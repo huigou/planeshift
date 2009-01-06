@@ -1,4 +1,9 @@
-﻿*** 2009-01-06 by Stefano Angeleri
+﻿*** 2009-01-06 by Dave Bentham
+- Progression scripts can be kicked by mini-games when won, by adding
+  script='prog_script_name' to the action_location. In script terms, the
+  winner = actor, loser = target.
+
+*** 2009-01-06 by Stefano Angeleri
 - Fixed FS#1548 - Battle Helms can be equipped in hands.
   The code replaced $H (which is used only for replacements for helms
   and most probably was intended so) only in case the helm was in the
