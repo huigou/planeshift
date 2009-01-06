@@ -54,10 +54,10 @@ public:
      */
     bool Initialize();
           
-    /** Handles incomming net messages.
+    /** Handles incoming net messages.
      * Have to add what messages it is subscribed to.
      */    
-    virtual void HandleMessage(MsgEntry *pMsg,Client *client);
+    virtual void HandleMessage(MsgEntry *pMsg,Client *client) { }
     
     
     bool Validate( psCharUploadMessage& mesg, csString& errorMsg );
