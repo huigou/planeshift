@@ -1,4 +1,13 @@
-﻿*** 2009-01-05 by Keith Fulton
+﻿*** 2009-01-06 by Stefano Angeleri
+- Fixed FS#1548 - Battle Helms can be equipped in hands.
+  The code replaced $H (which is used only for replacements for helms
+  and most probably was intended so) only in case the helm was in the
+  helm slot making it impossible to get the right mesh if you hold
+  it in the hands for example. Also removed the definition of a psstring
+  to use replaceallsubstring as the replaceall in crystal space csstring
+  does already what's needed avoiding useless assignments and conversions
+
+*** 2009-01-05 by Keith Fulton
 - Now Paladin detects speed hacks and kicks you off the server if you run too quickly
   for more than a few seconds.  Needs to be tested more by the Testing team if
   possible for false positives mostly.
