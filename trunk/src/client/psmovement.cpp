@@ -346,7 +346,7 @@ void psMovementManager::SetupMovements(psMovementInfoMessage& movemsg)
         newmove->name = name;
         newmove->motion.move = base_move;
         newmove->motion.rotate = base_rotate;
-
+        
         CS_ASSERT(id < sizeof(activeMoves)*8);
         moves.Put(id,newmove);
     }
