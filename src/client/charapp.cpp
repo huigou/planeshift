@@ -37,9 +37,9 @@ psCharAppearance::psCharAppearance(iObjectRegistry* objectReg)
     engine = csQueryRegistry<iEngine>(objectReg);
     vfs    = csQueryRegistry<iVFS>(objectReg);
     g3d    = csQueryRegistry<iGraphics3D>(objectReg);
-    txtmgr = g3d->GetTextureManager();        
+    txtmgr = g3d->GetTextureManager();
     xmlparser =  csQueryRegistry<iDocumentSystem> (objectReg);
-    
+
     eyeMesh = "Eyes";
     hairMesh = "Hair";
     beardMesh = "Beard";
@@ -59,7 +59,7 @@ void psCharAppearance::SetMesh(iMeshWrapper* mesh)
 {
     state = scfQueryInterface<iSpriteCal3DState>(mesh->GetMeshObject());
     stateFactory = scfQueryInterface<iSpriteCal3DFactoryState>(mesh->GetMeshObject()->GetFactory());
-    
+
     baseMesh = mesh;
 }
 
@@ -67,12 +67,12 @@ void psCharAppearance::SetMesh(iMeshWrapper* mesh)
 csString psCharAppearance::ParseStrings(const char* part, const char* str) const
 {
     psString result(str);
-    
+
     const char* factname = baseMesh->GetFactory()->QueryObject()->GetName();
-    
+
     result.ReplaceAllSubString("$F", factname);
     result.ReplaceAllSubString("$P", part);
-    
+
     return result;
 }
 
@@ -81,9 +81,9 @@ void psCharAppearance::FaceTexture(csString& faceMaterial, csString& faceTexture
 {
     csString materialParsed = ParseStrings("", faceMaterial);
     csString textureParsed  = ParseStrings("", faceTexture);
-    
+
     iMaterialWrapper* material = Loader::GetSingleton().LoadMaterial(materialParsed, textureParsed);
-    
+
     if ( !material )
     {
             Notify3(LOG_CHARACTER, "Failed to load texture ( %s, %s )", faceMaterial.GetData(), faceTexture.GetData());
@@ -93,32 +93,32 @@ void psCharAppearance::FaceTexture(csString& faceMaterial, csString& faceTexture
     {
         if ( state )
         {
-            state->SetMaterial("Head", material);        
+            state->SetMaterial("Head", material);
         }
-    }    
+    }
 
 }
 
 void psCharAppearance::BeardMesh(csString& subMesh)
 {
     beardMesh = subMesh;
-    
+
     if ( beardMesh.Length() == 0 )
     {
         for ( int idx=0; idx < stateFactory->GetMeshCount(); idx++)
         {
             const char* meshName = stateFactory->GetMeshName(idx);
-            
+
             if ( strstr(meshName, "Beard") )
             {
                 state->DetachCoreMesh(meshName);
             }
         }
-        return;        
+        return;
     }
-    
+
     csString newPartParsed = ParseStrings("Beard", beardMesh);
-    
+
     int newMeshAvailable = stateFactory->FindMeshName(newPartParsed);
     if ( newMeshAvailable == -1 )
     {
@@ -129,33 +129,33 @@ void psCharAppearance::BeardMesh(csString& subMesh)
         for ( int idx=0; idx < stateFactory->GetMeshCount(); idx++)
         {
             const char* meshName = stateFactory->GetMeshName(idx);
-            
+
             if ( strstr(meshName, "Beard") )
             {
                 state->DetachCoreMesh(meshName);
             }
         }
-        
+
         state->AttachCoreMesh(newPartParsed);
         beardAttached = true;
         beardMesh = newPartParsed;
     }
-    
+
     if ( hairColorSet )
-        HairColor(hairShader);    
+        HairColor(hairShader);
 }
 
 void psCharAppearance::HairMesh(csString& subMesh)
-{   
+{
     hairMesh = subMesh;
-    
+
     if ( hairMesh.Length() == 0 )
     {
         hairMesh = "Hair";
     }
-    
+
     csString newPartParsed = ParseStrings("Hair", hairMesh);
-    
+
     int newMeshAvailable = stateFactory->FindMeshName(newPartParsed);
     if ( newMeshAvailable == -1 )
     {
@@ -166,20 +166,20 @@ void psCharAppearance::HairMesh(csString& subMesh)
         for ( int idx=0; idx < stateFactory->GetMeshCount(); idx++)
         {
             const char* meshName = stateFactory->GetMeshName(idx);
-            
+
             if ( strstr(meshName, "Hair") )
             {
                 state->DetachCoreMesh(meshName);
             }
         }
-        
+
         state->AttachCoreMesh(newPartParsed);
         hairAttached = true;
         hairMesh = newPartParsed;
     }
-    
+
     if ( hairColorSet )
-        HairColor(hairShader);    
+        HairColor(hairShader);
 }
 
 
@@ -190,34 +190,34 @@ void psCharAppearance::HairColor(csVector3& color)
         return;
     }
     else
-    {        
+    {
         hairShader = color;
         iShaderVariableContext* context_hair = state->GetCoreMeshShaderVarContext(hairMesh);
         iShaderVariableContext* context_beard = state->GetCoreMeshShaderVarContext(beardMesh);
-    
+
         if ( context_hair )
         {
             CS::ShaderVarStringID varName = stringSet->Request("color modulation");
             csShaderVariable* var = context_hair->GetVariableAdd(varName);
-        
+
             if ( var )
             {
                 var->SetValue(hairShader);
             }
         }
-        
+
         if ( context_beard )
         {
             CS::ShaderVarStringID varName = stringSet->Request("color modulation");
             csShaderVariable* var = context_beard->GetVariableAdd(varName);
-        
+
             if ( var )
             {
                 var->SetValue(hairShader);
             }
         }
         hairColorSet = true;
-    }        
+    }
 }
 
 void psCharAppearance::EyeColor(csVector3& color)
@@ -265,16 +265,16 @@ void psCharAppearance::SetSkinTone(csString& part, csString& material, csString&
     if (!baseMesh || !part || !material || !texture)
     {
         return;
-    }        
+    }
     else
     {
         SkinToneSet s;
         s.part = part;
         s.material = material;
         s.texture = texture;
-    
+
         skinToneSet.Push(s);
-       
+
         csString materialNameParsed    = ParseStrings(part, material);
         csString textureNameParsed     = ParseStrings(part, texture);
 
@@ -291,7 +291,7 @@ void psCharAppearance::SetSkinTone(csString& part, csString& material, csString&
             csString left,right;
             left.Format("Left %s",part.GetData());
             right.Format("Right %s",part.GetData());
-    
+
             // Try mirroring
             if ( !state->SetMaterial(left,material) || !state->SetMaterial(right,material) )
             {
@@ -299,7 +299,7 @@ void psCharAppearance::SetSkinTone(csString& part, csString& material, csString&
                 return;
             }
         }
-    }    
+    }
 }
 
 
@@ -309,7 +309,7 @@ void psCharAppearance::ApplyEquipment(csString& equipment)
     {
         return;
     }
-    
+
     csRef<iDocument> doc = xmlparser->CreateDocument();
 
     const char* error = doc->Parse(equipment);
@@ -318,15 +318,15 @@ void psCharAppearance::ApplyEquipment(csString& equipment)
         Error2("Error in XML: %s", error );
         return;
     }
-    
+
     // Do the helm check.
-    csRef<iDocumentNode> helmNode = doc->GetRoot()->GetNode("equiplist")->GetNode("helm");    
+    csRef<iDocumentNode> helmNode = doc->GetRoot()->GetNode("equiplist")->GetNode("helm");
     csString helmGroup(helmNode->GetContentsValue());
     if ( helmGroup.Length() == 0 )
         helmGroup = baseMesh->GetFactory()->QueryObject()->GetName();
-    
+
     csRef<iDocumentNodeIterator> equipIter = doc->GetRoot()->GetNode("equiplist")->GetNodes("equip");
-          
+
     while (equipIter->HasNext())
     {
         csRef<iDocumentNode> equipNode = equipIter->Next();
@@ -335,13 +335,13 @@ void psCharAppearance::ApplyEquipment(csString& equipment)
         csString part = equipNode->GetAttributeValue( "part" );
         csString partMesh = equipNode->GetAttributeValue("partMesh");
         csString texture = equipNode->GetAttributeValue( "texture" );
-        
+
         //If the mesh has a $H it means it's an helm so search for replacement
         mesh.ReplaceAll("$H",helmGroup);
-       
-        Equip(slot, mesh, part, partMesh, texture);                        
+
+        Equip(slot, mesh, part, partMesh, texture);
     }
-    
+
     return;
 }
 
@@ -352,13 +352,13 @@ void psCharAppearance::Equip( csString& slotname,
                               csString& subMesh,
                               csString& texture
                              )
-{ 
-    
+{
+
     if ( slotname == "helm" )
     {
         ShowHair(false);
     }
-    
+
     // If it's a new mesh attach that mesh.
     if ( mesh.Length() )
     {
@@ -370,7 +370,7 @@ void psCharAppearance::Equip( csString& slotname,
     {
         // Change the mesh on the part of the model.
         ChangeMesh(part, subMesh);
-        
+
         // If there is also a new material ( texture ) then place that on as well.
         if ( texture.Length() )
         {
@@ -380,7 +380,7 @@ void psCharAppearance::Equip( csString& slotname,
     else if ( part.Length() )
     {
         ChangeMaterial(part, texture, texture);
-    }   
+    }
 }
 
 
@@ -389,7 +389,7 @@ bool psCharAppearance::Dequip(csString& slotname,
                               csString& part,
                               csString& subMesh,
                               csString& texture)
-{  
+{
     if ( slotname == "helm" )
     {
          ShowHair(true);
@@ -404,7 +404,7 @@ bool psCharAppearance::Dequip(csString& slotname,
 
     if ( subMesh.Length() )
     {
-        DefaultMesh(part); 
+        DefaultMesh(part);
     }
 
     if ( part.Length() )
@@ -413,10 +413,10 @@ bool psCharAppearance::Dequip(csString& slotname,
         {
             ChangeMaterial(part, texture, texture);
         }
-        else            
+        else
         {
             DefaultMaterial(part);
-        }            
+        }
         DefaultMaterial(part);
     }
 
@@ -443,11 +443,11 @@ void psCharAppearance::DefaultMesh(const char* part)
         }
     }
 
-    if (!defaultPart) 
+    if (!defaultPart)
     {
         return;
     }
-    
+
     state->AttachCoreMesh( defaultPart );
 }
 
@@ -456,7 +456,7 @@ bool psCharAppearance::ChangeMaterial(const char* part, const char* meshName, co
 {
     if ( !part || !meshName || !textureName)
         return false;
-    
+
     csString meshNameParsed    = ParseStrings(part, meshName);
     csString textureNameParsed = ParseStrings(part, textureName);
 
@@ -487,24 +487,24 @@ bool psCharAppearance::ChangeMaterial(const char* part, const char* meshName, co
 
 
 bool psCharAppearance::ChangeMesh(const char* partPattern, const char* newPart)
-{   
+{
     csString newPartParsed = ParseStrings(partPattern, newPart);
 
-    // If the new mesh cannot be found then do nothing.   
+    // If the new mesh cannot be found then do nothing.
     int newMeshAvailable = stateFactory->FindMeshName(newPartParsed);
     if ( newMeshAvailable == -1 )
         return false;
-    
+
     /* First we detach every mesh that match the partPattern */
     for (int idx=0; idx < stateFactory->GetMeshCount(); idx++)
     {
         const char * meshName = stateFactory->GetMeshName( idx );
         if (strstr(meshName,partPattern))
-        {     
+        {
             state->DetachCoreMesh( meshName );
         }
     }
-    
+
     state->AttachCoreMesh( newPartParsed.GetData() );
     return true;
 }
@@ -515,7 +515,7 @@ bool psCharAppearance::Attach(const char* socketName, const char* meshFactName)
     if (!socketName || !meshFactName)
         return false;
 
-    
+
     csRef<iSpriteCal3DSocket> socket = state->FindSocket( socketName );
     if ( !socket )
     {
@@ -530,7 +530,7 @@ bool psCharAppearance::Attach(const char* socketName, const char* meshFactName)
         csString filename;
         if (!psengine->GetFileNameByFact(meshFactName, filename))
         {
-            Error2("Mesh Factory %s not found", meshFactName );            
+            Error2("Mesh Factory %s not found", meshFactName );
             return false;
         }
 
@@ -616,7 +616,7 @@ void psCharAppearance::ApplyTraits(csString& traitString)
     {
         return;
     }
-    
+
     csRef<iDocument> doc = xmlparser->CreateDocument();
 
     const char* traitError = doc->Parse(traitString);
@@ -665,7 +665,7 @@ void psCharAppearance::ApplyTraits(csString& traitString)
     {
         Trait * trait = iter3.Next();
         if (trait->prev_trait == NULL)
-        {                    
+        {
             if (!SetTrait(trait))
             {
                 Error2("Failed to set trait %s for mesh.", traitString.GetData());
@@ -690,31 +690,31 @@ bool psCharAppearance::SetTrait(Trait * trait)
                 SetSkinTone(trait->mesh, trait->material, trait->texture);
                 break;
             }
-        
+
             case PSTRAIT_LOCATION_FACE:
             {
                 FaceTexture(trait->material, trait->texture );
-                break;            
+                break;
             }
-            
-                        
+
+
             case PSTRAIT_LOCATION_HAIR_STYLE:
             {
                 HairMesh(trait->mesh);
                 break;
             }
-            
-            
+
+
             case PSTRAIT_LOCATION_BEARD_STYLE:
             {
                 BeardMesh(trait->mesh);
                 break;
-            } 
-                           
+            }
+
 
             case PSTRAIT_LOCATION_HAIR_COLOR:
             {
-                HairColor(trait->shader);            
+                HairColor(trait->shader);
                 break;
             }
 
@@ -723,7 +723,7 @@ bool psCharAppearance::SetTrait(Trait * trait)
                 EyeColor(trait->shader);
                 break;
             }
-        
+
 
             default:
             {
@@ -771,8 +771,8 @@ void psCharAppearance::ClearEquipment(const char* slot)
     }
 
     csArray<csString> deleteList = usedSlots;
-    
-    for ( size_t z = 0; z < deleteList.GetSize(); z++ )    
+
+    for ( size_t z = 0; z < deleteList.GetSize(); z++ )
     {
         Detach(deleteList[z]);
     }
@@ -801,9 +801,9 @@ bool psCharAppearance::Detach(const char* socketName )
     if (!socketName)
     {
         return false;
-    }        
+    }
 
-    
+
     csRef<iSpriteCal3DSocket> socket = state->FindSocket( socketName );
     if ( !socket )
     {
@@ -823,7 +823,7 @@ bool psCharAppearance::Detach(const char* socketName )
         engine->RemoveObject( meshWrap );
     }
 
-    usedSlots.Delete(socketName);    
+    usedSlots.Delete(socketName);
     return true;
 }
 
@@ -833,9 +833,9 @@ void psCharAppearance::Clone(psCharAppearance* clone)
     this->eyeMesh       = clone->eyeMesh;
     this->hairMesh      = clone->hairMesh;
     this->beardMesh     = clone->beardMesh;
-    
+
     this->eyeShader     = clone->eyeShader;
-    this->hairShader    = clone->hairShader;    
+    this->hairShader    = clone->hairShader;
     this->faceMaterial  = clone->faceMaterial;
     this->skinToneSet   = clone->skinToneSet;
     this->eyeColorSet   = clone->eyeColorSet;
