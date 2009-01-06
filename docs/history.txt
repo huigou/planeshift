@@ -1,4 +1,9 @@
-﻿*** 2009-01-04 by Stefano Angeleri
+﻿*** 2009-01-05 by Keith Fulton
+- Now Paladin detects speed hacks and kicks you off the server if you run too quickly
+  for more than a few seconds.  Needs to be tested more by the Testing team if
+  possible for false positives mostly.
+
+*** 2009-01-04 by Stefano Angeleri
 - Changed cordinates of the hide/show button in order to make it not
   move around when clicked (except style 2)
 - Disabled Style change if the toolbar is hidden
