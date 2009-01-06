@@ -480,9 +480,10 @@ void SpawnManager::LoadHuntLocations(psSectorInfo *sectorinfo)
 
 void SpawnManager::LoadSpawnRanges(SpawnRule *rule)
 {
-    Result result(db->Select("select id,x1,y1,z1,x2,y2,z2,cstr_id_spawn_sector,range_type_code"
-                             "  from npc_spawn_ranges"
-                             "  where npc_spawn_rule_id=%d", rule->GetID() ));
+    Result result(db->Select("select npc_spawn_ranges.id,x1,y1,z1,x2,y2,z2,name,range_type_code"
+                             "  from npc_spawn_ranges, sectors "
+                             "  where npc_spawn_ranges.sector_id = sectors.id"
+                             "  and npc_spawn_rule_id=%d", rule->GetID() ));
 
     if (!result.IsValid() )
     {
@@ -504,7 +505,8 @@ void SpawnManager::LoadSpawnRanges(SpawnRule *rule)
                        result[i].GetFloat("x2"),
                        result[i].GetFloat("y2"),
                        result[i].GetFloat("z2"),
-                       CacheManager::GetSingleton().FindCommonString( result[i].GetUInt32("cstr_id_spawn_sector") ) );
+                       result[i]["name"]);
+
 
         rule->AddRange(r);
     }
@@ -1154,7 +1156,7 @@ void SpawnRule::DetermineSpawnLoc(psCharacter *ch, csVector3& pos, float& angle,
 
         // randomly choose an angle in [0, 2*PI]
         angle = randomgen->Get() * TWO_PI;
-
+        instance = fixedinstance;
     }
     else if (ch && fixedspawnsector == "startlocation")
     {

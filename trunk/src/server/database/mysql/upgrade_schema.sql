@@ -1066,22 +1066,25 @@ UPDATE `server_options` SET `option_value`='1210' WHERE `option_name`='db_versio
 ALTER TABLE `character_quests` ADD `last_response_npc_id` INT(10) UNSIGNED NULL COMMENT 'This field stores the npc PID who gave the last response. Required for menu filtering.';
 UPDATE `server_options` SET `option_value`='1211' WHERE `option_name`='db_version';
 
-#### 1211 - Stefano Angeleri - Added /setkillexp
+#### Also 1211 - Stefano Angeleri - Added /setkillexp
 INSERT INTO command_group_assignment VALUES( "/setkillexp", 30 );
 INSERT INTO command_group_assignment VALUES( "/setkillexp", 25 );
 INSERT INTO command_group_assignment VALUES( "/setkillexp", 24 );
 INSERT INTO command_group_assignment VALUES( "/setkillexp", 23 );
 
-#### 1211 - Stefano Angeleri - Lowered killnpc required access level to gm2
+#### Lowered killnpc required access level to gm2
 INSERT INTO command_group_assignment VALUES( "/killnpc", 24 );
 INSERT INTO command_group_assignment VALUES( "/killnpc", 23 );
 INSERT INTO command_group_assignment VALUES( "/killnpc", 22 );
 
-#### 1211 - Stefano Angeleri - Added /assignfaction for gm4+
+#### Added /assignfaction for gm4+
 INSERT INTO command_group_assignment VALUES( "/assignfaction", 30 );
 INSERT INTO command_group_assignment VALUES( "/assignfaction", 25 );
 INSERT INTO command_group_assignment VALUES( "/assignfaction", 24 );
 
+#### 1212 - Keith Fulton - Renamed column name to be more accurate and to be required
+ALTER TABLE `npc_spawn_ranges` CHANGE `cstr_id_spawn_sector` `sector_id` int(10) NOT NULL DEFAULT '0';
+UPDATE `server_options` SET `option_value`='1212' WHERE `option_name`='db_version';
 
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
