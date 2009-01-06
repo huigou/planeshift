@@ -336,13 +336,8 @@ void psCharAppearance::ApplyEquipment(csString& equipment)
         csString partMesh = equipNode->GetAttributeValue("partMesh");
         csString texture = equipNode->GetAttributeValue( "texture" );
         
-        // If this is a helm item check for helm replacement
-        if ( slot == "helm" )
-        {
-            psString result(mesh);                        
-            result.ReplaceAllSubString("$H",helmGroup);                                                    
-            mesh = result;        
-        }            
+        //If the mesh has a $H it means it's an helm so search for replacement
+        mesh.ReplaceAll("$H",helmGroup);
        
         Equip(slot, mesh, part, partMesh, texture);                        
     }
