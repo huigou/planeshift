@@ -37,10 +37,11 @@ class PaladinJr
 public:
 
     // Extrapolate the current position from last DR packet
-    void PredictClient(Client*, psDRMessage& drmsg);
+    bool ValidateMovement(Client*, psDRMessage& drmsg);
+
     // Compare extrapolated displacement with new displacement from new DR packet
     // Should be called after actor has been updated with newest recieved DR packet
-    void CheckClient(Client*);
+    bool CheckCollDetection(Client*);
 
     void Initialize(EntityManager* celbase);
     PaladinJr()
@@ -58,7 +59,7 @@ private:
     bool enabled;
     unsigned int watchTime;
 
-    void SpeedCheck(Client* client, psDRMessage& currUpdate);
+    bool SpeedCheck(Client* client, psDRMessage& currUpdate);
 
 
     EntityManager         *entitymanager;

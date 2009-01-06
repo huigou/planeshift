@@ -291,7 +291,6 @@ bool psLinearMovement::RotateV (float delta)
 
 int psLinearMovement::MoveSprite (float delta)
 {
-  //float local_max_interval;
   int ret = PS_MOVE_SUCCEED;
 
   csReversibleTransform fulltransf = mesh->GetMovable ()
@@ -299,40 +298,26 @@ int psLinearMovement::MoveSprite (float delta)
   const csMatrix3& transf = fulltransf.GetT2O ();
   float yrot = Matrix2YRot (transf);
 
-
-  // Make sure time moves forward at least at this rate
-
-  //float temp3=(vel.y==0.0f)
-	 // ? MAX_CD_INTERVAL
-	 // : ABS (topSize.y/vel.y);
-
-  //float temp2=MIN (temp3, (vel.x==0.0f)
-	 // ? MAX_CD_INTERVAL
-	 // : ABS (topSize.x/vel.x));
-
-  //float temp1=MIN (temp2, (vel.z==0.0f)
-	 // ? MAX_CD_INTERVAL
-	 // : ABS (topSize.z/vel.z));
-
-  //float local_max_interval =
-	 // MAX (temp1, MIN_CD_INTERVAL);
-
   // Calculate the total velocity (body and world) in OBJECT space.
   csVector3 bodyVel (fulltransf.Other2ThisRelative (velWorld) + velBody);
 
   float local_max_interval =
-  	MIN (MIN ((bodyVel.y==0.0f)
-  	? MAX_CD_INTERVAL
-  	: ABS (intervalSize.y/bodyVel.y), (bodyVel.x==0.0f)
-  	? MAX_CD_INTERVAL
-  	: ABS (intervalSize.x/bodyVel.x)), (bodyVel.z==0.0f)
-  	? MAX_CD_INTERVAL
-  	: ABS (intervalSize.z/bodyVel.z));
+  	MIN (MIN ( (bodyVel.y==0.0f) ? MAX_CD_INTERVAL : ABS (intervalSize.y/bodyVel.y),
+               (bodyVel.x==0.0f) ? MAX_CD_INTERVAL : ABS (intervalSize.x/bodyVel.x)
+             ),(bodyVel.z==0.0f) ? MAX_CD_INTERVAL : ABS (intervalSize.z/bodyVel.z)
+        );
 
   // Compensate for speed
   local_max_interval /= speed;
   // Err on the side of safety (95% error margin)
   local_max_interval *= 0.95f;
+
+  //printf("local_max_interval=%f, bodyVel is %1.2f, %1.2f, %1.2f\n",local_max_interval, bodyVel.x, bodyVel.y, bodyVel.z);
+  //printf("velWorld is %1.2f, %1.2f, %1.2f\n", velWorld.x, velWorld.y, velWorld.z);
+  //printf("velBody is %1.2f, %1.2f, %1.2f\n", velBody.x, velBody.y, velBody.z);
+
+  // Sanity check on time interval here.  Something is messing it up. -KWF
+  //local_max_interval = MAX(local_max_interval,0.1F);
 
   if (colldet)
   {
@@ -415,6 +400,9 @@ int psLinearMovement::MoveSprite (float delta)
       local_max_interval /= speed;
       // Err on the side of safety (95% error margin)
       local_max_interval *= 0.95f;
+
+      // Sanity check on time interval here.  Something is messing it up. -KWF
+      // local_max_interval = MAX(local_max_interval,0.1F);
     }
   }
 
@@ -1097,6 +1085,9 @@ void psLinearMovement::SetVelocity (const csVector3& vel)
 
 void psLinearMovement::AddVelocity (const csVector3& vel)
 {
+    if (vel.Norm() > 100)
+        printf("Garbage data in AddVel!\n");
+
     // Y movement here can be used for lift and gravity effects.
     velWorld += vel;
 }
