@@ -949,31 +949,6 @@ bool EntityManager::CreateRoom(const char* name, const char* mapfile)
 }
 
 
-
-void EntityManager::HandleMessage(MsgEntry* me,Client *client)
-{
-    /****************************
-    switch(me->GetType())
-    {
-        case MSGTYPE_USERACTION:
-            HandleUserAction( me );
-            break;
-        case MSGTYPE_PERSIST_WORLD_REQUEST:
-            HandleWorld( me );        
-            break;
-        case MSGTYPE_PERSIST_ACTOR_REQUEST:
-            HandleActor( me );        
-            break;        
-        case MSGTYPE_PERSIST_ALL:
-            HandleAllRequest( me );        
-            break;
-        case MSGTYPE_REQUESTMOVEMENTS:
-            SendMovementInfo( me->clientnum );
-            break;
-    }
-    ****************************/
-}
-
 void EntityManager::HandleAllRequest(MsgEntry* me, Client *client)
 {
     // This is not available to regular clients!

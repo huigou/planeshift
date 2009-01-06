@@ -149,19 +149,19 @@ void psServerDR::ResetPos(gemActor* actor)
     actor->MulticastDRUpdate();
 }
 
-void psServerDR::HandleMessage (MsgEntry* me,Client *client)
+void psServerDR::HandleMessage(MsgEntry* me,Client *client)
 {
     psDRMessage drmsg(me,CacheManager::GetSingleton().GetMsgStrings(),EntityManager::GetSingleton().GetEngine() );
     if (!drmsg.valid)
     {
-        Debug2(LOG_NET,me->clientnum,"Received unparsable psDRMessage from client %u.\n",me->clientnum);
+        Error2("Received unparsable psDRMessage from client %u.\n",me->clientnum);
         return;
     }
 
     gemActor *actor = client->GetActor();
     if (actor == NULL)
     {
-        Error1("Recieved DR data for NULL actor.");
+        Error1("Received DR data for NULL actor.");
         return;
     }
 
@@ -169,7 +169,7 @@ void psServerDR::HandleMessage (MsgEntry* me,Client *client)
     {
         if (drmsg.worldVel.y > 0)
         {
-            client->FlagExploit();  // This DR data may be an exploit but may also be valid from lag.
+            client->CountDetectedCheat();  // This DR data may be an exploit but may also be valid from lag.
             actor->pcmove->AddVelocity(csVector3(0,-1,0));
             actor->UpdateDR();
             actor->MulticastDRUpdate();
@@ -213,7 +213,8 @@ void psServerDR::HandleMessage (MsgEntry* me,Client *client)
         return;
     }
 
-    paladin->PredictClient(client, drmsg);
+    if (!paladin->ValidateMovement(client, drmsg)) // client ptr has been deleted if this is false
+        return;
 
     // Go ahead and update the server version
     if (!actor->SetDRData(drmsg)) // out of date message if returns false
@@ -276,7 +277,7 @@ void psServerDR::HandleMessage (MsgEntry* me,Client *client)
                           actor->GetMulticastClients(),
                           me->clientnum,PROX_LIST_ANY_RANGE);
 
-    paladin->CheckClient(client);
+    paladin->CheckCollDetection(client);
 
     // Swap lines for easy Death Penalty testing.            
     //if (strcmp(drmsg.sector->QueryObject()->GetName(), "NPCroom1") == 0)

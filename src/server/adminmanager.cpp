@@ -1866,7 +1866,7 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
 
         info.AppendFmt("total time connected is %1.1f hours", timeConnected );
 
-        info.AppendFmt(" has had %d exploits flagged.", client->GetFlagCount());
+        info.AppendFmt(" has had %d cheats flagged.", client->GetDetectedCheatCount());
 
         if(banned)
         {

@@ -65,7 +65,7 @@ Client::Client ()
     lastInviteTime  = 0;
     spamPoints      = 0;
     clientnum       = 0;    
-    flags           = 0;
+    detectedCheatCount           = 0;
 
     nextFloodHistoryIndex = 0;
     

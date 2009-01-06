@@ -353,9 +353,8 @@ public:
     bool LocationIsDisplaying() { return locationIsDisplaying; }
 
     /// Give a warning to the client silently. Capped at 10000.
-    void FlagExploit() {if(flags < 10000) flags++; }
-    
-    int GetFlagCount() { return flags;}
+    void CountDetectedCheat() {if (detectedCheatCount < 10000) detectedCheatCount++; }
+    int GetDetectedCheatCount() { return detectedCheatCount;}
 
 protected:
 
@@ -413,10 +412,6 @@ protected:
     bool hasBeenWarned;
     bool hasBeenPenalized;
 
-    // State information for merchants
-    //    TradingStatus tradingStatus;
-    //    int merchantID;
-
     // Path edit global vars for client
     csString waypointPathName;
     int waypointPathIndex;
@@ -435,7 +430,7 @@ private:
 
     /// Potential number of exploits automatically detected.
     /// This needs more work as it's only a preliminary measure so far.
-    int flags;
+    int detectedCheatCount;
 };
 
 #endif
