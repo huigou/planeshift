@@ -197,6 +197,9 @@ private:
     /// count of players in session
     uint8_t playerCount;
 
+    /// progression script for winner
+    csString winnerScript;
+
     /// resend board layouts as was, e.g. correcting an illegal move
     void ResendBoardLayout(uint32_t clientnum);
 

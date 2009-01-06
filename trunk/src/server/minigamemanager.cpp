@@ -46,6 +46,7 @@
 #include "chatmanager.h"
 #include "gem.h"
 #include "globals.h"
+#include "progressionmanager.h"
 
 using namespace psMiniGame;
 
@@ -430,6 +431,7 @@ psMiniGameSession::psMiniGameSession(MiniGameManager *mng, gemActionLocation *ob
     nextPlayerToMove = 0;
     endgameReached = false;
     playerCount = 0;
+    winnerScript.Clear();
 }
 
 psMiniGameSession::~psMiniGameSession()
@@ -547,7 +549,7 @@ bool psMiniGameSession::Load(csString &responseString)
     {
         Error2("Session setting for minigame %s invalid. Defaulting to \'Public\'", gameName);
     }
-    
+ 
     // whether to observe the end game settings. If so, the server observes the moves made and
     // can identify the end game pattern(s). Default = No.
     csString endgameStr(boardNode->GetAttributeValue("EndGame"));
@@ -558,6 +560,20 @@ bool psMiniGameSession::Load(csString &responseString)
     else if (endgameStr.Length() > 0 && endgameStr.Downcase() != "no")
     {
         Error2("ObserveEndGame setting for %s invalid. Defaulting to \'No\'", gameName);
+    }
+
+    // read any script name for winner
+    csString scriptStr(boardNode->GetAttributeValue("Script"));
+    if (scriptStr.Length() > 0)
+    {
+        if (options & OBSERVE_ENDGAME)
+        {
+            winnerScript = scriptStr;
+        }
+        else
+        {
+            Error2("Ignoring invalid script for %s.", gameName);
+        }
     }
 
     // Setup the game board
@@ -571,6 +587,7 @@ bool psMiniGameSession::Load(csString &responseString)
     }
 
     // intialise player to move first, if appropriate
+    // Player 1 has the white pieces.
     if (gameBoard.GetPlayerTurnRule() >= ORDERED)
     {
         nextPlayerToMove = 1;
@@ -863,6 +880,8 @@ void psMiniGameSession::Update(Client *client, psMGUpdateMessage &msg)
         // determine winner
         uint32_t winnerID, loserID;
         csString wonText;
+        ProgressionEvent *progEvent = NULL;
+
         if (winningPiece == WHITE_PIECE || winningPiece == BLACK_PIECE)
         {
             if (winningPiece == WHITE_PIECE)
@@ -876,8 +895,17 @@ void psMiniGameSession::Update(Client *client, psMGUpdateMessage &msg)
                 winnerID = blackPlayerID;
             }
 
-            // announce winner
-            if (winnerID != (uint32_t)-1)
+            // is there a progression script to run
+            if (winnerScript.Length() > 0)
+            {
+                if (!(progEvent = psserver->GetProgressionManager()->FindEvent(winnerScript.GetDataSafe())))
+                {
+                    Error2( "Failed to find progression event %s. ", winnerScript.GetDataSafe() );
+                }
+            }
+
+            // announce winner, unless script to run for winner
+            if (winnerID != (uint32_t)-1 && !progEvent)
                 psserver->SendSystemInfo(winnerID, (GetName() + ": You have won!"));
             wonText = GetName() + ": ";
             if (winnerID == whitePlayerID && whitePlayerName)
@@ -893,6 +921,35 @@ void psMiniGameSession::Update(Client *client, psMGUpdateMessage &msg)
                 wonText += "Someone";
             }
             wonText += " has won.";
+
+            // now run progression script
+            if (progEvent && winnerID != (uint32_t)-1)
+            {
+                ClientConnectionSet *clients = psserver->GetConnections();
+                if (clients)
+                {
+                    Client *winnerClient = clients->Find(winnerID);
+                    float result;
+                    if (winnerClient)
+                    {
+                        if (gameBoard.GetNumPlayers() == 1)
+                        {
+                            result = progEvent->Run(winnerClient->GetActor(),
+                                                    winnerClient->GetActor(), NULL);
+                        }
+                        else
+                        {
+                            Client *loserClient;
+                            if (loserID != (uint32_t)-1)
+                            {
+                                loserClient = clients->Find(loserID);
+                                result = progEvent->Run(winnerClient->GetActor(),
+                                                        loserClient->GetActor(), NULL);
+                            }
+                        }
+                    }
+                }
+            }
         }
         else
         {
