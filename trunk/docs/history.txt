@@ -2,6 +2,8 @@
 - Now Paladin detects speed hacks and kicks you off the server if you run too quickly
   for more than a few seconds.  Needs to be tested more by the Testing team if
   possible for false positives mostly.
+- New fixed version doesn't hardcode max speed to always be 1.  :)
+
 
 *** 2009-01-04 by Stefano Angeleri
 - Changed cordinates of the hide/show button in order to make it not
