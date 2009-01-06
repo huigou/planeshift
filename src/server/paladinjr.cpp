@@ -66,7 +66,7 @@ void PaladinJr::Initialize(EntityManager* celbase)
 
     // Running forward while strafing
     maxSpeed = sqrtf(maxVelocity.z * maxVelocity.z + maxVelocity.x * maxVelocity.x);
-    maxSpeed = 1;
+    //maxSpeed = 1;
 
     watchTime = configmanager->GetInt("PlaneShift.Paladin.WatchTime", 30000);
    
@@ -226,13 +226,14 @@ bool PaladinJr::SpeedCheck(Client* client, psDRMessage& currUpdate)
     if (!sector)
         return true;
 
-    float dist = sqrt (pow((currUpdate.pos.x - oldpos.x), 2.0f) +
-        pow((currUpdate.pos.z - oldpos.z), 2.0f));
+    float dist = sqrt ( (currUpdate.pos.x - oldpos.x)*(currUpdate.pos.x - oldpos.x) +
+                        (currUpdate.pos.z - oldpos.z)*(currUpdate.pos.z - oldpos.z) );
 
     csTicks timedelta = client->GetActor()->pcmove->ClientTimeDiff();
 
     float max_noncheat_distance = maxSpeed*timedelta/1000;
     float lag_distance          = maxSpeed*client->accumulatedLag/1000;
+
 
     if (fabs(currUpdate.vel.x) <= maxVelocity.x && 
               currUpdate.vel.y <= maxVelocity.y && 
@@ -258,6 +259,10 @@ bool PaladinJr::SpeedCheck(Client* client, psDRMessage& currUpdate)
     }
     else
     {
+        printf("Went %1.2f in %u ticks when %1.2f was expected plus %1.2f allowed lag distance (%1.2f)\n", dist, timedelta, max_noncheat_distance, lag_distance, max_noncheat_distance+lag_distance);
+        printf("Z Vel is %1.2f\n", currUpdate.vel.z);
+        printf("MaxSpeed is %1.2f\n", maxSpeed);
+
         // Report cheater
         csVector3 vel;
         csVector3 angVel;
