@@ -1466,6 +1466,7 @@ csVector3 psCamera::CalcCollisionPos(const csVector3& pseudoTarget, const csVect
         case CAMERA_M64_THIRD_PERSON:
         case CAMERA_LARA_THIRD_PERSON:
         case CAMERA_FREE:
+        case CAMERA_NPCTALK:
             csVector3 isect;
             csIntersectingTriangle closest_tri;
             csVector3 modifiedTarget = pseudoTarget;
