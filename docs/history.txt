@@ -3,9 +3,14 @@
   to the sectors table instead of a common string with the name of the sector
   in the string.  This is a tighter structure for this table.
   DB VERSION BUMP.
-
 - On a side note, Aiken has tested this functionality and it does work.
   We should use it.
+- Fixed crash if the speex plugin isn't available, which has the effect of the 
+  file being found but the data still unable to be loaded (crashes the client).
+- Fixed crash in npc /give check for frozen targetClient
+- Now quests break up dialog into different say commands, one sentence at a time.
+  The objective of this is to make the chat (and chat bubbles) more readable and
+  give better pacing with the eventual audio files.
 
 *** 2009-01-06 by Dave Bentham
 - Progression scripts can be kicked by mini-games when won, by adding
