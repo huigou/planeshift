@@ -272,7 +272,11 @@ csRef<iSndSysSource> psSoundManager::StartSound(const char* name,float volume,bo
         Error2("Sound '%s' not found!", name);
         return NULL;
     }
-    
+    if (!handle->snddata)
+    {
+        Error2("Sound '%s' was found but could not be loaded!", name);
+        return NULL;
+    }
     csRef<iSndSysStream> sndstream = soundSystem->CreateStream(handle->snddata, CS_SND3D_DISABLE);
     if (!sndstream)
     {

@@ -1374,12 +1374,6 @@ void ExchangeManager::StartExchange( Client* client, bool withPlayer )
         return;
     }
 
-    if(targetClient->IsFrozen())
-    {
-        psserver->SendSystemInfo(client->GetClientNum(), "% was frozen by a GM and cannot trade", target->GetName());
-        return;
-    }
-
     // if the command was "/give":
     if (!withPlayer)
     {
@@ -1405,9 +1399,15 @@ void ExchangeManager::StartExchange( Client* client, bool withPlayer )
     // if the command was "/trade":
     else
     {
+        if(targetClient->IsFrozen())
+        {
+            psserver->SendSystemInfo(client->GetClientNum(), "% was frozen by a GM and cannot trade", target->GetName());
+            return;
+        }
+
         if ( target->GetNPCPtr() )
         {
-            psserver->SendSystemError(client->GetClientNum(), "You can trade with other players only");
+            psserver->SendSystemError(client->GetClientNum(), "You can trade with other players only.");
             return;
         }
 
