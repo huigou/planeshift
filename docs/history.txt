@@ -1,4 +1,8 @@
-﻿*** 2009-01-07 by Stefano Angeleri
+﻿*** 2009-01-07 by Dave Bentham
+- Improved some GUI texts for minigames to distnguish between games
+  and puzzles.
+
+*** 2009-01-07 by Stefano Angeleri
 - Fixed NPC camera collision detection it was skipping the code acting
   always as with collision detection disabled
 

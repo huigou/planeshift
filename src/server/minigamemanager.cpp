@@ -225,7 +225,7 @@ void MiniGameManager::HandleStartGameRequest(Client *client)
     // Check the range
     if (client->GetActor()->RangeTo(action, true) > RANGE_TO_LOOT)
     {
-        psserver->SendSystemError(clientID, "You are not in range to play %s!", actionLocation->name.GetData());
+        psserver->SendSystemError(clientID, "You are not in range for %s!", actionLocation->name.GetData());
         return;
     }
 
@@ -593,6 +593,9 @@ bool psMiniGameSession::Load(csString &responseString)
         nextPlayerToMove = 1;
     }
 
+    // determine style of minigame: currently based on number of players only
+    minigameStyle = (gameBoard.GetNumPlayers()==1) ? MG_PUZZLE : MG_GAME;
+
     return true;
 }
 
@@ -623,9 +626,18 @@ void psMiniGameSession::AddPlayer(Client *client)
         }
 
         // Send notifications
-        psSystemMessage newmsg(clientID, MSG_INFO, "%s started playing %s with white pieces.",
-                               whitePlayerName, name.GetData());
-        newmsg.Multicast(client->GetActor()->GetMulticastClients(), 0, CHAT_SAY_RANGE);
+        psSystemMessage *newmsg;
+        if (minigameStyle == MG_GAME)
+        {
+            newmsg = new psSystemMessage(clientID, MSG_INFO, "%s started playing %s with white pieces.",
+                                         whitePlayerName, name.GetData());
+        }
+        else // MG_PUZZLE
+        {
+            newmsg = new psSystemMessage(clientID, MSG_INFO, "%s started solving %s.",
+                                         whitePlayerName, name.GetData());
+        }
+        newmsg->Multicast(client->GetActor()->GetMulticastClients(), 0, CHAT_SAY_RANGE);
 
         playerCount++;
     }
@@ -634,14 +646,23 @@ void psMiniGameSession::AddPlayer(Client *client)
     else if (blackPlayerID == (uint32_t)-1 && gameBoard.GetNumPlayers() >= 2)
     {
         blackPlayerID = clientID;
-
-        blackIdleCounter = MINIGAME_IDLE_TIME;
         blackPlayerName = client->GetName();
 
+        blackIdleCounter = MINIGAME_IDLE_TIME;
+
         // Send notifications
-        psSystemMessage newmsg(clientID, MSG_INFO, "%s started playing %s with black pieces.",
-                               blackPlayerName, name.GetData());
-        newmsg.Multicast(client->GetActor()->GetMulticastClients(), 0, CHAT_SAY_RANGE);
+        psSystemMessage *newmsg;
+        if (minigameStyle == MG_GAME)
+        {
+            newmsg = new psSystemMessage(clientID, MSG_INFO, "%s started playing %s with black pieces.",
+                                         blackPlayerName, name.GetData());
+        }
+        else // MG_PUZZLE
+        {
+            newmsg = new psSystemMessage(clientID, MSG_INFO, "%s started solving %s.",
+                                         blackPlayerName, name.GetData());
+        }
+        newmsg->Multicast(client->GetActor()->GetMulticastClients(), 0, CHAT_SAY_RANGE);
 
         playerCount++;
     }
@@ -680,9 +701,18 @@ void psMiniGameSession::RemovePlayer(Client *client)
         whitePlayerID = (uint32_t)-1;
 
         // Send notifications
-        psSystemMessage newmsg(clientID, MSG_INFO, "%s stopped playing %s.",
-                               whitePlayerName, name.GetData());
-        newmsg.Multicast(client->GetActor()->GetMulticastClients(), 0, CHAT_SAY_RANGE);
+        psSystemMessage *newmsg;
+        if (minigameStyle == MG_GAME)
+        {
+            newmsg = new psSystemMessage(clientID, MSG_INFO, "%s stopped playing %s.",
+                                         whitePlayerName, name.GetData());
+        }
+        else // MG_PUZZLE
+        {
+            newmsg = new psSystemMessage(clientID, MSG_INFO, "%s stopped solving %s.",
+                                         whitePlayerName, name.GetData());
+        }
+        newmsg->Multicast(client->GetActor()->GetMulticastClients(), 0, CHAT_SAY_RANGE);
 
         whitePlayerName = NULL;
         playerCount--;
@@ -694,9 +724,18 @@ void psMiniGameSession::RemovePlayer(Client *client)
         blackPlayerID = (uint32_t)-1;
 
         // Send notifications
-        psSystemMessage newmsg(clientID, MSG_INFO, "%s stopped playing %s.",
-                               blackPlayerName, name.GetData());
-        newmsg.Multicast(client->GetActor()->GetMulticastClients(), 0, CHAT_SAY_RANGE);
+        psSystemMessage *newmsg;
+        if (minigameStyle == MG_GAME)
+        {
+            newmsg = new psSystemMessage(clientID, MSG_INFO, "%s stopped playing %s.",
+                                         blackPlayerName, name.GetData());
+        }
+        else // MG_PUZZLE
+        {
+            newmsg = new psSystemMessage(clientID, MSG_INFO, "%s stopped solving %s.",
+                                         blackPlayerName, name.GetData());
+        }
+        newmsg->Multicast(client->GetActor()->GetMulticastClients(), 0, CHAT_SAY_RANGE);
 
         blackPlayerName = NULL;
         playerCount--;
@@ -792,7 +831,7 @@ void psMiniGameSession::Update(Client *client, psMGUpdateMessage &msg)
     // Verify range
     if (client->GetActor()->RangeTo(actionObject, true) > RANGE_TO_LOOT)
     {
-        psserver->SendSystemError(clientnum, "You are not in range to play %s!",
+        psserver->SendSystemError(clientnum, "You are not in range for %s!",
                                   name.GetData());
         // Reset the client's game board
         ResendBoardLayout(clientnum);
@@ -802,8 +841,14 @@ void psMiniGameSession::Update(Client *client, psMGUpdateMessage &msg)
     // valid move?
     if (endgameReached)
     {
-        psserver->SendSystemError(clientnum, "Game over");
-        // Reset the client's game board
+        if (minigameStyle == MG_GAME)
+        {
+            psserver->SendSystemError(clientnum, "Game over");
+        }
+        else  // Puzzle
+        {
+            psserver->SendSystemError(clientnum, "Puzzle solved");
+        }        // Reset the client's game board
         ResendBoardLayout(clientnum);
         return;
     }
@@ -906,7 +951,14 @@ void psMiniGameSession::Update(Client *client, psMGUpdateMessage &msg)
 
             // announce winner, unless script to run for winner
             if (winnerID != (uint32_t)-1 && !progEvent)
+            if (minigameStyle == MG_GAME)
+            {
                 psserver->SendSystemInfo(winnerID, (GetName() + ": You have won!"));
+            }
+            else
+            {
+                psserver->SendSystemInfo(winnerID, (GetName() + ": You have solved it!"));
+            }
             wonText = GetName() + ": ";
             if (winnerID == whitePlayerID && whitePlayerName)
             {
@@ -920,7 +972,14 @@ void psMiniGameSession::Update(Client *client, psMGUpdateMessage &msg)
             {
                 wonText += "Someone";
             }
-            wonText += " has won.";
+            if (minigameStyle == MG_GAME)
+            {
+                wonText += " has won.";
+            }
+            else
+            {
+                wonText += " has solved it.";
+            }
 
             // now run progression script
             if (progEvent && winnerID != (uint32_t)-1)
@@ -953,7 +1012,14 @@ void psMiniGameSession::Update(Client *client, psMGUpdateMessage &msg)
         }
         else
         {
-            wonText = "Game over.";
+            if (minigameStyle == MG_GAME)
+            {
+                wonText = "Game over.";
+            }
+            else  // Puzzle
+            {
+                wonText = "Puzzle solved.";
+            }
             if (winnerID != (uint32_t)-1)
             {
                 psserver->SendSystemInfo(winnerID, wonText);
