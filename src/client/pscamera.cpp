@@ -232,10 +232,33 @@ const char * psCamera::HandleCommand(const char *cmd)
     // enable npc mode if the targeted npc is in talking distance
     if(GetCameraMode() != CAMERA_NPCTALK && actor->RangeTo(target, false) < NPC_MODE_DISTANCE)
     {
+        //rotate the target so that it faces the player
+        csVector3 playerPos = psengine->GetCelClient()->GetMainPlayer()->Pos();
+        csVector3 targetPos = target->GetPosition();
+
+        csVector3 diff = playerPos - targetPos;
+        if (!diff.x)
+            diff.x = 0.00001F; // div/0 protect
+
+        float angle = atan2(-diff.x,-diff.z);
+        
+        float npcrot = target->GetRotation();
+        
+        GEMClientActor* targetActor = dynamic_cast<GEMClientActor*>(target);
+        
+        csVector3 velocity;
+        velocity = targetActor->GetVelocity();
+        float velNormSquared = velocity.SquaredNorm();
+        
+        
+        if((angle-npcrot) < 3.14159F && (angle-npcrot) > -3.14159F && velNormSquared == 0)
+            target->SetPosition(target->GetPosition(), angle, target->GetSector());
+
+
         npcModeTarget = target;
         npcModePosition = actor->GetMesh()->GetMovable()->GetFullPosition();
-            SetCameraMode(CAMERA_NPCTALK);
-        }
+        SetCameraMode(CAMERA_NPCTALK);
+    }
 
     return 0;
 }
