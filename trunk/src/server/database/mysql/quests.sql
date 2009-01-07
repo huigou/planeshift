@@ -32,8 +32,7 @@ CREATE TABLE `quests` (
   `quest_lockout_time` int(10) NOT NULL default '0',
   `category` varchar(30) NOT NULL default '',
   `prerequisite` varchar(250) NOT NULL default '',
-  PRIMARY KEY  (`id`),
-  UNIQUE KEY `indx_quests_name` (`name`)
+  PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=209 /*!40100 DEFAULT CHARSET=utf8*/;
 
 
