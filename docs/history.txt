@@ -1,4 +1,7 @@
-﻿*** 2009-01-07 by Dave Bentham
+﻿*** 2009-01-07 by Steven Patrick
+- Fixed FS#2458 : Make NPCs face player when talking, patch by kougaro.
+
+*** 2009-01-07 by Dave Bentham
 - Improved some GUI texts for minigames to distnguish between games
   and puzzles.
 
