@@ -1,4 +1,8 @@
-﻿*** 2009-01-06 by Keith Fulton
+﻿*** 2009-01-07 by Stefano Angeleri
+- Fixed NPC camera collision detection it was skipping the code acting
+  always as with collision detection disabled
+
+*** 2009-01-06 by Keith Fulton
 - Changed sector specifier in npc_spawn_ranges table to be a FK directly
   to the sectors table instead of a common string with the name of the sector
   in the string.  This is a tighter structure for this table.
