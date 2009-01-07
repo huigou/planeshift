@@ -601,6 +601,10 @@ void NPCDialogDict::AddResponse( iDataConnection* db, int databaseID )
     }
 }
 
+#ifndef min
+#define min(a,b)            (((a) < (b)) ? (a) : (b))
+#endif
+
 NpcResponse *NPCDialogDict::AddResponse(const char *response_text,
                                         const char *pronoun_him,
                                         const char *pronoun_her,
@@ -620,70 +624,78 @@ NpcResponse *NPCDialogDict::AddResponse(const char *response_text,
 
     csString opStr;
 
-    if (strchr(response_text,'['))
-    {
-        size_t start=0,end=0;
-        opStr = "<response>";
-        csString resp(response_text);
+    size_t start=0,end=0;
+    opStr = "<response>";
+    csString resp(response_text);
 
-        while (end != resp.Length() )
+    printf("\nGot: %s\n",response_text);
+
+    while (end != resp.Length() )
+    {
+        while (start < resp.Length() && (resp.GetAt(start) == ']' || resp.GetAt(start) == ' '))
+            start++;
+        if (start == resp.Length())
+            break;
+
+        end = (int)min(resp.Find("[", start),resp.Find(". ", start));  // action delimiter or sentence delimiter whichever is first
+        if (end == SIZET_NOT_FOUND)
+            end = resp.Length();
+        if (end < resp.Length() && resp.GetAt(end)=='.') // include the period in this substring
+            end++;
+
+        if (end-start > 0)
         {
-            if (resp.GetAt(start) == ']')
-                start++;
-            end = (int)resp.Find("[", start);  // action delimiter
-            if (end == SIZET_NOT_FOUND)
-                end = resp.Length();
-
-            if (end-start > 0)
-            {
-                csString saySegment;
-                resp.SubString(saySegment,start,end-start); // pull out the part before the [ ]
-                opStr.AppendFmt("<say text=\"%s\"/>", saySegment.GetDataSafe() );
-            }
-            if (end == resp.Length())
-                break;
-
-            // Now get the part in brackets
-            start = end;
-            end = resp.Find("]", start); // find end of action
-            if (end == SIZET_NOT_FOUND)
-            {
-                Error2("Unmatched open '[' in npc response %s.", response_text);
-                delete newresp;
-                return NULL;
-            }
-
-            if (end - start > 1)
-            {
-                csString actionSegment;
-                resp.SubString(actionSegment,start+1,end-start-1);
-                 // If action does not start with npc's name, it is a 3rd person statement, not /me
-                if (strncasecmp(actionSegment,npc_name,strlen(npc_name)))
-                {
-                    opStr.AppendFmt("<narrate text=\"%s\"/>", actionSegment.GetDataSafe() );
-                }
-                else // now look for /me or /my because the npc name matches
-                {
-                    size_t spc = actionSegment.FindFirst(" ");
-                    if (resp[strlen(npc_name)] == '\'') // apostrophe after name means /my
-                    {
-                        actionSegment.DeleteAt(0,spc+1);
-                        opStr.AppendFmt("<actionmy text=\"%s\"/>", actionSegment.GetDataSafe() );
-                    }
-                    else // this is a /me command
-                    {
-                        actionSegment.DeleteAt(0,spc+1);
-                        opStr.AppendFmt("<action text=\"%s\"/>", actionSegment.GetDataSafe() );
-                    }
-                }
-            }
-            start = end;
+            csString saySegment;
+            resp.SubString(saySegment,start,end-start); // pull out the part before the [ ]
+            printf("Say: %s\n",(const char *)saySegment);
+            opStr.AppendFmt("<say text=\"%s\"/>", saySegment.GetDataSafe() );
         }
+        if (end == resp.Length())  // stop if at end of string already
+            break;
+
+        if (end > 0 && resp.GetAt(end-1)=='.' && resp.GetAt(end) != '[') // skip action brackets if this was a sentence break
+        {
+            start = end;
+            continue;
+        }
+
+        // Now get the part in brackets
+        start = end;
+        end = resp.Find("]", start); // find end of action
+        if (end == SIZET_NOT_FOUND)
+        {
+            Error2("Unmatched open '[' in npc response %s.", response_text);
+            delete newresp;
+            return NULL;
+        }
+
+        if (end - start > 1)
+        {
+            csString actionSegment;
+            resp.SubString(actionSegment,start+1,end-start-1);
+             // If action does not start with npc's name, it is a 3rd person statement, not /me
+            if (strncasecmp(actionSegment,npc_name,strlen(npc_name)))
+            {
+                opStr.AppendFmt("<narrate text=\"%s\"/>", actionSegment.GetDataSafe() );
+            }
+            else // now look for /me or /my because the npc name matches
+            {
+                size_t spc = actionSegment.FindFirst(" ");
+                if (resp[strlen(npc_name)] == '\'') // apostrophe after name means /my
+                {
+                    actionSegment.DeleteAt(0,spc+1);
+                    opStr.AppendFmt("<actionmy text=\"%s\"/>", actionSegment.GetDataSafe() );
+                }
+                else // this is a /me command
+                {
+                    actionSegment.DeleteAt(0,spc+1);
+                    opStr.AppendFmt("<action text=\"%s\"/>", actionSegment.GetDataSafe() );
+                }
+            }
+        }
+        start = end;
     }
-    else // simple case doesn't have /me actions in brackets [ ]
-    {
-        newresp->response[0] = response_text;
-    }
+
     newresp->him  = pronoun_him;
     newresp->her  = pronoun_her;
     newresp->it   = pronoun_it;
