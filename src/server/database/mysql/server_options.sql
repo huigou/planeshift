@@ -28,7 +28,7 @@ CREATE TABLE `server_options` (
 # Dumping data for table server_options
 #
 
-INSERT INTO `server_options` VALUES ('db_version','1211');
+INSERT INTO `server_options` VALUES ('db_version','1212');
 INSERT INTO `server_options` VALUES ('game_time','15:00');
 INSERT INTO `server_options` VALUES ('game_date','100-1-1');
 INSERT INTO `server_options` VALUES ('standard_motd','This is the message of the day from server_options table.');
