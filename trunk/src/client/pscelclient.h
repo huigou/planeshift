@@ -317,6 +317,9 @@ public:
     /** Get position of entity */
     virtual csVector3 GetPosition();
 
+    /** Get rotation of entity */
+    virtual float GetRotation();
+
     /** Get sector of entity */
     virtual iSector* GetSector();
 

@@ -1165,6 +1165,13 @@ csVector3 GEMClientObject::GetPosition()
     return pcmesh->GetMovable ()->GetFullPosition();
 }
 
+float GEMClientObject::GetRotation()
+{
+    // Rotation
+    csMatrix3 transf = pcmesh->GetMovable()->GetTransform().GetT2O();
+    return psWorld::Matrix2YRot(transf);
+}
+
 iSector* GEMClientObject::GetSector()
 {
     if(pcmesh->GetMovable()->InSector())
