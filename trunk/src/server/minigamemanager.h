@@ -42,6 +42,12 @@ class MiniGameManager;
 class gemActionLocation;
 class gemObject;
 
+enum MinigameStyle
+{
+    MG_GAME,    // normally 2 or more player mini-game
+    MG_PUZZLE   // single player mini-game
+};
+
 /** Implements one minigame session.
  *
  * Game sessions are bound to a game board (action location) and identified
@@ -199,6 +205,9 @@ private:
 
     /// progression script for winner
     csString winnerScript;
+
+    /// style of minigame
+    MinigameStyle minigameStyle;
 
     /// resend board layouts as was, e.g. correcting an illegal move
     void ResendBoardLayout(uint32_t clientnum);
