@@ -341,8 +341,6 @@ void psMovementManager::SetupMovements(psMovementInfoMessage& movemsg)
                     base_rotate.x,base_rotate.y,base_rotate.z);
         #endif
 
-        base_move.z *= 1.5;
-
         psMovement* newmove = new psMovement;
         newmove->id = id;
         newmove->name = name;
