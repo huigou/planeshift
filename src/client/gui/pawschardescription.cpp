@@ -63,8 +63,8 @@ bool pawsCharDescription::PostSetup()
 
 void pawsCharDescription::Show()
 {
-    pawsWidget::Show();
     RequestDetails();
+    pawsWidget::Show();
 }
 
 void pawsCharDescription::RequestDetails()
