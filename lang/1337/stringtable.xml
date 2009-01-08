@@ -1,0 +1,207 @@
+<StringTable>
+    <item orig="Mute Player" trans="|v||_|7e |o4`|3r" />
+    <item orig="Invincible" trans="||\|\/||\|(|813" />
+    <item orig="Quest" trans="q|_|3s7" />
+    <item orig="Game Master:" trans="94|v|3 |v|4s73r:" />
+    <item orig="Keys" trans="|<3`|s" />
+    <item orig="Magic Skills" trans="|v|49|( S|<|11s" />
+    <item orig="Locked" trans="10(|<3|)" />
+    <item orig="Active" trans="4(7|\/3" />
+    <item orig="Credits" trans="(r3|)|7s" />
+    <item orig="Random name" trans="R4|\||)0|v| |\|4|v|3" />
+    <item orig="New Character" trans="|\|3\/\/ (|-|4r4(73r" />
+    <item orig="Servers" trans="S3r\/3rs" />
+    <item orig="Shortcut key:" trans="S|-|0r7(|_|7" />
+    <item orig="Clear" trans="(134r" />
+    <item orig="Unmute Player" trans="|_||\||v||_|73 |o14`|3r" />
+    <item orig="Chat - Tabs" trans="(|-|47 - 748s" />
+    <item orig="Disband" trans="|)|s84|\||)" />
+    <item orig="Stats" trans="S747s" />
+    <item orig="Mana" trans="|v|4|\|4" />
+    <item orig="Edit points" trans="3|)|7 |o0||\|7s" />
+    <item orig="Faction" trans="F4(7|0|\|" />
+    <item orig="Edit level" trans="3|)17 13\/31" />
+    <item orig="Public notes" trans="|o|_|81|( |\|073s" />
+    <item orig="Jobs" trans="j08s" />
+    <item orig="Account" trans="4((0|_||\|7" />
+    <item orig="Tells" trans="7311s" />
+    <item orig="Online" trans="0|\|1||\|3" />
+    <item orig="Quit" trans="q|_||7" />
+    <item orig="Save MOTD" trans="S4\/3 |v|3ss493 0f 7|-|3 |)4`|" />
+    <item orig="o'clock" trans="0'(10(|<" />
+    <item orig="Save" trans="s4\/3" />
+    <item orig="Invisible" trans="||\|\/|s|813" />
+    <item orig="Quest notes" trans="q|_|3s7 |\|073s" />
+    <item orig="Make leader" trans="|v|4|<3 134|)3r" />
+    <item orig="Progression Points" trans="|or09r3ss|0|\| |o0||\|7s" />
+    <item orig="List" trans="1|s7:" />
+    <item orig="Full Mesh" trans="F|_|11 |v|3s|-|" />
+    <item orig="Password:" trans="|ossVV0r|)" />
+    <item orig="Study" trans="S7|_||)`|" />
+    <item orig="Admin" trans="4|)|v|||\|" />
+    <item orig="Labels" trans="14813s" />
+    <item orig="Exchange" trans="3><(|-|3|\|93" />
+    <item orig="Loading GUI" trans="104|)||\|9 9|_||" />
+    <item orig="System" trans="S`|s73|v|" />
+    <item orig="Enter the command" trans="3|\|73r 7|-|3 (0|v||v|4|\||)" />
+    <item orig="Edit" trans="3|)|7" />
+    <item orig="Graphics" trans="" />
+    <item orig="Points" trans="" />
+    <item orig="Combat Skills" trans="" />
+    <item orig="Ok" trans="" />
+    <item orig="LOGIN" trans="" />
+    <item orig="Confirmation" trans="" />
+    <item orig="No Fall Damage" trans="" />
+    <item orig="Controls" trans="" />
+    <item orig="Items" trans="" />
+    <item orig="Settings" trans="" />
+    <item orig="Refresh List" trans="" />
+    <item orig="Allow spawning item with missing mesh" trans="" />
+    <item orig="Amount available to withdraw" trans="" />
+    <item orig="Chat" trans="" />
+    <item orig="Promote" trans="" />
+    <item orig="Spawn item" trans="" />
+    <item orig="Website:" trans="" />
+    <item orig="Factions:" trans="" />
+    <item orig="Mesh:" trans="" />
+    <item orig="Load" trans="" />
+    <item orig="Requesting connection" trans="" />
+    <item orig="Tria" trans="" />
+    <item orig="Alliance:" trans="" />
+    <item orig="Health points" trans="" />
+    <item orig="Character description:" trans="" />
+    <item orig="Getting entities" trans="" />
+    <item orig="Weight:" trans="" />
+    <item orig="Description:" trans="" />
+    <item orig="Collision Detection" trans="" />
+    <item orig="none" trans="" />
+    <item orig="Join" trans="" />
+    <item orig="Auction" trans="" />
+    <item orig="Sector:" trans="" />
+    <item orig="Add Linked" trans="" />
+    <item orig="Spell List:" trans="" />
+    <item orig="Spell Description:" trans="" />
+    <item orig="Exchange coins" trans="" />
+    <item orig="Buffs" trans="" />
+    <item orig="Private notes" trans="" />
+    <item orig="Guild message of the day" trans="" />
+    <item orig="Reload" trans="" />
+    <item orig="Loading game" trans="" />
+    <item orig="Attributes" trans="" />
+    <item orig="Camera" trans="" />
+    <item orig="General" trans="" />
+    <item orig="Members" trans="" />
+    <item orig="Loading world" trans="" />
+    <item orig="Lockpicking" trans="" />
+    <item orig="Experience" trans="" />
+    <item orig="View" trans="" />
+    <item orig="Count:" trans="" />
+    <item orig="Polygon:" trans="" />
+    <item orig="Withdraw and Deposit" trans="" />
+    <item orig="Back" trans="" />
+    <item orig="Combat Skill description:" trans="" />
+    <item orig="Various Skills List:" trans="" />
+    <item orig="Money" trans="" />
+    <item orig="Withdraw" trans="" />
+    <item orig="Coins to exchange:" trans="" />
+    <item orig="Set" trans="" />
+    <item orig="Cancel" trans="" />
+    <item orig="Close" trans="" />
+    <item orig="Players" trans="" />
+    <item orig="Various Skill description:" trans="" />
+    <item orig="Factions" trans="" />
+    <item orig="Your notes:" trans="" />
+    <item orig="Remove" trans="" />
+    <item orig="None" trans="" />
+    <item orig="Load File Tree" trans="" />
+    <item orig="Kill Player" trans="" />
+    <item orig="Invite" trans="" />
+    <item orig="Physical stamina" trans="" />
+    <item orig="Use Collision Detection" trans="" />
+    <item orig="CHARACTER SELECT" trans="" />
+    <item orig="You're offering" trans="" />
+    <item orig="Ban" trans="" />
+    <item orig="Stats:" trans="" />
+    <item orig="Description" trans="" />
+    <item orig="Waiting on server data.." trans="" />
+    <item orig="Teleport To Player" trans="" />
+    <item orig="Faction" trans="" />
+    <item orig="Discard" trans="" />
+    <item orig="Escalate" trans="" />
+    <item orig="Mouse" trans="" />
+    <item orig="Magic Skill description:" trans="" />
+    <item orig="Pickupable" trans="" />
+    <item orig="Action:" trans="" />
+    <item orig="No" trans="" />
+    <item orig="Welcome to PlaneShift!" trans="" />
+    <item orig="Petition" trans="" />
+    <item orig="List Attributes" trans="" />
+    <item orig="View all" trans="" />
+    <item orig="Spells" trans="" />
+    <item orig="Deposit" trans="" />
+    <item orig="Remember password" trans="" />
+    <item orig="Help" trans="" />
+    <item orig="Never tired" trans="" />
+    <item orig="View chat" trans="" />
+    <item orig="Men Stam." trans="" />
+    <item orig="Combat" trans="" />
+    <item orig="Position:" trans="" />
+    <item orig="Add" trans="" />
+    <item orig="Actions" trans="" />
+    <item orig="Sound" trans="" />
+    <item orig="Jobs Skill description:" trans="" />
+    <item orig="Rotate" trans="" />
+    <item orig="Details" trans="" />
+    <item orig="Create alliance" trans="" />
+    <item orig="NPC" trans="" />
+    <item orig="Yes" trans="" />
+    <item orig="Add New" trans="" />
+    <item orig="PvP" trans="" />
+    <item orig="Privet notes" trans="" />
+    <item orig="Mana" trans="" />
+    <item orig="Stats description:" trans="" />
+    <item orig="Group" trans="" />
+    <item orig="Claim" trans="" />
+    <item orig="Delete" trans="" />
+    <item orig="You're offered" trans="" />
+    <item orig="Infinite Inventory" trans="" />
+    <item orig="Radius:" trans="" />
+    <item orig="New" trans="" />
+    <item orig="Name:" trans="" />
+    <item orig="Change name" trans="" />
+    <item orig="Detail information:" trans="" />
+    <item orig="Guild" trans="" />
+    <item orig="Capacity:" trans="" />
+    <item orig="Chat - Bubbles" trans="" />
+    <item orig="Amount to withdraw" trans="" />
+    <item orig="Shadows" trans="" />
+    <item orig="Interface" trans="" />
+    <item orig="Various Skills" trans="" />
+    <item orig="Amount to deposit" trans="" />
+    <item orig="Debuffs" trans="" />
+    <item orig="Permissions" trans="" />
+    <item orig="Various" trans="" />
+    <item orig="Select a reward:" trans="" />
+    <item orig="Main" trans="" />
+    <item orig="Reset" trans="" />
+    <item orig="Refresh MOTD" trans="" />
+    <item orig="Jobs Skills List:" trans="" />
+    <item orig="Instant Cast" trans="" />
+    <item orig="Kick Player" trans="" />
+    <item orig="Reload Cache" trans="" />
+    <item orig="Secret guild" trans="" />
+    <item orig="Magic" trans="" />
+    <item orig="Magic Skills List:" trans="" />
+    <item orig="Get Reward" trans="" />
+    <item orig="Lockable" trans="" />
+    <item orig="Unclaim" trans="" />
+    <item orig="Alliance" trans="" />
+    <item orig="Amount available to deposit" trans="" />
+    <item orig="Change" trans="" />
+    <item orig="Completed" trans="" />
+    <item orig="Done" trans="" />
+    <item orig="Entities" trans="" />
+    <item orig="Chat - Filters" trans="" />
+    <item orig="Uncompleted" trans="" />
+    <item orig="Events" trans="" />
+</StringTable>
