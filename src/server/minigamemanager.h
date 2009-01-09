@@ -234,7 +234,7 @@ public:
     ~MiniGameManager();
 
     /// Handles message from client.
-    virtual void HandleMessage(MsgEntry *me, Client *client);
+    virtual void HandleMessage(MsgEntry *me, Client *client) { }
     
     /// returns session by its id.
     psMiniGameSession *GetSessionByID(uint32_t id);
@@ -253,6 +253,12 @@ public:
 
 protected:
 
+    /// Handle start and stop messages
+    void HandleStartStop(MsgEntry *me, Client *client);
+
+    /// handles a client that has made a move.
+    void HandleGameUpdate(MsgEntry *me, Client *client);
+
     /// client requests start of game session.
     void HandleStartGameRequest(Client *client);
 
@@ -262,15 +268,11 @@ protected:
     /// a client is removed from a game session.
     void RemovePlayerFromSessions(psMiniGameSession *session, Client *client, uint32_t clientID);
 
-    /// handles a client that has made a move.
-    void HandleGameUpdate(Client *client, psMGUpdateMessage &msg);
-
     /// requests a session to be reset.
     void ResetGameSession(psMiniGameSession *sessionToReset);
 
     /// function parses game options string from gameboards DB table.
     int16_t ParseGameboardOptions(psString optionsStr);
-
     /// Game sessions.
     csPDelArray<psMiniGameSession> sessions;
 

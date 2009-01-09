@@ -135,7 +135,6 @@ bool EntityManager::Initialize(iObjectRegistry* object_reg,
 
     usermanager = umanager;
 
-//    psserver->GetEventManager()->Subscribe(this, new NetMessageCallback<EntityManager>(this,&EntityManager::HandlePreAuthent), MSGTYPE_CELPERSIST,REQUIRE_ANY_CLIENT);
     psserver->GetEventManager()->Subscribe(this, new NetMessageCallback<EntityManager>(this,&EntityManager::HandleUserAction), MSGTYPE_USERACTION,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
     psserver->GetEventManager()->Subscribe(this, new NetMessageCallback<EntityManager>(this,&EntityManager::HandleWorld)     , MSGTYPE_PERSIST_WORLD_REQUEST,REQUIRE_ANY_CLIENT );
     psserver->GetEventManager()->Subscribe(this, new NetMessageCallback<EntityManager>(this,&EntityManager::HandleActor)     , MSGTYPE_PERSIST_ACTOR_REQUEST,REQUIRE_ANY_CLIENT );    

@@ -266,7 +266,7 @@ GroupManager::GroupManager(ClientConnectionSet *cs, ChatManager *chat)
     chatserver = chat;  // Needed to GROUPSAY things.
 
     eventmanager = psserver->GetEventManager();
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_GROUPCMD,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<GroupManager>(this,&GroupManager::HandleGroupCommand),MSGTYPE_GROUPCMD,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
 }
 
 GroupManager::~GroupManager()
@@ -275,18 +275,12 @@ GroupManager::~GroupManager()
         psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_GROUPCMD);
 }
 
-void GroupManager::HandleMessage(MsgEntry *me, Client *client)
+void GroupManager::HandleGroupCommand(MsgEntry *me, Client *client)
 {
     psGroupCmdMessage msg(me);
     if (!msg.valid)
     {
         Debug2(LOG_NET,me->clientnum,"Failed to parse psGroupCmdMessage from client %u.\n",me->clientnum);
-        return;
-    }
-
-    if (!msg.valid)
-    {
-        Error1("Command not supported");
         return;
     }
 

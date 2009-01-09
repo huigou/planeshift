@@ -40,7 +40,10 @@ public:
     IntroductionManager();
     ~IntroductionManager();
 
-    virtual void HandleMessage(MsgEntry *pMsg,Client *client);
+    virtual void HandleMessage(MsgEntry *pMsg,Client *client) { }
+
+protected:
+    void HandleIntroduction(MsgEntry *pMsg,Client *client);
 };
 
 #endif

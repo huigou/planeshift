@@ -66,7 +66,7 @@ public:
     GuildManager(ClientConnectionSet *pCCS, ChatManager *chat);
     virtual ~GuildManager();
 
-    virtual void HandleMessage(MsgEntry *pMsg,Client *client);
+    virtual void HandleMessage(MsgEntry *pMsg,Client *client) { };
 
     void HandleJoinGuild(PendingGuildInvite *invite);
     void AcceptWar(PendingGuildWarInvite *invite);
@@ -84,9 +84,9 @@ protected:
     int  GetClientLevel(Client *client);
     bool CheckAllianceOperation(Client * client, bool checkLeaderGuild, psGuildInfo * & guild, psGuildAlliance * & alliance);
 
-    void HandleCmdMessage(psGuildCmdMessage& msg,Client *client);
-    void HandleGUIMessage(psGUIGuildMessage& msg,Client *client);
-    void HandleMOTDSet(psGuildMOTDSetMessage& msg,Client *client);
+    void HandleCmdMessage(MsgEntry *me,Client *client);
+    void HandleGUIMessage(MsgEntry *me,Client *client);
+    void HandleMOTDSet(MsgEntry *me,Client *client);
     void HandleSubscribeGuildData(Client *client,iDocumentNode * root);
     void UnsubscribeGuildData(Client *client);
     void HandleSetOnline(Client *client,iDocumentNode * root);

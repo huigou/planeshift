@@ -65,7 +65,7 @@ public:
     bool Initialize();
 
     /// Handle incoming messages from the superclients.
-    virtual void HandleMessage(MsgEntry *pMsg,Client *client);
+    virtual void HandleMessage(MsgEntry *pMsg,Client *client) { }
 
     /// Send a list of managed NPCs to a newly connecting superclient.
     void SendNPCList(Client *client);
@@ -139,16 +139,16 @@ public:
 protected:
 
     /// Handle a login message from a superclient.
-    void HandleAuthentRequest(MsgEntry *me);
+    void HandleAuthentRequest(MsgEntry *me,Client *client);
 
     /// Handle a network msg with a list of npc directives.
-    void HandleCommandList(MsgEntry *me);
+    void HandleCommandList(MsgEntry *me,Client *client);
 
     /// Catch an internal server event for damage so a perception can be sent about it.
-    void HandleDamageEvent(MsgEntry *me);
+    void HandleDamageEvent(MsgEntry *me,Client *client);
 
     /// Catch an internal server event for death so a perception can be sent about it.
-    void HandleDeathEvent(MsgEntry *me);
+    void HandleDeathEvent(MsgEntry *me,Client *client);
 
     /// Send the list of maps for the superclient to load on startup.
     void SendMapList(Client *client);
@@ -163,13 +163,13 @@ protected:
     bool WillPetReact(int clientnum, Client * owner, gemNPC * pet, const char * type, int level);
 
     /// Handle network message with pet directives
-    void HandlePetCommand( MsgEntry *me );
+    void HandlePetCommand(MsgEntry *me,Client *client);
 
     /// Handle network message with console commands from npcclient
-    void HandleConsoleCommand(MsgEntry *me);
+    void HandleConsoleCommand(MsgEntry *me,Client *client);
 
     /// Handle network message with pet skills
-    void HandlePetSkill( MsgEntry * me );
+    void HandlePetSkill(MsgEntry * me,Client *client);
     void SendPetSkillList( Client * client, bool forceOpen = true, PSSKILL focus = PSSKILL_NONE );
 
     /// Create an empty command list message, waiting for items to be queued in it.
