@@ -49,7 +49,7 @@ GMEventManager::GMEventManager()
     // initialise gmEvents
     gmEvents.DeleteAll();
 
-    psserver->GetEventManager()->Subscribe(this, MSGTYPE_GMEVENT_INFO, REQUIRE_READY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<GMEventManager>(this,&GMEventManager::HandleGMEventCommand), MSGTYPE_GMEVENT_INFO, REQUIRE_READY_CLIENT);
 }
 
 GMEventManager::~GMEventManager()
@@ -589,71 +589,66 @@ int GMEventManager::GetAllGMEventsForPlayer (PID playerID,
 }
 
 /// handle message from client
-void GMEventManager::HandleMessage(MsgEntry* me, Client* client)
+void GMEventManager::HandleGMEventCommand(MsgEntry* me, Client* client)
 {
-    // request from client for the events description
-    if (me->GetType() == MSGTYPE_GMEVENT_INFO)
+    psGMEventInfoMessage msg(me);
+
+    if (msg.command == psGMEventInfoMessage::CMD_QUERY)
     {
-        //int gmID;
-        psGMEventInfoMessage msg(me);
-
-        if (msg.command == psGMEventInfoMessage::CMD_QUERY)
+        GMEvent* theEvent;
+        if ((theEvent = GetGMEventByID(msg.id)) == NULL)
         {
-            GMEvent* theEvent;
-            if ((theEvent = GetGMEventByID(msg.id)) == NULL)
+            Error3("Client %s requested unavailable GM Event %d", client->GetName(), msg.id);
+            return;
+        }
+
+        csString eventDesc(theEvent->eventDescription);
+
+        if (theEvent->status != EMPTY)
+        {
+            ClientConnectionSet* clientConnections = psserver->GetConnections();
+            Client* target;
+
+            // if this client is the GM, list the participants too
+            if (client->GetPID() == theEvent->gmID)
             {
-                Error3("Client %s requested unavailable GM Event %d", client->GetName(), msg.id);
-                return;
-            }
-
-            csString eventDesc(theEvent->eventDescription);
-
-            if (theEvent->status != EMPTY)
-            {
-                ClientConnectionSet* clientConnections = psserver->GetConnections();
-                Client* target;
-
-                // if this client is the GM, list the participants too
-                if (client->GetPID() == theEvent->gmID)
+                eventDesc.AppendFmt(". Participants: %zu. Online: ", theEvent->playerID.GetSize());
+                csArray<PID>::Iterator iter = theEvent->playerID.GetIterator();
+                while (iter.HasNext())
                 {
-                    eventDesc.AppendFmt(". Participants: %zu. Online: ", theEvent->playerID.GetSize());
-                    csArray<PID>::Iterator iter = theEvent->playerID.GetIterator();
-                    while (iter.HasNext())
+                    if ((target = clientConnections->FindPlayer(iter.Next())))
                     {
-                        if ((target = clientConnections->FindPlayer(iter.Next())))
-                        {
-                            eventDesc.AppendFmt("%s, ", target->GetName());
-                        }
+                        eventDesc.AppendFmt("%s, ", target->GetName());
                     }
                 }
-                else if (theEvent->status == RUNNING) // and name the running GM
-                {
-                    if (theEvent->gmID == UNDEFINED_GMID)
-                    {
-                        eventDesc.AppendFmt(" (No GM)");
-                    }
-                    if ((target = clientConnections->FindPlayer(theEvent->gmID)))
-                    {
-                        eventDesc.AppendFmt(" (%s)", target->GetName());
-                    }
-                }
-
-                psGMEventInfoMessage response(me->clientnum,
-                                              psGMEventInfoMessage::CMD_INFO,
-                                              msg.id,
-                                              theEvent->eventName.GetDataSafe(),
-                                              eventDesc.GetDataSafe());
-                response.SendMessage();
             }
-            else
+            else if (theEvent->status == RUNNING) // and name the running GM
             {
-                Error3("Client %s requested unavailable GM Event %d", client->GetName(), msg.id);
+                if (theEvent->gmID == UNDEFINED_GMID)
+                {
+                    eventDesc.AppendFmt(" (No GM)");
+                }
+                if ((target = clientConnections->FindPlayer(theEvent->gmID)))
+                {
+                    eventDesc.AppendFmt(" (%s)", target->GetName());
+                }
             }
+
+            psGMEventInfoMessage response(me->clientnum,
+                                          psGMEventInfoMessage::CMD_INFO,
+                                          msg.id,
+                                          theEvent->eventName.GetDataSafe(),
+                                          eventDesc.GetDataSafe());
+            response.SendMessage();
         }
-        else if (msg.command == psGMEventInfoMessage::CMD_DISCARD)
+        else
         {
-            DiscardGMEvent(client, msg.id);
+            Error3("Client %s requested unavailable GM Event %d", client->GetName(), msg.id);
         }
+    }
+    else if (msg.command == psGMEventInfoMessage::CMD_DISCARD)
+    {
+        DiscardGMEvent(client, msg.id);
     }
 }
 

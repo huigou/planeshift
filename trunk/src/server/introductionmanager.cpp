@@ -44,9 +44,11 @@
 #include "psserver.h"
 #include "globals.h"
 
+
+
 IntroductionManager::IntroductionManager()
 {
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_INTRODUCTION,REQUIRE_READY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<IntroductionManager>(this,&IntroductionManager::HandleIntroduction),MSGTYPE_INTRODUCTION,REQUIRE_READY_CLIENT);
 }
 
 IntroductionManager::~IntroductionManager()
@@ -54,9 +56,9 @@ IntroductionManager::~IntroductionManager()
     psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_INTRODUCTION);
 }
 
-void IntroductionManager::HandleMessage(MsgEntry *pMsg, Client *client)
+void IntroductionManager::HandleIntroduction(MsgEntry *me, Client *client)
 {
-    psCharIntroduction msg(pMsg);
+    psCharIntroduction msg(me);
     if (!msg.valid)
         return;
 

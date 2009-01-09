@@ -192,9 +192,9 @@ GuildManager::GuildManager(ClientConnectionSet *cs,
     xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
     CS_ASSERT( xml );
 
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_GUILDCMD,REQUIRE_READY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_GUIGUILD,REQUIRE_READY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_GUILDMOTDSET,REQUIRE_ANY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<GuildManager>(this,&GuildManager::HandleCmdMessage),MSGTYPE_GUILDCMD,REQUIRE_READY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<GuildManager>(this,&GuildManager::HandleGUIMessage),MSGTYPE_GUIGUILD,REQUIRE_READY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<GuildManager>(this,&GuildManager::HandleMOTDSet),MSGTYPE_GUILDMOTDSET,REQUIRE_ANY_CLIENT);
 }
 
 GuildManager::~GuildManager()
@@ -210,47 +210,17 @@ GuildManager::~GuildManager()
     psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_GUILDMOTDSET);
 }
 
-void GuildManager::HandleMessage(MsgEntry *me,Client *client)
-{
-    switch (me->GetType())
-    {
-        case MSGTYPE_GUILDCMD:
-        {
-            psGuildCmdMessage msg(me);
-            if (!msg.valid)
-            {
-                psserver->SendSystemError(me->clientnum, "Command not supported by server yet.");
-                Error2("Failed to parse psGuildCmdMessage from client %u.",me->clientnum);
-                return;
-            }
-            HandleCmdMessage(msg,client);
-            break;
-        }
-        case MSGTYPE_GUIGUILD:
-        {
-            psGUIGuildMessage msg(me);
-            if (!msg.valid)
-            {
-                Error2("Failed to parse psGUIGuildMessage from client %u.",me->clientnum);
-                return;
-            }
-            HandleGUIMessage(msg,client);
-            break;
-        }
-        case MSGTYPE_GUILDMOTDSET:
-        {
-            psGuildMOTDSetMessage msg(me);
-            if (!msg.valid)
-            {
-                Error2("Failed to parse psGuildMOTDSetMessage from client %u.",me->clientnum);
-            }
-            HandleMOTDSet(msg,client);
-        }
-    }
-}
 
-void GuildManager::HandleCmdMessage(psGuildCmdMessage& msg, Client* client )
+void GuildManager::HandleCmdMessage( MsgEntry *me,Client *client )
 {
+    psGuildCmdMessage msg(me);
+    if (!msg.valid)
+    {
+        psserver->SendSystemError(me->clientnum, "Command not supported by server yet.");
+        Error2("Failed to parse psGuildCmdMessage from client %u.",me->clientnum);
+        return;
+    }
+
     int clientnum = client->GetClientNum();
     
     if (msg.command == "/newguild")
@@ -339,8 +309,14 @@ void GuildManager::HandleCmdMessage(psGuildCmdMessage& msg, Client* client )
     }
 }
 
-void GuildManager::HandleGUIMessage(psGUIGuildMessage& msg,Client *client)
+void GuildManager::HandleGUIMessage(MsgEntry *me,Client *client)
 {
+    psGUIGuildMessage msg(me);
+    if (!msg.valid)
+    {
+        Error2("Failed to parse psGUIGuildMessage from client %u.",me->clientnum);
+        return;
+    }
     csRef<iDocument> doc  = xml->CreateDocument();
 
     const char* error = doc->Parse( msg.commandData);
@@ -379,8 +355,14 @@ void GuildManager::HandleGUIMessage(psGUIGuildMessage& msg,Client *client)
     }
 }
 
-void GuildManager::HandleMOTDSet(psGuildMOTDSetMessage& msg,Client *client)
+void GuildManager::HandleMOTDSet(MsgEntry *me,Client *client)
 {
+    psGuildMOTDSetMessage msg(me);
+    if (!msg.valid)
+    {
+        Error2("Failed to parse psGuildMOTDSetMessage from client %u.",me->clientnum);
+    }
+
     if (CheckClientRights(client,RIGHTS_EDIT_GUILD,"You don't have permission to change settings of your guild.")) 
     {
         if (msg.guildmotd.Length() > 200)

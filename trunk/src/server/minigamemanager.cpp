@@ -91,8 +91,8 @@ void MiniGameManagerTick::Trigger()
 
 MiniGameManager::MiniGameManager()
 {
-    psserver->GetEventManager()->Subscribe(this, MSGTYPE_MINIGAME_STARTSTOP, REQUIRE_READY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this, MSGTYPE_MINIGAME_UPDATE, REQUIRE_READY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<MiniGameManager>(this,&MiniGameManager::HandleStartStop), MSGTYPE_MINIGAME_STARTSTOP, REQUIRE_READY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<MiniGameManager>(this,&MiniGameManager::HandleGameUpdate), MSGTYPE_MINIGAME_UPDATE, REQUIRE_READY_CLIENT);
 
     MiniGameManagerTick *tick = new MiniGameManagerTick(MINIGAME_TICK_INTERVAL, this);
     psserver->GetEventManager()->Push(tick);
@@ -160,39 +160,23 @@ bool MiniGameManager::Initialise(void)
     return false;
 }
 
-void MiniGameManager::HandleMessage(MsgEntry *me, Client *client)
+void MiniGameManager::HandleStartStop(MsgEntry *me, Client *client)
 {
-    if (me->GetType() == MSGTYPE_MINIGAME_STARTSTOP)
+    psMGStartStopMessage msg(me);
+    if (!msg.valid)
     {
-        psMGStartStopMessage msg(me);
-        if (!msg.valid)
-        {
-            Error2("Failed to parse psMGStartStopMessage from client %u.", me->clientnum);
-            return;
-        }
-
-        if (msg.msgStart)
-        {
-            HandleStartGameRequest(client);
-        }
-        else
-        {
-            HandleStopGameRequest(client);
-        }
+        Error2("Failed to parse psMGStartStopMessage from client %u.", me->clientnum);
+        return;
     }
 
-    else if (me->GetType() == MSGTYPE_MINIGAME_UPDATE)
+    if (msg.msgStart)
     {
-        psMGUpdateMessage msg(me);
-        if (!msg.valid)
-        {
-            Error2("Failed to parse psMGUpdateMessage from client %u.", me->clientnum);
-            return;
-        }
-
-        HandleGameUpdate(client, msg);
+        HandleStartGameRequest(client);
     }
-
+    else
+    {
+        HandleStopGameRequest(client);
+    }
 }
 
 void MiniGameManager::HandleStartGameRequest(Client *client)
@@ -308,8 +292,15 @@ void MiniGameManager::RemovePlayerFromSessions(psMiniGameSession *session, Clien
     }
 }
 
-void MiniGameManager::HandleGameUpdate(Client *client, psMGUpdateMessage &msg)
+void MiniGameManager::HandleGameUpdate(MsgEntry *me, Client *client)
 {
+    psMGUpdateMessage msg(me);
+    if (!msg.valid)
+    {
+        Error2("Failed to parse psMGUpdateMessage from client %u.", me->clientnum);
+        return;
+    }
+
     if (!client || client->GetClientNum() == (uint32_t)-1)
     {
         Error1("Invalid client in the minigame update message.");
@@ -923,7 +914,7 @@ void psMiniGameSession::Update(Client *client, psMGUpdateMessage &msg)
     if (endgameReached)
     {
         // determine winner
-        uint32_t winnerID, loserID;
+        uint32_t winnerID=(uint32_t)-1, loserID;
         csString wonText;
         ProgressionEvent *progEvent = NULL;
 

@@ -339,14 +339,14 @@ NPCManager::NPCManager(ClientConnectionSet *pCCS,
     database     = db;
     eventmanager = evtmgr;
 
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_NPCAUTHENT,REQUIRE_ANY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_NPCOMMANDLIST,REQUIRE_ANY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_NPC_COMMAND,REQUIRE_ANY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<NPCManager>(this,&NPCManager::HandleAuthentRequest),MSGTYPE_NPCAUTHENT,REQUIRE_ANY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<NPCManager>(this,&NPCManager::HandleCommandList)   ,MSGTYPE_NPCOMMANDLIST,REQUIRE_ANY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<NPCManager>(this,&NPCManager::HandleConsoleCommand),MSGTYPE_NPC_COMMAND,REQUIRE_ANY_CLIENT);
 
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_DAMAGE_EVENT,NO_VALIDATION);
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_DEATH_EVENT,NO_VALIDATION);
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_PET_COMMAND,REQUIRE_ANY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_PET_SKILL,REQUIRE_ANY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<NPCManager>(this,&NPCManager::HandleDamageEvent),MSGTYPE_DAMAGE_EVENT,NO_VALIDATION);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<NPCManager>(this,&NPCManager::HandleDeathEvent) ,MSGTYPE_DEATH_EVENT,NO_VALIDATION);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<NPCManager>(this,&NPCManager::HandlePetCommand) ,MSGTYPE_PET_COMMAND,REQUIRE_ANY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<NPCManager>(this,&NPCManager::HandlePetSkill)   ,MSGTYPE_PET_SKILL,REQUIRE_ANY_CLIENT);
 
     PrepareMessage();
 
@@ -400,49 +400,8 @@ NPCManager::~NPCManager()
     delete outbound;
 }
 
-void NPCManager::HandleMessage(MsgEntry *me,Client *client)
-{
-    switch ( me->GetType() )
-    {
-        case MSGTYPE_DAMAGE_EVENT:
-        {
-            HandleDamageEvent(me);
-            break;
-        }
-        case MSGTYPE_DEATH_EVENT:
-        {
-            HandleDeathEvent(me);
-            break;
-        }
-        case MSGTYPE_NPCAUTHENT:
-        {
-            HandleAuthentRequest(me);
-            break;
-        }
-        case MSGTYPE_NPCOMMANDLIST:
-        {
-            HandleCommandList(me);
-            break;
-        }
-        case MSGTYPE_PET_COMMAND:
-        {
-            HandlePetCommand(me);
-            break;
-        }
-        case MSGTYPE_PET_SKILL:
-        {
-            HandlePetSkill(me);
-            break;
-        }
-        case MSGTYPE_NPC_COMMAND:
-        {
-            HandleConsoleCommand(me);
-            break;
-        }
-    }
-}
 
-void NPCManager::HandleDamageEvent(MsgEntry *me)
+void NPCManager::HandleDamageEvent(MsgEntry *me,Client *client)
 {
     psDamageEvent evt(me);
 
@@ -453,7 +412,7 @@ void NPCManager::HandleDamageEvent(MsgEntry *me)
     }
 }
 
-void NPCManager::HandleDeathEvent(MsgEntry *me)
+void NPCManager::HandleDeathEvent(MsgEntry *me,Client *client)
 {
     Debug1(LOG_SUPERCLIENT, 0,"NPCManager handling Death Event\n");
     psDeathEvent evt(me);
@@ -462,7 +421,7 @@ void NPCManager::HandleDeathEvent(MsgEntry *me)
 }
 
 
-void NPCManager::HandleConsoleCommand(MsgEntry *me)
+void NPCManager::HandleConsoleCommand(MsgEntry *me,Client *client)
 {
     csString buffer;
 
@@ -493,7 +452,7 @@ void NPCManager::HandleConsoleCommand(MsgEntry *me)
 }
 
 
-void NPCManager::HandleAuthentRequest(MsgEntry *me)
+void NPCManager::HandleAuthentRequest(MsgEntry *me,Client *notused)
 {
     Client* client = clients->FindAny(me->clientnum);
     if (!client)
@@ -710,7 +669,7 @@ void NPCManager::SendNPCList(Client *client)
     }
 }
 
-void NPCManager::HandleCommandList(MsgEntry *me)
+void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
 {
     psNPCCommandsMessage list(me);
 
@@ -1355,7 +1314,7 @@ bool NPCManager::WillPetReact(int clientnum, Client * owner, gemNPC * pet, const
     return false;
 }
 
-void NPCManager::HandlePetCommand( MsgEntry * me )
+void NPCManager::HandlePetCommand(MsgEntry * me,Client *client)
 {
     psPETCommandMessage msg( me );
     gemNPC *pet = NULL;
@@ -2149,7 +2108,7 @@ void psNPCManagerTick::Trigger()
 /*-----------------------------------------------------------------*/
 /* Pet Skills Handler                                              */
 /*-----------------------------------------------------------------*/
-void NPCManager::HandlePetSkill( MsgEntry * me )
+void NPCManager::HandlePetSkill(MsgEntry * me,Client *client)
 {
     psPetSkillMessage msg( me );
     if ( !msg.valid )
@@ -2157,7 +2116,7 @@ void NPCManager::HandlePetSkill( MsgEntry * me )
         Debug2( LOG_NET, me->clientnum, "Received unparsable psPetSkillMessage from client %u.\n", me->clientnum );
         return;
     }
-    Client* client = clients->FindAny( me->clientnum );
+    // Client* client = clients->FindAny( me->clientnum );
 
     if ( !client->GetFamiliar() )
         return;

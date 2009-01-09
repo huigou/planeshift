@@ -172,7 +172,8 @@ public:
                                           csString& name,
                                           csString& description);
 
-     virtual void HandleMessage(MsgEntry *me, Client *client);
+     virtual void HandleMessage(MsgEntry *me, Client *client) { };
+     virtual void HandleGMEventCommand(MsgEntry *me, Client *client);
 
      /** @brief Removes a player from any GM event they maybe involved with (eg player being deleted)
       *

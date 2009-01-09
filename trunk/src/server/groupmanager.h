@@ -60,13 +60,14 @@ public:
     GroupManager(ClientConnectionSet *pCCS, ChatManager *chat);
     virtual ~GroupManager();
 
-    virtual void HandleMessage(MsgEntry *pMsg,Client *client);
-
+    virtual void HandleMessage(MsgEntry *pMsg,Client *client) { }
     void HandleJoinGroup(PendingGroupInvite *invite);
     
 protected:
     friend class PlayerGroup;
         
+    void HandleGroupCommand(MsgEntry *pMsg,Client *client);
+
     void Invite(psGroupCmdMessage& msg,Client *client);
     void Disband(psGroupCmdMessage& msg,gemActor *client);
     void Leave(psGroupCmdMessage& msg,gemActor *client);
