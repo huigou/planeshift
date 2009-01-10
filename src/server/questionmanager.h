@@ -116,7 +116,7 @@ public:
     QuestionManager();
     virtual ~QuestionManager();
 
-    virtual void HandleMessage(MsgEntry *pMsg,Client *client);
+    virtual void HandleMessage(MsgEntry *pMsg,Client *client) { }
 
     /** Sends a question to a client */
     void SendQuestion(PendingQuestion *question);
@@ -125,6 +125,8 @@ public:
     void CancelQuestion(PendingQuestion *question);
 
 protected:
+    
+    void HandleQuestionResponse(MsgEntry *pMsg,Client *client);
 
     BinaryRBTree<PendingQuestion> questions; /** questions indexed by IDs */
 };

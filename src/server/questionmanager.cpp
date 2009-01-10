@@ -92,12 +92,12 @@ void psQuestionCancelEvent::Trigger()
 }
 
 /**************************************************************
-*                                        class QuestionManager
+*                   class QuestionManager
 ***************************************************************/
 
 QuestionManager::QuestionManager()
 {
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_QUESTIONRESPONSE,REQUIRE_READY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<QuestionManager>(this,&QuestionManager::HandleQuestionResponse),MSGTYPE_QUESTIONRESPONSE,REQUIRE_READY_CLIENT);
 }
 
 QuestionManager::~QuestionManager()
@@ -105,7 +105,7 @@ QuestionManager::~QuestionManager()
     psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_QUESTIONRESPONSE);
 }
 
-void QuestionManager::HandleMessage(MsgEntry *me,Client *client)
+void QuestionManager::HandleQuestionResponse(MsgEntry *me,Client *client)
 {
     psQuestionResponseMsg msg(me);
     if (!msg.valid)

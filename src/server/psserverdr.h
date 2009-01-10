@@ -32,14 +32,11 @@
 #include "msgmanager.h"
 
 class psCelClient;
-class ClientConnectionSet;
 class MsgEntry;
 class gemActor;
 class MathScript;
 class MathScriptVar;
 class PaladinJr;
-class EntityManager;
-class psServerDR;
 
 class psServerDR : public MessageManager
 {
@@ -47,14 +44,15 @@ public:
     psServerDR();
     virtual ~psServerDR();
 
-    bool Initialize(EntityManager* celbase,
-                    ClientConnectionSet* clients);
+    bool Initialize();
 
     void SendPersist();
 
-    virtual void HandleMessage(MsgEntry* me,Client *client);
+    virtual void HandleMessage(MsgEntry* me,Client *client) {}
 
 protected:
+
+    void HandleDeadReckoning(MsgEntry* me,Client *client);
 
     /// If the entity was falling and stops falling, this is called.
     void HandleFallDamage(gemActor *actor,int clientnum, const csVector3& pos, iSector* sector);
@@ -65,8 +63,8 @@ protected:
     MathScriptVar *var_fall_height;
     MathScriptVar *var_fall_dmg;
 
-    EntityManager       *entitymanager;
-    ClientConnectionSet *clients;
+//    EntityManager       *entitymanager;
+//    ClientConnectionSet *clients;
     PaladinJr           *paladin;
 };
 
