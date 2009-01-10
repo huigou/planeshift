@@ -53,7 +53,7 @@ class  UserManager;
 class  WeatherManager;
 class  psTimerThread;
 class  psDatabase;
-class  psServerCharManager;
+class  ServerCharManager;
 class  SpawnManager;
 class  EventManager;
 class  TutorialManager;
@@ -114,7 +114,7 @@ public:
      *     - advice manager ( AdviceManager )
      *     - guild manager ( GuildManager )
      *     - group manager ( GroupManager )
-     *     - character manager ( psServerCharManager )
+     *     - character manager ( ServerCharManager )
      *     - spawn manager ( psSpawnManager )
      *     - admin manager ( AdminManager )
      *     - CEL Server ( EntityManager )
@@ -271,7 +271,7 @@ public:
      * @return Returns a reference to the current character manager for the
      *     server.
      */
-    psServerCharManager* GetCharManager() { return charmanager; }
+    ServerCharManager* GetCharManager() { return charmanager; }
 
     /** Returns the Progression Manager.
      *
@@ -520,7 +520,7 @@ protected:
     NetManager*                     netmanager;
     AdminManager*                   adminmanager;
     psDatabase*                     database;
-    psServerCharManager*            charmanager;
+    ServerCharManager*            charmanager;
     SpawnManager*                   spawnmanager;
     csRef<EventManager>             eventmanager;
     WeatherManager*                 weathermanager;

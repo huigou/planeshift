@@ -57,8 +57,7 @@ public:
 
     virtual ~ProgressionManager();
 
-    virtual void HandleMessage(MsgEntry *pMsg,Client *client);
-    void HandleSkill(Client * client, psGUISkillMessage& msg);
+    virtual void HandleMessage(MsgEntry *pMsg,Client *client)  {}
     
     /** Send the skill list to the client. 
       * @param client The client that the message is for.
@@ -100,7 +99,9 @@ public:
     
 protected:
     
-    void HandleDeathEvent(MsgEntry *me);
+    void HandleSkill(MsgEntry *me, Client * client);
+    void HandleDeathEvent(MsgEntry *me, Client *notused);
+    void HandleZPointEvent(MsgEntry *me, Client *client);
 
     csHash<csString, csString> affinitycategories;
 

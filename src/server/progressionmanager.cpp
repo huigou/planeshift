@@ -4538,10 +4538,9 @@ ProgressionManager::ProgressionManager(ClientConnectionSet *ccs)
 {
     clients      = ccs;
 
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_GUISKILL,REQUIRE_READY_CLIENT);
-
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_DEATH_EVENT,NO_VALIDATION);
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_ZPOINT_EVENT,NO_VALIDATION);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ProgressionManager>(this,&ProgressionManager::HandleSkill)      ,MSGTYPE_GUISKILL,    REQUIRE_READY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ProgressionManager>(this,&ProgressionManager::HandleDeathEvent) ,MSGTYPE_DEATH_EVENT, NO_VALIDATION);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ProgressionManager>(this,&ProgressionManager::HandleZPointEvent),MSGTYPE_ZPOINT_EVENT,NO_VALIDATION);
 }
 
 
@@ -4626,56 +4625,24 @@ bool ProgressionManager::Initialize()
     return true;
 }
 
-void ProgressionManager::HandleMessage(MsgEntry *me,Client *client)
+
+void ProgressionManager::HandleZPointEvent(MsgEntry *me, Client *client)
 {
-    switch( me->GetType())
+    psZPointsGainedEvent evt(me);
+
+    csString string;
+    string.Format("You've gained some practice points in %s.", evt.skillName.GetData() );
+    if ( evt.rankUp )
     {
-        case MSGTYPE_GUISKILL:
-        {
-            psGUISkillMessage msg(me);
-            if (msg.valid)
-                HandleSkill(client, msg);
-            else
-            {
-                Debug2(LOG_NET,me->clientnum,"Received unparsable psGUISkillMessage from client %u.\n",me->clientnum);
-            }
-            break;
-        }
-        case MSGTYPE_DEATH_EVENT:
-        {
-            HandleDeathEvent(me);
-            break;
-        }
-
-        case MSGTYPE_ZPOINT_EVENT:
-        {
-            psZPointsGainedEvent evt(me);
-
-            Client* client = clients->Find( evt.actor->GetClientID() );
-
-            if (!client)
-            {
-                Error1("Got unknown client!");
-                return;
-            }
-
-            csString string;
-            string.Format("You've gained some practice points in %s.", evt.skillName.GetData() );
-            if ( evt.rankUp )
-            {
-                string.Append(" You've also ranked up!");
-            }
-            psserver->SendSystemInfo(evt.actor->GetClientID(), string);
-
-            SendSkillList( client, false );
-
-            break;
-        }
-
+        string.Append(" You've also ranked up!");
     }
+    psserver->SendSystemInfo(evt.actor->GetClientID(), string);
+
+    SendSkillList( client, false );
 }
 
-void ProgressionManager::HandleDeathEvent(MsgEntry *me)
+
+void ProgressionManager::HandleDeathEvent(MsgEntry *me, Client *notused)
 {
     Debug1(LOG_COMBAT, me->clientnum,"Progression Manager handling Death Event\n");
     psDeathEvent evt(me);
@@ -4695,8 +4662,15 @@ void ProgressionManager::HandleDeathEvent(MsgEntry *me)
 }
 
 
-void ProgressionManager::HandleSkill(Client * client, psGUISkillMessage& msg)
+void ProgressionManager::HandleSkill(MsgEntry *me, Client * client)
 {
+    psGUISkillMessage msg(me);
+    if (!msg.valid)
+    {
+        Debug2(LOG_NET,me->clientnum,"Received unparsable psGUISkillMessage from client %u.\n",me->clientnum);
+        return;
+    }
+
     //    CPrintf(CON_DEBUG, "ProgressionManager::HandleSkill(%d,%s)\n",msg.command, (const char*)msg.commandData);
     switch ( msg.command )
     {

@@ -48,7 +48,7 @@
 struct iMeshWrapper;
 
 class ProximityList;
-class psServerCharManager;
+class ServerCharManager;
 class EntityManager;
 class gemObject;
 class PlayerGroup;

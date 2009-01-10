@@ -83,7 +83,7 @@
 /// The number of characters per email account
 #define CHARACTERS_ALLOWED 4       
 
-psServerCharManager::psServerCharManager()
+ServerCharManager::ServerCharManager()
 {
     slotManager = NULL;
 
@@ -110,7 +110,7 @@ psServerCharManager::psServerCharManager()
     }
 }
 
-psServerCharManager::~psServerCharManager()
+ServerCharManager::~ServerCharManager()
 {
     if (psserver->GetEventManager())
     {
@@ -126,16 +126,16 @@ psServerCharManager::~psServerCharManager()
     slotManager = NULL;
 }
 
-bool psServerCharManager::Initialize( ClientConnectionSet* ccs)
+bool ServerCharManager::Initialize()
 {
-    clients = ccs;
+//    clients = ccs;
 
-    psserver->GetEventManager()->Subscribe(this, MSGTYPE_GUIINVENTORY,NO_VALIDATION);
-    psserver->GetEventManager()->Subscribe(this, MSGTYPE_GUIMERCHANT,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
-    psserver->GetEventManager()->Subscribe(this, MSGTYPE_VIEW_ITEM,REQUIRE_READY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this, MSGTYPE_VIEW_SKETCH,REQUIRE_READY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this, MSGTYPE_WRITE_BOOK, REQUIRE_READY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this, MSGTYPE_FACTION_INFO);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ServerCharManager>(this,&ServerCharManager::HandleInventoryMessage), MSGTYPE_GUIINVENTORY,NO_VALIDATION);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ServerCharManager>(this,&ServerCharManager::HandleMerchantMessage),  MSGTYPE_GUIMERCHANT,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ServerCharManager>(this,&ServerCharManager::ViewItem),               MSGTYPE_VIEW_ITEM,REQUIRE_READY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ServerCharManager>(this,&ServerCharManager::UpdateSketch),           MSGTYPE_VIEW_SKETCH,REQUIRE_READY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ServerCharManager>(this,&ServerCharManager::HandleBookWrite),        MSGTYPE_WRITE_BOOK, REQUIRE_READY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ServerCharManager>(this,&ServerCharManager::HandleFaction),          MSGTYPE_FACTION_INFO);
 
     slotManager = new SlotManager;
     if ( !(slotManager && slotManager->Initialize()) )
@@ -144,20 +144,18 @@ bool psServerCharManager::Initialize( ClientConnectionSet* ccs)
     return true;
 }
 
-void psServerCharManager::ViewItem( MsgEntry* me )
+void ServerCharManager::ViewItem(MsgEntry *me, Client *client)
 {
     psViewItemDescription mesg(me);
-    Client* client = clients->Find(me->clientnum);
     ViewItem(client, mesg.containerID, (INVENTORY_SLOT_NUMBER) mesg.slotID);
 }
 
-void psServerCharManager::UpdateSketch( MsgEntry* me )
+void ServerCharManager::UpdateSketch(MsgEntry* me, Client *client)
 {
     psSketchMessage sketchMsg(me);
 
     if (sketchMsg.valid)
     {
-        Client *client = clients->Find(me->clientnum);
         psItem *item   = client->GetCharacterData()->Inventory().FindItemID(sketchMsg.ItemID);
         if (item)
         {
@@ -194,7 +192,7 @@ void psServerCharManager::UpdateSketch( MsgEntry* me )
     }
 }
 
-void psServerCharManager::ViewItem(Client* client, int containerID, INVENTORY_SLOT_NUMBER slotID)
+void ServerCharManager::ViewItem(Client* client, int containerID, INVENTORY_SLOT_NUMBER slotID)
 {
     // printf("Viewing item in Container %d, slot %d.\n", containerID, slotID);
 
@@ -267,7 +265,7 @@ void psServerCharManager::ViewItem(Client* client, int containerID, INVENTORY_SL
     }
 }
 
-void psServerCharManager::HandleBookWrite(MsgEntry* me, Client* client)
+void ServerCharManager::HandleBookWrite(MsgEntry* me, Client* client)
 {
     psWriteBookMessage mesg(me);
 
@@ -333,77 +331,12 @@ void psServerCharManager::HandleBookWrite(MsgEntry* me, Client* client)
     }
 }
 
-void psServerCharManager::HandleMessage( MsgEntry* me, Client *client )
+
+void ServerCharManager::HandleFaction(MsgEntry* me,Client *client)
 {
-    client = clients->FindAny(me->clientnum);
-
-    if (!client)
-    {
-        CPrintf (CON_ERROR, "***Couldn't find clientnum in serverchar HandleMessage\n");
-        return;
-    }
-
-    switch ( me->GetType() )
-    {
-		// Case to handle incoming faction requests from a client. 
-		// These should normally only be a request for a full 
-		// list
-		case MSGTYPE_FACTION_INFO:
-		{
-			HandleFaction(me);
-			return;
-		}
-
-        case MSGTYPE_GUIINVENTORY:
-        {
-            HandleInventoryMessage(me);
-            return;
-        }
-
-        case MSGTYPE_VIEW_ITEM:
-        {
-            // printf("Got msgtype view item\n");
-            ViewItem(me);
-            break;
-        }
-
-        case MSGTYPE_VIEW_SKETCH:
-        {
-            UpdateSketch(me);
-            break;
-        }
-        //Not yet implemented, using /examine for now 
-        case MSGTYPE_READ_BOOK:
-        {
-            ViewItem( me );
-            break;
-        }
-        
-        case MSGTYPE_WRITE_BOOK:
-        {
-           HandleBookWrite( me, client );
-           break;
-        }
-
-        case MSGTYPE_GUIMERCHANT:
-        {
-            HandleMerchantMessage(me, client);
-            break;
-        }
-    }
-}
-
-
-void psServerCharManager::HandleFaction(MsgEntry* me)
-{
-    Client* client = clients->Find(me->clientnum);
-    if (client==NULL)
-        return;
-
     psCharacter *chardata=client->GetCharacterData();
     if (chardata==NULL)	
 		return;
-
 	
 	psFactionMessage outMsg(me->clientnum, psFactionMessage::MSG_FULL_LIST);
 
@@ -424,11 +357,8 @@ void psServerCharManager::HandleFaction(MsgEntry* me)
  * This handles all formats of inventory message.
  */
 //---------------------------------------------------------------------------
-bool psServerCharManager::HandleInventoryMessage( MsgEntry* me )
+void ServerCharManager::HandleInventoryMessage(MsgEntry* me,Client *client)
 {
-    if ( !me )
-        return false;
-
     psGUIInventoryMessage incoming(me);
     int     fromClientNumber    = me->clientnum;
 
@@ -437,19 +367,17 @@ bool psServerCharManager::HandleInventoryMessage( MsgEntry* me )
         case psGUIInventoryMessage::REQUEST:
         case psGUIInventoryMessage::UPDATE_REQUEST:
         {
-            SendInventory(fromClientNumber, 
-                  (static_cast<psGUIInventoryMessage::commands>(incoming.command)==psGUIInventoryMessage::UPDATE_REQUEST));
+            SendInventory(fromClientNumber, (static_cast<psGUIInventoryMessage::commands>(incoming.command)==psGUIInventoryMessage::UPDATE_REQUEST));
             break;
         }
     }
-    return true;
 }
 
-bool psServerCharManager::SendInventory( int clientNum, bool sendUpdatesOnly)
+bool ServerCharManager::SendInventory( int clientNum, bool sendUpdatesOnly)
 {
     psGUIInventoryMessage* outgoing;
     
-    Client* client = clients->Find(clientNum);
+    Client* client = psserver->GetNetManager()->GetClient(clientNum);
     if (client==NULL)
         return false;
 
@@ -541,9 +469,9 @@ bool psServerCharManager::SendInventory( int clientNum, bool sendUpdatesOnly)
     return true;
 }
 
-bool psServerCharManager::UpdateItemViews( int clientNum )
+bool ServerCharManager::UpdateItemViews( int clientNum )
 {
-    Client* client = clients->Find(clientNum);
+    Client* client = psserver->GetNetManager()->GetClient(clientNum);
 
     // If inventory window is up, update it
     SendInventory( clientNum );
@@ -561,7 +489,7 @@ bool psServerCharManager::UpdateItemViews( int clientNum )
     return true;
 }
 
-bool psServerCharManager::IsBanned(const char* name)
+bool ServerCharManager::IsBanned(const char* name)
 {
     // Check if the name is banned
     csString nName = NormalizeCharacterName(name);
@@ -575,7 +503,7 @@ bool psServerCharManager::IsBanned(const char* name)
 }
 
 
-bool psServerCharManager::HasConnected( csString name )
+bool ServerCharManager::HasConnected( csString name )
 {
     int secondsLastLogin;
     secondsLastLogin = 0;
@@ -599,7 +527,7 @@ bool psServerCharManager::HasConnected( csString name )
     return true;
 }
 
-void psServerCharManager::BeginTrading(Client * client, gemObject * target, const csString & type)
+void ServerCharManager::BeginTrading(Client * client, gemObject * target, const csString & type)
 {
     psCharacter * merchant = NULL;
     int clientnum = client->GetClientNum();
@@ -694,7 +622,7 @@ void psServerCharManager::BeginTrading(Client * client, gemObject * target, cons
     SendPlayerMoney(client);
 }
 
-void psServerCharManager::HandleMerchantRequest(psGUIMerchantMessage& msg, Client *client)
+void ServerCharManager::HandleMerchantRequest(psGUIMerchantMessage& msg, Client *client)
 {
     csRef<iDocumentNode> exchangeNode = ParseString(msg.commandData, "R");
     if (!exchangeNode)
@@ -727,7 +655,7 @@ void psServerCharManager::HandleMerchantRequest(psGUIMerchantMessage& msg, Clien
     BeginTrading(client, target, type);
 }
 
-void psServerCharManager::HandleMerchantCategory(psGUIMerchantMessage& msg, Client *client)
+void ServerCharManager::HandleMerchantCategory(psGUIMerchantMessage& msg, Client *client)
 {
     psCharacter* character = client->GetCharacterData();
 
@@ -767,7 +695,7 @@ void psServerCharManager::HandleMerchantCategory(psGUIMerchantMessage& msg, Clie
     }
 }
 
-void psServerCharManager::HandleMerchantBuy(psGUIMerchantMessage& msg, Client *client)
+void ServerCharManager::HandleMerchantBuy(psGUIMerchantMessage& msg, Client *client)
 {
     psCharacter* character = client->GetCharacterData();
     csRef <iDocumentNode> merchantNode = ParseString(msg.commandData, "T");
@@ -919,7 +847,7 @@ void psServerCharManager::HandleMerchantBuy(psGUIMerchantMessage& msg, Client *c
     }
 }
 
-void psServerCharManager::HandleMerchantSell(psGUIMerchantMessage& msg, Client *client)
+void ServerCharManager::HandleMerchantSell(psGUIMerchantMessage& msg, Client *client)
 {
     psCharacter* character = client->GetCharacterData();
     csRef <iDocumentNode> merchantNode = ParseString(msg.commandData, "T");
@@ -1008,7 +936,7 @@ void psServerCharManager::HandleMerchantSell(psGUIMerchantMessage& msg, Client *
     }
 }
 
-void psServerCharManager::HandleMerchantView(psGUIMerchantMessage& msg, Client *client)
+void ServerCharManager::HandleMerchantView(psGUIMerchantMessage& msg, Client *client)
 {
     psCharacter* character = client->GetCharacterData();
     csRef <iDocumentNode> merchantNode = ParseString(msg.commandData, "V");
@@ -1048,7 +976,7 @@ void psServerCharManager::HandleMerchantView(psGUIMerchantMessage& msg, Client *
     }
 }
 
-void psServerCharManager::HandleMerchantMessage( MsgEntry* me, Client *client )
+void ServerCharManager::HandleMerchantMessage( MsgEntry* me, Client *client )
 {
     psGUIMerchantMessage msg(me);
     if (!msg.valid)
@@ -1057,7 +985,7 @@ void psServerCharManager::HandleMerchantMessage( MsgEntry* me, Client *client )
         return;
     }
 
-    //    CPrintf(CON_DEBUG, "psServerCharManager::HandleMerchantMessage (%s, %d,%s)\n",
+    //    CPrintf(CON_DEBUG, "ServerCharManager::HandleMerchantMessage (%s, %d,%s)\n",
     //           (const char*)client->GetName(),msg.command, (const char*)msg.commandData);
 
     switch (msg.command)
@@ -1099,7 +1027,7 @@ void psServerCharManager::HandleMerchantMessage( MsgEntry* me, Client *client )
     }
 }
 
-bool psServerCharManager::VerifyTrade( Client * client, psCharacter * character, psCharacter ** merchant, psMerchantInfo ** info,
+bool ServerCharManager::VerifyTrade( Client * client, psCharacter * character, psCharacter ** merchant, psMerchantInfo ** info,
                                        const char * trade,const char * itemName, PID merchantID)
 {
     *merchant = character->GetMerchant();
@@ -1144,7 +1072,7 @@ bool psServerCharManager::VerifyTrade( Client * client, psCharacter * character,
 }
 
 
-void psServerCharManager::SendOutPlaySoundMessage( int clientnum, const char* itemsound, const char* action )
+void ServerCharManager::SendOutPlaySoundMessage( int clientnum, const char* itemsound, const char* action )
 {
     if (clientnum == 0 || itemsound == NULL || action == NULL)
         return;
@@ -1166,7 +1094,7 @@ void psServerCharManager::SendOutPlaySoundMessage( int clientnum, const char* it
 //    psserver->GetEventManager()->Multicast(msg, fromClient->GetActor()->GetMulticastClients(), 0, range );
 }
 
-void psServerCharManager::SendOutEquipmentMessages( gemActor* actor,
+void ServerCharManager::SendOutEquipmentMessages( gemActor* actor,
                                                     INVENTORY_SLOT_NUMBER slot,
                                                     psItem* item,
                                                     int equipped )
@@ -1201,7 +1129,7 @@ void psServerCharManager::SendOutEquipmentMessages( gemActor* actor,
                                             PROX_LIST_ANY_RANGE );
 }
 
-void psServerCharManager::SendPlayerMoney( Client *client )
+void ServerCharManager::SendPlayerMoney( Client *client )
 {
     csString buff;
 
@@ -1218,7 +1146,7 @@ void psServerCharManager::SendPlayerMoney( Client *client )
     psserver->GetEventManager()->SendMessage(msg.msg);
 }
 
-bool psServerCharManager::SendMerchantItems( Client *client, psCharacter* merchant, psItemCategory* category)
+bool ServerCharManager::SendMerchantItems( Client *client, psCharacter* merchant, psItemCategory* category)
 {
     csArray<psItem*> items = merchant->Inventory().GetItemsInCategory(category);
 
@@ -1260,7 +1188,7 @@ bool psServerCharManager::SendMerchantItems( Client *client, psCharacter* mercha
     return true;
 }
 
-int psServerCharManager::CalculateMerchantPrice(psItem *item, Client *client, bool sellPrice)
+int ServerCharManager::CalculateMerchantPrice(psItem *item, Client *client, bool sellPrice)
 {
     int basePrice = sellPrice?item->GetSellPrice().GetTotal():item->GetPrice().GetTotal();
     int finalPrice = basePrice;
@@ -1292,7 +1220,7 @@ int psServerCharManager::CalculateMerchantPrice(psItem *item, Client *client, bo
     return finalPrice;
 }
 
-bool psServerCharManager::SendPlayerItems( Client *client, psItemCategory* category)
+bool ServerCharManager::SendPlayerItems( Client *client, psItemCategory* category)
 {
     csArray<psItem*> items = client->GetCharacterData()->Inventory().GetItemsInCategory(category);
 
@@ -1355,7 +1283,7 @@ bool psServerCharManager::SendPlayerItems( Client *client, psItemCategory* categ
     return true;
 }
 
-bool psServerCharManager::VerifyGoal(Client* client, psCharacter* character, psItem* goal)
+bool ServerCharManager::VerifyGoal(Client* client, psCharacter* character, psItem* goal)
 {
     // glyph items can't be goals
     if (goal->GetCurrentStats()->GetIsGlyph())
