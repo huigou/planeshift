@@ -1452,7 +1452,7 @@ void psWorkManager::StartAutoWork(Client* client, gemContainer* container, psIte
                     // Set up event for auto transformation
                     StartTransformationEvent(
                         TRANSFORMTYPE_AUTO_CONTAINER, PSCHARACTER_SLOT_NONE, count, autoItem->GetItemQuality(), autoItem);
-                    psserver->SendSystemOK(clientNum,"You are not sure what is going to happen to %d %s.", autoItem->GetStackCount(), autoItem->GetName());
+                    psserver->SendSystemError(clientNum,"You are not sure what is going to happen to %d %s.", autoItem->GetStackCount(), autoItem->GetName());
                     return;
                 }
                 default:
@@ -1745,7 +1745,7 @@ bool psWorkManager::ScriptItem(gemItem* gemItm)
             // Set up event for auto transformation
             StartTransformationEvent(
                 TRANSFORMTYPE_TARGET, PSCHARACTER_SLOT_NONE, itemCount, gemItm->GetItem()->GetItemQuality(), gemItm->GetItem());
-            psserver->SendSystemOK(clientNum,"You are not sure what is going to happen to %d %s.", gemItm->GetItem()->GetStackCount(), gemItm->GetItem()->GetName());
+            psserver->SendSystemError(clientNum,"You are not sure what is going to happen to %d %s.", gemItm->GetItem()->GetStackCount(), gemItm->GetItem()->GetName());
             return true;
         }
     }
