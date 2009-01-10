@@ -38,7 +38,6 @@
 #include "msgmanager.h"
 
 class MsgEntry;
-class ClientConnectionSet;
 class psServer;
 class Client;
 class psMerchantInfo;
@@ -60,21 +59,17 @@ struct psItemCategory;
  * is an all or nothing sort of thing. By using this we can make
  * more efficient use of the net traffic
  */
-class psServerCharManager : public MessageManager
+class ServerCharManager : public MessageManager
 {
 public:
 
-    psServerCharManager();
-    virtual ~psServerCharManager();
+    ServerCharManager();
+    virtual ~ServerCharManager();
 
-    bool Initialize( ClientConnectionSet* ccs);
+    bool Initialize();
 
-    virtual void HandleMessage( MsgEntry *me, Client *client );
+    virtual void HandleMessage( MsgEntry *me, Client *client ) { };
 
-    // Handles any incomming messages about the character gui.
-    virtual bool HandleInventoryMessage( MsgEntry* me );
-
-	void HandleFaction(MsgEntry* me);
 
     /// Sends the client an inventory
     virtual bool SendInventory( int clientNum, bool sendUpdatesOnly=true );
@@ -116,6 +111,14 @@ public:
 
 protected:
 
+    void HandleBookWrite(MsgEntry* me, Client* client);
+    void HandleCraftTransInfo( MsgEntry * me, Client *client );
+    /// Handles any incoming messages about the character gui.
+    void HandleInventoryMessage(MsgEntry* me, Client *client);
+    void HandleFaction(MsgEntry* me, Client *client);
+    void ViewItem( MsgEntry* me, Client *client);
+    void UpdateSketch( MsgEntry* me, Client *client);
+
     // -------------------Merchant Handling -------------------------------
     int CalculateMerchantPrice(psItem *item, Client *client, bool sellPrice);
     bool SendMerchantItems( Client *client, psCharacter * merchant, psItemCategory * category);
@@ -129,8 +132,6 @@ protected:
 
     bool SendPlayerItems( Client *client, psItemCategory * category);
    
-    void HandleBookWrite(MsgEntry* me, Client* client);
-    void HandleCraftTransInfo( MsgEntry * me, Client *client );
 
     /// Return true if all trade params are ok
     bool VerifyTrade( Client * client, psCharacter * character, psCharacter ** merchant, psMerchantInfo ** info,
@@ -139,12 +140,9 @@ protected:
     // verifies that item dropped in mind slot is a valid goal
     bool VerifyGoal(Client* client, psCharacter* character, psItem* goal);
 
-    ClientConnectionSet*    clients;
+//    ClientConnectionSet*    clients;
 
     SlotManager *slotManager;
-
-    void ViewItem( MsgEntry* me );
-    void UpdateSketch( MsgEntry* me );
 
     MathScript* calc_item_merchant_price_buy;
     MathScriptVar* calc_item_merchant_price_item_price_buy;

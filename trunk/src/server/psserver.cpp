@@ -453,8 +453,8 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     groupmanager = csPtr<GroupManager>(new GroupManager(GetConnections(), chatmanager));
     Debug1(LOG_STARTUP,0,"Started Group Manager\n");
 
-    charmanager = new psServerCharManager();
-    if (!charmanager->Initialize(GetConnections()))
+    charmanager = new ServerCharManager();
+    if (!charmanager->Initialize())
         return false;
     Debug1(LOG_STARTUP,0,"Started Character Manager\n");
 
