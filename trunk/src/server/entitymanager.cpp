@@ -146,7 +146,7 @@ bool EntityManager::Initialize(iObjectRegistry* object_reg,
     gem = new GEMSupervisor(object_reg,psserver->GetDatabase());
 
     serverdr = new psServerDR;
-    if (!serverdr->Initialize(this, clients))
+    if (!serverdr->Initialize())
     {
         delete serverdr;
         serverdr = NULL;

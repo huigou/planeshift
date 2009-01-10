@@ -60,10 +60,10 @@
 #include "psproxlist.h"
 #include "globals.h"
 
+
+
 psServerDR::psServerDR()
 {
-    entitymanager = NULL;
-    clients = NULL;
     paladin = NULL;
 }
 
@@ -71,16 +71,13 @@ psServerDR::~psServerDR()
 {
     if (psserver->GetEventManager())
         psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_DEAD_RECKONING);
-    //delete paladin;
+    
+    delete paladin;
 }
 
-bool psServerDR::Initialize(EntityManager* entitymanager,
-    ClientConnectionSet* clients)
+bool psServerDR::Initialize()
 {
-    psServerDR::entitymanager  = entitymanager;
-    psServerDR::clients        = clients;
-
-    if (!psserver->GetEventManager()->Subscribe(this,MSGTYPE_DEAD_RECKONING,REQUIRE_READY_CLIENT))
+    if (!psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<psServerDR>(this,&psServerDR::HandleDeadReckoning),MSGTYPE_DEAD_RECKONING,REQUIRE_READY_CLIENT))
         return false;
 
     calc_damage   = psserver->GetMathScriptEngine()->FindScript("Calculate Fall Damage");
@@ -90,13 +87,12 @@ bool psServerDR::Initialize(EntityManager* entitymanager,
         return false;
     }
 
-
     // Output var bindings here
     var_fall_height = calc_damage->GetVar("FallHeight");
     var_fall_dmg    = calc_damage->GetVar("Damage");
 
     paladin = new PaladinJr;
-    paladin->Initialize(entitymanager);
+    paladin->Initialize(psserver->entitymanager);
     
     return true;
 }
@@ -149,7 +145,7 @@ void psServerDR::ResetPos(gemActor* actor)
     actor->MulticastDRUpdate();
 }
 
-void psServerDR::HandleMessage(MsgEntry* me,Client *client)
+void psServerDR::HandleDeadReckoning(MsgEntry* me,Client *client)
 {
     psDRMessage drmsg(me,CacheManager::GetSingleton().GetMsgStrings(),EntityManager::GetSingleton().GetEngine() );
     if (!drmsg.valid)

@@ -1044,10 +1044,6 @@ bool QuestManager::AddTrigger(csString& current_npc,const char *trigger,int prio
 }
 
 
-
-
-
-
 void QuestManager::HandleMessage(MsgEntry *me,Client *who)
 {
     if (me->GetType() == MSGTYPE_QUESTINFO)
