@@ -1,4 +1,7 @@
-﻿*** 2009-01-07 by Steven Patrick
+﻿*** 2009-01-10 by Stefano Angeleri
+- Ignoring quest prereqs when questtester is set
+
+*** 2009-01-07 by Steven Patrick
 - Fixed FS#2458 : Make NPCs face player when talking, patch by kougaro.
 
 *** 2009-01-07 by Dave Bentham
