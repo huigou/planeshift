@@ -36,7 +36,7 @@
 #include "psskills.h"
 
 class csVector3;
-class psSpellManager;
+class SpellManager;
 class Client;
 class gemObject;
 class gemActor;
@@ -112,7 +112,7 @@ class psSpell : public iScriptableVar
      *
      *  @return An array of new psSpellCastGameEvents that are ready to be pushed inot the event stream.
      */
-    psSpellCastGameEvent *Cast(psSpellManager * mgr, Client * client, csString &effectName, csVector3 &offset,
+    psSpellCastGameEvent *Cast(SpellManager * mgr, Client * client, csString &effectName, csVector3 &offset,
                            EID & anchorID, EID & targetID, unsigned int & castingDuration, csString & castingText) const;
         
     /** Find all objects in range for spell around caster
@@ -125,7 +125,7 @@ class psSpell : public iScriptableVar
      */
     csArray< gemObject *> *getTargetsInRange(Client * client, float max_range, float range) const;
     
-    bool AffectTargets(psSpellManager * mgr,psSpellCastGameEvent * event, csString &effectName, csVector3 &offset, 
+    bool AffectTargets(SpellManager * mgr,psSpellCastGameEvent * event, csString &effectName, csVector3 &offset, 
                 EID & anchorID, EID & targetID, csString & affectText) const;
     bool AffectTarget( psSpellCastGameEvent * event, csString &effectName, csVector3 &offset,
                        EID & anchorID, EID & targetID, csString & affectText) const;

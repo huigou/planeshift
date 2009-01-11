@@ -59,13 +59,13 @@ class MathScriptVar;
 /** Manager class that handles loading/searching/casting spells. 
   * This class also manages a number of psSpell Events.  
   */
-class psSpellManager : public MessageManager
+class SpellManager : public MessageManager
 {
 public:
 
-    psSpellManager(ClientConnectionSet *clients,
+    SpellManager(ClientConnectionSet *clients,
                    iObjectRegistry * object_reg);
-    virtual ~psSpellManager();
+    virtual ~SpellManager();
     
     /** Handles a network message.  
       * This is a factory for the different types of message that the manager handles.
@@ -73,7 +73,7 @@ public:
       * @param me The message entry incoming.
       * @param client The client that this message came from.
       */
-    virtual void HandleMessage(MsgEntry *me,Client *client);
+    virtual void HandleMessage(MsgEntry *me,Client *client) { }
 
     /** Purifying on a glyph has been complete.  
       *  This will send out a network message to the client and update it's inventory 
@@ -89,7 +89,7 @@ public:
       *
       * @param client  The client that will be sent it's current glyphs.
       */
-    void SendGlyphs(Client * client);
+    void SendGlyphs(MsgEntry *notused, Client * client);
 
     /** Handles a cast event object.
       * @param event  The event that needs to be handled.
@@ -115,13 +115,15 @@ protected:
       * @param spellName The name of the spell to cast.
       * @param kFactor The power factor that the spell is cast with.
       */
-    void Cast(Client * client, csString spellName, float kFactor);
-    
+    void Cast(MsgEntry *me, Client * client);
+
+    void HandleCancelSpell(MsgEntry* notused, Client* client);
+
     /** Send the player's spell book.
       * 
       * @param client The client that will be sent the spell book.
       */
-    void SendSpellBook(Client * client);
+    void SendSpellBook(MsgEntry *notused, Client * client);
     
     /** Start to purify a glyph.
       * This will also send out notifications to the client about the start of operation.
@@ -129,7 +131,7 @@ protected:
       * @param client The client that this data is for.
       * @param The stat ID of the glyph that the player wants to purify.
       */  
-    void StartPurifying(Client * client, int statID);
+    void StartPurifying(MsgEntry *me, Client * client);
     
     /** Find a spell in the assorted glyphs.
       * This checks ths list of glyphs and see if it matches any 
@@ -163,7 +165,7 @@ protected:
       * @param client The client this is for.
       * @param me The message from that client.
       */
-    void HandleAssembler(Client* client, MsgEntry* me);
+    void HandleAssembler(MsgEntry* me,Client* client);
     
     MathScript *researchSpellScript;                
     MathScriptVar *varCaster;
@@ -183,7 +185,7 @@ protected:
 class psSpellCastGameEvent : public psGameEvent, public iDeleteObjectCallback
 {
  protected:
-    psSpellManager *spellmanager;
+    SpellManager *spellmanager;
     
  public:
 
@@ -195,7 +197,7 @@ class psSpellCastGameEvent : public psGameEvent, public iDeleteObjectCallback
     float        powerLevel;
     csTicks      duration;
     
-    psSpellCastGameEvent(psSpellManager *mgr,
+    psSpellCastGameEvent(SpellManager *mgr,
                      const psSpell *spell,
                      Client  *caster,
                      gemObject *target,
@@ -220,7 +222,7 @@ class psSpellCastGameEvent : public psGameEvent, public iDeleteObjectCallback
 class psSpellAffectGameEvent : public psGameEvent, public iDeleteObjectCallback, public iDeathCallback
 {
  protected:
-    psSpellManager *spellmanager;
+    SpellManager *spellmanager;
     
  public:
 
@@ -233,7 +235,7 @@ class psSpellAffectGameEvent : public psGameEvent, public iDeleteObjectCallback,
     float        powerLevel;
     csTicks      duration;
     
-    psSpellAffectGameEvent(psSpellManager *mgr,
+    psSpellAffectGameEvent(SpellManager *mgr,
                            const psSpell *spell,
                            Client  *caster, 
                            gemObject *target, 

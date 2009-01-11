@@ -52,7 +52,7 @@
 #include "commandmanager.h"
 
 
-psSpellManager::psSpellManager(ClientConnectionSet *ccs,
+SpellManager::SpellManager(ClientConnectionSet *ccs,
                                iObjectRegistry * object_reg)
 {
     clients      = ccs;
@@ -60,12 +60,12 @@ psSpellManager::psSpellManager(ClientConnectionSet *ccs,
 
     randomgen = psserver->rng;
 
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_GLYPH_REQUEST,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);  
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_GLYPH_ASSEMBLE,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);  
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_SPELL_CAST,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);  
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_PURIFY_GLYPH,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);  
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_SPELL_BOOK,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);  
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_SPELL_CANCEL,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);      
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<SpellManager>(this,&SpellManager::SendGlyphs),MSGTYPE_GLYPH_REQUEST,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);  
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<SpellManager>(this,&SpellManager::HandleAssembler),MSGTYPE_GLYPH_ASSEMBLE,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);  
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<SpellManager>(this,&SpellManager::Cast),MSGTYPE_SPELL_CAST,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);  
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<SpellManager>(this,&SpellManager::StartPurifying),MSGTYPE_PURIFY_GLYPH,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);  
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<SpellManager>(this,&SpellManager::SendSpellBook),MSGTYPE_SPELL_BOOK,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);  
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<SpellManager>(this,&SpellManager::HandleCancelSpell),MSGTYPE_SPELL_CANCEL,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);      
 
     researchSpellScript = psserver->GetMathScriptEngine()->FindScript("CalculateChanceOfResearchSuccess");
     if ( researchSpellScript )
@@ -80,7 +80,7 @@ psSpellManager::psSpellManager(ClientConnectionSet *ccs,
     }
 }
 
-psSpellManager::~psSpellManager()
+SpellManager::~SpellManager()
 {
     if (psserver->GetEventManager())
     {
@@ -93,57 +93,14 @@ psSpellManager::~psSpellManager()
     }
 }
 
-void psSpellManager::HandleMessage(MsgEntry *me,Client *client)
+
+void SpellManager::HandleCancelSpell(MsgEntry* notused, Client* client)
 {
-    switch( me->GetType())
-    {
-        case MSGTYPE_SPELL_CAST:
-        {
-            psSpellCastMessage mesg(me);            
-            Cast(client,mesg.spell,mesg.kFactor);
-            break;
-        }
-        case MSGTYPE_PURIFY_GLYPH:
-        {
-            psPurifyGlyphMessage mesg(me);
-            StartPurifying(client, mesg.glyph);
-            break;
-        }        
-        case MSGTYPE_SPELL_BOOK:
-        {
-            SendSpellBook( client );
-            break;
-        }
-        case MSGTYPE_GLYPH_REQUEST:
-        {
-            SendGlyphs( client );
-            break; 
-        }
-        case MSGTYPE_GLYPH_ASSEMBLE:
-        {
-            HandleAssembler( client, me );
-            break;
-        }       
-        
-        case MSGTYPE_SPELL_CANCEL:
-        {
-            client->GetCharacterData()->InterruptSpellCasting();
-            break;
-        }            
-    }
+    client->GetCharacterData()->InterruptSpellCasting();
 }
 
-//debug:
-void DumpAssembler(Client * client, glyphList_t & assembler)
-{
-    psString msg;
-    msg="";
-    for (size_t i=0; i < assembler.GetSize(); i++)
-        msg.AppendFmt("S%u ",assembler[i]->GetUID());
-    psserver->SendSystemInfo(client->GetClientNum(), msg.GetData());
-}
 
-void psSpellManager::HandleAssembler( Client* client, MsgEntry* me )
+void SpellManager::HandleAssembler(MsgEntry* me, Client* client)
 {
     psGlyphAssembleMessage mesg;
     mesg.FromClient( me );
@@ -172,7 +129,7 @@ void psSpellManager::HandleAssembler( Client* client, MsgEntry* me )
     if (!client->GetCharacterData()->Inventory().HasPurifiedGlyphs(assembler))
     {
         Error2( "Client %i tried to research spell with glyphs he actually doesn't have", client->GetClientNum() );
-        SendGlyphs( client );
+        SendGlyphs(NULL,client);
         return;
     }
 
@@ -256,7 +213,7 @@ void psSpellManager::HandleAssembler( Client* client, MsgEntry* me )
 }
 
 
-void psSpellManager::SaveSpell(Client * client, csString spellName)
+void SpellManager::SaveSpell(Client * client, csString spellName)
 {
     psSpell * spell = client->GetCharacterData()->GetSpellByName(spellName);
     if (spell)
@@ -279,14 +236,18 @@ void psSpellManager::SaveSpell(Client * client, csString spellName)
 
     psServer::CharacterLoader.SaveCharacterData(client->GetCharacterData(),client->GetActor());
 
-    SendSpellBook(client);
+    SendSpellBook(NULL,client);
     psserver->SendSystemInfo(client->GetClientNum(),
                            "%s added to your spell book!",spellName.GetData());
 }
 
-void psSpellManager::Cast(Client * client, csString spellName, float kFactor)
+void SpellManager::Cast(MsgEntry *me, Client * client)
 {
+    psSpellCastMessage msg(me);            
+
     psSpell *spell = NULL;
+    csString spellName = msg.spell;
+    float kFactor = msg.kFactor;
 
     // Allow developers to cast any spell, even if unknown to the character.
     if (CacheManager::GetSingleton().GetCommandManager()->Validate(client->GetSecurityLevel(), "cast all spells"))
@@ -342,7 +303,7 @@ void psSpellManager::Cast(Client * client, csString spellName, float kFactor)
     }
 }
 
-void psSpellManager::SendSpellBook(Client * client)
+void SpellManager::SendSpellBook(MsgEntry *notused, Client * client)
 {
     psSpellBookMessage mesg(client->GetClientNum());
     csArray<psSpell*> spells = client->GetCharacterData()->GetSpellList();
@@ -369,7 +330,7 @@ void psSpellManager::SendSpellBook(Client * client)
     mesg.SendMessage();
 }
 
-void psSpellManager::SendGlyphs( Client * client)
+void SpellManager::SendGlyphs(MsgEntry *notused, Client * client)
 {
     psCharacter * character = client->GetCharacterData();
     csArray <glyphSlotInfo> slots;
@@ -444,8 +405,11 @@ psGlyph * FindUnpurifiedGlyph(psCharacter * character, unsigned int statID)
     return NULL;
 }
 
-void psSpellManager::StartPurifying(Client * client, int statID)
+void SpellManager::StartPurifying(MsgEntry *me, Client * client)
 {
+    psPurifyGlyphMessage mesg(me);
+    int statID = mesg.glyph;
+
     psCharacter* character = client->GetCharacterData();
 
     psGlyph* glyph = FindUnpurifiedGlyph(character, statID);
@@ -475,7 +439,7 @@ void psSpellManager::StartPurifying(Client * client, int statID)
 
             // Reset the stack count to account for the one that was destroyed.
             stackOfGlyphs->SetStackCount(stackOfGlyphs->GetStackCount() + 1);
-            SendGlyphs(client);
+            SendGlyphs(NULL,client);
             return;
         }
         stackOfGlyphs->Save(false);
@@ -495,11 +459,11 @@ void psSpellManager::StartPurifying(Client * client, int statID)
     event.Format("<evt><script delay=\"%d\" persistent=\"yes\"><purify glyph=\"%u\"/></script></evt>",20000,glyph->GetUID());
     psserver->GetProgressionManager()->ProcessScript(event.GetData(),client->GetActor(),client->GetActor());
 
-    SendGlyphs(client);
+    SendGlyphs(NULL,client);
     psserver->GetCharManager()->SendInventory(client->GetClientNum());
 }
 
-void psSpellManager::EndPurifying(psCharacter * character, uint32 glyphUID)
+void SpellManager::EndPurifying(psCharacter * character, uint32 glyphUID)
 {
     Client * client = clients->FindPlayer(character->GetPID());
     if (!client)
@@ -517,14 +481,14 @@ void psSpellManager::EndPurifying(psCharacter * character, uint32 glyphUID)
             glyph->PurifyingFinished();
             glyph->Save(false);
             psserver->SendSystemInfo(client->GetClientNum(), "The glyph %s is now purified", glyph->GetName());
-            SendGlyphs(client);
+            SendGlyphs(NULL,client);
             psserver->GetCharManager()->SendInventory(client->GetClientNum());
             return;
         }
     }
 }
 
-psSpell* psSpellManager::FindSpell(Client * client, const glyphList_t & assembler)
+psSpell* SpellManager::FindSpell(Client * client, const glyphList_t & assembler)
 {
     CacheManager::SpellIterator loop = CacheManager::GetSingleton().GetSpellIterator();
     
@@ -544,12 +508,12 @@ psSpell* psSpellManager::FindSpell(Client * client, const glyphList_t & assemble
     return NULL;
 }
 
-psSpell* psSpellManager::FindSpell(csString& name)
+psSpell* SpellManager::FindSpell(csString& name)
 {
     return CacheManager::GetSingleton().GetSpellByName(name);
 }
 
-psSpell* psSpellManager::FindSpell(int spellID)
+psSpell* SpellManager::FindSpell(int spellID)
 {
     return CacheManager::GetSingleton().GetSpellByID(spellID);
 }
@@ -557,7 +521,7 @@ psSpell* psSpellManager::FindSpell(int spellID)
 /**
  * This is the meat and potatoes of the spell engine here.
  */
-void psSpellManager::HandleSpellCastEvent(psSpellCastGameEvent *event)
+void SpellManager::HandleSpellCastEvent(psSpellCastGameEvent *event)
 {
     csString  responseEffectName;
     csVector3 offset;
@@ -630,7 +594,7 @@ void psSpellManager::HandleSpellCastEvent(psSpellCastGameEvent *event)
     }
 }
 
-void psSpellManager::HandleSpellAffectEvent( psSpellAffectGameEvent *event )
+void SpellManager::HandleSpellAffectEvent( psSpellAffectGameEvent *event )
 { 
     // Since we just came in from an event, make sure target is still alive.
     if ( event->target->IsAlive())
@@ -673,7 +637,7 @@ void psSpellManager::HandleSpellAffectEvent( psSpellAffectGameEvent *event )
 
 /*-------------------------------------------------------------*/
 
-psSpellCastGameEvent::psSpellCastGameEvent(psSpellManager *mgr,
+psSpellCastGameEvent::psSpellCastGameEvent(SpellManager *mgr,
                                    const psSpell * spell,
                                    Client *caster,
                                    gemObject *target,
@@ -755,7 +719,7 @@ void psSpellCastGameEvent::Trigger()
 
 /*-------------------------------------------------------------*/
 
-psSpellAffectGameEvent::psSpellAffectGameEvent(psSpellManager *mgr,
+psSpellAffectGameEvent::psSpellAffectGameEvent(SpellManager *mgr,
                                    const psSpell *spell,
                                    Client  *caster, 
                                    gemObject *target, 

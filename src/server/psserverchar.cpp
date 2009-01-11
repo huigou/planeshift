@@ -477,7 +477,7 @@ bool ServerCharManager::UpdateItemViews( int clientNum )
     SendInventory( clientNum );
 
     // If glyph window is up, update it
-    psserver->GetSpellManager()->SendGlyphs(client);
+    psserver->GetSpellManager()->SendGlyphs(NULL,client);
     
     if ( slotManager->worldContainer )
     {
