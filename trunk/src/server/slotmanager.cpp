@@ -61,22 +61,14 @@ SlotManager::~SlotManager()
 bool SlotManager::Initialize()
 {
     worldContainer = NULL;
-    psserver->GetEventManager()->Subscribe(this, MSGTYPE_SLOT_MOVEMENT, REQUIRE_READY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this, MSGTYPE_CMDDROP, REQUIRE_READY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this, new NetMessageCallback<SlotManager>(this,&SlotManager::HandleSlotMovement),MSGTYPE_SLOT_MOVEMENT, REQUIRE_READY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this, new NetMessageCallback<SlotManager>(this,&SlotManager::HandleDropCommand),MSGTYPE_CMDDROP, REQUIRE_READY_CLIENT);
     return true;
 }
 
 
-void SlotManager::HandleMessage(MsgEntry* me, Client *fromClient)
+void SlotManager::HandleSlotMovement(MsgEntry* me, Client *fromClient)
 {
-    // Those are the only two types of messages we should handle
-    if (me->GetType() == MSGTYPE_CMDDROP)
-    {
-        CmdDrop(me, fromClient);
-    }
-    else if (me->GetType() != MSGTYPE_SLOT_MOVEMENT)
-        return;
-
     psSlotMovementMsg mesg(me);
     // printf("Got slot movement message for %d stacked items.\n", mesg.stackCount);
     // printf("--> From container %d, slot %d\n", mesg.fromContainer, mesg.fromSlot);
@@ -927,7 +919,7 @@ void SlotManager::Consume(psItem* item, psCharacter *charData, int count)
     }
 }
 
-void SlotManager::CmdDrop(MsgEntry* me, Client *fromClient)
+void SlotManager::HandleDropCommand(MsgEntry* me, Client *fromClient)
 {
     psCmdDropMessage mesg(me);
     if (mesg.quantity < 1)

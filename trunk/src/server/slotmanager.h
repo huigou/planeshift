@@ -47,7 +47,7 @@ public:
 
     bool Initialize();
 
-    virtual void HandleMessage(MsgEntry *me, Client *client);
+    virtual void HandleMessage(MsgEntry *me, Client *client) { }
 
     static psItem* FindItem(Client* client, int containerID, INVENTORY_SLOT_NUMBER slotID);
 
@@ -55,6 +55,11 @@ public:
     int  containerEntityID;         // Working ID of the container ID
 
 private:
+
+    ///drop a stack of the item type requested by searching into the different slots
+    void HandleDropCommand(MsgEntry *me, Client *client);
+    void HandleSlotMovement(MsgEntry *me, Client *client);
+
     /** Create a money item.
      *
      * @param slot One of the four money slots.
@@ -80,9 +85,6 @@ private:
 
     /// Consume an item and fire off any progression events it has.
     static void Consume(psItem* item, psCharacter *charData, int count);
-    
-    ///drop a stack of the item type requested by searching into the different slots
-    void CmdDrop(MsgEntry* me, Client *fromClient);
 };
 
 #endif

@@ -106,7 +106,10 @@ protected:
                              psQuest *mainQuest,
                              bool& quest_assigned_already,
                              psQuest *quest);
-                                 
+
+    void HandleQuestInfo(MsgEntry *pMsg,Client *client);
+    void HandleQuestReward(MsgEntry *pMsg,Client *client);
+
 public:
 
     QuestManager();
@@ -114,7 +117,7 @@ public:
 
     bool Initialize();
 
-    virtual void HandleMessage(MsgEntry *pMsg,Client *client);
+    virtual void HandleMessage(MsgEntry *pMsg,Client *client) { }
 
     void Assign(psQuest *quest, Client *who, gemNPC *assigner);
     bool Complete(psQuest *quest, Client *who);
