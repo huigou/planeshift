@@ -2400,6 +2400,8 @@ bool psWorkManager::ValidateMind()
 // Check for any targeted item or container in hand
 bool psWorkManager::ValidateTarget(Client* client)
 {
+    char dbgdata[1000000]; //this is here in oder to keep some data which could be dumped by gdb
+    char tmp[1000];       //please remove this and the associated code from here when the crash is understood
     // Check if player has something targeted
     gemObject* target = client->GetTargetObject();
 
@@ -2409,12 +2411,15 @@ bool psWorkManager::ValidateTarget(Client* client)
 
       // check if the actionlocation is linked to real item
       InstanceID InstanceID = action->GetInstanceID();
+      sprintf(tmp, "instanceid => %u --- ", InstanceID);
       if (InstanceID==INSTANCE_ALL)
       {
           InstanceID = action->GetGemObject()->GetEID().Unbox(); // FIXME: Understand & comment on ID magic here.
       }
       target = GEMSupervisor::GetSingleton().FindItemEntity( InstanceID );
     }
+
+    sprintf(dbgdata, "%s instanceid now %s -- client-> AID %u PID %u zombie? %d",InstanceID, client->GetAccountID(), client->GetPID(), client->IsZombie());
 
     if (target)
     {
