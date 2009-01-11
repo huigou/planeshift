@@ -60,7 +60,7 @@ public:
     TutorialManager(ClientConnectionSet *pCCS);
     virtual ~TutorialManager();
 
-    virtual void HandleMessage(MsgEntry *pMsg,Client *client);
+    virtual void HandleMessage(MsgEntry *pMsg,Client *client) { }
 
 protected:
     /// Specifically handle the Connect event in the tutorial

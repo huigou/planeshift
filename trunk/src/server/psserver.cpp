@@ -423,7 +423,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     Debug1(LOG_STARTUP,0,"Started Combat Manager\n");
 
     // Start Spell Manager
-    spellmanager = new psSpellManager(GetConnections(), object_reg);
+    spellmanager = new SpellManager(GetConnections(), object_reg);
     Debug1(LOG_STARTUP,0,"Started Spell Manager\n");
 
     // Start Weather Manager

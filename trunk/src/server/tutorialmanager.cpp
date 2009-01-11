@@ -49,12 +49,12 @@
 TutorialManager::TutorialManager(ClientConnectionSet *pCCS)
 {
     clients = pCCS;
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_CONNECT_EVENT, REQUIRE_ANY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_MOVEMENT_EVENT,REQUIRE_ANY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_TARGET_EVENT,  NO_VALIDATION);
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_GENERIC_EVENT, REQUIRE_ANY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_DAMAGE_EVENT,  NO_VALIDATION);
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_DEATH_EVENT,  NO_VALIDATION);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<TutorialManager>(this,&TutorialManager::HandleConnect),MSGTYPE_CONNECT_EVENT, REQUIRE_ANY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<TutorialManager>(this,&TutorialManager::HandleMovement),MSGTYPE_MOVEMENT_EVENT,REQUIRE_ANY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<TutorialManager>(this,&TutorialManager::HandleTarget),MSGTYPE_TARGET_EVENT,  NO_VALIDATION);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<TutorialManager>(this,&TutorialManager::HandleGeneric),MSGTYPE_GENERIC_EVENT, REQUIRE_ANY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<TutorialManager>(this,&TutorialManager::HandleDamage),MSGTYPE_DAMAGE_EVENT,  NO_VALIDATION);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<TutorialManager>(this,&TutorialManager::HandleDeath),MSGTYPE_DEATH_EVENT,  NO_VALIDATION);
     LoadTutorialStrings();
 }
 
@@ -99,24 +99,11 @@ void TutorialManager::SendTutorialMessage(int which,Client *client,const char *i
     msg.SendMessage();
 }
 
-void TutorialManager::HandleMessage(MsgEntry *pMsg,Client *client)
-{
-    switch (pMsg->GetType())
-    {
-        case MSGTYPE_CONNECT_EVENT:   HandleConnect(pMsg,client);   break;
-        case MSGTYPE_MOVEMENT_EVENT:  HandleMovement(pMsg,client);  break;
-        case MSGTYPE_TARGET_EVENT:    HandleTarget(pMsg,client);    break;
-        case MSGTYPE_DAMAGE_EVENT:    HandleDamage(pMsg,client);    break;
-        case MSGTYPE_DEATH_EVENT:     HandleDeath(pMsg,client);     break;
-        case MSGTYPE_GENERIC_EVENT:   HandleGeneric(pMsg,client);   break;
-        default: break;
-    }
-}
 
-void TutorialManager::HandleConnect(MsgEntry *pMsg,Client *client)
+void TutorialManager::HandleConnect(MsgEntry *me,Client *client)
 {
 //    printf("Got psConnectEvent\n");
-    psConnectEvent evt(pMsg);
+    psConnectEvent evt(me);
     if (client)
     {
         psCharacter *ch = client->GetCharacterData();
@@ -128,10 +115,10 @@ void TutorialManager::HandleConnect(MsgEntry *pMsg,Client *client)
     }
 }
 
-void TutorialManager::HandleMovement(MsgEntry *pMsg,Client *client)
+void TutorialManager::HandleMovement(MsgEntry *me,Client *client)
 {
     // printf("Got psMovementEvent\n");
-    psMovementEvent evt(pMsg);
+    psMovementEvent evt(me);
     if (client)
     {
         psCharacter *ch = client->GetCharacterData();
@@ -144,10 +131,10 @@ void TutorialManager::HandleMovement(MsgEntry *pMsg,Client *client)
 }
 
 // psTargetEvent already published so intercepting this takes zero code
-void TutorialManager::HandleTarget(MsgEntry *pMsg,Client *client)
+void TutorialManager::HandleTarget(MsgEntry *me,Client *client)
 {
     // printf("Got psTargetEvent\n");
-    psTargetChangeEvent evt(pMsg);
+    psTargetChangeEvent evt(me);
     if (evt.character)
     {
         client = evt.character->GetClient();
@@ -167,10 +154,10 @@ void TutorialManager::HandleTarget(MsgEntry *pMsg,Client *client)
 }
 
 /// Specifically handle the Damage event in the tutorial
-void TutorialManager::HandleDamage(MsgEntry *pMsg,Client *client)
+void TutorialManager::HandleDamage(MsgEntry *me,Client *client)
 {
     //printf("Got psDamageEvent\n");
-    psDamageEvent evt(pMsg);
+    psDamageEvent evt(me);
     if (evt.target && evt.attacker)  // someone hurt us
     {
         client = evt.target->GetClient();
@@ -200,10 +187,10 @@ void TutorialManager::HandleDamage(MsgEntry *pMsg,Client *client)
 }
 
 /// Specifically handle the Damage event in the tutorial
-void TutorialManager::HandleDeath(MsgEntry *pMsg,Client *client)
+void TutorialManager::HandleDeath(MsgEntry *me,Client *client)
 {
     //printf("Got psDeathEvent\n");
-    psDeathEvent evt(pMsg);
+    psDeathEvent evt(me);
     if (evt.deadActor)  // We're dead
     {
         client = evt.deadActor->GetClient();
@@ -219,10 +206,10 @@ void TutorialManager::HandleDeath(MsgEntry *pMsg,Client *client)
     }
 }
 
-void TutorialManager::HandleGeneric(MsgEntry *pMsg,Client *client)
+void TutorialManager::HandleGeneric(MsgEntry *me,Client *client)
 {
     // printf("Got psGenericEvent\n");
-    psGenericEvent evt(pMsg);
+    psGenericEvent evt(me);
     if (evt.client_id)
     {
         switch (evt.eventType)

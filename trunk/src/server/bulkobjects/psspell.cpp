@@ -232,7 +232,7 @@ bool psSpell::MatchGlyphs(const glyphList_t & assembler)
     return true;
 }
 
-psSpellCastGameEvent *psSpell::Cast(psSpellManager * mgr, Client * client, csString &effectName,
+psSpellCastGameEvent *psSpell::Cast(SpellManager * mgr, Client * client, csString &effectName,
     csVector3 &offset, EID &anchorID, EID &targetID, unsigned int &castingDuration, csString & castingText) const
 {
     gemActor *caster = client->GetActor();
@@ -444,7 +444,7 @@ csArray< gemObject *> *psSpell::getTargetsInRange(Client * client, float max_ran
     return targetsInRange;
 }
 
-bool psSpell::AffectTargets(psSpellManager * mgr, psSpellCastGameEvent * event, csString &effectName, csVector3 &offset, 
+bool psSpell::AffectTargets(SpellManager * mgr, psSpellCastGameEvent * event, csString &effectName, csVector3 &offset, 
                             EID &anchorID, EID &targetID, csString & affectText) const
 {
     gemActor * caster = event->caster->GetActor();

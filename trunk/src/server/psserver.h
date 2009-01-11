@@ -60,7 +60,7 @@ class  TutorialManager;
 class  ServerStatus;
 class  psMarriageManager;
 class  CombatManager;
-class  psSpellManager;
+class  SpellManager;
 class  ExchangeManager;
 class  ProgressionManager;
 class  NPCManager;
@@ -296,7 +296,7 @@ public:
      * @return Returns a reference to the current spell manager for the
      *     server.
      */
-    psSpellManager* GetSpellManager() { return spellmanager; }
+    SpellManager* GetSpellManager() { return spellmanager; }
 
     /** Returns the work manager.
      *
@@ -524,7 +524,7 @@ protected:
     SpawnManager*                   spawnmanager;
     csRef<EventManager>             eventmanager;
     WeatherManager*                 weathermanager;
-    psSpellManager*                 spellmanager;
+    SpellManager*                 spellmanager;
     ProgressionManager*             progression;
     psWorkManager*                  workmanager;
     EconomyManager*                 economymanager;

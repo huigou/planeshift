@@ -130,7 +130,6 @@ UserManager::UserManager(ClientConnectionSet *cs)
     psserver->GetEventManager()->Subscribe(this,MSGTYPE_MOTDREQUEST,REQUIRE_ANY_CLIENT);
     psserver->GetEventManager()->Subscribe(this,MSGTYPE_CHARDETAILSREQUEST,REQUIRE_READY_CLIENT);
     psserver->GetEventManager()->Subscribe(this,MSGTYPE_CHARDESCUPDATE,REQUIRE_READY_CLIENT);
-
     psserver->GetEventManager()->Subscribe(this,MSGTYPE_TARGET_EVENT,NO_VALIDATION);
     psserver->GetEventManager()->Subscribe(this,MSGTYPE_ENTRANCE,REQUIRE_READY_CLIENT);
 }
@@ -143,7 +142,6 @@ UserManager::~UserManager()
         psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_MOTDREQUEST);
         psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_CHARDETAILSREQUEST);
         psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_CHARDESCUPDATE);
-
         psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_TARGET_EVENT);
         psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_ENTRANCE);
     }
