@@ -57,9 +57,8 @@
 
 QuestManager::QuestManager()
 {
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_QUESTINFO,REQUIRE_READY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_QUESTREWARD,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
-
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<QuestManager>(this,&QuestManager::HandleQuestInfo),  MSGTYPE_QUESTINFO,REQUIRE_READY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<QuestManager>(this,&QuestManager::HandleQuestReward),MSGTYPE_QUESTREWARD,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
 }
 
 QuestManager::~QuestManager()
@@ -1043,73 +1042,72 @@ bool QuestManager::AddTrigger(csString& current_npc,const char *trigger,int prio
     return result;
 }
 
-
-void QuestManager::HandleMessage(MsgEntry *me,Client *who)
+void QuestManager::HandleQuestInfo(MsgEntry *me,Client *who)
 {
-    if (me->GetType() == MSGTYPE_QUESTINFO)
-    {
-        psQuestInfoMessage msg(me);
-        QuestAssignment *q = who->GetActor()->GetCharacterData()->IsQuestAssigned(msg.id);
+    psQuestInfoMessage msg(me);
+    QuestAssignment *q = who->GetActor()->GetCharacterData()->IsQuestAssigned(msg.id);
 
-        if (q)
+    if (q)
+    {
+        if (msg.command == psQuestInfoMessage::CMD_DISCARD)
         {
-            if (msg.command == psQuestInfoMessage::CMD_DISCARD)
-            {
-                // Discard quest assignment on request
-                who->GetActor()->GetCharacterData()->DiscardQuest(q);
-            }
-            else
-            {
-                psQuestInfoMessage response(me->clientnum,psQuestInfoMessage::CMD_INFO,
-                    q->GetQuest()->GetID(),q->GetQuest()->GetName(),q->GetQuest()->GetTask());
-                response.SendMessage();
-            }
+            // Discard quest assignment on request
+            who->GetActor()->GetCharacterData()->DiscardQuest(q);
         }
         else
         {
-            if (msg.command == psQuestInfoMessage::CMD_DISCARD)
-            {
-                Error3("Client %s requested discard of unassigned quest id #%u!",who->GetName(),msg.id);
-            }
-            else
-            {
-                Error3("Client %s requested unassigned quest id #%u!",who->GetName(),msg.id);
-            }
+            psQuestInfoMessage response(me->clientnum,psQuestInfoMessage::CMD_INFO,
+                q->GetQuest()->GetID(),q->GetQuest()->GetName(),q->GetQuest()->GetTask());
+            response.SendMessage();
         }
     }
-    else if (me->GetType() == MSGTYPE_QUESTREWARD)
+    else
     {
-        psQuestRewardMessage msg(me);
-
-        if (msg.msgType==psQuestRewardMessage::selectReward)
+        if (msg.command == psQuestInfoMessage::CMD_DISCARD)
         {
-            // verify that this item was really offered to the client as a 
-            // possible reward
-            for (size_t z=0;z<offers.GetSize();z++)
+            Error3("Client %s requested discard of unassigned quest id #%u!",who->GetName(),msg.id);
+        }
+        else
+        {
+            Error3("Client %s requested unassigned quest id #%u!",who->GetName(),msg.id);
+        }
+    }
+}
+
+void QuestManager::HandleQuestReward(MsgEntry *me,Client *who)
+{
+    psQuestRewardMessage msg(me);
+
+    if (msg.msgType==psQuestRewardMessage::selectReward)
+    {
+        // verify that this item was really offered to the client as a 
+        // possible reward
+        for (size_t z=0;z<offers.GetSize();z++)
+        {
+            QuestRewardOffer* offer = offers[z]; 
+            if (offer->clientID==me->clientnum)
             {
-                QuestRewardOffer* offer = offers[z]; 
-                if (offer->clientID==me->clientnum)
+                for (size_t x=0;x<offer->items.GetSize();x++)
                 {
-                    for (size_t x=0;x<offer->items.GetSize();x++)
+                    uint32 itemID = (uint32)atoi(msg.newValue.GetData());
+
+                    if (offer->items[x]->GetUID()==itemID)
                     {
-                        uint32 itemID = (uint32)atoi(msg.newValue.GetData());
+                        // this item has indeed been offered to the client
+                        // so the item can now be given to client (player)
+                        GiveRewardToPlayer(who, offer->items[x]);
 
-                        if (offer->items[x]->GetUID()==itemID)
-                        {
-                            // this item has indeed been offered to the client
-                            // so the item can now be given to client (player)
-                            GiveRewardToPlayer(who, offer->items[x]);
-
-                            // remove the offer from the list
-                            offers.DeleteIndex(z);
-                            return;                     
-                        }
+                        // remove the offer from the list
+                        offers.DeleteIndex(z);
+                        return;                     
                     }
                 }
             }
         }
     }
 }
+
+
 
 void QuestManager::OfferRewardsToPlayer(Client *who, csArray<psItemStats*> &offer,csTicks &timeDelay)
 {
