@@ -186,8 +186,8 @@ SpawnManager::SpawnManager(psDatabase *db)
 
     PreloadDatabase();
 
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_LOOTITEM,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_DEATH_EVENT,NO_VALIDATION);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<SpawnManager>(this,&SpawnManager::HandleLootItem),MSGTYPE_LOOTITEM,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<SpawnManager>(this,&SpawnManager::HandleDeathEvent),MSGTYPE_DEATH_EVENT,NO_VALIDATION);
 }
 
 SpawnManager::~SpawnManager()
@@ -848,18 +848,6 @@ void SpawnManager::RemoveNPC(gemObject *obj)
 #define SPAWN_POINT_TAKEN 999
 #define SPAWN_BASE_ITEM   1000
 
-void SpawnManager::HandleMessage(MsgEntry *me,Client *client)
-{
-    if (me->GetType() == MSGTYPE_LOOTITEM)
-    {
-        HandleLootItem(me,client);
-        return;
-    }
-    if (me->GetType() == MSGTYPE_DEATH_EVENT)
-    {
-        HandleDeathEvent(me);
-    }
-}
 
 void SpawnManager::Respawn(InstanceID instance, csVector3& where, float rot, csString& sector, PID playerID)
 {
@@ -1032,7 +1020,7 @@ void SpawnManager::HandleLootItem(MsgEntry *me,Client *client)
 
 }
 
-void SpawnManager::HandleDeathEvent(MsgEntry *me)
+void SpawnManager::HandleDeathEvent(MsgEntry *me,Client *notused)
 {
     Debug1(LOG_SPAWN,0, "Spawn Manager handling Death Event\n");
     psDeathEvent death(me);

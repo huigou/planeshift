@@ -313,7 +313,7 @@ protected:
     LootRandomizer         *lootRandomizer;
 
     void HandleLootItem(MsgEntry *me,Client *client);
-    void HandleDeathEvent(MsgEntry *me);
+    void HandleDeathEvent(MsgEntry *me,Client *notused);
 
 public:
 
@@ -371,7 +371,7 @@ public:
     /**
      * This function receives inbound net messages from the client.
      */
-    void HandleMessage(MsgEntry *me,Client *client);
+    void HandleMessage(MsgEntry *me,Client *client) { };
 
     /**
      * This function is called periodically by the server and will respawn
