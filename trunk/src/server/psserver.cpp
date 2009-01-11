@@ -494,7 +494,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     Debug1(LOG_STARTUP,0,"Started Progression Manager\n");
 
     // Start work manager
-    workmanager = new psWorkManager();
+    workmanager = new WorkManager();
     Debug1(LOG_STARTUP,0,"Started Work Manager\n");
 
     // Start economy manager

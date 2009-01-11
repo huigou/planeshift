@@ -126,12 +126,12 @@ UserManager::UserManager(ClientConnectionSet *cs)
 {
     clients       = cs;
 
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_USERCMD,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_MOTDREQUEST,REQUIRE_ANY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_CHARDETAILSREQUEST,REQUIRE_READY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_CHARDESCUPDATE,REQUIRE_READY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_TARGET_EVENT,NO_VALIDATION);
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_ENTRANCE,REQUIRE_READY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<UserManager>(this,&UserManager::HandleUserCommand),MSGTYPE_USERCMD,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<UserManager>(this,&UserManager::HandleMOTDRequest),MSGTYPE_MOTDREQUEST,REQUIRE_ANY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<UserManager>(this,&UserManager::HandleCharDetailsRequest),MSGTYPE_CHARDETAILSREQUEST,REQUIRE_READY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<UserManager>(this,&UserManager::HandleCharDescUpdate),MSGTYPE_CHARDESCUPDATE,REQUIRE_READY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<UserManager>(this,&UserManager::HandleTargetEvent),MSGTYPE_TARGET_EVENT,NO_VALIDATION);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<UserManager>(this,&UserManager::HandleEntranceMessage),MSGTYPE_ENTRANCE,REQUIRE_READY_CLIENT);
 }
 
 UserManager::~UserManager()
@@ -837,7 +837,7 @@ void UserManager::HandleCharDescUpdate(MsgEntry *me,Client *client)
     Debug3(LOG_USER, client->GetClientNum(), "Character description updated for %s (%s)\n", charData->GetCharFullName(), ShowID(client->GetAccountID()));
 }
 
-void UserManager::HandleTargetEvent(MsgEntry *me)
+void UserManager::HandleTargetEvent(MsgEntry *me, Client *notused)
 {
     psTargetChangeEvent targetevent(me);
 
@@ -1001,43 +1001,6 @@ void UserManager::HandleEntranceMessage( MsgEntry* me, Client *client )
     }
 }
 
-void UserManager::HandleMessage(MsgEntry *me,Client *client)
-{
-    switch (me->GetType())
-    {
-    case MSGTYPE_MOTDREQUEST:
-        {
-            HandleMOTDRequest(me,client);
-            break;
-        }
-    case MSGTYPE_USERCMD:
-        {
-            HandleUserCommand(me,client);
-            break;
-        }
-    case MSGTYPE_CHARDETAILSREQUEST:
-        {
-            HandleCharDetailsRequest(me,client);
-            break;
-        }
-    case MSGTYPE_CHARDESCUPDATE:
-        {
-            HandleCharDescUpdate(me,client);
-            break;
-        }
-    case MSGTYPE_TARGET_EVENT:
-        {
-            HandleTargetEvent(me);
-            break;
-        }
-    case MSGTYPE_ENTRANCE:
-        {
-            HandleEntranceMessage(me, client);
-            break;
-        }
-
-    }
-}
 
 void UserManager::Who(psUserCmdMessage& msg, Client* client, int clientnum)
 {

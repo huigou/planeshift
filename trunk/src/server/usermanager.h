@@ -70,7 +70,7 @@ public:
     UserManager(ClientConnectionSet *pCCS);
     virtual ~UserManager();
 
-    virtual void HandleMessage(MsgEntry *pMsg,Client *client);
+    virtual void HandleMessage(MsgEntry *pMsg,Client *client) { }
 
     /** @brief Send a notification to all clients on a person buddy list if they log on/off.
      *
@@ -340,7 +340,7 @@ protected:
     void HandleUserCommand(MsgEntry *me,Client *client);
     void HandleCharDescUpdate(MsgEntry *me,Client *client);
     void HandleCharDetailsRequest(MsgEntry *me,Client *client);
-    void HandleTargetEvent(MsgEntry *me);
+    void HandleTargetEvent(MsgEntry *me,Client *client);
     void HandleEntranceMessage( MsgEntry* me, Client *client );
 
     void SwitchAttackTarget(Client *targeter, Client *targeted);

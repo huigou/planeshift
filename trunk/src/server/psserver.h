@@ -70,7 +70,7 @@ class  csRandomGen;
 class  CharCreationManager;
 class  QuestManager;
 class  EconomyManager;
-class  psWorkManager;
+class  WorkManager;
 class  QuestionManager;
 class  ClientConnectionSet;
 class  Client;
@@ -303,7 +303,7 @@ public:
      * @return Returns a reference to the current work manager for the
      *     server.
      */
-    psWorkManager* GetWorkManager() { return workmanager; }
+    WorkManager* GetWorkManager() { return workmanager; }
 
     /** Returns the guild manager.
      *
@@ -526,7 +526,7 @@ protected:
     WeatherManager*                 weathermanager;
     SpellManager*                 spellmanager;
     ProgressionManager*             progression;
-    psWorkManager*                  workmanager;
+    WorkManager*                  workmanager;
     EconomyManager*                 economymanager;
     TutorialManager*                tutorialmanager;
     MiniGameManager*                minigamemanager;
