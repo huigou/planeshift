@@ -38,7 +38,7 @@
 #include "gem.h"
 
 class psWorkGameEvent;
-class psWorkManager;
+class WorkManager;
 class psItem;
 class Client;
 struct CombinationConstruction;
@@ -118,7 +118,7 @@ struct NaturalResource
 
 struct constraint
 {
-    bool (*constraintFunction)(psWorkManager* that, char* param);
+    bool (*constraintFunction)(WorkManager* that, char* param);
     const char* name;
     const char* message;
 };
@@ -129,14 +129,14 @@ struct constraint
 *  and information from the pspccharacterinfo Prop Classes for both
 *  the worker and the target.
 */
-class psWorkManager : public MessageManager
+class WorkManager : public MessageManager
 {
 public:
 
-    psWorkManager();
-    virtual ~psWorkManager();
+    WorkManager();
+    virtual ~WorkManager();
 
-    virtual void HandleMessage(MsgEntry *me, Client *client);
+    virtual void HandleMessage(MsgEntry *me, Client *client)  { }
 
 //-----------------------------------------------------------------------------
 // Entry points
@@ -219,12 +219,12 @@ public:
     *  
     */
     //@{         
-    static bool constraintTime(psWorkManager* that, char* param);
-    static bool constraintFriends(psWorkManager* that,char* param);
-    static bool constraintLocation(psWorkManager* that,char* param);
-    static bool constraintMode(psWorkManager* that,char* param);
-    static bool constraintGender(psWorkManager* that,char* param);
-    static bool constraintRace(psWorkManager* that,char* param);
+    static bool constraintTime(WorkManager* that, char* param);
+    static bool constraintFriends(WorkManager* that,char* param);
+    static bool constraintLocation(WorkManager* that,char* param);
+    static bool constraintMode(WorkManager* that,char* param);
+    static bool constraintGender(WorkManager* that,char* param);
+    static bool constraintRace(WorkManager* that,char* param);
     //@}
 
 
@@ -272,6 +272,9 @@ protected:
     MathScriptVar *var_mining_quality;      /// Quality of mining equipment
     MathScriptVar *var_mining_skill;        /// Mining skill
     MathScriptVar *var_mining_total;        /// Final result
+
+    void HandleLockPick(MsgEntry* me,Client *client);
+    void HandleWorkCommand(MsgEntry* me,Client *client);
 
     /** Stop auto work event.  
      * This is called when a client removes an item from any container 
@@ -467,7 +470,7 @@ private:
 class psWorkGameEvent : public psGameEvent, public iDeleteObjectCallback
 {
 public:
-    psWorkGameEvent(psWorkManager* mgr,
+    psWorkGameEvent(WorkManager* mgr,
                     gemActor* worker,
                     int delayticks, 
                     int cat,
@@ -525,7 +528,7 @@ public:
     int GetTransformationType() { return transType; }
     void SetTransformationType(int t) { transType = t; }
     
-    psWorkManager* workmanager;
+    WorkManager* workmanager;
     csWeakRef<gemObject> worker;
     NaturalResource* nr;
     Client* client;

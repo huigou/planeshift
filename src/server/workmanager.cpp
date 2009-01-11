@@ -84,32 +84,32 @@ const constraint constraints[] =
     // Time of day.
     // Parameter: hh; where hh is hour of 24 hour clock.
     // Example: TIME(12) is noon.
-    {psWorkManager::constraintTime, "TIME", "You can not do this work at this time of the day!"},
+    {WorkManager::constraintTime, "TIME", "You can not do this work at this time of the day!"},
 
     // People in area.
     // Parameter: n,r; where n is number of people and r is the range.
     // Example: FRIENDS(6,4) is six people within 4.
-    {psWorkManager::constraintFriends, "FRIENDS", "You need more people for this work!"},
+    {WorkManager::constraintFriends, "FRIENDS", "You need more people for this work!"},
 
     // Location of player.
     // Parameter: s,x,y,z,r; where s is sector, x is x-coord, y is y-coord, z is z-coord, and r is rotation.
     // Example: LOCATION(3,-10.53,176.36,,) is at [-10.53,176.36] any hight and any direction in sector 3.
-    {psWorkManager::constraintLocation, "LOCATION","You can not do this work here!"},
+    {WorkManager::constraintLocation, "LOCATION","You can not do this work here!"},
 
     // Player mode.
     // Parameter: mode; where mode is psCharacter mode string.
     // Example: MODE(sitting) is player needs to be sitting as work is started.
-    {psWorkManager::constraintMode, "MODE","You are not in the right position to complete this work!"},
+    {WorkManager::constraintMode, "MODE","You are not in the right position to complete this work!"},
 
     // Player gender.
     // Parameter: gender; where gender is psCharacter's gender.
     // Example: GENDER(F) is player needs to be female as work is completed.
-    {psWorkManager::constraintGender, "GENDER","You are not in the right gender to complete this work!"},
+    {WorkManager::constraintGender, "GENDER","You are not in the right gender to complete this work!"},
 
     // Player race.
     // Parameter: race; where race is psCharacter's race.
     // Example: RACE(ylianm) is player needs to be ylianm as work is completed.
-    {psWorkManager::constraintRace, "RACE","You do not have right racial background to complete this work!"},
+    {WorkManager::constraintRace, "RACE","You do not have right racial background to complete this work!"},
 
     // Array end.
     {NULL, "", ""}
@@ -117,12 +117,12 @@ const constraint constraints[] =
 
 //-----------------------------------------------------------------------------
 
-psWorkManager::psWorkManager()
+WorkManager::WorkManager()
 {
     currentQuality = 1.00;
 
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_WORKCMD,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_LOCKPICK,REQUIRE_READY_CLIENT|REQUIRE_ALIVE|REQUIRE_TARGET);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<WorkManager>(this,&WorkManager::HandleWorkCommand),MSGTYPE_WORKCMD,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<WorkManager>(this,&WorkManager::HandleLockPick),MSGTYPE_LOCKPICK,REQUIRE_READY_CLIENT|REQUIRE_ALIVE|REQUIRE_TARGET);
 
     script_engine = psserver->GetMathScriptEngine();
     calc_repair_time   = script_engine->FindScript("Calculate Repair Time");
@@ -178,7 +178,7 @@ psWorkManager::psWorkManager()
 };
 
 
-psWorkManager::~psWorkManager()
+WorkManager::~WorkManager()
 {
     if (psserver->GetEventManager())
     {
@@ -187,7 +187,7 @@ psWorkManager::~psWorkManager()
     }
 }
 
-void psWorkManager::Initialize()
+void WorkManager::Initialize()
 {
     Result res(db->Select("select * from natural_resources"));
 
@@ -224,89 +224,80 @@ void psWorkManager::Initialize()
     }
 }
 
-
-void psWorkManager::HandleMessage(MsgEntry* me,Client *client)
+void WorkManager::HandleWorkCommand(MsgEntry* me,Client *client)
 {
-    switch ( me->GetType() )
+    psWorkCmdMessage msg(me);
+
+    if (!msg.valid)
     {
-        case MSGTYPE_WORKCMD:
+        psserver->SendSystemError(me->clientnum,"Invalid work command.");
+        return;
+    }
+
+    if (msg.command == "/use" )
+    {
+        HandleUse(client);
+    }
+    else if (msg.command == "/combine")
+    {
+        HandleCombine(client);
+    }
+    else if (msg.command == "/dig")
+    {
+        HandleProduction(client,"dig",msg.filter);
+    }
+    else if (msg.command == "/fish")
+    {
+        HandleProduction(client, "fish", msg.filter);
+    }
+    else if (msg.command == "/repair")
+    {
+        HandleRepair(client, msg);
+    }
+}
+
+void WorkManager::HandleLockPick(MsgEntry* me,Client *client)
+{
+    gemObject* target = client->GetTargetObject();
+
+    // Check if target is action item
+    gemActionLocation* gemAction = dynamic_cast<gemActionLocation*>(target);
+    if(gemAction) {
+        psActionLocation *action = gemAction->GetAction();
+
+        // Check if the actionlocation is linked to real item
+        InstanceID InstanceID = action->GetInstanceID();
+        if( InstanceID!= INSTANCE_ALL )
         {
-            psWorkCmdMessage msg(me);
-
-            if (!msg.valid)
-            {
-                psserver->SendSystemError(me->clientnum,"Invalid work command.");
-                return;
-            }
-
-            if (msg.command == "/use" )
-            {
-                HandleUse(client);
-            }
-            else if (msg.command == "/combine")
-            {
-                HandleCombine(client);
-            }
-            else if (msg.command == "/dig")
-            {
-                HandleProduction(client,"dig",msg.filter);
-            }
-            else if (msg.command == "/fish")
-            {
-                HandleProduction(client, "fish", msg.filter);
-            }
-            else if (msg.command == "/repair")
-            {
-                HandleRepair(client, msg);
-            }
-            break;
-        }
-
-        case MSGTYPE_LOCKPICK:
-        {
-            gemObject* target = client->GetTargetObject();
-
-            // Check if target is action item
-            gemActionLocation* gemAction = dynamic_cast<gemActionLocation*>(target);
-            if(gemAction) {
-                psActionLocation *action = gemAction->GetAction();
-
-                // Check if the actionlocation is linked to real item
-                InstanceID InstanceID = action->GetInstanceID();
-                if( InstanceID!= INSTANCE_ALL )
-                {
-                    target = GEMSupervisor::GetSingleton().FindItemEntity( InstanceID );
-                }
-            }
-
-            // Check target gem
-            if (!target)
-            {
-                    Error1("No gemItem target!\n");
-                    return;
-            }
-
-            // Check range ignoring Y co-ordinate
-            if (client->GetActor()->RangeTo(target, true) > RANGE_TO_USE)
-            {
-                psserver->SendSystemInfo(client->GetClientNum(),"You need to be closer to the lock to try this.");
-                return;
-            }
-
-            // Get item
-            psItem* item = target->GetItem();
-            if ( !item )
-            {
-                Error1("Found gemItem but no psItem was attached!\n");
-                return;
-            }
-
-            StartLockpick(client,item);
-            break;
+            target = GEMSupervisor::GetSingleton().FindItemEntity( InstanceID );
         }
     }
 
+    // Check target gem
+    if (!target)
+    {
+        Error1("No gemItem target!\n");
+        return;
+    }
+
+    // Check range ignoring Y co-ordinate
+    if (client->GetActor()->RangeTo(target, true) > RANGE_TO_USE)
+    {
+        psserver->SendSystemInfo(client->GetClientNum(),"You need to be closer to the lock to try this.");
+        return;
+    }
+
+    // Get item
+    psItem* item = target->GetItem();
+    if ( !item )
+    {
+        Error1("Found gemItem but no psItem was attached!\n");
+        return;
+    }
+
+    StartLockpick(client,item);
 }
+
 
 //-----------------------------------------------------------------------------
 // Repair
@@ -324,7 +315,7 @@ void psWorkManager::HandleMessage(MsgEntry* me,Client *client)
 * 6) Queue time event to trigger when repair is complete, if not canceled.
 *
 */
-void psWorkManager::HandleRepair(Client *client, psWorkCmdMessage &msg)
+void WorkManager::HandleRepair(Client *client, psWorkCmdMessage &msg)
 {
     // Make sure client isn't already busy digging, etc.
     if ( client->GetActor()->GetMode() != PSCHARACTER_MODE_PEACE )
@@ -448,7 +439,7 @@ void psWorkManager::HandleRepair(Client *client, psWorkCmdMessage &msg)
  * 2) Consume the repair required item, if flagged to do so.
  * 3) Notify the user.
  */
-void psWorkManager::HandleRepairEvent(psWorkGameEvent* workEvent)
+void WorkManager::HandleRepairEvent(psWorkGameEvent* workEvent)
 {
     psItem *repairTarget = workEvent->object;
 
@@ -549,7 +540,7 @@ void psWorkManager::HandleRepairEvent(psWorkGameEvent* workEvent)
  *   Send anim and confirmation message to client
  *   Queue up game event for success
  */
-void psWorkManager::HandleProduction(Client *client,const char *type,const char *reward)
+void WorkManager::HandleProduction(Client *client,const char *type,const char *reward)
 {
     if ( !LoadLocalVars(client) )
     {
@@ -647,7 +638,7 @@ void psWorkManager::HandleProduction(Client *client,const char *type,const char 
 }
 
 // Function used by super client
-void psWorkManager::HandleProduction(gemActor *actor,const char *type,const char *reward)
+void WorkManager::HandleProduction(gemActor *actor,const char *type,const char *reward)
 {
     int mode = actor->GetMode();
 
@@ -731,7 +722,7 @@ void psWorkManager::HandleProduction(gemActor *actor,const char *type,const char
 }
 
 
-bool psWorkManager::SameProductionPosition(gemActor *actor,
+bool WorkManager::SameProductionPosition(gemActor *actor,
                                            const csVector3& startPos)
 {
     csVector3 pos;
@@ -742,7 +733,7 @@ bool psWorkManager::SameProductionPosition(gemActor *actor,
     return ((startPos - pos).SquaredNorm() < 1);
 }
 
-NaturalResource *psWorkManager::FindNearestResource(const char *reward,iSector *sector, csVector3& pos, const char *action)
+NaturalResource *WorkManager::FindNearestResource(const char *reward,iSector *sector, csVector3& pos, const char *action)
 {
     NaturalResource *nr=NULL;
 
@@ -778,7 +769,7 @@ NaturalResource *psWorkManager::FindNearestResource(const char *reward,iSector *
     return nr;
 }
 
-void psWorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
+void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
 {
     if (!workEvent->worker.IsValid()) // Worker has disconnected
         return;
@@ -1027,9 +1018,9 @@ void psWorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
 *    StartAutoWork - Item moved into container: SlotManager::MoveFromInventory()
 *                  - Item stack split in container: SlotManager::MoveFromWorldContainer()
 *    HandleUse - Client issues /use command from buttons: gemActiveObject::SendBehaviorMessage()
-*              - Workmanager gets /use message: psWorkManager::HandleMessage()
+*              - Workmanager gets /use message: WorkManager::HandleMessage()
 *    HandleCombine - Client issues /combine command from buttons: gemActiveObject::SendBehaviorMessage()
-*                  - Workmanager gets /combine message: psWorkManager::HandleMessage()
+*                  - Workmanager gets /combine message: WorkManager::HandleMessage()
 *    HandleWorkEvent - Work event triggers: psWorkGameEvent::Trigger()
 *    StopWork - Items removed from containers: SlotManager::MoveFromWorldContainer();
 *    StartScriptWork - Progression scripts pass pattern information: CraftOp::Run()
@@ -1038,7 +1029,7 @@ void psWorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Stop doing work
-void psWorkManager::StopWork(Client* client, psItem* item)
+void WorkManager::StopWork(Client* client, psItem* item)
 {
     // Assign the memeber vars
     if ( !LoadLocalVars(client) )
@@ -1084,7 +1075,7 @@ void psWorkManager::StopWork(Client* client, psItem* item)
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Handle /use command
-void psWorkManager::HandleUse(Client *client)
+void WorkManager::HandleUse(Client *client)
 {
     // Assign the memeber vars
     if ( !LoadLocalVars(client) )
@@ -1105,7 +1096,7 @@ void psWorkManager::HandleUse(Client *client)
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Check if possible to do some use work
-void psWorkManager::StartUseWork(Client* client)
+void WorkManager::StartUseWork(Client* client)
 {
     // Check to see if we have everything we need to do any trade work
     if (!ValidateWork())
@@ -1256,7 +1247,7 @@ void psWorkManager::StartUseWork(Client* client)
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Stop doing use work
-void psWorkManager::StopUseWork(Client* client)
+void WorkManager::StopUseWork(Client* client)
 {
     // Check for any targeted item or container in hand
     if ( !ValidateTarget(client))
@@ -1274,7 +1265,7 @@ void psWorkManager::StopUseWork(Client* client)
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Handle /combine command
-void psWorkManager::HandleCombine(Client *client)
+void WorkManager::HandleCombine(Client *client)
 {
     // Assign the memeber vars
     if ( !LoadLocalVars(client) )
@@ -1295,7 +1286,7 @@ void psWorkManager::HandleCombine(Client *client)
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Check if possible to do some use work
-void psWorkManager::StartCombineWork(Client* client)
+void WorkManager::StartCombineWork(Client* client)
 {
     // Check to see if we have everything we need to do any trade work
     if (!ValidateWork())
@@ -1326,7 +1317,7 @@ void psWorkManager::StartCombineWork(Client* client)
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Do combine work if possible
-bool psWorkManager::CombineWork()
+bool WorkManager::CombineWork()
 {
     // Find out if anything can be combined in container
     uint32 combinationId = 0;
@@ -1376,7 +1367,7 @@ bool psWorkManager::CombineWork()
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Stop doing combine work
-void psWorkManager::StopCombineWork(Client* client)
+void WorkManager::StopCombineWork(Client* client)
 {
     // Check for any targeted item or container in hand
     if ( !ValidateTarget(client))
@@ -1396,7 +1387,7 @@ void psWorkManager::StopCombineWork(Client* client)
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Check if possible to do some automatic work
-void psWorkManager::StartAutoWork(Client* client, gemContainer* container, psItem* droppedItem, int count)
+void WorkManager::StartAutoWork(Client* client, gemContainer* container, psItem* droppedItem, int count)
 {
     // Assign the member vars
     if ( !LoadLocalVars(client) )
@@ -1473,7 +1464,7 @@ void psWorkManager::StartAutoWork(Client* client, gemContainer* container, psIte
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Stop doing automatic work
-void psWorkManager::StopAutoWork(Client* client, psItem* autoItem)
+void WorkManager::StopAutoWork(Client* client, psItem* autoItem)
 {
     // Check for proper autoItem
     if ( !autoItem )
@@ -1505,7 +1496,7 @@ void psWorkManager::StopAutoWork(Client* client, psItem* autoItem)
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Check if possible to do some script work
-bool psWorkManager::StartScriptWork(Client* client, gemObject *target, csString pattern)
+bool WorkManager::StartScriptWork(Client* client, gemObject *target, csString pattern)
 {
     // Assign the memeber vars
     if (!LoadLocalVars(client, target))
@@ -1581,7 +1572,7 @@ bool psWorkManager::StartScriptWork(Client* client, gemObject *target, csString 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Do no item script work
-bool psWorkManager::ScriptNoTarget()
+bool WorkManager::ScriptNoTarget()
 {
     // Check if player has any items in right hand
     psItem* rhand = owner->Inventory().GetInventoryItem(PSCHARACTER_SLOT_RIGHTHAND);
@@ -1640,7 +1631,7 @@ bool psWorkManager::ScriptNoTarget()
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Do actor script work
-bool psWorkManager::ScriptActor(gemActor* gemAct)
+bool WorkManager::ScriptActor(gemActor* gemAct)
 {
     // Set target if any
     if (gemAct && gemAct->GetCharacterData() == NULL )
@@ -1706,7 +1697,7 @@ bool psWorkManager::ScriptActor(gemActor* gemAct)
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Do item script work
-bool psWorkManager::ScriptItem(gemItem* gemItm)
+bool WorkManager::ScriptItem(gemItem* gemItm)
 {
     // Check range ignoring Y co-ordinate
     if (worker->RangeTo(gemItm, true) > RANGE_TO_USE)
@@ -1754,7 +1745,7 @@ bool psWorkManager::ScriptItem(gemItem* gemItm)
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Do action location script work
-bool psWorkManager::ScriptAction(gemActionLocation* gemAction)
+bool WorkManager::ScriptAction(gemActionLocation* gemAction)
 {
     psActionLocation *action = gemAction->GetAction();
 
@@ -1775,7 +1766,7 @@ bool psWorkManager::ScriptAction(gemActionLocation* gemAction)
 //  if work item container has the correct items in the correct amounts
 // Note:  This assumes that the combination items array is sorted by
 //  resultId and then itemId
-bool psWorkManager::IsContainerCombinable(uint32 &resultId, int &resultQty)
+bool WorkManager::IsContainerCombinable(uint32 &resultId, int &resultQty)
 {
     // cast a gem container to iterate thru
     gemContainer *container = dynamic_cast<gemContainer*> (workItem->GetGemObject());
@@ -1817,7 +1808,7 @@ bool psWorkManager::IsContainerCombinable(uint32 &resultId, int &resultQty)
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Checks to see if every item in list matches every item in a valid combination
-bool psWorkManager::ValidateCombination(csArray<psItem*> itemArray, uint32 &resultId, int &resultQty)
+bool WorkManager::ValidateCombination(csArray<psItem*> itemArray, uint32 &resultId, int &resultQty)
 {
     // check if player owns anything in conatiner
     size_t itemCount = itemArray.GetSize();
@@ -1888,7 +1879,7 @@ bool psWorkManager::ValidateCombination(csArray<psItem*> itemArray, uint32 &resu
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Checks to see if every item in list is in the set of ingredients for this pattern
-bool psWorkManager::AnyCombination(csArray<psItem*> itemArray, uint32 &resultId, int &resultQty)
+bool WorkManager::AnyCombination(csArray<psItem*> itemArray, uint32 &resultId, int &resultQty)
 {
     // check if player owns anything in conatiner
     size_t itemCount = itemArray.GetSize();
@@ -1948,7 +1939,7 @@ bool psWorkManager::AnyCombination(csArray<psItem*> itemArray, uint32 &resultId,
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Checks for matching combination list to item array
-bool psWorkManager::MatchCombinations(csArray<psItem*> itemArray, CombinationConstruction* current)
+bool WorkManager::MatchCombinations(csArray<psItem*> itemArray, CombinationConstruction* current)
 {
     // If the items count match then this is a possible valid combination.
     if ( itemArray.GetSize() == current->combinations.GetSize() )
@@ -2005,7 +1996,7 @@ bool psWorkManager::MatchCombinations(csArray<psItem*> itemArray, CombinationCon
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Checks if any transformation is possible
 //   We check the more specific transforms for matches first
-unsigned int psWorkManager::AnyTransform(uint32 singlePatternId, uint32 groupPatternId, uint32 targetId, int targetQty)
+unsigned int WorkManager::AnyTransform(uint32 singlePatternId, uint32 groupPatternId, uint32 targetId, int targetQty)
 {
     // First check for specific single transform match
     if (secure) psserver->SendSystemInfo(clientNum,"Checking single transforms for pattern id %u, target id %u, and target qty %u.", singlePatternId,targetId,targetQty );
@@ -2059,7 +2050,7 @@ unsigned int psWorkManager::AnyTransform(uint32 singlePatternId, uint32 groupPat
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Checks if a transformation is possible
-unsigned int psWorkManager::IsTransformable(uint32 patternId, uint32 targetId, int targetQty)
+unsigned int WorkManager::IsTransformable(uint32 patternId, uint32 targetId, int targetQty)
 {
     unsigned int match = TRANSFORM_GARBAGE;
     uint32 workID = 0;
@@ -2170,7 +2161,7 @@ unsigned int psWorkManager::IsTransformable(uint32 patternId, uint32 targetId, i
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Checks if any ingredient transformation is possible
-bool psWorkManager::IsIngredient(uint32 patternId, uint32 groupPatternId, uint32 targetId)
+bool WorkManager::IsIngredient(uint32 patternId, uint32 groupPatternId, uint32 targetId)
 {
     // Check if ingredient is on list of unique ingredients for this pattern
     csArray<uint32>* itemArray = CacheManager::GetSingleton().GetTradeTransUniqueByID(patternId);
@@ -2220,7 +2211,7 @@ bool psWorkManager::IsIngredient(uint32 patternId, uint32 groupPatternId, uint32
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Do transformation
 // This is called once all the transformation requirements have been verified.
-void psWorkManager::StartTransformationEvent(int transType, INVENTORY_SLOT_NUMBER transSlot, int resultQty,
+void WorkManager::StartTransformationEvent(int transType, INVENTORY_SLOT_NUMBER transSlot, int resultQty,
                                              float resultQuality, psItem* item)
 {
     // Get transformation delay
@@ -2295,7 +2286,7 @@ void psWorkManager::StartTransformationEvent(int transType, INVENTORY_SLOT_NUMBE
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Loads up local memeber variables
-bool psWorkManager::LoadLocalVars(Client* client, gemObject *target)
+bool WorkManager::LoadLocalVars(Client* client, gemObject *target)
 {
     if ( client == NULL )
     {
@@ -2345,7 +2336,7 @@ bool psWorkManager::LoadLocalVars(Client* client, gemObject *target)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Check to see if client can do any trade work
-bool psWorkManager::ValidateWork()
+bool WorkManager::ValidateWork()
 {
     if ( worker->GetMode() == PSCHARACTER_MODE_WORK)
     {
@@ -2366,7 +2357,7 @@ bool psWorkManager::ValidateWork()
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Check to see if client can do any trade work and
 // that we have everything we need to do any trade work
-bool psWorkManager::ValidateMind()
+bool WorkManager::ValidateMind()
 {
     // Check for the existance of a design item
     psItem* designitem = owner->Inventory().GetInventoryItem( PSCHARACTER_SLOT_MIND );
@@ -2398,7 +2389,7 @@ bool psWorkManager::ValidateMind()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Check for any targeted item or container in hand
-bool psWorkManager::ValidateTarget(Client* client)
+bool WorkManager::ValidateTarget(Client* client)
 {
     // Check if player has something targeted
     gemObject* target = client->GetTargetObject();
@@ -2476,7 +2467,7 @@ bool psWorkManager::ValidateTarget(Client* client)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Check if client is too tired
-bool psWorkManager::ValidateStamina(Client* client)
+bool WorkManager::ValidateStamina(Client* client)
 {
     //TODO: use factors based on the work to determine required stamina
     // check stamina
@@ -2493,7 +2484,7 @@ bool psWorkManager::ValidateStamina(Client* client)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Checks if equipment is in hand
-bool psWorkManager::IsOnHand( uint32 equipId )
+bool WorkManager::IsOnHand( uint32 equipId )
 {
     // Check right hand
     psItem* rhand = owner->Inventory().GetInventoryItem(PSCHARACTER_SLOT_RIGHTHAND);
@@ -2520,7 +2511,7 @@ bool psWorkManager::IsOnHand( uint32 equipId )
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Validates player has enough training
-bool psWorkManager::ValidateTraining(psTradeTransformations* transCandidate, psTradeProcesses* processCandidate)
+bool WorkManager::ValidateTraining(psTradeTransformations* transCandidate, psTradeProcesses* processCandidate)
 {
     // Check primary skill training if any skill required
     int priSkill = processCandidate->GetPrimarySkillId();
@@ -2552,7 +2543,7 @@ bool psWorkManager::ValidateTraining(psTradeTransformations* transCandidate, psT
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Validates player has the correct skills
-bool psWorkManager::ValidateSkills(psTradeTransformations* transCandidate, psTradeProcesses* processCandidate)
+bool WorkManager::ValidateSkills(psTradeTransformations* transCandidate, psTradeProcesses* processCandidate)
 {
     // Check if players primary skill levels are less then minimum for that skill
     int priSkill = processCandidate->GetPrimarySkillId();
@@ -2581,7 +2572,7 @@ bool psWorkManager::ValidateSkills(psTradeTransformations* transCandidate, psTra
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool psWorkManager::CheckStamina(psCharacter * owner) const
+bool WorkManager::CheckStamina(psCharacter * owner) const
 {
 //todo- use factors based on the work to determine required stamina
     return ((owner->GetStamina(true) >= ( owner->GetStaminaMax(true)*.1 ) ) // physical
@@ -2590,7 +2581,7 @@ bool psWorkManager::CheckStamina(psCharacter * owner) const
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Validates player is not over skilled
-bool psWorkManager::ValidateNotOverSkilled(psTradeTransformations* transCandidate, psTradeProcesses* processCandidate)
+bool WorkManager::ValidateNotOverSkilled(psTradeTransformations* transCandidate, psTradeProcesses* processCandidate)
 {
     // Check if players primary skill levels are less then minimum for that skill
     int priSkill = processCandidate->GetPrimarySkillId();
@@ -2621,7 +2612,7 @@ bool psWorkManager::ValidateNotOverSkilled(psTradeTransformations* transCandidat
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Validate if all the transformation constraints are meet
 // Note: This assumes that each of the constraints have paramaters
-bool psWorkManager::ValidateConstraints(psTradeTransformations* transCandidate, psTradeProcesses* processCandidate)
+bool WorkManager::ValidateConstraints(psTradeTransformations* transCandidate, psTradeProcesses* processCandidate)
 {
     // Set up to go through the constraint string picking out the functions and parameters
     const char constraintSeperators[] = "\t(),";
@@ -2667,7 +2658,7 @@ bool psWorkManager::ValidateConstraints(psTradeTransformations* transCandidate, 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Calculate how long it will take to complete event
 //  based on the transformation's point quanity
-int psWorkManager::CalculateEventDuration(int pointQty)
+int WorkManager::CalculateEventDuration(int pointQty)
 {
     // Translate the points into seconds
     // ToDo: For now the point quantity is the duration
@@ -2676,7 +2667,7 @@ int psWorkManager::CalculateEventDuration(int pointQty)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Combine transform all items in container into a new item
-psItem* psWorkManager::CombineContainedItem(uint32 newId, int newQty, float itemQuality, psItem* containerItem)
+psItem* WorkManager::CombineContainedItem(uint32 newId, int newQty, float itemQuality, psItem* containerItem)
 {
 #ifdef DEBUG_WORKMANAGER
     CPrintf(CON_DEBUG, "deleting items from container...\n");
@@ -2766,7 +2757,7 @@ psItem* psWorkManager::CombineContainedItem(uint32 newId, int newQty, float item
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Transform the one items in container into a new item
-psItem* psWorkManager::TransformContainedItem(psItem* oldItem, uint32 newId, int newQty, float itemQuality)
+psItem* WorkManager::TransformContainedItem(psItem* oldItem, uint32 newId, int newQty, float itemQuality)
 {
     if (!oldItem)
     {
@@ -2848,7 +2839,7 @@ psItem* psWorkManager::TransformContainedItem(psItem* oldItem, uint32 newId, int
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Transform all items in equipment into a new item
-psItem* psWorkManager::TransformSlotItem(INVENTORY_SLOT_NUMBER slot, uint32 newId, int newQty, float itemQuality)
+psItem* WorkManager::TransformSlotItem(INVENTORY_SLOT_NUMBER slot, uint32 newId, int newQty, float itemQuality)
 {
     // Remove items from slot and destroy it
     psItem *oldItem = owner->Inventory().RemoveItem(NULL,slot);
@@ -2918,7 +2909,7 @@ psItem* psWorkManager::TransformSlotItem(INVENTORY_SLOT_NUMBER slot, uint32 newI
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Transform all items in equipment into a new item
-psItem* psWorkManager::TransformTargetSlotItem(INVENTORY_SLOT_NUMBER slot, uint32 newId, int newQty, float itemQuality)
+psItem* WorkManager::TransformTargetSlotItem(INVENTORY_SLOT_NUMBER slot, uint32 newId, int newQty, float itemQuality)
 {
     // Remove items from targeted slot and destroy it
     psItem *oldItem = gemTarget->GetCharacterData()->Inventory().RemoveItem(NULL,slot);
@@ -2999,7 +2990,7 @@ psItem* psWorkManager::TransformTargetSlotItem(INVENTORY_SLOT_NUMBER slot, uint3
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Transforms the targeted item into a new item
-psItem* psWorkManager::TransformTargetItem(psItem* oldItem, uint32 newId, int newQty, float itemQuality)
+psItem* WorkManager::TransformTargetItem(psItem* oldItem, uint32 newId, int newQty, float itemQuality)
 {
     if (!oldItem)
     {
@@ -3073,7 +3064,7 @@ psItem* psWorkManager::TransformTargetItem(psItem* oldItem, uint32 newId, int ne
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Create the new item and return newly created item pointer
 //  The location and saving of item is up to calling routine
-psItem* psWorkManager::CreateTradeItem(uint32 newId, int newQty, float itemQuality, bool transient)
+psItem* WorkManager::CreateTradeItem(uint32 newId, int newQty, float itemQuality, bool transient)
 {
     Debug3( LOG_TRADE, 0,"Creating new item id(%u) quantity(%d)\n", newId, newQty );
 
@@ -3134,7 +3125,7 @@ psItem* psWorkManager::CreateTradeItem(uint32 newId, int newQty, float itemQuali
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Constraint function to check hour of day
-bool psWorkManager::constraintTime(psWorkManager* that,char* param)
+bool WorkManager::constraintTime(WorkManager* that,char* param)
 {
     // Check paramater pointer
     if(!param)
@@ -3155,7 +3146,7 @@ bool psWorkManager::constraintTime(psWorkManager* that,char* param)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Constraint function to check if players are near worker (including worker)
 //  Note: Constraint distance is limited to proximiy list.
-bool psWorkManager::constraintFriends(psWorkManager* that, char* param)
+bool WorkManager::constraintFriends(WorkManager* that, char* param)
 {
     // Check paramater pointer
     if(!param)
@@ -3177,7 +3168,7 @@ bool psWorkManager::constraintFriends(psWorkManager* that, char* param)
 #define MAXANGLE 0.2
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Constraint function to check location
-bool psWorkManager::constraintLocation(psWorkManager* that, char* param)
+bool WorkManager::constraintLocation(WorkManager* that, char* param)
 {
     int ch = ',';
     char* pdest;
@@ -3266,7 +3257,7 @@ bool psWorkManager::constraintLocation(psWorkManager* that, char* param)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Constraint function to check client mode
-bool psWorkManager::constraintMode(psWorkManager* that, char* param)
+bool WorkManager::constraintMode(WorkManager* that, char* param)
 {
     // Check mode string pointer
     if ( !that->preworkModeString )
@@ -3281,7 +3272,7 @@ bool psWorkManager::constraintMode(psWorkManager* that, char* param)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Constraint function to check client gender
-bool psWorkManager::constraintGender(psWorkManager* that, char* param)
+bool WorkManager::constraintGender(WorkManager* that, char* param)
 {
     // Get race info
     psRaceInfo* race = that->owner->GetRaceInfo();
@@ -3295,7 +3286,7 @@ bool psWorkManager::constraintGender(psWorkManager* that, char* param)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Constraint function to check client race
-bool psWorkManager::constraintRace(psWorkManager* that, char* param)
+bool WorkManager::constraintRace(WorkManager* that, char* param)
 {
     // Get race info
     psRaceInfo* race = that->owner->GetRaceInfo();
@@ -3309,7 +3300,7 @@ bool psWorkManager::constraintRace(psWorkManager* that, char* param)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // This handles trade work transformation events
-void psWorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
+void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
 {
 #ifdef DEBUG_WORKMANAGER
     CPrintf(CON_DEBUG, "handling work event...\n");
@@ -3600,7 +3591,7 @@ void psWorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
 }
 
 // Apply skills if any to quality and practice points
-bool psWorkManager::ApplySkills(float factor, psItem* transItem)
+bool WorkManager::ApplySkills(float factor, psItem* transItem)
 {
     // just return for processless transforms
     if (!process)
@@ -3764,7 +3755,7 @@ bool psWorkManager::ApplySkills(float factor, psItem* transItem)
     return true;
 }
 
-void psWorkManager::SendTransformError( uint32_t clientNum, unsigned int result, uint32 curItemId, int curItemQty )
+void WorkManager::SendTransformError( uint32_t clientNum, unsigned int result, uint32 curItemId, int curItemQty )
 {
     csString error("");
 
@@ -3869,7 +3860,7 @@ void psWorkManager::SendTransformError( uint32_t clientNum, unsigned int result,
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Stop doing cleanup work
-void psWorkManager::StopCleanupWork(Client* client, psItem* cleanItem)
+void WorkManager::StopCleanupWork(Client* client, psItem* cleanItem)
 {
     // Check for proper autoItem
     if ( !cleanItem )
@@ -3890,7 +3881,7 @@ void psWorkManager::StopCleanupWork(Client* client, psItem* cleanItem)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Start doing cleanup
-void psWorkManager::StartCleanupEvent(int transType, Client* client, psItem* item, gemActor* worker)
+void WorkManager::StartCleanupEvent(int transType, Client* client, psItem* item, gemActor* worker)
 {
     if (!item)
     {
@@ -3916,7 +3907,7 @@ void psWorkManager::StartCleanupEvent(int transType, Client* client, psItem* ite
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Remove ownership of item making item free game.
-void psWorkManager::HandleCleanupEvent(psWorkGameEvent* workEvent)
+void WorkManager::HandleCleanupEvent(psWorkGameEvent* workEvent)
 {
 #ifdef DEBUG_WORKMANAGER
     CPrintf(CON_DEBUG, "handling cleanup workEvent...\n");
@@ -3937,7 +3928,7 @@ void psWorkManager::HandleCleanupEvent(psWorkGameEvent* workEvent)
 // Lock picking
 //-----------------------------------------------------------------------------
 
-void psWorkManager::StartLockpick(Client* client,psItem* item)
+void WorkManager::StartLockpick(Client* client,psItem* item)
 {
     // Check if its a lock
     if(!item->GetIsLockable())
@@ -4003,7 +3994,7 @@ void psWorkManager::StartLockpick(Client* client,psItem* item)
     psserver->GetEventManager()->Push(ev);
 }
 
-void psWorkManager::LockpickComplete(psWorkGameEvent* workEvent)
+void WorkManager::LockpickComplete(psWorkGameEvent* workEvent)
 {
     psCharacter* character = workEvent->client->GetCharacterData();
     PSSKILL skill = workEvent->object->GetLockpickSkill();
@@ -4043,7 +4034,7 @@ void psWorkManager::LockpickComplete(psWorkGameEvent* workEvent)
 
 //////////////////////////////////////////////////////////////
 //  Primary work object
-psWorkGameEvent::psWorkGameEvent(psWorkManager* mgr,
+psWorkGameEvent::psWorkGameEvent(WorkManager* mgr,
                                  gemActor* worker,
                                  int delayticks,
                                  int cat,
