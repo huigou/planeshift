@@ -2,7 +2,7 @@
 <head>
 
 <title>PlaneShift Compiling Guide</title>
-<meta name="copyright" content="&copy; 2008 Atomic Blue">
+<meta name="copyright" content="&copy; 2009 Atomic Blue">
 <meta http-equiv="content-type" content="text/html">
 <script type="text/javascript">
 /*
@@ -45,7 +45,7 @@ e.custom(start,val,"");}});return true;});},queue:function(type,fn){if(jQuery.is
     // An additional CS revision (CSrev_HEAD) may be specified for the latest version of PS.
     var CSrev = "31648";  // CS_SOURCE_REV
     var CAL3Drev = "507"; // CAL3D_SOURCE_REV
-    var CSrev_HEAD = "31684";  // CS_SOURCE_REV_HEAD
+    var CSrev_HEAD = "HEAD";  // CS_SOURCE_REV_HEAD
     var CAL3Drev_HEAD = "507"; // CAL3D_SOURCE_REV_HEAD
     var PSStable_Laanx = "2580"; //Last revision of ps stable that works with laanx
     var PSStable_latest = "2580"; //STABLE HEAD - Set this the same as PSStable_Laanx to hide revision info for stable
@@ -640,7 +640,7 @@ After that we need to refresh our sources.list file like so:<br>
     <p>Note: This section is incomplete and untested, but contains the Debian specific build information that was previously in the manual.</p>
     <p>Due to the number of dependencies needed, if you wish to read the homepage listing, or dependency description please select Linux's generic dropdown selection.</p>
 
-    <p>via apt-get: <i class="command">#apt-get install jam svn build-essentials libfreetype6-dev libasound2-dev </i></p>
+    <p>via apt-get: <i class="command">#apt-get install jam subversion build-essential libfreetype6-dev libasound2-dev </i></p>
 
     <p>If you are using Debian testing (which uses X.Org), then you need xlibmesa-gl-dev instead of xlibmesa-glu-dev.</p>
     <p>
@@ -652,7 +652,7 @@ After that we need to refresh our sources.list file like so:<br>
     They would conflict with the older versions flex-old, bison1.35 and automake1.8 needed to compile PlaneShift.</p>
 
     <p><i class="command">#apt-get install libtool bison-1.35 flex-old autoconf automake1.8</i></p>
-    <p><i class="command">#apt-get install libmng-dev libmikmod2-dev libogg-dev libvorbis-dev zlib1g-dev libpng3-dev libjpeg62-dev python2.3-dev libspeex-dev</i></p>
+    <p><i class="command">#apt-get install libmng-dev libmikmod2-dev libogg-dev libvorbis-dev zlib1g-dev libpng3-dev libjpeg62-dev python2.4-dev libspeex-dev</i></p>
 <strong> BOTH of these above commands are assuming you do not need a server if you do please follow directions in the <a href="#mysql">mysql</a> section for installing other required packages</strong>
 </div>
 
@@ -914,7 +914,7 @@ then<br /><br />
     <h3>Updating Sources</h3>
     <p>From time to time, newer PlaneShift revisions will require you to upgrade your cal3d and CS repositories to a newer revision as well.  To update your supporting libraries, always be certain that you use the "-r" option keep from updating to the latest revision:</p>
 
-    If you want to update to a new revision replace REVISON with the number of the revision you want to use:
+    If you want to update to a new revision replace REVISION with the number of the revision you want to use:
     <p><div class="commandBox">
     $HOME/development/cal3d$ svn update -r REVISION<br>
         $HOME/development/cs$ svn update -r REVISION<br>
@@ -1073,7 +1073,7 @@ If you update a repository, you will need to recompile that repository and each 
 <h3>Updating Sources</h3>
     <p>From time to time, newer PlaneShift revisions will require you to upgrade your cal3d and CS repositories to a newer revision as well.  To update your supporting libraries, always be certain that you use the "-r" option keep from updating to the latest revision:</p>
 
-    If you want to update to a new revision replace REVISON with the number of the revision you want to use:
+    If you want to update to a new revision replace REVISION with the number of the revision you want to use:
     <p><div class="commandBox">
     $HOME/development/cal3d$ svn update -r REVISION<br>
         $HOME/development/cs$ svn update -r REVISION<br>
@@ -1547,7 +1547,9 @@ a <i>art</i> subdirectory in your PlaneShift directory.
 <div class="Linux">
 <p><i class="command">$HOME/development/planeshift$ svn co https://planeshift.svn.sourceforge.net/svnroot/planeshift/art</i></p>
 </div>
-
+<div class="MacOSX">
+<p><i class="command">$HOME/development/planeshift$ svn co https://planeshift.svn.sourceforge.net/svnroot/planeshift/art</i></p>
+</div>
 <div class="Windows">
 <p><i class="command">https://planeshift.svn.sourceforge.net/svnroot/planeshift/art</i></p>
 </div>
