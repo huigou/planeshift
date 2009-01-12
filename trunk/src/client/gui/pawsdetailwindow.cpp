@@ -217,7 +217,7 @@ void pawsDetailWindow::HandleMessage( MsgEntry* me )
                 "sensed with the five accepted senses (sight, touch, hearing and smell (being primary)"
                 "(only list taste if you anticipate people tasting your character)).");
             if(!storedoocdescription.Length()) //if the player didn't input anything in ooc description inform him
-                storedoocdescription = PawsManager::GetSingleton().Translate("HELP TEXT HERE.");
+                storedoocdescription = PawsManager::GetSingleton().Translate("Here you can place any OOC information except to advertise companies, products, or services from the real world.\n\nTo disable this feature delete everything in the window by using the Modify Description button.");
         }
         else
         {
