@@ -1,0 +1,31 @@
+This file contains detailed To Do's for the engine team or prospects looking to help.
+Put an X in between the brackets as you commit one of these items or a patch for one of these items.
+
+
+PAWS enhancements
+-----------------
+[ ] Add support for pawsBorder to buttons and other widgets
+[ ] Make a new type of pawsBorder which has only left->middle tiled->right images (3 images)
+[ ] Make buttons support Up, Down, Up with mouseover, Down with mouseover, Disabled Up and Disabled Down in 6 border references
+[ ] Make the font definition hierarchical, so that each child inherits the font from the parent without needing it specified over and over.
+[ ] Extend an image resource to be a subrectangle from an image file, so that a single image file can contain many resources
+
+
+Paladin Fixes
+-------------
+The following give false positives in PaladinJr when performed by a player validly.  Fix:
+[ ] Move then teleport
+[ ] Teleport then move
+[ ] Move then slide
+[ ] Slide then move
+[ ] Move and use an AL that teleports you to the same sector
+[ ] Fall off a map
+
+NPC Interaction
+---------------
+[ ] Fix npc chat bubbles displaying
+[ ] Do the question popup widget
+[ ] Make the camera look from person to person when talking and fixate on the player when NPC response is complete
+[ ] Make Option GUI for enabling/disabling voice audio
+[ ] Make Option GUI for making bubbles disappear slower/faster
+[ ] Make a way for players to skip a bubble and cut off audio by clicking the bubble.
