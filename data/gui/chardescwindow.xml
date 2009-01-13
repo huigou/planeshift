@@ -13,11 +13,23 @@
             <frame x="34" y="8" width="200" height="20" border="no" />
             <font name="/planeshift/data/ttf/scurlock.ttf" r="255" g="255" b="255" size="14" scalefont="no"/>
             <text string="Character description:" />
+            <attachpoints>
+                <attach point="PROPORTIONAL_RIGHT" />
+                <attach point="PROPORTIONAL_LEFT" />
+                <attach point="PROPORTIONAL_TOP" />
+                <attach point="PROPORTIONAL_BOTTOM" />
+            </attachpoints>
         </widget>
         <widget name="lblb" factory="pawsTextBox" >
             <frame x="35" y="9" width="200" height="20" border="no" />
             <font name="/planeshift/data/ttf/scurlock.ttf" r="0" g="0" b="0" size="14" scalefont="no"/>
             <text string="Character description:" />
+            <attachpoints>
+                <attach point="PROPORTIONAL_RIGHT" />
+                <attach point="PROPORTIONAL_LEFT" />
+                <attach point="PROPORTIONAL_TOP" />
+                <attach point="PROPORTIONAL_BOTTOM" />
+            </attachpoints>
         </widget>
  
         <widget name="Description" factory="pawsMultilineEditTextBox" >
