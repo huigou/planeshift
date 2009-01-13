@@ -1,4 +1,16 @@
-﻿*** 2009-01-10 by Keith Fulton
+﻿*** 2009-01-13 by Stefano Angeleri
+- Changed tabs to spaces and trimmed ending spaces
+- Added the possibility to load/save descriptions from file.
+  They are stored in /description/char_name_description.txt and ca be
+  easily loaded with a button from the char description editing window
+  fixing PS#2434 - Loading-/Saving-functions for player descriptions 
+- Committed patch by Electricsheep fixing
+  PS#2632 - resizing the chardescription edit window. with some
+  refactoring from me
+- Updates to the compiling guide
+- Added OOC tab help by doshot
+
+*** 2009-01-10 by Keith Fulton
 - Now PaladinJr will not report teleports or shifts as cheat moves.
 - Restructured the allowed lag calculations significantly.  Khaki if you're out there
   your review would be appreciated.
