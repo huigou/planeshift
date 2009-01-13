@@ -70,6 +70,12 @@ enum TARGET_TYPES
     TARGET_PVP      = 0x100
 };
 
+enum CheatFlags // will have more of these as Paladin gets better
+{
+    NO_CHEAT   = 0x00,
+    MOVE_CHEAT = 0x01
+};
+
 
 /**
 * This class collects data of a netclient. While the socket data like
@@ -355,6 +361,9 @@ public:
     /// Give a warning to the client silently. Capped at 10000.
     void CountDetectedCheat() {if (detectedCheatCount < 10000) detectedCheatCount++; }
     int GetDetectedCheatCount() { return detectedCheatCount;}
+    /// Set the next move as not a cheat, or clear it.
+    void SetCheatMask(CheatFlags mask,bool flag);
+    bool GetCheatMask(CheatFlags mask) { return (cheatMask & mask) != 0;  }
 
 protected:
 
@@ -429,8 +438,10 @@ private:
     bool isFrozen;  ///< Whether the client is frozen or not.
 
     /// Potential number of exploits automatically detected.
-    /// This needs more work as it's only a preliminary measure so far.
     int detectedCheatCount;
+
+    /// This flag set to true after a teleport, to keep Paladin from reporting a cheat
+    int cheatMask;
 };
 
 #endif
