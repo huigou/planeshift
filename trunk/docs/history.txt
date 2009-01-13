@@ -1,4 +1,14 @@
-﻿*** 2009-01-10 by Stefano Angeleri
+﻿*** 2009-01-10 by Keith Fulton
+- Now PaladinJr will not report teleports or shifts as cheat moves.
+- Restructured the allowed lag calculations significantly.  Khaki if you're out there
+  your review would be appreciated.
+- Left in the debug printf spam intentionally to help the testing team help me figure
+  out where the remaining problems are.
+- Final functor messaging conversion is completed.
+- Renamed psWorkManager to WorkManager for consistency.  I think all the "ps" prefixes
+  are now gone from the Manager level anyway.
+
+*** 2009-01-10 by Stefano Angeleri
 - Ignoring quest prereqs when questtester is set
 - Made an error message in crafting more visible
 
