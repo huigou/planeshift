@@ -1,38 +1,58 @@
 <widget_description>
-
+ 
     <widget name="DescriptionEdit" factory="pawsCharDescription"
-            visible="yes" savepositions="no" movable="yes" 
-            resizable="no" configurable="yes">
-        
+            visible="yes" savepositions="no" movable="yes" keepaspect="no" 
+            resizable="yes" configurable="yes">
+ 
         <frame x="100" y="100" width="320" height="270" border="yes" />
+        <minframe width="250" height="250" />
         <title resource="Blue Title" text="Modify description" align="left" close_button="yes" />
         <bgimage resource="Modify Description BG" alpha="128" />
-    
+ 
         <widget name="lbl" factory="pawsTextBox" >
             <frame x="34" y="8" width="200" height="20" border="no" />
-            <font name="/planeshift/data/ttf/scurlock.ttf" r="255" g="255" b="255" size="14" />
+            <font name="/planeshift/data/ttf/scurlock.ttf" r="255" g="255" b="255" size="14" scalefont="no"/>
             <text string="Character description:" />
         </widget>
-       <widget name="lblb" factory="pawsTextBox" >
+        <widget name="lblb" factory="pawsTextBox" >
             <frame x="35" y="9" width="200" height="20" border="no" />
-            <font name="/planeshift/data/ttf/scurlock.ttf" r="0" g="0" b="0" size="14" />
+            <font name="/planeshift/data/ttf/scurlock.ttf" r="0" g="0" b="0" size="14" scalefont="no"/>
             <text string="Character description:" />
         </widget>
-        
+ 
         <widget name="Description" factory="pawsMultilineEditTextBox" >
             <frame x="25" y="30" width="270" height="185" border="no" />
+	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" scalefont="no" />
+            <attachpoints>
+                <attach point="PROPORTIONAL_RIGHT" />
+                <attach point="PROPORTIONAL_TOP" />
+                <attach point="PROPORTIONAL_LEFT" />
+                <attach point="PROPORTIONAL_BOTTOM" />
+            </attachpoints>
         </widget>  
+ 
         <widget name="OK" factory="pawsButton" id="100">
             <frame x="38" y="238" width="85" height="30" />
             <bgimage resource="Modify Save" />
+            <attachpoints>
+                <attach point="PROPORTIONAL_RIGHT" />
+                <attach point="ATTACH_LEFT" />
+                <attach point="PROPORTIONAL_TOP" />
+                <attach point="ATTACH_BOTTOM" />
+            </attachpoints>
             <label text="OK" />
         </widget>
         <widget name="Cancel" factory="pawsButton" id="101">
             <frame x="200" y="238" width="85" height="30" />
             <bgimage resource="Modify Cancel" />
+            <attachpoints>
+                <attach point="PROPORTIONAL_RIGHT" />
+                <attach point="PROPORTIONAL_LEFT" />
+                <attach point="PROPORTIONAL_TOP" />
+                <attach point="ATTACH_BOTTOM" />
+            </attachpoints>
             <label text="Cancel" />
         </widget>
     </widget>
-    
+ 
 </widget_description>
-
