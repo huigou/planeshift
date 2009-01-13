@@ -37,6 +37,8 @@
 
 #define BTN_OK     100
 #define BTN_CANCEL 101
+#define BTN_SAVE   102
+#define BTN_LOAD   103
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -121,7 +123,54 @@ bool pawsCharDescription::OnButtonPressed( int mouseButton, int keyModifier, paw
             this->Close();
             return true;
         }
+        case BTN_SAVE:
+        {
+            csRef<iVFS> vfs = psengine->GetVFS();
+            csString FileName; //stores the filename to use for saving: char_name_description.txt
+            csString DescriptionData; //the data taken from char description
 
+            //make up the filename
+            FileName.Format("/planeshift/userdata/%s_description.txt", psengine->GetCelClient()->GetMainPlayer()->GetName());
+            FileName.ReplaceAll(" ", "_");
+
+            DescriptionData = description->GetText(); //get the text to save
+            #ifdef _WIN32
+            DescriptionData.ReplaceAll("\n", "\r\n"); //replace new lines with newlines+linefeeds for windows
+            #endif
+            vfs->WriteFile(FileName, DescriptionData, DescriptionData.Length()); //write the file to disk
+
+            //show the success with the filename excluding the path to it
+            psSystemMessage msg(0, MSG_ACK, "Description saved to %s", FileName.GetData()+21 );
+            msg.FireEvent();
+            return true;
+        }
+        case BTN_LOAD:
+        {
+            csRef<iVFS> vfs = psengine->GetVFS();
+            csString FileName; //stores the filename to use for loading: char_name_description.txt
+            csString DescriptionData; //the data taken from char description
+
+            //make up the filename
+            FileName.Format("/planeshift/userdata/%s_description.txt", psengine->GetCelClient()->GetMainPlayer()->GetName());
+            FileName.ReplaceAll(" ", "_");
+
+            if (!vfs->Exists(FileName)) //check if there is a file saved
+            {
+                psSystemMessage msg(0, MSG_ERROR, "File not found!" );
+                msg.FireEvent();
+                return true;
+            }
+
+            csRef<iDataBuffer> data = vfs->ReadFile(FileName); //load the file
+            DescriptionData = data->GetData();
+            DescriptionData.ReplaceAll("\r\n", "\n"); //remove linefeeds
+            description->SetText(DescriptionData,true); //set the new text
+
+            //show the success with the filename excluding the path to it
+            psSystemMessage msg(0, MSG_ACK, "Description loaded from %s", FileName.GetData()+21 );
+            msg.FireEvent();
+            return true;
+        }
     }
     return false;
 }

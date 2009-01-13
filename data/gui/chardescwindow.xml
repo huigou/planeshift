@@ -44,7 +44,7 @@
         </widget>  
  
         <widget name="OK" factory="pawsButton" id="100">
-            <frame x="38" y="238" width="85" height="30" />
+            <frame x="5" y="238" width="70" height="30" />
             <bgimage resource="Modify Save" />
             <attachpoints>
                 <attach point="PROPORTIONAL_RIGHT" />
@@ -55,7 +55,7 @@
             <label text="OK" />
         </widget>
         <widget name="Cancel" factory="pawsButton" id="101">
-            <frame x="200" y="238" width="85" height="30" />
+            <frame x="80" y="238" width="70" height="30" />
             <bgimage resource="Modify Cancel" />
             <attachpoints>
                 <attach point="PROPORTIONAL_RIGHT" />
@@ -64,6 +64,28 @@
                 <attach point="ATTACH_BOTTOM" />
             </attachpoints>
             <label text="Cancel" />
+        </widget>
+        <widget name="Save" factory="pawsButton" id="102">
+            <frame x="170" y="238" width="65" height="30" />
+            <bgimage resource="Modify Save" />
+            <attachpoints>
+                <attach point="PROPORTIONAL_RIGHT" />
+                <attach point="ATTACH_LEFT" />
+                <attach point="PROPORTIONAL_TOP" />
+                <attach point="ATTACH_BOTTOM" />
+            </attachpoints>
+            <label text="Save" />
+        </widget>
+        <widget name="Load" factory="pawsButton" id="103">
+            <frame x="240" y="238" width="75" height="30" />
+            <bgimage resource="Modify Cancel" />
+            <attachpoints>
+                <attach point="PROPORTIONAL_RIGHT" />
+                <attach point="PROPORTIONAL_LEFT" />
+                <attach point="PROPORTIONAL_TOP" />
+                <attach point="ATTACH_BOTTOM" />
+            </attachpoints>
+            <label text="Load" />
         </widget>
     </widget>
  
