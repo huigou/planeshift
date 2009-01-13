@@ -56,7 +56,7 @@ Client::Client ()
       accountID(0), playerID(0), securityLevel(0), superclient(false),
       name(""), waypointEffectID(0), waypointIsDisplaying(false),
       pathEffectID(0), pathPath(NULL), pathIsDisplaying(false),
-      locationEffectID(0), locationIsDisplaying(false)
+      locationEffectID(0), locationIsDisplaying(false),cheatMask(NO_CHEAT)
 {
     actor           = 0;
     target          = 0;
@@ -65,7 +65,7 @@ Client::Client ()
     lastInviteTime  = 0;
     spamPoints      = 0;
     clientnum       = 0;    
-    detectedCheatCount           = 0;
+    detectedCheatCount = 0;
 
     nextFloodHistoryIndex = 0;
     
@@ -651,4 +651,12 @@ bool Client::IsAdvisorBanned()
         advisorBan = result[0].GetUInt32("advisor_ban") != 0;
         
     return advisorBan;
+}
+
+void Client::SetCheatMask(CheatFlags mask,bool flag )
+{
+    if (flag)
+        cheatMask |= mask;
+    else
+        cheatMask &= (~mask);
 }

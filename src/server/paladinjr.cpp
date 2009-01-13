@@ -226,36 +226,55 @@ bool PaladinJr::SpeedCheck(Client* client, psDRMessage& currUpdate)
     if (!sector)
         return true;
 
-    float dist = sqrt ( (currUpdate.pos.x - oldpos.x)*(currUpdate.pos.x - oldpos.x) +
+    float dist = sqrtf ( (currUpdate.pos.x - oldpos.x)*(currUpdate.pos.x - oldpos.x) +
                         (currUpdate.pos.z - oldpos.z)*(currUpdate.pos.z - oldpos.z) );
 
     csTicks timedelta = client->GetActor()->pcmove->ClientTimeDiff();
 
+    // We use the last reported vel, not the new vel, to calculate how far he should have gone since the last DR update
+    csVector3 vel;
+    vel = client->GetActor()->pcmove->GetVelocity();
+    float reported_distance = sqrtf(vel.x * vel.x + vel.z * vel.z)*timedelta/1000;
+
+    printf("Player went %1.3fm in %u ticks when %1.3fm was allowed.\n",dist, timedelta, reported_distance);
+
     float max_noncheat_distance = maxSpeed*timedelta/1000;
     float lag_distance          = maxSpeed*client->accumulatedLag/1000;
 
-
+    
     if (fabs(currUpdate.vel.x) <= maxVelocity.x && 
               currUpdate.vel.y <= maxVelocity.y && 
         fabs(currUpdate.vel.z) <= maxVelocity.z && 
               dist<max_noncheat_distance + lag_distance)
     {
-        if (dist < max_noncheat_distance)
+        if (dist==0) // trivial case
+        {
+            client->accumulatedLag = 200; // reset the allowed lag when the player becomes stationary again
+            return true;
+        }
+
+        if (fabs(dist-reported_distance) < dist * 0.05F) // negligible error just due to lag jitter
+        {
+            printf("Ignoring lag jitter.\n");
+            return true;
+        }
+
+        if (dist > 0.0F && dist < reported_distance)
         {
             // Calculate the "unused movement time" here and add it to the
             // accumulated lag.
-            client->accumulatedLag += (csTicks)((max_noncheat_distance-dist) * 1000.0f/maxSpeed);
+            client->accumulatedLag += (csTicks)((reported_distance-dist) * 1000.0f/maxSpeed);
             if (client->accumulatedLag > MAX_ACCUMULATED_LAG)
                 client->accumulatedLag = MAX_ACCUMULATED_LAG;
         }
-        else
+        else if (dist > 0.0F)
         {   
             // Subtract from the accumulated lag.
-            if(client->accumulatedLag > (csTicks)((dist-max_noncheat_distance) * 1000.0f/maxSpeed))
-               client->accumulatedLag-=(csTicks)((dist-max_noncheat_distance)
-                * 1000.0f/maxSpeed);
+            if(client->accumulatedLag > (csTicks)((dist-reported_distance) * 1000.0f/maxSpeed))
+               client->accumulatedLag-= (csTicks)((dist-reported_distance) * 1000.0f/maxSpeed);
         }
-        //printf("Accumulated lag: %u\n",client->accumulatedLag);
+       
+        printf("Accumulated lag: %u\n",client->accumulatedLag);
     }
     else
     {
@@ -264,7 +283,6 @@ bool PaladinJr::SpeedCheck(Client* client, psDRMessage& currUpdate)
         //printf("MaxSpeed is %1.2f\n", maxSpeed);
 
         // Report cheater
-        csVector3 vel;
         csVector3 angVel;
         csString buf;
         csString type;
@@ -283,7 +301,13 @@ bool PaladinJr::SpeedCheck(Client* client, psDRMessage& currUpdate)
         else
             type = "Distance Violation";
 
-        vel = client->GetActor()->pcmove->GetVelocity();
+        if (client->GetCheatMask(MOVE_CHEAT))
+        {
+            printf("Server has pre-authorized this apparent speed violation.\n");
+            client->SetCheatMask(MOVE_CHEAT, false);  // now clear the Get Out of Jail Free card
+            return true;  // not cheating
+        }
+        
         client->GetActor()->pcmove->GetAngularVelocity(angVel);
         buf.Format("%s, %s, %s, %.3f %.3f %.3f, %.3f 0 %.3f, %.3f %.3f %.3f, %.3f %.3f %.3f, %.3f %.3f %.3f, %s\n",
                    client->GetName(), type.GetData(), sectorName.GetData(),oldpos.x, oldpos.y, oldpos.z,
@@ -297,6 +321,7 @@ bool PaladinJr::SpeedCheck(Client* client, psDRMessage& currUpdate)
             client->GetName (),dist,timedelta,client->accumulatedLag);
 
         client->CountDetectedCheat();
+        printf("Client has %d detected cheats now.\n", client->GetDetectedCheatCount());
         if (client->GetDetectedCheatCount() % 5 == 0)
         {
             psserver->SendSystemError(client->GetClientNum(),"You have been flagged as using speed hacks.  You will be disconnected if you continue.");
