@@ -101,7 +101,7 @@ void pawsCharDescription::HandleMessage( MsgEntry* me )
 }
 
 bool pawsCharDescription::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
-{       
+{
     switch ( widget->GetID() )
     {
         case BTN_OK:
@@ -117,7 +117,7 @@ bool pawsCharDescription::OnButtonPressed( int mouseButton, int keyModifier, paw
                 detailWindow->RequestDetails();
             return true;
         }
-        
+
         case BTN_CANCEL:
         {
             this->Close();
