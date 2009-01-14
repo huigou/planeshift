@@ -1953,8 +1953,6 @@ void AdminManager::SendGMAttribs(Client* client)
         gmSettings |= (1 << 8);
     if (client->GetActor()->givekillexp)
         gmSettings |= (1 << 9);
-    if (client->GetActor()->attackable)
-        gmSettings |= (1 << 10);
 
 
     psGMGuiMessage gmMsg(client->GetClientNum(), gmSettings);
@@ -2069,8 +2067,7 @@ void AdminManager::SetAttrib(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
                                                 "questtester = %s\n"
                                                 "infinitemana = %s\n"
                                                 "instantcast = %s\n"
-                                                "givekillexp = %s\n"
-                                                "attackable = %s",
+                                                "givekillexp = %s\n",
                                                 (actor->GetInvincibility())?"on":"off",
                                                 (!actor->GetVisibility())?"on":"off",
                                                 (actor->GetViewAllObjects())?"on":"off",
@@ -2080,8 +2077,7 @@ void AdminManager::SetAttrib(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
                                                 (actor->questtester)?"on":"off",
                                                 (actor->infinitemana)?"on":"off",
                                                 (actor->instantcast)?"on":"off",
-                                                (actor->givekillexp)?"on":"off",
-                                                (actor->attackable)?"on":"off");
+                                                (actor->givekillexp)?"on":"off");
         return;
     }
     else if (data.attribute == "invincible" || data.attribute == "invincibility")
