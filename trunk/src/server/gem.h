@@ -768,7 +768,7 @@ public:
 
     virtual void Broadcast(int clientnum, bool control);
     /**
-     * /param control  Set to true when sent to the controling client.
+     * @param control  Set to true when sent to the controling client.
      */
     virtual void Send( int clientnum, bool control, bool to_superclient );
     virtual void SendGroupMessage(MsgEntry *me);

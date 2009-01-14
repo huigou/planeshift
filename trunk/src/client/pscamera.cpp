@@ -252,8 +252,10 @@ const char * psCamera::HandleCommand(const char *cmd)
         
         
         if((angle-npcrot) < 3.14159F && (angle-npcrot) > -3.14159F && velNormSquared == 0)
+        {
+            psengine->GetCharManager()->StoreTarget();
             target->SetPosition(target->GetPosition(), angle, target->GetSector());
-
+        }
 
         npcModeTarget = target;
         npcModePosition = actor->GetMesh()->GetMovable()->GetFullPosition();
@@ -1443,6 +1445,7 @@ void psCamera::DoCameraIdealCalcs(const csTicks elapsedTicks, const csVector3& a
             psClientCharManager* clientChar = psengine->GetCharManager();
             if (npcModeTarget != clientChar->GetTarget() || npcModePosition != actor->GetMesh()->GetMovable()->GetFullPosition())
             {
+                clientChar->GetTargetStored()->SetPosition(clientChar->GetTargetStored()->GetPosition(), clientChar->GetOldRot(), clientChar->GetTargetStored()->GetSector());
                 SetCameraMode(lastCameraMode);
                 break;
             }

@@ -232,6 +232,7 @@ public:
     bool Initialize();
     bool IsReady();
 
+    ///Takes an event from psEngine, and dispatch it to either psControlManager or psMovementManager
     bool HandleEvent(iEvent& event);
 
     /// Provides access to the movement system
