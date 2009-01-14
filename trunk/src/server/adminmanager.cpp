@@ -1732,6 +1732,8 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
                   info += " 'transient'";
               if ( flags & PSITEM_FLAG_USE_CD)
                   info += " 'collide'";
+              if ( flags & PSITEM_FLAG_SETTINGITEM)
+                  info += " 'settingitem'";
           }
 
           psserver->SendSystemInfo(client->GetClientNum(),info);
@@ -1951,6 +1953,8 @@ void AdminManager::SendGMAttribs(Client* client)
         gmSettings |= (1 << 8);
     if (client->GetActor()->givekillexp)
         gmSettings |= (1 << 9);
+    if (client->GetActor()->attackable)
+        gmSettings |= (1 << 10);
 
 
     psGMGuiMessage gmMsg(client->GetClientNum(), gmSettings);
@@ -2065,7 +2069,8 @@ void AdminManager::SetAttrib(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
                                                 "questtester = %s\n"
                                                 "infinitemana = %s\n"
                                                 "instantcast = %s\n"
-                                                "givekillexp = %s\n",
+                                                "givekillexp = %s\n"
+                                                "attackable = %s",
                                                 (actor->GetInvincibility())?"on":"off",
                                                 (!actor->GetVisibility())?"on":"off",
                                                 (actor->GetViewAllObjects())?"on":"off",
@@ -2075,7 +2080,8 @@ void AdminManager::SetAttrib(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
                                                 (actor->questtester)?"on":"off",
                                                 (actor->infinitemana)?"on":"off",
                                                 (actor->instantcast)?"on":"off",
-                                                (actor->givekillexp)?"on":"off");
+                                                (actor->givekillexp)?"on":"off",
+                                                (actor->attackable)?"on":"off");
         return;
     }
     else if (data.attribute == "invincible" || data.attribute == "invincibility")
@@ -2197,6 +2203,18 @@ void AdminManager::SetAttrib(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
             already = true;
         else
             actor->givekillexp = onoff;
+    }
+    else if (data.attribute == "attackable")
+    {
+        if (toggle)
+        {
+            actor->attackable = !actor->attackable;
+            onoff = actor->attackable;
+        }
+        else if (actor->attackable == onoff)
+            already = true;
+        else
+            actor->attackable = onoff;
     }
     else if (!data.attribute.IsEmpty())
     {
@@ -7182,6 +7200,12 @@ void AdminManager::ModifyItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
                                     item->GetName(), onoff ? "using collision detection" : "not using collision detection");
             item->GetGemObject()->Send(me->clientnum, false, false);
             item->GetGemObject()->Broadcast(me->clientnum, false);
+        }
+        else if (data.action == "settingitem")
+        {
+            item->SetIsSettingItem(onoff);
+            psserver->SendSystemInfo(me->clientnum, "%s is now %s",
+                                    item->GetName(), onoff ? "a setting item" : "not a setting item");
         }
         // TODO: Add more flags
         else

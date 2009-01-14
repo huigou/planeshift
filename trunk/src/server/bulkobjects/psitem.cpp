@@ -327,6 +327,10 @@ bool psItem::Load(iResultRow& row)
         flags |= PSITEM_FLAG_STACKABLE;
         flags &= ~PSITEM_FLAG_UNSTACKABLE;
     }
+    if (flagstr.FindSubString("SETTINGITEM", 0, true) != -1)
+    {
+        flags |= PSITEM_FLAG_SETTINGITEM;
+    }
 
     // Lockpick stuff
     SetLockStrength(row.GetInt("lock_str"));
@@ -602,6 +606,11 @@ void psItem::Commit(bool children)
     {
         if (!flagString.IsEmpty()) flagString.Append(",");
         flagString.Append("STACKABLE");
+    }
+    if (flags & PSITEM_FLAG_SETTINGITEM)
+    {
+        if (!flagString.IsEmpty()) flagString.Append(",");
+        flagString.Append("SETTINGITEM");
     }
     
     targetQuery->AddField("flags",flagString);
@@ -2049,6 +2058,14 @@ void psItem::MakeSkeleton(bool b)
 bool psItem::GetIsSkeleton()
 {
     return openableLocks.Find(KEY_SKELETON) != csArrayItemNotFound;
+}
+
+void psItem::SetIsSettingItem(bool v)
+{
+    if (v)
+        flags = flags | PSITEM_FLAG_SETTINGITEM;
+    else
+        flags = flags & ~PSITEM_FLAG_SETTINGITEM;
 }
 
 void psItem::RemoveOpenableLock(uint32 v)

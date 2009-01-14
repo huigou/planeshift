@@ -127,6 +127,9 @@ class psString;
 /// Flag defines if item can be stacked
 #define PSITEM_FLAG_STACKABLE           0x00040000
 
+/// Flag defines if item is done by setting (unused by the server, it's more for ordering in the db)
+#define PSITEM_FLAG_SETTINGITEM         0x00080000
+
 #define KEY_SKELETON      ((unsigned int)-2)
 
 #define MAX_STACK_COUNT        65  // This is the most items a player can have in a stack
@@ -803,6 +806,9 @@ public:
 
     void SetIsItemStackable(bool v);
     void ResetItemStackable();
+
+    bool GetIsSettingItem() const { return ((flags & PSITEM_FLAG_SETTINGITEM)? true : false); }
+    void SetIsSettingItem(bool v);
 
     PSSKILL GetLockpickSkill() { return lockpickSkill; }
     void SetLockpickSkill(PSSKILL v);
