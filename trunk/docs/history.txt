@@ -1,4 +1,9 @@
-﻿*** 2009-01-13 by Stefano Angeleri
+﻿*** 2009-01-14 by Stefano Angeleri
+- Comment fixes by kougaro
+- Made npc rotate back to their original position after talking with
+  them patch by kougaro
+
+*** 2009-01-13 by Stefano Angeleri
 - Changed tabs to spaces and trimmed ending spaces
 - Added the possibility to load/save descriptions from file.
   They are stored in /description/char_name_description.txt and ca be
