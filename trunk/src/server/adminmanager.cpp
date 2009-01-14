@@ -2200,18 +2200,6 @@ void AdminManager::SetAttrib(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
         else
             actor->givekillexp = onoff;
     }
-    else if (data.attribute == "attackable")
-    {
-        if (toggle)
-        {
-            actor->attackable = !actor->attackable;
-            onoff = actor->attackable;
-        }
-        else if (actor->attackable == onoff)
-            already = true;
-        else
-            actor->attackable = onoff;
-    }
     else if (!data.attribute.IsEmpty())
     {
         psserver->SendSystemInfo(me->clientnum, "%s is not a supported attribute", data.attribute.GetData() );
