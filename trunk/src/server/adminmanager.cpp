@@ -6615,17 +6615,15 @@ void AdminManager::Inspect(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& d
     }
 
     // We got our target, now let's print it's inventory
-    csString message; // Dump all data formated in this
+    csString message; //stores the formatted item data
     bool npc = (target->GetClientID() == 0);
 
-    message.Format("Inventory for %s %s:\n",
-                   npc?"NPC":"player",
-                   target->GetName() );
-
-    message.AppendFmt("Total weight is %d / %d\nTotal money is %d\n",
-                      (int)target->GetCharacterData()->Inventory().GetCurrentTotalWeight(),
-                      (int)target->GetCharacterData()->Inventory().MaxWeight(),
-                      target->GetCharacterData()->Money().GetTotal() );
+    //sends the heading
+    psserver->SendSystemInfo(me->clientnum,"Inventory for %s %s:\nTotal weight is %d / %d\nTotal money is %d\n",
+                    npc?"NPC":"player", target->GetName(),
+                    (int)target->GetCharacterData()->Inventory().GetCurrentTotalWeight(),
+                    (int)target->GetCharacterData()->Inventory().MaxWeight(),
+                    target->GetCharacterData()->Money().GetTotal() );
 
     bool found = false;
     // Inventory indexes start at 1.  0 is reserved for the "NULL" item.
@@ -6635,7 +6633,7 @@ void AdminManager::Inspect(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& d
         if (item)
         {
             found = true;
-            message += item->GetName();
+            message = item->GetName();
             message.AppendFmt(" (%d/%d)", (int)item->GetItemQuality(), (int)item->GetMaxItemQuality());
             if (item->GetStackCount() > 1)
                 message.AppendFmt(" (x%u)", item->GetStackCount());
@@ -6647,15 +6645,13 @@ void AdminManager::Inspect(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& d
                 message.Append(slotname);
             else
                 message.AppendFmt("Bulk %d", item->GetLocInParent(true));
-            message += "\n";
+
+            psserver->SendSystemInfo(me->clientnum,message); //sends one line per item.
+                                                             //so we avoid to go over the packet limit
         }
     }
     if (!found)
-        message += "(none)\n";
-
-    message.Truncate(message.Length() -1);
-
-    psserver->SendSystemInfo(me->clientnum,message);
+        psserver->SendSystemInfo(me->clientnum,"(none)");
 }
 
 void AdminManager::RenameGuild(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client* client)
