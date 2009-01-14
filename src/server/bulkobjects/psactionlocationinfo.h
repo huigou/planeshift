@@ -87,7 +87,7 @@ public:
     csString GetEnterScript() const { return enterScript; }
     void SetEnterScript(csString newScript) { enterScript = newScript; }
 
-    /// Returns the enterance type in entrance action location response string
+    /// Returns the entrance type in entrance action location response string
     csString GetEntranceType() const { return entranceType; }
     void SetEntranceType(csString newType) { entranceType = newType; }
 
