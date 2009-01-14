@@ -1370,6 +1370,7 @@ void show_item_stats(psItem *item,int depth)
     if (flags & PSITEM_FLAG_UNPICKABLE) flags_string += "UNPICKABLE ";
     if (flags & PSITEM_FLAG_KEY) flags_string += "KEY ";
     if (flags & PSITEM_FLAG_MASTERKEY) flags_string += "MASTERKEY ";
+    if (flags & PSITEM_FLAG_SETTINGITEM) flags_string += "SETTINGITEM ";
     if (flags_string.Length () > 0)
     {
     indent(depth);
