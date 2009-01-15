@@ -1509,6 +1509,13 @@ gemObject* AdminManager::FindObjectByString(const csString& str, gemActor * me) 
         if (eid.IsValid())
             found = gem->FindObject(eid);
     }
+    else if ( str.StartsWith("itemid:",true) ) // Find by item UID
+    {
+        csString itemid_str = str.Slice(7);
+        uint32 itemID = strtoul(itemid_str.GetDataSafe(), NULL, 10);
+        if (itemID != 0)
+            found = gem->FindItemEntity(itemID);
+    }
     else if ( me != NULL && str.CompareNoCase("me") ) // Return me
     {
         found = me;
@@ -1681,7 +1688,7 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
           if ( item->GetStackCount() > 1 )
               info.AppendFmt("(x%d) ", item->GetStackCount() );
 
-          info.AppendFmt("with item ID %u, instance ID %u, and %s, is at position (%1.2f, %1.2f, %1.2f) "
+          info.AppendFmt("with item stats ID %u, item ID %u, and %s, is at position (%1.2f, %1.2f, %1.2f) "
                          "angle: %d in sector: %s, instance: %d",
                         item->GetBaseStats()->GetUID(),
                         item->GetUID(),

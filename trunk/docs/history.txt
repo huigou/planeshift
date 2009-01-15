@@ -1,4 +1,12 @@
-﻿*** 2009-01-14 by Stefano Angeleri
+﻿*** 2009-01-15 by Kenny Graunke
+- Implemented targeting by ItemID(*) for admin commands, i.e.
+  "/teleport itemid:407 here".  This will be immensely useful when working
+  with container ALs, as they only specify ItemID, not EID.
+  
+  (*) "ItemID" means psItem/item_instance UID, not item_stats.  If you find
+      any incorrect uses, please rename them to "ItemStatsID" for clarity.
+
+*** 2009-01-14 by Stefano Angeleri
 - Comment fixes by kougaro
 - Made npc rotate back to their original position after talking with
   them patch by kougaro
