@@ -1954,7 +1954,6 @@ void AdminManager::SendGMAttribs(Client* client)
     if (client->GetActor()->givekillexp)
         gmSettings |= (1 << 9);
 
-
     psGMGuiMessage gmMsg(client->GetClientNum(), gmSettings);
     gmMsg.SendMessage();
 }
@@ -7277,7 +7276,9 @@ void AdminManager::TempSecurityLevel(MsgEntry* me, psAdminCmdMessage& msg, Admin
     }
 
     // Can only set others to a max of 1 level below own level (ex: GM4 can set someone to GM3)
-    int maxleveltoset = client->GetSecurityLevel() - 1;
+    // Devs can override this
+    int maxleveltoset = client->GetSecurityLevel() >= GM_DEVELOPER ?
+                        client->GetSecurityLevel() : client->GetSecurityLevel() - 1;
 
     int value;
 
@@ -7314,9 +7315,11 @@ void AdminManager::TempSecurityLevel(MsgEntry* me, psAdminCmdMessage& msg, Admin
         value = GM_LEVEL_1;
     else if (data.setting.StartsWith("gm",true) && data.setting.Length() == 3)
         value = atoi(data.setting.Slice(2,1)) + GM_LEVEL_0;
+    else if (data.setting == "developer")
+        value = GM_DEVELOPER;
     else
     {
-        psserver->SendSystemError(me->clientnum,"Valid settings are:  player, tester, GM, or reset.  GM levels may be specified:  GM1, ... GM5");
+        psserver->SendSystemError(me->clientnum,"Valid settings are:  player, tester, GM, developer or reset.  GM levels may be specified:  GM1, ... GM5");
         return;
     }
 
