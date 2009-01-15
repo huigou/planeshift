@@ -3,6 +3,8 @@
 - Made npc rotate back to their original position after talking with
   them patch by kougaro
 - fixed /inspect being cut by the packet size limit
+- /deputize now allows devs to set up to their level differently than
+  gm who keep the <their level - 1> rule
 
 *** 2009-01-13 by Stefano Angeleri
 - Changed tabs to spaces and trimmed ending spaces
