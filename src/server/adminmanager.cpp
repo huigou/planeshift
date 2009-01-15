@@ -8016,11 +8016,6 @@ void AdminManager::CheckTarget(psAdminCmdMessage& msg, AdminCmdData& data, gemOb
     if(targetobject) //just to be sure
         psserver->SendSystemInfo(client->GetClientNum(),"Targeted: %s", targetobject->GetName());
         gemActor *myact = targetobject->GetActorPtr();
-        if(myact && myact->GetCharacterData())
-        {
-            myact->GetCharacterData()->SetKillExperience(10000);
-            printf("%d\n",myact->GetCharacterData()->GetKillExperience());
-        }
 }
 
 void AdminManager::DisableQuest(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client )
