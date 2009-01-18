@@ -1,4 +1,9 @@
-﻿*** 2009-01-15 by Kenny Graunke
+﻿*** 2009-01-19 by Keith Fulton
+- Fixing chat bubbles so that both the npc bubbles and the player menu popups are
+  displayed.
+- Committing a fix by Nick Prassas (Loyni) for bug 2402.  Thanks Nick!
+
+*** 2009-01-15 by Kenny Graunke
 - Implemented targeting by ItemID(*) for admin commands, i.e.
   "/teleport itemid:407 here".  This will be immensely useful when working
   with container ALs, as they only specify ItemID, not EID.
