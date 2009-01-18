@@ -23,7 +23,7 @@ The following give false positives in PaladinJr when performed by a player valid
 
 NPC Interaction
 ---------------
-[ ] Fix npc chat bubbles displaying
+[X] Fix npc chat bubbles displaying
 [ ] Do the question popup widget
 [ ] Make the camera look from person to person when talking and fixate on the player when NPC response is complete
 [ ] Make Option GUI for enabling/disabling voice audio
