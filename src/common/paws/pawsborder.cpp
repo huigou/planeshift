@@ -50,7 +50,7 @@ void pawsBorder::UseBorder( const char* name )
             // border definition.
             for ( int x = 0; x < PAWS_BORDER_MAX; x++ )
             {
-                borderImages[x] = PawsManager::GetSingleton().GetTextureManager()->GetDrawable(def->descriptions[x]);
+                borderImages[x] = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(def->descriptions[x]);
                 if (!borderImages[x])
                 {
                     Warning2(LOG_PAWS, "Could not retrieve border drawable: >%s<", def->descriptions[x].GetData());

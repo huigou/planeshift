@@ -80,7 +80,7 @@ class pawsSketchWindow : public pawsWidget, public psClientNetSubscriber,public 
     };
     struct SketchIcon : public SketchObject
     {
-        csRef<iPAWSDrawable> iconImage;
+        csRef<iPawsImage> iconImage;
         SketchIcon() : SketchObject() {}
         SketchIcon(int _x, int _y, const char *icon, pawsSketchWindow *parent);
         virtual ~SketchIcon() {};
@@ -191,7 +191,7 @@ protected:
     size_t selectedIndex;
     int dirty;
     uint32_t currentItemID;
-    csRef<iPAWSDrawable> blackBox;
+    csRef<iPawsImage> blackBox;
     bool editMode;
     bool mouseDown;
     int mouseDownX; // used to calculate the updatePosition diff. this value is updated OnMouseDown

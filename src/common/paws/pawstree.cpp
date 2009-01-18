@@ -760,8 +760,8 @@ pawsStdTreeDecorator::pawsStdTreeDecorator(pawsTree * _tree, iGraphics2D * _g2d,
     lineColor         = _lineColor;
     collSpacing       = _collSpacing;
 
-    collImage = PawsManager::GetSingleton().GetTextureManager()->GetDrawable("treecollapse");
-    expandImage = PawsManager::GetSingleton().GetTextureManager()->GetDrawable("treeexpand");
+    collImage = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage("treecollapse");
+    expandImage = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage("treeexpand");
 }
 
 pawsStdTreeDecorator::~pawsStdTreeDecorator()
@@ -779,7 +779,7 @@ void pawsStdTreeDecorator::Decorate()
 
 void pawsStdTreeDecorator::DecorateSubtree(pawsTreeNode * node)
 {
-    csRef<iPAWSDrawable> currImage;
+    csRef<iPawsImage> currImage;
     pawsTreeNode * child;
     csRect nodeFrame, childFrame, collSignFrame;
     int vertLineX, vertLineYMin, vertLineYMax;    

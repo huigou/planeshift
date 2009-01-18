@@ -48,7 +48,7 @@ void pawsFrameDrawable::LoadPiece(csRef<iDocumentNode> node, FRAME_DRAWABLE_PIEC
 }
 
 pawsFrameDrawable::pawsFrameDrawable(csRef<iDocumentNode> node)
-: scfImplementationType (this)
+  : scfImplementationType (this)
 {
     defaultTransparentColourBlue  = -1;
     defaultTransparentColourGreen = -1;
@@ -215,4 +215,38 @@ int pawsFrameDrawable::GetHeight() const
 int pawsFrameDrawable::GetDefaultAlpha() const
 {
     return defaultAlphaValue;
+}
+
+void pawsFrameDrawable::DrawPiece( FRAME_DRAWABLE_PIECE p, int x, int y, int w, int h, int alpha, bool scaleX/*=false*/, bool scaleY/*=false*/ )
+{
+    if (!pieces[p].drawable)
+        return;
+
+    if (scaleX) // if this piece has been scaled along the x-axis then we want the offset to extend both sides
+    {
+        x -= pieces[p].offsetx;
+        w += pieces[p].offsetx*2;
+    }
+    else
+        x += pieces[p].offsetx;
+
+    if (scaleY) // if this piece has been scaled along the y-axis then we want the offset to extend both sides
+    {
+        y -= pieces[p].offsety;
+        h += pieces[p].offsety*2;
+    }
+    else
+        y += pieces[p].offsety;
+
+    pieces[p].drawable->Draw(x, y, w, h, alpha);
+}
+
+void pawsFrameDrawable::DrawPiece( FRAME_DRAWABLE_PIECE p, int x, int y, int alpha )
+{
+    if (!pieces[p].drawable)
+        return;
+
+    x += pieces[p].offsetx;
+    y += pieces[p].offsety;
+    pieces[p].drawable->Draw(x, y, alpha);
 }

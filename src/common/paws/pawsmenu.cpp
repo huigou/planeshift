@@ -447,7 +447,7 @@ bool pawsMenu::Setup(iDocumentNode * node)
     csRef<iDocumentAttribute> attr;
     csString colourStr;
 
-    arrowImage = PawsManager::GetSingleton().GetTextureManager()->GetDrawable("Right Arrow");
+    arrowImage = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage("Right Arrow");
     if (!arrowImage)
     	return false;
 

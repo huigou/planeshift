@@ -53,8 +53,8 @@ pawsTextureManager::pawsTextureManager( iObjectRegistry* object )
 }
 
 pawsTextureManager::~pawsTextureManager()
-    {
-    }
+{
+}
     
 bool pawsTextureManager::LoadImageList( const char* listName )
 {    
@@ -90,39 +90,40 @@ bool pawsTextureManager::LoadImageList( const char* listName )
     csRef<iDocumentNodeIterator> iter = topNode->GetNodes();
 
     while ( iter->HasNext() )
-{
+    {
         csRef<iDocumentNode> node = iter->Next();
 
         if ( node->GetType() != CS_NODE_ELEMENT )
             continue;
 
-        if (loadedDrawables.Contains(node->GetAttributeValue("resource")))
+        if (elementList.Contains(node->GetAttributeValue("resource")))
             continue;
 
-        csRef<iPAWSDrawable> drawable;
+        iPawsImage *element = NULL;
         if (!strcmp(node->GetValue(), "image"))
-            drawable.AttachNew(new pawsImageDrawable(node));
+            element = new pawsImageDrawable(node);
 		else if (!strcmp(node->GetValue(), "frame"))
-			drawable.AttachNew(new pawsFrameDrawable(node));
-        if (drawable)
-            loadedDrawables.Put(drawable->GetName(), drawable);
-        }
+			element = new pawsFrameDrawable(node);
+        
+        if (element)
+            elementList.Put(element->GetName(), element);
+    }
 
     return true;     
-        }
+}
 
 void pawsTextureManager::Remove( const char* resource )
-        {
-    loadedDrawables.DeleteAll(resource);
-        }
+{
+    elementList.DeleteAll(resource);
+}
 
-csRef<iPAWSDrawable> pawsTextureManager::GetDrawable(const char * name)
-        {
-    return loadedDrawables.Get(name, 0);
-        }
+csPtr<iPawsImage> pawsTextureManager::GetPawsImage(const char * name)
+{
+    return csPtr<iPawsImage>(elementList.Get(name, 0));
+}
 
-void pawsTextureManager::AddDrawable(csRef<iPAWSDrawable> drawable)
-            {
-    loadedDrawables.Put(drawable->GetName(), drawable);
+void pawsTextureManager::AddPawsImage(iPawsImage * element)
+{
+    elementList.Put(element->GetName(), element);
 }
 

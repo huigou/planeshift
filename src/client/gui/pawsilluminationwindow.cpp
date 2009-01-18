@@ -180,7 +180,7 @@ void pawsSketchWindow::HandleMessage( MsgEntry* me )
     SetTitle(sketchName);
 
     if (!blackBox)
-        blackBox = PawsManager::GetSingleton().GetTextureManager()->GetDrawable("blackbox");
+        blackBox = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage("blackbox");
     Show();
 }
 
@@ -965,7 +965,7 @@ bool pawsSketchWindow::SketchIcon::Init(int _x, int _y, const char *icon, pawsSk
     y = _y;
     str = icon;
 
-    iconImage = PawsManager::GetSingleton().GetTextureManager()->GetDrawable(str);
+    iconImage = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(str);
     // printf("Icon %s at (%d,%d)\n",str.GetDataSafe(),x,y);
 
     if (parent)

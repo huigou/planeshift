@@ -95,10 +95,10 @@ public:
     csRect GetRect();
 
     void SetTitle(const char *t, bool shadow = true);
-    void SetTitleImage(csRef<iPAWSDrawable> drawable) { titleImage = drawable; } // This will take delete responsibility
+    void SetTitleImage(csRef<iPawsImage> drawable) { titleImage = drawable; } // This will take delete responsibility
     void SetTitleAlign(int al)        { align = al; }
 
-    csRef<iPAWSDrawable> GetTitleImage() { return titleImage; }
+    csRef<iPawsImage> GetTitleImage() { return titleImage; }
     const char* GetTitle() { return title; }
 
 protected:
@@ -109,12 +109,12 @@ protected:
     csRect frame;
     pawsWidget* parent;
        
-    csRef<iPAWSDrawable> borderImages[PAWS_BORDER_MAX];
+    csRef<iPawsImage> borderImages[PAWS_BORDER_MAX];
      
     /// Title bar text 
     csString title;
     /// Title bar image
-    csRef<iPAWSDrawable> titleImage;
+    csRef<iPawsImage> titleImage;
     /// Alignment of title text
     int align;
     

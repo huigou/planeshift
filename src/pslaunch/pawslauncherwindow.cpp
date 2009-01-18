@@ -1000,9 +1000,9 @@ bool pawsLauncherWindow::LoadResource(const char* resource,const char* resname, 
         return false;
     }
 
-    csRef<iPAWSDrawable> img;
+    csRef<iPawsImage> img;
     img.AttachNew(new pawsImageDrawable(filename.GetData(), resname, false, csRect(), 0, 0, 0, 0));
-    PawsManager::GetSingleton().GetTextureManager()->AddDrawable(img);
+    PawsManager::GetSingleton().GetTextureManager()->AddPawsImage(img);
 
     return true;
 }

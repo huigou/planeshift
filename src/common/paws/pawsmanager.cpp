@@ -161,7 +161,7 @@ PawsManager::PawsManager(iObjectRegistry* object, const char* skin, const char* 
     mouse = new pawsMouse();
     mouse->ChangeImage("Standard Mouse Pointer");
 
-    resizeImg = textureManager->GetDrawable("ResizeBox");
+    resizeImg = textureManager->GetPawsImage("ResizeBox");
 
     graphics2D->SetMouseCursor( csmcNone );
 

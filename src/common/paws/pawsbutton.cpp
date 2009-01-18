@@ -160,27 +160,27 @@ bool pawsButton::SelfPopulate( iDocumentNode *node)
 
 void pawsButton::SetDownImage(const csString & image)
 {
-    pressedImage = PawsManager::GetSingleton().GetTextureManager()->GetDrawable(image);
+    pressedImage = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(image);
 }
 
 void pawsButton::SetUpImage(const csString & image)
 {
-    releasedImage = PawsManager::GetSingleton().GetTextureManager()->GetDrawable(image);
+    releasedImage = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(image);
 }
 
 void pawsButton::SetGreyUpImage(const char * greyUpImage)
 {
-    this->greyUpImage = PawsManager::GetSingleton().GetTextureManager()->GetDrawable(greyUpImage);
+    this->greyUpImage = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(greyUpImage);
 }
 
 void pawsButton::SetGreyDownImage(const char * greyDownImage)
 {
-    this->greyDownImage = PawsManager::GetSingleton().GetTextureManager()->GetDrawable(greyDownImage);
+    this->greyDownImage = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(greyDownImage);
 }
 
 void pawsButton::SetOnSpecialImage( const csString & image )
 {
-    specialFlashImage = PawsManager::GetSingleton().GetTextureManager()->GetDrawable(image);
+    specialFlashImage = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(image);
 }
 
 

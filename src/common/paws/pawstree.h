@@ -348,8 +348,8 @@ protected:
     int lineColor;        // color of lines
     int collSpacing;      // distance between node and expand/collapse sign
     
-    csRef<iPAWSDrawable> collImage;
-    csRef<iPAWSDrawable> expandImage;
+    csRef<iPawsImage> collImage;
+    csRef<iPawsImage> expandImage;
 };
 
 

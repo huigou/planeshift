@@ -189,9 +189,9 @@ bool pawsPrefManager::LoadBorderFile( const char* file )
                 Error2("Missing <image> tag in %s", file);
                 return false;
             }
-            csRef<iPAWSDrawable> drawable;
+            csRef<iPawsImage> drawable;
             drawable.AttachNew(new pawsImageDrawable(image));
-            PawsManager::GetSingleton().GetTextureManager()->AddDrawable(drawable);
+            PawsManager::GetSingleton().GetTextureManager()->AddPawsImage(drawable);
             
             definition->descriptions[current] = image->GetAttributeValue("resource");
                                                                              

@@ -132,8 +132,8 @@ private:
     /// For outgoing messages.    
     csRef<MsgHandler> msgHandler; 
   
-    csRef<iPAWSDrawable> femaleImage;
-    csRef<iPAWSDrawable> neutralImage;
+    csRef<iPawsImage> femaleImage;
+    csRef<iPawsImage> neutralImage;
 
     
     /// Paper doll view of model.

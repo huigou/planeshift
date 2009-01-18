@@ -94,7 +94,7 @@ enum PAWS_WIDGET_SCRIPT_EVENTS
     PW_SCRIPT_EVENT_COUNT
 };
 
-struct iPAWSDrawable;
+struct iPawsImage;
 class PawsManager;
 class pawsBorder;
 class pawsScrollBar;
@@ -217,7 +217,7 @@ protected:
     int bgColour;   
 
     /// Background image.
-    csRef<iPAWSDrawable> bgImage;
+    csRef<iPawsImage> bgImage;
     
     /// border created by GetBorder().
     pawsBorder* border;
@@ -302,7 +302,7 @@ protected:
     csString defaultToolTip;
     
     /// Masking image, used for nice-looking stuff.
-    csRef<iPAWSDrawable> maskImage;
+    csRef<iPawsImage> maskImage;
 
     /** Flag determines if WidgetAT() ignores this widget. 
      * @remark Default is FALSE. Set during LoadAttributes().

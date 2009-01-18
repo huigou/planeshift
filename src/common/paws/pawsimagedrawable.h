@@ -22,7 +22,7 @@
 
 #include "pawstexturemanager.h"
 
-class pawsImageDrawable : public scfImplementation1<pawsImageDrawable, iPAWSDrawable>
+class pawsImageDrawable : public scfImplementation1<pawsImageDrawable, iPawsImage>
 {
 private:
     /// The VFS path to the file.

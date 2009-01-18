@@ -90,7 +90,7 @@ class pawsGameTile : public pawsWidget
         uint8_t oldState;
 
         /// The game piece image.
-        csRef<iPAWSDrawable> image;
+        csRef<iPawsImage> image;
 
 };
 
