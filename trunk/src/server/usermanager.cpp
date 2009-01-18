@@ -1618,6 +1618,19 @@ void UserManager::Assist( psUserCmdMessage& msg, Client* client, int clientnum )
         return;
     }
 
+    // bug PS#2402 - Command /assist can be used to determine enemy's target.
+    // Add check for actors in the same guild.
+    if ( (client->GetGuildID() == 0) || (client->GetGuildID() != targetClient->GetGuildID()) )
+    {
+        // Add check for grouped actors
+        int nGID = client->GetActor()->GetGroupID();
+        if ( (nGID == 0) || (nGID != targetClient->GetActor()->GetGroupID()) )
+        {
+        	psserver->SendSystemInfo( clientnum,"You can only assist members of your guild or players you're grouped with." );
+        	return;
+        }
+    }
+
     gemObject* targetObject = targetClient->GetTargetObject();
     if(!targetObject)
     {
