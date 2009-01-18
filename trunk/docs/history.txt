@@ -1,7 +1,9 @@
 ﻿*** 2009-01-19 by Keith Fulton
 - Fixing chat bubbles so that both the npc bubbles and the player menu popups are
   displayed.
-- Committing a fix by Nick Prassas (Loyni) for bug 2402.  Thanks Nick!
+- Committed a fix by Nick Prassas (Loyni) for bug 2402.  Thanks Nick!
+- Also committed a fix by Nick Prassas (Loyni) for bug 2691.  Thanks Nick!
+  (Net Version bump)
 
 *** 2009-01-15 by Kenny Graunke
 - Implemented targeting by ItemID(*) for admin commands, i.e.
