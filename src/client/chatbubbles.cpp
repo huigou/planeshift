@@ -156,6 +156,8 @@ bool psChatBubbles::Load(const char * filename, bool saveAgain)
         else if (type == "my")
             chat.chatType = CHATBUBBLE_MY;
         else if (type == "npc")
+            chat.chatType = CHAT_NPC;
+        else if (type == "npcinternal")
             chat.chatType = CHAT_NPCINTERNAL; // /tellnpc messages are now ignored and only /tellnpcinternal messages are displayed.  These are normally sent in pairs.
         else if (type == "npc_me")
             chat.chatType = CHAT_NPC_ME;
