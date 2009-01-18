@@ -37,9 +37,9 @@
 
 class pawsTextureManager;
 
-struct iPAWSDrawable : public virtual iBase
+struct iPawsImage : public virtual iBase
 {
-    SCF_INTERFACE(iPAWSDrawable, 1, 0, 0);
+    SCF_INTERFACE(iPawsImage, 1, 0, 0);
     virtual const char * GetName() const = 0;
 
     virtual void Draw(int x, int y, int alpha=-1) = 0;
@@ -81,8 +81,8 @@ public:
      */
     void Remove( const char* name );
     
-   csRef<iPAWSDrawable> GetDrawable(const char * name);
-   void AddDrawable(csRef<iPAWSDrawable> drawable);
+   csPtr<iPawsImage> GetPawsImage(const char *name);
+   void AddPawsImage(iPawsImage *element);
     
 public:
     iObjectRegistry* objectReg;
@@ -90,7 +90,7 @@ public:
     csRef<iVFS> vfs;
     csRef<iDocumentSystem>  xml; 
 
-    csHash<csRef<iPAWSDrawable>, csString> loadedDrawables;
+    csHash<csRef<iPawsImage>, csString> elementList;
 };
 
 #endif

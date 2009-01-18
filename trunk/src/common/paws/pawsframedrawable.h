@@ -22,7 +22,7 @@
 
 #include "pawstexturemanager.h"
 
-class pawsFrameDrawable : public scfImplementation1<pawsFrameDrawable, iPAWSDrawable>
+class pawsFrameDrawable  : public scfImplementation1<pawsFrameDrawable, iPawsImage>
 {
 private:
     enum FRAME_DRAWABLE_PIECE
@@ -39,9 +39,10 @@ private:
 
         FDP_COUNT
     };
+
     struct pawsFrameDrawablePiece
     {
-        csRef<iPAWSDrawable> drawable;
+        csRef<iPawsImage> drawable;
         int                  offsetx;
         int                  offsety;
     };
@@ -72,38 +73,8 @@ private:
     int      defaultTransparentColourBlue;
 
     void LoadPiece(csRef<iDocumentNode> node, FRAME_DRAWABLE_PIECE piece);
-    inline void DrawPiece(FRAME_DRAWABLE_PIECE p, int x, int y, int w, int h, int alpha, bool scaleX=false, bool scaleY=false)
-    {
-        if (!pieces[p].drawable)
-            return;
-
-        if (scaleX) // if this piece has been scaled along the x-axis then we want the offset to extend both sides
-        {
-            x -= pieces[p].offsetx;
-            w += pieces[p].offsetx*2;
-        }
-        else
-            x += pieces[p].offsetx;
-
-        if (scaleY) // if this piece has been scaled along the y-axis then we want the offset to extend both sides
-        {
-            y -= pieces[p].offsety;
-            h += pieces[p].offsety*2;
-        }
-        else
-            y += pieces[p].offsety;
-
-        pieces[p].drawable->Draw(x, y, w, h, alpha);
-    }
-    inline void DrawPiece(FRAME_DRAWABLE_PIECE p, int x, int y, int alpha)
-    {
-        if (!pieces[p].drawable)
-            return;
-
-        x += pieces[p].offsetx;
-        y += pieces[p].offsety;
-        pieces[p].drawable->Draw(x, y, alpha);
-    }
+    void DrawPiece(FRAME_DRAWABLE_PIECE p, int x, int y, int w, int h, int alpha, bool scaleX=false, bool scaleY=false);
+    void DrawPiece(FRAME_DRAWABLE_PIECE p, int x, int y, int alpha);
 
 public:
     pawsFrameDrawable(csRef<iDocumentNode> node);

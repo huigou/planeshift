@@ -382,10 +382,10 @@ bool PawsEditorApp::LoadResources( const char* mountPath )
 
 
             // Compile the structure
-			csRef<iPAWSDrawable> drawable;
+			csRef<iPawsImage> drawable;
 			if (!strcmp(node->GetValue(), "image"))
 			{
-				paws->GetTextureManager()->AddDrawable(new pawsImageDrawable(node));
+				paws->GetTextureManager()->AddPawsImage(new pawsImageDrawable(node));
 			}
 
         }

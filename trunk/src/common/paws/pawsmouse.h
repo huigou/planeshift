@@ -54,7 +54,7 @@ public:
      * @param imageName A resource name to use as the image.
      */
     void ChangeImage( const char* imageName );
-    void ChangeImage(csRef<iPAWSDrawable> drawable);
+    void ChangeImage(csRef<iPawsImage> drawable);
     void Draw();
     void Hide(bool h = true);
     void WantCrosshair(bool h = true) { crosshair = h; }
@@ -86,8 +86,8 @@ protected:
     psPoint currentPosition;
     psPoint deltas;    
 
-    csRef<iPAWSDrawable> cursorImage;
-    csRef<iPAWSDrawable> crosshairImage;
+    csRef<iPawsImage> cursorImage;
+    csRef<iPawsImage> crosshairImage;
     bool hidden, crosshair;
 
     bool useOS;
@@ -98,7 +98,7 @@ protected:
 
     csRef<iImage> image;
 
-    void SetOSMouse(csRef<iPAWSDrawable> mouseImage);
+    void SetOSMouse(csRef<iPawsImage> mouseImage);
 };
 
 #endif 

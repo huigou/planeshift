@@ -96,16 +96,16 @@ protected:
     bool down;
 
     /// Image to draw when button is pressed or when the mouse enters.
-    csRef<iPAWSDrawable> pressedImage;
+    csRef<iPawsImage> pressedImage;
 
     /// Image to draw when button is released or when the mouse exits.
-    csRef<iPAWSDrawable> releasedImage;
+    csRef<iPawsImage> releasedImage;
 
-	csRef<iPAWSDrawable> greyUpImage;
-	csRef<iPAWSDrawable> greyDownImage;
+	csRef<iPawsImage> greyUpImage;
+	csRef<iPawsImage> greyDownImage;
 
 	/// Image to draw when button is released.
-    csRef<iPAWSDrawable> specialFlashImage;
+    csRef<iPawsImage> specialFlashImage;
 
     /// Check to see if this is a toggle button.
     bool toggle;

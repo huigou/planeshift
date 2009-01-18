@@ -1020,7 +1020,7 @@ void pawsListBox::SortRows()
     {
         rows[i] = sortedRows[i];
         if(sortedRows[i] == selectedrow) //check if the current row is the one which was selected
-            selected = i; //if so update our selected variable
+            selected = (int) i; //if so update our selected variable
     }
 
     delete [] sortedRows;

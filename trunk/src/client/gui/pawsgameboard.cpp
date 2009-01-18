@@ -660,7 +660,7 @@ void pawsGameTile::SetState(uint8_t state)
                 return;
             }
 
-            image = PawsManager::GetSingleton().GetTextureManager()->GetDrawable(art);
+            image = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(art);
             if (!image)
             {
                 Error2("Could not create image \"%s\"", art.GetData());

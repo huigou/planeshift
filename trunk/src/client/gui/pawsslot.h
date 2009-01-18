@@ -29,7 +29,7 @@ public:
     void SetPurifyStatus(int status);
     
     void PlaceItem( const char* imageName, int count = 0 );
-    csRef<iPAWSDrawable> Image() { return image;}
+    csRef<iPawsImage> Image() { return image;}
     const char *ImageName();
     
     const csString & SlotName() const { return slotName; }
@@ -64,7 +64,7 @@ protected:
     bool drawStackCount;
     bool reserved;		// implemented to fix dequip behaviour. Cleared on PlaceItem and Clear
     
-    csRef<iPAWSDrawable> image;
+    csRef<iPawsImage> image;
     pawsWidget* purifySign;
     pawsTextBox* stackCountLabel;
     bool handleMouseClicks;

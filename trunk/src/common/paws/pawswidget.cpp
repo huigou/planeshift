@@ -548,7 +548,7 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
     if ( bgImageNode )
     {
         csString image = bgImageNode->GetAttributeValue("resource");               
-        bgImage = PawsManager::GetSingleton().GetTextureManager()->GetDrawable(image);
+        bgImage = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(image);
         if(!bgImage)
         {
             Warning2(LOG_PAWS, "GUI image '%s' not found.\n", image.GetData());
@@ -903,7 +903,7 @@ void pawsWidget::UseBorder( const char* style )
 
 void pawsWidget::SetBackground( const char* image )
 {
-    bgImage = PawsManager::GetSingleton().GetTextureManager()->GetDrawable(image);
+    bgImage = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(image);
 
     if (!bgImage)
     {
@@ -1046,7 +1046,7 @@ void pawsWidget::DrawBackground()
         
     if ( IsResizable() && showResize )
     {
-        csRef<iPAWSDrawable> resize = PawsManager::GetSingleton().GetResizeImage();
+        csRef<iPawsImage> resize = PawsManager::GetSingleton().GetResizeImage();
         if (resize)
         resize->Draw( ScreenFrame().xmax-8, ScreenFrame().ymax-8,8,8 );
     }
@@ -2575,7 +2575,7 @@ bool pawsWidget::SetTitle( const char* text, const char* image, const char* alig
     {
         borderTitleShadow = shadowTitle;
         border->SetTitle( text, borderTitleShadow );
-        csRef<iPAWSDrawable> titleImage = PawsManager::GetSingleton().GetTextureManager()->GetDrawable(image);
+        csRef<iPawsImage> titleImage = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(image);
         border->SetTitleImage(titleImage);
 
         int alignValue = ALIGN_LEFT;
@@ -2631,7 +2631,7 @@ csString pawsWidget::GetPathInWidgetTree()
 
 void pawsWidget::SetMaskingImage(const char* image)
 {
-    maskImage = PawsManager::GetSingleton().GetTextureManager()->GetDrawable(image);
+    maskImage = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(image);
     if (!maskImage)
     {
         Warning3( LOG_PAWS, "Could not locate masking image %s for widget %s",image,GetName());

@@ -151,7 +151,7 @@ void pawsSlot::PlaceItem( const char* imageName, int count )
 {
     empty = false;
 
-    image = PawsManager::GetSingleton().GetTextureManager()->GetDrawable(imageName);
+    image = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(imageName);
 
     if (drawStackCount)
         stackCountLabel->Show();

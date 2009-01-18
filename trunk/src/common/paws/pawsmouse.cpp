@@ -47,7 +47,7 @@ pawsMouse::pawsMouse()
     deltas = psPoint( 0, 0 );
     hidden = false;
     crosshair = false;
-    crosshairImage = PawsManager::GetSingleton().GetTextureManager()->GetDrawable("Crosshair Mouse Pointer");
+    crosshairImage = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage("Crosshair Mouse Pointer");
     useOS = false;
 }
 
@@ -66,20 +66,20 @@ void pawsMouse::SetPosition( int x, int y )
 
 void pawsMouse::ChangeImage( const char* imageName )
 {
-    cursorImage = PawsManager::GetSingleton().GetTextureManager()->GetDrawable(imageName);
+    cursorImage = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(imageName);
     SetOSMouse(cursorImage);
 }
 
-void pawsMouse::ChangeImage(csRef<iPAWSDrawable> drawable)
+void pawsMouse::ChangeImage(csRef<iPawsImage> drawable)
 {
     cursorImage = drawable;
     SetOSMouse(cursorImage);
 }
 
-void pawsMouse::SetOSMouse(csRef<iPAWSDrawable> drawable)
+void pawsMouse::SetOSMouse(csRef<iPawsImage> drawable)
 {
 #ifdef CS_PLATFORM_WIN32
-    pawsImageDrawable * pwDraw = dynamic_cast<pawsImageDrawable *>((iPAWSDrawable *)drawable);
+    pawsImageDrawable * pwDraw = dynamic_cast<pawsImageDrawable *>((iPawsImage *)drawable);
     if (!pwDraw)
       return;
 

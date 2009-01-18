@@ -74,12 +74,12 @@ pawsCreationMain::pawsCreationMain()
     currentGender = PSCHARACTER_GENDER_MALE;
     lastGender = -1;
     
-    femaleImage = PawsManager::GetSingleton().GetTextureManager()->GetDrawable(FEMALE_ICON);
+    femaleImage = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(FEMALE_ICON);
     if (!femaleImage)
     {
         Warning1( LOG_PAWS, "Could not locate the female icon image. This image is not part of the GPL.");
     }
-    neutralImage = PawsManager::GetSingleton().GetTextureManager()->GetDrawable(NEUTRAL_ICON);
+    neutralImage = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(NEUTRAL_ICON);
     if (!neutralImage)
     {
         Warning1( LOG_PAWS, "Could not locate the neutral icon image. This image is not part of the GPL.");

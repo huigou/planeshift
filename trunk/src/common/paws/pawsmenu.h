@@ -284,7 +284,7 @@ protected:
     pawsButton * stickyButton, * closeButton;
     pawsTextBox * label;
 
-    csRef<iPAWSDrawable> arrowImage;    // image of right arrow indicating that menu item invokes a submenu
+    csRef<iPawsImage> arrowImage;    // image of right arrow indicating that menu item invokes a submenu
     
     pawsMenuAlign align;
     

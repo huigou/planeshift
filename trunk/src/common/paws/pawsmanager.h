@@ -202,7 +202,7 @@ public:
     pawsMouse* GetMouse() { return mouse; }
 
     /// Returns the resized image.
-    csRef<iPAWSDrawable> GetResizeImage() { return resizeImg; }
+    csRef<iPawsImage> GetResizeImage() { return resizeImg; }
 
     /** Locate a widget by name.
      * @param name The name of the widget.
@@ -485,7 +485,7 @@ protected:
     pawsMouse* mouse;
 
     /// Resized image.
-    csRef<iPAWSDrawable> resizeImg;
+    csRef<iPawsImage> resizeImg;
 
     /// An array of pointers to available factories.
     csPDelArray<pawsWidgetFactory> factories;
