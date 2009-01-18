@@ -99,6 +99,7 @@ psCharacterInventory::psCharacterInventory(psCharacter *ownr)
     loaded         = false;
     inExchangeMode = false;
     bEncumbranceLocked = false;
+	version = 1; // Client cache version initializes to 0. so, we start with 1 here
 }
 
 psCharacterInventory::~psCharacterInventory()

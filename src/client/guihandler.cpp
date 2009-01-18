@@ -65,6 +65,14 @@ void GUIHandler::HandleInventory(MsgEntry* me)
 {
     psGUIInventoryMessage incoming(me);
 
+	// drop inventory list, if its version is older than the current.
+	// this may happen due to UDP latency.
+	if (inventoryCache->GetInventoryVersion() >= incoming.version)
+		return;
+	
+	// Set new version in any case (LIST or UPDATE_LIST)
+	inventoryCache->SetInventoryVersion(incoming.version);
+
     // merge the received inventory list into the client's inventory cache
     if (incoming.command == psGUIInventoryMessage::LIST)   // for the whole lot
     {
