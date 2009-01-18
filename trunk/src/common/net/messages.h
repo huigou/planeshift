@@ -43,7 +43,7 @@ class psLinearMovement;
 
 // This holds the version number of the network code, remember to increase
 // this each time you do an update which breaks compatibility
-#define PS_NETVERSION   0x0097
+#define PS_NETVERSION   0x0098
 // Remember to bump the version in pscssetup.h, as well.
 
 // NPC Networking version is separate so we don't have to break compatibility
@@ -1482,12 +1482,14 @@ public:
      * @param totalItems The total items or item stacks.
      * @param totalEmptiedSlots The total number of slots been emptied.
      * @param maxWeight The max weight the player can carry.
+     * @param cache_version Inventory cache version we're gonna build in this message.
      */
     psGUIInventoryMessage( uint32_t clientnum,
                            uint8_t command,
                            uint32_t totalItems,
                            uint32_t totalEmptiedSlots,
                            float maxWeight,
+						   uint32_t cache_version,
                            size_t msgsize);
 
 
@@ -1545,6 +1547,7 @@ public:
     size_t totalEmptiedSlots;
     float maxWeight;    ///< The total max weight the player can carry.
     psMoney money;
+	uint32 version;		/// cache version (PS#2691)
 };
 
 //---------------------------------------------------------------------------

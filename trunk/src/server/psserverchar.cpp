@@ -417,12 +417,15 @@ bool ServerCharManager::SendInventory( int clientNum, bool sendUpdatesOnly)
     if (exchange)
         m += -exchange->GetOfferedMoney(client);
     msgsize += strlen(m.ToString()) + 1;
+
+	msgsize += sizeof(uint32); // apply version size
     
     // actually create the message
     outgoing = new psGUIInventoryMessage(toClientNumber,
                                          psGUIInventoryMessage::LIST,
                                          (uint32_t)chardata->Inventory().GetInventoryIndexCount()-1,  // skip item 0
-                                         (uint32_t)0, chardata->Inventory().MaxWeight(), msgsize);
+										 (uint32_t)0, chardata->Inventory().MaxWeight(),
+										 chardata->Inventory().GetInventoryVersion(), msgsize);
     
     for (size_t i=1; i < chardata->Inventory().GetInventoryIndexCount(); i++)
     {
@@ -455,6 +458,9 @@ bool ServerCharManager::SendInventory( int clientNum, bool sendUpdatesOnly)
         outgoing->msg->ClipToCurrentSize();
         psserver->GetEventManager()->SendMessage(outgoing->msg);
 
+		// Increase the inventory version, since this version was sent.
+		chardata->Inventory().IncreaseInventoryVersion();
+		
         // server now can believe the clients inventory cache is upto date
         //        inventoryCache->SetCacheStatus(psCache::VALID);
     }

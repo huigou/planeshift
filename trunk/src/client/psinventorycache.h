@@ -93,6 +93,14 @@ class psInventoryCache : public psCache
          */
          CachedItemDescription*GetInventoryItem(int slot);
 	
+		 /// inline uint32 GetInventoryVersion() const
+		 /// Info: Returns the cache version (PS#2691)
+		 inline uint32 GetInventoryVersion() const { return version; }
+	
+		 /// inline void SetInventoryVersion(uint32 ver)
+		 /// Info: Sets the cache version (PS#2691)
+		 inline void SetInventoryVersion(uint32 ver) { version = ver; }
+
     private:
 
         csHash<CachedItemDescription*> itemhash;  // all cached items in equip, bulk or containers
@@ -100,6 +108,8 @@ class psInventoryCache : public psCache
         // CachedItemDescription equipItems[INVENTORY_EQUIP_COUNT];  /// cached equip items
 
         csRef<MsgHandler> msgHandler;
+
+		uint32 version; // Current cache version (PS#2691)
 };
 
 #endif

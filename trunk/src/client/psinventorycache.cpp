@@ -21,7 +21,7 @@
 #include "psinventorycache.h"
 #include "globals.h"
 
-psInventoryCache::psInventoryCache ()
+psInventoryCache::psInventoryCache () : version(0)
 {
     msgHandler = psengine->GetMsgHandler();
     EmptyInventory();

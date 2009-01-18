@@ -2052,6 +2052,7 @@ psGUIInventoryMessage::psGUIInventoryMessage(MsgEntry *message)
             if (command == UPDATE_LIST)
                 totalEmptiedSlots = message->GetUInt32();
             maxWeight = message->GetFloat();
+			version = message->GetUInt32();
             for ( size_t x = 0; x < totalItems; x++ )
             {
                 ItemDescription item;
@@ -2090,10 +2091,11 @@ psGUIInventoryMessage::psGUIInventoryMessage(uint32_t clientnum,
                                              uint32_t totalItems,
                                              uint32_t totalEmptiedSlots,
                                              float maxWeight,
+											 uint32_t cache_version,
                                              size_t msgsize)
 {
     // add on this header size
-    msg.AttachNew(new MsgEntry( msgsize + sizeof(uint8_t) + sizeof(uint32_t) * 2 + sizeof(float) ));
+    msg.AttachNew(new MsgEntry( msgsize + sizeof(uint8_t) + sizeof(uint32_t) * 3 + sizeof(float) ));
     msg->SetType(MSGTYPE_GUIINVENTORY);
     msg->clientnum      = clientnum;
 
@@ -2102,6 +2104,7 @@ psGUIInventoryMessage::psGUIInventoryMessage(uint32_t clientnum,
     if (command == UPDATE_LIST)
         msg->Add(totalEmptiedSlots);
     msg->Add( maxWeight );
+    msg->Add( cache_version );
 
     // Sets valid flag based on message overrun state
     valid=!(msg->overrun);
@@ -2153,7 +2156,7 @@ csString psGUIInventoryMessage::ToString(AccessPointers * /*access_ptrs*/)
     msgtext.AppendFmt("Command: %d", command);
     if (command == LIST || command == UPDATE_LIST)
     {
-        msgtext.AppendFmt(" Total Items: %zu Max Weight: %.3f", totalItems, maxWeight);
+		msgtext.AppendFmt(" Total Items: %zu Max Weight: %.3f Cache Version: %d", totalItems, maxWeight, version);
 
         msgtext.AppendFmt(" List: ");
         for ( size_t x = 0; x < totalItems; x++ )

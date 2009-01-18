@@ -131,6 +131,9 @@ protected:
     /// Exchange mode flag
     bool inExchangeMode;
 
+	/// Inventory version
+	uint32 version;
+
 public:
 
     psCharacterInventory(psCharacter *owner);
@@ -181,6 +184,12 @@ public:
     
     /// @return The current capacity ( ie space ) of the inventory.
     float GetTotalSizeOfItemsInContainer(psItem *container=NULL);
+
+	/// @return The current inventory version.
+	uint32 GetInventoryVersion() const { return version; }
+
+	/// Updates (increases) the current inventory version.
+	void IncreaseInventoryVersion() { version++; }
 
     /** Put an item into the bulk inventory, and stack if needed.
       * @param item The item we want to place into the slot.
