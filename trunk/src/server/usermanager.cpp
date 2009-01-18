@@ -1613,8 +1613,7 @@ void UserManager::Assist( psUserCmdMessage& msg, Client* client, int clientnum )
 
     if ( !client->GetActor()->IsNear( targetClient->GetActor(), ASSIST_MAX_DIST ) )
     {
-        psserver->SendSystemInfo(clientnum,
-            "Specified player is too far away." );
+        psserver->SendSystemInfo(clientnum,"Specified player is too far away." );
         return;
     }
 
