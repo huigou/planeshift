@@ -4047,6 +4047,7 @@ void AdminManager::CreateMoney(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDat
     Debug4(LOG_ADMIN,me->clientnum,  "Created %d %s for %s\n", quantity, data.item.GetDataSafe(), charData->GetCharName());
 
     charData->AdjustMoney(money, false);
+    psserver->GetCharManager()->SendPlayerMoney(client);
 
 }
 
