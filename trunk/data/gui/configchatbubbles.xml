@@ -475,6 +475,41 @@
                 <text string="Mix Action colours" />
             </widget>
 
+            <widget name="npcinternalText" factory="pawsTextBox">
+                <frame x="10" y="30" width="130" height="20" />
+                <text string="npcinternal text colour" />
+            </widget>
+            <widget name="npcinternalTextR" factory="pawsEditTextBox"><frame border="yes" x="140" y="30" width="30" height="20" /></widget>
+            <widget name="npcinternalTextG" factory="pawsEditTextBox"><frame border="yes" x="180" y="30" width="30" height="20" /></widget>
+            <widget name="npcinternalTextB" factory="pawsEditTextBox"><frame border="yes" x="220" y="30" width="30" height="20" /></widget>
+            <widget name="npcinternalEnabled" factory="pawsCheckBox">
+                <frame x="260" y="30" width="130" height="20"/>
+                <text string="Enable npcinternal" />
+            </widget>
+            <widget name="npcinternalShadow" factory="pawsTextBox">
+                <frame x="10" y="50" width="130" height="20" />
+                <text string="npcinternal shadow colour" />
+            </widget>
+            <widget name="npcinternalShadowR" factory="pawsEditTextBox"><frame border="yes" x="140" y="50" width="30" height="20" /></widget>
+            <widget name="npcinternalShadowG" factory="pawsEditTextBox"><frame border="yes" x="180" y="50" width="30" height="20" /></widget>
+            <widget name="npcinternalShadowB" factory="pawsEditTextBox"><frame border="yes" x="220" y="50" width="30" height="20" /></widget>
+            <widget name="npcinternalOutline" factory="pawsTextBox">
+                <frame x="10" y="70" width="130" height="20" />
+                <text string="npcinternal outline colour" />
+            </widget>
+            <widget name="npcinternalOutlineR" factory="pawsEditTextBox"><frame border="yes" x="140" y="70" width="30" height="20" /></widget>
+            <widget name="npcinternalOutlineG" factory="pawsEditTextBox"><frame border="yes" x="140" y="70" width="30" height="20" /></widget>
+            <widget name="npcinternalOutlineB" factory="pawsEditTextBox"><frame border="yes" x="140" y="70" width="30" height="20" /></widget>
+            <widget name="npcinternalAlignText" factory="pawsTextBox">
+                <frame x="10" y="70" width="130" height="20" />
+                <text string="npcinternal Alignment" />
+            </widget>
+            <widget name="npcinternalAlign" factory="pawsComboBox" >
+                <listbox rows="3" height="20" text="Left" />
+                <frame x="150" y="20" width="200" height="25" border="no" />
+            </widget>
+
+
 		</widget>
 
 </widget_description>
