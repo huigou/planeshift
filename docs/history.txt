@@ -1,4 +1,7 @@
-﻿*** 2009-01-19 by Keith Fulton
+﻿*** 2009-01-19 by Steven Patrick
+- Updated chat bubbles config for npcinternal, patch by Caarrie.
+
+*** 2009-01-19 by Keith Fulton
 - Fixing chat bubbles so that both the npc bubbles and the player menu popups are
   displayed.
 - Committed a fix by Nick Prassas (Loyni) for bug 2402.  Thanks Nick!
