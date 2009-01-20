@@ -1,4 +1,33 @@
-﻿*** 2009-01-19 by Steven Patrick
+﻿*** 2009-01-19 by Keith Fulton
+- Major upgrade to PAWS capabilities in this commit.  Most of this functionality
+  was already here but unused or not working right.  Here is an explanation of
+  what is possible, with pointers to examples:
+    1. Anywhere an image is needed, you can now use a tilable stretchable image.
+       This images can be made with 3 components to stretch horizontally, 3
+       components to stretch vertically, or 9 components to stretch both directions.
+       See the new imagelist.xml in default.zip for examples of these.
+    2. PAWS styles now work much better.  In any <widget> tag you can specify
+       style="whatever" and the xml for that style in /data/gui/styles.xml will
+       be dropped into that widget.  This means anything can be overridden with
+       styles.  Backgrounds, fonts, and the next feature.
+    3. New widget subtag, <defaultstyle>.  This allows you to specify for a
+       widget that any widget with the named factory should get the named style
+       unless overridden locally.  For example:
+
+          <defaultstyle factory="pawsButton" style="redbutton"/>
+
+       If this is specified at a parent level, then all buttons in this widget
+       will use the redbutton class without having to specify it each time.
+
+       If this is specified inside a style, then any widget getting this style
+       will use the "redbutton" style for any of this widget's buttons.
+
+       By specifying defaultstyle's for many factories in a standard style,
+       we should be able to pull out nearly ALL style information from the 
+       widget definitions and only store them in 1 place.
+
+
+*** 2009-01-19 by Steven Patrick
 - Updated chat bubbles config for npcinternal, patch by Caarrie.
 - Compiling.html fixes, patch by Caarrie.
 
