@@ -57,7 +57,8 @@ pawsTextureManager::~pawsTextureManager()
 }
     
 bool pawsTextureManager::LoadImageList( const char* listName )
-{    
+{ 
+    printf("Texture Manager parsing %s\n", listName);
     csRef<iDataBuffer> buff = vfs->ReadFile( listName );
 
     if ( !buff || !buff->GetSize() )
@@ -104,9 +105,11 @@ bool pawsTextureManager::LoadImageList( const char* listName )
             element = new pawsImageDrawable(node);
 		else if (!strcmp(node->GetValue(), "frame"))
 			element = new pawsFrameDrawable(node);
-        
+        else
+            Error2("Illegal node name in imagelist.xml: %s", node->GetValue() );
+
         if (element)
-            elementList.Put(element->GetName(), element);
+            AddPawsImage(element);
     }
 
     return true;     
@@ -124,6 +127,7 @@ csPtr<iPawsImage> pawsTextureManager::GetPawsImage(const char * name)
 
 void pawsTextureManager::AddPawsImage(iPawsImage * element)
 {
+    printf("Adding pawsImage called %s\n", element->GetName() );
     elementList.Put(element->GetName(), element);
 }
 

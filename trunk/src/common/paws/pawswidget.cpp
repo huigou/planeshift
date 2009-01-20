@@ -279,8 +279,13 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
     */
         
     atr = node->GetAttribute("style");
+
     if (atr)
         PawsManager::GetSingleton().ApplyStyle(atr->GetValue(), node);
+    else
+        PawsManager::GetSingleton().ApplyStyle(FindDefaultWidgetStyle(factory), node);
+
+    ReadDefaultWidgetStyles(node);
 
     atr = node->GetAttribute("ignore");
     if ( atr )
@@ -2693,4 +2698,33 @@ void pawsWidget::SetProperty(const char * ptr, double value)
         Error2("pawsWidget::SetProperty(%s) failed\n", ptr);
 }
 
+bool pawsWidget::ReadDefaultWidgetStyles( iDocumentNode *node )
+{
+    csRef<iDocumentNodeIterator> defaults = node->GetNodes();
+    while ( defaults->HasNext() )
+    {
+        csRef<iDocumentNode> child = defaults->Next();
+        if (!strcmp(child->GetValue(),"defaultstyle"))
+        {
+            defaultWidgetStyles.Put(child->GetAttributeValue("factory"),child->GetAttributeValue("style"));
+        }
+    } 
+    return true;
+}
+
+const char *pawsWidget::FindDefaultWidgetStyle(const char *factoryName)
+{
+    static csString style;
+    
+    style = defaultWidgetStyles.Get(factoryName,csString("not found"));
+    if (style == "not found" && parent != NULL)
+    {
+        // walk up the chain of parents
+        return parent->FindDefaultWidgetStyle(factoryName);
+    }
+    if (style == "not found")
+        return NULL;
+    else
+        return style;
+}
 

@@ -36,16 +36,7 @@
 #include "pawsframedrawable.h"
 #include "pawsmanager.h"
 
-void pawsFrameDrawable::LoadPiece(csRef<iDocumentNode> node, FRAME_DRAWABLE_PIECE piece)
-{
-    bool tiled = node->GetAttributeValueAsBool("tile");
-    csRect textureRect;
-    textureRect.SetPos(node->GetAttributeValueAsInt("tx"), node->GetAttributeValueAsInt("ty"));
-    textureRect.SetSize(node->GetAttributeValueAsInt("tw"), node->GetAttributeValueAsInt("th"));
-    pieces[piece].drawable.AttachNew(new pawsImageDrawable(imageFileLocation, resourceName, tiled, textureRect, defaultAlphaValue, defaultTransparentColourRed, defaultTransparentColourGreen, defaultTransparentColourBlue));
-    pieces[piece].offsetx = node->GetAttributeValueAsInt("offsetx");
-    pieces[piece].offsety = node->GetAttributeValueAsInt("offsety");
-}
+
 
 pawsFrameDrawable::pawsFrameDrawable(csRef<iDocumentNode> node)
   : scfImplementationType (this)
@@ -60,11 +51,11 @@ pawsFrameDrawable::pawsFrameDrawable(csRef<iDocumentNode> node)
     imageFileLocation = node->GetAttributeValue("file");
     resourceName = node->GetAttributeValue("resource");
 
-    const char * typeStr = node->GetAttributeValue("type");
+    csString typeStr(node->GetAttributeValue("type"));
     type = FDT_FULL;
-    if (!strcmp(typeStr, "horizontal"))
+    if (typeStr == "horizontal")
         type = FDT_HORIZONTAL;
-    else if (!strcmp(typeStr, "vertical"))
+    else if (typeStr == "vertical")
         type = FDT_VERTICAL;
 
     csRef<iDocumentNodeIterator> iter = node->GetNodes();
@@ -111,9 +102,20 @@ pawsFrameDrawable::~pawsFrameDrawable()
 
 }
 
-const char * pawsFrameDrawable::GetName() const
+const char *pawsFrameDrawable::GetName() const
 {
     return resourceName;
+}
+
+void pawsFrameDrawable::LoadPiece(csRef<iDocumentNode> node, FRAME_DRAWABLE_PIECE piece)
+{
+    bool tiled = node->GetAttributeValueAsBool("tile");
+    csRect textureRect;
+    textureRect.SetPos(node->GetAttributeValueAsInt("tx"), node->GetAttributeValueAsInt("ty"));
+    textureRect.SetSize(node->GetAttributeValueAsInt("tw"), node->GetAttributeValueAsInt("th"));
+    pieces[piece].drawable.AttachNew(new pawsImageDrawable(imageFileLocation, resourceName, tiled, textureRect, defaultAlphaValue, defaultTransparentColourRed, defaultTransparentColourGreen, defaultTransparentColourBlue));
+    pieces[piece].offsetx = node->GetAttributeValueAsInt("offsetx");
+    pieces[piece].offsety = node->GetAttributeValueAsInt("offsety");
 }
 
 void pawsFrameDrawable::Draw(int x, int y, int alpha)
