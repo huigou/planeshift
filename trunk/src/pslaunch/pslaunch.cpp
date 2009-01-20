@@ -49,6 +49,7 @@ psLauncherGUI::psLauncherGUI(iObjectRegistry* _object_reg, InfoShare *_infoShare
     infoShare = _infoShare;
     execPSClient = _execPSClient;
     
+    drawScreen = true;
     psLaunchGUI = this;
     paws = NULL;
     updateTold = false;
