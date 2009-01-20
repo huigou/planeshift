@@ -69,6 +69,19 @@
         <bgimage resource="Standard Button" alpha="0"/>
     </style>
 
+    <!-- red button -->
+    <style name="redbutton" toggle="no" >
+        <frame width="80" height="22" border="no" />
+        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="20" />
+        <bgimage resource="Glossy Red Button" alpha="0"/>
+    </style>
+
+    <!-- scaling red button -->
+    <style name="scaleredbutton" toggle="no" >
+        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="20" />
+        <bgimage resource="Scaling Red Button" alpha="0"/>
+    </style>
+
     <style name="nicebutton" toggle="no" >
         <frame width="80" height="22" border="no" />
         <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="240" g="240" b="200" size="8" />
@@ -105,4 +118,9 @@
         </childborders>
     </style>
     
+    <style name="New Standard GUI">
+        <bgimage resource="Scaling Widget Background" />
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="20" g="20" b="20" size="10" />
+        <defaultstyle factory="pawsButton" style="scaleredbutton"/>
+    </style>
 </styles>

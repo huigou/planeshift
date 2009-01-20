@@ -2,26 +2,22 @@
 
 <widget name="YesNoWindow" factory="pawsYesNoBox" 
         visible="no" savepositions="no" movable="yes"
-        resizable="no" >
+        resizable="no" style="New Standard GUI" >
 
         
-    <frame x="0" y="0" width="644" height="300" border="no" />
-    <bgimage resource="YesNo" alpha="0" />
-
+    <frame x="0" y="0" width="500" height="250" border="no" />
+    
         <widget name="Message Box" factory="pawsMultiLineTextBox">
-            <frame x="180" y="80" width="300" height="108" border="no" />
-	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="10" />
+            <frame x="100" y="40" width="300" height="150" border="no" />
         </widget>
 
         <widget name="YesButton" factory="pawsButton" id="-10" key="Y">
-            <frame x="212" y="185" width="80" height="40" border="no"/>
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="20" />
+            <frame x="140" y="185" width="100" height="40" />
             <label text="Yes" />
         </widget>
 
         <widget name="NoButton" factory="pawsButton" id="-20" key="N">
-            <frame x="370" y="185" width="50" height="40" border="no"/>
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="20" />
+            <frame x="260" y="185" width="100" height="40" />
             <label text="No" />
         </widget>
 

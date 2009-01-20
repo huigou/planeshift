@@ -1,20 +1,21 @@
 <widget_description>
 
     <widget name="ShortcutWindow" factory="pawsShortcutWindow" visible="yes" configurable="yes"
-        savepositions="yes" movable="yes" resizable="yes" keepaspect="no" >
-	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="10" scalefont="no" />
+            savepositions="yes" movable="yes" resizable="yes" keepaspect="no" style="New Standard GUI">
+	    
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="10" scalefont="no" />
         <frame x="526" y="545" width="280" height="55" border="no" />
-		<minframe width="105" height="32" />
-		<bgimage resource="Shortcut Background" alpha="128" />
+	  <minframe width="105" height="32" />
     </widget>
 
     <widget name="ShortcutEdit" factory="pawsWidget" visible="no" savepositions="yes" movable="yes"
-        resizable="yes" configurable="yes" keepaspect="no" >
+            resizable="yes" configurable="yes" keepaspect="no" style="New Standard GUI">
+
 		<frame x="30" y="30" width="330" height="220" border="yes" />
 		<title resource="Blue Title" text="Edit Shortcut..." align="left" close_button="yes" />
-		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="10" scalefont="no" />
-		<bgimage resource="Options Background" alpha="128"/>
+		<!--bgimage resource="Options Background" alpha="128"/-->
 		<minframe width="300" height="200" />
+
         <widget name="Infobox1" factory="pawsTextBox">
             <frame x="20" y="7" width="60" height="20" />
             <text string="Name:" />
@@ -47,10 +48,9 @@
             </attachpoints>
         </widget>
         <widget name="SetKeyButton" factory="pawsButton" toggle="no" id="1102" notify="ShortcutWindow">
-            <frame x="260" y="28" width="50" height="20" border="yes" />
+            <frame x="260" y="28" width="50" height="24" />
             <notify name="ShortcutWindow" />
-            <buttonup resource="Blue Title" />
-            <buttondown resource="Blue Title" />
+            <bgimage resource="Scaling Red Button" />
             <label text="Set" />
 	    <attachpoints>
 		    <attach point="ATTACH_RIGHT" />
@@ -66,7 +66,8 @@
             </attachpoints>
         </widget>
         <widget name="CommandBox" factory="pawsMultilineEditTextBox">
-            <frame x="20" y="90" width="300" height="70" border="yes" />
+            <frame x="20" y="90" width="300" height="70" border="no" />
+            <bgimage resource="Scaling Button Background"/>
             <attachpoints>
                 <attach point="ATTACH_LEFT" />
                 <attach point="ATTACH_RIGHT" />
@@ -75,10 +76,9 @@
             </attachpoints>
         </widget>
         <widget name="DoneButton" factory="pawsButton" toggle="no" id="1100" notify="ShortcutWindow">
-            <frame x="20" y="180" width="50" height="20" border="yes" />
+            <frame x="20" y="180" width="50" height="24" />
             <notify name="ShortcutWindow" />
-            <buttonup resource="Blue Title" />
-            <buttondown resource="Blue Title" />
+            <bgimage resource="Scaling Red Button" />
             <label text="Done" />
             <attachpoints>
                 <attach point="ATTACH_LEFT" />
@@ -86,9 +86,8 @@
             </attachpoints>
         </widget>
         <widget name="ClearButton" factory="pawsButton" toggle="no" id="1103" notify="ShortcutWindow">
-            <frame x="80" y="180" width="50" height="20" border="yes" />
-            <buttonup resource="Blue Title" />
-            <buttondown resource="Blue Title" />
+            <frame x="80" y="180" width="50" height="24" />
+            <bgimage resource="Scaling Red Button" />
             <label text="Clear" />
             <attachpoints>
                 <attach point="ATTACH_LEFT" />
@@ -96,9 +95,8 @@
             </attachpoints>
         </widget>
         <widget name="CancelButton" factory="pawsButton" toggle="no" id="1101" notify="ShortcutWindow">
-            <frame x="140" y="180" width="60" height="20" border="yes" />
-            <buttonup resource="Blue Title" />
-            <buttondown resource="Blue Title" />
+            <frame x="140" y="180" width="60" height="24" />
+            <bgimage resource="Scaling Red Button" />
             <label text="Cancel" />
             <attachpoints>
                 <attach point="ATTACH_LEFT" />
