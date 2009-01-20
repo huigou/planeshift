@@ -116,6 +116,9 @@ void pawsStyles::InheritFromParent(csRef <iDocumentNode> & style, STRING_HASH(bo
 
 void pawsStyles::ApplyStyle(const char * style, iDocumentNode * target)
 {
+    if (!style)
+        return;
+
     iDocumentNode * styleXML = styles.Get(style, NULL);
     if (styleXML != NULL)
         ApplyStyle(styleXML, target);

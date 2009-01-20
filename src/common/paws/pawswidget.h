@@ -326,6 +326,10 @@ protected:
 
     pawsScript * scriptEvents[PW_SCRIPT_EVENT_COUNT];
 
+    csHash<csString,csString> defaultWidgetStyles;
+
+    bool ReadDefaultWidgetStyles(iDocumentNode *node);
+
 public:
 
     pawsWidget();
@@ -1299,6 +1303,8 @@ public:
     bool SetTitle( const char* text, const char* image, const char* align, const char* close_button, const bool shadowTitle = true);
 
     void RemoveTitle();
+
+    const char *FindDefaultWidgetStyle(const char *factoryName);
 
 protected:
 

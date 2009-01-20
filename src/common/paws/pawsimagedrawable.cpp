@@ -162,9 +162,9 @@ pawsImageDrawable::pawsImageDrawable(const char * file, const char * resource, b
     this->tiled = tiled;
     textureRectangle = textureRect;
     defaultAlphaValue = alpha;
-    transR = defaultTransparentColourRed;
-    transG = defaultTransparentColourGreen;
-    transB = defaultTransparentColourBlue;
+    defaultTransparentColourRed   = transR;
+    defaultTransparentColourGreen = transG;
+    defaultTransparentColourBlue  = transB;
     PreparePixmap();
 }
 
