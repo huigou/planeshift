@@ -1,5 +1,6 @@
 ﻿*** 2009-01-19 by Steven Patrick
 - Updated chat bubbles config for npcinternal, patch by Caarrie.
+- Compiling.html fixes, patch by Caarrie.
 
 *** 2009-01-19 by Keith Fulton
 - Fixing chat bubbles so that both the npc bubbles and the player menu popups are
