@@ -2,7 +2,7 @@
 
 <widget name="OkWindow" factory="pawsOkBox" 
         visible="no" savepositions="no" movable="yes" 
-        resizable="no" >
+        resizable="no" style="New Standard GUI" >
        
     <frame x="0" y="0" width="644" height="300" border="no" />
     <bgimage resource="YesNo" alpha="0" />
@@ -18,8 +18,7 @@
 
     <widget name="OkButton" factory="pawsButton" id="-30">
         <frame x="270" y="220" width="80" height="40" border="no"/>
-        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="25" />
-    <label text="Ok" />
+        <label text="Ok" />
     </widget>
 
 </widget>

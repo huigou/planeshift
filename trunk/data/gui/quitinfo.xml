@@ -2,9 +2,9 @@
 
 <widget name="QuitInfoWindow" factory="pawsQuitInfoBox" 
         visible="no" savepositions="no" movable="yes" 
-        resizable="no" >        
+        resizable="no" style="New Standard GUI" >
+        
     <frame x="0" y="0" width="512" height="240" border="no" />
-    <bgimage resource="YesNo" alpha="0" />
     
     <widget name="Message Box" factory="pawsMultiLineTextBox">
         <frame x="100" y="60" width="300" height="100" border="no" />        
