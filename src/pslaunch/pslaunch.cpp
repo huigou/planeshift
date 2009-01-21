@@ -336,7 +336,7 @@ int main(int argc, char* argv[])
         csString s(argv[i]);
         if(s.CompareNoCase("--console") || s.CompareNoCase("-console"))
         {
-            //console = true;
+            console = true;
         }
     }
 
