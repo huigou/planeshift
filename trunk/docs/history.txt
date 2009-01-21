@@ -1,4 +1,7 @@
-﻿*** 2009-01-19 by Keith Fulton
+﻿*** 2009-01-21
+- Fixed PS#2368 - Add Map name to /info results, patch by kougaro.
+
+*** 2009-01-19 by Keith Fulton
 - Major upgrade to PAWS capabilities in this commit.  Most of this functionality
   was already here but unused or not working right.  Here is an explanation of
   what is possible, with pointers to examples:
