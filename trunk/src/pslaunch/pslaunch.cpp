@@ -511,7 +511,7 @@ int main(int argc, char* argv[])
               if(fork() == 0)
               {
 #ifdef CS_PLATFORM_MACOSX
-                execl("./psclient.app, "./psclient.app", (char*)0); 
+                execl("./psclient.app", "./psclient.app", (char*)0); 
 #else
                 execl("./psclient", "./psclient", (char*)0);  
 #endif
@@ -520,7 +520,7 @@ int main(int argc, char* argv[])
               {
                 int status;
                 wait(&status);
-                exitApp = status ? 0 : !0;
+                exitApp = (status == 0);
               }                
 #endif
             }
