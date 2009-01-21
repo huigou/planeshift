@@ -382,9 +382,6 @@ int main(int argc, char* argv[])
         bool exitApp = false;
         while(!exitApp)
         {
-            // Set to exit app.
-            exitApp = true;
-
             // Set up CS
             iObjectRegistry* object_reg = csInitializer::CreateEnvironment (argc, argv);
 
@@ -475,6 +472,9 @@ int main(int argc, char* argv[])
                 // Free GUI.
                 delete gui;
             }
+
+            // Set to exit app.
+            exitApp = true;
 
             // Clean up everything else.
             engine.Invalidate();
