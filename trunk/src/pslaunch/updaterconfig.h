@@ -28,7 +28,7 @@
 
 #include "util/singleton.h"
 
-#define CONFIG_FILENAME "/this/psupdater.cfg"
+#define CONFIG_FILENAME "/this/pslaunch.cfg"
 #define UPDATERINFO_FILENAME "/planeshift/userdata/updaterinfo.xml"
 #define UPDATERINFO_CURRENT_FILENAME "/this/updaterinfo.xml"
 
