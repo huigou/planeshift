@@ -510,7 +510,11 @@ int main(int argc, char* argv[])
 #else
               if(fork() == 0)
               {
-                execl("./psclient", "./psclient", (char*)0);                                        
+#ifdef CS_PLATFORM_MACOSX
+                execl("./psclient.app, "./psclient.app", (char*)0); 
+#else
+                execl("./psclient", "./psclient", (char*)0);  
+#endif
               }                
               else
               {
