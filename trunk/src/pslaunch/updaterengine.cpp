@@ -103,6 +103,20 @@ void UpdaterEngine::PrintOutput(const char *string, ...)
     }    
 }
 
+void UpdaterEngine::Run()
+{
+  CheckForUpdates();
+
+  while(!infoShare->GetExitGUI())
+  {
+    if(infoShare->GetCheckIntegrity())
+    {
+      CheckIntegrity();
+      infoShare->SetCheckIntegrity(false);
+    }
+  }
+}
+
 void UpdaterEngine::CheckForUpdates()
 {
     // Make sure the old instance had time to terminate (self-update).

@@ -41,7 +41,7 @@ private:
     pawsYesNoBox* updateAvailable;
     csRef<iConfigFile> configFile;
     csRef<iConfigFile> configUser;
-    csRef<Thread> newsUpdater;
+    csRef<CS::Threading::Thread> newsUpdater;
     csString mountedPath;
     csString currentSkin;
 
@@ -54,7 +54,7 @@ private:
     bool LoadResource(const char* resource,const char* resname, const char* mountPath);
     void OnListAction(pawsListBox* widget, int status);
 
-    class NewsUpdater : public Runnable
+    class NewsUpdater : public CS::Threading::Runnable
     {
     public:
         NewsUpdater(pawsLauncherWindow* plw)
