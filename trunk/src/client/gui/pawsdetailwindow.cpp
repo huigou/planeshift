@@ -215,7 +215,10 @@ void pawsDetailWindow::HandleMessage( MsgEntry* me )
                 "detail ONLY is to be included, this does not mean that you should be sparing, please "
                 "include as many appeals to the senses as your character clearly eminates that can be "
                 "sensed with the five accepted senses (sight, touch, hearing and smell (being primary)"
-                "(only list taste if you anticipate people tasting your character)).");
+                "(only list taste if you anticipate people tasting your character)). If you are on the "
+                "non rp server: Not only can you disregard the above, but you are encouraged to include "
+                "epic descriptions of all sorts, quote great authors and even recite your own unpublished "
+                "novels with no limitation whatsoever.");
             if(!storedoocdescription.Length()) //if the player didn't input anything in ooc description inform him
                 storedoocdescription = PawsManager::GetSingleton().Translate("Here you can place any OOC information except to advertise companies, products, or services from the real world.\n\nTo disable this feature delete everything in the window by using the Modify Description button.");
         }
