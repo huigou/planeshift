@@ -379,11 +379,12 @@ int main(int argc, char* argv[])
     }
     else
     {
-        // Set to true to exit the app.
         bool exitApp = false;
-
         while(!exitApp)
         {
+            // Set to exit app.
+            exitApp = true;
+
             // Set up CS
             iObjectRegistry* object_reg = csInitializer::CreateEnvironment (argc, argv);
 
