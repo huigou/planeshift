@@ -1448,9 +1448,10 @@ void UserManager::ReportPosition(psUserCmdMessage& msg,Client *client,int client
         {
             // Get the region this sector belongs to
             csString region_name = (sector) ? sector->QueryObject()->GetObjectParent()->GetName() : "(null)";
-            csString idtxt; //holds the pid data if present
-            if(object->GetActorPtr()) //check if it's an actor else just don't add the pid: entry
-                idtxt.Format(", pid: %u",object->GetPID().Unbox()); //adds the pid: entry to the end of the output
+            // If it's an actor, append their PID to the output.
+            csString idtxt;
+            if (object->GetActorPtr())
+                idtxt.Format(", %s", ShowID(object->GetPID()));
 
             int degrees = (int)(angle*180.0/PI);
             psserver->SendSystemInfo(clientnum,
