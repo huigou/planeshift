@@ -34,6 +34,7 @@
 #include "globals.h"
 #include "pawslauncherwindow.h"
 
+using namespace CS::Threading;
 using namespace std;
 
 pawsLauncherWindow::pawsLauncherWindow()

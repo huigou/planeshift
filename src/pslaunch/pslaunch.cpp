@@ -42,6 +42,8 @@
 CS_IMPLEMENT_APPLICATION
 
 psLauncherGUI* psLaunchGUI;
+
+using namespace CS::Threading;
     
 psLauncherGUI::psLauncherGUI(iObjectRegistry* _object_reg, InfoShare *_infoShare, bool *_execPSClient)
 {
@@ -402,10 +404,6 @@ int main(int argc, char* argv[])
                 args.Push(argv[i]);
             }
 
-            InfoShare *infoShare = new InfoShare();
-            infoShare->SetPerformUpdate(false);
-            infoShare->SetUpdateNeeded(false);
-
             // Mount the VFS paths.
             csRef<iVFS> vfs = csQueryRegistry<iVFS>(object_reg);
             if (!vfs->Mount ("/planeshift/", "$^"))
@@ -414,26 +412,39 @@ int main(int argc, char* argv[])
                 return false;
             }
 
+            // Set config path.
             csRef<iConfigManager> configManager = csQueryRegistry<iConfigManager> (object_reg);
             csString configPath = csGetPlatformConfigPath("PlaneShift");
             configPath.ReplaceAll("/.crystalspace/", "/.");
             configPath = configManager->GetStr("PlaneShift.UserConfigPath", configPath);
-            FileUtil fileUtil(vfs);
-            csRef<FileStat> filestat = fileUtil.StatFile(configPath);
+
+            // Check that the path exists, else attempt to create it.
+            FileUtil* fileUtil = new FileUtil(vfs);
+            csRef<FileStat> filestat = fileUtil->StatFile(configPath);
             if (!filestat.IsValid() && CS_MKDIR(configPath) < 0)
             {
                 printf("Could not create required %s directory!\n", configPath.GetData());
                 return false;
             }
+            filestat.Invalidate();
+            delete fileUtil;
+            fileUtil = NULL;
 
+            // Mount config path.
             if (!vfs->Mount("/planeshift/userdata", configPath + "$/"))
             {
                 printf("Could not mount %s as /planeshift/userdata!\n", configPath.GetData());
                 return false;
             }
 
+            // Init thread communication structure.
+            InfoShare *infoShare = new InfoShare();
+            infoShare->SetPerformUpdate(false);
+            infoShare->SetUpdateNeeded(false);
+
             // Initialize updater engine.
-            UpdaterEngine* engine = new UpdaterEngine(args, object_reg, "pslaunch", infoShare);
+            csRef<UpdaterEngine> engine;
+            engine.AttachNew(new UpdaterEngine(args, object_reg, "pslaunch", infoShare));
 
             // If we're self updating, continue self update.
             if(engine->GetConfig()->IsSelfUpdating())
@@ -441,97 +452,77 @@ int main(int argc, char* argv[])
                 exitApp = engine->SelfUpdate(engine->GetConfig()->IsSelfUpdating());
             }
 
-            // If we don't have to exit the app, create GUI thread and run updater.
+            // Set to true by GUI if we have to launch the client.
+            bool execPSClient = false;
+
+            // If we don't have to exit the app, create updater thread and run the GUI.
             if(!exitApp)
             {
-                // Set to true by GUI if we have to launch the client.
-                bool execPSClient = false;
-                // Ping stuff.
+                // Start up updater.
+                csRef<Thread> updaterThread;
+                updaterThread.AttachNew(new Thread(engine));
+                updaterThread->Start();
 
                 // Request needed plugins for GUI.
                 csInitializer::RequestPlugins(object_reg, CS_REQUEST_FONTSERVER, CS_REQUEST_IMAGELOADER,
                     CS_REQUEST_OPENGL3D, CS_REQUEST_END);
 
-                // Start up GUI.
-                csRef<Runnable> gui;
-                gui.AttachNew(new psLauncherGUI(object_reg, infoShare, &execPSClient));
-                csRef<Thread> guiThread;
-                guiThread.AttachNew(new Thread(gui));
-                guiThread->Start();
+                // Start GUI.
+                psLauncherGUI* gui = new psLauncherGUI(object_reg, infoShare, &execPSClient);
+                gui->Run();
 
-                //Begin update checking.
-                if(engine)
-                    engine->CheckForUpdates();
+                // Free GUI.
+                delete gui;
+            }
 
-                // Wait for the gui to exit.
-                while(guiThread->IsRunning())
-                {
-                    csSleep(500);
-                    if(infoShare->GetCheckIntegrity())
-                    {
-                        engine->CheckIntegrity();
-                        csSleep(1000);
-                        infoShare->SetCheckIntegrity(false);
-                    }
+            // Clean up everything else.
+            engine.Invalidate();
+            delete infoShare;
+            configManager.Invalidate();
+            vfs.Invalidate();
+            csInitializer::DestroyApplication(object_reg);
 
-                }
-
-                // Free updater.
-                delete engine;
-                engine = NULL;
-
-                // Free the GUI.
-                guiThread = NULL;
-                gui = NULL;
-
-                // Clean up everything else.
-                csInitializer::DestroyApplication(object_reg);
-                object_reg = NULL;
-                delete infoShare;
-                infoShare = NULL;
-
-                if (execPSClient)
-                {
-                    // Execute psclient process.
+            if (execPSClient)
+            {
+              // Execute psclient process.
 
 #ifdef CS_PLATFORM_WIN32
 
-                    // Info for CreateProcess.
-                    STARTUPINFO siStartupInfo;
-                    DWORD dwExitCode;
-                    PROCESS_INFORMATION piProcessInfo;
-                    memset(&siStartupInfo, 0, sizeof(siStartupInfo));
-                    memset(&piProcessInfo, 0, sizeof(piProcessInfo));
-                    siStartupInfo.cb = sizeof(siStartupInfo);
+              // Info for CreateProcess.
+              STARTUPINFO siStartupInfo;
+              DWORD dwExitCode;
+              PROCESS_INFORMATION piProcessInfo;
+              memset(&siStartupInfo, 0, sizeof(siStartupInfo));
+              memset(&piProcessInfo, 0, sizeof(piProcessInfo));
+              siStartupInfo.cb = sizeof(siStartupInfo);
 
-                    CreateProcess(NULL, "psclient.exe", 0, 0, false,
-                        CREATE_DEFAULT_ERROR_MODE, 0, 0, &siStartupInfo, &piProcessInfo);
-                    GetExitCodeProcess(piProcessInfo.hProcess, &dwExitCode);
-                    while (dwExitCode == STILL_ACTIVE)
-                    {
-                        csSleep(1000);
-                        GetExitCodeProcess(piProcessInfo.hProcess, &dwExitCode);
-                    }
-                    exitApp = dwExitCode ? 0 : !0;
-                    CloseHandle(piProcessInfo.hProcess);
-                    CloseHandle(piProcessInfo.hThread);
+              CreateProcess(NULL, "psclient.exe", 0, 0, false,
+                CREATE_DEFAULT_ERROR_MODE, 0, 0, &siStartupInfo, &piProcessInfo);
+              GetExitCodeProcess(piProcessInfo.hProcess, &dwExitCode);
+              while (dwExitCode == STILL_ACTIVE)
+              {
+                csSleep(1000);
+                GetExitCodeProcess(piProcessInfo.hProcess, &dwExitCode);
+              }
+              exitApp = dwExitCode ? 0 : !0;
+              CloseHandle(piProcessInfo.hProcess);
+              CloseHandle(piProcessInfo.hThread);
 #else
-                    if(fork() == 0)
-                    {
-                        execl("./psclient", "./psclient", (char*)0);                                        
-                    }                
-                    else
-                    {
-                        int status;
-                        wait(&status);
-                        exitApp = status ? 0 : !0;
-                    }                
+              if(fork() == 0)
+              {
+                execl("./psclient", "./psclient", (char*)0);                                        
+              }                
+              else
+              {
+                int status;
+                wait(&status);
+                exitApp = status ? 0 : !0;
+              }                
 #endif
-                }
-                else
-                {
-                    exitApp = true;
-                }
+            }
+            else
+            {
+              exitApp = true;
             }
         }
     }

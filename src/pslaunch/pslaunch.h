@@ -38,9 +38,7 @@ class pawsMainWidget;
 class PawsManager;
 struct iObjectRegistry;
 
-using namespace CS::Threading;
-
-class psLauncherGUI : public Runnable
+class psLauncherGUI
 {
 private:
 
@@ -108,9 +106,8 @@ public:
 
     void CancelUpdater() { infoShare->SetCancelUpdater(true); }
 
-    // Run thread.
+    // Run.
     void Run();
-    
 };
 
 #endif // __PSLAUNCH_H__

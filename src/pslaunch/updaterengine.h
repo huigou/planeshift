@@ -131,7 +131,7 @@ public:
     }
 };
 
-class UpdaterEngine : public Singleton<UpdaterEngine>
+class UpdaterEngine : public CS::Threading::Runnable, public Singleton<UpdaterEngine>
 {
 private:
     iObjectRegistry* object_reg;
@@ -208,6 +208,9 @@ public:
 
     /* Print to console and save to array for GUI output. */
     void PrintOutput(const char* string, ...);
+
+    /* Run updater thread. */
+    void Run();
 };
 
 #endif // __UPDATERENGINE_H__
