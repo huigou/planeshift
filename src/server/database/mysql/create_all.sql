@@ -21,6 +21,7 @@ source command_access.sql;
 source commonstrings.sql;
 source factions.sql;
 source familiar_types.sql;
+source gameboards.sql;
 source gm_command_log.sql;
 source guildlevels.sql;
 source guilds.sql;
@@ -91,6 +92,8 @@ source warnings.sql;
 source guild_wars.sql;
 source wc_accessrules.sql;
 source wc_cmdlog.sql;
-source gameboards.sql;
+source wc_statistics.sql;
+
+
 
 source create_indexes.sql;
