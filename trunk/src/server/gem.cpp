@@ -1543,11 +1543,9 @@ gemContainer::gemContainer(csWeakRef<psItem> item,
              InstanceID myInstance,
              iSector* room,
              const csVector3& pos,
-             float xrotangle,
-             float yrotangle,
-             float zrotangle,
+             float rotangle,
              int clientnum)
-             : gemItem(item,factname,filename,myInstance,room,pos,xrotangle,yrotangle,zrotangle,clientnum)
+             : gemItem(item,factname,filename,myInstance,room,pos,rotangle,clientnum)
 {
 }
 
