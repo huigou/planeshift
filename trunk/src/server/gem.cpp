@@ -1183,7 +1183,9 @@ void gemObject::Dump()
     CPrintf(CON_CMDOUTPUT, out.GetData());
 }
 
-//------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------
+// gemActiveObject
+//--------------------------------------------------------------------------------------
 
 gemActiveObject::gemActiveObject( const char* name )
                                 : gemObject( name )
@@ -1400,7 +1402,9 @@ void gemActiveObject::SendBehaviorMessage(const csString & msg_id, gemObject *ac
     return;
 }
 
-/*--------------------------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------------------
+// gemItem
+//--------------------------------------------------------------------------------------
 
 gemItem::gemItem(csWeakRef<psItem> item,
                      const char* factname,
@@ -1528,6 +1532,278 @@ bool gemItem::GetVisibility()
        include use of itemdata in this function. */
     return true;
 }
+
+//--------------------------------------------------------------------------------------
+// gemContainer
+//--------------------------------------------------------------------------------------
+
+gemContainer::gemContainer(csWeakRef<psItem> item,
+             const char* factname,
+             const char* filename,
+             InstanceID myInstance,
+             iSector* room,
+             const csVector3& pos,
+             float xrotangle,
+             float yrotangle,
+             float zrotangle,
+             int clientnum)
+             : gemItem(item,factname,filename,myInstance,room,pos,xrotangle,yrotangle,zrotangle,clientnum)
+{
+}
+
+bool gemContainer::CanAdd(unsigned short amountToAdd, psItem *item, int slot)
+{
+    if (!item)
+        return false;
+
+    PID guard = GetItem()->GetGuardingCharacterID();
+    gemActor* guardingActor = GEMSupervisor::GetSingleton().FindPlayerEntity(guard);
+
+    // Test if container is guarded by someone else who is near
+    if (guard.IsValid() && guard != item->GetOwningCharacterID()
+        && guardingActor && (guardingActor->RangeTo(this) <= 5))
+        return false;
+
+    /* We often want to see if a partial stack could be added, but we want to
+     * check before actually doing the splitting.  So, we take an extra parameter
+     * and fake the stack count before calling AddToContainer with the test flag;
+     * we put it back when we're done. */
+
+    uint currentSize = 0;
+    gemContainer::psContainerIterator iter(this);
+    while (iter.HasNext())
+    {
+        psItem* child = iter.Next();
+        currentSize += child->GetTotalStackSize();
+    }
+    if (item->GetItemSize()*amountToAdd + currentSize > itemdata->GetContainerMaxSize())
+        return false;
+
+
+    unsigned short savedCount = item->GetStackCount();
+    item->SetStackCount(amountToAdd);
+    bool result = AddToContainer(item, NULL, slot, true);
+    item->SetStackCount(savedCount);
+    return result;
+}
+
+bool gemContainer::CanTake(Client *client, psItem* item)
+{
+    if (!client || !item)
+        return false;
+
+    // Allow developers to take anything
+    if (client->GetSecurityLevel() >= GM_DEVELOPER)
+        return true;
+
+    /* \note
+     * The check if the item is NPCOwned or NoPickup only makes
+     * sense if it is not possible to have NPCOwned items in a not
+     * NPCOwned container, or NoPickup items in a PickUpable container
+     */
+    //not allowed to take npcowned or nopickup items in a container
+    if (item->GetIsNpcOwned() || item->GetIsNoPickup())
+        return false;
+
+    psItem *containeritem = GetItem();
+    CS_ASSERT(containeritem);
+
+    // Check for npc-owned or locked container
+    if (client->GetSecurityLevel() < GM_LEVEL_2)
+    {
+        if (containeritem->GetIsNpcOwned())
+        {
+            return false;
+        }
+        if (containeritem->GetIsLocked())
+        {
+            psserver->SendSystemError(client->GetClientNum(), "You cannot take an item from a locked container!");
+            return false;
+        }
+    }
+
+    // Allow if the item is pickupable and either: public, guarded by the character, or the guarding character is offline
+    PID guard = item->GetGuardingCharacterID();
+    gemActor* guardingActor = GEMSupervisor::GetSingleton().FindPlayerEntity(guard);
+
+    if ((!guard.IsValid() || guard == client->GetCharacterData()->GetPID() || !guardingActor) || (guardingActor->RangeTo(this) > 5))
+    {
+        return true;
+    }
+
+    return false;
+}
+
+bool gemContainer::AddToContainer(psItem *item, Client *fromClient, int slot, bool test)
+{
+    // Slot changing and item creation in craft is done at the very end of event.
+    // A new item is created from scratch and replaces the previous item stack and all.
+    // Auto-transform containers will interupt event if item is changed.
+    // Checks in craft code to make sure original item is what is expected before the item is replaced.
+
+    // If slot number not specified put into first open slot
+    if (slot == PSCHARACTER_SLOT_NONE)
+    {
+        for (int i = 0; i < SlotCount(); i++)
+        {
+            if( FindItemInSlot(i) == NULL)
+            {
+                slot = i;
+                break;
+            }
+        }
+    }
+    if (slot < 0 || slot >= SlotCount())
+        return false;
+
+    // printf("Adding %s to GEM container %s in slot %d.\n", item->GetName(), GetName(), slot);
+
+    // If the destination slot is occupied, try and look for an empty slot.
+    if (FindItemInSlot(slot))
+        return AddToContainer(item, fromClient, PSCHARACTER_SLOT_NONE, test);
+
+    if (test)
+        return true;
+
+    // If the gemContainer we are dropping the item into is not pickupable then we
+    // guard the item placed inside.  Otherwise the item becomes public.
+    if (fromClient)
+    {
+        /* put the player behind the client as guard */
+        item->SetGuardingCharacterID(fromClient->GetCharacterData()->GetPID());
+    }
+    if (item->GetOwningCharacterID().IsValid())
+    {
+        /* item comes from a player () */
+        item->SetGuardingCharacterID(item->GetOwningCharacterID());
+    }
+
+    if (!GetItem()->GetIsNoPickup() && item->GetOwningCharacterID().IsValid())
+        GetItem()->SetGuardingCharacterID(item->GetOwningCharacterID());
+
+    item->SetOwningCharacter(NULL);
+    item->SetContainerID(GetItem()->GetUID());
+    item->SetLocInParent((INVENTORY_SLOT_NUMBER)(slot));
+    item->Save(false);
+    itemlist.PushSmart(item);
+
+    item->UpdateView(fromClient, eid, false);
+    return true;
+}
+
+bool gemContainer::RemoveFromContainer(psItem *item,Client *fromClient)
+{
+    // printf("Removing %s from container now.\n", item->GetName() );
+    if (itemlist.Delete(item))
+    {
+        item->UpdateView(fromClient, eid, true);
+        return true;
+    }
+    else
+        return false;
+}
+
+psItem* gemContainer::RemoveFromContainer(psItem *itemStack, int fromSlot, Client *fromClient, int stackCount)
+{
+    // printf("Removing %s from container now.\n", item->GetName() );
+
+    psItem* item = NULL;
+    bool clear = false;
+
+    // If the stack count is the taken amount then we can delete the entire stack from the itemlist
+    if ( itemStack->GetStackCount() == stackCount )
+    {
+        item = itemStack;
+        itemlist.Delete(itemStack);
+        clear = true;   // Clear out the slot on the client
+    }
+    else
+    {
+        // Split out the stack for the required amount.
+        item = itemStack->SplitStack(stackCount);
+
+        // Save the lowered value
+        itemStack->Save(false);
+    }
+
+    // Send out messages about the change in the item stack.
+    itemStack->UpdateView(fromClient, eid, clear);
+    return item;
+}
+
+
+psItem *gemContainer::FindItemInSlot(int slot, int stackCount)
+{
+    if (slot < 0 || slot >= SlotCount())
+        return NULL;
+    psContainerIterator it(this);
+    while (it.HasNext())
+    {
+        // Check for specific slot
+        //  These are small arrays so no need to hash index
+        psItem* item = it.Next();
+        if (item == NULL)
+        {
+            Error1("Null item in container list.");
+            return NULL;
+        }
+
+        // Return the item in parrent location slot
+        if (item->GetLocInParent() == slot)
+        {
+            // If the item is here and the stack count we want is available.
+            if ( stackCount == -1 || item->GetStackCount() >= stackCount )
+            {
+                return item;
+            }
+            else
+            {
+                return NULL;
+            }
+        }
+    }
+    return NULL;
+}
+
+gemContainer::psContainerIterator::psContainerIterator(gemContainer *containerItem)
+{
+    UseContainerItem(containerItem);
+}
+
+bool gemContainer::psContainerIterator::HasNext()
+{
+    if (current + 1 < container->CountItems() )
+        return true;
+    return false;
+}
+
+psItem *gemContainer::psContainerIterator::Next()
+{
+    if (!HasNext())
+        return NULL;
+
+    current++;
+    return container->GetIndexItem(current);
+}
+
+psItem *gemContainer::psContainerIterator::RemoveCurrent(Client *fromClient)
+{
+    if (current < container->CountItems() )
+    {
+        psItem *item = container->GetIndexItem(current);
+        container->RemoveFromContainer(item,fromClient);
+        current--; // This adjusts so that the next "Next()" call actually returns the next item and doesn't skip one.
+        return item;
+    }
+    return NULL;
+}
+
+void gemContainer::psContainerIterator::UseContainerItem(gemContainer *containerItem)
+{
+    container=containerItem;
+    current = SIZET_NOT_FOUND;
+}
+
 //--------------------------------------------------------------------------------------
 // gemActionLocation
 //--------------------------------------------------------------------------------------
@@ -3948,271 +4224,3 @@ void gemNPC::NPCTalk(const csString & text)
 }
 #endif
 
-gemContainer::gemContainer(csWeakRef<psItem> item,
-             const char* factname,
-             const char* filename,
-             InstanceID myInstance,
-             iSector* room,
-             const csVector3& pos,
-             float rotangle,
-             int clientnum)
-             : gemItem(item,factname,filename,myInstance,room,pos,rotangle,clientnum)
-{
-}
-
-bool gemContainer::CanAdd(unsigned short amountToAdd, psItem *item, int slot)
-{
-    if (!item)
-        return false;
-
-    PID guard = GetItem()->GetGuardingCharacterID();
-    gemActor* guardingActor = GEMSupervisor::GetSingleton().FindPlayerEntity(guard);
-
-    // Test if container is guarded by someone else who is near
-    if (guard.IsValid() && guard != item->GetOwningCharacterID()
-        && guardingActor && (guardingActor->RangeTo(this) <= 5))
-        return false;
-
-    /* We often want to see if a partial stack could be added, but we want to
-     * check before actually doing the splitting.  So, we take an extra parameter
-     * and fake the stack count before calling AddToContainer with the test flag;
-     * we put it back when we're done. */
-
-    uint currentSize = 0;
-    gemContainer::psContainerIterator iter(this);
-    while (iter.HasNext())
-    {
-        psItem* child = iter.Next();
-        currentSize += child->GetTotalStackSize();
-    }
-    if (item->GetItemSize()*amountToAdd + currentSize > itemdata->GetContainerMaxSize())
-        return false;
-
-
-    unsigned short savedCount = item->GetStackCount();
-    item->SetStackCount(amountToAdd);
-    bool result = AddToContainer(item, NULL, slot, true);
-    item->SetStackCount(savedCount);
-    return result;
-}
-
-bool gemContainer::CanTake(Client *client, psItem* item)
-{
-    if (!client || !item)
-        return false;
-
-    // Allow developers to take anything
-    if (client->GetSecurityLevel() >= GM_DEVELOPER)
-        return true;
-
-    /* \note
-     * The check if the item is NPCOwned or NoPickup only makes
-     * sense if it is not possible to have NPCOwned items in a not
-     * NPCOwned container, or NoPickup items in a PickUpable container
-     */
-    //not allowed to take npcowned or nopickup items in a container
-    if (item->GetIsNpcOwned() || item->GetIsNoPickup())
-        return false;
-
-    psItem *containeritem = GetItem();
-    CS_ASSERT(containeritem);
-
-    // Check for npc-owned or locked container
-    if (client->GetSecurityLevel() < GM_LEVEL_2)
-    {
-        if (containeritem->GetIsNpcOwned())
-        {
-            return false;
-        }
-        if (containeritem->GetIsLocked())
-        {
-            psserver->SendSystemError(client->GetClientNum(), "You cannot take an item from a locked container!");
-            return false;
-        }
-    }
-
-    // Allow if the item is pickupable and either: public, guarded by the character, or the guarding character is offline
-    PID guard = item->GetGuardingCharacterID();
-    gemActor* guardingActor = GEMSupervisor::GetSingleton().FindPlayerEntity(guard);
-
-    if ((!guard.IsValid() || guard == client->GetCharacterData()->GetPID() || !guardingActor) || (guardingActor->RangeTo(this) > 5))
-    {
-        return true;
-    }
-
-    return false;
-}
-
-
-bool gemContainer::AddToContainer(psItem *item, Client *fromClient, int slot, bool test)
-{
-    // Slot changing and item creation in craft is done at the very end of event.
-    // A new item is created from scratch and replaces the previous item stack and all.
-    // Auto-transform containers will interupt event if item is changed.
-    // Checks in craft code to make sure original item is what is expected before the item is replaced.
-
-    // If slot number not specified put into first open slot
-    if (slot == PSCHARACTER_SLOT_NONE)
-    {
-        for (int i = 0; i < SlotCount(); i++)
-        {
-            if( FindItemInSlot(i) == NULL)
-            {
-                slot = i;
-                break;
-            }
-        }
-    }
-    if (slot < 0 || slot >= SlotCount())
-        return false;
-
-    // printf("Adding %s to GEM container %s in slot %d.\n", item->GetName(), GetName(), slot);
-
-    // If the destination slot is occupied, try and look for an empty slot.
-    if (FindItemInSlot(slot))
-        return AddToContainer(item, fromClient, PSCHARACTER_SLOT_NONE, test);
-
-    if (test)
-        return true;
-
-    // If the gemContainer we are dropping the item into is not pickupable then we
-    // guard the item placed inside.  Otherwise the item becomes public.
-    if (fromClient)
-    {
-        /* put the player behind the client as guard */
-        item->SetGuardingCharacterID(fromClient->GetCharacterData()->GetPID());
-    }
-    if (item->GetOwningCharacterID().IsValid())
-    {
-        /* item comes from a player () */
-        item->SetGuardingCharacterID(item->GetOwningCharacterID());
-    }
-
-    if (!GetItem()->GetIsNoPickup() && item->GetOwningCharacterID().IsValid())
-        GetItem()->SetGuardingCharacterID(item->GetOwningCharacterID());
-
-    item->SetOwningCharacter(NULL);
-    item->SetContainerID(GetItem()->GetUID());
-    item->SetLocInParent((INVENTORY_SLOT_NUMBER)(slot));
-    item->Save(false);
-    itemlist.PushSmart(item);
-
-    item->UpdateView(fromClient, eid, false);
-    return true;
-}
-
-bool gemContainer::RemoveFromContainer(psItem *item,Client *fromClient)
-{
-    // printf("Removing %s from container now.\n", item->GetName() );
-    if (itemlist.Delete(item))
-    {
-        item->UpdateView(fromClient, eid, true);
-        return true;
-    }
-    else
-        return false;
-}
-
-
-psItem* gemContainer::RemoveFromContainer(psItem *itemStack, int fromSlot, Client *fromClient, int stackCount)
-{
-    // printf("Removing %s from container now.\n", item->GetName() );
-
-    psItem* item = NULL;
-    bool clear = false;
-
-    // If the stack count is the taken amount then we can delete the entire stack from the itemlist
-    if ( itemStack->GetStackCount() == stackCount )
-    {
-        item = itemStack;
-        itemlist.Delete(itemStack);
-        clear = true;   // Clear out the slot on the client
-    }
-    else
-    {
-        // Split out the stack for the required amount.
-        item = itemStack->SplitStack(stackCount);
-
-        // Save the lowered value
-        itemStack->Save(false);
-    }
-
-    // Send out messages about the change in the item stack.
-    itemStack->UpdateView(fromClient, eid, clear);
-    return item;
-}
-
-
-
-
-psItem *gemContainer::FindItemInSlot(int slot, int stackCount)
-{
-    if (slot < 0 || slot >= SlotCount())
-        return NULL;
-    psContainerIterator it(this);
-    while (it.HasNext())
-    {
-        // Check for specific slot
-        //  These are small arrays so no need to hash index
-        psItem* item = it.Next();
-        if (item == NULL)
-        {
-            Error1("Null item in container list.");
-            return NULL;
-        }
-
-        // Return the item in parrent location slot
-        if (item->GetLocInParent() == slot)
-        {
-            // If the item is here and the stack count we want is available.
-            if ( stackCount == -1 || item->GetStackCount() >= stackCount )
-            {
-                return item;
-            }
-            else
-            {
-                return NULL;
-            }
-        }
-    }
-    return NULL;
-}
-
-gemContainer::psContainerIterator::psContainerIterator(gemContainer *containerItem)
-{
-    UseContainerItem(containerItem);
-}
-
-bool gemContainer::psContainerIterator::HasNext()
-{
-    if (current + 1 < container->CountItems() )
-        return true;
-    return false;
-}
-
-psItem *gemContainer::psContainerIterator::Next()
-{
-    if (!HasNext())
-        return NULL;
-
-    current++;
-    return container->GetIndexItem(current);
-}
-
-psItem *gemContainer::psContainerIterator::RemoveCurrent(Client *fromClient)
-{
-    if (current < container->CountItems() )
-    {
-        psItem *item = container->GetIndexItem(current);
-        container->RemoveFromContainer(item,fromClient);
-        current--; // This adjusts so that the next "Next()" call actually returns the next item and doesn't skip one.
-        return item;
-    }
-    return NULL;
-}
-
-void gemContainer::psContainerIterator::UseContainerItem(gemContainer *containerItem)
-{
-    container=containerItem;
-    current = SIZET_NOT_FOUND;
-}
