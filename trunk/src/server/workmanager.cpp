@@ -3920,7 +3920,7 @@ void WorkManager::HandleCleanupEvent(psWorkGameEvent* workEvent)
         cleanItem->SetGuardingCharacterID(0);
         cleanItem->Save(true);
         cleanItem->SetTransformationEvent(NULL);
-        psserver->SendSystemOK(clientNum,"You probably should not leave %d %s here.", cleanItem->GetStackCount(), cleanItem->GetName());
+        psserver->SendSystemOK(workEvent->client->GetClientNum(),"You probably should not leave %d %s here.", cleanItem->GetStackCount(), cleanItem->GetName());
     }
 }
 
