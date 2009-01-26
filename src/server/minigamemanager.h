@@ -48,6 +48,23 @@ enum MinigameStyle
     MG_PUZZLE   // single player mini-game
 };
 
+/** Structure to hold player data
+ */
+struct MinigamePlayer
+{
+    uint32_t playerID;
+    const char* playerName;
+
+    /// Idle counter for the player with black pieces.
+    int idleCounter;
+
+    /// point to next player to move
+    MinigamePlayer *nextMover;
+
+    /// identifies colour pieces for player TODO this is temp
+    int blackOrWhite;
+};
+
 /** Implements one minigame session.
  *
  * Game sessions are bound to a game board (action location) and identified
@@ -167,19 +184,8 @@ protected:
     /// Game options
     uint16_t options;
 
-    /// The player with white game pieces.
-    uint32_t whitePlayerID;
-    const char* whitePlayerName;
-
-    /// Idle counter for the player with white pieces.
-    int whiteIdleCounter;
-
-    /// The player with black game pieces.
-    uint32_t blackPlayerID;
-    const char* blackPlayerName;
-
-    /// Idle counter for the player with black pieces.
-    int blackIdleCounter;
+    /// Minigame players
+    csArray<MinigamePlayer*>players;
 
     /// Watchers.
     csArray<uint32_t> watchers;
@@ -193,8 +199,8 @@ protected:
     /// if game session marked for reset
     bool toReset;
 
-    /// next player to move: 0=dont care, 1=player 1 (white), 2=player 2 (black), etc
-    int nextPlayerToMove;
+    /// pointer to next player to move
+    MinigamePlayer *nextPlayerToMove;
 
 private:
     /// flag for when end game reached (i.e. game over).
@@ -210,10 +216,10 @@ private:
     MinigameStyle minigameStyle;
 
     /// resend board layouts as was, e.g. correcting an illegal move
-    void ResendBoardLayout(uint32_t clientnum);
+    void ResendBoardLayout(MinigamePlayer *player);
 
     /// Game rule checking function
-    bool GameMovePassesRules(uint32_t movingClient,
+    bool GameMovePassesRules(MinigamePlayer *player,
                              int8_t col1, int8_t row1, int8_t state1,
                              int8_t col2=-1, int8_t row2=-1, int8_t state2=-1); 
 };

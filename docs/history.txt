@@ -1,4 +1,7 @@
-﻿*** 2009-01-21 by Stefano Angeleri
+﻿*** 2009-01-26 by Dave Bentham
+- Minigames: modified how game-player data is held to allow extensibility.
+
+*** 2009-01-21 by Stefano Angeleri
 - Added pid: in /pos extended output fixing PS#2680 - pos and info have
   differnet pos output, original patch by caarrie reworked by me
 - Added the rest of the help text in the description
