@@ -39,8 +39,8 @@
   <item orig="Shadows" trans="Ombre" />
   <item orig="Unclaim" trans="Deassegna" />
   <item orig="Server:" trans="Server:" />
-  <item orig="Enable Shadows" trans="" />
   <item orig="Exit PlaneShift" trans="Esci da PlaneShift" />
+  <item orig="Enable Shadows" trans="" />
   <item orig="Escalation Level:" trans="" />
   <item orig="Notify when members login/logout" trans="" />
   <item orig="Talk to someone privately." trans="Parla a qualcuno privatamente." />
@@ -59,16 +59,17 @@
   <item orig="Edit points" trans="Cambia punti" />
   <item orig="Points" trans="Punti" />
   <item orig="Coins to exchange:" trans="Monete da cambiare:" />
-  <item orig="PvP" trans="" />
   <item orig="Are you sure you want to discard the selected quest?" trans="" />
+  <item orig="PvP" trans="" />
   <item orig="landscape" trans="landscape" />
   <item orig="Type:" trans="Tipo:" />
   <item orig="Time: " trans="Ora: " />
   <item orig="Exchange coins" trans="Scambia monete" />
   <item orig="Log the system messages" trans="" />
+  <item orig="Free Movement" trans="" />
   <item orig="Hostility" trans="Ostilita'" />
-  <item orig="Account User Name:" trans="Nome utente Account:" />
   <item orig="Auction" trans="" />
+  <item orig="Account User Name:" trans="Nome utente Account:" />
   <item orig="You currently have no petitions." trans="Al momento non hai petizioni." />
   <item orig="Attributes" trans="" />
   <item orig="You will now ignore %s." trans="Da ora ignorerai %s." />
@@ -97,8 +98,8 @@
   <item orig="Movements" trans="" />
   <item orig="Mesh:" trans="" />
   <item orig="Resolution" trans="Risoluzione" />
-  <item orig="Gender:" trans="" />
   <item orig="Refresh MOTD" trans="Aggiorna MOTD" />
+  <item orig="Gender:" trans="" />
   <item orig="Login" trans="" />
   <item orig="Z:" trans="" />
   <item orig="Spell Description:" trans="Descrizione magia:" />
@@ -106,6 +107,7 @@
   <item orig="%s has invited you to join a group. Click Yes to accept or No to reject." trans="%s ti ha invitato ad aggregarti a un gruppo. Clicca Sì per accettare e No per rifiutare." />
   <item orig="You must select a petition from the list in order to cancel it." trans="Devi selezionare una petizione della lista per poterla cancellare." />
   <item orig="Alliance" trans="Alleanza" />
+  <item orig="Dynamic Follow" trans="" />
   <item orig="Full Mesh" trans="Modello completo" />
   <item orig="I am leaving" trans="Sto andando via" />
   <item orig="List:" trans="" />
@@ -118,12 +120,13 @@ Do you really wish to leave Yliakum?" trans="
 Vuoi veramente lasciare Yliakum?" />
   <item orig="Count" trans="Conto" />
   <item orig="Enter the command(s):" trans="Inserire i comandi:" />
-  <item orig="Month:" trans="Mese:" />
   <item orig="Chat" trans="" />
+  <item orig="Month:" trans="Mese:" />
   <item orig="Father Name:" trans="Nome Padre:" />
   <item orig="Rank" trans="" />
   <item orig="Spawn item" trans="Crea oggetto" />
   <item orig="o&clock" trans="in punto" />
+  <item orig="Give Kill Experience" trans="" />
   <item orig="Own combat stance changes" trans="" />
   <item orig="Experience" trans="Esperienza" />
   <item orig="Upload!" trans="Carica!" />
@@ -142,9 +145,10 @@ Vuoi veramente lasciare Yliakum?" />
   <item orig="Path" trans="" />
   <item orig="Kill Player" trans="Uccidi giocatore" />
   <item orig="%s says: %s" trans="%s dice: %s" />
-  <item orig="Get Reward" trans="Ottieni ricompensa" />
-  <item orig="Magic" trans="Magia" />
+  <item orig="Are you sure you want to upload your character?" trans="" />
   <item orig="Own attacks that fail to penetrate the armor" trans="" />
+  <item orig="Magic" trans="Magia" />
+  <item orig="Get Reward" trans="Ottieni ricompensa" />
   <item orig="Credits" trans="Crediti" />
   <item orig="details" trans="Dettagli" />
   <item orig="HP" trans="" />
@@ -152,9 +156,10 @@ Vuoi veramente lasciare Yliakum?" />
   <item orig="%s shouts: %s" trans="%s urla: %s" />
   <item orig="No server running at the moment" trans="Non ci sono server attivi in questo momento" />
   <item orig="CHARACTER CREATION" trans="CREAZIONE PERSONAGGIO" />
-  <item orig="Glyphs" trans="Glyph" />
   <item orig="Alliance:" trans="Alleanza:" />
+  <item orig="Glyphs" trans="Glyph" />
   <item orig="Various Skill description:" trans="" />
+  <item orig="100%" trans="" />
   <item orig="Edit level" trans="Cambia livello" />
   <item orig="Leave" trans="Abbandona" />
   <item orig="Capacity:" trans="Capacità" />
@@ -171,8 +176,8 @@ Vuoi veramente lasciare Yliakum?" />
   <item orig="%s %s" trans="%s %s" />
   <item orig="Trias" trans="Tria" />
   <item orig="General" trans="Generale" />
-  <item orig="Life" trans="Vita" />
   <item orig="Password:" trans="" />
+  <item orig="Life" trans="Vita" />
   <item orig="Currently, there are no petitions." trans="Al momento non ci sono petizioni." />
   <item orig="Set" trans="" />
   <item orig="Actions Volume" trans="Volume Azioni" />
@@ -181,6 +186,7 @@ Vuoi veramente lasciare Yliakum?" />
   <item orig="Save" trans="Salva" />
   <item orig="Promote" trans="" />
   <item orig="Combat Skills" trans="" />
+  <item orig="Apply to all" trans="" />
   <item orig="Polygon:" trans="" />
   <item orig="Talk to everyone in your guild privately." trans="Parla a chiunque nella tua gilda privatamente." />
   <item orig="Others' attacks that are dodged" trans="" />
@@ -215,8 +221,10 @@ Vuoi veramente lasciare Yliakum?" />
   <item orig="Petition text:" trans="Testo petizione:" />
   <item orig="Secret guild" trans="Gilda segreta" />
   <item orig="List Attributes" trans="Elenca attributi" />
+  <item orig="OOC" trans="" />
   <item orig="Claim" trans="Assegna" />
   <item orig="Radius:" trans="Raggio" />
+  <item orig="CC" trans="" />
   <item orig="0" trans="" />
   <item orig="disabled" trans="disabilitato" />
   <item orig="Tells" trans="" />
@@ -235,10 +243,11 @@ Vuoi veramente lasciare Yliakum?" />
   <item orig="Ambiguous command: " trans="Comando Ambiguo: " />
   <item orig="The selected petition was %s" trans="La petizione selezionata era %s" />
   <item orig="Loading game" trans="Caricamento Gioco" />
-  <item orig="Use Collision Detection" trans="" />
   <item orig="Invite" trans="Invita" />
+  <item orig="Use Collision Detection" trans="" />
   <item orig="Sector:" trans="Settore:" />
   <item orig="Mix yourtext color" trans="" />
+  <item orig="Max. Transparency:" trans="" />
   <item orig="Permissions" trans="Permessi" />
   <item orig="X:" trans="" />
   <item orig="5" trans="" />
@@ -249,6 +258,7 @@ Vuoi veramente lasciare Yliakum?" />
   <item orig="Parents" trans="Genitori" />
   <item orig="Jobs" trans="Lavori" />
   <item orig="Chat - Bubbles" trans="" />
+  <item orig="DescOC" trans="" />
   <item orig="Welcome to PlaneShift!" trans="Benvenuto su Planeshift" />
   <item orig="Delete" trans="Cancella" />
   <item orig="Entities" trans="Entità" />
@@ -295,6 +305,7 @@ Vuoi veramente lasciare Yliakum?" />
   <item orig="First Person" trans="" />
   <item orig="Selection" trans="" />
   <item orig="?" trans="" />
+  <item orig="Fade Speed:" trans="" />
   <item orig="Trigger:" trans="" />
   <item orig="Refresh List" trans="Aggiorna lista" />
   <item orig="Character Name" trans="Nome Personaggio" />
@@ -323,9 +334,12 @@ Vuoi veramente lasciare Yliakum?" />
   <item orig="Third Person Follow" trans="" />
   <item orig="Character Name:" trans="" />
   <item orig="Day:" trans="" />
+  <item orig="This window is what people will read when they click on you; this box is not to be filled with anything other than things that a person could reasonably perceive with their senses. There is no reason to include anything beyond what one can sense when looking at your character. While sensual detail ONLY is to be included, this does not mean that you should be sparing, please include as many appeals to the senses as your character clearly eminates that can be sensed with the five accepted senses (sight, touch, hearing and smell (being primary)(only list taste if you anticipate people tasting your character)). If you are on the non rp server: Not only can you disregard the above, but you are encouraged to include epic descriptions of all sorts, quote great authors and even recite your own unpublished novels with no limitation whatsoever." trans="" />
   <item orig="Clear" trans="Cancella" />
   <item orig="Next" trans="" />
   <item orig="Stat" trans="" />
+  <item orig="Min. Transparency:" trans="" />
+  <item orig="Enabled" trans="" />
   <item orig="%s tells you: %s" trans="%s ti dice: %s" />
   <item orig="D:" trans="" />
   <item orig="Jobs Skill description:" trans="" />
@@ -333,6 +347,9 @@ Vuoi veramente lasciare Yliakum?" />
   <item orig="Yes" trans="Sì" />
   <item orig="Reset" trans="" />
   <item orig="Interface sounds" trans="" />
+  <item orig="Here you can place any OOC information except to advertise companies, products, or services from the real world.
+
+To disable this feature delete everything in the window by using the Modify Description button." trans="" />
   <item orig="Talk to your group privately." trans="Parla al tuo gruppo privatamente." />
   <item orig="Own attacks that are blocked" trans="" />
   <item orig="Religion:" trans="" />
@@ -397,6 +414,7 @@ Vuoi veramente lasciare Yliakum?" />
   <item orig="New User? Register at http://laanx.fragnetics.com/register" trans="Nuovo utente? Vai su: http://laanx.fragnetics.com/register" />
   <item orig="Quests" trans="" />
   <item orig="Please wait for verification from server" trans="" />
+  <item orig="Scale Font:" trans="" />
   <item orig="o'clock" trans="in punto" />
   <item orig="You must select a petition from the list in order to close it." trans="Devi selezionare una petizione dalla lista in modo da poterla chiudere." />
   <item orig="Name" trans="Nome" />
@@ -442,6 +460,7 @@ Vuoi veramente lasciare Yliakum?" />
   <item orig="Combat Skill description:" trans="" />
   <item orig="Ambient sounds" trans="Suoni ambientali" />
   <item orig="Please re-login" trans="" />
+  <item orig="Fading:" trans="" />
   <item orig="Greetings" trans="Saluti" />
   <item orig="Select a reward:" trans="Seleziona una ricompensa:" />
   <item orig="Ambient Volume" trans="Volume Ambiente" />
