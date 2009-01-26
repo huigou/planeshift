@@ -52,8 +52,8 @@ e.custom(start,val,"");}});return true;});},queue:function(type,fn){if(jQuery.is
     var csWinLibsVersionStab = "1.3_004"; // cs win32 libs version.
     var csWinLibsVersion = "1.3_004"; // cs win32 libs version.
     //Update date and author, to be changed everytime and updates occurred
-    var UpdateDate = "07 Dec 2008"; //Date when the update occurred
-    var UpdateAuthor = "Stefano Angeleri"; //Author of the update
+    var UpdateDate = "22 Jan 2009"; //Date when the update occurred
+    var UpdateAuthor = "Alec Rusanda (Allaann)"; //Author of the update
 -->
 </script>
 
@@ -98,6 +98,7 @@ How to add a new selection:
 .Linux-Gentoo    { display: none; }
 .Linux-Slackware { display: none; }
 .Linux-Ubuntu    { display: none; }
+.FreeBSD         { display: none; }
 .Windows         { display: none; }
 .MacOSX          { display: none; }
 
@@ -312,6 +313,7 @@ $(document).ready(function(){
         <option value="Linux-Gentoo">Gentoo Linux</option>
         <option value="Linux-Slackware">Slackware Linux</option>
         <option value="Linux-Ubuntu">Ubuntu Linux</option>
+        <option value="FreeBSD">FreeBSD</option>
         <option value="Windows">Windows</option>
         <option value="MacOSX">Mac OSX</option>
     </select>
@@ -392,7 +394,23 @@ $(document).ready(function(){
       Platyna, author of the first compiling guide for Slackware distribution.<br>
         Mike Gist, author of the static compiling guide.<br>
 </div>
-    <div class="MacOSX">
+
+<div class="FreeBSD">
+        This guide gives a fairly detailed description on how to get a working client up and
+        running in FreeBSD. It gives instructions on how to get all the required tools and how
+        to check out the source code and configure it. At the end there you will have a
+        PlaneShift client and a PlaneShift updater application, and if you want also the server.<br><br>
+
+      <b>Credits</b><br>
+          Caarrie, Trying to maintain the guide;<br>
+          Arianna Benigno, maintained the guide;<br>
+          Dave Garrett, author of the new compiling guides layout;<br>
+          Andrew Craig, author of the first Linux guides that were available on <a href="http://laanx.fragnetics.com">Laanx website</a>;<br>
+
+          Platyna, author of the first compiling guide for Slackware distribution.<br>
+          Mike Gist, author of the static compiling guide.<br>
+</div>
+<div class="MacOSX">
         This guide gives a very basic description on how to get a working client up and
         running on a Mac. It gives instructions on how to get to check out the source code and configure it. At the end there you will have a
         PlaneShift client and a PlaneShift updater application, and if you want also the server.<br><br>
@@ -447,6 +465,10 @@ $(document).ready(function(){
     however this guide will assume you use:
 
 <div class="Linux">
+    <p><i class="command">$HOME/development/</i></p>
+    Many people get confused here because they copy and paste commands which contain this path. $HOME is a system environment variable that will always point to your users home directory.
+</div>
+<div class="FreeBSD">
     <p><i class="command">$HOME/development/</i></p>
     Many people get confused here because they copy and paste commands which contain this path. $HOME is a system environment variable that will always point to your users home directory.
 </div>
@@ -582,6 +604,22 @@ continue as indicated.<br></p>
     <p>CS and PlaneShift use SVN for their source repositories, so you'll need that too.<br>
        You can find the software at: <a href="http://subversion.tigris.org/">http://subversion.tigris.org/</a><br>
        A GUI is available at: <a href="http://esvn.umputun.com/">http://esvn.umputun.com/</a> You can also use your distro's package manger to install it.</p>
+</div>
+
+<div class="FreeBSD">
+    <h3>Jam</h3>
+    <p>You will need a tool called Jam. Jam is a replacement for make. It's a bit easier to maintain and create
+    custom builds. If you do not already have Jam, you can find it at <a href="ftp://ftp.perforce.com/pub/jam/">ftp://ftp.perforce.com/pub/jam/</a> - install it system wide. You can also use FreeBSD ports to install it.</p>
+<div class="commandBox"># cd /usr/ports/devel/jam</br>
+        # make install clean</br>
+</div></br>
+    <h3>SVN</h3>
+    <p>CS and PlaneShift use SVN for their source repositories, so you'll need that too.<br>
+       You can find the software at: <a href="http://subversion.tigris.org/">http://subversion.tigris.org/</a><br>
+       A GUI is available at: <a href="http://esvn.umputun.com/">http://esvn.umputun.com/</a> You can also use FreeBSD ports to install it.</p>
+	 <div class="commandBox"># cd /usr/ports/devel/subversion</br>
+        # make install clean</br>
+</div></br>  
 </div>
 
 <div class="Windows">
@@ -839,6 +877,17 @@ then<br /><br />
         <p>If after building if you see that mysql was not found when running the server and you get the following error:<br /><br />
         <i class="command">WARNING: could not load plugin 'planeshift.database.mysql'</i> <br /><br />make sure you have libmysqlclient-dev installed, if it was not installed, ./autogen.sh, ./configure, and recompile the server again, according to the documentation below.</p></div>
 
+    <div class="FreeBSD">
+        <p>install from ports: <div class="commandBox"># cd /usr/ports/databases/mysql50-server <br>
+		# make install clean <br>
+		# cd /usr/ports/databases/mysql50-client <br>
+		# make install clean <br>		
+		</div></p>
+
+        <p>Note: This section is incomplete and untested, but contains the FreeBSD specific build information.</p>
+
+    </div>
+
 		<div class="MacOSX">
 		We need to install mysql. In order to do this we need to use fink.<br /><br />
 		<i class="command">fink -y -v install mysql mysql-client mysql15-dev mysql15-shlibs</i><br /><br />
@@ -927,6 +976,68 @@ then<br /><br />
     If, for some reason, you wish to update any of the supporting libraries to the latest version (i.e. the HEAD), you have to remove the sticky date tag. WE DO NOT RECOMMEND THIS as it may break your build:
     <p><div class="commandBox">
     $HOME/development/cal3d$ svn update -r HEAD<br>
+        $HOME/development/cs$ svn update -r HEAD<br>
+    </div></p>
+
+
+If you update a repository, you will need to recompile that repository and each repository that depends on it. Before doing so, you should do a "jam clean" for each project you want to jam again. So, for example, if you want to rebuild PS you will do:
+    <p><div class="commandBox">
+        $HOME/development/planeshift$ jam clean<br>
+        $HOME/development/planeshift$ jam -aq
+    </div></p>
+</div>
+<div class="FreeBSD"><h4>Do NOT install Cal3D, CrystalSpace and PlaneShift from FreeBSD ports<h4>
+    <h3>Cal3D</h3>
+    <p>We need to build cal3d from source before we can start on Crystal Space. Cal3d is a library that is used for
+    handling skeleton systems. This is a very nice system and can allow for fluid transformations between animations.
+    This needs to be built/installed first because when we configure Crystal Space it has to find the cal3d libraries
+    so it can know to build the sprcal3d plugin.  Cal3D doesn't change much, so just download latest stable or checkout latest from svn:</p>
+    <p><a href="http://home.gna.org/cal3d/">Cal3D Home</a></p>
+    <p><i class="command">$HOME/development$ svn co -r CAL3D_SOURCE_REV svn://svn.gna.org/svn/cal3d/trunk/cal3d cal3d</i></p>
+
+    <p>In case of a slow download use the following command:</p>
+    <p><i class="command">$HOME/development$ svn co -r CAL3D_SOURCE_REV http://svn.gna.org/svn/cal3d/trunk/cal3d cal3d</i></p>
+
+    <h3>Crystal Space (CS)</h3>
+    <p>Crystal Space 3D SDK is the engine that we use for rendering and sound.</p>
+    <div class="User">
+    <p><i class="command">$HOME/development$ svn co -r CS_SOURCE_REV https://crystal.svn.sourceforge.net/svnroot/crystal/CS/branches/release/V1.4 cs</i></p>
+
+    </div>
+    <div class="Developer">
+    <p><i class="command">$HOME/development$ svn co -r CS_SOURCE_REV_HEAD https://crystal.svn.sourceforge.net/svnroot/crystal/CS/trunk cs</i></p>
+    </div>
+
+    <h3>PlaneShift</h3>
+    <p>Lastly, download our source:</p>
+    <div class="User">
+
+    <div class="NOTPS">   <p><i class="command">$HOME/development$ svn co https://planeshift.svn.sourceforge.net/svnroot/planeshift/stable planeshift</i></p>
+         </div>  <div class="PS">
+    <i class="command">$HOME/development$ svn co -r PS_Laanx https://planeshift.svn.sourceforge.net/svnroot/planeshift/stable planeshift</i>
+      </div>
+    </div>
+    <div class="Developer">
+    <p><i class="command">$HOME/development$ svn co https://planeshift.svn.sourceforge.net/svnroot/planeshift/trunk planeshift</i></p>
+
+    </div>
+    <h3>Updating Sources</h3>
+    <p>From time to time, newer PlaneShift revisions will require you to upgrade your cal3d and CS repositories to a newer revision as well.  To update your supporting libraries, always be certain that you use the "-r" option keep from updating to the latest revision:</p>
+
+    If you want to update to a new revision replace REVISION with the number of the revision you want to use:
+    <p><div class="commandBox">
+    $HOME/development/cal3d$ svn update -r REVISION<br>
+
+        $HOME/development/cs$ svn update -r REVISION<br>
+    </div></p>
+    <p>Unlike the supporting libraries, you will generally want to use the latest PlaneShift source (or the HEAD) rather than an intermediate revision.  In this case, you will omit the "-r" option like so:
+    <div class="commandBox">
+    $HOME/development/planeshift$ svn update
+    </div></p><br>
+    If, for some reason, you wish to update any of the supporting libraries to the latest version (i.e. the HEAD), you have to remove the sticky date tag. WE DO NOT RECOMMEND THIS as it may break your build:
+    <p><div class="commandBox">
+    $HOME/development/cal3d$ svn update -r HEAD<br>
+
         $HOME/development/cs$ svn update -r HEAD<br>
     </div></p>
 
@@ -1103,6 +1214,27 @@ If you update a repository, you will need to recompile that repository and each 
 <h2><a name="compile">Compile the Code</a></h2>
 
 <div class="GCC">
+    <div class="FreeBSD" >
+    <p>If you have a dual core or better processor then you can take advantage of parallel make or jam by adding -j3 after the command. You can replace 3 with the number of jobs you want to run in parallel.</p>
+            <h3>Cal3D</h3>
+            <p>Since cal3d is a library in development we probably don't want to 'install' this one as root since there is a good
+            possibility it will change in the future. Instead we will 'install' it into our working directory. This is done
+            by using the --prefix option when we configure it.</p>
+        Using a text editor open configure.in and remove the line
+        <p><div class="commandBox">
+            AM_USE_UNITTESTCPP</div></p>
+    <p> Then you can build cal3d </p>
+            <p><div class="commandBox">
+                $HOME/development/cal3d$ autoreconf --install --force<br>
+                $HOME/development/cal3d$ ./configure --prefix=$HOME/development/cal3d<br>
+                $HOME/development/cal3d$ make<br>
+                $HOME/development/cal3d$ make install
+                </div></p>
+    <p>Because we did not install cal3d we need to make sure other things can find it. This is done using the LD_LIBRARY_PATH:<br>
+    Using a text editor open $HOME/.cshrc and add the line: <br></p>
+    <p><div class="commandBox">
+            setenv  LD_LIBRARY_PATH /home/development/cal3d/lib/:/home/development/cs/ </div>(need user relog)</p>
+    </div>
     <div class="Linux">
         <p>If you have a dual core or better processor then you can take advantage of parallel make or jam by adding -j3 after the command. You can replace 3 with the number of jobs you want to run in parallel.</p>
         <h3>Cal3D</h3>
@@ -1186,6 +1318,10 @@ sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in
         Because we did not install cal3d we need to make sure other things can find it. This is done using the LD_LIBRARY_PATH:
         <p><i class="command">export LD_LIBRARY_PATH=$HOME/development/cal3d/src/cal3d/.libs/:$LD_LIBRARY_PATH</i></p>
 </div></div></div>
+    <div class="FreeBSD">
+        <h3>Crystal Space (CS)</h3>
+        <p>Now we can build it and use the configure line to tell it where we installed the cal3d libraries.
+        To do this, use the prefix line that was used for Cal3d above.</p></div>
      <div class="Linux">
         <h3>Crystal Space (CS)</h3>
         <p>Now we can build it and use the configure line to tell it where we installed the cal3d libraries.
@@ -1240,6 +1376,63 @@ sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in
            <div class="Static"><i class="command">
             $HOME/development/cs$ jam -aq libs staticplugins cs-config walktest_static</i></div><br>
        </div></div>
+	   <div class="FreeBSD" >
+           <div class="User"><div class="commandBox">
+            $HOME/development/cs$ ./configure --without-java --without-perl --without-python --without-lib3ds --with-cal3d=$HOME/development/cal3d</div></div><br>
+           <div class="Developer"><div class="commandBox">
+            $HOME/development/cs$ ./configure --enable-debug --without-java --without-perl --without-python --without-lib3ds --with-cal3d=$HOME/development/cal3d</div></div><br>
+           <div class="Normal"><i class="command">
+            $HOME/development/cs$ jam -aq libs plugins cs-config walktest</i></div><br>
+
+           <div class="Static"><i class="command">
+            $HOME/development/cs$ jam -aq libs staticplugins cs-config walktest_static</i><br>
+           </div><p>We should export the CRYSTAL environment variable so applications outside the Crystal Space
+             tree know where to find the .so's. <br>Using a text editor open $HOME/.cshrc and add the line: <br></p>
+			 <p><div class="commandBox">
+			setenv  CRYSTAL /home/development/cs/ </div>(need user relog)</p>
+		<h3>PlaneShift</h3>
+        First of all Using a text editor open $HOME/planeshift/src/tools/wordnet/wnutil.c <br>
+		At line 20 change :<br><br>
+		
+		<div class="commandBox">
+			malloc.h </div>
+			with
+			<div class="commandBox">
+			stdlib.h  </div><br>
+		You can now start to compile PlaneShift
+		
+		<p><div class="commandBox">
+            $HOME/development/planeshift$ ./autogen.sh<br>
+           <div class="User">
+            $HOME/development/planeshift$ ./configure --with-cal3d=$HOME/development/cal3d<br>
+           </div>
+           <div class="Developer">
+            $HOME/development/planeshift$ ./configure --enable-debug --with-cal3d=$HOME/development/cal3d<br>
+           </div>
+           <div class="Normal">
+            $HOME/development/planeshift$ jam -aq client
+           </div>
+           <div class="Static">
+            $HOME/development/planeshift$ jam -aq client_static
+           </div>
+</div></p>
+        If you also want to build the server, do this as well:
+        <div class="Normal">
+
+           <p><i class="command">$HOME/development/planeshift$ jam -aq server</i></p>
+        </div>
+        <div class="Static">
+           <p><i class="command">$HOME/development/planeshift$ jam -aq server_static</i></p>
+        </div>
+        If you want to build the extra tools, just do "jam -a".
+       <p>If your psclient has no skin you are used to seeing launch pssetup after you have copied your art over and select a new skin</p>
+       <p>If you wish for your psclient to not use the same user files as your other build/install you may run ps with the following command<br />
+       <div class="commandBox">
+       $HOME/development/planeshift$ ./psclient -cfgset=PlaneShift.UserConfigPath=$HOME/.PlaneShift2</div>
+      <p> You can also edit this in the psclient.cfg file under the game section uncomment the appropriate line and edit the path.</p>
+
+   </div>
+</div></div></div>
 
 
 <div class="Linux">
@@ -1548,6 +1741,9 @@ a <i>art</i> subdirectory in your PlaneShift directory.
 <div class="Linux">
 <p><i class="command">$HOME/development/planeshift$ svn co https://planeshift.svn.sourceforge.net/svnroot/planeshift/art</i></p>
 </div>
+<div class="FreeBSD">
+<p><i class="command">$HOME/development/planeshift$ svn co https://planeshift.svn.sourceforge.net/svnroot/planeshift/art</i></p>
+</div>
 <div class="MacOSX">
 <p><i class="command">$HOME/development/planeshift$ svn co https://planeshift.svn.sourceforge.net/svnroot/planeshift/art</i></p>
 </div>
@@ -1608,6 +1804,16 @@ You can start your MySQL server in this way:</p>
     If you wish to put a password on the root account you can
     <i class="command"> $ mysqladmin -u root password "newpwd"</i>
 </div>
+<div class="FreeBSD">
+    
+	Using a text editor open /etc/rc.conf and add the line: 
+	<p><i class="command">mysql_enable="YES"</i></p>then use
+	<p><i class="command"># /usr/local/etc/rc.d/mysql.sh start</i></p>
+	to start the mysql server.<br>
+     Then login to the MySQL client using (default username with no password):
+     <p><i class="command">$ mysql -u username -ppassword</i></p>
+     The default username is root with no password.
+</div>
 <div class="MacOSX">
 
 To start mysql automatically on boot do the following:
@@ -1637,6 +1843,12 @@ How to create a new PS database:
 </div></p>
 
 <div class="Linux">
+    <p><div class="commandBox">
+        $ cd home/development/planeshift/src/server/database/mysql/<br>
+        home/development/planeshift/src/server/database/mysql/$ mysql -u planeshift -pplaneshift
+    </div></p>
+</div>
+<div class="FreeBSD">
     <p><div class="commandBox">
         $ cd home/development/planeshift/src/server/database/mysql/<br>
         home/development/planeshift/src/server/database/mysql/$ mysql -u planeshift -pplaneshift
@@ -1675,6 +1887,9 @@ NOTE: If you have upgraded MySQL server to 4.1 or superior (while the client is 
 <div class="Linux">Go to your PlaneShift directory ($HOME/development/planeshift) and run psserver, this will start the server. If you have a script to start your server or load maps you can use<br><br>
 <i class="command">./psserver --run=/this/script_name</i> <br> <br>
 </div>
+<div class="FreeBSD">Go to your PlaneShift directory ($HOME/development/planeshift) and run psserver, this will start the server. If you have a script to start your server or load maps you can use<br><br>
+<i class="command">./psserver --run=/this/script_name</i> <br> <br>
+</div>
 <div class="MacOSX">Go to your PlaneShift directory ($HOME/development/planeshift) and run psserver, this will start the server. If you have a script to start your server or load maps you can use<br><br>
 <i class="command">./psserver --run=/this/script_name</i><br></div>
 Once the server has been started, you should see a "PS Server:" prompt. Not always does the prompt show PS Server: on first start but this is ok as long as you have gotten no errors so far.</p>
@@ -1703,7 +1918,7 @@ is located somewhere else or you want to connect to somebody's else server, you 
 <div class="Windows">The servers list is located in <i class="Command">C:\development\planeshift\data\servers.xml.</i></div> <br>
 <div class="Linux">The servers list is located in <i class="Command"> $HOME/development/planeshift/data/servers.xml</i></div><br>
 <div class="MacOSX">The servers list is located in <i class="Command" >$HOME/development/planeshift/data/servers.xml</i></div><br>
-
+<div class="FreeBSD">The servers list is located in <i class="Command"> $HOME/development/planeshift/data/servers.xml</i></div><br>
 
  The following accounts are in the SVN DB:</p>
 
@@ -1859,6 +2074,10 @@ is located somewhere else or you want to connect to somebody's else server, you 
 </div>
 <div class="Linux">
     On Linux it will be a forwardslash.
+    <p><i class="command">PlaneShift.Mount.characterszip = /svn/planeshift/art/characters.zip/</i></p>
+</div>
+<div class="FreeBSD">
+    On FreeBSD it will be a forwardslash.
     <p><i class="command">PlaneShift.Mount.characterszip = /svn/planeshift/art/characters.zip/</i></p>
 </div>
 <div class="MacOSX">
