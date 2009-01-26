@@ -60,6 +60,9 @@ using namespace psMiniGame;
 #define MINIGAME_IDLE_TIME      60
 //#define MINIGAME_IDLE_TIME      6
 
+// TODO these are temp
+#define WHITE_PLAYER 0
+#define BLACK_PLAYER 1
 
 //---------------------------------------------------------------------------
 
@@ -414,15 +417,12 @@ psMiniGameSession::psMiniGameSession(MiniGameManager *mng, gemActionLocation *ob
     id = (uint32_t)obj->GetAction()->id;
     this->name = name;
     currentCounter = 0;
-    whitePlayerID = (uint32_t)-1;
-    whitePlayerName = NULL;
-    blackPlayerID = (uint32_t)-1;
-    blackPlayerName = NULL;
     toReset = false;
-    nextPlayerToMove = 0;
+    nextPlayerToMove = NULL;
     endgameReached = false;
     playerCount = 0;
     winnerScript.Clear();
+    players.DeleteAll();
 }
 
 psMiniGameSession::~psMiniGameSession()
@@ -433,22 +433,21 @@ psMiniGameSession::~psMiniGameSession()
     ClientConnectionSet *clients = psserver->GetConnections();
     if (clients)
     {
-        if (whitePlayerID != (uint32_t)-1)
+        csArray<MinigamePlayer*>::Iterator pIter = players.GetIterator();
+        while (pIter.HasNext())
         {
-            Client *client = clients->Find(whitePlayerID);
-            if (client && client->GetActor())
+            MinigamePlayer *p = pIter.Next();
+            if (p && p->playerID != (uint32_t)-1)
             {
-                client->GetActor()->UnregisterCallback(this);
+                Client *client = clients->Find(p->playerID);
+                if (client && client->GetActor())
+                {
+                    client->GetActor()->UnregisterCallback(this);
+                }
             }
         }
-        if (blackPlayerID != (uint32_t)-1)
-        {
-            Client *client = clients->Find(blackPlayerID);
-            if (client && client->GetActor())
-            {
-                client->GetActor()->UnregisterCallback(this);
-            }
-        }
+        players.DeleteAll();
+
         csArray<uint32_t>::Iterator iter = watchers.GetIterator();
         while (iter.HasNext())
         {
@@ -458,6 +457,7 @@ psMiniGameSession::~psMiniGameSession()
                 client->GetActor()->UnregisterCallback(this);
             }
         }
+        watchers.DeleteAll();
     }
 }
 
@@ -577,11 +577,40 @@ bool psMiniGameSession::Load(csString &responseString)
         return false;
     }
 
-    // intialise player to move first, if appropriate
-    // Player 1 has the white pieces.
-    if (gameBoard.GetPlayerTurnRule() >= ORDERED)
+    // initialise players
+    MinigamePlayer *player, *previousPlayer = NULL;
+    for (int p=0; p<gameBoard.GetNumPlayers(); p++)
     {
-        nextPlayerToMove = 1;
+        player = new MinigamePlayer();
+        if (!player)
+        {
+            Error2("Cannot initialise players for %s.", gameName);
+            return false;
+        }
+
+        player->playerID = (uint32_t)-1;
+        player->playerName = NULL;
+        player->nextMover = NULL;
+
+        // organise order of play, if appropriate
+        if (gameBoard.GetPlayerTurnRule() >= ORDERED)
+        {
+            if (p == 0)
+            {
+                nextPlayerToMove = player;
+            }
+            else
+            {
+                previousPlayer->nextMover = player;
+            }
+            previousPlayer = player;
+        }
+
+        players.Push(player);
+    }
+    if (previousPlayer)
+    {
+        previousPlayer->nextMover = nextPlayerToMove;
     }
 
     // determine style of minigame: currently based on number of players only
@@ -602,64 +631,49 @@ void psMiniGameSession::AddPlayer(Client *client)
 
     uint32_t clientID = client->GetClientNum();
 
-    // If there is no player with white pieces, give to this player white pieces
-    if (whitePlayerID == (uint32_t)-1)
+    // look for free player position
+    bool playerIsAPlayer = false; 
+    int colour=WHITE_PLAYER; // TODO temp to maintain White/Black: destined to done proper
+    csArray<MinigamePlayer*>::Iterator pIter = players.GetIterator();
+    while (pIter.HasNext())
     {
-        whitePlayerID = clientID;
-        whitePlayerName = client->GetName();
-
-        whiteIdleCounter = MINIGAME_IDLE_TIME;
-
-        // If this is a managed game, reset the game board
-        if (options & MANAGED_GAME)
+        MinigamePlayer *p = pIter.Next();
+        if (p && p->playerID == (uint32_t)-1)
         {
-            Restart();
+            p->playerID = clientID;
+            p->playerName = client->GetName();
+            p->idleCounter = MINIGAME_IDLE_TIME;
+            p->blackOrWhite = colour;
+
+            // If this is a managed game, reset the game board
+            if (options & MANAGED_GAME)
+            {
+                Restart();
+            }
+
+            // Send notifications
+            psSystemMessage *newmsg;
+            if (minigameStyle == MG_GAME)
+            {
+                newmsg = new psSystemMessage(clientID, MSG_INFO, "%s started playing %s with %s pieces.",
+                                             p->playerName, name.GetData(), (colour==WHITE_PLAYER)?"white":"black");
+            }
+            else // MG_PUZZLE
+            {
+                newmsg = new psSystemMessage(clientID, MSG_INFO, "%s started solving %s.",
+                                             p->playerName, name.GetData());
+            }
+            newmsg->Multicast(client->GetActor()->GetMulticastClients(), 0, CHAT_SAY_RANGE);
+
+            playerCount++;
+            playerIsAPlayer = true;
+            break;
         }
-
-        // Send notifications
-        psSystemMessage *newmsg;
-        if (minigameStyle == MG_GAME)
-        {
-            newmsg = new psSystemMessage(clientID, MSG_INFO, "%s started playing %s with white pieces.",
-                                         whitePlayerName, name.GetData());
-        }
-        else // MG_PUZZLE
-        {
-            newmsg = new psSystemMessage(clientID, MSG_INFO, "%s started solving %s.",
-                                         whitePlayerName, name.GetData());
-        }
-        newmsg->Multicast(client->GetActor()->GetMulticastClients(), 0, CHAT_SAY_RANGE);
-
-        playerCount++;
-    }
-
-    // Or if there is no player with black pieces, and its a 2-player game, give black pieces
-    else if (blackPlayerID == (uint32_t)-1 && gameBoard.GetNumPlayers() >= 2)
-    {
-        blackPlayerID = clientID;
-        blackPlayerName = client->GetName();
-
-        blackIdleCounter = MINIGAME_IDLE_TIME;
-
-        // Send notifications
-        psSystemMessage *newmsg;
-        if (minigameStyle == MG_GAME)
-        {
-            newmsg = new psSystemMessage(clientID, MSG_INFO, "%s started playing %s with black pieces.",
-                                         blackPlayerName, name.GetData());
-        }
-        else // MG_PUZZLE
-        {
-            newmsg = new psSystemMessage(clientID, MSG_INFO, "%s started solving %s.",
-                                         blackPlayerName, name.GetData());
-        }
-        newmsg->Multicast(client->GetActor()->GetMulticastClients(), 0, CHAT_SAY_RANGE);
-
-        playerCount++;
+        colour++;
     }
 
     // Otherwise add to the list of watchers
-    else
+    if (!playerIsAPlayer)
     {
         watchers.Push(clientID);
     }
@@ -683,57 +697,41 @@ void psMiniGameSession::RemovePlayer(Client *client)
     }
 
     client->GetActor()->UnregisterCallback(this);
-
     uint32_t clientID = client->GetClientNum();
 
-    // Is it the player with white pieces?
-    if (whitePlayerID == clientID)
+    bool playerRemoved = false;
+    csArray<MinigamePlayer*>::Iterator pIter = players.GetIterator();
+    while (pIter.HasNext())
     {
-        whitePlayerID = (uint32_t)-1;
-
-        // Send notifications
-        psSystemMessage *newmsg;
-        if (minigameStyle == MG_GAME)
+        MinigamePlayer *p = pIter.Next();
+        if (p && p->playerID == clientID)
         {
-            newmsg = new psSystemMessage(clientID, MSG_INFO, "%s stopped playing %s.",
-                                         whitePlayerName, name.GetData());
-        }
-        else // MG_PUZZLE
-        {
-            newmsg = new psSystemMessage(clientID, MSG_INFO, "%s stopped solving %s.",
-                                         whitePlayerName, name.GetData());
-        }
-        newmsg->Multicast(client->GetActor()->GetMulticastClients(), 0, CHAT_SAY_RANGE);
+            p->playerID = (uint32_t)-1;
 
-        whitePlayerName = NULL;
-        playerCount--;
-    }
+            // Send notifications
+            psSystemMessage *newmsg;
+            if (minigameStyle == MG_GAME)
+            {
+                newmsg = new psSystemMessage(clientID, MSG_INFO, "%s stopped playing %s.",
+                                             p->playerName, name.GetData());
+            }
+            else // MG_PUZZLE
+            {
+                newmsg = new psSystemMessage(clientID, MSG_INFO, "%s stopped solving %s.",
+                                             p->playerName, name.GetData());
+            }
+            newmsg->Multicast(client->GetActor()->GetMulticastClients(), 0, CHAT_SAY_RANGE);
 
-    // Or the player with black pieces?
-    else if (blackPlayerID == clientID)
-    {
-        blackPlayerID = (uint32_t)-1;
+            p->playerName = NULL;
+            playerCount--;
+            playerRemoved = true;
 
-        // Send notifications
-        psSystemMessage *newmsg;
-        if (minigameStyle == MG_GAME)
-        {
-            newmsg = new psSystemMessage(clientID, MSG_INFO, "%s stopped playing %s.",
-                                         blackPlayerName, name.GetData());
+            break;
         }
-        else // MG_PUZZLE
-        {
-            newmsg = new psSystemMessage(clientID, MSG_INFO, "%s stopped solving %s.",
-                                         blackPlayerName, name.GetData());
-        }
-        newmsg->Multicast(client->GetActor()->GetMulticastClients(), 0, CHAT_SAY_RANGE);
-
-        blackPlayerName = NULL;
-        playerCount--;
     }
 
     // Otherwise it is one of the watchers
-    else
+    if (!playerRemoved)
     {
         watchers.Delete(clientID);
     }
@@ -757,14 +755,14 @@ void psMiniGameSession::Send(uint32_t clientID, uint32_t modOptions)
 
 void psMiniGameSession::Broadcast()
 {
-    if (whitePlayerID != (uint32_t)-1)
+    csArray<MinigamePlayer*>::Iterator pIter = players.GetIterator();
+    while (pIter.HasNext())
     {
-        Send(whitePlayerID, 0);
-    }
-
-    if (blackPlayerID != (uint32_t)-1)
-    {
-        Send(blackPlayerID, BLACK_PIECES);
+        MinigamePlayer *p = pIter.Next();
+        if (p && p->playerID != (uint32_t)-1)
+        {
+            Send(p->playerID, (p->blackOrWhite==WHITE_PLAYER)? 0 : BLACK_PIECES);
+        }
     }
 
     csArray<uint32_t>::Iterator iter = watchers.GetIterator();
@@ -797,18 +795,39 @@ bool psMiniGameSession::IsValidToUpdate(Client *client) const
 
     // TODO: Implement more complex verification for managed games
 
-    if (clientID != whitePlayerID && clientID != blackPlayerID)
+    csArray<MinigamePlayer*>::ConstIterator pIter = players.GetIterator();
+    while (pIter.HasNext())
     {
-        psserver->SendSystemError(clientID, "You are not playing %s!", name.GetData());
-        return false;
+        MinigamePlayer *p = pIter.Next();
+        if (p && p->playerID == clientID)
+        {
+            return true;
+        }
     }
 
-    return true;
+    psserver->SendSystemError(clientID, "You are not playing %s!", name.GetData());
+    return false;
 }
 
 void psMiniGameSession::Update(Client *client, psMGUpdateMessage &msg)
 {
     uint32_t clientnum = client->GetClientNum();
+    MinigamePlayer *movingPlayer = NULL;
+    csArray<MinigamePlayer*>::Iterator pIter = players.GetIterator();
+    while (pIter.HasNext())
+    {
+        MinigamePlayer *p = pIter.Next();
+        if (p && p->playerID == clientnum)
+        {
+            movingPlayer = p;
+            break;
+        }
+    }
+    if (!movingPlayer)
+    {
+        Error1("Minigame moving player NULL!");
+        return;
+    }
 
     // Verify the message version
     if (!msg.IsNewerThan(currentCounter))
@@ -825,7 +844,7 @@ void psMiniGameSession::Update(Client *client, psMGUpdateMessage &msg)
         psserver->SendSystemError(clientnum, "You are not in range for %s!",
                                   name.GetData());
         // Reset the client's game board
-        ResendBoardLayout(clientnum);
+        ResendBoardLayout(movingPlayer);
         return;
     }
 
@@ -840,15 +859,15 @@ void psMiniGameSession::Update(Client *client, psMGUpdateMessage &msg)
         {
             psserver->SendSystemError(clientnum, "Puzzle solved");
         }        // Reset the client's game board
-        ResendBoardLayout(clientnum);
+        ResendBoardLayout(movingPlayer);
         return;
     }
-    if ((nextPlayerToMove == 1 && clientnum == blackPlayerID) ||
-        (nextPlayerToMove == 2 && clientnum == whitePlayerID))
+
+    if (nextPlayerToMove && nextPlayerToMove != movingPlayer)
     {
         psserver->SendSystemError(clientnum, "It is not your turn to move.");
         // Reset the client's game board
-        ResendBoardLayout(clientnum);
+        ResendBoardLayout(movingPlayer);
         return;
     }
 
@@ -857,7 +876,7 @@ void psMiniGameSession::Update(Client *client, psMGUpdateMessage &msg)
     if (msg.msgNumUpdates == 1)
     {
         // 1 update means a new piece is added to the board
-        moveAccepted = GameMovePassesRules(clientnum,
+        moveAccepted = GameMovePassesRules(movingPlayer,
                                            (msg.msgUpdates[0] & 0xF0) >> 4,
                                            msg.msgUpdates[0] & 0x0F,
                                            msg.msgUpdates[1]);
@@ -865,7 +884,7 @@ void psMiniGameSession::Update(Client *client, psMGUpdateMessage &msg)
     else if (msg.msgNumUpdates == 2)
     {
         // 2 updates means a piece has been moved from one tile to another
-        moveAccepted = GameMovePassesRules(clientnum,
+        moveAccepted = GameMovePassesRules(movingPlayer,
                                            (msg.msgUpdates[0] & 0xF0) >> 4,
                                            msg.msgUpdates[0] & 0x0F,
                                            msg.msgUpdates[1],
@@ -878,7 +897,7 @@ void psMiniGameSession::Update(Client *client, psMGUpdateMessage &msg)
     {
         psserver->SendSystemError(clientnum, "Illegal move.");
         // Reset the client's game board
-        ResendBoardLayout(clientnum);
+        ResendBoardLayout(movingPlayer);
         return;
     }
 
@@ -893,15 +912,7 @@ void psMiniGameSession::Update(Client *client, psMGUpdateMessage &msg)
         piecePlayed = (TileStates)msg.msgUpdates[2*i+1];
     }
 
-    // Update idle counters
-    if (clientnum == whitePlayerID)
-    {
-        whiteIdleCounter = MINIGAME_IDLE_TIME;
-    }
-    else if (clientnum == blackPlayerID)
-    {
-        blackIdleCounter = MINIGAME_IDLE_TIME;
-    }
+    movingPlayer->idleCounter = MINIGAME_IDLE_TIME;
 
     // Broadcast the new game board layout
     Broadcast();
@@ -914,21 +925,27 @@ void psMiniGameSession::Update(Client *client, psMGUpdateMessage &msg)
     if (endgameReached)
     {
         // determine winner
-        uint32_t winnerID=(uint32_t)-1, loserID;
+        MinigamePlayer *winningPlayer = NULL;
         csString wonText;
         ProgressionEvent *progEvent = NULL;
 
         if (winningPiece == WHITE_PIECE || winningPiece == BLACK_PIECE)
         {
-            if (winningPiece == WHITE_PIECE)
+            pIter.Reset();
+            while (pIter.HasNext())
             {
-                winnerID = whitePlayerID;
-                loserID = blackPlayerID;
+                MinigamePlayer *p = pIter.Next();
+                if (p && ((p->blackOrWhite == WHITE_PLAYER && winningPiece == WHITE_PIECE) ||
+                          (p->blackOrWhite == BLACK_PLAYER && winningPiece == BLACK_PIECE)))
+                {
+                    winningPlayer = p;
+                    break;
+                }
             }
-            else
+            if (!winningPlayer)
             {
-                loserID = whitePlayerID;
-                winnerID = blackPlayerID;
+                Error1("Minigame winning player NULL!");
+                return;
             }
 
             // is there a progression script to run
@@ -941,44 +958,43 @@ void psMiniGameSession::Update(Client *client, psMGUpdateMessage &msg)
             }
 
             // announce winner, unless script to run for winner
-            if (winnerID != (uint32_t)-1 && !progEvent)
-            if (minigameStyle == MG_GAME)
+            if (!progEvent)
             {
-                psserver->SendSystemInfo(winnerID, (GetName() + ": You have won!"));
-            }
-            else
-            {
-                psserver->SendSystemInfo(winnerID, (GetName() + ": You have solved it!"));
-            }
-            wonText = GetName() + ": ";
-            if (winnerID == whitePlayerID && whitePlayerName)
-            {
-                wonText += csString(whitePlayerName) + " (white)";
-            }
-            else if (winnerID == blackPlayerID && blackPlayerName)
-            {
-                wonText += csString(blackPlayerName) + " (black)";
-            }
-            else
-            {
-                wonText += "Someone";
-            }
-            if (minigameStyle == MG_GAME)
-            {
-                wonText += " has won.";
-            }
-            else
-            {
-                wonText += " has solved it.";
+                if (minigameStyle == MG_GAME)
+                {
+                   psserver->SendSystemInfo(winningPlayer->playerID, (GetName() + ": You have won!"));
+                }
+                else
+                {
+                    psserver->SendSystemInfo(winningPlayer->playerID, (GetName() + ": You have solved it!"));
+                }
+                wonText = GetName() + ": ";
+                if (movingPlayer->playerName)
+                {
+                    wonText += csString(winningPlayer->playerName);
+                    wonText += (winningPlayer->blackOrWhite == WHITE_PLAYER) ? " (white)" : " (black)";
+                }
+                else
+                {
+                    wonText += "Someone";
+                }
+                if (minigameStyle == MG_GAME)
+                {
+                    wonText += " has won.";
+                }
+                else
+                {
+                    wonText += " has solved it.";
+                }
             }
 
             // now run progression script
-            if (progEvent && winnerID != (uint32_t)-1)
+            if (progEvent)
             {
                 ClientConnectionSet *clients = psserver->GetConnections();
                 if (clients)
                 {
-                    Client *winnerClient = clients->Find(winnerID);
+                    Client *winnerClient = clients->Find(winningPlayer->playerID);
                     float result;
                     if (winnerClient)
                     {
@@ -990,11 +1006,16 @@ void psMiniGameSession::Update(Client *client, psMGUpdateMessage &msg)
                         else
                         {
                             Client *loserClient;
-                            if (loserID != (uint32_t)-1)
+                            pIter.Reset();
+                            while (pIter.HasNext())
                             {
-                                loserClient = clients->Find(loserID);
-                                result = progEvent->Run(winnerClient->GetActor(),
-                                                        loserClient->GetActor(), NULL);
+                                MinigamePlayer *p = pIter.Next();
+                                if (p && p->playerID != winningPlayer->playerID)
+                                {
+                                    loserClient = clients->Find(p->playerID);
+                                    result = progEvent->Run(winnerClient->GetActor(),
+                                                            loserClient->GetActor(), NULL);
+                                }
                             }
                         }
                     }
@@ -1011,15 +1032,17 @@ void psMiniGameSession::Update(Client *client, psMGUpdateMessage &msg)
             {
                 wonText = "Puzzle solved.";
             }
-            if (winnerID != (uint32_t)-1)
-            {
-                psserver->SendSystemInfo(winnerID, wonText);
-            }
+            psserver->SendSystemInfo(winningPlayer->playerID, wonText);
         }
 
-        if (loserID != (uint32_t)-1)
+        pIter.Reset();
+        while (pIter.HasNext())
         {
-            psserver->SendSystemInfo(loserID, wonText);
+            MinigamePlayer *p = pIter.Next();
+            if (p && p->playerID != winningPlayer->playerID)
+            {
+                psserver->SendSystemInfo(p->playerID, wonText);
+            }
         }
         csArray<uint32_t>::Iterator iter = watchers.GetIterator();
         while (iter.HasNext())
@@ -1038,13 +1061,13 @@ void psMiniGameSession::Update(Client *client, psMGUpdateMessage &msg)
     {
         // broadcast the move info too
         csString movedText = GetName() + ": ";
-        if (clientnum == whitePlayerID && whitePlayerName)
+        if (movingPlayer->playerName)
         {
-            movedText += csString(whitePlayerName) + " (white)";
-        }
-        else if (clientnum == blackPlayerID && blackPlayerName)
-        {
-            movedText += csString(blackPlayerName) + " (black)";
+            movedText += csString(movingPlayer->playerName);
+            if (movingPlayer->blackOrWhite == WHITE_PLAYER)
+                movedText +=  " (white)";
+            else
+                movedText +=  " (black)";
         }
         else
         {
@@ -1052,13 +1075,14 @@ void psMiniGameSession::Update(Client *client, psMGUpdateMessage &msg)
         }
         movedText += " has moved.";
 
-        if (clientnum == whitePlayerID && blackPlayerID != (uint32_t)-1)
+        pIter.Reset();
+        while (pIter.HasNext())
         {
-            psserver->SendSystemInfo(blackPlayerID, movedText);
-        }
-        else if (clientnum == blackPlayerID && whitePlayerID != (uint32_t)-1)
-        {
-            psserver->SendSystemInfo(whitePlayerID, movedText);
+            MinigamePlayer *p = pIter.Next();
+            if (p && p->playerID != movingPlayer->playerID)
+            {
+                psserver->SendSystemInfo(p->playerID, movedText);
+            }
         }
         csArray<uint32_t>::Iterator iter = watchers.GetIterator();
         while (iter.HasNext())
@@ -1072,16 +1096,9 @@ void psMiniGameSession::Update(Client *client, psMGUpdateMessage &msg)
     }
 
     // whos move next?
-    if (nextPlayerToMove > 0)
+    if (nextPlayerToMove != NULL)
     {
-        if (nextPlayerToMove < gameBoard.GetNumPlayers())
-        {
-            nextPlayerToMove++;
-        }
-        else
-        {
-            nextPlayerToMove = 1;
-        }
+        nextPlayerToMove = movingPlayer->nextMover;
     }
 }
 
@@ -1103,44 +1120,28 @@ void psMiniGameSession::DeleteObjectCallback(iDeleteNotificationObject * object)
 
 void psMiniGameSession::Idle()
 {
-
     // Idle counters
-
-    if (whiteIdleCounter > 0 && whitePlayerID != (uint32_t)-1)
+    csArray<MinigamePlayer*>::Iterator pIter = players.GetIterator();
+    while (pIter.HasNext())
     {
-#ifdef DEBUG_MINIGAMES
-        Debug2(LOG_ANY, 0, "White player idle counter %d", whiteIdleCounter);
-#endif
-
-        if ((--whiteIdleCounter) == 0)
+        MinigamePlayer *p = pIter.Next();
+        if (p && p->playerID != (uint32_t)-1 && p->idleCounter > 0)
         {
-            Client *client = psserver->GetNetManager()->GetClient(whitePlayerID);
-            if (client)
-            {
-                RemovePlayer(client);
-            }
-        }
-    }
-
-    if (blackIdleCounter > 0 && blackPlayerID != (uint32_t)-1)
-    {
-
 #ifdef DEBUG_MINIGAMES
-        Debug2(LOG_ANY, 0, "Black player idle counter %d", blackIdleCounter);
+            Debug2(LOG_ANY, 0, "Player idle counter %d", p->idleCounter);
 #endif
-
-        if ((--blackIdleCounter) == 0)
-        {
-            Client *client = psserver->GetNetManager()->GetClient(blackPlayerID);
-            if (client)
+            if ((--p->idleCounter) == 0)
             {
-                RemovePlayer(client);
+                Client *client = psserver->GetNetManager()->GetClient(p->playerID);
+                if (client)
+                {
+                    RemovePlayer(client);
+                }
             }
         }
     }
 
     // Range check for watchers
-
     size_t i = 0;
     while (i < watchers.GetSize())
     {
@@ -1163,7 +1164,17 @@ void psMiniGameSession::Idle()
 
 bool psMiniGameSession::GameSessionActive(void)
 {
-    return ((whitePlayerID!=(uint32_t)-1) || (blackPlayerID!=(uint32_t)-1) || !watchers.IsEmpty());
+    csArray<MinigamePlayer*>::Iterator pIter = players.GetIterator();
+    while (pIter.HasNext())
+    {
+        MinigamePlayer *p = pIter.Next();
+        if (p && p->playerID != (uint32_t)-1)
+        {
+            return true;
+        }
+    }
+
+    return (!watchers.IsEmpty());
 }
 
 bool psMiniGameSession::IsSessionPublic(void)
@@ -1171,19 +1182,15 @@ bool psMiniGameSession::IsSessionPublic(void)
     return !(options & PERSONAL_GAME);
 }
 
-void psMiniGameSession::ResendBoardLayout(uint32_t clientnum)
+void psMiniGameSession::ResendBoardLayout(MinigamePlayer *player)
 {
-    if (clientnum == whitePlayerID)
+    if (player->blackOrWhite == WHITE_PLAYER)
     {
-        Send(whitePlayerID, DISALLOWED_MOVE);
+        Send(player->playerID, DISALLOWED_MOVE);
     }
-    else if (clientnum == blackPlayerID)
+    else if (player->blackOrWhite == BLACK_PLAYER)
     {
-        Send(blackPlayerID, BLACK_PIECES | DISALLOWED_MOVE);
-    }
-    else
-    {
-        Send(clientnum, READ_ONLY | DISALLOWED_MOVE);
+        Send(player->playerID, BLACK_PIECES | DISALLOWED_MOVE);
     }
 
     // after a disallowed move, the other clients will be out of sync
@@ -1193,7 +1200,7 @@ void psMiniGameSession::ResendBoardLayout(uint32_t clientnum)
 
 // checks move passes rules. If col/row/state-2 are -1 then a new piece is played,
 // otherwise an existing piece is moved
-bool psMiniGameSession::GameMovePassesRules(uint32_t movingClient,
+bool psMiniGameSession::GameMovePassesRules(MinigamePlayer *mover,
                                             int8_t col1, int8_t row1, int8_t state1,
                                             int8_t col2, int8_t row2, int8_t state2)
 {
@@ -1213,11 +1220,11 @@ bool psMiniGameSession::GameMovePassesRules(uint32_t movingClient,
     if (gameBoard.GetMoveablePiecesRule() == OWN_PIECES_ONLY)
     {
         TileStates movingPiece = (TileStates) gameBoard.Get(col1, row1);
-        if (movingClient == whitePlayerID && (movingPiece < WHITE_1 || movingPiece > WHITE_7))
+        if (mover->blackOrWhite == WHITE_PLAYER && (movingPiece < WHITE_1 || movingPiece > WHITE_7))
         {
             return false;
         }
-        else if (movingClient == blackPlayerID && (movingPiece < BLACK_1 || movingPiece > BLACK_7))
+        else if (mover->blackOrWhite == BLACK_PLAYER && (movingPiece < BLACK_1 || movingPiece > BLACK_7))
         {
             return false;
         }
