@@ -178,6 +178,9 @@ Slot Names: righthand, lefthand, helm, legs, boots, bracers, torso, gloves, neck
         <topic name="/roll">/roll times sides target
 
 Rolls a certain number of dice with the specified sides and gives the answer.  Example: "/roll 2 6" rolls 2 6-sided dice.  If target is defined it will only announce the number of dice which got a number higher than the specified one. Example: "/roll 2 6 3" rolls a 2 6-sided dice and tells how many of them got a 3 or an higher number. Use this to invent your own gambling games.</topic>
+        <topic name="/rotate">/rotate target x y z
+
+Rotate an object along the x, y, and z axis. Values are in degrees. Please note that y is the vertical axis.</topic>
         <topic name="/sell">/sell merchant
 
 Sell to specified merchant.  If no merchant specified, sell to current target.</topic>
@@ -273,6 +276,27 @@ You leave your current group.</topic>
     </branch>
     <branch name="Guild Commands">
 Commands used to perform guild actions, many of which are available via the guild window.
+        <branch name="Alliance Commands">
+Commands used to create and maintain guild alliances.
+            <topic name="/allianceinvite">/allianceinvite leader_name
+
+Invites leader of another guild to your guild alliance.</topic>
+            <topic name="/allianceleader">/allianceleader guild_name
+
+Hands over alliance leadership to another guild.</topic>
+            <topic name="/allianceleave">/allianceleave 
+
+Leave your guild alliance.</topic>
+            <topic name="/allianceremove">/allianceremove guild_name
+
+Removes a guild from your guild alliance.</topic>
+            <topic name="/endalliance">/endalliance 
+
+Disband your guild alliance.</topic>
+            <topic name="/newalliance">/newalliance alliance_name
+
+Creates new alliance of guilds.</topic>
+        </branch>
         <topic name="/endguild">/endguild 
 
 Disbands your guild.</topic>
@@ -321,27 +345,6 @@ Surrenders to the target's guild to end a guild war.</topic>
         <topic name="/newguild">/newguild guild_name
 
 This creates a new guild with the specified name and you as leader.</topic>
-    </branch>
-    <branch name="Alliance Commands">
-Commands used to create and maintain guild alliances.
-        <topic name="/allianceinvite">/allianceinvite leader_name
-
-Invites leader of another guild to your guild alliance.</topic>
-        <topic name="/allianceleader">/allianceleader guild_name
-
-Hands over alliance leadership to another guild.</topic>
-        <topic name="/allianceleave">/allianceleave 
-
-Leave your guild alliance.</topic>
-        <topic name="/allianceremove">/allianceremove guild_name
-
-Removes a guild from your guild alliance.</topic>
-        <topic name="/endalliance">/endalliance 
-
-Disband your guild alliance.</topic>
-        <topic name="/newalliance">/newalliance alliance_name
-
-Creates new alliance of guilds.</topic>
     </branch>
     <branch name="Utility Commands">
 Additional commands used for other game functions.
@@ -543,6 +546,10 @@ Kicks the named player off of the server.</topic>
 Kills the targeted NPC, using the current target if no name is given. The reload option recreates the NPC with stats and triggers from the DB.</topic>
         <topic name="/listwarnings">/listwarnings [me/target/eid/pid/area/name]
 List all warnings given to the targeted account.</topic>
+        <topic name="/giveitem">/loadquest questname
+
+Reloads the given quest.
+Note that you might need to wrap it like this \"quest name\" in case the quest name has spaces</topic>
         <topic name="/managepetitions">/managepetitions
 
 Manage petitions to help users.</topic>
@@ -824,6 +831,113 @@ Default controls.  You may alter your settings to your liking via the options wi
         <topic name="X">Center the camera.</topic>
         <topic name="Z">Sit down or stand back up.</topic>
         <topic name="1 - 0">Shortcuts one through to ten in the Shortcuts Window.</topic>
+    </branch>
+    <branch name="Files And Folders">File Locations
+
+Windows: %AppData%\PlaneShift
+Mac: ~/Library/Application Support/PlaneShift
+Linux: $HOME/.PlaneShift
+        <topic name="Files">Files
+
+options.cfg: This file contains some camera-settings
+
+planeshift.cfg: This file contains additional settings, like the email seen on the login-screen and options which can be set via the pssetup application.
+
+questnotes_YourCharactersFirstName_YourCharactersLastName.xml: This file contains a list of all the quests you have taken in planeshift, together with all the notes you made on them.
+        </topic>
+        <topic name="Folders">Folders
+
+books: This folder contains books you have saved from planeshift. It is also used to store texts you have created outside of planeshift and want to load into a book
+
+logs: This folder contains your log files.
+- Chat Log: 'YourCharactersFirstName_YourCharactersLastName_chat.txt'.
+- System Log: 'YourCharactersFirstName_YourCharactersLastName_system.txt'.
+
+options: The files within contain the options you can set from within planeshift itself.
+
+screenshots: The screenshots you take from within planeshift via the command '/screenshot' are saved here.
+        </topic>
+    </branch>
+    <branch name="Using The Updater">Using The Updater
+
+The Updater is a utility to get your installed client files in sync with the lastest version available on the server.
+        <topic name="Auto-Update">Auto-Update
+
+Just doubleclick the PSUpdater application to start it. However, the Updater isn't complete yet. At the moment, if you start it, you won't get many hints that it is actually doing something. This is what happens and what you can do do to see if it worked properly:
+
+Windows: A dos-box should open and the updater should output status-messages about its behaviour there.
+
+Linux / Mac OS X: On these systems, the updater writes its output into a file. So, after running the updater, you can open a file named "updater.log" which resides in the Planeshift-gamefolder.
+        </topic>
+
+        <branch name="Integrity Check">Integrity Check
+
+PSUpdater can also be started via a console/terminal/dosbox/whatever commandline-tool there is on your system, in conjunction with the 'repair' parameter. It checks your installation and, if any of the files are changed, asks you to replace them with the official version. Beware: This will also check and therefore overwrite files like 'psclient.cfg' within the Planeshift-gamefolder. So any changes you made to them will be lost. This does not change any of the options you have set from within the options-window within the game itself.
+
+The way to use PSUpdater from the commandline is slightly more complicated and will be explained below (again, OS-specific):
+
+            <topic name="Windows">Windows
+
+1) Click on the Start-Button in your taskbar, then choose 'Run'
+
+2) In the upcoming dialog box, type in the following command:
+C:\thePathToWherePlaneshiftIsInstalled\Planeshift\psupdater.exe' -repair
+            </topic>
+            <topic name="Mac">Mac
+
+1) Go to the folder '/Applications/Utilities' and open the application named 'Terminal' or 'Terminal.app'
+
+2) cd into your planeshift-directory with this command (you can copy/paste it):
+cd /Applications/PlaneShift
+Attention: This path is only valid if you installed the game into the folder suggested by the installer ('Applications')
+
+3)Run this command (again, you can copy/paste it):
+./psupdater.app/Contents/MacOS/psupdater_static -repair
+Attention: As with the last step, this path is only valid if you installed the game into the 'Applications' folder
+            </topic>
+            <topic name="Linux">Linux
+
+1) start your commandline-utility (Console, Terminal, whatever you have)
+
+2) cd into your planeshift-directory with this command (you can copy/paste it):
+cd /opt/PlaneShift
+Attention: This path is only valid if you installed the game into the folder suggested by the installer ('opt')
+
+3)Run this command (again, you can copy/paste it):
+./psupdater -repair
+Attention: As with the last step, this path is only valid if you installed the game into the 'opt' folder
+            </topic>
+        </branch>
+
+    </branch>
+    <branch name="Web Links">
+Web Links
+
+FAQ:
+http://www.planeshift.it/faq.html
+
+Players Guides:
+http://www.planeshift.it/guide/en/index.html
+http://pswiki.xordan.com
+
+Policies:
+http://www.planeshift.it/policies.html
+
+More Policies:
+http://www.hydlaaplaza.com/smf/index.php?topic=31960.0
+
+Tutorial Walkthrough:
+http://hydlaaplaza.com/smf/index.php?branch=30436.0
+
+Forums:
+http://forums.hydlaaplaza.com
+
+Bug Tracker:
+http://www.hydlaaplaza.com/flyspray
+
+Non-RP Server:
+Register: http://planeshift.ezpcusa.com/register
+Connect: planeshift.ezpcusa.com 7777
     </branch>
 </help>
 
