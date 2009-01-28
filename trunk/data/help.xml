@@ -546,7 +546,7 @@ Kicks the named player off of the server.</topic>
 Kills the targeted NPC, using the current target if no name is given. The reload option recreates the NPC with stats and triggers from the DB.</topic>
         <topic name="/listwarnings">/listwarnings [me/target/eid/pid/area/name]
 List all warnings given to the targeted account.</topic>
-        <topic name="/giveitem">/loadquest questname
+        <topic name="/loadquest">/loadquest questname
 
 Reloads the given quest.
 Note that you might need to wrap it like this \"quest name\" in case the quest name has spaces</topic>
@@ -843,7 +843,7 @@ options.cfg: This file contains some camera-settings
 
 planeshift.cfg: This file contains additional settings, like the email seen on the login-screen and options which can be set via the pssetup application.
 
-questnotes_YourCharactersFirstName_YourCharactersLastName.xml: This file contains a list of all the quests you have taken in planeshift, together with all the notes you made on them.
+questnotes_YourCharactersFirstName_YourCharactersLastName.xml: This file contains all the notes you made on the quests you have done.
         </topic>
         <topic name="Folders">Folders
 
@@ -856,58 +856,23 @@ logs: This folder contains your log files.
 options: The files within contain the options you can set from within planeshift itself.
 
 screenshots: The screenshots you take from within planeshift via the command '/screenshot' are saved here.
+
+sketches: The sketches (maps) you have saved from ingame. These are saved in .xml format.
+
+Description: This folder contains all the descriptions you have saved from ingame [yours only] and any you wish to upload.
         </topic>
     </branch>
     <branch name="Using The Updater">Using The Updater
 
 The Updater is a utility to get your installed client files in sync with the lastest version available on the server.
-        <topic name="Auto-Update">Auto-Update
+        <topic name="Updating">Updating
 
-Just doubleclick the PSUpdater application to start it. However, the Updater isn't complete yet. At the moment, if you start it, you won't get many hints that it is actually doing something. This is what happens and what you can do do to see if it worked properly:
-
-Windows: A dos-box should open and the updater should output status-messages about its behaviour there.
-
-Linux / Mac OS X: On these systems, the updater writes its output into a file. So, after running the updater, you can open a file named "updater.log" which resides in the Planeshift-gamefolder.
+To update PlaneShift you just need to launch PSlaunch and it will tell you if you need to update the game or not.
         </topic>
 
-        <branch name="Integrity Check">Integrity Check
-
-PSUpdater can also be started via a console/terminal/dosbox/whatever commandline-tool there is on your system, in conjunction with the 'repair' parameter. It checks your installation and, if any of the files are changed, asks you to replace them with the official version. Beware: This will also check and therefore overwrite files like 'psclient.cfg' within the Planeshift-gamefolder. So any changes you made to them will be lost. This does not change any of the options you have set from within the options-window within the game itself.
-
-The way to use PSUpdater from the commandline is slightly more complicated and will be explained below (again, OS-specific):
-
-            <topic name="Windows">Windows
-
-1) Click on the Start-Button in your taskbar, then choose 'Run'
-
-2) In the upcoming dialog box, type in the following command:
-C:\thePathToWherePlaneshiftIsInstalled\Planeshift\psupdater.exe' -repair
-            </topic>
-            <topic name="Mac">Mac
-
-1) Go to the folder '/Applications/Utilities' and open the application named 'Terminal' or 'Terminal.app'
-
-2) cd into your planeshift-directory with this command (you can copy/paste it):
-cd /Applications/PlaneShift
-Attention: This path is only valid if you installed the game into the folder suggested by the installer ('Applications')
-
-3)Run this command (again, you can copy/paste it):
-./psupdater.app/Contents/MacOS/psupdater_static -repair
-Attention: As with the last step, this path is only valid if you installed the game into the 'Applications' folder
-            </topic>
-            <topic name="Linux">Linux
-
-1) start your commandline-utility (Console, Terminal, whatever you have)
-
-2) cd into your planeshift-directory with this command (you can copy/paste it):
-cd /opt/PlaneShift
-Attention: This path is only valid if you installed the game into the folder suggested by the installer ('opt')
-
-3)Run this command (again, you can copy/paste it):
-./psupdater -repair
-Attention: As with the last step, this path is only valid if you installed the game into the 'opt' folder
-            </topic>
-        </branch>
+        <topic name="Repair">Repairing PlaneShift
+If your client is not working as well as it could, you can run the repair updater in PSlaunch. To do this just click "repair" in the launcher and it will tell you if there are any files that are not updated or dont match what it has to offer, then allow you the choice of updating those files or not.
+</topic>
 
     </branch>
     <branch name="Web Links">
