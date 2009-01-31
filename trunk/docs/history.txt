@@ -1,4 +1,7 @@
-﻿*** 2009-01-28 by Steven Patrick
+﻿*** 2009-01-31 by Steven Patrick
+- Fix to application title for linux, patch by Vornne.
+
+*** 2009-01-28 by Steven Patrick
 - Updated help.xml, patch by Caarrie.
 
 *** 2009-01-26 by Dave Bentham
