@@ -127,6 +127,9 @@ bool psLauncherGUI::InitApp()
         return false;
     }
     
+    if (nw)
+        nw->SetTitle(APPNAME);
+
     g2d->AllowResize(false);
 
     // paws initialization
