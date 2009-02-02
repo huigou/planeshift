@@ -2,6 +2,10 @@
 - Added all-axis rotation support for items by kougaro
 - Added a wrapper to check access to a certain command more easily by kougaro
 - Changed hardcoded PI values to the Crystal Space provided PI define
+- Added a faction_character column in the faction table which should store
+  how the dinamyc faction should be applied in the life events of a character
+- added a life_description column in character which holds the editable
+  part of the char creation/life events tab in the character description
 
 *** 2009-01-31 by Steven Patrick
 - Fix to application title for linux, patch by Vornne.
