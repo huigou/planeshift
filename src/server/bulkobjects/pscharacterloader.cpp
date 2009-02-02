@@ -654,9 +654,9 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
     static iRecord* updatePlayer;
     static iRecord* updateNpc;
     if(playerORpet && updatePlayer == NULL)
-        updatePlayer = db->NewUpdatePreparedStatement("characters", "id", 41, __FILE__, __LINE__); // 40 fields + 1 id field
+        updatePlayer = db->NewUpdatePreparedStatement("characters", "id", 42, __FILE__, __LINE__); // 41 fields + 1 id field
     if(!playerORpet && updateNpc == NULL)
-        updateNpc = db->NewUpdatePreparedStatement("characters", "id", 34, __FILE__, __LINE__); // 33 fields + 1 id field
+        updateNpc = db->NewUpdatePreparedStatement("characters", "id", 35, __FILE__, __LINE__); // 34 fields + 1 id field
 
     // Give 100% hp if the char is dead
     if(!actor->IsAlive())
