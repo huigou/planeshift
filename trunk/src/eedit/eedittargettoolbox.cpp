@@ -87,7 +87,7 @@ void EEditTargetToolbox::Update(unsigned int elapsed)
     }
 
     if (changeTar)
-        editApp->SetTargetData(prevTar, prevRot * 3.14159f / 180.0f);
+        editApp->SetTargetData(prevTar, prevRot * PI / 180.0f);
 }
 
 size_t EEditTargetToolbox::GetType() const

@@ -81,7 +81,6 @@
 #include "creationmanager.h"
 #include "guildmanager.h"
 #include "weathermanager.h"
-#include "commandmanager.h"
 #include "authentserver.h"
 #include "gmeventmanager.h"
 #include "actionmanager.h"

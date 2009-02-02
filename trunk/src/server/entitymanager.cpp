@@ -811,11 +811,14 @@ gemObject *EntityManager::CreateItem( psItem *& iteminstance, bool transient )
     const char *meshname;
     psSectorInfo *sectorinfo;
     csVector3 newpos;
+    float xrot;
     float yrot;
+    float zrot;
     iSector *isec;
     InstanceID instance;
 
     iteminstance->GetLocationInWorld(instance, &sectorinfo,newpos.x,newpos.y,newpos.z,yrot);
+    iteminstance->GetXZRotationInWorld(xrot,zrot);
     if (sectorinfo==NULL)
         return NULL;
     isec = FindSector(sectorinfo->name);
@@ -857,11 +860,11 @@ gemObject *EntityManager::CreateItem( psItem *& iteminstance, bool transient )
     
     if (iteminstance->GetIsContainer())
     {
-        obj = new gemContainer(iteminstance,meshname,meshfile,instance,isec,newpos,yrot,0);
+        obj = new gemContainer(iteminstance,meshname,meshfile,instance,isec,newpos,xrot,yrot,zrot,0);
     }
     else
     {
-        obj = new gemItem(iteminstance,meshname,meshfile,instance,isec,newpos,yrot,0);
+        obj = new gemItem(iteminstance,meshname,meshfile,instance,isec,newpos,xrot,yrot,zrot,0);
     }
 
     // Won't create item if gemItem entity was not created

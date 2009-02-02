@@ -1345,6 +1345,12 @@ psUserCmdMessage::psUserCmdMessage(MsgEntry *message)
         action = words.Get(2);
         return;
     }
+    if ( command == "/rotate" )
+    {
+        target = words.Get(1);
+        action = words.GetTail(2);
+        return;
+    }
 
     valid = false;
 }
@@ -1392,7 +1398,7 @@ csString psUserCmdMessage::ToString(AccessPointers * /*access_ptrs*/)
          command == "/stoptrading" || command == "/quests" ||
          command == "/tip" || command == "/motd" ||
          command == "/challenge" || command == "/yield" ||
-         command == "/admin" ||
+         command == "/admin" || command == "rotate" ||
          command == "/list" || 
          command == "/sit" || command == "/stand" ||
          command == "/bank")
@@ -4615,7 +4621,9 @@ psPersistItem::psPersistItem( uint32_t clientNum,
                               const char* filename,
                               const char* sector,
                               csVector3 pos,
+                              float xRot,
                               float yRot,
+                              float zRot,
                               uint32_t flags)
 {
     msg.AttachNew(new MsgEntry( 5000 ));
@@ -4630,7 +4638,9 @@ psPersistItem::psPersistItem( uint32_t clientNum,
     msg->Add( filename );
     msg->Add( sector );
     msg->Add( pos );
+    msg->Add( xRot );
     msg->Add( yRot );
+    msg->Add( zRot );
     if (flags) // No point sending 0, has to be at the end
     {
         msg->Add( flags );
@@ -4649,7 +4659,9 @@ psPersistItem::psPersistItem( MsgEntry* me )
     filename    = csString ( me->GetStr() );
     sector      = csString ( me->GetStr() );
     pos         = me->GetVector();
+    xRot        = me->GetFloat();
     yRot        = me->GetFloat();
+    zRot        = me->GetFloat();
     if (!me->IsEmpty())
     {
         flags   = me->GetUInt32();

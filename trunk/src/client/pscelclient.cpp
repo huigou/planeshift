@@ -1160,6 +1160,16 @@ bool GEMClientObject::SetPosition(const csVector3 & pos, float rot, iSector * se
 
 }
 
+void GEMClientObject::Rotate(float xRot, float yRot, float zRot)
+{
+    csMatrix3 xmatrix = (csMatrix3) csXRotMatrix3 (xRot);
+
+    csMatrix3 ymatrix = (csMatrix3) csYRotMatrix3 (yRot);
+
+    csMatrix3 zmatrix = (csMatrix3) csZRotMatrix3 (zRot);
+    pcmesh->GetMovable()->GetTransform().SetO2T (xmatrix*ymatrix*zmatrix);
+}
+
 csVector3 GEMClientObject::GetPosition()
 {
     return pcmesh->GetMovable ()->GetFullPosition();
@@ -1849,7 +1859,9 @@ GEMClientItem::GEMClientItem( psCelClient* cel, psPersistItem& mesg )
     factname = mesg.factname;
     solid = 0;
     pos = mesg.pos;
+    xRot = mesg.xRot;
     yRot = mesg.yRot;
+    zRot = mesg.zRot;
     sector = mesg.sector;
     flags = mesg.flags;
 
@@ -1868,6 +1880,8 @@ GEMClientItem::~GEMClientItem()
 void GEMClientItem::PostLoad()
 {
     Move(pos, yRot, sector);
+    
+    Rotate(xRot, yRot, zRot);
 
     if (flags & psPersistItem::COLLIDE)
     {

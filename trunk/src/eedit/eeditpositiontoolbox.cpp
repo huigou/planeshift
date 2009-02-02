@@ -87,7 +87,7 @@ void EEditPositionToolbox::Update(unsigned int elapsed)
     }
 
     if (changePos)
-        editApp->SetPositionData(prevPos, prevRot * 3.14159f / 180.0f);
+        editApp->SetPositionData(prevPos, prevRot * PI / 180.0f);
 }
 
 size_t EEditPositionToolbox::GetType() const

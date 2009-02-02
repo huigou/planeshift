@@ -308,8 +308,19 @@ public:
     */
     bool InitMesh();
 
-    /** Set position of mesh */
+    /** Set the position of mesh 
+     * @param pos the coordinates of the mesh
+     * @param rotangle the y axis rotation of the mesh
+     * @param room the sector in which the mesh is moved to
+     */
     void Move(const csVector3& pos,float rotangle, const char* room);
+
+    /** Set the rotation of mesh 
+     * @param xRot the variable used to set the x rotation of the item
+     * @param yRot the variable used to set the x rotation of the item
+     * @param zRot the variable used to set the z rotation of the item
+     */
+	void Rotate(float xRot, float yRot, float zRot);
 
     /** Set position of entity */
     virtual bool SetPosition(const csVector3 & pos, float rot, iSector * sector);
@@ -557,7 +568,9 @@ protected:
 private:
     // Post load data.
     csVector3 pos;
+    float xRot;
     float yRot;
+    float zRot;
     csString sector;
     uint32_t flags;
 };

@@ -159,19 +159,19 @@ psEffectObjKeyFrame::psEffectObjKeyFrame(iDocumentNode *node, const psEffectObjK
             if (attr)
             {
                 specAction.SetBit(KA_ROT_X);
-                actions[KA_ROT_X] = attr->GetValueAsFloat() * 3.14159f / 180.0f;
+                actions[KA_ROT_X] = attr->GetValueAsFloat() * PI / 180.0f;
             }
             attr = keyNode->GetAttribute("y");
             if (attr)
             {
                 specAction.SetBit(KA_ROT_Y);
-                actions[KA_ROT_Y] = attr->GetValueAsFloat() * 3.14159f / 180.0f;
+                actions[KA_ROT_Y] = attr->GetValueAsFloat() * PI / 180.0f;
             }
             attr = keyNode->GetAttribute("z");
             if (attr)
             {
                 specAction.SetBit(KA_ROT_Z);
-                actions[KA_ROT_Z] = attr->GetValueAsFloat() * 3.14159f / 180.0f;
+                actions[KA_ROT_Z] = attr->GetValueAsFloat() * PI / 180.0f;
             }
         }
         else if (action == "spin")
@@ -180,19 +180,19 @@ psEffectObjKeyFrame::psEffectObjKeyFrame(iDocumentNode *node, const psEffectObjK
             if (attr)
             {
                 specAction.SetBit(KA_SPIN_X);
-                actions[KA_SPIN_X] = attr->GetValueAsFloat() * 3.14159f / 180.0f;
+                actions[KA_SPIN_X] = attr->GetValueAsFloat() * PI / 180.0f;
             }
             attr = keyNode->GetAttribute("y");
             if (attr)
             {
                 specAction.SetBit(KA_SPIN_Y);
-                actions[KA_SPIN_Y] = attr->GetValueAsFloat() * 3.14159f / 180.0f;
+                actions[KA_SPIN_Y] = attr->GetValueAsFloat() * PI / 180.0f;
             }
             attr = keyNode->GetAttribute("z");
             if (attr)
             {
                 specAction.SetBit(KA_SPIN_Z);
-                actions[KA_SPIN_Z] = attr->GetValueAsFloat() * 3.14159f / 180.0f;
+                actions[KA_SPIN_Z] = attr->GetValueAsFloat() * PI / 180.0f;
             }
         }
         else if (action == "cell")

@@ -428,6 +428,8 @@ class gemItem : public gemActiveObject
 protected:
     csWeakRef<psItem> itemdata;
     csString itemType;
+    float xRot;
+    float zRot;
 
 public:
     gemItem(csWeakRef<psItem> item,
@@ -436,7 +438,9 @@ public:
         InstanceID myInstance,
         iSector* room,
         const csVector3& pos,
-        float rotangle,
+        float xrotangle,
+        float yrotangle,
+        float zrotangle,
         int clientnum);
 
     virtual const char* GetObjectType() { return itemType.GetData(); }
@@ -447,7 +451,29 @@ public:
     virtual void Broadcast(int clientnum, bool control);
     virtual void Send( int clientnum, bool control, bool super_clients);
 
+    /** @brief Set position of item in world.
+      *
+      * @param pos The coordinates of the object in the sector
+      * @param angle The y rotation angle
+      * @param sector The sector in which the object is
+      * @param instance The instance the object is in
+      * 
+      * @return Set the position of the item in given sector, instance and position. Also sets the item y rotation
+      */    
     virtual void SetPosition(const csVector3& pos,float angle, iSector* sector, InstanceID instance);
+
+    /** Set the x, y and z axis rotations for the item
+     * @param xrotangle the variable used to set the x rotation of the item
+     * @param yrotangle the variable used to set the x rotation of the item
+     * @param zrotangle the variable used to set the z rotation of the item
+     */
+    virtual void SetRotation(float xrotangle, float yrotangle, float zrotangle);
+    /** Get the x,y and z axis rotations for the item
+     * @param xrotangle the variable in which the x rotation will be stored
+     * @param yrotangle the variable in which the y rotation will be stored
+     * @param zrotangle the variable in which the z rotation will be stored
+     */
+    virtual void GetRotation(float& xrotangle, float& yrotangle, float& zrotangle);
 
     virtual bool IsPickable();
     virtual bool IsLockable();
@@ -480,7 +506,9 @@ public:
         InstanceID myInstance,
         iSector* room,
         const csVector3& pos,
-        float rotangle,
+        float xrotangle,
+        float yrotangle,
+        float zrotangle,
         int clientnum);
 
     bool CanAdd(unsigned short amountToAdd, psItem *item, int slot=-1);

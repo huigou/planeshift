@@ -497,6 +497,14 @@ public:
 
     iResultSet* GetAllResponses( csString& trigger );
 
+    /** Check if a client is authorized to execute a command
+     * @param client: the client we are checking
+     * @param command: the command we are checking for
+     * @return return true if the client is authorized to execute the command
+     */
+    bool HasAccess( Client* client, const char* command);
+
+
     static psCharacterLoader        CharacterLoader;
 
     NPCManager*                     npcmanager;
