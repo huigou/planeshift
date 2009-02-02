@@ -312,6 +312,14 @@ protected:
       */
     void HandleGuard(Client *client, csString target, csString action);
 
+    /** @brief Handles a player command to rotate an item.
+      *
+      * @param client The client that issued the command.
+      * @param target description of the item to be rotated.
+      * @param action rotation data
+      */
+    void HandleRotate(Client *client, csString target, csString action);
+
     /** @brief Handles a player request to 'use' the targeted item.
       *
       * @param client The client that issued the command.

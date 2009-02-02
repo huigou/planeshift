@@ -329,6 +329,31 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         csString itemName( words.GetTail(1) );
         window->Write( itemName );
     }
+    
+    else if (words[0] == "/rotate")
+    {
+        if ( words.GetCount() < 2 )
+            return "Usage: /rotate [target] [x|reset] [y|reset] [z|reset]  or /rotate [x|y|z] [angle|reset]";
+        
+        GEMClientObject *object = NULL;
+        if (words[1] == "x" || words[1] == "y" || words[1] == "z" || words[1] == "reset" || atoi(words[1]))
+            object = psengine->GetCharManager()->GetTarget();
+        else
+            object = FindEntityWithName(words[1]);
+        
+        csString newCmd;
+        if (object)
+        {
+            EID mappedID = object->GetEID();
+            newCmd.Format("/rotate eid:%u %s", mappedID.Unbox(), words.GetTail(2).GetDataSafe());
+        }
+        else
+        {
+            newCmd.Format("/rotate %s %s", words[1].GetDataSafe(), words.GetTail(2).GetDataSafe());
+        }
+        psUserCmdMessage cmdmsg(cmd);
+        cmdmsg.SendMessage();
+    }
 
     else if (words[0] == "/sell")
     {
@@ -640,26 +665,26 @@ const char *psUserCommands::HandleCommand(const char *cmd)
 
     else if (words[0] == "/pickup")
     {
-         GEMClientObject *object = NULL;
+        GEMClientObject *object = NULL;
 
-         if (words[1].IsEmpty())
-             object = psengine->GetCharManager()->GetTarget();
-         else
-             object = FindEntityWithName(words[1]);
-         if (object)
-         {
-             psengine->GetCharManager()->SetTarget(object,"select");
-             EID mappedID = object->GetEID();
-             csString newCmd;
-             newCmd.Format("/pickup eid:%u", mappedID.Unbox());
-             psUserCmdMessage cmdmsg(newCmd);
-             cmdmsg.SendMessage();
-         }
-         else
-         {
-             psUserCmdMessage cmdmsg(cmd);
-             cmdmsg.SendMessage();
-         }
+        if (words[1].IsEmpty())
+            object = psengine->GetCharManager()->GetTarget();
+        else
+            object = FindEntityWithName(words[1]);
+        if (object)
+        {
+            psengine->GetCharManager()->SetTarget(object,"select");
+            EID mappedID = object->GetEID();
+            csString newCmd;
+            newCmd.Format("/pickup eid:%u", mappedID.Unbox());
+            psUserCmdMessage cmdmsg(newCmd);
+            cmdmsg.SendMessage();
+        }
+        else
+        {
+            psUserCmdMessage cmdmsg(cmd);
+            cmdmsg.SendMessage();
+        }
     }
 
     else if ( words[0] == "/game" )

@@ -202,7 +202,7 @@ void psEffectObjSpire::CalculateData(int shape, int segments, csVector3 * verts,
         case SPI_CIRCLE:
             for (int b=0; b<=segments; ++b)
             {
-                float currAng = b * 2.0f*3.14159f / segments;
+                float currAng = b * 2.0f*PI / segments;
                 float cosCurr = cosf(currAng);
                 float sinCurr = sinf(currAng);
                 
@@ -219,7 +219,7 @@ void psEffectObjSpire::CalculateData(int shape, int segments, csVector3 * verts,
         case SPI_ASTERIX:
             for (int b=0; b<segments; ++b)
             {
-                float currAng = b * 3.14159f / segments;
+                float currAng = b * PI / segments;
                 float cosCurr = cosf(currAng);
                 float sinCurr = sinf(currAng);
 
@@ -239,10 +239,10 @@ void psEffectObjSpire::CalculateData(int shape, int segments, csVector3 * verts,
         case SPI_STAR:
             for (int b=0; b<segments; ++b)
             {
-                float currAng = b * 2.0f*3.14159f / segments;
+                float currAng = b * 2.0f*PI / segments;
                 float cosCurr = cosf(currAng);
                 float sinCurr = sinf(currAng);
-                float nextAng = currAng + 2.0f*3.14159f/segments;
+                float nextAng = currAng + 2.0f*PI/segments;
                 float cosNext = cosf(nextAng);
                 float sinNext = sinf(nextAng);
                 float midAng = currAng + (nextAng - currAng) / 2.0f;

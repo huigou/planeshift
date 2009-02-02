@@ -365,6 +365,10 @@ void UserManager::HandleUserCommand(MsgEntry *me,Client *client)
     {
         HandleGuard(client, msg.target, msg.action);
     }
+    else if (msg.command == "/rotate")
+    {
+        HandleRotate(client, msg.target, msg.action);
+    }
     else
     {
         psserver->SendSystemError(me->clientnum,"Command not supported by server yet.");
@@ -987,7 +991,7 @@ void UserManager::HandleEntranceMessage( MsgEntry* me, Client *client )
 
         // Process return attributes and spin us around 180 deg for exit
         csVector3 retPos = retAction->GetReturnPosition();
-        float retRot = retAction->GetReturnRotation() + (3.141592654/2);
+        float retRot = retAction->GetReturnRotation() + (PI/2);
         csString retSectorName = retAction->GetReturnSector();
 
         // Send player back to return point
@@ -2120,6 +2124,106 @@ void UserManager::HandleGuard(Client *client, csString target, csString action)
     else
         psserver->SendSystemError(client->GetClientNum(),
                 "You can't change guard status of %s", target.GetData());
+}
+
+void UserManager::HandleRotate(Client *client, csString target, csString action)
+{
+    if (target.StartsWith("area:"))
+    {
+        csArray<csString> filters = DecodeCommandArea(client, target);
+        csArray<csString>::Iterator it(filters.GetIterator());
+        while (it.HasNext()) 
+        {
+            HandleRotate(client, it.Next(), action);
+        }
+        return;
+    }
+    else if (target.StartsWith("eid:", true))
+    {
+        gemItem* rotItem = NULL;
+        GEMSupervisor *gem = GEMSupervisor::GetSingletonPtr();
+        csString eid_str = target.Slice(4);
+        EID eID = EID(strtoul(eid_str.GetDataSafe(), NULL, 10));
+        if (eID.IsValid())
+        {
+            rotItem = dynamic_cast<gemItem*> (gem->FindObject(eID));
+
+            if (rotItem)
+            {
+                float oldxrot, oldyrot, oldzrot;
+                rotItem->GetRotation(oldxrot, oldyrot, oldzrot);
+                oldxrot = oldxrot*180/PI;// rotation is stored in radians,
+                oldyrot = oldyrot*180/PI;// we are converting the angles
+                oldzrot = oldzrot*180/PI;// to degrees
+                float xrot=oldxrot, yrot=oldyrot, zrot=oldzrot;
+                WordArray words(action);
+                if (words[0] == "x")
+                {
+                    if (words[1] != "reset")
+                        xrot = oldxrot + atoi(words[1]);
+                    else
+                        xrot = 0;
+                }
+                else if (words[0] == "y")
+                {
+                    if (words[1] != "reset")
+                        yrot = oldyrot + atoi(words[1]);
+                    else
+                        yrot = 0;
+                }
+                else if (words[0] == "z")
+                {
+                    if (words[1] != "reset")
+                        zrot = oldzrot + atoi(words[1]);
+                    else
+                        zrot = 0;
+                }
+                else
+                {
+                    if (words[0] != "reset")
+                        xrot = oldxrot + atoi(words[1]);
+                    else
+                        xrot = 0;
+                    if (words[1] != "reset")
+                        yrot = oldyrot + atoi(words[1]);
+                    else
+                        yrot = 0;
+                    if (words[2] != "reset")
+                        zrot = oldzrot + atoi(words[1]);
+                    else
+                        zrot = 0;
+                }
+        
+                if (psserver->HasAccess(client, "rotate all")||
+                    rotItem->GetItem()->GetGuardingCharacterID() == client->GetPID())
+                {
+                    xrot = xrot/180*PI;// rotation is given in degrees
+                    yrot = yrot/180*PI;// converting that to radians
+                    zrot = zrot/180*PI;
+                    rotItem->SetRotation(xrot, yrot, zrot);
+                    rotItem->UpdateProxList(true);
+                    psserver->SendSystemInfo(client->GetClientNum(), "You have rotated %s %f %f %f", rotItem->GetItem()->GetName(), xrot, yrot, zrot);
+                }
+                else
+                {
+                    psserver->SendSystemInfo(client->GetClientNum(), "You can't rotate %s", rotItem->GetItem()->GetName());
+                }
+            }
+            else
+            {
+                psserver->SendSystemError(client->GetClientNum(),
+                                "Item not found.", target.GetData());
+            }
+        }
+    }
+    else if(client->GetTargetObject())
+    {
+        gemObject* object= client->GetTargetObject();
+        HandleRotate(client, object->GetEID().Show(), action);
+    }
+    else
+        psserver->SendSystemError(client->GetClientNum(),
+                "You can't rotate %s", target.GetData());
 }
 
 void UserManager::GiveTip(int id)

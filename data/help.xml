@@ -177,10 +177,13 @@ Slot Names: righthand, lefthand, helm, legs, boots, bracers, torso, gloves, neck
 </topic>
         <topic name="/roll">/roll times sides target
 
-Rolls a certain number of dice with the specified sides and gives the answer.  Example: "/roll 2 6" rolls 2 6-sided dice.  If target is defined it will only announce the number of dice which got a number higher than the specified one. Example: "/roll 2 6 3" rolls a 2 6-sided dice and tells how many of them got a 3 or an higher number. Use this to invent your own gambling games.</topic>
-        <topic name="/rotate">/rotate target x y z
+Rolls a certain number of dice with the specified sides and gives the answer.
+Example: "/roll 2 6" rolls 2 6-sided dice.  If target is defined it will only announce the number of dice which got a number higher than the specified one.
+Example: "/roll 2 6 3" rolls a 2 6-sided dice and tells how many of them got a 3 or an higher number. Use this to invent your own gambling games.</topic>
+        <topic name="/rotate">/rotate target x y z  or /rotate [axis] [angle]
 
-Rotate an object along the x, y, and z axis. Values are in degrees. Please note that y is the vertical axis.</topic>
+Rotate an object along the x, y, and z axis. Values are in degrees. Please note that y is the vertical axis.
+The rotation is added to the item's current rotation. Instead of specifying an angle, you can input "reset" which will reset the rotation to 0.</topic>
         <topic name="/sell">/sell merchant
 
 Sell to specified merchant.  If no merchant specified, sell to current target.</topic>
@@ -240,7 +243,9 @@ Loots an available corpse if you have authority.</topic>
 Stops attacking.</topic>
         <topic name="/target">/target [next|prev] [npc|pc|item|any|clear OR a player name]
 
-Searches for a target that matches the parameters. With no parameters targets yourself.  You may search for an NPC, PC (player), or item.  'Any' will find anything to target, and 'clear' will deselect your target.  You may also specify your target by entering the player's name.  You may optionally specify the direction with 'next' (default) or 'prev', for searching outwards or inwards from your location.
+Searches for a target that matches the parameters. With no parameters targets yourself.
+You may search for an NPC, PC (player), or item.  'Any' will find anything to target, and 'clear' will deselect your target.
+You may also specify your target by entering the player's name.  You may optionally specify the direction with 'next' (default) or 'prev', for searching outwards or inwards from your location.
 
 Examples:  "/target Bob" will target the player named Bob.  "/target prev npc" will target the next closest NPC from the one you already have selected.</topic>
         <topic name="/targetinfo">/targetinfo target
@@ -385,7 +390,11 @@ Commands available to game master level characters.  Note that this is a full li
 Commands which act on a target all use the same system.  A number of keywords and features are available to make specifying the target easier and more flexible.
             <topic name="area">area syntax: 'area:[type]:range'
 
-Used run a command on all entities of a specific type within a range. (crosses portals; range doesn't include yourself) Available types are players (default), actors, npcs, items, and entities. (no spaces before/after colons) Note that this is a very powerful feature; be careful! Examples: "/info area:entities:30" lists info on everything within 30m, "/modify area:items:10 remove" deletes all litter within 10m, "/teleport area:players:5 hydlaa_plaza" teleports you and all players within 5m to the plaza</topic>
+Used to run a command on all entities of a specific type within a range. (crosses portals; range doesn't include yourself)
+Available types are players (default), actors, npcs, items, and entities. (no spaces before/after colons) Note that this is a very powerful feature; be careful! 
+Examples: "/info area:entities:30" lists info on everything within 30m, 
+"/modify area:items:10 remove" deletes all litter within 10m, 
+"/teleport area:players:5 hydlaa_plaza" teleports you and all players within 5m to the plaza</topic>
             <topic name="here">keyword 'here'
 
 Used to specify your current sector for sector based commands. Also may be used as a destination for /teleport to indicate your exact location. Examples: "/thunder here", "/teleport target here"</topic>

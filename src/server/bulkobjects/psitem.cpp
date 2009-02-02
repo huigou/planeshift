@@ -155,7 +155,9 @@ psItem::psItem() : transformationEvent(NULL), gItem(NULL), pendingsave(false), l
     location.loc_x=0.0f;
     location.loc_y=0.0f;
     location.loc_z=0.0f;
+    location.loc_xrot=0.0f;
     location.loc_yrot=0.0f;
+    location.loc_zrot=0.0f;
 
     for (i=0;i<PSITEM_MAX_MODIFIERS;i++)
         modifiers[i]=NULL;
@@ -383,7 +385,7 @@ bool psItem::Load(iResultRow& row)
        row.GetInt("char_id_owner") == 0 &&
        row.GetInt("parent_item_id") == 0)) // No owner and no slot
     {
-        float x,y,z,yrot;
+        float x,y,z,xrot,yrot,zrot;
         InstanceID instance;
 
         instance = row.GetUInt32("loc_instance");
@@ -402,8 +404,11 @@ bool psItem::Load(iResultRow& row)
         x = row.GetFloat("loc_x");
         y = row.GetFloat("loc_y");
         z = row.GetFloat("loc_z");
+        xrot = row.GetFloat("loc_xrot");
         yrot = row.GetFloat("loc_yrot");
+        zrot = row.GetFloat("loc_zrot");
         SetLocationInWorld(instance,itemsector,x,y,z,yrot);
+        SetXZRotationInWorld(xrot,zrot);
     }
     else // in inventory, they have no location
     {
@@ -501,13 +506,13 @@ void psItem::Commit(bool children)
     if (GetUID()==0)
     {
         if(insertQuery == NULL)
-            insertQuery = db->NewInsertPreparedStatement("item_instances", 24, __FILE__, __LINE__); // 24 fields
+            insertQuery = db->NewInsertPreparedStatement("item_instances", 26, __FILE__, __LINE__); // 26 fields
         targetQuery = insertQuery;
     }
     else
     {
         if(updateQuery == NULL)
-            updateQuery = db->NewUpdatePreparedStatement("item_instances", "id", 25, __FILE__, __LINE__); // 24 fields + 1 id field
+            updateQuery = db->NewUpdatePreparedStatement("item_instances", "id", 27, __FILE__, __LINE__); // 26 fields + 1 id field
         targetQuery = updateQuery;
     }
     
@@ -631,18 +636,21 @@ void psItem::Commit(bool children)
     }
     
     
-    float locx,locy,locz,locyrot;
+    float locx,locy,locz,locxrot,locyrot,loczrot;
     psSectorInfo *sectorinfo;
     InstanceID instance;
     
     GetLocationInWorld(instance,&sectorinfo,locx,locy,locz,locyrot);
+    GetXZRotationInWorld(locxrot,loczrot);
     
     if (!sectorinfo || parent_item_InstanceID)
     {
         targetQuery->AddFieldNull("loc_x");
         targetQuery->AddFieldNull("loc_y");
         targetQuery->AddFieldNull("loc_z");
+        targetQuery->AddFieldNull("loc_xrot");
         targetQuery->AddFieldNull("loc_yrot");
+        targetQuery->AddFieldNull("loc_zrot");
         targetQuery->AddFieldNull("loc_sector_id");
     }
     else  // Item is not held or in something; must be in the world
@@ -652,7 +660,9 @@ void psItem::Commit(bool children)
             targetQuery->AddField("loc_x",locx);
             targetQuery->AddField("loc_y",locy);
             targetQuery->AddField("loc_z",locz);
+            targetQuery->AddField("loc_xrot",locxrot);
             targetQuery->AddField("loc_yrot",locyrot);
+            targetQuery->AddField("loc_zrot",loczrot);
             targetQuery->AddField("loc_sector_id",sectorinfo->uid);
         }
         else  //  Item is nowhere; cannot be saved
@@ -908,6 +918,32 @@ void psItem::SetLocationInWorld(InstanceID instance,psSectorInfo *sectorinfo,flo
     location.loc_y          = loc_y;
     location.loc_z          = loc_z;
     location.loc_yrot       = loc_yrot;
+}
+
+void psItem::GetXZRotationInWorld(float &loc_xrot, float &loc_zrot)
+{
+    loc_xrot    = location.loc_xrot;
+    loc_zrot    = location.loc_zrot;
+}
+
+void psItem::SetXZRotationInWorld(float loc_xrot, float loc_zrot)
+{
+    location.loc_xrot = loc_xrot;
+    location.loc_zrot = loc_zrot;
+}
+
+void psItem::GetRotationInWorld(float &loc_xrot, float &loc_yrot, float &loc_zrot)
+{
+    loc_xrot = location.loc_xrot;
+    loc_yrot = location.loc_yrot;
+    loc_zrot = location.loc_zrot;
+}
+
+void psItem::SetRotationInWorld(float loc_xrot, float loc_yrot, float loc_zrot)
+{
+    location.loc_xrot = loc_xrot;
+    location.loc_yrot = loc_yrot;
+    location.loc_zrot = loc_zrot;
 }
 
 csString psItem::GetQuantityName()

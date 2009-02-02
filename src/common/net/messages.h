@@ -2956,7 +2956,9 @@ public:
                     const char* filename,
                     const char* sector,
                     csVector3 pos,
+                    float xRot,
                     float yRot,
+                    float zRot,
                     uint32_t flags
                  );
 
@@ -2977,7 +2979,9 @@ public:
     csString filename;
     csString sector;
     csVector3 pos;
+    float xRot;
     float yRot;
+    float zRot;
     EID eid;
     uint32_t type;
     uint32_t flags;

@@ -972,18 +972,18 @@ bool CombatManager::ValidCombatAngle(gemObject *attacker,gemObject *target,psIte
     float angle = atan2(-diff.x,-diff.z);  // Incident angle to npc
     float attackFacing = attacker->GetAngle();
     angle = attackFacing - angle;  // Where is user facing vs. incident angle?
-    if (angle > 3.14159F)
+    if (angle > PI)
         angle -= TWO_PI;
-    else if (angle < -3.14159F)
+    else if (angle < -PI)
         angle += TWO_PI;
 
     float dist = diff.SquaredNorm();
 
     // Use a slightly tighter angle if the player is farther away
     if (dist > 1.5)
-        return ( fabs(angle) < 3.14159F * .30);
+        return ( fabs(angle) < PI * .30);
     else
-        return ( fabs(angle) < 3.14159F * .40);
+        return ( fabs(angle) < PI * .40);
 }
 
 void CombatManager::HandleDeathEvent(MsgEntry *me,Client *client)

@@ -272,6 +272,11 @@ INSERT INTO command_group_assignment VALUES( "/killnpc", 25 );
 INSERT INTO command_group_assignment VALUES( "/killnpc", 24 );
 INSERT INTO command_group_assignment VALUES( "/killnpc", 23 );
 INSERT INTO command_group_assignment VALUES( "/killnpc", 22 );
+INSERT INTO command_group_assignment VALUES( "rotate all", 30 );
+INSERT INTO command_group_assignment VALUES( "rotate all", 25 );
+INSERT INTO command_group_assignment VALUES( "rotate all", 24 );
+INSERT INTO command_group_assignment VALUES( "rotate all", 23 );
+INSERT INTO command_group_assignment VALUES( "rotate all", 22 );
 
 
 # GM1 and above

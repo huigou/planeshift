@@ -1086,6 +1086,20 @@ INSERT INTO command_group_assignment VALUES( "/assignfaction", 24 );
 ALTER TABLE `npc_spawn_ranges` CHANGE `cstr_id_spawn_sector` `sector_id` int(10) NOT NULL DEFAULT '0';
 UPDATE `server_options` SET `option_value`='1212' WHERE `option_name`='db_version';
 
+#### Added item rotation around the x and z axis
+
+INSERT INTO command_group_assignment VALUES( "rotate all", 30 );
+INSERT INTO command_group_assignment VALUES( "rotate all", 25 );
+INSERT INTO command_group_assignment VALUES( "rotate all", 24 );
+INSERT INTO command_group_assignment VALUES( "rotate all", 23 );
+INSERT INTO command_group_assignment VALUES( "rotate all", 22 );
+
+ALTER TABLE item_instances ADD COLUMN `loc_xrot` float(14,6) default '0' AFTER `loc_z`;
+ALTER TABLE item_instances ADD COLUMN `loc_zrot` float(14,6) default '0' AFTER `loc_yrot`;
+
+UPDATE `server_options` SET `option_value`='1213' WHERE `option_name`='db_version';
+
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to

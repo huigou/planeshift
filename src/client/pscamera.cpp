@@ -251,7 +251,7 @@ const char * psCamera::HandleCommand(const char *cmd)
         float velNormSquared = velocity.SquaredNorm();
         
         
-        if((angle-npcrot) < 3.14159F && (angle-npcrot) > -3.14159F && velNormSquared == 0)
+        if((angle-npcrot) < PI && (angle-npcrot) > -PI && velNormSquared == 0)
         {
             psengine->GetCharManager()->StoreTarget();
             target->SetPosition(target->GetPosition(), angle, target->GetSector());
@@ -1088,10 +1088,10 @@ void psCamera::SetPitch(float pitch, int mode)
 {
     if (mode < 0) mode = currCameraMode;
 
-    if (pitch > 3.1415f/2.1f)
-        pitch = 3.1415f/2.1f;
-    if (pitch < -3.1415f/2.1f)
-        pitch = -3.1415f/2.1f;
+    if (pitch > PI/2.1f)
+        pitch = PI/2.1f;
+    if (pitch < -PI/2.1f)
+        pitch = -PI/2.1f;
 
     camData[mode].pitch = pitch;
 }
@@ -1664,7 +1664,7 @@ void psCamera::CalculateNewYawPitchRoll(int mode)
     SetYaw(acosf(((GetTarget(mode).z - GetPosition(mode).z) / GetDistance(mode)) / -cosf(GetPitch(mode))), mode);
     // but have to check the z value for possible vertical flip
     if (GetTarget(mode).x > GetPosition(mode).x)
-        SetYaw(2*3.14159f - GetYaw(mode), mode);
+        SetYaw(2*PI - GetYaw(mode), mode);
 
 }
 
@@ -1710,11 +1710,11 @@ bool psCamera::IsActorVisible(int mode) const
 
 float psCamera::SaturateAngle(float angle) const
 {
-    while (angle >= 3.14159f)
-        angle -= 2*3.14159f;
+    while (angle >= PI)
+        angle -= 2*PI;
 
-    while (angle < -3.14169f)
-        angle += 2*3.14159f;
+    while (angle < -3.14169f)  //TODO : is this right, or should it be replaced with PI?
+        angle += 2*PI;
 
     return angle;
 }

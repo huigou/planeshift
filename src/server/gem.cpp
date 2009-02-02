@@ -1412,11 +1412,15 @@ gemItem::gemItem(csWeakRef<psItem> item,
                      InstanceID instance,
                      iSector* room,
                      const csVector3& pos,
-                     float rotangle,
+                     float xrotangle,
+                     float yrotangle,
+                     float zrotangle,
                      int clientnum)
-                     : gemActiveObject(item->GetName(),factname,filename,instance,room,pos,rotangle,clientnum)
+                     : gemActiveObject(item->GetName(),factname,filename,instance,room,pos,yrotangle,clientnum)
 {
     itemdata=item;
+    xRot=xrotangle;
+    zRot=zrotangle;
     itemType.Format("Item(%s)",itemdata->GetItemType());
     itemdata->SetGemObject( this );
     cel->AddItemEntity(this);
@@ -1437,7 +1441,9 @@ void gemItem::Broadcast(int clientnum, bool control )
                          filename,
                          sector->QueryObject()->GetName(),
                          pos,
+                         xRot,
                          yRot,
+                         zRot,
                          flags
                          );
 
@@ -1462,6 +1468,23 @@ void gemItem::SetPosition(const csVector3& pos,float angle, iSector* sector, Ins
     }
 
     UpdateProxList(true);
+}
+
+void gemItem::SetRotation(float xrotangle, float yrotangle, float zrotangle)
+{
+    this->xRot = xrotangle;
+    this->yRot = yrotangle;
+    this->zRot = zrotangle;
+    
+    itemdata->SetRotationInWorld(xrotangle,yrotangle,zrotangle);
+	itemdata->Save(false);
+}
+
+void gemItem::GetRotation(float& xrotangle, float& yrotangle, float& zrotangle)
+{
+    xrotangle = this->xRot;
+    yrotangle = this->yRot;
+    zrotangle = this->zRot;
 }
 
 psItem* gemItem::GetItem()
@@ -1495,7 +1518,9 @@ void gemItem::Send( int clientnum, bool , bool to_superclient)
                          filename,
                          sector->QueryObject()->GetName(),
                          pos,
+                         xRot,
                          yRot,
+                         zRot,
                          flags
                          );
 
@@ -1543,9 +1568,11 @@ gemContainer::gemContainer(csWeakRef<psItem> item,
              InstanceID myInstance,
              iSector* room,
              const csVector3& pos,
-             float rotangle,
+             float xrotangle,
+             float yrotangle,
+             float zrotangle,
              int clientnum)
-             : gemItem(item,factname,filename,myInstance,room,pos,rotangle,clientnum)
+             : gemItem(item,factname,filename,myInstance,room,pos,xrotangle,yrotangle,zrotangle,clientnum)
 {
 }
 
@@ -3823,7 +3850,7 @@ void gemNPC::ShowPopupMenu(Client *client)
             printf("Skipping completed or irrelevant quest: %s\n", q->GetName() );
             continue;
         }
-        printf("Checking quest %d: %s.  ", i, q->GetName() );
+        printf("Checking quest %u: %s.  ", i, q->GetName() );
         int last_response = quests[i]->last_response;
         printf("Got last response %d\n", last_response);
 

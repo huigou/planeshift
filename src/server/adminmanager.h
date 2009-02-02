@@ -200,6 +200,8 @@ protected:
      */
     void ModifyItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client* client, gemObject* object);
 
+    /** Move an object by a certain amount along one direction (up, down, left, right, forward, backward)
+        or allow to turn an object around the y axis*/ 
     void Slide(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject *target);
 
     void Teleport(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject *subject);

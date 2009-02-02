@@ -278,7 +278,7 @@ private:
     {
         psSectorInfo *loc_sectorinfo;
         float loc_x,loc_y,loc_z;
-        float loc_yrot;
+        float loc_xrot,loc_yrot,loc_zrot;
         InstanceID worldInstance;
     } location;
 
@@ -709,6 +709,32 @@ public:
 
     void GetLocationInWorld(InstanceID &instance,psSectorInfo **sectorinfo,float &loc_x,float &loc_y,float &loc_z,float &loc_yrot) const;
     void SetLocationInWorld(InstanceID instance,psSectorInfo *sectorinfo,float loc_x,float loc_y,float loc_z,float loc_yrot);
+
+    /** Get the x and z axis rotations for the item (y obtained in GetLocationInWorld)
+     * @param loc_xrot the variable in which the x rotation will be stored
+     * @param loc_zrot the variable in which the z rotation will be stored
+     */
+    void GetXZRotationInWorld(float &loc_xrot, float &loc_zrot);
+
+    /** Set the x and z axis rotations for the item (y set in SetLocationInWorld)
+     * @param loc_xrot the variable used to set the x rotation of the item
+     * @param loc_zrot the variable used to set the z rotation of the item
+     */
+    void SetXZRotationInWorld(float loc_xrot, float loc_zrot);
+
+    /** Get the x,y and z axis rotations for the item
+     * @param loc_xrot the variable in which the x rotation will be stored
+     * @param loc_yrot the variable in which the y rotation will be stored
+     * @param loc_zrot the variable in which the z rotation will be stored
+     */
+    void GetRotationInWorld(float &loc_xrot, float &loc_yrot, float &loc_zrot);
+
+    /** Set the x, y and z axis rotations for the item
+     * @param loc_xrot the variable used to set the x rotation of the item
+     * @param loc_yrot the variable used to set the x rotation of the item
+     * @param loc_zrot the variable used to set the z rotation of the item
+     */
+    void SetRotationInWorld(float loc_xrot, float loc_yrot, float loc_zrot);
 
     psSectorInfo* GetSector() const { return location.loc_sectorinfo; }
 
