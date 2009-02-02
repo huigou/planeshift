@@ -1,4 +1,9 @@
-﻿*** 2009-01-31 by Steven Patrick
+﻿*** 2009-02-02 by Stefano Angeleri
+- Added all-axis rotation support for items by kougaro
+- Added a wrapper to check access to a certain command more easily by kougaro
+- Changed hardcoded PI values to the Crystal Space provided PI define
+
+*** 2009-01-31 by Steven Patrick
 - Fix to application title for linux, patch by Vornne.
 
 *** 2009-01-28 by Steven Patrick
