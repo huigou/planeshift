@@ -1086,7 +1086,11 @@ INSERT INTO command_group_assignment VALUES( "/assignfaction", 24 );
 ALTER TABLE `npc_spawn_ranges` CHANGE `cstr_id_spawn_sector` `sector_id` int(10) NOT NULL DEFAULT '0';
 UPDATE `server_options` SET `option_value`='1212' WHERE `option_name`='db_version';
 
-#### Added item rotation around the x and z axis
+#### 1213 - Stefano Angeleri - Added the ability to make char creation data dynamic with factions
+ALTER TABLE factions ADD COLUMN faction_character BLOB  NOT NULL DEFAULT '' AFTER faction_description;
+ALTER TABLE characters ADD COLUMN description_life TEXT  DEFAULT NULL AFTER creation_info;
+
+#### Kougaro - Added item rotation around the x and z axis
 
 INSERT INTO command_group_assignment VALUES( "rotate all", 30 );
 INSERT INTO command_group_assignment VALUES( "rotate all", 25 );
