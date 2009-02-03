@@ -2146,15 +2146,19 @@ void UserManager::HandleRotate(Client *client, csString target, csString action)
         EID eID = EID(strtoul(eid_str.GetDataSafe(), NULL, 10));
         if (eID.IsValid())
         {
+            // only rotate the object if it's an item
             rotItem = dynamic_cast<gemItem*> (gem->FindObject(eID));
 
             if (rotItem)
             {
                 float oldxrot, oldyrot, oldzrot;
                 rotItem->GetRotation(oldxrot, oldyrot, oldzrot);
-                oldxrot = oldxrot*180/PI;// rotation is stored in radians,
-                oldyrot = oldyrot*180/PI;// we are converting the angles
-                oldzrot = oldzrot*180/PI;// to degrees
+                // rotation is stored in radians, 
+                // we are converting the angles to degrees
+                oldxrot = oldxrot*180/PI;
+                oldyrot = oldyrot*180/PI;
+                oldzrot = oldzrot*180/PI;
+                // the specified rotation is added to the item's current rotation
                 float xrot=oldxrot, yrot=oldyrot, zrot=oldzrot;
                 WordArray words(action);
                 if (words[0] == "x")
@@ -2193,12 +2197,15 @@ void UserManager::HandleRotate(Client *client, csString target, csString action)
                     else
                         zrot = 0;
                 }
-        
+
+                // rotate an item only if the client is guarding it, 
+                // or has the right to rotate all items
                 if (psserver->HasAccess(client, "rotate all")||
                     rotItem->GetItem()->GetGuardingCharacterID() == client->GetPID())
                 {
-                    xrot = xrot/180*PI;// rotation is given in degrees
-                    yrot = yrot/180*PI;// converting that to radians
+                    // rotation is given in degrees, converting that to radians
+                    xrot = xrot/180*PI;
+                    yrot = yrot/180*PI;
                     zrot = zrot/180*PI;
                     rotItem->SetRotation(xrot, yrot, zrot);
                     rotItem->UpdateProxList(true);
@@ -2215,11 +2222,6 @@ void UserManager::HandleRotate(Client *client, csString target, csString action)
                                 "Item not found.", target.GetData());
             }
         }
-    }
-    else if(client->GetTargetObject())
-    {
-        gemObject* object= client->GetTargetObject();
-        HandleRotate(client, object->GetEID().Show(), action);
     }
     else
         psserver->SendSystemError(client->GetClientNum(),
