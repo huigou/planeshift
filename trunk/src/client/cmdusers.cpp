@@ -336,17 +336,20 @@ const char *psUserCommands::HandleCommand(const char *cmd)
             return "Usage: /rotate [target] [x|reset] [y|reset] [z|reset]  or /rotate [x|y|z] [angle|reset]";
         
         GEMClientObject *object = NULL;
+        // if the command's target is not precised, get the object currently targeted
         if (words[1] == "x" || words[1] == "y" || words[1] == "z" || words[1] == "reset" || atoi(words[1]))
             object = psengine->GetCharManager()->GetTarget();
         else
             object = FindEntityWithName(words[1]);
         
         csString newCmd;
+        // obtain the EID of the command's target
         if (object)
         {
             EID mappedID = object->GetEID();
             newCmd.Format("/rotate eid:%u %s", mappedID.Unbox(), words.GetTail(2).GetDataSafe());
         }
+        // for the area keyword
         else
         {
             newCmd.Format("/rotate %s %s", words[1].GetDataSafe(), words.GetTail(2).GetDataSafe());

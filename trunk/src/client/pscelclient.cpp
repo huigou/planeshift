@@ -1162,11 +1162,14 @@ bool GEMClientObject::SetPosition(const csVector3 & pos, float rot, iSector * se
 
 void GEMClientObject::Rotate(float xRot, float yRot, float zRot)
 {
+    // calculate the rotation matrix from the axis rotation
     csMatrix3 xmatrix = (csMatrix3) csXRotMatrix3 (xRot);
 
     csMatrix3 ymatrix = (csMatrix3) csYRotMatrix3 (yRot);
 
     csMatrix3 zmatrix = (csMatrix3) csZRotMatrix3 (zRot);
+    
+    // multiply the matrices for the three axis together, then we apply it to the mesh 
     pcmesh->GetMovable()->GetTransform().SetO2T (xmatrix*ymatrix*zmatrix);
 }
 
