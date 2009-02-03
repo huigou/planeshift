@@ -7,11 +7,11 @@
 # Table structure for table 'factions'
 #
 
-CREATE TABLE factions (
+CREATE TABLE factions2 (
   id int(8) unsigned NOT NULL auto_increment,
   faction_name varchar(40) NOT NULL DEFAULT '' ,
   `faction_description` text,
-  faction_character BLOB  NOT NULL DEFAULT '',
+  faction_character BLOB NOT NULL,
   faction_weight float(6,3) NOT NULL DEFAULT '1.000' ,
   PRIMARY KEY (id)
 );
