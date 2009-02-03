@@ -7,7 +7,7 @@
 # Table structure for table 'factions'
 #
 
-CREATE TABLE factions2 (
+CREATE TABLE factions (
   id int(8) unsigned NOT NULL auto_increment,
   faction_name varchar(40) NOT NULL DEFAULT '' ,
   `faction_description` text,
