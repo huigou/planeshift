@@ -248,6 +248,8 @@ bool psCharacter::Load(iResultRow& row)
     SetCreationInfo(row["creation_info"]); //loads the info gathered in the creation in order to allow the player
                                            //to review them
 
+    SetLifeDescription(row["description_life"]); //Loads the life events added by players
+
     attributes.SetStat(PSITEMSTATS_STAT_STRENGTH,(unsigned int)row.GetFloat("base_strength"), false);
     attributes.SetStat(PSITEMSTATS_STAT_AGILITY,(unsigned int)row.GetFloat("base_agility"), false);
     attributes.SetStat(PSITEMSTATS_STAT_ENDURANCE,(unsigned int)row.GetFloat("base_endurance"), false);
@@ -3754,7 +3756,7 @@ bool psCharacter::CheckFaction(Faction * faction, int value)
 
 const char* psCharacter::GetDescription()
 {
-    return description;
+    return description.GetDataSafe();
 }
 
 void psCharacter::SetDescription(const char* newValue)
@@ -3773,7 +3775,7 @@ void psCharacter::SetDescription(const char* newValue)
 
 const char* psCharacter::GetOOCDescription()
 {
-    return oocdescription;
+    return oocdescription.GetDataSafe();
 }
 
 void psCharacter::SetOOCDescription(const char* newValue)
@@ -3793,7 +3795,7 @@ void psCharacter::SetOOCDescription(const char* newValue)
 //returns the stored char creation info of the player
 const char* psCharacter::GetCreationInfo()
 {
-    return creationinfo;
+    return creationinfo.GetDataSafe();
 }
 
 void psCharacter::SetCreationInfo(const char* newValue)
@@ -3808,6 +3810,26 @@ void psCharacter::SetCreationInfo(const char* newValue)
 
     if (bChanged && GetActor() && GetActor()->GetClient())
         psserver->SendSystemError(GetActor()->GetClient()->GetClientNum(), "Warning! creation info trimmed.");
+}
+
+//returns the stored custom life event info of the player
+const char* psCharacter::GetLifeDescription()
+{
+    return lifedescription.GetDataSafe();
+}
+
+void psCharacter::SetLifeDescription(const char* newValue)
+{
+    lifedescription = newValue;
+    bool bChanged = false;
+    while (lifedescription.Find("\n\n\n\n") != (size_t)-1)
+    {
+        bChanged = true;
+        lifedescription.ReplaceAll("\n\n\n\n", "\n\n\n");
+    }
+
+    if (bChanged && GetActor() && GetActor()->GetClient())
+        psserver->SendSystemError(GetActor()->GetClient()->GetClientNum(), "Warning! custom life events trimmed.");
 }
 
 //TODO: Make this not return a temp csString, but fix in place

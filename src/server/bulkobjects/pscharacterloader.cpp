@@ -324,7 +324,7 @@ bool psCharacterLoader::NewNPCCharacterData(AccountID accountid, psCharacter *ch
     values.FormatPush("%s",chardata->GetDescription());
     values.FormatPush("%s",chardata->GetOOCDescription());
     values.FormatPush("%s",chardata->GetCreationInfo());
-    values.FormatPush("%s","");//placeholder life description
+    values.FormatPush("%s",chardata->GetLifeDescription());
     values.FormatPush("%d",chardata->Stats().GetStat(PSITEMSTATS_STAT_STRENGTH, false));
     values.FormatPush("%d",chardata->Stats().GetStat(PSITEMSTATS_STAT_AGILITY, false));
     values.FormatPush("%d",chardata->Stats().GetStat(PSITEMSTATS_STAT_ENDURANCE, false));
@@ -809,7 +809,7 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
     targetUpdate->AddField("description",chardata->GetDescription());
     targetUpdate->AddField("description_ooc",chardata->GetOOCDescription());
     targetUpdate->AddField("creation_info",chardata->GetCreationInfo());
-    targetUpdate->AddField("description_life",""); //placeholder life description
+    targetUpdate->AddField("description_life",chardata->GetLifeDescription());
 
     // Done building the fields struct, now
     // SAVE it to the DB.

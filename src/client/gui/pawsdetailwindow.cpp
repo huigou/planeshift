@@ -267,8 +267,14 @@ bool pawsDetailWindow::SelectTab( pawsWidget* widget )
         {
             pawsCharDescription *editWindow = (pawsCharDescription*) PawsManager::GetSingleton().FindWidget("DescriptionEdit");
             editWindow->PostSetup();
-            //if the OOC description tab is selected this will be true and the occ description will be shown
-            editWindow->SetOOCDescription(lastTab == (pawsButton*)FindWidget( "ShowDescrOOC" ));
+            //show the right description depending on the tab selected
+            if(lastTab == (pawsButton*)FindWidget( "ShowDescr" ))
+                editWindow->SetDescriptionType(DESC_IC);
+            else if(lastTab == (pawsButton*)FindWidget( "ShowDescrOOC" ))
+                editWindow->SetDescriptionType(DESC_OOC);
+            else
+                editWindow->SetDescriptionType(DESC_CC);
+
             editWindow->Show();
             break;
         }
@@ -318,7 +324,8 @@ bool pawsDetailWindow::SelectTab( pawsWidget* widget )
             else if(widget->GetID() == BTN_DESCRCC)
             {
                 description->SetText(storedcreationinfo);
-                editButton->Hide();  //hide the edit button it's useless here
+                if(details_editable) editButton->Show(); //if it's editable show the button
+                else                 editButton->Hide();
             }
             else
             {
