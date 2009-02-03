@@ -46,7 +46,7 @@
 
 pawsCharDescription::pawsCharDescription()
 {
-    ooc_editing = false;
+    editingtype = DESC_IC;
 }
 
 pawsCharDescription::~pawsCharDescription()
@@ -90,10 +90,13 @@ void pawsCharDescription::HandleMessage( MsgEntry* me )
 
         if (msg.requestor == "pawsCharDescription")
         {
-            if(ooc_editing)
+            if(editingtype == DESC_IC)
+                description->SetText(msg.desc);
+            else if(editingtype == DESC_OOC)
                 description->SetText(msg.desc_ooc);
             else
-                description->SetText(msg.desc);
+                description->SetText(msg.creationinfo);
+                
             psengine->GetMsgHandler()->Unsubscribe( this, MSGTYPE_CHARACTERDETAILS );
         }
         return;
@@ -107,7 +110,7 @@ bool pawsCharDescription::OnButtonPressed( int mouseButton, int keyModifier, paw
         case BTN_OK:
         {
             csString newTxt(description->GetText());
-            psCharacterDescriptionUpdateMessage descUpdate(newTxt,ooc_editing);
+            psCharacterDescriptionUpdateMessage descUpdate(newTxt,editingtype);
             psengine->GetMsgHandler()->SendMessage(descUpdate.msg);
             Hide();
 

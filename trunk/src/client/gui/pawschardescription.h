@@ -32,7 +32,7 @@ public:
 
     bool PostSetup();
     /// used to change the description to be edited
-    void SetOOCDescription(bool editOOC) { ooc_editing = editOOC; }
+    void SetDescriptionType(DESCTYPE type) { editingtype = type; }
     void RequestDetails();
 
     void Show();
@@ -42,7 +42,7 @@ public:
 private:
     pawsMultilineEditTextBox    *description;
     pawsMultiLineTextBox        *creationinfo;
-    bool ooc_editing;
+    DESCTYPE editingtype;
 };
 
 CREATE_PAWS_FACTORY( pawsCharDescription );

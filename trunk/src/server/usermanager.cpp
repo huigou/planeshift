@@ -673,6 +673,7 @@ void UserManager::SendCharacterDescription(Client * client, psCharacter * charDa
 
     csString charName = charData->GetCharFullName();
     csString raceName;
+    csString creationinfo;
     PSCHARACTER_GENDER gender;
     psRaceInfo* charrinfo = CacheManager::GetSingleton().GetRaceInfoByMeshName(meshName);
     if (charrinfo != NULL)
@@ -693,7 +694,14 @@ void UserManager::SendCharacterDescription(Client * client, psCharacter * charDa
         full = true;  // GMs can view the stats list
 
     //send creation info only if the player is requesting  his info
-    csString creationinfo = ( isSelf || full )? charData->GetCreationInfo() : "";
+    if( isSelf || full)
+    {
+        if(requestor != "pawsCharDescription") //only send all if the requestor is the normal description window
+            creationinfo.Format("%s\n\n%s\n\n%s", charData->GetCreationInfo(), " ", charData->GetLifeDescription());
+        else
+            creationinfo = charData->GetLifeDescription();
+    }
+
     csString desc_ooc     = charData->GetOOCDescription();
 
     if (full)
@@ -833,10 +841,12 @@ void UserManager::HandleCharDescUpdate(MsgEntry *me,Client *client)
     if (!charData)
         return;
 
-    if(descUpdate.oocdesc)
-        charData->SetOOCDescription(descUpdate.newValue);
-    else
+    if(descUpdate.desctype == DESC_IC)
         charData->SetDescription(descUpdate.newValue);
+    else if(descUpdate.desctype == DESC_OOC)
+        charData->SetOOCDescription(descUpdate.newValue);
+    else if(descUpdate.desctype == DESC_CC)
+        charData->SetLifeDescription(descUpdate.newValue);
 
     Debug3(LOG_USER, client->GetClientNum(), "Character description updated for %s (%s)\n", charData->GetCharFullName(), ShowID(client->GetAccountID()));
 }

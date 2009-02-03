@@ -3608,24 +3608,31 @@ public:
     csString requestor;     /// Identifies which part of system initiated this
 };
 
+enum DESCTYPE
+{
+    DESC_IC = 1, ///< Normal character description
+    DESC_OOC,    ///< Out of Character description
+    DESC_CC      ///< Character life additional data provided by players
+};
+
 class psCharacterDescriptionUpdateMessage : public psMessageCracker
 {
 public:
-    psCharacterDescriptionUpdateMessage(csString& newValue, bool oocdesc)
+    psCharacterDescriptionUpdateMessage(csString& newValue, DESCTYPE desctype)
     {
 
-        msg.AttachNew(new MsgEntry( newValue.Length() +1 + sizeof(oocdesc) ));
+        msg.AttachNew(new MsgEntry( newValue.Length() +1 + sizeof(uint8_t) ));
         msg->SetType(MSGTYPE_CHARDESCUPDATE);
 
         msg->clientnum  = 0;
         msg->Add(newValue);
-        msg->Add(oocdesc);
+        msg->Add( (uint8_t)desctype);
     }
 
     psCharacterDescriptionUpdateMessage(MsgEntry *me)
     {
-        newValue    = me->GetStr();
-        oocdesc     = me->GetBool();
+        newValue    =  me->GetStr();
+        desctype    =  (DESCTYPE) me->GetUInt8();
     }
 
     PSF_DECLARE_MSG_FACTORY();
@@ -3639,7 +3646,7 @@ public:
     virtual csString ToString(AccessPointers * access_ptrs);
 
     csString newValue;
-    bool     oocdesc;
+    DESCTYPE desctype;
 };
 
 //------------------------------------------------------------------------------
