@@ -1,5 +1,19 @@
 ﻿*** 2009-02-05 by Stefano Angeleri
 - Various fixes and clean ups by kougaro
+- Completed work on the new descriptions
+- Fixed an issue which would stop the player from editing his custom
+  life events if there was nothing in the tab
+- Added the possibility to add little scripts which will define dynamically
+  generated life events based on the character faction points. The script
+  must be ordered from the absolute highest value to the lowest one. The
+  fact a number is negative doesn't matter so: 20 10 is correct, 20 -20
+  10 -10 is correct, 10 -20 is correct but 10 20 -10 -20 and 20 10 -10 -20
+  are wrong.
+- Added some sample data to faction.sql to demonstrate the dynamic life
+  events function, part of it was provided by Xillix
+- Some commenting improvements
+- Tab/spaces fixes
+  
 
 ﻿*** 2009-02-03 by Stefano Angeleri
 - Made the editable life event field working in editing and reading from
