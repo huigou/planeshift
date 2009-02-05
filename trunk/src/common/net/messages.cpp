@@ -1398,7 +1398,7 @@ csString psUserCmdMessage::ToString(AccessPointers * /*access_ptrs*/)
          command == "/stoptrading" || command == "/quests" ||
          command == "/tip" || command == "/motd" ||
          command == "/challenge" || command == "/yield" ||
-         command == "/admin" || command == "rotate" ||
+         command == "/admin" ||
          command == "/list" || 
          command == "/sit" || command == "/stand" ||
          command == "/bank")
