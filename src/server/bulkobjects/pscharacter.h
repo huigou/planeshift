@@ -1118,24 +1118,50 @@ public:
 
     unsigned int GetTimeConnected() { return timeconnected; }
 
-    /// This is used to get the stored the player description
+    /** @brief This is used to get the stored player description.
+     *  @return Returns a pointer to the stored player description.
+     */
     const char* GetDescription();
-    /// This is used to store the player description.
+
+    /** @brief This is used to store the player description.
+     *  @param newValue: A pointer to the new string to set as player description.
+     */
     void SetDescription(const char* newValue);
 
-    /// This is used to get the stored the player OOC description
+    /** @brief This is used to get the stored player OOC description.
+     *  @return Returns a pointer to the stored player OOC description.
+     */
     const char* GetOOCDescription();
-    /// This is used to store the player OOC description.
+
+    /** @brief This is used to store the player OOC description.
+     *  @param newValue: A pointer to the new string to set as player OOC description.
+     */
     void SetOOCDescription(const char* newValue);
 
-    /// This is used to get the stored informations from the char creation
+    /** @brief This is used to get the stored informations from the char creation.
+     *  @return Returns a pointer to the stored informations from the char creation.
+     */
     const char* GetCreationInfo();
-    /// This is used to store the informations from the char creation. Players shouldn't be able to edit this.
+
+    /** @brief This is used to store the informations from the char creation. Players shouldn't be able to edit this.
+     *  @param newValue: A pointer to the new string to set as char creation data.
+     */
     void SetCreationInfo(const char* newValue);
 
-    /// This is used to get the stored informations from the custom life events made by players
+    /** @brief Gets dynamic life events generated from the factions of the character.
+     *  @param factionDescription: where to store the dynamically generated data.
+     *  @return Returns true if there were some dynamic life events founds else false.
+     */
+    bool GetFactionEventsDescription(csString & factionDescription);
+
+    /** @brief This is used to get the stored informations from the custom life events made by players.
+     *  @return Returns a pointer to the stored informations from the custom life events made by players.
+     */
     const char* GetLifeDescription();
-    /// This is used to store the informations sent by players for their custom life events
+
+    /** @brief This is used to store the informations sent by players for their custom life events.
+     *  @param newValue: A pointer to the new string to set as custom life events.
+     */
     void SetLifeDescription(const char* newValue);
 
     /// This is used by the math scripting engine to get various values.

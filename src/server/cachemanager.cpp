@@ -2325,6 +2325,41 @@ bool CacheManager::PreloadFactions()
             f->name = result_factions[x]["faction_name"];
             f->description = result_factions[x]["faction_description"];
             f->weight = atof( result_factions[x]["faction_weight"] );
+            // Parses the script for factions dynamic life events and populates the arrays for it
+            // used to store the script to be parsed to generate dynamic life events
+            csString factionCharacterEvents = result_factions[x]["faction_character"];
+            // Parsing of the script
+            while(factionCharacterEvents.Length())
+            {
+                //get the value from the string
+                size_t cutpos = factionCharacterEvents.FindFirst(' ', 0);
+                if(cutpos == (size_t) -1) //script error or finished parsing bail out
+                    break;
+                size_t cutpos2 = factionCharacterEvents.FindFirst('\n', 0);
+                if(cutpos2 == (size_t) -1) //script error or finished parsing bail out
+                    break;
+
+                //get the value of the faction which will trigger the text
+                int value = atoi(factionCharacterEvents.Slice(0,cutpos).GetDataSafe());
+                if(value == 0) //script error or finished parsing bail out
+                    break;
+
+                //take out the string we need
+                csString entry_text = factionCharacterEvents.Slice(cutpos+1, cutpos2);
+                
+                //prepare the struct containing the parsed data
+                FactionLifeEvent * factionevt = new FactionLifeEvent;
+                factionevt->event_description = entry_text;
+                factionevt->value = abs(value); //we want a positive value for checking later
+                if(value > 0) //check what cshash should get the parsed data
+                    f->PositiveFactionEvents.Put(0, factionevt); //this was a positive value
+                else
+                    f->NegativeFactionEvents.Put(0, factionevt); //this was a negative value
+
+                //prepare for the next line
+                factionCharacterEvents = factionCharacterEvents.Slice(cutpos2+1);
+            }
+
             // Stored two different ways
             factions.Insert(f,TREE_OWNS_DATA);
             factions_by_id.Put(f->id,f);

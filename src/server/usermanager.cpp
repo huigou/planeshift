@@ -697,8 +697,23 @@ void UserManager::SendCharacterDescription(Client * client, psCharacter * charDa
     if( isSelf || full)
     {
         if(requestor != "pawsCharDescription") //only send all if the requestor is the normal description window
-            creationinfo.Format("%s\n\n%s\n\n%s", charData->GetCreationInfo(), " ", charData->GetLifeDescription());
-        else
+        {
+            csString factiondescription; //used to store temporarily the faction dynamic data
+            
+            creationinfo += charData->GetCreationInfo();
+
+            if(creationinfo.Length() > 0) //only add separators in case there is something to separate
+                creationinfo += "\n\n";
+
+            //get the dynamically generated faction based life events
+            if(charData->GetFactionEventsDescription(factiondescription))
+            {
+                creationinfo += factiondescription;
+                creationinfo += "\n";
+            }
+            creationinfo += charData->GetLifeDescription();
+        }
+        else //if the player requested to edit send only what he can actually edit
             creationinfo = charData->GetLifeDescription();
     }
 

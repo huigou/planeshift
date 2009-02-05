@@ -23,6 +23,15 @@
 #include <csutil/hash.h>
 #include <csutil/csstring.h>
 
+/** This struct stores the values and text used for the dynamically
+ *  generated life events based on factions
+ */
+struct FactionLifeEvent
+{
+    int value;                  ///< Value from which this life event is attribuited
+    csString event_description; ///< The text of this life event
+};
+
 /** An ingame faction group.
  *
  */
@@ -32,6 +41,8 @@ struct Faction
     csString description;
     int      id;
     float    weight;
+    csHash<FactionLifeEvent*, int> PositiveFactionEvents; ///< Stores the Positive faction values life events
+    csHash<FactionLifeEvent*, int> NegativeFactionEvents; ///< Stores the Negative faction values life events
     bool operator==(Faction& other) const
     { return name == other.name; }
     bool operator<(Faction& other) const
