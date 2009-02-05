@@ -2054,13 +2054,13 @@ void UserManager::HandlePickup(Client *client, csString target)
             else
             {
                 psserver->SendSystemError(client->GetClientNum(),
-                                "Item not found.", target.GetData());
+                                "Item not found %s", target.GetData());
             }
         }
     }
     else
         psserver->SendSystemError(client->GetClientNum(),
-                "You can't pickup %s", target.GetData());
+                "Item not found %s", target.GetData());
 }
 
 void UserManager::HandleGuard(Client *client, csString target, csString action)
@@ -2122,7 +2122,7 @@ void UserManager::HandleGuard(Client *client, csString target, csString action)
             else
             {
                 psserver->SendSystemError(client->GetClientNum(),
-                                "Item not found.", target.GetData());
+                                "Item not found %s", target.GetData());
             }
         }
     }
@@ -2133,7 +2133,7 @@ void UserManager::HandleGuard(Client *client, csString target, csString action)
     }
     else
         psserver->SendSystemError(client->GetClientNum(),
-                "You can't change guard status of %s", target.GetData());
+                "Item not found %s", target.GetData());
 }
 
 void UserManager::HandleRotate(Client *client, csString target, csString action)

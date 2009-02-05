@@ -39,6 +39,9 @@ You can also use /my to describe yourself. Both these commands work in the tell,
         <topic name="/mypet">/mypet action
 
 Have your pet perform an action seen by those in its vicinity (within 10 meters).  This is a great roleplaying tool when you want your pet to do something not directly supported by the game. You can also use "/mypet 's property" to describe your pet, similar to the /my command.</topic>
+        <topic name="/npcmenu">/npcmenu
+
+Shows a menu to talk to npcs where available.</topic>
         <topic name="/report">/report player
 
 Makes the server log everything the indicated player says for 5 minutes. 
@@ -56,9 +59,6 @@ Talk to someone privately.  With this command you can send text only the person 
         <topic name="/tellnpc">/tellnpc message
 
 Talk to the currently targeted npc.</topic>
-        <topic name="/npcmenu">/npcmenu
-
-Shows a menu to talk to npcs where available.</topic>
     </branch>
     <branch name="User Commands">
 Commands to control various player actions.  Many of these are also available via windows and context menus.
