@@ -13,6 +13,8 @@
   events function, part of it was provided by Xillix
 - Some commenting improvements
 - Tab/spaces fixes
+- Added race and gender quest prerequisites for race it's
+  <race name="klyros"/> for gender it's <gender type="M"/>
   
 
 ﻿*** 2009-02-03 by Stefano Angeleri
