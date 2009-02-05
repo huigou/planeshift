@@ -699,7 +699,7 @@ void UserManager::SendCharacterDescription(Client * client, psCharacter * charDa
         if(requestor != "pawsCharDescription") //only send all if the requestor is the normal description window
         {
             csString factiondescription; //used to store temporarily the faction dynamic data
-            
+
             creationinfo += charData->GetCreationInfo();
 
             if(creationinfo.Length() > 0) //only add separators in case there is something to separate
@@ -1658,8 +1658,8 @@ void UserManager::Assist( psUserCmdMessage& msg, Client* client, int clientnum )
         int nGID = client->GetActor()->GetGroupID();
         if ( (nGID == 0) || (nGID != targetClient->GetActor()->GetGroupID()) )
         {
-        	psserver->SendSystemInfo( clientnum,"You can only assist members of your guild or players you're grouped with." );
-        	return;
+            psserver->SendSystemInfo( clientnum,"You can only assist members of your guild or players you're grouped with." );
+            return;
         }
     }
 
@@ -2157,7 +2157,7 @@ void UserManager::HandleRotate(Client *client, csString target, csString action)
     {
         csArray<csString> filters = DecodeCommandArea(client, target);
         csArray<csString>::Iterator it(filters.GetIterator());
-        while (it.HasNext()) 
+        while (it.HasNext())
         {
             HandleRotate(client, it.Next(), action);
         }
@@ -2178,7 +2178,7 @@ void UserManager::HandleRotate(Client *client, csString target, csString action)
             {
                 float oldxrot, oldyrot, oldzrot;
                 rotItem->GetRotation(oldxrot, oldyrot, oldzrot);
-                // rotation is stored in radians, 
+                // rotation is stored in radians,
                 // we are converting the angles to degrees
                 oldxrot = oldxrot*180/PI;
                 oldyrot = oldyrot*180/PI;
@@ -2223,7 +2223,7 @@ void UserManager::HandleRotate(Client *client, csString target, csString action)
                         zrot = 0;
                 }
 
-                // rotate an item only if the client is guarding it, 
+                // rotate an item only if the client is guarding it,
                 // or has the right to rotate all items
                 if (psserver->HasAccess(client, "rotate all")||
                     rotItem->GetItem()->GetGuardingCharacterID() == client->GetPID())

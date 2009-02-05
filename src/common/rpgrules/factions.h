@@ -2,7 +2,7 @@
  * factions.h
  *      written by Keith Fulton <keith@paqrat.com>
  *
- * Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- */ 
+ */
 #ifndef __FACTIONS_H__
 #define __FACTIONS_H__
 
@@ -52,7 +52,7 @@ struct Faction
 
 /** This struct stores the particular score of a particular player to a
  *   particular faction.
- *   
+ *
  */
 struct FactionStanding
 {
@@ -69,8 +69,8 @@ class FactionSet
 {
 protected:
     /// A list of all the standings with each faction
-    csHash<FactionStanding*, int>   factionstandings;   
-    
+    csHash<FactionStanding*, int>   factionstandings;
+
     /// A list of all the factions in this set
     csHash<Faction*, int>   factions_by_id;
 
@@ -80,17 +80,17 @@ public:
       * @param factionset The global list of factions.
       */
     FactionSet(const char *csv_list,csHash<Faction*, int, CS::Memory::AllocatorMalloc> &factionset);
-    
+
     ~FactionSet();
-   
+
     bool GetFactionStanding(int factionID,int& standing, float& weight);
-    
+
     /** Updates a faction standing.
       * If the factionID is not in the current list of standings a new standing
       * is added.
       *
       * @param factionID The ID of the faction to update.
-      * @param delta The amount to change the faction score by.  If the faction is 
+      * @param delta The amount to change the faction score by.  If the faction is
       *              not in the current list this will be the starting score.
       */
     void UpdateFactionStanding(int factionID,int delta);
@@ -108,7 +108,7 @@ public:
      * Check given faction.
      */
     bool CheckFaction(Faction * faction, int value);
-    
+
 };
 
 
