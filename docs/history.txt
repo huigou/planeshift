@@ -1,3 +1,6 @@
+﻿*** 2009-02-05 by Stefano Angeleri
+- Various fixes and clean ups by kougaro
+
 ﻿*** 2009-02-03 by Stefano Angeleri
 - Made the editable life event field working in editing and reading from
   the description
