@@ -38,6 +38,7 @@
 #include "psquest.h"
 #include "weathermanager.h"
 #include "cachemanager.h"
+#include "psraceinfo.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 
@@ -410,6 +411,68 @@ csPtr<psQuestPrereqOp> psQuestPrereqOpActiveMagic::Copy()
 {
     csRef<psQuestPrereqOpActiveMagic> copy;
     copy.AttachNew(new psQuestPrereqOpActiveMagic(activeMagic));
+    return csPtr<psQuestPrereqOp>(copy);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////
+
+bool psQuestPrereqOpRace::Check(psCharacter * character)
+{
+    //Requirements are always valid for quest testers
+    if(character->GetActor() && character->GetActor()->questtester)
+        return true;
+
+    if (character->GetRaceInfo())
+    {
+        return (character->GetRaceInfo()->GetRace() == race);
+    }        
+    return false;
+}
+
+csString psQuestPrereqOpRace::GetScriptOp()
+{
+    csString script;
+    
+    script.Format("<race name=\"%s\"/>", race.GetData());
+
+    return script;
+}
+
+csPtr<psQuestPrereqOp> psQuestPrereqOpRace::Copy()
+{
+    csRef<psQuestPrereqOpRace> copy;
+    copy.AttachNew(new psQuestPrereqOpRace(race));
+    return csPtr<psQuestPrereqOp>(copy);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////
+
+bool psQuestPrereqOpGender::Check(psCharacter * character)
+{
+    //Requirements are always valid for quest testers
+    if(character->GetActor() && character->GetActor()->questtester)
+        return true;
+
+    if (character->raceinfo)
+    {
+        return (character->GetRaceInfo()->GetGender() == gender);
+    }        
+    return false;
+}
+
+csString psQuestPrereqOpGender::GetScriptOp()
+{
+    csString script;
+    
+    script.Format("<gender type=\"%s\"/>", gender.GetData());
+
+    return script;
+}
+
+csPtr<psQuestPrereqOp> psQuestPrereqOpGender::Copy()
+{
+    csRef<psQuestPrereqOpGender> copy;
+    copy.AttachNew(new psQuestPrereqOpGender(gender));
     return csPtr<psQuestPrereqOp>(copy);
 }
 
