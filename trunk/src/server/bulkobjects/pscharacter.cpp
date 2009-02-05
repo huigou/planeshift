@@ -3834,7 +3834,7 @@ bool psCharacter::GetFactionEventsDescription(csString & factionDescription)
                     factionDescription += "\n";
                     break; //nothing else to do as we found what we needed so bail out
                 }
-            } 
+            }
         }
         else //negative factions
         {
@@ -3844,13 +3844,13 @@ bool psCharacter::GetFactionEventsDescription(csString & factionDescription)
             while (scoreIter.HasNext())
             {
                 FactionLifeEvent* lifevt = scoreIter.Next();
-                if(score > lifevt->value) 
+                if(score > lifevt->value)
                 {
                     factionDescription += lifevt->event_description;
                     factionDescription += "\n";
                     break;
                 }
-            }   
+            }
         }
     }
     return (factionDescription.Length() > 0); //if the string contains something it means some events were attribuited

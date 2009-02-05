@@ -162,8 +162,8 @@ void pawsDetailWindow::HandleMessage( MsgEntry* me )
     {
         psCharacterDetailsMessage msg(me);
 
-        if (   msg.requestor!="pawsDetailWindow" 
-            && msg.requestor!="behaviorMsg" 
+        if (   msg.requestor!="pawsDetailWindow"
+            && msg.requestor!="behaviorMsg"
             && msg.requestor!="ShowDetailsOp")
             return;
 
@@ -245,7 +245,7 @@ void pawsDetailWindow::HandleMessage( MsgEntry* me )
                 {
                     skills[cat].Append(msg.skills[s].text);
                 }
-		        SelectTab((pawsWidget*)lastTab);
+                SelectTab((pawsWidget*)lastTab);
             }
         }
 
@@ -262,7 +262,7 @@ bool pawsDetailWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWi
 }
 
 bool pawsDetailWindow::SelectTab( pawsWidget* widget )
-{       
+{
     switch ( widget->GetID() )
     {
     case BTN_EDIT:
@@ -286,7 +286,7 @@ bool pawsDetailWindow::SelectTab( pawsWidget* widget )
     case BTN_MAGIC:
     case BTN_JOBS:
     case BTN_VARIOUS:
-        {   
+        {
             int id = widget->GetID() - 1000;
             if(id >= 0 && id < 6)
             {

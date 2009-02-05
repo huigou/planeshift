@@ -127,7 +127,7 @@ CacheManager::CacheManager()
     ItemStatFlagArray.Push(statflag);
 
     effectID = 0;
-    
+
     commandManager = NULL;
 }
 
@@ -205,13 +205,13 @@ void CacheManager::UnloadAll()
 {
 
     delete commandManager;
-    
+
     quests_by_id.DeleteAll();
-    
-    
+
+
     {
         csHash<csPDelArray<CombinationConstruction>*,uint32>::GlobalIterator it(tradeCombinations_IDHash.GetIterator ());
-        
+
         while (it.HasNext ())
         {
             csPDelArray<CombinationConstruction>* newArray = it.Next ();
@@ -326,7 +326,7 @@ void CacheManager::UnloadAll()
         }
         sectorinfo_by_id.Empty();
     }
-    // ToDo: unload everything else    
+    // ToDo: unload everything else
 }
 
 void CacheManager::RemoveInstance( psItem * & item )
@@ -541,13 +541,13 @@ bool CacheManager::PreloadMovement()
     {
         return false;
     }
-    
+
     if ( !types.Count() )
     {
         Error1("No movement types to load.");
         return false;
     }
-    
+
     for (unsigned int i=0; i<types.Count(); i++)
     {
         psMovement* newmove = new psMovement;
@@ -637,7 +637,7 @@ bool CacheManager::PreloadArmorVsWeapon()
     Notify2(LOG_COMBAT,"Testing Armor VS Weapon table ('1d','Claymore'): %f\n",GetArmorVSWeaponResistance("1d","Claymore"));
     Notify2(LOG_COMBAT,"Testing Armor VS Weapon table ('2b','Sabre'): %f\n",GetArmorVSWeaponResistance("2b","Sabre"));
 
-    
+
     Notify2( LOG_STARTUP, "%lu Armor vs Weapon Loaded", result.Count() );
     return true;
 }
@@ -669,7 +669,7 @@ bool CacheManager::PreloadStances()
     {
         return false;
     }
-    
+
     for(unsigned int currentRow = 0; currentRow < result.Count(); currentRow++)
     {
         iResultRow& row = result[currentRow];
@@ -817,9 +817,9 @@ bool CacheManager::PreloadTradeCombinations()
     Result result(db->Select("select * from trade_combinations order by pattern_id, result_id, item_id"));
     if (!result.IsValid())
     {
-        Error1("No data in trade_combinations could be found");    
-    }        
-    else 
+        Error1("No data in trade_combinations could be found");
+    }
+    else
     {
         // Loop through all the combinations
         for (currentrow=0; currentrow<result.Count(); currentrow++)
@@ -877,9 +877,9 @@ bool CacheManager::PreloadTradeTransformations()
     Result result(db->Select("select * from trade_transformations order by pattern_id, item_id"));
     if (!result.IsValid())
     {
-        Error1("No data in trade_transformations could be found");    
-    }        
-    else 
+        Error1("No data in trade_transformations could be found");
+    }
+    else
     {
         for (currentrow=0; currentrow<result.Count(); currentrow++)
         {
@@ -920,7 +920,7 @@ csPDelArray<psTradeTransformations> *CacheManager::FindTransformationsList(uint3
     // First get transformation hash table using the patternid
     csHash<csPDelArray<psTradeTransformations> *,uint32>* transHash;
     transHash = tradeTransformations_IDHash.Get(patternid,NULL);
-    if (!transHash) 
+    if (!transHash)
     {
         // Error2("No data in trade_transformations for pattern %d", patternid);
         return NULL;
@@ -941,9 +941,9 @@ bool CacheManager::PreloadUniqueTradeTransformations()
     Result result(db->Select("select id from trade_patterns order by id"));
     if (!result.IsValid())
     {
-        Error1("No data in trade_patterns could be found");    
-    }        
-    else 
+        Error1("No data in trade_patterns could be found");
+    }
+    else
     {
         for (int currentrow=0; currentrow<(int)result.Count(); currentrow++)
         {
@@ -955,9 +955,9 @@ bool CacheManager::PreloadUniqueTradeTransformations()
             Result result (db->Select( query ) );
             if (!result.IsValid())
             {
-                Error1("No distinct item ids found in trade_transformations");    
-            }        
-            else 
+                Error1("No distinct item ids found in trade_transformations");
+            }
+            else
             {
                 // Push each result item ID into array
                 for (int transrow=0; transrow<(int)result.Count(); transrow++)
@@ -970,9 +970,9 @@ bool CacheManager::PreloadUniqueTradeTransformations()
                 Result result2 (db->Select( query ) );
                 if (!result2.IsValid())
                 {
-                    Error1("No distinct item ids found in trade_combinations");    
-                }        
-                else 
+                    Error1("No distinct item ids found in trade_combinations");
+                }
+                else
                 {
                     // Push each result item ID into array
                     for (int combsrow=0; combsrow<(int)result2.Count(); combsrow++)
@@ -1008,9 +1008,9 @@ bool CacheManager::PreloadTradeProcesses()
     Result result(db->Select("select * from trade_processes order by process_id, subprocess_number"));
     if (!result.IsValid())
     {
-        Error1("No data in trade_processes could be found");    
-    }        
-    else 
+        Error1("No data in trade_processes could be found");
+    }
+    else
     {
         for (currentrow=0; currentrow<result.Count(); currentrow++)
         {
@@ -1027,7 +1027,7 @@ bool CacheManager::PreloadTradeProcesses()
             newProcess = new psTradeProcesses;
             if (!newProcess->Load(result[currentrow]))
             {
-                Error1("Failure to load processes");    
+                Error1("Failure to load processes");
                 delete newProcess;
                 continue;
             }
@@ -2050,7 +2050,7 @@ psItemStats *CacheManager::GetBasicItemStatsByName(csString name)
         {
             CPrintf(CON_ERROR, "Duplicate item_stats ID where id='%u' found.\n", itemstats->GetUID());
         }
-        
+
         delete itemstats;
         return NULL;
     } else
@@ -2082,20 +2082,20 @@ psItemStats *CacheManager::GetBasicItemStatsByID(uint32 id)
     {
         return NULL;
     }
-    
+
     psItemStats *itemstats = itemStats_IDHash.Get(id,NULL);
     if(itemstats)
     {
         return itemstats;
     }
-    
+
     Result result(db->Select("SELECT * from item_stats where stat_type in ('B','U','R')  and id='%u'", id));
 
     if (!result.IsValid() || result.Count() == 0)
     {
         return NULL;
     }
-    
+
     itemstats = new psItemStats;
     bool loaded = itemstats->ReadItemStats(result[0]);
     // Prevent name conflicts
@@ -2346,7 +2346,7 @@ bool CacheManager::PreloadFactions()
 
                 //take out the string we need
                 csString entry_text = factionCharacterEvents.Slice(cutpos+1, cutpos2);
-                
+
                 //prepare the struct containing the parsed data
                 FactionLifeEvent * factionevt = new FactionLifeEvent;
                 factionevt->event_description = entry_text;
@@ -2516,7 +2516,7 @@ psItemSet *CacheManager::LoadWorldItems(psSectorInfo *sector,int &loadeditems)
                 continue;
             }
             */
-            
+
             // printf("Loaded world item %d: %s\n", item->GetUID(), item->GetName() );
 
             loadeditems++;
@@ -2574,7 +2574,7 @@ bool CacheManager::PreloadItemStatsDatabase()
                 CPrintf(CON_ERROR, "Failed to load item_stats with id='%s' and name='%s'\n",
                         result[currentrow]["id"],result[currentrow]["name"]);
             }
-            
+
             delete newitem;
             return false;
         } else
@@ -2600,7 +2600,7 @@ psItemStats* CacheManager::CopyItemStats(uint32 id, csString newName)
 
     psItemStats *newItem;
 
-    if ( db->Command( sql.GetData(), id ) == QUERY_FAILED) 
+    if ( db->Command( sql.GetData(), id ) == QUERY_FAILED)
     {
         Error4("Error while copying item stats for id %d.\nSQL:%s\nError:%s\n",id,db->GetLastQuery(),db->GetLastError());
         return NULL;
@@ -2625,12 +2625,12 @@ psItemStats* CacheManager::CopyItemStats(uint32 id, csString newName)
     {
         return NULL;
     }
-    
+
     if ( result.Count() != 1 )
     {
         return NULL;
     }
-    
+
     newItem = new psItemStats;
     if ( !newItem->ReadItemStats( result[0] ) )
     {
@@ -2885,7 +2885,7 @@ psGuildAlliance * CacheManager::FindAlliance(unsigned int id)
     {
         return a;
     }
-    
+
     // Load on demand if not found
     a = new psGuildAlliance();
     if (a->Load(id))
