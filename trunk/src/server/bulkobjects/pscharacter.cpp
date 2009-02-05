@@ -3812,11 +3812,57 @@ void psCharacter::SetCreationInfo(const char* newValue)
         psserver->SendSystemError(GetActor()->GetClient()->GetClientNum(), "Warning! creation info trimmed.");
 }
 
+//Generates and returns the dynamic life events from factions
+bool psCharacter::GetFactionEventsDescription(csString & factionDescription)
+{
+    //iterates all the various factions in this character
+    csHash<FactionStanding*, int>::GlobalIterator iter(GetActor()->GetFactions()->GetStandings().GetIterator());
+    while(iter.HasNext())
+    {
+        FactionStanding* standing = iter.Next();
+        int score = 0; //used to store the current score
+        if(standing->score > 0) //positive factions
+        {
+            csHash<FactionLifeEvent*, int>::GlobalIterator scoreIter = standing->faction->PositiveFactionEvents.GetIterator();
+            score = standing->score;
+            while (scoreIter.HasNext())
+            {
+                FactionLifeEvent* lifevt = scoreIter.Next();
+                if(score > lifevt->value) //check if the score is enough to attribuite this life event
+                {
+                    factionDescription += lifevt->event_description; //add the life event to the description
+                    factionDescription += "\n";
+                    break; //nothing else to do as we found what we needed so bail out
+                }
+            } 
+        }
+        else //negative factions
+        {
+            csHash<FactionLifeEvent*, int>::GlobalIterator scoreIter = standing->faction->NegativeFactionEvents.GetIterator();
+            score = abs(standing->score); //we store values as positive to make things easier and faster so take the
+                                          //absolute value
+            while (scoreIter.HasNext())
+            {
+                FactionLifeEvent* lifevt = scoreIter.Next();
+                if(score > lifevt->value) 
+                {
+                    factionDescription += lifevt->event_description;
+                    factionDescription += "\n";
+                    break;
+                }
+            }   
+        }
+    }
+    return (factionDescription.Length() > 0); //if the string contains something it means some events were attribuited
+}
+
 //returns the stored custom life event info of the player
 const char* psCharacter::GetLifeDescription()
 {
     return lifedescription.GetDataSafe();
 }
+
+
 
 void psCharacter::SetLifeDescription(const char* newValue)
 {

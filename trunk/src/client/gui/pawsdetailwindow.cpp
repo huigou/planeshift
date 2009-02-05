@@ -220,7 +220,9 @@ void pawsDetailWindow::HandleMessage( MsgEntry* me )
                 "epic descriptions of all sorts, quote great authors and even recite your own unpublished "
                 "novels with no limitation whatsoever.");
             if(!storedoocdescription.Length()) //if the player didn't input anything in ooc description inform him
-                storedoocdescription = PawsManager::GetSingleton().Translate("Here you can place any OOC information except to advertise companies, products, or services from the real world.\n\nTo disable this feature delete everything in the window by using the Modify Description button.");
+                storedoocdescription = PawsManager::GetSingleton().Translate("Here you can place any OOC "
+                "information except to advertise companies, products, or services from the real world.\n\n"
+                "To disable this feature delete everything in the window by using the Modify Description button.");
         }
         else
         {
@@ -228,7 +230,7 @@ void pawsDetailWindow::HandleMessage( MsgEntry* me )
         }
 
         //checks what tabs should be shown
-        UpdateTabsVisibility(msg.skills.GetSize() != 0, storedcreationinfo.Length() != 0,
+        UpdateTabsVisibility(msg.skills.GetSize() != 0, storedcreationinfo.Length() != 0 || details_editable,
                              storedoocdescription.Length() != 0 || details_editable);
 
         for(int i=0; i<6; i++)
