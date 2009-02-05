@@ -652,6 +652,106 @@ class psQuestPrereqOpActiveMagic : public psQuestPrereqOp
 };
 
 /**
+ * race prerequisite operator
+ *
+ * The actor must be of a certain race.
+ */
+class psQuestPrereqOpRace : public psQuestPrereqOp
+{
+ protected:
+    csString race;
+
+ public:
+
+    /**
+     * Construct a race operator
+     *
+     * @param gender The name of the race the actor is required to be
+     */
+    psQuestPrereqOpRace(const char *race):race(race){};
+
+    virtual ~psQuestPrereqOpRace() {}
+
+    /**
+     * Check if the character is of the specific race
+     *
+     * @param  character The character that are checking for a prerequisite
+     * @return True if the race is the one we are looking for.
+     */
+    virtual bool Check(psCharacter * character);
+
+    /**
+     * Convert the prerequisite operator to a xml string
+     *
+     * Convert the operator into the xml string: 
+     * <activemagic name="-activemagic"/>
+     *
+     * @return XML string for the prerequisite operator.
+     */
+    virtual csString GetScriptOp();
+
+    /**
+     * Copy the prerequisite operator
+     *
+     * Override this function to return a copy of the prerequisite
+     * operator.
+     *
+     * @return Copy of the prerequisite operator.
+     */
+    virtual csPtr<psQuestPrereqOp> Copy();
+};
+
+/**
+ * Gender prerequisite operator
+ *
+ * The actor must be of a certain gender.
+ */
+class psQuestPrereqOpGender : public psQuestPrereqOp
+{
+ protected:
+    csString gender;
+
+ public:
+ 
+    /**
+     * Construct a gender operator
+     *
+     * @param gender The sex the character must be
+     */
+    psQuestPrereqOpGender(const char *gender):gender(gender){};
+
+    virtual ~psQuestPrereqOpGender() {}
+
+    /**
+     * Check if the character is of the specified gender
+     *
+     * @param  character The character that are checking for a prerequisite
+     * @return True if the sex is the one we are looking for.
+     */
+    virtual bool Check(psCharacter * character);
+
+    /**
+     * Convert the prerequisite operator to a xml string
+     *
+     * Convert the operator into the xml string: 
+     * <activemagic name="-activemagic"/>
+     *
+     * @return XML string for the prerequisite operator.
+     */
+    virtual csString GetScriptOp();
+
+    /**
+     * Copy the prerequisite operator
+     *
+     * Override this function to return a copy of the prerequisite
+     * operator.
+     *
+     * @return Copy of the prerequisite operator.
+     */
+    virtual csPtr<psQuestPrereqOp> Copy();
+};
+
+/**
  * Time of day prerequisite operator
  *
  * The time must be between mintime and maxtime.

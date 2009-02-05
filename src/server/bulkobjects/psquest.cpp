@@ -362,6 +362,28 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, csRef<psQuestP
         
         prerequisite.AttachNew(new psQuestPrereqOpActiveMagic(name));
     }
+    else if ( strcmp( topNode->GetValue(), "race" ) == 0 )
+    {
+        csString name = topNode->GetAttributeValue("name");
+        if (name.IsEmpty())
+        {
+            Error1("No race name given for race prerequisite operation");
+            return false;
+        }
+        
+        prerequisite.AttachNew(new psQuestPrereqOpRace(name));
+    }
+    else if ( strcmp( topNode->GetValue(), "gender" ) == 0 )
+    {
+        csString type = topNode->GetAttributeValue("type");
+        if (type.IsEmpty())
+        {
+            Error1("No type given for gender prerequisite operation");
+            return false;
+        }
+        
+        prerequisite.AttachNew(new psQuestPrereqOpGender(type));
+    }
     else if ( strcmp( topNode->GetValue(), "timeofday" ) == 0 )
     {
         int min = topNode->GetAttributeValueAsInt("min");
