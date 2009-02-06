@@ -3821,7 +3821,7 @@ bool psCharacter::GetFactionEventsDescription(csString & factionDescription)
     {
         FactionStanding* standing = iter.Next();
         int score = 0; //used to store the current score
-        if(standing->score > 0) //positive factions
+        if(standing->score >= 0) //positive factions
         {
             csHash<FactionLifeEvent*, int>::GlobalIterator scoreIter = standing->faction->PositiveFactionEvents.GetIterator();
             score = standing->score;
@@ -3844,7 +3844,7 @@ bool psCharacter::GetFactionEventsDescription(csString & factionDescription)
             while (scoreIter.HasNext())
             {
                 FactionLifeEvent* lifevt = scoreIter.Next();
-                if(score > lifevt->value)
+                if(score >= lifevt->value)
                 {
                     factionDescription += lifevt->event_description;
                     factionDescription += "\n";
