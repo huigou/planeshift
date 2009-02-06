@@ -1,4 +1,12 @@
 ﻿*** 2009-02-05 by Stefano Angeleri
+- Added guild quest prerequisites eg: <guild type="public"/>
+  These are the allowed values:
+  none = the player isn't in a guild
+  public = the player is in a public guild
+  private = the player is in a private guild
+  both = the player is in a guild, regardless of it's public status
+
+*** 2009-02-05 by Stefano Angeleri
 - Various fixes and clean ups by kougaro
 - Completed work on the new descriptions
 - Fixed an issue which would stop the player from editing his custom
@@ -14,7 +22,7 @@
 - Some commenting improvements
 - Tab/spaces fixes
 - Added race and gender quest prerequisites for race it's
-  <race name="klyros"/> for gender it's <gender type="M"/>
+  <race name="Klyros"/> for gender it's <gender type="M"/>
   
 
 ﻿*** 2009-02-03 by Stefano Angeleri
