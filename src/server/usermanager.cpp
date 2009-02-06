@@ -703,7 +703,7 @@ void UserManager::SendCharacterDescription(Client * client, psCharacter * charDa
             creationinfo += charData->GetCreationInfo();
 
             if(creationinfo.Length() > 0) //only add separators in case there is something to separate
-                creationinfo += "\n\n";
+                creationinfo += "\n";
 
             //get the dynamically generated faction based life events
             if(charData->GetFactionEventsDescription(factiondescription))

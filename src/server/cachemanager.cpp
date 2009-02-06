@@ -2345,7 +2345,7 @@ bool CacheManager::PreloadFactions()
                     break;
 
                 //take out the string we need
-                csString entry_text = factionCharacterEvents.Slice(cutpos+1, cutpos2);
+                csString entry_text = factionCharacterEvents.Slice(cutpos+1, cutpos2-cutpos-1);
 
                 //prepare the struct containing the parsed data
                 FactionLifeEvent * factionevt = new FactionLifeEvent;
