@@ -30,8 +30,8 @@ INSERT INTO factions VALUES("1","orcs","faction orcs will garantie you are hated
 INSERT INTO factions VALUES("2","merchants","faction merchants will offer you a nice deal from time to time",
 "20 Merchants find you invaluable to find and fix bugs.
 10 Merchants are starting to like you.
--20 Merchants have hired weltall to kill because of your bugs.
--10 Merchants don't fell good when you are around.
+-20 Merchants have hired weltall to kill you because of your bugs.
+-10 Merchants don't feel good when you are around.
 ","1.000");
 INSERT INTO factions VALUES("3","liberals","faction liberals will make you popular by all those who value freedom and such stuff",
 "20 Liberals think you are open minded and worth talking to.
