@@ -317,24 +317,16 @@ bool pawsDetailWindow::SelectTab( pawsWidget* widget )
             {
                 lastTab->SetState(true);
             }
+
+            if(details_editable) editButton->Show(); //if it's editable show the button
+            else                 editButton->Hide();
+
             if(widget->GetID() == BTN_DESCR)
-            {
                 description->SetText(storedescription);
-                if(details_editable) editButton->Show(); //if it's editable show the button
-                else                 editButton->Hide();
-            }
             else if(widget->GetID() == BTN_DESCRCC)
-            {
                 description->SetText(storedcreationinfo);
-                if(details_editable) editButton->Show(); //if it's editable show the button
-                else                 editButton->Hide();
-            }
             else
-            {
                 description->SetText(storedoocdescription);
-                if(details_editable) editButton->Show(); //if it's editable show the button
-                else                 editButton->Hide();
-            }
             break;
         }
     }
