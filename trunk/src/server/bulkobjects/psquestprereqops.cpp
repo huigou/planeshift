@@ -39,6 +39,7 @@
 #include "weathermanager.h"
 #include "cachemanager.h"
 #include "psraceinfo.h"
+#include "psguildinfo.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 
@@ -453,7 +454,7 @@ bool psQuestPrereqOpGender::Check(psCharacter * character)
     if(character->GetActor() && character->GetActor()->questtester)
         return true;
 
-    if (character->raceinfo)
+    if (character->GetRaceInfo())
     {
         return (character->GetRaceInfo()->GetGender() == gender);
     }        
@@ -473,6 +474,46 @@ csPtr<psQuestPrereqOp> psQuestPrereqOpGender::Copy()
 {
     csRef<psQuestPrereqOpGender> copy;
     copy.AttachNew(new psQuestPrereqOpGender(gender));
+    return csPtr<psQuestPrereqOp>(copy);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////
+
+bool psQuestPrereqOpGuild::Check(psCharacter * character)
+{
+    //Requirements are always valid for quest testers
+    if(character->GetActor() && character->GetActor()->questtester)
+        return true;
+
+    if (!character->GetGuild()) //the player isn't in a guild
+    {
+        return (guildtype == "none"); //it was what we where looking for?
+    }
+    else
+    {
+        if(guildtype == "both") //no need to check for the case it's in a guild
+            return true;
+        if(character->GetGuild()->IsSecret())
+            return (guildtype == "secret");
+        else
+            return (guildtype == "public");
+    }
+    return false;
+}
+
+csString psQuestPrereqOpGuild::GetScriptOp()
+{
+    csString script;
+    
+    script.Format("<guild type=\"%s\"/>", guildtype.GetData());
+
+    return script;
+}
+
+csPtr<psQuestPrereqOp> psQuestPrereqOpGuild::Copy()
+{
+    csRef<psQuestPrereqOpGuild> copy;
+    copy.AttachNew(new psQuestPrereqOpGuild(guildtype));
     return csPtr<psQuestPrereqOp>(copy);
 }
 

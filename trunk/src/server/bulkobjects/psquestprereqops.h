@@ -726,7 +726,57 @@ class psQuestPrereqOpGender : public psQuestPrereqOp
      * Check if the character is of the specified gender
      *
      * @param  character The character that are checking for a prerequisite
-     * @return True if the sex is the one we are looking for.
+     * @return True if the gender is the one we are looking for.
+     */
+    virtual bool Check(psCharacter * character);
+
+    /**
+     * Convert the prerequisite operator to a xml string
+     *
+     * Convert the operator into the xml string: 
+     * <activemagic name="-activemagic"/>
+     *
+     * @return XML string for the prerequisite operator.
+     */
+    virtual csString GetScriptOp();
+
+    /**
+     * Copy the prerequisite operator
+     *
+     * Override this function to return a copy of the prerequisite
+     * operator.
+     *
+     * @return Copy of the prerequisite operator.
+     */
+    virtual csPtr<psQuestPrereqOp> Copy();
+};
+
+/**
+ * Guild prerequisite operator
+ *
+ * The actor must be in a certain type of guild or none.
+ */
+class psQuestPrereqOpGuild : public psQuestPrereqOp
+{
+ protected:
+    csString guildtype;
+
+ public:
+ 
+    /**
+     * Construct a guild operator
+     *
+     * @param guildtype The type of guild the character must be
+     */
+    psQuestPrereqOpGuild(const char *guildtype):guildtype(guildtype){};
+
+    virtual ~psQuestPrereqOpGuild() {}
+
+    /**
+     * Check if the character is in a specified type of guild
+     *
+     * @param  character The character that are checking for a prerequisite
+     * @return True if the character is in the guild type we are looking for.
      */
     virtual bool Check(psCharacter * character);
 

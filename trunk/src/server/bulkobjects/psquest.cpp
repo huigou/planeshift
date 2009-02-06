@@ -384,6 +384,17 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, csRef<psQuestP
         
         prerequisite.AttachNew(new psQuestPrereqOpGender(type));
     }
+    else if ( strcmp( topNode->GetValue(), "guild" ) == 0 )
+    {
+        csString type = topNode->GetAttributeValue("type");
+        if (type.IsEmpty())
+        {
+            Error1("No type given for guild prerequisite operation");
+            return false;
+        }
+        
+        prerequisite.AttachNew(new psQuestPrereqOpGuild(type));
+    }
     else if ( strcmp( topNode->GetValue(), "timeofday" ) == 0 )
     {
         int min = topNode->GetAttributeValueAsInt("min");
