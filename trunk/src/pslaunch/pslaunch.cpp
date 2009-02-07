@@ -126,9 +126,6 @@ bool psLauncherGUI::InitApp()
     iNativeWindow *nw = g2d->GetNativeWindow();
     if (nw)
       nw->SetTitle(APPNAME);
-    
-    if (nw)
-        nw->SetTitle(APPNAME);
 
     g2d->AllowResize(false);
 
