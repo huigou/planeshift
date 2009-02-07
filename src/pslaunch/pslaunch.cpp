@@ -19,7 +19,7 @@
 
 #include <psconfig.h>
 
-#ifndef CS_COMPILER_MSVC
+#ifndef CS_PLATFORM_WIN32
 #include <sys/wait.h>
 #endif
 
@@ -110,11 +110,7 @@ bool psLauncherGUI::InitApp()
         printf("GetDriver2D failed to Init!\n");
         return false;
     }
-    
-    iNativeWindow *nw = g2d->GetNativeWindow();
-    if (nw)
-        nw->SetTitle(APPNAME);
-    
+       
     // Initialise downloader.
     downloader = new Downloader(vfs);
 
@@ -126,6 +122,10 @@ bool psLauncherGUI::InitApp()
         printf("Error initialising app (CRYSTAL not set?)\n");
         return false;
     }
+
+    iNativeWindow *nw = g2d->GetNativeWindow();
+    if (nw)
+      nw->SetTitle(APPNAME);
     
     if (nw)
         nw->SetTitle(APPNAME);
