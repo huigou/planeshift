@@ -60,6 +60,11 @@
       <bgimage resource="Launcher Other" alpha="0" fading="false"/>
       <frame x="0" y="0" width="850" height="600" border="no"/>
 
+      <widget name="LauncherUpdaterLogo" factory="pawsWidget" visible="yes" savepositions="no" movable="no" resizable="no" id="110">
+        <bgimage resource="PSLogo" alpha="0" fading="false"/>
+        <frame x="430" y="25" width="300" height="80" border="no"/>
+      </widget>
+
       <widget name="UpdaterOutput" factory="pawsMessageTextBox" id="121" alwaysontop="true">
         <frame x="90" y="205" width="670" height="290" />
       </widget>
@@ -97,6 +102,11 @@
     <widget name="LauncherSettings" factory="pawsButton" visible="no" alwaysontop="true" savepositions="no" movable="no" resizable="no" resizetoscreen="yes" id="13">
       <bgimage resource="Launcher Other" alpha="0" fading="false"/>
       <frame x="0" y="0" width="850" height="600" border="no"/>
+
+      <widget name="LauncherSettingsLogo" factory="pawsWidget" visible="yes" savepositions="no" movable="no" resizable="no" id="110">
+        <bgimage resource="PSLogo" alpha="0" fading="false"/>
+        <frame x="430" y="25" width="300" height="80" border="no"/>
+      </widget>
 
       <!-- Ok button -->
       <widget name="SettingsOkButton" factory="pawsButton" id="131" changeonmouseover="true">
