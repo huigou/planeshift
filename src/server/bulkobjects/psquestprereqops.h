@@ -802,6 +802,59 @@ class psQuestPrereqOpGuild : public psQuestPrereqOp
 };
 
 /**
+ * Time online time prerequisite operator
+ *
+ * The time must be between mintime and maxtime.
+ */
+class psQuestPrereqOpTimeOnline : public psQuestPrereqOp
+{
+ protected:
+    int minTime, maxTime;
+    csString type;
+
+ public:
+
+    /**
+     * Construct an online time operator
+     *
+     * @param minTime Minimal time online
+     * @param maxTime Maximal time online
+     * @param type Type of the check
+     */
+     psQuestPrereqOpTimeOnline(int minTime, int maxTime, csString type):minTime(minTime),maxTime(maxTime),type(type){};
+
+    virtual ~psQuestPrereqOpTimeOnline() {}
+
+    /**
+     * Check if within the time range
+     *
+     * @param  character The character that are checking for a prerequisite
+     * @return True if in the valid range
+     */
+    virtual bool Check(psCharacter * character);
+
+    /**
+     * Convert the prerequisite operator to a xml string
+     *
+     * Convert the operator into the xml string: 
+     * <onlinetime min="-min" max="-max" type="min/max/both"/>
+     *
+     * @return XML string for the prerequisite operator.
+     */
+    virtual csString GetScriptOp();
+
+    /**
+     * Copy the prerequisite operator
+     *
+     * Override this function to return a copy of the prerequisite
+     * operator.
+     *
+     * @return Copy of the prerequisite operator.
+     */
+    virtual csPtr<psQuestPrereqOp> Copy();
+};
+
+/**
  * Time of day prerequisite operator
  *
  * The time must be between mintime and maxtime.

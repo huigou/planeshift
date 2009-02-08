@@ -493,9 +493,9 @@ bool psQuestPrereqOpGuild::Check(psCharacter * character)
     {
         if(guildtype == "both") //no need to check for the case it's in a guild
             return true;
-        if(character->GetGuild()->IsSecret())
+        if(character->GetGuild()->IsSecret()) //the guild is secret
             return (guildtype == "secret");
-        else
+        else //the guild is public
             return (guildtype == "public");
     }
     return false;
@@ -514,6 +514,38 @@ csPtr<psQuestPrereqOp> psQuestPrereqOpGuild::Copy()
 {
     csRef<psQuestPrereqOpGuild> copy;
     copy.AttachNew(new psQuestPrereqOpGuild(guildtype));
+    return csPtr<psQuestPrereqOp>(copy);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////
+
+bool psQuestPrereqOpTimeOnline::Check(psCharacter * character)
+{
+    //Requirements are always valid for quest testers
+    if(character->GetActor() && character->GetActor()->questtester)
+        return true;
+
+    if(type == "min")
+        return (character->GetTotalOnlineTime() > minTime);
+    if(type == "max")
+        return (character->GetTotalOnlineTime() < maxTime);
+    if(type == "both")
+        return (character->GetTotalOnlineTime() > minTime && character->GetTotalOnlineTime() < maxTime);
+}
+
+csString psQuestPrereqOpTimeOnline::GetScriptOp()
+{
+    csString script;
+    
+    script.Format("<onlinetime min=\"%d\" max=\"%d\" type=\"%s\"/>", minTime, maxTime, type.GetDataSafe());
+
+    return script;
+}
+
+csPtr<psQuestPrereqOp> psQuestPrereqOpTimeOnline::Copy()
+{
+    csRef<psQuestPrereqOpTimeOnline> copy;
+    copy.AttachNew(new psQuestPrereqOpTimeOnline(minTime, maxTime, type));
     return csPtr<psQuestPrereqOp>(copy);
 }
 
