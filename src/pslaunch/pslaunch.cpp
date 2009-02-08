@@ -512,7 +512,7 @@ int main(int argc, char* argv[])
               if(fork() == 0)
               {
 #ifdef CS_PLATFORM_MACOSX
-                execl("./psclient.app/Contents/MacOS/psclient_static", "./psclient.app/Contents/MacOS/psclient_static", (char*)0); 
+                execl("/usr/bin/open", "/usr/bin/open", "psclient.app", (char*)0); 
 #else
                 execl("./psclient", "./psclient", (char*)0);  
 #endif
