@@ -585,7 +585,7 @@ bool UpdaterEngine::SelfUpdate(int selfUpdating)
             // Create a new process of the updater and exit.
             csString path = appName;
             if(fork() == 0)
-                execl(path.Append(".app"), path.Append(".app"), "selfUpdateSecond", NULL);
+                execl(path.AppendFmt(".app/Contents/MacOS/%s_static", appName), path.AppendFmt(".app/Contents/MacOS/%s_static", appName), "selfUpdateSecond", NULL);
 #else
             if(fork() == 0)
                 execl(appName, appName, "selfUpdateSecond", NULL);
