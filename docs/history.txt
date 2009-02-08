@@ -1,10 +1,21 @@
-﻿*** 2009-02-05 by Stefano Angeleri
+*** 2009-02-08 by Stefano Angeleri
+- Added an online time quest prerequisites 
+  eg: <onlinetime min="0" max="100" type="both"/>
+  min and max are the minimum and maximum online time where
+  the quest will be allowed to be taken
+  Type can have 3 values:
+  both = It means min and max will be taken in consideration
+  min = It means online min will be taken in consideration
+  max = It means online max will be taken in consideration
+
+﻿*** 2009-02-06 by Stefano Angeleri
 - Added guild quest prerequisites eg: <guild type="public"/>
   These are the allowed values:
   none = the player isn't in a guild
   public = the player is in a public guild
   private = the player is in a private guild
   both = the player is in a guild, regardless of it's public status
+- Removed duplicate code in pawsdetailwindow
 
 *** 2009-02-05 by Stefano Angeleri
 - Various fixes and clean ups by kougaro
@@ -23,7 +34,6 @@
 - Tab/spaces fixes
 - Added race and gender quest prerequisites for race it's
   <race name="Klyros"/> for gender it's <gender type="M"/>
-  
 
 ﻿*** 2009-02-03 by Stefano Angeleri
 - Made the editable life event field working in editing and reading from
