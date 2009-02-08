@@ -404,6 +404,17 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, csRef<psQuestP
         prerequisite.AttachNew(new psQuestPrereqOpTimeOfDay(min,max));
 
     }
+    else if ( strcmp( topNode->GetValue(), "onlinetime" ) == 0 )
+    {
+        int min = topNode->GetAttributeValueAsInt("min");
+
+        int max = topNode->GetAttributeValueAsInt("max");
+
+	csString type = topNode->GetAttributeValue("type");
+
+        prerequisite.AttachNew(new psQuestPrereqOpTimeOnline(min,max,type));
+
+    }
     else if ( strcmp( topNode->GetValue(), "not" ) == 0 )
     {
         csRef<iDocumentNodeIterator> iter = topNode->GetNodes();
