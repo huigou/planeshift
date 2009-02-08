@@ -168,19 +168,19 @@ void pawsDetailWindow::HandleMessage( MsgEntry* me )
             return;
 
         //Begin sentence
-        csString str("You see a ");
+        csString str(PawsManager::GetSingleton().Translate("You see a "));
 
         //Add gender
         switch(msg.gender)
         {
         case PSCHARACTER_GENDER_FEMALE:
             {
-                str.Append("female ");
+                str.Append(PawsManager::GetSingleton().Translate("female "));
                 break;
             }
         case PSCHARACTER_GENDER_MALE:
             {
-                str.Append("male ");
+                str.Append(PawsManager::GetSingleton().Translate("male "));
                 break;
             }
         case PSCHARACTER_GENDER_NONE:
@@ -193,7 +193,7 @@ void pawsDetailWindow::HandleMessage( MsgEntry* me )
         str.Append(msg.race);
 
         //Add seperator
-        str.Append(" in front\nof you named ");
+        str.Append(PawsManager::GetSingleton().Translate(" in front\nof you named "));
 
         //Add name
         str.Append(msg.name);
