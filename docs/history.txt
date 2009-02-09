@@ -1,12 +1,24 @@
 *** 2009-02-08 by Stefano Angeleri
+- Added an advisor point quest prerequisite
+  eg: <advisorpoint min="0" max="100" type="both"/>
+  min and max are the minimum and maximum advisor points where
+  the quest will be allowed to be taken
+  Type can have 3 values:
+  both = It means min and max will be taken in consideration
+  min = It means min will be taken in consideration
+  max = It means max will be taken in consideration
+- Added a $time variable for npc texts which will be substituted to
+  morning/afternoon/evening/night depending on the hour patch by Lanarel
+
+*** 2009-02-08 by Stefano Angeleri
 - Added an online time quest prerequisites 
   eg: <onlinetime min="0" max="100" type="both"/>
   min and max are the minimum and maximum online time where
   the quest will be allowed to be taken
   Type can have 3 values:
   both = It means min and max will be taken in consideration
-  min = It means online min will be taken in consideration
-  max = It means online max will be taken in consideration
+  min = It means min will be taken in consideration
+  max = It means max will be taken in consideration
 
 ﻿*** 2009-02-06 by Stefano Angeleri
 - Added guild quest prerequisites eg: <guild type="public"/>
