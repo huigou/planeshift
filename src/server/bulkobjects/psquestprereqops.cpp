@@ -1,7 +1,7 @@
 /*
  * psquestprereqopts.cpp
  *
- * Copyright (C) 2005 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2005 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -76,10 +76,10 @@ bool psQuestPrereqOpAnd::Check(psCharacter * character)
     // Check if all prereqs are valid
     for (size_t i = 0; i < prereqlist.GetSize(); i++)
     {
-        if (!prereqlist[i]->Check(character)) 
+        if (!prereqlist[i]->Check(character))
         {
             return false;
-        }            
+        }
     }
 
     return true;
@@ -104,7 +104,7 @@ csPtr<psQuestPrereqOp> psQuestPrereqOpAnd::Copy()
     for (size_t i = 0; i < prereqlist.GetSize(); i++)
     {
         copy->Push(prereqlist[i]->Copy());
-    }    
+    }
     return csPtr<psQuestPrereqOp>(copy);
 }
 
@@ -119,10 +119,10 @@ bool psQuestPrereqOpOr::Check(psCharacter * character)
     // Check if any of the prereqs are valid
     for (size_t i = 0; i < prereqlist.GetSize(); i++)
     {
-        if (prereqlist[i]->Check(character)) 
+        if (prereqlist[i]->Check(character))
         {
             return true;
-        }            
+        }
     }
 
     return false;
@@ -147,7 +147,7 @@ csPtr<psQuestPrereqOp> psQuestPrereqOpOr::Copy()
     for (size_t i = 0; i < prereqlist.GetSize(); i++)
     {
         copy->Push(prereqlist[i]->Copy());
-    }    
+    }
     return csPtr<psQuestPrereqOp>(copy);
 }
 
@@ -169,12 +169,12 @@ bool psQuestPrereqOpRequire::Check(psCharacter * character)
     int count=0;
     for (size_t i = 0; i < prereqlist.GetSize(); i++)
     {
-        if (prereqlist[i]->Check(character)) 
+        if (prereqlist[i]->Check(character))
         {
             count++;
-        }            
+        }
     }
-    // Verify that the appropiate numbers of prereqs was counted. 
+    // Verify that the appropiate numbers of prereqs was counted.
     return ((min == -1 || count >= min) && (max == -1 || count <= max));
 }
 
@@ -186,12 +186,12 @@ csString psQuestPrereqOpRequire::GetScriptOp()
     {
         script.AppendFmt(" min=\"%d\"",min);
     }
-            
+
     if (max != -1)
     {
         script.AppendFmt(" max=\"%d\"",max);
     }
-            
+
     script.Append(">");
     for (size_t i = 0; i < prereqlist.GetSize(); i++)
     {
@@ -208,7 +208,7 @@ csPtr<psQuestPrereqOp> psQuestPrereqOpRequire::Copy()
     for (size_t i = 0; i < prereqlist.GetSize(); i++)
     {
         copy->Push(prereqlist[i]->Copy());
-    }    
+    }
     return csPtr<psQuestPrereqOp>(copy);
 }
 
@@ -230,7 +230,7 @@ csString psQuestPrereqOpNot::GetScriptOp()
     if (prereqlist.GetSize())
     {
         script.Append(prereqlist[0]->GetScriptOp());
-    }        
+    }
     script.Append("</not>");
     return script;
 }
@@ -265,7 +265,7 @@ bool psQuestPrereqOpQuestCompleted::Check(psCharacter * character)
 csString psQuestPrereqOpQuestCompleted::GetScriptOp()
 {
     csString script;
-    
+
     script.AppendFmt("<completed quest=\"%s\"/>",quest->GetName());
 
     return script;
@@ -296,7 +296,7 @@ bool psQuestPrereqOpQuestAssigned::Check(psCharacter * character)
 csString psQuestPrereqOpQuestAssigned::GetScriptOp()
 {
     csString script;
-    
+
     script.AppendFmt("<assigned quest=\"%s\"/>",quest->GetName());
 
     return script;
@@ -329,17 +329,17 @@ bool psQuestPrereqOpQuestCompletedCategory::Check(psCharacter * character)
 csString psQuestPrereqOpQuestCompletedCategory::GetScriptOp()
 {
     csString script;
-    
+
     script.AppendFmt("<completed category=\"%s\"",category.GetDataSafe());
     if (min != -1)
     {
         script.AppendFmt(" min=\"%d\"",min);
     }
-            
+
     if (max != -1)
     {
         script.AppendFmt(" max=\"%d\"",max);
-    }        
+    }
     script.Append("/>");
 
     return script;
@@ -361,17 +361,17 @@ bool psQuestPrereqOpFaction::Check(psCharacter * character)
         return true;
 
     if(max)
-    { 
-        // If value is max, make sure we're below it        
+    {
+        // If value is max, make sure we're below it
         return !character->CheckFaction(faction,value);
-    }        
+    }
     return character->CheckFaction(faction,value);
 }
 
 csString psQuestPrereqOpFaction::GetScriptOp()
 {
     csString script;
-    
+
     script.AppendFmt("<faction name=\"%s\" value=\"%d\" max=\"%d\"/>",faction->name.GetData(),value,max);
 
     return script;
@@ -395,14 +395,14 @@ bool psQuestPrereqOpActiveMagic::Check(psCharacter * character)
     if (character->GetActor())
     {
         return character->GetActor()->IsMagicCategoryActive(activeMagic);
-    }        
+    }
     return false;
 }
 
 csString psQuestPrereqOpActiveMagic::GetScriptOp()
 {
     csString script;
-    
+
     script.Format("<activemagic name=\"%s\"/>", activeMagic.GetData());
 
     return script;
@@ -426,14 +426,14 @@ bool psQuestPrereqOpRace::Check(psCharacter * character)
     if (character->GetRaceInfo())
     {
         return (character->GetRaceInfo()->GetRace() == race);
-    }        
+    }
     return false;
 }
 
 csString psQuestPrereqOpRace::GetScriptOp()
 {
     csString script;
-    
+
     script.Format("<race name=\"%s\"/>", race.GetData());
 
     return script;
@@ -457,14 +457,14 @@ bool psQuestPrereqOpGender::Check(psCharacter * character)
     if (character->GetRaceInfo())
     {
         return (character->GetRaceInfo()->GetGender() == gender);
-    }        
+    }
     return false;
 }
 
 csString psQuestPrereqOpGender::GetScriptOp()
 {
     csString script;
-    
+
     script.Format("<gender type=\"%s\"/>", gender.GetData());
 
     return script;
@@ -504,7 +504,7 @@ bool psQuestPrereqOpGuild::Check(psCharacter * character)
 csString psQuestPrereqOpGuild::GetScriptOp()
 {
     csString script;
-    
+
     script.Format("<guild type=\"%s\"/>", guildtype.GetData());
 
     return script;
@@ -531,12 +531,13 @@ bool psQuestPrereqOpTimeOnline::Check(psCharacter * character)
         return (character->GetTotalOnlineTime() < maxTime);
     if(type == "both")
         return (character->GetTotalOnlineTime() > minTime && character->GetTotalOnlineTime() < maxTime);
+    return false;
 }
 
 csString psQuestPrereqOpTimeOnline::GetScriptOp()
 {
     csString script;
-    
+
     script.Format("<onlinetime min=\"%d\" max=\"%d\" type=\"%s\"/>", minTime, maxTime, type.GetDataSafe());
 
     return script;
@@ -551,6 +552,45 @@ csPtr<psQuestPrereqOp> psQuestPrereqOpTimeOnline::Copy()
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 
+bool psQuestPrereqOpAdvisorPoints::Check(psCharacter * character)
+{
+    //Requirements are always valid for quest testers
+    if(character->GetActor())
+    {
+         if(character->GetActor()->questtester)
+            return true;
+        if(character->GetActor()->GetClient())
+        {
+            if(type == "min")
+                return (character->GetActor()->GetClient()->GetAdvisorPoints() > minPoints);
+            if(type == "max")
+                return (character->GetActor()->GetClient()->GetAdvisorPoints() < maxPoints);
+            if(type == "both")
+                return (character->GetActor()->GetClient()->GetAdvisorPoints() > minPoints &&
+                        character->GetActor()->GetClient()->GetAdvisorPoints() < maxPoints);
+        }
+    }
+    return false;
+}
+
+csString psQuestPrereqOpAdvisorPoints::GetScriptOp()
+{
+    csString script;
+
+    script.Format("<advisorpoints min=\"%d\" max=\"%d\" type=\"%s\"/>", minPoints, maxPoints, type.GetDataSafe());
+
+    return script;
+}
+
+csPtr<psQuestPrereqOp> psQuestPrereqOpAdvisorPoints::Copy()
+{
+    csRef<psQuestPrereqOpAdvisorPoints> copy;
+    copy.AttachNew(new psQuestPrereqOpAdvisorPoints(minPoints, maxPoints, type));
+    return csPtr<psQuestPrereqOp>(copy);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////
+
 bool psQuestPrereqOpTimeOfDay::Check(psCharacter * character)
 {
     //Requirements are always valid for quest testers
@@ -559,10 +599,10 @@ bool psQuestPrereqOpTimeOfDay::Check(psCharacter * character)
 
     int currTime = psserver->GetWeatherManager()->GetGameTODHour();
 
-    if (minTime <= maxTime) 
+    if (minTime <= maxTime)
     {
         return (currTime <= maxTime) && (currTime >= minTime); // quests during the day
-    }        
+    }
 
     return (currTime >= maxTime) || (currTime <= minTime); // quests overnight
 }
@@ -570,7 +610,7 @@ bool psQuestPrereqOpTimeOfDay::Check(psCharacter * character)
 csString psQuestPrereqOpTimeOfDay::GetScriptOp()
 {
     csString script;
-    
+
     script.Format("<timeofday min=\"%d\" max=\"%d\"/>", minTime, maxTime);
 
     return script;
@@ -620,7 +660,7 @@ csPtr<psQuestPrereqOp> psQuestPrereqOpXor::Copy()
     for (size_t i = 0; i < prereqlist.GetSize(); i++)
     {
         copy->Push(prereqlist[i]->Copy());
-    }    
+    }
     return csPtr<psQuestPrereqOp>(copy);
 }
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -634,20 +674,20 @@ bool psQuestPrereqOpSkill::Check(psCharacter * character)
     unsigned int skill_val = character->Skills().GetSkillRank(skill->id);
 
     if(max && skill_val > max)
-    { 
+    {
         return false;
-    }        
+    }
     if(min && skill_val < min)
-    { 
+    {
         return false;
-    }        
+    }
     return true;
 }
 
 csString psQuestPrereqOpSkill::GetScriptOp()
 {
     csString script;
-    
+
     script.AppendFmt("<skill name=\"%s\"", skill->name.GetData());
     if(min)
     {

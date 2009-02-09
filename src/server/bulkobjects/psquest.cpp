@@ -1,7 +1,7 @@
 /*
  * psquest.cpp
  *
-//  * Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+//  * Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -53,7 +53,7 @@ psQuest::psQuest()
     quest_lockout_time = 0;
     quest_last_activated = 0;
     prerequisite = NULL;
-    
+
     active = true;
 }
 
@@ -108,7 +108,7 @@ bool psQuest::Load(iResultRow& row)
         infinitePlayerLockout = false;
         player_lockout_time = lockout_time;
     }
-    
+
     quest_lockout_time  = row.GetInt("quest_lockout_time");
 
     return true;
@@ -127,7 +127,7 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, csRef<psQuestP
         while ( iter->HasNext() )
         {
             csRef<iDocumentNode> node = iter->Next();
-            
+
             if ( node->GetType() != CS_NODE_ELEMENT )
                 continue;
 
@@ -138,7 +138,7 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, csRef<psQuestP
 
             break;
         }
-    } 
+    }
     else if ( strcmp( topNode->GetValue(), "completed" ) == 0 )
     {
         if (topNode->GetAttributeValue("quest"))
@@ -204,29 +204,29 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, csRef<psQuestP
                    topNode->GetAttributeValue("quest"));
             return false;
         }
-    } 
+    }
     else if ( strcmp( topNode->GetValue(), "and" ) == 0 )
     {
         csRef<psQuestPrereqOpList> list;
         list.AttachNew(new psQuestPrereqOpAnd());
         prerequisite = list;
-        
+
         csRef<iDocumentNodeIterator> iter = topNode->GetNodes();
 
         while ( iter->HasNext() )
         {
             csRef<iDocumentNode> node = iter->Next();
-            
+
             if (node->GetType() != CS_NODE_ELEMENT)
                 continue;
 
             csRef<psQuestPrereqOp> op;
-            
+
             if (!LoadPrerequisiteXML(node, self, op))
             {
                 return false;
             }
-            
+
             if (op)
             {
                 list->Push(op);
@@ -240,23 +240,23 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, csRef<psQuestP
         csRef<psQuestPrereqOpList> list;
         list.AttachNew(new psQuestPrereqOpOr());
         prerequisite = list;
-        
+
         csRef<iDocumentNodeIterator> iter = topNode->GetNodes();
 
         while ( iter->HasNext() )
         {
             csRef<iDocumentNode> node = iter->Next();
-            
+
             if ( node->GetType() != CS_NODE_ELEMENT )
                 continue;
 
             csRef<psQuestPrereqOp> op;
-            
+
             if (!LoadPrerequisiteXML(node, self, op))
             {
                 return false;
             }
-            
+
             if (op)
             {
                 list->Push(op);
@@ -270,23 +270,23 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, csRef<psQuestP
         csRef<psQuestPrereqOpList> list;
         list.AttachNew(new psQuestPrereqOpXor());
         prerequisite = list;
-        
+
         csRef<iDocumentNodeIterator> iter = topNode->GetNodes();
 
         while ( iter->HasNext() )
         {
             csRef<iDocumentNode> node = iter->Next();
-            
+
             if ( node->GetType() != CS_NODE_ELEMENT )
                 continue;
 
             csRef<psQuestPrereqOp> op;
-            
+
             if (!LoadPrerequisiteXML(node, self, op))
             {
                 return false;
             }
-            
+
             if (op)
             {
                 list->Push(op);
@@ -298,26 +298,26 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, csRef<psQuestP
     else if ( strcmp( topNode->GetValue(), "require" ) == 0 )
     {
         int min = -1,max = -1;
-        if (topNode->GetAttributeValue("min")) 
+        if (topNode->GetAttributeValue("min"))
             min = topNode->GetAttributeValueAsInt("min");
-        if (topNode->GetAttributeValue("max")) 
+        if (topNode->GetAttributeValue("max"))
             max = topNode->GetAttributeValueAsInt("max");
 
         csRef<psQuestPrereqOpList> list;
         list.AttachNew(new psQuestPrereqOpRequire(min,max));
         prerequisite = list;
-        
+
         csRef<iDocumentNodeIterator> iter = topNode->GetNodes();
 
         while ( iter->HasNext() )
         {
             csRef<iDocumentNode> node = iter->Next();
-            
+
             if ( node->GetType() != CS_NODE_ELEMENT )
             continue;
 
             csRef<psQuestPrereqOp> op;
-            
+
             if (!LoadPrerequisiteXML(node, self, op))
             {
                 return false;
@@ -336,7 +336,7 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, csRef<psQuestP
             Error1("No name given for faction prerequisite operation");
             return false;
         }
-        
+
         Faction * faction = CacheManager::GetSingleton().GetFaction(name);
         if (!faction)
         {
@@ -359,7 +359,7 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, csRef<psQuestP
             Error1("No name given for activemagic prerequisite operation");
             return false;
         }
-        
+
         prerequisite.AttachNew(new psQuestPrereqOpActiveMagic(name));
     }
     else if ( strcmp( topNode->GetValue(), "race" ) == 0 )
@@ -370,7 +370,7 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, csRef<psQuestP
             Error1("No race name given for race prerequisite operation");
             return false;
         }
-        
+
         prerequisite.AttachNew(new psQuestPrereqOpRace(name));
     }
     else if ( strcmp( topNode->GetValue(), "gender" ) == 0 )
@@ -381,7 +381,7 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, csRef<psQuestP
             Error1("No type given for gender prerequisite operation");
             return false;
         }
-        
+
         prerequisite.AttachNew(new psQuestPrereqOpGender(type));
     }
     else if ( strcmp( topNode->GetValue(), "guild" ) == 0 )
@@ -392,8 +392,24 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, csRef<psQuestP
             Error1("No type given for guild prerequisite operation");
             return false;
         }
-        
+
         prerequisite.AttachNew(new psQuestPrereqOpGuild(type));
+    }
+    else if ( strcmp( topNode->GetValue(), "advisorpoints" ) == 0 )
+    {
+        int min = topNode->GetAttributeValueAsInt("min");
+
+        int max = topNode->GetAttributeValueAsInt("max");
+
+        csString type = topNode->GetAttributeValue("type");
+
+        if (type.IsEmpty())
+        {
+            Error1("No type given for advisorpoints prerequisite operation");
+            return false;
+        }
+
+        prerequisite.AttachNew(new psQuestPrereqOpAdvisorPoints(min,max,type));
     }
     else if ( strcmp( topNode->GetValue(), "timeofday" ) == 0 )
     {
@@ -410,7 +426,13 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, csRef<psQuestP
 
         int max = topNode->GetAttributeValueAsInt("max");
 
-	csString type = topNode->GetAttributeValue("type");
+        csString type = topNode->GetAttributeValue("type");
+
+        if (type.IsEmpty())
+        {
+            Error1("No type given for onlinetime prerequisite operation");
+            return false;
+        }
 
         prerequisite.AttachNew(new psQuestPrereqOpTimeOnline(min,max,type));
 
@@ -422,7 +444,7 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, csRef<psQuestP
         while ( iter->HasNext() )
         {
             csRef<iDocumentNode> node = iter->Next();
-            
+
             if ( node->GetType() != CS_NODE_ELEMENT )
             continue;
 
@@ -437,7 +459,7 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, csRef<psQuestP
             prerequisite = list;
             break;
         }
-    } 
+    }
     else if ( strcmp( topNode->GetValue(), "skill" ) == 0 )
     {
         csString name = topNode->GetAttributeValue("name");
@@ -446,7 +468,7 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, csRef<psQuestP
             Error1("No name given for skill prerequisite operation");
             return false;
         }
-        
+
         psSkillInfo * skill = CacheManager::GetSingleton().GetSkillByName( name );
         if (!skill)
         {
@@ -496,7 +518,7 @@ bool LoadPrerequisiteXML(csRef<psQuestPrereqOp>& prerequisite, psQuest * self, c
         Error3("Could not find <pre> tag in prerequisite script '%s' for quest '%s'!",
                script.GetData(),(self?self->GetName():"(null)"));
         return false;
-    }    
+    }
 
     return true;
 }
@@ -515,7 +537,7 @@ bool psQuest::PostLoad()
             Error1("Failed to load prerequisite XML!");
             return false;
         }
-        
+
         if (prerequisite)
         {
             prerequisiteStr.Empty();
@@ -536,11 +558,11 @@ bool psQuest::AddPrerequisite(csString prerequisitescript)
         return false;
     }
 
-    if (op) 
+    if (op)
     {
         return AddPrerequisite(op);
     }
-    
+
     return false;
 }
 
