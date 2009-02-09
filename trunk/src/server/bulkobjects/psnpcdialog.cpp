@@ -52,6 +52,7 @@
 #include "../iserver/idal.h"
 
 #include "../psserver.h"
+#include "../weathermanager.h"
 #include "../gem.h"
 #include "../playergroup.h"
 #include "../client.h"
@@ -496,6 +497,26 @@ void psNPCDialog::SubstituteKeywords(Client * player, csString& resp) const
             if (!response.ReplaceSubString(word,sir))
             {
                 Error4("Failed to replace substring %s in %s with %s",word.GetData(),response.GetData(),player->GetName());
+            }
+        }        
+        else if (word == "$time") //changes a $time variable with a sentence like night morning afternoon or evening
+        {
+            csString timestr; //used to store the string which will be replaced in the text
+
+            int clockHour = psserver->GetWeatherManager()->GetGameTODHour(); //gets the current hour
+
+            //checks what type of string should be applied according to the hour
+            if ( clockHour < 6)
+                timestr = "night";
+            else if ( clockHour < 12 )
+                timestr = "morning";
+            else if ( clockHour < 18 )    
+                timestr = "afternoon";
+            else
+                timestr = "evening";
+            if (!response.ReplaceSubString(word,timestr))
+            {
+                Error4("Failed to replace substring %s in %s with %s",word.GetData(),response.GetData(),timestr.GetData());
             }
         }
         where = response.FindSubString(dollarsign,where+1);
