@@ -62,6 +62,7 @@ bool pawsLauncherWindow::PostSetup()
     // Setup update available window.
     updateAvailable = (pawsYesNoBox*)FindWidget("UpdateAvailable");
     updateAvailable->SetCallBack(HandleUpdateButton, updateAvailable, "An update to PlaneShift is available. Do you wish to update now?");
+    updateAvailable->SetAlwaysOnTop(true);
 
     return true;
 }
