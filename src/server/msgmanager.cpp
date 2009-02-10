@@ -41,9 +41,6 @@ bool MessageManager::Verify(MsgEntry *pMsg,unsigned int flags,Client*& client)
 {
     client = NULL;
 
-    if (flags == NO_VALIDATION)
-        return true;
-
     gemObject *obj = NULL;
     gemActor  *actor;
     gemNPC    *npc;
@@ -54,6 +51,9 @@ bool MessageManager::Verify(MsgEntry *pMsg,unsigned int flags,Client*& client)
         Warning2(LOG_NET,"MessageManager got unknown client %d!",pMsg->clientnum);
         return false;
     }
+
+    if (flags == NO_VALIDATION)
+        return true;
     if (flags & REQUIRE_READY_CLIENT)
     {
         // Infer the client MUST be ready to have sent this message.

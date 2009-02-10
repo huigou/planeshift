@@ -135,7 +135,7 @@ bool ServerCharManager::Initialize()
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ServerCharManager>(this,&ServerCharManager::ViewItem),               MSGTYPE_VIEW_ITEM,REQUIRE_READY_CLIENT);
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ServerCharManager>(this,&ServerCharManager::UpdateSketch),           MSGTYPE_VIEW_SKETCH,REQUIRE_READY_CLIENT);
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ServerCharManager>(this,&ServerCharManager::HandleBookWrite),        MSGTYPE_WRITE_BOOK, REQUIRE_READY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ServerCharManager>(this,&ServerCharManager::HandleFaction),          MSGTYPE_FACTION_INFO);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ServerCharManager>(this,&ServerCharManager::HandleFaction),          MSGTYPE_FACTION_INFO, REQUIRE_READY_CLIENT);
 
     slotManager = new SlotManager;
     if ( !(slotManager && slotManager->Initialize()) )
