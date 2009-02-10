@@ -684,7 +684,7 @@ class psQuestPrereqOpRace : public psQuestPrereqOp
      * Convert the prerequisite operator to a xml string
      *
      * Convert the operator into the xml string:
-     * <activemagic name="-activemagic"/>
+     * <race name="racename"/>
      *
      * @return XML string for the prerequisite operator.
      */
@@ -734,7 +734,7 @@ class psQuestPrereqOpGender : public psQuestPrereqOp
      * Convert the prerequisite operator to a xml string
      *
      * Convert the operator into the xml string:
-     * <activemagic name="-activemagic"/>
+     * <gender type="GenderType"/>
      *
      * @return XML string for the prerequisite operator.
      */
