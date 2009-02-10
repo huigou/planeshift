@@ -666,7 +666,7 @@ class psQuestPrereqOpRace : public psQuestPrereqOp
     /**
      * Construct a race operator
      *
-     * @param gender The name of the race the actor is required to be
+     * @param race The name of the race the actor is required to be
      */
     psQuestPrereqOpRace(const char *race):race(race){};
 
@@ -734,7 +734,7 @@ class psQuestPrereqOpGender : public psQuestPrereqOp
      * Convert the prerequisite operator to a xml string
      *
      * Convert the operator into the xml string:
-     * <gender type="GenderType"/>
+     * <gender type="Gender Initial"/>
      *
      * @return XML string for the prerequisite operator.
      */
@@ -784,7 +784,7 @@ class psQuestPrereqOpGuild : public psQuestPrereqOp
      * Convert the prerequisite operator to a xml string
      *
      * Convert the operator into the xml string:
-     * <activemagic name="-activemagic"/>
+     * <guild type="type of the guild"/>
      *
      * @return XML string for the prerequisite operator.
      */
@@ -862,7 +862,7 @@ class psQuestPrereqOpAdvisorPoints : public psQuestPrereqOp
 class psQuestPrereqOpTimeOnline : public psQuestPrereqOp
 {
  protected:
-    int minTime, maxTime;
+    unsigned int minTime, maxTime;
     csString type;
 
  public:
