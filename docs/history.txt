@@ -1,4 +1,8 @@
 *** 2009-02-08 by Stefano Angeleri
+- Fixed PS#2677 - server crash on opening skill window  patch by loyni
+- Fixed a bug in gender and race prerequiste operators
+
+*** 2009-02-08 by Stefano Angeleri
 - Added an advisor point quest prerequisite
   eg: <advisorpoint min="0" max="100" type="both"/>
   min and max are the minimum and maximum advisor points where
