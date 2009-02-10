@@ -422,10 +422,10 @@ bool psQuestPrereqOpRace::Check(psCharacter * character)
     //Requirements are always valid for quest testers
     if(character->GetActor() && character->GetActor()->questtester)
         return true;
-
+printf("poke\n");
     if (character->GetRaceInfo())
     {
-        return (character->GetRaceInfo()->GetRace() == race);
+        return ((csString)character->GetRaceInfo()->GetRace() == race);
     }
     return false;
 }
@@ -453,10 +453,10 @@ bool psQuestPrereqOpGender::Check(psCharacter * character)
     //Requirements are always valid for quest testers
     if(character->GetActor() && character->GetActor()->questtester)
         return true;
-
+printf("pokeb\n");
     if (character->GetRaceInfo())
     {
-        return (character->GetRaceInfo()->GetGender() == gender);
+        return ((csString)character->GetRaceInfo()->GetGender() == gender);
     }
     return false;
 }
