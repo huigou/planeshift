@@ -86,7 +86,6 @@ void psSlotManager::OnNumberEntered(const char *name,int param,int count)
 
     int purifyStatus = parent->GetPurifyStatus();
     int newStack = parent->StackCount() - count;
-    parent->StackCount( newStack );
             
     pawsSlot* widget = new pawsSlot();
     widget->SetRelativeFrame( 0,0, parent->DefaultFrame().Width(), parent->DefaultFrame().Height() );
@@ -96,6 +95,7 @@ void psSlotManager::OnNumberEntered(const char *name,int param,int count)
     else        
         widget->PlaceItem( NULL, count );
         
+    parent->StackCount( newStack );
     widget->SetPurifyStatus( purifyStatus );
     widget->SetBackgroundAlpha(0);
     widget->SetParent( NULL );
