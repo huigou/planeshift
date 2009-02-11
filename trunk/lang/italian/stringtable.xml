@@ -32,6 +32,7 @@
   <item orig="Talk to people in your sector." trans="Parla alle persone nel tuo settore." />
   <item orig="Factions:" trans="Fazioni:" />
   <item orig="Paths" trans="Vie" />
+  <item orig="male " trans="maschio di " />
   <item orig="Active" trans="Attivo" />
   <item orig="Creatures:" trans="" />
   <item orig="View" trans="Vedi" />
@@ -132,6 +133,7 @@ Vuoi veramente lasciare Yliakum?" />
   <item orig="Upload!" trans="Carica!" />
   <item orig="Deposit" trans="Deposita" />
   <item orig="? Weight" trans="? Peso" />
+  <item orig="You see a " trans="Vedi un " />
   <item orig="No Target" trans="Nessuno obiettivo" />
   <item orig="Tria" trans="" />
   <item orig="Group text color" trans="" />
@@ -171,6 +173,9 @@ Vuoi veramente lasciare Yliakum?" />
   <item orig="mouse" trans="" />
   <item orig="Various Skills List:" trans="" />
   <item orig="Stats description:" trans="" />
+  <item orig=" in front
+of you named " trans=" davanti a te
+chiamato " />
   <item orig="Lets go !" trans="Andiamo!" />
   <item orig="Account:" trans="" />
   <item orig="%s %s" trans="%s %s" />
