@@ -1749,6 +1749,15 @@ void GEMClientActor::SetAnimationVelocity(const csVector3& velocity)
     bool useZ = ABS(velocity.z) > ABS(velocity.x);
     float cal3dvel = useZ ? velocity.z : velocity.x;
     cal3dstate->SetVelocity(-cal3dvel, &psengine->GetRandomGen());
+
+    if(abs(cal3dvel) <= 2 && abs(cal3dvel) >= 1)
+    {
+        charApp->SetSneak(true);
+    }
+    else
+    {
+        charApp->SetSneak(false);
+    }
 }
 
 void GEMClientActor::SetMode(uint8_t mode, bool newactor)

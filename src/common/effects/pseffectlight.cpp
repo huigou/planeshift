@@ -44,10 +44,11 @@ unsigned int psLight::AttachLight(csRef<iLight> newLight, csRef<iMeshWrapper> mw
 {
     light = newLight;
     movable = mw->GetMovable();
-    lightBasePos = light->GetCenter();
+    lightBasePos = light->GetMovable()->GetPosition();
     sector = movable->GetSectors()->Get(0);
     light->GetMovable()->SetSector(sector);
-    light->SetCenter(lightBasePos+movable->GetFullPosition());
+    light->GetMovable()->SetPosition(lightBasePos+movable->GetFullPosition());
+    light->GetMovable()->UpdateMove();
 
     return ++genUniqueID;
 }
@@ -66,14 +67,15 @@ bool psLight::Update()
             csVector3 newPos(movable->GetFullTransform().GetT2O()*lightBasePos);
             newPos += movable->GetFullPosition();
 
-            if(light->GetCenter() != newPos)
+            if(light->GetMovable()->GetPosition() != newPos)
             {
                 if(sectors && (!sector || sector != sectors->Get(0)))
                 {
                     sector = sectors->Get(0);
                     light->GetMovable()->SetSector(sector);
                 }
-                light->SetCenter(newPos);
+                light->GetMovable()->SetPosition(newPos);
+                light->GetMovable()->UpdateMove();
             }
         }
         return true;
