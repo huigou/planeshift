@@ -367,7 +367,7 @@ void ModeHandler::SetModeSounds(uint8_t mode)
             break;
         case psModeMessage::DEAD:
             if (soundmanager->PlayingMusic())
-                soundmanager->OverrideBGSong("death",iSoundManager::LOOP_SOUND);
+                soundmanager->OverrideBGSong("sound.msg.death",iSoundManager::LOOP_SOUND);
             break;
     }
 }

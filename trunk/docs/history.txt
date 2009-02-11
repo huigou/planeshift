@@ -1,3 +1,6 @@
+*** 2009-02-11 by Kenny Graunke
+- Patch for PS#2745 by Caarrie - the wrong sound resource was being used.
+
 *** 2009-02-08 by Stefano Angeleri
 - Fixed PS#2677 - server crash on opening skill window  patch by loyni
 - Fixed a bug in gender and race prerequiste operators
