@@ -106,8 +106,8 @@ public:
     /** Any subclass of iNetSubscriber can subscribe to incoming network messages
      * with this function
      */
-    virtual bool Subscribe(iNetSubscriber *subscriber, msgtype type, uint32_t flags=0);
-    virtual bool Subscribe(iNetSubscriber *subscriber, MsgtypeCallback *callback, msgtype type, uint32_t flags=0);
+    virtual bool Subscribe(iNetSubscriber *subscriber, msgtype type, uint32_t flags = 0x01/*REQUIRE_READY_CLIENT*/);
+    virtual bool Subscribe(iNetSubscriber *subscriber, MsgtypeCallback *callback, msgtype type, uint32_t flags = 0x01/*REQUIRE_READY_CLIENT*/);
 
     /// Remove subscriber from list
     virtual bool Unsubscribe(iNetSubscriber *subscriber, msgtype type);
