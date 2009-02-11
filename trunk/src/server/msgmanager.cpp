@@ -45,15 +45,16 @@ bool MessageManager::Verify(MsgEntry *pMsg,unsigned int flags,Client*& client)
     gemActor  *actor;
     gemNPC    *npc;
 
+    if (flags == NO_VALIDATION)
+        return true; // Nothing to validate
+
     client = psserver->GetConnections()->FindAny(pMsg->clientnum);
     if (!client)
     {
-        Warning2(LOG_NET,"MessageManager got unknown client %d!",pMsg->clientnum);
+        Warning2(LOG_NET, "MessageManager got unknown client %d!", pMsg->clientnum);
         return false;
     }
-
-    if (flags == NO_VALIDATION)
-        return true;
+    
     if (flags & REQUIRE_READY_CLIENT)
     {
         // Infer the client MUST be ready to have sent this message.
