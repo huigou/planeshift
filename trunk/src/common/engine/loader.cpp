@@ -1079,7 +1079,7 @@ iMaterialWrapper* Loader::LoadMaterial(const char *name, const char *filename)
 
             // Gloss map
             shadermap = shadermapBase;
-            shadermap.Append("_sgdds");
+            shadermap.Append("_g.dds");
             if(vfs->Exists(shadermap))
             {
                 iTextureWrapper* t = LoadTexture(shadermap, shadermap);
