@@ -136,6 +136,8 @@ public:
     void ClearEquipment(const char* slot = NULL);
 
     void CheckMeshLoad();
+
+    void SetSneak(bool sneaking);
     
 private:
     /** Parse a string from it's parts into a proper string.
@@ -227,6 +229,8 @@ private:
     
     bool eyeColorSet;                                   // Flag if eye colour set.
     bool hairColorSet;                                  // Flag if hair colour set.
+
+    bool sneak;                                         // Flag if we're in sneak mode.
     
     csString faceMaterial;                              // Default face materail.
     csArray<SkinToneSet> skinToneSet;                   // Default skin colours. 

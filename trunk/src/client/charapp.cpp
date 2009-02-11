@@ -30,6 +30,8 @@
 #include "psclientchar.h"
 #include "globals.h"
 
+static const uint meshCount = 9;
+static const char* meshNames[meshCount] = { "Head", "Torso", "Hand", "Legs", "Foot", "Arm", "Eyes", "Hair", "Beard" };
 
 psCharAppearance::psCharAppearance(iObjectRegistry* objectReg)
 {
@@ -47,6 +49,7 @@ psCharAppearance::psCharAppearance(iObjectRegistry* objectReg)
     eyeColorSet = false;
     hairAttached = true;
     hairColorSet = false;
+    sneak = false;
 }
 
 psCharAppearance::~psCharAppearance()
@@ -842,4 +845,33 @@ void psCharAppearance::Clone(psCharAppearance* clone)
     this->hairAttached  = clone->hairAttached;
     this->hairColorSet  = clone->hairColorSet;
     this->effectids     = clone->effectids;
+}
+
+void psCharAppearance::SetSneak(bool sneaking)
+{
+    if(sneak != sneaking)
+    {
+        sneak = sneaking;
+
+        CS::ShaderVarStringID varName = stringSet->Request("alpha factor");
+        for(uint i=0; i<meshCount; i++)
+        {
+            iShaderVariableContext* context = state->GetCoreMeshShaderVarContext(meshNames[i]);
+            if(context)
+            {
+                csShaderVariable* var = context->GetVariableAdd(varName);
+                if(var)
+                {
+                  if(sneak)
+                  {
+                      var->SetValue(0.5f);
+                  }
+                  else
+                  {
+                      var->SetValue(1.0f);
+                  }
+                }
+            }
+        }
+    }
 }
