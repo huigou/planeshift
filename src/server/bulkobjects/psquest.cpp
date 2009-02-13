@@ -364,6 +364,7 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, csRef<psQuestP
     }
     else if ( strcmp( topNode->GetValue(), "race" ) == 0 )
     {
+        printf("a\n");
         csString name = topNode->GetAttributeValue("name");
         if (name.IsEmpty())
         {
@@ -374,7 +375,7 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, csRef<psQuestP
         prerequisite.AttachNew(new psQuestPrereqOpRace(name));
     }
     else if ( strcmp( topNode->GetValue(), "gender" ) == 0 )
-    {
+    {printf("b\n");
         csString type = topNode->GetAttributeValue("type");
         if (type.IsEmpty())
         {
@@ -394,6 +395,17 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, csRef<psQuestP
         }
 
         prerequisite.AttachNew(new psQuestPrereqOpGuild(type));
+    }
+    else if ( strcmp( topNode->GetValue(), "marriage" ) == 0 )
+    {
+        csString type = topNode->GetAttributeValue("status");
+        if (type.IsEmpty())
+        {
+            Error1("No status given for marriage prerequisite operation");
+            return false;
+        }
+
+        prerequisite.AttachNew(new psQuestPrereqOpMarriage(type));
     }
     else if ( strcmp( topNode->GetValue(), "advisorpoints" ) == 0 )
     {

@@ -519,6 +519,41 @@ csPtr<psQuestPrereqOp> psQuestPrereqOpGuild::Copy()
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 
+bool psQuestPrereqOpMarriage::Check(psCharacter * character)
+{
+    //Requirements are always valid for quest testers
+    if(character->GetActor() && character->GetActor()->questtester)
+        return true;
+
+    if (character->GetIsMarried()) //the player is married?
+    {
+        return (status == "yes"); //it was what we where looking for?
+    }
+    else
+    {
+        return (status == "no");
+    }
+    return false;
+}
+
+csString psQuestPrereqOpMarriage::GetScriptOp()
+{
+    csString script;
+
+    script.Format("<marriage status=\"%s\"/>", status.GetData());
+
+    return script;
+}
+
+csPtr<psQuestPrereqOp> psQuestPrereqOpMarriage::Copy()
+{
+    csRef<psQuestPrereqOpMarriage> copy;
+    copy.AttachNew(new psQuestPrereqOpMarriage(status));
+    return csPtr<psQuestPrereqOp>(copy);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////
+
 bool psQuestPrereqOpTimeOnline::Check(psCharacter * character)
 {
     //Requirements are always valid for quest testers

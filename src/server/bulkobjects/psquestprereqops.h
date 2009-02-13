@@ -802,6 +802,56 @@ class psQuestPrereqOpGuild : public psQuestPrereqOp
 };
 
 /**
+ * Marriage prerequisite operator
+ *
+ * The actor must be married or not.
+ */
+class psQuestPrereqOpMarriage : public psQuestPrereqOp
+{
+ protected:
+    csString status;
+
+ public:
+
+    /**
+     * Construct a marriage operator
+     *
+     * @param status The type of guild the character must be
+     */
+    psQuestPrereqOpMarriage(const char *status):status(status){};
+
+    virtual ~psQuestPrereqOpMarriage() {}
+
+    /**
+     * Check if the character is married or not
+     *
+     * @param  character The character that are checking for a prerequisite
+     * @return True if the character is married or not.
+     */
+    virtual bool Check(psCharacter * character);
+
+    /**
+     * Convert the prerequisite operator to a xml string
+     *
+     * Convert the operator into the xml string:
+     * <marriage status="yes/no"/>
+     *
+     * @return XML string for the prerequisite operator.
+     */
+    virtual csString GetScriptOp();
+
+    /**
+     * Copy the prerequisite operator
+     *
+     * Override this function to return a copy of the prerequisite
+     * operator.
+     *
+     * @return Copy of the prerequisite operator.
+     */
+    virtual csPtr<psQuestPrereqOp> Copy();
+};
+
+/**
  * advisor points prerequisite operator
  *
  * The advisorpoints must be beetwen maxPoints and minPoints.
