@@ -396,16 +396,9 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, csRef<psQuestP
 
         prerequisite.AttachNew(new psQuestPrereqOpGuild(type));
     }
-    else if ( strcmp( topNode->GetValue(), "marriage" ) == 0 )
+    else if ( strcmp( topNode->GetValue(), "married" ) == 0 ) //wrap in <not></not> to reverse
     {
-        csString type = topNode->GetAttributeValue("status");
-        if (type.IsEmpty())
-        {
-            Error1("No status given for marriage prerequisite operation");
-            return false;
-        }
-
-        prerequisite.AttachNew(new psQuestPrereqOpMarriage(type));
+        prerequisite.AttachNew(new psQuestPrereqOpMarriage);
     }
     else if ( strcmp( topNode->GetValue(), "advisorpoints" ) == 0 )
     {

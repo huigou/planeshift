@@ -525,14 +525,8 @@ bool psQuestPrereqOpMarriage::Check(psCharacter * character)
     if(character->GetActor() && character->GetActor()->questtester)
         return true;
 
-    if (character->GetIsMarried()) //the player is married?
-    {
-        return (status == "yes"); //it was what we where looking for?
-    }
-    else
-    {
-        return (status == "no");
-    }
+    return character->GetIsMarried(); //is the character married?
+
     return false;
 }
 
@@ -540,7 +534,7 @@ csString psQuestPrereqOpMarriage::GetScriptOp()
 {
     csString script;
 
-    script.Format("<marriage status=\"%s\"/>", status.GetData());
+    script.Format("<married/>");
 
     return script;
 }
@@ -548,7 +542,7 @@ csString psQuestPrereqOpMarriage::GetScriptOp()
 csPtr<psQuestPrereqOp> psQuestPrereqOpMarriage::Copy()
 {
     csRef<psQuestPrereqOpMarriage> copy;
-    copy.AttachNew(new psQuestPrereqOpMarriage(status));
+    copy.AttachNew(new psQuestPrereqOpMarriage());
     return csPtr<psQuestPrereqOp>(copy);
 }
 

@@ -808,9 +808,6 @@ class psQuestPrereqOpGuild : public psQuestPrereqOp
  */
 class psQuestPrereqOpMarriage : public psQuestPrereqOp
 {
- protected:
-    csString status;
-
  public:
 
     /**
@@ -818,7 +815,7 @@ class psQuestPrereqOpMarriage : public psQuestPrereqOp
      *
      * @param status The type of guild the character must be
      */
-    psQuestPrereqOpMarriage(const char *status):status(status){};
+    psQuestPrereqOpMarriage() {};
 
     virtual ~psQuestPrereqOpMarriage() {}
 
