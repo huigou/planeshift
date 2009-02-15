@@ -385,6 +385,8 @@ bool ZoneHandler::ExecuteFlaggedRegions(const csString & sector)
             {
                 Debug2(LOG_LOAD, 0, "Setting background %s", found->loadImage.GetData());
                 loadWindow->SetBackground(found->loadImage.GetData());
+                loadWindow->AddText("Loading region");
+                loadWindow->Show();
                 psengine->ForceRefresh();
             }
 
