@@ -134,13 +134,14 @@ private:
     class Sector : public CS::Utility::FastRefCount<Sector>
     {
     public:
-        Sector(const char* name) : name(name), isLoading(false), objectCount(0), alwaysLoadedCount(0)
+        Sector(const char* name) : name(name), isLoading(false), checked(false), objectCount(0), alwaysLoadedCount(0)
         {
             ambient = csColor(0.0f);
         }
 
         csString name;
         bool isLoading;
+        bool checked;
         csString culler;
         csColor ambient;
         size_t objectCount;
@@ -160,13 +161,13 @@ private:
         {
         }
 
-        bool InRange(const csVector3& curpos, const csBox3& curBBox)
+        inline bool InRange(const csVector3& curpos, const csBox3& curBBox)
         {
             return !object.IsValid() && (alwaysLoaded ||
                 (hasBBox ? curBBox.Overlap(bbox) : csVector3(pos - curpos).Norm() <= Loader::GetSingleton().loadRange));
         }
 
-        bool OutOfRange(const csVector3& curpos, const csBox3& curBBox)
+        inline bool OutOfRange(const csVector3& curpos, const csBox3& curBBox)
         {
             return !alwaysLoaded && object.IsValid() &&
                 (hasBBox ? !curBBox.Overlap(bbox) : csVector3(pos - curpos).Norm() > Loader::GetSingleton().loadRange*1.5);
@@ -195,40 +196,14 @@ private:
         {
         }
 
-        bool InRange(const csVector3& pos)
+        inline bool InRange(const csVector3& pos, const csBox3& curBBox)
         {
-            if(mObject.IsValid())
-            {
-                return false;
-            }
-
-            for(size_t i=0; i<poly.GetVertexCount(); i++)
-            {
-                if(csVector3(poly.GetVertices()[i] - pos).Norm() <= Loader::GetSingleton().loadRange)
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return !mObject.IsValid() && curBBox.Overlap(bbox);
         }
 
-        bool OutOfRange(const csVector3& pos)
+        inline bool OutOfRange(const csVector3& pos, const csBox3& curBBox)
         {
-            if(!mObject.IsValid())
-            {
-                return false;
-            }
-
-            for(size_t i=0; i<poly.GetVertexCount(); i++)
-            {
-                if(csVector3(poly.GetVertices()[i] - pos).Norm() <= Loader::GetSingleton().loadRange*1.5)
-                {
-                    return false;
-                }
-            }
-
-            return true;
+            return mObject.IsValid() && !curBBox.Overlap(bbox);
         }
 
         csString name;
@@ -240,6 +215,7 @@ private:
         bool zfill;
         bool warp;
         csPoly3D poly;
+        csBox3 bbox;
 
         csRef<Sector> targetSector;
         iPortal* pObject;
