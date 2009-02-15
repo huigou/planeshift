@@ -202,12 +202,12 @@ void ZoneHandler::HandleMessage(MsgEntry* me)
         return;
     }
 
-    if(!psengine->ThreadedLoading())
+    if(!psengine->ThreadedWorldLoading())
     {
         FlagRegions(zone);
     }
 
-    if (psengine->ThreadedLoading() || world->NeedsLoading(zone->transitional))
+    if (psengine->ThreadedWorldLoading() || world->NeedsLoading(zone->transitional))
     {
         SetMapLoadNeeded(true);
         sectorToLoad = msg.newSector;
@@ -371,7 +371,7 @@ bool ZoneHandler::ExecuteFlaggedRegions(const csString & sector)
 {
     ZoneLoadInfo* found = FindZone(sector);
     bool background = true;
-    if(!psengine->ThreadedLoading())
+    if(!psengine->ThreadedWorldLoading())
     {
         background = false;
     }
@@ -415,7 +415,7 @@ bool ZoneHandler::ExecuteFlaggedRegions(const csString & sector)
         }
         else
         {
-            executed = world->ExecuteFlaggedRegions(found->transitional, psengine->UnloadingLast());
+            executed = world->ExecuteFlaggedRegions(found->transitional);
         }
 
         switch(executed)

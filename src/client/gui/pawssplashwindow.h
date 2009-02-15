@@ -33,10 +33,7 @@ public:
     void Draw(); 
     
 private:
-    bool firstDraw;
-    bool playingSplashMusic; 
-    
-    pawsProgressBar* bar;        
+    bool firstDraw;      
 };
 
 CREATE_PAWS_FACTORY( pawsSplashWindow );

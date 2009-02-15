@@ -20,10 +20,10 @@
 #include <psconfig.h>
 #include <iutil/objreg.h>
 
+#include "engine/loader.h"
 #include "net/cmdhandler.h"
 #include "net/msghandler.h"
 #include "net/messages.h"
-#include "clientcachemanager.h"
 
 #include "../globals.h"
 #include "paws/pawslistbox.h"
@@ -162,19 +162,11 @@ bool pawsGMSpawnWindow::OnSelected(pawsWidget* widget)
             psString fact_name(item.mesh);
             fact_name.ReplaceAllSubString("$H", "stonebm");
             item.mesh = fact_name;
+            factName = item.mesh;
 
-            psString file_name(filename);
-            file_name.ReplaceAllSubString("$H", "stonebm");
-            filename = file_name;
-
-            csRef<iMeshFactoryWrapper> factory = psengine->GetEngine()->GetMeshFactories()->FindByName (item.mesh);
+            csRef<iMeshFactoryWrapper> factory = psengine->GetLoader()->LoadFactory(factName);
             if(!factory)
             {
-                // Try loading the mesh again
-                if (!psengine->GetFileNameByFact(item.mesh, filename))
-                {
-                    Error2("Mesh Factory %s not found", item.mesh.GetData() );
-                }
                 loaded = false;
                 CheckMeshLoad();
             }
@@ -203,8 +195,7 @@ bool pawsGMSpawnWindow::OnSelected(pawsWidget* widget)
         lockStr->SetText("5");
         imagename->SetText(item.icon);
         factname->SetText(item.mesh);
-        //we need to check if the factory was found and get the updated filename to show it
-        meshname->SetText(item.mesh && psengine->GetFileNameByFact(item.mesh, filename) ? filename: "");
+        meshname->SetText(item.name);
 
         cbLockable->Show();
         cbLocked->Show();
@@ -230,12 +221,11 @@ void pawsGMSpawnWindow::CheckMeshLoad()
 {
     if(!loaded)
     {
-        FactoryIndexEntry* indexEntry = psengine->GetCacheManager()->GetFactoryEntry(filename);
-
-        if(indexEntry && indexEntry->factory)
+        csRef<iMeshFactoryWrapper> factory = psengine->GetLoader()->LoadFactory(factName);
+        if(factory.IsValid())
         {
             psengine->UnregisterDelayedLoader(this);
-            objView->View(indexEntry->factory);
+            objView->View(factory);
             loaded = true;
         }
         else

@@ -29,8 +29,7 @@
 
 pawsSplashWindow::pawsSplashWindow()
 {
-    firstDraw = true;
-    playingSplashMusic = false;       
+    firstDraw = true;     
 }
 
 pawsSplashWindow::~pawsSplashWindow()
@@ -38,9 +37,7 @@ pawsSplashWindow::~pawsSplashWindow()
 }
 
 bool pawsSplashWindow::PostSetup()
-{       
-    bar = (pawsProgressBar*) FindWidget("Progress");
-    bar->Hide();
+{
     return true;    
 }
 
@@ -54,21 +51,11 @@ void pawsSplashWindow::Draw()
         return;
     }
     
-    if ( !playingSplashMusic)
-    {
-        if(psengine->GetSoundStatus() && psengine->PreloadingModels())
-        {
-            psengine->GetSoundManager()->StartMusicSound("splash");
-        }
-        psengine->Initialize( 1 );
-        playingSplashMusic=true;
-    }
-         
-     
-    if ( bar->IsDone() )
-    {
-        PawsManager::GetSingleton().LoadWidget("data/gui/loginwindow.xml");                    
-        Hide();
-    }
+    psengine->Initialize(1);
+    PawsManager::GetSingleton().LoadWidget("data/gui/loginwindow.xml");
+    Hide();
+    PawsManager::GetSingleton().GetMouse()->ChangeImage("Standard Mouse Pointer");
+    PawsManager::GetSingleton().GetMouse()->Hide(false);
+    delete this;
 }
 

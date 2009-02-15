@@ -344,7 +344,7 @@ public:
     virtual const char* GetName() { return name; }
     virtual void ChangeName(const char* name);
 
-    const char* GetFactName() { return factname; }
+    const char* GetFactName() { return factName; }
 
     psEffect* GetEntityLabel() { return entitylabel; }
     void      SetEntityLabel(psEffect* el) { entitylabel = el; }
@@ -391,8 +391,7 @@ protected:
     static psCelClient *cel;
 
     csString name;
-    csString factname;
-    csString filename;
+    csString factName;
     EID eid;
     int type;
 

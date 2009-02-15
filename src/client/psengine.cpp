@@ -118,7 +118,6 @@ if (!myref)                                                  \
 #include "util/consoleout.h"
 #include "entitylabels.h"
 #include "chatbubbles.h"
-#include "clientcachemanager.h"
 #include "questionclient.h"
 
 /////////////////////////////////////////////////////////////////////////////
@@ -219,7 +218,6 @@ psEngine::psEngine (iObjectRegistry *objectreg)
     loadstate = LS_NONE;
     loadError = false;
 
-    cachemanager = NULL;
     charmanager = NULL;
     guiHandler = NULL;
     charController = NULL;
@@ -234,11 +232,6 @@ psEngine::psEngine (iObjectRegistry *objectreg)
 
     loadtimeout = 10;  // Default load timeout
 
-    modelsInit = false;
-    preloadModels = false;
-    modelsLoaded = false;
-    okToLoadModels = false;
-    modelToLoad = (size_t)-1;
     drawScreen = true;
 
     cal3DCallbackLoader = csPtr<psCal3DCallbackLoader> (new psCal3DCallbackLoader(objectreg));
@@ -299,7 +292,6 @@ void psEngine::Cleanup()
     delete paws; // Include delete of mainWidget
 
     delete questionclient;
-    delete cachemanager;
     delete slotManager;
     delete mouseBinds;
     delete guiHandler;
@@ -388,9 +380,6 @@ bool psEngine::Initialize (int level)
         {
             return false;
         }
-
-        // Check if we're preloading models.
-        preloadModels = (cmdline->GetBoolOption("preload_models", false) || GetConfig()->GetBool("PlaneShift.Loading.PreloadModels", false));
 
         // Check if we're using basic or more advanced shaders.
         csString advanced("Advanced");
@@ -534,6 +523,53 @@ bool psEngine::Initialize (int level)
     }
     else if (level==1)
     {
+        threadedWorldLoading = csString("Threaded").Compare(psengine->GetConfig()->GetStr("PlaneShift.Loading.WorldLoad", "NThreaded"));
+        loader = new Loader();
+        Loader::GetSingleton().Init(object_reg, gfxFeatures, 200);
+
+        // Fill the loader cache.
+        csRef<iStringArray> dirs = vfs->FindFiles("/planeshift/models/");
+        for(size_t i=0; i<dirs->GetSize(); ++i)
+        {
+            csRef<iStringArray> files = vfs->FindFiles(dirs->Get(i));
+            for(size_t j=0; j<files->GetSize(); ++j)
+            {
+                csString file = files->Get(j);
+                if(file.Find(".cal3d", file.Length()-7) != size_t(-1))
+                {
+                    modelPrecaches.Push(Loader::GetSingleton().PrecacheData(files->Get(j), false));
+                }
+            }
+        }
+
+        dirs = vfs->FindFiles("/planeshift/");
+        for(size_t i=0; i<dirs->GetSize(); ++i)
+        {
+            csRef<iStringArray> files = vfs->FindFiles(dirs->Get(i));
+            for(size_t j=0; j<files->GetSize(); ++j)
+            {
+                csString file = files->Get(j);
+                if(file.Find(".meshfact", file.Length()-10) != size_t(-1))
+                {
+                    modelPrecaches.Push(Loader::GetSingleton().PrecacheData(files->Get(j), false));
+                }
+            }
+        }
+
+        if(threadedWorldLoading)
+        {
+            csString path;
+            csRef<iStringArray> maps = vfs->FindFiles("/planeshift/world/");
+            for(size_t i=0; i<maps->GetSize(); ++i)
+            {
+                csRef<iDataBuffer> tmp = vfs->GetRealPath(maps->Get(i));
+                path.AppendFmt("%s, ", tmp->GetData());
+                csString vpath(maps->Get(i));
+                vpath.Append("/world");
+                mapPrecaches.Push(Loader::GetSingleton().PrecacheData(vpath.GetData(), false));
+            }
+            vfs->Mount("/planeshift/maps/", path);
+        }
 
         // Initialize Networking
         if (!netmanager)
@@ -555,7 +591,6 @@ bool psEngine::Initialize (int level)
         modehandler = csPtr<ModeHandler> (new ModeHandler (soundmanager, celclient,netmanager->GetMsgHandler(),object_reg));
         actionhandler = csPtr<ActionHandler> ( new ActionHandler ( netmanager->GetMsgHandler(), object_reg ) );
         zonehandler = csPtr<ZoneHandler> (new ZoneHandler(netmanager->GetMsgHandler(),object_reg,celclient));
-        cachemanager = new ClientCacheManager();
         questionclient = new psQuestionClient(GetMsgHandler(), object_reg);
 
         if (cmdline)
@@ -565,8 +600,6 @@ bool psEngine::Initialize (int level)
 
         zonehandler->SetLoadAllMaps(GetConfig()->GetBool("PlaneShift.Client.Loading.AllMaps",false));
         zonehandler->SetKeepMapsLoaded(GetConfig()->GetBool("PlaneShift.Client.Loading.KeepMaps",false));
-
-        unloadLast = GetConfig()->GetBool("PlaneShift.Client.Loading.UnloadLast", true);
 
         if (!celclient->Initialize(object_reg, GetMsgHandler(), zonehandler))
         {
@@ -619,29 +652,8 @@ bool psEngine::Initialize (int level)
             return 1;
         }
 
-        threadedLoading = !psengine->GetConfig()->GetBool("ThreadManager.AlwaysRunNow");
-
-        loader = new Loader();
-        Loader::GetSingleton().Init(object_reg, preloadModels, gfxFeatures, 200);
-
-        if(threadedLoading)
-        {
-            csString path;
-            csRef<iStringArray> maps = vfs->FindFiles("/planeshift/world/");
-            for(size_t i=0; i<maps->GetSize(); i++)
-            {
-                csRef<iDataBuffer> tmp = vfs->GetRealPath(maps->Get(i));
-                path.AppendFmt("%s, ", tmp->GetData());
-                csString path(maps->Get(i));
-                path.Append("/world");
-                precaches.Push(Loader::GetSingleton().PrecacheData(path.GetData(), false));
-            }
-            vfs->Mount("/planeshift/maps/", path);
-        }
-
-        okToLoadModels = true;
-                
-        return true;
+        csRef<iThreadManager> tm = csQueryRegistry<iThreadManager>(object_reg);
+        tm->Wait(modelPrecaches);
     }
 
     return true;
@@ -861,39 +873,7 @@ bool psEngine::Process3D(iEvent& ev)
     // Loading the game
     if (loadstate != LS_DONE)
     {
-        if(!modelsLoaded && okToLoadModels)
-        {
-            if(preloadModels)
-            {
-                // Preload models in spare time.
-                PreloadModels();
-            }
-            else
-            {
-                // Load the cal3d model names.
-                PreloadSubDir("");
-                // Load the item model names.
-                PreloadItemsDir();
-                BuildFactoryList();
-                Debug1(LOG_ADMIN,0, "Preloading complete");
-
-                delete paws->FindWidget("SplashWindow");
-                paws->LoadWidget("data/gui/loginwindow.xml");
-
-                paws->GetMouse()->ChangeImage("Standard Mouse Pointer");
-                paws->GetMouse()->Hide(false);
-
-                modelsLoaded = true;
-            }
-        }
-
-        /* Try forwarding loading every 10th frame... not that
-        * nice... but our guy doesn't produce idle events at the
-        * moment :(
-        */
-        static unsigned int count = 0;
-        if (++count%10 == 0)
-            LoadGame();
+        LoadGame();
     }
     // Update the sound system
     else if (GetSoundStatus())
@@ -1242,14 +1222,14 @@ void psEngine::LoadGame()
 
         // Make sure all the maps have been precached.
         bool precached = true;
-        for(size_t i=0; i<precaches.GetSize(); i++)
+        for(size_t i=0; i<mapPrecaches.GetSize(); i++)
         {
-            precached &= precaches[i]->IsFinished();
+            precached &= mapPrecaches[i]->IsFinished();
         }
 
         if(precached)
         {
-            precaches.Empty();
+            mapPrecaches.Empty();
             vfs->SetSyncDir("/planeshift/maps/");
         }
         else
@@ -1472,195 +1452,6 @@ psMouseBinds* psEngine::GetMouseBinds()
             Error1("Failed to load mouse options");
     }
     return mouseBinds;
-}
-
-bool psEngine::GetFileNameByFact(csString factName, csString& fileName)
-{
-    csString notfound = "MESH_NOT_FOUND", tempfilename;
-    tempfilename = factfilenames.Get(factName, notfound);
-    if (tempfilename == notfound)
-        return false;
-    fileName = tempfilename;
-    return true;
-}
-
-inline void psEngine::PreloadModels()
-{
-    /// Models are already finished loading
-    if(modelsLoaded)
-    {
-        return;
-    }
-
-    static pawsProgressBar* bar = NULL;
-    if (!bar)
-        bar = (pawsProgressBar*)paws->FindWidget("SplashWindow")->FindWidget("Progress");
-    bar->Show();
-
-    /// Load the models
-    if(!modelsInit)
-    {
-        // Load the cal3d model names.
-        PreloadSubDir("");
-        // Load the item model names.
-        PreloadItemsDir();
-        modelToLoad = 0;
-
-        bar->SetTotalValue( modelnames.GetSize() );
-
-        for(size_t i=0; i<modelnames.GetSize(); i++)
-        {
-          cachemanager->GetFactoryEntry(modelnames.Get(i));
-        }
-        modelsInit = true;
-    }
-    else
-    {
-        if (modelnames.GetSize()-1 < modelToLoad)
-        {
-            BuildFactoryList();
-            cachemanager->Precache();
-            Debug1(LOG_ADMIN,0, "Preloading complete");
-
-            delete paws->FindWidget("SplashWindow");
-            paws->LoadWidget("data/gui/loginwindow.xml");
-
-            paws->GetMouse()->ChangeImage("Standard Mouse Pointer");
-            paws->GetMouse()->Hide(false);
-
-            modelsLoaded = true;
-            return;
-        }
-
-        // Now build the index..
-        if(cachemanager->GetFactoryEntry(modelnames.Get(modelToLoad)))
-        {
-            modelToLoad++;
-            bar->SetCurrentValue( modelToLoad );
-        }
-    }
-}
-
-void psEngine::BuildFactoryList()
-{
-    for (size_t i = 0 ; i < modelnames.GetSize() ; i++)
-    {
-        csString filename = modelnames.Get(i);
-
-        // Check if the file exists
-        if (!GetVFS()->Exists(filename))
-        {
-            Error2("Couldn't find file %s",filename.GetData());
-            continue;
-        }
-
-        csRef<iDocument> doc = ParseFile(GetObjectRegistry(),filename);
-        if (!doc)
-        {
-            Error2("Couldn't parse file %s",filename.GetData());
-            continue;
-        }
-
-        csRef<iDocumentNode> root = doc->GetRoot();
-        if (!root)
-        {
-            Error2("The file(%s) doesn't have a root",filename.GetData());
-            continue;
-        }
-
-        csRef<iDocumentNode> meshNode;
-        csRef<iDocumentNode> libNode = root->GetNode("library");
-        if (libNode)
-            meshNode = libNode->GetNode("meshfact");
-        else
-            meshNode = root->GetNode("meshfact");
-        if (!meshNode)
-        {
-            Error2("The file(%s) doesn't have a meshfact or library node", filename.GetData());
-            continue;
-        }
-
-        csString factname = meshNode->GetAttributeValue("name");
-        factfilenames.PutUnique(factname, filename);
-    }
-}
-
-void psEngine::PreloadItemsDir()
-{
-  /// Models are already finished loaded
-  if (modelsLoaded)
-    return;
-
-  csRef<iDataBuffer> xpath = vfs->ExpandPath("/planeshift/");
-  csRef<iStringArray> files = vfs->FindFiles( **xpath );
-
-  if (!files)
-    return;
-
-  for (size_t i=0; i < files->GetSize(); i++)
-  {
-    csString filename = files->Get(i);
-
-    // Do it this way because if we do it by recursing (whatever) it will loop through a lot of
-    // stuff we don't want to load
-    if (filename.GetAt(filename.Length()-1) == '/')
-    {
-      csRef<iDataBuffer> xpath2 = vfs->ExpandPath(filename);
-      csRef<iStringArray> files2 = vfs->FindFiles( **xpath2 );
-
-      if (files2)
-      {
-        for (size_t i=0; i < files2->GetSize(); i++)
-        {
-          csString localName= files2->Get(i);
-          if (localName.Slice(localName.Length()-9,9) != ".meshfact")
-            continue;
-
-          modelnames.Push(localName);
-        }
-      }
-      continue;
-    }
-
-    if (filename.Slice(filename.Length()-9,9) != ".meshfact")
-      continue;
-
-    modelnames.Push(filename);
-  }
-}
-
-void psEngine::PreloadSubDir(const char* dirname)
-{
-    /// Models are already finished loaded
-    if (modelsLoaded)
-        return;
-
-    if (modelToLoad == (size_t)-1)
-    {
-        csRef<iDataBuffer> xpath = vfs->ExpandPath("/planeshift/models/" + csString(dirname));
-        csRef<iStringArray> files = vfs->FindFiles( **xpath );
-
-        if (!files)
-            return;
-
-        for (size_t i=0; i < files->GetSize(); i++)
-        {
-            csString filename = files->Get(i);
-            size_t length = strlen("/planeshift/models/");
-            csString localName = filename.Slice(length,filename.Length() - length);
-
-            if (localName.GetAt(localName.Length()-1) == '/')
-            {
-                PreloadSubDir(localName);
-                continue;
-            }
-
-            if (localName.Slice(localName.Length()-6,6) != ".cal3d")
-                continue;
-
-            modelnames.Push("/planeshift/models/"+localName.Slice(0,localName.Length()));
-        }
-    }
 }
 
 size_t psEngine::GetTime()

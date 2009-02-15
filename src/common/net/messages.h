@@ -2953,7 +2953,6 @@ public:
                     int type,
                     const char* name,
                     const char* factname,
-                    const char* filename,
                     const char* sector,
                     csVector3 pos,
                     float xRot,
@@ -2976,7 +2975,6 @@ public:
 
     csString name;
     csString factname;
-    csString filename;
     csString sector;
     csVector3 pos;
     float xRot;

@@ -35,10 +35,9 @@
 #include "util/strutil.h"
 #include "globals.h"
 
-void Loader::Init(iObjectRegistry* object_reg, bool keepModels, uint gfxFeatures, float loadRange)
+void Loader::Init(iObjectRegistry* object_reg, uint gfxFeatures, float loadRange)
 {
     this->object_reg = object_reg;
-    this->keepModels = keepModels;
     this->gfxFeatures = gfxFeatures;
     this->loadRange = loadRange;
 
@@ -55,15 +54,15 @@ void Loader::Init(iObjectRegistry* object_reg, bool keepModels, uint gfxFeatures
     txtmgr = g3d->GetTextureManager();
 
     engine->SetClearZBuf(true);
-
-    if(keepModels)
-    {
-        PreloadTextures();
-    }
 }
 
 THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
 {
+    // Don't parse folders.
+    csString folder(path);
+    if(folder.GetAt(folder.Length()-1) == '/')
+        return false;
+
     if(vfs->Exists(path))
     {
         csRef<iDocumentSystem> docsys = csQueryRegistry<iDocumentSystem>(object_reg);
@@ -76,6 +75,10 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
         }
 
         doc->Parse(data, true);
+
+        // Check that it's an xml file.
+        if(!doc->GetRoot())
+            return false;
 
         csRef<iDocumentNode> root = doc->GetRoot()->GetNode("library");
         if(!root.IsValid())
@@ -92,7 +95,7 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
             while(nodeItr->HasNext())
             {
                 node = nodeItr->Next();
-                PrecacheData(node->GetContentsValue(), true);
+                PrecacheDataTC(ret, node->GetContentsValue(), true);
             }
 
             node = root->GetNode("plugins");
@@ -123,11 +126,11 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                     node = nodeItr->Next();
                     csRef<Texture> t = csPtr<Texture>(new Texture());
                     {
+                        t->name = node->GetAttributeValue("name");
+                        t->data = node;
                         CS::Threading::MutexScopedLock lock(tLock);
-                        textures.Push(t);
+                        textures.Put(t->name, t);
                     }
-                    t->name = node->GetAttributeValue("name");
-                    t->data = node;
                 }
             }
 
@@ -141,7 +144,7 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                     csRef<Material> m = csPtr<Material>(new Material(node->GetAttributeValue("name")));
                     {
                         CS::Threading::MutexScopedLock lock(mLock);
-                        materials.Push(m);
+                        materials.Put(m->name, m);
                     }
 
                     if(node->GetNode("texture"))
@@ -152,13 +155,14 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                         m->shadervars.Push(sv);
 
                         CS::Threading::MutexScopedLock lock(tLock);
-                        for(size_t i=0; i<textures.GetSize(); i++)
+                        csRef<Texture> texture = textures.Get(node->GetContentsValue(), csRef<Texture>());
                         {
-                            if(textures[i]->name.Compare(node->GetContentsValue()))
-                            {
-                                m->textures.Push(textures[i]);
-                            }
+                            // Validation.
+                            csString msg;
+                            msg.Format("Invalid texture reference '%s' in material '%s'", node->GetContentsValue(), node->GetParent()->GetAttributeValue("name"));
+                            CS_ASSERT_MSG(msg.GetData(), texture.IsValid());
                         }
+                        m->textures.Push(texture);
 
                         node = node->GetParent();
                     }
@@ -181,13 +185,14 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                             sv.value = node->GetContentsValue();
                             m->shadervars.Push(sv);
                             CS::Threading::MutexScopedLock lock(tLock);
-                            for(size_t i=0; i<textures.GetSize(); i++)
+                            csRef<Texture> texture = textures.Get(node->GetContentsValue(), csRef<Texture>());
                             {
-                                if(textures[i]->name.Compare(node->GetContentsValue()))
-                                {
-                                    m->textures.Push(textures[i]);
-                                }
+                                // Validation.
+                                csString msg;
+                                msg.Format("Invalid texture reference '%s' in shadervar", node->GetContentsValue());
+                                CS_ASSERT_MSG(msg.GetData(), texture.IsValid());
                             }
+                            m->textures.Push(texture);
                         }
                         else if(csString("vector2").Compare(node->GetAttributeValue("type")))
                         {
@@ -212,14 +217,31 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                     if(node2->GetNode("material"))
                     {
                         CS::Threading::MutexScopedLock lock(mLock);
-                        for(size_t i=0; i<materials.GetSize(); i++)
+                        csRef<Material> material = materials.Get(node2->GetNode("material")->GetContentsValue(), csRef<Material>());
                         {
-                            if(materials[i]->name.Compare(node2->GetNode("material")->GetContentsValue()))
-                            {
-                                mf->materials.PushSmart(materials[i]);
-                            }
+                            // Validation.
+                            csString msg;
+                            msg.Format("Invalid material reference '%s' in meshfact '%s'", node2->GetNode("material")->GetContentsValue(), node->GetAttributeValue("name"));
+                            CS_ASSERT_MSG(msg.GetData(), material.IsValid());
                         }
+
+                        mf->materials.Push(material);
                     }
+                }
+
+                nodeItr3 = node->GetNode("params")->GetNodes("mesh");
+                while(nodeItr3->HasNext())
+                {
+                    csRef<iDocumentNode> node2 = nodeItr3->Next();
+                    CS::Threading::MutexScopedLock lock(mLock);
+                    csRef<Material> material = materials.Get(node2->GetAttributeValue("material"), csRef<Material>());
+                    {
+                        // Validation.
+                        csString msg;
+                        msg.Format("Invalid material reference '%s' in cal3d meshfact '%s'", node2->GetAttributeValue("material"), node->GetAttributeValue("name"));
+                        CS_ASSERT_MSG(msg.GetData(), material.IsValid());
+                    }
+                    mf->materials.Push(material);
                 }
 
                 if(node->GetNode("params")->GetNode("cells"))
@@ -227,13 +249,15 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                     node = node->GetNode("params")->GetNode("cells")->GetNode("celldefault")->GetNode("basematerial");
                     {
                         CS::Threading::MutexScopedLock lock(mLock);
-                        for(size_t i=0; i<materials.GetSize(); i++)
+                        csRef<Material> material = materials.Get(node->GetContentsValue(), csRef<Material>());
                         {
-                            if(materials[i]->name.Compare(node->GetContentsValue()))
-                            {
-                                mf->materials.PushSmart(materials[i]);
-                            }
+                            // Validation.
+                            csString msg;
+                            msg.Format("Invalid basematerial reference '%s' in terrain mesh", node->GetContentsValue());
+                            CS_ASSERT_MSG(msg.GetData(), material.IsValid());
                         }
+
+                        mf->materials.Push(material);
                     }
                     node = node->GetParent()->GetParent();
 
@@ -249,20 +273,22 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                             {
                                 csRef<iDocumentNode> node2 = nodeItr4->Next();
                                 CS::Threading::MutexScopedLock lock(mLock);
-                                for(size_t i=0; i<materials.GetSize(); i++)
+                                csRef<Material> material = materials.Get(node2->GetAttributeValue("material"), csRef<Material>());
                                 {
-                                    if(materials[i]->name.Compare(node2->GetAttributeValue("material")))
-                                    {
-                                        mf->materials.PushSmart(materials[i]);
-                                    }
+                                    // Validation.
+                                    csString msg;
+                                    msg.Format("Invalid alphamap reference '%s' in terrain mesh", node2->GetAttributeValue("material"));
+                                    CS_ASSERT_MSG(msg.GetData(), material.IsValid());
                                 }
+
+                                mf->materials.Push(material);
                             }
                         }
                     }
                 }
 
                 CS::Threading::MutexScopedLock lock(mfLock);
-                meshfacts.Push(mf);
+                meshfacts.Put(mf->name, mf);
             }
 
             nodeItr = root->GetNodes("sector");
@@ -336,13 +362,15 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                         if(node3->GetNode("material"))
                         {
                             CS::Threading::MutexScopedLock lock(mLock);
-                            for(size_t i=0; i<materials.GetSize(); i++)
+                            csRef<Material> material = materials.Get(node3->GetNode("material")->GetContentsValue(), csRef<Material>());
                             {
-                                if(materials[i]->name.Compare(node3->GetNode("material")->GetContentsValue()))
-                                {
-                                    m->materials.PushSmart(materials[i]);
-                                }
+                                // Validation.
+                                csString msg;
+                                msg.Format("Invalid material reference '%s' in meshobj submesh", node3->GetNode("material")->GetContentsValue());
+                                CS_ASSERT_MSG(msg.GetData(), material.IsValid());
                             }
+
+                            m->materials.Push(material);
                         }
 
                         csRef<iDocumentNodeIterator> nodeItr4 = node3->GetNodes("shadervar");
@@ -352,13 +380,15 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                             if(csString("texture").Compare(node3->GetAttributeValue("type")))
                             {
                                 CS::Threading::MutexScopedLock lock(tLock);
-                                for(size_t i=0; i<textures.GetSize(); i++)
+                                csRef<Texture> texture = textures.Get(node3->GetContentsValue(), csRef<Texture>());
                                 {
-                                    if(textures[i]->name.Compare(node3->GetContentsValue()))
-                                    {
-                                        m->textures.PushSmart(textures[i]);
-                                    }
+                                    // Validation.
+                                    csString msg;
+                                    msg.Format("Invalid texture reference '%s' in meshobj shadervar", node3->GetContentsValue());
+                                    CS_ASSERT_MSG(msg.GetData(), texture.IsValid());
                                 }
+
+                                m->textures.Push(texture);
                             }
                         }
                     }
@@ -366,53 +396,55 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                     node2 = node2->GetNode("params")->GetNode("factory");
                     {
                         CS::Threading::MutexScopedLock lock(mfLock);
-                        for(size_t i=0; i<meshfacts.GetSize(); i++)
+                        csRef<MeshFact> meshfact = meshfacts.Get(node2->GetContentsValue(), csRef<MeshFact>());
                         {
-                            if(meshfacts[i]->name.Compare(node2->GetContentsValue()))
-                            {
-                                // Calc bbox data.
-                                csRef<iDocumentNodeIterator> keys = meshfacts[i]->data->GetNodes("key");
-                                while(keys->HasNext())
-                                {
-                                    csRef<iDocumentNode> bboxdata = keys->Next();
-                                    if(csString("bbox").Compare(bboxdata->GetAttributeValue("name")))
-                                    {
-                                        csRef<iDocumentNode> position = node2->GetParent()->GetParent()->GetNode("move");
-                                        if(position)
-                                        {
-                                            m->hasBBox = true;
-                                            csVector3 pos;
-                                            syntaxService->ParseVector(position->GetNode("v"), pos);
+                            // Validation.
+                            csString msg;
+                            msg.Format("Invalid factory reference '%s' in meshobj '%s'", node2->GetContentsValue(),
+                                node2->GetParent()->GetParent()->GetAttributeValue("name"));
+                            CS_ASSERT_MSG(msg.GetData(), meshfact.IsValid());
+                        }
 
-                                            csMatrix3 rot;
-                                            if(position->GetNode("matrix"))
-                                            {
-                                                syntaxService->ParseMatrix(position->GetNode("matrix"), rot);
-                                            }
-                                                                                        
-                                            csRef<iDocumentNodeIterator> vs = bboxdata->GetNodes("v");
-                                            while(vs->HasNext())
-                                            {
-                                                bboxdata = vs->Next();
-                                                csVector3 bPos;
-                                                syntaxService->ParseVector(bboxdata, pos);
-                                                if(position->GetNode("matrix"))
-                                                {
-                                                    m->bbox.AddBoundingVertex(rot*csVector3(pos+bPos));
-                                                }
-                                                else
-                                                {
-                                                    m->bbox.AddBoundingVertex(pos+bPos);
-                                                }
-                                            }
+                        // Calc bbox data.
+                        csRef<iDocumentNodeIterator> keys = meshfact->data->GetNodes("key");
+                        while(keys->HasNext())
+                        {
+                            csRef<iDocumentNode> bboxdata = keys->Next();
+                            if(csString("bbox").Compare(bboxdata->GetAttributeValue("name")))
+                            {
+                                csRef<iDocumentNode> position = node2->GetParent()->GetParent()->GetNode("move");
+                                if(position)
+                                {
+                                    m->hasBBox = true;
+                                    csVector3 pos;
+                                    syntaxService->ParseVector(position->GetNode("v"), pos);
+
+                                    csMatrix3 rot;
+                                    if(position->GetNode("matrix"))
+                                    {
+                                        syntaxService->ParseMatrix(position->GetNode("matrix"), rot);
+                                    }
+
+                                    csRef<iDocumentNodeIterator> vs = bboxdata->GetNodes("v");
+                                    while(vs->HasNext())
+                                    {
+                                        bboxdata = vs->Next();
+                                        csVector3 bPos;
+                                        syntaxService->ParseVector(bboxdata, pos);
+                                        if(position->GetNode("matrix"))
+                                        {
+                                            m->bbox.AddBoundingVertex(rot*csVector3(pos+bPos));
                                         }
-                                        break;
+                                        else
+                                        {
+                                            m->bbox.AddBoundingVertex(pos+bPos);
+                                        }
                                     }
                                 }
-
-                                m->meshfacts.PushSmart(meshfacts[i]);
+                                break;
                             }
                         }
+                        m->meshfacts.Push(meshfact);
                     }
                     node2 = node2->GetParent();
 
@@ -420,13 +452,15 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                     {
                         node2 = node2->GetNode("material");
                         CS::Threading::MutexScopedLock lock(mLock);
-                        for(size_t i=0; i<materials.GetSize(); i++)
+                        csRef<Material> material = materials.Get(node2->GetContentsValue(), csRef<Material>());
                         {
-                            if(materials[i]->name.Compare(node2->GetContentsValue()))
-                            {
-                                m->materials.PushSmart(materials[i]);
-                            }
+                            // Validation.
+                            csString msg;
+                            msg.Format("Invalid material reference '%s' in terrain object", node2->GetContentsValue());
+                            CS_ASSERT_MSG(msg.GetData(), material.IsValid());
                         }
+
+                        m->materials.Push(material);
                         node2 = node2->GetParent();
                     }
 
@@ -438,13 +472,15 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                         {
                             csRef<iDocumentNode> node3 = nodeItr3->Next();
                             CS::Threading::MutexScopedLock lock(mLock);
-                            for(size_t i=0; i<materials.GetSize(); i++)
+                            csRef<Material> material = materials.Get(node3->GetContentsValue(), csRef<Material>());
                             {
-                                if(materials[i]->name.Compare(node3->GetContentsValue()))
-                                {
-                                    m->materials.PushSmart(materials[i]);
-                                }
+                                // Validation.
+                                csString msg;
+                                msg.Format("Invalid material reference '%s' in terrain materialpalette", node3->GetContentsValue());
+                                CS_ASSERT_MSG(msg.GetData(), material.IsValid());
                             }
+
+                            m->materials.Push(material);
                         }
                     }
 
@@ -463,13 +499,15 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                                     if(csString("texture").Compare(node3->GetAttributeValue("type")))
                                     {
                                         CS::Threading::MutexScopedLock lock(tLock);
-                                        for(size_t i=0; i<textures.GetSize(); i++)
+                                        csRef<Texture> texture = textures.Get(node3->GetContentsValue(), csRef<Texture>());
                                         {
-                                            if(textures[i]->name.Compare(node3->GetContentsValue()))
-                                            {
-                                                m->textures.PushSmart(textures[i]);
-                                            }
+                                            // Validation.
+                                            csString msg;
+                                            msg.Format("Invalid texture reference '%s' in terrain renderproperties shadervar", node3->GetContentsValue());
+                                            CS_ASSERT_MSG(msg.GetData(), texture.IsValid());
                                         }
+
+                                        m->textures.Push(texture);
                                     }
                                 }
                             }
@@ -1019,6 +1057,24 @@ bool Loader::LoadTexture(Texture* texture)
     return true;
 }
 
+csPtr<iMeshFactoryWrapper> Loader::LoadFactory(const char* name)
+{
+    csRef<MeshFact> meshfact = meshfacts.Get(name, csRef<MeshFact>());
+    {
+        // Validation.
+        csString msg;
+        msg.Format("Invalid factory reference '%s'", name);
+        CS_ASSERT_MSG(msg.GetData(), meshfact.IsValid());
+    }
+
+    if(LoadMeshFact(meshfact))
+    {
+        return scfQueryInterface<iMeshFactoryWrapper>(meshfact->status->GetResultRefPtr());
+    }
+
+    return csPtr<iMeshFactoryWrapper>(0);
+}
+
 iMaterialWrapper* Loader::LoadMaterial(const char *name, const char *filename)
 {
     iMaterialWrapper* materialWrap = engine->GetMaterialList()->FindByName(name);
@@ -1141,79 +1197,4 @@ iTextureWrapper* Loader::LoadTexture(const char *name, const char *filename, con
         return false;
     }
     return texture;
-}
-
-bool Loader::LoadTextureDir(const char *dir)
-{
-    csRef<iDataBuffer> xpath = vfs->ExpandPath(dir);
-    csRef<iStringArray> files = vfs->FindFiles( **xpath );
-
-    if (!files)
-        return false;
-
-    for (size_t i=0; i < files->GetSize(); i++)
-    {
-        const char* filename = files->Get(i);
-        if (strcmp (filename + strlen(filename) - 4, ".png") && 
-            strcmp (filename + strlen(filename) - 4, ".tga") && 
-            strcmp (filename + strlen(filename) - 4, ".gif") && 
-            strcmp (filename + strlen(filename) - 4, ".bmp") && 
-            strcmp (filename + strlen(filename) - 4, ".jpg") &&
-            strcmp (filename + strlen(filename) - 4, ".dds"))
-            continue;
-
-        // If this is an icon or shader map texture then we don't load as a material.
-        if(strstr(filename, "_icon" ) || strstr(filename, "_n." ) || strstr(filename, "_h." ) ||
-            strstr(filename, "_s." ) || strstr(filename, "_g." ) || strstr(filename, "_ao." ))
-            continue;
-
-        const char* name = csStrNew(filename);
-        const char* onlyname = PS_GetFileName(name);
-
-        if (!LoadMaterial(onlyname,filename))
-        {
-            delete[] name;
-            return false;
-        }
-        delete[] name;
-    }
-    return true;
-}
-
-bool Loader::PreloadTextures()
-{
-    // characters
-    if (!LoadTextureDir("/planeshift/models/"))
-        return false;
-
-    // Load the textures for the weapons.
-    if (!LoadTextureDir("/planeshift/weapons/"))
-        return false;
-
-    if (!LoadTextureDir("/planeshift/shields/"))
-        return false;
-
-    // Load the textures for the items.
-    if (!LoadTextureDir("/planeshift/items/"))
-        return false;
-
-    // Load the textures for the spell effects
-    if (!LoadTextureDir("/planeshift/art/effects/"))
-        return false;
-
-    // Load the textures for the resources items
-    if (!LoadTextureDir("/planeshift/naturalres/"))
-        return false;
-
-    // Load the textures for the tools items
-    if (!LoadTextureDir("/planeshift/tools/"))
-        return false;
-
-    // Load the textures for the food items
-    if (!LoadTextureDir("/planeshift/food/"))
-        return false;
-
-    engine->SyncEngineListsNow(tloader);
-
-    return true;
 }

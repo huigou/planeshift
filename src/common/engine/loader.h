@@ -22,6 +22,7 @@
 
 #include <csgeom/poly3d.h>
 #include <csgfx/shadervar.h>
+#include <csutil/redblacktree.h>
 #include <csutil/scf_implementation.h>
 #include <csutil/threadmanager.h>
 
@@ -43,17 +44,14 @@ struct iSyntaxService;
 class Loader : public Singleton<Loader>, public ThreadedCallable<Loader>
 {
 public:
-    void Init(iObjectRegistry* _object_reg, bool _keepModels, uint gfxFeatures, float loadRange);
+    void Init(iObjectRegistry* _object_reg, uint gfxFeatures, float loadRange);
 
-    iMaterialWrapper* LoadMaterial (const char* name, const char* filename);
-
-    iTextureWrapper* LoadTexture (const char* name, const char* filename, const char* className = 0);
+    iTextureWrapper* LoadTexture(const char* name, const char* filename, const char* className = 0);
+    iMaterialWrapper* LoadMaterial(const char* name, const char* filename);
+    csPtr<iMeshFactoryWrapper> LoadFactory(const char* name);
 
     THREADED_CALLABLE_DECL2(Loader, PrecacheData, csThreadReturn, const char*, path, bool, recursive, THREADEDL, false, false);
     void UpdatePosition(const csVector3& pos, const char* sectorName, bool force);
-
-    bool PreloadTextures();
-    bool KeepModels() { return keepModels; }
 
     iThreadedLoader* GetLoader() { return tloader; }
 
@@ -62,52 +60,9 @@ public:
     iObjectRegistry* GetObjectRegistry() const { return object_reg; }
 
 private:
-    class Texture;
-    class Material;
-    class MeshFact;
-    class Sector;
-    class MeshObj;
-    class Portal;
-    class Light;
-
-    void CleanDisconnectedSectors(Sector* sector);
-    void FindConnectedSectors(csRefArray<Sector>& connectedSectors, Sector* sector);
-    void CleanSector(Sector* sector);
-    void LoadSector(const csVector3& pos, const csBox3& bbox, Sector* sector);
-    void LoadMesh(MeshObj* mesh);
-    bool LoadMeshFact(MeshFact* meshfact);
-    bool LoadMaterial(Material* material);
-    bool LoadTexture(Texture* texture);
-
-    bool LoadTextureDir(const char *dir);
-    bool keepModels;
-    float loadRange;
-
-    iObjectRegistry* object_reg;
-    csRef<iEngine> engine;
-    csRef<iTextureManager> txtmgr;
-    csRef<iThreadedLoader> tloader;
-    csRef<iVFS> vfs;
-    csRef<iShaderVarStringSet> svstrings;
-    csRef<iStringSet> strings;
-    csRef<iCollideSystem> cdsys;
-    csRef<iSyntaxService> syntaxService;
-    uint gfxFeatures;
-
-    csRef<Sector> lastSector;
-    csVector3 lastPos;
-
-    csRefArray<MeshObj> loadingMeshes;
-
-    csRefArray<Texture> textures;
-    csRefArray<Material> materials;
-    csRefArray<MeshFact> meshfacts;
-    csRefArray<Sector> sectors;
-
-    CS::Threading::Mutex tLock;
-    CS::Threading::Mutex mLock;
-    CS::Threading::Mutex mfLock;
-    CS::Threading::Mutex sLock;
+  class MeshObj;
+  class Portal;
+  class Light;
 
     struct Shader
     {
@@ -307,6 +262,43 @@ private:
         csLightAttenuationMode attenuation;
         csLightType type;
     };
+
+    void CleanDisconnectedSectors(Sector* sector);
+    void FindConnectedSectors(csRefArray<Sector>& connectedSectors, Sector* sector);
+    void CleanSector(Sector* sector);
+    void LoadSector(const csVector3& pos, const csBox3& bbox, Sector* sector);
+    void LoadMesh(MeshObj* mesh);
+    bool LoadMeshFact(MeshFact* meshfact);
+    bool LoadMaterial(Material* material);
+    bool LoadTexture(Texture* texture);
+
+    float loadRange;
+
+    iObjectRegistry* object_reg;
+    csRef<iEngine> engine;
+    csRef<iTextureManager> txtmgr;
+    csRef<iThreadedLoader> tloader;
+    csRef<iVFS> vfs;
+    csRef<iShaderVarStringSet> svstrings;
+    csRef<iStringSet> strings;
+    csRef<iCollideSystem> cdsys;
+    csRef<iSyntaxService> syntaxService;
+    uint gfxFeatures;
+
+    csRef<Sector> lastSector;
+    csVector3 lastPos;
+
+    csRefArray<MeshObj> loadingMeshes;
+
+    csRedBlackTreeMap<csString, csRef<Texture> > textures;
+    csRedBlackTreeMap<csString, csRef<Material> > materials;
+    csRedBlackTreeMap<csString, csRef<MeshFact> > meshfacts;
+    csRefArray<Sector> sectors;
+
+    CS::Threading::Mutex tLock;
+    CS::Threading::Mutex mLock;
+    CS::Threading::Mutex mfLock;
+    CS::Threading::Mutex sLock;
 };
 
 #endif // __LOADER_H__

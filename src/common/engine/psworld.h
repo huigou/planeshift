@@ -102,7 +102,7 @@ public:
     ~psWorld();
  
     /// Initialize psWorld
-    bool Initialize(iObjectRegistry* object_reg, bool unloadingLast = true, uint gfxFeatures = 0);
+    bool Initialize(iObjectRegistry* object_reg, uint gfxFeatures = 0);
     bool CreateMap(const char* name, const char* mapFile, bool loadNow, bool loadMeshes = true); 
     enum
     {
@@ -148,7 +148,7 @@ public:
 
     /// Unload all regions to be unloaded, and load any regions to be kept but
     /// which are not loaded already.
-    int ExecuteFlaggedRegions(bool transitional, bool unloadOrder = true);
+    int ExecuteFlaggedRegions(bool transitional);
 
     bool NeedsLoading(bool transitional);
 
@@ -171,7 +171,6 @@ public:
 
     void DumpWarpCache();
 private:
-    bool startLoading;
     uint gfxFeatures;
 };
 

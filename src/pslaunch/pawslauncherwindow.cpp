@@ -561,24 +561,14 @@ void pawsLauncherWindow::LoadSettings()
         keepMapsLoaded->SetState(configPSC.GetBool("Planeshift.Loading.KeepMaps"));
     }
 
-    pawsCheckBox* preloadModels = (pawsCheckBox*)FindWidget("PreloadModels");
-    if(configUser->KeyExists("Planeshift.Loading.PreloadModels"))
+    pawsCheckBox* threadedWorldLoading = (pawsCheckBox*)FindWidget("ThreadedWorldLoading");
+    if(configUser->KeyExists("PlaneShift.Loading.WorldLoad"))
     {
-        preloadModels->SetState(configUser->GetBool("Planeshift.Loading.PreloadModels"));
+        threadedWorldLoading->SetState(csString("Threaded").Compare(configUser->GetStr("PlaneShift.Loading.WorldLoad", "NThreaded")));
     }
     else
     {
-        preloadModels->SetState(configPSC.GetBool("Planeshift.Loading.PreloadModels"));
-    }
-
-    pawsCheckBox* threadedLoading = (pawsCheckBox*)FindWidget("ThreadedLoading");
-    if(configUser->KeyExists("ThreadManager.AlwaysRunNow"))
-    {
-        threadedLoading->SetState(configUser->GetBool("ThreadManager.AlwaysRunNow"));
-    }
-    else
-    {
-        threadedLoading->SetState(configPSC.GetBool("ThreadManager.AlwaysRunNow"));
+        threadedWorldLoading->SetState(csString("Threaded").Compare(configPSC.GetStr("PlaneShift.Loading.WorldLoad", "NThreaded")));
     }
 
     // Fill the skins
@@ -634,7 +624,6 @@ void pawsLauncherWindow::SaveSettings()
             configUser->SetBool("Video.OpenGL.UseExtension.GL_ARB_vertex_buffer_object", true);
             configUser->SetBool("Planeshift.Loading.AllMaps", false);
             configUser->SetBool("Planeshift.Loading.KeepMaps", true);
-            configUser->SetBool("Planeshift.Loading.PreloadModels", true);
             configUser->SetBool("ThreadManager.AlwaysRunNow", false);
             break;
         }
@@ -649,7 +638,6 @@ void pawsLauncherWindow::SaveSettings()
             configUser->SetBool("Video.OpenGL.UseExtension.GL_ARB_vertex_buffer_object", true);
             configUser->SetBool("Planeshift.Loading.AllMaps", false);
             configUser->SetBool("Planeshift.Loading.KeepMaps", false);
-            configUser->SetBool("Planeshift.Loading.PreloadModels", true);
             configUser->SetBool("ThreadManager.AlwaysRunNow", false);
             break;
         }
@@ -664,7 +652,6 @@ void pawsLauncherWindow::SaveSettings()
             configUser->SetBool("Video.OpenGL.UseExtension.GL_ARB_vertex_buffer_object", true);
             configUser->SetBool("Planeshift.Loading.AllMaps", false);
             configUser->SetBool("Planeshift.Loading.KeepMaps", false);
-            configUser->SetBool("Planeshift.Loading.PreloadModels", false);
             configUser->SetBool("ThreadManager.AlwaysRunNow", false);
             break;
         }
@@ -679,7 +666,6 @@ void pawsLauncherWindow::SaveSettings()
             configUser->SetBool("Video.OpenGL.UseExtension.GL_ARB_vertex_buffer_object", true);
             configUser->SetBool("Planeshift.Loading.AllMaps", false);
             configUser->SetBool("Planeshift.Loading.KeepMaps", false);
-            configUser->SetBool("Planeshift.Loading.PreloadModels", false);
             configUser->SetBool("ThreadManager.AlwaysRunNow", false);
             break;
         }
@@ -694,7 +680,6 @@ void pawsLauncherWindow::SaveSettings()
             configUser->SetBool("Video.OpenGL.UseExtension.GL_ARB_vertex_buffer_object", true);
             configUser->SetBool("Planeshift.Loading.AllMaps", false);
             configUser->SetBool("Planeshift.Loading.KeepMaps", false);
-            configUser->SetBool("Planeshift.Loading.PreloadModels", false);
             configUser->SetBool("ThreadManager.AlwaysRunNow", false);
             break;
         }
@@ -742,11 +727,8 @@ void pawsLauncherWindow::SaveSettings()
             pawsCheckBox* keepMapsLoaded = (pawsCheckBox*)FindWidget("KeepMapsLoaded");
             configUser->SetBool("Planeshift.Loading.KeepMaps", keepMapsLoaded->GetState());
 
-            pawsCheckBox* preloadModels = (pawsCheckBox*)FindWidget("PreloadModels");
-            configUser->SetBool("Planeshift.Loading.PreloadModels", preloadModels->GetState());
-
-            pawsCheckBox* threadedLoading = (pawsCheckBox*)FindWidget("ThreadedLoading");
-            configUser->SetBool("ThreadManager.AlwaysRunNow", !threadedLoading->GetState());
+            pawsCheckBox* threadedWorldLoading = (pawsCheckBox*)FindWidget("ThreadedWorldLoading");
+            configUser->SetStr("PlaneShift.Loading.WorldLoad", threadedWorldLoading->GetState() ? "Threaded" : "NThreaded");
 
             break;
         }

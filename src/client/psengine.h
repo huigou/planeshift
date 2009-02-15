@@ -60,7 +60,6 @@ class psEffectManager;
 class psChatBubbles;
 class psCal3DCallbackLoader;
 class psMainWidget;
-class ClientCacheManager;
 class psQuestionClient;
 class psOptions;
 class Loader;
@@ -182,7 +181,6 @@ public:
     MsgHandler*            GetMsgHandler()     { return netmanager->GetMsgHandler(); }
     CmdHandler*            GetCmdHandler()     { return netmanager->GetCmdHandler(); }
     psSlotManager*         GetSlotManager()    { return slotManager;}
-    ClientCacheManager*    GetCacheManager()   { return cachemanager; }
     psClientCharManager*   GetCharManager()    { return charmanager; }
     psCelClient*           GetCelClient()      { return celclient; };
     psMainWidget*          GetMainWidget()     { return mainWidget; }
@@ -195,6 +193,7 @@ public:
     psMouseBinds*          GetMouseBinds();
     psCamera*              GetPSCamera()       { return camera; }
     psNetManager*          GetNetManager()     { return netmanager; }
+    Loader*                GetLoader()         { return loader; }
 
     /// Access the player's petitioner target
     void SetTargetPetitioner(const char * pet) { targetPetitioner = pet; }
@@ -328,16 +327,10 @@ public:
     /// get the inventory cache
     psInventoryCache* GetInventoryCache(void) { return inventoryCache; }
 
-    /// Are we preloading models?
-    bool PreloadingModels() { return preloadModels; }
-
-    /// Unload order.
-    bool UnloadingLast() { return unloadLast; }
-
     /// The graphics features that are enabled/disabled.
     uint GetGFXFeatures() { return gfxFeatures; }
 
-    bool ThreadedLoading() { return threadedLoading; }
+    bool ThreadedWorldLoading() { return threadedWorldLoading; }
 
     void RegisterDelayedLoader(DelayedLoader* obj) { delayedLoaders.PushSmart(obj); }
     void UnregisterDelayedLoader(DelayedLoader* obj) { delayedLoaders.Delete(obj); }
@@ -374,7 +367,6 @@ private:
     csRef<iStringSet>         stringset;
     csRandomGen               random;
 
-    ClientCacheManager*       cachemanager; ///< Cache manager
     csRef<psNetManager>       netmanager;   ///< Network manager
     csRef<psCelClient>        celclient;    ///< CEL client
     csRef<ModeHandler>        modehandler;  ///< Handling background audio sent from server, etc.
@@ -410,22 +402,10 @@ private:
     /// Used to stop rendering when the window is minimized
     bool drawScreen;
 
-    void BuildFactoryList();
-    void PreloadModels();
-    void PreloadItemsDir();
-    void PreloadSubDir(const char* dirname);
-    bool preloadModels;
     uint gfxFeatures;
-    bool modelsLoaded;  ///< Tells if the models are finished loading yet.
-    size_t modelToLoad; ///< Keeps a count of the models loaded so far.
-    bool modelsInit;    ///< True if we've begun the process of loading models.
-    bool okToLoadModels; ///< True if we can load models now.
-    csStringArray modelnames;
-    csHash<csString, csString> factfilenames;
-    csRefArray<iThreadReturn> precaches;
+    csRefArray<iThreadReturn> modelPrecaches;
+    csRefArray<iThreadReturn> mapPrecaches;
 
-public:
-    bool GetFileNameByFact(csString factName, csString& fileName);
 private:
 
     csString targetPetitioner;
@@ -463,10 +443,7 @@ private:
     /// Define if the sound is on or off from psclient.cfg.
     bool soundOn;
 
-    /// Define what kind of loading we want to do; unload first or unload last.
-    bool unloadLast;
-
-    bool threadedLoading;
+    bool threadedWorldLoading;
 
     // Event ID cache
     csEventID event_frame;

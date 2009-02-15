@@ -164,7 +164,7 @@ private:
     psCharAppearance* charApp;
 
     bool loaded;
-    csString fileName;
+    csString factName;
 };
 
 
