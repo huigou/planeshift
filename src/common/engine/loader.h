@@ -163,13 +163,13 @@ private:
         bool InRange(const csVector3& curpos, const csBox3& curBBox)
         {
             return !object.IsValid() && (alwaysLoaded ||
-                hasBBox ? curBBox.Overlap(bbox) : csVector3(pos - curpos).Norm() <= Loader::GetSingleton().loadRange);
+                (hasBBox ? curBBox.Overlap(bbox) : csVector3(pos - curpos).Norm() <= Loader::GetSingleton().loadRange));
         }
 
         bool OutOfRange(const csVector3& curpos, const csBox3& curBBox)
         {
             return !alwaysLoaded && object.IsValid() &&
-                hasBBox ? !curBBox.Overlap(bbox) : csVector3(pos - curpos).Norm() > Loader::GetSingleton().loadRange*1.5;
+                (hasBBox ? !curBBox.Overlap(bbox) : csVector3(pos - curpos).Norm() > Loader::GetSingleton().loadRange*1.5);
         }
 
         csString name;
