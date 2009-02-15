@@ -752,6 +752,56 @@ class psQuestPrereqOpGender : public psQuestPrereqOp
 };
 
 /**
+ * Spell knownledge prerequisite operator
+ *
+ * The actor must know a certain spell.
+ */
+class psQuestPrereqOpKnownSpell : public psQuestPrereqOp
+{
+ protected:
+    csString spell;
+
+ public:
+
+    /**
+     * Construct a Spell Known operator
+     *
+     * @param spell The spell the character must know
+     */
+    psQuestPrereqOpKnownSpell(const char *spell):spell(spell){};
+
+    virtual ~psQuestPrereqOpKnownSpell() {}
+
+    /**
+     * Check if the character known the specified spell.
+     *
+     * @param  character The character that are checking for a prerequisite
+     * @return True if the spell we are looking for is known.
+     */
+    virtual bool Check(psCharacter * character);
+
+    /**
+     * Convert the prerequisite operator to a xml string
+     *
+     * Convert the operator into the xml string:
+     * <knownspell spell="Spell Name"/>
+     *
+     * @return XML string for the prerequisite operator.
+     */
+    virtual csString GetScriptOp();
+
+    /**
+     * Copy the prerequisite operator
+     *
+     * Override this function to return a copy of the prerequisite
+     * operator.
+     *
+     * @return Copy of the prerequisite operator.
+     */
+    virtual csPtr<psQuestPrereqOp> Copy();
+};
+
+/**
  * Guild prerequisite operator
  *
  * The actor must be in a certain type of guild or none.
