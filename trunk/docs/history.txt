@@ -2,6 +2,8 @@
 - Added a knownspell quest prerequisite operator
   eg: <knownspell spell="Darkness" />
   where spell is the name of the spell we are looking for
+- Removed a non working and deprecated /confirmgroupjoin, fixes to
+  /guildinfo and to the bugreport command patch by loyni
 
 *** 2009-02-14 by Stefano Angeleri
 - Changed the marriage quest prerequisite operator to be easier
