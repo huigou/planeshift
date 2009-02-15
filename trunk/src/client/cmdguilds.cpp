@@ -47,8 +47,8 @@ psGuildCommands::psGuildCommands( MsgHandler* mh,
                                   iObjectRegistry* obj )
   : psCmdBase(mh,ch,obj)
 {
-    cmdsource->Subscribe("/guildinfo",this);     // create new guild (requires list of names)
-    cmdsource->Subscribe("/newguild",this);     // create new guild (requires list of names)
+    cmdsource->Subscribe("/guildinfo",this);    // displays
+    cmdsource->Subscribe("/newguild",this);     // create new guild
     cmdsource->Subscribe("/endguild",this);     // disband guild
     cmdsource->Subscribe("/guildinvite",this);  // ask player to join guild
     cmdsource->Subscribe("/guildremove",this);  // remove player from guild
@@ -109,16 +109,20 @@ const char *psGuildCommands::HandleCommand(const char *cmd)
         psGUIGuildMessage msg(psGUIGuildMessage::SUBSCRIBE_GUILD_DATA, "<x/>");
         msg.SendMessage();
         if ( words.GetCount() == 2 )
-        {   
+        {
+			if ((words[1]!="yes")&&(words[1]!="no"))
+				return "Syntax: /guildinfo yes|no";
+			pawsCheckBox* onlineOnly = (pawsCheckBox*)PawsManager::GetSingleton().FindWidget("GuildWindow")->FindWidget("OnlineOnly");
+			onlineOnly->SetState(words[1]=="yes");
             csString command;
             command.Format("<r onlineonly=\"%s\"/>", (const char*)words[1] );
             psGUIGuildMessage msg2(psGUIGuildMessage::SET_ONLINE, command );
-            msg2.SendMessage();            
-        }            
+            msg2.SendMessage();
+        }
         else
         {
             csString command;            
-            pawsCheckBox* onlineOnly = (pawsCheckBox*)PawsManager::GetSingleton().FindWidget("GuildWindow")->FindWidget("OnlineOnly");            
+            pawsCheckBox* onlineOnly = (pawsCheckBox*)PawsManager::GetSingleton().FindWidget("GuildWindow")->FindWidget("OnlineOnly");
             command.Format("<r onlineonly=\"%s\"/>", onlineOnly->GetState() ? "yes":"no");    
             psGUIGuildMessage msg2(psGUIGuildMessage::SET_ONLINE, command );
             msg2.SendMessage();

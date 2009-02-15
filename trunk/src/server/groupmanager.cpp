@@ -306,7 +306,7 @@ void GroupManager::HandleGroupCommand(MsgEntry *me, Client *client)
     }
     else
     {
-        Error1("Command not supported by server.");
+		Error2("Group command %s is not supported by server.", msg.command.GetDataSafe());
     }
 }
 

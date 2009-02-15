@@ -48,7 +48,6 @@ psGroupCommands::psGroupCommands(MsgHandler* mh,
     cmdsource->Subscribe("/groupremove",this);  // remove player from group (leader only)
     cmdsource->Subscribe("/leavegroup",this);   // name group level something (ranks)
     cmdsource->Subscribe("/groupmembers",this); // see list of members (optional level #)
-    cmdsource->Subscribe("/confirmgroupjoin", this );
 }
 
 psGroupCommands::~psGroupCommands()
@@ -58,7 +57,6 @@ psGroupCommands::~psGroupCommands()
     cmdsource->Unsubscribe("/groupremove",this);  // remove player from group (leader only)
     cmdsource->Unsubscribe("/leavegroup",this);  
     cmdsource->Unsubscribe("/groupmembers",this); 
-    cmdsource->Unsubscribe("/confirmgroupjoin", this );
 }
 
 const char *psGroupCommands::HandleCommand(const char *cmd)
@@ -72,5 +70,3 @@ void psGroupCommands::HandleMessage(MsgEntry *msg)
 {
 
 }
-
-
