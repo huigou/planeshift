@@ -777,7 +777,12 @@ void Loader::CleanSector(Sector* sector)
         }
     }
 
-    CS_ASSERT_MSG("Error cleaning sector. Sector still has objects!", sector->objectCount == 0);
+    if(sector->objectCount != 0)
+    {
+        csString msg;
+        msg.Format("Error cleaning sector. Sector still has %u objects!", sector->objectCount);
+        CS_ASSERT_MSG(msg.GetData(), false);
+    }
     CS_ASSERT_MSG("Error cleaning sector. Sector is invalid!", sector->object.IsValid());
 
     engine->GetSectors()->Remove(sector->object);
@@ -798,8 +803,22 @@ void Loader::LoadSector(const csVector3& pos, const csBox3& bbox, Sector* sector
     // Check other sectors linked to by active portals.
     for(size_t i=0; i<sector->activePortals.GetSize(); i++)
     {
-        if(!sector->activePortals[i]->targetSector->isLoading && !sector->portals[i]->targetSector->checked)
-            LoadSector(pos, bbox, sector->activePortals[i]->targetSector);
+        if(!sector->activePortals[i]->targetSector->isLoading && !sector->activePortals[i]->targetSector->checked)
+        {
+            csVector3 wwPos = pos;
+            csBox3 wwBbox = bbox;
+            if(sector->activePortals[i]->warp)
+            {
+                wwPos -= sector->activePortals[i]->ww;
+                wwBbox.SetMin(0, wwBbox.GetMin(0)-sector->activePortals[i]->ww.x);
+                wwBbox.SetMin(1, wwBbox.GetMin(1)-sector->activePortals[i]->ww.y);
+                wwBbox.SetMin(2, wwBbox.GetMin(2)-sector->activePortals[i]->ww.z);
+                wwBbox.SetMax(0, wwBbox.GetMax(0)-sector->activePortals[i]->ww.x);
+                wwBbox.SetMax(1, wwBbox.GetMax(1)-sector->activePortals[i]->ww.y);
+                wwBbox.SetMax(2, wwBbox.GetMax(2)-sector->activePortals[i]->ww.z);
+            }
+            LoadSector(wwPos, wwBbox, sector->activePortals[i]->targetSector);
+        }
     }
 
     for(size_t i=0; i<sector->meshes.GetSize(); i++)
@@ -828,9 +847,27 @@ void Loader::LoadSector(const csVector3& pos, const csBox3& bbox, Sector* sector
     {
         if(sector->portals[i]->InRange(pos, bbox))
         {
+            printf("Portal %s in sector %s leading to sector %s is in range.\n", sector->portals[i]->name.GetData(), sector->name.GetData(), sector->portals[i]->targetSector->name.GetData());
             if(!sector->portals[i]->targetSector->isLoading && !sector->portals[i]->targetSector->checked)
             {
-                LoadSector(pos, bbox, sector->portals[i]->targetSector);
+                csVector3 wwPos = pos;
+                csBox3 wwBbox = bbox;
+                if(sector->portals[i]->warp)
+                {
+                    if(!sector->portals[i]->ww_given)
+                    {
+                        sector->portals[i]->ww = sector->portals[i]->wv;
+                    }
+
+                    wwPos -= sector->portals[i]->ww;
+                    wwBbox.SetMin(0, wwBbox.GetMin(0)-sector->portals[i]->ww.x);
+                    wwBbox.SetMin(1, wwBbox.GetMin(1)-sector->portals[i]->ww.y);
+                    wwBbox.SetMin(2, wwBbox.GetMin(2)-sector->portals[i]->ww.z);
+                    wwBbox.SetMax(0, wwBbox.GetMax(0)-sector->portals[i]->ww.x);
+                    wwBbox.SetMax(1, wwBbox.GetMax(1)-sector->portals[i]->ww.y);
+                    wwBbox.SetMax(2, wwBbox.GetMax(2)-sector->portals[i]->ww.z);
+                }
+                LoadSector(wwPos, wwBbox, sector->portals[i]->targetSector);
             }
 
             sector->portals[i]->mObject = engine->CreatePortal(sector->portals[i]->name, sector->object,
