@@ -834,6 +834,15 @@ void psCharAppearance::SetSneak(bool sneaking)
     {
         sneak = sneaking;
 
+        if(sneaking)
+        {
+            baseMesh->SetRenderPriority(engine->GetRenderPriority("alpha"));
+        }
+        else
+        {
+            baseMesh->SetRenderPriority(engine->GetRenderPriority("object"));
+        }
+
         CS::ShaderVarStringID varName = stringSet->Request("alpha factor");
         for(uint i=0; i<meshCount; i++)
         {
@@ -843,7 +852,7 @@ void psCharAppearance::SetSneak(bool sneaking)
                 csShaderVariable* var = context->GetVariableAdd(varName);
                 if(var)
                 {
-                  if(sneak)
+                  if(sneaking)
                   {
                       var->SetValue(0.5f);
                   }
