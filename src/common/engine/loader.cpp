@@ -561,6 +561,7 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                             csVector3 vec;
                             syntaxService->ParseVector(nodeItr3->Next(), vec);
                             p->poly.AddVertex(vec);
+                            p->bbox.AddBoundingVertex(vec);
                         }
 
                         csString targetSector = node2->GetNode("sector")->GetContentsValue();
@@ -702,6 +703,11 @@ void Loader::UpdatePosition(const csVector3& pos, const char* sectorName, bool f
         lastPos = pos;
         lastSector = sector;
     }
+
+    for(size_t i=0; i<sectors.GetSize(); i++)
+    {
+        sectors[i]->checked = false;
+    }
 }
 
 void Loader::CleanDisconnectedSectors(Sector* sector)
@@ -792,7 +798,7 @@ void Loader::LoadSector(const csVector3& pos, const csBox3& bbox, Sector* sector
     // Check other sectors linked to by active portals.
     for(size_t i=0; i<sector->activePortals.GetSize(); i++)
     {
-        if(!sector->activePortals[i]->targetSector->isLoading)
+        if(!sector->activePortals[i]->targetSector->isLoading && !sector->portals[i]->targetSector->checked)
             LoadSector(pos, bbox, sector->activePortals[i]->targetSector);
     }
 
@@ -820,9 +826,9 @@ void Loader::LoadSector(const csVector3& pos, const csBox3& bbox, Sector* sector
 
     for(size_t i=0; i<sector->portals.GetSize(); i++)
     {
-        if(sector->portals[i]->InRange(pos))
+        if(sector->portals[i]->InRange(pos, bbox))
         {
-            if(!sector->portals[i]->targetSector->isLoading)
+            if(!sector->portals[i]->targetSector->isLoading && !sector->portals[i]->targetSector->checked)
             {
                 LoadSector(pos, bbox, sector->portals[i]->targetSector);
             }
@@ -854,7 +860,7 @@ void Loader::LoadSector(const csVector3& pos, const csBox3& bbox, Sector* sector
             sector->activePortals.Push(sector->portals[i]);
             ++sector->objectCount;
         }
-        else if(sector->portals[i]->OutOfRange(pos))
+        else if(sector->portals[i]->OutOfRange(pos, bbox))
         {
             if(!sector->portals[i]->targetSector->isLoading)
             {
@@ -906,6 +912,7 @@ void Loader::LoadSector(const csVector3& pos, const csBox3& bbox, Sector* sector
         sector->object.Invalidate();
     }
 
+    sector->checked = true;
     sector->isLoading = false;
 }
 
