@@ -317,22 +317,16 @@
           <text string="Load All Maps:" position="left"/>
         </widget>
 	
-        <widget name="KeepMapsLoaded" factory="pawsCheckBox" id="13113">
+        <widget name="KeepMapsLoaded" factory="pawsCheckBox" id="13114">
           <frame x="0" y="163" width="130" height="15"/>
           <checkbox on="radioon" off="radiooff" size="12"/>
           <text string="Keep Maps Loaded:" position="left"/>
         </widget>
 
-        <widget name="PreloadModels" factory="pawsCheckBox" id="13115">
+        <widget name="ThreadedWorldLoading" factory="pawsCheckBox" id="13115">
           <frame x="0" y="183" width="130" height="15"/>
           <checkbox on="radioon" off="radiooff" size="12"/>
-          <text string="Preload Models:" position="left"/>
-        </widget>
-
-        <widget name="ThreadedLoading" factory="pawsCheckBox" id="13116">
-          <frame x="0" y="203" width="130" height="15"/>
-          <checkbox on="radioon" off="radiooff" size="12"/>
-          <text string="Threaded Loading:" position="left"/>
+          <text string="Threaded World Loading:" position="left"/>
         </widget>
       </widget>
     </widget>

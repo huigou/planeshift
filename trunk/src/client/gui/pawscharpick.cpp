@@ -24,6 +24,7 @@
 #include "globals.h"
 
 #include "charapp.h"
+#include "engine/loader.h"
 #include "pawscharpick.h"
 #include "pawsloginwindow.h"
 #include "paws/pawsbutton.h"
@@ -36,7 +37,6 @@
 #include "net/messages.h"
 #include "iclient/isoundmngr.h"
 #include "psnetmanager.h"
-#include "clientcachemanager.h"
 #include "pscelclient.h"
 #include "psclientdr.h"
 
@@ -523,11 +523,11 @@ void pawsCharacterPickerWindow::CheckMeshLoad()
 {
     if(!loaded)
     {
-        FactoryIndexEntry* entry = psengine->GetCacheManager()->GetFactoryEntry(models[selectedCharacter].fileName);
-        if (entry && entry->factory)
+        csRef<iMeshFactoryWrapper> factory = psengine->GetLoader()->LoadFactory(models[selectedCharacter].factName);
+        if (factory.IsValid())
         {
             psengine->UnregisterDelayedLoader(this);
-            view->View(entry->factory);
+            view->View(factory);
 
             iMeshWrapper * mesh = view->GetObject();        
             if (!mesh)

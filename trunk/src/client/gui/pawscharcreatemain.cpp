@@ -24,10 +24,10 @@
 
 #include "../globals.h"
 #include "../charapp.h"
+#include "engine/loader.h"
 #include "net/messages.h"
 #include "net/charmessages.h"
 #include "iclient/isoundmngr.h"
-#include "clientcachemanager.h"
 
 #include "paws/pawsmanager.h"
 #include "paws/pawstextbox.h"
@@ -1018,10 +1018,8 @@ void pawsCreationMain::UpdateRace(int id)
     createManager->SetGender( currentGender );                
     lastGender = -1;
         
-    csString factName = createManager->GetModelName( id, currentGender );
-    
-    // Store the factory name and file name for the mesh
-    fileName.Format("/planeshift/models/%s/%s.cal3d",factName.GetData(), factName.GetData());
+    // Store the factory name for the selected model.
+    factName = createManager->GetModelName( id, currentGender );
                        
     // Show the model for the selected race.
     view->Show();
@@ -1034,13 +1032,12 @@ void pawsCreationMain::CheckMeshLoad()
 {
     if(!loaded)
     {
-        FactoryIndexEntry* entry = psengine->GetCacheManager()->GetFactoryEntry(fileName);
-
-        if(entry && entry->factory)
+        csRef<iMeshFactoryWrapper> factory = psengine->GetLoader()->LoadFactory(factName);
+        if(factory.IsValid())
         {
-            view->View(entry->factory);
+            view->View(factory);
 
-            iMeshWrapper * mesh = view->GetObject();
+            iMeshWrapper* mesh = view->GetObject();
             charApp->SetMesh(mesh);
             if (!mesh)
             {

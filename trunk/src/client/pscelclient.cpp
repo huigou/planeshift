@@ -82,7 +82,6 @@
 #include "psclientdr.h"
 #include "entitylabels.h"
 #include "shadowmanager.h"
-#include "clientcachemanager.h"
 #include "pscharcontrol.h"
 #include "psclientchar.h"
 #include "pscal3dcallback.h"
@@ -207,7 +206,7 @@ void psCelClient::RequestServerWorld()
 bool psCelClient::IsReady()
 {
     if ( local_player == NULL ||
-        (!psengine->ThreadedLoading() && gameWorld == NULL))
+        (!psengine->ThreadedWorldLoading() && gameWorld == NULL))
         return false;
     else
         return true;
@@ -215,11 +214,11 @@ bool psCelClient::IsReady()
 
 void psCelClient::HandleWorld( MsgEntry* me )
 {
-    if(!psengine->ThreadedLoading())
+    if(!psengine->ThreadedWorldLoading())
     {
         psPersistWorld mesg( me );
         gameWorld = new psWorld;
-        gameWorld->Initialize(object_reg, psengine->UnloadingLast(), psengine->GetGFXFeatures());
+        gameWorld->Initialize(object_reg, psengine->GetGFXFeatures());
 
         zonehandler->SetWorld(gameWorld);
         zonehandler->LoadZone(mesg.sector);
@@ -313,29 +312,11 @@ void psCelClient::HandleMainActor( psPersistActor& mesg )
     {
         local_player->charApp->ClearEquipment();
 
-        csRef<iMeshFactoryWrapper> factory = psengine->GetEngine()->GetMeshFactories()->FindByName(mesg.factname);
-        if (!factory)
+        csRef<iMeshFactoryWrapper> factory;
+        while(!factory.IsValid())
         {
-            // Try loading the mesh from file
-            csString filename;
-            if (!psengine->GetFileNameByFact(mesg.factname, filename))
-            {
-                Error2( "Mesh Factory %s not found", mesg.factname.GetData() );
-                return;
-            }
-            FactoryIndexEntry* fie = psengine->GetCacheManager()->GetFactoryEntry(filename);
-            while(!fie)
-            {
-                csSleep(100);
-                fie = psengine->GetCacheManager()->GetFactoryEntry(filename);
-            }
-            factory = fie->factory;
-            if(!factory)
-            {
-                Error2("Couldn't morph main player! Factory %s doesn't exist!", mesg.factname.GetData() );
-                return;
-            }
-       }
+            factory = psengine->GetLoader()->LoadFactory(mesg.factname);
+        }
 
         // New or resetting?
         if (local_player_defaultFactName != mesg.factname)
@@ -364,7 +345,7 @@ void psCelClient::HandleMainActor( psPersistActor& mesg )
         }
 
         // Update factory
-        local_player->factname = mesg.factname;
+        local_player->factName = mesg.factname;
 
 
         // Update cal3d
@@ -1218,23 +1199,9 @@ bool GEMClientObject::InitMesh()
     {
         replacement = cel->GetMainPlayer()->helmGroup;
     }
-    psString factoryName(factname);
+    psString factoryName(factName);
     factoryName.ReplaceAllSubString("$H", replacement);
-
-    csRef<iMeshFactoryWrapper> factory = psengine->GetEngine()->GetMeshFactories()->FindByName (factoryName);
-    if ( !factory )
-    {
-        // Try loading the mesh again
-        if (!psengine->GetFileNameByFact(factoryName, filename))
-        {
-            Error2( "Mesh Factory %s not found.\nTrying to use a sack instead.", factoryName.GetData() );
-            if (!psengine->GetFileNameByFact("items#sack02a", filename))
-            {
-                Error1( "Replacement Mesh Factory items#sack02a not found.\nGiving up loading the mesh.");
-                return false;
-            }
-        }
-     }
+    factName = factoryName;
 
     // Set up callback.
     psengine->RegisterDelayedLoader(this);
@@ -1247,20 +1214,18 @@ bool GEMClientObject::InitMesh()
 
 void GEMClientObject::CheckMeshLoad()
 {
-    FactoryIndexEntry* fie = psengine->GetCacheManager()->GetFactoryEntry(filename);
-    if(!fie)
+    csRef<iMeshFactoryWrapper> factory = psengine->GetLoader()->LoadFactory(factName);
+    if(!factory.IsValid())
     {
         return;
     }
-
-    csRef<iMeshFactoryWrapper> factory = fie->factory;
 
     pcmesh = factory->CreateMeshWrapper();
     psengine->GetEngine()->GetMeshes()->Add(pcmesh);
 
     if (!pcmesh)
     {
-        Error2("Could not create Item because could not load %s file into mesh.", factname.GetData());
+        Error2("Could not create Item because could not load %s file into mesh.", factName.GetData());
         return;
     }
 
@@ -1316,8 +1281,7 @@ GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
     linmove = 0;
     groupID = mesg.groupID;
     gender = mesg.gender;
-    filename = mesg.filename;
-    factname = mesg.factname;
+    factName = mesg.factname;
     ownerEID = mesg.ownerEID;
     lastSentVelocity = lastSentRotation = 0.0f;
     stationary = true;
@@ -1340,7 +1304,7 @@ GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
     equipment = mesg.equipment;
 
     if ( helmGroup.Length() == 0 )
-        helmGroup = factname;
+        helmGroup = factName;
 
     Debug3(LOG_CELPERSIST, 0, "Actor %s(%s) Received", mesg.name.GetData(), ShowID(mesg.entityid));
 
@@ -1867,8 +1831,7 @@ GEMClientItem::GEMClientItem( psCelClient* cel, psPersistItem& mesg )
     name = mesg.name;
     Debug3(LOG_CELPERSIST, 0, "Item %s(%s) Received", mesg.name.GetData(), ShowID(mesg.eid));
     type = mesg.type;
-    filename = mesg.filename;
-    factname = mesg.factname;
+    factName = mesg.factname;
     solid = 0;
     pos = mesg.pos;
     xRot = mesg.xRot;

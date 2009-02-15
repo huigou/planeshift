@@ -243,7 +243,7 @@ private:
     struct Attachment
     {
         csRef<iSpriteCal3DSocket> socket;
-        csString filename;
+        csString factName;
     };
 
     csList<Attachment> delayedAttach;

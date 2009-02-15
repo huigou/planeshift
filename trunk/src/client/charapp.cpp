@@ -25,7 +25,6 @@
 //=============================================================================
 #include "charapp.h"
 #include "psengine.h"
-#include "clientcachemanager.h"
 #include "pscelclient.h"
 #include "psclientchar.h"
 #include "globals.h"
@@ -526,35 +525,17 @@ bool psCharAppearance::Attach(const char* socketName, const char* meshFactName)
         return false;
     }
 
-    csRef<iMeshFactoryWrapper> factory = engine->GetMeshFactories()->FindByName (meshFactName);
-    if ( !factory )
+    csRef<iMeshFactoryWrapper> factory = psengine->GetLoader()->LoadFactory(meshFactName);
+    if(!factory.IsValid())
     {
-        // Try loading the mesh again
-        csString filename;
-        if (!psengine->GetFileNameByFact(meshFactName, filename))
+        Attachment attach;
+        attach.factName = meshFactName;
+        attach.socket = socket;
+        if(delayedAttach.IsEmpty())
         {
-            Error2("Mesh Factory %s not found", meshFactName );
-            return false;
+            psengine->RegisterDelayedLoader(this);
         }
-
-        // Check for factory and set up callback if not loaded yet.
-        FactoryIndexEntry* fie = psengine->GetCacheManager()->GetFactoryEntry(filename);
-        if(!fie)
-        {
-            Attachment attach;
-            attach.filename = filename;
-            attach.socket = socket;
-            if(delayedAttach.IsEmpty())
-            {
-                psengine->RegisterDelayedLoader(this);
-            }
-            delayedAttach.PushBack(attach);
-        }
-        else
-        {
-            factory = fie->factory;
-            ProcessAttach(factory, meshFactName, socket);
-        }
+        delayedAttach.PushBack(attach);
     }
     else
     {
@@ -600,10 +581,10 @@ void psCharAppearance::CheckMeshLoad()
     if(!delayedAttach.IsEmpty())
     {
         Attachment attach = delayedAttach.Front();
-        FactoryIndexEntry* fie = psengine->GetCacheManager()->GetFactoryEntry(attach.filename);
-        if(fie)
+        csRef<iMeshFactoryWrapper> factory = psengine->GetLoader()->LoadFactory(attach.factName);
+        if(factory.IsValid())
         {
-            ProcessAttach(fie->factory, fie->factname, attach.socket);
+            ProcessAttach(factory, attach.factName, attach.socket);
             delayedAttach.PopFront();
         }
     }

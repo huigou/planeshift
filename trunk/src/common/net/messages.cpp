@@ -4618,7 +4618,6 @@ psPersistItem::psPersistItem( uint32_t clientNum,
                               int type,
                               const char* name,
                               const char* factname,
-                              const char* filename,
                               const char* sector,
                               csVector3 pos,
                               float xRot,
@@ -4635,7 +4634,6 @@ psPersistItem::psPersistItem( uint32_t clientNum,
     msg->Add( (uint32_t) type );
     msg->Add( name );
     msg->Add( factname );
-    msg->Add( filename );
     msg->Add( sector );
     msg->Add( pos );
     msg->Add( xRot );
@@ -4656,7 +4654,6 @@ psPersistItem::psPersistItem( MsgEntry* me )
     type        = me->GetUInt32();
     name        = csString ( me->GetStr() );
     factname    = csString ( me->GetStr() );
-    filename    = csString ( me->GetStr() );
     sector      = csString ( me->GetStr() );
     pos         = me->GetVector();
     xRot        = me->GetFloat();
@@ -4676,7 +4673,7 @@ csString psPersistItem::ToString(AccessPointers * /*access_ptrs*/)
     csString msgtext;
 
     msgtext.AppendFmt("EID: %d type: %d Name: %s",eid.Unbox(),type,name.GetData());
-    msgtext.AppendFmt(" Factname: %s Filename %s ",factname.GetData(),filename.GetData());
+    msgtext.AppendFmt(" Factname: %s",factname.GetData());
     msgtext.AppendFmt("Sector: %s ",sector.GetDataSafe());
     msgtext.AppendFmt("Pos(%.2f,%.2f,%.2f) ",pos.x,pos.y,pos.z);
     msgtext.AppendFmt("yrot: %.2f Flags:",yRot);

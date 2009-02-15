@@ -72,7 +72,7 @@ private:
 
     csString currentItem;
     bool loaded;
-    csString filename;
+    csString factName;
 };
 
 

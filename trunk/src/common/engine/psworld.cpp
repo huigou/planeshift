@@ -52,11 +52,10 @@ psWorld::~psWorld()
     transarray.Empty();
 }
 
-bool psWorld::Initialize(iObjectRegistry* objectReg, bool unloadingLast, uint _gfxFeatures)
+bool psWorld::Initialize(iObjectRegistry* objectReg, uint _gfxFeatures)
 {
     object_reg = objectReg;
     engine = csQueryRegistry<iEngine>(object_reg);
-    startLoading = unloadingLast;
     gfxFeatures = _gfxFeatures;
 
     return true;
@@ -154,24 +153,21 @@ void ConnectPortalToSector(iEngine * engine, const char * portalName, const char
     }
 }
 
-int psWorld::ExecuteFlaggedRegions(bool transitional, bool unloadingLast)
+int psWorld::ExecuteFlaggedRegions(bool transitional)
 {
-    if(startLoading)
+    // Load any regions on the list which are not already loaded.
+    for (uint i=0; i < regions.GetSize(); i++)
     {
-        // Load any regions on the list which are not already loaded.
-        for (uint i=0; i < regions.GetSize(); i++)
+        psRegion *rgn = regions[i];
+        if (!rgn->IsLoaded() )
         {
-            psRegion *rgn = regions[i];
-            if (!rgn->IsLoaded() )
+            if(!rgn->Load())
             {
-                if(!rgn->Load())
-                {
-                    Error2("Loading region %s failed!", rgn->GetName());
-                    return 1;
-                }
-                // 2 signifies that a region is loaded, and that we need to refresh the screen.
-                return 2;
+                Error2("Loading region %s failed!", rgn->GetName());
+                return 1;
             }
+            // 2 signifies that a region is loaded, and that we need to refresh the screen.
+            return 2;
         }
     }
 
@@ -192,24 +188,7 @@ int psWorld::ExecuteFlaggedRegions(bool transitional, bool unloadingLast)
                 regions.DeleteIndex(i-1);
             }
         }
-        // Check if any factories, materials or textures can be freed.
-        //if(!MaterialManager::GetSingletonPtr()->KeepModels())
-        //{
-            //MaterialManager::GetSingletonPtr()->UnloadUnusedFactories();
-            //MaterialManager::GetSingletonPtr()->UnloadUnusedMaterials();
-            //MaterialManager::GetSingletonPtr()->UnloadUnusedTextures();
-        //}
     }
-
-    // Mark that we should start loading maps.
-    if(!startLoading)
-    {
-        startLoading = true;
-        return 2;
-    }
-
-    // Reset loading flag.
-    startLoading = unloadingLast;
 
     return 0;
 }
