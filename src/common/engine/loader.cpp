@@ -584,6 +584,11 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                             sectors.Push(p->targetSector);
                         }
 
+                        if(!p->ww_given)
+                        {
+                            p->ww = p->wv;
+                        }
+                        p->transform = p->ww - p->matrix * p->wv;
                         s->portals.Push(p);
                     }
                 }
@@ -809,13 +814,14 @@ void Loader::LoadSector(const csVector3& pos, const csBox3& bbox, Sector* sector
             csBox3 wwBbox = bbox;
             if(sector->activePortals[i]->warp)
             {
-                wwPos -= sector->activePortals[i]->ww;
-                wwBbox.SetMin(0, wwBbox.GetMin(0)-sector->activePortals[i]->ww.x);
-                wwBbox.SetMin(1, wwBbox.GetMin(1)-sector->activePortals[i]->ww.y);
-                wwBbox.SetMin(2, wwBbox.GetMin(2)-sector->activePortals[i]->ww.z);
-                wwBbox.SetMax(0, wwBbox.GetMax(0)-sector->activePortals[i]->ww.x);
-                wwBbox.SetMax(1, wwBbox.GetMax(1)-sector->activePortals[i]->ww.y);
-                wwBbox.SetMax(2, wwBbox.GetMax(2)-sector->activePortals[i]->ww.z);
+                csVector3& transform = sector->activePortals[i]->transform;
+                wwPos -= transform;
+                wwBbox.SetMin(0, wwBbox.MinX()-transform.x);
+                wwBbox.SetMin(1, wwBbox.MinY()-transform.y);
+                wwBbox.SetMin(2, wwBbox.MinZ()-transform.z);
+                wwBbox.SetMax(0, wwBbox.MaxX()-transform.x);
+                wwBbox.SetMax(1, wwBbox.MaxY()-transform.y);
+                wwBbox.SetMax(2, wwBbox.MaxZ()-transform.z);
             }
             LoadSector(wwPos, wwBbox, sector->activePortals[i]->targetSector);
         }
@@ -847,25 +853,20 @@ void Loader::LoadSector(const csVector3& pos, const csBox3& bbox, Sector* sector
     {
         if(sector->portals[i]->InRange(pos, bbox))
         {
-            printf("Portal %s in sector %s leading to sector %s is in range.\n", sector->portals[i]->name.GetData(), sector->name.GetData(), sector->portals[i]->targetSector->name.GetData());
             if(!sector->portals[i]->targetSector->isLoading && !sector->portals[i]->targetSector->checked)
             {
                 csVector3 wwPos = pos;
                 csBox3 wwBbox = bbox;
                 if(sector->portals[i]->warp)
                 {
-                    if(!sector->portals[i]->ww_given)
-                    {
-                        sector->portals[i]->ww = sector->portals[i]->wv;
-                    }
-
-                    wwPos -= sector->portals[i]->ww;
-                    wwBbox.SetMin(0, wwBbox.GetMin(0)-sector->portals[i]->ww.x);
-                    wwBbox.SetMin(1, wwBbox.GetMin(1)-sector->portals[i]->ww.y);
-                    wwBbox.SetMin(2, wwBbox.GetMin(2)-sector->portals[i]->ww.z);
-                    wwBbox.SetMax(0, wwBbox.GetMax(0)-sector->portals[i]->ww.x);
-                    wwBbox.SetMax(1, wwBbox.GetMax(1)-sector->portals[i]->ww.y);
-                    wwBbox.SetMax(2, wwBbox.GetMax(2)-sector->portals[i]->ww.z);
+                    csVector3& transform = sector->portals[i]->transform;
+                    wwPos -= transform;
+                    wwBbox.SetMin(0, wwBbox.MinX()-transform.x);
+                    wwBbox.SetMin(1, wwBbox.MinY()-transform.y);
+                    wwBbox.SetMin(2, wwBbox.MinZ()-transform.z);
+                    wwBbox.SetMax(0, wwBbox.MaxX()-transform.x);
+                    wwBbox.SetMax(1, wwBbox.MaxY()-transform.y);
+                    wwBbox.SetMax(2, wwBbox.MaxZ()-transform.z);
                 }
                 LoadSector(wwPos, wwBbox, sector->portals[i]->targetSector);
             }
@@ -876,11 +877,6 @@ void Loader::LoadSector(const csVector3& pos, const csBox3& bbox, Sector* sector
 
             if(sector->portals[i]->warp)
             {
-                if(!sector->portals[i]->ww_given)
-                {
-                    sector->portals[i]->ww = sector->portals[i]->wv;
-                }
-
                 sector->portals[i]->pObject->SetWarp(sector->portals[i]->matrix, sector->portals[i]->wv, sector->portals[i]->ww);
             }
 
