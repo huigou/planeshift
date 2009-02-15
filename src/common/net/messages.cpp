@@ -943,11 +943,6 @@ psGuildCmdMessage::psGuildCmdMessage(MsgEntry *message)
         player = words[1];
         return;
     }
-    if (command == "/confirmguildjoin")
-    {
-        accept = words[1];  // yes or no
-        return;
-    }
     if (command == "/guildlevel")
     {
         level = words.GetInt(1);
@@ -1011,11 +1006,6 @@ csString psGuildCmdMessage::ToString(AccessPointers * /*access_ptrs*/)
     if (command == "/guildinvite" || command == "/guildremove" || command == "/allianceinvite")
     {
         msgtext.AppendFmt("Player: '%s'",player.GetDataSafe());
-        return msgtext;
-    }
-    if (command == "/confirmguildjoin")
-    {
-        msgtext.AppendFmt("Accept: '%s'",accept.GetDataSafe());
         return msgtext;
     }
     if (command == "/guildlevel")
@@ -1172,14 +1162,9 @@ psGroupCmdMessage::psGroupCmdMessage(MsgEntry *message)
         player = words[1];
         return;
     }
-    if (command == "/confirmgroupjoin")
-    {
-        accept = words[1];  // yes or no
-        return;
-    }
     if (command == "/disband" ||
-             command == "/leavegroup" ||
-             command == "/groupmembers")
+         command == "/leavegroup" ||
+         command == "/groupmembers")
     {
         return;
     }
@@ -1195,11 +1180,6 @@ csString psGroupCmdMessage::ToString(AccessPointers * /*access_ptrs*/)
     if (command == "/invite" || command == "/groupremove")
     {
         msgtext.AppendFmt("Player: '%s'", player.GetDataSafe());
-        return msgtext;
-    }
-    if (command == "/confirmgoupjoin")
-    {
-        msgtext.AppendFmt("Accept: '%s'", accept.GetDataSafe());
         return msgtext;
     }
     if (command == "/disband" ||
