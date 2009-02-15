@@ -1,3 +1,8 @@
+*** 2009-02-15 by Stefano Angeleri
+- Added a knownspell quest prerequisite operator
+  eg: <knownspell spell="Darkness" />
+  where spell is the name of the spell we are looking for
+
 *** 2009-02-14 by Stefano Angeleri
 - Changed the marriage quest prerequisite operator to be easier
   now it's just <married /> which will be true if the character is
