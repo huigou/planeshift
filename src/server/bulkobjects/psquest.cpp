@@ -364,7 +364,6 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, csRef<psQuestP
     }
     else if ( strcmp( topNode->GetValue(), "race" ) == 0 )
     {
-        printf("a\n");
         csString name = topNode->GetAttributeValue("name");
         if (name.IsEmpty())
         {
@@ -375,7 +374,7 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, csRef<psQuestP
         prerequisite.AttachNew(new psQuestPrereqOpRace(name));
     }
     else if ( strcmp( topNode->GetValue(), "gender" ) == 0 )
-    {printf("b\n");
+    {
         csString type = topNode->GetAttributeValue("type");
         if (type.IsEmpty())
         {
@@ -384,6 +383,17 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, csRef<psQuestP
         }
 
         prerequisite.AttachNew(new psQuestPrereqOpGender(type));
+    }
+    else if ( strcmp( topNode->GetValue(), "knownspell" ) == 0 )
+    {
+        csString spell = topNode->GetAttributeValue("spell");
+        if (spell.IsEmpty())
+        {
+            Error1("No spell given for kwownspell prerequisite operation");
+            return false;
+        }
+
+        prerequisite.AttachNew(new psQuestPrereqOpKnownSpell(spell));
     }
     else if ( strcmp( topNode->GetValue(), "guild" ) == 0 )
     {

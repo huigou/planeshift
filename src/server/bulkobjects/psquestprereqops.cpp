@@ -479,6 +479,37 @@ csPtr<psQuestPrereqOp> psQuestPrereqOpGender::Copy()
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 
+bool psQuestPrereqOpKnownSpell::Check(psCharacter * character)
+{
+    //Requirements are always valid for quest testers
+    if(character->GetActor() && character->GetActor()->questtester)
+        return true;
+
+    if (character)
+    {
+        return (character->GetSpellByName(spell));
+    }
+    return false;
+}
+
+csString psQuestPrereqOpKnownSpell::GetScriptOp()
+{
+    csString script;
+
+    script.Format("<knownspell spell=\"%s\"/>", spell.GetData());
+
+    return script;
+}
+
+csPtr<psQuestPrereqOp> psQuestPrereqOpKnownSpell::Copy()
+{
+    csRef<psQuestPrereqOpKnownSpell> copy;
+    copy.AttachNew(new psQuestPrereqOpKnownSpell(spell));
+    return csPtr<psQuestPrereqOp>(copy);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////
+
 bool psQuestPrereqOpGuild::Check(psCharacter * character)
 {
     //Requirements are always valid for quest testers
