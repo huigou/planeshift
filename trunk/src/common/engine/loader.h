@@ -192,7 +192,7 @@ private:
     class Portal : public CS::Utility::FastRefCount<Portal>
     {
     public:
-        Portal(const char* name) : name(name), wv(0), ww_given(false), ww(0), clip(false), zfill(false), warp(false)
+        Portal(const char* name) : name(name), wv(0), ww_given(false), ww(0), transform(0), clip(false), zfill(false), warp(false)
         {
         }
 
@@ -211,6 +211,7 @@ private:
         csVector3 wv;
         bool ww_given;
         csVector3 ww;
+        csVector3 transform;
         bool clip;
         bool zfill;
         bool warp;
