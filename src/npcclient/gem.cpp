@@ -274,7 +274,7 @@ gemNPCActor::gemNPCActor( psNPCClient* npcclient, psPersistActor& mesg)
     Debug3(LOG_CELPERSIST, eid.Unbox(), "Actor %s(%s) Received\n", mesg.name.GetData(), ShowID(mesg.entityid));
 
     csString filename;
-    filename.Format("/planeshift/models/%s/%s.cal3d", mesg.factname, mesg.factname);
+    filename.Format("/planeshift/models/%s/%s.cal3d", mesg.factname.GetData(), mesg.factname.GetData());
     InitMesh(  mesg.factname, filename, mesg.pos, mesg.yrot, mesg.sectorName );
     InitLinMove( mesg.pos, mesg.yrot, mesg.sectorName, mesg.top, mesg.bottom, mesg.offset );
     InitCharData( mesg.texParts, mesg.equipment );  
