@@ -2682,17 +2682,17 @@ bool gemActor::InitLinMove (const csVector3& pos,
     // will take to long to process.
     if (width < 0.2)
     {
-        Warning4(LOG_ANY, "Width %.2f to small for %s(%s)", width, GetName(), ShowID(pid));
+        Warning4(LOG_ANY, "Raceinfo width %.2f is too small for %s(%s). Using default.", width, GetName(), ShowID(pid));
         width = 0.8F;
     }
     if (depth < 0.2*1.33)
     {
-        Warning4(LOG_ANY, "Depth %.2f to small for %s(%s)", depth, GetName(), ShowID(pid));
+        Warning4(LOG_ANY, "Raceinfo depth %.2f is too small for %s(%s). Using default.", depth, GetName(), ShowID(pid));
         depth = 0.6F*1.33F;
     }
     if (height < 0.2F)
     {
-        Warning4(LOG_ANY, "Height %.2f to small for %s(%s)", height, GetName(), ShowID(pid));
+        Warning4(LOG_ANY, "Raceinfo height %.2f is too small for %s(%s). Using default.", height, GetName(), ShowID(pid));
         height = 1.4F;
     }
 
