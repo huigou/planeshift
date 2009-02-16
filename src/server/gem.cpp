@@ -671,13 +671,19 @@ void gemObject::SetAlive(bool flag)
 
 
 void gemObject::InitMesh(const char *name,
-                           const csVector3& pos,
-                           const float rotangle,
-                           iSector* room)
+                         const csVector3& pos,
+                         const float rotangle,
+                         iSector* room)
 {
     csRef<iEngine> engine = csQueryRegistry<iEngine> (psserver->GetObjectReg());
     if(!nullfact)
+    {
         nullfact = engine->CreateMeshFactory("crystalspace.mesh.object.null", "Dummy", false);
+        csRef<iNullFactoryState> nullstate = scfQueryInterface<iNullFactoryState> (nullfact->GetMeshObjectFactory());
+        csBox3 bbox;
+        bbox.AddBoundingVertex(pos);
+        nullstate->SetBoundingBox(bbox);
+    }
 
     csRef<iMeshWrapper> mesh = engine->CreateMeshWrapper(nullfact, name);
 

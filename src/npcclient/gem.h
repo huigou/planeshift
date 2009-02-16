@@ -21,9 +21,8 @@
 //=============================================================================
 // Crystal Space Includes
 //=============================================================================
+#include <iengine/mesh.h>
 #include <csutil/csobject.h>
-
-struct iMeshWrapper;
 
 //=============================================================================
 // Project Library Includes
@@ -109,6 +108,7 @@ public:
 protected:
     psNPCClient *npcclient;
     
+    static csRef<iMeshFactoryWrapper> nullfact;
 
     csString name;
     EID  eid;

@@ -24,6 +24,8 @@
 #include <iengine/movable.h>
 #include <iengine/engine.h>
 #include <imap/loader.h>
+#include <imesh/nullmesh.h>
+#include <imesh/object.h>
 
 //=============================================================================
 // Project Library Includes
@@ -42,6 +44,8 @@
 #include "networkmgr.h"
 
 //-----------------------------------------------------------------------------
+
+csRef<iMeshFactoryWrapper> gemNPCObject::nullfact = NULL;
 
 psNpcMeshAttach::psNpcMeshAttach(gemNPCObject* objectToAttach) : scfImplementationType(this)
 {
@@ -97,114 +101,131 @@ bool gemNPCObject::InitMesh(    const char *factname,
                              )
 {
     pcmesh = new npcMesh(npcclient->GetObjectReg(), this, npcclient);
-    
-    // Replace helm group token with the default race.
-    psString fact_name(factname);
-    fact_name.ReplaceAllSubString("$H", "stonebm");
-    factname = fact_name;
 
-    psString file_name(filename);
-    file_name.ReplaceAllSubString("$H", "stonebm");
-    filename = file_name;
-
-    csRef<iEngine> engine = csQueryRegistry<iEngine> (npcclient->GetObjectReg());
-    csRef<iVFS> vfs = csQueryRegistry<iVFS> (npcclient->GetObjectReg());
-
+    csRef<iEngine> engine = csQueryRegistry<iEngine> (npcclient->GetObjectReg());    
     csRef<iMeshWrapper> mesh;
-    csRef<iMeshFactoryWrapper> meshFact = engine->GetMeshFactories()->FindByName(factname);
-    if(meshFact.IsValid())
+
+    if(csString("").Compare(filename))
     {
-        mesh = meshFact->CreateMeshWrapper();
-    }
-    
-    if(!mesh.IsValid())
-    {
-        bool failed = true;
-        if(vfs->Exists(filename))
+        if(!nullfact)
         {
-            failed = false;
-            while(!failed)
-            {
-                csRef<iDocument> doc = ParseFile(npcclient->GetObjectReg(), filename);
-                if (!doc)
-                {
-                    Error2("Couldn't parse file %s", filename);
-                    failed = true;
-                    break;
-                }
-
-                csRef<iDocumentNode> root = doc->GetRoot();
-                if (!root)
-                {
-                    Error2("The file(%s) doesn't have a root", filename);
-                    failed = true;
-                    break;
-                }
-
-                csRef<iDocumentNode> meshNode;
-                csRef<iDocumentNode> libNode = root->GetNode("library");
-                if (libNode)
-                {
-                    meshNode = libNode->GetNode("meshfact");
-
-                    if(libNode->GetNode("shaders"))
-                        libNode->RemoveNode(libNode->GetNode("shaders"));
-
-                    if(libNode->GetNode("textures"))
-                        libNode->RemoveNode(libNode->GetNode("textures"));
-
-                    if(libNode->GetNode("materials"))
-                        libNode->RemoveNode(libNode->GetNode("materials"));
-                }
-                else
-                    meshNode = root->GetNode("meshfact");
-                if (!meshNode)
-                {
-                    Error2("The file(%s) doesn't have a meshfact node", filename);
-                    failed = true;
-                    break;
-                }
-
-                csRef<iDocumentNode> params = meshNode->GetNode("params");
-                if(meshNode->GetNode("params"))
-                {
-                    if(params->GetNode("material"))
-                        params->RemoveNode(params->GetNode("material"));
-
-                    params->RemoveNodes(params->GetNodes("animation"));
-
-                    csRef<iDocumentNodeIterator> meshes = params->GetNodes("mesh");
-                    while(meshes->HasNext())
-                    {
-                        csRef<iDocumentNode> mesh = meshes->Next();
-                        csRef<iDocumentAttribute> att = mesh->GetAttribute("material");
-                        mesh->RemoveAttribute(mesh->GetAttribute("material"));
-                    }
-                }
-
-                csRef<iThreadedLoader> loader (csQueryRegistry<iThreadedLoader> (npcclient->GetObjectReg()));
-                csRef<iThreadReturn> ret = loader->LoadNode(root);
-                ret->Wait();
-                engine->SyncEngineListsNow(loader);
-                meshFact = engine->GetMeshFactories()->FindByName(factname);
-                if(meshFact.IsValid())
-                {
-                    mesh = meshFact->CreateMeshWrapper();
-                }
-                failed = !mesh.IsValid();
-                break;
-            }
+            nullfact = engine->CreateMeshFactory("crystalspace.mesh.object.null", "Dummy", false);
+            csRef<iNullFactoryState> nullstate = scfQueryInterface<iNullFactoryState> (nullfact->GetMeshObjectFactory());
+            csBox3 bbox;
+            bbox.AddBoundingVertex(pos);
+            nullstate->SetBoundingBox(bbox);
         }
 
-        if(failed)
+        mesh = engine->CreateMeshWrapper(nullfact, name);
+    }
+    else
+    {
+        // Replace helm group token with the default race.
+        psString fact_name(factname);
+        fact_name.ReplaceAllSubString("$H", "stonebm");
+        factname = fact_name;
+
+        psString file_name(filename);
+        file_name.ReplaceAllSubString("$H", "stonebm");
+        filename = file_name;
+
+        csRef<iVFS> vfs = csQueryRegistry<iVFS> (npcclient->GetObjectReg());
+
+        csRef<iMeshFactoryWrapper> meshFact = engine->GetMeshFactories()->FindByName(factname);
+        if(meshFact.IsValid())
         {
-            Error3("Could not set mesh with factname=%s and filename=%s. Trying dummy model", factname, filename);                
-            factname = "stonebm";
-            filename = "/planeshift/models/stonebm/stonebm.cal3d";
-            if (!pcmesh->SetMesh(factname, filename))
+            mesh = meshFact->CreateMeshWrapper();
+        }
+
+        if(!mesh.IsValid())
+        {
+            bool failed = true;
+            if(vfs->Exists(filename))
             {
-                Error3("Could not use dummy CVS mesh with factname=%s and filename=%s", factname, filename);        
-                return false;
+                failed = false;
+                while(!failed)
+                {
+                    csRef<iDocument> doc = ParseFile(npcclient->GetObjectReg(), filename);
+                    if (!doc)
+                    {
+                        Error2("Couldn't parse file %s", filename);
+                        failed = true;
+                        break;
+                    }
+
+                    csRef<iDocumentNode> root = doc->GetRoot();
+                    if (!root)
+                    {
+                        Error2("The file(%s) doesn't have a root", filename);
+                        failed = true;
+                        break;
+                    }
+
+                    csRef<iDocumentNode> meshNode;
+                    csRef<iDocumentNode> libNode = root->GetNode("library");
+                    if (libNode)
+                    {
+                        meshNode = libNode->GetNode("meshfact");
+
+                        if(libNode->GetNode("shaders"))
+                            libNode->RemoveNode(libNode->GetNode("shaders"));
+
+                        if(libNode->GetNode("textures"))
+                            libNode->RemoveNode(libNode->GetNode("textures"));
+
+                        if(libNode->GetNode("materials"))
+                            libNode->RemoveNode(libNode->GetNode("materials"));
+                    }
+                    else
+                        meshNode = root->GetNode("meshfact");
+                    if (!meshNode)
+                    {
+                        Error2("The file(%s) doesn't have a meshfact node", filename);
+                        failed = true;
+                        break;
+                    }
+
+                    csRef<iDocumentNode> params = meshNode->GetNode("params");
+                    if(meshNode->GetNode("params"))
+                    {
+                        if(params->GetNode("material"))
+                            params->RemoveNode(params->GetNode("material"));
+
+                        params->RemoveNodes(params->GetNodes("animation"));
+
+                        csRef<iDocumentNodeIterator> meshes = params->GetNodes("mesh");
+                        while(meshes->HasNext())
+                        {
+                            csRef<iDocumentNode> mesh = meshes->Next();
+                            csRef<iDocumentAttribute> att = mesh->GetAttribute("material");
+                            mesh->RemoveAttribute(mesh->GetAttribute("material"));
+                        }
+                    }
+
+                    csRef<iThreadedLoader> loader (csQueryRegistry<iThreadedLoader> (npcclient->GetObjectReg()));
+                    csRef<iThreadReturn> ret = loader->LoadNode(root);
+                    ret->Wait();
+                    engine->SyncEngineListsNow(loader);
+                    meshFact = engine->GetMeshFactories()->FindByName(factname);
+                    if(meshFact.IsValid())
+                    {
+                        mesh = meshFact->CreateMeshWrapper();
+                    }
+                    failed = !mesh.IsValid();
+                    break;
+                }
+            }
+
+            if(failed)
+            {
+                Error3("Could not set mesh with factname=%s and filename=%s. Trying dummy model", factname, filename);                
+                factname = "stonebm";
+                filename = "/planeshift/models/stonebm/stonebm.cal3d";
+                if (!pcmesh->SetMesh(factname, filename))
+                {
+                    Error3("Could not use dummy CVS mesh with factname=%s and filename=%s", factname, filename);        
+                    return false;
+                }
             }
         }
     }
@@ -251,7 +272,10 @@ gemNPCActor::gemNPCActor( psNPCClient* npcclient, psPersistActor& mesg)
     SetInstance( mesg.instance );
 
     Debug3(LOG_CELPERSIST, eid.Unbox(), "Actor %s(%s) Received\n", mesg.name.GetData(), ShowID(mesg.entityid));
-    InitMesh(  mesg.factname, mesg.filename, mesg.pos, mesg.yrot, mesg.sectorName );
+
+    csString filename;
+    filename.Format("/planeshift/models/%s/%s.cal3d", mesg.factname, mesg.factname);
+    InitMesh(  mesg.factname, filename, mesg.pos, mesg.yrot, mesg.sectorName );
     InitLinMove( mesg.pos, mesg.yrot, mesg.sectorName, mesg.top, mesg.bottom, mesg.offset );
     InitCharData( mesg.texParts, mesg.equipment );  
 }
@@ -305,7 +329,7 @@ gemNPCItem::gemNPCItem( psNPCClient* npcclient, psPersistItem& mesg)
         Error2("Item %s has bad data! Check cstr_id_gfx_mesh for this item!\n", mesg.name.GetData());
     }
 
-    InitMesh(  mesg.factname.GetDataSafe(), mesg.filename.GetDataSafe(), mesg.pos, mesg.yRot, mesg.sector );
+    InitMesh(  mesg.factname.GetDataSafe(), "", mesg.pos, mesg.yRot, mesg.sector );
     if (mesg.flags & psPersistItem::NOPICKUP) flags |= NOPICKUP;
 }
 
