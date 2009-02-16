@@ -681,7 +681,7 @@ void gemObject::InitMesh(const char *name,
         nullfact = engine->CreateMeshFactory("crystalspace.mesh.object.null", "Dummy", false);
         csRef<iNullFactoryState> nullstate = scfQueryInterface<iNullFactoryState> (nullfact->GetMeshObjectFactory());
         csBox3 bbox;
-        bbox.AddBoundingVertex(pos);
+        bbox.AddBoundingVertex(csVector3(0.0f));
         nullstate->SetBoundingBox(bbox);
     }
 
