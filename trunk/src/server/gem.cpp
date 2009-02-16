@@ -121,6 +121,7 @@ psGemServerMeshAttach::psGemServerMeshAttach(gemObject* objectToAttach) : scfImp
 //-----------------------------------------------------------------------------
 
 GEMSupervisor *gemObject::cel = NULL;
+csRef<iMeshFactoryWrapper> gemObject::nullfact = NULL;
 
 GEMSupervisor::GEMSupervisor(iObjectRegistry *objreg,
                              psDatabase *db)
@@ -586,7 +587,6 @@ gemObject::gemObject(const char *name)
 
 gemObject::gemObject(const char* name,
                      const char* factname,
-                     const char* filename,
                      InstanceID myInstance,
                      iSector* room,
                      const csVector3& pos,
@@ -599,7 +599,6 @@ gemObject::gemObject(const char* name,
     this->valid    = true;
     this->name     = name;
     this->factname = factname;
-    this->filename = filename;
     this->yRot     = rotangle;
     this->worldInstance = myInstance;
 
@@ -611,12 +610,7 @@ gemObject::gemObject(const char* name,
     prox_distance_desired=DEF_PROX_DIST;
     prox_distance_current=DEF_PROX_DIST;
 
-    if (!InitMesh(name,factname,filename,pos,rotangle,room))
-    {
-        Error1("Could not create gemObject because mesh could not be Init'd.");
-        Error4("Name: %s Factory: %s File: %s\n", name, factname, filename );
-        return;
-    }
+    InitMesh(name,pos,rotangle,room);
 
     if (!InitProximityList(DEF_PROX_DIST,clientnum))
     {
@@ -676,139 +670,21 @@ void gemObject::SetAlive(bool flag)
 }
 
 
-bool gemObject::InitMesh(const char *name,
-                           const char *factname,
-                           const char *filename,
+void gemObject::InitMesh(const char *name,
                            const csVector3& pos,
                            const float rotangle,
                            iSector* room)
 {
-    pcmesh = new gemMesh(psserver->GetObjectReg(), this, cel);
-
-    // Replace helm group token with the default race.
-    psString fact_name(factname);
-    fact_name.ReplaceAllSubString("$H", "stonebm");
-    factname = fact_name;
-
-    psString file_name(filename);
-    file_name.ReplaceAllSubString("$H", "stonebm");
-    filename = file_name;
-
     csRef<iEngine> engine = csQueryRegistry<iEngine> (psserver->GetObjectReg());
-    csRef<iVFS> vfs = csQueryRegistry<iVFS> (psserver->GetObjectReg());
+    if(!nullfact)
+        nullfact = engine->CreateMeshFactory("crystalspace.mesh.object.null", "Dummy", false);
 
-    csRef<iMeshWrapper> mesh;
-    csRef<iMeshFactoryWrapper> meshFact = engine->GetMeshFactories()->FindByName(factname);
-    if(meshFact.IsValid())
-    {
-        mesh = meshFact->CreateMeshWrapper();
-    }
+    csRef<iMeshWrapper> mesh = engine->CreateMeshWrapper(nullfact, name);
 
-    if(!mesh.IsValid())
-    {
-        bool failed = true;
-
-        if(vfs->Exists(filename))
-        {
-            failed = false;
-            while(!failed)
-            {
-                csRef<iDocument> doc = ParseFile(psserver->GetObjectReg(), filename);
-                if (!doc)
-                {
-                    Error2("Couldn't parse file %s", filename);
-                    failed = true;
-                    break;
-                }
-
-                csRef<iDocumentNode> root = doc->GetRoot();
-                if (!root)
-                {
-                    Error2("The file(%s) doesn't have a root", filename);
-                    failed = true;
-                    break;
-                }
-
-                csRef<iDocumentNode> meshNode;
-                csRef<iDocumentNode> libNode = root->GetNode("library");
-                if (libNode)
-                {
-                    meshNode = libNode->GetNode("meshfact");
-
-                    if(libNode->GetNode("shaders"))
-                        libNode->RemoveNode(libNode->GetNode("shaders"));
-
-                    if(libNode->GetNode("textures"))
-                        libNode->RemoveNode(libNode->GetNode("textures"));
-
-                    if(libNode->GetNode("materials"))
-                        libNode->RemoveNode(libNode->GetNode("materials"));
-                }
-                else
-                    meshNode = root->GetNode("meshfact");
-                if (!meshNode)
-                {
-                    Error2("The file(%s) doesn't have a meshfact node", filename);
-                    failed = true;
-                    break;
-                }
-
-                csRef<iDocumentNode> params = meshNode->GetNode("params");
-                if(meshNode->GetNode("params"))
-                {
-                    if(params->GetNode("material"))
-                        params->RemoveNode(params->GetNode("material"));
-
-                    params->RemoveNodes(params->GetNodes("animation"));
-
-                    csRef<iDocumentNodeIterator> meshes = params->GetNodes("mesh");
-                    while(meshes->HasNext())
-                    {
-                        csRef<iDocumentNode> mesh = meshes->Next();
-                        csRef<iDocumentAttribute> att = mesh->GetAttribute("material");
-                        mesh->RemoveAttribute(mesh->GetAttribute("material"));
-                    }
-                }
-
-                csRef<iThreadedLoader> loader (csQueryRegistry<iThreadedLoader> (psserver->GetObjectReg()));
-                csRef<iThreadReturn> ret = loader->LoadNode(root);
-                ret->Wait();
-                engine->SyncEngineListsNow(loader);
-                meshFact = engine->GetMeshFactories()->FindByName(factname);
-                if(meshFact.IsValid())
-                {
-                    mesh = meshFact->CreateMeshWrapper();
-                }
-                failed = !mesh.IsValid();
-                break;
-            }
-        }
-        else
-        {
-          Error2("The file(%s) could not be found", filename);
-        }
-
-        if(failed)
-        {
-            Error3("Could not set mesh with factname=%s and filename=%s. Trying dummy model", factname, filename);
-            factname = "stonebm";
-            filename = "/planeshift/models/stonebm/stonebm.cal3d";
-            if (!pcmesh->SetMesh(factname, filename))
-            {
-                Error3("Could not use dummy CVS mesh with factname=%s and filename=%s", factname, filename);
-                return false;
-            }
-        }
-    }
-
-    if(!pcmesh->GetMesh())
-    {
-        pcmesh->SetMesh(mesh);
-    }
+    pcmesh = new gemMesh(psserver->GetObjectReg(), this, cel);
+    pcmesh->SetMesh(mesh);
 
     Move(pos,rotangle,room);
-
-    return true;
 }
 
 iMeshWrapper *gemObject::GetMeshWrapper()
@@ -1194,13 +1070,12 @@ gemActiveObject::gemActiveObject( const char* name )
 
 gemActiveObject::gemActiveObject( const char* name,
                                      const char* factname,
-                                     const char* filename,
                                      InstanceID myInstance,
                                      iSector* room,
                                      const csVector3& pos,
                                      float rotangle,
                                      int clientnum)
-                                     : gemObject(name,factname,filename,myInstance,room,pos,rotangle,clientnum)
+                                     : gemObject(name,factname,myInstance,room,pos,rotangle,clientnum)
 {
     //if entity is not set, object is not a success
 //    if (entity != NULL)
@@ -1408,7 +1283,6 @@ void gemActiveObject::SendBehaviorMessage(const csString & msg_id, gemObject *ac
 
 gemItem::gemItem(csWeakRef<psItem> item,
                      const char* factname,
-                     const char* filename,
                      InstanceID instance,
                      iSector* room,
                      const csVector3& pos,
@@ -1416,7 +1290,7 @@ gemItem::gemItem(csWeakRef<psItem> item,
                      float yrotangle,
                      float zrotangle,
                      int clientnum)
-                     : gemActiveObject(item->GetName(),factname,filename,instance,room,pos,yrotangle,clientnum)
+                     : gemActiveObject(item->GetName(),factname,instance,room,pos,yrotangle,clientnum)
 {
     itemdata=item;
     xRot=xrotangle;
@@ -1562,7 +1436,6 @@ bool gemItem::GetVisibility()
 
 gemContainer::gemContainer(csWeakRef<psItem> item,
              const char* factname,
-             const char* filename,
              InstanceID myInstance,
              iSector* room,
              const csVector3& pos,
@@ -1570,7 +1443,7 @@ gemContainer::gemContainer(csWeakRef<psItem> item,
              float yrotangle,
              float zrotangle,
              int clientnum)
-             : gemItem(item,factname,filename,myInstance,room,pos,xrotangle,yrotangle,zrotangle,clientnum)
+             : gemItem(item,factname,myInstance,room,pos,xrotangle,yrotangle,zrotangle,clientnum)
 {
 }
 
@@ -1953,15 +1826,14 @@ void gemActionLocation::Send( int clientnum, bool , bool to_superclient )
 
 gemActor::gemActor( psCharacter *chardata,
                        const char* factname,
-                       const char* filename,
                        InstanceID myInstance,
                        iSector* room,
                        const csVector3& pos,
                        float rotangle,
                        int clientnum) :
-  gemObject(chardata->GetCharFullName(),factname,filename,myInstance,room,pos,rotangle,clientnum),
+  gemObject(chardata->GetCharFullName(),factname,myInstance,room,pos,rotangle,clientnum),
 psChar(chardata), factions(NULL), DRcounter(0), lastDR(0), lastV(0), lastSentSuperclientPos(0, 0, 0),
-lastSentSuperclientInstance(-1), numReports(0), reportTargetId(0), isFalling(false), invincible(false), visible(true), viewAllObjects(false), meshcache(factname),
+lastSentSuperclientInstance(-1), numReports(0), reportTargetId(0), isFalling(false), invincible(false), visible(true), viewAllObjects(false),
 movementMode(0), isAllowedToMove(true), atRest(true), pcmove(NULL),
 nevertired(false), infinitemana(false), instantcast(false), safefall(false), givekillexp(false)
 {
@@ -2578,7 +2450,6 @@ void gemActor::Send( int clientnum, bool control, bool to_superclient  )
                          name,
                          guildName,
                          factname,
-                         filename,
                          psChar->GetRaceInfo()->name,
                          psChar->GetRaceInfo()->gender,
                          helmGroup,
@@ -2792,32 +2663,9 @@ bool gemActor::InitLinMove (const csVector3& pos,
     csVector3 size;
     psRaceInfo *raceinfo = psChar->GetRaceInfo();
     raceinfo->GetSize(size);
-    float width = 0.0f;
-    float height = 0.0f;
-    float depth = 0.0f;
-
-    if(!(size.x && size.y && size.z))
-    {
-        // Now Determine CD bounding boxes for upper and lower colliders
-        csRef<iSpriteCal3DState> cal3d;
-        cal3d = scfQueryInterface<iSpriteCal3DState> ( GetMeshWrapper()->GetMeshObject ());
-        if (cal3d)
-        {
-            cal3d->SetAnimCycle("stand",1);
-        }
-        const csBox3& box = GetMeshWrapper()->GetMeshObject()->GetObjectModel()->GetObjectBoundingBox();
-
-        width  = box.MaxX() - box.MinX();
-        height = box.MaxY() - box.MinY();
-        depth  = box.MaxZ() - box.MinZ();
-    }
-
-    if(size.x != 0)
-        width = size.x;
-    if(size.y != 0)
-        height = size.y;
-    if(size.z != 0)
-        depth = size.z;
+    float width = size.x;
+    float height = size.y;
+    float depth = size.z;
 
     // Add a fudge factor to the depth to allow for feet
     // sticking forward while running
@@ -2829,17 +2677,17 @@ bool gemActor::InitLinMove (const csVector3& pos,
     if (width < 0.2)
     {
         Warning4(LOG_ANY, "Width %.2f to small for %s(%s)", width, GetName(), ShowID(pid));
-        width = 0.2F;
+        width = 0.8F;
     }
     if (depth < 0.2*1.33)
     {
         Warning4(LOG_ANY, "Depth %.2f to small for %s(%s)", depth, GetName(), ShowID(pid));
-        depth = 0.2F*1.33F;
+        depth = 0.6F*1.33F;
     }
     if (height < 0.2F)
     {
         Warning4(LOG_ANY, "Height %.2f to small for %s(%s)", height, GetName(), ShowID(pid));
-        height = 0.2F;
+        height = 1.4F;
     }
 
     float legSize;
@@ -3660,10 +3508,16 @@ bool gemActor::IsMagicCategoryActive(const csString & category)
 
 bool gemActor::SetMesh(const char* meshname)
 {
-    csString newmesh;
-    newmesh.Format("/planeshift/models/%s/%s.cal3d", meshname, meshname );
-
-    if ( psserver->vfs->Exists(newmesh) )
+    if(pcmesh->GetMesh())
+    {
+        if(CacheManager::GetSingleton().GetRaceInfoByMeshName(meshname) != NULL)
+        {
+            factname = meshname;
+            UpdateProxList(true);
+            return true;
+        }
+    }
+    else
     {
         // Get current position to give to the newly set mesh
         csVector3 pos;
@@ -3671,45 +3525,27 @@ bool gemActor::SetMesh(const char* meshname)
         iSector* sector;
         GetPosition(pos,angle,sector);
 
-        if ( pcmesh->SetMesh(meshname,newmesh) )
+        csRef<iEngine> engine = csQueryRegistry<iEngine>(psserver->GetObjectReg());
+        csRef<iMeshWrapper> newmesh = engine->CreateMeshWrapper(meshname);
+        pcmesh->SetMesh(newmesh);
+
+        if (pcmove)
         {
-            if (pcmove)
-            {
-                delete pcmove;
-                pcmove = NULL;
-            }
-            InitLinMove(pos, angle, sector);
-
-            SetPosition(pos,angle,sector);
-            MulticastDRUpdate();
-
-            if ( pcmesh->GetMesh() )
-            {
-                factname = meshname;
-                filename = newmesh;
-
-                UpdateProxList(true);
-                return true;
-            }
+            delete pcmove;
+            pcmove = NULL;
         }
+        InitLinMove(pos, angle, sector);
 
-        // Setting the mesh failed. Resetting back to the original mesh assuming
-        // that the mesh factory for the original mesh is already loaded.
-        if (!pcmesh->SetMesh(meshcache, 0))
-        {
-            // Last attempt with the full file name
-            newmesh.Format("/planeshift/models/%s/%s.cal3d", meshcache.GetData(), meshcache.GetData());
-            if (!pcmesh->SetMesh(meshcache, newmesh))
-            {
-                //Previously was CS_ASSERT(ResetMesh());, CS_ASSERT disappears in release mode
-                CS_ASSERT(false);
-            }
-        }
         SetPosition(pos,angle,sector);
         MulticastDRUpdate();
 
+        if ( pcmesh->GetMesh() )
+        {
+            factname = meshname;
+            UpdateProxList(true);
+            return true;
+        }
     }
-
     return false;
 }
 
@@ -3717,13 +3553,12 @@ bool gemActor::SetMesh(const char* meshname)
 
 gemNPC::gemNPC( psCharacter *chardata,
                    const char* factname,
-                   const char* filename,
                    InstanceID instance,
                    iSector* room,
                    const csVector3& pos,
                    float rotangle,
                    int clientnum)
-                   : gemActor(chardata,factname,filename,instance,room,pos,rotangle,clientnum)
+                   : gemActor(chardata,factname,instance,room,pos,rotangle,clientnum)
 {
     npcdialog = NULL;
     superClientID = 0;
@@ -4180,7 +4015,6 @@ void gemNPC::Send( int clientnum, bool control, bool to_superclient )
                          name,
                          guildName,
                          factname,
-                         filename,
                          psChar->GetRaceInfo()->name,
                          psChar->GetRaceInfo()->gender,
                          helmGroup,

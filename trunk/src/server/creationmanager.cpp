@@ -864,15 +864,8 @@ void CharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
     if ( trait )
         chardata->SetTraitForLocation( trait->location, trait );
     
-//    printf("Uploaded Skin Colour: %d\n", upload.selectedSkinColour );
-            
-                        
-    csString filename;
-    filename.Format("/planeshift/models/%s/%s.cal3d",raceinfo->mesh_name,raceinfo->mesh_name);
-
     gemActor *actor = new gemActor( chardata,
                                     raceinfo->mesh_name,
-                                    filename,
                                     newinstance,
                                     EntityManager::GetSingleton().FindSector(sectorinfo->name),
                                     csVector3(x,y,z),yrot,

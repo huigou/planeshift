@@ -116,7 +116,6 @@ bool psRaceInfo::Load(iResultRow& row)
                  row.GetUInt32("cstr_id_mesh"),name.GetData() );
     }
     mesh_name = meshname;
-    meshFileName.Format("/planeshift/models/%s/%s.cal3d",mesh_name,mesh_name);
 
     const char *textname=CacheManager::GetSingleton().FindCommonString(row.GetUInt32("cstr_id_base_texture"));
     if (textname==NULL)
@@ -149,6 +148,8 @@ bool psRaceInfo::LoadBaseSpeeds(iObjectRegistry *object_reg)
 
     csRef<iDocument> doc = xml->CreateDocument();
 
+    csString meshFileName;
+    meshFileName.Format("/planeshift/models/%s/%s.cal3d",mesh_name,mesh_name);
     csRef<iDataBuffer> buf (vfs->ReadFile (meshFileName.GetData()));
     if (!buf || !buf->GetSize ())
     {
@@ -192,13 +193,6 @@ bool psRaceInfo::LoadBaseSpeeds(iObjectRegistry *object_reg)
 
     return true;
 }
-
-
-csString psRaceInfo::GetMeshFileName()
-{
-    return meshFileName;
-}
-
 
 float psRaceInfo::GetBaseAttribute(PSITEMSTATS_STAT attrib)
 {

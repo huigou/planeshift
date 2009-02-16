@@ -23,6 +23,7 @@
 //=============================================================================
 // Crystal Space Includes
 //=============================================================================
+#include <iengine/mesh.h>
 #include <iutil/vfs.h>
 #include <csutil/csobject.h>
 #include <csutil/csstring.h>
@@ -253,7 +254,7 @@ class gemObject : public iDeleteNotificationObject, public CS::Utility::WeakRefe
 {
 
 public:
-    gemObject(const char* name, const char* factname,const char* filename,InstanceID myinstance,iSector* room,
+    gemObject(const char* name, const char* factname,InstanceID myinstance,iSector* room,
         const csVector3& pos,float rotangle,int clientnum);
 
     /// This ctor is only for use in making keys for the BinaryTree
@@ -372,8 +373,8 @@ protected:
     iSector *sector;                            ///< Ptr to the CS sector inhabited
     bool is_alive;                              ///< Flag indicating whether object is alive or not
     csString factname;                          ///< Name of CS Mesh Factory used to create this object
-    csString filename;                          ///< VFS Filename of mesh
     EID eid;                                    ///< Entity ID (unique identifier for object)
+    static csRef<iMeshFactoryWrapper> nullfact;       ///< Null factory for our mesh instances.
 
     csArray<iDeleteObjectCallback*> receivers;  ///< List of objects which are to be notified when this object is deleted.
 
@@ -382,8 +383,7 @@ protected:
 
     bool InitProximityList(float radius,int clientnum);
 
-    bool InitMesh(const char *name,const char *factname,const char *filename,
-        const csVector3& pos,const float rotangle,iSector* room);
+    void InitMesh(const char *name, const csVector3& pos, const float rotangle, iSector* room);
 };
 
 //-----------------------------------------------------------------------------
@@ -397,7 +397,6 @@ public:
     gemActiveObject( const char *name );
     gemActiveObject( const char* name,
                     const char* factname,
-                    const char* filename,
                     InstanceID myInstance,
                     iSector* room,
                     const csVector3& pos,
@@ -434,7 +433,6 @@ protected:
 public:
     gemItem(csWeakRef<psItem> item,
         const char* factname,
-        const char* filename,
         InstanceID myInstance,
         iSector* room,
         const csVector3& pos,
@@ -502,7 +500,6 @@ protected:
 public:
     gemContainer(csWeakRef<psItem> item,
         const char* factname,
-        const char* filename,
         InstanceID myInstance,
         iSector* room,
         const csVector3& pos,
@@ -682,7 +679,7 @@ protected:
 public:
     psLinearMovement* pcmove;
 
-    gemActor(psCharacter *chardata, const char* factname,const char* filename,
+    gemActor(psCharacter *chardata, const char* factname,
         InstanceID myInstance,iSector* room,const csVector3& pos,float rotangle,int clientnum);
 
     virtual ~gemActor();
@@ -925,7 +922,7 @@ protected:
     NpcDialogMenu *initial_triggers;
 
 public:
-    gemNPC(psCharacter *chardata, const char* factname,const char* filename,
+    gemNPC(psCharacter *chardata, const char* factname,
            InstanceID myInstance,iSector* room,const csVector3& pos,float rotangle,int clientnum);
 
     virtual ~gemNPC();
@@ -993,8 +990,8 @@ class gemPet : public gemNPC
 {
 public:
 
-    gemPet(psCharacter *chardata, const char* factname,const char* filename,InstanceID instance,iSector* room,
-        const csVector3& pos,float rotangle,int clientnum,uint32 id) : gemNPC(chardata,factname,filename,instance,room,pos,rotangle,clientnum)
+    gemPet(psCharacter *chardata, const char* factname,InstanceID instance,iSector* room,
+        const csVector3& pos,float rotangle,int clientnum,uint32 id) : gemNPC(chardata,factname,instance,room,pos,rotangle,clientnum)
     {
         this->persistanceLevel = "Temporary";
     };

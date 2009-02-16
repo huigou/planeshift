@@ -54,7 +54,6 @@ struct psRaceInfo
 {
 protected:
     unsigned short attributes[PSITEMSTATS_STAT_COUNT];
-    csString meshFileName;
     
 public:
     psRaceInfo();
@@ -77,8 +76,6 @@ public:
     int natural_armor_id;
     float runMinSpeed,runBaseSpeed,runMaxSpeed;
     float walkMinSpeed,walkBaseSpeed,walkMaxSpeed;
-
-    csString GetMeshFileName();
     
     float GetBaseAttribute(PSITEMSTATS_STAT attrib);
     
