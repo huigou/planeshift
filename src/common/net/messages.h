@@ -2877,7 +2877,6 @@ public:
                     const char* name,
                     const char* guildName,
                     const char* factname,
-                    const char* filename,
                     const char* raceName,
                     unsigned short int gender,
                     const char* helmGroup,
@@ -2916,7 +2915,6 @@ public:
     csString name;
     csString guild;
     csString factname;
-    csString filename;
     csString race;
     unsigned short int gender;
     csString helmGroup;                 // Used for helm groupings.

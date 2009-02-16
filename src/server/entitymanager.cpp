@@ -552,7 +552,6 @@ gemNPC* EntityManager::CreatePet (Client *client, int masterFamiliarID)
 
 bool EntityManager::CreatePlayer (Client* client)
 {
-    csString filename;
     psCharacter *chardata=psServer::CharacterLoader.LoadCharacterData(client->GetPID(),true);
     if (chardata==NULL)
     {
@@ -571,8 +570,6 @@ bool EntityManager::CreatePlayer (Client* client)
         return false;
     }
 
-    filename.Format("/planeshift/models/%s/%s.cal3d",raceinfo->mesh_name,raceinfo->mesh_name);
-
     csVector3 pos;
     float yrot;
     psSectorInfo *sectorinfo;
@@ -589,7 +586,7 @@ bool EntityManager::CreatePlayer (Client* client)
     }
 
 
-    gemActor *actor = new gemActor(chardata,raceinfo->mesh_name,filename,
+    gemActor *actor = new gemActor(chardata,raceinfo->mesh_name,
                                    instance,sector,pos,yrot,
                                    client->GetClientNum());
 
@@ -731,8 +728,7 @@ EID EntityManager::CreateNPC(psCharacter *chardata, InstanceID instance, csVecto
         return false;
     }
 
-    gemNPC *actor = new gemNPC(chardata, raceinfo->mesh_name, raceinfo->GetMeshFileName(), 
-                               instance, sector, pos, yrot, 0);
+    gemNPC *actor = new gemNPC(chardata, raceinfo->mesh_name, instance, sector, pos, yrot, 0);
 
     if ( !actor->IsValid() )
     {
@@ -847,24 +843,15 @@ gemObject *EntityManager::CreateItem( psItem *& iteminstance, bool transient )
     // Cannot stack, so make a new one
     // Get the mesh for this object
     meshname = iteminstance->GetMeshName();
-    csString meshfile(meshname);
-    if (!meshfile.IsEmpty())
-    {
-        meshfile.ReplaceAll("#", "/");
-        csString tmp;
-        tmp.Format("/planeshift/%s.meshfact", meshfile.GetData());
-        meshfile = tmp;
-    }
-
     gemItem *obj;
     
     if (iteminstance->GetIsContainer())
     {
-        obj = new gemContainer(iteminstance,meshname,meshfile,instance,isec,newpos,xrot,yrot,zrot,0);
+        obj = new gemContainer(iteminstance,meshname,instance,isec,newpos,xrot,yrot,zrot,0);
     }
     else
     {
-        obj = new gemItem(iteminstance,meshname,meshfile,instance,isec,newpos,xrot,yrot,zrot,0);
+        obj = new gemItem(iteminstance,meshname,instance,isec,newpos,xrot,yrot,zrot,0);
     }
 
     // Won't create item if gemItem entity was not created
@@ -875,10 +862,6 @@ gemObject *EntityManager::CreateItem( psItem *& iteminstance, bool transient )
         // don't create removal events for items in e.g guildhalls
         iteminstance->ScheduleRemoval();
     }
-
-    csReversibleTransform revTransform;
-    iMeshWrapper *mesh = obj->GetMeshWrapper();
-    csBox3 box = mesh->GetTransformedBoundingBox(revTransform);
         
     obj->Move(newpos,yrot,isec);
 
