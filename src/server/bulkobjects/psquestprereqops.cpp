@@ -487,7 +487,7 @@ bool psQuestPrereqOpKnownSpell::Check(psCharacter * character)
 
     if (character)
     {
-        return (character->GetSpellByName(spell));
+        return (character->GetSpellByName(spell) != NULL);
     }
     return false;
 }
