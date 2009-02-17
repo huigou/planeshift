@@ -1825,7 +1825,7 @@ Next we need to set a password for the root mysql user:
 
 To make the database you need to do the following:<br />
 <div class="commandBox">cd $HOME/development/planeshift/src/server/database/mysql<br />
-mysql -r root -pyourpasswordhere<br />
+mysql -u root -pyourpasswordhere<br />
 </div>
 </div>
 <div class="Windows">
@@ -1860,7 +1860,12 @@ How to create a new PS database:
         C:\mysql\bin\mysql -u planeshift -pplaneshift
     </div></p>
 </div>
-
+<div class="MacOSX">
+    <p><div class="commandBox">
+        $ cd $HOME/development/planeshift/src/server/database/mysql/<br>
+        home/development/planeshift/src/server/database/mysql/$ mysql -u planeshift -pplaneshift
+    </div></p>
+</div>
 <p><div class="commandBox">
     mysql> source create_all.sql;<br>
     mysql> quit
