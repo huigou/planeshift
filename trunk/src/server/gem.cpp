@@ -3831,7 +3831,7 @@ void gemNPC::SendBehaviorMessage(const csString & msg_id, gemObject *actor)
     else if (msg_id == "attack")
         psserver->usermanager->Attack(actor->GetCharacterData()->getStance("Normal"), actor->GetClient(), actor->GetClientID());
     else if (msg_id == "loot")
-        psserver->usermanager->HandleLoot(actor->GetClient());
+        psserver->usermanager->Loot(actor->GetClient());
 }
 
 void gemNPC::AddLootableClient(int cnum)
