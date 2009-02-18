@@ -3370,11 +3370,6 @@ void gemActor::SetAction(const char *anim,csTicks& timeDelay)
 {
     if (!anim)
         return;
-
-    csRef<iSpriteCal3DState> spstate = scfQueryInterface<iSpriteCal3DState> (GetMeshWrapper()->GetMeshObject());
-
-    // Player must be standing for anim to happen
-    spstate->SetAnimAction(anim,.25,.25);
     psOverrideActionMessage action(0, eid, anim);
     action.Multicast(GetMulticastClients(),-1,0);
 }
