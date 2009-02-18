@@ -1,7 +1,7 @@
 /*
  * pssoundmngr.cpp. Saul Leite <leite@engineer.com>
  *
- * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -62,7 +62,7 @@
 psSoundManager::psSoundManager(iBase* iParent)
     : scfImplementationType(this, iParent) ,  sndmngr(this)
 {
-    
+
     soundEnabled = true;
     musicEnabled = true;
     musicCombat = false;
@@ -71,16 +71,17 @@ psSoundManager::psSoundManager(iBase* iParent)
     ambientVolume = 1.0;
     actionsVolume = 1.0;
     guiVolume = 1.0;
+    voicesVolume = 1.0;
 
     eventHandler = NULL;
     currentSectorName = csString("");
 
     mapSoundSystem = NULL;
-    
+
     currentSoundSector = NULL;
     lastSoundSector = NULL;
     lastlastSoundSector = NULL;
-    backgroundSong = 0;   
+    backgroundSong = 0;
     ListenerInitialized = false;
 
     overSongName = NULL;
@@ -94,8 +95,8 @@ psSoundManager::~psSoundManager()
         queue->RemoveListener( eventHandler );
     }
 
-    
-    delete backgroundSong;   
+
+    delete backgroundSong;
     delete mapSoundSystem;
 }
 
@@ -104,16 +105,16 @@ bool psSoundManager::Initialize(iObjectRegistry* objectReg)
     object_reg = objectReg;
 
     pslog::Initialize (object_reg);
-     
+
     eventHandler = new EventHandler( this );
-    if ( !eventHandler ) 
+    if ( !eventHandler )
         return false;
 
     csRef<iEventQueue> queue =  csQueryRegistry<iEventQueue > ( objectReg);
 
     if ( !queue )
         return false;
-    
+
     csEventID esub[] = {
           csevFrame (object_reg),
           CS_EVENTLIST_END
@@ -121,7 +122,7 @@ bool psSoundManager::Initialize(iObjectRegistry* objectReg)
     queue->RegisterListener( eventHandler, esub );
 
     mapSoundSystem = new psMapSoundSystem( this, objectReg );
-    
+
     csRef<iConfigManager> cfg =  csQueryRegistry<iConfigManager> (object_reg);
     if (!cfg)
     {
@@ -139,8 +140,8 @@ void psSoundManager::ChangeTimeOfDay( int newTime )
 }
 
 void psSoundManager::StartMapSoundSystem()
-{ 
-    mapSoundSystem->Initialize(); 
+{
+    mapSoundSystem->Initialize();
 }
 
 void psSoundManager::Update( iView* view )
@@ -149,7 +150,7 @@ void psSoundManager::Update( iView* view )
     return;
   SOUND_LISTENER_TYPE *sndListener = soundSystem->GetListener();
   if (sndListener)
-  {        
+  {
     ListenerInitialized=true;
 
     // take position/direction from view->GetCamera ()
@@ -217,7 +218,7 @@ bool psSoundManager::Setup()
     if (!soundSystem)
     {
         Error1("Couldn't find iSoundRender!");
-        return false;                                          
+        return false;
     }
 
     return true;
@@ -243,6 +244,14 @@ csRef<iSndSysSource> psSoundManager::StartGUISound(const char* name,bool loop)
 {
     if(guiEnabled)
         return StartSound(name,guiVolume,loop);
+    else
+        return NULL;
+}
+
+csRef<iSndSysSource> psSoundManager::StartVoiceSound(const char* name,bool loop)
+{
+    if(voicesEnabled)
+        return StartSound(name,voicesVolume,loop);
     else
         return NULL;
 }
@@ -301,7 +310,7 @@ csRef<iSndSysSource> psSoundManager::StartSound(const char* name,float volume,bo
 
     return sndsource;
 }
- 
+
 
 void psSoundManager::HandleSoundType(int type)
 {
@@ -386,12 +395,22 @@ float psSoundManager::GetGUIVolume()
     return guiVolume;
 }
 
+void psSoundManager::SetVoicesVolume(float vol)
+{
+    voicesVolume = vol;
+}
+
+float psSoundManager::GetVoicesVolume()
+{
+    return voicesVolume;
+}
+
 void psSoundManager::StopOverrideBG()
 {
-    if ( backgroundSong ) 
+    if ( backgroundSong )
         backgroundSong->Stop();
     delete backgroundSong;
-    backgroundSong = NULL;    
+    backgroundSong = NULL;
 }
 
 
@@ -403,29 +422,29 @@ bool psSoundManager::OverrideBGSong(const char* name, bool loop, float fadeTime)
     overSongName = name;
     if ( !backgroundSong )
     {
-      csRef<iSndSysData> snddata = GetSoundResource( name );        
+      csRef<iSndSysData> snddata = GetSoundResource( name );
       if (!snddata.IsValid())
         return false;
       csRef<iSndSysStream> sndstream = soundSystem->CreateStream(snddata, CS_SND3D_DISABLE);
       if (!sndstream.IsValid())
         return false;
 
-      backgroundSong = new psSoundObject(sndstream,mapSoundSystem, 1.0, 0.0, (int)fadeTime, 0, 0 ); 
+      backgroundSong = new psSoundObject(sndstream,mapSoundSystem, 1.0, 0.0, (int)fadeTime, 0, 0 );
       backgroundSong->SetVolume( musicVolume );
       backgroundSong->SetResource( name );
-      backgroundSong->StartFade( FADE_UP ); 
-    }                        
+      backgroundSong->StartFade( FADE_UP );
+    }
     else
-    {   
+    {
 
-      csRef<iSndSysData> snddata = GetSoundResource( name );        
+      csRef<iSndSysData> snddata = GetSoundResource( name );
       if (!snddata.IsValid())
         return false;
       csRef<iSndSysStream> sndstream = soundSystem->CreateStream(snddata, CS_SND3D_DISABLE);
       if (!sndstream.IsValid())
         return false;
 
-      psSoundObject* backgroundSongNew = new psSoundObject( sndstream,mapSoundSystem, 1.0, 0.0, (int)fadeTime, 0, 0 );            
+      psSoundObject* backgroundSongNew = new psSoundObject( sndstream,mapSoundSystem, 1.0, 0.0, (int)fadeTime, 0, 0 );
       backgroundSongNew->SetVolume( musicVolume );
       backgroundSongNew->SetResource( name );
 
@@ -433,16 +452,16 @@ bool psSoundManager::OverrideBGSong(const char* name, bool loop, float fadeTime)
       {
           delete backgroundSongNew; backgroundSongNew = NULL;
           return true;
-      }            
-      else      
+      }
+      else
       {
           StopOverrideBG();
-          backgroundSong = backgroundSongNew;            
-          backgroundSong->StartFade( FADE_UP );                
-      }                            
-    }   
-    
-    return true;    
+          backgroundSong = backgroundSongNew;
+          backgroundSong->StartFade( FADE_UP );
+      }
+    }
+
+    return true;
 }
 
 
@@ -454,35 +473,35 @@ void psSoundManager::ToggleMusic(bool toggle)
     // Enable Music
     if (toggle)
     {
-        musicEnabled = true; 
-        if ( currentSoundSector ) 
+        musicEnabled = true;
+        if ( currentSoundSector )
             currentSoundSector->StartBackground();
-            
-        if (musicCombat) 
+
+        if (musicCombat)
         {
             OverrideBGSong("combat",iSoundManager::LOOP_SOUND, 2.0);
             FadeSectorSounds( FADE_DOWN );
         }
-      // if ( lastSoundSector ) lastSoundSector->StartBackground(); 
+      // if ( lastSoundSector ) lastSoundSector->StartBackground();
     // Disable Music
-    } 
-    else 
+    }
+    else
     {
           // stop background music
-        
+
         if (backgroundSong)
         {
             backgroundSong->Stop();
-        }        
+        }
         musicEnabled = false;
-        if ( currentSoundSector ) 
+        if ( currentSoundSector )
             currentSoundSector->StopBackground();
-        if ( lastSoundSector ) 
+        if ( lastSoundSector )
             lastSoundSector->StopBackground();
-        if (lastlastSoundSector ) 
+        if (lastlastSoundSector )
             lastlastSoundSector->StopBackground();
     }
-    
+
     mapSoundSystem->EnableMusic( musicEnabled );
 }
 
@@ -495,7 +514,7 @@ void psSoundManager::ToggleSounds(bool toggle)
     if (toggle)
     {
         soundEnabled = true;
-        if ( currentSoundSector ) 
+        if ( currentSoundSector )
         {
             int weather = currentSoundSector->GetWeather();
             //TODO: Getting the time
@@ -521,6 +540,11 @@ void psSoundManager::ToggleActions(bool toggle)
 void psSoundManager::ToggleGUI(bool toggle)
 {
     guiEnabled = toggle;
+}
+
+void psSoundManager::ToggleVoices(bool toggle)
+{
+    voicesEnabled = toggle;
 }
 
 void psSoundManager::ToggleLoop(bool toggle)
@@ -616,7 +640,7 @@ bool psSoundManager::psSndSourceMngr::LoadSoundLib(const char* fname)
     }
 
     csRef<iDocument> doc=xml->CreateDocument();
-    
+
     const char* error=doc->Parse(buff);
     if (error)
     {
@@ -629,7 +653,7 @@ bool psSoundManager::psSndSourceMngr::LoadSoundLib(const char* fname)
         Error1("No XML root in soundlib.xml");
         return false;
     }
-    
+
     csRef<iDocumentNode> topNode=root->GetNode("Sounds");
     if(!topNode)
     {
@@ -653,10 +677,10 @@ bool psSoundManager::psSndSourceMngr::LoadSoundLib(const char* fname)
         }
     }
     return true;
-    
+
 }
 
-csRef<iSndSysData> 
+csRef<iSndSysData>
 psSoundManager::psSndSourceMngr::LoadSound(const char* fname)
 {
     if (!parent->soundSystem)
@@ -690,9 +714,9 @@ csRef<psSoundHandle> psSoundManager::psSndSourceMngr::CreateSound
 }
 
 /**
- * Check to see if a background song is already playing. 
+ * Check to see if a background song is already playing.
  *
- * Get the file info from both the resource names.  
+ * Get the file info from both the resource names.
  * If they are the same file then return true.
  */
 bool psSoundManager::psSndSourceMngr::CheckAlreadyPlaying( psSoundHandle* oldResourceHandle,
@@ -732,44 +756,44 @@ bool psSoundManager::psSndSourceMngr::CheckAlreadyPlaying( psSoundHandle* oldRes
 csPtr<psTemplateRes> psSoundManager::psSndSourceMngr::LoadResource
                                 (const char* name)
 {
-	csRef<iSndSysData> snddata;
-	
-	if (name[0] != '/') // not a pathname
-	{
-		csHash<psSoundFileInfo *>::Iterator i = sndfiles.GetIterator(csHashCompute(name));
-		psSoundFileInfo* info = NULL;
-		while (  i.HasNext()  )
-		{
-			info = i.Next();
-			if (!strcmp(info->name, name))
-				break;
-		}
-		if (!info)
-		{
-			Error2("Couldn't find a definition for '%s'", name);
-			return NULL;
-		}
+    csRef<iSndSysData> snddata;
 
-		snddata = LoadSound(info->file);
-		if (!snddata)
-		  return NULL;
-	}
-	else
-	{
-		snddata = LoadSound(name);
-	}
+    if (name[0] != '/') // not a pathname
+    {
+        csHash<psSoundFileInfo *>::Iterator i = sndfiles.GetIterator(csHashCompute(name));
+        psSoundFileInfo* info = NULL;
+        while (  i.HasNext()  )
+        {
+            info = i.Next();
+            if (!strcmp(info->name, name))
+                break;
+        }
+        if (!info)
+        {
+            Error2("Couldn't find a definition for '%s'", name);
+            return NULL;
+        }
+
+        snddata = LoadSound(info->file);
+        if (!snddata)
+          return NULL;
+    }
+    else
+    {
+        snddata = LoadSound(name);
+    }
     return csPtr <psTemplateRes> (new psSoundHandle(snddata));
 }
 
 //-------------------------------------------------------------------
 
 void psSoundManager::EnterSector( const char* sector, int timeOfDay, int weather, csVector3& position )
-{           
+{
     if ( currentSectorName == sector )
         return;
     else
         currentSectorName = sector;
-            
+
     lastlastSoundSector = lastSoundSector;
     lastSoundSector = currentSoundSector;
     currentSoundSector = mapSoundSystem->GetSoundSectorByName(sector);
@@ -780,14 +804,14 @@ void psSoundManager::EnterSector( const char* sector, int timeOfDay, int weather
         currentSoundSector->Music(musicEnabled);
         currentSoundSector->Sounds(soundEnabled);
     }
-    
+
 
     // mapSoundSystem::EnterSector must be called BEFORE entering the new sector or the new
     //  sector's emitters will be pruned to only what can be heard at the zone-in
     mapSoundSystem->EnterSector( currentSoundSector );
 
     if ( currentSoundSector )
-        currentSoundSector->Enter( lastSoundSector, timeOfDay, weather, position );    
+        currentSoundSector->Enter( lastSoundSector, timeOfDay, weather, position );
 
 }
 
@@ -796,7 +820,7 @@ void psSoundManager::FadeSectorSounds( Fade_Direction dir )
     if ( currentSoundSector )
     {
         currentSoundSector->Fade( dir );
-    }                    
+    }
 }
 
 
@@ -805,7 +829,7 @@ SCF_IMPLEMENT_FACTORY (psSoundManager)
 
 //-----------------------------------------------------------------------------
 
-        
+
 psMapSoundSystem::psMapSoundSystem( psSoundManager* mngr, iObjectRegistry* object )
 {
     objectReg = object;
@@ -814,13 +838,13 @@ psMapSoundSystem::psMapSoundSystem( psSoundManager* mngr, iObjectRegistry* objec
 
 
 void psMapSoundSystem::EnableMusic( bool enable )
-{ 
+{
     BinaryRBIterator<psSectorSoundManager> iter(&sectors);
-    
-    for ( psSectorSoundManager* sect = iter.First(); sect; sect = ++iter )    
+
+    for ( psSectorSoundManager* sect = iter.First(); sect; sect = ++iter )
     {
-         sect->Music( enable );     
-    }        
+         sect->Music( enable );
+    }
 }
 
 
@@ -828,13 +852,13 @@ void psMapSoundSystem::EnableSounds( bool enable )
 {
     BinaryRBIterator<psSectorSoundManager> iter(&sectors);
     Fade_Direction dir;
-    
-    if  ( enable ) 
+
+    if  ( enable )
         dir = FADE_UP;
     else
-        dir = FADE_DOWN;        
-        
-    for ( psSectorSoundManager* sect = iter.First(); sect; sect = ++iter )    
+        dir = FADE_DOWN;
+
+    for ( psSectorSoundManager* sect = iter.First(); sect; sect = ++iter )
     {
         sect->Sounds( enable );
     }
@@ -844,7 +868,7 @@ void psMapSoundSystem::EnableSounds( bool enable )
 psSectorSoundManager* psMapSoundSystem::GetSoundSectorByName(const char* name)
 {
     csString sectorStr(name);
-   
+
     psSectorSoundManager key( sectorStr, NULL, this );
     psSectorSoundManager* sectora = sectors.Find(&key);
     return sectora;
@@ -899,11 +923,11 @@ int psMapSoundSystem::TriggerStringToInt(const char* str)
 bool psMapSoundSystem::Initialize()
 {
     Debug1( LOG_SOUND, 0, "Starting Map Sound System");
-    
+
     csRef<iVFS> vfs =  csQueryRegistry<iVFS> ( objectReg);
     if (!vfs)
         return false;
-    
+
     csRef<iDataBuffer> xpath = vfs->ExpandPath("/planeshift/world/");
     const char* dir = **xpath;
     csRef<iStringArray> files = vfs->FindFiles(dir);
@@ -912,7 +936,7 @@ bool psMapSoundSystem::Initialize()
 
     for (size_t i=0; i < files->GetSize(); i++)
     {
-	    // Skip server's "cleaned" files and cd files, to suppress warnings
+        // Skip server's "cleaned" files and cd files, to suppress warnings
         if ( strstr(files->Get(i),"_cleaned") || strstr(files->Get(i), "cd_"))
             continue;
 
@@ -920,9 +944,9 @@ bool psMapSoundSystem::Initialize()
         name.Append("sound.xml");
         csRef<iDocument> doc;
         csRef<iDocumentNode> root, mapNode;
-            
+
         if ( (doc=ParseFile( objectReg, name )) && (root=doc->GetRoot()) && (mapNode=root->GetNode("MAP_SOUNDS")) )
-        {  
+        {
             csRef<iDocumentNodeIterator> sectorIter = mapNode->GetNodes("SECTOR");
             while ( sectorIter->HasNext() )
             {
@@ -949,12 +973,12 @@ bool psMapSoundSystem::Initialize()
                 // we can now be sure we have a manager
                 sectors.Insert(manager);
                 Debug2( LOG_SOUND,0, "Added sector %s to the list",manager->GetSector());
-                
+
                 csRef<iDocumentNodeIterator> ambientItr = sector->GetNodes("AMBIENT");
                 while ( ambientItr->HasNext() )
                 {
                     csRef<iDocumentNode> ambientNode = ambientItr->Next();
-                    csString resource = ambientNode->GetAttributeValue("RESOURCE");                   
+                    csString resource = ambientNode->GetAttributeValue("RESOURCE");
                     float minVol =  ambientNode->GetAttributeValueAsFloat("MINVOL");
                     float maxVol =  ambientNode->GetAttributeValueAsFloat("MAXVOL");
                     int fadeDelay = ambientNode->GetAttributeValueAsInt("FADEDELAY");
@@ -966,7 +990,7 @@ bool psMapSoundSystem::Initialize()
 
                     int trigger = TriggerStringToInt(trigS);
                     psSectorSoundManager* trigSector = manager;
-					if(sec.Length() > 0)
+                    if(sec.Length() > 0)
                         trigSector = GetOrCreateSector(sec);
 
 
@@ -987,29 +1011,29 @@ bool psMapSoundSystem::Initialize()
 
                     psSoundObject* obj = new psSoundObject (sndstream,
                                                             this,
-                                                            maxVol, minVol,  
-                                                            fadeDelay, 
-                                                            timeOfDay, 
+                                                            maxVol, minVol,
+                                                            fadeDelay,
+                                                            timeOfDay,
                                                             timeOfDayRange,
                                                             weather,
                                                             true,
                                                             trigSector,
-                                                            trigger);   
-                    obj->SetResource( resource );                                                            
-                        
-                    manager->NewAmbient( obj );                
-                }                    
-                
-                csRef<iDocumentNodeIterator> emitters = sector->GetNodes("EMITTER");                
+                                                            trigger);
+                    obj->SetResource( resource );
+
+                    manager->NewAmbient( obj );
+                }
+
+                csRef<iDocumentNodeIterator> emitters = sector->GetNodes("EMITTER");
                 while ( emitters->HasNext() )
                 {
                     csRef<iDocumentNode> emitter = emitters->Next();
-                    csString resource = emitter->GetAttributeValue("RESOURCE");                   
+                    csString resource = emitter->GetAttributeValue("RESOURCE");
                     float minVol =  emitter->GetAttributeValueAsFloat("MINVOL");
                     float maxVol =  emitter->GetAttributeValueAsFloat("MAXVOL");
-                    float maxRange = emitter->GetAttributeValueAsFloat("MAX_RANGE");  
-                    float minRange = emitter->GetAttributeValueAsFloat("MIN_RANGE");                                 
-                    
+                    float maxRange = emitter->GetAttributeValueAsFloat("MAX_RANGE");
+                    float minRange = emitter->GetAttributeValueAsFloat("MIN_RANGE");
+
                     csRef<SOUND_DATA_TYPE> snddata = sndmngr->GetSoundResource( resource );
                     if (!snddata)
                     {
@@ -1023,11 +1047,11 @@ bool psMapSoundSystem::Initialize()
                       Error2("Failed to create Sound Stream: %s", resource.GetData());
                       continue;
                     }
-                    
+
                     psSoundObject* obj = new psSoundObject (sndstream, this,
-                                                            maxVol, minVol,  
-                                                            true 
-                                                            );  
+                                                            maxVol, minVol,
+                                                            true
+                                                            );
                     obj->SetResource( resource );
                     obj->SetRange( maxRange, minRange );
 
@@ -1035,7 +1059,7 @@ bool psMapSoundSystem::Initialize()
                     csRef<iDocumentAttribute> factory = emitter->GetAttribute("FACTORY");
                     if ( mesh )
                     {
-                        obj->AttachToMesh( mesh->GetValue() );  
+                        obj->AttachToMesh( mesh->GetValue() );
                         manager->New3DMeshSound( obj );
                     }
                     else if ( factory )
@@ -1048,23 +1072,23 @@ bool psMapSoundSystem::Initialize()
                         csVector3 pos( emitter->GetAttributeValueAsFloat("X"),
                                        emitter->GetAttributeValueAsFloat("Y"),
                                        emitter->GetAttributeValueAsFloat("Z") );
-                        obj->SetPosition( pos );                                                                                                                                            
+                        obj->SetPosition( pos );
                         manager->New3DSound( obj );
                     }
                 }
-                
-                csRef<iDocumentNodeIterator> backgroundIter = sector->GetNodes("BACKGROUND");                
+
+                csRef<iDocumentNodeIterator> backgroundIter = sector->GetNodes("BACKGROUND");
                 while ( backgroundIter->HasNext() )
                 {
                     csRef<iDocumentNode> background = backgroundIter->Next();
-                    csString resource = background->GetAttributeValue("RESOURCE");                   
+                    csString resource = background->GetAttributeValue("RESOURCE");
                     float minVol =  background->GetAttributeValueAsFloat("MINVOL");
                     float maxVol =  background->GetAttributeValueAsFloat("MAXVOL");
                     int fadeDelay = background->GetAttributeValueAsInt("FADEDELAY");
                     int timeOfDay = background->GetAttributeValueAsInt("TIME");
                     int timeOfDayRange = background->GetAttributeValueAsInt("TIME_RANGE");
                     int weather   = background->GetAttributeValueAsInt("WEATHER");
-                    
+
                     csRef<SOUND_DATA_TYPE> snddata = sndmngr->GetSoundResource( resource );
                     if (!snddata)
                     {
@@ -1074,32 +1098,32 @@ bool psMapSoundSystem::Initialize()
 
 
                     csRef<SOUND_STREAM_TYPE> sndstream = sndmngr->soundSystem->CreateStream(snddata, CS_SND3D_DISABLE);
-                    if ( !sndstream )                       
+                    if ( !sndstream )
                     {
                       Error2("Failed to create Sound Stream: %s", resource.GetData());
                       continue;
                     }
-                        
+
                     psSoundObject* obj = new psSoundObject (sndstream, this,
-                                                            maxVol, minVol,  
-                                                            fadeDelay, 
-                                                            timeOfDay, 
+                                                            maxVol, minVol,
+                                                            fadeDelay,
+                                                            timeOfDay,
                                                             timeOfDayRange,
                                                             weather,
-                                                            sndmngr->LoopBGM());   
+                                                            sndmngr->LoopBGM());
                     obj->SetResource( resource );
                     manager->NewBackground( obj );
                 }
             }
         }
     }
-    
+
     // Remove pending ones
     pendingSectors.DeleteAll();
 
     return true;
 }
-    
+
 
 void psMapSoundSystem::RegisterActiveSong(psSoundObject *song)
 {
@@ -1247,10 +1271,10 @@ void psMapSoundSystem::EnterSector(psSectorSoundManager *enterTo)
     for ( i = 0; i<l; i++ )
     {
         Debug2( LOG_SOUND, 0, "Checking whether music %s is playing in next sector", active_songs[i]->GetName().GetData() );
-        if (!enterTo || enterTo->CheckSong( active_songs[i] ) )    
-            active_songs[i]->StartFade( FADE_DOWN );                             
+        if (!enterTo || enterTo->CheckSong( active_songs[i] ) )
+            active_songs[i]->StartFade( FADE_DOWN );
     }
-            
+
 
     l=active_ambient.GetSize();
     for ( i = 0; i<l; i++ )
@@ -1263,7 +1287,7 @@ void psMapSoundSystem::EnterSector(psSectorSoundManager *enterTo)
 
             active_ambient[i]->StartFade( FADE_DOWN );
         }
-    }            
+    }
 }
 
 void psMapSoundSystem::Update( csVector3 & pos )
@@ -1288,7 +1312,7 @@ void psMapSoundSystem::Update()
             z--;
         }
     }
-    
+
     for ( z = 0; z < active_ambient.GetSize(); z++ )
     {
         active_ambient[z]->Update();
@@ -1297,14 +1321,14 @@ void psMapSoundSystem::Update()
             RemoveActiveAmbient(active_ambient[z]);
             z--;
         }
-    }        
+    }
 }
 
 psSectorSoundManager::psSectorSoundManager( csString& sectorName, iEngine* engine, psMapSoundSystem *mapSS )
 {
     sector = sectorName;
     sounds = true;
-    music = true;    
+    music = true;
     this->engine = engine;
     mainBG = NULL;
     mapsoundsystem = mapSS;
@@ -1322,7 +1346,7 @@ psSectorSoundManager::~psSectorSoundManager()
       mapsoundsystem->RemoveActiveSong(songs[i]);
       songs[i]->Stop();
     }
-    
+
     l = ambient.GetSize();
     for (i=0;i<l;i++)
     {
@@ -1337,7 +1361,7 @@ psSectorSoundManager::~psSectorSoundManager()
       emitters[i]->Stop();
     }
 }
-    
+
 void psSectorSoundManager::NewBackground( psSoundObject* song )
 {
     songs.Push( song );
@@ -1373,14 +1397,14 @@ void psSectorSoundManager::Init3DFactorySounds()
         ps3DFactorySound* sndfact = unAssignedEmitterFactories[z];
 
         //printf("New 3D Factory sound:  %p %s %f\n", sndfact->sound, sndfact->meshfactname.GetData(), sndfact->probability );
-    
+
         iSector* searchSector = engine->FindSector( sector, NULL );
         if (!searchSector)
         {
             Error3("Sector %s not found for adding sounds for factory %s\n", sector.GetData(), sndfact->meshfactname.GetData() );
             return;
         }
-    
+
         iMeshFactoryWrapper* factory = engine->GetMeshFactories()->FindByName(sndfact->meshfactname);
         if (!factory)
         {
@@ -1397,12 +1421,12 @@ void psSectorSoundManager::Init3DFactorySounds()
 
         // Init to exact same random pattern every time, on every system
         csRandomGen* rng = new csRandomGen(0);
-    
+
         iMeshList* meshes = searchSector->GetMeshes();
         for (int i=0; i < meshes->GetCount(); i++)
         {
             iMeshWrapper* mesh = meshes->Get(i);
-    
+
             if (mesh->GetFactory() == factory)
             {
                 if (rng->Get() <= sndfact->probability)
@@ -1419,7 +1443,7 @@ void psSectorSoundManager::Init3DFactorySounds()
                     csVector3 pos = mesh->GetMovable()->GetPosition();
                     obj->SetPosition(pos);
                     emitters.Push(obj);
-                    
+
                     //printf("New sound emitter at: %f, %f, %f\n",pos.x,pos.y,pos.z);
                 }
             }
@@ -1433,7 +1457,7 @@ void psSectorSoundManager::Init3DFactorySounds()
 }
 
 void psSectorSoundManager::StartBackground()
-{    
+{
     music = true;
 
     if ( mainBG )
@@ -1456,18 +1480,18 @@ void psSectorSoundManager::StartBackground()
                 songs[0]->SetLooping(false);
             songs[0]->StartFade( FADE_UP );
             mainBG = songs[0];
-        }                     
+        }
     }
 }
 
 
 
 void psSectorSoundManager::StopBackground()
-{    
+{
     music = false;
     for ( size_t z = 0; z < songs.GetSize(); z++ )
     {
-        mapsoundsystem->RemoveActiveSong(songs[z]);     
+        mapsoundsystem->RemoveActiveSong(songs[z]);
         songs[z]->Stop();
     }
 }
@@ -1476,7 +1500,7 @@ void psSectorSoundManager::StartSounds(int weather)
 {
     sounds = true;
     size_t z;
-     
+
     for ( z = 0; z < ambient.GetSize(); z++ )
     {
         //TODO: matching time as well
@@ -1485,13 +1509,13 @@ void psSectorSoundManager::StartSounds(int weather)
             mapsoundsystem->RegisterActiveAmbient(ambient[z]);
             ambient[z]->StartFade( FADE_UP );
         }
-    }        
-    
+    }
+
     for ( z = 0; z < emitters.GetSize(); z++ )
     {
         mapsoundsystem->RegisterActiveEmitter(emitters[z]);
-        emitters[z]->StartSound();            
-    }        
+        emitters[z]->StartSound();
+    }
 }
 
 void psSectorSoundManager::StopSounds()
@@ -1502,13 +1526,13 @@ void psSectorSoundManager::StopSounds()
     {
         mapsoundsystem->RemoveActiveAmbient(ambient[z]);
         ambient[z]->Stop();
-    }        
-    
+    }
+
     for ( z = 0; z < emitters.GetSize(); z++ )
     {
         mapsoundsystem->RemoveActiveEmitter(emitters[z]);
-        emitters[z]->Stop();            
-    }        
+        emitters[z]->Stop();
+    }
 }
 
 void psSectorSoundManager::Fade( Fade_Direction dir )
@@ -1521,7 +1545,7 @@ void psSectorSoundManager::Fade( Fade_Direction dir )
         }
         mainBG->StartFade( dir );
     }
-        
+
     size_t z;
     if (HasSounds())//Check if the sector can play sounds
     {
@@ -1531,13 +1555,13 @@ void psSectorSoundManager::Fade( Fade_Direction dir )
                 mapsoundsystem->RegisterActiveSong(ambient[z]);
             if(ambient[z]->MatchWeather(weather))
                 ambient[z]->StartFade( dir );
-        }        
-    
+        }
+
          for ( z = 0; z < emitters.GetSize(); z++ )
         {
             if (dir == FADE_UP)
                 mapsoundsystem->RegisterActiveEmitter(emitters[z]);
-            emitters[z]->StartFade( dir );            
+            emitters[z]->StartFade( dir );
         }
     }
 }
@@ -1547,27 +1571,27 @@ void psSectorSoundManager::ChangeTime( int timeOfDay )
     psSoundObject* bestTimeSong = NULL;
     size_t z;
     if ( music )
-    {        
+    {
         for ( z = 0; z < songs.GetSize(); z++ )
-        {   
+        {
             if ( songs[z]->MatchTime( timeOfDay ) )
-                bestTimeSong = songs[z];                
+                bestTimeSong = songs[z];
         }
-    }                
-  
-    
-    if ( bestTimeSong ) 
+    }
+
+
+    if ( bestTimeSong )
     {
         Debug2( LOG_SOUND, 0, "Song now playing is: %s", bestTimeSong->GetName().GetData() );
         if (!mapsoundsystem->FindSameActiveSong( bestTimeSong ))
         {
             mainBG->StartFade( FADE_DOWN );
             mapsoundsystem->RegisterActiveSong(bestTimeSong);
-            bestTimeSong->StartFade( FADE_UP );                        
+            bestTimeSong->StartFade( FADE_UP );
             mainBG = bestTimeSong;
-        }        
-    } 
-         
+        }
+    }
+
 }
 
 void psSectorSoundManager::Enter( psSectorSoundManager* leaveFrom, int timeOfDay, int weather, csVector3& position )
@@ -1577,23 +1601,23 @@ void psSectorSoundManager::Enter( psSectorSoundManager* leaveFrom, int timeOfDay
     this->weather = weather;
 
     size_t z;
-    
+
     if ( music )
-    {        
+    {
         for ( z = 0; z < songs.GetSize(); z++ )
-        {   
+        {
             if ( songs[z]->MatchTime( timeOfDay ) )
             {
-                bestTimeSong = songs[z];                
+                bestTimeSong = songs[z];
             }
-        
+
             if ( songs[z]->MatchWeather( weather ) )
             {
-                bestWeatherSong = songs[z];                
+                bestWeatherSong = songs[z];
             }
         }
-            
-        if ( bestTimeSong ) 
+
+        if ( bestTimeSong )
         {
             if (!mapsoundsystem->FindSameActiveSong( bestTimeSong ))
             {
@@ -1601,7 +1625,7 @@ void psSectorSoundManager::Enter( psSectorSoundManager* leaveFrom, int timeOfDay
                 bestTimeSong->StartFade( FADE_UP );
                 mainBG = bestTimeSong;
             }
-        }            
+        }
         else if ( bestWeatherSong )
         {
             if (!mapsoundsystem->FindSameActiveSong( bestWeatherSong ))
@@ -1610,7 +1634,7 @@ void psSectorSoundManager::Enter( psSectorSoundManager* leaveFrom, int timeOfDay
                 bestWeatherSong->StartFade( FADE_UP );
                 mainBG = bestWeatherSong;
             }
-        }            
+        }
         else
         {
             if ( songs.GetSize() > 0 )
@@ -1625,13 +1649,13 @@ void psSectorSoundManager::Enter( psSectorSoundManager* leaveFrom, int timeOfDay
 
                     songs[0]->StartFade( FADE_UP );
                     mainBG = songs[0];
-                }                
-            }                
-        }            
+                }
+            }
+        }
     }
-    
+
     if ( sounds )
-    {    
+    {
         for ( z = 0; z < ambient.GetSize(); z++ )
         {
             if (!mapsoundsystem->FindSameActiveAmbient( ambient[z] ) && !ambient[z]->Triggered()) // Only start non-trigger sounds
@@ -1639,8 +1663,8 @@ void psSectorSoundManager::Enter( psSectorSoundManager* leaveFrom, int timeOfDay
                 mapsoundsystem->RegisterActiveAmbient(ambient[z]);
                 ambient[z]->StartFade( FADE_UP );
             }
-        }        
-    
+        }
+
         if ( unAssignedEmitters.GetSize() > 0 )
         {
             for ( z = 0; z < unAssignedEmitters.GetSize(); z++ )
@@ -1657,13 +1681,13 @@ void psSectorSoundManager::Enter( psSectorSoundManager* leaveFrom, int timeOfDay
                     csVector3 pos = mesh->GetRadius().GetCenter();
                     pso->SetPosition( pos );
                     emitters.Push( pso );
-                }                    
-            }                
+                }
+            }
             unAssignedEmitters.Empty();
-        }                
-        
-        Init3DFactorySounds();                        
-        
+        }
+
+        Init3DFactorySounds();
+
         for ( z = 0; z < emitters.GetSize(); z++ )
         {
             if(emitters[z]->Triggered()) // Only start non-trigger sounds
@@ -1671,11 +1695,11 @@ void psSectorSoundManager::Enter( psSectorSoundManager* leaveFrom, int timeOfDay
 
             mapsoundsystem->RegisterActiveEmitter(emitters[z]);
             emitters[z]->Start3DSound( position );
-        }    
+        }
 
         // Update weather
-        UpdateWeather(weather);        
-    }        
+        UpdateWeather(weather);
+    }
 }
 
 void psSectorSoundManager::UpdateWeather(int weather)
@@ -1725,26 +1749,26 @@ bool psSectorSoundManager::CheckSong( psSoundObject* bgSound )
 {
     if (!bgSound)
         return true;
-        
+
     for ( size_t z = 0; z < songs.GetSize(); z++ )
     {
         //if ( songs[z]->IsPlaying() && songs[z]->Same( bgSound ) )
-        if ( songs[z]->Same( bgSound ) )        
+        if ( songs[z]->Same( bgSound ) )
             return false;
-    }            
-    return true;                
+    }
+    return true;
 }
 
 bool psSectorSoundManager::CheckAmbient( psSoundObject* ambientSnd )
 {
     if ( !ambientSnd )
         return true;
-        
+
     for ( size_t z = 0; z < ambient.GetSize(); z++ )
         if ( ambient[z]->Same( ambientSnd ) )
             return false;
-            
-    return true;                    
+
+    return true;
 }
 
 psSoundObject::psSoundObject(csRef<iSndSysStream> strm,
@@ -1768,7 +1792,7 @@ psSoundObject::psSoundObject(csRef<iSndSysStream> strm,
     mapSystem = mapSys;
     connectedWith = connectWith;
     loop = looping;
-  
+
     if (strm->Get3dMode() == CS_SND3D_DISABLE)
       threeDee = false;
     else
@@ -1798,7 +1822,7 @@ psSoundObject::psSoundObject(psSoundObject* other, csRef<iSndSysStream> strm) : 
     this->loop             = other->loop;
 
     this->resourceName = other->resourceName;
-    
+
     this->rangeToStart = other->rangeToStart;
     this->minRange = other->minRange;
     this->rangeConstant = other->rangeConstant;
@@ -1849,7 +1873,7 @@ void psSoundObject::StartSound()
 void psSoundObject::Start3DSound( csVector3& playerPos )
 {
     StartSound();
-    Update( playerPos );    
+    Update( playerPos );
 }
 
 bool psSoundObject::Triggered()
@@ -1877,7 +1901,7 @@ void psSoundObject::Notify(int event)
 }
 
 void psSoundObject::UpdateWeather(int weather)
-{    
+{
     if(!Triggered())
         return;
 
@@ -1902,10 +1926,10 @@ void psSoundObject::UpdateWeather(int weather)
 }
 
 void psSoundObject::Update( csVector3& playerPos )
-{          
+{
     csVector3 rangeVec = position - playerPos;
     float range = rangeVec.Norm();
-    
+
     //printf("RANGE: %f\n", range );
 
     if ( isPlaying && range > rangeToStart )
@@ -1919,16 +1943,16 @@ void psSoundObject::Update( csVector3& playerPos )
 
         // Emitter volume is based on 3d positional audio calculations handled inside the sound system
         currentVolume = maxVol;
-        
+
         //printf("Emitter Sound Vol: %f\n", currentVolume );
         stream.SetVolume( currentVolume * ambientVolume );
     }
 }
 
 void psSoundObject::StartFade( Fade_Direction dir )
-{    
+{
     Debug3( LOG_SOUND, 0, "Fading Song %s Direction %d", GetName().GetData(), dir );
-    
+
     if ( dir == FADE_DOWN && currentVolume == minVol )
     {
         fadeComplete = true;
@@ -1937,7 +1961,7 @@ void psSoundObject::StartFade( Fade_Direction dir )
         {
             isPlaying = false;
             stream.SetVolume(0.0f);
-        }        
+        }
         return;
     }
     else if ( dir == FADE_UP && currentVolume == maxVol )
@@ -1951,12 +1975,12 @@ void psSoundObject::StartFade( Fade_Direction dir )
             stream.SetVolume(currentVolume);
         }
         return;
-    }        
+    }
 
     fadeDir = dir;
     startTime = csGetTicks();
     fadeComplete = false;
-    
+
 
     if (!stream.IsValid())
     {
@@ -1994,17 +2018,17 @@ void psSoundObject::SetRange( float maxRange, float minRange )
 }
 
 
-bool psSoundObject::MatchTime( int time ) 
-{ 
-    
+bool psSoundObject::MatchTime( int time )
+{
+
     int timeEnd = timeOfDay + timeOfDayRange;
-    
-    if (  time >= timeOfDay && time < timeEnd ) 
+
+    if (  time >= timeOfDay && time < timeEnd )
         return true;
     else
-        return false;    
+        return false;
 }
-    
+
 
 void psSoundObject::Update()
 {
@@ -2032,9 +2056,9 @@ void psSoundObject::Update()
             currentVolume = minVol + (maxVol-minVol)*percent;
             if ( currentVolume > maxVol )
             {
-                currentVolume = maxVol;                
-                fadeComplete = true;                
-            }                
+                currentVolume = maxVol;
+                fadeComplete = true;
+            }
         }
         else
         {
@@ -2047,8 +2071,8 @@ void psSoundObject::Update()
             }
         }
     }
-    
-    
+
+
     if ( currentVolume <= minVol && fadeDir == FADE_DOWN )
     {
         isPlaying = false;

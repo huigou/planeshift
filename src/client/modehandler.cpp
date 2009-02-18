@@ -1,7 +1,7 @@
 /*
  * modehandler.cpp    Keith Fulton <keith@paqrat.com>
  *
- * Copyright (C) 2001-2002 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2001-2002 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -110,7 +110,7 @@ ModeHandler::ModeHandler(iSoundManager *sm,
     actorEntity  = 0;
     object_reg   = obj_reg;
     engine =  csQueryRegistry<iEngine> (object_reg);
-	vfs    =  csQueryRegistry<iVFS>    (object_reg);
+    vfs    =  csQueryRegistry<iVFS>    (object_reg);
 
     downfall     = NULL;
     fog          = NULL;
@@ -122,7 +122,7 @@ ModeHandler::ModeHandler(iSoundManager *sm,
     last_interpolation_reset = 0;
     randomgen     = new csRandomGen();
     interpolation_complete = true;  // don't attempt to update lights until you get a net msg to do so
-    
+
     timeOfDay = TIME_MORNING;
     chatWindow = NULL;
     sound_queued = false;
@@ -178,7 +178,7 @@ bool ModeHandler::LoadLightingLevels()
     csRef<iDocumentSystem> xml = psengine->GetXMLParser ();
 
     csRef<iDataBuffer> buf (vfs->ReadFile("/planeshift/art/world/lighting.xml"));
-    
+
     if (!buf || !buf->GetSize()) {
         printf("Cannot load /planeshift/art/world/lighting.xml");
         return false;
@@ -194,7 +194,7 @@ bool ModeHandler::LoadLightingLevels()
     }
 
     csRef<iDocumentNodeIterator> iter = doc->GetRoot()->GetNode("lighting")->GetNodes("color");
-    
+
     while (iter->HasNext())
     {
         csRef<iDocumentNode> node = iter->Next();
@@ -212,20 +212,20 @@ bool ModeHandler::LoadLightingLevels()
         r2 = node->GetAttributeValueAsFloat("weather_r");
         g2 = node->GetAttributeValueAsFloat("weather_g");
         b2 = node->GetAttributeValueAsFloat("weather_b");
-        
+
         newlight->color.Set(r,g,b);
         if (r2 || g2 || b2)
             newlight->raincolor.Set(r2,g2,b2);
         else
             newlight->raincolor.Set(r,g,b);
-        
-        // Now add to lighting setup        
+
+        // Now add to lighting setup
         if (newlight->value >= lights.GetSize() )
         {
             if ( lights.GetSize() == 0 )
             {
                 LightingList *newset = new LightingList;
-                lights.Push(newset);            
+                lights.Push(newset);
             }
             else
             {
@@ -235,7 +235,7 @@ bool ModeHandler::LoadLightingLevels()
                     LightingList *newset = new LightingList;
                     lights.Push(newset);
                 }
-            }                
+            }
         }
 
         LightingList *set = lights[newlight->value];
@@ -251,7 +251,7 @@ bool ModeHandler::LoadLightingLevels()
                 newlight->sector = light->GetMovable()->GetSectors()->Get(0)->QueryObject()->GetName();
             }
         }
-    }    
+    }
     return true;
 }
 
@@ -313,16 +313,16 @@ void ModeHandler::HandleMessage(MsgEntry* me)
             HandleCombatEvent(me);
             return;
 
-		case MSGTYPE_CACHEFILE:
-			HandleCachedFile(me);
-			return;
+        case MSGTYPE_CACHEFILE:
+            HandleCachedFile(me);
+            return;
     }
 }
 
 void ModeHandler::HandleModeMessage(MsgEntry* me)
 {
     psModeMessage msg(me);
-    
+
     GEMClientActor* actor = dynamic_cast<GEMClientActor*>(celclient->FindObject(msg.actorID));
     if (!actor)
     {
@@ -427,7 +427,7 @@ bool ModeHandler::CreatePortalWeather(iPortal* portal, csTicks delta)
         }
 
         if(!subbed) // Not a psPortalCallback class, subscribe
-        {       
+        {
             // Set the new callback
             csRef<psPortalCallback> psCall;
             psCall.AttachNew(new psPortalCallback());
@@ -449,7 +449,7 @@ bool ModeHandler::CreatePortalWeather(iPortal* portal, csTicks delta)
         return true;
     }
 
-    
+
     if(!weatherP)
     {
         // Create the WeatherPortal entity
@@ -459,15 +459,15 @@ bool ModeHandler::CreatePortalWeather(iPortal* portal, csTicks delta)
         weatherP->wi       = ri;
 
         csVector3 min,max;
-        csBox3 posCalc; 
-        // Create the weathermesh 
+        csBox3 posCalc;
+        // Create the weathermesh
         for (int vertidx = 0; vertidx < portal->GetVertexIndicesCount(); vertidx++)
         {
             int vertexidx = portal->GetVertexIndices()[vertidx];
             csVector3 vertex = portal->GetWorldVertices()[vertexidx];
             posCalc.AddBoundingVertex(vertex);
         }
-       
+
         // Store the pos
         weatherP->pos = posCalc.GetCenter();
 
@@ -480,7 +480,7 @@ bool ModeHandler::CreatePortalWeather(iPortal* portal, csTicks delta)
         // Push it into the array before loading mesh and stuff
         portals.Push(weatherP);
     }
-   
+
     // Check for removal of downfall
     if (weatherP->downfall && ri->downfall_condition == WEATHER_CLEAR)
     {
@@ -496,7 +496,7 @@ bool ModeHandler::CreatePortalWeather(iPortal* portal, csTicks delta)
         weatherP->downfall->Destroy();
         delete weatherP->downfall;
         weatherP->downfall = CreateDownfallWeatherObject(ri);
-    
+
         if(!weatherP->downfall->CreateMesh())
         {
             Error1("Failed to create downfall");
@@ -504,23 +504,23 @@ bool ModeHandler::CreatePortalWeather(iPortal* portal, csTicks delta)
             weatherP->downfall = NULL;
             return false;
         }
-        
+
         // Calculate the drops
         csBox3 def = weatherP->downfall->CreateDefaultBBox();
         csBox3 box = weatherP->bbox;
         float mod = box.Volume() / def.Volume();
         int drops = (int)((float)ri->downfall_params.value * mod);
-        
+
         if(drops < 1)
             drops = 1;
-        
+
         // Setup the mesh
         weatherP->downfall->SetupMesh(weatherP->downfall->CreateDefaultBBox());
 
         //If the portal is a warp one, then distance is != 0
         csReversibleTransform transform = portal->GetWarp();
         csVector3 distance = transform.GetT2OTranslation();
-        
+
         // move it to right position
         weatherP->downfall->MoveTo(ri,sect);
         weatherP->downfall->MoveTo(weatherP->pos + distance);
@@ -537,7 +537,7 @@ bool ModeHandler::CreatePortalWeather(iPortal* portal, csTicks delta)
     else if (!weatherP->downfall && ri->downfall_condition != WEATHER_CLEAR)
     {
         weatherP->downfall = CreateDownfallWeatherObject(ri);
-    
+
         if(!weatherP->downfall->CreateMesh())
         {
             Error1("Failed to create downfall");
@@ -545,23 +545,23 @@ bool ModeHandler::CreatePortalWeather(iPortal* portal, csTicks delta)
             weatherP->downfall = NULL;
             return false;
         }
-        
+
         // Calculate the drops
         csBox3 def = weatherP->downfall->CreateDefaultBBox();
         csBox3 box = weatherP->bbox;
         float mod = box.Volume() / def.Volume();
         int drops = (int)((float)ri->downfall_params.value * mod);
-        
+
         if(drops < 1)
             drops = 1;
-        
+
         // Setup the mesh
         weatherP->downfall->SetupMesh(weatherP->downfall->CreateDefaultBBox());
 
         //If the portal is a warp one, then distance is != 0
         csReversibleTransform transform = portal->GetWarp();
         csVector3 distance = transform.GetT2OTranslation();
-        
+
         // move it to right position
         weatherP->downfall->MoveTo(ri,sect);
         weatherP->downfall->MoveTo(weatherP->pos + distance);
@@ -632,7 +632,7 @@ void ModeHandler::CreatePortalWeather(iSector* sector, csTicks delta)
     }
 }
 
-    
+
 void ModeHandler::RemovePortalWeather()
 {
     // Delete the weather meshes
@@ -653,7 +653,7 @@ void ModeHandler::RemovePortalWeather()
             delete portal->wi->fog;
             portal->wi->fog = NULL;
         }
-        
+
         portals.DeleteIndex(i);
         i--;
     }
@@ -688,7 +688,7 @@ void ModeHandler::HandleNewSectorMessage(MsgEntry* me)
 
     RemovePortalWeather();
     RemoveWeather();
-    
+
     WeatherInfo *ri= GetWeatherInfo(msg.newSector);
     if(ri)
     {
@@ -730,10 +730,10 @@ void ModeHandler::UpdateWeatherSounds()
 void ModeHandler::SetSectorMusic(const char *sectorname)
 {
     csVector3 pos = psengine->GetCelClient()->GetMainPlayer()->Pos();
-   
+
     // Get the current sound for our main weather object
     WeatherSound sound;
-    
+
     if(downfall && downfall->GetParent()->sector == sectorname)
     {
         sound = downfall->GetWeatherSound();
@@ -742,7 +742,7 @@ void ModeHandler::SetSectorMusic(const char *sectorname)
     {
         sound = WEATHER_SOUND_CLEAR;
     }
-   
+
     csString sector(sectorname);
     if(psengine->GetSoundStatus())
     {
@@ -785,8 +785,8 @@ void ModeHandler::PublishTime( int newTime )
 
     char time[3];
     time[0] = 'A'; time[1]='M'; time[2]='\0';
-    
-    if ( newTime >= 12 ) 
+
+    if ( newTime >= 12 )
     {
         newTime-= 12;
         time[0] = 'P';
@@ -794,10 +794,10 @@ void ModeHandler::PublishTime( int newTime )
     // "0 o'clock" is really "12 o'clock" for both AM and PM
     if (newTime == 0)
       newTime = 12;
-    
+
     csString timeString;
     timeString.Format("%d %s(%s)", newTime, PawsManager::GetSingleton().Translate("o'clock").GetData(), time);
-    PawsManager::GetSingleton().Publish("TimeOfDayStr", timeString);    
+    PawsManager::GetSingleton().Publish("TimeOfDayStr", timeString);
 }
 
 
@@ -809,7 +809,7 @@ void ModeHandler::HandleWeatherMessage(MsgEntry* me)
     switch(msg.type)
     {
         case psWeatherMessage::WEATHER:
-        {    
+        {
             if (msg.weather.has_lightning)
             {
                 ProcessLighting(msg.weather);
@@ -824,7 +824,7 @@ void ModeHandler::HandleWeatherMessage(MsgEntry* me)
             }
             break;
         }
-            
+
         case psWeatherMessage::DAYNIGHT:
         {
             uint lastClockHour = clockHour;
@@ -839,13 +839,13 @@ void ModeHandler::HandleWeatherMessage(MsgEntry* me)
                 timeOfDay = TIME_NIGHT;
             else if ( clockHour >=7 && clockHour <=12 )
                 timeOfDay = TIME_MORNING;
-            else if ( clockHour >=13 && clockHour <=18 )    
+            else if ( clockHour >=13 && clockHour <=18 )
                 timeOfDay = TIME_AFTERNOON;
             else if ( clockHour >=19 && clockHour < 22 )
-                timeOfDay = TIME_EVENING;    
-            
+                timeOfDay = TIME_EVENING;
+
             PublishTime(clockHour);
-            
+
             // Reset the time basis for interpolation
             if ( (clockHour == lastClockHour+1) || (lastClockHour == 23 && clockHour == 0) )
             {
@@ -920,7 +920,7 @@ void ModeHandler::ProcessLighting(psWeatherMessage::NetWeatherInfo& info)
     name.Append(" lightning");
     //We search if the sector has the support for this sequence (lightning)
     if(!seqmgr->FindSequenceByName(name))
-    {   
+    {
         Notify2(LOG_WEATHER,"Couldn't apply thunder in sector %s! No sequence for "
                 "this sector!",info.sector.GetData());
         return;
@@ -960,7 +960,7 @@ void ModeHandler::ProcessFog(psWeatherMessage::NetWeatherInfo& info)
         wi->r = info.r;
         wi->g = info.g;
         wi->b = info.b;
-        
+
         if(info.fog_fade)
         {
             wi->fog_params.fade_time  = info.fog_fade;
@@ -1172,7 +1172,7 @@ bool ModeHandler::ProcessLighting(LightingSetting *setting, float pct)
 {
     csColor interpolate_color;
     csColor target_color;
-    
+
     target_color.red = 0.0f;
     target_color.blue = 0.0f;
     target_color.green = 0.0f;
@@ -1188,7 +1188,7 @@ bool ModeHandler::ProcessLighting(LightingSetting *setting, float pct)
         }
 
         // then weathering in sector in which light is located
-        if (ri && downfall && (setting->raincolor.red || setting->raincolor.green || setting->raincolor.blue)) 
+        if (ri && downfall && (setting->raincolor.red || setting->raincolor.green || setting->raincolor.blue))
         {
             // Interpolate between daylight color and full weather color depending on weather intensity
             target_color.red   = setting->color.red   + ((setting->raincolor.red   - setting->color.red)  * GetDensity(ri));
@@ -1206,12 +1206,12 @@ bool ModeHandler::ProcessLighting(LightingSetting *setting, float pct)
     target_color.green += gamma;
     target_color.blue += gamma;
     target_color.red = target_color.red<0? 0.0f: target_color.red>=1.0f?
-			1.0f: target_color.red;
+            1.0f: target_color.red;
     target_color.green = target_color.green<0? 0.0f: target_color.green>=1.0f?
-			1.0f: target_color.green;
+            1.0f: target_color.green;
     target_color.blue = target_color.blue<0? 0.0f: target_color.blue>=1.0f?
-			1.0f: target_color.blue;
-    
+            1.0f: target_color.blue;
+
     if (setting->type == "light")
     {
         iLight* light = setting->light_cache;
@@ -1238,7 +1238,7 @@ bool ModeHandler::ProcessLighting(LightingSetting *setting, float pct)
                 setting->diff.green = target_color.green - setting->start_color.green;
                 setting->diff.blue  = target_color.blue  - setting->start_color.blue;
             }
-    
+
             interpolate_color.red   = setting->start_color.red   + (setting->diff.red*pct);
             interpolate_color.green = setting->start_color.green + (setting->diff.green*pct);
             interpolate_color.blue  = setting->start_color.blue  + (setting->diff.blue*pct);
@@ -1249,7 +1249,7 @@ bool ModeHandler::ProcessLighting(LightingSetting *setting, float pct)
                 {
                     light->SetColor(interpolate_color);
                 }
-            
+
             return true;
         }
         else
@@ -1279,7 +1279,7 @@ bool ModeHandler::ProcessLighting(LightingSetting *setting, float pct)
                 setting->diff.green = target_color.green - setting->start_color.green;
                 setting->diff.blue  = target_color.blue  - setting->start_color.blue;
             }
-            
+
             interpolate_color.red   = setting->start_color.red   + (setting->diff.red*pct);
             interpolate_color.green = setting->start_color.green + (setting->diff.green*pct);
             interpolate_color.blue  = setting->start_color.blue  + (setting->diff.blue*pct);
@@ -1291,7 +1291,7 @@ bool ModeHandler::ProcessLighting(LightingSetting *setting, float pct)
         {
             // Warning3( LOG_WEATHER, "Sector '%s' for ambient light was not found in lighting setup %d.\n", (const char *)setting->object, setting->value);
             setting->error = true;
-            
+
             return false;
         }
     }
@@ -1313,7 +1313,7 @@ bool ModeHandler::ProcessLighting(LightingSetting *setting, float pct)
                     if (sector->HasFog())
                     {
                         csColor fogColor = sector->GetFog().color;
-                        
+
                         setting->start_color.Set(fogColor.red,fogColor.green,fogColor.blue);
                     }
                     else
@@ -1324,7 +1324,7 @@ bool ModeHandler::ProcessLighting(LightingSetting *setting, float pct)
                     setting->diff.green = target_color.green - setting->start_color.green;
                     setting->diff.blue  = target_color.blue  - setting->start_color.blue;
                 }
-                
+
                 interpolate_color.red   = setting->start_color.red   + (setting->diff.red*pct);
                 interpolate_color.green = setting->start_color.green + (setting->diff.green*pct);
                 interpolate_color.blue  = setting->start_color.blue  + (setting->diff.blue*pct);
@@ -1334,7 +1334,7 @@ bool ModeHandler::ProcessLighting(LightingSetting *setting, float pct)
             {
                 sector->DisableFog();
             }
-            
+
             return true;
         }
         else
@@ -1379,13 +1379,13 @@ void ModeHandler::UpdateWeather(csTicks when)
     }
 
     /*
-     * Update fade in weather info so 
+     * Update fade in weather info so
      * that rain etc are at the right level when
      * entering a new sector.
      */
     BinaryRBIterator<WeatherInfo> loop(&weatherlist);
     WeatherInfo *wi, *current_wi = NULL;
-    
+
     for ( wi = loop.First(); wi; wi = ++loop)
     {
 
@@ -1395,14 +1395,14 @@ void ModeHandler::UpdateWeather(csTicks when)
             wi->downfall_params.value = 0;
             wi->downfall_condition = WEATHER_CLEAR;
         }
-        
+
         wi->Fade(&wi->fog_params,delta);
         if (wi->fog_params.value <= 0)
         {
             wi->fog_params.value = 0;
             wi->fog_condition = WEATHER_CLEAR;
         }
-        
+
         // Remember wi for current sector for use later
         if (wi->sector == current_sector)
         {
@@ -1423,7 +1423,7 @@ void ModeHandler::UpdateWeather(csTicks when)
         // Refresh the portals
         iSector* current = psengine->GetCelClient()->GetMainPlayer()->GetSector();
         CreatePortalWeather(current,delta);
-        
+
         // Update sounds
         UpdateWeatherSounds();
     }
@@ -1444,7 +1444,7 @@ void ModeHandler::StopFollowWeather()
     downfall->Destroy();
 }
 
-bool ModeHandler::CheckCurrentSector(GEMClientObject* entity, 
+bool ModeHandler::CheckCurrentSector(GEMClientObject* entity,
                                      const char *sectorname,
                                      csVector3& pos,
                                      iSector*&  sector)
@@ -1454,7 +1454,7 @@ bool ModeHandler::CheckCurrentSector(GEMClientObject* entity,
         Bug1("No Mesh found on entity!\n");
         return false;
     }
-    
+
     iMovable* movable = entity->GetMesh()->GetMovable();
 
     sector = movable->GetSectors()->Get(0);
@@ -1466,7 +1466,7 @@ bool ModeHandler::CheckCurrentSector(GEMClientObject* entity,
     }
 
     pos = movable->GetPosition();
-    
+
     return true;
 }
 
@@ -1478,14 +1478,14 @@ bool ModeHandler::CreateWeather(WeatherInfo* ri, csTicks delta)
         return false;
     }
 
-    // Check that player is in same sector that the weather and 
+    // Check that player is in same sector that the weather and
     // get sector pointer and position.
     csVector3 pos;
     iSector *sector;
     if (!CheckCurrentSector(actorEntity,ri->sector,pos,sector))
     {
         return false;
-    }        
+    }
 
 
     // Check for removal of downfall
@@ -1568,7 +1568,7 @@ bool ModeHandler::CreateWeather(WeatherInfo* ri, csTicks delta)
                      sector->QueryObject()->GetName());
         }
     }
-    
+
 
     return true;
 }
@@ -1576,12 +1576,12 @@ bool ModeHandler::CreateWeather(WeatherInfo* ri, csTicks delta)
 WeatherObject* ModeHandler::CreateDownfallWeatherObject(WeatherInfo* ri)
 {
     WeatherObject* object = NULL;
-    
+
     switch(ri->downfall_condition)
     {
         case WEATHER_CLEAR:
             return NULL;
-            
+
         case WEATHER_RAIN:
         {
             object = new RainWeatherObject(ri);
@@ -1607,12 +1607,12 @@ WeatherObject* ModeHandler::CreateDownfallWeatherObject(WeatherInfo* ri)
 WeatherObject* ModeHandler::CreateStaticWeatherObject(WeatherInfo* ri)
 {
     WeatherObject* object = NULL;
-    
+
     switch(ri->fog_condition)
     {
         case WEATHER_CLEAR:
             return NULL;
-            
+
         case WEATHER_FOG:
         {
             object = new FogWeatherObject(ri);
@@ -1648,39 +1648,39 @@ void ModeHandler::HandleCombatEvent(MsgEntry* me)
         Bug1("NULL Attacker or Target combat event sent to client!");
         return;
     }
-  
+
     SetCombatAnim( atObject, event.attack_anim );
-    
+
     if (event.event_type == event.COMBAT_DEATH)
     {
         tarObject->StopMoving();
-    }        
+    }
     else
     {
         SetCombatAnim( tarObject, event.defense_anim );
-    }        
+    }
 
- 
+
     if ( !chatWindow )
-    {    
+    {
         chatWindow = (pawsChatWindow*)PawsManager::GetSingleton().FindWidget("ChatWindow");
         if(!chatWindow)
         {
             Error1("Couldn't find the communications window (ChatWindow), won't print combat.");
             return;
-        }       
-    }        
+        }
+    }
 
-    
+
     // Display the text that goes with it
     if (atObject == celclient->GetMainPlayer() ) // we're attacking here
     {
-        Attack( event.event_type, event.damage, atObject, tarObject, location );                
+        Attack( event.event_type, event.damage, atObject, tarObject, location );
     }
     else if (tarObject == celclient->GetMainPlayer() )  // we're being attacked
     {
         Defend( event.event_type, event.damage, atObject, tarObject, location );
-    }        
+    }
     else // 3rd party msg
     {
         Other(  event.event_type, event.damage, atObject, tarObject, location );
@@ -1704,7 +1704,7 @@ void ModeHandler::AttackBlock(GEMClientActor* atObject, GEMClientActor* tarObjec
     psengine->GetEffectManager()->RenderEffect("combatBlock", csVector3(0, 0, 0), tarObject->GetMesh(), atObject->GetMesh());
     if(!(chatWindow->GetSettings().meFilters & COMBAT_BLOCKED))
         return;
-    
+
     psSystemMessage ev(0,MSG_COMBAT_BLOCK,"You attack %s on the %s but are blocked", MungeName(tarObject).GetData(), location.GetData() );
     msghandler->Publish(ev.msg);
 
@@ -1718,7 +1718,7 @@ void ModeHandler::AttackDamage(float damage, GEMClientActor* atObject, GEMClient
 
         if(!(chatWindow->GetSettings().meFilters & COMBAT_SUCCEEDED))
             return;
-    
+
         psSystemMessage ev(0,MSG_COMBAT_YOURHIT,"You hit %s on the %s for %1.2f damage!", MungeName(tarObject).GetData(), location.GetData(), damage );
         msghandler->Publish(ev.msg);
 
@@ -1728,7 +1728,7 @@ void ModeHandler::AttackDamage(float damage, GEMClientActor* atObject, GEMClient
         psengine->GetEffectManager()->RenderEffect("combatYourHitFail", csVector3(0, 0, 0), tarObject->GetMesh(), atObject->GetMesh());
         if(!(chatWindow->GetSettings().meFilters & COMBAT_FAILED))
             return;
-            
+
         psSystemMessage ev(0,MSG_COMBAT_YOURHIT,"You hit %s on the %s but fail to do any damage!", MungeName(tarObject).GetData(), location.GetData());
         msghandler->Publish(ev.msg);
 
@@ -1745,7 +1745,7 @@ void ModeHandler::AttackDeath( GEMClientActor* atObject, GEMClientActor* tarObje
 
         psSystemMessage ev(0,MSG_COMBAT_VICTORY,"You have killed %s!", MungeName(tarObject).GetData() );
         msghandler->Publish(ev.msg);
-        
+
 
     }
     else //killing self
@@ -1760,7 +1760,7 @@ void ModeHandler::AttackDodge(GEMClientActor* atObject, GEMClientActor* tarObjec
     psengine->GetEffectManager()->RenderEffect("combatDodge", csVector3(0, 0, 0), tarObject->GetMesh(), atObject->GetMesh());
     if(!(chatWindow->GetSettings().meFilters & COMBAT_DODGED))
         return;
-        
+
     psSystemMessage ev(0,MSG_COMBAT_DODGE,"%s has dodged your attack!", MungeName(tarObject).GetData() );
     msghandler->Publish(ev.msg);
 
@@ -1814,17 +1814,17 @@ void ModeHandler::Attack( int type, float damage, GEMClientActor* atObject, GEMC
         }
         case psCombatEventMessage::COMBAT_DODGE:
         {
-            AttackDodge( atObject, tarObject );                
+            AttackDodge( atObject, tarObject );
             break;
         }
         case psCombatEventMessage::COMBAT_MISS:
         {
-            AttackMiss( atObject, tarObject, location );                
+            AttackMiss( atObject, tarObject, location );
             break;
         }
         case psCombatEventMessage::COMBAT_OUTOFRANGE:
         {
-            AttackOutOfRange( atObject, tarObject );                
+            AttackOutOfRange( atObject, tarObject );
             break;
         }
     }
@@ -1850,7 +1850,7 @@ void ModeHandler::DefendDamage( float damage, GEMClientActor* atObject, GEMClien
         psengine->GetEffectManager()->RenderEffect("combatHitYou", csVector3(0, 0, 0), tarObject->GetMesh(), atObject->GetMesh());
         if(!(chatWindow->GetSettings().meFilters & COMBAT_SUCCEEDED))
             return;
-            
+
         psSystemMessage ev(0,MSG_COMBAT_HITYOU,"%s hits you on the %s for %1.2f damage!",  MungeName(atObject).GetData(), location.GetData(), damage );
         msghandler->Publish(ev.msg);
 
@@ -1860,7 +1860,7 @@ void ModeHandler::DefendDamage( float damage, GEMClientActor* atObject, GEMClien
         psengine->GetEffectManager()->RenderEffect("combatHitYouFail", csVector3(0, 0, 0), tarObject->GetMesh(), atObject->GetMesh());
         if(!(chatWindow->GetSettings().meFilters & COMBAT_FAILED))
             return;
-            
+
         psSystemMessage ev(0,MSG_COMBAT_HITYOU,"%s hits you on the %s but fails to do any damage!",  MungeName(atObject).GetData(), location.GetData());
         msghandler->Publish(ev.msg);
 
@@ -1883,7 +1883,7 @@ void ModeHandler::DefendDodge( GEMClientActor* atObject, GEMClientActor* tarObje
     psengine->GetEffectManager()->RenderEffect("combatDodge", csVector3(0, 0, 0), tarObject->GetMesh(), atObject->GetMesh());
     if(!(chatWindow->GetSettings().meFilters & COMBAT_DODGED))
         return;
-        
+
     psSystemMessage ev(0,MSG_COMBAT_DODGE,"%s attacks you but you dodge.", MungeName(atObject).GetData() );
     msghandler->Publish(ev.msg);
 
@@ -1907,7 +1907,7 @@ void ModeHandler::DefendOutOfRange( GEMClientActor* atObject, GEMClientActor* ta
     psSystemMessage ev(0,MSG_COMBAT_MISS,"%s attacks but is too far away to reach you.", MungeName(atObject).GetData() );
     msghandler->Publish(ev.msg);
 
-}    
+}
 
 void ModeHandler::DefendNearlyDead()
 {
@@ -1923,7 +1923,7 @@ void ModeHandler::Defend( int type, float damage, GEMClientActor* atObject, GEMC
     {
         case psCombatEventMessage::COMBAT_BLOCK:
         {
-            DefendBlock( atObject, tarObject, location ); 
+            DefendBlock( atObject, tarObject, location );
             break;
         }
 
@@ -1934,28 +1934,28 @@ void ModeHandler::Defend( int type, float damage, GEMClientActor* atObject, GEMC
         }
         case psCombatEventMessage::COMBAT_DAMAGE:
         {
-            DefendDamage( damage, atObject, tarObject, location ); 
+            DefendDamage( damage, atObject, tarObject, location );
             break;
         }
-        
+
         case psCombatEventMessage::COMBAT_DEATH:
         {
             DefendDeath( atObject );
             break;
         }
-        
+
         case psCombatEventMessage::COMBAT_DODGE:
         {
-            DefendDodge( atObject, tarObject );             
+            DefendDodge( atObject, tarObject );
             break;
         }
-        
+
         case psCombatEventMessage::COMBAT_MISS:
         {
-            DefendMiss( atObject, tarObject );             
+            DefendMiss( atObject, tarObject );
             break;
         }
-        
+
         case psCombatEventMessage::COMBAT_OUTOFRANGE:
         {
             DefendOutOfRange( atObject, tarObject );
@@ -1974,7 +1974,7 @@ void ModeHandler::OtherBlock( GEMClientActor* atObject, GEMClientActor* tarObjec
 
     if(!((level > 0 || isGrouped) && (chatWindow->GetSettings().vicinityFilters & COMBAT_BLOCKED)))
         return;
-        
+
     psSystemMessage ev(0,MSG_COMBAT_BLOCK,"%s attacks %s but they are blocked.", MungeName(atObject).GetData(), MungeName(tarObject).GetData() );
     msghandler->Publish(ev.msg);
 }
@@ -1990,7 +1990,7 @@ void ModeHandler::OtherDamage( float damage, GEMClientActor* atObject, GEMClient
         psengine->GetEffectManager()->RenderEffect("combatHitOther", csVector3(0, 0, 0), tarObject->GetMesh(), atObject->GetMesh());
         if(!((level > 0 || isGrouped) && (chatWindow->GetSettings().vicinityFilters & COMBAT_SUCCEEDED)))
             return;
-            
+
         psSystemMessage ev(0,MSG_COMBAT_HITOTHER,"%s hits %s for %1.2f damage!", MungeName(atObject).GetData(), MungeName(tarObject).GetData(), damage );
         msghandler->Publish(ev.msg);
     }
@@ -2032,7 +2032,7 @@ void ModeHandler::OtherDodge( GEMClientActor* atObject, GEMClientActor* tarObjec
     msghandler->Publish(ev.msg);
 }
 
-void ModeHandler::OtherMiss( GEMClientActor* atObject, GEMClientActor* tarObject ) 
+void ModeHandler::OtherMiss( GEMClientActor* atObject, GEMClientActor* tarObject )
 {
     bool isGrouped = celclient->GetMainPlayer()->IsGroupedWith(atObject) ||
             celclient->GetMainPlayer()->IsGroupedWith(tarObject);
@@ -2045,12 +2045,12 @@ void ModeHandler::OtherMiss( GEMClientActor* atObject, GEMClientActor* tarObject
     msghandler->Publish(ev.msg);
 }
 
-void ModeHandler::OtherOutOfRange( GEMClientActor* atObject, GEMClientActor* tarObject ) 
+void ModeHandler::OtherOutOfRange( GEMClientActor* atObject, GEMClientActor* tarObject )
 {
     psengine->GetEffectManager()->RenderEffect("combatMiss", csVector3(0, 0, 0), atObject->GetMesh(), tarObject->GetMesh());
     psSystemMessage ev(0,MSG_COMBAT_MISS,"%s attacks but is too far away to reach %s.", MungeName(atObject).GetData(),MungeName(tarObject).GetData() );
     msghandler->Publish(ev.msg);
-}    
+}
 
 void ModeHandler::OtherNearlyDead(GEMClientActor *tarObject)
 {
@@ -2111,51 +2111,51 @@ void ModeHandler::SetCombatAnim( GEMClientActor* atObject, csStringID anim )
         if (state)
         {
             int idx = atObject->GetAnimIndex (celclient->GetClientDR ()->GetMsgStrings (), anim);
-            state->SetAnimAction(idx,0.5F,0.5F);     
+            state->SetAnimAction(idx,0.5F,0.5F);
         }
-    }    
+    }
 }
 
 void ModeHandler::HandleCachedFile(MsgEntry* me)
 {
     psCachedFileMessage msg(me);
+    if (!msg.valid)
+        return;
 
-	if (msg.valid)
-	{
+    if (psengine->GetSoundStatus() && soundmanager->PlayingVoices()) // PS#2744
+    {
+        csString fname;
+        fname.Format("/planeshift/userdata/cache/%s",msg.hash.GetDataSafe() );
 
-		// TODO: Check for cached version
-		csString fname;
-		fname.Format("/planeshift/userdata/cache/%s",msg.hash.GetDataSafe() );
+        printf(">>Got audio file '%s' to play, in '%s'.\n", msg.hash.GetDataSafe(), fname.GetDataSafe() );
 
-		printf(">>Got audio file '%s' to play, in '%s'.\n", msg.hash.GetDataSafe(), fname.GetDataSafe() );
-
-		// Check for cached version
-		if (!msg.databuf.IsValid())
-		{
-			printf(">>Checking if file exists locally already.\n");
-			if (!vfs->Exists(fname))  // doesn't exist so we need to request it
-			{
-				printf(">>Requesting file '%s' from server.\n", msg.hash.GetDataSafe() );
-				psCachedFileMessage request(0,msg.hash,NULL); // cheating here to send the hash back in the filename field
-				request.SendMessage();
-			}
-			else // does exist, and we're done
-			{
-				printf("Yes, it is cached already.  Playing immediately.\n");
-				soundmanager->StartAmbientSound(fname);
-			}
-		}
-		else
-		{
-			printf(">>Received file from server.  Putting in cache.\n");
-			// Save sound file
-			if (!vfs->WriteFile(fname,msg.databuf->GetData(), msg.databuf->GetSize() ))
-			{
-				Error2(">>Could not write cached file '%s'.",fname.GetData());
-				return;
-			}
-			// Play sound file
-			soundmanager->StartAmbientSound(fname);
-		}
-	}
+        // Check for cached version
+        if (!msg.databuf.IsValid())
+        {
+            printf(">>Checking if file exists locally already.\n");
+            if (!vfs->Exists(fname))  // doesn't exist so we need to request it
+            {
+                printf(">>Requesting file '%s' from server.\n", msg.hash.GetDataSafe() );
+                psCachedFileMessage request(0,msg.hash,NULL); // cheating here to send the hash back in the filename field
+                request.SendMessage();
+            }
+            else // does exist, and we're done
+            {
+                printf("Yes, it is cached already.  Playing immediately.\n");
+                soundmanager->StartVoiceSound(fname.GetData());
+            }
+        }
+        else
+        {
+            printf(">>Received file from server.  Putting in cache.\n");
+            // Save sound file
+            if (!vfs->WriteFile(fname,msg.databuf->GetData(), msg.databuf->GetSize() ))
+            {
+                Error2(">>Could not write cached file '%s'.",fname.GetData());
+                return;
+            }
+            // Play sound file
+            soundmanager->StartVoiceSound(fname.GetData());
+        }
+    }
 }
