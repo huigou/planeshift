@@ -72,6 +72,14 @@ bool pawsConfigSound::PostSetup()
     if(!guiVol)
         return false;
 
+    voicesVol = (pawsScrollBar*)FindWidget("voicesVol");
+    if(!voicesVol)
+        return false;
+
+    voices = (pawsCheckBox*)FindWidget("voices");
+    if(!voices)
+        return false;
+
     gui = (pawsCheckBox*)FindWidget("gui");
     if(!gui)
         return false;
@@ -120,6 +128,10 @@ bool pawsConfigSound::PostSetup()
     guiVol->SetTickValue(10);
     guiVol->EnableValueLimit(true);
 
+    voicesVol->SetMaxValue(100);
+    voicesVol->SetTickValue(10);
+    voicesVol->EnableValueLimit(true);
+
     return true;
 }
 bool pawsConfigSound::LoadConfig()
@@ -130,12 +142,14 @@ bool pawsConfigSound::LoadConfig()
     musicVol->SetCurrentValue(pssnd->GetMusicVolume()*100,false);
     ambientVol->SetCurrentValue(pssnd->GetAmbientVolume()*100,false);
     guiVol->SetCurrentValue(PawsManager::GetSingleton().GetVolume()*100,false);
+    voicesVol->SetCurrentValue(pssnd->GetVoicesVolume()*100,false);
     actionsVol->SetCurrentValue(pssnd->GetActionsVolume()*100,false);
 
     ambient->SetState(pssnd->PlayingSounds());
     actions->SetState(pssnd->PlayingActions());
     music->SetState(pssnd->PlayingMusic());
     gui->SetState(PawsManager::GetSingleton().PlayingSounds());
+    voices->SetState(pssnd->PlayingVoices());
 
     muteOnFocusLoss->SetState(psengine->GetMuteSoundsOnFocusLoss());
     loopBGM->SetState(pssnd->LoopBGM());
@@ -158,6 +172,8 @@ bool pawsConfigSound::SaveConfig()
                      music->GetState() ? "yes" : "no");
     xml.AppendFmt("<gui on=\"%s\" />\n",
                      gui->GetState() ? "yes" : "no");
+    xml.AppendFmt("<voices on=\"%s\" />\n",
+                     voices->GetState() ? "yes" : "no");
     xml.AppendFmt("<volume value=\"%d\" />\n",
                      int(generalVol->GetCurrentValue()));
     xml.AppendFmt("<musicvolume value=\"%d\" />\n",
@@ -168,6 +184,8 @@ bool pawsConfigSound::SaveConfig()
                      int(actionsVol->GetCurrentValue()));
     xml.AppendFmt("<guivolume value=\"%d\" />\n",
                      int(guiVol->GetCurrentValue()));
+    xml.AppendFmt("<voicesvolume value=\"%d\" />\n",
+                     int(voicesVol->GetCurrentValue()));
     xml.AppendFmt("<muteonfocusloss on=\"%s\" />\n",
                      muteOnFocusLoss->GetState() ? "yes" : "no");
     xml.AppendFmt("<loopbgm on=\"%s\" />\n",
@@ -232,6 +250,14 @@ bool pawsConfigSound::OnScroll(int scrollDir,pawsScrollBar* wdg)
         psengine->GetSoundManager()->SetGUIVolume(guiVol->GetCurrentValue()/100);
         return true;
     }
+    else if(wdg == voicesVol && loaded)
+    {
+        if(voicesVol->GetCurrentValue() < 1)
+            voicesVol->SetCurrentValue(1,false);
+
+        psengine->GetSoundManager()->SetVoicesVolume(voicesVol->GetCurrentValue()/100);
+        return true;
+    }
     else
         return false;
 }
@@ -268,6 +294,11 @@ bool pawsConfigSound::OnButtonPressed(int button, int mod, pawsWidget* wdg)
         }
         return true;
     }
+    else if(wdg == voices)
+    {
+        psengine->GetSoundManager()->ToggleVoices(voices->GetState());
+        return true;
+    }
     else if(wdg == loopBGM)
     {
         psengine->GetSoundManager()->ToggleLoop(loopBGM->GetState());
@@ -292,12 +323,14 @@ void pawsConfigSound::Show()
     oldmusic = psengine->GetSoundManager()->PlayingMusic();
     oldactions = psengine->GetSoundManager()->PlayingActions();
     oldgui = PawsManager::GetSingleton().PlayingSounds();
+    oldvoices = psengine->GetSoundManager()->PlayingVoices();
 
     oldvol = psengine->GetSoundManager()->GetVolume();
     oldmusicvol = psengine->GetSoundManager()->GetMusicVolume();
     oldambientvol = psengine->GetSoundManager()->GetAmbientVolume();
     oldactionsvol = psengine->GetSoundManager()->GetActionsVolume();
     oldguivol = PawsManager::GetSingleton().GetVolume();
+    oldvoicesvol = psengine->GetSoundManager()->GetVoicesVolume();
 
     pawsWidget::Show();
 }
@@ -311,6 +344,7 @@ void pawsConfigSound::Hide()
         psengine->GetSoundManager()->ToggleMusic(oldmusic);
         PawsManager::GetSingleton().ToggleSounds(oldgui);
         psengine->GetSoundManager()->ToggleGUI(oldgui);
+        psengine->GetSoundManager()->ToggleVoices(oldvoices);
 
         psengine->GetSoundManager()->SetVolume(oldvol);
         psengine->GetSoundManager()->SetMusicVolume(oldmusicvol);
@@ -318,6 +352,7 @@ void pawsConfigSound::Hide()
         psengine->GetSoundManager()->SetActionsVolume(oldactionsvol);
         PawsManager::GetSingleton().SetVolume(oldguivol);
         psengine->GetSoundManager()->SetGUIVolume(oldguivol);
+        psengine->GetSoundManager()->SetVoicesVolume(oldvoicesvol);
     }
 
     pawsWidget::Hide();

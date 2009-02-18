@@ -1,87 +1,101 @@
 <widget_description>
 <widget name="ConfigPvPTree" factory="pawsConfigPvP"
         visible="no" savepositions="no" movable="no" resizable="no" >\
-	<frame x="225" y="10" width="400" height="300" border="no" />
-	<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="10" scalefont="no" />
-     
+    <frame x="225" y="10" width="400" height="300" border="no" />
+    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="10" scalefont="no" />
+
     <widget name="music" factory="pawsCheckBox">
         <frame x="10" y="10" width="190" height="20" />
         <text string="Background music"/>
     </widget>
-    
+
     <widget name="ambient" factory="pawsCheckBox">
-        <frame x="10" y="40" width="190" height="20" />
+        <frame x="10" y="35" width="190" height="20" />
         <text string="Ambient sounds"/>
     </widget>
-    
+
     <widget name="actions" factory="pawsCheckBox">
-        <frame x="10" y="70" width="190" height="20" />
+        <frame x="10" y="60" width="190" height="20" />
         <text string="Actions sounds"/>
     </widget>
-    
+
     <widget name="gui" factory="pawsCheckBox">
-        <frame x="10" y="100" width="190" height="20" />
+        <frame x="10" y="85" width="190" height="20" />
         <text string="Interface sounds"/>
     </widget>
-   
+
+    <widget name="voices" factory="pawsCheckBox">
+      <frame x="10" y="110" width="190" height="20" />
+      <text string="Voices"/>
+    </widget>
+
     <widget name="" factory="pawsTextBox">
         <frame x="10" y="140" width="140" height="20" />
         <text string="Master Volume"/>
     </widget>
-    
+
     <widget name="generalVol" factory="pawsScrollBar" direction="horizontal" >
         <frame x="150" y="140" width="100" height="15" border="no" />
     </widget>
-    
+
     <widget name="" factory="pawsTextBox">
         <frame x="10" y="170" width="140" height="20" />
         <text string="Music Volume"/>
     </widget>
-    
+
     <widget name="musicVol" factory="pawsScrollBar" direction="horizontal" >
         <frame x="150" y="170" width="100" height="15" border="no" />
     </widget>
-    
+
     <widget name="" factory="pawsTextBox">
-        <frame x="10" y="200" width="140" height="20" />
+        <frame x="10" y="195" width="140" height="20" />
         <text string="Ambient Volume"/>
     </widget>
-    
+
     <widget name="ambientVol" factory="pawsScrollBar" direction="horizontal" >
-        <frame x="150" y="200" width="100" height="15" border="no" />
+        <frame x="150" y="195" width="100" height="15" border="no" />
     </widget>
-    
+
     <widget name="" factory="pawsTextBox">
-        <frame x="10" y="230" width="140" height="20" />
+        <frame x="10" y="220" width="140" height="20" />
         <text string="Actions Volume"/>
     </widget>
-    
+
     <widget name="actionsVol" factory="pawsScrollBar" direction="horizontal" >
-        <frame x="150" y="230" width="100" height="15" border="no" />
+        <frame x="150" y="220" width="100" height="15" border="no" />
     </widget>
-    
+
     <widget name="" factory="pawsTextBox">
-        <frame x="10" y="260" width="140" height="20" />
+        <frame x="10" y="245" width="140" height="20" />
         <text string="Interface Volume"/>
     </widget>
-    
-    <widget name="guiVol" factory="pawsScrollBar" direction="horizontal" > 
-        <frame x="150" y="260" width="100" height="15" border="no" />
+
+    <widget name="guiVol" factory="pawsScrollBar" direction="horizontal" >
+      <frame x="150" y="245" width="100" height="15" border="no" />
     </widget>
-    
-    <widget name="muteOnFocusLoss" factory="pawsCheckBox">
-        <frame x="10" y="280" width="220" height="20" />
-        <text string="Mute sounds on focus loss"/>
+
+    <widget name="" factory="pawsTextBox">
+      <frame x="10" y="270" width="140" height="20" />
+      <text string="Voices Volume"/>
     </widget>
-    
+
+    <widget name="voicesVol" factory="pawsScrollBar" direction="horizontal" >
+      <frame x="150" y="270" width="100" height="15" border="no" />
+    </widget>
+
     <widget name="combatMusic" factory="pawsCheckBox">
         <frame x="200" y="10" width="220" height="20" />
         <text string="Combat music"/>
     </widget>
 
     <widget name="loopBGM" factory="pawsCheckBox">
-        <frame x="200" y="40" width="220" height="20" />
+        <frame x="200" y="35" width="220" height="20" />
         <text string="Loop background music"/>
+    </widget>
+
+    <widget name="muteOnFocusLoss" factory="pawsCheckBox">
+      <frame x="200" y="60" width="220" height="20" />
+      <text string="Mute on focus loss"/>
     </widget>
 
 </widget>

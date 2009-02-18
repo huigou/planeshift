@@ -392,7 +392,7 @@ bool psEngine::Initialize (int level)
         if(GetConfig()->GetBool("PlaneShift.Graphics.EnableGrass", true))
         {
             gfxFeatures |= useMeshGen;
-        }   
+        }
 
         //Check if sound is on or off in psclient.cfg
         csString soundPlugin;
@@ -411,6 +411,7 @@ bool psEngine::Initialize (int level)
             {
                 csReport(object_reg, CS_REPORTER_SEVERITY_NOTIFY, PSAPP,
                     "Warning: Cannot initialize SoundManager");
+                soundOn = false;
             }
         }
 
@@ -448,7 +449,7 @@ bool psEngine::Initialize (int level)
         paws->GetMouse()->Hide(true);
 
         DeclareExtraFactories();
-       
+
         // Register default PAWS sounds
         if (soundmanager.IsValid() && soundOn)
         {
@@ -760,7 +761,7 @@ void psEngine::DeclareExtraFactories()
     RegisterFactory (pawsBankWindowFactory);
     RegisterFactory (pawsConfigChatBubblesFactory);
     RegisterFactory (pawsConfigShadowsFactory);
-	RegisterFactory (pawsNpcDialogWindowFactory);
+    RegisterFactory (pawsNpcDialogWindowFactory);
 }
 
 //-----------------------------------------------------------------------------
@@ -965,8 +966,8 @@ const csHandlerID * psEngine::LogicEventHandler::GenericSucc(csRef<iEventHandler
         FrameSignpost_ConsoleDebug::StaticID(handler_reg),
         FrameSignpost_DebugFrame::StaticID(handler_reg),
         CS_HANDLERLIST_END
-    };									
-    return succConstraint;						
+    };
+    return succConstraint;
 }
 
 // ----------------------------------------------------------------------------
@@ -1567,6 +1568,10 @@ bool psEngine::LoadSoundSettings(bool forceDef)
     if (optionNode != NULL)
         paws->ToggleSounds(optionNode->GetAttributeValueAsBool("on",true));
 
+    optionNode = mainNode->GetNode("voices");
+    if (optionNode != NULL)
+        GetSoundManager()->ToggleVoices(optionNode->GetAttributeValueAsBool("on",true));
+
     optionNode = mainNode->GetNode("volume");
     if (optionNode != NULL)
     {
@@ -1635,6 +1640,20 @@ bool psEngine::LoadSoundSettings(bool forceDef)
         }
 
         paws->SetVolume(float(volume)/100);
+    }
+
+    optionNode = mainNode->GetNode("voicesvolume");
+    if (optionNode != NULL)
+    {
+        // Failsafe
+        int volume = optionNode->GetAttributeValueAsInt("value");
+        if(volume == 0)
+        {
+            printf("Invalid sound setting, setting to 100%%\n");
+            volume = 100;
+        }
+
+        GetSoundManager()->SetVoicesVolume(float(volume)/100);
     }
 
     optionNode = mainNode->GetNode("muteonfocusloss");

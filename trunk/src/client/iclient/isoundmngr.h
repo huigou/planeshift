@@ -1,7 +1,7 @@
 /*
  * isoundmngr.h -- Saul Leite <leite@engineer.com>
  *
- * Copyright (C) 2001 PlaneShift Team (info@planeshift.it, 
+ * Copyright (C) 2001 PlaneShift Team (info@planeshift.it,
  * http://www.planeshift.it)
  *
  * This program is free software; you can redistribute it and/or
@@ -45,7 +45,7 @@
 #define SOUND_LISTENER_TYPE iSndSysListener
 #define SOUND_DATA_TYPE iSndSysData
 
-enum Fade_Direction 
+enum Fade_Direction
 {
     FADE_UP,
     FADE_DOWN
@@ -66,37 +66,43 @@ struct iSoundManager : public virtual iBase
     virtual bool Setup() = 0;
 
     virtual void ChangeTimeOfDay( int newTime ) = 0;
-    
+
     /// Get current volume of renderer, between 0 and 1.
     virtual float GetVolume() =0;
-    
+
     /// Set current volume of renderer, between 0 and 1.
     virtual void SetVolume(float vol) =0;
-    
+
     /// Get current volume of renderer, between 0 and 1.
     virtual float GetMusicVolume() =0;
-    
+
     /// Set current volume of renderer, between 0 and 1.
     virtual void SetMusicVolume(float vol) =0;
-    
+
     /// Get current volume of renderer, between 0 and 1.
     virtual float GetAmbientVolume() =0;
-    
+
     /// Set current volume of renderer, between 0 and 1.
     virtual void SetAmbientVolume(float vol) =0;
-    
+
     /// Get current volume of renderer, between 0 and 1.
     virtual float GetActionsVolume() =0;
-    
+
     /// Set current volume of renderer, between 0 and 1.
     virtual void SetActionsVolume(float vol) =0;
-    
+
     /// Get current volume of renderer, between 0 and 1.
     virtual float GetGUIVolume() =0;
-    
+
     /// Set current volume of renderer, between 0 and 1.
     virtual void SetGUIVolume(float vol) =0;
-    
+
+    /// Get current volume of renderer, between 0 and 1.
+    virtual float GetVoicesVolume() =0;
+
+    /// Set current volume of renderer, between 0 and 1.
+    virtual void SetVoicesVolume(float vol) =0;
+
     /**
      * Play a named sound and optionally loop it.  If it is looped,
      * the caller must save the csRef returned by this function and
@@ -106,18 +112,19 @@ struct iSoundManager : public virtual iBase
     virtual csRef<SOUND_SOURCE_TYPE> StartAmbientSound(const char* name,bool loop = NO_LOOP) = 0;
     virtual csRef<SOUND_SOURCE_TYPE> StartActionsSound(const char* name,bool loop = NO_LOOP) = 0;
     virtual csRef<SOUND_SOURCE_TYPE> StartGUISound(const char* name,bool loop = NO_LOOP) = 0;
+    virtual csRef<SOUND_SOURCE_TYPE> StartVoiceSound(const char* name,bool loop = NO_LOOP) = 0;
 
     // Playback of GUI sounds can also be performed through the PawsManager.
 
-  	// This one used to be the main one. Please avoid unless necessary.
+    // This one used to be the main one. Please avoid unless necessary.
     virtual csRef<SOUND_SOURCE_TYPE> StartSound(const char* name,float volume,bool loop = NO_LOOP) = 0;
 
-   
+
     /// Stop playing the background sound and start another one.
-    virtual bool OverrideBGSong(const char* name, 
-                                bool loop = true, 
+    virtual bool OverrideBGSong(const char* name,
+                                bool loop = true,
                                 float fadeTime = 2.0 ) = 0;
-    virtual void StopOverrideBG() = 0;                                
+    virtual void StopOverrideBG() = 0;
 
     /// Set whether music will be played or not, based on toggle parm.
     virtual void ToggleMusic(bool toggle) = 0;
@@ -131,12 +138,15 @@ struct iSoundManager : public virtual iBase
     /// Set whether gui sounds will actually be played or not.
     virtual void ToggleGUI(bool toggle) = 0;
 
+    /// Set whether voices will actually be played or not.
+    virtual void ToggleVoices(bool toggle) = 0;
+
     virtual void ToggleLoop(bool toggle) = 0;
     virtual bool LoopBGM() = 0;
-    
+
     virtual void ToggleCombatMusic(bool toggle) = 0;
     virtual bool PlayingCombatMusic() = 0;
-    
+
     /// This returns if we are playing music as a setting or not
     virtual bool PlayingMusic() = 0;
 
@@ -149,6 +159,9 @@ struct iSoundManager : public virtual iBase
     /// This returns if we are playing gui sounds as a setting or not
     virtual bool PlayingGUI() = 0;
 
+    /// This returns if we are playing npc voice sounds as a setting or not
+    virtual bool PlayingVoices() = 0;
+
     /// This returns if the music is the one of a fight or not
     virtual void ChangeMusicMode(bool combat) = 0;
 
@@ -157,10 +170,10 @@ struct iSoundManager : public virtual iBase
 
     /// Play a sound effect based on message type
     virtual void HandleSoundType(int type) = 0;
-    
-    
+
+
     virtual void Update( csVector3 pos ) = 0;
-    virtual void Update( iView* view ) = 0; 
+    virtual void Update( iView* view ) = 0;
     /** Update the current weather. This will trigger WEATHER sounds in
       * the current sector
       * @param weather New weather from the WeatherSound enum (weather.h)
@@ -179,11 +192,11 @@ struct iSoundManager : public virtual iBase
 
     /// Retrieves a pointer to the sound renderer - the main interface of the sound system
     virtual csRef<SOUND_RENDER_TYPE> GetSoundSystem() = 0;
-    
+
     virtual void StartMapSoundSystem() = 0;
     virtual void EnterSector( const char* sectorName, int timeOfDay, int weather, csVector3& position ) = 0;
-    
-    virtual void FadeSectorSounds( Fade_Direction dir ) = 0;    
+
+    virtual void FadeSectorSounds( Fade_Direction dir ) = 0;
 };
 
 #endif // I_SOUND_H
