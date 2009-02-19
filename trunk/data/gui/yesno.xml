@@ -7,17 +7,17 @@
         
     <frame x="0" y="0" width="500" height="250" border="no" />
     
-        <widget name="Message Box" factory="pawsMultiLineTextBox">
+        <widget name="Message Box" factory="pawsMultiLineTextBox" style="">
             <frame x="100" y="40" width="300" height="150" border="no" />
         </widget>
 
         <widget name="YesButton" factory="pawsButton" id="-10" key="Y">
-            <frame x="140" y="185" width="100" height="40" />
+            <frame x="140" y="195" width="100" height="30" />
             <label text="Yes" />
         </widget>
 
         <widget name="NoButton" factory="pawsButton" id="-20" key="N">
-            <frame x="260" y="185" width="100" height="40" />
+            <frame x="260" y="195" width="100" height="30" />
             <label text="No" />
         </widget>
 

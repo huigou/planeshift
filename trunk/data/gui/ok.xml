@@ -1,26 +1,24 @@
 <widget_description>
 
-<widget name="OkWindow" factory="pawsOkBox" 
-        visible="no" savepositions="no" movable="yes" 
-        resizable="no" style="New Standard GUI" >
+<pawsOkBox name="OkWindow" 
+           visible="no" savepositions="no" movable="yes" 
+           resizable="no" style="New Standard GUI" >
        
     <frame x="0" y="0" width="644" height="300" border="no" />
-    <bgimage resource="YesNo" alpha="0" />
     
         <form>
             <enter name="OkButton" />
         </form>
 
-    <widget name="Message Box" factory="pawsMultiLineTextBox">
+    <pawsMultiLineTextBox name="Message Box">
         <frame x="130" y="55" width="430" height="170" border="no" />
-       <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="10" />
-    </widget>
+    </pawsMultiLineTextBox>
 
-    <widget name="OkButton" factory="pawsButton" id="-30">
+    <pawsButton name="OkButton" id="-30">
         <frame x="270" y="220" width="80" height="40" border="no"/>
         <label text="Ok" />
-    </widget>
+    </pawsButton>
 
-</widget>
+</pawsOkBox>
 
 </widget_description>

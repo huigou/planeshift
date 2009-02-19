@@ -2,9 +2,9 @@
 
 <widget name="QuitInfoWindow" factory="pawsQuitInfoBox" 
         visible="no" savepositions="no" movable="yes" 
-        resizable="no" style="New Standard GUI" >
+        resizable="no" style="New Standard GUI">
         
-    <frame x="0" y="0" width="512" height="240" border="no" />
+    <frame x="0" y="0" width="512" height="240" border="yes" />
     
     <widget name="Message Box" factory="pawsMultiLineTextBox">
         <frame x="100" y="60" width="300" height="100" border="no" />        
@@ -12,7 +12,6 @@
 
     <widget name="OkButton" factory="pawsButton" id="100">
         <frame x="210" y="170" width="80" height="40" border="no"/>
-        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="30" />
         <label text="Ok" />
     </widget>
     

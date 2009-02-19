@@ -1,159 +1,155 @@
 <widget_description>
 
-    <widget name="QuestNotebook" factory="pawsQuestListWindow" style="topwindow" visible="no">
+  <pawsQuestListWindow name="QuestNotebook" style="topwindow" visible="no" style="New Standard GUI">
+    <frame x="100" y="100" width="550" height="400" border="yes" />
+    <title resource="Scaling Title Bar" text="Quest & Events Notebook" align="left" close_button="yes"/>
 
-    <frame x="100" y="100" width="550" height="400" />
-    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
-    <title text="Quest & Events Notebook"/>
-    <bgimage resource="Quests Background" alpha="128" />
-
-    <widget name="" factory="pawsTextBox" style="header">
-        <frame x="40" y="12" width="135" />
+    <pawsTextBox name="" style="New Standard Prompt">
+        <frame x="20" y="15" width="135" height="20" />
         <text string="List:" />
-    </widget>
+    </pawsTextBox>
 
-    <widget name="QuestTabs" factory="pawsTabWindow">
-        <frame x="5" y="3" width="250" height="250" border="no" />
-        <widget name="UncompletedButton" factory="pawsButton" style="button" id="1000">
-            <frame x="17" y="190" />
+
+  <pawsTabWindow name="EventsOrQuests">
+    <frame x="5" y="3" width="250" height="250" border="yes" />
+
+    <pawsButton name="QuestLists" id="300">
+        <frame x="90" y="15" width="50" height="15" />
+        <label text="Quests" />
+    </pawsButton>
+
+    <pawsButton name="EventLists" id="301">
+        <frame x="150" y="15" width="50" height="15" />
+        <label text="Events" />
+    </pawsButton>
+
+    <pawsTabWindow name="QuestTabs" id="400">
+
+        <frame x="0" y="10" width="250" height="220" border="yes" />
+    
+        <pawsButton name="UncompletedButton" id="1000">
+            <frame x="17" y="205" width="65" height="15" />
             <label text="Uncompleted" />
-        </widget>
-        <widget name="CompletedButton" factory="pawsButton" style="button" id="1001" >
-            <frame x="106" y="190" />
+        </pawsButton>
+        <pawsButton name="CompletedButton" id="1001" >
+            <frame x="96" y="205"width="50" height="15" />
             <label text="Completed" />
-        </widget>
+        </pawsButton>
 
-        <widget name="EventLists" factory="pawsButton" style="button" id="1300">
-            <frame x="106" y="3" />
-            <label text="Events" />
-        </widget>
 
-        <widget name="UncompletedQuestList" factory="pawsListBox" style="listbox" xmlbinding="quests" id="1100">
-            <frame x="16" y="27" width="186" height="161"/>
-            <highlight resource="Hightlight" alpha="128" />
-            <columns height="30" headings="no" xmlbinding="q" >
-            <column width="166" xmlbinding="desc" >
-                <widget name="Name" factory="pawsTextBox" style="label">
-                </widget>
-            </column>
-            <column width="0" xmlbinding="id">
-                <widget name="ID" factory="pawsTextBox" visible="no"></widget>
-            </column>
-            <column width="0" xmlbinding="status">
-                <widget name="Status" factory="pawsTextBox" visible="no"></widget>
-            </column>
+        <pawsListBox name="UncompletedQuestList" xmlbinding="quests" id="1100">
+            <frame x="16" y="35" width="186" height="161" />
+            <columns height="20" headings="no" xmlbinding="q" >
+              <column width="166" xmlbinding="desc" >
+                <pawsTextBox name="Name" style="label" />
+              </column>
+              <column width="0" xmlbinding="id">
+                <pawsTextBox name="ID" visible="no" />
+              </column>
+              <column width="0" xmlbinding="status">
+                <pawsTextBox name="Status" visible="no" />
+              </column>
             </columns>
-        </widget>
+        </pawsListBox>
 
-        <widget name="CompletedQuestList" factory="pawsListBox" style="listbox" xmlbinding="quests" id="1101">
-            <frame x="16" y="27" width="186" height="161" />
-            <highlight resource="Hightlight" alpha="128" />
-            <columns height="30" headings="no" xmlbinding="q" >
-            <column width="166" xmlbinding="desc" >
-                <widget name="Name" factory="pawsTextBox" style="label">
-                </widget>
-            </column>
-            <column width="0" xmlbinding="id">
-                <widget name="ID" factory="pawsTextBox" visible="no"></widget>
-            </column>
-            <column width="0" xmlbinding="status">
-                <widget name="Status" factory="pawsTextBox" visible="no"></widget>
-            </column>
+        <pawsListBox name="CompletedQuestList" xmlbinding="quests" id="1101">
+            <frame x="16" y="35" width="186" height="161" />
+            <columns height="20" headings="no" xmlbinding="q" >
+              <column width="166" xmlbinding="desc" >
+                <pawsTextBox name="Name" style="label" />
+              </column>
+              <column width="0" xmlbinding="id">
+                <pawsTextBox name="ID" visible="no" />
+              </column>
+              <column width="0" xmlbinding="status">
+                <pawsTextBox name="Status" visible="no" />
+              </column>
             </columns>
-        </widget>
-    </widget>
+        </pawsListBox>
+    </pawsTabWindow>
 
-    <widget name="EventTabs" factory="pawsTabWindow">
-        <frame x="5" y="3" width="250" height="250" border="no" />
-        <widget name="UncompletedButton" factory="pawsButton" style="button" id="1000">
-            <frame x="17" y="190" />
+    <pawsTabWindow name="EventTabs" visible="no" id="401">
+
+        <frame x="0" y="10" width="250" height="220" border="yes" />
+
+        <pawsButton name="UncompletedButton" id="1000">
+            <frame x="17" y="205" width="65" height="15"/>
             <label text="Uncompleted" />
-        </widget>
-        <widget name="CompletedButton" factory="pawsButton" style="button" id="1001" >
-            <frame x="106" y="190" />
+        </pawsButton>
+        <pawsButton name="CompletedButton" id="1001" >
+            <frame x="96" y="205" width="50" height="15" />
             <label text="Completed" />
-        </widget>
+        </pawsButton>
 
-        <widget name="QuestLists" factory="pawsButton" style="button" id="1300">
-            <frame x="106" y="3" />
-            <label text="Quests" />
-        </widget>
-
-        <widget name="UncompletedEventList" factory="pawsListBox" style="listbox" xmlbinding="gmevents" id="1100">
-            <frame x="16" y="27" width="186" height="161"/>
-            <highlight resource="Hightlight" alpha="128" />
-            <columns height="30" headings="no" xmlbinding="event" >
-            <column width="166" xmlbinding="name" >
-                <widget name="Name" factory="pawsTextBox" style="label"></widget>
-            </column>
-            <column width="7" xmlbinding="role" >
-                <widget name="Role" factory="pawsTextBox" visible="yes"></widget>
-            </column>
-            <column width="0" xmlbinding="id">
-                <widget name="ID" factory="pawsTextBox" visible="no"></widget>
-            </column>
-            <column width="0" xmlbinding="status">
-                <widget name="Status" factory="pawsTextBox" visible="no"></widget>
-            </column>
+        <pawsListBox name="UncompletedEventList" xmlbinding="gmevents" id="1100">
+            <frame x="16" y="35" width="186" height="161" />
+            <columns height="20" headings="no" xmlbinding="event" >
+              <column width="166" xmlbinding="name" >
+                <pawsTextBox name="Name" style="label" />
+              </column>
+              <column width="7" xmlbinding="role" >
+                <pawsTextBox name="Role" visible="yes" />
+              </column>
+              <column width="0" xmlbinding="id">
+                <pawsTextBox name="ID" visible="no" />
+              </column>
+              <column width="0" xmlbinding="status">
+                <pawsTextBox name="Status" visible="no" />
+              </column>
             </columns>
-        </widget>
+        </pawsListBox>
 
-        <widget name="CompletedEventList" factory="pawsListBox" style="listbox" xmlbinding="gmevents" id="1101">
-            <frame x="16" y="27" width="186" height="161" />
-            <highlight resource="Hightlight" alpha="128" />
-            <columns height="30" headings="no" xmlbinding="event" >
-            <column width="166" xmlbinding="name" >
-                <widget name="Name" factory="pawsTextBox" style="label"></widget>
-            </column>
-            <column width="7" xmlbinding="role" >
-                <widget name="Role" factory="pawsTextBox" visible="yes"></widget>
-            </column>
-            <column width="0" xmlbinding="id">
-                <widget name="ID" factory="pawsTextBox" visible="no"></widget>
-            </column>
-            <column width="0" xmlbinding="status">
-                <widget name="Status" factory="pawsTextBox" visible="no"></widget>
-            </column>
+        <pawsListBox name="CompletedEventList" xmlbinding="gmevents" id="1101">
+            <frame x="16" y="35" width="186" height="161" />
+            <columns height="20" headings="no" xmlbinding="event" >
+              <column width="166" xmlbinding="name" >
+                <pawsTextBox name="Name" style="label" />
+              </column>
+              <column width="7" xmlbinding="role" >
+                <pawsTextBox name="Role" visible="yes" />
+              </column>
+              <column width="0" xmlbinding="id">
+                <pawsTextBox name="ID" visible="no" />
+              </column>
+              <column width="0" xmlbinding="status">
+                <pawsTextBox name="Status" visible="no" />
+              </column>
             </columns>
-        </widget>
-    </widget>
+        </pawsListBox>
+    </pawsTabWindow>
+  </pawsTabWindow>
 
-    <widget name="Discard" factory="pawsButton" id="1201"  style="button" >
-        <frame x="300" y="195" width="80"/>
+    <pawsButton name="Discard" id="1201">
+        <frame x="450" y="225" width="78" height="15"/>
         <label text="Discard"/>
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
-    </widget>
+    </pawsButton>
 
 
-    <widget name="" factory="pawsTextBox" style="header">
-        <frame x="267" y="14" width="135" />
+    <pawsTextBox name="" style="New Standard Prompt">
+        <frame x="255" y="20" width="135" height="20" />
         <text string="Description:" />
-    </widget>
-    <widget name="Description" factory="pawsMessageTextBox" style="label">
-        <frame x="256" y="37" width="280" height="161"/>
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
-    </widget>
+    </pawsTextBox>
+    <pawsMessageTextBox name="Description" style="Fancy Standard MsgText">
+        <frame x="245" y="45" width="280" height="168"/>
+    </pawsMessageTextBox>
 
-    <widget name="" factory="pawsTextBox" style="header">
-        <frame x="50" y="235" width="100" />
+    <pawsTextBox name="" style="New Standard Prompt">
+        <frame x="30" y="245" width="100" width="70" height="15" />
         <text string="Your notes:" />
-    </widget>
-    <widget name="Notes" factory="pawsMultilineEditTextBox" style="textinput">
-        <frame x="30" y="255" width="490" height="100" />
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
-    </widget>
+    </pawsTextBox>
+    <pawsMultilineEditTextBox name="Notes">
+        <frame x="30" y="263" width="490" height="90" />
+    </pawsMultilineEditTextBox>
 
-    <widget name="SaveButton" factory="pawsButton"  style="button" id="1203">
-        <frame x="22" y="370"/>
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
+    <pawsButton name="SaveButton" id="1203">
+        <frame x="22" y="370" width="50" height="15"/>
         <label text="Save" />
-    </widget>
-    <widget name="CancelButton" factory="pawsButton" style="button" id="1204">
-        <frame x="111" y="370"/>
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
+    </pawsButton>
+    <pawsButton name="CancelButton" id="1204">
+        <frame x="111" y="370" width="50" height="15"/>
         <label text="Reload" />
-    </widget>
+    </pawsButton>
 
-    </widget>
+    </pawsQuestListWindow>
 
 </widget_description>
