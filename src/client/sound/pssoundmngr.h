@@ -138,7 +138,7 @@ public:
     void FadeSectorSounds( Fade_Direction dir );
 
     virtual void ToggleMusic(bool toggle);
-    virtual void ToggleSounds(bool toggle);
+    virtual void ToggleAmbient(bool toggle);
     virtual void ToggleActions(bool toggle);
     virtual void ToggleGUI(bool toggle);
     virtual void ToggleVoices(bool toggle);
@@ -146,7 +146,7 @@ public:
     virtual void ToggleCombatMusic(bool toggle);
 
     virtual bool PlayingMusic() {return musicEnabled;}
-    virtual bool PlayingSounds() {return soundEnabled;}
+    virtual bool PlayingAmbient() {return ambientEnabled;}
     virtual bool PlayingActions() {return actionsEnabled;}
     virtual bool PlayingGUI() {return guiEnabled;}
     virtual bool PlayingVoices() {return voicesEnabled;}
@@ -214,6 +214,7 @@ private:
 
     bool soundEnabled;
     bool musicEnabled;
+    bool ambientEnabled;
     bool actionsEnabled;
     bool guiEnabled;
     bool voicesEnabled;

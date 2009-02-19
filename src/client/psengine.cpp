@@ -1028,7 +1028,7 @@ inline bool psEngine::FrameLimit()
 
 void psEngine::MuteAllSounds(void)
 {
-    GetSoundManager()->ToggleSounds(false);
+    GetSoundManager()->ToggleAmbient(false);
     GetSoundManager()->ToggleMusic(false);
     GetSoundManager()->ToggleActions(false);
     GetSoundManager()->ToggleGUI(false);
@@ -1554,7 +1554,7 @@ bool psEngine::LoadSoundSettings(bool forceDef)
     // load and apply the settings
     optionNode = mainNode->GetNode("ambient");
     if (optionNode != NULL)
-        GetSoundManager()->ToggleSounds(optionNode->GetAttributeValueAsBool("on",true));
+        GetSoundManager()->ToggleAmbient(optionNode->GetAttributeValueAsBool("on",true));
 
     optionNode = mainNode->GetNode("actions");
     if (optionNode != NULL)

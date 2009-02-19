@@ -145,7 +145,7 @@ bool pawsConfigSound::LoadConfig()
     voicesVol->SetCurrentValue(pssnd->GetVoicesVolume()*100,false);
     actionsVol->SetCurrentValue(pssnd->GetActionsVolume()*100,false);
 
-    ambient->SetState(pssnd->PlayingSounds());
+    ambient->SetState(pssnd->PlayingAmbient());
     actions->SetState(pssnd->PlayingActions());
     music->SetState(pssnd->PlayingMusic());
     gui->SetState(PawsManager::GetSingleton().PlayingSounds());
@@ -267,7 +267,7 @@ bool pawsConfigSound::OnButtonPressed(int button, int mod, pawsWidget* wdg)
     dirty = true;
     if(wdg == ambient)
     {
-        psengine->GetSoundManager()->ToggleSounds(ambient->GetState());
+        psengine->GetSoundManager()->ToggleAmbient(ambient->GetState());
         return true;
     }
     else if(wdg == actions)
@@ -319,7 +319,7 @@ bool pawsConfigSound::OnButtonPressed(int button, int mod, pawsWidget* wdg)
 
 void pawsConfigSound::Show()
 {
-    oldambient = psengine->GetSoundManager()->PlayingSounds();
+    oldambient = psengine->GetSoundManager()->PlayingAmbient();
     oldmusic = psengine->GetSoundManager()->PlayingMusic();
     oldactions = psengine->GetSoundManager()->PlayingActions();
     oldgui = PawsManager::GetSingleton().PlayingSounds();
@@ -339,7 +339,7 @@ void pawsConfigSound::Hide()
 {
     if(dirty)
     {
-        psengine->GetSoundManager()->ToggleSounds(oldambient);
+        psengine->GetSoundManager()->ToggleAmbient(oldambient);
         psengine->GetSoundManager()->ToggleActions(oldactions);
         psengine->GetSoundManager()->ToggleMusic(oldmusic);
         PawsManager::GetSingleton().ToggleSounds(oldgui);

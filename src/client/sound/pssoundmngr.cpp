@@ -65,6 +65,13 @@ psSoundManager::psSoundManager(iBase* iParent)
 
     soundEnabled = true;
     musicEnabled = true;
+    ambientEnabled = true;
+    actionsEnabled = true;
+    guiEnabled = true;
+    voicesEnabled = true;
+    loopBGM = true;
+    combatMusicEnabled = true;
+
     musicCombat = false;
 
     musicVolume = 1.0;
@@ -234,7 +241,7 @@ csRef<iSndSysSource> psSoundManager::StartMusicSound(const char* name,bool loop)
 
 csRef<iSndSysSource> psSoundManager::StartAmbientSound(const char* name,bool loop)
 {
-    if(soundEnabled)
+    if(ambientEnabled)
         return StartSound(name,ambientVolume,loop);
     else
         return NULL;
@@ -505,15 +512,15 @@ void psSoundManager::ToggleMusic(bool toggle)
     mapSoundSystem->EnableMusic( musicEnabled );
 }
 
-void psSoundManager::ToggleSounds(bool toggle)
+void psSoundManager::ToggleAmbient(bool toggle)
 {
     if (!soundSystem)
         return;
 
-    // Enable Sounds
+    // Enable Ambient Sounds
     if (toggle)
     {
-        soundEnabled = true;
+        ambientEnabled = true;
         if ( currentSoundSector )
         {
             int weather = currentSoundSector->GetWeather();
@@ -524,12 +531,12 @@ void psSoundManager::ToggleSounds(bool toggle)
 
     // Disable Sounds
     } else {
-        soundEnabled = false;
+        ambientEnabled = false;
         if ( currentSoundSector ) currentSoundSector->StopSounds( );
         if ( lastSoundSector ) lastSoundSector->StopSounds();
 
     }
-    mapSoundSystem->EnableSounds( soundEnabled );
+    mapSoundSystem->EnableSounds( ambientEnabled );
 }
 
 void psSoundManager::ToggleActions(bool toggle)
@@ -802,7 +809,7 @@ void psSoundManager::EnterSector( const char* sector, int timeOfDay, int weather
     if ( currentSoundSector )
     {
         currentSoundSector->Music(musicEnabled);
-        currentSoundSector->Sounds(soundEnabled);
+        currentSoundSector->Sounds(ambientEnabled);
     }
 
 
@@ -1916,7 +1923,7 @@ void psSoundObject::UpdateWeather(int weather)
     // Same weather and is not playing?
     if(MatchWeather(weather) && !mapSystem->FindSameActiveAmbient(this))
     {
-        if( mapSystem->sndmngr->PlayingSounds() )
+        if( mapSystem->sndmngr->PlayingAmbient() )
         {
             mapSystem->RegisterActiveAmbient(this); // We're playing this now
             StartFade(FADE_UP); // PLAY!
