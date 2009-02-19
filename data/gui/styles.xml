@@ -117,10 +117,87 @@
             <colour r="64" g="64" b="64" />
         </childborders>
     </style>
-    
+
+    <style name="New Standard Button" toggle="no" >
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="240" g="240" b="200" size="8" scalefont="false" />
+        <bgimage resource="Scaling Button Up" alpha="0"/>
+        <buttonup resource="Scaling Button Up" />
+        <buttondown resource="Scaling Button Down" />
+        <attachpoints>
+            <attach point="PROPORTIONAL_RIGHT" />
+            <attach point="ATTACH_LEFT" />
+            <attach point="PROPORTIONAL_TOP" />
+            <attach point="ATTACH_BOTTOM" />
+        </attachpoints>
+    </style>
+
+    <style name="New Standard TextBox" >
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="240" g="240" b="200" size="8" scalefont="false" />
+    </style>
+
+    <style name="New Standard Prompt">
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="240" g="240" b="200" size="8" scalefont="false" bold="yes" />
+    </style>
+
+    <style name="New Standard MLB">
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="240" g="240" b="200" size="8" scalefont="false" />
+        <bgimage resource="Scaling Widget Background" alpha="0"/>
+    </style>
+
+    <style name="New Standard MLE" inherit="New Standard MLB">
+        <bgimage resource="Scaling Widget Background" alpha="0"/>
+    </style>
+
+    <style name="New Standard Field">
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="240" g="240" b="200" size="8" scalefont="false" />
+    </style>
+
+    <style name="New Standard Tab" toggle="yes" >
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="240" g="240" b="200" size="8" scalefont="false" />
+        <buttonup resource="Scaling Button Down" />
+        <buttondown resource="Scaling Button Up" />
+        <buttonspecial resource="Chat Tab Button Special" />
+        <attachpoints>
+             <attach point="PROPORTIONAL_RIGHT" />
+             <attach point="PROPORTIONAL_LEFT" />
+             <attach point="ATTACH_TOP" />
+        </attachpoints>
+    </style>
+
+    <style name="New Standard MsgText" >
+        <attachpoints>
+            <attach point="ATTACH_RIGHT" />
+            <attach point="ATTACH_TOP" />
+            <attach point="ATTACH_LEFT" />
+            <attach point="ATTACH_BOTTOM" />
+        </attachpoints>
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="240" g="240" b="200" size="8" scalefont="false" />
+    </style>
+
+    <style name="Fancy Standard MsgText" inherit="New Standard MsgText">
+        <bgimage resource="Scaling Widget Background" alpha="0"/>
+    </style>
+
+    <style name="New Standard ListBox" >
+        <highlight resource="Hightlight" alpha="128" />
+        <bgimage resource="Scaling Field Background" alpha="0"/>
+        <attachpoints>
+            <attach point="ATTACH_RIGHT" />
+            <attach point="ATTACH_TOP" />
+            <attach point="ATTACH_LEFT" />
+            <attach point="ATTACH_BOTTOM" />
+        </attachpoints>
+    </style>
+
     <style name="New Standard GUI">
         <bgimage resource="Scaling Widget Background" />
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="20" g="20" b="20" size="10" />
-        <defaultstyle factory="pawsButton" style="scaleredbutton"/>
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="220" g="220" b="220" size="10" scalefont="false" />
+        <defaultstyle widget="pawsButton"           style="New Standard Button"/>
+        <defaultstyle widget="pawsTextBox"          style="New Standard TextBox"/>
+        <defaultstyle widget="pawsMultiLineTextBox" style="New Standard MLB"/>
+        <defaultstyle widget="pawsEditTextBox"      style="New Standard Field"/>
+        <defaultstyle widget="pawsMessageTextBox"   style="New Standard MsgText"/>
+        <defaultstyle widget="pawsListBox"          style="New Standard ListBox"/>
+        <defaultstyle widget="pawsMultilineEditTextBox" style="New Standard MLE"/>
     </style>
 </styles>

@@ -50,7 +50,6 @@
         <widget name="SetKeyButton" factory="pawsButton" toggle="no" id="1102" notify="ShortcutWindow">
             <frame x="260" y="28" width="50" height="24" />
             <notify name="ShortcutWindow" />
-            <bgimage resource="Scaling Red Button" />
             <label text="Set" />
 	    <attachpoints>
 		    <attach point="ATTACH_RIGHT" />
@@ -58,7 +57,7 @@
             </attachpoints>
         </widget>
         <widget name="Infobox2" factory="pawsTextBox">
-            <frame x="20" y="70" width="200" height="20" />
+            <frame x="20" y="66" width="200" height="20" />
             <text string="Enter the command(s):" />
 	    <attachpoints>
 		    <attach point="ATTACH_LEFT" />
@@ -67,7 +66,7 @@
         </widget>
         <widget name="CommandBox" factory="pawsMultilineEditTextBox">
             <frame x="20" y="90" width="300" height="70" border="no" />
-            <bgimage resource="Scaling Button Background"/>
+            <bgimage resource="Scaling Field Background"/>
             <attachpoints>
                 <attach point="ATTACH_LEFT" />
                 <attach point="ATTACH_RIGHT" />
@@ -78,7 +77,6 @@
         <widget name="DoneButton" factory="pawsButton" toggle="no" id="1100" notify="ShortcutWindow">
             <frame x="20" y="180" width="50" height="24" />
             <notify name="ShortcutWindow" />
-            <bgimage resource="Scaling Red Button" />
             <label text="Done" />
             <attachpoints>
                 <attach point="ATTACH_LEFT" />
@@ -87,7 +85,6 @@
         </widget>
         <widget name="ClearButton" factory="pawsButton" toggle="no" id="1103" notify="ShortcutWindow">
             <frame x="80" y="180" width="50" height="24" />
-            <bgimage resource="Scaling Red Button" />
             <label text="Clear" />
             <attachpoints>
                 <attach point="ATTACH_LEFT" />
@@ -96,7 +93,6 @@
         </widget>
         <widget name="CancelButton" factory="pawsButton" toggle="no" id="1101" notify="ShortcutWindow">
             <frame x="140" y="180" width="60" height="24" />
-            <bgimage resource="Scaling Red Button" />
             <label text="Cancel" />
             <attachpoints>
                 <attach point="ATTACH_LEFT" />
