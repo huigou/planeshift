@@ -130,7 +130,7 @@ struct iSoundManager : public virtual iBase
     virtual void ToggleMusic(bool toggle) = 0;
 
     /// Set whether ambient sounds will actually be played or not.
-    virtual void ToggleSounds(bool toggle) = 0;
+    virtual void ToggleAmbient(bool toggle) = 0;
 
     /// Set whether actions sounds will actually be played or not.
     virtual void ToggleActions(bool toggle) = 0;
@@ -151,7 +151,7 @@ struct iSoundManager : public virtual iBase
     virtual bool PlayingMusic() = 0;
 
     /// This returns if we are playing ambient sounds as a setting or not
-    virtual bool PlayingSounds() = 0;
+    virtual bool PlayingAmbient() = 0;
 
     /// This returns if we are playing actions sounds as a setting or not
     virtual bool PlayingActions() = 0;
