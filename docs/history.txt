@@ -1,3 +1,10 @@
+*** 2009-02-18 by Tristan Cragnolini
+- Patch for PS#2744 by Loyni - ambient sound and voices options now
+  treated separately, plus a fix to sound after the window lost focus.
+- Patch for PS#2579 - the client was loading even though the slots
+  were not correctly set up, and the server was accepting to place items
+  in invalid slots.
+
 *** 2009-02-15 by Stefano Angeleri
 - Added a knownspell quest prerequisite operator
   eg: <knownspell spell="Darkness" />
