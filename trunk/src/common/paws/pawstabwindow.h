@@ -23,6 +23,10 @@
 #include "pawsbutton.h"
 
 
+/** 
+ * This window is supposed to be a generic widget for using tabs to show and hide subwindows
+ * automatically.
+ */
 class pawsTabWindow : public pawsWidget
 {
 public:
@@ -39,7 +43,6 @@ public:
 
 protected:
     pawsWidget* activeTab;
-
     pawsButton* lastButton;
 
 };

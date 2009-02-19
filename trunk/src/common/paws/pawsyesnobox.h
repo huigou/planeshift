@@ -41,7 +41,7 @@ public:
     pawsYesNoBox();
     virtual ~pawsYesNoBox();
 
-    bool OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget );
+    bool OnButtonReleased( int mouseButton, int keyModifier, pawsWidget* widget );
     void SetNotify( pawsWidget* widget );
     
     bool PostSetup();

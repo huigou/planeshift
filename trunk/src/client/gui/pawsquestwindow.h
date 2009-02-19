@@ -154,7 +154,7 @@ protected:
     bool populateGMEventLists;
 
     /// current top tab
-    pawsTabWindow* topTab;
+    pawsTabWindow* currentTab;
 
     pawsMessageTextBox* description;
 

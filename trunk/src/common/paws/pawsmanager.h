@@ -133,7 +133,7 @@ public:
     /** @brief Loads a widget from given XML node.
      *  @return NULL on failure.
      */
-    pawsWidget * LoadWidget( csRef<iDocumentNode> widgetNode );
+    pawsWidget *LoadWidget(iDocumentNode *widgetNode);
 
     /** @brief Loads widgets from a definition file without assigning a parent.
      *

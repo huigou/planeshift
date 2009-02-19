@@ -52,7 +52,7 @@ public:
     pawsStringPromptWindow();
     
     //from pawsWidget:
-    bool OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget );
+    bool OnButtonReleased( int mouseButton, int keyModifier, pawsWidget* widget );
     virtual bool OnKeyDown( int keyCode, int keyChar, int modifiers );
     
     static pawsStringPromptWindow * Create( 

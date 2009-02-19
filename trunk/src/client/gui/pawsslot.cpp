@@ -169,7 +169,7 @@ void pawsSlot::Draw()
         stackCountLabel->Hide();
 
     pawsWidget::Draw();
-    ClipToParent();    
+    ClipToParent(false);    
     csRect frame = screenFrame;
     
     // Deal with frames that are taller than they are high (left/right hand

@@ -128,6 +128,6 @@ void pawsStyles::ApplyStyle(const char * style, iDocumentNode * target)
 
 void pawsStyles::ApplyStyle(iDocumentNode * style, iDocumentNode * target)
 {
-    CopyXMLNode(style, target, 2);
+    CopyXMLNode(style, target, 3);
 }
 

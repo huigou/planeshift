@@ -155,7 +155,7 @@ void pawsBuddyWindow::HandleMessage( MsgEntry* me )
 }
 
 
-bool pawsBuddyWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsBuddyWindow::OnButtonReleased( int mouseButton, int keyModifier, pawsWidget* widget )
 {
     switch ( widget->GetID() )
     {

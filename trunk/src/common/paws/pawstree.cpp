@@ -1101,14 +1101,14 @@ void pawsTree::Draw()
         SetScrollBarMax();
     }
 
-    ClipToParent();
+    ClipToParent(true);
     DrawBackground();
     
     graphics2D->SetClipRect(screenFrame.xmin, screenFrame.ymin, screenFrame.xmax, screenFrame.ymax);
     if (decor)
         decor->Decorate();
 
-    ClipToParent();
+    ClipToParent(false);
     DrawChildren();
 }
 

@@ -61,7 +61,7 @@ public:
     virtual float GetValue();
 
     virtual bool OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget );
-    virtual bool OnButtonReleased( int button, pawsWidget* widget);
+    virtual bool OnButtonReleased( int button, int keyModifier, pawsWidget* widget);
 
     virtual void OnLostFocus(); 
 

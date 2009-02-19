@@ -404,7 +404,7 @@ void CopyXMLNode(csRef<iDocumentNode> source, csRef<iDocumentNode> target, int m
     {
         csRef<iDocumentNode> child = nodeIter->Next();
         csRef<iDocumentNode> targetChild = target->GetNode(child->GetValue());
-        if (targetChild==NULL)
+        if (targetChild==NULL || mode==3)  // Mode 3 means don't merge tags but just insert multiples, so we create a new one here every time
         {
             targetChild = target->CreateNodeBefore(child->GetType());
             if (targetChild == NULL)

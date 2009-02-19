@@ -175,7 +175,7 @@ void pawsPetitionWindow::Close()
     pawsControlledWindow::Hide();
 }
 
-bool pawsPetitionWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsPetitionWindow::OnButtonReleased(int mouseButton, int keyModifier, pawsWidget* widget)
 {
     // We know that the calling widget is a button.
     int button = widget->GetID();

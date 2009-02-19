@@ -45,7 +45,7 @@ pawsPromptWindow::pawsPromptWindow()
 
 bool pawsPromptWindow::PostSetup()
 {
-    SetBackground("Small Blank Background");
+    SetBackground("Scaling Widget Background");
     UseBorder("line");
     
     label = new pawsTextBox();
@@ -53,14 +53,16 @@ bool pawsPromptWindow::PostSetup()
     
     okButton = new pawsButton();
     AddChild(okButton);
-    okButton->SetUpImage("Standard Button");
+    okButton->SetUpImage("Scaling Button Up");
+    okButton->SetDownImage("Scaling Button Down");
     okButton->SetRelativeFrameSize(80, 25);
     okButton->SetText(PawsManager::GetSingleton().Translate("OK"));
     okButton->SetSound("gui.ok");
     
     cancelButton = new pawsButton();
     AddChild(cancelButton);
-    cancelButton->SetUpImage("Standard Button");
+    cancelButton->SetUpImage("Scaling Button Up");
+    cancelButton->SetDownImage("Scaling Button Down");
     cancelButton->SetRelativeFrameSize(80, 25);
     cancelButton->SetText(PawsManager::GetSingleton().Translate("Cancel"));
     cancelButton->SetSound("gui.cancel");

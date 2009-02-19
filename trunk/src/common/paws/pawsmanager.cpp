@@ -143,7 +143,7 @@ PawsManager::PawsManager(iObjectRegistry* object, const char* skin, const char* 
         Error2("Failed to load skin %s!", skin);
     }
 
-    // Mount base skin to satisfy unskined elements
+    // Mount base skin to satisfy unskinned elements
     if(skinBase)
     {
         if(!LoadAdditionalSkin(skinBase))
@@ -680,19 +680,16 @@ bool PawsManager::LoadWidget( const char* widgetFile )
             continue;
 
         // This is a widget so read it's factory to create it.
-        if ( strcmp( node->GetValue(), "widget" ) == 0 )
+        pawsWidget * widget = LoadWidget(node);
+        if (widget)
         {
-            pawsWidget * widget = LoadWidget(node);
-            if (widget)
-            {
-                widget->SetFilename(widgetFile);
-                mainWidget->AddChild(widget);
-            }
-            else
-            {
-                Error2("Could not load child widget in file %s",fullPath.GetDataSafe());
-                return false;
-            }
+            widget->SetFilename(widgetFile);
+            mainWidget->AddChild(widget);
+        }
+        else
+        {
+            Error2("Could not load child widget in file %s",fullPath.GetDataSafe());
+            return false;
         }
     }
     return true;
@@ -717,23 +714,25 @@ bool PawsManager::LoadChildWidgets( const char* widgetFile, csArray<pawsWidget *
             continue;
 
         // This is a widget so read it's factory to create it.
-        if ( strcmp( node->GetValue(), "widget" ) == 0 )
-        {
-            pawsWidget * widget = LoadWidget(node);
-            if (widget)
-                loadedWidgets.Push(widget);
-            else
-                errors = true;
-        }
+        pawsWidget * widget = LoadWidget(node);
+        if (widget)
+            loadedWidgets.Push(widget);
+        else
+            errors = true;
     }
     return (!errors);
 }
 
-pawsWidget * PawsManager::LoadWidget( csRef<iDocumentNode> widgetNode )
+pawsWidget * PawsManager::LoadWidget(iDocumentNode *widgetNode )
 {
     pawsWidget * widget;
+    csString factory;
 
-    csString factory = widgetNode->GetAttributeValue( "factory" );
+    if ( strcmp( widgetNode->GetValue(), "widget" ) == 0 )   // old syntax is <widget factory="bla"....>
+        factory = widgetNode->GetAttributeValue( "factory" );
+    else
+        factory = widgetNode->GetValue();   // new syntax is using factory name as tag name directly: <pawsChatWindow ....>
+
     if ( factory.Length() == 0 )
     {
         Error1("Could not read factory from XML file. Error in XML");

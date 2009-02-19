@@ -569,7 +569,7 @@ void pawsGameTile::Draw()
     if (state != EMPTY_TILE)
     {
         csRect frame = screenFrame;
-        ClipToParent();
+        ClipToParent(false);
         image->Draw(frame);
     }
 }

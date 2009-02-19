@@ -468,7 +468,7 @@ void pawsMultilineEditTextBox::Draw()
     }
 
     pawsWidget::Draw();
-    pawsWidget::ClipToParent();
+    pawsWidget::ClipToParent(false);
     
     for (size_t line = topLine; line <= (topLine+canDrawLines); line++ )
     {

@@ -54,7 +54,8 @@
 #define CANCEL_BUTTON                     1204
 #define TAB_UNCOMPLETED_QUESTS_OR_EVENTS  1000
 #define TAB_COMPLETED_QUESTS_OR_EVENTS    1001
-#define FLIP_TAB_BUTTON                   1300
+#define QUEST_TAB_BUTTON                   300
+#define EVENT_TAB_BUTTON                   301
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -148,7 +149,7 @@ bool pawsQuestListWindow::PostSetup()
     // get pointer to active listbox:
     eventList  = (pawsListBox*)eventTab->GetActiveTab();
 
-    topTab = NULL;
+    currentTab = NULL;
 
     description = (pawsMessageTextBox*)FindWidget("Description");
     notes = (pawsMultilineEditTextBox*)FindWidget("Notes");
@@ -215,7 +216,7 @@ void pawsQuestListWindow::HandleMessage ( MsgEntry* me )
             populateQuestLists = true;
 
             // Reset window
-            if (!topTab || topTab == questTab)
+            if (!currentTab || currentTab == questTab)
             {
                 PopulateQuestTab();
             }
@@ -274,7 +275,7 @@ void pawsQuestListWindow::HandleMessage ( MsgEntry* me )
             notes->Clear();
             populateGMEventLists = true;
 
-            if (!topTab || topTab == eventTab)
+            if (!currentTab || currentTab == eventTab)
             {
                 PopulateGMEventTab();
             }
@@ -303,7 +304,7 @@ bool pawsQuestListWindow::OnButtonPressed( int mouseButton, int keyModifier, paw
         case TAB_COMPLETED_QUESTS_OR_EVENTS:
         case TAB_UNCOMPLETED_QUESTS_OR_EVENTS:
         {
-        if (topTab == questTab)
+        if (currentTab == questTab)
             {
                 questID = -1;
                 completedQuestList->Select(NULL);
@@ -323,13 +324,13 @@ bool pawsQuestListWindow::OnButtonPressed( int mouseButton, int keyModifier, paw
         // These cases are for the discard funciton, and it's confirmation prompt
         case DISCARD_BUTTON:
         {
-            if (topTab == eventTab && questID != -1)
+            if (currentTab == eventTab && questID != -1)
             {
                 PawsManager::GetSingleton().CreateYesNoBox(
                     "Are you sure you want to discard the selected event?", this);
                 questIDBuffer = questID;
             }
-            else if (topTab == questTab && questID != -1)
+            else if (currentTab == questTab && questID != -1)
             {
                 PawsManager::GetSingleton().CreateYesNoBox(
                     "Are you sure you want to discard the selected quest?", this );
@@ -339,9 +340,9 @@ bool pawsQuestListWindow::OnButtonPressed( int mouseButton, int keyModifier, paw
         }
         case CONFIRM_YES:
         {
-            if (topTab == questTab)
+            if (currentTab == questTab)
                 DiscardQuest(questIDBuffer);
-            else if (topTab == eventTab)
+            else if (currentTab == eventTab)
                 DiscardGMEvent(questIDBuffer);
             questID = -1;
 
@@ -359,12 +360,12 @@ bool pawsQuestListWindow::OnButtonPressed( int mouseButton, int keyModifier, paw
         // These cases are for the edit window child of this
         case SAVE_BUTTON:
         {
-            if (topTab == eventTab)
+            if (currentTab == eventTab)
             {
                 PawsManager::GetSingleton().CreateWarningBox(
                     "Notes for GM-Events not yet implemented. Sorry.", this);
             }
-            else if (topTab == questTab && questID != -1)
+            else if (currentTab == questTab && questID != -1)
             {
                 bool found = false;
                 for (size_t i=0; i < quest_notes.GetSize(); i++)
@@ -391,19 +392,20 @@ bool pawsQuestListWindow::OnButtonPressed( int mouseButton, int keyModifier, paw
         }
         case CANCEL_BUTTON:
         {
-            if (topTab == questTab)
+            if (currentTab == questTab)
             {
                 ShowNotes();
             }
             break;
         }
 
-        case FLIP_TAB_BUTTON:
+        case QUEST_TAB_BUTTON:
+        case EVENT_TAB_BUTTON:
         {
-            if (topTab)
-                topTab->Hide();
+//            if (currentTab)
+//                currentTab->Hide();
 
-            if (!topTab || topTab == eventTab)
+            if (!currentTab || currentTab == eventTab)
             {
                 PopulateQuestTab();
             }
@@ -412,7 +414,7 @@ bool pawsQuestListWindow::OnButtonPressed( int mouseButton, int keyModifier, paw
                 PopulateGMEventTab();
             }
 
-        description->Clear();
+            description->Clear();
             notes->Clear();
 
         break;
@@ -452,9 +454,9 @@ void pawsQuestListWindow::OnListAction( pawsListBox* selected, int status )
     size_t topLine = 0;
     int idColumn;
 
-    if (topTab == questTab)
+    if (currentTab == questTab)
         idColumn = QCOL_ID;
-    else if (topTab == eventTab)
+    else if (currentTab == eventTab)
         idColumn = EVCOL_ID;
     else
         return;
@@ -465,7 +467,7 @@ void pawsQuestListWindow::OnListAction( pawsListBox* selected, int status )
         pawsTextBox *field = (pawsTextBox*)row->GetColumn(idColumn);
         questID = atoi(field->GetText());
 
-        if (topTab == questTab)       // GM Events dont support notes, yet!
+        if (currentTab == questTab)       // GM Events dont support notes, yet!
         {
             numOfQuests = quest_notes.GetSize();
             for (size_t i=0; i < numOfQuests; i++)
@@ -588,12 +590,12 @@ void pawsQuestListWindow::PopulateQuestTab(void)
         uncompletedQuestList->SelfPopulateXML(uncompletedQuests);
         populateQuestLists = false;
     }
-    topTab = questTab;
+    currentTab = questTab;
     questTab->SetTab(TAB_UNCOMPLETED_QUESTS_OR_EVENTS);
     completedQuestList->Select(NULL);
     uncompletedQuestList->Select(NULL);
 
-    topTab->Show();
+    currentTab->Show();
 }
 
 void pawsQuestListWindow::PopulateGMEventTab(void)
@@ -605,11 +607,11 @@ void pawsQuestListWindow::PopulateGMEventTab(void)
         uncompletedEventList->SelfPopulateXML(uncompletedEvents);
         populateGMEventLists = false;
     }
-    topTab = eventTab;
+    currentTab = eventTab;
     eventTab->SetTab(TAB_UNCOMPLETED_QUESTS_OR_EVENTS);
     completedEventList->Select(NULL);
     uncompletedEventList->Select(NULL);
 
-    topTab->Show();
+    currentTab->Show();
 }
 

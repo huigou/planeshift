@@ -30,15 +30,19 @@
 bool pawsTabWindow::PostSetup()
 {
     lastButton = (pawsButton*)FindWidget(1000);
-    if (!lastButton) lastButton = (pawsButton*)FindWidget(1200);
+    if (!lastButton) 
+        lastButton = (pawsButton*)FindWidget(1200);
     lastButton->SetState(true);
-        activeTab = FindWidget(1100);
-        if (!activeTab) activeTab = FindWidget(1200);
-        for ( size_t z = 0; z < children.GetSize(); z++ )
-      {
-        if ( strcmp(children[z]->GetType(), "pawsButton"))
+    activeTab = FindWidget(1100);
+    if (!activeTab) 
+        activeTab = FindWidget(1200);
+
+    // Hide all the panels so we can show the active one after
+    for ( size_t z = 0; z < children.GetSize(); z++ )
+    {
+        if ( strcmp(children[z]->GetType(), "pawsButton") != 0)
             children[z]->Hide();
-          }
+    }
     activeTab->Show();
     PawsManager::GetSingleton().SetCurrentFocusedWidget(activeTab);
     Resize();
@@ -48,28 +52,33 @@ bool pawsTabWindow::PostSetup()
 bool pawsTabWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
 {
     pawsButton* buttonWidget = ( pawsButton* ) widget;
-    if (buttonWidget->GetID() < 1200)
+    if (buttonWidget->GetParent() == this && buttonWidget->GetID() < 1200)  // only auto-flip for tabs that are owned by this TabWindow
     {
-     pawsWidget* newWidget = FindWidget(buttonWidget->GetID()+100);
-     if (newWidget)
-     {
-        lastButton->SetState(false);
-        activeTab->Hide();
-        newWidget->Show();
-        buttonWidget->SetState(true);
-        PawsManager::GetSingleton().SetCurrentFocusedWidget(parent);
-        activeTab=newWidget;
-        lastButton=buttonWidget;
-         parent->OnButtonPressed(mouseButton, keyModifier, widget);
-        return true;
-     }
-         return false; 
+        pawsWidget* newWidget = FindWidget(buttonWidget->GetID()+100);
+        if (newWidget)
+        {
+            lastButton->SetState(false);
+            activeTab->Hide();
+            newWidget->Show();
+            buttonWidget->SetState(true);
+            PawsManager::GetSingleton().SetCurrentFocusedWidget(parent);
+            activeTab=newWidget;
+            lastButton=buttonWidget;
+            parent->OnButtonPressed(mouseButton, keyModifier, widget);
+            return true;
         }
+        return false; 
+    }
+    if (buttonWidget->GetParent() == this)  // only handle buttons owned by this TabWindow
+    {
         lastButton->SetState(false);
         buttonWidget->SetState(true);
         lastButton=buttonWidget;
-        parent->OnButtonPressed(mouseButton, keyModifier, widget);
-        return true;
+    }
+
+    // In any case, pass up the chain to the parent of this tab.
+    parent->OnButtonPressed(mouseButton, keyModifier, widget);
+    return true;
 }
 
 void pawsTabWindow::SetTab(int id)
