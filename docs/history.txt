@@ -11,7 +11,11 @@
    4. CTRL-ALT-Click on the Close Box of a window now reloads that window xml file.
       This is not guaranteed not to crash the client but a lot better than exiting
       and reloading every time you tweak a widget position 1 pixel.
-   5. A number of windows have been redone to support the above.
+   5. Also changed the default button behavior to use OnButtonReleased, not OnButtonPressed.
+      This equates to processing the button on mouse up, not mouse down, which is
+      the way every GUI in the world works.  We need to change all windows to do
+      this correctly.
+   6. A number of windows have been redone to support the above.
 - Miscellaneous fixes discovered during the above.
 
 *** 2009-02-18 by Tristan Cragnolini
