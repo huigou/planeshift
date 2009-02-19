@@ -422,6 +422,9 @@ bool psCharacterInventory::CheckSlotRequirements(psItem *item, INVENTORY_SLOT_NU
     CS_ASSERT(proposedSlot != PSCHARACTER_SLOT_NONE);
     CS_ASSERT(item != NULL); // attempting either is probably bad
 
+    if(proposedSlot < PSCHARACTER_SLOT_NONE)
+        return false;
+    
     if (stackCount == 0)
         stackCount = item->GetStackCount();
 
@@ -473,7 +476,7 @@ bool psCharacterInventory::CheckSlotRequirements(psItem *item, INVENTORY_SLOT_NU
         }
     }
 
-    return false;
+    return true;
 }
 
 bool psCharacterInventory::EquipItem(psItem *item, INVENTORY_SLOT_NUMBER slot)

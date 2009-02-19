@@ -337,7 +337,8 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         
         GEMClientObject *object = NULL;
         // if the command's target is not precised, get the object currently targeted
-        if (words[1] == "x" || words[1] == "y" || words[1] == "z" || words[1] == "reset" || atoi(words[1]))
+        if (words[1] == "x" || words[1] == "y" || words[1] == "z" ||
+            words[1] == "reset" || words[1]=="target" || atoi(words[1]))
             object = psengine->GetCharManager()->GetTarget();
         else
             object = FindEntityWithName(words[1]);
@@ -734,7 +735,9 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         
         unsigned int i = 1;
         
-        if (quantity = atoi(words[1]))
+        // if the first word is a number, use that for quantity
+        quantity = atoi(words[1]);
+        if (quantity)
         {
             i++;
         }
