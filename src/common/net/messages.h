@@ -985,6 +985,8 @@ public:
     virtual csString ToString(AccessPointers * access_ptrs);
 };
 
+//--------------------------------------------------------------------------
+
 /**
  * Guild commands sent from client to server.
  */
@@ -1104,7 +1106,12 @@ public:
     virtual csString ToString(AccessPointers * access_ptrs);
 };
 
+//--------------------------------------------------------------------------
 
+/**
+ * User commands.
+ * Those are processed by UserManager
+ */
 class psUserCmdMessage : public psMessageCracker
 {
 public:
@@ -1127,6 +1134,12 @@ public:
     virtual csString ToString(AccessPointers * access_ptrs);
 };
 
+//--------------------------------------------------------------------------
+
+/**
+ * Work commands.
+ * Those are processed by WorkManager
+ */
 class psWorkCmdMessage : public psMessageCracker
 {
 public:
@@ -1150,6 +1163,12 @@ public:
     virtual csString ToString(AccessPointers * access_ptrs);
 };
 
+//--------------------------------------------------------------------------
+
+/**
+ * Admin commands.
+ * Those are processed by AdminManager
+ */
 class psAdminCmdMessage : public psMessageCracker
 {
 public:
@@ -1171,6 +1190,8 @@ public:
     virtual csString ToString(AccessPointers * access_ptrs);
 };
 
+//--------------------------------------------------------------------------
+
 class psDisconnectMessage : public psMessageCracker
 {
 public:
@@ -1190,6 +1211,8 @@ public:
      */
     virtual csString ToString(AccessPointers * access_ptrs);
 };
+
+//--------------------------------------------------------------------------
 
 class psUserActionMessage : public psMessageCracker
 {
@@ -1267,6 +1290,7 @@ public:
     uint32_t options;
 };
 
+//--------------------------------------------------------------------------
 
 /**
  * Messages that are sent to/from the ActionManager
@@ -1681,7 +1705,6 @@ public:
     int command,id;
     csString xml;
 };
-
 
 //---------------------------------------------------------------------------
 
@@ -3900,6 +3923,7 @@ public:
     int containerID;
 };
 
+//--------------------------------------------------------------------------
 
 class psQuestRewardMessage : public psMessageCracker
 {
@@ -3938,6 +3962,8 @@ public:
     int msgType;
     csString newValue;
 };
+
+//--------------------------------------------------------------------------
 
 class psExchangeMoneyMsg : public psMessageCracker
 {
