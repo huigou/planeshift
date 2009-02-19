@@ -75,7 +75,7 @@ void pawsProgressBar::SetCurrentValue( float newValue )
 
 void pawsProgressBar::Draw()
 {
-    ClipToParent();
+    ClipToParent(false);
 
     int alpha = 255;
     if (parent

@@ -127,7 +127,7 @@ csPtr<iPawsImage> pawsTextureManager::GetPawsImage(const char * name)
 
 void pawsTextureManager::AddPawsImage(iPawsImage * element)
 {
-    printf("Adding pawsImage called %s\n", element->GetName() );
+    // printf("Adding pawsImage called %s\n", element->GetName() );
     elementList.Put(element->GetName(), element);
 }
 

@@ -223,7 +223,7 @@ void pawsSketchWindow::Draw()
     pawsWidget::Draw();
 
     // The close button X overrides the clip region so we have to set it back here
-    ClipToParent();
+    ClipToParent(false);
 
     // if (editMode && !mouseDown) update "new selection" each nth frame
     if (editMode && !mouseDown && !colorPending)

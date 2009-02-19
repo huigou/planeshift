@@ -431,7 +431,7 @@ void pawsMessageTextBox::Draw()
 {
     pawsWidget::Draw();
 
-    ClipToParent();
+    ClipToParent(false);
 
     int yPos = 0;
     
@@ -658,7 +658,8 @@ void pawsMessageTextBox::SplitMessage( const char* newText, int colour, int size
         {
             /// See how many characters can be drawn on a single line.                
             int canDrawLength =  GetFont()->GetLength( dummy, screenFrame.Width()-offSet );
-        
+            CS_ASSERT_MSG("iFont->GetLength returned 0.  Infinite loop detected.", canDrawLength != 0);
+
             /// If it can fit the entire string then return.
             if ( canDrawLength == (int)strlen( dummy ) )
             {
@@ -827,7 +828,7 @@ void pawsEditTextBox::Draw()
     
     pawsWidget::Draw();
 
-    ClipToParent();
+    ClipToParent(false);
 
     if (cursorPosition>text.Length())
         cursorPosition=text.Length();
@@ -1292,7 +1293,7 @@ void pawsMultiLineTextBox::OnUpdateData(const char *dataname,PAWSData& value)
 void pawsMultiLineTextBox::Draw()
 {
     pawsWidget::Draw();
-    pawsWidget::ClipToParent();
+    pawsWidget::ClipToParent(false);
     
     int drawX = screenFrame.xmin+margin;
     int drawY = screenFrame.ymin+margin;

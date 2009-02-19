@@ -42,7 +42,7 @@ public:
     bool PostSetup();
     void HandleMessage( MsgEntry* me );
 
-    bool OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget );
+    bool OnButtonReleased( int mouseButton, int keyModifier, pawsWidget* widget );
     void OnListAction( pawsListBox* widget, int status );
     void OnStringEntered(const char *name,int param,const char *value);
 

@@ -122,8 +122,10 @@ void pawsListBox::Clear()
 
     rows.DeleteAll();
     totalRows = 0;
-    if ( scrollBar ) scrollBar->Hide();
-    if ( horzscrollBar ) horzscrollBar->Hide();
+    if (scrollBar) 
+        scrollBar->Hide();
+    if (horzscrollBar)
+        horzscrollBar->Hide();
 }
 
 
@@ -155,10 +157,26 @@ bool pawsListBox::Setup( iDocumentNode* node )
 
         ColumnDef cInfo;
 
-        cInfo.width      = GetActualWidth(colNode->GetAttributeValueAsInt( "width" ));
+        cInfo.width      = GetActualWidth(colNode->GetAttributeValueAsInt("width"));
         cInfo.height     = GetActualHeight(columnHeight);
-        cInfo.widgetNode = colNode->GetNode( "widget" );
-        cInfo.xmlbinding = colNode->GetAttributeValue( "xmlbinding" );
+        cInfo.xmlbinding = colNode->GetAttributeValue("xmlbinding");
+        
+        cInfo.widgetNode = colNode->GetNode("widget");
+        if (!cInfo.widgetNode)
+        {
+            csRef<iDocumentNodeIterator> it = colNode->GetNodes();
+            while (it->HasNext())
+            {
+                csRef<iDocumentNode> n = it->Next();
+                if (strncmp(n->GetValue(),"paws",4)==0) // must start with "paws"
+                {
+                    cInfo.widgetNode = n;
+                    break;
+                }
+            }
+        }
+        CS_ASSERT_MSG("Did not find widget or paws node in column definition.",cInfo.widgetNode != NULL);
+
         rowWidth+= cInfo.width;
 
         colInfo.Push(cInfo);
@@ -1166,6 +1184,8 @@ pawsWidget* pawsListBoxRow::GetColumn( size_t column )
 void pawsListBoxRow::AddColumn( int column, ColumnDef* def )
 {
     csString factory = def[column].widgetNode->GetAttributeValue("factory");
+    if (factory.Length() == 0)
+        factory = def[column].widgetNode->GetValue();
 
     pawsWidget* widget = PawsManager::GetSingleton().CreateWidget( factory );
     if (!widget)

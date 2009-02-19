@@ -421,7 +421,7 @@ bool psEngine::Initialize (int level)
         csString skinPath;
         skinPath += cfgmgr->GetStr("PlaneShift.GUI.Skin.Dir","/planeshift/art/skins/");
         skinPath += cfgmgr->GetStr("PlaneShift.GUI.Skin.Selected","default");
-        skinPath += ".zip";
+        // skinPath += ".zip"; // Don't require the .zip on there, so unzipped skin directories don't need to be named with .zip
 
         // This .zip could be a file or a dir
         csString slash(CS_PATH_SEPARATOR);

@@ -232,7 +232,7 @@ void PawsEditorApp::LoadSkin( const char* name )
     csString zip;
     zip += cfgmgr->GetStr("Planeshift.GUI.Skin.Dir","/planeshift/art/skins/");
     zip += name;
-    zip += ".zip";
+    // zip += ".zip";   // Not doing this anymore so that we can use directories unzipped without naming them .zip  :)
 
     //const char *zip = "/this/art/skins/cvs.zip";
     csString slash(CS_PATH_SEPARATOR);

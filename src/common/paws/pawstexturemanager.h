@@ -46,9 +46,10 @@ struct iPawsImage : public virtual iBase
     virtual void Draw(csRect rect, int alpha=-1) = 0;
     virtual void Draw(int x, int y, int newWidth, int newHeight, int alpha=-1) = 0;
 
-    virtual int GetWidth() const = 0;
-    virtual int GetHeight() const = 0;
-    
+    virtual int  GetWidth() const = 0;
+    virtual int  GetHeight() const = 0;
+    virtual void ExpandClipRect(csRect &clipRect) = 0;
+
     virtual int GetDefaultAlpha() const = 0;
 };
 

@@ -525,7 +525,7 @@ void psMainWidget::DrawChildren()
 
     for(size_t i = 0; i < onscreen.GetSize();i++)
     {
-        ClipToParent();
+        ClipToParent(false);
         onscreen[i]->Draw();
     }
 }

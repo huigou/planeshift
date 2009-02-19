@@ -260,7 +260,7 @@ void pawsCreditsWindow::Hide()
 void pawsCreditsWindow::Draw()
 {
     pawsWidget::Draw();
-    ClipToParent();
+    ClipToParent(false);
 
     if ( csGetTicks() - initialTime >= scrollRate )
     {

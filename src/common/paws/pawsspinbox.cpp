@@ -244,7 +244,7 @@ void pawsSpinBox::OnLostFocus()
 }
 
 
-bool pawsSpinBox::OnButtonReleased( int button, pawsWidget* widget)
+bool pawsSpinBox::OnButtonReleased( int button, int keyModifier, pawsWidget* widget)
 {
     if ( widget == upButton || widget == downButton )
     {    
@@ -254,7 +254,7 @@ bool pawsSpinBox::OnButtonReleased( int button, pawsWidget* widget)
     }
 
     if ( parent ) 
-        return parent->OnButtonReleased( button, widget );
+        return parent->OnButtonReleased( button, keyModifier,widget );
 
     return false;
 }

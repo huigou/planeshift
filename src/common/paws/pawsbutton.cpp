@@ -24,7 +24,7 @@
 #include <ivideo/fontserv.h>
 #include <iutil/evdefs.h>
 
-
+#include "pawsmainwidget.h"
 #include "pawsmanager.h"
 #include "pawsbutton.h"
 #include "pawstexturemanager.h"
@@ -294,7 +294,7 @@ void pawsButton::Draw()
 
 bool pawsButton::OnMouseEnter()
 {
-    if(changeOnMouseOver)
+    if (changeOnMouseOver)
     {
         SetState(true, false);
     }
@@ -304,7 +304,7 @@ bool pawsButton::OnMouseEnter()
 
 bool pawsButton::OnMouseExit()
 {
-    if(changeOnMouseOver)
+    if (changeOnMouseOver)
     {
         SetState(false, false);
     }
@@ -358,11 +358,12 @@ bool pawsButton::CheckKeyHandled(int keyCode)
 {
     if (keybinding && keyCode == keybinding)
     {
-        OnMouseDown(0,0,0,0);
+        OnMouseUp(-1,0,0,0);
         return true;
     }
     return false;
 }
+
 bool pawsButton::OnMouseUp( int button, int modifiers, int x, int y )
 {
     if (!enabled)
@@ -373,13 +374,24 @@ bool pawsButton::OnMouseUp( int button, int modifiers, int x, int y )
     if (!toggle)
         SetState(false, false);
 
+    if (button != -1)  // triggered by keyboard
+    {
+        // Check to make sure mouse is still in this button
+        pawsWidget* newWidget = PawsManager::GetSingleton().GetMainWidget()->WidgetAt(x, y);
+        if (newWidget != this)
+        {
+            printf("Not still in button so not pressed.\n");
+            return true;
+        }
+    }
+
     if (notify != NULL)
     {
-        notify->OnButtonReleased( button, this );
+        notify->OnButtonReleased( button, modifiers, this );
     }        
     else if ( parent )
     {
-        return parent->OnButtonReleased( button, this );
+        return parent->OnButtonReleased( button, modifiers, this );
     }
 
     return false;

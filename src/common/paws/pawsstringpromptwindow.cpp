@@ -70,7 +70,7 @@ void pawsStringPromptWindow::Initialize(const csString & label, const csString &
     this->param  = param;
 }
 
-bool pawsStringPromptWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsStringPromptWindow::OnButtonReleased( int mouseButton, int keyModifier, pawsWidget* widget )
 {
     if (action==NULL)
         return false;

@@ -837,7 +837,7 @@ public:
         if ( parent ) 
             return parent->OnButtonPressed( button, keyModifier, widget );
 
-        return false; 
+        return true; 
     }
 
     /** Called whenever a button is released.
@@ -845,9 +845,10 @@ public:
      * @param widget The widget the button belongs to.
      * @return bool Parent's result or FALSE if no parent.
      */
-    virtual bool OnButtonReleased( int button, pawsWidget* widget)
+    virtual bool OnButtonReleased( int button, int keyModifier, pawsWidget* widget)
     {
-        if ( parent ) return parent->OnButtonReleased( button, widget );
+        if ( parent ) 
+            return parent->OnButtonReleased( button, keyModifier, widget );
         return false;
     }
 
@@ -1105,7 +1106,7 @@ public:
      * it calculates the intersection between either it's border or  
      * screenframe and parent clip. Updates clipRect for future drawing.
      */
-     void ClipToParent();
+     void ClipToParent(bool allowForBackgroundBorder);
 
     /** This returns the current clipping rectangle.
      * @return csRect clipRect

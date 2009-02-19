@@ -121,8 +121,8 @@ void pawsBorder::Draw()
 
     if ( !usingGraphics )
     {
-        if ( !justTitle )
-            DrawFrame(frame);
+        //if ( !justTitle )
+            // DrawFrame(frame);
         return;        
     }
     

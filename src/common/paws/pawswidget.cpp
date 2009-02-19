@@ -165,7 +165,11 @@ bool pawsWidget::CheckButtonPressed( int button, int modifiers, pawsWidget* pres
 {  
     if ( pressedWidget->GetName()!=NULL  &&  GetCloseName()!=NULL  &&  strcmp( pressedWidget->GetName(),GetCloseName())==0 )
     {
-        Close();
+        if (modifiers == (CSMASK_CTRL | CSMASK_ALT))
+            ReloadWidget();
+        else
+            Close();
+    
         return true;
     }
     else
@@ -279,6 +283,9 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
     */
         
     atr = node->GetAttribute("style");
+
+    if (name=="ChatWindow")
+        printf("In chat window...\n");
 
     if (atr)
         PawsManager::GetSingleton().ApplyStyle(atr->GetValue(), node);
@@ -519,7 +526,7 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
         csString title = titleNode->GetAttributeValue("text");
         csString image = titleNode->GetAttributeValue("resource");               
         csString align = titleNode->GetAttributeValue("align");        
-        csString close = titleNode->GetAttributeValue( "close_button" );
+        csString close = titleNode->GetAttributeValue("close_button");
         bool shadowTitle = titleNode->GetAttributeValueAsBool("shadow", true);
 
         SetTitle( title, image, align, close, shadowTitle ); 
@@ -700,6 +707,9 @@ bool pawsWidget::Load( iDocumentNode* node )
         return false;
     }
 
+    if (name=="ChatWindow")
+        printf("Chat found.");
+
     if ( ! LoadChildren(node) )
         return false;
         
@@ -740,7 +750,7 @@ bool pawsWidget::LoadChildren( iDocumentNode* node )
     pawsWidget* widget;
 
     // Get an iterator over all the child widgets       
-    csRef<iDocumentNodeIterator> childIter = node->GetNodes ("widget");
+    csRef<iDocumentNodeIterator> childIter = node->GetNodes();
 
     while ( childIter->HasNext() )
     {
@@ -772,14 +782,15 @@ bool pawsWidget::LoadChildren( iDocumentNode* node )
         {
             csString factory = childWidgetNode->GetAttributeValue( "factory" );
 
-            if ( factory.Length() == 0 )
+            if (factory.Length() == 0)
             {
-                Error1("Could not read factory from XML file. Error in XML");
-                return false;
+                factory=childWidgetNode->GetValue();
+                if (strncmp(factory,"paws",4) != 0)
+                    continue;
             }
-                        
+
             widget = PawsManager::GetSingleton().CreateWidget( factory );
-            CS_ASSERT( widget );
+            CS_ASSERT_MSG("Creating widget from factory name failed.", widget!=NULL);
 
             AddChild( widget );            
         }
@@ -1060,13 +1071,15 @@ void pawsWidget::DrawBackground()
 void pawsWidget::Draw()
 {
     // Setup our clipping rect so we know where we can draw
-    ClipToParent();
+    ClipToParent(true);
 
     // If we can't draw anywhere, then don't try.  Our children can't be drawn either.
     if (clipRect.IsEmpty())
         return;
 
     DrawBackground();
+    
+    ClipToParent(false);
     DrawChildren();
 
     // Draw the masking image
@@ -1497,7 +1510,7 @@ bool pawsWidget::OnMouseDown( int button, int modifiers, int x, int y )
                 return true;
             }
         }
-        else if ((button == csmbRight) || (button == csmbLeft && modifiers & CSMASK_CTRL))
+        else if ((button == csmbRight) || (button == csmbLeft && modifiers == CSMASK_CTRL))
         {
             if (!contextMenu && !contextMenuFile.IsEmpty())
             {
@@ -1545,7 +1558,9 @@ bool pawsWidget::OnMouseUp( int button, int modifiers, int x, int y )
     if ( parent )
         return parent->OnMouseUp( button, modifiers, x, y );
     else
+    {
         return false;
+    }
 }
 
 bool pawsWidget::OnDoubleClick( int button, int modifiers, int x, int y )
@@ -2290,7 +2305,7 @@ void pawsWidget::MakeFullyVisible()
         MoveTo(targetX, targetY);
 }
 
-void pawsWidget::ClipToParent()
+void pawsWidget::ClipToParent(bool allowForBackgroundBorder)
 {
     if ( !parent )
     {
@@ -2312,6 +2327,11 @@ void pawsWidget::ClipToParent()
             clipRect = border->GetRect();
         else
             clipRect = screenFrame;
+
+        if (allowForBackgroundBorder && bgImage)
+        {
+            bgImage->ExpandClipRect(clipRect);
+        }
 
         // Calculate intersection of our frame and parent frame
         clipRect.Intersect(parent->ClipRect());
@@ -2706,7 +2726,8 @@ bool pawsWidget::ReadDefaultWidgetStyles( iDocumentNode *node )
         csRef<iDocumentNode> child = defaults->Next();
         if (!strcmp(child->GetValue(),"defaultstyle"))
         {
-            defaultWidgetStyles.Put(child->GetAttributeValue("factory"),child->GetAttributeValue("style"));
+            printf("Adding style %s for widget %s.\n",child->GetAttributeValue("style"),child->GetAttributeValue("widget"));
+            defaultWidgetStyles.Put(child->GetAttributeValue("widget"),child->GetAttributeValue("style"));
         }
     } 
     return true;
@@ -2716,15 +2737,24 @@ const char *pawsWidget::FindDefaultWidgetStyle(const char *factoryName)
 {
     static csString style;
     
+    if (name=="ChatWindow")
+        printf("Finding default style for factory '%s'\n", factoryName);
+
     style = defaultWidgetStyles.Get(factoryName,csString("not found"));
     if (style == "not found" && parent != NULL)
     {
+        if (name=="ChatWindow")
+            printf("No default style found for factory '%s'. Checking parent.\n", factoryName);
         // walk up the chain of parents
         return parent->FindDefaultWidgetStyle(factoryName);
     }
     if (style == "not found")
         return NULL;
     else
+    {
+        if (name=="ChatWindow")
+            printf("Default style '%s' found for factory '%s'\n", style.GetData(), factoryName);
         return style;
+    }
 }
 

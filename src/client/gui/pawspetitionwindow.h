@@ -72,7 +72,7 @@ public:
     bool PostSetup();
 
     /// Handle button clicks
-    bool OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* reporter);
+    bool OnButtonReleased(int mouseButton, int keyModifier, pawsWidget* reporter);
 
     void OnListAction( pawsListBox* selected, int status );
 

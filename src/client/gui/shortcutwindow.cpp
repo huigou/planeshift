@@ -52,7 +52,7 @@
 #define DEFAULT_COMMAND_FILE "/planeshift/data/options/shortcutcommands_def.xml"
 
 #define BUTTON_PADDING       2
-#define BUTTON_SPACING       2
+#define BUTTON_SPACING       8
 #define WINDOW_PADDING       5
 #define SCROLLBAR_SIZE       12
 
@@ -154,7 +154,7 @@ void pawsShortcutWindow::RebuildMatrix()
             button = new pawsButton;
             button->SetSound("gui.shortcut");
             AddChild(button);
-            button->SetBackground("Shortcut Button");
+            button->SetBackground("Scaling Button Up");
             matrix[i][k] = button;
         }
     }
@@ -276,7 +276,8 @@ bool pawsShortcutWindow::OnMouseDown( int button, int modifiers, int x, int y )
     }
 }
 
-bool pawsShortcutWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+// bool pawsShortcutWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, pawsWidget* widget )
 {
     if (!subWidget)
         subWidget = PawsManager::GetSingleton().FindWidget("ShortcutEdit");

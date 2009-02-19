@@ -957,7 +957,6 @@ bool pawsCreationMain::OnButtonPressed( int mouseButton, int keyModifier, pawsWi
 
 void pawsCreationMain::Draw()
 {
-    ClipToParent();
     pawsWidget::Draw();
     
     

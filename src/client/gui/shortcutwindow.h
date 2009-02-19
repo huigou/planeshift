@@ -47,7 +47,8 @@ public:
     virtual bool PostSetup();
 
     bool OnMouseDown( int button, int modifiers, int x, int y );
-    bool OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* reporter);
+    // bool OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* reporter);
+    bool OnButtonReleased(int mouseButton, int keyModifier, pawsWidget* reporter);
     bool OnScroll( int direction, pawsScrollBar* widget );
     void OnResize();
     void StopResize();
