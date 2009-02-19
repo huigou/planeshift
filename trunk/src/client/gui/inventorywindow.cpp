@@ -132,21 +132,22 @@ bool pawsInventoryWindow::PostSetup()
     }
 
     // If you add something here, DO NOT FORGET TO CHANGE 'INVENTORY_EQUIP_COUNT'!!!
-    SetupSlot("lefthand");
-    SetupSlot("righthand");
-    SetupSlot("leftfinger");
-    SetupSlot("rightfinger");
-    SetupSlot("helm");
-    SetupSlot("neck");
-    SetupSlot("back");
-    SetupSlot("arms");
-    SetupSlot("gloves");
-    SetupSlot("boots");
-    SetupSlot("legs");
-    SetupSlot("belt");
-    SetupSlot("bracers");
-    SetupSlot("torso");
-    SetupSlot("mind");
+    if(!(SetupSlot("lefthand") &&
+    SetupSlot("righthand") &&
+    SetupSlot("leftfinger") &&
+    SetupSlot("rightfinger") &&
+    SetupSlot("helm") &&
+    SetupSlot("neck") &&
+    SetupSlot("back") &&
+    SetupSlot("arms") &&
+    SetupSlot("gloves") &&
+    SetupSlot("boots") &&
+    SetupSlot("legs") &&
+    SetupSlot("belt") &&
+    SetupSlot("bracers") &&
+    SetupSlot("torso") &&
+    SetupSlot("mind")))
+        return false;
 
     pawsListBox * bulkList = dynamic_cast <pawsListBox*> (FindWidget("BulkList"));
     if (bulkList)

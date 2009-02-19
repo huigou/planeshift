@@ -473,7 +473,7 @@ bool psCharacterInventory::CheckSlotRequirements(psItem *item, INVENTORY_SLOT_NU
         }
     }
 
-    return true;
+    return false;
 }
 
 bool psCharacterInventory::EquipItem(psItem *item, INVENTORY_SLOT_NUMBER slot)
