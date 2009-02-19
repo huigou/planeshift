@@ -1,3 +1,19 @@
+﻿*** 2009-02-18 by Keith Fulton
+- PAWS update
+   1. Now syntax of <pawsButton bla.bla></pawsButton> is supported instead
+      of cumbersome <widget factory="pawsButton" bla bla></widget> syntax.
+   2. styles now work and support repeated tags.
+   3. image definitions can now be horizontal or vertial "3-patches" where the
+      middle part automatically tiles.  They can also be rectangular "9-patches"
+      where the middle parts of the edges repeat on the edges and the middle part
+      tiles in the middle to accommodate any widget size.  These can be used
+      interchangeably wherever single images used to be used.
+   4. CTRL-ALT-Click on the Close Box of a window now reloads that window xml file.
+      This is not guaranteed not to crash the client but a lot better than exiting
+      and reloading every time you tweak a widget position 1 pixel.
+   5. A number of windows have been redone to support the above.
+- Miscellaneous fixes discovered during the above.
+
 *** 2009-02-18 by Tristan Cragnolini
 - Patch for PS#2744 by Loyni - ambient sound and voices options now
   treated separately, plus a fix to sound after the window lost focus.
