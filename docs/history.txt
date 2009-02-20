@@ -17,6 +17,7 @@
       this correctly.
    6. A number of windows have been redone to support the above.
 - Miscellaneous fixes discovered during the above.
+- Restyled Help Window and Spell Window
 
 *** 2009-02-18 by Tristan Cragnolini
 - Patch for PS#2744 by Loyni - ambient sound and voices options now
