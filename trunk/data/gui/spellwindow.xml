@@ -1,74 +1,49 @@
 <widget_description>
 
-<widget name="SpellBookWindow" factory="pawsSpellBookWindow"
-        visible="no" savepositions="yes" movable="yes"
-        resizable="no" configurable="yes" >
+<pawsSpellBookWindow name="SpellBookWindow"
+           visible="no" savepositions="yes" movable="yes"
+           resizable="no" configurable="yes" style="New Standard GUI">
 
     <frame x="200" y="200" width="400" height="300" border="yes" />
-    <bgimage resource="Spellbook Background" alpha="128" />
-    <title resource="Blue Title" text="Spell Book" align="left" close_button="yes"/>
+    <title resource="Scaling Title Bar" text="Spell Book" align="left" close_button="yes"/>
 
-    <widget name="Combine" factory="pawsButton" id="100" tooltip="Combine Glyphs" >
+    <pawsButton name="Combine" id="100" tooltip="Combine Glyphs" style="none">
         <frame x="148" y="5" width="32" height="32" />
         <bgimage resource="PurifyGlyphButton" />
-    </widget>
+    </pawsButton>
 
-    <widget name="Cast" factory="pawsButton" id="101" tooltip="Cast Spell">
+    <pawsButton name="Cast" id="101" tooltip="Cast Spell" style="none">
         <frame x="194" y="5" width="32" height="32" />
         <bgimage resource="CastSpellButton" />
-    </widget>
+    </pawsButton>
 
-    <widget name="ActiveMagic" factory="pawsButton" id="102" tooltip="Active Magic">
+    <pawsButton name="ActiveMagic" id="102" tooltip="Active Magic" style="none">
         <frame x="240" y="5" width="32" height="32" />
         <bgimage resource="ActiveMagicButton" />
-    </widget>
+    </pawsButton>
 
-    <widget name="Description" factory="pawsMessageTextBox" >
-        <frame x="137" y="42" width="245" height="91" border="no" />
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
-    </widget>
+    <pawsMessageTextBox name="Picture" style="Fancy Standard MsgText" >
+        <frame x="45" y="50" width="60" height="60" border="no" />
+    </pawsMessageTextBox>
 
-    <widget name="Picture" factory="pawsMessageTextBox" >
-        <frame x="50" y="72" width="60" height="60" border="no" />
-    </widget>
+    <pawsMessageTextBox name="Description" style="Fancy Standard MsgText" >
+        <frame x="137" y="50" width="245" height="81" border="no" />
+    </pawsMessageTextBox>
 
-    <widget name="SpellList" factory="pawsListBox"  >
-        <frame x="22" y="128" width="356" height="146" margin="5" border="no" />
+    <pawsListBox name="SpellList">
+        <frame x="22" y="160" width="356" height="110" margin="5" border="no" />
         <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="12" />
         <columns height="32" headings="yes">
-            <column width="120" >
-                <widget name="Name" factory="pawsTextBox">
-                    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
-                </widget>
-            </column>
-            <column width="40" >
-                <widget name="Glyph" factory="pawsWidget">
-                    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
-                </widget>
-            </column>
-            <column width="25" >
-                <widget name="" factory="pawsWidget"></widget>
-            </column>
-            <column width="25" >
-                <widget name="" factory="pawsWidget"></widget>
-            </column>
-            <column width="25" >
-                <widget name="" factory="pawsWidget"></widget>
-            </column>
-            <column width="45" >
-                <widget name="Way" factory="pawsTextBox">
-                    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
-                </widget>
-            </column>
-            <column width="45" >
-                <widget name="Realm" factory="pawsTextBox">
-                    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="8" />
-                    <frame x="15" y="0" width="20" height="20"/>
-                </widget>
-            </column>
+            <column width="120"><pawsTextBox name="Name"/> </column>
+            <column width="40" ><pawsWidget name="Glyph"/> </column>
+            <column width="25" ><pawsWidget name=""/>      </column>
+            <column width="25" ><pawsWidget name=""/>      </column>
+            <column width="25" ><pawsWidget name="" />     </column>
+            <column width="45" ><pawsTextBox name="Way"/>  </column>
+            <column width="45" ><pawsTextBox name="Realm"/></column>
         </columns>
-    </widget>
+    </pawsListBox>
 
-</widget>
+</pawsSpellBookWindow>
 
 </widget_description>

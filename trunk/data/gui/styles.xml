@@ -145,7 +145,15 @@
     </style>
 
     <style name="New Standard MLE" inherit="New Standard MLB">
-        <bgimage resource="Scaling Widget Background" alpha="0"/>
+        <bgimage resource="Scaling Widget Background" />
+    </style>
+
+    <style name="New Left Side Tree" inherit="New Standard MLE">
+        <attachpoints>
+            <attach point="ATTACH_TOP" />
+            <attach point="ATTACH_LEFT" />
+            <attach point="ATTACH_BOTTOM" />
+        </attachpoints>
     </style>
 
     <style name="New Standard Field">
@@ -180,7 +188,7 @@
 
     <style name="New Standard ListBox" >
         <highlight resource="Hightlight" alpha="128" />
-        <bgimage resource="Scaling Field Background" alpha="0"/>
+        <bgimage resource="Scaling Field Background" />
         <attachpoints>
             <attach point="ATTACH_RIGHT" />
             <attach point="ATTACH_TOP" />
@@ -198,6 +206,7 @@
         <defaultstyle widget="pawsEditTextBox"      style="New Standard Field"/>
         <defaultstyle widget="pawsMessageTextBox"   style="New Standard MsgText"/>
         <defaultstyle widget="pawsListBox"          style="New Standard ListBox"/>
+        <defaultstyle widget="pawsSimpleTree"       style="New Left Side Tree"/>
         <defaultstyle widget="pawsMultilineEditTextBox" style="New Standard MLE"/>
     </style>
 </styles>

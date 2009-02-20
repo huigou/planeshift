@@ -33,13 +33,13 @@
         </columns>
     </widget>
 
-    <widget name="PetitionTextLabel" factory="pawsTextBox" >
-        <frame x="25" y="190" width="150" height="20" border="no"/>
-        <text string="Petition text:" />
+    <widget name="PetitionTextLabel" factory="pawsTextBox" style="New Standard Prompt" >
+        <frame x="20" y="190" width="150" height="20" border="no"/>
+        <text string="Petition Text:" />
     </widget>
 
     <widget name="PetitionText" factory="pawsMultilineEditTextBox" >
-        <frame x="45" y="215" width="540" height="94" border="yes" />
+        <frame x="20" y="210" width="562" height="84" border="yes" />
     </widget>
 
     <widget name="Delete Button" factory="pawsButton" toggle="no" id="1" shadows="yes" >
