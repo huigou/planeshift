@@ -72,35 +72,35 @@
              </widget>
 
             <widget name="MainText" factory="pawsMessageTextBox" visible="no" id="1100">
-                <frame x="0" y="15" width="320" height="80" border="no" />
+                <frame x="0" y="20" width="320" height="80" border="no" />
             </widget>
 
             <widget name="SystemText" factory="pawsMessageTextBox" visible="no" id="1101">
-                <frame x="0" y="15" width="320" height="80" border="no" />
+                <frame x="0" y="20" width="320" height="80" border="no" />
             </widget>
 
             <widget name="NpcText" factory="pawsMessageTextBox" visible="no" id="1102">
-                <frame x="0" y="15" width="320" height="80" border="no" />
+                <frame x="0" y="20" width="320" height="80" border="no" />
             </widget>
 
             <widget name="TellText" factory="pawsMessageTextBox" visible="no" id="1103">
-                <frame x="0" y="15" width="320" height="80" border="no" />
+                <frame x="0" y="20" width="320" height="80" border="no" />
             </widget>
 
             <widget name="GuildText" factory="pawsMessageTextBox" visible="no" id="1104">
-                <frame x="0" y="15" width="320" height="80" border="no" />
+                <frame x="0" y="20" width="320" height="80" border="no" />
             </widget>
 
             <widget name="GroupText" factory="pawsMessageTextBox" visible="no" id="1105">
-                <frame x="0" y="15" width="320" height="80" border="no" />
+                <frame x="0" y="20" width="320" height="80" border="no" />
             </widget>
 
             <widget name="AuctionText" factory="pawsMessageTextBox" visible="no" id="1106">
-                <frame x="0" y="15" width="320" height="80" border="no" />
+                <frame x="0" y="20" width="320" height="80" border="no" />
             </widget>
 
             <widget name="HelpText" factory="pawsMessageTextBox" visible="no" id="1107">
-                <frame x="0" y="15" width="320" height="80" border="no" />
+                <frame x="0" y="20" width="320" height="80" border="no" />
             </widget>
         </widget>
     </widget>
