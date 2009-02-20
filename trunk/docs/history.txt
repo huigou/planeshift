@@ -1,4 +1,9 @@
-﻿*** 2009-02-18 by Keith Fulton
+﻿*** 2009-02-20 by Stefano Angeleri
+- Added instance sliding with /slide.
+  The command is /slide (target) I slideamount, slide amount is relative
+  the the current instance of the target
+
+*** 2009-02-18 by Keith Fulton
 - PAWS update
    1. Now syntax of <pawsButton bla.bla></pawsButton> is supported instead
       of cumbersome <widget factory="pawsButton" bla bla></widget> syntax.
