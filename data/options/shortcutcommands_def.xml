@@ -14,6 +14,5 @@
     <shortcut12 name="Clear target">/target clear</shortcut12>
     <shortcut13 name="Train">/train</shortcut13>
     <shortcut14 name="Use">/use</shortcut14>
-    <shortcut15 name="Stop using">/stopusing</shortcut15>
-    <shortcut16 name="Unstick">/unstick</shortcut16>
+    <shortcut15 name="Unstick">/unstick</shortcut15>
 </shortcuts>
