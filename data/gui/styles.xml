@@ -118,11 +118,13 @@
         </childborders>
     </style>
 
-    <style name="New Standard Button" toggle="no" >
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="240" g="240" b="200" size="8" scalefont="false" />
-        <bgimage resource="Scaling Button Up" alpha="0"/>
-        <buttonup resource="Scaling Button Up" />
-        <buttondown resource="Scaling Button Down" />
+    <style name="Standard Font">
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="240" g="240" b="200" size="9" scalefont="false" />
+    </style>
+
+    <style name="New Standard Button" inherit="Standard Font" toggle="no" >
+        <buttonup resource="Scaling Button Up" alpha="128" />
+        <buttondown resource="Scaling Button Down" alpha="128" />
         <attachpoints>
             <attach point="PROPORTIONAL_RIGHT" />
             <attach point="ATTACH_LEFT" />
@@ -131,21 +133,19 @@
         </attachpoints>
     </style>
 
-    <style name="New Standard TextBox" >
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="240" g="240" b="200" size="8" scalefont="false" />
+    <style name="New Standard TextBox" inherit="Standard Font" >
     </style>
 
-    <style name="New Standard Prompt">
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="240" g="240" b="200" size="8" scalefont="false" bold="yes" />
+    <style name="New Standard Prompt" inherit="Standard Font" >
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="240" g="240" b="200" size="9" scalefont="false" bold="yes" />
     </style>
 
-    <style name="New Standard MLB">
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="240" g="240" b="200" size="8" scalefont="false" />
-        <bgimage resource="Scaling Widget Background" alpha="0"/>
+    <style name="New Standard MLB" inherit="Standard Font">
+        <bgimage resource="Scaling Widget Background" alpha="128"/>
     </style>
 
     <style name="New Standard MLE" inherit="New Standard MLB">
-        <bgimage resource="Scaling Widget Background" />
+        <bgimage resource="Scaling Widget Background" alpha="128" />
     </style>
 
     <style name="New Left Side Tree" inherit="New Standard MLE">
@@ -156,14 +156,12 @@
         </attachpoints>
     </style>
 
-    <style name="New Standard Field">
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="240" g="240" b="200" size="8" scalefont="false" />
+    <style name="New Standard Field" inherit="Standard Font">
     </style>
 
-    <style name="New Standard Tab" toggle="yes" >
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="240" g="240" b="200" size="8" scalefont="false" />
-        <buttonup resource="Scaling Button Down" />
-        <buttondown resource="Scaling Button Up" />
+    <style name="New Standard Tab" inherit="Standard Font" toggle="yes" >
+        <buttonup resource="Scaling Button Down" alpha="128" />
+        <buttondown resource="Scaling Button Up" alpha="128" />
         <buttonspecial resource="Chat Tab Button Special" />
         <attachpoints>
              <attach point="PROPORTIONAL_RIGHT" />
@@ -172,23 +170,22 @@
         </attachpoints>
     </style>
 
-    <style name="New Standard MsgText" >
+    <style name="New Standard MsgText" inherit="Standard Font">
         <attachpoints>
             <attach point="ATTACH_RIGHT" />
             <attach point="ATTACH_TOP" />
             <attach point="ATTACH_LEFT" />
             <attach point="ATTACH_BOTTOM" />
         </attachpoints>
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="240" g="240" b="200" size="8" scalefont="false" />
     </style>
 
     <style name="Fancy Standard MsgText" inherit="New Standard MsgText">
-        <bgimage resource="Scaling Widget Background" alpha="0"/>
+        <bgimage resource="Scaling Widget Background" alpha="128"/>
     </style>
 
     <style name="New Standard ListBox" >
         <highlight resource="Hightlight" alpha="128" />
-        <bgimage resource="Scaling Field Background" />
+        <bgimage resource="Scaling Field Background" alpha="128" />
         <attachpoints>
             <attach point="ATTACH_RIGHT" />
             <attach point="ATTACH_TOP" />
@@ -197,9 +194,8 @@
         </attachpoints>
     </style>
 
-    <style name="New Standard GUI">
+    <style name="New Standard GUI" inherit="Standard Font">
         <bgimage resource="Scaling Widget Background" />
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="220" g="220" b="220" size="10" scalefont="false" />
         <defaultstyle widget="pawsButton"           style="New Standard Button"/>
         <defaultstyle widget="pawsTextBox"          style="New Standard TextBox"/>
         <defaultstyle widget="pawsMultiLineTextBox" style="New Standard MLB"/>
