@@ -43,7 +43,7 @@
 pawsTextBox::pawsTextBox() : textX(0), textY(0)
 {
     horizAdjust = horizLEFT;
-    vertAdjust  = vertTOP;
+    vertAdjust  = vertCENTRE;
     
     vertical = false;
     grayed = false;
@@ -89,7 +89,9 @@ bool pawsTextBox::Setup( iDocumentNode* node )
                 VertAdjust(vertBOTTOM);
             else
                 VertAdjust(vertTOP);
-        }            
+        } 
+		else
+			VertAdjust(vertCENTRE);  // default is centered vertically unless specified otherwise
         
         csRef<iDocumentAttribute> textAttribute = textNode->GetAttribute("string");
         if ( textAttribute )
@@ -104,6 +106,9 @@ bool pawsTextBox::Setup( iDocumentNode* node )
 void pawsTextBox::CalcTextPos()
 {
     int width, height;
+
+	if (!screenFrame.Height())
+		SetSizeByText();
 
     if (horizAdjust==horizRIGHT  ||  horizAdjust==horizCENTRE  ||  vertAdjust==vertBOTTOM  ||  vertAdjust==vertCENTRE)
         CalcTextSize(width, height);
@@ -193,7 +198,7 @@ void pawsTextBox::VertAdjust(pawsVertAdjust vert)
     CalcTextPos();
 }
 
-void pawsTextBox::CalcTextSize(int & width, int & height)
+void pawsTextBox::CalcTextSize(int& width, int& height)
 {
     if (vertical)
     {
@@ -303,9 +308,9 @@ void pawsTextBox::Draw()
     }
     else
     {
-        DrawWidgetText( (const char*)text, 
-                        screenFrame.xmin + margin + textX,
-                        screenFrame.ymin + margin + textY );   
+		DrawWidgetText( (const char*)text, 
+						screenFrame.xmin + margin + textX,
+						screenFrame.ymin + margin + textY );   
     }
 }
 

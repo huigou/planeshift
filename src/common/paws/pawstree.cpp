@@ -604,7 +604,7 @@ bool pawsTreeStruct::Load(iDocumentNode *node)
     if (xmlRoot == NULL)
     {
         Error1("<widget> tag not found");
-        return false;
+        return true;
     }
 
     factory = xmlRoot->GetAttributeValue("factory");

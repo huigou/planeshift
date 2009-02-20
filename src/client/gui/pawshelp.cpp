@@ -52,24 +52,19 @@ bool pawsHelp::PostSetup(void)
 {
     helpText = dynamic_cast<pawsMultiLineTextBox*>(FindWidget("HelpText"));
     if (!helpText)
-    return false;
+        return false;
 
     // creates tree:
-    helpTree = new pawsSimpleTree;
+    helpTree = dynamic_cast<pawsSimpleTree*>(FindWidget("HelpTree"));
     if (helpTree == NULL)
     {
         Error1("Could not create widget pawsSimpleTree");
         return false;
     }
-    AddChild(helpTree);
-    helpTree->SetRelativeFrame(27,29,GetActualWidth(198),GetActualHeight(224));
     helpTree->SetNotify(this);
-    helpTree->SetAttachFlags(ATTACH_TOP | ATTACH_BOTTOM | ATTACH_LEFT);
     helpTree->SetScrollBars(false, true);
-    helpTree->Resize();
-    helpTree->SetDefaultColor(psengine->GetG2D()->FindRGB(255,255,255));
 
-    helpTree->InsertChildL("", "RootTopic", "", "");
+	helpTree->InsertChildL("", "RootTopic", "", "");
 
     LoadHelps(helpDoc->GetRoot()->GetNode("help"), "RootTopic");
 
