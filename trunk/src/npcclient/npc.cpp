@@ -114,7 +114,7 @@ void NPC::Load(const char* name, PID pid, NPCType* type, const char* region_name
 {
     this->name = name;
     this->pid = pid;
-    this->type = type;
+    this->type = type->GetName();
     this->region_name = region_name;
     this->debugging = debugging;
     this->disabled = disabled;
