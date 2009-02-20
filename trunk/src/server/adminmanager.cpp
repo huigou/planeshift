@@ -3766,7 +3766,7 @@ void AdminManager::Slide(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& dat
 
     if (data.direction.IsEmpty())
     {
-        psserver->SendSystemError(me->clientnum, "Syntax: /slide [name|'target'] [direction] [distance]\nAllowed directions: U D L R F B T");
+        psserver->SendSystemError(me->clientnum, "Syntax: /slide [name|'target'] [direction] [distance]\nAllowed directions: U D L R F B T I");
         return;
     }
 
@@ -3781,6 +3781,7 @@ void AdminManager::Slide(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& dat
     csVector3 pos;
     float yrot;
     iSector* sector = 0;
+    InstanceID instance = target->GetInstance();
 
     target->GetPosition(pos, yrot, sector);
 
@@ -3814,13 +3815,16 @@ void AdminManager::Slide(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& dat
                 slideAmount = (data.amt == 0)?90:data.amt; // defualt to 90 deg
                 yrot += slideAmount*PI/180.0; // Rotation units are degrees
                 break;
+            case 'I':
+                instance += slideAmount;
+                break;
             default:
-                psserver->SendSystemError(me->clientnum, "Invalid direction given (Use one of: U D L R F B T)");
+                psserver->SendSystemError(me->clientnum, "Invalid direction given (Use one of: U D L R F B T I)");
                 return;
         }
 
         // Update the object
-        if ( !MoveObject(client,target,pos,yrot,sector,target->GetInstance()) )
+        if ( !MoveObject(client,target,pos,yrot,sector,instance) )
             return;
 
         target->UpdateProxList(false); // Update ProxList if needed

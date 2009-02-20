@@ -737,7 +737,9 @@ Note: The adequate gender for Krans is "none".</topic>
 Shows the GM GUI, a window with a player list and quick access to many commands.</topic>
         <topic name="/slide">/slide target direction distance
 
-Slides the target object/NPC/player in the direction specified (L,R,F,B,U,D,T). Moves one space or the distance specified. The "direction" 'T' turns the target.  (in degrees; default is 90)</topic>
+Slides the target object/NPC/player in the direction specified (L,R,F,B,U,D,T,I). Moves one space or the distance specified.
+The "direction" 'T' turns the target.  (in degrees; default is 90)
+The "direction" 'I' changes target instance. (it's relative to current instance)</topic>
         <topic name="/snow">/snow sector [flakes [length [fade]]|stop]
 
 It creates snow effect in a specific sector, with a specific number of flakes, the length of the effect (in milliseconds) and its fading
