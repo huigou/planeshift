@@ -558,7 +558,7 @@ void UserManager::SendCharacterDescription(Client * client, psCharacter * charDa
 
     csArray<psCharacterDetailsMessage::NetworkDetailSkill> skills;
 
-    if ( !simple && CacheManager::GetSingleton().GetCommandManager()->Validate(client->GetSecurityLevel(), "view stats") )
+    if (!simple && psserver->CheckAccess(client, "view stats", false))
         full = true;  // GMs can view the stats list
 
     //send creation info only if the player is requesting  his info
@@ -1359,7 +1359,7 @@ void UserManager::ReportPosition(psUserCmdMessage& msg,Client *client)
     gemObject *object = NULL;
     bool self = true;
 
-    bool extras = CacheManager::GetSingleton().GetCommandManager()->Validate(client->GetSecurityLevel(), "pos extras");
+    bool extras = psserver->CheckAccess(client, "pos extras", false);
 
     // Allow GMs to get other players' and entities' locations
     if (extras && msg.player.Length())
@@ -2193,8 +2193,8 @@ void UserManager::Rotate(Client *client, gemObject* target, csString action)
 
         // rotate an item only if the client is guarding it,
         // or has the right to rotate all items
-        if (psserver->HasAccess(client, "rotate all")||
-            rotItem->GetItem()->GetGuardingCharacterID() == client->GetPID())
+        if (rotItem->GetItem()->GetGuardingCharacterID() == client->GetPID() ||
+            psserver->CheckAccess(client, "rotate all"))
         {
             // rotation is given in degrees, converting that to radians
             xrot = xrot/180*PI;

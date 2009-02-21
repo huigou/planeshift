@@ -1022,7 +1022,19 @@ bool psServer::SetServerOption(const char *option_name,const csString& value)
     return result==1;
 }
 
-bool psServer::HasAccess( Client* client, const char* command)
+bool psServer::CheckAccess(Client* client, const char* command, bool returnError)
 {
+    if(returnError)
+    {
+        bool gotAccess;
+        csString errorMessage;
+        gotAccess = CacheManager::GetSingleton().GetCommandManager()->Validate(client->GetSecurityLevel(), command, errorMessage);
+        if(gotAccess)
+            return true;
+        
+        SendSystemError(client->GetClientNum(), errorMessage);
+        return false;
+    }
+    
     return CacheManager::GetSingleton().GetCommandManager()->Validate(client->GetSecurityLevel(), command);
 }

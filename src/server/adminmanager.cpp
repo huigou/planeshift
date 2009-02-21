@@ -1068,11 +1068,8 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, Client *client)
     }
 
     // Security check
-    if ( me->clientnum != 0 && !IsReseting(msg.cmd) && !Valid(client->GetSecurityLevel(), data.command,  me->clientnum) )
-    {
-        psserver->SendSystemError(me->clientnum, "You are not allowed to use %s.", data.command.GetData());
+    if ( me->clientnum != 0 && !IsReseting(msg.cmd) && !psserver->CheckAccess(client, data.command))
         return;
-    }
 
     // Called functions should report all needed errors
     gemObject* targetobject = NULL;
@@ -1609,20 +1606,6 @@ void AdminManager::GetSiblingChars(MsgEntry* me,psAdminCmdMessage& msg, AdminCmd
         psserver->SendSystemInfo(me->clientnum, "The Account ID [%d] of player %s is not valid.", ShowID(accountId), data.player.GetData());
     }
 }
-
-
-bool AdminManager::Valid( int level, const char* command, int clientnum )
-{
-    csString errorStr;
-
-    if ( !CacheManager::GetSingleton().GetCommandManager()->Validate( level, command, errorStr ) )
-    {
-        psserver->SendSystemError(clientnum, errorStr);
-        return false;
-    }
-    return true;
-}
-
 
 void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& data,Client *client, gemObject* target)
 {
@@ -5423,7 +5406,7 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
             type = row.GetUInt32("character_type");
             if (type == PSCHARACTER_TYPE_NPC)
             {
-                if (!Valid(client->GetSecurityLevel(), "change NPC names", me->clientnum))
+                if (!psserver->CheckAccess(client, "change NPC names"))
                     return;
             }
         }
@@ -5965,7 +5948,7 @@ void AdminManager::SendSpawnItems (MsgEntry* me, Client *client)
 
     csArray<psItemStats*> items;
     unsigned int size = 0;
-    if (!Valid(client->GetSecurityLevel(), "/item", client->GetClientNum()))
+    if (!psserver->CheckAccess(client, "/item"))
     {
         return;
     }
@@ -6027,7 +6010,7 @@ void AdminManager::SpawnItemInv(MsgEntry* me, Client *client)
 
 void AdminManager::SpawnItemInv( MsgEntry* me, psGMSpawnItem& msg, Client *client)
 {
-    if (!Valid(client->GetSecurityLevel(), "/item", client->GetClientNum()))
+    if (!psserver->CheckAccess(client, "/item"))
     {
         return;
     }
@@ -6483,7 +6466,7 @@ void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
     }
 
     // Check the permission to set skills for other characters
-    if (target != client && !Valid(client->GetSecurityLevel(), "setskill others", me->clientnum))
+    if (target != client && !psserver->CheckAccess(client, "setskill others"))
         return;
 
     psCharacter * pchar = target->GetCharacterData();
@@ -7258,11 +7241,8 @@ void AdminManager::Morph(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& dat
         return;
     }
 
-    if(targetclient != client && !Valid(client->GetSecurityLevel(), "morph others", me->clientnum))
-    {
-        psserver->SendSystemError(me->clientnum,"You don't have permission to change mesh of %s!", targetclient->GetName() );
+    if(targetclient != client && !psserver->CheckAccess(client, "morph others"))
         return;
-    }
 
     gemActor* target = targetclient->GetActor();
 
@@ -8047,7 +8027,7 @@ void AdminManager::DisableQuest(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDa
     quest->Active(!quest->Active()); //invert the status of the quest: if enabled, disable it, if disabled, enable it
     if(data.subCmd == "save") //if the subcmd is save we save this also on the database
     {
-        if(!Valid(client->GetSecurityLevel(), "save quest disable", me->clientnum)) //check if the client has the correct rights to do this
+        if(!psserver->CheckAccess(client, "save quest disable", false)) //check if the client has the correct rights to do this
         {
             psserver->SendSystemInfo(client->GetClientNum(),"You can't change the active status of quests: the quest status was changed only temporarily.");
             return;
