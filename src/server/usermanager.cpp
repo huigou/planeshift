@@ -38,9 +38,9 @@
 #include "util/serverconsole.h"
 #include "util/pserror.h"
 #include "util/psconst.h"
-#include "util/strutil.h"
 #include "util/log.h"
 #include "util/eventmanager.h"
+#include "util/strutil.h"
 
 #include "engine/psworld.h"
 
@@ -55,34 +55,33 @@
 //=============================================================================
 // Local Includes
 //=============================================================================
-#include "usermanager.h"
+#include "actionmanager.h"
+#include "adminmanager.h"
+#include "advicemanager.h"
+#include "bankmanager.h"
+#include "cachemanager.h"
+#include "chatmanager.h"
 #include "client.h"
 #include "clients.h"
+#include "combatmanager.h"
+#include "commandmanager.h"
+#include "entitymanager.h"
 #include "events.h"
 #include "gem.h"
-#include "netmanager.h"
-#include "entitymanager.h"
-#include "marriagemanager.h"
-#include "combatmanager.h"
+#include "globals.h"
+#include "gmeventmanager.h"
 #include "invitemanager.h"
-#include "adminmanager.h"
-#include "commandmanager.h"
-#include "psserver.h"
-#include "psserverchar.h"
-#include "cachemanager.h"
+#include "marriagemanager.h"
+#include "netmanager.h"
+#include "netmanager.h"
 #include "playergroup.h"
 #include "progressionmanager.h"
-#include "netmanager.h"
-#include "advicemanager.h"
-#include "actionmanager.h"
-#include "chatmanager.h"
-#include "gmeventmanager.h"
-#include "bankmanager.h"
-#include "globals.h"
+#include "psserver.h"
+#include "psserverchar.h"
+#include "usermanager.h"
 
 #define RANGE_TO_CHALLENGE 50
 
-//TODO: Implement or reuse adminmanager standard targetting also here
 
 class psUserStatRegeneration : public psGameEvent
 {
@@ -245,158 +244,6 @@ void UserManager::HandleUserCommand(MsgEntry *me,Client *client)
         return;
     }
 
-}
-
-csArray<csString> UserManager::DecodeCommandArea(Client *client, csString target)
-{
-    csArray<csString> result;
-
-    if (!CacheManager::GetSingleton().GetCommandManager()->Validate(client->GetSecurityLevel(), "command area"))
-    {
-        psserver->SendSystemError(client->GetClientNum(),
-                "You are not allowed to use area", target.GetData());
-        return result;
-    }
-
-    csArray<csString> splitTarget = psSplit(target, ':');
-    size_t splitSize = splitTarget.GetSize();
-
-    if (splitSize < 3 || splitSize > 4)
-    {
-        psserver->SendSystemError(client->GetClientNum(),
-                "Try /$CMD area:item:range[:name]");
-        return result;
-    }
-
-    csString itemName = splitTarget[1];
-    csString* nameFilter = splitSize > 3 ? &splitTarget[3] : 0;
-
-    const int range = atoi(splitTarget[2].GetData());
-    if (range <= 0)
-    {
-        psserver->SendSystemError(client->GetClientNum(),
-                "You must specify a positive integer for the area: range.");
-        return result;
-    }
-
-    bool allNames = true;
-    if (nameFilter && (*nameFilter!="all"))
-        allNames = false;
-
-    int mode;
-    if (itemName == "players")
-        mode = 0;
-    else if (itemName == "actors")
-        mode = 1;
-    else if (itemName == "items")
-        mode = 2;
-    else if (itemName == "npcs")
-        mode = 3;
-    else if (itemName == "entities")
-        mode = 4;
-    else
-    {
-        psserver->SendSystemError(client->GetClientNum(),
-                "item must be players|actors|items|npcs|entities");
-        return result;
-    }
-
-    gemActor* self = client->GetActor();
-    if (!self)
-    {
-        psserver->SendSystemError(client->GetClientNum(), "You do not exist...");
-        return result;
-    }
-
-    csVector3 pos;
-    iSector* sector;
-    self->GetPosition(pos, sector);
-
-    GEMSupervisor* gem = GEMSupervisor::GetSingletonPtr();
-    if (!gem)
-        return result;
-
-    csArray<gemObject*> nearlist = gem->FindNearbyEntities(sector, pos,
-            range);
-    size_t count = nearlist.GetSize();
-    csArray<csString *> results;
-
-    for (size_t i=0; i<count; i++)
-    {
-        gemObject *nearobj = nearlist[i];
-        if (!nearobj)
-            continue;
-
-        if (nearobj->GetInstance() != self->GetInstance())
-            continue;
-
-        if (!allNames)
-        {
-            csString nearobjName = nearobj->GetName();
-            if (!nearobjName.StartsWith(*nameFilter->GetData(), true))
-                continue;
-        }
-
-        csString newTarget;
-
-        switch (mode)
-        {
-        case 0: // Target players
-        {
-            if (nearobj->GetClientID())
-            {
-                newTarget.Format("pid:%d", nearobj->GetPID().Unbox());
-                break;
-            }
-            else
-                continue;
-        }
-        case 1: // Target actors
-        {
-            if (nearobj->GetPID().IsValid())
-            {
-                newTarget.Format("pid:%d", nearobj->GetPID().Unbox());
-                break;
-            }
-            else
-                continue;
-        }
-        case 2: // Target items
-        {
-            if (nearobj->GetItem())
-            {
-                newTarget.Format("eid:%u", nearobj->GetEID().Unbox());
-                break;
-            }
-            else
-                continue;
-        }
-        case 3: // Target NPCs
-        {
-            if (nearobj->GetNPCPtr())
-            {
-                newTarget.Format("pid:%u", nearobj->GetPID().Unbox());
-                break;
-            }
-            else
-                continue;
-        }
-        case 4: // Target everything
-        {
-            newTarget.Format("eid:%u", nearobj->GetEID().Unbox());
-            break;
-        }
-        }
-
-        // Run this once for every target in range  (each one will be verified and logged seperately)
-        result.Push(newTarget);
-    }
-    if (result.IsEmpty())
-    {
-        psserver->SendSystemError(client->GetClientNum(),
-                "Nothing of specified type in range.");
-    }
-    return result;
 }
 
 bool UserManager::CheckForEmote(csString command, bool execute, Client *client)
@@ -1005,7 +852,7 @@ void UserManager::Who(psUserCmdMessage& msg, Client* client)
         while (it.HasNext())
         {
             csString pid = it.Next();
-            gemObject *object = psserver->GetAdminManager()->FindObjectByString(pid,client->GetActor());
+            gemObject *object = FindObjectByString(pid,client->GetActor());
             Client* thisclient = object->GetClient();
             if (thisclient)
             {
@@ -1377,9 +1224,9 @@ void UserManager::ReportPosition(psUserCmdMessage& msg,Client *client)
         }
         else
         {
-            Client* c = psserver->GetAdminManager()->FindPlayerClient(msg.player);
+            Client* c = FindPlayerClient(msg.player);
             if (c) object = (gemObject*)c->GetActor();
-            if (!object) object = psserver->GetAdminManager()->FindObjectByString(msg.player,client->GetActor());
+            if (!object) object = FindObjectByString(msg.player,client->GetActor());
         }
     }
     else
@@ -2121,14 +1968,14 @@ void UserManager::HandleRotate(psUserCmdMessage& msg, Client *client)
         csArray<csString>::Iterator it(filters.GetIterator());
         while (it.HasNext())
         {
-            rotationTarget = psserver->GetAdminManager()->FindObjectByString(msg.target, client->GetActor());
+            rotationTarget = FindObjectByString(msg.target, client->GetActor());
             Rotate(client, rotationTarget, msg.action);
         }
         return;
     }
     else if(msg.target.StartsWith("eid:"))
     {
-        rotationTarget = psserver->GetAdminManager()->FindObjectByString(msg.target, client->GetActor());
+        rotationTarget = FindObjectByString(msg.target, client->GetActor());
         Rotate(client, rotationTarget, msg.action);
     }
     else

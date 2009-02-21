@@ -44,6 +44,8 @@
 #define REQUIRE_TARGETNPC    0x20
 
 class Client;
+class gemObject;
+class gemActor;
 class MsgEntry;
 
 class MessageManager : public iNetSubscriber
@@ -55,6 +57,23 @@ public:
 
     /** Finds Client* of character with given name. */
     Client * FindPlayerClient(const char *name);
+    
+    /** @brief Decodes an area: expression
+     *
+     *  @param client The client of the caller
+     *  @param target The area: expression
+     */
+    static csArray<csString> DecodeCommandArea(Client *client, csString target);
+    
+    /** @brief Find the object we are referring to in str
+     * 
+     * This str can have different formats, depending on the object
+     * we are trying to get.
+     * 
+     * @param str the field containing the reference to the object
+     * @param me the client's actor who is sending the command
+     */
+    gemObject* FindObjectByString(const csString& str, gemActor * me) const;
 };
 
 #endif

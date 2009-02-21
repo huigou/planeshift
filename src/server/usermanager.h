@@ -144,13 +144,6 @@ public:
     /// Load emotes from xml.
     bool LoadEmotes(const char *xmlfile, iVFS *vfs);
 
-    /** @brief Decodes an area: expression
-     *
-     *  @param client The client of the caller
-     *  @param target The area: expression
-     * */
-    static csArray<csString> DecodeCommandArea(Client *client, csString target);
-
 protected:
     /** @brief Send a list of the players that are online to a client.
       *
