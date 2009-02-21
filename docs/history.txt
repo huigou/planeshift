@@ -4,12 +4,13 @@
 - Added a gm column in the gm petition window showing the gm who has claimed
   currently a petition
 - Fix for PS#1714 - ability for gms to view all petitions even if claimed.
-  By allowing all to see always all petitions, even claimed ones and
-  gm5+/devs to unclaim them, removed also some redundant code and variables
+  By allowing all to see always all petitions, even claimed ones and only
+  gm5+/devs can unclaim them, removed also some redundant code and variables
 - Fix for PS#2775 - Petition notification - By requesting immediately the
   petitions and setting haspetinterest true, additionally changed the
   Petitions are waiting message to New petition from (name from the last
-  petition submitted)
+  petition submitted
+- Change the OnButtonPressed to OnButtonReleased in the gm petition window
 
 *** 2009-02-21 by Tristan Cragnolini
 - Changed the array of emote in UserManager to be a hashmap
