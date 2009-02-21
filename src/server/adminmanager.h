@@ -439,10 +439,9 @@ protected:
      *  @param playerID: Is the ID of the player who is requesting the list.
      *                   if the ID is -1, that means a GM is requesting a complete listing
      *  @param gmID: Is the id of the GM who is requesting petitions, ignored if playerID != -1
-     *  @param gmLevel: Is the security level of the GM who is requesting petitions, ignored if playerID != -1
      *  @return Returns a iResultSet which contains the set of all matching petitions for the user
      */
-    iResultSet *GetPetitions(PID playerID, PID gmID = PETITION_GM, int gmLevel = -1);
+    iResultSet *GetPetitions(PID playerID, PID gmID = PETITION_GM);
 
     /** @brief Cancels the specified petition if the player was its creator
      *  @param playerID: Is the ID of the player who is requesting the change.
@@ -477,10 +476,11 @@ protected:
 
     /** @brief Deassignes the specified GM to the specified petition
      *  @param gmID: Is the ID of the GM who is requesting the deassignment.
+     *  @param gmLevel: The security level of the gm
      *  @param petitionID: The petition id
      *  @return Returns either success or failure.
      */
-    bool DeassignPetition(PID gmID, int petitionID);
+    bool DeassignPetition(PID gmID, int gmLevel, int petitionID);
 
     /** @brief Escalates the level of the specified petition.
      *

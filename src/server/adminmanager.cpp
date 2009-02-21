@@ -4805,7 +4805,7 @@ void AdminManager::GMListPetitions(MsgEntry *me, psPetitionRequestMessage& msg,C
     // Try and grab the result set from the database:
 
     // Show the player all petitions.
-    iResultSet *rs = GetPetitions(PETITION_GM, client->GetPID(), GM_DEVELOPER );
+    iResultSet *rs = GetPetitions(PETITION_GM, client->GetPID());
     if (rs)
     {
         // Send list to GM:
@@ -4820,6 +4820,7 @@ void AdminManager::GMListPetitions(MsgEntry *me, psPetitionRequestMessage& msg,C
             info.escalation = atoi((*rs)[i][3]);
             info.created = csString((*rs)[i][4]).Slice(0, 16);
             info.player = (*rs)[i][5];
+            info.assignedgm = (*rs)[i][6];
             info.online = (clients->Find(info.player) ? true : false);
 
             // Append to the message:
@@ -4874,7 +4875,7 @@ void AdminManager::GMHandlePetition(MsgEntry *me, psPetitionRequestMessage& msg,
     {
         // Deassigning petition:
         type = PETITION_DEASSIGN;
-        result = DeassignPetition(client->GetPID(), msg.id);
+        result = DeassignPetition(client->GetPID(), client->GetSecurityLevel(), msg.id);
     }
     else if (msg.request == "escalate")
     {
@@ -4893,13 +4894,13 @@ void AdminManager::GMHandlePetition(MsgEntry *me, psPetitionRequestMessage& msg,
     // Check result of operation
     if (!result)
     {
-        psPetitionMessage error(me->clientnum, NULL, db->GetLastError(), false, type, true);
+        psPetitionMessage error(me->clientnum, NULL, lasterror, false, type, true);
         error.SendMessage();
         return;
     }
 
     // Try and grab the result set from the database:
-    iResultSet *rs = GetPetitions(PETITION_GM, client->GetPID(), GM_DEVELOPER);
+    iResultSet *rs = GetPetitions(PETITION_GM, client->GetPID());
     if (rs)
     {
         // Send list to GM:
@@ -4914,6 +4915,7 @@ void AdminManager::GMHandlePetition(MsgEntry *me, psPetitionRequestMessage& msg,
             info.escalation = atoi((*rs)[i][3]);
             info.created = csString((*rs)[i][4]).Slice(0, 16);
             info.player = (*rs)[i][5];
+            info.assignedgm = (*rs)[i][6];
             info.online = (clients->Find(info.player) ? true : false);
 
             // Append to the message:
@@ -4988,10 +4990,9 @@ bool AdminManager::EscalatePetition(PID gmID, int gmLevel, int petitionID)
                             "WHERE id=%d AND escalation_level<=%d AND escalation_level<%d "
                             "AND (assigned_gm=%d OR status='Open')", petitionID, gmLevel, GM_DEVELOPER-20, gmID.Unbox());
     // If this failed if means that there is a serious error
-    if (result == -1)
+    if (!result || result <= -1)
     {
-        lasterror.Format("Couldn't escalate petition #%d.",
-            petitionID);
+        lasterror.Format("Couldn't escalate petition #%d.", petitionID);
         return false;
     }
     return (result != -1);
@@ -5004,10 +5005,9 @@ bool AdminManager::DescalatePetition(PID gmID, int gmLevel, int petitionID)
                             "escalation_level=(escalation_level-1)"
                             "WHERE id=%d AND escalation_level<=%d AND (assigned_gm=%u OR status='Open' AND escalation_level != 0)", petitionID, gmLevel, gmID.Unbox());
     // If this failed if means that there is a serious error
-    if (result == -1)
+    if (!result || result <= -1)
     {
-        lasterror.Format("Couldn't descalate petition #%d.",
-            petitionID);
+        lasterror.Format("Couldn't descalate petition #%d.", petitionID);
         return false;
     }
     return (result != -1);
@@ -5028,18 +5028,17 @@ bool AdminManager::AddPetition(PID playerID, const char* petition)
     return (result != -1);
 }
 
-iResultSet *AdminManager::GetPetitions(PID playerID, PID gmID, int gmLevel)
+iResultSet *AdminManager::GetPetitions(PID playerID, PID gmID)
 {
     iResultSet *rs;
 
     // Check player ID, if ID is PETITION_GM (0xFFFFFFFF), get a complete list for the GM:
     if (playerID == PETITION_GM)
     {
-        rs = db->Select("SELECT pet.id,pet.petition,pet.status,pet.escalation_level,pet.created_date,pl.name FROM petitions pet, "
-                    "characters pl WHERE (pet.player!=%d AND ((pet.status=\"Open\" AND pet.escalation_level<=%d) "
-                    "OR (pet.assigned_gm=%d AND pet.status=\"In Progress\"))) "
+            rs = db->Select("SELECT pet.id,pet.petition,pet.status,pet.escalation_level,pet.created_date,pl.name, gm.name as gmname FROM petitions pet "
+                    "LEFT JOIN characters gm ON pet.assigned_gm=gm.id, characters pl WHERE pet.player!=%d AND (pet.status=\"Open\" OR pet.status=\"In Progress\") "
                     "AND pet.player=pl.id "
-                    "ORDER BY pet.status ASC,pet.escalation_level DESC,pet.created_date ASC", gmID.Unbox(), gmLevel, gmID.Unbox());
+                    "ORDER BY pet.status ASC,pet.escalation_level DESC,pet.created_date ASC", gmID.Unbox());
     }
     else
     {
@@ -5064,7 +5063,7 @@ bool AdminManager::CancelPetition(PID playerID, int petitionID)
     // If player ID is PETITION_GM, just cancel the petition (a GM is requesting the change)
     if (playerID == PETITION_GM)
     {
-        int result = db->CommandPump("UPDATE petitions SET status='Cancelled' WHERE id=%d", petitionID);
+        int result = db->CommandPump("UPDATE petitions SET status='Cancelled' WHERE id=%d AND (assigned_gm=-1 OR assigned_gm=%u)", petitionID,playerID.Unbox());
         return (result != -1);
     }
 
@@ -5123,22 +5122,30 @@ bool AdminManager::ClosePetition(PID gmID, int petitionID, const char* desc)
                              "WHERE id=%d AND assigned_gm=%u", escape.GetData(), petitionID, gmID.Unbox());
 
     // If this failed if means that there is a serious error, or the GM was not assigned
-    if (result == -1)
+    if (!result || result <= -1)
     {
         lasterror.Format("Couldn't close petition #%d.  You must be assigned to the petition before you close it.",
             petitionID);
         return false;
     }
 
-    return (result != -1);
+    return true;
 }
 
-bool AdminManager::DeassignPetition(PID gmID, int petitionID)
+bool AdminManager::DeassignPetition(PID gmID, int gmLevel, int petitionID)
 {
-    int result = db->CommandPump("UPDATE petitions SET assigned_gm=-1,status=\"Open\" WHERE id=%d AND assigned_gm=%u", petitionID, gmID.Unbox());
+    int result;
+    if(gmLevel > GM_LEVEL_5) //allows to deassing without checks only to a gm lead or a developer
+    {
+        result = db->CommandPump("UPDATE petitions SET assigned_gm=-1,status=\"Open\" WHERE id=%d", petitionID);
+    }
+    else
+    {
+        result = db->CommandPump("UPDATE petitions SET assigned_gm=-1,status=\"Open\" WHERE id=%d AND assigned_gm=%u", petitionID, gmID.Unbox());
+    }
 
     // If this failed if means that there is a serious error, or another GM was already assigned
-    if (result == -1)
+    if (!result || result <= -1)
     {
         lasterror.Format("Couldn't deassign you to petition #%d.  Another GM is assigned to that petition.",
             petitionID);
@@ -5153,7 +5160,7 @@ bool AdminManager::AssignPetition(PID gmID, int petitionID)
     int result = db->CommandPump("UPDATE petitions SET assigned_gm=%d,status=\"In Progress\" WHERE id=%d AND assigned_gm=-1", gmID.Unbox(), petitionID);
 
     // If this failed if means that there is a serious error, or another GM was already assigned
-    if (result == -1)
+    if (!result || result <= -1)
     {
         lasterror.Format("Couldn't assign you to petition #%d.  Another GM is already assigned to that petition.",
             petitionID);
