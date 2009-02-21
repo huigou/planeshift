@@ -28,11 +28,12 @@
 /// Enum of the columns for the listbox:
 enum {
     PGMCOL_LVL = 0,
-    PGMCOL_PLAYER = 1,
-    PGMCOL_ONLINE = 2,
-    PGMCOL_STATUS = 3,
-    PGMCOL_CREATED = 4,
-    PGMCOL_PETITION = 5
+    PGMCOL_GM= 1,
+    PGMCOL_PLAYER = 2,
+    PGMCOL_ONLINE = 3,
+    PGMCOL_STATUS = 4,
+    PGMCOL_CREATED = 5,
+    PGMCOL_PETITION = 6
 };
 
 /** Defines the length a petition can be before it is
@@ -73,7 +74,7 @@ public:
     bool PostSetup();
 
     /// Handle button clicks
-    bool OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* reporter);
+    bool OnButtonReleased(int mouseButton, int keyModifier, pawsWidget* reporter);
 
     void OnListAction( pawsListBox* selected, int status );
 

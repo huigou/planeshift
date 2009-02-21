@@ -11,8 +11,11 @@
             <frame x="25" y="12" width="545" height="160" border="no"/>
             <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="12" />
             <columns height="20" headings="yes">
-                <column width="30" >
+                <column width="25" >
                     <pawsTextBox name="Lvl" />
+                </column>
+                <column width="80" >
+                    <pawsTextBox name="GM" />
                 </column>
                 <column width="80" >
                     <pawsTextBox name="Player" />
@@ -20,10 +23,10 @@
                 <column width="40" >
                     <pawsTextBox name="Online" />
                 </column>
-                <column width="80" >
+                <column width="75" >
                     <pawsTextBox name="Status" />
                 </column>
-                <column width="115" >
+                <column width="105" >
                     <pawsTextBox name="Created Date" />
                 </column>
                 <column width="200">
@@ -48,7 +51,6 @@
 
         <widget name="PetitionText" factory="pawsMessageTextBox" style="Fancy Standard MsgText">
             <frame x="25" y="200" width="545" height="105" />
-            <font name="/planeshift/data/ttf/LiberationMono-Regular.ttf" r="255" g="255" b="255" size="10" />
         </widget>
 
         <widget name="Admin Petition" factory="pawsButton" id="8" >

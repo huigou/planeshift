@@ -144,10 +144,7 @@ void pawsPetitionGMWindow::HandleMessage ( MsgEntry* me )
         psSystemMessage error(0,MSG_INFO,message.error);
         msgqueue->Publish(error.msg);
 
-        petCount = 0;
-        petitionList->Clear();
-        petitionList->NewRow(0);
-        SetText(0, 1, PawsManager::GetSingleton().Translate("No Petitions"));
+        QueryServer(); //request the server a new petition list
         return;
     }
 
@@ -329,7 +326,7 @@ void pawsPetitionGMWindow::HandleMessage ( MsgEntry* me )
     }
 }
 
-bool pawsPetitionGMWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsPetitionGMWindow::OnButtonReleased( int mouseButton, int keyModifier, pawsWidget* widget )
 {
     // We know that the calling widget is a button.
     int button = widget->GetID();
@@ -357,7 +354,8 @@ bool pawsPetitionGMWindow::OnButtonPressed( int mouseButton, int keyModifier, pa
                     return true;
                 }
 
-                if (csString("In Progress") == ((pawsTextBox*)(petitionList->GetSelected()->GetColumn(PGMCOL_STATUS)))->GetText())
+                if (csString("In Progress") == ((pawsTextBox*)(petitionList->GetSelected()->GetColumn(PGMCOL_STATUS)))->GetText()
+                    && (csString)psengine->GetCelClient()->GetMainPlayer()->GetName() == ((pawsTextBox*)(petitionList->GetSelected()->GetColumn(PGMCOL_GM)))->GetText())
                 {
 
                     currentRow = sel;
@@ -418,7 +416,9 @@ bool pawsPetitionGMWindow::OnButtonPressed( int mouseButton, int keyModifier, pa
                     return true;
                 }
 
-                if (csString("In Progress") == ((pawsTextBox*)(petitionList->GetSelected()->GetColumn(PGMCOL_STATUS)))->GetText())
+                if (csString("In Progress") == ((pawsTextBox*)(petitionList->GetSelected()->GetColumn(PGMCOL_STATUS)))->GetText()
+                    && ((csString)psengine->GetCelClient()->GetMainPlayer()->GetName() == ((pawsTextBox*)(petitionList->GetSelected()->GetColumn(PGMCOL_GM)))->GetText()
+                    || psengine->GetCelClient()->GetMainPlayer()->GetType() >= 25))
                 {
                     currentRow = sel;
 
@@ -448,7 +448,8 @@ bool pawsPetitionGMWindow::OnButtonPressed( int mouseButton, int keyModifier, pa
                     return true;
                 }
 
-                if (csString("In Progress") == ((pawsTextBox*)(petitionList->GetSelected()->GetColumn(PGMCOL_STATUS)))->GetText())
+                if (csString("In Progress") == ((pawsTextBox*)(petitionList->GetSelected()->GetColumn(PGMCOL_STATUS)))->GetText()
+                    && (csString)psengine->GetCelClient()->GetMainPlayer()->GetName() == ((pawsTextBox*)(petitionList->GetSelected()->GetColumn(PGMCOL_GM)))->GetText())
                 {
                     currentRow = sel;
 
@@ -632,6 +633,7 @@ void pawsPetitionGMWindow::AddPetitions(csArray<psPetitionInfo> &petitions)
             selectedPet.escalation = atoi(escalation.GetData());
         else
             selectedPet.escalation = -1;
+        selectedPet.assignedgm =      petitionList->GetTextCellValue(selRow, PGMCOL_GM);
         selectedPet.player =          petitionList->GetTextCellValue(selRow, PGMCOL_PLAYER);
         selectedPet.status =          petitionList->GetTextCellValue(selRow, PGMCOL_STATUS);
         selectedPet.created =         petitionList->GetTextCellValue(selRow, PGMCOL_CREATED);
@@ -656,6 +658,7 @@ void pawsPetitionGMWindow::AddPetitions(csArray<psPetitionInfo> &petitions)
         // Set the data for this row:
         petitionList->NewRow(i);
         SetText(i, PGMCOL_LVL, "%d", info.escalation);
+        SetText(i, PGMCOL_GM, "%s", info.assignedgm.GetData());
         SetText(i, PGMCOL_PLAYER, "%s", info.player.GetData());
         SetText(i, PGMCOL_ONLINE, "%s", (info.online ? "yes" : "no"));
         SetText(i, PGMCOL_STATUS, "%s", info.status.GetData());
