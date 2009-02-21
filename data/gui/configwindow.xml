@@ -1,21 +1,18 @@
 <?xml version="1.0"?>
 <widget_description>
 
-<widget name="ConfigWindow" factory="pawsConfigWindow"
+<pawsConfigWindow name="ConfigWindow"
         visible="no" savepositions="yes" movable="yes" 
         resizable="no"
-        configurable="yes" >
+        configurable="yes" style="New Standard GUI">
         
     <frame x="10" y="100" width="680" height="346" border="yes" />
-    <title resource="Blue Title" text="Options" align="left" close_button="yes"/>    
-    <bgimage resource="Config Background" alpha="128"/>
+    <title resource="Scaling Title Bar" text="Options" align="left" close_button="yes"/>    
+    
+    <pawsSimpleTree name="ConfigTree" >
 
-    <widget name="ConfigTree" factory="pawsSimpleTree" >
-    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="10" scalefont="no" />
-        
         <frame x="10" y="10" width="200" height="300" border="no" />
-        <bgimage resource="Options Background"  />
-
+        
         <widget factory="pawsSimpleTreeNode">
 	    <frame x="225" y="10" width="400" height="300" border="yes" />
 
@@ -32,10 +29,10 @@
                     <attr name="SectionName" value="entityinteract"/>
                     <attr name="factory" value="pawsConfigEntityInteraction"/>
                 </widget>
-        </widget>
+            </widget>
 
             <widget factory="pawsSimpleTreeNode" label="Graphics">
-              <widget factory="pawsSimpleTreeNode" label="Camera">
+                <widget factory="pawsSimpleTreeNode" label="Camera">
                     <attr name="SectionName" value="camera"/>
                     <attr name="factory" value="pawsConfigCamera"/>        
                 </widget>
@@ -53,12 +50,12 @@
                 </widget>
             </widget>
     
-        <widget factory="pawsSimpleTreeNode" label="Sound">
+            <widget factory="pawsSimpleTreeNode" label="Sound">
                 <widget factory="pawsSimpleTreeNode" label="General">
                     <attr name="SectionName" value="configsound"/>
                     <attr name="factory" value="pawsConfigSound"/>
                 </widget>
-        </widget>
+            </widget>
 
             <widget factory="pawsSimpleTreeNode" label="PvP">
                 <widget factory="pawsSimpleTreeNode" label="Confirmation">
@@ -83,27 +80,23 @@
                 <widget factory="pawsSimpleTreeNode" label="Chat - Bubbles">
                     <attr name="SectionName" value="chatbubbles"/>
                     <attr name="factory" value="pawsConfigChatBubbles"/>
-                </widget>       
+                </widget> 
             </widget>
             
         </widget>
 
-    </widget>
+    </pawsSimpleTree>
 
-    <widget name="OKButton" factory="pawsButton" id="-10" toggle="no">
+    <pawsButton name="OKButton" id="-10" toggle="no">
         <frame x="10" y="320" width="80" height="20" border="no"/>
-        <buttonup resource="Blue Title"/>
-	<buttondown resource="Blue Title"/>
         <label text="Save"/>
-    </widget>
+    </pawsButton>
     
-    <widget name="ResetButton" factory="pawsButton" id="-20" toggle="no">
+    <pawsButton name="ResetButton" id="-20" toggle="no">
         <frame x="100" y="320" width="80" height="20" border="no"/>
-        <buttonup resource="Blue Title"/>
-	<buttondown resource="Blue Title"/>
         <label text="Reset"/>
-    </widget>
+    </pawsButton>
 
-</widget>
+</pawsConfigWindow>
 
 </widget_description>

@@ -1,7 +1,10 @@
 <widget_description>
 <widget name="ConfigKeysTree" factory="pawsTreeNode"
-    visible="yes" savepositions="no" movable="no" resizable="no" >
-	<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="10" scalefont="no" />
+        visible="yes" savepositions="no" movable="no" resizable="no" >
+    
+    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="10" scalefont="no" />
+    <bgimage resource="Scaling Widget Background" />
+
     <widget factory="pawsSeqTreeNode">
         <widget factory="pawsWidgetTreeNode" name="Movement">
             <nodewidget>
