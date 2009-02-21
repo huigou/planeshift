@@ -174,6 +174,7 @@ UserManager::~UserManager()
         psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_TARGET_EVENT);
         psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_ENTRANCE);
     }
+    emoteHash.DeleteAll();
 }
 
 void UserManager::HandleMOTDRequest(MsgEntry *me,Client *client)
@@ -230,7 +231,7 @@ void UserManager::HandleUserCommand(MsgEntry *me,Client *client)
     Debug3(LOG_USER, client->GetClientNum(),"Received user command: %s from %s\n",
         me->bytes->payload, (const char *)client->GetName());
 
-    cmdPointer cmdPt = userCommandHash.Get(msg.command, NULL);
+    userCmdPointer cmdPt = userCommandHash.Get(msg.command, NULL);
     if(cmdPt != NULL)
     {
         (this->*cmdPt)(msg,client);
@@ -400,18 +401,12 @@ csArray<csString> UserManager::DecodeCommandArea(Client *client, csString target
 
 bool UserManager::CheckForEmote(csString command, bool execute, Client *client)
 {
-    for(unsigned int i=0;  i < emoteList.GetSize(); i++)
-    {
-        if( command == emoteList[i].command )
-        {
-            if(execute)
-            {
-                Emote(emoteList[i].general, emoteList[i].specific, emoteList[i].anim, client);
-            }
-            return true;
-        }
-    }
-    return false;
+    EMOTE *emotePtr = emoteHash.Get(command, NULL);
+    if(emotePtr == NULL)
+        return false;
+    
+    Emote(emotePtr->general, emotePtr->specific, emotePtr->anim, client);
+    return true;
 }
 
 void UserManager::Emote(csString general, csString specific, csString animation, Client *client)
@@ -468,17 +463,19 @@ bool UserManager::LoadEmotes(const char *xmlfile, iVFS *vfs)
     }
     csRef<iDocumentNodeIterator> emoteIter = topNode->GetNodes("emote");
 
+    EMOTE *emote;
+
     while(emoteIter->HasNext())
     {
         csRef<iDocumentNode> emoteNode = emoteIter->Next();
 
-        EMOTE emote;
-        emote.command = emoteNode->GetAttributeValue("command");
-        emote.general = emoteNode->GetAttributeValue("general");
-        emote.specific = emoteNode->GetAttributeValue("specific");
-        emote.anim = emoteNode->GetAttributeValue("anim");
-
-        emoteList.Push(emote);
+        emote = new EMOTE;
+        emote->command = emoteNode->GetAttributeValue("command");
+        emote->general = emoteNode->GetAttributeValue("general");
+        emote->specific = emoteNode->GetAttributeValue("specific");
+        emote->anim = emoteNode->GetAttributeValue("anim");
+                
+        emoteHash.Put(emote->command, emote);
     }
 
     return true;

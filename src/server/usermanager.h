@@ -466,7 +466,7 @@ protected:
     csString anim;
     };
 
-    csArray<EMOTE> emoteList;
+    csHash<EMOTE *, csString> emoteHash;
 
     ClientConnectionSet     *clients;
 //    psDatabase              *database;
@@ -476,10 +476,11 @@ protected:
 //    psServer                *server;
 //    AdminManager            *adminmanager;
     csTicks                  nextUserStatRegeneration;
+
     /// pointer to member function typedef, improves readability
-    typedef void (UserManager::*cmdPointer)(psUserCmdMessage& msg, Client *client);
+    typedef void (UserManager::*userCmdPointer)(psUserCmdMessage& msg, Client *client);
     /// Hash of the user commands, the key is the command name
-    csHash<cmdPointer, csString> userCommandHash;
+    csHash<userCmdPointer, csString> userCommandHash;
 };
 
 #endif
