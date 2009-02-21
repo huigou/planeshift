@@ -635,6 +635,7 @@ psPetitionMessage::psPetitionMessage(uint32_t clientnum, csArray<psPetitionInfo>
         else
         {
             messageSize+=sizeof(int32_t);
+            messageSize+=curr->assignedgm.Length()+1;
             messageSize+=curr->created.Length()+1;
             messageSize+=curr->player.Length()+1;
             messageSize+=sizeof(bool);                  // online flag for players
@@ -665,18 +666,16 @@ psPetitionMessage::psPetitionMessage(uint32_t clientnum, csArray<psPetitionInfo>
         msg->Add((int32_t)current->id);
         msg->Add(current->petition.GetData());
         msg->Add(current->status.GetData());
-
+        msg->Add(current->created.GetData());
+        msg->Add(current->assignedgm.GetData());
         // Add specified fields based upon GM status or not
         if (!gm)
         {
-            msg->Add(current->created.GetData());
-            msg->Add(current->assignedgm.GetData());
             msg->Add(current->resolution.GetData());
         }
         else
         {
             msg->Add((int32_t)current->escalation);
-            msg->Add(current->created.GetData());
             msg->Add(current->player.GetData());
             msg->Add(current->online);
         }
@@ -705,18 +704,17 @@ psPetitionMessage::psPetitionMessage(MsgEntry *message)
         current.id = message->GetInt32();
         current.petition = message->GetStr();
         current.status = message->GetStr();
+        current.created = message->GetStr();
+        current.assignedgm = message->GetStr();
 
         // Check GM fields or user fields:
         if (!isGM)
         {
-            current.created = message->GetStr();
-            current.assignedgm = message->GetStr();
             current.resolution = message->GetStr();
         }
         else
         {
             current.escalation = message->GetInt32();
-            current.created = message->GetStr();
             current.player = message->GetStr();
             current.online = message->GetBool();
         }
@@ -756,10 +754,11 @@ csString psPetitionMessage::ToString(AccessPointers * /*access_ptrs*/)
         }
         else
         {
-            msgtext.AppendFmt(" Escalation: %d Created: '%s' Player: '%s'",
+            msgtext.AppendFmt(" Escalation: %d Created: '%s' Player: '%s' AssignedGM: '%s'",
                               current.escalation,
                               current.created.GetDataSafe(),
-                              current.player.GetDataSafe());
+                              current.player.GetDataSafe(),
+                              current.assignedgm.GetDataSafe());
         }
     }
     msgtext.AppendFmt(" Error: '%s' Success: %s MsgType: %d",
