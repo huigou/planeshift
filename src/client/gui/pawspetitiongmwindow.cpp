@@ -77,7 +77,11 @@ bool pawsPetitionGMWindow::PostSetup()
     //TODO: this should be removed when autocompletion autocompletes /show
     // If player is GM, give him the /petition_manage command
     if ( psengine->GetCelClient()->GetMainPlayer()->GetType() > 20 )
+    {
         cmdsource->Subscribe("/managepetitions", this);
+        hasPetInterest = true;   //gm are going to want to get informations about the petitions
+        QueryServer();           //Query the server for messages
+    }
 
     return true;
 }
