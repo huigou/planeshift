@@ -1,4 +1,13 @@
-﻿*** 2009-02-20 by Stefano Angeleri
+﻿*** 2009-02-21 by Tristan Cragnolini
+- Changed the array of emote in UserManager to be a hashmap
+- merged the Validate() security level checking wrapper from adminmanager
+  into HasAccess() from psserver, renamed HasAccess() to CheckAccess(),
+  changed various commands in usermanager and adminmanager to use the new wrapper
+- moved DecodeCommandArea() from UserManager and FindObjectByString()
+  from AdminManager to msgmanager, where they will be easily reusable
+  by both classes
+
+*** 2009-02-20 by Stefano Angeleri
 - Added instance sliding with /slide.
   The command is /slide (target) I slideamount, slide amount is relative
   the the current instance of the target
