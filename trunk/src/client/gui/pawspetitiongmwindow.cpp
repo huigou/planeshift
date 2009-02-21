@@ -321,7 +321,10 @@ void pawsPetitionGMWindow::HandleMessage ( MsgEntry* me )
     //alert GM that there are petitions waiting
     if (petCount > tempCount)
     {
-        psSystemMessage alert(0,MSG_INFO,PawsManager::GetSingleton().Translate("Petitions are waiting."));
+        psPetitionInfo info = message.petitions.Get(petCount-1); //get the last petition (supposed to be the new one)
+        csString message = PawsManager::GetSingleton().Translate("New petition from ") + info.player.GetDataSafe(); //make a nice message
+
+        psSystemMessage alert(0,MSG_INFO,message); //and send it
         msgqueue->Publish(alert.msg);
     }
 }
