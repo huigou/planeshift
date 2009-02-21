@@ -62,30 +62,30 @@
 //=============================================================================
 // Application Includes
 //=============================================================================
-#include "globals.h"
+#include "actionmanager.h"
 #include "adminmanager.h"
-#include "spawnmanager.h"
-#include "chatmanager.h"
-#include "marriagemanager.h"
-#include "gem.h"
-#include "clients.h"
-#include "playergroup.h"
-#include "entitymanager.h"
-#include "psserver.h"
-#include "usermanager.h"
+#include "authentserver.h"
 #include "cachemanager.h"
+#include "chatmanager.h"
+#include "clients.h"
+#include "creationmanager.h"
+#include "entitymanager.h"
+#include "gem.h"
+#include "globals.h"
+#include "gmeventmanager.h"
+#include "guildmanager.h"
+#include "marriagemanager.h"
 #include "netmanager.h"
 #include "npcmanager.h"
-#include "psserverchar.h"
-#include "questmanager.h"
-#include "creationmanager.h"
-#include "guildmanager.h"
-#include "weathermanager.h"
-#include "authentserver.h"
-#include "gmeventmanager.h"
-#include "actionmanager.h"
+#include "playergroup.h"
 #include "progressionmanager.h"
+#include "psserver.h"
+#include "psserverchar.h"
 #include "questionmanager.h"
+#include "questmanager.h"
+#include "spawnmanager.h"
+#include "usermanager.h"
+#include "weathermanager.h"
 
 //-----------------------------------------------------------------------------
 
@@ -108,13 +108,13 @@ class AreaTargetConfirm : public PendingQuestion
                 return;
 
             //decode the area command and get the list of objects to work on
-            csArray<csString> filters = UserManager::DecodeCommandArea(client, player);
+            csArray<csString> filters = MessageManager::DecodeCommandArea(client, player);
             csArray<csString>::Iterator it(filters.GetIterator());
             while (it.HasNext())
             {
                 csString cur_player = it.Next(); //get the data about the specific entity on this iteration
 
-                gemObject * targetobject = psserver->GetAdminManager()->FindObjectByString(cur_player,client->GetActor());
+                gemObject * targetobject = psserver->GetAdminManager()->FindObjectByString(cur_player, client->GetActor());
                 if(targetobject == client->GetActor())
                 {
                     continue;
@@ -132,6 +132,7 @@ class AreaTargetConfirm : public PendingQuestion
         Client *client;     ///< Originating client of the command
         csString player;    ///< Normally this should be the area:x:x command extrapolated from the original command
 };
+
 
 AdminManager::AdminManager()
 {
@@ -1096,7 +1097,7 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, Client *client)
             csString question; //used to hold the generated question for the client
             //first part of the question add also the command which will be used on the are if confirmed (the name not the arguments)
             question.Format("Are you sure you want to execute %s on:\n", data.command.GetDataSafe());
-            csArray<csString> filters = UserManager::DecodeCommandArea(client, data.player); //decode the area command
+            csArray<csString> filters = DecodeCommandArea(client, data.player); //decode the area command
             csArray<csString>::Iterator it(filters.GetIterator());
             if(filters.GetSize())
             {
@@ -1479,49 +1480,6 @@ void AdminManager::HandleLoadQuest(psAdminCmdMessage& msg, AdminCmdData& data, C
     {
         psserver->SendSystemError(client->GetClientNum(), "Quest <%s> loaded", data.text.GetData());
     }
-}
-
-
-gemObject* AdminManager::FindObjectByString(const csString& str, gemActor * me) const
-{
-    gemObject* found = NULL;
-    GEMSupervisor *gem = GEMSupervisor::GetSingletonPtr();
-    if (!gem)
-    {
-        return NULL;
-    }
-
-    if ( str.StartsWith("pid:",true) ) // Find by player ID
-    {
-        csString pid_str = str.Slice(4);
-        PID pid = PID(strtoul(pid_str.GetDataSafe(), NULL, 10));
-        if (pid.IsValid())
-            found = gem->FindPlayerEntity(pid);
-    }
-    else if ( str.StartsWith("eid:",true) ) // Find by entity ID
-    {
-        csString eid_str = str.Slice(4);
-        EID eid = EID(strtoul(eid_str.GetDataSafe(), NULL, 10));
-        if (eid.IsValid())
-            found = gem->FindObject(eid);
-    }
-    else if ( str.StartsWith("itemid:",true) ) // Find by item UID
-    {
-        csString itemid_str = str.Slice(7);
-        uint32 itemID = strtoul(itemid_str.GetDataSafe(), NULL, 10);
-        if (itemID != 0)
-            found = gem->FindItemEntity(itemID);
-    }
-    else if ( me != NULL && str.CompareNoCase("me") ) // Return me
-    {
-        found = me;
-    }
-    else // Try finding an entity by name
-    {
-        found = gem->FindObject(str);
-    }
-
-    return found;
 }
 
 void AdminManager::GetSiblingChars(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& data, gemObject *targetobject, bool duplicateActor, Client *client)

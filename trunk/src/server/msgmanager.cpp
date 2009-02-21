@@ -27,6 +27,7 @@
 //=============================================================================
 #include "net/messages.h"            // Chat Message definitions
 #include "util/psdatabase.h"
+#include "util/strutil.h"
 
 //=============================================================================
 // Local Includes
@@ -115,3 +116,192 @@ Client * MessageManager::FindPlayerClient(const char *name)
     return player;
 }
 
+csArray<csString> MessageManager::DecodeCommandArea(Client *client, csString target)
+{
+    csArray<csString> result;
+
+    if (!psserver->CheckAccess(client, "command area"))
+        return result;
+
+    csArray<csString> splitTarget = psSplit(target, ':');
+    size_t splitSize = splitTarget.GetSize();
+
+    if (splitSize < 3 || splitSize > 4)
+    {
+        psserver->SendSystemError(client->GetClientNum(),
+                "Try /$CMD area:item:range[:name]");
+        return result;
+    }
+
+    csString itemName = splitTarget[1];
+    csString* nameFilter = splitSize > 3 ? &splitTarget[3] : 0;
+
+    const int range = atoi(splitTarget[2].GetData());
+    if (range <= 0)
+    {
+        psserver->SendSystemError(client->GetClientNum(),
+                "You must specify a positive integer for the area: range.");
+        return result;
+    }
+
+    bool allNames = true;
+    if (nameFilter && (*nameFilter!="all"))
+        allNames = false;
+
+    int mode;
+    if (itemName == "players")
+        mode = 0;
+    else if (itemName == "actors")
+        mode = 1;
+    else if (itemName == "items")
+        mode = 2;
+    else if (itemName == "npcs")
+        mode = 3;
+    else if (itemName == "entities")
+        mode = 4;
+    else
+    {
+        psserver->SendSystemError(client->GetClientNum(),
+                "item must be players|actors|items|npcs|entities");
+        return result;
+    }
+
+    gemActor* self = client->GetActor();
+    if (!self)
+    {
+        psserver->SendSystemError(client->GetClientNum(), "You do not exist...");
+        return result;
+    }
+
+    csVector3 pos;
+    iSector* sector;
+    self->GetPosition(pos, sector);
+
+    GEMSupervisor* gem = GEMSupervisor::GetSingletonPtr();
+    if (!gem)
+        return result;
+
+    csArray<gemObject*> nearlist = gem->FindNearbyEntities(sector, pos,
+            range);
+    size_t count = nearlist.GetSize();
+    csArray<csString *> results;
+
+    for (size_t i=0; i<count; i++)
+    {
+        gemObject *nearobj = nearlist[i];
+        if (!nearobj)
+            continue;
+
+        if (nearobj->GetInstance() != self->GetInstance())
+            continue;
+
+        if (!allNames)
+        {
+            csString nearobjName = nearobj->GetName();
+            if (!nearobjName.StartsWith(*nameFilter->GetData(), true))
+                continue;
+        }
+
+        csString newTarget;
+
+        switch (mode)
+        {
+        case 0: // Target players
+        {
+            if (nearobj->GetClientID())
+            {
+                newTarget.Format("pid:%d", nearobj->GetPID().Unbox());
+                break;
+            }
+            else
+                continue;
+        }
+        case 1: // Target actors
+        {
+            if (nearobj->GetPID().IsValid())
+            {
+                newTarget.Format("pid:%d", nearobj->GetPID().Unbox());
+                break;
+            }
+            else
+                continue;
+        }
+        case 2: // Target items
+        {
+            if (nearobj->GetItem())
+            {
+                newTarget.Format("eid:%u", nearobj->GetEID().Unbox());
+                break;
+            }
+            else
+                continue;
+        }
+        case 3: // Target NPCs
+        {
+            if (nearobj->GetNPCPtr())
+            {
+                newTarget.Format("pid:%u", nearobj->GetPID().Unbox());
+                break;
+            }
+            else
+                continue;
+        }
+        case 4: // Target everything
+        {
+            newTarget.Format("eid:%u", nearobj->GetEID().Unbox());
+            break;
+        }
+        }
+
+        // Run this once for every target in range  (each one will be verified and logged seperately)
+        result.Push(newTarget);
+    }
+    if (result.IsEmpty())
+    {
+        psserver->SendSystemError(client->GetClientNum(),
+                "Nothing of specified type in range.");
+    }
+    return result;
+}
+
+gemObject* MessageManager::FindObjectByString(const csString& str, gemActor * me) const
+{
+    gemObject* found = NULL;
+    GEMSupervisor *gem = GEMSupervisor::GetSingletonPtr();
+    if (!gem)
+    {
+        return NULL;
+    }
+
+    if ( str.StartsWith("pid:",true) ) // Find by player ID
+    {
+        csString pid_str = str.Slice(4);
+        PID pid = PID(strtoul(pid_str.GetDataSafe(), NULL, 10));
+        if (pid.IsValid())
+            found = gem->FindPlayerEntity(pid);
+    }
+    else if ( str.StartsWith("eid:",true) ) // Find by entity ID
+    {
+        csString eid_str = str.Slice(4);
+        EID eid = EID(strtoul(eid_str.GetDataSafe(), NULL, 10));
+        if (eid.IsValid())
+            found = gem->FindObject(eid);
+    }
+    else if ( str.StartsWith("itemid:",true) ) // Find by item UID
+    {
+        csString itemid_str = str.Slice(7);
+        uint32 itemID = strtoul(itemid_str.GetDataSafe(), NULL, 10);
+        if (itemID != 0)
+            found = gem->FindItemEntity(itemID);
+    }
+    else if ( me != NULL && str.CompareNoCase("me") ) // Return me
+    {
+        found = me;
+    }
+    else // Try finding an entity by name
+    {
+        found = gem->FindObject(str);
+    }
+
+    return found;
+}
