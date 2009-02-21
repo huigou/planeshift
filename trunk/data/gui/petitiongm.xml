@@ -1,156 +1,90 @@
 <widget_description>
 
-<widget name="PetitionGMWindow" factory="pawsPetitionGMWindow"
-        visible="no" savepositions="yes" movable="yes"
-        resizable="no" >
+    <widget name="PetitionGMWindow" factory="pawsPetitionGMWindow"
+            visible="no" savepositions="yes" movable="yes"
+            resizable="no" style="New Standard GUI">
 
-    <frame x="0" y="100" width="600" height="350" border="yes" />
-    <title resource="Blue Title" text="Manage Petitions" align="left" close_button="yes" />
-    <bgimage resource="Petitions Background" alpha="128" />
+        <frame x="0" y="100" width="600" height="350" border="yes" />
+        <title resource="Scaling Title Bar" text="Manage Petitions" align="left" close_button="yes" />
 
-    <widget name="PetitionList" factory="pawsListBox">
-        <frame x="25" y="0" width="545" height="176" border="no"/>
-        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="12" />
-        <columns height="20" headings="yes">
-            <column width="30" >
-                <widget name="Lvl" factory="pawsTextBox">
-                    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
-                </widget>
-            </column>
-            <column width="80" >
-                <widget name="Player" factory="pawsTextBox">
-                    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
-                </widget>
-            </column>
-            <column width="40" >
-                <widget name="Online" factory="pawsTextBox">
-                    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
-                </widget>
-            </column>
-            <column width="80" >
-                <widget name="Status" factory="pawsTextBox">
-                    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
-                </widget>
-            </column>
-            <column width="115" >
-                <widget name="Created Date" factory="pawsTextBox">
-                    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
-                </widget>
-            </column>
-            <column width="200">
-                <widget name="Petition" factory="pawsTextBox">
-                    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
-                </widget>
-            </column>
+        <widget name="PetitionList" factory="pawsListBox">
+            <frame x="25" y="12" width="545" height="160" border="no"/>
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="12" />
+            <columns height="20" headings="yes">
+                <column width="30" >
+                    <pawsTextBox name="Lvl" />
+                </column>
+                <column width="80" >
+                    <pawsTextBox name="Player" />
+                </column>
+                <column width="40" >
+                    <pawsTextBox name="Online" />
+                </column>
+                <column width="80" >
+                    <pawsTextBox name="Status" />
+                </column>
+                <column width="115" >
+                    <pawsTextBox name="Created Date" />
+                </column>
+                <column width="200">
+                    <pawsTextBox name="Petition" />
+                </column>
+            </columns>
 
-        </columns>
+             <attachpoints>
+                 <attach point="ATTACH_RIGHT" />
+                 <attach point="ATTACH_TOP" />
+                 <attach point="ATTACH_LEFT" />
+                 <attach point="PROPORTIONAL_BOTTOM" />
+             </attachpoints>
 
-         <attachpoints>
-             <attach point="ATTACH_RIGHT" />
-             <attach point="ATTACH_TOP" />
-             <attach point="ATTACH_LEFT" />
-             <attach point="PROPORTIONAL_BOTTOM" />
-         </attachpoints>
+        </widget>
+
+        <widget name="PetitionTextLabel" factory="pawsTextBox" style="New Standard Prompt">
+            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="12" />
+            <frame x="40" y="180" width="150" height="20" border="no"/>
+            <text string="Petition text:" />
+        </widget>
+
+        <widget name="PetitionText" factory="pawsMessageTextBox" style="Fancy Standard MsgText">
+            <frame x="25" y="200" width="545" height="105" />
+            <font name="/planeshift/data/ttf/LiberationMono-Regular.ttf" r="255" g="255" b="255" size="10" />
+        </widget>
+
+        <widget name="Admin Petition" factory="pawsButton" id="8" >
+            <frame x="20" y="324" width="75" height="22" />
+            <label text="Admin" />
+        </widget>
+
+        <widget name="Assign Button" factory="pawsButton" id="2" >
+            <frame x="100" y="324" width="75" height="22" />
+            <label text="Claim" />
+        </widget>
+
+        <widget name="Unassign Button" factory="pawsButton" id="3" >
+            <frame x="180" y="324" width="75" height="22" />
+            <label text="Unclaim" />
+        </widget>
+
+        <widget name="Escalate Button" factory="pawsButton" id="4" >
+            <frame x="260" y="324" width="75" height="22" />
+            <label text="Escalate" />
+        </widget>
+
+        <widget name="Descalate Button" factory="pawsButton" id="5" >
+            <frame x="340" y="324" width="75" height="22" />
+            <label text="Descalate" />
+        </widget>
+
+        <widget name="Close Button" factory="pawsButton" id="6"  >
+            <frame x="420" y="324" width="75" height="22" />
+            <label text="Close" />
+        </widget>
+
+        <widget name="Cancel Button" factory="pawsButton" id="7" >
+            <frame x="500" y="324" width="75" height="22" />
+            <label text="Delete" />
+        </widget>
 
     </widget>
-
-    <widget name="PetitionTextLabel" factory="pawsTextBox" >
-        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="12" />
-        <frame x="40" y="209" width="150" height="20" border="no"/>
-        <text string="Petition text:" />
-    </widget>
-
-    <widget name="PetitionText" factory="pawsMessageTextBox" >
-        <frame x="32" y="227" width="540" height="94" border="no" />
-        <font name="/planeshift/data/ttf/LiberationMono-Regular.ttf" r="255" g="255" b="255" size="10" />
-    </widget>
-
-    <widget name="Admin Petition" factory="pawsButton" toggle="no" id="8" shadows="yes" >
-        <frame x="20" y="324" width="75" height="22" border="no" />
-        <bgimage resource="Standard Button"/>
-    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
-        <label text="Admin" />
-
-        <attachpoints>
-            <attach point="ATTACH_LEFT" />
-            <attach point="ATTACH_BOTTOM" />
-        </attachpoints>
-    </widget>
-
-    <widget name="Assign Button" factory="pawsButton" toggle="no" id="2" shadows="yes" >
-        <frame x="100" y="324" width="75" height="22" border="no" />
-        <bgimage resource="Standard Button"/>
-    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
-        <label text="Claim" />
-
-        <attachpoints>
-            <attach point="ATTACH_LEFT" />
-            <attach point="ATTACH_BOTTOM" />
-        </attachpoints>
-    </widget>
-
-    <widget name="Unassign Button" factory="pawsButton" toggle="no" id="3" shadows="yes" >
-        <frame x="180" y="324" width="75" height="22" border="no" />
-        <bgimage resource="Standard Button"/>
-    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
-        <label text="Unclaim" />
-
-        <attachpoints>
-            <attach point="ATTACH_LEFT" />
-            <attach point="ATTACH_BOTTOM" />
-        </attachpoints>
-    </widget>
-
-    <widget name="Escalate Button" factory="pawsButton" toggle="no" id="4" shadows="yes" >
-        <frame x="260" y="324" width="75" height="22" border="no" />
-        <bgimage resource="Standard Button"/>
-    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
-        <label text="Escalate" />
-
-        <attachpoints>
-            <attach point="ATTACH_LEFT" />
-            <attach point="ATTACH_BOTTOM" />
-        </attachpoints>
-    </widget>
-
-    <widget name="Descalate Button" factory="pawsButton" toggle="no" id="5" shadows="yes" >
-        <frame x="340" y="324" width="75" height="22" border="no" />
-        <bgimage resource="Standard Button"/>
-    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
-        <label text="Descalate" />
-
-        <attachpoints>
-            <attach point="ATTACH_LEFT" />
-            <attach point="ATTACH_BOTTOM" />
-        </attachpoints>
-    </widget>
-
-    <widget name="Close Button" factory="pawsButton" toggle="no" id="6" shadows="yes" >
-        <frame x="420" y="324" width="75" height="22" border="no" />
-        <bgimage resource="Standard Button"/>
-    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
-        <label text="Close" />
-
-        <attachpoints>
-            <attach point="ATTACH_LEFT" />
-            <attach point="ATTACH_BOTTOM" />
-        </attachpoints>
-    </widget>
-
-    <widget name="Cancel Button" factory="pawsButton" toggle="no" id="7" shadows="yes" >
-        <frame x="500" y="324" width="75" height="22" border="no" />
-        <bgimage resource="Standard Button"/>
-    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
-        <label text="Delete" />
-
-        <attachpoints>
-            <attach point="ATTACH_LEFT" />
-            <attach point="ATTACH_BOTTOM" />
-        </attachpoints>
-    </widget>
-
-</widget>
-
-
-
 </widget_description>
