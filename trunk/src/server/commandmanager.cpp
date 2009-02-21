@@ -111,6 +111,14 @@ bool psCommandManager::LoadFromDatabase()
     return true;
 }
 
+bool psCommandManager::GroupExists( int securityLevel )
+{
+    // Force every security level to legal range
+    if (securityLevel > 30) securityLevel = 30;
+
+    return commandGroups.Contains( securityLevel );
+}
+
 bool psCommandManager::Validate( int securityLevel, const char* command )
 {
     if ( !command )
@@ -124,14 +132,6 @@ bool psCommandManager::Validate( int securityLevel, const char* command )
         return list->groupMembers.Find(securityLevel) != csArrayItemNotFound;
     else
         return false;
-}
-
-bool psCommandManager::GroupExists( int securityLevel )
-{
-    // Force every security level to legal range
-    if (securityLevel > 30) securityLevel = 30;
-
-    return commandGroups.Contains( securityLevel );
 }
 
 bool psCommandManager::Validate( int securityLevel, const char* command, csString& error )
@@ -156,7 +156,7 @@ bool psCommandManager::Validate( int securityLevel, const char* command, csStrin
             if ( grp )
                 groupName = grp->name;
 
-            error.Format("You cannot '%s' in your group '%s'", command, groupName.GetData() );
+            error.Format("You do not have access to '%s' in your group '%s'", command, groupName.GetData() );
             return false;
         }
         else

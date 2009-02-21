@@ -109,7 +109,6 @@ public:
 
 protected:
 
-    bool Valid( int level, const char* command, int clientnum );
     bool IsReseting(const csString& command);
 
     struct AdminCmdData

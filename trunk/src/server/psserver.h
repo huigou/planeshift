@@ -495,14 +495,16 @@ public:
      */
     bool SetServerOption(const char *option_name,const csString& value);
 
-    iResultSet* GetAllResponses( csString& trigger );
+    iResultSet* GetAllResponses(csString& trigger);
 
     /** Check if a client is authorized to execute a command
      * @param client: the client we are checking
      * @param command: the command we are checking for
+     * @param returnError: tells whether the command outputs an error
+     * 
      * @return return true if the client is authorized to execute the command
      */
-    bool HasAccess( Client* client, const char* command);
+    bool CheckAccess(Client* client, const char* command, bool returnError=true);
 
 
     static psCharacterLoader        CharacterLoader;
