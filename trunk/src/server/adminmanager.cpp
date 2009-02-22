@@ -1051,11 +1051,6 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         value = words.GetInt(3);
         return true;
     }
-    else if (command == "/forcepickup") //will pickup also no pickup items - be careful with this -
-    {
-        player = words[1];
-        return true;
-    }
     return false;
 }
 
@@ -1453,10 +1448,6 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, Client *client)
     else if (data.command == "/assignfaction")
     {
         AssignFaction(me, msg, data, client, targetclient);
-    }
-    else if (data.command == "/forcepickup")
-    {
-        ForcePickup(me, msg, data, targetobject, client);
     }
 }
 
@@ -1914,9 +1905,6 @@ void AdminManager::SendGMAttribs(Client* client)
         gmSettings |= (1 << 8);
     if (client->GetActor()->givekillexp)
         gmSettings |= (1 << 9);
-    if (client->GetActor()->attackable)
-        gmSettings |= (1 << 10);
-
 
     psGMGuiMessage gmMsg(client->GetClientNum(), gmSettings);
     gmMsg.SendMessage();
@@ -2030,8 +2018,7 @@ void AdminManager::SetAttrib(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
                                                 "questtester = %s\n"
                                                 "infinitemana = %s\n"
                                                 "instantcast = %s\n"
-                                                "givekillexp = %s\n"
-                                                "attackable = %s",
+                                                "givekillexp = %s\n",
                                                 (actor->GetInvincibility())?"on":"off",
                                                 (!actor->GetVisibility())?"on":"off",
                                                 (actor->GetViewAllObjects())?"on":"off",
@@ -2041,8 +2028,7 @@ void AdminManager::SetAttrib(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
                                                 (actor->questtester)?"on":"off",
                                                 (actor->infinitemana)?"on":"off",
                                                 (actor->instantcast)?"on":"off",
-                                                (actor->givekillexp)?"on":"off",
-                                                (actor->attackable)?"on":"off");
+                                                (actor->givekillexp)?"on":"off");
         return;
     }
     else if (data.attribute == "invincible" || data.attribute == "invincibility")
@@ -2164,18 +2150,6 @@ void AdminManager::SetAttrib(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
             already = true;
         else
             actor->givekillexp = onoff;
-    }
-    else if (data.attribute == "attackable")
-    {
-        if (toggle)
-        {
-            actor->attackable = !actor->attackable;
-            onoff = actor->attackable;
-        }
-        else if (actor->attackable == onoff)
-            already = true;
-        else
-            actor->attackable = onoff;
     }
     else if (!data.attribute.IsEmpty())
     {
@@ -4849,9 +4823,6 @@ void AdminManager::GMListPetitions(MsgEntry *me, psPetitionRequestMessage& msg,C
             info.assignedgm = (*rs)[i][6];
             info.online = (clients->Find(info.player) ? true : false);
 
-            if(!info.assignedgm.Length()) //put something in there so it looks nice
-                info.assignedgm = "";
-
             // Append to the message:
             petitions.Push(info);
         }
@@ -4946,9 +4917,6 @@ void AdminManager::GMHandlePetition(MsgEntry *me, psPetitionRequestMessage& msg,
             info.player = (*rs)[i][5];
             info.assignedgm = (*rs)[i][6];
             info.online = (clients->Find(info.player) ? true : false);
-
-            if(!info.assignedgm.Length()) //put something in there so it looks nice
-                info.assignedgm = "";
 
             // Append to the message:
             petitions.Push(info);
@@ -6614,7 +6582,7 @@ void AdminManager::Inspect(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& d
     bool npc = (target->GetClientID() == 0);
 
     //sends the heading
-    psserver->SendSystemInfo(me->clientnum,"Inventory for %s %s:\nTotal weight is %d / %d\nTotal money is %d",
+    psserver->SendSystemInfo(me->clientnum,"Inventory for %s %s:\nTotal weight is %d / %d\nTotal money is %d\n",
                     npc?"NPC":"player", target->GetName(),
                     (int)target->GetCharacterData()->Inventory().GetCurrentTotalWeight(),
                     (int)target->GetCharacterData()->Inventory().MaxWeight(),
@@ -8087,16 +8055,4 @@ void AdminManager::AssignFaction(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdD
     }
 
     AdjustFactionStandingOfTarget(client->GetClientNum(), target, data.name, data.value);
-}
-
-void AdminManager::ForcePickup(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, gemObject* targetobject, Client *client )
-{
-    if ((!data.player || !data.player.Length()) && !targetobject)
-    {
-        psserver->SendSystemInfo(client->GetClientNum(),"Syntax: \"/forcepickup [me/target/eid/pid/area/name]\"");
-        return;
-    }
-    if(targetobject) //just to be sure
-        psserver->SendSystemInfo(client->GetClientNum(),"Targeted: %s", targetobject->GetName());
-        gemActor *myact = targetobject->GetActorPtr();
 }
