@@ -325,6 +325,7 @@ void pawsLauncherWindow::HandleAspectRatio(csString ratio)
 void pawsLauncherWindow::LoadSettings()
 {
     csConfigFile configPSC("/planeshift/psclient.cfg", psLaunchGUI->GetVFS());
+    const csString languagepath = "/planeshift/lang/";
 
     // Graphics Preset
     pawsComboBox* graphicsPreset = (pawsComboBox*)FindWidget("GraphicsPreset");
@@ -571,6 +572,40 @@ void pawsLauncherWindow::LoadSettings()
         threadedWorldLoading->SetState(csString("Threaded").Compare(configPSC.GetStr("PlaneShift.Loading.WorldLoad", "NThreaded")));
     }
 
+    // Fill the languages
+    pawsComboBox* languages = (pawsComboBox*)FindWidget("Languages");
+    languages->Clear();
+
+    //add english: it's the default embedded in binary language
+    languages->NewOption("english");
+    
+    csRef<iStringArray> langfiles = psLaunchGUI->GetVFS()->FindFiles(languagepath); //find the folders with languages
+    for (size_t i = 0; i < langfiles->GetSize(); i++)
+    {
+        csString file = langfiles->Get(i);
+        if(psLaunchGUI->GetVFS()->Exists(csString(file+"stringtable.xml"))) //check if it's an usable language
+        {
+            file = file.Slice(languagepath.Length(),file.Length()-languagepath.Length());
+            languages->NewOption(file.Slice(0,file.Length()-1)); //add found language names based on folder
+        }
+    }
+
+    // Load the current language
+    csString language = configUser->GetStr("PlaneShift.GUI.Language");	
+    if(!strcmp(language,""))
+    {
+        // Try loading the default language.
+        language = configPSC.GetStr("PlaneShift.GUI.Language");
+        if(!strcmp(language,""))
+        {
+            // No language selected.. shouldn't happen but it's not fatal.
+            languages->Select("english"); //english is the default fallback
+            return;
+        }
+    }
+
+    languages->Select(language);
+
     // Fill the skins
     pawsComboBox* skins = (pawsComboBox*)FindWidget("Skins");
     skins->Clear();
@@ -765,6 +800,9 @@ void pawsLauncherWindow::SaveSettings()
     {
         configUser->SetStr("System.PlugIns.iSndSysRenderer", "crystalspace.sndsys.renderer.software");
     }
+
+    pawsComboBox* languages = (pawsComboBox*)FindWidget("Languages");
+    configUser->SetStr("PlaneShift.GUI.Language", languages->GetSelectedRowString());
 
     pawsComboBox* skins = (pawsComboBox*)FindWidget("Skins");
     configUser->SetStr("PlaneShift.GUI.Skin.Selected", skins->GetSelectedRowString());
