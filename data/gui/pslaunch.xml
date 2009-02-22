@@ -216,12 +216,12 @@
           <text string="Enable Fullscreen:" position="left"/>
         </widget>
 
-        <widget name="LanguagesText" factory="pawsTextBox" id="1395">
+        <widget name="LanguagesText" factory="pawsTextBox" id="1400">
           <frame x="0" y="103" width="90" height="20"/>
           <text string="Language:"/>
         </widget>
 
-        <widget name="Languages" factory="pawsComboBox" id="1396" alwaysontop="true">
+        <widget name="Languages" factory="pawsComboBox" id="1401" alwaysontop="true">
           <frame x="100" y="100" width="90" height="20" border="no" />
           <listbox rows="4" height="25" useScrollBar="true" />
         </widget>
