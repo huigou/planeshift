@@ -1,4 +1,13 @@
-﻿*** 2009-02-21 by Stefano Angeleri
+﻿*** 2009-02-22 by Stefano Angeleri
+- Removed a Show() in the groupwindow which would have displayed each
+  time there were member changes the window disregarding the user choice
+  to hide it (this made the window extremely annoying considering left/join
+  notifications are already in chat)
+- Added a language selection in pslaunch
+- Updates to the italian language with new strings and additional
+  translated strings
+
+*** 2009-02-21 by Stefano Angeleri
 - Updated the gm petition window to the new paws version and improved
   placements of parts of it
 - Added a gm column in the gm petition window showing the gm who has claimed
