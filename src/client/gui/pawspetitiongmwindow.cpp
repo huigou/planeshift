@@ -74,6 +74,8 @@ bool pawsPetitionGMWindow::PostSetup()
 
     hasPetInterest = false;
 
+    petCount = -1; //default value: we didn't receive petitions yet
+
     //TODO: this should be removed when autocompletion autocompletes /show
     // If player is GM, give him the /petition_manage command
     if ( psengine->GetCelClient()->GetMainPlayer()->GetType() > 20 )
@@ -323,7 +325,16 @@ void pawsPetitionGMWindow::HandleMessage ( MsgEntry* me )
     AddPetitions(message.petitions);
 
     //alert GM that there are petitions waiting
-    if (petCount > tempCount)
+    if (tempCount == -1)
+    {
+        csString message = PawsManager::GetSingleton().Translate("There are ");
+        message += petCount;
+        message += PawsManager::GetSingleton().Translate(" unaswered petitions."); //make a nice message
+
+        psSystemMessage alert(0,MSG_INFO,message); //and send it
+        msgqueue->Publish(alert.msg);
+    }
+    else if (petCount > tempCount)
     {
         psPetitionInfo info = message.petitions.Get(petCount-1); //get the last petition (supposed to be the new one)
         csString message = PawsManager::GetSingleton().Translate("New petition from ") + info.player.GetDataSafe(); //make a nice message
