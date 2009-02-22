@@ -93,7 +93,6 @@ void pawsGroupWindow::HandleMessage( MsgEntry* me )
 
         case psGUIGroupMessage::MEMBERS:
         {
-            Show();
             HandleMembers( incomming.commandData );
             break;
         }
