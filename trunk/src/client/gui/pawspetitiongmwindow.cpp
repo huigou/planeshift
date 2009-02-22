@@ -676,7 +676,7 @@ void pawsPetitionGMWindow::AddPetitions(csArray<psPetitionInfo> &petitions)
         // Set the data for this row:
         petitionList->NewRow(i);
         SetText(i, PGMCOL_LVL, "%d", info.escalation);
-        SetText(i, PGMCOL_GM, "%s", info.assignedgm.GetData());
+        SetText(i, PGMCOL_GM, "%s", info.assignedgm.GetDataSafe());
         SetText(i, PGMCOL_PLAYER, "%s", info.player.GetData());
         SetText(i, PGMCOL_ONLINE, "%s", (info.online ? "yes" : "no"));
         SetText(i, PGMCOL_STATUS, "%s", info.status.GetData());
