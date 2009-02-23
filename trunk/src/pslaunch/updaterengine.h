@@ -43,25 +43,29 @@ class InfoShare
 {
 private:
     /* Set to true if we want the GUI to exit. */
-    bool exitGUI;
+    volatile bool exitGUI;
 
     /* Set to true to cancel the updater. */
-    bool cancelUpdater;
+    volatile bool cancelUpdater;
 
     /* Set to true if we need to tell the GUI that an update is pending. */
-    bool updateNeeded;
+    volatile bool updateNeeded;
+
+    /* Set to true if an update is available but admin permissions are needed. */
+    volatile bool updateAdminNeeded;
 
     /* If true, then it's okay to perform the update. */
-    bool performUpdate;
+    volatile bool performUpdate;
 
     /* Set to true to perform an integrity check. */
-    bool checkIntegrity;
-
-    /* Communicator for ensuring sync. */
-    bool synched;
+    volatile bool checkIntegrity;
 
     /* Safety. */
     CS::Threading::Mutex mutex;
+
+    /* Sync condition */
+    CS::Threading::Condition synched;
+    bool synching;
 
     /* Array to store console output. */
     csList<csString> consoleOut;
@@ -72,60 +76,62 @@ public:
         exitGUI = false;
         performUpdate = false;
         updateNeeded = false;
+        updateAdminNeeded = false;
         checkIntegrity = false;
         cancelUpdater = false;
-        synched = false;
+        synching = false;
         mutex.Initialize();
     }
 
-    void SetExitGUI(bool v) { exitGUI = v; }
-    void SetUpdateNeeded(bool v) { updateNeeded = v; }
-    void SetPerformUpdate(bool v) { performUpdate = v; }
-    void SetCheckIntegrity(bool v) { checkIntegrity = v; }
-    void SetCancelUpdater(bool v) { cancelUpdater = v; }
-    void Sync(bool first)
+    inline void SetExitGUI(bool v) { exitGUI = v; }
+    inline void SetUpdateNeeded(bool v) { updateNeeded = v; }
+    inline void SetUpdateAdminNeeded(bool v) { updateAdminNeeded = v; }
+    inline void SetPerformUpdate(bool v) { performUpdate = v; }
+    inline void SetCheckIntegrity(bool v) { checkIntegrity = v; }
+    inline void SetCancelUpdater(bool v) { cancelUpdater = v; }
+    inline void Sync()
     {
-      if(first)
-      {
-        while(!synched);
-        synched = false;
-      }
-      else
-      {
-        synched = true;
-      }
+        CS::Threading::MutexScopedLock lock(mutex);
+        if(!synching)
+        {
+            synching = true;
+            synched.Wait(mutex);
+        }
+        else
+        {
+            synched.NotifyAll();
+            synching = false;
+        }
     }
 
-    bool GetExitGUI() { return exitGUI; }
-    bool GetUpdateNeeded() { return updateNeeded; }
-    bool GetPerformUpdate() { return performUpdate; }
-    bool GetCheckIntegrity() { return checkIntegrity; }
-    bool GetCancelUpdater() { return cancelUpdater; }
+    inline bool GetExitGUI() { return exitGUI; }
+    inline bool GetUpdateNeeded() { return updateNeeded; }
+    inline bool GetUpdateAdminNeeded() { return updateAdminNeeded; }
+    inline bool GetPerformUpdate() { return performUpdate; }
+    inline bool GetCheckIntegrity() { return checkIntegrity; }
+    inline bool GetCancelUpdater() { return cancelUpdater; }
 
-    void EmptyConsole()
+    inline void EmptyConsole()
     {
-        mutex.Lock();
+        CS::Threading::MutexScopedLock lock(mutex);
         consoleOut.DeleteAll();
-        mutex.Unlock();
     }
 
-    void ConsolePush(csString str)
+    inline void ConsolePush(csString str)
     {
-        mutex.Lock();
+        CS::Threading::MutexScopedLock lock(mutex);
         consoleOut.PushBack(str);
-        mutex.Unlock();
     }
 
-    csString ConsolePop()
+    inline csString ConsolePop()
     {
-        mutex.Lock();
+        CS::Threading::MutexScopedLock lock(mutex);
         csString ret = consoleOut.Front();
         consoleOut.PopFront();
-        mutex.Unlock();
         return ret;
     }
 
-    bool ConsoleIsEmpty()
+    inline bool ConsoleIsEmpty()
     {
         return consoleOut.IsEmpty();
     }

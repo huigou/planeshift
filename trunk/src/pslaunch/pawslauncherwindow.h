@@ -25,6 +25,7 @@
 #include "pslaunch.h"
 
 class pawsComboBox;
+class pawsOkBox;
 class pawsYesNoBox;
 
 class pawsLauncherWindow : public pawsWidget
@@ -39,6 +40,7 @@ private:
     pawsWidget* launcherSettings;
     pawsComboBox* resolution;
     pawsYesNoBox* updateAvailable;
+    pawsOkBox* notify;
     csRef<iConfigFile> configFile;
     csRef<iConfigFile> configUser;
     csRef<CS::Threading::Thread> newsUpdater;
@@ -97,7 +99,9 @@ private:
         SKINS = 1399,
         UPDATE_MESSAGE_BOX = 141,
         UPDATE_YES_BUTTON,
-        UPDATE_NO_BUTTON
+        UPDATE_NO_BUTTON,
+        NOTIFY_MESSAGE_BOX = 151,
+        NOTIFY_OK_BUTTON
     };
 
     enum GraphicsPresets

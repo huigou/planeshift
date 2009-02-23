@@ -30,6 +30,10 @@
 #include <unistd.h>
 #endif
 
+#ifdef _WIN32
+#include <shlobj.h>
+#endif
+
 #define CHECK_QUIT \
     if(CheckQuit()) \
     { \
@@ -159,9 +163,14 @@ void UpdaterEngine::CheckForUpdates()
         printf("Update Available!\n");
 
         // Check if we have write permissions.
+#ifdef _WIN32
+        if(!IsUserAnAdmin())
+#else
         if(!log.IsValid())
+#endif
         {
-            PrintOutput("Please run this program with administrator permissions to continue updating.\n");
+            printf("Please run this program with write permissions on your PlaneShift directory to continue updating.\n");
+            infoShare->SetUpdateAdminNeeded(true);
             return;
         }
 
@@ -174,7 +183,7 @@ void UpdaterEngine::CheckForUpdates()
                 // Make sure we die if we exit the gui as well.
                 if(!infoShare->GetUpdateNeeded() || infoShare->GetExitGUI() || CheckQuit())
                 {
-                    infoShare->Sync(false);
+                    infoShare->Sync();
                     delete downloader;
                     downloader = NULL;
                     return;
@@ -183,7 +192,7 @@ void UpdaterEngine::CheckForUpdates()
 
             // If we're going to self-update, close the GUI.
             infoShare->SetExitGUI(true);
-            infoShare->Sync(false);
+            infoShare->Sync();
         }
 
         // Begin the self update process.
@@ -199,9 +208,14 @@ void UpdaterEngine::CheckForUpdates()
         printf("Updates Available!\n");
 
         // Check if we have write permissions.
+#ifdef _WIN32
+        if(!IsUserAnAdmin())
+#else
         if(!log.IsValid())
+#endif
         {
-            PrintOutput("Please run this program with administrator permissions to continue updating.\n");
+            printf("Please run this program with write permissions on your PlaneShift directory to continue updating.\n");
+            infoShare->SetUpdateAdminNeeded(true);
             return;
         }
 
@@ -211,15 +225,16 @@ void UpdaterEngine::CheckForUpdates()
             infoShare->SetUpdateNeeded(true);
             while(!infoShare->GetPerformUpdate())
             {
-                if(!infoShare->GetUpdateNeeded() || infoShare->GetExitGUI() || CheckQuit())
+                bool updateNeeded = infoShare->GetUpdateNeeded();
+                if(!updateNeeded || infoShare->GetExitGUI() || CheckQuit())
                 {
-                    infoShare->Sync(false);
+                    infoShare->Sync();
                     delete downloader;
                     downloader = NULL;
                     return;
                 }
             }
-            infoShare->Sync(false);
+            infoShare->Sync();
         }
 
         // Begin general update.
@@ -229,7 +244,7 @@ void UpdaterEngine::CheckForUpdates()
         fflush(stdout);
 
         PrintOutput("Update finished!\n");
-        infoShare->Sync(false);
+        infoShare->Sync();
     }
     else
         PrintOutput("No updates needed!\n");
@@ -1095,7 +1110,7 @@ void UpdaterEngine::CheckIntegrity()
                     }
                     c = infoShare->GetPerformUpdate() ? 'y' : 'n';
                     infoShare->SetPerformUpdate(false);
-                    infoShare->Sync(false);
+                    infoShare->Sync();
                 }
                 
                 if(c == 'n')
