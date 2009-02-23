@@ -225,8 +225,7 @@ void UpdaterEngine::CheckForUpdates()
             infoShare->SetUpdateNeeded(true);
             while(!infoShare->GetPerformUpdate())
             {
-                bool updateNeeded = infoShare->GetUpdateNeeded();
-                if(!updateNeeded || infoShare->GetExitGUI() || CheckQuit())
+                if(!infoShare->GetUpdateNeeded() || infoShare->GetExitGUI() || CheckQuit())
                 {
                     infoShare->Sync();
                     delete downloader;
