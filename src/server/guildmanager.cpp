@@ -1174,6 +1174,11 @@ void GuildManager::EndGuild(psGuildCmdMessage& msg,Client *client)
 
 void GuildManager::EndGuild(psGuildInfo *guild,int clientnum)
 {
+    //if this guild is in an alliance, it must be removed from it
+    psGuildAlliance * alliance = CacheManager::GetSingleton().FindAlliance(guild->GetAllianceID());
+    if(alliance)
+        alliance->RemoveMember(guild);
+    
     if (!guild->RemoveGuild() )
     {
         psserver->SendSystemError(clientnum,db->GetLastError());
