@@ -1,4 +1,7 @@
 ﻿*** 2009-02-22 by Stefano Angeleri
+- Fixed PS#2722 - Can't place money there 
+
+*** 2009-02-22 by Stefano Angeleri
 - Removed a Show() in the groupwindow which would have displayed each
   time there were member changes the window disregarding the user choice
   to hide it (this made the window extremely annoying considering left/join
