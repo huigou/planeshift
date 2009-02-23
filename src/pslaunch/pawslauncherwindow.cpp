@@ -27,6 +27,7 @@
 #include "paws/pawscombo.h"
 #include "paws/pawsimagedrawable.h"
 #include "paws/pawslistbox.h"
+#include "paws/pawsokbox.h"
 #include "paws/pawstextbox.h"
 #include "paws/pawswidget.h"
 #include "paws/pawsyesnobox.h"
@@ -63,6 +64,10 @@ bool pawsLauncherWindow::PostSetup()
     updateAvailable = (pawsYesNoBox*)FindWidget("UpdateAvailable");
     updateAvailable->SetCallBack(HandleUpdateButton, updateAvailable, "An update to PlaneShift is available. Do you wish to update now?");
     updateAvailable->SetAlwaysOnTop(true);
+
+    // Setup notify window.
+    notify = (pawsOkBox*)FindWidget("Notify");
+    notify->SetAlwaysOnTop(true);
 
     return true;
 }
@@ -226,6 +231,10 @@ bool pawsLauncherWindow::OnButtonPressed(int mouseButton, int keyModifier, pawsW
         FindButton(SETTINGS_GENERAL_BUTTON)->SetState(false, false);
         FindButton(SETTINGS_GRAPHICS_BUTTON)->SetState(true, false);
         launcherSettings->OnGainFocus();
+    }
+    else if(ID == NOTIFY_OK_BUTTON)
+    {
+        notify->Hide();
     }
 
     return true;

@@ -36,6 +36,7 @@
 #include "paws/pawsbutton.h"
 #include "paws/pawsmainwidget.h"
 #include "paws/pawsmanager.h"
+#include "paws/pawsokbox.h"
 #include "paws/pawstextbox.h"
 #include "util/log.h"
 
@@ -220,7 +221,7 @@ bool psLauncherGUI::HandleEvent (iEvent &ev)
         if(!infoShare->GetUpdateNeeded())
         {
             infoShare->SetPerformUpdate(false);
-            infoShare->Sync(true);
+            infoShare->Sync();
         }
 
         pawsMessageTextBox* updateProgressOutput = (pawsMessageTextBox*)paws->FindWidget("UpdaterOutput");
@@ -244,7 +245,15 @@ bool psLauncherGUI::HandleEvent (iEvent &ev)
     }
     else if(!updateTold)
     {
-        if(infoShare->GetUpdateNeeded())
+        if(infoShare->GetUpdateAdminNeeded())
+        {
+            pawsOkBox* notify = (pawsOkBox*)paws->FindWidget("Notify");
+            notify->SetText("An update is available but you don't have the correct permissions to continue!\n\n"
+                            "Please restart the program as an admin.");
+            notify->Show();
+            updateTold = true;
+        }
+        else if(infoShare->GetUpdateNeeded())
         {
             paws->FindWidget("UpdateAvailable")->Show();
             updateTold = true;
@@ -308,7 +317,7 @@ void psLauncherGUI::PerformUpdate(bool update, bool integrity)
 {
     infoShare->SetPerformUpdate(update || integrity);
     infoShare->SetUpdateNeeded(update);
-    infoShare->Sync(true);
+    infoShare->Sync();
 
     if(update && !infoShare->GetExitGUI())
     {
