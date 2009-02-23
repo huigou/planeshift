@@ -371,6 +371,10 @@ void SlotManager::MoveFromMoney(psSlotMovementMsg& msg, Client *fromClient)
             money.Set(-money.Get(3), -money.Get(2), -money.Get(1), -money.Get(0));
             break;
         }
+        case CONTAINER_INVENTORY_MONEY:
+        {
+            break;
+        }
         default:
         {
             psserver->SendSystemError(fromClient->GetClientNum(), "You can't place money there.");
