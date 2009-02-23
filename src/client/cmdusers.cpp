@@ -684,6 +684,10 @@ const char *psUserCommands::HandleCommand(const char *cmd)
             psUserCmdMessage cmdmsg(newCmd);
             cmdmsg.SendMessage();
         }
+        else if (words[1].IsEmpty())
+        {
+            return "You need to precise a target or to select one";
+        }
         else
         {
             psUserCmdMessage cmdmsg(cmd);
