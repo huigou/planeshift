@@ -1,4 +1,7 @@
-﻿*** 2009-02-22 by Stefano Angeleri
+﻿*** 2009-02-23 by Tristan Cragnolini
+- Fixed PS#2496 - Guild shows in an alliance 
+
+*** 2009-02-22 by Tristan Cragnolini
 - Fixed PS#2722 - Can't place money there
 - Fixed  PS#2595 - pickup command should need a target
 
