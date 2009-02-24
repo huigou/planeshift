@@ -15,15 +15,15 @@
             </attachpoints>
             <!-- Tabs, there are three tabs. -->
             <widget name="Players Button" factory="pawsButton" style="tabbuttonskills" id="1000">
-                <frame x="20" y="7" width="69" height="20" />
+                <frame x="20" y="5" width="69" height="20" />
                 <label text="Players" />
             </widget>
             <widget name="Action Button" factory="pawsButton" style="tabbuttonskills" id="1002">
-                <frame x="89" y="7" width="69" height="20" />
+                <frame x="89" y="5" width="69" height="20" />
                 <label text="Actions" />
             </widget>
             <widget name="Attributes Button" factory="pawsButton" style="tabbuttonskills" id="1003" >
-                <frame x="158" y="7" width="69" height="20" />
+                <frame x="158" y="5" width="69" height="20" />
                 <label text="Attributes" />
             </widget>
 			<!-- The Tab Panels -->
@@ -36,8 +36,8 @@
                     <attach point="ATTACH_LEFT" />
                     <attach point="PROPORTIONAL_BOTTOM" />
                 </attachpoints>
-                <widget name="PlayerList" factory="pawsListBox" id="1201" style="listbox">
-                    <frame x="20" y="5" width="465" height="352" />
+                <widget name="PlayerList" factory="pawsListBox" id="1201" >
+                    <frame x="20" y="10" width="458" height="350" />
                     <highlight resource="Hightlight" alpha="128" />
                     <columns height="25" headings="yes">
                     <column width="110" >
@@ -184,8 +184,8 @@
                     <attach point="ATTACH_LEFT" />
                     <attach point="PROPORTIONAL_BOTTOM" />
                 </attachpoints>
-                <widget name="ActionList" factory="pawsListBox" id="1265" style="listbox">
-                    <frame x="20" y="5" width="580" height="340" border="no"/>
+                <widget name="ActionList" factory="pawsListBox" id="1265" >
+                    <frame x="20" y="10" width="580" height="330" />
                      <highlight resource="Hightlight" alpha="128" />
                     <columns height="24" headings="yes">
                         <column width="20" >
