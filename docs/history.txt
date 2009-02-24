@@ -1,4 +1,13 @@
-﻿*** 2009-02-23 by Tristan Cragnolini
+﻿*** 2009-02-24 by Stefano Angeleri
+- Updated gm gui to the new paws specifications
+- Fixed PS#2785 - [pawscrollbar] Keeps scrolling undefinitely even when
+  not clicking. pawsscrollbar onbuttonrelease() was forgot with the
+  old definition and so it wasn't called anymore making scroll not work
+  correctly while clicking on arrows.
+- Placed a sleep in the main loop so the client doesn't take all the cpu
+  in case no drawing is being done
+
+*** 2009-02-23 by Tristan Cragnolini
 - Fixed PS#2496 - Guild shows in an alliance 
 
 *** 2009-02-22 by Tristan Cragnolini
