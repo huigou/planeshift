@@ -69,10 +69,6 @@ void psQuestPrereqOpList::Insert(size_t n, csRef<psQuestPrereqOp> prereqOp)
 
 bool psQuestPrereqOpAnd::Check(psCharacter * character)
 {
-    //Requirements are always valid for quest testers
-    if(character->GetActor() && character->GetActor()->questtester)
-        return true;
-
     // Check if all prereqs are valid
     for (size_t i = 0; i < prereqlist.GetSize(); i++)
     {
@@ -112,10 +108,6 @@ csPtr<psQuestPrereqOp> psQuestPrereqOpAnd::Copy()
 
 bool psQuestPrereqOpOr::Check(psCharacter * character)
 {
-    //Requirements are always valid for quest testers
-    if(character->GetActor() && character->GetActor()->questtester)
-        return true;
-
     // Check if any of the prereqs are valid
     for (size_t i = 0; i < prereqlist.GetSize(); i++)
     {
@@ -161,10 +153,6 @@ psQuestPrereqOpRequire::psQuestPrereqOpRequire(int min_required,int max_required
 
 bool psQuestPrereqOpRequire::Check(psCharacter * character)
 {
-    //Requirements are always valid for quest testers
-    if(character->GetActor() && character->GetActor()->questtester)
-        return true;
-
     // Count the number of prereqs that is valid.
     int count=0;
     for (size_t i = 0; i < prereqlist.GetSize(); i++)
@@ -216,10 +204,6 @@ csPtr<psQuestPrereqOp> psQuestPrereqOpRequire::Copy()
 
 bool psQuestPrereqOpNot::Check(psCharacter * character)
 {
-    //Requirements are always valid for quest testers
-    if(character->GetActor() && character->GetActor()->questtester)
-        return true;
-
     return (prereqlist.GetSize() && !prereqlist[0]->Check(character));
 }
 
@@ -253,10 +237,6 @@ psQuestPrereqOpQuestCompleted::psQuestPrereqOpQuestCompleted(csString questName)
 
 bool psQuestPrereqOpQuestCompleted::Check(psCharacter * character)
 {
-    //Requirements are always valid for quest testers
-    if(character->GetActor() && character->GetActor()->questtester)
-        return true;
-
     if (quest == NULL)
         quest = CacheManager::GetSingleton().GetQuestByName(name);
     return character->CheckQuestCompleted(quest);
@@ -286,10 +266,6 @@ csPtr<psQuestPrereqOp> psQuestPrereqOpQuestCompleted::Copy()
 
 bool psQuestPrereqOpQuestAssigned::Check(psCharacter * character)
 {
-    //Requirements are always valid for quest testers
-    if(character->GetActor() && character->GetActor()->questtester)
-        return true;
-
     return character->CheckQuestAssigned(quest);
 }
 
@@ -313,10 +289,6 @@ csPtr<psQuestPrereqOp> psQuestPrereqOpQuestAssigned::Copy()
 
 bool psQuestPrereqOpQuestCompletedCategory::Check(psCharacter * character)
 {
-    //Requirements are always valid for quest testers
-    if(character->GetActor() && character->GetActor()->questtester)
-        return true;
-
     int count = character->NumberOfQuestsCompleted(category);
 
     Debug5(LOG_QUESTS, character->GetPID().Unbox(), "Check for category %s in range %d <= %d <= %d",
@@ -356,10 +328,6 @@ csPtr<psQuestPrereqOp> psQuestPrereqOpQuestCompletedCategory::Copy()
 
 bool psQuestPrereqOpFaction::Check(psCharacter * character)
 {
-    //Requirements are always valid for quest testers
-    if(character->GetActor() && character->GetActor()->questtester)
-        return true;
-
     if(max)
     {
         // If value is max, make sure we're below it
@@ -388,10 +356,6 @@ csPtr<psQuestPrereqOp> psQuestPrereqOpFaction::Copy()
 
 bool psQuestPrereqOpActiveMagic::Check(psCharacter * character)
 {
-    //Requirements are always valid for quest testers
-    if(character->GetActor() && character->GetActor()->questtester)
-        return true;
-
     if (character->GetActor())
     {
         return character->GetActor()->IsMagicCategoryActive(activeMagic);
@@ -419,10 +383,6 @@ csPtr<psQuestPrereqOp> psQuestPrereqOpActiveMagic::Copy()
 
 bool psQuestPrereqOpRace::Check(psCharacter * character)
 {
-    //Requirements are always valid for quest testers
-    if(character->GetActor() && character->GetActor()->questtester)
-        return true;
-
     if (character->GetRaceInfo())
     {
         return ((csString)character->GetRaceInfo()->GetRace() == race);
@@ -450,10 +410,6 @@ csPtr<psQuestPrereqOp> psQuestPrereqOpRace::Copy()
 
 bool psQuestPrereqOpGender::Check(psCharacter * character)
 {
-    //Requirements are always valid for quest testers
-    if(character->GetActor() && character->GetActor()->questtester)
-        return true;
-
     if (character->GetRaceInfo())
     {
         return ((csString)character->GetRaceInfo()->GetGender() == gender);
@@ -481,10 +437,6 @@ csPtr<psQuestPrereqOp> psQuestPrereqOpGender::Copy()
 
 bool psQuestPrereqOpKnownSpell::Check(psCharacter * character)
 {
-    //Requirements are always valid for quest testers
-    if(character->GetActor() && character->GetActor()->questtester)
-        return true;
-
     if (character)
     {
         return (character->GetSpellByName(spell) != NULL);
@@ -512,10 +464,6 @@ csPtr<psQuestPrereqOp> psQuestPrereqOpKnownSpell::Copy()
 
 bool psQuestPrereqOpGuild::Check(psCharacter * character)
 {
-    //Requirements are always valid for quest testers
-    if(character->GetActor() && character->GetActor()->questtester)
-        return true;
-
     if (!character->GetGuild()) //the player isn't in a guild
     {
         return (guildtype == "none"); //it was what we where looking for?
@@ -552,10 +500,6 @@ csPtr<psQuestPrereqOp> psQuestPrereqOpGuild::Copy()
 
 bool psQuestPrereqOpMarriage::Check(psCharacter * character)
 {
-    //Requirements are always valid for quest testers
-    if(character->GetActor() && character->GetActor()->questtester)
-        return true;
-
     return character->GetIsMarried(); //is the character married?
 
     return false;
@@ -581,10 +525,6 @@ csPtr<psQuestPrereqOp> psQuestPrereqOpMarriage::Copy()
 
 bool psQuestPrereqOpTimeOnline::Check(psCharacter * character)
 {
-    //Requirements are always valid for quest testers
-    if(character->GetActor() && character->GetActor()->questtester)
-        return true;
-
     if(type == "min")
         return (character->GetTotalOnlineTime() > minTime);
     if(type == "max")
@@ -653,10 +593,6 @@ csPtr<psQuestPrereqOp> psQuestPrereqOpAdvisorPoints::Copy()
 
 bool psQuestPrereqOpTimeOfDay::Check(psCharacter * character)
 {
-    //Requirements are always valid for quest testers
-    if(character->GetActor() && character->GetActor()->questtester)
-        return true;
-
     int currTime = psserver->GetWeatherManager()->GetGameTODHour();
 
     if (minTime <= maxTime)
@@ -687,10 +623,6 @@ csPtr<psQuestPrereqOp> psQuestPrereqOpTimeOfDay::Copy()
 
 bool psQuestPrereqOpXor::Check(psCharacter * character)
 {
-    //Requirements are always valid for quest testers
-    if(character->GetActor() && character->GetActor()->questtester)
-        return true;
-
     // Check if any of the prereqs are valid
     bool flag = 0;
     for (size_t i = 0; i < prereqlist.GetSize(); i++)
@@ -727,10 +659,6 @@ csPtr<psQuestPrereqOp> psQuestPrereqOpXor::Copy()
 
 bool psQuestPrereqOpSkill::Check(psCharacter * character)
 {
-    //Requirements are always valid for quest testers
-    if(character->GetActor() && character->GetActor()->questtester)
-        return true;
-
     unsigned int skill_val = character->Skills().GetSkillRank(skill->id);
 
     if(max && skill_val > max)
