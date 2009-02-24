@@ -49,7 +49,7 @@ public:
      */
     virtual bool OnButtonPressed( int button, int keyModifier, pawsWidget* widget );
 
-    virtual bool OnButtonReleased( int button, pawsWidget* widget );
+    virtual bool OnButtonReleased( int button, int keyModifier, pawsWidget* widget );
 
     /** Set the max value that this scroll bar should have. 
      * @param value The max value that this bar can have.
