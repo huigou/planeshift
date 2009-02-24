@@ -903,6 +903,11 @@ bool psEngine::Process3D(iEvent& ev)
             }
         }
     }
+    else
+    {
+        csSleep(150); //TODO: Find out a better way to handle this, like
+                      //      a condition.
+    }
 
     return false;
 }
