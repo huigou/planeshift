@@ -511,7 +511,7 @@ bool pawsScrollBar::OnButtonPressed( int button, int keyModifier, pawsWidget* wi
     return false;
 }
 
-bool pawsScrollBar::OnButtonReleased( int button, pawsWidget* widget )
+bool pawsScrollBar::OnButtonReleased( int button, int keyModifier, pawsWidget* widget )
 {
     mouseDown = false;
     return true;
