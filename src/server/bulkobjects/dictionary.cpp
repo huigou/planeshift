@@ -1073,8 +1073,11 @@ bool NpcTrigger::HaveAvailableResponses(Client * client, gemNPC * npc, NPCDialog
             if (resp->quest || resp->prerequisite)
             {
                 // Check if all prerequisites are true, and available(no lockout)
-                if ((!resp->prerequisite || client->GetCharacterData()->CheckResponsePrerequisite(resp)) &&
-                    (!resp->quest || (resp->quest->Active() && client->GetCharacterData()->CheckQuestAvailable(resp->quest,npc->GetPID()))))
+                if ( ((!resp->prerequisite || client->GetCharacterData()->CheckResponsePrerequisite(resp) ) && //checks if prerequisites are in order
+                     (!resp->quest || (resp->quest->Active() && client->GetCharacterData()->CheckQuestAvailable(resp->quest,npc->GetPID()))))  //checks if the player can get the quest
+                     /*overrides the above while mantaining quest consistency in case of questtester */
+                   ||(client->GetCharacterData()->GetActor() && client->GetCharacterData()->GetActor()->questtester &&
+                     (!resp->quest || !resp->quest->GetParentQuest()))) 
                 {
                     Debug2(LOG_QUESTS,client->GetClientNum(),"Pushing quest response: %d\n",resp->id);
                     // This is a available response that is connected to a available quest
