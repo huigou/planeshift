@@ -1,9 +1,9 @@
 <widget_description>
-    <widget name="GmGUI" factory="pawsGmGUIWindow" style="topwindow">
-	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
-        <frame x="0" y="0" width="630" height="425" />
-        <title text="Game Master Options" />
-        <bgimage resource="GM Background" />
+    <widget name="GmGUI" factory="pawsGmGUIWindow"
+            visible="no" savepositions="yes" movable="yes"
+            resizable="no" style="New Standard GUI">
+        <frame x="0" y="0" width="630" height="425" border="yes"/>
+        <title resource="Scaling Title Bar" text="Game Master Options" align="left" close_button="yes" />
 
         <widget name="GM Tabs" factory="pawsTabWindow" style="tabwindow">
             <frame y="0" width="630" height="425" />
@@ -15,31 +15,16 @@
             </attachpoints>
             <!-- Tabs, there are three tabs. -->
             <widget name="Players Button" factory="pawsButton" style="tabbuttonskills" id="1000">
-                <frame x="20" y="7" width="69" />
-		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
+                <frame x="20" y="7" width="69" height="20" />
                 <label text="Players" />
-                <attachpoints>
-                    <attach point="PROPORTIONAL_RIGHT" />
-                    <attach point="ATTACH_LEFT" />
-                </attachpoints>
             </widget>
             <widget name="Action Button" factory="pawsButton" style="tabbuttonskills" id="1002">
-                <frame x="89" y="7" width="69"  />
-		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
+                <frame x="89" y="7" width="69" height="20" />
                 <label text="Actions" />
-                <attachpoints>
-                    <attach point="PROPORTIONAL_RIGHT" />
-                    <attach point="PROPORTIONAL_LEFT" />
-                </attachpoints>
             </widget>
             <widget name="Attributes Button" factory="pawsButton" style="tabbuttonskills" id="1003" >
-                <frame x="158" y="7" width="69" />
-		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
+                <frame x="158" y="7" width="69" height="20" />
                 <label text="Attributes" />
-                <attachpoints>
-                    <attach point="ATTACH_RIGHT" />
-                    <attach point="PROPORTIONAL_LEFT" />
-                </attachpoints>
             </widget>
 			<!-- The Tab Panels -->
 				<!-- The Player Panel here -->
@@ -56,43 +41,39 @@
                     <highlight resource="Hightlight" alpha="128" />
                     <columns height="25" headings="yes">
                     <column width="110" >
-                        <widget name="First Name" factory="pawsTextBox"></widget>
+                        <pawsTextBox name="First Name"/>
                     </column>
                     <column width="90" >
-                        <widget name="Last Name" factory="pawsTextBox"></widget>
+                        <pawsTextBox name="Last Name"/>
                     </column>
                     <column width="40" >
-                        <widget name="Gnd" factory="pawsTextBox"></widget>
+                        <pawsTextBox name="Gnd"/>
                     </column>
                     <column width="140" >
-                        <widget name="Guild" factory="pawsTextBox"></widget>
+                        <pawsTextBox name="Guild"/>
                     </column>
                     <column width="120" >
-                        <widget name="Sector" factory="pawsTextBox"></widget>
+                        <pawsTextBox name="Sector"/>
                     </column>                
                     </columns>
                 </widget>
 
-                <widget name="RefreshPlayerList" factory="pawsButton" id="1298" style="button">
+                <widget name="RefreshPlayerList" factory="pawsButton" id="1298">
                     <frame x="25" y="370" width="130" height="20" />
-		    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
                     <label text="Refresh List" />
                 </widget>
 
                 <widget name="PlayerCount" factory="pawsTextBox" >
                     <frame x="240" y="375" width="200" height="20"/>
-					<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
                 </widget>
 
                 <widget name="SectorLbl" factory="pawsTextBox" style="label" >
                     <frame x="490" y="5" width="120" height="20"/>
                     <text string="Sector:" />
-					<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
                 </widget>
                 <widget name="MoveTarget" factory="pawsTextBox" style="label" >
-                    <frame x="525" y="37" width="30" height="20"/>
+                    <frame x="525" y="40" width="30" height="20"/>
                     <text string="SL" horizAdjust="CENTRE" vertAdjust="CENTRE" />
-					<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="8" />
                 </widget>
                 <widget name="TargetLeft" factory="pawsButton" toggle="no" id="1211"  >
                     <frame x="507" y="40" width="20" height="20" border="no" />
@@ -125,86 +106,71 @@
                     <buttondown resource="Down Arrow" />
                 </widget>
 
-                <widget name="AidPet" factory="pawsButton" toggle="no" id="1210" style="button">
+                <widget name="AidPet" factory="pawsButton" toggle="no" id="1210" >
                     <frame x="490" y="80" width="115" height="20" />
-		    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
                     <label text="Teleport To Player" />
                 </widget>
 
                 <widget name="KillWarn" factory="pawsTextBox" style="label" >
                     <frame x="490" y="105" width="115" height="20" />
                     <text string="!!!WARNING!!!" horizAdjust="CENTRE" vertAdjust="CENTRE" />
-					<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="0" b="0" size="10" />
                 </widget>  
-                <widget name="Kill" factory="pawsButton" toggle="no" id="1233" style="button">
+                <widget name="Kill" factory="pawsButton" toggle="no" id="1233" >
                     <frame x="490" y="125" width="115" height="20" />
-		    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
                     <label text="Kill Player" />
                 </widget>
 
-                <widget name="Mute" factory="pawsButton" id="1231" style="button">
+                <widget name="Mute" factory="pawsButton" id="1231" >
                     <frame x="490" y="160" width="115" height="20" />
-		    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
                     <label text="Mute Player" />
                 </widget>
-                <widget name="Unmute" factory="pawsButton" id="1232" style="button">
+                <widget name="Unmute" factory="pawsButton" id="1232" >
                     <frame x="490" y="185" width="115" height="20" />
-		    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
                     <label text="Unmute Player" />
                 </widget>
 
-                <widget name="ChangeName" factory="pawsButton" id="1234" style="button">
+                <widget name="ChangeName" factory="pawsButton" id="1234" >
                     <frame x="490" y="220" width="115" height="20" />
-		    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
                     <label text="Change name" />
                 </widget>
-                <widget name="ChangeNameRnd" factory="pawsButton" id="1235" style="button">
+                <widget name="ChangeNameRnd" factory="pawsButton" id="1235" >
                     <frame x="490" y="245" width="115" height="20"  />
-		    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
                     <label text="Random name" />
                 </widget>
 
-                <widget name="Kick" factory="pawsButton" id="1230" style="button">
+                <widget name="Kick" factory="pawsButton" id="1230" >
                     <frame x="490" y="280" width="115" height="20" />
-		    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
                     <label text="Kick Player" />
                 </widget>
 
                 <widget name="BanMin" factory="pawsEditTextBox">    
-                    <frame x="500" y="309" width="20" height="20" border="no"/>
+                    <frame x="500" y="312" width="20" height="20" border="no"/>
                     <text string="30" horizAdjust="CENTRE" />    
-					<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
                 </widget>
                 <widget name="BanHrs" factory="pawsEditTextBox">    
-                    <frame x="534" y="309" width="20" height="20" border="no"/>
+                    <frame x="534" y="312" width="20" height="20" border="no"/>
                     <text string="0" horizAdjust="CENTRE" />    
-					<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
                 </widget>        
                 <widget name="BanDays" factory="pawsEditTextBox">    
-                    <frame x="568" y="309" width="20" height="20" border="no"/> 
+                    <frame x="568" y="312" width="20" height="20" border="no"/> 
                     <text string="0" horizAdjust="CENTRE" />    
-					<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
                 </widget>
 					
                 <widget name="BanMinlbl" factory="pawsTextBox" style="label">    
                     <frame x="490" y="314" width="20" height="20" />
                     <text string="M:" horizAdjust="CENTRE" />    
-					<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="0" b="0" size="9" />
                 </widget>
                 <widget name="BanHrslbl" factory="pawsTextBox" style="label">    
                     <frame x="524" y="314" width="20" height="20" />
                     <text string="H:" horizAdjust="CENTRE" />    
-					<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="0" b="0" size="9" />
                 </widget>        
                 <widget name="BanDayslbl" factory="pawsTextBox" style="label">    
                     <frame x="558" y="314" width="20" height="20" /> 
                     <text string="D:" horizAdjust="CENTRE" />    
-					<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="0" b="0" size="9" />
                 </widget>
 
-                <widget name="Ban" factory="pawsButton" id="1236" style="button">
-                    <frame x="490" y="330" width="115" height="20" />
-		    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
+                <widget name="Ban" factory="pawsButton" id="1236" >
+                    <frame x="490" y="335" width="115" height="20" />
                     <label text="Ban" />
                 </widget>
 
@@ -219,63 +185,57 @@
                     <attach point="PROPORTIONAL_BOTTOM" />
                 </attachpoints>
                 <widget name="ActionList" factory="pawsListBox" id="1265" style="listbox">
-                    <frame x="20" y="5" width="580" height="335" border="no"/>
+                    <frame x="20" y="5" width="580" height="340" border="no"/>
                      <highlight resource="Hightlight" alpha="128" />
                     <columns height="24" headings="yes">
                         <column width="20" >
-                            <widget name="Id" factory="pawsTextBox"></widget>
+                            <pawsTextBox name="Id"/>
                         </column>
                         <column width="160" >
-                            <widget name="Name" factory="pawsTextBox"></widget>
+                            <pawsTextBox name="Name"/>
                         </column>
                         <column width="135" >
-                            <widget name="Mesh" factory="pawsTextBox"></widget>
+                            <pawsTextBox name="Mesh"/>
                         </column>
                         <column width="40" >
-                            <widget name="Poly" factory="pawsTextBox"></widget>
+                            <pawsTextBox name="Poly"/>
                         </column>
                         <column width="145" >
-                            <widget name="Pos" factory="pawsTextBox"></widget>
+                            <pawsTextBox name="Pos"/>
                         </column>
                         <column width="120" >
-                            <widget name="Type" factory="pawsTextBox"></widget>
+                            <pawsTextBox name="Type"/>
                         </column>                
                     </columns>
                 </widget>
 
-                <widget name="cmdRefresh" factory="pawsButton" id="1260" style="button">
+                <widget name="cmdRefresh" factory="pawsButton" id="1260" >
                     <frame x="20" y="350" width="105" height="20" />
-		    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
                     <label text="Refresh List" />
                 </widget>
 
-                <widget name="cmdReload" factory="pawsButton" id="1266" style="button">
+                <widget name="cmdReload" factory="pawsButton" id="1266" >
                     <frame x="20" y="375" width="105" height="20" />
-		    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
                     <label text="Reload Cache" />
                 </widget>
                 
-                <widget name="cmdAdd" factory="pawsButton" id="1261" style="button">
+                <widget name="cmdAdd" factory="pawsButton" id="1261" >
                     <frame x="140" y="350" width="105" height="20" />
-		    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
                     <label text="Add New" />
                 </widget>
                 
-                <widget name="cmdAddLink" factory="pawsButton" id="1262" style="button">
+                <widget name="cmdAddLink" factory="pawsButton" id="1262" >
                     <frame x="140" y="375" width="105" height="20"  />
-		    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
                     <label text="Add Linked" />
                 </widget>
 
-                <widget name="cmdEdit" factory="pawsButton" id="1263" style="button">
+                <widget name="cmdEdit" factory="pawsButton" id="1263" >
                     <frame x="260" y="350" width="105" height="20" />
-		    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
                     <label text="Edit" />
                 </widget>
 
-                <widget name="cmdDelete" factory="pawsButton" id="1264" style="button">
+                <widget name="cmdDelete" factory="pawsButton" id="1264" >
                     <frame x="260" y="375" width="105" height="20" />
-		    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
                     <label text="Delete" />
                 </widget>
 
@@ -292,16 +252,14 @@
                 </attachpoints>
 
 
-                <widget name="listattributes" factory="pawsButton" toggle="no" id="1250" style="button">
+                <widget name="listattributes" factory="pawsButton" toggle="no" id="1250" >
                     <frame x="30" y="20" width="160" height="20" border="no" />
-		    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
                     <label text="List Attributes" />
                 </widget>
 
 
                 <widget name="invincible" factory="pawsTextBox" id="1251" visible="no" tooltip="set invincible">
                     <frame x="30" y="44" width="160" height="20" border="no" />
-		    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
                     <text string="Invincible" />
                 </widget>
                 <widget name="toggleInvincible" factory="pawsCheckBox" id="1251" visible="no">
@@ -312,7 +270,6 @@
 
 		<widget name="invisible" factory="pawsTextBox" visible="no" tooltip="set invisible">
                     <frame x="30" y="68" width="160" height="20" border="no" />
-		    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
                     <text string="Invisible" />
                 </widget>
                 <widget name="toggleInvisible" factory="pawsCheckBox" id="1252" visible="no">
@@ -323,7 +280,6 @@
 
 		<widget name="viewall" factory="pawsTextBox" visible="no" tooltip="set viewall">
                     <frame x="30" y="92" width="160" height="20" border="no"/>
-		    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
                     <text string="View all" />
                 </widget>
                 <widget name="toggleViewAll" factory="pawsCheckBox" id="1253" visible="no">
@@ -334,7 +290,6 @@
 
 		<widget name="nevertired" factory="pawsTextBox" visible="no" tooltip="set nevertired">
                     <frame x="30" y="116" width="160" height="20" border="no"/>
-		    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
                     <text string="Never tired" />
                 </widget>
                 <widget name="toggleNeverTired" factory="pawsCheckBox" id="1254" visible="no">
@@ -345,7 +300,6 @@
 
 		<widget name="nofalldamage" factory="pawsTextBox" visible="no" tooltip="set nofalldamage">
                     <frame x="30" y="140" width="160" height="20" border="no" />
-		    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
                     <text string="No Fall Damage" />
                 </widget>
                 <widget name="toggleNoFallDamage" factory="pawsCheckBox" id="1255" visible="no">
@@ -356,7 +310,6 @@
 
 		<widget name="infiniteinventory" factory="pawsTextBox" visible="no" tooltip="set infiniteinventory">
                     <frame x="30" y="164" width="160" height="20" border="no" />
-		    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
                     <text string="Infinite Inventory" />
                 </widget>
                 <widget name="toggleInfiniteInventory" factory="pawsCheckBox" id="1256" visible="no">
@@ -367,7 +320,6 @@
 
 		<widget name="questtester" factory="pawsTextBox" visible="no" tooltip="set questtester">
                     <frame x="30" y="188" width="160" height="20" border="no" />
-		    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
                     <text string="Quest Testing" />
                 </widget>
                 <widget name="toggleQuestTester" factory="pawsCheckBox" id="1257" visible="no">
@@ -378,7 +330,6 @@
 
 		<widget name="infinitemana" factory="pawsTextBox" visible="no" tooltip="set infinitemana">
                     <frame x="30" y="212" width="160" height="20" border="no" />
-		    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
                     <text string="Infinite Mana" />
                 </widget>
                 <widget name="toggleInfiniteMana" factory="pawsCheckBox" id="1258" visible="no">
@@ -389,7 +340,6 @@
 
 		<widget name="instantcast" factory="pawsTextBox" visible="no" tooltip="set instantcast">
                     <frame x="30" y="236" width="160" height="20" border="no" />
-		    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
                     <text string="Instant Cast" />
                 </widget>
                 <widget name="toggleInstantCast" factory="pawsCheckBox" id="1259" visible="no">
@@ -399,7 +349,6 @@
 
 		<widget name="givekillexp" factory="pawsTextBox" visible="no" tooltip="set givekillexp">
                     <frame x="30" y="260" width="160" height="20" border="no" />
-		    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
                     <text string="Give Kill Experience" />
                 </widget>
                 <widget name="toggleGiveKillExp" factory="pawsCheckBox" id="1267" visible="no">
