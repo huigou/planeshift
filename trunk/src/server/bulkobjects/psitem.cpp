@@ -2731,7 +2731,7 @@ void psItem::GetComboInfoString(psCharacter* character, uint32 designID, csStrin
         int secSkill = skillArray->Get(count)->secSkillId;
         if(secSkill != 0)
         {
-            if (skillArray->Get(count)->minSecSkill >= (int)character->Skills().GetSkillRank((PSSKILL)priSkill))
+            if (skillArray->Get(count)->minSecSkill >= (int)character->Skills().GetSkillRank((PSSKILL)secSkill))
             {
                 return;
             }
