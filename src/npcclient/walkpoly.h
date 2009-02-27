@@ -190,19 +190,19 @@ protected:
 class psWalkPolyCont
 {
 public:
-    csVector3 begin, end;   /** what part of the edge */
-    psWalkPoly * poly;      /** the polygon that touches us */
+    csVector3 begin, end;   ///< what part of the edge
+    psWalkPoly * poly;      ///< the polygon that touches us
 };
 
-/** Vertex of psWalkPoly, also containing info about edge to the next vertex
+/** Vertex of psWalkPoly, also containing info about edge to the next vertex.
     Contains list of contacts with neighbour psWalkPolys */
 class psWalkPolyVert
 {
 public:
     csVector3 pos;
-    ps2DLine line;      // normal equation of edge from this vertex to the following one
+    ps2DLine line;      ///< normal equation of edge from this vertex to the following one
     csArray<psWalkPolyCont> conts;
-    csString info;      // debug only
+    csString info;      ///< debug only
     
     bool touching, stuck;
     bool followingEdge;

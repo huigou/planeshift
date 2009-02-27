@@ -45,20 +45,20 @@ class psTribe
 public:
     struct Resource
     {
-        int      id;           /// Database id
+        int      id;           ///< Database id
         csString name;
         int      amount;
     };
 
     struct Memory
     {
-        int       id;          /// Database id
+        int       id;          ///< Database id
         csString  name;
         csVector3 pos;
         iSector*  sector;
-        csString  sector_name; /// Keep the sector name until sector is loaded
+        csString  sector_name; ///< Keep the sector name until sector is loaded
         float     radius;
-        NPC*      npc;         /// Privat memory if NPC is set
+        NPC*      npc;         ///< Privat memory if NPC is set
 
         iSector* GetSector();
     };

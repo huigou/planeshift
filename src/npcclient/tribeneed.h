@@ -24,17 +24,17 @@
 //=============================================================================
 #include "tribe.h"
 
+
 /**
  * Represent the base class for all tribe need types.
  */
 class psTribeNeed 
 {
 public:
-    psTribeNeedSet     *parentSet;    // Point to the need set that this need is part of
-    psTribe::TribeNeed  needType;     // Set by each need type to one of the tribe needs
-    float               current_need; // Represent current need. Will be used to sort
-                                      // each need.
-    csString            name;         // Name of need used for debug prints.
+    psTribeNeedSet     *parentSet;    ///< Point to the need set that this need is part of
+    psTribe::TribeNeed  needType;     ///< Set by each need type to one of the tribe needs
+    float               current_need; ///< Represent current need. Will be used to sort each need.
+    csString            name;         ///< Name of need used for debug prints.
 
     /**
      * Construct a basic need with the given needType and needName for debuging.
@@ -44,9 +44,7 @@ public:
     {
     }
 
-    virtual ~psTribeNeed()
-    {
-    }
+    virtual ~psTribeNeed() {};
 
     /**
      * @return The tribe this need is a part of
@@ -288,7 +286,7 @@ public:
     virtual void ResetNeed()
     {
         current_need = 0.5;  // Constant need to do nothing, 
-                             // just to make sure its abou everyone 
+                             // just to make sure its about everyone 
                              // without any need at all.
     }
 };

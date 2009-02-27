@@ -41,8 +41,8 @@ struct iCollection;
 struct iEngine;
 struct iDocumentNode;
 
-/*******************************************************************************
-* Keeps pathfinding maps for all regions.
+/***************************************************************************//**
+* Keeps pathfinding maps for one region.
 *******************************************************************************/
 class psPFMap
 {
@@ -53,6 +53,9 @@ public:
     psAMap * aMap;
 };
 
+/***************************************************************************//**
+* Keeps pathfinding maps for all regions.
+*******************************************************************************/
 class psPFMaps
 {
 public:
@@ -66,34 +69,33 @@ protected:
     
     csList<psPFMap*> regions;
     
-    // sector name ---> psPFMap
+    /// sector name ---> psPFMap
     csHash<psPFMap*, csString> regionMap;
     
     iObjectRegistry * objReg;
     csRef<iEngine> engine;
 };
 
-/*******************************************************************************
+/***************************************************************************//**
 *  Edge from one A* node to another A* node.
 *  Each connection in A* graph is bidirectional, so each edge
 *  in this graph is kept as two psAEdges (from two different directions)
 *******************************************************************************/
-
 class psAEdge
 {
 public:
     psAEdge(psANode * neighbour, float cost);
     psANode * neighbour;
-    float cost;    /** How hard is it for a NPC to walk along this edge - influenced
+    float cost;    /**< How hard is it for a NPC to walk along this edge - influenced
                        by length and terrain properties */
 };
 
-/** Empty subclass that unites psACluster and psAHierarchyNode */
-/*class psAHierarchyNode
+/* Empty subclass that unites psACluster and psAHierarchyNode
+class psAHierarchyNode
 {
 };*/
 
-/*****************************************************************
+/*************************************************************//**
 * Cluster is group of A* nodes or group of smaller clusters.
 * Keeps list of all exits from cluster.
 *****************************************************************/
@@ -114,7 +116,7 @@ protected:
     csList <psANode*> exits;
 };
 
-/***********************************************************************************
+/*******************************************************************************//**
 * All A* nodes are split into three groups during run of the A* algorithm:
 *    unknown - we haven't discovered these nodes yet in this search
 *    open    - we discovered these nodes already, but maybe not all their neighbours
@@ -123,7 +125,7 @@ protected:
 enum psAState {AState_open, AState_closed, AState_unknown};
 
 
-/****************************************************************************
+/************************************************************************//**
 * Describes one A* node and keeps temporary state for the current run 
 * of A* algorithm. This temporary state is valid for one run of A* only.
 * We don't clean it before each A* run, rather we keep number of the A*
@@ -178,8 +180,8 @@ public:
     psWalkPoly * poly1, * poly2;
     static int nextID;
     
-    /** The following variables are temporary A* state valid for one A* run only */
-    int ARunNum;          /** number of the A* run */
+    /* The following variables are temporary A* state valid for one A* run only */
+    int ARunNum;          /**< number of the A* run */
     psAState state;
     psANode * prevInOpen, * nextInOpen;  /**  */
     psANode * bestPrev;
@@ -207,7 +209,7 @@ public:
     void Dump();
     void ResetNodes();
     
-    //calculates cost from first to last node, ignores 'dest'
+    ///calculates cost from first to last node, ignores 'dest'
     float CalcCost();
     
 protected:
