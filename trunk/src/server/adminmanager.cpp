@@ -3784,12 +3784,8 @@ bool AdminManager::MoveObject(Client *client, gemObject *target, csVector3& pos,
 {
     // This is a powerful feature; not everyone is allowed to use all of it
     csString response;
-    bool allowedToMoveOthers = CacheManager::GetSingleton().GetCommandManager()->Validate(client->GetSecurityLevel(), "move others", response);
-    if ( client->GetActor() != (gemActor*)target && !allowedToMoveOthers )
-    {
-        psserver->SendSystemError(client->GetClientNum(),response);
+    if (client->GetActor() != (gemActor*)target && psserver->CheckAccess(client, "move others"))
         return false;
-    }
 
     if ( dynamic_cast<gemItem*>(target) ) // Item?
     {
@@ -5418,8 +5414,7 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     }
 
     bool nameUnique = CharCreationManager::IsUnique(data.newName);
-    bool allowedToClonename = CacheManager::GetSingleton().GetCommandManager()->Validate(
-                    client->GetSecurityLevel(), "changenameall");
+    bool allowedToClonename = psserver->CheckAccess(client, "changenameall", false);
     if (!allowedToClonename)
         data.uniqueFirstName=true;
 
@@ -7546,8 +7541,8 @@ void AdminManager::HandleCompleteQuest(MsgEntry* me,psAdminCmdMessage& msg, Admi
     // "/quest"              gives access to list and change your own quests.
     // "quest list others"   gives access to list other players' quests.
     // "quest change others" gives access to complete/discard other players' quests.
-    const bool listOthers = CacheManager::GetSingleton().GetCommandManager()->Validate(client->GetSecurityLevel(), "quest list others");
-    const bool changeOthers = CacheManager::GetSingleton().GetCommandManager()->Validate(client->GetSecurityLevel(), "quest change others");
+    const bool listOthers = psserver->CheckAccess(client, "quest list others", false);
+    const bool changeOthers = psserver->CheckAccess(client, "quest change others", false);
 
     if (data.subCmd == "complete")
     {

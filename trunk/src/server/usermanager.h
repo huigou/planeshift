@@ -204,13 +204,12 @@ protected:
     void ReportPosition(psUserCmdMessage& msg,Client *client);
 
 
-    /** @brief Moves a player back to the default start point for their race.
+    /* @brief Moves a player back to the default start point for their race.
       *
       * @param msg The incomming user command message.
       * @param client The client that request the command..
-      * @param clientnum The client id number of the requesting client.
-      */
-    void MoveToSpawnPos(psUserCmdMessage& msg,Client *client,int clientnum);
+      *
+    void MoveToSpawnPos(psUserCmdMessage& msg,Client *client,int clientnum); */
 
     /** @brief Moves a player back to his last valid position.
       *
@@ -300,21 +299,21 @@ protected:
 
     /** @brief Give a tip from the database to the client
      *
-     * @param the user command message
+     * @param msg The incomming user command message
      * @param the client who sit
      */
     void GiveTip(psUserCmdMessage& msg, Client *client);
 
     /** @brief Sends the MOTD  to the client
       *
-      * @param the user command message
+      * @param msg The incomming user command message
       * @param the client who sit
       */
     void GiveMOTD(psUserCmdMessage& msg, Client *client);
 
     /** @brief Handles a player command to show the popup dialog menu of the currently targeted NPC, if any.
       *
-      * @param the user command message
+      * @param msg The incomming user command message
       * @param client The client that issued the command.
       */
     void ShowNpcMenu(psUserCmdMessage& msg, Client *client);
@@ -322,14 +321,14 @@ protected:
     /**
      * @brief Handles a player command to sit down
      * 
-     * @param the user command message
+     * @param msg The incomming user command message
      * @param the client who sit
      */
     void HandleSit(psUserCmdMessage& msg, Client *client);
 
     /** @brief Handles the /admin command
       * 
-      * @param the user command message
+      * @param msg The incomming user command message
       * @param the client who sit
       */
     void HandleAdminCommand(psUserCmdMessage& msg, Client *client);
@@ -337,14 +336,14 @@ protected:
     /**
      * @brief Handles a player command to stand up
      * 
-     * @param the user command message
+     * @param msg The incomming user command message
      * @param the client who stand
      */
     void HandleStand(psUserCmdMessage& msg, Client *client);
     
     /** @brief Handles a player command to die
      * 
-     *  @param the user command message
+     *  @param msg The incomming user command message
      *  @param the client who stand
      */
     void HandleDie(psUserCmdMessage& msg, Client *client);
@@ -358,6 +357,7 @@ protected:
 
     /** @brief Handles a player command to start banking with the targeted entity.
      * 
+     * @param msg The incomming user command message
      * @param client The client that issued the command.
      */
     void HandleBanking(psUserCmdMessage& msg, Client *client);
@@ -401,6 +401,7 @@ protected:
     void HandleUse(Client *client, bool on);
 
     /** @brief Handles an /Assist command comming from the client.
+     * 
      *  @param msg The incomming command message
      *  @param client A pointer to the client struct.
      */
