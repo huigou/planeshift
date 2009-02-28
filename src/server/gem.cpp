@@ -1167,7 +1167,7 @@ void gemActiveObject::SendBehaviorMessage(const csString & msg_id, gemObject *ac
         // Check if the item is in range
         if (!(RangeTo(actor) < RANGE_TO_SELECT))
         {
-            if (!CacheManager::GetSingleton().GetCommandManager()->Validate(actor->GetClient()->GetSecurityLevel(), "pickup override"))
+            if (!psserver->CheckAccess(actor->GetClient(), "pickup override", false))
             {
                 psserver->SendSystemInfo(clientnum,"You're too far away to pick up %s.", GetName());
                 return;
@@ -1177,7 +1177,7 @@ void gemActiveObject::SendBehaviorMessage(const csString & msg_id, gemObject *ac
         psItem* item = GetItem();
 
         // Check if item is guarded
-        if (!CacheManager::GetSingleton().GetCommandManager()->Validate(actor->GetClient()->GetSecurityLevel(), "pickup override"))
+        if (!psserver->CheckAccess(actor->GetClient(), "pickup override", false))
         {
             PID guardCharacterID = item->GetGuardingCharacterID();
             gemActor* guardActor = GEMSupervisor::GetSingleton().FindPlayerEntity(guardCharacterID);
@@ -2248,6 +2248,7 @@ void gemActor::DoDamage(gemActor * attacker, float damage, float damageRate, csT
         {
             psserver->combatmanager->StopAttack(attacker);
         }
+        MulticastDRUpdate();
     }
 
     // Update group stats and it's own

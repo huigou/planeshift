@@ -242,14 +242,14 @@ public:
       */
     bool LoadLocalVars(Client* client, gemObject *target=NULL);
 
-/*    /** Send clear client view message to remove items from autocontainers.
+    /* Send clear client view message to remove items from autocontainers.
       *
       * @param slotID The slot number to clear. 
       * @param containerID The container ID that has item that needs to be cleared. 
       *
       * @return False if there is a problem sending message.
-      */
-    // bool SendClearUpdate( unsigned int slotID, unsigned int containerID );
+      *
+    bool SendClearUpdate( unsigned int slotID, unsigned int containerID ); */
     
     
     /// Handle production events from super clients

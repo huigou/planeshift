@@ -852,10 +852,9 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
     }
 
 
-    psCharacter *worke = workEvent->worker->GetCharacterData();
     if (roll < total)  // successful!
     {
-        unsigned int ppGained =  worke->AddExperiencePoints(25);
+        unsigned int ppGained =  workerchar->AddExperiencePoints(25);
 
         if (workEvent->client)
         {
@@ -882,7 +881,7 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
             if (!worke->Inventory().AddOrDrop(item))
             {
                 Debug5(LOG_ANY, worke->GetPID().Unbox(), "HandleProductionEvent() could not give item of stat %u (%s) to character %s[%s])",
-                    newitem->GetUID(), newitem->GetName(), worke->GetCharName(), ShowID(worke->GetPID()));
+                    newitem->GetUID(), newitem->GetName(), workerchar->GetCharName(), ShowID(worke->GetPID()));
 
                 if (workEvent->client)
                 {
@@ -936,7 +935,7 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
     }
     else
     {
-        unsigned int ppGained =  worke->AddExperiencePoints(2);
+        unsigned int ppGained =  workerchar->AddExperiencePoints(2);
 
         if (workEvent->client)
         {
