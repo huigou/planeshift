@@ -878,10 +878,10 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
                 return;
             }
 
-            if (!worke->Inventory().AddOrDrop(item))
+            if (!workerchar->Inventory().AddOrDrop(item))
             {
-                Debug5(LOG_ANY, worke->GetPID().Unbox(), "HandleProductionEvent() could not give item of stat %u (%s) to character %s[%s])",
-                    newitem->GetUID(), newitem->GetName(), workerchar->GetCharName(), ShowID(worke->GetPID()));
+                Debug5(LOG_ANY, workerchar->GetPID().Unbox(), "HandleProductionEvent() could not give item of stat %u (%s) to character %s[%s])",
+                    newitem->GetUID(), newitem->GetName(), workerchar->GetCharName(), ShowID(workerchar->GetPID()));
 
                 if (workEvent->client)
                 {
@@ -891,7 +891,7 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
                 else
                 {
                     Debug5(LOG_SUPERCLIENT,0,"%s(%s) found %s, but dropped it: %s",workEvent->worker->GetName(),
-                           ShowID(workEvent->worker->GetEID()), newitem->GetName(), worke->Inventory().lastError.GetDataSafe());
+                           ShowID(workEvent->worker->GetEID()), newitem->GetName(), workerchar->Inventory().lastError.GetDataSafe());
                 }
 
             }
