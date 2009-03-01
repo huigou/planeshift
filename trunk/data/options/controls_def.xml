@@ -17,7 +17,7 @@
     <bind action="Run" key="LShift" />
     <bind action="ToggleRun" key="LCtrl" />
     <bind action="AutoMove" key="r" />
-    <bind action="MouseMove" key="LeftClick" />
+    <bind action="MouseMove" key="" />
     <bind action="Sneak" key="RShift" />
     <bind action="Jump" key="Space" />
     <bind action="Sit" key="z" />
