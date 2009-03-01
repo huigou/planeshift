@@ -602,6 +602,60 @@ class psQuestPrereqOpFaction: public psQuestPrereqOp
 };
 
 /**
+ * Inventory prerequisite operator.
+ *
+ * The given item must be equiped or just in inventory (includes the first)
+ * for this prerequisite to be true. 
+ */
+class psQuestPrereqOpItem : public psQuestPrereqOp
+{
+ protected:
+    csString itemName;
+    bool includeInventory;
+
+ public:
+
+    /**
+     * Construct an inventory operator
+     *
+     * @param includeInventory if true it will search either equipment and inventory
+     *                         else only inventory.
+     * @param name The name of the base item we are searching for.
+     */
+    psQuestPrereqOpItem(const char *itemName, bool includeInventory):itemName(itemName),includeInventory(includeInventory){};
+
+    virtual ~psQuestPrereqOpItem() {}
+
+    /**
+     * Check if the specified item is in the player inventory/equipment
+     *
+     * @param  character The character that are checking for a prerequisite
+     * @return True if the item was found.
+     */
+    virtual bool Check(psCharacter * character);
+
+    /**
+     * Convert the prerequisite operator to a xml string
+     *
+     * Convert the operator into the xml string:
+     * <item inventory="true/false" name="baseitemname"/>
+     *
+     * @return XML string for the prerequisite operator.
+     */
+    virtual csString GetScriptOp();
+
+    /**
+     * Copy the prerequisite operator
+     *
+     * Override this function to return a copy of the prerequisite
+     * operator.
+     *
+     * @return Copy of the prerequisite operator.
+     */
+    virtual csPtr<psQuestPrereqOp> Copy();
+};
+
+/**
  * Active magic prerequisite operator
  *
  * The actor must have a certain active magic (buff or debuff).
@@ -960,7 +1014,6 @@ class psQuestPrereqOpTimeOnline : public psQuestPrereqOp
 {
  protected:
     unsigned int minTime, maxTime;
-    csString type;
 
  public:
 
@@ -969,9 +1022,8 @@ class psQuestPrereqOpTimeOnline : public psQuestPrereqOp
      *
      * @param minTime Minimal time online
      * @param maxTime Maximal time online
-     * @param type Type of the check
      */
-     psQuestPrereqOpTimeOnline(int minTime, int maxTime, csString type):minTime(minTime),maxTime(maxTime),type(type){};
+     psQuestPrereqOpTimeOnline(int minTime, int maxTime):minTime(minTime),maxTime(maxTime){};
 
     virtual ~psQuestPrereqOpTimeOnline() {}
 
@@ -987,7 +1039,7 @@ class psQuestPrereqOpTimeOnline : public psQuestPrereqOp
      * Convert the prerequisite operator to a xml string
      *
      * Convert the operator into the xml string:
-     * <onlinetime min="-min" max="-max" type="min/max/both"/>
+     * <onlinetime min="-min" max="-max" />
      *
      * @return XML string for the prerequisite operator.
      */
@@ -1017,7 +1069,7 @@ class psQuestPrereqOpTimeOfDay : public psQuestPrereqOp
  public:
 
     /**
-     * Construct an active magic operator
+     * Construct a time of the day operator
      *
      * @param minTime Minimal time of day
      * @param maxTime Maximal time of day

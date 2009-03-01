@@ -266,7 +266,7 @@ csPtr<psQuestPrereqOp> psQuestPrereqOpQuestCompleted::Copy()
 
 bool psQuestPrereqOpQuestAssigned::Check(psCharacter * character)
 {
-    return character->CheckQuestAssigned(quest);
+     return character->CheckQuestAssigned(quest);
 }
 
 csString psQuestPrereqOpQuestAssigned::GetScriptOp()
@@ -349,6 +349,34 @@ csPtr<psQuestPrereqOp> psQuestPrereqOpFaction::Copy()
 {
     csRef<psQuestPrereqOpFaction> copy;
     copy.AttachNew(new psQuestPrereqOpFaction(faction,value,max));
+    return csPtr<psQuestPrereqOp>(copy);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////
+
+bool psQuestPrereqOpItem::Check(psCharacter * character)
+{
+
+    if (character->GetActor())
+    {
+        return true;
+    }
+    return false;
+}
+
+csString psQuestPrereqOpItem::GetScriptOp()
+{
+    csString script;
+
+    script.Format("<item inventory=\"%s\" name=\"%s\"/>", includeInventory? "true" : "false", itemName.GetData());
+
+    return script;
+}
+
+csPtr<psQuestPrereqOp> psQuestPrereqOpItem::Copy()
+{
+    csRef<psQuestPrereqOpItem> copy;
+    copy.AttachNew(new psQuestPrereqOpItem(itemName,includeInventory));
     return csPtr<psQuestPrereqOp>(copy);
 }
 
@@ -525,20 +553,28 @@ csPtr<psQuestPrereqOp> psQuestPrereqOpMarriage::Copy()
 
 bool psQuestPrereqOpTimeOnline::Check(psCharacter * character)
 {
-    if(type == "min")
-        return (character->GetTotalOnlineTime() > minTime);
-    if(type == "max")
-        return (character->GetTotalOnlineTime() < maxTime);
-    if(type == "both")
-        return (character->GetTotalOnlineTime() > minTime && character->GetTotalOnlineTime() < maxTime);
-    return false;
+    if(maxTime)
+    {
+        // If value is max, make sure we're below it
+        return (character->GetTotalOnlineTime() <= maxTime);
+    }
+    return (character->GetTotalOnlineTime() >= minTime);
 }
 
 csString psQuestPrereqOpTimeOnline::GetScriptOp()
 {
     csString script;
 
-    script.Format("<onlinetime min=\"%d\" max=\"%d\" type=\"%s\"/>", minTime, maxTime, type.GetDataSafe());
+    script.AppendFmt("<onlinetime ");
+    if(minTime)
+    {
+        script.AppendFmt(" min=\"%d\"", minTime);
+    }
+    if(maxTime)
+    {
+        script.AppendFmt(" max=\"%d\"", maxTime);
+    }
+    script.Append(" />");
 
     return script;
 }
@@ -546,7 +582,7 @@ csString psQuestPrereqOpTimeOnline::GetScriptOp()
 csPtr<psQuestPrereqOp> psQuestPrereqOpTimeOnline::Copy()
 {
     csRef<psQuestPrereqOpTimeOnline> copy;
-    copy.AttachNew(new psQuestPrereqOpTimeOnline(minTime, maxTime, type));
+    copy.AttachNew(new psQuestPrereqOpTimeOnline(minTime, maxTime));
     return csPtr<psQuestPrereqOp>(copy);
 }
 
@@ -554,7 +590,6 @@ csPtr<psQuestPrereqOp> psQuestPrereqOpTimeOnline::Copy()
 
 bool psQuestPrereqOpAdvisorPoints::Check(psCharacter * character)
 {
-    //Requirements are always valid for quest testers
     if(character->GetActor())
     {
          if(character->GetActor()->questtester)

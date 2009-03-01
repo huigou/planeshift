@@ -444,14 +444,6 @@ bool QuestManager::HandleScriptCommand(csString& block,
             }
             op.Append("/>");
         }
-        else if (!strncasecmp(block,"Introduce",9)) 
-        {
-            csString charname = block.Slice(10).Trim();
-            if (!charname.IsEmpty())
-                op.Format("<introduce name=\"%s\"/>", charname.GetData() ); 
-            else
-                op.Format("<introduce/>"); 
-        }
         else if (!strncasecmp(block,"DoAdminCmd",10)) 
         {
             csString command = block.Slice(11).Trim();
@@ -474,6 +466,82 @@ bool QuestManager::HandleScriptCommand(csString& block,
             {
                 response_requireop.AppendFmt("<not><timeofday min=\"%s\" max=\"%s\" /></not>", timeinfo[0].GetData(), timeinfo[1].GetData() );
             }
+        }
+        else if (!strncasecmp(block,"Require guild",13))  //NOTE: the both argument is implictly defined
+        {
+            csString type = block.Slice(14,block.Length()).Trim();
+            response_requireop.AppendFmt("<guild type=\"%s\" />", type.Length() ? type.GetData() : "both" );
+        }
+        else if (!strncasecmp(block,"Require not guild",17))  //NOTE: the both argument is implictly defined
+        {
+            csString type = block.Slice(18,block.Length()).Trim();
+            response_requireop.AppendFmt("<not><guild type=\"%s\" /></not>", type.Length() ? type.GetData() : "both" );
+        }
+        else if (!strncasecmp(block,"Require active magic",20)) 
+        {
+            csString magicname = block.Slice(21,block.Length()).Trim();
+            response_requireop.AppendFmt("<activemagic name=\"%s\" />", magicname.GetData() );
+        }
+        else if (!strncasecmp(block,"Require not active magic",24)) 
+        {
+            csString magicname = block.Slice(25,block.Length()).Trim();
+            response_requireop.AppendFmt("<not><activemagic name=\"%s\" /></not>", magicname.GetData() );
+        }
+        else if (!strncasecmp(block,"Require known spell",19))
+        {
+            csString magicname = block.Slice(20,block.Length()).Trim();
+            response_requireop.AppendFmt("<knownspell name=\"%s\" />", magicname.GetData() );
+        }
+        else if (!strncasecmp(block,"Require not known spell",23)) 
+        {
+            csString magicname = block.Slice(24,block.Length()).Trim();
+            response_requireop.AppendFmt("<not><knownspell name=\"%s\" /></not>", magicname.GetData() );
+        }
+        else if (!strncasecmp(block,"Require race",12)) 
+        {
+            csString racename = block.Slice(13,block.Length()).Trim();
+            response_requireop.AppendFmt("<race name=\"%s\" />", racename.GetData() );
+        }
+        else if (!strncasecmp(block,"Require not race",16)) 
+        {
+            csString racename = block.Slice(17,block.Length()).Trim();
+            response_requireop.AppendFmt("<not><race name=\"%s\" /></not>", racename.GetData() );
+        }
+        else if (!strncasecmp(block,"Require gender",14))
+        {
+            csString gender = block.Slice(15,block.Length()).Trim();
+            
+            if(gender == "male") gender = "M";
+            else if(gender == "female") gender = "F";
+            else if(gender == "neutral") gender = "N";
+
+            response_requireop.AppendFmt("<gender type=\"%s\" />", gender.GetData() );
+        }
+        else if (!strncasecmp(block,"Require not gender",18)) 
+        {
+            csString gender = block.Slice(19,block.Length()).Trim();
+
+            if(gender == "male") gender = "M";
+            else if(gender == "female") gender = "F";
+            else if(gender == "neutral") gender = "N";
+
+            response_requireop.AppendFmt("<not><gender type=\"%s\" /></not>", gender.GetData() );
+        }
+        else if (!strncasecmp(block,"Require married",15)) 
+        {
+            response_requireop.AppendFmt("<married />");
+        }
+        else if (!strncasecmp(block,"Require not married",19)) 
+        {
+            response_requireop.AppendFmt("<not><married /></not>");
+        }
+        else if (!strncasecmp(block,"Introduce",9)) 
+        {
+            csString charname = block.Slice(10).Trim();
+            if (!charname.IsEmpty())
+                op.Format("<introduce name=\"%s\"/>", charname.GetData() ); 
+            else
+                op.Format("<introduce/>"); 
         }
         else // unknown block
         {
