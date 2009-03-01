@@ -351,6 +351,19 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, csRef<psQuestP
         prerequisite.AttachNew(new psQuestPrereqOpFaction(faction,value,max!=0));
 
     }
+    else if ( strcmp( topNode->GetValue(), "item" ) == 0 )
+    {
+        csString name = topNode->GetAttributeValue("name");
+        if (name.IsEmpty())
+        {
+            Error1("No name given for item prerequisite operation");
+            return false;
+        }
+
+        bool includeInventory = topNode->GetAttributeValueAsBool("position", false);
+
+        prerequisite.AttachNew(new psQuestPrereqOpItem(name,includeInventory));
+    }
     else if ( strcmp( topNode->GetValue(), "activemagic" ) == 0 )
     {
         csString name = topNode->GetAttributeValue("name");
@@ -441,15 +454,7 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, csRef<psQuestP
 
         int max = topNode->GetAttributeValueAsInt("max");
 
-        csString type = topNode->GetAttributeValue("type");
-
-        if (type.IsEmpty())
-        {
-            Error1("No type given for onlinetime prerequisite operation");
-            return false;
-        }
-
-        prerequisite.AttachNew(new psQuestPrereqOpTimeOnline(min,max,type));
+        prerequisite.AttachNew(new psQuestPrereqOpTimeOnline(min,max));
 
     }
     else if ( strcmp( topNode->GetValue(), "not" ) == 0 )
