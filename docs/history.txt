@@ -1,4 +1,17 @@
-﻿*** 2009-02-24 by Stefano Angeleri
+﻿*** 2009-03-01 by Stefano Angeleri
+- Changed behaviour of the onlinetime prerequisite operator
+  now you don't have to pass the type but works like factions so just
+  pass max or min and if you need both and two onlinetime operators
+- fixed some comments and cleaned up some code
+- added Require guild [private/public/], Require not guild [private/public/],
+  Require active magic [magicname], Require not active magic [magicname],
+  Require known spell [spellname], Require not known spell [spellname],
+  Require race [Racename as per db], Require not race [racename as per db],
+  Require gender [male/female/neutral], Require not gender [male/female/neutral],
+  Require married, Require not married to the quest script syntax allowing
+  so more dynamic quests without doing many duplicates.
+
+*** 2009-02-24 by Stefano Angeleri
 - Updated gm gui to the new paws specifications
 - Fixed PS#2785 - [pawscrollbar] Keeps scrolling undefinitely even when
   not clicking. pawsscrollbar onbuttonrelease() was forgot with the
