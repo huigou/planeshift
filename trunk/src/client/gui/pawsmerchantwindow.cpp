@@ -193,6 +193,10 @@ void pawsMerchantWindow::HandleMoney( const char* moneyData )
     UpdateMoney("hexas",  "MoneyHexas",    money.GetHexas());
     UpdateMoney("trias",  "MoneyTrias",    money.GetTrias());
     
+    PawsManager::GetSingleton().Publish( "sigInvMoney", money.ToString() );         
+    PawsManager::GetSingleton().Publish( "sigInvMoneyTotal", money.GetTotal() );
+
+    
     trias->SetText(csString().Format("%d Trias",money.GetTotal()));    
 }
 
