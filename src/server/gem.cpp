@@ -1184,7 +1184,8 @@ void gemActiveObject::SendBehaviorMessage(const csString & msg_id, gemObject *ac
             if (guardCharacterID.IsValid() &&
                 guardCharacterID != actor->GetCharacterData()->GetPID() &&
                 guardActor &&
-                guardActor->RangeTo(item->GetGemObject()) < RANGE_TO_SELECT)
+                guardActor->RangeTo(item->GetGemObject()) < RANGE_TO_SELECT &&
+                (guardActor->GetInstance() == this->GetInstance()))
             {
                 psserver->SendSystemInfo(clientnum,"You notice that the item is being guarded by %s",
                     guardActor->GetCharacterData()->GetCharFullName());
