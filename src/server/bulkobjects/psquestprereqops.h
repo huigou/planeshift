@@ -1170,8 +1170,8 @@ class psQuestPrereqOpSkill: public psQuestPrereqOp
     /**
      * The skill level range
      */
-    unsigned int min;
-    unsigned int max;
+    int min;
+    int max;
  public:
 
     /**

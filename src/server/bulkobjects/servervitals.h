@@ -43,6 +43,8 @@ class psCharacter;
 class VitalBuffable : public Buffable<float>
 {
 public:
+    virtual ~VitalBuffable() { }
+
     void Initialize(unsigned int *sDirty, int dirtyF)
     {
         statsDirty = sDirty;

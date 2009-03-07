@@ -881,12 +881,12 @@ void psCharacter::SetRaceInfo(psRaceInfo *rinfo)
     if ( !rinfo )
         return;
 
-    attributes[PSITEMSTATS_STAT_STRENGTH] .   SetBase(rinfo->GetBaseAttribute(PSITEMSTATS_STAT_STRENGTH));
-    attributes[PSITEMSTATS_STAT_AGILITY]   .  SetBase(rinfo->GetBaseAttribute(PSITEMSTATS_STAT_AGILITY));
-    attributes[PSITEMSTATS_STAT_ENDURANCE]  . SetBase(rinfo->GetBaseAttribute(PSITEMSTATS_STAT_ENDURANCE));
-    attributes[PSITEMSTATS_STAT_INTELLIGENCE].SetBase(rinfo->GetBaseAttribute(PSITEMSTATS_STAT_INTELLIGENCE));
-    attributes[PSITEMSTATS_STAT_WILL]       . SetBase(rinfo->GetBaseAttribute(PSITEMSTATS_STAT_WILL));
-    attributes[PSITEMSTATS_STAT_CHARISMA]  .  SetBase(rinfo->GetBaseAttribute(PSITEMSTATS_STAT_CHARISMA));
+    attributes[PSITEMSTATS_STAT_STRENGTH] .   SetBase(int(rinfo->GetBaseAttribute(PSITEMSTATS_STAT_STRENGTH)));
+    attributes[PSITEMSTATS_STAT_AGILITY]   .  SetBase(int(rinfo->GetBaseAttribute(PSITEMSTATS_STAT_AGILITY)));
+    attributes[PSITEMSTATS_STAT_ENDURANCE]  . SetBase(int(rinfo->GetBaseAttribute(PSITEMSTATS_STAT_ENDURANCE)));
+    attributes[PSITEMSTATS_STAT_INTELLIGENCE].SetBase(int(rinfo->GetBaseAttribute(PSITEMSTATS_STAT_INTELLIGENCE)));
+    attributes[PSITEMSTATS_STAT_WILL]       . SetBase(int(rinfo->GetBaseAttribute(PSITEMSTATS_STAT_WILL)));
+    attributes[PSITEMSTATS_STAT_CHARISMA]  .  SetBase(int(rinfo->GetBaseAttribute(PSITEMSTATS_STAT_CHARISMA)));
 }
 
 void psCharacter::SetFamiliarID(PID v)

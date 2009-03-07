@@ -111,6 +111,8 @@ class OverridableMesh : public Overridable<csString>
 {
 public:
     OverridableMesh(const csString mesh) : Overridable<csString>(mesh), actor(NULL) { }
+    virtual ~OverridableMesh() { }
+
     void SetActor(gemActor *act) { actor = act; }
 protected:
     virtual void OnChange();
