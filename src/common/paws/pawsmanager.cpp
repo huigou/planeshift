@@ -1409,25 +1409,3 @@ csArray<iPAWSSubscriber*> PawsManager::ListSubscribers(const char *dataname)
     return list;
 }
 
-void PawsManager::AddExtraScriptVar(iScriptableVar * var, const char * name)
-{
-    ExtraScriptVar v;
-    v.var = var;
-    strcpy(v.name, name);
-    extraScriptVars.Push(v);
-}
-
-size_t PawsManager::GetExtraScriptVarCount() const
-{
-    return extraScriptVars.GetSize();
-}
-
-const char * PawsManager::GetExtraScriptVarName(size_t index) const
-{
-    return extraScriptVars[index].name;
-}
-
-iScriptableVar * PawsManager::GetExtraScriptVar(size_t index) const
-{
-    return extraScriptVars[index].var;
-}

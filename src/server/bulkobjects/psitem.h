@@ -139,6 +139,7 @@ typedef unsigned int PSITEM_FLAGS;
 /// The maximum number of modifiers that can be applied to a single instance of an item on top of the base item
 #define PSITEM_MAX_MODIFIERS    10
 
+class ActiveSpell;
 class psItem;
 class psCharacter;
 class gemItem;
@@ -406,6 +407,9 @@ private:
      * Holds a custom item description. Can be empty.
      */
     csString item_description;
+
+    // The ActiveSpell* of the equip script, for cancelling on unequip.
+    ActiveSpell *equipActiveSpell;
 
 public:
     /** Loads data from a database row into the current psItem.
@@ -792,6 +796,9 @@ public:
     bool IsActive() const;
     void SetActive(bool state);
 
+    void RunEquipScript(gemActor *actor);
+    void CancelEquipScript();
+
     bool CheckStackableWith(const psItem *otheritem, bool precise) const;
 
     const char *GetSound();
@@ -799,6 +806,7 @@ public:
     /// This is used by the math scripting engine to get various values.
     double GetProperty(const char *ptr);
     double CalcFunction(const char * functionName, const double * params);
+    const char *ToString() { return item_name.GetDataSafe(); }
 
     bool GetIsLocked() { return ((flags & PSITEM_FLAG_LOCKED)? true : false); }
     void SetIsLocked(bool v);

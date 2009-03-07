@@ -21,7 +21,7 @@ CREATE TABLE action_locations
 INSERT INTO `action_locations` VALUES (1,0,'The Blacksmith Shop','NPCroom','_s_blacksmith',0,-56,0,-148,10,'SELECT','EXAMINE','<Examine><Entrance Type=\'ActionID\' LockID=\'95\' X=\'-58\' Y=\'0\' Z=\'-115\' Rot=\'280\' Sector=\'NPCroom1\' /><Return X=\'-56\' Y=\'0\' Z=\'-148\' Rot=\'130\' Sector=\'NPCroom\' /><Description>A lovely residence</Description></Examine>','Y');
 
 #Entrance with quest check
-INSERT INTO `action_locations` VALUES (2,0,'A door to a restricted place','NPCroom','door1', 0,-42,0,-158,10,'SELECT','EXAMINE','<Examine><Entrance Type=\'Prime\' Script=\'rescue_check\'  X=\'-58\' Y=\'0\' Z=\'-115\' Rot=\'280\' Sector=\'NPCroom1\' /><Description>A door to a restricted place</Description></Examine>','Y');
+INSERT INTO `action_locations` VALUES (2,0,'A door to a restricted place','NPCroom','door1', 0,-42,0,-158,10,'SELECT','EXAMINE',"<Examine><Entrance Type='Prime' Script='Actor:HasCompletedQuest(\"Rescue the Princess\")' X='-58' Y='0' Z='-115' Rot='280' Sector='NPCroom1'/><Description>A door to a restricted place</Description></Examine>",'Y');
 
 INSERT INTO `action_locations` VALUES (3,0,'IngotsOfFire','NPCroom','smith_ingots',0,0,0,0,10,'PROXIMITY','SCRIPT','flame_damage','Y');
 INSERT INTO `action_locations` VALUES (4,0,'HealingTree','NPCroom','_g_treetop02big_npc02',0,0,0,0,4,'PROXIMITY','SCRIPT','healing_tree','Y');

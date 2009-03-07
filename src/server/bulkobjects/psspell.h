@@ -1,7 +1,7 @@
 /*
  * psspell.h
  *
- * Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -29,6 +29,7 @@
 // Project Includes
 //=============================================================================
 #include "../iserver/idal.h"
+#include "util/mathscript.h"
 
 //=============================================================================
 // Local Includes
@@ -42,10 +43,9 @@ class gemObject;
 class gemActor;
 class psGlyph;
 class psSpellCastGameEvent;
-class MathScript;
-class MathScriptVar;
+class ProgressionScript;
 
-struct psWay 
+struct psWay
 {
     unsigned int id;
     PSSKILL      skill;    // for example, Crystal Way
@@ -58,7 +58,7 @@ typedef csArray <psItemStats*> glyphList_t;
 
 
 /**
- * Represents a spell.  This is mostly data that is cached in from the 
+ * Represents a spell.  This is mostly data that is cached in from the
  * database to represent what a spell is. It contains details such as the
  * required glyphs as well as the effect of the spell.
  */
@@ -68,76 +68,40 @@ class psSpell : public iScriptableVar
     psSpell();
     ~psSpell();
 
-    friend class SpellManager;
-
     bool Load(iResultRow& row);
-
-    int GetID() const { return id; }    
+    int GetID() const { return id; }
     const csString& GetName() const { return name; }
     const csString& GetImage() const { return image; }
     const csString& GetDescription() const { return description; }
-    float ManaCost(float KFactor) const;
-    float ChanceOfSuccess(float KFactor, float waySkill, float relatedStat) const;    
+    float ManaCost(float kFactor) const;
+    float PowerLevel(float kFactor) const;
+    float ChanceOfCastSuccess(float kFactor) const;
+    float ChanceOfResearchSuccess(psCharacter *researcher);
 
-    //csTicks GetCastingDuration() const { return casting_duration; }
-
-    PSSKILL GetSkill() const;  // Return the needed skill to cast this spell.
-    PSSKILL GetRelatedStat() const;  // Return the related stat for this way.
-
-    /** Takes a list of glyphs and compares them to the correct sequence to 
+    /** Takes a list of glyphs and compares them to the correct sequence to
       * construct this spell.
       */
-    bool MatchGlyphs(const glyphList_t & glyphs);
+    bool MatchGlyphs(const csArray<psItemStats*> & glyphs);
 
-    
-    /** Creates a new instance of this spell.  
-     *  Preforms all the necessary checks on the player to make sure they meet 
-     *  the requirements to cast this spell.  
-     *  1) The character is not in PSCHARACTER_MODE_PEACE mode.
-     *  2) The player has the required glyphs.
-     *  3) The player has the required mana.
-     *  4) The player has a target. 
-     *  5) The target is castable ( ie allowed to attack ).
-     *  6) Check to see if self is targeted for non self spells. 
-     *  7) Player is in spell range of the target. 
-     *
+    /** Performs the necessary checks on the player to make sure they meet
+     *  the requirements to cast this spell.
+     *  1) The character is in PEACE or COMBAT modes.
+     *  2) The player has the required glyphs (or "cast all spells" privs)
+     *  3) The player has the required mana (or infinitemana set).
+     */
+    bool CanCast(Client *client, float kFactor, csString & reason);
+
+    /** Creates a new instance of this spell.
      *  @param mgr The main PS Spell Manager.
-     *  @param client The client that cast the spell. 
+     *  @param client The client that cast the spell.
      *  @param effectName [CHANGES] Filled in with this spell's effect.
      *  @param offset [CHANGES] Filled in with the offset( ie how off target ) this spell is.
      *  @param anchorID [CHANGES] The entity that the spell should be attached to ( in case of movement )
-     *  @param targetID [CHANGES] Filled in with the ID of the target. 
-     *  @param castingDuration [CHANGES] Filled in by the time it takes to cast spell.
-     *  @param castingText [CHANGES] Filled in with the text that should be sent to caster.
-     *
-     *  @return An array of new psSpellCastGameEvents that are ready to be pushed inot the event stream.
+     *  @param targetID [CHANGES] Filled in with the ID of the target.
      */
-    psSpellCastGameEvent *Cast(SpellManager * mgr, Client * client, csString &effectName, csVector3 &offset,
-                           EID & anchorID, EID & targetID, unsigned int & castingDuration, csString & castingText) const;
-        
-    /** Find all objects in range for spell around caster
-     *
-     *  @param client The client that cast the spell. 
-     *  @param max_range The maximum range for this spell.
-     *  @param range
-     *
-     *  @return An array of objects in range for spell
-     */
-    csArray< gemObject *> *getTargetsInRange(Client * client, float max_range, float range) const;
-    
-    bool AffectTargets(SpellManager * mgr,psSpellCastGameEvent * event, csString &effectName, csVector3 &offset, 
-                EID & anchorID, EID & targetID, csString & affectText) const;
-    bool AffectTarget( psSpellCastGameEvent * event, csString &effectName, csVector3 &offset,
-                       EID & anchorID, EID & targetID, csString & affectText) const;
-    bool PerformResult(gemActor *caster, gemObject *target, float max_range, bool saved, float powerLevel, csTicks duration = 0) const;
+    void Cast(Client *client, float kFactor) const;
+    void Affect(gemActor *caster, gemObject *target, float range, float kFactor, float power) const;
 
-    csString SpellToXML() const;
-    csString DescriptionToXML() const;
-
-    // Needed for the BinaryTree
-    bool operator==(const psSpell& other) const;
-    bool operator<(const psSpell& other) const;
-    
     int GetRealm() { return realm; }
     psWay* GetWay() { return way; }
     csArray<psItemStats*>& GetGlyphList() { return glyphList; }
@@ -146,64 +110,43 @@ class psSpell : public iScriptableVar
     /// This is used by the math scripting engine to get various values.
     double GetProperty(const char *ptr);
     double CalcFunction(const char * functionName, const double * params);
+    const char* ToString() { return name.GetDataSafe(); }
 
 protected:
-    bool isTargetAffected(Client *client, gemObject *target, float max_range, csString & castingText) const;
-    int checkRange( gemActor *caster, gemObject *target, float max_range) const;
-
-    // Returns mathscript variable with given name - when there is no such variable, returns NULL and writes error into log
-    MathScriptVar * GetScriptVar(const char * varName);
+    bool AffectTarget(gemActor *caster, gemObject *target, float power) const;
 
     int id;
     csString name;
-    psWay* way;
+    psWay *way;
     int realm;
-    csArray<psItemStats*> glyphList;
-    bool offensive;     //is casting of this spell restricted by PvP system ?
-
-    /// The Power cap this spell has.
-    int max_power;
-    
-    /// Casting paramters
-    csString caster_effect;  // Any visual/sound responses on the caster for casting
-                               // this spell. It is defined in an XML on the client.
-                               
-    //csTicks casting_duration; 
-    
-    /// Used for spells like 4HP every 15 Seconds. 
-    //csTicks interval_time; 
-    //csTicks spellDuration;
-    
-    // bit field if valid target types for this spell
-    int spell_target;
-    csString target_effect;  // Any visual/sound responses on the target for casting
-                               // this spell. It is defined in an XML on the client. 
-    
-                               
-    MathScript *mathScript;
-    MathScript *manaScript;
-    MathScript *castSuccessScript;
-    MathScriptVar *varPowerLevel;
-    MathScriptVar *varAntiMagic;
-    MathScriptVar *varRange;
-    MathScriptVar *varDuration;
-    MathScriptVar *varCastingDuration;
-    MathScriptVar *varUseSaveThrow;
-    MathScriptVar *varAffectRange;
-    MathScriptVar *varAffectAngle;
-    MathScriptVar *varAffectTypes;
-    MathScriptVar *varProgressionDelay;
-    MathScriptVar *varWaySkill;
-    csArray<MathScriptVar*> varParams;
-                                   
     csString image;
     csString description;
-    
-    /** What this spell should actually do (Result).  This script event is 
-        fired off when the spell is cast.
-       */
-    csString progression_event; 
-    csString saved_progression_event;     
+    csString castingEffect;
+    bool offensive;
+
+    /// The Power (P) cap.
+    int maxPower;
+
+    /// Bit field if valid target types for this spell
+    int targetTypes;
+
+    /// Whether or not to exclude the target when AOE Radius > 0.
+    bool excludeTarget;
+
+    /// Math for various properties.
+    /// Casting duration: (Power, WaySkill, RelatedStat) -> Seconds
+    MathExpression *castDuration;
+    /// Maximum range to target allowed: (Power, WaySkill, RelatedStat) -> Meters
+    MathExpression *range;
+    /// AOE Radius: (Power, WaySkill, RelatedStat) -> Meters
+    MathExpression *aoeRadius;
+    /// AOE Angle: (Power, WaySkill, RelatedStat) -> Degrees
+    MathExpression *aoeAngle;
+    /// The progression script: (Power, Caster, Target) -> (side effects)
+    ProgressionScript *outcome;
+
+    /// List of glyphs required to assemble the technique.
+    csArray<psItemStats*> glyphList;
 
     /// Name of category of spell, which will sent to npc perception system
     csString npcSpellCategory;
@@ -213,14 +156,40 @@ protected:
 
     /// Relative Power of spell, used as a hint to npc perception system
     float    npcSpellRelativePower;
+};
 
-    struct SavingThrow
-    {        
-        PSITEMSTATS_STAT  statSave;
-        PSSKILL           skillSave;  
-        int value;
-    };
-    SavingThrow *saveThrow;            
+//-----------------------------------------------------------------------------
+
+/**
+ * This event actually triggers a spell, after the casting wait time.
+ */
+class psSpellCastGameEvent : public psGameEvent, public iDeleteObjectCallback
+{
+public:
+    Client        *caster; ///< Entity who casting this spell
+    gemObject     *target; ///< Entity who is target of this spell
+    const psSpell *spell;  ///< The spell that is casted
+
+    float max_range;
+    float kFactor;
+    float powerLevel;
+    float power;
+    csTicks duration;
+
+    psSpellCastGameEvent(const psSpell *spell,
+                         Client *caster,
+                         gemObject *target,
+                         csTicks castingDuration,
+                         float max_range,
+                         float kFactor,
+                         float power);
+
+    ~psSpellCastGameEvent();
+
+    void Interrupt();
+
+    virtual void Trigger();  // Abstract event processing function
+    virtual void DeleteObjectCallback(iDeleteNotificationObject * object);
 };
 
 #endif

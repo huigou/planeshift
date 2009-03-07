@@ -39,9 +39,10 @@
 //=============================================================================
 // Project Includes
 //=============================================================================
-#include "util/psxmlparser.h"
 #include "util/log.h"
+#include "util/mathscript.h"
 #include "util/psstring.h"
+#include "util/psxmlparser.h"
 #include "util/serverconsole.h"
 
 #include "../globals.h"
@@ -89,7 +90,7 @@ psActionLocation::psActionLocation() : gemAction( NULL )
     isEntrance = false;
     isLockable = false;
     isReturn = false;
-    enterScript.Clear();
+    enterScript = NULL;
     entranceType.Clear();
     instanceID = 0;
     entrancePosition.x = 0;
@@ -606,8 +607,21 @@ void psActionLocation::SetupEntrance(csRef<iDocumentNode> entranceNode)
     }
 
     // Set entrance script if any
-    SetEnterScript(entranceNode->GetAttributeValue( "Script" ));
+    if (enterScript)
+    {
+        delete enterScript;
+        enterScript = NULL;
+    }
 
+    if (entranceNode->GetAttributeValue("Script"))
+    {
+        enterScript = MathExpression::Create(entranceNode->GetAttributeValue("Script"));
+        if (!enterScript)
+        {
+            Error2("Failed to create enter script for action location %d.", id);
+        }
+    }
+    
     // Set entrance coordinates
     csVector3 entrancePos;
     entrancePos.x = entranceNode->GetAttributeValueAsFloat( "X" );

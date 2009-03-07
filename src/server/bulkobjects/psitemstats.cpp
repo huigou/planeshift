@@ -33,6 +33,7 @@
 
 #include "../psserver.h"
 #include "../cachemanager.h"
+#include "../scripting.h"
 #include "../globals.h"
 
 //=============================================================================
@@ -43,6 +44,19 @@
 #include "psitem.h"
 #include "psmerchantinfo.h"
 
+PSITEMSTATS_STAT skillToStat(PSSKILL skill)
+{
+    switch (skill)
+    {
+        case PSSKILL_AGI:  return PSITEMSTATS_STAT_AGILITY;
+        case PSSKILL_END:  return PSITEMSTATS_STAT_ENDURANCE;
+        case PSSKILL_STR:  return PSITEMSTATS_STAT_STRENGTH;
+        case PSSKILL_CHA:  return PSITEMSTATS_STAT_CHARISMA;
+        case PSSKILL_INT:  return PSITEMSTATS_STAT_INTELLIGENCE;
+        case PSSKILL_WILL: return PSITEMSTATS_STAT_WILL;
+        default:           return PSITEMSTATS_STAT_NONE;
+    }
+}
 
 //-----------------------------------------------------------------------------
                                       
@@ -417,9 +431,19 @@ bool psItemStats::ReadItemStats(iResultRow& row)
     stat_type = row["stat_type"];
     SetDescription(row["description"]);
 
-    SetProgressionEventEquip( row["prg_evt_equip"] );
-    SetProgressionEventUnEquip( row["prg_evt_unequip"] );
-    SetProgressionEventConsume( row["prg_evt_consume"] );
+    consumeScriptName = row["consume_script"];
+    equipScript = NULL;
+
+    csString equipXML(row["equip_script"]);
+    if (!equipXML.IsEmpty())
+    {
+        equipScript = ApplicativeScript::Create(equipXML);
+        if (!equipScript)
+        {
+            Error4("Could not create ApplicativeScript for ItemStats %d (%s)'s equip script: %s.", uid, name.GetData(), equipXML.GetData());
+            return false;
+        }
+    }
 
     item_quality       = row.GetFloat("item_max_quality");
     if (item_quality > 300)
@@ -695,7 +719,7 @@ bool psItemStats::Save()
     static iRecord* update;
     
     if(update == NULL)
-        update = db->NewUpdatePreparedStatement("item_stats", "id", 31, __FILE__, __LINE__); // 30 parameters plus 1 id
+        update = db->NewUpdatePreparedStatement("item_stats", "id", 28, __FILE__, __LINE__); // 27 parameters plus 1 id
     
     update->Reset();
     
@@ -750,9 +774,8 @@ bool psItemStats::Save()
     update->AddField("requirement_3_value", reqs[2].min_value);
 
     // equip/unequip events
-    update->AddField("prg_evt_equip", this->progressionEventEquip );
-    update->AddField("prg_evt_unequip", this->progressionEventUnEquip );
-    update->AddField("prg_evt_consume", this->progressionEventConsume );
+    //update->AddField("equip_script", we haven't saved the script XML);
+    //update->AddField("consume_script", consumeScriptName);
     update->AddField("creative_definition", this->creativeStats.creativeDefinitionXML );
 
     // Save this entry
@@ -1227,8 +1250,9 @@ bool psItemStats::CheckRequirements( psCharacter* charData, csString& resp )
         if ( stat != PSITEMSTATS_STAT_NONE )
         {
             // Stat buffs may be negative; don't use those here
-            bool usebuff = charData->Stats().GetBuffVal(stat) > 0;
-            val = charData->Stats().GetStat(stat, usebuff);
+            CharStat & cs = charData->Stats()[stat];
+            val = MAX(cs.Base(), cs.Current());
+
             // TODO: This should just use the buff always when a move from equipment to bulk can't fail
         }
         else
@@ -1236,7 +1260,7 @@ bool psItemStats::CheckRequirements( psCharacter* charData, csString& resp )
             PSSKILL skill = CacheManager::GetSingleton().ConvertSkillString(reqs[z].name);
             if ( skill != PSSKILL_NONE )
             {
-                val = charData->Skills().GetSkillRank(skill);
+                val = charData->Skills().GetSkillRank(skill).Current();
             }            
         }
         

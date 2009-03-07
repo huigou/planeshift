@@ -53,6 +53,7 @@
 #include "questmanager.h"
 #include "client.h"
 #include "globals.h"
+#include "scripting.h"
 
 CacheManager::CacheManager()
 {
@@ -161,6 +162,8 @@ bool CacheManager::PreloadAll()
     if (!PreloadWays())
         return false;
     if (!PreloadFactions())
+        return false;
+    if (!PreloadScripts())
         return false;
     if (!PreloadSpells())
         return false;
@@ -326,7 +329,13 @@ void CacheManager::UnloadAll()
         }
         sectorinfo_by_id.Empty();
     }
-    // ToDo: unload everything else
+
+    {
+        csHash<ProgressionScript*,csString>::GlobalIterator it(scripts.GetIterator());
+        while (it.HasNext())
+            delete it.Next();
+    }
+    // ToDo: unload everything else    
 }
 
 void CacheManager::RemoveInstance( psItem * & item )
@@ -1984,6 +1993,12 @@ Faction *CacheManager::GetFaction(int id)
     return factions_by_id.Get(id,0);
 }
 
+ProgressionScript *CacheManager::GetProgressionScript(const char *name)
+{
+    if (!name)
+        return NULL;
+    return scripts.Get(name, NULL);
+}
 
 // TODO:  This function needs to be implemented in a fast fashion
 psSpell *CacheManager::GetSpellByID(unsigned int id)
@@ -2370,6 +2385,25 @@ bool CacheManager::PreloadFactions()
     return true;
 }
 
+bool CacheManager::PreloadScripts()
+{
+    Result result(db->Select("SELECT * from progression_events"));
+
+    if (result.IsValid())
+    {
+        for (size_t i = 0; i < result.Count(); i++)
+        {
+            ProgressionScript *s = ProgressionScript::Create(result[i]["name"], result[i]["event_script"]);
+            if (!s)
+            {
+                Error2("Couldn't load script %s\n", result[i]["name"]);
+                return false;
+            }
+            scripts.Put(s->Name(), s);
+        }
+    }
+    return true;
+}
 
 bool CacheManager::PreloadSpells()
 {

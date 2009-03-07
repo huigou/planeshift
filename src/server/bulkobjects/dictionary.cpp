@@ -1342,10 +1342,12 @@ bool NpcResponse::ParseResponseScript(const char *xmlstr,bool insertBeginning)
         {
             op = new DoAdminCommandResponseOp;
         }
+        /*
         else if (strcmp(node->GetValue(), "fire_event") == 0)
         {
             op = new FireEventResponseOp;
         }
+        */
         else
         {
             Error2("undefined operation specified in response script %d.",id);
@@ -1911,7 +1913,7 @@ csString AssignQuestSelectOp::GetResponseScript()
     return resp;
 }
 
-
+/*
 bool FireEventResponseOp::Load(iDocumentNode *node)
 {
     event = node->GetAttributeValue("name");
@@ -1931,6 +1933,7 @@ bool FireEventResponseOp::Run(gemNPC *who, Client *target,NpcResponse *owner,csT
 
     return true;
 }
+*/
 
 bool CheckQuestTimeoutOp::Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay)
 {
@@ -2132,39 +2135,29 @@ csString RunScriptResponseOp::GetResponseScript()
 
 bool RunScriptResponseOp::Run(gemNPC *who, Client *target, NpcResponse *owner, csTicks& timeDelay)
 {
-    ProgressionEvent *event;
+    ProgressionScript *script;
 
+    /*
     if ((scriptname.GetDataSafe())[0] == '<')
     {
-        event = psserver->GetProgressionManager()->CreateEvent(who->GetName(),scriptname);
-        if (!event)
-        {
-            Error2("Progression script '%s' could not be created in the Progression Manager!",scriptname.GetData());
-            return true;
-        }
+        script = ProgressionScript::Create(...);
     }
     else
+    */
     {
-        event = psserver->GetProgressionManager()->FindEvent(scriptname);
-        if (!event)
+        script = psserver->GetProgressionManager()->FindScript(scriptname);
+        if (!script)
         {
-            Error2("Progression script '%s' was not found in the Progression Manager!",scriptname.GetData());
+            Error2("Progression script '%s' was not found in the Progression Manager!", scriptname.GetData());
             return true;
         }
     }
 
-    MathScriptVar *var;
-    var = event->FindOrCreateVariable("Param0");
-    if (var)
-        var->SetValue(p0);
-    var = event->FindOrCreateVariable("Param1");
-    if (var)
-        var->SetValue(p1);
-    var = event->FindOrCreateVariable("Param2");
-    if (var)
-        var->SetValue(p2);
-
-    event->Run(target->GetActor(), who, target->GetCharacterData()->Inventory().GetItemHeld());
+    MathEnvironment env;
+    env.Define("Param0", p0);
+    env.Define("Param1", p1);
+    env.Define("Param2", p2);
+    script->Run(&env);
 
     return true;
 }

@@ -224,10 +224,10 @@ void PlayerGroup::BroadcastMemberList()
         csString race = EscpXML(members[n]->GetCharacterData()->GetRaceInfo()->ReadableRaceGender().GetData());
         buff.Format("<M N=\"%s\" R=\"%s\" H=\"%.2f\" M=\"%.2f\" PS=\"%.2f\" MS=\"%.2f\"/>",
                 name.GetData(), race.GetData(),
-                charData->AdjustHitPoints(0.0) / fixZero(charData->AdjustHitPointsMax(0.0)) * 100,
-                charData->AdjustMana(0.0) / fixZero(charData->AdjustManaMax(0.0)) * 100,
-                charData->GetStamina(true) / fixZero(charData->GetStaminaMax(true)) * 100,
-                charData->GetStamina(false) / fixZero(charData->GetStaminaMax(false)) * 100);
+                charData->GetHP() / fixZero(charData->GetMaxHP().Current()) * 100,
+                charData->GetMana() / fixZero(charData->GetMaxMana().Current()) * 100,
+                charData->GetStamina(true) / fixZero(charData->GetMaxPStamina().Current()) * 100,
+                charData->GetStamina(false) / fixZero(charData->GetMaxMStamina().Current()) * 100);
         
         list.Append(buff);
     }

@@ -867,8 +867,8 @@ void SpawnManager::Respawn(InstanceID instance, csVector3& where, float rot, csS
 
     chardata->ResetMode();
     chardata->SetLocationInWorld(instance,spawnsector,where.x,where.y,where.z,rot);
-    chardata->SetHitPointsRate(HP_REGEN_RATE);
-    chardata->SetManaRate(MANA_REGEN_RATE);
+    chardata->GetHPRate().SetBase(HP_REGEN_RATE);
+    chardata->GetManaRate().SetBase(MANA_REGEN_RATE);
 
     // Now create the NPC as usual
     EntityManager::GetSingleton().CreateNPC(chardata);
@@ -1409,9 +1409,9 @@ void LootEntrySet::CreateMultipleLoot(psCharacter *chr, size_t numModifiers)
                             loot_item->Weapon().TargetedBlockValue(),
                             loot_item->Weapon().CounterBlockValue());
                 }
-                CPrintf(CON_CMDOUTPUT,
+                /*CPrintf(CON_CMDOUTPUT,
                     "Equip script: %s\n Un-equip script: %s\n",loot_item->GetProgressionEventEquip().GetData(),
-                    loot_item->GetProgressionEventUnEquip().GetData());
+                    loot_item->GetProgressionEventUnEquip().GetData());*/
             }
         }
         float pct = psserver->rng->Get();
@@ -1785,12 +1785,13 @@ void LootRandomizer::ApplyModifier( psItemStats* loot, LootModifier* mod, bool l
 
         csString name;
         name.Format("randomitemequip_%s", loot->GetUIDStr());
-        if (lootTesting)
-          loot->SetProgressionEventEquip( event );
-        else if(psserver->GetProgressionManager()->AddScript(name, event))
-          loot->SetProgressionEventEquip( name );
-        else
-          CPrintf(CON_ERROR,"Couldn't insert equip script for random item %s",loot->GetUIDStr());
+        //if (lootTesting)
+          //loot->SetProgressionEventEquip( event );
+        // TODO: rewrite loot handling to not generate a bazillion randomitem_blah entries
+        //else if(psserver->GetProgressionManager()->AddScript(name, event))
+          //loot->SetProgressionEventEquip( name );
+        //else
+          //CPrintf(CON_ERROR,"Couldn't insert equip script for random item %s",loot->GetUIDStr());
     }
 
     if ( !mod->prg_evt_unequip.IsEmpty() ) 
@@ -1801,12 +1802,13 @@ void LootRandomizer::ApplyModifier( psItemStats* loot, LootModifier* mod, bool l
 
       csString name;
       name.Format("randomitemunequip_%s", loot->GetUIDStr());
-      if (lootTesting)
-          loot->SetProgressionEventUnEquip( event );
-      else if(psserver->GetProgressionManager()->AddScript(name, event))
-        loot->SetProgressionEventUnEquip( name );
-      else
-        CPrintf(CON_ERROR,"Couldn't insert unequip script for random item %s",loot->GetUIDStr());
+      //if (lootTesting)
+          //loot->SetProgressionEventUnEquip( event );
+      // TODO: rewrite loot handling to not generate a bazillion randomitem_blah entries
+      //else if(psserver->GetProgressionManager()->AddScript(name, event))
+        //loot->SetProgressionEventUnEquip( name );
+      //else
+        //CPrintf(CON_ERROR,"Couldn't insert unequip script for random item %s",loot->GetUIDStr());
 
     }
 }
@@ -1821,19 +1823,20 @@ float LootRandomizer::CalcModifierCostCap(psCharacter *chr)
     }
 
     // Use the mob's attributes to calculate modifier cost cap
-    modifierCostCalc->GetOrCreateVar("Str")->SetValue((double)chr->Stats().GetStat(PSITEMSTATS_STAT_STRENGTH));
-    modifierCostCalc->GetOrCreateVar("End")->SetValue((double)chr->Stats().GetStat(PSITEMSTATS_STAT_ENDURANCE));
-    modifierCostCalc->GetOrCreateVar("Agi")->SetValue((double)chr->Stats().GetStat(PSITEMSTATS_STAT_AGILITY));
-    modifierCostCalc->GetOrCreateVar("Int")->SetValue((double)chr->Stats().GetStat(PSITEMSTATS_STAT_INTELLIGENCE));
-    modifierCostCalc->GetOrCreateVar("Will")->SetValue((double)chr->Stats().GetStat(PSITEMSTATS_STAT_WILL));
-    modifierCostCalc->GetOrCreateVar("Cha")->SetValue((double)chr->Stats().GetStat(PSITEMSTATS_STAT_CHARISMA));
-    modifierCostCalc->GetOrCreateVar("MaxHP")->SetValue((double)chr->GetHitPointsMax());
-    modifierCostCalc->GetOrCreateVar("MaxMana")->SetValue((double)chr->GetManaMax());
+    MathEnvironment env;
+    env.Define("Str",     chr->Stats()[PSITEMSTATS_STAT_STRENGTH].Current());
+    env.Define("End",     chr->Stats()[PSITEMSTATS_STAT_ENDURANCE].Current());
+    env.Define("Agi",     chr->Stats()[PSITEMSTATS_STAT_AGILITY].Current());
+    env.Define("Int",     chr->Stats()[PSITEMSTATS_STAT_INTELLIGENCE].Current());
+    env.Define("Will",    chr->Stats()[PSITEMSTATS_STAT_WILL].Current());
+    env.Define("Cha",     chr->Stats()[PSITEMSTATS_STAT_CHARISMA].Current());
+    env.Define("MaxHP",   chr->GetMaxHP().Current());
+    env.Define("MaxMana", chr->GetMaxMana().Current());
 
-    modifierCostCalc->Execute();
-    float modcap = (float)modifierCostCalc->GetOrCreateVar("ModCap")->GetValue();
-    Debug2(LOG_LOOT,0,"DEBUG: Calculated cost cap %f\n",modcap);
-    return modcap;
+    modifierCostCalc->Evaluate(&env);
+    MathVar *modcap = env.Lookup("ModCap");
+    Debug2(LOG_LOOT,0,"DEBUG: Calculated cost cap %f\n", modcap->GetValue());
+    return modcap->GetValue();
 }
 
 

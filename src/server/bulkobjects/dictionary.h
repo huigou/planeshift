@@ -505,6 +505,7 @@ public:
     virtual bool Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay);
 };
 
+/*
 class FireEventResponseOp : public ResponseOperation
 {
 protected:
@@ -516,6 +517,7 @@ public:
     virtual csString GetResponseScript();    
     virtual bool Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay);    
 };
+*/
 
 /**
  * This script operation checks to make sure a named quest

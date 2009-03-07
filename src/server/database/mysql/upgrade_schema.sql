@@ -1103,6 +1103,17 @@ ALTER TABLE item_instances ADD COLUMN `loc_zrot` float(14,6) default '0' AFTER `
 
 UPDATE `server_options` SET `option_value`='1213' WHERE `option_name`='db_version';
 
+#### 1214 - Kenny Graunke - Rewrote the magic system
+# Manual conversion is required!
+# 1. All your progression scripts are bunk.  This includes item equip scripts.
+# 2. Action locations with <Entrance Type='Prime' Script=...> need to specify an inline MathExpression
+#    rather than the name of a progression script.
+UPDATE characters SET progression_script = '';
+ALTER TABLE item_stats DROP COLUMN prg_evt_unequip;
+ALTER TABLE item_stats CHANGE prg_evt_equip   equip_script   text;
+ALTER TABLE item_stats CHANGE prg_evt_consume consume_script text;
+
+UPDATE `server_options` SET `option_value`='1214' WHERE `option_name`='db_version';
 
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.

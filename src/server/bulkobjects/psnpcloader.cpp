@@ -441,12 +441,13 @@ void psNPCLoader::ReadStats()
     strength = xmlnode->GetAttributeValueAsFloat("str");
     will = xmlnode->GetAttributeValueAsFloat("wil");
 
-    npc->Stats().SetStat(PSITEMSTATS_STAT_AGILITY, (unsigned int)agility);
-    npc->Stats().SetStat(PSITEMSTATS_STAT_CHARISMA, (unsigned int)charisma);
-    npc->Stats().SetStat(PSITEMSTATS_STAT_ENDURANCE, (unsigned int)endurance);
-    npc->Stats().SetStat(PSITEMSTATS_STAT_INTELLIGENCE, (unsigned int)intelligence);
-    npc->Stats().SetStat(PSITEMSTATS_STAT_STRENGTH, (unsigned int)strength);
-    npc->Stats().SetStat(PSITEMSTATS_STAT_WILL, (unsigned int)will);
+    npc->Stats()[PSITEMSTATS_STAT_AGILITY]  .   SetBase((int) agility);
+    npc->Stats()[PSITEMSTATS_STAT_CHARISMA]  .  SetBase((int) charisma);
+    npc->Stats()[PSITEMSTATS_STAT_ENDURANCE]  . SetBase((int) endurance);
+    npc->Stats()[PSITEMSTATS_STAT_INTELLIGENCE].SetBase((int) intelligence);
+    npc->Stats()[PSITEMSTATS_STAT_STRENGTH]   . SetBase((int) strength);
+    npc->Stats()[PSITEMSTATS_STAT_WILL]      .  SetBase((int) will);
+    npc->RecalculateStats();
 }
 
 
@@ -1020,12 +1021,12 @@ void psNPCLoader::WriteStats()
     csRef<iDocumentNode> statsNode = npcRoot->CreateNodeBefore(CS_NODE_ELEMENT);
 
     statsNode->SetValue("stats");
-    statsNode->SetAttributeAsInt("agi", (int)npc->Stats().GetStat(PSITEMSTATS_STAT_AGILITY, false));
-    statsNode->SetAttributeAsInt("cha", (int)npc->Stats().GetStat(PSITEMSTATS_STAT_CHARISMA, false));
-    statsNode->SetAttributeAsInt("end", (int)npc->Stats().GetStat(PSITEMSTATS_STAT_ENDURANCE, false));
-    statsNode->SetAttributeAsInt("int", (int)npc->Stats().GetStat(PSITEMSTATS_STAT_INTELLIGENCE, false));
-    statsNode->SetAttributeAsInt("str", (int)npc->Stats().GetStat(PSITEMSTATS_STAT_STRENGTH, false));
-    statsNode->SetAttributeAsInt("wil", (int)npc->Stats().GetStat(PSITEMSTATS_STAT_WILL, false));
+    statsNode->SetAttributeAsInt("agi", (int) npc->Stats()[PSITEMSTATS_STAT_AGILITY].Base());
+    statsNode->SetAttributeAsInt("cha", (int) npc->Stats()[PSITEMSTATS_STAT_CHARISMA].Base());
+    statsNode->SetAttributeAsInt("end", (int) npc->Stats()[PSITEMSTATS_STAT_ENDURANCE].Base());
+    statsNode->SetAttributeAsInt("int", (int) npc->Stats()[PSITEMSTATS_STAT_INTELLIGENCE].Base());
+    statsNode->SetAttributeAsInt("str", (int) npc->Stats()[PSITEMSTATS_STAT_STRENGTH].Base());
+    statsNode->SetAttributeAsInt("wil", (int) npc->Stats()[PSITEMSTATS_STAT_WILL].Base());
 }
 
 
@@ -1433,7 +1434,7 @@ void psNPCLoader::WriteSkills()
     skillsNode->SetValue("skills");
     for (int i=0;i<PSSKILL_COUNT;i++)
     {
-        unsigned int rank = npc->Skills().GetSkillRank((PSSKILL)i);
+        int rank = npc->Skills().GetSkillRank((PSSKILL)i).Current();
         if (rank)
         {
             csRef<iDocumentNode> skillNode = skillsNode->CreateNodeBefore(CS_NODE_ELEMENT);

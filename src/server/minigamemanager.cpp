@@ -927,7 +927,7 @@ void psMiniGameSession::Update(Client *client, psMGUpdateMessage &msg)
         // determine winner
         MinigamePlayer *winningPlayer = NULL;
         csString wonText;
-        ProgressionEvent *progEvent = NULL;
+        ProgressionScript *progScript = NULL;
 
         if (winningPiece == WHITE_PIECE || winningPiece == BLACK_PIECE)
         {
@@ -951,14 +951,14 @@ void psMiniGameSession::Update(Client *client, psMGUpdateMessage &msg)
             // is there a progression script to run
             if (winnerScript.Length() > 0)
             {
-                if (!(progEvent = psserver->GetProgressionManager()->FindEvent(winnerScript.GetDataSafe())))
+                if (!(progScript = psserver->GetProgressionManager()->FindScript(winnerScript.GetData())))
                 {
-                    Error2( "Failed to find progression event %s. ", winnerScript.GetDataSafe() );
+                    Error2("Failed to find progression script >%s<.", winnerScript.GetData());
                 }
             }
 
             // announce winner, unless script to run for winner
-            if (!progEvent)
+            if (!progScript)
             {
                 if (minigameStyle == MG_GAME)
                 {
@@ -989,19 +989,19 @@ void psMiniGameSession::Update(Client *client, psMGUpdateMessage &msg)
             }
 
             // now run progression script
-            if (progEvent)
+            if (progScript)
             {
                 ClientConnectionSet *clients = psserver->GetConnections();
                 if (clients)
                 {
                     Client *winnerClient = clients->Find(winningPlayer->playerID);
-                    float result;
                     if (winnerClient)
                     {
+                        MathEnvironment env;
+                        env.Define("Winner", winnerClient->GetActor());
                         if (gameBoard.GetNumPlayers() == 1)
                         {
-                            result = progEvent->Run(winnerClient->GetActor(),
-                                                    winnerClient->GetActor(), NULL);
+                            progScript->Run(&env);
                         }
                         else
                         {
@@ -1013,8 +1013,8 @@ void psMiniGameSession::Update(Client *client, psMGUpdateMessage &msg)
                                 if (p && p->playerID != winningPlayer->playerID)
                                 {
                                     loserClient = clients->Find(p->playerID);
-                                    result = progEvent->Run(winnerClient->GetActor(),
-                                                            loserClient->GetActor(), NULL);
+                                    env.Define("Loser", loserClient->GetActor());
+                                    progScript->Run(&env);
                                 }
                             }
                         }

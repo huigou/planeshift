@@ -88,26 +88,7 @@ ServerCharManager::ServerCharManager()
     slotManager = NULL;
 
     calc_item_merchant_price_buy = psserver->GetMathScriptEngine()->FindScript("Calc Item Merchant Price Buy");
-    if (calc_item_merchant_price_buy)
-    {
-        calc_item_merchant_price_item_price_buy = calc_item_merchant_price_buy->GetOrCreateVar("ItemPrice");
-        calc_item_merchant_price_char_data_buy = calc_item_merchant_price_buy->GetOrCreateVar("CharData");
-        calc_item_merchant_price_char_result_buy = calc_item_merchant_price_buy->GetOrCreateVar("Result");
-        calc_item_merchant_price_supply_buy = calc_item_merchant_price_buy->GetOrCreateVar("Supply");
-        calc_item_merchant_price_demand_buy = calc_item_merchant_price_buy->GetOrCreateVar("Demand");
-        calc_item_merchant_price_time_buy = calc_item_merchant_price_buy->GetOrCreateVar("Time");
-    }
-
     calc_item_merchant_price_sell = psserver->GetMathScriptEngine()->FindScript("Calc Item Merchant Price Sell");
-    if (calc_item_merchant_price_sell)
-    {
-        calc_item_merchant_price_item_price_sell = calc_item_merchant_price_sell->GetOrCreateVar("ItemPrice");
-        calc_item_merchant_price_char_data_sell = calc_item_merchant_price_sell->GetOrCreateVar("CharData");
-        calc_item_merchant_price_char_result_sell = calc_item_merchant_price_sell->GetOrCreateVar("Result");
-        calc_item_merchant_price_supply_sell = calc_item_merchant_price_buy->GetOrCreateVar("Supply");
-        calc_item_merchant_price_demand_sell = calc_item_merchant_price_buy->GetOrCreateVar("Demand");
-        calc_item_merchant_price_time_sell = calc_item_merchant_price_buy->GetOrCreateVar("Time");
-    }
 }
 
 ServerCharManager::~ServerCharManager()
@@ -1197,33 +1178,28 @@ bool ServerCharManager::SendMerchantItems( Client *client, psCharacter* merchant
 int ServerCharManager::CalculateMerchantPrice(psItem *item, Client *client, bool sellPrice)
 {
     int basePrice = sellPrice?item->GetSellPrice().GetTotal():item->GetPrice().GetTotal();
-    int finalPrice = basePrice;
-    if((sellPrice && !calc_item_merchant_price_sell) || (!sellPrice && !calc_item_merchant_price_buy))
+    if ((sellPrice && !calc_item_merchant_price_sell) || (!sellPrice && !calc_item_merchant_price_buy))
         return basePrice;
 
     csRef<ItemSupplyDemandInfo> suppInfo = psserver->GetEconomyManager()->GetItemSupplyDemandInfo(item->GetUID());
 
+    MathEnvironment env;
+    env.Define("CharData",  client->GetCharacterData());
+    env.Define("ItemPrice", basePrice);
+    env.Define("Demand",    suppInfo->sold);
+    env.Define("Supply",    suppInfo->bought);
+    env.Define("Time",      psserver->GetWeatherManager()->GetGameTODHour());
     if (sellPrice)
     {
-        calc_item_merchant_price_char_data_sell->SetObject(client->GetCharacterData());
-        calc_item_merchant_price_item_price_sell->SetValue(basePrice);
-        calc_item_merchant_price_demand_sell->SetValue(suppInfo->sold);
-        calc_item_merchant_price_supply_sell->SetValue(suppInfo->bought);
-        calc_item_merchant_price_time_sell->SetValue(psserver->GetWeatherManager()->GetGameTODHour());
-        calc_item_merchant_price_sell->Execute();
-        finalPrice = (int)calc_item_merchant_price_char_result_sell->GetValue();
+        calc_item_merchant_price_sell->Evaluate(&env);
     }
     else
     {
-        calc_item_merchant_price_char_data_buy->SetObject(client->GetCharacterData());
-        calc_item_merchant_price_item_price_buy->SetValue(basePrice);
-        calc_item_merchant_price_demand_buy->SetValue(suppInfo->sold);
-        calc_item_merchant_price_supply_buy->SetValue(suppInfo->bought);
-        calc_item_merchant_price_time_buy->SetValue(psserver->GetWeatherManager()->GetGameTODHour());
-        calc_item_merchant_price_buy->Execute();
-        finalPrice = (int)calc_item_merchant_price_char_result_buy->GetValue();
+        calc_item_merchant_price_buy->Evaluate(&env);
     }
-    return finalPrice;
+
+    MathVar *result = env.Lookup("Result");
+    return (int) result->GetValue();
 }
 
 bool ServerCharManager::SendPlayerItems( Client *client, psItemCategory* category)

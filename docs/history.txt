@@ -1,4 +1,7 @@
-﻿*** 2009-03-06 by Tristan Cragnolini
+﻿*** 2009-03-06 by Kenny Graunke
+- Rewrote MathScript, ProgressionScript, and the magic system.
+
+*** 2009-03-06 by Tristan Cragnolini
 - Fixed PS#2795 - guarding range ignores instance
 
 *** 2009-03-01 by Stefano Angeleri

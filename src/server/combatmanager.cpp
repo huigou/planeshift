@@ -139,47 +139,14 @@ protected:
 CombatManager::CombatManager() : pvp_region(NULL)
 {
     randomgen = psserver->rng;
-    var_IAH       = NULL;         
-    var_AHR       = NULL;         
-    var_Blocked   = NULL;
-    var_QOH       = NULL;
-    var_FinalDmg  = NULL;
   
-    script_engine = psserver->GetMathScriptEngine();
-    calc_damage   = script_engine->FindScript("Calculate Damage");
+    calc_damage   = psserver->GetMathScriptEngine()->FindScript("Calculate Damage");
     if ( !calc_damage )
     {
-        Error1("Calculate Damage Script could not be found. Check rpgrules.xml");            
+        Error1("Calculate Damage Script could not be found.  Check the math_scripts DB table.");
     }
     else
     {
-        // Output var bindings here
-        var_IAH       = calc_damage->GetVar("IAH");
-        var_AHR       = calc_damage->GetVar("AHR");
-        var_Blocked   = calc_damage->GetVar("Blocked");
-        var_QOH       = calc_damage->GetVar("QOH");
-        var_FinalDmg  = calc_damage->GetVar("FinalDamage");
-  
-        if ( !(var_IAH && var_AHR && var_Blocked && var_QOH && var_FinalDmg) )
-        {
-            Error1("One or more combat output binding variables is incorrect");
-            Error2("    IAH = %p", var_IAH);
-            Error2("    AHR = %p", var_AHR);
-            Error2("    Blocked = %p", var_Blocked);
-            Error2("    QOH = %p", var_QOH);
-            Error2("    FinalDamage = %p", var_FinalDmg);
-            Error1("Check rpgrules.xml to make sure these variables exist in 'Calculate Damage' script");
-        } 
-
-        // Input var bindings here
-        var_AttackWeapon       = calc_damage->GetVar("AttackWeapon");
-        var_AttackWeaponSecondary  = calc_damage->GetVar("AttackWeaponSecondary");
-        var_TargetAttackWeapon      = calc_damage->GetVar("TargetAttackWeapon");
-        var_DefenseWeaponSecondary = calc_damage->GetVar("DefenseWeaponSecondary");
-        var_Target                 = calc_damage->GetVar("Target");
-        var_Attacker               = calc_damage->GetVar("Attacker");
-        var_AttackLocationItem     = calc_damage->GetVar("AttackLocationItem");
-
         targetLocations.Push(PSCHARACTER_SLOT_HELM);
         targetLocations.Push(PSCHARACTER_SLOT_TORSO);
         targetLocations.Push(PSCHARACTER_SLOT_ARMS);
@@ -189,10 +156,6 @@ CombatManager::CombatManager() : pvp_region(NULL)
     } 
 
     staminacombat = psserver->GetMathScriptEngine()->FindScript("StaminaCombat");
-    PhyDrain   = staminacombat->GetVar("PhyDrain");
-    MntDrain   = staminacombat->GetVar("MntDrain");
-    actorVar    = staminacombat->GetOrCreateVar("Actor");
-    weaponVar   = staminacombat->GetOrCreateVar("Weapon");
 
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<CombatManager>(this,&CombatManager::HandleDeathEvent),MSGTYPE_DEATH_EVENT,NO_VALIDATION);
 }
@@ -468,49 +431,45 @@ int CombatManager::GetDefaultModeAction(gemActor *attacker)
  */
 int CombatManager::CalculateAttack(psCombatGameEvent *event, psItem* subWeapon)
 {
-    var_Attacker->SetObject(event->GetAttackerData() );
-    var_Target->SetObject(event->GetTargetData() );
+    INVENTORY_SLOT_NUMBER otherHand = event->GetWeaponSlot() == PSCHARACTER_SLOT_LEFTHAND ? PSCHARACTER_SLOT_RIGHTHAND : PSCHARACTER_SLOT_LEFTHAND;
+    event->AttackLocation = (INVENTORY_SLOT_NUMBER) targetLocations[randomgen->Get((int) targetLocations.GetSize())];
 
-    if (var_AttackWeapon)
-        var_AttackWeapon->SetObject(event->GetAttackerData()->Inventory().GetEffectiveWeaponInSlot(event->GetWeaponSlot() ) );
+    MathEnvironment env;
+    env.Define("Attacker",              event->GetAttackerData());
+    env.Define("Target",                event->GetTargetData());
+    env.Define("AttackWeapon",          event->GetAttackerData()->Inventory().GetEffectiveWeaponInSlot(event->GetWeaponSlot()));
+    env.Define("AttackWeaponSecondary", subWeapon);
+    // FIXME: The original code defined and redefined TargetAttackWeapon, which can't be right.
+    //        Maybe this was supposed to be DefenseWeaponSecondary.  Probably not.  This needs cleaning.
+    env.Define("TargetAttackWeapon",    event->GetTargetData()->Inventory().GetEffectiveWeaponInSlot(event->GetWeaponSlot()));
+    env.Define("TargetAttackWeapon",    event->GetTargetData()->Inventory().GetEffectiveWeaponInSlot(otherHand));
+    env.Define("AttackLocationItem",    event->GetTargetData()->Inventory().GetEffectiveArmorInSlot(event->AttackLocation));
 
-    if (var_AttackWeaponSecondary && subWeapon)
-        var_AttackWeaponSecondary->SetObject(subWeapon);
-
-    if (var_TargetAttackWeapon)
-        var_TargetAttackWeapon->SetObject(event->GetTargetData()->Inventory().GetEffectiveWeaponInSlot(event->GetWeaponSlot() ) );
-
-    if (var_TargetAttackWeapon)
-    {
-        INVENTORY_SLOT_NUMBER otherHand = event->GetWeaponSlot() == PSCHARACTER_SLOT_LEFTHAND ? PSCHARACTER_SLOT_RIGHTHAND : PSCHARACTER_SLOT_LEFTHAND;
-        var_TargetAttackWeapon->SetObject(event->GetTargetData()->Inventory().GetEffectiveWeaponInSlot(otherHand) );
-    }
-
-    if (var_AttackLocationItem)
-    {
-        int idx = randomgen->Get((int)targetLocations.GetSize());        
-        int attack_location = targetLocations[idx];
-        var_AttackLocationItem->SetObject(event->GetTargetData()->Inventory().GetEffectiveArmorInSlot((INVENTORY_SLOT_NUMBER)attack_location) );
-        event->AttackLocation = (INVENTORY_SLOT_NUMBER)attack_location;
-    }
-
-    calc_damage->Execute();
+    calc_damage->Evaluate(&env);
 
 	if (DoLogDebug2(LOG_COMBAT, event->GetAttackerData()->GetPID().Unbox()))
     {
-        calc_damage->DumpAllVars();
+        CPrintf(CON_DEBUG, "Variables for Calculate Damage:\n");
+        env.DumpAllVars();
     }
 
-    if (var_IAH->GetValue() < 0.0F)
+    MathVar *IAH      = env.Lookup("IAH");         // IAH = If Attack Hit
+    MathVar *AHR      = env.Lookup("AHR");         // AHR = Attack Hit Roll
+    MathVar *blocked  = env.Lookup("Blocked");     // Blocked = Blocked by weapon
+    MathVar *damage   = env.Lookup("FinalDamage"); // Actual damage done, if any
+    // QOH ("Quality of Hit") is also an output variable, supposedly, but isn't used by the code...
+    if (IAH->GetValue() < 0.0)
         return ATTACK_MISSED;
 
-    if (var_AHR->GetValue() < 0.0F)
+    if (AHR->GetValue() < 0.0)
         return ATTACK_DODGED;
 
-    if (var_Blocked->GetValue() < 0.0F)
+    if (blocked->GetValue() < 0.0)
        return ATTACK_BLOCKED;
 
-    event->FinalDamage=var_FinalDmg->GetValue();
+    event->FinalDamage = damage->GetValue();
+
+    DebugOutput(event, env);
 
     return ATTACK_DAMAGE;
 }
@@ -542,9 +501,9 @@ void CombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_result
         case ATTACK_DAMAGE:
         {
             bool isNearlyDead = false;
-            if (target_data->GetHitPointsMax() > 0.0 && target_data->GetHP()/target_data->GetHitPointsMax() > 0.2)
+            if (target_data->GetMaxHP().Current() > 0.0 && target_data->GetHP()/target_data->GetMaxHP().Current() > 0.2)
             {
-                if ((target_data->GetHP() - event->FinalDamage) / target_data->GetHitPointsMax() <= 0.2)
+                if ((target_data->GetHP() - event->FinalDamage) / target_data->GetMaxHP().Current() <= 0.2)
                     isNearlyDead = true;
             }
 
@@ -565,10 +524,10 @@ void CombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_result
                 gemTarget->DoDamage(gemAttacker,event->FinalDamage);
                 
                 if (gemAttacker)
-                    gemAttacker->InvokeAttackScripts(gemTarget,weapon);
+                    gemAttacker->InvokeAttackScripts(gemTarget, weapon);
 
                 if (gemTarget)
-                    gemTarget->InvokeDamageScripts(gemAttacker,weapon);
+                    gemTarget->InvokeDefenseScripts(gemAttacker, weapon);
 
                 if (gemTarget->GetClientID() == 0 && !gemTarget->GetCharacterData()->IsPet())
                 {
@@ -774,10 +733,12 @@ void CombatManager::HandleCombatEvent(psCombatGameEvent *event)
     if (attacker_client)
     {
         // Input the stamina data
-        actorVar->SetObject(gemAttacker->GetCharacterData());
-        weaponVar->SetObject(weapon);
-
-        staminacombat->Execute();
+        MathEnvironment env;
+        env.Define("Actor",  gemAttacker->GetCharacterData());
+        env.Define("Weapon", weapon);
+        staminacombat->Evaluate(&env);
+        MathVar *PhyDrain = env.Lookup("PhyDrain");
+        MathVar *MntDrain = env.Lookup("MntDrain");
 
         if ( (attacker_client->GetCharacterData()->GetStamina(true) < PhyDrain->GetValue())
             || (attacker_client->GetCharacterData()->GetStamina(false) < MntDrain->GetValue()) )
@@ -898,10 +859,6 @@ void CombatManager::HandleCombatEvent(psCombatGameEvent *event)
 
         event->AttackResult=attack_result;
 
-        //#ifdef DEBUGCOMBAT
-            DebugOutput(event);
-        //#endif
-
         ApplyCombatEvent(event, attack_result);
     }
 
@@ -919,18 +876,24 @@ void CombatManager::HandleCombatEvent(psCombatGameEvent *event)
 //        CPrintf(CON_DEBUG, "Slot %d for %s not an auto-attack slot.\n",event->GetWeaponSlot(), event->attacker->GetName() );
 }
 
-void CombatManager::DebugOutput(psCombatGameEvent *event)
+void CombatManager::DebugOutput(psCombatGameEvent *event, const MathEnvironment & env)
 {
+    MathVar *IAH      = env.Lookup("IAH");         // IAH = If Attack Hit
+    MathVar *AHR      = env.Lookup("AHR");         // AHR = Attack Hit Roll
+    MathVar *QOH      = env.Lookup("QOH");         // QOH = Quality of Hit
+    MathVar *blocked  = env.Lookup("Blocked");     // Blocked = Blocked by weapon
+    MathVar *damage   = env.Lookup("FinalDamage"); // Actual damage done, if any
+
     psItem* item = event->GetAttackerData()->Inventory().GetEffectiveWeaponInSlot(event->GetWeaponSlot() );
+
     psString debug;
     debug.Append( "-----Debug Combat Summary--------\n");
     debug.AppendFmt( "%s attacks %s with slot %d , weapon %s, quality %1.2f, basedmg %1.2f/%1.2f/%1.2f\n",
       event->attacker->GetName(),event->target->GetName(), event->GetWeaponSlot(),item->GetName(),item->GetItemQuality(),
       item->GetDamage(PSITEMSTATS_DAMAGETYPE_SLASH),item->GetDamage(PSITEMSTATS_DAMAGETYPE_BLUNT),item->GetDamage(PSITEMSTATS_DAMAGETYPE_PIERCE));
-    debug.AppendFmt( "IAH: %1.6f AHR: %1.6f Blocked: %1.6f",var_IAH->GetValue(),var_AHR->GetValue(),var_Blocked->GetValue());
-    debug.AppendFmt( "QOH: %1.6f Damage: %1.1f\n",var_QOH->GetValue(),var_FinalDmg->GetValue());
+    debug.AppendFmt( "IAH: %1.6f AHR: %1.6f Blocked: %1.6f", IAH->GetValue(), AHR->GetValue(), blocked->GetValue());
+    debug.AppendFmt( "QOH: %1.6f Damage: %1.1f\n", QOH->GetValue(), damage->GetValue());
     Debug1(LOG_COMBAT, event->attacker->GetClientID(),debug.GetData());
-
 }
 
 

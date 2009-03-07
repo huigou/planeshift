@@ -44,17 +44,11 @@
 //=============================================================================
 
 class psSpellCastGameEvent;
-class psSpellAffectGameEvent;
 class psGlyphGameEvent;
 class ClientConnectionSet;
 class EntityManager;
 class psSpell;
 class psGlyph;
-class ProgressionEvent;
-class MathScript;
-class MathScriptVar;
-
-
 
 /** Manager class that handles loading/searching/casting spells. 
   * This class also manages a number of psSpell Events.  
@@ -91,16 +85,6 @@ public:
       */
     void SendGlyphs(MsgEntry *notused, Client * client);
 
-    /** Handles a cast event object.
-      * @param event  The event that needs to be handled.
-      */
-    void HandleSpellCastEvent( psSpellCastGameEvent *event );
-
-    /** Handles a spell effect event.  
-      * @param event The spell affect event that needs to be handled.
-      */    
-    void HandleSpellAffectEvent( psSpellAffectGameEvent *event );
-
 protected:    
     /** Save a spell to the database for when a player has researched it.
       *
@@ -115,7 +99,7 @@ protected:
       * @param spellName The name of the spell to cast.
       * @param kFactor The power factor that the spell is cast with.
       */
-    void Cast(MsgEntry *me, Client * client);
+    void Cast(MsgEntry *me, Client *client);
 
     void HandleCancelSpell(MsgEntry* notused, Client* client);
 
@@ -144,112 +128,15 @@ protected:
       */
     psSpell* FindSpell(Client * client, const glyphList_t & assembler);
 
-    /** Find a spell based on name.
-      *
-      * @param name The name of the spell to find.
-      * 
-      * @return a psSpell object that matches the name or NULL if no match found.
-      */    
-    psSpell * FindSpell(csString& name);
-    
-    /** Find a spell based on id.
-      *
-      * @param id The id of the spell to find in the spells table.
-      * 
-      * @return a psSpell object that matches the id or NULL if no match found.
-      */        
-    psSpell * FindSpell(int spellID);
-
     /** Handles a command when player tries to research.
       * 
       * @param client The client this is for.
       * @param me The message from that client.
       */
     void HandleAssembler(MsgEntry* me,Client* client);
-    
-    MathScript *researchSpellScript;                
-    MathScriptVar *varCaster;
-    MathScriptVar *varSpell;
-    MathScriptVar *varSuccess;
-     
-    csRandomGen* randomgen;
+
     ClientConnectionSet *clients;
     iObjectRegistry *object_reg;
-};
-
-//-----------------------------------------------------------------------------
-
-/** A spell event.
-  * These are fired off when spells are cast.
- */
-class psSpellCastGameEvent : public psGameEvent, public iDeleteObjectCallback
-{
- protected:
-    SpellManager *spellmanager;
-    
- public:
-
-    Client      *caster;        ///< Entity who casting this spell
-    gemObject   *target;        ///< Entity who is target of this spell
-    const psSpell     *spell;   ///< The spell that is casted
-    
-    float        max_range;     
-    float        powerLevel;
-    csTicks      duration;
-    
-    psSpellCastGameEvent(SpellManager *mgr,
-                     const psSpell *spell,
-                     Client  *caster,
-                     gemObject *target,
-                     csTicks castingDuration,
-                     float max_range,
-                     float powerLevel,
-                     csTicks duration);
-
-    ~psSpellCastGameEvent();
-                         
-    void Interrupt();
-
-    virtual void Trigger();  // Abstract event processing function
-    virtual void DeleteObjectCallback(iDeleteNotificationObject * object);
-};
-
-//-----------------------------------------------------------------------------
-
-/** A spell event.
-  * These are fired off when spells are cast.
- */
-class psSpellAffectGameEvent : public psGameEvent, public iDeleteObjectCallback, public iDeathCallback
-{
- protected:
-    SpellManager *spellmanager;
-    
- public:
-
-    Client      *caster;        ///< Entity who casting this spell
-    gemObject   *target;        ///< Entity who is target of this spell
-    const psSpell     *spell;   ///< The spell that is casted
-    float        min_range;
-    float        max_range;
-    bool         saved;
-    float        powerLevel;
-    csTicks      duration;
-    
-    psSpellAffectGameEvent(SpellManager *mgr,
-                           const psSpell *spell,
-                           Client  *caster, 
-                           gemObject *target, 
-                           csTicks progression_delay,
-                           float max_range,
-                           bool saved,
-                           float powerLevel,
-                           csTicks duration);
-
-    ~psSpellAffectGameEvent();
-                         
-    virtual void Trigger();  // Abstract event processing function
-    virtual void DeleteObjectCallback(iDeleteNotificationObject * object);
-    virtual void DeathCallback( iDeathNotificationObject * object );
 };
 
 #endif

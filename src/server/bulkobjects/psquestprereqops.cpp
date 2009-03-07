@@ -386,7 +386,7 @@ bool psQuestPrereqOpActiveMagic::Check(psCharacter * character)
 {
     if (character->GetActor())
     {
-        return character->GetActor()->IsMagicCategoryActive(activeMagic);
+        return character->GetActor()->ActiveSpellCount(activeMagic) > 0;
     }
     return false;
 }
@@ -694,7 +694,7 @@ csPtr<psQuestPrereqOp> psQuestPrereqOpXor::Copy()
 
 bool psQuestPrereqOpSkill::Check(psCharacter * character)
 {
-    unsigned int skill_val = character->Skills().GetSkillRank(skill->id);
+    int skill_val = character->GetSkillRank(skill->id).Current();
 
     if(max && skill_val > max)
     {

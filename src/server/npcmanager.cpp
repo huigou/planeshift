@@ -293,24 +293,16 @@ public:
         double maxTime = 60 * 5 * 1000;
 
         if (!maxPetTime)
-        {
-            // Max Pet Time Script isn't loaded, so load it
             maxPetTime = psserver->GetMathScriptEngine()->FindScript("CalculateMaxPetTime");
-        }
 
-        if ( maxPetTime )
+        if (maxPetTime && owner)
         {
-            MathScriptVar* actorvar  = maxPetTime->GetOrCreateVar("Actor");
-            MathScriptVar* skill = maxPetTime->GetOrCreateVar("Skill");
-            if ( owner )
-            {
-                actorvar->SetObject( this->owner->GetCharacterData() );
-                skill->SetValue(owner->GetCharacterData()->Skills().GetSkillRank(PSSKILL_EMPATHY));
-
-                maxPetTime->Execute();
-                MathScriptVar* timeValue =  maxPetTime->GetVar("MaxTime");
-                maxTime = timeValue->GetValue();
-            }
+            MathEnvironment env;
+            env.Define("Actor", owner->GetCharacterData());
+            env.Define("Skill", owner->GetCharacterData()->Skills().GetSkillRank(PSSKILL_EMPATHY).Current());
+            maxPetTime->Evaluate(&env);
+            MathVar *timeValue = env.Lookup("MaxTime");
+            maxTime = timeValue->GetValue();
         }
 
         return maxTime;
@@ -354,35 +346,22 @@ NPCManager::NPCManager(ClientConnectionSet *pCCS,
     eventmanager->Push(tick);
 
     petRangeScript = psserver->GetMathScriptEngine()->FindScript("CalculateMaxPetRange");
-    varRangeEmpathySkill = petRangeScript->GetOrCreateVar("Skill");
-    varMaxRange          = petRangeScript->GetOrCreateVar("MaxRange");
-
     petReactScript = psserver->GetMathScriptEngine()->FindScript("CalculatePetReact");;
-    varReactEmpathySkill = petReactScript->GetOrCreateVar("Skill");
-    varReactLevel        = petReactScript->GetOrCreateVar("Level");
-    varReact             = petReactScript->GetOrCreateVar("React");
 }
 
 bool NPCManager::Initialize()
 {
-    petRangeScript = psserver->GetMathScriptEngine()->FindScript("CalculateMaxPetRange");
     if (!petRangeScript)
     {
         Error1("No CalculateMaxPetRange script!");
         return false;
     }
-    varRangeEmpathySkill = petRangeScript->GetOrCreateVar("Skill");
-    varMaxRange          = petRangeScript->GetOrCreateVar("MaxRange");
 
-    petReactScript = psserver->GetMathScriptEngine()->FindScript("CalculatePetReact");;
     if (!petReactScript)
     {
         Error1("No CalculatePetReact script!");
         return false;
     }
-    varReactEmpathySkill = petReactScript->GetOrCreateVar("Skill");
-    varReactLevel        = petReactScript->GetOrCreateVar("Level");
-    varReact             = petReactScript->GetOrCreateVar("React");
 
     return true;
 }
@@ -1274,13 +1253,16 @@ bool NPCManager::CanPetHearYou(int clientnum, Client *owner, gemNPC *pet, const 
 {
     //TODO: Add a range check
 
-    varRangeEmpathySkill->SetValue(owner->GetCharacterData()->GetSkillRank(PSSKILL_EMPATHY));
-    petRangeScript->Execute();
+    MathEnvironment env;
+    env.Define("Skill", owner->GetCharacterData()->GetSkillRank(PSSKILL_EMPATHY).Current());
+    petRangeScript->Evaluate(&env);
+    MathVar *varMaxRange = env.Lookup("MaxRange");
     float max_range = varMaxRange->GetValue();
 
     if (DoLogDebug(LOG_NPC))
     {
-        petRangeScript->DumpAllVars();
+        CPrintf(CON_DEBUG, "Variables for CalculateMaxPetRange:\n");
+        env.DumpAllVars();
     }
 
     if (pet->GetInstance() != owner->GetActor()->GetInstance() ||
@@ -1295,14 +1277,17 @@ bool NPCManager::CanPetHearYou(int clientnum, Client *owner, gemNPC *pet, const 
 
 bool NPCManager::WillPetReact(int clientnum, Client * owner, gemNPC * pet, const char * type, int level)
 {
-    varReactEmpathySkill->SetValue(owner->GetCharacterData()->GetSkillRank(PSSKILL_EMPATHY));
-    varReactLevel->SetValue(level);
-    petReactScript->Execute();
+    MathEnvironment env;
+    env.Define("Skill", owner->GetCharacterData()->GetSkillRank(PSSKILL_EMPATHY).Current());
+    env.Define("Level", level);
+    petReactScript->Evaluate(&env);
+    MathVar *varReact = env.Lookup("React");
     float react = varReact->GetValue();
 
     if (DoLogDebug(LOG_NPC))
     {
-        petReactScript->DumpAllVars();
+        CPrintf(CON_DEBUG, "Variables for CalculatePetReact:\n");
+        env.DumpAllVars();
     }
 
     if ( react > 0.0)
@@ -2180,20 +2165,20 @@ void NPCManager::HandlePetSkill(MsgEntry * me,Client *client)
             psPetSkillMessage newmsg(client->GetClientNum(),
                             psPetSkillMessage::DESCRIPTION,
                             buff,
-                            (unsigned int)(chr->Stats().GetStat(PSITEMSTATS_STAT_STRENGTH)),
-                            (unsigned int)(chr->Stats().GetStat(PSITEMSTATS_STAT_ENDURANCE)),
-                            (unsigned int)(chr->Stats().GetStat(PSITEMSTATS_STAT_AGILITY)),
-                            (unsigned int)(chr->Stats().GetStat(PSITEMSTATS_STAT_INTELLIGENCE)),
-                            (unsigned int)(chr->Stats().GetStat(PSITEMSTATS_STAT_WILL)),
-                            (unsigned int)(chr->Stats().GetStat(PSITEMSTATS_STAT_CHARISMA)),
+                            (unsigned int)(chr->Stats()[PSITEMSTATS_STAT_STRENGTH].Current()),
+                            (unsigned int)(chr->Stats()[PSITEMSTATS_STAT_ENDURANCE].Current()),
+                            (unsigned int)(chr->Stats()[PSITEMSTATS_STAT_AGILITY].Current()),
+                            (unsigned int)(chr->Stats()[PSITEMSTATS_STAT_INTELLIGENCE].Current()),
+                            (unsigned int)(chr->Stats()[PSITEMSTATS_STAT_WILL].Current()),
+                            (unsigned int)(chr->Stats()[PSITEMSTATS_STAT_CHARISMA].Current()),
                             (unsigned int)(chr->GetHP()),
                             (unsigned int)(chr->GetMana()),
                             (unsigned int)(chr->GetStamina(true)),
                             (unsigned int)(chr->GetStamina(false)),
-                            (unsigned int)(chr->GetHitPointsMax()),
-                            (unsigned int)(chr->GetManaMax()),
-                            (unsigned int)(chr->GetStaminaMax(true)),
-                            (unsigned int)(chr->GetStaminaMax(false)),
+                            (unsigned int)(chr->GetMaxHP().Current()),
+                            (unsigned int)(chr->GetMaxMana().Current()),
+                            (unsigned int)(chr->GetMaxPStamina().Current()),
+                            (unsigned int)(chr->GetMaxMStamina().Current()),
                             true,
                             PSSKILL_NONE);
 
@@ -2242,18 +2227,13 @@ void NPCManager::SendPetSkillList(Client * client, bool forceOpen, PSSKILL focus
             return;
         }
 
-        Skill * charSkill = character->Skills().GetSkill((PSSKILL) skillID);
-        if (charSkill == NULL)
-        {
-            Error3("Can't find skill %d in character %s", skillID, ShowID(character->GetPID()));
-            return;
-        }
+        Skill & charSkill = character->Skills().Get((PSSKILL) skillID);
 
         csString escpxml = EscpXML(info->name);
 
             buff.AppendFmt("<SKILL NAME=\"%s\" R=\"%i\" Y=\"%i\" YC=\"%i\" Z=\"%i\" ZC=\"%i\" CAT=\"%d\"/>",
-                              escpxml.GetData(), charSkill->rank,
-                              charSkill->y, charSkill->yCost, charSkill->z, charSkill->zCost, info->category);
+                              escpxml.GetData(), charSkill.rank.Base(),
+                              charSkill.y, charSkill.yCost, charSkill.z, charSkill.zCost, info->category);
     }
     buff.Append("</L>");
 
@@ -2261,20 +2241,20 @@ void NPCManager::SendPetSkillList(Client * client, bool forceOpen, PSSKILL focus
     psPetSkillMessage newmsg(client->GetClientNum(),
                             psPetSkillMessage::SKILL_LIST,
                             buff,
-                            (unsigned int)chr->Stats().GetStat(PSITEMSTATS_STAT_STRENGTH),
-                            (unsigned int)chr->Stats().GetStat(PSITEMSTATS_STAT_ENDURANCE),
-                            (unsigned int)chr->Stats().GetStat(PSITEMSTATS_STAT_AGILITY),
-                            (unsigned int)chr->Stats().GetStat(PSITEMSTATS_STAT_INTELLIGENCE),
-                            (unsigned int)chr->Stats().GetStat(PSITEMSTATS_STAT_WILL),
-                            (unsigned int)chr->Stats().GetStat(PSITEMSTATS_STAT_CHARISMA),
+                            (unsigned int)chr->Stats()[PSITEMSTATS_STAT_STRENGTH].Current(),
+                            (unsigned int)chr->Stats()[PSITEMSTATS_STAT_ENDURANCE].Current(),
+                            (unsigned int)chr->Stats()[PSITEMSTATS_STAT_AGILITY].Current(),
+                            (unsigned int)chr->Stats()[PSITEMSTATS_STAT_INTELLIGENCE].Current(),
+                            (unsigned int)chr->Stats()[PSITEMSTATS_STAT_WILL].Current(),
+                            (unsigned int)chr->Stats()[PSITEMSTATS_STAT_CHARISMA].Current(),
                             (unsigned int)chr->GetHP(),
                             (unsigned int)chr->GetMana(),
                             (unsigned int)chr->GetStamina(true),
                             (unsigned int)chr->GetStamina(false),
-                            (unsigned int)chr->GetHitPointsMax(),
-                            (unsigned int)chr->GetManaMax(),
-                            (unsigned int)chr->GetStaminaMax(true),
-                            (unsigned int)chr->GetStaminaMax(false),
+                            (unsigned int)chr->GetMaxHP().Current(),
+                            (unsigned int)chr->GetMaxMana().Current(),
+                            (unsigned int)chr->GetMaxPStamina().Current(),
+                            (unsigned int)chr->GetMaxMStamina().Current(),
                             forceOpen,
                             found?realID:-1
                             );

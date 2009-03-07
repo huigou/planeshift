@@ -63,39 +63,66 @@ enum PS_DIRTY_VITALS
                       DIRTY_VITAL_PROGRESSION
 };
 
-//----------------------------------------------------------------------------
-
-
-/** A character vital stat. These are things such as the current HP or MANA. Can
-  * be any number of different type of vital statistic.
-  */
-struct psCharVital
-{
-    float value;
-    float drRate;
-    float max;
-    float maxModifier;
-};
-
-
-
-//----------------------------------------------------------------------------
-
 /** Manages a set of Vitals and does the predictions and updates on them
   *   when new data comes from the server.
   */
+template <typename Vital>
 class psVitalManager
 {
 public:
-    psVitalManager();
-    ~psVitalManager();
+    psVitalManager()
+    {
+        experiencePoints  = 0;
+        progressionPoints = 0;
+        lastDRUpdate = 0;
+    }
+    ~psVitalManager() {}
 
-    void ResetVitals();
-    void SetOrigVitals();
+    /// Reset to the "original" vitals (for use when killing NPCs).
+    void ResetVitals()
+    {
+        for (int i = 0; i < VITAL_COUNT; i++)
+            vitals[i] = origVitals[i];
+    }
 
-    /** Get the value of a particular Vital.
-     */
-    float GetValue( int vital );
+    /// Saves the current vitals as the "original".
+    void SetOrigVitals()
+    {
+        for (int i = 0; i < VITAL_COUNT; i++)
+            origVitals[i] = vitals[i];
+    }
+
+    /** @brief Get a reference to a particular vital.
+      *
+      * @param vital @see PS_VITALS
+      * @return The vital reference.
+      */
+    Vital & GetVital(int vital)
+    {
+        CS_ASSERT(vital >= 0 && vital < VITAL_COUNT);
+        return vitals[vital];
+    }
+
+    // Quick accessors
+    float GetHP()
+    {
+        return vitals[VITAL_HITPOINTS].value;
+    }
+
+    float GetMana()
+    {
+        return vitals[VITAL_MANA].value;
+    }
+
+    float GetPStamina()
+    {
+        return vitals[VITAL_PYSSTAMINA].value;
+    }
+
+    float GetMStamina()
+    {
+        return vitals[VITAL_MENSTAMINA].value;
+    }
 
     /** Get players experience points. */
     unsigned int GetExp() { return experiencePoints; }
@@ -103,30 +130,12 @@ public:
     /** Gets a players current progression points.*/
     unsigned int GetPP()  { return progressionPoints; }
 
-
-    /** Get the current Hitpoint value. */
-    float GetHP() { return vitals[VITAL_HITPOINTS].value; }
-
-    /** Get the current Mana value. */
-    float GetMana() { return vitals[VITAL_MANA].value; }
-
-    /** Get the current stamina value. */
-    float GetStamina(bool pys);
-
-    /** @brief Get a reference to a particular vital.
-      *
-      * @param vital @see PS_VITALS
-      * @return The vital reference.
-      */
-    psCharVital & GetVital( int vital );
-
 protected:
-    /// Used by the above Predict function to determine new predicted values.
     csTicks lastDRUpdate;
 
-    /** A list of player Vital. */
-    psCharVital vitals[VITAL_COUNT];
-    psCharVital orig_vitals[VITAL_COUNT];
+    /// A list of player vitals
+    Vital vitals[VITAL_COUNT];
+    Vital origVitals[VITAL_COUNT]; // saved copy for quick restore
 
     /// Players current experience points
     unsigned int experiencePoints;

@@ -53,7 +53,6 @@
 
 #include "gui/inventorywindow.h"
 #include "gui/pawssummary.h"
-#include "gui/pawsspellcancelwindow.h"
 #include "gui/pawsinfowindow.h"
 
 #include "effects/pseffectmanager.h"
@@ -557,28 +556,6 @@ void psClientCharManager::HandleEffect( MsgEntry* me )
             if ( effect.uid != 0 )
             {
                 effectMapper.PutUnique( effect.uid, effectID );
-            }
-        }
-
-        // if this is a spell effect,
-        if (effect.castDuration > 0)
-        {
-            //and it's anchored to the main actor then the you must be casting the spell
-            if (effect.anchorID == psengine->GetCelClient()->GetMainPlayer()->GetEID())
-            {
-                // show the spell cancel window
-                pawsSpellCancelWindow* widget = (pawsSpellCancelWindow *)PawsManager::GetSingleton().FindWidget( "SpellCancelWindow" );
-                if (widget)
-                {
-                    widget->Start(effect.castDuration);
-                }
-            }
-
-            // start the spell animation
-            GEMClientActor* actor = (GEMClientActor*)gemAnchor;
-            if ( actor )
-            {
-                actor->SetAnimation( "cast" );
             }
         }
     }

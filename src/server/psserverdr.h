@@ -59,13 +59,7 @@ protected:
     void ResetPos(gemActor* actor);
 
     MathScript *calc_damage;
-
-    MathScriptVar *var_fall_height;
-    MathScriptVar *var_fall_dmg;
-
-//    EntityManager       *entitymanager;
-//    ClientConnectionSet *clients;
-    PaladinJr           *paladin;
+    PaladinJr *paladin;
 };
 
 #endif

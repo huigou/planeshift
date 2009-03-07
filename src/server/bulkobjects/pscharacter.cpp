@@ -159,11 +159,6 @@ psCharacter::psCharacter() : inventory(this),
     impervious_to_attack = 0;
 
     faction_standings.Clear();
-    nextProgressionEventID = 1;
-
-    attackValueModifier = 1;
-    defenseValueModifier = 1;
-    meleeDefensiveDamageModifier = 1;
 
     player_mode = PSCHARACTER_MODE_PEACE;
     lastError = "None";
@@ -250,12 +245,12 @@ bool psCharacter::Load(iResultRow& row)
 
     SetLifeDescription(row["description_life"]); //Loads the life events added by players
 
-    attributes.SetStat(PSITEMSTATS_STAT_STRENGTH,(unsigned int)row.GetFloat("base_strength"), false);
-    attributes.SetStat(PSITEMSTATS_STAT_AGILITY,(unsigned int)row.GetFloat("base_agility"), false);
-    attributes.SetStat(PSITEMSTATS_STAT_ENDURANCE,(unsigned int)row.GetFloat("base_endurance"), false);
-    attributes.SetStat(PSITEMSTATS_STAT_INTELLIGENCE,(unsigned int)row.GetFloat("base_intelligence"), false);
-    attributes.SetStat(PSITEMSTATS_STAT_WILL,(unsigned int)row.GetFloat("base_will"), false);
-    attributes.SetStat(PSITEMSTATS_STAT_CHARISMA,(unsigned int)row.GetFloat("base_charisma"), false);
+    attributes[PSITEMSTATS_STAT_STRENGTH] .   SetBase((int) row.GetFloat("base_strength"));
+    attributes[PSITEMSTATS_STAT_AGILITY]   .  SetBase((int) row.GetFloat("base_agility"));
+    attributes[PSITEMSTATS_STAT_ENDURANCE]  . SetBase((int) row.GetFloat("base_endurance"));
+    attributes[PSITEMSTATS_STAT_INTELLIGENCE].SetBase((int) row.GetFloat("base_intelligence"));
+    attributes[PSITEMSTATS_STAT_WILL]       . SetBase((int) row.GetFloat("base_will"));
+    attributes[PSITEMSTATS_STAT_CHARISMA]  .  SetBase((int) row.GetFloat("base_charisma"));
 
     // NPC fields here
     npc_spawnruleid = row.GetUInt32("npc_spawn_rule");
@@ -265,10 +260,10 @@ bool psCharacter::Load(iResultRow& row)
     // from a single master instance.
     PID use_id = npc_masterid ? npc_masterid : pid;
 
-    SetHitPointsMax(row.GetFloat("base_hitpoints_max"));
-    override_max_hp = GetHitPointsMax();
-    SetManaMax(row.GetFloat("base_mana_max"));
-    override_max_mana = GetManaMax();
+    GetMaxHP().SetBase(row.GetFloat("base_hitpoints_max"));
+    override_max_hp = GetMaxHP().Base();
+    GetMaxMana().SetBase(row.GetFloat("base_mana_max"));
+    override_max_mana = GetMaxMana().Base();
 
     if (!LoadSkills(use_id))
     {
@@ -289,9 +284,9 @@ bool psCharacter::Load(iResultRow& row)
     // If mod_hp or mod_mana are set < 0 in the db, then that means
     // to use whatever is calculated as the max, so npc's spawn at 100%.
     float mod = row.GetFloat("mod_hitpoints");
-    SetHitPoints( mod < 0 ? GetHitPointsMax() : mod );
+    SetHitPoints(mod < 0 ? GetMaxHP().Base() : mod);
     mod = row.GetFloat("mod_mana");
-    SetMana( mod < 0 ? GetManaMax() : mod );
+    SetMana(mod < 0 ? GetMaxMana().Base() : mod);
     SetStamina(row.GetFloat("stamina_physical"),true);
     SetStamina(row.GetFloat("stamina_mental"),false);
 
@@ -299,7 +294,7 @@ bool psCharacter::Load(iResultRow& row)
 
     lastlogintime = row["last_login"];
     faction_standings = row["faction_standings"];
-    progressionEventsText = row["progression_script"];
+    progressionScriptText = row["progression_script"];
 
     // Set on-hand money.
     money.Set(
@@ -796,7 +791,7 @@ bool psCharacter::LoadSkills(PID use_id)
                 skills.SetSkillPractice(  skill, skillResult[i].GetInt("skill_Z") );
                 skills.SetSkillKnowledge( skill, skillResult[i].GetInt("skill_Y") );
                 skills.SetSkillRank(      skill, skillResult[i].GetInt("skill_Rank"),false );
-                skills.GetSkill(skill)->dirtyFlag = false;
+                skills.Get(skill).dirtyFlag = false;
             }
         }
         skills.Calculate();
@@ -805,19 +800,19 @@ bool psCharacter::LoadSkills(PID use_id)
         return false;
 
     // Set stats ranks
-    skills.SetSkillRank( PSSKILL_AGI , attributes.GetStat( PSITEMSTATS_STAT_AGILITY        , false), false);
-    skills.SetSkillRank( PSSKILL_CHA , attributes.GetStat( PSITEMSTATS_STAT_CHARISMA       , false), false);
-    skills.SetSkillRank( PSSKILL_END , attributes.GetStat( PSITEMSTATS_STAT_ENDURANCE      , false), false);
-    skills.SetSkillRank( PSSKILL_INT , attributes.GetStat( PSITEMSTATS_STAT_INTELLIGENCE   , false), false);
-    skills.SetSkillRank( PSSKILL_WILL ,attributes.GetStat( PSITEMSTATS_STAT_WILL           , false), false);
-    skills.SetSkillRank( PSSKILL_STR,  attributes.GetStat( PSITEMSTATS_STAT_STRENGTH       , false), false);
+    skills.SetSkillRank(PSSKILL_AGI,  attributes[PSITEMSTATS_STAT_AGILITY].Base()     , false);
+    skills.SetSkillRank(PSSKILL_CHA,  attributes[PSITEMSTATS_STAT_CHARISMA].Base()    , false);
+    skills.SetSkillRank(PSSKILL_END,  attributes[PSITEMSTATS_STAT_ENDURANCE].Base()   , false);
+    skills.SetSkillRank(PSSKILL_INT,  attributes[PSITEMSTATS_STAT_INTELLIGENCE].Base(), false);
+    skills.SetSkillRank(PSSKILL_WILL, attributes[PSITEMSTATS_STAT_WILL].Base()        , false);
+    skills.SetSkillRank(PSSKILL_STR,  attributes[PSITEMSTATS_STAT_STRENGTH].Base()    , false);
 
-    skills.GetSkill(PSSKILL_AGI)->dirtyFlag = false;
-    skills.GetSkill(PSSKILL_CHA)->dirtyFlag = false;
-    skills.GetSkill(PSSKILL_END)->dirtyFlag = false;
-    skills.GetSkill(PSSKILL_INT)->dirtyFlag = false;
-    skills.GetSkill(PSSKILL_WILL)->dirtyFlag = false;
-    skills.GetSkill(PSSKILL_STR)->dirtyFlag = false;
+    skills.Get(PSSKILL_AGI).dirtyFlag = false;
+    skills.Get(PSSKILL_CHA).dirtyFlag = false;
+    skills.Get(PSSKILL_END).dirtyFlag = false;
+    skills.Get(PSSKILL_INT).dirtyFlag = false;
+    skills.Get(PSSKILL_WILL).dirtyFlag = false;
+    skills.Get(PSSKILL_STR).dirtyFlag = false;
 
     return true;
 }
@@ -886,12 +881,12 @@ void psCharacter::SetRaceInfo(psRaceInfo *rinfo)
     if ( !rinfo )
         return;
 
-    attributes.SetStat(PSITEMSTATS_STAT_STRENGTH,(unsigned int)rinfo->GetBaseAttribute(PSITEMSTATS_STAT_STRENGTH), false );
-    attributes.SetStat(PSITEMSTATS_STAT_AGILITY,(unsigned int)rinfo->GetBaseAttribute(PSITEMSTATS_STAT_AGILITY), false);
-    attributes.SetStat(PSITEMSTATS_STAT_ENDURANCE,(unsigned int)rinfo->GetBaseAttribute(PSITEMSTATS_STAT_ENDURANCE), false);
-    attributes.SetStat(PSITEMSTATS_STAT_INTELLIGENCE,(unsigned int)rinfo->GetBaseAttribute(PSITEMSTATS_STAT_INTELLIGENCE), false);
-    attributes.SetStat(PSITEMSTATS_STAT_WILL,(unsigned int)rinfo->GetBaseAttribute(PSITEMSTATS_STAT_WILL), false);
-    attributes.SetStat(PSITEMSTATS_STAT_CHARISMA,(unsigned int)rinfo->GetBaseAttribute(PSITEMSTATS_STAT_CHARISMA), false);
+    attributes[PSITEMSTATS_STAT_STRENGTH] .   SetBase(rinfo->GetBaseAttribute(PSITEMSTATS_STAT_STRENGTH));
+    attributes[PSITEMSTATS_STAT_AGILITY]   .  SetBase(rinfo->GetBaseAttribute(PSITEMSTATS_STAT_AGILITY));
+    attributes[PSITEMSTATS_STAT_ENDURANCE]  . SetBase(rinfo->GetBaseAttribute(PSITEMSTATS_STAT_ENDURANCE));
+    attributes[PSITEMSTATS_STAT_INTELLIGENCE].SetBase(rinfo->GetBaseAttribute(PSITEMSTATS_STAT_INTELLIGENCE));
+    attributes[PSITEMSTATS_STAT_WILL]       . SetBase(rinfo->GetBaseAttribute(PSITEMSTATS_STAT_WILL));
+    attributes[PSITEMSTATS_STAT_CHARISMA]  .  SetBase(rinfo->GetBaseAttribute(PSITEMSTATS_STAT_CHARISMA));
 }
 
 void psCharacter::SetFamiliarID(PID v)
@@ -907,66 +902,25 @@ void psCharacter::SetFamiliarID(PID v)
 
 };
 
-void psCharacter::LoadSavedProgressionEvents()
+void psCharacter::LoadActiveSpells()
 {
-    if (progressionEventsText.IsEmpty())
+    if (progressionScriptText.IsEmpty())
         return;
 
-    csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
-    csRef<iDocument> doc = xml->CreateDocument();
-    const char *error = doc->Parse(progressionEventsText);
-    if (error)
+    ProgressionScript *script = ProgressionScript::Create(fullname, progressionScriptText);
+    if (!script)
     {
-        Error3("Couldn't restore saved progression events: %s\n%s", error, progressionEventsText.GetData());
-        progressionEventsText.Clear();
+        Error3("Saved progression script for >%s< is invalid:\n%s", fullname.GetData(), progressionScriptText.GetData());
         return;
     }
 
-    csRef<iDocumentNode> evts = doc->GetRoot()->GetNode("evts");
-    if (!evts)
-    {
-        Error2("Couldn't restore saved progression events: no <evts> tag:\n%s", progressionEventsText.GetData());
-        progressionEventsText.Clear();
-        return;
-    }
+    CS_ASSERT(actor);
 
-    csRef<iDocumentNodeIterator> iter = evts->GetNodes();
+    MathEnvironment env;
+    env.Define("Actor", actor);
+    script->Run(&env);
 
-    while (iter->HasNext())
-    {
-        csRef<iDocumentNode> evt = iter->Next();
-
-        if (evt->GetType() != CS_NODE_ELEMENT)
-            continue;
-
-        csString script = GetNodeXML(evt, false);
-        //printf("Restoring saved script: %s\n", script.GetData());
-        psserver->GetProgressionManager()->ProcessScript(script, actor, actor);
-    }
-    progressionEventsText.Clear();
-}
-
-int psCharacter::RegisterProgressionEvent(const csString & script, csTicks ticksElapsed)
-{
-    SavedProgressionEvent evt;
-    evt.id = nextProgressionEventID++;
-    evt.registrationTime = csGetTicks();
-    evt.ticksElapsed = ticksElapsed;
-    evt.script = script;
-    progressionEvents.Push(evt);
-    return evt.id;
-}
-
-void psCharacter::UnregisterProgressionEvent(int id)
-{
-    for (size_t i = 0; i < progressionEvents.GetSize(); i++)
-    {
-        if (progressionEvents[i].id == id)
-        {
-            progressionEvents.DeleteIndex(i);
-            return;
-        }
-    }
+    delete script;
 }
 
 void psCharacter::UpdateRespawn(csVector3 pos, float yrot, psSectorInfo *sector, InstanceID instance)
@@ -1130,108 +1084,34 @@ void psCharacter::SetTradeWork(psWorkGameEvent * event)
     workEvent = event;
 }
 
-void psCharacter::SetKFactor(float K)
-{
-    if (K < 0.0)
-        K = 0.0;
-    else if (K > 100.0)
-        K = 100.0;
-
-    KFactor = K;
-}
-
-float psCharacter::GetPowerLevel( PSSKILL skill )
-{
-    float waySkillRank = (float)skills.GetSkillRank(skill);
-    MathScriptVar*  waySkillVar = powerScript->GetVar("WaySkill");
-    MathScriptVar*  kVar        = powerScript->GetVar("KFactor");
-    MathScriptVar*  powerLevel  = powerScript->GetVar("PowerLevel");
-
-    if(!kVar)
-    {
-        Warning1(LOG_SPELLS,"Couldn't find the KFactor var in powerlevel script!\n");
-        return 0.0f;
-    }
-
-    if(!waySkillVar)
-    {
-        Warning1(LOG_SPELLS,"Couldn't find the WaySkill var in powerlevel script!\n");
-        return 0.0f;
-    }
-
-    if(!powerLevel)
-    {
-        Warning1(LOG_SPELLS,"Couldn't find the PowerLevel var in powerlevel script!\n");
-        return 0.0f;
-    }
-
-    kVar->SetValue((double)KFactor);
-    waySkillVar->SetValue((double)waySkillRank);
-
-    powerScript->Execute();
-    return (float)powerLevel->GetValue();
-}
-
 int psCharacter::GetMaxAllowedRealm( PSSKILL skill )
 {
-    unsigned int waySkillRank = skills.GetSkillRank(skill);
+    unsigned int waySkillRank = skills.GetSkillRank(skill).Current();
 
     if (waySkillRank == 0)  // zero skill = no casting
         return 0;
 
-    if (!maxRealmScript)
+    MathEnvironment env;
+    env.Define("WaySkill", waySkillRank);
+
+    maxRealmScript->Evaluate(&env);
+
+    MathVar *maxRealm = env.Lookup("MaxRealm");
+    if (!maxRealm)
     {
-        Error1("No \"MaxRealm\" script!");
+        Error1("Failed to evaluate MathScript >MaxRealm<.");
         return 0;
     }
-
-    MathScriptVar*  waySkillVar = maxRealmScript->GetVar("WaySkill");
-    MathScriptVar*  maxRealmVar = maxRealmScript->GetVar("MaxRealm");
-
-    if(!waySkillVar)
-    {
-        Warning1(LOG_SPELLS,"Couldn't find the WaySkill var in MaxRealm script!");
-        return 0;
-    }
-
-    if(!maxRealmVar)
-    {
-        Warning1(LOG_SPELLS,"Couldn't find the MaxRealm var in MaxRealm script!");
-        return 0;
-    }
-
-    waySkillVar->SetValue((double)waySkillRank);
-    maxRealmScript->Execute();
-    return (int)maxRealmVar->GetValue();
+    return (int) maxRealm->GetValue();
 }
 
 bool psCharacter::CheckMagicKnowledge( PSSKILL skill, int realm )
 {
-    Skill * skillRec = skills.GetSkill(skill);
-    if (!skillRec)
-        return false;
-
     if (GetMaxAllowedRealm(skill) >= realm)
         return true;
 
     // Special case for rank 0 people just starting.
-    if (skillRec->rank==0 && !skillRec->CanTrain() && realm==1)
-        return true;
-    else
-        return false;
-}
-
-float psCharacter::GetPowerLevel()
-{
-    // When casting a spell the spell casting event is stored in spellCasting.
-    // This function is only legal to call when a spell is casted.
-    if (spellCasting == NULL)
-    {
-        Error2("Character %s isn't casting a spell and GetPowerLevel is called",GetCharName());
-        return 0.0;
-    }
-
-    return GetPowerLevel(spellCasting->spell->GetSkill());
+    return (realm == 1 && skills.GetSkillRank(skill).Base() == 0 && !skills.Get(skill).CanTrain());
 }
 
 const char * psCharacter::GetModeStr()
@@ -1263,7 +1143,7 @@ bool psCharacter::CanSwitchMode(PSCHARACTER_MODE from, PSCHARACTER_MODE to)
     }
 }
 
-void psCharacter::SetMode(PSCHARACTER_MODE newmode, uint32_t clientnum)
+void psCharacter::SetMode(PSCHARACTER_MODE newmode, uint32_t clientnum, uint32_t extraData)
 {
     // Assume combat messages need to be sent anyway, because the stance may have changed.
     if (player_mode == newmode && newmode != PSCHARACTER_MODE_COMBAT)
@@ -1294,7 +1174,10 @@ void psCharacter::SetMode(PSCHARACTER_MODE newmode, uint32_t clientnum)
         isFrozen = actor->GetClient()->IsFrozen();
     }
 
-    psModeMessage msg(clientnum, actor->GetEID(), (uint8_t) newmode, combat_stance.stance_id);
+    if (newmode == PSCHARACTER_MODE_COMBAT)
+        extraData = combat_stance.stance_id;
+
+    psModeMessage msg(clientnum, actor->GetEID(), (uint8_t) newmode, extraData);
     msg.Multicast(actor->GetMulticastClients(), 0, PROX_LIST_ANY_RANGE);
 
     actor->SetAllowedToMove(newmode != PSCHARACTER_MODE_DEAD &&
@@ -1332,7 +1215,7 @@ void psCharacter::SetMode(PSCHARACTER_MODE newmode, uint32_t clientnum)
             SetStaminaRegenerationNone();  // no stamina regen while dead or overweight
             break;
         case PSCHARACTER_MODE_DEFEATED:
-            SetHitPointsRate(HP_REGEN_RATE);
+            GetHPRate().SetBase(HP_REGEN_RATE);
             SetStaminaRegenerationNone();
             break;
 
@@ -1482,6 +1365,8 @@ void psCharacter::DropItem(psItem *&item, csVector3 suggestedPos, bool guarded, 
     }
 }
 
+// This is lame, but we need a key for these special "modifier" things
+#define MODIFIER_FAKE_ACTIVESPELL ((ActiveSpell*) 0xf00)
 void psCharacter::CalculateEquipmentModifiers()
 {
     // In this method we potentially call Equip and Unequip scripts that modify stats.
@@ -1497,7 +1382,10 @@ void psCharacter::CalculateEquipmentModifiers()
 
     csList<psItem*> itemlist;
 
-    modifiers.Clear();
+    for (int i = 0; i < PSITEMSTATS_STAT_COUNT; i++)
+    {
+        modifiers[(PSITEMSTATS_STAT) i].Cancel(MODIFIER_FAKE_ACTIVESPELL);
+    }
 
     psItem *currentitem = NULL;
 
@@ -1531,12 +1419,12 @@ void psCharacter::CalculateEquipmentModifiers()
             }
             if (!currentitem->IsActive())
             {
-                Inventory().RunEquipScript(currentitem);
+                currentitem->RunEquipScript(actor);
             }
             // Check for attr bonuses
             for (int i = 0; i < PSITEMSTATS_STAT_BONUS_COUNT; i++)
             {
-                modifiers.AddToStat(currentitem->GetWeaponAttributeBonusType(i), (int) currentitem->GetWeaponAttributeBonusMax(i));
+                modifiers[currentitem->GetWeaponAttributeBonusType(i)].Buff(MODIFIER_FAKE_ACTIVESPELL, (int) currentitem->GetWeaponAttributeBonusMax(i));
             }
             hasChanged = true;
             itemlist.Delete(it);
@@ -1549,9 +1437,9 @@ void psCharacter::CalculateEquipmentModifiers()
     while( i.HasNext() )
     {
         currentitem = i.Next();
-        if( currentitem->IsActive() )
+        if (currentitem->IsActive())
         {
-            Inventory().RunUnequipScript(currentitem);
+            currentitem->CancelEquipScript();
         }
     }
     itemlist.DeleteAll();
@@ -1707,125 +1595,40 @@ void psCharacter::ResetStats()
 
 void psCharacter::CombatDrain(int slot)
 {
-    float mntdrain = 1.0f;
-    float phydrain = 1.0f;
+    static MathScript *script = NULL;
+    if (!script)
+        script = psserver->GetMathScriptEngine()->FindScript("StaminaCombat");
+    if (!script)
+        return;
 
-    static MathScript *costScript = NULL;
+    MathEnvironment env;
+    env.Define("Actor", this);
+    env.Define("Weapon", inventory.GetItem(NULL, (INVENTORY_SLOT_NUMBER) slot));
 
-    if (!costScript)
-        costScript = psserver->GetMathScriptEngine()->FindScript("StaminaCombat");
+    script->Evaluate(&env);
 
-    if ( costScript )
+    MathVar *phyDrain = env.Lookup("PhyDrain");
+    MathVar *mntDrain = env.Lookup("MntDrain");
+    if (!phyDrain || !mntDrain)
     {
-        // Output
-        MathScriptVar* PhyDrain   = costScript->GetVar("PhyDrain");
-        MathScriptVar* MntDrain   = costScript->GetVar("MntDrain");
-
-        // Input
-        MathScriptVar* actor    = costScript->GetOrCreateVar("Actor");
-        MathScriptVar* weapon   = costScript->GetOrCreateVar("Weapon");
-
-        if(!PhyDrain || !MntDrain)
-        {
-            Error1("Couldn't find the PhyDrain output var in StaminaCombat script!");
-            return;
-        }
-
-        // Input the data
-        actor->SetObject(this);
-        weapon->SetObject(inventory.GetItem(NULL,(INVENTORY_SLOT_NUMBER) slot));
-
-        costScript->Execute();
-
-        // Get the output
-        phydrain = PhyDrain->GetValue();
-        mntdrain = MntDrain->GetValue();
+        Error1("Failed to evaluate MathScript >StaminaCombat<.");
+        return;
     }
 
-    AdjustStamina(-phydrain, true);
-    AdjustStamina(-mntdrain, false);
+    AdjustStamina(-phyDrain->GetValue(), true);
+    AdjustStamina(-mntDrain->GetValue(), false);
 }
 
-float psCharacter::GetHitPointsMax()
+void psCharacter::AdjustHitPoints(float delta)
 {
-    return vitals->GetVital(VITAL_HITPOINTS).max;
+    vitals->AdjustVital(VITAL_HITPOINTS, DIRTY_VITAL_HP, delta);
 }
-
-float psCharacter::GetHitPointsMaxModifier()
-{
-    return vitals->GetVital(VITAL_HITPOINTS).maxModifier;
-}
-
-
-float psCharacter::GetManaMax()
-{
-    return vitals->GetVital(VITAL_MANA).max;
-}
-
-float psCharacter::GetManaMaxModifier()
-{
-    return vitals->GetVital(VITAL_MANA).maxModifier;
-}
-
-
-float psCharacter::GetStaminaMax(bool pys)
-{
-    if(pys)
-    {
-        return vitals->GetVital(VITAL_PYSSTAMINA).max;
-    }
-    else
-    {
-        return vitals->GetVital(VITAL_MENSTAMINA).max;
-    }
-}
-
-float psCharacter::GetStaminaMaxModifier(bool pys)
-{
-    if(pys)
-    {
-        return vitals->GetVital(VITAL_PYSSTAMINA).maxModifier;
-    }
-    else
-    {
-        return vitals->GetVital(VITAL_MENSTAMINA).maxModifier;
-    }
-}
-
-
-float psCharacter::AdjustHitPoints(float adjust)
-{
-    return AdjustVital(VITAL_HITPOINTS, DIRTY_VITAL_HP,adjust);
-}
-
 
 void psCharacter::SetHitPoints(float v)
 {
-    SetVital(VITAL_HITPOINTS, DIRTY_VITAL_HP,v);
+    vitals->SetVital(VITAL_HITPOINTS, DIRTY_VITAL_HP,v);
 }
 
-float psCharacter::AdjustHitPointsMaxModifier(float adjust)
-{
-    vitals->DirtyVital(VITAL_HITPOINTS, DIRTY_VITAL_HP_MAX).maxModifier += adjust;
-    return vitals->GetVital(VITAL_HITPOINTS).maxModifier;
-}
-
-void psCharacter::SetHitPointsMaxModifier (float v)
-{
-    vitals->DirtyVital(VITAL_HITPOINTS, DIRTY_VITAL_HP_MAX).maxModifier = v;
-}
-
-
-float psCharacter::AdjustHitPointsMax(float adjust)
-{
-    vitals->DirtyVital(VITAL_HITPOINTS, DIRTY_VITAL_HP_MAX).max += adjust;
-    return vitals->GetVital(VITAL_HITPOINTS).max;
-}
-void psCharacter::SetHitPointsMax(float v)
-{
-    CS_ASSERT(v > -0.01f);
-    vitals->DirtyVital(VITAL_HITPOINTS, DIRTY_VITAL_HP_MAX).max = v;
-}
 float psCharacter::GetHP()
 {
     return vitals->GetHP();
@@ -1837,33 +1640,7 @@ float psCharacter::GetMana()
 }
 float psCharacter::GetStamina(bool pys)
 {
-    return vitals->GetStamina(pys);
-}
-
-float psCharacter::AdjustVital( int vitalName, int dirtyFlag, float adjust )
-{
-    vitals->DirtyVital(vitalName, dirtyFlag).value += adjust;
-
-    if (vitals->GetVital(vitalName).value < 0)
-        vitals->GetVital(vitalName).value = 0;
-
-    if (vitals->GetVital(vitalName).value > vitals->GetVital(vitalName).max)
-        vitals->GetVital(vitalName).value = vitals->GetVital(vitalName).max;
-
-    return vitals->GetVital(vitalName).value;
-}
-
-float psCharacter::SetVital( int vitalName, int dirtyFlag, float value )
-{
-    vitals->DirtyVital(vitalName, dirtyFlag).value = value;
-
-    if (vitals->GetVital(vitalName).value < 0)
-        vitals->GetVital(vitalName).value = 0;
-
-    if (vitals->GetVital(vitalName).value > vitals->GetVital(vitalName).max)
-        vitals->GetVital(vitalName).value = vitals->GetVital(vitalName).max;
-
-    return vitals->GetVital(vitalName).value;
+    return pys ? vitals->GetPStamina() : vitals->GetMStamina();
 }
 
 bool psCharacter::UpdateStatDRData(csTicks now)
@@ -1881,138 +1658,88 @@ bool psCharacter::SendStatDRMessage(uint32_t clientnum, EID eid, int flags, csRe
     return vitals->SendStatDRMessage(clientnum, eid, flags, group);
 }
 
-float psCharacter::AdjustHitPointsRate(float adjust)
+VitalBuffable & psCharacter::GetMaxHP()
 {
-    vitals->DirtyVital(VITAL_HITPOINTS, DIRTY_VITAL_HP_RATE).drRate += adjust;
-    return vitals->GetVital(VITAL_HITPOINTS).drRate;
+    return vitals->GetVital(VITAL_HITPOINTS).max;
 }
-void psCharacter::SetHitPointsRate(float v)
+VitalBuffable & psCharacter::GetMaxMana()
 {
-    vitals->DirtyVital(VITAL_HITPOINTS, DIRTY_VITAL_HP).drRate = v;
-}
-
-
-float psCharacter::AdjustMana(float adjust)
-{
-    return AdjustVital(VITAL_MANA, DIRTY_VITAL_MANA,adjust);
-}
-void psCharacter::SetMana(float v)
-{
-    SetVital(VITAL_MANA, DIRTY_VITAL_MANA,v);
-}
-
-float psCharacter::AdjustManaMaxModifier(float adjust)
-{
-    vitals->DirtyVital(VITAL_MANA, DIRTY_VITAL_MANA_MAX).maxModifier += adjust;
-    return vitals->GetVital(VITAL_MANA).maxModifier;
-}
-
-void psCharacter::SetManaMaxModifier(float v)
-{
-    vitals->DirtyVital(VITAL_MANA, DIRTY_VITAL_MANA_MAX).maxModifier = v;
-}
-
-float psCharacter::AdjustManaMax(float adjust)
-{
-    vitals->DirtyVital(VITAL_MANA, DIRTY_VITAL_MANA_MAX).max += adjust;
     return vitals->GetVital(VITAL_MANA).max;
 }
-void psCharacter::SetManaMax(float v)
+VitalBuffable & psCharacter::GetMaxPStamina()
 {
-    CS_ASSERT_MSG("Negative Max MP!", v > -0.01f);
-    vitals->DirtyVital(VITAL_MANA, DIRTY_VITAL_MANA_MAX).max = v;
+    return vitals->GetVital(VITAL_PYSSTAMINA).max;
+}
+VitalBuffable & psCharacter::GetMaxMStamina()
+{
+    return vitals->GetVital(VITAL_MENSTAMINA).max;
 }
 
-float psCharacter::AdjustManaRate(float adjust)
+VitalBuffable & psCharacter::GetHPRate()
 {
-    vitals->DirtyVital(VITAL_MANA, DIRTY_VITAL_MANA_RATE).drRate += adjust;
+    return vitals->GetVital(VITAL_HITPOINTS).drRate;
+}
+VitalBuffable & psCharacter::GetManaRate()
+{
     return vitals->GetVital(VITAL_MANA).drRate;
 }
-
-void psCharacter::SetManaRate(float v)
+VitalBuffable & psCharacter::GetPStaminaRate()
 {
-    vitals->DirtyVital(VITAL_MANA, DIRTY_VITAL_MANA_RATE).drRate = v;
+    return vitals->GetVital(VITAL_PYSSTAMINA).drRate;
+}
+VitalBuffable & psCharacter::GetMStaminaRate()
+{
+    return vitals->GetVital(VITAL_MENSTAMINA).drRate;
 }
 
-
-float psCharacter::AdjustStamina(float adjust, bool pys)
+void psCharacter::AdjustMana(float adjust)
 {
-    if(pys)
-        return AdjustVital(VITAL_PYSSTAMINA, DIRTY_VITAL_PYSSTAMINA,adjust);
+    vitals->AdjustVital(VITAL_MANA, DIRTY_VITAL_MANA,adjust);
+}
+
+void psCharacter::SetMana(float v)
+{
+    vitals->SetVital(VITAL_MANA, DIRTY_VITAL_MANA, v);
+}
+
+void psCharacter::AdjustStamina(float delta, bool pys)
+{
+    if (pys)
+        vitals->AdjustVital(VITAL_PYSSTAMINA, DIRTY_VITAL_PYSSTAMINA, delta);
     else
-        return AdjustVital(VITAL_MENSTAMINA, DIRTY_VITAL_MENSTAMINA,adjust);
+        vitals->AdjustVital(VITAL_MENSTAMINA, DIRTY_VITAL_MENSTAMINA, delta);
 }
-float psCharacter::AdjustStaminaMaxModifier (float adjust, bool pys)
-{
-    if(pys)
-    {
-        vitals->DirtyVital(VITAL_PYSSTAMINA, DIRTY_VITAL_PYSSTAMINA_MAX).maxModifier += adjust;
-        return vitals->GetVital(VITAL_PYSSTAMINA).maxModifier;
-    }
-    else
-    {
-        vitals->DirtyVital(VITAL_MENSTAMINA, DIRTY_VITAL_MENSTAMINA_MAX).maxModifier += adjust;
-        return vitals->GetVital(VITAL_MENSTAMINA).maxModifier;
-    }
-}
-
-void psCharacter::SetStaminaMaxModifier(float v, bool pys)
-{
-    if(pys)
-    {
-        vitals->DirtyVital(VITAL_PYSSTAMINA, DIRTY_VITAL_PYSSTAMINA_MAX).maxModifier = v;
-    }
-    else
-    {
-        vitals->DirtyVital(VITAL_MENSTAMINA, DIRTY_VITAL_MENSTAMINA_MAX).maxModifier = v;
-    }
-}
-
 
 void psCharacter::SetStamina(float v,bool pys)
 {
     if(pys)
-        SetVital(VITAL_PYSSTAMINA, DIRTY_VITAL_PYSSTAMINA,v);
+        vitals->SetVital(VITAL_PYSSTAMINA, DIRTY_VITAL_PYSSTAMINA,v);
     else
-        SetVital(VITAL_MENSTAMINA, DIRTY_VITAL_MENSTAMINA,v);
-}
-
-float psCharacter::AdjustStaminaMax(float adjust,bool pys)
-{
-    if(pys)
-    {
-        vitals->DirtyVital(VITAL_PYSSTAMINA, DIRTY_VITAL_PYSSTAMINA_MAX).max += adjust;
-        return vitals->GetVital(VITAL_PYSSTAMINA).max;
-    }
-    else
-    {
-        vitals->DirtyVital(VITAL_MENSTAMINA, DIRTY_VITAL_MENSTAMINA_MAX).max += adjust;
-        return vitals->GetVital(VITAL_MENSTAMINA).max;
-    }
+        vitals->SetVital(VITAL_MENSTAMINA, DIRTY_VITAL_MENSTAMINA,v);
 }
 
 void psCharacter::SetStaminaRegenerationNone(bool physical,bool mental)
 {
-    if(physical) SetStaminaRate(0.0f,true);
-    if(mental)   SetStaminaRate(0.0f,false);
+    if(physical) GetPStaminaRate().SetBase(0.0);
+    if(mental)   GetMStaminaRate().SetBase(0.0);
 }
 
 void psCharacter::SetStaminaRegenerationWalk(bool physical,bool mental)
 {
-    if(physical) SetStaminaRate(GetStaminaMax(true)/100 * GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_PHYSICAL_WALK],true);
-    if(mental)   SetStaminaRate(GetStaminaMax(false)/100 * GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_MENTAL_WALK],false);
+    if(physical) GetPStaminaRate().SetBase(GetMaxPStamina().Current()/100 * GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_PHYSICAL_WALK]);
+    if(mental)   GetMStaminaRate().SetBase(GetMaxMStamina().Current()/100 * GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_MENTAL_WALK]);
 }
 
 void psCharacter::SetStaminaRegenerationSitting()
 {
-    SetStaminaRate(GetStaminaMax(true) * 0.015 * GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_PHYSICAL_STILL],true);
-    SetStaminaRate(GetStaminaMax(false) * 0.015 * GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_MENTAL_STILL],false);
+    GetPStaminaRate().SetBase(GetMaxPStamina().Current() * 0.015 * GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_PHYSICAL_STILL]);
+    GetMStaminaRate().SetBase(GetMaxMStamina().Current() * 0.015 * GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_MENTAL_STILL]);
 }
 
 void psCharacter::SetStaminaRegenerationStill(bool physical,bool mental)
 {
-    if(physical) SetStaminaRate(GetStaminaMax(true)/100 * GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_PHYSICAL_STILL],true);
-    if(mental)   SetStaminaRate(GetStaminaMax(false)/100 * GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_MENTAL_STILL],false);
+    if(physical) GetPStaminaRate().SetBase(GetMaxPStamina().Current()/100 * GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_PHYSICAL_STILL]);
+    if(mental)   GetMStaminaRate().SetBase(GetMaxMStamina().Current()/100 * GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_MENTAL_STILL]);
 }
 
 void psCharacter::SetStaminaRegenerationWork(int skill)
@@ -2024,65 +1751,39 @@ void psCharacter::SetStaminaRegenerationWork(int skill)
     // Need real formula for this. Shouldn't be hard coded anyway.
     // Stamina drain needs to be set depending on the complexity of the task.
     int factor = CacheManager::GetSingleton().GetSkillByID(skill)->mental_factor;
-    AdjustStaminaRate(-6.0*(100-factor)/100, true);
-    AdjustStaminaRate(-6.0*(100-factor)/100, false);
+    GetPStaminaRate().SetBase(GetPStaminaRate().Base()-6.0*(100-factor)/100);
+    GetMStaminaRate().SetBase(GetMStaminaRate().Base()-6.0*(100-factor)/100);
 }
 void psCharacter::CalculateMaxStamina()
 {
     if(!staminaCalc)
     {
-        CPrintf(CON_ERROR,"Called CalculateMaxStamina without mathscript!!!!");
+        CPrintf(CON_ERROR, "Called CalculateMaxStamina without mathscript!!!!");
         return;
     }
+    MathEnvironment env;
     // Set all the skills vars
-    staminaCalc->GetOrCreateVar("STR") ->SetValue(attributes.GetStat(PSITEMSTATS_STAT_STRENGTH));
-    staminaCalc->GetOrCreateVar("END") ->SetValue(attributes.GetStat(PSITEMSTATS_STAT_ENDURANCE));
-    staminaCalc->GetOrCreateVar("AGI") ->SetValue(attributes.GetStat(PSITEMSTATS_STAT_AGILITY));
-    staminaCalc->GetOrCreateVar("INT") ->SetValue(attributes.GetStat(PSITEMSTATS_STAT_INTELLIGENCE));
-    staminaCalc->GetOrCreateVar("WILL")->SetValue(attributes.GetStat(PSITEMSTATS_STAT_WILL));
-    staminaCalc->GetOrCreateVar("CHA") ->SetValue(attributes.GetStat(PSITEMSTATS_STAT_CHARISMA));
+    env.Define("STR",  attributes[PSITEMSTATS_STAT_STRENGTH].Current());
+    env.Define("END",  attributes[PSITEMSTATS_STAT_ENDURANCE].Current());
+    env.Define("AGI",  attributes[PSITEMSTATS_STAT_AGILITY].Current());
+    env.Define("INT",  attributes[PSITEMSTATS_STAT_INTELLIGENCE].Current());
+    env.Define("WILL", attributes[PSITEMSTATS_STAT_WILL].Current());
+    env.Define("CHA",  attributes[PSITEMSTATS_STAT_CHARISMA].Current());
 
     // Calculate
-    staminaCalc->Execute();
+    staminaCalc->Evaluate(&env);
 
+    MathVar *basePhy = env.Lookup("BasePhy");
+    MathVar *baseMen = env.Lookup("BaseMen");
+    if (!basePhy || !baseMen)
+    {
+        Error1("Failed to evaluate MathScript >StaminaBase<.");
+        return;
+    }
     // Set the max values
-    SetStaminaMax((float)staminaCalc->GetOrCreateVar("BasePhy")->GetValue(),true);
-    SetStaminaMax((float)staminaCalc->GetOrCreateVar("BaseMen")->GetValue(),false);
+    GetMaxPStamina().SetBase(basePhy->GetValue());
+    GetMaxMStamina().SetBase(baseMen->GetValue());
 }
-
-void psCharacter::SetStaminaMax(float v,bool pys)
-{
-    if (v < 0.0)
-        v =0.1f;
-    if(pys)
-        vitals->DirtyVital(VITAL_PYSSTAMINA, DIRTY_VITAL_PYSSTAMINA_MAX).max = v;
-    else
-        vitals->DirtyVital(VITAL_MENSTAMINA, DIRTY_VITAL_MENSTAMINA_MAX).max = v;
-}
-
-float psCharacter::AdjustStaminaRate(float adjust,bool pys)
-{
-    if(pys)
-    {
-        vitals->DirtyVital(VITAL_PYSSTAMINA, DIRTY_VITAL_PYSSTAMINA_RATE).drRate += adjust;
-        return vitals->GetVital(VITAL_PYSSTAMINA).drRate;
-    }
-    else
-    {
-        vitals->DirtyVital(VITAL_MENSTAMINA, DIRTY_VITAL_MENSTAMINA_RATE).drRate += adjust;
-        return vitals->GetVital(VITAL_MENSTAMINA).drRate;
-    }
-
-}
-
-void psCharacter::SetStaminaRate(float v,bool pys)
-{
-    if(pys)
-        vitals->DirtyVital(VITAL_PYSSTAMINA, DIRTY_VITAL_PYSSTAMINA_RATE).drRate = v;
-    else
-        vitals->DirtyVital(VITAL_MENSTAMINA, DIRTY_VITAL_MENSTAMINA_RATE).drRate = v;
-}
-
 
 void psCharacter::ResetSwings(csTicks timeofattack)
 {
@@ -2130,36 +1831,6 @@ int psCharacter::GetSlotEventId(INVENTORY_SLOT_NUMBER slot)
 
 // AVPRO= attack Value progression (this is to change the progression of all the calculation in AV for now it is equal to 1)
 #define AVPRO 1
-
-float psCharacter::GetAttackValueModifier()
-{
-    return attackValueModifier;
-}
-
-void  psCharacter::AdjustAttackValueModifier(float mul)
-{
-    attackValueModifier *= mul;
-}
-
-float psCharacter::GetDefenseValueModifier()
-{
-    return defenseValueModifier;
-}
-
-void  psCharacter::AdjustDefenseValueModifier(float mul)
-{
-    defenseValueModifier *= mul;
-}
-
-float psCharacter::GetMeleeDefensiveDamageModifier()
-{
-    return meleeDefensiveDamageModifier;
-}
-
-void  psCharacter::AdjustMeleeDefensiveDamageModifier(float mul)
-{
-    meleeDefensiveDamageModifier *= mul;
-}
 
 float psCharacter::GetTargetedBlockValueForWeaponInSlot(INVENTORY_SLOT_NUMBER slot)
 {
@@ -2236,9 +1907,9 @@ float psCharacter::GetDodgeValue()
     CALCULATE_ARMOR_FOR_SLOT(PSCHARACTER_SLOT_BOOTS);
 
     // multiplies for skill
-    heavy_p *= skills.GetSkillRank(PSSKILL_HEAVYARMOR);
-    med_p   *= skills.GetSkillRank(PSSKILL_MEDIUMARMOR);
-    light_p *= skills.GetSkillRank(PSSKILL_LIGHTARMOR);
+    heavy_p *= skills.GetSkillRank(PSSKILL_HEAVYARMOR).Current();
+    med_p   *= skills.GetSkillRank(PSSKILL_MEDIUMARMOR).Current();
+    light_p *= skills.GetSkillRank(PSSKILL_LIGHTARMOR).Current();
 
     // armor skill defense mod
     asdm=heavy_p+med_p+light_p;
@@ -2253,7 +1924,7 @@ float psCharacter::GetDodgeValue()
     /*
     // MADM= Martial Arts Defense Mod=martial arts skill-(weight carried+ AGI malus of the armor +DEX malus of the armor) min 0
     // TODO: fix this to use armor agi malus
-    madm=GetSkillRank(PSSKILL_MARTIALARTS)-inventory.weight;
+    madm=GetSkillRank(PSSKILL_MARTIALARTS).Current()-inventory.weight;
     if (madm<0.0f)
         madm=0.0f;
 
@@ -2394,17 +2065,6 @@ psSpell * psCharacter::GetSpellByIdx(int index)
     if (index < 0 || (size_t)index >= spellList.GetSize())
         return NULL;
     return spellList[index];
-}
-
-csString psCharacter::GetXMLSpellList()
-{
-    csString buff = "<L>";
-    for (size_t i=0; i < spellList.GetSize(); i++)
-    {
-        buff.Append(spellList[i]->SpellToXML());
-    }
-    buff.Append("</L>");
-    return buff;
 }
 
 bool psCharacter::SetTradingStopped(bool stopped)
@@ -3137,67 +2797,67 @@ double psCharacter::GetProperty(const char *ptr)
     }
     else if (!strcasecmp(ptr,"getAttackValueModifier"))
     {
-        return attackValueModifier;
+        return attackModifier.Value();
     }
     else if (!strcasecmp(ptr,"getDefenseValueModifier"))
     {
-        return defenseValueModifier;
+        return defenseModifier.Value();
     }
     else if (!strcasecmp(ptr,"Strength"))
     {
-        return attributes.GetStat(PSITEMSTATS_STAT_STRENGTH,true);
+        return attributes[PSITEMSTATS_STAT_STRENGTH].Current();
     }
     else if (!strcasecmp(ptr,"Agility"))
     {
-        return attributes.GetStat(PSITEMSTATS_STAT_AGILITY,true);
+        return attributes[PSITEMSTATS_STAT_AGILITY].Current();
     }
     else if (!strcasecmp(ptr,"Endurance"))
     {
-        return attributes.GetStat(PSITEMSTATS_STAT_ENDURANCE,true);
+        return attributes[PSITEMSTATS_STAT_ENDURANCE].Current();
     }
     else if (!strcasecmp(ptr,"Intelligence"))
     {
-        return attributes.GetStat(PSITEMSTATS_STAT_INTELLIGENCE,true);
+        return attributes[PSITEMSTATS_STAT_INTELLIGENCE].Current();
     }
     else if (!strcasecmp(ptr,"Will"))
     {
-        return attributes.GetStat(PSITEMSTATS_STAT_WILL,true);
+        return attributes[PSITEMSTATS_STAT_WILL].Current();
     }
     else if (!strcasecmp(ptr,"Charisma"))
     {
-        return attributes.GetStat(PSITEMSTATS_STAT_CHARISMA,true);
+        return attributes[PSITEMSTATS_STAT_CHARISMA].Current();
     }
     else if (!strcasecmp(ptr,"BaseStrength"))
     {
-        return attributes.GetStat(PSITEMSTATS_STAT_STRENGTH,false);
+        return attributes[PSITEMSTATS_STAT_STRENGTH].Base();
     }
     else if (!strcasecmp(ptr,"BaseAgility"))
     {
-        return attributes.GetStat(PSITEMSTATS_STAT_AGILITY,false);
+        return attributes[PSITEMSTATS_STAT_AGILITY].Base();
     }
     else if (!strcasecmp(ptr,"BaseEndurance"))
     {
-        return attributes.GetStat(PSITEMSTATS_STAT_ENDURANCE,false);
+        return attributes[PSITEMSTATS_STAT_ENDURANCE].Base();
     }
     else if (!strcasecmp(ptr,"BaseIntelligence"))
     {
-        return attributes.GetStat(PSITEMSTATS_STAT_INTELLIGENCE,false);
+        return attributes[PSITEMSTATS_STAT_INTELLIGENCE].Base();
     }
     else if (!strcasecmp(ptr,"BaseWill"))
     {
-        return attributes.GetStat(PSITEMSTATS_STAT_WILL,false);
+        return attributes[PSITEMSTATS_STAT_WILL].Base();
     }
     else if (!strcasecmp(ptr,"BaseCharisma"))
     {
-        return attributes.GetStat(PSITEMSTATS_STAT_CHARISMA,false);
+        return attributes[PSITEMSTATS_STAT_CHARISMA].Base();
     }
     else if (!strcasecmp(ptr,"AllArmorStrMalus"))
     {
-        return modifiers.GetStat(PSITEMSTATS_STAT_STRENGTH);
+        return modifiers[PSITEMSTATS_STAT_STRENGTH].Current();
     }
     else if (!strcasecmp(ptr,"AllArmorAgiMalus"))
     {
-        return modifiers.GetStat(PSITEMSTATS_STAT_AGILITY);
+        return modifiers[PSITEMSTATS_STAT_AGILITY].Current();
     }
     else if (!strcasecmp(ptr,"CombatStance"))
     {
@@ -3210,11 +2870,17 @@ double psCharacter::GetProperty(const char *ptr)
 
 double psCharacter::CalcFunction(const char * functionName, const double * params)
 {
-    if (!strcasecmp(functionName, "GetStatValue"))
+    if (!strcasecmp(functionName, "HasCompletedQuest"))
+    {
+        const char *questName = MathScriptEngine::GetString(params[0]);
+        psQuest *quest = CacheManager::GetSingleton().GetQuestByName(questName);
+        return (double) CheckQuestCompleted(quest);
+    }
+    else if (!strcasecmp(functionName, "GetStatValue"))
     {
         PSITEMSTATS_STAT stat = (PSITEMSTATS_STAT)(int)params[0];
 
-        return (double) attributes.GetStat(stat);
+        return (double) attributes[stat].Current();
     }
     else if (!strcasecmp(functionName, "GetAverageSkillValue"))
     {
@@ -3222,15 +2888,15 @@ double psCharacter::CalcFunction(const char * functionName, const double * param
         PSSKILL skill2 = (PSSKILL)(int)params[1];
         PSSKILL skill3 = (PSSKILL)(int)params[2];
 
-        double v1 = skills.GetSkillRank(skill1);
+        double v1 = skills.GetSkillRank(skill1).Current();
 
         if (skill2!=PSSKILL_NONE) {
-            double v2 = skills.GetSkillRank(skill2);
+            double v2 = skills.GetSkillRank(skill2).Current();
             v1 = (v1+v2)/2;
         }
 
         if (skill3!=PSSKILL_NONE) {
-            double v3 = skills.GetSkillRank(skill3);
+            double v3 = skills.GetSkillRank(skill3).Current();
             v1 = (v1+v3)/2;
         }
 
@@ -3244,7 +2910,7 @@ double psCharacter::CalcFunction(const char * functionName, const double * param
     {
         PSSKILL skill = (PSSKILL)(int)params[0];
 
-        double value = skills.GetSkillRank(skill);
+        double value = skills.GetSkillRank(skill).Current();
 
         // always give a small % of melee (unharmed) skill
         if (skill==PSSKILL_MARTIALARTS && value==0)
@@ -3267,45 +2933,24 @@ bool psCharacter::CanTrain( PSSKILL skill )
 void psCharacter::Train( PSSKILL skill, int yIncrease )
 {
     // Did we train stats?
-    if( skill == PSSKILL_AGI ||
-        skill == PSSKILL_CHA ||
-        skill == PSSKILL_END ||
-        skill == PSSKILL_INT ||
-        skill == PSSKILL_WILL ||
-        skill == PSSKILL_STR )
+    PSITEMSTATS_STAT stat = skillToStat(skill);
+    if (stat != PSITEMSTATS_STAT_NONE)
     {
-        Skill* cskill = skills.GetSkill(skill);
+        Skill & cskill = skills.Get(skill);
 
         skills.Train( skill, yIncrease );
-        int know = cskill->y;
-        int cost = cskill->yCost;
+        int know = cskill.y;
+        int cost = cskill.yCost;
 
         // We ranked up
         if(know >= cost)
         {
-            cskill->rank++;
-            cskill->y = 0;
-            int after = cskill->rank;
-            cskill->CalculateCosts(this);
+            cskill.rank.SetBase(cskill.rank.Base()+1);
+            cskill.y = 0;
+            cskill.CalculateCosts(this);
 
             // Insert into the stats
-            switch(skill)
-            {
-                case PSSKILL_AGI:
-                    attributes.SetStat(PSITEMSTATS_STAT_AGILITY,after); break;
-                case PSSKILL_CHA:
-                    attributes.SetStat(PSITEMSTATS_STAT_CHARISMA,after); break;
-                case PSSKILL_END:
-                    attributes.SetStat(PSITEMSTATS_STAT_ENDURANCE,after); break;
-                case PSSKILL_INT:
-                    attributes.SetStat(PSITEMSTATS_STAT_INTELLIGENCE,after); break;
-                case PSSKILL_WILL:
-                    attributes.SetStat(PSITEMSTATS_STAT_WILL,after); break;
-                case PSSKILL_STR:
-                    attributes.SetStat(PSITEMSTATS_STAT_STRENGTH,after); break;
-                default:
-                    break;
-            }
+            attributes[stat].SetBase(cskill.rank.Base());
 
             // Save stats
             if(GetActor()->GetClientID() != 0)
@@ -3319,12 +2964,12 @@ void psCharacter::Train( PSSKILL skill, int yIncrease )
                    "base_charisma"
                     };
                 psStringArray fieldvalues;
-                fieldvalues.FormatPush("%d",attributes.GetStat(PSITEMSTATS_STAT_STRENGTH, false));
-                fieldvalues.FormatPush("%d",attributes.GetStat(PSITEMSTATS_STAT_AGILITY, false));
-                fieldvalues.FormatPush("%d",attributes.GetStat(PSITEMSTATS_STAT_ENDURANCE, false));
-                fieldvalues.FormatPush("%d",attributes.GetStat(PSITEMSTATS_STAT_INTELLIGENCE, false));
-                fieldvalues.FormatPush("%d",attributes.GetStat(PSITEMSTATS_STAT_WILL, false));
-                fieldvalues.FormatPush("%d",attributes.GetStat(PSITEMSTATS_STAT_CHARISMA, false));
+                fieldvalues.FormatPush("%d", attributes[PSITEMSTATS_STAT_STRENGTH].Base());
+                fieldvalues.FormatPush("%d", attributes[PSITEMSTATS_STAT_AGILITY].Base());
+                fieldvalues.FormatPush("%d", attributes[PSITEMSTATS_STAT_ENDURANCE].Base());
+                fieldvalues.FormatPush("%d", attributes[PSITEMSTATS_STAT_INTELLIGENCE].Base());
+                fieldvalues.FormatPush("%d", attributes[PSITEMSTATS_STAT_WILL].Base());
+                fieldvalues.FormatPush("%d", attributes[PSITEMSTATS_STAT_CHARISMA].Base());
 
                 csString id((size_t) pid.Unbox());
 
@@ -3348,45 +2993,10 @@ void psCharacter::Train( PSSKILL skill, int yIncrease )
                 skill,
                 skills.GetSkillPractice((PSSKILL)skill),
                 skills.GetSkillKnowledge((PSSKILL)skill),
-                skills.GetSkillRank((PSSKILL)skill, false)
+                skills.GetSkillRank((PSSKILL)skill).Base()
                 );
         RecalculateStats();
         inventory.CalculateLimits();
-    }
-}
-
-void psCharacter::RegisterDurationEvent(ProgressionDelay* progDelay, csString& name, csTicks duration)
-{
-    FireEvent(name);
-
-    DurationEvent * newEvent = new DurationEvent;
-    newEvent->queuedObject = progDelay;
-    newEvent->name = name;
-    newEvent->appliedTime = csGetTicks();
-    newEvent->duration = duration;
-
-    durationEvents.Push(newEvent);
-}
-
-void psCharacter::UnregisterDurationEvent(ProgressionDelay* progDelay)
-{
-    for ( size_t z = 0; z < durationEvents.GetSize(); z++ )
-    {
-        if ( durationEvents[z]->queuedObject == progDelay )
-        {
-            durationEvents.DeleteIndex(z);
-        }
-    }
-}
-
-void psCharacter::FireEvent(const char* name)
-{
-    for ( size_t z = 0; z < durationEvents.GetSize(); z++ )
-    {
-        if ( durationEvents[z]->name == name )
-        {
-            durationEvents[z]->queuedObject->Trigger();
-        }
     }
 }
 
@@ -3399,54 +3009,36 @@ void Skill::CalculateCosts(psCharacter* user)
         return;
 
     // Calc the new Y/Z cost
-    MathScript* costScript;
     csString scriptName;
-
-    if(info->id < PSSKILL_AGI || info->id > PSSKILL_WILL)
+    if (info->id < PSSKILL_AGI || info->id > PSSKILL_WILL)
         scriptName = "CalculateSkillCosts";
     else
         scriptName = "CalculateStatCosts";
 
-    costScript = psserver->GetMathScriptEngine()->FindScript(scriptName);
-    if (!costScript)
+    MathScript *script = psserver->GetMathScriptEngine()->FindScript(scriptName);
+    if (!script)
     {
-        Error2("Couldn't find script %s!",scriptName.GetData());
+        Error2("Couldn't find script %s!", scriptName.GetData());
         return;
     }
 
-    // Output
-    MathScriptVar*  yCostVar        = costScript->GetVar("YCost");
-    MathScriptVar*  zCostVar        = costScript->GetVar("ZCost");
+    MathEnvironment env;
+    env.Define("BaseCost",       info->baseCost);
+    env.Define("SkillRank",      rank.Base());
+    env.Define("SkillID",        info->id);
+    env.Define("PracticeFactor", info->practice_factor);
+    env.Define("MentalFactor",   info->mental_factor);
+    env.Define("Actor",          user);
 
-    // Input
-    MathScriptVar*  baseCostVar  = costScript->GetOrCreateVar("BaseCost");
-    MathScriptVar*  skillRankVar = costScript->GetOrCreateVar("SkillRank");
-    MathScriptVar*  skillIDVar   = costScript->GetOrCreateVar("SkillID");
-    MathScriptVar*  practiceVar  = costScript->GetOrCreateVar("PracticeFactor");
-    MathScriptVar*  mentalVar    = costScript->GetOrCreateVar("MentalFactor");
-    MathScriptVar*  actorVar     = costScript->GetOrCreateVar("Actor");
+    script->Evaluate(&env);
 
-    if(!yCostVar)
+    MathVar *yCostVar = env.Lookup("YCost");
+    MathVar *zCostVar = env.Lookup("ZCost");
+    if (!yCostVar || !zCostVar)
     {
-        Warning2(LOG_SKILLXP,"Couldn't find the YCost var in %s script!\n",scriptName.GetData());
+        Error2("Failed to evaluate MathScript >%s<.", scriptName.GetData());
         return;
     }
-    if(!zCostVar)
-    {
-        Warning2(LOG_SKILLXP,"Couldn't find the ZCost var in %s script!\n",scriptName.GetData());
-        return;
-    }
-
-    // Input the data
-    skillRankVar->SetValue((double)rank);
-    skillIDVar->SetValue((double)info->id);
-    practiceVar->SetValue((double)info->practice_factor);
-    mentalVar->SetValue((double)info->mental_factor);
-    baseCostVar->SetValue((double)info->baseCost);
-    actorVar->SetObject(user);
-
-    // Execute
-    costScript->Execute();
 
     // Get the output
     yCost = (int)yCostVar->GetValue();
@@ -3486,7 +3078,7 @@ bool Skill::Practice( unsigned int amount, unsigned int& actuallyAdded,psCharact
         z+=amount;
         if ( z >= zCost )
         {
-            rank++;
+            rank.SetBase(rank.Base()+1);
             z = 0;
             y = 0;
             actuallyAdded = z - zCost;
@@ -3508,67 +3100,70 @@ bool Skill::Practice( unsigned int amount, unsigned int& actuallyAdded,psCharact
     return rankup;
 }
 
-void psCharacter::SetSkillRank( PSSKILL which, unsigned int rank)
+void psCharacter::SetSkillRank(PSSKILL which, unsigned int rank)
 {
     if (rank < 0)
         rank = 0;
 
     skills.SetSkillRank(which, rank);
 
-    if (which == PSSKILL_AGI )
-        attributes.SetStat(PSITEMSTATS_STAT_AGILITY, rank);
-    else if( which == PSSKILL_CHA )
-        attributes.SetStat(PSITEMSTATS_STAT_CHARISMA, rank);
-    else if( which == PSSKILL_END )
-        attributes.SetStat(PSITEMSTATS_STAT_ENDURANCE, rank);
-    else if( which == PSSKILL_INT )
-        attributes.SetStat(PSITEMSTATS_STAT_INTELLIGENCE, rank);
-    else if( which == PSSKILL_STR )
-        attributes.SetStat(PSITEMSTATS_STAT_STRENGTH, rank);
-    else if( which == PSSKILL_WILL)
-        attributes.SetStat(PSITEMSTATS_STAT_WILL,rank);
+    if (which == PSSKILL_AGI)
+        attributes[PSITEMSTATS_STAT_AGILITY].SetBase(rank);
+    else if (which == PSSKILL_CHA)
+        attributes[PSITEMSTATS_STAT_CHARISMA].SetBase(rank);
+    else if (which == PSSKILL_END)
+        attributes[PSITEMSTATS_STAT_ENDURANCE].SetBase(rank);
+    else if (which == PSSKILL_INT)
+        attributes[PSITEMSTATS_STAT_INTELLIGENCE].SetBase(rank);
+    else if (which == PSSKILL_STR)
+        attributes[PSITEMSTATS_STAT_STRENGTH].SetBase(rank);
+    else if (which == PSSKILL_WILL)
+        attributes[PSITEMSTATS_STAT_WILL].SetBase(rank);
 
+    RecalculateStats();
     inventory.CalculateLimits();
 }
 
 unsigned int psCharacter::GetCharLevel()
 {
-    return ( attributes.GetStat(PSITEMSTATS_STAT_STRENGTH) +
-             attributes.GetStat(PSITEMSTATS_STAT_ENDURANCE) +
-             attributes.GetStat(PSITEMSTATS_STAT_AGILITY) +
-             attributes.GetStat(PSITEMSTATS_STAT_INTELLIGENCE) +
-             attributes.GetStat(PSITEMSTATS_STAT_WILL) +
-             attributes.GetStat(PSITEMSTATS_STAT_CHARISMA) ) / 6;
+    return (attributes[PSITEMSTATS_STAT_STRENGTH].Current()     +
+            attributes[PSITEMSTATS_STAT_ENDURANCE].Current()    +
+            attributes[PSITEMSTATS_STAT_AGILITY].Current()      +
+            attributes[PSITEMSTATS_STAT_INTELLIGENCE].Current() +
+            attributes[PSITEMSTATS_STAT_WILL].Current()         +
+            attributes[PSITEMSTATS_STAT_CHARISMA].Current()) / 6;
 }
 
 //This function recalculates Hp, Mana, and Stamina when needed (char creation, combats, training sessions)
 void psCharacter::RecalculateStats()
 {
+    MathEnvironment env; // safe enough to reuse...and faster...
+    env.Define("Actor", this);
+
     // Calculate current Max Mana level:
     static MathScript *maxManaScript;
-
     if (!maxManaScript)
     {
-        // Max Mana Script isn't loaded, so load it
         maxManaScript = psserver->GetMathScriptEngine()->FindScript("CalculateMaxMana");
         CS_ASSERT(maxManaScript != NULL);
     }
 
 
-    if ( maxManaScript )
+    if (override_max_mana)
     {
-        MathScriptVar* actorvar  = maxManaScript->GetOrCreateVar("Actor");
-        actorvar->SetObject(this);
-
-        if (override_max_mana)
+        GetMaxMana().SetBase(override_max_mana);
+    }
+    else if (maxManaScript)
+    {
+        maxManaScript->Evaluate(&env);
+        MathVar* maxMana = env.Lookup("MaxMana");
+        if (maxMana)
         {
-            SetManaMax(override_max_mana);
+            GetMaxMana().SetBase(maxMana->GetValue());
         }
         else
         {
-            maxManaScript->Execute();
-            MathScriptVar* manaValue =  maxManaScript->GetVar("MaxMana");
-            SetManaMax(manaValue->GetValue() + GetManaMaxModifier());
+            Error1("Failed to evaluate MathScript >CalculateMaxMana<.");
         }
     }
 
@@ -3577,27 +3172,19 @@ void psCharacter::RecalculateStats()
 
     if (!maxHPScript)
     {
-        // Max HP Script isn't loaded, so load it
         maxHPScript = psserver->GetMathScriptEngine()->FindScript("CalculateMaxHP");
         CS_ASSERT(maxHPScript != NULL);
     }
 
-
-    if ( maxHPScript )
+    if (override_max_hp)
     {
-        MathScriptVar* actorvar  = maxHPScript->GetOrCreateVar("Actor");
-        actorvar->SetObject(this);
-
-        if (override_max_hp)
-        {
-            SetHitPointsMax(override_max_hp);
-        }
-        else
-        {
-            maxHPScript->Execute();
-            MathScriptVar* HPValue =  maxHPScript->GetVar("MaxHP");
-            SetHitPointsMax(HPValue->GetValue() + GetHitPointsMaxModifier());
-        }
+        GetMaxHP().SetBase(override_max_hp);
+    }
+    else if (maxHPScript)
+    {
+        maxHPScript->Evaluate(&env);
+        MathVar* maxHP = env.Lookup("MaxHP");
+        GetMaxHP().SetBase(maxHP->GetValue());
     }
 
     // The max weight that a player can carry
@@ -3891,65 +3478,11 @@ csString NormalizeCharacterName(const csString & name)
 
 
 
-unsigned int StatSet::GetStat(PSITEMSTATS_STAT attrib, bool withBuff)
+CharStat & StatSet::Get(PSITEMSTATS_STAT which)
 {
-    if (attrib<0 || attrib>=PSITEMSTATS_STAT_COUNT)
-        return 0;
-
-    int buff   = withBuff?stats[attrib].rankBuff:0;
-    int result = (int)stats[attrib].rank + buff;
-    CS_ASSERT(result >= 0);
-    return result;
+    CS_ASSERT(which >= 0 && which < PSITEMSTATS_STAT_COUNT);
+    return stats[which];
 }
-
-int StatSet::GetBuffVal( PSITEMSTATS_STAT attrib )
-{
-    if (attrib<0 || attrib>=PSITEMSTATS_STAT_COUNT)
-        return 0;
-
-    return stats[attrib].rankBuff;
-}
-
-
-void StatSet::BuffStat( PSITEMSTATS_STAT attrib, int buffAmount )
-{
-    if (attrib<0 || attrib>=PSITEMSTATS_STAT_COUNT)
-        return;
-
-    // should buffed stat go negative, we set it to zero
-    if (int(stats[attrib].rank) + stats[attrib].rankBuff + buffAmount < 0)
-        stats[attrib].rankBuff = -(int)stats[attrib].rank;
-    else
-        stats[attrib].rankBuff+=buffAmount;
-
-    self->RecalculateStats();
-}
-
-void StatSet::SetStat(PSITEMSTATS_STAT attrib, unsigned int val, bool recalculatestats)
-{
-    if (attrib < 0 || attrib >= PSITEMSTATS_STAT_COUNT)
-        return;
-
-    // Clamp values to prevent huge numbers
-    if (val > MAX_STAT)
-        val = MAX_STAT;
-
-    stats[attrib].rank = val;
-    if (recalculatestats)
-      self->RecalculateStats();
-}
-
-void StatSet::AddToStat(PSITEMSTATS_STAT attrib, unsigned int delta)
-{
-    if (attrib<0 || attrib>=PSITEMSTATS_STAT_COUNT)
-        return;
-
-    stats[attrib].rank += delta;
-
-    self->RecalculateStats();
-}
-
-
 
 int SkillSet::AddSkillPractice(PSSKILL skill, unsigned int val)
 {
@@ -3973,7 +3506,7 @@ int SkillSet::AddSkillPractice(PSSKILL skill, unsigned int val)
                 skill,
                 GetSkillPractice((PSSKILL)skill),
                 GetSkillKnowledge((PSSKILL)skill),
-                GetSkillRank((PSSKILL)skill)
+                GetSkillRank((PSSKILL)skill).Base()
                 );
         }
 
@@ -4000,14 +3533,6 @@ int SkillSet::AddSkillPractice(PSSKILL skill, unsigned int val)
     return added;
 }
 
-Skill * SkillSet::GetSkill( PSSKILL which )
-{
-    if (which<0 || which>=PSSKILL_COUNT)
-        return NULL;
-    else
-        return & skills[which];
-}
-
 unsigned int SkillSet::GetBestSkillValue( bool withBuffer )
 {
     unsigned int max=0;
@@ -4022,7 +3547,7 @@ unsigned int SkillSet::GetBestSkillValue( bool withBuffer )
                 skill == PSSKILL_STR )
             continue; // Jump past the stats, we only want the skills
 
-        unsigned int rank = skills[i].rank + (withBuffer?skills[i].rankBuff:0);
+        unsigned int rank = withBuffer ? skills[i].rank.Current() : skills[i].rank.Base();
         if (rank > max)
             max = rank;
     }
@@ -4035,7 +3560,7 @@ unsigned int SkillSet::GetBestSkillSlot( bool withBuffer )
     unsigned int i = 0;
     for (; i<PSSKILL_COUNT; i++)
     {
-        unsigned int rank = skills[i].rank + withBuffer ? skills[i].rankBuff : 0;
+        unsigned int rank = withBuffer ? skills[i].rank.Current() : skills[i].rank.Base();
         if (rank > max)
             max = rank;
     }
@@ -4115,15 +3640,6 @@ void SkillSet::SetSkillRank( PSSKILL which, unsigned int rank, bool recalculates
       self->RecalculateStats();
 }
 
-void SkillSet::BuffSkillRank( PSSKILL which, int buff )
-{
-    if (which<0 || which>=PSSKILL_COUNT)
-        return;
-    skills[which].Buff( buff );
-
-    self->RecalculateStats();
-}
-
 void SkillSet::SetSkillKnowledge( PSSKILL which, int y_value )
 {
     if (which<0 || which>=PSSKILL_COUNT)
@@ -4175,23 +3691,15 @@ unsigned int SkillSet::GetSkillKnowledge(PSSKILL skill)
     return skills[skill].y;
 }
 
-unsigned int SkillSet::GetSkillRank( PSSKILL skill, bool withBuffer )
+SkillRank & SkillSet::GetSkillRank(PSSKILL skill)
 {
-    if (skill<0 || skill>=PSSKILL_COUNT)
-        return 0;
-
-    int buff   = withBuffer?skills[skill].rankBuff:0;
-    int result = (int)skills[skill].rank + buff;
-
-    if (result < 0)
-        return 0;
-
-    return (unsigned int)result;
+    CS_ASSERT(skill >= 0 && skill < PSSKILL_COUNT);
+    return skills[skill].rank;
 }
-
 
 Skill& SkillSet::Get(PSSKILL skill)
 {
+    CS_ASSERT(skill >= 0 && skill < PSSKILL_COUNT);
     return skills[skill];
 }
 

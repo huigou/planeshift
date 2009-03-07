@@ -30,7 +30,6 @@
 //=============================================================================
 // Library Includes
 //=============================================================================
-#include "util/prb.h"                   // Red Black tree template class
 #include "util/gameevent.h"
 
 #include "bulkobjects/psskills.h"       
@@ -39,15 +38,11 @@
 // Application Includes
 //=============================================================================
 #include "msgmanager.h"                 // Subscriber class
+#include "scripting.h"
 
 class psServer;
-class ProgressionOperation;
 class psGUISkillMessage;
-class MathScriptVar;
-class MathScript;
 class psCharacter;
-
-class ProgressionEvent;
 
 class ProgressionManager : public MessageManager
 {
@@ -67,13 +62,6 @@ public:
 
     void StartTraining(Client * client, psCharacter * trainer);
     
-    float ProcessEvent(ProgressionEvent *event, gemActor * actor = NULL, gemObject *target = NULL, psItem *item = NULL, bool inverse = false);
-    float ProcessEvent(const char *event, gemActor * actor = NULL, gemObject *target = NULL, psItem *item = NULL, bool inverse = false);
-    float ProcessScript(const char *script, gemActor * actor = NULL, gemObject *target = NULL, psItem *item = NULL);
-
-    bool AddScript(const char *name, const char *script);
-    void QueueUndoScript(const char *script, int delay, gemActor * actor = NULL, gemObject *target = NULL, psItem *item = NULL, int persistentID = 0);
-
     csHash< csString, csString> &GetAffinityCategories() { return affinitycategories; }
 
     // Internal utility functions for the progression system
@@ -81,17 +69,8 @@ public:
     void SendMessage(MsgEntry *me);
     void Broadcast(MsgEntry *me);
 
-    void ChangeScript( csString& script, int param, const char* change );
-    ProgressionEvent *FindEvent(char const *name);
+    ProgressionScript *FindScript(char const *name);
     
-    /**
-     * Create a ProgressionEvent script from a script input.
-     *
-     * @param name Template for the new name. A random number XXXX will be appended
-     *             until a uniq name is found that dosn't exist in the store.
-     */
-    ProgressionEvent *CreateEvent(const char *name, const char *script);
-
     /**
      * Load progression script from db
      */
@@ -104,100 +83,7 @@ protected:
     void HandleZPointEvent(MsgEntry *me, Client *client);
 
     csHash<csString, csString> affinitycategories;
-
-    csHash<ProgressionEvent *, const char *> events;
-
     ClientConnectionSet    *clients;
-};
-
-
-//-----------------------------------------------------------------------------
-
-class ProgressionDelay : public psGameEvent
-{
-private:    
-    unsigned int client;
-
-public:
-    csRef<ProgressionEvent> progEvent;
-    
-    ProgressionDelay(ProgressionEvent * progEvent, csTicks delay, unsigned int clientnum);
-    virtual ~ProgressionDelay();
-    void Trigger(); 
-    virtual bool CheckTrigger();
-};
-
-//-----------------------------------------------------------------------------
-
-class ProgressionEvent : public csRefCount
-{
-public:
-    ProgressionEvent();
-    virtual ~ProgressionEvent();
-
-    bool LoadScript(iDocument *doc);
-    bool LoadScript(iDocumentNode *topNode);
-
-    float ForceRun(csTicks duration = 0);
-    /** Run this script.
-     *
-     *  @param actor The actor
-     *  @param target The target
-     *  @param item The item
-     *  @param duration The length of time to wait until the inverse script is executed. Set to 0 if this is a permanent change.
-     */
-    float Run(gemActor *actor, gemObject *target, psItem *item, csTicks duration = 0)
-    {
-        return RunScript(actor, target, item, false, duration);
-    }
-    /// This function should not exist. It is simply wrong but because of the existing system for unequipping items we need it.
-    float RunInverse(gemActor *actor, gemObject *target, psItem *item)
-    {
-        return RunScript(actor, target, item, true, 0);
-    }
-    void CopyVariables(MathScript *from);
-    virtual csString ToString(bool topLevel) const;
-
-    void AddVariable(MathScriptVar *pv);
-    MathScriptVar *FindVariable(const char *name);
-    MathScriptVar *FindOrCreateVariable(const char *name);
-    void SetValue(const char* name, double val);
-
-    bool operator==(ProgressionEvent& other) const
-    { return name == other.name; }
-    bool operator<(ProgressionEvent& other) const
-    { return strcmp(name,other.name)<0; }
-
-    csString name;
-
-protected:
-    // Internal Run function that is allowed to run inverse versions of scripts
-    // Outside functions must not be allowed to invert scripts because scripts may not run to completion
-    float RunScript(gemActor *actor, gemObject *target, psItem *item, bool inverse, csTicks duration);
-    
-    // saved parameters given to Run() so that we can use callbacks for delayed events
-    csWeakRef<gemActor> runParamActor;
-    csWeakRef<gemObject> runParamTarget;
-    csWeakRef<psItem> runParamItem;
-    bool runParamInverse;
-
-    csString savedName;
-    
-    csArray<ProgressionOperation*> sequence;
-    csArray<MathScriptVar*>        variables;
-
-    MathScript * triggerDelay;
-    MathScriptVar * triggerDelayVar;
-    MathScript * durationScript;
-    MathScriptVar * durationVar;
-   
-    ProgressionDelay * progDelay;
-
-    bool LoadScript(const char* str);
-    
-    void LoadVariables(MathScript *script);
-    
-    csString Dump() const;
 };
 
 #endif

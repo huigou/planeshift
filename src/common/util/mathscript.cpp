@@ -32,322 +32,159 @@
 
 #include <ctype.h>
 
-#include "util/psstring.h"
 #include "util/log.h"
-#include <csutil/array.h>
-#include <csutil/hash.h>
+#include <csutil/randomgen.h>
 #include <csutil/xmltiny.h>
 
 #include "../server/globals.h"
 #include "psdatabase.h"
 
 #include "util/mathscript.h"
-#include "util/strutil.h"
 #include "util/consoleout.h"
 
-MathScriptLine::MathScriptLine(const char *line,MathScript *myScript)
+MathEnvironment::~MathEnvironment()
 {
-    scriptLine = line;
-    assignee = 0;
-
-    size_t start = scriptLine.FindFirst('=');
-    if (start == SIZET_NOT_FOUND)
-        start = 0;
-    else
+    csHash<MathVar*, csString>::GlobalIterator it(variables.GetIterator());
+    while (it.HasNext())
     {
-        //csString varWithEq = GetWordNumber(scriptLine,1);
-        scriptLine[start] = ' ';
-        csString var = GetWordNumber(scriptLine,1);
-        //CS_ASSERT_MSG("mathscript line has previously invalid operator spacing", var == varWithEq);
-        var.Trim();
-
-        bool validAssignee = true;
-        for (size_t a=0; a<var.Length(); ++a)
-        {
-            char c = var[a];
-            if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_'))
-            {
-                validAssignee = false;
-                break;
-            }
-        }
-        if (validAssignee)
-        {
-        assignee = myScript->GetOrCreateVar(var);
-            scriptLine.DeleteAt(0,start+1);
-        }
-        else
-            scriptLine[start] = '='; // restore the = we removed
-    }
-
-    valid = true;
-
-    var_array = NULL;
-
-    fp.AddFunction("rnd", MathScriptEngine::RandomGen, 1);
-    fp.AddFunction("pow", MathScriptEngine::Power, 2);
-    for (unsigned int a=2; a<12; ++a)
-    {
-        psString funcName = "customCompoundFunc";
-        funcName += a;
-        fp.AddFunction(funcName.GetData(), MathScriptEngine::CustomCompoundFunc, a);
-    }
-
-    ParseVariables(myScript);
-    ParseFormula(myScript);
-}
-
-MathScriptLine::~MathScriptLine()
-{
-    if (var_array)
-        delete[] var_array;
-}
-
-MathScriptVar *MathScriptLine::FindVariable(const char *name)
-{
-    size_t i;
-    for (i=0; i<variables.GetSize(); i++)
-    {
-        if (variables[i]->name == name)
-            return variables[i];
-    }
-    return NULL;
-}
-
-void MathScriptLine::ParseVariables(MathScript *myScript)
-{
-    size_t start=0;
-    psString word;
-
-    while ( start < scriptLine.Length() )
-    {
-        scriptLine.GetWord(start,word,false);
-        if (!word.Length())
-        {
-            start++;
-            continue;
-        }
-        if (isupper(word.GetAt(0))) // capital first letter means var name
-        {
-            // A compound var function starts as Target:WeaponAt(Slot)
-            // and turns into customCompoundFuncA(B,Target,Slot)
-            // where N is the number of parameters and B is the index of the
-            // function name in the lookup table
-            // A compound var turns Target::HP into Target_HP
-            if (scriptLine.Length() > start+word.Length() && scriptLine[start+word.Length()] == ':')  // compound var name
-            {
-                MathScriptVar *base = FindVariable(word);
-                // get core variable onto list
-                if (!base) // unique list
-                {
-                    base = myScript->GetOrCreateVar(word);
-                    variables.Push( base );
-                }
-                base->type = MathScriptVar::VARTYPE_PTR;
-                psString extend;
-                scriptLine.GetWord(start+word.Length()+2,extend,false);
-
-                if (scriptLine.Length() > start+word.Length()+extend.Length()+1 && scriptLine[start+word.Length()+1+extend.Length()] == '(')
-                {
-                    size_t paramCount = 2;
-                    size_t endFunc = scriptLine.FindFirst(')',start);
-                    if (scriptLine[endFunc-1] != '(')
-                        ++paramCount;
-                    for (size_t a=start; a<endFunc; ++a)
-                        paramCount += scriptLine[a] == ',' ? 1 : 0;
-
-                    scriptLine.DeleteAt(start,word.Length()+2+extend.Length());
-                    csString funcPrefix = "customCompoundFunc";
-                    funcPrefix += paramCount;
-                    funcPrefix += '(';
-                    funcPrefix += (unsigned int)MathScriptEngine::customCompoundFunctions.GetSize();
-                    funcPrefix += ',';
-                    funcPrefix += word;
-                    if (paramCount > 2)
-                        funcPrefix += ',';
-                    scriptLine.Insert(start, funcPrefix);
-                    MathScriptEngine::customCompoundFunctions.Push(extend);
-                    /*
-                    word.Append(',');
-                    scriptLine.Insert(start+extend.Length()+1,word);
-                    */
-                    word.Clear();
-                }
-                else
-                {
-                    MathScriptVar *var = myScript->GetOrCreateVar(word); // get underlying var
-
-                    scriptLine.SetAt(start+word.Length(),'_');
-                 
-                    word.Append('_');
-                    word.Append(extend);
-        
-                    if (!FindVariable(word)) // unique list
-                    {
-                        MathScriptVar *ext = myScript->GetOrCreateVar(word);
-                        variables.Push( ext );
-                        ext->property = extend;
-                        ext->SetVariable(var);
-                    }
-                }
-            }
-            else if (!FindVariable(word)) // unique list
-                variables.Push( myScript->GetOrCreateVar(word) );
-        }
-        start += word.Length();
-    }
-    if (variables.GetSize())
-        var_array = new double[variables.GetSize()];
-}
-
-void MathScriptLine::ParseFormula(MathScript *myScript)
-{
-    csString varlist("");
-
-    if (variables.GetSize())
-    {
-        varlist = variables[0]->name;
-        size_t i;
-        for (i=1; i<variables.GetSize(); i++)
-        {
-            varlist.Append(',');
-            varlist.Append(variables[i]->name);
-        }
-    }
-    size_t ret = fp.Parse( scriptLine.GetData(), varlist.GetData() );
-    if (ret != (size_t)-1)
-    {
-        valid=false;
-        printf( "Caller: %s", myScript->name.GetData());
-        Error4("Error in Col %d: %s\n Script: \"%s\" ",(int)ret,fp.ErrorMsg(),scriptLine.GetData() );
-    }
-    else
-    {
-        fp.Optimize();
+        delete it.Next();
     }
 }
 
-void MathScriptLine::Execute()
+MathVar* MathEnvironment::Lookup(const char *name) const
 {
-    if (!valid)
+    MathVar *var = variables.Get(name, NULL);
+    if (!var && parent)
+        var = parent->Lookup(name);
+
+    return var;
+}
+
+void MathEnvironment::Define(const char *name, double value)
+{
+    MathVar *var = variables.Get(name, NULL);
+    if (var)
     {
-        Error2("Attempted to execute bad Mathscript line (%s).\n",scriptLine.GetData());
-        if (assignee)
-            assignee->SetValue(0);
+        var->SetValue(value);
         return;
     }
 
-    size_t i;
-    for (i=0; i<variables.GetSize(); i++)
-        var_array[i] = variables[i]->GetValue();
-
-    double ret = fp.Eval(var_array);
-    if (assignee)
-        assignee->SetValue(ret);
+    var = new MathVar;
+    var->SetValue(value);
+    variables.Put(name, var);
 }
 
-
-
-
-MathScript::MathScript(iDocumentNode *node)
+void MathEnvironment::Define(const char *name, iScriptableVar *obj)
 {
-    name = node->GetAttributeValue("name");
-    ParseScript( node->GetContentsValue() );
-}
-
-MathScript::MathScript(const char *myname,const char *script)
-{
-    name = myname;
-    ParseScript(script);
-}
-
-void MathScript::ParseScript(const char *parsescript)
-{
-    psString script(parsescript);
-    uintptr_t  i,line_start = 0;
-
-    while (line_start < script.Length() )
+    MathVar *var = variables.Get(name, NULL);
+    if (var)
     {
-        i = script.FindFirst(';',line_start);
-        if (i==SIZET_NOT_FOUND)
-        {
-            i = script.Length();
-        }
-        psString line;
-        if (i-line_start > 0)
-        {
+        var->SetObject(obj);
+        return;
+    }
 
-            script.SubString(line,line_start,i-line_start);
+    var = new MathVar;
+    var->SetObject(obj);
+    variables.Put(name, var);
+}
 
-            // avoids empty lines (spaces, tabs, carriage returns)
-            line.ReplaceAllSubString("\t"," ");
-            line.ReplaceAllSubString("\r"," ");
-            line.ReplaceAllSubString("\n"," ");
-            line = line.Trim();
-            if (!line.IsEmpty()) {
-                MathScriptLine *newline = new MathScriptLine(line,this);
-                scriptLines.Push(newline);
+void MathEnvironment::DumpAllVars() const
+{
+    csHash<MathVar*, csString>::ConstGlobalIterator it(variables.GetIterator());
+    while (it.HasNext())
+    {
+        MathVar *var = it.Next();
+        CPrintf(CON_DEBUG, "%25s=%1.4f\n", var->name.GetData(), var->GetValue());
+    }
+}
+
+MathStatement* MathStatement::Create(const csString & line, const char *name)
+{
+    size_t assignAt = line.FindFirst('=');
+    if (assignAt == SIZET_NOT_FOUND || assignAt == 0 || assignAt == line.Length())
+        return NULL;
+
+    MathStatement *stmt = new MathStatement;
+    csString & assignee = stmt->assignee;
+    line.SubString(assignee, 0, assignAt);
+    assignee.Trim();
+
+    bool validAssignee = isupper(assignee[0]);
+    for (size_t i = 1; validAssignee && i < assignee.Length(); i++)
+    {
+        if (!isalnum(assignee[i]) && assignee[i] != '_')
+            validAssignee = false;
+    }
+    if (!validAssignee && assignee != "exit") // exit is special
+    {
+        Error3("Parse error in MathStatement >%s: %s<: Invalid assignee.", name, line.GetData());
+        delete stmt;
+        return NULL;
+    }
+
+    stmt->expression = MathExpression::Create(line.Slice(assignAt+1), name);
+    if (!stmt->expression)
+    {
+        delete stmt;
+        return NULL;
+    }
+    return stmt;
+}
+
+void MathStatement::Evaluate(MathEnvironment *env)
+{
+    env->Define(assignee, expression->Evaluate(env));
+}
+
+MathScript* MathScript::Create(const char *name, const csString & script)
+{
+    MathScript *s = new MathScript(name);
+
+    size_t start = 0;
+    size_t semicolonAt = 0;
+
+    while (start < script.Length())
+    {
+        semicolonAt = script.FindFirst(';', start);
+        if (semicolonAt == SIZET_NOT_FOUND)
+            semicolonAt = script.Length();
+
+        if (semicolonAt - start > 0)
+        {
+            csString line = script.Slice(start, semicolonAt - start);
+            line.Collapse();
+            if (!line.IsEmpty())
+            {
+                MathStatement *st = MathStatement::Create(line, name);
+                if (!st)
+                {
+                    delete s;
+                    return NULL;
+                }
+                s->scriptLines.Push(st);
             }
         }
-        line_start = i+1;
+        start = semicolonAt+1;
     }
+    return s;
 }
 
 MathScript::~MathScript()
 {
     while (scriptLines.GetSize())
         delete scriptLines.Pop();
-
-    csHash<MathScriptVar *>::GlobalIterator it (variables.GetIterator ());
-    while (it.HasNext ())
-    {
-        MathScriptVar* var = it.Next ();
-        delete var;
-    }
 }
 
-MathScriptVar *MathScript::GetVar(const char *name)
+void MathScript::Evaluate(MathEnvironment *env)
 {
-    unsigned int key = csHashCompute(name);
-    csHash<MathScriptVar*>::Iterator iter = variables.GetIterator(key);
-    while (iter.HasNext())
-    {
-        MathScriptVar *ptr = iter.Next();
-        if (ptr->name == name)
-            return ptr;
-    }
-    return NULL;
-}
-
-MathScriptVar *MathScript::GetOrCreateVar(const char *name)
-{
-    MathScriptVar *var = GetVar(name);
-    if (var)
-        return var;
-
-    // CPrintf(CON_DEBUG, "Creating var <%s> in script <%s>\n",name,this->name.GetData() );
-
-    unsigned int key = csHashCompute(name);
-    var = new MathScriptVar;
-    var->name = name;
-    var->SetValue(0);
-
-    variables.Put(key,var);
-    return var;
-}
-
-void MathScript::Execute()
-{
-    size_t i;
-    MathScriptVar *exitsignal = GetVar("exit");
-
+    MathVar *exitsignal = env->Lookup("exit");
     if (exitsignal)
         exitsignal->SetValue(0); // clear exit condition before running
 
-    for (i=0; i<scriptLines.GetSize(); i++)
+    for (size_t i = 0; i < scriptLines.GetSize(); i++)
     {
-        scriptLines[i]->Execute();
-        if (exitsignal && exitsignal->GetValue()!=0)
+        scriptLines[i]->Evaluate(env);
+        if (exitsignal && exitsignal->GetValue() != 0.0)
         {
             // printf("Terminating mathscript at line %d of %d.\n",i, scriptLines.GetSize());
             break;
@@ -356,64 +193,45 @@ void MathScript::Execute()
 }
 
 
-void MathScript::DumpAllVars()
-{
-    csHash<MathScriptVar*>::GlobalIterator iter = variables.GetIterator();
-
-    CPrintf(CON_DEBUG, "\nAll vars for '%s'\n-----------------------------------------\n",
-            name.GetData());
-    while (iter.HasNext())
-    {
-        MathScriptVar *var = iter.Next();
-        CPrintf(CON_DEBUG, "%25s=%1.4f\n",var->name.GetData(),var->GetValue() );
-    }
-}
-
 MathScriptEngine::MathScriptEngine()
 {
-    Result result_events(db->Select("SELECT * from math_scripts"));
+    Result result(db->Select("SELECT * from math_scripts"));
+    if (!result.IsValid())
+        return;
 
-    if ( result_events.IsValid() )
+    for (unsigned long i = 0; i < result.Count(); i++ )
     {
-        for ( size_t index = 0; index < result_events.Count(); index++ )
+        MathScript *scr = MathScript::Create(result[i]["name"], result[i]["math_script"]);
+        if (!scr)
         {
-            unsigned long x = (unsigned long)index; // remove casting warnings
-
-            MathScript *scr = new MathScript(result_events[x]["name"], result_events[x]["math_script"]);
-            unsigned int key = csHashCompute(scr->name);
-            scripts.Put(key,scr);
+            Error2("Failed to load MathScript >%s<.", result[i]["name"]);
+            continue;
         }
+        scripts.Put(scr->Name(), scr);
     }
 }
 
 MathScriptEngine::~MathScriptEngine()
 {
-    csHash<MathScript *>::GlobalIterator it (scripts.GetIterator ());
-    while (it.HasNext ())
+    csHash<MathScript*, csString>::GlobalIterator it(scripts.GetIterator());
+    while (it.HasNext())
     {
-        MathScript* script = it.Next ();
-        delete script;
+        delete it.Next();
     }
     scripts.DeleteAll();
     
-    MathScriptEngine::customCompoundFunctions.DeleteAll();
+    MathScriptEngine::customCompoundFunctions.Empty();
+    MathScriptEngine::stringLiterals.Empty();
 }
 
-MathScript *MathScriptEngine::FindScript(const char *name)
+MathScript *MathScriptEngine::FindScript(const csString & name)
 {
-    unsigned int key = csHashCompute(name);
-    csHash<MathScript*>::Iterator iter = scripts.GetIterator(key);
-    while (iter.HasNext())
-    {
-        MathScript *ptr = iter.Next();
-        if (ptr->name == name)
-            return ptr;
-    }
-    return NULL;
+    return scripts.Get(name, NULL);
 }
 
 csRandomGen MathScriptEngine::rng;
-csArray<csString> MathScriptEngine::customCompoundFunctions;
+csStringSet MathScriptEngine::customCompoundFunctions;
+csStringSet MathScriptEngine::stringLiterals;
 
 double MathScriptEngine::RandomGen(const double *dummy)
 {
@@ -429,5 +247,283 @@ double MathScriptEngine::CustomCompoundFunc(const double * parms)
 {
     size_t funcIndex = (size_t)parms[0];
     iScriptableVar * v = (iScriptableVar *)(intptr_t)parms[1];
-    return v->CalcFunction(customCompoundFunctions[funcIndex], &parms[2]);
+    return v->CalcFunction(customCompoundFunctions.Request(funcIndex), &parms[2]);
 }
+
+csString MathScriptEngine::GetString(double id)
+{
+    const char *str = stringLiterals.Request(unsigned(id));
+    return str ? str : "";
+}
+
+//////////////////////////////////////////////////
+
+MathExpression::MathExpression()
+{
+    fp.AddFunction("rnd", MathScriptEngine::RandomGen, 1);
+    fp.AddFunction("pow", MathScriptEngine::Power, 2);
+    for (int n = 2; n < 12; n++)
+    {
+        csString funcName("customCompoundFunc");
+        funcName.Append(n);
+        fp.AddFunction(funcName.GetData(), MathScriptEngine::CustomCompoundFunc, n);
+    }
+}
+
+MathExpression* MathExpression::Create(const char *expression, const char *name)
+{
+    MathExpression* exp = new MathExpression;
+    exp->name = name;
+
+    if (!exp->Parse(expression))
+    {
+        delete exp;
+        return NULL;
+    }
+
+    return exp;
+}
+
+void MathExpression::AddToFPVarList(const csSet<csString> & set, csString & fpVars)
+{
+    csSet<csString>::GlobalIterator it(set.GetIterator());
+    while (it.HasNext())
+    {
+        fpVars.Append(it.Next());
+        fpVars.Append(',');
+    }
+}
+
+bool MathExpression::Parse(const char *exp)
+{
+    CS_ASSERT(exp);
+
+    // SCANNER: creates a list of tokens.
+    csArray<csString> tokens;
+    size_t start = SIZET_NOT_FOUND;
+    char quote = '\0';
+    for (size_t i = 0; exp[i] != '\0'; i++)
+    {
+        char c = exp[i];
+
+        // are we in a string literal?
+        if (quote)
+        {
+            // found a closing quote?
+            if (c == quote && exp[i-1] != '\\')
+            {
+                quote = '\0';
+                csString token(exp+start, i-start);
+
+                // strip slashes.
+                for (size_t j = 0; j < token.Length(); j++)
+                {
+                    if (token[j] == '\\')
+                        token.DeleteAt(j++); // remove and skip what it escaped
+                }
+
+                tokens.Push(token);
+                start = SIZET_NOT_FOUND;
+            }
+            // otherwise, it's part of the string...ignore it.
+            continue;
+        }
+
+        // alpha, numeric, and underscores don't break a token
+        if (isalnum(c) || c == '_')
+        {
+            if (start == SIZET_NOT_FOUND) // and they can start one
+                start = i;
+            continue;
+        }
+        // everything else breaks the token...
+        if (start != SIZET_NOT_FOUND)
+        {
+            tokens.Push(csString(exp+start, i-start));
+            start = SIZET_NOT_FOUND;
+        }
+
+        // check if it's starting a string literal
+        if (c == '\'' || c == '"')
+        {
+            quote = c;
+            start = i;
+            continue;
+        }
+
+        // ...otherwise, if it's not whitespace, it's a token by itself.
+        if (!isspace(c))
+        {
+            tokens.Push(csString(c));
+        }
+    }
+    // Push the last token, too
+    if (start != SIZET_NOT_FOUND)
+        tokens.Push(exp+start);
+
+    //for (size_t i = 0; i < tokens.GetSize(); i++)
+        //printf("Token[%d] = %s\n", int(i), tokens[i].GetDataSafe());
+
+    // PARSER: (kind of)
+    for (size_t i = 0; i < tokens.GetSize(); i++)
+    {
+        if (tokens[i] == ":")
+        {
+            if (i+1 == tokens.GetSize() || !isalpha(tokens[i+1][0]))
+            {
+                Error4("Parse error in MathExpression >%s: %s<: Expected property or method after ':' operator; found >%s<.", name, exp, tokens[i+1].GetData());
+                return false;
+            }
+            if (!isupper(tokens[i-1][0]))
+            {
+                Error4("Parse error in MathExpression >%s: %s<: ':' Expected variable before ':' operator; found >%s<.", name, exp, tokens[i-1].GetData());
+                return false;
+            }
+
+            // The previous variable must be an object.
+            requiredObjs.Add(tokens[i-1]);
+
+            // Is it a method call?
+            if (i+2 < tokens.GetSize() && tokens[i+2] == "(")
+            {
+                // Methods start as Target:WeaponAt(Slot) and turn into customCompoundFuncN(X,Target,Slot)
+                // where N-2 is the number of parameters and X is the index in a global lookup table.
+                int paramCount = 2; // customCompoundFunc takes two args as boilerplate.
+
+                // Count the number of params via the number of commas.  First one doesn't come with a comma.
+                if (i+3 < tokens.GetSize() && tokens[i+3] != ")")
+                    paramCount++;
+                for (size_t j = i+3; j < tokens.GetSize() && tokens[j] != ")"; j++)
+                {
+                    if (tokens[j] == "(")
+                        while (tokens[++j] != ")"); // fast forward; skip over nested calls for now.
+
+                    if (tokens[j] == ",")
+                        paramCount++;
+                }
+
+                // Build the replacement call - replace all four tokens.
+                csString object = tokens[i-1];
+                csString method = tokens[i+1];
+                tokens[i-1] = "customCompoundFunc";
+                tokens[ i ].Format("%d", paramCount);
+                tokens[i+1] = "(";
+                tokens[i+2].Format("%u,%s,", CS::StringIDValue(MathScriptEngine::customCompoundFunctions.Request(method)), object.GetData());
+                i += 2; // skip method name & paren - we just dealt with them.
+            }
+            else
+            {
+                // Found a property reference, i.e. Actor:HP
+                tokens[i] = "_"; // fparser can't deal with ':', so change it to '_'.
+                propertyRefs.Add(csString().Format("%s:%s", tokens[i-1].GetData(), tokens[i+1].GetData()));
+                i++; // skip next token - we already dealt with the property.
+            }
+        }
+        else // not dealing with a colon
+        {
+            // Record any string literals and replace them with their table index.
+            if (tokens[i][0] == '"' || tokens[i][0] == '\'')
+            {
+                // remove quote (scanner already omitted the closing quote)
+                tokens[i].DeleteAt(0);
+                CS::StringIDValue id = MathScriptEngine::stringLiterals.Request(tokens[i]);
+                tokens[i].Format("%u", id);
+            }
+
+            // Jot down any variable names (tokens starting with [A-Z])
+            if (isupper(tokens[i][0]))
+                requiredVars.Add(tokens[i]);
+        }
+    }
+
+    // Parse the formula.
+    csString fpVars;
+    csSet<csString>::GlobalIterator it(requiredVars.GetIterator());
+    while (it.HasNext())
+    {
+        fpVars.Append(it.Next());
+        fpVars.Append(',');
+    }
+    it = propertyRefs.GetIterator();
+    while (it.HasNext())
+    {
+        csString ref = it.Next();
+        ref.ReplaceAll(":", "_");
+        fpVars.Append(ref);
+        fpVars.Append(',');
+    }
+    if (!fpVars.IsEmpty())
+        fpVars.Truncate(fpVars.Length() - 1); // remove the last training ','
+
+    // Rebuild the expression now that method calls & properties are transformed
+    csString expression;
+    for (size_t i = 0; i < tokens.GetSize(); i++)
+        expression.Append(tokens[i]);
+
+    //printf("Final expression: %s\n", expression.GetData());
+
+    size_t ret = fp.Parse(expression.GetData(), fpVars.GetDataSafe());
+    if (ret != (size_t) -1)
+    {
+        Error5("Parse error in MathExpression >%s: %s< at column %zu: %s", name, expression.GetData(), ret, fp.ErrorMsg());
+        return false;
+    }
+
+    fp.Optimize();
+    return true;
+
+}
+
+double MathExpression::Evaluate(const MathEnvironment *env)
+{
+    double *values = new double [requiredVars.GetSize() + propertyRefs.GetSize()];
+    size_t i = 0;
+
+    csSet<csString>::GlobalIterator it(requiredVars.GetIterator());
+    while (it.HasNext())
+    {
+        const csString & varName = it.Next();
+        MathVar *var = env->Lookup(varName);
+        if (!var)
+        {
+            Error3("Error in >%s<: Required variable >%s< not supplied in environment.", name, varName.GetData());
+            CS_ASSERT(false);
+            return 0.0/0.0; 
+        }
+        values[i++] = var->GetValue();
+    }
+
+    it = requiredObjs.GetIterator();
+    while (it.HasNext())
+    {
+        const csString & objName = it.Next();
+        MathVar *var = env->Lookup(objName);
+        CS_ASSERT(var); // checked as part of requiredVars
+        if (!var->GetObject())
+        {
+            Error3("Error in >%s<: Type inference requires >%s< to be an iScriptableVar, but it isn't.", name, objName.GetData());
+            CS_ASSERT(false);
+            return 0.0/0.0;
+        }
+    }
+
+    it = propertyRefs.GetIterator();
+    while (it.HasNext())
+    {
+        const csString & ref = it.Next();
+        size_t colonAt = ref.FindFirst(':');
+        csString objname = ref.Slice(0, colonAt);
+        csString prop    = ref.Slice(colonAt + 1);
+
+        MathVar *var = env->Lookup(objname);
+        CS_ASSERT(var); // checked as part of requiredVars
+        iScriptableVar *obj = var->GetObject();
+        CS_ASSERT(obj); // checked as part of requiredObjs
+        values[i++] = obj->GetProperty(prop);
+    }
+
+    double ret = fp.Eval(values);
+    delete [] values;
+    return ret;
+}
+

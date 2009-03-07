@@ -145,7 +145,7 @@ void BankManager::TaxAccount(T guildOrChar, MoneyEvent monEvt, int index)
                 Error3 ("Couldn't mark payment as 'late' in database.\nCommand was <%s>.\nError returned was <%s>\n",db->GetLastQuery(),db->GetLastError());
 
             // Trigger 'not paid' script.
-            psserver->GetProgressionManager()->CreateEvent("Money_Event", monEvt.npaid)->Run(0, 0, false);
+            //psserver->GetProgressionManager()->CreateEvent("Money_Event", monEvt.npaid)->Run(0, 0, false);
         }
         else
         {
@@ -154,7 +154,7 @@ void BankManager::TaxAccount(T guildOrChar, MoneyEvent monEvt, int index)
             if(monEvt.lateBy > 6)
             {
                 // Trigger 'final not paid' script.
-                psserver->GetProgressionManager()->CreateEvent("Money_Event", monEvt.fnpaid)->Run(0, 0, false);
+                //psserver->GetProgressionManager()->CreateEvent("Money_Event", monEvt.fnpaid)->Run(0, 0, false);
 
                 // Remove money event from money_events.
                 monEvts.DeleteIndex(index);
@@ -186,7 +186,7 @@ void BankManager::TaxAccount(T guildOrChar, MoneyEvent monEvt, int index)
             Error3 ("Couldn't unmark payment as 'late' in database.\nCommand was <%s>.\nError returned was <%s>\n",db->GetLastQuery(),db->GetLastError());
 
         // Paid
-        psserver->GetProgressionManager()->CreateEvent("Money_Event", monEvt.paid)->Run(0, 0, false);
+        //psserver->GetProgressionManager()->CreateEvent("Money_Event", monEvt.paid)->Run(0, 0, false);
     }
 
     // Work out how much of each coin to remove.
@@ -786,18 +786,8 @@ int BankManager::CoinsForExchange(psCharacter* pschar, bool guild, int type, flo
 
 int BankManager::CalculateAccountLevel(psCharacter *pschar, bool guild)
 {
-    MathScript* accountLevelScript;
-    if (guild)
-    {
-        accountLevelScript = accountGuildLvlScript;
-    }
-    else
-    {
-        accountLevelScript = accountCharLvlScript;
-    }
-
-    MathScriptVar* totalTrias = accountLevelScript->GetOrCreateVar("TotalTrias");
-    MathScriptVar* accountLevel = accountLevelScript->GetOrCreateVar("AccountLevel");
+    MathScript* script;
+    MathEnvironment env;
 
     if (guild)
     {
@@ -806,27 +796,27 @@ int BankManager::CalculateAccountLevel(psCharacter *pschar, bool guild)
         {
             return 0;
         }
-        totalTrias->SetValue(g->GetBankMoney().GetTotal());
+        script = accountGuildLvlScript;
+        env.Define("TotalTrias", g->GetBankMoney().GetTotal());
     }
     else
     {
-        totalTrias->SetValue(pschar->BankMoney().GetTotal());
+        script = accountCharLvlScript;
+        env.Define("TotalTrias", pschar->BankMoney().GetTotal());
     }
 
-    accountLevelScript->Execute();
+    script->Evaluate(&env);
+    MathVar* accountLevel = env.Lookup("AccountLevel");
 
     return (int)accountLevel->GetValue();
 }
 
 float BankManager::CalculateFee(psCharacter* pschar, bool guild)
 { 
-    MathScriptVar* accountLevel = CalcBankFeeScript->GetOrCreateVar("AccountLevel");
-    MathScriptVar* bankFee = CalcBankFeeScript->GetOrCreateVar("BankFee");
-
-    accountLevel->SetValue(CalculateAccountLevel(pschar, guild));
-
-    CalcBankFeeScript->Execute();
-
+    MathEnvironment env;
+    env.Define("AccountLevel", CalculateAccountLevel(pschar, guild));
+    CalcBankFeeScript->Evaluate(&env);
+    MathVar* bankFee = env.Lookup("BankFee");
     return bankFee->GetValue();
 }
 

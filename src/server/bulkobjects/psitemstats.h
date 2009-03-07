@@ -41,7 +41,7 @@
 //=============================================================================
 #include "psskills.h"
 
-
+class ApplicativeScript;
 class CacheManager;
 class psCharacter;
 class psItem;
@@ -90,6 +90,9 @@ enum PSITEMSTATS_STAT
     PSITEMSTATS_STAT_STAMINA,
     PSITEMSTATS_STAT_COUNT
 };
+
+// Convenience function to convert between SKILL and STAT.
+PSITEMSTATS_STAT skillToStat(PSSKILL skill);
 
 enum PSITEMSTATS_DAMAGETYPE {
     PSITEMSTATS_DAMAGETYPE_NONE  = -1,
@@ -376,8 +379,9 @@ private:
     /// How much is the default decay to item_quality per use
     float decay_rate;
 
-    /// The name of event that this event can trigger on equip, unequip, or consuming.
-    csString progressionEventEquip, progressionEventUnEquip, progressionEventConsume;
+    /// Scripts The name of a progression script that this event can trigger on equip, unequip, or consuming.
+    ApplicativeScript *equipScript;
+    csString consumeScriptName;
     
     PSITEMSTATS_SLOTLIST valid_slots;
     csArray<INVENTORY_SLOT_NUMBER> valid_slots_array;
@@ -595,12 +599,8 @@ public:
     const char *GetSound();
     void SetSound(const char *v);
 
-    csString GetProgressionEventEquip() { return progressionEventEquip; }
-    csString GetProgressionEventUnEquip() { return progressionEventUnEquip; }
-    csString GetProgressionEventConsume() { return progressionEventConsume; }
-    void SetProgressionEventEquip( const char* event ) { progressionEventEquip = event;}
-    void SetProgressionEventUnEquip( const char* event ) { progressionEventUnEquip = event;}
-    void SetProgressionEventConsume( const char* event ) { progressionEventConsume = event; }
+    ApplicativeScript* GetEquipScript() { return equipScript; }
+    const csString & GetConsumeScriptName() { return consumeScriptName; }
     
     /** Checks to see if the character meets the requirements to equip an item
       * with these stats.

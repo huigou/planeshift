@@ -43,7 +43,7 @@ class psLinearMovement;
 
 // This holds the version number of the network code, remember to increase
 // this each time you do an update which breaks compatibility
-#define PS_NETVERSION   0x0098
+#define PS_NETVERSION   0x0099
 // Remember to bump the version in pscssetup.h, as well.
 
 // NPC Networking version is separate so we don't have to break compatibility
@@ -1336,7 +1336,7 @@ public:
 class psModeMessage : public psMessageCracker
 {
 public:
-    psModeMessage(uint32_t clientnum, EID actorID, uint8_t mode, uint8_t stance);
+    psModeMessage(uint32_t clientnum, EID actorID, uint8_t mode, uint32_t value);
     psModeMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
@@ -1365,7 +1365,7 @@ public:
 public:
     EID actorID;
     uint8_t mode;
-    uint8_t stance;
+    uint32_t value; //< stance if COMBAT, duration if SPELL_CASTING, ...
 };
 
 //---------------------------------------------------------------------------
@@ -2158,12 +2158,12 @@ public:
      *   @param effectOffset the offset position from the anchor point
      *   @param anchorID the ID of the entity to anchor the effect to (0 for absolute anchor)
      *   @param targetID the ID of the entity that will be the target of the effect (0 for a target the same as the anchor)
-     *   @param castDuration the length of the casting duration (this has to be sent to the client to make the spell window work
+     *   @param duration the duration of the effect
      *   @param uid Optional ID that server can use to stop a particular Effect.
      */
     psEffectMessage(uint32_t clientNum, const csString &effectName,
                     const csVector3 &effectOffset, EID anchorID,
-                    EID targetID, uint32_t castDuration, uint32_t uid);
+                    EID targetID, uint32_t duration, uint32_t uid);
 
     /**  @brief Constructs a new message that will tell the client to render a text effect - not just a normal effect
      *   @param clientNum the client to send the effect message to
@@ -2171,7 +2171,7 @@ public:
      *   @param effectOffset the offset position from the anchor point
      *   @param anchorID the ID of the entity to anchor the effect to (0 for absolute anchor)
      *   @param targetID the ID of the entity that will be the target of the effect (0 for a target the same as the anchor)
-     *   @param effectText the length of the casting duration (this has to be sent to the client to make the spell window work
+     *   @param effectText (this was documented incorrectly)
      *   @param uid Optional ID that server can use to stop a particular Effect.
      */
     psEffectMessage(uint32_t clientNum, const csString &effectName,
@@ -2197,7 +2197,7 @@ public:
     csVector3 offset;
     EID       anchorID;
     EID       targetID;
-    uint32_t  castDuration;
+    uint32_t  duration;
     uint32_t  uid;
     csString effectText;
 };
@@ -3314,70 +3314,28 @@ public:
 class psGUIActiveMagicMessage : public psMessageCracker
 {
 public:
-    enum commandType { addCategory, removeCategory };
+    enum commandType { Add, Remove };
 
-    psGUIActiveMagicMessage( uint32_t clientNum,
+    psGUIActiveMagicMessage(uint32_t clientNum,
                             commandType cmd,
-                            csArray<csString> categories,
-                            bool open )
+                            SPELL_TYPE type,
+                            const csString & name)
     {
-        size_t sizeCategories = 0;
-        int numCategories = 0;
-        for ( size_t i = 0; i < categories.GetSize(); i++ )
-        {
-            if ( categories[ i ].Length() != 0 )
-            {
-                sizeCategories += categories[ i ].Length() + 1;
-                numCategories++;
-            }
-        }
-
-        msg.AttachNew(new MsgEntry( sizeof(bool) + sizeof(uint8_t) + sizeof(int32_t) + sizeCategories ));
+        msg.AttachNew(new MsgEntry( sizeof(bool) + +sizeof(uint8_t) + sizeof(int32_t) + name.Length() + 1));
         msg->SetType(MSGTYPE_ACTIVEMAGIC);
         msg->clientnum = clientNum;
-        msg->Add( open );
-        msg->Add( (uint8_t)cmd );
-        msg->Add( (int32_t)numCategories );
-        for ( size_t i = 0; i < categories.GetSize(); i++ )
-        {
-            if ( categories[ i ].Length() != 0 )
-            {
-                msg->Add( categories[ i ] );
-            }
-        }
-        valid = !(msg->overrun);
-    }
-
-    psGUIActiveMagicMessage( uint32_t clientNum,
-                            commandType cmd,
-                            csString category,
-                            bool open )
-    {
-        size_t sizeCategories = category.Length() + 1;
-        int numCategories = 1;
-
-        msg.AttachNew(new MsgEntry( sizeof(bool) + +sizeof(uint8_t) + sizeof(int32_t) + sizeCategories ));
-        msg->SetType(MSGTYPE_ACTIVEMAGIC);
-        msg->clientnum = clientNum;
-        msg->Add( open );
-        msg->Add( (uint8_t)cmd );
-        msg->Add( (int32_t)numCategories );
-        msg->Add( category );
+        msg->Add((uint8_t)cmd);
+        msg->Add((uint8_t)type);
+        msg->Add(name);
         valid = !(msg->overrun);
     }
 
     /// Crack this message off the network.
     psGUIActiveMagicMessage( MsgEntry* message )
     {
-        int numCategories = 0;
-
-        openWindow = message->GetBool();
-        command = (commandType)message->GetUInt8();
-        numCategories = message->GetInt32();
-        for ( int i = 0; i < numCategories; i++ )
-        {
-            categoryList.Push( message->GetStr() );
-        }
+        command = (commandType) message->GetUInt8();
+        type = (SPELL_TYPE) message->GetUInt8();
+        name = message->GetStr();
         valid = true;
     }
 
@@ -3392,8 +3350,8 @@ public:
     virtual csString ToString(AccessPointers * access_ptrs);
 
     commandType command;
-    csArray<csString> categoryList;
-    bool openWindow;
+    SPELL_TYPE type;
+    csString name;
 };
 
 //-----------------------------------------------------------------------------

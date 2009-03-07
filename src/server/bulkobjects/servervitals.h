@@ -29,33 +29,52 @@
 // Project Includes
 //=============================================================================
 #include "util/psconst.h"
-
 #include "rpgrules/vitals.h"
-
 #include "../playergroup.h"
-
 
 //=============================================================================
 // Local Includes
 //=============================================================================
 
-
-
 class MsgEntry;
 class psCharacter;
+
+// Buffables for vitals, which automatically update the dirty flag as necessary.
+class VitalBuffable : public Buffable<float>
+{
+public:
+    void Initialize(unsigned int *sDirty, int dirtyF)
+    {
+        statsDirty = sDirty;
+        dirtyFlag = dirtyF;
+    }
+
+protected:
+    virtual void OnChange()
+    {
+        *statsDirty |= dirtyFlag;
+    }
+
+    int dirtyFlag; //< The bit value we should set when this becomes dirty.
+    unsigned int *statsDirty; //< Pointer to the psServerVitals dirty bitfield.
+};
+
+/// A character vital (such as HP or Mana) - server side.
+struct Vital
+{
+    float value;
+    VitalBuffable drRate; ///< Amount added to this vital each second
+    VitalBuffable max;
+};
+
+//----------------------------------------------------------------------------
 
 /** Server side of the character vitals manager.  Does a lot more accessing
   * of the data to set particular things.  Also does construction of data to
   * send to a client.
   */
-class psServerVitals : public psVitalManager
+class psServerVitals : public psVitalManager<Vital>
 {
-private:
-    ///  @see  PS_DIRTY_VITALS
-    unsigned int statsDirty;
-    unsigned char version;
-    psCharacter * character;  // the char whose vitals we manage
-
 public:
     psServerVitals(psCharacter * character);
 
@@ -68,16 +87,27 @@ public:
     void SetExp( unsigned int exp );
     void SetPP( unsigned int pp );
 
-    /** @brief Adjust a field in a vital statistic.
-    *
-    *   @param vitalName One of the enums @see PS_VITALS
-    *   @param dirtyFlag What became dirty in this adjustment. @see  PS_DIRTY_VITAL.
-    *
-    *   @return The new value of the field in the vital stat.
-    */
-    psCharVital& DirtyVital( int vitalName, int dirtyFlag );
-};
+    void SetVital(int vitalName, int dirtyFlag, float value);
+    void AdjustVital(int vitalName, int dirtyFlag, float delta);
 
+private:
+    /// Clamps the vital's current value to be in the interval [0, max].
+    void ClampVital(int vital);
+
+    /** @brief Adjust a field in a vital statistic.
+     *
+     *  @param vitalName One of the enums @see PS_VITALS
+     *  @param dirtyFlag What became dirty in this adjustment. @see  PS_DIRTY_VITAL.
+     *
+     *  @return The new value of the field in the vital stat.
+     */
+    Vital & DirtyVital(int vitalName, int dirtyFlag);
+
+    ///  @see  PS_DIRTY_VITALS
+    unsigned int statsDirty;
+    unsigned char version;
+    psCharacter *character;  //< the character whose vitals we manage
+};
 
 #endif
 
