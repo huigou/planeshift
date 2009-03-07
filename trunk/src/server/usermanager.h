@@ -60,7 +60,7 @@ class PendingDuelInvite;
 class AdviceManager;
 class StatSet;
 
-/** Used to manage incomming user commands from a client. Most commands are in
+/** Used to manage incoming user commands from a client. Most commands are in
  * the format of /command param1 param2 ... paramN
  */
 class UserManager : public MessageManager
@@ -119,14 +119,14 @@ public:
       */
     void SendCharacterDescription(Client * client, psCharacter * charData, bool full, bool simple, const csString & requestor);
 
-    void Attack(Stance stance, Client *client,int clientnum);
+    void Attack(Stance stance, Client *client);
 
     void SendPlayerMoney(Client *client);
 
     
     /** @brief Handles a /loot command from a player to loot something.
       *
-      * @param msg The incomming user command message
+      * @param msg The incoming user command message
       * @param client The client that request the /who
       */
     void HandleLoot(psUserCmdMessage& msg,Client *client);
@@ -149,7 +149,7 @@ protected:
       *
       * Sends the name/guild/rank of all players in the world.
       *
-      * @param msg The incomming user command message
+      * @param msg The incoming user command message
       * @param client The client that request the /who
       */
     void Who(psUserCmdMessage& msg, Client* client);
@@ -176,7 +176,7 @@ protected:
       *
       * This does a database hit to add/remove to the buddy table.
       *
-      * @param msg The incomming user command message.
+      * @param msg The incoming user command message.
       * @param client The client that request the /buddy.
       */
     void Buddy(psUserCmdMessage& msg,Client *client);
@@ -190,7 +190,7 @@ protected:
 
     /** @brief Calculates a dice roll from a player based on number of die and sides.
       *
-      * @param msg The incomming user command message.
+      * @param msg The incoming user command message.
       * @param client The client that request the command.
       */
     void RollDice(psUserCmdMessage& msg,Client *client);
@@ -198,7 +198,7 @@ protected:
 
     /** @brief Sends the player their current position and sector.
       *
-      * @param msg The incomming user command message.
+      * @param msg The incoming user command message.
       * @param client The client that request the command.
       */
     void ReportPosition(psUserCmdMessage& msg,Client *client);
@@ -206,14 +206,14 @@ protected:
 
     /* @brief Moves a player back to the default start point for their race.
       *
-      * @param msg The incomming user command message.
+      * @param msg The incoming user command message.
       * @param client The client that request the command..
       *
     void MoveToSpawnPos(psUserCmdMessage& msg,Client *client,int clientnum); */
 
     /** @brief Moves a player back to his last valid position.
       *
-      * @param msg The incomming user command message.
+      * @param msg The incoming user command message.
       * @param client The client that request the command.
       */
     void HandleUnstick(psUserCmdMessage& msg,Client *client);
@@ -233,14 +233,14 @@ protected:
     /** @brief Command to start attacking something. Starts the combat manager
       * working.
       *
-      * @param msg The incomming user command message.
+      * @param msg The incoming user command message.
       * @param client The client that request the command.
       */
     void HandleAttack(psUserCmdMessage& msg,Client *client);
 
     /** @brief Command to stop attacking your target
       *
-      * @param msg The incomming user command message.
+      * @param msg The incoming user command message.
       * @param client The client that request the command.
       */
     void HandleStopAttack(psUserCmdMessage& msg,Client *client);
@@ -299,21 +299,21 @@ protected:
 
     /** @brief Give a tip from the database to the client
      *
-     * @param msg The incomming user command message
+     * @param msg The incoming user command message
      * @param the client who sit
      */
     void GiveTip(psUserCmdMessage& msg, Client *client);
 
     /** @brief Sends the MOTD  to the client
       *
-      * @param msg The incomming user command message
+      * @param msg The incoming user command message
       * @param the client who sit
       */
     void GiveMOTD(psUserCmdMessage& msg, Client *client);
 
     /** @brief Handles a player command to show the popup dialog menu of the currently targeted NPC, if any.
       *
-      * @param msg The incomming user command message
+      * @param msg The incoming user command message
       * @param client The client that issued the command.
       */
     void ShowNpcMenu(psUserCmdMessage& msg, Client *client);
@@ -321,14 +321,14 @@ protected:
     /**
      * @brief Handles a player command to sit down
      * 
-     * @param msg The incomming user command message
+     * @param msg The incoming user command message
      * @param the client who sit
      */
     void HandleSit(psUserCmdMessage& msg, Client *client);
 
     /** @brief Handles the /admin command
       * 
-      * @param msg The incomming user command message
+      * @param msg The incoming user command message
       * @param the client who sit
       */
     void HandleAdminCommand(psUserCmdMessage& msg, Client *client);
@@ -336,14 +336,14 @@ protected:
     /**
      * @brief Handles a player command to stand up
      * 
-     * @param msg The incomming user command message
+     * @param msg The incoming user command message
      * @param the client who stand
      */
     void HandleStand(psUserCmdMessage& msg, Client *client);
     
     /** @brief Handles a player command to die
      * 
-     *  @param msg The incomming user command message
+     *  @param msg The incoming user command message
      *  @param the client who stand
      */
     void HandleDie(psUserCmdMessage& msg, Client *client);
@@ -357,7 +357,7 @@ protected:
 
     /** @brief Handles a player command to start banking with the targeted entity.
      * 
-     * @param msg The incomming user command message
+     * @param msg The incoming user command message
      * @param client The client that issued the command.
      */
     void HandleBanking(psUserCmdMessage& msg, Client *client);
@@ -377,10 +377,14 @@ protected:
 
     /** @brief Handles a player command to guard/unguard an item.
       *
+      * If the action parameter is empty, the guarding status
+      * of the item will be toggled.
+      * 
       * @param client The client that issued the command.
-      * @param target description of the item to be guarded/unguarded.
+      * @param object pointer to the item to be guarded/unguarded.
+      * @param action value can be "on" or "off"
       */
-    void Guard(Client *client, csString target, csString action);
+    void Guard(Client *client, gemObject *object, csString action);
 
     /// Handle the /rotate command, send it to Rotate()
     void HandleRotate(psUserCmdMessage& msg, Client *client);
@@ -402,7 +406,7 @@ protected:
 
     /** @brief Handles an /Assist command comming from the client.
      * 
-     *  @param msg The incomming command message
+     *  @param msg The incoming command message
      *  @param client A pointer to the client struct.
      */
     void Assist( psUserCmdMessage& msg, Client* client);

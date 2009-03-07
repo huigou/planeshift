@@ -1051,7 +1051,6 @@ void UserManager::BuddyList(Client *client,int clientnum,bool filter)
     mesg.SendMessage();
 }
 
-
 void UserManager::NotifyBuddies(Client * client, bool logged_in)
 {
     csString name (client->GetName());
@@ -1107,8 +1106,6 @@ void UserManager::NotifyGuildBuddies(Client * client, bool logged_in)
     }
 }
 
-
-
 void UserManager::RollDice(psUserCmdMessage& msg,Client *client)
 {
     int total=0;
@@ -1117,77 +1114,76 @@ void UserManager::RollDice(psUserCmdMessage& msg,Client *client)
         msg.dice = 100;
     if (msg.sides > 10000)
         msg.sides = 10000;
-        if (msg.dtarget > msg.sides)
-                msg.dtarget = msg.sides;
+    if (msg.dtarget > msg.sides)
+        msg.dtarget = msg.sides;
 
     if (msg.dice < 1)
         msg.dice = 1;
     if (msg.sides < 1)
         msg.sides = 1;
-        if (msg.dtarget < 0)
-                msg.dtarget = 0;
+    if (msg.dtarget < 0)
+        msg.dtarget = 0;
 
     for (int i = 0; i<msg.dice; i++)
     {
         // must use msg.sides instead of msg.sides-1 because rand never actually
         // returns max val, and int truncation never results in max val as a result
-                if (msg.dtarget)
-                        total += ((psserver->rng->Get(msg.sides) + 1 >= (uint)msg.dtarget)? 1: 0);
-                else
-                        total = total + psserver->rng->Get(msg.sides) + 1;
-    }
         if (msg.dtarget)
+            total += ((psserver->rng->Get(msg.sides) + 1 >= (uint)msg.dtarget)? 1: 0);
+        else
+            total += psserver->rng->Get(msg.sides) + 1;
+    }
+    if (msg.dtarget)
+    {
+        if (msg.dice > 1)
         {
-                if (msg.dice > 1)
-                {
-                        psSystemMessage newmsg(client->GetClientNum(),MSG_INFO_BASE,
-                                "Player %s has rolled %d %d-sided dice and had %d of them come up %d or greater.",
-                                client->GetName(),
-                                msg.dice,
-                                msg.sides,
-                                total,
-                                msg.dtarget);
+            psSystemMessage newmsg(client->GetClientNum(),MSG_INFO_BASE,
+                    "Player %s has rolled %d %d-sided dice and had %d of them come up %d or greater.",
+                    client->GetName(),
+                    msg.dice,
+                    msg.sides,
+                    total,
+                    msg.dtarget);
 
-                        newmsg.Multicast(client->GetActor()->GetMulticastClients(),0, 10);
-                }
-                else
-                {
-                        psSystemMessage newmsg(client->GetClientNum(),MSG_INFO_BASE,((total)?
-                                "Player %s has rolled a %d-sided dice and had it come up %d or greater.":
-                                "Player %s has rolled a %d-sided dice and had it come up less than %d."),
-                                client->GetName(),
-                                msg.sides,
-                                msg.dtarget);
-
-                        newmsg.Multicast(client->GetActor()->GetMulticastClients(),0, 10);
-                }
+            newmsg.Multicast(client->GetActor()->GetMulticastClients(),0, 10);
         }
         else
         {
-                if (msg.dice > 1)
-                {
-                        psSystemMessage newmsg(client->GetClientNum(),MSG_INFO_BASE,
-                                "Player %s has rolled %d %d-sided dice for a %d.",
-                                client->GetName(),
-                                msg.dice,
-                                msg.sides,
-                                total);
+            psSystemMessage newmsg(client->GetClientNum(),MSG_INFO_BASE,((total)?
+                    "Player %s has rolled a %d-sided dice and had it come up %d or greater.":
+                    "Player %s has rolled a %d-sided dice and had it come up less than %d."),
+                    client->GetName(),
+                    msg.sides,
+                    msg.dtarget);
 
-                        newmsg.Multicast(client->GetActor()->GetMulticastClients(),0, 10);
-                }
-                else
-                {
-                        psSystemMessage newmsg(client->GetClientNum(),MSG_INFO_BASE,
-                                "Player %s has rolled a %d-sided die for a %d.",
-                                client->GetName(),
-                                msg.sides,
-                                total);
-
-                        newmsg.Multicast(client->GetActor()->GetMulticastClients(),0, 10);
-                }
+            newmsg.Multicast(client->GetActor()->GetMulticastClients(),0, 10);
         }
-}
+    }
+    else
+    {
+        if (msg.dice > 1)
+        {
+            psSystemMessage newmsg(client->GetClientNum(),MSG_INFO_BASE,
+                    "Player %s has rolled %d %d-sided dice for a %d.",
+                    client->GetName(),
+                    msg.dice,
+                    msg.sides,
+                    total);
 
+            newmsg.Multicast(client->GetActor()->GetMulticastClients(),0, 10);
+        }
+        else
+        {
+            psSystemMessage newmsg(client->GetClientNum(),MSG_INFO_BASE,
+                    "Player %s has rolled a %d-sided die for a %d.",
+                    client->GetName(),
+                    msg.sides,
+                    total);
+
+            newmsg.Multicast(client->GetActor()->GetMulticastClients(),0, 10);
+        }
+    }
+}
 
 void UserManager::ReportPosition(psUserCmdMessage& msg,Client *client)
 {
@@ -1345,7 +1341,7 @@ void UserManager::StopAllCombat(Client *client)
 
 void UserManager::HandleAttack(psUserCmdMessage& msg,Client *client)
 {
-    Attack(client->GetCharacterData()->getStance(msg.stance), client, client->GetClientNum());
+    Attack(client->GetCharacterData()->getStance(msg.stance), client);
 }
 
 void UserManager::HandleStopAttack(psUserCmdMessage& msg,Client *client)
@@ -1353,8 +1349,7 @@ void UserManager::HandleStopAttack(psUserCmdMessage& msg,Client *client)
     psserver->combatmanager->StopAttack(client->GetActor());
 }
 
-//TODO : remove clientnum, check calling functions
-void UserManager::Attack(Stance stance, Client *client,int clientnum)
+void UserManager::Attack(Stance stance, Client *client)
 {
     if (!client->IsAlive() || client->IsFrozen())
     {
@@ -1630,11 +1625,7 @@ void UserManager::Loot(Client *client)
                             psLootEvent evt(
                                             chr->GetPID(),
                                             currmember->GetCharacterData()->GetPID(),
-                                            0,
-                                            0,
-                                            0,
-                                            eachmoney.GetTotal()
-                                            );
+                                            0, 0, 0, eachmoney.GetTotal());
                             evt.FireEvent();
                         }
                         else
@@ -1660,14 +1651,9 @@ void UserManager::Loot(Client *client)
 
                     client->GetCharacterData()->AdjustMoney(remmoney, false);
                     psserver->GetCharManager()->SendPlayerMoney(client);
-                    psLootEvent evt(
-                                    chr->GetPID(),
+                    psLootEvent evt(chr->GetPID(),
                                     client->GetCharacterData()->GetPID(),
-                                    0,
-                                    0,
-                                    0,
-                                    remmoney.GetTotal()
-                                    );
+                                    0, 0, 0, remmoney.GetTotal());
                     evt.FireEvent();
                 }
             }
@@ -1682,14 +1668,9 @@ void UserManager::Loot(Client *client)
                 client->GetCharacterData()->AdjustMoney(m, false);
                 psserver->GetCharManager()->SendPlayerMoney(client);
 
-                psLootEvent evt(
-                               chr->GetPID(),
-                               client->GetCharacterData()->GetPID(),
-                               0,
-                               0,
-                               0,
-                               m.GetTotal()
-                               );
+                psLootEvent evt(chr->GetPID(),
+                                client->GetCharacterData()->GetPID(),
+                               0, 0, 0, m.GetTotal());
                 evt.FireEvent();
             }
         }
@@ -1883,80 +1864,70 @@ void UserManager::Pickup(Client *client, csString target)
 
 void UserManager::HandleGuard(psUserCmdMessage& msg, Client *client)
 {
-    Guard(client, msg.target, msg.action);
-}
-
-void UserManager::Guard(Client *client, csString target, csString action)
-{
-    if (target.StartsWith("area:"))
+    gemObject* object;
+    if (msg.target.StartsWith("area:"))
     {
-        csArray<csString> filters = DecodeCommandArea(client, target);
-        csArray<csString>::Iterator it(filters.GetIterator());
-        while (it.HasNext()) {
-            Guard(client, it.Next(), action);
-        }
-        return;
-    }
-    else if (target.StartsWith("eid:", true))
-    {
-        gemObject* object= NULL;
-        bool onoff = false;
-        bool toggle = false;
-        GEMSupervisor *gem = GEMSupervisor::GetSingletonPtr();
-        csString eid_str = target.Slice(4);
-        EID eID = EID(strtoul(eid_str.GetDataSafe(), NULL, 10));
-        if (eID.IsValid())
+        csArray<csString> targetList = DecodeCommandArea(client, msg.target);
+        csArray<csString>::Iterator targets(targetList.GetIterator());
+        while (targets.HasNext())
         {
-            object = gem->FindObject(eID);
-            if (action == "on")         //The player provided an on so set ignore
-                onoff = true;
-            else if (action == "off") //The player provided an off so unset ignore
-                onoff = false;
-            else                           //The player didn't provide anything so toggle the option
-                toggle = true;
-
-            if (object && object->GetItem())
-            {
-                if(onoff || (toggle && object->GetItem()->GetGuardingCharacterID() == 0))
-                {
-                    if(client->GetSecurityLevel() > 22) //GM2
-                    {
-                        object->GetItem()->SetGuardingCharacterID(client->GetPID());
-                        psserver->SendSystemError(client->GetClientNum(), "You have guarded %s", object->GetName());
-                    }
-                    else
-                    {
-                        psserver->SendSystemError(client->GetClientNum(), "You can't guard %s", object->GetName());
-                    }
-                }
-                else
-                {
-                    if(object->GetItem()->GetGuardingCharacterID() == client->GetPID() || client->GetSecurityLevel() > 22)
-                    {
-                        object->GetItem()->SetGuardingCharacterID(0);
-                        psserver->SendSystemError(client->GetClientNum(), "You have unguarded %s", object->GetName());
-                    }
-                    else
-                    {
-                        psserver->SendSystemError(client->GetClientNum(), "You can't unguard %s", object->GetName());
-                    }
-                }
-            }
-            else
-            {
-                psserver->SendSystemError(client->GetClientNum(),
-                                "Item not found %s", target.GetData());
-            }
+            object = FindObjectByString(targets.Next(), client->GetActor());
+            Guard(client, object, msg.action);
         }
     }
-    else if(client->GetTargetObject())
+    else if(msg.target.StartsWith("eid:"))
     {
-        gemObject* object= client->GetTargetObject();
-        Guard(client, object->GetEID().Show(), action);
+        object = FindObjectByString(msg.target, client->GetActor());
+        Guard(client, object, msg.action);
     }
     else
         psserver->SendSystemError(client->GetClientNum(),
-                "Item not found %s", target.GetData());
+                "Unknown target : %s", msg.target.GetData());
+}
+
+void UserManager::Guard(Client *client, gemObject *object, csString action)
+{
+    bool onoff = false;
+    bool toggle = false;
+    if (action == "on")         //The player provided an on so set ignore
+        onoff = true;
+    else if (action == "off") //The player provided an off so unset ignore
+        onoff = false;
+    else                           //The player didn't provide anything so toggle the option
+        toggle = true;
+
+    psItem* guardItem;
+    
+    if(object)
+        guardItem = object->GetItem();
+    
+    if (guardItem)
+    {
+        if(onoff || (toggle && guardItem->GetGuardingCharacterID() == 0))
+        {
+            // TODO : Add that check in the security table
+            if(client->GetSecurityLevel() > 22) //GM2
+            {
+                guardItem->SetGuardingCharacterID(client->GetPID());
+                psserver->SendSystemError(client->GetClientNum(), "You have guarded %s", object->GetName());
+            }
+            else
+                psserver->SendSystemError(client->GetClientNum(), "You can't guard %s", object->GetName());
+        }
+        else
+        {
+            if(guardItem->GetGuardingCharacterID() == client->GetPID() || client->GetSecurityLevel() > 22)
+            {
+                guardItem->SetGuardingCharacterID(0);
+                psserver->SendSystemError(client->GetClientNum(), "You have unguarded %s", object->GetName());
+            }
+            else
+                psserver->SendSystemError(client->GetClientNum(), "You can't unguard %s", object->GetName());
+        }
+    }
+    else
+        psserver->SendSystemError(client->GetClientNum(),
+                        "Item not found %s", object->GetName());
 }
 
 void UserManager::HandleRotate(psUserCmdMessage& msg, Client *client)
@@ -1964,11 +1935,11 @@ void UserManager::HandleRotate(psUserCmdMessage& msg, Client *client)
     gemObject* rotationTarget;
     if (msg.target.StartsWith("area:"))
     {
-        csArray<csString> filters = DecodeCommandArea(client, msg.target);
-        csArray<csString>::Iterator it(filters.GetIterator());
-        while (it.HasNext())
+        csArray<csString> targetList = DecodeCommandArea(client, msg.target);
+        csArray<csString>::Iterator targets(targetList.GetIterator());
+        while (targets.HasNext())
         {
-            rotationTarget = FindObjectByString(msg.target, client->GetActor());
+            rotationTarget = FindObjectByString(targets.Next(), client->GetActor());
             Rotate(client, rotationTarget, msg.action);
         }
         return;
@@ -1991,6 +1962,15 @@ void UserManager::Rotate(Client *client, gemObject* target, csString action)
 
     if (rotItem)
     {
+        // rotate an item only if the client is guarding it,
+        // or has the right to rotate all items
+        if (!(rotItem->GetItem()->GetGuardingCharacterID() == client->GetPID()) &&
+            !psserver->CheckAccess(client, "rotate all"))
+        {
+            psserver->SendSystemInfo(client->GetClientNum(), "You can't rotate %s", rotItem->GetItem()->GetName());
+            return;
+        }
+        
         float oldxrot, oldyrot, oldzrot;
         rotItem->GetRotation(oldxrot, oldyrot, oldzrot);
         // rotation is stored in radians,
@@ -2004,57 +1984,46 @@ void UserManager::Rotate(Client *client, gemObject* target, csString action)
         if (words[0] == "x")
         {
             if (words[1] != "reset")
-                xrot = oldxrot + atoi(words[1]);
+                xrot = oldxrot + atof(words[1]);
             else
                 xrot = 0;
         }
         else if (words[0] == "y")
         {
             if (words[1] != "reset")
-                yrot = oldyrot + atoi(words[1]);
+                yrot = oldyrot + atof(words[1]);
             else
                 yrot = 0;
         }
         else if (words[0] == "z")
         {
             if (words[1] != "reset")
-                zrot = oldzrot + atoi(words[1]);
+                zrot = oldzrot + atof(words[1]);
             else
                 zrot = 0;
         }
         else
         {
             if (words[0] != "reset")
-                xrot = oldxrot + atoi(words[1]);
+                xrot = oldxrot + atof(words[0]);
             else
                 xrot = 0;
             if (words[1] != "reset")
-                yrot = oldyrot + atoi(words[1]);
+                yrot = oldyrot + atof(words[1]);
             else
                 yrot = 0;
             if (words[2] != "reset")
-                zrot = oldzrot + atoi(words[1]);
+                zrot = oldzrot + atof(words[2]);
             else
                 zrot = 0;
         }
-
-        // rotate an item only if the client is guarding it,
-        // or has the right to rotate all items
-        if (rotItem->GetItem()->GetGuardingCharacterID() == client->GetPID() ||
-            psserver->CheckAccess(client, "rotate all"))
-        {
-            // rotation is given in degrees, converting that to radians
-            xrot = xrot/180*PI;
-            yrot = yrot/180*PI;
-            zrot = zrot/180*PI;
-            rotItem->SetRotation(xrot, yrot, zrot);
-            rotItem->UpdateProxList(true);
-            psserver->SendSystemInfo(client->GetClientNum(), "You have rotated %s", rotItem->GetItem()->GetName());
-        }
-        else
-        {
-            psserver->SendSystemInfo(client->GetClientNum(), "You can't rotate %s", rotItem->GetItem()->GetName());
-        }
+        // rotation is given in degrees, converting that to radians
+        xrot = xrot/180*PI;
+        yrot = yrot/180*PI;
+        zrot = zrot/180*PI;
+        rotItem->SetRotation(xrot, yrot, zrot);
+        rotItem->UpdateProxList(true);
+        psserver->SendSystemInfo(client->GetClientNum(), "You have rotated %s", rotItem->GetItem()->GetName());
     }
     else
     {
@@ -2245,7 +2214,7 @@ void UserManager::SwitchAttackTarget(Client *targeter, Client *targeted )
     // If we switch targets while in combat, start attacking the new
     // target, unless we no longer have a target.
     if (targeted)
-        Attack(targeter->GetCharacterData()->GetCombatStance(), targeter, targeter->GetClientNum());
+        Attack(targeter->GetCharacterData()->GetCombatStance(), targeter);
     else
         psserver->combatmanager->StopAttack(targeter->GetActor());
 }

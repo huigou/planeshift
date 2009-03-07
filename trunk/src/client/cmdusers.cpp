@@ -333,30 +333,40 @@ const char *psUserCommands::HandleCommand(const char *cmd)
     else if (words[0] == "/rotate")
     {
         if ( words.GetCount() < 2 )
-            return "Usage: /rotate [target] [x|reset] [y|reset] [z|reset]  or /rotate [x|y|z] [angle|reset]";
+            return "Usage: /rotate [target] [x|reset] [y|reset] [z|reset]  or /rotate [x|y|z]";
         
-        GEMClientObject *object = NULL;
+        bool targetGiven = false;
+        
+        csString targetString;
         // if the command's target is not precised, get the object currently targeted
         if (words[1] == "x" || words[1] == "y" || words[1] == "z" ||
-            words[1] == "reset" || words[1]=="target" || atoi(words[1]))
-            object = psengine->GetCharManager()->GetTarget();
+            words[1] == "reset" || words[1] == "0" || atoi(words[1]))
+            targetString = FormatTarget();
         else
-            object = FindEntityWithName(words[1]);
+        {
+            targetString = FormatTarget(words[1]);
+            targetGiven = true;
+        }
         
-        csString newCmd;
-        // obtain the EID of the command's target
-        if (object)
+        if (!targetString.IsEmpty())
         {
-            EID mappedID = object->GetEID();
-            newCmd.Format("/rotate eid:%u %s", mappedID.Unbox(), words.GetTail(2).GetDataSafe());
+            csString newCmd;
+            newCmd.Append("/rotate ");
+            newCmd.Append(targetString);
+            newCmd.Append(" ");
+            
+            if(targetGiven)
+                newCmd.Append(words.GetTail(2).GetDataSafe());
+            else
+                newCmd.Append(words.GetTail(1).GetDataSafe());
+            
+            Error2("Rotate : %s", newCmd.GetDataSafe());
+            psUserCmdMessage cmdmsg(newCmd);
+            cmdmsg.SendMessage();
         }
-        // for the area keyword
         else
-        {
-            newCmd.Format("/rotate %s %s", words[1].GetDataSafe(), words.GetTail(2).GetDataSafe());
-        }
-        psUserCmdMessage cmdmsg(cmd);
-        cmdmsg.SendMessage();
+            return "You need to precise a target or to select one";
+
     }
 
     else if (words[0] == "/sell")
@@ -667,32 +677,58 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         return NULL;
     }
 
-    else if (words[0] == "/pickup")
+    else if (words[0] == "/guard")
     {
-        GEMClientObject *object = NULL;
+        unsigned int onoff = 0;
+        csString targetString;
 
         if (words[1].IsEmpty())
-            object = psengine->GetCharManager()->GetTarget();
-        else
-            object = FindEntityWithName(words[1]);
-        if (object)
+            targetString = FormatTarget();
+        else if (words[1] == "on" || words[1] == "off")
         {
-            psengine->GetCharManager()->SetTarget(object,"select");
-            EID mappedID = object->GetEID();
+            onoff = 1;
+            targetString = FormatTarget();
+        }
+        else
+        {
+            targetString = FormatTarget(words[1]);
+            if(!words[2].IsEmpty())
+                onoff = 2;
+        }        
+        
+        if (!targetString.IsEmpty())
+        {
             csString newCmd;
-            newCmd.Format("/pickup eid:%u", mappedID.Unbox());
+            newCmd.Append("/guard ");
+            newCmd.Append(targetString);
+            if(onoff > 0)
+                newCmd.Append(" ");
+                newCmd.Append(words[onoff]);
             psUserCmdMessage cmdmsg(newCmd);
             cmdmsg.SendMessage();
         }
-        else if (words[1].IsEmpty())
-        {
-            return "You need to precise a target or to select one";
-        }
         else
+            return "You need to precise a target or to select one";
+    }
+
+    else if (words[0] == "/pickup")
+    {
+        csString targetString;
+        if (words[1].IsEmpty())
+            targetString = FormatTarget();
+        else
+            targetString = FormatTarget(words[1]);
+            
+        if (!targetString.IsEmpty())
         {
-            psUserCmdMessage cmdmsg(cmd);
+            csString newCmd;
+            newCmd.Append("/pickup ");
+            newCmd.Append(targetString);
+            psUserCmdMessage cmdmsg(newCmd);
             cmdmsg.SendMessage();
         }
+        else
+            return "You need to precise a target or to select one";
     }
 
     else if ( words[0] == "/game" )
@@ -951,8 +987,6 @@ void psUserCommands::UpdateTarget(SearchDirection searchDirection,
     return psengine->GetCharManager()->SetTarget((bestObject == startingEntity) ? loopObject : bestObject,"select");
 }
 
-
-
 GEMClientObject* psUserCommands::FindEntityWithName(const char *name)
 {
     psCelClient* cel = psengine->GetCelClient();
@@ -983,4 +1017,35 @@ GEMClientObject* psUserCommands::FindEntityWithName(const char *name)
     }
 
     return NULL;
+}
+
+csString psUserCommands::FormatTarget(const csString& target)
+{
+    GEMClientObject *targetObject = NULL;
+    
+    if(target == "target" || target.IsEmpty())
+        targetObject = psengine->GetCharManager()->GetTarget();
+    else if (target.StartsWith("area:",true) ||
+        target.StartsWith("eid:",true) ||
+        target.StartsWith("itemid:",true) ||
+        target.StartsWith("pid:",true) ||
+        target ==  "me")
+        return target;
+    else
+    {
+        targetObject = FindEntityWithName(target);
+    }
+    
+    csString targetString;
+    
+    if (targetObject)
+    {
+        psengine->GetCharManager()->SetTarget(targetObject,"select");
+        EID mappedID = targetObject->GetEID();
+        targetString.Format("eid:%u", mappedID.Unbox());
+        return targetString;
+    }
+
+    targetString.Empty();
+    return targetString;
 }

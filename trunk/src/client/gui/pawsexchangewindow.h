@@ -66,7 +66,7 @@ public:
     /** Sends psExchangeAcceptMsg message to the server. */
     void SendAccept();
 
-    /** Sends a psExchangeRejectMsg message to the server. */
+    /** Sends a psExchangeEndMsg message to the server. */
     void SendEnd();
 
 protected:
