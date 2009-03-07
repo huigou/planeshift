@@ -37,6 +37,7 @@ class ActiveSpell;
 class iSpellModifier
 {
 public:
+    virtual ~iSpellModifier() { }
     virtual void Cancel(const ActiveSpell *owner) = 0;
 };
 
@@ -69,10 +70,13 @@ template <typename T>
 class Overridable : public iSpellModifier
 {
 public:
+
     Overridable(T x)
     {
         values.PushBack(csTuple2<const ActiveSpell*,T>(NULL, x));
     }
+
+    virtual ~Overridable() { }
 
     T Current() const
     {
@@ -148,6 +152,7 @@ class Buffable : public iSpellModifier
 public:
     Buffable() { base = cached = 0; }
     Buffable(T x) { base = cached = x; }
+    virtual ~Buffable() { }
 
     T Current() const { return cached; }
     T Base() const { return base; }
@@ -213,6 +218,8 @@ class Multiplier : public iSpellModifier
 {
 public:
     Multiplier() { cached = 1; }
+    virtual ~Multiplier() { }
+
     float Value() { return cached; }
 
     void Buff(const ActiveSpell *owner, float x)

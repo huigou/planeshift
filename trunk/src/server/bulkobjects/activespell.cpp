@@ -37,6 +37,7 @@ class LinkedSpellCancel : public iCancelAction
 {
 public:
     LinkedSpellCancel(ActiveSpell *linked) : linked(linked) { }
+    virtual ~LinkedSpellCancel() { }
 
     void Cancel()
     {

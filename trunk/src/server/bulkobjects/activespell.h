@@ -45,6 +45,7 @@ class gemActor;
 class iCancelAction
 {
 public:
+    virtual ~iCancelAction() { }
     virtual void Cancel() = 0;
 };
 
