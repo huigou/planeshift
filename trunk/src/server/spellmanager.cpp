@@ -50,6 +50,25 @@
 #include "progressionmanager.h"
 #include "commandmanager.h"
 
+class psPurifyEvent : public psGameEvent
+{
+public:
+    psPurifyEvent(csTicks duration, gemActor *actor, uint32 glyphItemID) : psGameEvent(0, duration, "psPurifyEvent"), actor(actor), glyphItemID(glyphItemID) { }
+
+    void Trigger()
+    {
+        if (!actor.IsValid())
+            return;
+
+        psserver->GetSpellManager()->EndPurifying(actor->GetCharacterData(), glyphItemID);
+    }
+
+protected:
+    csWeakRef<gemActor> actor;
+    uint32 glyphItemID;
+};
+
+//----------------------------------------------------------------------------
 
 SpellManager::SpellManager(ClientConnectionSet *ccs,
                                iObjectRegistry * object_reg)
@@ -382,15 +401,10 @@ void SpellManager::StartPurifying(MsgEntry *me, Client * client)
     // If the glyph has no ID, we must save it now because we need to have an ID for the purification script
     glyph->ForceSaveIfNew();
 
-    // Use the progression manager to purify so that the
-    // purify event will continue when player reconnect if
-    // not finished before disconnect.
-    /* KAYDEN: Replace this.  Unfortunately, the new system cannot do it.
-    psserver->SendSystemInfo(client->GetClientNum(), "You start to purify %s", glyph->GetName() );
-    csString event;
-    event.Format("<evt><script delay=\"%d\" persistent=\"yes\"><purify glyph=\"%u\"/></script></evt>",20000,glyph->GetUID());
-    psserver->GetProgressionManager()->ProcessScript(event.GetData(),client->GetActor(),client->GetActor());
-    */
+    // Should probably just assume PURIFYING glyphs actually finished when we load them next.
+    psserver->SendSystemInfo(client->GetClientNum(), "You start to purify %s", glyph->GetName());
+    psPurifyEvent *evt = new psPurifyEvent(20000, client->GetActor(), glyph->GetUID());
+    psserver->GetEventManager()->Push(evt);
 
     SendGlyphs(NULL,client);
     psserver->GetCharManager()->SendInventory(client->GetClientNum());
