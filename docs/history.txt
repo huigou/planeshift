@@ -5,6 +5,10 @@
 - Fixed PS#2795 - guarding range ignores instance
 
 *** 2009-03-01 by Stefano Angeleri
+- Committed a patch by peeg fixing some little issues in the chardescription
+  editing window
+
+*** 2009-03-01 by Stefano Angeleri
 - Changed behaviour of the onlinetime prerequisite operator
   now you don't have to pass the type but works like factions so just
   pass max or min and if you need both and two onlinetime operators
