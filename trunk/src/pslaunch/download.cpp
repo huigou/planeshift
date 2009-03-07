@@ -115,7 +115,7 @@ bool Downloader::DownloadFile(const char *file, const char *dest, bool URL, bool
         
         if(!URL)
         {
-            url.AppendFmt(file);
+            url.Append(file);
         }
 
         csString destpath = dest;

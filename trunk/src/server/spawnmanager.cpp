@@ -841,7 +841,7 @@ void SpawnManager::RemoveNPC(gemObject *obj)
                (float)delay/1000.0,
                pos.x, pos.y, pos.z, sector.GetData() );
 
-    Notify1(LOG_SPAWN,msg);
+    Notify2(LOG_SPAWN, "%s", msg.GetData());
 }
 
 
@@ -1278,7 +1278,7 @@ void psDespawnGameEvent::Trigger()
         status.Format("Despawn event triggered for non-existant NPC %s!", ShowID(entity));
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
 
-        Error1(status);
+        Error2("%s", status.GetData());
         return;
     }
     spawnmanager->RemoveNPC(object);

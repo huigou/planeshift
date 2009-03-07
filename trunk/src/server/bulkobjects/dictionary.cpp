@@ -129,8 +129,7 @@ bool NPCDialogDict::LoadDisallowedWords(iDataConnection *db)
 
     if (!result.IsValid())
     {
-        Error1("Cannot load disallowed words into dictionary from database.\n");
-        Error1( db->GetLastError() );
+        Error2("Cannot load disallowed words into dictionary from database.\n%s", db->GetLastError());
         return false;
     }
 
@@ -2407,7 +2406,7 @@ void NpcDialogMenu::Add(NpcDialogMenu *add)
 		printf("Adding '%s' to menu.\n", add->triggers[i].menuText.GetData() );
 		AddTrigger(add->triggers[i].menuText, add->triggers[i].trigger, add->triggers[i].quest, add->triggers[i].prerequisite);
 	}
-	printf("Added %d triggers to menu.\n", add->triggers.GetSize() );
+	printf("Added %lu triggers to menu.\n", (unsigned long) add->triggers.GetSize());
 }
 
 void NpcDialogMenu::ShowMenu( Client *client )
@@ -2428,11 +2427,11 @@ void NpcDialogMenu::ShowMenu( Client *client )
 
         if (!prereq.IsEmpty())
         {
-            printf("Item %d Prereq : %s\n",i, prereq.GetDataSafe());
+            printf("Item %lu Prereq : %s\n", (unsigned long) i, prereq.GetDataSafe());
         }
         else
         {
-            printf("Item %d has no prereqs.\n", i);
+            printf("Item %lu has no prereqs.\n", (unsigned long) i);
         }
 
         if (triggers[i].prerequisite)

@@ -820,11 +820,11 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
     debug.AppendFmt( "Roll:            %1.3f\n",roll);
     if (workEvent->client)
     {
-        Debug1(LOG_TRADE, workEvent->client->GetClientNum(),debug.GetData());
+        Debug2(LOG_TRADE, workEvent->client->GetClientNum(), "%s", debug.GetData());
     }
     else
     {
-       Debug1(LOG_TRADE, 0 ,debug.GetData());
+        Debug2(LOG_TRADE, 0, "%s", debug.GetData());
     }
 
 

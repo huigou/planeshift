@@ -201,7 +201,7 @@ void WeatherManager::QueueNextEvent(int delayticks,
                 "Duration: %d Fade: %d Sector: %s ...",
                 delayticks,eventtype,eventvalue,duration,
                 fade,sector);
-    Notify1(LOG_WEATHER,note.GetDataSafe());
+    Notify2(LOG_WEATHER, "%s", note.GetDataSafe());
     
     event = new psWeatherGameEvent(this,
                                    delayticks,

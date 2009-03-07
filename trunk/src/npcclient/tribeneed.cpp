@@ -67,7 +67,7 @@ psTribe::TribeNeed psTribeNeedSet::CalculateNeed(NPC * npc)
     {
         log.AppendFmt("\n%20s %.2f -> %s",needs[i]->name.GetDataSafe(),needs[i]->current_need,psTribe::TribeNeedName[needs[i]->GetNeedType()]);
     }
-    Debug1( LOG_TRIBES, GetTribe()->GetID(), log );
+    Debug2(LOG_TRIBES, GetTribe()->GetID(), "%s", log.GetData());
 
     needs[0]->ResetNeed();
     return needs[0]->GetNeedType();
