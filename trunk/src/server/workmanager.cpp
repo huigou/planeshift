@@ -124,54 +124,26 @@ WorkManager::WorkManager()
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<WorkManager>(this,&WorkManager::HandleWorkCommand),MSGTYPE_WORKCMD,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<WorkManager>(this,&WorkManager::HandleLockPick),MSGTYPE_LOCKPICK,REQUIRE_READY_CLIENT|REQUIRE_ALIVE|REQUIRE_TARGET);
 
-    script_engine = psserver->GetMathScriptEngine();
-    calc_repair_time   = script_engine->FindScript("Calculate Repair Time");
-    calc_repair_result = script_engine->FindScript("Calculate Repair Result");
-    calc_mining_chance = script_engine->FindScript("Calculate Mining Odds");
+    calc_repair_time   = psserver->GetMathScriptEngine()->FindScript("Calculate Repair Time");
+    calc_repair_result = psserver->GetMathScriptEngine()->FindScript("Calculate Repair Result");
+    calc_mining_chance = psserver->GetMathScriptEngine()->FindScript("Calculate Mining Odds");
+    calc_lockpick_time = psserver->GetMathScriptEngine()->FindScript("Lockpicking Time");
 
     if (!calc_repair_time)
     {
-        Error1("Could not find mathscript 'Calculate Repair Time' in rpgrules.xml");
+        Error1("Could not find mathscript 'Calculate Repair Time'");
     }
-    else
-    {
-        var_time_Worker = calc_repair_time->GetVar("Worker");
-        var_time_Object = calc_repair_time->GetVar("Object");
-        var_time_Result = calc_repair_time->GetVar("Result");
-
-        if (!var_time_Worker || !var_time_Object)
-        {
-            Error1("Either var 'Worker', 'Object' or 'Result' is missing from Calculate Repair Time script in rpgrules.xml.");
-        }
-    }
-
     if (!calc_repair_result)
     {
-        Error1("Could not find mathscript 'Calculate Repair Result' in rpgrules.xml");
+        Error1("Could not find mathscript 'Calculate Repair Result'");
     }
-    else
-    {
-        var_result_Worker = calc_repair_result->GetVar("Worker");
-        var_result_Object = calc_repair_result->GetVar("Object");
-        var_result_Result = calc_repair_result->GetVar("Result");
-
-        if (!var_result_Worker || !var_result_Object || !var_result_Result)
-        {
-            Error1("Either var 'Worker', 'Object' or 'Result' is missing from Calculate Repair Result script in rpgrules.xml.");
-        }
-    }
-
     if (!calc_mining_chance)
     {
-        Error1("Could not find mathscript 'Calculate Mining Odds' in rpgrules");
+        Error1("Could not find mathscript 'Calculate Mining Odds'");
     }
-    else
+    if (!calc_lockpick_time)
     {
-        var_mining_distance = calc_mining_chance->GetOrCreateVar("Distance");
-        var_mining_probability = calc_mining_chance->GetOrCreateVar("Probability");
-        var_mining_quality = calc_mining_chance->GetOrCreateVar("Quality");
-        var_mining_skill = calc_mining_chance->GetOrCreateVar("Skill");
-        var_mining_total = calc_mining_chance->GetVar("Total");
+        Error1("Could not find mathscript 'Lockpicking Time'");
     }
 
     Initialize();
@@ -382,7 +354,7 @@ void WorkManager::HandleRepair(Client *client, psWorkCmdMessage &msg)
     if (repairTarget->GetPrice().GetTotal()<300)
         rankneeded = 0;
     int skillid = repairTarget->GetBaseStats()->GetCategory()->repairSkillId;
-    int repairskillrank = client->GetCharacterData()->Skills().GetSkillRank(PSSKILL(skillid));
+    int repairskillrank = client->GetCharacterData()->Skills().GetSkillRank(PSSKILL(skillid)).Current();
     if (repairskillrank<rankneeded)
     {
         psserver->SendSystemError(client->GetClientNum(),"This item is too complex for your current repair skill. You cannot repair it." );
@@ -390,31 +362,35 @@ void WorkManager::HandleRepair(Client *client, psWorkCmdMessage &msg)
     }
 
     // If skill=0, check if it has at least theoretical training in that skill
-    if (repairskillrank==0) {
-        if( client->GetCharacterData()->Skills().GetSkill(PSSKILL(skillid))->CanTrain() )
-        {
-            psserver->SendSystemInfo(client->GetClientNum(),"You don't have the skill to repair your %s.",repairTarget->GetName());
-            return;
-        }
+    if (repairskillrank == 0 && client->GetCharacterData()->Skills().Get(PSSKILL(skillid)).CanTrain())
+    {
+        psserver->SendSystemInfo(client->GetClientNum(),"You don't have the skill to repair your %s.",repairTarget->GetName());
+        return;
     }
 
     // Calculate time required for repair based on item and skill level
-    var_time_Object->SetObject(repairTarget);
-    var_time_Worker->SetObject(client->GetCharacterData());
-    calc_repair_time->Execute();
-    // If time is less than 20 seconds, cap it to 20 seconds
-    int repair_time = (int)var_time_Result->GetValue();
-    if (repair_time < 20)
+    csTicks repairDuration;
     {
-        repair_time = 20;
+        MathEnvironment env;
+        env.Define("Object", repairTarget);
+        env.Define("Worker", client->GetCharacterData());
+        calc_repair_time->Evaluate(&env);
+        MathVar *varTime = env.Lookup("Result");
+        // If time is less than 20 seconds, cap it to 20 seconds
+        int repair_time = MAX(20, varTime->GetValue());
+        repairDuration = (csTicks)(repair_time * 1000); // convert secs to msec
     }
-    csTicks repairDuration = (csTicks)(repair_time * 1000); // convert secs to msec
 
     // Calculate result after repair
-    var_result_Object->SetObject(repairTarget);
-    var_result_Worker->SetObject(client->GetCharacterData());
-    calc_repair_result->Execute();
-    float repairResult = var_result_Result->GetValue();
+    float repairResult;
+    {
+        MathEnvironment env;
+        env.Define("Object", repairTarget);
+        env.Define("Worker", client->GetCharacterData());
+        calc_repair_result->Evaluate(&env);
+        MathVar *varResult = env.Lookup("Result");
+        repairResult = varResult->GetValue();
+    }
 
     // Queue time event to trigger when repair is complete, if not canceled.
     csVector3 dummy = csVector3(0,0,0);
@@ -594,11 +570,11 @@ void WorkManager::HandleProduction(Client *client,const char *type,const char *r
     }
 
     // Validate the skill
-    float cur_skill = client->GetCharacterData()->Skills().GetSkillRank((PSSKILL)nr->skill->id);
+    float cur_skill = client->GetCharacterData()->Skills().GetSkillRank((PSSKILL)nr->skill->id).Current();
 
     // If skill=0, check if it has at least theoretical training in that skill
     if (cur_skill==0) {
-        bool fullTrainingReceived = !client->GetCharacterData()->Skills().GetSkill((PSSKILL)nr->skill->id)->CanTrain();
+        bool fullTrainingReceived = !client->GetCharacterData()->Skills().Get((PSSKILL)nr->skill->id).CanTrain();
         if (fullTrainingReceived)
            cur_skill=0.7F;
     }
@@ -673,11 +649,11 @@ void WorkManager::HandleProduction(gemActor *actor,const char *type,const char *
     }
 
     // Validate the skill
-    float cur_skill = actor->GetCharacterData()->Skills().GetSkillRank((PSSKILL)nr->skill->id);
+    float cur_skill = actor->GetCharacterData()->Skills().GetSkillRank((PSSKILL)nr->skill->id).Current();
 
     // If skill=0, check if it has at least theoretical training in that skill
     if (cur_skill==0) {
-        bool fullTrainingReceived = !actor->GetCharacterData()->Skills().GetSkill((PSSKILL)nr->skill->id)->CanTrain();
+        bool fullTrainingReceived = !actor->GetCharacterData()->Skills().Get((PSSKILL)nr->skill->id).CanTrain();
         if (fullTrainingReceived)
            cur_skill=0.7F;
     }
@@ -803,11 +779,11 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
     float roll = psserver->GetRandom();
 
     // Get player skill value
-    float cur_skill = workerchar->Skills().GetSkillRank((PSSKILL)workEvent->nr->skill->id);
+    float cur_skill = workerchar->Skills().GetSkillRank((PSSKILL)workEvent->nr->skill->id).Current();
 
     // If skill=0, check if it has at least theoretical training in that skill
     if (cur_skill==0) {
-        bool fullTrainingReceived = !workerchar->Skills().GetSkill((PSSKILL)workEvent->nr->skill->id)->CanTrain();
+        bool fullTrainingReceived = !workerchar->Skills().Get((PSSKILL)workEvent->nr->skill->id).CanTrain();
         if (fullTrainingReceived)
             cur_skill = 0.7F; // consider the skill somewhat usable
     }
@@ -826,14 +802,14 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
     float f3 = 1 - (dist / workEvent->nr->radius);
     if (f3 < 0.0) f3 = 0.0f; // Clamp value 0..1
 
-    var_mining_distance->SetValue(f3);
-    var_mining_probability->SetValue(workEvent->nr->probability);
-    var_mining_quality->SetValue(f2);
-    var_mining_skill->SetValue(f1);
-
-    calc_mining_chance->Execute();
-
-    float total = var_mining_total->GetValue();
+    MathEnvironment env;
+    env.Define("Distance",    f3);                         // Distance from mine to the actual mining
+    env.Define("Probability", workEvent->nr->probability); // Probability of successful mining
+    env.Define("Quality",     f2);                         // Quality of mining equipment
+    env.Define("Skill",       f1);                         // Mining skill
+    calc_mining_chance->Evaluate(&env);
+    MathVar *varTotal = env.Lookup("Total");
+    float total = varTotal->GetValue();
 
     psString debug;
     debug.AppendFmt( "Probability:     %1.3f\n",workEvent->nr->probability);
@@ -2470,10 +2446,10 @@ bool WorkManager::ValidateStamina(Client* client)
 {
     //TODO: use factors based on the work to determine required stamina
     // check stamina
-    if ( (client->GetActor()->GetCharacterData()->GetStamina(true) <=
-        ( client->GetActor()->GetCharacterData()->GetStaminaMax(true)*.1 ) )
-     || (client->GetActor()->GetCharacterData()->GetStamina(false) <=
-        ( client->GetActor()->GetCharacterData()->GetStaminaMax(false)*.1 )) )
+    if (client->GetActor()->GetCharacterData()->GetStamina(true)
+           <= client->GetActor()->GetCharacterData()->GetMaxPStamina().Current()*.1
+     || client->GetActor()->GetCharacterData()->GetStamina(false)
+           <= client->GetActor()->GetCharacterData()->GetMaxMStamina().Current()*.1)
     {
         SendTransformError( clientNum, TRANSFORM_NO_STAMINA );
         return false;
@@ -2517,10 +2493,10 @@ bool WorkManager::ValidateTraining(psTradeTransformations* transCandidate, psTra
     if ( priSkill > 0 )
     {
         // If primary skill is zero, check if this skill should be trained first
-        unsigned int basePriSkill = owner->Skills().GetSkillRank((PSSKILL)priSkill);
+        unsigned int basePriSkill = owner->Skills().GetSkillRank((PSSKILL)priSkill).Current();
         if ( basePriSkill == 0 )
         {
-            if( owner->Skills().GetSkill((PSSKILL)priSkill)->CanTrain() )
+            if (owner->Skills().Get((PSSKILL)priSkill).CanTrain())
                 return false;
         }
     }
@@ -2530,10 +2506,10 @@ bool WorkManager::ValidateTraining(psTradeTransformations* transCandidate, psTra
     if ( secSkill > 0 )
     {
         // If secondary skill is zero, check if this skill should be trained first
-        unsigned int baseSecSkill = owner->Skills().GetSkillRank((PSSKILL)secSkill);
+        unsigned int baseSecSkill = owner->Skills().GetSkillRank((PSSKILL)secSkill).Current();
         if ( baseSecSkill == 0 )
         {
-            if( owner->Skills().GetSkill((PSSKILL)secSkill)->CanTrain() )
+            if (owner->Skills().Get((PSSKILL)secSkill).CanTrain())
                 return false;
         }
     }
@@ -2549,7 +2525,7 @@ bool WorkManager::ValidateSkills(psTradeTransformations* transCandidate, psTrade
     if ( priSkill > 0 )
     {
         unsigned int minPriSkill = processCandidate->GetMinPrimarySkill();
-        unsigned int basePriSkill = owner->Skills().GetSkillRank((PSSKILL)priSkill);
+        unsigned int basePriSkill = owner->Skills().GetSkillRank((PSSKILL)priSkill).Current();
         if ( minPriSkill > basePriSkill )
         {
             return false;
@@ -2561,7 +2537,7 @@ bool WorkManager::ValidateSkills(psTradeTransformations* transCandidate, psTrade
     if ( secSkill > 0 )
     {
         unsigned int minSecSkill = processCandidate->GetMinSecondarySkill();
-        unsigned int baseSecSkill = owner->Skills().GetSkillRank((PSSKILL)secSkill);
+        unsigned int baseSecSkill = owner->Skills().GetSkillRank((PSSKILL)secSkill).Current();
         if ( minSecSkill > baseSecSkill )
         {
             return false;
@@ -2574,8 +2550,8 @@ bool WorkManager::ValidateSkills(psTradeTransformations* transCandidate, psTrade
 bool WorkManager::CheckStamina(psCharacter * owner) const
 {
 //todo- use factors based on the work to determine required stamina
-    return ((owner->GetStamina(true) >= ( owner->GetStaminaMax(true)*.1 ) ) // physical
-         && (owner->GetStamina(false) >= ( owner->GetStaminaMax(false)*.1 )) //mental
+    return (owner->GetStamina(true) >= owner->GetMaxPStamina().Current()*.1  // physical
+         && owner->GetStamina(false) >= owner->GetMaxMStamina().Current()*.1 // mental
         );
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2587,7 +2563,7 @@ bool WorkManager::ValidateNotOverSkilled(psTradeTransformations* transCandidate,
     if ( priSkill > 0 )
     {
         unsigned int maxPriSkill = processCandidate->GetMaxPrimarySkill();
-        unsigned int basePriSkill = owner->Skills().GetSkillRank((PSSKILL)priSkill);
+        unsigned int basePriSkill = owner->Skills().GetSkillRank((PSSKILL)priSkill).Current();
         if ( maxPriSkill < basePriSkill )
         {
             return false;
@@ -2599,7 +2575,7 @@ bool WorkManager::ValidateNotOverSkilled(psTradeTransformations* transCandidate,
     if ( secSkill > 0 )
     {
         unsigned int maxSecSkill = processCandidate->GetMaxSecondarySkill();
-        unsigned int baseSecSkill = owner->Skills().GetSkillRank((PSSKILL)secSkill);
+        unsigned int baseSecSkill = owner->Skills().GetSkillRank((PSSKILL)secSkill).Current();
         if ( maxSecSkill < baseSecSkill )
         {
             return false;
@@ -3621,7 +3597,7 @@ bool WorkManager::ApplySkills(float factor, psItem* transItem)
         }
 
         // Get the players skill level using the transformations primary skill
-        unsigned int basePriSkill = owner->Skills().GetSkillRank((PSSKILL)priSkill);
+        unsigned int basePriSkill = owner->Skills().GetSkillRank((PSSKILL)priSkill).Current();
         unsigned int maxPriSkill = process->GetMaxPrimarySkill();
 
         // Get the quality factor for this primary skill
@@ -3680,7 +3656,7 @@ bool WorkManager::ApplySkills(float factor, psItem* transItem)
                 currentQuality = currentQuality * 2;
             }
 
-            unsigned int baseSecSkill = owner->Skills().GetSkillRank((PSSKILL)secSkill);
+            unsigned int baseSecSkill = owner->Skills().GetSkillRank((PSSKILL)secSkill).Current();
             unsigned int maxSecSkill = process->GetMaxSecondarySkill();
 
             // Get the quality factor for this secmary skill
@@ -3972,12 +3948,10 @@ void WorkManager::StartLockpick(Client* client,psItem* item)
     client->GetActor()->SetMode(PSCHARACTER_MODE_WORK);
 
     // Execute mathscript to get lockpicking time
-    MathScript* pickTime = psserver->GetMathScriptEngine()->FindScript("Lockpicking Time");
-    MathScriptVar* quality = pickTime->GetVar("LockQuality");
-    MathScriptVar* time = pickTime->GetVar("Time");
-
-    quality->SetValue(item->GetItemQuality());
-    pickTime->Execute();
+    MathEnvironment env;
+    env.Define("LockQuality", item->GetItemQuality());
+    calc_lockpick_time->Evaluate(&env);
+    MathVar *time = env.Lookup("Time");
 
     // Add new event
     csVector3 emptyV = csVector3(0,0,0);
@@ -4010,7 +3984,7 @@ void WorkManager::LockpickComplete(psWorkGameEvent* workEvent)
     else
     {
         // Check if the user has the right skills
-        if(character->Skills().GetSkillRank(skill) >= workEvent->object->GetLockStrength())
+        if (character->Skills().GetSkillRank(skill).Current() >= (int) workEvent->object->GetLockStrength())
         {
             bool locked = workEvent->object->GetIsLocked();
             psserver->SendSystemOK(workEvent->client->GetClientNum(), locked ? "You unlocked %s." : "You locked %s.", workEvent->object->GetName());

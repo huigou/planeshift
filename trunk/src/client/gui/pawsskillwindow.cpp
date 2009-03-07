@@ -798,14 +798,14 @@ void pawsSkillWindow::Draw()
 
     if (vitals)
     {
-        static char buff[12];
-        sprintf(buff,"%1.0f/%i", vitals->GetHP()*hitpointsMax, hitpointsMax );
+        csString buff;
+        buff.Format("%1.0f/%i", vitals->GetHP()*hitpointsMax, hitpointsMax);
         hpFrac->SetText(buff);
-        sprintf(buff,"%1.0f/%i", vitals->GetMana()*manaMax, manaMax );
+        buff.Format("%1.0f/%i", vitals->GetMana()*manaMax, manaMax);
         manaFrac->SetText(buff);
-        sprintf(buff,"%1.0f/%i", vitals->GetStamina(true)*physStaminaMax, physStaminaMax );
+        buff.Format("%1.0f/%i", vitals->GetPStamina()*physStaminaMax, physStaminaMax);
         pysStaminaFrac->SetText(buff);
-        sprintf(buff,"%1.0f/%i", vitals->GetStamina(false)*menStaminaMax, menStaminaMax );
+        buff.Format("%1.0f/%i", vitals->GetMStamina()*menStaminaMax, menStaminaMax);
         menStaminaFrac->SetText(buff);
     }
 

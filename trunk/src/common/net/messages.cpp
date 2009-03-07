@@ -1722,21 +1722,20 @@ csString psMapActionMessage::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psModeMessage,MSGTYPE_MODE);
 
-psModeMessage::psModeMessage (uint32_t client, EID actorID, uint8_t mode, uint8_t stance)
+psModeMessage::psModeMessage (uint32_t client, EID actorID, uint8_t mode, uint32_t value)
 {
-    msg.AttachNew(new MsgEntry(sizeof(uint32_t) + 2*sizeof(uint8_t)));
+    msg.AttachNew(new MsgEntry(2*sizeof(uint32_t) + sizeof(uint8_t)));
 
     msg->SetType(MSGTYPE_MODE);
     msg->clientnum      = client;
 
     msg->Add(actorID.Unbox());
     msg->Add(mode);
-    msg->Add(stance);
+    msg->Add(value);
 
     // Sets valid flag based on message overrun state
     valid=!(msg->overrun);
 }
-
 
 psModeMessage::psModeMessage(MsgEntry *message)
 {
@@ -1745,7 +1744,7 @@ psModeMessage::psModeMessage(MsgEntry *message)
 
     actorID = EID(message->GetUInt32());
     mode    = message->GetUInt8();
-    stance  = message->GetUInt8();
+    value   = message->GetUInt32();
 
     // Sets valid flag based on message overrun state
     valid=!(message->overrun);
@@ -1755,11 +1754,10 @@ csString psModeMessage::ToString(AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
-    msgtext.AppendFmt("ActorID: %u Mode: %u Stance: %u", actorID.Unbox(), mode, stance);
+    msgtext.AppendFmt("ActorID: %u Mode: %u Value: %u", actorID.Unbox(), mode, value);
 
     return msgtext;
 }
-
 
 //---------------------------------------------------------------------------
 
@@ -2995,7 +2993,7 @@ psEffectMessage::psEffectMessage(uint32_t clientNum, const csString &effectName,
 
 psEffectMessage::psEffectMessage(uint32_t clientNum, const csString &effectName,
                                  const csVector3 &effectOffset, EID anchorID,
-                                 EID targetID, uint32_t castDuration,uint32_t uid)
+                                 EID targetID, uint32_t duration, uint32_t uid)
 {
     msg.AttachNew(new MsgEntry(effectName.Length() + sizeof(csVector3)
                 + sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint32_t) + 1));
@@ -3009,7 +3007,7 @@ psEffectMessage::psEffectMessage(uint32_t clientNum, const csString &effectName,
     msg->Add(effectOffset.z);
     msg->Add(anchorID.Unbox());
     msg->Add(targetID.Unbox());
-    msg->Add(castDuration);
+    msg->Add(duration);
     msg->Add(uid);
 
     valid = !(msg->overrun);
@@ -3048,7 +3046,7 @@ psEffectMessage::psEffectMessage(MsgEntry* message)
     offset.z = message->GetFloat();
     anchorID = EID(message->GetUInt32());
     targetID = EID(message->GetUInt32());
-    castDuration = message->GetUInt32();
+    duration = message->GetUInt32();
     uid = message->GetUInt32();
 
     valid = !(message->overrun);
@@ -3063,7 +3061,7 @@ csString psEffectMessage::ToString(AccessPointers * /*access_ptrs*/)
             offset.x, offset.y, offset.z,
             anchorID.Unbox(),
             targetID.Unbox(),
-            castDuration,
+            duration,
             uid);
 
     return msgtext;
@@ -4877,16 +4875,14 @@ PSF_IMPLEMENT_MSG_FACTORY(psGUIActiveMagicMessage,MSGTYPE_ACTIVEMAGIC);
 
 csString psGUIActiveMagicMessage::ToString(AccessPointers * /*access_ptrs*/)
 {
-    csString msgtext;
-    size_t numCategories = categoryList.GetSize();
+    csString msgtext(command == Add ? "Add " : "Remove ");
 
-    msgtext.AppendFmt("Window: %s Command: %d Categories: %zu ",
-            (openWindow ? "open" : "closed"), command, numCategories);
-    for (size_t i = 0; i < numCategories; i++)
-    {
-        msgtext.AppendFmt("'%s', ", categoryList[i].GetDataSafe());
-    }
+    if (type == BUFF)
+        msgtext.Append("buff ");
+    else if (type == DEBUFF)
+        msgtext.Append("debuff ");
 
+    msgtext.Append(name);
     return msgtext;
 }
 

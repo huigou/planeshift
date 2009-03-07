@@ -44,7 +44,6 @@ class psMerchantInfo;
 class psItem;
 class psActionLocation;
 class SlotManager;
-class MathScriptVar;
 class gemActor;
 class gemObject;
 class psCharacter;
@@ -145,20 +144,7 @@ protected:
     SlotManager *slotManager;
 
     MathScript* calc_item_merchant_price_buy;
-    MathScriptVar* calc_item_merchant_price_item_price_buy;
-    MathScriptVar* calc_item_merchant_price_char_data_buy;
-    MathScriptVar* calc_item_merchant_price_char_result_buy;
-    MathScriptVar* calc_item_merchant_price_supply_buy;
-    MathScriptVar* calc_item_merchant_price_demand_buy;
-    MathScriptVar* calc_item_merchant_price_time_buy;
-    
     MathScript* calc_item_merchant_price_sell;
-    MathScriptVar* calc_item_merchant_price_item_price_sell;
-    MathScriptVar* calc_item_merchant_price_char_data_sell;
-    MathScriptVar* calc_item_merchant_price_char_result_sell;
-    MathScriptVar* calc_item_merchant_price_supply_sell;
-    MathScriptVar* calc_item_merchant_price_demand_sell;
-    MathScriptVar* calc_item_merchant_price_time_sell;
 };
 
 #endif

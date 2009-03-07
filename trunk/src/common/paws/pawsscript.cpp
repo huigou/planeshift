@@ -25,17 +25,9 @@
 #include "pawswidget.h"
 #include "util/mathscript.h"
 
-pawsScriptStatement::pawsScriptStatement(const char * script)
+pawsScriptStatement::pawsScriptStatement(const char *scriptText) : env(PawsManager::GetSingleton().ExtraScriptVars())
 {
-    this->script = new MathScript("pawsScript", script);
-
-    size_t a;
-    size_t len = PawsManager::GetSingleton().GetExtraScriptVarCount();
-    for (a=0; a<len; ++a)
-    {
-        MathScriptVar * v = this->script->GetOrCreateVar(PawsManager::GetSingleton().GetExtraScriptVarName(a));
-        v->SetObject(PawsManager::GetSingleton().GetExtraScriptVar(a));
-    }
+    script = MathScript::Create("pawsScript", scriptText);
 }
 
 void pawsScriptStatement::ChangedResultsVarCallback(void * arg)
@@ -48,27 +40,25 @@ void pawsScriptStatement::AddLHSResult(pawsWidget * widget, const char * propert
 {
     pawsScriptResult res;
     res.widget = widget;
-    strcpy(res.property, property);
-    res.var = script->GetOrCreateVar(name);
+    res.property = property;
+    env.Define(name, 0.0); // Bogus value...it'll get set when we Execute().  We just need a var.
+    res.var = env.Lookup(name);
     scriptResults.Push(res);
 }
 
 void pawsScriptStatement::AddRHSVar(iScriptableVar * v, const char * name)
 {
-    MathScriptVar * var = script->GetOrCreateVar(name);
-    var->SetObject(v);
+    env.Define(name, v);
 }
 
 void pawsScriptStatement::Execute()
 {
-    size_t a;
-    size_t len = scriptResults.GetSize();
-    for (a=0; a<len; ++a)
+    for (size_t i = 0; i < scriptResults.GetSize(); ++i)
     {
-        scriptResults[a].var->SetValue(scriptResults[a].widget->GetProperty(scriptResults[a].property));
-        scriptResults[a].var->SetChangedCallback(pawsScriptStatement::ChangedResultsVarCallback, (void *)&scriptResults[a]);
+        scriptResults[i].var->SetValue(scriptResults[i].widget->GetProperty(scriptResults[i].property));
+        scriptResults[i].var->SetChangedCallback(pawsScriptStatement::ChangedResultsVarCallback, (void*) &scriptResults[i]);
     }
-    script->Execute();
+    script->Evaluate(&env);
 }
 
 bool pawsScript::NextChar(const char * script, size_t & currIndex, char & c, char & n)
@@ -164,17 +154,7 @@ bool pawsScript::Parse(const char * script)
         if (tokens[a] == ":" && onRHS)
         {
             // check if it's an extra var
-            bool isExtraVar = false;
-            size_t extraVarLen = PawsManager::GetSingleton().GetExtraScriptVarCount();
-            for (size_t b=0; b<extraVarLen; ++b)
-            {
-                if (tokens[a-1] == PawsManager::GetSingleton().GetExtraScriptVarName(b))
-                {
-                    isExtraVar = true;
-                    break;
-                }
-            }
-
+            bool isExtraVar = PawsManager::GetSingleton().ExtraScriptVars().Lookup(tokens[a-1]);
             if (!isExtraVar)
             {
                 pawsWidget * dep;
@@ -208,8 +188,8 @@ bool pawsScript::Parse(const char * script)
                 result.widget = FindWidget(widget, tokens[startToken]);
                 if (result.widget)
                 {
-                    strcpy(result.property, tokens[startToken+2]);
-                    result.var = 0;
+                    result.property = tokens[startToken+2];
+                    result.var = NULL;
                     lhsResults.Push(result);
 
                     // rename variable to something mathscript can set

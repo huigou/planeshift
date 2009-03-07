@@ -117,34 +117,43 @@ psCharacterInventory::~psCharacterInventory()
 
 void psCharacterInventory::CalculateLimits()
 {
+    MathEnvironment env; // safe enough to reuse it for both...faster...
+    env.Define("Actor", owner);
+
     // The max total weight that a player can carry
     static MathScript *maxCarryWeight = NULL;
-    if ( !maxCarryWeight )
+    if (!maxCarryWeight)
         maxCarryWeight = psserver->GetMathScriptEngine()->FindScript("CalculateMaxCarryWeight");
-    if ( maxCarryWeight )
+    if (maxCarryWeight)
     {
-        MathScriptVar* actorvar = maxCarryWeight->GetOrCreateVar("Actor");
-        actorvar->SetObject(owner);
-
-        maxCarryWeight->Execute();
-        MathScriptVar* carry = maxCarryWeight->GetVar("MaxCarry");
-        maxWeight = carry->GetValue();
-        //printf("Calculated maxWeight to be %1.2f", maxWeight);
+        maxCarryWeight->Evaluate(&env);
+        MathVar *carry = env.Lookup("MaxCarry");
+        if (carry)
+        {
+            maxWeight = carry->GetValue();
+        }
+        else
+        {
+            Error1("Failed to evaluate MathScript >CalculateMaxCarryWeight<.");
+        }
     }        
 
     // The max total size that a player can carry
     static MathScript *maxCarryAmount = NULL;
-    if ( !maxCarryAmount )
+    if (!maxCarryAmount)
         maxCarryAmount = psserver->GetMathScriptEngine()->FindScript("CalculateMaxCarryAmount");
-    if ( maxCarryAmount )
+    if (maxCarryAmount)
     {
-        MathScriptVar* actorvar = maxCarryAmount->GetOrCreateVar("Actor");
-        actorvar->SetObject(owner);
-
-        maxCarryAmount->Execute();
-        MathScriptVar* carryAmount = maxCarryAmount->GetVar("MaxAmount");
-        maxSize = carryAmount->GetValue();
-        //printf("Calculated maxSize to be %1.2f", maxSize);
+        maxCarryAmount->Evaluate(&env);
+        MathVar *carry = env.Lookup("MaxAmount");
+        if (carry)
+        {
+            maxSize = carry->GetValue();
+        }
+        else
+        {
+            Error1("Failed to evaluate MathScript >CalculateMaxCarryAmount<.");
+        }
     }                       
     
     UpdateEncumbrance();
@@ -350,9 +359,9 @@ void psCharacterInventory::Equip(psItem *item)
     psserver->GetCharManager()->SendOutPlaySoundMessage(fromClient->GetClientNum(), item->GetSound(), "equip");
     psserver->GetCharManager()->SendOutEquipmentMessages(actor, item->GetLocInParent(false), item, psEquipmentMessage::EQUIP);
 
-    if(!item->IsActive())
+    if (!item->IsActive())
     {
-        RunEquipScript(item);
+        item->RunEquipScript(actor);
     }
     owner->CalculateEquipmentModifiers();
 }
@@ -375,46 +384,11 @@ void psCharacterInventory::Unequip(psItem *item)
     psserver->GetCharManager()->SendOutEquipmentMessages(actor, item->GetLocInParent(), item, psEquipmentMessage::DEEQUIP);
 
     // 3. Run unequip script
-    if(item->IsActive())
+    if (item->IsActive())
     {
-        RunUnequipScript(item);
+        item->CancelEquipScript();
     }
     owner->CalculateEquipmentModifiers();
-}
-
-void psCharacterInventory::RunEquipScript(psItem *item)
-{
-    // don't run the equip script for items that are already active - workaround for FS#1124
-    if(item->IsActive())
-    {
-        Warning2(LOG_SCRIPT, "Didn't run equip script for item \"%s\" because it's already active!", item->GetName());
-        return;
-    }
-    gemActor *actor = owner->GetActor();
-    csString equipScript = item->GetBaseStats()->GetProgressionEventEquip();            
-    item->SetActive(true);
-    if (!equipScript.IsEmpty())
-    {
-        psserver->GetProgressionManager()->ProcessEvent(equipScript, actor, NULL, item);
-    }
-}
-
-void psCharacterInventory::RunUnequipScript(psItem *item)
-{
-    gemActor *actor = owner->GetActor();
-    csString unequipScript = item->GetBaseStats()->GetProgressionEventUnEquip();
-    csString equipScript = item->GetBaseStats()->GetProgressionEventEquip();
-
-    item->SetActive(false);
-    if (unequipScript.IsEmpty() && !equipScript.IsEmpty())
-    {
-        Notify2(LOG_SCRIPT, "Item \"%s\" has no prg_evt_unequip script.  Using the inverse of prg_evt_equip.", item->GetName());
-        psserver->GetProgressionManager()->ProcessEvent(equipScript, actor, NULL, item, true);
-    }
-    else if (!unequipScript.IsEmpty())
-    {
-        psserver->GetProgressionManager()->ProcessEvent(unequipScript, actor, NULL, item);
-    }
 }
 
 bool psCharacterInventory::CheckSlotRequirements(psItem *item, INVENTORY_SLOT_NUMBER proposedSlot, unsigned short stackCount)
@@ -932,7 +906,7 @@ void psCharacterInventory::RunEquipScripts()
     {
         if (equipment[equipslot].itemIndexEquipped!=0) // 0 is Default fist item
         {
-            RunEquipScript(inventory[equipment[equipslot].itemIndexEquipped].item);
+            inventory[equipment[equipslot].itemIndexEquipped].item->RunEquipScript(owner->GetActor());
         }
     }
 }

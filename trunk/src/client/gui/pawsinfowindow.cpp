@@ -124,8 +124,8 @@ void pawsInfoWindow::HandleMessage( MsgEntry* me )
             {
                 if (msg.mode != psModeMessage::COMBAT && selectedstance)
                     SetStanceHighlight(0);
-                else if (msg.mode == psModeMessage::COMBAT && msg.stance != selectedstance)
-                    SetStanceHighlight(msg.stance);
+                else if (msg.mode == psModeMessage::COMBAT && msg.value != selectedstance)
+                    SetStanceHighlight(msg.value);
             }
             break;
         }

@@ -43,6 +43,7 @@
 #include "../spawnmanager.h"
 #include "../psserverchar.h"
 #include "../progressionmanager.h"
+#include "../scripting.h"
 #include "../globals.h"
 #include "../adminmanager.h"
 
@@ -1217,6 +1218,40 @@ void psItem::SetActive(bool state)
     }
 }
 
+void psItem::RunEquipScript(gemActor *actor)
+{
+    if (IsActive())
+    {
+        Warning2(LOG_SCRIPT, "Didn't run equip script for item \"%s\" because it's already active!", GetName());
+        return;
+    }
+
+    ApplicativeScript *script = base_stats->GetEquipScript();
+    if (!script)
+        return;
+
+    MathEnvironment env;
+    env.Define("Actor", actor);
+    env.Define("Item", this);
+    equipActiveSpell = script->Apply(&env);
+
+    SetActive(true);
+}
+
+void psItem::CancelEquipScript()
+{
+    if (!IsActive())
+        return;
+
+    SetActive(false);
+
+    if (equipActiveSpell && equipActiveSpell->Cancel())
+    {
+        delete equipActiveSpell;
+        equipActiveSpell = NULL;
+    }
+}
+
 bool psItem::CheckStackableWith(const psItem *otheritem, bool precise) const
 {
     int i;
@@ -1454,7 +1489,7 @@ void psItem::CombineStack(psItem *& stackme)
 int psItem::GetAttackAnimID(psCharacter *pschar)
 {
     PSSKILL skill = current_stats->Weapon().Skill(PSITEMSTATS_WEAPONSKILL_INDEX_0);
-    unsigned int curr_level = pschar->Skills().GetSkillRank(skill);
+    int curr_level = pschar->Skills().GetSkillRank(skill).Current();
 
     return current_stats->GetAttackAnimID(curr_level);
 }
@@ -1693,23 +1728,19 @@ psMoney psItem::GetPrice()
         return current_stats->GetPrice();
     }
 
-    static MathScriptVar *price;
-    static MathScriptVar *quality;
-    static MathScriptVar *maxquality;
-    static MathScriptVar *finalprice;
+    MathEnvironment env;
+    env.Define("Price", current_stats->GetPrice().GetTotal());
+    env.Define("Quality", GetItemQuality());
+    env.Define("MaxQuality", GetMaxItemQuality());
+    script->Evaluate(&env);
 
-    price = script->GetOrCreateVar("Price");
-    quality = script->GetOrCreateVar("Quality");
-    maxquality = script->GetOrCreateVar("MaxQuality");
-    finalprice = script->GetOrCreateVar("FinalPrice");
-
-    price->SetValue(current_stats->GetPrice().GetTotal());
-    quality->SetValue(GetItemQuality());
-    maxquality->SetValue(GetMaxItemQuality());
-
-    script->Execute();
-
-    return psMoney((int)(finalprice->GetValue()));
+    MathVar *finalPrice = env.Lookup("FinalPrice");
+    if (!finalPrice)
+    {
+        Error1("Failed to evaluate MathScript >Calc Item Price<.");
+        return current_stats->GetPrice();
+    }
+    return psMoney(int(finalPrice->GetValue()));
 }
 
 psMoney psItem::GetSellPrice()
@@ -1728,14 +1759,17 @@ psMoney psItem::GetSellPrice()
         return sellPrice;
     }
 
-    MathScriptVar *price = script->GetOrCreateVar("Price");
-    MathScriptVar *finalPrice = script->GetOrCreateVar("FinalPrice");
+    MathEnvironment env;
+    env.Define("Price", current_stats->GetPrice().GetTotal());
+    script->Evaluate(&env);
 
-    price->SetValue(GetPrice().GetTotal());
-
-    script->Execute();
-
-    return psMoney((int)finalPrice->GetValue());
+    MathVar *finalPrice = env.Lookup("FinalPrice");
+    if (!finalPrice)
+    {
+        Error1("Failed to evaluate MathScript >Calc Item Price<.");
+        return current_stats->GetPrice();
+    }
+    return psMoney(int(finalPrice->GetValue()));
 }
 
 psItemCategory * psItem::GetCategory()
@@ -2479,7 +2513,7 @@ bool psItem::SendItemDescription( Client *client)
     itemQuality = "";
     int idSkill = GetIdentifySkill();
     int idMin = GetIdentifyMinSkill();
-    if (!idSkill || (uint) idMin < client->GetCharacterData()->Skills().GetSkillRank((PSSKILL) idSkill))
+    if (!idSkill || idMin < client->GetCharacterData()->Skills().GetSkillRank((PSSKILL) idSkill).Current())
     {
         // If the item is an average stackable type object it has no max quality so don't 
         // send that information to the client since it is not applicable.
@@ -2721,7 +2755,7 @@ void psItem::GetComboInfoString(psCharacter* character, uint32 designID, csStrin
         int priSkill = skillArray->Get(count)->priSkillId;
         if(priSkill != 0)
         {
-            if (skillArray->Get(count)->minPriSkill >= (int) character->Skills().GetSkillRank((PSSKILL) priSkill))
+            if (skillArray->Get(count)->minPriSkill >= character->Skills().GetSkillRank((PSSKILL) priSkill).Current())
             {
                 return;
             }
@@ -2731,7 +2765,7 @@ void psItem::GetComboInfoString(psCharacter* character, uint32 designID, csStrin
         int secSkill = skillArray->Get(count)->secSkillId;
         if(secSkill != 0)
         {
-            if (skillArray->Get(count)->minSecSkill >= (int)character->Skills().GetSkillRank((PSSKILL)secSkill))
+            if (skillArray->Get(count)->minSecSkill >= (int)character->Skills().GetSkillRank((PSSKILL) secSkill).Current())
             {
                 return;
             }
@@ -2754,7 +2788,7 @@ void psItem::GetTransInfoString(psCharacter* character, uint32 designID, csStrin
         int priSkill = craftArray->Get(count)->priSkillId;
         if(priSkill != 0)
         {
-            if (craftArray->Get(count)->minPriSkill >= (int) character->Skills().GetSkillRank((PSSKILL) priSkill))
+            if (craftArray->Get(count)->minPriSkill >= character->Skills().GetSkillRank((PSSKILL) priSkill).Current())
             {
                 continue;
             }
@@ -2764,7 +2798,7 @@ void psItem::GetTransInfoString(psCharacter* character, uint32 designID, csStrin
         int secSkill = craftArray->Get(count)->secSkillId;
         if(secSkill != 0)
         {
-            if (craftArray->Get(count)->minSecSkill >= (int) character->Skills().GetSkillRank((PSSKILL) secSkill))
+            if (craftArray->Get(count)->minSecSkill >= (int) character->Skills().GetSkillRank((PSSKILL) secSkill).Current())
             {
                 continue;
             }
@@ -2820,19 +2854,13 @@ void psItem::SendSketchDefinition(Client *client)
         return;
     }
 
-    static MathScriptVar *var;
-    static MathScriptVar *score;
-    static MathScriptVar *count;
+    MathEnvironment env;
+    env.Define("Actor", client->GetCharacterData());
+    script->Evaluate(&env);
 
-    if (!var)
-    {
-        var = script->GetOrCreateVar("Actor");
-        score = script->GetOrCreateVar("IconScore");
-        count = script->GetOrCreateVar("PrimCount");
-    }
-
-    var->SetObject(client->GetActor()->GetCharacterData() );  // Now the mathscript can access all info about player
-    script->Execute();
+    MathVar *score = env.Lookup("IconScore");
+    MathVar *count = env.Lookup("PrimCount");
+    CS_ASSERT(score && count);
     int playerScore = (int)score->GetValue();
     int primCount   = (int)count->GetValue();
 

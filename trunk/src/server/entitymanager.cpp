@@ -457,7 +457,6 @@ int EntityManager::CalculateFamiliarAffinity( psCharacter * chardata, size_t typ
 
     if (!msAffinity)
     {
-        // Script isn't loaded, so load it
         msAffinity = psserver->GetMathScriptEngine()->FindScript("CalculateFamiliarAffinity");
         CS_ASSERT(msAffinity != NULL);
     }
@@ -465,25 +464,15 @@ int EntityManager::CalculateFamiliarAffinity( psCharacter * chardata, size_t typ
     // Determine Familiar Type using Affinity Values
     if ( msAffinity )
     {
-        MathScriptVar* actorvar  = msAffinity->GetOrCreateVar("Actor");
-        actorvar->SetObject( chardata );
-        
-        MathScriptVar* typevar  = msAffinity->GetOrCreateVar("Type");
-        typevar->SetValue( type );
-
-        MathScriptVar* lifecyclevar  = msAffinity->GetOrCreateVar("Lifecycle");
-        lifecyclevar->SetValue( lifecycle );
-
-        MathScriptVar* attacktoolvar  = msAffinity->GetOrCreateVar("AttackTool");
-        attacktoolvar->SetValue( attacktool );
-
-        MathScriptVar* attacktypevar  = msAffinity->GetOrCreateVar("AttackType");
-        attacktypevar->SetValue( attacktype );
-
-        msAffinity->Execute();
-
-        MathScriptVar* manaValue =  msAffinity->GetVar("Affinity");
-        affinityValue = (int)manaValue->GetValue();
+        MathEnvironment env;
+        env.Define("Actor",      chardata);
+        env.Define("Type",       type);
+        env.Define("Lifecycle",  lifecycle);
+        env.Define("AttackTool", attacktool);
+        env.Define("AttackType", attacktype);
+        msAffinity->Evaluate(&env);
+        MathVar *affinity = env.Lookup("Affinity");
+        affinityValue = (int) affinity->GetValue();
     }
 
     return affinityValue;
@@ -585,7 +574,6 @@ bool EntityManager::CreatePlayer (Client* client)
         return false;
     }
 
-
     gemActor *actor = new gemActor(chardata,raceinfo->mesh_name,
                                    instance,sector,pos,yrot,
                                    client->GetClientNum());
@@ -599,7 +587,7 @@ bool EntityManager::CreatePlayer (Client* client)
         return false;
     }
   
-    chardata->LoadSavedProgressionEvents();
+    chardata->LoadActiveSpells();
 
     // Check for buddy list members
     usermanager->NotifyBuddies(client, UserManager::LOGGED_ON);
@@ -804,7 +792,6 @@ gemObject *EntityManager::MoveItemToWorld(psItem       *chrItem,
 
 gemObject *EntityManager::CreateItem( psItem *& iteminstance, bool transient )
 {
-    const char *meshname;
     psSectorInfo *sectorinfo;
     csVector3 newpos;
     float xrot;
@@ -842,9 +829,8 @@ gemObject *EntityManager::CreateItem( psItem *& iteminstance, bool transient )
 
     // Cannot stack, so make a new one
     // Get the mesh for this object
-    meshname = iteminstance->GetMeshName();
+    const char *meshname = iteminstance->GetMeshName();
     gemItem *obj;
-    
     if (iteminstance->GetIsContainer())
     {
         obj = new gemContainer(iteminstance,meshname,instance,isec,newpos,xrot,yrot,zrot,0);

@@ -1286,9 +1286,6 @@ static void indent(int depth)
 void show_itemstat_stats(const char* prefix,psItemStats *itemstats,int depth)
 {
     indent(depth);
-    csString prog = itemstats->GetProgressionEventEquip();
-    csString progun = itemstats->GetProgressionEventUnEquip();
-    CPrintf(CON_CMDOUTPUT ,"%s Progression Event Equip:%s Progression Event UnEquip:%s\n", prefix, prog.GetData(), progun.GetData());
     PSITEM_FLAGS flags = itemstats->GetFlags();
     csString flags_string;
     if (flags & PSITEMSTATS_FLAG_IS_A_MELEE_WEAPON) flags_string += "MELEE ";
@@ -1875,6 +1872,8 @@ int com_setlog(char *line)
 
 int com_adjuststat(char *line)
 {
+    CPrintf(CON_CMDOUTPUT, "No longer implemented, sorry.");
+#if 0
     if (!line || !strcmp(line,"") || !strcmp((const char*)line,"help"))
     {
         CPrintf(CON_CMDOUTPUT ,"Please specify: PlayerName StatValue AdjustMent.\n"
@@ -2000,7 +1999,7 @@ int com_adjuststat(char *line)
             charname.GetData(),statValue.GetData(),adjust,newValue);
         return 0;
     }
-
+#endif
     return 0;
 }
 
@@ -2049,27 +2048,27 @@ int com_liststats(char *line)
 
     psCharacter* charData = chardata_keeper.chardata;
     CPrintf(CON_CMDOUTPUT ,"\nStats for player %s\n",charData->GetCharName());
-    CPrintf(CON_CMDOUTPUT     ,"Stat            Current     Max    Rate\n");
+    CPrintf(CON_CMDOUTPUT     ,"Stat            Current     Max           Rate\n");
     {
         // Only show these stats if character is really loaded.
-        CPrintf(CON_CMDOUTPUT ,"HP              %7.1f %7.1f %7.1f\n",charData->AdjustHitPoints(0.0),
-        charData->AdjustHitPointsMax(0.0),charData->AdjustHitPointsRate(0.0));
-        CPrintf(CON_CMDOUTPUT ,"Mana            %7.1f %7.1f %7.1f\n",charData->AdjustMana(0.0),
-        charData->AdjustManaMax(0.0),charData->AdjustManaRate(0.0));
-        CPrintf(CON_CMDOUTPUT ,"Physical Stamina%7.1f %7.1f %7.1f\n",charData->GetStamina(true),
-        charData->GetStaminaMax(true),charData->AdjustStaminaRate(0.0,true));
-        CPrintf(CON_CMDOUTPUT ,"Mental Stamina  %7.1f %7.1f %7.1f\n",charData->GetStamina(false),
-        charData->GetStaminaMax(false),charData->AdjustStaminaRate(0.0,false));
+        CPrintf(CON_CMDOUTPUT ,"HP              %7.1f %7.1f(%7.1f) %7.1f(%7.1f)\n", charData->GetHP(),
+        charData->GetMaxHP().Base(), charData->GetMaxHP().Current(), charData->GetHPRate().Base(), charData->GetHPRate().Current());
+        CPrintf(CON_CMDOUTPUT ,"Mana            %7.1f %7.1f(%7.1f) %7.1f(%7.1f)\n", charData->GetMana(),
+        charData->GetMaxMana().Base(), charData->GetMaxMana().Current(), charData->GetManaRate().Base(), charData->GetManaRate().Current());
+        CPrintf(CON_CMDOUTPUT ,"Physical Stamina%7.1f %7.1f(%7.1f) %7.1f(%7.1f)\n", charData->GetStamina(true),
+        charData->GetMaxPStamina().Base(), charData->GetMaxPStamina().Current(), charData->GetPStaminaRate().Base(), charData->GetPStaminaRate().Current());
+        CPrintf(CON_CMDOUTPUT ,"Mental Stamina  %7.1f %7.1f(%7.1f) %7.1f(%7.1f)\n",charData->GetStamina(false),
+        charData->GetMaxMStamina().Base(), charData->GetMaxMStamina().Current(), charData->GetMStaminaRate().Base(), charData->GetMStaminaRate().Current());
     }
 
-    CPrintf(CON_CMDOUTPUT ,"Stat        Base        Buff\n");
+    CPrintf(CON_CMDOUTPUT ,"Stat        Base        Buffed\n");
     {
-    CPrintf(CON_CMDOUTPUT ,"STR        %7.1f\t%7.1f\n",(float)charData->Stats().GetStat(PSITEMSTATS_STAT_STRENGTH, false), (float)charData->Stats().GetBuffVal(PSITEMSTATS_STAT_STRENGTH) );
-    CPrintf(CON_CMDOUTPUT ,"AGI        %7.1f\t%7.1f\n",(float)charData->Stats().GetStat(PSITEMSTATS_STAT_AGILITY, false), (float)charData->Stats().GetBuffVal(PSITEMSTATS_STAT_AGILITY));
-    CPrintf(CON_CMDOUTPUT ,"END        %7.1f\t%7.1f\n",(float)charData->Stats().GetStat(PSITEMSTATS_STAT_ENDURANCE, false), (float)charData->Stats().GetBuffVal(PSITEMSTATS_STAT_ENDURANCE));
-    CPrintf(CON_CMDOUTPUT ,"INT        %7.1f\t%7.1f\n",(float)charData->Stats().GetStat(PSITEMSTATS_STAT_INTELLIGENCE,false), (float)charData->Stats().GetBuffVal(PSITEMSTATS_STAT_INTELLIGENCE));
-    CPrintf(CON_CMDOUTPUT ,"WIL        %7.1f\t%7.1f\n",(float)charData->Stats().GetStat(PSITEMSTATS_STAT_WILL,false), (float)charData->Stats().GetBuffVal(PSITEMSTATS_STAT_WILL));
-    CPrintf(CON_CMDOUTPUT ,"CHA        %7.1f\t%7.1f\n",(float)charData->Stats().GetStat(PSITEMSTATS_STAT_CHARISMA, false),(float)charData->Stats().GetBuffVal(PSITEMSTATS_STAT_CHARISMA) );
+    CPrintf(CON_CMDOUTPUT ,"STR        %7.1f\t%7.1f\n", (float) charData->Stats()[PSITEMSTATS_STAT_STRENGTH].Base(), (float) charData->Stats()[PSITEMSTATS_STAT_STRENGTH].Current());
+    CPrintf(CON_CMDOUTPUT ,"AGI        %7.1f\t%7.1f\n", (float) charData->Stats()[PSITEMSTATS_STAT_AGILITY].Base(), (float) charData->Stats()[PSITEMSTATS_STAT_AGILITY].Current());
+    CPrintf(CON_CMDOUTPUT ,"END        %7.1f\t%7.1f\n", (float) charData->Stats()[PSITEMSTATS_STAT_ENDURANCE].Base(), (float) charData->Stats()[PSITEMSTATS_STAT_ENDURANCE].Current());
+    CPrintf(CON_CMDOUTPUT ,"INT        %7.1f\t%7.1f\n", (float) charData->Stats()[PSITEMSTATS_STAT_INTELLIGENCE].Base(), (float) charData->Stats()[PSITEMSTATS_STAT_INTELLIGENCE].Current());
+    CPrintf(CON_CMDOUTPUT ,"WIL        %7.1f\t%7.1f\n", (float) charData->Stats()[PSITEMSTATS_STAT_WILL].Base(), (float) charData->Stats()[PSITEMSTATS_STAT_WILL].Current());
+    CPrintf(CON_CMDOUTPUT ,"CHA        %7.1f\t%7.1f\n", (float) charData->Stats()[PSITEMSTATS_STAT_CHARISMA].Base(), (float) charData->Stats()[PSITEMSTATS_STAT_CHARISMA].Current());
     }
 
     CPrintf(CON_CMDOUTPUT ,"Experience points(W)  %7u\n",charData->GetExperiencePoints());
@@ -2086,7 +2085,7 @@ int com_liststats(char *line)
 
         unsigned int z = charData->Skills().GetSkillPractice(info->id);
         unsigned int y = charData->Skills().GetSkillKnowledge(info->id);
-        unsigned int rank = charData->Skills().GetSkillRank(info->id);
+        unsigned int rank = charData->Skills().GetSkillRank(info->id).Current();
 
 
         if ( z == 0 && y == 0 && rank == 0 )
@@ -2098,7 +2097,7 @@ int com_liststats(char *line)
     return 0;
 }
 
-
+/*
 int com_progress(char * line)
 {
     if (!line)
@@ -2187,6 +2186,7 @@ int com_progress(char * line)
 
     return 0;
 }
+*/
 
 /** Kills a player right away
  */
@@ -2433,7 +2433,7 @@ const COMMAND commands[] = {
     { "delete",    false, com_delete,    "Delete a player from the database"},
     { "dict",      true, com_dict,      "Dump the NPC dictionary"},
     { "kill",      true, com_kill,      "kill <playerID> Kills a player" },
-    { "progress",  true, com_progress,  "progress <player>,<event/script>" },
+    //{ "progress",  true, com_progress,  "progress <player>,<event/script>" },
     { "questreward", true, com_questreward, "Preforms the same action as when a player gets a quest reward" },
     { "say",       true, com_say,       "Tell something to all players connected"},
     { "showinv",   true, com_showinv,   "Show items in a player's inventory" },

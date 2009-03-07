@@ -325,16 +325,16 @@ bool psCharacterLoader::NewNPCCharacterData(AccountID accountid, psCharacter *ch
     values.FormatPush("%s",chardata->GetOOCDescription());
     values.FormatPush("%s",chardata->GetCreationInfo());
     values.FormatPush("%s",chardata->GetLifeDescription());
-    values.FormatPush("%d",chardata->Stats().GetStat(PSITEMSTATS_STAT_STRENGTH, false));
-    values.FormatPush("%d",chardata->Stats().GetStat(PSITEMSTATS_STAT_AGILITY, false));
-    values.FormatPush("%d",chardata->Stats().GetStat(PSITEMSTATS_STAT_ENDURANCE, false));
-    values.FormatPush("%d",chardata->Stats().GetStat(PSITEMSTATS_STAT_INTELLIGENCE, false));
-    values.FormatPush("%d",chardata->Stats().GetStat(PSITEMSTATS_STAT_WILL, false));
-    values.FormatPush("%d",chardata->Stats().GetStat(PSITEMSTATS_STAT_CHARISMA, false));
+    values.FormatPush("%d",chardata->Stats()[PSITEMSTATS_STAT_STRENGTH].Base());
+    values.FormatPush("%d",chardata->Stats()[PSITEMSTATS_STAT_AGILITY].Base());
+    values.FormatPush("%d",chardata->Stats()[PSITEMSTATS_STAT_ENDURANCE].Base());
+    values.FormatPush("%d",chardata->Stats()[PSITEMSTATS_STAT_INTELLIGENCE].Base());
+    values.FormatPush("%d",chardata->Stats()[PSITEMSTATS_STAT_WILL].Base());
+    values.FormatPush("%d",chardata->Stats()[PSITEMSTATS_STAT_CHARISMA].Base());
     values.FormatPush("%10.2f",chardata->GetHP());
-    values.FormatPush("%10.2f",chardata->GetHitPointsMax());
+    values.FormatPush("%10.2f",chardata->GetMaxHP().Base());
     values.FormatPush("%10.2f",chardata->GetMana());
-    values.FormatPush("%10.2f",chardata->GetManaMax());
+    values.FormatPush("%10.2f",chardata->GetMaxMana().Base());
     values.FormatPush("%10.2f",chardata->GetStamina(true));
     values.FormatPush("%10.2f",chardata->GetStamina(false));
     values.FormatPush("%u",chardata->Money().GetCircles());
@@ -419,7 +419,7 @@ bool psCharacterLoader::NewCharacterData(AccountID accountid, psCharacter *chard
 
     for (i=0;i<PSSKILL_COUNT;i++)
     {
-        unsigned int skillRank = chardata->Skills().GetSkillRank((PSSKILL) i, false);
+        unsigned int skillRank = chardata->Skills().GetSkillRank((PSSKILL) i).Base();
         unsigned int skillY = chardata->Skills().GetSkillKnowledge((PSSKILL) i);
         unsigned int skillZ = chardata->Skills().GetSkillPractice((PSSKILL) i);
         SaveCharacterSkill(chardata->GetPID(),i,skillZ,skillY,skillRank);
@@ -660,7 +660,7 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
 
     // Give 100% hp if the char is dead
     if(!actor->IsAlive())
-        chardata->SetHitPoints( chardata->GetHitPointsMax() );
+        chardata->SetHitPoints(chardata->GetMaxHP().Base());
 
     iRecord* targetUpdate = (playerORpet) ? updatePlayer : updateNpc;
 
@@ -671,14 +671,14 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
     targetUpdate->AddField("old_lastname", chardata->GetOldLastName());
     targetUpdate->AddField("racegender_id", chardata->GetRaceInfo()->uid);
     targetUpdate->AddField("character_type", chardata->GetCharType());
-    targetUpdate->AddField("base_strength", chardata->Stats().GetStat(PSITEMSTATS_STAT_STRENGTH, false));
-    targetUpdate->AddField("base_agility", chardata->Stats().GetStat(PSITEMSTATS_STAT_AGILITY, false));
-    targetUpdate->AddField("base_endurance", chardata->Stats().GetStat(PSITEMSTATS_STAT_ENDURANCE, false));
-    targetUpdate->AddField("base_intelligence", chardata->Stats().GetStat(PSITEMSTATS_STAT_INTELLIGENCE, false));
-    targetUpdate->AddField("base_will", chardata->Stats().GetStat(PSITEMSTATS_STAT_WILL, false));
-    targetUpdate->AddField("base_charisma", chardata->Stats().GetStat(PSITEMSTATS_STAT_CHARISMA, false));
-    targetUpdate->AddField("mod_hitpoints", (playerORpet)? chardata->GetHP():chardata->GetHitPointsMax());
-    targetUpdate->AddField("mod_mana", (playerORpet)?chardata->GetMana():chardata->GetManaMax());
+    targetUpdate->AddField("base_strength", chardata->Stats()[PSITEMSTATS_STAT_STRENGTH].Base());
+    targetUpdate->AddField("base_agility", chardata->Stats()[PSITEMSTATS_STAT_AGILITY].Base());
+    targetUpdate->AddField("base_endurance", chardata->Stats()[PSITEMSTATS_STAT_ENDURANCE].Base());
+    targetUpdate->AddField("base_intelligence", chardata->Stats()[PSITEMSTATS_STAT_INTELLIGENCE].Base());
+    targetUpdate->AddField("base_will", chardata->Stats()[PSITEMSTATS_STAT_WILL].Base());
+    targetUpdate->AddField("base_charisma", chardata->Stats()[PSITEMSTATS_STAT_CHARISMA].Base());
+    targetUpdate->AddField("mod_hitpoints", (playerORpet)? chardata->GetHP():chardata->GetMaxHP().Base());
+    targetUpdate->AddField("mod_mana", (playerORpet)?chardata->GetMana():chardata->GetMaxMana().Base());
     targetUpdate->AddField("stamina_physical", chardata->GetStamina(true));
     targetUpdate->AddField("stamina_mental", chardata->GetStamina(false));
     targetUpdate->AddField("money_circles", chardata->Money().GetCircles());
@@ -777,28 +777,17 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
     actor->GetFactions()->GetFactionListCSV(csv);
     targetUpdate->AddField("faction_standings", csv.GetData());
 
-    csString progressionEvents;
-
-    while (chardata->progressionEvents.GetSize() > 0)
+    // Create XML for a new progression script that'll restore ActiveSpells.
+    csString script;
+    csArray<ActiveSpell*> asps = actor->GetActiveSpells();
+    if (!asps.IsEmpty())
     {
-        SavedProgressionEvent evt = chardata->progressionEvents.Pop();
-        evt.ticksElapsed += csGetTicks() - evt.registrationTime;
-        progressionEvents.AppendFmt("<evt elapsed=\"%u\">%s</evt>", evt.ticksElapsed, evt.script.GetData());
+        script.Append("<script>");
+        for (size_t i = 0; i < asps.GetSize(); i++)
+            script.Append(asps[i]->Persist());
+        script.Append("</script>");
     }
-
-    csString durationEventStr;
-    while ( chardata->durationEvents.GetSize() > 0 )
-    {
-        DurationEvent* devent = chardata->durationEvents.Pop();
-        csTicks ticks = devent->duration - (csGetTicks()- devent->appliedTime);
-
-        durationEventStr.AppendFmt("<evt duration='%u' name='%s'>%s</evt>", ticks, devent->name.GetData(), devent->queuedObject->progEvent->ToString(false).GetData());
-    }
-
-
-    csString scriptStr;
-    scriptStr.Format("<evts>%s%s</evts>", progressionEvents.GetDataSafe(), durationEventStr.GetDataSafe());
-    targetUpdate->AddField("progression_script", scriptStr);
+    targetUpdate->AddField("progression_script", script);
 
     targetUpdate->AddField("time_connected_sec", chardata->GetTotalOnlineTime());
     targetUpdate->AddField("experience_points", chardata->GetExperiencePoints()); // Save W
@@ -835,11 +824,11 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
     // one to the database.
     for (i=0;i<PSSKILL_COUNT;i++)
     {
-        if (chardata->Skills().GetSkill((PSSKILL) i)->dirtyFlag)
+        if (chardata->Skills().Get((PSSKILL) i).dirtyFlag)
         {
             unsigned int skillY = chardata->Skills().GetSkillKnowledge((PSSKILL) i);
             unsigned int skillZ = chardata->Skills().GetSkillPractice((PSSKILL) i);
-            unsigned int skillRank = chardata->Skills().GetSkillRank((PSSKILL) i, false);
+            unsigned int skillRank = chardata->Skills().GetSkillRank((PSSKILL) i).Base();
             UpdateCharacterSkill(chardata->GetPID(),i,skillZ,skillY,skillRank);
         }
     }

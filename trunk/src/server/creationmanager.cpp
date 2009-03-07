@@ -776,8 +776,7 @@ void CharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
     }
     chardata->SetRaceInfo(raceinfo);
     chardata->SetHitPoints(50.0);
-    chardata->SetHitPointsMax(0.0);
-    chardata->SetHitPointsMaxModifier(0.0);
+    chardata->GetMaxHP().SetBase(0.0);
 
     float x,y,z,yrot;
     const char *sectorname;
@@ -893,13 +892,15 @@ void CharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
         // Progression Event name is PATH_PathName
         csString name("PATH_");
         name.Append(upload.path);
-        ProgressionEvent* event = psserver->GetProgressionManager()->FindEvent( name.GetData() );
-        if ( event )
+        ProgressionScript *script = psserver->GetProgressionManager()->FindScript(name.GetData());
+        if (script)
         {
             // The script uses the race base character points to calculate starting stats.
-            event->SetValue("CharPoints",  (double)raceinfo->initialCP );                                                                                                 
-            psserver->GetProgressionManager()->ProcessEvent( event, actor, actor );
-        }            
+            MathEnvironment env;
+            env.Define("CharPoints", raceinfo->initialCP);
+            env.Define("Actor", actor);
+            script->Run(&env);
+        }
     }
     else
     {
@@ -910,25 +911,22 @@ void CharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
         CharCreationManager::CreationChoice* choice = psserver->charCreationManager->FindChoice( upload.choices[ci] );
         if ( choice )
         {
-            csString script (choice->eventScript.GetData() );
             csString name( psserver->charCreationManager->FindChoice( upload.choices[ci] )->name.GetData() );
-            Debug3( LOG_NEWCHAR, me->clientnum,"Choice: %s Creation Script: %s", name.GetData(), script.GetData() );
+            Debug3(LOG_NEWCHAR, me->clientnum,"Choice: %s Creation Script: %s", name.GetData(), choice->eventScript.GetData());
 
+            MathEnvironment env;
+            env.Define("Actor", actor);
             if ( choice->choiceArea == FATHER_JOB || choice->choiceArea == MOTHER_JOB )
             {
-                ProgressionEvent* event = psserver->GetProgressionManager()->FindEvent( script.GetData() );
-                if ( event )
-                {
-                    int modifier = (choice->choiceArea == FATHER_JOB) ? upload.fatherMod : upload.motherMod;
-                    if ( modifier > 3 || modifier < 1 )
-                    {
-                        modifier = 1;
-                    }
-                    
-                    event->SetValue("ParentStatus", (double)modifier );                                                               
-                }
-            }                           
-            psserver->GetProgressionManager()->ProcessEvent( script, actor, actor );
+                int modifier = (choice->choiceArea == FATHER_JOB) ? upload.fatherMod : upload.motherMod;
+                if ( modifier > 3 || modifier < 1 )
+                    modifier = 1;
+                
+                env.Define("ParentStatus", modifier);
+            }
+            ProgressionScript *script = psserver->GetProgressionManager()->FindScript(choice->eventScript);
+            if (script)
+                script->Run(&env);
         }            
         else
         {
@@ -937,10 +935,14 @@ void CharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
     }
     for ( size_t li = 0; li < upload.lifeEvents.GetSize(); li++ )
     {
-        csString script(psserver->charCreationManager->FindLifeEvent( upload.lifeEvents[li] )->eventScript.GetData() );
-        Debug2( LOG_NEWCHAR, me->clientnum,"LifeEvent Script: %s", script.GetData() );
+        MathEnvironment env;
+        env.Define("Actor", actor);
+        csString scriptName(psserver->charCreationManager->FindLifeEvent(upload.lifeEvents[li])->eventScript.GetData());
+        Debug2(LOG_NEWCHAR, me->clientnum, "LifeEvent Script: %s", scriptName.GetData());
 
-        psserver->GetProgressionManager()->ProcessEvent( script, actor, actor );
+        ProgressionScript *script = psserver->GetProgressionManager()->FindScript(scriptName);
+        if (script)
+            script->Run(&env);
     }
     }
     
@@ -955,10 +957,10 @@ void CharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
         chardata->RecalculateStats();
 
         // Make sure the new player have HP, Mana and Samina that was calculated
-        chardata->SetHitPoints(chardata->GetHitPointsMax());
-        chardata->SetMana(chardata->GetManaMax());
-        chardata->SetStamina(chardata->GetStaminaMax(true),true);
-        chardata->SetStamina(chardata->GetStaminaMax(false),false);
+        chardata->SetHitPoints(chardata->GetMaxHP().Base());
+        chardata->SetMana(chardata->GetMaxMana().Base());
+        chardata->SetStamina(chardata->GetMaxPStamina().Base(),true);
+        chardata->SetStamina(chardata->GetMaxMStamina().Base(),false);
         
                    
         psServer::CharacterLoader.SaveCharacterData( chardata, actor );
@@ -995,7 +997,7 @@ void CharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
         int z;
         for ( z = 0; z < PSITEMSTATS_STAT_COUNT; z++ )
         {
-            unsigned int value = chardata->Stats().GetStat((PSITEMSTATS_STAT) z);
+            int value = chardata->Stats()[(PSITEMSTATS_STAT) z].Current();
             if ( value > 0 )
             {
                 mesg.AddStat( value, CacheManager::GetSingleton().Attribute2String((PSITEMSTATS_STAT)z));                
@@ -1003,7 +1005,7 @@ void CharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
         }
         for ( z = 0; z < PSSKILL_COUNT; z++ )
         {
-            unsigned int rank = chardata->Skills().GetSkillRank((PSSKILL) z, false);
+            unsigned int rank = chardata->Skills().GetSkillRank((PSSKILL) z).Base();
             
             psSkillInfo* info = CacheManager::GetSingleton().GetSkillByID(z);
             csString name("Not found");

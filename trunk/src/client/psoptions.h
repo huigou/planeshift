@@ -70,6 +70,7 @@ public:
     // inherited from iScriptableVar
     double GetProperty(const char *ptr);
     double CalcFunction(const char * functionName, const double * params);
+    const char * ToString() { return "options"; }
 
     /**
      * Registers a new options class with the options system.

@@ -112,6 +112,12 @@ typedef uint32 InstanceID;
 #define WEATHER_MAX_RAIN_DROPS  8000
 #define WEATHER_MAX_SNOW_FALKES 6000
 
+enum SPELL_TYPE
+{
+    BUFF,
+    DEBUFF,
+};
+
 // Make unique integer types for various types of IDs.  This allows the
 // compiler to statically check for the right kind of ID, preventing various
 // kinds of mistakes.  It also documents which kind of ID is required.

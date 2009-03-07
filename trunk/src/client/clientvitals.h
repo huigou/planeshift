@@ -32,13 +32,19 @@
 // Local Includes
 //=============================================================================
 
-
 class psStatDRMessage;
+
+/// A character vital (such as HP or Mana) - client side
+struct Vital
+{
+    float value;
+    float drRate;
+};
 
 /** Handles the incoming vital data from the server to update it's
   * local values.
   */
-class psClientVitals : public psVitalManager
+class psClientVitals : public psVitalManager<Vital>
 {
 public:
     psClientVitals();
@@ -68,7 +74,6 @@ private:
     /// version indicator to ignore out of order packets
     unsigned char counter;
     bool counterSet;
-
 };
 
 

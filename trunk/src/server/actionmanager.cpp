@@ -683,23 +683,12 @@ void ActionManager::HandleExamineOperation( psActionLocation* action, Client *cl
     gemItem* realItem = action->GetRealItem();
 
     // If no enter check is specified, do nothing
-    if ( action->GetEnterScript().Length() > 0)
+    if (action->GetEnterScript())
     {
-        allowedEntry = false;
-        ProgressionEvent *progEvent = psserver->GetProgressionManager()->FindEvent( action->GetEnterScript() );
-        if (progEvent)
-        {
-            float ret = progEvent->Run(client->GetActor(), NULL, realItem?realItem->GetItem():NULL);
-            if ( ret > 1.0 )
-            {
-                allowedEntry = true;
-            }
-        }
-        else
-        {
-            Error2("Failed to find enter progression script \"%s\"", action->GetEnterScript().GetData());
-            return;
-        }
+        MathEnvironment env;
+        env.Define("Actor", client->GetActor());
+
+        allowedEntry = action->GetEnterScript()->Evaluate(&env) != 0.0;
     }
 
     // Invoke Interaction menu
@@ -761,17 +750,21 @@ void ActionManager::HandleScriptOperation( psActionLocation* action, Client *cli
     // if no event is specified, do nothing
     if ( action->response.Length() > 0)
     {
-        ProgressionEvent *progEvent = psserver->GetProgressionManager()->FindEvent( action->response );
-        if (!progEvent)
+        ProgressionScript *script = psserver->GetProgressionManager()->FindScript(action->response);
+        if (!script)
         {
-            Error2("Failed to find progression event \"%s\"", action->response.GetData());
+            Error2("Failed to find progression script \"%s\"", action->response.GetData());
             return;
         }
 
         // Find the real item if there exist
         gemItem* realItem = action->GetRealItem();
 
-        progEvent->Run(client->GetActor(), NULL, realItem?realItem->GetItem():NULL);
+        MathEnvironment env;
+        env.Define("Actor", client->GetActor());
+        if (realItem)
+            env.Define("Item", realItem->GetItem());
+        script->Run(&env);
     }
 }
 

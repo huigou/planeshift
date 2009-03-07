@@ -188,14 +188,9 @@ protected:
 
     /* Math script setup for pet range check */
     MathScript *petRangeScript;
-    MathScriptVar *varRangeEmpathySkill;
-    MathScriptVar *varMaxRange;
 
     /* Math script setup for pet should react check */
     MathScript *petReactScript;
-    MathScriptVar *varReactEmpathySkill;
-    MathScriptVar *varReactLevel;
-    MathScriptVar *varReact;
 };
 
 #endif

@@ -41,8 +41,25 @@ psServerVitals::psServerVitals(psCharacter * character)
     this->character = character;
     statsDirty = 0;
     version    = 0;
+
+    // Set up callbacks for updating the dirty flag.
+    vitals[VITAL_HITPOINTS].drRate.Initialize(&statsDirty,  DIRTY_VITAL_HP_RATE);
+    vitals[VITAL_HITPOINTS].max.Initialize(&statsDirty,     DIRTY_VITAL_HP_MAX);
+    vitals[VITAL_MANA].drRate.Initialize(&statsDirty,       DIRTY_VITAL_MANA_RATE);
+    vitals[VITAL_MANA].max.Initialize(&statsDirty,          DIRTY_VITAL_MANA_MAX);
+    vitals[VITAL_PYSSTAMINA].drRate.Initialize(&statsDirty, DIRTY_VITAL_PYSSTAMINA_RATE);
+    vitals[VITAL_PYSSTAMINA].max.Initialize(&statsDirty,    DIRTY_VITAL_PYSSTAMINA_MAX);
+    vitals[VITAL_MENSTAMINA].drRate.Initialize(&statsDirty, DIRTY_VITAL_MENSTAMINA_RATE);
+    vitals[VITAL_MENSTAMINA].max.Initialize(&statsDirty,    DIRTY_VITAL_MENSTAMINA_MAX);
+
+    vitals[VITAL_HITPOINTS].drRate.SetBase(HP_REGEN_RATE);
+    vitals[VITAL_MANA].drRate.SetBase(MANA_REGEN_RATE);
+
+    SetOrigVitals();
 }
 
+#define PERCENT_VALUE(v) vitals[v].max.Current() ? vitals[v].value / vitals[v].max.Current() : 0
+#define PERCENT_RATE(v)  vitals[v].max.Current() ? vitals[v].drRate.Current() / vitals[v].max.Current() : 0
 bool psServerVitals::SendStatDRMessage(uint32_t clientnum, EID eid, int flags, csRef<PlayerGroup> group)
 {
     bool backup=0;
@@ -61,30 +78,30 @@ bool psServerVitals::SendStatDRMessage(uint32_t clientnum, EID eid, int flags, c
     csArray<uint32_t> uiVitals;
 
     if (statsDirty & DIRTY_VITAL_HP)
-        fVitals.Push(vitals[VITAL_HITPOINTS].max ? vitals[VITAL_HITPOINTS].value / vitals[VITAL_HITPOINTS].max : 0);
+        fVitals.Push(PERCENT_VALUE(VITAL_HITPOINTS));
 
     if (statsDirty & DIRTY_VITAL_HP_RATE)
-        fVitals.Push(vitals[VITAL_HITPOINTS].max ? vitals[VITAL_HITPOINTS].drRate / vitals[VITAL_HITPOINTS].max : 0);
+        fVitals.Push(PERCENT_RATE(VITAL_HITPOINTS));
 
     if (statsDirty & DIRTY_VITAL_MANA)
-        fVitals.Push(vitals[VITAL_MANA].max ? vitals[VITAL_MANA].value / vitals[VITAL_MANA].max : 0);
+        fVitals.Push(PERCENT_VALUE(VITAL_MANA));
 
     if (statsDirty & DIRTY_VITAL_MANA_RATE)
-        fVitals.Push(vitals[VITAL_MANA].max ? vitals[VITAL_MANA].drRate/vitals[VITAL_MANA].max : 0);
+        fVitals.Push(PERCENT_RATE(VITAL_MANA));
 
-    // Pyshical Stamina
+    // Physical Stamina
     if (statsDirty & DIRTY_VITAL_PYSSTAMINA)
-        fVitals.Push(vitals[VITAL_PYSSTAMINA].max ? vitals[VITAL_PYSSTAMINA].value/vitals[VITAL_PYSSTAMINA].max : 0);
+        fVitals.Push(PERCENT_VALUE(VITAL_PYSSTAMINA));
 
     if (statsDirty & DIRTY_VITAL_PYSSTAMINA_RATE)
-        fVitals.Push(vitals[VITAL_PYSSTAMINA].max ? vitals[VITAL_PYSSTAMINA].drRate/vitals[VITAL_PYSSTAMINA].max : 0);
+        fVitals.Push(PERCENT_RATE(VITAL_PYSSTAMINA));
 
     // Mental Stamina
     if (statsDirty & DIRTY_VITAL_MENSTAMINA)
-        fVitals.Push(vitals[VITAL_MENSTAMINA].max ? vitals[VITAL_MENSTAMINA].value/vitals[VITAL_MENSTAMINA].max : 0);
+        fVitals.Push(PERCENT_VALUE(VITAL_MENSTAMINA));
 
     if (statsDirty & DIRTY_VITAL_MENSTAMINA_RATE)
-        fVitals.Push(vitals[VITAL_MENSTAMINA].max ? vitals[VITAL_MENSTAMINA].drRate/vitals[VITAL_MENSTAMINA].max : 0);
+        fVitals.Push(PERCENT_RATE(VITAL_MENSTAMINA));
 
     if (statsDirty & DIRTY_VITAL_EXPERIENCE)
         uiVitals.Push(GetExp());
@@ -121,17 +138,13 @@ bool psServerVitals::Update( csTicks now )
     lastDRUpdate = now;
 
     // iterate over all fields and predict their values based on their recharge rate
-    for ( int x = 0; x < VITAL_COUNT; x++ )
+    for (int i = 0; i < VITAL_COUNT; i++)
     {
-        vitals[x].value += vitals[x].drRate*delta;
-
-        if ( vitals[x].value < 0 )
-            vitals[x].value = 0;
-        if ( vitals[x].value > vitals[x].max )
-            vitals[x].value = vitals[x].max;
+        vitals[i].value += vitals[i].drRate.Current() * delta;
+        ClampVital(i);
     }
 
-    if (vitals[VITAL_HITPOINTS].value==0  &&  vitals[VITAL_HITPOINTS].drRate<0)
+    if (vitals[VITAL_HITPOINTS].value == 0 && vitals[VITAL_HITPOINTS].drRate.Current() < 0)
         character->GetActor()->Kill(NULL);
 
     if (drdelta > 10000)
@@ -153,9 +166,30 @@ void psServerVitals::SetPP( unsigned int pp )
     statsDirty |= DIRTY_VITAL_PROGRESSION;
 }
 
-psCharVital& psServerVitals::DirtyVital( int vitalName, int dirtyFlag )
+Vital & psServerVitals::DirtyVital(int vital, int dirtyFlag)
 {
     statsDirty |= dirtyFlag;
-    return GetVital( vitalName );
+    return GetVital(vital);
+}
+
+void psServerVitals::SetVital(int vital, int dirtyFlag, float value)
+{
+    DirtyVital(vital, dirtyFlag).value = value;
+    ClampVital(vital);
+}
+
+void psServerVitals::AdjustVital(int vital, int dirtyFlag, float delta)
+{
+    DirtyVital(vital, dirtyFlag).value += delta;
+    ClampVital(vital);
+}
+
+void psServerVitals::ClampVital(int v)
+{
+    if (vitals[v].value < 0)
+        vitals[v].value = 0;
+
+    if (vitals[v].value > vitals[v].max.Current())
+        vitals[v].value = vitals[v].max.Current();
 }
 

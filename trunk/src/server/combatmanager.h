@@ -87,29 +87,9 @@ private:
     csRandomGen* randomgen;
     LocationType* pvp_region;
 
-    MathScriptEngine *script_engine; /// Scripting engine handles all RPG calculations.
     MathScript *calc_damage; /// This is the particular calculation for damage.
-    MathScriptVar *var_IAH; /// IAH == If Attack Hit
-    MathScriptVar *var_AHR; /// AHR == Attack Hit Roll
-    MathScriptVar *var_Blocked; /// Blocked == Blocked by weapon
-    MathScriptVar *var_QOH; /// QOH == Quality Of Hit
-    MathScriptVar *var_FinalDmg; /// Actual Damage done, if any
-    MathScriptVar *var_AttackWeapon;
-    MathScriptVar *var_AttackWeaponSecondary;
-    MathScriptVar *var_TargetAttackWeapon;
-    MathScriptVar *var_DefenseWeaponSecondary;
-    MathScriptVar *var_Target;
-    MathScriptVar *var_Attacker;
-    MathScriptVar *var_AttackLocationItem;
-
     // if the player is too tired, stop fighting. We stop if we don't have enough stamina to make an attack with the current stance.
     MathScript* staminacombat;
-    // Output
-    MathScriptVar* PhyDrain;
-    MathScriptVar* MntDrain;
-    // Input
-    MathScriptVar* actorVar;
-    MathScriptVar* weaponVar;
 
     void HandleDeathEvent(MsgEntry *me,Client *client);
 
@@ -125,7 +105,7 @@ private:
             int previousResult = ATTACK_NOTCALCULATED);
 
     void ApplyCombatEvent(psCombatGameEvent *event, int attack_result);
-    void DebugOutput(psCombatGameEvent *event);
+    void DebugOutput(psCombatGameEvent *event, const MathEnvironment & env);
     int CalculateAttack(psCombatGameEvent *event, psItem* subWeapon = NULL);
 };
 

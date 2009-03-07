@@ -258,7 +258,6 @@ struct LootModifier
 };
 
 class MathScript;
-class MathScriptVar;
 /**
  * This class stores an array of LootModifiers and randomizes
  * loot stats.

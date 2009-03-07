@@ -879,35 +879,35 @@ void SlotManager::Consume(psItem* item, psCharacter *charData, int count)
         return;
 
     // Use math function to determine effect of quality
-    MathScript* qualityScript = psserver->GetMathScriptEngine()->FindScript("CalculateConsumeQuality");
+    static MathScript *qualityScript = NULL;
+    if (!qualityScript)
+        qualityScript = psserver->GetMathScriptEngine()->FindScript("CalculateConsumeQuality");
     if (!qualityScript)
     {
         Error1("Can't find quality script CalculateConsumeQuality");
         return;
     }
 
-    MathScriptVar *varQuality = qualityScript->GetOrCreateVar("Quality");
-
-    float quality = item->GetMaxItemQuality();
-    varQuality->SetValue(quality);
-    qualityScript->Execute();
-
-    csString script = item->GetBaseStats()->GetProgressionEventConsume();
-    if (script.IsEmpty())
+    csString scriptName = item->GetBaseStats()->GetConsumeScriptName();
+    if (scriptName.IsEmpty())
     {
         Error2("No consume script for consumable item %s",item->GetName());
         return;
     }
    
-    ProgressionEvent* progEvent = psserver->GetProgressionManager()->FindEvent(script);
-    if (!progEvent)
+    ProgressionScript *script = psserver->GetProgressionManager()->FindScript(scriptName);
+    if (!script)
     {
-        Error2("No event found for consume script %s",script.GetData());
+        Error2("No event found for consume script >%s<.", scriptName.GetData());
         return;
     }
 
-    progEvent->CopyVariables(qualityScript);
+    MathEnvironment env;
+    env.Define("Quality", item->GetMaxItemQuality());
+    qualityScript->Evaluate(&env);
+
     gemActor *actor = charData->GetActor();
+    env.Define("Actor", actor);
     
     // Remove the item from inventory and destroy it
     psItem* consumedItem = charData->Inventory().RemoveItemID(item->GetUID(), count);
@@ -915,9 +915,8 @@ void SlotManager::Consume(psItem* item, psCharacter *charData, int count)
     {
         for (unsigned short i = 0; i < consumedItem->GetStackCount(); i++)
         {
-            psserver->GetProgressionManager()->ProcessEvent(progEvent, actor);
+            script->Run(&env);
         }
-    
         consumedItem->Destroy();
         delete consumedItem;
     }

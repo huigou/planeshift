@@ -1,44 +1,39 @@
-# MySQL-Front Dump 1.16 beta
-#
-# Host: localhost Database: planeshift
-#--------------------------------------------------------
-# Server version 4.0.18-max-nt
-#
-# Table structure for table 'spells'
-#
+/*
+ * Table structure for table 'spells'
+ */
 
 CREATE TABLE spells (
   id int(8) unsigned NOT NULL auto_increment,
-  name varchar(30) DEFAULT '0' ,
-  way_id int(8) unsigned DEFAULT '0' ,
-  realm tinyint(3) unsigned DEFAULT '0' ,
-  caster_effect varchar(255) DEFAULT '0' ,
-  target_effect varchar(255) DEFAULT '0' ,
-  image_name varchar(100) DEFAULT '0' ,
-  spell_description text ,
-  offensive tinyint(3) DEFAULT '0' ,
-  progression_event varchar(255) ,
-  saved_progression_event varchar(255) ,
-  saving_throw varchar(32) DEFAULT '0' ,
-  saving_throw_value int(4) DEFAULT '-1' ,
-  max_power int(4) DEFAULT '1' ,
-  target_type int(4) DEFAULT '32' ,
-  cstr_npc_spell_category int(10) DEFAULT '0' ,
-  npc_spell_power float(10,3) DEFAULT '0.000' ,
+  name varchar(30) NOT NULL,
+  way_id int(8) unsigned DEFAULT '0',
+  realm tinyint(3) unsigned DEFAULT '0',
+  casting_effect varchar(255),
+  image_name varchar(100),
+  spell_description text,
+  offensive boolean DEFAULT true,
+  max_power int(4) DEFAULT '1',
+  target_type int(4) DEFAULT '32',
+  exclude_target boolean DEFAULT false,
+  cast_duration text NOT NULL, /* (power, wayskill, relatedstat) -> seconds */
+  range text,                  /* (power, wayskill, relatedstat) -> meters  */
+  aoe_radius text,             /* (power, wayskill, relatedstat) -> meters  */
+  aoe_angle text,              /* (power, wayskill, relatedstat) -> radians */
+  outcome text NOT NULL,       /* (power, caster, target) -> side effects   */
+  cstr_npc_spell_category int(10) DEFAULT '0',
+  npc_spell_power float(10,3) DEFAULT '0.000',
   PRIMARY KEY (id),
   UNIQUE name (name)
 );
 
 
-#
-# Dumping data for table 'spells'
-#
+/*
+ * Sample/fake spells
+ */
 
-INSERT INTO spells VALUES("1","Summon Missile","1","1","casting","test_","","A wooden arrow is summoned and thrown at the target dealing 6*P damages.","1","cast Summon Missile","","0","-1","2","288","163","1.000");
-INSERT INTO spells VALUES("2","Life Infusion","1","1","casting","clear","","By means of this spell the wizard is able to instill pure energy in a creature. The energy, which has healing effects, is less powerful but similar to the energy of the Great Crystal. It can be cast on the wizard or on another character in touch range.","0","cast Life Infusion","","0","-1","5","24","164","1.000");
-INSERT INTO spells VALUES("3","Gust Of Wind","1","1","casting","puff","","AoE Example. A nasty smelling breeze passes by you.","1","cast Gust of Wind","","0","-1","20","32","165","1.500");
-INSERT INTO spells VALUES("4","Defensive Wind","1","1","casting","puff","","Buff Example. A calming effect washes over you.","0","cast Defensive Wind","","0","-1","50","24","166","1.500");
-INSERT INTO spells VALUES("5","Summon Creature","5","1","casting","clear","","The caster summons a creature as it's familiar.","0","cast Summon Creature","","0","-1","50","24","166","1.500");
-INSERT INTO spells VALUES("6","Fire Warts","3","1","casting","fire","","DoT Example. This spell will cause burning sores appear all over your enemies body, searing their flesh.","1","cast Fire Warts","","0","-1","20","288","165","1.500");
-INSERT INTO spells VALUES("7","Gem of Clarity","1","1","casting","clear","","Block Example. The caster will feel very clear minded.","0","GemOfClarity","","0","-1","20","8","165","1.500");
-INSERT INTO spells VALUES("8","Recharge","1","1","casting","clear","","Test the recharge operation.","0","Recharge","","0","-1","20","8","165","1.500");
+INSERT INTO spells VALUES(1,"Summon Missile",1,1,"casting","","You summon a wooden arrow and magically shoot it at your target.",true,1,288,false,"5000-(WaySkill+RelatedStat)/Power","40*Power","0","0","cast Summon Missile",163,"1.000");
+INSERT INTO spells VALUES(2,"Life Infusion",1,1,"casting","","By means of this spell the wizard is able to instill pure energy in a creature. The energy, which has healing effects, is less powerful but similar to the energy of the Great Crystal. It can be cast on the wizard or on another character in touch range.",false,1,24,false,"1000-(WaySkill+RelatedStat)/Power","3.0","0","0","cast Life Infusion","164","1.000");
+INSERT INTO spells VALUES(3,"Swiftness",2,1,"casting","","This spell increases the agility of the caster for a time.",false,1,24,false,"1000-(WaySkill+RelatedStat)/Power","3.0","0","0","cast Swiftness","164","1.000");
+INSERT INTO spells VALUES(4,"Dispel",1,1,"casting","","This spell cancels various benificial status effects on your target.",false,1,314,false,"2000-(WaySkill+RelatedStat)/Power","3+Power","0","0","cast Dispel",164,"1.000");
+INSERT INTO spells VALUES(5,"Flame Spire",3,1,"casting","","This spells creates a spire of flames all around the caster.",false,1,24,false,"2000-(WaySkill+RelatedStat)/Power","3.0","0","0","cast Flame Spire",167,0.000);
+INSERT INTO spells VALUES(6,"Magetank",3,1,"casting","","Everybody wants to play one...",false,1,24,false,"2000-(WaySkill+RelatedStat)/Power","3.0","0","0","cast Magetank",167,0.000);
+INSERT INTO spells VALUES(7,"Drain",4,1,"casting","","This spell drains the life of your opponent, over time, and gives some of it back to you.",true,1,288,false,"2000-(WaySkill+RelatedStat)/Power","15.0","0","0","cast Drain",163,1.000);

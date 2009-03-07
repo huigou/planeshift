@@ -21,23 +21,22 @@
 #define PAWS_SCRIPT_H
 
 #include <csutil/array.h>
+#include "util/mathscript.h"
 
-class MathScript;
-class MathScriptVar;
-class iScriptableVar;
 class pawsWidget;
 
 struct pawsScriptResult
 {
-    pawsWidget *    widget;
-    char            property[64];
-    MathScriptVar * var;
+    pawsWidget *widget;
+    MathVar    *var;
+    csString    property;
 };
 
 class pawsScriptStatement
 {
 private:
     MathScript *                script;
+    MathEnvironment             env;
     csArray<pawsScriptResult>   scriptResults;
 
     static void ChangedResultsVarCallback(void * arg);

@@ -33,6 +33,8 @@
 //=============================================================================
 // Project Space Includes
 //=============================================================================
+#include "bulkobjects/activespell.h"
+#include "bulkobjects/buffable.h"
 #include "bulkobjects/pscharacter.h"
 
 #include "util/gameevent.h"
@@ -101,6 +103,18 @@ public:
 
 private:
     gemObject* object;          ///< The object that is attached to a iMeshWrapper object.
+};
+
+//-----------------------------------------------------------------------------
+
+class OverridableMesh : public Overridable<csString>
+{
+public:
+    OverridableMesh(const csString mesh) : Overridable<csString>(mesh), actor(NULL) { }
+    void SetActor(gemActor *act) { actor = act; }
+protected:
+    virtual void OnChange();
+    gemActor *actor;
 };
 
 //-----------------------------------------------------------------------------
@@ -250,7 +264,7 @@ protected:
 * A gemObject is any solid, graphical object visible in PS with normal physics
 * and normal collision detection.
 */
-class gemObject : public iDeleteNotificationObject, public CS::Utility::WeakReferenced
+class gemObject : public iDeleteNotificationObject, public CS::Utility::WeakReferenced, public iScriptableVar
 {
 
 public:
@@ -263,6 +277,11 @@ public:
     virtual ~gemObject();
 
     EID GetEID() { return eid; }
+
+    /// iScriptableVar implementation
+    virtual double GetProperty(const char *ptr);
+    virtual double CalcFunction(const char *functionName, const double *params);
+    virtual const char* ToString() { return name.GetData(); }
 
     /// Called when a client disconnects
     virtual void Disconnect();
@@ -296,7 +315,8 @@ public:
 
     // Mesh related functions
     iMeshWrapper *GetMeshWrapper();
-    csString GetMesh() { return factname; };
+    csString GetMesh() { return factname.Current(); }
+    OverridableMesh & GetOverridableMesh() { return factname; }
     void Move(const csVector3& pos,float rotangle,iSector* room);
     bool IsNear(gemObject *obj,float radius);
     void GetPosition(csVector3& pos, float& yrot,iSector*& sector);
@@ -337,7 +357,7 @@ public:
 
     // Overridden functions in child classes
     virtual PSCHARACTER_MODE GetMode() { return PSCHARACTER_MODE_UNKNOWN; }
-    virtual void SetMode(PSCHARACTER_MODE mode) { }
+    virtual void SetMode(PSCHARACTER_MODE mode, uint32_t extraData = 0) { }
     virtual PID GetPID() { return 0; }
     virtual int GetGuildID() { return 0; }
     virtual psGuildInfo* GetGuild() { return 0; }
@@ -372,7 +392,7 @@ protected:
     float yRot;                                 ///< Left-Right rotation, in radians
     iSector *sector;                            ///< Ptr to the CS sector inhabited
     bool is_alive;                              ///< Flag indicating whether object is alive or not
-    csString factname;                          ///< Name of CS Mesh Factory used to create this object
+    OverridableMesh factname;                   ///< Name of CS Mesh Factory used to create this object
     EID eid;                                    ///< Entity ID (unique identifier for object)
     static csRef<iMeshFactoryWrapper> nullfact;       ///< Null factory for our mesh instances.
 
@@ -443,6 +463,10 @@ public:
 
     virtual const char* GetObjectType() { return itemType.GetData(); }
     virtual psItem *GetItem();
+
+    /// iScriptableVar implementation
+    virtual double GetProperty(const char *ptr);
+    virtual double CalcFunction(const char *functionName, const double *params);
 
     virtual float GetBaseAdvertiseRange();
 
@@ -659,13 +683,10 @@ protected:
     bool visible;             ///< is visible to clients ?
     bool viewAllObjects;      ///< can view invisible objects?
 
-    csString meshcache;
-
     csPDelArray<DamageHistory> dmgHistory;
-    csArray<csString> onAttackScripts, onDamageScripts;
+    csPDelArray<ProgressionScript> onAttackScripts, onDefenseScripts;
 
-    int FindCategorySlot(const csString & categoryName);
-    csArray<csString> active_spell_categories;
+    csArray<ActiveSpell*> activeSpells;
 
     void ApplyStaminaCalculations(const csVector3& velocity, float times);
 
@@ -679,7 +700,7 @@ protected:
 public:
     psLinearMovement* pcmove;
 
-    gemActor(psCharacter *chardata, const char* factname,
+    gemActor(psCharacter *chardata, const char *factname,
         InstanceID myInstance,iSector* room,const csVector3& pos,float rotangle,int clientnum);
 
     virtual ~gemActor();
@@ -691,12 +712,16 @@ public:
 
     virtual PID GetPID() { return pid; }
 
+    /// iScriptableVar implementation
+    virtual double GetProperty(const char *ptr);
+    virtual double CalcFunction(const char *functionName, const double *params);
+
     bool SetupCharData();
 
     void SetTextureParts(const char *parts);
     void SetEquipment(const char *equip);
 
-    void SetMode(PSCHARACTER_MODE mode) { psChar->SetMode(mode, GetClientID()); }
+    void SetMode(PSCHARACTER_MODE mode, uint32_t extraData = 0) { psChar->SetMode(mode, GetClientID(), extraData); }
     PSCHARACTER_MODE GetMode() { return psChar->GetMode(); }
     bool IsAllowedToMove() { return isAllowedToMove; }  ///< Covers sitting, death, and out-of-stamina
     void SetAllowedToMove(bool newvalue);
@@ -855,17 +880,18 @@ public:
     size_t GetDamageHistoryCount() const { return dmgHistory.GetSize(); }
     void ClearDamageHistory() { dmgHistory.Empty(); }
 
-    int  AttachAttackScript(const csString & scriptName);
-    void DetachAttackScript(int scriptID);
-    int  AttachDamageScript(const csString & scriptName);
-    void DetachDamageScript(int scriptID);
-    void InvokeAttackScripts(gemActor *target, psItem *item);
-    void InvokeDamageScripts(gemActor *attacker, psItem *item);
+    void AttachAttackScript(ProgressionScript *script);
+    void DetachAttackScript(ProgressionScript *script);
+    void AttachDefenseScript(ProgressionScript *script);
+    void DetachDefenseScript(ProgressionScript *script);
+    void InvokeAttackScripts(gemActor *defender, psItem *weapon);
+    void InvokeDefenseScripts(gemActor *attacker, psItem *weapon);
 
-    bool AddActiveMagicCategory(const csString & category);
-    bool RemoveActiveMagicCategory(const csString & category);
-    bool IsMagicCategoryActive(const csString & category);
-    csArray<csString> GetActiveMagicCategories() { return active_spell_categories; }
+    void AddActiveSpell(ActiveSpell *asp);
+    bool RemoveActiveSpell(ActiveSpell *asp);
+    ActiveSpell* FindActiveSpell(const csString & name, SPELL_TYPE type);
+    int ActiveSpellCount(const csString & name);
+    csArray<ActiveSpell*> & GetActiveSpells() { return activeSpells; }
 
     /** These flags are for GM/debug abilities */
     bool nevertired;        ///< infinite stamina
@@ -875,8 +901,8 @@ public:
     bool questtester;       ///< no quest lockouts
     bool givekillexp;       ///< give exp if killed
 
+    // don't use this directly
     bool SetMesh(const char* meshname);
-    bool ResetMesh() { return SetMesh(meshcache); }
 
     bool GetFiniteInventory() { return GetCharacterData()->Inventory().GetDoRestrictions(); }
     void SetFiniteInventory(bool v) { GetCharacterData()->Inventory().SetDoRestrictions(v); }
@@ -922,7 +948,7 @@ protected:
     NpcDialogMenu *initial_triggers;
 
 public:
-    gemNPC(psCharacter *chardata, const char* factname,
+    gemNPC(psCharacter *chardata, const char *factname,
            InstanceID myInstance,iSector* room,const csVector3& pos,float rotangle,int clientnum);
 
     virtual ~gemNPC();
@@ -990,7 +1016,7 @@ class gemPet : public gemNPC
 {
 public:
 
-    gemPet(psCharacter *chardata, const char* factname,InstanceID instance,iSector* room,
+    gemPet(psCharacter *chardata, const char* factname, InstanceID instance, iSector* room,
         const csVector3& pos,float rotangle,int clientnum,uint32 id) : gemNPC(chardata,factname,instance,room,pos,rotangle,clientnum)
     {
         this->persistanceLevel = "Temporary";

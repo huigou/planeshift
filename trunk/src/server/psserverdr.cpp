@@ -87,10 +87,6 @@ bool psServerDR::Initialize()
         return false;
     }
 
-    // Output var bindings here
-    var_fall_height = calc_damage->GetVar("FallHeight");
-    var_fall_dmg    = calc_damage->GetVar("Damage");
-
     paladin = new PaladinJr;
     paladin->Initialize(psserver->entitymanager);
     
@@ -108,10 +104,10 @@ void psServerDR::HandleFallDamage(gemActor *actor,int clientnum, const csVector3
 {
     float fallHeight = actor->FallEnded(pos,sector);
 
-    // Initialize all variables before call to execute 
-    var_fall_height->SetValue(fallHeight);
-    var_fall_dmg->SetValue(0.0);
-    calc_damage->Execute();
+    MathEnvironment env;
+    env.Define("FallHeight", fallHeight);
+    calc_damage->Evaluate(&env);
+    MathVar *var_fall_dmg = env.Lookup("Damage");
     Debug4(LOG_LINMOVE,actor->GetClientID(), "%s fell %.2fm for damage %.2f",
            actor->GetName(),fallHeight,var_fall_dmg->GetValue() );
 
@@ -279,7 +275,17 @@ void psServerDR::HandleDeadReckoning(MsgEntry* me,Client *client)
     //if (strcmp(drmsg.sector->QueryObject()->GetName(), "NPCroom1") == 0)
     if (strcmp(drmsg.sector->QueryObject()->GetName(), "DRexit") == 0)
     {
-         psserver->GetProgressionManager()->ProcessEvent("death_penalty", actor);
+        // should probably load this on startup.
+        static ProgressionScript *death_penalty = NULL;
+        if (!death_penalty)
+            psserver->GetProgressionManager()->FindScript("death_penalty");
+
+        if (death_penalty)
+        {
+            MathEnvironment env;
+            env.Define("Actor", actor);
+            death_penalty->Run(&env);
+        }
 
         actor->pcmove->SetOnGround(false);
         actor->MoveToSpawnPos();

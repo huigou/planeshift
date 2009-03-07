@@ -41,7 +41,7 @@ psOptions::psOptions(const char * filename, csRef<iVFS> vfs)
          : filename(filename)
 {
     configFile.AttachNew(new csConfigFile(filename, vfs));
-    PawsManager::GetSingleton().AddExtraScriptVar(this, "Options");
+    PawsManager::GetSingleton().ExtraScriptVars().Define("Options", this);
 }
 
 psOptions::~psOptions()

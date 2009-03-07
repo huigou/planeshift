@@ -44,6 +44,8 @@
 class CacheManager;
 class gemActionLocation;
 class gemItem;
+class iDocumentNode;
+class MathExpression;
 
 /**
  * This huge class stores all the properties of any object
@@ -84,8 +86,7 @@ public:
     void SetInstanceID(InstanceID newID) { instanceID = newID; }
 
     /// Returns the enter script in entrance action location response string
-    csString GetEnterScript() const { return enterScript; }
-    void SetEnterScript(csString newScript) { enterScript = newScript; }
+    MathExpression *GetEnterScript() const { return enterScript; }
 
     /// Returns the entrance type in entrance action location response string
     csString GetEntranceType() const { return entranceType; }
@@ -207,7 +208,7 @@ private:
 
     /// String containing the entrance script
     ///   Script return value of 0 indicates no entry
-    csString enterScript;
+    MathExpression *enterScript;
 
     // Possition stuff for returns
     csVector3 returnPosition;

@@ -1336,6 +1336,7 @@ public:
     /// Executes any pawsScript associated with the given event
     void RunScriptEvent(PAWS_WIDGET_SCRIPT_EVENTS event);
 
+    const char* ToString() { return name.GetDataSafe(); }
     virtual double GetProperty(const char * ptr);
     virtual double CalcFunction(const char * functionName, const double * params);
     virtual void SetProperty(const char * ptr, double value);

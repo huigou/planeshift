@@ -61,79 +61,40 @@ bool pawsActiveMagicWindow::PostSetup()
 void pawsActiveMagicWindow::HandleMessage( MsgEntry* me )
 {
     psGUIActiveMagicMessage incoming(me);
-    pawsListBox *list;
 
-    if (!IsVisible() && incoming.openWindow && psengine->loadstate == psEngine::LS_DONE)
+    if (!IsVisible() && psengine->loadstate == psEngine::LS_DONE)
         Show();
 
-    //buffCategories->Clear();
-    //debuffCategories->Clear();
-    // Get number of spells
-    // For each record
-    // Get Name
-    // Determine buff/debuff
-    // Add to correct  listbox
-
+    pawsListBox *list = incoming.type == BUFF ? buffCategories : debuffCategories;
     switch ( incoming.command )
     {
-    case psGUIActiveMagicMessage::addCategory:
-        for (size_t i = 0; i < incoming.categoryList.GetSize(); i++)
+        case psGUIActiveMagicMessage::Add:
         {
-            csString buffName ;
-            if ( incoming.categoryList[i].StartsWith( BUFF_CATEGORY_PREFIX ) )
-            {
-                list = buffCategories;
-                buffName = incoming.categoryList[i].Slice(strlen(BUFF_CATEGORY_PREFIX), incoming.categoryList[i].Length() - strlen(BUFF_CATEGORY_PREFIX)); 
-            }
-            else 
-            {
-                list = debuffCategories;
-                buffName = incoming.categoryList[i].Slice(strlen(DEBUFF_CATEGORY_PREFIX), incoming.categoryList[i].Length() - strlen(DEBUFF_CATEGORY_PREFIX));
-            }
-
-            pawsListBoxRow* row = list->NewRow();
+            pawsListBoxRow *row = list->NewRow();
            
-            pawsTextBox* name = dynamic_cast <pawsTextBox*> (row->GetColumn(0));
-            if (name == NULL) return;
-            name->SetText( buffName );
+            pawsTextBox *name = dynamic_cast<pawsTextBox*>(row->GetColumn(0));
+            if (!name)
+                return;
+            name->SetText(incoming.name);
+
+            break;
         }
-        break;
-    case psGUIActiveMagicMessage::removeCategory:
-        pawsListBoxRow* row;
-        for (size_t i = 0; i < incoming.categoryList.GetSize(); i++)
+        case psGUIActiveMagicMessage::Remove:
         {
-            csString buffName ;
-            if ( incoming.categoryList[i].StartsWith( BUFF_CATEGORY_PREFIX ) )
+            for (int i = 0; i < list->GetRowCount(); i++)
             {
-                list = buffCategories;
-                buffName = incoming.categoryList[i].Slice(strlen(BUFF_CATEGORY_PREFIX), incoming.categoryList[i].Length() - strlen(BUFF_CATEGORY_PREFIX));
-            }
-            else 
-            {
-                list = debuffCategories;
-                buffName = incoming.categoryList[i].Slice(strlen(DEBUFF_CATEGORY_PREFIX), incoming.categoryList[i].Length() - strlen(DEBUFF_CATEGORY_PREFIX));
+                pawsListBoxRow *row = list->GetRow(i);
+                pawsTextBox *name = dynamic_cast<pawsTextBox*>(row->GetColumn(0));
+                if (incoming.name == name->GetText())
+                    list->Remove(row);
             }
 
-            for ( int i = 0; i < list->GetRowCount(); i++ )
-            {
-                row = list->GetRow( i );
-                pawsTextBox* name = dynamic_cast <pawsTextBox*> (row->GetColumn(0));
-                csString nameText = name->GetText();
-
-                if ( nameText.Compare(buffName) )
-                {
-                    list->Remove( row );
-                }
-            }
-
-            // If no Active Magics hide the window.
-            if ( debuffCategories->GetRowCount() + buffCategories->GetRowCount() == 0 )
-            {
+            // If no active magic, hide the window.
+            if (debuffCategories->GetRowCount() + buffCategories->GetRowCount() == 0)
                 Hide();
-            }
 
+            break;
         }
-        break;
     }
 }
 

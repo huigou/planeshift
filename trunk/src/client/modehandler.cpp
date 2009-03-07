@@ -61,8 +61,9 @@
 
 #include "paws/pawsmanager.h"
 
-#include "gui/pawsinfowindow.h"
 #include "gui/chatwindow.h"
+#include "gui/pawsinfowindow.h"
+#include "gui/pawsspellcancelwindow.h"
 
 //=============================================================================
 // Local Includes
@@ -339,6 +340,18 @@ void ModeHandler::HandleModeMessage(MsgEntry* me)
         {
             psSystemMessage sysMsg(0, MSG_ERROR, "You struggle under the weight of your inventory and must drop something." );
             msghandler->Publish( sysMsg.msg );
+        }
+        else if (msg.mode == psModeMessage::SPELL_CASTING)
+        {
+            // start the spell animation
+            actor->SetAnimation("cast");
+
+            // show the spell cancel window
+            pawsSpellCancelWindow* castWindow = (pawsSpellCancelWindow*) PawsManager::GetSingleton().FindWidget("SpellCancelWindow");
+            if (castWindow)
+            {
+                castWindow->Start(msg.value); // msg.value is the duration
+            }
         }
     }
 }

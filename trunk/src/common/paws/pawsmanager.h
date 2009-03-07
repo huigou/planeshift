@@ -41,7 +41,7 @@
 
 #include "engine/psregion.h"
 
-#include "util/scriptvar.h"
+#include "util/mathscript.h"
 #include "util/log.h"
 
 #include "pawsmouse.h"
@@ -343,18 +343,10 @@ public:
     ///Set if sound is available or not (psclient.cfg)
     void SetSoundStatus(bool sound){ soundStatus = sound; }
 
-    void AddExtraScriptVar(iScriptableVar * var, const char * name);
-    size_t GetExtraScriptVarCount() const;
-    const char * GetExtraScriptVarName(size_t index) const;
-    iScriptableVar * GetExtraScriptVar(size_t index) const;
+    MathEnvironment & ExtraScriptVars() { return extraScriptVars; }
 
 protected:
-    struct ExtraScriptVar
-    {
-        iScriptableVar * var;
-        char name[64];
-    };
-    csArray<ExtraScriptVar> extraScriptVars;
+    MathEnvironment extraScriptVars;
 
     psPoint MouseLocation( iEvent &ev );
 

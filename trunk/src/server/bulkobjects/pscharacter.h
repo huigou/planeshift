@@ -29,23 +29,26 @@
 // Project Includes
 //=============================================================================
 #include "util/poolallocator.h"
-#include "util/slots.h"
 #include "util/psconst.h"
 #include "util/scriptvar.h"
 #include "util/skillcache.h"
+#include "util/slots.h"
 
 #include "net/charmessages.h"
 
 #include "../icachedobject.h"
 #include "../playergroup.h"
+
 //=============================================================================
 // Local Includes
 //=============================================================================
+#include "buffable.h"
 #include "psskills.h"
 #include "psstdint.h"
 #include "pscharinventory.h"
 #include "psinventorycachesvr.h"
 #include "psitemstats.h"
+#include "servervitals.h"
 
 class psServerVitals;
 class MsgEntry;
@@ -53,13 +56,13 @@ class psItemStats;
 class psItem;
 class psQuest;
 class psGuildInfo;
-class ProgressionDelay;
 
 struct Result;
 struct Faction;
 
 /** "Normalizes" name of character i.e. makes the first letter uppercase and all the rest downcase */
 csString NormalizeCharacterName(const csString & name);
+
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -267,43 +270,23 @@ struct Buddy
     PID playerID;
 };
 
-/**
- * A player's stat. Tracks the base value as well as any buffs accumlated on it.
- * The final rank should be calculated as rank+rankBuff
- */
-struct CharStat
-{
-    CharStat() { rank = rankBuff = 0; }
 
-    unsigned int rank;    ///< base rank without any buffs.
-    int rankBuff;         ///< additional buffs.
-};
-
-
+typedef Buffable<int> CharStat;
 
 class StatSet : public CharacterAttribute
 {
-protected:
-    CharStat stats[PSITEMSTATS_STAT_COUNT];
-
 public:
 
-    StatSet(psCharacter *self) : CharacterAttribute(self)
-    {  Clear();  }
+    StatSet(psCharacter *self) : CharacterAttribute(self) { }
 
-    void Clear()
-    {
-        for (int i=0; i<PSITEMSTATS_STAT_COUNT; i++)
-            stats[i].rank=stats[i].rankBuff=0;
-    }
-    unsigned int GetStat(PSITEMSTATS_STAT attrib, bool withBuff=true);
-    /// Get the current value of the buffer on the stat.
-    int GetBuffVal( PSITEMSTATS_STAT attrib );
-    void BuffStat( PSITEMSTATS_STAT attrib, int buffAmount );
-    void SetStat(PSITEMSTATS_STAT attrib, unsigned int val, bool recalculatestats = true);
-    void AddToStat(PSITEMSTATS_STAT attrib, unsigned int delta);
+    CharStat & Get(PSITEMSTATS_STAT attrib);
+    CharStat & operator [] (PSITEMSTATS_STAT which) { return Get(which); }
+
+protected:
+    CharStat stats[PSITEMSTATS_STAT_COUNT];
 };
 
+typedef Buffable<int> SkillRank;
 
 /** A structure that holds the knowledge/practice/rank of each player skill.
  */
@@ -311,8 +294,7 @@ struct Skill
 {
     unsigned short z;        ///< Practice value
     unsigned short y;        ///< Knowledge Level
-    unsigned short rank;     ///< Current skill rank
-    short rankBuff;          ///< Current Buff amount on rank.
+    SkillRank rank;          ///< Skill rank (buffable)
 
     unsigned short zCost;    ///< Cost in Z points.
     unsigned short yCost;    ///< cost in y points.
@@ -321,7 +303,7 @@ struct Skill
     psSkillInfo *info;       ///< Database information about the skill.
 
     Skill() { Clear(); }
-    void Clear() { z=y=rank=rankBuff=0; zCost=yCost=0; info = NULL; dirtyFlag = false;}
+    void Clear() { z=y=0; zCost=yCost=0; info = NULL; dirtyFlag = false;}
 
     void CalculateCosts(psCharacter* user);
 
@@ -353,9 +335,6 @@ struct Skill
       * @return True if the practice causes a rank change, false if not.
       */
     bool Practice( unsigned int amount, unsigned int& actuallyAdded,psCharacter* user  );
-
-    /** Apply a Buff to this skill. */
-    void Buff( short amount ) { rankBuff+=amount; }
 };
 
 
@@ -369,15 +348,11 @@ protected:
     Skill skills[PSSKILL_COUNT];
 
 public:
-
     SkillSet(psCharacter *self) : CharacterAttribute(self)
     {
         for (int i=0; i<PSSKILL_COUNT; i++)
             skills[i].Clear();
     }
-
-    /** Returns requested skill */
-    Skill * GetSkill( PSSKILL which );
 
     /** @brief Sets the common skill info for this skill ( data from the database )
       * @param which  The skill we want to set
@@ -405,9 +380,6 @@ public:
      *  @param y_value    The value to set this skill knowledge at.
      */
     void SetSkillKnowledge(PSSKILL which,int y_value);
-
-    /** @brief Adds to a skill Buff */
-    void BuffSkillRank( PSSKILL which, int buffValue );
 
     /** @brief Set a skill rank level.
      *
@@ -448,11 +420,9 @@ public:
     /** @brief Get the current rank of a skill.
      *
      *  @param which The skill that we want the rank for.
-     *  @param withBuff If false return the base skill value. Else return true
-     *                    skill with all buffs and modifiers.
-     *  @return The rank of the requested skill. O if no skill found.
+     *  @return The rank of the requested skill.
      */
-    unsigned int GetSkillRank( PSSKILL which, bool withBuff = true );
+    SkillRank & GetSkillRank(PSSKILL which);
 
     /** @brief Get the current knowledge level of a skill.
      *
@@ -491,7 +461,7 @@ public:
      */
     unsigned int GetBestSkillSlot( bool withBuff );
 
-    Skill& Get(PSSKILL skill);
+    Skill & Get(PSSKILL skill);
 };
 
 #define ALWAYS_IMPERVIOUS      1
@@ -517,26 +487,6 @@ struct Stance
     float attack_damage_mod;
     float defense_avoid_mod;
     float defense_absorb_mod;
-};
-
-//-----------------------------------------------------------------------------
-
-struct SavedProgressionEvent
-{
-    int id;
-    csTicks registrationTime;
-    csTicks ticksElapsed;
-    csString script;
-};
-
-/** A duration event stored on this object.
- */
-struct DurationEvent
-{
-    ProgressionDelay* queuedObject;  ///< The actual event that is in the queue
-    csString name;                  ///< The name of the event
-    csTicks appliedTime;            ///< Time applied.
-    csTicks duration;               ///< Duration for the event.
 };
 
 //-----------------------------------------------------------------------------
@@ -582,10 +532,6 @@ protected:
     int  loot_money;
 
 public:
-    void RegisterDurationEvent(ProgressionDelay* progDelay, csString& name, csTicks duration);
-    void UnregisterDurationEvent(ProgressionDelay* progDelay);
-    void FireEvent(const char* name);
-
     psCharacterInventory& Inventory() { return inventory; }
 
     psMoney Money() { return money; }
@@ -625,11 +571,7 @@ public:
     Stance combat_stance;
     const Stance& getStance(csString name);
     csString faction_standings;
-    csArray<SavedProgressionEvent> progressionEvents;
-    csPDelArray<DurationEvent> durationEvents;
-
-    csString progressionEventsText; ///< flat string with evts, loaded from the DB.
-    int nextProgressionEventID;
+    csString progressionScriptText; ///< flat string loaded from the DB.
     int     impervious_to_attack;
     /// Bitfield for which help events a character has already encountered.
     unsigned int     help_event_flags;
@@ -721,10 +663,7 @@ public:
 
     void LoadIntroductions();
 
-    void LoadSavedProgressionEvents();
-    int RegisterProgressionEvent(const csString & script, csTicks elapsedTicks);
-    void UnregisterProgressionEvent(int id);
-
+    void LoadActiveSpells();
     void AddSpell(psSpell * spell);
     bool Store(const char *location,const char *slot,psItem *what);
 
@@ -861,24 +800,20 @@ public:
     void SetProgressionPoints(unsigned int X,bool save);
     void UseProgressionPoints(unsigned int X);
 
-    void SetKFactor(float K);
-    float GetKFactor() const { return KFactor; }
     void SetSpellCasting(psSpellCastGameEvent * event) { spellCasting = event; }
     bool IsSpellCasting() { return spellCasting != NULL; }
     void InterruptSpellCasting();
-    float GetPowerLevel(); ///< Get spell casting power level
-    float GetPowerLevel( PSSKILL skill );
     /// Get the maximum realm the caster can cast with given skill
     int GetMaxAllowedRealm( PSSKILL skill );
     /// Checks if this character has enough knowledge to cast spell
     /// of given way and realm
     bool CheckMagicKnowledge( PSSKILL skill, int realm );
-    inline float GetSkillRank( PSSKILL skill ) { return skills.GetSkillRank(skill); }
+    SkillRank & GetSkillRank(PSSKILL skill) { return skills.GetSkillRank(skill); }
 
     PSCHARACTER_MODE GetMode() { return player_mode; }
     const char* GetModeStr(); ///< Return a string name of the mode
     bool CanSwitchMode(PSCHARACTER_MODE from, PSCHARACTER_MODE to);
-    void SetMode(PSCHARACTER_MODE newmode, uint32_t clientnum);
+    void SetMode(PSCHARACTER_MODE newmode, uint32_t clientnum, uint32_t extraData = 0);
 
     /**
      * Reset modes for NPCs
@@ -899,39 +834,27 @@ public:
       */
     void DropItem(psItem *&item, csVector3 pos = 0, bool guarded = true, bool transient = true, bool inplace = false);
 
-    float AdjustHitPoints(float adjust);
-    float AdjustHitPointsMax(float adjust);
-    float AdjustHitPointsMaxModifier(float adjust);
-    float AdjustHitPointsRate(float adjust);
-
-    float GetHitPointsMax();
-    float GetHitPointsMaxModifier();
+    float GetHP();
+    float GetMana();
+    float GetStamina(bool pys);
 
     void SetHitPoints(float v);
-    void SetHitPointsMax(float v);
-    void SetHitPointsMaxModifier(float v);
-    void SetHitPointsRate(float v);
-
-    float AdjustMana(float adjust);
-    float AdjustManaMax(float adjust);
-    float AdjustManaMaxModifier(float adjust);
-    float AdjustManaRate(float adjust);
-
-    float GetManaMax();
-    float GetManaMaxModifier();
-
     void SetMana(float v);
-    void SetManaMax(float v);
-    void SetManaMaxModifier(float v);
-    void SetManaRate(float v);
+    void SetStamina(float v, bool pys);
 
-    float AdjustStamina(float adjust, bool pys);
-    float AdjustStaminaMax(float adjust, bool pys);
-    float AdjustStaminaMaxModifier(float adjust, bool pys);
-    float AdjustStaminaRate(float adjust, bool pys);
+    void AdjustHitPoints(float adjust);
+    void AdjustMana(float adjust);
+    void AdjustStamina(float adjust, bool pys);
 
-    float GetStaminaMax(bool pys);
-    float GetStaminaMaxModifier(bool pys);
+    VitalBuffable & GetMaxHP();
+    VitalBuffable & GetMaxMana();
+    VitalBuffable & GetMaxPStamina();
+    VitalBuffable & GetMaxMStamina();
+
+    VitalBuffable & GetHPRate();
+    VitalBuffable & GetManaRate();
+    VitalBuffable & GetPStaminaRate();
+    VitalBuffable & GetMStaminaRate();
 
     void SetStaminaRegenerationNone(bool physical = true, bool mental = true);
     void SetStaminaRegenerationWalk(bool physical = true, bool mental = true);
@@ -940,15 +863,6 @@ public:
     void SetStaminaRegenerationWork(int skill);
 
     void CalculateMaxStamina();
-
-    void SetStamina(float v, bool pys);
-    void SetStaminaMax(float v, bool pys);
-    void SetStaminaMaxModifier(float v, bool pys);
-    void SetStaminaRate(float v, bool pys);
-
-    float GetHP();
-    float GetMana();
-    float GetStamina(bool pys);
 
     const char* GetHelmGroup() { return helmGroup.GetData(); }
 
@@ -976,8 +890,6 @@ public:
     bool IsBanker() const { return banker; }
 
 private:
-    float AdjustVital( int vitalName, int dirtyFlag, float adjust);
-    float SetVital( int vitalName, int dirtyFlag, float value);
     int FindGlyphSlot(const csArray<glyphSlotInfo>& slots, psItemStats * glyphType, int purifyStatus);
 
     csString helmGroup;                 // Some races share helms so this tells which
@@ -1026,13 +938,8 @@ public:
     float GetCounterBlockValueForWeaponInSlot(INVENTORY_SLOT_NUMBER slot);
     float GetDodgeValue();
 
-    float GetAttackValueModifier();
-    float GetDefenseValueModifier();
-    void  AdjustAttackValueModifier(float  mul);
-    void  AdjustDefenseValueModifier(float mul);
-
-    float GetMeleeDefensiveDamageModifier();
-    void  AdjustMeleeDefensiveDamageModifier(float mul);
+    Multiplier & AttackModifier()  { return attackModifier;  }
+    Multiplier & DefenseModifier() { return defenseModifier; }
 
     /// Practice skills for armor and weapons
     void PracticeArmorSkills(unsigned int practice, INVENTORY_SLOT_NUMBER attackLocation);
@@ -1088,7 +995,6 @@ public:
 
     psSpell * GetSpellByName(const csString& spellName);
     psSpell * GetSpellByIdx(int index);
-    csString GetXMLSpellList();
     csArray<psSpell*>& GetSpellList() { return spellList; }
 
     typedef enum
@@ -1167,6 +1073,7 @@ public:
     /// This is used by the math scripting engine to get various values.
     double GetProperty(const char *ptr);
     double CalcFunction(const char * functionName, const double * params);
+    const char* ToString() { return fullname.GetData(); }
 
     /// The exp to be handed out when this actor dies
     int GetKillExperience() { return kill_exp; }
@@ -1203,9 +1110,8 @@ public:
 
     int kill_exp; ///< Kill Exp
 
-    float attackValueModifier;          ///< Attack value is multiplied by this
-    float defenseValueModifier;         ///< Defense value is multiplied by this
-    float meleeDefensiveDamageModifier; ///< Melee damage to this character is multiplied by this
+    Multiplier attackModifier;  ///< Attack  value is multiplied by this
+    Multiplier defenseModifier; ///< Defense value is multiplied by this
 
     MathScript* powerScript, *maxRealmScript; ///< The PowerLevel math script
 

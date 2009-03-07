@@ -3998,6 +3998,8 @@ void AdminManager::CreateMoney(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDat
 
 void AdminManager::RunScript(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& data,Client *client, gemObject* object)
 {
+    psserver->SendSystemError(me->clientnum, "/runscript temporarily not implemented");
+    /*
     // Give syntax
     if((data.script.Length() == 0) || (data.script == "help"))
     {
@@ -4021,6 +4023,7 @@ void AdminManager::RunScript(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData&
         return;
     }
     psserver->SendSystemError(me->clientnum, "Progression script \"%s\" returned value=%f.",data.script.GetData(),result);
+    */
 }
 
 void AdminManager::ModifyKey(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& data,Client *client)
@@ -6453,7 +6456,7 @@ void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
             psSkillInfo * skill = CacheManager::GetSingleton().GetSkillByID(i);
             if (skill == NULL) continue;
 
-            unsigned int old_value = pchar->Skills().GetSkillRank(skill->id);
+            unsigned int old_value = pchar->Skills().GetSkillRank(skill->id).Current();
 
             if(data.value == -1)
             {
@@ -6484,7 +6487,7 @@ void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
             return;
         }
 
-        unsigned int old_value = pchar->Skills().GetSkillRank(skill->id);
+        unsigned int old_value = pchar->Skills().GetSkillRank(skill->id).Current();
         if (data.value == -1)
         {
             psserver->SendSystemInfo(me->clientnum, "Current '%s' of '%s' is %u",skill->name.GetDataSafe(), target->GetName(), old_value);
@@ -7154,6 +7157,7 @@ void AdminManager::ModifyItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     }
 }
 
+#define MORPH_FAKE_ACTIVESPELL ((ActiveSpell*) 0x447)
 void AdminManager::Morph(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client, Client *targetclient)
 {
     if (data.player == "list" && data.mesh.IsEmpty())
@@ -7208,18 +7212,13 @@ void AdminManager::Morph(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& dat
 
     if (data.mesh == "reset")
     {
-        if ( target->ResetMesh() )
-            psserver->SendSystemInfo(me->clientnum,"Resetting mesh for %s", targetclient->GetName() );
-        else
-            psserver->SendSystemError(me->clientnum,"Error resetting mesh for %s!", targetclient->GetName() );
-
+        psserver->SendSystemInfo(me->clientnum, "Resetting mesh for %s", targetclient->GetName());
+        target->GetOverridableMesh().Cancel(MORPH_FAKE_ACTIVESPELL);
     }
     else
     {
-        if ( target->SetMesh(data.mesh) )
-            psserver->SendSystemInfo(me->clientnum,"Setting mesh for %s to %s", targetclient->GetName(), data.mesh.GetData() );
-        else
-            psserver->SendSystemError(me->clientnum,"Error setting mesh %s!", data.mesh.GetData() );
+        psserver->SendSystemInfo(me->clientnum, "Overriding mesh for %s to %s", targetclient->GetName(), data.mesh.GetData());
+        target->GetOverridableMesh().Override(MORPH_FAKE_ACTIVESPELL, data.mesh);
     }
 }
 

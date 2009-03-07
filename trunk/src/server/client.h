@@ -152,7 +152,7 @@ public:
     void SetTargetObject(gemObject *object, bool updateClientGUI=false);
     gemObject* GetTargetObject() const { return target; }
 
-    // Mesh information
+    // Targeted mesh information - i.e. for adding action locations
     void SetMesh(csString nextMesh) { mesh = nextMesh; }
     csString GetMesh() const { return mesh; }
 

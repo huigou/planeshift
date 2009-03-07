@@ -264,6 +264,9 @@ public:
     Faction * GetFactionByName(const char *name);
     csHash<Faction*, int> &GetFactionHash() { return factions_by_id; }
     
+    // Progression Scripts
+    ProgressionScript *GetProgressionScript(const char *name);
+
     // Spells
     typedef csPDelArray<psSpell>::Iterator SpellIterator;
     psSpell *GetSpellByID(unsigned int id);
@@ -364,6 +367,7 @@ protected:
     bool PreloadItemCategories();
     bool PreloadWays();
     bool PreloadFactions();
+    bool PreloadScripts();
     bool PreloadSpells();
     bool PreloadItemStatsDatabase();
     bool PreloadItemAnimList();
@@ -436,6 +440,7 @@ protected:
     csPDelArray<psWay > wayList;
     csHash<Faction*, int> factions_by_id;
     BinaryRBTree<Faction> factions;
+    csHash<ProgressionScript*,csString> scripts;
     csPDelArray<psSpell > spellList;
     //csArray<psItemStats *> basicitemstatslist;
     csHash<psItemStats *,uint32> itemStats_IDHash;
