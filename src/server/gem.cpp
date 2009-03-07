@@ -3365,7 +3365,7 @@ void gemActor::SendBehaviorMessage(const csString & msg_id, gemObject *actor)
     else if (msg_id == "exchange")
         psserver->exchangemanager->StartExchange(actor->GetClient(), true);
     else if (msg_id == "attack")
-        psserver->usermanager->Attack(actor->GetCharacterData()->getStance("Normal"), actor->GetClient(), actor->GetClientID());
+        psserver->usermanager->Attack(actor->GetCharacterData()->getStance("Normal"), actor->GetClient());
 }
 
 void gemActor::SetAction(const char *anim,csTicks& timeDelay)
@@ -3826,7 +3826,7 @@ void gemNPC::SendBehaviorMessage(const csString & msg_id, gemObject *actor)
         psserver->usermanager->SendCharacterDescription(actor->GetClient(),
                                                         GetCharacterData(), false, false, "behaviorMsg");
     else if (msg_id == "attack")
-        psserver->usermanager->Attack(actor->GetCharacterData()->getStance("Normal"), actor->GetClient(), actor->GetClientID());
+        psserver->usermanager->Attack(actor->GetCharacterData()->getStance("Normal"), actor->GetClient());
     else if (msg_id == "loot")
         psserver->usermanager->Loot(actor->GetClient());
 }

@@ -81,6 +81,19 @@ protected:
 
     
     GEMClientObject* FindEntityWithName(const char *name);
+    
+    /** @brief Returns a target string formatted to be sent in a message
+     * 
+     * This function would be called on a target input by the player,
+     * and will return a string indicating the same target, formatted
+     * to be sent in a net message to the server. If this can't be done,
+     * it will send back an empty string (error)
+     * 
+     * @param target The target to be formatted
+     * 
+     * @return Returns the formatted target, or an empty string
+     */
+    csString FormatTarget(const csString& target = "target");
 
     void UpdateTarget(SearchDirection searchDirection,
                       EntityTypes entityType);
