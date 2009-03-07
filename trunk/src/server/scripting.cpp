@@ -118,6 +118,7 @@ protected:
 class AppliedOp
 {
 public:
+    virtual ~AppliedOp() { }
     virtual bool Load(iDocumentNode *node) = 0;
     virtual void Run(const MathEnvironment *env, gemActor *target, ActiveSpell *asp) = 0;
 };
@@ -345,6 +346,7 @@ class MsgCancel : public iCancelAction
 {
 public:
     MsgCancel(int clientnum, const csString & undo) : clientnum(clientnum), undo(undo) { }
+    virtual ~MsgCancel() { }
 
     void Cancel()
     {
@@ -399,6 +401,7 @@ class FxCancel : public iCancelAction
 {
 public:
     FxCancel(gemObject *target, uint32_t uid) : target(target), msg(uid) { }
+    virtual ~FxCancel() { }
 
     virtual void Cancel()
     {
@@ -510,6 +513,7 @@ class OnCancel : public iCancelAction
 {
 public:
     OnCancel(gemActor *actor, SCRIPT_TRIGGER type, ProgressionScript *script) : actor(actor), script(script), type(type) { }
+    virtual ~OnCancel() { }
 
     void Cancel()
     {
@@ -847,7 +851,7 @@ public:
 class ApplyOp : public ImperativeOp
 {
 public:
-    ~ApplyOp()
+    virtual ~ApplyOp()
     {
         if (aps)
             delete aps;
@@ -874,7 +878,7 @@ protected:
 class ApplyLinkedOp : public ImperativeOp
 {
 public:
-    ~ApplyLinkedOp()
+    virtual ~ApplyLinkedOp()
     {
         if (buff)
             delete buff;
@@ -1019,6 +1023,8 @@ protected:
 class MsgOp : public ImperativeOp
 {
 public:
+    virtual ~MsgOp() { }
+
     bool Load(iDocumentNode *node)
     {
         aim = node->GetAttributeValue("aim");
@@ -1062,6 +1068,8 @@ protected:
 class CancelOp : public ImperativeOp
 {
 public:
+    virtual ~CancelOp() { }
+
     bool Load(iDocumentNode *cancel)
     {
         aim = cancel->GetAttributeValue("aim");
@@ -1168,6 +1176,8 @@ protected:
 class FxOp : public ImperativeOp
 {
 public:
+    virtual ~FxOp() { }
+
     bool Load(iDocumentNode *top)
     {
         // type should probably be optional; I'm guessing most cases will want it attached...
@@ -1242,6 +1252,8 @@ class TeleportOp : public ImperativeOp
 class Imperative1 : public ImperativeOp
 {
 public:
+    virtual ~Imperative1() { }
+
     bool Load(iDocumentNode *node)
     {
         aim = node->GetAttributeValue("aim");
@@ -1456,6 +1468,8 @@ protected:
 class ActionOp : public Imperative1
 {
 public:
+    virtual ~ActionOp() { }
+
     bool Load(iDocumentNode *node)
     {
         sector = node->GetAttributeValue("sector");
@@ -1557,8 +1571,8 @@ protected:
 class KeyOp : public Imperative1
 {
 public:
-    KeyOp() : Imperative1() { };
-    virtual ~KeyOp() {};
+    KeyOp() : Imperative1() { }
+    virtual ~KeyOp() { }
 
     bool Load(iDocumentNode *node)
     {
@@ -1678,6 +1692,8 @@ protected:
 class ItemOp : public Imperative1
 {
 public:
+    virtual ~ItemOp() { }
+
     bool Load(iDocumentNode *node)
     {
         name = node->GetAttributeValue("name");
@@ -1784,6 +1800,8 @@ protected:
 class CreateFamiliarOp : public Imperative1
 {
 public:
+    virtual ~CreateFamiliarOp() { }
+
     void Run(const MathEnvironment *env)
     {
         gemActor *actor = GetActor(env, aim);
