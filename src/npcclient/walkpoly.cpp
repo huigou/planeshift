@@ -3018,7 +3018,7 @@ void psWalkPolyMap::Generate(psNPCClient* npcclient, psSeedSet & seeds, iSector 
     }
     
     prof.AddCons("generate", watch.Stop());
-    printf(prof.Dump("msec", "WalkPoly generation profile").GetData());
+    printf("%s", prof.Dump("msec", "WalkPoly generation profile").GetData());
     
     printf("ran out of seeds\n");
     DumpPolys();

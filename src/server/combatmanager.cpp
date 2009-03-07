@@ -893,7 +893,7 @@ void CombatManager::DebugOutput(psCombatGameEvent *event, const MathEnvironment 
       item->GetDamage(PSITEMSTATS_DAMAGETYPE_SLASH),item->GetDamage(PSITEMSTATS_DAMAGETYPE_BLUNT),item->GetDamage(PSITEMSTATS_DAMAGETYPE_PIERCE));
     debug.AppendFmt( "IAH: %1.6f AHR: %1.6f Blocked: %1.6f", IAH->GetValue(), AHR->GetValue(), blocked->GetValue());
     debug.AppendFmt( "QOH: %1.6f Damage: %1.1f\n", QOH->GetValue(), damage->GetValue());
-    Debug1(LOG_COMBAT, event->attacker->GetClientID(),debug.GetData());
+    Debug2(LOG_COMBAT, event->attacker->GetClientID(), "%s", debug.GetData());
 }
 
 

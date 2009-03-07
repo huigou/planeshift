@@ -395,10 +395,8 @@ bool psItem::Load(iResultRow& row)
         psSectorInfo *itemsector=CacheManager::GetSingleton().GetSectorInfoByID(row.GetInt("loc_sector_id"));
         if (!itemsector)
         {
-            csString error;
-            error.Format("Item %s(%s) Could not be loaded\nIt is in sector id %s which does not resolve\n",
-               GetName(), row["id"], row["loc_sector_id"] );
-            Error1( error );
+            Error4("Item %s(%s) Could not be loaded\nIt is in sector id %s which does not resolve\n",
+                   GetName(), row["id"], row["loc_sector_id"]);
             return false;
         }
 

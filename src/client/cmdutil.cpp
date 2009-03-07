@@ -242,7 +242,7 @@ csString psUtilityCommands::SaveCamera()
     //Write to the file
     psengine->GetVFS()->WriteFile (filename.GetData(), s.GetData(), s.Length());
 
-	return csString().Format("Saved graphic bug report (graphicbug%u.cam). "
+	return csString().Format("Saved graphic bug report (graphicbug%lu.cam). "
 							"Report it to http://hydlaaplaza.com/flyspray/", reportNum);
 }
 

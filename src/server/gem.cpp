@@ -3708,7 +3708,7 @@ void gemNPC::ShowPopupMenu(Client *client)
             printf("Skipping completed or irrelevant quest: %s\n", q->GetName() );
             continue;
         }
-        printf("Checking quest %u: %s.  ", i, q->GetName() );
+        printf("Checking quest %lu: %s.  ", (unsigned long) i, q->GetName() );
         int last_response = quests[i]->last_response;
         printf("Got last response %d\n", last_response);
 
@@ -3719,7 +3719,7 @@ void gemNPC::ShowPopupMenu(Client *client)
         }
         else
         {
-            printf("Got last_response==-1 for quest %d.\n",i);
+            printf("Got last_response==-1 for quest %lu.\n", (unsigned long) i);
         }
     }
 

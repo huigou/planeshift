@@ -423,8 +423,7 @@ void NPCManager::HandleConsoleCommand(MsgEntry *me,Client *client)
         buffer = cmd ? "That command is not allowed to be executed remotely"
                      : "No command by that name.  Please try again.";
     }
-    printf(buffer);
-    printf("\n");
+    printf("%s\n", buffer.GetData());
 
     psServerCommandMessage retn(me->clientnum, buffer);
     retn.SendMessage();

@@ -319,7 +319,7 @@ bool psCharacterInventory::AddLoadedItem(uint32 parentID, INVENTORY_SLOT_NUMBER 
                      owner->GetCharName(), 
                      ShowID(owner->GetPID()),
                      slot); 
-        Bug1(error);
+        Bug2("%s", error);
         return false;
     }
 
