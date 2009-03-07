@@ -197,6 +197,7 @@ float psSpell::ChanceOfResearchSuccess(psCharacter *researcher)
 
     MathEnvironment env;
     env.Define("Spell", this);
+    env.Define("WaySkill", way->skill);
     script->Evaluate(&env);
 
     MathVar *chance = env.Lookup("ChanceOfSuccess");
