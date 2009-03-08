@@ -7,718 +7,13 @@
 	SccProjectName=""
 	SccLocalPath="">
 	<Platforms>
-		<Platform Name="Win32"/>
-		<Platform Name="x64"/>
-	</Platforms>
+  		<Platform Name="Win32"/>
+    	</Platforms>
 	<Configurations>
-      		<Configuration
-			Name="Release (with static libs)|Win32"
-			OutputDirectory="..\..\out\release7\build\grpapps_pstypical\Win32"
-			IntermediateDirectory="..\..\out\release7\build\grpapps_pstypical\Win32"
-			ConfigurationType="4"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE">
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="2"
-				StringPooling="TRUE"
-				EnableFunctionLevelLinking="TRUE"
-				RuntimeLibrary="2"
-				DebugInformationFormat="3"
-				BufferSecurityCheck="FALSE"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32"
-				OptimizeForProcessor="1"
-				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\release7\build\grpapps_pstypical\Win32\grpapps_pstypical.pch"
-				AssemblerListingLocation="..\..\out\release7\build\grpapps_pstypical\Win32"
-				ObjectFile="..\..\out\release7\build\grpapps_pstypical\Win32"
-				WarningLevel="3"
-				SuppressStartupBanner="TRUE"
-				Detect64BitPortabilityProblems="false"
-				TreatWChar_tAsBuiltInType="false"
-				ForceConformanceInForLoopScope="true"
-				DebugInformationFormat="4"
-				CompileAs="0"/>
-			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"
-				LinkIncremental="1"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				GenerateDebugInformation="TRUE"
-				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD"
-				AdditionalOptions=" "
-				AdditionalDependencies=""
-				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
-				TargetMachine="1"/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="..\..\out\release7\libs\Win32\grpapps_pstypical.lib"
-				SuppressStartupBanner="TRUE"/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX"
-				MkTypLibCompatible="TRUE"
-				SuppressStartupBanner="TRUE"
-				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\release7\build\grpapps_pstypical\Win32\grpapps_pstypical.tlb"/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\release7\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release7\bin\&#x0D;&#x0A;"
-				/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\tools\ccheck;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				Culture="1033"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
-		</Configuration>
-    		<Configuration
-			Name="Release (with DLLs)|Win32"
-			OutputDirectory="..\..\out\release7\build\grpapps_pstypical\Win32"
-			IntermediateDirectory="..\..\out\release7\build\grpapps_pstypical\Win32"
-			ConfigurationType="4"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE">
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="2"
-				StringPooling="TRUE"
-				EnableFunctionLevelLinking="TRUE"
-				RuntimeLibrary="2"
-				DebugInformationFormat="3"
-				BufferSecurityCheck="FALSE"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32;CS_BUILD_SHARED_LIBS"
-				OptimizeForProcessor="1"
-				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\release7\build\grpapps_pstypical\Win32\grpapps_pstypical.pch"
-				AssemblerListingLocation="..\..\out\release7\build\grpapps_pstypical\Win32"
-				ObjectFile="..\..\out\release7\build\grpapps_pstypical\Win32"
-				WarningLevel="3"
-				SuppressStartupBanner="TRUE"
-				Detect64BitPortabilityProblems="false"
-				TreatWChar_tAsBuiltInType="false"
-				ForceConformanceInForLoopScope="true"
-				DebugInformationFormat="4"
-				CompileAs="0"/>
-			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"
-				LinkIncremental="1"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				GenerateDebugInformation="TRUE"
-				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD"
-				AdditionalOptions=" "
-				AdditionalDependencies=""
-				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
-				TargetMachine="1"/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="..\..\out\release7\libs\Win32\grpapps_pstypical.lib"
-				SuppressStartupBanner="TRUE"/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX"
-				MkTypLibCompatible="TRUE"
-				SuppressStartupBanner="TRUE"
-				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\release7\build\grpapps_pstypical\Win32\grpapps_pstypical.tlb"/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\release7\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release7\bin\&#x0D;&#x0A;"
-				/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\tools\ccheck;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				Culture="1033"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
-		</Configuration>
-          		<Configuration
-			Name="Debug (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug7\build\grpapps_pstypical\Win32"
-			IntermediateDirectory="..\..\out\debug7\build\grpapps_pstypical\Win32"
-			ConfigurationType="4"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE">
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				MinimalRebuild="TRUE"
-				DebugInformationFormat="4"
-				RuntimeTypeInfo="TRUE"
-				RuntimeLibrary="3"
-
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32"
-				OptimizeForProcessor="1"
-				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug7\build\grpapps_pstypical\Win32\grpapps_pstypical.pch"
-				AssemblerListingLocation="..\..\out\debug7\build\grpapps_pstypical\Win32"
-				ObjectFile="..\..\out\debug7\build\grpapps_pstypical\Win32"
-				WarningLevel="3"
-				SuppressStartupBanner="TRUE"
-				Detect64BitPortabilityProblems="false"
-				TreatWChar_tAsBuiltInType="false"
-				ForceConformanceInForLoopScope="true"
-				DebugInformationFormat="4"
-				CompileAs="0"/>
-			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"
-				LinkIncremental="2"
-				GenerateDebugInformation="TRUE"
-				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				AdditionalOptions=" "
-				AdditionalDependencies=""
-				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
-				TargetMachine="1"/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug7\libs\Win32\grpapps_pstypical.lib"
-				SuppressStartupBanner="TRUE"/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX"
-				MkTypLibCompatible="TRUE"
-				SuppressStartupBanner="TRUE"
-				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug7\build\grpapps_pstypical\Win32\grpapps_pstypical.tlb"/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug7\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug7\bin\&#x0D;&#x0A;"
-				/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\tools\ccheck;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				Culture="1033"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
-		</Configuration>
-    		<Configuration
-			Name="Debug (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug7\build\grpapps_pstypical\Win32"
-			IntermediateDirectory="..\..\out\debug7\build\grpapps_pstypical\Win32"
-			ConfigurationType="4"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE">
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				MinimalRebuild="TRUE"
-				DebugInformationFormat="4"
-				RuntimeTypeInfo="TRUE"
-				RuntimeLibrary="3"
-
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32;CS_BUILD_SHARED_LIBS"
-				OptimizeForProcessor="1"
-				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug7\build\grpapps_pstypical\Win32\grpapps_pstypical.pch"
-				AssemblerListingLocation="..\..\out\debug7\build\grpapps_pstypical\Win32"
-				ObjectFile="..\..\out\debug7\build\grpapps_pstypical\Win32"
-				WarningLevel="3"
-				SuppressStartupBanner="TRUE"
-				Detect64BitPortabilityProblems="false"
-				TreatWChar_tAsBuiltInType="false"
-				ForceConformanceInForLoopScope="true"
-				DebugInformationFormat="4"
-				CompileAs="0"/>
-			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"
-				LinkIncremental="2"
-				GenerateDebugInformation="TRUE"
-				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				AdditionalOptions=" "
-				AdditionalDependencies=""
-				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
-				TargetMachine="1"/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug7\libs\Win32\grpapps_pstypical.lib"
-				SuppressStartupBanner="TRUE"/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX"
-				MkTypLibCompatible="TRUE"
-				SuppressStartupBanner="TRUE"
-				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug7\build\grpapps_pstypical\Win32\grpapps_pstypical.tlb"/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug7\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug7\bin\&#x0D;&#x0A;"
-				/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\tools\ccheck;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				Culture="1033"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
-		</Configuration>
-          		<Configuration
-			Name="MemoryTracker (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug7\build\grpapps_pstypical\Win32"
-			IntermediateDirectory="..\..\out\debug7\build\grpapps_pstypical\Win32"
-			ConfigurationType="4"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE">
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				MinimalRebuild="TRUE"
-				DebugInformationFormat="4"
-				RuntimeTypeInfo="TRUE"
-				RuntimeLibrary="3"
-
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;WIN32"
-				OptimizeForProcessor="1"
-				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug7\build\grpapps_pstypical\Win32\grpapps_pstypical.pch"
-				AssemblerListingLocation="..\..\out\debug7\build\grpapps_pstypical\Win32"
-				ObjectFile="..\..\out\debug7\build\grpapps_pstypical\Win32"
-				WarningLevel="3"
-				SuppressStartupBanner="TRUE"
-				Detect64BitPortabilityProblems="false"
-				TreatWChar_tAsBuiltInType="false"
-				ForceConformanceInForLoopScope="true"
-				DebugInformationFormat="4"
-				CompileAs="0"/>
-			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"
-				LinkIncremental="2"
-				GenerateDebugInformation="TRUE"
-				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				AdditionalOptions=" "
-				AdditionalDependencies=""
-				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
-				TargetMachine="1"/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug7\libs\Win32\grpapps_pstypical.lib"
-				SuppressStartupBanner="TRUE"/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER"
-				MkTypLibCompatible="TRUE"
-				SuppressStartupBanner="TRUE"
-				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug7\build\grpapps_pstypical\Win32\grpapps_pstypical.tlb"/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug7\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug7\bin\&#x0D;&#x0A;"
-				/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\tools\ccheck;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				Culture="1033"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
-		</Configuration>
-    		<Configuration
-			Name="MemoryTracker (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug7\build\grpapps_pstypical\Win32"
-			IntermediateDirectory="..\..\out\debug7\build\grpapps_pstypical\Win32"
-			ConfigurationType="4"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE">
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				MinimalRebuild="TRUE"
-				DebugInformationFormat="4"
-				RuntimeTypeInfo="TRUE"
-				RuntimeLibrary="3"
-
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;WIN32;CS_BUILD_SHARED_LIBS"
-				OptimizeForProcessor="1"
-				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug7\build\grpapps_pstypical\Win32\grpapps_pstypical.pch"
-				AssemblerListingLocation="..\..\out\debug7\build\grpapps_pstypical\Win32"
-				ObjectFile="..\..\out\debug7\build\grpapps_pstypical\Win32"
-				WarningLevel="3"
-				SuppressStartupBanner="TRUE"
-				Detect64BitPortabilityProblems="false"
-				TreatWChar_tAsBuiltInType="false"
-				ForceConformanceInForLoopScope="true"
-				DebugInformationFormat="4"
-				CompileAs="0"/>
-			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"
-				LinkIncremental="2"
-				GenerateDebugInformation="TRUE"
-				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				AdditionalOptions=" "
-				AdditionalDependencies=""
-				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
-				TargetMachine="1"/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug7\libs\Win32\grpapps_pstypical.lib"
-				SuppressStartupBanner="TRUE"/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER"
-				MkTypLibCompatible="TRUE"
-				SuppressStartupBanner="TRUE"
-				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug7\build\grpapps_pstypical\Win32\grpapps_pstypical.tlb"/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug7\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug7\bin\&#x0D;&#x0A;"
-				/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\tools\ccheck;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				Culture="1033"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
-		</Configuration>
-          		<Configuration
-			Name="RefTracker (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug7\build\grpapps_pstypical\Win32"
-			IntermediateDirectory="..\..\out\debug7\build\grpapps_pstypical\Win32"
-			ConfigurationType="4"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE">
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				MinimalRebuild="TRUE"
-				DebugInformationFormat="4"
-				RuntimeTypeInfo="TRUE"
-				RuntimeLibrary="3"
-
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;WIN32"
-				OptimizeForProcessor="1"
-				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug7\build\grpapps_pstypical\Win32\grpapps_pstypical.pch"
-				AssemblerListingLocation="..\..\out\debug7\build\grpapps_pstypical\Win32"
-				ObjectFile="..\..\out\debug7\build\grpapps_pstypical\Win32"
-				WarningLevel="3"
-				SuppressStartupBanner="TRUE"
-				Detect64BitPortabilityProblems="false"
-				TreatWChar_tAsBuiltInType="false"
-				ForceConformanceInForLoopScope="true"
-				DebugInformationFormat="4"
-				CompileAs="0"/>
-			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"
-				LinkIncremental="2"
-				GenerateDebugInformation="TRUE"
-				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				AdditionalOptions=" "
-				AdditionalDependencies=""
-				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
-				TargetMachine="1"/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug7\libs\Win32\grpapps_pstypical.lib"
-				SuppressStartupBanner="TRUE"/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER"
-				MkTypLibCompatible="TRUE"
-				SuppressStartupBanner="TRUE"
-				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug7\build\grpapps_pstypical\Win32\grpapps_pstypical.tlb"/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug7\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug7\bin\&#x0D;&#x0A;"
-				/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\tools\ccheck;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				Culture="1033"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
-		</Configuration>
-    		<Configuration
-			Name="RefTracker (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug7\build\grpapps_pstypical\Win32"
-			IntermediateDirectory="..\..\out\debug7\build\grpapps_pstypical\Win32"
-			ConfigurationType="4"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE">
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				MinimalRebuild="TRUE"
-				DebugInformationFormat="4"
-				RuntimeTypeInfo="TRUE"
-				RuntimeLibrary="3"
-
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;WIN32;CS_BUILD_SHARED_LIBS"
-				OptimizeForProcessor="1"
-				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug7\build\grpapps_pstypical\Win32\grpapps_pstypical.pch"
-				AssemblerListingLocation="..\..\out\debug7\build\grpapps_pstypical\Win32"
-				ObjectFile="..\..\out\debug7\build\grpapps_pstypical\Win32"
-				WarningLevel="3"
-				SuppressStartupBanner="TRUE"
-				Detect64BitPortabilityProblems="false"
-				TreatWChar_tAsBuiltInType="false"
-				ForceConformanceInForLoopScope="true"
-				DebugInformationFormat="4"
-				CompileAs="0"/>
-			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"
-				LinkIncremental="2"
-				GenerateDebugInformation="TRUE"
-				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				AdditionalOptions=" "
-				AdditionalDependencies=""
-				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
-				TargetMachine="1"/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug7\libs\Win32\grpapps_pstypical.lib"
-				SuppressStartupBanner="TRUE"/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER"
-				MkTypLibCompatible="TRUE"
-				SuppressStartupBanner="TRUE"
-				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug7\build\grpapps_pstypical\Win32\grpapps_pstypical.tlb"/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug7\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug7\bin\&#x0D;&#x0A;"
-				/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\tools\ccheck;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				Culture="1033"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
-		</Configuration>
-          		<Configuration
-			Name="DebugPSReleaseCSCEL (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug7\build\grpapps_pstypical\Win32"
-			IntermediateDirectory="..\..\out\debug7\build\grpapps_pstypical\Win32"
-			ConfigurationType="4"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE">
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				MinimalRebuild="TRUE"
-				DebugInformationFormat="4"
-				RuntimeTypeInfo="TRUE"
-				RuntimeLibrary="3"
-
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32"
-				OptimizeForProcessor="1"
-				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug7\build\grpapps_pstypical\Win32\grpapps_pstypical.pch"
-				AssemblerListingLocation="..\..\out\debug7\build\grpapps_pstypical\Win32"
-				ObjectFile="..\..\out\debug7\build\grpapps_pstypical\Win32"
-				WarningLevel="3"
-				SuppressStartupBanner="TRUE"
-				Detect64BitPortabilityProblems="false"
-				TreatWChar_tAsBuiltInType="false"
-				ForceConformanceInForLoopScope="true"
-				DebugInformationFormat="4"
-				CompileAs="0"/>
-			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"
-				LinkIncremental="2"
-				GenerateDebugInformation="TRUE"
-				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				AdditionalOptions=" "
-				AdditionalDependencies=""
-				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
-				TargetMachine="1"/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug7\libs\Win32\grpapps_pstypical.lib"
-				SuppressStartupBanner="TRUE"/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX"
-				MkTypLibCompatible="TRUE"
-				SuppressStartupBanner="TRUE"
-				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug7\build\grpapps_pstypical\Win32\grpapps_pstypical.tlb"/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug7\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug7\bin\&#x0D;&#x0A;"
-				/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\tools\ccheck;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				Culture="1033"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
-		</Configuration>
-    		<Configuration
-			Name="DebugPSReleaseCSCEL (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug7\build\grpapps_pstypical\Win32"
-			IntermediateDirectory="..\..\out\debug7\build\grpapps_pstypical\Win32"
-			ConfigurationType="4"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE">
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				MinimalRebuild="TRUE"
-				DebugInformationFormat="4"
-				RuntimeTypeInfo="TRUE"
-				RuntimeLibrary="3"
-
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32;CS_BUILD_SHARED_LIBS"
-				OptimizeForProcessor="1"
-				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug7\build\grpapps_pstypical\Win32\grpapps_pstypical.pch"
-				AssemblerListingLocation="..\..\out\debug7\build\grpapps_pstypical\Win32"
-				ObjectFile="..\..\out\debug7\build\grpapps_pstypical\Win32"
-				WarningLevel="3"
-				SuppressStartupBanner="TRUE"
-				Detect64BitPortabilityProblems="false"
-				TreatWChar_tAsBuiltInType="false"
-				ForceConformanceInForLoopScope="true"
-				DebugInformationFormat="4"
-				CompileAs="0"/>
-			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"
-				LinkIncremental="2"
-				GenerateDebugInformation="TRUE"
-				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				AdditionalOptions=" "
-				AdditionalDependencies=""
-				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
-				TargetMachine="1"/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug7\libs\Win32\grpapps_pstypical.lib"
-				SuppressStartupBanner="TRUE"/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX"
-				MkTypLibCompatible="TRUE"
-				SuppressStartupBanner="TRUE"
-				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug7\build\grpapps_pstypical\Win32\grpapps_pstypical.tlb"/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug7\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug7\bin\&#x0D;&#x0A;"
-				/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\tools\ccheck;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				Culture="1033"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
-		</Configuration>
             		<Configuration
-			Name="Release (with static libs)|x64"
-			OutputDirectory="..\..\out\release7\build\grpapps_pstypical\x64"
-			IntermediateDirectory="..\..\out\release7\build\grpapps_pstypical\x64"
+			Name="Release (with static libs)|Win32"
+			OutputDirectory="..\..\out\release7\build\grpapps_pstypical\"
+			IntermediateDirectory="..\..\out\release7\build\grpapps_pstypical\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -728,15 +23,14 @@
 				StringPooling="TRUE"
 				EnableFunctionLevelLinking="TRUE"
 				RuntimeLibrary="2"
-				DebugInformationFormat="3"
 				BufferSecurityCheck="FALSE"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\release7\build\grpapps_pstypical\x64\grpapps_pstypical.pch"
-				AssemblerListingLocation="..\..\out\release7\build\grpapps_pstypical\x64"
-				ObjectFile="..\..\out\release7\build\grpapps_pstypical\x64"
+				PrecompiledHeaderFile="..\..\out\release7\build\grpapps_pstypical\grpapps_pstypical.pch"
+				AssemblerListingLocation="..\..\out\release7\build\grpapps_pstypical\"
+				ObjectFile="..\..\out\release7\build\grpapps_pstypical\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -757,10 +51,10 @@
 				AdditionalDependencies=""
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories=""
-				TargetMachine="17"/>
+				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\release7\libs\x64\grpapps_pstypical.lib"
+				OutputFile="..\..\out\release7\libs\grpapps_pstypical.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -768,7 +62,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\release7\build\grpapps_pstypical\x64\grpapps_pstypical.tlb"/>
+				TypeLibraryName="..\..\out\release7\build\grpapps_pstypical\grpapps_pstypical.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\release7\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release7\bin\&#x0D;&#x0A;"
@@ -787,10 +81,10 @@
 			<Tool
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
-    		<Configuration
-			Name="Release (with DLLs)|x64"
-			OutputDirectory="..\..\out\release7\build\grpapps_pstypical\x64"
-			IntermediateDirectory="..\..\out\release7\build\grpapps_pstypical\x64"
+      		<Configuration
+			Name="Release (with DLLs)|Win32"
+			OutputDirectory="..\..\out\release7\build\grpapps_pstypical\"
+			IntermediateDirectory="..\..\out\release7\build\grpapps_pstypical\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -800,15 +94,14 @@
 				StringPooling="TRUE"
 				EnableFunctionLevelLinking="TRUE"
 				RuntimeLibrary="2"
-				DebugInformationFormat="3"
 				BufferSecurityCheck="FALSE"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\release7\build\grpapps_pstypical\x64\grpapps_pstypical.pch"
-				AssemblerListingLocation="..\..\out\release7\build\grpapps_pstypical\x64"
-				ObjectFile="..\..\out\release7\build\grpapps_pstypical\x64"
+				PrecompiledHeaderFile="..\..\out\release7\build\grpapps_pstypical\grpapps_pstypical.pch"
+				AssemblerListingLocation="..\..\out\release7\build\grpapps_pstypical\"
+				ObjectFile="..\..\out\release7\build\grpapps_pstypical\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -829,10 +122,10 @@
 				AdditionalDependencies=""
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories=""
-				TargetMachine="17"/>
+				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\release7\libs\x64\grpapps_pstypical.lib"
+				OutputFile="..\..\out\release7\libs\grpapps_pstypical.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -840,7 +133,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\release7\build\grpapps_pstypical\x64\grpapps_pstypical.tlb"/>
+				TypeLibraryName="..\..\out\release7\build\grpapps_pstypical\grpapps_pstypical.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\release7\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release7\bin\&#x0D;&#x0A;"
@@ -859,10 +152,10 @@
 			<Tool
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
-          		<Configuration
-			Name="Debug (with static libs)|x64"
-			OutputDirectory="..\..\out\debug7\build\grpapps_pstypical\x64"
-			IntermediateDirectory="..\..\out\debug7\build\grpapps_pstypical\x64"
+                		<Configuration
+			Name="Debug (with static libs)|Win32"
+			OutputDirectory="..\..\out\debug7\build\grpapps_pstypical\"
+			IntermediateDirectory="..\..\out\debug7\build\grpapps_pstypical\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -870,7 +163,6 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				MinimalRebuild="TRUE"
-				DebugInformationFormat="4"
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
@@ -878,15 +170,15 @@
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug7\build\grpapps_pstypical\x64\grpapps_pstypical.pch"
-				AssemblerListingLocation="..\..\out\debug7\build\grpapps_pstypical\x64"
-				ObjectFile="..\..\out\debug7\build\grpapps_pstypical\x64"
+				PrecompiledHeaderFile="..\..\out\debug7\build\grpapps_pstypical\grpapps_pstypical.pch"
+				AssemblerListingLocation="..\..\out\debug7\build\grpapps_pstypical\"
+				ObjectFile="..\..\out\debug7\build\grpapps_pstypical\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
 				TreatWChar_tAsBuiltInType="false"
 				ForceConformanceInForLoopScope="true"
-				DebugInformationFormat="3"
+				DebugInformationFormat="4"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -899,10 +191,10 @@
 				AdditionalDependencies=""
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories=""
-				TargetMachine="17"/>
+				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug7\libs\x64\grpapps_pstypical.lib"
+				OutputFile="..\..\out\debug7\libs\grpapps_pstypical.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -910,7 +202,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug7\build\grpapps_pstypical\x64\grpapps_pstypical.tlb"/>
+				TypeLibraryName="..\..\out\debug7\build\grpapps_pstypical\grpapps_pstypical.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug7\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug7\bin\&#x0D;&#x0A;"
@@ -929,10 +221,10 @@
 			<Tool
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
-    		<Configuration
-			Name="Debug (with DLLs)|x64"
-			OutputDirectory="..\..\out\debug7\build\grpapps_pstypical\x64"
-			IntermediateDirectory="..\..\out\debug7\build\grpapps_pstypical\x64"
+      		<Configuration
+			Name="Debug (with DLLs)|Win32"
+			OutputDirectory="..\..\out\debug7\build\grpapps_pstypical\"
+			IntermediateDirectory="..\..\out\debug7\build\grpapps_pstypical\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -940,7 +232,6 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				MinimalRebuild="TRUE"
-				DebugInformationFormat="4"
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
@@ -948,15 +239,15 @@
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug7\build\grpapps_pstypical\x64\grpapps_pstypical.pch"
-				AssemblerListingLocation="..\..\out\debug7\build\grpapps_pstypical\x64"
-				ObjectFile="..\..\out\debug7\build\grpapps_pstypical\x64"
+				PrecompiledHeaderFile="..\..\out\debug7\build\grpapps_pstypical\grpapps_pstypical.pch"
+				AssemblerListingLocation="..\..\out\debug7\build\grpapps_pstypical\"
+				ObjectFile="..\..\out\debug7\build\grpapps_pstypical\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
 				TreatWChar_tAsBuiltInType="false"
 				ForceConformanceInForLoopScope="true"
-				DebugInformationFormat="3"
+				DebugInformationFormat="4"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -969,10 +260,10 @@
 				AdditionalDependencies=""
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories=""
-				TargetMachine="17"/>
+				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug7\libs\x64\grpapps_pstypical.lib"
+				OutputFile="..\..\out\debug7\libs\grpapps_pstypical.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -980,7 +271,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug7\build\grpapps_pstypical\x64\grpapps_pstypical.tlb"/>
+				TypeLibraryName="..\..\out\debug7\build\grpapps_pstypical\grpapps_pstypical.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug7\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug7\bin\&#x0D;&#x0A;"
@@ -999,10 +290,10 @@
 			<Tool
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
-          		<Configuration
-			Name="MemoryTracker (with static libs)|x64"
-			OutputDirectory="..\..\out\debug7\build\grpapps_pstypical\x64"
-			IntermediateDirectory="..\..\out\debug7\build\grpapps_pstypical\x64"
+                		<Configuration
+			Name="MemoryTracker (with static libs)|Win32"
+			OutputDirectory="..\..\out\debug7\build\grpapps_pstypical\"
+			IntermediateDirectory="..\..\out\debug7\build\grpapps_pstypical\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -1010,7 +301,6 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				MinimalRebuild="TRUE"
-				DebugInformationFormat="4"
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
@@ -1018,15 +308,15 @@
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug7\build\grpapps_pstypical\x64\grpapps_pstypical.pch"
-				AssemblerListingLocation="..\..\out\debug7\build\grpapps_pstypical\x64"
-				ObjectFile="..\..\out\debug7\build\grpapps_pstypical\x64"
+				PrecompiledHeaderFile="..\..\out\debug7\build\grpapps_pstypical\grpapps_pstypical.pch"
+				AssemblerListingLocation="..\..\out\debug7\build\grpapps_pstypical\"
+				ObjectFile="..\..\out\debug7\build\grpapps_pstypical\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
 				TreatWChar_tAsBuiltInType="false"
 				ForceConformanceInForLoopScope="true"
-				DebugInformationFormat="3"
+				DebugInformationFormat="4"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -1039,10 +329,10 @@
 				AdditionalDependencies=""
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories=""
-				TargetMachine="17"/>
+				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug7\libs\x64\grpapps_pstypical.lib"
+				OutputFile="..\..\out\debug7\libs\grpapps_pstypical.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -1050,7 +340,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug7\build\grpapps_pstypical\x64\grpapps_pstypical.tlb"/>
+				TypeLibraryName="..\..\out\debug7\build\grpapps_pstypical\grpapps_pstypical.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug7\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug7\bin\&#x0D;&#x0A;"
@@ -1069,10 +359,10 @@
 			<Tool
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
-    		<Configuration
-			Name="MemoryTracker (with DLLs)|x64"
-			OutputDirectory="..\..\out\debug7\build\grpapps_pstypical\x64"
-			IntermediateDirectory="..\..\out\debug7\build\grpapps_pstypical\x64"
+      		<Configuration
+			Name="MemoryTracker (with DLLs)|Win32"
+			OutputDirectory="..\..\out\debug7\build\grpapps_pstypical\"
+			IntermediateDirectory="..\..\out\debug7\build\grpapps_pstypical\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -1080,7 +370,6 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				MinimalRebuild="TRUE"
-				DebugInformationFormat="4"
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
@@ -1088,15 +377,15 @@
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug7\build\grpapps_pstypical\x64\grpapps_pstypical.pch"
-				AssemblerListingLocation="..\..\out\debug7\build\grpapps_pstypical\x64"
-				ObjectFile="..\..\out\debug7\build\grpapps_pstypical\x64"
+				PrecompiledHeaderFile="..\..\out\debug7\build\grpapps_pstypical\grpapps_pstypical.pch"
+				AssemblerListingLocation="..\..\out\debug7\build\grpapps_pstypical\"
+				ObjectFile="..\..\out\debug7\build\grpapps_pstypical\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
 				TreatWChar_tAsBuiltInType="false"
 				ForceConformanceInForLoopScope="true"
-				DebugInformationFormat="3"
+				DebugInformationFormat="4"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -1109,10 +398,10 @@
 				AdditionalDependencies=""
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories=""
-				TargetMachine="17"/>
+				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug7\libs\x64\grpapps_pstypical.lib"
+				OutputFile="..\..\out\debug7\libs\grpapps_pstypical.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -1120,7 +409,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug7\build\grpapps_pstypical\x64\grpapps_pstypical.tlb"/>
+				TypeLibraryName="..\..\out\debug7\build\grpapps_pstypical\grpapps_pstypical.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug7\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug7\bin\&#x0D;&#x0A;"
@@ -1139,10 +428,10 @@
 			<Tool
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
-          		<Configuration
-			Name="RefTracker (with static libs)|x64"
-			OutputDirectory="..\..\out\debug7\build\grpapps_pstypical\x64"
-			IntermediateDirectory="..\..\out\debug7\build\grpapps_pstypical\x64"
+                		<Configuration
+			Name="RefTracker (with static libs)|Win32"
+			OutputDirectory="..\..\out\debug7\build\grpapps_pstypical\"
+			IntermediateDirectory="..\..\out\debug7\build\grpapps_pstypical\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -1150,7 +439,6 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				MinimalRebuild="TRUE"
-				DebugInformationFormat="4"
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
@@ -1158,15 +446,15 @@
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug7\build\grpapps_pstypical\x64\grpapps_pstypical.pch"
-				AssemblerListingLocation="..\..\out\debug7\build\grpapps_pstypical\x64"
-				ObjectFile="..\..\out\debug7\build\grpapps_pstypical\x64"
+				PrecompiledHeaderFile="..\..\out\debug7\build\grpapps_pstypical\grpapps_pstypical.pch"
+				AssemblerListingLocation="..\..\out\debug7\build\grpapps_pstypical\"
+				ObjectFile="..\..\out\debug7\build\grpapps_pstypical\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
 				TreatWChar_tAsBuiltInType="false"
 				ForceConformanceInForLoopScope="true"
-				DebugInformationFormat="3"
+				DebugInformationFormat="4"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -1179,10 +467,10 @@
 				AdditionalDependencies=""
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories=""
-				TargetMachine="17"/>
+				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug7\libs\x64\grpapps_pstypical.lib"
+				OutputFile="..\..\out\debug7\libs\grpapps_pstypical.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -1190,7 +478,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug7\build\grpapps_pstypical\x64\grpapps_pstypical.tlb"/>
+				TypeLibraryName="..\..\out\debug7\build\grpapps_pstypical\grpapps_pstypical.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug7\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug7\bin\&#x0D;&#x0A;"
@@ -1209,10 +497,10 @@
 			<Tool
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
-    		<Configuration
-			Name="RefTracker (with DLLs)|x64"
-			OutputDirectory="..\..\out\debug7\build\grpapps_pstypical\x64"
-			IntermediateDirectory="..\..\out\debug7\build\grpapps_pstypical\x64"
+      		<Configuration
+			Name="RefTracker (with DLLs)|Win32"
+			OutputDirectory="..\..\out\debug7\build\grpapps_pstypical\"
+			IntermediateDirectory="..\..\out\debug7\build\grpapps_pstypical\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -1220,7 +508,6 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				MinimalRebuild="TRUE"
-				DebugInformationFormat="4"
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
@@ -1228,15 +515,15 @@
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug7\build\grpapps_pstypical\x64\grpapps_pstypical.pch"
-				AssemblerListingLocation="..\..\out\debug7\build\grpapps_pstypical\x64"
-				ObjectFile="..\..\out\debug7\build\grpapps_pstypical\x64"
+				PrecompiledHeaderFile="..\..\out\debug7\build\grpapps_pstypical\grpapps_pstypical.pch"
+				AssemblerListingLocation="..\..\out\debug7\build\grpapps_pstypical\"
+				ObjectFile="..\..\out\debug7\build\grpapps_pstypical\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
 				TreatWChar_tAsBuiltInType="false"
 				ForceConformanceInForLoopScope="true"
-				DebugInformationFormat="3"
+				DebugInformationFormat="4"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -1249,10 +536,10 @@
 				AdditionalDependencies=""
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories=""
-				TargetMachine="17"/>
+				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug7\libs\x64\grpapps_pstypical.lib"
+				OutputFile="..\..\out\debug7\libs\grpapps_pstypical.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -1260,7 +547,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug7\build\grpapps_pstypical\x64\grpapps_pstypical.tlb"/>
+				TypeLibraryName="..\..\out\debug7\build\grpapps_pstypical\grpapps_pstypical.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug7\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug7\bin\&#x0D;&#x0A;"
@@ -1279,10 +566,10 @@
 			<Tool
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
-          		<Configuration
-			Name="DebugPSReleaseCSCEL (with static libs)|x64"
-			OutputDirectory="..\..\out\debug7\build\grpapps_pstypical\x64"
-			IntermediateDirectory="..\..\out\debug7\build\grpapps_pstypical\x64"
+                		<Configuration
+			Name="DebugPSReleaseCSCEL (with static libs)|Win32"
+			OutputDirectory="..\..\out\debug7\build\grpapps_pstypical\"
+			IntermediateDirectory="..\..\out\debug7\build\grpapps_pstypical\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -1290,7 +577,6 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				MinimalRebuild="TRUE"
-				DebugInformationFormat="4"
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
@@ -1298,15 +584,15 @@
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug7\build\grpapps_pstypical\x64\grpapps_pstypical.pch"
-				AssemblerListingLocation="..\..\out\debug7\build\grpapps_pstypical\x64"
-				ObjectFile="..\..\out\debug7\build\grpapps_pstypical\x64"
+				PrecompiledHeaderFile="..\..\out\debug7\build\grpapps_pstypical\grpapps_pstypical.pch"
+				AssemblerListingLocation="..\..\out\debug7\build\grpapps_pstypical\"
+				ObjectFile="..\..\out\debug7\build\grpapps_pstypical\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
 				TreatWChar_tAsBuiltInType="false"
 				ForceConformanceInForLoopScope="true"
-				DebugInformationFormat="3"
+				DebugInformationFormat="4"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -1319,10 +605,10 @@
 				AdditionalDependencies=""
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories=""
-				TargetMachine="17"/>
+				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug7\libs\x64\grpapps_pstypical.lib"
+				OutputFile="..\..\out\debug7\libs\grpapps_pstypical.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -1330,7 +616,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug7\build\grpapps_pstypical\x64\grpapps_pstypical.tlb"/>
+				TypeLibraryName="..\..\out\debug7\build\grpapps_pstypical\grpapps_pstypical.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug7\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug7\bin\&#x0D;&#x0A;"
@@ -1349,10 +635,10 @@
 			<Tool
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
-    		<Configuration
-			Name="DebugPSReleaseCSCEL (with DLLs)|x64"
-			OutputDirectory="..\..\out\debug7\build\grpapps_pstypical\x64"
-			IntermediateDirectory="..\..\out\debug7\build\grpapps_pstypical\x64"
+      		<Configuration
+			Name="DebugPSReleaseCSCEL (with DLLs)|Win32"
+			OutputDirectory="..\..\out\debug7\build\grpapps_pstypical\"
+			IntermediateDirectory="..\..\out\debug7\build\grpapps_pstypical\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -1360,7 +646,6 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				MinimalRebuild="TRUE"
-				DebugInformationFormat="4"
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
@@ -1368,15 +653,15 @@
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug7\build\grpapps_pstypical\x64\grpapps_pstypical.pch"
-				AssemblerListingLocation="..\..\out\debug7\build\grpapps_pstypical\x64"
-				ObjectFile="..\..\out\debug7\build\grpapps_pstypical\x64"
+				PrecompiledHeaderFile="..\..\out\debug7\build\grpapps_pstypical\grpapps_pstypical.pch"
+				AssemblerListingLocation="..\..\out\debug7\build\grpapps_pstypical\"
+				ObjectFile="..\..\out\debug7\build\grpapps_pstypical\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
 				TreatWChar_tAsBuiltInType="false"
 				ForceConformanceInForLoopScope="true"
-				DebugInformationFormat="3"
+				DebugInformationFormat="4"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -1389,10 +674,10 @@
 				AdditionalDependencies=""
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories=""
-				TargetMachine="17"/>
+				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug7\libs\x64\grpapps_pstypical.lib"
+				OutputFile="..\..\out\debug7\libs\grpapps_pstypical.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -1400,7 +685,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug7\build\grpapps_pstypical\x64\grpapps_pstypical.tlb"/>
+				TypeLibraryName="..\..\out\debug7\build\grpapps_pstypical\grpapps_pstypical.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug7\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug7\bin\&#x0D;&#x0A;"
@@ -1419,7 +704,7 @@
 			<Tool
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
-      	</Configurations>
+              	</Configurations>
 	<Files>
 	</Files>
 	<Globals>

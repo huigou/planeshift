@@ -7,760 +7,14 @@
 	SccProjectName=""
 	SccLocalPath="">
 	<Platforms>
-		<Platform Name="Win32"/>
-		<Platform Name="x64"/>
-	</Platforms>
+  		<Platform Name="Win32"/>
+    		<Platform Name="x64"/>
+  	</Platforms>
 	<Configurations>
-      		<Configuration
-			Name="Release (with static libs)|Win32"
-			OutputDirectory="..\..\out\release8\build\apppslaunch_static\Win32"
-			IntermediateDirectory="..\..\out\release8\build\apppslaunch_static\Win32"
-			ConfigurationType="1"
-			CharacterSet="2"
-			WholeProgramOptimization="1"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE">
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="2"
-				StringPooling="TRUE"
-				EnableFunctionLevelLinking="TRUE"
-				RuntimeLibrary="2"
-				DebugInformationFormat="3"
-				BufferSecurityCheck="FALSE"
-				ProgramDataBaseFileName="..\..\out\release8\build\apppslaunch_static\Win32\pslaunch_static.pdb"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED;WIN32"
-				OptimizeForProcessor="1"
-				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\release8\build\apppslaunch_static\Win32\apppslaunch_static.pch"
-				AssemblerListingLocation="..\..\out\release8\build\apppslaunch_static\Win32"
-				ObjectFile="..\..\out\release8\build\apppslaunch_static\Win32"
-				WarningLevel="3"
-				SuppressStartupBanner="TRUE"
-				Detect64BitPortabilityProblems="false"
-				TreatWChar_tAsBuiltInType="false"
-				ForceConformanceInForLoopScope="true"
-				DebugInformationFormat="4"
-				CompileAs="0"/>
-			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"
-				LinkIncremental="1"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				GenerateDebugInformation="TRUE"
-				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD"
-				OutputFile="..\..\pslaunch_static.exe"
-				ProgramDatabaseFile="..\..\out\release8\build\apppslaunch_static\Win32\pslaunch_static.pdb"
-				SubSystem="2"
-				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_staticplugins.lib libcrystalspace_windows.lib libcrystalspace_opengl.lib libcrystalspace.lib opengl32.lib zlib.lib version.lib "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
-				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
-				TargetMachine="1"/>
-			<Tool
-				Name="VCLibrarianTool"
-				SuppressStartupBanner="TRUE"/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED"
-				MkTypLibCompatible="TRUE"
-				SuppressStartupBanner="TRUE"
-				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\release8\build\apppslaunch_static\Win32\apppslaunch_static.tlb"/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\release8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release8\bin\&#x0D;&#x0A;"
-				/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\src\pslaunch;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				Culture="1033"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
-		</Configuration>
-    		<Configuration
-			Name="Release (with DLLs)|Win32"
-			OutputDirectory="..\..\out\release8\build\apppslaunch_static\Win32"
-			IntermediateDirectory="..\..\out\release8\build\apppslaunch_static\Win32"
-			ConfigurationType="1"
-			CharacterSet="2"
-			WholeProgramOptimization="1"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE">
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="2"
-				StringPooling="TRUE"
-				EnableFunctionLevelLinking="TRUE"
-				RuntimeLibrary="2"
-				DebugInformationFormat="3"
-				BufferSecurityCheck="FALSE"
-				ProgramDataBaseFileName="..\..\out\release8\build\apppslaunch_static\Win32\pslaunch_static.pdb"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
-				OptimizeForProcessor="1"
-				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\release8\build\apppslaunch_static\Win32\apppslaunch_static.pch"
-				AssemblerListingLocation="..\..\out\release8\build\apppslaunch_static\Win32"
-				ObjectFile="..\..\out\release8\build\apppslaunch_static\Win32"
-				WarningLevel="3"
-				SuppressStartupBanner="TRUE"
-				Detect64BitPortabilityProblems="false"
-				TreatWChar_tAsBuiltInType="false"
-				ForceConformanceInForLoopScope="true"
-				DebugInformationFormat="4"
-				CompileAs="0"/>
-			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"
-				LinkIncremental="1"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				GenerateDebugInformation="TRUE"
-				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD"
-				OutputFile="..\..\pslaunch_static.exe"
-				ProgramDatabaseFile="..\..\out\release8\build\apppslaunch_static\Win32\pslaunch_static.pdb"
-				SubSystem="2"
-				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_staticplugins.lib libcrystalspace_windows.lib libcrystalspace_opengl.lib libcrystalspace.lib opengl32.lib zlib.lib version.lib "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
-				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
-				TargetMachine="1"/>
-			<Tool
-				Name="VCLibrarianTool"
-				SuppressStartupBanner="TRUE"/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED"
-				MkTypLibCompatible="TRUE"
-				SuppressStartupBanner="TRUE"
-				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\release8\build\apppslaunch_static\Win32\apppslaunch_static.tlb"/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\release8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release8\bin\&#x0D;&#x0A;"
-				/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\src\pslaunch;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				Culture="1033"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
-		</Configuration>
-          		<Configuration
-			Name="Debug (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug8\build\apppslaunch_static\Win32"
-			IntermediateDirectory="..\..\out\debug8\build\apppslaunch_static\Win32"
-			ConfigurationType="1"
-			CharacterSet="2"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE">
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				MinimalRebuild="TRUE"
-				DebugInformationFormat="4"
-				RuntimeTypeInfo="TRUE"
-				RuntimeLibrary="3"
-
-				ProgramDataBaseFileName="..\..\out\debug8\build\apppslaunch_static\Win32\pslaunch_static.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED;WIN32"
-				OptimizeForProcessor="1"
-				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug8\build\apppslaunch_static\Win32\apppslaunch_static.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\apppslaunch_static\Win32"
-				ObjectFile="..\..\out\debug8\build\apppslaunch_static\Win32"
-				WarningLevel="3"
-				SuppressStartupBanner="TRUE"
-				Detect64BitPortabilityProblems="false"
-				TreatWChar_tAsBuiltInType="false"
-				ForceConformanceInForLoopScope="true"
-				DebugInformationFormat="4"
-				CompileAs="0"/>
-			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"
-				LinkIncremental="2"
-				GenerateDebugInformation="TRUE"
-				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\pslaunch_static.exe"
-				ProgramDatabaseFile="..\..\out\debug8\build\apppslaunch_static\Win32\pslaunch_static.pdb"
-				SubSystem="1"
-				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
-				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
-				TargetMachine="1"/>
-			<Tool
-				Name="VCLibrarianTool"
-				SuppressStartupBanner="TRUE"/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED"
-				MkTypLibCompatible="TRUE"
-				SuppressStartupBanner="TRUE"
-				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\apppslaunch_static\Win32\apppslaunch_static.tlb"/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
-				/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\src\pslaunch;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				Culture="1033"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
-		</Configuration>
-    		<Configuration
-			Name="Debug (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug8\build\apppslaunch_static\Win32"
-			IntermediateDirectory="..\..\out\debug8\build\apppslaunch_static\Win32"
-			ConfigurationType="1"
-			CharacterSet="2"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE">
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				MinimalRebuild="TRUE"
-				DebugInformationFormat="4"
-				RuntimeTypeInfo="TRUE"
-				RuntimeLibrary="3"
-
-				ProgramDataBaseFileName="..\..\out\debug8\build\apppslaunch_static\Win32\pslaunch_static.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
-				OptimizeForProcessor="1"
-				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug8\build\apppslaunch_static\Win32\apppslaunch_static.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\apppslaunch_static\Win32"
-				ObjectFile="..\..\out\debug8\build\apppslaunch_static\Win32"
-				WarningLevel="3"
-				SuppressStartupBanner="TRUE"
-				Detect64BitPortabilityProblems="false"
-				TreatWChar_tAsBuiltInType="false"
-				ForceConformanceInForLoopScope="true"
-				DebugInformationFormat="4"
-				CompileAs="0"/>
-			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"
-				LinkIncremental="2"
-				GenerateDebugInformation="TRUE"
-				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\pslaunch_static.exe"
-				ProgramDatabaseFile="..\..\out\debug8\build\apppslaunch_static\Win32\pslaunch_static.pdb"
-				SubSystem="1"
-				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
-				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
-				TargetMachine="1"/>
-			<Tool
-				Name="VCLibrarianTool"
-				SuppressStartupBanner="TRUE"/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED"
-				MkTypLibCompatible="TRUE"
-				SuppressStartupBanner="TRUE"
-				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\apppslaunch_static\Win32\apppslaunch_static.tlb"/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
-				/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\src\pslaunch;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				Culture="1033"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
-		</Configuration>
-          		<Configuration
-			Name="MemoryTracker (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug8\build\apppslaunch_static\Win32"
-			IntermediateDirectory="..\..\out\debug8\build\apppslaunch_static\Win32"
-			ConfigurationType="1"
-			CharacterSet="2"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE">
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				MinimalRebuild="TRUE"
-				DebugInformationFormat="4"
-				RuntimeTypeInfo="TRUE"
-				RuntimeLibrary="3"
-
-				ProgramDataBaseFileName="..\..\out\debug8\build\apppslaunch_static\Win32\pslaunch_static.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WINDOWS;CS_STATIC_LINKED;WIN32"
-				OptimizeForProcessor="1"
-				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug8\build\apppslaunch_static\Win32\apppslaunch_static.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\apppslaunch_static\Win32"
-				ObjectFile="..\..\out\debug8\build\apppslaunch_static\Win32"
-				WarningLevel="3"
-				SuppressStartupBanner="TRUE"
-				Detect64BitPortabilityProblems="false"
-				TreatWChar_tAsBuiltInType="false"
-				ForceConformanceInForLoopScope="true"
-				DebugInformationFormat="4"
-				CompileAs="0"/>
-			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"
-				LinkIncremental="2"
-				GenerateDebugInformation="TRUE"
-				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\pslaunch_static.exe"
-				ProgramDatabaseFile="..\..\out\debug8\build\apppslaunch_static\Win32\pslaunch_static.pdb"
-				SubSystem="1"
-				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
-				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
-				TargetMachine="1"/>
-			<Tool
-				Name="VCLibrarianTool"
-				SuppressStartupBanner="TRUE"/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WINDOWS;CS_STATIC_LINKED"
-				MkTypLibCompatible="TRUE"
-				SuppressStartupBanner="TRUE"
-				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\apppslaunch_static\Win32\apppslaunch_static.tlb"/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
-				/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WINDOWS;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\src\pslaunch;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				Culture="1033"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
-		</Configuration>
-    		<Configuration
-			Name="MemoryTracker (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug8\build\apppslaunch_static\Win32"
-			IntermediateDirectory="..\..\out\debug8\build\apppslaunch_static\Win32"
-			ConfigurationType="1"
-			CharacterSet="2"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE">
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				MinimalRebuild="TRUE"
-				DebugInformationFormat="4"
-				RuntimeTypeInfo="TRUE"
-				RuntimeLibrary="3"
-
-				ProgramDataBaseFileName="..\..\out\debug8\build\apppslaunch_static\Win32\pslaunch_static.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WINDOWS;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
-				OptimizeForProcessor="1"
-				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug8\build\apppslaunch_static\Win32\apppslaunch_static.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\apppslaunch_static\Win32"
-				ObjectFile="..\..\out\debug8\build\apppslaunch_static\Win32"
-				WarningLevel="3"
-				SuppressStartupBanner="TRUE"
-				Detect64BitPortabilityProblems="false"
-				TreatWChar_tAsBuiltInType="false"
-				ForceConformanceInForLoopScope="true"
-				DebugInformationFormat="4"
-				CompileAs="0"/>
-			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"
-				LinkIncremental="2"
-				GenerateDebugInformation="TRUE"
-				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\pslaunch_static.exe"
-				ProgramDatabaseFile="..\..\out\debug8\build\apppslaunch_static\Win32\pslaunch_static.pdb"
-				SubSystem="1"
-				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
-				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
-				TargetMachine="1"/>
-			<Tool
-				Name="VCLibrarianTool"
-				SuppressStartupBanner="TRUE"/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WINDOWS;CS_STATIC_LINKED"
-				MkTypLibCompatible="TRUE"
-				SuppressStartupBanner="TRUE"
-				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\apppslaunch_static\Win32\apppslaunch_static.tlb"/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
-				/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WINDOWS;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\src\pslaunch;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				Culture="1033"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
-		</Configuration>
-          		<Configuration
-			Name="RefTracker (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug8\build\apppslaunch_static\Win32"
-			IntermediateDirectory="..\..\out\debug8\build\apppslaunch_static\Win32"
-			ConfigurationType="1"
-			CharacterSet="2"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE">
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				MinimalRebuild="TRUE"
-				DebugInformationFormat="4"
-				RuntimeTypeInfo="TRUE"
-				RuntimeLibrary="3"
-
-				ProgramDataBaseFileName="..\..\out\debug8\build\apppslaunch_static\Win32\pslaunch_static.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WINDOWS;CS_STATIC_LINKED;WIN32"
-				OptimizeForProcessor="1"
-				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug8\build\apppslaunch_static\Win32\apppslaunch_static.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\apppslaunch_static\Win32"
-				ObjectFile="..\..\out\debug8\build\apppslaunch_static\Win32"
-				WarningLevel="3"
-				SuppressStartupBanner="TRUE"
-				Detect64BitPortabilityProblems="false"
-				TreatWChar_tAsBuiltInType="false"
-				ForceConformanceInForLoopScope="true"
-				DebugInformationFormat="4"
-				CompileAs="0"/>
-			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"
-				LinkIncremental="2"
-				GenerateDebugInformation="TRUE"
-				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\pslaunch_static.exe"
-				ProgramDatabaseFile="..\..\out\debug8\build\apppslaunch_static\Win32\pslaunch_static.pdb"
-				SubSystem="1"
-				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
-				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
-				TargetMachine="1"/>
-			<Tool
-				Name="VCLibrarianTool"
-				SuppressStartupBanner="TRUE"/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WINDOWS;CS_STATIC_LINKED"
-				MkTypLibCompatible="TRUE"
-				SuppressStartupBanner="TRUE"
-				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\apppslaunch_static\Win32\apppslaunch_static.tlb"/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
-				/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WINDOWS;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\src\pslaunch;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				Culture="1033"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
-		</Configuration>
-    		<Configuration
-			Name="RefTracker (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug8\build\apppslaunch_static\Win32"
-			IntermediateDirectory="..\..\out\debug8\build\apppslaunch_static\Win32"
-			ConfigurationType="1"
-			CharacterSet="2"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE">
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				MinimalRebuild="TRUE"
-				DebugInformationFormat="4"
-				RuntimeTypeInfo="TRUE"
-				RuntimeLibrary="3"
-
-				ProgramDataBaseFileName="..\..\out\debug8\build\apppslaunch_static\Win32\pslaunch_static.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WINDOWS;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
-				OptimizeForProcessor="1"
-				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug8\build\apppslaunch_static\Win32\apppslaunch_static.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\apppslaunch_static\Win32"
-				ObjectFile="..\..\out\debug8\build\apppslaunch_static\Win32"
-				WarningLevel="3"
-				SuppressStartupBanner="TRUE"
-				Detect64BitPortabilityProblems="false"
-				TreatWChar_tAsBuiltInType="false"
-				ForceConformanceInForLoopScope="true"
-				DebugInformationFormat="4"
-				CompileAs="0"/>
-			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"
-				LinkIncremental="2"
-				GenerateDebugInformation="TRUE"
-				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\pslaunch_static.exe"
-				ProgramDatabaseFile="..\..\out\debug8\build\apppslaunch_static\Win32\pslaunch_static.pdb"
-				SubSystem="1"
-				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
-				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
-				TargetMachine="1"/>
-			<Tool
-				Name="VCLibrarianTool"
-				SuppressStartupBanner="TRUE"/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WINDOWS;CS_STATIC_LINKED"
-				MkTypLibCompatible="TRUE"
-				SuppressStartupBanner="TRUE"
-				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\apppslaunch_static\Win32\apppslaunch_static.tlb"/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
-				/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WINDOWS;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\src\pslaunch;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				Culture="1033"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
-		</Configuration>
-          		<Configuration
-			Name="DebugPSReleaseCSCEL (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug8\build\apppslaunch_static\Win32"
-			IntermediateDirectory="..\..\out\debug8\build\apppslaunch_static\Win32"
-			ConfigurationType="1"
-			CharacterSet="2"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE">
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				MinimalRebuild="TRUE"
-				DebugInformationFormat="4"
-				RuntimeTypeInfo="TRUE"
-				RuntimeLibrary="3"
-
-				ProgramDataBaseFileName="..\..\out\debug8\build\apppslaunch_static\Win32\pslaunch_static.pdb"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED;WIN32"
-				OptimizeForProcessor="1"
-				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug8\build\apppslaunch_static\Win32\apppslaunch_static.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\apppslaunch_static\Win32"
-				ObjectFile="..\..\out\debug8\build\apppslaunch_static\Win32"
-				WarningLevel="3"
-				SuppressStartupBanner="TRUE"
-				Detect64BitPortabilityProblems="false"
-				TreatWChar_tAsBuiltInType="false"
-				ForceConformanceInForLoopScope="true"
-				DebugInformationFormat="4"
-				CompileAs="0"/>
-			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"
-				LinkIncremental="2"
-				GenerateDebugInformation="TRUE"
-				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\pslaunch_static.exe"
-				ProgramDatabaseFile="..\..\out\debug8\build\apppslaunch_static\Win32\pslaunch_static.pdb"
-				SubSystem="1"
-				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
-				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
-				TargetMachine="1"/>
-			<Tool
-				Name="VCLibrarianTool"
-				SuppressStartupBanner="TRUE"/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED"
-				MkTypLibCompatible="TRUE"
-				SuppressStartupBanner="TRUE"
-				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\apppslaunch_static\Win32\apppslaunch_static.tlb"/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
-				/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\src\pslaunch;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				Culture="1033"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
-		</Configuration>
-    		<Configuration
-			Name="DebugPSReleaseCSCEL (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug8\build\apppslaunch_static\Win32"
-			IntermediateDirectory="..\..\out\debug8\build\apppslaunch_static\Win32"
-			ConfigurationType="1"
-			CharacterSet="2"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE">
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				MinimalRebuild="TRUE"
-				DebugInformationFormat="4"
-				RuntimeTypeInfo="TRUE"
-				RuntimeLibrary="3"
-
-				ProgramDataBaseFileName="..\..\out\debug8\build\apppslaunch_static\Win32\pslaunch_static.pdb"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
-				OptimizeForProcessor="1"
-				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug8\build\apppslaunch_static\Win32\apppslaunch_static.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\apppslaunch_static\Win32"
-				ObjectFile="..\..\out\debug8\build\apppslaunch_static\Win32"
-				WarningLevel="3"
-				SuppressStartupBanner="TRUE"
-				Detect64BitPortabilityProblems="false"
-				TreatWChar_tAsBuiltInType="false"
-				ForceConformanceInForLoopScope="true"
-				DebugInformationFormat="4"
-				CompileAs="0"/>
-			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"
-				LinkIncremental="2"
-				GenerateDebugInformation="TRUE"
-				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\pslaunch_static.exe"
-				ProgramDatabaseFile="..\..\out\debug8\build\apppslaunch_static\Win32\pslaunch_static.pdb"
-				SubSystem="1"
-				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
-				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
-				TargetMachine="1"/>
-			<Tool
-				Name="VCLibrarianTool"
-				SuppressStartupBanner="TRUE"/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED"
-				MkTypLibCompatible="TRUE"
-				SuppressStartupBanner="TRUE"
-				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\apppslaunch_static\Win32\apppslaunch_static.tlb"/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
-				/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\src\pslaunch;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				Culture="1033"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
-		</Configuration>
             		<Configuration
-			Name="Release (with static libs)|x64"
-			OutputDirectory="..\..\out\release8\build\apppslaunch_static\x64"
-			IntermediateDirectory="..\..\out\release8\build\apppslaunch_static\x64"
+			Name="Release (with static libs)|Win32"
+			OutputDirectory="..\..\out\release8\build\apppslaunch_static\"
+			IntermediateDirectory="..\..\out\release8\build\apppslaunch_static\"
 			ConfigurationType="1"
 			CharacterSet="2"
 			WholeProgramOptimization="1"
@@ -772,16 +26,15 @@
 				StringPooling="TRUE"
 				EnableFunctionLevelLinking="TRUE"
 				RuntimeLibrary="2"
-				DebugInformationFormat="3"
 				BufferSecurityCheck="FALSE"
-				ProgramDataBaseFileName="..\..\out\release8\build\apppslaunch_static\x64\pslaunch_static.pdb"
+				ProgramDataBaseFileName="..\..\out\release8\build\apppslaunch_static\Win32\pslaunch_static.pdb"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\release8\build\apppslaunch_static\x64\apppslaunch_static.pch"
-				AssemblerListingLocation="..\..\out\release8\build\apppslaunch_static\x64"
-				ObjectFile="..\..\out\release8\build\apppslaunch_static\x64"
+				PrecompiledHeaderFile="..\..\out\release8\build\apppslaunch_static\apppslaunch_static.pch"
+				AssemblerListingLocation="..\..\out\release8\build\apppslaunch_static\"
+				ObjectFile="..\..\out\release8\build\apppslaunch_static\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -799,13 +52,13 @@
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD"
 				OutputFile="..\..\pslaunch_static.exe"
-				ProgramDatabaseFile="..\..\out\release8\build\apppslaunch_static\x64\pslaunch_static.pdb"
+				ProgramDatabaseFile="..\..\out\release8\build\apppslaunch_static\Win32\pslaunch_static.pdb"
 				SubSystem="2"
 				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_staticplugins.lib libcrystalspace_windows.lib libcrystalspace_opengl.lib libcrystalspace.lib opengl32.lib zlib.lib version.lib "
 				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
-				TargetMachine="17"/>
+				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
 				SuppressStartupBanner="TRUE"/>
@@ -815,7 +68,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\release8\build\apppslaunch_static\x64\apppslaunch_static.tlb"/>
+				TypeLibraryName="..\..\out\release8\build\apppslaunch_static\apppslaunch_static.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\release8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release8\bin\&#x0D;&#x0A;"
@@ -834,10 +87,10 @@
 			<Tool
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
-    		<Configuration
-			Name="Release (with DLLs)|x64"
-			OutputDirectory="..\..\out\release8\build\apppslaunch_static\x64"
-			IntermediateDirectory="..\..\out\release8\build\apppslaunch_static\x64"
+      		<Configuration
+			Name="Release (with DLLs)|Win32"
+			OutputDirectory="..\..\out\release8\build\apppslaunch_static\"
+			IntermediateDirectory="..\..\out\release8\build\apppslaunch_static\"
 			ConfigurationType="1"
 			CharacterSet="2"
 			WholeProgramOptimization="1"
@@ -849,16 +102,15 @@
 				StringPooling="TRUE"
 				EnableFunctionLevelLinking="TRUE"
 				RuntimeLibrary="2"
-				DebugInformationFormat="3"
 				BufferSecurityCheck="FALSE"
-				ProgramDataBaseFileName="..\..\out\release8\build\apppslaunch_static\x64\pslaunch_static.pdb"
+				ProgramDataBaseFileName="..\..\out\release8\build\apppslaunch_static\Win32\pslaunch_static.pdb"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\release8\build\apppslaunch_static\x64\apppslaunch_static.pch"
-				AssemblerListingLocation="..\..\out\release8\build\apppslaunch_static\x64"
-				ObjectFile="..\..\out\release8\build\apppslaunch_static\x64"
+				PrecompiledHeaderFile="..\..\out\release8\build\apppslaunch_static\apppslaunch_static.pch"
+				AssemblerListingLocation="..\..\out\release8\build\apppslaunch_static\"
+				ObjectFile="..\..\out\release8\build\apppslaunch_static\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -876,13 +128,13 @@
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD"
 				OutputFile="..\..\pslaunch_static.exe"
-				ProgramDatabaseFile="..\..\out\release8\build\apppslaunch_static\x64\pslaunch_static.pdb"
+				ProgramDatabaseFile="..\..\out\release8\build\apppslaunch_static\Win32\pslaunch_static.pdb"
 				SubSystem="2"
 				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_staticplugins.lib libcrystalspace_windows.lib libcrystalspace_opengl.lib libcrystalspace.lib opengl32.lib zlib.lib version.lib "
 				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
-				TargetMachine="17"/>
+				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
 				SuppressStartupBanner="TRUE"/>
@@ -892,7 +144,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\release8\build\apppslaunch_static\x64\apppslaunch_static.tlb"/>
+				TypeLibraryName="..\..\out\release8\build\apppslaunch_static\apppslaunch_static.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\release8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release8\bin\&#x0D;&#x0A;"
@@ -911,10 +163,10 @@
 			<Tool
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
-          		<Configuration
-			Name="Debug (with static libs)|x64"
-			OutputDirectory="..\..\out\debug8\build\apppslaunch_static\x64"
-			IntermediateDirectory="..\..\out\debug8\build\apppslaunch_static\x64"
+                		<Configuration
+			Name="Debug (with static libs)|Win32"
+			OutputDirectory="..\..\out\debug8\build\apppslaunch_static\"
+			IntermediateDirectory="..\..\out\debug8\build\apppslaunch_static\"
 			ConfigurationType="1"
 			CharacterSet="2"
 			UseOfMFC="0"
@@ -923,24 +175,23 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				MinimalRebuild="TRUE"
-				DebugInformationFormat="4"
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8\build\apppslaunch_static\x64\pslaunch_static.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8\build\apppslaunch_static\Win32\pslaunch_static.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug8\build\apppslaunch_static\x64\apppslaunch_static.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\apppslaunch_static\x64"
-				ObjectFile="..\..\out\debug8\build\apppslaunch_static\x64"
+				PrecompiledHeaderFile="..\..\out\debug8\build\apppslaunch_static\apppslaunch_static.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\apppslaunch_static\"
+				ObjectFile="..\..\out\debug8\build\apppslaunch_static\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
 				TreatWChar_tAsBuiltInType="false"
 				ForceConformanceInForLoopScope="true"
-				DebugInformationFormat="3"
+				DebugInformationFormat="4"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -950,13 +201,13 @@
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
 				OutputFile="..\..\pslaunch_static.exe"
-				ProgramDatabaseFile="..\..\out\debug8\build\apppslaunch_static\x64\pslaunch_static.pdb"
+				ProgramDatabaseFile="..\..\out\debug8\build\apppslaunch_static\Win32\pslaunch_static.pdb"
 				SubSystem="1"
 				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
 				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
-				TargetMachine="17"/>
+				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
 				SuppressStartupBanner="TRUE"/>
@@ -966,7 +217,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\apppslaunch_static\x64\apppslaunch_static.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\apppslaunch_static\apppslaunch_static.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
@@ -985,10 +236,10 @@
 			<Tool
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
-    		<Configuration
-			Name="Debug (with DLLs)|x64"
-			OutputDirectory="..\..\out\debug8\build\apppslaunch_static\x64"
-			IntermediateDirectory="..\..\out\debug8\build\apppslaunch_static\x64"
+      		<Configuration
+			Name="Debug (with DLLs)|Win32"
+			OutputDirectory="..\..\out\debug8\build\apppslaunch_static\"
+			IntermediateDirectory="..\..\out\debug8\build\apppslaunch_static\"
 			ConfigurationType="1"
 			CharacterSet="2"
 			UseOfMFC="0"
@@ -997,24 +248,23 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				MinimalRebuild="TRUE"
-				DebugInformationFormat="4"
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8\build\apppslaunch_static\x64\pslaunch_static.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8\build\apppslaunch_static\Win32\pslaunch_static.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug8\build\apppslaunch_static\x64\apppslaunch_static.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\apppslaunch_static\x64"
-				ObjectFile="..\..\out\debug8\build\apppslaunch_static\x64"
+				PrecompiledHeaderFile="..\..\out\debug8\build\apppslaunch_static\apppslaunch_static.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\apppslaunch_static\"
+				ObjectFile="..\..\out\debug8\build\apppslaunch_static\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
 				TreatWChar_tAsBuiltInType="false"
 				ForceConformanceInForLoopScope="true"
-				DebugInformationFormat="3"
+				DebugInformationFormat="4"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -1024,13 +274,13 @@
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
 				OutputFile="..\..\pslaunch_static.exe"
-				ProgramDatabaseFile="..\..\out\debug8\build\apppslaunch_static\x64\pslaunch_static.pdb"
+				ProgramDatabaseFile="..\..\out\debug8\build\apppslaunch_static\Win32\pslaunch_static.pdb"
 				SubSystem="1"
 				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
 				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
-				TargetMachine="17"/>
+				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
 				SuppressStartupBanner="TRUE"/>
@@ -1040,7 +290,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\apppslaunch_static\x64\apppslaunch_static.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\apppslaunch_static\apppslaunch_static.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
@@ -1059,10 +309,10 @@
 			<Tool
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
-          		<Configuration
-			Name="MemoryTracker (with static libs)|x64"
-			OutputDirectory="..\..\out\debug8\build\apppslaunch_static\x64"
-			IntermediateDirectory="..\..\out\debug8\build\apppslaunch_static\x64"
+                		<Configuration
+			Name="MemoryTracker (with static libs)|Win32"
+			OutputDirectory="..\..\out\debug8\build\apppslaunch_static\"
+			IntermediateDirectory="..\..\out\debug8\build\apppslaunch_static\"
 			ConfigurationType="1"
 			CharacterSet="2"
 			UseOfMFC="0"
@@ -1071,24 +321,23 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				MinimalRebuild="TRUE"
-				DebugInformationFormat="4"
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8\build\apppslaunch_static\x64\pslaunch_static.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8\build\apppslaunch_static\Win32\pslaunch_static.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WINDOWS;CS_STATIC_LINKED;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug8\build\apppslaunch_static\x64\apppslaunch_static.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\apppslaunch_static\x64"
-				ObjectFile="..\..\out\debug8\build\apppslaunch_static\x64"
+				PrecompiledHeaderFile="..\..\out\debug8\build\apppslaunch_static\apppslaunch_static.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\apppslaunch_static\"
+				ObjectFile="..\..\out\debug8\build\apppslaunch_static\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
 				TreatWChar_tAsBuiltInType="false"
 				ForceConformanceInForLoopScope="true"
-				DebugInformationFormat="3"
+				DebugInformationFormat="4"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -1098,13 +347,13 @@
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
 				OutputFile="..\..\pslaunch_static.exe"
-				ProgramDatabaseFile="..\..\out\debug8\build\apppslaunch_static\x64\pslaunch_static.pdb"
+				ProgramDatabaseFile="..\..\out\debug8\build\apppslaunch_static\Win32\pslaunch_static.pdb"
 				SubSystem="1"
 				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
 				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
-				TargetMachine="17"/>
+				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
 				SuppressStartupBanner="TRUE"/>
@@ -1114,7 +363,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\apppslaunch_static\x64\apppslaunch_static.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\apppslaunch_static\apppslaunch_static.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
@@ -1133,10 +382,10 @@
 			<Tool
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
-    		<Configuration
-			Name="MemoryTracker (with DLLs)|x64"
-			OutputDirectory="..\..\out\debug8\build\apppslaunch_static\x64"
-			IntermediateDirectory="..\..\out\debug8\build\apppslaunch_static\x64"
+      		<Configuration
+			Name="MemoryTracker (with DLLs)|Win32"
+			OutputDirectory="..\..\out\debug8\build\apppslaunch_static\"
+			IntermediateDirectory="..\..\out\debug8\build\apppslaunch_static\"
 			ConfigurationType="1"
 			CharacterSet="2"
 			UseOfMFC="0"
@@ -1145,24 +394,23 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				MinimalRebuild="TRUE"
-				DebugInformationFormat="4"
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8\build\apppslaunch_static\x64\pslaunch_static.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8\build\apppslaunch_static\Win32\pslaunch_static.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WINDOWS;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug8\build\apppslaunch_static\x64\apppslaunch_static.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\apppslaunch_static\x64"
-				ObjectFile="..\..\out\debug8\build\apppslaunch_static\x64"
+				PrecompiledHeaderFile="..\..\out\debug8\build\apppslaunch_static\apppslaunch_static.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\apppslaunch_static\"
+				ObjectFile="..\..\out\debug8\build\apppslaunch_static\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
 				TreatWChar_tAsBuiltInType="false"
 				ForceConformanceInForLoopScope="true"
-				DebugInformationFormat="3"
+				DebugInformationFormat="4"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -1172,13 +420,13 @@
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
 				OutputFile="..\..\pslaunch_static.exe"
-				ProgramDatabaseFile="..\..\out\debug8\build\apppslaunch_static\x64\pslaunch_static.pdb"
+				ProgramDatabaseFile="..\..\out\debug8\build\apppslaunch_static\Win32\pslaunch_static.pdb"
 				SubSystem="1"
 				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
 				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
-				TargetMachine="17"/>
+				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
 				SuppressStartupBanner="TRUE"/>
@@ -1188,7 +436,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\apppslaunch_static\x64\apppslaunch_static.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\apppslaunch_static\apppslaunch_static.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
@@ -1207,10 +455,10 @@
 			<Tool
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
-          		<Configuration
-			Name="RefTracker (with static libs)|x64"
-			OutputDirectory="..\..\out\debug8\build\apppslaunch_static\x64"
-			IntermediateDirectory="..\..\out\debug8\build\apppslaunch_static\x64"
+                		<Configuration
+			Name="RefTracker (with static libs)|Win32"
+			OutputDirectory="..\..\out\debug8\build\apppslaunch_static\"
+			IntermediateDirectory="..\..\out\debug8\build\apppslaunch_static\"
 			ConfigurationType="1"
 			CharacterSet="2"
 			UseOfMFC="0"
@@ -1219,24 +467,23 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				MinimalRebuild="TRUE"
-				DebugInformationFormat="4"
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8\build\apppslaunch_static\x64\pslaunch_static.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8\build\apppslaunch_static\Win32\pslaunch_static.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WINDOWS;CS_STATIC_LINKED;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug8\build\apppslaunch_static\x64\apppslaunch_static.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\apppslaunch_static\x64"
-				ObjectFile="..\..\out\debug8\build\apppslaunch_static\x64"
+				PrecompiledHeaderFile="..\..\out\debug8\build\apppslaunch_static\apppslaunch_static.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\apppslaunch_static\"
+				ObjectFile="..\..\out\debug8\build\apppslaunch_static\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
 				TreatWChar_tAsBuiltInType="false"
 				ForceConformanceInForLoopScope="true"
-				DebugInformationFormat="3"
+				DebugInformationFormat="4"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -1246,13 +493,13 @@
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
 				OutputFile="..\..\pslaunch_static.exe"
-				ProgramDatabaseFile="..\..\out\debug8\build\apppslaunch_static\x64\pslaunch_static.pdb"
+				ProgramDatabaseFile="..\..\out\debug8\build\apppslaunch_static\Win32\pslaunch_static.pdb"
 				SubSystem="1"
 				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
 				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
-				TargetMachine="17"/>
+				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
 				SuppressStartupBanner="TRUE"/>
@@ -1262,7 +509,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\apppslaunch_static\x64\apppslaunch_static.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\apppslaunch_static\apppslaunch_static.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
@@ -1281,10 +528,10 @@
 			<Tool
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
-    		<Configuration
-			Name="RefTracker (with DLLs)|x64"
-			OutputDirectory="..\..\out\debug8\build\apppslaunch_static\x64"
-			IntermediateDirectory="..\..\out\debug8\build\apppslaunch_static\x64"
+      		<Configuration
+			Name="RefTracker (with DLLs)|Win32"
+			OutputDirectory="..\..\out\debug8\build\apppslaunch_static\"
+			IntermediateDirectory="..\..\out\debug8\build\apppslaunch_static\"
 			ConfigurationType="1"
 			CharacterSet="2"
 			UseOfMFC="0"
@@ -1293,24 +540,23 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				MinimalRebuild="TRUE"
-				DebugInformationFormat="4"
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8\build\apppslaunch_static\x64\pslaunch_static.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8\build\apppslaunch_static\Win32\pslaunch_static.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WINDOWS;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug8\build\apppslaunch_static\x64\apppslaunch_static.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\apppslaunch_static\x64"
-				ObjectFile="..\..\out\debug8\build\apppslaunch_static\x64"
+				PrecompiledHeaderFile="..\..\out\debug8\build\apppslaunch_static\apppslaunch_static.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\apppslaunch_static\"
+				ObjectFile="..\..\out\debug8\build\apppslaunch_static\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
 				TreatWChar_tAsBuiltInType="false"
 				ForceConformanceInForLoopScope="true"
-				DebugInformationFormat="3"
+				DebugInformationFormat="4"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -1320,13 +566,13 @@
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
 				OutputFile="..\..\pslaunch_static.exe"
-				ProgramDatabaseFile="..\..\out\debug8\build\apppslaunch_static\x64\pslaunch_static.pdb"
+				ProgramDatabaseFile="..\..\out\debug8\build\apppslaunch_static\Win32\pslaunch_static.pdb"
 				SubSystem="1"
 				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
 				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
-				TargetMachine="17"/>
+				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
 				SuppressStartupBanner="TRUE"/>
@@ -1336,7 +582,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\apppslaunch_static\x64\apppslaunch_static.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\apppslaunch_static\apppslaunch_static.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
@@ -1355,10 +601,10 @@
 			<Tool
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
-          		<Configuration
-			Name="DebugPSReleaseCSCEL (with static libs)|x64"
-			OutputDirectory="..\..\out\debug8\build\apppslaunch_static\x64"
-			IntermediateDirectory="..\..\out\debug8\build\apppslaunch_static\x64"
+                		<Configuration
+			Name="DebugPSReleaseCSCEL (with static libs)|Win32"
+			OutputDirectory="..\..\out\debug8\build\apppslaunch_static\"
+			IntermediateDirectory="..\..\out\debug8\build\apppslaunch_static\"
 			ConfigurationType="1"
 			CharacterSet="2"
 			UseOfMFC="0"
@@ -1367,24 +613,23 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				MinimalRebuild="TRUE"
-				DebugInformationFormat="4"
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8\build\apppslaunch_static\x64\pslaunch_static.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8\build\apppslaunch_static\Win32\pslaunch_static.pdb"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug8\build\apppslaunch_static\x64\apppslaunch_static.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\apppslaunch_static\x64"
-				ObjectFile="..\..\out\debug8\build\apppslaunch_static\x64"
+				PrecompiledHeaderFile="..\..\out\debug8\build\apppslaunch_static\apppslaunch_static.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\apppslaunch_static\"
+				ObjectFile="..\..\out\debug8\build\apppslaunch_static\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
 				TreatWChar_tAsBuiltInType="false"
 				ForceConformanceInForLoopScope="true"
-				DebugInformationFormat="3"
+				DebugInformationFormat="4"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -1394,13 +639,13 @@
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
 				OutputFile="..\..\pslaunch_static.exe"
-				ProgramDatabaseFile="..\..\out\debug8\build\apppslaunch_static\x64\pslaunch_static.pdb"
+				ProgramDatabaseFile="..\..\out\debug8\build\apppslaunch_static\Win32\pslaunch_static.pdb"
 				SubSystem="1"
 				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
 				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
-				TargetMachine="17"/>
+				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
 				SuppressStartupBanner="TRUE"/>
@@ -1410,7 +655,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\apppslaunch_static\x64\apppslaunch_static.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\apppslaunch_static\apppslaunch_static.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
@@ -1429,10 +674,10 @@
 			<Tool
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
-    		<Configuration
-			Name="DebugPSReleaseCSCEL (with DLLs)|x64"
-			OutputDirectory="..\..\out\debug8\build\apppslaunch_static\x64"
-			IntermediateDirectory="..\..\out\debug8\build\apppslaunch_static\x64"
+      		<Configuration
+			Name="DebugPSReleaseCSCEL (with DLLs)|Win32"
+			OutputDirectory="..\..\out\debug8\build\apppslaunch_static\"
+			IntermediateDirectory="..\..\out\debug8\build\apppslaunch_static\"
 			ConfigurationType="1"
 			CharacterSet="2"
 			UseOfMFC="0"
@@ -1441,24 +686,23 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				MinimalRebuild="TRUE"
-				DebugInformationFormat="4"
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8\build\apppslaunch_static\x64\pslaunch_static.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8\build\apppslaunch_static\Win32\pslaunch_static.pdb"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug8\build\apppslaunch_static\x64\apppslaunch_static.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\apppslaunch_static\x64"
-				ObjectFile="..\..\out\debug8\build\apppslaunch_static\x64"
+				PrecompiledHeaderFile="..\..\out\debug8\build\apppslaunch_static\apppslaunch_static.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\apppslaunch_static\"
+				ObjectFile="..\..\out\debug8\build\apppslaunch_static\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
 				TreatWChar_tAsBuiltInType="false"
 				ForceConformanceInForLoopScope="true"
-				DebugInformationFormat="3"
+				DebugInformationFormat="4"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -1468,13 +712,13 @@
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
 				OutputFile="..\..\pslaunch_static.exe"
-				ProgramDatabaseFile="..\..\out\debug8\build\apppslaunch_static\x64\pslaunch_static.pdb"
+				ProgramDatabaseFile="..\..\out\debug8\build\apppslaunch_static\Win32\pslaunch_static.pdb"
 				SubSystem="1"
 				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
 				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
-				TargetMachine="17"/>
+				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
 				SuppressStartupBanner="TRUE"/>
@@ -1484,7 +728,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\apppslaunch_static\x64\apppslaunch_static.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\apppslaunch_static\apppslaunch_static.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
@@ -1503,7 +747,743 @@
 			<Tool
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
-      	</Configurations>
+                        		<Configuration
+			Name="Release (with static libs)|x64"
+			OutputDirectory="..\..\out\release8-x64\build\apppslaunch_static\"
+			IntermediateDirectory="..\..\out\release8-x64\build\apppslaunch_static\"
+			ConfigurationType="1"
+			CharacterSet="2"
+			WholeProgramOptimization="1"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE">
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="2"
+				StringPooling="TRUE"
+				EnableFunctionLevelLinking="TRUE"
+				RuntimeLibrary="2"
+				BufferSecurityCheck="FALSE"
+				ProgramDataBaseFileName="..\..\out\release8-x64\build\apppslaunch_static\x64\pslaunch_static.pdb"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED;WIN32"
+				OptimizeForProcessor="1"
+				AdditionalOptions=" "
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PrecompiledHeaderFile="..\..\out\release8-x64\build\apppslaunch_static\apppslaunch_static.pch"
+				AssemblerListingLocation="..\..\out\release8-x64\build\apppslaunch_static\"
+				ObjectFile="..\..\out\release8-x64\build\apppslaunch_static\"
+				WarningLevel="3"
+				SuppressStartupBanner="TRUE"
+				Detect64BitPortabilityProblems="false"
+				TreatWChar_tAsBuiltInType="false"
+				ForceConformanceInForLoopScope="true"
+				DebugInformationFormat="3"
+				CompileAs="0"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				LinkIncremental="1"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				GenerateDebugInformation="TRUE"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD"
+				OutputFile="..\..\pslaunch_static.exe"
+				ProgramDatabaseFile="..\..\out\release8-x64\build\apppslaunch_static\x64\pslaunch_static.pdb"
+				SubSystem="2"
+				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_staticplugins.lib libcrystalspace_windows.lib libcrystalspace_opengl.lib libcrystalspace.lib opengl32.lib zlib.lib version.lib "
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				TargetMachine="17"/>
+			<Tool
+				Name="VCLibrarianTool"
+				SuppressStartupBanner="TRUE"/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED"
+				MkTypLibCompatible="TRUE"
+				SuppressStartupBanner="TRUE"
+				TargetEnvironment="1"
+				TypeLibraryName="..\..\out\release8-x64\build\apppslaunch_static\apppslaunch_static.tlb"/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="md ..\..\out\release8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release8-x64\bin\&#x0D;&#x0A;"
+				/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				AdditionalIncludeDirectories=".;..\..\src\pslaunch;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				Culture="1033"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+		</Configuration>
+      		<Configuration
+			Name="Release (with DLLs)|x64"
+			OutputDirectory="..\..\out\release8-x64\build\apppslaunch_static\"
+			IntermediateDirectory="..\..\out\release8-x64\build\apppslaunch_static\"
+			ConfigurationType="1"
+			CharacterSet="2"
+			WholeProgramOptimization="1"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE">
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="2"
+				StringPooling="TRUE"
+				EnableFunctionLevelLinking="TRUE"
+				RuntimeLibrary="2"
+				BufferSecurityCheck="FALSE"
+				ProgramDataBaseFileName="..\..\out\release8-x64\build\apppslaunch_static\x64\pslaunch_static.pdb"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
+				OptimizeForProcessor="1"
+				AdditionalOptions=" "
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PrecompiledHeaderFile="..\..\out\release8-x64\build\apppslaunch_static\apppslaunch_static.pch"
+				AssemblerListingLocation="..\..\out\release8-x64\build\apppslaunch_static\"
+				ObjectFile="..\..\out\release8-x64\build\apppslaunch_static\"
+				WarningLevel="3"
+				SuppressStartupBanner="TRUE"
+				Detect64BitPortabilityProblems="false"
+				TreatWChar_tAsBuiltInType="false"
+				ForceConformanceInForLoopScope="true"
+				DebugInformationFormat="3"
+				CompileAs="0"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				LinkIncremental="1"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				GenerateDebugInformation="TRUE"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD"
+				OutputFile="..\..\pslaunch_static.exe"
+				ProgramDatabaseFile="..\..\out\release8-x64\build\apppslaunch_static\x64\pslaunch_static.pdb"
+				SubSystem="2"
+				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_staticplugins.lib libcrystalspace_windows.lib libcrystalspace_opengl.lib libcrystalspace.lib opengl32.lib zlib.lib version.lib "
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				TargetMachine="17"/>
+			<Tool
+				Name="VCLibrarianTool"
+				SuppressStartupBanner="TRUE"/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED"
+				MkTypLibCompatible="TRUE"
+				SuppressStartupBanner="TRUE"
+				TargetEnvironment="1"
+				TypeLibraryName="..\..\out\release8-x64\build\apppslaunch_static\apppslaunch_static.tlb"/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="md ..\..\out\release8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release8-x64\bin\&#x0D;&#x0A;"
+				/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				AdditionalIncludeDirectories=".;..\..\src\pslaunch;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				Culture="1033"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+		</Configuration>
+                		<Configuration
+			Name="Debug (with static libs)|x64"
+			OutputDirectory="..\..\out\debug8-x64\build\apppslaunch_static\"
+			IntermediateDirectory="..\..\out\debug8-x64\build\apppslaunch_static\"
+			ConfigurationType="1"
+			CharacterSet="2"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE">
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				MinimalRebuild="TRUE"
+				RuntimeTypeInfo="TRUE"
+				RuntimeLibrary="3"
+
+				ProgramDataBaseFileName="..\..\out\debug8-x64\build\apppslaunch_static\x64\pslaunch_static.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED;WIN32"
+				OptimizeForProcessor="1"
+				AdditionalOptions=" "
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PrecompiledHeaderFile="..\..\out\debug8-x64\build\apppslaunch_static\apppslaunch_static.pch"
+				AssemblerListingLocation="..\..\out\debug8-x64\build\apppslaunch_static\"
+				ObjectFile="..\..\out\debug8-x64\build\apppslaunch_static\"
+				WarningLevel="3"
+				SuppressStartupBanner="TRUE"
+				Detect64BitPortabilityProblems="false"
+				TreatWChar_tAsBuiltInType="false"
+				ForceConformanceInForLoopScope="true"
+				DebugInformationFormat="3"
+				CompileAs="0"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				LinkIncremental="2"
+				GenerateDebugInformation="TRUE"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
+				OutputFile="..\..\pslaunch_static.exe"
+				ProgramDatabaseFile="..\..\out\debug8-x64\build\apppslaunch_static\x64\pslaunch_static.pdb"
+				SubSystem="1"
+				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				TargetMachine="17"/>
+			<Tool
+				Name="VCLibrarianTool"
+				SuppressStartupBanner="TRUE"/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED"
+				MkTypLibCompatible="TRUE"
+				SuppressStartupBanner="TRUE"
+				TargetEnvironment="1"
+				TypeLibraryName="..\..\out\debug8-x64\build\apppslaunch_static\apppslaunch_static.tlb"/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="md ..\..\out\debug8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8-x64\bin\&#x0D;&#x0A;"
+				/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				AdditionalIncludeDirectories=".;..\..\src\pslaunch;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				Culture="1033"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+		</Configuration>
+      		<Configuration
+			Name="Debug (with DLLs)|x64"
+			OutputDirectory="..\..\out\debug8-x64\build\apppslaunch_static\"
+			IntermediateDirectory="..\..\out\debug8-x64\build\apppslaunch_static\"
+			ConfigurationType="1"
+			CharacterSet="2"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE">
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				MinimalRebuild="TRUE"
+				RuntimeTypeInfo="TRUE"
+				RuntimeLibrary="3"
+
+				ProgramDataBaseFileName="..\..\out\debug8-x64\build\apppslaunch_static\x64\pslaunch_static.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
+				OptimizeForProcessor="1"
+				AdditionalOptions=" "
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PrecompiledHeaderFile="..\..\out\debug8-x64\build\apppslaunch_static\apppslaunch_static.pch"
+				AssemblerListingLocation="..\..\out\debug8-x64\build\apppslaunch_static\"
+				ObjectFile="..\..\out\debug8-x64\build\apppslaunch_static\"
+				WarningLevel="3"
+				SuppressStartupBanner="TRUE"
+				Detect64BitPortabilityProblems="false"
+				TreatWChar_tAsBuiltInType="false"
+				ForceConformanceInForLoopScope="true"
+				DebugInformationFormat="3"
+				CompileAs="0"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				LinkIncremental="2"
+				GenerateDebugInformation="TRUE"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
+				OutputFile="..\..\pslaunch_static.exe"
+				ProgramDatabaseFile="..\..\out\debug8-x64\build\apppslaunch_static\x64\pslaunch_static.pdb"
+				SubSystem="1"
+				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				TargetMachine="17"/>
+			<Tool
+				Name="VCLibrarianTool"
+				SuppressStartupBanner="TRUE"/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED"
+				MkTypLibCompatible="TRUE"
+				SuppressStartupBanner="TRUE"
+				TargetEnvironment="1"
+				TypeLibraryName="..\..\out\debug8-x64\build\apppslaunch_static\apppslaunch_static.tlb"/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="md ..\..\out\debug8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8-x64\bin\&#x0D;&#x0A;"
+				/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				AdditionalIncludeDirectories=".;..\..\src\pslaunch;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				Culture="1033"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+		</Configuration>
+                		<Configuration
+			Name="MemoryTracker (with static libs)|x64"
+			OutputDirectory="..\..\out\debug8-x64\build\apppslaunch_static\"
+			IntermediateDirectory="..\..\out\debug8-x64\build\apppslaunch_static\"
+			ConfigurationType="1"
+			CharacterSet="2"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE">
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				MinimalRebuild="TRUE"
+				RuntimeTypeInfo="TRUE"
+				RuntimeLibrary="3"
+
+				ProgramDataBaseFileName="..\..\out\debug8-x64\build\apppslaunch_static\x64\pslaunch_static.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WINDOWS;CS_STATIC_LINKED;WIN32"
+				OptimizeForProcessor="1"
+				AdditionalOptions=" "
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PrecompiledHeaderFile="..\..\out\debug8-x64\build\apppslaunch_static\apppslaunch_static.pch"
+				AssemblerListingLocation="..\..\out\debug8-x64\build\apppslaunch_static\"
+				ObjectFile="..\..\out\debug8-x64\build\apppslaunch_static\"
+				WarningLevel="3"
+				SuppressStartupBanner="TRUE"
+				Detect64BitPortabilityProblems="false"
+				TreatWChar_tAsBuiltInType="false"
+				ForceConformanceInForLoopScope="true"
+				DebugInformationFormat="3"
+				CompileAs="0"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				LinkIncremental="2"
+				GenerateDebugInformation="TRUE"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
+				OutputFile="..\..\pslaunch_static.exe"
+				ProgramDatabaseFile="..\..\out\debug8-x64\build\apppslaunch_static\x64\pslaunch_static.pdb"
+				SubSystem="1"
+				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				TargetMachine="17"/>
+			<Tool
+				Name="VCLibrarianTool"
+				SuppressStartupBanner="TRUE"/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WINDOWS;CS_STATIC_LINKED"
+				MkTypLibCompatible="TRUE"
+				SuppressStartupBanner="TRUE"
+				TargetEnvironment="1"
+				TypeLibraryName="..\..\out\debug8-x64\build\apppslaunch_static\apppslaunch_static.tlb"/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="md ..\..\out\debug8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8-x64\bin\&#x0D;&#x0A;"
+				/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WINDOWS;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				AdditionalIncludeDirectories=".;..\..\src\pslaunch;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				Culture="1033"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+		</Configuration>
+      		<Configuration
+			Name="MemoryTracker (with DLLs)|x64"
+			OutputDirectory="..\..\out\debug8-x64\build\apppslaunch_static\"
+			IntermediateDirectory="..\..\out\debug8-x64\build\apppslaunch_static\"
+			ConfigurationType="1"
+			CharacterSet="2"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE">
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				MinimalRebuild="TRUE"
+				RuntimeTypeInfo="TRUE"
+				RuntimeLibrary="3"
+
+				ProgramDataBaseFileName="..\..\out\debug8-x64\build\apppslaunch_static\x64\pslaunch_static.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WINDOWS;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
+				OptimizeForProcessor="1"
+				AdditionalOptions=" "
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PrecompiledHeaderFile="..\..\out\debug8-x64\build\apppslaunch_static\apppslaunch_static.pch"
+				AssemblerListingLocation="..\..\out\debug8-x64\build\apppslaunch_static\"
+				ObjectFile="..\..\out\debug8-x64\build\apppslaunch_static\"
+				WarningLevel="3"
+				SuppressStartupBanner="TRUE"
+				Detect64BitPortabilityProblems="false"
+				TreatWChar_tAsBuiltInType="false"
+				ForceConformanceInForLoopScope="true"
+				DebugInformationFormat="3"
+				CompileAs="0"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				LinkIncremental="2"
+				GenerateDebugInformation="TRUE"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
+				OutputFile="..\..\pslaunch_static.exe"
+				ProgramDatabaseFile="..\..\out\debug8-x64\build\apppslaunch_static\x64\pslaunch_static.pdb"
+				SubSystem="1"
+				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				TargetMachine="17"/>
+			<Tool
+				Name="VCLibrarianTool"
+				SuppressStartupBanner="TRUE"/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WINDOWS;CS_STATIC_LINKED"
+				MkTypLibCompatible="TRUE"
+				SuppressStartupBanner="TRUE"
+				TargetEnvironment="1"
+				TypeLibraryName="..\..\out\debug8-x64\build\apppslaunch_static\apppslaunch_static.tlb"/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="md ..\..\out\debug8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8-x64\bin\&#x0D;&#x0A;"
+				/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WINDOWS;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				AdditionalIncludeDirectories=".;..\..\src\pslaunch;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				Culture="1033"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+		</Configuration>
+                		<Configuration
+			Name="RefTracker (with static libs)|x64"
+			OutputDirectory="..\..\out\debug8-x64\build\apppslaunch_static\"
+			IntermediateDirectory="..\..\out\debug8-x64\build\apppslaunch_static\"
+			ConfigurationType="1"
+			CharacterSet="2"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE">
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				MinimalRebuild="TRUE"
+				RuntimeTypeInfo="TRUE"
+				RuntimeLibrary="3"
+
+				ProgramDataBaseFileName="..\..\out\debug8-x64\build\apppslaunch_static\x64\pslaunch_static.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WINDOWS;CS_STATIC_LINKED;WIN32"
+				OptimizeForProcessor="1"
+				AdditionalOptions=" "
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PrecompiledHeaderFile="..\..\out\debug8-x64\build\apppslaunch_static\apppslaunch_static.pch"
+				AssemblerListingLocation="..\..\out\debug8-x64\build\apppslaunch_static\"
+				ObjectFile="..\..\out\debug8-x64\build\apppslaunch_static\"
+				WarningLevel="3"
+				SuppressStartupBanner="TRUE"
+				Detect64BitPortabilityProblems="false"
+				TreatWChar_tAsBuiltInType="false"
+				ForceConformanceInForLoopScope="true"
+				DebugInformationFormat="3"
+				CompileAs="0"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				LinkIncremental="2"
+				GenerateDebugInformation="TRUE"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
+				OutputFile="..\..\pslaunch_static.exe"
+				ProgramDatabaseFile="..\..\out\debug8-x64\build\apppslaunch_static\x64\pslaunch_static.pdb"
+				SubSystem="1"
+				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				TargetMachine="17"/>
+			<Tool
+				Name="VCLibrarianTool"
+				SuppressStartupBanner="TRUE"/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WINDOWS;CS_STATIC_LINKED"
+				MkTypLibCompatible="TRUE"
+				SuppressStartupBanner="TRUE"
+				TargetEnvironment="1"
+				TypeLibraryName="..\..\out\debug8-x64\build\apppslaunch_static\apppslaunch_static.tlb"/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="md ..\..\out\debug8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8-x64\bin\&#x0D;&#x0A;"
+				/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WINDOWS;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				AdditionalIncludeDirectories=".;..\..\src\pslaunch;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				Culture="1033"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+		</Configuration>
+      		<Configuration
+			Name="RefTracker (with DLLs)|x64"
+			OutputDirectory="..\..\out\debug8-x64\build\apppslaunch_static\"
+			IntermediateDirectory="..\..\out\debug8-x64\build\apppslaunch_static\"
+			ConfigurationType="1"
+			CharacterSet="2"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE">
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				MinimalRebuild="TRUE"
+				RuntimeTypeInfo="TRUE"
+				RuntimeLibrary="3"
+
+				ProgramDataBaseFileName="..\..\out\debug8-x64\build\apppslaunch_static\x64\pslaunch_static.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WINDOWS;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
+				OptimizeForProcessor="1"
+				AdditionalOptions=" "
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PrecompiledHeaderFile="..\..\out\debug8-x64\build\apppslaunch_static\apppslaunch_static.pch"
+				AssemblerListingLocation="..\..\out\debug8-x64\build\apppslaunch_static\"
+				ObjectFile="..\..\out\debug8-x64\build\apppslaunch_static\"
+				WarningLevel="3"
+				SuppressStartupBanner="TRUE"
+				Detect64BitPortabilityProblems="false"
+				TreatWChar_tAsBuiltInType="false"
+				ForceConformanceInForLoopScope="true"
+				DebugInformationFormat="3"
+				CompileAs="0"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				LinkIncremental="2"
+				GenerateDebugInformation="TRUE"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
+				OutputFile="..\..\pslaunch_static.exe"
+				ProgramDatabaseFile="..\..\out\debug8-x64\build\apppslaunch_static\x64\pslaunch_static.pdb"
+				SubSystem="1"
+				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				TargetMachine="17"/>
+			<Tool
+				Name="VCLibrarianTool"
+				SuppressStartupBanner="TRUE"/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WINDOWS;CS_STATIC_LINKED"
+				MkTypLibCompatible="TRUE"
+				SuppressStartupBanner="TRUE"
+				TargetEnvironment="1"
+				TypeLibraryName="..\..\out\debug8-x64\build\apppslaunch_static\apppslaunch_static.tlb"/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="md ..\..\out\debug8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8-x64\bin\&#x0D;&#x0A;"
+				/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WINDOWS;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				AdditionalIncludeDirectories=".;..\..\src\pslaunch;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				Culture="1033"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+		</Configuration>
+                		<Configuration
+			Name="DebugPSReleaseCSCEL (with static libs)|x64"
+			OutputDirectory="..\..\out\debug8-x64\build\apppslaunch_static\"
+			IntermediateDirectory="..\..\out\debug8-x64\build\apppslaunch_static\"
+			ConfigurationType="1"
+			CharacterSet="2"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE">
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				MinimalRebuild="TRUE"
+				RuntimeTypeInfo="TRUE"
+				RuntimeLibrary="3"
+
+				ProgramDataBaseFileName="..\..\out\debug8-x64\build\apppslaunch_static\x64\pslaunch_static.pdb"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED;WIN32"
+				OptimizeForProcessor="1"
+				AdditionalOptions=" "
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PrecompiledHeaderFile="..\..\out\debug8-x64\build\apppslaunch_static\apppslaunch_static.pch"
+				AssemblerListingLocation="..\..\out\debug8-x64\build\apppslaunch_static\"
+				ObjectFile="..\..\out\debug8-x64\build\apppslaunch_static\"
+				WarningLevel="3"
+				SuppressStartupBanner="TRUE"
+				Detect64BitPortabilityProblems="false"
+				TreatWChar_tAsBuiltInType="false"
+				ForceConformanceInForLoopScope="true"
+				DebugInformationFormat="3"
+				CompileAs="0"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				LinkIncremental="2"
+				GenerateDebugInformation="TRUE"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
+				OutputFile="..\..\pslaunch_static.exe"
+				ProgramDatabaseFile="..\..\out\debug8-x64\build\apppslaunch_static\x64\pslaunch_static.pdb"
+				SubSystem="1"
+				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				TargetMachine="17"/>
+			<Tool
+				Name="VCLibrarianTool"
+				SuppressStartupBanner="TRUE"/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED"
+				MkTypLibCompatible="TRUE"
+				SuppressStartupBanner="TRUE"
+				TargetEnvironment="1"
+				TypeLibraryName="..\..\out\debug8-x64\build\apppslaunch_static\apppslaunch_static.tlb"/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="md ..\..\out\debug8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8-x64\bin\&#x0D;&#x0A;"
+				/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				AdditionalIncludeDirectories=".;..\..\src\pslaunch;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				Culture="1033"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+		</Configuration>
+      		<Configuration
+			Name="DebugPSReleaseCSCEL (with DLLs)|x64"
+			OutputDirectory="..\..\out\debug8-x64\build\apppslaunch_static\"
+			IntermediateDirectory="..\..\out\debug8-x64\build\apppslaunch_static\"
+			ConfigurationType="1"
+			CharacterSet="2"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE">
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				MinimalRebuild="TRUE"
+				RuntimeTypeInfo="TRUE"
+				RuntimeLibrary="3"
+
+				ProgramDataBaseFileName="..\..\out\debug8-x64\build\apppslaunch_static\x64\pslaunch_static.pdb"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
+				OptimizeForProcessor="1"
+				AdditionalOptions=" "
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PrecompiledHeaderFile="..\..\out\debug8-x64\build\apppslaunch_static\apppslaunch_static.pch"
+				AssemblerListingLocation="..\..\out\debug8-x64\build\apppslaunch_static\"
+				ObjectFile="..\..\out\debug8-x64\build\apppslaunch_static\"
+				WarningLevel="3"
+				SuppressStartupBanner="TRUE"
+				Detect64BitPortabilityProblems="false"
+				TreatWChar_tAsBuiltInType="false"
+				ForceConformanceInForLoopScope="true"
+				DebugInformationFormat="3"
+				CompileAs="0"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				LinkIncremental="2"
+				GenerateDebugInformation="TRUE"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
+				OutputFile="..\..\pslaunch_static.exe"
+				ProgramDatabaseFile="..\..\out\debug8-x64\build\apppslaunch_static\x64\pslaunch_static.pdb"
+				SubSystem="1"
+				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				TargetMachine="17"/>
+			<Tool
+				Name="VCLibrarianTool"
+				SuppressStartupBanner="TRUE"/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED"
+				MkTypLibCompatible="TRUE"
+				SuppressStartupBanner="TRUE"
+				TargetEnvironment="1"
+				TypeLibraryName="..\..\out\debug8-x64\build\apppslaunch_static\apppslaunch_static.tlb"/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="md ..\..\out\debug8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8-x64\bin\&#x0D;&#x0A;"
+				/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				AdditionalIncludeDirectories=".;..\..\src\pslaunch;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				Culture="1033"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+		</Configuration>
+            	</Configurations>
 	<Files>
 		<Filter
 			Name="Source Files"
