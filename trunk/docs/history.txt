@@ -1,4 +1,7 @@
-﻿*** 2009-03-06 by Kenny Graunke
+﻿*** 2009-03-08 by Kenny Graunke
+- Fixed a crash when killing an NPC with the /death command.
+
+*** 2009-03-06 by Kenny Graunke
 - Rewrote MathScript, ProgressionScript, and the magic system.
 
 *** 2009-03-06 by Tristan Cragnolini

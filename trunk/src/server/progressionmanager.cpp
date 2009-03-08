@@ -133,8 +133,8 @@ void ProgressionManager::HandleDeathEvent(MsgEntry *me, Client *notused)
     Debug1(LOG_COMBAT, me->clientnum,"Progression Manager handling Death Event\n");
     psDeathEvent evt(me);
 
-    // Only do progression if dead guy is an NPC and not a pet or if a gm enabled the givexp flag
-    if ((evt.deadActor->GetClientID()==0 && !evt.deadActor->GetCharacterData()->IsPet()) || evt.deadActor->givekillexp)
+    // Only award experience if the dead actor is a NPC and not a pet, or a GM with the givekillexp flag.
+    if (evt.killer && ((evt.deadActor->GetClientID()==0 && !evt.deadActor->GetCharacterData()->IsPet()) || evt.deadActor->givekillexp))
     {
         ProgressionScript *script = FindScript("kill");
         MathEnvironment env;
