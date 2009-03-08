@@ -109,7 +109,7 @@ MathStatement* MathStatement::Create(const csString & line, const char *name)
     line.SubString(assignee, 0, assignAt);
     assignee.Trim();
 
-    bool validAssignee = isupper(assignee[0]);
+    bool validAssignee = isupper(assignee.GetAt(0));
     for (size_t i = 1; validAssignee && i < assignee.Length(); i++)
     {
         if (!isalnum(assignee[i]) && assignee[i] != '_')
@@ -369,12 +369,12 @@ bool MathExpression::Parse(const char *exp)
     {
         if (tokens[i] == ":")
         {
-            if (i+1 == tokens.GetSize() || !isalpha(tokens[i+1][0]))
+            if (i+1 == tokens.GetSize() || !isalpha(tokens[i+1].GetAt(0)))
             {
                 Error4("Parse error in MathExpression >%s: %s<: Expected property or method after ':' operator; found >%s<.", name, exp, tokens[i+1].GetData());
                 return false;
             }
-            if (!isupper(tokens[i-1][0]))
+            if (!isupper(tokens[i-1].GetAt(0)))
             {
                 Error4("Parse error in MathExpression >%s: %s<: ':' Expected variable before ':' operator; found >%s<.", name, exp, tokens[i-1].GetData());
                 return false;
@@ -422,7 +422,7 @@ bool MathExpression::Parse(const char *exp)
         else // not dealing with a colon
         {
             // Record any string literals and replace them with their table index.
-            if (tokens[i][0] == '"' || tokens[i][0] == '\'')
+            if (tokens[i].GetAt(0) == '"' || tokens[i].GetAt(0) == '\'')
             {
                 // remove quote (scanner already omitted the closing quote)
                 tokens[i].DeleteAt(0);
@@ -431,7 +431,7 @@ bool MathExpression::Parse(const char *exp)
             }
 
             // Jot down any variable names (tokens starting with [A-Z])
-            if (isupper(tokens[i][0]))
+            if (isupper(tokens[i].GetAt(0)))
                 requiredVars.Add(tokens[i]);
         }
     }
@@ -488,7 +488,7 @@ double MathExpression::Evaluate(const MathEnvironment *env)
         {
             Error3("Error in >%s<: Required variable >%s< not supplied in environment.", name, varName.GetData());
             CS_ASSERT(false);
-            return 0.0/0.0; 
+            return 0.0; 
         }
         values[i++] = var->GetValue();
     }
@@ -503,7 +503,7 @@ double MathExpression::Evaluate(const MathEnvironment *env)
         {
             Error3("Error in >%s<: Type inference requires >%s< to be an iScriptableVar, but it isn't.", name, objName.GetData());
             CS_ASSERT(false);
-            return 0.0/0.0;
+            return 0.0;
         }
     }
 

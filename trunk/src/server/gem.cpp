@@ -648,12 +648,14 @@ double gemObject::GetProperty(const char *prop)
     //if (prop == "mesh")
     //{
     //}
-    return 0.0/0.0;
+    CS_ASSERT(false);
+    return 0.0;
 }
 
 double gemObject::CalcFunction(const char *f, const double *params)
 {
-    return 0.0/0.0;
+    CS_ASSERT(false);
+    return 0.0;
 }
 
 void gemObject::Disconnect()
