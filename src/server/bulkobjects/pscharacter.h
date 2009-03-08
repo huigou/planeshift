@@ -270,8 +270,17 @@ struct Buddy
     PID playerID;
 };
 
+class ClampedPositiveBuffable : public Buffable<int>
+{
+public:
+    int Current()
+    {
+        // Clamp to avoid underflow problems with negative buffs.
+        return cached > 0 ? cached : 0;
+    }
+};
 
-typedef Buffable<int> CharStat;
+typedef ClampedPositiveBuffable CharStat;
 
 class StatSet : public CharacterAttribute
 {
@@ -286,7 +295,7 @@ protected:
     CharStat stats[PSITEMSTATS_STAT_COUNT];
 };
 
-typedef Buffable<int> SkillRank;
+typedef ClampedPositiveBuffable SkillRank;
 
 /** A structure that holds the knowledge/practice/rank of each player skill.
  */

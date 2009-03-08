@@ -3632,7 +3632,7 @@ void SkillSet::SetSkillRank( PSSKILL which, unsigned int rank, bool recalculates
     else if (isStat && rank > MAX_STAT)
         rank = MAX_STAT;
 
-    skills[which].rank = rank;
+    skills[which].rank.SetBase(rank);
     skills[which].CalculateCosts(self);
     skills[which].dirtyFlag = true;
 
