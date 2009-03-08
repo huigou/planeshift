@@ -98,14 +98,12 @@
 				StringPooling="TRUE"
 				EnableFunctionLevelLinking="TRUE"
 				RuntimeLibrary="2"
-				DebugInformationFormat="3"
 				BufferSecurityCheck="FALSE"
 [% END %]
 
 [% MACRO compiler_debug BLOCK -%]
 				Optimization="0"
 				MinimalRebuild="TRUE"
-				DebugInformationFormat="4"
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 [% precompiled_header -%]
@@ -185,7 +183,7 @@
 [% END %]
 
 [% MACRO library_outfile(suffix) BLOCK -%]
-				OutputFile="[% worklibout %]\[% platform.name %]\[% my.doc.project.0 %][% suffix %].lib"
+				OutputFile="[% worklibout %]\[% my.doc.project.0 %][% suffix %].lib"
 [% END %]
 [% MACRO librarian_library_release GET library_outfile('') %]
 [% MACRO librarian_library_debug   GET library_outfile('_d') %]
