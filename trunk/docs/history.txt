@@ -1,4 +1,8 @@
-﻿*** 2009-03-08 by Kenny Graunke
+﻿*** 2009-03-09 by Tristan Cragnolini
+- Fixed PS#613 - You always receive group loot when you're in a guildhouse.  
+                 Patch by Vornne
+
+*** 2009-03-08 by Kenny Graunke
 - Fixed a crash when killing an NPC with the /death command.
 - Fixed an underflow bug with skills and stats.
 
