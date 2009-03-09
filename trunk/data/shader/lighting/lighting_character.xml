@@ -22,6 +22,7 @@
   <alias name="apply_alpha" file="/shader/snippets/surface/alpha-nochange.xml" />
   <alias name="lighting" file="/shader/snippets/lighting/lighting-ppl.xml" />
   <alias name="surface" file="/shader/snippets/surface/surface-overlay.xml" />
+  <alias name="specular" file="/shader/snippets/surface/specular-default.xml" />
   
   <technique priority="300" minlights="3">
     <tag>per_pixel_lighting</tag>
