@@ -179,7 +179,11 @@ bool ScriptOperation::CheckMovedOk(NPC *npc, EventManager *eventmgr, csVector3 o
 {
     npcMesh* pcmesh = npc->GetActor()->pcmesh;
 
-    npcclient->GetWorld()->WarpSpace(oldSector, newSector, oldPos);
+    if (!npcclient->GetWorld()->WarpSpace(oldSector, newSector, oldPos))
+    {
+        npc->Printf("CheckMovedOk: new and old sectors are not connected by a portal!");
+        return false;
+    }
 
     if ((oldPos - newPos).SquaredNorm() < 0.01f) // then stopped dead, presumably by collision
     {
@@ -288,8 +292,11 @@ void ScriptOperation::TurnTo(NPC *npc, csVector3& dest, iSector* destsect, csVec
 
     psGameObject::GetPosition(npc->GetActor(),pos,rot,sector);
 
-    npcclient->GetWorld()->WarpSpace(sector, destsect, pos);
-
+    if (!npcclient->GetWorld()->WarpSpace(sector, destsect, pos))
+    {
+        npc->Printf("Current and TurnTo destination sectors are not connected!");
+        return;
+    }
     forward = dest-pos;
 
     npc->Printf(6,"Forward is %s",toString(forward).GetDataSafe());
@@ -2057,7 +2064,11 @@ bool ChaseOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
                     toString(targetPos,targetSector).GetDataSafe());
 
         // We need to work in the target sector space
-        npcclient->GetWorld()->WarpSpace(targetSector, mySector, targetPos);
+        if (!npcclient->GetWorld()->WarpSpace(targetSector, mySector, targetPos))
+        {
+            npc->Printf("ChaseOperation: target's sector is not connected to ours!");
+            return true;  // This operation is complete
+        }
 
         // This prevents NPCs from wanting to occupy the same physical space as something else
         csVector3 displacement = targetPos - myPos;
@@ -2138,7 +2149,11 @@ void ChaseOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
     targetInstance = targetActor->GetInstance();
 
     // We work in our sector's space
-    npcclient->GetWorld()->WarpSpace(targetSector, mySector, targetPos);
+    if (!npcclient->GetWorld()->WarpSpace(targetSector, mySector, targetPos))
+    {
+        npc->Printf("ChaseOperation: target's sector is not connected to ours!");
+        return;
+    }
 
     // This prevents NPCs from wanting to occupy the same physical space as something else
     csVector3 displacement = targetPos - myPos;

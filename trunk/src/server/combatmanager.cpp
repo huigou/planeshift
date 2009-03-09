@@ -926,7 +926,10 @@ bool CombatManager::ValidCombatAngle(gemObject *attacker,gemObject *target,psIte
     attacker->GetPosition(attackPos, attackSector);
     target->GetPosition(targetPos, targetSector);
 
-    EntityManager::GetSingleton().GetWorld()->WarpSpace(targetSector, attackSector, targetPos);
+    if(!(EntityManager::GetSingleton().GetWorld()->WarpSpace(targetSector, attackSector, targetPos)))
+    {
+        return false;
+    }
 
     csVector3 diff = targetPos - attackPos;
     if (!diff.x)

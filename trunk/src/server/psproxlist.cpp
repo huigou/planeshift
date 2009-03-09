@@ -431,6 +431,14 @@ float ProximityList::RangeTo( gemObject* object, bool ignoreY )
 #ifdef PSPROXDEBUG
     CPrintf(CON_DEBUG, "[float ProximityList::RangeTo( gemObject* entity )]\n");
 #endif
+
+    // If in different instances, except for the common 'all' instance, return a very big value.
+    if (object->GetInstance() != INSTANCE_ALL && self->GetInstance() != INSTANCE_ALL &&
+        object->GetInstance() != self->GetInstance())
+    {
+        return 9999999.99f;
+    }
+
     // Find the current position of the specified entity
     csVector3 pos1;
     csVector3 pos2;
@@ -448,18 +456,21 @@ float ProximityList::RangeTo( gemObject* object, bool ignoreY )
     CPrintf(CON_DEBUG, "Entity %s is at (%f,%f,%f)\n", GetEntity()->GetName(), pos2.x, pos2.y, pos2.z);
 #endif
 
-    EntityManager::GetSingleton().GetWorld()->WarpSpace(sector2, sector1, pos2);
-
     if ( ignoreY )
     {
+        if(EntityManager::GetSingleton().GetWorld()->WarpSpace(sector2, sector1, pos2))
+        {
         return ( sqrt(  (pos1.x - pos2.x)*(pos1.x - pos2.x)+
                     (pos1.z - pos2.z)*(pos1.z - pos2.z)));
+        }
+        else
+        {
+            return 9999999.99f; // No transformation found, so just set larg distance.
+        }
     }
     else
     {
-        return ( sqrt(  (pos1.x - pos2.x)*(pos1.x - pos2.x)+
-                    (pos1.y - pos2.y)*(pos1.y - pos2.y)+
-                    (pos1.z - pos2.z)*(pos1.z - pos2.z)));
+        return EntityManager::GetSingleton().GetWorld()->Distance(pos1, sector1, pos2, sector2);
     }
 }
 

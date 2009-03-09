@@ -230,8 +230,6 @@ void psPath::Precalculate(psWorld * world, iEngine *engine)
     if (precalculationValid) return;
 
     PrecalculatePath(world,engine);
-    
-    precalculationValid = true;
 }
 
 float DistancePointLine(const csVector3 &p, const csVector3 &l1, const csVector3 &l2, float & t)
@@ -250,8 +248,13 @@ float psPath::Distance(psWorld * world, iEngine *engine,csVector3& pos, iSector 
         csVector3 l1(points[i]->pos);
         csVector3 l2(points[i+1]->pos);
         
-        world->WarpSpace(points[i]->GetSector(engine),sector,l1);
-        world->WarpSpace(points[i+1]->GetSector(engine),sector,l2);
+        // If sectors are not connected, return a very big value.
+        if (!world->WarpSpace(points[i]->GetSector(engine),sector,l1) ||
+            !world->WarpSpace(points[i+1]->GetSector(engine),sector,l2))
+        {
+            dist = 9999999.99f;
+            break;
+        }
 
         float t = 0.0;
         float d = DistancePointLine(pos,l1,l2,t);
@@ -558,8 +561,13 @@ void psLinearPath::PrecalculatePath(psWorld * world, iEngine *engine)
     {
         csVector3 pos1(points[ii]->pos),pos2(points[ii+1]->pos);
 
-        world->WarpSpace(points[ii+1]->GetSector(engine),points[ii]->GetSector(engine),pos2);
-
+        if (!world->WarpSpace(points[ii+1]->GetSector(engine),points[ii]->GetSector(engine),pos2))
+        {
+            Error4("In path \'%s\', sectors of points %lu and %lu are not connected by a portal!", name.GetDataSafe(), (unsigned long)ii, (unsigned long)ii+1);
+            precalculationValid = false;
+            return;
+        }
+        
         float dist = (pos2-pos1).Norm();
 
         points[ii]->startDistance[FORWARD] = totalDistance;
@@ -576,6 +584,7 @@ void psLinearPath::PrecalculatePath(psWorld * world, iEngine *engine)
     {
         points[ii]->startDistance[REVERSE] =  totalDistance - points[ii]->startDistance[FORWARD];
     }
+    precalculationValid = true;
 }
 
 void psLinearPath::GetInterpolatedPosition (int index, float fraction, csVector3& pos)
