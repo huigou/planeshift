@@ -3784,7 +3784,7 @@ bool AdminManager::MoveObject(Client *client, gemObject *target, csVector3& pos,
 {
     // This is a powerful feature; not everyone is allowed to use all of it
     csString response;
-    if (client->GetActor() != (gemActor*)target && psserver->CheckAccess(client, "move others"))
+    if (client->GetActor() != (gemActor*)target && !psserver->CheckAccess(client, "move others"))
         return false;
 
     if ( dynamic_cast<gemItem*>(target) ) // Item?

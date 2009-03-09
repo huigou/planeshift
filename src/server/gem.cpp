@@ -730,21 +730,9 @@ void gemObject::Move(const csVector3& pos,float rotangle, iSector* room)
 
 bool gemObject::IsNear(gemObject *obj, float radius)
 {
-    // Find the current position of the specified entity
-    csVector3 pos1,pos2;
-    float yrot1,yrot2;
-    iSector *sector1,*sector2;
+    float distance = proxlist->RangeTo(obj);
 
-    GetPosition(pos1,yrot1,sector1);
-    obj->GetPosition(pos2,yrot2,sector2);
-
-    EntityManager::GetSingleton().GetWorld()->WarpSpace(sector2, sector1, pos2);
-
-    float squaredDistance = (pos1.x - pos2.x)*(pos1.x - pos2.x)+
-        (pos1.y - pos2.y)*(pos1.y - pos2.y)+
-        (pos1.z - pos2.z)*(pos1.z - pos2.z);
-
-    if ( squaredDistance < radius*radius)
+    if ( distance < radius)
         return true;
     else
         return false;
@@ -4098,13 +4086,3 @@ void gemNPC::Broadcast(int clientnum, bool control)
     }
 
 }
-
-#if 0   // This function is redundant with npc->Say()
-void gemNPC::NPCTalk(const csString & text)
-{
-    psSystemMessage talkMsg(0, MSG_INFO, text);
-    psserver->GetEventManager()->Broadcast(talkMsg.msg);
-    talkMsg.Multicast(GetMulticastClients(), 0, CHAT_SAY_RANGE );
-}
-#endif
-
