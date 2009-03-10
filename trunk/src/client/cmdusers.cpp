@@ -339,8 +339,9 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         
         csString targetString;
         // if the command's target is not precised, get the object currently targeted
+        // isdigit(words[1][0] checks if the first argument is a number
         if (words[1] == "x" || words[1] == "y" || words[1] == "z" ||
-            words[1] == "reset" || words[1] == "0" || atoi(words[1]))
+            words[1] == "reset" || isdigit(words[1][0]) || atoi(words[1]))
             targetString = FormatTarget();
         else
         {
@@ -360,7 +361,6 @@ const char *psUserCommands::HandleCommand(const char *cmd)
             else
                 newCmd.Append(words.GetTail(1).GetDataSafe());
             
-            Error2("Rotate : %s", newCmd.GetDataSafe());
             psUserCmdMessage cmdmsg(newCmd);
             cmdmsg.SendMessage();
         }
