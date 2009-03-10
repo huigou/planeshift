@@ -51,6 +51,12 @@ psServerVitals::psServerVitals(psCharacter * character)
     vitals[VITAL_PYSSTAMINA].max.Initialize(&statsDirty,    DIRTY_VITAL_PYSSTAMINA_MAX);
     vitals[VITAL_MENSTAMINA].drRate.Initialize(&statsDirty, DIRTY_VITAL_MENSTAMINA_RATE);
     vitals[VITAL_MENSTAMINA].max.Initialize(&statsDirty,    DIRTY_VITAL_MENSTAMINA_MAX);
+    
+    //initialize values to a safe value:
+    vitals[VITAL_HITPOINTS].value = 0;
+    vitals[VITAL_MANA].value = 0;
+    vitals[VITAL_PYSSTAMINA].value = 0;
+    vitals[VITAL_MENSTAMINA].value = 0;
 
     vitals[VITAL_HITPOINTS].drRate.SetBase(HP_REGEN_RATE);
     vitals[VITAL_MANA].drRate.SetBase(MANA_REGEN_RATE);
