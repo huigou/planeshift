@@ -1,4 +1,8 @@
-﻿*** 2009-03-09 by Tristan Cragnolini
+﻿*** 2009-03-10 by Kenny Graunke
+- Converted Buffables to use csArray instead of csList to improve their
+  efficiency (memory usage and cache behavior).
+
+*** 2009-03-09 by Tristan Cragnolini
 - Fixed PS#613 - You always receive group loot when you're in a guildhouse.  
                  Patch by Vornne
 - Fixed PS#2799 - Server crash when uploading character, patch by Lanarel

@@ -171,25 +171,28 @@ public:
     void Buff(const ActiveSpell *owner, T x)
     {
         cached += x;
-        buffs.PushFront(csTuple2<const ActiveSpell*,T>(owner, x));
+        buffs.Push(csTuple2<const ActiveSpell*,T>(owner, x));
 
         OnChange();
     }
 
     virtual void Cancel(const ActiveSpell *owner)
     {
-        typename csList< csTuple2<const ActiveSpell*, T> >::Iterator it(buffs);
-        while (it.HasNext())
+        bool changed = false;
+
+        // Count backwards since we're deleting and things may shift on the right
+        for (size_t i = buffs.GetSize() - 1; i != (size_t) -1; i--)
         {
-            csTuple2<const ActiveSpell*, T> & curr = it.Next();
-            if (curr.first == owner)
+            if (buffs[i].first == owner)
             {
-                cached -= curr.second;
-                buffs.Delete(it);
+                cached -= buffs[i].second;
+                buffs.DeleteIndexFast(i);
+                changed = true;
             }
         }
 
-        OnChange();
+        if (changed)
+            OnChange();
     }
 
 protected:
@@ -200,10 +203,7 @@ protected:
 
     T base;
     T cached;
-    // We can probably get away with using a csArray and DeleteIndexFast
-    // (more efficient)...the ordering may be important in weird overflow
-    // situations, but hopefully we won't hit those...
-    csList< csTuple2<const ActiveSpell*, T> > buffs;
+    csArray< csTuple2<const ActiveSpell*, T> > buffs;
 };
 
 //-----------------------------------------------------------------------------
