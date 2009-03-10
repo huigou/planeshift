@@ -1,6 +1,10 @@
 ﻿*** 2009-03-09 by Tristan Cragnolini
 - Fixed PS#613 - You always receive group loot when you're in a guildhouse.  
                  Patch by Vornne
+- Fixed PS#2799 - Server crash when uploading character, patch by Lanarel
+- Improved the parsing in /rotate, taking into account first axis 
+  parameter being 0
+- Corrected a loss of target when using /slide or /rotate on items
 
 *** 2009-03-08 by Kenny Graunke
 - Fixed a crash when killing an NPC with the /death command.
