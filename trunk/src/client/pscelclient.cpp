@@ -359,13 +359,14 @@ void psCelClient::HandleItem( MsgEntry* me )
 {
     psPersistItem mesg( me );
 
-    // We already have an entity with this id so we must have missed the remove object message
-    // so delete and remake it.
+    // We already have an entity with this id, updating the item
     GEMClientObject *found = (GEMClientObject*) FindObject(mesg.eid);
-    if(found)
+    GEMClientItem *foundItem = dynamic_cast<GEMClientItem*>(found);
+    if(foundItem)
     {
-        Debug3(LOG_CELPERSIST, 0, "Found existing item<%s> object with %s, removing.\n", found->GetName(), ShowID(mesg.eid));
-        RemoveObject(found);
+        Debug3(LOG_CELPERSIST, 0, "Found existing item<%s> object with %s, updating.\n", found->GetName(), ShowID(mesg.eid));
+        foundItem->UpdateItem( mesg );
+        return;
     }
 
     GEMClientItem* newItem = new GEMClientItem( this, mesg );
@@ -1864,6 +1865,20 @@ void GEMClientItem::PostLoad()
 
     cel->GetEntityLabels()->OnObjectArrived(this);
     cel->GetShadowManager()->CreateShadow(this);
+}
+
+void GEMClientItem::UpdateItem( psPersistItem& mesg )
+{
+    name = mesg.name;
+    Debug3(LOG_CELPERSIST, 0, "Item %s(%s) Updated", mesg.name.GetData(), ShowID(mesg.eid));
+    pos = mesg.pos;
+    xRot = mesg.xRot;
+    yRot = mesg.yRot;
+    zRot = mesg.zRot;
+    sector = mesg.sector;
+    flags = mesg.flags;
+
+    PostLoad();
 }
 
 GEMClientActionLocation::GEMClientActionLocation( psCelClient* cel, psPersistActionLocation& mesg )

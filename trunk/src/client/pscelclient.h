@@ -558,6 +558,8 @@ public:
     virtual ~GEMClientItem();
 
     virtual GEMOBJECT_TYPE GetObjectType() { return GEM_ITEM; }
+    
+    void UpdateItem( psPersistItem& mesg );
 
 protected:
     virtual void PostLoad();
