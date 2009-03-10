@@ -373,7 +373,7 @@ bool pawsPetitionGMWindow::OnButtonReleased( int mouseButton, int keyModifier, p
                 }
 
                 if (csString("In Progress") == ((pawsTextBox*)(petitionList->GetSelected()->GetColumn(PGMCOL_STATUS)))->GetText()
-                    && (csString)psengine->GetCelClient()->GetMainPlayer()->GetName() == ((pawsTextBox*)(petitionList->GetSelected()->GetColumn(PGMCOL_GM)))->GetText())
+                    && ((csString)psengine->GetCelClient()->GetMainPlayer()->GetName()).StartsWith(((pawsTextBox*)(petitionList->GetSelected()->GetColumn(PGMCOL_GM)))->GetText()))
                 {
 
                     currentRow = sel;
@@ -435,8 +435,8 @@ bool pawsPetitionGMWindow::OnButtonReleased( int mouseButton, int keyModifier, p
                 }
 
                 if (csString("In Progress") == ((pawsTextBox*)(petitionList->GetSelected()->GetColumn(PGMCOL_STATUS)))->GetText()
-                    && ((csString)psengine->GetCelClient()->GetMainPlayer()->GetName() == ((pawsTextBox*)(petitionList->GetSelected()->GetColumn(PGMCOL_GM)))->GetText()
-                    || psengine->GetCelClient()->GetMainPlayer()->GetType() >= 25))
+                    && ((csString)psengine->GetCelClient()->GetMainPlayer()->GetName()).StartsWith(((pawsTextBox*)(petitionList->GetSelected()->GetColumn(PGMCOL_GM)))->GetText())
+                    || psengine->GetCelClient()->GetMainPlayer()->GetType() >= 25)
                 {
                     currentRow = sel;
 
@@ -467,7 +467,7 @@ bool pawsPetitionGMWindow::OnButtonReleased( int mouseButton, int keyModifier, p
                 }
 
                 if (csString("In Progress") == ((pawsTextBox*)(petitionList->GetSelected()->GetColumn(PGMCOL_STATUS)))->GetText()
-                    && (csString)psengine->GetCelClient()->GetMainPlayer()->GetName() == ((pawsTextBox*)(petitionList->GetSelected()->GetColumn(PGMCOL_GM)))->GetText())
+                    && ((csString)psengine->GetCelClient()->GetMainPlayer()->GetName()).StartsWith(((pawsTextBox*)(petitionList->GetSelected()->GetColumn(PGMCOL_GM)))->GetText()))
                 {
                     currentRow = sel;
 
