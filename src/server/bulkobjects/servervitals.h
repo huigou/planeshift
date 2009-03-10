@@ -39,7 +39,7 @@
 class MsgEntry;
 class psCharacter;
 
-// Buffables for vitals, which automatically update the dirty flag as necessary.
+/// Buffables for vitals, which automatically update the dirty flag as necessary.
 class VitalBuffable : public Buffable<float>
 {
 public:
@@ -57,8 +57,8 @@ protected:
         *statsDirty |= dirtyFlag;
     }
 
-    int dirtyFlag; //< The bit value we should set when this becomes dirty.
-    unsigned int *statsDirty; //< Pointer to the psServerVitals dirty bitfield.
+    int dirtyFlag; ///< The bit value we should set when this becomes dirty.
+    unsigned int *statsDirty; ///< Pointer to the psServerVitals dirty bitfield.
 };
 
 /// A character vital (such as HP or Mana) - server side.
@@ -108,7 +108,7 @@ private:
     ///  @see  PS_DIRTY_VITALS
     unsigned int statsDirty;
     unsigned char version;
-    psCharacter *character;  //< the character whose vitals we manage
+    psCharacter *character;  ///< the character whose vitals we manage
 };
 
 #endif
