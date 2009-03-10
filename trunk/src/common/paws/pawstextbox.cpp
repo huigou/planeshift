@@ -638,9 +638,9 @@ void pawsMessageTextBox::FullScroll()
 
 }
 
-void pawsMessageTextBox::SplitMessage( const char* newText, int colour, int size )
+void pawsMessageTextBox::SplitMessage( csString newText, int colour, int size )
 {
-    if ( newText != NULL )
+    if ( !newText.IsEmpty())
     {    
         int maxWidth;
         int maxHeight;

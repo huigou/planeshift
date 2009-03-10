@@ -194,7 +194,7 @@ protected:
     
     //void AdjustMessages();
     
-    void SplitMessage( const char* text, int colour, int size );
+    void SplitMessage( csString newText, int colour, int size );
 
     /// Calculates value of the lineHeight attribute
     void CalcLineHeight();
