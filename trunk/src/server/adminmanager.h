@@ -445,11 +445,11 @@ protected:
 
     /** @brief Cancels the specified petition if the player was its creator
      *  @param playerID: Is the ID of the player who is requesting the change.
-     *                   if ID is -1, that means a GM is cancelling someone's petition
      *  @param petitionID: The petition id
+     *  @param isGMrequest: if true that means a GM is cancelling someone's petition
      *  @return Returns either success or failure.
      */
-    bool CancelPetition(PID playerID, int petitionID);
+    bool CancelPetition(PID playerID, int petitionID, bool isGMrequest = false);
 
     /** @brief Changes the description of the specified petition if the player was its creator
      *  @param playerID: Is the ID of the player who is requesting the change.

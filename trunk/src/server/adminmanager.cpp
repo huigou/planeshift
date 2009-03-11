@@ -4856,7 +4856,7 @@ void AdminManager::GMHandlePetition(MsgEntry *me, psPetitionRequestMessage& msg,
     {
         // Cancellation:
         type = PETITION_CANCEL;
-        result = CancelPetition(PETITION_GM, msg.id);
+        result = CancelPetition(client->GetPID(), msg.id, true);
     }
     else if (msg.request == "close")
     {
@@ -5057,13 +5057,13 @@ iResultSet *AdminManager::GetPetitions(PID playerID, PID gmID)
     return rs;
 }
 
-bool AdminManager::CancelPetition(PID playerID, int petitionID)
+bool AdminManager::CancelPetition(PID playerID, int petitionID, bool isGMrequest)
 {
     // If player ID is PETITION_GM, just cancel the petition (a GM is requesting the change)
     if (playerID == PETITION_GM)
     {
-        int result = db->CommandPump("UPDATE petitions SET status='Cancelled' WHERE id=%d AND (assigned_gm=-1 OR assigned_gm=%u)", petitionID,playerID.Unbox());
-        return (result != -1);
+        int result = db->CommandPump("UPDATE petitions SET status='Cancelled' WHERE id=%d AND assigned_gm=%u)", petitionID,playerID.Unbox());
+        return (result > 0);
     }
 
     // Attempt to select this petition; two things can go wrong: it doesn't exist or the player didn't create it
