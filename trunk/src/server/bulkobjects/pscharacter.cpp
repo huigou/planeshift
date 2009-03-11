@@ -2906,8 +2906,22 @@ double psCharacter::CalcFunction(const char * functionName, const double * param
 
         return v1;
     }
+    else if (!strcasecmp(functionName, "SkillRank"))
+    {
+        const char *skillName = MathScriptEngine::GetString(params[0]);
+        PSSKILL skill = CacheManager::GetSingleton().ConvertSkillString(skillName);
+        double value = skills.GetSkillRank(skill).Current();
+
+        // always give a small % of melee (unharmed) skill
+        if (skill == PSSKILL_MARTIALARTS && value == 0)
+            value = 0.2;
+
+        return value;
+    }
     else if (!strcasecmp(functionName, "GetSkillValue"))
     {
+        // Deprecated in favor of SkillRank, which takes a string literal.
+        Warning2(LOG_CHARACTER, "MathScript: Character:GetSkillValue(%d) is deprecated.", (int) params[0]);
         PSSKILL skill = (PSSKILL)(int)params[0];
 
         double value = skills.GetSkillRank(skill).Current();
