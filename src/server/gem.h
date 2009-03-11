@@ -902,6 +902,7 @@ public:
     bool safefall;          ///< no fall damage
     bool questtester;       ///< no quest lockouts
     bool givekillexp;       ///< give exp if killed
+    bool attackable;        ///< This actor can be attacked by anyone without limitations or /challenge
 
     // don't use this directly
     bool SetMesh(const char* meshname);
