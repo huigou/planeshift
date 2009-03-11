@@ -432,6 +432,7 @@ bool PawsManager::HandleMouseDown( iEvent &ev )
 
     if ( widget != NULL )
     {
+		// Enforce modality by only allowing button clicks within the modal widget if there is one.
         if ( modalWidget != NULL )
         {
             // Check to see if the widget is a child of the modal widget.

@@ -331,7 +331,7 @@ void pawsListBox::CreateTitleRow()
 }
 
 
-pawsListBoxRow* pawsListBox::GetSelected()
+pawsListBoxRow* pawsListBox::GetSelectedRow()
 {
     if ( selected == -1 )
         return NULL;
@@ -705,12 +705,6 @@ bool pawsListBox::OnMouseDown(int button, int modifiers, int x, int y )
     }
 
     return true;
-}
-
-pawsListBoxRow* pawsListBox::GetSelectedRow()
-{
-    if ( selected == -1 ) return 0;
-    return GetRow( selected );
 }
 
 
@@ -1125,6 +1119,19 @@ void pawsListBox::MoveRow(int rownr,int dest)
         rows[i] = sortedRows[i];
     delete [] sortedRows;
     CalculateDrawPositions();
+}
+
+const char *pawsListBox::GetSelectedText(size_t columnId)
+{
+	pawsListBoxRow *row = GetSelectedRow();
+	if (!row)
+		return NULL;
+
+	pawsTextBox *box = (pawsTextBox *)GetSelectedRow()->GetColumn(columnId);
+	if (!box)
+		return NULL;
+
+	return box->GetText();
 }
 
 //-----------------------------------------------------------------------------

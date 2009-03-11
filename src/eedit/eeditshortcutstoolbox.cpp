@@ -124,7 +124,7 @@ void EEditShortcutsToolbox::Show()
 
 void EEditShortcutsToolbox::OnListAction(pawsListBox * selected, int status)
 {
-    pawsListBoxRow * row = shortcutsList->GetSelected();
+    pawsListBoxRow * row = shortcutsList->GetSelectedRow();
     if (!row)
         return;
 

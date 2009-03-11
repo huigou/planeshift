@@ -291,7 +291,7 @@ bool pawsCharParents::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
 
             // check religion selected
             pawsListBox* religionBox = (pawsListBox*)FindWidget("Religions");
-            if (!religionBox->GetSelected())
+            if (!religionBox->GetSelectedRow())
             {
                 psSystemMessage error(0,MSG_ERROR,"Please choose a religion");
                 error.FireEvent();

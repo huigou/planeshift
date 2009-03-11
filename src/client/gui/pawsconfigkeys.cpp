@@ -87,7 +87,7 @@ bool pawsConfigKeys::Initialize()
     if ( !CreateTree() )
         return false;
 
-    UseBorder("line");
+   // UseBorder("line");
 
     if ( !FindFingeringWindow() )
         return false;
@@ -97,6 +97,7 @@ bool pawsConfigKeys::Initialize()
 
 bool pawsConfigKeys::CreateTree()
 {
+	/***********
     pawsTreeNode * root;
 
     CS_ASSERT(tree == NULL);
@@ -114,6 +115,10 @@ bool pawsConfigKeys::CreateTree()
     root = tree->GetRoot();
     if (root != NULL)
         CreateTreeWidgets(root);
+    ****************/
+
+	if (!LoadFromFile("data/gui/configkeys.xml") )
+		return false;
 
     return true;
 }

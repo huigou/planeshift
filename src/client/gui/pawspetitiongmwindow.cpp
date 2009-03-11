@@ -364,7 +364,7 @@ bool pawsPetitionGMWindow::OnButtonReleased( int mouseButton, int keyModifier, p
             if (petCount > 0)
             {
                 // Get the currently selected row:
-                int sel = petitionList->GetSelection();
+                int sel = petitionList->GetSelectedRowNum();
                 if (sel < 0)
                 {
                     psSystemMessage error(0,MSG_INFO,PawsManager::GetSingleton().Translate("You must select a petition from the list in order to cancel it."));
@@ -372,8 +372,8 @@ bool pawsPetitionGMWindow::OnButtonReleased( int mouseButton, int keyModifier, p
                     return true;
                 }
 
-                if (csString("In Progress") == ((pawsTextBox*)(petitionList->GetSelected()->GetColumn(PGMCOL_STATUS)))->GetText()
-                    && ((csString)psengine->GetCelClient()->GetMainPlayer()->GetName()).StartsWith(((pawsTextBox*)(petitionList->GetSelected()->GetColumn(PGMCOL_GM)))->GetText()))
+                if (csString("In Progress") == petitionList->GetSelectedText(PGMCOL_STATUS)
+                    && ((csString)psengine->GetCelClient()->GetMainPlayer()->GetName()).StartsWith(petitionList->GetSelectedText(PGMCOL_GM)))
                 {
 
                     currentRow = sel;
@@ -396,7 +396,7 @@ bool pawsPetitionGMWindow::OnButtonReleased( int mouseButton, int keyModifier, p
             if (petCount > 0)
             {
                 // Get the currently selected row:
-                int sel = petitionList->GetSelection();
+                int sel = petitionList->GetSelectedRowNum();
                 if (sel < 0)
                 {
                     psSystemMessage error(0,MSG_INFO,PawsManager::GetSingleton().Translate("You must select a petition from the list in order to assign yourself."));
@@ -404,7 +404,7 @@ bool pawsPetitionGMWindow::OnButtonReleased( int mouseButton, int keyModifier, p
                     return true;
                 }
 
-                if (csString("Open") == ((pawsTextBox*)(petitionList->GetSelected()->GetColumn(PGMCOL_STATUS)))->GetText())
+                if (csString("Open") == petitionList->GetSelectedText(PGMCOL_STATUS))
                 {
                     currentRow = sel;
 
@@ -426,7 +426,7 @@ bool pawsPetitionGMWindow::OnButtonReleased( int mouseButton, int keyModifier, p
             if (petCount > 0)
             {
                 // Get the currently selected row:
-                int sel = petitionList->GetSelection();
+                int sel = petitionList->GetSelectedRowNum();
                 if (sel < 0)
                 {
                     psSystemMessage error(0,MSG_INFO,PawsManager::GetSingleton().Translate("You must select a petition from the list in order to deassign yourself."));
@@ -434,8 +434,8 @@ bool pawsPetitionGMWindow::OnButtonReleased( int mouseButton, int keyModifier, p
                     return true;
                 }
 
-                if (csString("In Progress") == ((pawsTextBox*)(petitionList->GetSelected()->GetColumn(PGMCOL_STATUS)))->GetText()
-                    && ((csString)psengine->GetCelClient()->GetMainPlayer()->GetName()).StartsWith(((pawsTextBox*)(petitionList->GetSelected()->GetColumn(PGMCOL_GM)))->GetText())
+                if (csString("In Progress") == petitionList->GetSelectedText(PGMCOL_STATUS)
+                    && ((csString)psengine->GetCelClient()->GetMainPlayer()->GetName()).StartsWith(petitionList->GetSelectedText(PGMCOL_GM))
                     || psengine->GetCelClient()->GetMainPlayer()->GetType() >= 25)
                 {
                     currentRow = sel;
@@ -458,7 +458,7 @@ bool pawsPetitionGMWindow::OnButtonReleased( int mouseButton, int keyModifier, p
             if (petCount > 0)
             {
                 // Get the currently selected row:
-                int sel = petitionList->GetSelection();
+                int sel = petitionList->GetSelectedRowNum();
                 if (sel < 0)
                 {
                     psSystemMessage error(0,MSG_INFO,PawsManager::GetSingleton().Translate("You must select a petition from the list in order to close it."));
@@ -466,8 +466,8 @@ bool pawsPetitionGMWindow::OnButtonReleased( int mouseButton, int keyModifier, p
                     return true;
                 }
 
-                if (csString("In Progress") == ((pawsTextBox*)(petitionList->GetSelected()->GetColumn(PGMCOL_STATUS)))->GetText()
-                    && ((csString)psengine->GetCelClient()->GetMainPlayer()->GetName()).StartsWith(((pawsTextBox*)(petitionList->GetSelected()->GetColumn(PGMCOL_GM)))->GetText()))
+                if (csString("In Progress") == petitionList->GetSelectedText(PGMCOL_STATUS)
+                    && ((csString)psengine->GetCelClient()->GetMainPlayer()->GetName()).StartsWith(petitionList->GetSelectedText(PGMCOL_GM)))
                 {
                     currentRow = sel;
 
@@ -488,7 +488,7 @@ bool pawsPetitionGMWindow::OnButtonReleased( int mouseButton, int keyModifier, p
             if (petCount > 0)
             {
                 // Get the currently selected row:
-                int sel = petitionList->GetSelection();
+                int sel = petitionList->GetSelectedRowNum();
                 if (sel < 0)
                 {
                     psSystemMessage error(0,MSG_INFO,PawsManager::GetSingleton().Translate("You must select a petition from the list in order to escalate it."));
@@ -496,9 +496,9 @@ bool pawsPetitionGMWindow::OnButtonReleased( int mouseButton, int keyModifier, p
                     return true;
                 }
 
-                if (psengine->GetCelClient()->GetMainPlayer()->GetType() + 1 >= atof(((pawsTextBox*)(petitionList->GetSelected()->GetColumn(PGMCOL_LVL)))->GetText()))
+                if (psengine->GetCelClient()->GetMainPlayer()->GetType() + 1 >= atof(petitionList->GetSelectedText(PGMCOL_LVL)))
                 {
-                    float level = atof(((pawsTextBox*)(petitionList->GetSelected()->GetColumn(PGMCOL_LVL)))->GetText());
+                    float level = atof(petitionList->GetSelectedText(PGMCOL_LVL));
                     if ( level == 10 )
                     {
                         psSystemMessage error(0,MSG_INFO,"Cannot escalate above 10");
@@ -521,7 +521,7 @@ bool pawsPetitionGMWindow::OnButtonReleased( int mouseButton, int keyModifier, p
             if (petCount > 0)
             {
                 // Get the currently selected row:
-                int sel = petitionList->GetSelection();
+                int sel = petitionList->GetSelectedRowNum();
                 if (sel < 0)
                 {
                     psSystemMessage error(0,MSG_INFO,PawsManager::GetSingleton().Translate("You must select a petition from the list in order to descalate it."));
@@ -529,9 +529,9 @@ bool pawsPetitionGMWindow::OnButtonReleased( int mouseButton, int keyModifier, p
                     return true;
                 }
 
-                if (psengine->GetCelClient()->GetMainPlayer()->GetType() + 1 >= atof(((pawsTextBox*)(petitionList->GetSelected()->GetColumn(PGMCOL_LVL)))->GetText()))
+                if (psengine->GetCelClient()->GetMainPlayer()->GetType() + 1 >= atof(petitionList->GetSelectedText(PGMCOL_LVL)))
                 {
-                    float level = atof(((pawsTextBox*)(petitionList->GetSelected()->GetColumn(PGMCOL_LVL)))->GetText());
+                    float level = atof(petitionList->GetSelectedText(PGMCOL_LVL));
                     if ( level == 0 )
                     {
                         psSystemMessage error(0,MSG_INFO,"Cannot descalate below 0");
@@ -555,13 +555,13 @@ bool pawsPetitionGMWindow::OnButtonReleased( int mouseButton, int keyModifier, p
             if (petCount > 0)
             {
                 // Get the currently selected row:
-                int sel = petitionList->GetSelection();
+                int sel = petitionList->GetSelectedRowNum();
                 if (sel < 0)
                     psengine->SetTargetPetitioner("None");
                 else
                 {
-                    if (csString("In Progress") == ((pawsTextBox*)(petitionList->GetSelected()->GetColumn(PGMCOL_STATUS)))->GetText())
-                        psengine->SetTargetPetitioner(((pawsTextBox*)(petitionList->GetSelected()->GetColumn(PGMCOL_PLAYER)))->GetText());
+                    if (csString("In Progress") == petitionList->GetSelectedText(PGMCOL_STATUS))
+                        psengine->SetTargetPetitioner(petitionList->GetSelectedText(PGMCOL_PLAYER));
                     else
                         psengine->SetTargetPetitioner("None");
                 }
@@ -643,7 +643,7 @@ void pawsPetitionGMWindow::AddPetitions(csArray<psPetitionInfo> &petitions)
     if (petitionList->GetRowCount() <= 0)
         petitionList->Select(NULL);
 
-    int selRow = petitionList->GetSelection();
+    int selRow = petitionList->GetSelectedRowNum();
     if (selRow != -1)
     {
         csString escalation = petitionList->GetTextCellValue(selRow, PGMCOL_LVL);
@@ -706,7 +706,7 @@ void pawsPetitionGMWindow::OnListAction( pawsListBox* selected, int status )
 {
     if (status == LISTBOX_HIGHLIGHTED)
     {
-        size_t sel = petitionList->GetSelection();
+        size_t sel = petitionList->GetSelectedRowNum();
         if (sel >= petitionMessage.petitions.GetSize())
             return;
         petText->Clear();

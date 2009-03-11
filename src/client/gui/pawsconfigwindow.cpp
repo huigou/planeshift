@@ -46,8 +46,8 @@
 
 // config window layout:
 #define SPACING             10            // space between parts of window
-#define SECT_WND_WIDTH      400           // width of section config window on the right
-#define SECT_WND_HEIGHT     300           // height of section config window on the right
+// #define SECT_WND_WIDTH      500           // width of section config window on the right
+// #define SECT_WND_HEIGHT     300           // height of section config window on the right
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -55,10 +55,11 @@
 
 pawsConfigWindow::pawsConfigWindow()
 {
-    sectionTree = NULL;
-    currSectWnd = NULL;
-    okButton = resetButton = NULL;
-    notify = NULL;
+    sectionTree   = NULL;
+	sectionParent = NULL;
+    currSectWnd   = NULL;
+    okButton      = resetButton = NULL;
+    notify        = NULL;
     object_reg = PawsManager::GetSingleton().GetObjectRegistry();
 }
 
@@ -67,9 +68,14 @@ bool pawsConfigWindow::PostSetup()
     sectionTree = dynamic_cast <pawsSimpleTree*> (FindWidget("ConfigTree"));
     if (sectionTree == NULL)
         return false;
+
     sectionTree->SetNotify(this);
     sectionTree->SetScrollBars(false, true);
     sectionTree->UseBorder("line");
+
+	sectionParent = FindWidget("PanelParent");
+	if (sectionParent == NULL)
+		return false;
 
     // sets up buttons:    
     okButton = FindWidget("OKButton");
@@ -172,14 +178,10 @@ bool pawsConfigWindow::OnSelected(pawsWidget* widget)
             Error1("Widget is not pawsConfigSectionWindow");
             return false;
         }
-        AddChild(newCurrSectWnd);
-        newCurrSectWnd->UseBorder("line");
-        newCurrSectWnd->SetSectionName(sectName);
-        newCurrSectWnd->SetRelativeFrame(
-                            sectionTree->DefaultFrame().xmax + GetActualWidth(SPACING), 
-                            GetActualHeight(SPACING),
-                            GetActualWidth(SECT_WND_WIDTH), 
-                            GetActualHeight(SECT_WND_HEIGHT));
+        sectionParent->AddChild(newCurrSectWnd);
+		newCurrSectWnd->SetRelativeFrame(8,8,sectionParent->GetActualWidth()-16 , sectionParent->GetActualHeight()-16 );
+        
+		// newCurrSectWnd->UseBorder("line");
         if (!strcmp(sectName, "configsound") && !psengine->GetSoundStatus())
         {
             PawsManager::GetSingleton().CreateWarningBox( "Your sound settings are disabled!");
@@ -190,6 +192,11 @@ bool pawsConfigWindow::OnSelected(pawsWidget* widget)
             Error1("pawsConfigSectionWindow failed to initialize");
             return false;
         }
+
+		// Ignore sizing info loaded from file and override to fit tab here
+		newCurrSectWnd->SetSectionName(sectName);
+		newCurrSectWnd->SetRelativeFrame(8,8,sectionParent->GetActualWidth()-16 , sectionParent->GetActualHeight()-16 );
+
         if (!newCurrSectWnd->LoadConfig())
         {
             Error1("pawsConfigSectionWindow could not load configuration");

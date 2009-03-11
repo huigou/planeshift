@@ -165,13 +165,15 @@ public:
     /** Get the row that is currently selected.
      * @return A pointer to the selected row or NULL.
      */
-    pawsListBoxRow* GetSelectedRow();
 
     int GetSelection() {  return selected;  }
 
     /// Get selected row
-    pawsListBoxRow* GetSelected();
+    pawsListBoxRow* GetSelectedRow();
     
+	/// Get text from specified column in the selected row
+	const char *GetSelectedText(size_t columnId);
+
     /// Returns number of selected row (-1 if none is selected)
     int GetSelectedRowNum();
 

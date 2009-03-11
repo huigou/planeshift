@@ -969,8 +969,11 @@ public:
     /** Returns the actual width assuming the passed value was in 800x600 
      * resolution. 
      */
-    int GetActualWidth( int myValue )
+    int GetActualWidth( int myValue=-1 )
     {
+		if (myValue == -1)
+			return screenFrame.Width();
+
         if (!resizeToScreen)
             return myValue;
 
@@ -987,8 +990,11 @@ public:
     /** Returns the actual Height assuming the passed value was in 800x600
      * resolution. 
      */
-    int GetActualHeight( int myValue )
+    int GetActualHeight( int myValue=-1 )
     {
+		if (myValue == -1)
+			return screenFrame.Height();
+
         if (!resizeToScreen)
             return myValue;
 
