@@ -146,6 +146,9 @@ public:
 
     void DumpAllVars() const;
 
+    /// Perform string interpolation, i.e. replacing ${...} with the appropriate variable.
+    void InterpolateString(csString & str) const;
+
 protected:
     const MathEnvironment *parent;
     csHash<MathVar*, csString> variables;

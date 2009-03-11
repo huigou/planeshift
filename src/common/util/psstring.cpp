@@ -26,7 +26,6 @@
 #include "util/psstring.h"
 #include "util/strutil.h"
 #include "util/psconst.h"
-#include "util/mathscript.h"
 
 bool psString::FindString(const char *border, unsigned int & pos, unsigned int & end)
 {
@@ -238,28 +237,6 @@ void psString::GetLine(size_t start,csString& line)
         end = end2;
 
     SubString(line,start,end-start);
-}
-
-void psString::Interpolate(const MathEnvironment *env)
-{
-    csString varName;
-    size_t pos = (size_t)-1;
-    while ((pos = Find("${", pos+1)) != SIZET_NOT_FOUND)
-    {
-        size_t end = Find("}", pos+2);
-        if (end == SIZET_NOT_FOUND)
-            continue; // invalid - unterminated ${
-        if (end <= pos+3)
-            continue; // invalid - empty ${}
-
-        SubString(varName, pos+2, end-(pos+2));
-        MathVar *var = env->Lookup(varName);
-        if (!var)
-            continue; // invalid - required variable not in environment.  leave it as is.
-
-        DeleteAt(pos, end-pos+1);
-        Insert(pos, var->ToString());
-    }
 }
 
 int psString::ReplaceAllSubString( const char* what, const char* with, bool wholeWord )
