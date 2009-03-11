@@ -425,7 +425,7 @@ bool pawsGmGUIWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
     case 1262:    // Add Linked Location
         if ( AddEdit )
         {
-            pawsListBoxRow* row = actionList->GetSelected();
+            pawsListBoxRow* row = actionList->GetSelectedRow();
             if (!row)
                 return true;
 
@@ -444,7 +444,7 @@ bool pawsGmGUIWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
         {
             AddEdit->Close();
 
-            pawsListBoxRow* row = actionList->GetSelected();
+            pawsListBoxRow* row = actionList->GetSelectedRow();
             if (!row)
                 return true;
 
@@ -493,7 +493,7 @@ bool pawsGmGUIWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
     case 1264:    // Delete Location
         if ( AddEdit )
         {
-            pawsListBoxRow* row = actionList->GetSelected();
+            pawsListBoxRow* row = actionList->GetSelectedRow();
             if (!row)
                 return true;
 
@@ -941,7 +941,7 @@ void pawsGmGUIWindow::ShowWidget(const char* name)
 
 const char* pawsGmGUIWindow::GetSelectedName()
 {
-    pawsListBoxRow* row = playerList->GetSelected();
+    pawsListBoxRow* row = playerList->GetSelectedRow();
     if (!row)
         return "Error";
 
@@ -952,7 +952,7 @@ const char* pawsGmGUIWindow::GetSelectedName()
 
 int pawsGmGUIWindow::GetSelectedGender()
 {
-    pawsListBoxRow* row = playerList->GetSelected();
+    pawsListBoxRow* row = playerList->GetSelectedRow();
     if (!row)
         return PSCHARACTER_GENDER_NONE;
 
@@ -970,13 +970,11 @@ int pawsGmGUIWindow::GetSelectedGender()
 
 const char* pawsGmGUIWindow::GetSelectedSector()
 {
-    pawsListBoxRow* row = playerList->GetSelected();
-    if (!row)
+    const char *val = playerList->GetSelectedText(4);
+    if (!val)
         return "Error";
-
-    pawsTextBox* box = (pawsTextBox*)row->GetColumn(4);
-
-    return box->GetText();
+	else
+		return val;
 }
 
 

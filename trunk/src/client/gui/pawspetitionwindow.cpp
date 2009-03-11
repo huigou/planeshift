@@ -187,7 +187,7 @@ bool pawsPetitionWindow::OnButtonReleased(int mouseButton, int keyModifier, paws
             if (petCount > 0)
             {
                 // Get the currently selected row:
-                int sel = petitionList->GetSelection();
+                int sel = petitionList->GetSelectedRowNum();
                 if (sel < 0)
                 {
                     psSystemMessage error(0,MSG_INFO,PawsManager::GetSingleton().Translate("You must select a petition from the list in order to cancel it."));
@@ -215,7 +215,7 @@ bool pawsPetitionWindow::OnButtonReleased(int mouseButton, int keyModifier, paws
             if (petCount > 0)
             {
                 // Get the currently selected row:
-                int sel = petitionList->GetSelection();
+                int sel = petitionList->GetSelectedRowNum();
                 if (sel < 0)
                 {
                     // no petition selected, create new one
@@ -309,13 +309,13 @@ void pawsPetitionWindow::AddPetitions(csArray<psPetitionInfo> &petitions)
     if (petitionList->GetRowCount() <= 0)
         petitionList->Select(NULL);
 
-    if (petitionList->GetSelection() >= 0)
+    if (petitionList->GetSelectedRowNum() >= 0)
     {
         selectedPet.escalation = 0;
-        selectedPet.player =          ((pawsTextBox*)(petitionList->GetSelected()->GetColumn(PCOL_GM)))->GetText();
-        selectedPet.status =          ((pawsTextBox*)(petitionList->GetSelected()->GetColumn(PCOL_STATUS)))->GetText();
-        selectedPet.created =         ((pawsTextBox*)(petitionList->GetSelected()->GetColumn(PCOL_CREATED)))->GetText();
-        selectedPet.petition =        ((pawsTextBox*)(petitionList->GetSelected()->GetColumn(PCOL_PETITION)))->GetText();
+        selectedPet.player =    petitionList->GetSelectedText(PCOL_GM);
+        selectedPet.status =    petitionList->GetSelectedText(PCOL_STATUS);
+        selectedPet.created =   petitionList->GetSelectedText(PCOL_CREATED);
+        selectedPet.petition =  petitionList->GetSelectedText(PCOL_PETITION);
     }
     else
     {
@@ -371,7 +371,7 @@ void pawsPetitionWindow::OnListAction( pawsListBox* selected, int status )
 {
     if (status == LISTBOX_HIGHLIGHTED)
     {
-        size_t sel = petitionList->GetSelection();
+        size_t sel = petitionList->GetSelectedRowNum();
         if ( sel >= petitionMessage.petitions.GetSize() )
         {
             return;

@@ -68,9 +68,9 @@ bool psSpell::Load(iResultRow& row)
     castingEffect = row["casting_effect"];
     realm         = row.GetInt("realm");
     maxPower      = row.GetInt("max_power");
-    offensive     = row.GetInt("offensive");
+    offensive     = row.GetInt("offensive")!=0;
     targetTypes   = row.GetInt("target_type");
-    excludeTarget = row.GetInt("exclude_target");
+    excludeTarget = row.GetInt("exclude_target")!=0;
 
     // if spell is defensive then you must be able to cast it on friends, otherwise the entry is wrong.
     csString errorMsg;
@@ -241,7 +241,7 @@ bool psSpell::CanCast(Client *client, float kFactor, csString & reason)
     if (!caster->GetActor()->infinitemana)
     {
         float manaCost = ManaCost(kFactor);
-        if (caster->GetMana() < manaCost);
+        if (caster->GetMana() < manaCost)
         {
             reason.Format("You don't have the mana to cast %s.", name.GetData());
             return false;

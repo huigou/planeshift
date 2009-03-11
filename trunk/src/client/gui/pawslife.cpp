@@ -205,7 +205,7 @@ void pawsLifeEventWindow::OnListAction(  pawsListBox* widget, int status )
     
     if ( status==LISTBOX_HIGHLIGHTED )
     {      
-        row = widget->GetSelected();
+        row = widget->GetSelectedRow();
         if (!row )
             return;
              

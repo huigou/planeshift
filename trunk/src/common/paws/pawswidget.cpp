@@ -861,8 +861,9 @@ void pawsWidget::Hide()
 
 void pawsWidget::SetRelativeFrame( int x, int y, int width, int height )
 {
+	// Must set width and height first so children don't get squeezed
+	SetRelativeFrameSize( width, height );
     SetRelativeFramePos( x, y );
-    SetRelativeFrameSize( width, height );
 }
 
 void MoveRect(csRect & rect, int x, int y)
@@ -2726,7 +2727,7 @@ bool pawsWidget::ReadDefaultWidgetStyles( iDocumentNode *node )
         csRef<iDocumentNode> child = defaults->Next();
         if (!strcmp(child->GetValue(),"defaultstyle"))
         {
-            printf("Adding style %s for widget %s.\n",child->GetAttributeValue("style"),child->GetAttributeValue("widget"));
+            //printf("Adding style %s for widget %s.\n",child->GetAttributeValue("style"),child->GetAttributeValue("widget"));
             defaultWidgetStyles.Put(child->GetAttributeValue("widget"),child->GetAttributeValue("style"));
         }
     } 

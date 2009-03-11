@@ -118,10 +118,11 @@ private:
     pawsConfigSectionWindow * FindSectionWindow(const csString & sectName);
         // Finds section window (in the 'sectWnds' list) for section 'sectName'
 
-    iObjectRegistry* object_reg;
+    iObjectRegistry *object_reg;
     csArray<sectWnd_t> sectWnds;
 
-    pawsSimpleTree* sectionTree;
+    pawsSimpleTree *sectionTree;
+	pawsWidget *sectionParent;
     pawsConfigSectionWindow * currSectWnd;
     pawsWidget * okButton, * resetButton;
     pawsWidget * notify;

@@ -946,7 +946,7 @@ bool pawsGuildWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
         case REMOVE_GUILD_CONFIRM:
         {
             csString command;
-            command.Format("/allianceremove %s", allianceMemberList->GetTextCellValue(allianceMemberList->GetSelection(), 0).GetData());
+            command.Format("/allianceremove %s", allianceMemberList->GetSelectedText(0));
             psengine->GetCmdHandler()->Execute(command);
             retVal = true;                                               
             break;
@@ -954,7 +954,7 @@ bool pawsGuildWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
         case SET_ALLIANCE_LEADER_CONFIRM:
         {
             csString command;
-            command.Format("/allianceleader %s", allianceMemberList->GetTextCellValue(allianceMemberList->GetSelection(), 0).GetData());
+            command.Format("/allianceleader %s", allianceMemberList->GetSelectedText(0));
             psengine->GetCmdHandler()->Execute(command);
             retVal = true;                                               
             break;
@@ -1007,19 +1007,8 @@ guildMemberInfo * pawsGuildWindow::FindMemberInfo(int char_id)
 }
 
 guildMemberInfo * pawsGuildWindow::FindSelectedMemberInfo()
-{
-    pawsListBoxRow * row;
-    pawsTextBox * name;
-    
-    row = memberList->GetSelected();
-    if (row == NULL)
-        return NULL;
-
-    name = dynamic_cast<pawsTextBox*> (row->GetColumn(0));
-    if (name == NULL)
-        return NULL;
-
-    return FindMemberInfo(name->GetText());
+{    
+    return FindMemberInfo(memberList->GetSelectedText(0));
 }
 
 int pawsGuildWindow::FindMemberInListBox(const csString & name)

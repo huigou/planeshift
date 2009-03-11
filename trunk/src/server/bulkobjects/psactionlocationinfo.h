@@ -44,7 +44,7 @@
 class CacheManager;
 class gemActionLocation;
 class gemItem;
-class iDocumentNode;
+struct iDocumentNode;
 class MathExpression;
 
 /**
