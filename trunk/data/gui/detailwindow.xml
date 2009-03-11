@@ -15,7 +15,7 @@
          </widget>
  
         <widget name="ShowDescr" factory="pawsButton" style="tabbuttonskills" id="999" >
-            <frame x="5" y="65" width="33" />
+            <frame x="5" y="65" width="33" height="20" />
             <label text="Desc" />
             <attachpoints>
                 <attach point="PROPORTIONAL_RIGHT" />
@@ -24,7 +24,7 @@
         </widget>
 
         <widget name="ShowDescrOOC" factory="pawsButton" style="tabbuttonskills" id="1006" >
-            <frame x="35" y="65" width="33" />
+            <frame x="35" y="65" width="33" height="20"/>
             <label text="OOC" />
             <attachpoints>
                 <attach point="PROPORTIONAL_RIGHT" />
@@ -33,7 +33,7 @@
         </widget>
 
         <widget name="ShowCC" factory="pawsButton" style="tabbuttonskills" id="1007" >
-            <frame x="65" y="65" width="33" />
+            <frame x="65" y="65" width="33" height="20"/>
             <label text="CC" />
             <attachpoints>
                 <attach point="PROPORTIONAL_RIGHT" />
@@ -42,7 +42,7 @@
         </widget>
        
         <widget name="ShowStats" factory="pawsButton" style="tabbuttonskills" id="1000" >
-            <frame x="95" y="65" width="30" />
+            <frame x="95" y="65" width="30" height="20"/>
             <label text="Stats" />
             <attachpoints>
                 <attach point="PROPORTIONAL_RIGHT" />
@@ -51,7 +51,7 @@
         </widget>
 
         <widget name="ShowFaction" factory="pawsButton" style="tabbuttonskills" id="1005" >
-            <frame x="125" y="65" width="40" />
+            <frame x="125" y="65" width="40" height="20"/>
             <label text="Faction" />
             <attachpoints>
                 <attach point="PROPORTIONAL_RIGHT" />
@@ -60,7 +60,7 @@
         </widget>
 
         <widget name="ShowCombat" factory="pawsButton" style="tabbuttonskills" id="1001" >
-            <frame x="165" y="65" width="43" />
+            <frame x="165" y="65" width="43" height="20"/>
             <label text="Combat" />
             <attachpoints>
                 <attach point="PROPORTIONAL_RIGHT" />
@@ -69,7 +69,7 @@
         </widget>
 
         <widget name="ShowMagic" factory="pawsButton" style="tabbuttonskills" id="1002">
-            <frame x="205" y="65" width="33"  />
+            <frame x="205" y="65" width="33"  height="20"/>
             <label text="Magic" />
             <attachpoints>
                 <attach point="PROPORTIONAL_RIGHT" />
@@ -78,7 +78,7 @@
         </widget>
 
         <widget name="ShowCraft" factory="pawsButton" style="tabbuttonskills" id="1003">
-            <frame x="240" y="65" width="30"  />
+            <frame x="240" y="65" width="30"  height="20"/>
             <label text="Jobs" />
             <attachpoints>
                 <attach point="PROPORTIONAL_RIGHT" />
@@ -87,7 +87,7 @@
         </widget>
 
         <widget name="ShowMisc" factory="pawsButton" style="tabbuttonskills" id="1004">
-            <frame x="280" y="65" width="40"  />
+            <frame x="280" y="65" width="40" height="20" />
             <label text="Various" />
             <attachpoints>
                <attach point="ATTACH_RIGHT" />
