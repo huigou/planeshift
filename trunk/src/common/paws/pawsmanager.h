@@ -36,7 +36,11 @@
 #include "isndsys/ss_data.h"
 #include "isndsys/ss_loader.h"
 #include "isndsys/ss_stream.h"
+// Until someone reworks the sound system, there's no point in spamming
+// everyone with a million iSndSysSourceSoftware3D deprecation warnings.
+#include <csutil/deprecated_warn_off.h>
 #include "isndsys/ss_source.h"
+#include <csutil/deprecated_warn_on.h>
 #include "isndsys/ss_renderer.h"
 
 #include "engine/psregion.h"
