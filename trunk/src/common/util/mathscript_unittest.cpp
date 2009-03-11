@@ -23,7 +23,6 @@
 // Project Includes
 //=============================================================================
 #include "util/mathscript.h"
-#include "util/psstring.h"
 
 //=============================================================================
 // Library Includes
@@ -228,21 +227,21 @@ TEST(MathScriptTest, ParserStress)
 
 TEST(MathScriptTest, InterpolateTest)
 {
-    psString msg("Xordan hits you for ${elite} damage...");
+    csString msg("Xordan hits you for ${elite} damage...");
     MathEnvironment env;
     env.Define("elite", 1337);
-    msg.Interpolate(&env);
+    env.InterpolateString(msg);
     EXPECT_STREQ("Xordan hits you for 1337.000000 damage...", msg.GetData());
 
     msg = "${elite} times, because he's just that ${elite}";
-    msg.Interpolate(&env);
+    env.InterpolateString(msg);
     EXPECT_STREQ("1337.000000 times, because he's just that 1337.000000", msg.GetData());
 
     msg = "${elite}";
-    msg.Interpolate(&env);
+    env.InterpolateString(msg);
     EXPECT_STREQ("1337.000000", msg.GetData());
 
     msg = "${} ${elite} ${}";
-    msg.Interpolate(&env);
+    env.InterpolateString(msg);
     EXPECT_STREQ("${} 1337.000000 ${}", msg.GetData());
 }

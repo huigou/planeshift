@@ -57,8 +57,6 @@ public:
     void GetWordNumber(int which,psString& buff);
     void GetLine(size_t start,csString& line);
 
-    /// Perform string interpolation, i.e. replacing ${...} with the appropriate variable.
-    void Interpolate(const MathEnvironment *env);
     bool ReplaceSubString(const char* what, const char* with);
     int ReplaceAllSubString(const char* what, const char* with, bool wholeWord=false);
 

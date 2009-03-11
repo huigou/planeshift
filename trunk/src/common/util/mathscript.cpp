@@ -98,6 +98,28 @@ void MathEnvironment::DumpAllVars() const
     }
 }
 
+void MathEnvironment::InterpolateString(csString & str) const
+{
+    csString varName;
+    size_t pos = (size_t)-1;
+    while ((pos = str.Find("${", pos+1)) != SIZET_NOT_FOUND)
+    {
+        size_t end = str.Find("}", pos+2);
+        if (end == SIZET_NOT_FOUND)
+            continue; // invalid - unterminated ${
+        if (end <= pos+3)
+            continue; // invalid - empty ${}
+
+        str.SubString(varName, pos+2, end-(pos+2));
+        MathVar *var = Lookup(varName);
+        if (!var)
+            continue; // invalid - required variable not in environment.  leave it as is.
+
+        str.DeleteAt(pos, end-pos+1);
+        str.Insert(pos, var->ToString());
+    }
+}
+
 MathStatement* MathStatement::Create(const csString & line, const char *name)
 {
     size_t assignAt = line.FindFirst('=');

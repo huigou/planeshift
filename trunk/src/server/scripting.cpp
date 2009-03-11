@@ -377,13 +377,13 @@ public:
     {
         if (target && target->GetClientID())
         {
-            psString finalText(text);
-            finalText.Interpolate(env);
+            csString finalText(text);
+            env->InterpolateString(finalText);
 
             psserver->SendSystemInfo(target->GetClientID(), finalText);
 
-            psString finalUndo(undo);
-            finalUndo.Interpolate(env);
+            csString finalUndo(undo);
+            env->InterpolateString(finalUndo);
 
             MsgCancel *cancel = new MsgCancel(target->GetClientID(), finalUndo);
             asp->Add(cancel, "<msg text=\"%s\" undo=\"%s\"/>", finalText.GetData(), finalUndo.GetData());
@@ -1038,8 +1038,8 @@ public:
 
         if (actor && actor->GetClientID())
         {
-            psString finalText(text);
-            finalText.Interpolate(env);
+            csString finalText(text);
+            env->InterpolateString(finalText);
 
             psserver->SendSystemInfo(actor->GetClientID(), finalText);
         }
