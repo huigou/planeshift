@@ -373,7 +373,7 @@ bool pawsPetitionGMWindow::OnButtonReleased( int mouseButton, int keyModifier, p
                 }
 
                 if (csString("In Progress") == petitionList->GetSelectedText(PGMCOL_STATUS)
-                    && ((csString)psengine->GetCelClient()->GetMainPlayer()->GetName()).StartsWith(petitionList->GetSelectedText(PGMCOL_GM)))
+                    && ((csString)psengine->GetMainPlayerName()).StartsWith(petitionList->GetSelectedText(PGMCOL_GM)))
                 {
 
                     currentRow = sel;
@@ -435,7 +435,7 @@ bool pawsPetitionGMWindow::OnButtonReleased( int mouseButton, int keyModifier, p
                 }
 
                 if (csString("In Progress") == petitionList->GetSelectedText(PGMCOL_STATUS)
-                    && ((csString)psengine->GetCelClient()->GetMainPlayer()->GetName()).StartsWith(petitionList->GetSelectedText(PGMCOL_GM))
+                    && ((csString)psengine->GetMainPlayerName()).StartsWith(petitionList->GetSelectedText(PGMCOL_GM))
                     || psengine->GetCelClient()->GetMainPlayer()->GetType() >= 25)
                 {
                     currentRow = sel;
@@ -467,7 +467,7 @@ bool pawsPetitionGMWindow::OnButtonReleased( int mouseButton, int keyModifier, p
                 }
 
                 if (csString("In Progress") == petitionList->GetSelectedText(PGMCOL_STATUS)
-                    && ((csString)psengine->GetCelClient()->GetMainPlayer()->GetName()).StartsWith(petitionList->GetSelectedText(PGMCOL_GM)))
+                    && ((csString)psengine->GetMainPlayerName()).StartsWith(petitionList->GetSelectedText(PGMCOL_GM)))
                 {
                     currentRow = sel;
 

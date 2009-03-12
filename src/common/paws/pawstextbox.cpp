@@ -640,7 +640,7 @@ void pawsMessageTextBox::FullScroll()
 
 void pawsMessageTextBox::SplitMessage( const char* newText, int colour, int size )
 {
-    if ( strlen(newText) > 0 )
+    if ( !newText && strlen(newText) > 0 )
     {    
         int maxWidth;
         int maxHeight;

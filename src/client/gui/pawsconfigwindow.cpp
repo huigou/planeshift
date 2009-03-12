@@ -73,10 +73,10 @@ bool pawsConfigWindow::PostSetup()
     sectionTree->SetScrollBars(false, true);
     sectionTree->UseBorder("line");
 
-	sectionParent = FindWidget("PanelParent");
+/*	sectionParent = FindWidget("PanelParent");
 	if (sectionParent == NULL)
 		return false;
-
+*/
     // sets up buttons:    
     okButton = FindWidget("OKButton");
     if (okButton == NULL)

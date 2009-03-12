@@ -166,7 +166,7 @@ void pawsIgnoreWindow::AddIgnore( csString& name )
 {
     pawsChatWindow* chat = (pawsChatWindow*)PawsManager::GetSingleton().FindWidget("ChatWindow");
 
-    if (!strcmp(name, psengine->GetCelClient()->GetMainPlayer()->GetName()))
+    if (!strcmp(name, psengine->GetMainPlayerName()))
     {
         if ( chat )
             chat->ChatOutput(PawsManager::GetSingleton().Translate("You can not ignore yourself."));
