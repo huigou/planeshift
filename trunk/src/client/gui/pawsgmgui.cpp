@@ -83,7 +83,6 @@ pawsGmGUIWindow::pawsGmGUIWindow()
     isSafeFall = false;
     isInstantCast = false;
     isGiveKillExp = false;
-    isAttackable = false;
 }
 
 pawsGmGUIWindow::~pawsGmGUIWindow()
@@ -140,7 +139,6 @@ bool pawsGmGUIWindow::PostSetup()
     cbInfiniteMana = (pawsCheckBox*)FindWidget("toggleInfiniteMana");
     cbInstantCast = (pawsCheckBox*)FindWidget("toggleInstantCast");
     cbGiveKillExp = (pawsCheckBox*)FindWidget("toggleGiveKillExp");
-    cbAttackable = (pawsCheckBox*)FindWidget("toggleAttackable");
 
     return true;
 }
@@ -225,11 +223,6 @@ void pawsGmGUIWindow::HandleMessage ( MsgEntry* me )
             isGiveKillExp = ( gmSets & (1 << 9) ? true : false);
             cbGiveKillExp->SetState(isGiveKillExp);
             cbGiveKillExp->SetText( isGiveKillExp ? "enabled" : "disabled" );
-
-            // Attackable flag (allows to avoid challenge)
-            isAttackable = ( gmSets & (1 << 10) ? true : false);
-            cbAttackable->SetState(isAttackable);
-            cbAttackable->SetText( isAttackable ? "enabled" : "disabled" );
         }
         }
         break;
@@ -414,12 +407,6 @@ bool pawsGmGUIWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
     case 1267:// instantcast
     {
         cmd.Format("/set givekillexp"); // Toggle
-        confirm = false;
-        break;
-    }
-    case 1268:// instantcast
-    {
-        cmd.Format("/set attackable"); // Toggle
         confirm = false;
         break;
     }
@@ -612,8 +599,6 @@ void pawsGmGUIWindow::SetSecurity()
     HideWidget("toggleInstantCast");
     HideWidget("givekillexp");
     HideWidget("toggleGiveKillExp");
-    HideWidget("attackable");
-    HideWidget("toggleAttackable");
 
     // int to hold the access level
     int level = psengine->GetCelClient()->GetMainPlayer()->GetType();
@@ -681,8 +666,6 @@ void pawsGmGUIWindow::SetSecurity()
         ShowWidget("toggleInstantCast");
         ShowWidget("givekillexp");
         ShowWidget("toggleGiveKillExp");
-        ShowWidget("attackable");
-        ShowWidget("toggleAttackable");
     case 0:
         break;
     }

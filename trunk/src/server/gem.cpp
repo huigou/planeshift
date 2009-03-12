@@ -173,8 +173,8 @@ void GEMSupervisor::HandleMessage(MsgEntry *me,Client *client)
             psCharacter* psChar = client->GetActor()->GetCharacterData();
 
             psStatsMessage msg(client->GetClientNum(),
-                               psChar->GetHitPointsMax(),
-                               psChar->GetManaMax(),
+                               psChar->GetMaxHP().Current(),
+                               psChar->GetMaxMana().Current(),
                                psChar->Inventory().MaxWeight(),
                                psChar->Inventory().GetCurrentMaxSpace() );
 
@@ -573,7 +573,7 @@ csString GetDefaultBehavior(const csString & dfltBehaviors, int behaviorNum)
         return "";
 }
 
-gemObject::gemObject(const char *name)
+gemObject::gemObject(const char *name) : factname("")
 {
     this->valid    = true;
     this->name     = name;
@@ -591,14 +591,13 @@ gemObject::gemObject(const char* name,
                      iSector* room,
                      const csVector3& pos,
                      float rotangle,
-                     int clientnum)
+                     int clientnum) : factname(factname)
 {
     if (!this->cel)
         this->cel = GEMSupervisor::GetSingletonPtr();
 
     this->valid    = true;
     this->name     = name;
-    this->factname = factname;
     this->yRot     = rotangle;
     this->worldInstance = myInstance;
 
@@ -643,6 +642,22 @@ void gemObject::SetName(const char *n)
     name = n;
 }
 
+double gemObject::GetProperty(const char *prop)
+{
+    //csString property(prop);
+    //if (prop == "mesh")
+    //{
+    //}
+    CS_ASSERT(false);
+    return 0.0;
+}
+
+double gemObject::CalcFunction(const char *f, const double *params)
+{
+    CS_ASSERT(false);
+    return 0.0;
+}
+
 void gemObject::Disconnect()
 {
     while(receivers.GetSize() > 0)
@@ -663,8 +678,8 @@ void gemObject::SetAlive(bool flag)
     is_alive = flag;
     if (!flag)
     {
-        GetCharacterData()->SetHitPointsRate(0);  // This keeps dead guys from regen'ing HP
-        GetCharacterData()->SetManaRate(0);  // This keeps dead guys from regen'ing Mana
+        GetCharacterData()->GetHPRate().SetBase(0);  // This keeps dead guys from regen'ing HP
+        GetCharacterData()->GetManaRate().SetBase(0);  // This keeps dead guys from regen'ing Mana
         BroadcastTargetStatDR( psserver->GetNetManager()->GetConnections() );
     }
 }
@@ -715,21 +730,9 @@ void gemObject::Move(const csVector3& pos,float rotangle, iSector* room)
 
 bool gemObject::IsNear(gemObject *obj, float radius)
 {
-    // Find the current position of the specified entity
-    csVector3 pos1,pos2;
-    float yrot1,yrot2;
-    iSector *sector1,*sector2;
+    float distance = proxlist->RangeTo(obj);
 
-    GetPosition(pos1,yrot1,sector1);
-    obj->GetPosition(pos2,yrot2,sector2);
-
-    EntityManager::GetSingleton().GetWorld()->WarpSpace(sector2, sector1, pos2);
-
-    float squaredDistance = (pos1.x - pos2.x)*(pos1.x - pos2.x)+
-        (pos1.y - pos2.y)*(pos1.y - pos2.y)+
-        (pos1.z - pos2.z)*(pos1.z - pos2.z);
-
-    if ( squaredDistance < radius*radius)
+    if ( distance < radius)
         return true;
     else
         return false;
@@ -1307,6 +1310,19 @@ gemItem::gemItem(csWeakRef<psItem> item,
     cel->AddItemEntity(this);
 }
 
+double gemItem::GetProperty(const char *prop)
+{
+    CS_ASSERT(itemdata);
+    return itemdata->GetProperty(prop);
+}
+
+double gemItem::CalcFunction(const char *f, const double *params)
+{
+    CS_ASSERT(itemdata);
+    return itemdata->CalcFunction(f, params);
+}
+
+
 void gemItem::Broadcast(int clientnum, bool control )
 {
     int flags = 0;
@@ -1318,7 +1334,7 @@ void gemItem::Broadcast(int clientnum, bool control )
                          eid,
                          -2,
                          name,
-                         factname,
+                         factname.Current(),
                          sector->QueryObject()->GetName(),
                          pos,
                          xRot,
@@ -1394,7 +1410,7 @@ void gemItem::Send( int clientnum, bool , bool to_superclient)
                          eid,
                          -2,
                          name,
-                         factname,
+                         factname.Current(),
                          sector->QueryObject()->GetName(),
                          pos,
                          xRot,
@@ -1827,6 +1843,12 @@ void gemActionLocation::Send( int clientnum, bool , bool to_superclient )
 }
 //-====================================================================================-
 
+void OverridableMesh::OnChange()
+{
+    if (actor)
+        actor->SetMesh(Current());
+}
+
 //--------------------------------------------------------------------------------------
 // gemActor
 //--------------------------------------------------------------------------------------
@@ -1842,7 +1864,7 @@ gemActor::gemActor( psCharacter *chardata,
 psChar(chardata), factions(NULL), DRcounter(0), lastDR(0), lastV(0), lastSentSuperclientPos(0, 0, 0),
 lastSentSuperclientInstance(-1), numReports(0), reportTargetId(0), isFalling(false), invincible(false), visible(true), viewAllObjects(false),
 movementMode(0), isAllowedToMove(true), atRest(true), pcmove(NULL),
-nevertired(false), infinitemana(false), instantcast(false), safefall(false), givekillexp(false),  attackable(false)
+nevertired(false), infinitemana(false), instantcast(false), safefall(false), givekillexp(false)
 {
     pid = chardata->GetPID();
 
@@ -1873,6 +1895,8 @@ nevertired(false), infinitemana(false), instantcast(false), safefall(false), giv
         return;
     }
 
+    this->factname.SetActor(this);
+
     Debug6(LOG_NPC,0,"Successfully created actor %s at %1.2f,%1.2f,%1.2f in sector %s.\n",
         factname,pos.x,pos.y,pos.z,sector->QueryObject()->GetName() );
 
@@ -1882,6 +1906,7 @@ nevertired(false), infinitemana(false), instantcast(false), safefall(false), giv
     UpdateValidLocation(pos, 0.0f, rotangle, sector, true);
 
     GetCharacterData()->SetStaminaRegenerationStill();
+
 }
 
 gemActor::~gemActor()
@@ -1895,6 +1920,11 @@ gemActor::~gemActor()
     {
         delete factions;
         factions = NULL;
+    }
+
+    while (!activeSpells.IsEmpty())
+    {
+        delete activeSpells.Pop();
     }
 
     if (psChar)
@@ -1912,6 +1942,23 @@ gemActor::~gemActor()
         logging_chat_file = 0;  //This should close the file.
 
     delete pcmove;
+}
+
+double gemActor::GetProperty(const char *prop)
+{
+    CS_ASSERT(psChar);
+    return psChar->GetProperty(prop);
+}
+
+double gemActor::CalcFunction(const char *f, const double *params)
+{
+    csString func(f);
+    if (func == "ActiveSpellCount")
+    {
+        return ActiveSpellCount(MathScriptEngine::GetString(params[0]));
+    }
+    CS_ASSERT(psChar);
+    return psChar->CalcFunction(f, params);
 }
 
 Client* gemActor::GetClient() const
@@ -2120,46 +2167,44 @@ void gemActor::Resurrect()
         SetInstance(DEFAULT_INSTANCE);
     }
 
-    psChar->SetHitPoints(psChar->GetHitPointsMax());
+    psChar->SetHitPoints(psChar->GetMaxHP().Base());
 
     //Do not reset mana to max while in DR, to prevent exploits using /die
     if (sector && strncmp ("DR", sector->QueryObject()->GetName(), 2))
-        psChar->SetMana(psChar->GetManaMax());
+        psChar->SetMana(psChar->GetMaxMana().Base());
 
-    psChar->SetStamina(psChar->GetStaminaMax(true), true);
-    psChar->SetStamina(psChar->GetStaminaMax(false), false);
-    psChar->SetHitPointsRate(HP_REGEN_RATE);
-    psChar->SetManaRate(MANA_REGEN_RATE);
+    psChar->SetStamina(psChar->GetMaxPStamina().Base(), true);
+    psChar->SetStamina(psChar->GetMaxMStamina().Base(), false);
+    psChar->GetHPRate().SetBase(HP_REGEN_RATE);
+    psChar->GetManaRate().SetBase(MANA_REGEN_RATE);
 
     BroadcastTargetStatDR( psserver->GetNetManager()->GetConnections() );
 }
 
-void InvokeScripts(csArray<csString> & scripts, gemActor * actor, gemActor * target, psItem * item)
+void gemActor::InvokeAttackScripts(gemActor *defender, psItem *weapon)
 {
-    unsigned int scriptID;
+    MathEnvironment env;
+    env.Define("Attacker", this);
+    env.Define("Defender", defender);
+    env.Define("Weapon",   weapon);
 
-    if (scripts.GetSize())
+    for (size_t i = 0; i < onAttackScripts.GetSize(); i++)
     {
-        Debug4(LOG_COMBAT, actor->GetPID().Unbox(), "-----InvokeScripts %zu  %s %s", scripts.GetSize(), actor->GetName(), target->GetName());
-        for (scriptID=0; scriptID < scripts.GetSize(); scriptID++)
-        {
-            if (scripts[scriptID].Length() > 0)
-            {
-                Debug2(LOG_COMBAT, actor->GetPID().Unbox(), "-----InvokeScripts script %s", scripts[scriptID].GetData());
-                psserver->GetProgressionManager()->ProcessEvent(scripts[scriptID], actor, target, item);
-            }
-        }
+        onAttackScripts[i]->Run(&env);
     }
 }
 
-void gemActor::InvokeAttackScripts(gemActor * target, psItem * item)
+void gemActor::InvokeDefenseScripts(gemActor *attacker, psItem *weapon)
 {
-    InvokeScripts(onAttackScripts, this, target, item);
-}
+    MathEnvironment env;
+    env.Define("Attacker", attacker);
+    env.Define("Defender", this);
+    env.Define("Weapon",   weapon);
 
-void gemActor::InvokeDamageScripts(gemActor * attacker, psItem * item)
-{
-    InvokeScripts(onDamageScripts, this, attacker, item);
+    for (size_t i = 0; i < onDefenseScripts.GetSize(); i++)
+    {
+        onDefenseScripts[i]->Run(&env);
+    }
 }
 
 void gemActor::DoDamage(gemActor * attacker, float damage, float damageRate, csTicks duration)
@@ -2173,7 +2218,7 @@ void gemActor::DoDamage(gemActor * attacker, float damage, float damageRate, csT
     }
 
     // Successful attack, if >30% max hp then interrupt spell
-    if ( damage > (this->GetCharacterData()->GetHitPointsMax() * 0.3F ) )
+    if (damage > psChar->GetMaxHP().Current() * 0.3F)
         this->GetCharacterData()->InterruptSpellCasting();
 
     if (damageRate == 0)
@@ -2184,9 +2229,10 @@ void gemActor::DoDamage(gemActor * attacker, float damage, float damageRate, csT
     // Add dmg to history
     AddAttackerHistory( attacker, damage, damageRate, duration );
 
-    float hp = psChar->AdjustHitPoints(-damage);
+    psChar->AdjustHitPoints(-damage);
+    float hp = psChar->GetHP();
     if (damageRate)
-        psChar->AdjustHitPointsRate(damageRate);
+        psChar->GetHPRate().SetBase(psChar->GetHPRate().Base()+damageRate); // TODO: I expect this is completely insane
 
     if (damage != 0.0)
     {
@@ -2369,7 +2415,8 @@ float gemActor::DrainMana(float adjust,bool absolute)
     {
         //mental stamina is only adjusted, never set
         GetCharacterData()->AdjustStamina(adjust, false);
-        finalMana = GetCharacterData()->AdjustMana(adjust);
+        GetCharacterData()->AdjustMana(adjust);
+        finalMana = psChar->GetMana();
     }
     SendGroupStats();
     return finalMana;
@@ -2457,7 +2504,7 @@ void gemActor::Send( int clientnum, bool control, bool to_superclient  )
                          control,
                          name,
                          guildName,
-                         factname,
+                         factname.Current(),
                          psChar->GetRaceInfo()->name,
                          psChar->GetRaceInfo()->gender,
                          helmGroup,
@@ -2884,15 +2931,6 @@ void gemActor::ApplyStaminaCalculations(const csVector3& v, float times)
         return;
     }
 
-    // Inputs
-    static MathScriptVar* speed         =  script->GetOrCreateVar("Speed");        // How fast you're moving
-    static MathScriptVar* ascent_angle  =  script->GetOrCreateVar("AscentAngle");  // How steep your climb is
-    static MathScriptVar* weight        =  script->GetOrCreateVar("Weight");       // How much you're carrying
-    static MathScriptVar* max_weight    =  script->GetOrCreateVar("MaxWeight");    // How much you can carry
-
-    // Output
-    static MathScriptVar* drain = script->GetOrCreateVar("Drain");  // The resultant drain in stamina this script produces
-
     if ( atRest )
     {
         #ifdef STAMINA_PROCESS_DEBUG
@@ -2952,15 +2990,17 @@ void gemActor::ApplyStaminaCalculations(const csVector3& v, float times)
         #endif
 
         // Stuff goes in
-        speed->         SetValue(Speed);
-        ascent_angle->  SetValue(Angle);
-        weight->        SetValue((double)psChar->Inventory().GetCurrentTotalWeight());
-        max_weight->    SetValue((double)psChar->Inventory().MaxWeight());
+        MathEnvironment env;
+        env.Define("Speed",       Speed);                                       // How fast you're moving
+        env.Define("AscentAngle", Angle);                                       // How steep your climb is
+        env.Define("Weight",      psChar->Inventory().GetCurrentTotalWeight()); // How much you're carrying
+        env.Define("MaxWeight",   psChar->Inventory().MaxWeight());             // How much you can carry
 
         // Do stuff with stuff
-        script->Execute();
+        script->Evaluate(&env);
 
         // Stuff comes out
+        MathVar* drain = env.Lookup("Drain");
         float value = drain->GetValue();
         //value *= times;
 
@@ -2972,7 +3012,8 @@ void gemActor::ApplyStaminaCalculations(const csVector3& v, float times)
         if (psChar->GetMode() == PSCHARACTER_MODE_PEACE || psChar->GetMode() == PSCHARACTER_MODE_SPELL_CASTING)
         {
             psChar->SetStaminaRegenerationWalk();
-            psChar->AdjustStaminaRate(-value,true);
+            VitalBuffable & pRate = psChar->GetPStaminaRate();
+            pRate.SetBase(pRate.Base()-value);
             psChar->AdjustStamina(-value*times,true);
         }
         else  // Another regen in place
@@ -3423,90 +3464,63 @@ void gemActor::FallBegan(const csVector3& pos, iSector* sector)
     this->fallStartTime = csGetTicks();
 }
 
-int GetFreeScriptSlot(csArray<csString> & scripts)
+void gemActor::AttachAttackScript(ProgressionScript *script)
 {
-    size_t scriptID;
-
-    scriptID = 0;
-    while (scriptID<scripts.GetSize()  &&  scripts[scriptID].Length()>0)
-        scriptID++;
-
-    if (scriptID<(scripts.GetSize()))
-        return (int)scriptID;
-    else
-    {
-        scripts.Push("");
-        return (int)scripts.GetSize()-1;
-    }
+    onAttackScripts.Push(script);
 }
 
-int gemActor::AttachAttackScript(const csString & scriptName)
+void gemActor::DetachAttackScript(ProgressionScript *script)
 {
-    Debug3(LOG_COMBAT, pid.Unbox(), "---attach %s %s", GetName(), scriptName.GetData());
-
-    int scriptID = GetFreeScriptSlot(onAttackScripts);
-    onAttackScripts[ scriptID ] = scriptName;
-    Debug2(LOG_COMBAT, pid.Unbox(), "---%i", scriptID);
-    return scriptID;
+    onAttackScripts.Delete(script);
 }
 
-void gemActor::DetachAttackScript(int scriptID)
+void gemActor::AttachDefenseScript(ProgressionScript *script)
 {
-    //Error3("---detach %s %i",GetName(),scriptID);
-
-    if (scriptID<0  ||  scriptID>=(int)onAttackScripts.GetSize())
-    {
-        Error3("Invalid attack script scriptID %i for actor %s", scriptID, name.GetData());
-        return;
-    }
-    onAttackScripts[scriptID].Clear();
+    onDefenseScripts.Push(script);
 }
 
-int  gemActor::AttachDamageScript(const csString & scriptName)
+void gemActor::DetachDefenseScript(ProgressionScript *script)
 {
-    Debug3(LOG_COMBAT, pid.Unbox(), "---attach dam %s %s", GetName(), scriptName.GetData());
-
-    int scriptID = GetFreeScriptSlot(onDamageScripts);
-    onDamageScripts[ scriptID ] = scriptName;
-    return scriptID;
+    onDefenseScripts.Delete(script);
 }
 
-void gemActor::DetachDamageScript(int scriptID)
+void gemActor::AddActiveSpell(ActiveSpell *asp)
 {
-    Debug3(LOG_COMBAT, pid.Unbox(), "---detach dam %s %i", GetName(), scriptID);
-
-    if (scriptID<0  ||  scriptID>=(int)onDamageScripts.GetSize())
-    {
-        Error3("Invalid damage script scriptID %i for actor %s", scriptID, name.GetData());
-        return;
-    }
-    onDamageScripts[scriptID].Clear();
-}
-
-bool gemActor::AddActiveMagicCategory(const csString & category)
-{
-    if (IsMagicCategoryActive(category))
-        return false;
-    active_spell_categories.Push(category);
-    psGUIActiveMagicMessage outgoing(this->GetClientID(), psGUIActiveMagicMessage::addCategory, category, true);
+    activeSpells.Push(asp);
+    psGUIActiveMagicMessage outgoing(GetClientID(), psGUIActiveMagicMessage::Add, asp->Type(), asp->Name());
     outgoing.SendMessage();
-    return true;
 }
 
-bool gemActor::RemoveActiveMagicCategory(const csString & category)
+bool gemActor::RemoveActiveSpell(ActiveSpell *asp)
 {
-    if (active_spell_categories.Delete(category))
+    if (activeSpells.Delete(asp))
     {
-        psGUIActiveMagicMessage outgoing(this->GetClientID(), psGUIActiveMagicMessage::removeCategory, category, true);
+        psGUIActiveMagicMessage outgoing(GetClientID(), psGUIActiveMagicMessage::Remove, asp->Type(), asp->Name());
         outgoing.SendMessage();
         return true;
     }
     return false;
 }
 
-bool gemActor::IsMagicCategoryActive(const csString & category)
+ActiveSpell* gemActor::FindActiveSpell(const csString & name, SPELL_TYPE type)
 {
-    return active_spell_categories.Find(category) != csArrayItemNotFound;
+    for (size_t i = 0; i < activeSpells.GetSize(); i++)
+    {
+        if (activeSpells[i]->Name() == name && activeSpells[i]->Type() == type)
+            return activeSpells[i];
+    }
+    return NULL;
+}
+
+int gemActor::ActiveSpellCount(const csString & name)
+{
+    int count = 0;
+    for (size_t i = 0; i < activeSpells.GetSize(); i++)
+    {
+        if (activeSpells[i]->Name() == name)
+            ++count;
+    }
+    return count;
 }
 
 bool gemActor::SetMesh(const char* meshname)
@@ -3515,7 +3529,6 @@ bool gemActor::SetMesh(const char* meshname)
     {
         if(CacheManager::GetSingleton().GetRaceInfoByMeshName(meshname) != NULL)
         {
-            factname = meshname;
             UpdateProxList(true);
             return true;
         }
@@ -3544,7 +3557,6 @@ bool gemActor::SetMesh(const char* meshname)
 
         if ( pcmesh->GetMesh() )
         {
-            factname = meshname;
             UpdateProxList(true);
             return true;
         }
@@ -3686,7 +3698,7 @@ void gemNPC::ShowPopupMenu(Client *client)
             printf("Skipping completed or irrelevant quest: %s\n", q->GetName() );
             continue;
         }
-        printf("Checking quest %u: %s.  ", i, q->GetName() );
+        printf("Checking quest %lu: %s.  ", (unsigned long) i, q->GetName() );
         int last_response = quests[i]->last_response;
         printf("Got last response %d\n", last_response);
 
@@ -3697,7 +3709,7 @@ void gemNPC::ShowPopupMenu(Client *client)
         }
         else
         {
-            printf("Got last_response==-1 for quest %d.\n",i);
+            printf("Got last_response==-1 for quest %lu.\n", (unsigned long) i);
         }
     }
 
@@ -4017,7 +4029,7 @@ void gemNPC::Send( int clientnum, bool control, bool to_superclient )
                          control,
                          name,
                          guildName,
-                         factname,
+                         factname.Current(),
                          psChar->GetRaceInfo()->name,
                          psChar->GetRaceInfo()->gender,
                          helmGroup,
@@ -4074,13 +4086,3 @@ void gemNPC::Broadcast(int clientnum, bool control)
     }
 
 }
-
-#if 0   // This function is redundant with npc->Say()
-void gemNPC::NPCTalk(const csString & text)
-{
-    psSystemMessage talkMsg(0, MSG_INFO, text);
-    psserver->GetEventManager()->Broadcast(talkMsg.msg);
-    talkMsg.Multicast(GetMulticastClients(), 0, CHAT_SAY_RANGE );
-}
-#endif
-
