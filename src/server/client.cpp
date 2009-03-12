@@ -526,6 +526,9 @@ int Client::GetTargetType(gemObject* target)
     if (targetclient->GetActor()->GetInvincibility())
         return TARGET_GM; /* Invincible GM */
 
+    if (targetclient->GetActor()->attackable)
+        return TARGET_PVP; /* attackable GM */
+
     // Challenged to a duel?
     if (IsDuelClient(target->GetClientID())
         || targetclient->IsDuelClient(clientnum))
