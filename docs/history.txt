@@ -1,4 +1,14 @@
-﻿*** 2009-03-10 by Kenny Graunke
+﻿*** 2009-03-12 by Stefano Angeleri
+- Added attackable flag for gm. Players will be able to attack him like a mob
+  but without kill steal protection. It's also the only way to use effectively
+  givekillexp
+- various improvements in gm gui
+- fixed bugs in petition management
+- Removed double spaces in /inspect
+- Updates to the compiling guide
+- Fixed tab width in the chardescription window by caarrie
+
+*** 2009-03-10 by Kenny Graunke
 - Converted Buffables to use csArray instead of csList to improve their
   efficiency (memory usage and cache behavior).
 
