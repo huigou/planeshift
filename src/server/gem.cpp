@@ -1864,7 +1864,7 @@ gemActor::gemActor( psCharacter *chardata,
 psChar(chardata), factions(NULL), DRcounter(0), lastDR(0), lastV(0), lastSentSuperclientPos(0, 0, 0),
 lastSentSuperclientInstance(-1), numReports(0), reportTargetId(0), isFalling(false), invincible(false), visible(true), viewAllObjects(false),
 movementMode(0), isAllowedToMove(true), atRest(true), pcmove(NULL),
-nevertired(false), infinitemana(false), instantcast(false), safefall(false), givekillexp(false)
+nevertired(false), infinitemana(false), instantcast(false), safefall(false), givekillexp(false), attackable(false)
 {
     pid = chardata->GetPID();
 
