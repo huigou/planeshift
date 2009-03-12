@@ -2153,6 +2153,8 @@ bool RunScriptResponseOp::Run(gemNPC *who, Client *target, NpcResponse *owner, c
     }
 
     MathEnvironment env;
+    env.Define("NPC", who);
+    env.Define("Target", target->GetActor());
     env.Define("Param0", p0);
     env.Define("Param1", p1);
     env.Define("Param2", p2);

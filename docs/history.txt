@@ -1,5 +1,7 @@
 ﻿*** 2009-03-12 by Kenny Graunke
 - Added MathScript accessors for HP, Mana, and Stamina.
+- Fixed "Run script ..." in quests, which wasn't providing the script with the
+  necessary actors.  Now it defines "NPC" and "Target" (the player).
 
 *** 2009-03-12 by Stefano Angeleri
 - Added attackable flag for gm. Players will be able to attack him like a mob
