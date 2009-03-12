@@ -204,7 +204,7 @@ void pawsDetailWindow::HandleMessage( MsgEntry* me )
         storedcreationinfo = msg.creationinfo;
 
         //check if the player is looking at his/her/its own description
-        if (msg.name == psengine->GetCelClient()->GetMainPlayer()->GetName())
+        if (msg.name == psengine->GetMainPlayerName())
         {
             details_editable = true;
             if(!storedescription.Length()) //if the player didn't input anything inform him

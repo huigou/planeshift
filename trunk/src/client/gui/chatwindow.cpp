@@ -536,7 +536,7 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
         }
         else if (words[0] == "/tellnpcinternal")
         {
-            pPerson = psengine->GetCelClient()->GetMainPlayer()->GetName();
+            pPerson = psengine->GetMainPlayerName();
             size_t space = pPerson.FindFirst(' ');
             if (space != SIZET_NOT_FOUND)
                 pPerson.DeleteAt(space,pPerson.Length()-space);
@@ -656,7 +656,7 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
         BadWordsFilter(text);
 
     // If a character says his/her own name, presume it's an introduction
-    csString name(psengine->GetCelClient()->GetMainPlayer()->GetName());
+    csString name(psengine->GetMainPlayerName());
     name.Truncate(name.FindFirst(' '));
     name.Downcase();
 
@@ -685,7 +685,7 @@ void pawsChatWindow::LogMessage(enum E_CHAT_LOG channel, const char* message, in
         {
         csString filename;
         filename.Format("/planeshift/userdata/logs/%s_%s",
-                            psengine->GetCelClient()->GetMainPlayer()->GetName(),
+                            psengine->GetMainPlayerName(),
                 logFileName[channel]);
             filename.ReplaceAll(" ", "_");
 
@@ -705,14 +705,14 @@ void pawsChatWindow::LogMessage(enum E_CHAT_LOG channel, const char* message, in
                     "================================================\r\n"
                     "%s %s\r\n"
                     "------------------------------------------------\r\n",
-                    buf, psengine->GetCelClient()->GetMainPlayer()->GetName()
+                    buf, psengine->GetMainPlayerName()
                     );
 #else
                 buffer.Format(
                     "================================================\n"
                     "%s %s\n"
                     "------------------------------------------------\n",
-                    buf, psengine->GetCelClient()->GetMainPlayer()->GetName()
+                    buf, psengine->GetMainPlayerName()
                     );
 #endif
                 logFile[channel]->Write(buffer.GetData(), buffer.Length());
@@ -1091,7 +1091,7 @@ void pawsChatWindow::HandleSystemMessage(MsgEntry *me)
                      msg.type == MSG_LOOT)
                 chatType = CHAT_SYSTEM_BASE;
 
-            WordArray playerName(psengine->GetCelClient()->GetMainPlayer()->GetName());
+            WordArray playerName(psengine->GetMainPlayerName());
             bool hasCharName = noCaseMsg.Find(playerName[0].Downcase().GetData()) != (size_t)-1;
             ChatOutput(buff.GetData(), colour, chatType, true, hasCharName);
 
@@ -1147,7 +1147,7 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
 
     if ( !havePlayerName )  // save name for auto-complete later
     {
-        noCasePlayerName.Replace(psengine->GetCelClient()->GetMainPlayer()->GetName());
+        noCasePlayerName.Replace(psengine->GetMainPlayerName());
         noCasePlayerName.Downcase(); // Create lowercase string
         noCasePlayerForename = GetWordNumber(noCasePlayerName, 1);
         chatTriggers.Push(noCasePlayerForename);
@@ -1314,13 +1314,13 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
         {
             if ( msg.sText.StartsWith("/me ") )
             {
-                WordArray tName(psengine->GetCelClient()->GetMainPlayer()->GetName());
+                WordArray tName(psengine->GetMainPlayerName());
                 buff.Format("%s %s",tName[0].GetData(),
                             ((const char *)msg.sText)+4);
             }
             else if ( msg.sText.StartsWith("/my ") )
             {
-                WordArray tName(psengine->GetCelClient()->GetMainPlayer()->GetName());
+                WordArray tName(psengine->GetMainPlayerName());
                 buff.Format("%s's %s",tName[0].GetData(),
                             ((const char *)msg.sText)+4);
             }
@@ -1411,7 +1411,7 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
         }
     }
 
-    WordArray playerName(psengine->GetCelClient()->GetMainPlayer()->GetName());
+    WordArray playerName(psengine->GetMainPlayerName());
     bool hasCharName = msg.sText.Downcase().Find(playerName[0].Downcase().GetData()) != (size_t)-1;
 
     if (!buff.IsEmpty())
@@ -1425,9 +1425,9 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
     {
         csString autoResponse, clientmsg(awayText);
         if ( clientmsg.StartsWith("/me ") )
-            clientmsg.Format("%s %s", psengine->GetCelClient()->GetMainPlayer()->GetName(), ((const char *)awayText)+4);
+            clientmsg.Format("%s %s", psengine->GetMainPlayerName(), ((const char *)awayText)+4);
         else if ( clientmsg.StartsWith("/my ") )
-            clientmsg.Format("%s's %s",psengine->GetCelClient()->GetMainPlayer()->GetName(), ((const char *)awayText)+4);
+            clientmsg.Format("%s's %s",psengine->GetMainPlayerName(), ((const char *)awayText)+4);
 
         autoResponse.Format("/tell %s [auto-reply] %s", (const char*)msg.sPerson, clientmsg.GetData());
         const char* errorMessage = cmdsource->Publish(autoResponse.GetData());

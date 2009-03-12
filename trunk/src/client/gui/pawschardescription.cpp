@@ -133,7 +133,7 @@ bool pawsCharDescription::OnButtonPressed( int mouseButton, int keyModifier, paw
             csString DescriptionData; //the data taken from char description
 
             //make up the filename
-            FileName.Format("/planeshift/userdata/descriptions/%s_description.txt", psengine->GetCelClient()->GetMainPlayer()->GetName());
+            FileName.Format("/planeshift/userdata/descriptions/%s_description.txt", psengine->GetMainPlayerName());
             FileName.ReplaceAll(" ", "_");
 
             DescriptionData = description->GetText(); //get the text to save
@@ -154,7 +154,7 @@ bool pawsCharDescription::OnButtonPressed( int mouseButton, int keyModifier, paw
             csString DescriptionData; //the data taken from char description
 
             //make up the filename
-            FileName.Format("/planeshift/userdata/descriptions/%s_description.txt", psengine->GetCelClient()->GetMainPlayer()->GetName());
+            FileName.Format("/planeshift/userdata/descriptions/%s_description.txt", psengine->GetMainPlayerName());
             FileName.ReplaceAll(" ", "_");
 
             if (!vfs->Exists(FileName)) //check if there is a file saved

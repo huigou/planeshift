@@ -1151,6 +1151,13 @@ void psEngine::Disconnect(bool final)
     netmanager->Disconnect();
 }
 
+//----------------------------------------------------------------------------
+
+const char* psEngine::GetMainPlayerName()
+{
+    return GetCelClient()->GetMainPlayer()->GetName();
+}
+
 // ----------------------------------------------------------------------------
 
 void psEngine::AddLoadingWindowMsg(const csString & msg)

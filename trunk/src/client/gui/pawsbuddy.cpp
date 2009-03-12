@@ -110,7 +110,7 @@ void pawsBuddyWindow::HandleMessage( MsgEntry* me )
         offlineBuddies.DeleteAll();
 
         // Load aliases
-        LoadAliases(psengine->GetCelClient()->GetMainPlayer()->GetName());
+        LoadAliases(psengine->GetMainPlayerName());
 
         for (size_t x = 0; x < mesg.buddies.GetSize(); x++ )
         {
@@ -256,7 +256,7 @@ void pawsBuddyWindow::OnStringEntered(const char *name,int param,const char *val
         // Remove from the alias list. It may fail on the server, but we don't have enough
         // information to remove the alias when the buddy was actually removed.
         if (aliases.DeleteAll(value))
-            SaveAliases(psengine->GetCelClient()->GetMainPlayer()->GetName());
+            SaveAliases(psengine->GetMainPlayerName());
     }
     else if (!strcmp(name, "EditBuddy"))
     {
@@ -417,7 +417,7 @@ void pawsBuddyWindow::ChangeAlias(const csString & name, const csString &oldAlia
 
     // Add/replace in the aliases table and save it.
     aliases.PutUnique(name, newAlias);
-    SaveAliases(psengine->GetCelClient()->GetMainPlayer()->GetName());
+    SaveAliases(psengine->GetMainPlayerName());
 
     // Update the listbox
     FillBuddyList();

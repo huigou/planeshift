@@ -284,6 +284,9 @@ public:
 
     /// Get the number of characters this player should have.
     int GetNumChars() { return numOfChars; }
+    
+    /// Get the main character's name
+    const char* GetMainPlayerName();
 
     /// Force the next frame to get drawn. Used when updating LoadWindow.
     void ForceRefresh() { elapsed = 0; }
