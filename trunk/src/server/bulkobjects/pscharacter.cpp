@@ -2803,6 +2803,22 @@ double psCharacter::GetProperty(const char *ptr)
     {
         return defenseModifier.Value();
     }
+    else if (!strcasecmp(ptr,"HP"))
+    {
+        return GetHP();
+    }
+    else if (!strcasecmp(ptr,"Mana"))
+    {
+        return GetMana();
+    }
+    else if (!strcasecmp(ptr,"PStamina"))
+    {
+        return GetStamina(true);
+    }
+    else if (!strcasecmp(ptr,"MStamina"))
+    {
+        return GetStamina(false);
+    }
     else if (!strcasecmp(ptr,"Strength"))
     {
         return attributes[PSITEMSTATS_STAT_STRENGTH].Current();
