@@ -95,7 +95,7 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
             while(nodeItr->HasNext())
             {
                 node = nodeItr->Next();
-                PrecacheDataTC(ret, node->GetContentsValue(), true);
+                PrecacheDataTC(ret, false, node->GetContentsValue(), true);
             }
 
             node = root->GetNode("plugins");
