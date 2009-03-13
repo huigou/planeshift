@@ -756,6 +756,9 @@ bool pawsWidget::LoadChildren( iDocumentNode* node )
     {
         csRef<iDocumentNode> childWidgetNode = childIter->Next();
 
+        if(!strcmp(childWidgetNode->GetValue(), "map"))
+          continue;
+
         widget=NULL;
 
         // Check if the child should be loaded from 

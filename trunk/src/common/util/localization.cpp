@@ -121,6 +121,8 @@ csString psLocalization::FindLocalizedFile(const csString & shortPath)
     fullPath += shortPath;
     if (FileExists(fullPath))
         return fullPath;
+    else if (FileExists(shortPath))
+        return shortPath;
     else
     {    
         fullPath = DEFAULT_FILE_PATH + shortPath;
