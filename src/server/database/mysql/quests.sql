@@ -47,7 +47,7 @@ INSERT INTO `quests` (`id`, `name`, `task`, `cstr_id_icon`, `flags`, `master_que
 	('1','Rescue the Princess','Princess Leia is being held by the Empire on the Death Star.  You must rescue her before she is compelled to give up the wherabouts of the rebel base!','0',0,'0',0,0,0,'Newbie',''),
 	('2','Sandwich Quest','Bring the merchant a freakin\' sandwich!','0',0,'0',0,10,0,'Newbie',''),
 	('3','Falchion Quest','Bring the merchant a steel falchion','0',0,'0',0,120,60,'Newbie','<pre><skill name=\"Sword\" min=\"10\" max=\"20\"/></pre>'),
-	('10','Male Enki Alina Quest','Find Smith and ask him if he loves the daugther.','0',0,'0',0,240,60,'Newbie','<pre><completed quest=\"Male Enki Gold\"/></pre>'),
+	('10','Male Enki Alina Quest','Find Smith and ask him if he loves his daughter.','0',0,'0',0,240,60,'Newbie','<pre><completed quest=\"Male Enki Gold\"/></pre>'),
 	('11','Male Enki Gold','Mine gold ore for the MaleEnki npc.','0',0,'0',0,240,60,'Newbie',''),
 	('12','Male Enki Trusted Transport','Transport the glyph to the merchant.','0',0,'0',0,300,60,'Newbie','<pre><or><completed quest=\"Male Enki Gold\"/><completed quest=\"Male Enki Alina Quest\"/></or></pre>'),
 	('13','Male Enki Lost Found','Get Key','0',0,'0',0,300,60,'Newbie',''),
@@ -65,7 +65,7 @@ INSERT INTO `quests` (`id`, `name`, `task`, `cstr_id_icon`, `flags`, `master_que
 	('205','QuestMaster2 Quest 5','Test Quest for the Quest Test Case: Quest prerequisite','0',0,'0',0,0,0,'Test2','<pre><completed category=\"Test2\" min=\"3\" max=\"4\"/></pre>'),
 	('206','QuestMaster2 Quest 6','Test Quest for the Quest Test Case: Quest lockouts','0',0,'0',0,-1,0,'Test3',''),
 	('207','Acquire Lapar','Test Quest for Audio with Smith','0',0,'0',0,-1,0,'TestAudio',''),
-	('208','One Thousand Year Sammich','Long complex demo quest','0',0,NULL,0,0,0,'Test4','');
+	('208','One Thousand Year Sammich','Long complex demo quest','0',0,NULL,0,0,0,'Test4',''),
 	('209','Puzzle Quest','Answer the merchant\'s question with BLUE to complete this quest.','0',0,NULL,0,0,0,'Newbie','');
 /*!40000 ALTER TABLE `quests` ENABLE KEYS*/;
 UNLOCK TABLES;
