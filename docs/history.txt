@@ -1,4 +1,11 @@
-﻿*** 2009-03-12 by Kenny Graunke
+﻿*** 2009-03-12 by Keith Fulton
+- Implemented the riddle prompt functionality from the quest popup menus.
+  Use:  Menu: ?=Question Reminder to script this functionality.
+  Talk to the Merchant to get this puzzle quest and try it.  "blue" is the correct
+  answer to the riddle.  It is quest script 210 if you want to see the example.
+- Other warning fixes and data type fixes.
+
+*** 2009-03-12 by Kenny Graunke
 - Added MathScript accessors for HP, Mana, and Stamina.
 - Fixed "Run script ..." in quests, which wasn't providing the script with the
   necessary actors.  Now it defines "NPC" and "Target" (the player).
