@@ -104,7 +104,7 @@ void EEditLoadEffectToolbox::FillList(psEffectManager * effectManager)
 
 void EEditLoadEffectToolbox::SelectEffect(const csString & effectName)
 {
-    for (int a=0; a<effectList->GetRowCount(); ++a)
+    for (size_t a=0; a<effectList->GetRowCount(); ++a)
     {
         if (effectList->GetTextCellValue(a, 0) == effectName)
             effectList->GetTextCell(a, 0)->SetColour(0x00ffff);

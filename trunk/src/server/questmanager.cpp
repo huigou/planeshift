@@ -950,7 +950,7 @@ bool QuestManager::BuildTriggerList(csString& block,csStringArray& list)
             response.DeleteAt(response.Length()-1);
         }
 
-        // This isn't truely a "any trigger" but will work
+        // This isn't truly a "any trigger" but will work
         if (response == "*")
             response = "error";
 

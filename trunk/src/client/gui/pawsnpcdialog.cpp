@@ -31,6 +31,7 @@
 
 #include "pawsnpcdialog.h"
 
+
 pawsNpcDialogWindow::pawsNpcDialogWindow()
 {
     responseList = NULL;
@@ -62,28 +63,43 @@ void pawsNpcDialogWindow::OnListAction( pawsListBox* widget, int status )
 
         // Send the server the original trigger
     	csString cmd;
-        if (trigger.GetAt(0) != '<')
-        {
-	    	cmd.Format("/tellnpc %s", trigger.GetData() );
-		    psengine->GetCmdHandler()->Publish(cmd);
-        }
-        else
-        {
-            psSimpleStringMessage gift(0,MSGTYPE_EXCHANGE_AUTOGIVE,trigger);
-            gift.SendMessage();
-        }
-        // Now send the chat window and chat bubbles the nice menu text
-        csString text(fld->GetText());
-        size_t dot = text.FindFirst('.'); // Take out the numbering to display
-        if (dot != SIZET_NOT_FOUND)
-        {
-            text.DeleteAt(0,dot+1);
-        }
-		cmd.Format("/tellnpcinternal %s", text.GetData() );
-		psengine->GetCmdHandler()->Publish(cmd);
-		responseList->Clear();
+        if (trigger.GetAt(0) == '=') // prompt window signal
+		{
+			pawsStringPromptWindow::Create(csString(trigger.GetData()+1),
+				                           csString(""),
+				                           false, 320, 30, this, trigger.GetData()+1 );
+		}
+		else
+		{
+			if (trigger.GetAt(0) != '<')
+			{
+	    		cmd.Format("/tellnpc %s", trigger.GetData() );
+				psengine->GetCmdHandler()->Publish(cmd);
+			}
+			else
+			{
+				psSimpleStringMessage gift(0,MSGTYPE_EXCHANGE_AUTOGIVE,trigger);
+				gift.SendMessage();
+			}
+			DisplayTextBubbles(fld->GetText());
+		}
 		Hide();
 	}
+}
+
+void pawsNpcDialogWindow::DisplayTextBubbles(const char *sayWhat)
+{
+	// Now send the chat window and chat bubbles the nice menu text
+	csString text(sayWhat);
+	size_t dot = text.FindFirst('.'); // Take out the numbering to display
+	if (dot != SIZET_NOT_FOUND)
+	{
+		text.DeleteAt(0,dot+1);
+	}
+	csString cmd;
+	cmd.Format("/tellnpcinternal %s", text.GetData() );
+	psengine->GetCmdHandler()->Publish(cmd);
+	responseList->Clear();
 }
 
 void pawsNpcDialogWindow::HandleMessage( MsgEntry* me )
@@ -97,6 +113,47 @@ void pawsNpcDialogWindow::HandleMessage( MsgEntry* me )
 
 		SelfPopulateXML(mesg.xml);
 
+		AdjustForPromptWindow();
+
 		Show();
     }
+}
+
+void pawsNpcDialogWindow::AdjustForPromptWindow()
+{
+	csString str;
+
+	for (size_t i=0; i<responseList->GetRowCount(); i++)
+	{
+		str = responseList->GetTextCellValue(i,0);
+		size_t where = str.Find("?=");
+		if (where != SIZET_NOT_FOUND) // we have a prompt choice
+		{
+			pawsTextBox *hidden = (pawsTextBox *)responseList->GetRow(i)->GetColumn(1);
+			if (where != SIZET_NOT_FOUND)
+			{
+				str.DeleteAt(where,1); // take out the ?
+				hidden->SetText(str.GetData() + where); // Save the question prompt, starting with the =, in the hidden column
+				str.DeleteAt(where,1); // take out the =
+
+				// now change the visible menu choice to something better
+				pawsTextBox *prompt = (pawsTextBox *)responseList->GetRow(i)->GetColumn(0);
+
+				csString menuPrompt(str);
+				menuPrompt.Insert(where,"<Answer ");
+				menuPrompt.Append('>');
+				prompt->SetText(menuPrompt);
+			}
+		}
+	}
+}
+
+void pawsNpcDialogWindow::OnStringEntered(const char *name,int param,const char *value)
+{
+	printf("Got name=%s, value=%s\n", name, value);
+
+	csString cmd;
+	cmd.Format("/tellnpc %s", value );
+	psengine->GetCmdHandler()->Publish(cmd);
+	DisplayTextBubbles(value);
 }

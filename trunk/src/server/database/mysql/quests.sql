@@ -66,6 +66,7 @@ INSERT INTO `quests` (`id`, `name`, `task`, `cstr_id_icon`, `flags`, `master_que
 	('206','QuestMaster2 Quest 6','Test Quest for the Quest Test Case: Quest lockouts','0',0,'0',0,-1,0,'Test3',''),
 	('207','Acquire Lapar','Test Quest for Audio with Smith','0',0,'0',0,-1,0,'TestAudio',''),
 	('208','One Thousand Year Sammich','Long complex demo quest','0',0,NULL,0,0,0,'Test4','');
+	('209','Puzzle Quest','Answer the merchant\'s question with BLUE to complete this quest.','0',0,NULL,0,0,0,'Newbie','');
 /*!40000 ALTER TABLE `quests` ENABLE KEYS*/;
 UNLOCK TABLES;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS*/;

@@ -189,7 +189,7 @@ public:
     void AddRow( pawsListBoxRow* row );
 
     /// Get number of rows in listboz
-    int GetRowCount();
+    size_t GetRowCount();
  
     /// Get a particular row
     pawsListBoxRow* GetRow( size_t x );
