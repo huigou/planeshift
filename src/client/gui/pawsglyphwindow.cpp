@@ -236,7 +236,8 @@ void pawsGlyphWindow::ClearSpell( void )
 
 pawsGlyphSlot * pawsGlyphWindow::FindFreeSlot(int wayNum)
 {
-    int rowNum, colNum;
+    size_t rowNum;
+	int colNum;
     pawsListBox * way;
     pawsListBoxRow * row;
     pawsGlyphSlot * slot;

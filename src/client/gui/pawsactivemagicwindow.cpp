@@ -81,7 +81,7 @@ void pawsActiveMagicWindow::HandleMessage( MsgEntry* me )
         }
         case psGUIActiveMagicMessage::Remove:
         {
-            for (int i = 0; i < list->GetRowCount(); i++)
+            for (size_t i = 0; i < list->GetRowCount(); i++)
             {
                 pawsListBoxRow *row = list->GetRow(i);
                 pawsTextBox *name = dynamic_cast<pawsTextBox*>(row->GetColumn(0));

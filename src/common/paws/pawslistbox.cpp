@@ -1265,9 +1265,9 @@ void pawsListBoxRow::SetHeading(bool flag)
     }
 }
 
-int pawsListBox::GetRowCount()
+size_t pawsListBox::GetRowCount()
 {
-    return (int)rows.GetSize();
+    return rows.GetSize();
 }
 
 pawsTextBox * pawsListBox::GetTextCell(int rowNum, int colNum)

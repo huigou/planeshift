@@ -989,3 +989,22 @@ Give 1 Sublime Sandwich. Give 40000 Exp.
 Complete One Thousand Year Sammich Step 29.");
 
 
+#
+# Quest to test riddle prompts
+#
+INSERT INTO quest_scripts VALUES("210","209","P:can I help
+Menu: I\'ll solve a riddle for a tria.
+
+Merchant: Ok that is fun.  I like riddles.  What is my favorite color?
+
+Assign Quest
+
+...
+
+P: *. P: blue
+Menu: That isn\'t a riddle, little man.  Menu: ?=Favorite color
+
+M: I don\'t care what you think of my riddle!  What is my favorite color?
+M: Yes blue is my favorite color!  Isn\'t it a wonderful color?  Here is your reward.
+Give 1 tria.
+");

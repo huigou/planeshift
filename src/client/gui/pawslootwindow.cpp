@@ -112,7 +112,7 @@ void pawsLootWindow::HandleMessage ( MsgEntry* me )
             lootList->SelfPopulateXML(message.lootxml);
 
             // Set up the row ids.
-            for(int i = 0;i < lootList->GetRowCount();i++)
+            for (size_t i = 0;i < lootList->GetRowCount();i++)
             {
                 pawsListBoxRow* row = lootList->GetRow(i);
                 if(!row)
@@ -136,7 +136,7 @@ void pawsLootWindow::HandleMessage ( MsgEntry* me )
 
             psLootRemoveMessage msg(me);
 
-            for (int i=0; i < lootList->GetRowCount(); i++)
+            for (size_t i=0; i < lootList->GetRowCount(); i++)
             {
                 pawsListBoxRow* row = lootList->GetRow(i);
                 if (!row)
@@ -148,8 +148,8 @@ void pawsLootWindow::HandleMessage ( MsgEntry* me )
                 {
                     lootList->Remove(row->GetID());
 
-                    int count = lootList->GetRowCount();
-                    if (count <= 0) // Clear and close when empty
+                    size_t count = lootList->GetRowCount();
+                    if (count == 0) // Clear and close when empty
                     {
                         lootList->Clear();
                         Hide();

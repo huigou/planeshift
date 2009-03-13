@@ -575,10 +575,8 @@ void pawsGuildWindow::SetAllianceWidgetVisibility(int mode)
 }
 
 void pawsGuildWindow::SetupLevelNameButtons()
-{
-    int i;
-    
-    for (i=0; i < levelList->GetRowCount(); i++)
+{    
+    for (size_t i=0; i < levelList->GetRowCount(); i++)
     {
         pawsListBoxRow * row = levelList->GetRow(i);
         pawsButton * cell = dynamic_cast <pawsButton*> (row->GetColumn(0));
@@ -592,7 +590,7 @@ void pawsGuildWindow::SetupLevelNameButtons()
 
 size_t pawsGuildWindow::GetLevel( const char* levelName )
 {
-    for( size_t z = 0; z < levels.GetSize(); z++ )
+    for (size_t z = 0; z < levels.GetSize(); z++ )
     {
         if ( levels[z] == levelName )
             return z;
@@ -1017,7 +1015,7 @@ int pawsGuildWindow::FindMemberInListBox(const csString & name)
     pawsTextBox * nameTextBox;
     csString nameInList;
     
-    for (int i=0; i < memberList->GetRowCount(); i++)
+    for (size_t i=0; i < memberList->GetRowCount(); i++)
     {
         row = memberList->GetRow(i);
         nameTextBox = dynamic_cast <pawsTextBox*> (row->GetColumn(0));

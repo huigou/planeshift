@@ -19,17 +19,18 @@
 #ifndef PAWS_NPC_DIALOG
 #define PAWS_NPC_DIALOG
 
-#include "paws/pawswidget.h"
 #include "net/subscriber.h"
 
-#include "gui/pawscontrolwindow.h"
+#include "paws/pawswidget.h"
+#include "paws/pawsstringpromptwindow.h"
+
 
 class pawsListBox;
 
-/** The buddy window that shows your current list of in game 'friends'.  
- *  This allows you to send them a tell or add/remove buddies.
+/** This window shows the popup menu of available responses
+ *  when talking to an NPC.
  */
-class pawsNpcDialogWindow: public pawsWidget, public psClientNetSubscriber
+class pawsNpcDialogWindow: public pawsWidget, public psClientNetSubscriber, public iOnStringEnteredAction
 {
 public:
     pawsNpcDialogWindow();
@@ -39,9 +40,13 @@ public:
 
     void OnListAction( pawsListBox* widget, int status );
 
-private:
-    pawsListBox* responseList;  
+	void OnStringEntered(const char *name,int param,const char *value);
 
+private:
+	void AdjustForPromptWindow();
+	void DisplayTextBubbles(const char *sayWhat);
+
+	pawsListBox* responseList;  
 };
 
 
