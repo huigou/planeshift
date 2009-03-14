@@ -149,13 +149,9 @@ bool pawsObjectView::LoadMap( const char* map, const char* sector )
         VFS->ChDir (map);
         VFS->SetSyncDir(VFS->GetCwd());
         engine->SetCacheManager(NULL);
-        csRef<iThreadReturn> itr = loader->LoadMap(worldNode, CS_LOADER_KEEP_WORLD, col);
-        itr->Wait();
+        csRef<iThreadReturn> itr = loader->LoadMapWait(worldNode, CS_LOADER_KEEP_WORLD, col);
         if (!itr->WasSuccessful())
             return false;
-
-        VFS->ChDir (map);
-        engine->SyncEngineListsNow(loader);
 
         stage = engine->FindSector( sector );
         stage->PrecacheDraw();
