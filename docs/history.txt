@@ -4,7 +4,8 @@
     "Nothing special" character creation options, which are <script></script>.
   - Made <else> optional.
 - Made the type attribute optional on imperative <fx> (defaults to attached).
-- Added more error messages when scripts fail to load.
+- Improved more error messages when scripts fail to load.
+- Added spell table structure conversion to upgrade_schema.sql.
 
 *** 2009-03-13 by Tristan Cragnolini
 - Changed the virtual functions in gemObject, implemented in the derived
