@@ -653,6 +653,8 @@ bool psEngine::Initialize (int level)
             return 1;
         }
 
+        vfs->ChDir("/planeshift/maps/");
+
         csRef<iThreadManager> tm = csQueryRegistry<iThreadManager>(object_reg);
         tm->Wait(modelPrecaches);
     }

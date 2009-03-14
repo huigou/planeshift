@@ -42,6 +42,7 @@ void Loader::Init(iObjectRegistry* object_reg, uint gfxFeatures, float loadRange
     this->loadRange = loadRange;
 
     engine = csQueryRegistry<iEngine> (object_reg);
+    loader = csQueryRegistry<iLoader> (object_reg);
     tloader = csQueryRegistry<iThreadedLoader> (object_reg);
     vfs = csQueryRegistry<iVFS> (object_reg);
     svstrings = csQueryRegistryTagInterface<iShaderVarStringSet>(object_reg, "crystalspace.shader.variablenameset");
@@ -101,8 +102,7 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
             node = root->GetNode("plugins");
             if(node.IsValid())
             {
-                csRef<iThreadReturn> itr = tloader->LoadNode(node);
-                itr->Wait();
+                loader->Load(node);
             }
 
             node = root->GetNode("shaders");
@@ -113,7 +113,7 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                 {
                     node = nodeItr->Next();
                     node = node->GetNode("file");
-                    tloader->LoadShader(node->GetContentsValue());
+                    tloader->LoadShader(vfs->GetCwd(), node->GetContentsValue());
                 }
             }
 
@@ -969,7 +969,7 @@ void Loader::LoadMesh(MeshObj* mesh)
 
     if(ready && !mesh->status)
     {
-        mesh->status = tloader->LoadNode(mesh->data);
+        mesh->status = tloader->LoadNode(vfs->GetCwd(), mesh->data);
     }
 
     if(mesh->status && mesh->status->IsFinished())
@@ -1001,7 +1001,7 @@ bool Loader::LoadMeshFact(MeshFact* meshfact)
 
     if(ready && !meshfact->status)
     {
-        meshfact->status = tloader->LoadNode(meshfact->data);
+        meshfact->status = tloader->LoadNode(vfs->GetCwd(), meshfact->data);
         return false;
     }
 
@@ -1084,7 +1084,7 @@ bool Loader::LoadTexture(Texture* texture)
 
     if(!texture->status.IsValid())
     {
-        texture->status = tloader->LoadNode(texture->data);
+        texture->status = tloader->LoadNode(vfs->GetCwd(), texture->data);
         return false;
     }
 
@@ -1218,9 +1218,7 @@ iTextureWrapper* Loader::LoadTexture(const char *name, const char *filename, con
 
     if(!texture)
     {
-        csRef<iThreadReturn> itr = tloader->LoadTexture(name, filename, CS_TEXTURE_3D, txtmgr, true, false);
-        itr->Wait();
-        texture = scfQueryInterfaceSafe<iTextureWrapper>(itr->GetResultRefPtr());
+        texture = loader->LoadTexture(name, filename, CS_TEXTURE_3D, txtmgr, true, false);
         if(className)
         {
             texture->SetTextureClass(className);

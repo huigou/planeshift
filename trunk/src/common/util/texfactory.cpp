@@ -235,11 +235,9 @@ csPtr<iImage> psTextureFactory::GetImage(const char *race,const char *filename)
     }
 
     // if still not found here, attempt to load
-    csRef<iThreadedLoader> loader =  csQueryRegistry<iThreadedLoader> (object_reg);
+    csRef<iLoader> loader =  csQueryRegistry<iLoader> (object_reg);
     if (!loader) return NULL; // or something else
-    csRef<iThreadReturn> itr = loader->LoadImage(name, CS_IMGFMT_TRUECOLOR);
-    itr->Wait();
-    csRef<iImage> image = scfQueryInterfaceSafe<iImage>(itr->GetResultRefPtr());
+    csRef<iImage> image = loader->LoadImage(name, CS_IMGFMT_TRUECOLOR);
 
     if (image && image->GetWidth()!=32) // Save in cache
     {

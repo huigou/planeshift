@@ -134,8 +134,9 @@ csRef<iThreadReturn> psEffectManager::LoadEffects(const csString & fileName, iVi
 #ifndef DONT_DO_EFFECTS
     view = parentView;
 
-    csRef<iThreadedLoader> loader =  csQueryRegistry<iThreadedLoader> (psCSSetup::object_reg);
-    return csPtr<iThreadReturn>(loader->LoadLibraryFile(fileName, effectsCollection));
+    csRef<iThreadedLoader> loader = csQueryRegistry<iThreadedLoader> (psCSSetup::object_reg);
+    csRef<iVFS> vfs = csQueryRegistry<iVFS> (psCSSetup::object_reg);
+    return csPtr<iThreadReturn>(loader->LoadLibraryFile(vfs->GetCwd(), fileName, effectsCollection));
 #endif
 }
 

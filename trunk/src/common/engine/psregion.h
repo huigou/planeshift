@@ -37,7 +37,7 @@ struct iCollection;
 struct iDocumentNode;
 struct iDocumentSystem;
 struct iEngine;
-struct iThreadedLoader;
+struct iLoader;
 struct iObjectRegistry;
 struct iVFS;
 
@@ -132,7 +132,7 @@ private:
     csRef<iEngine> engine;
     csRef<iVFS> vfs;
     csRef<iDocumentSystem> xml;
-    csRef<iThreadedLoader> loader;
+    csRef<iLoader> loader;
 };
 
 #endif // __PSREGION_H__

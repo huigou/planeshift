@@ -160,10 +160,8 @@ psEffectObj *psEffectObjSimpMesh::Clone() const
 
 bool psEffectObjSimpMesh::PostSetup()
 {
-    csRef<iThreadedLoader> loader = csQueryRegistry<iThreadedLoader> (psCSSetup::object_reg);
-    csRef<iThreadReturn> itr = loader->LoadLibraryFile(fileName, effectsCollection);
-    itr->Wait();
-    engine->SyncEngineListsNow(loader);
+    csRef<iLoader> loader = csQueryRegistry<iLoader> (psCSSetup::object_reg);
+    loader->LoadLibraryFile(fileName, effectsCollection);
 
     return true;
 }

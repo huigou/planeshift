@@ -59,7 +59,7 @@ psRegion::psRegion(iObjectRegistry *obj_reg, const char *file, uint _gfxFeatures
     engine = csQueryRegistry<iEngine> (object_reg);
     vfs = csQueryRegistry<iVFS>(object_reg);
     xml = csQueryRegistry<iDocumentSystem>(object_reg);
-    loader = csQueryRegistry<iThreadedLoader>(object_reg);
+    loader = csQueryRegistry<iLoader>(object_reg);
 }
 
 psRegion::~psRegion()
@@ -120,17 +120,12 @@ bool psRegion::Load(bool loadMeshes)
 
     // Now load the map into the selected region
     vfs->ChDir(worlddir);
-    vfs->SetSyncDir(vfs->GetCwd());
     engine->SetVFSCacheManager();
 
     csTicks start = csGetTicks();
     Debug2(LOG_LOAD, 0,"Loading map file %s", worlddir.GetData());
 
-    csRef<iThreadReturn> itr = loader->LoadMap(worldNode, CS_LOADER_KEEP_WORLD, collection);
-    itr->Wait();
-    vfs->ChDir(worlddir); // Workaround a CS cwd bug.
-    engine->SyncEngineListsNow(loader);
-    if(!itr->WasSuccessful())
+    if(!loader->LoadMap(worldNode, CS_LOADER_KEEP_WORLD, collection))
     {
         Error3("LoadMap failed: %s, %s.",worlddir.GetData(),worldfile.GetData() );
         Error2("Region name was: %s", regionName.GetData());

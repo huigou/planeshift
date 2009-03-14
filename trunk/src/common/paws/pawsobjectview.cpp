@@ -147,9 +147,8 @@ bool pawsObjectView::LoadMap( const char* map, const char* sector )
 
         // Now load the map into the selected region
         VFS->ChDir (map);
-        VFS->SetSyncDir(VFS->GetCwd());
         engine->SetCacheManager(NULL);
-        csRef<iThreadReturn> itr = loader->LoadMapWait(worldNode, CS_LOADER_KEEP_WORLD, col);
+        csRef<iThreadReturn> itr = loader->LoadMapWait(map, worldNode, CS_LOADER_KEEP_WORLD, col);
         if (!itr->WasSuccessful())
             return false;
 
@@ -196,11 +195,8 @@ void pawsObjectView::View( const char* factName, const char* fileName )
 
     if ( !meshfact )
     {
-        csRef<iThreadedLoader> loader = csQueryRegistry<iThreadedLoader> (PawsManager::GetSingleton().GetObjectRegistry());
-        csRef<iThreadReturn> itr = loader->LoadMeshObjectFactory (fileName);
-        itr->Wait();
-        meshfact = scfQueryInterfaceSafe<iMeshFactoryWrapper>(itr->GetResultRefPtr());
-        engine->SyncEngineListsNow(loader);
+        csRef<iLoader> loader = csQueryRegistry<iLoader> (PawsManager::GetSingleton().GetObjectRegistry());
+        meshfact = loader->LoadMeshObjectFactory (fileName);
     }
 
     if ( !meshfact )
