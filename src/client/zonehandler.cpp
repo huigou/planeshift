@@ -207,7 +207,21 @@ void ZoneHandler::HandleMessage(MsgEntry* me)
         FlagRegions(zone);
     }
 
-    if (psengine->ThreadedWorldLoading() || world->NeedsLoading(zone->transitional))
+    bool catchUp = psengine->ThreadedWorldLoading();
+    if(catchUp)
+    {
+      csVector3 pos;
+      float yrot;
+      iSector* sector;
+
+      celclient->GetMainPlayer()->GetLastPosition (pos, yrot, sector);
+
+      pos -= msg.pos;
+      catchUp = msg.oldSector.Compare("SectorWhereWeKeepEntitiesResidingInUnloadedMaps") ||
+        (abs(pos.x) > 1.0f || abs(pos.x) > 1.0f || abs(pos.x) > 1.0f);
+    }
+
+    if (catchUp || (world && world->NeedsLoading(zone->transitional)))
     {
         SetMapLoadNeeded(true);
         sectorToLoad = msg.newSector;

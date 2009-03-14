@@ -82,7 +82,7 @@ bool pawsGenericView::LoadMap( const char* map, const char* sector )
     VFS->ChDir (map);
     VFS->SetSyncDir(VFS->GetCwd());
     engine->SetCacheManager(NULL);
-    csRef<iThreadReturn> itr = loader->LoadMapFile("world", CS_LOADER_KEEP_WORLD, collection);
+    csRef<iThreadReturn> itr = loader->LoadMapFile(map, "world", CS_LOADER_KEEP_WORLD, collection);
     itr->Wait();
     if(!itr->WasSuccessful())
     {

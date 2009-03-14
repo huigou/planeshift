@@ -55,8 +55,7 @@ iMeshFactoryWrapper* npcMesh::LoadMeshFactory(const char* fileName, const char* 
 
     csRef<iThreadedLoader> loader = csQueryRegistry<iThreadedLoader>(objectReg);
 
-    csRef<iThreadReturn> ret = loader->LoadFile(fileName);
-    ret->Wait();
+    csRef<iThreadReturn> ret = loader->LoadFileWait(vfs->GetCwd(), fileName);
     
     csRef<iMeshFactoryWrapper> imesh_fact = 0;
 

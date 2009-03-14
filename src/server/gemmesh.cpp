@@ -55,9 +55,8 @@ iMeshFactoryWrapper* gemMesh::LoadMeshFactory(const char* fileName, const char* 
 
     csRef<iThreadedLoader> loader = csQueryRegistry<iThreadedLoader>(objectReg);
 
-    csRef<iThreadReturn> ret = loader->LoadFile(fileName);
-    ret->Wait();
-    engine->SyncEngineListsNow(loader); // PS#2666 - server crash on /morph
+    csRef<iThreadReturn> ret = loader->LoadFileWait(vfs->GetCwd(), fileName);
+
     csRef<iMeshFactoryWrapper> imesh_fact = 0;
 
     if ( ret->WasSuccessful() )
