@@ -29,7 +29,6 @@
 #include "net/cmdhandler.h"
 #include "net/msghandler.h"
 #include "net/messages.h"
-#include "clientcachemanager.h"
 #include "util/psxmlparser.h"
 
 #include "../globals.h"
