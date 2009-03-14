@@ -24,7 +24,7 @@
   </start>
 
   <define name="ImperativeMode">
-    <oneOrMore>
+    <zeroOrMore>
       <choice>
         <!-- let-blocks -->
         <element name="let">
@@ -38,9 +38,11 @@
           <element name="then">
             <ref name="ImperativeMode"/>
           </element>
-          <element name="else">
-            <ref name="ImperativeMode"/>
-          </element>
+          <optional>
+            <element name="else">
+              <ref name="ImperativeMode"/>
+            </element>
+          </optional>
         </element>
         <element name="apply">
           <attribute name="aim"/>
@@ -74,7 +76,7 @@
           </attribute>
           <oneOrMore>
             <element name="script">
-              <attribute name="name">
+              <attribute name="name"/>
               <ref name="SpellType"/>
             </element>
           </oneOrMore>
@@ -92,12 +94,14 @@
           </optional>
           <attribute name="target"/>
           <attribute name="name"/>
-          <attribute name="type">
-            <choice>
-              <value>attached</value>
-              <value>unattached</value>
-            </choice>
-          </attribute>
+          <optional>
+            <attribute name="type">
+              <choice>
+                <value>attached</value>
+                <value>unattached</value>
+              </choice>
+            </attribute>
+          </optional>
         </element>
 
         <element name="teleport"> <ref name="teleport"/> </element>
@@ -195,7 +199,7 @@
         <element name="animal-affinity"> <ref name="imperative3"/> </element>
 
       </choice>
-    </oneOrMore>
+    </zeroOrMore>
   </define>
 
   <define name="ApplyMode">
