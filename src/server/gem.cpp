@@ -632,7 +632,36 @@ gemObject::~gemObject()
 }
 
 
-const char *gemObject::GetName()
+gemItem* gemObject::GetItemPtr()
+{
+    return dynamic_cast<gemItem*>(this);
+}
+
+psItem* gemObject::GetItem()
+{
+    gemItem *itemPtr = GetItemPtr();
+    if(itemPtr)
+        return itemPtr->GetItemData();
+    
+    return NULL;
+}
+
+gemActor* gemObject::GetActorPtr()
+{
+    return dynamic_cast<gemActor*>(this);
+}
+
+gemNPC* gemObject::GetNPCPtr()
+{
+    return dynamic_cast<gemNPC*>(this);
+}
+
+gemPet* gemObject::GetPetPtr()
+{
+    return dynamic_cast<gemPet*>(this);
+}
+
+const char* gemObject::GetName()
 {
     return name;
 }
@@ -1383,11 +1412,6 @@ void gemItem::GetRotation(float& xrotangle, float& yrotangle, float& zrotangle)
     zrotangle = this->zRot;
 }
 
-psItem* gemItem::GetItem()
-{
-    return itemdata;
-}
-
 float gemItem::GetBaseAdvertiseRange()
 {
     if (itemdata==NULL)
@@ -1396,7 +1420,6 @@ float gemItem::GetBaseAdvertiseRange()
     }
     return itemdata->GetVisibleDistance();
 }
-
 
 void gemItem::Send( int clientnum, bool , bool to_superclient)
 {
@@ -2441,7 +2464,7 @@ void gemActor::SendGroupStats()
         psChar->SendStatDRMessage(GetClientID(), eid, 0, InGroup() ? GetGroup() : NULL);
     }
 
-    gemNPC* npc = dynamic_cast<gemNPC*>(this);
+    gemNPC* npc = GetNPCPtr();
     if (npc && npc->GetCharacterData()->IsPet())
     {
         // Get Client ID of Owner
@@ -3722,6 +3745,17 @@ void gemNPC::ShowPopupMenu(Client *client)
         menu.ShowMenu(client);
     else
         psserver->SendSystemError(client->GetClientNum(), "This NPC has nothing to say to you.");
+}
+
+void gemNPC::SetOwner(gemObject* newOwner)
+{
+    if (newOwner)
+    {
+        this->owner = newOwner;
+        this->GetCharacterData()->SetOwnerID(newOwner->GetCharacterData()->GetPID());
+    }
+    else
+        this->owner = NULL;
 }
 
 csString gemNPC::GetDefaultBehavior(const csString & dfltBehaviors)

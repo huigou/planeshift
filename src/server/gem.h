@@ -298,12 +298,14 @@ public:
 
     virtual const char* GetObjectType() { return "Object"; }
 
-    virtual psItem *GetItem() { return NULL; }
-    virtual gemActor* GetActorPtr() { return NULL; }
-    virtual gemNPC* GetNPCPtr()  { return NULL; }
-    virtual gemPet* GetPetPtr() { return NULL; }
+    gemItem* GetItemPtr();
+    gemActor* GetActorPtr();
+    gemNPC* GetNPCPtr();
+    gemPet* GetPetPtr();
 
+    psItem* GetItem();
     virtual psCharacter *GetCharacterData() { return NULL; }
+
     virtual Client* GetClient() const { return NULL; }
 
     const char *GetName();
@@ -464,7 +466,8 @@ public:
         int clientnum);
 
     virtual const char* GetObjectType() { return itemType.GetData(); }
-    virtual psItem *GetItem();
+    psItem* GetItemData() { return itemdata; }
+
 
     /// iScriptableVar implementation
     virtual double GetProperty(const char *ptr);
@@ -708,8 +711,7 @@ public:
     virtual ~gemActor();
 
     virtual const char* GetObjectType() { return "Actor"; }
-    virtual gemActor* GetActorPtr() { return this; }
-    virtual psCharacter *GetCharacterData() { return psChar; }
+    virtual psCharacter* GetCharacterData() { return psChar; }
     virtual Client* GetClient() const;
 
     virtual PID GetPID() { return pid; }
@@ -957,7 +959,6 @@ public:
     virtual ~gemNPC();
 
     virtual const char* GetObjectType()    { return "NPC";     }
-    virtual gemNPC* GetNPCPtr()            { return this;      }
     virtual psNPCDialog *GetNPCDialogPtr() { return npcdialog; }
     virtual Client* GetClient() const      { return NULL;      }
 
@@ -986,29 +987,12 @@ public:
     virtual csString GetDefaultBehavior(const csString & dfltBehaviors);
     void ShowPopupMenu(Client *client);
 
-    virtual void SetTarget(gemObject* target)
-    {
-        this->target = target;
-    };
-    virtual gemObject* GetTarget()
-    {
-        return this->target;
-    };
+    virtual void SetTarget(gemObject* newTarget) { target = newTarget; }
+    virtual gemObject* GetTarget() { return this->target; }
 
-    virtual void SetOwner(gemObject* owner)
-    {
-        if ( owner )
-        {
-            this->owner = owner;
-            this->GetCharacterData()->SetOwnerID(owner->GetCharacterData()->GetPID());
-        }
-        else
-            this->owner = NULL;
-    };
-    virtual gemObject* GetOwner()
-    {
-        return this->owner;
-    };
+    virtual void SetOwner(gemObject* owner);
+    
+    virtual gemObject* GetOwner() { return this->owner; }
 
     virtual void SetPosition(const csVector3& pos, float angle, iSector* sector);
 };
@@ -1026,7 +1010,6 @@ public:
     };
 
     virtual const char* GetObjectType() { return "PET"; }
-    virtual gemPet* GetPetPtr()  { return this; }
 
 
     void SetPersistanceLevel( const char *level )   { this->persistanceLevel = level; };
