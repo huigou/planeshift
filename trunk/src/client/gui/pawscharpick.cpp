@@ -44,6 +44,7 @@
 #define CHARACTER_BUTTON_1 1
 #define CHARACTER_BUTTON_2 2
 #define CHARACTER_BUTTON_3 3
+#define CHARACTER_BUTTON_4 4
 
 #define CHARACTER_DELETE_BUTTON 150
 #define CHARACTER_ACTION_BUTTON 100
@@ -291,6 +292,7 @@ bool pawsCharacterPickerWindow::OnButtonPressed( int mouseButton, int keyModifer
         case CHARACTER_BUTTON_1:
         case CHARACTER_BUTTON_2:
         case CHARACTER_BUTTON_3:
+                case CHARACTER_BUTTON_4:
         {
             if(!connecting)
             {
@@ -431,7 +433,7 @@ void pawsCharacterPickerWindow::SelectCharacter(int character)
 
     pawsWidget* wdg;
 
-    for (int i = 0;i < 4; i++)
+    for (int i = 0;i < 5; i++)
     {
         csString name;
         name = "ImgCharacter";
@@ -483,7 +485,7 @@ void pawsCharacterPickerWindow::SelectCharacter(int character, pawsWidget* widge
 
     pawsWidget* wdg;
 
-    for (int i = 0;i < 4; i++)
+    for (int i = 0;i < 5; i++)
     {
         csString name;
         name = "ImgCharacter";
