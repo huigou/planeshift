@@ -764,9 +764,6 @@
 				RelativePath="..\..\src\client\chatbubbles.cpp">
 			</File>
 			<File
-				RelativePath="..\..\src\client\clientcachemanager.cpp">
-			</File>
-			<File
 				RelativePath="..\..\src\client\clientvitals.cpp">
 			</File>
 			<File
@@ -862,9 +859,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\client\chatbubbles.h">
-			</File>
-			<File
-				RelativePath="..\..\src\client\clientcachemanager.h">
 			</File>
 			<File
 				RelativePath="..\..\src\client\clientvitals.h">
