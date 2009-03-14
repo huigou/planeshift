@@ -1113,6 +1113,22 @@ ALTER TABLE item_stats DROP COLUMN prg_evt_unequip;
 ALTER TABLE item_stats CHANGE prg_evt_equip   equip_script   text;
 ALTER TABLE item_stats CHANGE prg_evt_consume consume_script text;
 
+-- You'll also need to remove spells from the math_script table, and add the individual
+-- pieces to new columns in the spells table.
+ALTER TABLE spells CHANGE caster_effect casting_effect varchar(255),
+                   DROP target_effect,
+                   CHANGE image_name image_name varchar(100),
+                   CHANGE offensive offensive boolean DEFAULT true,
+                   DROP saved_progression_event,
+                   DROP saving_throw,
+                   DROP saving_throw_value,
+                   ADD exclude_target boolean DEFAULT false AFTER target_type,
+                   ADD cast_duration text NOT NULL AFTER exclude_target,
+                   ADD range text AFTER cast_duration,
+                   ADD aoe_radius text AFTER range,
+                   ADD aoe_angle text AFTER aoe_radius,
+                   CHANGE progression_event outcome text NOT NULL AFTER aoe_angle;
+
 UPDATE `server_options` SET `option_value`='1214' WHERE `option_name`='db_version';
 
 # Insert your upgrade before this line. Remember when you set a new db_version
