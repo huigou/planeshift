@@ -125,7 +125,7 @@ bool pawsMoney::PostSetup()
     octas->SetEmptyOnZeroCount(false);                
     octas->PlaceItem("MoneyOctas");
     octas->SetSlotID( MONEY_OCTAS );    
-    //octas->SetRelativeFramePos(GetActualWidth(SLOT_SIZE+spacing), 0);
+    octas->SetRelativeFramePos(GetActualWidth(SLOT_SIZE+spacing), 0);
     if (border) octas->SetBackground("Bulk Item Slot");
     
     hexas    =  dynamic_cast <pawsSlot*> (FindWidget("Hexas"));
