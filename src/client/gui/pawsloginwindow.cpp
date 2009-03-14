@@ -178,8 +178,6 @@ void pawsLoginWindow::UpdateUserPasswdFromConfig()
     
     if (!storedPasswd.IsEmpty())
         passwd->SetText(ASTERISKS);
-    else
-        passwd->SetText("");
 }
 
 bool pawsLoginWindow::OnChange(pawsWidget * widget)

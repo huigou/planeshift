@@ -69,6 +69,15 @@
 	<font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="13" resizetoscreen="yes" />
         <label text="New Character"/>
     </widget>
+    <widget name="ImgCharacter4" factory="pawsWidget" visible="yes">
+        <frame x="695" y="428" width="30" height="30" border="no"/>
+        <bgimage resource="radiooff2"/>
+    </widget>
+        <widget name="SelectCharacter4" factory="pawsButton" id="4" visible="yes">
+        <frame x="550" y="425" width="140" height="40" border="no"/>
+	<font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="13" resizetoscreen="yes" />
+        <label text="New Character"/>
+    </widget>
 
     <widget name="PaperDollView" factory="pawsObjectView">
         <frame x="290" y="120" width="223" height="398" border="no"/>
@@ -80,7 +89,7 @@
 
     <!-- Join Game Button -->
     <widget name="login" factory="pawsButton" id="100" visible="yes" key="L">
-        <frame x="550" y="440" width="135" height="50" border="no"/>
+        <frame x="550" y="500" width="135" height="50" border="no"/>
 	<font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="20" resizetoscreen="yes" />
         <label text="Join"/>
     </widget>
