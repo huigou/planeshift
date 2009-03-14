@@ -1,4 +1,11 @@
-﻿*** 2009-03-13 by Tristan Cragnolini
+﻿*** 2009-03-14 by Kenny Graunke
+- Updates to ProgressionSchema.rng:
+  - Switched to <zeroOrMore> for imperative operations to support the
+    "Nothing special" character creation options, which are <script></script>.
+  - Made <else> optional.
+  - Made the type attribute optional on imperative <fx> (defaults to attached).
+
+*** 2009-03-13 by Tristan Cragnolini
 - Changed the virtual functions in gemObject, implemented in the derived
   classes, to get a pointer to the derived classes. They now are wrapper
   for dynamic_cast to the derived classes.
