@@ -231,7 +231,10 @@ public:
         else if (type == "wil")
             stat = PSITEMSTATS_STAT_WILL;
         else
+        {
+            Error2("StatsAOp doesn't know what to do with <%s> tag.", type.GetData());
             return false;
+        }
 
         return Applied1::Load(node);
     }
@@ -263,7 +266,10 @@ public:
     {
         psSkillInfo *info = CacheManager::GetSingleton().GetSkillByName(node->GetAttributeValue("name"));
         if (!info)
+        {
+            Error2("Found <skill name=\"%s\">, but no such skill exists.", node->GetAttributeValue("name"));
             return false;
+        }
         skill = info->id;
         return Applied1::Load(node);
     }
@@ -892,7 +898,10 @@ public:
     {
         csString name(top->GetAttributeValue("name"));
         if (name.IsEmpty())
+        {
+            Error1("<apply-linked> node is missing a name attribute.");
             return false;
+        }
 
         csRef<iDocumentNode> buffNode   = top->GetNode("buff");
         csRef<iDocumentNode> debuffNode = top->GetNode("debuff");
@@ -989,7 +998,10 @@ public:
         csRef<iDocumentNode> elseNode = node->GetNode("else");
 
         if (!thenNode)
+        {
+            Error1("Missing <then> in <if>.");
             return false;
+        }
 
         thenBranch = ProgressionScript::Create("<then> clause", thenNode);
 
@@ -1180,14 +1192,9 @@ public:
 
     bool Load(iDocumentNode *top)
     {
-        // type should probably be optional; I'm guessing most cases will want it attached...
+        // type defaults to attached
         csString typ(top->GetAttributeValue("type"));
-        if (typ == "attached")
-            attached = true;
-        else if (typ == "unattached")
-            attached = false;
-        else
-            return false;
+        attached = typ != "unattached";
 
         name      = top->GetAttributeValue("name");
         sourceVar = top->GetAttributeValue("source");
@@ -1374,7 +1381,10 @@ public:
         else if (type == "wil")
             stat = PSITEMSTATS_STAT_WILL;
         else
+        {
+            Error2("StatsOp doesn't know what to do with <%s> tag.", type.GetData());
             return false;
+        }
 
         return Imperative2::Load(node);
     }
@@ -1410,7 +1420,10 @@ public:
     {
         psSkillInfo *info = CacheManager::GetSingleton().GetSkillByName(node->GetAttributeValue("name"));
         if (!info)
+        {
+            Error2("Found <skill aim=\"...\" name=\"%s\">, but no such skill exists.", node->GetAttributeValue("name"));
             return false;
+        }
         skill = info->id;
         return Imperative3::Load(node);
     }
