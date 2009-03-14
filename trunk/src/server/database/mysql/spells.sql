@@ -3,24 +3,24 @@
  */
 
 CREATE TABLE spells (
-  id int(8) unsigned NOT NULL auto_increment,
-  name varchar(30) NOT NULL,
-  way_id int(8) unsigned DEFAULT '0',
-  realm tinyint(3) unsigned DEFAULT '0',
-  casting_effect varchar(255),
-  image_name varchar(100),
-  spell_description text,
-  offensive boolean DEFAULT true,
-  max_power int(4) DEFAULT '1',
-  target_type int(4) DEFAULT '32',
-  exclude_target boolean DEFAULT false,
-  cast_duration text NOT NULL, /* (power, wayskill, relatedstat) -> seconds */
-  range text,                  /* (power, wayskill, relatedstat) -> meters  */
-  aoe_radius text,             /* (power, wayskill, relatedstat) -> meters  */
-  aoe_angle text,              /* (power, wayskill, relatedstat) -> radians */
-  outcome text NOT NULL,       /* (power, caster, target) -> side effects   */
-  cstr_npc_spell_category int(10) DEFAULT '0',
-  npc_spell_power float(10,3) DEFAULT '0.000',
+  `id` int(8) unsigned NOT NULL auto_increment,
+  `name` varchar(30) NOT NULL,
+  `way_id` int(8) unsigned DEFAULT '0',
+  `realm` tinyint(3) unsigned DEFAULT '0',
+  `casting_effect` varchar(255),
+  `image_name` varchar(100),
+  `spell_description` text,
+  `offensive` boolean DEFAULT true,
+  `max_power` int(4) DEFAULT '1',
+  `target_type` int(4) DEFAULT '32',
+  `exclude_target` boolean DEFAULT false,
+  `cast_duration` text NOT NULL, /* (power, wayskill, relatedstat) -> seconds */
+  `range` text,                  /* (power, wayskill, relatedstat) -> meters  */
+  `aoe_radius` text,             /* (power, wayskill, relatedstat) -> meters  */
+  `aoe_angle` text,              /* (power, wayskill, relatedstat) -> radians */
+  `outcome` text NOT NULL,       /* (power, caster, target) -> side effects   */
+  `cstr_npc_spell_category` int(10) DEFAULT '0',
+  `npc_spell_power` float(10,3) DEFAULT '0.000',
   PRIMARY KEY (id),
   UNIQUE name (name)
 );
