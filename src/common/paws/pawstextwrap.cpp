@@ -407,6 +407,15 @@ void pawsMultilineEditTextBox::LayoutText()
             font->GetDimensions(tempString,tailWidth,height);
             srcPos += word.Length();
         } 
+        else if(width > screenWidth) 
+        {
+            //Wordwrap 
+            totalCount += tempString.Length();
+            PushLineInfo(tempString.Length(),totalCount,1);
+            tempString = word;
+            font->GetDimensions(tempString,tailWidth,height);
+            srcPos += word.Length();
+        }
         else if (tempString.FindFirst(" ") != (size_t)-1)
         {
             //If wordwrap->linebreak on same line, 
@@ -422,11 +431,9 @@ void pawsMultilineEditTextBox::LayoutText()
         {   
             //breakline - the case where we have a single 
             //unbroken word wider than our page
+
             int maxChars = font->GetLength(word,screenWidth); 
-            if(word.FindFirst("\n") == (size_t)maxChars+1)
-            { printf("case\n");    word = word.Slice(0,maxChars+1); }   //Get string for the line
-            else
-                word = word.Slice(0,maxChars);    //Get string for the line
+            word = word.Slice(0,maxChars);    //Get string for the line
             totalCount += word.Length();     //Get absolute char position in text for line break
             PushLineInfo(word.Length(),totalCount,0);//Push the line information to the stack
             srcPos += word.Length();//Set srcPosition for this loop
