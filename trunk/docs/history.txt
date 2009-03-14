@@ -1,4 +1,9 @@
-﻿*** 2009-03-12 by Keith Fulton
+﻿*** 2009-03-13 by Tristan Cragnolini
+- Changed the virtual functions in gemObject, implemented in the derived
+  classes, to get a pointer to the derived classes. They now are wrapper
+  for dynamic_cast to the derived classes.
+
+*** 2009-03-12 by Keith Fulton
 - Implemented the riddle prompt functionality from the quest popup menus.
   Use:  Menu: ?=Question Reminder to script this functionality.
   Talk to the Merchant to get this puzzle quest and try it.  "blue" is the correct
