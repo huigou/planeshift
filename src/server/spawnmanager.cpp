@@ -870,6 +870,16 @@ void SpawnManager::Respawn(InstanceID instance, csVector3& where, float rot, csS
     chardata->GetHPRate().SetBase(HP_REGEN_RATE);
     chardata->GetManaRate().SetBase(MANA_REGEN_RATE);
 
+    // Here we restore status of equipped items to max quality as this is going to be a *newly born* npc
+    // We will repair only equiped items.
+    for(int cur_slot = PSCHARACTER_SLOT_RIGHTHAND; cur_slot < PSCHARACTER_SLOT_BULK1; cur_slot++) 
+    {
+        //Get the item in the current equip slot
+        psItem * cur_item = chardata->Inventory().GetInventoryItem((INVENTORY_SLOT_NUMBER)cur_slot);
+        if(cur_item) //there is something in the slot?
+            cur_item->SetItemQuality(cur_item->GetMaxItemQuality()); //Restore the item to it's max quality
+    }
+
     // Now create the NPC as usual
     EntityManager::GetSingleton().CreateNPC(chardata);
 
