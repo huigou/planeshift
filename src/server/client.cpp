@@ -16,7 +16,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  */
- 
+
 #include <psconfig.h>
 //=============================================================================
 // Crystal Space Includes
@@ -52,7 +52,7 @@
 #include "adminmanager.h"
 
 Client::Client ()
-    : accumulatedLag(0), zombie(false), allowedToDisconnect(true), ready(false), mute(false), 
+    : accumulatedLag(0), zombie(false), allowedToDisconnect(true), ready(false), mute(false),
       accountID(0), playerID(0), securityLevel(0), superclient(false),
       name(""), waypointEffectID(0), waypointIsDisplaying(false),
       pathEffectID(0), pathPath(NULL), pathIsDisplaying(false),
@@ -64,18 +64,18 @@ Client::Client ()
     advisorPoints   = 0;
     lastInviteTime  = 0;
     spamPoints      = 0;
-    clientnum       = 0;    
+    clientnum       = 0;
     detectedCheatCount = 0;
 
     nextFloodHistoryIndex = 0;
-    
+
     isAdvisor           = false;
-    isFrozen            = false;    
+    isFrozen            = false;
     lastInviteResult    = true;
     hasBeenWarned       = false;
-    hasBeenPenalized    = false;    
+    hasBeenPenalized    = false;
     valid               = false;
-    
+
     // pets[0] is a special case for the players familiar.
     pets.Insert(0, PID(0));
 }
@@ -92,7 +92,7 @@ bool Client::Initialize(LPSOCKADDR_IN addr, uint32_t clientnum)
     Client::valid=true;
 
     outqueue = csPtr<NetPacketQueueRefCount>
-      (new NetPacketQueueRefCount (MAXQUEUESIZE));
+      (new NetPacketQueueRefCount (MAXCLIENTQUEUESIZE));
     if (!outqueue)
         ERRORHALT("No Memory!");
 
@@ -111,7 +111,7 @@ bool Client::Disconnect()
     {
         GetActor()->RemoveFromGroup();
     }
-    
+
     // Only save if an account has been found for this client.
     if (accountID.IsValid())
     {
@@ -163,7 +163,7 @@ bool Client::ZombieAllowDisconnect()
     {
         return true;
     }
- 
+
     return allowedToDisconnect;
 }
 
@@ -189,11 +189,11 @@ void Client::SetTargetObject(gemObject* newobject, bool updateClientGUI)
     }
 }
 
-void Client::SetFamiliar( gemActor *familiar ) 
-{ 
+void Client::SetFamiliar( gemActor *familiar )
+{
     if ( familiar )
     {
-        pets[0] = familiar->GetPID(); 
+        pets[0] = familiar->GetPID();
     }
     else
     {
@@ -201,7 +201,7 @@ void Client::SetFamiliar( gemActor *familiar )
     }
 }
 
-gemActor* Client::GetFamiliar() 
+gemActor* Client::GetFamiliar()
 {
     if (pets[0].IsValid())
     {
@@ -210,12 +210,12 @@ gemActor* Client::GetFamiliar()
     return NULL;
 }
 
-void Client::AddPet( gemActor *pet ) 
-{ 
-    pets.Push(pet->GetPID()); 
+void Client::AddPet( gemActor *pet )
+{
+    pets.Push(pet->GetPID());
 }
-void Client::RemovePet( size_t index ) 
-{ 
+void Client::RemovePet( size_t index )
+{
     pets.DeleteIndex(index);
 }
 
@@ -295,7 +295,7 @@ unsigned int Client::GetAccountTotalOnlineTime()
     Result result(db->Select("SELECT SUM(time_connected_sec) FROM characters WHERE account_id = %d", accountID.Unbox()));
     if (result.IsValid())
         totalTimeConnected += result[0].GetUInt32("SUM(time_connected_sec)");
-        
+
     return totalTimeConnected;
 }
 
@@ -404,7 +404,7 @@ bool Client::IsAllowedToAttack(gemObject * target, bool inform)
 {
     csString tmp;
     const char *sMsg = NULL;
-    
+
     // Am I a GM?
        if (IsGM())
        {
@@ -453,7 +453,7 @@ bool Client::IsAllowedToAttack(gemObject * target, bool inform)
                 {
                     if (lastAttacker)
                     {
-                        tmp.Format("You must be grouped with %s to attack %s.", 
+                        tmp.Format("You must be grouped with %s to attack %s.",
                                    lastAttacker->GetName(), foe->GetName());
                     }
                     else
@@ -614,24 +614,24 @@ void Client::SaveAccountData()
 
 uint32_t Client::WaypointGetEffectID()
 {
-    if (waypointEffectID == 0) 
-        waypointEffectID = CacheManager::GetSingleton().NextEffectUID(); 
+    if (waypointEffectID == 0)
+        waypointEffectID = CacheManager::GetSingleton().NextEffectUID();
 
     return waypointEffectID;
 }
 
 uint32_t Client::PathGetEffectID()
 {
-    if (pathEffectID == 0) 
-        pathEffectID = CacheManager::GetSingleton().NextEffectUID(); 
+    if (pathEffectID == 0)
+        pathEffectID = CacheManager::GetSingleton().NextEffectUID();
 
     return pathEffectID;
 }
 
 uint32_t Client::LocationGetEffectID()
 {
-    if (locationEffectID == 0) 
-        locationEffectID = CacheManager::GetSingleton().NextEffectUID(); 
+    if (locationEffectID == 0)
+        locationEffectID = CacheManager::GetSingleton().NextEffectUID();
 
     return locationEffectID;
 }
@@ -639,10 +639,10 @@ uint32_t Client::LocationGetEffectID()
 void Client::SetAdvisorBan(bool ban)
 {
     db->Command("UPDATE accounts SET advisor_ban = %d WHERE id = %d", (int) ban, accountID.Unbox());
-    
+
     if (isAdvisor)
         psserver->GetAdviceManager()->RemoveAdvisor(clientnum, clientnum);
-    
+
     psserver->SendSystemError(clientnum, "You have been %s from advising by a GM.", ban ? "banned" : "unbanned");
 }
 
@@ -652,7 +652,7 @@ bool Client::IsAdvisorBanned()
     Result result(db->Select("SELECT advisor_ban FROM accounts WHERE id = %d", accountID.Unbox()));
     if (result.IsValid())
         advisorBan = result[0].GetUInt32("advisor_ban") != 0;
-        
+
     return advisorBan;
 }
 
