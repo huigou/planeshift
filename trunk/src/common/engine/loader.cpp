@@ -40,6 +40,8 @@ void Loader::Init(iObjectRegistry* object_reg, uint gfxFeatures, float loadRange
     this->object_reg = object_reg;
     this->gfxFeatures = gfxFeatures;
     this->loadRange = loadRange;
+    
+    validPosition = false;
 
     engine = csQueryRegistry<iEngine> (object_reg);
     loader = csQueryRegistry<iLoader> (object_reg);
@@ -658,6 +660,8 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
 
 void Loader::UpdatePosition(const csVector3& pos, const char* sectorName, bool force)
 {
+    validPosition = true;
+
     // Check already loading meshes.
     for(size_t i=0; i<(loadingMeshes.GetSize() < 50 ? loadingMeshes.GetSize() : 50); ++i)
     {
@@ -980,8 +984,9 @@ void Loader::FinishMeshLoad(MeshObj* mesh)
   engine->SyncEngineListsNow(tloader);
   mesh->object->GetMovable()->SetSector(mesh->sector->object);
   mesh->object->GetMovable()->UpdateMove();
-  engine->PrecacheMesh(mesh->object);
   csColliderHelper::InitializeCollisionWrapper(cdsys, mesh->object);
+  engine->PrecacheMesh(mesh->object);
+
   mesh->loading = false;
 }
 

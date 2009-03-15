@@ -198,7 +198,7 @@ public:
     /// Add all new entities on the queue.
     void ForceEntityQueues();
 
-    void Update();
+    void Update(bool loaded);
 
 
     /** Attach a client object to a Crystal Space object.

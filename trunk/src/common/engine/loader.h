@@ -53,11 +53,15 @@ public:
     THREADED_CALLABLE_DECL2(Loader, PrecacheData, csThreadReturn, const char*, path, bool, recursive, THREADEDL, false, false);
     void UpdatePosition(const csVector3& pos, const char* sectorName, bool force);
 
-    iThreadedLoader* GetLoader() { return tloader; }
+    inline iThreadedLoader* GetLoader() { return tloader; }
 
-    size_t GetLoadingCount() { return loadingMeshes.GetSize(); }
+    inline size_t GetLoadingCount() { return loadingMeshes.GetSize() + finalisableMeshes.GetSize(); }
 
     iObjectRegistry* GetObjectRegistry() const { return object_reg; }
+
+    inline void SetLoadRange(float r) { loadRange = r; }
+
+    inline bool HasValidPosition() const { return validPosition; }
 
 private:
   class MeshObj;
@@ -263,6 +267,7 @@ private:
     csRef<iCollideSystem> cdsys;
     csRef<iSyntaxService> syntaxService;
     uint gfxFeatures;
+    bool validPosition;
 
     csRef<Sector> lastSector;
     csVector3 lastPos;

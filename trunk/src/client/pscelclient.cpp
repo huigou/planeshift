@@ -248,6 +248,16 @@ void psCelClient::HandleActor( MsgEntry* me )
     }
     psPersistActor mesg( me, GetClientDR()->GetMsgStrings(), psengine->GetEngine() );
 
+    // If this is the first actor to be sent...
+    if ( local_player == NULL )
+    {
+        // Trigger a world load, as we now know where we are.
+        Loader::GetSingleton().UpdatePosition(mesg.pos, mesg.sectorName, true);
+
+        // Set the sector.
+        mesg.sector = psengine->GetEngine()->FindSector(mesg.sectorName);
+    }
+
     // We already have an entity with this id so we must have missed the remove object message
     // so delete and remake it.
     GEMClientObject* found = (GEMClientObject *) FindObject(mesg.entityid);
@@ -281,9 +291,6 @@ void psCelClient::HandleActor( MsgEntry* me )
     {
         local_player = actor;
         SetMainActor( local_player );
-
-        // Now that we know where we are, trigger a world load around us.
-        Loader::GetSingleton().UpdatePosition(mesg.pos, mesg.sectorName, true);
 
         // This triggers the server to update our proxlist
         local_player->SendDRUpdate(PRIORITY_LOW,GetClientDR()->GetMsgStrings());
@@ -763,21 +770,24 @@ void psCelClient::CheckEntityQueues()
     }
 }
 
-void psCelClient::Update()
+void psCelClient::Update(bool loaded)
 {
-    for(size_t i =0; i < entities.GetSize();i++)
-    {
-        entities[i]->Update();
-    }
-
     // Update loader.
     if(local_player)
     {
-        Loader::GetSingleton().UpdatePosition(local_player->Pos(),
-            local_player->GetSector()->QueryObject()->GetName(), false);
+      Loader::GetSingleton().UpdatePosition(local_player->Pos(), 
+        local_player->GetSector()->QueryObject()->GetName(), false);
     }
 
-    shadowManager->UpdateShadows();
+    if(loaded)
+    {
+      for(size_t i =0; i < entities.GetSize();i++)
+      {
+          entities[i]->Update();
+      }
+
+      shadowManager->UpdateShadows();
+    }
 }
 
 void psCelClient::HandleMessage(MsgEntry *me)

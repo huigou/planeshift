@@ -217,7 +217,7 @@ void ZoneHandler::HandleMessage(MsgEntry* me)
       celclient->GetMainPlayer()->GetLastPosition (pos, yrot, sector);
 
       pos -= msg.pos;
-      catchUp = msg.oldSector.Compare("SectorWhereWeKeepEntitiesResidingInUnloadedMaps") ||
+      catchUp = msg.oldSector.IsEmpty() || msg.oldSector.Compare("SectorWhereWeKeepEntitiesResidingInUnloadedMaps") ||
         (abs(pos.x) > 1.0f || abs(pos.x) > 1.0f || abs(pos.x) > 1.0f);
     }
 
@@ -423,7 +423,7 @@ bool ZoneHandler::ExecuteFlaggedRegions(const csString & sector)
         int executed = 2;
         if(background)
         {
-            if(Loader::GetSingleton().GetLoadingCount() == 0)
+            if(Loader::GetSingleton().HasValidPosition() && Loader::GetSingleton().GetLoadingCount() == 0)
             {
                 executed = 0;
                 psengine->GetEngine()->PrecacheDraw();

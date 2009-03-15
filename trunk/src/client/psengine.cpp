@@ -905,7 +905,7 @@ bool psEngine::Process3D(iEvent& ev)
     }
 
     if (celclient)
-        celclient->Update();
+        celclient->Update(HasLoadedMap());
 
     if (effectManager)
         effectManager->Update();
