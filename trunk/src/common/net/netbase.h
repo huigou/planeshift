@@ -1,7 +1,7 @@
 /*
  * netbase.h by Matze Braun <MatzeBraun@gmx.de>
  *
- * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -35,6 +35,7 @@
 
 #define NUM_BROADCAST        0xffffffff
 #define MAXQUEUESIZE        20000
+#define MAXCLIENTQUEUESIZE  5000
 #define MAXPACKETHISTORY    400
 #define NETAVGCOUNT 400
 #define RESENDAVGCOUNT 200
@@ -44,7 +45,7 @@
 // The whole seconds that the SendTo function will block each cycle waiting for the write state to change on the socket
 #define SENDTO_SELECT_TIMEOUT_SEC 0
 // The microseconds (1/10^6 s) that the SendTo function will block each cycle waiting for the write state to change on the socket
-#define SENDTO_SELECT_TIMEOUT_USEC 10000 
+#define SENDTO_SELECT_TIMEOUT_USEC 10000
 
 /* Include platform specific socket settings */
 #ifdef USE_WINSOCK
@@ -105,14 +106,14 @@ public:
      */
     NetBase(int outqueuelen=100);
     virtual ~NetBase();
-    
+
     /**
      * This adds another message queue (for other threads)
      * These queues are for reading off.
      * Selection of the messages is done by a minimum and maximum ObjID
-     */    
+     */
     bool AddMsgQueue (MsgQueue *,objID minID=0,objID maxID=0xffffffff);
-    
+
     /** this removes a queue */
     void RemoveMsgQueue(MsgQueue *);
 
@@ -132,7 +133,7 @@ public:
      * Mulitcast a message, to all client nums
      */
     virtual void Multicast (MsgEntry* me, const csArray<PublishDestination>& multi, int except, float range) = 0;
-    
+
     /**
      * Is this connection ready to use?
      */
@@ -168,13 +169,13 @@ public:
 
     /** Binds the socket to the specified address (only needed on server */
     bool Bind(const char* addr, int port);
-    bool Bind(int addr, int port);            
+    bool Bind(int addr, int port);
 
     /**
-     * This class describes connections to other computers - so it contains    
+     * This class describes connections to other computers - so it contains
      * TCP/IP address, a buffer for splitted packets, msgnum and others, but not
      * things like name of the client or character type
-     */      
+     */
     class Connection;
 
     enum broadcasttype
@@ -188,7 +189,7 @@ public:
     };
 
     csTicks GetPing(void) { return netInfos.GetAveragePingTicks();}
-    
+
     psNetMsgProfiles * GetProfs() { return profs; }
 
     /// The timeout to use when waiting for new incoming packets.
@@ -230,13 +231,13 @@ public:
      * @param type The type of message to not filter.
      */
     void RemoveFilterLogMessage(int type);
-    
+
     /**
      * Clear all message type from the LogMessage message filter list
      *
      */
     void LogMessageFilterClear();
-    
+
     /**
      * Invert the LogMessage filter
      */
@@ -251,7 +252,7 @@ public:
      * Toggle the global send LogMessage filter
      */
     void ToggleSendMessageFilter() { logmsgfiltersetting.send = !logmsgfiltersetting.send; }
-    
+
     /**
      * Set the filter hex messages flag.
      */
@@ -264,7 +265,7 @@ public:
 
     /** return a random ID that can be used for messages */
     uint32_t GetRandomID();
-    
+
 protected:
     /**
      * Check if the given message type should be loged or not.
@@ -273,15 +274,15 @@ protected:
      *
      */
     bool FilterLogMessage(int type,char dir);
-    
+
 protected:
     /* the following protected stuff is thought of being used in the inherited
      * network classes
      */
 
     /** Wrapper to encapsulate the sendto call and provide for retry if the buffer is full.
-     * 
-     * 
+     *
+     *
      */
     int SendTo (LPSOCKADDR_IN addr, const void *data, unsigned int size)
     {
@@ -292,7 +293,7 @@ protected:
 
         #ifdef DEBUG
             if (!addr || !data)
-            Error1("wrong args");    
+            Error1("wrong args");
         #endif
 
         // #define ENDIAN_DEBUG
@@ -306,19 +307,19 @@ protected:
             ptr = (const char *)data;
             len = ((40<size) ? 40 : size);
             fprintf(f,"\n------------\nSending %d bytes:\n",len);
-            for ( i = 0 ; i < len ; i++ ) /* Print the hex dump for len chars. */ 
-                fprintf(f,"%02x " ,(*(ptr+i)&0xff)); 
-            for ( i = len ; i < 16 ; i++ ) /* Pad out the dump field to the ASCII */ 
-                fprintf(f, "   " ); /* field. */ 
-            fprintf(f, " " ); 
-            for ( i = 0 ; i < len ; i++ ) /* Now print the ASCII field. */ 
-            { 
-                 c=0x7f&(*(ptr+i)); /* mask out bit 7 */ 
-                 if (!(isprint(c))) /* If not printable */ 
+            for ( i = 0 ; i < len ; i++ ) /* Print the hex dump for len chars. */
+                fprintf(f,"%02x " ,(*(ptr+i)&0xff));
+            for ( i = len ; i < 16 ; i++ ) /* Pad out the dump field to the ASCII */
+                fprintf(f, "   " ); /* field. */
+            fprintf(f, " " );
+            for ( i = 0 ; i < len ; i++ ) /* Now print the ASCII field. */
+            {
+                 c=0x7f&(*(ptr+i)); /* mask out bit 7 */
+                 if (!(isprint(c))) /* If not printable */
                      fprintf(f, "." ); /* print a dot */
                  else {
-                     fprintf(f, "%c" ,c);  
-                 } /* else display it */ 
+                     fprintf(f, "%c" ,c);
+                 } /* else display it */
             }
             fprintf(f,"\n-----------------\n");
             fclose(f);
@@ -351,7 +352,7 @@ protected:
                 */
                 SOCK_SELECT(mysocket+1,NULL,&wfds,NULL,&timeout);
 
-                // Try and send again. 
+                // Try and send again.
                 sentbytes=SOCK_SENDTO(mysocket, data, size, 0, (LPSOCKADDR) addr, sizeof (SOCKADDR_IN) );
             }
 
@@ -387,7 +388,7 @@ protected:
         if(pipe_fd[0] > 0)
             FD_SET (pipe_fd[0], &set);
 #endif
-        
+
         // Backup the timeval struct in case select changes it as on Linux
         struct timeval prevTimeout = timeout;
 
@@ -397,7 +398,7 @@ protected:
             timeout = prevTimeout;
             return 0;
         }
-        
+
 #ifndef CS_PLATFORM_WIN32
         if(FD_ISSET(pipe_fd[0], &set))
         {
@@ -405,9 +406,9 @@ protected:
             read(pipe_fd[0], throwaway, 32);
         }
 #endif
-        
+
         timeout = prevTimeout;
-        
+
         if(!FD_ISSET(mysocket, &set))
             return 0;
 
@@ -477,7 +478,7 @@ protected:
      * the psMessageBytes struct and MsgEntry struct if complete.
      */
     csPtr<MsgEntry> CheckCompleteMessage(uint32_t client,uint32_t id);
-    
+
     /**
      * This receives only fully reassembled messages and adds to appropriate
      * queues.
@@ -537,27 +538,27 @@ protected:
     int totaltransferin, totaltransferout;
     /** total packages transferred by this object */
     int totalcountin, totalcountout;
-    
+
     /** Moving averages */
     typedef struct {
         unsigned int senders;
         unsigned int messages;
         csTicks time;
     } SendQueueStats_t;
-    
+
     SendQueueStats_t sendStats[NETAVGCOUNT];
     csTicks lastSendReport;
     unsigned int avgIndex;
-    
+
     size_t resends[RESENDAVGCOUNT];
     unsigned int resendIndex;
-    
+
     psNetMsgProfiles * profs;
 
 private:
     /** my socket */
     SOCKET mysocket;
-    
+
     /** a pipe to wake up from the select call when data is ready to be written */
     SOCKET pipe_fd[2];
 
@@ -568,7 +569,7 @@ private:
      * is not good at all
      */
     csRandomGen* randomgen;
-    
+
     /** mutex used for the random generator */
     CS::Threading::Mutex mutex;
 
@@ -629,7 +630,7 @@ public:
     ~Connection();
     bool isValid() const
     { return valid; }
-    
+
     uint32_t GetNextPacketID() {return sequence++;}
 };
 
