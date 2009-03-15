@@ -642,7 +642,7 @@ psItem* gemObject::GetItem()
     gemItem *itemPtr = GetItemPtr();
     if(itemPtr)
         return itemPtr->GetItemData();
-    
+
     return NULL;
 }
 
@@ -1400,7 +1400,7 @@ void gemItem::SetRotation(float xrotangle, float yrotangle, float zrotangle)
     this->xRot = xrotangle;
     this->yRot = yrotangle;
     this->zRot = zrotangle;
-    
+
     itemdata->SetRotationInWorld(xrotangle,yrotangle,zrotangle);
 	itemdata->Save(false);
 }
@@ -2927,20 +2927,6 @@ void gemActor::ProcessStamina(const csVector3& velocity, bool force)
     }
 }
 
-/// Event to recheck stamina after a delay
-class psStaminaRest : public psGameEvent
-{
-protected:
-    csWeakRef<gemObject> actor;
-public:
-    psStaminaRest(int length, gemActor* a) : psGameEvent(0,length,"psStaminaRest"), actor(a) {}
-    virtual void Trigger()
-    {
-        gemActor* a = static_cast<gemActor*>((gemObject *) actor);
-        if (a) a->ProcessStamina(0.0f,true);
-    }
-};
-
 void gemActor::ApplyStaminaCalculations(const csVector3& v, float times)
 {
     csVector3 thisV = lastV;
@@ -3055,9 +3041,6 @@ void gemActor::ApplyStaminaCalculations(const csVector3& v, float times)
         SetMode(PSCHARACTER_MODE_EXHAUSTED);
         psChar->SetStaminaRegenerationStill();
         psserver->SendSystemResult(GetClientID(),"You're too exhausted to move");
-
-        // Wake us up in a couple seconds
-        psserver->GetEventManager()->Push( new psStaminaRest(2000,this) );
     }
     else if (GetMode() == PSCHARACTER_MODE_EXHAUSTED)
     {
