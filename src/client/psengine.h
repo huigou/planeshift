@@ -241,7 +241,7 @@ public:
     bool LoadSoundSettings(bool forceDef);
 
     /// Checks if the client has loaded its map
-    bool HasLoadedMap() { return loadedMap; }
+    inline bool HasLoadedMap() const { return loadedMap; }
 
     /// Sets the HasLoadedMap value
     void SetLoadedMap(bool value) { loadedMap = value; }

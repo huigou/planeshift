@@ -46,6 +46,8 @@
 #include "util/psstring.h"
 #include "util/strutil.h"
 
+#include "engine/loader.h"
+
 #include "gui/psmainwidget.h"
 
 #include "net/messages.h"
@@ -175,6 +177,8 @@ psCamera::psCamera()
     distanceCfg.minFPS   = 20;
     distanceCfg.maxFPS   = 30;
     distanceCfg.minDist  = 30;
+
+    fixedDistClip = 200;
 
     useCameraCD = false;
     useNPCCam = false;
@@ -1756,6 +1760,9 @@ void psCamera::SetDistanceClipping(float dist)
     // control distance we see shadows as well
     psShadowManager *shadowManager = psengine->GetCelClient()->GetShadowManager();
     shadowManager->SetShadowRange(dist);
+
+    // control load distance.
+    psengine->GetLoader()->SetLoadRange(dist+dist/10);
 }
 
 float psCamera::GetDistanceClipping()
