@@ -433,7 +433,7 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                                     {
                                         bboxdata = vs->Next();
                                         csVector3 bPos;
-                                        syntaxService->ParseVector(bboxdata, pos);
+                                        syntaxService->ParseVector(bboxdata, bPos);
                                         if(position->GetNode("matrix"))
                                         {
                                             m->bbox.AddBoundingVertex(rot*csVector3(pos+bPos));
