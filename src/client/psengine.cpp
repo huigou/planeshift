@@ -557,18 +557,39 @@ bool psEngine::Initialize (int level)
             }
         }
 
+        csRef<iThreadManager> tm = csQueryRegistry<iThreadManager>(object_reg);
         if(threadedWorldLoading)
         {
             csString path;
             csRef<iStringArray> maps = vfs->FindFiles("/planeshift/world/");
+
+            // Do the _common maps first.
+             for(size_t i=0; i<maps->GetSize(); ++i)
+            {
+                csRef<iDataBuffer> tmp = vfs->GetRealPath(maps->Get(i));
+                if(csString(tmp->GetData()).Find("common") != (size_t)-1)
+                {
+                  path.AppendFmt("%s, ", tmp->GetData());
+                  csString vpath(maps->Get(i));
+                  vpath.Append("/world");
+                  mapPrecaches.Push(Loader::GetSingleton().PrecacheData(vpath.GetData(), false));
+                }
+            }
+            tm->Wait(mapPrecaches);
+
+            // Now everything else.
             for(size_t i=0; i<maps->GetSize(); ++i)
             {
                 csRef<iDataBuffer> tmp = vfs->GetRealPath(maps->Get(i));
-                path.AppendFmt("%s, ", tmp->GetData());
-                csString vpath(maps->Get(i));
-                vpath.Append("/world");
-                mapPrecaches.Push(Loader::GetSingleton().PrecacheData(vpath.GetData(), false));
+                if(csString(tmp->GetData()).Find("common") == (size_t)-1)
+                {
+                  path.AppendFmt("%s, ", tmp->GetData());
+                  csString vpath(maps->Get(i));
+                  vpath.Append("/world");
+                  mapPrecaches.Push(Loader::GetSingleton().PrecacheData(vpath.GetData(), false));
+                }
             }
+
             vfs->Mount("/planeshift/maps/", path);
         }
 
@@ -654,8 +675,6 @@ bool psEngine::Initialize (int level)
         }
 
         vfs->ChDir("/planeshift/maps/");
-
-        csRef<iThreadManager> tm = csQueryRegistry<iThreadManager>(object_reg);
         tm->Wait(modelPrecaches);
     }
 
