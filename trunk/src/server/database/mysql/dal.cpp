@@ -669,8 +669,9 @@ bool dbRecord::Execute(uint32 uid)
 
     if(!prepared)
         Prepare();
-    
+
     psStopWatch timer;
+    timer.Start();
 
     CS_ASSERT(count == mysql_stmt_param_count(stmt));
 
