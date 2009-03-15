@@ -659,15 +659,26 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
 void Loader::UpdatePosition(const csVector3& pos, const char* sectorName, bool force)
 {
     // Check already loading meshes.
-    for(size_t i=0; i<loadingMeshes.GetSize(); i++)
+    for(size_t i=0; i<(loadingMeshes.GetSize() < 50 ? loadingMeshes.GetSize() : 50); ++i)
     {
-        LoadMesh(loadingMeshes[i]);
+        if(LoadMesh(loadingMeshes[i]))
+        {
+          finalisableMeshes.Push(loadingMeshes[i]);
+          loadingMeshes.DeleteIndex(i);
+        }
+    }
+
+    // Finalise loaded meshes (expensive, so limited per check).
+    for(size_t i=0; i<(finalisableMeshes.GetSize() < 10 ? finalisableMeshes.GetSize() : 10); ++i)
+    {
+      FinishMeshLoad(finalisableMeshes[i]);
+      finalisableMeshes.DeleteIndex(i);
     }
 
     if(!force)
     {
         // Check if we've moved.
-        if(lastSector.IsValid() && lastSector->name.Compare(sectorName) && csVector3(lastPos - pos).Norm() < loadRange/10)
+        if(csVector3(lastPos - pos).Norm() < loadRange/10)
         {
             return;
         }
@@ -702,6 +713,20 @@ void Loader::UpdatePosition(const csVector3& pos, const char* sectorName, bool f
 
         // Check.
         LoadSector(pos, curBox, sector);
+
+        if(force)
+        {
+          // Make sure we start the loading now.
+          for(size_t i=0; i<loadingMeshes.GetSize(); i++)
+          {
+            if(LoadMesh(loadingMeshes[i]))
+            {
+              FinishMeshLoad(loadingMeshes[i]);
+              loadingMeshes.DeleteIndex(i);
+            }
+          }
+        }
+
         if(lastSector != sector)
         {
             CleanDisconnectedSectors(sector);
@@ -836,7 +861,6 @@ void Loader::LoadSector(const csVector3& pos, const csBox3& bbox, Sector* sector
             {
                 sector->meshes[i]->loading = true;
                 loadingMeshes.Push(sector->meshes[i]);
-                LoadMesh(sector->meshes[i]);
                 ++sector->objectCount;
             }
             else if(sector->meshes[i]->OutOfRange(pos, bbox))
@@ -950,9 +974,21 @@ void Loader::LoadSector(const csVector3& pos, const csBox3& bbox, Sector* sector
     sector->isLoading = false;
 }
 
-void Loader::LoadMesh(MeshObj* mesh)
+void Loader::FinishMeshLoad(MeshObj* mesh)
+{
+  mesh->object = scfQueryInterface<iMeshWrapper>(mesh->status->GetResultRefPtr());
+  engine->SyncEngineListsNow(tloader);
+  mesh->object->GetMovable()->SetSector(mesh->sector->object);
+  mesh->object->GetMovable()->UpdateMove();
+  engine->PrecacheMesh(mesh->object);
+  csColliderHelper::InitializeCollisionWrapper(cdsys, mesh->object);
+  mesh->loading = false;
+}
+
+bool Loader::LoadMesh(MeshObj* mesh)
 {
     bool ready = true;
+    csTicks t = csGetTicks();
     for(size_t i=0; i<mesh->meshfacts.GetSize(); i++)
     {
         ready &= LoadMeshFact(mesh->meshfacts[i]);
@@ -973,18 +1009,7 @@ void Loader::LoadMesh(MeshObj* mesh)
         mesh->status = tloader->LoadNode(vfs->GetCwd(), mesh->data);
     }
 
-    if(mesh->status && mesh->status->IsFinished())
-    {
-        vfs->ChDir("/planeshift/maps/");
-        mesh->object = scfQueryInterface<iMeshWrapper>(mesh->status->GetResultRefPtr());
-        engine->SyncEngineListsNow(tloader);
-        mesh->object->GetMovable()->SetSector(mesh->sector->object);
-        mesh->object->GetMovable()->UpdateMove();
-        engine->PrecacheMesh(mesh->object);
-        csColliderHelper::InitializeCollisionWrapper(cdsys, mesh->object);
-        loadingMeshes.Delete(mesh);
-        mesh->loading = false;
-    }
+    return (mesh->status && mesh->status->IsFinished());
 }
 
 bool Loader::LoadMeshFact(MeshFact* meshfact)

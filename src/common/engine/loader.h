@@ -244,7 +244,8 @@ private:
     void FindConnectedSectors(csRefArray<Sector>& connectedSectors, Sector* sector);
     void CleanSector(Sector* sector);
     void LoadSector(const csVector3& pos, const csBox3& bbox, Sector* sector);
-    void LoadMesh(MeshObj* mesh);
+    void FinishMeshLoad(MeshObj* mesh);
+    bool LoadMesh(MeshObj* mesh);
     bool LoadMeshFact(MeshFact* meshfact);
     bool LoadMaterial(Material* material);
     bool LoadTexture(Texture* texture);
@@ -267,6 +268,7 @@ private:
     csVector3 lastPos;
 
     csRefArray<MeshObj> loadingMeshes;
+    csRefArray<MeshObj> finalisableMeshes;
 
     csRedBlackTreeMap<csString, csRef<Texture> > textures;
     csRedBlackTreeMap<csString, csRef<Material> > materials;
