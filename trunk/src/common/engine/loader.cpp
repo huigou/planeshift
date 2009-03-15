@@ -339,12 +339,13 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                         m->alwaysLoaded = true;
                     }
 
-                    if(node2->GetNode("move"))
+                    csRef<iDocumentNode> move = node2->GetNode("move");
+                    if(move.IsValid())
                     {
-                        node2 = node2->GetNode("move")->GetNode("v");
-                        m->pos = csVector3(node2->GetAttributeValueAsFloat("x"),
-                            node2->GetAttributeValueAsFloat("y"), node2->GetAttributeValueAsFloat("z"));
-                        node2 = node2->GetParent()->GetParent();
+                        move = move->GetNode("v");
+                        m->pos = csVector3(move->GetAttributeValueAsFloat("x"),
+                            move->GetAttributeValueAsFloat("y"), move->GetAttributeValueAsFloat("z"));
+                        move = move->GetParent();
                     }
 
                     if(node2->GetNode("paramsfile"))
@@ -412,8 +413,8 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                             csRef<iDocumentNode> bboxdata = keys->Next();
                             if(csString("bbox").Compare(bboxdata->GetAttributeValue("name")))
                             {
-                                csRef<iDocumentNode> position = node2->GetParent()->GetParent()->GetNode("move");
-                                if(position)
+                                csRef<iDocumentNode> position = move;
+                                if(position.IsValid())
                                 {
                                     m->hasBBox = true;
                                     csVector3 pos;
