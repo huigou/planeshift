@@ -109,6 +109,11 @@ psActionLocation::psActionLocation() : gemAction( NULL )
 
 psActionLocation::~psActionLocation()
 {
+    if (enterScript)
+    {
+        delete enterScript;
+        enterScript = NULL;
+    }
 }
 
 

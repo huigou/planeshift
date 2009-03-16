@@ -120,6 +120,8 @@ void MathEnvironment::InterpolateString(csString & str) const
     }
 }
 
+//----------------------------------------------------------------------------
+
 MathStatement* MathStatement::Create(const csString & line, const char *name)
 {
     size_t assignAt = line.FindFirst('=');
@@ -153,10 +155,21 @@ MathStatement* MathStatement::Create(const csString & line, const char *name)
     return stmt;
 }
 
+MathStatement::~MathStatement()
+{
+    if (expression)
+    {
+        delete expression;
+        expression = NULL;
+    }
+}
+
 void MathStatement::Evaluate(MathEnvironment *env)
 {
     env->Define(assignee, expression->Evaluate(env));
 }
+
+//----------------------------------------------------------------------------
 
 MathScript* MathScript::Create(const char *name, const csString & script)
 {
@@ -214,6 +227,7 @@ void MathScript::Evaluate(MathEnvironment *env)
     }
 }
 
+//----------------------------------------------------------------------------
 
 MathScriptEngine::MathScriptEngine()
 {
@@ -278,7 +292,7 @@ csString MathScriptEngine::GetString(double id)
     return str ? str : "";
 }
 
-//////////////////////////////////////////////////
+//----------------------------------------------------------------------------
 
 MathExpression::MathExpression()
 {

@@ -50,10 +50,34 @@
 
 psSpell::psSpell()
 {
+    castDuration = NULL;
+    range        = NULL;
+    aoeRadius    = NULL;
+    aoeAngle     = NULL;
 }
 
 psSpell::~psSpell()
 {
+    if (castDuration)
+    {
+        delete castDuration;
+        castDuration = NULL;
+    }
+    if (range)
+    {
+        delete range;
+        range = NULL;
+    }
+    if (aoeRadius)
+    {
+        delete aoeRadius;
+        aoeRadius = NULL;
+    }
+    if (aoeAngle)
+    {
+        delete aoeAngle;
+        aoeAngle = NULL;
+    }
 }
 
 bool psSpell::Load(iResultRow& row)
