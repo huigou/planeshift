@@ -1,8 +1,11 @@
-*** 2009-03-1 by Stefano Angeleri
+*** 2009-03-16 by Kenny Graunke
+- Fixed substantial memory leaks in the new scripting system.
+
+*** 2009-03-14 by Stefano Angeleri
 - Fixed PS#2798 - NPC items lose quality by setting all equipped items
   back to max quality on respawn.
 
-﻿*** 2009-03-14 by Kenny Graunke
+*** 2009-03-14 by Kenny Graunke
 - Fixes to the progression script schema:
   - Switched to <zeroOrMore> for imperative operations to support the
     "Nothing special" character creation options, which are <script></script>.

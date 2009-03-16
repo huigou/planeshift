@@ -185,10 +185,14 @@ protected:
 class MathStatement
 {
 public:
+    ~MathStatement();
+
     static MathStatement* Create(const csString & expression, const char *name);
     void Evaluate(MathEnvironment *env);
 
 protected:
+    MathStatement() : expression(NULL) { }
+
     csString assignee;
     MathExpression *expression;
 };

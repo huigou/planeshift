@@ -416,12 +416,19 @@ psItemStats::psItemStats()
     texture_name.Clear();
     texturepart_name.Clear();
     image_name=NULL;
+
+    equipScript = NULL;
     
     visible_distance = DEF_PROX_DIST;
 }
 
 psItemStats::~psItemStats()
 {
+    if (equipScript)
+    {
+        delete equipScript;
+        equipScript = NULL;
+    }
 }
 
 bool psItemStats::ReadItemStats(iResultRow& row)

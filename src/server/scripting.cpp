@@ -655,12 +655,17 @@ protected:
 // Applicative script implementation (progression script applied mode)
 //============================================================================
 
-ApplicativeScript::ApplicativeScript()
+ApplicativeScript::ApplicativeScript() : duration(NULL)
 {
 }
 
 ApplicativeScript::~ApplicativeScript()
 {
+    if (duration)
+    {
+        delete duration;
+        duration = NULL;
+    }
 }
 
 ApplicativeScript* ApplicativeScript::Create(const char *script)
@@ -716,7 +721,8 @@ ApplicativeScript* ApplicativeScript::Create(iDocumentNode *top, SPELL_TYPE type
     script->name = name;
     script->type = type;
 
-    script->duration = duration ? MathExpression::Create(duration) : NULL;
+    if (duration)
+        script->duration = MathExpression::Create(duration);
 
     if (script->aim.IsEmpty() || script->name.IsEmpty() || (duration && !script->duration))
     {
