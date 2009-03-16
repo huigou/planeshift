@@ -1,7 +1,7 @@
 /*
 * npcbehave.cpp by Keith Fulton <keith@paqrat.com>
 *
-* Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+* Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
 *
 *
 * This program is free software; you can redistribute it and/or
@@ -124,7 +124,7 @@ bool NPCType::Load(iDocumentNode *node)
 
     csString velStr = node->GetAttributeValue("vel");
     velStr.Upcase();
-    
+
     if (velStr.IsEmpty())
     {
         // Do nothing. Use velSource from constructor default value
@@ -296,7 +296,7 @@ Behavior* BehaviorSet::Advance(csTicks delta,NPC *npc,EventManager *eventmgr)
     {
         max_need = -999;
         bool behaviours_changed = false;
-        
+
         // Go through and update needs based on time
         for (size_t i=0; i<behaviors.GetSize(); i++)
         {
@@ -304,15 +304,15 @@ Behavior* BehaviorSet::Advance(csTicks delta,NPC *npc,EventManager *eventmgr)
             if (b->ApplicableToNPCState(npc))
             {
                 b->Advance(delta,npc,eventmgr);
-                
+
                 if (behaviors[i]->CurrentNeed() != behaviors[i]->NewNeed())
                 {
-                    npc->Printf(4, "Advancing %-30s:\t%1.1f ->%1.1f", 
+                    npc->Printf(4, "Advancing %-30s:\t%1.1f ->%1.1f",
                                 behaviors[i]->GetName(),
                                 behaviors[i]->CurrentNeed(),
                                 behaviors[i]->NewNeed() );
                 }
-                
+
                 if (b->NewNeed() > max_need) // the advance causes re-ordering
                 {
                     if (i!=0)  // trivial swap if same element
@@ -331,25 +331,25 @@ Behavior* BehaviorSet::Advance(csTicks delta,NPC *npc,EventManager *eventmgr)
         {
             npc->DumpBehaviorList();
         }
-        
+
         // now that behaviours are correctly sorted, select the first one
         Behavior *new_behaviour = behaviors[0];
-        
+
         // use it only if need > 0
         if (new_behaviour->CurrentNeed()<=0 || !new_behaviour->ApplicableToNPCState(npc))
         {
             npc->Printf(15,"NO Active applicable behavior." );
             return active;
         }
-        
+
         if (new_behaviour != active)
         {
             if (active)  // if there is a behavior allready assigned to this npc
             {
                 npc->Printf(1,"Switching behavior from '%s' to '%s'",
-                            active->GetName(), 
+                            active->GetName(),
                             new_behaviour->GetName() );
-                
+
                 // Interrupt and stop current behaviour
                 active->InterruptScript(npc,eventmgr);
                 active->SetActive(false);
@@ -375,7 +375,7 @@ Behavior* BehaviorSet::Advance(csTicks delta,NPC *npc,EventManager *eventmgr)
             break;
         }
     }
-    
+
     npc->Printf(15,"Active behavior is '%s'", active->GetName() );
     return active;
 }
@@ -420,7 +420,7 @@ Behavior *BehaviorSet::Find(const char *name)
 void BehaviorSet::DumpBehaviorList(NPC *npc)
 {
     CPrintf(CON_CMDOUTPUT, "Appl. %-30s %5s %5s\n","Behavior","Curr","New");
-    
+
     for (size_t i=0; i<behaviors.GetSize(); i++)
     {
         char applicable = 'N';
@@ -428,7 +428,7 @@ void BehaviorSet::DumpBehaviorList(NPC *npc)
         {
             applicable = 'Y';
         }
-        
+
         CPrintf(CON_CMDOUTPUT, "%c    %s%-30s %5.1f %5.1f\n",applicable,
                 (behaviors[i]->IsInterrupted()?"*":" "),
                 behaviors[i]->GetName(),behaviors[i]->CurrentNeed(),
@@ -449,6 +449,8 @@ Behavior::Behavior()
     interrupted = false;
     resume_after_interrupt = false;
     current_step = 0;
+    init_need = 0;
+    current_need            = init_need;
 }
 
 Behavior::Behavior(const char *n)
@@ -463,6 +465,8 @@ Behavior::Behavior(const char *n)
     resume_after_interrupt = false;
     current_step = 0;
     name = n;
+    init_need = 0;
+    current_need            = init_need;
 }
 
 void Behavior::DeepCopy(Behavior& other)
@@ -609,7 +613,7 @@ bool Behavior::LoadScript(iDocumentNode *node,bool top_level)
         else if ( strcmp( node->GetValue(), "resurrect" ) == 0 )
         {
             op = new ResurrectOperation;
-        } 
+        }
         else if ( strcmp( node->GetValue(), "rotate" ) == 0 )
         {
             op = new RotateOperation;
@@ -727,13 +731,13 @@ bool Behavior::StartScript(NPC *npc, EventManager *eventmgr)
         return RunScript(npc,eventmgr,false);
     }
 }
-   
+
 Behavior* BehaviorSet::Find(Behavior *key)
 {
     size_t found = behaviors.Find(key);
     return (found = SIZET_NOT_FOUND) ? NULL : behaviors[found];
 }
-     
+
 bool Behavior::RunScript(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
     size_t start_step = current_step;
@@ -746,7 +750,7 @@ bool Behavior::RunScript(NPC *npc, EventManager *eventmgr, bool interrupted)
                         (interrupted?" Interrupted":""));
             sequence[current_step]->SetCompleted(false);
             if (!sequence[current_step]->Run(npc,eventmgr,interrupted)) // Run returning false means that
-            {                                                           // op is not finished but should 
+            {                                                           // op is not finished but should
                                                                         // relinquish
                 npc->Printf(2, "Behavior %s step %d - %s will complete later...",
                             name.GetData(),current_step,sequence[current_step]->GetName());
@@ -755,7 +759,7 @@ bool Behavior::RunScript(NPC *npc, EventManager *eventmgr, bool interrupted)
             interrupted = false; // Only the first script operation should be interrupted.
             current_step++;
         }
-        
+
         if (current_step >= sequence.GetSize())
         {
             current_step = 0; // behaviors automatically loop around to the top
@@ -764,12 +768,12 @@ bool Behavior::RunScript(NPC *npc, EventManager *eventmgr, bool interrupted)
             {
                 npc->Printf(1, "Loop back to start of behaviour '%s'",GetName());
             }
-            else 
+            else
             {
                 if (completion_decay)
                 {
                     float delta_decay = completion_decay;
-                    
+
                     if (completion_decay == -1)
                     {
                         delta_decay = current_need;
@@ -789,7 +793,7 @@ bool Behavior::RunScript(NPC *npc, EventManager *eventmgr, bool interrupted)
             npc->Printf(3,"Terminating behavior '%s' since it has looped all once.",GetName());
             return true; // This behavior is done
         }
-        
+
     }
     return true; // This behavior is done
 }
@@ -809,7 +813,7 @@ void Behavior::InterruptScript(NPC *npc,EventManager *eventmgr)
 bool Behavior::ResumeScript(NPC *npc,EventManager *eventmgr)
 {
     if (current_step < sequence.GetSize())
-    { 
+    {
         npc->Printf(3, "Resuming behavior %s at step %d - %s.",
                     name.GetData(),current_step,sequence[current_step]->GetName());
 
@@ -824,7 +828,7 @@ bool Behavior::ResumeScript(NPC *npc,EventManager *eventmgr)
         {
             return false; // This behavior isn't done yet
         }
-        
+
     }
     else
     {
