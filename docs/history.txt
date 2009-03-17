@@ -1,3 +1,6 @@
+*** 2009-03-17 by Kenny Graunke
+- Sync'd CacheManager::CopyItemStats for the new 1214 DB schema.
+
 *** 2009-03-16 by Kenny Graunke
 - Fixed substantial memory leaks in the new scripting system.
 
