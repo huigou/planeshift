@@ -1,3 +1,10 @@
+﻿*** 2009-03-17 by Keith Fulton
+- Made npc_knowledge_areas row in database unnecessary for the KA which is named
+  after the NPC.  This enables quest_scripts to work without needed another row in 
+  another table anywhere.  The now-redundant rows for specific named KAs in that table
+  are harmless though and can stay.
+
+
 *** 2009-03-17 by Kenny Graunke
 - Sync'd CacheManager::CopyItemStats for the new 1214 DB schema.
 
