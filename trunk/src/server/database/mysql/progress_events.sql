@@ -85,9 +85,11 @@ INSERT INTO progression_events VALUES("cast Flame Spire",
         <apply aim="Target" type="buff" name="Flame Spire" duration="30000">
           <msg text="A spire of flames surrounds you." undo="The spire of flames flickers out."/>
           <on type="defense">
-            <hp aim="Attacker" value="-10-@{Power}"/>
-            <msg aim="Defender" text="Your flame spire injures ${Attacker}!"/>
-            <msg aim="Attacker" text="${Defender}&apos;s flame spire burns you!"/>
+            <let vars="Dmg = 10+@{Power};">
+              <hp aim="Attacker" value="-Dmg"/>
+              <msg aim="Defender" text="Your flame spire burns ${Attacker} for ${Dmg} damage!"/>
+              <msg aim="Attacker" text="${Defender}&apos;s flame spire burns you for ${Dmg} damage!"/>
+            </let>
           </on>
         </apply>
       </script>');

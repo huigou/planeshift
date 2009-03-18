@@ -579,6 +579,7 @@ public:
 
         // Now, parse and load the script (but don't run it)...
         ProgressionScript *body = ProgressionScript::Create("<on> body", self);
+        CS_ASSERT_MSG("<on> body failed to load", body);
 
         // Register the triggering event
         switch (type) {

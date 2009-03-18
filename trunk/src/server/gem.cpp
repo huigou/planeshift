@@ -3472,6 +3472,7 @@ void gemActor::FallBegan(const csVector3& pos, iSector* sector)
 
 void gemActor::AttachAttackScript(ProgressionScript *script)
 {
+    CS_ASSERT(script);
     onAttackScripts.Push(script);
 }
 
@@ -3482,6 +3483,7 @@ void gemActor::DetachAttackScript(ProgressionScript *script)
 
 void gemActor::AttachDefenseScript(ProgressionScript *script)
 {
+    CS_ASSERT(script);
     onDefenseScripts.Push(script);
 }
 
