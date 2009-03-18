@@ -427,7 +427,13 @@ NpcResponse *ChatManager::CheckNPCEvent(Client *client,csString& triggerText,gem
             return npcdlg->Respond(trigger,client);
         }
         else
-            Debug2(LOG_NPC, client->GetClientNum(),"NPC %s cannot speak.\n",npc->GetName() );  // can comment this out later
+		{
+			// Admins and GMs can see a better error on the client
+			if (client->GetSecurityLevel() > 20)
+				psserver->SendSystemError(client->GetClientNum(),"%s cannot speak.",npc->GetName() );
+
+            Debug2(LOG_NPC, client->GetClientNum(),"NPC %s cannot speak.\n",npc->GetName() );
+		}
     }
     return NULL;
 }

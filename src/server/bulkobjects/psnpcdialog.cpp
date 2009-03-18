@@ -775,9 +775,13 @@ bool psNPCDialog::AddSynonym(const char *,const char *)
     return false;
 }
 
-bool psNPCDialog::AddKnowledgeArea(const char *)
+bool psNPCDialog::AddKnowledgeArea(const char *ka_name)
 {
-    return false;
+	KnowledgeArea *newKA = new KnowledgeArea;
+	newKA->area = ka_name;
+	newKA->priority = 0; // priority only matters when sorting from the db table.  here it will always be last priority
+	knowareas.Push(newKA);
+    return true;
 }
 
 bool psNPCDialog::AddResponse(const char *area,const char *words,const char *response,const char *minfaction)

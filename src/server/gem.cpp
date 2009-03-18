@@ -3617,13 +3617,22 @@ void gemNPC::SetPosition(const csVector3& pos,float angle, iSector* sector)
 
 void gemNPC::SetupDialog(PID npcID, bool force)
 {
-    if (force || db->SelectSingleNumber("SELECT count(*) FROM npc_knowledge_areas WHERE player_id=%d", npcID.Unbox()) > 0)
+	if (!force)
+		force = dict->FindKnowledgeArea(name);  // present in Quest Script but not in the queried table
+
+	if (force || db->SelectSingleNumber("SELECT count(*) FROM npc_knowledge_areas WHERE player_id=%d", npcID.Unbox()) > 0)
     {
         npcdialog = new psNPCDialog(this);
         if (!npcdialog->Initialize(db,npcID))
         {
             Error2("Failed to initialize NPC dialog for %s\n", ShowID(npcID));
         }
+		if (force)
+		{
+			csString newArea(name);
+			newArea.Downcase();
+			npcdialog->AddKnowledgeArea(newArea);
+		}
     }
 }
 
