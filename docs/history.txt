@@ -1,9 +1,14 @@
-﻿*** 2009-03-17 by Keith Fulton
+﻿*** 2009-03-18 by Kenny Graunke
+- Added assertions to catch problems earlier, where one might stand a chance
+  at deciphering the actual issue.
+- Updated fake version of "Flame Spire" to display the amount of damage.
+  This should help with PS#818.
+
+*** 2009-03-17 by Keith Fulton
 - Made npc_knowledge_areas row in database unnecessary for the KA which is named
   after the NPC.  This enables quest_scripts to work without needed another row in 
   another table anywhere.  The now-redundant rows for specific named KAs in that table
   are harmless though and can stay.
-
 
 *** 2009-03-17 by Kenny Graunke
 - Sync'd CacheManager::CopyItemStats for the new 1214 DB schema.
