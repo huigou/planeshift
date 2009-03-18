@@ -70,6 +70,7 @@ protected:
     csHash<NpcTrigger>                 trigger_by_id;
     BinaryRBTree<NpcResponse>          responses;
     BinaryRBTree<csString>             disallowed_words;
+	csHash<csString,csString>		   knowledgeAreas;  /// Collection of all referenced knowledge areas
 
 	/// This is a storage area for popup menus parsed during quest loading, which is done before NPCs are spawned.
 	csHash<NpcDialogMenu*,csString>    initial_popup_menus;
@@ -102,6 +103,8 @@ public:
 
     bool Initialize(iDataConnection *db);
         
+	bool FindKnowledgeArea(const csString& name);
+
     /** Returns record of 'term' (or NULL if unknown) */
     NpcTerm * FindTerm(const char *term);
     

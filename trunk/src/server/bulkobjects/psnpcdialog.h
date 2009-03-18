@@ -185,7 +185,7 @@ public:
 
     bool AddWord(const char *word);
     bool AddSynonym(const char *word,const char *synonym);
-    bool AddKnowledgeArea(const char *area);
+    bool AddKnowledgeArea(const char *ka_name);
     bool AddResponse(const char *area,const char *words,const char *response,const char *minfaction);
     bool AssignNPCArea(const char *npcname,const char *areaname);
 

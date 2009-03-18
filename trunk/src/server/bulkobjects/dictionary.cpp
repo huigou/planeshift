@@ -332,6 +332,16 @@ bool NPCDialogDict::LoadTriggerGroups(iDataConnection *db)
     return true;
 }
 
+bool NPCDialogDict::FindKnowledgeArea(const csString& name)
+{
+	static csString fallback("not found");
+
+	csString key(name);
+	key.Downcase(); // all KAs are supposed to be lowercase
+	csString temp = knowledgeAreas.Get(key,fallback);
+	return temp != fallback;
+}
+
 bool NPCDialogDict::LoadTriggers(iDataConnection *db)
 {
     Debug1(LOG_STARTUP,0,"Loading Triggers...\n");
@@ -373,7 +383,11 @@ bool NPCDialogDict::LoadTriggers(iDataConnection *db)
             delete newtrig;
             continue;
         }
-
+		if (!FindKnowledgeArea(newtrig->area))
+		{
+			printf("--------Adding KA: %s\n",newtrig->area.GetDataSafe());
+			knowledgeAreas.PutUnique(newtrig->area,newtrig->area);
+		}
     }
     return true;
 }
@@ -794,6 +808,12 @@ NpcTrigger *NPCDialogDict::AddTrigger(const char *k_area,const char *mytrigger,i
             delete newtrig;
             return oldtrig;
         }
+
+		if (!FindKnowledgeArea(newtrig->area))
+		{
+			printf("--------Adding KA: %s\n",newtrig->area.GetDataSafe());
+			knowledgeAreas.PutUnique(newtrig->area,newtrig->area);
+		}
 
 
         return newtrig;
