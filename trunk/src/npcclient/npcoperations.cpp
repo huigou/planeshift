@@ -2069,21 +2069,24 @@ bool ChaseOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
             npc->Printf("ChaseOperation: target's sector is not connected to ours!");
             return true;  // This operation is complete
         }
-
-        // This prevents NPCs from wanting to occupy the same physical space as something else
-        csVector3 displacement = targetPos - myPos;
-        float factor = sqrt((offset.x * offset.x)+(offset.z * offset.z)) / displacement.Norm();
-        targetPos = myPos + (1 - factor) * displacement;
-
-        path.SetMaps(npcclient->GetMaps());
-        path.SetDest(targetPos);
-        path.CalcLocalDest(myPos, mySector, localDest);
-
-        if ( Calc2DDistance( myPos, targetPos ) < 0.5 )
+        if ( Calc2DDistance( myPos, targetPos ) < sqrt((offset.x * offset.x)+(offset.z * offset.z)) )
         {
             return true;  // This operation is complete
         }
-        else if ( GetAngularVelocity(npc) > 0 || GetVelocity(npc) > 0 )
+
+        // This prevents NPCs from wanting to occupy the same physical space as something else
+        csVector3 displacement = targetPos - myPos;
+        displacement.y = 0;
+        float factor = sqrt((offset.x * offset.x)+(offset.z * offset.z)) / displacement.Norm();
+        csVector3 destPos = myPos + (1 - factor) * displacement;
+        destPos.y = targetPos.y;
+
+        path.SetMaps(npcclient->GetMaps());
+        path.SetDest(destPos);
+        path.CalcLocalDest(myPos, mySector, localDest);
+
+
+        if ( GetAngularVelocity(npc) > 0 || GetVelocity(npc) > 0 )
         {
             StartMoveTo(npc, eventmgr, localDest, targetSector, GetVelocity(npc), action, false);
             return false;
@@ -2158,7 +2161,9 @@ void ChaseOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
     // This prevents NPCs from wanting to occupy the same physical space as something else
     csVector3 displacement = targetPos - myPos;
 
+    displacement.y = 0;
     float distance = displacement.Norm();
+    
     if ( (chaseRange > 0 && distance > chaseRange) || (targetInstance != myInstance) )
     {
         npc->Printf(5, "Target out of chase range -> we are done..");
@@ -2174,6 +2179,7 @@ void ChaseOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
 
     float factor = sqrt((offset.x * offset.x)+(offset.z * offset.z)) / distance;
     targetPos = myPos + (1 - factor) * displacement;
+    targetPos.y = myPos.y;
 
     npc->Printf(10, "Still chasing %s at %s...",(const char *)name,toString(targetPos,targetSector).GetDataSafe());
     
