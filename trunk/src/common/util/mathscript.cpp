@@ -444,7 +444,9 @@ bool MathExpression::Parse(const char *exp)
                 tokens[i-1] = "customCompoundFunc";
                 tokens[ i ].Format("%d", paramCount);
                 tokens[i+1] = "(";
-                tokens[i+2].Format("%u,%s,", CS::StringIDValue(MathScriptEngine::customCompoundFunctions.Request(method)), object.GetData());
+                tokens[i+2].Format("%u,%s", CS::StringIDValue(MathScriptEngine::customCompoundFunctions.Request(method)), object.GetData());
+                if (paramCount > 2)
+                    tokens[i+2].Append(',');
                 i += 2; // skip method name & paren - we just dealt with them.
             }
             else
