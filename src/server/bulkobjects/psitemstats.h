@@ -601,6 +601,9 @@ public:
 
     ApplicativeScript* GetEquipScript() { return equipScript; }
     const csString & GetConsumeScriptName() { return consumeScriptName; }
+
+    /// Sets a new equip script and saves it to the DB.  Mostly for the loot generator.
+    bool SetEquipScript(const csString & script);
     
     /** Checks to see if the character meets the requirements to equip an item
       * with these stats.

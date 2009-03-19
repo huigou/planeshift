@@ -2354,8 +2354,6 @@ int com_randomloot( char* loot )
         testEntry->item = CacheManager::GetSingleton().GetBasicItemStatsByName(baseItemName);
         if (testEntry->item)
         {
-            // make copy of item to randomize
-            testEntry->item = new psItemStats(*testEntry->item);
             testEntry->probability = 1.0;   // want a dead cert for testing!
             testEntry->min_money = 0;       // ignore money
             testEntry->max_money = 0;
@@ -2367,8 +2365,6 @@ int com_randomloot( char* loot )
             // generate loot from base item
             testLootEntrySet->SetRandomizer(psserver->GetSpawnManager()->GetLootRandomizer());
             testLootEntrySet->CreateLoot(NULL, numModifiers);
-
-            delete testEntry->item;
         }
         else
             CPrintf(CON_CMDOUTPUT, "\'%s\' not found.\n",

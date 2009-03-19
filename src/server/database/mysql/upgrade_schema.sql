@@ -1131,6 +1131,13 @@ ALTER TABLE spells CHANGE caster_effect casting_effect varchar(255),
 
 UPDATE `server_options` SET `option_value`='1214' WHERE `option_name`='db_version';
 
+#### 1215 - Kenny Graunke - Make the loot generator work with the new scripting system
+ALTER TABLE loot_modifiers DROP COLUMN prg_evt_unequip;
+ALTER TABLE loot_modifiers CHANGE prg_evt_equip equip_script text NULL AFTER not_usable_with;
+
+-- Also needs manual updates to the equip_script operations.
+UPDATE `server_options` SET `option_value`='1215' WHERE `option_name`='db_version';
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to

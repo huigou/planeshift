@@ -248,8 +248,7 @@ struct LootModifier
     csString modifier_type;
     csString name;
     csString effect;
-    csString prg_evt_equip;
-    csString prg_evt_unequip;
+    csString equip_script;
     float    probability;
     csString stat_req_modifier;
     float    cost_modifier;
@@ -294,7 +293,7 @@ protected:
 
 private:
     void AddModifier( LootModifier *oper1, LootModifier *oper2 );
-    void ApplyModifier( psItemStats* loot, LootModifier* mod, bool lootTesting );
+    void ApplyModifier(psItemStats *loot, LootModifier *mod);
 };
 
 class PendingLootPrompt;
