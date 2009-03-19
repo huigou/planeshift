@@ -79,7 +79,7 @@ public:
         if (strcmp(prop, "TheAnswer") == 0)
             return 42;
 
-        return 0.0/0.0;
+        return 0.0;
     }
     virtual double CalcFunction(const char *function, const double *params)
     {
@@ -94,7 +94,12 @@ public:
             return 0;
         }
 
-        return 0.0/0.0;
+        if (strcmp(function, "GetSeven") == 0)
+        {
+            return 7;
+        }
+
+        return 0.0;
     }
     const char* ToString()
     {
@@ -122,6 +127,17 @@ TEST(MathScriptTest, BasicMethod)
     env.Define("Quux", &foo);
     ASSERT_NE(env.Lookup("Quux"), NULL);
     EXPECT_EQ(42, exp->Evaluate(&env));
+}
+
+TEST(MathScriptTest, MethodNoArgs)
+{
+    Foo foo;
+    MathExpression *exp = MathExpression::Create("Quux:GetSeven()");
+    MathEnvironment env;
+    ASSERT_NE(exp, NULL);
+    env.Define("Quux", &foo);
+    ASSERT_NE(env.Lookup("Quux"), NULL);
+    EXPECT_EQ(7, exp->Evaluate(&env));
 }
 
 TEST(MathScriptTest, PropertyAndFunction)

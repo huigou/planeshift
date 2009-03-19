@@ -1,6 +1,8 @@
 ﻿*** 2009-03-19 by Kenny Graunke
 - Fixed a server crash when lockpicking.  GetSkillRank used to return 0 when
   given an invalid skill ID, but now it triggers an assertion.
+- Fixed a bug in MathExpression's parser, which wasn't handling zero argument
+  method calls correctly.  Fixes PS#2814.  Also added a unit test.
 
 *** 2009-03-18 by Kenny Graunke
 - Added assertions to catch problems earlier, where one might stand a chance
