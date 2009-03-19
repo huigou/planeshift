@@ -490,16 +490,24 @@ void pawsLauncherWindow::LoadSettings()
     textureQuality->NewOption("Low");
     textureQuality->NewOption("Very Low");
 
-    int ds = configUser->GetInt("Video.OpenGL.TextureDownsample", -1);
-    if(ds == -1)
+    int ds = 0;
+    if(configUser->KeyExists("Video.OpenGL.TextureDownsample"))
     {
-        ds = configPSC.GetInt("Video.OpenGL.TextureDownsample", 0);
+      ds = configUser->GetInt("Video.OpenGL.TextureDownsample");
+    }
+    else
+    {
+      ds = configPSC.GetInt("Video.OpenGL.TextureDownsample", ds);
     }
 
-    int tlb = configUser->GetInt("Video.OpenGL.TextureLODBias", 1337);
-    if(tlb == 1337)
+    int tlb = 0;
+    if(configUser->KeyExists("Video.OpenGL.TextureLODBias"))
     {
-       tlb = configPSC.GetInt("Video.OpenGL.TextureLODBias", 0);
+      configUser->GetInt("Video.OpenGL.TextureLODBias");
+    }
+    else
+    {
+      tlb = configPSC.GetInt("Video.OpenGL.TextureLODBias", tlb);
     }
 
     switch(ds)
