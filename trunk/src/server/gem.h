@@ -340,7 +340,7 @@ public:
     void UpdateProxList( bool force = false);
     void RemoveFromAllProx();
 
-    float RangeTo(gemObject *obj, bool ignoreY = false);
+    float RangeTo(gemObject *obj, bool ignoreY = false, bool ignoreInstance = false);
 
     virtual bool IsUpdateReq (csVector3 const &pos,csVector3 const &oldPos);
 

@@ -768,9 +768,9 @@ bool gemObject::IsNear(gemObject *obj, float radius)
 }
 
 
-float gemObject::RangeTo(gemObject* obj, bool ignoreY)
+float gemObject::RangeTo(gemObject* obj, bool ignoreY, bool ignoreInstance)
 {
-    return proxlist->RangeTo(obj, ignoreY);
+    return proxlist->RangeTo(obj, ignoreY, ignoreInstance);
 }
 
 bool gemObject::IsUpdateReq (csVector3 const &pos,csVector3 const &oldPos)

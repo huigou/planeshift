@@ -115,7 +115,7 @@ public:
      * Check if an update is required for this object based on moved range and changed instance.
      */
     bool CheckUpdateRequired();
-    float RangeTo( gemObject* object, bool ignoreY = false );
+    float RangeTo( gemObject* object, bool ignoreY = false, bool ignoreInstance = false );
     void DebugDumpContents(csString& out);
 
     void ClearTouched();
