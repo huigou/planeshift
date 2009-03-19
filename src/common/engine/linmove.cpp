@@ -370,11 +370,20 @@ int psLinearMovement::MoveSprite (float delta)
         
         // Check the invariants still hold otherwise we may jump walls
         if(!(fabs(displacement.x) <= intervalSize.x))
-            printf("X out of bounds %g - %g!\n", fabs(displacement.x), intervalSize.x);
+        {
+        	printf("X (%g) out of bounds when performing CD > %g!\n", fabs(displacement.x), intervalSize.x);
+        	CS_ASSERT(false);
+        }
         if(!(fabs(displacement.z) <= intervalSize.z))
-            printf("Z out of bounds %g - %g!\n", fabs(displacement.y), intervalSize.y);
+        {
+            printf("Z (%g) out of bounds when performing CD > %g!\n", fabs(displacement.y), intervalSize.y);
+            CS_ASSERT(false);
+        }
         if(!(fabs(displacement.y) <= intervalSize.y))
-            printf("Y out of bounds %g - %g!\n", fabs(displacement.z), intervalSize.z);
+        {
+            printf("Y (%g) out of bounds when performing CD > %g!\n", fabs(displacement.z), intervalSize.z);
+            CS_ASSERT(false);
+        }
 
         RotateV (local_max_interval);
         yrot = Matrix2YRot (transf);
