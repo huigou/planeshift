@@ -213,7 +213,7 @@ void ServerCharManager::ViewItem(Client* client, int containerID, INVENTORY_SLOT
 
                 // Check range ignoring Y co-ordinate
                 csWeakRef<gemObject> gem = client->GetActor();
-                if (gem.IsValid() && gem->RangeTo(realItem, true) > RANGE_TO_SELECT)
+                if (gem.IsValid() && gem->RangeTo(realItem, true, true) > RANGE_TO_SELECT)
                 {
                     psserver->SendSystemError(client->GetClientNum(),
                         "You are not in range to see %s.",item->GetName());

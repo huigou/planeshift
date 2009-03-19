@@ -426,14 +426,14 @@ bool ProximityList::GetUntouched_ObjectThatIWatch(gemObject* &object)
 }
 
 
-float ProximityList::RangeTo( gemObject* object, bool ignoreY )
+float ProximityList::RangeTo( gemObject* object, bool ignoreY, bool ignoreInstance)
 {
 #ifdef PSPROXDEBUG
     CPrintf(CON_DEBUG, "[float ProximityList::RangeTo( gemObject* entity )]\n");
 #endif
 
     // If in different instances, except for the common 'all' instance, return a very big value.
-    if (object->GetInstance() != INSTANCE_ALL && self->GetInstance() != INSTANCE_ALL &&
+    if (!ignoreInstance && object->GetInstance() != INSTANCE_ALL && self->GetInstance() != INSTANCE_ALL &&
         object->GetInstance() != self->GetInstance())
     {
         return 9999999.99f;
