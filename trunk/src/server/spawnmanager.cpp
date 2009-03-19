@@ -376,8 +376,7 @@ void SpawnManager::PreloadLootModifiers()
         entry->modifier_type = result[i][ "modifier_type" ];
         entry->name = result[i][ "name" ];
         entry->effect = result[i][ "effect" ];
-        entry->prg_evt_equip = result[i][ "prg_evt_equip" ];
-        entry->prg_evt_unequip = result[i][ "prg_evt_unequip" ];
+        entry->equip_script = result[i]["equip_script"];
         entry->effect = result[i][ "effect" ];
         entry->probability = result[i].GetFloat( "probability" );
         entry->stat_req_modifier = result[i][ "stat_req_modifier" ];
@@ -1616,7 +1615,6 @@ psItemStats* LootRandomizer::RandomizeItem( psItemStats* itemstats, float maxcos
         //if (lootTesting && lootModifier)
         //{
         //    lootModifier->prg_evt_equip.Empty();
-        //    lootModifier->prg_evt_unequip.Empty();
         //}
 
         if(lootModifier) AddModifier( &totalMods, lootModifier );
@@ -1626,27 +1624,19 @@ psItemStats* LootRandomizer::RandomizeItem( psItemStats* itemstats, float maxcos
     newStats = CacheManager::GetSingleton().GetBasicItemStatsByName( totalMods.name.GetData() );
     if ( !newStats ) // If it doesn't exist
     {
-        // if not doing this via the DB, then just use the existing stats, not copying a DB row
-        if (lootTesting)
+        // This will copy the current ItemsStats row in the DB and create a new one for us.
+        // TODO: rewrite loot handling to not generate a bazillion item_stats entries
+        newStats = CacheManager::GetSingleton().CopyItemStats(itemstats->GetUID(), totalMods.name);
+        if ( !newStats )
         {
-            newStats = itemstats;
-        }
-        else
-        {
-            // This will copy the current ItemsStats row in the DB and create a new one for us.
-            newStats = CacheManager::GetSingleton().CopyItemStats(itemstats->GetUID(), totalMods.name);
-            if ( !newStats )
-            {
-                return itemstats;
-            }
+            return itemstats;
         }
 
         // Apply All Changes
-        ApplyModifier( newStats, &totalMods , lootTesting);
+        ApplyModifier(newStats, &totalMods);
 
         // Save Changes and return
-        if (!lootTesting)
-            newStats->Save();
+        newStats->Save();
     }
     return newStats;
 }
@@ -1681,12 +1671,11 @@ void LootRandomizer::AddModifier( LootModifier *oper1, LootModifier *oper2 )
     oper1->mesh = oper2->mesh;
     oper1->stat_req_modifier.Append( oper2->stat_req_modifier );
 
-    // equip/unequip
-    oper1->prg_evt_equip.Append(oper2->prg_evt_equip);
-    oper1->prg_evt_unequip.Append(oper2->prg_evt_unequip);
+    // equip script
+    oper1->equip_script.Append(oper2->equip_script);
 }
 
-void LootRandomizer::ApplyModifier( psItemStats* loot, LootModifier* mod, bool lootTesting)
+void LootRandomizer::ApplyModifier( psItemStats* loot, LootModifier* mod)
 {
 
     loot->SetName( mod->name );
@@ -1787,40 +1776,12 @@ void LootRandomizer::ApplyModifier( psItemStats* loot, LootModifier* mod, bool l
         node = nodeList->Next();
     }
 
-    // Apply equip/unequip events
-    if ( !mod->prg_evt_equip.IsEmpty() ) 
+    // Apply equip script
+    if (!mod->equip_script.IsEmpty())
     {
-        csString event = "<evt>";
-        event.Append( mod->prg_evt_equip );
-        event.Append( "</evt>" );
-
-        csString name;
-        name.Format("randomitemequip_%s", loot->GetUIDStr());
-        //if (lootTesting)
-          //loot->SetProgressionEventEquip( event );
-        // TODO: rewrite loot handling to not generate a bazillion randomitem_blah entries
-        //else if(psserver->GetProgressionManager()->AddScript(name, event))
-          //loot->SetProgressionEventEquip( name );
-        //else
-          //CPrintf(CON_ERROR,"Couldn't insert equip script for random item %s",loot->GetUIDStr());
-    }
-
-    if ( !mod->prg_evt_unequip.IsEmpty() ) 
-    {
-      csString event = "<evt>";
-      event.Append( mod->prg_evt_unequip );
-      event.Append( "</evt>" );
-
-      csString name;
-      name.Format("randomitemunequip_%s", loot->GetUIDStr());
-      //if (lootTesting)
-          //loot->SetProgressionEventUnEquip( event );
-      // TODO: rewrite loot handling to not generate a bazillion randomitem_blah entries
-      //else if(psserver->GetProgressionManager()->AddScript(name, event))
-        //loot->SetProgressionEventUnEquip( name );
-      //else
-        //CPrintf(CON_ERROR,"Couldn't insert unequip script for random item %s",loot->GetUIDStr());
-
+        csString scriptXML;
+        scriptXML.Format("<apply aim=\"Actor\" name=\"%s\" type=\"buff\">%s</apply>", mod->name.GetData(), mod->equip_script.GetData());
+        loot->SetEquipScript(scriptXML);
     }
 }
 

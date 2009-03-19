@@ -1244,6 +1244,33 @@ void psItemStats::SetSound(const char *v)
     sound = csString("item.") + v;
 }
 
+bool psItemStats::SetEquipScript(const csString & equipXML)
+{
+    ApplicativeScript *aps = NULL;
+
+    if (!equipXML.IsEmpty())
+    {
+        aps = ApplicativeScript::Create(equipXML);
+        if (!aps)
+        {
+            Error4("Could not create ApplicativeScript for ItemStats %u (%s)'s equip script: %s.", uid, name.GetData(), equipXML.GetData());
+            return false;
+        }
+    }
+
+    csString escXML;
+    db->Escape(escXML, equipXML);
+    unsigned long res = db->Command("UPDATE item_stats SET equip_script='%s' WHERE id=%u", escXML.GetData(), uid);
+    if (res == QUERY_FAILED)
+    {
+        Error2("sql error: %s", db->GetLastError());
+        return false;
+    }
+
+    equipScript = aps;
+
+    return true;
+}
 
 bool psItemStats::CheckRequirements( psCharacter* charData, csString& resp )
 {
