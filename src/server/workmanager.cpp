@@ -3984,7 +3984,11 @@ void WorkManager::LockpickComplete(psWorkGameEvent* workEvent)
     else
     {
         // Check if the user has the right skills
-        if (character->Skills().GetSkillRank(skill).Current() >= (int) workEvent->object->GetLockStrength())
+        int rank = 0;
+        if (skill >= 0 && skill < PSSKILL_COUNT)
+            rank = character->Skills().GetSkillRank(skill).Current();
+
+        if (rank >= (int) workEvent->object->GetLockStrength())
         {
             bool locked = workEvent->object->GetIsLocked();
             psserver->SendSystemOK(workEvent->client->GetClientNum(), locked ? "You unlocked %s." : "You locked %s.", workEvent->object->GetName());

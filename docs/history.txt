@@ -1,4 +1,8 @@
-﻿*** 2009-03-18 by Kenny Graunke
+﻿*** 2009-03-19 by Kenny Graunke
+- Fixed a server crash when lockpicking.  GetSkillRank used to return 0 when
+  given an invalid skill ID, but now it triggers an assertion.
+
+*** 2009-03-18 by Kenny Graunke
 - Added assertions to catch problems earlier, where one might stand a chance
   at deciphering the actual issue.
 - Updated fake version of "Flame Spire" to display the amount of damage.
