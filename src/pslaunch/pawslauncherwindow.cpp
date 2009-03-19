@@ -489,29 +489,38 @@ void pawsLauncherWindow::LoadSettings()
     textureQuality->NewOption("Low");
     textureQuality->NewOption("Very Low");
 
-    int ds = configUser->GetInt("Video.OpenGL.TextureDownsample", (int)-1);
-    if(ds == (int)-1)
+    int ds = configUser->GetInt("Video.OpenGL.TextureDownsample", -1);
+    if(ds == -1)
     {
         ds = configPSC.GetInt("Video.OpenGL.TextureDownsample", 0);
     }
+
+    int tlb = configUser->GetInt("Video.OpenGL.TextureLODBias", 1337);
+    if(tlb == 1337)
+    {
+       tlb = configPSC.GetInt("Video.OpenGL.TextureLODBias", -1);
+    }
+
     switch(ds)
     {
     case 0:
         {
-            setting = "High";
+            if(tlb == -1)
+            {
+                setting = "High";
+            }
+            else
+            {
+                setting = "Medium";
+            }
             break;
         }
     case 1:
         {
-            setting = "Medium";
-            break;
-        }
-    case 2:
-        {
             setting = "Low";
             break;
         }
-    case 4:
+    case 2:
         {
             setting = "Very Low";
             break;
@@ -662,6 +671,7 @@ void pawsLauncherWindow::SaveSettings()
             configUser->SetInt("Video.ScreenDepth", 32);
             configUser->SetInt("Video.OpenGL.MultiSamples", 16);
             configUser->SetInt("Video.OpenGL.TextureFilterAnisotropy", 16);
+            configUser->SetInt("Video.OpenGL.TextureLODBias", -1);
             configUser->SetInt("Video.OpenGL.TextureDownsample", 0);
             configUser->SetStr("PlaneShift.Graphics.Shaders", "Advanced");
             configUser->SetBool("PlaneShift.Graphics.EnableGrass", true);
@@ -676,6 +686,7 @@ void pawsLauncherWindow::SaveSettings()
             configUser->SetInt("Video.ScreenDepth", 32);
             configUser->SetInt("Video.OpenGL.MultiSamples", 4);
             configUser->SetInt("Video.OpenGL.TextureFilterAnisotropy", 8);
+            configUser->SetInt("Video.OpenGL.TextureLODBias", -1);
             configUser->SetInt("Video.OpenGL.TextureDownsample", 0);
             configUser->SetStr("PlaneShift.Graphics.Shaders", "Advanced");
             configUser->SetBool("PlaneShift.Graphics.EnableGrass", true);
@@ -741,20 +752,25 @@ void pawsLauncherWindow::SaveSettings()
             configUser->SetStr("Video.OpenGL.TextureFilterAnisotropy", selected.Slice(0, selected.FindFirst("x")));
 
             pawsComboBox* textureQuality = (pawsComboBox*)FindWidget("TextureQuality");
-            int value = 0;
-            if(textureQuality->GetSelectedRowString().Compare("Medium"))
+
+            int texlodbias = 0;
+            int downsample = 0;
+
+            if(textureQuality->GetSelectedRowString().Compare("High"))
             {
-                value = 1;
+                texlodbias = -1;
             }
             else if(textureQuality->GetSelectedRowString().Compare("Low"))
             {
-                value = 2;
+                downsample = 1;
             }
             else if(textureQuality->GetSelectedRowString().Compare("Lowest"))
             {
-                value = 4;
+                downsample = 2;
             }
-            configUser->SetInt("Video.OpenGL.TextureDownsample", value);
+
+            configUser->SetInt("Video.OpenGL.TextureLODBias", texlodbias);
+            configUser->SetInt("Video.OpenGL.TextureDownsample", downsample);
 
             pawsComboBox* shaders = (pawsComboBox*)FindWidget("Shaders");
             configUser->SetStr("PlaneShift.Graphics.Shaders", shaders->GetSelectedRowString());
