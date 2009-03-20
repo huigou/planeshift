@@ -1,4 +1,11 @@
-﻿*** 2009-03-19 by Kenny Graunke
+﻿*** 2009-03-19 by Andrew Dai
+- Reduced network queue size for clients on server.
+- Fixed uninitialized variable in SQL timing statements.
+- Fixes to NPC chasing behaviour.
+- Changed the CD out of bounds error to be fatal to pick up on nan errors earlier.
+- Disables stamina for NPCs which fixes NPCs attacking back and chasing.
+
+*** 2009-03-19 by Kenny Graunke
 - Fixed a server crash when lockpicking.  GetSkillRank used to return 0 when
   given an invalid skill ID, but now it triggers an assertion.
 - Fixed a bug in MathExpression's parser, which wasn't handling zero argument
