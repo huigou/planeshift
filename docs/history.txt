@@ -6,6 +6,7 @@
 - Updated the loot generator for the new scripting system.
   It's still not ideal, but should work as well as it did before.
   ==> DB VERSION BUMP <==
+- Added a MathScript accessor for character faction.
 
 *** 2009-03-18 by Kenny Graunke
 - Added assertions to catch problems earlier, where one might stand a chance
