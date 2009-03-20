@@ -13,7 +13,7 @@
 
         <frame x="10" y="10" width="200" height="300" border="no" />
         
-        <widget factory="pawsSimpleTreeNode">
+        <widget factory="pawsSimpleTreeNode" name="PanelParent">
 	    <frame x="225" y="10" width="400" height="300" border="yes" />
 
             <widget factory="pawsSimpleTreeNode" label="Controls">
