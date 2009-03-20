@@ -693,7 +693,7 @@ protected:
 
     csArray<ActiveSpell*> activeSpells;
 
-    void ApplyStaminaCalculations(const csVector3& velocity, float times);
+    virtual void ApplyStaminaCalculations(const csVector3& velocity, float times);
 
     /// Set initial attributes for GMs
     void SetGMDefaults();
@@ -967,6 +967,9 @@ public:
 
     void SetupDialog(PID npcID,bool force=false);
     void ReactToPlayerApproach(psNPCCommandsMessage::PerceptionType type,gemActor *player);
+    
+    virtual void ApplyStaminaCalculations(const csVector3& velocity, float times) { } // NPCs usually have 0 stamina.
+    // Before this fix, this caused a major long term bug where NPCs would give up attacking after a few hits and expending all stamina.
 
     virtual void AddLootableClient(int cnum);
     virtual void RemoveLootableClient(int cnum);
