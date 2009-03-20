@@ -1,4 +1,7 @@
-﻿*** 2009-03-19 by Andrew Dai
+﻿*** 2009-03-20 by Andrew Dai
+- Fixed npcclient crashes that were referencing a deleted object in MeleeOperation.
+
+*** 2009-03-19 by Andrew Dai
 - Reduced network queue size for clients on server.
 - Fixed uninitialized variable in SQL timing statements.
 - Fixes to NPC chasing behaviour.
