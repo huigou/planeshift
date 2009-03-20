@@ -188,7 +188,7 @@ bool ScriptOperation::CheckMovedOk(NPC *npc, EventManager *eventmgr, csVector3 o
     if ((oldPos - newPos).SquaredNorm() < 0.01f) // then stopped dead, presumably by collision
     {
         Perception collisionPerception(collision);
-        npc->TriggerEvent(&collisionPerception, eventmgr);
+        npc->TriggerEvent(&collisionPerception);
         return false;
     }
     else
@@ -214,7 +214,7 @@ bool ScriptOperation::CheckMovedOk(NPC *npc, EventManager *eventmgr, csVector3 o
                 // after a couple seconds of sliding against something
                 // the npc should give up and react to the obstacle.
                 Perception collisionPerception(collision);
-                npc->TriggerEvent(&collisionPerception, eventmgr);
+                npc->TriggerEvent(&collisionPerception);
                 return false;
             }
         }
@@ -233,7 +233,7 @@ bool ScriptOperation::CheckMovedOk(NPC *npc, EventManager *eventmgr, csVector3 o
                 if (!rgn->CheckWithinBounds(npcclient->GetEngine(),newPos,newSector))
                 {
                     Perception outbounds(outOfBounds);
-                    npc->TriggerEvent(&outbounds, eventmgr);
+                    npc->TriggerEvent(&outbounds);
                     inside_rgn = false;
                 }
             }
@@ -242,7 +242,7 @@ bool ScriptOperation::CheckMovedOk(NPC *npc, EventManager *eventmgr, csVector3 o
                 if (rgn->CheckWithinBounds(npcclient->GetEngine(),newPos,newSector))
                 {
                     Perception inbounds(inBounds);
-                    npc->TriggerEvent(&inbounds, eventmgr);
+                    npc->TriggerEvent(&inbounds);
                     inside_rgn = true;
                 }
             }
@@ -674,7 +674,7 @@ void MoveToOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
         if ((pos-pos2).SquaredNorm() < SMALL_EPSILON) // then stopped dead, presumably by collision
         {
             Perception collision("collision");
-            npc->TriggerEvent(&collision, eventmgr);
+            npc->TriggerEvent(&collision);
         }
     }
 }
@@ -1739,7 +1739,7 @@ void WanderOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
         // None linear movement so we have to queue DRData updates.
         npcclient->GetNetworkMgr()->QueueDRData(npc);
 
-        npc->ResumeScript(eventmgr, npc->GetBrain()->GetCurrentBehavior() );
+        npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior() );
 
         return;
     }
@@ -2171,8 +2171,8 @@ void ChaseOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
         str.Append(typeStr[type]);
         str.Append(" out of chase");
         Perception range(str);
-        npc->TriggerEvent(&range, eventmgr);
-        npc->ResumeScript(eventmgr, npc->GetBrain()->GetCurrentBehavior() );
+        npc->TriggerEvent(&range);
+        npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior() );
         return;
     }
     
@@ -2209,7 +2209,7 @@ void ChaseOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
         if (Calc2DDistance(myPos,targetPos) <= close)
         {
             npc->Printf(5, "We are done..");
-            npc->ResumeScript(eventmgr, npc->GetBrain()->GetCurrentBehavior() );
+            npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior() );
             return;
         }
         else
@@ -2398,7 +2398,7 @@ bool TalkOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         npcclient->GetNetworkMgr()->QueueTalkCommand(npc->GetActor(), npc->GetName() + text);
         
         Perception collision("friend:" + command);
-        friendNPC->TriggerEvent(&collision, eventmgr);
+        friendNPC->TriggerEvent(&collision);
     }
     return true;
 }
@@ -2651,7 +2651,7 @@ void MeleeOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
             npc->GetCurrentBehavior()->ApplyNeedDelta(-5);
 
             Perception range("target out of range");
-            npc->TriggerEvent(&range, eventmgr);
+            npc->TriggerEvent(&range);
         }
         else // no hated targets around
         {
@@ -3026,7 +3026,7 @@ void MovePathOperation::Advance(float timedelta, NPC *npc, EventManager *eventmg
         // None linear movement so we have to queue DRData updates.
         npcclient->GetNetworkMgr()->QueueDRData(npc);
 
-        npc->ResumeScript(eventmgr, npc->GetBrain()->GetCurrentBehavior() );
+        npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior() );
 
         return;
     }
@@ -3242,7 +3242,7 @@ void WatchOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
     if (!watchedEnt)
     {
         npc->Printf(5,"No entity to watch");
-        npc->ResumeScript(eventmgr, npc->GetBrain()->GetCurrentBehavior() );
+        npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior() );
         return; // Nothing to do for this behavior.
     }
 
@@ -3252,8 +3252,8 @@ void WatchOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
         str.Append(typeStr[type]);
         str.Append(" out of range");
         Perception range(str);
-        npc->TriggerEvent(&range, eventmgr);
-        npc->ResumeScript(eventmgr, npc->GetBrain()->GetCurrentBehavior() );
+        npc->TriggerEvent(&range);
+        npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior() );
         return; // Lost track of the watched entity.
     }
 }

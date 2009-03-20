@@ -110,7 +110,7 @@ psLinearMovement* NPC::GetLinMove()
     return NULL;
 }
 
-void NPC::Load(const char* name, PID pid, NPCType* type, const char* region_name, int debugging, bool disabled)
+void NPC::Load(const char* name, PID pid, NPCType* type, const char* region_name, int debugging, bool disabled, EventManager* eventmanager)
 {
     this->name = name;
     this->pid = pid;
@@ -118,10 +118,10 @@ void NPC::Load(const char* name, PID pid, NPCType* type, const char* region_name
     this->region_name = region_name;
     this->debugging = debugging;
     this->disabled = disabled;
-    this->brain = new NPCType(*type);
+    this->brain = new NPCType(*type, eventmanager);
 }
 
-bool NPC::Load(iResultRow& row, csHash<NPCType*, const char*>& npctypes)
+bool NPC::Load(iResultRow& row, csHash<NPCType*, const char*>& npctypes, EventManager* eventmanager)
 {
     name = row["name"];
     pid   = row.GetInt("char_id");
@@ -179,7 +179,7 @@ bool NPC::Load(iResultRow& row, csHash<NPCType*, const char*>& npctypes)
         disabled = false;
     }
 
-    brain = new NPCType(*t); // deep copy constructor
+    brain = new NPCType(*t, eventmanager); // deep copy constructor
 
     return true; // success
 }
@@ -221,30 +221,30 @@ void NPC::SetActor(gemNPCActor * actor)
 }
 
 
-void NPC::Advance(csTicks when,EventManager *eventmgr)
+void NPC::Advance(csTicks when)
 {
     if (last_update && !disabled)
     {
-        brain->Advance(when-last_update,this,eventmgr);
+        brain->Advance(when-last_update,this);
     }
 
     last_update = when;
 }
 
-void NPC::ResumeScript(EventManager *eventmgr,Behavior *which)
+void NPC::ResumeScript(Behavior *which)
 {
     if (!disabled)
     {
-        brain->ResumeScript(this,eventmgr,which);
+        brain->ResumeScript(this,which);
     }
 }
 
-void NPC::TriggerEvent(Perception *pcpt,EventManager *eventmgr)
+void NPC::TriggerEvent(Perception *pcpt)
 {
     if (!disabled)
     {
         Printf(15,"Got event %s",pcpt->ToString().GetData() );
-        brain->FirePerception(this,eventmgr,pcpt);
+        brain->FirePerception(this,pcpt);
     }
 }
 
@@ -424,7 +424,7 @@ void NPC::DumpHateList()
 void NPC::ClearState()
 {
     Printf(5,"ClearState");
-    brain->ClearState();
+    brain->ClearState(this);
     last_perception = NULL;
     hatelist.Clear();
     SetAlive(false);

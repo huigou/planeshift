@@ -98,7 +98,7 @@ public:
     void DeepCopy(Reaction& other,BehaviorSet& behaviors);
 
     bool Load(iDocumentNode *node,BehaviorSet& behaviors);
-    void React(NPC *who,EventManager *eventmgr,Perception *pcpt);
+    void React(NPC *who,Perception *pcpt);
 
     // Caled by perception related to entitis to check
     // for reaction against visibility and invincibility

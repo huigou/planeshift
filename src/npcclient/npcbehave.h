@@ -66,9 +66,10 @@ protected:
     csPDelArray<Behavior> behaviors;
     Behavior *active;
     float max_need;
+    EventManager *eventmgr;
 
 public:
-    BehaviorSet() { active=NULL; }
+    BehaviorSet(EventManager *eventmanager) { active=NULL; eventmgr = eventmanager; }
 
     /// Returns true if the behavior didn't already exist. Otherwise returns false and removes the existing duplicate behavior.
     bool Add(Behavior *b);
@@ -76,12 +77,12 @@ public:
     
     Behavior *Find(const char *name);
     void DeepCopy(BehaviorSet& other);
-    void ClearState();
+    void ClearState(NPC *npc);
 
     /// Advances the behaviors and returns the active one.
-    Behavior* Advance(csTicks delta,NPC *npc,EventManager *eventmgr);
-    void Interrupt(NPC *npc,EventManager *eventmgr);
-    void ResumeScript(NPC *npc,EventManager *eventmgr,Behavior *which);
+    Behavior* Advance(csTicks delta,NPC *npc);
+    void Interrupt(NPC *npc);
+    void ResumeScript(NPC *npc,Behavior *which);
     Behavior *GetCurrentBehavior() { return active; }
     void DumpBehaviorList(NPC *npc);
 };
@@ -110,21 +111,20 @@ protected:
     VelSource velSource;
 
 public:
-    NPCType(psNPCClient* npcclient);
-    NPCType(psNPCClient* npcclient, const char *n);
-    NPCType(NPCType& other) { DeepCopy(other); }
+    NPCType(psNPCClient* npcclient, EventManager* eventmanager);
+    NPCType(NPCType& other, EventManager* eventmanager): behaviors(eventmanager) { DeepCopy(other); }
 
     ~NPCType();
     void DeepCopy(NPCType& other);
-    void ClearState();
+    void ClearState(NPC *npc);
 
     bool Load(iDocumentNode *node);
     const char* GetName(){ return name.GetDataSafe(); }
 
-    void Advance(csTicks delta,NPC *npc,EventManager *eventmgr);
-    void Interrupt(NPC *npc,EventManager *eventmgr);
-    void ResumeScript(NPC *npc,EventManager *eventmgr,Behavior *which);
-    void FirePerception(NPC *npc,EventManager *eventmgr,Perception *pcpt);
+    void Advance(csTicks delta,NPC *npc);
+    void Interrupt(NPC *npc);
+    void ResumeScript(NPC *npc,Behavior *which);
+    void FirePerception(NPC *npc,Perception *pcpt);
 
     void DumpBehaviorList(NPC *npc) { behaviors.DumpBehaviorList(npc); }
     void DumpReactionList(NPC *npc);

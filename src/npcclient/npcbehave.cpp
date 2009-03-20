@@ -60,14 +60,8 @@ extern bool running;
 
 psNPCClient* NPCType::npcclient = NULL;
 
-NPCType::NPCType(psNPCClient* npcclient)
-    :ang_vel(999),vel(999),velSource(VEL_DEFAULT)
-{
-    this->npcclient = npcclient;
-}
-
-NPCType::NPCType(psNPCClient* npcclient, const char *n)
-    :name(n),ang_vel(999),vel(999),velSource(VEL_DEFAULT)
+NPCType::NPCType(psNPCClient* npcclient, EventManager* eventmanager)
+    :behaviors(eventmanager),ang_vel(999),vel(999),velSource(VEL_DEFAULT)
 {
     this->npcclient = npcclient;
 }
@@ -197,11 +191,11 @@ bool NPCType::Load(iDocumentNode *node)
     return true; // success
 }
 
-void NPCType::FirePerception(NPC *npc, EventManager *eventmgr, Perception *pcpt)
+void NPCType::FirePerception(NPC *npc, Perception *pcpt)
 {
     for (size_t x=0; x<reactions.GetSize(); x++)
     {
-        reactions[x]->React(npc,eventmgr,pcpt);
+        reactions[x]->React(npc,pcpt);
     }
 }
 
@@ -216,24 +210,24 @@ void NPCType::DumpReactionList(NPC *npc)
     }
 }
 
-void NPCType::ClearState()
+void NPCType::ClearState(NPC *npc)
 {
-    behaviors.ClearState();
+    behaviors.ClearState(npc);
 }
 
-void NPCType::Advance(csTicks delta, NPC *npc, EventManager *eventmgr)
+void NPCType::Advance(csTicks delta, NPC *npc)
 {
-    behaviors.Advance(delta,npc,eventmgr);
+    behaviors.Advance(delta,npc);
 }
 
-void NPCType::ResumeScript(NPC *npc, EventManager *eventmgr, Behavior *which)
+void NPCType::ResumeScript(NPC *npc, Behavior *which)
 {
-    behaviors.ResumeScript(npc, eventmgr, which);
+    behaviors.ResumeScript(npc, which);
 }
 
-void NPCType::Interrupt(NPC *npc, EventManager *eventmgr)
+void NPCType::Interrupt(NPC *npc)
 {
-    behaviors.Interrupt(npc, eventmgr);
+    behaviors.Interrupt(npc);
 }
 
 float NPCType::GetAngularVelocity(NPC * /*npc*/)
@@ -265,10 +259,12 @@ float NPCType::GetVelocity(NPC *npc)
 
 //---------------------------------------------------------------------------
 
-void BehaviorSet::ClearState()
+void BehaviorSet::ClearState(NPC *npc)
 {
     for (size_t i = 0; i<behaviors.GetSize(); i++)
     {
+    	// Ensure any existing script is ended correctly.
+    	Interrupt(npc);
         behaviors[i]->ResetNeed();
         behaviors[i]->SetActive(false);
         behaviors[i]->ClearInterrupted();
@@ -290,7 +286,7 @@ bool BehaviorSet::Add(Behavior *b)
     return true;
 }
 
-Behavior* BehaviorSet::Advance(csTicks delta,NPC *npc,EventManager *eventmgr)
+Behavior* BehaviorSet::Advance(csTicks delta,NPC *npc)
 {
     while (true)
     {
@@ -380,7 +376,7 @@ Behavior* BehaviorSet::Advance(csTicks delta,NPC *npc,EventManager *eventmgr)
     return active;
 }
 
-void BehaviorSet::ResumeScript(NPC *npc,EventManager *eventmgr,Behavior *which)
+void BehaviorSet::ResumeScript(NPC *npc,Behavior *which)
 {
     if (which == active && which->ApplicableToNPCState(npc))
     {
@@ -388,7 +384,7 @@ void BehaviorSet::ResumeScript(NPC *npc,EventManager *eventmgr,Behavior *which)
     }
 }
 
-void BehaviorSet::Interrupt(NPC *npc,EventManager *eventmgr)
+void BehaviorSet::Interrupt(NPC *npc)
 {
     if (active)
     {
@@ -853,7 +849,7 @@ void psResumeScriptEvent::Trigger()
     if (running)
     {
         scriptOp->ResumeTrigger(this);
-        npc->ResumeScript(eventmgr,behavior);
+        npc->ResumeScript(behavior);
     }
 }
 

@@ -202,7 +202,7 @@ void Reaction::DeepCopy(Reaction& other,BehaviorSet& behaviors)
     }
 }
 
-void Reaction::React(NPC *who, EventManager *eventmgr, Perception *pcpt)
+void Reaction::React(NPC *who, Perception *pcpt)
 {
     CS_ASSERT(who);
 
