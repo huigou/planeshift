@@ -4,6 +4,9 @@
 
 ﻿*** 2009-03-20 by Andrew Dai
 - Fixed npcclient crashes that were referencing a deleted object in MeleeOperation.
+- Fixed npcclient crash where script operations were not being reset completely when
+  a npcobject is no longer being tracked.
+- Also added EventManager reference to BehaviorSets.
 
 *** 2009-03-19 by Andrew Dai
 - Reduced network queue size for clients on server.
