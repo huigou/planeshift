@@ -40,7 +40,7 @@ psNPCClient* npcclient;
 
 class BehaviorSetTest : public testing::Test {
 protected:
-    BehaviorSetTest() {
+    BehaviorSetTest(): behaviorset(&eventmgr) {
         if (iSCF::SCF == 0)
             scfInitialize(0);
         objreg = new csObjectRegistry();
@@ -85,7 +85,7 @@ TEST_F(BehaviorSetTest, Advance2Behaviors) {
     Behavior* behavior2 = new Behavior("test_behavior2");
     behavior2->SetDecay(20)->SetGrowth(100)->SetCompletionDecay(100)->SetInitial(10);
     behaviorset.Add(behavior2);
-    EXPECT_EQ(behavior, behaviorset.Advance(10, npc, &eventmgr));
-    EXPECT_EQ(behavior, behaviorset.Advance(10, npc, &eventmgr));
-    EXPECT_EQ(behavior2, behaviorset.Advance(1000, npc, &eventmgr));
+    EXPECT_EQ(behavior, behaviorset.Advance(10, npc));
+    EXPECT_EQ(behavior, behaviorset.Advance(10, npc));
+    EXPECT_EQ(behavior2, behaviorset.Advance(1000, npc));
 }

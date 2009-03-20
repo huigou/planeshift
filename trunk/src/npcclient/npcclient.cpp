@@ -364,7 +364,7 @@ bool psNPCClient::LoadNPCTypes(iDocumentNode* root)
         // This is a NPC so load it.
         if ( strcmp( node->GetValue(), "npctype" ) == 0 )
         {
-            NPCType *npctype = new NPCType(this);
+            NPCType *npctype = new NPCType(this, eventmanager);
             if (npctype->Load(node))
             {
                 npctypes.Put(npctype->GetName(), npctype);
@@ -478,7 +478,7 @@ NPC* psNPCClient::ReadSingleNPC(PID char_id)
     }
     NPC *newnpc = new NPC(this, network, world, engine, cdsys);
 
-    if (newnpc->Load(result[0],npctypes))
+    if (newnpc->Load(result[0],npctypes, eventmanager))
     {
         npcs.Push(newnpc);
         return newnpc;
@@ -512,7 +512,7 @@ bool psNPCClient::ReadNPCsFromDatabase()
         }
 
         NPC *npc = new NPC(this, network, world, engine, cdsys);
-        if (npc->Load(rs[i],npctypes))
+        if (npc->Load(rs[i],npctypes, eventmanager))
         {
             npcs.Push(npc);
 
@@ -748,7 +748,7 @@ void psNPCClient::TriggerEvent(NPC *npc,Perception *pcpt,float max_range,
 {
     if (npc)
     {
-        npc->TriggerEvent(pcpt, eventmanager);
+        npc->TriggerEvent(pcpt);
     }
     else
     {
@@ -759,7 +759,7 @@ void psNPCClient::TriggerEvent(NPC *npc,Perception *pcpt,float max_range,
 
             if (max_range <= 0.0)  // broadcast perceptions
             {
-                npcs[i]->TriggerEvent(pcpt,eventmanager);
+                npcs[i]->TriggerEvent(pcpt);
             }
             else
             {
@@ -775,7 +775,7 @@ void psNPCClient::TriggerEvent(NPC *npc,Perception *pcpt,float max_range,
                 
                 if (dist <= max_range)
                 {
-                    npcs[i]->TriggerEvent(pcpt, eventmanager);
+                    npcs[i]->TriggerEvent(pcpt);
                 }
             }
         }
@@ -836,7 +836,7 @@ void psNPCClient::Tick()
         {
             csTicks start = csGetTicks();             // When did we start
 
-            npcs[i]->Advance(when,eventmanager);
+            npcs[i]->Advance(when);
 
             csTicks timeTaken = csGetTicks() - start; // How long did it take
 
@@ -1372,7 +1372,7 @@ void psNPCClient::ListLocations(const char * pattern)
 
 void psNPCClient::HandleDeath(NPC *who)
 {
-    who->GetBrain()->Interrupt(who,eventmanager);
+    who->GetBrain()->Interrupt(who);
     who->SetAlive(false);
     if (who->GetTribe())
     {

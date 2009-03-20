@@ -130,8 +130,8 @@ public:
     uint8_t               GetDRCounter() { return ++DRcounter;}
     void                  SetDRCounter(uint8_t counter) { DRcounter = counter;}
 
-    bool Load(iResultRow& row,csHash<NPCType*, const char*>& npctypes);
-    void Load(const char* name, PID pid, NPCType* type, const char* region_name, int debugging, bool disabled);
+    bool Load(iResultRow& row,csHash<NPCType*, const char*>& npctypes, EventManager* eventmanager);
+    void Load(const char* name, PID pid, NPCType* type, const char* region_name, int debugging, bool disabled, EventManager* eventmanager);
 
     bool InsertCopy(PID use_char_id, PID ownerPID);
 
@@ -165,10 +165,10 @@ public:
 
     void ClearState();
 
-    void Advance(csTicks when,EventManager *eventmgr);
-    void ResumeScript(EventManager *eventmgr,Behavior *which);
+    void Advance(csTicks when);
+    void ResumeScript(Behavior *which);
 
-    void TriggerEvent(Perception *pcpt,EventManager *eventmgr);
+    void TriggerEvent(Perception *pcpt);
     void SetLastPerception(Perception *pcpt);
     Perception *GetLastPerception() { return last_perception; }
 
