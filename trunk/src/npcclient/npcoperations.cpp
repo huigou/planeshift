@@ -2666,6 +2666,7 @@ void MeleeOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
     }
     if (ent != attacked_ent)
     {
+        attacked_ent = ent;
         if (attacked_ent)
         {
             npc->Printf(5, "Melee switching to attack %s(%s)", attacked_ent->GetName(), ShowID(attacked_ent->GetEID()));
@@ -2674,7 +2675,6 @@ void MeleeOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
         {
             npc->Printf(5, "Melee stop attack");
         }
-        attacked_ent = ent;
         npcclient->GetNetworkMgr()->QueueAttackCommand(npc->GetActor(), ent);
     }
 }
