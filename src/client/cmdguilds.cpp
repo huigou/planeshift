@@ -128,7 +128,7 @@ const char *psGuildCommands::HandleCommand(const char *cmd)
             csString command;
             pawsCheckBox* onlineOnly = NULL;
             if(PawsManager::GetSingleton().FindWidget("GuildWindow")) //we can't be sure this is loaded
-                pawsCheckBox* onlineOnly = (pawsCheckBox*)PawsManager::GetSingleton().FindWidget("GuildWindow")->FindWidget("OnlineOnly");
+                onlineOnly = (pawsCheckBox*)PawsManager::GetSingleton().FindWidget("GuildWindow")->FindWidget("OnlineOnly");
             command.Format("<r onlineonly=\"%s\"/>", !onlineOnly || onlineOnly->GetState() ? "yes":"no");    
             psGUIGuildMessage msg2(psGUIGuildMessage::SET_ONLINE, command );
             msg2.SendMessage();
