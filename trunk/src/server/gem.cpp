@@ -1980,6 +1980,13 @@ double gemActor::CalcFunction(const char *f, const double *params)
     {
         return ActiveSpellCount(MathScriptEngine::GetString(params[0]));
     }
+    else if (func == "Faction")
+    {
+        const char *factionName = MathScriptEngine::GetString(params[0]);
+        Faction *faction = CacheManager::GetSingleton().GetFactionByName(factionName);
+        CS_ASSERT(faction);
+        return (double) factions->GetFaction(faction);
+    }
     CS_ASSERT(psChar);
     return psChar->CalcFunction(f, params);
 }

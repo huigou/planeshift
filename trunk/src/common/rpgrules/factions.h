@@ -109,6 +109,10 @@ public:
      */
     bool CheckFaction(Faction * faction, int value);
 
+    /**
+     * Just get the number.
+     */
+    int GetFaction(Faction *faction);
 };
 
 
