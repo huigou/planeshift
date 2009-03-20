@@ -261,10 +261,10 @@ float NPCType::GetVelocity(NPC *npc)
 
 void BehaviorSet::ClearState(NPC *npc)
 {
+	// Ensure any existing script is ended correctly.
+	Interrupt(npc);
     for (size_t i = 0; i<behaviors.GetSize(); i++)
     {
-    	// Ensure any existing script is ended correctly.
-    	Interrupt(npc);
         behaviors[i]->ResetNeed();
         behaviors[i]->SetActive(false);
         behaviors[i]->ClearInterrupted();
