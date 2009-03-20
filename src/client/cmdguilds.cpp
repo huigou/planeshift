@@ -112,8 +112,12 @@ const char *psGuildCommands::HandleCommand(const char *cmd)
         {
 			if ((words[1]!="yes")&&(words[1]!="no"))
 				return "Syntax: /guildinfo yes|no";
-			pawsCheckBox* onlineOnly = (pawsCheckBox*)PawsManager::GetSingleton().FindWidget("GuildWindow")->FindWidget("OnlineOnly");
-			onlineOnly->SetState(words[1]=="yes");
+            if(PawsManager::GetSingleton().FindWidget("GuildWindow")) //we can't be sure this is loaded
+            {
+                pawsCheckBox* onlineOnly = (pawsCheckBox*)PawsManager::GetSingleton().FindWidget("GuildWindow")->FindWidget("OnlineOnly");
+                if(onlineOnly)
+			        onlineOnly->SetState(words[1]=="yes");
+            }
             csString command;
             command.Format("<r onlineonly=\"%s\"/>", (const char*)words[1] );
             psGUIGuildMessage msg2(psGUIGuildMessage::SET_ONLINE, command );
@@ -121,9 +125,11 @@ const char *psGuildCommands::HandleCommand(const char *cmd)
         }
         else
         {
-            csString command;            
-            pawsCheckBox* onlineOnly = (pawsCheckBox*)PawsManager::GetSingleton().FindWidget("GuildWindow")->FindWidget("OnlineOnly");
-            command.Format("<r onlineonly=\"%s\"/>", onlineOnly->GetState() ? "yes":"no");    
+            csString command;
+            pawsCheckBox* onlineOnly = NULL;
+            if(PawsManager::GetSingleton().FindWidget("GuildWindow")) //we can't be sure this is loaded
+                pawsCheckBox* onlineOnly = (pawsCheckBox*)PawsManager::GetSingleton().FindWidget("GuildWindow")->FindWidget("OnlineOnly");
+            command.Format("<r onlineonly=\"%s\"/>", !onlineOnly || onlineOnly->GetState() ? "yes":"no");    
             psGUIGuildMessage msg2(psGUIGuildMessage::SET_ONLINE, command );
             msg2.SendMessage();
         }
