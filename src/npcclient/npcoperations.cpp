@@ -2777,14 +2777,14 @@ bool WaitOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     //now persist
     npcclient->GetNetworkMgr()->QueueDRData(npc);
 
-    Resume((int)(remaining*1000.0),npc,eventmgr);
-
     return false;
 }
 
 void WaitOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
 {
     remaining -= timedelta;
+    if(remaining <= 0)
+    	npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior() );
     npc->Printf(10, "waiting... %.2f",remaining);
 }
 
