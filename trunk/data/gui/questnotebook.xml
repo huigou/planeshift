@@ -1,6 +1,6 @@
 <widget_description>
 
-  <pawsQuestListWindow name="QuestNotebook" style="topwindow" visible="no" style="New Standard GUI">
+  <pawsQuestListWindow name="QuestNotebook" style="topwindow" visible="no"  savepositions="yes" movable="yes"  style="New Standard GUI">
     <frame x="100" y="100" width="550" height="400" border="yes" />
     <title resource="Scaling Title Bar" text="Quest & Events Notebook" align="left" close_button="yes"/>
 
