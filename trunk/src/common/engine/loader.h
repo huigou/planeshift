@@ -200,12 +200,12 @@ private:
         {
         }
 
-        inline bool InRange(const csVector3& pos, const csBox3& curBBox)
+        inline bool InRange(const csBox3& curBBox)
         {
             return !mObject.IsValid() && curBBox.Overlap(bbox);
         }
 
-        inline bool OutOfRange(const csVector3& pos, const csBox3& curBBox)
+        inline bool OutOfRange(const csBox3& curBBox)
         {
             return mObject.IsValid() && !curBBox.Overlap(bbox);
         }
@@ -234,6 +234,16 @@ private:
         {
         }
 
+        inline bool InRange(const csBox3& curBBox)
+        {
+            return !object.IsValid() && curBBox.Overlap(bbox);
+        }
+
+        inline bool OutOfRange(const csBox3& curBBox)
+        {
+            return object.IsValid() && !curBBox.Overlap(bbox);
+        }
+
         csRef<iLight> object;
         csString name;
         csVector3 pos;
@@ -242,6 +252,7 @@ private:
         csLightDynamicType dynamic;
         csLightAttenuationMode attenuation;
         csLightType type;
+        csBox3 bbox;
     };
 
     void CleanDisconnectedSectors(Sector* sector);
