@@ -424,16 +424,13 @@ bool psEngine::Initialize (int level)
 
         // This could be a file or a dir
         csString slash(CS_PATH_SEPARATOR);
-        if(!vfs->Exists(skinPath))
+        if(vfs->Exists(skinPath + slash))
         {
-            if(vfs->Exists(skinPath + slash))
-            {
-                skinPath += slash;
-            }
-            else if(vfs->Exists(skinPath + ".zip"))
-            {
-                skinPath += ".zip";
-            }
+            skinPath += slash;
+        }
+        else if(vfs->Exists(skinPath + ".zip"))
+        {
+            skinPath += ".zip";
         }
 
 
