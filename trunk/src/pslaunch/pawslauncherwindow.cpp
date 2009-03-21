@@ -75,7 +75,8 @@ bool pawsLauncherWindow::PostSetup()
 void pawsLauncherWindow::UpdateNews()
 {
     pawsMessageTextBox* serverNews = (pawsMessageTextBox*)FindWidget("ServerNews");
-    psLaunchGUI->GetDownloader()->DownloadFile(configFile->GetStr("Launcher.News.URL", ""), "servernews", true, false);
+    psLaunchGUI->GetDownloader()->DownloadFile(configFile->GetStr("Launcher.News.URL", "http://www.xordan.com/servernews"),
+      "servernews", true, false);
     
     ifstream newsFile("servernews", ifstream::in);
     csString buffer;
