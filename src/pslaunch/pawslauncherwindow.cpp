@@ -847,7 +847,7 @@ void pawsLauncherWindow::SaveSettings()
     configUser->SetStr("PlaneShift.GUI.Language", languages->GetSelectedRowString());
 
     pawsComboBox* skins = (pawsComboBox*)FindWidget("Skins");
-    configUser->SetStr("PlaneShift.GUI.Skin.Selected", skins->GetSelectedRowString());
+    configUser->SetStr("PlaneShift.GUI.Skin.Selected", skins->GetSelectedRowString().Append(".zip"));
 
     // Save everything
     configUser->Save();
@@ -865,12 +865,21 @@ void pawsLauncherWindow::LoadSkin(const char* name)
     csString skinPath = configPSC.GetStr("PlaneShift.GUI.Skin.Dir");
 
 	// Create full path to skin.
-    csString zip = skinPath + name + ".zip";
+    csString zip = skinPath + name;
 
     // This .zip could be a file or a dir
     csString slash(CS_PATH_SEPARATOR);
     if (psLaunchGUI->GetVFS()->Exists(zip + slash))
         zip += slash;
+    else if(psLaunchGUI->GetVFS()->Exists(zip + ".zip"))
+    {
+        zip += ".zip";
+    }
+    else if(psLaunchGUI->GetVFS()->Exists(zip + ".zip" + slash))
+    {
+        zip += ".zip";
+        zip += slash;
+    }
 
     if (!psLaunchGUI->GetVFS()->Exists(zip))
     {
@@ -883,7 +892,10 @@ void pawsLauncherWindow::LoadSkin(const char* name)
     {
         if(!skins->Select(name))
         {
-            return;
+            if(!skins->Select(csString(name).Slice(0, csString(name).FindFirst('.'))))
+            {
+                return;
+            }
         }
     }
 

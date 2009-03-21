@@ -419,15 +419,21 @@ bool psEngine::Initialize (int level)
 
         // Mount the selected gui first to allow overwriting of certain elements
         csString skinPath;
-        skinPath += cfgmgr->GetStr("PlaneShift.GUI.Skin.Dir","/planeshift/art/skins/");
-        skinPath += cfgmgr->GetStr("PlaneShift.GUI.Skin.Selected","default");
-        // skinPath += ".zip"; // Don't require the .zip on there, so unzipped skin directories don't need to be named with .zip
+        skinPath += cfgmgr->GetStr("PlaneShift.GUI.Skin.Dir", "/planeshift/art/skins/");
+        skinPath += cfgmgr->GetStr("PlaneShift.GUI.Skin.Selected", "default.zip");
 
-        // This .zip could be a file or a dir
+        // This could be a file or a dir
         csString slash(CS_PATH_SEPARATOR);
-        if ( vfs->Exists(skinPath + slash) )
+        if(!vfs->Exists(skinPath))
         {
-            skinPath += slash;
+            if(vfs->Exists(skinPath + slash))
+            {
+                skinPath += slash;
+            }
+            else if(vfs->Exists(skinPath + ".zip"))
+            {
+                skinPath += ".zip";
+            }
         }
 
 
@@ -926,9 +932,9 @@ bool psEngine::Process3D(iEvent& ev)
     }
     else
     {
-		// Sleep for a bit but don't draw anything if minimized
-		FrameLimit();
-		return true;
+        // Sleep for a bit but don't draw anything if minimized
+        FrameLimit();
+        return true;
     }
 
     return false;
