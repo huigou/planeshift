@@ -138,12 +138,14 @@ private:
     class Sector : public CS::Utility::FastRefCount<Sector>
     {
     public:
-        Sector(const char* name) : name(name), isLoading(false), checked(false), objectCount(0), alwaysLoadedCount(0)
+        Sector(const char* name) : name(name), init(false), isLoading(false), checked(false),
+          objectCount(0), alwaysLoadedCount(0)
         {
             ambient = csColor(0.0f);
         }
 
         csString name;
+        bool init;
         bool isLoading;
         bool checked;
         csString culler;
@@ -258,7 +260,8 @@ private:
     void CleanDisconnectedSectors(Sector* sector);
     void FindConnectedSectors(csRefArray<Sector>& connectedSectors, Sector* sector);
     void CleanSector(Sector* sector);
-    void LoadSector(const csVector3& pos, const csBox3& loadBox, const csBox3& unloadBox, Sector* sector);
+    void LoadSector(const csVector3& pos, const csBox3& loadBox, const csBox3& unloadBox,
+      Sector* sector, uint depth);
     void FinishMeshLoad(MeshObj* mesh);
     bool LoadMesh(MeshObj* mesh);
     bool LoadMeshFact(MeshFact* meshfact);
@@ -279,6 +282,9 @@ private:
     csRef<iSyntaxService> syntaxService;
     uint gfxFeatures;
     bool validPosition;
+
+    // Limit on how many portals deep we load.
+    static const int maxPortalDepth = 3;
 
     csRef<Sector> lastSector;
     csVector3 lastPos;
