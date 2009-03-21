@@ -510,7 +510,14 @@ int main(int argc, char* argv[])
               memset(&piProcessInfo, 0, sizeof(piProcessInfo));
               siStartupInfo.cb = sizeof(siStartupInfo);
 
-              CreateProcess(NULL, "psclient.exe", 0, 0, false,
+              csString commandLine = "psclient.exe";
+
+              for(int i=1; i<argc; ++i)
+              {
+                  commandLine.AppendFmt(" %s", argv[i]);
+              }
+
+              CreateProcess(NULL, (LPSTR)commandLine.GetData(), 0, 0, false,
                 CREATE_DEFAULT_ERROR_MODE, 0, 0, &siStartupInfo, &piProcessInfo);
               GetExitCodeProcess(piProcessInfo.hProcess, &dwExitCode);
               while (dwExitCode == STILL_ACTIVE)
@@ -525,22 +532,40 @@ int main(int argc, char* argv[])
               if(fork() == 0)
               {
 #ifdef CS_PLATFORM_MACOSX
-                execl("/usr/bin/open", "/usr/bin/open", "psclient.app", (char*)0); 
+                  char* nargv[argc+2];
+                  char* name = "/usr/bin/open";
+                  char* psc = "psclient.app";
+                  nargv[0] = name;
+                  nargv[1] = psc;
+                  for(int i=2; i<argc+1; ++i)
+                  {
+                      nargv[i] = argv[i-1];
+                  }
+                  nargv[argc+1] = (char*)0;
+                  execv("/usr/bin/open", nargv); 
 #else
-                execl("./psclient", "./psclient", (char*)0);  
+                  char* nargv[argc+1];
+                  char* name = "./psclient";
+                  nargv[0] = name;
+                  for(int i=1; i<argc; ++i)
+                  {
+                      nargv[i] = argv[i];
+                  }
+                  nargv[argc] = (char*)0;
+                  execv("./psclient", nargv);  
 #endif
               }                
               else
               {
-                int status;
-                wait(&status);
-                exitApp = (status == 0);
+                  int status;
+                  wait(&status);
+                  exitApp = (status == 0);
               }                
 #endif
             }
             else
             {
-              exitApp = true;
+                exitApp = true;
             }
         }
     }
