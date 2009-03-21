@@ -258,7 +258,7 @@ private:
     void CleanDisconnectedSectors(Sector* sector);
     void FindConnectedSectors(csRefArray<Sector>& connectedSectors, Sector* sector);
     void CleanSector(Sector* sector);
-    void LoadSector(const csVector3& pos, const csBox3& bbox, Sector* sector);
+    void LoadSector(const csVector3& pos, const csBox3& loadBox, const csBox3& unloadBox, Sector* sector);
     void FinishMeshLoad(MeshObj* mesh);
     bool LoadMesh(MeshObj* mesh);
     bool LoadMeshFact(MeshFact* meshfact);
