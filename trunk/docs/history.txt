@@ -7,6 +7,10 @@
 - Fixed npcclient crash where script operations were not being reset completely when
   a npcobject is no longer being tracked.
 - Also added EventManager reference to BehaviorSets.
+- Made NPC AI ticks more flexible so that they are no longer grouped together.
+- Increased NPC reactions by reducing delay to 200.
+- Increased NPC position resolution by increasing DR updates from once per 2.5 seconds
+  to once per 1.5 seconds.
 
 *** 2009-03-19 by Andrew Dai
 - Reduced network queue size for clients on server.
