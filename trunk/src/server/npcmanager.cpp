@@ -2080,7 +2080,7 @@ void psNPCManagerTick::Trigger()
 {
     static int counter=0;
 
-    if (!(counter%5))
+    if (!(counter%3))
         npcmgr->UpdateWorldPositions();
 
     npcmgr->SendAllCommands();
