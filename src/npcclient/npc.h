@@ -47,6 +47,9 @@ class gemNPCObject;
 class gemNPCActor;
 struct RaceInfo_t;
 class LocationType;
+class psNPCTick;
+
+#define NPC_BRAIN_TICK 200
 
 /**
 * This object represents the entities which have attacked or 
@@ -113,6 +116,7 @@ protected:
     bool               checkedResult;
     bool               disabled;
     
+    void Advance(csTicks when);
 
 public:
     HateList           hatelist;
@@ -120,6 +124,9 @@ public:
     NPC(psNPCClient* npcclient, NetworkManager* networkmanager, psWorld* world, iEngine* engine, iCollideSystem* cdsys);
     ~NPC();
 
+    
+    void Tick();
+    
     PID                   GetPID() { return pid; }
     /**
      * Return the entity ID if an entity exist else 0.
@@ -146,6 +153,8 @@ public:
     Behavior *GetCurrentBehavior() { return brain->GetCurrentBehavior(); }
     NPCType  *GetBrain() { return brain; }
 
+    void Dump();
+    
     /**
      * Dump all state information for npc.
      */
@@ -165,7 +174,6 @@ public:
 
     void ClearState();
 
-    void Advance(csTicks when);
     void ResumeScript(Behavior *which);
 
     void TriggerEvent(Perception *pcpt);
@@ -247,10 +255,29 @@ public:
     void CheckPosition();
     
 private:
+    psNPCTick* tick;
     psNPCClient* npcclient;
     NetworkManager* networkmanager;
     psWorld* world;
     iCollideSystem* cdsys;
+    
+    friend class psNPCTick;
+};
+
+// The event that makes the NPC brain go TICK.
+class psNPCTick : public psGameEvent
+{
+protected:
+    NPC *npc;
+
+public:
+	psNPCTick(int offsetticks): psGameEvent(0,offsetticks,"psNPCTick") {};
+    virtual void Trigger()
+    {
+    	npc->tick = NULL;
+    	npc->Tick();
+    }
+    virtual csString ToString() const { return "psNPCTick"; } 
 };
 
 struct HateListEntry

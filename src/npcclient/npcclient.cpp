@@ -75,13 +75,13 @@
 bool running;
 extern iDataConnection *db;
 
-class psNPCTick : public psGameEvent
+class psNPCClientTick : public psGameEvent
 {
 protected:
     static psNPCClient *client;
 
 public:
-    psNPCTick(int offsetticks, psNPCClient *c);
+	psNPCClientTick(int offsetticks, psNPCClient *c);
     virtual void Trigger();  // Abstract event processing function
     virtual csString ToString() const;
 };
@@ -480,6 +480,7 @@ NPC* psNPCClient::ReadSingleNPC(PID char_id)
 
     if (newnpc->Load(result[0],npctypes, eventmanager))
     {
+    	newnpc->Tick();
         npcs.Push(newnpc);
         return newnpc;
     }
@@ -514,6 +515,7 @@ bool psNPCClient::ReadNPCsFromDatabase()
         NPC *npc = new NPC(this, network, world, engine, cdsys);
         if (npc->Load(rs[i],npctypes, eventmanager))
         {
+        	npc->Tick();
             npcs.Push(npc);
 
             CheckAttachTribes(npc);
@@ -812,15 +814,15 @@ void psNPCClient::LoadCompleted()
     // Client is loaded.
 
     // This starts the NPC AI processing loop.
-    psNPCTick *tick = new psNPCTick(255,this);
+	psNPCClientTick *tick = new psNPCClientTick(255,this);
     tick->QueueEvent();
 
 }
 
 void psNPCClient::Tick()
 {
-    // Fire a new tick for the NPC AI processing loop
-    psNPCTick *tick = new psNPCTick(250,this);
+    // Fire a new tick for the common AI processing loop
+	psNPCClientTick *tick = new psNPCClientTick(250,this);
     tick->QueueEvent();
 
     if (IsReady())
@@ -830,23 +832,6 @@ void psNPCClient::Tick()
         ScopedTimer st_tick(250, "tick for tick_counter %d.",tick_counter);
         
         csTicks when = csGetTicks();
-
-        // Advance NPC's
-        for (size_t i=0; i<npcs.GetSize(); i++)
-        {
-            csTicks start = csGetTicks();             // When did we start
-
-            npcs[i]->Advance(when);
-
-            csTicks timeTaken = csGetTicks() - start; // How long did it take
-
-            if (timeTaken > 250)                      // This took way to long time
-            {
-                CPrintf(CON_WARNING,"Used %u time to process tick for npc: %s(%s)\n",
-                        timeTaken, npcs[i]->GetName(), ShowID(npcs[i]->GetEID()));
-                DumpNPC(npcs[i]);
-            }
-        }
 
         // Advance tribes
         for (size_t j=0; j<tribes.GetSize(); j++)
@@ -1154,21 +1139,6 @@ void psNPCClient::ListAllNPCs(const char * pattern)
     }
 }
 
-void psNPCClient::DumpNPC(NPC * npc)
-{
-    npc->DumpState();
-    CPrintf(CON_CMDOUTPUT,"\n");
-    
-    npc->DumpBehaviorList();
-    CPrintf(CON_CMDOUTPUT,"\n");
-
-    npc->DumpReactionList();
-    CPrintf(CON_CMDOUTPUT,"\n");
-
-    npc->DumpHateList();            
-    CPrintf(CON_CMDOUTPUT,"\n");
-}
-
 bool psNPCClient::DumpRace(const char *pattern)
 {
     csHash<RaceInfo_t,csString>::GlobalIterator it(raceInfos.GetIterator());
@@ -1190,7 +1160,7 @@ bool psNPCClient::DumpNPC(const char *pattern)
     {
         if (npcs[i]->GetPID() == id)
         {
-            DumpNPC(npcs[i]);
+            npcs[i]->Dump();
             return true;
         }
     }
@@ -1558,21 +1528,21 @@ csArray<gemNPCObject*> psNPCClient::FindNearbyEntities( iSector* sector, const c
 
 /*------------------------------------------------------------------*/
 
-psNPCClient* psNPCTick::client = NULL;
+psNPCClient* psNPCClientTick::client = NULL;
 
-psNPCTick::psNPCTick(int offsetticks, psNPCClient *c)
-: psGameEvent(0,offsetticks,"psNPCTick")
+psNPCClientTick::psNPCClientTick(int offsetticks, psNPCClient *c)
+: psGameEvent(0,offsetticks,"psNPCClientTick")
 {
     client = c;
 }
 
-void psNPCTick::Trigger()
+void psNPCClientTick::Trigger()
 {
     if (running)
         client->Tick();
 }
 
-csString psNPCTick::ToString() const
+csString psNPCClientTick::ToString() const
 {
     return "NPC Client tick";
 }
