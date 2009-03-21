@@ -133,7 +133,7 @@ public:
     bool IsReady();
     
     /**
-    * This does 1 AI calc per NPC, 1 AI calc per Tribe then returns.
+    * This does 1 AI calc per Tribe then returns.
     */
     void Tick();
    
@@ -304,11 +304,6 @@ public:
      * List all NPCs matching pattern to console.
      */
     void ListAllNPCs(const char *pattern);
-
-    /**
-     * Print its current state info.
-     */
-    void DumpNPC(NPC *npc);
 
     /**
      * Find one npc and print its current state info.

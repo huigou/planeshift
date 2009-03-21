@@ -450,7 +450,7 @@ void psWalkPoly::CalcConts(psWalkPolyMap & map)
                     if (cont.begin != cont.end)
                     {
                         if (dbg) printf("##################################################################################################adding contact\n");
-                        if (dbg)printf("%f %f - %f %f (%i %i)\n", cont.begin.x, cont.begin.z, cont.end.x, cont.end.z, intptr_t(this), intptr_t(poly2));
+                        if (dbg)printf("%f %f - %f %f (%p %p)\n", cont.begin.x, cont.begin.z, cont.end.x, cont.end.z, this, poly2);
                         cont.poly  = poly2;
                         vert.conts.Push(cont);
                     }

@@ -59,7 +59,7 @@
 
 extern iDataConnection *db;
 
-NPC::NPC(psNPCClient* npcclient, NetworkManager* networkmanager, psWorld* world, iEngine* engine, iCollideSystem* cdsys): checked(false), hatelist(npcclient, engine, world)
+NPC::NPC(psNPCClient* npcclient, NetworkManager* networkmanager, psWorld* world, iEngine* engine, iCollideSystem* cdsys): checked(false), hatelist(npcclient, engine, world), tick(NULL)
 { 
     brain=NULL; 
     pid=0;
@@ -94,6 +94,44 @@ NPC::~NPC()
     {
         delete brain; 
     }
+}
+
+void NPC::Tick()
+{
+	// Ensure NPC only has one tick at a time.
+	CS_ASSERT(tick == NULL);
+	tick = new psNPCTick(NPC_BRAIN_TICK);
+	
+	tick->QueueEvent();
+	if(npcclient->IsReady())
+	{
+		csTicks when = csGetTicks();
+		Advance(when);  // Abstract event processing function
+        csTicks timeTaken = csGetTicks() - when; // How long did it take
+
+        if (timeTaken > 200)                      // This took way to long time
+        {
+            CPrintf(CON_WARNING,"Used %u time to process tick for npc: %s(%s)\n",
+                    timeTaken, GetName(), ShowID(GetEID()));
+            Dump();
+        }
+	}
+	npcclient->GetNetworkMgr()->SendAllCommands(true); 
+}
+
+void NPC::Dump()
+{
+    DumpState();
+    CPrintf(CON_CMDOUTPUT,"\n");
+    
+    DumpBehaviorList();
+    CPrintf(CON_CMDOUTPUT,"\n");
+
+    DumpReactionList();
+    CPrintf(CON_CMDOUTPUT,"\n");
+
+    DumpHateList();            
+    CPrintf(CON_CMDOUTPUT,"\n");
 }
 
 EID NPC::GetEID()
