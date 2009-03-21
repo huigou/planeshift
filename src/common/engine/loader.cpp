@@ -710,16 +710,16 @@ void Loader::UpdatePosition(const csVector3& pos, const char* sectorName, bool f
     if(sector.IsValid())
     {
         // Calc bbox.
-        csBox3 curBox;
-        curBox.AddBoundingVertex(pos.x+loadRange, pos.y, pos.z);
-        curBox.AddBoundingVertexSmart(pos.x, pos.y+loadRange, pos.z);
-        curBox.AddBoundingVertexSmart(pos.x, pos.y, pos.z+loadRange);
-        curBox.AddBoundingVertexSmart(pos.x-loadRange, pos.y, pos.z);
-        curBox.AddBoundingVertexSmart(pos.x, pos.y-loadRange, pos.z);
-        curBox.AddBoundingVertexSmart(pos.x, pos.y, pos.z-loadRange);
+        csBox3 loadBox;
+        loadBox.AddBoundingVertex(pos.x+loadRange, pos.y+loadRange, pos.z+loadRange);
+        loadBox.AddBoundingVertexSmart(pos.x-loadRange, pos.y-loadRange, pos.z-loadRange);
+
+        csBox3 unloadBox;
+        unloadBox.AddBoundingVertex(pos.x+loadRange*1.5, pos.y+loadRange*1.5, pos.z+loadRange*1.5);
+        unloadBox.AddBoundingVertexSmart(pos.x-loadRange*1.5, pos.y-loadRange*1.5, pos.z-loadRange*1.5);
 
         // Check.
-        LoadSector(pos, curBox, sector);
+        LoadSector(pos, loadBox, unloadBox, sector);
 
         if(force)
         {
@@ -827,7 +827,7 @@ void Loader::CleanSector(Sector* sector)
     sector->object.Invalidate();
 }
 
-void Loader::LoadSector(const csVector3& pos, const csBox3& bbox, Sector* sector)
+void Loader::LoadSector(const csVector3& pos, const csBox3& loadBox, const csBox3& unloadBox, Sector* sector)
 {
     sector->isLoading = true;
 
@@ -844,19 +844,27 @@ void Loader::LoadSector(const csVector3& pos, const csBox3& bbox, Sector* sector
         if(!sector->activePortals[i]->targetSector->isLoading && !sector->activePortals[i]->targetSector->checked)
         {
             csVector3 wwPos = pos;
-            csBox3 wwBbox = bbox;
+            csBox3 wwLoadBox = loadBox;
+            csBox3 wwUnloadBox = unloadBox;
             if(sector->activePortals[i]->warp)
             {
                 csVector3& transform = sector->activePortals[i]->transform;
                 wwPos -= transform;
-                wwBbox.SetMin(0, wwBbox.MinX()-transform.x);
-                wwBbox.SetMin(1, wwBbox.MinY()-transform.y);
-                wwBbox.SetMin(2, wwBbox.MinZ()-transform.z);
-                wwBbox.SetMax(0, wwBbox.MaxX()-transform.x);
-                wwBbox.SetMax(1, wwBbox.MaxY()-transform.y);
-                wwBbox.SetMax(2, wwBbox.MaxZ()-transform.z);
+                wwLoadBox.SetMin(0, wwLoadBox.MinX()-transform.x);
+                wwLoadBox.SetMin(1, wwLoadBox.MinY()-transform.y);
+                wwLoadBox.SetMin(2, wwLoadBox.MinZ()-transform.z);
+                wwLoadBox.SetMax(0, wwLoadBox.MaxX()-transform.x);
+                wwLoadBox.SetMax(1, wwLoadBox.MaxY()-transform.y);
+                wwLoadBox.SetMax(2, wwLoadBox.MaxZ()-transform.z);
+                wwUnloadBox.SetMin(0, wwUnloadBox.MinX()-transform.x);
+                wwUnloadBox.SetMin(1, wwUnloadBox.MinY()-transform.y);
+                wwUnloadBox.SetMin(2, wwUnloadBox.MinZ()-transform.z);
+                wwUnloadBox.SetMax(0, wwUnloadBox.MaxX()-transform.x);
+                wwUnloadBox.SetMax(1, wwUnloadBox.MaxY()-transform.y);
+                wwUnloadBox.SetMax(2, wwUnloadBox.MaxZ()-transform.z);
             }
-            LoadSector(wwPos, wwBbox, sector->activePortals[i]->targetSector);
+
+            LoadSector(wwPos, wwLoadBox, wwUnloadBox, sector->activePortals[i]->targetSector);
         }
     }
 
@@ -864,13 +872,13 @@ void Loader::LoadSector(const csVector3& pos, const csBox3& bbox, Sector* sector
     {
         if(!sector->meshes[i]->loading)
         {
-            if(sector->meshes[i]->InRange(pos, bbox))
+            if(sector->meshes[i]->InRange(pos, loadBox))
             {
                 sector->meshes[i]->loading = true;
                 loadingMeshes.Push(sector->meshes[i]);
                 ++sector->objectCount;
             }
-            else if(sector->meshes[i]->OutOfRange(pos, bbox))
+            else if(sector->meshes[i]->OutOfRange(pos, unloadBox))
             {
                 sector->meshes[i]->object->GetMovable()->ClearSectors();
                 sector->meshes[i]->object->GetMovable()->UpdateMove();
@@ -883,24 +891,31 @@ void Loader::LoadSector(const csVector3& pos, const csBox3& bbox, Sector* sector
 
     for(size_t i=0; i<sector->portals.GetSize(); i++)
     {
-        if(sector->portals[i]->InRange(bbox))
+        if(sector->portals[i]->InRange(loadBox))
         {
             if(!sector->portals[i]->targetSector->isLoading && !sector->portals[i]->targetSector->checked)
             {
                 csVector3 wwPos = pos;
-                csBox3 wwBbox = bbox;
+                csBox3 wwLoadBox = loadBox;
+                csBox3 wwUnloadBox = unloadBox;
                 if(sector->portals[i]->warp)
                 {
                     csVector3& transform = sector->portals[i]->transform;
                     wwPos -= transform;
-                    wwBbox.SetMin(0, wwBbox.MinX()-transform.x);
-                    wwBbox.SetMin(1, wwBbox.MinY()-transform.y);
-                    wwBbox.SetMin(2, wwBbox.MinZ()-transform.z);
-                    wwBbox.SetMax(0, wwBbox.MaxX()-transform.x);
-                    wwBbox.SetMax(1, wwBbox.MaxY()-transform.y);
-                    wwBbox.SetMax(2, wwBbox.MaxZ()-transform.z);
+                    wwLoadBox.SetMin(0, wwLoadBox.MinX()-transform.x);
+                    wwLoadBox.SetMin(1, wwLoadBox.MinY()-transform.y);
+                    wwLoadBox.SetMin(2, wwLoadBox.MinZ()-transform.z);
+                    wwLoadBox.SetMax(0, wwLoadBox.MaxX()-transform.x);
+                    wwLoadBox.SetMax(1, wwLoadBox.MaxY()-transform.y);
+                    wwLoadBox.SetMax(2, wwLoadBox.MaxZ()-transform.z);
+                    wwUnloadBox.SetMin(0, wwUnloadBox.MinX()-transform.x);
+                    wwUnloadBox.SetMin(1, wwUnloadBox.MinY()-transform.y);
+                    wwUnloadBox.SetMin(2, wwUnloadBox.MinZ()-transform.z);
+                    wwUnloadBox.SetMax(0, wwUnloadBox.MaxX()-transform.x);
+                    wwUnloadBox.SetMax(1, wwUnloadBox.MaxY()-transform.y);
+                    wwUnloadBox.SetMax(2, wwUnloadBox.MaxZ()-transform.z);
                 }
-                LoadSector(wwPos, wwBbox, sector->portals[i]->targetSector);
+                LoadSector(wwPos, wwLoadBox, wwUnloadBox, sector->portals[i]->targetSector);
             }
 
             sector->portals[i]->mObject = engine->CreatePortal(sector->portals[i]->name, sector->object,
@@ -925,11 +940,31 @@ void Loader::LoadSector(const csVector3& pos, const csBox3& bbox, Sector* sector
             sector->activePortals.Push(sector->portals[i]);
             ++sector->objectCount;
         }
-        else if(sector->portals[i]->OutOfRange(bbox))
+        else if(sector->portals[i]->OutOfRange(unloadBox))
         {
             if(!sector->portals[i]->targetSector->isLoading)
             {
-                LoadSector(pos, bbox, sector->portals[i]->targetSector);
+                csVector3 wwPos = pos;
+                csBox3 wwLoadBox = loadBox;
+                csBox3 wwUnloadBox = unloadBox;
+                if(sector->portals[i]->warp)
+                {
+                    csVector3& transform = sector->portals[i]->transform;
+                    wwPos -= transform;
+                    wwLoadBox.SetMin(0, wwLoadBox.MinX()-transform.x);
+                    wwLoadBox.SetMin(1, wwLoadBox.MinY()-transform.y);
+                    wwLoadBox.SetMin(2, wwLoadBox.MinZ()-transform.z);
+                    wwLoadBox.SetMax(0, wwLoadBox.MaxX()-transform.x);
+                    wwLoadBox.SetMax(1, wwLoadBox.MaxY()-transform.y);
+                    wwLoadBox.SetMax(2, wwLoadBox.MaxZ()-transform.z);
+                    wwUnloadBox.SetMin(0, wwUnloadBox.MinX()-transform.x);
+                    wwUnloadBox.SetMin(1, wwUnloadBox.MinY()-transform.y);
+                    wwUnloadBox.SetMin(2, wwUnloadBox.MinZ()-transform.z);
+                    wwUnloadBox.SetMax(0, wwUnloadBox.MaxX()-transform.x);
+                    wwUnloadBox.SetMax(1, wwUnloadBox.MaxY()-transform.y);
+                    wwUnloadBox.SetMax(2, wwUnloadBox.MaxZ()-transform.z);
+                }
+                LoadSector(wwPos, wwLoadBox, wwUnloadBox, sector->portals[i]->targetSector);
             }
 
             engine->GetMeshes()->Remove(sector->portals[i]->mObject);
@@ -942,7 +977,7 @@ void Loader::LoadSector(const csVector3& pos, const csBox3& bbox, Sector* sector
 
     for(size_t i=0; i<sector->lights.GetSize(); i++)
     {
-        if(sector->lights[i]->InRange(bbox))
+        if(sector->lights[i]->InRange(loadBox))
         {
             sector->lights[i]->object = engine->CreateLight(sector->lights[i]->name, sector->lights[i]->pos,
                 sector->lights[i]->radius, sector->lights[i]->colour, sector->lights[i]->dynamic);
@@ -951,7 +986,7 @@ void Loader::LoadSector(const csVector3& pos, const csBox3& bbox, Sector* sector
             sector->object->AddLight(sector->lights[i]->object);
             ++sector->objectCount;
         }
-        else if(sector->lights[i]->OutOfRange(bbox))
+        else if(sector->lights[i]->OutOfRange(unloadBox))
         {
             engine->RemoveLight(sector->lights[i]->object);
             sector->lights[i]->object.Invalidate();
