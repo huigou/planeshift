@@ -376,8 +376,12 @@ int main(int argc, char* argv[])
 
         if(!engine->GetConfig()->IsSelfUpdating())
         {
+#if defined(WIN32) && defined(NDEBUG)
+            printf("\nUpdater finished!\n");
+#else
             printf("\nUpdater finished, press enter to exit.\n");
             getchar();
+#endif
         }
 
         // Terminate updater!

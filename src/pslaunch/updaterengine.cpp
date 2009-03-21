@@ -176,7 +176,7 @@ void UpdaterEngine::CheckForUpdates()
         }
 
         // If using a GUI, prompt user whether or not to update.
-        if(!appName.Compare("psupdater"))
+        if(hasGUI)
         {
             infoShare->SetUpdateNeeded(true);         
             while(!infoShare->GetPerformUpdate())
@@ -223,7 +223,7 @@ void UpdaterEngine::CheckForUpdates()
         }
 
         // If using a GUI, prompt user whether or not to update.
-        if(!appName.Compare("psupdater"))
+        if(hasGUI)
         {
             infoShare->SetUpdateNeeded(true);
             while(!infoShare->GetPerformUpdate())
@@ -430,7 +430,7 @@ bool UpdaterEngine::SelfUpdate(int selfUpdating)
             fileUtil->CopyFile("/this/" + tempName, "/this/" + appName, true, true);
 
             // Copy any art and data.
-            if(appName.Compare("pslaunch"))
+            if(hasGUI)
             {
               csString zip = appName;
               zip.AppendFmt(config->GetCurrentConfig()->GetPlatform());
@@ -1098,7 +1098,7 @@ void UpdaterEngine::CheckIntegrity()
 
                 char c = ' ';
                 PrintOutput("\nDo you wish to download the correct copies of these files? (y/n)\n");
-                if(!appName.Compare("pslaunch"))
+                if(!hasGUI)
                 {
                     while(c != 'y' && c != 'n')
                     {
