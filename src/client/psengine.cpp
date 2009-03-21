@@ -532,6 +532,7 @@ bool psEngine::Initialize (int level)
     {
         threadedWorldLoading = csString("Threaded").Compare(psengine->GetConfig()->GetStr("PlaneShift.Loading.WorldLoad", "NThreaded"));
         loader = new Loader();
+        csRef<iThreadManager> tm = csQueryRegistry<iThreadManager>(object_reg);
         Loader::GetSingleton().Init(object_reg, gfxFeatures, 200);
 
         // Fill the loader cache.
@@ -544,7 +545,14 @@ bool psEngine::Initialize (int level)
                 csString file = files->Get(j);
                 if(file.Find(".cal3d", file.Length()-7) != size_t(-1))
                 {
-                    modelPrecaches.Push(Loader::GetSingleton().PrecacheData(files->Get(j), false));
+                    if(tm->GetThreadCount() == 1)
+                    {
+                        Loader::GetSingleton().PrecacheDataWait(files->Get(j), false);
+                    }
+                    else
+                    {
+                        modelPrecaches.Push(Loader::GetSingleton().PrecacheData(files->Get(j), false));
+                    }
                 }
             }
         }
@@ -558,12 +566,18 @@ bool psEngine::Initialize (int level)
                 csString file = files->Get(j);
                 if(file.Find(".meshfact", file.Length()-10) != size_t(-1))
                 {
-                    modelPrecaches.Push(Loader::GetSingleton().PrecacheData(files->Get(j), false));
+                    if(tm->GetThreadCount() == 1)
+                    {
+                        Loader::GetSingleton().PrecacheDataWait(files->Get(j), false);
+                    }
+                    else
+                    {
+                        modelPrecaches.Push(Loader::GetSingleton().PrecacheData(files->Get(j), false));
+                    }
                 }
             }
         }
 
-        csRef<iThreadManager> tm = csQueryRegistry<iThreadManager>(object_reg);
         if(threadedWorldLoading)
         {
             csString path;
@@ -578,7 +592,14 @@ bool psEngine::Initialize (int level)
                   path.AppendFmt("%s, ", tmp->GetData());
                   csString vpath(maps->Get(i));
                   vpath.Append("/world");
-                  mapPrecaches.Push(Loader::GetSingleton().PrecacheData(vpath.GetData(), false));
+                  if(tm->GetThreadCount() == 1)
+                  {
+                    Loader::GetSingleton().PrecacheDataWait(vpath.GetData(), false);
+                  }
+                  else
+                  {
+                    mapPrecaches.Push(Loader::GetSingleton().PrecacheData(vpath.GetData(), false));
+                  }
                 }
             }
             tm->Wait(mapPrecaches);
