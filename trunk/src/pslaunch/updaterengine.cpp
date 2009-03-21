@@ -113,11 +113,12 @@ void UpdaterEngine::Run()
 
   while(!infoShare->GetExitGUI())
   {
-    if(infoShare->GetCheckIntegrity())
-    {
-      CheckIntegrity();
-      infoShare->SetCheckIntegrity(false);
-    }
+      csSleep(100);
+      if(infoShare->GetCheckIntegrity())
+      {
+          CheckIntegrity();
+          infoShare->SetCheckIntegrity(false);
+      }
   }
 }
 
@@ -188,6 +189,8 @@ void UpdaterEngine::CheckForUpdates()
                     downloader = NULL;
                     return;
                 }
+
+                csSleep(100);
             }
 
             // If we're going to self-update, close the GUI.
@@ -232,6 +235,8 @@ void UpdaterEngine::CheckForUpdates()
                     downloader = NULL;
                     return;
                 }
+
+                csSleep(100);
             }
             infoShare->Sync();
         }
@@ -1105,7 +1110,8 @@ void UpdaterEngine::CheckIntegrity()
                     infoShare->SetUpdateNeeded(true);
                     while(infoShare->GetUpdateNeeded())
                     {
-                      CHECK_QUIT
+                        CHECK_QUIT
+                        csSleep(100);
                     }
                     c = infoShare->GetPerformUpdate() ? 'y' : 'n';
                     infoShare->SetPerformUpdate(false);
