@@ -572,7 +572,7 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                             CS::Threading::MutexScopedLock lock(sLock);
                             for(size_t i=0; i<sectors.GetSize(); i++)
                             {
-                                if(targetSector == sectors[i]->name)
+                                if(targetSector.CompareNoCase(sectors[i]->name))
                                 {
                                     p->targetSector = sectors[i];
                                     break;
@@ -993,16 +993,21 @@ void Loader::FinishMeshLoad(MeshObj* mesh)
 bool Loader::LoadMesh(MeshObj* mesh)
 {
     bool ready = true;
-    csTicks t = csGetTicks();
     for(size_t i=0; i<mesh->meshfacts.GetSize(); i++)
     {
         ready &= LoadMeshFact(mesh->meshfacts[i]);
     }
 
+    if(!ready)
+      return false;
+
     for(size_t i=0; i<mesh->materials.GetSize(); i++)
     {
         ready &= LoadMaterial(mesh->materials[i]);
     }
+
+    if(!ready)
+      return false;
 
     for(size_t i=0; i<mesh->textures.GetSize(); i++)
     {
