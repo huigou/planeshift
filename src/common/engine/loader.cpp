@@ -648,6 +648,9 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                     l->radius = node->GetNode("radius")->GetContentsValueAsFloat();
                     syntaxService->ParseColor(node->GetNode("color"), l->colour);
 
+                    l->bbox.AddBoundingVertex(l->pos.x - l->radius, l->pos.y - l->radius, l->pos.z - l->radius);
+                    l->bbox.AddBoundingVertex(l->pos.x + l->radius, l->pos.y + l->radius, l->pos.z + l->radius);
+
                     s->lights.Push(l);
                     node = node->GetParent();
                 }
@@ -880,7 +883,7 @@ void Loader::LoadSector(const csVector3& pos, const csBox3& bbox, Sector* sector
 
     for(size_t i=0; i<sector->portals.GetSize(); i++)
     {
-        if(sector->portals[i]->InRange(pos, bbox))
+        if(sector->portals[i]->InRange(bbox))
         {
             if(!sector->portals[i]->targetSector->isLoading && !sector->portals[i]->targetSector->checked)
             {
@@ -922,7 +925,7 @@ void Loader::LoadSector(const csVector3& pos, const csBox3& bbox, Sector* sector
             sector->activePortals.Push(sector->portals[i]);
             ++sector->objectCount;
         }
-        else if(sector->portals[i]->OutOfRange(pos, bbox))
+        else if(sector->portals[i]->OutOfRange(bbox))
         {
             if(!sector->portals[i]->targetSector->isLoading)
             {
@@ -939,7 +942,7 @@ void Loader::LoadSector(const csVector3& pos, const csBox3& bbox, Sector* sector
 
     for(size_t i=0; i<sector->lights.GetSize(); i++)
     {
-        if(!sector->lights[i]->object.IsValid() && csVector3(sector->lights[i]->pos - pos).Norm() <= loadRange)
+        if(sector->lights[i]->InRange(bbox))
         {
             sector->lights[i]->object = engine->CreateLight(sector->lights[i]->name, sector->lights[i]->pos,
                 sector->lights[i]->radius, sector->lights[i]->colour, sector->lights[i]->dynamic);
@@ -948,7 +951,7 @@ void Loader::LoadSector(const csVector3& pos, const csBox3& bbox, Sector* sector
             sector->object->AddLight(sector->lights[i]->object);
             ++sector->objectCount;
         }
-        else if(sector->lights[i]->object.IsValid() && csVector3(sector->lights[i]->pos - pos).Norm() > loadRange*1.5)
+        else if(sector->lights[i]->OutOfRange(bbox))
         {
             engine->RemoveLight(sector->lights[i]->object);
             sector->lights[i]->object.Invalidate();
