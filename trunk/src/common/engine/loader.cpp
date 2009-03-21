@@ -304,7 +304,7 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                     CS::Threading::MutexScopedLock lock(sLock);
                     for(size_t i=0; i<sectors.GetSize(); i++)
                     {
-                        if(sectors[i]->name.Compare(sectorName))
+                        if(sectors[i]->name.CompareNoCase(sectorName))
                         {
                             s = sectors[i];
                             break;
@@ -319,6 +319,7 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                     sectors.Push(s);
                 }
 
+                s->init = true;
                 s->culler = node->GetNode("cullerp")->GetContentsValue();
                 if(node->GetNode("ambient"))
                 {
@@ -447,6 +448,24 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                                 break;
                             }
                         }
+
+                        csRef<iDocumentNode> cell = meshfact->data->GetNode("params")->GetNode("cells");
+                        if(cell.IsValid())
+                        {
+                          cell = cell->GetNode("celldefault");
+                          if(cell.IsValid())
+                          {
+                            m->hasBBox = true;
+                            cell = cell->GetNode("size");
+                            m->bbox.AddBoundingVertex(m->pos.x-(cell->GetAttributeValueAsInt("x")/2),
+                              m->pos.y,
+                              m->pos.z-(cell->GetAttributeValueAsInt("z")/2));
+                            m->bbox.AddBoundingVertex(m->pos.x+(cell->GetAttributeValueAsInt("x")/2),
+                              m->pos.y+cell->GetAttributeValueAsInt("y"),
+                              m->pos.z+(cell->GetAttributeValueAsInt("z")/2));
+                          }
+                        }
+
                         m->meshfacts.Push(meshfact);
                     }
                     node2 = node2->GetParent();
@@ -719,7 +738,7 @@ void Loader::UpdatePosition(const csVector3& pos, const char* sectorName, bool f
         unloadBox.AddBoundingVertexSmart(pos.x-loadRange*1.5, pos.y-loadRange*1.5, pos.z-loadRange*1.5);
 
         // Check.
-        LoadSector(pos, loadBox, unloadBox, sector);
+        LoadSector(pos, loadBox, unloadBox, sector, 0);
 
         if(force)
         {
@@ -827,12 +846,19 @@ void Loader::CleanSector(Sector* sector)
     sector->object.Invalidate();
 }
 
-void Loader::LoadSector(const csVector3& pos, const csBox3& loadBox, const csBox3& unloadBox, Sector* sector)
+void Loader::LoadSector(const csVector3& pos, const csBox3& loadBox, const csBox3& unloadBox,
+                        Sector* sector, uint depth)
 {
     sector->isLoading = true;
 
     if(!sector->object.IsValid())
     {
+        {
+            csString msg;
+            msg.AppendFmt("Attempting to load uninit sector %s!\n", sector->name.GetData());
+            CS_ASSERT_MSG(msg.GetData(), sector->init);
+            if(!sector->init) return;
+        }
         sector->object = engine->CreateSector(sector->name);
         sector->object->SetDynamicAmbientLight(sector->ambient);
         sector->object->SetVisibilityCullerPlugin(sector->culler);
@@ -864,7 +890,7 @@ void Loader::LoadSector(const csVector3& pos, const csBox3& loadBox, const csBox
                 wwUnloadBox.SetMax(2, wwUnloadBox.MaxZ()-transform.z);
             }
 
-            LoadSector(wwPos, wwLoadBox, wwUnloadBox, sector->activePortals[i]->targetSector);
+            LoadSector(wwPos, wwLoadBox, wwUnloadBox, sector->activePortals[i]->targetSector, depth+1);
         }
     }
 
@@ -891,7 +917,7 @@ void Loader::LoadSector(const csVector3& pos, const csBox3& loadBox, const csBox
 
     for(size_t i=0; i<sector->portals.GetSize(); i++)
     {
-        if(sector->portals[i]->InRange(loadBox))
+        if(depth < maxPortalDepth && sector->portals[i]->InRange(loadBox))
         {
             if(!sector->portals[i]->targetSector->isLoading && !sector->portals[i]->targetSector->checked)
             {
@@ -915,7 +941,7 @@ void Loader::LoadSector(const csVector3& pos, const csBox3& loadBox, const csBox
                     wwUnloadBox.SetMax(1, wwUnloadBox.MaxY()-transform.y);
                     wwUnloadBox.SetMax(2, wwUnloadBox.MaxZ()-transform.z);
                 }
-                LoadSector(wwPos, wwLoadBox, wwUnloadBox, sector->portals[i]->targetSector);
+                LoadSector(wwPos, wwLoadBox, wwUnloadBox, sector->portals[i]->targetSector, depth+1);
             }
 
             sector->portals[i]->mObject = engine->CreatePortal(sector->portals[i]->name, sector->object,
@@ -964,7 +990,7 @@ void Loader::LoadSector(const csVector3& pos, const csBox3& loadBox, const csBox
                     wwUnloadBox.SetMax(1, wwUnloadBox.MaxY()-transform.y);
                     wwUnloadBox.SetMax(2, wwUnloadBox.MaxZ()-transform.z);
                 }
-                LoadSector(wwPos, wwLoadBox, wwUnloadBox, sector->portals[i]->targetSector);
+                LoadSector(wwPos, wwLoadBox, wwUnloadBox, sector->portals[i]->targetSector, depth+1);
             }
 
             engine->GetMeshes()->Remove(sector->portals[i]->mObject);
