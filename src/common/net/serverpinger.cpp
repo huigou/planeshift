@@ -59,7 +59,7 @@ bool psServerPinger::Connect()
     connection->AddMsgQueue(queue);
     if (!connection->Connect(address, port))
     {
-        Error2("psServerPinger connection failed for address %s", address.GetData());
+        Error2("psServerPinger connection couldn't resolve hostname %s", address.GetData());
         return false;
     }
 
