@@ -861,11 +861,9 @@ void psNPCClient::Tick()
 
             PerceptProximityItems();
         }
-
+        // Send all queued npc commands to the server
+        network->SendAllCommands(true); // Final
     }
-
-    // Send all queued npc commands to the server
-    network->SendAllCommands(true); // Final
 }
 
 
