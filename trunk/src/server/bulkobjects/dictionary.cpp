@@ -2439,6 +2439,7 @@ void NpcDialogMenu::ShowMenu( Client *client )
 	psDialogMenuMessage menu;
 
     csString currentQuest;
+	int count = 0;
 
 	for (size_t i=0; i < counter; i++ )
 	{
@@ -2447,20 +2448,20 @@ void NpcDialogMenu::ShowMenu( Client *client )
         if (triggers[i].prerequisite)
             prereq = triggers[i].prerequisite->GetScript();
 
-        if (!prereq.IsEmpty())
-        {
-            printf("Item %lu Prereq : %s\n", (unsigned long) i, prereq.GetDataSafe());
-        }
-        else
-        {
-            printf("Item %lu has no prereqs.\n", (unsigned long) i);
-        }
+        //if (!prereq.IsEmpty())
+        //{
+        //    printf("Item %lu Prereq : %s\n", (unsigned long) i, prereq.GetDataSafe());
+        //}
+        //else
+        //{
+        //    printf("Item %lu has no prereqs.\n", (unsigned long) i);
+        //}
 
         if (triggers[i].prerequisite)
         {
             if (!triggers[i].prerequisite->Check(client->GetCharacterData()))
             {
-                printf("Prereq check failed. Skipping.\n");
+                //printf("Prereq check failed. Skipping.\n");
                 continue;
             }
         }
@@ -2474,7 +2475,7 @@ void NpcDialogMenu::ShowMenu( Client *client )
             menu.AddResponse((uint32_t) i, temp, temptrig,
                              "", "", "", "" );
         }
-        
+		count++;    
 		menu.AddResponse((uint32_t) i, 
                           triggers[i].menuText,
 		                  triggers[i].trigger, 
@@ -2482,9 +2483,16 @@ void NpcDialogMenu::ShowMenu( Client *client )
 						  client->GetCharacterData()->GetRaceInfo()->GetHonorific(),
 						  client->GetCharacterData()->GetRaceInfo()->GetPossessive() );
 	}
-	menu.BuildMsg(client->GetClientNum());
-	
-	menu.SendMessage();
+
+	if (count)
+	{
+		menu.BuildMsg(client->GetClientNum());
+		menu.SendMessage();
+	}
+	else
+	{
+		psserver->SendSystemError(client->GetClientNum(), "This NPC has no quest information for you.");
+	}
 }
 
 void NpcDialogMenu::SetPrerequisiteScript(psQuestPrereqOp *script)

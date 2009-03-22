@@ -3762,8 +3762,10 @@ void gemNPC::SetOwner(gemObject* newOwner)
 csString gemNPC::GetDefaultBehavior(const csString & dfltBehaviors)
 {
     int behNum;
-    if (GetCharacterData()->IsMerchant())
+    if (psChar->IsMerchant())
         behNum = 2;
+	else if (GetNPCDialogPtr() != NULL)
+		return csString("talk");
     else if (IsAlive())
         behNum = 3;
     else
@@ -3876,6 +3878,8 @@ void gemNPC::SendBehaviorMessage(const csString & msg_id, gemObject *actor)
         psserver->usermanager->Attack(actor->GetCharacterData()->getStance("Normal"), actor->GetClient());
     else if (msg_id == "loot")
         psserver->usermanager->Loot(actor->GetClient());
+	else if (msg_id == "talk")
+		ShowPopupMenu(actor->GetClient());
 }
 
 void gemNPC::AddLootableClient(int cnum)
