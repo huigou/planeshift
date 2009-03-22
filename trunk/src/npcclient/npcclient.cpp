@@ -174,7 +174,6 @@ bool psNPCClient::Initialize(iObjectRegistry* object_reg,const char *_host, cons
         CPrintf(CON_ERROR, "Couldn't connect to %s on port %d.\n",(const char *)host,port);
         exit(1);
     }
-    network = new NetworkManager(msghandler,connection, engine);
 
     eventmanager = new EventManager;
     msghandler   = eventmanager;
@@ -186,6 +185,7 @@ bool psNPCClient::Initialize(iObjectRegistry* object_reg,const char *_host, cons
     {
         return false;                // Attach to incoming messages.
     }
+    network = new NetworkManager(msghandler,connection, engine);
 
     vfs =  csQueryRegistry<iVFS> (object_reg);
     if (!vfs)
