@@ -100,7 +100,7 @@ void NPC::Tick()
 {
 	// Ensure NPC only has one tick at a time.
 	CS_ASSERT(tick == NULL);
-	tick = new psNPCTick(NPC_BRAIN_TICK);
+	tick = new psNPCTick(NPC_BRAIN_TICK, this);
 	
 	tick->QueueEvent();
 	if(npcclient->IsReady())
@@ -115,7 +115,7 @@ void NPC::Tick()
                     timeTaken, GetName(), ShowID(GetEID()));
             Dump();
         }
-    	npcclient->GetNetworkMgr()->SendAllCommands(true); 
+        networkmanager->SendAllCommands(true); 
 	}
 }
 
