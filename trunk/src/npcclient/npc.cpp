@@ -115,8 +115,8 @@ void NPC::Tick()
                     timeTaken, GetName(), ShowID(GetEID()));
             Dump();
         }
+    	npcclient->GetNetworkMgr()->SendAllCommands(true); 
 	}
-	npcclient->GetNetworkMgr()->SendAllCommands(true); 
 }
 
 void NPC::Dump()
