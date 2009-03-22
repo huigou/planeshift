@@ -884,6 +884,9 @@ void NetworkManager::PrepareCommandMessage()
 
 void NetworkManager::QueueDRData(NPC * npc )
 {
+	// When a NPC is dead, this may still be called by Behavior::Interrupt
+	if(!npc->IsAlive())
+		return;
     cmd_dr_outbound.PutUnique(npc->GetPID(), npc);
 }
 
