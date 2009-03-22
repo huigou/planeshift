@@ -484,6 +484,12 @@ void ChatManager::SendAudioFileHash(Client *client, const char *voiceFile)
 			Error2("Audio file '%s' not found.\n", voiceFile);
 			return;
 		}
+		if (buffer->GetSize() > 63000) // file is too big
+		{
+			Error2("Audio file '%s' is too big!\n", voiceFile);
+			// buffer ref auto release at this return
+			return;
+		}
 		csFileTime oTime;
 		psserver->vfs->GetFileTime(voiceFile,oTime);
 
