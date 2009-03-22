@@ -271,7 +271,7 @@ protected:
     NPC *npc;
 
 public:
-	psNPCTick(int offsetticks): psGameEvent(0,offsetticks,"psNPCTick") {};
+	psNPCTick(int offsetticks, NPC *npc): psGameEvent(0,offsetticks,"psNPCTick"), npc(npc) {};
     virtual void Trigger()
     {
     	npc->tick = NULL;

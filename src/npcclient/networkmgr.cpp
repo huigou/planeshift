@@ -1229,7 +1229,7 @@ void NetworkManager::ReConnect()
 {
     if (!connection->Connect(host,port))
     {
-        CPrintf(CON_ERROR, "Couldn't connect to %s on port %d.\n",(const char *)host,port);
+        CPrintf(CON_ERROR, "Couldn't resolve hostname %s on port %d.\n",(const char *)host,port);
         return;
     }
     // 2 seconds to allow linkdead messages to be processed

@@ -158,9 +158,6 @@ bool psNPCClient::Initialize(iObjectRegistry* object_reg,const char *_host, cons
     pass = _pass ? _pass : configmanager->GetStr("PlaneShift.NPCClient.password", "planeshift");
     port = _port ? _port : configmanager->GetInt("PlaneShift.NPCClient.port", 13331);
 
-    CPrintf(CON_DEBUG, "Connecting to Host: '%s' User: '%s' Password: '%s' Port %d...\n",
-        (const char*) host, (const char*) user, (const char*) pass, port);
-
     CPrintf (CON_DEBUG, "Initialize Network Thread...\n");
     connection = new psNetConnection(500); // 500 elements in queue
     if (!connection->Initialize(object_reg))
@@ -171,7 +168,7 @@ bool psNPCClient::Initialize(iObjectRegistry* object_reg,const char *_host, cons
     }
     if (!connection->Connect(host,port))
     {
-        CPrintf(CON_ERROR, "Couldn't connect to %s on port %d.\n",(const char *)host,port);
+        CPrintf(CON_ERROR, "Couldn't resolve hostname %s on port %d.\n",(const char *)host,port);
         exit(1);
     }
 
@@ -237,7 +234,9 @@ bool psNPCClient::Initialize(iObjectRegistry* object_reg,const char *_host, cons
     cdsys =  csQueryRegistry<iCollideSystem> (objreg);
 
     PFMaps = new psPFMaps(objreg);
-
+    
+    CPrintf(CON_DEBUG, "Connecting to Host: '%s' User: '%s' Password: '%s' Port %d...\n",
+        (const char*) host, (const char*) user, (const char*) pass, port);
     // Starts the logon process
     network->Authenticate(host,port,user,pass);
 
