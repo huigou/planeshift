@@ -174,6 +174,7 @@ bool psNPCClient::Initialize(iObjectRegistry* object_reg,const char *_host, cons
         CPrintf(CON_ERROR, "Couldn't connect to %s on port %d.\n",(const char *)host,port);
         exit(1);
     }
+    network = new NetworkManager(msghandler,connection, engine);
 
     eventmanager = new EventManager;
     msghandler   = eventmanager;
@@ -236,8 +237,6 @@ bool psNPCClient::Initialize(iObjectRegistry* object_reg,const char *_host, cons
     cdsys =  csQueryRegistry<iCollideSystem> (objreg);
 
     PFMaps = new psPFMaps(objreg);
-    
-    network = new NetworkManager(msghandler,connection, engine);
 
     // Starts the logon process
     network->Authenticate(host,port,user,pass);
@@ -808,9 +807,7 @@ void psNPCClient::SetEntityPos(EID eid, csVector3& pos, iSector* sector, Instanc
 
 bool psNPCClient::IsReady()
 {
-	if(network)
-		return network->IsReady();
-	else return false;
+	return network->IsReady();
 }
 
 void psNPCClient::LoadCompleted()
@@ -829,41 +826,38 @@ void psNPCClient::Tick()
 	psNPCClientTick *tick = new psNPCClientTick(250,this);
     tick->QueueEvent();
 
-    if (IsReady())
-    {    
-        tick_counter++;
+	tick_counter++;
 
-        ScopedTimer st_tick(250, "tick for tick_counter %d.",tick_counter);
-        
-        csTicks when = csGetTicks();
+	ScopedTimer st_tick(250, "tick for tick_counter %d.",tick_counter);
+	
+	csTicks when = csGetTicks();
 
-        // Advance tribes
-        for (size_t j=0; j<tribes.GetSize(); j++)
-        {
-            csTicks start = csGetTicks();             // When did we start
+	// Advance tribes
+	for (size_t j=0; j<tribes.GetSize(); j++)
+	{
+		csTicks start = csGetTicks();             // When did we start
 
-            tribes[j]->Advance(when,eventmanager);
+		tribes[j]->Advance(when,eventmanager);
 
-            csTicks timeTaken = csGetTicks() - start; // How long did it take
+		csTicks timeTaken = csGetTicks() - start; // How long did it take
 
-            if (timeTaken > 250)                      // This took way to long time
-            {
-                CPrintf(CON_WARNING,"Used %u time to process tick for tribe: %s(ID: %u)\n",
-                        timeTaken,tribes[j]->GetName(),tribes[j]->GetID());
-                ListTribes(tribes[j]->GetName());
-            }
-        }
+		if (timeTaken > 250)                      // This took way to long time
+		{
+			CPrintf(CON_WARNING,"Used %u time to process tick for tribe: %s(ID: %u)\n",
+					timeTaken,tribes[j]->GetName(),tribes[j]->GetID());
+			ListTribes(tribes[j]->GetName());
+		}
+	}
 
-        // Percept proximity items every 4th tick
-        if (tick_counter % 4 == 0)
-        {
-            ScopedTimer st(200, "tick for percept proximity items");
+	// Percept proximity items every 4th tick
+	if (tick_counter % 4 == 0)
+	{
+		ScopedTimer st(200, "tick for percept proximity items");
 
-            PerceptProximityItems();
-        }
-        // Send all queued npc commands to the server
-        network->SendAllCommands(true); // Final
-    }
+		PerceptProximityItems();
+	}
+	// Send all queued npc commands to the server
+	network->SendAllCommands(true); // Final
 }
 
 
