@@ -2205,6 +2205,21 @@ int com_kill(char* player)
     return 0;
 }
 
+/** Kills a npc right away
+ */
+int com_killnpc(char* input)
+{
+    EID eid = atoi(input);
+    gemActor* object = (gemActor*)GEMSupervisor::GetSingleton().FindObject(eid);
+    if (!object)
+    {
+    	CPrintf(CON_CMDOUTPUT ,"NPC with eid %d not found!\n", eid);
+    	return 0;
+    }
+    object->Kill(NULL);
+    return 0;
+}
+
 int com_motd(char* str)
 {
     if (!strcmp(str,""))    {
@@ -2429,6 +2444,7 @@ const COMMAND commands[] = {
     { "delete",    false, com_delete,    "Delete a player from the database"},
     { "dict",      true, com_dict,      "Dump the NPC dictionary"},
     { "kill",      true, com_kill,      "kill <playerID> Kills a player" },
+    { "killnpc",   true, com_killnpc,   "killnpc <eid> Kills a npc" },
     //{ "progress",  true, com_progress,  "progress <player>,<event/script>" },
     { "questreward", true, com_questreward, "Preforms the same action as when a player gets a quest reward" },
     { "say",       true, com_say,       "Tell something to all players connected"},
