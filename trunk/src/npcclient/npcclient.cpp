@@ -92,6 +92,7 @@ psNPCClient::psNPCClient () : serverconsole(NULL)
     eventmanager = NULL;
     running      = true;
     database     = NULL;
+    network      = NULL;
     tick_counter = 0;
     current_long_range_perception_index = 0;
 }
@@ -99,6 +100,7 @@ psNPCClient::psNPCClient () : serverconsole(NULL)
 psNPCClient::~psNPCClient()
 {
     running = false;
+    delete network;
     delete serverconsole;
     delete database;
 }
@@ -806,7 +808,9 @@ void psNPCClient::SetEntityPos(EID eid, csVector3& pos, iSector* sector, Instanc
 
 bool psNPCClient::IsReady()
 {
-    return network->IsReady();
+	if(network)
+		return network->IsReady();
+	else return false;
 }
 
 void psNPCClient::LoadCompleted()
