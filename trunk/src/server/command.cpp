@@ -2213,7 +2213,7 @@ int com_killnpc(char* input)
     gemActor* object = (gemActor*)GEMSupervisor::GetSingleton().FindObject(eid);
     if (!object)
     {
-    	CPrintf(CON_CMDOUTPUT ,"NPC with eid %d not found!\n", eid.Unbox());
+    	CPrintf(CON_CMDOUTPUT, "NPC with %s not found!\n", ShowID(eid));
     	return 0;
     }
     object->Kill(NULL);
