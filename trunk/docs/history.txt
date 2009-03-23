@@ -2,6 +2,8 @@
 - Integrated RecalculateStats() and CalculateCosts() with Buffables.
 - This fixes a bug where buffs were not affecting inventory weight limits,
   among other things.
+- Fixed PS#920 by reverting a fix to PS#176 from 2007, then wrote a different
+  fix for that bug.
 
 *** 2009-03-20 by Stefano Angeleri
 - Fixed a crash in the /guildinfo caused by the assumption the guild window 

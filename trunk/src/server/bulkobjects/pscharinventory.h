@@ -393,17 +393,10 @@ public:
     /// Cancel pending inventory exchange and rollback to original start point of inv.
     void RollbackExchange();
 
-    // Temporarily lock current encumbrance state
-    void SetLockEncumbranceState(bool v) { bEncumbranceLocked = v; }
-
-    bool GetLockEncumbranceState() { return bEncumbranceLocked; }
-
-private:
     /// Update encumbrance/OVERWEIGHT mode to match current status.
     void UpdateEncumbrance();
 
-    bool bEncumbranceLocked;
-          
+private:
     void WriteItem(csRef<iDocumentNode> equipmentNode, psItem* item, int bulk, INVENTORY_SLOT_NUMBER slot);
 
     size_t GetItemIndex(psItem *item);

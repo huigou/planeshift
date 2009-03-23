@@ -98,7 +98,6 @@ psCharacterInventory::psCharacterInventory(psCharacter *ownr)
     doRestrictions = false;
     loaded         = false;
     inExchangeMode = false;
-    bEncumbranceLocked = false;
 	version = 1; // Client cache version initializes to 0. so, we start with 1 here
 }
 
@@ -162,9 +161,6 @@ void psCharacterInventory::CalculateLimits()
 void psCharacterInventory::UpdateEncumbrance()
 {
     if (!owner->GetActor())
-        return;
-
-    if (GetLockEncumbranceState())
         return;
 
     /* TODO: http://www.hydlaa.com/bugtracker/bug.php?op=show&bugid=2618
@@ -1247,12 +1243,10 @@ psItem* psCharacterInventory::StackNumberItems(psItemStats * testItemStats, int 
             psItem* stackedItem = inventory[j].item;
             if (stackItem->CheckStackableWith(stackedItem, false))
             {
-                SetLockEncumbranceState(true);
                 psItem *stack = RemoveItemID(stackedItem->GetUID());
 
                 stackItem->CombineStack(stack);
                 stackItem->Save(false);
-                SetLockEncumbranceState(false);
             }
         }
     }

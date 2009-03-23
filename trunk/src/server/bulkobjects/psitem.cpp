@@ -1472,6 +1472,9 @@ void psItem::CombineStack(psItem *& stackme)
     SetMaxItemQuality(newMaxQuality);
     SetStackCount(newStackCount);
 
+    if (owning_character)
+        owning_character->Inventory().UpdateEncumbrance();
+
     // Average charges
     int newCharges = (GetCharges()*GetStackCount() + stackme->GetCharges()*stackme->GetStackCount())/newStackCount;
     SetCharges(newCharges);
