@@ -1,8 +1,13 @@
-﻿*** 2009-03-20 by Stefano Angeleri
+﻿*** 2009-03-23 by Kenny Graunke
+- Integrated RecalculateStats() and CalculateCosts() with Buffables.
+- This fixes a bug where buffs were not affecting inventory weight limits,
+  among other things.
+
+*** 2009-03-20 by Stefano Angeleri
 - Fixed a crash in the /guildinfo caused by the assumption the guild window 
   was always loaded, which is not the case if you aren't in a guild.
 
-﻿*** 2009-03-20 by Andrew Dai
+*** 2009-03-20 by Andrew Dai
 - Fixed npcclient crashes that were referencing a deleted object in MeleeOperation.
 - Fixed npcclient crash where script operations were not being reset completely when
   a npcobject is no longer being tracked.
