@@ -3008,11 +3008,6 @@ void psCharacter::Train( PSSKILL skill, int yIncrease )
                     Error2("Couldn't save stats for character %u!\n", pid.Unbox());
                 }
             }
-
-            // When a stat is ranked up, hp, mana and stamina are recalculated
-            RecalculateStats();
-            inventory.CalculateLimits();
-            skills.Calculate();
         }
     }
     else
@@ -3025,8 +3020,6 @@ void psCharacter::Train( PSSKILL skill, int yIncrease )
                 skills.GetSkillKnowledge((PSSKILL)skill),
                 skills.GetSkillRank((PSSKILL)skill).Base()
                 );
-        RecalculateStats();
-        inventory.CalculateLimits();
     }
 }
 
@@ -3149,9 +3142,6 @@ void psCharacter::SetSkillRank(PSSKILL which, unsigned int rank)
         attributes[PSITEMSTATS_STAT_STRENGTH].SetBase(rank);
     else if (which == PSSKILL_WILL)
         attributes[PSITEMSTATS_STAT_WILL].SetBase(rank);
-
-    RecalculateStats();
-    inventory.CalculateLimits();
 }
 
 unsigned int psCharacter::GetCharLevel()
@@ -3506,7 +3496,24 @@ csString NormalizeCharacterName(const csString & name)
     return normName;
 }
 
+void SkillStatBuffable::OnChange()
+{
+    chr->RecalculateStats();
+}
 
+void CharStat::SetBase(int x)
+{
+    SkillStatBuffable::SetBase(x);
+    chr->Skills().Calculate();
+}
+
+StatSet::StatSet(psCharacter *self) : CharacterAttribute(self)
+{
+    for (int i = 0; i < PSITEMSTATS_STAT_COUNT; i++)
+    {
+        stats[i].Initialize(self);
+    }
+}
 
 CharStat & StatSet::Get(PSITEMSTATS_STAT which)
 {
@@ -3607,9 +3614,7 @@ void SkillSet::Calculate()
     {
         skills[z].CalculateCosts(self);
     }
-    self->RecalculateStats();
 }
-
 
 bool SkillSet::CanTrain( PSSKILL skill )
 {

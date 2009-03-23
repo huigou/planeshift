@@ -270,23 +270,31 @@ struct Buddy
     PID playerID;
 };
 
-class ClampedPositiveBuffable : public Buffable<int>
+// Need to recalculate Max HP/Mana/Stamina and inventory limits whenever stats
+// change (whether via buffs or base value changes).
+class SkillStatBuffable : public ClampedPositiveBuffable<int>
 {
 public:
-    int Current()
-    {
-        // Clamp to avoid underflow problems with negative buffs.
-        return cached > 0 ? cached : 0;
-    }
+    void Initialize(psCharacter *c) { chr = c; }
+protected:
+    virtual void OnChange();
+    psCharacter *chr;
 };
 
-typedef ClampedPositiveBuffable CharStat;
+// When base stats change, we also need to recalculate skill training costs.
+// However, since training ignores buffs, we don't need to for all changes.
+class CharStat : public SkillStatBuffable
+{
+public:
+    void SetBase(int x);
+};
+
+typedef SkillStatBuffable SkillRank;
 
 class StatSet : public CharacterAttribute
 {
 public:
-
-    StatSet(psCharacter *self) : CharacterAttribute(self) { }
+    StatSet(psCharacter *self);
 
     CharStat & Get(PSITEMSTATS_STAT attrib);
     CharStat & operator [] (PSITEMSTATS_STAT which) { return Get(which); }
@@ -294,8 +302,6 @@ public:
 protected:
     CharStat stats[PSITEMSTATS_STAT_COUNT];
 };
-
-typedef ClampedPositiveBuffable SkillRank;
 
 /** A structure that holds the knowledge/practice/rank of each player skill.
  */
@@ -360,7 +366,10 @@ public:
     SkillSet(psCharacter *self) : CharacterAttribute(self)
     {
         for (int i=0; i<PSSKILL_COUNT; i++)
+        {
             skills[i].Clear();
+            skills[i].rank.Initialize(self);
+        }
     }
 
     /** @brief Sets the common skill info for this skill ( data from the database )

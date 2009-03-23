@@ -253,4 +253,19 @@ protected:
     csList< csTuple2<const ActiveSpell*, float> > buffs;
 };
 
+//-----------------------------------------------------------------------------
+
+/// A special form of buffable that is clamped to always return a positive number.
+template <typename T>
+class ClampedPositiveBuffable : public Buffable<T>
+{
+public:
+    using Buffable<T>::cached;
+    int Current()
+    {
+        // Clamp to avoid underflow problems with negative buffs.
+        return cached > 0 ? cached : 0;
+    }
+};
+
 #endif
