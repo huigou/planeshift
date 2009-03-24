@@ -177,7 +177,7 @@ float psSpell::ManaCost(psCharacter *caster, float kFactor) const
     MathEnvironment env;
     env.Define("KFactor",     kFactor);
     env.Define("Realm",       realm);
-    env.Define("RelatedStat", caster->GetSkillRank(way->related_stat).Current());
+    env.Define("RelatedStat", caster->Stats()[way->related_stat].Current());
     env.Define("WaySkill",    caster->GetSkillRank(way->skill).Current());
     script->Evaluate(&env);
 
@@ -198,7 +198,7 @@ float psSpell::ChanceOfCastSuccess(psCharacter *caster, float kFactor) const
     MathEnvironment env;
     env.Define("KFactor",     kFactor);
     env.Define("Realm",       realm);
-    env.Define("RelatedStat", caster->GetSkillRank(way->related_stat).Current());
+    env.Define("RelatedStat", caster->Stats()[way->related_stat].Current());
     env.Define("WaySkill",    caster->GetSkillRank(way->skill).Current());
     script->Evaluate(&env);
 
@@ -307,8 +307,8 @@ void psSpell::Cast(Client *client, float kFactor) const
 
     float power = MIN(maxPower, PowerLevel(caster->GetCharacterData(), kFactor));
     float skill = caster->GetCharacterData()->GetSkillRank(way->skill).Current();
-    float stat = caster->GetCharacterData()->GetSkillRank(way->related_stat).Current();
-
+    float stat = caster->GetCharacterData()->Stats()[way->related_stat].Current();
+    
     MathEnvironment env;
     env.Define("Power",       power);
     env.Define("WaySkill",    skill);
@@ -399,7 +399,7 @@ void psSpell::Affect(gemActor *caster, gemObject *target, float range, float kFa
     MathEnvironment env;
     env.Define("Power",       power);
     env.Define("WaySkill",    caster->GetCharacterData()->GetSkillRank(way->skill).Current());
-    env.Define("RelatedStat", caster->GetCharacterData()->GetSkillRank(way->related_stat).Current());
+    env.Define("RelatedStat", caster->GetCharacterData()->Stats()[way->related_stat].Current());
     float radius = aoeRadius->Evaluate(&env);
     float angle  = aoeAngle->Evaluate(&env);
 
