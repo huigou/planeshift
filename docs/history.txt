@@ -1,4 +1,15 @@
-﻿*** 2009-03-24 by Stefano Angeleri
+﻿*** 2009-03-24 by Kenny Graunke
+- Improved assertion messages in MathExpression::Evaluate.
+- Lowered the precision of MathVar::ToString() to two decimal places, to bring
+  spell messages in line with the precision of combat damage messages.
+- Fixed a bug where NULL was being supplied to the Calculate Damage script as,
+  TargetAttackWeapon.  This occured when the target had a non-weapon in their
+  hand.  Yet, this is not sensible, because scripts don't check for NULL and
+  just presume the object really exists.  Now we use "Fist", as if the hand
+  was empty, so we get a real weapon with a small amount of blunt damage.
+
+
+*** 2009-03-24 by Stefano Angeleri
 - Made newacct auto enable created accounts, additionally added an optional
   argument to define the security level of the account user/pass/seclevel
   default is security level 0

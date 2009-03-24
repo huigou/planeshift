@@ -31,6 +31,12 @@
 //#error "MathScript doesn't work on platforms where double-precision floating points are smaller than pointers.
 //#endif
 
+enum MathType
+{
+    VARTYPE_VALUE,
+    VARTYPE_OBJ
+};
+
 class MathVar
 {
 protected:
@@ -43,11 +49,7 @@ protected:
     void * changedVarCallbackArg;
 
 public:
-    enum 
-    { 
-        VARTYPE_VALUE,
-        VARTYPE_OBJ
-    } type;
+    MathType type;
 
     csString name;
 
@@ -65,6 +67,8 @@ public:
         changedVarCallback = callback;
         changedVarCallbackArg = arg;
     }
+
+    MathType Type() { return type; }
 
     double GetValue()
     {
@@ -109,7 +113,7 @@ public:
         if (type == VARTYPE_OBJ)
             return obj->ToString();
 
-        return csString().Format("%f", value);
+        return csString().Format("%.2f", value);
     }
 
     csString Dump() const
