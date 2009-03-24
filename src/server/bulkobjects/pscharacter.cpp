@@ -484,12 +484,6 @@ bool psCharacter::Load(iResultRow& row)
     kill_exp = row.GetUInt32("kill_exp");
 
     // Load the math script
-    powerScript = psserver->GetMathScriptEngine()->FindScript("CalculatePowerLevel");
-    if ( !powerScript )
-    {
-        Warning1(LOG_CHARACTER, "Can't find math script CalculatePowerLevel!");
-        return false;
-    }
     maxRealmScript = psserver->GetMathScriptEngine()->FindScript("MaxRealm");
     if ( !maxRealmScript )
     {
