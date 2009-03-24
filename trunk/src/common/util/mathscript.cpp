@@ -107,7 +107,7 @@ void MathEnvironment::InterpolateString(csString & str) const
         size_t end = str.Find("}", pos+2);
         if (end == SIZET_NOT_FOUND)
             continue; // invalid - unterminated ${
-        if (end <= pos+3)
+        if (end < pos+3)
             continue; // invalid - empty ${}
 
         str.SubString(varName, pos+2, end-(pos+2));
