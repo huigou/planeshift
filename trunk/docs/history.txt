@@ -3,6 +3,8 @@
   it not to substitute for single letter variables like ${D}.
 - Fixed a major bug in psSpellCastGameEvent, which somehow had two copies of
   PowerLevel, set one, and used the other.
+- Fixed a major bug where PowerLevel, ChanceOfCastSuccess, and ManaCost were
+  supplying numerical skill IDs rather than the character's actual skill rank.
 
 *** 2009-03-23 by Kenny Graunke
 - Integrated RecalculateStats() and CalculateCosts() with Buffables.

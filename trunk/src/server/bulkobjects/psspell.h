@@ -73,9 +73,9 @@ class psSpell : public iScriptableVar
     const csString& GetName() const { return name; }
     const csString& GetImage() const { return image; }
     const csString& GetDescription() const { return description; }
-    float ManaCost(float kFactor) const;
-    float PowerLevel(float kFactor) const;
-    float ChanceOfCastSuccess(float kFactor) const;
+    float ManaCost(psCharacter *caster, float kFactor) const;
+    float PowerLevel(psCharacter *caster, float kFactor) const;
+    float ChanceOfCastSuccess(psCharacter *caster, float kFactor) const;
     float ChanceOfResearchSuccess(psCharacter *researcher);
 
     /** Takes a list of glyphs and compares them to the correct sequence to
