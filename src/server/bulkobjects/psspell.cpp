@@ -616,6 +616,6 @@ void psSpellCastGameEvent::Interrupt()
 
 void psSpellCastGameEvent::Trigger()
 {
-    spell->Affect(caster->GetActor(), target, max_range, kFactor, power);
+    spell->Affect(caster->GetActor(), target, max_range, kFactor, powerLevel);
 }
 

@@ -173,7 +173,6 @@ public:
     float max_range;
     float kFactor;
     float powerLevel;
-    float power;
     csTicks duration;
 
     psSpellCastGameEvent(const psSpell *spell,
