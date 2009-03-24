@@ -243,21 +243,22 @@ TEST(MathScriptTest, ParserStress)
 
 TEST(MathScriptTest, InterpolateTest)
 {
-    csString msg("Xordan hits you for ${elite} damage...");
+    csString msg("Xordan hits you for ${Elite} damage...");
     MathEnvironment env;
-    env.Define("elite", 1337);
+    env.Define("Elite", 1337);
+    env.Define("E", 31337);
     env.InterpolateString(msg);
     EXPECT_STREQ("Xordan hits you for 1337.000000 damage...", msg.GetData());
 
-    msg = "${elite} times, because he's just that ${elite}";
+    msg = "${E} times, because he's just that ${Elite}";
     env.InterpolateString(msg);
-    EXPECT_STREQ("1337.000000 times, because he's just that 1337.000000", msg.GetData());
+    EXPECT_STREQ("31337.000000 times, because he's just that 1337.000000", msg.GetData());
 
-    msg = "${elite}";
+    msg = "${Elite}";
     env.InterpolateString(msg);
     EXPECT_STREQ("1337.000000", msg.GetData());
 
-    msg = "${} ${elite} ${}";
+    msg = "${} ${Elite} ${}";
     env.InterpolateString(msg);
     EXPECT_STREQ("${} 1337.000000 ${}", msg.GetData());
 }

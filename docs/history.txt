@@ -1,4 +1,8 @@
-﻿*** 2009-03-23 by Kenny Graunke
+﻿*** 2009-03-24 by Kenny Graunke
+- Fixed an off-by-one bug in MathEnvironment::InterpolateString which caused
+  it not to substitute for single letter variables like ${D}.
+
+*** 2009-03-23 by Kenny Graunke
 - Integrated RecalculateStats() and CalculateCosts() with Buffables.
 - This fixes a bug where buffs were not affecting inventory weight limits,
   among other things.
