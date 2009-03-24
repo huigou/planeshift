@@ -149,7 +149,6 @@ psCharacter::psCharacter() : inventory(this),
     timeconnected = 0;
     startTimeThisSession = csGetTicks();
 
-    KFactor = 0.0;
     spellCasting = NULL;
 
 //    transformation = NULL;

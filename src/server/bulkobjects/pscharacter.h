@@ -651,7 +651,6 @@ public:
 
     unsigned int advantage_bitfield[PSCHARACTER_ADVANTAGE_32BIT_BITFIELDS];
 
-    float KFactor;
     psSpellCastGameEvent *spellCasting; ///< Hold a pointer to the game event
                                         ///< for the spell currently cast.
 
