@@ -140,6 +140,26 @@ bool psSoundManager::Initialize(iObjectRegistry* objectReg)
     return true;
 }
 
+void psSoundManager::StreamAddNotification(iSndSysStream *pStream)
+{
+	printf("StreamAdd Notification\n");
+}
+void psSoundManager::StreamRemoveNotification(iSndSysStream *pStream)
+{
+	printf("StreamRemove Notification\n");
+}
+
+void psSoundManager::SourceAddNotification(iSndSysSource *pSource)
+{
+	printf("SourceAdd Notification\n");
+}
+
+void psSoundManager::SourceRemoveNotification(iSndSysSource *pSource)
+{
+	printf("SourceAdd Notification\n");
+}
+
+
 void psSoundManager::ChangeTimeOfDay( int newTime )
 {
     if ( currentSoundSector )
@@ -227,6 +247,12 @@ bool psSoundManager::Setup()
         Error1("Couldn't find iSoundRender!");
         return false;
     }
+
+	if (!soundSystem->RegisterCallback(this))
+	{
+		Error1("Couldn't register iSndSysRenderer callback");
+		return false;
+	}
 
     return true;
 }
