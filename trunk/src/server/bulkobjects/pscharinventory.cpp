@@ -1005,11 +1005,10 @@ psItem *psCharacterInventory::GetEffectiveWeaponInSlot(INVENTORY_SLOT_NUMBER slo
     if (equipment[slot].itemIndexEquipped!=0)
     {
         psItem *item = inventory[equipment[slot].itemIndexEquipped].item;
-        if (item->GetIsMeleeWeapon() ||
-            item->GetIsRangeWeapon())
+        if (item->GetIsMeleeWeapon() || item->GetIsRangeWeapon())
+        {
             return item;
-        else
-            return NULL;
+        }
     }
     
     // right hand and left hand can attack also if no weapon is there

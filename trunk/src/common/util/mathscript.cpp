@@ -537,9 +537,15 @@ double MathExpression::Evaluate(const MathEnvironment *env)
         const csString & objName = it.Next();
         MathVar *var = env->Lookup(objName);
         CS_ASSERT(var); // checked as part of requiredVars
-        if (!var->GetObject())
+        if (var->Type() != VARTYPE_OBJ)
         {
             Error3("Error in >%s<: Type inference requires >%s< to be an iScriptableVar, but it isn't.", name, objName.GetData());
+            CS_ASSERT(false);
+            return 0.0;
+        }
+        if (!var->GetObject())
+        {
+            Error3("Error in >%s<: Given a NULL iScriptableVar* for >%s<.", name, objName.GetData());
             CS_ASSERT(false);
             return 0.0;
         }
