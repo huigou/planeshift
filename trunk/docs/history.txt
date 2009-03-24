@@ -1,4 +1,9 @@
-﻿*** 2009-03-24 by Kenny Graunke
+﻿*** 2009-03-24 by Stefano Angeleri
+- Made newacct auto enable created accounts, additionally added an optional
+  argument to define the security level of the account user/pass/seclevel
+  default is security level 0
+
+*** 2009-03-24 by Kenny Graunke
 - Fixed an off-by-one bug in MathEnvironment::InterpolateString which caused
   it not to substitute for single letter variables like ${D}.
 - Fixed a major bug in psSpellCastGameEvent, which somehow had two copies of
