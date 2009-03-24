@@ -77,7 +77,7 @@ enum SoundEvent
 /** The main PlaneShift Sound Manager.
  * Handles the details for loading/playing sounds and music.
  */
-class psSoundManager : public scfImplementation2<psSoundManager, iSoundManager, iComponent>
+class psSoundManager : public iSndSysRendererCallback, public scfImplementation2<psSoundManager, iSoundManager, iComponent>
 {
 
 public:
@@ -205,6 +205,13 @@ public:
       */
     void UpdateWeather(int weather,const char* sector);
     void UpdateWeather(int weather);
+
+
+	/* This is the iSndSysRendererCallback interface */
+	void StreamAddNotification(iSndSysStream *pStream);
+	void StreamRemoveNotification(iSndSysStream *pStream);
+	void SourceAddNotification(iSndSysSource *pSource);
+	void SourceRemoveNotification(iSndSysSource *pSource);
 
 
 
