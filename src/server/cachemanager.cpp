@@ -2817,7 +2817,8 @@ unsigned int CacheManager::NewAccountInfo(psAccountInfo *ainfo)
         "username",
         "password",
         "last_login_ip",
-        "security_level"
+        "security_level",
+        "status"
     };
     psStringArray fields;
 
@@ -2825,6 +2826,7 @@ unsigned int CacheManager::NewAccountInfo(psAccountInfo *ainfo)
     fields.Push(ainfo->password);
     fields.Push(ainfo->lastloginip);
     fields.FormatPush("%d",ainfo->securitylevel);
+    fields.Push("A"); //created from server console so auto enabled
 
     unsigned int id=db->GenericInsertWithID("accounts",fieldnames,fields);
 

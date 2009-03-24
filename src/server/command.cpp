@@ -1014,9 +1014,10 @@ int com_exportdialogs(char *args)
 int com_newacct(char *userpass)
 {
     char *password;
+    unsigned long int level = 0;
     if (!userpass)
     {
-        CPrintf(CON_CMDOUTPUT ,"Please specify username/password.\n");
+        CPrintf(CON_CMDOUTPUT ,"Please specify username/password[/securitylevel].\n");
         return 0;
     }
     char *slash = strchr(userpass,'/');
@@ -1027,11 +1028,18 @@ int com_newacct(char *userpass)
     }
     *slash = 0;  // term the user str
     password=slash+1;
+    slash = strchr(password,'/'); //used for the level  
+    if(slash != NULL)
+    {
+        *slash = 0; // term the pass str
+        level = strtoul(slash+1, NULL, 0); //aquires the level
+    }
 
     psAccountInfo accountinfo;
 
     accountinfo.username = userpass;
     accountinfo.password = csMD5::Encode(password).HexString();
+    accountinfo.securitylevel = level;
 
     if (CacheManager::GetSingleton().NewAccountInfo(&accountinfo)==0)
     {
@@ -2430,7 +2438,7 @@ const COMMAND commands[] = {
     { "importnpc", true, com_importnpc, "Loads NPC data from a XML file or a directory and inserts it into the DB"},
     { "loadnpc",   true, com_loadnpc,   "Loads/Reloads an NPC from the DB into the world"},
     { "loadquest", true, com_loadquest, "Loads/Reloads a quest from the DB into the world"},
-    { "newacct",   true, com_newacct,   "Create a new account: newacct <user/passwd>" },
+    { "newacct",   true, com_newacct,   "Create a new account: newacct <user/passwd[/security level]>" },
 //  { "newguild",  com_newguild,  "Create a new guild: newguild <name/leader>" },
 //  { "joinguild", com_joinguild, "Attach player to guild: joinguild <guild/player>" },
 //  { "quitguild", com_quitguild, "Detach player from guild: quitguild <player>" },
