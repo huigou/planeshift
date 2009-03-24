@@ -668,10 +668,9 @@ void pawsMessageTextBox::SplitMessage( const char* newText, int colour, int size
             /// If it can fit the entire string then return.
             if ( canDrawLength == (int)strlen( dummy ) )
             {
-                csString temp( dummy );
                 MessageLine* msgLine = new MessageLine;
                 msgLine->size = size;
-                msgLine->text = temp;
+                msgLine->text = dummy;
                 msgLine->colour = colour;
                 adjusted.Push( msgLine );
                 break;
@@ -1205,8 +1204,7 @@ void pawsMultiLineTextBox::OrganizeText( const char* newText )
         /// If it can fit the entire string then return.
         if ( canDrawLength == (int)strlen( dummy ) )
         {
-            csString temp( dummy );
-            lines.Push( temp );
+            lines.Push( dummy );
             break;
         }
         // We have to push in a new line to the lines bit.

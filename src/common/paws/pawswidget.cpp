@@ -958,8 +958,7 @@ pawsWidget* pawsWidget::FindWidget( const char* name, bool complain )
     if (!name)
          return NULL;
     
-    csString temp(name);
-    if ( this->name == temp )
+    if ( this->name == name )
         return this;
 
     for ( size_t z = 0; z < children.GetSize(); z++ )
@@ -973,7 +972,7 @@ pawsWidget* pawsWidget::FindWidget( const char* name, bool complain )
     if (this->name == "None") 
         return NULL;
     if (complain)
-        Error3( "Could not locate widget %s in %s", name, this->name.GetData() );
+        Error4( "Could not locate widget %s in %s (%s)", name, this->name.GetData(), this->GetFilename());
     return NULL;
 }
 
@@ -997,9 +996,8 @@ pawsWidget* pawsWidget::FindWidget( int ID, bool complain )
 
 pawsWidget* pawsWidget::FindWidgetXMLBinding( const char* xmlbinding )
 {
-    csString temp(xmlbinding);
-    if ( (this->xmlbinding == temp) || 
-         (this->xmlbinding.IsEmpty() && name == temp ))
+    if ( (this->xmlbinding == xmlbinding) || 
+         (this->xmlbinding.IsEmpty() && name == xmlbinding ))
         return this;
 
     for ( size_t z = 0; z < children.GetSize(); z++ )
