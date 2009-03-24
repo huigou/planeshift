@@ -146,7 +146,7 @@ bool psSpell::Load(iResultRow& row)
     return true;
 }
 
-float psSpell::PowerLevel(float kFactor) const
+float psSpell::PowerLevel(psCharacter *caster, float kFactor) const
 {
     static MathScript *script = NULL;
     if (!script)
@@ -157,7 +157,7 @@ float psSpell::PowerLevel(float kFactor) const
 
     MathEnvironment env;
     env.Define("KFactor", kFactor);
-    env.Define("WaySkill", way->skill);
+    env.Define("WaySkill", caster->GetSkillRank(way->skill).Current());
     script->Evaluate(&env);
 
     MathVar *power = env.Lookup("PowerLevel");
@@ -165,7 +165,7 @@ float psSpell::PowerLevel(float kFactor) const
     return power->GetValue();
 }
 
-float psSpell::ManaCost(float kFactor) const
+float psSpell::ManaCost(psCharacter *caster, float kFactor) const
 {
     static MathScript *script = NULL;
     if (!script)
@@ -177,8 +177,8 @@ float psSpell::ManaCost(float kFactor) const
     MathEnvironment env;
     env.Define("KFactor",     kFactor);
     env.Define("Realm",       realm);
-    env.Define("RelatedStat", way->related_stat);
-    env.Define("WaySkill",    way->skill);
+    env.Define("RelatedStat", caster->GetSkillRank(way->related_stat).Current());
+    env.Define("WaySkill",    caster->GetSkillRank(way->skill).Current());
     script->Evaluate(&env);
 
     MathVar *manaCost = env.Lookup("ManaCost");
@@ -186,7 +186,7 @@ float psSpell::ManaCost(float kFactor) const
     return manaCost->GetValue();
 }
 
-float psSpell::ChanceOfCastSuccess(float kFactor) const
+float psSpell::ChanceOfCastSuccess(psCharacter *caster, float kFactor) const
 {
     static MathScript *script = NULL;
     if (!script)
@@ -198,8 +198,8 @@ float psSpell::ChanceOfCastSuccess(float kFactor) const
     MathEnvironment env;
     env.Define("KFactor",     kFactor);
     env.Define("Realm",       realm);
-    env.Define("RelatedStat", way->related_stat);
-    env.Define("WaySkill",    way->skill);
+    env.Define("RelatedStat", caster->GetSkillRank(way->related_stat).Current());
+    env.Define("WaySkill",    caster->GetSkillRank(way->skill).Current());
     script->Evaluate(&env);
 
     MathVar *chance = env.Lookup("ChanceOfSuccess");
@@ -264,7 +264,7 @@ bool psSpell::CanCast(Client *client, float kFactor, csString & reason)
     // Check for sufficient Mana
     if (!caster->GetActor()->infinitemana)
     {
-        float manaCost = ManaCost(kFactor);
+        float manaCost = ManaCost(caster, kFactor);
         if (caster->GetMana() < manaCost)
         {
             reason.Format("You don't have the mana to cast %s.", name.GetData());
@@ -305,7 +305,7 @@ void psSpell::Cast(Client *client, float kFactor) const
     if (offensive && !client->IsAllowedToAttack(target,true))  // this function sends sys error msg
         return;
 
-    float power = MIN(maxPower, PowerLevel(kFactor));
+    float power = MIN(maxPower, PowerLevel(caster->GetCharacterData(), kFactor));
     float skill = caster->GetCharacterData()->GetSkillRank(way->skill).Current();
     float stat = caster->GetCharacterData()->GetSkillRank(way->related_stat).Current();
 
@@ -372,7 +372,7 @@ void psSpell::Cast(Client *client, float kFactor) const
 
 void psSpell::Affect(gemActor *caster, gemObject *target, float range, float kFactor, float power) const
 {
-    const float chanceOfSuccess = ChanceOfCastSuccess(kFactor);
+    const float chanceOfSuccess = ChanceOfCastSuccess(caster->GetCharacterData(), kFactor);
     Notify4(LOG_SPELLS, "%s casting %s with a chance of success = %.2f\n", caster->GetName(), name.GetData(), chanceOfSuccess);
 
     if (psserver->GetRandom() * 100.0 > chanceOfSuccess)
@@ -384,7 +384,7 @@ void psSpell::Affect(gemActor *caster, gemObject *target, float range, float kFa
         fx.Multicast(caster->GetMulticastClients(), 0, PROX_LIST_ANY_RANGE);
 
         // Only drain 10% of mana.
-        caster->DrainMana(-(ManaCost(kFactor)/10), false);
+        caster->DrainMana(-(ManaCost(caster->GetCharacterData(), kFactor)/10), false);
 
         // Spell casting complete, we are now in PEACE mode again.
         caster->SetMode(PSCHARACTER_MODE_PEACE);
@@ -393,7 +393,7 @@ void psSpell::Affect(gemActor *caster, gemObject *target, float range, float kFa
     }
 
     // Drain full mana amount.
-    caster->DrainMana(-ManaCost(kFactor), false);
+    caster->DrainMana(-ManaCost(caster->GetCharacterData(), kFactor), false);
 
     // Look for targets
     MathEnvironment env;
