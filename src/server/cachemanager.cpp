@@ -2280,37 +2280,37 @@ bool CacheManager::PreloadWays()
             if (way->name == "Crystal")
             {
                 way->skill = PSSKILL_CRYSTALWAY;
-                way->related_stat = PSSKILL_CHA;
+                way->related_stat = PSITEMSTATS_STAT_CHARISMA;
             }
             else
             if (way->name == "Azure")
             {
                 way->skill = PSSKILL_AZUREWAY;
-                way->related_stat = PSSKILL_WILL;
+                way->related_stat = PSITEMSTATS_STAT_WILL;
             }
             else
             if (way->name == "Red")
             {
                 way->skill = PSSKILL_REDWAY;
-                way->related_stat = PSSKILL_WILL;
+                way->related_stat = PSITEMSTATS_STAT_WILL;
             }
             else
             if (way->name == "Dark")
             {
                 way->skill = PSSKILL_DARKWAY;
-                way->related_stat = PSSKILL_CHA;
+                way->related_stat = PSITEMSTATS_STAT_CHARISMA;
             }
             else
             if (way->name == "Brown")
             {
                 way->skill = PSSKILL_BROWNWAY;
-                way->related_stat = PSSKILL_INT;
+                way->related_stat = PSITEMSTATS_STAT_INTELLIGENCE;
             }
             else
             if (way->name == "Blue")
             {
                 way->skill = PSSKILL_BLUEWAY;
-                way->related_stat = PSSKILL_INT;
+                way->related_stat = PSITEMSTATS_STAT_INTELLIGENCE;
             }
             else
             {

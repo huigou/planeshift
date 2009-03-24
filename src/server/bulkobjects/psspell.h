@@ -47,10 +47,10 @@ class ProgressionScript;
 
 struct psWay
 {
-    unsigned int id;
-    PSSKILL      skill;    // for example, Crystal Way
-    PSSKILL      related_stat; // for example, Charisma
-    csString     name;
+    unsigned int     id;
+    PSSKILL          skill;    // for example, Crystal Way
+    PSITEMSTATS_STAT related_stat; // for example, Charisma
+    csString         name;
 };
 
 

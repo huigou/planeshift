@@ -5,6 +5,7 @@
   PowerLevel, set one, and used the other.
 - Fixed a major bug where PowerLevel, ChanceOfCastSuccess, and ManaCost were
   supplying numerical skill IDs rather than the character's actual skill rank.
+- Converted psWay to use PSITEMSTATS_STAT instead of PSSKILL.
 
 *** 2009-03-23 by Kenny Graunke
 - Integrated RecalculateStats() and CalculateCosts() with Buffables.
