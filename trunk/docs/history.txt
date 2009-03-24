@@ -6,6 +6,8 @@
 - Fixed a major bug where PowerLevel, ChanceOfCastSuccess, and ManaCost were
   supplying numerical skill IDs rather than the character's actual skill rank.
 - Converted psWay to use PSITEMSTATS_STAT instead of PSSKILL.
+- Ported Borillis' code for the <animal-affinity> script operation to the new
+  scripting system.  (It's needed for character creation.)
 
 *** 2009-03-23 by Kenny Graunke
 - Integrated RecalculateStats() and CalculateCosts() with Buffables.
