@@ -25,6 +25,7 @@
 //=============================================================================
 #include <iutil/document.h>
 #include <csutil/xmltiny.h>
+#include <csutil/scfstr.h>
 
 //=============================================================================
 // Library Includes
@@ -42,6 +43,7 @@
 #include "actionmanager.h"
 #include "cachemanager.h"
 #include "entitymanager.h"
+#include "progressionmanager.h"
 #include "clients.h"
 #include "events.h"
 #include "gem.h"
@@ -1472,6 +1474,97 @@ protected:
 //----------------------------------------------------------------------------
 
 /**
+ * AnimalAffinityOp
+ *
+ * <animal-affinity aim="Actor" name="reptile" value="2"/>
+ *
+ * This is primarily used for character creation, as these effects are
+ * permanent.  There is no way to buff this currently.
+ */
+class AnimalAffinityOp : public Imperative3
+{
+public:
+    AnimalAffinityOp() : Imperative3() { }
+    virtual ~AnimalAffinityOp() { }
+
+    bool Load(iDocumentNode *node)
+    {
+        if (!Imperative3::Load(node))
+            return false;
+
+        name.Downcase();
+
+        return true;
+    }
+
+    void Run(const MathEnvironment *env)
+    {
+        psCharacter *chr = GetCharacter(env, aim);
+
+        // Parse the string into an XML document.
+        //     <category attribute="Type|Lifecycle|AttackTool|AttackType|..." name="" value="" />
+        //     <category attribute="Type|Lifecycle|AttackTool|AttackType|..." name="" value="" />
+        //     ...
+        //     <category attribute="Type|Lifecycle|AttackTool|AttackType|..." name="" value="" />
+        csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
+        CS_ASSERT(xml != NULL);
+        csRef<iDocument> xmlDoc = xml->CreateDocument();
+        const char *error = xmlDoc->Parse(chr->GetAnimalAffinity());
+
+        csRef<iDocumentNode> node;
+        bool found = false;
+
+        if (!error)
+        {
+            // Find existing node
+            csRef<iDocumentNodeIterator> it = xmlDoc->GetRoot()->GetNodes();
+            while (it->HasNext())
+            {
+                node = it->Next();
+                if (name.CompareNoCase(node->GetAttributeValue("name")))
+                {
+                    found = true;
+                    break;
+                }
+            }
+        }
+
+        // Add new node if one doesn't exist
+        if (!found)
+        {
+            csString attrNode = psserver->GetProgressionManager()->GetAffinityCategories().Get(name, "");
+            if (!attrNode.IsEmpty())
+            {
+                node = xmlDoc->GetRoot()->CreateNodeBefore(CS_NODE_ELEMENT);
+                node->SetValue("category");
+                node->SetAttribute("name", name);
+                node->SetAttribute("attribute", attrNode);
+                node->SetAttribute("value", "0");
+            }
+            else
+            {
+                Error2("Error: Found <animal-affinity name=\"%s\"/>, but that isn't a valid affinity category.", name.GetDataSafe());
+            }
+        }
+
+        // Modify Value
+        if (node)
+        {
+            float oldValue = node->GetAttributeValueAsFloat("value");
+            float delta = value->Evaluate(env);
+            node->SetAttributeAsFloat("value", oldValue + delta);
+        }
+
+        // Save changes back
+        scfString str;
+        xmlDoc->Write(&str);
+        chr->SetAnimialAffinity(str);
+    }
+};
+
+//----------------------------------------------------------------------------
+
+/**
  * ActionOp
  * Activates any inactive entrance action location of the specified entrance
  * type and places into players inventory a key for the lock instance ID defined
@@ -1931,7 +2024,7 @@ ProgressionScript* ProgressionScript::Create(const char *name, iDocumentNode *to
         {
             op = new CancelOp;
         }
-        else if (elem == "teleport" || elem == "create-familiar" || elem == "fog" || elem == "rain" || elem == "snow" || elem == "lightning" || elem == "weather" || elem == "animal-affinity")
+        else if (elem == "teleport" || elem == "create-familiar" || elem == "fog" || elem == "rain" || elem == "snow" || elem == "lightning" || elem == "weather")
         {
             printf("TODO: implement <%s> used in script >%s<\n", elem.GetData(), name);
             continue;
@@ -1952,6 +2045,10 @@ ProgressionScript* ProgressionScript::Create(const char *name, iDocumentNode *to
         {
             printf("TODO: implement imperative factions\n");
             continue;
+        }
+        else if (elem == "animal-affinity")
+        {
+            op = new AnimalAffinityOp;
         }
         else if (elem == "action")
         {
