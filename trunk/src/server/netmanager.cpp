@@ -240,7 +240,10 @@ void NetManager::CheckResendPkts()
         {
         	// Perform exponential backoff once for each connection since pkts are ordered
         	// by clientnum
-        	connection->backoff *= 2;
+        	
+        	// Now backoff previous connection for the next time we need to resend those packets
+        	if (currentConnection)
+        		currentConnection->backoff *= 2;
         	currentConnection = connection;
         }
         
@@ -279,6 +282,9 @@ void NetManager::CheckResendPkts()
         }
 
     }
+    // Backoff last connection
+	if (currentConnection)
+		currentConnection->backoff *= 2;
     if(pkts.GetSize() > 0)
     {
         resends[resendIndex] = pkts.GetSize();
