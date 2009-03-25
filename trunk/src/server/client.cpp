@@ -427,9 +427,6 @@ bool Client::IsAllowedToAttack(gemObject * target, bool inform)
         case TARGET_NONE:
             sMsg = "You must select a target to attack.";
             break;
-        case TARGET_NPC:
-            sMsg = "%s is impervious to attack.";
-            break;
         case TARGET_ITEM:
             sMsg = "You can't attack an inanimate object.";
             break;
@@ -463,8 +460,6 @@ bool Client::IsAllowedToAttack(gemObject * target, bool inform)
                     sMsg = tmp.GetData();
                 }
             }
-            break;
-        case TARGET_PVP: /* Attackable player */
             break;
     }
 
@@ -504,7 +499,7 @@ int Client::GetTargetType(gemObject* target)
 
     if (target->GetCharacterData()->impervious_to_attack)
     {
-        return TARGET_NPC; /* Impervious NPC */
+        return TARGET_FRIEND; /* Impervious NPC */
     }
 
     // Is target a NPC?
@@ -527,13 +522,13 @@ int Client::GetTargetType(gemObject* target)
         return TARGET_GM; /* Invincible GM */
 
     if (targetclient->GetActor()->attackable)
-        return TARGET_PVP; /* attackable GM */
+        return TARGET_FOE; /* attackable GM */
 
     // Challenged to a duel?
     if (IsDuelClient(target->GetClientID())
         || targetclient->IsDuelClient(clientnum))
     {
-        return TARGET_PVP; /* Attackable player */
+        return TARGET_FOE; /* Attackable player */
     }
 
     // In PvP region?
@@ -546,7 +541,7 @@ int Client::GetTargetType(gemObject* target)
     if (psserver->GetCombatManager()->InPVPRegion(attackerpos,attackersector)
         && psserver->GetCombatManager()->InPVPRegion(targetpos,targetsector))
     {
-        return TARGET_PVP; /* Attackable player */
+        return TARGET_FOE; /* Attackable player */
     }
 
     // Is this a player who has hit you and run out of a PVP area?
@@ -555,7 +550,7 @@ int Client::GetTargetType(gemObject* target)
         const DamageHistory *dh = GetActor()->GetDamageHistory((int)i);
         // If the target has ever hit you, you can attack them back.  Logging out clears this.
         if (dh->attacker_ref.IsValid() && dh->attacker_ref->GetActorPtr() == target)
-            return TARGET_PVP;
+            return TARGET_FOE;
     }
 
     // Declared war?
@@ -564,7 +559,7 @@ int Client::GetTargetType(gemObject* target)
     if (attackguild && targetguild &&
         targetguild->IsGuildWarActive(attackguild))
     {
-        return TARGET_PVP; /* Attackable player */
+        return TARGET_FOE; /* Attackable player */
     }
 
     return TARGET_FRIEND; /* Friend */
@@ -587,13 +582,11 @@ void Client::GetTargetTypeName(int32_t targetType, csString& targetDesc) const
 {
     targetDesc.Clear();
     TestTarget(targetDesc, targetType, TARGET_NONE, "the surrounding area");
-    TestTarget(targetDesc, targetType, TARGET_NPC, "living associates");
     TestTarget(targetDesc, targetType, TARGET_ITEM, "items");
     TestTarget(targetDesc, targetType, TARGET_SELF, "yourself");
     TestTarget(targetDesc, targetType, TARGET_FRIEND, "living friends");
-    TestTarget(targetDesc, targetType, TARGET_FOE, "living monsters");
+    TestTarget(targetDesc, targetType, TARGET_FOE, "living enemies");
     TestTarget(targetDesc, targetType, TARGET_DEAD, "the dead");
-    TestTarget(targetDesc, targetType, TARGET_PVP, "living people");
 }
 
 bool Client::IsAlive(void) const

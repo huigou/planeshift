@@ -1135,8 +1135,12 @@ UPDATE `server_options` SET `option_value`='1214' WHERE `option_name`='db_versio
 ALTER TABLE loot_modifiers DROP COLUMN prg_evt_unequip;
 ALTER TABLE loot_modifiers CHANGE prg_evt_equip equip_script text NULL AFTER not_usable_with;
 
--- Also needs manual updates to the equip_script operations.
 UPDATE `server_options` SET `option_value`='1215' WHERE `option_name`='db_version';
+
+#### 1216 - Kenny Graunke - Remove TARGET_NPC and TARGET_PVP from spell target types.
+UPDATE `spells` SET target_type = target_type & ~0x102;
+
+UPDATE `server_options` SET `option_value`='1216' WHERE `option_name`='db_version';
 
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
