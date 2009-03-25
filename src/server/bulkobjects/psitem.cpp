@@ -1762,6 +1762,8 @@ psMoney psItem::GetSellPrice()
 
     MathEnvironment env;
     env.Define("Price", current_stats->GetPrice().GetTotal());
+    env.Define("Quality", GetItemQuality());
+    env.Define("MaxQuality", GetMaxItemQuality());
     script->Evaluate(&env);
 
     MathVar *finalPrice = env.Lookup("FinalPrice");
