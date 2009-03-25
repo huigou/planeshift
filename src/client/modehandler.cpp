@@ -2155,7 +2155,8 @@ void ModeHandler::HandleCachedFile(MsgEntry* me)
             else // does exist, and we're done
             {
                 printf("Yes, it is cached already.  Playing immediately.\n");
-                soundmanager->StartVoiceSound(fname.GetData());
+				soundmanager->StartVoiceSound(fname.GetData());
+				soundmanager->StartVoiceSound(fname.GetData());
             }
         }
         else
@@ -2168,7 +2169,8 @@ void ModeHandler::HandleCachedFile(MsgEntry* me)
                 return;
             }
             // Play sound file
-            soundmanager->StartVoiceSound(fname.GetData());
+			soundmanager->StartVoiceSound(fname.GetData());
+			soundmanager->StartVoiceSound(fname.GetData());
         }
     }
 }

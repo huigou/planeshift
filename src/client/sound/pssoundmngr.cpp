@@ -156,7 +156,18 @@ void psSoundManager::SourceAddNotification(iSndSysSource *pSource)
 
 void psSoundManager::SourceRemoveNotification(iSndSysSource *pSource)
 {
-	printf("SourceAdd Notification\n");
+	printf("SourceRemove Notification\n");
+	if (currentVoiceSource && currentVoiceSource == pSource)
+	{
+		printf("Voice file ended.  Checking for another.\n");
+		voicingQueue.DeleteIndex(0);
+
+		if (voicingQueue.GetSize() > 0)
+		{
+			printf("Playing next voice file.\n");
+			currentVoiceSource = StartSound(voicingQueue.Get(0),voicesVolume,false);
+		}
+	}
 }
 
 
@@ -259,7 +270,7 @@ bool psSoundManager::Setup()
 
 csRef<iSndSysSource> psSoundManager::StartMusicSound(const char* name,bool loop)
 {
-    if(musicEnabled)
+    if (musicEnabled)
         return StartSound(name,musicVolume,loop);
     else
         return NULL;
@@ -267,7 +278,7 @@ csRef<iSndSysSource> psSoundManager::StartMusicSound(const char* name,bool loop)
 
 csRef<iSndSysSource> psSoundManager::StartAmbientSound(const char* name,bool loop)
 {
-    if(ambientEnabled)
+    if (ambientEnabled)
         return StartSound(name,ambientVolume,loop);
     else
         return NULL;
@@ -275,7 +286,7 @@ csRef<iSndSysSource> psSoundManager::StartAmbientSound(const char* name,bool loo
 
 csRef<iSndSysSource> psSoundManager::StartGUISound(const char* name,bool loop)
 {
-    if(guiEnabled)
+    if (guiEnabled)
         return StartSound(name,guiVolume,loop);
     else
         return NULL;
@@ -283,10 +294,20 @@ csRef<iSndSysSource> psSoundManager::StartGUISound(const char* name,bool loop)
 
 csRef<iSndSysSource> psSoundManager::StartVoiceSound(const char* name,bool loop)
 {
-    if(voicesEnabled)
-        return StartSound(name,voicesVolume,loop);
-    else
-        return NULL;
+    if (!voicesEnabled)
+		return NULL;
+	
+	voicingQueue.Push(name);
+
+	if (voicingQueue.GetSize() == 1) // this is the only voice file
+	{
+	    currentVoiceSource = StartSound(name,voicesVolume,loop);
+		return currentVoiceSource;
+	}
+	else
+	{
+		return NULL;
+	}
 }
 
 csRef<iSndSysSource> psSoundManager::StartActionsSound(const char* name,bool loop)
