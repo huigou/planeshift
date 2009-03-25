@@ -1,3 +1,11 @@
+*** 2009-03-25 by Andrew Dai
+- Reduced lag on connections with packet loss by changing algorithm for
+  resending packets to use Jacobson/Karels algorithm to estimate RTT and mean
+  deviance in connections and use those to calculate a packet timeout for each
+  individual client connection.
+- Increased npcclient inqueue size to prevent packet drops on startup.
+- Removed some pointless string copying in PAWS.
+
 *** 2009-03-25 by Stefano Angeleri
 - Added quality and maxquality in getsellprice() math script enviroment
   for coherence with getprice()
