@@ -28,6 +28,7 @@
 #include <csutil/sysfunc.h>
 #include <csutil/ref.h>
 #include <csutil/parray.h>
+#include <csutil/stringarray.h>
 #include <iutil/comp.h>
 #include "util/prb.h"
 #include "csutil/hash.h"
@@ -218,8 +219,14 @@ public:
 private:
 
     csRef<iConfigManager>   cfgmgr;
+	/// This array holds the currently playing voice file, plus any in queue, in order.
+	csStringArray voicingQueue;
 
-    bool soundEnabled;
+	/// This reference holds the current source, so the callback can know when to play the next voice
+	/// while other sounds are playing.
+	csRef<iSndSysSource> currentVoiceSource;
+    
+	bool soundEnabled;
     bool musicEnabled;
     bool ambientEnabled;
     bool actionsEnabled;
