@@ -1,4 +1,11 @@
-﻿*** 2009-03-24 by Kenny Graunke
+﻿*** 2009-03-24 by Keith Fulton
+- Step 1 of supporting multiple voicing files for one response is to allow
+  queueing and sequencing of the files.  This commit does that and demos it by playing 
+  any voice file twice in a row.
+- This commit along with a CS fix also should fix the memory leaks for sounds, where
+  sound streams were constantly being added but never removed in the OpenAL renderer.
+
+*** 2009-03-24 by Kenny Graunke
 - Improved assertion messages in MathExpression::Evaluate.
 - Lowered the precision of MathVar::ToString() to two decimal places, to bring
   spell messages in line with the precision of combat damage messages.
