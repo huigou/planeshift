@@ -203,6 +203,7 @@ void NetManager::CheckResendPkts()
     csHash<csRef<psNetPacketEntry>, PacketKey>::GlobalIterator it (awaitingack.GetIterator());
     csRef<psNetPacketEntry> pkt;
     csArray<csRef<psNetPacketEntry> > pkts;
+    Connection* currentConnection = NULL;
 
     csTicks currenttime = csGetTicks();
 
@@ -218,10 +219,7 @@ void NetManager::CheckResendPkts()
         Debug2(LOG_NET,"Resending nonacked HIGH packet (ID %d).\n", pkt->packet->pktid);
 #endif
         pkt = pkts.Get(i);
-        pkt->timestamp = currenttime;   // update stamp on packet
-        pkt->retransmitted = true;
         
-
         // re-add to send queue
         csRef<NetPacketQueueRefCount> outqueue = clients.FindQueueAny(pkt->clientnum);
         if (!outqueue)
@@ -234,10 +232,21 @@ void NetManager::CheckResendPkts()
         if (connection)
         {
         	// Check the connection packet timeout
-        	if (pkt->timestamp + connection->RTO >= currenttime)
+        	if (pkt->timestamp + connection->RTO * connection->backoff >= currenttime)
         		continue;
         }
-
+        
+        if (connection != currentConnection)
+        {
+        	// Perform exponential backoff once for each connection since pkts are ordered
+        	// by clientnum
+        	connection->backoff *= 2;
+        	currentConnection = connection;
+        }
+        
+        pkt->timestamp = currenttime;   // update stamp on packet
+        pkt->retransmitted = true;
+        
         /*  The proper way to send a message is to add it to the queue, and then add the queue to the senders.
         *  If you do it the other way around the net thread may remove the queue from the senders before you add the packet.
         *   Yes - this has actually happened!

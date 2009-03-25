@@ -332,9 +332,12 @@ bool NetBase::HandleAck(csRef<psNetPacketEntry> pkt, Connection* connection,
         if (ack) // if acked pkt is found, simply remove it.  We're done.
         {
         	// Only update RTT estimate when packet has not been retransmitted
-            if (!ack->retransmitted)
+            if (!ack->retransmitted && connection)
             {
                 csTicks elapsed = csGetTicks() - ack->timestamp;
+                
+                // Finally received non-retransmitted ack, go back to normal retransmit
+                connection->backoff = 1;
       
                 if (connection->estRTT > 0)
                 {
@@ -424,6 +427,7 @@ void NetBase::CheckResendPkts()
     csHash<csRef<psNetPacketEntry> , PacketKey>::GlobalIterator it(awaitingack.GetIterator());
     csRef<psNetPacketEntry> pkt;
     csArray<csRef<psNetPacketEntry> > pkts;
+    Connection *currentConnection = NULL;
 
     csTicks currenttime = csGetTicks();
 
@@ -439,16 +443,23 @@ void NetBase::CheckResendPkts()
 #ifdef PACKETDEBUG
         Debug2(LOG_NET,0,"Resending nonacked HIGH packet (ID %d).\n", pkt->packet->pktid);
 #endif
-        pkt->timestamp = currenttime;   // update stamp on packet
-        pkt->retransmitted = true;
-        
         Connection* connection = GetConnByNum(pkt->clientnum);
         if (connection)
         {
         	// Check the connection packet timeout
-        	if (pkt->timestamp + connection->RTO >= currenttime)
+        	if (pkt->timestamp + connection->RTO * connection->backoff >= currenttime)
         		continue;
         }
+        if (connection != currentConnection)
+        {
+        	// Perform exponential backoff once for each connection since pkts are ordered
+        	// by clientnum
+        	connection->backoff *= 2;
+        	currentConnection = connection;
+        }
+        
+        pkt->timestamp = currenttime;   // update stamp on packet
+        pkt->retransmitted = true;
         
         // re-add to send queue
         if(NetworkQueue->Add(pkt))
@@ -1277,6 +1288,7 @@ NetBase::Connection::Connection(uint32_t num): sequence(1)
     valid=false;
     heartbeat=0;
     lastRecvPacketTime = csGetTicks();
+    backoff = 1;
     
     // Round trip time estimates
     estRTT = 0;
