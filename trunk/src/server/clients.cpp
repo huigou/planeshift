@@ -207,31 +207,6 @@ csRef<NetPacketQueueRefCount> ClientConnectionSet::FindQueueAny(uint32_t clientn
         return NULL;
 }
 
-/**
- * Any client who has an entity targeted is potentially preventing
- * that entity from being removed from the world.  For example, a group
- * of players will often all have the same mob targeted when the mob is
- * killed.  This function removes the reference from all clients.
- * This function does no networking, so the client with this target will
- * not be updated automatically by this function, but it is assumed that
- * the client will be notified of the removed entity by the same function
- * that calls this one.
- */
-void ClientConnectionSet::ClearAllTargets(gemObject *obj)
-{
-    CS::Threading::RecursiveMutexScopedLock lock(mutex);
-    AddressHash::GlobalIterator it (addrHash.GetIterator());
-
-    while(it.HasNext())
-    {
-        Client *p = it.Next();
-        if (p->GetTargetObject() == obj)
-        {
-            p->SetTargetObject(NULL);  // This fixes DecRef problems also.
-        }
-    }
-}
-
 ClientIterator::ClientIterator (ClientConnectionSet& clients)
 : ClientConnectionSet::AddressHash::GlobalIterator (clients.addrHash.GetIterator()), mutex(clients.mutex)
 {

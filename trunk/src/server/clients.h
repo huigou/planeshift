@@ -95,9 +95,6 @@ public:
     Client *Find(LPSOCKADDR_IN addr);
     
     csRef<NetPacketQueueRefCount> FindQueueAny(uint32_t id);
-
-    /// Remove specified entity from any client who has this entity targeted
-    void ClearAllTargets(gemObject *obj);
 };
 
 class ClientIterator : public ClientConnectionSet::AddressHash::GlobalIterator
