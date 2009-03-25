@@ -60,14 +60,12 @@ public:
 enum TARGET_TYPES
 {
     TARGET_NONE     = 0x01, /* Also Area */
-    TARGET_NPC      = 0x02,
     TARGET_ITEM     = 0x04,
     TARGET_SELF     = 0x08,
     TARGET_FRIEND   = 0x10,
     TARGET_FOE      = 0x20,
     TARGET_DEAD     = 0x40,
-    TARGET_GM       = 0x80,
-    TARGET_PVP      = 0x100
+    TARGET_GM       = 0x80
 };
 
 enum CheatFlags // will have more of these as Paladin gets better

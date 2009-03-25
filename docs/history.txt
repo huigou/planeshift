@@ -7,7 +7,8 @@
   hand.  Yet, this is not sensible, because scripts don't check for NULL and
   just presume the object really exists.  Now we use "Fist", as if the hand
   was empty, so we get a real weapon with a small amount of blunt damage.
-
+- Removed TARGET_NPC and TARGET_PVP target types.  Just use FRIEND or FOE.
+  ==> DB VERSION BUMP: 1216 <==
 
 *** 2009-03-24 by Stefano Angeleri
 - Made newacct auto enable created accounts, additionally added an optional
