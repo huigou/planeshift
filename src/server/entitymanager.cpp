@@ -1108,10 +1108,6 @@ bool EntityManager::RemoveActor(gemObject *actor)
     // also notify superclients
     psserver->GetNPCManager()->RemoveEntity(msg.msg);
 
-    // Need to remove all references to this entity before
-    // attempting to remove from the world.
-    clients->ClearAllTargets(actor);
-
     delete actor;
     actor = NULL;
 

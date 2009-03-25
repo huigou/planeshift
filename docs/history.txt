@@ -1,4 +1,9 @@
-﻿*** 2009-03-24 by Keith Fulton
+*** 2009-03-26 by Kenny Graunke
+- Switched Clients to use csWeakRef<gemObject> target instead of a bare
+  pointer, and removed ClientConnectionSet::ClearAllTargets.  I believe
+  this should be safer.  May fix some obscure crashes.
+
+*** 2009-03-24 by Keith Fulton
 - Step 1 of supporting multiple voicing files for one response is to allow
   queueing and sequencing of the files.  This commit does that and demos it by playing 
   any voice file twice in a row.

@@ -382,7 +382,7 @@ protected:
     int exchangeID;
     gemActor *actor;
     csArray<PID> pets;
-    gemObject *target;
+    csWeakRef<gemObject> target;
     csString mesh;
     bool ready;
 
