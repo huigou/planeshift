@@ -620,6 +620,12 @@ public:
     csTicks lastRecvPacketTime;
     /** number of attempts to keep alive connection without ack response */
     int heartbeat;
+    /** Estimated RTT */
+    float estRTT;
+    /** RTT deviance */
+    float devRTT;
+    /** timeout */
+    csTicks RTO;
 
     /** keeps track of received packets to drop doubled packets */
     uint32_t packethistoryid[MAXPACKETHISTORY];
