@@ -1,4 +1,8 @@
-*** 2009-03-26 by Kenny Graunke
+*** 2009-03-25 by Stefano Angeleri
+- Added quality and maxquality in getsellprice() math script enviroment
+  for coherence with getprice()
+
+*** 2009-03-25 by Kenny Graunke
 - Switched Clients to use csWeakRef<gemObject> target instead of a bare
   pointer, and removed ClientConnectionSet::ClearAllTargets.  I believe
   this should be safer.  May fix some obscure crashes.
