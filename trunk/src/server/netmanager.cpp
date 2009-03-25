@@ -209,7 +209,7 @@ void NetManager::CheckResendPkts()
     while(it.HasNext())
     {
         pkt = it.Next();
-        if (pkt->timestamp + PKTMAXLATENCY < currenttime)
+        if (pkt->timestamp + PKTMINRTO < currenttime)
             pkts.Push(pkt);
     }
     for (size_t i = 0; i < pkts.GetSize(); i++)
@@ -219,6 +219,8 @@ void NetManager::CheckResendPkts()
 #endif
         pkt = pkts.Get(i);
         pkt->timestamp = currenttime;   // update stamp on packet
+        pkt->retransmitted = true;
+        
 
         // re-add to send queue
         csRef<NetPacketQueueRefCount> outqueue = clients.FindQueueAny(pkt->clientnum);
@@ -226,6 +228,14 @@ void NetManager::CheckResendPkts()
         {
             awaitingack.Delete(PacketKey(pkt->clientnum, pkt->packet->pktid), pkt);
             continue;
+        }
+        
+        Connection* connection = GetConnByNum(pkt->clientnum);
+        if (connection)
+        {
+        	// Check the connection packet timeout
+        	if (pkt->timestamp + connection->RTO >= currenttime)
+        		continue;
         }
 
         /*  The proper way to send a message is to add it to the queue, and then add the queue to the senders.

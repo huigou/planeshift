@@ -29,7 +29,9 @@
 enum
 {
   PKTSIZE_ACK    = 0,        // 0 pktsize means ACK pkt
-  PKTMAXLATENCY    = 800,        // 800 mseconds till packet resent (max RTT assumed to be 400 * 2 variance)
+  PKTMINRTO    = 250,        // Minimum of 250 mseconds till packet resend
+  PKTMAXRTO = 120000,        // Maximum of 2 minutes till packet resend
+  PKTINITRTO = 3000,         // Initially assume 3 seconds till packet resend
   FLAG_MULTIPACKET = 0x08,  // priority bit 8 is multipacket 
   /// MAXPACKETSIZE includes header length ( sizeof(struct psNetPacket) )
   MAXPACKETSIZE       = 1400    // 1400 bytes is max size of network packet
@@ -159,6 +161,9 @@ public:
     uint32_t clientnum;
 
     csTicks  timestamp;
+    
+    /** has this packet been retransmitted */
+    bool retransmitted;
 
     /** The Packet like it is returned from reading UDP socket / will be
      * written to socket

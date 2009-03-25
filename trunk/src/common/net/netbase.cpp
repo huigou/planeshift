@@ -331,10 +331,33 @@ bool NetBase::HandleAck(csRef<psNetPacketEntry> pkt, Connection* connection,
 
         if (ack) // if acked pkt is found, simply remove it.  We're done.
         {
-            csTicks elapsed = csGetTicks() - ack->timestamp;
-
-            netInfos.AddPingTicks(elapsed);
-
+        	// Only update RTT estimate when packet has not been retransmitted
+            if (!ack->retransmitted)
+            {
+                csTicks elapsed = csGetTicks() - ack->timestamp;
+      
+                if (connection->estRTT > 0)
+                {
+                	int diff = elapsed - connection->estRTT;
+					connection->estRTT += (int) (0.125 * diff);
+					if(diff < 0)
+						diff = -diff;
+					connection->devRTT += (int) (0.125 * (diff - connection->devRTT));
+                }
+                else
+                {
+                	// Initialise the RTT estimates
+                	connection->estRTT = elapsed;
+                	connection->devRTT = elapsed / 2;
+                }
+                // Update the packet timeout
+				connection->RTO = connection->estRTT + 4 * connection->devRTT;
+				if (connection->RTO > PKTMAXRTO)
+					connection->RTO = PKTMAXRTO;
+				else if(connection->RTO < PKTMINRTO)
+					connection->RTO = PKTMINRTO;
+				netInfos.AddPingTicks(elapsed);
+            }
             // printf ("Ping time: %i, average: %i\n", elapsed, netInfos.GetAveragePingTicks());
 
 
@@ -407,7 +430,7 @@ void NetBase::CheckResendPkts()
     while(it.HasNext())
     {
         pkt = it.Next();
-        if (pkt->timestamp + PKTMAXLATENCY < currenttime)
+        if (pkt->timestamp + PKTMINRTO < currenttime)
             pkts.Push(pkt);
     }
     for (size_t i = 0; i < pkts.GetSize(); i++)
@@ -417,6 +440,15 @@ void NetBase::CheckResendPkts()
         Debug2(LOG_NET,0,"Resending nonacked HIGH packet (ID %d).\n", pkt->packet->pktid);
 #endif
         pkt->timestamp = currenttime;   // update stamp on packet
+        pkt->retransmitted = true;
+        
+        Connection* connection = GetConnByNum(pkt->clientnum);
+        if (connection)
+        {
+        	// Check the connection packet timeout
+        	if (pkt->timestamp + connection->RTO >= currenttime)
+        		continue;
+        }
         
         // re-add to send queue
         if(NetworkQueue->Add(pkt))
@@ -1245,6 +1277,13 @@ NetBase::Connection::Connection(uint32_t num): sequence(1)
     valid=false;
     heartbeat=0;
     lastRecvPacketTime = csGetTicks();
+    
+    // Round trip time estimates
+    estRTT = 0;
+
+    devRTT = 0;
+
+    RTO = PKTINITRTO;
 
     memset(&addr, 0, sizeof(SOCKADDR_IN));
     memset(&packethistoryid, 0, MAXPACKETHISTORY * sizeof(uint32_t));
