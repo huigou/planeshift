@@ -36,7 +36,9 @@
 #define NUM_BROADCAST        0xffffffff
 #define MAXQUEUESIZE        20000
 #define MAXCLIENTQUEUESIZE  5000
-#define MAXPACKETHISTORY    400
+#define MAXPACKETHISTORY    503  // Should be a prime to improve performance of hash
+                                 // This must be set carefully and ideally should be at least the size
+                                 // of the input queue
 #define NETAVGCOUNT 400
 #define RESENDAVGCOUNT 200
 
@@ -604,6 +606,7 @@ class NetBase::Connection
 {
     uint32_t sequence;
 public:
+    csHash<uint32_t> packethistoryhash;
     /** buffer for split up packets, allocated when needed */
     void *buf;
     /** The INet Adress of the client */
