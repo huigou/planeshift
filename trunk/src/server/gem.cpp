@@ -907,9 +907,9 @@ void gemObject::UpdateProxList( bool force )
     if (player_count > PROX_LIST_SHRINK_THRESHOLD)
     {
         prox_distance_current-=PROX_LIST_STEP_SIZE;
-        if (prox_distance_current<0)
+        if (prox_distance_current<2)
         {
-            prox_distance_current=0;
+            prox_distance_current=2;
         }
     }
     /* Step up if we're small enough
