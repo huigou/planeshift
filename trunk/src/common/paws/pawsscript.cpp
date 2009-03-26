@@ -154,7 +154,7 @@ bool pawsScript::Parse(const char * script)
         if (tokens[a] == ":" && onRHS)
         {
             // check if it's an extra var
-            bool isExtraVar = PawsManager::GetSingleton().ExtraScriptVars().Lookup(tokens[a-1]);
+            bool isExtraVar = PawsManager::GetSingleton().ExtraScriptVars().Lookup(tokens[a-1]) != NULL;
             if (!isExtraVar)
             {
                 pawsWidget * dep;
