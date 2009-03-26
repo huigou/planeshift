@@ -242,8 +242,12 @@ void NetManager::CheckResendPkts()
         	// by clientnum
         	
         	// Now backoff previous connection for the next time we need to resend those packets
-        	if (currentConnection)
+        	if (currentConnection && (currentConnection->backoff == 1 || currentConnection->backoffStart + MIN(PKTMAXRTO, currentConnection->RTO * currentConnection->backoff) <= currenttime))
+        	{
+        		currentConnection->backoffStart = currenttime;
         		currentConnection->backoff *= 2;
+        		currentConnection = connection;
+        	}
         	currentConnection = connection;
         }
         
@@ -260,7 +264,10 @@ void NetManager::CheckResendPkts()
         *  not all of the data could be added.
         */
         if (!outqueue->Add(pkt))
+        {
             Error2("Queue full. Could not add packet with clientnum %d.\n", pkt->clientnum);
+            continue;
+        }
 
         /**
         * The senders list is a list of busy queues.  The SendOut() function
@@ -269,7 +276,10 @@ void NetManager::CheckResendPkts()
         */
 
         if (!senders.Add (outqueue))
+        {
             Error1("Senderlist Full!");
+            continue;
+        }
 
         //printf("pkt=%p, pkt->packet=%p\n",pkt,pkt->packet);
         // take out of awaiting ack pool.
@@ -283,8 +293,11 @@ void NetManager::CheckResendPkts()
 
     }
     // Backoff last connection
-	if (currentConnection)
+	if (currentConnection && (currentConnection->backoff == 1 || currentConnection->backoffStart + MIN(PKTMAXRTO, currentConnection->RTO * currentConnection->backoff) <= currenttime))
+	{
+		currentConnection->backoffStart = currenttime;
 		currentConnection->backoff *= 2;
+	}
     if(pkts.GetSize() > 0)
     {
         resends[resendIndex] = pkts.GetSize();

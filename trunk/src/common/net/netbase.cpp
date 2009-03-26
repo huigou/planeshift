@@ -454,7 +454,7 @@ void NetBase::CheckResendPkts()
         if (connection)
         {
         	// Check the connection packet timeout
-        	if (pkt->timestamp + connection->RTO * connection->backoff >= currenttime)
+        	if (pkt->timestamp + MIN(PKTMAXRTO, connection->RTO * connection->backoff) >= currenttime)
         		continue;
         }
         if (connection != currentConnection)
@@ -462,9 +462,12 @@ void NetBase::CheckResendPkts()
         	// Perform exponential backoff once for each connection since pkts are ordered
         	// by clientnum
         	// Now backoff previous connection for the next time we need to resend those packets
-        	if (currentConnection)
+        	if (currentConnection && (currentConnection->backoff == 1 || currentConnection->backoffStart + MIN(PKTMAXRTO, currentConnection->RTO * currentConnection->backoff) <= currenttime))
+        	{
+        		currentConnection->backoffStart = currenttime;
         		currentConnection->backoff *= 2;
-        	currentConnection = connection;
+        		currentConnection = connection;
+        	}
         }
         
         pkt->timestamp = currenttime;   // update stamp on packet
@@ -485,8 +488,11 @@ void NetBase::CheckResendPkts()
         }
     }
     // Backoff last connection
-	if (currentConnection)
+	if (currentConnection && (currentConnection->backoff == 1 || currentConnection->backoffStart + MIN(PKTMAXRTO, currentConnection->RTO * currentConnection->backoff) <= currenttime))
+	{
+		currentConnection->backoffStart = currenttime;
 		currentConnection->backoff *= 2;
+	}
     if(pkts.GetSize() > 0)
     {
         resends[resendIndex] = pkts.GetSize();
@@ -1033,7 +1039,8 @@ void NetBase::CheckFragmentTimeouts(void)
         if(newids.In(pkt->packet->pktid))
             continue;
 
-        if (pkt->timestamp > current || pkt->timestamp < current-12000)
+        // Remove fragment if timed out and (low priority or lost connection)
+        if ((pkt->timestamp > current || pkt->timestamp < current-12000) && (pkt->packet->GetPriority() == PRIORITY_LOW || !GetConnByNum(pkt->clientnum)))
         {
             // Maximum of 10 ol
             if (count<10)
@@ -1233,9 +1240,6 @@ bool NetBase::QueueMessage(MsgEntry *me)
             Error4("*** Input Buffer Full! Yielding for packet, client %u, type %s, input queue %zu!",
                    me->clientnum,GetMsgTypeName(me->GetType()).GetData(),i);
 
-           // Input queue is full. Yield CPU and check back  if it still is full
-            CS::Threading::Thread::Yield();
-
             // Block permanently on the full queue so we don't have a problem with fake acks
             CS_ASSERT(inqueues[i]->AddWait(me));
         }
@@ -1301,6 +1305,7 @@ NetBase::Connection::Connection(uint32_t num): sequence(1), packethistoryhash(MA
     heartbeat=0;
     lastRecvPacketTime = csGetTicks();
     backoff = 1;
+    backoffStart = 0;
     
     // Round trip time estimates
     estRTT = 0;
