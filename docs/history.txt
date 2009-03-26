@@ -5,6 +5,10 @@
   individual client connection.
 - Increased npcclient inqueue size to prevent packet drops on startup.
 - Removed some pointless string copying in PAWS.
+- Improved performance when checking for duplicated packets.
+- Fixed bug in npcclient where duplicates would not be detected since the input
+  queue was longer than the packet history so when the input queue fills up,
+  dups would not be detected.
 
 *** 2009-03-25 by Stefano Angeleri
 - Added quality and maxquality in getsellprice() math script enviroment
