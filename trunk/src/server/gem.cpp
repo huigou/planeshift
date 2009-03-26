@@ -954,11 +954,11 @@ void gemObject::UpdateProxList( bool force )
         }
     }
 
-    if (csGetTicks() - time > 500)
+    if (csGetTicks() - time > 500 || player_count > 100)
     {
         csString status;
-        status.Format("Warning: Spent %u time getting untouched objects in proxlist for %s, %zu nearby entities!",
-                      csGetTicks() - time, GetName(), count);
+        status.Format("Warning: Spent %u time getting untouched objects in proxlist for %s, %zu nearby entities, distance %g!",
+                      csGetTicks() - time, GetName(), player_count, prox_distance_current);
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
 
@@ -976,12 +976,12 @@ void gemObject::UpdateProxList( bool force )
         }
     }
 
-    if (csGetTicks() - time > 500)
+    if (csGetTicks() - time > 500 || player_count > 100)
     {
         csString status;
         status.Format("Warning: Spent %u time touching entities in proxlist for %s,"
-                      " counted %zu nearby entities, %zu untouched objects that it watches!",
-                      csGetTicks() - time, GetName(), count, debug_count);
+                      " counted %zu nearby entities, %zu untouched objects that it watches, distance %g!",
+                      csGetTicks() - time, GetName(), player_count, debug_count, prox_distance_current);
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
 
