@@ -685,7 +685,7 @@ void Loader::UpdatePosition(const csVector3& pos, const char* sectorName, bool f
     validPosition = true;
 
     // Check already loading meshes.
-    for(size_t i=0; i<(loadingMeshes.GetSize() < 50 ? loadingMeshes.GetSize() : 50); ++i)
+    for(size_t i=0; i<(loadingMeshes.GetSize() < 10 ? loadingMeshes.GetSize() : 10); ++i)
     {
         if(LoadMesh(loadingMeshes[i]))
         {
@@ -695,10 +695,10 @@ void Loader::UpdatePosition(const csVector3& pos, const char* sectorName, bool f
     }
 
     // Finalise loaded meshes (expensive, so limited per check).
-    for(size_t i=0; i<(finalisableMeshes.GetSize() < 10 ? finalisableMeshes.GetSize() : 10); ++i)
+    if(!finalisableMeshes.IsEmpty())
     {
-      FinishMeshLoad(finalisableMeshes[i]);
-      finalisableMeshes.DeleteIndex(i);
+      FinishMeshLoad(finalisableMeshes[0]);
+      finalisableMeshes.DeleteIndexFast(0);
     }
 
     if(!force)
