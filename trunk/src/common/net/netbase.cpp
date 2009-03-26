@@ -408,18 +408,25 @@ bool NetBase::HandleAck(csRef<psNetPacketEntry> pkt, Connection* connection,
 
 bool NetBase::CheckDoublePackets(Connection* connection, csRef<psNetPacketEntry> pkt)
 {
-    int i;
+    
+    csArray<uint32_t> offsets = connection->packethistoryhash.GetAll(pkt->packet->pktid);
+    if(!offsets.IsEmpty())
+    {
+    	for(size_t i = 0; i < offsets.GetSize(); i++)
+    		if(offsets[i] == pkt->packet->offset)
+    			return true;
+    }
 
-    for (i=0; i<MAXPACKETHISTORY; i++)
-        if (connection->packethistoryid[i] == pkt->packet->pktid
-            && connection->packethistoryoffset[i] == pkt->packet->offset)
-            break;
+	// No duplicate packet found
+	connection->packethistoryhash.Put(pkt->packet->pktid, pkt->packet->offset);
+	
+	// Push new packet onto history
+	connection->packethistoryhash.Delete(connection->packethistoryid[connection->historypos], connection->packethistoryoffset[connection->historypos]);
+	connection->packethistoryid[connection->historypos] = pkt->packet->pktid;
+	connection->packethistoryoffset[connection->historypos] = pkt->packet->offset;
+	connection->historypos = (connection->historypos + 1) % MAXPACKETHISTORY;
 
-    connection->packethistoryid[connection->historypos] = pkt->packet->pktid;
-    connection->packethistoryoffset[connection->historypos] = pkt->packet->offset;
-    connection->historypos = (connection->historypos + 1) % MAXPACKETHISTORY;
-
-    return (i != MAXPACKETHISTORY);
+    return false;
 }
 
 void NetBase::CheckResendPkts()
@@ -1285,7 +1292,7 @@ uint32_t NetBase::GetRandomID()
 
 // --------------------------------------------------------------------------
 
-NetBase::Connection::Connection(uint32_t num): sequence(1)
+NetBase::Connection::Connection(uint32_t num): sequence(1), packethistoryhash(MAXPACKETHISTORY)
 {
     pcknumin=0;
     pcknumout=0;
