@@ -133,7 +133,7 @@ MathStatement* MathStatement::Create(const csString & line, const char *name)
     line.SubString(assignee, 0, assignAt);
     assignee.Trim();
 
-    bool validAssignee = isupper(assignee.GetAt(0)) != NULL;
+    bool validAssignee = isupper(assignee.GetAt(0)) != 0;
     for (size_t i = 1; validAssignee && i < assignee.Length(); i++)
     {
         if (!isalnum(assignee[i]) && assignee[i] != '_')
