@@ -631,6 +631,7 @@ public:
     csTicks RTO;
     /** exponential backoff for timeouts */
     int backoff;
+    csTicks backoffStart;
 
     /** keeps track of received packets to drop doubled packets */
     uint32_t packethistoryid[MAXPACKETHISTORY];
