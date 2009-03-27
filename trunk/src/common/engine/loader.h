@@ -87,7 +87,7 @@ private:
         csVector2 vec2;
 
         ShaderVar(const char* name, csShaderVariable::VariableType type)
-            : name(name), type(type)
+            : name(name), type(type), vec2(0.0f)
         {
         }
     };
@@ -275,6 +275,7 @@ private:
     csRef<iTextureManager> txtmgr;
     csRef<iLoader> loader;
     csRef<iThreadedLoader> tloader;
+    csRef<iThreadManager> tman;
     csRef<iVFS> vfs;
     csRef<iShaderVarStringSet> svstrings;
     csRef<iStringSet> strings;
