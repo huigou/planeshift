@@ -77,9 +77,9 @@ NetBase::NetBase(int outqueuesize)
     
     profs = new psNetMsgProfiles();
     
-    // Initialize the timeout to 10ms
+    // Initialize the timeout to 30ms, adds 30ms of latency but gives time for packets to coalesce
     timeout.tv_sec = 0;
-    timeout.tv_usec = 10000;
+    timeout.tv_usec = 30000;
 
     msgstrings = NULL;
     engine = NULL;
