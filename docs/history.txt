@@ -1,3 +1,12 @@
+*** 2009-03-27 by Stefano Angeleri
+- Completed the item prereq op. It takes two arguments: if it should search
+  in the inventory or only in the equipment slots and the item name which
+  can check also for renamed items.
+  eg: <item inventory="true" name="Ubersword of Weltall the Klyros" />
+- Added a function in psitem to search for items in equipment or the entire
+  inventory for the specified item name. It returns true if it was found, false
+  if it wasn't
+
 *** 2009-03-27 by Andrew Dai
 - Removed send trigger in netbase as this can prevent packets being merged
   together.
