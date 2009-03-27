@@ -397,6 +397,7 @@ bool ZoneHandler::ExecuteFlaggedRegions(const csString & sector)
             // If the sector has a loading screen, display it
             if (found->loadImage && FindLoadWindow())
             {
+                loadWindow->Clear();
                 Debug2(LOG_LOAD, 0, "Setting background %s", found->loadImage.GetData());
                 loadWindow->SetBackground(found->loadImage.GetData());
                 loadWindow->AddText("Loading region");
