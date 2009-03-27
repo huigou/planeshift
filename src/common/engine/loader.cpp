@@ -47,6 +47,7 @@ void Loader::Init(iObjectRegistry* object_reg, uint gfxFeatures, float loadRange
     engine = csQueryRegistry<iEngine> (object_reg);
     loader = csQueryRegistry<iLoader> (object_reg);
     tloader = csQueryRegistry<iThreadedLoader> (object_reg);
+    tman = csQueryRegistry<iThreadManager> (object_reg);
     vfs = csQueryRegistry<iVFS> (object_reg);
     svstrings = csQueryRegistryTagInterface<iShaderVarStringSet>(object_reg, "crystalspace.shader.variablenameset");
     strings = csQueryRegistryTagInterface<iStringSet>(object_reg, "crystalspace.shared.stringset");
@@ -69,8 +70,8 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
 
     if(vfs->Exists(path))
     {
-        // For the plugins load.
-        csRef<iThreadReturn> plugins;
+        // For the plugin and shader loads.
+        csRefArray<iThreadReturn> rets;
 
         // Restores any directory changes.
         csVfsDirectoryChanger dirchange(vfs);
@@ -112,18 +113,18 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
             node = root->GetNode("plugins");
             if(node.IsValid())
             {
-                plugins = tloader->LoadNode(vfs->GetCwd(), node);
+              rets.Push(tloader->LoadNode(vfs->GetCwd(), node));
             }
 
             node = root->GetNode("shaders");
             if(node.IsValid())
             {
-                nodeItr = root->GetNodes("shader");
+                nodeItr = node->GetNodes("shader");
                 while(nodeItr->HasNext())
                 {
                     node = nodeItr->Next();
                     node = node->GetNode("file");
-                    tloader->LoadShader(vfs->GetCwd(), node->GetContentsValue());
+                    rets.Push(tloader->LoadShader(vfs->GetCwd(), node->GetContentsValue()));
                 }
             }
 
@@ -684,11 +685,8 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
             }
         }
 
-        // Wait for plugins load to finish.
-        if(plugins.IsValid())
-        {
-          plugins->Wait();
-        }
+        // Wait for plugin and shader loads to finish.
+        tman->Wait(rets);
     }
 
     return true;
@@ -1143,10 +1141,6 @@ bool Loader::LoadMaterial(Material* material)
 
     if(ready)
     {
-        csArray<csStringID> shadertypes;
-        csArray<iShader*> shaderptrs;
-        csRefArray<csShaderVariable> shadervars;
-
         csRef<iMaterial> mat (engine->CreateBaseMaterial(0));
         engine->GetMaterialList()->NewMaterial(mat, material->name);
 
