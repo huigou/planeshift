@@ -1452,14 +1452,12 @@ void UserManager::UserStatRegeneration()
 
     // Push a new event
     psUserStatRegeneration* event;
-    nextUserStatRegeneration += 1000;
-    event = new psUserStatRegeneration(this,nextUserStatRegeneration);
+    event = new psUserStatRegeneration(this,csGetTicks() + 1000);
     psserver->GetEventManager()->Push(event);
 }
 
 void UserManager::Ready()
 {
-    nextUserStatRegeneration = csGetTicks();
     UserStatRegeneration();
 }
 

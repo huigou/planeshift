@@ -473,7 +473,6 @@ protected:
 //    CombatManager         *combatmanager;
 //    psServer                *server;
 //    AdminManager            *adminmanager;
-    csTicks                  nextUserStatRegeneration;
 
     /// pointer to member function typedef, improves readability
     typedef void (UserManager::*userCmdPointer)(psUserCmdMessage& msg, Client *client);
