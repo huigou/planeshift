@@ -77,9 +77,9 @@ NetBase::NetBase(int outqueuesize)
     
     profs = new psNetMsgProfiles();
     
-    // Initialize the timeout to 100ms
+    // Initialize the timeout to 10ms
     timeout.tv_sec = 0;
-    timeout.tv_usec = 100000;
+    timeout.tv_usec = 10000;
 
     msgstrings = NULL;
     engine = NULL;
@@ -1002,8 +1002,9 @@ bool NetBase::SendMessage(MsgEntry* me,NetPacketQueueRefCount *queue)
         
 #ifndef CS_PLATFORM_WIN32
         // tell the network code there is a transmission waiting, this minimises lag time for sending network messages
-        if(pipe_fd[1] > 0)
-            write(pipe_fd[1], &notify, 1);
+        // DISABLED: This prevents multiple packets coalescing.
+        //if(pipe_fd[1] > 0)
+           // write(pipe_fd[1], &notify, 1);
 #endif
         
         bytesleft -= pktlen;
