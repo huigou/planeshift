@@ -20,6 +20,7 @@
 #include <psconfig.h>
 
 #include <cstool/collider.h>
+#include <cstool/vfsdirchange.h>
 #include <csutil/scanstr.h>
 #include <iengine/movable.h>
 #include <iengine/portal.h>
@@ -68,20 +69,27 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
 
     if(vfs->Exists(path))
     {
+        // For the plugins load.
+        csRef<iThreadReturn> plugins;
+
+        // Restores any directory changes.
+        csVfsDirectoryChanger dirchange(vfs);
+
+        // XML doc structures.
         csRef<iDocumentSystem> docsys = csQueryRegistry<iDocumentSystem>(object_reg);
         csRef<iDocument> doc = docsys->CreateDocument();
         csRef<iDataBuffer> data = vfs->ReadFile(path);
-
-        if(!recursive)
-        {
-            vfs->ChDir(csString(path).Truncate(csString(path).FindLast('/')));
-        }
 
         doc->Parse(data, true);
 
         // Check that it's an xml file.
         if(!doc->GetRoot())
             return false;
+
+        if(!recursive)
+        {
+          dirchange.ChangeTo(csString(path).Truncate(csString(path).FindLast('/')));
+        }
 
         csRef<iDocumentNode> root = doc->GetRoot()->GetNode("library");
         if(!root.IsValid())
@@ -104,7 +112,7 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
             node = root->GetNode("plugins");
             if(node.IsValid())
             {
-                loader->Load(node);
+                plugins = tloader->LoadNode(vfs->GetCwd(), node);
             }
 
             node = root->GetNode("shaders");
@@ -674,6 +682,12 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                     node = node->GetParent();
                 }
             }
+        }
+
+        // Wait for plugins load to finish.
+        if(plugins.IsValid())
+        {
+          plugins->Wait();
         }
     }
 
