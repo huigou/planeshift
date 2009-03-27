@@ -1,7 +1,7 @@
 <widget_description>
 
   <widget name="LoadWindow" factory="pawsLoadWindow"
-            visible="yes" movable="no" resizable="no" resizetoscreen="yes" >
+            visible="yes" movable="no" resizable="no" resizetoscreen="yes" alwaysontop="yes" >
         <frame x="0" y="0" width="800" height="600" border="no" />
         <font name="/planeshift/data/ttf/cupandtalon.ttf" r="180" g="180" b="180" size="12" shadow="yes" resizetoscreen="yes" />
         <bgimage resource="Loading Background" />
