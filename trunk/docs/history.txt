@@ -1,3 +1,11 @@
+*** 2009-03-27 by Andrew Dai
+- Removed send trigger in netbase as this can prevent packets being merged
+  together.
+- Reduced the select timeout to 10ms since send trigger is removed and to
+  reduce network lag.
+- Changed minimum proxlist distance to be > 0.
+- Made proxlist messages more informative.
+
 *** 2009-03-25 by Andrew Dai
 - Reduced lag on connections with packet loss by changing algorithm for
   resending packets to use Jacobson/Karels algorithm to estimate RTT and mean
