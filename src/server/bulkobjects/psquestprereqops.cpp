@@ -356,12 +356,7 @@ csPtr<psQuestPrereqOp> psQuestPrereqOpFaction::Copy()
 
 bool psQuestPrereqOpItem::Check(psCharacter * character)
 {
-
-    if (character->GetActor())
-    {
-        return true;
-    }
-    return false;
+    return character->Inventory().hasItemName(itemName, includeInventory);
 }
 
 csString psQuestPrereqOpItem::GetScriptOp()

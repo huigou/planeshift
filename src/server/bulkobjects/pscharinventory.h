@@ -212,6 +212,13 @@ public:
      * @return The item in the given slot. NULL if no item was found.
      */
     psItem* GetItem(psItem *container, INVENTORY_SLOT_NUMBER slot);
+
+    /** Check if the item of a certain name is in the character inventory.
+     * @param itemname The name of the item to search for.
+     * @param includeBulk searches for the item only in the equipment if true.
+     * @return The item in the given slot. NULL if no item was found.
+     */
+    bool hasItemName(csString & itemname, bool includeBulk);
     
     /** Get an item that is in the equipment inventory.    
       * @param slot The slot in which we want to retrive the item ( if any ).

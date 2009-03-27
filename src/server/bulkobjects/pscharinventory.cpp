@@ -828,6 +828,17 @@ psItem *psCharacterInventory::GetItem(psItem *container,INVENTORY_SLOT_NUMBER sl
         return NULL;
 }
 
+bool psCharacterInventory::hasItemName(csString & itemname, bool includeBulk)
+{
+    for (size_t i=1; i < inventory.GetSize(); i++)
+    {
+        if (inventory[i].item && (csString)inventory[i].item->GetName() == itemname &&
+           (includeBulk || inventory[i].item->GetLocInParent(true) < PSCHARACTER_SLOT_BULK1))
+            return true;
+    }
+    return false;
+}
+
 psItem *psCharacterInventory::RemoveItemIndex(size_t itemIndex, int count)
 {
     psItem* currentItem = inventory[itemIndex].item;
