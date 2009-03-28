@@ -347,7 +347,19 @@ void GEMSupervisor::FillNPCList(MsgEntry *msg, AccountID superclientID)
         {
             msg->Add(obj->GetPID().Unbox());
             msg->Add(obj->GetEID().Unbox());
+        }
+    }
+}
 
+void GEMSupervisor::ActivateNPCs(AccountID superclientID)
+{
+    csHash<gemObject*, EID>::GlobalIterator iter(entities_by_eid.GetIterator());
+
+    while (iter.HasNext())
+    {
+        gemObject *obj = iter.Next();
+        if (obj->GetSuperclientID() == superclientID)
+        {
             // Turn off any npcs about to be managed from being temporarily impervious
             // CPrintf(CON_NOTIFY,"---------> GemSuperVisor Setting imperv\n");
             obj->GetCharacterData()->SetImperviousToAttack(obj->GetCharacterData()->GetImperviousToAttack() & ~TEMPORARILY_IMPERVIOUS);  // may switch this to 'hide' later

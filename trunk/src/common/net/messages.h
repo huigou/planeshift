@@ -49,7 +49,7 @@ class psLinearMovement;
 // NPC Networking version is separate so we don't have to break compatibility
 // with clients to enhance the superclients.  Made it a large number to ensure
 // no inadvertent overlaps.
-#define PS_NPCNETVERSION 0x1012
+#define PS_NPCNETVERSION 0x1013
 
 enum Slot_Containers
 {
@@ -127,6 +127,7 @@ enum MSG_TYPES
     MSGTYPE_GUITARGETUPDATE,
     MSGTYPE_MAPLIST,
     MSGTYPE_NPCOMMANDLIST,
+    MSGTYPE_NPCREADY,
     MSGTYPE_ALLENTITYPOS,
     MSGTYPE_NEW_NPC,
     MSGTYPE_PETITION,

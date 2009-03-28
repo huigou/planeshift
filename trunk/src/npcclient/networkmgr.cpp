@@ -154,6 +154,9 @@ void NetworkManager::HandleMessage(MsgEntry *me)
         {
             ReceiveNPCList(me);
             ready = true;
+            // Activates NPCs on server side
+            psNPCReadyMessage mesg;
+            msghandler->SendMessage( mesg.msg );
             npcclient->LoadCompleted();
             break;
         }

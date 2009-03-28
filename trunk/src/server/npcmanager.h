@@ -149,6 +149,8 @@ protected:
 
     /// Catch an internal server event for death so a perception can be sent about it.
     void HandleDeathEvent(MsgEntry *me,Client *client);
+    
+    void HandleNPCReady(MsgEntry *me,Client *client);
 
     /// Send the list of maps for the superclient to load on startup.
     void SendMapList(Client *client);
