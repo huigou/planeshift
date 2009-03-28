@@ -2030,6 +2030,7 @@ void AdminManager::SetAttrib(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
                                                 (!actor->GetFiniteInventory())?"on":"off",
                                                 (actor->questtester)?"on":"off",
                                                 (actor->infinitemana)?"on":"off",
+                                                (actor->instantcast)?"on":"off",
                                                 (actor->givekillexp)?"on":"off",
                                                 (actor->attackable)?"on":"off");
         return;
