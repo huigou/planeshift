@@ -334,6 +334,7 @@ NPCManager::NPCManager(ClientConnectionSet *pCCS,
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<NPCManager>(this,&NPCManager::HandleAuthentRequest),MSGTYPE_NPCAUTHENT,REQUIRE_ANY_CLIENT);
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<NPCManager>(this,&NPCManager::HandleCommandList)   ,MSGTYPE_NPCOMMANDLIST,REQUIRE_ANY_CLIENT);
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<NPCManager>(this,&NPCManager::HandleConsoleCommand),MSGTYPE_NPC_COMMAND,REQUIRE_ANY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<NPCManager>(this,&NPCManager::HandleNPCReady)   ,MSGTYPE_NPCREADY, REQUIRE_ANY_CLIENT);
 
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<NPCManager>(this,&NPCManager::HandleDamageEvent),MSGTYPE_DAMAGE_EVENT,NO_VALIDATION);
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<NPCManager>(this,&NPCManager::HandleDeathEvent) ,MSGTYPE_DEATH_EVENT,NO_VALIDATION);
@@ -371,6 +372,7 @@ NPCManager::~NPCManager()
 {
     psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_NPCAUTHENT);
     psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_NPCOMMANDLIST);
+    psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_NPCREADY);
     psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_NPC_COMMAND);
     psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_DAMAGE_EVENT);
     psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_DEATH_EVENT);
@@ -379,6 +381,13 @@ NPCManager::~NPCManager()
     delete outbound;
 }
 
+void NPCManager::HandleNPCReady(MsgEntry *me,Client *client)
+{
+	GEMSupervisor::GetSingleton().ActivateNPCs(client->GetAccountID());
+	// NPC Client is now ready so add onto superclients list
+	client->SetReady(true);
+	superclients.Push(PublishDestination(client->GetClientNum(), client, 0, 0));
+}
 
 void NPCManager::HandleDamageEvent(MsgEntry *me,Client *client)
 {
@@ -636,10 +645,6 @@ void NPCManager::SendNPCList(Client *client)
     if (!newmsg.msg->overrun)
     {
         newmsg.SendMessage();
-
-        // NPC Client is now ready so add onto superclients list
-        client->SetReady(true);
-        superclients.Push(PublishDestination(client->GetClientNum(), client, 0, 0));
     }
     else
     {

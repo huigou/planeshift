@@ -86,6 +86,34 @@ csString psNPCListMessage::ToString(AccessPointers * /*access_ptrs*/)
     return msgtext;
 }
 
+//---------------------------------------------------------------------------
+
+PSF_IMPLEMENT_MSG_FACTORY(psNPCReadyMessage,MSGTYPE_NPCREADY);
+
+psNPCReadyMessage::psNPCReadyMessage()
+{
+    msg.AttachNew(new MsgEntry());
+
+    msg->SetType(MSGTYPE_NPCREADY);
+    msg->clientnum      = 0;
+}
+
+psNPCReadyMessage::psNPCReadyMessage(MsgEntry *message)
+{
+    if (!message)
+        return;
+    
+    msg = message;
+}
+
+csString psNPCReadyMessage::ToString(AccessPointers * /*access_ptrs*/)
+{
+    csString msgtext;
+    
+    msgtext.AppendFmt("TODO");
+
+    return msgtext;
+}
 
 //---------------------------------------------------------------------------
 

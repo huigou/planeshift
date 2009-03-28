@@ -86,6 +86,30 @@ public:
 };
 
 /**
+* The message sent from superclient to server after
+* receiving all entities.  It activates the NPCs on the server.
+*/
+class psNPCReadyMessage : public psMessageCracker
+{
+public:
+    /// Create psMessageBytes struct for outbound use
+	psNPCReadyMessage();
+
+    /// Crack incoming psMessageBytes struct for inbound use
+	psNPCReadyMessage(MsgEntry *message);
+    
+    PSF_DECLARE_MSG_FACTORY();
+
+    /**
+     * Convert the message into human readable string.
+     *
+     * @param access_ptrs A struct to a number of access pointers.
+     * @return Return a human readable string for the message.
+     */
+    virtual csString ToString(AccessPointers * access_ptrs);
+};
+
+/**
 * The 2nd message sent from server to superclient after successful
 * login.  It is a list of strings, each string with the name
 * of a CS world map zip file to load.

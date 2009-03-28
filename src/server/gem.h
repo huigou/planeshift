@@ -180,6 +180,7 @@ public:
     void GetAllEntityPos(psAllEntityPosMessage& msg);
     int  CountManagedNPCs(AccountID superclientID);
     void FillNPCList(MsgEntry *msg, AccountID superclientID);
+    void ActivateNPCs(AccountID superclientID);
     void StopAllNPCs(AccountID superclientID);
 
     /** @brief Gets a list of all the 'live' entities that this player has ownership of.
