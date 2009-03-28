@@ -2394,8 +2394,13 @@ void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
             return;
         }
 
+        
+        //escape the player name so it's not possible to do nasty things
+        csString escapedName;
+        db->Escape( escapedName, data.name.GetDataSafe() );
+
         sql.AppendFmt("update characters set loc_x=%10.2f, loc_y=%10.2f, loc_z=%10.2f, loc_yrot=%10.2f, loc_sector_id=%u, loc_instance=%u where name='%s'",
-            myPoint.x, myPoint.y, myPoint.z, yRot, mysectorinfo->uid, client->GetActor()->GetInstance(), data.player.GetData());
+            myPoint.x, myPoint.y, myPoint.z, yRot, mysectorinfo->uid, client->GetActor()->GetInstance(), escapedName.GetDataSafe());
 
         if (db->CommandPump(sql) != 1)
         {
@@ -4545,7 +4550,12 @@ void AdminManager::WarnMessage(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDat
 
     // This message will be in big red letters on their screen
     psserver->SendSystemError(target->GetClientNum(), data.reason);
-    db->CommandPump("INSERT INTO warnings VALUES(%u, '%s', NOW(), '%s')", target->GetAccountID().Unbox(), client->GetName(), data.reason.GetData());
+
+    //escape the warning so it's not possible to do nasty things
+    csString escapedReason;
+    db->Escape( escapedReason, data.reason.GetDataSafe() );
+
+    db->CommandPump("INSERT INTO warnings VALUES(%u, '%s', NOW(), '%s')", target->GetAccountID().Unbox(), client->GetName(), escapedReason.GetDataSafe());
 
     psserver->SendSystemInfo(client->GetClientNum(), "You warned '%s': " + data.reason, target->GetName());
 }
