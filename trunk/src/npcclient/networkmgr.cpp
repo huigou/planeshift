@@ -306,7 +306,6 @@ void NetworkManager::HandleItem( MsgEntry* me )
         
         npcclient->Remove(obj);
         obj = NULL; // Obj isn't valid after remove
-        return;
     }
 
     gemNPCItem* item = new gemNPCItem( npcclient, mesg);        
