@@ -1,3 +1,8 @@
+*** 2009-03-28 by Stefano Angeleri
+- Fixed PS#2116 - vulnerability against sql injections  by escaping the
+  two offending variables before dropping them to mysql.
+- Fixed an output glitch with /set list
+
 *** 2009-03-27 by Stefano Angeleri
 - Completed the item prereq op. It takes two arguments: if it should search
   in the inventory or only in the equipment slots and the item name which
