@@ -232,7 +232,7 @@ void NetManager::CheckResendPkts()
         if (connection)
         {
         	// Check the connection packet timeout
-        	if (pkt->timestamp + connection->RTO * connection->backoff >= currenttime)
+        	if (pkt->timestamp + MIN(PKTMAXRTO, connection->RTO * connection->backoff) >= currenttime)
         		continue;
         }
         
