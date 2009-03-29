@@ -1094,7 +1094,8 @@ void psLinearMovement::SetVelocity (const csVector3& vel)
 
 void psLinearMovement::AddVelocity (const csVector3& vel)
 {
-    if (vel.Norm() > 100)
+	// -107 is terminal velocity
+    if (vel.Norm() > 110)
         printf("Garbage data in AddVel!\n");
 
     // Y movement here can be used for lift and gravity effects.
