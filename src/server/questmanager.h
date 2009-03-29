@@ -119,7 +119,7 @@ public:
 
     virtual void HandleMessage(MsgEntry *pMsg,Client *client) { }
 
-    void Assign(psQuest *quest, Client *who, gemNPC *assigner);
+    void Assign(psQuest *quest, Client *who, gemNPC *assigner,csTicks timeDelay=0);
     bool Complete(psQuest *quest, Client *who);
 
     void OfferRewardsToPlayer(Client *who, csArray<psItemStats*> &offer,csTicks& timeDelay);
