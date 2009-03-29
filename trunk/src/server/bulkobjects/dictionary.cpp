@@ -1901,8 +1901,8 @@ bool AssignQuestResponseOp::Run(gemNPC *who, Client *target,NpcResponse *owner,c
                target->GetCharacterData()->GetCharName());
         return false;
     }
-
-    psserver->questmanager->Assign(quest[owner->GetActiveQuest()],target,who);
+	timeDelay += 1000;
+    psserver->questmanager->Assign(quest[owner->GetActiveQuest()],target,who,timeDelay);
     return true;
 }
 
@@ -2081,11 +2081,17 @@ bool GiveItemResponseOp::Run(gemNPC *who, Client *target,NpcResponse *owner,csTi
 
 
     csString itemName = item->GetQuantityName();
-    psserver->SendSystemInfo(target->GetClientNum(), "You have received %s.", itemName.GetData());
 
     if (!character->Inventory().AddOrDrop(item))
-        psserver->SendSystemError(target->GetClientNum(), "You received %s, but dropped it because you can't carry any more.", itemName.GetData());
-
+	{
+		psSystemMessage recv(target->GetClientNum(),MSG_ERROR,"You received %s, but dropped it because you can't carry any more.", itemName.GetData());
+		psserver->GetNetManager()->SendMessageDelayed(recv.msg, timeDelay);
+	}
+	else
+	{
+		psSystemMessage recv(target->GetClientNum(),MSG_INFO,"You have received %s.", itemName.GetData());
+		psserver->GetNetManager()->SendMessageDelayed(recv.msg, timeDelay);
+	}
     return true;
 }
 

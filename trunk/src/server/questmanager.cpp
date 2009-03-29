@@ -1244,11 +1244,15 @@ bool QuestManager::GiveRewardToPlayer(Client *who, psItemStats* itemstat)
     return true;
 }
 
-void QuestManager::Assign(psQuest *quest, Client *who,gemNPC *assigner)
+void QuestManager::Assign(psQuest *quest, Client *who,gemNPC *assigner,csTicks timeDelay)
 {
     who->GetActor()->GetCharacterData()->AssignQuest(quest, assigner->GetPID());
-    psserver->SendSystemOK(who->GetClientNum(),"You got a quest!");
-    psserver->SendSystemInfo(who->GetClientNum(),"You now have the %s quest.",quest->GetName() );
+
+	psSystemMessage okmsg(who->GetClientNum() ,MSG_OK,   "You got a quest!");
+    psSystemMessage newmsg(who->GetClientNum(),MSG_INFO, "You now have the %s quest.",quest->GetName() );
+
+	psserver->GetNetManager()->SendMessageDelayed(okmsg.msg,timeDelay);
+	psserver->GetNetManager()->SendMessageDelayed(newmsg.msg,timeDelay);
 
     // Post tutorial event
     psGenericEvent evt(who->GetClientNum(), psGenericEvent::QUEST_ASSIGN);

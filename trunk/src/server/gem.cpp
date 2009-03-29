@@ -3731,12 +3731,12 @@ void gemNPC::ShowPopupMenu(Client *client)
         // If the quest is completed or the last response was not from this NPC, then skip
         if (quests[i]->last_response_from_npc_pid != pid || quests[i]->status == 'C')
         {
-            printf("Skipping completed or irrelevant quest: %s\n", q->GetName() );
+            // printf("Skipping completed or irrelevant quest: %s\n", q->GetName() );
             continue;
         }
-        printf("Checking quest %lu: %s.  ", (unsigned long) i, q->GetName() );
+        // printf("Checking quest %lu: %s.  ", (unsigned long) i, q->GetName() );
         int last_response = quests[i]->last_response;
-        printf("Got last response %d\n", last_response);
+        // printf("Got last response %d\n", last_response);
 
         if (last_response != -1) // within a quest step
         {
@@ -3745,7 +3745,7 @@ void gemNPC::ShowPopupMenu(Client *client)
         }
         else
         {
-            printf("Got last_response==-1 for quest %lu.\n", (unsigned long) i);
+            // printf("Got last_response==-1 for quest %lu.\n", (unsigned long) i);
         }
     }
 
