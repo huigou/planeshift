@@ -378,9 +378,6 @@ void psCelClient::HandleItem( MsgEntry* me )
 
     GEMClientItem* newItem = new GEMClientItem( this, mesg );
 
-    // Handle item effect if there is one.
-    HandleItemEffect(newItem->GetFactName(), newItem->GetMesh());
-
     entities.Push(newItem);
     entities_hash.Put(newItem->GetEID(), newItem);
 }
@@ -508,6 +505,7 @@ void psCelClient::HandleItemEffect( const char* factName, csRef<iMeshWrapper> mw
             csRef<iLight> light = psengine->GetEngine()->CreateLight(factName,
                                                                      l->lightoffset, l->radius,
                                                                      l->colour, CS_LIGHT_DYNAMICTYPE_DYNAMIC);
+            light->SetAttenuationMode(CS_ATTN_REALISTIC);
             unsigned int id = psengine->GetEffectManager()->AttachLight(light, mw);
             if(!id)
             {
@@ -1251,6 +1249,9 @@ void GEMClientObject::CheckMeshLoad()
     psengine->UnregisterDelayedLoader(this);
 
     PostLoad();
+
+    // Handle item effect if there is one.
+    cel->HandleItemEffect(factName, pcmesh);
 }
 
 void GEMClientObject::ChangeName(const char* name)
