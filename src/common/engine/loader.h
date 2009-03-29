@@ -24,6 +24,7 @@
 #include <csgfx/shadervar.h>
 #include <csutil/redblacktree.h>
 #include <csutil/scf_implementation.h>
+#include <csutil/threading/rwmutex.h>
 #include <csutil/threadmanager.h>
 
 #include <iengine/engine.h>
@@ -64,6 +65,7 @@ public:
     inline bool HasValidPosition() const { return validPosition; }
 
 private:
+  class MeshGen;
   class MeshObj;
   class Portal;
   class Light;
@@ -157,10 +159,42 @@ private:
         size_t objectCount;
         size_t alwaysLoadedCount;
         csRef<iSector> object;
+        csRefArray<MeshGen> meshgen;
         csRefArray<MeshObj> meshes;
         csRefArray<Portal> portals;
         csRefArray<Portal> activePortals;
         csRefArray<Light> lights;
+    };
+
+    class MeshGen : public CS::Utility::FastRefCount<MeshObj>
+    {
+    public:
+        MeshGen(const char* name, iDocumentNode* data) : name(name), data(data),
+            loading(false)
+        {
+        }
+
+        inline bool InRange(const csBox3& curBBox)
+        {
+            return !status.IsValid() && curBBox.Overlap(bbox);
+        }
+
+        inline bool OutOfRange(const csBox3& curBBox)
+        {
+            return status.IsValid() && !curBBox.Overlap(bbox);
+        }
+
+        csString name;
+        csRef<iDocumentNode> data;
+        bool loading;
+        csBox3 bbox;
+        csRef<iThreadReturn> status;
+        csRef<MeshObj> object;
+        csRefArray<Material> materials;
+        csArray<bool> matchecked;
+        csRefArray<MeshFact> meshfacts;
+        csArray<bool> mftchecked;
+        Sector* sector;
     };
 
     class MeshObj : public CS::Utility::FastRefCount<MeshObj>
@@ -268,12 +302,14 @@ private:
     void FindConnectedSectors(csRefArray<Sector>& connectedSectors, Sector* sector);
     void CleanSector(Sector* sector);
     void CleanMesh(MeshObj* mesh);
+    void CleanMeshGen(MeshGen* meshgen);
     void CleanMeshFact(MeshFact* meshfact);
     void CleanMaterial(Material* material);
     void CleanTexture(Texture* texture);
     void LoadSector(const csVector3& pos, const csBox3& loadBox, const csBox3& unloadBox,
       Sector* sector, uint depth);
     void FinishMeshLoad(MeshObj* mesh);
+    bool LoadMeshGen(MeshGen* meshgen);
     bool LoadMesh(MeshObj* mesh);
     bool LoadMeshFact(MeshFact* meshfact);
     bool LoadMaterial(Material* material);
@@ -301,6 +337,7 @@ private:
     csRef<Sector> lastSector;
     csVector3 lastPos;
 
+    csRefArray<MeshGen> loadingMeshGen;
     csRefArray<MeshObj> loadingMeshes;
     csRefArray<MeshObj> finalisableMeshes;
     csRefArray<MeshObj> deleteQueue;
@@ -308,12 +345,14 @@ private:
     csRedBlackTreeMap<csString, csRef<Texture> > textures;
     csRedBlackTreeMap<csString, csRef<Material> > materials;
     csRedBlackTreeMap<csString, csRef<MeshFact> > meshfacts;
+    csRedBlackTreeMap<csString, csRef<MeshObj> > meshes;
     csRefArray<Sector> sectors;
 
-    CS::Threading::Mutex tLock;
-    CS::Threading::Mutex mLock;
-    CS::Threading::Mutex mfLock;
-    CS::Threading::Mutex sLock;
+    CS::Threading::ReadWriteMutex tLock;
+    CS::Threading::ReadWriteMutex mLock;
+    CS::Threading::ReadWriteMutex mfLock;
+    CS::Threading::ReadWriteMutex meshLock;
+    CS::Threading::ReadWriteMutex sLock;
 };
 
 #endif // __LOADER_H__
