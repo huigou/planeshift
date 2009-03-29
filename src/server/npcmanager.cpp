@@ -507,18 +507,6 @@ void NPCManager::HandleAuthentRequest(MsgEntry *me,Client *notused)
     Notify2(LOG_SUPERCLIENT, "Check Superclient Login for: '%s'\n", (const char*)msg.sUser);
     psAccountInfo *acctinfo=CacheManager::GetSingleton().GetAccountInfoByUsername((const char *)msg.sUser);
 
-    if (clients->FindAccount(acctinfo->accountid, client->GetClientNum()))  // username already logged in
-    {
-        // invalid
-        // psserver->RemovePlayer(me->clientnum,"You are already logged on to this server. If you were disconnected, please wait 30 seconds and try again.");
-        psDisconnectMessage disconnectMsg(client->GetClientNum(), 0, "Already logged in.");
-        psserver->GetEventManager()->Broadcast(disconnectMsg.msg, NetBase::BC_FINALPACKET);
-
-        Error2("User '%s' authentication request rejected: User already logged in.\n",
-               (const char *)msg.sUser);
-
-        return;
-    }
 
     csString password = csMD5::Encode(msg.sPassword).HexString();
 
@@ -554,7 +542,20 @@ void NPCManager::HandleAuthentRequest(MsgEntry *me,Client *notused)
         delete acctinfo;
         return;
     }
+    
 
+    Client* existingClient = clients->FindAccount(acctinfo->accountid, client->GetClientNum());
+    if(existingClient)// username already logged in
+    {
+        // invalid
+        // psserver->RemovePlayer(me->clientnum,"You are already logged on to this server. If you were disconnected, please wait 30 seconds and try again.");
+    	// Diconnect existing superclient
+
+        Error2("Superclient '%s' already logged in. Logging out existing client\n",
+               (const char *)msg.sUser);
+        psserver->RemovePlayer(existingClient->GetClientNum(),"Existing connection overridden by new login.");
+    }
+    
     // *********Successful superclient login here!**********
 
     time_t curtime = time(NULL);
@@ -582,7 +583,7 @@ void NPCManager::HandleAuthentRequest(MsgEntry *me,Client *notused)
 
     delete acctinfo;
 
-    status.Format("%s, %u, Superclient logged in", (const char*) msg.sUser, me->clientnum);
+    status.Format("%s, %u, %s, Superclient logged in", (const char*) msg.sUser, me->clientnum, addr);
     psserver->GetLogCSV()->Write(CSV_AUTHENT, status);
 }
 
