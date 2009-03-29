@@ -228,9 +228,12 @@ void ZoneHandler::HandleMessage(MsgEntry* me)
         haveNewPos = true;
         newPos = msg.pos;
 
-        Loader::GetSingleton().UpdatePosition(newPos, sectorToLoad, true);
+        if(catchUp)
+        {
+          Loader::GetSingleton().UpdatePosition(newPos, sectorToLoad, true);
+        }
 
-        if(Loader::GetSingleton().GetLoadingCount() == 0)
+        if(catchUp && Loader::GetSingleton().GetLoadingCount() == 0)
         {
             haveNewPos = false;
         }

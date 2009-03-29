@@ -174,6 +174,7 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                             CS_ASSERT_MSG(msg.GetData(), texture.IsValid());
                         }
                         m->textures.Push(texture);
+                        m->checked.Push(false);
 
                         node = node->GetParent();
                     }
@@ -204,6 +205,7 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                                 CS_ASSERT_MSG(msg.GetData(), texture.IsValid());
                             }
                             m->textures.Push(texture);
+                            m->checked.Push(false);
                         }
                         else if(csString("vector2").Compare(node->GetAttributeValue("type")))
                         {
@@ -237,6 +239,7 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                         }
 
                         mf->materials.Push(material);
+                        mf->checked.Push(false);
                     }
                 }
 
@@ -253,6 +256,7 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                         CS_ASSERT_MSG(msg.GetData(), material.IsValid());
                     }
                     mf->materials.Push(material);
+                    mf->checked.Push(false);
                 }
 
                 if(node->GetNode("params")->GetNode("cells"))
@@ -269,6 +273,7 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                         }
 
                         mf->materials.Push(material);
+                        mf->checked.Push(false);
                     }
                     node = node->GetParent()->GetParent();
 
@@ -293,6 +298,7 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                                 }
 
                                 mf->materials.Push(material);
+                                mf->checked.Push(false);
                             }
                         }
                     }
@@ -384,6 +390,7 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                             }
 
                             m->materials.Push(material);
+                            m->matchecked.Push(false);
                         }
 
                         csRef<iDocumentNodeIterator> nodeItr4 = node3->GetNodes("shadervar");
@@ -402,6 +409,7 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                                 }
 
                                 m->textures.Push(texture);
+                                m->texchecked.Push(false);
                             }
                         }
                     }
@@ -476,6 +484,7 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                         }
 
                         m->meshfacts.Push(meshfact);
+                        m->mftchecked.Push(false);
                     }
                     node2 = node2->GetParent();
 
@@ -492,6 +501,7 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                         }
 
                         m->materials.Push(material);
+                        m->matchecked.Push(false);
                         node2 = node2->GetParent();
                     }
 
@@ -512,6 +522,7 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                             }
 
                             m->materials.Push(material);
+                            m->matchecked.Push(false);
                         }
                     }
 
@@ -539,6 +550,7 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                                         }
 
                                         m->textures.Push(texture);
+                                        m->texchecked.Push(false);
                                     }
                                 }
                             }
@@ -695,6 +707,13 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
 void Loader::UpdatePosition(const csVector3& pos, const char* sectorName, bool force)
 {
     validPosition = true;
+    
+    // Delete from delete queue (fairly expensive, so limited per update).
+    if(!deleteQueue.IsEmpty())
+    {
+        CleanMesh(deleteQueue[0]);
+        deleteQueue.DeleteIndexFast(0);
+    }
 
     // Check already loading meshes.
     for(size_t i=0; i<(loadingMeshes.GetSize() < 10 ? loadingMeshes.GetSize() : 10); ++i)
@@ -706,7 +725,7 @@ void Loader::UpdatePosition(const csVector3& pos, const char* sectorName, bool f
         }
     }
 
-    // Finalise loaded meshes (expensive, so limited per check).
+    // Finalise loaded meshes (expensive, so limited per update).
     if(!finalisableMeshes.IsEmpty())
     {
       FinishMeshLoad(finalisableMeshes[0]);
@@ -820,6 +839,7 @@ void Loader::CleanSector(Sector* sector)
             sector->meshes[i]->object->GetMovable()->UpdateMove();
             engine->GetMeshes()->Remove(sector->meshes[i]->object);
             sector->meshes[i]->object.Invalidate();
+            CleanMesh(sector->meshes[i]);
             --sector->objectCount;
         }
     }
@@ -856,6 +876,100 @@ void Loader::CleanSector(Sector* sector)
 
     engine->GetSectors()->Remove(sector->object);
     sector->object.Invalidate();
+}
+
+void Loader::CleanMesh(MeshObj* mesh)
+{
+    for(size_t i=0; i<mesh->meshfacts.GetSize(); ++i)
+    {
+        CleanMeshFact(mesh->meshfacts[i]);
+    }
+
+    for(size_t i=0; i<mesh->mftchecked.GetSize(); ++i)
+    {
+        mesh->mftchecked[i] = false;
+    }
+
+    for(size_t i=0; i<mesh->materials.GetSize(); ++i)
+    {
+        CleanMaterial(mesh->materials[i]);
+    }
+
+    for(size_t i=0; i<mesh->matchecked.GetSize(); ++i)
+    {
+        mesh->matchecked[i] = false;
+    }
+
+    for(size_t i=0; i<mesh->textures.GetSize(); ++i)
+    {
+        CleanTexture(mesh->textures[i]);
+    }
+
+    for(size_t i=0; i<mesh->texchecked.GetSize(); ++i)
+    {
+        mesh->texchecked[i] = false;
+    }
+}
+
+void Loader::CleanMeshFact(MeshFact* meshfact)
+{
+  if(--meshfact->useCount == 0)
+  {
+      csWeakRef<iMeshFactoryWrapper> mf = scfQueryInterface<iMeshFactoryWrapper>(meshfact->status->GetResultRefPtr());
+      if(mf->GetRefCount() == 2)
+      {
+          engine->GetMeshFactories()->Remove(mf);
+      }
+
+      meshfact->status.Invalidate();
+
+      for(size_t i=0; i<meshfact->materials.GetSize(); ++i)
+      {
+          CleanMaterial(meshfact->materials[i]);
+      }
+
+      for(size_t i=0; i<meshfact->checked.GetSize(); ++i)
+      {
+          meshfact->checked[i] = false;
+      }
+  }
+}
+
+void Loader::CleanMaterial(Material* material)
+{
+  if(--material->useCount == 0)
+  {
+      if(material->mat->GetRefCount() == 2)
+      {
+          engine->GetMaterialList()->Remove(material->mat);
+      }
+
+      material->mat.Invalidate();
+
+      for(size_t i=0; i<material->textures.GetSize(); ++i)
+      {
+          CleanTexture(material->textures[i]);
+      }
+
+      for(size_t i=0; i<material->checked.GetSize(); ++i)
+      {
+          material->checked[i] = false;
+      }
+  }
+}
+
+void Loader::CleanTexture(Texture* texture)
+{
+  if(--texture->useCount == 0)
+  {
+      csWeakRef<iTextureWrapper> t = scfQueryInterface<iTextureWrapper>(texture->status->GetResultRefPtr());
+      if(t->GetRefCount() == 2)
+      {
+          engine->GetTextureList()->Remove(t);
+      }
+
+      texture->status.Invalidate();
+  }
 }
 
 void Loader::LoadSector(const csVector3& pos, const csBox3& loadBox, const csBox3& unloadBox,
@@ -922,6 +1036,7 @@ void Loader::LoadSector(const csVector3& pos, const csBox3& loadBox, const csBox
                 sector->meshes[i]->object->GetMovable()->UpdateMove();
                 engine->GetMeshes()->Remove(sector->meshes[i]->object);
                 sector->meshes[i]->object.Invalidate();
+                deleteQueue.Push(sector->meshes[i]);
                 --sector->objectCount;
             }
         }
@@ -1057,6 +1172,7 @@ void Loader::LoadSector(const csVector3& pos, const csBox3& loadBox, const csBox
 void Loader::FinishMeshLoad(MeshObj* mesh)
 {
   mesh->object = scfQueryInterface<iMeshWrapper>(mesh->status->GetResultRefPtr());
+  mesh->status.Invalidate();
   engine->SyncEngineListsNow(tloader);
   mesh->object->GetMovable()->SetSector(mesh->sector->object);
   mesh->object->GetMovable()->UpdateMove();
@@ -1071,7 +1187,11 @@ bool Loader::LoadMesh(MeshObj* mesh)
     bool ready = true;
     for(size_t i=0; i<mesh->meshfacts.GetSize(); i++)
     {
-        ready &= LoadMeshFact(mesh->meshfacts[i]);
+        if(!mesh->mftchecked[i])
+        {
+            mesh->mftchecked[i] = LoadMeshFact(mesh->meshfacts[i]);
+            ready &= mesh->mftchecked[i];
+        }
     }
 
     if(!ready)
@@ -1079,7 +1199,11 @@ bool Loader::LoadMesh(MeshObj* mesh)
 
     for(size_t i=0; i<mesh->materials.GetSize(); i++)
     {
-        ready &= LoadMaterial(mesh->materials[i]);
+        if(!mesh->matchecked[i])
+        {
+            mesh->matchecked[i] = LoadMaterial(mesh->materials[i]);
+            ready &= mesh->matchecked[i];
+        }
     }
 
     if(!ready)
@@ -1087,7 +1211,11 @@ bool Loader::LoadMesh(MeshObj* mesh)
 
     for(size_t i=0; i<mesh->textures.GetSize(); i++)
     {
-        ready &= LoadTexture(mesh->textures[i]);
+        if(!mesh->texchecked[i])
+        {
+            mesh->texchecked[i] = LoadTexture(mesh->textures[i]);
+            ready &= mesh->texchecked[i];
+        }
     }
 
     if(ready && !mesh->status)
@@ -1100,15 +1228,20 @@ bool Loader::LoadMesh(MeshObj* mesh)
 
 bool Loader::LoadMeshFact(MeshFact* meshfact)
 {
-    if(meshfact->loaded)
+    if(meshfact->useCount != 0)
     {
+        ++meshfact->useCount;
         return true;
     }
 
     bool ready = true;
     for(size_t i=0; i<meshfact->materials.GetSize(); i++)
     {
-        ready &= LoadMaterial(meshfact->materials[i]);
+        if(!meshfact->checked[i])
+        {
+            meshfact->checked[i] = LoadMaterial(meshfact->materials[i]);
+            ready &= meshfact->checked[i];
+        }
     }
 
     if(ready && !meshfact->status)
@@ -1119,7 +1252,7 @@ bool Loader::LoadMeshFact(MeshFact* meshfact)
 
     if(meshfact->status && meshfact->status->IsFinished())
     {
-        meshfact->loaded = true;
+        ++meshfact->useCount;
         return true;
     }
 
@@ -1128,21 +1261,26 @@ bool Loader::LoadMeshFact(MeshFact* meshfact)
 
 bool Loader::LoadMaterial(Material* material)
 {
-    if(material->loaded)
+    if(material->useCount != 0)
     {
+        ++material->useCount;
         return true;
     }
 
     bool ready = true;
     for(size_t i=0; i<material->textures.GetSize(); i++)
     {
-        ready &= LoadTexture(material->textures[i]);
+        if(!material->checked[i])
+        {
+            material->checked[i] = LoadTexture(material->textures[i]);
+            ready &= material->checked[i];
+        }
     }
 
     if(ready)
     {
         csRef<iMaterial> mat (engine->CreateBaseMaterial(0));
-        engine->GetMaterialList()->NewMaterial(mat, material->name);
+        material->mat = engine->GetMaterialList()->NewMaterial(mat, material->name);
 
         for(size_t i=0; i<material->shaders.GetSize(); i++)
         {
@@ -1176,7 +1314,7 @@ bool Loader::LoadMaterial(Material* material)
             }
         }
 
-        material->loaded = true;
+        ++material->useCount;
         return true;
     }
 
@@ -1185,8 +1323,9 @@ bool Loader::LoadMaterial(Material* material)
 
 bool Loader::LoadTexture(Texture* texture)
 {
-    if(texture->loaded)
+    if(texture->useCount != 0)
     {
+        ++texture->useCount;
         return true;
     }
 
@@ -1196,13 +1335,13 @@ bool Loader::LoadTexture(Texture* texture)
         return false;
     }
 
-    if(!texture->status->IsFinished())
+    if(texture->status->IsFinished())
     {
-        return false;
+        ++texture->useCount;
+        return true;
     }
 
-    texture->loaded = true;
-    return true;
+    return false;
 }
 
 csPtr<iMeshFactoryWrapper> Loader::LoadFactory(const char* name)

@@ -96,12 +96,12 @@ private:
     {
     public:
         Texture(const char* name = "")
-            : name(name), loaded(false)
+            : name(name), useCount(0)
         {
         }
 
         csString name;
-        bool loaded;
+        uint useCount;
         csRef<iThreadReturn> status;
         csRef<iDocumentNode> data;
     };
@@ -110,29 +110,33 @@ private:
     {
     public:
         Material(const char* name = "")
-            : name(name), loaded(false)
+            : name(name), useCount(0)
         {
         }
 
         csString name;
-        bool loaded;
+        uint useCount;
+        csRef<iMaterialWrapper> mat;
         csArray<Shader> shaders;
         csArray<ShaderVar> shadervars;
         csRefArray<Texture> textures;
+        csArray<bool> checked;
     };
 
     class MeshFact : public CS::Utility::FastRefCount<MeshFact>
     {
     public:
-        MeshFact(const char* name, iDocumentNode* data) : name(name), loaded(false), data(data)
+        MeshFact(const char* name, iDocumentNode* data) : name(name),
+          useCount(0), data(data)
         {
         }
 
         csString name;
-        bool loaded;
+        uint useCount;
         csRef<iThreadReturn> status;
         csRef<iDocumentNode> data;
         csRefArray<Material> materials;
+        csArray<bool> checked;
     };
 
     class Sector : public CS::Utility::FastRefCount<Sector>
@@ -190,8 +194,11 @@ private:
         csRef<iThreadReturn> status;
         csRef<iMeshWrapper> object;
         csRefArray<Texture> textures;
+        csArray<bool> texchecked;
         csRefArray<Material> materials;
+        csArray<bool> matchecked;
         csRefArray<MeshFact> meshfacts;
+        csArray<bool> mftchecked;
         Sector* sector;
     };
 
@@ -260,6 +267,10 @@ private:
     void CleanDisconnectedSectors(Sector* sector);
     void FindConnectedSectors(csRefArray<Sector>& connectedSectors, Sector* sector);
     void CleanSector(Sector* sector);
+    void CleanMesh(MeshObj* mesh);
+    void CleanMeshFact(MeshFact* meshfact);
+    void CleanMaterial(Material* material);
+    void CleanTexture(Texture* texture);
     void LoadSector(const csVector3& pos, const csBox3& loadBox, const csBox3& unloadBox,
       Sector* sector, uint depth);
     void FinishMeshLoad(MeshObj* mesh);
@@ -292,6 +303,7 @@ private:
 
     csRefArray<MeshObj> loadingMeshes;
     csRefArray<MeshObj> finalisableMeshes;
+    csRefArray<MeshObj> deleteQueue;
 
     csRedBlackTreeMap<csString, csRef<Texture> > textures;
     csRedBlackTreeMap<csString, csRef<Material> > materials;
