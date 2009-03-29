@@ -139,7 +139,7 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                     {
                         t->name = node->GetAttributeValue("name");
                         t->data = node;
-                        CS::Threading::MutexScopedLock lock(tLock);
+                        CS::Threading::ScopedWriteLock lock(tLock);
                         textures.Put(t->name, t);
                     }
                 }
@@ -154,7 +154,7 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                     node = nodeItr->Next();
                     csRef<Material> m = csPtr<Material>(new Material(node->GetAttributeValue("name")));
                     {
-                        CS::Threading::MutexScopedLock lock(mLock);
+                        CS::Threading::ScopedWriteLock lock(mLock);
                         materials.Put(m->name, m);
                     }
 
@@ -165,9 +165,11 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                         sv.value = node->GetContentsValue();
                         m->shadervars.Push(sv);
 
-                        CS::Threading::MutexScopedLock lock(tLock);
-                        csRef<Texture> texture = textures.Get(node->GetContentsValue(), csRef<Texture>());
+                        csRef<Texture> texture;
                         {
+                            CS::Threading::ScopedReadLock lock(tLock);
+                            texture = textures.Get(node->GetContentsValue(), csRef<Texture>());
+
                             // Validation.
                             csString msg;
                             msg.Format("Invalid texture reference '%s' in material '%s'", node->GetContentsValue(), node->GetParent()->GetAttributeValue("name"));
@@ -196,9 +198,11 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                             ShaderVar sv(node->GetAttributeValue("name"), csShaderVariable::TEXTURE);
                             sv.value = node->GetContentsValue();
                             m->shadervars.Push(sv);
-                            CS::Threading::MutexScopedLock lock(tLock);
-                            csRef<Texture> texture = textures.Get(node->GetContentsValue(), csRef<Texture>());
+                            csRef<Texture> texture;
                             {
+                                CS::Threading::ScopedReadLock lock(tLock);
+                                texture = textures.Get(node->GetContentsValue(), csRef<Texture>());
+
                                 // Validation.
                                 csString msg;
                                 msg.Format("Invalid texture reference '%s' in shadervar", node->GetContentsValue());
@@ -223,15 +227,35 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
             {
                 node = nodeItr->Next();
                 csRef<MeshFact> mf = csPtr<MeshFact>(new MeshFact(node->GetAttributeValue("name"), node));
+
+                if(node->GetNode("params")->GetNode("material"))
+                {
+                    csRef<Material> material;
+                    {
+                        CS::Threading::ScopedReadLock lock(mLock);
+                        material = materials.Get(node->GetNode("params")->GetNode("material")->GetContentsValue(), csRef<Material>());
+
+                        // Validation.
+                        csString msg;
+                        msg.Format("Invalid material reference '%s' in meshfact '%s'", node->GetNode("params")->GetNode("material")->GetContentsValue(), node->GetAttributeValue("name"));
+                        CS_ASSERT_MSG(msg.GetData(), material.IsValid());
+                    }
+
+                    mf->materials.Push(material);
+                    mf->checked.Push(false);
+                }
+
                 csRef<iDocumentNodeIterator> nodeItr3 = node->GetNode("params")->GetNodes("submesh");
                 while(nodeItr3->HasNext())
                 {
                     csRef<iDocumentNode> node2 = nodeItr3->Next();
                     if(node2->GetNode("material"))
                     {
-                        CS::Threading::MutexScopedLock lock(mLock);
-                        csRef<Material> material = materials.Get(node2->GetNode("material")->GetContentsValue(), csRef<Material>());
+                        csRef<Material> material;
                         {
+                            CS::Threading::ScopedReadLock lock(mLock);
+                            material = materials.Get(node2->GetNode("material")->GetContentsValue(), csRef<Material>());
+
                             // Validation.
                             csString msg;
                             msg.Format("Invalid material reference '%s' in meshfact '%s'", node2->GetNode("material")->GetContentsValue(), node->GetAttributeValue("name"));
@@ -247,9 +271,11 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                 while(nodeItr3->HasNext())
                 {
                     csRef<iDocumentNode> node2 = nodeItr3->Next();
-                    CS::Threading::MutexScopedLock lock(mLock);
-                    csRef<Material> material = materials.Get(node2->GetAttributeValue("material"), csRef<Material>());
+                    csRef<Material> material;
                     {
+                        CS::Threading::ScopedReadLock lock(mLock);
+                        material = materials.Get(node2->GetAttributeValue("material"), csRef<Material>());
+
                         // Validation.
                         csString msg;
                         msg.Format("Invalid material reference '%s' in cal3d meshfact '%s'", node2->GetAttributeValue("material"), node->GetAttributeValue("name"));
@@ -263,9 +289,11 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                 {
                     node = node->GetNode("params")->GetNode("cells")->GetNode("celldefault")->GetNode("basematerial");
                     {
-                        CS::Threading::MutexScopedLock lock(mLock);
-                        csRef<Material> material = materials.Get(node->GetContentsValue(), csRef<Material>());
-                        {
+                        csRef<Material> material;
+                        {    
+                            CS::Threading::ScopedReadLock lock(mLock);
+                            material = materials.Get(node->GetContentsValue(), csRef<Material>());
+
                             // Validation.
                             csString msg;
                             msg.Format("Invalid basematerial reference '%s' in terrain mesh", node->GetContentsValue());
@@ -288,9 +316,11 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                             while(nodeItr4->HasNext())
                             {
                                 csRef<iDocumentNode> node2 = nodeItr4->Next();
-                                CS::Threading::MutexScopedLock lock(mLock);
-                                csRef<Material> material = materials.Get(node2->GetAttributeValue("material"), csRef<Material>());
+                                csRef<Material> material;
                                 {
+                                    CS::Threading::ScopedReadLock lock(mLock);
+                                    material = materials.Get(node2->GetAttributeValue("material"), csRef<Material>());
+
                                     // Validation.
                                     csString msg;
                                     msg.Format("Invalid alphamap reference '%s' in terrain mesh", node2->GetAttributeValue("material"));
@@ -304,7 +334,7 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                     }
                 }
 
-                CS::Threading::MutexScopedLock lock(mfLock);
+                CS::Threading::ScopedWriteLock lock(mfLock);
                 meshfacts.Put(mf->name, mf);
             }
 
@@ -316,7 +346,7 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                 csRef<Sector> s;
                 csString sectorName = node->GetAttributeValue("name");
                 {
-                    CS::Threading::MutexScopedLock lock(sLock);
+                    CS::Threading::ScopedReadLock lock(sLock);
                     for(size_t i=0; i<sectors.GetSize(); i++)
                     {
                         if(sectors[i]->name.CompareNoCase(sectorName))
@@ -330,7 +360,7 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                 if(!s.IsValid())
                 {
                     s = csPtr<Sector>(new Sector(sectorName));
-                    CS::Threading::MutexScopedLock lock(sLock);
+                    CS::Threading::ScopedWriteLock lock(sLock);
                     sectors.Push(s);
                 }
 
@@ -380,9 +410,11 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                         csRef<iDocumentNode> node3 = nodeItr3->Next();
                         if(node3->GetNode("material"))
                         {
-                            CS::Threading::MutexScopedLock lock(mLock);
-                            csRef<Material> material = materials.Get(node3->GetNode("material")->GetContentsValue(), csRef<Material>());
+                            csRef<Material> material;
                             {
+                                CS::Threading::ScopedReadLock lock(mLock);
+                                material = materials.Get(node3->GetNode("material")->GetContentsValue(), csRef<Material>());
+
                                 // Validation.
                                 csString msg;
                                 msg.Format("Invalid material reference '%s' in meshobj submesh", node3->GetNode("material")->GetContentsValue());
@@ -399,9 +431,11 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                             node3 = nodeItr4->Next();
                             if(csString("texture").Compare(node3->GetAttributeValue("type")))
                             {
-                                CS::Threading::MutexScopedLock lock(tLock);
-                                csRef<Texture> texture = textures.Get(node3->GetContentsValue(), csRef<Texture>());
+                                csRef<Texture> texture;
                                 {
+                                    CS::Threading::ScopedReadLock lock(tLock);
+                                    texture = textures.Get(node3->GetContentsValue(), csRef<Texture>());
+
                                     // Validation.
                                     csString msg;
                                     msg.Format("Invalid texture reference '%s' in meshobj shadervar", node3->GetContentsValue());
@@ -416,9 +450,11 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
 
                     node2 = node2->GetNode("params")->GetNode("factory");
                     {
-                        CS::Threading::MutexScopedLock lock(mfLock);
-                        csRef<MeshFact> meshfact = meshfacts.Get(node2->GetContentsValue(), csRef<MeshFact>());
+                        csRef<MeshFact> meshfact;
                         {
+                            CS::Threading::ScopedReadLock lock(mfLock);
+                            meshfact = meshfacts.Get(node2->GetContentsValue(), csRef<MeshFact>());
+
                             // Validation.
                             csString msg;
                             msg.Format("Invalid factory reference '%s' in meshobj '%s'", node2->GetContentsValue(),
@@ -491,9 +527,12 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                     if(node2->GetNode("material"))
                     {
                         node2 = node2->GetNode("material");
-                        CS::Threading::MutexScopedLock lock(mLock);
-                        csRef<Material> material = materials.Get(node2->GetContentsValue(), csRef<Material>());
+
+                        csRef<Material> material;
                         {
+                            CS::Threading::ScopedReadLock lock(mLock);
+                            material = materials.Get(node2->GetContentsValue(), csRef<Material>());
+
                             // Validation.
                             csString msg;
                             msg.Format("Invalid material reference '%s' in terrain object", node2->GetContentsValue());
@@ -512,9 +551,11 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                         while(nodeItr3->HasNext())
                         {
                             csRef<iDocumentNode> node3 = nodeItr3->Next();
-                            CS::Threading::MutexScopedLock lock(mLock);
-                            csRef<Material> material = materials.Get(node3->GetContentsValue(), csRef<Material>());
+                            csRef<Material> material;
                             {
+                                CS::Threading::ScopedReadLock lock(mLock);
+                                material = materials.Get(node3->GetContentsValue(), csRef<Material>());
+
                                 // Validation.
                                 csString msg;
                                 msg.Format("Invalid material reference '%s' in terrain materialpalette", node3->GetContentsValue());
@@ -540,9 +581,11 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                                     csRef<iDocumentNode> node3 = nodeItr4->Next();
                                     if(csString("texture").Compare(node3->GetAttributeValue("type")))
                                     {
-                                        CS::Threading::MutexScopedLock lock(tLock);
-                                        csRef<Texture> texture = textures.Get(node3->GetContentsValue(), csRef<Texture>());
+                                        csRef<Texture> texture;
                                         {
+                                            CS::Threading::ScopedReadLock lock(tLock);
+                                            texture = textures.Get(node3->GetContentsValue(), csRef<Texture>());
+
                                             // Validation.
                                             csString msg;
                                             msg.Format("Invalid texture reference '%s' in terrain renderproperties shadervar", node3->GetContentsValue());
@@ -558,6 +601,75 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                     }
 
                     s->meshes.Push(m);
+                    CS::Threading::ScopedWriteLock lock(meshLock);
+                    meshes.Put(m->name, m);
+                }
+
+                nodeItr2 = node->GetNodes("meshgen");
+                while(nodeItr2->HasNext())
+                {
+                    csRef<iDocumentNode> meshgen = nodeItr2->Next();
+                    csRef<MeshGen> mgen = csPtr<MeshGen>(new MeshGen(meshgen->GetAttributeValue("name"), meshgen));
+                    
+                    mgen->sector = s;
+                    s->meshgen.Push(mgen);
+
+                    meshgen = meshgen->GetNode("samplebox");
+                    {
+                        csVector3 min;
+                        csVector3 max;
+
+                        syntaxService->ParseVector(meshgen->GetNode("min"), min);
+                        syntaxService->ParseVector(meshgen->GetNode("max"), max);
+                        mgen->bbox.AddBoundingVertex(min);
+                        mgen->bbox.AddBoundingVertex(max);
+                    }
+                    meshgen = meshgen->GetParent();
+
+                    {
+                        CS::Threading::ScopedReadLock lock(meshLock);
+                        mgen->object = meshes.Get(meshgen->GetNode("meshobj")->GetContentsValue(), csRef<MeshObj>());
+                    }
+
+                    csRef<iDocumentNodeIterator> geometries = meshgen->GetNodes("geometry");
+                    while(geometries->HasNext())
+                    {
+                        csRef<iDocumentNode> geometry = geometries->Next();
+
+                        csRef<MeshFact> meshfact;
+                        {
+                            csString name(geometry->GetNode("factory")->GetAttributeValue("name"));
+                            CS::Threading::ScopedReadLock lock(mfLock);
+                            meshfact = meshfacts.Get(name, csRef<MeshFact>());
+
+                            // Validation.
+                            csString msg;
+                            msg.Format("Invalid meshfact reference '%s' in meshgen '%s'", name.GetData(), mgen->name.GetData());
+                            CS_ASSERT_MSG(msg.GetData(), meshfact.IsValid());
+                        }
+
+                        mgen->meshfacts.Push(meshfact);   
+                        mgen->mftchecked.Push(false);
+
+                        csRef<iDocumentNodeIterator> matfactors = geometry->GetNodes("materialfactor");
+                        while(matfactors->HasNext())
+                        {
+                            csRef<Material> material;
+                            {
+                                csString name(matfactors->Next()->GetAttributeValue("material"));
+                                CS::Threading::ScopedReadLock lock(mLock);
+                                material = materials.Get(name, csRef<Material>());
+
+                                // Validation.
+                                csString msg;
+                                msg.Format("Invalid material reference '%s' in meshgen '%s'", name.GetData(), mgen->name.GetData());
+                                CS_ASSERT_MSG(msg.GetData(), material.IsValid());
+                            }
+
+                            mgen->materials.Push(material);
+                            mgen->matchecked.Push(false);
+                        }
+                    }
                 }
 
                 nodeItr2 = node->GetNodes("portals");
@@ -609,7 +721,7 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
 
                         csString targetSector = node2->GetNode("sector")->GetContentsValue();
                         {
-                            CS::Threading::MutexScopedLock lock(sLock);
+                            CS::Threading::ScopedReadLock lock(sLock);
                             for(size_t i=0; i<sectors.GetSize(); i++)
                             {
                                 if(targetSector.CompareNoCase(sectors[i]->name))
@@ -623,7 +735,7 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                         if(!p->targetSector.IsValid())
                         {
                             p->targetSector = csPtr<Sector>(new Sector(targetSector));
-                            CS::Threading::MutexScopedLock lock(sLock);
+                            CS::Threading::ScopedWriteLock lock(sLock);
                             sectors.Push(p->targetSector);
                         }
 
@@ -732,6 +844,15 @@ void Loader::UpdatePosition(const csVector3& pos, const char* sectorName, bool f
       finalisableMeshes.DeleteIndexFast(0);
     }
 
+    // Load meshgens.
+    for(size_t i=0; i<loadingMeshGen.GetSize(); ++i)
+    {
+      if(LoadMeshGen(loadingMeshGen[i]))
+      {
+        loadingMeshGen.DeleteIndex(i);
+      }
+    }
+
     if(!force)
     {
         // Check if we've moved.
@@ -773,15 +894,23 @@ void Loader::UpdatePosition(const csVector3& pos, const char* sectorName, bool f
 
         if(force)
         {
-          // Make sure we start the loading now.
-          for(size_t i=0; i<loadingMeshes.GetSize(); i++)
-          {
-            if(LoadMesh(loadingMeshes[i]))
+            // Make sure we start the loading now.
+            for(size_t i=0; i<loadingMeshes.GetSize(); i++)
             {
-              FinishMeshLoad(loadingMeshes[i]);
-              loadingMeshes.DeleteIndex(i);
+                if(LoadMesh(loadingMeshes[i]))
+                {
+                    FinishMeshLoad(loadingMeshes[i]);
+                    loadingMeshes.DeleteIndex(i);
+                }
             }
-          }
+
+            for(size_t i=0; i<loadingMeshGen.GetSize(); ++i)
+            {
+                if(LoadMeshGen(loadingMeshGen[i]))
+                {
+                    loadingMeshGen.DeleteIndex(i);
+                }
+            }
         }
 
         if(lastSector != sector)
@@ -842,6 +971,12 @@ void Loader::CleanSector(Sector* sector)
             CleanMesh(sector->meshes[i]);
             --sector->objectCount;
         }
+    }
+
+    for(size_t i=0; i<sector->meshgen.GetSize(); i++)
+    {
+        CleanMeshGen(sector->meshgen[i]);
+        --sector->objectCount;
     }
 
     for(size_t i=0; i<sector->portals.GetSize(); i++)
@@ -909,6 +1044,32 @@ void Loader::CleanMesh(MeshObj* mesh)
     {
         mesh->texchecked[i] = false;
     }
+}
+
+void Loader::CleanMeshGen(MeshGen* meshgen)
+{
+  meshgen->sector->object->RemoveMeshGenerator(meshgen->name);
+  meshgen->status.Invalidate();
+
+  for(size_t i=0; i<meshgen->meshfacts.GetSize(); ++i)
+  {
+      CleanMeshFact(meshgen->meshfacts[i]);
+  }
+
+  for(size_t i=0; i<meshgen->mftchecked.GetSize(); ++i)
+  {
+      meshgen->mftchecked[i] = false;
+  }
+
+  for(size_t i=0; i<meshgen->materials.GetSize(); ++i)
+  {
+      CleanMaterial(meshgen->materials[i]);
+  }
+
+  for(size_t i=0; i<meshgen->matchecked.GetSize(); ++i)
+  {
+      meshgen->matchecked[i] = false;
+  }
 }
 
 void Loader::CleanMeshFact(MeshFact* meshfact)
@@ -1037,6 +1198,24 @@ void Loader::LoadSector(const csVector3& pos, const csBox3& loadBox, const csBox
                 engine->GetMeshes()->Remove(sector->meshes[i]->object);
                 sector->meshes[i]->object.Invalidate();
                 deleteQueue.Push(sector->meshes[i]);
+                --sector->objectCount;
+            }
+        }
+    }
+
+    for(size_t i=0; i<sector->meshgen.GetSize(); i++)
+    {
+        if(!sector->meshgen[i]->loading)
+        {
+            if(sector->meshgen[i]->InRange(loadBox))
+            {
+                sector->meshgen[i]->loading = true;
+                loadingMeshGen.Push(sector->meshgen[i]);
+                ++sector->objectCount;
+            }
+            else if(sector->meshgen[i]->OutOfRange(unloadBox))
+            {
+                CleanMeshGen(sector->meshgen[i]);
                 --sector->objectCount;
             }
         }
@@ -1182,8 +1361,53 @@ void Loader::FinishMeshLoad(MeshObj* mesh)
   mesh->loading = false;
 }
 
+bool Loader::LoadMeshGen(MeshGen* meshgen)
+{
+    bool ready = true;
+    for(size_t i=0; i<meshgen->meshfacts.GetSize(); i++)
+    {
+        if(!meshgen->mftchecked[i])
+        {
+            meshgen->mftchecked[i] = LoadMeshFact(meshgen->meshfacts[i]);
+            ready &= meshgen->mftchecked[i];
+        }
+    }
+
+    if(!ready)
+      return false;
+
+    for(size_t i=0; i<meshgen->materials.GetSize(); i++)
+    {
+        if(!meshgen->matchecked[i])
+        {
+            meshgen->matchecked[i] = LoadMaterial(meshgen->materials[i]);
+            ready &= meshgen->matchecked[i];
+        }
+    }
+
+    if(!ready || !LoadMesh(meshgen->object))
+      return false;
+
+    if(ready && !meshgen->status)
+    {
+        meshgen->status = tloader->LoadNode(vfs->GetCwd(), meshgen->data, 0, meshgen->sector->object);
+        return false;
+    }
+
+    if(meshgen->status && meshgen->status->IsFinished())
+    {
+      meshgen->loading = false;
+      return true;
+    }
+
+    return false;
+}
+
 bool Loader::LoadMesh(MeshObj* mesh)
 {
+    if(mesh->object.IsValid())
+      return true;
+
     bool ready = true;
     for(size_t i=0; i<mesh->meshfacts.GetSize(); i++)
     {

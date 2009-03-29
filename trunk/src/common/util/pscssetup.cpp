@@ -441,6 +441,7 @@ void psCSSetup::MountArt()
     MountThings("foodzip",       "food");
     MountThings("jewelryzip",    "jewelry");
     MountThings("furniturezip",  "furniture");
+    MountThings("foliagezip",    "foliage");
 
     // Create the mount points for glyphs
     MountThings("azurezip",      "azure_way");
