@@ -33,7 +33,7 @@
 #include "util/pserror.h"
 #include "util/eventmanager.h"
 #include "util/strutil.h"
-
+#include "netmanager.h"
 #include "net/msghandler.h"
 
 #include "bulkobjects/psnpcdialog.h"
@@ -176,7 +176,7 @@ void ChatManager::HandleChatMessage(MsgEntry *me, Client *client)
 			  NpcResponse *resp = CheckNPCResponse(msg,client,targetnpc);
 			  if (resp)
 			  {
-				  SendAudioFileHash(client, resp->GetVoiceFile());
+				  SendMultipleAudioFileHashes(client, resp->GetVoiceFile());
 				  resp->ExecuteScript(client, targetnpc);
 			  }
 			  break;
@@ -443,10 +443,29 @@ NpcResponse *ChatManager::CheckNPCResponse(psChatMessage& msg,Client *client,gem
     return CheckNPCEvent(client,msg.sText,target);  // <L MONEY="0,0,0,3"></L>
 }
 
-void ChatManager::SendAudioFileHash(Client *client, const char *voiceFile)
+void ChatManager::SendMultipleAudioFileHashes(Client *client, const char *voiceFiles)
+{
+	if (!voiceFiles || voiceFiles[0]==0)
+		return;
+
+	psString files(voiceFiles);
+	csStringArray filelist;
+
+	files.Split(filelist,'|');
+	csTicks delay=0;
+	for (size_t i=0; i<filelist.GetSize(); i++)
+	{
+		SendAudioFileHash(client, filelist.Get(i), delay);
+		delay += 5000; // wait 5 seconds before sending next file for queueing
+	}
+}
+
+void ChatManager::SendAudioFileHash(Client *client, const char *voiceFile, csTicks delay)
 {
 	if (!voiceFile || voiceFile[0]==0)
 		return;
+
+	printf("Sending file '%s' in %d msec.\n",voiceFile,delay);
 
 	csString timestamp;
 	csRef<iDataBuffer> buffer;
@@ -517,7 +536,10 @@ void ChatManager::SendAudioFileHash(Client *client, const char *voiceFile)
 	// back with a request for the file, which will come here 
 	// and call SendAudioFile.
 	psCachedFileMessage msg(client->GetClientNum(), timestamp, NULL);
-	msg.SendMessage();
+	if (delay == 0)	
+		msg.SendMessage();
+	else
+		psserver->GetNetManager()->SendMessageDelayed(msg.msg, delay);
 }
 
 void ChatManager::SendAudioFile(Client *client, const char *voiceFileHash)
