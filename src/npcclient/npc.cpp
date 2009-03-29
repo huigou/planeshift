@@ -711,7 +711,7 @@ void NPC::CheckPosition()
         {
             CPrintf(CON_ERROR,"Got bad starting location %f %f %f, killing %s (%s/%s).\n",
                     pos.x, pos.y, pos.z, name.GetData(), ShowID(pid), ShowID(GetActor()->GetEID()));
-            SetAlive(false);
+            Disable();
             break;
         }
     }
