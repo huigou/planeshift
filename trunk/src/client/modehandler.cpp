@@ -2156,7 +2156,6 @@ void ModeHandler::HandleCachedFile(MsgEntry* me)
             {
                 printf("Yes, it is cached already.  Playing immediately.\n");
 				soundmanager->StartVoiceSound(fname.GetData());
-				soundmanager->StartVoiceSound(fname.GetData());
             }
         }
         else
@@ -2169,7 +2168,6 @@ void ModeHandler::HandleCachedFile(MsgEntry* me)
                 return;
             }
             // Play sound file
-			soundmanager->StartVoiceSound(fname.GetData());
 			soundmanager->StartVoiceSound(fname.GetData());
         }
     }

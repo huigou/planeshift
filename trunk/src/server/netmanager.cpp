@@ -27,6 +27,7 @@
 //=============================================================================
 #include "util/pserror.h"
 #include "util/serverconsole.h"
+#include "util/eventmanager.h"
 
 #include "net/message.h"
 #include "net/messages.h"
@@ -52,6 +53,33 @@
 #define RESENDCHECK    200
 // Redisplay network server stats every 60 seconds
 #define STATDISPLAYCHECK 60000
+
+
+
+class DelayedMessageSendEvent : public psGameEvent
+{
+protected:
+	bool valid;
+	csRef<MsgEntry> myMsg;
+
+public:
+	DelayedMessageSendEvent(int delayticks,MsgEntry *msg)
+		: psGameEvent(0, delayticks, "DelayedMessageSendEvent")
+	{
+		valid = true;
+		myMsg = msg;
+	}
+	void CancelEvent() { valid = false;}
+	virtual void Trigger()
+	{
+		if (valid)
+		{
+			printf("Now sending delayed msg.\n");
+			psserver->GetNetManager()->SendMessage(myMsg);
+		}
+	}
+};
+
 
 NetManager::NetManager(csRef<CS::Threading::Thread> _thread)
     : NetBase (1000),stop_network(false)
@@ -352,6 +380,14 @@ NetManager::Connection *NetManager::GetConnByNum (uint32_t clientnum)
     CS_ASSERT(clients.FindAny(clientnum) != NULL);
 
     return client->GetConnection();
+}
+
+bool NetManager::SendMessageDelayed(MsgEntry *me, csTicks delay)
+{
+	printf("Sending delayed message %d msec from now.\n", delay);
+	DelayedMessageSendEvent *event = new DelayedMessageSendEvent(delay,me);
+	psserver->GetEventManager()->Push(event);
+	return true;
 }
 
 bool NetManager::SendMessage(MsgEntry* me)

@@ -134,6 +134,11 @@ public:
      * @return Returns success or faliure.
      */
     virtual bool SendMessage (MsgEntry* me);
+	/**
+	 * Queues the message for sending later, so the calling classes don't have 
+	 * to all manage this themselves.
+	 */
+	bool SendMessageDelayed(MsgEntry *me, csTicks delay);
 
     /** This is the main thread function.
      * If it hasn't been initialized it waits until the server is ready to go
