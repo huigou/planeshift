@@ -1,4 +1,15 @@
-﻿*** 2009-03-28 by Keith Fulton
+﻿*** 2009-03-29 by Andrew Dai
+- The superclient can now login even if it is already logged in. Existing
+  logins are overridden.
+- Fixed vel limit in linmove DR messages.
+- Fixes bug where tribe members go into infinite respawn, so that npcclient
+  now disables NPCs with wrong starting positions.
+- Fix to RTO timeout for serverside packets.
+- Fixed bug where NPCs would be attackable before npcclient was ready.
+- Fixed bug in npcclient where items were mistakenly deleted on a dup packet.
+- Fixed bug in user stat regen event timer.
+
+*** 2009-03-28 by Keith Fulton
 - New voicing files for the Sammich Quest.  Double-click on Gertie Hollaback to test.
 - Took out feature to play each voice file twice.
 - Added support for pipe-delimited lists of multiple files in an npc response
