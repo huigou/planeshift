@@ -5,6 +5,11 @@
   script.
 - Added new NetManager command for sending Net messages after a certain delay on
   the server.  This will keep the voice files playing in the right sequence.
+- Added time delay to quest assignments and given items.  This will help them sync
+  up better with the dialog going slowly instead of happening instantly.
+- Slight optimization of SendMessageDelayed, so it sends immediately the old way if
+  the specified delay is zero.
+- Took out some debug printfs.
 
 *** 2009-03-28 by Stefano Angeleri
 - Fixed PS#2116 - vulnerability against sql injections  by escaping the
