@@ -341,7 +341,7 @@ unsigned int psEffectManager::RenderEffect(const csString & effectName, iSectorL
 
 unsigned int psEffectManager::AttachLight(csRef<iLight> light, csRef<iMeshWrapper> mw)
 {
-    psLight* pslight = new psLight();
+    psLight* pslight = new psLight(object_reg);
     unsigned int uniqueID = pslight->AttachLight(light, mw);
     lightList.Put(uniqueID, pslight);
     return uniqueID;

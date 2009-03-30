@@ -25,15 +25,22 @@
 #include <iengine/mesh.h>
 #include <iengine/scenenode.h>
 #include <iutil/object.h>
+#include <iutil/objreg.h>
 
 #include "pseffectlight.h"
 
 // used for generating a unique ID
 static unsigned int genUniqueID = 0;
 
-psLight::psLight()
+psLight::psLight(iObjectRegistry* object_reg)
 {
+    vclock = csQueryRegistry<iVirtualClock>(object_reg);
     movable = NULL;
+    dim = true;
+    sequencenum = 0;
+    stepsPerSecond = 60;
+    stepsPerCycle = 60;
+    dimStrength = 100;
 }
 
 psLight::~psLight()
@@ -46,10 +53,13 @@ unsigned int psLight::AttachLight(csRef<iLight> newLight, csRef<iMeshWrapper> mw
 {
     light = newLight;
     movable = mw->GetMovable();
+    baseColour = light->GetColor();
 
     light->QuerySceneNode()->SetParent(mw->QuerySceneNode());
     sector = movable->GetSectors()->Get(0);
     sector->AddLight(light);
+
+    lastTime = vclock->GetCurrentTicks();
 
     return ++genUniqueID;
 }
@@ -64,6 +74,56 @@ bool psLight::Update()
             sector->GetLights()->Remove(light);
             sector = sectors->Get(0);
             sector->AddLight(light);
+        }
+
+        int advanceSteps = (vclock->GetCurrentTicks() - lastTime) / (1000.0f/stepsPerSecond);
+
+        if(0 < advanceSteps)
+        {
+          lastTime = vclock->GetCurrentTicks();
+
+          if(dim)
+          {
+            if(sequencenum < stepsPerCycle/2)
+            {
+              csColor n = light->GetColor();
+
+              for(int i=0; sequencenum < stepsPerCycle/2 && i<advanceSteps; ++i)
+              {
+                n.red -= baseColour.red/dimStrength;
+                n.green -= baseColour.green/dimStrength;
+                n.blue -= baseColour.blue/dimStrength;
+                ++sequencenum;
+              }
+
+              light->SetColor(n);
+            }
+            else
+            {
+              dim = false;
+            }
+          }
+          else
+          {
+            if(sequencenum > 0)
+            {
+              csColor n = light->GetColor();
+
+              for(int i=0; sequencenum > 0 && i<advanceSteps; ++i)
+              {
+                n.red += baseColour.red/dimStrength;
+                n.green += baseColour.green/dimStrength;
+                n.blue += baseColour.blue/dimStrength;
+                --sequencenum;
+              }
+
+              light->SetColor(n);
+            }
+            else
+            {
+              dim = true;
+            }
+          }
         }
 
         return true;

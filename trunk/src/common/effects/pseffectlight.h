@@ -21,11 +21,12 @@
 #define PS_EFFECT_LIGHT_HEADER
 
 #include <csgeom/matrix3.h>
-#include <csgeom/vector3.h>
+#include <csutil/cscolor.h>
 #include <csutil/weakref.h>
 #include <csutil/scf_implementation.h>
 #include <iengine/movable.h>
 #include <iengine/sector.h>
+#include <iutil/virtclk.h>
 
 class csColor;
 struct iLight;
@@ -34,7 +35,7 @@ struct iMeshWrapper;
 class psLight
 {
 public:
-    psLight();
+    psLight(iObjectRegistry* object_reg);
     ~psLight();
 
     unsigned int AttachLight(csRef<iLight> newLight, csRef<iMeshWrapper> mw);
@@ -42,7 +43,16 @@ public:
 
 private:
     csRef<iLight> light;
-    csVector3 lightBasePos;
+    csRef<iVirtualClock> vclock;
+
+    csTicks lastTime;
+    csColor baseColour;
+    bool dim;
+    uint sequencenum;
+    uint stepsPerSecond;
+    uint stepsPerCycle;
+    uint dimStrength;
+
     csWeakRef<iMovable> movable;
     csWeakRef<iSector> sector;
 };
