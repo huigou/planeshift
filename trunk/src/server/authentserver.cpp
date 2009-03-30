@@ -288,7 +288,7 @@ void AuthenticationServer::HandleAuthent(MsgEntry *me, Client *notused)
                           "This connection is being overridden by a new login..", existingClient->GetName());
         }
 
-        psserver->RemovePlayer(existingClient->clientnum, reason);
+        psserver->RemovePlayer(existingClient->GetClientNum(), reason);
         Notify2(LOG_CONNECTIONS,"User '%s' authentication request overrides an existing logged in user.\n",
             (const char *)msg.sUser);
 
