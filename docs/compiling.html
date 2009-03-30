@@ -97,6 +97,7 @@ How to add a new selection:
 .Linux-Debian    { display: none; }
 .Linux-Gentoo    { display: none; }
 .Linux-Slackware { display: none; }
+.Linux-OpenSUSE  { display: none; }
 .Linux-Ubuntu    { display: none; }
 .FreeBSD         { display: none; }
 .Windows         { display: none; }
@@ -312,6 +313,7 @@ $(document).ready(function(){
         <option value="Linux-Debian">Debian Linux</option>
         <option value="Linux-Gentoo">Gentoo Linux</option>
         <option value="Linux-Slackware">Slackware Linux</option>
+        <option value="Linux-OpenSUSE">OpenSUSE Linux</option>
         <option value="Linux-Ubuntu">Ubuntu Linux</option>
         <option value="FreeBSD">FreeBSD</option>
         <option value="Windows">Windows</option>
@@ -637,6 +639,13 @@ continue as indicated.<br></p>
     <p>Due to the number of dependencies needed, if you wish to read the homepage listing, or dependency description please select Linux's generic dropdown selection.</p>
 <strong> BOTH of these above commands are assuming you do not need a server, if you do please follow directions in the <a href="#mysql">mysql</a> section for installing other required packages before moving on to building to save you time.</strong>
 </div>
+<div class="Linux-OpenSUSE">
+    <p>Note: This section is incomplete and untested.</p>
+    <p>Due to the number of dependencies needed, if you wish to read the homepage listing, or dependency description please select Linux's generic dropdown selection.</p>
+<p>libtool may need to be installed via</p>
+<p><i class="command">yast install libtool</i></p>
+<strong> BOTH of these above commands are assuming you do not need a server, if you do please follow directions in the <a href="#mysql">mysql</a> section for installing other required packages before moving on to building to save you time.</strong>
+</div>
 <div class="Linux-Ubuntu">
     <p>The instructions here are tested using Ubuntu Hardy Heron and Intrepid Ibex.<br>
     Since Hardy Heron is installed by default with minimal packages, many required packages for this project are not available. <br>
@@ -717,6 +726,9 @@ After that we need to refresh our sources.list file like so:<br>
         <i class="command">tar -zxvf Cg-2.1_October2008_x86*.tgz</i>
     </div>
     <div class="Linux-Slackware">
+        <i class="command">tar -zxvf Cg-2.1_October2008_x86*.tgz</i>
+    </div>
+	<div class="Linux-OpenSUSE">
         <i class="command">tar -zxvf Cg-2.1_October2008_x86*.tgz</i>
     </div>
     <div class="Linux-Ubuntu">
@@ -1300,6 +1312,21 @@ sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in
             $HOME/development/cal3d$ make<br>
             $HOME/development/cal3d$ make install
         </div></p></div>
+		    <div class="linux-OpenSUSE" >
+		    Using a text editor open configure.in and remove the line
+		    <p><div class="commandBox">
+		        AM_USE_UNITTESTCPP</div></p>
+		        <p>Or you can use the following sed command</p>
+		        <p> <div class="commandBox" >
+		  mv configure.in configure-old.in<br />
+		sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in</div></p>
+		<p> Then you can build cal3d </p>
+		        <p><div class="commandBox">
+		            $HOME/development/cal3d$ autoreconf --install --force<br>
+		            $HOME/development/cal3d$ ./configure --prefix=$HOME/development/cal3d<br>
+		            $HOME/development/cal3d$ make<br>
+		            $HOME/development/cal3d$ make install
+		        </div></p></div>
     <div class="linux-Ubuntu" >
     Using a text editor open configure.in and remove the line
     <p><div class="commandBox">
@@ -1366,6 +1393,16 @@ sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in
            <div class="Static"><i class="command">
             $HOME/development/cs$ jam -aq libs staticplugins cs-config walktest_static</i><br>
            </div></div>
+		<div class="Linux-OpenSUSE" >
+	            <div class="User"><div class="commandBox">
+	            $HOME/development/cs$./configure --without-java --without-perl --without-python --without-3ds --with-cal3d=$HOME/development/cal3d</div></div><br>
+	           <div class="Developer"><div class="commandBox">
+	            $HOME/development/cs$./configure --enable-debug --without-java --without-perl --without-python --without-3ds --with-cal3d=$HOME/development/cal3d</div></div><br>
+	           <div class="Normal"><i class="command">
+	            $HOME/development/cs$ jam -aq libs plugins cs-config walktest</i></div><br>
+	           <div class="Static"><i class="command">
+	            $HOME/development/cs$ jam -aq libs staticplugins cs-config walktest_static</i><br>
+	           </div></div>
         <div class="Linux-Ubuntu">
      <div class="User"><div class="commandBox">
             $HOME/development/cs$./configure --without-java --without-perl --without-python --without-3ds --with-cal3d=$HOME/development/cal3d</div></div><br>
@@ -1772,6 +1809,13 @@ downloaded from the SVN are usually more recent and updated.
 </div>
 You can start your MySQL server in this way:</p>
 <div class="Linux-Slackware">
+    <p><i class="command"># chmod 755  /etc/rc.d/rc.mysqld</i></p>
+    <p><i class="command"># /etc/rc.d/rc.mysqld start</i></p>
+    Then login to the MySQL client using (default username with no password):
+    <p><i class="command">$ mysql -u username -ppassword</i></p>
+    The default username is root with no password.
+</div>
+<div class="Linux-OpenSUSE">
     <p><i class="command"># chmod 755  /etc/rc.d/rc.mysqld</i></p>
     <p><i class="command"># /etc/rc.d/rc.mysqld start</i></p>
     Then login to the MySQL client using (default username with no password):
