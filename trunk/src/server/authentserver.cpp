@@ -280,21 +280,20 @@ void AuthenticationServer::HandleAuthent(MsgEntry *me, Client *notused)
         if(existingClient->IsZombie())
         {
             reason.Format("Your character(%s) was still in combat or casting a spell when you disconnected. "
-                          "Please wait for combat to finish and try again.", existingClient->GetName());
+                          "This connection is being overridden by a new login.", existingClient->GetName());
         }
         else
         {
-            reason.Format("You are already logged on to this server as %s. If you were disconnected, "
-                          "please wait 30 seconds and try again.", existingClient->GetName());
+            reason.Format("You are already logged on to this server as %s. "
+                          "This connection is being overridden by a new login..", existingClient->GetName());
         }
 
-        psserver->RemovePlayer(me->clientnum, reason);
-        Notify2(LOG_CONNECTIONS,"User '%s' authentication request rejected: User already logged in.\n",
+        psserver->RemovePlayer(existingClient->clientnum, reason);
+        Notify2(LOG_CONNECTIONS,"User '%s' authentication request overrides an existing logged in user.\n",
             (const char *)msg.sUser);
 
         // No delete necessary because AddToCache will auto-delete
         // delete acctinfo;
-        return;
     }
 
 
