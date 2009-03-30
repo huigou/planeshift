@@ -2786,8 +2786,6 @@ psAccountInfo *CacheManager::GetAccountInfoByUsername(const char *username)
 bool CacheManager::UpdateAccountInfo(psAccountInfo *ainfo)
 {
     const char *fieldnames[]= {
-        "username",
-        "password",
         "last_login_ip",
         "security_level",
         "last_login"
@@ -2795,8 +2793,6 @@ bool CacheManager::UpdateAccountInfo(psAccountInfo *ainfo)
     char accountidstring[11];
     psStringArray fields;
 
-    fields.Push(ainfo->username);
-    fields.Push(ainfo->password);
     fields.Push(ainfo->lastloginip);
     fields.FormatPush("%d",ainfo->securitylevel);
     fields.Push(ainfo->lastlogintime);

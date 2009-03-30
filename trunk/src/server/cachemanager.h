@@ -229,7 +229,7 @@ public:
      */
     psAccountInfo *GetAccountInfoByUsername(const char *username);
 
-    /** Call to store modified account information back to the database.
+    /** Call to store modified account information back to the database. Updates IP, security level and last login time.
      *
      * @param ainfo - A pointer to account data to store.
      * @return true - success  false - failed
