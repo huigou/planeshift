@@ -505,7 +505,7 @@ void psCelClient::HandleItemEffect( const char* factName, csRef<iMeshWrapper> mw
             csRef<iLight> light = psengine->GetEngine()->CreateLight(factName,
                                                                      l->lightoffset, l->radius,
                                                                      l->colour, CS_LIGHT_DYNAMICTYPE_DYNAMIC);
-            light->SetAttenuationMode(CS_ATTN_REALISTIC);
+            light->SetAttenuationMode(CS_ATTN_INVERSE);
             unsigned int id = psengine->GetEffectManager()->AttachLight(light, mw);
             if(!id)
             {
