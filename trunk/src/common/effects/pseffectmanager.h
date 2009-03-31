@@ -150,7 +150,8 @@ public:
                               iMeshWrapper * attachTarget=0, const csVector3 & up=csVector3(0,1,0), 
                               const unsigned int uniqueIDOverride = 0);
 
-    unsigned int AttachLight(csRef<iLight> light, csRef<iMeshWrapper> mw);
+    unsigned int AttachLight(const char* name, const csVector3& pos,
+  	float radius, const csColor& colour, csRef<iMeshWrapper> mw);
     void DetachLight(unsigned int lightID);
 
     /** updates the spell effects (should be called every frame)

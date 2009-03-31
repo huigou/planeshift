@@ -1247,6 +1247,9 @@ void psEngine::LoadGame()
         psMOTDRequestMessage motdRe;
         GetMsgHandler()->SendMessage(motdRe.msg);
 
+        pawsWidget* cpw = paws->FindWidget("CharPickerWindow");
+        cpw->DeleteYourself();
+
         loadstate = LS_INIT_ENGINE;
         break;
     }

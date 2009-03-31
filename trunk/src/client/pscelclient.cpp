@@ -502,11 +502,9 @@ void psCelClient::HandleItemEffect( const char* factName, csRef<iMeshWrapper> mw
         for(size_t i=0; i<ie->lights.GetSize(); i++)
         {
             Light* l = ie->lights.Get(i);
-            csRef<iLight> light = psengine->GetEngine()->CreateLight(factName,
-                                                                     l->lightoffset, l->radius,
-                                                                     l->colour, CS_LIGHT_DYNAMICTYPE_DYNAMIC);
-            light->SetAttenuationMode(CS_ATTN_INVERSE);
-            unsigned int id = psengine->GetEffectManager()->AttachLight(light, mw);
+            unsigned int id = psengine->GetEffectManager()->AttachLight(factName, l->lightoffset,
+                l->radius, l->colour, mw);
+
             if(!id)
             {
               printf("Failed to create light on item %s!\n", factName);

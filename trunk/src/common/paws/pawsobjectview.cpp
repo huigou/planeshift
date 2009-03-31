@@ -55,6 +55,8 @@ pawsObjectView::pawsObjectView()
 
 pawsObjectView::~pawsObjectView()
 {
+    Clear();
+
     if(col->GetRefCount() == 2)
     {
         engine->RemoveCollection(col);

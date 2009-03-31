@@ -339,10 +339,11 @@ unsigned int psEffectManager::RenderEffect(const csString & effectName, iSectorL
    
 }
 
-unsigned int psEffectManager::AttachLight(csRef<iLight> light, csRef<iMeshWrapper> mw)
+unsigned int psEffectManager::AttachLight(const char* name, const csVector3& pos,
+  	float radius, const csColor& colour, csRef<iMeshWrapper> mw)
 {
     psLight* pslight = new psLight(object_reg);
-    unsigned int uniqueID = pslight->AttachLight(light, mw);
+    unsigned int uniqueID = pslight->AttachLight(name, pos, radius, colour, mw);
     lightList.Put(uniqueID, pslight);
     return uniqueID;
 }
