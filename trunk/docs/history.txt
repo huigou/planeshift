@@ -1,4 +1,9 @@
-﻿*** 2009-04-01 by Kenny Graunke
+﻿*** 2009-04-01 by Stefano Angeleri
+- Fixed questmanager to support the new syntax for run, swapped the
+  param for give_exp to Exp and make the amount of argument which can
+  be passed to Run script in quest scripts dynamic
+
+*** 2009-04-01 by Kenny Graunke
 - Improved the syntax of the <run> NPC response.
   - The old syntax was:
     <run scr="..." param0="..." param1="..." param2="..."/>
