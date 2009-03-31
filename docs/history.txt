@@ -8,6 +8,9 @@
     string literals, define as many variables as one would like, and even give
     them sane names.
   ==> DB VERSION BUMP: 1217 <==
+- Updated MathScript unit tests:
+  - Fixed expectations to match precision changes from r3303.
+  - Added a new test for script lines like Skill = "Sword";
 
 *** 2009-03-29 by Andrew Dai
 - The superclient can now login even if it is already logged in. Existing
