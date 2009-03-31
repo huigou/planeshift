@@ -437,12 +437,12 @@ bool QuestManager::HandleScriptCommand(csString& block,
             }
 
             // Build the op
-            op.Format("<run scr=\"%s\"",script.GetDataSafe());
+            op.Format("<run script=\"%s\" with=\"",script.GetDataSafe());
             for (int i = 0; i < p; i++)
             {
-                op.AppendFmt(" param%d=\"%s\"",i,param[i].GetDataSafe());
+                op.AppendFmt("Param%d=%s; ",i,param[i].GetDataSafe());
             }
-            op.Append("/>");
+            op.Append("\"/>");
         }
         else if (!strncasecmp(block,"DoAdminCmd",10)) 
         {
