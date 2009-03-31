@@ -148,8 +148,6 @@ bool pawsObjectView::LoadMap( const char* map, const char* sector )
         }
 
         // Now load the map into the selected region
-        VFS->ChDir (map);
-        engine->SetCacheManager(NULL);
         csRef<iThreadReturn> itr = loader->LoadMapWait(map, worldNode, CS_LOADER_KEEP_WORLD, col);
         if (!itr->WasSuccessful())
             return false;
