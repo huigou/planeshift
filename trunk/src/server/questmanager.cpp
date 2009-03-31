@@ -353,7 +353,7 @@ bool QuestManager::HandleScriptCommand(csString& block,
             }
             else if (words.GetInt(1) != 0 && words.Get(2).CompareNoCase("exp")) // give experience points
             {
-                op.Format("<run script=\"give_exp\" with=\"Exp = %d;\" />",words.GetInt(1) );  
+                op.Format("<run script=\"give_exp\" with=\"Exp=%d;\" />",words.GetInt(1) );  
             }
             else if (words.GetInt(1) != 0 && words.Get(2).CompareNoCase("faction") && words.GetCount() > 3) // give faction points
             {
@@ -408,9 +408,8 @@ bool QuestManager::HandleScriptCommand(csString& block,
         {
             csString script = block.Slice(10,block.Length()-1).Trim();
 
-            // Find params if any, up to 3
-            csString param[3];
-            int p = 0;
+            // Find params if any
+            csArray<csString> param;
             size_t start = script.FindStr("(");
             size_t end   = script.FindStr(")");
             if (start != SIZET_NOT_FOUND && end != SIZET_NOT_FOUND && 
@@ -424,23 +423,22 @@ bool QuestManager::HandleScriptCommand(csString& block,
                     next = params.FindStr(",");
                     if (next == SIZET_NOT_FOUND)
                     {
-                        param[p] = params.Trim();
+                        param.Push(params.Trim());
                     }
                     else
                     {
-                        param[p] = params.Slice(0,next).Trim();
+                        param.Push(params.Slice(0,next).Trim());
                         params.DeleteAt(0,next+1);
                     }
-                    p++;
-                } while (next != SIZET_NOT_FOUND && p < 3);
+                } while (next != SIZET_NOT_FOUND);
 
             }
 
             // Build the op
             op.Format("<run script=\"%s\" with=\"",script.GetDataSafe());
-            for (int i = 0; i < p; i++)
+            for (int i = 0; i < param.GetSize(); i++)
             {
-                op.AppendFmt("Param%d=%s; ",i,param[i].GetDataSafe());
+                op.AppendFmt("Param%d=%s;",i,param[i].GetDataSafe());
             }
             op.Append("\"/>");
         }
