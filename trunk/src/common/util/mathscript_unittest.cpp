@@ -68,7 +68,7 @@ TEST(MathScriptTest, BasicScript)
     EXPECT_EQ(212.0,  F->GetValue());
     EXPECT_EQ(100.0,  C->GetValue());
     EXPECT_EQ(373.15, K->GetValue());
-    EXPECT_STREQ("373.150000", K->ToString());
+    EXPECT_STREQ("373.15", K->ToString());
 }
 
 class Foo : public iScriptableVar
@@ -91,6 +91,8 @@ public:
             csString skill(MathScriptEngine::GetString(params[0]));
             if (skill == "Lah'ar")
                 return 77;
+            if (skill == "Sword")
+                return 33;
             return 0;
         }
 
@@ -197,6 +199,18 @@ TEST(MathScriptTest, StringTest2)
     EXPECT_EQ(77, rank->GetValue());
 };
 
+TEST(MathScriptTest, StringAssignment)
+{
+    Foo foo;
+    MathScript *script = MathScript::Create("StringAssignment", "Skill = 'Sword'; Rank = Quux:GetSkillRank(Skill);");
+    MathEnvironment env;
+    ASSERT_NE(script, NULL);
+    env.Define("Quux", &foo);
+    script->Evaluate(&env);
+    MathVar *rank = env.Lookup("Rank");
+    EXPECT_EQ(33, rank->GetValue());
+};
+
 TEST(MathScriptTest, ParserStress)
 {
     // Combat makes for a pretty good parser stress test.
@@ -248,17 +262,17 @@ TEST(MathScriptTest, InterpolateTest)
     env.Define("Elite", 1337);
     env.Define("E", 31337);
     env.InterpolateString(msg);
-    EXPECT_STREQ("Xordan hits you for 1337.000000 damage...", msg.GetData());
+    EXPECT_STREQ("Xordan hits you for 1337.00 damage...", msg.GetData());
 
     msg = "${E} times, because he's just that ${Elite}";
     env.InterpolateString(msg);
-    EXPECT_STREQ("31337.000000 times, because he's just that 1337.000000", msg.GetData());
+    EXPECT_STREQ("31337.00 times, because he's just that 1337.00", msg.GetData());
 
     msg = "${Elite}";
     env.InterpolateString(msg);
-    EXPECT_STREQ("1337.000000", msg.GetData());
+    EXPECT_STREQ("1337.00", msg.GetData());
 
     msg = "${} ${Elite} ${}";
     env.InterpolateString(msg);
-    EXPECT_STREQ("${} 1337.000000 ${}", msg.GetData());
+    EXPECT_STREQ("${} 1337.00 ${}", msg.GetData());
 }
