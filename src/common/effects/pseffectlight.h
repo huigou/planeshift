@@ -29,6 +29,7 @@
 #include <iutil/virtclk.h>
 
 class csColor;
+struct iEngine;
 struct iLight;
 struct iMeshWrapper;
 
@@ -38,12 +39,14 @@ public:
     psLight(iObjectRegistry* object_reg);
     ~psLight();
 
-    unsigned int AttachLight(csRef<iLight> newLight, csRef<iMeshWrapper> mw);
+    unsigned int AttachLight(const char* name, const csVector3& pos,
+  	float radius, const csColor& colour, csRef<iMeshWrapper> mw);
     bool Update();
 
 private:
     csRef<iLight> light;
     csRef<iVirtualClock> vclock;
+    csRef<iEngine> engine;
 
     csTicks lastTime;
     csColor baseColour;
@@ -55,6 +58,9 @@ private:
 
     csWeakRef<iMovable> movable;
     csWeakRef<iSector> sector;
+
+    csWeakRef<iSector> podium;
+    bool is_podium;
 };
 
 #endif
