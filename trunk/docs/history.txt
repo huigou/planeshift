@@ -11,6 +11,10 @@
 - Updated MathScript unit tests:
   - Fixed expectations to match precision changes from r3303.
   - Added a new test for script lines like Skill = "Sword";
+- Hacked MathVars & Statements to detect Area = "Hydlaa"; as a special string
+  type, so when we call ToString(), we can get the actual string rather than
+  the index into the literals table.  In general, we can't know the type,
+  since fparser treats everything as doubles.  It would be very useful.
 
 *** 2009-03-29 by Andrew Dai
 - The superclient can now login even if it is already logged in. Existing
