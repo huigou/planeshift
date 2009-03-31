@@ -56,6 +56,7 @@ class gemActor;
 class Client;
 class psQuest;
 class psCharacter;
+class MathScript;
 
 struct iDocumentNode;
 struct Faction;
@@ -662,15 +663,18 @@ public:
 /**
  * This script operation invokes the progression manager to run a script,
  * as part of his response to a player event.
+ * 
+ * Syntax: <run script="name" with="...mathscript to add bindings..."/>
  */
 class RunScriptResponseOp : public ResponseOperation
 {
 protected:
     csString scriptname;
-    float p0, p1, p2;
+    csString bindingsText;
+    MathScript *bindings;
 
 public:
-    RunScriptResponseOp() { name="run"; p0=p1=p2=0; }
+    RunScriptResponseOp() { name = "run"; bindings = NULL; }
     virtual ~RunScriptResponseOp() {};
     virtual bool Load(iDocumentNode *node);
     virtual csString GetResponseScript();    

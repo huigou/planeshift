@@ -1,4 +1,15 @@
-﻿*** 2009-03-29 by Andrew Dai
+﻿*** 2009-04-01 by Kenny Graunke
+- Improved the syntax of the <run> NPC response.
+  - The old syntax was:
+    <run scr="..." param0="..." param1="..." param2="..."/>
+  - The new syntax is:
+    <run script="..." with="Param0 = ...; Param1 = ...; Param2 = ...;"/>
+  - Since it uses a MathScript to define the bindings, one can supply
+    string literals, define as many variables as one would like, and even give
+    them sane names.
+  ==> DB VERSION BUMP: 1217 <==
+
+*** 2009-03-29 by Andrew Dai
 - The superclient can now login even if it is already logged in. Existing
   logins are overridden.
 - Fixed vel limit in linmove DR messages.

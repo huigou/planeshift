@@ -53,7 +53,7 @@ INSERT INTO `npc_responses` VALUES (18,10,'Umm, didn\'t you just say that?','I f
 INSERT INTO `npc_responses` VALUES (19,11,'Oh weird, it\'s like deja vu!','','','','','','','','','','',0,NULL);
 INSERT INTO `npc_responses` VALUES (20,12,'I have already responded to that and I will not do so again, $sir!','','','','','','','','','','',0,NULL);
 INSERT INTO `npc_responses` VALUES (21,13,'I\'m not giving you anything.  What have you given me?','','','','','','','','','','',0,NULL);
-INSERT INTO `npc_responses` VALUES (22,14,'Ok, I will give you some exp.','','','','','','','','','<response><respond/><run scr=\"give_exp\" param0=\"200\" /></response>','',0,NULL);
+INSERT INTO `npc_responses` VALUES (22,14,'Ok, I will give you some exp.','','','','','','','','','<response><run script="give_exp" with="Exp = 200;"/></response>','',0,NULL);
 INSERT INTO `npc_responses` VALUES (23,15,'Hi $sir!, I will say thank you for 11 trias.','','','','','','','','','','',0,NULL);
 INSERT INTO `npc_responses` VALUES (24,16,'You are speaking strangely, please rephrase.','','','','','','','','','','',0,NULL);
 INSERT INTO `npc_responses` VALUES (25,17,'this is my error response.','','','','','','','','','','',0,NULL);

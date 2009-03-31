@@ -18,6 +18,7 @@ CREATE TABLE progression_events (
 # Dumping data for table 'progression_events'
 #
 
+INSERT INTO progression_events VALUES("give_exp",'<script><exp aim="Target" value="Exp"/></script>');
 INSERT INTO progression_events VALUES("kill",'<script><exp aim="Killer" value="KillExp"/></script>');
 INSERT INTO progression_events VALUES("cast Life Infusion",
     '<script>

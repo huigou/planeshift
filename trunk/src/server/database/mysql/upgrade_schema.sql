@@ -1142,6 +1142,16 @@ UPDATE `spells` SET target_type = target_type & ~0x102;
 
 UPDATE `server_options` SET `option_value`='1216' WHERE `option_name`='db_version';
 
+#### 1217 - Kenny Graunke - Update syntax of RunScriptResponseOp
+
+-- You'll need to manually change responses from:
+-- <response><run scr="...script name..." param0="..."/></response>
+-- to something like:
+-- <response><run script="...script name..." with="Param0 = 42.0; Foo = 'foo';"/></response>
+
+UPDATE `server_options` SET `option_value`='1217' WHERE `option_name`='db_version';
+
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to

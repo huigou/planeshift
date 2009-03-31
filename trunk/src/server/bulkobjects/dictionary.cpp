@@ -2132,28 +2132,27 @@ bool FactionResponseOp::Run(gemNPC *who, Client *target,NpcResponse *owner,csTic
 
 bool RunScriptResponseOp::Load(iDocumentNode *node)
 {
-    scriptname = node->GetAttributeValue("scr");
-    if (!scriptname.Length())
+    scriptname = node->GetAttributeValue("script");
+    if (scriptname.IsEmpty())
     {
         Error1("Progression script name was not specified in Run script op!");
         return false;
     }
-    p0 = node->GetAttributeValueAsFloat("param0");
-    p1 = node->GetAttributeValueAsFloat("param1");
-    p2 = node->GetAttributeValueAsFloat("param2");
+    bindingsText = node->GetAttributeValue("with");
+    if (!bindingsText.IsEmpty())
+    {
+        bindings = MathScript::Create("RunScriptResponseOp bindings", bindingsText);
+        return bindings != NULL;
+    }
     return true;
 }
 
 csString RunScriptResponseOp::GetResponseScript()
 {
-    psString resp = GetName();
-    resp.AppendFmt(" scr=\"%s\"",scriptname.GetData());
-    if (p0 != 0)
-        resp.AppendFmt(" param0=\"%f\"",p0);
-    if (p1 != 0)
-        resp.AppendFmt(" param1=\"%f\"",p1);
-    if (p2 != 0)
-        resp.AppendFmt(" param2=\"%f\"",p2);
+    csString resp = GetName();
+    resp.AppendFmt(" script=\"%s\"",scriptname.GetData());
+    if (bindings)
+        resp.AppendFmt(" with=\"%s\"", bindingsText.GetData());
 
     return resp;
 }
@@ -2181,9 +2180,10 @@ bool RunScriptResponseOp::Run(gemNPC *who, Client *target, NpcResponse *owner, c
     MathEnvironment env;
     env.Define("NPC", who);
     env.Define("Target", target->GetActor());
-    env.Define("Param0", p0);
-    env.Define("Param1", p1);
-    env.Define("Param2", p2);
+    if (bindings)
+    {
+        bindings->Evaluate(&env);
+    }
     script->Run(&env);
 
     return true;
