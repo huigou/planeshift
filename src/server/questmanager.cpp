@@ -353,7 +353,7 @@ bool QuestManager::HandleScriptCommand(csString& block,
             }
             else if (words.GetInt(1) != 0 && words.Get(2).CompareNoCase("exp")) // give experience points
             {
-                op.Format("<run scr=\"give_exp\" param0=\"%d\" />",words.GetInt(1) );  
+                op.Format("<run script=\"give_exp\" with=\"Param0 = %d;\" />",words.GetInt(1) );  
             }
             else if (words.GetInt(1) != 0 && words.Get(2).CompareNoCase("faction") && words.GetCount() > 3) // give faction points
             {
