@@ -42,6 +42,40 @@
 #include "util/mathscript.h"
 #include "util/consoleout.h"
 
+csString MathVar::ToString() const
+{
+    if (type == VARTYPE_OBJ)
+        return obj->ToString();
+    if (type == VARTYPE_STR)
+        return MathScriptEngine::GetString(value);
+    return csString().Format("%.2f", value);
+}
+
+csString MathVar::Dump() const
+{
+    csString str;
+    str.Append(name);
+    str.Append("(");
+    switch (type)
+    {
+        case VARTYPE_VALUE:
+            str.Append("VAL) = ");
+            str.Append(value);
+            break;
+        case VARTYPE_STR:
+            str.Append("STR) = ");
+            str.Append(MathScriptEngine::GetString(value));
+            break;
+        case VARTYPE_OBJ:
+            str.Append("OBJ) = ");
+            str.Append("PTR");
+            break;
+    }
+    return str;
+}
+
+//----------------------------------------------------------------------------
+
 MathEnvironment::~MathEnvironment()
 {
     csHash<MathVar*, csString>::GlobalIterator it(variables.GetIterator());
@@ -146,12 +180,21 @@ MathStatement* MathStatement::Create(const csString & line, const char *name)
         return NULL;
     }
 
-    stmt->expression = MathExpression::Create(line.Slice(assignAt+1), name);
+    csString expression;
+    line.SubString(expression, assignAt+1);
+    stmt->expression = MathExpression::Create(expression, name);
     if (!stmt->expression)
     {
         delete stmt;
         return NULL;
     }
+
+    // Lame hack - mark   Var = "String";  as a string type, for proper display.
+    // In general, we can't know, since with fparser everything is a double.
+    expression.LTrim();
+    if (expression.GetAt(0) == '\'' || expression.GetAt(0) == '"')
+        stmt->assigneeType = VARTYPE_STR;
+
     return stmt;
 }
 
@@ -167,6 +210,11 @@ MathStatement::~MathStatement()
 void MathStatement::Evaluate(MathEnvironment *env)
 {
     env->Define(assignee, expression->Evaluate(env));
+    if (assigneeType != VARTYPE_VALUE)
+    {
+        MathVar *var = env->Lookup(assignee);
+        var->type = assigneeType;
+    }
 }
 
 //----------------------------------------------------------------------------

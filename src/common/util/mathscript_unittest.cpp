@@ -211,6 +211,20 @@ TEST(MathScriptTest, StringAssignment)
     EXPECT_EQ(33, rank->GetValue());
 };
 
+TEST(MathScriptTest, StringAssignment2)
+{
+    MathScript *script = MathScript::Create("StringAssignment2", "Skill = 'Sword';");
+    ASSERT_NE(script, NULL);
+
+    MathEnvironment env;
+    script->Evaluate(&env);
+
+    MathVar *rank = env.Lookup("Skill");
+    ASSERT_NE(rank, NULL);
+    EXPECT_STREQ("Sword", rank->ToString());
+};
+
+
 TEST(MathScriptTest, ParserStress)
 {
     // Combat makes for a pretty good parser stress test.

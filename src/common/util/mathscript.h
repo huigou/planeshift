@@ -34,6 +34,7 @@
 enum MathType
 {
     VARTYPE_VALUE,
+    VARTYPE_STR,
     VARTYPE_OBJ
 };
 
@@ -59,7 +60,7 @@ public:
         value = 0;
         obj   = NULL;
         changedVarCallback = NULL;
-        changedVarCallbackArg = NULL;        
+        changedVarCallbackArg = NULL;    
     }
 
     void SetChangedCallback(MathScriptVarCallback callback, void * arg)
@@ -108,33 +109,8 @@ public:
         name = v->name;
     }
 
-    csString ToString()
-    {
-        if (type == VARTYPE_OBJ)
-            return obj->ToString();
-
-        return csString().Format("%.2f", value);
-    }
-
-    csString Dump() const
-    {
-        csString str;
-        str.Append(name);
-        str.Append("(");
-        switch (type)
-        {
-        case VARTYPE_VALUE:
-            str.Append("VAL) = ");
-            str.Append(value);
-            break;
-        case VARTYPE_OBJ:
-            str.Append("OBJ) = ");
-            str.Append("PTR");
-            break;
-        }
-        return str;
-    }
-    
+    csString ToString() const;
+    csString Dump() const;
 };
 
 class MathEnvironment
@@ -195,9 +171,10 @@ public:
     void Evaluate(MathEnvironment *env);
 
 protected:
-    MathStatement() : expression(NULL) { }
+    MathStatement() : assigneeType(VARTYPE_VALUE), expression(NULL) { }
 
     csString assignee;
+    MathType assigneeType; // we can't know, but at least detect Var = 'Hi' as STR.
     MathExpression *expression;
 };
 
