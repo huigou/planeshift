@@ -1197,6 +1197,27 @@ void GEMClientObject::Move(const csVector3& pos,float rotangle,  const char* roo
 
 bool GEMClientObject::InitMesh()
 {
+    // Check for nullmesh.
+    if(factName == "nullmesh")
+    {
+        csRef<iMeshFactoryWrapper> nullmesh = psengine->GetEngine()->FindMeshFactory("nullmesh");
+        if(!nullmesh)
+        {
+            nullmesh = psengine->GetEngine()->CreateMeshFactory("crystalspace.mesh.object.null", "nullmesh");
+            nullmesh->GetFlags().Set(CS_ENTITY_NODECAL);
+            csRef<iNullFactoryState> nullstate = scfQueryInterface<iNullFactoryState> (nullmesh->GetMeshObjectFactory());
+            csBox3 bbox;
+            bbox.AddBoundingVertex(csVector3(0.0f));
+            nullstate->SetBoundingBox(bbox);
+        }
+
+        pcmesh = psengine->GetEngine()->CreateMeshWrapper(nullmesh, name);
+        cel->AttachObject(pcmesh->QueryObject(), this);
+
+        PostLoad(true);
+
+        return true;
+    }
 
     // Helm Mesh Check
     // If there is helm specific item and we don't have any race yet, fall back to
@@ -1246,7 +1267,7 @@ void GEMClientObject::CheckMeshLoad()
 
     psengine->UnregisterDelayedLoader(this);
 
-    PostLoad();
+    PostLoad(false);
 
     // Handle item effect if there is one.
     cel->HandleItemEffect(factName, pcmesh);
@@ -1332,7 +1353,7 @@ GEMClientActor::~GEMClientActor()
     delete linmove;
 }
 
-void GEMClientActor::PostLoad()
+void GEMClientActor::PostLoad(bool nullmesh)
 {
     InitLinMove(pos, yrot, sectorName, top, bottom, offset );
     if (sector != NULL)
@@ -1340,20 +1361,19 @@ void GEMClientActor::PostLoad()
     else
         cel->HandleUnresolvedPos(this, pos, yrot, sectorName);
 
-    InitCharData(texParts, equipment);
-
-    RefreshCal3d();
-
-    SetMode(serverMode, true);
-
-    SetAnimationVelocity(vel);
+    if(!nullmesh)
+    {
+        InitCharData(texParts, equipment);
+        RefreshCal3d();
+        SetAnimationVelocity(vel);
+        SetMode(serverMode, true);
+        if (!control && (flags & psPersistActor::NAMEKNOWN))
+            cel->GetEntityLabels()->OnObjectArrived(this);
+        cel->GetShadowManager()->CreateShadow(this);
+    }
 
     // Move into position
     Move(pos, yrot, sectorName);
-
-    if (!control && (flags & psPersistActor::NAMEKNOWN))
-        cel->GetEntityLabels()->OnObjectArrived(this);
-    cel->GetShadowManager()->CreateShadow(this);
 
     lastDRUpdateTime = 0;
 
@@ -1859,7 +1879,7 @@ GEMClientItem::~GEMClientItem()
     delete solid;
 }
 
-void GEMClientItem::PostLoad()
+void GEMClientItem::PostLoad(bool nullmesh)
 {
     Move(pos, yRot, sector);
     
@@ -1887,7 +1907,7 @@ void GEMClientItem::UpdateItem( psPersistItem& mesg )
     sector = mesg.sector;
     flags = mesg.flags;
 
-    PostLoad();
+    PostLoad(false);
 }
 
 GEMClientActionLocation::GEMClientActionLocation( psCelClient* cel, psPersistActionLocation& mesg )

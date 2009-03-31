@@ -523,6 +523,7 @@ protected:
     SkillSet                  skills;
     psSkillCache              skillCache;
     GMEventsAssignment        assigned_events;
+    csArray<PID>              explored_areas;
     bool guildNotified; ///< If true the player will get notifications about his guild members logging in and out
 
     bool LoadSpells(PID use_id);
@@ -534,6 +535,7 @@ protected:
     bool LoadBuddies( Result& myBuddy, Result& buddyOf);
     bool LoadMarriageInfo( Result& result);
     bool LoadFamiliar( Result& pet, Result& owner);
+    bool LoadExploration(Result& exploration);
     bool LoadGMEvents();
 
     float override_max_hp,override_max_mana;  ///< These values are loaded from base_hp_max,base_mana_max in the db and
@@ -751,6 +753,18 @@ public:
 
     void BuddyOf(PID buddyID);
     void NotBuddyOf(PID buddyID);
+
+    /** @brief Add a new explored area.
+     *
+     *  @param explored The PID of the area npc.
+     */
+    bool AddExploredArea(PID explored);
+
+    /** @brief Check if an area has already been explored.
+     *
+     *  @param explored The PID of the area npc.
+     */
+    bool HasExploredArea(PID explored);
 
     const char *GetFactionStandings() { return faction_standings; }
 

@@ -383,7 +383,7 @@ public:
      /**
       * Delayed load 'post-process'.
       */
-     virtual void PostLoad() { }
+     virtual void PostLoad(bool nullmesh) { }
 
 protected:
     friend class psCelClient;
@@ -522,7 +522,7 @@ protected:
     uint8_t  DRcounter;  /// increments in loop to prevent out of order packet overwrites of better data
     bool DRcounter_set;
 
-    virtual void PostLoad();
+    virtual void PostLoad(bool nullmesh);
 
     bool InitLinMove(const csVector3& pos,float angle, const char* sector,
                      csVector3 top, csVector3 bottom, csVector3 offset);
@@ -562,7 +562,7 @@ public:
     void UpdateItem( psPersistItem& mesg );
 
 protected:
-    virtual void PostLoad();
+    virtual void PostLoad(bool nullmesh);
 
     psSolid* solid;
 
