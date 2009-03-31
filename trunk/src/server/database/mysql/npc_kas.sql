@@ -34,3 +34,5 @@ INSERT INTO npc_knowledge_areas VALUES("15","DictMaster2","1");
 INSERT INTO npc_knowledge_areas VALUES("15","general","10");
 INSERT INTO npc_knowledge_areas VALUES("40","WinchMover1","1");
 INSERT INTO npc_knowledge_areas VALUES("40","WinchMovers","2");
+INSERT INTO npc_knowledge_areas VALUES("59","NPCroom1","1");
+INSERT INTO npc_knowledge_areas VALUES("60","NPCroom2","1");

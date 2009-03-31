@@ -548,11 +548,18 @@ bool psCharacter::LoadRelationshipInfo(PID pid)
       return false;
     }
 
-    if ( !LoadBuddies( has_a, of_a) )
+    if ( !LoadBuddies( has_a, of_a ) )
     {
         Error2("Cannot load buddies for Character %s.", ShowID(pid));
         return false;
     }
+
+    if ( !LoadExploration( has_a ) )
+    {
+        Error2("Cannot load exploration points for Character %s.", ShowID(pid));
+        return false;
+    }
+
     return true;
 }
 
@@ -670,6 +677,25 @@ bool psCharacter::LoadFamiliar( Result& pet, Result& owner )
             owner_id = owner[x].GetInt( "character_id" );
             Notify2( LOG_MARRIAGE, "Successfully loaded owner for %s", name.GetData() );
             break;
+        }
+    }
+
+    return true;
+}
+
+bool psCharacter::LoadExploration(Result& exploration)
+{
+    if(!exploration.IsValid())
+    {
+        Error3("Could not load exploration info for character %s: %s", ShowID(pid), db->GetLastError());
+        return false;
+    }
+
+    for(uint i=0; i<exploration.Count(); ++i)
+    {
+        if(strcmp(exploration[i]["relationship_type"], "exploration") == 0)
+        {
+            explored_areas.Push(exploration[i].GetInt("related_id"));
         }
     }
 
@@ -2763,7 +2789,32 @@ bool psCharacter::AddBuddy(PID buddyID, csString & buddyName)
     return true;
 }
 
+bool psCharacter::AddExploredArea(PID explored)
+{
+    int rows = db->Command("INSERT INTO character_relationships (character_id, related_id, relationship_type) VALUES (%u, %u, 'exploration')",
+        pid.Unbox(), explored.Unbox());
 
+    if (rows != 1)
+    {
+        psserver->GetDatabase()->SetLastError(psserver->GetDatabase()->GetLastSQLError());
+        return false;
+    }
+
+    explored_areas.Push(explored);
+
+    return true;
+}
+
+bool psCharacter::HasExploredArea(PID explored)
+{
+    for(size_t i=0; i<explored_areas.GetSize(); ++i)
+    {
+        if(explored == explored_areas[i])
+            return true;
+    }
+
+    return false;
+}
 
 double psCharacter::GetProperty(const char *ptr)
 {
@@ -2873,6 +2924,10 @@ double psCharacter::GetProperty(const char *ptr)
         // Backwards compatibility.
         return GetCombatStance().stance_id;
     }
+    else if (!strcasecmp(ptr,"PID"))
+    {
+        return (double) pid.Unbox();
+    }
     Error2("Requested psCharacter property not found '%s'", ptr);
     return 0;
 }
@@ -2940,6 +2995,16 @@ double psCharacter::CalcFunction(const char * functionName, const double * param
             value = 0.2;
 
         return value;
+    }
+    else if (!strcasecmp(functionName, "HasExploredArea"))
+    {
+        if(!HasExploredArea(params[0]))
+        {
+            AddExploredArea(params[0]);
+            return 0;
+        }
+
+        return 1;        
     }
 
     CPrintf(CON_ERROR, "psItem::CalcFunction(%s) failed\n", functionName);

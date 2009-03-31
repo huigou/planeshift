@@ -233,3 +233,4 @@ INSERT INTO common_strings VALUES("225","/planeshift/items/campfire01a.dds");
 
 INSERT INTO common_strings VALUES("1162","weapons#round_shield_01a");
 INSERT INTO common_strings VALUES("1163","/planeshift/weapons/roundshield01a_icon.dds");
+INSERT INTO common_strings VALUES("9999","nullmesh");

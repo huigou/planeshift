@@ -11,7 +11,7 @@ CREATE TABLE `character_relationships`
 ( 
 	character_id int(11) NOT NULL default '0' 			COMMENT 'character id from the characters table' ,
 	related_id int(11) NOT NULL default '0'             COMMENT 'character id of the related character' ,
-	relationship_type varchar(15) NOT NULL default ''   COMMENT 'one of three values currently `familiar`, `buddy`, or `spouse` ' ,
+	relationship_type varchar(15) NOT NULL default ''   COMMENT 'one of three values currently `familiar`, `buddy`, `spouse` or `exploration` ' ,
 	spousename  varchar(30) default NULL                COMMENT 'used for marriages, historical data in case of deletion' ,
 	
 	PRIMARY KEY (`character_id`, `relationship_type`, `related_id` ), 
