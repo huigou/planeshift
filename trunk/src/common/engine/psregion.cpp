@@ -348,6 +348,8 @@ csRef<iDocumentNode> psRegion::Filter(csRef<iDocumentNode> world, bool using3D)
             csRef<iDocumentNode> sector = newWorld->CreateNodeBefore(CS_NODE_ELEMENT);
             CS::DocSystem::CloneNode(sectors->Next(), sector);
 
+            sector->RemoveNodes(sector->GetNodes("meshgen"));
+
             csRef<iDocumentNodeIterator> meshobjs = sector->GetNodes("meshobj");
             while(meshobjs->HasNext())
             {

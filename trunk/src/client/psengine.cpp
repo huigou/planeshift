@@ -298,6 +298,10 @@ void psEngine::Cleanup()
     delete inventoryCache;
     delete loader;
 
+    // celclient needs to be destroyed before the effectmanager.
+    celclient.Invalidate();
+    modehandler.Invalidate();
+
     // Effect manager needs to be destroyed before the soundmanager.
     effectManager.Invalidate();
 

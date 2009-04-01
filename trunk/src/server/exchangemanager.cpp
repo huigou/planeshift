@@ -1211,7 +1211,7 @@ bool PlayerToNPCExchange::CheckXMLResponse(Client * client, psNPCDialog *dlg, cs
     NpcResponse *resp = dlg->FindXMLResponse(client, trigger);
     if (resp && resp->type != NpcResponse::ERROR_RESPONSE)
     {
-        if (resp->ExecuteScript(client, (gemNPC *)target))
+        if (resp->ExecuteScript(client->GetActor(), (gemNPC *)target))
         {
             // Give offered items to npc
             starterChar.TransferOffer(target->GetCharacterData());

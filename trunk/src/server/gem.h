@@ -341,6 +341,9 @@ public:
     void UpdateProxList( bool force = false);
     void RemoveFromAllProx();
 
+    void SetAlwaysWatching(bool w) { alwaysWatching = w; }
+    bool AlwaysWatching() { return alwaysWatching; }
+
     float RangeTo(gemObject *obj, bool ignoreY = false, bool ignoreInstance = false);
 
     virtual bool IsUpdateReq (csVector3 const &pos,csVector3 const &oldPos);
@@ -392,14 +395,15 @@ protected:
     ProximityList *proxlist;                    ///< Proximity List for this object
     csString name;                              ///< Name of this object, used mostly for debugging
     static GEMSupervisor *cel;                  ///< Static ptr back to main collection of all objects
-    InstanceID worldInstance;                  ///< Only objects which match instances can see each other
+    InstanceID worldInstance;                   ///< Only objects which match instances can see each other
     csVector3 pos;                              ///< Position in 3d space
     float yRot;                                 ///< Left-Right rotation, in radians
     iSector *sector;                            ///< Ptr to the CS sector inhabited
     bool is_alive;                              ///< Flag indicating whether object is alive or not
     OverridableMesh factname;                   ///< Name of CS Mesh Factory used to create this object
     EID eid;                                    ///< Entity ID (unique identifier for object)
-    static csRef<iMeshFactoryWrapper> nullfact;       ///< Null factory for our mesh instances.
+    csRef<iMeshFactoryWrapper> nullfact;        ///< Null factory for our mesh instances.
+    bool alwaysWatching;                           ///< True if this object always watches (proxlists) regardless of owner.
 
     csArray<iDeleteObjectCallback*> receivers;  ///< List of objects which are to be notified when this object is deleted.
 

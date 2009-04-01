@@ -463,7 +463,7 @@ NpcResponse *NPCDialogDict::FindResponse(gemNPC * npc,
                                          int priorresponse,
                                          Client *client)
 {
-    Debug7(LOG_NPC, client->GetClientNum(),"Entering NPCDialogDict::FindResponse(%s,%s,%s,%d,%d,%s)",
+    Debug7(LOG_NPC, client ? client->GetClientNum() : 0,"Entering NPCDialogDict::FindResponse(%s,%s,%s,%d,%d,%s)",
             npc->GetName(),area,trigger,faction,priorresponse,client->GetName());
     NpcTrigger *trig;
     NpcTrigger key;
@@ -476,12 +476,12 @@ NpcResponse *NPCDialogDict::FindResponse(gemNPC * npc,
 
     if (trig)
     { 
-        Debug3(LOG_NPC, client->GetClientNum(),"NPCDialogDict::FindResponse consider trig(%d): '%s'",
+        Debug3(LOG_NPC, client ? client->GetClientNum() : 0,"NPCDialogDict::FindResponse consider trig(%d): '%s'",
                 trig->id,trig->trigger.GetDataSafe());
     }
     else
     {
-        Debug1(LOG_NPC, client->GetClientNum(),"NPCDialogDict::FindResponse no trigger found");
+        Debug1(LOG_NPC, client ? client->GetClientNum() : 0,"NPCDialogDict::FindResponse no trigger found");
         return NULL;
     }
 
@@ -491,7 +491,7 @@ NpcResponse *NPCDialogDict::FindResponse(gemNPC * npc,
     // Check if not all responses is blocked(Not available in quests, Prequests not fullfitted,...)
     if (trig && !trig->HaveAvailableResponses(client,npc,this,&availableResponseList))
     {
-        Debug1(LOG_NPC, client->GetClientNum(),"NPCDialogDict::FindResponse no available responses found");
+        Debug1(LOG_NPC, client ? client->GetClientNum() : 0,"NPCDialogDict::FindResponse no available responses found");
         return NULL;
     }
 
@@ -741,6 +741,23 @@ NpcResponse *NPCDialogDict::AddResponse(const char *response_text,
 
 
     return newresp;  // Make response available for script additions
+}
+
+NpcResponse *NPCDialogDict::AddResponse(const char *script)
+{
+    NpcResponse *newresp = new NpcResponse;
+    newresp->id = dynamic_id++;
+    newresp->type = NpcResponse::VALID_RESPONSE;
+    newresp->ParseResponseScript(script);
+
+    if (responses.Insert(newresp, TREE_OWNS_DATA))
+    {
+        Error2("Found equal response(%s) in responses\n",newresp->response[0].GetData());
+        delete newresp;
+        return NULL;
+    }
+
+    return newresp;
 }
 
 void NPCDialogDict::DeleteTriggerResponse(NpcTrigger * trigger, int responseId)
@@ -1089,7 +1106,7 @@ bool NpcTrigger::HaveAvailableResponses(Client * client, gemNPC * npc, NPCDialog
         NpcResponse * resp = dict->FindResponse(responseIDlist[n]);
         if (resp)
         {
-            if (resp->quest || resp->prerequisite)
+            if (client && (resp->quest || resp->prerequisite))
             {
                 // Check if all prerequisites are true, and available(no lockout)
                 if ( ((!resp->prerequisite || client->GetCharacterData()->CheckResponsePrerequisite(resp) ) && //checks if prerequisites are in order
@@ -1107,7 +1124,7 @@ bool NpcTrigger::HaveAvailableResponses(Client * client, gemNPC * npc, NPCDialog
             }
             else
             {
-                Debug2(LOG_QUESTS,client->GetClientNum(),"Pushing non quest response: %d\n",resp->id);
+                Debug2(LOG_QUESTS, client ? client->GetClientNum() : 0,"Pushing non quest response: %d\n",resp->id);
                 // This is a available responses that isn't connected to a quest
                 haveAvail = true;
                 if (availableResponseList) availableResponseList->Push(resp->id);
@@ -1413,18 +1430,18 @@ bool NpcResponse::HasPublicResponse()
     return false;
 }
 
-bool NpcResponse::ExecuteScript(Client *client, gemNPC* target)
+bool NpcResponse::ExecuteScript(gemActor *player, gemNPC* target)
 {
     timeDelay = 0; // Say commands, etc. should be delayed by 2-3 seconds to simulate typing
 
     active_quest = -1;  // not used by default
     for (size_t i=0; i<script.GetSize(); i++)
     {
-        if (!script[i]->Run(target,client,this,timeDelay))
+        if (!script[i]->Run(target,player,this,timeDelay))
         {
             csString resp = script[i]->GetResponseScript();
             Error3("Error running script in %s operation for client %s.",
-                   resp.GetData(),client->GetName() );
+                resp.GetData(), player->GetClient() ? player->GetClient()->GetName() : "NPC");
             return false;
         }
     }
@@ -1617,7 +1634,7 @@ csString SayResponseOp::GetResponseScript()
     return resp;
 }
 
-bool SayResponseOp::Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay)
+bool SayResponseOp::Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay)
 {
     psString response;
 
@@ -1626,12 +1643,12 @@ bool SayResponseOp::Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& 
     else
         response = owner->GetResponse();
 
-    who->GetNPCDialogPtr()->SubstituteKeywords(target,response);
+    who->GetNPCDialogPtr()->SubstituteKeywords(target->GetClient(),response);
 
     if (target->GetSecurityLevel() >= GM_DEVELOPER)
         response.AppendFmt(" (%s)",owner->triggerText.GetDataSafe() );
 
-    who->Say(response,target,saypublic,timeDelay);
+    who->Say(response,target->GetClient(),saypublic,timeDelay);
 
     return true;
 }
@@ -1654,7 +1671,7 @@ csString ActionResponseOp::GetResponseScript()
     return resp;
 }
 
-bool ActionResponseOp::Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay)
+bool ActionResponseOp::Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay)
 {
     if (!anim.IsEmpty())
         who->SetAction(anim,timeDelay);
@@ -1662,8 +1679,8 @@ bool ActionResponseOp::Run(gemNPC *who, Client *target,NpcResponse *owner,csTick
     if (actWhat)
     {
         csString response(*actWhat);
-        who->GetNPCDialogPtr()->SubstituteKeywords(target,response);
-        who->ActionCommand(actionMy, actionNarrate, response.GetDataSafe(), target->GetClientNum(),timeDelay );
+        who->GetNPCDialogPtr()->SubstituteKeywords(target->GetClient(),response);
+        who->ActionCommand(actionMy, actionNarrate, response.GetDataSafe(), target->GetClient()->GetClientNum(),timeDelay );
     }
 
     return true;
@@ -1683,7 +1700,7 @@ csString NPCCmdResponseOp::GetResponseScript()
     return resp;
 }
 
-bool NPCCmdResponseOp::Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay)
+bool NPCCmdResponseOp::Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay)
 {
     psserver->GetNPCManager()->QueueNPCCmdPerception(who,cmd);
     return true;
@@ -1715,13 +1732,13 @@ csString VerifyQuestCompletedResponseOp::GetResponseScript()
     return resp;
 }
 
-bool VerifyQuestCompletedResponseOp::Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay)
+bool VerifyQuestCompletedResponseOp::Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay)
 {
     bool avail = target->GetCharacterData()->CheckQuestCompleted(quest);
     if (!avail)
     {
-        who->GetNPCDialogPtr()->SubstituteKeywords(target,error_msg);
-        who->Say(error_msg,target,false,timeDelay);
+        who->GetNPCDialogPtr()->SubstituteKeywords(target->GetClient(),error_msg);
+        who->Say(error_msg,target->GetClient(),false,timeDelay);
         return false;
     }
     return true;  // and don't say anything
@@ -1765,7 +1782,7 @@ csString VerifyQuestAssignedResponseOp::GetResponseScript()
     return resp;
 }
 
-bool VerifyQuestAssignedResponseOp::Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay)
+bool VerifyQuestAssignedResponseOp::Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay)
 {
     bool avail = target->GetCharacterData()->CheckQuestAssigned(quest);
     if (!avail)
@@ -1774,8 +1791,8 @@ bool VerifyQuestAssignedResponseOp::Run(gemNPC *who, Client *target,NpcResponse 
         {
             error_msg = "I don't know what you are talking about.";  // TODO: use the standard error response for that NPC
         }
-        who->GetNPCDialogPtr()->SubstituteKeywords(target,error_msg);
-        who->Say(error_msg,target,false,timeDelay);
+        who->GetNPCDialogPtr()->SubstituteKeywords(target->GetClient(),error_msg);
+        who->Say(error_msg,target->GetClient(),false,timeDelay);
         return false;
     }
     return true;  // and don't say anything
@@ -1819,7 +1836,7 @@ csString VerifyQuestNotAssignedResponseOp::GetResponseScript()
     return resp;
 }
 
-bool VerifyQuestNotAssignedResponseOp::Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay)
+bool VerifyQuestNotAssignedResponseOp::Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay)
 {
     bool avail = target->GetCharacterData()->CheckQuestAssigned(quest);
     if (avail)
@@ -1828,8 +1845,8 @@ bool VerifyQuestNotAssignedResponseOp::Run(gemNPC *who, Client *target,NpcRespon
         {
             error_msg = "I don't know what you are talking about.";  // TODO: use the standard error response for that NPC
         }
-        who->GetNPCDialogPtr()->SubstituteKeywords(target,error_msg);
-        who->Say(error_msg,target,false,timeDelay);
+        who->GetNPCDialogPtr()->SubstituteKeywords(target->GetClient(),error_msg);
+        who->Say(error_msg,target->GetClient(),false,timeDelay);
         return false;
     }
     return true;  // and don't say anything
@@ -1886,38 +1903,38 @@ csString AssignQuestResponseOp::GetResponseScript()
     return resp;
 }
 
-bool AssignQuestResponseOp::Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay)
+bool AssignQuestResponseOp::Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay)
 {
     if (owner->GetActiveQuest() == -1)
     {
         owner->SetActiveQuest(GetMaxQuests());
-        Debug4(LOG_QUESTS, target->GetClientNum(),"Selected quest %d out of %d for %s",owner->GetActiveQuest()+1,
+        Debug4(LOG_QUESTS, target->GetClient()->GetClientNum(),"Selected quest %d out of %d for %s",owner->GetActiveQuest()+1,
                GetMaxQuests(),target->GetCharacterData()->GetCharName());
     }
 
     if (target->GetCharacterData()->CheckQuestAssigned(quest[owner->GetActiveQuest()]))
     {
-        Debug3(LOG_QUESTS, target->GetClientNum(),"Quest(%d) is already assigned for %s",owner->GetActiveQuest()+1,
+        Debug3(LOG_QUESTS, target->GetClient()->GetClientNum(),"Quest(%d) is already assigned for %s",owner->GetActiveQuest()+1,
                target->GetCharacterData()->GetCharName());
         return false;
     }
 	timeDelay += 1000;
-    psserver->questmanager->Assign(quest[owner->GetActiveQuest()],target,who,timeDelay);
+    psserver->questmanager->Assign(quest[owner->GetActiveQuest()],target->GetClient(),who,timeDelay);
     return true;
 }
 
-bool AssignQuestSelectOp::Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay)
+bool AssignQuestSelectOp::Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay)
 {
     if (owner->GetActiveQuest() == -1)
     {
         owner->SetActiveQuest(quest_op->GetMaxQuests());
-        Debug4(LOG_QUESTS, target->GetClientNum(), "Selected quest %d out of %d for %s",owner->GetActiveQuest()+1,
+        Debug4(LOG_QUESTS, target->GetClient()->GetClientNum(), "Selected quest %d out of %d for %s",owner->GetActiveQuest()+1,
                quest_op->GetMaxQuests(),target->GetCharacterData()->GetCharName());
     }
 
     if (target->GetCharacterData()->CheckQuestAssigned(quest_op->GetQuest(owner->GetActiveQuest())))
     {
-        Debug3(LOG_QUESTS, target->GetClientNum(), "Quest(%d) is already assignd for %s",quest_op->GetQuest(owner->GetActiveQuest())->GetID(),
+        Debug3(LOG_QUESTS, target->GetClient()->GetClientNum(), "Quest(%d) is already assignd for %s",quest_op->GetQuest(owner->GetActiveQuest())->GetID(),
                target->GetCharacterData()->GetCharName());
         return false;
     }
@@ -1954,12 +1971,12 @@ bool FireEventResponseOp::Run(gemNPC *who, Client *target,NpcResponse *owner,csT
 }
 */
 
-bool CheckQuestTimeoutOp::Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay)
+bool CheckQuestTimeoutOp::Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay)
 {
     if (owner->GetActiveQuest() == -1)
     {
         owner->SetActiveQuest(quest_op->GetMaxQuests());
-        Debug4(LOG_QUESTS, target->GetClientNum(), "Selected quest %d out of %d for %s",owner->GetActiveQuest()+1,
+        Debug4(LOG_QUESTS, target->GetClient()->GetClientNum(), "Selected quest %d out of %d for %s",owner->GetActiveQuest()+1,
                quest_op->GetMaxQuests(),target->GetCharacterData()->GetCharName());
     }
 
@@ -1968,8 +1985,8 @@ bool CheckQuestTimeoutOp::Run(gemNPC *who, Client *target,NpcResponse *owner,csT
     if (!avail)
     {
         psString timeOutMsg = quest_op->GetTimeoutMsg();
-        who->GetNPCDialogPtr()->SubstituteKeywords(target,timeOutMsg);
-        who->Say(timeOutMsg,target,false,timeDelay);
+        who->GetNPCDialogPtr()->SubstituteKeywords(target->GetClient(),timeOutMsg);
+        who->Say(timeOutMsg,target->GetClient(),false,timeDelay);
         return false;
     }
     return true;
@@ -2006,12 +2023,12 @@ csString CompleteQuestResponseOp::GetResponseScript()
     return resp;
 }
 
-bool CompleteQuestResponseOp::Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay)
+bool CompleteQuestResponseOp::Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay)
 {
-    if (!psserver->questmanager->Complete(quest,target))
+    if (!psserver->questmanager->Complete(quest,target->GetClient()))
     {
-        who->GetNPCDialogPtr()->SubstituteKeywords(target,error_msg);
-        who->Say(error_msg,target,false,timeDelay);
+        who->GetNPCDialogPtr()->SubstituteKeywords(target->GetClient(),error_msg);
+        who->Say(error_msg,target->GetClient(),false,timeDelay);
         return false;
     }
     else
@@ -2062,9 +2079,9 @@ csString GiveItemResponseOp::GetResponseScript()
     return resp;
 }
 
-bool GiveItemResponseOp::Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay)
+bool GiveItemResponseOp::Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay)
 {
-    psCharacter *character = target->GetActor()->GetCharacterData();
+    psCharacter *character = target->GetCharacterData();
     if (!character)
         return false;
 
@@ -2084,12 +2101,12 @@ bool GiveItemResponseOp::Run(gemNPC *who, Client *target,NpcResponse *owner,csTi
 
     if (!character->Inventory().AddOrDrop(item))
 	{
-		psSystemMessage recv(target->GetClientNum(),MSG_ERROR,"You received %s, but dropped it because you can't carry any more.", itemName.GetData());
+		psSystemMessage recv(target->GetClient()->GetClientNum(),MSG_ERROR,"You received %s, but dropped it because you can't carry any more.", itemName.GetData());
 		psserver->GetNetManager()->SendMessageDelayed(recv.msg, timeDelay);
 	}
 	else
 	{
-		psSystemMessage recv(target->GetClientNum(),MSG_INFO,"You have received %s.", itemName.GetData());
+		psSystemMessage recv(target->GetClient()->GetClientNum(),MSG_INFO,"You have received %s.", itemName.GetData());
 		psserver->GetNetManager()->SendMessageDelayed(recv.msg, timeDelay);
 	}
     return true;
@@ -2116,9 +2133,9 @@ csString FactionResponseOp::GetResponseScript()
     return resp;
 }
 
-bool FactionResponseOp::Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay)
+bool FactionResponseOp::Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay)
 {
-    psCharacter *player = target->GetActor()->GetCharacterData();
+    psCharacter *player = target->GetCharacterData();
     if (!player)
     {
         Error1("Error: FactionResponceOp found no character");
@@ -2166,7 +2183,7 @@ csString RunScriptResponseOp::GetResponseScript()
     return resp;
 }
 
-bool RunScriptResponseOp::Run(gemNPC *who, Client *target, NpcResponse *owner, csTicks& timeDelay)
+bool RunScriptResponseOp::Run(gemNPC *who, gemActor *target, NpcResponse *owner, csTicks& timeDelay)
 {
     ProgressionScript *script;
 
@@ -2188,7 +2205,7 @@ bool RunScriptResponseOp::Run(gemNPC *who, Client *target, NpcResponse *owner, c
 
     MathEnvironment env;
     env.Define("NPC", who);
-    env.Define("Target", target->GetActor());
+    env.Define("Target", target);
     if (bindings)
     {
         bindings->Evaluate(&env);
@@ -2221,15 +2238,15 @@ csString TrainResponseOp::GetResponseScript()
     return resp;
 }
 
-bool TrainResponseOp::Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay)
+bool TrainResponseOp::Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay)
 {
-    if (CheckTraining(who, target, skill))
+    if (CheckTraining(who, target->GetClient(), skill))
     {
         csString question;
         question.Format("Do you really want to train %s ? You will be charged %d trias.",
         skill->name.GetData(), skill->price.GetTotal());
         psserver->questionmanager->SendQuestion(
-            new TrainingConfirm(question, who, target, skill));
+            new TrainingConfirm(question, who, target->GetClient(), skill));
     }
     return true;
 }
@@ -2247,7 +2264,7 @@ csString GuildAwardResponseOp::GetResponseScript()
     return resp;
 }
 
-bool GuildAwardResponseOp::Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay)
+bool GuildAwardResponseOp::Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay)
 {
     psGuildInfo * guild = CacheManager::GetSingleton().FindGuild(target->GetGuildID());
     if (!guild)
@@ -2305,9 +2322,9 @@ csString OfferRewardResponseOp::GetResponseScript()
     return resp;
 }
 
-bool OfferRewardResponseOp::Run(gemNPC *who, Client *target, NpcResponse *owner,csTicks& timeDelay)
+bool OfferRewardResponseOp::Run(gemNPC *who, gemActor *target, NpcResponse *owner,csTicks& timeDelay)
 {
-    psserver->questmanager->OfferRewardsToPlayer(target, offer, timeDelay);
+    psserver->questmanager->OfferRewardsToPlayer(target->GetClient(), offer, timeDelay);
     return true;
 }
 
@@ -2335,13 +2352,13 @@ csString MoneyResponseOp::GetResponseScript()
     return resp;
 }
 
-bool MoneyResponseOp::Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay)
+bool MoneyResponseOp::Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay)
 {
     psCharacter * character = target->GetCharacterData();
 
     character->SetMoney(character->Money()+money);
 
-    psserver->SendSystemInfo(target->GetClientNum(), "You've received %s",money.ToUserString().GetData());
+    psserver->SendSystemInfo(target->GetClient()->GetClientNum(), "You've received %s",money.ToUserString().GetData());
     return true;
 }
 
@@ -2363,7 +2380,7 @@ csString IntroduceResponseOp::GetResponseScript()
     return resp;
 }
 
-bool IntroduceResponseOp::Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay)
+bool IntroduceResponseOp::Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay)
 {
     psCharacter * character = target->GetCharacterData();
     psCharacter * npcChar = who->GetCharacterData();
@@ -2374,15 +2391,15 @@ bool IntroduceResponseOp::Run(gemNPC *who, Client *target,NpcResponse *owner,csT
         if (obj)
         {
             character->Introduce(((gemNPC*)obj)->GetCharacterData());
-            obj->Send(target->GetClientNum(), false, false);
-            psserver->SendSystemInfo(target->GetClientNum(), "You now know %s",((gemNPC*)obj)->GetName());
+            obj->Send(target->GetClient()->GetClientNum(), false, false);
+            psserver->SendSystemInfo(target->GetClient()->GetClientNum(), "You now know %s",((gemNPC*)obj)->GetName());
         }
     }
     else
     {
         character->Introduce(npcChar);
-        who->Send(target->GetClientNum(), false, false);
-        psserver->SendSystemInfo(target->GetClientNum(), "You now know %s",who->GetName());
+        who->Send(target->GetClient()->GetClientNum(), false, false);
+        psserver->SendSystemInfo(target->GetClient()->GetClientNum(), "You now know %s",who->GetName());
     }
 
     return true;
@@ -2400,7 +2417,7 @@ csString DoAdminCommandResponseOp::GetResponseScript()
     return resp;
 }
 
-bool DoAdminCommandResponseOp::Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay)
+bool DoAdminCommandResponseOp::Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay)
 {
     modifiedCommandString = origCommandString;
     csString format;
@@ -2410,7 +2427,7 @@ bool DoAdminCommandResponseOp::Run(gemNPC *who, Client *target,NpcResponse *owne
     modifiedCommandString.ReplaceAll("sourcenpc", format);
     psAdminCmdMessage msg(modifiedCommandString, 0);
     msg.msg->current=0;
-    psserver->GetAdminManager()->HandleMessage(msg.msg, target);
+    psserver->GetAdminManager()->HandleMessage(msg.msg, target->GetClient());
     return true;
 }
 

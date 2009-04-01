@@ -681,7 +681,7 @@ PID EntityManager::CopyNPCFromDatabase(PID master_id, float x, float y, float z,
     return new_id;
 }
 
-EID EntityManager::CreateNPC(psCharacter *chardata, bool updateProxList)
+EID EntityManager::CreateNPC(psCharacter *chardata, bool updateProxList, bool alwaysWatching)
 {
     csVector3 pos;
     float yrot;
@@ -699,10 +699,11 @@ EID EntityManager::CreateNPC(psCharacter *chardata, bool updateProxList)
         return false;
     }
 
-    return CreateNPC(chardata, instance, pos, sector, yrot, updateProxList);
+    return CreateNPC(chardata, instance, pos, sector, yrot, updateProxList, alwaysWatching);
 }
 
-EID EntityManager::CreateNPC(psCharacter *chardata, InstanceID instance, csVector3 pos, iSector* sector, float yrot, bool updateProxList)
+EID EntityManager::CreateNPC(psCharacter *chardata, InstanceID instance, csVector3 pos, iSector* sector, float yrot,
+                             bool updateProxList, bool alwaysWatching)
 {
     if (chardata==NULL)
         return false;
@@ -717,6 +718,7 @@ EID EntityManager::CreateNPC(psCharacter *chardata, InstanceID instance, csVecto
     }
 
     gemNPC *actor = new gemNPC(chardata, raceinfo->mesh_name, instance, sector, pos, yrot, 0);
+    actor->SetAlwaysWatching(alwaysWatching);
 
     if ( !actor->IsValid() )
     {
@@ -730,7 +732,7 @@ EID EntityManager::CreateNPC(psCharacter *chardata, InstanceID instance, csVecto
     actor->SetSuperclientID( chardata->GetAccount() );
     
     // Add NPC Dialog plugin if any knowledge areas are defined in db for him.
-    actor->SetupDialog(chardata->GetPID());
+    actor->SetupDialog(chardata->GetPID(), true);
 
     // Setup prox list and send to anyone who needs him
     if ( updateProxList )
@@ -746,7 +748,7 @@ EID EntityManager::CreateNPC(psCharacter *chardata, InstanceID instance, csVecto
 }
 
 
-EID EntityManager::CreateNPC(PID npcID, bool updateProxList)
+EID EntityManager::CreateNPC(PID npcID, bool updateProxList, bool alwaysWatching)
 {
     psCharacter *chardata=psServer::CharacterLoader.LoadCharacterData(npcID,false);
     if (chardata==NULL)
@@ -755,7 +757,7 @@ EID EntityManager::CreateNPC(PID npcID, bool updateProxList)
         return 0;
     }
 
-    return CreateNPC(chardata, updateProxList);
+    return CreateNPC(chardata, updateProxList, alwaysWatching);
 }
 
 

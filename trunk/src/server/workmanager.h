@@ -88,7 +88,8 @@ enum TradeTransfomType
     TRANSFORMTYPE_CONTAINER,        ///< Transforming an item that is in a container
     TRANSFORMTYPE_SLOT_CONTAINER,   ///< Transforming an item that is in a container in an equipped slot
     TRANSFORMTYPE_TARGETSLOT,       ///< Transforming an item that is in a targetted actors equipped slot
-    TRANSFORMTYPE_TARGET            ///< Transforming an item that is targeted
+    TRANSFORMTYPE_TARGET,           ///< Transforming an item that is targeted
+    TRANSFORMTYPE_TARGET_TO_NPC     ///< Transforming an item that is targeted to an npc type
 };
 
 //-----------------------------------------------------------------------------
@@ -402,6 +403,7 @@ protected:
     psItem* TransformSlotItem(INVENTORY_SLOT_NUMBER slot, uint32 newId, int newQty, float itemQuality);
     psItem* TransformTargetSlotItem(INVENTORY_SLOT_NUMBER slot, uint32 newId, int newQty, float itemQuality);
     psItem* TransformTargetItem(psItem* oldItem, uint32 newId, int newQty, float itemQuality);
+    void TransformTargetItemToNpc(psItem* workItem, Client* client);
 //    bool TransformHandItem(uint32 newId, int newQty, float itemQuality);
     //bool SendItemUpdate( INVENTORY_SLOT_NUMBER slotID, psItem *newItem );
 

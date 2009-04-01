@@ -375,6 +375,8 @@ public:
 
      float RangeTo(GEMClientObject * obj, bool ignoreY);
 
+     bool HasShadow() { return hasShadow; }
+
      /**
       * Delayed mesh loading.
       */
@@ -398,6 +400,7 @@ protected:
     int flags;                      ///< Various flags on the entity.
     psEffect* entitylabel;
     psEffect * shadow;
+    bool hasShadow;
 
 
 };

@@ -1050,6 +1050,7 @@ public:
     {
         aim = node->GetAttributeValue("aim");
         text = node->GetAttributeValue("text");
+        type = node->GetAttributeValue("type");
         return true;
     }
 
@@ -1062,13 +1063,29 @@ public:
             csString finalText(text);
             env->InterpolateString(finalText);
 
-            psserver->SendSystemInfo(actor->GetClientID(), finalText);
+            if(type.CompareNoCase("ok"))
+            {
+                psserver->SendSystemOK(actor->GetClientID(), finalText);
+            }
+            else if(type.CompareNoCase("result"))
+            {
+                psserver->SendSystemResult(actor->GetClientID(), finalText);
+            }
+            else if(type.CompareNoCase("error"))
+            {
+                psserver->SendSystemError(actor->GetClientID(), finalText);
+            }
+            else
+            {
+                psserver->SendSystemInfo(actor->GetClientID(), finalText);
+            }
         }
     }
 
 protected:
     csString aim;  //< name of the MathScript var to aim at
     csString text; //< message to send
+    csString type; //< message type to send
 };
 
 //----------------------------------------------------------------------------
@@ -1330,7 +1347,7 @@ public:
     void Run(const MathEnvironment *env)
     {
         gemObject *obj = GetObject(env, aim);
-        EntityManager::GetSingleton().RemoveActor(obj);
+        EventManager::GetSingleton().Push(new psEntityEvent(psEntityEvent::DESTROY, obj));
     }
 };
 

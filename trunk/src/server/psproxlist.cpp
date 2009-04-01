@@ -157,16 +157,18 @@ void ProximityList::AddWatcher(gemObject *interestedObject, float range)
 {
     PublishDestination *pd;
 
-    pd = FindObjectThatWatchesMe(interestedObject);
+    uint index;
+    pd = FindObjectThatWatchesMe(interestedObject, index);
     if (pd != NULL)
     {
-        UpdatePublishDestRange(pd, self, interestedObject, range);
+        UpdatePublishDestRange(pd, self, interestedObject, index, range);
         return;
     }
 
 
+    destRangeTimer.Push(0);
     size_t i = objectsThatWatchMe.Push(PublishDestination(interestedObject->GetClientID(), interestedObject, 0, 100));
-    UpdatePublishDestRange(&objectsThatWatchMe[i], self, interestedObject, range);
+    UpdatePublishDestRange(&objectsThatWatchMe[i], self, interestedObject, i, range);
     objectsThatWatchMe_touched.Push(true);
 }
 
@@ -196,7 +198,7 @@ bool ProximityList::EndMutualWatching(gemObject *fromobject)
 
 bool ProximityList::StartWatching(gemObject * object, float range)
 {
-    if (self->GetClientID() == 0)
+    if (self->GetClientID() == 0 && !self->AlwaysWatching() && !object->AlwaysWatching())
         return false;
 
     if (FindObjectThatIWatch(object))
@@ -234,6 +236,7 @@ void ProximityList::RemoveWatcher(gemObject *object)
         {
             objectsThatWatchMe.DeleteIndex(x);
             objectsThatWatchMe_touched.DeleteIndex(x);
+            destRangeTimer.DeleteIndex(x);
             return;
         }
     }
@@ -263,9 +266,9 @@ bool ProximityList::FindObject(gemObject *object)
     return false;
 }
 
-PublishDestination *ProximityList::FindObjectThatWatchesMe(gemObject *object)
+PublishDestination *ProximityList::FindObjectThatWatchesMe(gemObject *object, uint& x)
 {
-    for (size_t x = 0; x < objectsThatWatchMe.GetSize(); x++ )
+    for (x = 0; x < objectsThatWatchMe.GetSize(); x++ )
     {
         if ( objectsThatWatchMe[x].object == object)
         {
@@ -301,52 +304,62 @@ gemObject *ProximityList::FindObjectName(const char *name)
     return false;
 }
 
-void ProximityList::UpdatePublishDestRange(PublishDestination *pd, gemObject *myself, gemObject *object, float newrange)
+void ProximityList::UpdatePublishDestRange(PublishDestination *pd, gemObject *myself, gemObject *object,
+                                           uint objIdx, float newrange)
 {
-    psNPCCommandsMessage::PerceptionType pcpt=psNPCCommandsMessage::CMD_TERMINATOR;
+    csArray<psNPCCommandsMessage::PerceptionType> pcpts;
 
     pd->dist = newrange;
     if (newrange < pd->min_dist)
     {
-        if (newrange < LONG_RANGE_PERCEPTION &&
-            pd->min_dist > LONG_RANGE_PERCEPTION) // 30m threshold crossed
-        {
-            pcpt = psNPCCommandsMessage::PCPT_LONGRANGEPLAYER;
-        }
-
-        if (newrange < SHORT_RANGE_PERCEPTION &&
-            pd->min_dist > SHORT_RANGE_PERCEPTION)  // 10m threshold crossed
-        {
-            pcpt = psNPCCommandsMessage::PCPT_SHORTRANGEPLAYER;
-        }
-
         if (newrange < PERSONAL_RANGE_PERCEPTION &&
             pd->min_dist > PERSONAL_RANGE_PERCEPTION)  // 4m threshold crossed
         {
-            pcpt = psNPCCommandsMessage::PCPT_VERYSHORTRANGEPLAYER;
+            pcpts.Push(psNPCCommandsMessage::PCPT_VERYSHORTRANGEPLAYER);
+        }
+        else if (newrange < SHORT_RANGE_PERCEPTION &&
+            pd->min_dist > SHORT_RANGE_PERCEPTION)  // 10m threshold crossed
+        {
+            pcpts.Push(psNPCCommandsMessage::PCPT_SHORTRANGEPLAYER);
+        }
+        else if (newrange < LONG_RANGE_PERCEPTION &&
+            pd->min_dist > LONG_RANGE_PERCEPTION) // 30m threshold crossed
+        {
+            pcpts.Push(psNPCCommandsMessage::PCPT_LONGRANGEPLAYER);
         }
 
-        if (pcpt)
+        // Check per-entity any distance.
+        csTicks now = csGetTicks();
+        csTicks timeout = destRangeTimer[objIdx];
+        if(timeout < now)
+        {
+            pcpts.Push(psNPCCommandsMessage::PCPT_ANYRANGEPLAYER);
+            destRangeTimer[objIdx] = now + newrange*50;
+        }
+
+        for(size_t i=0; i<pcpts.GetSize(); ++i)
         {
             gemActor *actorself   = dynamic_cast<gemActor *>(myself);
             gemActor *actorobject = dynamic_cast<gemActor *>(object);
+
             if (actorself && actorobject)
             {
-                if (!myself->GetClientID() && object->GetClientID() && actorself->IsAlive()) // I'm an NPC and He is a player watching me
+                if ((!myself->GetClientID() && object->GetClientID() && actorself->IsAlive()) // I'm an NPC and He is a player watching me
+                    || (!myself->GetClientID() && !object->GetClientID() && actorobject->IsAlive())) // I'm an npc and he is an npc
                 {
                     float faction = actorself->GetRelativeFaction(actorobject);
-                    psserver->GetNPCManager()->QueueEnemyPerception(pcpt,
-                                                                    actorself,
-                                                                    actorobject,
-                                                                    faction);
+                    psserver->GetNPCManager()->QueueEnemyPerception(pcpts[i],
+                        actorself,
+                        actorobject,
+                        faction);
                 }
                 else if (myself->GetClientID() && !object->GetClientID() && actorobject->IsAlive()) // I'm a player and he is an npc
                 {
                     float faction = actorobject->GetRelativeFaction(actorself);
-                    psserver->GetNPCManager()->QueueEnemyPerception(pcpt,
-                                                                    actorobject,
-                                                                    actorself,
-                                                                    faction);
+                    psserver->GetNPCManager()->QueueEnemyPerception(pcpts[i],
+                        actorobject,
+                        actorself,
+                        faction);
                 }
             }
         }
@@ -361,7 +374,7 @@ void ProximityList::TouchObjectThatWatchesMe(gemObject *object,float newrange)
         if ( objectsThatWatchMe[x].object == object)
         {
             objectsThatWatchMe_touched[x] = true;
-            UpdatePublishDestRange(&objectsThatWatchMe[x], self, object, newrange);
+            UpdatePublishDestRange(&objectsThatWatchMe[x], self, object, x, newrange);
             return;
         }
     }

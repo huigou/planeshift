@@ -424,6 +424,13 @@ void psChatBubbles::HandleMessage(MsgEntry * msg, Client * client)
     // create the effect
     psEffectManager * effectManager = psengine->GetEffectManager();
     csRef<iMeshWrapper> mesh = actor->GetMesh();
+
+    // Mesh might not be loaded yet.
+    if(!mesh.IsValid())
+    {
+        return;
+    }
+
     const csBox3& boundBox = mesh->GetMeshObject()->GetObjectModel()->GetObjectBoundingBox();
     unsigned int bubbleID = effectManager->RenderEffect("chatbubble", //effectName, 
           csVector3(0, boundBox.Max(1) + 0.5f, 0), mesh);

@@ -1521,6 +1521,11 @@ bool psItem::GetIsContainer()
     return current_stats->GetIsContainer();
 }
 
+bool psItem::GetIsTrap()
+{
+    return current_stats->GetIsTrap();
+}
+
 bool psItem::GetCanTransform()
 {
     return current_stats->GetCanTransform();

@@ -196,10 +196,29 @@ INSERT INTO progression_events VALUES('minigame_win', '<script><item aim="Actor"
 
 INSERT INTO progression_events VALUES('explore_area',
     '<script>
-       <if t="Target:HasExploredArea(NPC:PID) = 0">
+       <if t="Target:IsWithin(Range, NPC:loc_x, NPC:loc_y, NPC:loc_z, NPC:sector) = 1">
          <then>
-           <msg aim="Target" text="You have discovered ${Area} and gained ${Exp} experience!"/>
-           <exp aim="Target" value="Exp"/>
+           <if t="Target:HasExploredArea(NPC:PID) = 0">
+             <then>
+               <msg aim="Target" text="You have discovered ${Area} and gained ${Exp} experience!"/>
+               <exp aim="Target" value="Exp"/>
+             </then>
+           </if>
+         </then>
+       </if>
+     </script>');
+
+INSERT INTO progression_events VALUES("vegeta",
+    '<script>
+       <if t="Target:IsEnemy(NPC:owner) = 1">
+         <then>
+           <if t="Target:IsWithin(5, NPC:loc_x, NPC:loc_y, NPC:loc_z, NPC:sector) = 1">
+             <then>
+               <hp aim="Target" value="-9001"/>
+               <msg aim="Target" type="Error" text="You have stepped on a trap! IT\'S OVER NINE THOUSAAAAANDD!!"/>
+               <destroy aim="NPC"/>
+             </then>
+           </if>
          </then>
        </if>
      </script>');

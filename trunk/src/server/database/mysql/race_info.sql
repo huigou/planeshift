@@ -87,7 +87,7 @@ INSERT INTO `race_info` (`id`,`name`,`cstr_id_mesh`,`sex`,`size_x`,`size_y`,`siz
  (30,'Ulbernaut',123,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'',19),
  (31,'Tefusang',124,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,2.0,1.5,10,10,0,'',20);
 INSERT INTO `race_info` (`id`,`name`,`cstr_id_mesh`,`sex`,`size_x`,`size_y`,`size_z`,`cstr_id_base_texture`,`initial_cp`,`start_str`,`start_end`,`start_agi`,`start_int`,`start_will`,`start_cha`,`base_physical_regen_still`,`base_physical_regen_walk`,`base_mental_regen_still`,`base_mental_regen_walk`,`armor_id`,`helm`,`race`) VALUES 
- (9999,'Explorer',9999,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'',9999);
+ (9999,'Special',9999,'N',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'',9999);
 /*!40000 ALTER TABLE `race_info` ENABLE KEYS */;
 
 

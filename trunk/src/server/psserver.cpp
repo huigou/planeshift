@@ -130,6 +130,7 @@ psServer::psServer ()
     cachemanager        = NULL;
     logcsv              = NULL;
     vfs                 = NULL;
+    unused_pid          = 0;
 
     // Initialize the RNG using current time() as the seed value
     randomGen.Initialize();

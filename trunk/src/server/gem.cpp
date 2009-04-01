@@ -121,7 +121,6 @@ psGemServerMeshAttach::psGemServerMeshAttach(gemObject* objectToAttach) : scfImp
 //-----------------------------------------------------------------------------
 
 GEMSupervisor *gemObject::cel = NULL;
-csRef<iMeshFactoryWrapper> gemObject::nullfact = NULL;
 
 GEMSupervisor::GEMSupervisor(iObjectRegistry *objreg,
                              psDatabase *db)
@@ -595,6 +594,7 @@ gemObject::gemObject(const char *name) : factname("")
     prox_distance_desired=DEF_PROX_DIST;
     prox_distance_current=DEF_PROX_DIST;
     eid = 0;
+    alwaysWatching = false;
 }
 
 gemObject::gemObject(const char* name,
@@ -615,6 +615,7 @@ gemObject::gemObject(const char* name,
 
     proxlist = NULL;
     is_alive = false;
+    alwaysWatching = false;
 
     eid = cel->CreateEntity(this);
 
@@ -732,9 +733,10 @@ void gemObject::InitMesh(const char *name,
                          iSector* room)
 {
     csRef<iEngine> engine = csQueryRegistry<iEngine> (psserver->GetObjectReg());
+    nullfact = engine->FindMeshFactory("nullmesh");
     if(!nullfact)
     {
-        nullfact = engine->CreateMeshFactory("crystalspace.mesh.object.null", "Dummy", false);
+        nullfact = engine->CreateMeshFactory("crystalspace.mesh.object.null", "nullmesh", false);
         csRef<iNullFactoryState> nullstate = scfQueryInterface<iNullFactoryState> (nullfact->GetMeshObjectFactory());
         csBox3 bbox;
         bbox.AddBoundingVertex(csVector3(0.0f));
@@ -850,8 +852,8 @@ void gemObject::UpdateProxList( bool force )
         if (!nearobj)
             continue;
 
-        // npcs and objects don't watch each other
-        if (!GetClientID() && !nearobj->GetClientID())
+        // Most npcs and objects don't watch each other.
+        if (!GetClientID() && !alwaysWatching && !nearobj->GetClientID() && !nearobj->AlwaysWatching())
             continue;
 
         float range = proxlist->RangeTo(nearobj);
@@ -3652,6 +3654,7 @@ void gemNPC::SetupDialog(PID npcID, bool force)
 		{
 			csString newArea(name);
 			newArea.Downcase();
+            newArea.Trim();
 			npcdialog->AddKnowledgeArea(newArea);
 		}
     }
@@ -3698,7 +3701,11 @@ void gemNPC::ReactToPlayerApproach(psNPCCommandsMessage::PerceptionType type,gem
                     nextVeryShortRangeAvail = now + (psserver->GetRandom(30) + 10) * 1000;
                 }
                 break;
+
             default:
+
+                trigger = "!anyrange";
+                which_avail = &now;
                 break;
         }
 
@@ -3707,7 +3714,7 @@ void gemNPC::ReactToPlayerApproach(psNPCCommandsMessage::PerceptionType type,gem
             NpcResponse *resp = npcdialog->FindXMLResponse(player->GetClient(),trigger);
             if (resp)
             {
-                resp->ExecuteScript(player->GetClient(), this);
+                resp->ExecuteScript(player, this);
             }
             else // not found, so don't try again to find it later
             {

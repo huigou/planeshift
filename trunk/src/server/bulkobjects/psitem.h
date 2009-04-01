@@ -663,6 +663,7 @@ public:
     bool GetIsAmmo();
     bool GetIsShield();
     bool GetIsContainer();
+    bool GetIsTrap();
     bool GetCanTransform();
     bool GetUsesAmmo();
     bool GetIsStackable() const;
