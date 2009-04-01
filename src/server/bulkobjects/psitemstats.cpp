@@ -919,6 +919,10 @@ bool psItemStats::GetIsContainer()
     return (flags & PSITEMSTATS_FLAG_IS_A_CONTAINER) ? true : false;
 }
 
+bool psItemStats::GetIsTrap()
+{
+    return (flags & PSITEMSTATS_FLAG_IS_A_TRAP) ? true : false;
+}
 
 bool psItemStats::GetCanTransform()
 {
@@ -1018,6 +1022,8 @@ csString psItemStats::FlagsToText()
         TempString.Append("AMMO ");
     if (flags & PSITEMSTATS_FLAG_IS_A_CONTAINER)
         TempString.Append("CONTAINER ");
+    if (flags & PSITEMSTATS_FLAG_IS_A_TRAP)
+        TempString.Append("TRAP ");
     if (flags & PSITEMSTATS_FLAG_USES_AMMO)
         TempString.Append("USESAMMO ");
     if (flags & PSITEMSTATS_FLAG_IS_STACKABLE)

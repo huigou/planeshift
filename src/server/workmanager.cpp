@@ -35,12 +35,14 @@
 #include "util/psdatabase.h"
 #include "util/mathscript.h"
 
+#include "bulkobjects/dictionary.h"
 #include "bulkobjects/psactionlocationinfo.h"
 #include "bulkobjects/pscharacterloader.h"
 #include "bulkobjects/pscharacter.h"
 #include "bulkobjects/psglyph.h"
 #include "bulkobjects/psitem.h"
 #include "bulkobjects/psmerchantinfo.h"
+#include "bulkobjects/psnpcdialog.h"
 #include "bulkobjects/psraceinfo.h"
 #include "bulkobjects/pstrade.h"
 #include "bulkobjects/pssectorinfo.h"
@@ -1097,8 +1099,14 @@ void WorkManager::StartUseWork(Client* client)
         return;
     }
 
-    // Check if the target is container
-    if ( workItem && workItem->GetIsContainer() )
+    // Check if the target is a trap
+    if ( workItem && workItem->GetIsTrap() )
+    {
+        StartTransformationEvent(TRANSFORMTYPE_TARGET_TO_NPC, PSCHARACTER_SLOT_NONE, 1, workItem->GetItemQuality(), workItem);
+        psserver->SendSystemOK(clientNum, "You begin constructing %s.", workItem->GetName());
+        return;
+    }
+    else if ( workItem && workItem->GetIsContainer() ) // Check if the target is a container
     {
         // cast a gem container to iterate thru
         gemContainer *container = dynamic_cast<gemContainer*> (workItem->GetGemObject());
@@ -1160,9 +1168,7 @@ void WorkManager::StartUseWork(Client* client)
             SendTransformError( clientNum, TRANSFORM_BAD_USE );
         }
     }
-
-    // check for in hand use
-    else
+    else // check for in hand use
     {
         // Check if player has any transformation items in right hand
         psItem* rhand = owner->Inventory().GetInventoryItem(PSCHARACTER_SLOT_RIGHTHAND);
@@ -2190,7 +2196,17 @@ void WorkManager::StartTransformationEvent(int transType, INVENTORY_SLOT_NUMBER 
                                              float resultQuality, psItem* item)
 {
     // Get transformation delay
-    int delay = CalculateEventDuration( trans->GetTransPoints() );
+    int delay;
+
+    if(trans)
+    {
+        delay = CalculateEventDuration( trans->GetTransPoints() );
+    }
+    else
+    {
+        // Used in the case of a transformation like item->npc.
+        delay = resultQuality/10;
+    }
 
     // Let the server admin know
     if (secure) psserver->SendSystemInfo(clientNum,"Scheduled to finish work on %s in %1.1f seconds.\n", item->GetName(), (float)delay);
@@ -2304,6 +2320,7 @@ bool WorkManager::LoadLocalVars(Client* client, gemObject *target)
     patternKFactor = 0.0;
     currentQuality = 0.0;
     trans = NULL;
+    process = NULL;
 
     return true;
 }
@@ -3037,6 +3054,38 @@ psItem* WorkManager::TransformTargetItem(psItem* oldItem, uint32 newId, int newQ
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Transforms the targeted item into an NPC.
+void WorkManager::TransformTargetItemToNpc(psItem* workItem, Client* client)
+{
+    InstanceID instance;
+    psSectorInfo* sectorinfo;
+    float loc_x;
+    float loc_y;
+    float loc_z;
+    float loc_yrot;
+    workItem->GetLocationInWorld(instance, &sectorinfo, loc_x, loc_y, loc_z, loc_yrot);
+
+    psCharacter* charData = new psCharacter();
+    charData->SetCharType(PSCHARACTER_TYPE_NPC);
+    psRaceInfo* raceinfo = CacheManager::GetSingleton().GetRaceInfoByNameGender("Special", PSCHARACTER_GENDER_NONE);
+    charData->SetPID(psserver->GetUnusedPID());
+    charData->SetName(charData->GetPID().Show());
+    charData->SetRaceInfo(raceinfo);
+    charData->SetOwnerID(client->GetPID());
+    charData->SetLocationInWorld(instance, sectorinfo, loc_x, loc_y, loc_z, loc_yrot);
+
+    csString script;
+    script.Format("<response><run script='%s'/></response>", workItem->GetBaseStats()->GetConsumeScriptName().GetData());
+    NpcResponse* response = dict->AddResponse(script);
+    dict->AddTrigger(charData->GetPID().Show(), "!anyrange", 0, response->id);
+
+    EntityManager::GetSingleton().RemoveActor(workItem->GetGemObject());
+    workItem->Destroy();
+
+    EntityManager::GetSingleton().CreateNPC(charData, true, true);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Create the new item and return newly created item pointer
 //  The location and saving of item is up to calling routine
 psItem* WorkManager::CreateTradeItem(uint32 newId, int newQty, float itemQuality, bool transient)
@@ -3290,31 +3339,34 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
         return;
     }
 
-    // Get active transformation and then do it
-    trans = workEvent->GetTransformation();
-    if (!trans)
+    int transType = workEvent->GetTransformationType();
+    if(transType != TRANSFORMTYPE_TARGET_TO_NPC)
     {
-        Error1("No valid transformation in HandleWorkEvent().\n");
-        if (secure) psserver->SendSystemInfo(clientNum,"No valid transformation in HandleWorkEvent().");
-        owner->SetTradeWork(NULL);
-        worker->SetMode(PSCHARACTER_MODE_PEACE);
-        return;
-    }
+        // Get active transformation and then do it
+        trans = workEvent->GetTransformation();
+        if (!trans)
+        {
+            Error1("No valid transformation in HandleWorkEvent().\n");
+            if (secure) psserver->SendSystemInfo(clientNum,"No valid transformation in HandleWorkEvent().");
+            owner->SetTradeWork(NULL);
+            worker->SetMode(PSCHARACTER_MODE_PEACE);
+            return;
+        }
 
-    // Get active process
-    process = workEvent->GetProcess();
-    if (!process)
-    {
+        // Get active process
+        process = workEvent->GetProcess();
+        if (!process)
+        {
             Error1("No valid process pointer for transaction.\n");
             if (secure) psserver->SendSystemInfo(clientNum,"No valid process pointer for transaction.\n");
             owner->SetTradeWork(NULL);
             worker->SetMode(PSCHARACTER_MODE_PEACE);
             return;
+        }
     }
 
     // Check for exploits before starting
     workItem = workEvent->GetWorkItem();
-    int transType = workEvent->GetTransformationType();
     if (transType == TRANSFORMTYPE_CONTAINER)
     {
         // Get event data
@@ -3346,11 +3398,20 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
 
     // Set and load
     currentQuality = workEvent->GetResultQuality();
-    uint32 result = trans->GetResultId();
     const int originalQty = workEvent->GetResultQuantity();
-    int resultQty = trans->GetResultQty();
-    int itemQty = trans->GetItemQty();
     psItem* transItem = workEvent->GetTranformationItem();
+
+    uint32 result = 0;
+    int resultQty = 0;
+    int itemQty = 0;
+
+    if(trans)
+    {
+        result = trans->GetResultId();
+        resultQty = trans->GetResultQty();
+        itemQty = trans->GetItemQty();
+    }
+
     if (!transItem)
     {
         Error1("Bad transformation item in HandleWorkEvent().\n");
@@ -3453,6 +3514,21 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
             }
             workEvent->SetTransformationItem(newItem);
             break;
+        }
+
+        case TRANSFORMTYPE_TARGET_TO_NPC:
+        {
+            bool is_trap = workEvent->GetTranformationItem()->GetIsTrap();
+            TransformTargetItemToNpc(workEvent->GetTranformationItem(), workEvent->client);
+
+            if(is_trap)
+            {
+                psserver->SendSystemInfo(clientNum, "Trap constructed!");
+            }
+
+            owner->SetTradeWork(NULL);
+            worker->SetMode(PSCHARACTER_MODE_PEACE);
+            return;
         }
 
         case TRANSFORMTYPE_AUTO_CONTAINER:

@@ -1086,6 +1086,7 @@ GEMClientObject::GEMClientObject()
 {
     entitylabel = NULL;
     shadow = 0;
+    hasShadow = true;
     flags = 0;
     charApp = new psCharAppearance(psengine->GetObjectRegistry());
 }
@@ -1099,6 +1100,7 @@ GEMClientObject::GEMClientObject(psCelClient* cel, EID id) : eid(id)
     //entity = cel->GetPlLayer()->CreateEntity(id);
     entitylabel = NULL;
     shadow = 0;
+    hasShadow = true;
     charApp = new psCharAppearance(psengine->GetObjectRegistry());
 }
 
@@ -1106,11 +1108,11 @@ GEMClientObject::~GEMClientObject()
 {
     if(pcmesh)
     {
+        cel->GetShadowManager()->RemoveShadow(this);
         cel->UnattachObject(pcmesh->QueryObject(), this);
         psengine->GetEngine()->RemoveObject (pcmesh);
     }
 
-    //cel->GetPlLayer()->RemoveEntity( entity );
     delete charApp;
 }
 
@@ -1213,6 +1215,7 @@ bool GEMClientObject::InitMesh()
 
         pcmesh = psengine->GetEngine()->CreateMeshWrapper(nullmesh, name);
         cel->AttachObject(pcmesh->QueryObject(), this);
+        hasShadow = false;
 
         PostLoad(true);
 
@@ -1248,6 +1251,7 @@ void GEMClientObject::CheckMeshLoad()
         return;
     }
 
+    factory->GetFlags().Set(CS_ENTITY_NODECAL);
     pcmesh = factory->CreateMeshWrapper();
     psengine->GetEngine()->GetMeshes()->Add(pcmesh);
 
@@ -1566,6 +1570,9 @@ void GEMClientActor::SendDRUpdate(unsigned char priority, csStringHashReversible
 
 void GEMClientActor::SetDRData(psDRMessage& drmsg)
 {
+    if(!linmove)
+        return;
+
     if (drmsg.sector != NULL)
     {
         if (!DRcounter_set || drmsg.IsNewerThan(DRcounter))
@@ -1674,6 +1681,9 @@ bool GEMClientActor::IsGroupedWith(GEMClientActor* actor)
 
 bool GEMClientActor::SetAnimation(const char* anim, int duration)
 {
+    if(!cal3dstate)
+        return true;
+
     int animation = cal3dstate->FindAnim(anim);
     if (animation < 0)
     {
@@ -1734,6 +1744,9 @@ bool GEMClientActor::SetAnimation(const char* anim, int duration)
 void GEMClientActor::SetAnimationVelocity(const csVector3& velocity)
 {
     if (!alive)  // No zombies please
+        return;
+
+    if(!cal3dstate)
         return;
 
     // Taking larger of the 2 axis; cal3d axis are the opposite of CEL's

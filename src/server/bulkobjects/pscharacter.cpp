@@ -31,6 +31,7 @@
 #include "../psserver.h"
 #include "../entitymanager.h"
 #include "../cachemanager.h"
+#include "../clients.h"
 #include "../psserverchar.h"
 #include "../exchangemanager.h"
 #include "../spellmanager.h"
@@ -2928,6 +2929,27 @@ double psCharacter::GetProperty(const char *ptr)
     {
         return (double) pid.Unbox();
     }
+    else if (!strcasecmp(ptr,"loc_x"))
+    {
+        return location.loc.x;
+    }
+    else if (!strcasecmp(ptr,"loc_y"))
+    {
+        return location.loc.y;
+    }
+    else if (!strcasecmp(ptr,"loc_z"))
+    {
+        return location.loc.z;
+    }
+    else if (!strcasecmp(ptr,"sector"))
+    {
+        return location.loc_sector->uid;
+    }
+    else if (!strcasecmp(ptr,"owner"))
+    {
+        return (double) owner_id.Unbox();
+    }
+
     Error2("Requested psCharacter property not found '%s'", ptr);
     return 0;
 }
@@ -3005,6 +3027,28 @@ double psCharacter::CalcFunction(const char * functionName, const double * param
         }
 
         return 1;        
+    }
+    else if (!strcasecmp(functionName, "IsWithin"))
+    {
+        if(location.loc_sector->uid != params[4])
+            return 0.0;
+
+        csVector3 other(params[1], params[2], params[3]);
+        return (csVector3(other - location.loc).Norm() <= params[0]) ? 1.0 : 0.0;
+    }
+    else if (!strcasecmp(functionName, "IsEnemy"))
+    {
+        // Check for self.
+        if(owner_id == params[0])
+            return 0.0;
+
+        Client* owner = EntityManager::GetSingleton().GetClients()->FindPlayer(params[0]);
+        if(owner->GetTargetType(GetActor()) == TARGET_FOE)
+        {
+            return 1.0;
+        }
+      
+        return 0.0;
     }
 
     CPrintf(CON_ERROR, "psItem::CalcFunction(%s) failed\n", functionName);

@@ -26,6 +26,7 @@
 //=============================================================================
 // Project Includes
 //=============================================================================
+#include "util/gameevent.h"
 #include "util/psconst.h"
 #include "util/singleton.h"
 
@@ -101,9 +102,9 @@ public:
     bool DeletePlayer(Client* client);
 
     PID CopyNPCFromDatabase(PID master_id, float x, float y, float z, float angle, const csString & sector, InstanceID instance, const char *firstName = NULL, const char *lastName = NULL);
-    EID CreateNPC(PID npcID, bool updateProxList = true);
-    EID CreateNPC(psCharacter *chardata, bool updateProxList = true);
-    EID CreateNPC(psCharacter *chardata, InstanceID instance, csVector3 pos, iSector* sector, float yrot, bool updateProxList = true);
+    EID CreateNPC(PID npcID, bool updateProxList = true, bool alwaysWatching = false);
+    EID CreateNPC(psCharacter *chardata, bool updateProxList = true, bool alwaysWatching = false);
+    EID CreateNPC(psCharacter *chardata, InstanceID instance, csVector3 pos, iSector* sector, float yrot, bool updateProxList = true, bool alwaysWatching = false);
 
     gemNPC *CreateFamiliar(gemActor *owner);
     gemNPC *CreatePet( Client* client, int familiarid );
@@ -165,6 +166,36 @@ protected:
     psWorld* gameWorld;
     
     psMovementInfoMessage* moveinfomsg;
+};
+
+class psEntityEvent : public psGameEvent
+{
+public:
+    enum EventType
+    {
+        DESTROY = 0
+    };
+
+    psEntityEvent(EventType type, gemObject* object) :
+      psGameEvent(0, 0, "psEntityEvent"), type(type), object(object)
+    {
+    }
+
+    virtual void Trigger()
+    {
+        switch(type)
+        {
+        case DESTROY:
+            {
+                EntityManager::GetSingleton().RemoveActor(object);
+                break;
+            }
+        }
+    }
+
+private:
+    EventType type;
+    gemObject* object;
 };
 
 #endif

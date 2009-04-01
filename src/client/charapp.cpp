@@ -584,6 +584,7 @@ void psCharAppearance::CheckMeshLoad()
         csRef<iMeshFactoryWrapper> factory = psengine->GetLoader()->LoadFactory(attach.factName);
         if(factory.IsValid())
         {
+            factory->GetFlags().Set(CS_ENTITY_NODECAL);
             ProcessAttach(factory, attach.factName, attach.socket);
             delayedAttach.PopFront();
         }

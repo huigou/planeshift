@@ -105,11 +105,11 @@ bool gemNPCObject::InitMesh(    const char *factname,
     csRef<iEngine> engine = csQueryRegistry<iEngine> (npcclient->GetObjectReg());    
     csRef<iMeshWrapper> mesh;
 
-    if(csString("").Compare(filename))
+    if(csString("").Compare(filename) || csString("nullmesh").Compare(factname))
     {
         if(!nullfact)
         {
-            nullfact = engine->CreateMeshFactory("crystalspace.mesh.object.null", "Dummy", false);
+            nullfact = engine->CreateMeshFactory("crystalspace.mesh.object.null", "nullmesh", false);
             csRef<iNullFactoryState> nullstate = scfQueryInterface<iNullFactoryState> (nullfact->GetMeshObjectFactory());
             csBox3 bbox;
             bbox.AddBoundingVertex(csVector3(0.0f));

@@ -1301,6 +1301,7 @@ void show_itemstat_stats(const char* prefix,psItemStats *itemstats,int depth)
     if (flags & PSITEMSTATS_FLAG_IS_A_SHIELD) flags_string += "SHIELD ";
     if (flags & PSITEMSTATS_FLAG_IS_AMMO) flags_string += "AMMO ";
     if (flags & PSITEMSTATS_FLAG_IS_A_CONTAINER) flags_string += "CONTAINER ";
+    if (flags & PSITEMSTATS_FLAG_IS_A_TRAP) flags_string += "TRAP ";
     if (flags & PSITEMSTATS_FLAG_USES_AMMO) flags_string += "USESAMMO ";
     if (flags & PSITEMSTATS_FLAG_IS_STACKABLE) flags_string += "STACKABLE ";
     if (flags & PSITEMSTATS_FLAG_IS_GLYPH) flags_string += "GLYPH ";

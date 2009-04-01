@@ -186,7 +186,12 @@ void psShadowManager::RecreateAllShadows()
     const csPDelArray<GEMClientObject>& entities = psengine->GetCelClient()->GetEntities();
     size_t len = entities.GetSize();
     for (size_t a=0; a<len; ++a)
-        CreateShadow(entities[a]);
+    {
+        if(entities[a]->HasShadow())
+        {
+            CreateShadow(entities[a]);
+        }
+    }
 }
 
 void psShadowManager::RemoveAllShadows()
@@ -197,7 +202,9 @@ void psShadowManager::RemoveAllShadows()
     const csPDelArray<GEMClientObject>& entities = psengine->GetCelClient()->GetEntities();
     size_t len = entities.GetSize();
     for (size_t a=0; a<len; ++a)
+    {
         RemoveShadow(entities[a]);
+    }
 }
 
 float psShadowManager::GetShadowRange() const
@@ -221,9 +228,13 @@ void psShadowManager::UpdateShadows()
     for (size_t a=0; a<len; ++a)
     {
         if (!WithinRange(entities[a]))
+        {
             RemoveShadow(entities[a]);
-        else
-            CreateShadow(entities[a]);         
+        }
+        else if(entities[a]->HasShadow())
+        {
+            CreateShadow(entities[a]);
+        }
     }
 }
 

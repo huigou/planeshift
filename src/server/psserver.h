@@ -506,6 +506,11 @@ public:
      */
     bool CheckAccess(Client* client, const char* command, bool returnError=true);
 
+    /**
+     * Return a unused PID for temporary usage.
+     */
+    PID GetUnusedPID() { return --unused_pid; }
+
 
     static psCharacterLoader        CharacterLoader;
 
@@ -554,6 +559,12 @@ protected:
     csString                        motd;
     GMEventManager*                 gmeventManager;
     BankManager*                    bankmanager;
+
+    /**
+     * Unused PID. These are for temporary use.
+     * Init with a really big number and decrements.
+     */
+    uint32_t unused_pid;
 };
 
 #endif

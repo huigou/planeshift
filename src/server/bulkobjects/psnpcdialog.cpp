@@ -350,7 +350,7 @@ NpcResponse *psNPCDialog::FindResponseWithAllPrior(const char *area,const char *
     bool TestedWithoutLastResponse = false;
 
     //first try with last responses of all assigned quests
-    for (size_t q = 0; q < currentClient->GetCharacterData()->GetNumAssignedQuests(); q++)
+    for (size_t q = 0; currentClient && q < currentClient->GetCharacterData()->GetNumAssignedQuests(); q++)
     {
         lastresponse = currentClient->GetCharacterData()->GetAssignedQuestLastResponse(q);
         if (lastresponse == -1)
@@ -371,7 +371,7 @@ NpcResponse *psNPCDialog::FindResponseWithAllPrior(const char *area,const char *
     }
     if (!resp) //else, try old way with general last response
     {
-        lastresponse = currentClient->GetCharacterData()->GetLastResponse();
+        lastresponse = currentClient ? currentClient->GetCharacterData()->GetLastResponse() : -1;
         if (lastresponse == -1)
         { 
             if (!TestedWithoutLastResponse)
@@ -385,7 +385,7 @@ NpcResponse *psNPCDialog::FindResponseWithAllPrior(const char *area,const char *
             resp = dict->FindResponse(self, area,trigger,0,lastresponse,currentClient);
         }
     }
-    if (!resp && TestedWithoutLastResponse)
+    if (currentClient && !resp && TestedWithoutLastResponse)
     {
         //set general last response to -1 so it is not tested again later on
         currentClient->GetCharacterData()->SetLastResponse(-1);
@@ -400,7 +400,7 @@ NpcResponse *psNPCDialog::FindResponse(csString& trigger,const char *text)
     csString trigger_error;
 
     //May be it is safe not to check for characterdata (now needed for GetLastRespons())
-    if (currentClient->GetCharacterData() == NULL)
+    if (currentClient && currentClient->GetCharacterData() == NULL)
     {
         Error1("NpcResponse *psNPCDialog::FindResponse(csString& trigger,const char *text) called with "
             "currentClient->GetCharacterData() returning NULL.");
@@ -418,8 +418,8 @@ NpcResponse *psNPCDialog::FindResponse(csString& trigger,const char *text)
     for (size_t z = 0; z < knowareas.GetSize(); z++)
     {
         area = knowareas[z];
-        Debug4(LOG_NPC, currentClient->GetClientNum(),"NPC checking %s for trigger %s , with lastResponseID %d...",
-                    (const char *)area->area,(const char *)trigger,currentClient->GetCharacterData()->GetLastResponse());
+        Debug4(LOG_NPC, currentClient ? currentClient->GetClientNum() : 0,"NPC checking %s for trigger %s , with lastResponseID %d...",
+            (const char *)area->area,(const char *)trigger, currentClient ? currentClient->GetCharacterData()->GetLastResponse() : -1);
 
         resp = FindResponseWithAllPrior(area->area, trigger);
         if (!resp) // If no response found, try search for error trigger
@@ -427,7 +427,7 @@ NpcResponse *psNPCDialog::FindResponse(csString& trigger,const char *text)
             resp = FindResponseWithAllPrior(area->area, trigger_error);
             if (!resp) // If no response found, try search without last response
             {
-                if (currentClient->GetCharacterData()->GetLastResponse() == -1)
+                if (!currentClient || currentClient->GetCharacterData()->GetLastResponse() == -1)
                 {
                     // No point testing without last response
                     // if last response where no last response.
@@ -454,7 +454,7 @@ NpcResponse *psNPCDialog::FindResponse(csString& trigger,const char *text)
         
         if (resp)
         {
-            Debug3(LOG_NPC, currentClient->GetClientNum(),"Found response %d: %s",resp->id,resp->GetResponse());
+            Debug3(LOG_NPC, currentClient ? currentClient->GetClientNum() : 0,"Found response %d: %s",resp->id,resp->GetResponse());
             resp->triggerText = trigger;
             UpdateAntecedents(resp);
             break;
@@ -687,9 +687,16 @@ NpcResponse *psNPCDialog::Respond(const char * text,Client *client)
 
 NpcResponse *psNPCDialog::FindXMLResponse(Client *client, csString trigger)
 {
-    if(!client) return NULL;
-    currentplayer = client->GetActor();
-    currentClient = client;
+    if(!client)
+    {
+        currentplayer = NULL;
+        currentClient = NULL;
+    }
+    else
+    {
+        currentplayer = client->GetActor();
+        currentClient = client;
+    }
 
     return FindResponse(trigger, trigger.GetDataSafe());
 }

@@ -25,6 +25,7 @@
 //=============================================================================
 #include <cstypes.h>
 #include <iutil/comp.h>
+#include <csutil/hash.h>
 #include <csutil/scf.h>
 #include <net/netbase.h>
 
@@ -56,6 +57,7 @@ protected:
 
     csArray<PublishDestination> objectsThatWatchMe;   ///< What players are subscribed to my updates?
     csArray<gemObject*>  objectsThatIWatch;           ///< What objects am I subscribed to myself?
+    csArray<csTicks> destRangeTimer;       ///< Per-object timeout on dest range checks.
 
     csArray<bool> objectsThatWatchMe_touched;
     csArray<bool> objectsThatIWatch_touched;
@@ -73,13 +75,14 @@ protected:
 
     bool IsNear(iSector *sector,csVector3& pos,gemObject *object,float radius);
     bool FindObject(gemObject *object);
-    PublishDestination *FindObjectThatWatchesMe(gemObject *object);
+    PublishDestination *FindObjectThatWatchesMe(gemObject *object, uint& x);
     bool FindObjectThatIWatch(gemObject *object);
 
     void TouchObjectThatWatchesMe(gemObject *object,float newrange);
     void UpdatePublishDestRange(PublishDestination *pd, 
                                 gemObject *myself, 
-                                gemObject *object, 
+                                gemObject *object,
+                                uint objIdx,
                                 float newrange);
 
 public:

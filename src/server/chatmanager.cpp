@@ -177,7 +177,7 @@ void ChatManager::HandleChatMessage(MsgEntry *me, Client *client)
 			  if (resp)
 			  {
 				  SendMultipleAudioFileHashes(client, resp->GetVoiceFile());
-				  resp->ExecuteScript(client, targetnpc);
+                  resp->ExecuteScript(client->GetActor(), targetnpc);
 			  }
 			  break;
 		  }

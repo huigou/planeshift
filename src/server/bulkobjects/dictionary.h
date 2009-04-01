@@ -142,6 +142,9 @@ public:
                              psQuest * quest,
 							 const char *audio_path);
 
+    /** Adds a scripted response */
+    NpcResponse *AddResponse(const char *script);
+
     NpcTrigger *AddTrigger(const char *k_area,
                     const char *mytrigger,
                     int prior_response, 
@@ -295,7 +298,7 @@ public:
     virtual ~ResponseOperation() {};
     virtual bool Load(iDocumentNode *node) = 0;
     virtual csString GetResponseScript() = 0;
-    virtual bool Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay) = 0;
+    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay) = 0;
     const char *GetName() { return name; }
 };
 
@@ -371,7 +374,7 @@ class NpcResponse
     /// Check for SayResponseOp with public flag set, which tells chat whether it is public or private.
     bool HasPublicResponse();
     bool ParseResponseScript(const char *xmlstr,bool insertBeginning=false);
-    bool ExecuteScript(Client *client, gemNPC* target);
+    bool ExecuteScript(gemActor *player, gemNPC* target);
     csString GetResponseScript();
 
     // This is used so that the popup menu and the subsequent response can share the same filtering criteria
@@ -429,7 +432,7 @@ public:
     virtual ~SayResponseOp() { if (sayWhat) delete sayWhat; }
     virtual bool Load(iDocumentNode *node);
     virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay);
+    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay);
 };
 
 /**
@@ -447,7 +450,7 @@ public:
     virtual ~ActionResponseOp() { if (actWhat) delete actWhat; }
     virtual bool Load(iDocumentNode *node);
     virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay);
+    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay);
 };
 
 /**
@@ -465,7 +468,7 @@ public:
     virtual ~NPCCmdResponseOp() {};
     virtual bool Load(iDocumentNode *node);
     virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay);
+    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay);
 };
 
 class psQuest; 
@@ -486,7 +489,7 @@ public:
     virtual ~VerifyQuestCompletedResponseOp() {};
     virtual bool Load(iDocumentNode *node);
     virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay);
+    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay);
 };
 
 /**
@@ -506,7 +509,7 @@ public:
     virtual ~VerifyQuestAssignedResponseOp() {};
     virtual bool Load(iDocumentNode *node);
     virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay);
+    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay);
 };
 
 /*
@@ -540,7 +543,7 @@ public:
     virtual ~VerifyQuestNotAssignedResponseOp() {};
     virtual bool Load(iDocumentNode *node);
     virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay);
+    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay);
 };
 
 /**
@@ -559,7 +562,7 @@ public:
     virtual ~AssignQuestResponseOp() {};
     virtual bool Load(iDocumentNode *node);
     virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay);
+    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay);
     const char *GetTimeoutMsg() { return timeout_msg; }
     psQuest *GetQuest(int n) { return quest[n]; }
     int      GetMaxQuests() { return num_quests; }
@@ -581,7 +584,7 @@ public:
     virtual ~AssignQuestSelectOp() {};
     virtual bool Load(iDocumentNode *node) { return true; }
     virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay);
+    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay);
 };
 
 
@@ -601,7 +604,7 @@ public:
     virtual ~CheckQuestTimeoutOp() {};
     virtual bool Load(iDocumentNode *node) { return true; }
     virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay);
+    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay);
 };
 
 /**
@@ -619,7 +622,7 @@ public:
     virtual ~CompleteQuestResponseOp() {};
     virtual bool Load(iDocumentNode *node);
     virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay);
+    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay);
 };
 
 class psItemStats;
@@ -639,7 +642,7 @@ public:
     virtual ~GiveItemResponseOp() {};
     virtual bool Load(iDocumentNode *node);
     virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay);
+    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay);
 };
 
 
@@ -657,7 +660,7 @@ public:
     virtual ~FactionResponseOp() {};
     virtual bool Load(iDocumentNode *node);
     virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay);
+    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay);
 };
 
 /**
@@ -678,7 +681,7 @@ public:
     virtual ~RunScriptResponseOp();
     virtual bool Load(iDocumentNode *node);
     virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay);
+    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay);
 };
 
 /**
@@ -696,7 +699,7 @@ public:
     virtual ~TrainResponseOp() {};
     virtual bool Load(iDocumentNode *node);
     virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay);
+    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay);
 };
 
 /**
@@ -712,7 +715,7 @@ public:
     virtual ~GuildAwardResponseOp() {};
     virtual bool Load(iDocumentNode *node);
     virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay);
+    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay);
 };
 
 
@@ -729,7 +732,7 @@ public:
     virtual ~OfferRewardResponseOp() {};
     virtual bool Load(iDocumentNode *node);
     virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay);
+    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay);
 };
 
 /**
@@ -746,7 +749,7 @@ public:
     virtual ~MoneyResponseOp() {};
     virtual bool Load(iDocumentNode *node);
     virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay);
+    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay);
 };
 
 /**
@@ -761,7 +764,7 @@ public:
     virtual ~IntroduceResponseOp() {};
     virtual bool Load(iDocumentNode *node);
     virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay);
+    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay);
 };
 
 /**
@@ -776,7 +779,7 @@ public:
     virtual ~DoAdminCommandResponseOp() {};
     virtual bool Load(iDocumentNode *node);
     virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay);
+    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay);
 };
 
 #endif
