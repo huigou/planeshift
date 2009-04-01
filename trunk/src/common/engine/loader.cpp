@@ -605,69 +605,72 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                     meshes.Put(m->name, m);
                 }
 
-                nodeItr2 = node->GetNodes("meshgen");
-                while(nodeItr2->HasNext())
+                if(gfxFeatures & useMeshGen)
                 {
-                    csRef<iDocumentNode> meshgen = nodeItr2->Next();
-                    csRef<MeshGen> mgen = csPtr<MeshGen>(new MeshGen(meshgen->GetAttributeValue("name"), meshgen));
-                    
-                    mgen->sector = s;
-                    s->meshgen.Push(mgen);
-
-                    meshgen = meshgen->GetNode("samplebox");
+                    nodeItr2 = node->GetNodes("meshgen");
+                    while(nodeItr2->HasNext())
                     {
-                        csVector3 min;
-                        csVector3 max;
+                        csRef<iDocumentNode> meshgen = nodeItr2->Next();
+                        csRef<MeshGen> mgen = csPtr<MeshGen>(new MeshGen(meshgen->GetAttributeValue("name"), meshgen));
 
-                        syntaxService->ParseVector(meshgen->GetNode("min"), min);
-                        syntaxService->ParseVector(meshgen->GetNode("max"), max);
-                        mgen->bbox.AddBoundingVertex(min);
-                        mgen->bbox.AddBoundingVertex(max);
-                    }
-                    meshgen = meshgen->GetParent();
+                        mgen->sector = s;
+                        s->meshgen.Push(mgen);
 
-                    {
-                        CS::Threading::ScopedReadLock lock(meshLock);
-                        mgen->object = meshes.Get(meshgen->GetNode("meshobj")->GetContentsValue(), csRef<MeshObj>());
-                    }
-
-                    csRef<iDocumentNodeIterator> geometries = meshgen->GetNodes("geometry");
-                    while(geometries->HasNext())
-                    {
-                        csRef<iDocumentNode> geometry = geometries->Next();
-
-                        csRef<MeshFact> meshfact;
+                        meshgen = meshgen->GetNode("samplebox");
                         {
-                            csString name(geometry->GetNode("factory")->GetAttributeValue("name"));
-                            CS::Threading::ScopedReadLock lock(mfLock);
-                            meshfact = meshfacts.Get(name, csRef<MeshFact>());
+                            csVector3 min;
+                            csVector3 max;
 
-                            // Validation.
-                            csString msg;
-                            msg.Format("Invalid meshfact reference '%s' in meshgen '%s'", name.GetData(), mgen->name.GetData());
-                            CS_ASSERT_MSG(msg.GetData(), meshfact.IsValid());
+                            syntaxService->ParseVector(meshgen->GetNode("min"), min);
+                            syntaxService->ParseVector(meshgen->GetNode("max"), max);
+                            mgen->bbox.AddBoundingVertex(min);
+                            mgen->bbox.AddBoundingVertex(max);
+                        }
+                        meshgen = meshgen->GetParent();
+
+                        {
+                            CS::Threading::ScopedReadLock lock(meshLock);
+                            mgen->object = meshes.Get(meshgen->GetNode("meshobj")->GetContentsValue(), csRef<MeshObj>());
                         }
 
-                        mgen->meshfacts.Push(meshfact);   
-                        mgen->mftchecked.Push(false);
-
-                        csRef<iDocumentNodeIterator> matfactors = geometry->GetNodes("materialfactor");
-                        while(matfactors->HasNext())
+                        csRef<iDocumentNodeIterator> geometries = meshgen->GetNodes("geometry");
+                        while(geometries->HasNext())
                         {
-                            csRef<Material> material;
+                            csRef<iDocumentNode> geometry = geometries->Next();
+
+                            csRef<MeshFact> meshfact;
                             {
-                                csString name(matfactors->Next()->GetAttributeValue("material"));
-                                CS::Threading::ScopedReadLock lock(mLock);
-                                material = materials.Get(name, csRef<Material>());
+                                csString name(geometry->GetNode("factory")->GetAttributeValue("name"));
+                                CS::Threading::ScopedReadLock lock(mfLock);
+                                meshfact = meshfacts.Get(name, csRef<MeshFact>());
 
                                 // Validation.
                                 csString msg;
-                                msg.Format("Invalid material reference '%s' in meshgen '%s'", name.GetData(), mgen->name.GetData());
-                                CS_ASSERT_MSG(msg.GetData(), material.IsValid());
+                                msg.Format("Invalid meshfact reference '%s' in meshgen '%s'", name.GetData(), mgen->name.GetData());
+                                CS_ASSERT_MSG(msg.GetData(), meshfact.IsValid());
                             }
 
-                            mgen->materials.Push(material);
-                            mgen->matchecked.Push(false);
+                            mgen->meshfacts.Push(meshfact);   
+                            mgen->mftchecked.Push(false);
+
+                            csRef<iDocumentNodeIterator> matfactors = geometry->GetNodes("materialfactor");
+                            while(matfactors->HasNext())
+                            {
+                                csRef<Material> material;
+                                {
+                                    csString name(matfactors->Next()->GetAttributeValue("material"));
+                                    CS::Threading::ScopedReadLock lock(mLock);
+                                    material = materials.Get(name, csRef<Material>());
+
+                                    // Validation.
+                                    csString msg;
+                                    msg.Format("Invalid material reference '%s' in meshgen '%s'", name.GetData(), mgen->name.GetData());
+                                    CS_ASSERT_MSG(msg.GetData(), material.IsValid());
+                                }
+
+                                mgen->materials.Push(material);
+                                mgen->matchecked.Push(false);
+                            }
                         }
                     }
                 }

@@ -112,9 +112,7 @@ psItem *psGlyph::CreateNew()
 void psGlyph::Copy(psGlyph * target)
 {
     psItem::Copy(target);
-
-    flags &= ~PSITEM_FLAG_PURIFIED;
-    flags &= ~PSITEM_FLAG_PURIFYING;
+    target->SetFlags(flags & ~(PSITEM_FLAG_PURIFIED | PSITEM_FLAG_PURIFYING));
 }
 
 void psGlyph::SetOwningCharacter(psCharacter *owner)
