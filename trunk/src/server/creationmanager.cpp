@@ -70,9 +70,20 @@ CharCreationManager::CharCreationManager()
 
 CharCreationManager::~CharCreationManager()
 {
-    delete[] raceCPValues;    
-}
+    if (psserver->GetEventManager())
+    {
+        psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_CHAR_CREATE_UPLOAD);
+        psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_CHAR_CREATE_CP);
+        psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_CHAR_CREATE_PARENTS);
+        psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_CHAR_CREATE_CHILDHOOD);
+        psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_CHAR_CREATE_LIFEEVENTS);
+        psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_CHAR_CREATE_TRAITS);
+        psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_CHAR_CREATE_NAME);
+        psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_CHAR_DELETE);
+    }
 
+    delete [] raceCPValues;
+}
 
 bool CharCreationManager::Initialize( )
 {
