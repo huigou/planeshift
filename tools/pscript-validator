@@ -1,0 +1,46 @@
+#! /usr/bin/php
+<?php
+// A validator for progression scripts - checks DB contents against the schema.
+// You need command line PHP and xmllint installed to run this.
+
+$SCHEMA_FILE = 'data/ProgressionSchema.rng';
+
+// Change your database settings here:
+$db = mysql_connect("localhost", "planeshift", "planeshift") or die ("Unable to connect!"); // host, user, pass
+mysql_select_db("planeshift", $db) or die("Could not select database");
+
+// snagged from the example in http://us2.php.net/manual/en/function.proc-open.php
+$descriptorspec = array(
+    0 => array("pipe", "r"), // stdin is a pipe that the child will read from
+    1 => array("pipe", "w"), // stdout is a pipe that the child will write to
+    2 => array("pipe", "w")  // stderr is a file to write to
+);
+
+echo "==== Validating progression scripts ================\n";
+$scripts = mysql_query("SELECT * FROM progression_events");
+while ($row = mysql_fetch_array($scripts))
+{
+    $process = proc_open("xmllint --relaxng $SCHEMA_FILE --noout -", $descriptorspec, $pipes);
+    if (!is_resource($process))
+    {
+        echo "Error when processing " . $row['name'] . ": couldn't run xmllint\n";
+        continue;
+    }
+
+    fwrite($pipes[0], $row['event_script']);
+    fclose($pipes[0]);
+
+    fclose($pipes[1]); // we don't care about stdout.
+
+    $errors = stream_get_contents($pipes[2]);
+
+    fclose($pipes[2]);
+    if (proc_close($process) != 0)
+    {
+        echo "========= " . $row['name'] . " is invalid!\n" . $errors . "\n";
+    }
+}
+
+// TODO: Validate equip scripts.  Would need to break down ProgressionSchema.rng such that
+//       ApplicativeScripts could be validated separately.
+?>
