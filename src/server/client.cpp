@@ -436,9 +436,6 @@ bool Client::IsAllowedToAttack(gemObject * target, bool inform)
         case TARGET_FRIEND:
             sMsg = "You cannot attack %s.";
             break;
-        case TARGET_GM:
-            sMsg = "You cannot attack a GM.";
-            break;
         case TARGET_FOE: /* Foe */
             {
                 gemActor *foe = target->GetActorPtr();
@@ -519,7 +516,7 @@ int Client::GetTargetType(gemObject* target)
     }
 
     if (targetclient->GetActor()->GetInvincibility())
-        return TARGET_GM; /* Invincible GM */
+        return TARGET_FRIEND; /* Invincible GM */
 
     if (targetclient->GetActor()->attackable)
         return TARGET_FOE; /* attackable GM */

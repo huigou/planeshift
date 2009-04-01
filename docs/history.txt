@@ -3,6 +3,9 @@
   given entity, removing it from the world.  Handy for implementing traps.
 - Committed my progression script validator.  You need xmllint and command
   line PHP to use it.  Run ./tools/pscript-validator and hope for no errors!
+- Removed TARGET_GM in favor of TARGET_FRIEND.  I use that for impervious
+  NPCs, so why not invincible GMs?  This allows players to cast healing/buff
+  spells on invincible players, once again.
 
 *** 2009-04-01 by Stefano Angeleri
 - Fixed questmanager to support the new syntax for run, swapped the
