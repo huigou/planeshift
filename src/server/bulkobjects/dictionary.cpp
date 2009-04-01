@@ -2130,6 +2130,15 @@ bool FactionResponseOp::Run(gemNPC *who, Client *target,NpcResponse *owner,csTic
     return true;
 }
 
+RunScriptResponseOp::~RunScriptResponseOp()
+{
+    if (bindings)
+    {
+        delete bindings;
+        bindings = NULL;
+    }
+}
+
 bool RunScriptResponseOp::Load(iDocumentNode *node)
 {
     scriptname = node->GetAttributeValue("script");

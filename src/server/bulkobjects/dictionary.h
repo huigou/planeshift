@@ -675,7 +675,7 @@ protected:
 
 public:
     RunScriptResponseOp() { name = "run"; bindings = NULL; }
-    virtual ~RunScriptResponseOp() {};
+    virtual ~RunScriptResponseOp();
     virtual bool Load(iDocumentNode *node);
     virtual csString GetResponseScript();    
     virtual bool Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay);
