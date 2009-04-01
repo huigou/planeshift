@@ -1,4 +1,8 @@
-﻿*** 2009-04-01 by Stefano Angeleri
+﻿*** 2009-04-01 by Kenny Graunke
+- Added a <destroy aim="..."/> imperative script operation, which destroys the
+  given entity, removing it from the world.  Handy for implementing traps.
+
+*** 2009-04-01 by Stefano Angeleri
 - Fixed questmanager to support the new syntax for run, swapped the
   param for give_exp to Exp and make the amount of argument which can
   be passed to Run script in quest scripts dynamic

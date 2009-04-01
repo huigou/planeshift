@@ -104,10 +104,17 @@
           </optional>
         </element>
 
-        <element name="teleport"> <ref name="teleport"/> </element>
+        <element name="teleport">
+          <attribute name="aim"/>
+          <ref name="teleport"/>
+        </element>
 
         <element name="create-familiar">
           <empty/> <!-- someday: type element? -->
+        </element>
+
+        <element name="destroy">
+          <attribute name="aim"/>
         </element>
 
         <element name="key">
