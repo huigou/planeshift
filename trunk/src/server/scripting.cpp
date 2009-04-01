@@ -1321,6 +1321,21 @@ protected:
 
 //----------------------------------------------------------------------------
 
+class DestroyOp : public Imperative1
+{
+public:
+    DestroyOp() : Imperative1() { }
+    virtual ~DestroyOp() { }
+
+    void Run(const MathEnvironment *env)
+    {
+        gemObject *obj = GetObject(env, aim);
+        EntityManager::GetSingleton().RemoveActor(obj);
+    }
+};
+
+//----------------------------------------------------------------------------
+
 /**
  * VitalOp - imperative vitals (HP, mana, stamina)
  *
@@ -2023,6 +2038,10 @@ ProgressionScript* ProgressionScript::Create(const char *name, iDocumentNode *to
         else if (elem == "cancel")
         {
             op = new CancelOp;
+        }
+        else if (elem == "destroy")
+        {
+            op = new DestroyOp;
         }
         else if (elem == "teleport" || elem == "create-familiar" || elem == "fog" || elem == "rain" || elem == "snow" || elem == "lightning" || elem == "weather")
         {
