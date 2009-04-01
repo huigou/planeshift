@@ -228,6 +228,10 @@ void WorkManager::HandleWorkCommand(MsgEntry* me,Client *client)
     {
         HandleRepair(client, msg);
     }
+    else if (msg.command == "/construct")
+    {
+        HandleConstruct(client);
+    }
 }
 
 void WorkManager::HandleLockPick(MsgEntry* me,Client *client)
@@ -1099,14 +1103,7 @@ void WorkManager::StartUseWork(Client* client)
         return;
     }
 
-    // Check if the target is a trap
-    if ( workItem && workItem->GetIsTrap() )
-    {
-        StartTransformationEvent(TRANSFORMTYPE_TARGET_TO_NPC, PSCHARACTER_SLOT_NONE, 1, workItem->GetItemQuality(), workItem);
-        psserver->SendSystemOK(clientNum, "You begin constructing %s.", workItem->GetName());
-        return;
-    }
-    else if ( workItem && workItem->GetIsContainer() ) // Check if the target is a container
+    if ( workItem && workItem->GetIsContainer() ) // Check if the target is a container
     {
         // cast a gem container to iterate thru
         gemContainer *container = dynamic_cast<gemContainer*> (workItem->GetGemObject());
@@ -1364,6 +1361,85 @@ void WorkManager::StopCombineWork(Client* client)
 
     // Tell the user
     psserver->SendSystemOK(clientNum,"You stop working.");
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Handle /construct command
+void WorkManager::HandleConstruct(Client *client)
+{
+    // Assign the memeber vars
+    if ( !LoadLocalVars(client) )
+    {
+        return;
+    }
+
+    //Check if we are starting or stopping use
+    if ( owner->GetMode() != PSCHARACTER_MODE_WORK )
+    {
+        StartConstructWork(client);
+    }
+    else
+    {
+        StartConstructWork(client);
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Check if possible to do some use work
+void WorkManager::StartConstructWork(Client* client)
+{
+    // Check to see if we have everything we need to do any trade work
+    if (!ValidateWork())
+    {
+        return;
+    }
+
+    // Check to see if we have pattern
+    if (!ValidateMind())
+    {
+        return;
+    }
+
+    // Check for any targeted item or container in hand
+    if (!ValidateTarget(client))
+    {
+        return;
+    }
+
+    // Check if targeted item is constructible
+    if(workItem && workItem->GetIsConstructible())
+    {
+        if(workItem->GetIsTrap())
+        {
+            StartTransformationEvent(TRANSFORMTYPE_TARGET_TO_NPC, PSCHARACTER_SLOT_NONE, 1, workItem->GetItemQuality(), workItem);
+            psserver->SendSystemOK(clientNum, "You begin constructing %s.", workItem->GetName());
+        }
+        else if(workItem->GetIsContainer())
+        {
+        }
+    }
+
+    return;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Stop doing combine work
+void WorkManager::StopConstructWork(Client* client)
+{
+    // Check for any targeted item or container in hand
+    if ( !ValidateTarget(client))
+    {
+        return;
+    }
+
+    // Kill the work event if it exists
+    if( worker->GetMode() == PSCHARACTER_MODE_WORK )
+    {
+        worker->SetMode(PSCHARACTER_MODE_PEACE);
+    }
+
+    // Tell the user
+    psserver->SendSystemOK(clientNum, "You stop constructing.");
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -924,6 +924,11 @@ bool psItemStats::GetIsTrap()
     return (flags & PSITEMSTATS_FLAG_IS_A_TRAP) ? true : false;
 }
 
+bool psItemStats::GetIsConstructible()
+{
+    return (flags & PSITEMSTATS_FLAG_IS_CONSTRUCTIBLE) ? true : false;
+}
+
 bool psItemStats::GetCanTransform()
 {
     return (flags & PSITEMSTATS_FLAG_CAN_TRANSFORM) ? true : false;
@@ -1024,6 +1029,8 @@ csString psItemStats::FlagsToText()
         TempString.Append("CONTAINER ");
     if (flags & PSITEMSTATS_FLAG_IS_A_TRAP)
         TempString.Append("TRAP ");
+    if (flags & PSITEMSTATS_FLAG_IS_CONSTRUCTIBLE)
+        TempString.Append("CONSTRUCTIBLE ");
     if (flags & PSITEMSTATS_FLAG_USES_AMMO)
         TempString.Append("USESAMMO ");
     if (flags & PSITEMSTATS_FLAG_IS_STACKABLE)

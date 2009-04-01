@@ -734,6 +734,8 @@ void ActionManager::HandleExamineOperation( psActionLocation* action, Client *cl
         // Container items can combine
         if(realItem->IsContainer()) 
             options |= psGUIInteractMessage::COMBINE;
+        if(realItem->IsConstructible())
+            options |= psGUIInteractMessage::CONSTRUCT;
         // All other action location items can be used
         options |= psGUIInteractMessage::USE;
     }

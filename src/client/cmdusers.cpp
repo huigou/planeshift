@@ -77,6 +77,7 @@ psUserCommands::psUserCommands(MsgHandler* mh,CmdHandler *ch,iObjectRegistry* ob
     cmdsource->Subscribe("/challenge",     this);
     cmdsource->Subscribe("/clear",         this);
     cmdsource->Subscribe("/combine",       this);
+    cmdsource->Subscribe("/construct",     this);
     cmdsource->Subscribe("/dequip",        this);
     cmdsource->Subscribe("/die",           this);
     cmdsource->Subscribe("/dig",           this);
@@ -141,6 +142,7 @@ psUserCommands::~psUserCommands()
     cmdsource->Unsubscribe("/challenge",             this);
     cmdsource->Unsubscribe("/clear",                 this);
     cmdsource->Unsubscribe("/combine",               this);
+    cmdsource->Unsubscribe("/construct",             this);
     cmdsource->Unsubscribe("/dequip",                this);
     cmdsource->Unsubscribe("/die",                   this);
     cmdsource->Unsubscribe("/dig",                   this);
@@ -538,6 +540,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
 
     else if (words[0] == "/use" ||
              words[0] == "/combine" ||
+             words[0] == "/construct" ||
              words[0] == "/dig" ||
              words[0] == "/fish" ||
              words[0] == "/repair" )

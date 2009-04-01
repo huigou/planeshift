@@ -86,7 +86,9 @@ CacheManager::CacheManager()
     ItemStatFlagArray.Push(statflag);
     statflag.Set( "CONTAINER",    PSITEMSTATS_FLAG_IS_A_CONTAINER );
     ItemStatFlagArray.Push(statflag);
-    statflag.Set( "TRAP",    PSITEMSTATS_FLAG_IS_A_TRAP );
+    statflag.Set( "TRAP",         PSITEMSTATS_FLAG_IS_A_TRAP );
+    ItemStatFlagArray.Push(statflag);
+    statflag.Set( "CONSTRUCTIBLE", PSITEMSTATS_FLAG_IS_CONSTRUCTIBLE );
     ItemStatFlagArray.Push(statflag);
     statflag.Set( "CANTRANSFORM", PSITEMSTATS_FLAG_CAN_TRANSFORM );
     ItemStatFlagArray.Push(statflag);

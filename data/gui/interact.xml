@@ -66,68 +66,73 @@
             <bgimage resource="ButtonCombine" />
         </widget>
 
-        <widget name="ButtonExchange" factory="pawsButton" id="1300" tooltip="Exchange">
+        <widget name="ButtonConstruct" factory="pawsButton" id="1300" tooltip="Construct">
+            <frame x="0" y="64" width="64" height="64" />
+            <bgimage resource="ButtonConstruct" />
+        </widget>
+
+        <widget name="ButtonExchange" factory="pawsButton" id="1400" tooltip="Exchange">
              <frame x="0" y="64" width="64" height="64" />
              <bgimage resource="ButtonGive" />
         </widget>
 
-        <widget name="ButtonTrain" factory="pawsButton" id="1400" tooltip="Train">
+        <widget name="ButtonTrain" factory="pawsButton" id="1500" tooltip="Train">
              <frame x="128" y="0" width="64" height="64" />
              <bgimage resource="ButtonTrain" />
         </widget>
 
-        <widget name="ButtonNPCTalk" factory="pawsButton" id="1500" tooltip="Talk">
+        <widget name="ButtonNPCTalk" factory="pawsButton" id="1600" tooltip="Talk">
              <frame x="128" y="64" width="64" height="64" />
              <bgimage resource="ButtonSpeak" />
         </widget>
 
-        <widget name="ButtonViewStats" factory="pawsButton" id="1600" tooltip="View Stats">
+        <widget name="ButtonViewStats" factory="pawsButton" id="1700" tooltip="View Stats">
             <frame x="64" y="64" width="64" height="64" />
             <bgimage resource="ButtonLook" />
         </widget>
 
-        <widget name="ButtonDismiss" factory="pawsButton" id="1700" tooltip="Dismiss">
+        <widget name="ButtonDismiss" factory="pawsButton" id="1800" tooltip="Dismiss">
             <frame x="64" y="0" width="64" height="64" />
             <bgimage resource="ButtonPetDismiss" />
         </widget>
 
-        <widget name="ButtonMarriage" factory="pawsButton" id="1800" tooltip="Marry">
+        <widget name="ButtonMarriage" factory="pawsButton" id="1900" tooltip="Marry">
              <frame x="128" y="64" width="64" height="64" />
              <bgimage resource="ButtonMarriage" />
         </widget>
 
-        <widget name="ButtonDivorce" factory="pawsButton" id="1900" tooltip="Divorce">
+        <widget name="ButtonDivorce" factory="pawsButton" id="2000" tooltip="Divorce">
              <frame x="128" y="64" width="64" height="64" />
              <bgimage resource="ButtonDivorce" />
         </widget>
 
-        <widget name="ButtonPlayGame" factory="pawsButton" id="2000" tooltip="Play/Solve">
+        <widget name="ButtonPlayGame" factory="pawsButton" id="2100" tooltip="Play/Solve">
             <frame x="0" y="64" width="64" height="64" />
             <bgimage resource="ButtonPush" />
         </widget>
 
-        <widget name="ButtonEnter" factory="pawsButton" id="2100" tooltip="Enter">
+        <widget name="ButtonEnter" factory="pawsButton" id="2200" tooltip="Enter">
             <frame x="0" y="64" width="64" height="64" />
             <bgimage resource="ButtonOpen" />
         </widget>
 
-        <widget name="ButtonLock" factory="pawsButton" id="2200" tooltip="Lock">
+        <widget name="ButtonLock" factory="pawsButton" id="2300" tooltip="Lock">
             <frame x="0" y="0" width="64" height="64" />
             <bgimage resource="ButtonOpen" />
         </widget>
 
-        <widget name="ButtonEnterLocked" factory="pawsButton" id="2300" tooltip="Enter">
+        <widget name="ButtonEnterLocked" factory="pawsButton" id="2400" tooltip="Enter">
             <frame x="0" y="64" width="64" height="64" />
             <bgimage resource="ButtonOpen" />
         </widget>
 
-        <widget name="ButtonBank" factory="pawsButton" id="2400" tooltip="Start Personal Banking">
+        <widget name="ButtonBank" factory="pawsButton" id="2500" tooltip="Start Personal Banking">
              <frame x="0" y="128" width="64" height="64" />
              <bgimage resource="ButtonBanking" />
         </widget>
 
 
-        <widget name="ButtonIntroduce" factory="pawsButton" id="2500" tooltip="Introduce yourself">
+        <widget name="ButtonIntroduce" factory="pawsButton" id="2600" tooltip="Introduce yourself">
              <frame x="128" y="128" width="64" height="64" />
              <bgimage resource="ButtonIntroduce" />
         </widget>

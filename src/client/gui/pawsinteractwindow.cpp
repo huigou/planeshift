@@ -64,19 +64,20 @@
 #define INTERACT_PLAYERDESC  1000
 #define INTERACT_ATTACK      1100
 #define INTERACT_COMBINE     1200
-#define INTERACT_EXCHANGE    1300
-#define INTERACT_TRAIN       1400
-#define INTERACT_NPCTALK     1500
-#define INTERACT_VIEWSTATS   1600
-#define INTERACT_DISMISS     1700
-#define INTERACT_MARRIAGE    1800
-#define INTERACT_DIVORCE     1900
-#define INTERACT_PLAYGAME    2000
-#define INTERACT_ENTER       2100
-#define INTERACT_LOCK        2200
-#define INTERACT_ENTERLOCKED 2300
-#define INTERACT_BANK        2400
-#define INTERACT_INTRODUCE   2500
+#define INTERACT_CONSTRUCT   1300
+#define INTERACT_EXCHANGE    1400
+#define INTERACT_TRAIN       1500
+#define INTERACT_NPCTALK     1600
+#define INTERACT_VIEWSTATS   1700
+#define INTERACT_DISMISS     1800
+#define INTERACT_MARRIAGE    1900
+#define INTERACT_DIVORCE     2000
+#define INTERACT_PLAYGAME    2100
+#define INTERACT_ENTER       2200
+#define INTERACT_LOCK        2300
+#define INTERACT_ENTERLOCKED 2400
+#define INTERACT_BANK        2500
+#define INTERACT_INTRODUCE   2600
 
 //////////////////////////////////////////////////////////////////////
 
@@ -94,6 +95,7 @@ pawsInteractWindow::pawsInteractWindow()
     names.Push("ButtonPlayerDesc");
     names.Push("ButtonAttack");
     names.Push("ButtonCombine");
+    names.Push("ButtonConstruct");
     names.Push("ButtonExchange");
     names.Push("ButtonBank");
     names.Push("ButtonTrain");
@@ -120,6 +122,7 @@ pawsInteractWindow::pawsInteractWindow()
     types.Push(psGUIInteractMessage::PLAYERDESC);
     types.Push(psGUIInteractMessage::ATTACK);
     types.Push(psGUIInteractMessage::COMBINE);
+    types.Push(psGUIInteractMessage::CONSTRUCT);
     types.Push(psGUIInteractMessage::EXCHANGE);
     types.Push(psGUIInteractMessage::BANK);
     types.Push(psGUIInteractMessage::TRAIN);
@@ -281,6 +284,13 @@ bool pawsInteractWindow::OnButtonPressed( int mouseButton, int keyModifier, paws
         case INTERACT_COMBINE:
         {
             psengine->GetCmdHandler()->Execute("/combine");
+            Hide();
+            PawsManager::GetSingleton().SetCurrentFocusedWidget( NULL );
+            return true;
+        }
+        case INTERACT_CONSTRUCT:
+        {
+            psengine->GetCmdHandler()->Execute("/construct");
             Hide();
             PawsManager::GetSingleton().SetCurrentFocusedWidget( NULL );
             return true;

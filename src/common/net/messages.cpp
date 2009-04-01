@@ -1417,8 +1417,9 @@ psWorkCmdMessage::psWorkCmdMessage(MsgEntry *message)
 
     command = words[0];
 
-    if (command == "/use"||
-        command == "/combine")
+    if (command == "/use" ||
+        command == "/combine" ||
+        command == "/construct")
     {
         return;
     }
@@ -1642,6 +1643,8 @@ csString psGUIInteractMessage::ToString(AccessPointers * /*access_ptrs*/)
         msgtext.Append(" ATTACK");
     if (options & psGUIInteractMessage::COMBINE)
         msgtext.Append(" COMBINE");
+    if (options & psGUIInteractMessage::CONSTRUCT)
+        msgtext.Append(" CONSTRUCT");
     if (options & psGUIInteractMessage::EXCHANGE)
         msgtext.Append(" EXCHANGE");
     if (options & psGUIInteractMessage::BANK)
