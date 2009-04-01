@@ -6,6 +6,7 @@
 - Removed TARGET_GM in favor of TARGET_FRIEND.  I use that for impervious
   NPCs, so why not invincible GMs?  This allows players to cast healing/buff
   spells on invincible players, once again.
+- Fixed a memory leak in RunScriptResponseOp ("bindings" was leaked).
 
 *** 2009-04-01 by Stefano Angeleri
 - Fixed questmanager to support the new syntax for run, swapped the
