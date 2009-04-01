@@ -188,6 +188,7 @@ typedef unsigned int PSITEMSTATS_SLOTLIST;
 #define PSITEMSTATS_FLAG_BUY_PERSONALISE     0x00200000         // duplicate & personalise at purchase
 #define PSITEMSTATS_FLAG_IS_RECHARGEABLE     0x00400000
 #define PSITEMSTATS_FLAG_IS_A_TRAP           0x00800000
+#define PSITEMSTATS_FLAG_IS_CONSTRUCTIBLE    0x01000000
 
 #define CREATIVEDEF_MAX  65535  // Max length for 'text' field in MySQL db.
 
@@ -484,6 +485,7 @@ public:
     bool GetIsShield();
     bool GetIsContainer();
     bool GetIsTrap();
+    bool GetIsConstructible();
     bool GetCanTransform();
     bool GetUnmovable();
     bool GetUsesAmmo();

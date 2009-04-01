@@ -445,6 +445,7 @@ public:
     virtual bool IsPickable() { return false; }
     virtual bool IsLockable() { return false; }
     virtual bool IsLocked() { return false; }
+    virtual bool IsConstructible() { return false; }
     virtual bool IsSecutityLocked() { return false; }
     virtual bool IsContainer() { return false; }
 };
@@ -510,6 +511,7 @@ public:
     virtual bool IsPickable();
     virtual bool IsLockable();
     virtual bool IsLocked();
+    virtual bool IsConstructible();
     virtual bool IsSecurityLocked();
     virtual bool IsContainer();
     virtual bool IsUsingCD();

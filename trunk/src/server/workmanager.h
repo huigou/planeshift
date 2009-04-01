@@ -89,7 +89,8 @@ enum TradeTransfomType
     TRANSFORMTYPE_SLOT_CONTAINER,   ///< Transforming an item that is in a container in an equipped slot
     TRANSFORMTYPE_TARGETSLOT,       ///< Transforming an item that is in a targetted actors equipped slot
     TRANSFORMTYPE_TARGET,           ///< Transforming an item that is targeted
-    TRANSFORMTYPE_TARGET_TO_NPC     ///< Transforming an item that is targeted to an npc type
+    TRANSFORMTYPE_TARGET_TO_NPC,    ///< Transforming an item that is targeted to an npc type
+    TRANSFORMTYPE_SELF_CONTAINER    ///< Transforming a container to another item
 };
 
 //-----------------------------------------------------------------------------
@@ -155,6 +156,12 @@ public:
       * @param client  The client that placed the item inside
       */
     void HandleCombine(Client *client);
+
+    /** Begins construction work.
+      * This is called when a player attempts to build a constructable item.
+      *
+      */
+    void HandleConstruct(Client *client);
     
     /** Start a work event for this client.  This is called when an item is placed
       * in a container.  If the container is an auto-transform container it can transform items 
@@ -299,6 +306,19 @@ protected:
       * @param client  The client that issues the /combine command
       */
     void StartCombineWork(Client *client);
+
+    /** Checks to see if the item can be constructed
+      *
+      * @param client  The client that issues the /construct command
+      */
+    void StartConstructWork(Client *client);
+
+    /** Handles stopping the constructing of an item.  This is called when an item 
+      * is tagetted and the /construct command issued and it's already in use.
+      *
+      * @param client  The client that issues the /construct command
+      */
+    void StopConstructWork(Client *client);
 
     /** Handles stopping the cleanup event for a particular item.  This is called when an item 
       * is removed from a container.

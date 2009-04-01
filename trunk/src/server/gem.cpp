@@ -1173,6 +1173,7 @@ void gemActiveObject::SendBehaviorMessage(const csString & msg_id, gemObject *ac
         {
             int options = psGUIInteractMessage::EXAMINE | psGUIInteractMessage::USE;
 
+            if (IsConstructible()) options |= psGUIInteractMessage::CONSTRUCT;
             if (IsContainer()) options |= psGUIInteractMessage::COMBINE;
             if (IsPickable())  options |= psGUIInteractMessage::PICKUP;
             if (IsLockable())
@@ -1474,6 +1475,8 @@ bool gemItem::IsPickable() { return !(itemdata->GetFlags() & PSITEM_FLAG_NOPICKU
 bool gemItem::IsLockable() { return itemdata->GetIsLockable();}
 
 bool gemItem::IsLocked() { return itemdata->GetIsLocked();}
+
+bool gemItem::IsConstructible() { return itemdata->GetIsConstructible();}
 
 bool gemItem::IsUsingCD() { return itemdata->GetIsCD();}
 
