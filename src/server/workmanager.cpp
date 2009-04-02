@@ -1416,6 +1416,28 @@ void WorkManager::StartConstructWork(Client* client)
         }
         else if(workItem->GetIsContainer())
         {
+            uint32 combinationId = 0;
+            int combinationQty = 0;
+            if(IsContainerCombinable(combinationId, combinationQty))
+            {
+                // Check to see if item can be transformed
+                uint32 itemID = workItem->GetBaseStats()->GetUID();
+                unsigned int transMatch = AnyTransform( patternId, groupPatternId, itemID, 1 );
+                if (transMatch == TRANSFORM_MATCH)
+                {
+                    // Set up event for transformation
+                    StartTransformationEvent(
+                        TRANSFORMTYPE_SELF_CONTAINER, PSCHARACTER_SLOT_NONE, 1, workItem->GetItemQuality(), workItem);
+                    psserver->SendSystemOK(clientNum,"You start work on %s.", workItem->GetName());
+                    return;
+                }
+                else
+                {
+                    // The transform could not be created so send the reason back to the user.
+                    SendTransformError( clientNum, transMatch, itemID, 1 );
+                    return;
+                }
+            }
         }
     }
 
@@ -2824,6 +2846,13 @@ psItem* WorkManager::CombineContainedItem(uint32 newId, int newQty, float itemQu
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Transform the container into a new item
+psItem* WorkManager::TransformSelfContainerItem(psItem* oldItem, uint32 newId, int newQty, float itemQuality)
+{
+    return NULL;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Transform the one items in container into a new item
 psItem* WorkManager::TransformContainedItem(psItem* oldItem, uint32 newId, int newQty, float itemQuality)
 {
@@ -3605,6 +3634,21 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
             owner->SetTradeWork(NULL);
             worker->SetMode(PSCHARACTER_MODE_PEACE);
             return;
+        }
+
+        case TRANSFORMTYPE_SELF_CONTAINER:
+        {
+            psItem* newItem = TransformSelfContainerItem(workEvent->GetTranformationItem(), result, resultQty, currentQuality );
+            if (!newItem  && (result != 0))
+            {
+                Error1("TransformSelfContainerItem did not create new item in HandleWorkEvent().\n");
+                if (secure) psserver->SendSystemInfo(clientNum,"TransformSelfContainerItem did not create new item in HandleWorkEvent().");
+                owner->SetTradeWork(NULL);
+                worker->SetMode(PSCHARACTER_MODE_PEACE);
+                return;
+            }
+            workEvent->SetTransformationItem(newItem);
+            break;
         }
 
         case TRANSFORMTYPE_AUTO_CONTAINER:

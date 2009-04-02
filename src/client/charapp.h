@@ -36,7 +36,6 @@ struct SkinToneSet
 {
     csString part;                  // The part of the model to adjust.
     csString material;              // The material to place on that part.
-    csString texture;               // The texture to load if material not found.
 };
 
 /** A manager class that handles all the details of a characters appearance.
@@ -59,9 +58,8 @@ public:
 
     /** Set the material we want to use for the face.
       * @param faceMaterial The material to use.
-      * @param faceTexture  The texture to load if the material is not found.
       */     
-    void FaceTexture(csString& faceMaterial, csString& faceTexture);
+    void FaceTexture(csString& faceMaterial);
     
     /** Attach a hair sub mesh to the model.
       * @param submesh The name of the hair sub mesh to attach.
@@ -91,9 +89,8 @@ public:
     /** Set the skin tone.
       * @param part  The part of the model to change.
       * @param material The material to use on that part.
-      * @param texture The texture to load if the material not found.
       */    
-    void SetSkinTone(csString& part, csString& material, csString& texture);
+    void SetSkinTone(csString& part, csString& material);
 
     /** Apply a set of traits based on a XML string.
       * @param traits The XML formated string that has a list of the traits
@@ -135,7 +132,7 @@ public:
     /** Clears the equipment on a mesh. */
     void ClearEquipment(const char* slot = NULL);
 
-    void CheckMeshLoad();
+    void CheckLoadStatus();
 
     void SetSneak(bool sneaking);
     
@@ -160,11 +157,10 @@ private:
     /** Change the material on a part of the model.
       * @param part The part of the model we want to change the materail on ( ex Torso )
       * @param material The name of the material to use.
-      * @param textureName The texture to use if material not found.
       *
       * @return true if the materail was changed.
       */
-    bool ChangeMaterial(const char* part, const char* materail, const char* textureName);
+    bool ChangeMaterial(const char* part, const char* materialName);
     
     /** Change a mesh on the model. 
       * @param partPattern The part to change (ex Torso )
@@ -202,6 +198,7 @@ private:
     void DefaultMesh(const char* part);
 
     void ProcessAttach(csRef<iMeshFactoryWrapper> factory, const char* meshFactName, csRef<iSpriteCal3DSocket> socket);
+    void ProcessAttach(csRef<iMaterialWrapper> material, const char* materialName, const char* partName);
                
     csRef<iMeshWrapper> baseMesh;                           // The mesh that is our base model.
 
@@ -242,8 +239,17 @@ private:
     // Delayed loading.
     struct Attachment
     {
+        bool factory;
+
         csRef<iSpriteCal3DSocket> socket;
+        csString partName;
+
         csString factName;
+        csString materialName;
+
+        Attachment(bool factory) : factory(factory)
+        {
+        }
     };
 
     csList<Attachment> delayedAttach;

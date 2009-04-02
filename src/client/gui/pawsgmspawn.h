@@ -41,7 +41,7 @@ public:
 
     bool OnButtonPressed(int button,int keyModifier,pawsWidget* widget);
 
-    void CheckMeshLoad();
+    void CheckLoadStatus();
 
 private:
     pawsSimpleTree*                 itemTree;

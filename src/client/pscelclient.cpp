@@ -322,7 +322,7 @@ void psCelClient::HandleMainActor( psPersistActor& mesg )
         csRef<iMeshFactoryWrapper> factory;
         while(!factory.IsValid())
         {
-            factory = psengine->GetLoader()->LoadFactory(mesg.factname);
+            factory = Loader::GetSingleton().LoadFactory(mesg.factname);
         }
 
         // New or resetting?
@@ -1238,14 +1238,14 @@ bool GEMClientObject::InitMesh()
     psengine->RegisterDelayedLoader(this);
 
     // Check if the mesh is already loaded.
-    CheckMeshLoad();
+    CheckLoadStatus();
 
     return true;
 }
 
-void GEMClientObject::CheckMeshLoad()
+void GEMClientObject::CheckLoadStatus()
 {
-    csRef<iMeshFactoryWrapper> factory = psengine->GetLoader()->LoadFactory(factName);
+    csRef<iMeshFactoryWrapper> factory = Loader::GetSingleton().LoadFactory(factName);
     if(!factory.IsValid())
     {
         return;

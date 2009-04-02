@@ -164,11 +164,11 @@ bool pawsGMSpawnWindow::OnSelected(pawsWidget* widget)
             item.mesh = fact_name;
             factName = item.mesh;
 
-            csRef<iMeshFactoryWrapper> factory = psengine->GetLoader()->LoadFactory(factName);
+            csRef<iMeshFactoryWrapper> factory = Loader::GetSingleton().LoadFactory(factName);
             if(!factory)
             {
                 loaded = false;
-                CheckMeshLoad();
+                CheckLoadStatus();
             }
             else
             {
@@ -217,11 +217,11 @@ bool pawsGMSpawnWindow::OnSelected(pawsWidget* widget)
     return true;
 }
 
-void pawsGMSpawnWindow::CheckMeshLoad()
+void pawsGMSpawnWindow::CheckLoadStatus()
 {
     if(!loaded)
     {
-        csRef<iMeshFactoryWrapper> factory = psengine->GetLoader()->LoadFactory(factName);
+        csRef<iMeshFactoryWrapper> factory = Loader::GetSingleton().LoadFactory(factName);
         if(factory.IsValid())
         {
             psengine->UnregisterDelayedLoader(this);

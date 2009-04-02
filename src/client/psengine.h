@@ -77,7 +77,7 @@ class GUIHandler;
 
 struct DelayedLoader : public CS::Utility::WeakReferenced
 {
-    virtual void CheckMeshLoad() = 0;
+    virtual void CheckLoadStatus() = 0;
     virtual ~DelayedLoader() { };
 };
 
@@ -193,7 +193,6 @@ public:
     psMouseBinds*          GetMouseBinds();
     psCamera*              GetPSCamera()       { return camera; }
     psNetManager*          GetNetManager()     { return netmanager; }
-    Loader*                GetLoader()         { return loader; }
 
     /// Access the player's petitioner target
     void SetTargetPetitioner(const char * pet) { targetPetitioner = pet; }
