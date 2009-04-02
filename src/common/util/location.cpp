@@ -257,7 +257,6 @@ bool LocationType::Load(iResultRow& row, iEngine * engine, iDataConnection *db)
 
         tmpLocs.Push(newloc);
     }
-
     while (tmpLocs.GetSize())
     {
         Location *curr, *first;
@@ -273,13 +272,6 @@ bool LocationType::Load(iResultRow& row, iEngine * engine, iDataConnection *db)
                 {
                     curr = tmpLocs[i];
                     tmpLocs.DeleteIndex(i);
-                    
-                    csArray<Location*>::Iterator it(tmpLocs.GetIterator());
-                    while(it.HasNext ())
-                    {
-                        Location * newLoc = it.Next();
-                        delete newLoc;
-                    }
                     tmpLocs.Empty();
                     
                     first->locs.Push(curr);
@@ -304,8 +296,7 @@ bool LocationType::Load(iResultRow& row, iEngine * engine, iDataConnection *db)
         {
             locs.Push(first);
         }
-    }
-    
+    }    
     
     return true;
 }

@@ -547,17 +547,9 @@ void ActionManager::HandleSaveMessage( csString xml, Client *client )
                 action->Save();
 
                 //Update Cache
-                if ( EntityManager::GetSingleton().CreateActionLocation( action, false ) )
+                if ( !CacheActionLocation(action) )
                 {
-                    if ( !CacheActionLocation(action) )
-                    {
-                        Error2("Failed to populate action : \"%s\"", action->name.GetData());
-                        delete action;
-                    }
-                }
-                else
-                {
-                    Error2("Failed to create action : \"%s\"", action->name.GetData());
+                    Error2("Failed to populate action : \"%s\"", action->name.GetData());
                     delete action;
                 }
             }
@@ -625,6 +617,8 @@ void ActionManager::HandleDeleteMessage( csString xml, Client *client )
             actionLocation_by_sector.Delete( csHashCompute( actionLocation->sectorname ), actionLocation );
             actionLocation_by_id.Delete( actionLocation->id, actionLocation );
 
+            if(actionLocation->gemAction != NULL)
+                delete actionLocation->gemAction;
             delete actionLocation;
         }
 
@@ -654,6 +648,8 @@ void ActionManager::HandleReloadMessage(Client * client)
     while (it.HasNext ())
     {
         psActionLocation* actionLocation = it.Next ();
+        if(actionLocation->gemAction != NULL)
+            delete actionLocation->gemAction;
         delete actionLocation;
     }
 
@@ -806,19 +802,11 @@ bool ActionManager::RepopulateActionLocations(psSectorInfo *sectorinfo)
 
         if ( newaction->Load( result[currentrow] ) )
         {
-            if ( EntityManager::GetSingleton().CreateActionLocation( newaction, false ) )
-            {
                 if ( !CacheActionLocation(newaction) )
                 {
                     Error2("Failed to populate action : \"%s\"", newaction->name.GetData());
                     delete newaction;
                 }
-            }
-            else
-            {
-                Error2("Failed to create action : \"%s\"", newaction->name.GetData());
-                delete newaction;
-            }
         }
         else
         {
