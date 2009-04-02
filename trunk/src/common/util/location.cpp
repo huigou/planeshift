@@ -273,6 +273,15 @@ bool LocationType::Load(iResultRow& row, iEngine * engine, iDataConnection *db)
                 {
                     curr = tmpLocs[i];
                     tmpLocs.DeleteIndex(i);
+                    
+                    csArray<Location*>::Iterator it(tmpLocs.GetIterator());
+                    while(it.HasNext ())
+                    {
+                        Location * newLoc = it.Next();
+                        delete newLoc;
+                    }
+                    tmpLocs.Empty();
+                    
                     first->locs.Push(curr);
                     found = true;
                     break;

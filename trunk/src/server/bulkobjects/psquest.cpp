@@ -66,11 +66,6 @@ psQuest::~psQuest()
         TriggerResponse triggerResponse = triggerPairs.Get(i);
         dict->DeleteTriggerResponse(triggerResponse.trigger, triggerResponse.responseID);
     }
-
-    // delete subquests
-    for(size_t i = 0;i < subquests.GetSize(); i++)
-        CacheManager::GetSingleton().UnloadQuest(subquests.Get(i));
-
 }
 
 void psQuest::Init(int new_id, const char *new_name)

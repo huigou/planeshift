@@ -173,6 +173,13 @@ UserManager::~UserManager()
         psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_TARGET_EVENT);
         psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_ENTRANCE);
     }
+    
+    csHash<EMOTE *, csString>::GlobalIterator it(emoteHash.GetIterator ());
+    while (it.HasNext ())
+    {
+        EMOTE * emote = it.Next ();
+        delete emote;
+    }
     emoteHash.DeleteAll();
 }
 
