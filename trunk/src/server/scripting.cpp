@@ -378,6 +378,7 @@ public:
     {
         text = node->GetAttributeValue("text");
         undo = node->GetAttributeValue("undo");
+        type = node->GetAttributeValue("type");
         return true;
     }
 
@@ -388,7 +389,22 @@ public:
             csString finalText(text);
             env->InterpolateString(finalText);
 
-            psserver->SendSystemInfo(target->GetClientID(), finalText);
+            if (type == "ok")
+            {
+                psserver->SendSystemOK(target->GetClientID(), finalText);
+            }
+            else if (type == "result")
+            {
+                psserver->SendSystemResult(target->GetClientID(), finalText);
+            }
+            else if (type == "error")
+            {
+                psserver->SendSystemError(target->GetClientID(), finalText);
+            }
+            else
+            {
+                psserver->SendSystemInfo(target->GetClientID(), finalText);
+            }
 
             csString finalUndo(undo);
             env->InterpolateString(finalUndo);
@@ -401,6 +417,7 @@ public:
 protected:
     csString text; //< message to send immediately
     csString undo; //< message to send when canceled
+    csString type; //< message type to send
 };
 
 //----------------------------------------------------------------------------
@@ -1063,15 +1080,15 @@ public:
             csString finalText(text);
             env->InterpolateString(finalText);
 
-            if(type.CompareNoCase("ok"))
+            if (type == "ok")
             {
                 psserver->SendSystemOK(actor->GetClientID(), finalText);
             }
-            else if(type.CompareNoCase("result"))
+            else if (type == "result")
             {
                 psserver->SendSystemResult(actor->GetClientID(), finalText);
             }
-            else if(type.CompareNoCase("error"))
+            else if (type == "error")
             {
                 psserver->SendSystemError(actor->GetClientID(), finalText);
             }

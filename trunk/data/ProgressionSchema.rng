@@ -75,7 +75,7 @@
             </choice>
           </attribute>
           <oneOrMore>
-            <element name="script">
+            <element name="spell">
               <attribute name="name"/>
               <ref name="SpellType"/>
             </element>
@@ -87,7 +87,9 @@
         <element name="msg">
           <attribute name="aim"/>
           <attribute name="text"/>
+          <ref name="msgtype"/>
         </element>
+
         <element name="fx">
           <optional>
             <attribute name="source"/>
@@ -244,8 +246,8 @@
         <!-- other -->
         <element name="msg">
           <attribute name="text"/>
-          <attribute name="type"/>
           <attribute name="undo"/>
+          <ref name="msgtype"/>
         </element>
 
         <element name="fx">
@@ -346,5 +348,18 @@
       <value>true</value>
       <value>false</value>
     </choice>
+  </define>
+
+  <define name="msgtype">
+    <optional>
+      <attribute name="type">
+        <choice>
+          <value>info</value>
+          <value>ok</value>
+          <value>result</value>
+          <value>error</value>
+        </choice>
+      </attribute>
+    </optional>
   </define>
 </grammar>
