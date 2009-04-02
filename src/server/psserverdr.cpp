@@ -133,7 +133,7 @@ void psServerDR::ResetPos(gemActor* actor)
     float yRot = 0;
     actor->GetPosition(targetPoint, yRot, targetSector);
     targetSectorName = targetSector->QueryObject()->GetObjectParent()->GetName();
-    psserver->GetAdminManager()->GetStartOfMap(actor->GetClient(), targetSectorName, targetSector, targetPoint);
+    psserver->GetAdminManager()->GetStartOfMap(actor->GetClient()->GetClientNum(), targetSectorName, targetSector, targetPoint);
     actor->pcmove->SetOnGround(false);
     actor->pcmove->SetVelocity(csVector3(0,0,0));
     actor->SetPosition(targetPoint,0, targetSector);

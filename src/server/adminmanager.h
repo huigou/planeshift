@@ -103,7 +103,7 @@ public:
     void AdjustFactionStandingOfTarget(int gmClientnum, Client* target, csString factionName, int standingDelta);
 
     /** Get sector and coordinates of starting point of a map. Returns success. */
-    bool GetStartOfMap(Client *client, const csString & map, iSector * & targetSector,  csVector3 & targetPoint);
+    bool GetStartOfMap(int clientnum, const csString & map, iSector * & targetSector,  csVector3 & targetPoint);
 
 protected:
 

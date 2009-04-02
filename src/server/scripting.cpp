@@ -23,6 +23,7 @@
 //=============================================================================
 // Crystal Space Includes
 //=============================================================================
+#include <iengine/engine.h>
 #include <iutil/document.h>
 #include <csutil/xmltiny.h>
 #include <csutil/scfstr.h>
@@ -41,6 +42,7 @@
 //=============================================================================
 #include "scripting.h"
 #include "actionmanager.h"
+#include "adminmanager.h"
 #include "cachemanager.h"
 #include "entitymanager.h"
 #include "progressionmanager.h"
@@ -1293,12 +1295,6 @@ protected:
 
 //----------------------------------------------------------------------------
 
-class TeleportOp : public ImperativeOp
-{
-};
-
-//----------------------------------------------------------------------------
-
 class Imperative1 : public ImperativeOp
 {
 public:
@@ -1334,8 +1330,6 @@ protected:
     MathExpression *value; //< an embedded MathExpression
 };
 
-//----------------------------------------------------------------------------
-
 // A base class supporting aim, value, and name.
 class Imperative3 : public Imperative2
 {
@@ -1366,6 +1360,108 @@ public:
         gemObject *obj = GetObject(env, aim);
         EventManager::GetSingleton().Push(new psEntityEvent(psEntityEvent::DESTROY, obj));
     }
+};
+
+//----------------------------------------------------------------------------
+
+class TeleportOp : public Imperative1
+{
+public:
+    TeleportOp() : Imperative1() { }
+    virtual ~TeleportOp() { }
+
+    bool Load(iDocumentNode *node)
+    {
+        if (!Imperative1::Load(node))
+            return false;
+
+        if (node->GetAttribute("location"))
+        {
+            type = NAMED;
+            destination = node->GetAttributeValue("location");
+            return destination == "spawn";
+        }
+        else if (node->GetAttribute("sector"))
+        {
+            destination = node->GetAttributeValue("sector");
+            type = SECTOR;
+
+            if (node->GetAttribute("x") && node->GetAttribute("y") && node->GetAttribute("z"))
+            {
+                type |= XYZ;
+                pos.x = node->GetAttributeValueAsFloat("x");
+                pos.y = node->GetAttributeValueAsFloat("y");
+                pos.z = node->GetAttributeValueAsFloat("z");
+            }
+
+            if (node->GetAttribute("instance"))
+            {
+                type |= INSTANCE;
+                instance = (InstanceID) node->GetAttributeValueAsInt("instance");
+            }
+        }
+        else
+        {
+            Error1("<teleport> specified with neither a location or map attribute.");
+            return false;
+        }
+        return true;
+    }
+
+    void Run(const MathEnvironment *env)
+    {
+        gemActor *actor = GetActor(env, aim);
+        CS_ASSERT(actor);
+
+        if (type == NAMED)
+        {
+            // we only handle "spawn" for now...
+            actor->MoveToSpawnPos();
+        }
+        else
+        {
+            iSector *sector;
+            csVector3 destPos;
+
+            if (type & XYZ)
+            {
+                sector = EntityManager::GetSingleton().GetEngine()->FindSector(destination);
+                destPos = pos;
+            }
+            else
+            {
+                if (!psserver->GetAdminManager()->GetStartOfMap(0, destination, sector, destPos))
+                {
+                    Error2("Could not get start of map >%s<.", destination.GetDataSafe());
+                    return;
+                }
+            }
+
+            if (!sector)
+            {
+                Error2("Could not find sector >%s<.", destination.GetDataSafe());
+                return;
+            }
+
+            actor->StopMoving();
+
+            if (type & INSTANCE)
+                actor->SetInstance(instance);
+
+            actor->SetPosition(destPos, 0.0, sector);
+
+            if (actor->GetClient())
+                actor->GetClient()->SetCheatMask(MOVE_CHEAT,true); // This tells paladin one of these is ok.
+            actor->MulticastDRUpdate();
+        }
+    }
+
+protected:
+    const static int NAMED = 0x0, SECTOR = 0x1, XYZ = 0x2, INSTANCE = 0x4;
+    int type;
+    csString destination;
+    csVector3 pos;
+    InstanceID instance;
 };
 
 //----------------------------------------------------------------------------
@@ -2079,6 +2175,10 @@ ProgressionScript* ProgressionScript::Create(const char *name, iDocumentNode *to
         }
         else if (elem == "teleport" || elem == "create-familiar" || elem == "fog" || elem == "rain" || elem == "snow" || elem == "lightning" || elem == "weather")
         {
+            op = new TeleportOp;
+        }
+        else if (elem == "fog" || elem == "rain" || elem == "snow" || elem == "lightning" || elem == "weather")
+        {
             printf("TODO: implement <%s> used in script >%s<\n", elem.GetData(), name);
             continue;
         }
@@ -2115,7 +2215,7 @@ ProgressionScript* ProgressionScript::Create(const char *name, iDocumentNode *to
         {
             op = new ItemOp;
         }
-        else if (elem == "createfamiliar")
+        else if (elem == "create-familiar")
         {
             op = new CreateFamiliarOp;
         }

@@ -3585,7 +3585,7 @@ bool AdminManager::GetTargetOfTeleport(Client *client, psAdminCmdMessage& msg, A
         }
         else
         {
-             return GetStartOfMap(client, data.map, targetSector, targetPoint);
+             return GetStartOfMap(client->GetClientNum(), data.map, targetSector, targetPoint);
         }
     }
     // when teleporting to the place where we are standing at
@@ -3689,27 +3689,27 @@ bool AdminManager::GetTargetOfTeleport(Client *client, psAdminCmdMessage& msg, A
     return true;
 }
 
-bool AdminManager::GetStartOfMap(Client * client, const csString & map, iSector * & targetSector,  csVector3 & targetPoint)
+bool AdminManager::GetStartOfMap(int clientnum, const csString & map, iSector * & targetSector, csVector3 & targetPoint)
 {
     iEngine* engine = EntityManager::GetSingleton().GetEngine();
 
-    if ( map.Length() == 0 )
+    if (map.IsEmpty())
     {
-        psserver->SendSystemError( client->GetClientNum(), "Map name not given");
+        psserver->SendSystemError(clientnum, "Map name not given");
         return false;
     }
 
     iCollection* psRegion = engine->GetCollection(map.GetData());
     if (psRegion == NULL)
     {
-        psserver->SendSystemError(client->GetClientNum(), "Map not found.");
+        psserver->SendSystemError(clientnum, "Map not found.");
         return false;
     }
 
     iCameraPosition* loc = psRegion->FindCameraPosition("Camera01");
     if (loc == NULL)
     {
-        psserver->SendSystemError(client->GetClientNum(), "Starting location not found in map.");
+        psserver->SendSystemError(clientnum, "Starting location not found in map.");
         return false;
     }
 
@@ -4019,32 +4019,28 @@ void AdminManager::CreateMoney(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDat
 
 void AdminManager::RunScript(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& data,Client *client, gemObject* object)
 {
-    psserver->SendSystemError(me->clientnum, "/runscript temporarily not implemented");
-    /*
     // Give syntax
-    if((data.script.Length() == 0) || (data.script == "help"))
+    if (data.script.IsEmpty() || data.script == "help")
     {
         psserver->SendSystemError(me->clientnum, "Syntax: /runscript script_name [me/target/eid/pid/area/name]");
         return;
     }
 
-    // Find script event
-    ProgressionEvent *progEvent = psserver->GetProgressionManager()->FindEvent(data.script.GetData());
-    if (!progEvent)
+    // Find script
+    ProgressionScript *script = psserver->GetProgressionManager()->FindScript(data.script);
+    if (!script)
     {
         psserver->SendSystemError(me->clientnum, "Progression script \"%s\" not found.",data.script.GetData());
         return;
     }
 
-    // Run script
-    float result = progEvent->Run(client->GetActor(), object,NULL);
-    if ( !result )
-    {
-        psserver->SendSystemError(me->clientnum, "Progression script \"%s\" failed to run.",data.script.GetData());
-        return;
-    }
-    psserver->SendSystemError(me->clientnum, "Progression script \"%s\" returned value=%f.",data.script.GetData(),result);
-    */
+    // We don't know what the script expects the actor to be called, so define...basically everything.
+    MathEnvironment env;
+    env.Define("Actor",  client->GetActor());
+    env.Define("Caster", client->GetActor());
+    env.Define("NPC",    client->GetActor());
+    env.Define("Target", object ? object : client->GetActor());
+    script->Run(&env);
 }
 
 void AdminManager::ModifyKey(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& data,Client *client)
