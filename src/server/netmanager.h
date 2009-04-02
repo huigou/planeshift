@@ -48,7 +48,7 @@ public:
     NetManager(csRef<CS::Threading::Thread> _thread);
     ~NetManager();
 
-    /** Initialize the network thread.
+    /** @brief Initialize the network thread.
      *  msgtype initializes firstmsg and timeout is the timout in ms for a
      * connection. If no packets are sent or received in this time then the
      * connection is made linkdead. 
@@ -86,7 +86,7 @@ public:
      */
     virtual void Broadcast(MsgEntry *me, int scope,int guild=-1);
 
-    /* Sends the given message me to all the clients in the list.
+    /** @brief Sends the given message me to all the clients in the list.
      * Sends the given message me to all the clients in the list (clientlist)
      * which is of size count. This will send the message to all the clients
      * except the client which has a client number given in the variable
@@ -134,11 +134,11 @@ public:
      * @return Returns success or faliure.
      */
     virtual bool SendMessage (MsgEntry* me);
-	/**
-	 * Queues the message for sending later, so the calling classes don't have 
-	 * to all manage this themselves.
-	 */
-	bool SendMessageDelayed(MsgEntry *me, csTicks delay);
+    /**
+     * Queues the message for sending later, so the calling classes don't have 
+     * to all manage this themselves.
+     */
+    bool SendMessageDelayed(MsgEntry *me, csTicks delay);
 
     /** This is the main thread function.
      * If it hasn't been initialized it waits until the server is ready to go
@@ -167,7 +167,7 @@ protected:
      */
     virtual Connection *GetConnByNum (uint32_t clientnum);
     
-    /** Handles/connects a new client from an unknown IP address.
+    /** @brief Handles/connects a new client from an unknown IP address.
      * This is called when we have recieved a message from a client that we
      * don't know yet. This happens when a new client connects to us. First
      * thing it does is check to make sure the msgtype is equal to firstmsg.

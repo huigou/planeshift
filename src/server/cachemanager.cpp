@@ -213,8 +213,15 @@ void CacheManager::UnloadAll()
 
     delete commandManager;
 
-    quests_by_id.DeleteAll();
-
+    {
+        csHash<psQuest *>::GlobalIterator it(quests_by_id.GetIterator ());
+        while (it.HasNext ())
+        {
+            psQuest* newQuest = it.Next ();
+            delete newQuest;
+        }
+        quests_by_id.DeleteAll();
+    }
 
     {
         csHash<csPDelArray<CombinationConstruction>*,uint32>::GlobalIterator it(tradeCombinations_IDHash.GetIterator ());
@@ -259,6 +266,12 @@ void CacheManager::UnloadAll()
         while (it.HasNext ())
         {
             csArray<psTradeProcesses*>* newArray = it.Next ();
+            csArray<psTradeProcesses*>::Iterator it2(newArray->GetIterator ());
+            while (it2.HasNext ())
+            {
+                psTradeProcesses* newProc = it2.Next ();
+                delete newProc; 
+            }
             delete newArray;
         }
         tradeProcesses_IDHash.Empty();
@@ -289,6 +302,12 @@ void CacheManager::UnloadAll()
         while (it.HasNext ())
         {
             CraftComboInfo* newCombo = it.Next ();
+            csArray<CraftSkills*>::Iterator it2(newCombo->skillArray->GetIterator ());
+            while (it2.HasNext ())
+            {
+                CraftSkills* newCraftSkill = it2.Next ();
+                delete newCraftSkill;
+            }
             delete newCombo;
         }
         tradeCraftComboInfo_IDHash.Empty();
