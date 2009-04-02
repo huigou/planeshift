@@ -166,6 +166,7 @@ public:
     gemItem   *FindItemEntity(uint32 item_id);
 
     EID  CreateEntity(gemObject *obj);
+    void AddEntity(gemObject *obj, EID objEid); ///< Ugly function, used for gemAL
     void RemoveEntity(gemObject *which);
     void AddActorEntity(gemActor *actor);
     void RemoveActorEntity(gemActor *actor);

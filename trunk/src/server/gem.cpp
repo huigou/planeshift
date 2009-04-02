@@ -217,6 +217,13 @@ EID GEMSupervisor::CreateEntity(gemObject *obj)
     return eid;
 }
 
+void GEMSupervisor::AddEntity(gemObject *obj, EID objEid)
+{
+    CS_ASSERT(!entities_by_eid.Contains(objEid));
+    entities_by_eid.Put(objEid, obj);
+    Debug3(LOG_CELPERSIST,0,"Entity <%s> added to supervisor as %s\n", obj->GetName(), ShowID(eid));
+}
+
 void GEMSupervisor::AddActorEntity(gemActor *actor)
 {
     actors_by_pid.Put(actor->GetPID(), actor);
@@ -1768,14 +1775,22 @@ void gemContainer::psContainerIterator::UseContainerItem(gemContainer *container
 //--------------------------------------------------------------------------------------
 
 gemActionLocation::gemActionLocation(psActionLocation *action, iSector *isec, int clientnum)
-                                     : gemActiveObject(action->name)
+                                     : gemActiveObject(action->name,
+                                                       action->meshname,
+                                                       action->GetInstanceID(),
+                                                       isec,
+                                                       action->position,
+                                                       0.0f,
+                                                       clientnum)
 {
-    this->yRot  = 0;
     this->action = action;
     action->SetGemObject( this );
-
+ 
     // action locations use the AL ID as their EID for some reason
+    // ugly hack, to put the AL in the entity hash
+    cel->RemoveEntity(this);
     eid = action->id;
+    cel->AddEntity(this, eid);
 
     this->prox_distance_desired = 0.0F;
     this->prox_distance_current = 0.0F;
@@ -1784,7 +1799,6 @@ gemActionLocation::gemActionLocation(psActionLocation *action, iSector *isec, in
 
     SetName(name);
 
-    pcmesh = new gemMesh(psserver->GetObjectReg(), this, cel);
 
     csRef< iEngine > engine =  csQueryRegistry<iEngine> (psserver->GetObjectReg());
     csRef< iMeshWrapper > nullmesh = engine->CreateMeshWrapper("crystalspace.mesh.object.null", "pos_anchor", isec, action->position);
@@ -1802,13 +1816,6 @@ gemActionLocation::gemActionLocation(psActionLocation *action, iSector *isec, in
     state->SetRadius(1.0);
 
     pcmesh->SetMesh( nullmesh );
-
-    if (!InitProximityList(DEF_PROX_DIST,clientnum))
-    {
-        Error1("Could not create gemActionLocation because prox list could not be Init'd.");
-        return;
-    }
-
 }
 
 void gemActionLocation::Broadcast(int clientnum, bool control )
