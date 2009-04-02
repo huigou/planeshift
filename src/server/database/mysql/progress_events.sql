@@ -146,7 +146,7 @@ INSERT INTO progression_events VALUES ('charcreate_224','<script><cha aim="Actor
 
 
 INSERT INTO progression_events VALUES("drink_potion",'<script><hp aim="Actor" value="10"/><msg aim="Actor" text="You drink an healing potion and feel better."/></script>');
-INSERT INTO progression_events VALUES("drink_poison",'<script><hp aim="Actor" value="-20"/><msg text="You drink some poison and feel bad."/></script>');
+INSERT INTO progression_events VALUES("drink_poison",'<script><hp aim="Actor" value="-20"/><msg aim="Actor" text="You drink some poison and feel bad."/></script>');
 INSERT INTO progression_events VALUES("BuffPotionWILL",'<script><apply aim="Actor" type="buff" name="Will Potion" duration="120000"><wil value="5"/><msg text="You drink a will potion." undo="The will potion wears off."/></apply></script>');
 INSERT INTO progression_events VALUES('drink_speed_potion','<script><msg aim="Actor" text="drink_speed_potion not implemented. I know, it makes me sad too."/></script>');
 INSERT INTO progression_events VALUES('drink_strange_potion','<script><msg aim="Actor" text="drink_strange_potion not implemented."/></script>');
@@ -174,8 +174,8 @@ INSERT INTO progression_events VALUES('death_penalty',
          <msg text="You fell the curse of the death realm upon you." undo="You feel the curse of death lift."/>
        </apply>
      </script>');
-INSERT INTO progression_events VALUES('CraftTest','<script><msg aim="Actor" text="<craft> tag not implemented...what is it?"/></script>');
-INSERT INTO progression_events VALUES('CraftTest2','<script><msg aim="Actor" text="<craft> tag not implemented...what is it?"/></script>');
+INSERT INTO progression_events VALUES('CraftTest','<script><msg aim="Actor" text="craft tag not implemented...what is it?"/></script>');
+INSERT INTO progression_events VALUES('CraftTest2','<script><msg aim="Actor" text="craft tag not implemented...what is it?"/></script>');
 
 INSERT INTO progression_events VALUES('PATH_Street Warrior',
     '<script>
@@ -215,7 +215,7 @@ INSERT INTO progression_events VALUES("vegeta",
            <if t="Target:IsWithin(5, NPC:loc_x, NPC:loc_y, NPC:loc_z, NPC:sector) = 1">
              <then>
                <hp aim="Target" value="-9001"/>
-               <msg aim="Target" type="Error" text="You have stepped on a trap! IT\'S OVER NINE THOUSAAAAANDD!!"/>
+               <msg aim="Target" type="error" text="You have stepped on a trap! IT\'S OVER NINE THOUSAAAAANDD!!"/>
                <destroy aim="NPC"/>
              </then>
            </if>
