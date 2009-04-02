@@ -1461,6 +1461,12 @@ void NPCManager::HandlePetCommand(MsgEntry * me,Client *client)
             return;
         }
 
+        if (!owner->GetCharacterData()->CanSummonFamiliar())
+        {
+            psserver->SendSystemInfo(me->clientnum, "You need to equip the item your familiar is bound to.");
+            return;
+        }
+
         if (familiarID.IsValid())
         {
             PetOwnerSession key, *session = NULL;

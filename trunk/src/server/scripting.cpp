@@ -351,6 +351,23 @@ protected:
 
 //----------------------------------------------------------------------------
 
+class CanSummonFamiliarAOp : public AppliedOp
+{
+public:
+    virtual ~CanSummonFamiliarAOp() { }
+
+    bool Load(iDocumentNode *node) { return true; }
+
+    void Run(const MathEnvironment *env, gemActor *target, ActiveSpell *asp)
+    {
+        Buffable<int> & b = target->GetCharacterData()->GetCanSummonFamiliar();
+        b.Buff(asp, 1);
+        asp->Add(b, "<can-summon-familiar/>");
+    }
+};
+
+//----------------------------------------------------------------------------
+
 // A cancel action that sends the "undo" part of <msg text="..." undo="..."/>.
 class MsgCancel : public iCancelAction
 {
@@ -799,6 +816,10 @@ ApplicativeScript* ApplicativeScript::Create(iDocumentNode *top, SPELL_TYPE type
             continue;
         }
         // other
+        else if (elem == "can-summon-familiar")
+        {
+            op = new CanSummonFamiliarAOp;
+        }
         else if (elem == "msg")
         {
             op = new MsgAOp;
@@ -2173,7 +2194,7 @@ ProgressionScript* ProgressionScript::Create(const char *name, iDocumentNode *to
         {
             op = new DestroyOp;
         }
-        else if (elem == "teleport" || elem == "create-familiar" || elem == "fog" || elem == "rain" || elem == "snow" || elem == "lightning" || elem == "weather")
+        else if (elem == "teleport")
         {
             op = new TeleportOp;
         }

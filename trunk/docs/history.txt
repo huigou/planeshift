@@ -1,3 +1,8 @@
+*** 2009-04-02 by Kenny Graunke
+- Made the Ring of Familiar actually useful and necessary.  Players must now
+  equip it to be able to summon their familiar.  This is accomplished by a new
+  ApplicativeScript operation, <can-summon-familiar/>.
+
 *** 2009-04-02 by Tristan Cragnolini
 - Fixed a few memory leaks in the server
 

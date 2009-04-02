@@ -264,6 +264,8 @@
           <attribute name="name"/>
         </element>
 
+        <element name="can-summon-familiar"/>
+
         <element name="on">
           <choice>
             <attribute name="type">
