@@ -153,7 +153,7 @@ INSERT INTO progression_events VALUES("drink_poison",'<script><hp aim="Actor" va
 INSERT INTO progression_events VALUES("BuffPotionWILL",'<script><apply aim="Actor" type="buff" name="Will Potion" duration="120000"><wil value="5"/><msg text="You drink a will potion." undo="The will potion wears off."/></apply></script>');
 INSERT INTO progression_events VALUES('drink_speed_potion','<script><msg aim="Actor" text="drink_speed_potion not implemented. I know, it makes me sad too."/></script>');
 INSERT INTO progression_events VALUES('drink_strange_potion','<script><msg aim="Actor" text="drink_strange_potion not implemented."/></script>');
-INSERT INTO progression_events VALUES('create_familiar','<script><msg aim="Actor" text="create_familiar not implemented."/></script>');
+INSERT INTO progression_events VALUES('create_familiar','<script><create-familiar aim="Target"/></script>');
 INSERT INTO progression_events VALUES('fire_damage','<script><hp aim="Actor" value="-6"/><msg aim="Actor" text="You touch the ingots and your hand is burned!"/></script>');
 INSERT INTO progression_events VALUES('healing_tree','<script><hp aim="Actor" value="6"/><msg aim="Actor" text="Walking near the tree you feel refreshed!"/></script>');
 INSERT INTO progression_events VALUES('morph_ulbernaut','<script><apply aim="Actor" type="buff" name="Ulberform" duration="60000"><mesh value="ulbernaut"/><msg text="You turn into a lumbering giant!" undo="Your ulbernaut form wears off."/></apply></script>');

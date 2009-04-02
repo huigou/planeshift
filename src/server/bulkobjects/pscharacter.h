@@ -670,6 +670,7 @@ public:
     csString animal_affinity;
     PID owner_id;
     PID familiar_id;
+    Buffable<int> canSummonFamiliar;
 
 public:
     psCharacter();
@@ -936,6 +937,8 @@ public:
     bool IsPet() { return characterType == PSCHARACTER_TYPE_PET; };
     PID  GetFamiliarID() { return familiar_id; };
     void SetFamiliarID(PID v);
+    bool CanSummonFamiliar() { return GetFamiliarID() != 0 && canSummonFamiliar.Current() > 0; }
+    Buffable<int> & GetCanSummonFamiliar() { return canSummonFamiliar; }
     const char *GetAnimalAffinity() { return animal_affinity.GetDataSafe(); };
     void SetAnimialAffinity( const char* v ) { animal_affinity = v; };
     PID  GetOwnerID() { return owner_id; };
