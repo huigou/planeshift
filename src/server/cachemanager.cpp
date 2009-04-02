@@ -220,7 +220,7 @@ void CacheManager::UnloadAll()
             psQuest* newQuest = it.Next ();
             delete newQuest;
         }
-        quests_by_id.DeleteAll();
+        quests_by_id.Empty();
     }
 
     {
@@ -292,6 +292,12 @@ void CacheManager::UnloadAll()
         while (it.HasNext ())
         {
             csArray<CraftTransInfo*>* newArray = it.Next ();
+            csArray<CraftTransInfo*>::Iterator it2(newArray->GetIterator ());
+            while (it2.HasNext ())
+            {
+                CraftTransInfo* newCraftTransInfo = it2.Next();
+                delete newCraftTransInfo;
+            }
             delete newArray;
         }
         tradeCraftTransInfo_IDHash.Empty();
@@ -336,27 +342,41 @@ void CacheManager::UnloadAll()
     {
         csHash<psItemStats *, csString>::GlobalIterator it (itemStats_NameHash.GetIterator ());
         while (it.HasNext ())
-        {
-            psItemStats* itemstats = it.Next ();
-            delete itemstats;
-        }
-        itemStats_NameHash.Empty();
+            delete it.Next ();
     }
 
     {
         csHash<psSectorInfo *>::GlobalIterator it (sectorinfo_by_id.GetIterator ());
         while (it.HasNext ())
-        {
-            psSectorInfo* sector = it.Next ();
-            delete sector;
-        }
-        sectorinfo_by_id.Empty();
+            delete it.Next ();
     }
 
     {
-        csHash<ProgressionScript*,csString>::GlobalIterator it(scripts.GetIterator());
-        while (it.HasNext())
+        csHash<ProgressionScript*,csString>::GlobalIterator it(scripts.GetIterator ());
+        while (it.HasNext ())
+            delete it.Next ();
+    }
+    
+    {
+        csHash<CachedObject *, csString>::GlobalIterator it(generic_object_cache.GetIterator ());
+        while (it.HasNext ())
             delete it.Next();
+    }
+    
+    // only deletes the hash tables in the factions
+    // the factions themselves will be deleted by the RBTree
+    {
+        csHash<Faction*, int>::GlobalIterator it(factions_by_id.GetIterator ());
+        while (it.HasNext())
+        {
+            Faction* newFaction = it.Next();
+            csHash< FactionLifeEvent *, int >::GlobalIterator it2(newFaction->PositiveFactionEvents.GetIterator ());
+            while (it2.HasNext ())
+                delete it2.Next();
+            csHash< FactionLifeEvent *, int >::GlobalIterator it3(newFaction->NegativeFactionEvents.GetIterator ());
+            while (it3.HasNext ())
+                delete it3.Next();
+        }
     }
     // ToDo: unload everything else    
 }
