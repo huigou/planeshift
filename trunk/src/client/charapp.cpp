@@ -79,26 +79,9 @@ csString psCharAppearance::ParseStrings(const char* part, const char* str) const
 }
 
 
-void psCharAppearance::FaceTexture(csString& faceMaterial, csString& faceTexture)
+void psCharAppearance::FaceTexture(csString& faceMaterial)
 {
-    csString materialParsed = ParseStrings("", faceMaterial);
-    csString textureParsed  = ParseStrings("", faceTexture);
-
-    iMaterialWrapper* material = Loader::GetSingleton().LoadMaterial(materialParsed, textureParsed);
-
-    if ( !material )
-    {
-            Notify3(LOG_CHARACTER, "Failed to load texture ( %s, %s )", faceMaterial.GetData(), faceTexture.GetData());
-            return;
-    }
-    else
-    {
-        if ( state )
-        {
-            state->SetMaterial("Head", material);
-        }
-    }
-
+    ChangeMaterial("Head", faceMaterial);
 }
 
 void psCharAppearance::BeardMesh(csString& subMesh)
@@ -262,9 +245,9 @@ void psCharAppearance::ShowHair(bool show)
     }
 }
 
-void psCharAppearance::SetSkinTone(csString& part, csString& material, csString& texture)
+void psCharAppearance::SetSkinTone(csString& part, csString& material)
 {
-    if (!baseMesh || !part || !material || !texture)
+    if (!baseMesh || !part || !material)
     {
         return;
     }
@@ -273,34 +256,9 @@ void psCharAppearance::SetSkinTone(csString& part, csString& material, csString&
         SkinToneSet s;
         s.part = part;
         s.material = material;
-        s.texture = texture;
-
         skinToneSet.Push(s);
 
-        csString materialNameParsed    = ParseStrings(part, material);
-        csString textureNameParsed     = ParseStrings(part, texture);
-
-        iMaterialWrapper* material = Loader::GetSingleton().LoadMaterial(materialNameParsed, textureNameParsed );
-        if ( !material )
-        {
-            // Not necisarily an error; this texture may just not exist for this character, yet
-            Notify3(LOG_CHARACTER,"Failed to load texture \"%s\" for part \"%s\"",textureNameParsed.GetData(),part.GetData());
-            return;
-        }
-
-        if ( !state->SetMaterial(part,material) )
-        {
-            csString left,right;
-            left.Format("Left %s",part.GetData());
-            right.Format("Right %s",part.GetData());
-
-            // Try mirroring
-            if ( !state->SetMaterial(left,material) || !state->SetMaterial(right,material) )
-            {
-                Error3("Failed to set material \"%s\" on part \"%s\"",materialNameParsed.GetData(),part.GetData());
-                return;
-            }
-        }
+        ChangeMaterial(part, material);
     }
 }
 
@@ -376,12 +334,12 @@ void psCharAppearance::Equip( csString& slotname,
         // If there is also a new material ( texture ) then place that on as well.
         if ( texture.Length() )
         {
-            ChangeMaterial( ParseStrings(part,subMesh),texture, texture);
+            ChangeMaterial( ParseStrings(part,subMesh), texture);
         }
     }
     else if ( part.Length() )
     {
-        ChangeMaterial(part, texture, texture);
+        ChangeMaterial(part, texture);
     }
 }
 
@@ -413,7 +371,7 @@ bool psCharAppearance::Dequip(csString& slotname,
     {
         if ( texture.Length() )
         {
-            ChangeMaterial(part, texture, texture);
+            ChangeMaterial(part, texture);
         }
         else
         {
@@ -454,35 +412,29 @@ void psCharAppearance::DefaultMesh(const char* part)
 }
 
 
-bool psCharAppearance::ChangeMaterial(const char* part, const char* meshName, const char* textureName )
+bool psCharAppearance::ChangeMaterial(const char* part, const char* materialName)
 {
-    if ( !part || !meshName || !textureName)
+    if (!part || !materialName)
         return false;
 
-    csString meshNameParsed    = ParseStrings(part, meshName);
-    csString textureNameParsed = ParseStrings(part, textureName);
+    csString materialNameParsed = ParseStrings(part, materialName);
 
-    iMaterialWrapper* material = Loader::GetSingleton().LoadMaterial( meshNameParsed, textureNameParsed );
-    if ( !material )
+    csRef<iMaterialWrapper> material = Loader::GetSingleton().LoadMaterial(materialNameParsed);
+    if (!material.IsValid())
     {
-        // Not necisarily an error; this texture may just not exist for this character, yet
-        Notify3(LOG_CHARACTER,"Failed to load texture \"%s\" for part \"%s\"",textureNameParsed.GetData(),part);
-        return false;
-    }
-
-    if ( !state->SetMaterial(part,material) )
-    {
-        csString left,right;
-        left.Format("Left %s",part);
-        right.Format("Right %s",part);
-
-        // Try mirroring
-        if ( !state->SetMaterial(left,material) || !state->SetMaterial(right,material) )
+        Attachment attach(false);
+        attach.materialName = materialNameParsed;
+        attach.partName = part;
+        if(delayedAttach.IsEmpty())
         {
-             Error3("Failed to set material \"%s\" on part \"%s\"",meshNameParsed.GetData(),part);
-             return false;
+            psengine->RegisterDelayedLoader(this);
         }
+        delayedAttach.PushBack(attach);
+
+        return false;
     }
+
+    ProcessAttach(material, materialName, part);
 
     return true;
 }
@@ -525,10 +477,10 @@ bool psCharAppearance::Attach(const char* socketName, const char* meshFactName)
         return false;
     }
 
-    csRef<iMeshFactoryWrapper> factory = psengine->GetLoader()->LoadFactory(meshFactName);
+    csRef<iMeshFactoryWrapper> factory = Loader::GetSingleton().LoadFactory(meshFactName);
     if(!factory.IsValid())
     {
-        Attachment attach;
+        Attachment attach(true);
         attach.factName = meshFactName;
         attach.socket = socket;
         if(delayedAttach.IsEmpty())
@@ -576,17 +528,47 @@ void psCharAppearance::ProcessAttach(csRef<iMeshFactoryWrapper> factory, const c
     psengine->GetCelClient()->HandleItemEffect(factory->QueryObject()->GetName(), socket->GetMeshWrapper(), false, socketName, &effectids, &lightids);
 }
 
-void psCharAppearance::CheckMeshLoad()
+void psCharAppearance::ProcessAttach(csRef<iMaterialWrapper> material, const char* materialName, const char* partName)
+{
+    if (!state->SetMaterial(partName, material))
+    {
+        csString left, right;
+        left.Format("Left %s", partName);
+        right.Format("Right %s", partName);
+
+        // Try mirroring
+        if(!state->SetMaterial(left, material) || !state->SetMaterial(right, material))
+        {
+             Error3("Failed to set material \"%s\" on part \"%s\"", materialName, partName);
+             return;
+        }
+    }
+}
+
+void psCharAppearance::CheckLoadStatus()
 {
     if(!delayedAttach.IsEmpty())
     {
         Attachment attach = delayedAttach.Front();
-        csRef<iMeshFactoryWrapper> factory = psengine->GetLoader()->LoadFactory(attach.factName);
-        if(factory.IsValid())
+
+        if(attach.factory)
         {
-            factory->GetFlags().Set(CS_ENTITY_NODECAL);
-            ProcessAttach(factory, attach.factName, attach.socket);
-            delayedAttach.PopFront();
+            csRef<iMeshFactoryWrapper> factory = Loader::GetSingleton().LoadFactory(attach.factName);
+            if(factory.IsValid())
+            {
+                factory->GetFlags().Set(CS_ENTITY_NODECAL);
+                ProcessAttach(factory, attach.factName, attach.socket);
+                delayedAttach.PopFront();
+            }
+        }
+        else
+        {
+            csRef<iMaterialWrapper> material = Loader::GetSingleton().LoadMaterial(attach.materialName);
+            if(material.IsValid())
+            {
+                ProcessAttach(material, attach.materialName, attach.partName);
+                delayedAttach.PopFront();
+            }
         }
     }
     else
@@ -672,13 +654,13 @@ bool psCharAppearance::SetTrait(Trait * trait)
         {
             case PSTRAIT_LOCATION_SKIN_TONE:
             {
-                SetSkinTone(trait->mesh, trait->material, trait->texture);
+                SetSkinTone(trait->mesh, trait->material);
                 break;
             }
 
             case PSTRAIT_LOCATION_FACE:
             {
-                FaceTexture(trait->material, trait->texture );
+                FaceTexture(trait->material);
                 break;
             }
 
@@ -732,14 +714,14 @@ void psCharAppearance::DefaultMaterial(csString& part)
         if ( part == skinToneSet[z].part )
         {
             skinToneSetFound = true;
-            ChangeMaterial(part, skinToneSet[z].material, skinToneSet[z].texture);
+            ChangeMaterial(part, skinToneSet[z].material);
         }
     }
 
     // Set stateFactory defaults if no skinToneSet found.
     if ( !skinToneSetFound )
     {
-        ChangeMaterial(part, stateFactory->GetDefaultMaterial(part), stateFactory->GetDefaultMaterial(part));
+        ChangeMaterial(part, stateFactory->GetDefaultMaterial(part));
     }
 }
 

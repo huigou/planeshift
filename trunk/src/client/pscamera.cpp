@@ -1762,7 +1762,7 @@ void psCamera::SetDistanceClipping(float dist)
     shadowManager->SetShadowRange(dist);
 
     // control load distance.
-    psengine->GetLoader()->SetLoadRange(dist+dist/10);
+    Loader::GetSingleton().SetLoadRange(dist+dist/10);
 }
 
 float psCamera::GetDistanceClipping()

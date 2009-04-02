@@ -239,7 +239,7 @@ void pawsCreationMain::ChangeSkinColour( int currentChoice )
     
     while ( trait )
     {
-        charApp->SetSkinTone(trait->mesh, trait->material, trait->texture);
+        charApp->SetSkinTone(trait->mesh, trait->material);
         trait = trait->next_trait;
     }
     
@@ -371,7 +371,7 @@ void pawsCreationMain::ChangeFace( int newFace )
         Trait* trait = race->location[PSTRAIT_LOCATION_FACE][currentGender][newFace];
         view->LockCamera(race->zoomLocations[PSTRAIT_LOCATION_FACE], csVector3(0, 0, 0));
                       
-        charApp->FaceTexture(trait->material, trait->texture);
+        charApp->FaceTexture(trait->material);
         
         faceLabel->SetText( trait->name );                                       
     }
@@ -1024,14 +1024,14 @@ void pawsCreationMain::UpdateRace(int id)
     view->Show();
     view->EnableMouseControl(true);
 
-    CheckMeshLoad();
+    CheckLoadStatus();
 }
 
-void pawsCreationMain::CheckMeshLoad()
+void pawsCreationMain::CheckLoadStatus()
 {
     if(!loaded)
     {
-        csRef<iMeshFactoryWrapper> factory = psengine->GetLoader()->LoadFactory(factName);
+        csRef<iMeshFactoryWrapper> factory = Loader::GetSingleton().LoadFactory(factName);
         if(factory.IsValid())
         {
             view->View(factory);

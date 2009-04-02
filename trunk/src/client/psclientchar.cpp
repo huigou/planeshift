@@ -83,7 +83,6 @@ void Trait::Load( iDocumentNode* node )
     else
         shader = csVector3(0,0,0);
 
-    texture = psengine->FindCommonString(cstr_id_texture);
     material = psengine->FindCommonString(cstr_id_material);
     mesh = psengine->FindCommonString(cstr_id_mesh);
 

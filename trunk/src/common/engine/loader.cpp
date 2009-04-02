@@ -1589,124 +1589,20 @@ csPtr<iMeshFactoryWrapper> Loader::LoadFactory(const char* name)
     return csPtr<iMeshFactoryWrapper>(0);
 }
 
-iMaterialWrapper* Loader::LoadMaterial(const char *name, const char *filename)
+csPtr<iMaterialWrapper> Loader::LoadMaterial(const char* name)
 {
-    iMaterialWrapper* materialWrap = engine->GetMaterialList()->FindByName(name);
-    if(!materialWrap)
+    csRef<Material> material = materials.Get(name, csRef<Material>());
     {
-        // Check that the texture exists.
-        if(!vfs->Exists(filename))
-            return NULL;
-
-        // Load base texture.
-        iTextureWrapper* texture = LoadTexture(name, filename);
-
-        // Load base material.
-        csRef<iMaterial> material (engine->CreateBaseMaterial(texture));
-        materialWrap = engine->GetMaterialList()->NewMaterial(material, name);
-
-        // Check for shader maps.
-        if(gfxFeatures & useAdvancedShaders)
-        {
-            csString shadermapBase = filename;
-            shadermapBase.Truncate(shadermapBase.Length()-4);
-
-            // Normal map
-            csString shadermap = shadermapBase;
-            shadermap.Append("_n.dds");
-            if(vfs->Exists(shadermap))
-            {
-                iTextureWrapper* t = LoadTexture(shadermap, shadermap, "normalmap");
-                csShaderVariable* shadervar = new csShaderVariable();
-                shadervar->SetName(svstrings->Request("tex normal compressed"));
-                shadervar->SetValue(t);
-                material->AddVariable(shadervar);
-            }
-
-            // Height map
-            shadermap = shadermapBase;
-            shadermap.Append("_h.dds");
-            if(vfs->Exists(shadermap))
-            {
-                iTextureWrapper* t = LoadTexture(shadermap, shadermap);
-                csShaderVariable* shadervar = new csShaderVariable();
-                shadervar->SetName(svstrings->Request("tex height"));
-                shadervar->SetValue(t);
-                material->AddVariable(shadervar);
-            }
-
-            // Spec map
-            shadermap = shadermapBase;
-            shadermap.Append("_s.dds");
-            if(vfs->Exists(shadermap))
-            {
-                iTextureWrapper* t = LoadTexture(shadermap, shadermap);
-                csShaderVariable* shadervar = new csShaderVariable();
-                shadervar->SetName(svstrings->Request("tex specular"));
-                shadervar->SetValue(t);
-                material->AddVariable(shadervar);
-            }
-
-            // Gloss map
-            shadermap = shadermapBase;
-            shadermap.Append("_g.dds");
-            if(vfs->Exists(shadermap))
-            {
-                iTextureWrapper* t = LoadTexture(shadermap, shadermap);
-                csShaderVariable* shadervar = new csShaderVariable();
-                shadervar->SetName(svstrings->Request("tex gloss"));
-                shadervar->SetValue(t);
-                material->AddVariable(shadervar);
-            }
-
-            // AO map
-            shadermap = shadermapBase;
-            shadermap.Append("_ao.dds");
-            if(vfs->Exists(shadermap))
-            {
-                iTextureWrapper* t = LoadTexture(shadermap, shadermap);
-                csShaderVariable* shadervar = new csShaderVariable();
-                shadervar->SetName(svstrings->Request("tex ambient occlusion"));
-                shadervar->SetValue(t);
-                material->AddVariable(shadervar);
-            }
-        }
-    }
-    return materialWrap;
-}
-
-iTextureWrapper* Loader::LoadTexture(const char *name, const char *filename, const char* className)
-{
-    // name is the material name; blah.dds
-    // filename will be /planeshift/blah/blah.dds
-    csString tempName;
-    if(!name)
-    {
-        tempName = filename;
-        size_t last = tempName.FindLast('/');
-        tempName.DeleteAt(0, last+1);
-        name = tempName.GetData();
+        // Validation.
+        csString msg;
+        msg.Format("Invalid material reference '%s'", name);
+        CS_ASSERT_MSG(msg.GetData(), material.IsValid());
     }
 
-    csRef<iTextureWrapper> texture = engine->GetTextureList()->FindByName(name);
-
-    if(!texture)
+    if(LoadMaterial(material))
     {
-        texture = loader->LoadTexture(name, filename, CS_TEXTURE_3D, txtmgr, true, false);
-        if(className)
-        {
-            texture->SetTextureClass(className);
-        }
-        engine->SyncEngineListsNow(tloader);
+        return csPtr<iMaterialWrapper>(material->mat);
     }
 
-    if (!texture)
-    {
-        csReport (object_reg, CS_REPORTER_SEVERITY_ERROR,
-            "planeshift.engine.celbase",
-            "Error loading texture '%s'!",
-            name);
-        return false;
-    }
-    return texture;
+    return csPtr<iMaterialWrapper>(0);
 }

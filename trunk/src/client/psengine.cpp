@@ -912,7 +912,7 @@ bool psEngine::Process3D(iEvent& ev)
         csWeakRef<DelayedLoader> dl = delayedLoaders.Get(0);
         if(dl.IsValid())
         {
-            dl->CheckMeshLoad();
+            dl->CheckLoadStatus();
         }
         else
         {

@@ -472,7 +472,7 @@ void pawsCharacterPickerWindow::SelectCharacter(int character)
         // Show the model for the selected character.
         loaded = false;
         view->Show();
-        CheckMeshLoad();
+        CheckLoadStatus();
     }
 }
 
@@ -515,15 +515,15 @@ void pawsCharacterPickerWindow::SelectCharacter(int character, pawsWidget* widge
         // Show the model for the selected character.
         loaded = false;
         view->Show();
-        CheckMeshLoad();
+        CheckLoadStatus();
     }
 }
 
-void pawsCharacterPickerWindow::CheckMeshLoad()
+void pawsCharacterPickerWindow::CheckLoadStatus()
 {
     if(!loaded)
     {
-        csRef<iMeshFactoryWrapper> factory = psengine->GetLoader()->LoadFactory(models[selectedCharacter].factName);
+        csRef<iMeshFactoryWrapper> factory = Loader::GetSingleton().LoadFactory(models[selectedCharacter].factName);
         if (factory.IsValid())
         {
             psengine->UnregisterDelayedLoader(this);

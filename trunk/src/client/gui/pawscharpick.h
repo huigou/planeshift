@@ -50,7 +50,7 @@ public:
     
     void StoreHashedPassword(csString passwordHash) {passHash = passwordHash;}
 
-    void CheckMeshLoad();
+    void CheckLoadStatus();
 private:
 
     /// Creates the character creation screens.

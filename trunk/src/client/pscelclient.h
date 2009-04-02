@@ -380,7 +380,7 @@ public:
      /**
       * Delayed mesh loading.
       */
-     void CheckMeshLoad();
+     void CheckLoadStatus();
 
      /**
       * Delayed load 'post-process'.

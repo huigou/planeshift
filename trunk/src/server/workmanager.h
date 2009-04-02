@@ -418,6 +418,7 @@ protected:
     bool CombineWork();
     bool IsIngredient(uint32 patternId, uint32 groupPatternId, uint32 targetId);
 
+    psItem* TransformSelfContainerItem(psItem* oldItem, uint32 newId, int newQty, float itemQuality);
     psItem* TransformContainedItem(psItem* oldItem, uint32 newId, int newQty, float itemQuality);
     psItem* CombineContainedItem(uint32 newId, int newQty, float itemQuality, psItem* containerItem);
     psItem* TransformSlotItem(INVENTORY_SLOT_NUMBER slot, uint32 newId, int newQty, float itemQuality);
