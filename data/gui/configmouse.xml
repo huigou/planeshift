@@ -4,6 +4,7 @@
         visible="yes" savepositions="no" movable="yes"
         resizable="no">
 	<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="10" scalefont="no" />
+
     <widget factory="pawsSeqTreeNode">
         <widget factory="pawsWidgetTreeNode">
             <nodewidget>

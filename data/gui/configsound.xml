@@ -1,7 +1,8 @@
 <widget_description>
-<widget name="ConfigPvPTree" factory="pawsConfigPvP"
-        visible="no" savepositions="no" movable="no" resizable="no" >\
-    <frame x="225" y="10" width="400" height="300" border="no" />
+<widget name="ConfigSound" factory="pawsConfigSound"
+        visible="no" savepositions="no" movable="no" resizable="no" style="New Standard GUI">
+
+    <frame x="10" y="10" width="400" height="300" border="no" />
     <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="10" scalefont="no" />
 
     <widget name="music" factory="pawsCheckBox">
