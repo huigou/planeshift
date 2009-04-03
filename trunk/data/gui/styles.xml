@@ -133,6 +133,10 @@
         </attachpoints>
     </style>
 
+    <style name="New Standard Checkbox" inherit="Standard Font" >
+        <checkbox off="Checkbox Unchecked" on="Checkbox Checked" greyoff="Checkbox Unchecked" greyon="CheckBox Checked Grayed" size="16" />
+    </style>
+
     <style name="New Standard TextBox" inherit="Standard Font" >
     </style>
 
@@ -204,5 +208,6 @@
         <defaultstyle widget="pawsListBox"          style="New Standard ListBox"/>
         <defaultstyle widget="pawsSimpleTree"       style="New Left Side Tree"/>
         <defaultstyle widget="pawsMultilineEditTextBox" style="New Standard MLE"/>
+        <defaultstyle widget="pawsCheckBox"             style="New Standard Checkbox"/>
     </style>
 </styles>

@@ -87,6 +87,16 @@
 
     </pawsSimpleTree>
 
+    <pawsWidget name="PanelParent">
+        <frame x="220" y="5" width="440" height="310" border="no" />
+        <attachpoints>
+            <attach point="ATTACH_RIGHT" />
+            <attach point="ATTACH_TOP" />
+            <attach point="ATTACH_LEFT" />
+            <attach point="ATTACH_BOTTOM" />
+        </attachpoints>
+    </pawsWidget>
+
     <pawsButton name="OKButton" id="-10" toggle="no">
         <frame x="10" y="320" width="80" height="20" border="no"/>
         <label text="Save"/>
