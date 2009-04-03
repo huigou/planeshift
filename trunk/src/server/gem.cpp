@@ -221,7 +221,7 @@ void GEMSupervisor::AddEntity(gemObject *obj, EID objEid)
 {
     CS_ASSERT(!entities_by_eid.Contains(objEid));
     entities_by_eid.Put(objEid, obj);
-    Debug3(LOG_CELPERSIST,0,"Entity <%s> added to supervisor as %s\n", obj->GetName(), ShowID(eid));
+    Debug3(LOG_CELPERSIST,0,"Entity <%s> added to supervisor as %s\n", obj->GetName(), ShowID(objEid));
 }
 
 void GEMSupervisor::AddActorEntity(gemActor *actor)
