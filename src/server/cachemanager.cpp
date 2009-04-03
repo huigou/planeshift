@@ -360,7 +360,13 @@ void CacheManager::UnloadAll()
     {
         csHash<CachedObject *, csString>::GlobalIterator it(generic_object_cache.GetIterator ());
         while (it.HasNext ())
-            delete it.Next();
+        {
+            CachedObject * newCachedObject = it.Next ();
+            newCachedObject->event->CancelEvent();
+            newCachedObject->object->ProcessCacheTimeout();
+            newCachedObject->object->DeleteSelf();
+            delete newCachedObject;
+        }
     }
     
     // only deletes the hash tables in the factions
