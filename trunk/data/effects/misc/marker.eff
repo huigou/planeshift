@@ -7,7 +7,7 @@
     </shaders>
     <textures>
         <texture name="marker">
-            <file>/this/art/effects/marker01.dds</file>
+            <file>/this/art/effects/marker02.dds</file>
         </texture>
     </textures>
     <materials>

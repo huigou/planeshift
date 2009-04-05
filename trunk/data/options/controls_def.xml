@@ -35,7 +35,6 @@
     <bind action="Communications" key="" />
     <bind action="Help" key="F1" />
     <bind action="Inventory" key="i" />
-    <bind action="Bag" key="v" />
     <bind action="Options" key="o" />
     <bind action="Quit" key="Alt+q" />
     <bind action="Spell book" key="c" />
