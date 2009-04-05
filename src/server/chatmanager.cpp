@@ -291,7 +291,7 @@ void ChatManager::SendNotice(psChatMessage& msg)
 
 void ChatManager::SendShout(Client *c, psChatMessage& msg)
 {
-    psChatMessage newMsg(c->GetClientNum(), c->GetName(), 0, msg.sText, msg.iChatType, msg.translate);
+    psChatMessage newMsg(c->GetClientNum(), c->GetActor()->GetEID(), c->GetName(), 0, msg.sText, msg.iChatType, msg.translate);
 
     if (c->GetActor()->GetCharacterData()->GetTotalOnlineTime() > 3600 || c->GetActor()->GetSecurityLevel() >= GM_LEVEL_0)
     {
@@ -315,7 +315,7 @@ void ChatManager::SendShout(Client *c, psChatMessage& msg)
 
 void ChatManager::SendSay(uint32_t clientNum, gemActor *actor, psChatMessage& msg,const char* who)
 {
-    psChatMessage newMsg(clientNum, who, 0, msg.sText, msg.iChatType, msg.translate);
+    psChatMessage newMsg(clientNum, actor->GetEID(), who, 0, msg.sText, msg.iChatType, msg.translate);
     csArray<PublishDestination>& clients = actor->GetMulticastClients();
     newMsg.Multicast(clients, 0, CHAT_SAY_RANGE );
 
@@ -347,10 +347,10 @@ void ChatManager::SendGuild(Client *client, psChatMessage& msg)
         return;
     }
 
-    SendGuild(client->GetName(), guild, msg);
+    SendGuild(client->GetName(), client->GetActor()->GetEID(), guild, msg);
 }
 
-void ChatManager::SendGuild(const csString & sender, psGuildInfo * guild, psChatMessage& msg)
+void ChatManager::SendGuild(const csString & sender, EID senderEID, psGuildInfo * guild, psChatMessage& msg)
 {
     ClientIterator iter(*psserver->GetConnections() );
     psGuildLevel * level;
@@ -363,7 +363,7 @@ void ChatManager::SendGuild(const csString & sender, psGuildInfo * guild, psChat
             level = client->GetCharacterData()->GetGuildLevel();
             if (level!=NULL  &&  level->HasRights(RIGHTS_VIEW_CHAT))
             {
-                psChatMessage newMsg(client->GetClientNum(), sender, 0, msg.sText, msg.iChatType, msg.translate);
+                psChatMessage newMsg(client->GetClientNum(), senderEID, sender, 0, msg.sText, msg.iChatType, msg.translate);
                 newMsg.SendMessage();
             }
         }
@@ -375,7 +375,7 @@ void ChatManager::SendGroup(Client * client, psChatMessage& msg)
     csRef<PlayerGroup> group = client->GetActor()->GetGroup();
     if (group)
     {
-        psChatMessage newMsg(0, client->GetName(), 0, msg.sText, msg.iChatType, msg.translate);
+        psChatMessage newMsg(0, client->GetActor()->GetEID(), client->GetName(), 0, msg.sText, msg.iChatType, msg.translate);
         group->Broadcast(newMsg.msg);
     }
     else
@@ -395,11 +395,11 @@ void ChatManager::SendTell(psChatMessage& msg, const char* who,Client *client,Cl
     CS_ASSERT(strcasecmp(p->GetName(), targetName) == 0);
 
     // Create a new message and send it to that person if found
-    psChatMessage cmsg(p->GetClientNum(), who, 0, msg.sText, msg.iChatType, msg.translate);
+    psChatMessage cmsg(p->GetClientNum(), client->GetActor()->GetEID(), who, 0, msg.sText, msg.iChatType, msg.translate);
     cmsg.SendMessage();
-
+//TODO CHECK MAGIC!
     // Echo the message back to the speaker also
-    psChatMessage cmsg2(client->GetClientNum(), targetName, 0, msg.sText, CHAT_TELLSELF, msg.translate);
+    psChatMessage cmsg2(client->GetClientNum(), client->GetActor()->GetEID(), targetName, 0, msg.sText, CHAT_TELLSELF, msg.translate);
     cmsg2.SendMessage();
 }
 

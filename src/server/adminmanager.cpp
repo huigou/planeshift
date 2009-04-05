@@ -4614,7 +4614,7 @@ void AdminManager::Impersonate( MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDa
     else
         sendText.Format("%s %ss: %s", data.player.GetData(), data.commandMod.GetData(), data.text.GetData() );
 
-    psChatMessage newMsg(client->GetClientNum(), data.player, 0, sendText, CHAT_GM, false);
+    psChatMessage newMsg(client->GetClientNum(), 0, data.player, 0, sendText, CHAT_GM, false);
 
     gemObject* source = (gemObject*)client->GetActor();
 
@@ -6743,9 +6743,9 @@ void AdminManager::ChangeGuildLeader(MsgEntry* me, psAdminCmdMessage& msg, Admin
 
     csString text;
     text.Format("%s has been promoted to '%s' by a GM.", data.player.GetData(), member->guildlevel->title.GetData() );
-    psChatMessage guildmsg(me->clientnum,"System",0,text,CHAT_GUILD, false);
+    psChatMessage guildmsg(me->clientnum,0,"System",0,text,CHAT_GUILD, false);
     if (guildmsg.valid)
-        psserver->GetChatManager()->SendGuild("server", guild, guildmsg);
+        psserver->GetChatManager()->SendGuild("server", 0, guild, guildmsg);
 }
 
 void AdminManager::Thunder(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client)

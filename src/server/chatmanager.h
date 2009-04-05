@@ -81,7 +81,7 @@ public:
 
     NpcResponse *CheckNPCEvent(Client *client,csString& trigger,gemNPC * &target);
 
-    void SendGuild(const csString & sender, psGuildInfo * guild, psChatMessage& msg);
+    void SendGuild(const csString & sender, EID senderEID, psGuildInfo * guild, psChatMessage& msg);
 
 protected:
 	csPDelArray<CachedData> audioFileCache;

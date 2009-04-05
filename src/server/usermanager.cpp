@@ -1072,6 +1072,11 @@ void UserManager::NotifyGuildBuddies(Client * client, bool logged_in)
     csString name (client->GetName());
     PID char_id = client->GetCharacterData()->GetPID();
     psGuildInfo * charGuild = client->GetCharacterData()->GetGuild();
+    EID clientEID;
+
+    if(client->GetActor())
+        clientEID = client->GetActor()->GetEID();
+
     if(charGuild)
     {
         for(size_t i = 0; i < charGuild->members.GetSize(); i++)
@@ -1089,7 +1094,7 @@ void UserManager::NotifyGuildBuddies(Client * client, bool logged_in)
                     else
                         text.Format("/me has quit");
 
-                    psChatMessage guildmsg(notifiedactor->GetClientID(),name.GetData(),0,text,CHAT_GUILD, false);
+                    psChatMessage guildmsg(notifiedactor->GetClientID(), clientEID, name.GetData(),0,text,CHAT_GUILD, false);
                     guildmsg.SendMessage();
                 }
             }

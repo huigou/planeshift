@@ -427,7 +427,7 @@ csString psCharacterApprovedMessage::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psChatMessage,MSGTYPE_CHAT);
 
-psChatMessage::psChatMessage(uint32_t cnum, const char *person, const char * other,
+psChatMessage::psChatMessage(uint32_t cnum, EID actorid, const char *person, const char * other,
                  const char *chatMessage, uint8_t type, bool translate)
 {
     if (!chatMessage || !person)
@@ -440,7 +440,7 @@ psChatMessage::psChatMessage(uint32_t cnum, const char *person, const char * oth
     this->translate = translate;
 
     bool includeOther = iChatType == CHAT_ADVISOR;
-    size_t sz = strlen(person) + 1 + strlen(chatMessage) + 1 + sizeof(uint8_t)*2;
+    size_t sz = strlen(person) + 1 + strlen(chatMessage) + 1 + sizeof(uint8_t)*2 + sizeof(uint32_t);
     if (includeOther)
         sz += strlen(other) + 1;
 
@@ -453,6 +453,7 @@ psChatMessage::psChatMessage(uint32_t cnum, const char *person, const char * oth
     msg->Add(person);
     msg->Add(chatMessage);
     msg->Add(translate);
+    msg->Add(actorid.Unbox());
     if (includeOther)
         msg->Add(other);
 
@@ -471,6 +472,7 @@ psChatMessage::psChatMessage(MsgEntry *message)
     sPerson   = message->GetStr();
     sText     = message->GetStr();
     translate = message->GetBool();
+    actor     = message->GetUInt32();
     if (includeOther && !message->IsEmpty())
         sOther = message->GetStr();
 
@@ -488,6 +490,7 @@ csString psChatMessage::ToString(AccessPointers * /*access_ptrs*/)
     msgtext.AppendFmt(" Person: %s",sPerson.GetDataSafe());
     msgtext.AppendFmt(" Text: %s",sText.GetDataSafe());
     msgtext.AppendFmt(" Translate: %s",(translate?"true":"false"));
+    msgtext.AppendFmt(" actor: %s",ShowID(actor));
 
     return msgtext;
 }

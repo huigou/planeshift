@@ -786,10 +786,13 @@ public:
     /** is the text supposed to be translated by psLocalization on target client ? */
     bool translate;
 
+    /** Keeps the eid of the originator client for chat bubbles */
+    EID actor;
+
     /** This function creates a PS Message struct given a chat text to send
      * out. This would be used for outgoing, new message creation
      */
-    psChatMessage(uint32_t cnum, const char *person, const char * other, const char *chatMessage,
+    psChatMessage(uint32_t cnum, EID actorid, const char *person, const char * other, const char *chatMessage,
           uint8_t type, bool translate);
 
     /** This constructor receives a PS Message struct and cracks it apart
