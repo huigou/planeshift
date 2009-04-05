@@ -6,6 +6,7 @@
   same names (eg: in events) As now the buble goes really to the origin
   of the text and not to a random one (depending on the first in the entities
   list)
+- Corrected a wrong fix for a memory leak patch by lanarel
 
 *** 2009-04-02 by Kenny Graunke
 - Made the Ring of Familiar actually useful and necessary.  Players must now
