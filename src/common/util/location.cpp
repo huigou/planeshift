@@ -140,9 +140,14 @@ bool Location::Import(iDocumentNode *node, iDataConnection *db,int typeID)
 
 LocationType::~LocationType()
 {
-    while (locs.GetSize()>1) // don't delete the last pointer because first and last are the same
+    while (locs.GetSize())
     {
-        Location * loc = locs.Pop();
+        Location * loc = locs.Pop(); //removes reference
+        //now delete the location (a polygon). Since this will delete all points
+        //on the polygon, and the first is a reference to loc, make sure to 
+        //delete that reference first:
+        loc->locs.DeleteIndex(0); 
+        // now delete the polygon
         delete loc;
     }
 }
