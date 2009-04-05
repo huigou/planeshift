@@ -1,3 +1,12 @@
+*** 2009-04-05 by Stefano Angeleri
+- Now the eid of the actor send a chat message is sent to the client which
+  in place of searching if he knows some actor with a certain name, just checks
+  for it's eid and uses it to show the chat bubble. this fixes some bugs
+  like PS#630 Kikiri - bubbles strangeness and problems with players with
+  same names (eg: in events) As now the buble goes really to the origin
+  of the text and not to a random one (depending on the first in the entities
+  list)
+
 *** 2009-04-02 by Kenny Graunke
 - Made the Ring of Familiar actually useful and necessary.  Players must now
   equip it to be able to summon their familiar.  This is accomplished by a new
