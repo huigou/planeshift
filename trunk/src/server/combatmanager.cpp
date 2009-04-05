@@ -209,7 +209,7 @@ bool CombatManager::InitializePVP()
 
 bool CombatManager::InPVPRegion(csVector3& pos,iSector * sector)
 {
-    if (pvp_region->CheckWithinBounds(EntityManager::GetSingleton().GetEngine(), pos, sector))
+    if (pvp_region && pvp_region->CheckWithinBounds(EntityManager::GetSingleton().GetEngine(), pos, sector))
         return true;
 
     return false;
