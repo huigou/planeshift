@@ -577,7 +577,7 @@ void GroupManager::GroupChat(gemActor * client, const char *fmt, ...)
     text.FormatV(fmt,args);
     va_end(args);
 
-    psChatMessage groupmsg(client->GetClientID(),"System",0,text,CHAT_GROUP, false);
+    psChatMessage groupmsg(client->GetClientID(),0,"System",0,text,CHAT_GROUP, false);
     if (groupmsg.valid)
     {
         groupmsg.msg->Reset();

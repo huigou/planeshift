@@ -280,7 +280,10 @@ void psChatBubbles::HandleMessage(MsgEntry * msg, Client * client)
     
     //we have to manage this separately as sPerson in this case holds the destination in place of the origin
     if (chatMsg.iChatType == CHAT_TELLSELF || chatMsg.iChatType == CHAT_NPCINTERNAL)
+    {
         chatMsg.sPerson = psengine->GetMainPlayerName();
+        chatMsg.actor = psengine->GetCelClient()->GetMainPlayer()->GetEID();
+    }
 
     // Get the first name of the person (needed for NPCs with both the first and the last name)
     csString firstName;
@@ -289,7 +292,7 @@ void psChatBubbles::HandleMessage(MsgEntry * msg, Client * client)
     else
         firstName = chatMsg.sPerson;
 
-    GEMClientActor* actor = psengine->GetCelClient()->GetActorByName(firstName);
+    GEMClientActor* actor = dynamic_cast<GEMClientActor*> (psengine->GetCelClient()->FindObject(chatMsg.actor));
     if (!actor)
         return;
 

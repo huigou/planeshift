@@ -483,7 +483,7 @@ void AdviceManager::HandleAdviceList( Client *advisor )
         if ( activeSession && activeSession->adviseeName.GetData() && activeSession->lastRequest.GetData()
             && activeSession->status == SESSION_STATUS_UNKNOWN && !activeSession->answered )
         {
-            psChatMessage msgAdvisor( advisor->GetClientNum(), activeSession->adviseeName, 0, activeSession->lastRequest, CHAT_ADVICE_LIST, false);
+            psChatMessage msgAdvisor( advisor->GetClientNum(), 0, activeSession->adviseeName, 0, activeSession->lastRequest, CHAT_ADVICE_LIST, false);
             msgAdvisor.SendMessage();
             found = true;
         }
@@ -600,7 +600,7 @@ void AdviceManager::HandleAdviceRequest( Client *advisee, csString message )
         buf.Format("%s, %s, \"%s\"", advisee->GetName(), activeSession->GetAdvisor()->GetActor()->GetName(), message.GetData() );
         psserver->GetLogCSV()->Write(CSV_ADVICE, buf);
 
-        psChatMessage msgAdvisor( activeSession->AdvisorClientNum, advisee->GetName(), 0, message , CHAT_ADVICE, false );
+        psChatMessage msgAdvisor( activeSession->AdvisorClientNum, 0, advisee->GetName(), 0, message , CHAT_ADVICE, false );
         msgAdvisor.SendMessage();
 
         // Send message to GM chars as well
@@ -608,7 +608,7 @@ void AdviceManager::HandleAdviceRequest( Client *advisee, csString message )
         {
             if (!advisors[i].GM || advisors[i].id == activeSession->AdvisorClientNum)
                 continue;
-            psChatMessage msgAdvisor( advisors[i].id, advisee->GetName(), 0, message, CHAT_ADVICE, false);
+            psChatMessage msgAdvisor( advisors[i].id, 0, advisee->GetName(), 0, message, CHAT_ADVICE, false);
             msgAdvisor.SendMessage();
         }
     }
@@ -620,11 +620,11 @@ void AdviceManager::HandleAdviceRequest( Client *advisee, csString message )
 
         for (size_t i = 0; i < advisors.GetSize(); i++)
         {
-            psChatMessage msgAdvisor( advisors[i].id, advisee->GetName(), 0, message, CHAT_ADVICE, false);
+            psChatMessage msgAdvisor( advisors[i].id, 0, advisee->GetName(), 0, message, CHAT_ADVICE, false);
             msgAdvisor.SendMessage();
         }
     }
-    psChatMessage msgChat( advisee->GetClientNum() , advisee->GetName(), 0, message, CHAT_ADVICE, false);
+    psChatMessage msgChat( advisee->GetClientNum() , 0, advisee->GetName(), 0, message, CHAT_ADVICE, false);
     msgChat.SendMessage();
 
 
@@ -726,7 +726,7 @@ void AdviceManager::HandleAdviceResponse( Client *advisor, csString sAdvisee, cs
             return;
         }
 
-        psChatMessage msgChat(activeSession->AdviseeClientNum, advisor->GetName(), advisee->GetName(), message ,CHAT_ADVISOR,false);
+        psChatMessage msgChat(activeSession->AdviseeClientNum, 0, advisor->GetName(), advisee->GetName(), message ,CHAT_ADVISOR,false);
 
         if ( activeSession->GetAdvisor() == NULL || activeSession->status != SESSION_STATUS_OWNED )
         {
@@ -877,7 +877,7 @@ void AdviceManager::AdviceRequestTimeout(AdviceSession *adviceSession)
         //adviceSession->advisorPoints = 0;
         psserver->SendSystemInfo(adviceSession->AdviseeClientNum,"Your advisor appears to be busy at the moment, the messenger is still waiting for an answer.");
         psserver->SendSystemInfo(adviceSession->AdvisorClientNum,"%s is still waiting for an answer to their question.",adviseeClient->GetName());
-        psChatMessage msgAdvisor(adviceSession->AdvisorClientNum,adviseeClient->GetName(), 0, adviceSession->lastRequest, CHAT_ADVICE_LIST, false);
+        psChatMessage msgAdvisor(adviceSession->AdvisorClientNum, 0, adviseeClient->GetName(), 0, adviceSession->lastRequest, CHAT_ADVICE_LIST, false);
         msgAdvisor.SendMessage();
     }
     else
@@ -885,7 +885,7 @@ void AdviceManager::AdviceRequestTimeout(AdviceSession *adviceSession)
         for (size_t i = 0; i < advisors.GetSize(); i++)
         {
             psserver->SendSystemInfo(advisors[i].id,"%s's messenger taps his foot impatiently.",adviseeClient->GetName());
-            //psChatMessage msgAdvisor(advisors[i].client_id,adviseeClient->GetName(), "RESEND:" + adviceSession->lastRequest,CHAT_ADVICE,false);
+            //psChatMessage msgAdvisor(advisors[i].client_id, 0, adviseeClient->GetName(), "RESEND:" + adviceSession->lastRequest,CHAT_ADVICE,false);
             //msgAdvisor.SendMessage();
         }
         psserver->SendSystemInfo(adviceSession->AdviseeClientNum,"All advisors appear to be busy at the moment, the messenger is still waiting for an answer.");

@@ -3467,7 +3467,7 @@ void gemActor::ActionCommand(bool actionMy, bool actionNarrate, const char *actT
     // subsequent ones add to the current time delay, and send delayed
     if (timeDelay==0)
         timeDelay = (csTicks)(1000);
-    psChatMessage msg(destClientID,GetName(),0,actText,chtype,false);
+    psChatMessage msg(destClientID,eid,GetName(),0,actText,chtype,false);
     psserver->GetEventManager()->SendMessageDelayed(msg.msg,timeDelay);
 
     timeDelay += (csTicks)(1000 + 30*strlen(actText));
@@ -3981,7 +3981,7 @@ void gemNPC::Say(const char *strsay,Client *who, bool saypublic,csTicks& timeDel
             Notify2(LOG_CHAT,"Private NPC Response: %s\n",strsay);
 
             // Some NPC responses are now in the form of private tells.
-            psChatMessage newMsg(who->GetClientNum(), GetName(), 0, strsay, CHAT_NPC, false);
+            psChatMessage newMsg(who->GetClientNum(), eid, GetName(), 0, strsay, CHAT_NPC, false);
 
             // first response gets 1 second delay to simulate NPC thinking
             // subsequent ones add to the current time delay, and send delayed
@@ -3994,7 +3994,7 @@ void gemNPC::Say(const char *strsay,Client *who, bool saypublic,csTicks& timeDel
         {
             Notify2(LOG_CHAT,"Public NPC Response: %s\n",strsay);
             // Some NPC responses are now in the form of public /says.
-            psChatMessage newMsg(0, GetName(), 0, strsay, CHAT_NPC, false);
+            psChatMessage newMsg(0, eid, GetName(), 0, strsay, CHAT_NPC, false);
             newMsg.Multicast(GetMulticastClients(), 0, CHAT_SAY_RANGE );
         }
 

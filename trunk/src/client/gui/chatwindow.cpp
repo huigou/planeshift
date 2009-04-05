@@ -668,7 +668,7 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
         msgqueue->SendMessage(introduce.msg);
     }
 
-    psChatMessage chat(0, pPerson.GetDataSafe(), 0, text.GetDataSafe(), chattype, false);
+    psChatMessage chat(0, 0, pPerson.GetDataSafe(), 0, text.GetDataSafe(), chattype, false);
     if (chattype != CHAT_NPCINTERNAL)
         msgqueue->SendMessage(chat.msg);  // Send all chat msgs to server...
     else
@@ -1689,7 +1689,7 @@ bool pawsChatWindow::OnMenuAction(pawsWidget * widget, const pawsMenuAction & ac
     {
         if (action.params.GetSize() > 0)
         {
-            psChatMessage chat(0, "", 0, action.params[0], CHAT_SAY, true);
+            psChatMessage chat(0, 0, "", 0, action.params[0], CHAT_SAY, true);
             msgqueue->SendMessage(chat.msg);
         }
         else

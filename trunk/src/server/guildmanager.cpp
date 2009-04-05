@@ -1370,6 +1370,11 @@ void GuildManager::HandleJoinGuild(PendingGuildInvite *invite)
     Client * inviteeClient = clients->Find(invite->clientnum);
     if (inviteeClient == NULL)
         return;
+
+    Client * inviterClient = clients->Find(invite->inviterClientNum);
+    EID inviterEID;
+    if (inviteeClient != NULL)
+        inviterEID = inviterClient->GetActor()->GetEID();
     
     psGuildInfo * guild = CacheManager::GetSingleton().FindGuild(invite->guildID);
     if (guild == NULL)
@@ -1384,8 +1389,8 @@ void GuildManager::HandleJoinGuild(PendingGuildInvite *invite)
 
     csString text;
     text.Format("Player %s has joined the guild!",invite->inviteeName.GetData() );
-    psChatMessage guildmsg(invite->inviterClientNum,"System",0,text,CHAT_GUILD, false);
-    chatserver->SendGuild(invite->inviterName.GetData(), guild, guildmsg);
+    psChatMessage guildmsg(invite->inviterClientNum,0,"System",0,text,CHAT_GUILD, false);
+    chatserver->SendGuild(invite->inviterName.GetData(), inviterEID, guild, guildmsg);
 
     SendNotifications(guild->id, psGUIGuildMessage::MEMBER_DATA);
 
@@ -1486,10 +1491,10 @@ void GuildManager::Remove(psGuildCmdMessage& msg,Client *client)
     else
         text.Format("Player %s has left the guild.", (const char *)msg.player );
 
-    psChatMessage guildmsg(0,"System",0,text,CHAT_GUILD, false);
+    psChatMessage guildmsg(0,0,"System",0,text,CHAT_GUILD, false);
     
     if (guildmsg.valid)
-        chatserver->SendGuild(client->GetCharacterData()->GetCharName(), gi, guildmsg);
+        chatserver->SendGuild(client->GetCharacterData()->GetCharName(), client->GetActor()->GetEID(), gi, guildmsg);
     
     SendNotifications(gi->id, psGUIGuildMessage::MEMBER_DATA);
 
@@ -1566,9 +1571,9 @@ void GuildManager::Rename(psGuildCmdMessage& msg,Client *client)
 
     csString text;
     text.Format("Guild level %d is now called: %s", msg.level, (const char *)msg.levelname );
-    psChatMessage guildmsg(clientnum,"System",0,text,CHAT_GUILD, false);
+    psChatMessage guildmsg(clientnum,0,"System",0,text,CHAT_GUILD, false);
     if (guildmsg.valid)
-        chatserver->SendGuild(client->GetCharacterData()->GetCharName(), gi, guildmsg);
+        chatserver->SendGuild(client->GetCharacterData()->GetCharName(), client->GetActor()->GetEID(), gi, guildmsg);
 
     SendNotifications(gi->id, psGUIGuildMessage::LEVEL_DATA);
 }
@@ -1652,9 +1657,9 @@ void GuildManager::Promote(psGuildCmdMessage& msg,Client *client)
 
     csString text;
     text.Format("%s has been promoted to '%s'", (const char *)msg.player, target->guildlevel->title.GetData() );
-    psChatMessage guildmsg(clientnum,"System",0,text,CHAT_GUILD, false);
+    psChatMessage guildmsg(clientnum,0,"System",0,text,CHAT_GUILD, false);
     if (guildmsg.valid)
-        chatserver->SendGuild(client->GetCharacterData()->GetCharName(), guild, guildmsg);
+        chatserver->SendGuild(client->GetCharacterData()->GetCharName(), client->GetActor()->GetEID(), guild, guildmsg);
 
     SendNotifications(guild->id, psGUIGuildMessage::MEMBER_DATA);
 }
