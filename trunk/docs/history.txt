@@ -1,3 +1,7 @@
+*** 2009-04-05 by Tristan Cragnolini
+- Make sure the server does not crash when no pvp regions are defined,
+  Patch by Lanarel
+
 *** 2009-04-05 by Stefano Angeleri
 - Now the eid of the actor send a chat message is sent to the client which
   in place of searching if he knows some actor with a certain name, just checks
