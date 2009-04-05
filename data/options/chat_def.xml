@@ -2,8 +2,6 @@
     <chatoptions>
         <selecttabstyle value="2" />
         <echoscreeninsystem value="1" />
-        <mainbrackets value="1" />
-        <yourcolormix value="1" />
         <loose value="0" />
         <logAllChat value="1" />
         <logSystemChat value="0" />
@@ -45,7 +43,6 @@
         <playernametext r="157" g="187" b="255" />
         <chattext       r="255" g="255" b="255" />
         <telltext       r="255" g="255" b="0" />
-        <npctext        r="255" g="0" b="255" />
         <shouttext      r="255" g="0"   b="255" />
         <guildtext      r="200" g="200" b="200" />
         <yourtext       r="255" g="255" b="255" />

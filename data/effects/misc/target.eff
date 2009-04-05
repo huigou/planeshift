@@ -7,7 +7,7 @@
     </shaders>
     <textures>
         <texture name="marker">
-            <file>/this/art/effects/marker01.dds</file>
+            <file>/this/art/effects/marker02.dds</file>
         </texture>
     </textures>
     <materials>
@@ -32,7 +32,7 @@
                     <action name="scale" value="0.8" />
                     <action name="rotate" x="0" y="0" z="0" />
                     <action name="spin" y="-90" />
-                    <action name="colour" r="0" g="200" b="40" />
+                    <action name="colour" r="200" g="0" b="40" />
                 </keyFrame>
                 <keyFrame time="2500">
                     <action name="rotate" x="0" y="360" z="0" />
@@ -48,7 +48,7 @@
                     <action name="scale" value="0.8" />
                     <action name="rotate" x="0" y="0" z="0" />
                     <action name="spin" y="180" />
-                    <action name="colour" r="0" g="200" b="40" />
+                    <action name="colour" r="200" g="0" b="40" />
                 </keyFrame>
                 <keyFrame time="2500">
                     <action name="rotate" x="0" y="360" z="0" />
@@ -64,7 +64,7 @@
                     <action name="scale" value="0.8" />
                     <action name="rotate" x="0" y="0" z="0" />
                     <action name="spin" y="0" />
-                    <action name="colour" r="0" g="200" b="40" />
+                    <action name="colour" r="200" g="0" b="40" />
                 </keyFrame>
                 <keyFrame time="2500">
                     <action name="rotate" x="0" y="360" z="0" />
@@ -80,7 +80,7 @@
                     <action name="scale" value="0.8" />
                     <action name="rotate" x="0" y="0" z="0" />
                     <action name="spin" y="90" />
-                    <action name="colour" r="0" g="200" b="40" />
+                    <action name="colour" r="200" g="0" b="40" />
                 </keyFrame>
                 <keyFrame time="2500">
                     <action name="rotate" x="0" y="360" z="0" />
@@ -96,7 +96,7 @@
                     <action name="scale" value="0.8" />
                     <action name="rotate" x="0" y="0" z="0" />
                     <action name="spin" y="270" />
-                    <action name="colour" r="0" g="200" b="40" />
+                    <action name="colour" r="200" g="0" b="40" />
                 </keyFrame>
                 <keyFrame time="2500">
                     <action name="rotate" x="0" y="-360" z="0" />
@@ -112,7 +112,7 @@
                     <action name="scale" value="0.8" />
                     <action name="rotate" x="0" y="0" z="0" />
                     <action name="spin" y="180" />
-                    <action name="colour" r="0" g="200" b="40" />
+                    <action name="colour" r="200" g="0" b="40" />
                 </keyFrame>
                 <keyFrame time="2500">
                     <action name="rotate" x="0" y="-360" z="0" />
@@ -128,7 +128,7 @@
                     <action name="scale" value="0.8" />
                     <action name="rotate" x="0" y="0" z="0" />
                     <action name="spin" y="0" />
-                    <action name="colour" r="0" g="200" b="40" />
+                    <action name="colour" r="200" g="0" b="40" />
                 </keyFrame>
                 <keyFrame time="2500">
                     <action name="rotate" x="0" y="-360" z="0" />
@@ -144,7 +144,7 @@
                     <action name="scale" value="0.8" />
                     <action name="rotate" x="0" y="0" z="0" />
                     <action name="spin" y="90" />
-                    <action name="colour" r="0" g="200" b="40" />
+                    <action name="colour" r="200" g="0" b="40" />
                 </keyFrame>
                 <keyFrame time="2500">
                     <action name="rotate" x="0" y="-360" z="0" />
