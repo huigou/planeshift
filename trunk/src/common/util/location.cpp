@@ -272,8 +272,6 @@ bool LocationType::Load(iResultRow& row, iEngine * engine, iDataConnection *db)
                 {
                     curr = tmpLocs[i];
                     tmpLocs.DeleteIndex(i);
-                    tmpLocs.Empty();
-                    
                     first->locs.Push(curr);
                     found = true;
                     break;
@@ -285,11 +283,21 @@ bool LocationType::Load(iResultRow& row, iEngine * engine, iDataConnection *db)
         if (first->locs.GetSize() <= 2)
         {
             Error1("Only two locs for region defined!");
+            //delete all locations in 'polygon'. When deleting first,
+            //it will recursively delete its polygon locations, in this
+            //case including itself. So remove that reference first
+            first->locs.DeleteIndex(0);
+            delete first;
             return false;
         }
         else if (curr->id != first->id_prev_loc_in_region)
         {
             Error1("First and last loc not connected!");
+            //delete all locations in 'polygon'. When deleting first,
+            //it will recursively delete its polygon locations, in this
+            //case including itself. So remove that reference first
+            first->locs.DeleteIndex(0);
+            delete first; 
             return false;
         }
         else
