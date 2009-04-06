@@ -327,7 +327,7 @@ public:
 
 	void AddTrigger( const csString &menuText, const csString &trigger, psQuest *quest, psQuestPrereqOp *script=NULL );
 	void Add( NpcDialogMenu *add);
-	void ShowMenu( Client *client );
+	void ShowMenu(Client *client,csTicks delay);
     void SetPrerequisiteScript(psQuestPrereqOp *script);
 };
 
@@ -374,7 +374,11 @@ class NpcResponse
     /// Check for SayResponseOp with public flag set, which tells chat whether it is public or private.
     bool HasPublicResponse();
     bool ParseResponseScript(const char *xmlstr,bool insertBeginning=false);
-    bool ExecuteScript(gemActor *player, gemNPC* target);
+
+	/**
+	 * Returns SIZET_NOT_FOUND (-1) if it fails, or csTicks of response duration if successful
+	 */
+    csTicks ExecuteScript(gemActor *player, gemNPC* target);
     csString GetResponseScript();
 
     // This is used so that the popup menu and the subsequent response can share the same filtering criteria

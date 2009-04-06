@@ -177,7 +177,9 @@ void ChatManager::HandleChatMessage(MsgEntry *me, Client *client)
 			  if (resp)
 			  {
 				  SendMultipleAudioFileHashes(client, resp->GetVoiceFile());
-                  resp->ExecuteScript(client->GetActor(), targetnpc);
+                  csTicks delay = resp->ExecuteScript(client->GetActor(), targetnpc);
+				  if (delay != SIZET_NOT_FOUND && resp->menu )
+					  resp->menu->ShowMenu(client, delay);
 			  }
 			  break;
 		  }
