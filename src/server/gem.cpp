@@ -3822,7 +3822,7 @@ void gemNPC::ShowPopupMenu(Client *client)
         menu.Add(npcmenu);
 
     if (menu.triggers.GetSize())
-        menu.ShowMenu(client);
+        menu.ShowMenu(client,0);
     else
         psserver->SendSystemError(client->GetClientNum(), "This NPC has nothing to say to you.");
 }

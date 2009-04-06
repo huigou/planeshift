@@ -1430,7 +1430,7 @@ bool NpcResponse::HasPublicResponse()
     return false;
 }
 
-bool NpcResponse::ExecuteScript(gemActor *player, gemNPC* target)
+csTicks NpcResponse::ExecuteScript(gemActor *player, gemNPC* target)
 {
     timeDelay = 0; // Say commands, etc. should be delayed by 2-3 seconds to simulate typing
 
@@ -1442,10 +1442,10 @@ bool NpcResponse::ExecuteScript(gemActor *player, gemNPC* target)
             csString resp = script[i]->GetResponseScript();
             Error3("Error running script in %s operation for client %s.",
                 resp.GetData(), player->GetClient() ? player->GetClient()->GetName() : "NPC");
-            return false;
+            return SIZET_NOT_FOUND;
         }
     }
-    return true;
+    return timeDelay;
 }
 
 csString NpcResponse::GetResponseScript()
@@ -2463,7 +2463,7 @@ void NpcDialogMenu::Add(NpcDialogMenu *add)
 	printf("Added %lu triggers to menu.\n", (unsigned long) add->triggers.GetSize());
 }
 
-void NpcDialogMenu::ShowMenu( Client *client )
+void NpcDialogMenu::ShowMenu(Client *client,csTicks delay)
 {
 	if( client == NULL )
 		return;
@@ -2519,7 +2519,7 @@ void NpcDialogMenu::ShowMenu( Client *client )
 	if (count)
 	{
 		menu.BuildMsg(client->GetClientNum());
-		menu.SendMessage();
+		psserver->GetNetManager()->SendMessageDelayed(menu.msg, delay);
 	}
 	else
 	{
