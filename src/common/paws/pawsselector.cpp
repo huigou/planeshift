@@ -203,7 +203,7 @@ bool pawsSelectorBox::SelectAndMoveRow(int rowNo, bool toSelected)
     pawsListBox* sourceList = toSelected ? available : selected;
     pawsListBox* destList = toSelected ? selected : available;
 
-    if (rowNo < 0 || rowNo >= sourceList->GetRowCount())
+    if (rowNo < 0 || rowNo >= (int)sourceList->GetRowCount())
         return false;
 
     // get row from row-number
