@@ -1,5 +1,8 @@
 *** 2009-04-06 by Stefano Angeleri
 - Committed a patch for PS#2789 - /report improvements  by loyni
+- Additional fix for PS#1548 - Battle Helms can be equipped in hands
+  now the server will respect the order of the valid_slots definitions in
+  the database. fixing issues like helms being equiped by default on hands.
 
 *** 2009-04-05 by Tristan Cragnolini
 - Make sure the server does not crash when no pvp regions are defined,
