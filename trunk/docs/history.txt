@@ -1,3 +1,7 @@
+﻿*** 2009-04-06 by Keith Fulton
+- Fixed chained response popups so they don't display until after the npc has finished
+  responding.  This prevents confusion and keeps multiple responses from overlapping.
+
 *** 2009-04-06 by Stefano Angeleri
 - Committed a patch for PS#2789 - /report improvements  by loyni
 - Additional fix for PS#1548 - Battle Helms can be equipped in hands
