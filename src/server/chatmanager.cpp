@@ -397,7 +397,7 @@ void ChatManager::SendTell(psChatMessage& msg, const char* who,Client *client,Cl
     // Create a new message and send it to that person if found
     psChatMessage cmsg(p->GetClientNum(), client->GetActor()->GetEID(), who, 0, msg.sText, msg.iChatType, msg.translate);
     cmsg.SendMessage();
-//TODO CHECK MAGIC!
+
     // Echo the message back to the speaker also
     psChatMessage cmsg2(client->GetClientNum(), client->GetActor()->GetEID(), targetName, 0, msg.sText, CHAT_TELLSELF, msg.translate);
     cmsg2.SendMessage();
