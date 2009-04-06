@@ -604,120 +604,129 @@ void psItemStats::ParseFlags( iResultRow& row )
 void psItemStats::LoadSlots( iResultRow& row )
 {
     // Valid slots
-    psString slots(row["valid_slots"]);
+    csStringArray slots;
+    if(row["valid_slots"]) //check if it's valid (aka the row is not NULL)
+        slots.SplitString(row["valid_slots"],  " ");
+  
+    for(size_t i = 0; i < slots.GetSize(); i++)
+    {
+        csString currentSlot = slots.Get(i); //get the current slot
 
-    if (slots.FindSubString("BULK",0,true)!=-1)
-    {
-        valid_slots|=PSITEMSTATS_SLOT_BULK;
-    } 
-    if (slots.FindSubString("RIGHTHAND",0,true)!=-1)
-    {
-        valid_slots_array.Push(PSCHARACTER_SLOT_RIGHTHAND);
-        valid_slots|=PSITEMSTATS_SLOT_RIGHTHAND;
-    }        
-    if (slots.FindSubString("LEFTHAND",0,true)!=-1)
-    {
-        valid_slots_array.Push(PSCHARACTER_SLOT_LEFTHAND);
-        valid_slots|=PSITEMSTATS_SLOT_LEFTHAND;
+        //checks what slot it is and push in an ordered fashion in order
+        //to allow to define what slot has a precedence in /equip
+        if (currentSlot == "BULK")
+        {
+            valid_slots|=PSITEMSTATS_SLOT_BULK;
+        }
+        else if (currentSlot == "RIGHTHAND")
+        {
+            valid_slots_array.Push(PSCHARACTER_SLOT_RIGHTHAND);
+            valid_slots|=PSITEMSTATS_SLOT_RIGHTHAND;
+        }        
+        else if (currentSlot == "LEFTHAND")
+        {
+            valid_slots_array.Push(PSCHARACTER_SLOT_LEFTHAND);
+            valid_slots|=PSITEMSTATS_SLOT_LEFTHAND;
+        }
+        else if (currentSlot == "BOTHHANDS")
+        {
+            valid_slots|=PSITEMSTATS_SLOT_BOTHHANDS;
+            valid_slots_array.Push(PSCHARACTER_SLOT_BOTHHANDS);
+        }
+        else if (currentSlot == "HELM")
+        {
+            valid_slots_array.Push(PSCHARACTER_SLOT_HELM);
+            valid_slots|=PSITEMSTATS_SLOT_HELM;
+        }
+        else if (currentSlot == "LEFTFINGER")
+        {
+            valid_slots_array.Push(PSCHARACTER_SLOT_LEFTFINGER);
+            valid_slots|=PSITEMSTATS_SLOT_LEFTFINGER;
+        }
+        else if (currentSlot == "RIGHTFINGER")
+        {
+            valid_slots_array.Push(PSCHARACTER_SLOT_RIGHTFINGER);
+            valid_slots|=PSITEMSTATS_SLOT_RIGHTFINGER;
+        }
+        else if (currentSlot == "NECK")
+        {
+            valid_slots_array.Push(PSCHARACTER_SLOT_NECK);
+            valid_slots|=PSITEMSTATS_SLOT_NECK;
+        }        
+        else if (currentSlot == "BACK")
+        {
+            valid_slots_array.Push(PSCHARACTER_SLOT_BACK);
+            valid_slots|=PSITEMSTATS_SLOT_BACK;
+        }        
+        else if (currentSlot == "ARMS")
+        {
+            valid_slots_array.Push(PSCHARACTER_SLOT_ARMS);
+            valid_slots|=PSITEMSTATS_SLOT_ARMS;
+        }                
+        else if (currentSlot == "GLOVES")
+        {
+            valid_slots_array.Push(PSCHARACTER_SLOT_GLOVES);
+            valid_slots|=PSITEMSTATS_SLOT_GLOVES;
+        }        
+        else if (currentSlot == "BOOTS")
+        {
+            valid_slots_array.Push(PSCHARACTER_SLOT_BOOTS);
+            valid_slots|=PSITEMSTATS_SLOT_BOOTS;
+        }        
+        else if (currentSlot == "LEGS")
+        {
+            valid_slots|=PSITEMSTATS_SLOT_LEGS;
+            valid_slots_array.Push(PSCHARACTER_SLOT_LEGS);
+        }        
+        else if (currentSlot == "BELT")
+        {
+            valid_slots|=PSITEMSTATS_SLOT_BELT;
+            valid_slots_array.Push(PSCHARACTER_SLOT_BELT);
+        }        
+        else if (currentSlot == "BRACERS")
+        {
+            valid_slots_array.Push(PSCHARACTER_SLOT_BRACERS);
+            valid_slots|=PSITEMSTATS_SLOT_BRACERS;
+        }        
+        else if (currentSlot == "TORSO")
+        {
+            valid_slots_array.Push(PSCHARACTER_SLOT_TORSO);
+            valid_slots|=PSITEMSTATS_SLOT_TORSO;
+        }        
+        else if (currentSlot == "MIND")
+        {
+            valid_slots_array.Push(PSCHARACTER_SLOT_MIND);
+            valid_slots|=PSITEMSTATS_SLOT_MIND; 
+        }
+        else if (currentSlot == "BANK")
+        {
+            valid_slots|=PSITEMSTATS_SLOT_BANK;
+        }        
+        else if (currentSlot == "CRYSTAL")
+        {
+            valid_slots|=PSITEMSTATS_SLOT_CRYSTAL;
+        }
+        else if (currentSlot == "AZURE")
+        {    
+            valid_slots|=PSITEMSTATS_SLOT_AZURE;
+        }        
+        else if (currentSlot == "RED")
+        {
+            valid_slots|=PSITEMSTATS_SLOT_RED;
+        }        
+        else if (currentSlot == "DARK")
+        {    
+            valid_slots|=PSITEMSTATS_SLOT_DARK;
+        }        
+        else if (currentSlot == "BROWN")
+        {
+            valid_slots|=PSITEMSTATS_SLOT_BROWN;
+        }        
+        else if (currentSlot == "BLUE")
+        {
+            valid_slots|=PSITEMSTATS_SLOT_BLUE;
+        }
     }
-    if (slots.FindSubString("BOTHHANDS",0,true)!=-1)
-    {
-        valid_slots|=PSITEMSTATS_SLOT_BOTHHANDS;
-        valid_slots_array.Push(PSCHARACTER_SLOT_BOTHHANDS);
-    }            
-    if (slots.FindSubString("HELM",0,true)!=-1)
-    {
-        valid_slots_array.Push(PSCHARACTER_SLOT_HELM);
-        valid_slots|=PSITEMSTATS_SLOT_HELM;
-    } 
-    if (slots.FindSubString("LEFTFINGER",0,true)!=-1)
-    {
-        valid_slots_array.Push(PSCHARACTER_SLOT_LEFTFINGER);
-        valid_slots|=PSITEMSTATS_SLOT_LEFTFINGER;
-    }
-    if (slots.FindSubString("RIGHTFINGER",0,true)!=-1)
-    {
-        valid_slots_array.Push(PSCHARACTER_SLOT_RIGHTFINGER);
-        valid_slots|=PSITEMSTATS_SLOT_RIGHTFINGER;
-    }
-    if (slots.FindSubString("NECK",0,true)!=-1)
-    {
-        valid_slots_array.Push(PSCHARACTER_SLOT_NECK);
-        valid_slots|=PSITEMSTATS_SLOT_NECK;
-    }        
-    if (slots.FindSubString("BACK",0,true)!=-1)
-    {
-        valid_slots_array.Push(PSCHARACTER_SLOT_BACK);
-        valid_slots|=PSITEMSTATS_SLOT_BACK;
-    }        
-    if (slots.FindSubString("ARMS",0,true)!=-1)
-    {
-        valid_slots_array.Push(PSCHARACTER_SLOT_ARMS);
-        valid_slots|=PSITEMSTATS_SLOT_ARMS;
-    }                
-    if (slots.FindSubString("GLOVES",0,true)!=-1)
-    {
-        valid_slots_array.Push(PSCHARACTER_SLOT_GLOVES);
-        valid_slots|=PSITEMSTATS_SLOT_GLOVES;
-    }        
-    if (slots.FindSubString("BOOTS",0,true)!=-1)
-    {
-        valid_slots_array.Push(PSCHARACTER_SLOT_BOOTS);
-        valid_slots|=PSITEMSTATS_SLOT_BOOTS;
-    }        
-    if (slots.FindSubString("LEGS",0,true)!=-1)
-    {
-        valid_slots|=PSITEMSTATS_SLOT_LEGS;
-        valid_slots_array.Push(PSCHARACTER_SLOT_LEGS);
-    }        
-    if (slots.FindSubString("BELT",0,true)!=-1)
-    {
-        valid_slots|=PSITEMSTATS_SLOT_BELT;
-        valid_slots_array.Push(PSCHARACTER_SLOT_BELT);
-    }        
-    if (slots.FindSubString("BRACERS",0,true)!=-1)
-    {
-        valid_slots_array.Push(PSCHARACTER_SLOT_BRACERS);
-        valid_slots|=PSITEMSTATS_SLOT_BRACERS;
-    }        
-    if (slots.FindSubString("TORSO",0,true)!=-1)
-    {
-        valid_slots_array.Push(PSCHARACTER_SLOT_TORSO);
-        valid_slots|=PSITEMSTATS_SLOT_TORSO;
-    }        
-    if (slots.FindSubString("MIND",0,true)!=-1)
-    {
-        valid_slots_array.Push(PSCHARACTER_SLOT_MIND);
-        valid_slots|=PSITEMSTATS_SLOT_MIND; 
-    }
-    if (slots.FindSubString("BANK",0,true)!=-1)
-    {
-        valid_slots|=PSITEMSTATS_SLOT_BANK;
-    }        
-    if (slots.FindSubString("CRYSTAL",0,true)!=-1)
-    {
-        valid_slots|=PSITEMSTATS_SLOT_CRYSTAL;
-    }
-    if (slots.FindSubString("AZURE",0,true)!=-1)
-    {    
-        valid_slots|=PSITEMSTATS_SLOT_AZURE;
-    }        
-    if (slots.FindSubString("RED",0,true)!=-1)
-    {
-        valid_slots|=PSITEMSTATS_SLOT_RED;
-    }        
-    if (slots.FindSubString("DARK",0,true)!=-1)
-    {    
-        valid_slots|=PSITEMSTATS_SLOT_DARK;
-    }        
-    if (slots.FindSubString("BROWN",0,true)!=-1)
-    {
-        valid_slots|=PSITEMSTATS_SLOT_BROWN;
-    }        
-    if (slots.FindSubString("BLUE",0,true)!=-1)
-    {
-        valid_slots|=PSITEMSTATS_SLOT_BLUE;
-    }        
 }
 
 // Saves current Item Stat values back to the DB.
