@@ -671,14 +671,48 @@ protected:
     DRstate last_location;
     DRstate prev_teleport_location;
 
-    // To be used for the /report command.
-    // NumReports says how many /report commands that haven't expired yet were applied on our object.
-    // Each /report command increments this variable. After some time, it is decremented back.
-    int numReports;
+    // used by /report command.
+    // for details on current /report implementation
+    // check PS#2789.
+    
+    /// struct ChatHistoryEntry
+    /// Info: Stores a chat history element.
+    struct ChatHistoryEntry
+    {
+        /// time_t _time
+        /// Info: Time this line was said.
+        time_t _time;
+
+        /// csString _line
+        /// Info: Actual text. (Preformated depending on chat type)
+        csString _line;
+
+        /// ChatHistoryEntry(const char*, time_t = 0)
+        /// Info: Constructor. When no time is given, current time is used.
+        ChatHistoryEntry(const char* szLine, time_t t = 0);
+
+        /// void GetLogLine(csString&) const
+        /// Info: Prepends a string representation of the time to this chat line
+        /// so it can be written to a log file. The resulting line is
+        /// written to 'line' argument (reference).
+        /// Note: this function also applies \n to the line end.
+        void GetLogLine(csString& line) const;
+    };
+
+    /// unsigned int activeReports
+    /// Info: Total /report commands filed against this
+    /// player that are still active (logging).
+    unsigned int activeReports;
+
+    /// csArray<ChatHistoryEntry> chatHistory
+    /// Info: Chat history for this player.
+    /// A chat line stays in history for CHAT_HISTORY_LIFETIME (defined in gem.cpp).
+    csArray<ChatHistoryEntry> chatHistory;
+
+    /// csRef<iFile> logging_chat_file
+    /// Info: log file handle.
     csRef<iFile> logging_chat_file;
-    /// Chat history for last CHAT_HISTORY_SIZE number of messages.
-    csPDelArray<csString> chatHistory;
-    uint32_t reportTargetId;
+
 
     bool InitLinMove(const csVector3& pos,float angle, iSector* sector);
     bool InitCharData(Client* c);
@@ -762,10 +796,25 @@ public:
     void SetProductionStartPos(const csVector3& pos) { productionStartPos = pos; }
 
     // To be used for the /report command.
-    void AddChatReport(gemActor *target);
+
+    /**
+     * @brief Adds an active report (file logging session) to this actor.
+     * @param[in] reporter The client actor issuing /report
+     * @return true on success, or false on error (failure to start logging probably)
+     */
+    bool AddChatReport(gemActor *reporter);
+    
+    /**
+     * @brief Removes an active report (file logging session) for this actor.
+     * This function is invoked automatically after a specific amount of time
+     * from the report activation.
+     */
     void RemoveChatReport();
-    bool IsLoggingChat() const { return numReports > 0; }
-    uint32_t GetReportTargetId() const { return reportTargetId; }
+    
+    /**
+     * @brief Returns /report file logging status.
+     */
+    bool IsLoggingChat() const { return activeReports > 0; }
 
     /**
      * @brief Adds the chat message to the history and optionally to the log file
@@ -773,7 +822,22 @@ public:
      * @param[in] msg The chat message
      * @return Returns true if the message was written to the log file
      */
-    bool LogMessage(const char *who, const psChatMessage &msg);
+    bool LogChatMessage(const char *who, const psChatMessage &msg);
+
+    /**
+     * @brief Saves a system message to this actor's chat history and logs it to
+     * a file, if there are active reports.
+     * @return Returns true if the line was written to the log file
+     */
+    bool LogSystemMessage(const char* szLine);
+
+    /**
+     * @brief Saves a line to this actor's chat history and logs it to
+     * a file, if there are active reports.
+     * @return Returns true if the line was written to the log file
+     */
+    bool LogLine(const char* szLine);
+
 
     void UpdateStats();
     void ProcessStamina();
@@ -805,6 +869,8 @@ public:
     void RemoveFromGroup();
 
     bool IsMyPet(gemActor *other) const;
+
+    const char* GetFirstName() { return psChar->GetCharName(); }
 
     const char *GetGuildName();
     psGuildInfo *GetGuild() { return psChar->GetGuild(); }

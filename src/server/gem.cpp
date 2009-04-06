@@ -107,8 +107,10 @@
 
 #define SPEED_WALK 2.0f
 
-/// Number of messages in the chat history buffer
-#define CHAT_HISTORY_SIZE 50
+/// Minimum size for the history buffer. old lines are not removed when this size is reached.
+#define CHAT_HISTORY_MINIMUM_SIZE 20
+/// Lifetime of a chat history line, in ticks
+#define CHAT_HISTORY_LIFETIME 300000 // 5 minutes
 
 //-----------------------------------------------------------------------------
 
@@ -1909,7 +1911,7 @@ gemActor::gemActor( psCharacter *chardata,
                        int clientnum) :
   gemObject(chardata->GetCharFullName(),factname,myInstance,room,pos,rotangle,clientnum),
 psChar(chardata), factions(NULL), DRcounter(0), lastDR(0), lastV(0), lastSentSuperclientPos(0, 0, 0),
-lastSentSuperclientInstance(-1), numReports(0), reportTargetId(0), isFalling(false), invincible(false), visible(true), viewAllObjects(false),
+lastSentSuperclientInstance(-1), activeReports(0), isFalling(false), invincible(false), visible(true), viewAllObjects(false),
 movementMode(0), isAllowedToMove(true), atRest(true), pcmove(NULL),
 nevertired(false), infinitemana(false), instantcast(false), safefall(false), givekillexp(false), attackable(false)
 {
@@ -1958,6 +1960,13 @@ nevertired(false), infinitemana(false), instantcast(false), safefall(false), giv
 
 gemActor::~gemActor()
 {
+    if (activeReports > 0)
+    {
+        LogLine(csString().Format("-- %s has quit --", GetFirstName()).GetData());
+        activeReports = 1; // force RemoveChatReport() to stop logging.
+        RemoveChatReport();
+    }
+
     // Disconnect while pointers are still valid
     Disconnect();
 
@@ -1984,9 +1993,6 @@ gemActor::~gemActor()
         CacheManager::GetSingleton().AddToCache(psChar, CacheManager::GetSingleton().MakeCacheName("char",psChar->GetPID().Unbox()),120);
         psChar = NULL;
     }
-
-    if (numReports > 0)
-        logging_chat_file = 0;  //This should close the file.
 
     delete pcmove;
 }
@@ -2634,129 +2640,151 @@ const char* gemActor::GetGuildName()
         return NULL;
 }
 
-void gemActor::AddChatReport(gemActor *target)
+bool gemActor::AddChatReport(gemActor *reporter)
 {
-    numReports++;
-
-    if (numReports == 1)
+    activeReports++;
+    
+    csString cssBuffer("");
+    csString cssTempLine("");
+    
+    if (activeReports == 1)
     {
+        // this is the first report. Let's open the log file
+        // and write all buffered history in it...
         csRef<iVFS> vfs =  csQueryRegistry<iVFS> (cel->object_reg);
         if (!vfs)
         {
-            numReports = 0;
-            return;
+            activeReports = 0;
+            Error1("Query for vfs plugin failed!");
+            return false;
         }
-        csString tmp;
 
-        reportTargetId = target->GetClientID();
+        // One file per user
+        csString cssFilename = csString().Format("/this/logs/report_chat_%s.log", GetFirstName());
 
-        tmp.Format("/this/logs/report_chat_%s_by_%s.log",
-                   target->GetCharacterData()->GetCharName(),
-                   GetCharacterData()->GetCharName());
-
-        logging_chat_file = vfs->Open(tmp, VFS_FILE_APPEND);
+        logging_chat_file = vfs->Open(cssFilename.GetData(), VFS_FILE_APPEND);
         if (!logging_chat_file)
         {
-            Error1("Error, could not open log file.");
-            return;
+            Error1("Error, could not open log file to append.");
+            activeReports = 0;
+            return false;
         }
-        logging_chat_file->Write("Starting to log ", 16);
-        logging_chat_file->Write(target->GetCharacterData()->GetCharName(),
-                                 strlen(target->GetCharacterData()->GetCharName()));
-        logging_chat_file->Write("\n", 1);
-        logging_chat_file->Write("Log by the request of ", 22);
-        logging_chat_file->Write(GetCharacterData()->GetCharName(),
-                                 strlen(GetCharacterData()->GetCharName()));
-        logging_chat_file->Write("\n\n", 2);
-        logging_chat_file->Write("Chat history from ", 18);
-        logging_chat_file->Write(GetCharacterData()->GetCharName(),
-                                 strlen(GetCharacterData()->GetCharName()));
-        logging_chat_file->Write(":\n", 2);
-        logging_chat_file->Write("=====================================\n", 38);
-        for (size_t i = 0; i < chatHistory.GetSize(); i++)
+
+        Notify2(LOG_ANY, "Logging of chat messages for '%s' started\n", ShowID(pid));
+        
+        csVector3 pos;
+        float loc_yrot(.0f);
+        iSector* sector = NULL;
+
+        GetPosition(pos, loc_yrot, sector);
+        int degrees = (int)(loc_yrot * 180.0f / PI);
+
+        csString sectorName = (sector) ? sector->QueryObject()->GetName() : "(null)";
+        csString regionName = (sector) ? sector->QueryObject()->GetObjectParent()->GetName() : "(null)";
+
+        // Start with general information
+        cssBuffer = "================================================================\n";
+        cssBuffer.AppendFmt("Starting to log player %s (%s).\n", GetName(), ShowID(pid));
+        cssBuffer.AppendFmt("Player has %d security level.\n", securityLevel);
+        cssBuffer.AppendFmt("At region %s, position (%1.2f, %1.2f, %1.2f) angle: %d in sector: %s, instance: %d.\n",
+            regionName.GetData(), pos.x, pos.y, pos.z, degrees, sectorName.GetData(), worldInstance);
+        cssBuffer.AppendFmt("Total time connected is %1.1f hours.\n", (GetCharacterData()->GetTimeConnected() / 3600.0f) );
+        cssBuffer.AppendFmt("================================================================\n");
+        // Write existing chat history
+        for (size_t i=0; i<chatHistory.GetSize(); i++)
         {
-            csString *s = chatHistory.Get(i);
-            logging_chat_file->Write(s->GetData(), s->Length());
-            logging_chat_file->Write("\n", 1);
+            chatHistory[i].GetLogLine(cssTempLine);
+            cssBuffer += cssTempLine;
         }
-        logging_chat_file->Write("=====================================\n\n", 39);
     }
+    
+    // Add /report line
+    ChatHistoryEntry cheReport(csString().Format("-- At this point player got reported by %s --", reporter->GetName()).GetData());
+    cheReport.GetLogLine(cssTempLine);
+    cssBuffer += cssTempLine;
+
+    // Write the data to the file
+    logging_chat_file->Write(cssBuffer.GetData(), cssBuffer.Length());
+    logging_chat_file->Flush(); // flush
+    
+    return true; // been there, done that
 }
 
 void gemActor::RemoveChatReport()
 {
-    numReports--;
+    activeReports--;
 
-    if (numReports == 0)
+    if (activeReports == 0)
     {
-        Notify2( LOG_ANY, "Logging of chat messages for '%s' stopped\n", ShowID(pid));
+        // This is the last /report for this client that expires,
+        // so we terminate logging and close the file.
+        Notify2(LOG_ANY, "Logging of chat messages for '%s' stopped -\n", ShowID(pid));
 
-        logging_chat_file->Write("=====================================\n\n", 39);
+        csString cssBuffer("================================================================\n\n");
+        logging_chat_file->Write(cssBuffer.GetData(), cssBuffer.Length());
+        logging_chat_file->Flush();
 
-        //This should close the file.
+        // This should close the file.
         logging_chat_file = 0;
-
-        reportTargetId = 0;
-
-        // Inform the reporter
-        psserver->SendSystemInfo(GetClientID(), "Logging of chat messages stopped.");
     }
 }
 
-bool gemActor::LogMessage(const char *who, const psChatMessage &msg)
+bool gemActor::LogChatMessage(const char *who, const psChatMessage &msg)
 {
-    csString *s = new csString;
+    csString cssLine("");
 
-    // Format the message
+    // Format according to chat type
     switch (msg.iChatType)
     {
-        case CHAT_AUCTION:
-        {
-            s->Format("Auction from %s: %s", who, msg.sText.GetData());
-            break;
-        }
-        case CHAT_SHOUT:
-        {
-            s->Format("%s shouts: %s", who, msg.sText.GetData());
-            break;
-        }
-        case CHAT_SAY:
-        {
-            s->Format("%s says: %s", who, msg.sText.GetData());
-            break;
-        }
-        case CHAT_TELL:
-        {
-            s->Format("%s tells to %s: %s", who, msg.sPerson.GetData(),
-                      msg.sText.GetData());
-            break;
-        }
-        default:
-            return false; // Currently we ignore any other chat types
+        case CHAT_SHOUT: cssLine.Format("%s shouts: %s", who, msg.sText.GetData()); break;
+        case CHAT_SAY: cssLine.Format("%s says: %s", who, msg.sText.GetData()); break;
+        case CHAT_TELL: cssLine.Format("%s tells %s: %s", who, msg.sPerson.GetData(), msg.sText.GetData()); break;
+        case CHAT_GUILD: cssLine.Format("GuildChat from %s: %s", who, msg.sText.GetData()); break;
+        case CHAT_GROUP: cssLine.Format("GroupChat from %s: %s", who, msg.sText.GetData()); break;
+        case CHAT_AUCTION: cssLine.Format("Auction from %s: %s", who, msg.sText.GetData()); break;
+        default: return false; // We do not log any other chat types.
+    }
+    return LogLine(cssLine.GetData());
+}
+
+/**
+ * @brief Saves a system message to this actor's chat history and logs it to
+ * a file, if there are active reports.
+ * @return Returns true if the line was written to the log file
+ */
+bool gemActor::LogSystemMessage(const char* szLine)
+{
+    return LogLine(csString().Format("> %s", szLine).GetData());
+}
+
+/**
+ * @brief Saves a line to this actor's chat history and logs it to
+ * a file, if there are active reports.
+ * @return Returns true if the line was written to the log file
+ */
+bool gemActor::LogLine(const char* szLine)
+{
+    // Add to chat history
+    ChatHistoryEntry cheNew(szLine);
+    chatHistory.Push(cheNew);
+
+    // Maintain history
+    time_t check = time(0) - CHAT_HISTORY_LIFETIME;
+    // We delete lines older than current time + CHAT_HISTORY_LIFETIME
+    // if the history size is not lowest than the minimum
+    while ( (chatHistory.GetSize()>CHAT_HISTORY_MINIMUM_SIZE) &&
+        chatHistory.Get(0)._time < check)
+    {
+        chatHistory.DeleteIndex(0);
     }
 
-    // Add to the chat history
-    chatHistory.Push(s);
-
-    // Delete older message in the history buffer
-    while (chatHistory.GetSize() > CHAT_HISTORY_SIZE)
-        chatHistory.DeleteIndex(0);
-
-    // Nothing else to do if the number of reports is 0
-    if (numReports == 0)
+    if (!IsLoggingChat()) // Check if we're logging. If not, there is nothing else to do here.
         return false;
 
-    // Write to the log file
-    csString tod;
-    GetTimeOfDay(tod);
-    csString line;
-    line.Format("[%s] :", tod.GetData());
-
-    logging_chat_file->Write(line.GetData(), line.Length());
-    logging_chat_file->Write(s->GetData(), s->Length());
-    logging_chat_file->Write("\n", 1);
-
-    return true;
+    csString cssLine("");
+    cheNew.GetLogLine(cssLine); // Get a log-writtable line
+    logging_chat_file->Write(cssLine.GetData(), cssLine.Length()); // Write to the file
+    return true; // The line was written to a file, so return true.
 }
 
 /**
@@ -3602,6 +3630,28 @@ bool gemActor::SetMesh(const char* meshname)
     }
     return false;
 }
+
+/* gemActor::ChatHistoryEntry function implementations */
+
+/// ChatHistoryEntry(const char*, time_t = 0)
+/// Info: Constructor. When no time is given, current time is used.
+gemActor::ChatHistoryEntry::ChatHistoryEntry(const char* szLine, time_t t)
+: _time(t?t:time(0)), _line(szLine) {}
+
+/// void GetLogLine(csString&) const
+/// Info: Prepends a string representation of the time to this chat line
+/// so it can be written to a log file. The resulting line is
+/// written to 'line' argument (reference).
+/// Note: this function also applies \n to the line end.
+void gemActor::ChatHistoryEntry::GetLogLine(csString& line) const
+{
+    tm* gmtm = gmtime(&_time);
+    csString cssTime = csString().Format("%d-%02d-%02d %02d:%02d:%02d",
+        gmtm->tm_year+1900, gmtm->tm_mon+1, gmtm->tm_mday,
+        gmtm->tm_hour, gmtm->tm_min, gmtm->tm_sec);
+    line.Format("[%s] %s\n", cssTime.GetData(), _line.GetData());
+}
+
 
 //--------------------------------------------------------------------------------------
 
