@@ -84,12 +84,12 @@ void ChatManager::HandleChatMessage(MsgEntry *me, Client *client)
 	{
 		Debug4(LOG_CHAT, client->GetClientNum(),
 				"%s %s: %s\n", client->GetName(),
-				pType, (const char *) msg.sText);
+                pType, msg.sText.GetData());
 	}
 	else
 	{
 		Debug5(LOG_CHAT,client->GetClientNum(), "%s %s %s: %s\n", client->GetName(),
-			   pType, (const char *)msg.sPerson,(const char *)msg.sText);
+			   pType, msg.sPerson.GetData(),msg.sText.GetData());
 	}
 
 	bool saveFlood = true;
@@ -192,17 +192,14 @@ void ChatManager::HandleChatMessage(MsgEntry *me, Client *client)
 			  Client *target = FindPlayerClient(msg.sPerson);
 			  if (target && !target->IsSuperClient())
 			  {
-				  SendTell(msg, client->GetName(), client, target);
-
-				  // Save to chat history
-				  client->GetActor()->LogMessage(client->GetActor()->GetName(), msg);
-				  if (target->GetActor()) // this can be null if someone sends a tell to a connecting client
-					  target->GetActor()->LogMessage(client->GetActor()->GetName(), msg);
+                  if (!target->IsReady())
+                      psserver->SendSystemError(client->GetClientNum(), "%s is not ready yet.", msg.sPerson.GetDataSafe());
+                  else
+                      SendTell(msg, client->GetName(), client, target);
 			  }
 			  else
-			  {
-				  psserver->SendSystemError(client->GetClientNum(), "%s is not found online.", msg.sPerson.GetDataSafe());
-			  }
+                  psserver->SendSystemError(client->GetClientNum(), "%s is not found online.", msg.sPerson.GetDataSafe());
+
 			  break;
 		  }
 		  case CHAT_REPORT:
@@ -210,13 +207,10 @@ void ChatManager::HandleChatMessage(MsgEntry *me, Client *client)
 			  // First thing to extract the name of the player to log
 			  csString targetName;
 			  int index = (int)msg.sText.FindFirst(' ', 0);
-			  if ( index == -1 )
-				 targetName = msg.sText;
-			  else
-				 targetName = msg.sText.Slice(0, index);
+              targetName = (index == -1) ? msg.sText : msg.sText.Slice(0, index);
 			  targetName = NormalizeCharacterName(targetName);
 
-			  if ( msg.sText.Length() == 0 )
+              if ( targetName.Length() == 0 )
 			  {
 				  psserver->SendSystemError(client->GetClientNum(), "You must specify name of player.");
 				  break;
@@ -234,29 +228,20 @@ void ChatManager::HandleChatMessage(MsgEntry *me, Client *client)
 				  break;
 			  }
 
-			  if (!client->GetActor()->IsLoggingChat())
-			  {
-				  psserver->SendSystemError(client->GetClientNum(), "%s will be logged for five minutes now.", targetName.GetData());
-				  psserver->SendSystemError(target->GetClientNum(), "Your last 5 minutes of chat has been reported to the GMs, logging will now continue.");
-			  }
-			  else
-			  {
-				  if (target->GetClientNum() != client->GetActor()->GetReportTargetId())
-				  {
-					  psserver->SendSystemError(client->GetClientNum(), "Previous logging is still active.");
-					  break;
-				  }
-				  psserver->SendSystemError(client->GetClientNum(), "Logging for another five minutes.");
-			  }
-			  client->GetActor()->AddChatReport(target->GetActor());
-			  psserver->GetEventManager()->Push(new psEndChatLoggingEvent(client->GetClientNum(), 300000));
+			  // Add an active report to the target.
+              if (target->GetActor()->AddChatReport(client->GetActor()))
+              {
+                  // Add report removal event.
+                  psserver->GetEventManager()->Push(new psEndChatLoggingEvent(target->GetClientNum(), 300000));
+                  psserver->SendSystemInfo(client->GetClientNum(), "Last 5 minutes of %s's chat were logged. Logging will continue for another 5 minutes.", targetName.GetData());
+              }
+              else
+                  psserver->SendSystemError(client->GetClientNum(), "Could not start logging %s, due to a server error.", targetName.GetData());
 			  break;
 		 }
 		 case CHAT_ADVISOR:
 		 case CHAT_ADVICE:
-		  {
-			 break;
-		 }
+             break;
 
 		 default:
 		 {
@@ -303,7 +288,7 @@ void ChatManager::SendShout(Client *c, psChatMessage& msg)
         {
             Client *target = psserver->GetConnections()->Find(clients[i].client);
             if (target && target->IsReady())
-                target->GetActor()->LogMessage(c->GetActor()->GetName(), newMsg);
+                target->GetActor()->LogChatMessage(c->GetActor()->GetFirstName(), newMsg);
         }
     }
     else
@@ -319,12 +304,12 @@ void ChatManager::SendSay(uint32_t clientNum, gemActor *actor, psChatMessage& ms
     csArray<PublishDestination>& clients = actor->GetMulticastClients();
     newMsg.Multicast(clients, 0, CHAT_SAY_RANGE );
 
-    // The message is saved to the chat history of all the clients around
+    // The message is saved to the chat history of all the clients around (PS#2789)
     for (size_t i = 0; i < clients.GetSize(); i++)
     {
         Client *target = psserver->GetConnections()->Find(clients[i].client);
-        if (target && target->IsReady() && clients[i].dist < CHAT_SAY_RANGE)
-            target->GetActor()->LogMessage(actor->GetName(), newMsg);
+        if (target && clients[i].dist < CHAT_SAY_RANGE)
+            target->GetActor()->LogChatMessage(actor->GetFirstName(), newMsg);
     }
 }
 
@@ -352,21 +337,21 @@ void ChatManager::SendGuild(Client *client, psChatMessage& msg)
 
 void ChatManager::SendGuild(const csString & sender, EID senderEID, psGuildInfo * guild, psChatMessage& msg)
 {
-    ClientIterator iter(*psserver->GetConnections() );
+    ClientIterator iter(*psserver->GetConnections());
     psGuildLevel * level;
 
     while(iter.HasNext())
     {
         Client *client = iter.Next();
-        if (client->GetGuildID() == guild->id)
-        {
-            level = client->GetCharacterData()->GetGuildLevel();
-            if (level!=NULL  &&  level->HasRights(RIGHTS_VIEW_CHAT))
-            {
-                psChatMessage newMsg(client->GetClientNum(), senderEID, sender, 0, msg.sText, msg.iChatType, msg.translate);
-                newMsg.SendMessage();
-            }
-        }
+        if (!client->IsReady()) continue;
+        if (client->GetGuildID() != guild->id) continue;
+        level = client->GetCharacterData()->GetGuildLevel();
+        if ( (!level) || (!level->HasRights(RIGHTS_VIEW_CHAT)) ) continue;
+        // Send the chat message
+        psChatMessage newMsg(client->GetClientNum(), senderEID, sender, 0, msg.sText, msg.iChatType, msg.translate);
+        newMsg.SendMessage();
+        // The message is saved to the chat history of all the clients in the same guild (PS#2789)
+        client->GetActor()->LogChatMessage(sender.GetData(), msg);
     }
 }
 
@@ -377,6 +362,11 @@ void ChatManager::SendGroup(Client * client, psChatMessage& msg)
     {
         psChatMessage newMsg(0, client->GetActor()->GetEID(), client->GetName(), 0, msg.sText, msg.iChatType, msg.translate);
         group->Broadcast(newMsg.msg);
+        // Save chat message to grouped clients' history (PS#2789)
+        for (size_t i=0; i<group->GetMemberCount(); i++)
+        {
+            group->GetMember(i)->LogChatMessage(client->GetActor()->GetFirstName(), newMsg);
+        }
     }
     else
     {
@@ -385,22 +375,26 @@ void ChatManager::SendGroup(Client * client, psChatMessage& msg)
 }
 
 
-void ChatManager::SendTell(psChatMessage& msg, const char* who,Client *client,Client *p)
+void ChatManager::SendTell(psChatMessage& msg, const char* who,Client *client,Client *target)
 {
     Debug2(LOG_CHAT, client->GetClientNum(), "SendTell: %s!", msg.sText.GetDataSafe());
 
     // Sanity check that we are sending to correct clientnum!
     csString targetName = msg.sPerson;
     targetName = NormalizeCharacterName(targetName);
-    CS_ASSERT(strcasecmp(p->GetName(), targetName) == 0);
-
+    CS_ASSERT(strcasecmp(target->GetName(), targetName) == 0);
+    
     // Create a new message and send it to that person if found
-    psChatMessage cmsg(p->GetClientNum(), client->GetActor()->GetEID(), who, 0, msg.sText, msg.iChatType, msg.translate);
+    psChatMessage cmsg(target->GetClientNum(), client->GetActor()->GetEID(), who, 0, msg.sText, msg.iChatType, msg.translate);
     cmsg.SendMessage();
-
+    
     // Echo the message back to the speaker also
     psChatMessage cmsg2(client->GetClientNum(), client->GetActor()->GetEID(), targetName, 0, msg.sText, CHAT_TELLSELF, msg.translate);
     cmsg2.SendMessage();
+    
+    // Save to both actors' chat history (PS#2789)
+    client->GetActor()->LogChatMessage(who, cmsg);
+    target->GetActor()->LogChatMessage(who, cmsg);
 }
 
 #define MAX_NPC_DIALOG_DIST 5

@@ -292,6 +292,9 @@ void psChatBubbles::HandleMessage(MsgEntry * msg, Client * client)
     else
         firstName = chatMsg.sPerson;
 
+    if(!chatMsg.actor.IsValid())
+        return;
+    
     GEMClientActor* actor = dynamic_cast<GEMClientActor*> (psengine->GetCelClient()->FindObject(chatMsg.actor));
     if (!actor)
         return;

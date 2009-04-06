@@ -86,7 +86,7 @@ public:
 protected:
 	csPDelArray<CachedData> audioFileCache;
 
-    void SendTell(psChatMessage& msg, const char* who,Client *from,Client *target);
+    void SendTell(psChatMessage& msg, const char* who, Client *client, Client *target);
     void SendSay(uint32_t clientNum, gemActor* actor, psChatMessage& msg, const char* who);
     void SendGuild(Client * client, psChatMessage& msg);
     void SendGroup(Client * client, psChatMessage& msg);

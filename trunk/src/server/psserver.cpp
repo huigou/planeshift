@@ -680,11 +680,18 @@ void psServer::SendSystemInfo(int clientnum, const char *fmt, ... )
 
     va_list args;
     va_start(args, fmt);
-    psSystemMessage newmsg(clientnum ,MSG_INFO, fmt, args);
+    csString cssLine = csString().FormatV(fmt, args);
     va_end(args);
+    
+    psSystemMessage newmsg(clientnum ,MSG_INFO, cssLine.GetData());
 
     if (newmsg.valid)
+    {
+        // Save to chat history (PS#2789)
+        if (Client* cl = GetConnections()->Find(clientnum))
+            cl->GetActor()->LogSystemMessage(cssLine.GetData());
         eventmanager->SendMessage(newmsg.msg);
+    }
     else
     {
         Bug2("Could not create valid psSystemMessage for client %u.\n",clientnum);
@@ -698,11 +705,18 @@ void psServer::SendSystemBaseInfo(int clientnum, const char *fmt, ...)
 
     va_list args;
     va_start(args, fmt);
-    psSystemMessage newmsg(clientnum ,MSG_INFO_BASE, fmt, args);
+    csString cssLine = csString().FormatV(fmt, args);
     va_end(args);
+    
+    psSystemMessage newmsg(clientnum ,MSG_INFO_BASE, cssLine.GetData());
 
     if (newmsg.valid)
+    {
+        // Save to chat history (PS#2789)
+        if (Client* cl = GetConnections()->Find(clientnum))
+            cl->GetActor()->LogSystemMessage(cssLine.GetData());
         eventmanager->SendMessage(newmsg.msg);
+    }
     else
     {
         Bug2("Could not create valid psSystemMessage for client %u.\n",clientnum);
@@ -716,11 +730,18 @@ void psServer::SendSystemResult(int clientnum, const char *fmt, ... )
 
     va_list args;
     va_start(args, fmt);
-    psSystemMessage newmsg(clientnum ,MSG_RESULT, fmt, args);
+    csString cssLine = csString().FormatV(fmt, args);
     va_end(args);
 
+    psSystemMessage newmsg(clientnum ,MSG_RESULT, cssLine.GetData());
+
     if (newmsg.valid)
+    {
+        // Save to chat history (PS#2789)
+        if (Client* cl = GetConnections()->Find(clientnum))
+            cl->GetActor()->LogSystemMessage(cssLine.GetData());
         eventmanager->SendMessage(newmsg.msg);
+    }
     else
     {
         Bug2("Could not create valid psSystemMessage for client %u.\n",clientnum);
@@ -734,11 +755,18 @@ void psServer::SendSystemOK(int clientnum, const char *fmt, ... )
 
     va_list args;
     va_start(args, fmt);
-    psSystemMessage newmsg(clientnum ,MSG_OK, fmt, args);
+    csString cssLine = csString().FormatV(fmt, args);
     va_end(args);
+    
+    psSystemMessage newmsg(clientnum ,MSG_OK, cssLine.GetData());
 
     if (newmsg.valid)
+    {
+        // Save to chat history (PS#2789)
+        if (Client* cl = GetConnections()->Find(clientnum))
+            cl->GetActor()->LogSystemMessage(cssLine.GetData());
         eventmanager->SendMessage(newmsg.msg);
+    }
     else
     {
         Bug2("Could not create valid psSystemMessage for client %u.\n",clientnum);
@@ -752,11 +780,18 @@ void psServer::SendSystemError(int clientnum, const char *fmt, ... )
 
     va_list args;
     va_start(args, fmt);
-    psSystemMessage newmsg(clientnum ,MSG_ERROR, fmt, args);
+    csString cssLine = csString().FormatV(fmt, args);
     va_end(args);
 
+    psSystemMessage newmsg(clientnum ,MSG_ERROR, cssLine.GetData());
+
     if (newmsg.valid)
+    {
+        // Save to chat history (PS#2789)
+        if (Client* cl = GetConnections()->Find(clientnum))
+            cl->GetActor()->LogSystemMessage(cssLine.GetData());
         eventmanager->SendMessage(newmsg.msg);
+    }
     else
     {
         Bug2("Could not create valid psSystemMessage for client %u.\n",clientnum);
