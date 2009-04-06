@@ -1,7 +1,7 @@
 /*
  * psitemstats.cpp
  *
- * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -59,20 +59,20 @@ PSITEMSTATS_STAT skillToStat(PSSKILL skill)
 }
 
 //-----------------------------------------------------------------------------
-                                      
+
 psItemArmorStats::psItemArmorStats()
 {
     armor_type = PSITEMSTATS_ARMORTYPE_NONE;
-    armor_class = 0;        
+    armor_class = 0;
     memset(damage_protection,0,sizeof(damage_protection));
-    hardness = 0.0;    
+    hardness = 0.0;
 }
 
 float psItemArmorStats::Protection(PSITEMSTATS_DAMAGETYPE dmgtype)
 {
     if (dmgtype <0 || dmgtype >= PSITEMSTATS_DAMAGETYPE_COUNT)
         return 0.0f;
-    return damage_protection[dmgtype];    
+    return damage_protection[dmgtype];
 }
 
 void psItemArmorStats::ReadStats( iResultRow& row )
@@ -81,7 +81,7 @@ void psItemArmorStats::ReadStats( iResultRow& row )
     damage_protection[PSITEMSTATS_DAMAGETYPE_SLASH]     = row.GetFloat("dmg_slash");
     damage_protection[PSITEMSTATS_DAMAGETYPE_BLUNT]     = row.GetFloat("dmg_blunt");
     damage_protection[PSITEMSTATS_DAMAGETYPE_PIERCE]    = row.GetFloat("dmg_pierce");
-        
+
     csString temp(row["armorvsweapon_type"]);
     if ( temp.Length() == 2 )
     {
@@ -91,25 +91,25 @@ void psItemArmorStats::ReadStats( iResultRow& row )
             armor_type = PSITEMSTATS_ARMORTYPE_MEDIUM;
         else if (temp.GetAt(0) == '3')
             armor_type = PSITEMSTATS_ARMORTYPE_HEAVY;
-            
-        armor_class = temp.GetAt(1);            
+
+        armor_class = temp.GetAt(1);
     }
-    
+
 }
-    
+
 //-----------------------------------------------------------------------------
 
 psItemWeaponStats::psItemWeaponStats()
 {
     weapon_type=PSITEMSTATS_WEAPONTYPE_NONE;
-    
+
     memset(weapon_skill,0,sizeof(weapon_skill));
     memset(attribute_bonuses,0,sizeof(attribute_bonuses));
     memset(damages,0,sizeof(damages));
-    
+
     latency=0.0f;
     penetration=0.0f;
-    
+
     untargeted_block_value=0.0f;
     targeted_block_value=0.0f;
     counter_block_value=0.0f;
@@ -136,7 +136,7 @@ void psItemWeaponStats::ReadStats( iResultRow& row )
     weapon_skill[PSITEMSTATS_WEAPONSKILL_INDEX_0] = CacheManager::GetSingleton().ConvertSkill(row.GetInt("item_skill_id_1"));
     weapon_skill[PSITEMSTATS_WEAPONSKILL_INDEX_1] = CacheManager::GetSingleton().ConvertSkill(row.GetInt("item_skill_id_2"));
     weapon_skill[PSITEMSTATS_WEAPONSKILL_INDEX_2] = CacheManager::GetSingleton().ConvertSkill(row.GetInt("item_skill_id_3"));
-    
+
     latency = row.GetFloat("weapon_speed");
     if (latency < 1.5F)
     {
@@ -151,7 +151,7 @@ void psItemWeaponStats::ReadStats( iResultRow& row )
     penetration = row.GetFloat("weapon_penetration");
     targeted_block_value = row.GetFloat("weapon_block_targeted");
     untargeted_block_value = row.GetFloat("weapon_block_untargeted");
-    counter_block_value = row.GetFloat("weapon_counterblock");               
+    counter_block_value = row.GetFloat("weapon_counterblock");
 }
 
 PSSKILL psItemWeaponStats::Skill(PSITEMSTATS_WEAPONSKILL_INDEX index)
@@ -204,7 +204,7 @@ void psItemAmmoStats::ReadStats( iResultRow& row )
 }
 
 //-----------------------------------------------------------------------------
-   
+
 psItemCreativeStats::psItemCreativeStats()
 {
     creativeType = PSITEMSTATS_CREATIVETYPE_NONE;
@@ -300,7 +300,7 @@ bool psItemCreativeStats::SetCreativeContent(PSITEMSTATS_CREATIVETYPE updatedCre
 bool psItemCreativeStats::FormatCreativeContent(void)
 {
     csString contentForXML(content);
-    
+
     creativeDefinitionXML = "<creative type=\"";
 
     // start of creative data xml
@@ -418,7 +418,7 @@ psItemStats::psItemStats()
     image_name=NULL;
 
     equipScript = NULL;
-    
+
     visible_distance = DEF_PROX_DIST;
 }
 
@@ -460,15 +460,15 @@ bool psItemStats::ReadItemStats(iResultRow& row)
     }
     weight             = row.GetFloat("weight");
     size               = (unsigned short)row.GetInt("size");
-    container_max_size = (unsigned short)row.GetInt("container_max_size");                 
+    container_max_size = (unsigned short)row.GetInt("container_max_size");
     visible_distance   = row.GetFloat("visible_distance");
-    decay_rate         = row.GetFloat("decay_rate");  
-    
+    decay_rate         = row.GetFloat("decay_rate");
+
     // Load in the valid slots for the item.
     LoadSlots( row );
-        
+
     ParseFlags( row );
-            
+
     if (flags==0) // no type specified is illegal
     {
         Error2("Item %s has no valid flags specified.",row["id"] );
@@ -476,8 +476,8 @@ bool psItemStats::ReadItemStats(iResultRow& row)
     }
 
     SetArmorVsWeaponType(row["armorvsweapon_type"]);
-    
-    weaponStats.ReadStats( row );        
+
+    weaponStats.ReadStats( row );
     armorStats.ReadStats( row );
     ammoStats.ReadStats( row );
     if (flags & PSITEMSTATS_FLAG_CREATIVE)
@@ -487,18 +487,18 @@ bool psItemStats::ReadItemStats(iResultRow& row)
 
     // Mesh, Texture, Part and Image strings
     const char *meshname = CacheManager::GetSingleton().FindCommonString(row.GetUInt32("cstr_id_gfx_mesh"));
-    if (row.GetUInt32("cstr_id_gfx_mesh")!=0 && !meshname) 
+    if (row.GetUInt32("cstr_id_gfx_mesh")!=0 && !meshname)
     {
         Error3("Error, no commonstring exists with number %lu while loading item_stats.id %u.\n",row.GetUInt32("cstr_id_gfx_mesh"),uid);
         return false;
-    } 
+    }
     else
     {
         SetMeshName(meshname);
     }
 
     const char *texturename = CacheManager::GetSingleton().FindCommonString(row.GetUInt32("cstr_id_gfx_texture"));
-    if (row.GetUInt32("cstr_id_gfx_texture")!=0 && !texturename) 
+    if (row.GetUInt32("cstr_id_gfx_texture")!=0 && !texturename)
     {
         Error3("Error, no commonstring exists with number %lu while loading item_stats.id %u.\n",row.GetUInt32("cstr_id_gfx_texture"),uid);
         return false;
@@ -579,10 +579,10 @@ bool psItemStats::ReadItemStats(iResultRow& row)
 void psItemStats::ParseFlags( iResultRow& row )
 {
     psString flagstr(row["flags"]);
-    
+
     int z = 0;
     // Iterates over all the flags in the list and adds that flag to the value if it
-    // has been found in the flag string from the database. 
+    // has been found in the flag string from the database.
     while ( CacheManager::GetSingleton().ItemStatFlagArray[z].string != "END" )
     {
         if (flagstr.FindSubString(CacheManager::GetSingleton().ItemStatFlagArray[z].string,0,true)!=-1)
@@ -590,7 +590,7 @@ void psItemStats::ParseFlags( iResultRow& row )
             flags |= CacheManager::GetSingleton().ItemStatFlagArray[z].flag;
         }
         z++;
-    }               
+    }
 
     // Enforce extra rules: Container => !Stackable
     if (GetIsContainer() && GetIsStackable())
@@ -607,7 +607,7 @@ void psItemStats::LoadSlots( iResultRow& row )
     csStringArray slots;
     if(row["valid_slots"]) //check if it's valid (aka the row is not NULL)
         slots.SplitString(row["valid_slots"],  " ");
-  
+
     for(size_t i = 0; i < slots.GetSize(); i++)
     {
         csString currentSlot = slots.Get(i); //get the current slot
@@ -622,7 +622,7 @@ void psItemStats::LoadSlots( iResultRow& row )
         {
             valid_slots_array.Push(PSCHARACTER_SLOT_RIGHTHAND);
             valid_slots|=PSITEMSTATS_SLOT_RIGHTHAND;
-        }        
+        }
         else if (currentSlot == "LEFTHAND")
         {
             valid_slots_array.Push(PSCHARACTER_SLOT_LEFTHAND);
@@ -652,76 +652,76 @@ void psItemStats::LoadSlots( iResultRow& row )
         {
             valid_slots_array.Push(PSCHARACTER_SLOT_NECK);
             valid_slots|=PSITEMSTATS_SLOT_NECK;
-        }        
+        }
         else if (currentSlot == "BACK")
         {
             valid_slots_array.Push(PSCHARACTER_SLOT_BACK);
             valid_slots|=PSITEMSTATS_SLOT_BACK;
-        }        
+        }
         else if (currentSlot == "ARMS")
         {
             valid_slots_array.Push(PSCHARACTER_SLOT_ARMS);
             valid_slots|=PSITEMSTATS_SLOT_ARMS;
-        }                
+        }
         else if (currentSlot == "GLOVES")
         {
             valid_slots_array.Push(PSCHARACTER_SLOT_GLOVES);
             valid_slots|=PSITEMSTATS_SLOT_GLOVES;
-        }        
+        }
         else if (currentSlot == "BOOTS")
         {
             valid_slots_array.Push(PSCHARACTER_SLOT_BOOTS);
             valid_slots|=PSITEMSTATS_SLOT_BOOTS;
-        }        
+        }
         else if (currentSlot == "LEGS")
         {
             valid_slots|=PSITEMSTATS_SLOT_LEGS;
             valid_slots_array.Push(PSCHARACTER_SLOT_LEGS);
-        }        
+        }
         else if (currentSlot == "BELT")
         {
             valid_slots|=PSITEMSTATS_SLOT_BELT;
             valid_slots_array.Push(PSCHARACTER_SLOT_BELT);
-        }        
+        }
         else if (currentSlot == "BRACERS")
         {
             valid_slots_array.Push(PSCHARACTER_SLOT_BRACERS);
             valid_slots|=PSITEMSTATS_SLOT_BRACERS;
-        }        
+        }
         else if (currentSlot == "TORSO")
         {
             valid_slots_array.Push(PSCHARACTER_SLOT_TORSO);
             valid_slots|=PSITEMSTATS_SLOT_TORSO;
-        }        
+        }
         else if (currentSlot == "MIND")
         {
             valid_slots_array.Push(PSCHARACTER_SLOT_MIND);
-            valid_slots|=PSITEMSTATS_SLOT_MIND; 
+            valid_slots|=PSITEMSTATS_SLOT_MIND;
         }
         else if (currentSlot == "BANK")
         {
             valid_slots|=PSITEMSTATS_SLOT_BANK;
-        }        
+        }
         else if (currentSlot == "CRYSTAL")
         {
             valid_slots|=PSITEMSTATS_SLOT_CRYSTAL;
         }
         else if (currentSlot == "AZURE")
-        {    
+        {
             valid_slots|=PSITEMSTATS_SLOT_AZURE;
-        }        
+        }
         else if (currentSlot == "RED")
         {
             valid_slots|=PSITEMSTATS_SLOT_RED;
-        }        
+        }
         else if (currentSlot == "DARK")
-        {    
+        {
             valid_slots|=PSITEMSTATS_SLOT_DARK;
-        }        
+        }
         else if (currentSlot == "BROWN")
         {
             valid_slots|=PSITEMSTATS_SLOT_BROWN;
-        }        
+        }
         else if (currentSlot == "BLUE")
         {
             valid_slots|=PSITEMSTATS_SLOT_BLUE;
@@ -733,12 +733,12 @@ void psItemStats::LoadSlots( iResultRow& row )
 bool psItemStats::Save()
 {
     static iRecord* update;
-    
+
     if(update == NULL)
         update = db->NewUpdatePreparedStatement("item_stats", "id", 28, __FILE__, __LINE__); // 27 parameters plus 1 id
-    
+
     update->Reset();
-    
+
     bool update_ok=true;
 
     // Existing Item, update
@@ -749,7 +749,7 @@ bool psItemStats::Save()
     // STRING    fields.Push(
 
     update->AddField("name", name);
-  
+
     update->AddField("stat_type", stat_type);
 
     update->AddField("weight", weight);
@@ -775,17 +775,17 @@ bool psItemStats::Save()
 
     // Note that these are the same as armorStats.damage_protection - weaponStats is populated
     // for all kinds of items, and both are filled from the same DB columns.  So it doesn't matter.
-    update->AddField("dmg_slash", weaponStats.damages[PSITEMSTATS_DAMAGETYPE_SLASH] );            
-    update->AddField("dmg_blunt", weaponStats.damages[PSITEMSTATS_DAMAGETYPE_BLUNT] );            
-    update->AddField("dmg_pierce", weaponStats.damages[PSITEMSTATS_DAMAGETYPE_PIERCE] );            
+    update->AddField("dmg_slash", weaponStats.damages[PSITEMSTATS_DAMAGETYPE_SLASH] );
+    update->AddField("dmg_blunt", weaponStats.damages[PSITEMSTATS_DAMAGETYPE_BLUNT] );
+    update->AddField("dmg_pierce", weaponStats.damages[PSITEMSTATS_DAMAGETYPE_PIERCE] );
 
-    update->AddField("cstr_id_gfx_mesh", CacheManager::GetSingleton().FindCommonStringID( this->mesh_name ) );    //Mesh   
+    update->AddField("cstr_id_gfx_mesh", CacheManager::GetSingleton().FindCommonStringID( this->mesh_name ) );    //Mesh
 
     // stat requirements
     update->AddField("requirement_1_name", reqs[0].name);
-    update->AddField("requirement_1_value", reqs[0].min_value);            
+    update->AddField("requirement_1_value", reqs[0].min_value);
     update->AddField("requirement_2_name", reqs[1].name);
-    update->AddField("requirement_2_value", reqs[1].min_value);            
+    update->AddField("requirement_2_value", reqs[1].min_value);
     update->AddField("requirement_3_name", reqs[2].name);
     update->AddField("requirement_3_value", reqs[2].min_value);
 
@@ -1317,9 +1317,9 @@ bool psItemStats::CheckRequirements( psCharacter* charData, csString& resp )
             if ( skill != PSSKILL_NONE )
             {
                 val = charData->Skills().GetSkillRank(skill).Current();
-            }            
+            }
         }
-        
+
         if ( val < reqs[z].min_value )
         {
             if(!first)
@@ -1331,14 +1331,14 @@ bool psItemStats::CheckRequirements( psCharacter* charData, csString& resp )
                 needed += "a lot ";
 
             needed += "more in ";
-            needed += reqs[z].name;                              
+            needed += reqs[z].name;
         }
-    }   
-    
+    }
+
     if(first) // No needed things
     {
         resp = "None";
-        return true;         
+        return true;
     }
 
     needed.Append(" to equip this item");
@@ -1425,7 +1425,7 @@ bool psItemStats::SetAttribute(const csString & op, const csString & attrName, f
     if ( AttributeName.Compare( "item.weight" ) )
     {
         value[0] = &this->weight;
-    } 
+    }
     else if ( AttributeName.Compare( "item.damage_value" ) )
     {
         value[0] = 0;
@@ -1538,7 +1538,7 @@ bool psItemStats::IsThisTheCreator(PID characterID)
 {
     // if characterID is creator of this item, or no creator assigned (then anyone can edit)
     // of if the item is 'public' then any can edit it.
-    if ((creativeStats.creatorIDStatus == PSITEMSTATS_CREATOR_VALID && 
+    if ((creativeStats.creatorIDStatus == PSITEMSTATS_CREATOR_VALID &&
          creativeStats.creatorID == characterID) ||
         creativeStats.creatorIDStatus == PSITEMSTATS_CREATOR_PUBLIC ||
         creativeStats.creatorIDStatus == PSITEMSTATS_CREATOR_UNASSIGNED)
