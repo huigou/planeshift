@@ -285,6 +285,8 @@ bool LocationType::Load(iResultRow& row, iEngine * engine, iDataConnection *db)
             
         } while (found);
         
+        //when not a closed loop of at least 3 points, delete this
+        //polygon, but continue with rest.
         if (first->locs.GetSize() <= 2)
         {
             Error1("Only two locs for region defined!");
@@ -293,7 +295,6 @@ bool LocationType::Load(iResultRow& row, iEngine * engine, iDataConnection *db)
             //case including itself. So remove that reference first
             first->locs.DeleteIndex(0);
             delete first;
-            return false;
         }
         else if (curr->id != first->id_prev_loc_in_region)
         {
@@ -303,7 +304,6 @@ bool LocationType::Load(iResultRow& row, iEngine * engine, iDataConnection *db)
             //case including itself. So remove that reference first
             first->locs.DeleteIndex(0);
             delete first; 
-            return false;
         }
         else
         {
