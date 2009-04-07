@@ -444,7 +444,7 @@ bool psCharAppearance::ChangeMaterial(const char* part, const char* materialName
     // The material isn't available to load.
     csReport(psengine->GetObjectRegistry(), CS_REPORTER_SEVERITY_NOTIFY,
         "planeshift.character.appearance", "Attempted to change to material %s and failed; material not found.",
-        materialNameParsed);
+        materialNameParsed.GetData());
     return false;
 }
 
