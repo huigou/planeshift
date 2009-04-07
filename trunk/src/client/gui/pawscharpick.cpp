@@ -245,8 +245,7 @@ bool pawsCharacterPickerWindow::OnButtonPressed( int mouseButton, int keyModifer
                 PawsManager::GetSingleton().CreateWarningBox( confirm, this );
                 return false;
             }
-            csString charName;
-            charName.Format(((pawsButton*)FindWidget(name))->GetText());
+            csString charName(((pawsButton*)FindWidget(name))->GetText());
             // Catch invalid selection.
             if(charName == "New Character")
                 return false;

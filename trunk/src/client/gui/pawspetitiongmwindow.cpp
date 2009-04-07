@@ -434,8 +434,8 @@ bool pawsPetitionGMWindow::OnButtonReleased( int mouseButton, int keyModifier, p
                     return true;
                 }
 
-                if (csString("In Progress") == petitionList->GetSelectedText(PGMCOL_STATUS)
-                    && ((csString)psengine->GetMainPlayerName()).StartsWith(petitionList->GetSelectedText(PGMCOL_GM))
+                if ((csString("In Progress") == petitionList->GetSelectedText(PGMCOL_STATUS)
+                    && ((csString)psengine->GetMainPlayerName()).StartsWith(petitionList->GetSelectedText(PGMCOL_GM)))
                     || psengine->GetCelClient()->GetMainPlayer()->GetType() >= 25)
                 {
                     currentRow = sel;
