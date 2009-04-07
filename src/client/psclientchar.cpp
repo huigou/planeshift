@@ -73,7 +73,7 @@ void Trait::Load( iDocumentNode* node )
     csString genderStr;
     name                 = node->GetAttributeValue( "name" );
     int cstr_id_mesh     = node->GetAttributeValueAsInt( "mesh" );
-    int cstr_id_texture  = node->GetAttributeValueAsInt( "tex" );
+    //int cstr_id_texture  = node->GetAttributeValueAsInt( "tex" );
     int cstr_id_material = node->GetAttributeValueAsInt( "mat" );
     genderStr            = node->GetAttributeValue( "gender" );
     location             = ConvertTraitLocationString(node->GetAttributeValue( "loc" ));

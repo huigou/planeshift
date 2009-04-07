@@ -262,7 +262,7 @@ pawsListBoxRow* pawsComboBox::Select(int optionNum)
 pawsListBoxRow* pawsComboBox::Select(const char * text)
 {
     pawsListBoxRow *row;
-    for (int i = 0; i < listChoice->GetRowCount(); i++ )
+    for (unsigned int i = 0; i < listChoice->GetRowCount(); i++ )
     {
         row = listChoice->GetRow(i);
         pawsTextBox* thing = dynamic_cast <pawsTextBox*> (row->GetColumn(0));

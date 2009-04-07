@@ -3794,7 +3794,7 @@ void gemNPC::ShowPopupMenu(Client *client)
     // Merge current spot in active quests first
     for (size_t i=0; i < quests.GetSize(); i++)
     {
-        psQuest *q = quests[i]->GetQuest();
+        quests[i]->GetQuest();
         // If the quest is completed or the last response was not from this NPC, then skip
         if (quests[i]->last_response_from_npc_pid != pid || quests[i]->status == 'C')
         {

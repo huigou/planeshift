@@ -153,7 +153,7 @@ bool psEffectObjQuad::Update(csTicks elapsed)
     {
         // COLOUR
         csVector3 lerpColour = LERP_VEC_KEY(KA_COLOUR);
-        float lerpAlpha = LERP_KEY(KA_ALPHA);
+        //float lerpAlpha = LERP_KEY(KA_ALPHA);
         CS::ShaderVarStringID varName = stringSet->Request("color modulation");
         csShaderVariable* var = mat->GetMaterial()->GetVariableAdd(varName);
         if(var)
