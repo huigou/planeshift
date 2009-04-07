@@ -47,7 +47,7 @@ class Loader : public Singleton<Loader>, public ThreadedCallable<Loader>
 public:
     void Init(iObjectRegistry* _object_reg, uint gfxFeatures, float loadRange);
 
-    csPtr<iMaterialWrapper> LoadMaterial(const char* name);
+    csPtr<iMaterialWrapper> LoadMaterial(const char* name, bool* failed = NULL);
     csPtr<iMeshFactoryWrapper> LoadFactory(const char* name);
 
     THREADED_CALLABLE_DECL2(Loader, PrecacheData, csThreadReturn, const char*, path, bool, recursive, THREADEDL, false, false);

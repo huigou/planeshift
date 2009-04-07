@@ -419,24 +419,33 @@ bool psCharAppearance::ChangeMaterial(const char* part, const char* materialName
 
     csString materialNameParsed = ParseStrings(part, materialName);
 
-    csRef<iMaterialWrapper> material = Loader::GetSingleton().LoadMaterial(materialNameParsed);
-    if (!material.IsValid())
+    bool failed = false;
+    csRef<iMaterialWrapper> material = Loader::GetSingleton().LoadMaterial(materialNameParsed, &failed);
+    if(!failed)
     {
-        Attachment attach(false);
-        attach.materialName = materialNameParsed;
-        attach.partName = part;
-        if(delayedAttach.IsEmpty())
+        if(!material.IsValid())
         {
-            psengine->RegisterDelayedLoader(this);
-        }
-        delayedAttach.PushBack(attach);
+            Attachment attach(false);
+            attach.materialName = materialNameParsed;
+            attach.partName = part;
+            if(delayedAttach.IsEmpty())
+            {
+                psengine->RegisterDelayedLoader(this);
+            }
+            delayedAttach.PushBack(attach);
 
-        return false;
+            return true;
+        }
+
+        ProcessAttach(material, materialName, part);
+        return true;
     }
 
-    ProcessAttach(material, materialName, part);
-
-    return true;
+    // The material isn't available to load.
+    csReport(psengine->GetObjectRegistry(), CS_REPORTER_SEVERITY_NOTIFY,
+        "planeshift.character.appearance", "Attempted to change to material %s and failed; material not found.",
+        materialNameParsed);
+    return false;
 }
 
 

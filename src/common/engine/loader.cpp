@@ -1589,14 +1589,22 @@ csPtr<iMeshFactoryWrapper> Loader::LoadFactory(const char* name)
     return csPtr<iMeshFactoryWrapper>(0);
 }
 
-csPtr<iMaterialWrapper> Loader::LoadMaterial(const char* name)
+csPtr<iMaterialWrapper> Loader::LoadMaterial(const char* name, bool* failed)
 {
     csRef<Material> material = materials.Get(name, csRef<Material>());
     {
-        // Validation.
-        csString msg;
-        msg.Format("Invalid material reference '%s'", name);
-        CS_ASSERT_MSG(msg.GetData(), material.IsValid());
+        if(!failed)
+        {
+          // Validation.
+          csString msg;
+          msg.Format("Invalid material reference '%s'", name);
+          CS_ASSERT_MSG(msg.GetData(), material.IsValid());
+        }
+        else if(!material.IsValid())
+        {
+          *failed = true;
+          return csPtr<iMaterialWrapper>(0);
+        }
     }
 
     if(LoadMaterial(material))
