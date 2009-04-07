@@ -2395,12 +2395,11 @@ void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
             return;
         }
 
-        
         //escape the player name so it's not possible to do nasty things
         csString escapedName;
-        db->Escape( escapedName, data.name.GetDataSafe() );
+        db->Escape( escapedName, data.player.GetDataSafe() );
 
-        sql.AppendFmt("update characters set loc_x=%10.2f, loc_y=%10.2f, loc_z=%10.2f, loc_yrot=%10.2f, loc_sector_id=%u, loc_instance=%u where name='%s'",
+        sql.AppendFmt("update characters set loc_x=%10.2f, loc_y=%10.2f, loc_z=%10.2f, loc_yrot=%10.2f, loc_sector_id=%u, loc_instance=%u where name=\"%s\"",
             myPoint.x, myPoint.y, myPoint.z, yRot, mysectorinfo->uid, client->GetActor()->GetInstance(), escapedName.GetDataSafe());
 
         if (db->CommandPump(sql) != 1)
