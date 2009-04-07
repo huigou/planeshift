@@ -26,8 +26,14 @@ The following give false positives in PaladinJr when performed by a player valid
 NPC Interaction
 ---------------
 [X] Fix npc chat bubbles displaying
-[ ] Do the question popup widget
+[X] Do the question popup widget
 [ ] Make the camera look from person to person when talking and fixate on the player when NPC response is complete
 [X] Make Option GUI for enabling/disabling voice audio
 [ ] Make Option GUI for making bubbles disappear slower/faster
 [ ] Make a way for players to skip a bubble and cut off audio by clicking the bubble.
+
+[X] Menu popup appears too fast and allows responses to step on each other
+[ ] Giving NPC's money doesn't work from menus
+[ ] Text is truncated in menu popup if too long
+[ ] Menu trigger prereq checking doesn't take into account quest lockouts
+[ ] Untargeting the npc while the popup menu is open makes it appear there is no response
