@@ -436,7 +436,7 @@ bool QuestManager::HandleScriptCommand(csString& block,
 
             // Build the op
             op.Format("<run script=\"%s\" with=\"",script.GetDataSafe());
-            for (int i = 0; i < param.GetSize(); i++)
+            for (unsigned int i = 0; i < param.GetSize(); i++)
             {
                 op.AppendFmt("Param%d=%s;",i,param[i].GetDataSafe());
             }
@@ -581,7 +581,7 @@ int QuestManager::ParseQuestScript(int quest_id, const char *script)
     int step_count=1; // Main quest is step 1
     csString current_npc;
     csString response_text,file_path;
-    NpcResponse *last_response=NULL,*error_response=NULL;
+    NpcResponse *last_response=NULL;
     bool quest_assigned_already = false;
     csString response_requireop; // Accumulate prerequisites for next response
     csString substep_requireop;  // Accumulate prerequisites for current substep
