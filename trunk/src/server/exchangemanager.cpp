@@ -1571,6 +1571,14 @@ void ExchangeManager::HandleAutoGive(MsgEntry *me,Client *client)
     // Now execute the exchange if all items were found
     if (exchangeSlot == itemCount) // successfully added everything to the exchange
     {
+		// Now parse the money attribute here and add any money found to the exchange
+		psMoney money(topNode->GetAttributeValue("money"));
+		if (money.GetTotal() > 0)
+		{
+			psSlotMovementMsg msg(CONTAINER_INVENTORY_MONEY,MONEY_TRIAS,CONTAINER_EXCHANGE_OFFERING,MONEY_TRIAS,money.GetTotal() );
+			msg.msg->clientnum = client->GetClientNum();  // must set this before publishing
+			msg.FireEvent();
+		}
         HandleExchangeAccept(NULL, client);
     }
 }
