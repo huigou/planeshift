@@ -261,6 +261,7 @@ bool QuestManager::HandlePlayerAction(csString& block, size_t& which_trigger,csS
         {
             pending_triggers.Empty();
             pending_triggers.Push(itemlist);  // next response will use this itemlist
+			printf("Got player action of: %s\n", itemlist.GetDataSafe() );
         }
         else
             return false;
