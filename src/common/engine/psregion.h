@@ -43,8 +43,8 @@ struct iVFS;
 
 // Feature defines.
 #define useLowShaders 0x01
-#define useMediumShaders 0x03
-#define useHighShaders 0x07
+#define useMediumShaders 0x02
+#define useHighShaders 0x04
 #define useMeshGen 0x08
 #define useAll (useHighShaders | useMeshGen)
 
