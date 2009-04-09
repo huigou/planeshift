@@ -69,14 +69,19 @@ csPtr<iBase> psEffectLoader::Parse(iDocumentNode * node, iStreamSource * istream
             psEffect * newEffect = new psEffect();
             newEffect->Load(effectNode, manager->GetView(), manager->Get2DRenderer(), ldr_context);
 
-            CS::Threading::MutexScopedLock lock(parseLock);
+            parseLock.UpgradeLock();
             if (manager->FindEffect(newEffect->GetName()))
             {
+                parseLock.UpgradeUnlock();
                 csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Duplicate effect '%s' found!", newEffect->GetName().GetData());
                 delete newEffect;
             }
             else
+            {
+                parseLock.UpgradeUnlockAndWriteLock();
                 manager->AddEffect((const char *)newEffect->GetName(), newEffect);
+                parseLock.WriteUnlock();
+            }
         }
     }
 #endif
