@@ -560,11 +560,11 @@ void pawsLauncherWindow::LoadSettings()
     pawsCheckBox* enableShadows = (pawsCheckBox*)FindWidget("EnableShadows");
     if(configUser->KeyExists("Engine.RenderManager.Default"))
     {
-        enableShadows->SetState(csString("shadow_pssm") == configUser->GetStr("Engine.RenderManager.Default"));
+        enableShadows->SetState(csString("crystalspace.rendermanager.shadow_pssm") == configUser->GetStr("Engine.RenderManager.Default"));
     }
     else
     {
-        enableShadows->SetState(csString("shadow_pssm") == configPSC.GetStr("Engine.RenderManager.Default"));
+        enableShadows->SetState(csString("crystalspace.rendermanager.shadow_pssm") == configPSC.GetStr("Engine.RenderManager.Default"));
     }
 
     pawsCheckBox* enableGrass = (pawsCheckBox*)FindWidget("EnableGrass");
@@ -833,18 +833,18 @@ void pawsLauncherWindow::SaveSettings()
 
     if(shaders->GetSelectedRowString() == "Lowest")
     {
-        configUser->SetStr("Engine.RenderManager.Default", "rlcompat");
+        configUser->SetStr("Engine.RenderManager.Default", "crystalspace.rendermanager.rlcompat");
     }
     else
     {
         pawsCheckBox* enableShadows = (pawsCheckBox*)FindWidget("EnableShadows");
         if(enableShadows->GetState())
         {
-            configUser->SetStr("Engine.RenderManager.Default", "shadow_pssm");
+            configUser->SetStr("Engine.RenderManager.Default", "crystalspace.rendermanager.shadow_pssm");
         }
         else
         {
-            configUser->SetStr("Engine.RenderManager.Default", "unshadowed");
+            configUser->SetStr("Engine.RenderManager.Default", "crystalspace.rendermanager.unshadowed");
         }
     }
 
