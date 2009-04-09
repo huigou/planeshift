@@ -1206,7 +1206,6 @@ bool GEMClientObject::InitMesh()
         if(!nullmesh)
         {
             nullmesh = psengine->GetEngine()->CreateMeshFactory("crystalspace.mesh.object.null", "nullmesh");
-            nullmesh->GetFlags().Set(CS_ENTITY_NODECAL);
             csRef<iNullFactoryState> nullstate = scfQueryInterface<iNullFactoryState> (nullmesh->GetMeshObjectFactory());
             csBox3 bbox;
             bbox.AddBoundingVertex(csVector3(0.0f));
@@ -1214,6 +1213,7 @@ bool GEMClientObject::InitMesh()
         }
 
         pcmesh = psengine->GetEngine()->CreateMeshWrapper(nullmesh, name);
+        pcmesh->GetFlags().Set(CS_ENTITY_NODECAL);
         cel->AttachObject(pcmesh->QueryObject(), this);
         hasShadow = false;
 
@@ -1251,8 +1251,8 @@ void GEMClientObject::CheckLoadStatus()
         return;
     }
 
-    factory->GetFlags().Set(CS_ENTITY_NODECAL);
     pcmesh = factory->CreateMeshWrapper();
+    pcmesh->GetFlags().Set(CS_ENTITY_NODECAL);
     psengine->GetEngine()->GetMeshes()->Add(pcmesh);
 
     if (!pcmesh)
