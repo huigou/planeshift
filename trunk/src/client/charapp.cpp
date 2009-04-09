@@ -509,6 +509,7 @@ bool psCharAppearance::Attach(const char* socketName, const char* meshFactName)
 void psCharAppearance::ProcessAttach(csRef<iMeshFactoryWrapper> factory, const char* meshFactName, csRef<iSpriteCal3DSocket> socket)
 {
      csRef<iMeshWrapper> meshWrap = engine->CreateMeshWrapper( factory, meshFactName );
+     meshWrap->GetFlags().Set(CS_ENTITY_NODECAL);
      const char* socketName = socket->GetName();
 
     // Given a socket name of "righthand", we're looking for a key in the form of "socket_righthand"
@@ -565,7 +566,6 @@ void psCharAppearance::CheckLoadStatus()
             csRef<iMeshFactoryWrapper> factory = Loader::GetSingleton().LoadFactory(attach.factName);
             if(factory.IsValid())
             {
-                factory->GetFlags().Set(CS_ENTITY_NODECAL);
                 ProcessAttach(factory, attach.factName, attach.socket);
                 delayedAttach.PopFront();
             }
