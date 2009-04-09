@@ -423,20 +423,21 @@ csRef<iDocumentNode> psRegion::Filter(csRef<iDocumentNode> world, bool using3D)
     }
     else
     {
-        if(!(gfxFeatures & useAdvancedShaders))
-        {
-            // TODO
-        }
-
         if(!(gfxFeatures & useMeshGen))
         {
-            csRef<iDocumentNodeIterator> sectors = world->GetNodes("sector");
+            csRef<iDocument> doc = xml->CreateDocument();
+            csRef<iDocumentNode> node = doc->CreateRoot();    
+            csRef<iDocumentNode> newWorld = node->CreateNodeBefore(CS_NODE_ELEMENT);
+            CS::DocSystem::CloneNode(world, newWorld);
+
+            csRef<iDocumentNodeIterator> sectors = newWorld->GetNodes("sector");
             while(sectors->HasNext())
             {
                 csRef<iDocumentNode> sector = sectors->Next();
                 csRef<iDocumentNodeIterator> meshgen = sector->GetNodes("meshgen");
                 sector->RemoveNodes(meshgen);
             }
+            world = newWorld;
         }
     }
 

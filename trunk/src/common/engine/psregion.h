@@ -42,9 +42,11 @@ struct iObjectRegistry;
 struct iVFS;
 
 // Feature defines.
-#define useAdvancedShaders 0x01
-#define useMeshGen 0x02
-#define useAll (useAdvancedShaders | useMeshGen)
+#define useLowShaders 0x01
+#define useMediumShaders 0x03
+#define useHighShaders 0x07
+#define useMeshGen 0x08
+#define useAll (useHighShaders | useMeshGen)
 
 /**
 * Replacement class for iPcRegion from CEL.

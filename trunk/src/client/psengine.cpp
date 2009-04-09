@@ -385,12 +385,23 @@ bool psEngine::Initialize (int level)
             return false;
         }
 
-        // Check if we're using basic or more advanced shaders.
-        csString advanced("Advanced");
-        if(advanced.CompareNoCase(GetConfig()->GetStr("PlaneShift.Graphics.Shaders")))
+        // Check the level of shader use.
+        csString shader("High");
+        if(shader.CompareNoCase(GetConfig()->GetStr("PlaneShift.Graphics.Shaders")))
         {
-            gfxFeatures |= useAdvancedShaders;
+            gfxFeatures |= useHighShaders;
         }
+        shader = "Medium";
+        if(shader.CompareNoCase(GetConfig()->GetStr("PlaneShift.Graphics.Shaders")))
+        {
+            gfxFeatures |= useMediumShaders;
+        }
+        shader = "Low";
+        if(shader.CompareNoCase(GetConfig()->GetStr("PlaneShift.Graphics.Shaders")))
+        {
+            gfxFeatures |= useLowShaders;
+        }
+
 
         // Check if we're using meshgen.
         if(GetConfig()->GetBool("PlaneShift.Graphics.EnableGrass", true))
@@ -531,7 +542,7 @@ bool psEngine::Initialize (int level)
     }
     else if (level==1)
     {
-        threadedWorldLoading = csString("Threaded").Compare(psengine->GetConfig()->GetStr("PlaneShift.Loading.WorldLoad", "NThreaded"));
+        threadedWorldLoading = psengine->GetConfig()->GetBool("PlaneShift.Loading.ThreadedWorldLoad");
         loader = new Loader();
         csRef<iThreadManager> tm = csQueryRegistry<iThreadManager>(object_reg);
         Loader::GetSingleton().Init(object_reg, gfxFeatures, 200);

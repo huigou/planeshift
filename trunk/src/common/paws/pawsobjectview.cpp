@@ -19,6 +19,7 @@
 
 #include <psconfig.h>
 
+#include <csutil/documenthelper.h>
 #include <csutil/weakref.h>
 
 #include <iutil/object.h>
@@ -49,8 +50,6 @@ pawsObjectView::pawsObjectView()
     mouseControlled = false;
     doRotate = true;
     mouseDownUnlock = false;
-
-    needToFilter = PawsManager::GetSingleton().GetGFXFeatures() != useAll;
 }   
 
 pawsObjectView::~pawsObjectView()
@@ -97,29 +96,6 @@ bool pawsObjectView::Setup(iDocumentNode* node )
     }
 }
 
-csRef<iDocumentNode> pawsObjectView::Filter(csRef<iDocumentNode> world)
-{
-    if(!(PawsManager::GetSingleton().GetGFXFeatures() & useAdvancedShaders))
-    {
-        csRef<iDocumentNodeIterator> sectors = world->GetNodes("sector");
-        while(sectors->HasNext())
-        {
-            csRef<iDocumentNode> sector = sectors->Next();
-            csRef<iDocumentNode> rloop = sector->GetNode("renderloop");
-            if(rloop.IsValid())
-            {
-                csString value = rloop->GetContentsValue();
-                if(value.Compare("std_rloop_diffuse"))
-                {
-                    sector->RemoveNode(rloop);
-                }
-            }
-        }
-    }
-
-    return world;
-}
-
 bool pawsObjectView::LoadMap( const char* map, const char* sector )
 {
     csRef<iEngine> engine =  csQueryRegistry<iEngine > ( PawsManager::GetSingleton().GetObjectRegistry());
@@ -140,12 +116,6 @@ bool pawsObjectView::LoadMap( const char* map, const char* sector )
         csRef<iDataBuffer> buf (VFS->ReadFile (filename, false));
         doc->Parse(buf);
         csRef<iDocumentNode> worldNode = doc->GetRoot()->GetNode("world");
-
-        if(needToFilter)
-        {
-            // Filter the world file to get the correct settings.
-            worldNode = Filter(worldNode);
-        }
 
         // Now load the map into the selected region
         csRef<iThreadReturn> itr = loader->LoadMapWait(map, worldNode, CS_LOADER_KEEP_WORLD, col);
