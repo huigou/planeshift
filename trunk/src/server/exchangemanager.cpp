@@ -1247,7 +1247,7 @@ bool PlayerToNPCExchange::HandleAccept(Client * client)
         starterChar.GetSimpleOffering(trigger,client->GetCharacterData(),true);
         if (!CheckXMLResponse(client,dlg,trigger))
         {
-            // Check if NPC is OK with all the money total in trias
+            // Check if NPC is OK with all the money total in circles
             starterChar.GetSimpleOffering(trigger,client->GetCharacterData(),false);
             if (!CheckXMLResponse(client,dlg,trigger))
             {
@@ -1575,9 +1575,30 @@ void ExchangeManager::HandleAutoGive(MsgEntry *me,Client *client)
 		psMoney money(topNode->GetAttributeValue("money"));
 		if (money.GetTotal() > 0)
 		{
-			psSlotMovementMsg msg(CONTAINER_INVENTORY_MONEY,MONEY_TRIAS,CONTAINER_EXCHANGE_OFFERING,MONEY_TRIAS,money.GetTotal() );
-			msg.msg->clientnum = client->GetClientNum();  // must set this before publishing
-			msg.FireEvent();
+			if (money.GetTrias())
+			{
+				psSlotMovementMsg trias(CONTAINER_INVENTORY_MONEY,MONEY_TRIAS,CONTAINER_EXCHANGE_OFFERING,MONEY_TRIAS,money.GetTrias() );
+				trias.msg->clientnum = client->GetClientNum();  // must set this before publishing
+				trias.FireEvent();
+			}
+			if (money.GetHexas())
+			{
+				psSlotMovementMsg hexas(CONTAINER_INVENTORY_MONEY,MONEY_HEXAS,CONTAINER_EXCHANGE_OFFERING,MONEY_HEXAS,money.GetHexas() );
+				hexas.msg->clientnum = client->GetClientNum();  // must set this before publishing
+				hexas.FireEvent();
+			}
+			if (money.GetOctas())
+			{
+				psSlotMovementMsg octas(CONTAINER_INVENTORY_MONEY,MONEY_OCTAS,CONTAINER_EXCHANGE_OFFERING,MONEY_OCTAS,money.GetOctas() );
+				octas.msg->clientnum = client->GetClientNum();  // must set this before publishing
+				octas.FireEvent();
+			}
+			if (money.GetCircles())
+			{
+				psSlotMovementMsg circles(CONTAINER_INVENTORY_MONEY,MONEY_CIRCLES,CONTAINER_EXCHANGE_OFFERING,MONEY_CIRCLES,money.GetCircles() );
+				circles.msg->clientnum = client->GetClientNum();  // must set this before publishing
+				circles.FireEvent();
+			}
 		}
         HandleExchangeAccept(NULL, client);
     }
