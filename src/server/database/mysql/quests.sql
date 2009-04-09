@@ -32,8 +32,9 @@ CREATE TABLE `quests` (
   `quest_lockout_time` int(10) NOT NULL default '0',
   `category` varchar(30) NOT NULL default '',
   `prerequisite` varchar(250) NOT NULL default '',
-  PRIMARY KEY  (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=209 /*!40100 DEFAULT CHARSET=utf8*/;
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `indx_quests_name` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=211 /*!40100 DEFAULT CHARSET=utf8*/;
 
 
 
@@ -65,8 +66,9 @@ INSERT INTO `quests` (`id`, `name`, `task`, `cstr_id_icon`, `flags`, `master_que
 	('205','QuestMaster2 Quest 5','Test Quest for the Quest Test Case: Quest prerequisite','0',0,'0',0,0,0,'Test2','<pre><completed category=\"Test2\" min=\"3\" max=\"4\"/></pre>'),
 	('206','QuestMaster2 Quest 6','Test Quest for the Quest Test Case: Quest lockouts','0',0,'0',0,-1,0,'Test3',''),
 	('207','Acquire Lapar','Test Quest for Audio with Smith','0',0,'0',0,-1,0,'TestAudio',''),
-	('208','One Thousand Year Sammich','Long complex demo quest','0',0,NULL,0,0,0,'Test4',''),
-	('209','Puzzle Quest','Answer the merchant\'s question with BLUE to complete this quest.','0',0,NULL,0,0,0,'Newbie','');
+	('208','One Thousand Year Sammich','Long complex demo quest','0',0,'0',0,0,0,'Test4',''),
+	('209','Puzzle Quest','Answer the merchant\'s question with BLUE to complete this quest.','0',0,'0',0,0,0,'Newbie',''),
+	('210','Fortune Quest','Give the merchant 5 tria and he will tell your fortune.','0',0,'0',0,0,0,'Newbie','');
 /*!40000 ALTER TABLE `quests` ENABLE KEYS*/;
 UNLOCK TABLES;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS*/;
