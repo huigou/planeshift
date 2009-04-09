@@ -545,8 +545,10 @@ void pawsLauncherWindow::LoadSettings()
 
     pawsComboBox* shaders = (pawsComboBox*)FindWidget("Shaders");
     shaders->Clear();
-    shaders->NewOption("Basic");
-    shaders->NewOption("Advanced");
+    shaders->NewOption("High");
+    shaders->NewOption("Medium");
+    shaders->NewOption("Low");
+    shaders->NewOption("Lowest");
 
     setting = configUser->GetStr("PlaneShift.Graphics.Shaders");
     if(setting.Compare(""))
@@ -554,6 +556,16 @@ void pawsLauncherWindow::LoadSettings()
         setting = configPSC.GetStr("PlaneShift.Graphics.Shaders");
     }
     shaders->Select(setting);
+
+    pawsCheckBox* enableShadows = (pawsCheckBox*)FindWidget("EnableShadows");
+    if(configUser->KeyExists("Engine.RenderManager.Default"))
+    {
+        enableShadows->SetState(csString("shadow_pssm") == configUser->GetStr("Engine.RenderManager.Default"));
+    }
+    else
+    {
+        enableShadows->SetState(csString("shadow_pssm") == configPSC.GetStr("Engine.RenderManager.Default"));
+    }
 
     pawsCheckBox* enableGrass = (pawsCheckBox*)FindWidget("EnableGrass");
     if(configUser->KeyExists("PlaneShift.Graphics.EnableGrass"))
@@ -595,14 +607,36 @@ void pawsLauncherWindow::LoadSettings()
         keepMapsLoaded->SetState(configPSC.GetBool("Planeshift.Loading.KeepMaps"));
     }
 
-    pawsCheckBox* threadedWorldLoading = (pawsCheckBox*)FindWidget("ThreadedWorldLoading");
-    if(configUser->KeyExists("PlaneShift.Loading.WorldLoad"))
+    pawsComboBox* threadedLoading = (pawsComboBox*)FindWidget("ThreadedLoading");
+    threadedLoading->Clear();
+    threadedLoading->NewOption("World");
+    threadedLoading->NewOption("Models");
+    threadedLoading->NewOption("Off");
+    if(configUser->KeyExists("ThreadManager.AlwaysRunNow") && configUser->GetBool("ThreadManager.AlwaysRunNow"))
     {
-        threadedWorldLoading->SetState(csString("Threaded").Compare(configUser->GetStr("PlaneShift.Loading.WorldLoad", "NThreaded")));
+        threadedLoading->Select("Off");
+    }
+    else if(configUser->KeyExists("PlaneShift.Loading.ThreadedWorldLoad"))
+    {
+        if(configUser->GetBool("PlaneShift.Loading.ThreadedWorldLoad"))
+        {
+            threadedLoading->Select("World");
+        }
+        else
+        {
+            threadedLoading->Select("Models");
+        }
     }
     else
     {
-        threadedWorldLoading->SetState(csString("Threaded").Compare(configPSC.GetStr("PlaneShift.Loading.WorldLoad", "NThreaded")));
+        if(configPSC.GetBool("PlaneShift.Loading.ThreadedWorldLoad"))
+        {
+            threadedLoading->Select("World");
+        }
+        else
+        {
+            threadedLoading->Select("Models");
+        }
     }
 
     // Fill the languages
@@ -688,12 +722,9 @@ void pawsLauncherWindow::SaveSettings()
             configUser->SetInt("Video.OpenGL.TextureFilterAnisotropy", 16);
             configUser->SetInt("Video.OpenGL.TextureLODBias", -1);
             configUser->SetInt("Video.OpenGL.TextureDownsample", 0);
-            configUser->SetStr("PlaneShift.Graphics.Shaders", "Advanced");
+            configUser->SetStr("PlaneShift.Graphics.Shaders", "High");
             configUser->SetBool("PlaneShift.Graphics.EnableGrass", true);
             configUser->SetBool("Video.OpenGL.UseExtension.GL_ARB_vertex_buffer_object", true);
-            configUser->SetBool("Planeshift.Loading.AllMaps", false);
-            configUser->SetBool("Planeshift.Loading.KeepMaps", true);
-            configUser->SetBool("ThreadManager.AlwaysRunNow", false);
             break;
         }
     case HIGH:
@@ -702,12 +733,9 @@ void pawsLauncherWindow::SaveSettings()
             configUser->SetInt("Video.OpenGL.MultiSamples", 4);
             configUser->SetInt("Video.OpenGL.TextureFilterAnisotropy", 8);
             configUser->SetInt("Video.OpenGL.TextureDownsample", 0);
-            configUser->SetStr("PlaneShift.Graphics.Shaders", "Advanced");
+            configUser->SetStr("PlaneShift.Graphics.Shaders", "High");
             configUser->SetBool("PlaneShift.Graphics.EnableGrass", true);
             configUser->SetBool("Video.OpenGL.UseExtension.GL_ARB_vertex_buffer_object", true);
-            configUser->SetBool("Planeshift.Loading.AllMaps", false);
-            configUser->SetBool("Planeshift.Loading.KeepMaps", false);
-            configUser->SetBool("ThreadManager.AlwaysRunNow", false);
             break;
         }
     case MEDIUM:
@@ -716,12 +744,9 @@ void pawsLauncherWindow::SaveSettings()
             configUser->SetInt("Video.OpenGL.MultiSamples", 2);
             configUser->SetInt("Video.OpenGL.TextureFilterAnisotropy", 4);
             configUser->SetInt("Video.OpenGL.TextureDownsample", 0);
-            configUser->SetStr("PlaneShift.Graphics.Shaders", "Advanced");
+            configUser->SetStr("PlaneShift.Graphics.Shaders", "Medium");
             configUser->SetBool("PlaneShift.Graphics.EnableGrass", true);
             configUser->SetBool("Video.OpenGL.UseExtension.GL_ARB_vertex_buffer_object", true);
-            configUser->SetBool("Planeshift.Loading.AllMaps", false);
-            configUser->SetBool("Planeshift.Loading.KeepMaps", false);
-            configUser->SetBool("ThreadManager.AlwaysRunNow", false);
             break;
         }
     case LOW:
@@ -730,12 +755,9 @@ void pawsLauncherWindow::SaveSettings()
             configUser->SetInt("Video.OpenGL.MultiSamples", 0);
             configUser->SetInt("Video.OpenGL.TextureFilterAnisotropy", 0);
             configUser->SetInt("Video.OpenGL.TextureDownsample", 2);
-            configUser->SetStr("PlaneShift.Graphics.Shaders", "Basic");
+            configUser->SetStr("PlaneShift.Graphics.Shaders", "Medium");
             configUser->SetBool("PlaneShift.Graphics.EnableGrass", false);
             configUser->SetBool("Video.OpenGL.UseExtension.GL_ARB_vertex_buffer_object", true);
-            configUser->SetBool("Planeshift.Loading.AllMaps", false);
-            configUser->SetBool("Planeshift.Loading.KeepMaps", false);
-            configUser->SetBool("ThreadManager.AlwaysRunNow", false);
             break;
         }
     case LOWEST:
@@ -744,12 +766,9 @@ void pawsLauncherWindow::SaveSettings()
             configUser->SetInt("Video.OpenGL.MultiSamples", 0);
             configUser->SetInt("Video.OpenGL.TextureFilterAnisotropy", 0);
             configUser->SetInt("Video.OpenGL.TextureDownsample", 4);
-            configUser->SetStr("PlaneShift.Graphics.Shaders", "Basic");
+            configUser->SetStr("PlaneShift.Graphics.Shaders", "Low");
             configUser->SetBool("PlaneShift.Graphics.EnableGrass", false);
             configUser->SetBool("Video.OpenGL.UseExtension.GL_ARB_vertex_buffer_object", true);
-            configUser->SetBool("Planeshift.Loading.AllMaps", false);
-            configUser->SetBool("Planeshift.Loading.KeepMaps", false);
-            configUser->SetBool("ThreadManager.AlwaysRunNow", false);
             break;
         }
     case CUSTOM:
@@ -798,19 +817,59 @@ void pawsLauncherWindow::SaveSettings()
 
             pawsCheckBox* VBO = (pawsCheckBox*)FindWidget("VBO");
             configUser->SetBool("Video.OpenGL.UseExtension.GL_ARB_vertex_buffer_object", VBO->GetState());
-
-            pawsCheckBox* loadAllMaps = (pawsCheckBox*)FindWidget("LoadAllMaps");
-            configUser->SetBool("Planeshift.Loading.AllMaps", loadAllMaps->GetState());
-
-            pawsCheckBox* keepMapsLoaded = (pawsCheckBox*)FindWidget("KeepMapsLoaded");
-            configUser->SetBool("Planeshift.Loading.KeepMaps", keepMapsLoaded->GetState());
-
-            pawsCheckBox* threadedWorldLoading = (pawsCheckBox*)FindWidget("ThreadedWorldLoading");
-            configUser->SetStr("PlaneShift.Loading.WorldLoad", threadedWorldLoading->GetState() ? "Threaded" : "NThreaded");
-
             break;
         }
     };
+
+    pawsComboBox* shaders = (pawsComboBox*)FindWidget("Shaders");
+    if(shaders->GetSelectedRowString() == "Low")
+    {
+        configUser->SetStr("Video.ShaderManager.Tags.per_pixel_lighting.Presence", "forbidden");
+    }
+    else
+    {
+        configUser->DeleteKey("Video.ShaderManager.Tags.per_pixel_lighting.Presence");
+    }
+
+    if(shaders->GetSelectedRowString() == "Lowest")
+    {
+        configUser->SetStr("Engine.RenderManager.Default", "rlcompat");
+    }
+    else
+    {
+        pawsCheckBox* enableShadows = (pawsCheckBox*)FindWidget("EnableShadows");
+        if(enableShadows->GetState())
+        {
+            configUser->SetStr("Engine.RenderManager.Default", "shadow_pssm");
+        }
+        else
+        {
+            configUser->SetStr("Engine.RenderManager.Default", "unshadowed");
+        }
+    }
+
+    pawsCheckBox* loadAllMaps = (pawsCheckBox*)FindWidget("LoadAllMaps");
+    configUser->SetBool("Planeshift.Loading.AllMaps", loadAllMaps->GetState());
+
+    pawsCheckBox* keepMapsLoaded = (pawsCheckBox*)FindWidget("KeepMapsLoaded");
+    configUser->SetBool("Planeshift.Loading.KeepMaps", keepMapsLoaded->GetState());
+
+    pawsComboBox* threadedLoading = (pawsComboBox*)FindWidget("ThreadedLoading");
+    if(threadedLoading->GetSelectedRowString() == "World")
+    {
+        configUser->SetBool("PlaneShift.Loading.ThreadedWorldLoad", true);
+        configUser->SetBool("ThreadManager.AlwaysRunNow", false);
+    }
+    else if(threadedLoading->GetSelectedRowString() == "Models")
+    {
+        configUser->SetBool("PlaneShift.Loading.ThreadedWorldLoad", false);
+        configUser->SetBool("ThreadManager.AlwaysRunNow", false);
+    }
+    else if(threadedLoading->GetSelectedRowString() == "Off")
+    {
+        configUser->SetBool("PlaneShift.Loading.ThreadedWorldLoad", false);
+        configUser->SetBool("ThreadManager.AlwaysRunNow", true);
+    }
 
     // Aspect Ratio and Screen Resolution
     pawsComboBox* aspect = (pawsComboBox*)FindWidget("AspectRatio");
