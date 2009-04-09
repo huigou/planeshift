@@ -28,6 +28,7 @@
 #include <iengine/camera.h>
 #include <iengine/engine.h>
 #include <cstool/csview.h>
+#include <cstool/enginetools.h>
 #include <ivideo/graph2d.h>
 #include <ivideo/graph3d.h>
 #include <csutil/flags.h>
@@ -957,17 +958,6 @@ iMeshWrapper* psCamera::FindMeshUnder2D(int x, int y, csVector3 *pos, int *poly)
     if (!GetICamera())
         return NULL;
 
-    csVector3 vc, vo, vw;
-    csVector2 perspective( x, GetICamera()->GetShiftY() * psengine->GetG2D()->GetHeight() * 2 - y );
-    vc = GetICamera()->GetCamera()->InvPerspective( perspective, 1 );
-    vw = GetICamera()->GetCamera()->GetTransform().This2Other( vc );
-
-    iSector* sector = GetICamera()->GetCamera()->GetSector();
-
-    if(!sector) {
-        return NULL;
-    }
-
     // RS: when in mouselook mode, do not use the mouse x,y coords ... the
     // mouse is pinned to the center of the screen in this case, and the mesh
     // at this position will be the player
@@ -1073,13 +1063,8 @@ iMeshWrapper* psCamera::FindMeshUnder2D(int x, int y, csVector3 *pos, int *poly)
     }
     else
     {
-        vo = GetICamera()->GetCamera()->GetTransform().GetO2TTranslation();
-        csVector3 end = vo + (vw-vo)*100;
-        csSectorHitBeamResult result;
-
-        result = sector->HitBeamPortals( vo, end );
-        //iMeshWrapper* sel = sector->HitBeamPortals(vo, end, isect, poly);
-        if ( pos != NULL )
+        csScreenTargetResult result = csEngineTools::FindScreenTarget(csVector2(x,y), 100.0f, GetICamera()->GetCamera());
+        if(pos != NULL)
         {
             *pos = result.isect;
         }
