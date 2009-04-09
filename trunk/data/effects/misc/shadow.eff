@@ -2,7 +2,7 @@
 <library>
     <shaders>
         <shader>
-            <file>/shader/lighting/fullbright.xml</file>
+            <file>/shader/lighting/lighting_basic.xml</file>
         </shader>
     </shaders>
     <textures>
@@ -13,8 +13,8 @@
     <materials>
         <material name="shadow">
             <texture>shadow</texture>
-	      <shader type="base">lighting_fullbright</shader>
-	      <shader type="diffuse">lighting_fullbright</shader>
+	      <shader type="base">lighting_basic</shader>
+	      <shader type="diffuse">lighting_basic</shader>
             <shader type="depthwrite">*null</shader>
         </material>
     </materials>
