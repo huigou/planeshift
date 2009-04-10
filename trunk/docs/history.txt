@@ -1,4 +1,7 @@
-﻿*** 2009-04-07 by Keith Fulton
+﻿*** 2009-04-10 by Tristan Cragnolini
+- Add emote logging for PS#2789 - Patch by Loyni
+
+*** 2009-04-07 by Keith Fulton
 - Fixed giving money from the popup menu by actually implementing it instead of skipping
   over it.
 
