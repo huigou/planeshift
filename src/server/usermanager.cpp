@@ -265,17 +265,28 @@ bool UserManager::CheckForEmote(csString command, bool execute, Client *client)
 
 void UserManager::Emote(csString general, csString specific, csString animation, Client *client)
 {
+    csString cssText("");
     if (client->GetTargetObject() && (client->GetTargetObject() != client->GetActor()))
-    {
-        psSystemMessage newmsg(client->GetClientNum(), MSG_INFO_BASE, specific, client->GetActor()->GetName(), client->GetTargetObject()->GetName());
-        newmsg.Multicast(client->GetActor()->GetMulticastClients(), 0, CHAT_SAY_RANGE);
-    }
+        cssText.Format(specific, client->GetActor()->GetName(), client->GetTargetObject()->GetName());
     else
+        cssText.Format(general, client->GetActor()->GetName());
+
+    // retrive priximity list
+    csArray<PublishDestination>& clients = client->GetActor()->GetMulticastClients();
+
+    // Create and multicast the message
+    psSystemMessage newmsg(client->GetClientNum(), MSG_INFO_BASE, cssText.GetData());
+    newmsg.Multicast(clients, 0, CHAT_SAY_RANGE);
+
+    // Save message to clients chat history meeting SAY range (PS#2789)
+    for (size_t i = 0; i < clients.GetSize(); i++)
     {
-        psSystemMessage newmsg(client->GetClientNum(), MSG_INFO_BASE, general, client->GetActor()->GetName());
-        newmsg.Multicast(client->GetActor()->GetMulticastClients(), 0, CHAT_SAY_RANGE);
+        Client *target = psserver->GetConnections()->Find(clients[i].client);
+        if (target && clients[i].dist < CHAT_SAY_RANGE)
+            target->GetActor()->LogLine(cssText.GetData()); // No special formatting for emotes. we use gemActor::LogLine directly
     }
 
+    // Send animation message, if animation is set
     if (animation != "noanim")
     {
         psUserActionMessage anim(client->GetClientNum(), client->GetActor()->GetEID(), animation);
