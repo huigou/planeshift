@@ -395,8 +395,8 @@ void ChatManager::SendTell(psChatMessage& msg, const char* who,Client *client,Cl
     cmsg2.SendMessage();
     
     // Save to both actors' chat history (PS#2789)
-    client->GetActor()->LogChatMessage(who, cmsg);
-    target->GetActor()->LogChatMessage(who, cmsg);
+    client->GetActor()->LogChatMessage(who, msg);
+    target->GetActor()->LogChatMessage(who, msg);
 }
 
 #define MAX_NPC_DIALOG_DIST 5
