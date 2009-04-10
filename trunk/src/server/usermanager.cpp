@@ -141,7 +141,7 @@ UserManager::UserManager(ClientConnectionSet *cs)
     userCommandHash.Put("/die",          &UserManager::HandleDie);
     userCommandHash.Put("/guard",        &UserManager::HandleGuard);
     userCommandHash.Put("/loot",         &UserManager::HandleLoot);
-    userCommandHash.Put("/marriage",     &UserManager::ReportPosition);
+    userCommandHash.Put("/marriage",     &UserManager::HandleMarriage);
     userCommandHash.Put("/motd",         &UserManager::GiveMOTD);
     userCommandHash.Put("/npcmenu",      &UserManager::ShowNpcMenu);
     userCommandHash.Put("/pickup",       &UserManager::HandlePickup);
