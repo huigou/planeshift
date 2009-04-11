@@ -402,6 +402,11 @@ bool psEngine::Initialize (int level)
             gfxFeatures |= useLowShaders;
         }
 
+        // Check if we're using real time shadows.
+        if(GetConfig()->GetBool("PlaneShift.Graphics.Shadows"))
+        {
+            gfxFeatures |= useShadows;
+        }
 
         // Check if we're using meshgen.
         if(GetConfig()->GetBool("PlaneShift.Graphics.EnableGrass", true))
