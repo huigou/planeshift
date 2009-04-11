@@ -448,6 +448,15 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                         while(nodeItr4->HasNext())
                         {
                             node3 = nodeItr4->Next();
+                            if(gfxFeatures & useShadows)
+                            {
+                                csString name = node3->GetAttributeValue("name");
+                                if(name.Find("tex lightmap") != (size_t)-1)
+                                {
+                                    continue;
+                                }
+                            }
+
                             if(csString("texture").Compare(node3->GetAttributeValue("type")))
                             {
                                 csRef<Texture> texture;

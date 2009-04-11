@@ -286,7 +286,7 @@
 
     	  <widget name="AnisotropicFiltering" factory="pawsComboBox" id="13106" alwaysontop="true">
           <frame x="120" y="40" width="70" height="20" border="no" />
-          <listbox rows="3" height="25" useScrollBar="false" />
+          <listbox rows="5" height="25" useScrollBar="false" />
     	  </widget>
 
         <widget name="TextureQualityText" factory="pawsTextBox" id="13107">

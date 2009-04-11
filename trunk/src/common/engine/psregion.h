@@ -45,8 +45,9 @@ struct iVFS;
 #define useLowShaders 0x01
 #define useMediumShaders 0x02
 #define useHighShaders 0x04
-#define useMeshGen 0x08
-#define useAll (useHighShaders | useMeshGen)
+#define useShadows 0x08
+#define useMeshGen 0x10
+#define useAll (useHighShaders | useShadows | useMeshGen)
 
 /**
 * Replacement class for iPcRegion from CEL.
