@@ -601,6 +601,152 @@
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
                 		<Configuration
+			Name="ThreadChecker (with static libs)|Win32"
+			OutputDirectory="..\..\out\debug7\build\apppslaunch_static\"
+			IntermediateDirectory="..\..\out\debug7\build\apppslaunch_static\"
+			ConfigurationType="1"
+			CharacterSet="2"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE">
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				MinimalRebuild="TRUE"
+				RuntimeTypeInfo="TRUE"
+				RuntimeLibrary="3"
+
+				ProgramDataBaseFileName="..\..\out\debug7\build\apppslaunch_static\Win32\pslaunch_static.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_WINDOWS;CS_STATIC_LINKED;WIN32"
+				OptimizeForProcessor="1"
+				AdditionalOptions=" "
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PrecompiledHeaderFile="..\..\out\debug7\build\apppslaunch_static\apppslaunch_static.pch"
+				AssemblerListingLocation="..\..\out\debug7\build\apppslaunch_static\"
+				ObjectFile="..\..\out\debug7\build\apppslaunch_static\"
+				WarningLevel="3"
+				SuppressStartupBanner="TRUE"
+				Detect64BitPortabilityProblems="false"
+				TreatWChar_tAsBuiltInType="false"
+				ForceConformanceInForLoopScope="true"
+				DebugInformationFormat="4"
+				CompileAs="0"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				LinkIncremental="2"
+				GenerateDebugInformation="TRUE"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
+				OutputFile="..\..\pslaunch_static.exe"
+				ProgramDatabaseFile="..\..\out\debug7\build\apppslaunch_static\Win32\pslaunch_static.pdb"
+				SubSystem="1"
+				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug7\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug7\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				TargetMachine="1"/>
+			<Tool
+				Name="VCLibrarianTool"
+				SuppressStartupBanner="TRUE"/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_WINDOWS;CS_STATIC_LINKED"
+				MkTypLibCompatible="TRUE"
+				SuppressStartupBanner="TRUE"
+				TargetEnvironment="1"
+				TypeLibraryName="..\..\out\debug7\build\apppslaunch_static\apppslaunch_static.tlb"/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="md ..\..\out\debug7\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug7\bin\&#x0D;&#x0A;"
+				/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_WINDOWS;CS_STATIC_LINKED;PROJECTGEN_VERSION=7"
+				AdditionalIncludeDirectories=".;..\..\src\pslaunch;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				Culture="1033"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+		</Configuration>
+      		<Configuration
+			Name="ThreadChecker (with DLLs)|Win32"
+			OutputDirectory="..\..\out\debug7\build\apppslaunch_static\"
+			IntermediateDirectory="..\..\out\debug7\build\apppslaunch_static\"
+			ConfigurationType="1"
+			CharacterSet="2"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE">
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				MinimalRebuild="TRUE"
+				RuntimeTypeInfo="TRUE"
+				RuntimeLibrary="3"
+
+				ProgramDataBaseFileName="..\..\out\debug7\build\apppslaunch_static\Win32\pslaunch_static.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_WINDOWS;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
+				OptimizeForProcessor="1"
+				AdditionalOptions=" "
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PrecompiledHeaderFile="..\..\out\debug7\build\apppslaunch_static\apppslaunch_static.pch"
+				AssemblerListingLocation="..\..\out\debug7\build\apppslaunch_static\"
+				ObjectFile="..\..\out\debug7\build\apppslaunch_static\"
+				WarningLevel="3"
+				SuppressStartupBanner="TRUE"
+				Detect64BitPortabilityProblems="false"
+				TreatWChar_tAsBuiltInType="false"
+				ForceConformanceInForLoopScope="true"
+				DebugInformationFormat="4"
+				CompileAs="0"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				LinkIncremental="2"
+				GenerateDebugInformation="TRUE"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
+				OutputFile="..\..\pslaunch_static.exe"
+				ProgramDatabaseFile="..\..\out\debug7\build\apppslaunch_static\Win32\pslaunch_static.pdb"
+				SubSystem="1"
+				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug7\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug7\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				TargetMachine="1"/>
+			<Tool
+				Name="VCLibrarianTool"
+				SuppressStartupBanner="TRUE"/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_WINDOWS;CS_STATIC_LINKED"
+				MkTypLibCompatible="TRUE"
+				SuppressStartupBanner="TRUE"
+				TargetEnvironment="1"
+				TypeLibraryName="..\..\out\debug7\build\apppslaunch_static\apppslaunch_static.tlb"/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="md ..\..\out\debug7\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug7\bin\&#x0D;&#x0A;"
+				/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_WINDOWS;CS_STATIC_LINKED;PROJECTGEN_VERSION=7"
+				AdditionalIncludeDirectories=".;..\..\src\pslaunch;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				Culture="1033"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+		</Configuration>
+                		<Configuration
 			Name="DebugPSReleaseCSCEL (with static libs)|Win32"
 			OutputDirectory="..\..\out\debug7\build\apppslaunch_static\"
 			IntermediateDirectory="..\..\out\debug7\build\apppslaunch_static\"
