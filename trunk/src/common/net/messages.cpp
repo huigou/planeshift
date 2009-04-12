@@ -7256,3 +7256,24 @@ psSimpleStringMessage::psSimpleStringMessage( MsgEntry* me )
     str   = me->GetStr();
     valid = !(me->overrun);
 }
+
+
+PSF_IMPLEMENT_MSG_FACTORY(psOrderedMessage,MSGTYPE_ORDEREDTEST);
+
+psOrderedMessage::psOrderedMessage( uint32_t client, int valueToSend, int sequenceNumber)
+{
+	printf("Creating orderedMessage with sequence number %d, value %d.\n", sequenceNumber, valueToSend);
+
+	msg.AttachNew(new MsgEntry(sizeof(uint32_t),PRIORITY_HIGH, (uint8_t)sequenceNumber) );
+	msg->SetType(MSGTYPE_ORDEREDTEST);
+	msg->clientnum = client;
+	msg->Add(valueToSend);
+	valid=!(msg->overrun);
+}
+
+psOrderedMessage::psOrderedMessage( MsgEntry* me )
+{
+	value   = me->GetUInt32();
+	valid = !(me->overrun);
+}
+

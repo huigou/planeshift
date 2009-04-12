@@ -142,8 +142,9 @@ AdminManager::AdminManager()
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<AdminManager>(this,&AdminManager::HandlePetitionMessage),MSGTYPE_PETITION_REQUEST,REQUIRE_READY_CLIENT);
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<AdminManager>(this,&AdminManager::HandleGMGuiMessage)   ,MSGTYPE_GMGUI,REQUIRE_READY_CLIENT);
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<AdminManager>(this,&AdminManager::SendSpawnItems)       ,MSGTYPE_GMSPAWNITEMS,REQUIRE_READY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<AdminManager>(this,&AdminManager::SpawnItemInv)         ,MSGTYPE_GMSPAWNITEM,REQUIRE_READY_CLIENT);
+	psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<AdminManager>(this,&AdminManager::SpawnItemInv)         ,MSGTYPE_GMSPAWNITEM,REQUIRE_READY_CLIENT);
 
+	
     // this makes sure that the player dictionary exists on start up.
     npcdlg = new psNPCDialog(NULL);
     npcdlg->Initialize( db );
@@ -165,13 +166,6 @@ AdminManager::~AdminManager()
     delete npcdlg;
     delete pathNetwork;
 }
-
-
-void AdminManager::HandleMessage(MsgEntry *me, Client *client)
-{
-    /******* No longer required with direct handler functors now. */
-}
-
 
 
 bool AdminManager::IsReseting(const csString& command)
@@ -1051,6 +1045,11 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         value = words.GetInt(3);
         return true;
     }
+	else if (command == "/rndmsgtest")
+	{
+		text = words[1];
+		return true;
+	}
     return false;
 }
 
@@ -1186,6 +1185,10 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, Client *client)
     {
         KillNPC(me, msg, data, targetobject, client);
     }
+	else if (data.command == "/rndmsgtest")
+	{
+		RandomMessageTest(client,data.text == "ordered");
+	}
     else if (data.command == "/item")
     {
         if (data.item.Length())  // If arg, make simple
@@ -8070,4 +8073,24 @@ void AdminManager::AssignFaction(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdD
     }
 
     AdjustFactionStandingOfTarget(client->GetClientNum(), target, data.name, data.value);
+}
+
+void AdminManager::RandomMessageTest(Client *client,bool sequential)
+{
+	csArray<int> values;
+	for (int i=0; i<10; i++)
+	{
+		int value = psserver->GetRandom(10) + 1; // range from 1-10, not 0-9
+		if (values.Find(value) != SIZET_NOT_FOUND) // already used
+			i--;  // try again
+		else
+			values.Push(value);
+	}
+
+	for (int i=0; i<10; i++)
+	{
+		psOrderedMessage seq(client->GetClientNum(), values[i], sequential ? values[i] : 0);  // 0 means not sequenced so values should show up randomly
+		// seq.SendMessage();
+		psserver->GetNetManager()->SendMessageDelayed(seq.msg,i*1000);  // send out 1 per second
+	}
 }

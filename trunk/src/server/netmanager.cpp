@@ -74,7 +74,6 @@ public:
 	{
 		if (valid)
 		{
-			printf("Now sending delayed msg.\n");
 			psserver->GetNetManager()->SendMessage(myMsg);
 		}
 	}
@@ -386,7 +385,6 @@ bool NetManager::SendMessageDelayed(MsgEntry *me, csTicks delay)
 {
 	if (delay)
 	{
-		printf("Sending delayed message %d msec from now.\n", delay);
 		DelayedMessageSendEvent *event = new DelayedMessageSendEvent(delay,me);
 		psserver->GetEventManager()->Push(event);
 		return true;

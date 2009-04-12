@@ -81,7 +81,7 @@ public:
 
 
 
-enum
+enum // note that 0x02 (bit1) is also reserved for marking messages as multipacket
 {
     PRIORITY_LOW  = 0x00,
     PRIORITY_HIGH = 0x01,
@@ -122,9 +122,13 @@ const unsigned int MAX_MESSAGE_SIZE = 65535 - sizeof(psMessageBytes) - 1;  // Cu
 class MsgEntry : public csSyncRefCount
 {
 public:
-    MsgEntry (size_t datasize = 0, uint8_t msgpriority=PRIORITY_HIGH)
-        : clientnum(0), priority(msgpriority), msgid(0), overrun(false)
+    MsgEntry (size_t datasize = 0, uint8_t msgpriority=PRIORITY_HIGH, uint8_t sequence=0)
+        : clientnum(0), priority((sequence << 2) | msgpriority), msgid(0), overrun(false)
     {
+		if (sequence && msgpriority==PRIORITY_LOW)
+		{
+			Error1("MsgEntry created with sequenced delivery but not guaranteed delivery.  This is not reliable and probably won't work.");
+		}
         if (datasize > MAX_MESSAGE_SIZE)
         {
             Debug3(LOG_NET,0,"Call to MsgEntry construction truncated data.  Requested size %u > max size %u.\n",(unsigned int)datasize,(unsigned int)MAX_MESSAGE_SIZE);
@@ -835,6 +839,12 @@ public:
     {
         return bytes->type;
     }
+
+	int GetSequenceNumber()
+	{
+		return priority >> 2;
+	}
+
     /////////////////////////////////
     // Dummy functions required by GenericQueue
     ////////////////////////////////////
