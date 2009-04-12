@@ -565,7 +565,7 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
         {
             Warning2(LOG_PAWS, "GUI image '%s' not found.\n", image.GetData());
         }
-        else
+        else 
         {
             csRef<iDocumentAttribute> alphaattr = bgImageNode->GetAttribute("alpha");
             if ( alphaattr )    

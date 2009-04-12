@@ -93,7 +93,35 @@ struct Subscription
 };
 
 
-/// This class handles the incoming network packets
+/**
+ * This class holds the structure for guaranteed inbound ordering of certain message
+ * types.  We need to track the next sequence number we're expecting (in a range
+ * from 1-127, where 0 means unordered) and to queue up the messages we've received
+ * early.  This is used by Client and ClientMsgHandler classes.
+ */
+struct OrderedMessageChannel
+{
+	int nextSequenceNumber;
+	csRefArray<MsgEntry> pendingMessages;
+
+	OrderedMessageChannel() : nextSequenceNumber(1) { }
+	int GetCurrentSequenceNumber() { return nextSequenceNumber; }
+
+	int IncrementSequenceNumber()
+	{
+		nextSequenceNumber++;
+		if (nextSequenceNumber > 63)  // must be clamped to 6 bit value
+			nextSequenceNumber = 1;    // can't use zero because that means unsequenced
+		return nextSequenceNumber;
+	}
+};
+
+
+/**
+ * This class is the client's and server's main interface for either sending
+ * network messages out or getting notified about inbound ones which have been
+ * received.
+ */
 class MsgHandler : public csRefCount
 {
 public:

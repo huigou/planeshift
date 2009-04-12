@@ -247,6 +247,7 @@ bool NetBase::CheckIn()
     {
         return true;
     }
+	// printf("Got packet with sequence %d.\n", pkt->packet->GetSequence());
 
     // Check for doubled packets and drop them
     if (pkt->packet->pktid != 0)
@@ -539,23 +540,31 @@ bool NetBase::SendMergedPackets(NetPacketQueue *q)
     
     final = queueget;
 
-    // Try to merge additional packets into a single send.
-    while ((queueget=q->Get()))
-    {
-        candidate = queueget;
-        if(!final->Append(candidate))
-        {
-            // A failed append means that the packet can't fit or is a resent packet.
-            // Resent packets MUST NOT be merged because it circumvents clientside packet dup
-            // detection
-            SendSinglePacket(final);
-            
-            // Start the process again with the packet that wouldn't fit
-            final = candidate;
-        }
-    }
+	if (final->packet->GetSequence() == 0)  // sequence numbers are lost in packet merging, so cannot be merged.
+	{
+		// Try to merge additional packets into a single send.
+		while ((queueget=q->Get()))
+		{
+			candidate = queueget;
+			if (candidate->packet->GetSequence() != 0) // sequenced packet is following a non-sequenced packet
+			{
+				SendSinglePacket(candidate); // Go ahead and send the sequenced one, but keep building the merged one.
+				continue;
+			}
+			if(!final->Append(candidate))
+			{
+				// A failed append means that the packet can't fit or is a resent packet.
+				// Resent packets MUST NOT be merged because it circumvents clientside packet dup
+				// detection
+				SendSinglePacket(final);
+	            
+				// Start the process again with the packet that wouldn't fit
+				final = candidate;
+			}
+		}
+	}
 
-    // There is always data in final here
+	// There is always data in final here
     SendSinglePacket(final);  // this deletes if necessary
 
     return true;
@@ -613,6 +622,8 @@ bool NetBase::SendFinalPacket(csRef<psNetPacketEntry> pkt, LPSOCKADDR_IN addr)
     Debug5(LOG_NET,0,"SendPacket ID: %d to %d size %d flags %d\n",
         pkt->packet->pktid, pkt->clientnum, pkt->packet->pktsize, pkt->packet->flags);
 #endif
+
+	// printf("Sending packet sequence %d on the wire.\n", pkt->packet->GetSequence());
 
     uint16_t size = (uint16_t)pkt->packet->GetPacketSize();
     void *data = pkt->GetData();
@@ -987,6 +998,9 @@ bool NetBase::SendMessage(MsgEntry* me,NetPacketQueueRefCount *queue)
         pNewPkt.AttachNew(new psNetPacketEntry(me->priority, me->clientnum, id, (uint16_t)offset,
           (uint16_t)me->bytes->GetTotalSize(), (uint16_t)pktlen, me->bytes));
 
+		//if (me->GetSequenceNumber())
+		//	printf("Just created packet with sequence number %d.\n", me->GetSequenceNumber());
+
         if (!queue->Add(pNewPkt))
         {
             if(queue == NetworkQueue)
@@ -1106,8 +1120,8 @@ bool NetBase::BuildMessage(csRef<psNetPacketEntry> pkt, Connection* &connection,
         {
             csRef<MsgEntry> me;
             me.AttachNew(new MsgEntry(msg));
-            me->priority = packet->GetPriority();
-            HandleCompletedMessage(me, connection, addr,pkt);
+            me->priority = packet->flags;
+			HandleCompletedMessage(me, connection, addr,pkt);
         }
         return false;
     }
@@ -1153,8 +1167,11 @@ csPtr<MsgEntry> NetBase::CheckCompleteMessage(uint32_t client, uint32_t id)
     bool invalidated=false;
 
     csRef<MsgEntry> me;
-    me.AttachNew(new MsgEntry(totallength, pkt->packet->GetPriority()));    
+    me.AttachNew(new MsgEntry(totallength, pkt->packet->GetPriority(),pkt->packet->GetSequence()));    
     
+	// if (pkt->packet->GetSequence() != 0)
+	//	printf("Got packet sequence number %d.\n",pkt->packet->GetSequence());
+
     for (size_t i = 0; i < pkts.GetSize(); i++)
     {
         pkt = pkts[i];

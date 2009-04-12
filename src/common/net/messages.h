@@ -43,8 +43,9 @@ class psLinearMovement;
 
 // This holds the version number of the network code, remember to increase
 // this each time you do an update which breaks compatibility
-#define PS_NETVERSION   0x0099
+#define PS_NETVERSION   0x009A
 // Remember to bump the version in pscssetup.h, as well.
+
 
 // NPC Networking version is separate so we don't have to break compatibility
 // with clients to enhance the superclients.  Made it a large number to ensure
@@ -250,7 +251,8 @@ enum MSG_TYPES
 
 	MSGTYPE_CACHEFILE,
     MSGTYPE_DIALOG_MENU,
-    MSGTYPE_SIMPLE_STRING
+    MSGTYPE_SIMPLE_STRING,
+	MSGTYPE_ORDEREDTEST
 };
 
 class psMessageCracker;
@@ -5160,6 +5162,33 @@ public:
     {
         return csString("not implemented");
     }
+
+};
+
+/**
+*  Class to implement sequential delivery of net messages
+*/
+class psOrderedMessage : public psMessageCracker
+{
+
+public:
+	int value;
+
+	psOrderedMessage( uint32_t client, int valueToSend, int sequenceNumber);
+	psOrderedMessage( MsgEntry* me );
+
+	PSF_DECLARE_MSG_FACTORY();
+
+	/**
+	* @brief Converts the message into human readable string.
+	*
+	* @param access_ptrs A struct to a number of access pointers.
+	* @return Return a human readable string for the message.
+	*/
+	virtual csString ToString(AccessPointers * access_ptrs)
+	{
+		return csString("not implemented");
+	}
 
 };
 

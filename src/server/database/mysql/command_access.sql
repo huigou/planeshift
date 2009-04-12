@@ -1,412 +1,430 @@
+# HeidiSQL Dump 
+#
+# --------------------------------------------------------
+# Host:                 127.0.0.1
+# Database:             planeshift
+# Server version:       5.0.67-community-nt
+# Server OS:            Win32
+# Target-Compatibility: MySQL 5.0
+# max_allowed_packet:   1048576
+# HeidiSQL version:     3.2 Revision: 1129
+# --------------------------------------------------------
 
-###############################################################################
-#   Table for the various command groups people have.
-#       id           - The group ID
-#       group_name   - The name of the group
-###############################################################################
-
-CREATE TABLE command_groups (
-  id int(8) unsigned NOT NULL,
-  group_name varchar(40) NOT NULL DEFAULT '' ,
-  PRIMARY KEY (id)
-);
-
-
-INSERT INTO command_groups VALUES(0, "Player");
-
-INSERT INTO command_groups VALUES(10, "Tester");
-
-INSERT INTO command_groups VALUES(21, "Initiate");
-INSERT INTO command_groups VALUES(22, "Moderator");
-INSERT INTO command_groups VALUES(23, "Advanced");
-INSERT INTO command_groups VALUES(24, "Senior");
-INSERT INTO command_groups VALUES(25, "Leader");
-
-INSERT INTO command_groups VALUES(30, "Developers");
+/*!40100 SET CHARACTER SET latin1*/;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0*/;
 
 
+DROP TABLE IF EXISTS `command_group_assignment`;
 
-###############################################################################
-#   Table for the command to group assignments
-###############################################################################
-CREATE TABLE command_group_assignment (
-  command_name varchar(40) NOT NULL DEFAULT '' ,
-  group_member int(8) NOT NULL,
+#
+# Table structure for table 'command_group_assignment'
+#
+
+CREATE TABLE `command_group_assignment` (
+  `command_name` varchar(40) NOT NULL default '',
+  `group_member` int(8) NOT NULL,
   UNIQUE KEY `UNIQUE1` (`command_name`,`group_member`)
- );
-
-# commands must be listed with the leading slash
-# special properties are listed without a slash
-
-# developers only
-INSERT INTO command_group_assignment VALUES( "/action", 30 );
-INSERT INTO command_group_assignment VALUES( "/badtext", 30 );
-INSERT INTO command_group_assignment VALUES( "change NPC names", 30 );
-INSERT INTO command_group_assignment VALUES( "/deletechar", 30 );
-INSERT INTO command_group_assignment VALUES( "/location", 30 );
-INSERT INTO command_group_assignment VALUES( "/npc", 30 );
-INSERT INTO command_group_assignment VALUES( "/path", 30 );
-INSERT INTO command_group_assignment VALUES( "/reload", 30 );
-INSERT INTO command_group_assignment VALUES( "/runscript", 30 );
-INSERT INTO command_group_assignment VALUES( "/loadquest", 30 );
-INSERT INTO command_group_assignment VALUES( "save quest disable", 30 );
-INSERT INTO command_group_assignment VALUES( "/updaterespawn", 30 );
-
-# GM5 and above
-INSERT INTO command_group_assignment VALUES( "/death", 30 );
-INSERT INTO command_group_assignment VALUES( "/death", 25 );
-INSERT INTO command_group_assignment VALUES( "/crystal", 30 );
-INSERT INTO command_group_assignment VALUES( "/crystal", 25 );
-INSERT INTO command_group_assignment VALUES( "/modify", 30 );
-INSERT INTO command_group_assignment VALUES( "/modify", 25 );
-INSERT INTO command_group_assignment VALUES( "/key", 30 );
-INSERT INTO command_group_assignment VALUES( "/key", 25 );
-INSERT INTO command_group_assignment VALUES( "/disablequest", 30 );
-INSERT INTO command_group_assignment VALUES( "/disablequest", 25 );
-INSERT INTO command_group_assignment VALUES( "move unpickupables/spawns", 30 );
-INSERT INTO command_group_assignment VALUES( "move unpickupables/spawns", 25 );
-
-# GM4 and above
-INSERT INTO command_group_assignment VALUES( "/ban", 30 );
-INSERT INTO command_group_assignment VALUES( "/ban", 25 );
-INSERT INTO command_group_assignment VALUES( "/ban", 24 );
-INSERT INTO command_group_assignment VALUES( "/unban", 30 );
-INSERT INTO command_group_assignment VALUES( "/unban", 25 );
-INSERT INTO command_group_assignment VALUES( "/unban", 24 );
-INSERT INTO command_group_assignment VALUES( "/fog", 30 );
-INSERT INTO command_group_assignment VALUES( "/fog", 25 );
-INSERT INTO command_group_assignment VALUES( "/fog", 24 );
-INSERT INTO command_group_assignment VALUES( "/weather", 30 );
-INSERT INTO command_group_assignment VALUES( "/weather", 25 );
-INSERT INTO command_group_assignment VALUES( "/weather", 24 );
-INSERT INTO command_group_assignment VALUES( "/rain", 30 );
-INSERT INTO command_group_assignment VALUES( "/rain", 25 );
-INSERT INTO command_group_assignment VALUES( "/rain", 24 );
-INSERT INTO command_group_assignment VALUES( "/snow", 30 );
-INSERT INTO command_group_assignment VALUES( "/snow", 25 );
-INSERT INTO command_group_assignment VALUES( "/snow", 24 );
-INSERT INTO command_group_assignment VALUES( "/thunder", 30 );
-INSERT INTO command_group_assignment VALUES( "/thunder", 25 );
-INSERT INTO command_group_assignment VALUES( "/thunder", 24 );
-INSERT INTO command_group_assignment VALUES( "/money", 30 );
-INSERT INTO command_group_assignment VALUES( "/money", 25 );
-INSERT INTO command_group_assignment VALUES( "/money", 24 );
-INSERT INTO command_group_assignment VALUES( "/event", 30 );
-INSERT INTO command_group_assignment VALUES( "/event", 25 );
-INSERT INTO command_group_assignment VALUES( "/event", 24 );
-INSERT INTO command_group_assignment VALUES( "/awardexp", 30 );
-INSERT INTO command_group_assignment VALUES( "/awardexp", 25 );
-INSERT INTO command_group_assignment VALUES( "/awardexp", 24 );
-INSERT INTO command_group_assignment VALUES( "/deputize", 30 );
-INSERT INTO command_group_assignment VALUES( "/deputize", 25 );
-INSERT INTO command_group_assignment VALUES( "/deputize", 24 );
-INSERT INTO command_group_assignment VALUES( "quest change others", 30 );
-INSERT INTO command_group_assignment VALUES( "quest change others", 25 );
-INSERT INTO command_group_assignment VALUES( "quest change others", 24 );
-INSERT INTO command_group_assignment VALUES( "setskill others", 30 );
-INSERT INTO command_group_assignment VALUES( "setskill others", 25 );
-INSERT INTO command_group_assignment VALUES( "setskill others", 24 );
-INSERT INTO command_group_assignment VALUES( "/item", 30 );
-INSERT INTO command_group_assignment VALUES( "/item", 25 );
-INSERT INTO command_group_assignment VALUES( "/item", 24 );
-INSERT INTO command_group_assignment VALUES( "/setitemname", 30 );
-INSERT INTO command_group_assignment VALUES( "/setitemname", 25 );
-INSERT INTO command_group_assignment VALUES( "/setitemname", 24 );
-INSERT INTO command_group_assignment VALUES( "/setquality", 30 );
-INSERT INTO command_group_assignment VALUES( "/setquality", 25 );
-INSERT INTO command_group_assignment VALUES( "/setquality", 24 );
-INSERT INTO command_group_assignment VALUES( "/setstackable", 30 );
-INSERT INTO command_group_assignment VALUES( "/setstackable", 25 );
-INSERT INTO command_group_assignment VALUES( "/setstackable", 24 );
-INSERT INTO command_group_assignment VALUES( "morph others", 30 );
-INSERT INTO command_group_assignment VALUES( "morph others", 25 );
-INSERT INTO command_group_assignment VALUES( "morph others", 24 );
-INSERT INTO command_group_assignment VALUES( "/assignfaction", 30 );
-INSERT INTO command_group_assignment VALUES( "/assignfaction", 25 );
-INSERT INTO command_group_assignment VALUES( "/assignfaction", 24 );
-
-# GM3 and above
-INSERT INTO command_group_assignment VALUES( "/settrait", 30 );
-INSERT INTO command_group_assignment VALUES( "/settrait", 25 );
-INSERT INTO command_group_assignment VALUES( "/settrait", 24 );
-INSERT INTO command_group_assignment VALUES( "/settrait", 23 );
-INSERT INTO command_group_assignment VALUES( "/giveitem", 30 );
-INSERT INTO command_group_assignment VALUES( "/giveitem", 25 );
-INSERT INTO command_group_assignment VALUES( "/giveitem", 24 );
-INSERT INTO command_group_assignment VALUES( "/giveitem", 23 );
-INSERT INTO command_group_assignment VALUES( "/takeitem", 30 );
-INSERT INTO command_group_assignment VALUES( "/takeitem", 25 );
-INSERT INTO command_group_assignment VALUES( "/takeitem", 24 );
-INSERT INTO command_group_assignment VALUES( "/takeitem", 23 );
-INSERT INTO command_group_assignment VALUES( "/impersonate", 30 );
-INSERT INTO command_group_assignment VALUES( "/impersonate", 25 );
-INSERT INTO command_group_assignment VALUES( "/impersonate", 24 );
-INSERT INTO command_group_assignment VALUES( "/impersonate", 23 );
-INSERT INTO command_group_assignment VALUES( "changenameall", 30 );
-INSERT INTO command_group_assignment VALUES( "changenameall", 25 );
-INSERT INTO command_group_assignment VALUES( "changenameall", 24 );
-INSERT INTO command_group_assignment VALUES( "changenameall", 23 );
-INSERT INTO command_group_assignment VALUES( "/morph", 30 );
-INSERT INTO command_group_assignment VALUES( "/morph", 25 );
-INSERT INTO command_group_assignment VALUES( "/morph", 24 );
-INSERT INTO command_group_assignment VALUES( "/morph", 23 );
-INSERT INTO command_group_assignment VALUES( "/setkillexp", 30 );
-INSERT INTO command_group_assignment VALUES( "/setkillexp", 25 );
-INSERT INTO command_group_assignment VALUES( "/setkillexp", 24 );
-INSERT INTO command_group_assignment VALUES( "/setkillexp", 23 );
-
-# GM2 and above
-INSERT INTO command_group_assignment VALUES( "command area", 30 );
-INSERT INTO command_group_assignment VALUES( "command area", 25 );
-INSERT INTO command_group_assignment VALUES( "command area", 24 );
-INSERT INTO command_group_assignment VALUES( "command area", 23 );
-INSERT INTO command_group_assignment VALUES( "command area", 22 );
-INSERT INTO command_group_assignment VALUES( "/divorce", 30 );
-INSERT INTO command_group_assignment VALUES( "/divorce", 25 );
-INSERT INTO command_group_assignment VALUES( "/divorce", 24 );
-INSERT INTO command_group_assignment VALUES( "/divorce", 23 );
-INSERT INTO command_group_assignment VALUES( "/divorce", 22 );
-INSERT INTO command_group_assignment VALUES( "/marriageinfo", 30 );
-INSERT INTO command_group_assignment VALUES( "/marriageinfo", 25 );
-INSERT INTO command_group_assignment VALUES( "/marriageinfo", 24 );
-INSERT INTO command_group_assignment VALUES( "/marriageinfo", 23 );
-INSERT INTO command_group_assignment VALUES( "/marriageinfo", 22 );
-INSERT INTO command_group_assignment VALUES( "cast all spells", 30 );
-INSERT INTO command_group_assignment VALUES( "cast all spells", 25 );
-INSERT INTO command_group_assignment VALUES( "cast all spells", 24 );
-INSERT INTO command_group_assignment VALUES( "cast all spells", 23 );
-INSERT INTO command_group_assignment VALUES( "cast all spells", 22 );
-INSERT INTO command_group_assignment VALUES( "/setskill", 30 );
-INSERT INTO command_group_assignment VALUES( "/setskill", 25 );
-INSERT INTO command_group_assignment VALUES( "/setskill", 24 );
-INSERT INTO command_group_assignment VALUES( "/setskill", 23 );
-INSERT INTO command_group_assignment VALUES( "/setskill", 22 );
-INSERT INTO command_group_assignment VALUES( "/changename", 30 );
-INSERT INTO command_group_assignment VALUES( "/changename", 25 );
-INSERT INTO command_group_assignment VALUES( "/changename", 24 );
-INSERT INTO command_group_assignment VALUES( "/changename", 23 );
-INSERT INTO command_group_assignment VALUES( "/changename", 22 );
-INSERT INTO command_group_assignment VALUES( "/changeguildname", 30 );
-INSERT INTO command_group_assignment VALUES( "/changeguildname", 25 );
-INSERT INTO command_group_assignment VALUES( "/changeguildname", 24 );
-INSERT INTO command_group_assignment VALUES( "/changeguildname", 23 );
-INSERT INTO command_group_assignment VALUES( "/changeguildname", 22 );
-INSERT INTO command_group_assignment VALUES( "/changeguildleader", 30 );
-INSERT INTO command_group_assignment VALUES( "/changeguildleader", 25 );
-INSERT INTO command_group_assignment VALUES( "/changeguildleader", 24 );
-INSERT INTO command_group_assignment VALUES( "/changeguildleader", 23 );
-INSERT INTO command_group_assignment VALUES( "/changeguildleader", 22 );
-INSERT INTO command_group_assignment VALUES( "/banname", 30 );
-INSERT INTO command_group_assignment VALUES( "/banname", 25 );
-INSERT INTO command_group_assignment VALUES( "/banname", 24 );
-INSERT INTO command_group_assignment VALUES( "/banname", 23 );
-INSERT INTO command_group_assignment VALUES( "/banname", 22 );
-INSERT INTO command_group_assignment VALUES( "/unbanname", 30 );
-INSERT INTO command_group_assignment VALUES( "/unbanname", 25 );
-INSERT INTO command_group_assignment VALUES( "/unbanname", 24 );
-INSERT INTO command_group_assignment VALUES( "/unbanname", 23 );
-INSERT INTO command_group_assignment VALUES( "/unbanname", 22 );
-INSERT INTO command_group_assignment VALUES( "/banadvisor", 30 );
-INSERT INTO command_group_assignment VALUES( "/banadvisor", 25 );
-INSERT INTO command_group_assignment VALUES( "/banadvisor", 24 );
-INSERT INTO command_group_assignment VALUES( "/banadvisor", 23 );
-INSERT INTO command_group_assignment VALUES( "/banadvisor", 22 );
-INSERT INTO command_group_assignment VALUES( "/unbanadvisor", 30 );
-INSERT INTO command_group_assignment VALUES( "/unbanadvisor", 25 );
-INSERT INTO command_group_assignment VALUES( "/unbanadvisor", 24 );
-INSERT INTO command_group_assignment VALUES( "/unbanadvisor", 23 );
-INSERT INTO command_group_assignment VALUES( "/unbanadvisor", 22 );
-INSERT INTO command_group_assignment VALUES( "/freeze", 30 );
-INSERT INTO command_group_assignment VALUES( "/freeze", 25 );
-INSERT INTO command_group_assignment VALUES( "/freeze", 24 );
-INSERT INTO command_group_assignment VALUES( "/freeze", 23 );
-INSERT INTO command_group_assignment VALUES( "/freeze", 22 );
-INSERT INTO command_group_assignment VALUES( "/thaw", 30 );
-INSERT INTO command_group_assignment VALUES( "/thaw", 25 );
-INSERT INTO command_group_assignment VALUES( "/thaw", 24 );
-INSERT INTO command_group_assignment VALUES( "/thaw", 23 );
-INSERT INTO command_group_assignment VALUES( "/thaw", 22 );
-INSERT INTO command_group_assignment VALUES( "/kick", 30 );
-INSERT INTO command_group_assignment VALUES( "/kick", 25 );
-INSERT INTO command_group_assignment VALUES( "/kick", 24 );
-INSERT INTO command_group_assignment VALUES( "/kick", 23 );
-INSERT INTO command_group_assignment VALUES( "/kick", 22 );
-INSERT INTO command_group_assignment VALUES( "move others", 30 );
-INSERT INTO command_group_assignment VALUES( "move others", 25 );
-INSERT INTO command_group_assignment VALUES( "move others", 24 );
-INSERT INTO command_group_assignment VALUES( "move others", 23 );
-INSERT INTO command_group_assignment VALUES( "move others", 22 );
-INSERT INTO command_group_assignment VALUES( "always login", 30 );
-INSERT INTO command_group_assignment VALUES( "always login", 25 );
-INSERT INTO command_group_assignment VALUES( "always login", 24 );
-INSERT INTO command_group_assignment VALUES( "always login", 23 );
-INSERT INTO command_group_assignment VALUES( "always login", 22 );
-INSERT INTO command_group_assignment VALUES( "/setlabelcolor", 30 );
-INSERT INTO command_group_assignment VALUES( "/setlabelcolor", 25 );
-INSERT INTO command_group_assignment VALUES( "/setlabelcolor", 24 );
-INSERT INTO command_group_assignment VALUES( "/setlabelcolor", 23 );
-INSERT INTO command_group_assignment VALUES( "/setlabelcolor", 22 );
-INSERT INTO command_group_assignment VALUES( "/inspect", 30 );
-INSERT INTO command_group_assignment VALUES( "/inspect", 25 );
-INSERT INTO command_group_assignment VALUES( "/inspect", 24 );
-INSERT INTO command_group_assignment VALUES( "/inspect", 23 );
-INSERT INTO command_group_assignment VALUES( "/inspect", 22 );
-INSERT INTO command_group_assignment VALUES( "quest list others", 30 );
-INSERT INTO command_group_assignment VALUES( "quest list others", 25 );
-INSERT INTO command_group_assignment VALUES( "quest list others", 24 );
-INSERT INTO command_group_assignment VALUES( "quest list others", 23 );
-INSERT INTO command_group_assignment VALUES( "quest list others", 22 );
-INSERT INTO command_group_assignment VALUES( "/checkitem", 30 );
-INSERT INTO command_group_assignment VALUES( "/checkitem", 26 );
-INSERT INTO command_group_assignment VALUES( "/checkitem", 25 );
-INSERT INTO command_group_assignment VALUES( "/checkitem", 24 );
-INSERT INTO command_group_assignment VALUES( "/checkitem", 23 );
-INSERT INTO command_group_assignment VALUES( "/checkitem", 22 );
-INSERT INTO command_group_assignment VALUES( "pickup override", 30 );
-INSERT INTO command_group_assignment VALUES( "pickup override", 25 );
-INSERT INTO command_group_assignment VALUES( "pickup override", 24 );
-INSERT INTO command_group_assignment VALUES( "pickup override", 23 );
-INSERT INTO command_group_assignment VALUES( "pickup override", 22 );
-INSERT INTO command_group_assignment VALUES( "/killnpc", 30 );
-INSERT INTO command_group_assignment VALUES( "/killnpc", 25 );
-INSERT INTO command_group_assignment VALUES( "/killnpc", 24 );
-INSERT INTO command_group_assignment VALUES( "/killnpc", 23 );
-INSERT INTO command_group_assignment VALUES( "/killnpc", 22 );
-INSERT INTO command_group_assignment VALUES( "rotate all", 30 );
-INSERT INTO command_group_assignment VALUES( "rotate all", 25 );
-INSERT INTO command_group_assignment VALUES( "rotate all", 24 );
-INSERT INTO command_group_assignment VALUES( "rotate all", 23 );
-INSERT INTO command_group_assignment VALUES( "rotate all", 22 );
+) ENGINE=InnoDB /*!40100 DEFAULT CHARSET=utf8*/;
 
 
-# GM1 and above
-INSERT INTO command_group_assignment VALUES( "view stats", 30 );
-INSERT INTO command_group_assignment VALUES( "view stats", 25 );
-INSERT INTO command_group_assignment VALUES( "view stats", 24 );
-INSERT INTO command_group_assignment VALUES( "view stats", 23 );
-INSERT INTO command_group_assignment VALUES( "view stats", 22 );
-INSERT INTO command_group_assignment VALUES( "view stats", 21 );
-INSERT INTO command_group_assignment VALUES( "/teleport", 30 );
-INSERT INTO command_group_assignment VALUES( "/teleport", 25 );
-INSERT INTO command_group_assignment VALUES( "/teleport", 24 );
-INSERT INTO command_group_assignment VALUES( "/teleport", 23 );
-INSERT INTO command_group_assignment VALUES( "/teleport", 22 );
-INSERT INTO command_group_assignment VALUES( "/teleport", 21 );
-INSERT INTO command_group_assignment VALUES( "/slide", 30 );
-INSERT INTO command_group_assignment VALUES( "/slide", 25 );
-INSERT INTO command_group_assignment VALUES( "/slide", 24 );
-INSERT INTO command_group_assignment VALUES( "/slide", 23 );
-INSERT INTO command_group_assignment VALUES( "/slide", 22 );
-INSERT INTO command_group_assignment VALUES( "/slide", 21 );
-INSERT INTO command_group_assignment VALUES( "/mute", 30 );
-INSERT INTO command_group_assignment VALUES( "/mute", 25 );
-INSERT INTO command_group_assignment VALUES( "/mute", 24 );
-INSERT INTO command_group_assignment VALUES( "/mute", 23 );
-INSERT INTO command_group_assignment VALUES( "/mute", 22 );
-INSERT INTO command_group_assignment VALUES( "/mute", 21 );
-INSERT INTO command_group_assignment VALUES( "/charlist", 30 );
-INSERT INTO command_group_assignment VALUES( "/charlist", 25 );
-INSERT INTO command_group_assignment VALUES( "/charlist", 24 );
-INSERT INTO command_group_assignment VALUES( "/charlist", 23 );
-INSERT INTO command_group_assignment VALUES( "/charlist", 22 );
-INSERT INTO command_group_assignment VALUES( "/charlist", 21 );
-INSERT INTO command_group_assignment VALUES( "/unmute", 30 );
-INSERT INTO command_group_assignment VALUES( "/unmute", 25 );
-INSERT INTO command_group_assignment VALUES( "/unmute", 24 );
-INSERT INTO command_group_assignment VALUES( "/unmute", 23 );
-INSERT INTO command_group_assignment VALUES( "/unmute", 22 );
-INSERT INTO command_group_assignment VALUES( "/unmute", 21 );
-INSERT INTO command_group_assignment VALUES( "/show_gm", 30 );
-INSERT INTO command_group_assignment VALUES( "/show_gm", 25 );
-INSERT INTO command_group_assignment VALUES( "/show_gm", 24 );
-INSERT INTO command_group_assignment VALUES( "/show_gm", 23 );
-INSERT INTO command_group_assignment VALUES( "/show_gm", 22 );
-INSERT INTO command_group_assignment VALUES( "/show_gm", 21 );
-INSERT INTO command_group_assignment VALUES( "/warn", 30 );
-INSERT INTO command_group_assignment VALUES( "/warn", 25 );
-INSERT INTO command_group_assignment VALUES( "/warn", 24 );
-INSERT INTO command_group_assignment VALUES( "/warn", 23 );
-INSERT INTO command_group_assignment VALUES( "/warn", 22 );
-INSERT INTO command_group_assignment VALUES( "/warn", 21 );
-INSERT INTO command_group_assignment VALUES( "/info", 30 );
-INSERT INTO command_group_assignment VALUES( "/info", 25 );
-INSERT INTO command_group_assignment VALUES( "/info", 24 );
-INSERT INTO command_group_assignment VALUES( "/info", 23 );
-INSERT INTO command_group_assignment VALUES( "/info", 22 );
-INSERT INTO command_group_assignment VALUES( "/info", 21 );
-INSERT INTO command_group_assignment VALUES( "quest notify", 30 );
-INSERT INTO command_group_assignment VALUES( "quest notify", 25 );
-INSERT INTO command_group_assignment VALUES( "quest notify", 24 );
-INSERT INTO command_group_assignment VALUES( "quest notify", 23 );
-INSERT INTO command_group_assignment VALUES( "quest notify", 22 );
-INSERT INTO command_group_assignment VALUES( "quest notify", 21 );
-INSERT INTO command_group_assignment VALUES( "pos extras", 30 );
-INSERT INTO command_group_assignment VALUES( "pos extras", 25 );
-INSERT INTO command_group_assignment VALUES( "pos extras", 24 );
-INSERT INTO command_group_assignment VALUES( "pos extras", 23 );
-INSERT INTO command_group_assignment VALUES( "pos extras", 22 );
-INSERT INTO command_group_assignment VALUES( "pos extras", 21 );
-INSERT INTO command_group_assignment VALUES( "default invincible", 30 );
-INSERT INTO command_group_assignment VALUES( "default invincible", 25 );
-INSERT INTO command_group_assignment VALUES( "default invincible", 24 );
-INSERT INTO command_group_assignment VALUES( "default invincible", 23 );
-INSERT INTO command_group_assignment VALUES( "default invincible", 22 );
-INSERT INTO command_group_assignment VALUES( "default invincible", 21 );
-INSERT INTO command_group_assignment VALUES( "default invisible", 30 );
-INSERT INTO command_group_assignment VALUES( "default invisible", 25 );
-INSERT INTO command_group_assignment VALUES( "default invisible", 24 );
-INSERT INTO command_group_assignment VALUES( "default invisible", 23 );
-INSERT INTO command_group_assignment VALUES( "default invisible", 22 );
-INSERT INTO command_group_assignment VALUES( "default invisible", 21 );
-INSERT INTO command_group_assignment VALUES( "default infinite inventory", 30 );
-INSERT INTO command_group_assignment VALUES( "default infinite inventory", 25 );
-INSERT INTO command_group_assignment VALUES( "default infinite inventory", 24 );
-INSERT INTO command_group_assignment VALUES( "default infinite inventory", 23 );
-INSERT INTO command_group_assignment VALUES( "default infinite inventory", 22 );
-INSERT INTO command_group_assignment VALUES( "default infinite inventory", 21 );
-INSERT INTO command_group_assignment VALUES( "default advisor", 25 );
-INSERT INTO command_group_assignment VALUES( "default advisor", 24 );
-INSERT INTO command_group_assignment VALUES( "default advisor", 23 );
-INSERT INTO command_group_assignment VALUES( "default advisor", 22 );
-INSERT INTO command_group_assignment VALUES( "default advisor", 21 );
-INSERT INTO command_group_assignment VALUES( "/set", 30 );
-INSERT INTO command_group_assignment VALUES( "/set", 25 );
-INSERT INTO command_group_assignment VALUES( "/set", 24 );
-INSERT INTO command_group_assignment VALUES( "/set", 23 );
-INSERT INTO command_group_assignment VALUES( "/set", 22 );
-INSERT INTO command_group_assignment VALUES( "/set", 21 );
-INSERT INTO command_group_assignment VALUES( "/quest", 30 );
-INSERT INTO command_group_assignment VALUES( "/quest", 25 );
-INSERT INTO command_group_assignment VALUES( "/quest", 24 );
-INSERT INTO command_group_assignment VALUES( "/quest", 23 );
-INSERT INTO command_group_assignment VALUES( "/quest", 22 );
-INSERT INTO command_group_assignment VALUES( "/quest", 21 );
-INSERT INTO command_group_assignment VALUES( "/listwarnings", 30 );
-INSERT INTO command_group_assignment VALUES( "/listwarnings", 25 );
-INSERT INTO command_group_assignment VALUES( "/listwarnings", 24 );
-INSERT INTO command_group_assignment VALUES( "/listwarnings", 23 );
-INSERT INTO command_group_assignment VALUES( "/listwarnings", 22 );
-INSERT INTO command_group_assignment VALUES( "/listwarnings", 21 );
-INSERT INTO command_group_assignment VALUES( "/targetname", 30 );
-INSERT INTO command_group_assignment VALUES( "/targetname", 25 );
-INSERT INTO command_group_assignment VALUES( "/targetname", 24 );
-INSERT INTO command_group_assignment VALUES( "/targetname", 23 );
-INSERT INTO command_group_assignment VALUES( "/targetname", 22 );
-INSERT INTO command_group_assignment VALUES( "/targetname", 21 );
 
-# testers group
-INSERT INTO command_group_assignment VALUES( "/slide", 10 );
-INSERT INTO command_group_assignment VALUES( "/teleport", 10 );
-INSERT INTO command_group_assignment VALUES( "/set", 10 );
-INSERT INTO command_group_assignment VALUES( "quest notify", 10 );
-INSERT INTO command_group_assignment VALUES( "pos extras", 10 );
+#
+# Dumping data for table 'command_group_assignment'
+#
 
-# everyone
-INSERT INTO command_group_assignment VALUES( "/petition", 30 );
-INSERT INTO command_group_assignment VALUES( "/petition", 25 );
-INSERT INTO command_group_assignment VALUES( "/petition", 24 );
-INSERT INTO command_group_assignment VALUES( "/petition", 23 );
-INSERT INTO command_group_assignment VALUES( "/petition", 22 );
-INSERT INTO command_group_assignment VALUES( "/petition", 21 );
-INSERT INTO command_group_assignment VALUES( "/petition", 10 );
-INSERT INTO command_group_assignment VALUES( "/petition", 0 );
+LOCK TABLES `command_group_assignment` WRITE;
+/*!40000 ALTER TABLE `command_group_assignment` DISABLE KEYS*/;
+INSERT INTO `command_group_assignment` (`command_name`, `group_member`) VALUES
+	('/action',30),
+	('/assignfaction',24),
+	('/assignfaction',25),
+	('/assignfaction',30),
+	('/awardexp',24),
+	('/awardexp',25),
+	('/awardexp',30),
+	('/badtext',30),
+	('/ban',24),
+	('/ban',25),
+	('/ban',30),
+	('/banadvisor',22),
+	('/banadvisor',23),
+	('/banadvisor',24),
+	('/banadvisor',25),
+	('/banadvisor',30),
+	('/banname',22),
+	('/banname',23),
+	('/banname',24),
+	('/banname',25),
+	('/banname',30),
+	('/changeguildleader',22),
+	('/changeguildleader',23),
+	('/changeguildleader',24),
+	('/changeguildleader',25),
+	('/changeguildleader',30),
+	('/changeguildname',22),
+	('/changeguildname',23),
+	('/changeguildname',24),
+	('/changeguildname',25),
+	('/changeguildname',30),
+	('/changename',22),
+	('/changename',23),
+	('/changename',24),
+	('/changename',25),
+	('/changename',30),
+	('/charlist',21),
+	('/charlist',22),
+	('/charlist',23),
+	('/charlist',24),
+	('/charlist',25),
+	('/charlist',30),
+	('/checkitem',22),
+	('/checkitem',23),
+	('/checkitem',24),
+	('/checkitem',25),
+	('/checkitem',26),
+	('/checkitem',30),
+	('/crystal',25),
+	('/crystal',30),
+	('/death',25),
+	('/death',30),
+	('/deletechar',30),
+	('/deputize',24),
+	('/deputize',25),
+	('/deputize',30),
+	('/disablequest',25),
+	('/disablequest',30),
+	('/divorce',22),
+	('/divorce',23),
+	('/divorce',24),
+	('/divorce',25),
+	('/divorce',30),
+	('/event',24),
+	('/event',25),
+	('/event',30),
+	('/fog',24),
+	('/fog',25),
+	('/fog',30),
+	('/freeze',22),
+	('/freeze',23),
+	('/freeze',24),
+	('/freeze',25),
+	('/freeze',30),
+	('/giveitem',23),
+	('/giveitem',24),
+	('/giveitem',25),
+	('/giveitem',30),
+	('/impersonate',23),
+	('/impersonate',24),
+	('/impersonate',25),
+	('/impersonate',30),
+	('/info',21),
+	('/info',22),
+	('/info',23),
+	('/info',24),
+	('/info',25),
+	('/info',30),
+	('/inspect',22),
+	('/inspect',23),
+	('/inspect',24),
+	('/inspect',25),
+	('/inspect',30),
+	('/item',24),
+	('/item',25),
+	('/item',30),
+	('/key',25),
+	('/key',30),
+	('/kick',22),
+	('/kick',23),
+	('/kick',24),
+	('/kick',25),
+	('/kick',30),
+	('/killnpc',22),
+	('/killnpc',23),
+	('/killnpc',24),
+	('/killnpc',25),
+	('/killnpc',30),
+	('/listwarnings',21),
+	('/listwarnings',22),
+	('/listwarnings',23),
+	('/listwarnings',24),
+	('/listwarnings',25),
+	('/listwarnings',30),
+	('/loadquest',30),
+	('/location',30),
+	('/marriageinfo',22),
+	('/marriageinfo',23),
+	('/marriageinfo',24),
+	('/marriageinfo',25),
+	('/marriageinfo',30),
+	('/modify',25),
+	('/modify',30),
+	('/money',24),
+	('/money',25),
+	('/money',30),
+	('/morph',23),
+	('/morph',24),
+	('/morph',25),
+	('/morph',30),
+	('/mute',21),
+	('/mute',22),
+	('/mute',23),
+	('/mute',24),
+	('/mute',25),
+	('/mute',30),
+	('/npc',30),
+	('/path',30),
+	('/petition',0),
+	('/petition',10),
+	('/petition',21),
+	('/petition',22),
+	('/petition',23),
+	('/petition',24),
+	('/petition',25),
+	('/petition',30),
+	('/quest',21),
+	('/quest',22),
+	('/quest',23),
+	('/quest',24),
+	('/quest',25),
+	('/quest',30),
+	('/rain',24),
+	('/rain',25),
+	('/rain',30),
+	('/reload',30),
+	('/rndmsgtest',30),
+	('/runscript',30),
+	('/set',10),
+	('/set',21),
+	('/set',22),
+	('/set',23),
+	('/set',24),
+	('/set',25),
+	('/set',30),
+	('/setitemname',24),
+	('/setitemname',25),
+	('/setitemname',30),
+	('/setkillexp',23),
+	('/setkillexp',24),
+	('/setkillexp',25),
+	('/setkillexp',30),
+	('/setlabelcolor',22),
+	('/setlabelcolor',23),
+	('/setlabelcolor',24),
+	('/setlabelcolor',25),
+	('/setlabelcolor',30),
+	('/setquality',24),
+	('/setquality',25),
+	('/setquality',30),
+	('/setskill',22),
+	('/setskill',23),
+	('/setskill',24),
+	('/setskill',25),
+	('/setskill',30),
+	('/setstackable',24),
+	('/setstackable',25),
+	('/setstackable',30),
+	('/settrait',23),
+	('/settrait',24),
+	('/settrait',25),
+	('/settrait',30),
+	('/show_gm',21),
+	('/show_gm',22),
+	('/show_gm',23),
+	('/show_gm',24),
+	('/show_gm',25),
+	('/show_gm',30),
+	('/slide',10),
+	('/slide',21),
+	('/slide',22),
+	('/slide',23),
+	('/slide',24),
+	('/slide',25),
+	('/slide',30),
+	('/snow',24),
+	('/snow',25),
+	('/snow',30),
+	('/takeitem',23),
+	('/takeitem',24),
+	('/takeitem',25),
+	('/takeitem',30),
+	('/targetname',21),
+	('/targetname',22),
+	('/targetname',23),
+	('/targetname',24),
+	('/targetname',25),
+	('/targetname',30),
+	('/teleport',10),
+	('/teleport',21),
+	('/teleport',22),
+	('/teleport',23),
+	('/teleport',24),
+	('/teleport',25),
+	('/teleport',30),
+	('/thaw',22),
+	('/thaw',23),
+	('/thaw',24),
+	('/thaw',25),
+	('/thaw',30),
+	('/thunder',24),
+	('/thunder',25),
+	('/thunder',30),
+	('/unban',24),
+	('/unban',25),
+	('/unban',30),
+	('/unbanadvisor',22),
+	('/unbanadvisor',23),
+	('/unbanadvisor',24),
+	('/unbanadvisor',25),
+	('/unbanadvisor',30),
+	('/unbanname',22),
+	('/unbanname',23),
+	('/unbanname',24),
+	('/unbanname',25),
+	('/unbanname',30),
+	('/unmute',21),
+	('/unmute',22),
+	('/unmute',23),
+	('/unmute',24),
+	('/unmute',25),
+	('/unmute',30),
+	('/updaterespawn',30),
+	('/warn',21),
+	('/warn',22),
+	('/warn',23),
+	('/warn',24),
+	('/warn',25),
+	('/warn',30),
+	('/weather',24),
+	('/weather',25),
+	('/weather',30),
+	('always login',22),
+	('always login',23),
+	('always login',24),
+	('always login',25),
+	('always login',30),
+	('cast all spells',22),
+	('cast all spells',23),
+	('cast all spells',24),
+	('cast all spells',25),
+	('cast all spells',30),
+	('change NPC names',30),
+	('changenameall',23),
+	('changenameall',24),
+	('changenameall',25),
+	('changenameall',30),
+	('command area',22),
+	('command area',23),
+	('command area',24),
+	('command area',25),
+	('command area',30),
+	('default advisor',21),
+	('default advisor',22),
+	('default advisor',23),
+	('default advisor',24),
+	('default advisor',25),
+	('default infinite inventory',21),
+	('default infinite inventory',22),
+	('default infinite inventory',23),
+	('default infinite inventory',24),
+	('default infinite inventory',25),
+	('default infinite inventory',30),
+	('default invincible',21),
+	('default invincible',22),
+	('default invincible',23),
+	('default invincible',24),
+	('default invincible',25),
+	('default invincible',30),
+	('default invisible',21),
+	('default invisible',22),
+	('default invisible',23),
+	('default invisible',24),
+	('default invisible',25),
+	('default invisible',30),
+	('morph others',24),
+	('morph others',25),
+	('morph others',30),
+	('move others',22),
+	('move others',23),
+	('move others',24),
+	('move others',25),
+	('move others',30),
+	('move unpickupables/spawns',25),
+	('move unpickupables/spawns',30),
+	('pickup override',22),
+	('pickup override',23),
+	('pickup override',24),
+	('pickup override',25),
+	('pickup override',30),
+	('pos extras',10),
+	('pos extras',21),
+	('pos extras',22),
+	('pos extras',23),
+	('pos extras',24),
+	('pos extras',25),
+	('pos extras',30),
+	('quest change others',24),
+	('quest change others',25),
+	('quest change others',30),
+	('quest list others',22),
+	('quest list others',23),
+	('quest list others',24),
+	('quest list others',25),
+	('quest list others',30),
+	('quest notify',10),
+	('quest notify',21),
+	('quest notify',22),
+	('quest notify',23),
+	('quest notify',24),
+	('quest notify',25),
+	('quest notify',30),
+	('rotate all',22),
+	('rotate all',23),
+	('rotate all',24),
+	('rotate all',25),
+	('rotate all',30),
+	('save quest disable',30),
+	('setskill others',24),
+	('setskill others',25),
+	('setskill others',30),
+	('view stats',21),
+	('view stats',22),
+	('view stats',23),
+	('view stats',24),
+	('view stats',25),
+	('view stats',30);
+/*!40000 ALTER TABLE `command_group_assignment` ENABLE KEYS*/;
+UNLOCK TABLES;
+
+
+DROP TABLE IF EXISTS `command_groups`;
+
+#
+# Table structure for table 'command_groups'
+#
+
+CREATE TABLE `command_groups` (
+  `id` int(8) unsigned NOT NULL,
+  `group_name` varchar(40) NOT NULL default '',
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB /*!40100 DEFAULT CHARSET=utf8*/;
+
+
+
+#
+# Dumping data for table 'command_groups'
+#
+
+LOCK TABLES `command_groups` WRITE;
+/*!40000 ALTER TABLE `command_groups` DISABLE KEYS*/;
+INSERT INTO `command_groups` (`id`, `group_name`) VALUES
+	('0','Player'),
+	('10','Tester'),
+	('21','Initiate'),
+	('22','Moderator'),
+	('23','Advanced'),
+	('24','Senior'),
+	('25','Leader'),
+	('30','Developers');
+/*!40000 ALTER TABLE `command_groups` ENABLE KEYS*/;
+UNLOCK TABLES;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS*/;

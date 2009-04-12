@@ -32,7 +32,7 @@ enum
   PKTMINRTO    = 250,        // Minimum of 250 mseconds till packet resend
   PKTMAXRTO = 120000,        // Maximum of 2 minutes till packet resend
   PKTINITRTO = 3000,         // Initially assume 3 seconds till packet resend
-  FLAG_MULTIPACKET = 0x08,  // priority bit 8 is multipacket 
+  FLAG_MULTIPACKET = 0x02,   // priority bit 1 is multipacket on/off 
   /// MAXPACKETSIZE includes header length ( sizeof(struct psNetPacket) )
   MAXPACKETSIZE       = 1400    // 1400 bytes is max size of network packet
 };
@@ -89,6 +89,11 @@ struct psNetPacket
     {
         return flags & PRIORITY_MASK;
     }
+
+	uint8_t GetSequence() const
+	{
+		return flags>>2; // upper 6 bits of flags should be sequence id
+	}
 
     void MarshallEndian() {
         // Pack up for transmission.  This endian-izes the packet.

@@ -109,20 +109,19 @@ public:
     /// Handles commands (unused for now)
     const char* HandleCommand(const char* cmd) { return NULL; };
 
- protected:
-    /**
-     * Print a message on screen
-     *
-     * This function is called when a system message is received. To print a message on screen
-     * fire a system message of type MSG_ERROR(Red), MSG_OK(Green), MSG_RESULT(Yellow) or MSG_ACK(Blue)
-     *
-     * @param text  The text to be printed on screen. Have to be at lest 2 chars or it will be ignored.
-     * @param color The color to be used on the text.
-     * @param ymod  Where on screen should the message be displayed. Default in center.
-     *
-     */
-    void PrintOnScreen(const char* text, int color, float ymod = 0.50f);
-    
+	/**
+	* Print a message on screen
+	*
+	* This function is called when a system message is received. To print a message on screen
+	* fire a system message of type MSG_ERROR(Red), MSG_OK(Green), MSG_RESULT(Yellow) or MSG_ACK(Blue)
+	*
+	* @param text  The text to be printed on screen. Have to be at lest 2 chars or it will be ignored.
+	* @param color The color to be used on the text.
+	* @param ymod  Where on screen should the message be displayed. Default in center.
+	*
+	*/
+	void PrintOnScreen(const char* text, int color, float ymod = 0.50f);
+
  public:
     void ClearFadingText();
 

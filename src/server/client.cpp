@@ -34,6 +34,7 @@
 #include "util/psscf.h"
 #include "util/consoleout.h"
 #include "util/psdatabase.h"
+#include "net/msghandler.h"
 
 //=============================================================================
 // Local Space Includes
@@ -652,4 +653,16 @@ void Client::SetCheatMask(CheatFlags mask,bool flag )
         cheatMask |= mask;
     else
         cheatMask &= (~mask);
+}
+
+int Client::GetNextSequenceNumber(msgtype mtype)
+{
+	OrderedMessageChannel *channel = orderedMessages.Get(mtype,NULL);
+
+	if (!channel)
+	{
+		channel = new OrderedMessageChannel;
+		orderedMessages.Put(mtype, channel);
+	}
+	return channel->IncrementSequenceNumber();
 }

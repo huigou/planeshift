@@ -73,6 +73,7 @@ enum CheatFlags // will have more of these as Paladin gets better
     MOVE_CHEAT = 0x01
 };
 
+struct OrderedMessageChannel;
 
 /**
 * This class collects data of a netclient. While the socket data like
@@ -362,6 +363,9 @@ public:
     void SetCheatMask(CheatFlags mask,bool flag);
     bool GetCheatMask(CheatFlags mask) { return (cheatMask & mask) != 0;  }
 
+	/// Get the next sequence number to use for an ordered message
+	int GetNextSequenceNumber(msgtype mtype);
+
 protected:
 
     /**
@@ -378,13 +382,19 @@ protected:
      */
     bool allowedToDisconnect;
     
+	/// Currently active id of Exchange object managed by Exchange Manager, or 0 if no exchange is active.
     int exchangeID;
+
+	/// Pointer to the gemActor object played by this client once a character is logged in and in-game.
     gemActor *actor;
+
     csArray<PID> pets;
     csWeakRef<gemObject> target;
     csString mesh;
     bool ready;
 
+	/// This collection stores queues of ordered messages while we're waiting for an out of order one to arrive.
+	csHash<OrderedMessageChannel*> orderedMessages;
     
     bool isAdvisor;         ///< Store if this client is acting as an advisor.
 

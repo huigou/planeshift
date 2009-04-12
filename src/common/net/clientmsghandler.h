@@ -67,6 +67,7 @@ public:
 
 protected:
     iObjectRegistry* object_reg;
+	csHash<OrderedMessageChannel*> pendingQueues;
 };
 
 #endif

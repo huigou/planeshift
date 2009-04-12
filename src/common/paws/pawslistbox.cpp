@@ -189,7 +189,8 @@ bool pawsListBox::Setup( iDocumentNode* node )
         delete [] columnDef;
     }
     columnDef = new ColumnDef[totalColumns];
-    for (int i = 0; i < totalColumns; i++){
+    for (int i = 0; i < totalColumns; i++)
+	{
         columnDef[i] = colInfo[i];
     }
 
@@ -421,7 +422,8 @@ pawsListBoxRow* pawsListBox::NewRow( size_t position )
     pawsListBoxRow* newRow = new pawsListBoxRow();
 
     newRow->SetParent( this );
-    newRow->SetRelativeFrame( 0 ,(totalRows+1)*GetActualHeight(columnHeight), rowWidth, GetActualHeight(columnHeight));//GetActualHeight(columnHeight) );
+	// Here we automatically resize the row to be the width of the parent listbox, so the row can reference that when adding columns
+    newRow->SetRelativeFrame( 0 ,(totalRows+1)*GetActualHeight(columnHeight), parent->GetActualWidth(), GetActualHeight(columnHeight));//GetActualHeight(columnHeight) );
 
     for ( int x = 0; x < totalColumns; x++ )
     {
@@ -1214,10 +1216,14 @@ void pawsListBoxRow::AddColumn( int column, ColumnDef* def )
 
     int offset = 0;
     for ( int x = 0; x < column; x++ )
-        offset += def[x].width;
+        offset += children[x]->GetActualWidth();
 
+	// Adjust this column width by the percentage growth of this column on the screen compared to original spec in file
+	float w = this->screenFrame.Width();
+	w /= GetLogicalWidth(screenFrame.Width());
+	int myWidth = def[column].width * w;
     widget->SetRelativeFrame( offset+borderW+widget->DefaultFrame().xmin, borderH+widget->DefaultFrame().ymin,
-                              def[column].width, def[column].height );
+                              GetActualWidth(myWidth), GetActualHeight(def[column].height) );
 
     columns.Push( widget );
     AddChild( widget );
@@ -1248,10 +1254,10 @@ void pawsListBoxRow::AddTitleColumn( int column, ColumnDef* def )
 
     int offset = 0;
     for ( int x = 0; x < column; x++ )
-        offset+=def[x].width;
+        offset+=GetActualWidth(def[x].width);
 
-    title->SetRelativeFrame( offset-4, -4, def[column].width, def[column].height );
-    innerWidget->SetRelativeFrame(4, 4, def[column].width, def[column].height );
+    title->SetRelativeFrame( offset-4, -4, GetActualWidth(def[column].width), GetActualHeight(def[column].height) );
+    innerWidget->SetRelativeFrame(4, 4, GetActualWidth(def[column].width), GetActualHeight(def[column].height) );
     title->SetID(column);
 }
 

@@ -86,13 +86,50 @@ bool psClientMsgHandler::DispatchQueue()
 
     while((msg = queue->Get()))
     {
-        Publish(msg);
-        /* Destroy this message.  Note that Msghandler normally does this in the 
-         * Run() loop for the server.
-         */
-        // don't forget to release the packet
-        msg = NULL;
-    }
-    
+		// Check for out of sequence messages.  Handle normally if not sequenced.
+		if (msg->GetSequenceNumber() == 0)
+		{
+		    Publish(msg);
+			/* Destroy this message.  Note that Msghandler normally does this in the 
+	         * Run() loop for the server.
+		     */
+			// don't forget to release the packet
+	        msg = NULL;
+		}
+		else // sequenced message
+		{
+			int seqnum = msg->GetSequenceNumber();
+			OrderedMessageChannel *channel = pendingQueues.Get(msg->GetType(),NULL);
+			if (!channel) // new type of sequence to track
+			{
+				printf("Adding new sequence channel for msgtype %d.\n", msg->GetType());
+				channel = new OrderedMessageChannel;
+				pendingQueues.Put(msg->GetType(), channel);
+			}
+			int nextSequenceExpected  = channel->GetCurrentSequenceNumber();
+			printf("Expecting sequence number %d, got %d.\n", nextSequenceExpected, seqnum);
+
+			if (seqnum < nextSequenceExpected)
+			{
+				printf("Cannot have a sequence number lower than expected!\n");
+				seqnum = nextSequenceExpected;
+			}
+
+			channel->pendingMessages.Put(seqnum - nextSequenceExpected, msg);
+			printf("Added as element %u to pending queue.\n", seqnum - nextSequenceExpected);
+			
+			if (seqnum == nextSequenceExpected) // have something to publish
+			{
+				while (channel->pendingMessages.GetSize() && channel->pendingMessages[0] != NULL)
+				{
+					printf("Publishing sequence number %d.\n", channel->GetCurrentSequenceNumber());
+					Publish(channel->pendingMessages[0]);
+					channel->pendingMessages[0] = NULL;  // release the ref
+					channel->pendingMessages.DeleteIndex(0);
+					channel->IncrementSequenceNumber();
+				}
+			}
+		}
+	}
     return false;  // this function should not eat the event
 }
