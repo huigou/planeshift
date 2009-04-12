@@ -1847,19 +1847,30 @@ void psEngine::setLimitFPS(int a)
 // ----------------------------------------------------------------------------
 
 /**
- *
+ * pureCallHandler()
+ * Handles all Pure Virtual Function calls for MSVC.
+ */
+#ifdef CS_COMPILER_MSVC
+void pureCallHandler()
+{
+   CS::Debug::AssertMessage("false", __FILE__, __LINE__, "Pure Virtual Function Call!\n");
+}
+#endif
+
+/**
  * main()
  * Main function. Like any other applications, this is the entry point of the
  * program. The SysSystemDriver is created and initialized here. It also
  * creates psEngine and initialize it. Then it calls the main loop.
- *
  **/
 
 psEngine * psengine;
 
-
 int main (int argc, char *argv[])
 {
+#ifdef CS_COMPILER_MSVC
+    _set_purecall_handler(pureCallHandler);
+#endif
     psCSSetup* CSSetup = new psCSSetup( argc, argv, "/this/psclient.cfg", CONFIGFILENAME );
     iObjectRegistry* object_reg = CSSetup->InitCS();
 
