@@ -1,6 +1,6 @@
 <layerconfig>
 	<layer>
-	      <defaultshader name="fullbright" file="/shader/lighting/lighting_basic.xml" />
+	      <defaultshader name="lighting_basic" file="/shader/lighting/lighting_basic.xml" />
 	        <!-- Draw layer, even if no lights are present -->
 		<ambient />
 		<staticlights>

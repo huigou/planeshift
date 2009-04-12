@@ -834,10 +834,11 @@ void pawsLauncherWindow::SaveSettings()
     if(shaders->GetSelectedRowString() == "Lowest")
     {
         configUser->SetBool("PlaneShift.Graphics.Shadows", false);
-        configUser->SetStr("Engine.RenderManager.Default", "crystalspace.rendermanager.rlcompat");
+        configUser->SetStr("RenderManager.Unshadowed.Layers", "/data/renderlayers/lighting_basic.xml"); 
     }
     else
     {
+        configUser->DeleteKey("RenderManager.Unshadowed.Layers");
         pawsCheckBox* enableShadows = (pawsCheckBox*)FindWidget("EnableShadows");
         if(enableShadows->GetState())
         {
