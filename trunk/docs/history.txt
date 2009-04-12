@@ -1,4 +1,9 @@
-﻿*** 2009-04-10 by Tristan Cragnolini
+﻿*** 2009-04-10 by Keith Fulton
+- Initial commit for guaranteed ordering of msgtypes.  (Attention Khaki! :-) )
+  Use dev level admin command /rndmsgtest to see it work.  Client-side ordering
+  is working here, but server tracking isn't fully implemented yet.  That's next.
+
+*** 2009-04-10 by Tristan Cragnolini
 - Add emote logging for PS#2789 - Patch by Loyni
 
 *** 2009-04-07 by Keith Fulton
