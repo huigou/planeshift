@@ -64,13 +64,13 @@ private:
     int                    id;
     int                    prevPointId;
     csVector3              pos;
-    csString               sectorName;       /// Should realy only be the pointer, but
-                                             /// since sector might not be available
-                                             /// when loaded we use the name for now.
+    csString               sectorName;       /**< Should really only be the pointer, but
+                                                  since sector might not be available
+                                                  when loaded we use the name for now.**/
 
     // Internal data
-    csWeakRef<iSector>     sector;           /// Cached sector
-    float                  startDistance[2]; /// Start distance for FORWARD and REVERS    
+    csWeakRef<iSector>     sector;           ///< Cached sector
+    float                  startDistance[2]; ///< Start distance for FORWARD and REVERS    
 };
 
 class psPath
@@ -82,9 +82,10 @@ public:
         REVERSE
     } Direction;
             
-    int                    id;
-    csString               name;
-    Waypoint              *start,*end; /// This path start and end waypoint
+    int                          id;
+    csString                   name;
+    Waypoint                 *start; ///< This path start waypoint
+    Waypoint                   *end; ///< This path end waypoint
     csPDelArray<psPathPoint> points;
 
     /// Flags
@@ -202,7 +203,7 @@ public:
     virtual ~psLinearPath(){};
 
 protected:
-    // Do the actual precalculate work
+    /// Do the actual precalculate work
     virtual void PrecalculatePath(psWorld * world, iEngine *engine);
 
     /// Get the interpolated position.
