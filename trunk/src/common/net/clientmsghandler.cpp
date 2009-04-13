@@ -1,5 +1,5 @@
 /*
- * psclientmsghandler.cpp by Keith Fulton <keith@paqrat.com>
+ * ClientMsgHandler.cpp by Keith Fulton <keith@paqrat.com>
  *
  * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
  *
@@ -26,14 +26,14 @@
 #include "net/netbase.h"
 #include "net/clientmsghandler.h"
 
-psClientMsgHandler::psClientMsgHandler()
+ClientMsgHandler::ClientMsgHandler()
 {
     // no special code needed right now
     scfiEventHandler = NULL;
     object_reg = NULL;
 }
 
-psClientMsgHandler::~psClientMsgHandler()
+ClientMsgHandler::~ClientMsgHandler()
 {
     if (scfiEventHandler)
     {
@@ -45,13 +45,13 @@ psClientMsgHandler::~psClientMsgHandler()
     }    
 }
 
-bool psClientMsgHandler::Initialize(NetBase* nb, iObjectRegistry* object_reg)
+bool ClientMsgHandler::Initialize(NetBase* nb, iObjectRegistry* object_reg)
 {
     // Create and register inbound queue
     if (!MsgHandler::Initialize(nb))
         return false;
 
-    psClientMsgHandler::object_reg = object_reg;
+    ClientMsgHandler::object_reg = object_reg;
 
     // This hooks our HandleEvent function into main application event loop
     csRef<iEventQueue> queue =  csQueryRegistry<iEventQueue> (object_reg);
@@ -68,7 +68,7 @@ bool psClientMsgHandler::Initialize(NetBase* nb, iObjectRegistry* object_reg)
     return true;
 }
 
-bool psClientMsgHandler::HandleEvent(iEvent &ev)
+bool ClientMsgHandler::HandleEvent(iEvent &ev)
 {
     if (!netbase->IsReady())
         return false;
@@ -76,7 +76,7 @@ bool psClientMsgHandler::HandleEvent(iEvent &ev)
     return DispatchQueue();
 }
 
-bool psClientMsgHandler::DispatchQueue()
+bool ClientMsgHandler::DispatchQueue()
 {
     /* 
      * If called, it publishes (and therefore handles)
@@ -99,19 +99,19 @@ bool psClientMsgHandler::DispatchQueue()
 		else // sequenced message
 		{
 			int seqnum = msg->GetSequenceNumber();
-			OrderedMessageChannel *channel = pendingQueues.Get(msg->GetType(),NULL);
+			OrderedMessageChannel *channel = orderedMessages.Get(msg->GetType(),NULL);
 			if (!channel) // new type of sequence to track
 			{
 				printf("Adding new sequence channel for msgtype %d.\n", msg->GetType());
 				channel = new OrderedMessageChannel;
-				pendingQueues.Put(msg->GetType(), channel);
+				orderedMessages.Put(msg->GetType(), channel);
 			}
 			int nextSequenceExpected  = channel->GetCurrentSequenceNumber();
 			printf("Expecting sequence number %d, got %d.\n", nextSequenceExpected, seqnum);
 
 			if (seqnum < nextSequenceExpected)
 			{
-				printf("Cannot have a sequence number lower than expected!\n");
+				Error1("Cannot have a sequence number lower than expected!");
 				seqnum = nextSequenceExpected;
 			}
 
@@ -132,4 +132,16 @@ bool psClientMsgHandler::DispatchQueue()
 		}
 	}
     return false;  // this function should not eat the event
+}
+
+int ClientMsgHandler::GetNextSequenceNumber(msgtype mtype)
+{
+	OrderedMessageChannel *channel = orderedMessages.Get(mtype,NULL);
+
+	if (!channel)
+	{
+		channel = new OrderedMessageChannel;
+		orderedMessages.Put(mtype, channel);
+	}
+	return channel->IncrementSequenceNumber();
 }

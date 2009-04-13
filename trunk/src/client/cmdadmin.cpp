@@ -24,7 +24,7 @@
 // Project Includes
 //=============================================================================
 #include "net/cmdhandler.h"
-#include "net/msghandler.h"
+#include "net/clientmsghandler.h"
 #include "net/messages.h"
 
 #include "util/strutil.h"
@@ -43,7 +43,7 @@
 
 class pawsWidget;
 
-psAdminCommands::psAdminCommands(MsgHandler* mh,
+psAdminCommands::psAdminCommands(ClientMsgHandler* mh,
                                  CmdHandler *ch,
                                  iObjectRegistry* obj )
   : psCmdBase(mh,ch,obj)

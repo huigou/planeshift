@@ -32,7 +32,7 @@
 //=============================================================================
 // Library Includes
 //=============================================================================
-#include "net/msghandler.h"
+#include "net/clientmsghandler.h"
 #include "net/npcmessages.h"
 
 #include "util/log.h"

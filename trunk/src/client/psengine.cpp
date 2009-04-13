@@ -102,7 +102,7 @@ if (!myref)                                                  \
 
 #include "net/connection.h"
 #include "net/cmdhandler.h"
-#include "net/msghandler.h"
+#include "net/clientmsghandler.h"
 
 #include "effects/pseffectmanager.h"
 

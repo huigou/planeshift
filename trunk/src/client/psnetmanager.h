@@ -24,7 +24,7 @@
 
 class psNetConnection;
 class psAuthenticationClient;
-class psClientMsgHandler;
+class ClientMsgHandler;
 class psUserCommands;
 class psGuildCommands;
 class psGroupCommands;
@@ -60,20 +60,20 @@ public:
     /** Sends an authentication message to the server */
     void Authenticate(const csString & name, const csString & pwd);
 
-    MsgHandler* GetMsgHandler();
-    CmdHandler* GetCmdHandler() { return cmdhandler; }
+    ClientMsgHandler *GetMsgHandler();
+    CmdHandler *GetCmdHandler() { return cmdhandler; }
 
-    const char* GetLastError() { return errormsg; }
-    const char* GetAuthMessage();
+    const char *GetLastError() { return errormsg; }
+    const char *GetAuthMessage();
 
-    psNetConnection* GetConnection() { return connection; }
+    psNetConnection *GetConnection() { return connection; }
     
     bool IsConnected() { return connected; }
 
 protected:
     iObjectRegistry*                object_reg;
     psNetConnection*                connection;
-    csRef<psClientMsgHandler>       msghandler;
+    csRef<ClientMsgHandler>       msghandler;
     csRef<psAuthenticationClient>   authclient;
 
     /* Command stuff here */

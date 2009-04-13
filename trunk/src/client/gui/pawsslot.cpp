@@ -24,7 +24,7 @@
 #include "globals.h"
 #include "pscelclient.h"
 #include "paws/pawstextbox.h"
-#include "net/msghandler.h"
+#include "net/clientmsghandler.h"
 
 pawsSlot::pawsSlot()
 {

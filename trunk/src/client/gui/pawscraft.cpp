@@ -25,7 +25,7 @@
 
 #include "paws/pawstree.h"
 #include "paws/pawstextbox.h"
-#include "net/msghandler.h"
+#include "net/clientmsghandler.h"
 #include "pawscraft.h"
 
   

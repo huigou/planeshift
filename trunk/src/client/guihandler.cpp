@@ -32,7 +32,7 @@
 // Project Includes
 //=============================================================================
 #include "net/messages.h"
-#include "net/msghandler.h"
+#include "net/clientmsghandler.h"
 
 //=============================================================================
 // Local Includes

@@ -25,7 +25,7 @@
 //=============================================================================
 // Project Includes
 //=============================================================================
-#include "net/msghandler.h"
+#include "net/clientmsghandler.h"
 
 #include "gui/chatwindow.h"
 

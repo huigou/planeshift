@@ -27,7 +27,7 @@
 #include "net/cmdbase.h"
 #include "gui/pawscontrolwindow.h"
 #include "net/message.h"
-#include "net/msghandler.h"
+#include "net/clientmsghandler.h"
 
 class pawsTextBox;
 class pawsProgressBar;

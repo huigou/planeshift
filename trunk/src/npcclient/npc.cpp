@@ -45,7 +45,7 @@
 #include "util/strutil.h"
 #include "util/waypoint.h"
 
-#include "net/msghandler.h"
+#include "net/clientmsghandler.h"
 #include "net/npcmessages.h"
 
 //=============================================================================

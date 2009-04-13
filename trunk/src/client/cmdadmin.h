@@ -36,7 +36,7 @@
 //=============================================================================
 
 
-class MsgHandler;
+class ClientMsgHandler;
 
 /**
  * This implements a subscriber object which handles admin-oriented commands
@@ -44,7 +44,7 @@ class MsgHandler;
 class psAdminCommands : public psCmdBase
 {
 public:
-    psAdminCommands(MsgHandler* mh,
+    psAdminCommands(ClientMsgHandler* mh,
                     CmdHandler *ch,
                     iObjectRegistry* obj);
     virtual ~psAdminCommands();

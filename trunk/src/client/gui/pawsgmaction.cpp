@@ -27,7 +27,7 @@
 #include <iutil/objreg.h>
 
 #include "net/cmdhandler.h"
-#include "net/msghandler.h"
+#include "net/clientmsghandler.h"
 #include "net/messages.h"
 #include "util/psxmlparser.h"
 

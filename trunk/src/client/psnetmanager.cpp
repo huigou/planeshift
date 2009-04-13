@@ -56,7 +56,7 @@ bool psNetManager::Initialize( iObjectRegistry* newobjreg )
     if (!connection->Initialize(object_reg))
         return false;
 
-    msghandler = csPtr<psClientMsgHandler> (new psClientMsgHandler);
+    msghandler = csPtr<ClientMsgHandler> (new ClientMsgHandler);
     bool rc = msghandler->Initialize((NetBase*) connection, object_reg);
     if (!rc)
         return false;
@@ -80,7 +80,7 @@ bool psNetManager::Initialize( iObjectRegistry* newobjreg )
     return true;
 }
 
-MsgHandler* psNetManager::GetMsgHandler()
+ClientMsgHandler* psNetManager::GetMsgHandler()
 {
     return msghandler;
 }

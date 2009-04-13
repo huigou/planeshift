@@ -26,6 +26,7 @@
 #include "../charapp.h"
 #include "engine/loader.h"
 #include "net/messages.h"
+#include "net/clientmsghandler.h"
 #include "net/charmessages.h"
 #include "iclient/isoundmngr.h"
 

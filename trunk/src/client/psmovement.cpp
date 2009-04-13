@@ -26,7 +26,7 @@
 
 #include "engine/linmove.h"
 
-#include "net/msghandler.h"
+#include "net/clientmsghandler.h"
 
 #include "psmovement.h"
 #include "pscharcontrol.h"

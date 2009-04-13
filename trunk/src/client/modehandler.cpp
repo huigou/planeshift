@@ -48,7 +48,7 @@
 // Project Includes
 //=============================================================================
 #include "net/messages.h"
-#include "net/msghandler.h"
+#include "net/clientmsghandler.h"
 
 #include "iclient/isoundmngr.h"
 
@@ -2148,8 +2148,9 @@ void ModeHandler::HandleCachedFile(MsgEntry* me)
             printf(">>Checking if file exists locally already.\n");
             if (!vfs->Exists(fname))  // doesn't exist so we need to request it
             {
+				psengine->GetMsgHandler()->GetNextSequenceNumber(MSGTYPE_CACHEFILE);
                 printf(">>Requesting file '%s' from server.\n", msg.hash.GetDataSafe() );
-                psCachedFileMessage request(0,msg.hash,NULL); // cheating here to send the hash back in the filename field
+                psCachedFileMessage request(0,0,msg.hash,NULL); // cheating here to send the hash back in the filename field
                 request.SendMessage();
             }
             else // does exist, and we're done

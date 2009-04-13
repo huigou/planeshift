@@ -23,7 +23,7 @@
 #include <iutil/objreg.h>
 
 // COMMON INCLUDES
-#include "net/msghandler.h"
+#include "net/clientmsghandler.h"
 #include "net/messages.h"
 
 // CLIENT INCLUDES

@@ -24,7 +24,7 @@
 // COMMON INCLUDES
 #include "net/messages.h"
 #include "net/cmdhandler.h"
-#include "net/msghandler.h"
+#include "net/clientmsghandler.h"
 #include "util/log.h"
 #include "util/psconst.h"
 #include "util/psxmlparser.h"

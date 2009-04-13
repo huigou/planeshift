@@ -26,16 +26,16 @@
 #include <psconfig.h>
 
 #include "net/cmdbase.h"
-#include "net/msghandler.h"
+#include "net/clientmsghandler.h"
 
-psCmdBase::psCmdBase(MsgHandler *mh,CmdHandler *ch,iObjectRegistry* obj)
+psCmdBase::psCmdBase(ClientMsgHandler *mh,CmdHandler *ch,iObjectRegistry* obj)
 {
     msgqueue  = mh;
     cmdsource = ch;
     objreg    = obj;
 }
 
-bool psCmdBase::Setup(MsgHandler *mh,CmdHandler *ch)
+bool psCmdBase::Setup(ClientMsgHandler *mh,CmdHandler *ch)
 {
     msgqueue  = mh;
     cmdsource = ch;

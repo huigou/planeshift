@@ -5079,7 +5079,7 @@ public:
 	csString hash;
 	csRef<iDataBuffer> databuf;
 
-	psCachedFileMessage( uint32_t client, const char *pathname, iDataBuffer *contents);
+	psCachedFileMessage( uint32_t client, uint8_t sequence, const char *pathname, iDataBuffer *contents);
     psCachedFileMessage( MsgEntry* me );
 
     PSF_DECLARE_MSG_FACTORY();

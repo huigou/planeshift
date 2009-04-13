@@ -95,8 +95,8 @@ protected:
 
     /**
      * This is the inbound queue to the client.  This class adds messages to
-     * this queue, and psClientMsgHandler pulls them out of this queue.
-     * @see psClientMsgHandler.
+     * this queue, and ClientMsgHandler pulls them out of this queue.
+     * @see ClientMsgHandler.
      */
     MsgQueue *inQueue;
     

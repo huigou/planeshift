@@ -24,14 +24,13 @@
 #include <imesh/spritecal3d.h>
 
 #include "net/message.h"
-#include "net/msghandler.h"
+#include "net/clientmsghandler.h"
 #include "net/cmdhandler.h"
 #include "util/strutil.h"
 #include "util/psconst.h"
 #include "globals.h"
 
 #include "pscelclient.h"
-
 
 
 #include "paws/pawstextbox.h"

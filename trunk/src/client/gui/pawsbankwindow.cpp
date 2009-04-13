@@ -23,7 +23,7 @@
 #include <csutil/csstring.h>
 
 #include "net/messages.h"
-#include "net/msghandler.h"
+#include "net/clientmsghandler.h"
 #include "pawsbankwindow.h"
 
 /* Widget ID's */

@@ -27,7 +27,7 @@
 //=============================================================================
 #include "net/message.h"
 #include "net/messages.h"
-#include "net/msghandler.h"
+#include "net/clientmsghandler.h"
 
 #include "util/pserror.h"
 #include "util/log.h"

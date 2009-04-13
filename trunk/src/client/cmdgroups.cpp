@@ -25,7 +25,7 @@
 // Project Includes
 //=============================================================================
 #include "net/cmdhandler.h"
-#include "net/msghandler.h"
+#include "net/clientmsghandler.h"
 
 #include "gui/pawsgroupwindow.h"
 
@@ -38,7 +38,7 @@
 #include "cmdgroups.h"
 #include "globals.h"
 
-psGroupCommands::psGroupCommands(MsgHandler* mh,
+psGroupCommands::psGroupCommands(ClientMsgHandler* mh,
                                  CmdHandler* ch,
                                  iObjectRegistry* obj)
   : psCmdBase(mh,ch,obj)

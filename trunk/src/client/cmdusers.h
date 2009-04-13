@@ -46,7 +46,7 @@ class psUserCommands : public psCmdBase
 {
 
 public:
-    psUserCommands(MsgHandler* mh,CmdHandler *ch,iObjectRegistry* obj);
+    psUserCommands(ClientMsgHandler* mh,CmdHandler *ch,iObjectRegistry* obj);
     virtual ~psUserCommands();
 
     static void HandleSlay(bool answeredYes, void *data);

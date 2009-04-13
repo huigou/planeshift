@@ -20,7 +20,7 @@
 #define PS_INVENTORY_CACHE
 
 #include "util/pscache.h"
-#include "net/msghandler.h"
+#include "net/clientmsghandler.h"
 
 /**
  * @class psInventoryCache

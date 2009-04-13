@@ -32,22 +32,22 @@
 #include <ivaria/reporter.h>
 
 class  CmdHandler;  // needed for circular includes
-class  MsgHandler;
+class  ClientMsgHandler;
 class  Client;  // dummy blind definition.  Only used on server.
 
 
 class psCmdBase : public iNetSubscriber, public iCmdSubscriber
 {
 protected:
-    MsgHandler*       msgqueue;
-    CmdHandler*       cmdsource;
-    iObjectRegistry*  objreg;
+    ClientMsgHandler *msgqueue;
+    CmdHandler         *cmdsource;
+    iObjectRegistry    *objreg;
 
 public:
-    psCmdBase(MsgHandler *mh, CmdHandler *ch, iObjectRegistry* obj);
+    psCmdBase(ClientMsgHandler *mh, CmdHandler *ch, iObjectRegistry* obj);
     
     virtual ~psCmdBase() {}
-    virtual bool Setup(MsgHandler* mh, CmdHandler* ch);
+    virtual bool Setup(ClientMsgHandler* mh, CmdHandler* ch);
 
     // iCmdSubscriber interface
     virtual const char *HandleCommand(const char *cmd) = 0;

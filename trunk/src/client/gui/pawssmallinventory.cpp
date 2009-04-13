@@ -23,7 +23,7 @@
 #include "util/log.h"
 #include "util/psconst.h"
 #include "net/messages.h"
-#include "net/msghandler.h"
+#include "net/clientmsghandler.h"
 
 #include "gui/pawsslot.h"
 #include "gui/pawsmoney.h"

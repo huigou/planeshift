@@ -38,7 +38,7 @@
 class psGroupCommands : public psCmdBase
 {
 public:
-    psGroupCommands(MsgHandler* mh,
+    psGroupCommands(ClientMsgHandler* mh,
                     CmdHandler* ch,
                     iObjectRegistry* obj);
     virtual ~psGroupCommands();
