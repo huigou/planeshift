@@ -132,11 +132,24 @@ bool psRegion::Load(bool loadMeshes)
         return false;
     }
 
-    if(gfxFeatures & (useMediumShaders | useHighShaders))
+    if(gfxFeatures & useHighShaders)
     {
-        for(size_t m=0; m<engine->GetMeshes()->GetCount(); ++m)
+        for(int m=0; m<engine->GetMeshes()->GetCount(); ++m)
         {
-            engine->GetMeshes()->Get(m)->GetFlags().Reset(CS_ENTITY_NOLIGHTING);
+            if(collection->IsParentOf(engine->GetMeshes()->Get(m)->QueryObject()))
+            {
+                engine->GetMeshes()->Get(m)->GetFlags().Reset(CS_ENTITY_NOLIGHTING);
+            }
+        }
+    }
+    else
+    {
+        for(int m=0; m<engine->GetMeshes()->GetCount(); ++m)
+        {
+            if(collection->IsParentOf(engine->GetMeshes()->Get(m)->QueryObject()))
+            {
+                engine->GetMeshes()->Get(m)->GetFlags().Set(CS_ENTITY_NOLIGHTING);
+            }
         }
     }
 
