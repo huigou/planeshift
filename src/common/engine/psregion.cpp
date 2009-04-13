@@ -134,7 +134,7 @@ bool psRegion::Load(bool loadMeshes)
 
     if(gfxFeatures & (useMediumShaders | useHighShaders))
     {
-        for(size_t m=0; i<engine->GetMeshes()->GetCount(); ++m)
+        for(size_t m=0; m<engine->GetMeshes()->GetCount(); ++m)
         {
             engine->GetMeshes()->Get(m)->GetFlags().Reset(CS_ENTITY_NOLIGHTING);
         }
