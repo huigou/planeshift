@@ -1376,9 +1376,13 @@ void Loader::FinishMeshLoad(MeshObj* mesh)
   mesh->status.Invalidate();
   engine->SyncEngineListsNow(tloader);
 
-  if(gfxFeatures & (useMediumShaders | useHighShaders))
+  if(gfxFeatures & useHighShaders)
   {
       mesh->object->GetFlags().Reset(CS_ENTITY_NOLIGHTING);
+  }
+  else
+  {
+      mesh->object->GetFlags().Set(CS_ENTITY_NOLIGHTING);
   }
 
   mesh->object->GetMovable()->SetSector(mesh->sector->object);
