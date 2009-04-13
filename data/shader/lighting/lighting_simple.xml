@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?> 
 <!--
-  Copyright (C) 2007 by Frank Richter
+  Copyright (C) 2007-2008 by Frank Richter
 	    (C) 2007 by Jorrit Tyberghein
 
   This library is free software; you can redistribute it and/or
@@ -17,15 +17,17 @@
   License along with this library; if not, write to the Free
   Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 -->
-<shader compiler="shaderweaver" name="lighting_character" lights="3">
-  <alias name="ambient" file="/shader/snippets/lighting/ambient-simple.xml" />
-  <alias name="apply_alpha" file="/shader/snippets/surface/alpha-nochange.xml" />
-  <alias name="lighting" file="/shader/snippets/lighting/lighting-ppl.xml" />
-  <alias name="surface" file="/shader/snippets/surface/surface-overlay.xml" />
-  <alias name="specular" file="/shader/snippets/surface/specular-default.xml" />
-  
+<shader compiler="shaderweaver" name="lighting_simple" lights="3">
+  <alias name="ambient" file="/shader/snippets/lighting/ambient-static.xml" />
+  <alias name="parallax" file="/shader/snippets/surface/parallax-none.xml" />
+  <alias name="normalmap" file="/shader/snippets/surface/normalmap-none.xml" />
+  <alias name="specular" file="/shader/snippets/surface/specular-none.xml" />
+  <alias name="staticspecular" file="/shader/snippets/lighting/staticspec-null.xml" />
+  <alias name="apply_alpha" file="/shader/snippets/surface/alpha-premult.xml" />
+  <alias name="lighting" file="/shader/snippets/lighting/lighting-pvl.xml" />
+  <alias name="surface" file="/shader/snippets/surface/surface-modulate.xml" />
+
   <technique priority="300" minlights="3">
-    <tag>per_pixel_lighting</tag>
     <!-- 1 pass, 3 lights -->
     <pass>
       <?if (vars."pass number".int == 0) && (vars."pass do_ambient") ?>
@@ -63,7 +65,6 @@
   </technique>
   
   <technique priority="200" minlights="2">
-    <tag>per_pixel_lighting</tag>
     <!-- 2 passes, 2+1 lights -->
     <pass minlights="1">
       <?if (vars."pass number".int == 0) && (vars."pass do_ambient") ?>
@@ -113,7 +114,6 @@
   </technique>
   
   <technique priority="100" minlights="1">
-    <tag>per_pixel_lighting</tag>
     <!-- 3 passes, 1+1+1 lights -->
     <pass minlights="1">
       <?if (vars."pass number".int == 0) && (vars."pass do_ambient") ?>
@@ -184,7 +184,6 @@
   <!-- No lights (ie ambient only) technique -->
   <?if (vars."pass number".int == 0) && (vars."pass do_ambient") ?>
   <technique priority="50">
-    <tag>per_pixel_lighting</tag>
     <pass>
       <!-- First(only) pass: blend with alpha -->
       <mixmode>
@@ -210,6 +209,6 @@
     </pass>
   </technique>
   <?endif?>
-  
-  <fallbackshader name="lighting_static" file="/shader/lighting/lighting_simple.xml" />
+
+  <fallbackshader name="lighting_basic" file="/shader/lighting/lighting_basic.xml" />
 </shader>

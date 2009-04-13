@@ -13,4 +13,5 @@
       <connection from="apply_mixmode_alpha" to="sectorfog" />
     </pass>
   </technique>
+  <fallbackshader name="lighting_vproc_fixed" file="/shader/lighting/vproc_fixed.xml" />
 </shader>

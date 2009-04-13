@@ -401,6 +401,11 @@ bool psEngine::Initialize (int level)
         {
             gfxFeatures |= useLowShaders;
         }
+        shader = "Lowest";
+        if(shader.CompareNoCase(GetConfig()->GetStr("PlaneShift.Graphics.Shaders")))
+        {
+            gfxFeatures |= useLowestShaders;
+        }
 
         // Check if we're using real time shadows.
         if(GetConfig()->GetBool("PlaneShift.Graphics.Shadows"))

@@ -187,7 +187,7 @@
 
     	  <widget name="GraphicsPreset" factory="pawsComboBox" id="1392" alwaysontop="true">
           <frame x="100" y="0" width="90" height="20" border="no" />
-          <listbox rows="4" height="25" useScrollBar="false" />
+          <listbox rows="5" height="25" useScrollBar="false" />
     	  </widget>
 
         <widget name="AspectRatioText" factory="pawsTextBox" id="1393">
@@ -304,48 +304,60 @@
           <text string="Shaders: "/>
         </widget>
 
-    	  <widget name="Shaders" factory="pawsComboBox" id="131010" alwaysontop="true">
+    	  <widget name="Shaders" factory="pawsComboBox" id="13110" alwaysontop="true">
           <frame x="120" y="80" width="70" height="20" border="no" />
           <listbox rows="4" height="25" useScrollBar="false" />
     	  </widget>
 
-        <widget name="EnableShadows" factory="pawsCheckBox" id="13117">
+        <widget name="EnableShadows" factory="pawsCheckBox" id="13111">
           <frame x="0" y="103" width="130" height="15"/>
           <checkbox on="radioon" off="radiooff" size="12"/>
           <text string="Enable Shadows:" position="left"/>
         </widget>
 
-        <widget name="EnableGrass" factory="pawsCheckBox" id="131011">
+        <widget name="EnableBloom" factory="pawsCheckBox" id="13112">
           <frame x="0" y="123" width="130" height="15"/>
+          <checkbox on="radioon" off="radiooff" size="12"/>
+          <text string="Enable Bloom:" position="left"/>
+        </widget>
+
+        <widget name="EnableHDR" factory="pawsCheckBox" id="13113">
+          <frame x="0" y="143" width="130" height="15"/>
+          <checkbox on="radioon" off="radiooff" size="12"/>
+          <text string="Enable HDR:" position="left"/>
+        </widget>
+
+        <widget name="EnableGrass" factory="pawsCheckBox" id="13114">
+          <frame x="0" y="163" width="130" height="15"/>
           <checkbox on="radioon" off="radiooff" size="12"/>
           <text string="Enable Grass:" position="left"/>
         </widget>
 
-        <widget name="VBO" factory="pawsCheckBox" id="131012">
-          <frame x="0" y="143" width="130" height="15"/>
+        <widget name="VBO" factory="pawsCheckBox" id="13115">
+          <frame x="0" y="183" width="130" height="15"/>
           <checkbox on="radioon" off="radiooff" size="12"/>
           <text string="Enable VBO:" position="left"/>
         </widget>
 
-        <widget name="LoadAllMaps" factory="pawsCheckBox" id="131013">
-          <frame x="0" y="163" width="130" height="15"/>
+        <widget name="LoadAllMaps" factory="pawsCheckBox" id="13116">
+          <frame x="0" y="203" width="130" height="15"/>
           <checkbox on="radioon" off="radiooff" size="12"/>
           <text string="Load All Maps:" position="left"/>
         </widget>
 	
-        <widget name="KeepMapsLoaded" factory="pawsCheckBox" id="13114">
-          <frame x="0" y="183" width="130" height="15"/>
+        <widget name="KeepMapsLoaded" factory="pawsCheckBox" id="13117">
+          <frame x="0" y="223" width="130" height="15"/>
           <checkbox on="radioon" off="radiooff" size="12"/>
           <text string="Keep Maps Loaded:" position="left"/>
         </widget>
 
-        <widget name="ThreadedLoadingText" factory="pawsTextBox" id="13115">
-          <frame x="0" y="203" width="210" height="20"/>
+        <widget name="ThreadedLoadingText" factory="pawsTextBox" id="13118">
+          <frame x="0" y="243" width="210" height="20"/>
           <text string="Threaded Loading:"/>
         </widget>
 
-        <widget name="ThreadedLoading" factory="pawsComboBox" id="13116">
-          <frame x="120" y="200" width="70" height="20" border="no"/>
+        <widget name="ThreadedLoading" factory="pawsComboBox" id="13119">
+          <frame x="120" y="240" width="70" height="20" border="no"/>
           <listbox rows="3" height="25" useScrollBar="false" />
         </widget>
       </widget>

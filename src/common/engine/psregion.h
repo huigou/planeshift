@@ -42,11 +42,12 @@ struct iObjectRegistry;
 struct iVFS;
 
 // Feature defines.
-#define useLowShaders 0x01
-#define useMediumShaders 0x02
-#define useHighShaders 0x04
-#define useShadows 0x08
-#define useMeshGen 0x10
+#define useLowestShaders 0x01
+#define useLowShaders 0x02
+#define useMediumShaders 0x04
+#define useHighShaders 0x08
+#define useShadows 0x10
+#define useMeshGen 0x20
 #define useAll (useHighShaders | useShadows | useMeshGen)
 
 /**
