@@ -26,7 +26,7 @@
 #include "clientvitals.h"
 #include "../charapp.h"
 #include "net/messages.h"
-#include "net/msghandler.h"
+#include "net/clientmsghandler.h"
 #include "util/strutil.h"
 #include "util/psxmlparser.h"
 

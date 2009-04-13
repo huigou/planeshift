@@ -37,7 +37,7 @@
 #include "util/strutil.h"
 
 #include "net/messages.h"
-#include "net/msghandler.h"
+#include "net/clientmsghandler.h"
 #include "net/cmdhandler.h"
 
 //=============================================================================

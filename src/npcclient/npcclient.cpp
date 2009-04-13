@@ -50,7 +50,7 @@
 #include "util/pspathnetwork.h"
 
 #include "net/connection.h"
-#include "net/msghandler.h"
+#include "net/clientmsghandler.h"
 
 #include "engine/psworld.h"
 

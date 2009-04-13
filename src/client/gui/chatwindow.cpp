@@ -51,7 +51,7 @@
 #include "gui/pawscontrolwindow.h"
 
 #include "net/message.h"
-#include "net/msghandler.h"
+#include "net/clientmsghandler.h"
 #include "net/cmdhandler.h"
 
 #include "util/strutil.h"

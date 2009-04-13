@@ -23,7 +23,7 @@
 #include "globals.h"
 
 // COMMON/NET INCLUDES
-#include "net/msghandler.h"
+#include "net/clientmsghandler.h"
 #include "net/cmdhandler.h"
 
 #include "util/log.h"

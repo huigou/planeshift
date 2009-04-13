@@ -7121,9 +7121,9 @@ csString psCharIntroduction::ToString(AccessPointers * access_ptrs)
 
 PSF_IMPLEMENT_MSG_FACTORY(psCachedFileMessage,MSGTYPE_CACHEFILE);
 
-psCachedFileMessage::psCachedFileMessage( uint32_t client, const char *pathname, iDataBuffer *contents)
+psCachedFileMessage::psCachedFileMessage( uint32_t client, uint8_t sequence, const char *pathname, iDataBuffer *contents)
 {
-    printf("::Building cached file message for '%s'.\n", pathname);
+    printf("::Building cached file message for '%s', sequence %d.\n", pathname, sequence);
 
     // We send the hash along with it to save as the filename on the client
     if (pathname[0] == '(')  // timestamp always starts with '('
@@ -7135,7 +7135,7 @@ psCachedFileMessage::psCachedFileMessage( uint32_t client, const char *pathname,
         hash = pathname;
 
     uint32_t size = contents ? (uint32_t)contents->GetSize() : 0;
-    msg.AttachNew(new MsgEntry(hash.Length()+1 + size + sizeof(uint32_t) ));
+    msg.AttachNew(new MsgEntry(hash.Length()+1 + size + sizeof(uint32_t),PRIORITY_HIGH,sequence) );
 
     msg->SetType(MSGTYPE_CACHEFILE);
     msg->clientnum = client;

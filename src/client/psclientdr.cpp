@@ -33,7 +33,7 @@
 // Project Includes
 //=============================================================================
 #include "net/message.h"
-#include "net/msghandler.h"
+#include "net/clientmsghandler.h"
 #include "net/connection.h"
 
 //=============================================================================

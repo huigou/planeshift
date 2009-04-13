@@ -42,7 +42,7 @@
 //=============================================================================
 #include "net/message.h"
 #include "net/messages.h"
-#include "net/msghandler.h"
+#include "net/clientmsghandler.h"
 #include "net/charmessages.h"
 
 #include "iclient/isoundmngr.h"

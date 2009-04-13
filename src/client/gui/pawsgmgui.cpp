@@ -38,7 +38,7 @@
 #include "paws/pawsmanager.h"
 #include "paws/pawsprefmanager.h"
 #include "net/cmdhandler.h"
-#include "net/msghandler.h"
+#include "net/clientmsghandler.h"
 #include "paws/pawstextbox.h"
 #include "paws/pawscheckbox.h"
 #include "paws/pawsyesnobox.h"

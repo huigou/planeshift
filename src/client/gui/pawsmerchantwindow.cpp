@@ -25,7 +25,7 @@
 //  COMMON INCLUDES
 /////////////////////////////////////////////////////////////////////////////
 #include "net/messages.h"
-#include "net/msghandler.h"
+#include "net/clientmsghandler.h"
 #include "rpgrules/psmoney.h"
 #include "util/psxmlparser.h"
 

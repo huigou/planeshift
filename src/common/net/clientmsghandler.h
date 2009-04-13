@@ -1,5 +1,5 @@
 /*
- * psclientmsghandler.h by Keith Fulton <keith@paqrat.com>
+ * ClientMsgHandler.h by Keith Fulton <keith@paqrat.com>
  *
  * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
  *
@@ -28,11 +28,11 @@ class psNetConnection;
 class NetBase;
 struct iObjectRegistry;
 
-class psClientMsgHandler : public MsgHandler
+class ClientMsgHandler : public MsgHandler
 {
 public:
-    psClientMsgHandler();
-    virtual ~psClientMsgHandler();
+    ClientMsgHandler();
+    virtual ~ClientMsgHandler();
 
     /** Initializes the Handler */
     bool Initialize(NetBase *nb, iObjectRegistry* object_reg);
@@ -61,13 +61,17 @@ public:
      */
     bool DispatchQueue();
 
+	/// Get the next sequence number to use for an ordered message
+	int GetNextSequenceNumber(msgtype mtype);
+
+
     /// Declare our event handler
-    DeclareGenericEventHandler(EventHandler,psClientMsgHandler,"planeshift.clientmsghandler");
+    DeclareGenericEventHandler(EventHandler,ClientMsgHandler,"planeshift.clientmsghandler");
     csRef<EventHandler> scfiEventHandler;
 
 protected:
     iObjectRegistry* object_reg;
-	csHash<OrderedMessageChannel*> pendingQueues;
+	csHash<OrderedMessageChannel*> orderedMessages;
 };
 
 #endif

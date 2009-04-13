@@ -28,7 +28,7 @@
 
 #include "net/cmdhandler.h"
 #include "net/messages.h"
-#include "net/msghandler.h"
+#include "net/clientmsghandler.h"
 #include "iclient/isoundmngr.h"
 #include "pscharcontrol.h"
 

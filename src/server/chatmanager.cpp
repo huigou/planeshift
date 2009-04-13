@@ -531,11 +531,11 @@ void ChatManager::SendAudioFileHash(Client *client, const char *voiceFile, csTic
 	// check the file hash.  If the client needs the file, it will reply
 	// back with a request for the file, which will come here 
 	// and call SendAudioFile.
-	psCachedFileMessage msg(client->GetClientNum(), timestamp, NULL);
-	if (delay == 0)	
-		msg.SendMessage();
-	else
-		psserver->GetNetManager()->SendMessageDelayed(msg.msg, delay);
+	psCachedFileMessage msg(client->GetClientNum(),							
+		                    client->GetNextSequenceNumber(MSGTYPE_CACHEFILE),	//guaranteed to be played in sequence order
+							timestamp,											//hash id value
+							NULL);												//null buffer means check in client-side cache first
+	msg.SendMessage();
 }
 
 void ChatManager::SendAudioFile(Client *client, const char *voiceFileHash)
@@ -562,7 +562,7 @@ void ChatManager::SendAudioFile(Client *client, const char *voiceFileHash)
 			timestamp = audioFileCache[i]->alternate;
 			voiceFile = audioFileCache[i]->key;
 
-			psCachedFileMessage msg(client->GetClientNum(), timestamp, buffer);
+			psCachedFileMessage msg(client->GetClientNum(),client->GetNextSequenceNumber(MSGTYPE_CACHEFILE), timestamp, buffer);
 			msg.SendMessage();
 			return;
 		}

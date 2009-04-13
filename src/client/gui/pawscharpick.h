@@ -4,7 +4,7 @@
 #include "paws/pawsstringpromptwindow.h"
 #include "paws/pawswidget.h"
 #include "net/message.h"
-#include "net/msghandler.h"
+#include "net/clientmsghandler.h"
 
 #include "psengine.h"
 

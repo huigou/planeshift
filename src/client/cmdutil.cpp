@@ -34,7 +34,7 @@
 // Project Includes
 //=============================================================================
 #include "net/cmdhandler.h"
-#include "net/msghandler.h"
+#include "net/clientmsghandler.h"
 
 #include "util/strutil.h"
 
@@ -56,7 +56,7 @@
 #include "psengine.h"
 #include "globals.h"
 
-psUtilityCommands::psUtilityCommands(MsgHandler *mh,
+psUtilityCommands::psUtilityCommands(ClientMsgHandler *mh,
                                      CmdHandler *ch,
                                      iObjectRegistry* obj)
   : psCmdBase(mh,ch,obj)

@@ -39,7 +39,7 @@
 class psGuildCommands : public psCmdBase
 {
 public:
-    psGuildCommands(MsgHandler* mh,
+    psGuildCommands(ClientMsgHandler* mh,
                     CmdHandler* ch,
                     iObjectRegistry* obj );
     virtual ~psGuildCommands();

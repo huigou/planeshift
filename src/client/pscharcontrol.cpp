@@ -32,7 +32,7 @@
 // Project Includes
 //=============================================================================
 #include "net/cmdhandler.h"
-#include "net/msghandler.h"
+#include "net/clientmsghandler.h"
 
 #include "util/psutil.h"
 

@@ -44,7 +44,7 @@
 #include "paws/pawsyesnobox.h"
 
 #include "net/cmdhandler.h"
-#include "net/msghandler.h"
+#include "net/clientmsghandler.h"
 
 //////////////////////////////////////////////////////////////////////
 // GUI BUTTONS NOTE: ONLY THOSE WHO NEEDS SPECIAL TREATMENT SHOULD BE

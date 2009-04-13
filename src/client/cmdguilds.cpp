@@ -26,7 +26,7 @@
 // Project Includes
 //=============================================================================
 #include "net/cmdhandler.h"
-#include "net/msghandler.h"
+#include "net/clientmsghandler.h"
 
 #include "util/strutil.h"
 
@@ -42,7 +42,7 @@
 
 
 
-psGuildCommands::psGuildCommands( MsgHandler* mh,
+psGuildCommands::psGuildCommands( ClientMsgHandler* mh,
                                   CmdHandler* ch,
                                   iObjectRegistry* obj )
   : psCmdBase(mh,ch,obj)

@@ -30,7 +30,7 @@
 // Project Includes
 //=============================================================================
 #include "net/cmdhandler.h"
-#include "net/msghandler.h"
+#include "net/clientmsghandler.h"
 #include "net/messages.h"
 #include "net/npcmessages.h"
 
@@ -59,7 +59,7 @@
 #include "globals.h"
 
 
-psUserCommands::psUserCommands(MsgHandler* mh,CmdHandler *ch,iObjectRegistry* obj)
+psUserCommands::psUserCommands(ClientMsgHandler* mh,CmdHandler *ch,iObjectRegistry* obj)
   : psCmdBase(mh,ch,obj)
 {
 //    msgqueue->Subscribe(MSGTYPE_CHAT,this);

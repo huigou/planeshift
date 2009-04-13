@@ -20,7 +20,7 @@
 #include <psconfig.h>
 
 #include "net/message.h"
-#include "net/msghandler.h"
+#include "net/clientmsghandler.h"
 #include "globals.h"
 
 #include "gui/pawsslot.h"

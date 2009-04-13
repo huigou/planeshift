@@ -29,9 +29,6 @@
 #include "psmousebinds.h"
 #include "util/prb.h"
 
-//#include "net/msghandler.h"
-//#include "engine/netpersist.h"
-
 
 /** A paws script key.
  * This is read from the guikeys.xml file to handle gui keys.

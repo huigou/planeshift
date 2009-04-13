@@ -39,7 +39,7 @@
 class psUtilityCommands : public psCmdBase
 {
 public:
-    psUtilityCommands(MsgHandler *mh,
+    psUtilityCommands(ClientMsgHandler *mh,
                       CmdHandler *ch,
                       iObjectRegistry* obj);
 

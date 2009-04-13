@@ -35,6 +35,7 @@
 #include "paws/pawsyesnobox.h"
 #include "paws/pawsokbox.h"
 #include "net/messages.h"
+#include "net/clientmsghandler.h"
 #include "iclient/isoundmngr.h"
 #include "psnetmanager.h"
 #include "pscelclient.h"

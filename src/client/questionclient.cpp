@@ -21,7 +21,7 @@
 
 #include "globals.h"
 #include "questionclient.h"
-#include "net/msghandler.h"
+#include "net/clientmsghandler.h"
 #include "paws/pawsmanager.h"
 #include "paws/pawsyesnobox.h"
 #include "paws/pawsmainwidget.h"

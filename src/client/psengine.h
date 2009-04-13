@@ -37,7 +37,7 @@
 #include "util/slots.h"
 
 class psCelClient;
-class psClientMsgHandler;
+class ClientMsgHandler;
 class psClientCharManager;
 struct iCommandLineParser;
 struct iConfigManager;
@@ -66,7 +66,7 @@ class Loader;
 
 // Networking classes
 class psNetConnection;
-class psClientMsgHandler;
+class ClientMsgHandler;
 class psAuthenticationClient;
 class psNetManager;
 class psSlotManager;
@@ -178,7 +178,7 @@ public:
     csRandomGen& GetRandomGen() { return random; }
     float GetRandom() { return random.Get(); }
 
-    MsgHandler*            GetMsgHandler()     { return netmanager->GetMsgHandler(); }
+    ClientMsgHandler *   GetMsgHandler()     { return netmanager->GetMsgHandler(); }
     CmdHandler*            GetCmdHandler()     { return netmanager->GetCmdHandler(); }
     psSlotManager*         GetSlotManager()    { return slotManager;}
     psClientCharManager*   GetCharManager()    { return charmanager; }

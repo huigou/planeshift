@@ -32,7 +32,7 @@
 #include "paws/pawstextbox.h"
 #include "paws/pawsmanager.h"
 #include "net/messages.h"
-#include "net/msghandler.h"
+#include "net/clientmsghandler.h"
 #include "util/log.h"
 #include "pawsbookreadingwindow.h"
 

@@ -22,7 +22,7 @@
 
 #include "util/pserror.h"
 #include "util/psstring.h"
-#include "net/msghandler.h"
+#include "net/clientmsghandler.h"
 #include "cmdhandler.h"
 
 
