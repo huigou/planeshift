@@ -132,6 +132,14 @@ bool psRegion::Load(bool loadMeshes)
         return false;
     }
 
+    if(gfxFeatures & (useMediumShaders | useHighShaders))
+    {
+        for(size_t m=0; i<engine->GetMeshes()->GetCount(); ++m)
+        {
+            engine->GetMeshes()->Get(m)->GetFlags().Reset(CS_ENTITY_NOLIGHTING);
+        }
+    }
+
     Debug2(LOG_LOAD, 0,"After LoadMapFile, %dms elapsed", csGetTicks()-start);
 
     // Successfully loaded.  Now get textures ready, etc. and return.

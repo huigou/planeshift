@@ -501,21 +501,21 @@ void pawsLauncherWindow::LoadSettings()
       ds = configPSC.GetInt("Video.OpenGL.TextureDownsample", ds);
     }
 
-    int tlb = 0;
+    float tlb = 0.0f;
     if(configUser->KeyExists("Video.OpenGL.TextureLODBias"))
     {
-      configUser->GetInt("Video.OpenGL.TextureLODBias");
+      tlb = configUser->GetFloat("Video.OpenGL.TextureLODBias");
     }
     else
     {
-      tlb = configPSC.GetInt("Video.OpenGL.TextureLODBias", tlb);
+      tlb = configPSC.GetFloat("Video.OpenGL.TextureLODBias", tlb);
     }
 
     switch(ds)
     {
     case 0:
         {
-            if(tlb == -1)
+            if(tlb < 0)
             {
                 setting = "Highest";
             }
@@ -558,13 +558,28 @@ void pawsLauncherWindow::LoadSettings()
     shaders->Select(setting);
 
     pawsCheckBox* enableShadows = (pawsCheckBox*)FindWidget("EnableShadows");
-    if(configUser->KeyExists("Engine.RenderManager.Default"))
+    if(configUser->KeyExists("PlaneShift.Graphics.Shadows"))
     {
         enableShadows->SetState(configUser->GetBool("PlaneShift.Graphics.Shadows"));
     }
     else
     {
         enableShadows->SetState(configPSC.GetBool("PlaneShift.Graphics.Shadows"));
+    }
+
+    pawsCheckBox* enableBloom = (pawsCheckBox*)FindWidget("EnableBloom");
+    pawsCheckBox* enableHDR = (pawsCheckBox*)FindWidget("EnableHDR");
+    if(enableShadows->GetState())
+    {
+        enableBloom->SetState(configUser->KeyExists("RenderManager.Unshadowed.Effects"));
+        enableHDR->SetState(configUser->KeyExists("RenderManager.Unshadowed.HDR.Enabled") &&
+            configUser->GetBool("RenderManager.Unshadowed.HDR.Enabled"));
+    }
+    else
+    {
+        enableBloom->SetState(configUser->KeyExists("RenderManager.ShadowPSSM.Effects"));
+        enableHDR->SetState(configUser->KeyExists("RenderManager.ShadowPSSM.HDR.Enabled") &&
+            configUser->GetBool("RenderManager.ShadowPSSM.HDR.Enabled"));
     }
 
     pawsCheckBox* enableGrass = (pawsCheckBox*)FindWidget("EnableGrass");
@@ -713,60 +728,72 @@ void pawsLauncherWindow::SaveSettings()
     pawsComboBox* graphicsPreset = (pawsComboBox*)FindWidget("GraphicsPreset");
     configUser->SetStr("PlaneShift.Graphics.Preset", graphicsPreset->GetSelectedRowString());
 
+    // Common
+    pawsComboBox* shaders = (pawsComboBox*)FindWidget("Shaders");
+    csString shaderSelection = shaders->GetSelectedRowString();
+
+    pawsCheckBox* enableShadows = (pawsCheckBox*)FindWidget("EnableShadows");
+    pawsCheckBox* enableBloom = (pawsCheckBox*)FindWidget("EnableBloom");
+    pawsCheckBox* enableHDR = (pawsCheckBox*)FindWidget("EnableHDR");
+
     switch(graphicsPreset->GetSelectedRowNum())
     {
     case HIGHEST:
         {
+            enableShadows->SetState(true);
+            enableBloom->SetState(true);
+            enableHDR->SetState(true);
+            shaderSelection = "High";
             configUser->SetInt("Video.ScreenDepth", 32);
             configUser->SetInt("Video.OpenGL.MultiSamples", 8);
             configUser->SetInt("Video.OpenGL.TextureFilterAnisotropy", 16);
-            configUser->SetInt("Video.OpenGL.TextureLODBias", -1);
+            configUser->SetFloat("Video.OpenGL.TextureLODBias", -0.1f);
             configUser->SetInt("Video.OpenGL.TextureDownsample", 0);
-            configUser->SetStr("PlaneShift.Graphics.Shaders", "High");
             configUser->SetBool("PlaneShift.Graphics.EnableGrass", true);
             configUser->SetBool("Video.OpenGL.UseExtension.GL_ARB_vertex_buffer_object", true);
             break;
         }
     case HIGH:
         {
+            enableBloom->SetState(true);
+            shaderSelection = "High";
             configUser->SetInt("Video.ScreenDepth", 32);
             configUser->SetInt("Video.OpenGL.MultiSamples", 4);
             configUser->SetInt("Video.OpenGL.TextureFilterAnisotropy", 8);
             configUser->SetInt("Video.OpenGL.TextureDownsample", 0);
-            configUser->SetStr("PlaneShift.Graphics.Shaders", "High");
             configUser->SetBool("PlaneShift.Graphics.EnableGrass", true);
             configUser->SetBool("Video.OpenGL.UseExtension.GL_ARB_vertex_buffer_object", true);
             break;
         }
     case MEDIUM:
         {
+            shaderSelection = "Medium";
             configUser->SetInt("Video.ScreenDepth", 32);
             configUser->SetInt("Video.OpenGL.MultiSamples", 2);
             configUser->SetInt("Video.OpenGL.TextureFilterAnisotropy", 4);
             configUser->SetInt("Video.OpenGL.TextureDownsample", 0);
-            configUser->SetStr("PlaneShift.Graphics.Shaders", "Medium");
             configUser->SetBool("PlaneShift.Graphics.EnableGrass", true);
             configUser->SetBool("Video.OpenGL.UseExtension.GL_ARB_vertex_buffer_object", true);
             break;
         }
     case LOW:
         {
+            shaderSelection = "Low";
             configUser->SetInt("Video.ScreenDepth", 32);
             configUser->SetInt("Video.OpenGL.MultiSamples", 0);
             configUser->SetInt("Video.OpenGL.TextureFilterAnisotropy", 0);
             configUser->SetInt("Video.OpenGL.TextureDownsample", 2);
-            configUser->SetStr("PlaneShift.Graphics.Shaders", "Medium");
             configUser->SetBool("PlaneShift.Graphics.EnableGrass", false);
             configUser->SetBool("Video.OpenGL.UseExtension.GL_ARB_vertex_buffer_object", true);
             break;
         }
     case LOWEST:
         {
+            shaderSelection = "Lowest";
             configUser->SetInt("Video.ScreenDepth", 16);
             configUser->SetInt("Video.OpenGL.MultiSamples", 0);
             configUser->SetInt("Video.OpenGL.TextureFilterAnisotropy", 0);
             configUser->SetInt("Video.OpenGL.TextureDownsample", 4);
-            configUser->SetStr("PlaneShift.Graphics.Shaders", "Low");
             configUser->SetBool("PlaneShift.Graphics.EnableGrass", false);
             configUser->SetBool("Video.OpenGL.UseExtension.GL_ARB_vertex_buffer_object", true);
             break;
@@ -786,12 +813,12 @@ void pawsLauncherWindow::SaveSettings()
 
             pawsComboBox* textureQuality = (pawsComboBox*)FindWidget("TextureQuality");
 
-            int texlodbias = 0;
+            float texlodbias = 0;
             int downsample = 0;
 
             if(textureQuality->GetSelectedRowString().Compare("Highest"))
             {
-                texlodbias = -1;
+                texlodbias = -0.1f;
             }
             if(textureQuality->GetSelectedRowString().Compare("Medium"))
             {
@@ -806,11 +833,8 @@ void pawsLauncherWindow::SaveSettings()
                 downsample = 4;
             }
 
-            configUser->SetInt("Video.OpenGL.TextureLODBias", texlodbias);
+            configUser->SetFloat("Video.OpenGL.TextureLODBias", texlodbias);
             configUser->SetInt("Video.OpenGL.TextureDownsample", downsample);
-
-            pawsComboBox* shaders = (pawsComboBox*)FindWidget("Shaders");
-            configUser->SetStr("PlaneShift.Graphics.Shaders", shaders->GetSelectedRowString());
 
             pawsCheckBox* enableGrass = (pawsCheckBox*)FindWidget("EnableGrass");
             configUser->SetBool("PlaneShift.Graphics.EnableGrass", enableGrass->GetState());
@@ -821,35 +845,50 @@ void pawsLauncherWindow::SaveSettings()
         }
     };
 
-    pawsComboBox* shaders = (pawsComboBox*)FindWidget("Shaders");
-    if(shaders->GetSelectedRowString() == "Low")
-    {
-        configUser->SetStr("Video.ShaderManager.Tags.per_pixel_lighting.Presence", "forbidden");
-    }
-    else
-    {
-        configUser->DeleteKey("Video.ShaderManager.Tags.per_pixel_lighting.Presence");
-    }
+    configUser->SetStr("PlaneShift.Graphics.Shaders", shaderSelection);
 
-    if(shaders->GetSelectedRowString() == "Lowest")
+    // Reset common options.
+    configUser->SetStr("Engine.RenderManager.Default", "crystalspace.rendermanager.unshadowed");
+    configUser->DeleteKey("PlaneShift.Graphics.Shadows");
+    configUser->DeleteKey("Video.ShaderManager.Tags.per_pixel_lighting.Presence");
+    configUser->DeleteKey("RenderManager.Unshadowed.Layers");
+    configUser->DeleteKey("RenderManager.Unshadowed.Effects");
+    configUser->DeleteKey("RenderManager.ShadowPSSM.Effects");
+    configUser->DeleteKey("RenderManager.Unshadowed.HDR.Enabled");
+    configUser->DeleteKey("RenderManager.ShadowPSSM.HDR.Enabled");
+
+    if(shaderSelection == "High")
     {
-        configUser->SetBool("PlaneShift.Graphics.Shadows", false);
-        configUser->SetStr("RenderManager.Unshadowed.Layers", "/data/renderlayers/lighting_basic.xml"); 
-    }
-    else
-    {
-        configUser->DeleteKey("RenderManager.Unshadowed.Layers");
-        pawsCheckBox* enableShadows = (pawsCheckBox*)FindWidget("EnableShadows");
+        configUser->SetBool("PlaneShift.Graphics.Shadows", enableShadows->GetState());
         if(enableShadows->GetState())
         {
-            configUser->SetBool("PlaneShift.Graphics.Shadows", true);
-            configUser->SetStr("Engine.RenderManager.Default", "crystalspace.rendermanager.shadow_pssm");
+            // Not working yet.
+            //configUser->SetStr("Engine.RenderManager.Default", "crystalspace.rendermanager.shadow_pssm");
         }
-        else
+
+        if(enableBloom->GetState())
         {
-            configUser->SetBool("PlaneShift.Graphics.Shadows", false);
-            configUser->SetStr("Engine.RenderManager.Default", "crystalspace.rendermanager.unshadowed");
+            configUser->SetStr("RenderManager.Unshadowed.Effects", "/data/posteffects/bloom.xml");
+            configUser->SetStr("RenderManager.ShadowPSSM.Effects", "/data/posteffects/bloom.xml");
         }
+
+        configUser->SetBool("RenderManager.Unshadowed.HDR.Enabled", enableHDR->GetState());
+        configUser->SetBool("RenderManager.ShadowPSSM.HDR.Enabled", enableHDR->GetState());
+    }
+    else if(shaderSelection == "Medium")
+    {
+        configUser->SetStr("RenderManager.Unshadowed.Layers", "/data/renderlayers/lighting_default_pvl.xml");
+        configUser->DeleteKey("Video.ShaderManager.Tags.per_pixel_lighting.Presence");
+    }
+    else if(shaderSelection == "Low")
+    {
+        configUser->SetStr("RenderManager.Unshadowed.Layers", "/data/renderlayers/lighting_simple.xml"); 
+        configUser->SetStr("Video.ShaderManager.Tags.per_pixel_lighting.Presence", "forbidden");
+    }
+    else if(shaderSelection == "Lowest")
+    {
+        configUser->SetStr("RenderManager.Unshadowed.Layers", "/data/renderlayers/lighting_basic.xml"); 
+        configUser->SetStr("Video.ShaderManager.Tags.per_pixel_lighting.Presence", "forbidden");
     }
 
     pawsCheckBox* loadAllMaps = (pawsCheckBox*)FindWidget("LoadAllMaps");
