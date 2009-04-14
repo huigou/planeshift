@@ -1,4 +1,8 @@
-﻿*** 2009-04-10 by Keith Fulton
+﻿*** 2009-04-14 by Stefano Angeleri
+- Don't show the marry icon when a genderless character right clicks a character
+  with a gender and viceversa
+
+*** 2009-04-10 by Keith Fulton
 - Initial commit for guaranteed ordering of msgtypes.  (Attention Khaki! :-) )
   Use dev level admin command /rndmsgtest to see it work.  Client-side ordering
   is working here, but server tracking isn't fully implemented yet.  That's next.
