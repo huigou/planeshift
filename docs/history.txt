@@ -1,6 +1,11 @@
 ﻿*** 2009-04-14 by Stefano Angeleri
 - Don't show the marry icon when a genderless character right clicks a character
   with a gender and viceversa
+- Fixed the attack icon showing in wrong contexts just to then give an error when
+  using it. When right clicking someone the icon was shown depending on the
+  possibilities of the target and not of the actor as expected.
+  Making so gm show an attack icon when right clicked and viceversa they didn't
+  get any attack icon if the target couldn't attack them.
 
 *** 2009-04-10 by Keith Fulton
 - Initial commit for guaranteed ordering of msgtypes.  (Attention Khaki! :-) )
