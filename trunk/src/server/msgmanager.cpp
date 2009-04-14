@@ -36,6 +36,7 @@
 #include "gem.h"
 #include "clients.h"
 #include "globals.h"
+#include "net/msghandler.h"
 
 
 bool MessageManager::Verify(MsgEntry *pMsg,unsigned int flags,Client*& client)
@@ -102,7 +103,60 @@ bool MessageManager::Verify(MsgEntry *pMsg,unsigned int flags,Client*& client)
     return true;
 }
 
-Client * MessageManager::FindPlayerClient(const char *name)
+bool MessageManager::CheckSequentialMessage(csRef<MsgEntry> msg,Client *client)
+{
+	if (msg)
+	{
+		if (!msg->GetSequenceNumber() || !client)  // Unsequenced messages automatically return immediately.
+		{
+			// printf("Passing unordered message through.\n");
+			return true;
+		}
+		else // sequenced message
+		{
+			OrderedMessageChannel *channel = client->GetOrderedMessageChannel(msg->GetType());
+
+			int seqnum = msg->GetSequenceNumber();
+			int nextSequenceExpected = channel->GetCurrentSequenceNumber();
+			printf("Expecting sequence number %d, got %d.\n", nextSequenceExpected, seqnum);
+
+			if (seqnum < nextSequenceExpected)
+			{
+				Error1("Cannot have a sequence number lower than expected!");
+				seqnum = nextSequenceExpected;
+			}
+
+			if (seqnum == nextSequenceExpected)
+			{
+				printf("Publishing expected msg immediately.\n");
+				return true;  // Go ahead and publish it
+			}
+			else
+			{
+				channel->pendingMessages.Put(seqnum - nextSequenceExpected, msg);
+				printf("Added as element %u to pending queue.\n", seqnum - nextSequenceExpected);
+				return false;
+			}
+		}
+	}
+	else // a NULL MsgEntry means try to find another one
+	{
+		OrderedMessageChannel *channel = client->GetOrderedMessageChannel(msg->GetType());
+
+		channel->pendingMessages.DeleteIndex(0); // remove dummy first value
+
+		// Transfer the ref to this variable
+		msg = channel->pendingMessages[0];
+		channel->pendingMessages[0] = NULL;
+
+		if (msg)
+			return true;
+		else
+			return false;
+	}
+}
+
+Client *MessageManager::FindPlayerClient(const char *name)
 {
     if (!name || strlen(name)==0)
     {

@@ -655,7 +655,7 @@ void Client::SetCheatMask(CheatFlags mask,bool flag )
         cheatMask &= (~mask);
 }
 
-int Client::GetNextSequenceNumber(msgtype mtype)
+OrderedMessageChannel *Client::GetOrderedMessageChannel(msgtype mtype)
 {
 	OrderedMessageChannel *channel = orderedMessages.Get(mtype,NULL);
 
@@ -664,5 +664,6 @@ int Client::GetNextSequenceNumber(msgtype mtype)
 		channel = new OrderedMessageChannel;
 		orderedMessages.Put(mtype, channel);
 	}
-	return channel->IncrementSequenceNumber();
+	return channel;
 }
+

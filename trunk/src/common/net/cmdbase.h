@@ -56,6 +56,7 @@ public:
     virtual void HandleMessage(MsgEntry *msg,Client*) { HandleMessage(msg); }
     virtual void HandleMessage(MsgEntry *msg) = 0;
     virtual bool Verify(MsgEntry *,unsigned int,Client *& ) { return true; }
+	virtual bool CheckSequentialMessage(csRef<MsgEntry> me,Client *client) { return true; }
 
     // Wrapper for csReport
     void Report(int severity, const char* msgtype, const char* description, ... );
@@ -70,6 +71,8 @@ public:
     virtual void HandleMessage(MsgEntry *msg,Client*) { HandleMessage(msg); }
     virtual void HandleMessage(MsgEntry *msg) = 0;
     virtual bool Verify(MsgEntry *,unsigned int,Client *& ) { return true; }
+	virtual bool CheckSequentialMessage(csRef<MsgEntry> me,Client *)  { return true; }
+
 };
 
 #endif

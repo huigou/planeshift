@@ -98,7 +98,8 @@ public:
     // implemented iNetSubscriber messages
     virtual bool Verify(MsgEntry * msg, unsigned int flags, Client *& client);
     virtual void HandleMessage(MsgEntry * msg, Client * client);
-    
+	virtual bool CheckSequentialMessage(csRef<MsgEntry> me,Client *client) { return true; }
+
 };
 
 #endif // CHAT_BUBBLES_HEADER

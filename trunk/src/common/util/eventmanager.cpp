@@ -161,18 +161,46 @@ csTicks EventManager::ProcessEventQueue()
     return PROCESS_EVENT; // Process events at least every PROCESS_EVENT ticks
 }
 
+void EventManager::TrackEventTimes(csTicks timeTaken,MsgEntry *msg)
+{
+	static bool filled = false;
+	static csTicks eventtimes[EVENT_AVERAGETIME_COUNT];
+	static short index = 0;
+	static csTicks eventtimesTotal = 0;
+	
+	csString status;
 
+	if(!filled)
+		eventtimesTotal += timeTaken;
+	else
+		eventtimesTotal = timeTaken + eventtimesTotal - eventtimes[index];
+
+	eventtimes[index] = timeTaken;
+
+	// Done this way to prevent a division operator
+	if(filled && timeTaken > 500 && (timeTaken * EVENT_AVERAGETIME_COUNT > 2 * eventtimesTotal || eventtimesTotal > EVENT_AVERAGETIME_COUNT * 1000))
+	{
+		status.Format("Message type %u has taken %u time to process, average time of events is %u", msg->GetType(), timeTaken, eventtimesTotal / EVENT_AVERAGETIME_COUNT);
+		CPrintf(CON_WARNING, "%s\n", status.GetData());
+		if(LogCSV::GetSingletonPtr())
+			LogCSV::GetSingleton().Write(CSV_STATUS, status);
+	}
+
+	index++;
+
+	// Rollover
+	if(index == EVENT_AVERAGETIME_COUNT)
+	{
+		index = 0;
+		filled = true;
+	}
+}
 
 // This is the MAIN GAME thread. Every message and event are handled from
 // this thread. This eliminate need for synchronization of access to
 // game data.
 void EventManager::Run ()
 {
-    csString status;
-    csTicks eventtimes[EVENT_AVERAGETIME_COUNT];
-    short index = 0;
-    csTicks eventtimesTotal = 0;
-
     // Have we filled in all the entries in the array yet?
     bool filled = false;
 
@@ -201,30 +229,9 @@ void EventManager::Run ()
             // Ignore messages that take no time to process.
             if(timeTaken)
             {
-                if(!filled)
-                    eventtimesTotal += timeTaken;
-                else
-                    eventtimesTotal = timeTaken + eventtimesTotal - eventtimes[index];
-
-                eventtimes[index] = timeTaken;
-
-                // Done this way to prevent a division operator
-                if(filled && timeTaken > 500 && (timeTaken * EVENT_AVERAGETIME_COUNT > 2 * eventtimesTotal || eventtimesTotal > EVENT_AVERAGETIME_COUNT * 1000))
-                {
-                    status.Format("Message type %u has taken %u time to process, average time of events is %u", msg->GetType(), timeTaken, eventtimesTotal / EVENT_AVERAGETIME_COUNT);
-                    CPrintf(CON_WARNING, "%s\n", status.GetData());
-                    if(LogCSV::GetSingletonPtr())
-                        LogCSV::GetSingleton().Write(CSV_STATUS, status);
-                }
-
-                index++;
-                // Rollover
-                if(index == EVENT_AVERAGETIME_COUNT)
-                {
-                    index = 0;
-                    filled = true;
-                }
+				TrackEventTimes(timeTaken,msg);
             }
+
             // don't forget to release the packet
             msg = NULL;
         }
@@ -232,13 +239,6 @@ void EventManager::Run ()
         {
             nextEvent = ProcessEventQueue();
         }
-    }
-    if(filled)
-    {
-        status.Format("Event manager shutdown, average time of events is %u", eventtimesTotal / EVENT_AVERAGETIME_COUNT);
-        CPrintf(CON_CMDOUTPUT, "%s\n", status.GetData());
-        if(LogCSV::GetSingletonPtr())
-            LogCSV::GetSingleton().Write(CSV_STATUS, status);
     }
     CPrintf(CON_CMDOUTPUT, "Event thread stopped!\n");
 }
