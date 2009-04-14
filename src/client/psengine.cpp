@@ -602,7 +602,6 @@ bool psEngine::Initialize (int level)
 
         if(threadedWorldLoading)
         {
-            csString path;
             csRef<iStringArray> maps = vfs->FindFiles("/planeshift/world/");
 
             // Do the _common maps first.
@@ -611,9 +610,8 @@ bool psEngine::Initialize (int level)
                 csRef<iDataBuffer> tmp = vfs->GetRealPath(maps->Get(i));
                 if(csString(tmp->GetData()).Find("common") != (size_t)-1)
                 {
-                  path.AppendFmt("%s, ", tmp->GetData());
                   csString vpath(maps->Get(i));
-                  vpath.Append("/world");
+                  vpath.Append("world");
                   if(tm->GetThreadCount() == 1)
                   {
                     Loader::GetSingleton().PrecacheDataWait(vpath.GetData(), false);
@@ -632,14 +630,11 @@ bool psEngine::Initialize (int level)
                 csRef<iDataBuffer> tmp = vfs->GetRealPath(maps->Get(i));
                 if(csString(tmp->GetData()).Find("common") == (size_t)-1)
                 {
-                  path.AppendFmt("%s, ", tmp->GetData());
                   csString vpath(maps->Get(i));
-                  vpath.Append("/world");
+                  vpath.Append("world");
                   mapPrecaches.Push(Loader::GetSingleton().PrecacheData(vpath.GetData(), false));
                 }
             }
-
-            vfs->Mount("/planeshift/maps/", path);
         }
 
         // Initialize Networking
@@ -723,7 +718,6 @@ bool psEngine::Initialize (int level)
             return 1;
         }
 
-        vfs->ChDir("/planeshift/maps/");
         tm->Wait(modelPrecaches);
     }
 
