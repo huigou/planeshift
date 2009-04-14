@@ -3441,7 +3441,9 @@ void gemActor::SendBehaviorMessage(const csString & msg_id, gemObject *actor)
                     if ( ( GetCharacterData()->GetRaceInfo()->gender == PSCHARACTER_GENDER_NONE &&
                            activeActor->GetCharacterData()->GetRaceInfo()->gender == PSCHARACTER_GENDER_NONE ) ||
                          ( GetCharacterData()->GetRaceInfo()->gender !=
-                           activeActor->GetCharacterData()->GetRaceInfo()->gender ) )
+                           activeActor->GetCharacterData()->GetRaceInfo()->gender &&
+                           GetCharacterData()->GetRaceInfo()->gender != PSCHARACTER_GENDER_NONE
+                           && activeActor->GetCharacterData()->GetRaceInfo()->gender != PSCHARACTER_GENDER_NONE ) )
                     {
                         options |= psGUIInteractMessage::MARRIAGE;
                     }
