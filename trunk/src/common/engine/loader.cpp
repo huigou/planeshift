@@ -64,11 +64,11 @@ void Loader::Init(iObjectRegistry* object_reg, uint gfxFeatures, float loadRange
 THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
 {
     // Don't parse folders.
-    csString folder(path);
-    if(folder.GetAt(folder.Length()-1) == '/')
+    csString vfsPath(path);
+    if(vfsPath.GetAt(vfsPath.Length()-1) == '/')
         return false;
 
-    if(vfs->Exists(path))
+    if(vfs->Exists(vfsPath))
     {
         // For the plugin and shader loads.
         csRefArray<iThreadReturn> rets;
@@ -89,7 +89,11 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
 
         if(!recursive)
         {
-          dirchange.ChangeTo(csString(path).Truncate(csString(path).FindLast('/')));
+            dirchange.ChangeTo(vfsPath.Truncate(vfsPath.FindLast('/')+1));
+        }
+        else
+        {
+            vfsPath = vfs->GetCwd();
         }
 
         csRef<iDocumentNode> root = doc->GetRoot()->GetNode("library");
@@ -135,10 +139,8 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                 while(nodeItr->HasNext())
                 {
                     node = nodeItr->Next();
-                    csRef<Texture> t = csPtr<Texture>(new Texture());
+                    csRef<Texture> t = csPtr<Texture>(new Texture(node->GetAttributeValue("name"), vfsPath, node));
                     {
-                        t->name = node->GetAttributeValue("name");
-                        t->data = node;
                         CS::Threading::ScopedWriteLock lock(tLock);
                         textures.Put(t->name, t);
                     }
@@ -245,7 +247,7 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
             while(nodeItr->HasNext())
             {
                 node = nodeItr->Next();
-                csRef<MeshFact> mf = csPtr<MeshFact>(new MeshFact(node->GetAttributeValue("name"), node));
+                csRef<MeshFact> mf = csPtr<MeshFact>(new MeshFact(node->GetAttributeValue("name"), vfsPath, node));
 
                 if(node->GetNode("params")->GetNode("material"))
                 {
@@ -397,7 +399,7 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                 while(nodeItr2->HasNext())
                 {
                     csRef<iDocumentNode> node2 = nodeItr2->Next();
-                    csRef<MeshObj> m = csPtr<MeshObj>(new MeshObj(node2->GetAttributeValue("name"), node2));
+                    csRef<MeshObj> m = csPtr<MeshObj>(new MeshObj(node2->GetAttributeValue("name"), vfsPath, node2));
                     m->sector = s;
 
                     if(node2->GetAttributeValueAsBool("alwaysloaded"))
@@ -1376,6 +1378,7 @@ void Loader::FinishMeshLoad(MeshObj* mesh)
   mesh->status.Invalidate();
   engine->SyncEngineListsNow(tloader);
 
+  // Mark the mesh as being realtime lit depending on graphics setting.
   if(gfxFeatures & useHighShaders)
   {
       mesh->object->GetFlags().Reset(CS_ENTITY_NOLIGHTING);
@@ -1385,10 +1388,17 @@ void Loader::FinishMeshLoad(MeshObj* mesh)
       mesh->object->GetFlags().Set(CS_ENTITY_NOLIGHTING);
   }
 
+  // Set world position.
   mesh->object->GetMovable()->SetSector(mesh->sector->object);
   mesh->object->GetMovable()->UpdateMove();
+
+  // Init collision data. TODO: Load simpler CD meshes.
   csColliderHelper::InitializeCollisionWrapper(cdsys, mesh->object);
+
+  // Get the correct path for loading heightmap data.
+  vfs->PushDir(mesh->path);
   engine->PrecacheMesh(mesh->object);
+  vfs->PopDir();
 
   mesh->loading = false;
 }
@@ -1476,7 +1486,7 @@ bool Loader::LoadMesh(MeshObj* mesh)
 
     if(ready && !mesh->status)
     {
-        mesh->status = tloader->LoadNode(vfs->GetCwd(), mesh->data);
+        mesh->status = tloader->LoadNode(mesh->path, mesh->data);
     }
 
     return (mesh->status && mesh->status->IsFinished());
@@ -1502,7 +1512,7 @@ bool Loader::LoadMeshFact(MeshFact* meshfact)
 
     if(ready && !meshfact->status)
     {
-        meshfact->status = tloader->LoadNode(vfs->GetCwd(), meshfact->data);
+        meshfact->status = tloader->LoadNode(meshfact->path, meshfact->data);
         return false;
     }
 
@@ -1587,7 +1597,7 @@ bool Loader::LoadTexture(Texture* texture)
 
     if(!texture->status.IsValid())
     {
-        texture->status = tloader->LoadNode(vfs->GetCwd(), texture->data);
+        texture->status = tloader->LoadNode(texture->path, texture->data);
         return false;
     }
 

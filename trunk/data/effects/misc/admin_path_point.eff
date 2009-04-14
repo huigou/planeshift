@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?> 
 <library>
-    <library>/planeshift/weapons/wand01a.meshfact</library>
+    <library path="/planeshift/weapons/" file="wand01a.meshfact"/>
     <addon plugin="PSEffects">
         <effect name="admin_path_point">
             <anchor type="basic" name="pos">

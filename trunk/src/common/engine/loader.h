@@ -96,12 +96,13 @@ private:
     class Texture : public CS::Utility::FastRefCount<Texture>
     {
     public:
-        Texture(const char* name = "")
-            : name(name), useCount(0)
+        Texture(const char* name, const char* path, iDocumentNode* data)
+            : name(name), path(path), useCount(0), data(data)
         {
         }
 
         csString name;
+        csString path;
         uint useCount;
         csRef<iThreadReturn> status;
         csRef<iDocumentNode> data;
@@ -127,12 +128,13 @@ private:
     class MeshFact : public CS::Utility::FastRefCount<MeshFact>
     {
     public:
-        MeshFact(const char* name, iDocumentNode* data) : name(name),
-          useCount(0), data(data)
+        MeshFact(const char* name, const char* path, iDocumentNode* data) : name(name),
+          path(path), useCount(0), data(data)
         {
         }
 
         csString name;
+        csString path;
         uint useCount;
         csRef<iThreadReturn> status;
         csRef<iDocumentNode> data;
@@ -199,7 +201,7 @@ private:
     class MeshObj : public CS::Utility::FastRefCount<MeshObj>
     {
     public:
-        MeshObj(const char* name, iDocumentNode* data) : name(name), data(data),
+        MeshObj(const char* name, const char* path, iDocumentNode* data) : name(name), path(path), data(data),
             loading(false), alwaysLoaded(false), hasBBox(false)
         {
         }
@@ -217,6 +219,7 @@ private:
         }
 
         csString name;
+        csString path;
         csRef<iDocumentNode> data;
         csVector3 pos;
 
