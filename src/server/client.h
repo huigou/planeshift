@@ -363,9 +363,9 @@ public:
     void SetCheatMask(CheatFlags mask,bool flag);
     bool GetCheatMask(CheatFlags mask) { return (cheatMask & mask) != 0;  }
 
-	/// Get the next sequence number to use for an ordered message
-	int GetNextSequenceNumber(msgtype mtype);
-
+	/// Get the channel to use for an ordered message
+	OrderedMessageChannel * GetOrderedMessageChannel(msgtype mtype);
+	
 protected:
 
     /**
