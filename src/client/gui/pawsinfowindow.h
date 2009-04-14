@@ -53,7 +53,7 @@ public:
     virtual bool OnScroll( int direction, pawsScrollBar* widget );
     virtual bool OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* reporter );
 
-    void SetStanceHighlight(int stance);
+    void SetStanceHighlight(uint stance);
 
 private:
     pawsTextBox     *targetName;
@@ -74,7 +74,7 @@ private:
     csRef<MsgHandler> msgHandler;
     csString stanceConvert(const uint ID);
 
-    int selectedstance;
+    uint selectedstance;
 
     enum baseStances {
         BLOODY = 1,
