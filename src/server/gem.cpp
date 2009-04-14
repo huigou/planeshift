@@ -3420,8 +3420,9 @@ void gemActor::SendBehaviorMessage(const csString & msg_id, gemObject *actor)
                     options |= psGUIInteractMessage::EXCHANGE;
 
                 // Can we attack this player?
-                Client* meC = psserver->GetNetManager()->GetClient(GetClientID());
-                if (IsAlive() && activeActor->IsAlive() && meC && meC->IsAllowedToAttack(actor,false))
+                
+                Client* attackerClient = psserver->GetNetManager()->GetClient(activeActor->GetClientID());
+                if (IsAlive() && activeActor->IsAlive() && attackerClient && attackerClient->IsAllowedToAttack(this,false))
                     options |= psGUIInteractMessage::ATTACK;
 
                 /*Options for a wedding or a divorce, in order to show the proper button.
