@@ -194,7 +194,7 @@ csString pawsInfoWindow::stanceConvert(const uint ID)
 }
 
 
-void pawsInfoWindow::SetStanceHighlight(int stance)
+void pawsInfoWindow::SetStanceHighlight(uint stance)
 {
     selectedstance = stance;
 
