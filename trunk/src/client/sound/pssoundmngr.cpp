@@ -142,29 +142,29 @@ bool psSoundManager::Initialize(iObjectRegistry* objectReg)
 
 void psSoundManager::StreamAddNotification(iSndSysStream *pStream)
 {
-	printf("StreamAdd Notification\n");
+//	printf("StreamAdd Notification\n");
 }
 void psSoundManager::StreamRemoveNotification(iSndSysStream *pStream)
 {
-	printf("StreamRemove Notification\n");
+//	printf("StreamRemove Notification\n");
 }
 
 void psSoundManager::SourceAddNotification(iSndSysSource *pSource)
 {
-	printf("SourceAdd Notification\n");
+//	printf("SourceAdd Notification\n");
 }
 
 void psSoundManager::SourceRemoveNotification(iSndSysSource *pSource)
 {
-	printf("SourceRemove Notification\n");
+//	printf("SourceRemove Notification\n");
 	if (currentVoiceSource && currentVoiceSource == pSource)
 	{
-		printf("Voice file ended.  Checking for another.\n");
+//		printf("Voice file ended.  Checking for another.\n");
 		voicingQueue.DeleteIndex(0);
 
 		if (voicingQueue.GetSize() > 0)
 		{
-			printf("Playing next voice file.\n");
+//			printf("Playing next voice file.\n");
 			currentVoiceSource = StartSound(voicingQueue.Get(0),voicesVolume,false);
 		}
 	}
