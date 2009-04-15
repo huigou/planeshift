@@ -1,10 +1,10 @@
 SubDir TOP src common rpgrules ;
 
-SubInclude TOP src common rpgrules test;
-
 Library psrpgrules 
 	: [ Wildcard *.cpp *.h ]
 	: noinstall
 ;
 
 ExternalLibs psrpgrules : CRYSTAL ;
+
+SubInclude TOP src common rpgrules test;
