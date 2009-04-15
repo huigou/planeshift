@@ -29,4 +29,8 @@ private:
     void PrintHelp();
     void PrintOutput(const char* string, ...);
 
+	csRef<iObjectRegistry> object_reg;
+	csRef<iVFS> vfs;
+	csRef<iFile> log;
+
 };
