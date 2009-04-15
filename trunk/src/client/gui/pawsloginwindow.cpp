@@ -144,6 +144,9 @@ bool pawsLoginWindow::PostSetup()
         msg.FireEvent();
     }
 
+    // We want to show as soon as we're done loading.
+    Show();
+
     return true;
 }
 
