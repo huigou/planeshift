@@ -1657,9 +1657,9 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
               info += ", has flags:";
 
               if ( flags & PSITEM_FLAG_CRAFTER_ID_IS_VALID )
-                  info += " 'vlaid crafter id'";
+                  info += " 'valid crafter id'";
               if ( flags & PSITEM_FLAG_GUILD_ID_IS_VALID )
-                  info += " 'vlaid guild id'";
+                  info += " 'valid guild id'";
               if ( flags & PSITEM_FLAG_UNIQUE_ITEM )
                   info += " 'unique'";
               if ( flags & PSITEM_FLAG_USES_BASIC_ITEM )
