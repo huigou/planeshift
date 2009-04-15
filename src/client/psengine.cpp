@@ -422,7 +422,8 @@ bool psEngine::Initialize (int level)
         //Check if sound is on or off in psclient.cfg
         csString soundPlugin;
 
-        soundOn = cfgmgr->KeyExists("System.PlugIns.iSndSysRenderer");
+        soundOn = GetConfig()->KeyExists("System.PlugIns.iSndSysRenderer") &&
+            strcmp(GetConfig()->GetStr("System.PlugIns.iSndSysRenderer"), "crystalspace.sndsys.renderer.null");
 
         if (soundOn)
         {

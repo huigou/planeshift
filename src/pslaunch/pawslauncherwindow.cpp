@@ -394,18 +394,22 @@ void pawsLauncherWindow::LoadSettings()
 
     // Sound
     pawsCheckBox* enableSound = (pawsCheckBox*)FindWidget("EnableSound");
-    setting = configUser->GetStr("SndSys.Driver");
-    enableSound->SetState(setting.Compare(""));
+    enableSound->SetState(configUser->KeyExists("System.PlugIns.iSndSysRenderer") &&
+        strcmp(configUser->GetStr("System.PlugIns.iSndSysRenderer"), "crystalspace.sndsys.renderer.null"));
 
     pawsComboBox* soundRenderer = (pawsComboBox*)FindWidget("SoundRenderer");
     soundRenderer->NewOption("OpenAL");
     soundRenderer->NewOption("Software");
 
-    setting = configUser->GetStr("System.PlugIns.iSndSysRenderer");
-    if(setting.Compare(""))
+    if(enableSound->GetState())
+    {
+        setting = configUser->GetStr("System.PlugIns.iSndSysRenderer");
+    }
+    else
     {
         setting = configPSC.GetStr("System.PlugIns.iSndSysRenderer");
     }
+
     if(setting.Compare("crystalspace.sndsys.renderer.openal"))
     {
         soundRenderer->Select("OpenAL");
@@ -929,21 +933,19 @@ void pawsLauncherWindow::SaveSettings()
     pawsCheckBox* enableSound = (pawsCheckBox*)FindWidget("EnableSound");
     if(enableSound->GetState())
     {
-        configUser->DeleteKey("SndSys.Driver");
+        pawsComboBox* soundRenderer = (pawsComboBox*)FindWidget("SoundRenderer");
+        if(soundRenderer->GetSelectedRowString().Compare("OpenAL"))
+        {
+            configUser->SetStr("System.PlugIns.iSndSysRenderer", "crystalspace.sndsys.renderer.openal");
+        }
+        else
+        {
+            configUser->SetStr("System.PlugIns.iSndSysRenderer", "crystalspace.sndsys.renderer.software");
+        }
     }
     else
     {
-        configUser->SetStr("SndSys.Driver", "crystalspace.sndsys.software.driver.null");
-    }
-
-    pawsComboBox* soundRenderer = (pawsComboBox*)FindWidget("SoundRenderer");
-    if(soundRenderer->GetSelectedRowString().Compare("OpenAL"))
-    {
-        configUser->SetStr("System.PlugIns.iSndSysRenderer", "crystalspace.sndsys.renderer.openal");
-    }
-    else
-    {
-        configUser->SetStr("System.PlugIns.iSndSysRenderer", "crystalspace.sndsys.renderer.software");
+        configUser->SetStr("System.PlugIns.iSndSysRenderer", "crystalspace.sndsys.renderer.null");
     }
 
     pawsComboBox* languages = (pawsComboBox*)FindWidget("Languages");
