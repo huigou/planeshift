@@ -33,10 +33,8 @@ CS_IMPLEMENT_APPLICATION
 
 TestRPGRules::TestRPGRules(iObjectRegistry* object_reg) : object_reg(object_reg)
 {
-    docsys = csQueryRegistry<iDocumentSystem>(object_reg);
     vfs = csQueryRegistry<iVFS>(object_reg);
-    strings = csQueryRegistryTagInterface<iStringSet>(object_reg, "crystalspace.shared.stringset");
-    log = vfs->Open("/this/ccheck.log", VFS_FILE_WRITE);
+    log = vfs->Open("/this/testrpgrules.log", VFS_FILE_WRITE);
 }
 
 TestRPGRules::~TestRPGRules()
@@ -55,7 +53,7 @@ void TestRPGRules::PrintHelp()
 int TestRPGRules::Run()
 {
     PrintOutput("RPG Rules Library Unit Test Application.\n\n");
-
+	return 0;
 }
 
 

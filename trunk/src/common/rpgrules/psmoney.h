@@ -61,7 +61,7 @@ public:
     /** Set the number of circles
      */
     void SetCircles(int c) { circles = c; }
-    void AdjustCircles( int c,bool makeChange );
+    void AdjustCircles( int c,bool makeChange=false );
     
     /** Get the number of circles
      * @return circles
@@ -71,7 +71,7 @@ public:
     /** Set the number of octas
      */
     void SetOctas(int o) { octas = o; }
-    void AdjustOctas(int o,bool makeChange);
+    void AdjustOctas(int o,bool makeChange=false);
     /** Get the number of octas
      * @return octas
      */
@@ -80,7 +80,7 @@ public:
     /** Set the number of hexas
      */
     void SetHexas(int h) { hexas = h; }
-    void AdjustHexas( int h,bool makeChange );
+    void AdjustHexas( int h,bool makeChange=false );
     /** Get the number of hexas
      * @return hexas
      */
@@ -89,7 +89,7 @@ public:
     /** Set the number of trias
      */
     void SetTrias(int t) { trias = t; }   
-    void AdjustTrias( int t,bool makeChange );
+    void AdjustTrias( int t,bool makeChange=false );
 
     /** Get the number of trias
      * @return trias
@@ -123,7 +123,7 @@ public:
     psMoney operator +=(const psMoney& other);
     psMoney operator * (const int mult) const;
     
-    void Adjust( int type, int value );
+    void Adjust( int type, int value, bool makeChange=false );
     int Get( int type );
 protected:
     int circles;
