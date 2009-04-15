@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<rpgtestsuite>
+	<testmoney name="Test default initialization">
+		<checkstr value="0,0,0,0" />
+		<checktotal total="0" />
+	</testmoney>
+	<testmoney name="Test 0 Initialization">
+		<init value="0,0,0,0" />
+		<checkstr value="0,0,0,0" />
+		<checktotal total="0" />
+	</testmoney>
+	<testmoney name="Test Tria Initialization">
+		<init value="0,0,0,1" />
+		<checkstr value="0,0,0,1" />
+		<checktotal total="1" />
+	</testmoney>
+	<testmoney name="Test Hexa Initialization">
+		<init value="0,0,1,0" />
+		<checkstr value="0,0,1,0" />
+		<checktotal total="10" />
+	</testmoney>
+	<testmoney name="Test Octa Initialization">
+		<init value="0,1,0,0" />
+		<checkstr value="0,1,0,0" />
+		<checktotal total="50" />
+	</testmoney>
+	<testmoney name="Test Circle Initialization">
+		<init value="1,0,0,0" />
+		<checkstr value="1,0,0,0" />
+		<checktotal total="250" />
+	</testmoney>
+	<testmoney name="Test All Initialization">
+		<init value="1,2,3,4" />
+		<checkstr value="1,2,3,4" />
+		<checktotal total="384" />
+	</testmoney>
+</rpgtestsuite>
