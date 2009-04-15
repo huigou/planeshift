@@ -17,6 +17,8 @@
  *
  */
 
+class psMoney;
+
 class TestRPGRules
 {
 public:
@@ -29,8 +31,14 @@ private:
     void PrintHelp();
     void PrintOutput(const char* string, ...);
 
+	bool TestMoney(iDocumentNode *testnode);
+	bool InitMoney(iDocumentNode *command, psMoney& money);
+	bool CheckMoneyString(iDocumentNode *command, psMoney& money);
+	bool CheckMoneyTotal(iDocumentNode *command, psMoney& money);
+
 	csRef<iObjectRegistry> object_reg;
 	csRef<iVFS> vfs;
 	csRef<iFile> log;
+	csRef<iDocumentSystem> docsys;
 
 };

@@ -17,7 +17,7 @@
  *
  */
 
-#include <cssysdef.h>
+#include <psconfig.h>
 
 #include <cstool/initapp.h>
 #include <csutil/cmdhelp.h>
@@ -28,13 +28,17 @@
 #include <iutil/stringarray.h>
 
 #include "testrpgrules.h"
+#include "../psmoney.h"
+
+
 
 CS_IMPLEMENT_APPLICATION
 
 TestRPGRules::TestRPGRules(iObjectRegistry* object_reg) : object_reg(object_reg)
 {
-    vfs = csQueryRegistry<iVFS>(object_reg);
-    log = vfs->Open("/this/testrpgrules.log", VFS_FILE_WRITE);
+	docsys = csQueryRegistry<iDocumentSystem>(object_reg);
+	vfs    = csQueryRegistry<iVFS>(object_reg);
+    log    = vfs->Open("/this/testrpgrules.log", VFS_FILE_WRITE);
 }
 
 TestRPGRules::~TestRPGRules()
@@ -43,19 +47,99 @@ TestRPGRules::~TestRPGRules()
 
 void TestRPGRules::PrintHelp()
 {
-    printf("This application checks for duplicate meshfact and texture inclusions in art files.\n\n");
+    printf("This application runs an xml script to test the psMoney class.\n\n");
 
-    printf("Options:\n");
-    printf("-path The vfs path to directory to search in. Defaults to /this/ccheck/\n\n");
-    printf("Usage: ccheck(.exe) -path /this/path/to/directory/\n");
+//    printf("Options:\n");
+ //   printf("-path The vfs path to directory to search in. Defaults to /this/ccheck/\n\n");
+  //  printf("Usage: ccheck(.exe) -path /this/path/to/directory/\n");
 }
 
 int TestRPGRules::Run()
 {
     PrintOutput("RPG Rules Library Unit Test Application.\n\n");
+
+	csRef<iDataBuffer> buf = vfs->ReadFile("/this/data/tests/rpgrules.xml");
+	if (!buf)
+	{
+		PrintOutput("Cannot load file /this/data/tests/rpgrules.xml\n");
+		return 1;
+	}
+	csRef<iDocument> doc = docsys->CreateDocument();
+
+	doc->Parse(buf, true);
+
+	if(!doc->GetRoot().IsValid())
+	{
+		PrintOutput("XML in /this/data/tests/rpgrules.xml is not valid.\n");
+		return 2;
+	}
+
+	csRef<iDocumentNode> root = doc->GetRoot()->GetNode("rpgtestsuite");
+	if(!root.IsValid())
+	{
+		PrintOutput("No <rpgtestsuite> node in xml test file.\n");
+		return 3;
+	}
+
+	csRef<iDocumentNodeIterator> itr = root->GetNodes("testmoney");
+	while(itr->HasNext())
+	{
+		csRef<iDocumentNode> node = itr->Next();
+		bool b = TestMoney(node);
+		if (!b)
+			return 4;
+	}
+
+	PrintOutput("All tests passed successfully.\n");
+
 	return 0;
 }
 
+bool TestRPGRules::TestMoney(iDocumentNode *testnode)
+{
+	PrintOutput("Running test: %-30s ", testnode->GetAttributeValue("name"));
+
+	bool result = true;
+	psMoney money;
+
+	csRef<iDocumentNodeIterator> itr = testnode->GetNodes();
+	while(result && itr->HasNext())
+	{
+		csRef<iDocumentNode> node = itr->Next();
+		if (!strcmp(node->GetValue(),"init"))
+			result = InitMoney(node,money);
+		else if (!strcmp(node->GetValue(),"checkstr"))
+			result = CheckMoneyString(node, money);
+		else if (!strcmp(node->GetValue(),"checktotal"))
+			result = CheckMoneyTotal(node, money);
+	}
+
+	if (result)
+		PrintOutput("Ok\n");
+	
+	return result;
+}
+
+bool TestRPGRules::InitMoney(iDocumentNode *command, psMoney& money)
+{
+	printf("Init money\n");
+	money.Set(command->GetAttributeValue("value"));
+	return true;
+}
+
+bool TestRPGRules::CheckMoneyString(iDocumentNode *command, psMoney& money)
+{
+	printf("Check string conversion of money\n");
+	csString val = money.ToString();
+	return (val == command->GetAttributeValue("value"));
+}
+
+bool TestRPGRules::CheckMoneyTotal(iDocumentNode *command, psMoney& money)
+{
+	printf("Check total money\n");
+	int val = money.GetTotal();
+	return (val == command->GetAttributeValueAsInt("total"));
+}
 
 void TestRPGRules::PrintOutput(const char* string, ...)
 {
@@ -83,11 +167,14 @@ int main(int argc, char** argv)
     }
 
     csInitializer::RequestPlugins (object_reg, CS_REQUEST_VFS,
+											   CS_REQUEST_PLUGIN("crystalspace.documentsystem.multiplexer", iDocumentSystem),
 											   CS_REQUEST_END);
 
     TestRPGRules* test = new TestRPGRules(object_reg);
     int ret = test->Run();
     delete test;
 
-    return ret;
+	PS_PAUSEEXIT(ret);
+
+    return 0;
 }
