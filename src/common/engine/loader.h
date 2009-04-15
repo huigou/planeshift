@@ -53,6 +53,8 @@ public:
     THREADED_CALLABLE_DECL2(Loader, PrecacheData, csThreadReturn, const char*, path, bool, recursive, THREADEDL, false, false);
     void UpdatePosition(const csVector3& pos, const char* sectorName, bool force);
 
+    void ContinueLoading(bool waiting);
+
     inline iThreadedLoader* GetLoader() { return tloader; }
 
     inline size_t GetLoadingCount() { return loadingMeshes.GetSize() + finalisableMeshes.GetSize(); }

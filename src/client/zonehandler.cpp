@@ -427,10 +427,21 @@ bool ZoneHandler::ExecuteFlaggedRegions(const csString & sector)
         int executed = 2;
         if(background)
         {
-            if(Loader::GetSingleton().HasValidPosition() && Loader::GetSingleton().GetLoadingCount() == 0)
+            if(Loader::GetSingleton().HasValidPosition())
             {
-                executed = 0;
-                psengine->GetEngine()->PrecacheDraw();
+                if(Loader::GetSingleton().GetLoadingCount() == 0)
+                {
+                    executed = 0;
+                    psengine->GetEngine()->PrecacheDraw();
+                }
+                else
+                {
+                    // Yield a bit of cpu time first.
+                    csSleep(1);
+
+                    // Continue loading the world.
+                    Loader::GetSingleton().ContinueLoading(true);
+                }
             }
         }
         else

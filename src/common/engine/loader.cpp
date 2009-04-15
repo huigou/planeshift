@@ -840,41 +840,60 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
     return true;
 }
 
+void Loader::ContinueLoading(bool waiting)
+{
+    bool finishLoading = true;
+    
+    // Limit even while waiting - we want some frames.
+    size_t count = 0;
+    while(finishLoading && count < 20)
+    {
+        // Delete from delete queue (fairly expensive, so limited per update).
+        if(!deleteQueue.IsEmpty())
+        {
+            CleanMesh(deleteQueue[0]);
+            deleteQueue.DeleteIndexFast(0);
+        }
+
+        // Check already loading meshes.
+        for(size_t i=0; i<(loadingMeshes.GetSize() < 10 ? loadingMeshes.GetSize() : 10); ++i)
+        {
+            if(LoadMesh(loadingMeshes[i]))
+            {
+                finalisableMeshes.Push(loadingMeshes[i]);
+                loadingMeshes.DeleteIndex(i);
+            }
+        }
+
+        // Finalise loaded meshes (expensive, so limited per update).
+        if(!finalisableMeshes.IsEmpty())
+        {
+            FinishMeshLoad(finalisableMeshes[0]);
+            finalisableMeshes.DeleteIndexFast(0);
+        }
+
+        // Load meshgens.
+        for(size_t i=0; i<loadingMeshGen.GetSize(); ++i)
+        {
+            if(LoadMeshGen(loadingMeshGen[i]))
+            {
+                loadingMeshGen.DeleteIndex(i);
+            }
+        }
+
+        ++count;
+        if(!waiting || GetLoadingCount() == 0)
+            finishLoading = false;
+    }
+}
+
 void Loader::UpdatePosition(const csVector3& pos, const char* sectorName, bool force)
 {
     validPosition = true;
-    
-    // Delete from delete queue (fairly expensive, so limited per update).
-    if(!deleteQueue.IsEmpty())
-    {
-        CleanMesh(deleteQueue[0]);
-        deleteQueue.DeleteIndexFast(0);
-    }
 
-    // Check already loading meshes.
-    for(size_t i=0; i<(loadingMeshes.GetSize() < 10 ? loadingMeshes.GetSize() : 10); ++i)
+    if(GetLoadingCount() != 0)
     {
-        if(LoadMesh(loadingMeshes[i]))
-        {
-          finalisableMeshes.Push(loadingMeshes[i]);
-          loadingMeshes.DeleteIndex(i);
-        }
-    }
-
-    // Finalise loaded meshes (expensive, so limited per update).
-    if(!finalisableMeshes.IsEmpty())
-    {
-      FinishMeshLoad(finalisableMeshes[0]);
-      finalisableMeshes.DeleteIndexFast(0);
-    }
-
-    // Load meshgens.
-    for(size_t i=0; i<loadingMeshGen.GetSize(); ++i)
-    {
-      if(LoadMeshGen(loadingMeshGen[i]))
-      {
-        loadingMeshGen.DeleteIndex(i);
-      }
+        ContinueLoading(false);
     }
 
     if(!force)
@@ -1145,16 +1164,16 @@ void Loader::CleanMaterial(Material* material)
 
 void Loader::CleanTexture(Texture* texture)
 {
-  if(--texture->useCount == 0)
-  {
-      csWeakRef<iTextureWrapper> t = scfQueryInterface<iTextureWrapper>(texture->status->GetResultRefPtr());
-      if(t->GetRefCount() == 2)
-      {
-          engine->GetTextureList()->Remove(t);
-      }
+    if(--texture->useCount == 0)
+    {
+        csWeakRef<iTextureWrapper> t = scfQueryInterface<iTextureWrapper>(texture->status->GetResultRefPtr());
+        if(t->GetRefCount() == 2)
+        {
+            engine->GetTextureList()->Remove(t);
+        }
 
-      texture->status.Invalidate();
-  }
+        texture->status.Invalidate();
+    }
 }
 
 void Loader::LoadSector(const csVector3& pos, const csBox3& loadBox, const csBox3& unloadBox,
