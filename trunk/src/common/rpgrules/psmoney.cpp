@@ -159,43 +159,44 @@ csString psMoney::ToUserString() const
     }
 }
 
-void psMoney::Adjust( int type, int value )
+void psMoney::Adjust( int type, int value, bool makeChange )
 {
     switch( type )
     {
-        case MONEY_TRIAS:   AdjustTrias( value ); break;
-        case MONEY_HEXAS:   AdjustHexas( value ); break;
-        case MONEY_OCTAS:   AdjustOctas( value ); break;
-        case MONEY_CIRCLES: AdjustCircles( value ); break;
+        case MONEY_TRIAS:   AdjustTrias(  value, makeChange ); break;
+        case MONEY_HEXAS:   AdjustHexas(  value, makeChange ); break;
+        case MONEY_OCTAS:   AdjustOctas(  value, makeChange ); break;
+        case MONEY_CIRCLES: AdjustCircles(value, makeChange ); break;
     }
 }
 
-void psMoney::AdjustHexas( int c )
+
+void psMoney::AdjustCircles( int c,bool makeChange )
+{ 
+	circles+= c; 
+	if ( circles < 0 )
+		circles = 0;
+}
+
+void psMoney::AdjustOctas( int c,bool makeChange )
+{ 
+	octas+= c; 
+	if ( octas < 0 )
+		octas = 0;
+}
+void psMoney::AdjustHexas( int c,bool makeChange )
 { 
     hexas+= c; 
     if ( hexas < 0 )
         hexas = 0;
 }
 
-void psMoney::AdjustOctas( int c )
-{ 
-    octas+= c; 
-    if ( octas < 0 )
-        octas = 0;
-}
 
-void psMoney::AdjustTrias( int c )
+void psMoney::AdjustTrias( int c,bool makeChange )
 { 
     trias+= c; 
     if ( trias < 0 )
         trias = 0;
-}
-
-void psMoney::AdjustCircles( int c )
-{ 
-    circles+= c; 
-    if ( circles < 0 )
-        circles = 0;
 }
 
 int psMoney::Get( int type )

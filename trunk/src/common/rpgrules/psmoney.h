@@ -61,17 +61,17 @@ public:
     /** Set the number of circles
      */
     void SetCircles(int c) { circles = c; }
-    void AdjustCircles( int c );
+    void AdjustCircles( int c,bool makeChange );
     
     /** Get the number of circles
-     * @return cicles
+     * @return circles
      */
     int GetCircles() const { return circles; }
 
     /** Set the number of octas
      */
     void SetOctas(int o) { octas = o; }
-    void AdjustOctas(int o);
+    void AdjustOctas(int o,bool makeChange);
     /** Get the number of octas
      * @return octas
      */
@@ -80,7 +80,7 @@ public:
     /** Set the number of hexas
      */
     void SetHexas(int h) { hexas = h; }
-    void AdjustHexas( int h );
+    void AdjustHexas( int h,bool makeChange );
     /** Get the number of hexas
      * @return hexas
      */
@@ -89,7 +89,7 @@ public:
     /** Set the number of trias
      */
     void SetTrias(int t) { trias = t; }   
-    void AdjustTrias( int t );
+    void AdjustTrias( int t,bool makeChange );
 
     /** Get the number of trias
      * @return trias
