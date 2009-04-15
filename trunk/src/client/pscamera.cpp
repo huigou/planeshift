@@ -955,7 +955,7 @@ iMeshWrapper *psCamera::Get3DPointFrom2D(int x, int y, csVector3 * worldCoord, c
 
 iMeshWrapper* psCamera::FindMeshUnder2D(int x, int y, csVector3 *pos, int *poly)
 {
-    if (!GetICamera())
+    if (!GetICamera() || !GetICamera()->GetCamera()->GetSector())
         return NULL;
 
     // RS: when in mouselook mode, do not use the mouse x,y coords ... the
