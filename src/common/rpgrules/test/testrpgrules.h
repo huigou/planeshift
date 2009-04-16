@@ -44,6 +44,9 @@ private:
 	bool AdjustOctas(iDocumentNode *command, psMoney& money);
 	bool AdjustCircles(iDocumentNode *command, psMoney& money);
 	bool AdjustMoney(iDocumentNode *command, psMoney& money);
+	bool CheckUserString(iDocumentNode *command, psMoney& money);
+	bool NormalizeMoney(iDocumentNode *command, psMoney& money);
+	bool CheckGreaterThan(iDocumentNode *command, psMoney& money);
 
 	csRef<iObjectRegistry> object_reg;
 	csRef<iVFS> vfs;
