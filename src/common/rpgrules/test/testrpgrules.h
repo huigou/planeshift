@@ -35,6 +35,10 @@ private:
 	bool InitMoney(iDocumentNode *command, psMoney& money);
 	bool CheckMoneyString(iDocumentNode *command, psMoney& money);
 	bool CheckMoneyTotal(iDocumentNode *command, psMoney& money);
+	bool CheckMoneyTrias(iDocumentNode *command, psMoney& money);
+	bool CheckMoneyHexas(iDocumentNode *command, psMoney& money);
+	bool CheckMoneyOctas(iDocumentNode *command, psMoney& money);
+	bool CheckMoneyCircles(iDocumentNode *command, psMoney& money);
 
 	csRef<iObjectRegistry> object_reg;
 	csRef<iVFS> vfs;

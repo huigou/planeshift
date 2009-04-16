@@ -229,6 +229,7 @@ bool psMoney::operator > (const psMoney& other) const
 {
     return GetTotal() > other.GetTotal();
 }
+
 psMoney psMoney::operator +=(const psMoney& other)
 {
     circles += other.circles;
@@ -237,6 +238,7 @@ psMoney psMoney::operator +=(const psMoney& other)
     trias += other.trias;
     return psMoney(circles, octas, hexas, trias);
 }
+
 psMoney psMoney::operator - (void) const
 {
     return psMoney(-circles, -octas, -hexas, -trias);

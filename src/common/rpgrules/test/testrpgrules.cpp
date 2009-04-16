@@ -112,6 +112,14 @@ bool TestRPGRules::TestMoney(iDocumentNode *testnode)
 			result = CheckMoneyString(node, money);
 		else if (!strcmp(node->GetValue(),"checktotal"))
 			result = CheckMoneyTotal(node, money);
+		else if (!strcmp(node->GetValue(),"checktrias"))
+			result = CheckMoneyTrias(node, money);
+		else if (!strcmp(node->GetValue(),"checkhexas"))
+			result = CheckMoneyHexas(node, money);
+		else if (!strcmp(node->GetValue(),"checkoctas"))
+			result = CheckMoneyOctas(node, money);
+		else if (!strcmp(node->GetValue(),"checkcircles"))
+			result = CheckMoneyCircles(node, money);
 	}
 
 	if (result)
@@ -139,6 +147,34 @@ bool TestRPGRules::CheckMoneyTotal(iDocumentNode *command, psMoney& money)
 	printf("Check total money\n");
 	int val = money.GetTotal();
 	return (val == command->GetAttributeValueAsInt("total"));
+}
+
+bool TestRPGRules::CheckMoneyTrias(iDocumentNode *command, psMoney& money)
+{
+	printf("Check # of trias\n");
+	int val = money.GetTrias();
+	return (val == command->GetAttributeValueAsInt("value"));
+}
+
+bool TestRPGRules::CheckMoneyHexas(iDocumentNode *command, psMoney& money)
+{
+	printf("Check # of hexas\n");
+	int val = money.GetHexas();
+	return (val == command->GetAttributeValueAsInt("value"));
+}
+
+bool TestRPGRules::CheckMoneyOctas(iDocumentNode *command, psMoney& money)
+{
+	printf("Check # of octas\n");
+	int val = money.GetOctas();
+	return (val == command->GetAttributeValueAsInt("value"));
+}
+
+bool TestRPGRules::CheckMoneyCircles(iDocumentNode *command, psMoney& money)
+{
+	printf("Check # of circles\n");
+	int val = money.GetCircles();
+	return (val == command->GetAttributeValueAsInt("value"));
 }
 
 void TestRPGRules::PrintOutput(const char* string, ...)
