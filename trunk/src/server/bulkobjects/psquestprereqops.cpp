@@ -587,8 +587,6 @@ bool psQuestPrereqOpAdvisorPoints::Check(psCharacter * character)
 {
     if(character->GetActor())
     {
-         if(character->GetActor()->questtester)
-            return true;
         if(character->GetActor()->GetClient())
         {
             if(type == "min")

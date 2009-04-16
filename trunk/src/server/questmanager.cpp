@@ -534,6 +534,26 @@ bool QuestManager::HandleScriptCommand(csString& block,
         {
             response_requireop.AppendFmt("<not><married /></not>");
         }
+        else if (!strncasecmp(block,"Require equipped",16)) 
+        {
+            csString itemName = block.Slice(17,block.Length()).Trim();
+            response_requireop.AppendFmt("<item inventory=\"false\" name=\"%s\" />", itemName.GetData());
+        }
+        else if (!strncasecmp(block,"Require not equipped",20)) 
+        {
+            csString itemName = block.Slice(21,block.Length()).Trim();
+            response_requireop.AppendFmt("<not><item inventory=\"false\" name=\"%s\" /></not>",itemName.GetData());
+        }
+        else if (!strncasecmp(block,"Require possessed",17)) 
+        {
+            csString itemName = block.Slice(18,block.Length()).Trim();
+            response_requireop.AppendFmt("<item inventory=\"true\" name=\"%s\" />", itemName.GetData());
+        }
+        else if (!strncasecmp(block,"Require not possessed",21)) 
+        {
+            csString itemName = block.Slice(22,block.Length()).Trim();
+            response_requireop.AppendFmt("<not><item inventory=\"true\" name=\"%s\" /></not>",itemName.GetData());
+        }
         else if (!strncasecmp(block,"Introduce",9)) 
         {
             csString charname = block.Slice(10).Trim();
