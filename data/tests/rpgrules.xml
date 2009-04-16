@@ -53,4 +53,20 @@
 		<checkoctas value="4" />
 		<checkcircles value="4" />
 	</testmoney>
+	<testmoney name="Test User String">
+		<init value="4,3,2,1"/>
+		<checkuserstring value="4 Circles, 3 Octas, 2 Hexas and 1 Trias"/>
+	</testmoney>
+	<testmoney name="Test normalize">
+		<init value="0,0,0,314" />
+		<normalize />
+		<checkstr value="1,1,1,4" />
+	</testmoney>
+	<testmoney name="Test > operator">
+		<init value="1,1,1,1" />
+		<checkgreaterthan value="1,1,1,0" />
+		<checkgreaterthan value="1,1,0,1" />
+		<checkgreaterthan value="1,0,1,1" />
+		<checkgreaterthan value="0,1,1,1" />
+	</testmoney>
 </rpgtestsuite>
