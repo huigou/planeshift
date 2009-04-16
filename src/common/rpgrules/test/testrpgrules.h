@@ -47,6 +47,9 @@ private:
 	bool CheckUserString(iDocumentNode *command, psMoney& money);
 	bool NormalizeMoney(iDocumentNode *command, psMoney& money);
 	bool CheckGreaterThan(iDocumentNode *command, psMoney& money);
+	bool SubtractMoney(iDocumentNode *command, psMoney& money);
+	bool NegateMoney(iDocumentNode *command, psMoney& money);
+	bool MultiplyMoney(iDocumentNode *command, psMoney& money);
 
 	csRef<iObjectRegistry> object_reg;
 	csRef<iVFS> vfs;
