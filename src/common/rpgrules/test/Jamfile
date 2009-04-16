@@ -4,7 +4,7 @@ Application testrpgrules :
 	[ Wildcard *.cpp *.h ]
 ;
 
-LinkWith testrpgrules : psrpgrules
+LinkWith testrpgrules : psrpgrules psutil ;
 CompileGroups testrpgrules : tests ;
 ExternalLibs testrpgrules : CRYSTAL ;
 
