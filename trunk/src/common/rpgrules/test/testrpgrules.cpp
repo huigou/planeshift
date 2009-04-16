@@ -120,6 +120,16 @@ bool TestRPGRules::TestMoney(iDocumentNode *testnode)
 			result = CheckMoneyOctas(node, money);
 		else if (!strcmp(node->GetValue(),"checkcircles"))
 			result = CheckMoneyCircles(node, money);
+		else if (!strcmp(node->GetValue(),"adjusttrias"))
+			result = AdjustTrias(node, money);
+		else if (!strcmp(node->GetValue(),"adjusthexas"))
+			result = AdjustHexas(node, money);
+		else if (!strcmp(node->GetValue(),"adjustoctas"))
+			result = AdjustOctas(node, money);
+		else if (!strcmp(node->GetValue(),"adjustcircles"))
+			result = AdjustCircles(node, money);
+		else if (!strcmp(node->GetValue(),"adjustmoney"))
+			result = AdjustMoney(node, money);
 	}
 
 	if (result)
@@ -146,7 +156,7 @@ bool TestRPGRules::CheckMoneyTotal(iDocumentNode *command, psMoney& money)
 {
 	printf("Check total money\n");
 	int val = money.GetTotal();
-	return (val == command->GetAttributeValueAsInt("total"));
+	return (val == command->GetAttributeValueAsInt("value"));
 }
 
 bool TestRPGRules::CheckMoneyTrias(iDocumentNode *command, psMoney& money)
@@ -176,6 +186,44 @@ bool TestRPGRules::CheckMoneyCircles(iDocumentNode *command, psMoney& money)
 	int val = money.GetCircles();
 	return (val == command->GetAttributeValueAsInt("value"));
 }
+
+bool TestRPGRules::AdjustTrias(iDocumentNode *command, psMoney& money)
+{
+	printf("Adjust # of trias\n");
+	money.AdjustTrias(command->GetAttributeValueAsInt("value"));
+	return true;
+}
+
+bool TestRPGRules::AdjustHexas(iDocumentNode *command, psMoney& money)
+{
+	printf("Adjust # of hexas\n");
+	money.AdjustHexas(command->GetAttributeValueAsInt("value"));
+	return true;
+}
+
+bool TestRPGRules::AdjustOctas(iDocumentNode *command, psMoney& money)
+{
+	printf("Adjust # of octas\n");
+	money.AdjustOctas(command->GetAttributeValueAsInt("value"));
+	return true;
+}
+
+bool TestRPGRules::AdjustCircles(iDocumentNode *command, psMoney& money)
+{
+	printf("Adjust # of circles\n");
+	money.AdjustCircles(command->GetAttributeValueAsInt("value"));
+	return true;
+}
+
+bool TestRPGRules::AdjustMoney(iDocumentNode *command, psMoney& money)
+{
+	printf("Adjust money with csv string\n");
+	psMoney other(command->GetAttributeValue("value"));
+	money += other;
+	return true;
+}
+
+
 
 void TestRPGRules::PrintOutput(const char* string, ...)
 {
