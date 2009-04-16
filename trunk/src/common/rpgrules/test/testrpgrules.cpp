@@ -130,6 +130,10 @@ bool TestRPGRules::TestMoney(iDocumentNode *testnode)
 			result = AdjustCircles(node, money);
 		else if (!strcmp(node->GetValue(),"adjustmoney"))
 			result = AdjustMoney(node, money);
+		else if (!strcmp(node->GetValue(),"checkuserstring"))
+			result = CheckUserString(node, money);
+		else if (!strcmp(node->GetValue(),"normalize"))
+			result = NormalizeMoney(node, money);
 	}
 
 	if (result)
@@ -223,6 +227,25 @@ bool TestRPGRules::AdjustMoney(iDocumentNode *command, psMoney& money)
 	return true;
 }
 
+bool TestRPGRules::CheckUserString(iDocumentNode *command, psMoney& money)
+{
+	printf("Check user string\n");
+	return (money.ToUserString() = command->GetAttributeValue("value"));
+}
+
+bool TestRPGRules::NormalizeMoney(iDocumentNode *command, psMoney& money)
+{
+	printf("Check user string\n");
+	money = money.Normalized();
+	return true;
+}
+
+bool TestRPGRules::CheckGreaterThan(iDocumentNode *command, psMoney& money)
+{
+	printf("Check greater than\n");
+	psMoney other(command->GetAttributeValue("value"));
+	return money > other;
+}
 
 
 void TestRPGRules::PrintOutput(const char* string, ...)
