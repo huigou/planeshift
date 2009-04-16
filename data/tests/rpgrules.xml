@@ -44,7 +44,7 @@
 		<checktotal value="314" />
 		<checktrias value="4" />
 	</testmoney>
-	<testmoney>
+	<testmoney name="Test adding 2 money values">
 		<init value="1,1,1,1"/>
 		<adjustmoney value="3,3,3,3" />
 		<checktotal value="1244" />
