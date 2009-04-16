@@ -39,6 +39,11 @@ private:
 	bool CheckMoneyHexas(iDocumentNode *command, psMoney& money);
 	bool CheckMoneyOctas(iDocumentNode *command, psMoney& money);
 	bool CheckMoneyCircles(iDocumentNode *command, psMoney& money);
+	bool AdjustTrias(iDocumentNode *command, psMoney& money);
+	bool AdjustHexas(iDocumentNode *command, psMoney& money);
+	bool AdjustOctas(iDocumentNode *command, psMoney& money);
+	bool AdjustCircles(iDocumentNode *command, psMoney& money);
+	bool AdjustMoney(iDocumentNode *command, psMoney& money);
 
 	csRef<iObjectRegistry> object_reg;
 	csRef<iVFS> vfs;
