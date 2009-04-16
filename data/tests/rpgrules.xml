@@ -69,4 +69,20 @@
 		<checkgreaterthan value="1,0,1,1" />
 		<checkgreaterthan value="0,1,1,1" />
 	</testmoney>
+	<testmoney name="Test - operator">
+		<init value="1,1,1,1" />
+		<subtract value="0,1,0,1" />
+		<checkstr value="1,0,1,0" />
+	</testmoney>
+	<testmoney name="Test unary - operator">
+		<init value="1,1,1,1" />
+		<negate />
+		<checkstr value="-1,-1,-1,-1" />
+	</testmoney>
+	<testmoney name="Test * operator">
+		<init value="1,1,1,1" />
+		<multiply value="3" />
+		<checkstr value="3,3,3,3" />
+	</testmoney>
+
 </rpgtestsuite>
