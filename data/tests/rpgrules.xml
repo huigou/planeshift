@@ -33,5 +33,9 @@
 		<init value="1,2,3,4" />
 		<checkstr value="1,2,3,4" />
 		<checktotal total="384" />
+		<checkcircles value="1" />
+		<checkoctas   value="2" />
+		<checkhexas   value="3" />
+		<checktrias   value="4" />
 	</testmoney>
 </rpgtestsuite>
