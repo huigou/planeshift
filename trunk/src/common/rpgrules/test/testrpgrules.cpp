@@ -134,6 +134,12 @@ bool TestRPGRules::TestMoney(iDocumentNode *testnode)
 			result = CheckUserString(node, money);
 		else if (!strcmp(node->GetValue(),"normalize"))
 			result = NormalizeMoney(node, money);
+		else if (!strcmp(node->GetValue(),"subtract"))
+			result = SubtractMoney(node, money);
+		else if (!strcmp(node->GetValue(),"negate"))
+			result = NegateMoney(node, money);
+		else if (!strcmp(node->GetValue(),"multiply"))
+			result = MultiplyMoney(node, money);
 	}
 
 	if (result)
@@ -245,6 +251,28 @@ bool TestRPGRules::CheckGreaterThan(iDocumentNode *command, psMoney& money)
 	printf("Check greater than\n");
 	psMoney other(command->GetAttributeValue("value"));
 	return money > other;
+}
+
+bool TestRPGRules::SubtractMoney(iDocumentNode *command, psMoney& money)
+{
+	printf("Check subtract\n");
+	psMoney other(command->GetAttributeValue("value"));
+	money = money - other;
+	return true;
+}
+
+bool TestRPGRules::NegateMoney(iDocumentNode *command, psMoney& money)
+{
+	printf("Check negate\n");
+	money = -money;
+	return true;
+}
+
+bool TestRPGRules::MultiplyMoney(iDocumentNode *command, psMoney& money)
+{
+	printf("Check multiply operator\n");
+	money = money * command->GetAttributeValueAsInt("value");
+	return true;
 }
 
 
