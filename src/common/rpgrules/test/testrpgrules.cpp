@@ -236,7 +236,7 @@ bool TestRPGRules::AdjustMoney(iDocumentNode *command, psMoney& money)
 bool TestRPGRules::CheckUserString(iDocumentNode *command, psMoney& money)
 {
 	printf("Check user string\n");
-	return (money.ToUserString() = command->GetAttributeValue("value"));
+	return (money.ToUserString() == command->GetAttributeValue("value"));
 }
 
 bool TestRPGRules::NormalizeMoney(iDocumentNode *command, psMoney& money)
