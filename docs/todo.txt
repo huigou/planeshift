@@ -13,6 +13,7 @@ PAWS enhancements / Fixes
 [ ] Fix font scaling global modifier
 [ ] Make window titles multi-lingual
 
+
 Paladin Fixes
 -------------
 The following give false positives in PaladinJr when performed by a player validly.  Fix:
@@ -22,6 +23,7 @@ The following give false positives in PaladinJr when performed by a player valid
 [X] Slide then move
 [ ] Move and use an AL that teleports you to the same sector
 [ ] Fall off a map
+[ ] Increase threshold to reduce false positives while jumping
 
 NPC Interaction
 ---------------
@@ -33,7 +35,10 @@ NPC Interaction
 [ ] Make a way for players to skip a bubble and cut off audio by clicking the bubble.
 
 [X] Menu popup appears too fast and allows responses to step on each other
-[ ] Giving NPC's money doesn't work from menus
+[X] Giving NPC's money doesn't work from menus
+[X] Quest autogive should make change when giving money
 [ ] Text is truncated in menu popup if too long
 [ ] Menu trigger prereq checking doesn't take into account quest lockouts
 [ ] Untargeting the npc while the popup menu is open makes it appear there is no response
+
+
