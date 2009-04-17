@@ -159,32 +159,32 @@ csString psMoney::ToUserString() const
     }
 }
 
-void psMoney::Adjust( int type, int value, bool makeChange )
+void psMoney::Adjust( int type, int value )
 {
     switch( type )
     {
-        case MONEY_TRIAS:   AdjustTrias(  value, makeChange ); break;
-        case MONEY_HEXAS:   AdjustHexas(  value, makeChange ); break;
-        case MONEY_OCTAS:   AdjustOctas(  value, makeChange ); break;
-        case MONEY_CIRCLES: AdjustCircles(value, makeChange ); break;
+        case MONEY_TRIAS:   AdjustTrias(  value ); break;
+        case MONEY_HEXAS:   AdjustHexas(  value ); break;
+        case MONEY_OCTAS:   AdjustOctas(  value ); break;
+        case MONEY_CIRCLES: AdjustCircles(value ); break;
     }
 }
 
 
-void psMoney::AdjustCircles( int c,bool makeChange )
+void psMoney::AdjustCircles( int c)
 { 
 	circles+= c; 
 	if ( circles < 0 )
 		circles = 0;
 }
 
-void psMoney::AdjustOctas( int c,bool makeChange )
+void psMoney::AdjustOctas( int c )
 { 
 	octas+= c; 
 	if ( octas < 0 )
 		octas = 0;
 }
-void psMoney::AdjustHexas( int c,bool makeChange )
+void psMoney::AdjustHexas( int c )
 { 
     hexas+= c; 
     if ( hexas < 0 )
@@ -192,11 +192,89 @@ void psMoney::AdjustHexas( int c,bool makeChange )
 }
 
 
-void psMoney::AdjustTrias( int c,bool makeChange )
+void psMoney::AdjustTrias( int c )
 { 
     trias+= c; 
     if ( trias < 0 )
         trias = 0;
+}
+
+
+bool psMoney::EnsureTrias(int minValue)
+{
+	int total = GetTotal();
+
+	if (total < minValue)
+		return false;
+
+	// Reserve how many trias we need
+	total -= minValue;
+
+	// Now normalize the remainder
+	Set(0,0,0,total);
+	*this = Normalized();
+
+	// Now add back in the trias we need
+	trias += minValue;
+	return true;
+}
+
+bool psMoney::EnsureHexas(int minValue)
+{
+	int total = GetTotal();
+
+	if (total < minValue * HEXAS_VALUE_TRIAS)
+		return false;
+
+	// Reserve how many hexas we need
+	total -= minValue * HEXAS_VALUE_TRIAS;
+
+	// Now normalize the remainder
+	Set(0,0,0,total);
+	*this = Normalized();
+
+	// Now add back in the hexas we need
+	hexas += minValue;
+	return true;
+}
+
+bool psMoney::EnsureOctas(int minValue)
+{
+	int total = GetTotal();
+
+	if (total < minValue * OCTAS_VALUE_TRIAS)
+		return false;
+
+	// Reserve how many octas we need
+	total -= minValue * OCTAS_VALUE_TRIAS;
+
+	// Now normalize the remainder
+	Set(0,0,0,total);
+	*this = Normalized();
+
+	// Now add back in the octas we need
+	octas += minValue;
+
+	return true;
+}
+
+bool psMoney::EnsureCircles(int minValue)
+{
+	int total = GetTotal();
+
+	if (total < minValue * CIRCLES_VALUE_TRIAS)
+		return false;
+
+	// Reserve how many circles we need
+	total -= minValue * CIRCLES_VALUE_TRIAS;
+
+	// Now normalize the remainder
+	Set(0,0,0,total);
+	*this = Normalized();
+
+	// Now add back in the hexas we need
+	circles += minValue;
+	return true;
 }
 
 int psMoney::Get( int type )

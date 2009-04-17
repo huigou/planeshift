@@ -1510,8 +1510,7 @@ void ExchangeManager::HandleAutoGive(MsgEntry *me,Client *client)
         Error1("Could not find <evt> tag in progression script!");
         return;
     }
-    // TODO: Validate that the person has sufficient money here
-
+ 
     // Create a temporary exchange to actually do all the gift giving
     StartExchange(client, false);
 
@@ -1573,28 +1572,40 @@ void ExchangeManager::HandleAutoGive(MsgEntry *me,Client *client)
     {
 		// Now parse the money attribute here and add any money found to the exchange
 		psMoney money(topNode->GetAttributeValue("money"));
-		if (money.GetTotal() > 0)
+		if (money.GetTotal() > 0 && client->GetCharacterData()->Money().GetTotal() > money.GetTotal() )
 		{
 			if (money.GetTrias())
 			{
+				psMoney newmoney = client->GetCharacterData()->Money();
+				newmoney.EnsureTrias(money.GetTrias());
+				client->GetCharacterData()->SetMoney(newmoney);
 				psSlotMovementMsg trias(CONTAINER_INVENTORY_MONEY,MONEY_TRIAS,CONTAINER_EXCHANGE_OFFERING,MONEY_TRIAS,money.GetTrias() );
 				trias.msg->clientnum = client->GetClientNum();  // must set this before publishing
 				trias.FireEvent();
 			}
 			if (money.GetHexas())
 			{
+				psMoney newmoney = client->GetCharacterData()->Money();
+				newmoney.EnsureHexas(money.GetHexas());
+				client->GetCharacterData()->SetMoney(newmoney);
 				psSlotMovementMsg hexas(CONTAINER_INVENTORY_MONEY,MONEY_HEXAS,CONTAINER_EXCHANGE_OFFERING,MONEY_HEXAS,money.GetHexas() );
 				hexas.msg->clientnum = client->GetClientNum();  // must set this before publishing
 				hexas.FireEvent();
 			}
 			if (money.GetOctas())
 			{
+				psMoney newmoney = client->GetCharacterData()->Money();
+				newmoney.EnsureOctas(money.GetOctas());
+				client->GetCharacterData()->SetMoney(newmoney);
 				psSlotMovementMsg octas(CONTAINER_INVENTORY_MONEY,MONEY_OCTAS,CONTAINER_EXCHANGE_OFFERING,MONEY_OCTAS,money.GetOctas() );
 				octas.msg->clientnum = client->GetClientNum();  // must set this before publishing
 				octas.FireEvent();
 			}
 			if (money.GetCircles())
 			{
+				psMoney newmoney = client->GetCharacterData()->Money();
+				newmoney.EnsureCircles(money.GetCircles());
+				client->GetCharacterData()->SetMoney(newmoney);
 				psSlotMovementMsg circles(CONTAINER_INVENTORY_MONEY,MONEY_CIRCLES,CONTAINER_EXCHANGE_OFFERING,MONEY_CIRCLES,money.GetCircles() );
 				circles.msg->clientnum = client->GetClientNum();  // must set this before publishing
 				circles.FireEvent();
