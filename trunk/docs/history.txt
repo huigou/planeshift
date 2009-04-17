@@ -1,4 +1,12 @@
-﻿*** 2009-04-14 by Stefano Angeleri
+﻿*** 2009-04-14 by Keith FUlton
+- Auto-give of money now makes change for you in case you don't have the exact change
+  the npc is looking for.  Also has the effect of normalizing your coin counts.
+- First cut at some unit testing functionality of psMoney.  Update data also to
+  get the test script directory.  This is a scriptable interface for writing test
+  cases for psMoney without needing to code.  It does not use Google test--just a 
+  standalone app.
+
+*** 2009-04-14 by Stefano Angeleri
 - Don't show the marry icon when a genderless character right clicks a character
   with a gender and viceversa
 - Fixed the attack icon showing in wrong contexts just to then give an error when
