@@ -42,7 +42,7 @@
 	<path name="Warlock" info="The warlock is a combatant mage. His task is to win battles and wars with metal and magic. Most warlocks try to follow both the way of fighting and the way of glyphs, but only a few of them achieve this goal." parents="Your parents were both peasants, but they had great hope in you." life="Your youth was spent learning and practicing. Curious about everything, you learned all you could.">
 		<StatBonus name="Strength" value="0.15" />
 		<StatBonus name="Endurance" value="0.15" />
-		<StatBonus name="Agility" value="0.2020" />
+		<StatBonus name="Agility" value="0.20" />
 		<StatBonus name="Intelligence" value="0.20" />
 		<StatBonus name="Will" value="0.15" />
 		<StatBonus name="Charisma" value="0.15" />
