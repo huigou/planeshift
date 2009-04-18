@@ -55,8 +55,7 @@ INSERT INTO `race_spawns` (`raceid`,`x`,`y`,`z`,`yrot`,`sector_id`) VALUES
  (17,-20,4,-150,0,3),
  (18,-20,4,-150,0,3),
  (19,-20,4,-150,0,3),
- (20,-20,4,-150,0,3),
- (9999,-20,4,-150,0,3);
+ (20,-20,4,-150,0,3);
 /*!40000 ALTER TABLE `race_spawns` ENABLE KEYS */;
 
 
