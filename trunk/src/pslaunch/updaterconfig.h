@@ -116,6 +116,8 @@ public:
     /* Get our platform string. */
     const char* GetPlatform() const;
 
+    const char* GetGeneric() const { return "generic"; }
+
     /* Get latest updater version */
     float GetUpdaterVersionLatest() const { return updaterVersionLatest; }
 
