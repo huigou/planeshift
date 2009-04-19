@@ -1,5 +1,9 @@
 ﻿*** 2009-04-19 by Tristan Cragnolini
 - Corrected a bug where the wrong gemItem was checked to go through an entrance
+
+*** 2009-04-16 by Stefano Angeleri
+- Added Require (not) equipped, Require (not) possessed to quest syntax
+
 *** 2009-04-14 by Keith Fulton
 - Auto-give of money now makes change for you in case you don't have the exact change
   the npc is looking for.  Also has the effect of normalizing your coin counts.
