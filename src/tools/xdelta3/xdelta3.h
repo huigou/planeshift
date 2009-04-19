@@ -24,6 +24,7 @@
 #ifndef _XDELTA3_H_
 #define _XDELTA3_H_
 
+#include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
@@ -135,7 +136,7 @@ typedef uint64_t xoff_t;
 #define SIZEOF_XOFF_T 8
 #define SIZEOF_USIZE_T 4
 #ifndef WIN32
-#define Q "q"
+#define Q "ll"
 #else
 #define Q "I64"
 #endif
@@ -248,6 +249,8 @@ typedef struct _xd3_config             xd3_config;
 typedef struct _xd3_code_table_desc    xd3_code_table_desc;
 typedef struct _xd3_code_table_sizes   xd3_code_table_sizes;
 typedef struct _xd3_slist              xd3_slist;
+typedef struct _xd3_whole_state        xd3_whole_state;
+typedef struct _xd3_wininfo            xd3_wininfo;
 
 /* The stream configuration has three callbacks functions, all of
  * which may be supplied with NULL values.  If config->getblk is
@@ -280,17 +283,16 @@ typedef int              (xd3_comp_table_func) (xd3_stream *stream,
     abort (); } } while (0)
 #else
 #define XD3_ASSERT(x) (void)0
-#endif
+#endif  /* XD3_DEBUG */
 
 #ifdef __GNUC__
-/* As seen on linux-kernel. */
 #ifndef max
 #define max(x,y) ({ \
 	const typeof(x) _x = (x);	\
 	const typeof(y) _y = (y);	\
 	(void) (&_x == &_y);		\
 	_x > _y ? _x : _y; })
-#endif
+#endif /* __GNUC__ */
 
 #ifndef min
 #define min(x,y) ({ \
@@ -299,14 +301,14 @@ typedef int              (xd3_comp_table_func) (xd3_stream *stream,
 	(void) (&_x == &_y);		\
 	_x < _y ? _x : _y; })
 #endif
-#else
+#else  /* __GNUC__ */
 #ifndef max
 #define max(x,y) ((x) < (y) ? (y) : (x))
 #endif
 #ifndef min
 #define min(x,y) ((x) < (y) ? (x) : (y))
 #endif
-#endif
+#endif  /* __GNUC__ */
 
 /****************************************************************
  PUBLIC ENUMS
@@ -550,8 +552,8 @@ struct _xd3_dinst
 struct _xd3_hinst
 {
   uint8_t     type;
-  usize_t     size;
-  usize_t     addr;
+  uint32_t    size;  /* TODO: why decode breaks if this is usize_t? */
+  uint32_t    addr;  /* TODO: why decode breaks if this is usize_t? */
 };
 
 /* the form of a whole-file instruction */
@@ -561,6 +563,7 @@ struct _xd3_winst
   uint8_t mode;  /* 0, VCD_SOURCE, VCD_TARGET */
   usize_t size;
   xoff_t  addr;
+  xoff_t  position;  /* absolute position of this inst */
 };
 
 /* used by the encoder to buffer output in sections.  list of blocks. */
@@ -577,7 +580,7 @@ struct _xd3_desect
 {
   const uint8_t *buf;
   const uint8_t *buf_max;
-  usize_t       size;
+  uint32_t       size;  /* TODO: why decode breaks if this is usize_t? */
   usize_t        pos;
 
   /* used in xdelta3-decode.h */
@@ -636,6 +639,30 @@ struct _xd3_slist
   usize_t     last_pos;
 };
 
+/* window info (for whole state) */
+struct _xd3_wininfo {
+  xoff_t offset;
+  usize_t length;
+  uint32_t adler32;
+};
+
+/* whole state for, e.g., merge */
+struct _xd3_whole_state {
+  usize_t addslen;
+  uint8_t *adds;
+  usize_t  adds_alloc;
+
+  usize_t instlen;
+  xd3_winst *inst;
+  usize_t  inst_alloc;
+
+  usize_t wininfolen;
+  xd3_wininfo *wininfo;
+  usize_t wininfo_alloc;
+
+  xoff_t length;
+};
+
 /********************************************************************
  public types
  *******************************************************************/
@@ -644,8 +671,8 @@ struct _xd3_slist
 struct _xd3_sec_cfg
 {
   int                data_type;     /* Which section. (set automatically) */
-  int                ngroups;       /* Number of DJW Huffman groups. */
-  int                sector_size;   /* Sector size. */
+  usize_t            ngroups;       /* Number of DJW Huffman groups. */
+  usize_t            sector_size;   /* Sector size. */
   int                inefficient;   /* If true, ignore efficiency check [avoid XD3_NOSECOND]. */
 };
 
@@ -809,6 +836,8 @@ struct _xd3_stream
   xoff_t             match_srcpos;     /* current match source
 					  position relative to
 					  srcbase */
+  xoff_t             match_last_srcpos;  /* previously attempted
+					  * srcpos, to avoid loops. */
   xoff_t             match_minaddr;    /* smallest matching address to
 				       * set window params (reset each
 				       * window xd3_encode_reset) */
@@ -824,7 +853,7 @@ struct _xd3_stream
 					 match (across windows) */
 
   uint8_t          *buf_in;           /* for saving buffered input */
-  usize_t            buf_avail;        /* amount of saved input */
+  usize_t           buf_avail;        /* amount of saved input */
   const uint8_t    *buf_leftover;     /* leftover content of next_in
 					 (i.e., user's buffer) */
   usize_t            buf_leftavail;    /* amount of leftover content */
@@ -857,11 +886,13 @@ struct _xd3_stream
 
   usize_t           dec_secondid;     /* Optional secondary compressor ID. */
 
-  usize_t           dec_codetblsz;    /* Optional code table: length. */
+  /* TODO: why decode breaks if this is usize_t? */
+  uint32_t          dec_codetblsz;    /* Optional code table: length. */
   uint8_t          *dec_codetbl;      /* Optional code table: storage. */
   usize_t           dec_codetblbytes; /* Optional code table: position. */
 
-  usize_t          dec_appheadsz;    /* Optional application header:
+  /* TODO: why decode breaks if this is usize_t? */
+  uint32_t          dec_appheadsz;    /* Optional application header:
 					 size. */
   uint8_t          *dec_appheader;    /* Optional application header:
 					 storage */
@@ -872,12 +903,15 @@ struct _xd3_stream
   uint8_t           dec_cksum[4];     /* Optional checksum: storage. */
   uint32_t          dec_adler32;      /* Optional checksum: value. */
 
-  usize_t           dec_cpylen;       /* length of copy window
+  /* TODO: why decode breaks if this is usize_t? */
+  uint32_t           dec_cpylen;       /* length of copy window
 					  (VCD_SOURCE or VCD_TARGET) */
   xoff_t             dec_cpyoff;       /* offset of copy window
 					  (VCD_SOURCE or VCD_TARGET) */
-  usize_t           dec_enclen;       /* length of delta encoding */
-  usize_t           dec_tgtlen;       /* length of target window */
+  /* TODO: why decode breaks if this is usize_t? */
+  uint32_t           dec_enclen;       /* length of delta encoding */
+  /* TODO: why decode breaks if this is usize_t? */
+  uint32_t           dec_tgtlen;       /* length of target window */
 
 #if USE_UINT64
   uint64_t          dec_64part;       /* part of a decoded uint64_t */
@@ -939,12 +973,7 @@ struct _xd3_stream
 
   /* state for reconstructing whole files (e.g., for merge), this only
    * supports loading USIZE_T_MAX instructions, adds, etc. */
-  usize_t whole_target_addslen;
-  uint8_t *whole_target_adds;
-  usize_t  whole_target_adds_alloc;
-  usize_t whole_target_instlen;
-  xd3_winst *whole_target_inst;
-  usize_t  whole_target_inst_alloc;
+  xd3_whole_state     whole_target;
 
   /* statistics */
   xoff_t            n_scpy;
@@ -1125,9 +1154,10 @@ void    xd3_free_stream   (xd3_stream    *stream);
  * be called before the first xd3_encode_input.  A NULL source is
  * ignored.  For decoding, this should be called before the first
  * window is decoded, but the appheader may be read first
- * (XD3_GOTHEADER).  At this point, consult
- * xd3_decoder_needs_source(), inlined below, to determine if a source
- * is expected by the decoder. */
+ * (XD3_GOTHEADER).  After decoding the header, call xd3_set_source()
+ * if you have a source file.  Note: if (stream->dec_win_ind & VCD_SOURCE)
+ * is true, it means the first window expects there to be a source file.
+ */
 int     xd3_set_source    (xd3_stream    *stream,
 			   xd3_source    *source);
 
@@ -1145,22 +1175,16 @@ int     xd3_get_appheader (xd3_stream     *stream,
 			   uint8_t       **data,
 			   usize_t        *size);
 
-/* After receiving XD3_GOTHEADER, the decoder should check this
- * function which returns 1 if the decoder will require source
- * data. */
-int     xd3_decoder_needs_source (xd3_stream *stream);
-
-
 /* To generate a VCDIFF encoded delta with xd3_encode_init() from
  * another format, use:
  *
- *   xd3_encode_init() -- initialze encoder state
+ *   xd3_encode_init_partial() -- initialze encoder state (w/o hash tables)
  *   xd3_init_cache() -- reset VCDIFF address cache
  *   xd3_found_match() -- to report a copy instruction
  *
  * set stream->enc_state to ENC_INSTR and call xd3_encode_input as usual.
  */
-int xd3_encode_init (xd3_stream *stream);
+int xd3_encode_init_partial (xd3_stream *stream);
 void xd3_init_cache (xd3_addr_cache* acache);
 int xd3_found_match (xd3_stream *stream,
 		     usize_t pos, usize_t size,
@@ -1180,7 +1204,22 @@ void    xd3_init_config (xd3_config *config,
   config->flags = flags;
 }
 
-/* This supplies some input to the stream. */
+/* This supplies some input to the stream.  
+ *
+ * For encoding, if the input is larger than the configured window
+ * size (xd3_config.winsize), the entire input will be consumed and
+ * encoded anyway.  If you wish to strictly limit the window size,
+ * limit the buffer passed to xd3_avail_input to the window size.
+ *
+ * For encoding, if the input is smaller than the configured window
+ * size (xd3_config.winsize), the library will create a window-sized
+ * buffer and accumulate input until a full-sized window can be
+ * encoded.  XD3_INPUT will be returned.  The input must remain valid
+ * until the next time xd3_encode_input() returns XD3_INPUT.
+ *
+ * For decoding, the input will be consumed entirely before XD3_INPUT
+ * is returned again.
+ */
 static inline
 void    xd3_avail_input  (xd3_stream    *stream,
 			  const uint8_t *idata,
@@ -1192,7 +1231,7 @@ void    xd3_avail_input  (xd3_stream    *stream,
    * xd3_avail_input it will return XD3_INPUT right away without
    * allocating a stream->winsize buffer.  This is to avoid an
    * unwanted allocation. */
-  XD3_ASSERT (idata != NULL);
+  XD3_ASSERT (idata != NULL || isize == 0);
 
   stream->next_in  = idata;
   stream->avail_in = isize;
