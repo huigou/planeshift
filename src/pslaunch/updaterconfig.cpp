@@ -168,7 +168,8 @@ bool Config::Initialize(csRef<iDocumentNode> node)
                 cVersion.AttachNew(new ClientVersion());
                 cVersion->SetName(cNode->GetAttributeValue("name"));
                 csString md5 = "md5";
-                cVersion->SetMD5Sum(cNode->GetAttributeValue(md5.Append(GetPlatform())));
+                cVersion->SetMD5Sum(cNode->GetAttributeValue(md5 + GetPlatform()));
+                cVersion->SetGenericMD5Sum(cNode->GetAttributeValue(md5 + GetGeneric()));
                 clientVersions.PushSmart(cVersion);
             }
         }
