@@ -247,11 +247,11 @@ void UpdaterEngine::CheckForUpdates()
         // Maybe this fixes a bug.
         fflush(stdout);
 
-        PrintOutput("Update finished!\n");
+        PrintOutput("\nUpdate finished!\n");
         infoShare->Sync();
     }
     else
-        PrintOutput("No updates needed!\n");
+        PrintOutput("\nNo updates needed!\n");
 
     delete downloader;
     downloader = NULL;
@@ -709,8 +709,17 @@ void UpdaterEngine::GeneralUpdate()
             csMD5::Digest md5 = csMD5::Encode(buffer->GetData(), buffer->GetSize());
 
             csString md5sum = md5.HexString();
-
-            if(!md5sum.Compare(newCv->GetMD5Sum()))
+            csString correctMD5Sum;
+            if(pass == 1)
+            {
+                correctMD5Sum = newCv->GetMD5Sum();
+            }
+            else
+            {
+                correctMD5Sum = newCv->GetGenericMD5Sum();
+            }
+            
+            if(md5sum != correctMD5Sum)
             {
                 PrintOutput("\nmd5sum of client zip does not match correct md5sum!!\n");
                 return;
@@ -838,6 +847,8 @@ void UpdaterEngine::GeneralUpdate()
                             {
                                 PrintOutput("\nUnable to update file: %s. Reverting file!\n", newFilePath.GetData());
                                 fileUtil->CopyFile("/this/" + oldFilePath, "/this/" + newFilePath, true, false);
+                                PrintOutput("\nPlease rerun the update.\n");
+                                return;
                             }
                             else
                                 PrintOutput(" Done!\n");

@@ -74,18 +74,25 @@ public:
     /* Get client update file name */
     const char* GetName() const { return name; }
 
-    /* Get client update file md5sum */
+    /* Get platform specific update file md5sum */
     const char* GetMD5Sum() const { return md5sum; }
+
+    /* Get generic update file md5sum */
+    const char* GetGenericMD5Sum() const { return genericmd5sum; }
 
     void SetName(const char* name) { this->name = name; }
     void SetMD5Sum(const char* md5sum) { this->md5sum = md5sum; }
+    void SetGenericMD5Sum(const char* genericmd5sum) { this->genericmd5sum = genericmd5sum; }
 
 private:
     /* Client update file name */
     csString name;
 
-    /* md5sum of the client update file */
+    /* md5sum of the platform specific update file */
     csString md5sum;
+
+    /* md5sum of the generic update file */
+    csString genericmd5sum;
 };
 
 struct Proxy
