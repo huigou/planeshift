@@ -82,7 +82,7 @@ const char* Config::GetPlatform() const
 {
     if(!UpdaterConfig::GetSingletonPtr()->UpdatePlatform())
     {
-        return "generic";
+        return GetGeneric();
     }
 #if defined(CS_PLATFORM_WIN32)
     return "win32";

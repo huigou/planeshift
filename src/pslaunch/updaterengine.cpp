@@ -640,6 +640,10 @@ void UpdaterEngine::GeneralUpdate()
         return;
     }
 
+    // True if the platform is 'generic' (data only).
+    bool genericPlatform = !strcmp(config->GetCurrentConfig()->GetPlatform(),
+        config->GetCurrentConfig()->GetGeneric());
+
     // Main loop.
     while(CheckGeneral())
     {
@@ -649,150 +653,134 @@ void UpdaterEngine::GeneralUpdate()
         // Use index to find the first update version in newCvs.
         ClientVersion* newCv = newCvs.Get(index);
 
-        // Construct zip name.
-        csString zip = config->GetCurrentConfig()->GetPlatform();
-        zip.AppendFmt("-%s.zip", newCv->GetName());
-
-        if(vfs->Exists("/this/" + zip))
+        /**
+         * Two passes:
+         * First is for the platform specific update.
+         * Second is for the generic update.
+         */
+        for(int pass=1; pass<=2; ++pass)
         {
-            fileUtil->RemoveFile("/this/" + zip);
-        }
+            // Only do second pass if the platform isn't 'generic'.
+            if(pass == 2 && genericPlatform)
+                break;
 
-        // Download update zip.
-        PrintOutput("\nDownloading update file..\n");
-        if(!downloader->DownloadFile(zip, zip, false, true))
-        {
-            PrintOutput("Failed to download the update file! Try again later.\n");
-            return;
-        }
-
-        // Check md5sum is correct.
-        csRef<iDataBuffer> buffer = vfs->ReadFile("/this/" + zip, true);
-        if (!buffer)
-        {
-            PrintOutput("Could not get MD5 of updater zip!!\n");
-            return;
-        }
-
-        csMD5::Digest md5 = csMD5::Encode(buffer->GetData(), buffer->GetSize());
-
-        csString md5sum = md5.HexString();
-
-        if(!md5sum.Compare(newCv->GetMD5Sum()))
-        {
-            PrintOutput("md5sum of client zip does not match correct md5sum!!\n");
-            return;
-        }
-
-         // Mount zip
-        csRef<iDataBuffer> realZipPath = vfs->GetRealPath("/this/" + zip);
-        vfs->Mount("/zip", realZipPath->GetData());
-
-        // Parse deleted files xml, make a list.
-        csArray<csString> deletedList;
-        csRef<iDocumentNode> deletedrootnode = GetRootNode("/zip/deletedfiles.xml");
-        if(deletedrootnode)
-        {
-            csRef<iDocumentNode> deletednode = deletedrootnode->GetNode("deletedfiles");
-            csRef<iDocumentNodeIterator> nodeItr = deletednode->GetNodes();
-            while(nodeItr->HasNext())
+            // Construct zip name.
+            csString zip;
+            if(pass == 1)
             {
-                csRef<iDocumentNode> node = nodeItr->Next();
-                deletedList.PushSmart(node->GetAttributeValue("name"));
+                zip = config->GetCurrentConfig()->GetPlatform();
             }
-        }
-
-        // Remove all those files from our real dir.
-        for(uint i=0; i<deletedList.GetSize(); i++)
-        {
-            fileUtil->RemoveFile("/this/" + deletedList.Get(i));
-        }
-
-        // Parse new files xml, make a list.
-        csArray<csString> newList;
-        csArray<csString> newListPlatform;
-        csArray<bool> newListExec;
-        csRef<iDocumentNode> newrootnode = GetRootNode("/zip/newfiles.xml");
-        if(newrootnode)
-        {
-            csRef<iDocumentNode> newnode = newrootnode->GetNode("newfiles");
-            csRef<iDocumentNodeIterator> nodeItr = newnode->GetNodes();
-            while(nodeItr->HasNext())
+            else
             {
-                csRef<iDocumentNode> node = nodeItr->Next();
-                newList.PushSmart(node->GetAttributeValue("name"));
-                newListPlatform.Push(node->GetAttributeValue("platform"));
-                newListExec.Push(node->GetAttributeValueAsBool("exec"));
+                zip = config->GetCurrentConfig()->GetGeneric();
             }
-        }
 
-        // Copy all those files to our real dir.
-        for(uint i=0; i<newList.GetSize(); i++)
-        {
-            fileUtil->CopyFile("/zip/" + newList.Get(i), "/this/" + newList.Get(i), true, newListExec.Get(i));
-        }
+            zip.AppendFmt("-%s.zip", newCv->GetName());
 
-        // Parse changed files xml, binary patch each file.
-        csRef<iDocumentNode> changedrootnode = GetRootNode("/zip/changedfiles.xml");
-        if(changedrootnode)
-        {
-            csRef<iDocumentNode> changednode = changedrootnode->GetNode("changedfiles");
-            csRef<iDocumentNodeIterator> nodeItr = changednode->GetNodes();
-            while(nodeItr->HasNext())
+            if(vfs->Exists("/this/" + zip))
             {
-                csRef<iDocumentNode> next = nodeItr->Next();
+                fileUtil->RemoveFile("/this/" + zip);
+            }
 
-                csString newFilePath = next->GetAttributeValue("filepath");
-                csString diff = next->GetAttributeValue("diff");
-                csString oldFilePath = newFilePath;
-                oldFilePath.AppendFmt(".old");
+            // Download update zip.
+            if(pass == 1 && !genericPlatform)
+            {
+                PrintOutput("\nDownloading platform specific update file..\n");
+            }
+            else
+            {
+                PrintOutput("\nDownloading generic update file..\n");
+            }
 
-                // Start by checking whether the existing file is already up to date.
-                csRef<iDataBuffer> buffer = vfs->ReadFile("/this/" + newFilePath);
-                if(buffer)
+            if(!downloader->DownloadFile(zip, zip, false, true))
+            {
+                PrintOutput("Failed to download the update file! Try again later.\n");
+                return;
+            }
+
+            // Check md5sum is correct.
+            csRef<iDataBuffer> buffer = vfs->ReadFile("/this/" + zip, true);
+            if (!buffer)
+            {
+                PrintOutput("Could not get MD5 of updater zip!!\n");
+                return;
+            }
+
+            csMD5::Digest md5 = csMD5::Encode(buffer->GetData(), buffer->GetSize());
+
+            csString md5sum = md5.HexString();
+
+            if(!md5sum.Compare(newCv->GetMD5Sum()))
+            {
+                PrintOutput("md5sum of client zip does not match correct md5sum!!\n");
+                return;
+            }
+
+            // Mount zip
+            csRef<iDataBuffer> realZipPath = vfs->GetRealPath("/this/" + zip);
+            vfs->Mount("/zip", realZipPath->GetData());
+
+            // Parse deleted files xml, make a list.
+            csArray<csString> deletedList;
+            csRef<iDocumentNode> deletedrootnode = GetRootNode("/zip/deletedfiles.xml");
+            if(deletedrootnode)
+            {
+                csRef<iDocumentNode> deletednode = deletedrootnode->GetNode("deletedfiles");
+                csRef<iDocumentNodeIterator> nodeItr = deletednode->GetNodes();
+                while(nodeItr->HasNext())
                 {
-                  csMD5::Digest md5 = csMD5::Encode(buffer->GetData(), buffer->GetSize());
-                  csString md5sum = md5.HexString();
-
-                  csString fileMD5 = next->GetAttributeValue("md5sum");
-
-                  // If it's up to date then skip this file.
-                  if(md5sum.Compare(fileMD5))
-                  {
-                    continue;
-                  }
+                    csRef<iDocumentNode> node = nodeItr->Next();
+                    deletedList.PushSmart(node->GetAttributeValue("name"));
                 }
+            }
 
-                // Move old file to a temp location ready for input.
-                fileUtil->MoveFile("/this/" + newFilePath, "/this/" + oldFilePath, true, false, true);
+            // Remove all those files from our real dir.
+            for(uint i=0; i<deletedList.GetSize(); i++)
+            {
+                fileUtil->RemoveFile("/this/" + deletedList.Get(i));
+            }
 
-                // Move diff to a real location ready for input.
-                fileUtil->CopyFile("/zip/" + diff, "/this/" + newFilePath + ".vcdiff", true, false, true);
-                diff = newFilePath + ".vcdiff";
-
-                // Get real paths.
-                csRef<iDataBuffer> oldFP = vfs->GetRealPath("/this/" + oldFilePath);
-                csRef<iDataBuffer> diffFP = vfs->GetRealPath("/this/" + diff);
-                csRef<iDataBuffer> newFP = vfs->GetRealPath("/this/" + newFilePath);
-
-                // Save permissions.
-                csRef<FileStat> fs = fileUtil->StatFile(oldFP->GetData());
-#ifdef CS_PLATFORM_UNIX
-                if(next->GetAttributeValueAsBool("exec"))
+            // Parse new files xml, make a list.
+            csArray<csString> newList;
+            csArray<csString> newListPlatform;
+            csArray<bool> newListExec;
+            csRef<iDocumentNode> newrootnode = GetRootNode("/zip/newfiles.xml");
+            if(newrootnode)
+            {
+                csRef<iDocumentNode> newnode = newrootnode->GetNode("newfiles");
+                csRef<iDocumentNodeIterator> nodeItr = newnode->GetNodes();
+                while(nodeItr->HasNext())
                 {
-                    fs->mode = fs->mode | S_IXUSR | S_IXGRP;
+                    csRef<iDocumentNode> node = nodeItr->Next();
+                    newList.PushSmart(node->GetAttributeValue("name"));
+                    newListPlatform.Push(node->GetAttributeValue("platform"));
+                    newListExec.Push(node->GetAttributeValueAsBool("exec"));
                 }
-#endif
+            }
 
-                // Binary patch.
-                PrintOutput("\nPatching file %s: ", newFilePath.GetData());
-                if(!PatchFile(oldFP->GetData(), diffFP->GetData(), newFP->GetData()))
+            // Copy all those files to our real dir.
+            for(uint i=0; i<newList.GetSize(); i++)
+            {
+                fileUtil->CopyFile("/zip/" + newList.Get(i), "/this/" + newList.Get(i), true, newListExec.Get(i));
+            }
+
+            // Parse changed files xml, binary patch each file.
+            csRef<iDocumentNode> changedrootnode = GetRootNode("/zip/changedfiles.xml");
+            if(changedrootnode)
+            {
+                csRef<iDocumentNode> changednode = changedrootnode->GetNode("changedfiles");
+                csRef<iDocumentNodeIterator> nodeItr = changednode->GetNodes();
+                while(nodeItr->HasNext())
                 {
-                    PrintOutput("Failed!\n");
+                    csRef<iDocumentNode> next = nodeItr->Next();
 
-                    // Check if the file is already up to date.
-                    bool download = true;
-                    csRef<iDataBuffer> buffer = vfs->ReadFile("/this/" + oldFilePath);
+                    csString newFilePath = next->GetAttributeValue("filepath");
+                    csString diff = next->GetAttributeValue("diff");
+                    csString oldFilePath = newFilePath;
+                    oldFilePath.AppendFmt(".old");
+
+                    // Start by checking whether the existing file is already up to date.
+                    csRef<iDataBuffer> buffer = vfs->ReadFile("/this/" + newFilePath);
                     if(buffer)
                     {
                         csMD5::Digest md5 = csMD5::Encode(buffer->GetData(), buffer->GetSize());
@@ -800,18 +788,40 @@ void UpdaterEngine::GeneralUpdate()
 
                         csString fileMD5 = next->GetAttributeValue("md5sum");
 
+                        // If it's up to date then skip this file.
                         if(md5sum.Compare(fileMD5))
                         {
-                            fileUtil->RemoveFile("/this/" + newFilePath);
-                            fileUtil->RemoveFile("/this/" + diff);
-                            fileUtil->CopyFile("/this/" + oldFilePath, "/this/" + newFilePath, true, false);
-                            download = false;
+                            continue;
                         }
                     }
 
-                    if(download)
+                    // Move old file to a temp location ready for input.
+                    fileUtil->MoveFile("/this/" + newFilePath, "/this/" + oldFilePath, true, false, true);
+
+                    // Move diff to a real location ready for input.
+                    fileUtil->CopyFile("/zip/" + diff, "/this/" + newFilePath + ".vcdiff", true, false, true);
+                    diff = newFilePath + ".vcdiff";
+
+                    // Get real paths.
+                    csRef<iDataBuffer> oldFP = vfs->GetRealPath("/this/" + oldFilePath);
+                    csRef<iDataBuffer> diffFP = vfs->GetRealPath("/this/" + diff);
+                    csRef<iDataBuffer> newFP = vfs->GetRealPath("/this/" + newFilePath);
+
+                    // Save permissions.
+                    csRef<FileStat> fs = fileUtil->StatFile(oldFP->GetData());
+#ifdef CS_PLATFORM_UNIX
+                    if(next->GetAttributeValueAsBool("exec"))
                     {
-                        PrintOutput("Attempting to download full version of %s: \n", newFilePath.GetData());
+                        fs->mode = fs->mode | S_IXUSR | S_IXGRP;
+                    }
+#endif
+
+                    // Binary patch.
+                    PrintOutput("\nPatching file %s: ", newFilePath.GetData());
+                    if(!PatchFile(oldFP->GetData(), diffFP->GetData(), newFP->GetData()))
+                    {
+                        PrintOutput("Failed!");
+                        PrintOutput("\nAttempting to download full version of %s:", newFilePath.GetData());
 
                         // Get the 'backup' mirror, should always be the first in the list.
                         csString baseurl = config->GetNewConfig()->GetMirror(0)->GetBaseURL();
@@ -830,65 +840,63 @@ void UpdaterEngine::GeneralUpdate()
                                 fileUtil->CopyFile("/this/" + oldFilePath, "/this/" + newFilePath, true, false);
                             }
                             else
-                                PrintOutput("Done!\n");
+                                PrintOutput(" Done!\n");
                         }
                         else
-                            PrintOutput("Done!\n");
-                    }
-                    else
-                        PrintOutput("File is already up to date!");
-                }
-                else
-                {
-                    PrintOutput("Done!\n");
-
-                    // Check md5sum is correct.
-                    PrintOutput("Checking for correct md5sum: ");
-                    csRef<iDataBuffer> buffer = vfs->ReadFile("/this/" + newFilePath);
-                    if(!buffer)
-                    {
-                        PrintOutput("Could not get MD5 of patched file %s! Reverting file!\n", newFilePath.GetData());
-                        fileUtil->RemoveFile("/this/" + newFilePath);
-                        fileUtil->CopyFile("/this/" + oldFilePath, "/this/" + newFilePath, true, false);
+                            PrintOutput(" Done!\n");
                     }
                     else
                     {
-                        csMD5::Digest md5 = csMD5::Encode(buffer->GetData(), buffer->GetSize());
-                        csString md5sum = md5.HexString();
+                        PrintOutput("Done!");
 
-                        csString fileMD5 = next->GetAttributeValue("md5sum");
-
-                        if(!md5sum.Compare(fileMD5))
+                        // Check md5sum is correct.
+                        PrintOutput("\nChecking for correct md5sum: ");
+                        csRef<iDataBuffer> buffer = vfs->ReadFile("/this/" + newFilePath);
+                        if(!buffer)
                         {
-                            PrintOutput("md5sum of file %s does not match correct md5sum! Reverting file!\n", newFilePath.GetData());
+                            PrintOutput("Could not get MD5 of patched file %s! Reverting file!\n", newFilePath.GetData());
                             fileUtil->RemoveFile("/this/" + newFilePath);
                             fileUtil->CopyFile("/this/" + oldFilePath, "/this/" + newFilePath, true, false);
                         }
                         else
-                            PrintOutput("Success!\n");
-                    }
-                    fileUtil->RemoveFile("/this/" + oldFilePath);
-                }
-                // Clean up temp files.
-                fileUtil->RemoveFile("/this/" + diff, false);
+                        {
+                            csMD5::Digest md5 = csMD5::Encode(buffer->GetData(), buffer->GetSize());
+                            csString md5sum = md5.HexString();
 
-                // Set permissions.
-                if(fs.IsValid())
-                {
-                    fileUtil->SetPermissions(newFP->GetData(), fs);
+                            csString fileMD5 = next->GetAttributeValue("md5sum");
+
+                            if(!md5sum.Compare(fileMD5))
+                            {
+                                PrintOutput("md5sum of file %s does not match correct md5sum! Reverting file!\n", newFilePath.GetData());
+                                fileUtil->RemoveFile("/this/" + newFilePath);
+                                fileUtil->CopyFile("/this/" + oldFilePath, "/this/" + newFilePath, true, false);
+                            }
+                            else
+                                PrintOutput("Success!\n");
+                        }
+                        fileUtil->RemoveFile("/this/" + oldFilePath);
+                    }
+                    // Clean up temp files.
+                    fileUtil->RemoveFile("/this/" + diff, false);
+
+                    // Set permissions.
+                    if(fs.IsValid())
+                    {
+                        fileUtil->SetPermissions(newFP->GetData(), fs);
+                    }
                 }
             }
-        }
 
-        // Unmount zip and delete.
-        if(vfs->Unmount("/zip", realZipPath->GetData()))
-        {
-            vfs->Sync();
-            fileUtil->RemoveFile("/this/" + zip);
-        }
-        else
-        {
-            printf("Failed to unmount file %s\n", zip.GetData());
+            // Unmount zip and delete.
+            if(vfs->Unmount("/zip", realZipPath->GetData()))
+            {
+                vfs->Sync();
+                fileUtil->RemoveFile("/this/" + zip);
+            }
+            else
+            {
+                printf("Failed to unmount file %s\n", zip.GetData());
+            }
         }
 
         // Add version info to updaterinfo.xml and oldCvs.
