@@ -694,7 +694,7 @@ void UpdaterEngine::GeneralUpdate()
 
             if(!downloader->DownloadFile(zip, zip, false, true))
             {
-                PrintOutput("Failed to download the update file! Try again later.\n");
+                PrintOutput("\nFailed to download the update file! Try again later.\n");
                 return;
             }
 
@@ -702,7 +702,7 @@ void UpdaterEngine::GeneralUpdate()
             csRef<iDataBuffer> buffer = vfs->ReadFile("/this/" + zip, true);
             if (!buffer)
             {
-                PrintOutput("Could not get MD5 of updater zip!!\n");
+                PrintOutput("\nCould not get MD5 of updater zip!!\n");
                 return;
             }
 
@@ -712,7 +712,7 @@ void UpdaterEngine::GeneralUpdate()
 
             if(!md5sum.Compare(newCv->GetMD5Sum()))
             {
-                PrintOutput("md5sum of client zip does not match correct md5sum!!\n");
+                PrintOutput("\nmd5sum of client zip does not match correct md5sum!!\n");
                 return;
             }
 
