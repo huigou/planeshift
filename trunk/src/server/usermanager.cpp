@@ -705,7 +705,7 @@ void UserManager::HandleEntranceMessage( MsgEntry* me, Client *client )
 
     // Check range
     csWeakRef<gemObject> gem = client->GetActor();
-    csWeakRef<gemObject> gemAction = action->GetGemObject();
+    csWeakRef<gemObject> gemAction = action->GetRealItem();
     if (gem.IsValid() && gemAction.IsValid() && gem->RangeTo(gemAction, false) > RANGE_TO_SELECT)
     {
         psserver->SendSystemError(client->GetClientNum(), "You are no longer in range to do this.");
