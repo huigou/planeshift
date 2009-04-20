@@ -356,22 +356,29 @@ csPtr<psQuestPrereqOp> psQuestPrereqOpFaction::Copy()
 
 bool psQuestPrereqOpItem::Check(psCharacter * character)
 {
-    return character->Inventory().hasItemName(itemName, includeInventory);
+    if(!categoryName.IsEmpty())
+        return character->Inventory().hasItemCategory(categoryName, includeInventory);
+    if(!itemName.IsEmpty())
+        return character->Inventory().hasItemName(itemName, includeInventory);
 }
 
 csString psQuestPrereqOpItem::GetScriptOp()
 {
     csString script;
 
-    script.Format("<item inventory=\"%s\" name=\"%s\"/>", includeInventory? "true" : "false", itemName.GetData());
-
+    script.Format("<item inventory=\"%s\" ", includeInventory? "true" : "false");
+    if(!itemName.IsEmpty())
+        script.AppendFmt("name=\"%s\" ", itemName.GetData());
+    if(!categoryName.IsEmpty())
+        script.AppendFmt("category=\"%s\" ", categoryName.GetData());
+    script.Append("/>");
     return script;
 }
 
 csPtr<psQuestPrereqOp> psQuestPrereqOpItem::Copy()
 {
     csRef<psQuestPrereqOpItem> copy;
-    copy.AttachNew(new psQuestPrereqOpItem(itemName,includeInventory));
+    copy.AttachNew(new psQuestPrereqOpItem(itemName,categoryName,includeInventory));
     return csPtr<psQuestPrereqOp>(copy);
 }
 
