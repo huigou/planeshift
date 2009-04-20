@@ -345,7 +345,9 @@ int main(int argc, char* argv[])
     for(int i=0; i<argc; i++)
     {
         csString s(argv[i]);
-        if(s.CompareNoCase("--console") || s.CompareNoCase("-console"))
+        if(s.CompareNoCase("--console") || s.CompareNoCase("-console") ||
+           s.CompareNoCase("--switch") || s.CompareNoCase("-switch") ||
+           s.CompareNoCase("--repair") || s.CompareNoCase("-repair"))
         {
             console = true;
         }
@@ -353,14 +355,22 @@ int main(int argc, char* argv[])
 
     if(console)
     {
-        // Set up CS
-        psUpdater* updater = new psUpdater(argc, argv);
-
-        // Convert args to an array of csString.
-        csArray<csString> args;
+        // Create new string array to make sure --console is there.
+        char** argvs = new char*[argc+1];
         for(int i=0; i<argc; i++)
         {
-            args.Push(argv[i]);
+            argvs[i] = argv[i];
+        }
+        argvs[argc] = "--console";
+
+        // Set up CS
+        psUpdater* updater = new psUpdater(argc+1, argvs);
+
+        // Convert args to an array of csString.
+        csStringArray args;
+        for(int i=0; i<argc+1; i++)
+        {
+            args.Push(argvs[i]);
         }
 
         // Initialize updater engine.
@@ -385,6 +395,7 @@ int main(int argc, char* argv[])
         }
 
         // Terminate updater!
+        delete argvs;
         delete engine;
         delete updater;
         engine = NULL;
@@ -409,7 +420,7 @@ int main(int argc, char* argv[])
             csInitializer::RequestPlugins(object_reg, CS_REQUEST_VFS, CS_REQUEST_END);
 
             // Convert args to an array of csString.
-            csArray<csString> args;
+            csStringArray args;
             for(int i=0; i<argc; i++)
             {
                 args.Push(argv[i]);

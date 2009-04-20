@@ -17,6 +17,8 @@
 *
 */
 
+#include <cssysdef.h>
+#include <csutil/stringarray.h>
 #include "updaterconfig.h"
 
 #if defined(CS_PLATFORM_MACOSX)
@@ -25,7 +27,7 @@
 
 iObjectRegistry* UpdaterConfig::object_reg = NULL;
 
-UpdaterConfig::UpdaterConfig(csArray<csString> args, iObjectRegistry* _object_reg, csRef<iVFS> _vfs)
+UpdaterConfig::UpdaterConfig(csStringArray& args, iObjectRegistry* _object_reg, csRef<iVFS> _vfs)
 {
     // Initialize the config manager.
     object_reg = _object_reg;
@@ -43,15 +45,27 @@ UpdaterConfig::UpdaterConfig(csArray<csString> args, iObjectRegistry* _object_re
     // Check if we're in the middle of a self update or doing an integrity check.
     selfUpdating = 0;
     checkIntegrity = false;
-    for(uint i=0; i<args.GetSize(); i++)
+    switchMirror = false;
+    csString last;
+    for(uint i=1; i<=args.GetSize(); i++)
     {
-        csString arg = args.Pop();
+        csString arg = args[args.GetSize()-i];
         if(arg.CompareNoCase("selfUpdateFirst"))
             selfUpdating = 1;
         else if(arg.CompareNoCase("selfUpdateSecond"))
             selfUpdating = 2;
         else if(arg.CompareNoCase("-repair") || arg.CompareNoCase("--repair"))
             checkIntegrity = true;
+        else if(arg.CompareNoCase("-switch") || arg.CompareNoCase("--switch"))
+        {
+            switchMirror = true;
+            checkIntegrity = true;
+            newMirror = last;
+        }
+        else
+        {
+            last = arg;
+        }
     }
 
     // Load config settings from cfg file.

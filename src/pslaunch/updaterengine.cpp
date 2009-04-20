@@ -19,8 +19,8 @@
 
 #include <csutil/csmd5.h>
 #include <csutil/hash.h>
+#include <csutil/stringarray.h>
 #include <csutil/xmltiny.h>
-#include <iutil/stringarray.h>
 
 #include "updaterconfig.h"
 #include "updaterengine.h"
@@ -41,21 +41,21 @@
         return; \
     } \
 
-UpdaterEngine::UpdaterEngine(const csArray<csString> args, iObjectRegistry* object_reg, const char* appName)
+UpdaterEngine::UpdaterEngine(csStringArray& args, iObjectRegistry* object_reg, const char* appName)
 {
     InfoShare *is = new InfoShare();
     hasGUI = false;
     Init(args, object_reg, appName, is);
 }
 
-UpdaterEngine::UpdaterEngine(const csArray<csString> args, iObjectRegistry* object_reg, const char* appName,
+UpdaterEngine::UpdaterEngine(csStringArray& args, iObjectRegistry* object_reg, const char* appName,
                              InfoShare *infoshare)
 {
     hasGUI = true;
     Init(args, object_reg, appName, infoshare);
 }
 
-void UpdaterEngine::Init(const csArray<csString> args, iObjectRegistry* _object_reg, const char* _appName,
+void UpdaterEngine::Init(csStringArray& args, iObjectRegistry* _object_reg, const char* _appName,
                          InfoShare* _infoShare)
 {
     object_reg = _object_reg;
@@ -247,11 +247,11 @@ void UpdaterEngine::CheckForUpdates()
         // Maybe this fixes a bug.
         fflush(stdout);
 
-        PrintOutput("\nUpdate finished!\n");
+        PrintOutput("Update finished!\n");
         infoShare->Sync();
     }
     else
-        PrintOutput("\nNo updates needed!\n");
+        PrintOutput("No updates needed!\n");
 
     delete downloader;
     downloader = NULL;
@@ -685,16 +685,16 @@ void UpdaterEngine::GeneralUpdate()
             // Download update zip.
             if(pass == 1 && !genericPlatform)
             {
-                PrintOutput("\nDownloading platform specific update file..\n");
+                PrintOutput("Downloading platform specific update file..\n");
             }
             else
             {
-                PrintOutput("\nDownloading generic update file..\n");
+                PrintOutput("Downloading generic update file..\n");
             }
 
             if(!downloader->DownloadFile(zip, zip, false, true))
             {
-                PrintOutput("\nFailed to download the update file! Try again later.\n");
+                PrintOutput("Failed to download the update file! Try again later.\n");
                 return;
             }
 
@@ -702,7 +702,7 @@ void UpdaterEngine::GeneralUpdate()
             csRef<iDataBuffer> buffer = vfs->ReadFile("/this/" + zip, true);
             if (!buffer)
             {
-                PrintOutput("\nCould not get MD5 of updater zip!!\n");
+                PrintOutput("Could not get MD5 of updater zip!!\n");
                 return;
             }
 
@@ -721,7 +721,7 @@ void UpdaterEngine::GeneralUpdate()
             
             if(md5sum != correctMD5Sum)
             {
-                PrintOutput("\nmd5sum of client zip does not match correct md5sum!!\n");
+                PrintOutput("md5sum of client zip does not match correct md5sum!!\n");
                 return;
             }
 
@@ -826,11 +826,11 @@ void UpdaterEngine::GeneralUpdate()
 #endif
 
                     // Binary patch.
-                    PrintOutput("\nPatching file %s: ", newFilePath.GetData());
+                    PrintOutput("Patching file %s: ", newFilePath.GetData());
                     if(!PatchFile(oldFP->GetData(), diffFP->GetData(), newFP->GetData()))
                     {
-                        PrintOutput("Failed!");
-                        PrintOutput("\nAttempting to download full version of %s:", newFilePath.GetData());
+                        PrintOutput("Failed!\n");
+                        PrintOutput("Attempting to download full version of %s: ", newFilePath.GetData());
 
                         // Get the 'backup' mirror, should always be the first in the list.
                         csString baseurl = config->GetNewConfig()->GetMirror(0)->GetBaseURL();
@@ -847,25 +847,25 @@ void UpdaterEngine::GeneralUpdate()
                             {
                                 PrintOutput("\nUnable to update file: %s. Reverting file!\n", newFilePath.GetData());
                                 fileUtil->CopyFile("/this/" + oldFilePath, "/this/" + newFilePath, true, false);
-                                PrintOutput("\nPlease rerun the update.\n");
+                                PrintOutput("Please re-run the update.\n");
                                 return;
                             }
                             else
-                                PrintOutput(" Done!\n");
+                                PrintOutput("Done!\n");
                         }
                         else
-                            PrintOutput(" Done!\n");
+                            PrintOutput("Done!\n");
                     }
                     else
                     {
-                        PrintOutput("Done!");
+                        PrintOutput("Done!\n");
 
                         // Check md5sum is correct.
-                        PrintOutput("\nChecking for correct md5sum: ");
+                        PrintOutput("Checking for correct md5sum: ");
                         csRef<iDataBuffer> buffer = vfs->ReadFile("/this/" + newFilePath);
                         if(!buffer)
                         {
-                            PrintOutput("Could not get MD5 of patched file %s! Reverting file!\n", newFilePath.GetData());
+                            PrintOutput("\nCould not get MD5 of patched file %s! Reverting file!\n", newFilePath.GetData());
                             fileUtil->RemoveFile("/this/" + newFilePath);
                             fileUtil->CopyFile("/this/" + oldFilePath, "/this/" + newFilePath, true, false);
                         }
@@ -878,7 +878,7 @@ void UpdaterEngine::GeneralUpdate()
 
                             if(!md5sum.Compare(fileMD5))
                             {
-                                PrintOutput("md5sum of file %s does not match correct md5sum! Reverting file!\n", newFilePath.GetData());
+                                PrintOutput("\nmd5sum of file %s does not match correct md5sum! Reverting file!\n", newFilePath.GetData());
                                 fileUtil->RemoveFile("/this/" + newFilePath);
                                 fileUtil->CopyFile("/this/" + oldFilePath, "/this/" + newFilePath, true, false);
                             }
@@ -1207,4 +1207,46 @@ void UpdaterEngine::CheckIntegrity()
     fileUtil->RemoveFile("integrity.zip", true);
 
     return;
+}
+
+bool UpdaterEngine::SwitchMirror()
+{
+    // Check if we have write permissions.
+#ifdef _WIN32
+    if(!IsUserAnAdmin())
+#else
+    if(!log.IsValid())
+#endif
+    {
+        printf("Please run this program with write permissions on your PlaneShift directory to continue updating.\n");
+        return false;
+    }
+
+    csString xmlPath = UPDATERINFO_CURRENT_FILENAME;
+    csString xmlBakPath;
+    xmlBakPath.Format("%s_bak", xmlPath);
+
+    fileUtil->MoveFile(xmlPath, xmlBakPath, true, false, true);
+    
+    // Initialise downloader.
+    downloader = new Downloader(vfs);
+
+    // Set proxy
+    downloader->SetProxy(config->GetProxy().host.GetData(), config->GetProxy().port);
+
+    // Download new xml file.
+    if(!downloader->DownloadFile(config->GetNewMirrorAddress(), xmlPath, true, true, 3, true))
+    {
+        csString xmlAddress;
+        xmlAddress.Format("%s/updaterinfo.xml", config->GetNewMirrorAddress());
+        if(!downloader->DownloadFile(xmlAddress, xmlPath, true, true, 3, true))
+        {
+            printf("Failed to download updaterinfo from new mirror.\n");
+            fileUtil->MoveFile(xmlBakPath, xmlPath, true, false, true);
+            return false;
+        }
+    }
+
+    fileUtil->RemoveFile(xmlBakPath, true);
+    return true;
 }
