@@ -51,6 +51,7 @@
 #include "psglyph.h"
 #include "psguildinfo.h"
 #include "adminmanager.h"
+#include "psmerchantinfo.h"
 
 psCharacterInventory::psCharacterInventory(psCharacter *ownr)
 {
@@ -833,6 +834,17 @@ bool psCharacterInventory::hasItemName(csString & itemname, bool includeBulk)
     for (size_t i=1; i < inventory.GetSize(); i++)
     {
         if (inventory[i].item && (csString)inventory[i].item->GetName() == itemname &&
+           (includeBulk || inventory[i].item->GetLocInParent(true) < PSCHARACTER_SLOT_BULK1))
+            return true;
+    }
+    return false;
+}
+
+bool psCharacterInventory::hasItemCategory(csString & categoryname, bool includeBulk)
+{
+    for (size_t i=1; i < inventory.GetSize(); i++)
+    {
+        if (inventory[i].item && inventory[i].item->GetCategory()->name == categoryname &&
            (includeBulk || inventory[i].item->GetLocInParent(true) < PSCHARACTER_SLOT_BULK1))
             return true;
     }

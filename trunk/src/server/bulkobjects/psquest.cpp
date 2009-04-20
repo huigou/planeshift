@@ -349,15 +349,16 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, csRef<psQuestP
     else if ( strcmp( topNode->GetValue(), "item" ) == 0 )
     {
         csString name = topNode->GetAttributeValue("name");
-        if (name.IsEmpty())
+        csString category = topNode->GetAttributeValue("category");
+        if (name.IsEmpty() && category.IsEmpty())
         {
-            Error1("No name given for item prerequisite operation");
+            Error1("No name or category given for item prerequisite operation");
             return false;
         }
 
         bool includeInventory = topNode->GetAttributeValueAsBool("position", false);
 
-        prerequisite.AttachNew(new psQuestPrereqOpItem(name,includeInventory));
+        prerequisite.AttachNew(new psQuestPrereqOpItem(name, category, includeInventory));
     }
     else if ( strcmp( topNode->GetValue(), "activemagic" ) == 0 )
     {

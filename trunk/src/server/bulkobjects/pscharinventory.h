@@ -219,6 +219,13 @@ public:
      * @return The item in the given slot. NULL if no item was found.
      */
     bool hasItemName(csString & itemname, bool includeBulk);
+
+    /** Check if the item of a certain category is in the character inventory.
+     * @param categoryname The name of the category of item to search for.
+     * @param includeBulk searches for the item only in the equipment if true.
+     * @return The item in the given slot. NULL if no item was found.
+     */
+    bool hasItemCategory(csString & categoryname, bool includeBulk);
     
     /** Get an item that is in the equipment inventory.    
       * @param slot The slot in which we want to retrive the item ( if any ).
