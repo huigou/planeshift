@@ -247,15 +247,27 @@ void UpdaterEngine::CheckForUpdates()
         // Maybe this fixes a bug.
         fflush(stdout);
 
-        PrintOutput("Update finished!\n");
-        infoShare->Sync();
+        // Mark as finished and sync with gui.
+        if(hasGUI)
+        {
+            PrintOutput("\nUpdate finished!\n");
+            infoShare->SetUpdateNeeded(false);
+            infoShare->Sync();
+        }
     }
     else
-        PrintOutput("No updates needed!\n");
+    {
+        // Mark no updates needed.
+        printf("\nNo updates needed!\n");
+        if(hasGUI)
+        {
+            infoShare->SetUpdateNeeded(false);
+        }
+    }
 
+    // Clean up.
     delete downloader;
     downloader = NULL;
-    infoShare->SetUpdateNeeded(false);
 }
 
 bool UpdaterEngine::CheckUpdater()
@@ -685,11 +697,11 @@ void UpdaterEngine::GeneralUpdate()
             // Download update zip.
             if(pass == 1 && !genericPlatform)
             {
-                PrintOutput("Downloading platform specific update file..\n");
+                PrintOutput("Downloading platform specific update file..\n\n");
             }
             else
             {
-                PrintOutput("Downloading generic update file..\n");
+                PrintOutput("Downloading generic update file..\n\n");
             }
 
             if(!downloader->DownloadFile(zip, zip, false, true))
