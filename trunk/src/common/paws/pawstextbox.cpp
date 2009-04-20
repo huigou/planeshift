@@ -609,7 +609,7 @@ void pawsMessageTextBox::AppendLastMessage(const char* data)
     line->text.Append(data);
 
     // Trim \n from the end and add a new line.
-    if(line->text.FindLast("\n") == line->text.Length()-1)
+    while(line->text.FindLast("\n") == line->text.Length()-1)
     {
       line->text.Truncate(line->text.Length()-1);
       AddMessage("");
