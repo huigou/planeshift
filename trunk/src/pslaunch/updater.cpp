@@ -78,6 +78,14 @@ void psUpdater::RunUpdate(UpdaterEngine* engine) const
             return;
     }
 
+    // Check for a mirror switch.
+    if(engine->GetConfig()->SwitchMirror())
+    {
+        printf("Switching updater mirror!\n");
+        if(!engine->SwitchMirror())
+            return;
+    }
+
     // Check if we want to do an integrity check instead of an update.
     if(engine->GetConfig()->CheckForIntegrity())
     {

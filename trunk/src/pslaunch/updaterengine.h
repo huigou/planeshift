@@ -170,12 +170,12 @@ private:
     csRef<iFile> log;
 
     /* Function shared by ctors */
-    void Init(const csArray<csString> args, iObjectRegistry* _object_reg, const char* _appName,
+    void Init(csStringArray& args, iObjectRegistry* _object_reg, const char* _appName,
               InfoShare *infoshare);
     
 public:
-    UpdaterEngine(const csArray<csString> args, iObjectRegistry* _object_reg, const char* _appName);
-    UpdaterEngine(const csArray<csString> args, iObjectRegistry* _object_reg, const char* _appName,
+    UpdaterEngine(csStringArray& args, iObjectRegistry* _object_reg, const char* _appName);
+    UpdaterEngine(csStringArray& args, iObjectRegistry* _object_reg, const char* _appName,
                   InfoShare *infoshare);
     ~UpdaterEngine();
 
@@ -208,6 +208,9 @@ public:
 
     /* Check the integrity of the install */
     void CheckIntegrity();
+
+    /* Switch updater mirror. */
+    bool SwitchMirror();
 
     /* Check if a quit event has been triggered. */
     inline bool CheckQuit() { return infoShare->GetCancelUpdater(); }

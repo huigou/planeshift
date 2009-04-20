@@ -149,13 +149,17 @@ private:
 class UpdaterConfig : public Singleton<UpdaterConfig>
 {
 public:
-    UpdaterConfig(const csArray<csString> args, iObjectRegistry* _object_reg, csRef<iVFS> _vfs);
+    UpdaterConfig(csStringArray& args, iObjectRegistry* _object_reg, csRef<iVFS> _vfs);
     ~UpdaterConfig();
 
     /* Returns true if the updater is self updating */
     int IsSelfUpdating() const { return selfUpdating; }
 
+    /* Returns true if a integrity check (repair) needs to be done. */
     bool CheckForIntegrity() const { return checkIntegrity; }
+
+    /* Returns true if a mirror switch needs to be done. */
+    bool SwitchMirror() const { return switchMirror; }
 
     /* Returns the proxy struct */
     Proxy GetProxy() { return proxy; }
@@ -177,6 +181,8 @@ public:
 
     void SetSelfUpdating(bool t) { selfUpdating = t ? 1 : 0; }
 
+    /* Returns the new mirror address. */
+    const char* GetNewMirrorAddress() const { return newMirror; }
 
 private:
     /* Holds stage of self updating. */
@@ -190,6 +196,12 @@ private:
 
     /* True if we're being asked to check the integrity of the install. */
     bool checkIntegrity;
+
+    /* True if we're being asked to switch the updater mirror. */
+    bool switchMirror;
+
+    /* Address of new mirror. */
+    csString newMirror;
 
     /* VFS, Object Registry */
     csRef<iVFS> vfs;
