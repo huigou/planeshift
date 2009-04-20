@@ -538,7 +538,7 @@ bool QuestManager::HandleScriptCommand(csString& block,
         {
             csString itemName = block.Slice(17,block.Length()).Trim();
             //this manages the category argument Require equipped category xxxx
-            if(itemName.StartsWith("category")
+            if(itemName.StartsWith("category"))
             {
                 csString categoryName = itemName.Slice(9, itemName.Length()); //no need to trim done above
                 response_requireop.AppendFmt("<item inventory=\"false\" category=\"%s\" />", categoryName.GetData());
@@ -552,7 +552,7 @@ bool QuestManager::HandleScriptCommand(csString& block,
         {
             csString itemName = block.Slice(21,block.Length()).Trim();
             //this manages the category argument Require equipped category xxxx
-            if(itemName.StartsWith("category")
+            if(itemName.StartsWith("category"))
             {
                 csString categoryName = itemName.Slice(9, itemName.Length()); //no need to trim done above
                 response_requireop.AppendFmt("<not><item inventory=\"false\" category=\"%s\" /></not>", categoryName.GetData());
@@ -566,7 +566,7 @@ bool QuestManager::HandleScriptCommand(csString& block,
         {
             csString itemName = block.Slice(18,block.Length()).Trim();
             //this manages the category argument Require equipped category xxxx
-            if(itemName.StartsWith("category")
+            if(itemName.StartsWith("category"))
             {
                 csString categoryName = itemName.Slice(9, itemName.Length()); //no need to trim done above
                 response_requireop.AppendFmt("<item inventory=\"true\" category=\"%s\" />", categoryName.GetData());
@@ -580,7 +580,7 @@ bool QuestManager::HandleScriptCommand(csString& block,
         {
             csString itemName = block.Slice(22,block.Length()).Trim();
             //this manages the category argument Require equipped category xxxx
-            if(itemName.StartsWith("category")
+            if(itemName.StartsWith("category"))
             {
                 csString categoryName = itemName.Slice(9, itemName.Length()); //no need to trim done above
                 response_requireop.AppendFmt("<not><item inventory=\"true\" category=\"%s\" /></not>", categoryName.GetData());
