@@ -165,7 +165,8 @@ void UpdaterEngine::CheckForUpdates()
 
         // Check if we have write permissions.
 #ifdef _WIN32
-        if(!IsUserAnAdmin())
+        // TODO: Improve this.
+        if(!IsUserAnAdmin() && !log.IsValid())
 #else
         if(!log.IsValid())
 #endif
@@ -1225,7 +1226,8 @@ bool UpdaterEngine::SwitchMirror()
 {
     // Check if we have write permissions.
 #ifdef _WIN32
-    if(!IsUserAnAdmin())
+    // TODO: Improve this.
+    if(!IsUserAnAdmin() && !log.IsValid())
 #else
     if(!log.IsValid())
 #endif
