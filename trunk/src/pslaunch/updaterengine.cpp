@@ -1236,7 +1236,7 @@ bool UpdaterEngine::SwitchMirror()
 
     csString xmlPath = UPDATERINFO_CURRENT_FILENAME;
     csString xmlBakPath;
-    xmlBakPath.Format("%s_bak", xmlPath);
+    xmlBakPath.Format("%s_bak", xmlPath.GetData());
 
     fileUtil->MoveFile(xmlPath, xmlBakPath, true, false, true);
     

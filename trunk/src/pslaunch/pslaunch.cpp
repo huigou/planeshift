@@ -361,7 +361,7 @@ int main(int argc, char* argv[])
         {
             argvs[i] = argv[i];
         }
-        argvs[argc] = "--console";
+        argvs[argc] = const_cast<char*>("--console");
 
         // Set up CS
         psUpdater* updater = new psUpdater(argc+1, argvs);
@@ -556,7 +556,7 @@ int main(int argc, char* argv[])
                   execv("/usr/bin/open", nargv); 
 #else
                   char* nargv[argc+1];
-                  char* name = "./psclient";
+                  char* name = const_cast<char*>("./psclient");
                   nargv[0] = name;
                   for(int i=1; i<argc; ++i)
                   {
