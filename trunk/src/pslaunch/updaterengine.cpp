@@ -259,7 +259,7 @@ void UpdaterEngine::CheckForUpdates()
     else
     {
         // Mark no updates needed.
-        printf("\nNo updates needed!\n");
+        printf("No updates needed!\n");
         if(hasGUI)
         {
             infoShare->SetUpdateNeeded(false);
@@ -323,15 +323,16 @@ bool UpdaterEngine::CheckGeneral()
     const csRefArray<ClientVersion>& oldCvs = config->GetCurrentConfig()->GetClientVersions();
     const csRefArray<ClientVersion>& newCvs = config->GetNewConfig()->GetClientVersions();
 
+    size_t oldSize = oldCvs.GetSize();
     size_t newSize = newCvs.GetSize();
 
     // Old is bigger than the new (out of sync), or same size.
-    if(oldCvs.GetSize() >= newSize)
+    if(oldSize >= newSize)
     {
         // If both are empty then skip the extra name check!
         if(newSize != 0)
         {
-            bool outOfSync = oldCvs.GetSize() > newSize;
+            bool outOfSync = oldSize > newSize;
 
             if(!outOfSync)
             {
@@ -361,8 +362,16 @@ bool UpdaterEngine::CheckGeneral()
         return false;
     }
 
-    // New is bigger than the old, so there's updates.
-    return true;
+    // Check for updates concerning this platform.
+    for(size_t i=oldSize; i<newSize; ++i)
+    {
+        ClientVersion* cv = newCvs[i];
+        if(strcmp(cv->GetMD5Sum(), "") || strcmp(cv->GetGenericMD5Sum(), ""))
+            return true;
+    }
+    
+    // No updates related to this platform are available.
+    return false;
 }
 
 csRef<iDocumentNode> UpdaterEngine::GetRootNode(const char* nodeName, csRef<iDocument>* document)
@@ -673,8 +682,12 @@ void UpdaterEngine::GeneralUpdate()
          */
         for(int pass=1; pass<=2; ++pass)
         {
+            // Check that this update is relevent to this platform.
+            if(pass == 1 && !strcmp(newCv->GetMD5Sum(), ""))
+                continue;
+
             // Only do second pass if the platform isn't 'generic'.
-            if(pass == 2 && genericPlatform)
+            if(pass == 2 && (genericPlatform || !strcmp(newCv->GetGenericMD5Sum(), "")))
                 break;
 
             // Construct zip name.
