@@ -63,7 +63,7 @@ How to edit this guide:
     with a WYSIWYG!
 
     Please keep commands in boxes to make them stand out more easily:
-    <p><i class="command">text</i></p>  or  <p><div class="commandBox">text<br>text</div></p>
+    <p><i class="command">text</i></p>  or  <p><div class="commandBox">text<br />text</div></p>
 
     Source dates/revisions compatible with Laanx should be specified in the body as:
     PS_SOURCE_DATE or CS_SOURCE_REV
@@ -337,21 +337,21 @@ $(document).ready(function(){
 
 <noscript>
     <p><i>
-        <b><font color=red>JavaScript must be enabled to fully view this guide!</font></b><br>
+        <b><font color=red>JavaScript must be enabled to fully view this guide!</font></b><br />
         With JavaScript off, you cannot show/hide the different system-specific sections or see the current source revisions.
     </i></p>
 </noscript>
 
 <b>Building PS:</b> <!-- section menu -->
 <p style="{ margin-left: 15px; margin-top: 0; }">
-    <a href="#dates">Source Revisions</a><br>
-    <a href="#dir">Working Directory</a><br>
-    <a href="#tools">Install Tools</a><br>
-    <a href="#download">Download Sources</a><br>
-    <a href="#compile">Compile Sources</a><br>
-    <a href="#server">Setup Server</a> <i>(optional)</i><br>
-    <span class="Linux"><a href="#scripts">Mini Scripts</a> <i>(optional)</i><br></span>
-    <a href="#mounts">Mounting External Art</a> <i>(optional)</i><br>
+    <a href="#dates">Source Revisions</a><br />
+    <a href="#dir">Working Directory</a><br />
+    <a href="#tools">Install Tools</a><br />
+    <a href="#download">Download Sources</a><br />
+    <a href="#compile">Compile Sources</a><br />
+    <a href="#server">Setup Server</a> <i>(optional)</i><br />
+    <span class="Linux"><a href="#scripts">Mini Scripts</a> <i>(optional)</i><br /></span>
+    <a href="#mounts">Mounting External Art</a> <i>(optional)</i><br />
     <a href="#help">Getting Help</a>
 </p>
 
@@ -361,62 +361,62 @@ $(document).ready(function(){
             <a href="http://www.mingw.org/">MinGW32</a> is a free, open source compiler with an
             associated toolset that can be used for compiling Win32 executables. In conjunction
             with other free or open source software the majority of PlaneShift can be compiled
-            under Windows without having to purchase any compiler or other licenses.<br><br>
-        <b>Credits</b><br>
-                Caarrie, Trying to maintain the guide;<br>
-        Arianna Benigno, maintained the guide;<br>
-        Rolenun, adjuster for good part of the content;<br>
-        Dave Garrett, author of the new compiling guides layout;<br>
-        Steve Cook, author of the guide to compiling with Mingw32.<br>
+            under Windows without having to purchase any compiler or other licenses.<br /><br />
+        <b>Credits</b><br />
+                Caarrie, Trying to maintain the guide;<br />
+        Arianna Benigno, maintained the guide;<br />
+        Rolenun, adjuster for good part of the content;<br />
+        Dave Garrett, author of the new compiling guides layout;<br />
+        Steve Cook, author of the guide to compiling with Mingw32.<br />
         </div>
         <div class="MSVC">
         This guide lists the steps necessary to download all the tools and compile PlaneShift.
             This guide assumes that Visual C++.NET or Visual Studio.NET is installed. Some tools
             need glut, Directx 9 SDK, and python. These features are not needed so they won't be
-            covered here. As a result there will be some compilation errors due to missing files.<br><br>
-        <b>Credits</b><br>
-                Caarrie, Trying to maintain the guide;<br>
-        Arianna Benigno, maintained the guide;<br>
-        Rolenun, adjuster for good part of the content;<br>
-        Dave Garrett, author of the new compiling guides layout;<br>
-        Chris Ayers, author of the first guide for MSVC;<br>
-        Steve Cook, author of the guide to compiling with Mingw32, on which the first MSVC guide was based.<br>
+            covered here. As a result there will be some compilation errors due to missing files.<br /><br />
+        <b>Credits</b><br />
+                Caarrie, Trying to maintain the guide;<br />
+        Arianna Benigno, maintained the guide;<br />
+        Rolenun, adjuster for good part of the content;<br />
+        Dave Garrett, author of the new compiling guides layout;<br />
+        Chris Ayers, author of the first guide for MSVC;<br />
+        Steve Cook, author of the guide to compiling with Mingw32, on which the first MSVC guide was based.<br />
         </div>
     </div>
     <div class="Linux">
         This guide gives a fairly detailed description on how to get a working client up and
         running in Linux. It gives instructions on how to get all the required tools and how
         to check out the source code and configure it. At the end there you will have a
-        PlaneShift client and a PlaneShift updater application, and if you want also the server.<br><br>
-      <b>Credits</b><br>
-          Caarrie, Trying to maintain the guide;<br>
-      Arianna Benigno, maintained the guide;<br>
-      Dave Garrett, author of the new compiling guides layout;<br>
-      Andrew Craig, author of the first Linux guides that were available on <a href="http://laanx.fragnetics.com">Laanx website</a>;<br>
-      Platyna, author of the first compiling guide for Slackware distribution.<br>
-        Mike Gist, author of the static compiling guide.<br>
+        PlaneShift client and a PlaneShift updater application, and if you want also the server.<br /><br />
+      <b>Credits</b><br />
+          Caarrie, Trying to maintain the guide;<br />
+      Arianna Benigno, maintained the guide;<br />
+      Dave Garrett, author of the new compiling guides layout;<br />
+      Andrew Craig, author of the first Linux guides that were available on <a href="http://laanx.fragnetics.com">Laanx website</a>;<br />
+      Platyna, author of the first compiling guide for Slackware distribution.<br />
+        Mike Gist, author of the static compiling guide.<br />
 </div>
 
 <div class="FreeBSD">
         This guide gives a fairly detailed description on how to get a working client up and
         running in FreeBSD. It gives instructions on how to get all the required tools and how
         to check out the source code and configure it. At the end there you will have a
-        PlaneShift client and a PlaneShift updater application, and if you want also the server.<br><br>
+        PlaneShift client and a PlaneShift updater application, and if you want also the server.<br /><br />
 
-      <b>Credits</b><br>
-          Caarrie, Trying to maintain the guide;<br>
-          Arianna Benigno, maintained the guide;<br>
-          Dave Garrett, author of the new compiling guides layout;<br>
-          Andrew Craig, author of the first Linux guides that were available on <a href="http://laanx.fragnetics.com">Laanx website</a>;<br>
+      <b>Credits</b><br />
+          Caarrie, Trying to maintain the guide;<br />
+          Arianna Benigno, maintained the guide;<br />
+          Dave Garrett, author of the new compiling guides layout;<br />
+          Andrew Craig, author of the first Linux guides that were available on <a href="http://laanx.fragnetics.com">Laanx website</a>;<br />
 
-          Platyna, author of the first compiling guide for Slackware distribution.<br>
-          Mike Gist, author of the static compiling guide.<br>
+          Platyna, author of the first compiling guide for Slackware distribution.<br />
+          Mike Gist, author of the static compiling guide.<br />
 </div>
 <div class="MacOSX">
         This guide gives a very basic description on how to get a working client up and
         running on a Mac. It gives instructions on how to get to check out the source code and configure it. At the end there you will have a
-        PlaneShift client and a PlaneShift updater application, and if you want also the server.<br><br>
-      <b>Credits</b><br>
+        PlaneShift client and a PlaneShift updater application, and if you want also the server.<br /><br />
+      <b>Credits</b><br />
        Caarrie, Author of the first basic Mac guide with help from the <a href="http://www.yliakum.com/psdocs/index.php?page=4">PSDocs</a> guide and Trymm
 
     </div>
@@ -434,27 +434,27 @@ $(document).ready(function(){
     This guide has been updated by UPDATE_AUTHOR, the UPDATE_DATE.
 <p>
     <h3>Source Dates:</h3>
-    <i>Make sure you get the correct dates required for the version of PS you are building.<br>
-    Note that different versions of PS require different CS and PS revisions.<br>
+    <i>Make sure you get the correct dates required for the version of PS you are building.<br />
+    Note that different versions of PS require different CS and PS revisions.<br />
     after those listed here may not be compatible with the public server.</i>
 
 <div style="display: block;" class="User"> <div class="NOTPS">   <p>
-        Currently compatible with Laanx:<br>
-        <b>CAL3D SVN revision:</b> CAL3D_SOURCE_REV <br>
-        <b>CS 1.4 SVN revision:</b> CS_SOURCE_REV <br></div>
+        Currently compatible with Laanx:<br />
+        <b>CAL3D SVN revision:</b> CAL3D_SOURCE_REV <br />
+        <b>CS 1.4 SVN revision:</b> CS_SOURCE_REV <br /></div>
               </p><div class="PS">
-                      Currently compatible with Laanx:<br>
-        <b>CAL3D SVN revision:</b> CAL3D_SOURCE_REV <br>
-        <b>CS 1.4 SVN revision:</b> CS_SOURCE_REV <br>
-        <b>Planeshift Stable revision:</b> PS_Laanx <br>
+                      Currently compatible with Laanx:<br />
+        <b>CAL3D SVN revision:</b> CAL3D_SOURCE_REV <br />
+        <b>CS 1.4 SVN revision:</b> CS_SOURCE_REV <br />
+        <b>Planeshift Stable revision:</b> PS_Laanx <br />
       </div>
     </p>
     </div>
     <div class="Developer">
     <p>
-        Currently compatible with trunk of PS:<br>
-        <b>CAL3D SVN revision:</b> CAL3D_SOURCE_REV_HEAD <br>
-        <b>CS SVN revision:</b> CS_SOURCE_REV_HEAD <br>
+        Currently compatible with trunk of PS:<br />
+        <b>CAL3D SVN revision:</b> CAL3D_SOURCE_REV_HEAD <br />
+        <b>CS SVN revision:</b> CS_SOURCE_REV_HEAD <br />
     </p>
     </div>
 </p>
@@ -496,8 +496,8 @@ $HOME is a system environment variable that will always point to your users home
         <h3>Platform SDK for MSVC 8</h3>
 
         <p>This step is necessary if you are using VC8 Express Edition.
-        You should download and install the Platform SDK from this location:<br>
-        <a href="http://www.microsoft.com/express/2005/platformsdk/default.aspx">http://www.microsoft.com/express/2005/platformsdk/default.aspx</a><br>
+        You should download and install the Platform SDK from this location:<br />
+        <a href="http://www.microsoft.com/express/2005/platformsdk/default.aspx">http://www.microsoft.com/express/2005/platformsdk/default.aspx</a><br />
         Remember to follow all the listed steps to get things working: this includes to update the directories for Visual C++ and
         edit corewin_express.vsprops as indicated.</p>
 
@@ -509,74 +509,74 @@ $HOME is a system environment variable that will always point to your users home
     </div>
     <div class="MINGW">
         <h3>MinGW32 and MSYS</h3>
-        <p>The MinGW package contains the compiler, header and lib files.<br>
-           The MSYS package contains the shell and make utility.<br>
+        <p>The MinGW package contains the compiler, header and lib files.<br />
+           The MSYS package contains the shell and make utility.<br />
            The MSYSDTK package contains autoconf, automake, libtool, autogen, guile, SVN,
-           openssl, openssh, inetutils, perl and vim.<br>
-           Because autoconf and automake will be outdated, we will manually update them.<br>
-           Also, With MinGW version 4.1.0.0, some of the BinUtils included are broken by default so we're fixing that.<br><br>
+           openssl, openssh, inetutils, perl and vim.<br />
+           Because autoconf and automake will be outdated, we will manually update them.<br />
+           Also, With MinGW version 4.1.0.0, some of the BinUtils included are broken by default so we're fixing that.<br /><br />
 
-           First, we'll get MinGW and a few necessary dependencies.<br>
-           Note: These are the minimum required packages for the MinGW build.<br>
-           Go here: <a href="http://prdownloads.sourceforge.net/mingw/">http://prdownloads.sourceforge.net/mingw/</a> and fetch:<br><br>
-           MinGW [bin] MinGW-5.1.4.exe<br>
-           MSYS [bin] MSYS-1.0.10.exe<br>
-           MSYS DTK [bin] msysDTK-1.0.1.exe<br>
-           GDB [bin] gdb-5.2.1-1.exe (Optional)<br>
-           MSYS Autoconf [bin] msys-autoconf-2.59.tar.bz2<br>
-           MSYS Automake [bin] msys-automake-1.8.2.tar.bz2<br>
-           BinUtils [bin] binutils-2.17.50-20060824-1.tar.gz<br><br>
+           First, we'll get MinGW and a few necessary dependencies.<br />
+           Note: These are the minimum required packages for the MinGW build.<br />
+           Go here: <a href="http://prdownloads.sourceforge.net/mingw/">http://prdownloads.sourceforge.net/mingw/</a> and fetch:<br /><br />
+           MinGW [bin] MinGW-5.1.4.exe<br />
+           MSYS [bin] MSYS-1.0.10.exe<br />
+           MSYS DTK [bin] msysDTK-1.0.1.exe<br />
+           GDB [bin] gdb-5.2.1-1.exe (Optional)<br />
+           MSYS Autoconf [bin] msys-autoconf-2.59.tar.bz2<br />
+           MSYS Automake [bin] msys-automake-1.8.2.tar.bz2<br />
+           BinUtils [bin] binutils-2.17.50-20060824-1.tar.gz<br /><br />
 
-           Run the exe  files in the order they were downloaded to install the compiler. Select 'Full' type for the MinGW installation.<br>
-           The installation program should also add an icon for MSYS to your start menu. <br>
-           Click the "MSYS" icon and it should open up a shell window. Type "exit" to close the shell window again.<br><br>
+           Run the exe  files in the order they were downloaded to install the compiler. Select 'Full' type for the MinGW installation.<br />
+           The installation program should also add an icon for MSYS to your start menu. <br />
+           Click the "MSYS" icon and it should open up a shell window. Type "exit" to close the shell window again.<br /><br />
 
-           Unzip the conf/make utilities in c:\msys\1.0\, then unzip the BinUtils to the c:\mingw directory as follows:<br>
+           Unzip the conf/make utilities in c:\msys\1.0\, then unzip the BinUtils to the c:\mingw directory as follows:<br />
 Unzipping the tar.bz2 archives needs to be done through the MSYS
 command-line by changing directory with the cd command to where you
 downloaded the files. Then, run the following commands:
-<div class="commandBox">tar -xjf msys-autoconf-2.59.tar.bz2 -C /c/msys/1.0<br>
-tar -xjf msys-automake-1.8.2.tar.bz2 -C /c/msys/1.0<br>
-tar -xzf binutils-2.17.50-20060824-1.tar.gz -C /c/MinGW</div><br>
-           This allows MSYS to setup the MinGW paths correctly.<br>
+<div class="commandBox">tar -xjf msys-autoconf-2.59.tar.bz2 -C /c/msys/1.0<br />
+tar -xjf msys-automake-1.8.2.tar.bz2 -C /c/msys/1.0<br />
+tar -xzf binutils-2.17.50-20060824-1.tar.gz -C /c/MinGW</div><br />
+           This allows MSYS to setup the MinGW paths correctly.<br />
 
-           Download the following dependencies from the same site, but do not install these yet. Their install instructions are included below.<br>
-           From explorer, create and place these dependencies into C:\msys\1.0\src. Also, create the C:\msys\1.0\local directory.<br><br>
+           Download the following dependencies from the same site, but do not install these yet. Their install instructions are included below.<br />
+           From explorer, create and place these dependencies into C:\msys\1.0\src. Also, create the C:\msys\1.0\local directory.<br /><br />
 
-           wget-1.9.1-mingwPORT.tar.bz2<br>
+           wget-1.9.1-mingwPORT.tar.bz2<br />
        </p>
-        The following dependencies use a scripted system to download and install them, built into their files.<br>
-        For the unanswered questions below, just press enter to accept the default (in parentheses).<br>
-        The following commands are to be run in the MSYS shell.<br><br>
+        The following dependencies use a scripted system to download and install them, built into their files.<br />
+        For the unanswered questions below, just press enter to accept the default (in parentheses).<br />
+        The following commands are to be run in the MSYS shell.<br /><br />
         <b>Installing wget</b>
         <p> The input listed by the mingwPORT.sh script assumes that there is a file
 called wget-1.9.1.tar.gz in /usr/src, but the file you do have is
-wget-1.9.1-mingwPORT.tar.bz2.<br>
+wget-1.9.1-mingwPORT.tar.bz2.<br />
 
-There seems to be two solutions to this problem, you can choose the one your prefer the most:<br>
+There seems to be two solutions to this problem, you can choose the one your prefer the most:<br />
 
 1)Download the file from
 <a href="ftp://ftp.gnu.org/gnu/wget/wget-1.9.1.tar.gz">here</a> and put it in
-/usr/src before running the mingwPORT.sh script<br>
+/usr/src before running the mingwPORT.sh script<br />
 
 2)Just copy the prebuilt wget instead of compiling it instead of
 typing "mingwPORT.sh" (see the command list below) to run the script type "cp wget.exe /mingw/bin" and then
-continue as indicated.<br></p>
+continue as indicated.<br /></p>
 
 
         <p><div class="commandBox">
-            $ cd /usr/src<br>
-            $ tar -jxvf wget-1.9.1-mingwPORT.tar.bz2<br>
-            $ cd wget-1.9.1/mingwPORT<br>
-            $ ./mingwPORT.sh<br>
-            Download file? (Yes) No<br>
-            Unarchive file? (Yes)<br>
-            Archive file type? (tar.gz) <br>
-            Archive file? (wget-1.9.1.tar.gz) <br>
-            Archive file path? (/tmp) /usr/src<br>
-            Source path? (/usr/src/wget-1.9.1) <br>
-            Installation directory? (/mingw) <br>
-            CFLAGS (-O3 -s -mms-bitfields -march=i686) <br>
+            $ cd /usr/src<br />
+            $ tar -jxvf wget-1.9.1-mingwPORT.tar.bz2<br />
+            $ cd wget-1.9.1/mingwPORT<br />
+            $ ./mingwPORT.sh<br />
+            Download file? (Yes) No<br />
+            Unarchive file? (Yes)<br />
+            Archive file type? (tar.gz) <br />
+            Archive file? (wget-1.9.1.tar.gz) <br />
+            Archive file path? (/tmp) /usr/src<br />
+            Source path? (/usr/src/wget-1.9.1) <br />
+            Installation directory? (/mingw) <br />
+            CFLAGS (-O3 -s -mms-bitfields -march=i686) <br />
          </div></p>
     </div>
 
@@ -587,13 +587,13 @@ continue as indicated.<br></p>
     Click New under either User or System variables depending on how you want it setup. If you choose System, you will have
     to log off to make the changes.</p>
 
-    <p><i>Variable Name</i>: CRYSTAL (all caps)<br>
+    <p><i>Variable Name</i>: CRYSTAL (all caps)<br />
     <i>Variable Value</i>: C:\development\cs</p>
 
     <div class="MINGW">
         <p>Before compiling each time in MinGW, you will also need to enter at the MSYS prompt:</p>
         <p><div class="commandBox">
-            export CRYSTAL=/c/development/cs<br>
+            export CRYSTAL=/c/development/cs<br />
         </div></p>
     </div>
 </div>
@@ -603,8 +603,8 @@ continue as indicated.<br></p>
     <p>You will need a tool called Jam. Jam is a replacement for make. It's a bit easier to maintain and create
     custom builds. If you do not already have Jam, you can find it at <a href="ftp://ftp.perforce.com/pub/jam/">ftp://ftp.perforce.com/pub/jam/</a> - install it system wide. You can also use your distro's package manager to install it.</p>
     <h3>SVN</h3>
-    <p>CS and PlaneShift use SVN for their source repositories, so you'll need that too.<br>
-       You can find the software at: <a href="http://subversion.tigris.org/">http://subversion.tigris.org/</a><br>
+    <p>CS and PlaneShift use SVN for their source repositories, so you'll need that too.<br />
+       You can find the software at: <a href="http://subversion.tigris.org/">http://subversion.tigris.org/</a><br />
        A GUI is available at: <a href="http://esvn.umputun.com/">http://esvn.umputun.com/</a> You can also use your distro's package manger to install it.</p>
 </div>
 
@@ -616,8 +616,8 @@ continue as indicated.<br></p>
         # make install clean</br>
 </div></br>
     <h3>SVN</h3>
-    <p>CS and PlaneShift use SVN for their source repositories, so you'll need that too.<br>
-       You can find the software at: <a href="http://subversion.tigris.org/">http://subversion.tigris.org/</a><br>
+    <p>CS and PlaneShift use SVN for their source repositories, so you'll need that too.<br />
+       You can find the software at: <a href="http://subversion.tigris.org/">http://subversion.tigris.org/</a><br />
        A GUI is available at: <a href="http://esvn.umputun.com/">http://esvn.umputun.com/</a> You can also use FreeBSD ports to install it.</p>
 	 <div class="commandBox"># cd /usr/ports/devel/subversion</br>
         # make install clean</br>
@@ -626,7 +626,7 @@ continue as indicated.<br></p>
 
 <div class="Windows">
     <h3>SVN client</h3>
-    <p>PS and CS use SVN for their source repositories, so you will need an SVN client.<br>
+    <p>PS and CS use SVN for their source repositories, so you will need an SVN client.<br />
        The SVN client for Windows is <a href="http://tortoisesvn.tigris.org/">TortoiseSVN</a>.</p>
 </div>
 <div class="Linux-Gentoo">
@@ -647,37 +647,37 @@ continue as indicated.<br></p>
 <strong> BOTH of these above commands are assuming you do not need a server, if you do please follow directions in the <a href="#mysql">mysql</a> section for installing other required packages before moving on to building to save you time.</strong>
 </div>
 <div class="Linux-Ubuntu">
-    <p>The instructions here are tested using Ubuntu Hardy Heron and Intrepid Ibex.<br>
-    Since Hardy Heron is installed by default with minimal packages, many required packages for this project are not available. <br>
-    To correct this, you will first need to enable the universe and multiverse repositories.<br>
-    Please note that Intrepid has already these repositories enabled by default but in case they aren't you can follow the instruction here or enable them from the package manager (eg: synaptic, adept, ...)<br>
-    To enable these, do the following:<br>
+    <p>The instructions here are tested using Ubuntu Hardy Heron and Intrepid Ibex.<br />
+    Since Hardy Heron is installed by default with minimal packages, many required packages for this project are not available. <br />
+    To correct this, you will first need to enable the universe and multiverse repositories.<br />
+    Please note that Intrepid has already these repositories enabled by default but in case they aren't you can follow the instruction here or enable them from the package manager (eg: synaptic, adept, ...)<br />
+    To enable these, do the following:<br />
     <p><i class="command"># sudo gedit /etc/apt/sources.list</i></p>
-    Delete everything in the file that you have not added yourself. If you are not running Hardy Heron, replace each instance of the word "hardy" with the name of the distro you are using, i.e. hoary, warty, dapper, or edgy, gutsy, intrepid. Got that? Ok, Paste the following into the file and save it. Be sure to make the necessary changes if you are running a different version than Hardy:<br>
+    Delete everything in the file that you have not added yourself. If you are not running Hardy Heron, replace each instance of the word "hardy" with the name of the distro you are using, i.e. hoary, warty, dapper, or edgy, gutsy, intrepid. Got that? Ok, Paste the following into the file and save it. Be sure to make the necessary changes if you are running a different version than Hardy:<br />
     <p><div class="commandBox">
-        # Ubuntu supported packages<br>
-        # GPG key: 437D05B5<br>
-        deb http://us.archive.ubuntu.com/ubuntu hardy main restricted<br>
-        deb http://us.archive.ubuntu.com/ubuntu hardy-updates main restricted<br>
-        deb http://security.ubuntu.com/ubuntu hardy-security main restricted<br><br>
+        # Ubuntu supported packages<br />
+        # GPG key: 437D05B5<br />
+        deb http://us.archive.ubuntu.com/ubuntu hardy main restricted<br />
+        deb http://us.archive.ubuntu.com/ubuntu hardy-updates main restricted<br />
+        deb http://security.ubuntu.com/ubuntu hardy-security main restricted<br /><br />
 
-        # Ubuntu community supported packages<br>
-        # GPG key: 437D05B5<br>
-        deb http://us.archive.ubuntu.com/ubuntu hardy universe multiverse<br>
-        deb http://us.archive.ubuntu.com/ubuntu hardy-updates universe multiverse<br>
-        deb http://security.ubuntu.com/ubuntu hardy-security universe multiverse<br><br>
+        # Ubuntu community supported packages<br />
+        # GPG key: 437D05B5<br />
+        deb http://us.archive.ubuntu.com/ubuntu hardy universe multiverse<br />
+        deb http://us.archive.ubuntu.com/ubuntu hardy-updates universe multiverse<br />
+        deb http://security.ubuntu.com/ubuntu hardy-security universe multiverse<br /><br />
 
-        # Ubuntu backports project<br>
-        # GPG key: 437D05B5<br>
-        deb http://us.archive.ubuntu.com/ubuntu hardy-backports main restricted universe multiverse<br>
-        </div></p><br>
-    Now we need to double check that the gpg keys are added correctly to avoid gpg errors. Sounds scary, but worry not! All it takes is one simple command:<br>
+        # Ubuntu backports project<br />
+        # GPG key: 437D05B5<br />
+        deb http://us.archive.ubuntu.com/ubuntu hardy-backports main restricted universe multiverse<br />
+        </div></p><br />
+    Now we need to double check that the gpg keys are added correctly to avoid gpg errors. Sounds scary, but worry not! All it takes is one simple command:<br />
     <p><i class="command"># gpg --keyserver hkp://subkeys.pgp.net --recv-keys 437D05B5 &&  gpg --export --armor 437D05B5 | sudo apt-key add -</i></p>
-After that we need to refresh our sources.list file like so:<br>
+After that we need to refresh our sources.list file like so:<br />
     <p><i class="command"># sudo apt-get update</i></p>
-    Once that is complete, we can fetch all the required packages using the following command:<br>
+    Once that is complete, we can fetch all the required packages using the following command:<br />
     <p><div class="commandBox"># sudo apt-get --assume-yes install libjpeg62-dev x11proto-gl-dev autoconf jam bison flex-old automake1.9 libcurl4-openssl-dev libmng-dev libmikmod2-dev libogg-dev libvorbis-dev zlib1g-dev libpng12-dev build-essential libtool libglu1-mesa-dev libglu1-xorg-dev xserver-xorg-dev libxt-dev libopenal0a libopenal-dev subversion zlibc libttf2 libfreetype6-dev libfreetype6 libasound2-dev alsa-oss libxxf86vm-dev libxext-dev x11proto-xext-dev libspeex-dev</div></p>
-    In case you are using intrepid, we can fetch all the required packages using the following command:<br>
+    In case you are using intrepid, we can fetch all the required packages using the following command:<br />
     <p><div class="commandBox"># sudo apt-get --assume-yes install libjpeg62-dev x11proto-gl-dev autoconf jam bison flex-old automake1.9 libcurl4-openssl-dev libmng-dev libmikmod2-dev libogg-dev libvorbis-dev zlib1g-dev libpng12-dev build-essential libtool libglu1-mesa-dev libglu1-xorg-dev xserver-xorg-dev libxt-dev libopenal1 libopenal-dev subversion zlibc libttf2 libfreetype6-dev libfreetype6 libasound2-dev alsa-oss libxxf86vm-dev libxext-dev x11proto-xext-dev libspeex-dev</div></p>
 
 
@@ -867,7 +867,7 @@ then<br /><br />
     <i>Optional section</i>
 
     <p>
-        <b><a name="mysql">MySQL:</b><br>
+        <b><a name="mysql">MySQL:</b><br />
         If you have the intentions to run the server you have to install <a href="http://www.mysql.org/">MySQL</a> as well.
         PlaneShift uses MySQL version 5.0.
         <div class="Linux-Generic">
@@ -890,10 +890,10 @@ then<br /><br />
         <i class="command">WARNING: could not load plugin 'planeshift.database.mysql'</i> <br /><br />make sure you have libmysqlclient-dev installed, if it was not installed, ./autogen.sh, ./configure, and recompile the server again, according to the documentation below.</p></div>
 
     <div class="FreeBSD">
-        <p>install from ports: <div class="commandBox"># cd /usr/ports/databases/mysql50-server <br>
-		# make install clean <br>
-		# cd /usr/ports/databases/mysql50-client <br>
-		# make install clean <br>		
+        <p>install from ports: <div class="commandBox"># cd /usr/ports/databases/mysql50-server <br />
+		# make install clean <br />
+		# cd /usr/ports/databases/mysql50-client <br />
+		# make install clean <br />		
 		</div></p>
 
         <p>Note: This section is incomplete and untested, but contains the FreeBSD specific build information.</p>
@@ -916,16 +916,16 @@ then<br /><br />
                     Microsoft compatible libraries that ship with MySQL. Read the
                     <a href="http://www.mingw.org/MinGWiki/index.php/MSVC-MinGW-DLL">FAQ for mingw32</a>
                     under the section "How can an MSVC program call a MinGW DLL, and vice versa?"
-                    You will find reimp here: <a href="http://wyw.dcweb.cn/reimp_new.zip">http://wyw.dcweb.cn/reimp_new.zip</a><br>
-                    You will have to compile it as an exe is not provided anymore, create and extract the contents of the zip into C:\msys\1.0\src\reimp, open an msys prompt then do the following:<br>
+                    You will find reimp here: <a href="http://wyw.dcweb.cn/reimp_new.zip">http://wyw.dcweb.cn/reimp_new.zip</a><br />
+                    You will have to compile it as an exe is not provided anymore, create and extract the contents of the zip into C:\msys\1.0\src\reimp, open an msys prompt then do the following:<br />
                     <p><div class="commandBox">
-                        cd /usr/src/reimp/src<br>
-                        make<br>
-                        cp reimp.exe /c/mingw/bin<br>
-                        cd /c/mysql/lib/debug<br>
-                        reimp -d libmysql.lib<br>
-                        dlltool -k -d LIBMYSQL.def -l libmysqlclient.a<br>
-                        rm LIBMYSQL.def<br>
+                        cd /usr/src/reimp/src<br />
+                        make<br />
+                        cp reimp.exe /c/mingw/bin<br />
+                        cd /c/mysql/lib/debug<br />
+                        reimp -d libmysql.lib<br />
+                        dlltool -k -d LIBMYSQL.def -l libmysqlclient.a<br />
+                        rm LIBMYSQL.def<br />
                         mv libmysqlclient.a ..
                     </div></p>
                 </div>
@@ -978,23 +978,23 @@ then<br /><br />
 
     If you want to update to a new revision replace REVISION with the number of the revision you want to use:
     <p><div class="commandBox">
-    $HOME/development/cal3d$ svn update -r REVISION<br>
-        $HOME/development/cs$ svn update -r REVISION<br>
+    $HOME/development/cal3d$ svn update -r REVISION<br />
+        $HOME/development/cs$ svn update -r REVISION<br />
     </div></p>
     <p>Unlike the supporting libraries, you will generally want to use the latest PlaneShift source (or the HEAD) rather than an intermediate revision.  In this case, you will omit the "-r" option like so:
     <div class="commandBox">
     $HOME/development/planeshift$ svn update
-    </div></p><br>
+    </div></p><br />
     If, for some reason, you wish to update any of the supporting libraries to the latest version (i.e. the HEAD), you have to remove the sticky date tag. WE DO NOT RECOMMEND THIS as it may break your build:
     <p><div class="commandBox">
-    $HOME/development/cal3d$ svn update -r HEAD<br>
-        $HOME/development/cs$ svn update -r HEAD<br>
+    $HOME/development/cal3d$ svn update -r HEAD<br />
+        $HOME/development/cs$ svn update -r HEAD<br />
     </div></p>
 
 
 If you update a repository, you will need to recompile that repository and each repository that depends on it. Before doing so, you should do a "jam clean" for each project you want to jam again. So, for example, if you want to rebuild PS you will do:
     <p><div class="commandBox">
-        $HOME/development/planeshift$ jam clean<br>
+        $HOME/development/planeshift$ jam clean<br />
         $HOME/development/planeshift$ jam -aq
     </div></p>
 </div>
@@ -1038,25 +1038,25 @@ If you update a repository, you will need to recompile that repository and each 
 
     If you want to update to a new revision replace REVISION with the number of the revision you want to use:
     <p><div class="commandBox">
-    $HOME/development/cal3d$ svn update -r REVISION<br>
+    $HOME/development/cal3d$ svn update -r REVISION<br />
 
-        $HOME/development/cs$ svn update -r REVISION<br>
+        $HOME/development/cs$ svn update -r REVISION<br />
     </div></p>
     <p>Unlike the supporting libraries, you will generally want to use the latest PlaneShift source (or the HEAD) rather than an intermediate revision.  In this case, you will omit the "-r" option like so:
     <div class="commandBox">
     $HOME/development/planeshift$ svn update
-    </div></p><br>
+    </div></p><br />
     If, for some reason, you wish to update any of the supporting libraries to the latest version (i.e. the HEAD), you have to remove the sticky date tag. WE DO NOT RECOMMEND THIS as it may break your build:
     <p><div class="commandBox">
-    $HOME/development/cal3d$ svn update -r HEAD<br>
+    $HOME/development/cal3d$ svn update -r HEAD<br />
 
-        $HOME/development/cs$ svn update -r HEAD<br>
+        $HOME/development/cs$ svn update -r HEAD<br />
     </div></p>
 
 
 If you update a repository, you will need to recompile that repository and each repository that depends on it. Before doing so, you should do a "jam clean" for each project you want to jam again. So, for example, if you want to rebuild PS you will do:
     <p><div class="commandBox">
-        $HOME/development/planeshift$ jam clean<br>
+        $HOME/development/planeshift$ jam clean<br />
         $HOME/development/planeshift$ jam -aq
     </div></p>
 </div>
@@ -1102,17 +1102,17 @@ If you update a repository, you will need to recompile that repository and each 
 <p>Run the program and install the libraries in C:\CSLibs. </p></div>
 
 <p>When it asks you for the CS directory, enter
-    <b>C:\development\CS</b>.<br>
-    When you have to select the components, you can select the options you prefer through the check boxes.<br>
+    <b>C:\development\CS</b>.<br />
+    When you have to select the components, you can select the options you prefer through the check boxes.<br />
 
     <div class="MINGW">
-    Be sure that you are selecting also the MinGW Win32 Libraries and the support files for MSYS and Cygwin.<br>
+    Be sure that you are selecting also the MinGW Win32 Libraries and the support files for MSYS and Cygwin.<br />
     </div>
     <div class="MSVC">
-    Be sure that you are selecting also the MSVC Win32 Libraries and the support files for your version of MSVC.<br>
+    Be sure that you are selecting also the MSVC Win32 Libraries and the support files for your version of MSVC.<br />
     </div>
 
-    Be sure that you are installing both DirectX 9 headers and libraries files.<br>
+    Be sure that you are installing both DirectX 9 headers and libraries files.<br />
     Continue the installation.
     If this is the first time you are installing the libraries and you do not yet have an SVN checkout of CS uncheck
     'Copy DLL's to CS directory' when prompted, otherwise check the box and set the dir to C:\development\CS.
@@ -1134,7 +1134,7 @@ If you update a repository, you will need to recompile that repository and each 
     <h3>PlaneShift</h3>
     <p>Lastly, download PlaneShift source code:</p>
     <p>
-        Right-click on the development directory and select "SVN Checkout".<br>
+        Right-click on the development directory and select "SVN Checkout".<br />
         Enter the following as the URL:       
         <div class="User">
         <p><i class="command">https://planeshift.svn.sourceforge.net/svnroot/planeshift/stable</i></p>
@@ -1153,14 +1153,14 @@ If you update a repository, you will need to recompile that repository and each 
     Please, remember that CS must be the exact revision specified above (or near the top of this <a name="dates">guide</a>) while PS can be newer.</p>
 
     <p>
-        <i>CS SVN:</i><br>
+        <i>CS SVN:</i><br />
         Right-click on the folder of the module you want and go to TortoiseSVN->"Update to Revision".
         Enter a new revsion number or select HEAD to get latest, there is a possibility that HEAD may not work with PS so keep that in mind. Click ok, and the files will be updated.
         <div class="MSVC">If you rebuild CS, copy the dlls as described in the section : Compile the Code - Planeshift</div>
     </p>
 
     <p>
-        <i>PlaneShift</i><br>
+        <i>PlaneShift</i><br />
         Right-click on the PlaneShift folder and click "SVN Update".
     </p>
 </div>
@@ -1200,23 +1200,23 @@ If you update a repository, you will need to recompile that repository and each 
 
     If you want to update to a new revision replace REVISION with the number of the revision you want to use:
     <p><div class="commandBox">
-    $HOME/development/cal3d$ svn update -r REVISION<br>
-        $HOME/development/cs$ svn update -r REVISION<br>
+    $HOME/development/cal3d$ svn update -r REVISION<br />
+        $HOME/development/cs$ svn update -r REVISION<br />
     </div></p>
     <p>Unlike the supporting libraries, you will generally want to use the latest PlaneShift source (or the HEAD) rather than an intermediate revision.  In this case, you will omit the "-r" option like so:
     <div class="commandBox">
     $HOME/development/planeshift$ svn update
-    </div></p><br>
+    </div></p><br />
     If, for some reason, you wish to update any of the supporting libraries to the latest version (i.e. the HEAD), you have to remove the sticky date tag. WE DO NOT RECOMMEND THIS as it may break your build:
     <p><div class="commandBox">
-    $HOME/development/cal3d$ svn update -r HEAD<br>
-        $HOME/development/cs$ svn update -r HEAD<br>
+    $HOME/development/cal3d$ svn update -r HEAD<br />
+        $HOME/development/cs$ svn update -r HEAD<br />
     </div></p>
 
 
 If you update a repository, you will need to recompile that repository and each repository that depends on it. Before doing so, you should do a "jam clean" for each project you want to jam again. So, for example, if you want to rebuild PS you will do:
     <p><div class="commandBox">
-        $HOME/development/planeshift$ jam clean<br>
+        $HOME/development/planeshift$ jam clean<br />
         $HOME/development/planeshift$ jam -aq
     </div></p>
 </div></div>
@@ -1238,13 +1238,13 @@ If you update a repository, you will need to recompile that repository and each 
             AM_USE_UNITTESTCPP</div></p>
     <p> Then you can build cal3d </p>
             <p><div class="commandBox">
-                $HOME/development/cal3d$ autoreconf --install --force<br>
-                $HOME/development/cal3d$ ./configure --prefix=$HOME/development/cal3d<br>
-                $HOME/development/cal3d$ make<br>
+                $HOME/development/cal3d$ autoreconf --install --force<br />
+                $HOME/development/cal3d$ ./configure --prefix=$HOME/development/cal3d<br />
+                $HOME/development/cal3d$ make<br />
                 $HOME/development/cal3d$ make install
                 </div></p>
-    <p>Because we did not install cal3d we need to make sure other things can find it. This is done using the LD_LIBRARY_PATH:<br>
-    Using a text editor open $HOME/.cshrc and add the line: <br></p>
+    <p>Because we did not install cal3d we need to make sure other things can find it. This is done using the LD_LIBRARY_PATH:<br />
+    Using a text editor open $HOME/.cshrc and add the line: <br /></p>
     <p><div class="commandBox">
             setenv  LD_LIBRARY_PATH /home/development/cal3d/lib/:/home/development/cs/ </div>(need user relog)</p>
     </div>
@@ -1263,9 +1263,9 @@ If you update a repository, you will need to recompile that repository and each 
 sed -i 's/AM_USE_UNITTESTCPP/#\ AM_USE_UNITTESTCPP/' configure.in </div></p>
 <p> Then you can build cal3d </p>
         <p><div class="commandBox">
-            $HOME/development/cal3d$ autoreconf --install --force<br>
-            $HOME/development/cal3d$ ./configure --prefix=$HOME/development/cal3d<br>
-            $HOME/development/cal3d$ make<br>
+            $HOME/development/cal3d$ autoreconf --install --force<br />
+            $HOME/development/cal3d$ ./configure --prefix=$HOME/development/cal3d<br />
+            $HOME/development/cal3d$ make<br />
             $HOME/development/cal3d$ make install
         </div></p></div>
     <div class="linux-Debian" >
@@ -1278,9 +1278,9 @@ sed -i 's/AM_USE_UNITTESTCPP/#\ AM_USE_UNITTESTCPP/' configure.in </div></p>
 sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in</div></p>
 <p> Then you can build cal3d </p>
         <p><div class="commandBox">
-            $HOME/development/cal3d$ autoreconf --install --force<br>
-            $HOME/development/cal3d$ ./configure --prefix=$HOME/development/cal3d<br>
-            $HOME/development/cal3d$ make<br>
+            $HOME/development/cal3d$ autoreconf --install --force<br />
+            $HOME/development/cal3d$ ./configure --prefix=$HOME/development/cal3d<br />
+            $HOME/development/cal3d$ make<br />
             $HOME/development/cal3d$ make install
         </div></p></div>
     <div class="linux-Gentoo" >
@@ -1293,9 +1293,9 @@ sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in
 sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in</div></p>
 <p> Then you can build cal3d </p>
         <p><div class="commandBox">
-            $HOME/development/cal3d$ autoreconf --install --force<br>
-            $HOME/development/cal3d$ ./configure --prefix=$HOME/development/cal3d<br>
-            $HOME/development/cal3d$ make<br>
+            $HOME/development/cal3d$ autoreconf --install --force<br />
+            $HOME/development/cal3d$ ./configure --prefix=$HOME/development/cal3d<br />
+            $HOME/development/cal3d$ make<br />
             $HOME/development/cal3d$ make install
         </div></p></div>
     <div class="linux-Slackware" >
@@ -1308,9 +1308,9 @@ sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in
 sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in</div></p>
 <p> Then you can build cal3d </p>
         <p><div class="commandBox">
-            $HOME/development/cal3d$ autoreconf --install --force<br>
-            $HOME/development/cal3d$ ./configure --prefix=$HOME/development/cal3d<br>
-            $HOME/development/cal3d$ make<br>
+            $HOME/development/cal3d$ autoreconf --install --force<br />
+            $HOME/development/cal3d$ ./configure --prefix=$HOME/development/cal3d<br />
+            $HOME/development/cal3d$ make<br />
             $HOME/development/cal3d$ make install
         </div></p></div>
 		    <div class="linux-OpenSUSE" >
@@ -1323,9 +1323,9 @@ sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in
 		sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in</div></p>
 		<p> Then you can build cal3d </p>
 		        <p><div class="commandBox">
-		            $HOME/development/cal3d$ autoreconf --install --force<br>
-		            $HOME/development/cal3d$ ./configure --prefix=$HOME/development/cal3d<br>
-		            $HOME/development/cal3d$ make<br>
+		            $HOME/development/cal3d$ autoreconf --install --force<br />
+		            $HOME/development/cal3d$ ./configure --prefix=$HOME/development/cal3d<br />
+		            $HOME/development/cal3d$ make<br />
 		            $HOME/development/cal3d$ make install
 		        </div></p></div>
     <div class="linux-Ubuntu" >
@@ -1338,9 +1338,9 @@ sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in
 sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in</div></p>
 <p> Then you can build cal3d </p>
         <p><div class="commandBox">
-            $HOME/development/cal3d$ autoreconf --install --force<br>
-            $HOME/development/cal3d$ ./configure --prefix=$HOME/development/cal3d<br>
-            $HOME/development/cal3d$ make<br>
+            $HOME/development/cal3d$ autoreconf --install --force<br />
+            $HOME/development/cal3d$ ./configure --prefix=$HOME/development/cal3d<br />
+            $HOME/development/cal3d$ make<br />
             $HOME/development/cal3d$ make install
         </div></p></div>
         Because we did not install cal3d we need to make sure other things can find it. This is done using the LD_LIBRARY_PATH:
@@ -1356,96 +1356,96 @@ sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in
         To do this, use the prefix line that was used for Cal3d above.</p></div>
     <div class="Linux-Generic" >
            <div class="User"><div class="commandBox">
-            $HOME/development/cs$ ./configure --without-java --without-perl --without-python --without-3ds --with-cal3d=$HOME/development/cal3d</div></div><br>
+            $HOME/development/cs$ ./configure --without-java --without-perl --without-python --without-3ds --with-cal3d=$HOME/development/cal3d</div></div><br />
            <div class="Developer"><div class="commandBox">
-            $HOME/development/cs$ ./configure --enable-debug --without-java --without-perl --without-python --without-3ds --with-cal3d=$HOME/development/cal3d</div></div><br>
+            $HOME/development/cs$ ./configure --enable-debug --without-java --without-perl --without-python --without-3ds --with-cal3d=$HOME/development/cal3d</div></div><br />
            <div class="Normal"><i class="command">
-            $HOME/development/cs$ jam -aq libs plugins cs-config walktest</i></div><br>
+            $HOME/development/cs$ jam -aq libs plugins cs-config walktest</i></div><br />
            <div class="Static"><i class="command">
-            $HOME/development/cs$ jam -aq libs staticplugins cs-config walktest_static</i><br>
+            $HOME/development/cs$ jam -aq libs staticplugins cs-config walktest_static</i><br />
            </div></div>
     <div class="Linux-Debian" >
             <div class="User"><div class="commandBox">
-            $HOME/development/cs$ ./configure --without-java --without-perl --without-python --without-3ds --with-cal3d=$HOME/development/cal3d</div></div><br>
+            $HOME/development/cs$ ./configure --without-java --without-perl --without-python --without-3ds --with-cal3d=$HOME/development/cal3d</div></div><br />
            <div class="Developer"><div class="commandBox">
-            $HOME/development/cs$ ./configure --enable-debug --without-java --without-perl --without-python --without-3ds --with-cal3d=$HOME/development/cal3d</div></div><br>
+            $HOME/development/cs$ ./configure --enable-debug --without-java --without-perl --without-python --without-3ds --with-cal3d=$HOME/development/cal3d</div></div><br />
            <div class="Normal"><i class="command">
-            $HOME/development/cs$ jam -aq libs plugins cs-config walktest</i></div><br>
+            $HOME/development/cs$ jam -aq libs plugins cs-config walktest</i></div><br />
            <div class="Static"><i class="command">
-            $HOME/development/cs$ jam -aq libs staticplugins cs-config walktest_static</i><br>
+            $HOME/development/cs$ jam -aq libs staticplugins cs-config walktest_static</i><br />
            </div></div>
     <div class="Linux-Gentoo" >
             <div class="User"><div class="commandBox">
-            $HOME/development/cs$./configure --without-java --without-perl --without-python --without-3ds --with-cal3d=$HOME/development/cal3d</div></div><br>
+            $HOME/development/cs$./configure --without-java --without-perl --without-python --without-3ds --with-cal3d=$HOME/development/cal3d</div></div><br />
            <div class="Developer"><div class="commandBox">
-            $HOME/development/cs$./configure --enable-debug --without-java --without-perl --without-python --without-3ds --with-cal3d=$HOME/development/cal3d</div></div><br>
+            $HOME/development/cs$./configure --enable-debug --without-java --without-perl --without-python --without-3ds --with-cal3d=$HOME/development/cal3d</div></div><br />
            <div class="Normal"><div class="commandBox">
-            $HOME/development/cs$ jam -aq libs plugins cs-config walktest</div></div><br>
+            $HOME/development/cs$ jam -aq libs plugins cs-config walktest</div></div><br />
            <div class="Static"><i class="command">
-            $HOME/development/cs$ jam -aq libs staticplugins cs-config walktest_static</i><br>
+            $HOME/development/cs$ jam -aq libs staticplugins cs-config walktest_static</i><br />
            </div></div>
     <div class="Linux-Slackware" >
             <div class="User"><div class="commandBox">
-            $HOME/development/cs$./configure --without-java --without-perl --without-python --without-3ds --with-cal3d=$HOME/development/cal3d</div></div><br>
+            $HOME/development/cs$./configure --without-java --without-perl --without-python --without-3ds --with-cal3d=$HOME/development/cal3d</div></div><br />
            <div class="Developer"><div class="commandBox">
-            $HOME/development/cs$./configure --enable-debug --without-java --without-perl --without-python --without-3ds --with-cal3d=$HOME/development/cal3d</div></div><br>
+            $HOME/development/cs$./configure --enable-debug --without-java --without-perl --without-python --without-3ds --with-cal3d=$HOME/development/cal3d</div></div><br />
            <div class="Normal"><i class="command">
-            $HOME/development/cs$ jam -aq libs plugins cs-config walktest</i></div><br>
+            $HOME/development/cs$ jam -aq libs plugins cs-config walktest</i></div><br />
            <div class="Static"><i class="command">
-            $HOME/development/cs$ jam -aq libs staticplugins cs-config walktest_static</i><br>
+            $HOME/development/cs$ jam -aq libs staticplugins cs-config walktest_static</i><br />
            </div></div>
 		<div class="Linux-OpenSUSE" >
 	            <div class="User"><div class="commandBox">
-	            $HOME/development/cs$./configure --without-java --without-perl --without-python --without-3ds --with-cal3d=$HOME/development/cal3d</div></div><br>
+	            $HOME/development/cs$./configure --without-java --without-perl --without-python --without-3ds --with-cal3d=$HOME/development/cal3d</div></div><br />
 	           <div class="Developer"><div class="commandBox">
-	            $HOME/development/cs$./configure --enable-debug --without-java --without-perl --without-python --without-3ds --with-cal3d=$HOME/development/cal3d</div></div><br>
+	            $HOME/development/cs$./configure --enable-debug --without-java --without-perl --without-python --without-3ds --with-cal3d=$HOME/development/cal3d</div></div><br />
 	           <div class="Normal"><i class="command">
-	            $HOME/development/cs$ jam -aq libs plugins cs-config walktest</i></div><br>
+	            $HOME/development/cs$ jam -aq libs plugins cs-config walktest</i></div><br />
 	           <div class="Static"><i class="command">
-	            $HOME/development/cs$ jam -aq libs staticplugins cs-config walktest_static</i><br>
+	            $HOME/development/cs$ jam -aq libs staticplugins cs-config walktest_static</i><br />
 	           </div></div>
         <div class="Linux-Ubuntu">
      <div class="User"><div class="commandBox">
-            $HOME/development/cs$./configure --without-java --without-perl --without-python --without-3ds --with-cal3d=$HOME/development/cal3d</div></div><br>
+            $HOME/development/cs$./configure --without-java --without-perl --without-python --without-3ds --with-cal3d=$HOME/development/cal3d</div></div><br />
            <div class="Developer"><div class="commandBox">
-            $HOME/development/cs$./configure --enable-debug --without-java --without-perl --without-python --without-3ds --with-cal3d=$HOME/development/cal3d</div></div><br>
+            $HOME/development/cs$./configure --enable-debug --without-java --without-perl --without-python --without-3ds --with-cal3d=$HOME/development/cal3d</div></div><br />
       <div class="Normal"><i class="command">
-            $HOME/development/cs$ jam -aq libs plugins cs-config walktest</i></div><br>
+            $HOME/development/cs$ jam -aq libs plugins cs-config walktest</i></div><br />
            <div class="Static"><i class="command">
-            $HOME/development/cs$ jam -aq libs staticplugins cs-config walktest_static</i></div><br>
+            $HOME/development/cs$ jam -aq libs staticplugins cs-config walktest_static</i></div><br />
        </div></div>
 	   <div class="FreeBSD" >
            <div class="User"><div class="commandBox">
-            $HOME/development/cs$ ./configure --without-java --without-perl --without-python --without-3ds --with-cal3d=$HOME/development/cal3d</div></div><br>
+            $HOME/development/cs$ ./configure --without-java --without-perl --without-python --without-3ds --with-cal3d=$HOME/development/cal3d</div></div><br />
            <div class="Developer"><div class="commandBox">
-            $HOME/development/cs$ ./configure --enable-debug --without-java --without-perl --without-python --without-3ds --with-cal3d=$HOME/development/cal3d</div></div><br>
+            $HOME/development/cs$ ./configure --enable-debug --without-java --without-perl --without-python --without-3ds --with-cal3d=$HOME/development/cal3d</div></div><br />
            <div class="Normal"><i class="command">
-            $HOME/development/cs$ jam -aq libs plugins cs-config walktest</i></div><br>
+            $HOME/development/cs$ jam -aq libs plugins cs-config walktest</i></div><br />
 
            <div class="Static"><i class="command">
-            $HOME/development/cs$ jam -aq libs staticplugins cs-config walktest_static</i><br>
+            $HOME/development/cs$ jam -aq libs staticplugins cs-config walktest_static</i><br />
            </div><p>We should export the CRYSTAL environment variable so applications outside the Crystal Space
-             tree know where to find the .so's. <br>Using a text editor open $HOME/.cshrc and add the line: <br></p>
+             tree know where to find the .so's. <br />Using a text editor open $HOME/.cshrc and add the line: <br /></p>
 			 <p><div class="commandBox">
 			setenv  CRYSTAL /home/development/cs/ </div>(need user relog)</p>
 		<h3>PlaneShift</h3>
-        First of all Using a text editor open $HOME/planeshift/src/tools/wordnet/wnutil.c <br>
-		At line 20 change :<br><br>
+        First of all Using a text editor open $HOME/planeshift/src/tools/wordnet/wnutil.c <br />
+		At line 20 change :<br /><br />
 		
 		<div class="commandBox">
 			malloc.h </div>
 			with
 			<div class="commandBox">
-			stdlib.h  </div><br>
+			stdlib.h  </div><br />
 		You can now start to compile PlaneShift
 		
 		<p><div class="commandBox">
-            $HOME/development/planeshift$ ./autogen.sh<br>
+            $HOME/development/planeshift$ ./autogen.sh<br />
            <div class="User">
-            $HOME/development/planeshift$ ./configure --with-cal3d=$HOME/development/cal3d<br>
+            $HOME/development/planeshift$ ./configure --with-cal3d=$HOME/development/cal3d<br />
            </div>
            <div class="Developer">
-            $HOME/development/planeshift$ ./configure --enable-debug --with-cal3d=$HOME/development/cal3d<br>
+            $HOME/development/planeshift$ ./configure --enable-debug --with-cal3d=$HOME/development/cal3d<br />
            </div>
            <div class="Normal">
             $HOME/development/planeshift$ jam -aq client
@@ -1480,12 +1480,12 @@ We should export the CRYSTAL environment variable so applications outside the Cr
 
 <h3>PlaneShift</h3>
         <p><div class="commandBox">
-            $HOME/development/planeshift$ ./autogen.sh<br>
+            $HOME/development/planeshift$ ./autogen.sh<br />
            <div class="User">
-            $HOME/development/planeshift$ ./configure --with-cal3d=$HOME/development/cal3d<br>
+            $HOME/development/planeshift$ ./configure --with-cal3d=$HOME/development/cal3d<br />
            </div>
            <div class="Developer">
-            $HOME/development/planeshift$ ./configure --enable-debug --with-cal3d=$HOME/development/cal3d<br>
+            $HOME/development/planeshift$ ./configure --enable-debug --with-cal3d=$HOME/development/cal3d<br />
            </div>
            <div class="Normal">
             $HOME/development/planeshift$ jam -aq client
@@ -1527,9 +1527,9 @@ $HOME/development/planeshift$ ./psclient -cfgset=PlaneShift.UserConfigPath=$HOME
 sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in</div></p>
 <p> Then you can build cal3d </p>
         <p><div class="commandBox">
-            $HOME/development/cal3d$ autoreconf --install --force<br>
-            $HOME/development/cal3d$ ./configure --prefix=$HOME/development/cal3d<br>
-            $HOME/development/cal3d$ make<br>
+            $HOME/development/cal3d$ autoreconf --install --force<br />
+            $HOME/development/cal3d$ ./configure --prefix=$HOME/development/cal3d<br />
+            $HOME/development/cal3d$ make<br />
             $HOME/development/cal3d$ make install
         </div></p></div>
   <h3>Crystal Space (CS)</h3>
@@ -1538,9 +1538,9 @@ sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in
        <div class="User"><div class="commandBox">
             $HOME/development/cs$./configure --disable-universal-binary --without-java --without-perl --without-python --without-3ds --with-cal3d=$HOME/development/cal3d</div></div>
            <div class="Developer"><div class="commandBox">
-            $HOME/development/cs$./configure --disable-universal-binary --enable-debug --without-java --without-perl --without-python --without-3ds --with-cal3d=$HOME/development/cal3d</div></div><br>
+            $HOME/development/cs$./configure --disable-universal-binary --enable-debug --without-java --without-perl --without-python --without-3ds --with-cal3d=$HOME/development/cal3d</div></div><br />
            <div class="Normal"><i class="command">
-            $HOME/development/cs$ jam -aq libs plugins cs-config walktest</i></div><br>
+            $HOME/development/cs$ jam -aq libs plugins cs-config walktest</i></div><br />
             <div class="Static"> there is no Mac static build guide at this time</div>
         We should export the CRYSTAL environment variable so applications outside the Crystal Space
              tree know where to find the .so's.
@@ -1548,12 +1548,12 @@ sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in
 
 <h3>PlaneShift</h3>
         <p><div class="commandBox">
-            $HOME/development/planeshift$ ./autogen.sh<br>
+            $HOME/development/planeshift$ ./autogen.sh<br />
            <i class="User">
-            $HOME/development/planeshift$ ./configure --with-cal3d=$HOME/development/cal3d<br>
+            $HOME/development/planeshift$ ./configure --with-cal3d=$HOME/development/cal3d<br />
            </i>
            <i class="Developer">
-            $HOME/development/planeshift$ ./configure --enable-debug --with-cal3d=$HOME/development/cal3d<br>
+            $HOME/development/planeshift$ ./configure --enable-debug --with-cal3d=$HOME/development/cal3d<br />
            </i>
            <i class="Normal">
             $HOME/development/planeshift$ jam -aq client
@@ -1595,30 +1595,30 @@ $HOME/development/planeshift$ ./psclient.app/Contents/MacOS/psclient -cfgset=Pla
            </div></div>
         </div>
         </p>
-        This will build all the needed libraries and plugins, as well as the standard test application.<br>
+        This will build all the needed libraries and plugins, as well as the standard test application.<br />
         After everything compiles, try running "walktest.exe" in /c/development/cs to check that everything is ok.
 
         <h3>PlaneShift</h3>
 Change your working directory to PS's,
  and do:</p>
         <p><div class="commandBox">
-            ./autogen.sh<br>
+            ./autogen.sh<br />
            <div class="User">
-            ./configure <br>
+            ./configure <br />
            </div>
            <div class="Developer">
-            ./configure --enable-debug <br>
+            ./configure --enable-debug <br />
            </div>
 </div>
 </p>
         If you're building the server instead do the following as you also need to configure with your MySQL location:
         <p><div class="User"> <div class="commandBox">
-            ./autogen.sh<br>
-            ./configure --with-mysqlclient=/c/mysql<br>
+            ./autogen.sh<br />
+            ./configure --with-mysqlclient=/c/mysql<br />
         </div></div></p>
         <p><div class="Developer"> <div class="commandBox">
-            ./autogen.sh<br>
-            ./configure --enable-debug --with-mysqlclient=/c/mysql<br>
+            ./autogen.sh<br />
+            ./configure --enable-debug --with-mysqlclient=/c/mysql<br />
         </div></div></p>
 
 <p><div class="commandBox">
@@ -1654,38 +1654,38 @@ psclient.exe -cfgset=PlaneShift.UserConfigPath=C:\development\pssettings</div>
 
     <p><b>Note for MSVC 2005 (also known as Visual Studio 8.0, MSVC 8.0 or Visual Studio .NET 2005)
     (Full Edition Only)</b>: Make sure the "Show all settings" checkbox is checked in
-    Tools->Options before continuing.<br>
+    Tools->Options before continuing.<br />
     If you have MSVC 2003, you might know it as MSVC 7.1, Visual Studio 7.1 or Visual Studio .NET 2003. If you have MSCV 2008, you might know it as MSVC 9.0, Visual Studio 9.0 or Visual Studio .NET 2008.
     Here we will add all the directories containing all the include and libraries files that we will need to
-    use for compiling PlaneShift.<br> Under Tools->Options in you MSVC look on the left hand side for the Projects
+    use for compiling PlaneShift.<br /> Under Tools->Options in you MSVC look on the left hand side for the Projects
     folder. Under Projects choose "VC++ Directories". In the "Show Directories for" choose "Include Files".
     Click the new folder icon and add the following directories, one by one:</p>
     <p>
-        C:\development\CS\include<br>
-        C:\development\CS\include\csutil\win32<br>
-        C:\development\CS\win32libs\include<br>
+        C:\development\CS\include<br />
+        C:\development\CS\include\csutil\win32<br />
+        C:\development\CS\win32libs\include<br />
         C:\mysql\include
     </p>
 
     <p>In the "Show Directories for" choose "Library Files". Click the new folder icon
     to add the following directories:</p>
     <p>
-        C:\mysql\lib\opt<br>
-        C:\development\CS\win32libs\lib<br>
+        C:\mysql\lib\opt<br />
+        C:\development\CS\win32libs\lib<br />
     </p>
 
     <h3>Crystal Space (CS)</h3>
     <p>
         <div class="Normal">
-        If you have MSVC 7.0 open C:\development\CS\mk\msvc7\wkstypical.sln<br>
-        If you have MSVC 7.1 open C:\development\CS\mk\msvc71\wkstypical.sln<br>
-        If you have MSVC 8.0 open C:\development\CS\mk\msvc8\wkstypical.sln<br>
+        If you have MSVC 7.0 open C:\development\CS\mk\msvc7\wkstypical.sln<br />
+        If you have MSVC 7.1 open C:\development\CS\mk\msvc71\wkstypical.sln<br />
+        If you have MSVC 8.0 open C:\development\CS\mk\msvc8\wkstypical.sln<br />
         If you have MSVC 9.0 open C:\development\CS\mk\msvc9\wkstypical.sln
         </div>
         <div class="Static">
-        If you have MSVC 7.0 open C:\development\CS\mk\msvc7\wksstatic.sln<br>
-        If you have MSVC 7.1 open C:\development\CS\mk\msvc71\wksstatic.sln<br>
-        If you have MSVC 8.0 open C:\development\CS\mk\msvc8\wksstatic.sln<br>
+        If you have MSVC 7.0 open C:\development\CS\mk\msvc7\wksstatic.sln<br />
+        If you have MSVC 7.1 open C:\development\CS\mk\msvc71\wksstatic.sln<br />
+        If you have MSVC 8.0 open C:\development\CS\mk\msvc8\wksstatic.sln<br />
         If you have MSVC 9.0 open C:\development\CS\mk\msvc9\wksstatic.sln
         </div>
     </p>
@@ -1693,14 +1693,14 @@ psclient.exe -cfgset=PlaneShift.UserConfigPath=C:\development\pssettings</div>
 and select Properties, 'read only' is one of the attributes in the General tab) before continuing.</p>
 
     <div class="User">
-    Go into the 'Build' menu, and select 'configuration manager'. Change the 'Active Solution Configuration' to 'Release(with DLLs)'.<br>
+    Go into the 'Build' menu, and select 'configuration manager'. Change the 'Active Solution Configuration' to 'Release(with DLLs)'.<br />
     </div>
     <div class="Developer">
-    Go into the 'Build' menu, and select 'configuration manager'. Change the 'Active Solution Configuration' to 'Debug(with DLLs)'.<br>
+    Go into the 'Build' menu, and select 'configuration manager'. Change the 'Active Solution Configuration' to 'Debug(with DLLs)'.<br />
     </div>
-    <p>Right click on the solution and select 'Build Solution'. To test the build of CS, run walktest.exe in C:\development\CS.<br>
+    <p>Right click on the solution and select 'Build Solution'. To test the build of CS, run walktest.exe in C:\development\CS.<br />
     If you encounter any errors, check you have done everything correctly, and then if the problem persists, you can
-    ask for help in the CS IRC channel:<br>
+    ask for help in the CS IRC channel:<br />
     irc.freenode.net #crystalspace</p>
 
     <h3>PlaneShift</h3>
@@ -1718,45 +1718,45 @@ and select Properties, 'read only' is one of the attributes in the General tab) 
     "Library Files". Click the new folder icon to add the following directories:</p>
     <p>
         <div class="User">
-        C:\development\CS\out\releaseX\libs<br>
+        C:\development\CS\out\releaseX\libs<br />
         </div>
         <div class="Developer">
-        C:\development\CS\out\debugX\libs<br>
+        C:\development\CS\out\debugX\libs<br />
         </div>
     </p>
     <p>You have to change X (in the path concerning CS) to these
     values, depending from the version you have of MSVC:</p>
     <p>
-        7 for MSVC 7<br>
-        71 for Visual Studio .NET 2003/MSVC 7.1<br>
-        8 for Visual Studio .NET 2005/MSVC 8<br>
+        7 for MSVC 7<br />
+        71 for Visual Studio .NET 2003/MSVC 7.1<br />
+        8 for Visual Studio .NET 2005/MSVC 8<br />
         9 for Visual Studio .NET 2005/MSVC 9
     </p>
 
     <p>
         <div class="Normal">
-        If you have MSVC.NET 7.0 open C:\development\planeshift\mk\msvc7\wkspstypical.sln<br>
-        If you have MSVC.NET 2003/VC 7.1 open C:\development\planeshift\mk\msvc71\wkspstypical.sln<br>
-        If you have MSVC.NET 2005/VC 8.0 open c:\development\PlaneShift\mk\msvc8\wkspstypical.sln<br>
+        If you have MSVC.NET 7.0 open C:\development\planeshift\mk\msvc7\wkspstypical.sln<br />
+        If you have MSVC.NET 2003/VC 7.1 open C:\development\planeshift\mk\msvc71\wkspstypical.sln<br />
+        If you have MSVC.NET 2005/VC 8.0 open c:\development\PlaneShift\mk\msvc8\wkspstypical.sln<br />
         If you have MSVC.NET 2008/VC 9.0 open c:\development\PlaneShift\mk\msvc9\wkspstypical.sln
         </div>
         <div class="Static">
-        If you have MSVC.NET 7.0 open C:\development\planeshift\mk\msvc7\wkspsstatic.sln<br>
-        If you have MSVC.NET 2003/VC 7.1 open C:\development\planeshift\mk\msvc71\wkspsstatic.sln<br>
-        If you have MSVC.NET 2005/VC 8.0 open c:\development\planeshift\mk\msvc8\wkspsstatic.sln<br>
+        If you have MSVC.NET 7.0 open C:\development\planeshift\mk\msvc7\wkspsstatic.sln<br />
+        If you have MSVC.NET 2003/VC 7.1 open C:\development\planeshift\mk\msvc71\wkspsstatic.sln<br />
+        If you have MSVC.NET 2005/VC 8.0 open c:\development\planeshift\mk\msvc8\wkspsstatic.sln<br />
         If you have MSVC.NET 2008/VC 9.0 open c:\development\planeshift\mk\msvc9\wkspsstatic.sln
         </div>
     </p>
 
-    <p>Do the following if you put mysql somewhere else than C:\mysql:<br>
+    <p>Do the following if you put mysql somewhere else than C:\mysql:<br />
     Right-click plgdbmysql, under properties->linker->general, change the "C:\mysql\lib\opt"
     in Additional Library Directories to whatever your location of mysql is.</p>
 
     <div class="User">
-    Go into the 'Build' menu, and select 'configuration manager'. Change the 'Active Solution Configuration' to 'Release(with DLLs)'.<br>
+    Go into the 'Build' menu, and select 'configuration manager'. Change the 'Active Solution Configuration' to 'Release(with DLLs)'.<br />
     </div>
     <div class="Developer">
-    Go into the 'Build' menu, and select 'configuration manager'. Change the 'Active Solution Configuration' to 'Debug(with DLLs)'.<br>
+    Go into the 'Build' menu, and select 'configuration manager'. Change the 'Active Solution Configuration' to 'Debug(with DLLs)'.<br />
     </div>
 
     <p>If you are only interested in the client,
@@ -1769,11 +1769,11 @@ and select Properties, 'read only' is one of the attributes in the General tab) 
 </div>
 <div class="MSVC">
     <h3>Setting Up For Debugging</h3>
-    <p>Now before you can debug the programs, you need to change some properties of the project.<br>
-    For each application you are interested in debugging (e.g. apppsclient):<br>
-    Right-Click on the project.<br> Under properties->debugging change:<br>
-    Command to: C:\development\planeshift\(name).exe<br>
-    Working directory to: C:\development\planeshift\<br>
+    <p>Now before you can debug the programs, you need to change some properties of the project.<br />
+    For each application you are interested in debugging (e.g. apppsclient):<br />
+    Right-Click on the project.<br /> Under properties->debugging change:<br />
+    Command to: C:\development\planeshift\(name).exe<br />
+    Working directory to: C:\development\planeshift\<br />
     You should be good to go now.</p>
 </div>
 <!---------------------------------------------------------------------------------------------------->
@@ -1814,7 +1814,7 @@ downloaded from the SVN are usually more recent and updated.
 <i>Optional section</i>
 
 <h3>Create the Database</h3>
-<p>Check if MySQL is running.<br>
+<p>Check if MySQL is running.<br />
 <div class="Windows">
     <div class="MINGW">Also, you should use a Command Prompt in DOS for the MySQL client commands.</div>
 </div>
@@ -1855,7 +1855,7 @@ You can start your MySQL server in this way:</p>
     <p><i class="command"># /etc/init.d/mysql start</i></p>
     Then login to the MySQL client using (default username with no password):
     <p><i class="command">$ mysql -u username -ppassword</i></p>
-    The default username is root with no password.<br>
+    The default username is root with no password.<br />
     If you wish to put a password on the root account you can
     <i class="command"> $ mysqladmin -u root password "newpwd"</i>
 </div>
@@ -1864,7 +1864,7 @@ You can start your MySQL server in this way:</p>
 	Using a text editor open /etc/rc.conf and add the line: 
 	<p><i class="command">mysql_enable="YES"</i></p>then use
 	<p><i class="command"># /usr/local/etc/rc.d/mysql.sh start</i></p>
-	to start the mysql server.<br>
+	to start the mysql server.<br />
      Then login to the MySQL client using (default username with no password):
      <p><i class="command">$ mysql -u username -ppassword</i></p>
      The default username is root with no password.
@@ -1892,37 +1892,37 @@ mysql -u root -pyourpasswordhere<br />
 
 How to create a new PS database:
 <p><div class="commandBox">
-    mysql> create database planeshift;<br>
-    mysql> GRANT ALL PRIVILEGES ON planeshift.* TO planeshift@localhost IDENTIFIED BY 'planeshift';<br>
+    mysql> create database planeshift;<br />
+    mysql> GRANT ALL PRIVILEGES ON planeshift.* TO planeshift@localhost IDENTIFIED BY 'planeshift';<br />
     mysql> quit
 </div></p>
 
 <div class="Linux">
     <p><div class="commandBox">
-        $ cd home/development/planeshift/src/server/database/mysql/<br>
+        $ cd home/development/planeshift/src/server/database/mysql/<br />
         home/development/planeshift/src/server/database/mysql/$ mysql -u planeshift -pplaneshift
     </div></p>
 </div>
 <div class="FreeBSD">
     <p><div class="commandBox">
-        $ cd home/development/planeshift/src/server/database/mysql/<br>
+        $ cd home/development/planeshift/src/server/database/mysql/<br />
         home/development/planeshift/src/server/database/mysql/$ mysql -u planeshift -pplaneshift
     </div></p>
 </div>
 <div class="Windows">
     <p><div class="commandBox">
-        cd c:\development\planeshift\src\server\database\mysql\<br>
+        cd c:\development\planeshift\src\server\database\mysql\<br />
         C:\mysql\bin\mysql -u planeshift -pplaneshift
     </div></p>
 </div>
 <div class="MacOSX">
     <p><div class="commandBox">
-        $ cd $HOME/development/planeshift/src/server/database/mysql/<br>
+        $ cd $HOME/development/planeshift/src/server/database/mysql/<br />
         home/development/planeshift/src/server/database/mysql/$ mysql -u planeshift -pplaneshift
     </div></p>
 </div>
 <p><div class="commandBox">
-    mysql> source create_all.sql;<br>
+    mysql> source create_all.sql;<br />
     mysql> quit
 </div></p>
 
@@ -1939,19 +1939,21 @@ NOTE: If you have upgraded MySQL server to 4.1 or superior (while the client is 
 <p>
 <div class="Windows">
     <div class="MINGW">
-        Go to your PlaneShift directory (C:\development\planeshift) and run psserver, this will start the server.<br>
-        Note: psserver requires the DOS Command Prompt to run. psclient does not.<br>
+        Go to your PlaneShift directory (C:\development\planeshift) and run psserver, this will start the server.<br />
+        Note: psserver requires the DOS Command Prompt to run. psclient does not.<br />
     </div>
-    <div class="MSVC">Go to your PlaneShift directory (C:\development\planeshift) and run psserver. This will start the server.</div>
+    <div class="MSVC">Go to your PlaneShift directory (C:\development\planeshift) and run psserver. This will start the server.If you have a script to start your server or load maps you can open a terminal and use :<br />
+    <div class="commandBox">psserver --run=/this/script_name</div><br />
+    Note : If you have the file extension hidden, your file name might be "script.txt", and not "script"<br /></div><br />
 </div>
-<div class="Linux">Go to your PlaneShift directory ($HOME/development/planeshift) and run psserver, this will start the server. If you have a script to start your server or load maps you can use<br><br>
-<i class="command">./psserver --run=/this/script_name</i> <br> <br>
+<div class="Linux">Go to your PlaneShift directory ($HOME/development/planeshift) and run psserver, this will start the server. If you have a script to start your server or load maps you can use<br /><br />
+<i class="command">./psserver --run=/this/script_name</i> <br /> <br />
 </div>
-<div class="FreeBSD">Go to your PlaneShift directory ($HOME/development/planeshift) and run psserver, this will start the server. If you have a script to start your server or load maps you can use<br><br>
-<i class="command">./psserver --run=/this/script_name</i> <br> <br>
+<div class="FreeBSD">Go to your PlaneShift directory ($HOME/development/planeshift) and run psserver, this will start the server. If you have a script to start your server or load maps you can use<br /><br />
+<i class="command">./psserver --run=/this/script_name</i> <br /> <br />
 </div>
-<div class="MacOSX">Go to your PlaneShift directory ($HOME/development/planeshift) and run psserver, this will start the server. If you have a script to start your server or load maps you can use<br><br>
-<i class="command">./psserver --run=/this/script_name</i><br></div>
+<div class="MacOSX">Go to your PlaneShift directory ($HOME/development/planeshift) and run psserver, this will start the server. If you have a script to start your server or load maps you can use<br /><br />
+<i class="command">./psserver --run=/this/script_name</i><br /></div>
 Once the server has been started, you should see a "PS Server:" prompt. Not always does the prompt show PS Server: on first start but this is ok as long as you have gotten no errors so far.</p>
 
 <div class="Windows">
@@ -1961,11 +1963,11 @@ Once the server has been started, you should see a "PS Server:" prompt. Not alwa
 
 Type the following to load the correct map and spawn all items and NPCs:
 <p><div class="commandBox">
-    PS Server: loadmap npcroom1<br>
-    PS Server: loadmap npcroom2<br>
-    PS Server: loadmap npcroom_corr<br>
-    PS Server: loadmap podium<br>
-    PS Server: spawn<br>
+    PS Server: loadmap npcroom1<br />
+    PS Server: loadmap npcroom2<br />
+    PS Server: loadmap npcroom_corr<br />
+    PS Server: loadmap podium<br />
+    PS Server: spawn<br />
     PS Server: ready
 </div></p>
 
@@ -1975,10 +1977,10 @@ To see a list of all available psserver commands, type "help".  You can shut dow
 <p>You should now be able to start psclient and log in. The server is localhost on port 13331, if your server
 is located somewhere else or you want to connect to somebody's else server, you need to modify the servers list.
 
-<div class="Windows">The servers list is located in <i class="Command">C:\development\planeshift\data\servers.xml.</i></div> <br>
-<div class="Linux">The servers list is located in <i class="Command"> $HOME/development/planeshift/data/servers.xml</i></div><br>
-<div class="MacOSX">The servers list is located in <i class="Command" >$HOME/development/planeshift/data/servers.xml</i></div><br>
-<div class="FreeBSD">The servers list is located in <i class="Command"> $HOME/development/planeshift/data/servers.xml</i></div><br>
+<div class="Windows">The servers list is located in <i class="Command">C:\development\planeshift\data\servers.xml.</i></div> <br />
+<div class="Linux">The servers list is located in <i class="Command"> $HOME/development/planeshift/data/servers.xml</i></div><br />
+<div class="MacOSX">The servers list is located in <i class="Command" >$HOME/development/planeshift/data/servers.xml</i></div><br />
+<div class="FreeBSD">The servers list is located in <i class="Command"> $HOME/development/planeshift/data/servers.xml</i></div><br />
 
  The following accounts are in the SVN DB:</p>
 
@@ -2062,22 +2064,22 @@ is located somewhere else or you want to connect to somebody's else server, you 
     time. In this way you can also have multiple versions of CS coexisting peacefully.</p>
 
     <p><div class="commandBox">
-        $ cd $HOME/development<br>
-        $ echo "export LD_LIBRARY_PATH="$PWD/cal3d/src/cal3d/.libs/:$PWD/cs/:"$LD_LIBRARY_PATH"<br>
-        $ echo \#\!/bin/sh > PlaneShiftserver.sh<br>
-        $ echo "export CRYSTAL=$PWD/cs/" >> PlaneShiftserver.sh<br>
-        $ echo "cd $PWD/PlaneShift" >> PlaneShiftserver.sh<br>
-        $ echo "./psserver \$@" >>  PlaneShiftserver.sh<br>
+        $ cd $HOME/development<br />
+        $ echo "export LD_LIBRARY_PATH="$PWD/cal3d/src/cal3d/.libs/:$PWD/cs/:"$LD_LIBRARY_PATH"<br />
+        $ echo \#\!/bin/sh > PlaneShiftserver.sh<br />
+        $ echo "export CRYSTAL=$PWD/cs/" >> PlaneShiftserver.sh<br />
+        $ echo "cd $PWD/PlaneShift" >> PlaneShiftserver.sh<br />
+        $ echo "./psserver \$@" >>  PlaneShiftserver.sh<br />
         $ chmod +x PlaneShiftserver.sh
     </div></p>
 
     <p><div class="commandBox">
-        $ cd $HOME/development<br>
-        $ echo "export LD_LIBRARY_PATH="$PWD/cal3d/src/cal3d/.libs/:$PWD/cs/:"$LD_LIBRARY_PATH"<br>
-        $ echo \#\!/bin/sh > PlaneShiftclient.sh<br>
-        $ echo "export CRYSTAL=$PWD/cs/" >> PlaneShiftclient.sh<br>
-        $ echo "cd $PWD/PlaneShift/" >> PlaneShiftclient.sh<br>
-        $ echo "./psclient \$@" >>  PlaneShiftclient.sh<br>
+        $ cd $HOME/development<br />
+        $ echo "export LD_LIBRARY_PATH="$PWD/cal3d/src/cal3d/.libs/:$PWD/cs/:"$LD_LIBRARY_PATH"<br />
+        $ echo \#\!/bin/sh > PlaneShiftclient.sh<br />
+        $ echo "export CRYSTAL=$PWD/cs/" >> PlaneShiftclient.sh<br />
+        $ echo "cd $PWD/PlaneShift/" >> PlaneShiftclient.sh<br />
+        $ echo "./psclient \$@" >>  PlaneShiftclient.sh<br />
         $ chmod +x PlaneShiftclient.sh
     </div></p>
 </div>
@@ -2120,8 +2122,8 @@ is located somewhere else or you want to connect to somebody's else server, you 
 <p>
     You can use the same mount as many times as needed, using different sub-dirs:
     <p><div class="commandBox">
-        PlaneShift.Mount.npcszip = /bins/art/npcs.zip<br>
-        PlaneShift.Mount.weaponzip = /bins/art/things/weapons.zip<br>
+        PlaneShift.Mount.npcszip = /bins/art/npcs.zip<br />
+        PlaneShift.Mount.weaponzip = /bins/art/things/weapons.zip<br />
     </div></p>
 </p>
 <p>
@@ -2149,27 +2151,27 @@ is located somewhere else or you want to connect to somebody's else server, you 
 <p>
     You can use the above method to easily mount most art.  The full list of mounts used is as follows:
     <p><i>
-        Planeshift.Mount.zipmapdir<br>
-        Planeshift.Mount.characterszip<br>
-        Planeshift.Mount.npcszip<br>
-        Planeshift.Mount.weaponzip<br>
-        Planeshift.Mount.itemzip<br>
-        Planeshift.Mount.azurezip<br>
-        Planeshift.Mount.bluezip<br>
-        Planeshift.Mount.brownzip<br>
-        Planeshift.Mount.crystalzip<br>
-        Planeshift.Mount.darkzip<br>
-        Planeshift.Mount.redzip<br>
-        Planeshift.Mount.potionszip<br>
-        Planeshift.Mount.moneyzip<br>
-        Planeshift.Mount.bookszip<br>
-        Planeshift.Mount.shieldszip<br>
-        Planeshift.Mount.toolszip<br>
-        Planeshift.Mount.naturalreszip<br>
-        Planeshift.Mount.foodzip<br>
-        Planeshift.Mount.helmszip<br>
-        Planeshift.Mount.jewelryzip<br>
-        Planeshift.GUI.Skin.Base<br>
+        Planeshift.Mount.zipmapdir<br />
+        Planeshift.Mount.characterszip<br />
+        Planeshift.Mount.npcszip<br />
+        Planeshift.Mount.weaponzip<br />
+        Planeshift.Mount.itemzip<br />
+        Planeshift.Mount.azurezip<br />
+        Planeshift.Mount.bluezip<br />
+        Planeshift.Mount.brownzip<br />
+        Planeshift.Mount.crystalzip<br />
+        Planeshift.Mount.darkzip<br />
+        Planeshift.Mount.redzip<br />
+        Planeshift.Mount.potionszip<br />
+        Planeshift.Mount.moneyzip<br />
+        Planeshift.Mount.bookszip<br />
+        Planeshift.Mount.shieldszip<br />
+        Planeshift.Mount.toolszip<br />
+        Planeshift.Mount.naturalreszip<br />
+        Planeshift.Mount.foodzip<br />
+        Planeshift.Mount.helmszip<br />
+        Planeshift.Mount.jewelryzip<br />
+        Planeshift.GUI.Skin.Base<br />
         Planeshift.GUI.Skin.Dir
     </p></i>
     <p>
@@ -2185,11 +2187,11 @@ is located somewhere else or you want to connect to somebody's else server, you 
 <!---------------------------------------------------------------------------------------------------->
 
 <h2><a name="help">Getting Help</a></h2>
-<p>If you have trouble getting any of this to work, please feel free to contact us and we will do our best to help.<br>
+<p>If you have trouble getting any of this to work, please feel free to contact us and we will do our best to help.<br />
 There is an IRC channel dedicated to providing help with building PlaneShift:</p>
 
 <p>
-    <b>Server:</b> irc.freenode.net<br>
+    <b>Server:</b> irc.freenode.net<br />
     <b>Channel:</b> #PlaneShift-build
 </p>
 
