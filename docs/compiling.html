@@ -52,7 +52,7 @@ e.custom(start,val,"");}});return true;});},queue:function(type,fn){if(jQuery.is
     var csWinLibsVersionStab = "1.3_004"; // cs win32 libs version.
     var csWinLibsVersion = "1.4_001"; // cs win32 libs version.
     //Update date and author, to be changed everytime and updates occurred
-    var UpdateDate = "18 April 2009"; //Date when the update occurred
+    var UpdateDate = "21 April 2009"; //Date when the update occurred
     var UpdateAuthor = "kougaro"; //Author of the update
 -->
 </script>
@@ -1154,8 +1154,9 @@ If you update a repository, you will need to recompile that repository and each 
 
     <p>
         <i>CS SVN:</i><br>
-        Right-click on the folder of the module you want and goto TortoiseSVN->"Update to Revision".
-        Enter a new revsion number or select HEAD to get latest, there is a possibility that HEAD may not work with with PS so keep that in mind. Click ok, and the files will be updated.
+        Right-click on the folder of the module you want and go to TortoiseSVN->"Update to Revision".
+        Enter a new revsion number or select HEAD to get latest, there is a possibility that HEAD may not work with PS so keep that in mind. Click ok, and the files will be updated.
+        <div class="MSVC">If you rebuild CS, copy the dlls as described in the section : Compile the Code - Planeshift</div>
     </p>
 
     <p>
@@ -1703,6 +1704,15 @@ and select Properties, 'read only' is one of the attributes in the General tab) 
     irc.freenode.net #crystalspace</p>
 
     <h3>PlaneShift</h3>
+    
+    <p>Execute the following commands :
+    <div class="commandBox">
+    xcopy "C:\Development\CS\crystalspace-1.9-vc9_d.dll" "C:\Development\PlaneShift" /D /Y<br />
+    xcopy "C:\Development\CS\libcal3d-csvc9_d.dll" "C:\Development\PlaneShift" /D /Y<br />
+    xcopy "C:\Development\CS\libz-cs.dll" "C:\Development\PlaneShift" /D /Y</div><br />
+    Note that the exact name of the first two dlls may vary, depending on your version of MSVC.
+    </p>
+    
     <p>Under Tools-&gt;Options in you MSVC look on the left hand side for the Projects
     folder. Under Projects choose "VC++ Directories". In the Show Directories for: choose
     "Library Files". Click the new folder icon to add the following directories:</p>
@@ -1749,11 +1759,12 @@ and select Properties, 'read only' is one of the attributes in the General tab) 
     Go into the 'Build' menu, and select 'configuration manager'. Change the 'Active Solution Configuration' to 'Debug(with DLLs)'.<br>
     </div>
 
-    <p>Build solution.</p>
+    <p>If you are only interested in the client,
+    right-click the apppsclient project in the solution explorer window and select Rebuild;<br />
+    else, Build solution.</p>
 </div>
 <div class="Windows">
-    <p>Note: You might have to copy a few DLL files from other build directories to your
-    PlaneShift directory if you get problems. You usually need to move libz-cs.dll, and libmySQL.dll.</p>
+    <p>Note: If you built the server, you may need to copy libmySQL.dll.</p>
 
 </div>
 <div class="MSVC">
