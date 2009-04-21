@@ -1,3 +1,6 @@
+*** 2009-04-21 by Tristan Cragnolini
+- Updates to the MSVC compiling guide, credits goes to Bovek
+
 *** 2009-04-20 by Stefano Angeleri
 - Added item category prerequisite operator. It allows to check for an item of
   the specified category in the inventory or equipment.
