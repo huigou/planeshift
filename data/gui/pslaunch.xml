@@ -257,7 +257,7 @@
 
       <!-- Graphics Widget -->
       <widget name="SettingsGraphics" factory="pawsWidget" id="1310" visible="no" alwaysontop="true">
-        <frame x="90" y="200" width="670" height="290" />
+        <frame x="90" y="200" width="670" height="330" />
 
         <widget name="ScreenDepthText" factory="pawsTextBox" id="13101">
           <frame x="0" y="3" width="90" height="20"/>
