@@ -27,6 +27,7 @@
 #include <iutil/document.h>
 #include <iutil/stringarray.h>
 
+#include "util/pscssetup.h"
 #include "testrpgrules.h"
 #include "../psmoney.h"
 
