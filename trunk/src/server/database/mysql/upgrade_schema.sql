@@ -1151,6 +1151,10 @@ UPDATE `server_options` SET `option_value`='1216' WHERE `option_name`='db_versio
 
 UPDATE `server_options` SET `option_value`='1217' WHERE `option_name`='db_version';
 
+#### added a new math script Calculate Repair Rank, removing so the hardcoded script
+
+INSERT INTO math_scripts VALUES( "Calculate Repair Rank","Result = if(Object:SalePrice > 300,Object:SalePrice/150,0);");
+
 
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
