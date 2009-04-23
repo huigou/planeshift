@@ -264,6 +264,7 @@ public:
     
 protected:
     csPDelArray<NaturalResource> resources; ///< list of all natural resources in game.
+    MathScript *calc_repair_rank;           ///< This is the calculation for how much skill is required to repair.
     MathScript *calc_repair_time;           ///< This is the calculation for how long a repair takes.
     MathScript *calc_repair_result;         ///< This is the calculation for how many points of quality are added in a repair.
     MathScript *calc_mining_chance;         ///< This is the calculation for chance of successful mining.
