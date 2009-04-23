@@ -132,8 +132,6 @@ psServer::psServer ()
     vfs                 = NULL;
     unused_pid          = 0;
 
-    // Initialize the RNG using current time() as the seed value
-    randomGen.Initialize();
 }
 
 #define PS_CHECK_REF_COUNT(c) printf("%3d %s\n",c->GetRefCount(),#c)
