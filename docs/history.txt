@@ -1,3 +1,6 @@
+*** 2009-04-23 by Stefano Angeleri
+- made rankneeded in the repair process a math script
+
 *** 2009-04-21 by Tristan Cragnolini
 - Updates to the MSVC compiling guide, credits goes to Bovek
 
