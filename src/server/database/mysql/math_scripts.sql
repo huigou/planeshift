@@ -118,6 +118,8 @@ INSERT INTO math_scripts VALUES( "CalculateMaxMana", "MaxMana = Actor:Will + Act
 
 INSERT INTO math_scripts VALUES( "LootModifierCostCap", "ModCap = MaxHP*10;");
 
+INSERT INTO math_scripts VALUES( "Calculate Repair Rank","Result = if(Object:SalePrice > 300,Object:SalePrice/150,0);");
+
 INSERT INTO math_scripts VALUES( "Calculate Repair Time",
 "
         Result = Object:SalePrice/100;

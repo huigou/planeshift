@@ -126,11 +126,16 @@ WorkManager::WorkManager()
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<WorkManager>(this,&WorkManager::HandleWorkCommand),MSGTYPE_WORKCMD,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<WorkManager>(this,&WorkManager::HandleLockPick),MSGTYPE_LOCKPICK,REQUIRE_READY_CLIENT|REQUIRE_ALIVE|REQUIRE_TARGET);
 
+    calc_repair_rank   = psserver->GetMathScriptEngine()->FindScript("Calculate Repair Rank");
     calc_repair_time   = psserver->GetMathScriptEngine()->FindScript("Calculate Repair Time");
     calc_repair_result = psserver->GetMathScriptEngine()->FindScript("Calculate Repair Result");
     calc_mining_chance = psserver->GetMathScriptEngine()->FindScript("Calculate Mining Odds");
     calc_lockpick_time = psserver->GetMathScriptEngine()->FindScript("Lockpicking Time");
 
+    if (!calc_repair_rank)
+    {
+        Error1("Could not find mathscript 'Calculate Repair Rank'");
+    }
     if (!calc_repair_time)
     {
         Error1("Could not find mathscript 'Calculate Repair Time'");
@@ -355,10 +360,14 @@ void WorkManager::HandleRepair(Client *client, psWorkCmdMessage &msg)
     }
 
     // Calculate if current skill is enough to repair the item
-    int rankneeded = repairTarget->GetPrice().GetTotal() / 150;
-    // if the item is low cost, allow people to try repair anyway
-    if (repairTarget->GetPrice().GetTotal()<300)
-        rankneeded = 0;
+    int rankneeded;
+    {
+        MathEnvironment env;
+        env.Define("Object", repairTarget);
+        calc_repair_rank->Evaluate(&env);
+        rankneeded = env.Lookup("Result")->GetValue();
+    }
+
     int skillid = repairTarget->GetBaseStats()->GetCategory()->repairSkillId;
     int repairskillrank = client->GetCharacterData()->Skills().GetSkillRank(PSSKILL(skillid)).Current();
     if (repairskillrank<rankneeded)
