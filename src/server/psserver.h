@@ -356,14 +356,15 @@ public:
 
     /** Returns a random number.
      *
-     * @return Returns a random number between 0.0 and 1.0.
+     * @return Returns a random number between 0.0(inclusive) and 1.0(non-inclusive).
      */
-    float GetRandom() { return randomGen.Get(); }
+    float GetRandom() { return rng->Get(); }
+    
     /** Returns a random number with a limit.
      *
      * @return Returns a random number between 0 and limit.
      */
-    uint32 GetRandom(uint32 limit) { return randomGen.Get(limit); }
+    uint32 GetRandom(uint32 limit) { return rng->Get(limit); }
 
     /**
      * Convenience command to send a client a psSystemMessage.
@@ -546,7 +547,6 @@ protected:
     TutorialManager*                tutorialmanager;
     MiniGameManager*                minigamemanager;
     IntroductionManager*            intromanager;
-    csRandomGen                     randomGen;
     MathScriptEngine*               mathscriptengine;
     iObjectRegistry*                objreg;
     csRef<iConfigManager>           configmanager;
