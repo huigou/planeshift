@@ -1,5 +1,5 @@
-  Function parser for C++  v2.82 by Warp.
-  ======================================
+  Function parser for C++  v3.1.2 by Warp.
+  ========================================
 
   Optimization code contributed by Bisqwit (http://iki.fi/bisqwit/)
 
@@ -7,15 +7,40 @@
   The usage license of this library is located at the end of this text file.
 
 
-  What's new in v2.82
-  -------------------
-  - Fixed bug in the optimizer which caused a crash with some functions.
+  What's new in v3.1.2
+  --------------------
+  - Fixed the bugs in the new optimizer code, and thus the new optimizer
+    has been restored.
+  - Small bugfixes and fine-tuning to make the library more compatible with
+    other compilers (especially MSVC++).
 
-  What's new in v2.81
-  -------------------
-  - Added support for units (see help on the AddUnit() method).
-  - Added support for optionally making the Eval() function thread-safe
-    with a precompiler constant.
+  What's new in v3.1.1
+  --------------------
+  - Due to several bugs in the new optimizer, the old optimizer (from the
+    library version 3.0.3) has been temporarily restored, until these bugs
+    are fixed. The other new library features are not affected.
+
+  What's new in v3.1
+  ------------------
+  - The optimizer has been completely rewritten. The new optimizer contains
+    more and better optimization rules than before, and is more easily
+    extensible.
+  - The Parse() function now precalculates simple constant expressions
+    which can be calculated without compromising parsing speed. For example
+    the input function "x+7/2" will be byte-compiled into the equivalent of
+    "x+3.5". (Note that precalculation of constant expressions at parse
+    time is limited and doesn't work in all possible situations. For example
+    a function like "x+1+2" cannot be precalculated into "x+3" because of
+    the way single-token lookahead recursive descent parsing works. The
+    Optimize() function will do a much more comprehensive optimization work.)
+  - A new development version of the library is available. The development
+    version of the library contains the full optimizer sources, an extensive
+    regression testbed, a Makefile and other tools.
+  - Fixed bug: The size of the internal stack was incorrectly calculated
+    in certain situations where a user-defined function taking 0 parameters
+    was used. In some rare circumstances this could potentially cause an
+    out-of-boundaries array access.
+  - A new HTML version of this documentation is available.
 
 
   Table of contents:
@@ -24,6 +49,7 @@
   - Usage
     * Configuring the compilation
     * Copying and assignment
+    * Identifier names
     * Short descriptions of FunctionParser methods
     * Long descriptions of FunctionParser methods
   - About thread safety
@@ -70,7 +96,7 @@ link them to the main program. In some developement environments it's
 enough to add those two files to your current project.
 
   If you are not going to use the optimizer (ie. you have commented out
-SUPPORT_OPTIMIZER in fpconfig.hh), you can leave the latter file out.
+FP_SUPPORT_OPTIMIZER in fpconfig.hh), you can leave the latter file out.
 
 
   * Configuring the compilation:
@@ -79,37 +105,36 @@ SUPPORT_OPTIMIZER in fpconfig.hh), you can leave the latter file out.
     There is a set of precompiler options in the fpconfig.hh file
   which can be used for setting certain features on or off:
 
-  NO_ASINH : (Default on)
+  FP_NO_ASINH : (Default on)
        By default the library does not support the asinh(), acosh()
        and atanh() functions because they are not part of the ISO C++
        standard. If your compiler supports them and you want the
        parser to support them as well, comment out this line.
+       Alternatively you can define the FP_SUPPORT_ASINH precompiler
+       constant in your compiler settings to turn on the support
+       (eg. with -DFP_SUPPORT_ASINH in gcc).
 
-  DISABLE_EVAL : (Default off)
+  FP_DISABLE_EVAL : (Default on)
        Even though the maximum recursion level of the eval() function
        is limited, it is still possible to write functions which never
        reach this maximum recursion level but take enormous amounts of
        time to evaluate (this can be undesirable eg. in web server-side
-       applications).
-       Uncommenting this line will disable the eval() function completely,
-       thus removing the danger of exploitation.
+       applications). For this reason this function is disabled by default.
+       You can add support for the eval() function by uncommenting this
+       line or, alternatively, you can define the FP_ENABLE_EVAL precompiler
+       constant in your compiler settings.
 
-       Note that you can also disable eval() by specifying the
-       DISABLE_EVAL precompiler constant in your compiler (eg.
-       with -DDISABLE_EVAL in gcc).
-
-  EVAL_MAX_REC_LEVEL : (Default 1000)
+  FP_EVAL_MAX_REC_LEVEL : (Default 1000)
        Sets the maximum recursion level allowed for eval().
 
-  SUPPORT_OPTIMIZER : (Default on)
+  FP_SUPPORT_OPTIMIZER : (Default on)
        If you are not going to use the Optimize() method, you can comment
-       this line out to speed-up the compilation of fparser.cc a bit, as
-       well as making the binary a bit smaller. (Optimize() can still be
-       called, but it will not do anything.)
+       this line out to speed-up the compilation a bit, as well as making
+       the binary a bit smaller. (Optimize() can still be called, but it
+       will not do anything.)
 
        You can also disable the optimizer by specifying the
-       NO_SUPPORT_OPTIMIZER precompiler constant in your compiler
-       (eg. with -DNO_SUPPORT_OPTIMIZER in gcc).
+       FP_NO_SUPPORT_OPTIMIZER precompiler constant in your compiler.
 
   FP_EPSILON : (Default 1e-14)
        Epsilon value used in comparison operators.
@@ -159,15 +184,39 @@ SUPPORT_OPTIMIZER in fpconfig.hh), you can leave the latter file out.
      assigned to another, like "fp2 = fp1;".)
 
 
+  * Identifier names:
+    ----------------
+
+    An identifier is a function (internal or user-defined), variable,
+  constant or unit. New identifiers can be specified with the functions
+  described in the next subsections.
+
+    The name of an identifier can use any alphanumeric characters, the
+  underscore character and any UTF8-encoded unicode character. The first
+  character of the name cannot be a numeric digit, though.
+
+    All functions, variables, constants and units must use unique names.
+  It's not possible to add two different identifiers with the same name.
+
+
   * Short descriptions of FunctionParser methods:
     --------------------------------------------
 
 int Parse(const std::string& Function, const std::string& Vars,
           bool useDegrees = false);
 
+int Parse(const char* Function, const std::string& Vars,
+          bool useDegrees = false);
+
     Parses the given function and compiles it to internal format.
     Return value is -1 if successful, else the index value to the location
     of the error.
+
+
+void setDelimiterChar(char);
+
+    Sets an ending delimiter character for the function string. (See the
+    long description for more details.)
 
 
 const char* ErrorMsg(void) const;
@@ -231,6 +280,9 @@ bool AddFunction(const std::string& name, FunctionParser&);
 ---------------------------------------------------------------------------
 int Parse(const std::string& Function, const std::string& Vars,
           bool useDegrees = false);
+
+int Parse(const char* Function, const std::string& Vars,
+          bool useDegrees = false);
 ---------------------------------------------------------------------------
 
       Parses the given function (and compiles it to internal format).
@@ -245,11 +297,15 @@ int Parse(const std::string& Function, const std::string& Vars,
       useDegrees: (Optional.) Whether to use degrees or radians in
                   trigonometric functions. (Default: radians)
 
+    If a char* is given as the Function parameter, it must be a null-terminated
+    string.
+
     Variables can have any size and they are case sensitive (ie. "var",
-    "VAR" and "Var" are *different* variable names). Letters, digits and
-    underscores can be used in variable names, but the name of a variable
-    can't begin with a digit. Each variable name can appear only once in
-    the 'Vars' string. Function names are not legal variable names.
+    "VAR" and "Var" are *different* variable names). Letters, digits,
+    underscores and UTF8-encoded characters can be used in variable names,
+    but the name of a variable can't begin with a digit. Each variable name
+    can appear only once in the 'Vars' string. Function names are not legal
+    variable names.
 
     Using longer variable names causes no overhead whatsoever to the Eval()
     method, so it's completely safe to use variable names of any size.
@@ -265,6 +321,50 @@ int Parse(const std::string& Function, const std::string& Vars,
      a parsing error returns an index to the end of the string + 1.
 
     Example: parser.Parse("3*x+y", "x,y");
+
+
+---------------------------------------------------------------------------
+void setDelimiterChar(char);
+---------------------------------------------------------------------------
+
+    By default the parser expects the entire function string to be valid
+    (ie. the entire contents of the given std::string, or a C string ending
+    in the null character '\0').
+
+    If a delimiter character is specified with this function, then if it's
+    encountered at the outermost parsing level by the Parse() function, and
+    the input function has been valid so far, Parse() will return an index
+    to this character inside the input string, but rather than set an error
+    code, FP_NO_ERROR will be set.
+
+    The idea is that this can be used to more easily parse functions which
+    are embedded inside larger strings, containing surrounding data, without
+    having to explicitly extract the function to a separate string.
+
+    For example, suppose you are writing an interpreter for a scripting
+    language, which can have commands like this:
+
+let MyFunction(x,y) = { sin(x*x+y*y) } // A 2-dimensional function
+
+    Normally when parsing such a line you would have to extract the part
+    inside the curly brackets into a separate string and parse it that way.
+    With this feature what you can do instead is to set '}' as the delimiter
+    character and then simply give a pointer to the character which comes
+    after the '{'. If all goes well, the Parse() function will return an
+    index to the '}' character (from the given starting point) and
+    GetParseErrorType() will return FP_NO_ERROR. You can use the return
+    value (if it's not -1) to jump forward in the string to the delimiter
+    character.
+
+    Note that a null character ('\0') or the end of the std::string (if
+    one was given) will still be a valid end of the function string even
+    if a delimiter character was specified. (In this case Parse() will
+    return -1 if there was no error, as usual.)
+
+    Also note that the delimiter character cannot be any valid operator
+    or alphanumeric (including the underscore) character, nor the other
+    characters defined in the function syntax. It must be a character not
+    supported by the function parser (such as '}', '"', ']', etc).
 
 
 ---------------------------------------------------------------------------
@@ -379,7 +479,7 @@ void Optimize();
     Optimize() and checking EvalError().
 
       If the destination application is not going to use this method,
-    the compiler constant SUPPORT_OPTIMIZER can be undefined in fpconfig.hh
+    the compiler constant FP_SUPPORT_OPTIMIZER can be undefined in fpconfig.hh
     to make the library smaller (Optimize() can still be called, but it will
     not do anything).
 
@@ -449,11 +549,8 @@ bool AddUnit(const std::string& name, double value);
     To change the value of a unit, call AddUnit() again with the same unit
     name and the new value.
 
-      Note that units are independent from variables, constants and functions.
-    This means that a unit can have the same name as those (there isn't any
-    syntactical problem in that), thus for example "x x" is a valid function
-    if "x" is a variable or constant and "x" is a unit, although for the sake
-    of clarity that is usually not recommended.
+      Unit names share the same namespace as constants, functions and
+    variables, and thus should be distinct from those.
 
     Example: parser.AddUnit("in", 300);
 
@@ -664,6 +761,7 @@ or functions using the following operators in this order of precedence:
   log10(A)  : Base 10 logarithm of A.
   max(A,B)  : If A>B, the result is A, else B.
   min(A,B)  : If A<B, the result is A, else B.
+  pow(A,B)  : Exponentiation (A raised to the power B).
   sec(A)    : Secant of A (equivalent to 1/cos(A)).
   sin(A)    : Sine of A. Returns the sine of the angle A, where A is
               measured in radians.
@@ -784,7 +882,7 @@ make loops or anything.
   Usage license:
 =============================================================================
 
-Copyright © 2003-2005 Juha Nieminen, Joel Yliluoma
+Copyright © 2003-2008 Juha Nieminen, Joel Yliluoma
 
   This library is distributed under two distinct usage licenses depending
 on the software ("Software" below) which uses the Function Parser library
@@ -816,6 +914,10 @@ A) If the Software using the Library is distributed under the GPL license,
    with the sources of the Library. (Documentation about possible
    modifications to the library should be put in a different text file.)
 
+   As per the GPL license, the copyright notification at the beginning of
+   this section should accompany any significant portions of the Library.
+   Proper credits in any Software using the Library is appreciated.
+
 B) If the Software using the Library is not distributed under the GPL
    license but under any other license, then the following usage license
    applies to the Library:
@@ -846,9 +948,10 @@ B) If the Software using the Library is not distributed under the GPL
      provide the source code, proper credits MUST be included. Trying to
      obfuscate the fact that this library is not made by you or that it is
      free is expressly prohibited. When crediting the usage of this library,
-     it's enough to include my name and email address, that is:
-     "Juha Nieminen (warp@iki.fi)". Also a URL to the library download page
-     would be nice, although not required. The official URL is:
+     it's enough to include a copyright notice and the name of the authors,
+     that is: Juha Nieminen, Joel Yliluoma.
+     Also a URL to the library download page would be nice, although not
+     required. The official URL is:
        http://iki.fi/warp/FunctionParser/
 
   6. And the necessary "lawyer stuff":

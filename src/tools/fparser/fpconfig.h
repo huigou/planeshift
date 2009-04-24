@@ -1,6 +1,6 @@
-//===============================
-// Function parser v2.82 by Warp
-//===============================
+//================================
+// Function parser v3.1.2 by Warp
+//================================
 
 // Configuration file
 // ------------------
@@ -8,31 +8,40 @@
 // NOTE:
 // This file is for the internal use of the function parser only.
 // You don't need to include this file in your source files, just
-// include "fparser.h".
+// include "fparser.hh".
 
 /*
  Comment out the following line if your compiler supports the (non-standard)
  asinh, acosh and atanh functions and you want them to be supported. If
  you are not sure, just leave it (those function will then not be supported).
+ Alternatively you can define the FP_SUPPORT_ASINH precompiler constant in
+ your compiler settings.
 */
-#define NO_ASINH
+#ifndef FP_SUPPORT_ASINH
+#define FP_NO_ASINH
+#endif
 
 
 /*
- Uncomment the following line to disable the eval() function if it could
- be too dangerous in the target application.
- Note that even though the maximum recursion level of eval() is limited,
- it is still possible to write functions using it which take enormous
- amounts of time to evaluate even though the maximum recursion is never
- reached. This may be undesirable in some applications.
+ Comment out the following line to enable the eval() function, which can
+ be used in the function string to recursively call the same function.
+ Note that enabling this function may be dangerous even if the maximum
+ recursion level is limited because it is still possible to write functions
+ using it which take enormous  amounts of time to evaluate even though the
+ maximum recursion is never reached. This may be undesirable in some
+ applications.
+ Alternatively you can define the FP_ENABLE_EVAL precompiler constant in
+ your compiler settings.
 */
-//#define DISABLE_EVAL
+#ifndef FP_ENABLE_EVAL
+#define FP_DISABLE_EVAL
+#endif
 
 
 /*
  Maximum recursion level for eval() calls:
 */
-#define EVAL_MAX_REC_LEVEL 1000
+#define FP_EVAL_MAX_REC_LEVEL 1000
 
 
 /*
@@ -42,8 +51,8 @@
  If you are unsure, just leave it. It won't slow down the other parts of
  the library.
 */
-#ifndef NO_SUPPORT_OPTIMIZER
-#define SUPPORT_OPTIMIZER
+#ifndef FP_NO_SUPPORT_OPTIMIZER
+#define FP_SUPPORT_OPTIMIZER
 #endif
 
 
