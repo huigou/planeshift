@@ -369,6 +369,17 @@ bool ExchangingCharacter::IsOfferingSane()
         if (item && itemInSlot->exchangeStackCount > item->GetStackCount())
             return false;
     }
+
+    //Make sure offered money is really available
+    psMoney characterMoney = chrinv->owner->Money();
+    if( characterMoney.Get(MONEY_CIRCLES) < offeringMoney.Get(MONEY_CIRCLES) ||
+        characterMoney.Get(MONEY_OCTAS)   < offeringMoney.Get(MONEY_OCTAS)   ||
+        characterMoney.Get(MONEY_HEXAS)   < offeringMoney.Get(MONEY_HEXAS)   ||
+        characterMoney.Get(MONEY_TRIAS)   < offeringMoney.Get(MONEY_TRIAS))
+    {
+        return false;
+    }
+    
     return true;
 }
 
@@ -1399,11 +1410,7 @@ void ExchangeManager::StartExchange( Client* client, bool withPlayer )
     // if the command was "/trade":
     else
     {
-        if(targetClient->IsFrozen())
-        {
-            psserver->SendSystemInfo(client->GetClientNum(), "% was frozen by a GM and cannot trade", target->GetName());
-            return;
-        }
+
 
         if ( target->GetNPCPtr() )
         {
@@ -1421,6 +1428,12 @@ void ExchangeManager::StartExchange( Client* client, bool withPlayer )
         if ( client == targetClient )
         {
             psserver->SendSystemError(client->GetClientNum(),"You can not trade with yourself");
+            return;
+        }
+
+        if(targetClient->IsFrozen())
+        {
+            psserver->SendSystemInfo(client->GetClientNum(), "% was frozen by a GM and cannot trade", target->GetName());
             return;
         }
 
