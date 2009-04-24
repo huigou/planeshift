@@ -158,7 +158,7 @@ namespace FPoptimizer_CodeTree
         bool    IsImmed() const;
         double GetImmed() const { return Value; }
         bool    IsLongIntegerImmed() const { return IsImmed() && GetImmed() == (double)GetLongIntegerImmed(); }
-        double GetLongIntegerImmed() const { return (long)GetImmed(); }
+        long GetLongIntegerImmed() const { return (long)GetImmed(); }
         bool      IsVar() const;
         unsigned GetVar() const { return Var; }
 
@@ -4615,7 +4615,7 @@ namespace
             if(value >= POWI_CACHE_SIZE) return false;
             //FPO(fprintf(stderr, "%ld will be needed %d times more\n", count, need_count));
             cache_needed[value] += count;
-            return cache[value];
+            return cache[value] == 0? false : true;
         }
 
         void Plan_Has(long value)
@@ -5049,7 +5049,7 @@ namespace FPoptimizer_CodeTree
                         *p0.param, p1.param->GetLongIntegerImmed(),
                         MulSequence,
                         synth,
-                        MAX_POWI_BYTECODE_LENGTH)
+                        (long)MAX_POWI_BYTECODE_LENGTH)
                   )
                 {
                     p0.param->SynthesizeByteCode(synth);
