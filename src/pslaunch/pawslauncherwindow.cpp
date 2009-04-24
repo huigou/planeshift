@@ -159,6 +159,7 @@ bool pawsLauncherWindow::OnButtonPressed(int mouseButton, int keyModifier, pawsW
     }
     else if(ID == SETTINGS_CANCEL_BUTTON)
     {
+        LoadSettings();
         FindWidget("SettingsAudio")->Hide();
         FindWidget("SettingsControls")->Hide();
         FindWidget("SettingsGeneral")->Show();
@@ -236,6 +237,11 @@ bool pawsLauncherWindow::OnButtonPressed(int mouseButton, int keyModifier, pawsW
     else if(ID == NOTIFY_OK_BUTTON)
     {
         notify->Hide();
+    }
+    else if(13100 < widget->GetID() && widget->GetID() < 13200)
+    {
+        pawsComboBox* graphicsPreset = (pawsComboBox*)FindWidget("GraphicsPreset");
+        graphicsPreset->Select("Custom");
     }
 
     return true;
@@ -337,23 +343,6 @@ void pawsLauncherWindow::LoadSettings()
     csConfigFile configPSC("/planeshift/psclient.cfg", psLaunchGUI->GetVFS());
     const csString languagepath = "/planeshift/lang/";
 
-    // Graphics Preset
-    pawsComboBox* graphicsPreset = (pawsComboBox*)FindWidget("GraphicsPreset");
-    graphicsPreset->Clear();
-    graphicsPreset->NewOption("Highest");
-    graphicsPreset->NewOption("High");
-    graphicsPreset->NewOption("Medium");
-    graphicsPreset->NewOption("Low");
-    graphicsPreset->NewOption("Lowest");
-    graphicsPreset->NewOption("Custom");
-
-    csString setting = configUser->GetStr("PlaneShift.Graphics.Preset");
-    if(setting.Compare(""))
-    {
-        setting = configPSC.GetStr("PlaneShift.Graphics.Preset", "Custom");
-    }
-    graphicsPreset->Select(setting);
-
     // Aspect Ratio and Screen Resolution
     pawsComboBox* aspect = (pawsComboBox*)FindWidget("AspectRatio");
     aspect->Clear();
@@ -365,7 +354,7 @@ void pawsLauncherWindow::LoadSettings()
     aspect->NewOption("4:3");
     aspect->NewOption("3:2");
 
-    setting = configUser->GetStr("Video.AspectRatio");
+    csString setting = configUser->GetStr("Video.AspectRatio");
     if(setting.Compare(""))
     {
         setting = configPSC.GetStr("Video.AspectRatio");
@@ -724,6 +713,23 @@ void pawsLauncherWindow::LoadSettings()
     }
 
     LoadSkin(skin);
+
+    // Graphics Preset
+    pawsComboBox* graphicsPreset = (pawsComboBox*)FindWidget("GraphicsPreset");
+    graphicsPreset->Clear();
+    graphicsPreset->NewOption("Highest");
+    graphicsPreset->NewOption("High");
+    graphicsPreset->NewOption("Medium");
+    graphicsPreset->NewOption("Low");
+    graphicsPreset->NewOption("Lowest");
+    graphicsPreset->NewOption("Custom");
+
+    setting = configUser->GetStr("PlaneShift.Graphics.Preset");
+    if(setting.Compare(""))
+    {
+        setting = configPSC.GetStr("PlaneShift.Graphics.Preset", "Custom");
+    }
+    graphicsPreset->Select(setting);
 }
 
 void pawsLauncherWindow::SaveSettings()
@@ -872,17 +878,18 @@ void pawsLauncherWindow::SaveSettings()
 
         if(enableBloom->GetState())
         {
-            configUser->SetStr("RenderManager.Unshadowed.Effects", "/data/posteffects/bloom.xml");
-            configUser->SetStr("RenderManager.ShadowPSSM.Effects", "/data/posteffects/bloom.xml");
+            // Not working yet.
+            //configUser->SetStr("RenderManager.Unshadowed.Effects", "/data/posteffects/bloom.xml");
+            //configUser->SetStr("RenderManager.ShadowPSSM.Effects", "/data/posteffects/bloom.xml");
         }
 
-        configUser->SetBool("RenderManager.Unshadowed.HDR.Enabled", enableHDR->GetState());
-        configUser->SetBool("RenderManager.ShadowPSSM.HDR.Enabled", enableHDR->GetState());
+        // Not working yet.
+        //configUser->SetBool("RenderManager.Unshadowed.HDR.Enabled", enableHDR->GetState());
+        //configUser->SetBool("RenderManager.ShadowPSSM.HDR.Enabled", enableHDR->GetState());
     }
     else if(shaderSelection == "Medium")
     {
         configUser->SetStr("RenderManager.Unshadowed.Layers", "/data/renderlayers/lighting_default_pvl.xml");
-        configUser->DeleteKey("Video.ShaderManager.Tags.per_pixel_lighting.Presence");
     }
     else if(shaderSelection == "Low")
     {
@@ -1200,13 +1207,19 @@ void pawsLauncherWindow::OnListAction(pawsListBox* widget, int status)
             {
                 LoadSkin(selected);
             }
-            break;
+            return;
         }
     case ASPECT_RATIO:
         {
             pawsComboBox* aspect = (pawsComboBox*)FindWidget("AspectRatio");
             HandleAspectRatio(aspect->GetSelectedRowString());
-            break;
+            return;
         }
+    }
+
+    if(13100 < widget->GetID() && widget->GetID() < 13200)
+    {
+        pawsComboBox* graphicsPreset = (pawsComboBox*)FindWidget("GraphicsPreset");
+        graphicsPreset->Select("Custom");
     }
 }
