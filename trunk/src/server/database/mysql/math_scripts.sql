@@ -125,6 +125,7 @@ INSERT INTO math_scripts VALUES( "Calculate Repair Time",
         Result = Object:SalePrice/100;
         Factor = Worker:getSkillValue(Object:RequiredRepairSkill) / (Object:SalePrice/20);
         Result = Result / Factor;
+        Result = if(Result < 20, 20, Result);
 ");
 
 INSERT INTO math_scripts VALUES( "Calculate Repair Result",
