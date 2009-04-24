@@ -387,6 +387,7 @@ void pawsLauncherWindow::LoadSettings()
         strcmp(configUser->GetStr("System.PlugIns.iSndSysRenderer"), "crystalspace.sndsys.renderer.null"));
 
     pawsComboBox* soundRenderer = (pawsComboBox*)FindWidget("SoundRenderer");
+    soundRenderer->Clear();
     soundRenderer->NewOption("OpenAL");
     soundRenderer->NewOption("Software");
 
@@ -410,6 +411,7 @@ void pawsLauncherWindow::LoadSettings()
 
     // Graphics
     pawsComboBox* screenDepth = (pawsComboBox*)FindWidget("ScreenDepth");
+    screenDepth->Clear();
     screenDepth->NewOption("16");
     screenDepth->NewOption("32");
 
