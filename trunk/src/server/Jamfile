@@ -26,25 +26,25 @@ LinkStaticPlugins psserver_static :
   csfont
   csopcode
   csparser
+  cssynldr
   dsplex
   dynavis
   engine
+  frustvis
+  glshader_cg
   imgplex
   null2d
   null3d
   nullmesh
   rendstep_std
+  rm_unshadowed
   reporter
   shadermgr
-  sndmanager
-  spr3d
-  spr3dldr
-  sprcal3d
-  sprcal3dldr
+  shaderweaver
   stdrep
   vfs
-  xmlread
   xmlshader
+  xmltiny
 : 
 : CRYSTAL
 ;
