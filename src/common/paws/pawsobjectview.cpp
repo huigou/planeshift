@@ -114,7 +114,12 @@ bool pawsObjectView::LoadMap( const char* map, const char* sector )
         csString filename = map;
         filename.Append("/world");
         csRef<iDataBuffer> buf (VFS->ReadFile (filename, false));
-        doc->Parse(buf);
+        const char* error = doc->Parse(buf);
+        if(error)
+        {
+            printf("pawsObjectView world parse error: %s\n", error);
+        }
+
         csRef<iDocumentNode> worldNode = doc->GetRoot()->GetNode("world");
 
         // Now load the map into the selected region
