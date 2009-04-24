@@ -1108,7 +1108,7 @@ void UpdaterEngine::CheckIntegrity()
                 {
                     // File is genuinely missing.
                     if(platform.Compare(config->GetCurrentConfig()->GetPlatform()) ||
-                       platform.Compare("all"))
+                       platform.Compare("cfg") || platform.Compare("all"))
                     {
                         failed.Push(node);
 #ifdef CS_PLATFORM_UNIX
@@ -1122,7 +1122,7 @@ void UpdaterEngine::CheckIntegrity()
                 csString md5s = md5.HexString();
 
                 if((platform.Compare(config->GetCurrentConfig()->GetPlatform()) ||
-                    platform.Compare("all")) && !md5s.Compare(md5sum))
+                    platform.Compare("cfg") || platform.Compare("all")) && !md5s.Compare(md5sum))
                 {
                     failed.Push(node);
                 }
