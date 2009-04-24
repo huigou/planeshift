@@ -23,6 +23,7 @@
 
 typedef unsigned long long fphash_t;
 #define FPHASH_CONST(x) x##ULL
+#pragma warning(disable:4351)
 
 #else
 
@@ -39,7 +40,7 @@ typedef uint_fast64_t fphash_t;
 
 namespace FPoptimizer_Grammar
 {
-    class Grammar;
+    struct Grammar;
 }
 
 namespace FPoptimizer_CodeTree
@@ -4615,7 +4616,7 @@ namespace
             if(value >= POWI_CACHE_SIZE) return false;
             //FPO(fprintf(stderr, "%ld will be needed %d times more\n", count, need_count));
             cache_needed[value] += count;
-            return cache[value] == 0? false : true;
+            return cache[value] != 0;
         }
 
         void Plan_Has(long value)
@@ -5049,7 +5050,7 @@ namespace FPoptimizer_CodeTree
                         *p0.param, p1.param->GetLongIntegerImmed(),
                         MulSequence,
                         synth,
-                        (long)MAX_POWI_BYTECODE_LENGTH)
+                        MAX_POWI_BYTECODE_LENGTH)
                   )
                 {
                     p0.param->SynthesizeByteCode(synth);
