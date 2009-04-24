@@ -390,10 +390,7 @@ void WorkManager::HandleRepair(Client *client, psWorkCmdMessage &msg)
         env.Define("Object", repairTarget);
         env.Define("Worker", client->GetCharacterData());
         calc_repair_time->Evaluate(&env);
-        MathVar *varTime = env.Lookup("Result");
-        // If time is less than 20 seconds, cap it to 20 seconds
-        int repair_time = MAX(20, varTime->GetValue());
-        repairDuration = (csTicks)(repair_time * 1000); // convert secs to msec
+        repairDuration = (csTicks)(env.Lookup("Result")->GetValue() * 1000); // convert secs to msec
     }
 
     // Calculate result after repair
