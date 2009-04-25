@@ -290,3 +290,54 @@ TEST(MathScriptTest, InterpolateTest)
     env.InterpolateString(msg);
     EXPECT_STREQ("${} 1337.00 ${}", msg.GetData());
 }
+
+
+void randomgentest(int limit)
+{
+   csString scriptstr;
+    if (limit<0)
+    {
+       scriptstr = "Roll = rnd();";
+       limit=1;
+    }
+    else    
+    {
+       scriptstr.Format("Roll = rnd(%d);",limit);
+    }
+    MathScript *script = MathScript::Create("randomgen test", scriptstr.GetData());
+    MathEnvironment env;
+    ASSERT_NE(script, NULL) << scriptstr.GetData() << " did not create script";
+    bool above1=false, abovehalflimit=false;
+    for (int i=0; i<100; i++) //try 100 times, since this is random
+    {
+       script->Evaluate(&env);
+       MathVar *roll = env.Lookup("Roll");
+       EXPECT_GE(roll->GetValue(), 0); 
+       EXPECT_LE(roll->GetValue(), limit);
+       if (roll->GetValue()>1)
+       {
+          above1 = true;
+       }
+       if (2*roll->GetValue()>limit)
+       {
+          abovehalflimit = true;
+       }
+    }
+    if (limit>1)
+    {
+       EXPECT_TRUE(above1) << scriptstr << "never exceeds 1"; 
+    }
+    if (limit>0)
+    {
+       EXPECT_TRUE(abovehalflimit) << scriptstr << "never exceeds half of limit"; 
+    }
+    delete script;
+}
+TEST(MathScriptTest, RandomGenTest)
+{
+   randomgentest(100);
+   randomgentest(50);
+   randomgentest(1);
+   randomgentest(0);  //should always be 0 :)
+   //randomgentest(-1); //this will test rnd(), which should limit at 1, but is NOT IMPLEMENTED
+}

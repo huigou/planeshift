@@ -317,10 +317,11 @@ csRandomGen MathScriptEngine::rng;
 csStringSet MathScriptEngine::customCompoundFunctions;
 csStringSet MathScriptEngine::stringLiterals;
 
-double MathScriptEngine::RandomGen(const double *dummy)
+double MathScriptEngine::RandomGen(const double *limit)
 {
-    return MathScriptEngine::rng.Get();
+   return MathScriptEngine::rng.Get()*limit[0];
 }
+
 
 double MathScriptEngine::Power(const double *parms)
 {
