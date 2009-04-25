@@ -1,3 +1,17 @@
+*** 2009-04-25 by Stefano Angeleri
+- Made the ending quality determination of the item a math script and
+  removed so the code from the repair handler function.
+- Made the practice experience to be attribuited in the repair operation
+  a math script and added exp (PP/200) attribuition in the repair operation.
+  The same math script manages both
+- Extension in math scripts by lanarel allowing support for rnd(amount).
+  before only a value limited to 0<->1 was returned
+
+*** 2009-04-24 by Stefano Angeleri
+- Moved some hardcoded operations in /repair in the specific math script
+- Updated FPARSER from 2.82 to 3.12 - many optimizations according to change logs
+- Added exchange sanity checks for money
+
 *** 2009-04-23 by Stefano Angeleri
 - made rankneeded in the repair process a math script
 
