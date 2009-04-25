@@ -134,6 +134,20 @@ INSERT INTO math_scripts VALUES( "Calculate Repair Result",
         Result = ((Object:SalePrice/25) * Factor) * (rnd(1)+0.5);
 ");
 
+INSERT INTO math_scripts VALUES( "Calculate Repair Quality",
+"
+ResultQ = if(Object:Quality+RepairAmount > Object:MaxQuality, Object:MaxQuality, Object:Quality+RepairAmount);
+ResultMaxQ = Object:MaxQuality-(ResultQ-Object:Quality)*0.2;
+ResultMaxQ = if(ResultMaxQ < 0, 0, ResultMaxQ);
+ResultQ = if(ResultQ > ResultMaxQ, ResultMaxQ, ResultQ);
+");
+
+INSERT INTO math_scripts VALUES( "Calculate Repair Experience",
+"
+ResultPractice = 1;
+ResultEXP = RepairAmount;
+");
+
 INSERT INTO math_scripts VALUES( "CalculateFamiliarAffinity", "Affinity = Type + Lifecycle + AttackTool + AttackType;");
 
 INSERT INTO math_scripts VALUES( "CalculateMaxPetTime", "MaxTime = 5 * 60 * 1000 * if(Skill,Skill,1);");
