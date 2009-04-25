@@ -126,11 +126,13 @@ WorkManager::WorkManager()
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<WorkManager>(this,&WorkManager::HandleWorkCommand),MSGTYPE_WORKCMD,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<WorkManager>(this,&WorkManager::HandleLockPick),MSGTYPE_LOCKPICK,REQUIRE_READY_CLIENT|REQUIRE_ALIVE|REQUIRE_TARGET);
 
-    calc_repair_rank   = psserver->GetMathScriptEngine()->FindScript("Calculate Repair Rank");
-    calc_repair_time   = psserver->GetMathScriptEngine()->FindScript("Calculate Repair Time");
-    calc_repair_result = psserver->GetMathScriptEngine()->FindScript("Calculate Repair Result");
-    calc_mining_chance = psserver->GetMathScriptEngine()->FindScript("Calculate Mining Odds");
-    calc_lockpick_time = psserver->GetMathScriptEngine()->FindScript("Lockpicking Time");
+    calc_repair_rank    = psserver->GetMathScriptEngine()->FindScript("Calculate Repair Rank");
+    calc_repair_time    = psserver->GetMathScriptEngine()->FindScript("Calculate Repair Time");
+    calc_repair_result  = psserver->GetMathScriptEngine()->FindScript("Calculate Repair Result");
+    calc_repair_quality = psserver->GetMathScriptEngine()->FindScript("Calculate Repair Quality");
+    calc_repair_exp     = psserver->GetMathScriptEngine()->FindScript("Calculate Repair Experience");
+    calc_mining_chance  = psserver->GetMathScriptEngine()->FindScript("Calculate Mining Odds");
+    calc_lockpick_time  = psserver->GetMathScriptEngine()->FindScript("Lockpicking Time");
 
     if (!calc_repair_rank)
     {
@@ -143,6 +145,14 @@ WorkManager::WorkManager()
     if (!calc_repair_result)
     {
         Error1("Could not find mathscript 'Calculate Repair Result'");
+    }
+    if (!calc_repair_quality)
+    {
+        Error1("Could not find mathscript 'Calculate Repair Quality'");
+    }
+    if (!calc_repair_exp)
+    {
+        Error1("Could not find mathscript 'Calculate Repair Experience'");
     }
     if (!calc_mining_chance)
     {
@@ -400,8 +410,7 @@ void WorkManager::HandleRepair(Client *client, psWorkCmdMessage &msg)
         env.Define("Object", repairTarget);
         env.Define("Worker", client->GetCharacterData());
         calc_repair_result->Evaluate(&env);
-        MathVar *varResult = env.Lookup("Result");
-        repairResult = varResult->GetValue();
+        repairResult = env.Lookup("Result")->GetValue();
     }
 
     // Queue time event to trigger when repair is complete, if not canceled.
@@ -475,39 +484,54 @@ void WorkManager::HandleRepairEvent(psWorkGameEvent* workEvent)
         // TODO: Implement decay of quality of repair tool here if not consumed.
     }
 
-    float qualitybefore = repairTarget->GetItemQuality();
-                             
-    // Adjust the quality of the item
-    repairTarget->SetItemQuality( repairTarget->GetItemQuality() + workEvent->repairAmount);
-    // Limit quality to maximum quality
-    if (repairTarget->GetItemQuality() > repairTarget->GetMaxItemQuality())
+    // Calculate resulting qualities after repair
+    float resultQuality;
+    float resultMaxQuality;
     {
-        repairTarget->SetItemQuality(repairTarget->GetMaxItemQuality());
+        MathEnvironment env;
+        env.Define("Object", repairTarget);
+        env.Define("Worker", workEvent->client->GetCharacterData());
+        env.Define("RepairAmount", workEvent->repairAmount);
+        calc_repair_quality->Evaluate(&env);
+        resultMaxQuality = env.Lookup("ResultMaxQ")->GetValue();
+        resultQuality = env.Lookup("ResultQ")->GetValue();
     }
 
-    // Lower the maximum quality based on the actual repair amount (new-qualitybefore)
-    float newmax = repairTarget->GetMaxItemQuality() - ((repairTarget->GetItemQuality()-qualitybefore) * 0.2);
-    newmax = (newmax<0) ? 0 : newmax;
-    repairTarget->SetMaxItemQuality(newmax);
-
-    // Limit quality to maximum quality again 
-    if (repairTarget->GetItemQuality() > repairTarget->GetMaxItemQuality())
-    {
-        repairTarget->SetItemQuality(repairTarget->GetMaxItemQuality());
-    }
+    repairTarget->SetItemQuality(resultQuality);
+    repairTarget->SetMaxItemQuality(resultMaxQuality);
 
     psserver->SendSystemResult(workEvent->client->GetClientNum(),
                                "You have repaired your %s to %.0f out of %.0f",
                                repairTarget->GetName(),
                                repairTarget->GetItemQuality(),
                                repairTarget->GetMaxItemQuality());
+
     // assign practice points
+
+    int practicepoints;
+    int experiencepoints;
+    {
+        MathEnvironment env;
+        env.Define("Object", repairTarget);
+        env.Define("Worker", workEvent->client->GetCharacterData());
+        env.Define("RepairAmount", workEvent->repairAmount);
+        calc_repair_exp->Evaluate(&env);
+        practicepoints   = env.Lookup("ResultPractice")->GetValue();
+        experiencepoints = env.Lookup("ResultEXP")->GetValue();
+    }
+
     int skillid = repairTarget->GetBaseStats()->GetCategory()->repairSkillId;
     psSkillInfo *skill = CacheManager::GetSingleton().GetSkillByID((PSSKILL)skillid);
     if (skill)
     {
-        workEvent->client->GetCharacterData()->Skills().AddSkillPractice((PSSKILL)skillid,1);
+        workEvent->client->GetCharacterData()->Skills().AddSkillPractice((PSSKILL)skillid,practicepoints);
     }
+
+    if ( workEvent->client->GetCharacterData()->AddExperiencePoints(experiencepoints) > 0 ) //check if PP where assigned
+        psserver->SendSystemInfo(workEvent->client->GetClientNum(),"You gained some experience points and progression points!");
+    else
+        psserver->SendSystemInfo(workEvent->client->GetClientNum(),"You gained some experience points");
+
     repairTarget->Save(false);
 }
 

@@ -1154,9 +1154,24 @@ UPDATE `server_options` SET `option_value`='1217' WHERE `option_name`='db_versio
 #### added a new math script Calculate Repair Rank, removing so the hardcoded script
 
 INSERT INTO math_scripts VALUES( "Calculate Repair Rank","Result = if(Object:SalePrice > 300,Object:SalePrice/150,0);");
+
 -- remember to add this line at the end of Calculate Repair Time,
 -- or the one of your choice which does the same
 -- Result = if(Result < 20, 20, Result);
+
+INSERT INTO math_scripts VALUES( "Calculate Repair Quality",
+"
+ResultQ = if(Object:Quality+RepairAmount > Object:MaxQuality, Object:MaxQuality, Object:Quality+RepairAmount);
+ResultMaxQ = Object:MaxQuality-(ResultQ-Object:Quality)*0.2;
+ResultMaxQ = if(ResultMaxQ < 0, 0, ResultMaxQ);
+ResultQ = if(ResultQ > ResultMaxQ, ResultMaxQ, ResultQ);
+");
+
+INSERT INTO math_scripts VALUES( "Calculate Repair Experience",
+"
+ResultPractice = 1;
+ResultEXP = RepairAmount;
+");
 
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
