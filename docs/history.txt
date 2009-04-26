@@ -1,5 +1,5 @@
 *** 2009-04-26 by Kenny Graunke
-- Exposed IsAdvisorBanned to the scripting system.
+- Exposed IsAdvisorBanned and AdvisorPoints to the scripting system.
 
 *** 2009-04-26 by Andrew Dai
 - Fixed problem where npcclient messages were corrupted from ignoring the new
