@@ -606,16 +606,9 @@ void WorkManager::HandleProduction(Client *client,const char *type,const char *r
     }
 
     // Validate the skill
-    float cur_skill = client->GetCharacterData()->Skills().GetSkillRank((PSSKILL)nr->skill->id).Current();
-
-    // If skill=0, check if it has at least theoretical training in that skill
-    if (cur_skill==0) {
-        bool fullTrainingReceived = !client->GetCharacterData()->Skills().Get((PSSKILL)nr->skill->id).CanTrain();
-        if (fullTrainingReceived)
-           cur_skill=0.7F;
-    }
-
-    if (cur_skill <= 0.0)
+    // If skill == 0 and can still be trained it's not possible to execute this operation
+    if (client->GetCharacterData()->Skills().GetSkillRank((PSSKILL)nr->skill->id).Current() == 0 &&
+        client->GetCharacterData()->Skills().Get((PSSKILL)nr->skill->id).CanTrain())
     {
         psserver->SendSystemInfo(client->GetClientNum(),"You don't have the skill to %s for %s.",type,reward);
         return;
@@ -685,16 +678,9 @@ void WorkManager::HandleProduction(gemActor *actor,const char *type,const char *
     }
 
     // Validate the skill
-    float cur_skill = actor->GetCharacterData()->Skills().GetSkillRank((PSSKILL)nr->skill->id).Current();
-
-    // If skill=0, check if it has at least theoretical training in that skill
-    if (cur_skill==0) {
-        bool fullTrainingReceived = !actor->GetCharacterData()->Skills().Get((PSSKILL)nr->skill->id).CanTrain();
-        if (fullTrainingReceived)
-           cur_skill=0.7F;
-    }
-
-    if (cur_skill <= 0.0)
+    // If skill == 0 and can still be trained it's not possible to execute this operation
+    if (actor->GetCharacterData()->Skills().GetSkillRank((PSSKILL)nr->skill->id).Current() == 0 &&
+        actor->GetCharacterData()->Skills().Get((PSSKILL)nr->skill->id).CanTrain())
     {
         //psserver->SendSystemInfo(client->GetClientNum(),"You don't have the skill to %s for %s.",type,reward);
         Warning6(LOG_SUPERCLIENT,"%s(%s) don't have the skill(%d) to %s for %s.",
