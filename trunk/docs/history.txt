@@ -3,6 +3,7 @@
   example, for equipment effects).  Should fix PS#173.
 - Also cancel them on defeat - should fix PS#1605.
 - Fixed MathEnvironment::DumpAllVars to print names; cleaned up MathVar cruft.
+- Removed instancing from the tutorial (settings consensus).
 
 *** 2009-04-25 by Stefano Angeleri
 - Made the ending quality determination of the item a math script and
