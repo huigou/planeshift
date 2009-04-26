@@ -136,16 +136,11 @@ public:
     ClientConnectionSet *GetClients() { return clients; };
     psWorld* GetWorld() { return gameWorld; }
 
-    void Teleport( gemObject *subject, gemObject *dest);
-
 protected:
     csHash<psAffinityAttribute *> affinityAttributeList;
     csHash<psFamiliarType*, PID> familiarTypeList;
 
     bool CreateRoom (const char* name, const char* mapfile);
-
-    bool SamePos(gemObject * actor, iSector * sector, const csVector3 & point);
-
     
     bool SendActorList(Client *client);
 

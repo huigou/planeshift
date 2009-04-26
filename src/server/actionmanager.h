@@ -113,14 +113,6 @@ public:
       */
     void HandleMapAction( MsgEntry *msg, Client *client );
 
-    //   /** Processes psDRMessages
-    //     *
-    //     * @param msg            The message to process
-    //     * @param client      The client that sent the message.
-    //     */
-    //void HandleMessage( psDRMessage *msg, Client *client );
-
-
     void RemoveActiveTrigger( size_t clientnum, const psActionLocation *actionLocation );
 
     /** Finds an ActionLocation from it's CEL Entity ID
