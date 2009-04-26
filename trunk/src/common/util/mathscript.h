@@ -43,7 +43,6 @@ class MathVar
 protected:
     double value;
     iScriptableVar *obj;
-    MathVar *var;
 
     typedef void (*MathScriptVarCallback)(void * arg);
     MathScriptVarCallback changedVarCallback;
@@ -51,8 +50,6 @@ protected:
 
 public:
     MathType type;
-
-    csString name;
 
     MathVar()
     {
@@ -106,7 +103,6 @@ public:
         type = v->type;
         value = v->value;
         obj = v->obj;
-        name = v->name;
     }
 
     csString ToString() const;

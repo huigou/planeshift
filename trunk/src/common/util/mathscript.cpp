@@ -54,21 +54,16 @@ csString MathVar::ToString() const
 csString MathVar::Dump() const
 {
     csString str;
-    str.Append(name);
-    str.Append("(");
     switch (type)
     {
         case VARTYPE_VALUE:
-            str.Append("VAL) = ");
-            str.Append(value);
+            str.Format("%1.4f", value);
             break;
         case VARTYPE_STR:
-            str.Append("STR) = ");
-            str.Append(MathScriptEngine::GetString(value));
+            str = MathScriptEngine::GetString(value);
             break;
         case VARTYPE_OBJ:
-            str.Append("OBJ) = ");
-            str.Append("PTR");
+            str.Format("%p", obj);
             break;
     }
     return str;
@@ -124,11 +119,12 @@ void MathEnvironment::Define(const char *name, iScriptableVar *obj)
 
 void MathEnvironment::DumpAllVars() const
 {
+    csString name;
     csHash<MathVar*, csString>::ConstGlobalIterator it(variables.GetIterator());
     while (it.HasNext())
     {
-        MathVar *var = it.Next();
-        CPrintf(CON_DEBUG, "%25s=%1.4f\n", var->name.GetData(), var->GetValue());
+        MathVar *var = it.Next(name);
+        CPrintf(CON_DEBUG, "%25s = %s\n", name.GetData(), var->Dump().GetData());
     }
 }
 
