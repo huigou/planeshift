@@ -2004,6 +2004,10 @@ double gemActor::GetProperty(const char *prop)
     {
         return (double) (GetClient() ? GetClient()->IsAdvisorBanned() : true);
     }
+    else if (property == "AdvisorPoints")
+    {
+        return (double) (GetClient() ? GetClient()->GetAdvisorPoints() : 0);
+    }
 
     CS_ASSERT(psChar);
     return psChar->GetProperty(prop);
