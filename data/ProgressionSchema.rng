@@ -319,7 +319,7 @@
     <choice>
       <attribute name="location"/>
       <group>
-        <attribute name="map"/>
+        <attribute name="sector"/>
         <optional>
           <attribute name="x"/>
           <attribute name="y"/>
