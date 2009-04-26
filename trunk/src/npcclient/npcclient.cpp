@@ -1172,7 +1172,7 @@ void psNPCClient::ListAllEntities(const char * pattern, bool onlyCharacters)
             if(!actor)
                 continue;
 
-            if (!pattern || strstr(actor->GetName(),pattern))
+            if (!pattern || strstr(actor->GetName(),pattern) || atoi(pattern) == actor->GetEID().Unbox())
             {
                 CPrintf(CON_CMDOUTPUT, "%-9d %-5d %-10s %-30s %-3s %-3s\n",
                         actor->GetPID().Unbox(),
@@ -1196,7 +1196,7 @@ void psNPCClient::ListAllEntities(const char * pattern, bool onlyCharacters)
         iSector *sector;
         psGameObject::GetPosition(obj,pos,rot,sector);
 
-        if (!pattern || strstr(obj->GetName(),pattern))
+        if (!pattern || strstr(obj->GetName(),pattern) || atoi(pattern) == obj->GetEID().Unbox())
         {
             CPrintf(CON_CMDOUTPUT, "%5d %-10s %-30s %-3s %-3s %-4s %s %d\n",
                     obj->GetEID().Unbox(),

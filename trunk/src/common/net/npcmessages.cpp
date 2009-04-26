@@ -132,26 +132,27 @@ psMapListMessage::psMapListMessage(uint32_t clientToken,csString& regions)
 psMapListMessage::psMapListMessage(MsgEntry *message)
 {
     csString str = message->GetStr();
-    char buff[5000];
-    strncpy(buff,str,5000);  // non-read-only copy now
-
-    // We expect double null termination below
-    buff[4998]=0x00;
-    buff[4999]=0x00;
-
-
-    char *first;
-
-    for (first=buff; *first; first++)
+    
+    // Find first delimiter
+    size_t loc = str.FindFirst('|');
+    if(loc == (size_t) -1)
+    	loc = str.Length();
+    size_t begin = 0;
+    while(begin < str.Length())
     {
-        if (*first == '|')
-            *first = 0;
+    	map.Push(str.Slice(begin, loc - begin));
+    	
+    	// Move to next delimiter
+    	begin = loc + 1;
+    	if(begin >= str.Length())
+    		break;
+    	
+    	// Find next delimiter
+    	loc = str.FindFirst('|', begin);
+    	if(loc == (size_t) -1)
+    		loc = str.Length();
     }
 
-    for (first=buff; *first; first+=strlen(first)+1)
-    {
-        map.Push(csString(first));
-    }
 }
 
 csString psMapListMessage::ToString(AccessPointers * /*access_ptrs*/)
@@ -599,11 +600,14 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                 msgtext.AppendFmt("Who: %u ", who.Unbox());
                 break;
             }
+            case psNPCCommandsMessage::PCPT_ANYRANGEPLAYER:
             case psNPCCommandsMessage::PCPT_LONGRANGEPLAYER:
             case psNPCCommandsMessage::PCPT_SHORTRANGEPLAYER:
             case psNPCCommandsMessage::PCPT_VERYSHORTRANGEPLAYER:
             {
                 csString range = "?";
+                if (cmd == psNPCCommandsMessage::PCPT_ANYRANGEPLAYER)
+                    range = "ANY";
                 if (cmd == psNPCCommandsMessage::PCPT_LONGRANGEPLAYER)
                     range = "LONG";
                 if (cmd == psNPCCommandsMessage::PCPT_SHORTRANGEPLAYER)

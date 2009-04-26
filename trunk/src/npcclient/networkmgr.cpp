@@ -589,6 +589,7 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 npcclient->TriggerEvent(NULL, &pcpt, 20, &pos, sector); // Broadcast
                 break;
             }
+            case psNPCCommandsMessage::PCPT_ANYRANGEPLAYER:
             case psNPCCommandsMessage::PCPT_LONGRANGEPLAYER:
             case psNPCCommandsMessage::PCPT_SHORTRANGEPLAYER:
             case psNPCCommandsMessage::PCPT_VERYSHORTRANGEPLAYER:
@@ -622,6 +623,8 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 {
                     pcpt_name.Append("player ");
                 }
+                if (cmd == psNPCCommandsMessage::PCPT_ANYRANGEPLAYER)
+                    pcpt_name.Append("anyrange");
                 if (cmd == psNPCCommandsMessage::PCPT_LONGRANGEPLAYER)
                     pcpt_name.Append("sensed");
                 if (cmd == psNPCCommandsMessage::PCPT_SHORTRANGEPLAYER)
@@ -815,7 +818,7 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
             default:
             {
                 CPrintf(CON_ERROR,"************************\nUnknown npc cmd: %d\n*************************\n",cmd);
-                break;
+                abort();
             }
         }
         cmd = list.msg->GetInt8();
