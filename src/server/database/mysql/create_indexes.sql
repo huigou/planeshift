@@ -1,7 +1,6 @@
 create unique index indx_sector_name on sectors (name);
 create index indx_AL_sectorname on action_locations (sectorname);
 create index indx_AL_master_id on action_locations (master_id);
-create unique index indx_quests_name on quests (name);
 create index indx_char_name on characters (name);
 create index indx_char_lastname on characters (lastname);
 create index indx_item_instance_flags on item_instances (flags);
