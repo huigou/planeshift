@@ -1852,9 +1852,9 @@ is located somewhere else or you want to connect to somebody's else server, you 
 
     <p class="commandBox">
         $ cd $HOME/development<br />
-        $ echo "export LD_LIBRARY_PATH="$PWD/cal3d/src/cal3d/.libs/:$PWD/cs/:"$LD_LIBRARY_PATH"<br />
         $ echo \#\!/bin/sh > PlaneShiftserver.sh<br />
-        $ echo "export CRYSTAL=$PWD/cs/" >> PlaneShiftserver.sh<br />
+        $ echo "export LD_LIBRARY_PATH="$PWD/cal3d/src/cal3d/.libs/:$PWD/cs/:"$LD_LIBRARY_PATH" >> PlaneShiftserver.sh<br />
+        $ echo "export CRYSTAL=$PWD/cs/" <br />
         $ echo "cd $PWD/PlaneShift" >> PlaneShiftserver.sh<br />
         $ echo "./psserver \$@" >>  PlaneShiftserver.sh<br />
         $ chmod +x PlaneShiftserver.sh
@@ -1862,8 +1862,8 @@ is located somewhere else or you want to connect to somebody's else server, you 
 
     <p class="commandBox">
         $ cd $HOME/development<br />
-        $ echo "export LD_LIBRARY_PATH="$PWD/cal3d/src/cal3d/.libs/:$PWD/cs/:"$LD_LIBRARY_PATH"<br />
         $ echo \#\!/bin/sh > PlaneShiftclient.sh<br />
+        $ echo "export LD_LIBRARY_PATH="$PWD/cal3d/src/cal3d/.libs/:$PWD/cs/:"$LD_LIBRARY_PATH" >> PlaneShiftclient.sh<br />
         $ echo "export CRYSTAL=$PWD/cs/" >> PlaneShiftclient.sh<br />
         $ echo "cd $PWD/PlaneShift/" >> PlaneShiftclient.sh<br />
         $ echo "./psclient \$@" >>  PlaneShiftclient.sh<br />
