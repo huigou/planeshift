@@ -163,7 +163,8 @@ INSERT INTO common_strings VALUES("140","potions#potionbig01c");
 INSERT INTO common_strings VALUES("141","money#tria_01a_01");
 INSERT INTO common_strings VALUES("142","money#octa_01a_01");
 INSERT INTO common_strings VALUES("143","money#hexa_01a_01");
-INSERT INTO common_strings VALUES("144","money#circle_01a_01");
+# Duplicate
+# INSERT INTO common_strings VALUES("144","money#circle_01a_01");
 INSERT INTO common_strings VALUES("145","money#tria_01a_pile_01_01");
 INSERT INTO common_strings VALUES("146","money#octa_01a_pile_01_01");
 INSERT INTO common_strings VALUES("147","money#hexa_01a_pile_01_01");
