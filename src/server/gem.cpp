@@ -1999,6 +1999,12 @@ gemActor::~gemActor()
 
 double gemActor::GetProperty(const char *prop)
 {
+    csString property(prop);
+    if (property == "IsAdvisorBanned")
+    {
+        return (double) (GetClient() ? GetClient()->IsAdvisorBanned() : true);
+    }
+
     CS_ASSERT(psChar);
     return psChar->GetProperty(prop);
 }
