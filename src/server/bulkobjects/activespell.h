@@ -61,7 +61,7 @@ public:
 class ActiveSpell : public CS::Utility::WeakReferenced
 {
 public:
-    ActiveSpell(const csString & name, SPELL_TYPE type, csTicks duration) : name(name), type(type), duration(duration), target(NULL), registrationTime(0) { }
+    ActiveSpell(const csString & name, SPELL_TYPE type, csTicks duration) : name(name), type(type), duration(duration), cancelOnDeath(true), target(NULL), registrationTime(0) { }
     ~ActiveSpell() { }
 
     // These are only used by progression scripts, for loading/initializing it.
@@ -70,6 +70,9 @@ public:
 
     void Register(gemActor *target);
     void Link(ActiveSpell *other);
+
+    void SetCancelOnDeath(bool x) { cancelOnDeath = x; }
+    bool CancelOnDeath() { return cancelOnDeath; }
 
     const csString & Name() const { return name; }
     SPELL_TYPE       Type() const { return type; }
@@ -88,6 +91,7 @@ protected:
     SPELL_TYPE type;          //< Spell type - buff, debuff, etc.
     csString script;          //< the contents of an <apply> node which recreates this effect
     csTicks duration;         //< How long this spell lasts
+    bool cancelOnDeath;       //< Whether or not this spell should be cancelled on death
 
     gemActor *target;         //< Who this spell is registered with
     csTicks registrationTime; //< Timestamp when the spell was registered, for comparison with csGetTicks().

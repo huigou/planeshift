@@ -1232,6 +1232,7 @@ void psItem::RunEquipScript(gemActor *actor)
     env.Define("Actor", actor);
     env.Define("Item", this);
     equipActiveSpell = script->Apply(&env);
+    equipActiveSpell->SetCancelOnDeath(false);
 
     SetActive(true);
 }
