@@ -141,12 +141,12 @@ csTicks EventManager::ProcessEventQueue()
         lastid    = event->id;
 
         count++;
-        if (count % 100 == 0)
-        {
-            CPrintf(CON_DEBUG, "Went through event loop 100 times in one timeslice for %d events.  This means we either have duplicate events, "
-                "bugs in event generation or bugs in deleting events from the event tree. "
-                "Last event: %s:%s took %u time\n", events, event->GetType(), event->ToString().GetDataSafe(), timeTaken);
-        }
+//        if (count % 100 == 0)
+//        {
+//            CPrintf(CON_DEBUG, "Went through event loop 100 times in one timeslice for %d events.  This means we either have duplicate events, "
+//                "bugs in event generation or bugs in deleting events from the event tree. "
+//                "Last event: %s:%s took %u time\n", events, event->GetType(), event->ToString().GetDataSafe(), timeTaken);
+//        }
 
         delete event;
     }

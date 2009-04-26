@@ -368,7 +368,7 @@ const COMMAND commands[] = {
     { "charlist",     false, com_charlist,     "List all known characters"},
     { "debugnpc",     false, com_debugnpc,     "Switches the debug mode on 1 NPC"},
     { "dumpwarpspace",true,  com_dumpwarpspace,"Dump the warp space table"},
-    { "entlist",      false, com_entlist,      "List all known entities"},
+    { "entlist",      false, com_entlist,      "List all known entities (entlist [pattern | EID]"},
     { "filtermsg",    true,  com_filtermsg,    "Add or remove messages from the LOG_MESSAGE log"},
     { "help",         false, com_help,         "Show help information" },
     { "loclist",      false, com_locationlist, "List all known locations (loclist [pattern])"},
