@@ -791,23 +791,23 @@ void CharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
 
     float x,y,z,yrot;
     const char *sectorname;
-    InstanceID newinstance;
+    InstanceID newinstance = DEFAULT_INSTANCE;
     sectorname = "tutorial";
 
     psSectorInfo *sectorinfo = CacheManager::GetSingleton().GetSectorInfoByName(sectorname);
 
-    if( !sectorinfo || PlayerHasFinishedTutorial(acctID, sectorinfo->uid) )
+    if (!sectorinfo || PlayerHasFinishedTutorial(acctID, sectorinfo->uid))
     {
         raceinfo->GetStartingLocation(x,y,z,yrot,sectorname);
         sectorinfo = CacheManager::GetSingleton().GetSectorInfoByName(sectorname);
-        newinstance = DEFAULT_INSTANCE;
-    } else {
+    }
+    else
+    {
         // Try tutorial level first.
         x = -232.00f;
         y = 21.31f;
         z = 31.50f;
         yrot = 4.0f;
-        newinstance = psserver->GetRandom(INT_MAX-1)+1; // Chars will start on random instance
     }
     
     bool sectorFound = true;
