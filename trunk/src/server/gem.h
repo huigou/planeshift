@@ -970,6 +970,7 @@ public:
     ActiveSpell* FindActiveSpell(const csString & name, SPELL_TYPE type);
     int ActiveSpellCount(const csString & name);
     csArray<ActiveSpell*> & GetActiveSpells() { return activeSpells; }
+    void CancelActiveSpellsForDeath();
 
     /** These flags are for GM/debug abilities */
     bool nevertired;        ///< infinite stamina

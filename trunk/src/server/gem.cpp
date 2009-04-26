@@ -2333,6 +2333,10 @@ void gemActor::DoDamage(gemActor * attacker, float damage, float damageRate, csT
             psserver->GetEventManager()->Push(evt);
             SetMode(PSCHARACTER_MODE_DEFEATED);
 
+            // Cancel any active spells as if the player had died...stops DoT
+            // from actually killing the player.
+            CancelActiveSpellsForDeath();
+
             psserver->SendSystemError(GetClientID(), "You've been defeated by %s!", attacker->GetName());
             GetClient()->AnnounceToDuelClients(attacker, "defeated");
         }
@@ -2485,12 +2489,7 @@ float gemActor::DrainMana(float adjust,bool absolute)
 void gemActor::HandleDeath()
 {
     // Cancel the appropriate ActiveSpells
-    for (size_t i = activeSpells.GetSize() - 1; i != (size_t) -1; i--)
-    {
-        ActiveSpell *asp = activeSpells[i];
-        if (asp->CancelOnDeath() && asp->Cancel())
-            delete asp;
-    }
+    CancelActiveSpellsForDeath();
 
     // Notifiy recievers that this actor has died.
     // Recievers will have to register again if they
@@ -3599,6 +3598,17 @@ int gemActor::ActiveSpellCount(const csString & name)
             ++count;
     }
     return count;
+}
+
+void gemActor::CancelActiveSpellsForDeath()
+{
+    // Cancel any spells marked to expire on death.
+    for (size_t i = activeSpells.GetSize() - 1; i != (size_t) -1; i--)
+    {
+        ActiveSpell *asp = activeSpells[i];
+        if (asp->CancelOnDeath() && asp->Cancel())
+            delete asp;
+    }
 }
 
 bool gemActor::SetMesh(const char* meshname)

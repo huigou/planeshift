@@ -1,6 +1,7 @@
 *** 2009-04-26 by Kenny Graunke
 - Made ActiveSpells cancel on death by default, unless set otherwise (for
   example, for equipment effects).  Should fix PS#173.
+- Also cancel them on defeat - should fix PS#1605.
 
 *** 2009-04-25 by Stefano Angeleri
 - Made the ending quality determination of the item a math script and
