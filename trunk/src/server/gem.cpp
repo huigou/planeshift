@@ -2484,6 +2484,14 @@ float gemActor::DrainMana(float adjust,bool absolute)
 
 void gemActor::HandleDeath()
 {
+    // Cancel the appropriate ActiveSpells
+    for (size_t i = activeSpells.GetSize() - 1; i != (size_t) -1; i--)
+    {
+        ActiveSpell *asp = activeSpells[i];
+        if (asp->CancelOnDeath() && asp->Cancel())
+            delete asp;
+    }
+
     // Notifiy recievers that this actor has died.
     // Recievers will have to register again if they
     // want to be continually notified of deaths
