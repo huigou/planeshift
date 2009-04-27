@@ -171,8 +171,6 @@ public:
 
     void SaveChatSettings();
     void LoadChatSettings();
-    //This little function simply tab just the proper tab for chatting with NPC on selection
-    void NpcChat();
     
     void RefreshCommandList();
 
@@ -198,15 +196,7 @@ protected:
     void TabCompleteCommand(const char *cmd);
     void TabCompleteName(const char *cmd);
 
-    /// Helper function for AutoselectChatTabIfNeeded
-    void DetermineChatTabAndSelect(const char *specificTabName,bool includeMain, const char *buttonName);
-
-    /// If currently selected chat tab is not in 'allowedTabs', switch to 'defaultTab'
-    void AutoselectChatTabIfNeeded(const char *allowedTabList, const char * defaultTab);
-
-    /// Output text to a specific tab.
-    void ChatOutput(pawsMessageTextBox *pmtb, const char *data, int colour = -1,
-                    bool flashEnabled = true, const char *bname = NULL);
+    void DetermineChatTabAndSelect(int chattype);
 
     pawsIgnoreWindow*  IgnoredList;
     csString           replyList[4];
@@ -221,30 +211,6 @@ protected:
     BinaryRBTree<psString> commandList;
     csArray<csString> systemTriggers;
     csArray<csString> chatTriggers;
-
-    /// System text for easy access
-    pawsMessageTextBox* systemText;
-
-    /// Chat text for easy access
-    pawsMessageTextBox* npcText;
-
-    /// All text for easy access
-    pawsMessageTextBox* mainText;
-
-    /// All tells for easy access
-    pawsMessageTextBox* tellText;
-
-    /// All the guild talk
-    pawsMessageTextBox* guildText;
-
-    /// All the group talk
-    pawsMessageTextBox* groupText;
-
-    /// All the auction talk
-    pawsMessageTextBox* auctionText;
-
-    /// All the advice talk
-    pawsMessageTextBox* helpText;
 
     /// Input box for quick access
     pawsEditTextBox* inputText;

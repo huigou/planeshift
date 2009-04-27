@@ -40,6 +40,17 @@ public:
     int GetTab(void) { return lastButton->GetID();}
 
     pawsWidget* GetActiveTab(){ return activeTab; };
+    
+    bool pawsTabWindow::OnChange(pawsWidget * widget)
+    {
+        if(!widget->IsVisible())
+        {
+        	pawsButton* button = dynamic_cast<pawsButton*>(FindWidget(widget->GetID() - 100));
+        	button->Flash(true);
+        	return true;
+        }
+        return false;
+    }
 
 protected:
     pawsWidget* activeTab;

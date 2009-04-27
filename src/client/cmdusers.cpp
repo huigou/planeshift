@@ -274,7 +274,6 @@ const char *psUserCommands::HandleCommand(const char *cmd)
     if (words.GetCount() == 0)
         return "";
 
-    char buff[1024];
 
     if (  words[0] == "/show")
     {
@@ -373,13 +372,14 @@ const char *psUserCommands::HandleCommand(const char *cmd)
 
     else if (words[0] == "/sell")
     {
+    	csString buff;
         if (words.GetCount() > 1){
         csString tail = words.GetTail(1);
-            sprintf(buff,"<R TYPE=\"SELL\" TARGET=\"%s\"/>",tail.GetData());
+            buff.Format("<R TYPE=\"SELL\" TARGET=\"%s\"/>",tail.GetData());
         }
         else
         {
-            sprintf(buff,"<R TYPE=\"SELL\"/>"); // If no target specified by user use active target
+            buff.Format("<R TYPE=\"SELL\"/>"); // If no target specified by user use active target
         }
         psGUIMerchantMessage exchange(psGUIMerchantMessage::REQUEST,buff);
         exchange.SendMessage();
@@ -402,13 +402,14 @@ const char *psUserCommands::HandleCommand(const char *cmd)
     }
     else if (words[0] == "/buy")
     {
+    	csString buff;
         if (words.GetCount() > 1){
         csString tail = words.GetTail(1);
-            sprintf(buff,"<R TYPE=\"BUY\" TARGET=\"%s\"/>",tail.GetData());
+            buff.Format("<R TYPE=\"BUY\" TARGET=\"%s\"/>",tail.GetData());
         }
         else
         {
-            sprintf(buff,"<R TYPE=\"BUY\"/>"); // If no target specified by user use active target
+        	buff.Format("<R TYPE=\"BUY\"/>"); // If no target specified by user use active target
         }
         psGUIMerchantMessage exchange(psGUIMerchantMessage::REQUEST,buff);
         exchange.SendMessage();

@@ -1260,7 +1260,7 @@ void psEngine::LoadGame()
             return;
         }
 
-        AddLoadingWindowMsg( "Loading game" );
+        AddLoadingWindowMsg( "Loading..." );
         ForceRefresh();
 
         // Request MOTD

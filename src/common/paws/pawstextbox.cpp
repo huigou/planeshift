@@ -480,6 +480,8 @@ bool pawsMessageTextBox::SelfPopulate( iDocumentNode *node)
 
 void pawsMessageTextBox::AddMessage( const char* data, int msgColour )
 {
+	// Notify parent of activity
+	OnChange(this);
     // Extract \n out of the data and print a newline for each.
     csString message = data;
     csArray<csString> cutMessages;
@@ -622,7 +624,10 @@ void pawsMessageTextBox::OnUpdateData(const char *dataname,PAWSData& value)
     if (overwrite_subscription)
         Clear();
 
-    AddMessage( value.GetStr() );
+    if(value.type == PAWS_DATA_INT_STR)
+    	AddMessage(value.GetStr(), value.GetInt());
+    else
+    	AddMessage( value.GetStr() );
 }
 
 void pawsMessageTextBox::ResetScroll()

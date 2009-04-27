@@ -97,6 +97,10 @@ void pawsTabWindow::SetTab(int id)
 void pawsTabWindow::SetTab(const csString & name)
 {
     pawsWidget * tab = FindWidget(name);
-    if (tab != NULL)
+    if(!tab)
+    	return;
+    if(!dynamic_cast<pawsButton*>(tab))
+    	SetTab(tab->GetID() - 100);
+    else
         SetTab(tab->GetID());
 }
