@@ -6,36 +6,6 @@
         <logAllChat value="1" />
         <logSystemChat value="0" />
     </chatoptions>
-    <maintabincludes>
-        <npc value="no" />
-        <tell value="no" />
-        <guild value="no" />
-        <group value="no" />
-        <auction value="no" />
-        <system value="no" />
-        <systembase value="yes" />
-        <help value="no" />
-    </maintabincludes>
-    <flashingoptions>
-        <main value="yes" />
-        <npc value="yes" />
-        <tell value="yes" />
-        <guild value="yes" />
-        <group value="yes" />
-        <auction value="yes" />
-        <system value="yes" />
-        <help value="yes" />
-    </flashingoptions>
-	<flashingoncharoptions>
-        <main value="yes" />
-        <npc value="yes" />
-        <tell value="yes" />
-        <guild value="yes" />
-        <group value="yes" />
-        <auction value="yes" />
-        <system value="yes" />
-        <help value="yes" />
-    </flashingoncharoptions>
 
 		<chatcolors>
         <systemtext     r="0"   g="255" b="0" />

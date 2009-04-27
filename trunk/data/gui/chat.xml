@@ -13,17 +13,6 @@
             </attachpoints>
         </widget>
 
-        <widget name="Chat Tabs" factory="pawsTabWindow">
-
-	    <defaultstyle widget="pawsButton" style="New Standard Tab"/>
-
-            <frame x="6" y="2" width="320" height="95" border="no" />
-            <attachpoints>
-                <attach point="ATTACH_RIGHT" />
-                <attach point="ATTACH_TOP" />
-                <attach point="ATTACH_LEFT" />
-                <attach point="ATTACH_BOTTOM" />
-            </attachpoints>
             <!--childborders>
                 <colour r="0" g="0" b="0" />
                 <colour r="32" g="32" b="32" />
@@ -32,76 +21,42 @@
                 <colour r="220" g="220" b="220" />
             </childborders-->
 
-            <widget name="Main Button" factory="pawsButton" id="1000" shadows="yes">
-                <label text="Main" />
-                <frame x="0" y="5" width="25" height="16" border="no" />
-            </widget>
+	    <widget name="MainText" factory="pawsMessageTextBox" visible="yes" id="1100">
+	    <defaultstyle widget="pawsButton" style="New Standard Tab"/>
+		<subscriptions overwrite = "false">
+			<subscribe data="CHAT_SYSTEM" />
+			<subscribe data="CHAT_SERVER_INFO" />
+			<subscribe data="CHAT_SAY" />
+			<subscribe data="CHAT_TELL" />
+			<subscribe data="CHAT_GROUP" />
+			<subscribe data="CHAT_GUILD" />
+			<subscribe data="CHAT_AUCTION" />
+			<subscribe data="CHAT_SHOUT" />
+			<subscribe data="CHAT_TELLSELF" />
+			<subscribe data="CHAT_REPORT" />
+			<subscribe data="CHAT_ADVISOR" />
+			<subscribe data="CHAT_ADVICE" />
+			<subscribe data="CHAT_ADVICE_LIST" />
+			<subscribe data="CHAT_SERVER_TELL" />
+			<subscribe data="CHAT_GM" />
+			<subscribe data="CHAT_SERVER_INFO" />
+			<subscribe data="CHAT_NPC" />
+			<subscribe data="CHAT_NPCINTERNAL" />
+			<subscribe data="CHAT_SYSTEM_BASE" />
+			<subscribe data="CHAT_PET_ACTION" />
+			<subscribe data="CHAT_NPC_ME" />
+			<subscribe data="CHAT_NPC_MY" />
+			<subscribe data="CHAT_NPC_NARRATE" />
+		</subscriptions>
+                <frame x="6" y="2" width="320" height="95" border="no" />
 
-            <widget name="NPC Button" factory="pawsButton" id="1002" shadows="yes">
-                <label text="NPC" />
-                <frame x="25" y="5" width="30" height="16" border="no" />
+            <attachpoints>
+                <attach point="ATTACH_RIGHT" />
+                <attach point="ATTACH_TOP" />
+                <attach point="ATTACH_LEFT" />
+                <attach point="ATTACH_BOTTOM" />
+            </attachpoints>
+	    
             </widget>
-
-            <widget name="Tell Button" factory="pawsButton" id="1003" shadows="yes">
-                <label text="Tells" />
-                <frame x="56" y="5" width="30" height="16" border="no" />
-            </widget>
-
-            <widget name="Guild Button" factory="pawsButton" id="1004" shadows="yes">
-                <label text="Guild" />
-                <frame x="87" y="5" width="35" height="16" border="no" />
-            </widget>
-
-            <widget name="Group Button" factory="pawsButton" id="1005" shadows="yes">
-                <label text="Group" />
-                <frame x="123" y="5" width="35" height="16" border="no" />
-            </widget>
-
-            <widget name="Auction Button" factory="pawsButton" id="1006" shadows="yes">
-                <label text="Auction" />
-                <frame x="159" y="5" width="40" height="16" border="no" />
-            </widget>
-
-            <widget name="System Button" factory="pawsButton" id="1001">
-                <label text="System" />
-                <frame x="200" y="5" width="45" height="16" border="no" />
-            </widget>
-             <widget name="Help Button" factory="pawsButton" id="1007">
-                 <label text="Help" />
-                 <frame x="285" y="5" width="30" height="16" border="no" />
-             </widget>
-
-            <widget name="MainText" factory="pawsMessageTextBox" visible="no" id="1100">
-                <frame x="0" y="20" width="320" height="80" border="no" />
-            </widget>
-
-            <widget name="SystemText" factory="pawsMessageTextBox" visible="no" id="1101">
-                <frame x="0" y="20" width="320" height="80" border="no" />
-            </widget>
-
-            <widget name="NpcText" factory="pawsMessageTextBox" visible="no" id="1102">
-                <frame x="0" y="20" width="320" height="80" border="no" />
-            </widget>
-
-            <widget name="TellText" factory="pawsMessageTextBox" visible="no" id="1103">
-                <frame x="0" y="20" width="320" height="80" border="no" />
-            </widget>
-
-            <widget name="GuildText" factory="pawsMessageTextBox" visible="no" id="1104">
-                <frame x="0" y="20" width="320" height="80" border="no" />
-            </widget>
-
-            <widget name="GroupText" factory="pawsMessageTextBox" visible="no" id="1105">
-                <frame x="0" y="20" width="320" height="80" border="no" />
-            </widget>
-
-            <widget name="AuctionText" factory="pawsMessageTextBox" visible="no" id="1106">
-                <frame x="0" y="20" width="320" height="80" border="no" />
-            </widget>
-
-            <widget name="HelpText" factory="pawsMessageTextBox" visible="no" id="1107">
-                <frame x="0" y="20" width="320" height="80" border="no" />
-            </widget>
-        </widget>
     </widget>
 </widget_description>

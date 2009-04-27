@@ -94,19 +94,6 @@ struct ChatSettings
     int selectTabStyle;
     int vicinityFilters; // Flags int
     int meFilters; // Flags int
-
-    // Other tabs included on the main chat tab
-    bool npcIncluded, tellIncluded, guildIncluded, groupIncluded, auctionIncluded;
-    bool systemIncluded, systemBaseIncluded, helpIncluded;
-
-    // Tabs that are flashing
-    bool mainFlashing, npcFlashing, tellFlashing, guildFlashing, groupFlashing;
-    bool auctionFlashing, systemFlashing, helpFlashing;
-
-	// Tabs that are flashing on char name
-    bool maincFlashing, npccFlashing, tellcFlashing, guildcFlashing, groupcFlashing;
-    bool auctioncFlashing, systemcFlashing, helpcFlashing;
-
 };
 
 
