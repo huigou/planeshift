@@ -1664,6 +1664,9 @@ void pawsChatWindow::SendChatLine()
                 textToSend.Insert(0, "/say ");
 
         }
+        else
+        	// Most probably system command
+        	DetermineChatTabAndSelect("SystemText", settings.systemIncluded, "System Button");
 
         const char* errorMessage = cmdsource->Publish(textToSend);
         if (errorMessage)
