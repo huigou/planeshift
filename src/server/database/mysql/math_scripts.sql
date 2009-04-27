@@ -148,6 +148,12 @@ ResultPractice = 1;
 ResultEXP = RepairAmount;
 ");
 
+INSERT INTO math_scripts VALUES( "Calculate Mining Experience",
+"
+ResultEXP = if(Success, 25, 2);
+ResultPractice = if(Success, 1, 0);
+");
+
 INSERT INTO math_scripts VALUES( "CalculateFamiliarAffinity", "Affinity = Type + Lifecycle + AttackTool + AttackType;");
 
 INSERT INTO math_scripts VALUES( "CalculateMaxPetTime", "MaxTime = 5 * 60 * 1000 * if(Skill,Skill,1);");
