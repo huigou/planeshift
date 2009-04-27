@@ -43,7 +43,7 @@ class psLinearMovement;
 
 // This holds the version number of the network code, remember to increase
 // this each time you do an update which breaks compatibility
-#define PS_NETVERSION   0x009A
+#define PS_NETVERSION   0x009B
 // Remember to bump the version in pscssetup.h, as well.
 
 
