@@ -46,9 +46,6 @@ private:
     pawsCheckBox *FindCheckbox(const char *name);
 
     pawsChatWindow* chatWindow;
-    pawsCheckBox *isysbase, *inpc, *itells, *iguild, *igroup, *iauction, *isys, *ihelp;
-    pawsCheckBox *fmain, *fnpc, *ftells, *fguild, *fgroup, *fauction, *fsys, *fhelp;
-	pawsCheckBox *fcmain, *fcnpc, *fctells, *fcguild, *fcgroup, *fcauction, *fcsys, *fchelp;
 
 };
 
