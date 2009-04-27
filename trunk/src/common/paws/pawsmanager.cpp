@@ -1172,7 +1172,7 @@ csString PAWSData::temp_buffer;  // declare static string for returning const ch
 
 const char *PAWSData::GetStr()
 {
-    if (type == PAWS_DATA_STR)
+    if (type == PAWS_DATA_STR || type == PAWS_DATA_INT_STR)
         return str;
 
     switch (type)
@@ -1190,6 +1190,7 @@ const char *PAWSData::GetStr()
         temp_buffer.Format("%u",uintval);
         break;
     case PAWS_DATA_STR:
+    case PAWS_DATA_INT_STR:
     case PAWS_DATA_UNKNOWN:
         break;
     }
@@ -1205,6 +1206,7 @@ float PAWSData::GetFloat()
     {
     case PAWS_DATA_BOOL:    return boolval?1:0;
     case PAWS_DATA_INT:     return intval;
+    case PAWS_DATA_INT_STR:
     case PAWS_DATA_STR:     return atof(str);
     case PAWS_DATA_UINT:    return uintval;
     case PAWS_DATA_FLOAT:
@@ -1216,7 +1218,7 @@ float PAWSData::GetFloat()
 
 int   PAWSData::GetInt()
 {
-    if (type == PAWS_DATA_INT)
+    if (type == PAWS_DATA_INT || type == PAWS_DATA_INT_STR)
         return intval;
 
     switch (type)
@@ -1226,6 +1228,7 @@ int   PAWSData::GetInt()
     case PAWS_DATA_STR:     return atoi(str);
     case PAWS_DATA_UINT:    return uintval; //this should never be used (wrap warning!)
     case PAWS_DATA_INT:
+    case PAWS_DATA_INT_STR:
     case PAWS_DATA_UNKNOWN:
     break;
     }
@@ -1241,6 +1244,7 @@ unsigned int   PAWSData::GetUInt()
     {
     case PAWS_DATA_BOOL:    return boolval?1:0;
     case PAWS_DATA_FLOAT:   return (unsigned int)floatval;
+    case PAWS_DATA_INT_STR:
     case PAWS_DATA_STR:     return atoi(str);
     case PAWS_DATA_INT:
     case PAWS_DATA_UINT:
@@ -1259,6 +1263,7 @@ bool  PAWSData::GetBool()
     {
     case PAWS_DATA_INT:     return intval?true:false;
     case PAWS_DATA_FLOAT:   return floatval?true:false;
+    case PAWS_DATA_INT_STR:
     case PAWS_DATA_STR:     if (!str ||
                                 !strlen(str) ||
                                 !strcasecmp(str,"False") ||
@@ -1386,6 +1391,15 @@ void PawsManager::Publish(const csString & dataname,float datavalue)
     PAWSData data;
     data.type = PAWS_DATA_FLOAT;
     data.floatval = datavalue;
+    Publish(dataname,data);
+}
+
+void PawsManager::Publish(const csString & dataname,const char* datavalue, int color)
+{
+    PAWSData data;
+    data.type = PAWS_DATA_INT_STR;
+    data.str = datavalue;
+    data.intval = color;
     Publish(dataname,data);
 }
 

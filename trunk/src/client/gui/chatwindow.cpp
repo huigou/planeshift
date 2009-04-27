@@ -75,6 +75,31 @@ const char *logFileName[CHAT_NLOG] = {
     "system.txt"
 };
 
+// Must match the chat types in messages.h
+const char *CHAT_TYPES[] = {
+		"CHAT_SYSTEM",
+		"CHAT_SAY",
+		"CHAT_TELL",
+		"CHAT_GROUP",
+		"CHAT_GUILD",
+		"CHAT_AUCTION",
+		"CHAT_SHOUT",
+		"CHAT_TELLSELF",
+		"CHAT_REPORT",
+		"CHAT_ADVISOR",
+		"CHAT_ADVICE",
+		"CHAT_ADVICE_LIST",
+		"CHAT_SERVER_TELL",      ///< this tell came from the server, not from another player
+		"CHAT_GM",
+		"CHAT_SERVER_INFO",
+		"CHAT_NPC",
+		"CHAT_NPCINTERNAL",
+		"CHAT_SYSTEM_BASE",      ///< System messages that are also shown on the "Main" tab
+		"CHAT_PET_ACTION",
+		"CHAT_NPC_ME",
+		"CHAT_NPC_MY",
+		"CHAT_NPC_NARRATE"
+};
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -132,17 +157,9 @@ bool pawsChatWindow::PostSetup()
 
     SubscribeCommands();
 
-    tabs = (pawsTabWindow*)FindWidget("Chat Tabs");
+    tabs = dynamic_cast<pawsTabWindow*>(FindWidget("Chat Tabs"));
 
-    systemText  = (pawsMessageTextBox*)FindWidget("SystemText");
-    npcText     = (pawsMessageTextBox*)FindWidget("NpcText");
-    mainText    = (pawsMessageTextBox*)FindWidget("MainText");
-    tellText    = (pawsMessageTextBox*)FindWidget("TellText");
-    guildText   = (pawsMessageTextBox*)FindWidget("GuildText");
-    groupText   = (pawsMessageTextBox*)FindWidget("GroupText");
-    auctionText = (pawsMessageTextBox*)FindWidget("AuctionText");
-    helpText    = (pawsMessageTextBox*)FindWidget("HelpText");
-    inputText   = (pawsEditTextBox*)   FindWidget("InputText");
+    inputText   = dynamic_cast<pawsEditTextBox*>   (FindWidget("InputText"));
 
     // Load the settings
     LoadChatSettings();
@@ -486,24 +503,25 @@ void pawsChatWindow::LoadChatSettings()
     }
 }
 
-void pawsChatWindow::DetermineChatTabAndSelect(const char *specificTabName,bool includeMain, const char *buttonName)
+void pawsChatWindow::DetermineChatTabAndSelect(int chattype)
 {
-    csString tabList(specificTabName);
+	csArray<iPAWSSubscriber*> subscribers = PawsManager::GetSingleton().ListSubscribers(CHAT_TYPES[chattype]);
+	
+	if(!tabs || subscribers.IsEmpty())
+		return;
     
-    if (includeMain)
-        tabList.Append("|MainText");
+	PawsManager::GetSingleton().SetCurrentFocusedWidget( inputText );
+	BringToTop( inputText );
 
-    switch (settings.selectTabStyle)
-    {
-        case 1:
-            AutoselectChatTabIfNeeded(tabList, buttonName);
-            break;
-        case 2:
-            AutoselectChatTabIfNeeded(tabList, includeMain ? "Main Button" : buttonName);
-            break;
-        default:
-            break;
-    }
+	for(size_t i = 0; i < subscribers.GetSize(); i++)
+	{
+		pawsWidget* widget = dynamic_cast<pawsWidget*>(subscribers[i]);
+		if(widget->IsVisible())
+			return;
+	}
+
+	pawsWidget* newTab = dynamic_cast<pawsWidget*>(subscribers[0]);
+	tabs->SetTab(newTab->GetName());
 }
 
 const char* pawsChatWindow::HandleCommand( const char* cmd )
@@ -532,7 +550,7 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
             pPerson.Clear();
             words.GetTail(1, text);
             chattype = CHAT_SAY;
-            DetermineChatTabAndSelect("MainText", false, "Main Button");
+            DetermineChatTabAndSelect(CHAT_SAY);
         }
         else if (words[0] == "/tellnpcinternal")
         {
@@ -548,35 +566,35 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
             pPerson.Clear();
             words.GetTail(1, text);
             chattype = CHAT_NPC;
-            DetermineChatTabAndSelect("NpcText", settings.npcIncluded, "NPC Button");
+            DetermineChatTabAndSelect(CHAT_NPC);
         }
         else if (words[0] == "/report")
         {
             pPerson.Clear();
             words.GetTail(1,text);
             chattype = CHAT_REPORT;
-            DetermineChatTabAndSelect("SystemText", settings.systemIncluded, "System Button");
+            DetermineChatTabAndSelect(CHAT_REPORT);
         }
         else if (words[0] == "/guild")
         {
             pPerson.Clear();
             words.GetTail(1,text);
             chattype = CHAT_GUILD;
-            DetermineChatTabAndSelect("GuildText", settings.guildIncluded, "Guild Button");
+            DetermineChatTabAndSelect(CHAT_GUILD);
         }
         else if (words[0] == "/shout")
         {
             pPerson.Clear();
             words.GetTail(1,text);
             chattype = CHAT_SHOUT;
-            DetermineChatTabAndSelect("MainText", false, "Main Button");
+            DetermineChatTabAndSelect(CHAT_SHOUT);
         }
         else if (words[0] == "/group")
         {
             pPerson.Clear();
             words.GetTail(1,text);
             chattype = CHAT_GROUP;
-            DetermineChatTabAndSelect("GroupText", settings.groupIncluded, "Group Button");
+            DetermineChatTabAndSelect(CHAT_GROUP);
         }
         else if (words[0] == "/tell")
         {
@@ -585,26 +603,28 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
                 return PawsManager::GetSingleton().Translate("You must enter the text").Detach();
             words.GetTail(2,text);
             chattype = CHAT_TELL;
-            DetermineChatTabAndSelect("TellText", settings.tellIncluded, "Tell Button");
+            DetermineChatTabAndSelect(CHAT_TELL);
         }
         else if (words[0] == "/auction")
         {
             pPerson.Clear();
             words.GetTail(1,text);
             chattype = CHAT_AUCTION;
-            DetermineChatTabAndSelect("AuctionText", settings.auctionIncluded, "Auction Button");
+            DetermineChatTabAndSelect(CHAT_AUCTION);
         }
         else if (words[0] == "/mypet")
         {
             pPerson.Clear();
             chattype = CHAT_PET_ACTION;
             words.GetTail(1,text);
-            DetermineChatTabAndSelect("MainText", false, "Main Button");
+            DetermineChatTabAndSelect(CHAT_PET_ACTION);
         }
         else if (words[0] == "/me" || words[0] == "/my")
         {
             pPerson.Clear();
-            csString chatType = tabs->GetActiveTab()->GetName();
+            csString chatType;
+            if(tabs)
+            	chatType = tabs->GetActiveTab()->GetName();
 
             csString allowedTabs;
             csString defaultButton("Main Button");
@@ -623,31 +643,31 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
                 }
                 words.GetTail(0,text);
                 chattype = CHAT_TELL;
-                DetermineChatTabAndSelect("TellText", settings.tellIncluded, "Tell Button");
+                DetermineChatTabAndSelect(CHAT_TELL);
             }
             else if (chatType == "GuildText")
             {
                 chattype = CHAT_GUILD;
                 words.GetTail(0,text);
-                DetermineChatTabAndSelect("GuildText", settings.guildIncluded, "Guild Button");
+                DetermineChatTabAndSelect(CHAT_GUILD);
             }
             else if (chatType == "GroupText")
             {
                 chattype = CHAT_GROUP;
                 words.GetTail(0,text);
-                DetermineChatTabAndSelect("GroupText", settings.groupIncluded, "Group Button");
+                DetermineChatTabAndSelect(CHAT_GROUP);
             }
             else if (chatType == "AuctionText")
             {
                 chattype = CHAT_AUCTION;
                 words.GetTail(0,text);
-                DetermineChatTabAndSelect("AuctionText", settings.auctionIncluded, "Auction Button");
+                DetermineChatTabAndSelect(CHAT_AUCTION);
             }
             else // when in doubt, use the normal way
             {
                 chattype = CHAT_SAY;
                 words.GetTail(0,text);
-                DetermineChatTabAndSelect("MainText", false, "Main Button");
+                DetermineChatTabAndSelect(CHAT_SAY);
             }
         }
     }
@@ -1631,7 +1651,9 @@ void pawsChatWindow::SendChatLine()
     {
         if ( textToSend.GetAt(0) != '/' )
         {
-            csString chatType = tabs->GetActiveTab()->GetName();
+        	csString chatType;
+        	if(tabs)
+            	chatType = tabs->GetActiveTab()->GetName();
 
             if (chatType == "TellText")
             {
@@ -1664,10 +1686,7 @@ void pawsChatWindow::SendChatLine()
                 textToSend.Insert(0, "/say ");
 
         }
-        else
-        	// Most probably system command
-        	DetermineChatTabAndSelect("SystemText", settings.systemIncluded, "System Button");
-
+        
         const char* errorMessage = cmdsource->Publish(textToSend);
         if (errorMessage)
             ChatOutput(errorMessage);
@@ -1700,37 +1719,6 @@ bool pawsChatWindow::OnMenuAction(pawsWidget * widget, const pawsMenuAction & ac
     }
 
     return pawsWidget::OnMenuAction(widget, action);
-}
-
-void pawsChatWindow::AutoselectChatTabIfNeeded(const char *allowedTabList, const char * defaultTab)
-{
-    pawsWidget * currentTab;
-    csString currentTabName;
-    size_t allowedTab;
-
-    csString list(allowedTabList);
-    csArray<csString> allowedTabs = psSplit(list,'|');
-
-    currentTab = tabs->GetActiveTab();
-    if (currentTab != NULL)
-    {
-        currentTabName = currentTab->GetName();
-        allowedTab = 0;
-        while (allowedTab < allowedTabs.GetSize() && currentTabName != allowedTabs[allowedTab])
-            allowedTab++;
-        if (allowedTab >= allowedTabs.GetSize())
-        {
-            tabs->SetTab(defaultTab);
-            PawsManager::GetSingleton().SetCurrentFocusedWidget( inputText );
-            BringToTop( inputText );
-        }
-    }
-    else
-    {
-        tabs->SetTab(defaultTab);
-        PawsManager::GetSingleton().SetCurrentFocusedWidget( inputText );
-        BringToTop( inputText );
-    }
 }
 
 bool pawsChatWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
@@ -1944,14 +1932,15 @@ void pawsChatWindow::SetAway(const char* text)
 
 void pawsChatWindow::Clear()
 {
-    mainText->Clear();
-    npcText->Clear();
-    systemText->Clear();
-    tellText->Clear();
-    guildText->Clear();
-    groupText->Clear();
-    auctionText->Clear();
-    helpText->Clear();
+	for(int chattype = 0; chattype < CHAT_END; chattype++)
+	{
+		csArray<iPAWSSubscriber*> subscribers = PawsManager::GetSingleton().ListSubscribers(CHAT_TYPES[chattype]);
+		for(size_t i = 0; i < subscribers.GetSize(); i++)
+		{
+			pawsMessageTextBox* textbox = dynamic_cast<pawsMessageTextBox*>(subscribers[i]);
+			textbox->Clear();
+		}
+	}
 }
 
 
@@ -2038,119 +2027,12 @@ csString pawsChatWindow::GetBracket(int type) //according to the type return the
 void pawsChatWindow::ChatOutput(const char* data, int colour, int type, bool flashEnabled, bool hasCharName)
 {
     csString s = data;
-    if (settings.enableBadWordsFilterIncoming)
+    if (settings.enableBadWordsFilterIncoming && type != CHAT_SERVER_INFO)
     {
         BadWordsFilter(s);
     }
 
-    pawsWidget *currentTab = tabs->GetActiveTab();
-
-    // Indicates that the text is also shown on the main tab
-    bool toMain = false;
-
-    // Indicates that the main tab should be flashing
-    bool flashMain = flashEnabled;
-
-    switch (type)
-    {
-        case CHAT_SERVER_INFO:
-            // We are posting this everywhere, no need to flash.
-            ChatOutput(systemText, data, colour, false, "System Button");
-            ChatOutput(tellText, data, colour, false, "Tell Button");
-            ChatOutput(guildText, data, colour, false, "Guild Button");
-            ChatOutput(groupText, data, colour, false, "Group Button");
-            ChatOutput(auctionText, data, colour, false, "Auction Button");
-            ChatOutput(helpText, data, colour, false, "Help Button");
-            ChatOutput(npcText, data, colour, false, "NPC Button");
-            toMain = true;
-            flashMain = false; // Since it goes to all tabs, no reason to flash the main tab
-            s = data; //we have to restore the original data for the main tab if it went trough the badwordfiltering as this an admin message
-            break;
-
-        case CHAT_SYSTEM:
-            toMain = settings.systemIncluded;
-            flashMain &= currentTab != systemText;
-            ChatOutput(systemText, s.GetDataSafe(), colour, flashEnabled && !toMain && (settings.systemFlashing || (hasCharName && settings.systemcFlashing)) , "System Button");
-            break;
-
-        case CHAT_TELL:
-        case CHAT_TELLSELF:
-            toMain = settings.tellIncluded;
-            flashMain &= currentTab != tellText;
-            ChatOutput(tellText, s.GetDataSafe(), colour, flashEnabled && !toMain && (settings.tellFlashing || (hasCharName && settings.tellcFlashing)), "Tell Button");
-            break;
-
-        case CHAT_GUILD:
-            toMain = settings.guildIncluded;
-            flashMain &= currentTab != guildText;
-            ChatOutput(guildText, s.GetDataSafe(), colour, flashEnabled && !toMain && (settings.guildFlashing || (hasCharName && settings.guildcFlashing)), "Guild Button");
-            break;
-
-        case CHAT_GROUP:
-            toMain = settings.groupIncluded;
-            flashMain &= currentTab != groupText;
-            ChatOutput(groupText, s.GetDataSafe(), colour, flashEnabled && !toMain && (settings.groupFlashing || (hasCharName && settings.groupcFlashing)), "Group Button");
-            break;
-
-        case CHAT_AUCTION:
-            toMain = settings.auctionIncluded;
-            flashMain &= currentTab != auctionText;
-            ChatOutput(auctionText, s.GetDataSafe(), colour, flashEnabled && !toMain && (settings.auctionFlashing || (hasCharName && settings.auctioncFlashing)), "Auction Button");
-            break;
-
-        case CHAT_ADVISOR:
-        case CHAT_ADVICE:
-        case CHAT_ADVICE_LIST:
-            toMain = settings.helpIncluded;
-            flashMain &= currentTab != helpText;
-            ChatOutput(helpText, s.GetDataSafe(), colour, flashEnabled && !toMain && (settings.helpFlashing || (hasCharName && settings.helpcFlashing)), "Help Button");
-            break;
-
-        case CHAT_NPC:
-        case CHAT_NPC_ME:
-        case CHAT_NPC_MY:
-        case CHAT_NPC_NARRATE:
-        case CHAT_NPCINTERNAL:
-            toMain = settings.npcIncluded;
-            flashMain &= currentTab != npcText;
-            ChatOutput(npcText, s.GetDataSafe(), colour, flashEnabled && !toMain && (settings.npcFlashing || (hasCharName && settings.npccFlashing)), "NPC Button");
-            break;
-
-        case CHAT_SYSTEM_BASE:
-            // System base messages go either to the main tab or to the system tab
-            if (settings.systemBaseIncluded)
-                toMain = true;
-            else
-            {
-                // There is another chance that it still would be shown on the main tab as well
-                toMain = settings.systemIncluded;
-                flashMain &= currentTab != systemText;
-                ChatOutput(systemText, s.GetDataSafe(), colour, flashEnabled && !toMain && (settings.systemFlashing || (hasCharName && settings.systemcFlashing)), "System Button");
-            }
-            break;
-
-        default:
-            // Anything else goes to the Main tab (say, shout, system base)
-            toMain = true;
-            break;
-    }
-
-    if (toMain)
-    {
-        if(settings.mainBrackets) //check if we have to add brackets
-            s.Insert(0, GetBracket(type));
-        ChatOutput(mainText, s.GetDataSafe(), colour, flashMain && (settings.mainFlashing || (hasCharName && settings.maincFlashing)), "Main Button");
-    }
-}
-
-void pawsChatWindow::ChatOutput(pawsMessageTextBox *pmtb, const char *data,
-                                int colour, bool flashEnabled,
-                                const char *buttonName)
-{
-    pmtb->AddMessage(data, colour);
-
-    if (flashEnabled && buttonName != NULL && FindWidget(buttonName))
-        ((pawsButton *) FindWidget(buttonName))->Flash(true);
+    PawsManager::GetSingleton().Publish(CHAT_TYPES[type], s, colour );
 }
 
 void pawsChatWindow::AddAutoCompleteName(const char *cname)
@@ -2178,11 +2060,6 @@ void pawsChatWindow::RemoveAutoCompleteName(const char *name)
             Debug2(LOG_CHAT,0, "Removed %s from autoComplete list.\n",name);
         }
     }
-}
-
-void pawsChatWindow::NpcChat()
-{
-    AutoselectChatTabIfNeeded("NpcText", "NPC Button");
 }
 
 int pawsChatWindow::mixColours(int colour1, int colour2)

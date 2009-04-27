@@ -334,6 +334,9 @@ public:
 
     /// Publish a float to all subscribers.
     void Publish(const csString & dataname,float datavalue);
+    
+    /// Publish a coloured string to all subscribers.
+    void Publish(const csString & dataname, const char *datavalue, int color);
 
     /// Publish nothing to all subscribers. (Used for one-time named signals.)
     void Publish(const csString & dataname);
@@ -586,7 +589,8 @@ enum PAWSDATATYPE
     PAWS_DATA_BOOL,
     PAWS_DATA_INT,
     PAWS_DATA_UINT,
-    PAWS_DATA_FLOAT
+    PAWS_DATA_FLOAT,
+    PAWS_DATA_INT_STR
 };
 
 

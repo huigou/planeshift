@@ -736,7 +736,7 @@ public:
 };
 
 enum {
-    CHAT_SYSTEM =   -1,
+    CHAT_SYSTEM,
     CHAT_SAY,
     CHAT_TELL,
     CHAT_GROUP,
@@ -757,9 +757,9 @@ enum {
     CHAT_PET_ACTION,
     CHAT_NPC_ME,
     CHAT_NPC_MY,
-    CHAT_NPC_NARRATE
+    CHAT_NPC_NARRATE,
+    CHAT_END
 };
-
 
 /**
  * Message sent with chat info.

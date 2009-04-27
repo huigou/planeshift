@@ -3124,8 +3124,8 @@ psMsgStringsMessage::psMsgStringsMessage(uint32_t clientnum, csStringHashReversi
 
     msg.AttachNew(new MsgEntry(MAX_MESSAGE_SIZE));
 
-    char buff1[PACKING_BUFFSIZE];      // Holds packed strings
-    char buff2[COMPRESSION_BUFFSIZE];  // Holds compressed data
+    char *buff1 = new char[PACKING_BUFFSIZE];      // Holds packed strings
+    char *buff2 = new char[COMPRESSION_BUFFSIZE];  // Holds compressed data
     size_t length = 0;
 
     msg->SetType(MSGTYPE_MSGSTRINGS);
@@ -3181,7 +3181,10 @@ psMsgStringsMessage::psMsgStringsMessage(uint32_t clientnum, csStringHashReversi
            length, z.total_out,
            int(length)-int(z.total_out),
            1.0f-(float(z.total_out)/float(length)));
+           
 */
+    delete[] buff1;
+    delete[] buff2;
 }
 
 psMsgStringsMessage::psMsgStringsMessage(MsgEntry *message)
@@ -3214,7 +3217,7 @@ psMsgStringsMessage::psMsgStringsMessage(MsgEntry *message)
         return;
     }
 
-    char buff[PACKING_BUFFSIZE];  // Holds packed strings after decompression
+    char *buff = new char[PACKING_BUFFSIZE];  // Holds packed strings after decompression
 
     // Ready
     z_stream z;
@@ -3270,6 +3273,7 @@ psMsgStringsMessage::psMsgStringsMessage(MsgEntry *message)
             return;
         }
     }
+    delete[] buff;
 }
 
 csString psMsgStringsMessage::ToString(AccessPointers * /*access_ptrs*/)
