@@ -64,7 +64,7 @@
 #include "adminmanager.h"
 
 //#define DEBUG_WORKMANAGER         // debugging only
-//#define NO_RANDOM_QUALITY         // no not apply randomness to calculations
+//#define NO_RANDOM_QUALITY         // do not apply randomness to calculations
 
 /*
  *  There are four types of work that can be done:
@@ -132,6 +132,7 @@ WorkManager::WorkManager()
     calc_repair_quality = psserver->GetMathScriptEngine()->FindScript("Calculate Repair Quality");
     calc_repair_exp     = psserver->GetMathScriptEngine()->FindScript("Calculate Repair Experience");
     calc_mining_chance  = psserver->GetMathScriptEngine()->FindScript("Calculate Mining Odds");
+    calc_mining_exp  = psserver->GetMathScriptEngine()->FindScript("Calculate Mining Experience");
     calc_lockpick_time  = psserver->GetMathScriptEngine()->FindScript("Lockpicking Time");
 
     if (!calc_repair_rank)
@@ -157,6 +158,10 @@ WorkManager::WorkManager()
     if (!calc_mining_chance)
     {
         Error1("Could not find mathscript 'Calculate Mining Odds'");
+    }
+    if (!calc_mining_exp)
+    {
+        Error1("Could not find mathscript 'Calculate Mining Experience'");
     }
     if (!calc_lockpick_time)
     {
@@ -527,10 +532,13 @@ void WorkManager::HandleRepairEvent(psWorkGameEvent* workEvent)
         workEvent->client->GetCharacterData()->Skills().AddSkillPractice((PSSKILL)skillid,practicepoints);
     }
 
-    if ( workEvent->client->GetCharacterData()->AddExperiencePoints(experiencepoints) > 0 ) //check if PP where assigned
-        psserver->SendSystemInfo(workEvent->client->GetClientNum(),"You gained some experience points and progression points!");
-    else
-        psserver->SendSystemInfo(workEvent->client->GetClientNum(),"You gained some experience points");
+    if ( experiencepoints > 0 ) //check if there is experience to assign.
+    {
+        if ( workEvent->client->GetCharacterData()->AddExperiencePoints(experiencepoints) > 0 ) //check if PP where assigned
+            psserver->SendSystemInfo(workEvent->client->GetClientNum(),"You gained some experience points and progression points!");
+        else
+            psserver->SendSystemInfo(workEvent->client->GetClientNum(),"You gained some experience points");
+    }
 
     repairTarget->Save(false);
 }
@@ -852,16 +860,6 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
 
     if (roll < total)  // successful!
     {
-        unsigned int ppGained =  workerchar->AddExperiencePoints(25);
-
-        if (workEvent->client)
-        {
-            if ( ppGained > 0 )
-                psserver->SendSystemInfo(workEvent->client->GetClientNum(),"You gained some experience points and a progression point!");
-            else
-                psserver->SendSystemInfo(workEvent->client->GetClientNum(),"You gained some experience points");
-        }
-
         psItemStats *newitem = CacheManager::GetSingleton().GetBasicItemStatsByID(workEvent->nr->reward);
         if (!newitem)
         {
@@ -922,34 +920,51 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
             {
                 workEvent->client->GetActor()->SetLastProductionPos(pos);
             }
-
-            // increase practice in that skill
-            psSkillInfo *skill = CacheManager::GetSingleton().GetSkillByID((PSSKILL)workEvent->nr->skill->id);
-            if (skill)
-            {
-                workerchar->Skills().AddSkillPractice(PSSKILL_MINING,1);
-            }
         }
     }
     else
     {
-        unsigned int ppGained =  workerchar->AddExperiencePoints(2);
-
         if (workEvent->client)
         {
-            if ( ppGained > 0 )
-                psserver->SendSystemInfo(workEvent->worker->GetClientID(),"You gained a little experience and a progression point!");
-            else
-                psserver->SendSystemInfo(workEvent->worker->GetClientID(),"You gained a little experience");
-
-
             psserver->SendSystemInfo(workEvent->worker->GetClientID(),"You were not successful.");
         } else
         {
             Debug2(LOG_SUPERCLIENT,0,"%s where not successful.",workEvent->worker->GetName());
         }
-
     }
+
+    //Assign experience and practice points
+    int practicepoints;
+    int experiencepoints;
+    {
+        MathEnvironment env;
+        env.Define("Success", roll < total);
+        env.Define("Worker", workEvent->client->GetCharacterData());
+        calc_mining_exp->Evaluate(&env);
+        practicepoints   = env.Lookup("ResultPractice")->GetValue();
+        experiencepoints = env.Lookup("ResultEXP")->GetValue();
+    }
+
+    if(experiencepoints > 0) //check if there is experience to assign.
+    {
+        unsigned int ppGained =  workerchar->AddExperiencePoints(experiencepoints);
+
+        if (workEvent->client)
+        {
+            if ( ppGained > 0 )
+                psserver->SendSystemInfo(workEvent->client->GetClientNum(),"You gained some experience points and progression points!");
+            else
+                psserver->SendSystemInfo(workEvent->client->GetClientNum(),"You gained some experience points");
+        }
+    }
+
+    // increase practice in that skill
+    psSkillInfo *skill = CacheManager::GetSingleton().GetSkillByID((PSSKILL)workEvent->nr->skill->id);
+    if (skill)
+    {
+        workerchar->Skills().AddSkillPractice(PSSKILL_MINING,practicepoints);
+    }
+    
     workEvent->worker->SetMode(PSCHARACTER_MODE_PEACE); // Actor isn't working anymore
 }
 
@@ -3690,7 +3705,7 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
             break;
         }
     }
-
+///TODO: CHANGE
     // Calculate and apply experience points
     if (result > 0 && startQuality < currentQuality)
     {

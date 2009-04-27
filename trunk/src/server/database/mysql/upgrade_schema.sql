@@ -1173,6 +1173,12 @@ ResultPractice = 1;
 ResultEXP = RepairAmount;
 ");
 
+INSERT INTO math_scripts VALUES( "Calculate Mining Experience",
+"
+ResultEXP = if(Success, 25, 2);
+ResultPractice = if(Success, 1, 0);
+");
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to

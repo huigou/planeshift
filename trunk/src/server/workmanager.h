@@ -268,8 +268,9 @@ protected:
     MathScript *calc_repair_time;           ///< This is the calculation for how long a repair takes.
     MathScript *calc_repair_result;         ///< This is the calculation for how many points of quality are added in a repair.
     MathScript *calc_repair_quality;        ///< This calculates the item ending quality and max quality at the end of repair.
-    MathScript *calc_repair_exp;            ///< This is the calculation for the experience to assign to player.
+    MathScript *calc_repair_exp;            ///< This is the calculation for the experience to assign to player for repairing.
     MathScript *calc_mining_chance;         ///< This is the calculation for chance of successful mining.
+    MathScript *calc_mining_exp;            ///< This is the calculation for the experience to assign to player for mining.
     MathScript *calc_lockpick_time;         ///< This is the calculation for how long it takes to pick a lock.
 
     void HandleLockPick(MsgEntry* me,Client *client);
