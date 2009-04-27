@@ -41,7 +41,7 @@ public:
 
     pawsWidget* GetActiveTab(){ return activeTab; };
     
-    bool pawsTabWindow::OnChange(pawsWidget * widget)
+    bool OnChange(pawsWidget * widget)
     {
         if(!widget->IsVisible())
         {
