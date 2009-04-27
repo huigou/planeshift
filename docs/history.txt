@@ -1,3 +1,15 @@
+*** 2009-04-27 by Andrew Dai
+NETVERSION BUMP
+- Refactored chatwindow to use PAWS subscriptions so that message types and tab
+  assignments now have practically unlimited flexibility.
+- Extended PAWS subscriptions to support coloured text in message text boxes.
+- Message text boxes now automatically notify parents on change so buttons
+  flash automatically.
+- Changed default chatwindow to have no tabs for the benefit of new players.
+  The tabbed chat window is still supported but will need updates to its
+  xml to work after this refactoring.
+- Reduced stack usage in some places for easier stack overflow checking.
+
 *** 2009-04-26 by Kenny Graunke
 - Exposed IsAdvisorBanned and AdvisorPoints to the scripting system.
 
