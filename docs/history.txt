@@ -1,3 +1,8 @@
+*** 2009-04-28 by Stefano Angeleri
+- Reworked scripts in work manager to call a generic new function which
+  attribuites skill practice points and experience based on the execution
+  of a generic math script. Reducing copy & paste effect.
+
 *** 2009-04-28 by Tristan Cragnolini
 - Changed a few RangeTo calls so that they ignore instances, fixing some ALs.
 
