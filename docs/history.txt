@@ -1,3 +1,6 @@
+*** 2009-04-28 by Tristan Cragnolini
+- Changed a few RangeTo calls so that they ignore instances, fixing some ALs.
+
 *** 2009-04-28 by Andrew Dai
 - The last used chat channel will now automatically be remembered in the
   chatwindow input.
