@@ -2946,7 +2946,39 @@ void gemActor::SetPosition(const csVector3& pos,float angle, iSector* sector)
     this->yRot = angle;
     this->sector = sector;
 
-    DRcounter += 3;
+    // DR packet versioning games:
+    //
+    // Consider teleporting from "guildlaw" to "npcroom":
+    // 1. The server sends a DR packet with the new npcroom position.
+    // 2. Assuming the player is moving, the client will still be sending
+    //    new DR packets to the server...likely before receiving it.
+    //
+    // When the client finally does receive it, it'll check the version.
+    // Since the client is likely ahead by several versions, it may well ignore
+    // the packet as out of date.
+    //
+    // Also, when the server receives the other DR packets from the client
+    // (still in guildlaw), it would see them as newer than its saved position
+    // and accept them...effectively moving the player back to the old map.
+    //
+    // This is detrimental when switching instances...the player may end up in
+    // the wrong instance (say 0) of a building, with no way out.
+    //
+    // We avoid these issues by bumping the version number whenever we force a
+    // position server-side.  The value we bump by is critical for robustness.
+    //
+    // For the client to accept the new version, the following must hold:
+    // 1. NewServerVersion - ClientVersion (mod 256) <= 127
+    //
+    // For the server to reject interim packets (on the old map):
+    // 2. ClientVersion - NewServerVersion (mod 256) >  127
+    //
+    // 127 would be the ideal choice, unless the server forces positions
+    // multiple times before the client notices - which could happen due to
+    // server coding or lag.  In that case, floor(127/N) is ideal (where N is
+    // the number of updates before the client notices).
+
+    DRcounter += 42; // handles client-lead-time of 42 versions, and up to 3 server forces
 
     pcmove->SetPosition(pos,angle,sector);
 

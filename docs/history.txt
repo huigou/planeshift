@@ -1,3 +1,7 @@
+*** 2009-04-28 by Kenny Graunke
+- Tentative fix for the guildhouse instance 0 bug.  It's not foolproof, but
+  doesn't cost anything and hopefully will prevent it in practice.
+
 *** 2009-04-27 by Andrew Dai
 NETVERSION BUMP
 - Refactored chatwindow to use PAWS subscriptions so that message types and tab
