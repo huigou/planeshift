@@ -360,6 +360,7 @@ bool psQuestPrereqOpItem::Check(psCharacter * character)
         return character->Inventory().hasItemCategory(categoryName, includeInventory);
     if(!itemName.IsEmpty())
         return character->Inventory().hasItemName(itemName, includeInventory);
+    return false;
 }
 
 csString psQuestPrereqOpItem::GetScriptOp()
