@@ -1,3 +1,7 @@
+*** 2009-04-28 by Andrew Dai
+- The last used chat channel will now automatically be remembered in the
+  chatwindow input.
+
 *** 2009-04-28 by Kenny Graunke
 - Tentative fix for the guildhouse instance 0 bug.  It's not foolproof, but
   doesn't cost anything and hopefully will prevent it in practice.
