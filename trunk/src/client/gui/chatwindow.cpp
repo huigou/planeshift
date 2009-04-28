@@ -406,11 +406,13 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
         if (words.GetCount() == 1)
             return PawsManager::GetSingleton().Translate("You must enter the text").Detach();
 
+        inputText->SetText(words[0] + " ");
         if (words[0] == "/say")
         {
             pPerson.Clear();
             words.GetTail(1, text);
             chattype = CHAT_SAY;
+            inputText->SetText("");
             DetermineChatTabAndSelect(CHAT_SAY);
         }
         else if (words[0] == "/tellnpcinternal")
@@ -531,6 +533,8 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
                 DetermineChatTabAndSelect(CHAT_SAY);
             }
         }
+        else
+        	inputText->SetText("");
     }
 
     if (settings.enableBadWordsFilterOutgoing)
@@ -1329,10 +1333,9 @@ bool pawsChatWindow::OnKeyDown(int keyCode, int key, int modifiers )
             if (settings.looseFocusOnSend || !strcmp(inputText->GetText(), ""))
                 PawsManager::GetSingleton().SetCurrentFocusedWidget((pawsWidget*)PawsManager::GetSingleton().GetMainWidget());
 
-            SendChatLine();
-
+            csString text = inputText->GetText();
             inputText->Clear();
-
+            SendChatLine(text);
             break;
         }
 
@@ -1428,10 +1431,8 @@ bool pawsChatWindow::OnKeyDown(int keyCode, int key, int modifiers )
     return true;
 }
 
-void pawsChatWindow::SendChatLine()
+void pawsChatWindow::SendChatLine(csString& textToSend)
 {
-    csString textToSend = inputText->GetText();
-
     if ( textToSend.Length() )
     {
         if ( textToSend.GetAt(0) != '/' )
