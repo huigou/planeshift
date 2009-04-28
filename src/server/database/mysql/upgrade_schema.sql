@@ -1170,13 +1170,18 @@ ResultQ = if(ResultQ > ResultMaxQ, ResultMaxQ, ResultQ);
 INSERT INTO math_scripts VALUES( "Calculate Repair Experience",
 "
 ResultPractice = 1;
-ResultEXP = RepairAmount;
+ResultModifier = RepairAmount;
 ");
 
 INSERT INTO math_scripts VALUES( "Calculate Mining Experience",
 "
-ResultEXP = if(Success, 25, 2);
 ResultPractice = if(Success, 1, 0);
+ResultModifier = if(Success, 25, 2);
+");
+
+INSERT INTO math_scripts VALUES( "Calculate Skill Experience",
+"
+Exp = PracticePoints*Modifier;
 ");
 
 # Insert your upgrade before this line. Remember when you set a new db_version

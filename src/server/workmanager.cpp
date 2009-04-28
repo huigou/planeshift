@@ -511,34 +511,23 @@ void WorkManager::HandleRepairEvent(psWorkGameEvent* workEvent)
                                repairTarget->GetItemQuality(),
                                repairTarget->GetMaxItemQuality());
 
-    // assign practice points
+    // calculate practice points
 
-    int practicepoints;
-    int experiencepoints;
+    int practicePoints;
+    float modifier;
     {
         MathEnvironment env;
         env.Define("Object", repairTarget);
         env.Define("Worker", workEvent->client->GetCharacterData());
         env.Define("RepairAmount", workEvent->repairAmount);
         calc_repair_exp->Evaluate(&env);
-        practicepoints   = env.Lookup("ResultPractice")->GetValue();
-        experiencepoints = env.Lookup("ResultEXP")->GetValue();
+        practicePoints   = env.Lookup("ResultPractice")->GetValue();
+        modifier = env.Lookup("ResultModifier")->GetValue();
     }
 
     int skillid = repairTarget->GetBaseStats()->GetCategory()->repairSkillId;
-    psSkillInfo *skill = CacheManager::GetSingleton().GetSkillByID((PSSKILL)skillid);
-    if (skill)
-    {
-        workEvent->client->GetCharacterData()->Skills().AddSkillPractice((PSSKILL)skillid,practicepoints);
-    }
-
-    if ( experiencepoints > 0 ) //check if there is experience to assign.
-    {
-        if ( workEvent->client->GetCharacterData()->AddExperiencePoints(experiencepoints) > 0 ) //check if PP where assigned
-            psserver->SendSystemInfo(workEvent->client->GetClientNum(),"You gained some experience points and progression points!");
-        else
-            psserver->SendSystemInfo(workEvent->client->GetClientNum(),"You gained some experience points");
-    }
+    //assigns points and exp
+    workEvent->client->GetCharacterData()->CalculateAddExperience((PSSKILL)skillid, practicePoints, modifier);
 
     repairTarget->Save(false);
 }
@@ -934,36 +923,20 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
     }
 
     //Assign experience and practice points
-    int practicepoints;
-    int experiencepoints;
+    int practicePoints;
+    float modifier;
     {
         MathEnvironment env;
         env.Define("Success", roll < total);
         env.Define("Worker", workEvent->client->GetCharacterData());
         calc_mining_exp->Evaluate(&env);
-        practicepoints   = env.Lookup("ResultPractice")->GetValue();
-        experiencepoints = env.Lookup("ResultEXP")->GetValue();
+        practicePoints   = env.Lookup("ResultPractice")->GetValue();
+        modifier = env.Lookup("ResultModifier")->GetValue();
     }
 
-    if(experiencepoints > 0) //check if there is experience to assign.
-    {
-        unsigned int ppGained =  workerchar->AddExperiencePoints(experiencepoints);
 
-        if (workEvent->client)
-        {
-            if ( ppGained > 0 )
-                psserver->SendSystemInfo(workEvent->client->GetClientNum(),"You gained some experience points and progression points!");
-            else
-                psserver->SendSystemInfo(workEvent->client->GetClientNum(),"You gained some experience points");
-        }
-    }
-
-    // increase practice in that skill
-    psSkillInfo *skill = CacheManager::GetSingleton().GetSkillByID((PSSKILL)workEvent->nr->skill->id);
-    if (skill)
-    {
-        workerchar->Skills().AddSkillPractice(PSSKILL_MINING,practicepoints);
-    }
+    // assign practice and experience
+    workEvent->client->GetCharacterData()->CalculateAddExperience((PSSKILL)workEvent->nr->skill->id, practicePoints, modifier);
     
     workEvent->worker->SetMode(PSCHARACTER_MODE_PEACE); // Actor isn't working anymore
 }
