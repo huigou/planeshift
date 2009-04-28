@@ -313,6 +313,8 @@ struct Skill
 
     unsigned short zCost;    ///< Cost in Z points.
     unsigned short yCost;    ///< cost in y points.
+    unsigned short zCostNext;///< Cost in Z points of next level.
+    unsigned short yCostNext;///< cost in y points of next level.
     bool dirtyFlag;          ///< Flag if this was changed after load from database
 
     psSkillInfo *info;       ///< Database information about the skill.
@@ -828,6 +830,7 @@ public:
     unsigned int GetExperiencePoints(); // W
     void SetExperiencePoints(unsigned int W);
     unsigned int AddExperiencePoints(unsigned int W);
+    unsigned int CalculateAddExperience(PSSKILL skill, unsigned int awardedPoints, float modifier = 1);
     unsigned int GetProgressionPoints(); // X
     void SetProgressionPoints(unsigned int X,bool save);
     void UseProgressionPoints(unsigned int X);
@@ -1149,7 +1152,8 @@ public:
 
     MathScript* powerScript, *maxRealmScript; ///< The PowerLevel math script
 
-    MathScript* staminaCalc; ///< The stamina calc script
+    MathScript* staminaCalc;  ///< The stamina calc script
+    MathScript* expSkillCalc; ///< The exp calc script to assign experience on skill ranking
 
 
 protected:

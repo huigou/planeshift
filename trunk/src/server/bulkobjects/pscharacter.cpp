@@ -167,6 +167,10 @@ psCharacter::psCharacter() : inventory(this),
     if( !staminaCalc)
         Warning1(LOG_CHARACTER, "Can't find math script StaminaBase!");
 
+    expSkillCalc = psserver->GetMathScriptEngine()->FindScript("Calculate Skill Experience");
+    if( !expSkillCalc)
+        Warning1(LOG_CHARACTER, "Calculate Skill Experience");
+
     lastResponse = -1;
 
     banker = false;
@@ -1046,6 +1050,47 @@ unsigned int psCharacter::AddExperiencePoints(unsigned int W)
     }
 
     return pp;
+}
+
+unsigned int psCharacter::CalculateAddExperience(PSSKILL skill, unsigned int practicePoints, float modifier)
+{
+    if(practicePoints > 0)
+    {
+        MathEnvironment env;
+        env.Define("ZCost", skills.Get(skill).zCost);
+        env.Define("YCost", skills.Get(skill).yCost);
+        env.Define("ZCostNext", skills.Get(skill).zCostNext);
+        env.Define("YCostNext", skills.Get(skill).yCostNext);
+        env.Define("Character", this);
+        env.Define("PracticePoints", practicePoints);
+        env.Define("Modifier", modifier);
+        expSkillCalc->Evaluate(&env);
+        int experiencePoints = env.Lookup("Exp")->GetValue();
+        if(experiencePoints > 0)
+        {
+            unsigned int PP = AddExperiencePoints(experiencePoints);
+            if(GetActor() && GetActor()->GetClientID())
+            {
+                if(PP > 0)
+                {
+                    csString message;
+                    message.Format("You gained some experience points and %d progression points!", PP);
+                    psserver->SendSystemInfo(GetActor()->GetClientID(), message.GetData());
+                }
+                else
+                {
+                    psserver->SendSystemInfo(GetActor()->GetClientID(),"You gained some experience points");
+                }
+            }
+        }
+
+        if (CacheManager::GetSingleton().GetSkillByID((PSSKILL)skill)) //check if skill is valid
+        {
+            Skills().AddSkillPractice(skill, practicePoints);
+        }
+        return experiencePoints;
+    }
+    return practicePoints;
 }
 
 void psCharacter::SetSpouseName( const char* name )
@@ -3168,6 +3213,14 @@ void Skill::CalculateCosts(psCharacter* user)
     // Get the output
     yCost = (int)yCostVar->GetValue();
     zCost = (int)zCostVar->GetValue();
+
+    //calculate the next level costs. Used by the CalculateAddExperience.
+    env.Define("SkillRank",      rank.Base()+1);
+    script->Evaluate(&env);
+
+    yCostNext = (int)yCostVar->GetValue();
+    zCostNext = (int)zCostVar->GetValue();
+
 /*
     // Make sure the y values is clamped to the cost.  Otherwise Practice may always
     // fail.
