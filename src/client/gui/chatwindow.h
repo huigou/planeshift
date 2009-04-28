@@ -174,7 +174,7 @@ protected:
     void HandleSystemMessage( MsgEntry* message );
 
     /// Sends the contents of the input text to the server.
-    void SendChatLine();
+    void SendChatLine(csString& inputText);
 
     /// Subscribe the player commands.
     void SubscribeCommands();
