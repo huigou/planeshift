@@ -156,7 +156,7 @@ void SlotManager::MoveFromWorldContainer(psSlotMovementMsg& msg, Client *fromCli
 
     if (!itemProposed)
     {
-        Error5("Cannot find any item in slot %d for container %s(%d) range of player is %g.", msg.fromSlot, parentItem->GetName(), parentItem->GetUID(), fromClient->GetActor()->RangeTo(worldContainer, true));
+        Error5("Cannot find any item in slot %d for container %s(%d) range of player is %g.", msg.fromSlot, parentItem->GetName(), parentItem->GetUID(), fromClient->GetActor()->RangeTo(worldContainer, true, true));
         return;
     }
 
@@ -166,7 +166,7 @@ void SlotManager::MoveFromWorldContainer(psSlotMovementMsg& msg, Client *fromCli
         return;
     }
 
-    if (fromClient->GetActor()->RangeTo(worldContainer, true) > RANGE_TO_USE)
+    if (fromClient->GetActor()->RangeTo(worldContainer, true, true) > RANGE_TO_USE)
     {
         psserver->SendSystemError(fromClient->GetClientNum(),
             "You are not in range to use %s.",worldContainer->GetItem()->GetName());
@@ -463,7 +463,7 @@ void SlotManager::MoveFromInventory(psSlotMovementMsg& msg, Client *fromClient)
                 psserver->SendSystemError(fromClient->GetClientNum(), "You may not use that container.");
                 return;
             }
-            if (fromClient->GetActor()->RangeTo(worldContainer, true) > RANGE_TO_USE)
+            if (fromClient->GetActor()->RangeTo(worldContainer, true, true) > RANGE_TO_USE)
             {
                 psserver->SendSystemError(fromClient->GetClientNum(),
                     "You are not in range to use %s.",worldContainer->GetItem()->GetName());
