@@ -284,9 +284,9 @@ public:
     psTradePatterns* GetTradePatternByItemID(uint32 id);
     psTradePatterns* GetTradePatternByName(csString name);
     csString CreateTransCraftDescription(psTradeTransformations* tran, psTradeProcesses* proc);
-    csString CreateComboCraftDescription(csPDelArray<CombinationConstruction>* combArray);
+    csString CreateComboCraftDescription(CombinationConstruction* combArray);
     csArray<CraftTransInfo*>* GetTradeTransInfoByItemID(uint32 id);
-    CraftComboInfo* GetTradeComboInfoByItemID(uint32 id);
+    csArray<CraftComboInfo*>* GetTradeComboInfoByItemID(uint32 id);
 
     // Items
     psItemStats *GetBasicItemStatsByName(csString name);
@@ -431,8 +431,8 @@ protected:
     csHash<CachedObject *, csString> generic_object_cache;
 
     csStringHashReversible msg_strings;
-    csHash<psSectorInfo *> sectorinfo_by_id;   /// Sector info list hashed by sector id
-    csHash<psSectorInfo *> sectorinfo_by_name; /// Sector info list hashed by sector name
+    csHash<psSectorInfo *> sectorinfo_by_id;   ///< Sector info list hashed by sector id
+    csHash<psSectorInfo *> sectorinfo_by_name; ///< Sector info list hashed by sector name
     csPDelArray<psTrait > traitlist;
     csPDelArray<psRaceInfo > raceinfolist;
     csPDelArray<psSkillInfo > skillinfolist;
@@ -456,13 +456,13 @@ protected:
     csHash<csHash<csPDelArray<psTradeTransformations> *,uint32> *,uint32> tradeTransformations_IDHash;
     csHash<csArray<uint32> *,uint32> tradeTransUnique_IDHash;
     csHash<csArray<CraftTransInfo*> *,uint32> tradeCraftTransInfo_IDHash;
-    csHash<CraftComboInfo*,uint32> tradeCraftComboInfo_IDHash;
-    csArray<csString> tips_list;                                            /// List for the tips
+    csHash<csArray<CraftComboInfo*> *,uint32> tradeCraftComboInfo_IDHash;
+    csArray<csString> tips_list;                                            ///< List for the tips
     csStringArray bad_names;
     csPDelArray<ArmorVsWeapon> armor_vs_weapon;
     csPDelArray<psCharMode> char_modes;
     csPDelArray<psMovement> movements;
-    csPDelArray<psCharacterLimitation> limits;  /// All the limitations based on scores for characters.
+    csPDelArray<psCharacterLimitation> limits;  ///< All the limitations based on scores for characters.
     psCommandManager* commandManager;
 };
 

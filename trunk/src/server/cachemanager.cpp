@@ -304,17 +304,23 @@ void CacheManager::UnloadAll()
     }
 
     {
-        csHash<CraftComboInfo*,uint32>::GlobalIterator it(tradeCraftComboInfo_IDHash.GetIterator ());
+        csHash<csArray<CraftComboInfo*>*,uint32>::GlobalIterator it(tradeCraftComboInfo_IDHash.GetIterator ());
         while (it.HasNext ())
         {
-            CraftComboInfo* newCombo = it.Next ();
-            csArray<CraftSkills*>::Iterator it2(newCombo->skillArray->GetIterator ());
-            while (it2.HasNext ())
+            csArray<CraftComboInfo*>* newComboArray = it.Next ();
+            csArray<CraftComboInfo*>::Iterator it2(newComboArray->GetIterator ());
+            while(it2.HasNext ())
             {
-                CraftSkills* newCraftSkill = it2.Next ();
-                delete newCraftSkill;
+                CraftComboInfo* newCombo = it2.Next ();
+                csArray<CraftSkills*>::Iterator it3(newCombo->skillArray->GetIterator ());
+                while (it3.HasNext ())
+                {
+                    CraftSkills* newCraftSkill = it3.Next ();
+                    delete newCraftSkill;
+                }
+                delete newCombo;
             }
-            delete newCombo;
+            delete newComboArray;
         }
         tradeCraftComboInfo_IDHash.Empty();
     }
@@ -959,7 +965,7 @@ bool CacheManager::PreloadTradeTransformations()
                 lastiid = iid;
             }
 
-            // Finnaly just load the transformation into existing array
+            // Finally just load the transformation into existing array
             psTradeTransformations* tran = new psTradeTransformations;
             if (tran->Load(result[currentrow]))
                 newArray->Push(tran);
@@ -1176,21 +1182,24 @@ bool CacheManager::PreloadCraftMessages()
         csPDelArray<CombinationConstruction>* combArray = FindCombinationsList(currentID);
         if (combArray)
         {
-            // Get the combination craft info string
-            CraftComboInfo* combInfo = new CraftComboInfo;
-            csArray<CraftSkills*>* craftArray = new csArray<CraftSkills*>;
-            combInfo->skillArray = craftArray;
-            combInfo->craftCombDescription = CreateComboCraftDescription(combArray);
-
+            csArray<CraftComboInfo*>* newComboArray = new csArray<CraftComboInfo*>;
+            
             // Get the skills array from the transformations
             for (size_t i=0; i<combArray->GetSize(); i++)
             {
                 uint32 resultID = combArray->Get(i)->resultItem;
                 csPDelArray<psTradeTransformations>* transArray = FindTransformationsList(currentID, resultID);
-                if (!transArray) {
+                if (!transArray)
+                {
                     Error3("Can not find any transformation data for pattern %d and result %u ",currentID, resultID);
                     continue;
                 }
+                
+                // Get the combination craft info string
+                CraftComboInfo* combInfo = new CraftComboInfo;
+                combInfo->skillArray = new csArray<CraftSkills*>;
+                combInfo->craftCombDescription = CreateComboCraftDescription(combArray->Get(i));
+                
                 for (size_t j=0; j<transArray->GetSize(); j++)
                 {
                     psTradeTransformations* trans = transArray->Get(j);
@@ -1212,32 +1221,36 @@ bool CacheManager::PreloadCraftMessages()
                         craftSkill->minPriSkill = proc->GetMinPrimarySkill();
                         craftSkill->secSkillId = proc->GetSecondarySkillId();
                         craftSkill->minSecSkill = proc->GetMinSecondarySkill();
-                        craftArray->Push(craftSkill);
+                        combInfo->skillArray->Push(craftSkill);
                     }
                 }
+                newComboArray->Push(combInfo);
             }
-            tradeCraftComboInfo_IDHash.Put(designItemID,combInfo);
+            tradeCraftComboInfo_IDHash.Put(designItemID,newComboArray);
         }
 
         // Preload the combination craft string for current group pattern
         csPDelArray<CombinationConstruction>* combGroupArray = FindCombinationsList(currentGroupID);
         if (combGroupArray)
         {
-            // Get the combination craft info string
-            CraftComboInfo* combInfo = new CraftComboInfo;
-            csArray<CraftSkills*>* craftArray = new csArray<CraftSkills*>;
-            combInfo->skillArray = craftArray;
-            combInfo->craftCombDescription = CreateComboCraftDescription(combGroupArray);
-
+            csArray<CraftComboInfo*>* newGroupComboArray = new csArray<CraftComboInfo*>;
+            
             // Get the skills array from the transformations
             for (size_t i=0; i<combGroupArray->GetSize(); i++)
             {
                 uint32 resultID = combGroupArray->Get(i)->resultItem;
                 csPDelArray<psTradeTransformations>* transArray = FindTransformationsList(currentGroupID, resultID);
-                if (!transArray) {
+                if (!transArray)
+                {
                     Error3("Can not find any transformation data for group pattern %d and result %u ",currentGroupID, resultID);
                     continue;
                 }
+                
+                // Get the combination craft info string
+                CraftComboInfo* combInfo = new CraftComboInfo;
+                combInfo->skillArray = new csArray<CraftSkills*>;
+                combInfo->craftCombDescription = CreateComboCraftDescription(combGroupArray->Get(i));
+                
                 for (size_t j=0; j<transArray->GetSize(); j++)
                 {
                     psTradeTransformations* trans = transArray->Get(j);
@@ -1259,11 +1272,12 @@ bool CacheManager::PreloadCraftMessages()
                         craftSkill->minPriSkill = proc->GetMinPrimarySkill();
                         craftSkill->secSkillId = proc->GetSecondarySkillId();
                         craftSkill->minSecSkill = proc->GetMinSecondarySkill();
-                        craftArray->Push(craftSkill);
+                        combInfo->skillArray->Push(craftSkill);
                     }
                 }
+                newGroupComboArray->Push(combInfo);
             }
-            tradeCraftComboInfo_IDHash.Put(designItemID,combInfo);
+            tradeCraftComboInfo_IDHash.Put(designItemID,newGroupComboArray);
         }
 
         // If it is a new design item then create new cache
@@ -1445,78 +1459,70 @@ csString CacheManager::CreateTransCraftDescription(psTradeTransformations* tran,
     return desc;
 }
 
-csString CacheManager::CreateComboCraftDescription(csPDelArray<CombinationConstruction>* combArray)
+csString CacheManager::CreateComboCraftDescription(CombinationConstruction* currentComb)
 {
     csString temp;
     csString desc("");
 
-    // Go through all of the combinations creating the info description
-    for (size_t i=0; i<combArray->GetSize(); i++)
+    // Check for matching lists and create combination info string
+    //  Example: "Combine between 2 and 4 Eggs, Nuts, 5 Milk into Waybread Batter."
+
+    desc.Append("Combine ");
+
+    // Get each of the items
+    for (size_t j=0; j<currentComb->combinations.GetSize(); j++)
     {
-        // Check for matching lists and create combination info string
-        //  Example: "Combine between 2 and 4 Eggs, Nuts, 5 Milk into Waybread Batter."
-        CombinationConstruction* current = combArray->Get(i);
-        if (!current)
+        uint32 combId  = currentComb->combinations[j]->GetItemId();
+        int combMinQty = currentComb->combinations[j]->GetMinQty();
+        int combMaxQty = currentComb->combinations[j]->GetMaxQty();
+        psItemStats* itemStats = CacheManager::GetSingleton().GetBasicItemStatsByID( combId );
+        if (!itemStats)
         {
-            Error2("No combination construction in combination array location %zu", i);
+            Error2("No item stats for id %u", combId);
             return desc;
         }
-        desc.Append("Combine ");
 
-        // Get each of the items
-        for (size_t j=0; j<current->combinations.GetSize(); j++)
+        // Check if min and max is same
+        if(combMinQty == combMaxQty)
         {
-            uint32 combId  = current->combinations[j]->GetItemId();
-            int combMinQty = current->combinations[j]->GetMinQty();
-            int combMaxQty = current->combinations[j]->GetMaxQty();
-            psItemStats* itemStats = CacheManager::GetSingleton().GetBasicItemStatsByID( combId );
-            if (!itemStats)
+            if (combMinQty == 1)
             {
-                Error2("No item stats for id %u", combId);
-                return desc;
-            }
-
-            // Check if min and max is same
-            if(combMinQty == combMaxQty)
-            {
-                if (combMinQty == 1)
-                {
-                    temp.Format("%s, ", itemStats->GetName());
-                    desc.Append(temp);
-                }
-                else
-                {
-                    temp.Format("%d %ss, ", combMinQty, itemStats->GetName());
-                    desc.Append(temp);
-                }
+                temp.Format("%s, ", itemStats->GetName());
+                desc.Append(temp);
             }
             else
             {
-                temp.Format("between %d and %d %ss, ", combMinQty, combMaxQty, itemStats->GetName());
+                temp.Format("%d %ss, ", combMinQty, itemStats->GetName());
                 desc.Append(temp);
             }
         }
-
-        // Get result item names
-        psItemStats* resultItemStats = CacheManager::GetSingleton().GetBasicItemStatsByID( current->resultItem );
-        if (!resultItemStats)
-        {
-            Error2("No item stats for id %u", current->resultItem);
-            return desc;
-        }
-
-        // Add result part of description
-        if (current->resultQuantity == 1)
-        {
-            temp.Format("into %s.\n", resultItemStats->GetName());
-            desc.Append(temp);
-        }
         else
         {
-            temp.Format("into %d %ss.\n", current->resultQuantity, resultItemStats->GetName());
+            temp.Format("between %d and %d %ss, ", combMinQty, combMaxQty, itemStats->GetName());
             desc.Append(temp);
         }
     }
+
+    // Get result item names
+    psItemStats* resultItemStats = CacheManager::GetSingleton().GetBasicItemStatsByID( currentComb->resultItem );
+    if (!resultItemStats)
+    {
+        Error2("No item stats for id %u", currentComb->resultItem);
+        return desc;
+    }
+
+    // Add result part of description
+    if (currentComb->resultQuantity == 1)
+    {
+        temp.Format("into %s.\n", resultItemStats->GetName());
+        desc.Append(temp);
+    }
+    else
+    {
+        temp.Format("into %d %ss.\n", currentComb->resultQuantity, resultItemStats->GetName());
+        desc.Append(temp);
+    }
+
     return desc;
 }
 
@@ -1525,7 +1531,7 @@ csArray<CraftTransInfo*>* CacheManager::GetTradeTransInfoByItemID(uint32 id)
     return tradeCraftTransInfo_IDHash.Get(id,NULL);
 }
 
-CraftComboInfo* CacheManager::GetTradeComboInfoByItemID(uint32 id)
+csArray<CraftComboInfo*>* CacheManager::GetTradeComboInfoByItemID(uint32 id)
 {
     return tradeCraftComboInfo_IDHash.Get(id,NULL);
 }
