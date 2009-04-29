@@ -390,6 +390,9 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
     WordArray words(cmd);
     csString pPerson;
     csString text;
+    
+    // Used to hold error message between calls
+    static csString error;
     int chattype = 0;
 
     if (words.GetCount()==0)
@@ -404,15 +407,17 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
     else
     {
         if (words.GetCount() == 1)
-            return PawsManager::GetSingleton().Translate("You must enter the text").Detach();
+        {
+        	error = PawsManager::GetSingleton().Translate("You must enter the text");
+            return error;
+        }
 
-        inputText->SetText(words[0] + " ");
+        
         if (words[0] == "/say")
         {
             pPerson.Clear();
             words.GetTail(1, text);
             chattype = CHAT_SAY;
-            inputText->SetText("");
             DetermineChatTabAndSelect(CHAT_SAY);
         }
         else if (words[0] == "/tellnpcinternal")
@@ -429,6 +434,7 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
             pPerson.Clear();
             words.GetTail(1, text);
             chattype = CHAT_NPC;
+            inputText->SetText(words[0] + " ");
             DetermineChatTabAndSelect(CHAT_NPC);
         }
         else if (words[0] == "/report")
@@ -436,6 +442,7 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
             pPerson.Clear();
             words.GetTail(1,text);
             chattype = CHAT_REPORT;
+            inputText->SetText(words[0] + " ");
             DetermineChatTabAndSelect(CHAT_REPORT);
         }
         else if (words[0] == "/guild")
@@ -443,6 +450,7 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
             pPerson.Clear();
             words.GetTail(1,text);
             chattype = CHAT_GUILD;
+            inputText->SetText(words[0] + " ");
             DetermineChatTabAndSelect(CHAT_GUILD);
         }
         else if (words[0] == "/shout")
@@ -450,6 +458,7 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
             pPerson.Clear();
             words.GetTail(1,text);
             chattype = CHAT_SHOUT;
+            inputText->SetText(words[0] + " ");
             DetermineChatTabAndSelect(CHAT_SHOUT);
         }
         else if (words[0] == "/group")
@@ -457,15 +466,20 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
             pPerson.Clear();
             words.GetTail(1,text);
             chattype = CHAT_GROUP;
+            inputText->SetText(words[0] + " ");
             DetermineChatTabAndSelect(CHAT_GROUP);
         }
         else if (words[0] == "/tell")
         {
             pPerson = words[1];
             if (words.GetCount() == 2)
-                return PawsManager::GetSingleton().Translate("You must enter the text").Detach();
+            {
+                error = PawsManager::GetSingleton().Translate("You must enter the text");
+                return error;
+            }
             words.GetTail(2,text);
             chattype = CHAT_TELL;
+            inputText->SetText(words[0] + " ");
             DetermineChatTabAndSelect(CHAT_TELL);
         }
         else if (words[0] == "/auction")
@@ -473,6 +487,7 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
             pPerson.Clear();
             words.GetTail(1,text);
             chattype = CHAT_AUCTION;
+            inputText->SetText(words[0] + " ");
             DetermineChatTabAndSelect(CHAT_AUCTION);
         }
         else if (words[0] == "/mypet")
@@ -480,6 +495,7 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
             pPerson.Clear();
             chattype = CHAT_PET_ACTION;
             words.GetTail(1,text);
+            inputText->SetText(words[0] + " ");
             DetermineChatTabAndSelect(CHAT_PET_ACTION);
         }
         else if (words[0] == "/me" || words[0] == "/my")
@@ -533,8 +549,6 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
                 DetermineChatTabAndSelect(CHAT_SAY);
             }
         }
-        else
-        	inputText->SetText("");
     }
 
     if (settings.enableBadWordsFilterOutgoing)
