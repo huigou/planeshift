@@ -2757,37 +2757,43 @@ void psItem::SendCraftTransInfo(Client *client)
 
 void psItem::GetComboInfoString(psCharacter* character, uint32 designID, csString & comboString)
 {
-    CraftComboInfo* combInfo = CacheManager::GetSingleton().GetTradeComboInfoByItemID(designID);
-    if (!combInfo)
+    csArray<CraftComboInfo*>* combInfoArray = CacheManager::GetSingleton().GetTradeComboInfoByItemID(designID);
+    if (!combInfoArray)
         return;
 
-    // If any skill check fails then do not display this combinations string
-    csArray<CraftSkills*>* skillArray = combInfo->skillArray;
-    for ( int count = 0; count<(int)skillArray->GetSize(); count++ )
+    csArray<CraftComboInfo*>::Iterator combInfoIter(combInfoArray->GetIterator());
+    while(combInfoIter.HasNext())
     {
-        // Check if craft step minimum primary skill level is meet by client
-        int priSkill = skillArray->Get(count)->priSkillId;
-        if(priSkill != 0)
+        CraftComboInfo* combInfo = combInfoIter.Next();
+        // If any skill check succeed then display this combinations string.
+        // that means we have a way to do something with the result of the combine
+        csArray<CraftSkills*>* skillArray = combInfo->skillArray;
+        for ( int count = 0; count<(int)skillArray->GetSize(); count++ )
         {
-            if (skillArray->Get(count)->minPriSkill >= character->Skills().GetSkillRank((PSSKILL) priSkill).Current())
+            // Check if craft step minimum primary skill level is meet by client
+            int priSkill = skillArray->Get(count)->priSkillId;
+            if(priSkill != 0)
             {
-                return;
+                if (skillArray->Get(count)->minPriSkill >= character->Skills().GetSkillRank((PSSKILL) priSkill).Current())
+                {
+                    continue;
+                }
             }
-        }
 
-        // Check if craft step minimum secondary skill level is meet by client
-        int secSkill = skillArray->Get(count)->secSkillId;
-        if(secSkill != 0)
-        {
-            if (skillArray->Get(count)->minSecSkill >= (int)character->Skills().GetSkillRank((PSSKILL) secSkill).Current())
+            // Check if craft step minimum secondary skill level is meet by client
+            int secSkill = skillArray->Get(count)->secSkillId;
+            if(secSkill != 0)
             {
-                return;
+                if (skillArray->Get(count)->minSecSkill >= (int)character->Skills().GetSkillRank((PSSKILL) secSkill).Current())
+                {
+                    continue;
+                }
             }
+            // Otherwise send combination string, and go on to next combine
+            comboString.Append(combInfo->craftCombDescription);
+            break;
         }
     }
-
-    // Otherwise send combination string
-    comboString.Append(combInfo->craftCombDescription);
 }
 
 void psItem::GetTransInfoString(psCharacter* character, uint32 designID, csString & transString)
