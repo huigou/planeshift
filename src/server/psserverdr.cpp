@@ -135,10 +135,7 @@ void psServerDR::ResetPos(gemActor* actor)
     targetSectorName = targetSector->QueryObject()->GetObjectParent()->GetName();
     psserver->GetAdminManager()->GetStartOfMap(actor->GetClient()->GetClientNum(), targetSectorName, targetSector, targetPoint);
     actor->pcmove->SetOnGround(false);
-    actor->pcmove->SetVelocity(csVector3(0,0,0));
-    actor->SetPosition(targetPoint,0, targetSector);
-    actor->UpdateProxList(true);  // true= force update
-    actor->MulticastDRUpdate();
+    actor->Teleport(targetSector, targetPoint, 0);
 }
 
 void psServerDR::HandleDeadReckoning(MsgEntry* me,Client *client)

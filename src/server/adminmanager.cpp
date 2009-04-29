@@ -2438,11 +2438,10 @@ void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
     csVector3 oldpos;
     float oldyrot;
     iSector *oldsector;
-    InstanceID oldInstance;
+    InstanceID oldInstance = subject->GetInstance();
     subject->GetPosition(oldpos,oldyrot,oldsector);
-    oldInstance = subject->GetInstance();
 
-    if ( (oldsector == targetSector) && (oldpos == targetPoint) && (oldInstance == targetInstance) )
+    if (oldsector == targetSector && oldpos == targetPoint && oldInstance == targetInstance)
     {
         psserver->SendSystemError(client->GetClientNum(), "What's the point?");
         return;
@@ -2468,17 +2467,10 @@ void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
         destName.Format("sector %s", targetSector->QueryObject()->GetName() );
     }
 
-    // Update ProxList on sector crossing
-    if (oldsector != targetSector || oldInstance != targetInstance)
+    if (oldsector != targetSector)
     {
-        subject->UpdateProxList(true);
         psserver->SendSystemOK(subject->GetClientID(), "Welcome to " + destName);
     }
-    else
-    {
-        subject->UpdateProxList(false); // Update ProxList if needed
-    }
-
 
     if ( dynamic_cast<gemActor*>(subject) ) // Record old location of actor, for undo
         ((gemActor*)subject)->SetPrevTeleportLocation(oldpos, oldyrot, oldsector);
@@ -3791,8 +3783,6 @@ void AdminManager::Slide(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& dat
         if ( !MoveObject(client,target,pos,yrot,sector,instance) )
             return;
 
-        target->UpdateProxList(false); // Update ProxList if needed
-
         if (target->GetActorPtr() && client->GetActor() != target->GetActorPtr())
             psserver->SendSystemInfo(me->clientnum, "Sliding %s...", target->GetName());
     }
@@ -3824,12 +3814,8 @@ bool AdminManager::MoveObject(Client *client, gemObject *target, csVector3& pos,
         }
 
         // Move the item
-        item->GetMeshWrapper()->GetMovable()->SetPosition(pos);
-        // Rotation
-        csMatrix3 matrix = (csMatrix3) csYRotMatrix3 (yrot);
-        item->GetMeshWrapper()->GetMovable ()->GetTransform ().SetO2T (matrix);
-
-        item->SetPosition(pos,yrot,sector,instance);
+        item->SetInstance(instance);
+        item->Move(pos,yrot,sector);
 
         // Check to see if this client has the admin level to move this spawn point
         if ( item->GetItem()->GetScheduledItem() && extras )
@@ -3839,16 +3825,13 @@ bool AdminManager::MoveObject(Client *client, gemObject *target, csVector3& pos,
             // Update spawn pos
             item->GetItem()->GetScheduledItem()->UpdatePosition(pos,sector->QueryObject()->GetName());
         }
+
+        item->UpdateProxList(true);
     }
     else if ( dynamic_cast<gemActor*>(target) ) // Actor? (Player/NPC)
     {
-        gemActor* actor = (gemActor*)target;
-        actor->pcmove->SetVelocity(csVector3(0.0f,0.0f,0.0f)); // Halt actor
-        actor->SetInstance(instance);
-        actor->SetPosition(pos,yrot,sector);
-        if (actor->GetClient())
-            actor->GetClient()->SetCheatMask(MOVE_CHEAT,true); // This tells paladin one of these is ok.
-        actor->MulticastDRUpdate();
+        gemActor *actor = (gemActor*) target;
+        actor->Teleport(sector, pos, yrot, instance);
     }
     else
     {

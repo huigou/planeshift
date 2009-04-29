@@ -698,10 +698,9 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
         csString sector;
         if ( actor->IsAlive() )
         {
-            float vel_y;
             iSector* sec;
             // We want to save the last reported location
-            actor->GetLastLocation(pos, vel_y, yrot, sec);
+            actor->GetLastLocation(pos, yrot, sec);
             sector = sec->QueryObject()->GetName();
 
             sectorinfo = CacheManager::GetSingleton().GetSectorInfoByName(sector);

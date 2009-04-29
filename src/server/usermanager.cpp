@@ -703,10 +703,12 @@ void UserManager::HandleEntranceMessage( MsgEntry* me, Client *client )
         return;
     }
 
+    gemActor *actor = client->GetActor();
+    CS_ASSERT(actor);
+
     // Check range
-    csWeakRef<gemObject> gem = client->GetActor();
     csWeakRef<gemObject> gemAction = action->GetRealItem();
-    if (gem.IsValid() && gemAction.IsValid() && gem->RangeTo(gemAction, false) > RANGE_TO_SELECT)
+    if (gemAction.IsValid() && actor->RangeTo(gemAction, false) > RANGE_TO_SELECT)
     {
         psserver->SendSystemError(client->GetClientNum(), "You are no longer in range to do this.");
         return;
@@ -766,7 +768,7 @@ void UserManager::HandleEntranceMessage( MsgEntry* me, Client *client )
     if (entranceType == "Prime")
     {
         if (secure) psserver->SendSystemInfo(client->GetClientNum(),"Teleporting to sector %s", sectorName.GetData());
-        Teleport( client, pos.x, pos.y, pos.z, 0, rot, sectorName );
+        actor->Teleport(sectorName, pos, rot, DEFAULT_INSTANCE);
     }
 
     // Send player to unique instance
@@ -774,7 +776,7 @@ void UserManager::HandleEntranceMessage( MsgEntry* me, Client *client )
     {
         InstanceID instance = action->id;
         if (secure) psserver->SendSystemInfo(client->GetClientNum(),"Teleporting to sector %s", sectorName.GetData());
-        Teleport( client, pos.x, pos.y, pos.z, instance, rot, sectorName );
+        actor->Teleport(sectorName, pos, rot, instance);
     }
 
     // Send player back to starting point
@@ -804,7 +806,7 @@ void UserManager::HandleEntranceMessage( MsgEntry* me, Client *client )
 
         // Send player back to return point
         if (secure) psserver->SendSystemInfo(client->GetClientNum(),"Teleporting to sector %s", sectorName.GetData());
-        Teleport( client, retPos.x, retPos.y, retPos.z, 0, retRot, retSectorName );
+        actor->Teleport(retSectorName, retPos, retRot, DEFAULT_INSTANCE);
     }
     else
     {
@@ -2223,32 +2225,6 @@ void UserManager::SwitchAttackTarget(Client *targeter, Client *targeted )
     else
         psserver->combatmanager->StopAttack(targeter->GetActor());
 }
-
-void UserManager::Teleport( Client *client, float x, float y, float z, InstanceID instance, float rot, const char* sectorname )
-{
-    csVector3 pos( x,y,z );
-    csRef<iEngine> engine = csQueryRegistry<iEngine> (psserver->GetObjectReg());
-    iSector * sector = engine->GetSectors()->FindByName(sectorname);
-    if ( !sector )
-    {
-        Bug2("Sector %s is not found!", sectorname );
-        return;
-    }
-    if ( !client->GetActor() )
-    {
-        Bug1("Actor for client not found!" );
-        return;
-    }
-
-    client->GetActor()->SetInstance(instance);
-    client->GetActor()->Move( pos, rot, sector );
-    client->GetActor()->SetPosition( pos, rot, sector );
-    client->GetActor()->UpdateProxList(true);  // true=force update
-    client->GetActor()->MulticastDRUpdate();
-}
-
-
-
 
 /*---------------------------------------------------------------------*/
 

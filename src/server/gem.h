@@ -665,7 +665,6 @@ protected:
         csVector3 pos;
         iSector* sector;
         float yrot;
-        float vel_y;
     } valid_location;
     DRstate newvalid_location;
     DRstate last_location;
@@ -844,13 +843,17 @@ public:
     void ProcessStamina(const csVector3& velocity, bool force=false);
     virtual float DrainMana(float adjust, bool absolute);
 
+    void Teleport(const char *sec, const csVector3 & pos, float yrot, InstanceID instance);
+    void Teleport(iSector *sector, const csVector3 & pos, float yrot, InstanceID instance);
+    void Teleport(iSector *sector, const csVector3 & pos, float yrot);
+
     void SetPosition(const csVector3& pos,float angle, iSector* sector);
     void SetInstance(InstanceID worldInstance);
 
-    void UpdateValidLocation(const csVector3& pos, float vel_y, float yrot, iSector* sector, bool force = false);
+    void UpdateValidLocation(const csVector3 & pos, float yrot, iSector *sector, bool force = false);
 
     bool SetDRData(psDRMessage& drmsg);
-    void MulticastDRUpdate(MsgEntry *resend = NULL);
+    void MulticastDRUpdate();
 
     using gemObject::RegisterCallback;
     using gemObject::UnregisterCallback;
@@ -944,7 +947,7 @@ public:
     void GetValidPos(csVector3& pos, float& yrot, iSector*& sector);
 
     /// Get the last reported location this actor was at
-    void GetLastLocation(csVector3& pos, float& vel_y, float& yrot, iSector*& sector);
+    void GetLastLocation(csVector3 & pos, float & yrot, iSector*& sector);
     /// Moves player to his last reported location
     void MoveToLastPos();
 
