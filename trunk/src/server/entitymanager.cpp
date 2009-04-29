@@ -879,20 +879,6 @@ bool EntityManager::CreateActionLocation( psActionLocation *instance, bool trans
 
     gemActionLocation *obj = new gemActionLocation(instance, isec, 0);
     
-    //won't create item if gemItem entity was not created
-    //if ( obj->GetEntity() == NULL ) 
-    //{
-    //    CPrintf(CON_ERROR, "Action Location ID %u : Failed to create gemActionLocation!\n", instance->id);
-    //    return false;
-    //}
-    
-//    if ( transient )
-//        psserver->CharacterLoader.ScheduleRemoval( instance );
-
-    csReversibleTransform revTransform;
-    iMeshWrapper *mesh = obj->GetMeshWrapper();
-    csBox3 box = mesh->GetTransformedBoundingBox(revTransform);
-        
     obj->Move( newpos, yrot, isec );
 
     // Add action location to all nearby clients

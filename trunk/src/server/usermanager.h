@@ -411,16 +411,6 @@ protected:
      */
     void Assist( psUserCmdMessage& msg, Client* client);
 
-    /** @brief Teleport player to a location.
-     *
-     *  @param client The player to move
-     *  @param x,y,z  Location to move to
-     *  @param w      Instance to move to
-     *  @param rot    The rotation to use.
-     *  @param sector The sector name to move to.
-     */
-    void Teleport( Client *client, float x, float y, float z, InstanceID instance, float rot, const char* sectorname );
-
     /** @brief Sends to client the MOTD and tip, and his guild's MOTD if needed
      * 
      * @param me The incoming message

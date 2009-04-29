@@ -491,30 +491,6 @@ void GEMSupervisor::GetAllEntityPos(psAllEntityPosMessage& update)
     update.msg->Add((int16_t)count_actual);  // Now correct the first value, which is the count of following entities
 }
 
-
-
-void GEMSupervisor::Teleport( gemObject* object, float x, float y, float z, float rot, const char* sectorname )
-{
-    csVector3 pos( x,y,z );
-    csRef<iEngine> engine = csQueryRegistry<iEngine> (psserver->GetObjectReg());
-    iSector * sector = engine->GetSectors()->FindByName(sectorname);
-
-    if ( !sector )
-    {
-        Bug2("Sector %s is not found!", sectorname );
-        return;
-    }
-
-    object->Move( pos, rot, sector );
-
-
-    gemActor* actor = (gemActor*)object;
-    actor->SetPosition( pos, rot, sector );
-    actor->UpdateProxList(true);  // true=force update
-    actor->MulticastDRUpdate();
-}
-
-
 void GEMSupervisor::AttachObject( iObject* object, gemObject* gobject )
 {
     csRef<psGemServerMeshAttach> attacher = csPtr<psGemServerMeshAttach>(new psGemServerMeshAttach(gobject));
@@ -1952,7 +1928,7 @@ nevertired(false), infinitemana(false), instantcast(false), safefall(false), giv
     SetPrevTeleportLocation(pos, rotangle, sector);
 
     // Set the initial valid location to be the spot the actor was created at.
-    UpdateValidLocation(pos, 0.0f, rotangle, sector, true);
+    UpdateValidLocation(pos, rotangle, sector, true);
 
     GetCharacterData()->SetStaminaRegenerationStill();
 
@@ -2046,10 +2022,7 @@ bool gemActor::MoveToSpawnPos()
         return false;
 
     pcmove->SetOnGround(false);
-    SetPosition(startingPos,startingYrot, startingSector);
-    pcmove->SetVelocity(csVector3(0,0,0));  // clear velocity also, so falling people stop falling
-    UpdateProxList(true);  // true= force update
-    MulticastDRUpdate();
+    Teleport(startingSector, startingPos, startingYrot);
     return true;
 }
 
@@ -2115,11 +2088,7 @@ bool gemActor::MoveToValidPos(bool force)
 
     isFalling = false;
     pcmove->SetOnGround(false);
-    SetPosition(valid_location.pos,valid_location.yrot, valid_location.sector);
-    StopMoving(true);
-    pcmove->AddVelocity(csVector3(0.0f, valid_location.vel_y, 0.0f));
-    UpdateProxList(true);  // true= force update
-    MulticastDRUpdate();
+    Teleport(valid_location.sector, valid_location.pos, valid_location.yrot);
     return true;
 }
 
@@ -2211,30 +2180,29 @@ void gemActor::Resurrect()
 
     Debug2(LOG_COMBAT, pid.Unbox(), "Resurrect event triggered for %s.\n", GetName());
 
-    // Check if the current player is in npcroom or tutorial. In that case we
-    // teleport back to npcroom or tutorial on resurrect. Otherwise we teleport
-    // to DR.
-    csVector3 pos;
-    float yRot;
-    iSector * sector;
-    pcmove->GetLastPosition(pos, yRot, sector);
     pcmove->SetOnGround(false);
-    StopMoving(true);
 
     // Set the mode before teleporting so people in the vicinity of the destination
     // get the right mode (peace) in the psPersistActor message they receive.
     // Note that characters are still movelocked when this is reset.
     SetMode(PSCHARACTER_MODE_PEACE);
 
+    // Check if the current player is in npcroom or tutorial. In that case we
+    // teleport back to npcroom or tutorial on resurrect. Otherwise we teleport
+    // to DR.
+    iSector *sector = pcmove->GetSector();
     if (sector && !strncmp ("NPCroom", sector->QueryObject()->GetName(), 7))
-        cel->Teleport( this, -20.0f, 1.0f, -180.0f, 0.0f, "NPCroom" );
+    {
+        Teleport("NPCroom", csVector3(-20, 1, -180), 0, worldInstance);
+    }
     else if (sector && !strncmp ("tutorial", sector->QueryObject()->GetName(), 8))
-        cel->Teleport( this, -232.0f, 21.31f, 31.5f, 4.0f, "tutorial" );
+    {
+        Teleport("tutorial", csVector3(-232, 21.31, 31.5), 4, worldInstance);
+    }
     else
     {
         // TODO: Get Death Realm location from db somewhere
-        cel->Teleport( this, -29.2f, -119.0f, 28.2f, 0.0f, "DR01");
-        SetInstance(DEFAULT_INSTANCE);
+        Teleport("DR01", csVector3(-29.2, -119, 28.2), 0, DEFAULT_INSTANCE);
     }
 
     psChar->SetHitPoints(psChar->GetMaxHP().Base());
@@ -2538,11 +2506,6 @@ void gemActor::Send( int clientnum, bool control, bool to_superclient  )
 
     psChar->MakeTextureString( texparts );
     psChar->MakeEquipmentString( equipmentParts );
-
-    csVector3 pos;
-    float yRot;
-    iSector * sector;
-    pcmove->GetLastPosition(pos, yRot, sector);
 
     csString guildName;
     guildName.Clear();
@@ -2940,6 +2903,36 @@ void gemActor::SetInstance(InstanceID worldInstance)
     this->worldInstance = worldInstance;
 }
 
+void gemActor::Teleport(const char *sectorName, const csVector3 & pos, float yrot, InstanceID instance)
+{
+    csRef<iEngine> engine = csQueryRegistry<iEngine>(psserver->GetObjectReg());
+    iSector *sector = engine->GetSectors()->FindByName(sectorName);
+    if (!sector)
+    {
+        Bug2("Sector %s is not found!", sectorName);
+        return;
+    }
+    Teleport(sector, pos, yrot, instance);
+}
+
+void gemActor::Teleport(iSector *sector, const csVector3 & pos, float yrot, InstanceID instance)
+{
+    SetInstance(instance);
+    Teleport(sector, pos, yrot);
+}
+
+void gemActor::Teleport(iSector *sector, const csVector3 & pos, float yrot)
+{
+    StopMoving();
+    SetPosition(pos, yrot, sector);
+
+    if (GetClient())
+        GetClient()->SetCheatMask(MOVE_CHEAT, true); // Tell paladin one of these is OK.
+
+    UpdateProxList(true);
+    MulticastDRUpdate();
+}
+
 void gemActor::SetPosition(const csVector3& pos,float angle, iSector* sector)
 {
     this->pos = pos;
@@ -2988,7 +2981,7 @@ void gemActor::SetPosition(const csVector3& pos,float angle, iSector* sector)
     if (sectorInfo != NULL)
     {
         psChar->SetLocationInWorld(worldInstance, sectorInfo, pos.x, pos.y, pos.z, angle );
-        UpdateValidLocation(pos, 0.0f, angle, sector, true);
+        UpdateValidLocation(pos, angle, sector, true);
     }
 }
 
@@ -3176,7 +3169,7 @@ bool gemActor::SetDRData(psDRMessage& drmsg)
 
     if (drmsg.sector != NULL)
     {
-        UpdateValidLocation(drmsg.pos, drmsg.vel.y, drmsg.yrot, drmsg.sector);
+        UpdateValidLocation(drmsg.pos, drmsg.yrot, drmsg.sector);
         psSectorInfo* sectorInfo = CacheManager::GetSingleton().GetSectorInfoByName( drmsg.sector->QueryObject()->GetName() );
         if (sectorInfo != NULL)
         {
@@ -3191,7 +3184,7 @@ bool gemActor::SetDRData(psDRMessage& drmsg)
     return true;
 }
 
-void gemActor::UpdateValidLocation(const csVector3& pos, float vel_y, float yrot, iSector* sector, bool force)
+void gemActor::UpdateValidLocation(const csVector3 & pos, float yrot, iSector *sector, bool force)
 {
     // 10m hops
     if (force || (!isFalling && (pos - newvalid_location.pos).SquaredNorm() > 100.0f))
@@ -3199,7 +3192,6 @@ void gemActor::UpdateValidLocation(const csVector3& pos, float vel_y, float yrot
         valid_location = newvalid_location;
         newvalid_location.pos = pos;
         newvalid_location.yrot = yrot;
-        newvalid_location.vel_y = vel_y;
         newvalid_location.sector = sector;
         if(force)
             valid_location = newvalid_location;
@@ -3207,23 +3199,18 @@ void gemActor::UpdateValidLocation(const csVector3& pos, float vel_y, float yrot
 
     last_location.pos = pos;
     last_location.yrot = yrot;
-    last_location.vel_y = vel_y;
     last_location.sector = sector;
 }
 
 void gemActor::MoveToLastPos()
 {
     pcmove->SetOnGround(false);
-    SetPosition(last_location.pos, last_location.yrot, last_location.sector);
-    StopMoving(true);
-    UpdateProxList();
-    MulticastDRUpdate();
+    Teleport(last_location.sector, last_location.pos, last_location.yrot);
 }
 
-void gemActor::GetLastLocation(csVector3& pos, float& vel_y, float& yrot, iSector*& sector)
+void gemActor::GetLastLocation(csVector3& pos, float& yrot, iSector*& sector)
 {
     pos = last_location.pos;
-    vel_y = last_location.vel_y;
     yrot = last_location.yrot;
     sector = last_location.sector;
 }
@@ -3242,25 +3229,18 @@ void gemActor::GetPrevTeleportLocation(csVector3& pos, float& yrot, iSector*& se
     sector = prev_teleport_location.sector;
 }
 
-void gemActor::MulticastDRUpdate(MsgEntry *resend)
+void gemActor::MulticastDRUpdate()
 {
-    if (!resend)
-    {
-        bool on_ground;
-        float speed,yrot,ang_vel;
-        csVector3 pos,vel,worldVel;
-        iSector *sector;
-        pcmove->GetDRData(on_ground,speed,pos,yrot,sector,vel,worldVel,ang_vel);
-        psDRMessage drmsg(0, eid, on_ground, movementMode, DRcounter,
-                          pos,yrot,sector, "", vel,worldVel,ang_vel,
-                          CacheManager::GetSingleton().GetMsgStrings() );
-        drmsg.msg->priority = PRIORITY_HIGH;
-        drmsg.Multicast(GetMulticastClients(),0,PROX_LIST_ANY_RANGE);
-    }
-    else
-    {
-        psserver->GetEventManager()->Multicast(resend,GetMulticastClients(),0,PROX_LIST_ANY_RANGE);
-    }
+    bool on_ground;
+    float speed,yrot,ang_vel;
+    csVector3 pos,vel,worldVel;
+    iSector *sector;
+    pcmove->GetDRData(on_ground,speed,pos,yrot,sector,vel,worldVel,ang_vel);
+    psDRMessage drmsg(0, eid, on_ground, movementMode, DRcounter,
+                      pos,yrot,sector, "", vel,worldVel,ang_vel,
+                      CacheManager::GetSingleton().GetMsgStrings() );
+    drmsg.msg->priority = PRIORITY_HIGH;
+    drmsg.Multicast(GetMulticastClients(),0,PROX_LIST_ANY_RANGE);
 }
 
 bool gemActor::UpdateDR()
@@ -4169,11 +4149,6 @@ void gemNPC::Send( int clientnum, bool control, bool to_superclient )
     psChar->MakeTextureString( texparts );
     psChar->MakeEquipmentString( equipmentParts );
     GetPosition(pos,yRot,sector);
-
-    csVector3 pos;
-    float yRot;
-    iSector * sector;
-    pcmove->GetLastPosition(pos, yRot, sector);
 
     csString guildName;
     guildName.Clear();

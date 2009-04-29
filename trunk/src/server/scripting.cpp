@@ -1464,16 +1464,10 @@ public:
                 return;
             }
 
-            actor->StopMoving();
-
             if (type & INSTANCE)
-                actor->SetInstance(instance);
-
-            actor->SetPosition(destPos, 0.0, sector);
-
-            if (actor->GetClient())
-                actor->GetClient()->SetCheatMask(MOVE_CHEAT,true); // This tells paladin one of these is ok.
-            actor->MulticastDRUpdate();
+                actor->Teleport(sector, destPos, 0.0, instance);
+            else
+                actor->Teleport(sector, destPos, 0.0);
         }
     }
 
