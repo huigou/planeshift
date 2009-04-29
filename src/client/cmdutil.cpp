@@ -114,15 +114,15 @@ const char *psUtilityCommands::HandleCommand(const char *cmd)
     }
     else if (words[0] == "/confirm")
     {
-        csString errorString;
+        static csString errorString;
         HandleConfirm( words, errorString );
-        return errorString.Detach();
+        return errorString;
     }
     else if (words[0] == "/ping")
     {
-        csString temp;
+        static csString temp;
         temp.Format("Average Ping time: %i", msgqueue->GetPing());
-        return temp.Detach();
+        return temp;
     }
     else if (words[0] == "/screenshot")
     {
