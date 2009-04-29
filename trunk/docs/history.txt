@@ -5,6 +5,9 @@
 
 *** 2009-04-28 by Tristan Cragnolini
 - Changed a few RangeTo calls so that they ignore instances, fixing some ALs.
+- Now combines should appear in the crafting book 
+  as soon as a transform is available for the resulting item.
+- Fix to /drop, which should now work for named items too.
 
 *** 2009-04-28 by Andrew Dai
 - The last used chat channel will now automatically be remembered in the
