@@ -937,19 +937,8 @@ void SlotManager::HandleDropCommand(MsgEntry* me, Client *fromClient)
         return;
     }
 
-    psItemStats * testItemStats;
-    if(!mesg.itemName.IsEmpty())
-        testItemStats = CacheManager::GetSingleton().GetBasicItemStatsByName(mesg.itemName);
-    
-    if(!testItemStats)
-    {
-        //Error2("Could not find Item Stats for this item: %s", mesg.itemName.GetData());
-        psserver->SendSystemInfo(fromClient->GetClientNum(), "Item %s not found.", mesg.itemName.GetData());
-        return;
-    }
-
     psCharacter *chr = fromClient->GetCharacterData();    
-    psItem* stackItem = chr->Inventory().StackNumberItems(testItemStats, mesg.quantity, mesg.container);
+    psItem* stackItem = chr->Inventory().StackNumberItems(mesg.itemName, mesg.quantity, mesg.container);
 
     if(!stackItem)
     {
