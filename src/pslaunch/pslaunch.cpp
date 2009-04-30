@@ -111,7 +111,14 @@ bool psLauncherGUI::InitApp()
         printf("GetDriver2D failed to Init!\n");
         return false;
     }
-       
+
+    csRef<iLoader> loader = csQueryRegistry<iLoader> (object_reg);
+    if (!loader)
+    {
+        printf("Loader failed to Init!\n");
+        return false;
+    }      
+
     // Initialise downloader.
     downloader = new Downloader(vfs);
 
