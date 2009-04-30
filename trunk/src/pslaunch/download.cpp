@@ -58,8 +58,7 @@ static int ProgressCallback(int progress, int finalSize)
     }
     else if(progress == finalSize)
     {
-        UpdaterEngine::GetSingletonPtr()->PrintOutput(" 100%%");
-        UpdaterEngine::GetSingletonPtr()->PrintOutput("\n");
+        UpdaterEngine::GetSingletonPtr()->PrintOutput(" 100%%\n\n");
         lastSize = 0;
     }
     else if((progress-lastSize) > (finalSize/20) && progress < finalSize - (finalSize/20))

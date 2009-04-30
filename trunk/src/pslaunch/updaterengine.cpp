@@ -934,6 +934,8 @@ void UpdaterEngine::GeneralUpdate()
             {
                 printf("Failed to unmount file %s\n", zip.GetData());
             }
+
+            PrintOutput("\n");
         }
 
         // Add version info to updaterinfo.xml and oldCvs.
