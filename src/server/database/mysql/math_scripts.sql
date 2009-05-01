@@ -154,6 +154,11 @@ ResultPractice = if(Success, 1, 0);
 ResultModifier = if(Success, 25, 2);
 ");
 
+INSERT INTO math_scripts VALUES( "Calculate Trasformation Experience",
+"
+Exp = if(StartQuality < CurrentQuality, 2*(CurrentQuality-StartQuality), 0);
+");
+
 INSERT INTO math_scripts VALUES( "Calculate Skill Experience",
 "
 Exp = PracticePoints*Modifier;

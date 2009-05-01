@@ -132,7 +132,8 @@ WorkManager::WorkManager()
     calc_repair_quality = psserver->GetMathScriptEngine()->FindScript("Calculate Repair Quality");
     calc_repair_exp     = psserver->GetMathScriptEngine()->FindScript("Calculate Repair Experience");
     calc_mining_chance  = psserver->GetMathScriptEngine()->FindScript("Calculate Mining Odds");
-    calc_mining_exp  = psserver->GetMathScriptEngine()->FindScript("Calculate Mining Experience");
+    calc_mining_exp     = psserver->GetMathScriptEngine()->FindScript("Calculate Mining Experience");
+    calc_transform_exp   = psserver->GetMathScriptEngine()->FindScript("Calculate Trasformation Experience");
     calc_lockpick_time  = psserver->GetMathScriptEngine()->FindScript("Lockpicking Time");
 
     if (!calc_repair_rank)
@@ -162,6 +163,10 @@ WorkManager::WorkManager()
     if (!calc_mining_exp)
     {
         Error1("Could not find mathscript 'Calculate Mining Experience'");
+    }
+    if (!calc_transform_exp)
+    {
+        Error1("Could not find mathscript 'Calculate Trasformation Experience'");
     }
     if (!calc_lockpick_time)
     {
@@ -3678,17 +3683,24 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
             break;
         }
     }
-///TODO: CHANGE
+
     // Calculate and apply experience points
-    if (result > 0 && startQuality < currentQuality)
+    if (result > 0)
     {
-        unsigned int ppGained =  owner->AddExperiencePoints(2*(int)(currentQuality-startQuality));
-        if ( ppGained > 0 )
-            psserver->SendSystemInfo(clientNum,"You gained some experience points and a progression point!");
-        else
-            psserver->SendSystemInfo(clientNum,"You gained some experience points");
-        Debug2(LOG_TRADE, clientNum, "Giving experience points %i.\n",(2*(int)(currentQuality-startQuality)));
-        if (secure) psserver->SendSystemInfo(clientNum,"Giving experience points %i.",(2*(int)(currentQuality-startQuality)));
+        unsigned int experiencePoints;
+        {
+            MathEnvironment env;
+            env.Define("StartQuality", startQuality);
+            env.Define("CurrentQuality", currentQuality);
+            env.Define("Character", owner);
+            calc_transform_exp->Evaluate(&env);
+            experiencePoints = env.Lookup("Exp")->GetValue();
+        }
+
+        owner->AddExperiencePointsNotify(experiencePoints);
+
+        Debug2(LOG_TRADE, clientNum, "Giving experience points %i.\n",experiencePoints);
+        if (secure) psserver->SendSystemInfo(clientNum,"Giving experience points %i.",experiencePoints);
     }
 
     // Let the user know the we have done something

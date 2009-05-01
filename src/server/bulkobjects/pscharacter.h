@@ -830,6 +830,7 @@ public:
     unsigned int GetExperiencePoints(); // W
     void SetExperiencePoints(unsigned int W);
     unsigned int AddExperiencePoints(unsigned int W);
+    unsigned int AddExperiencePointsNotify(unsigned int W);
     unsigned int CalculateAddExperience(PSSKILL skill, unsigned int awardedPoints, float modifier = 1);
     unsigned int GetProgressionPoints(); // X
     void SetProgressionPoints(unsigned int X,bool save);
