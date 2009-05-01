@@ -58,7 +58,7 @@ struct CombinationConstruction;
     This is binary since each transform atempt could have multiple reasons for failure
  */
 enum TradePatternMatch
-{   
+{
     TRANSFORM_MATCH                 = 0x0000,       ///< There was a transform that matched correctly
     TRANSFORM_UNKNOWN_PATTERN       = 0x0001,       ///< There was no pattern found
     TRANSFORM_UNKNOWN_ITEM          = 0x0002,       ///< Item is not used with any available transform.
@@ -69,7 +69,7 @@ enum TradePatternMatch
     TRANSFORM_BAD_SKILLS            = 0x0040,       ///< Did not meet required skills.
     TRANSFORM_OVER_SKILLED          = 0x0080,       ///< Over skilled for this task.
     TRANSFORM_FAILED_CONSTRAINTS    = 0x0100,       ///< Failed one or more contstraints on the transform
-    TRANSFORM_BAD_QUANTITY          = 0x0200,       ///< Item was ok for transform but quantity was not.         
+    TRANSFORM_BAD_QUANTITY          = 0x0200,       ///< Item was ok for transform but quantity was not.
     TRANSFORM_BAD_COMBINATION       = 0x0400,       ///< Combination items or ammounts not correct.
     TRANSFORM_TOO_MANY_ITEMS        = 0x0800,       ///< Tried to transform too many items.
     TRANSFORM_BAD_USE               = 0x1000,       ///< Use of item or ammounts not correct.
@@ -81,7 +81,7 @@ enum TradePatternMatch
 /** Holds the possible transformation types.
  */
 enum TradeTransfomType
-{   
+{
     TRANSFORMTYPE_UNKNOWN=0,        ///< A unknown tranformation
     TRANSFORMTYPE_AUTO_CONTAINER,   ///< Transforming an item by putting it into auto-transform container
     TRANSFORMTYPE_SLOT,             ///< Transforming an item in an equipped slot
@@ -104,11 +104,11 @@ struct NaturalResource
     float    radius;            ///< Radius around the centre where resource can be found.
     float    visible_radius;
     float    probability;       ///< Probability of finding resource on attempt.
-    psSkillInfo *skill;         ///< Skill used to harvest resource. 
-    int      skill_level;       ///< Skill level required to be able to harvest resource. 
-    unsigned int item_cat_id;       
+    psSkillInfo *skill;         ///< Skill used to harvest resource.
+    int      skill_level;       ///< Skill level required to be able to harvest resource.
+    unsigned int item_cat_id;
     float    item_quality;
-    csString anim;                  ///< Name of animation to play while harvesting 
+    csString anim;                  ///< Name of animation to play while harvesting
     int      anim_duration_seconds; ///< Length of time the animation should play.
     int      reward;
     csString reward_nickname;
@@ -143,7 +143,7 @@ public:
 // Entry points
 //-----------------------------------------------------------------------------
 
-    /** Handles using an item for working.  This is called when an item 
+    /** Handles using an item for working.  This is called when an item
       * is tagetted and the use command issued.
       *
       * @param client  The client that placed the item inside
@@ -162,9 +162,9 @@ public:
       *
       */
     void HandleConstruct(Client *client);
-    
+
     /** Start a work event for this client.  This is called when an item is placed
-      * in a container.  If the container is an auto-transform container it can transform items 
+      * in a container.  If the container is an auto-transform container it can transform items
       * automatically ( ie placing items in automatically triggers the transformation process to start ).
       *
       * @param client  The client that placed the item inside
@@ -173,7 +173,7 @@ public:
       * @param count The stack count of the item placed in.
       */
     void StartAutoWork(Client *client, gemContainer* container, psItem *autoItem, int count);
-    
+
     /** Checks to see if the progression script generated craft work can be done.
       *
       * @param client  The client for the actor that initiates that progressions script
@@ -183,9 +183,9 @@ public:
       */
     bool StartScriptWork(Client* client, gemObject *target, csString pattern);
 
-    /** Stop work event.  
-     * This is called when a client removes an item from a container. 
-     *  
+    /** Stop work event.
+     * This is called when a client removes an item from a container.
+     *
      *  @param client The client that removed the item.
      *  @param item The item that was being transformed.
      */
@@ -194,38 +194,38 @@ public:
     /** @name Work Event Handlers
       *  These are the functions fired when a psWorkGameEvent is Triggered.
       */
-    //@{     
-    /** Handles a transformation/combination event. Basically the manufacturing events. 
-      * 
+    //@{
+    /** Handles a transformation/combination event. Basically the manufacturing events.
+      *
       * @param event The work event that was in the queue to fire.
-      */      
+      */
     void HandleWorkEvent(psWorkGameEvent* workEvent);
-    
-    /** Handles a cleanup event. Basically removing discarded items from public containers. 
-      * 
+
+    /** Handles a cleanup event. Basically removing discarded items from public containers.
+      *
       * @param event The work event that was in the queue to fire.
-      */      
+      */
     void HandleCleanupEvent(psWorkGameEvent* workEvent);
-    
-    /** Handles a resource/harvesting event. Basically the production events. 
-      * 
+
+    /** Handles a resource/harvesting event. Basically the production events.
+      *
       * @param event The work event that was in the queue to fire.
-      */          
+      */
     void HandleProductionEvent(psWorkGameEvent* workEvent);
 
-    /** Handles a repair event, which occurs after a few seconds of repairing an item. 
-    * 
+    /** Handles a repair event, which occurs after a few seconds of repairing an item.
+    *
     * @param event The work event that was in the queue to fire.
-    */          
-    void HandleRepairEvent(psWorkGameEvent* workEvent);
-    void LockpickComplete(psWorkGameEvent* workEvent);   
-    //@}
-    
-    
-    /** @name Constraint Functions
-    *  
     */
-    //@{         
+    void HandleRepairEvent(psWorkGameEvent* workEvent);
+    void LockpickComplete(psWorkGameEvent* workEvent);
+    //@}
+
+
+    /** @name Constraint Functions
+    *
+    */
+    //@{
     static bool constraintTime(WorkManager* that, char* param);
     static bool constraintFriends(WorkManager* that,char* param);
     static bool constraintLocation(WorkManager* that,char* param);
@@ -237,12 +237,12 @@ public:
 
     // Lockpicking
     void StartLockpick(Client* client,psItem* item);
-    
-   
+
+
     /** Sets up the internal structure of the work manager to handle a particular client.
-      * This sets many variables of the workmanager to work with a single user at a time. 
+      * This sets many variables of the workmanager to work with a single user at a time.
       *
-      * @param client The client that is the current one to use. 
+      * @param client The client that is the current one to use.
       * @param target The object for which the client is targetting.
       *
       * @return False if there is a problem loading stuff.
@@ -251,17 +251,17 @@ public:
 
     /* Send clear client view message to remove items from autocontainers.
       *
-      * @param slotID The slot number to clear. 
-      * @param containerID The container ID that has item that needs to be cleared. 
+      * @param slotID The slot number to clear.
+      * @param containerID The container ID that has item that needs to be cleared.
       *
       * @return False if there is a problem sending message.
       *
     bool SendClearUpdate( unsigned int slotID, unsigned int containerID ); */
-    
-    
+
+
     /// Handle production events from super clients
     void HandleProduction(gemActor *actor,const char *type,const char *reward);
-    
+
 protected:
     csPDelArray<NaturalResource> resources; ///< list of all natural resources in game.
     MathScript *calc_repair_rank;           ///< This is the calculation for how much skill is required to repair.
@@ -277,16 +277,16 @@ protected:
     void HandleLockPick(MsgEntry* me,Client *client);
     void HandleWorkCommand(MsgEntry* me,Client *client);
 
-    /** Stop auto work event.  
-     * This is called when a client removes an item from any container 
-     * before it has had a chance to transform the item. 
-     *  
+    /** Stop auto work event.
+     * This is called when a client removes an item from any container
+     * before it has had a chance to transform the item.
+     *
      *  @param client The client that removed the item.
      *  @param autoItem The item that was being transformed.
      */
     void StopAutoWork(Client *client, psItem *autoItem);
 
-    /** Handles stopping the use of the item for working.  This is called when an item 
+    /** Handles stopping the use of the item for working.  This is called when an item
       * is tagetted and the /use command issued and it's already in use.
       *
       * @param client  The client that issues the /use command
@@ -298,8 +298,8 @@ protected:
       * @param client  The client that issues the /use command
       */
     void StartUseWork(Client *client);
-    
-    /** Handles stopping the combining in the work container.  This is called when an item 
+
+    /** Handles stopping the combining in the work container.  This is called when an item
       * is tagetted and the /combine command issued and it's already in use.
       *
       * @param client  The client that issues the /combine command
@@ -318,14 +318,14 @@ protected:
       */
     void StartConstructWork(Client *client);
 
-    /** Handles stopping the constructing of an item.  This is called when an item 
+    /** Handles stopping the constructing of an item.  This is called when an item
       * is tagetted and the /construct command issued and it's already in use.
       *
       * @param client  The client that issues the /construct command
       */
     void StopConstructWork(Client *client);
 
-    /** Handles stopping the cleanup event for a particular item.  This is called when an item 
+    /** Handles stopping the cleanup event for a particular item.  This is called when an item
       * is removed from a container.
       *
       * @param client  The client that removes the item
@@ -333,20 +333,20 @@ protected:
       */
     void StopCleanupWork(Client* client, psItem* cleanItem);
 
-    /** Sends an error message to the client based on the trade pattern error. 
-      * @see TradePatternMatch for the list of error conditions. 
+    /** Sends an error message to the client based on the trade pattern error.
+      * @see TradePatternMatch for the list of error conditions.
       * @param clientNum the client to send the message to.
-      * @param result The error code from the transformable test. 
+      * @param result The error code from the transformable test.
       */
     void SendTransformError( uint32 clientNum, unsigned int result, uint32 curItemId = 0, int CurItemQty = 0 );
-     
+
     /** Returns with the result ID and quantity of the combination
       *  if work item container has the correct items in the correct amounts
       * Note:  This assumes that the combination items array is sorted by
       *  resultId and then itemId
       *
       * @return resultID The item ID of the resulting item.
-      * @return resultQty The stack quantity of the resulting item. 
+      * @return resultQty The stack quantity of the resulting item.
       *
       * @return False if combination is not possible.
       */
@@ -358,7 +358,7 @@ protected:
       *  resultId and then itemId
       *
       * @return resultID The item ID of the resulting item.
-      * @return resultQty The stack quantity of the resulting item. 
+      * @return resultQty The stack quantity of the resulting item.
       *
       * @return False if combination is not possible.
       */
@@ -369,18 +369,18 @@ protected:
       *
       * @param itemArray The array of items that need to be checked.
       * @return resultID The item ID of the resulting item.
-      * @return resultQty The stack quantity of the resulting item. 
+      * @return resultQty The stack quantity of the resulting item.
       *
       * @return False if combination is not possible.
       */
     bool ValidateCombination(csArray<psItem*> itemArray, uint32 &resultId, int &resultQty);
-    
+
     /** Returns with the result ID and quantity of the combination
       *  if the item list is in set of unique ingredients for that pattern
       *
       * @param itemArray The array of items that need to be checked.
       * @return resultID The item ID of the resulting item.
-      * @return resultQty The stack quantity of the resulting item. 
+      * @return resultQty The stack quantity of the resulting item.
       *
       * @return False if combination is not possible.
       */
@@ -433,7 +433,7 @@ protected:
 //    bool TransformHandItem(uint32 newId, int newQty, float itemQuality);
     //bool SendItemUpdate( INVENTORY_SLOT_NUMBER slotID, psItem *newItem );
 
-    void StartTransformationEvent(int transType, INVENTORY_SLOT_NUMBER transSlot, int resultQty, 
+    void StartTransformationEvent(int transType, INVENTORY_SLOT_NUMBER transSlot, int resultQty,
         float resultQuality, psItem* autoItem);
     void StartCleanupEvent(int transType, Client* client, psItem* item, gemActor* worker);
 
@@ -455,19 +455,19 @@ protected:
     void HandleRepair(Client *client, psWorkCmdMessage& msg);
     /// Handle production events from clients
     void HandleProduction(Client *client,const char *type,const char *reward);
-    
+
     bool SameProductionPosition(gemActor *actor, const csVector3& startPos);
     NaturalResource *FindNearestResource(const char *reward,iSector *sector, csVector3& pos, const char *action);
-        
+
 private:
 
     csWeakRef<gemObject> worker;    ///< Current worker that the work manager is dealing with.
-    
+
     uint32_t clientNum;             ///< Current client the work manager is dealing with.
     psItem* workItem;               ///< The current work item that is in use ( example, ore furnace )
     psItem* autoItem;               ///< The current item that is being transformed by auto-transformation container
-    psCharacter *owner;             ///< The character pointer of the current character being used. 
-    gemObject *gemTarget;           ///< The object being targeted by the player. 
+    psCharacter *owner;             ///< The character pointer of the current character being used.
+    gemObject *gemTarget;           ///< The object being targeted by the player.
     uint32 patternId;               ///< Current pattern ID
     uint32 groupPatternId;          ///< Current group pattern ID
     float patternKFactor;           ///< Pattern factor that's part of quality calculation
@@ -488,7 +488,7 @@ class psWorkGameEvent : public psGameEvent, public iDeleteObjectCallback
 public:
     psWorkGameEvent(WorkManager* mgr,
                     gemActor* worker,
-                    int delayticks, 
+                    int delayticks,
                     int cat,
                     csVector3& pos,
                     NaturalResource *natres=NULL,
@@ -527,7 +527,7 @@ public:
     float GetKFactor() { return KFactor; }
     void SetKFactor(float newFactor) { KFactor = newFactor; }
 
-    // slot to perform the transformation 
+    // slot to perform the transformation
     INVENTORY_SLOT_NUMBER GetTransformationSlot() { return transSlot; }
     void SetTransformationSlot(INVENTORY_SLOT_NUMBER curSlot) { transSlot = curSlot; }
 
@@ -543,7 +543,7 @@ public:
     // transformation type
     int GetTransformationType() { return transType; }
     void SetTransformationType(int t) { transType = t; }
-    
+
     WorkManager* workmanager;
     csWeakRef<gemObject> worker;
     NaturalResource* nr;
@@ -555,10 +555,10 @@ public:
     psTradeTransformations* transformation;
     psTradeProcesses* process;
     float repairAmount;
-    
+
     uint32_t effectID;      // The id of the psEffect tied to event.
     csArray<PublishDestination> multi;
-    
+
 private:
     int resultQuantity;
     float resultQuality;
