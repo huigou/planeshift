@@ -661,7 +661,7 @@ NpcResponse *NPCDialogDict::AddResponse(const char *response_text,
             csString saySegment;
             resp.SubString(saySegment,start,end-start); // pull out the part before the [ ]
             printf("Say: %s\n",(const char *)saySegment);
-            opStr.AppendFmt("<say text=\"%s\"/>", saySegment.GetDataSafe() );
+            opStr.AppendFmt("<say text=\"%s\"/>", EscpXML(saySegment.GetDataSafe()).GetDataSafe() );
         }
         if (end == resp.Length())  // stop if at end of string already
             break;
@@ -689,7 +689,7 @@ NpcResponse *NPCDialogDict::AddResponse(const char *response_text,
              // If action does not start with npc's name, it is a 3rd person statement, not /me
             if (strncasecmp(actionSegment,npc_name,strlen(npc_name)))
             {
-                opStr.AppendFmt("<narrate text=\"%s\"/>", actionSegment.GetDataSafe() );
+                opStr.AppendFmt("<narrate text=\"%s\"/>", EscpXML(actionSegment.GetDataSafe()).GetDataSafe() );
             }
             else // now look for /me or /my because the npc name matches
             {
@@ -697,12 +697,12 @@ NpcResponse *NPCDialogDict::AddResponse(const char *response_text,
                 if (resp[strlen(npc_name)] == '\'') // apostrophe after name means /my
                 {
                     actionSegment.DeleteAt(0,spc+1);
-                    opStr.AppendFmt("<actionmy text=\"%s\"/>", actionSegment.GetDataSafe() );
+                    opStr.AppendFmt("<actionmy text=\"%s\"/>", EscpXML(actionSegment.GetDataSafe()).GetDataSafe() );
                 }
                 else // this is a /me command
                 {
                     actionSegment.DeleteAt(0,spc+1);
-                    opStr.AppendFmt("<action text=\"%s\"/>", actionSegment.GetDataSafe() );
+                    opStr.AppendFmt("<action text=\"%s\"/>", EscpXML(actionSegment.GetDataSafe()).GetDataSafe() );
                 }
             }
         }
