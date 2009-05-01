@@ -466,8 +466,8 @@ bool MathExpression::Parse(const char *exp)
     if (start != SIZET_NOT_FOUND)
         tokens.Push(exp+start);
 
-    for (size_t i = 0; i < tokens.GetSize(); i++)
-        printf("Token[%d] = %s\n", int(i), tokens[i].GetDataSafe());
+    //for (size_t i = 0; i < tokens.GetSize(); i++)
+    //    printf("Token[%d] = %s\n", int(i), tokens[i].GetDataSafe());
 
     // PARSER: (kind of)
     for (size_t i = 0; i < tokens.GetSize(); i++)
