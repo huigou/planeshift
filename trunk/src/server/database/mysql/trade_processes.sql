@@ -23,7 +23,7 @@ CREATE TABLE trade_processes (
   primary_max_skill int(8) unsigned ,                           # maximum primary skill level at which practice and quality are effected, 0 is no maximum
   primary_practice_points int(4) ,                              # number of practice primary skill points gained for performing transformation
   primary_quality_factor int(3) unsigned DEFAULT '0' ,          # percentage of the primary skill range that applies to quality
-  secondary_skill_id int(10) unsigned ,                         # secondary skill foriegn key
+  secondary_skill_id int(10)  ,                                 # secondary skill foriegn key
   secondary_min_skill int(8) unsigned ,                         # minimum secondary skill level required to perform transformation, 0 is no minimum
   secondary_max_skill int(8) unsigned ,                         # maximum secondary skill level at which practice and quality are effected, 0 is no maximum
   secondary_practice_points int(4) ,                            # number of practice secondary skill points gained for performing transformation
