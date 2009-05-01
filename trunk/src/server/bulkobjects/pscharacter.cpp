@@ -1052,6 +1052,29 @@ unsigned int psCharacter::AddExperiencePoints(unsigned int W)
     return pp;
 }
 
+unsigned int psCharacter::AddExperiencePointsNotify(unsigned int experiencePoints)
+{
+    if(experiencePoints > 0)
+    {
+        unsigned int PP = AddExperiencePoints(experiencePoints);
+        if(GetActor() && GetActor()->GetClientID())
+        {
+            if(PP > 0)
+            {
+                csString message;
+                message.Format("You gained some experience points and %d progression points!", PP);
+                psserver->SendSystemInfo(GetActor()->GetClientID(), message.GetData());
+            }
+            else
+            {
+                psserver->SendSystemInfo(GetActor()->GetClientID(),"You gained some experience points");
+            }
+        }
+        return PP;
+    }
+    return 0;
+}
+
 unsigned int psCharacter::CalculateAddExperience(PSSKILL skill, unsigned int practicePoints, float modifier)
 {
     if(practicePoints > 0)
@@ -1065,24 +1088,9 @@ unsigned int psCharacter::CalculateAddExperience(PSSKILL skill, unsigned int pra
         env.Define("PracticePoints", practicePoints);
         env.Define("Modifier", modifier);
         expSkillCalc->Evaluate(&env);
-        int experiencePoints = env.Lookup("Exp")->GetValue();
-        if(experiencePoints > 0)
-        {
-            unsigned int PP = AddExperiencePoints(experiencePoints);
-            if(GetActor() && GetActor()->GetClientID())
-            {
-                if(PP > 0)
-                {
-                    csString message;
-                    message.Format("You gained some experience points and %d progression points!", PP);
-                    psserver->SendSystemInfo(GetActor()->GetClientID(), message.GetData());
-                }
-                else
-                {
-                    psserver->SendSystemInfo(GetActor()->GetClientID(),"You gained some experience points");
-                }
-            }
-        }
+        unsigned int experiencePoints = env.Lookup("Exp")->GetValue();
+
+        AddExperiencePointsNotify(experiencePoints);
 
         if (CacheManager::GetSingleton().GetSkillByID((PSSKILL)skill)) //check if skill is valid
         {
@@ -1090,7 +1098,7 @@ unsigned int psCharacter::CalculateAddExperience(PSSKILL skill, unsigned int pra
         }
         return experiencePoints;
     }
-    return practicePoints;
+    return 0;
 }
 
 void psCharacter::SetSpouseName( const char* name )
