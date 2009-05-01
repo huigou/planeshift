@@ -1,3 +1,9 @@
+*** 2009-05-01 by Stefano Angeleri
+- Made a new math script Calculate Trasformation Experience to calculate
+  experience gained trough transformations
+- Separated the output sent to player from the generic
+  experience assignment function
+- various cleanups
 *** 2009-04-29 by Kenny Graunke
 - Refactored and cleaned server-side teleporting code - there seemed to be
   many different copies, each doing -mostly- the same thing, but not quite.
