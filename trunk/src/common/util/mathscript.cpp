@@ -224,6 +224,30 @@ MathScript* MathScript::Create(const char *name, const csString & script)
 
     while (start < script.Length())
     {
+        if(script.Slice(start).RTrim().GetAt(0) == '\r') //skips new lines
+        {
+            semicolonAt = script.FindFirst('\r', start);
+            start = semicolonAt+1;
+            continue;
+        }
+
+        if(script.Slice(start).RTrim().GetAt(0) == '\n')
+        {
+            semicolonAt = script.FindFirst('\n', start);
+            start = semicolonAt+1;
+            continue;
+        }
+        
+        if(script.Slice(start).RTrim().StartsWith("//")) //manages full line comments like this
+        {
+            semicolonAt = script.FindFirst('\n', start);
+            if(semicolonAt == SIZET_NOT_FOUND)
+                semicolonAt = script.Length();
+
+            start = semicolonAt+1;
+            continue;
+        }
+
         semicolonAt = script.FindFirst(';', start);
         if (semicolonAt == SIZET_NOT_FOUND)
             semicolonAt = script.Length();
@@ -442,8 +466,8 @@ bool MathExpression::Parse(const char *exp)
     if (start != SIZET_NOT_FOUND)
         tokens.Push(exp+start);
 
-    //for (size_t i = 0; i < tokens.GetSize(); i++)
-        //printf("Token[%d] = %s\n", int(i), tokens[i].GetDataSafe());
+    for (size_t i = 0; i < tokens.GetSize(); i++)
+        printf("Token[%d] = %s\n", int(i), tokens[i].GetDataSafe());
 
     // PARSER: (kind of)
     for (size_t i = 0; i < tokens.GetSize(); i++)
