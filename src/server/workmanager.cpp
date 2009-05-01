@@ -942,7 +942,7 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
 
     // assign practice and experience
     workEvent->client->GetCharacterData()->CalculateAddExperience((PSSKILL)workEvent->nr->skill->id, practicePoints, modifier);
-    
+
     workEvent->worker->SetMode(PSCHARACTER_MODE_PEACE); // Actor isn't working anymore
 }
 
@@ -2441,7 +2441,7 @@ bool WorkManager::ValidateWork()
     {
         psserver->SendSystemInfo(clientNum,"You can not practice your trade when working." );
         return false;
-    }    
+    }
     // Check if not in normal mode
     else if ( worker->GetMode() == PSCHARACTER_MODE_COMBAT)
     {

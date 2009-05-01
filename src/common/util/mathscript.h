@@ -57,7 +57,7 @@ public:
         value = 0;
         obj   = NULL;
         changedVarCallback = NULL;
-        changedVarCallbackArg = NULL;    
+        changedVarCallbackArg = NULL;
     }
 
     void SetChangedCallback(MathScriptVarCallback callback, void * arg)
@@ -81,7 +81,7 @@ public:
         if (type == VARTYPE_OBJ)
             obj = *reinterpret_cast<iScriptableVar**>(&v); // Scary non-portible madness!
         else
-            value = v; 
+            value = v;
 
         if (changedVarCallback)
             changedVarCallback(changedVarCallbackArg);
@@ -152,9 +152,9 @@ protected:
 
 /**
  * This holds one line of a (potentially) multi-line script.
- * It knows what <var> is on the left, and what <formula> is 
+ * It knows what <var> is on the left, and what <formula> is
  * on the right of the = sign.  When run, it executes the
- * formula and sets the result in the Var.  These vars are 
+ * formula and sets the result in the Var.  These vars are
  * shared across Lines, which means the next Line can use
  * that Var as an input.
  */

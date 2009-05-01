@@ -3079,7 +3079,7 @@ double psCharacter::CalcFunction(const char * functionName, const double * param
             return 0;
         }
 
-        return 1;        
+        return 1;
     }
     else if (!strcasecmp(functionName, "IsWithin"))
     {
@@ -3100,7 +3100,7 @@ double psCharacter::CalcFunction(const char * functionName, const double * param
         {
             return 1.0;
         }
-      
+
         return 0.0;
     }
 
