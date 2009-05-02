@@ -452,13 +452,21 @@ void pawsMessageTextBox::Draw()
             {
                 //ChangeFontSize(adjusted[x]->size);
             }
-
+            // Draw shadow
+		    graphics2D->Write(  GetFont(),
+							    screenFrame.xmin + 1,
+							    screenFrame.ymin + yPos*lineHeight + 1,
+							    0,
+							    -1,
+							    (const char*)adjusted[x]->text );
+		    // Draw actual text
             graphics2D->Write(  GetFont(),
                                 screenFrame.xmin,
                                 screenFrame.ymin + yPos*lineHeight,
                                 adjusted[x]->colour,
                                 -1,
                                 (const char*)adjusted[x]->text );
+           
             //ChangeFontSize(oldSize);
             yPos++;                                                                            
         }
