@@ -1041,7 +1041,7 @@ csArray< gemObject* > *gemObject::GetObjectsInRange( float range )
 void gemObject::GetPosition(csVector3& pos, float& yrot,iSector*& sector)
 {
     // Position
-    pos = GetMeshWrapper()->GetMovable()->GetPosition();
+    pos = this->pos;
 
     // Rotation
     yrot = GetAngle();
@@ -1053,7 +1053,7 @@ void gemObject::GetPosition(csVector3& pos, float& yrot,iSector*& sector)
 void gemObject::GetPosition(csVector3& pos, iSector*& sector)
 {
     // Position
-    pos = GetMeshWrapper()->GetMovable()->GetPosition();
+    pos = this->pos;
 
     // Sector
     sector = GetSector();
@@ -1062,17 +1062,13 @@ void gemObject::GetPosition(csVector3& pos, iSector*& sector)
 float gemObject::GetAngle()
 {
     // Rotation
-    csMatrix3 transf = GetMeshWrapper()->GetMovable()->GetTransform().GetT2O();
-    return psWorld::Matrix2YRot(transf);
+    return this->yRot;
 }
 
 iSector* gemObject::GetSector()
 {
     // Sector
-    if (GetMeshWrapper()->GetMovable()->GetSectors()->GetCount())
-        return GetMeshWrapper()->GetMovable()->GetSectors()->Get(0);
-    else
-        return NULL;
+    return this->sector;
 }
 
 void gemObject::SendBehaviorMessage(const csString & str, gemObject *actor)
