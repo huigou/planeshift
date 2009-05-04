@@ -228,6 +228,8 @@ protected:
 
     void CreateSettingNode(iDocumentNode* mNode,int color,const char* name);
 
+    // Replay recent message history on load
+    void ReplayMessages();
 };
 
 //--------------------------------------------------------------------------

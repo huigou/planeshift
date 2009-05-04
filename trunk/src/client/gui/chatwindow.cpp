@@ -170,6 +170,7 @@ bool pawsChatWindow::PostSetup()
         Error1("ChatWindow failed because IgnoredList window was not found.");
         return false;
     }
+    ReplayMessages();
     return true;
 }
 
@@ -574,6 +575,58 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
         msgqueue->Publish(chat.msg);      // ...except for the display only ones.
 
     return NULL;
+}
+
+void pawsChatWindow::ReplayMessages()
+{
+	csString filename;
+	filename.Format("/planeshift/userdata/logs/%s_%s",
+						psengine->GetMainPlayerName(),
+						logFileName[CHAT_LOG_ALL]);
+	filename.ReplaceAll(" ", "_");
+	
+	char buf[1001];
+
+	// Open file and seek to 1000 bytes from the end, unlikely to need anything earlier than that.
+	csRef<iFile> file = psengine->GetVFS()->Open(filename, VFS_FILE_READ);
+	if(!file.IsValid())
+		return;
+	size_t seekPos = 0;
+	if(file->GetSize() > 1000)
+		seekPos = file->GetSize() - 1000;
+	file->SetPos(seekPos);
+	size_t readLength = file->Read(buf, 1000);
+	
+	// At least 5 chars
+	if(readLength < 5)
+		return;
+	
+	buf[readLength] = '\0';
+	
+	// Find the last 10 lines
+	int lines = 0;
+	char* currentPos;
+	csArray<const char*> line;
+	
+	for(currentPos = buf + readLength - 2; currentPos != buf && lines != 10; currentPos--)
+	{
+		if(*currentPos == '\n')
+		{
+			*currentPos = '\0';
+			// Useful log messages are prepended with a ( time stamp
+			if(*(currentPos + 1) == '(')
+			{
+				line.Push(currentPos + 1);
+				lines++;
+			}
+		}
+		if(*currentPos == '\r')
+			*currentPos = '\0';
+	}
+	// Assume CHAT_SAY and place all in one chat type to ensure they end up in the same window
+	PawsManager::GetSingleton().Publish(CHAT_TYPES[CHAT_SAY], "Replaying previous chat...", settings.systemColor );
+	while(!line.IsEmpty())
+		PawsManager::GetSingleton().Publish(CHAT_TYPES[CHAT_SAY], line.Pop(), settings.chatColor );
 }
 
 void pawsChatWindow::LogMessage(enum E_CHAT_LOG channel, const char* message, int type)
