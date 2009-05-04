@@ -3791,7 +3791,7 @@ bool WorkManager::ApplySkills(float factor, psItem* transItem)
     float startingQuality = currentQuality;
     if (secure) psserver->SendSystemInfo(clientNum,"Starting quality calculation with quality %f.", startingQuality);
     int priSkill = process->GetPrimarySkillId();
-    if ( priSkill > 0)
+    if ( priSkill => 0)
     {
         // Increase quality for crafted item based on if the starting quality was less then the normal quality
         float baseQuality = transItem->GetBaseStats()->GetQuality();
@@ -3851,7 +3851,7 @@ bool WorkManager::ApplySkills(float factor, psItem* transItem)
 
         // Apply the secondary skill if any
         int secSkill = process->GetSecondarySkillId();
-        if ( secSkill > 0)
+        if ( secSkill => 0)
         {
             // Increase quality for crafted item based on if the starting quality was less then the normal quality
             float baseQuality = transItem->GetBaseStats()->GetQuality();
