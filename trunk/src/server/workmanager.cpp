@@ -3845,7 +3845,7 @@ bool WorkManager::ApplySkills(float factor, psItem* transItem)
         {
             // Get some practice in
             int priPoints = process->GetPrimaryPracticePts();
-            owner->Skills().AddSkillPractice( (PSSKILL)priSkill, priPoints );
+            owner->CalculateAddExperience((PSSKILL)priSkill, priPoints);
             if (secure) psserver->SendSystemInfo(clientNum,"Giving practice points %d to skill %d.",priPoints, priSkill);
         }
 
@@ -3901,7 +3901,7 @@ bool WorkManager::ApplySkills(float factor, psItem* transItem)
             {
                 // Get some practice in
                 int secPoints = process->GetSecondaryPracticePts();
-                owner->Skills().AddSkillPractice( (PSSKILL)secSkill, secPoints );
+                owner->CalculateAddExperience((PSSKILL)secSkill, secPoints);
                 if (secure) psserver->SendSystemInfo(clientNum,"Giving practice points %d to skill %d.",secPoints, secSkill);
             }
         }
