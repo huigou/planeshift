@@ -2747,7 +2747,7 @@ void psItem::SendCraftTransInfo(Client *client)
     GetTransInfoString(character,mindStats->GetUID(), transString);
     mess.Append(transString);
 
-    // Send info to cleint
+    // Send info to client
     psMsgCraftingInfo msg(client->GetClientNum(),mess);
     if (msg.valid)
         psserver->GetEventManager()->SendMessage(msg.msg);
@@ -2772,22 +2772,16 @@ void psItem::GetComboInfoString(psCharacter* character, uint32 designID, csStrin
         {
             // Check if craft step minimum primary skill level is meet by client
             int priSkill = skillArray->Get(count)->priSkillId;
-            if(priSkill != 0)
+            if(priSkill >= 0 && skillArray->Get(count)->minPriSkill >= character->Skills().GetSkillRank((PSSKILL) priSkill).Current())
             {
-                if (skillArray->Get(count)->minPriSkill >= character->Skills().GetSkillRank((PSSKILL) priSkill).Current())
-                {
-                    continue;
-                }
+                continue;
             }
 
             // Check if craft step minimum secondary skill level is meet by client
             int secSkill = skillArray->Get(count)->secSkillId;
-            if(secSkill != 0)
+            if(secSkill >= 0 && skillArray->Get(count)->minSecSkill >= (int)character->Skills().GetSkillRank((PSSKILL) secSkill).Current())
             {
-                if (skillArray->Get(count)->minSecSkill >= (int)character->Skills().GetSkillRank((PSSKILL) secSkill).Current())
-                {
                     continue;
-                }
             }
             // Otherwise send combination string, and go on to next combine
             comboString.Append(combInfo->craftCombDescription);
@@ -2806,22 +2800,16 @@ void psItem::GetTransInfoString(psCharacter* character, uint32 designID, csStrin
     {
         // Check if craft step minimum primary skill level is meet by client
         int priSkill = craftArray->Get(count)->priSkillId;
-        if(priSkill != 0)
+        if(priSkill >= 0 && craftArray->Get(count)->minPriSkill >= character->Skills().GetSkillRank((PSSKILL) priSkill).Current())
         {
-            if (craftArray->Get(count)->minPriSkill >= character->Skills().GetSkillRank((PSSKILL) priSkill).Current())
-            {
                 continue;
-            }
         }
 
         // Check if craft step minimum seconday skill level is meet by client
         int secSkill = craftArray->Get(count)->secSkillId;
-        if(secSkill != 0)
+        if(secSkill >= 0 && craftArray->Get(count)->minSecSkill >= (int) character->Skills().GetSkillRank((PSSKILL) secSkill).Current())
         {
-            if (craftArray->Get(count)->minSecSkill >= (int) character->Skills().GetSkillRank((PSSKILL) secSkill).Current())
-            {
                 continue;
-            }
         }
 
         // Otherwise tack on trasnformation step description to message

@@ -1162,6 +1162,7 @@ bool CacheManager::PreloadCraftMessages()
     CraftTransInfo *craftInfo;
     csArray<CraftTransInfo*>* newArray = NULL;
     psTradeTransformations* tran = new psTradeTransformations;
+    csArray<CraftComboInfo*>* newComboArray = NULL;
 
     // Get a list of all the trade patterns in the database ordered by design item ID
     Result result(db->Select("SELECT * from trade_patterns order by designitem_id") );
@@ -1182,7 +1183,7 @@ bool CacheManager::PreloadCraftMessages()
         csPDelArray<CombinationConstruction>* combArray = FindCombinationsList(currentID);
         if (combArray)
         {
-            csArray<CraftComboInfo*>* newComboArray = new csArray<CraftComboInfo*>;
+            newComboArray = new csArray<CraftComboInfo*>;
             
             // Get the skills array from the transformations
             for (size_t i=0; i<combArray->GetSize(); i++)
@@ -1232,9 +1233,7 @@ bool CacheManager::PreloadCraftMessages()
         // Preload the combination craft string for current group pattern
         csPDelArray<CombinationConstruction>* combGroupArray = FindCombinationsList(currentGroupID);
         if (combGroupArray)
-        {
-            csArray<CraftComboInfo*>* newGroupComboArray = new csArray<CraftComboInfo*>;
-            
+        {            
             // Get the skills array from the transformations
             for (size_t i=0; i<combGroupArray->GetSize(); i++)
             {
@@ -1275,9 +1274,8 @@ bool CacheManager::PreloadCraftMessages()
                         combInfo->skillArray->Push(craftSkill);
                     }
                 }
-                newGroupComboArray->Push(combInfo);
+                newComboArray->Push(combInfo);
             }
-            tradeCraftComboInfo_IDHash.Put(designItemID,newGroupComboArray);
         }
 
         // If it is a new design item then create new cache
