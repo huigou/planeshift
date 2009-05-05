@@ -279,18 +279,7 @@ gemObject *GEMSupervisor::FindObject(EID id)
     if (!id.IsValid())
         return NULL;
 
-    csHash<gemObject*, EID>::Iterator i(entities_by_eid.GetIterator(id));
-    gemObject* obj;
-
-    while ( i.HasNext() )
-    {
-        obj = i.Next();
-        if (obj->GetEID() == id)
-        {
-            return obj;
-        }
-    }
-    return NULL;
+    return entities_by_eid.Get(id, NULL);
 }
 
 gemObject *GEMSupervisor::FindObject(const csString& name)
