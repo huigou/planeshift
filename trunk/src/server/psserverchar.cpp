@@ -191,32 +191,32 @@ void ServerCharManager::ViewItem(Client* client, int containerID, INVENTORY_SLOT
         }
         else
         {
+            gemObject* gemAction = action->GetGemObject();
+            // Check range ignoring Y co-ordinate
+            csWeakRef<gemObject> gem = client->GetActor();
+            if (gem.IsValid() && gem->RangeTo(gemAction, true, true) > RANGE_TO_SELECT)
+            {
+                psserver->SendSystemError(client->GetClientNum(),
+                    "You are not in range to see %s.", gemAction->GetName());
+                return;
+            }
+            
             // Check for container
             if ( action->IsContainer() )
             {
                 // Get container instance
-                uint32 InstanceID = action->GetInstanceID();
-                gemItem* realItem = GEMSupervisor::GetSingleton().FindItemEntity( InstanceID );
-                if (!realItem)
+                if (!action->GetRealItem())
                 {
+                    uint32 InstanceID = action->GetInstanceID();
                     Error3("Invalid instance ID %u in action location %s", InstanceID, action->name.GetDataSafe());
                     return;
                 }
 
                 // Get item pointer
-                item = realItem->GetItem();
+                item = action->GetRealItem()->GetItem();
                 if ( !item )
                 {
                     CPrintf (CON_ERROR, "Invalid ItemID in Action Location Response.\n");
-                    return;
-                }
-
-                // Check range ignoring Y co-ordinate
-                csWeakRef<gemObject> gem = client->GetActor();
-                if (gem.IsValid() && gem->RangeTo(realItem, true, true) > RANGE_TO_SELECT)
-                {
-                    psserver->SendSystemError(client->GetClientNum(),
-                        "You are not in range to see %s.",item->GetName());
                     return;
                 }
                 item->SendActionContents(client, action);
