@@ -341,6 +341,7 @@ private:
     csRef<Sector> lastSector;
     csVector3 lastPos;
 
+    csStringArray shaders;
     csRefArray<MeshGen> loadingMeshGen;
     csRefArray<MeshObj> loadingMeshes;
     csRefArray<MeshObj> finalisableMeshes;

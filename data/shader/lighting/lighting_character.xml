@@ -23,6 +23,7 @@
   <alias name="lighting" file="/shader/snippets/lighting/lighting-ppl.xml" />
   <alias name="surface" file="/shader/snippets/surface/surface-overlay.xml" />
   <alias name="specular" file="/shader/snippets/surface/specular-default.xml" />
+  <alias name="staticspecular" file="/shader/snippets/lighting/staticspec-null.xml" />
   
   <technique priority="300" minlights="3">
     <tag>per_pixel_lighting</tag>
@@ -211,5 +212,5 @@
   </technique>
   <?endif?>
   
-  <fallbackshader name="lighting_static" file="/shader/lighting/lighting_simple.xml" />
+  <fallbackshader name="lighting_simple" file="/shader/lighting/lighting_simple.xml" />
 </shader>
