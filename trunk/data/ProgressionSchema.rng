@@ -112,7 +112,7 @@
         </element>
 
         <element name="create-familiar">
-          <empty/> <!-- someday: type element? -->
+          <attribute name="aim"/>
         </element>
 
         <element name="destroy">
@@ -264,7 +264,9 @@
           <attribute name="name"/>
         </element>
 
-        <element name="can-summon-familiar"/>
+        <element name="can-summon-familiar">
+          <empty/>
+        </element>
 
         <element name="on">
           <choice>
