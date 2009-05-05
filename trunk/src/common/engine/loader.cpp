@@ -126,9 +126,23 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
                 nodeItr = node->GetNodes("shader");
                 while(nodeItr->HasNext())
                 {
+                    bool loadShader = false;
                     node = nodeItr->Next();
                     node = node->GetNode("file");
-                    rets.Push(tloader->LoadShader(vfs->GetCwd(), node->GetContentsValue()));
+
+                    {
+                        CS::Threading::ScopedWriteLock lock(sLock);
+                        if(!shaders.Contains(node->GetContentsValue()))
+                        {
+                            shaders.Push(node->GetContentsValue());
+                            loadShader = true;
+                        }
+                    }
+
+                    if(loadShader)
+                    {
+                        rets.Push(tloader->LoadShader(vfs->GetCwd(), node->GetContentsValue()));
+                    }
                 }
             }
 
