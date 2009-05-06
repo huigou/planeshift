@@ -1,3 +1,6 @@
+*** 2009-05-06 by Kenny Graunke
+- Fixed terrible movement bugs by reverting two recent changes.
+
 *** 2009-05-01 by Stefano Angeleri
 - Made a new math script Calculate Trasformation Experience to calculate
   experience gained trough transformations
