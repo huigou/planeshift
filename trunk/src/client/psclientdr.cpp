@@ -73,6 +73,7 @@ psClientDR::~psClientDR()
     if (msghandler)
     {
         msghandler->Unsubscribe(this,MSGTYPE_DEAD_RECKONING);
+        msghandler->Unsubscribe(this,MSGTYPE_FORCE_POSITION);
         msghandler->Unsubscribe(this,MSGTYPE_STATDRUPDATE);
         msghandler->Unsubscribe(this,MSGTYPE_MSGSTRINGS);
         msghandler->Unsubscribe(this,MSGTYPE_OVERRIDEACTION);
@@ -92,6 +93,7 @@ bool psClientDR::Initialize(iObjectRegistry* object_reg, psCelClient* celclient,
     msgstrings = NULL; // will get it in a MSGTYPE_MSGSTRINGS message
 
     msghandler->Subscribe(this,MSGTYPE_DEAD_RECKONING);
+    msghandler->Subscribe(this,MSGTYPE_FORCE_POSITION);
     msghandler->Subscribe(this,MSGTYPE_STATDRUPDATE);
     msghandler->Subscribe(this,MSGTYPE_MSGSTRINGS);
     msghandler->Subscribe(this,MSGTYPE_OVERRIDEACTION);
@@ -168,6 +170,10 @@ void psClientDR::HandleMessage (MsgEntry* me)
     {
         HandleDeadReckon( me );
     }
+    else if (me->GetType() == MSGTYPE_FORCE_POSITION)
+    {
+        HandleForcePosition(me);
+    }
     else if (me->GetType() == MSGTYPE_STATDRUPDATE)
     {
         HandleStatsUpdate( me );
@@ -219,24 +225,36 @@ void psClientDR::HandleDeadReckon( MsgEntry* me )
         return;
     }
 
-    // If the object that changed position is our player, check if he crossed sector boundary.
-    // If that case the player may have been moved to map that is not currently loaded so
-    // we must tell ZoneHandler to: 1) load the needed maps 2) set player's position.
-    // If the other case (when the player is in the same sector) we simply set his position immediately.
+    // Ignore any updates to the main player...psForcePositionMessage handles that.
     if (gemActor == celclient->GetMainPlayer())
     {
-        if (last_sector != drmsg.sectorName)
-        {
-            psNewSectorMessage cross(last_sector, drmsg.sectorName, drmsg.pos);
-            msghandler->Publish(cross.msg);
-            Error3("Sector crossed from %s to %s after received DR.\n", last_sector.GetData(), drmsg.sectorName.GetData());
-        }
-        
         psengine->GetModeHandler()->SetModeSounds(drmsg.mode);
+        return;
     }
 
     // Set data for this actor
     gemActor->SetDRData(drmsg);
+}
+
+void psClientDR::HandleForcePosition(MsgEntry *me)
+{
+    psForcePositionMessage msg(me, msgstrings, psengine->GetEngine());
+    GEMClientActor *actor = celclient->GetMainPlayer();
+
+    // Check if we crossed a sector boundary - if so, the player may have been
+    // moved to an unloaded map.  We must tell ZoneHandler to 1) load the
+    // necessary maps and 2) set the player's position.
+    if (last_sector != msg.sectorName)
+    {
+        psNewSectorMessage cross(last_sector, msg.sectorName, msg.pos);
+        msghandler->Publish(cross.msg);
+        Error3("Sector crossed from %s to %s after forced position update.\n", last_sector.GetData(), msg.sectorName.GetData());
+    }
+    else
+    {
+        CS_ASSERT(msg.sector);
+        actor->SetPosition(msg.pos, msg.sector);
+    }
 }
 
 void psClientDR::HandleStatsUpdate( MsgEntry* me )

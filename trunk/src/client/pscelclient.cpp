@@ -1626,6 +1626,13 @@ void GEMClientActor::StopMoving(bool worldVel)
 
 }
 
+bool GEMClientActor::SetPosition(const csVector3 & pos, iSector *sector)
+{
+    if (linmove)
+        linmove->SetPosition(pos, linmove->GetYRotation(), sector);
+    return true;
+}
+
 bool GEMClientActor::SetPosition(const csVector3 & pos, float rot, iSector * sector)
 {
     if (linmove)

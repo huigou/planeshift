@@ -439,6 +439,7 @@ public:
       */
     const csVector3 GetVelocity () const;
 
+    virtual bool SetPosition(const csVector3 & pos, iSector *sector);
     virtual bool SetPosition(const csVector3 & pos, float rot, iSector * sector);
 
     void SetAlive( bool aliveFlag, bool newactor );

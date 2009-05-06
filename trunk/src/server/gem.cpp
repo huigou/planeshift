@@ -1870,7 +1870,7 @@ gemActor::gemActor( psCharacter *chardata,
                        float rotangle,
                        int clientnum) :
   gemObject(chardata->GetCharFullName(),factname,myInstance,room,pos,rotangle,clientnum),
-psChar(chardata), factions(NULL), DRcounter(0), lastDR(0), lastV(0), lastSentSuperclientPos(0, 0, 0),
+psChar(chardata), factions(NULL), DRcounter(0), forceDRcounter(0), lastDR(0), lastV(0), lastSentSuperclientPos(0, 0, 0),
 lastSentSuperclientInstance(-1), activeReports(0), isFalling(false), invincible(false), visible(true), viewAllObjects(false),
 movementMode(0), isAllowedToMove(true), atRest(true), pcmove(NULL),
 nevertired(false), infinitemana(false), instantcast(false), safefall(false), givekillexp(false), attackable(false)
@@ -2915,6 +2915,7 @@ void gemActor::Teleport(iSector *sector, const csVector3 & pos, float yrot)
 
     UpdateProxList(true);
     MulticastDRUpdate();
+    ForcePositionUpdate();
 }
 
 void gemActor::SetPosition(const csVector3& pos,float angle, iSector* sector)
@@ -2922,8 +2923,6 @@ void gemActor::SetPosition(const csVector3& pos,float angle, iSector* sector)
     this->pos = pos;
     this->yRot = angle;
     this->sector = sector;
-
-    DRcounter += 3;
 
     pcmove->SetPosition(pos,angle,sector);
 
@@ -3191,8 +3190,20 @@ void gemActor::MulticastDRUpdate()
     psDRMessage drmsg(0, eid, on_ground, movementMode, DRcounter,
                       pos,yrot,sector, "", vel,worldVel,ang_vel,
                       CacheManager::GetSingleton().GetMsgStrings() );
-    drmsg.msg->priority = PRIORITY_HIGH;
     drmsg.Multicast(GetMulticastClients(),0,PROX_LIST_ANY_RANGE);
+}
+
+void gemActor::ForcePositionUpdate()
+{
+    float yrot;
+    csVector3 pos;
+    iSector *sector;
+
+    GetPosition(pos, yrot, sector);
+
+    psForcePositionMessage msg(GetClientID(), ++forceDRcounter, pos, sector,
+                               CacheManager::GetSingleton().GetMsgStrings());
+    msg.SendMessage();
 }
 
 bool gemActor::UpdateDR()
