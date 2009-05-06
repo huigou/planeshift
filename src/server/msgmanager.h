@@ -53,13 +53,6 @@ class MessageManager : public iNetSubscriber
 public:
     virtual ~MessageManager() {}
 
-	/**
-	 * Returns the same message and "true" if not sequenced.  Checks
-	 * sequence number and queues it if not the next in the sequence.
-	 * Or checks the next message in the queue and returns it if a NULL
-	 * me ptr is passed in.
-	 */
-	bool CheckSequentialMessage(csRef<MsgEntry> me,Client *client);
 
     virtual bool Verify(MsgEntry *pMsg,unsigned int flags,Client*& client);
 
