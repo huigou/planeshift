@@ -474,8 +474,22 @@ const char *psUserCommands::HandleCommand(const char *cmd)
        if (words.GetCount() <= 1)
             return "You must specify a spell name";
 
-       csString tail_word = words.GetTail(1);
-       AskToSlayBeforeSending(new psSpellCastMessage(tail_word, psengine->GetKFactor()));
+
+       csString spell;
+       float KFactor;
+       unsigned int pct;
+       if (words.GetCount() > 2 && sscanf(words[1], "%3u", &pct) == 1)
+       {
+           KFactor = float(pct)/100;
+           spell = words.GetTail(2);
+       }
+       else
+       {
+           KFactor = psengine->GetKFactor();
+           spell = words.GetTail(1);
+       }
+
+       AskToSlayBeforeSending(new psSpellCastMessage(spell, psengine->GetKFactor()));
     }
 
     else if (words[0] == "/away")

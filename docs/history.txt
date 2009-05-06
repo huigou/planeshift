@@ -5,6 +5,9 @@
   ordered and reliable, while DR updates are neither.  (The server used to
   multicast DR updates as reliable messages, but no longer does so.)
   ==> NETVERSION BUMP (0x9C) <==
+- Implement feature request PS#2275 - spell power in /cast command.
+  Now you can type /cast 45 Life Infusion to cast with a K factor of 45,
+  overriding the value set by the slider in the info window.
 
 *** 2009-05-01 by Stefano Angeleri
 - Made a new math script Calculate Trasformation Experience to calculate
