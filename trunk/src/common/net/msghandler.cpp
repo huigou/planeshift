@@ -70,22 +70,10 @@ void MsgHandler::Publish(MsgEntry* me)
 		MsgEntry *message = me;
         if (subscribers[mtype][x]->subscriber->Verify(message,subscribers[mtype][x]->flags,client))
         {
-			while (subscribers[mtype][x]->subscriber->CheckSequentialMessage(message,client))
-			{
-	            if (subscribers[mtype][x]->callback)
-		            subscribers[mtype][x]->callback->Call(message,client);
-			    else
-				    subscribers[mtype][x]->subscriber->HandleMessage(message,client);
-
-				if (message->GetSequenceNumber())
-				{
-					message = NULL;  // This triggers CheckSequentialMessage to check for another one available next time through the while loop
-				}
-				else
-				{
-					break;  // don't try to drain the sequence in while loop if the message was unsequenced.
-				}
-			}
+            if (subscribers[mtype][x]->callback)
+	            subscribers[mtype][x]->callback->Call(message,client);
+		    else
+			    subscribers[mtype][x]->subscriber->HandleMessage(message,client);
         }
         handled = true;
     }
