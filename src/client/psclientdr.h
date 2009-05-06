@@ -85,6 +85,7 @@ private:
     void HandleStrings( MsgEntry* me );
     void HandleStatsUpdate( MsgEntry* me );
     void HandleDeadReckon( MsgEntry* me );
+    void HandleForcePosition(MsgEntry *me);
     void HandleSequence( MsgEntry* me );
 };
 

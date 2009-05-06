@@ -649,6 +649,7 @@ protected:
     csWeakRef<Client> clientRef;
 
     uint8_t DRcounter;  ///< increments in loop to prevent out of order packet overwrites of better data
+    uint8_t forceDRcounter; ///< sequence number for forced position updates
     csTicks lastDR;
     csVector3 lastV;
 
@@ -854,6 +855,7 @@ public:
 
     bool SetDRData(psDRMessage& drmsg);
     void MulticastDRUpdate();
+    void ForcePositionUpdate();
 
     using gemObject::RegisterCallback;
     using gemObject::UnregisterCallback;

@@ -1,5 +1,10 @@
 *** 2009-05-06 by Kenny Graunke
 - Fixed terrible movement bugs by reverting two recent changes.
+- Changed server-forced position updates (i.e. teleporting) to use a new
+  psForcePositionMessage rather than multicasting DR.  These new messages are
+  ordered and reliable, while DR updates are neither.  (The server used to
+  multicast DR updates as reliable messages, but no longer does so.)
+  ==> NETVERSION BUMP (0x9C) <==
 
 *** 2009-05-01 by Stefano Angeleri
 - Made a new math script Calculate Trasformation Experience to calculate

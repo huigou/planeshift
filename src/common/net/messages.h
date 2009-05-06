@@ -43,7 +43,7 @@ class psLinearMovement;
 
 // This holds the version number of the network code, remember to increase
 // this each time you do an update which breaks compatibility
-#define PS_NETVERSION   0x009B
+#define PS_NETVERSION   0x009C
 // Remember to bump the version in pscssetup.h, as well.
 
 
@@ -84,6 +84,7 @@ enum MSG_TYPES
     MSGTYPE_SYSTEM,
     MSGTYPE_CHARREJECT,
     MSGTYPE_DEAD_RECKONING,
+    MSGTYPE_FORCE_POSITION,
     MSGTYPE_CELPERSIST,
     MSGTYPE_CONFIRMQUESTION,
     MSGTYPE_USERACTION,
@@ -2736,7 +2737,6 @@ private:
 
 //-----------------------------------------------------------------------------
 
-
 class psDRMessage : public psMessageCracker
 {
 protected:
@@ -2807,7 +2807,35 @@ public:
     virtual csString ToString(AccessPointers * access_ptrs);
 };
 
+//-----------------------------------------------------------------------------
 
+class psForcePositionMessage : public psMessageCracker
+{
+public:
+    csVector3 pos;       ///< Position vector
+    iSector *sector;     ///< Ptr to sector for mesh
+    csString sectorName; ///< Name of the sector
+
+    psForcePositionMessage() { }
+    psForcePositionMessage(uint32_t client, uint8_t sequence,
+                           const csVector3& pos, iSector *sector,
+                           csStringHashReversible *msgstrings);
+    psForcePositionMessage(MsgEntry *me, csStringHashReversible *msgstrings, iEngine *engine);
+
+    PSF_DECLARE_MSG_FACTORY();
+
+    void operator=(psForcePositionMessage& other);
+
+    /**
+     * @brief Converts the message into human readable string.
+     *
+     * @param access_ptrs A struct to a number of access pointers.
+     * @return Return a human readable string for the message.
+     */
+    virtual csString ToString(AccessPointers * access_ptrs);
+};
+
+//-----------------------------------------------------------------------------
 
 class psPersistWorldRequest : public psMessageCracker
 {

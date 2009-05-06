@@ -4343,6 +4343,58 @@ csString psDRMessage::ToString(AccessPointers * /*access_ptrs*/)
     return msgtext;
 }
 
+//--------------------------------------------------------------------------------
+
+PSF_IMPLEMENT_MSG_FACTORY2(psForcePositionMessage, MSGTYPE_FORCE_POSITION);
+
+psForcePositionMessage::psForcePositionMessage(uint32_t client, uint8_t sequenceNumber,
+                         const csVector3 & pos, iSector *sector,
+                         csStringHashReversible *msgstrings)
+{
+    CS_ASSERT(sector);
+    csString sectorName = sector->QueryObject()->GetName();
+    csStringID sectorNameStrId = msgstrings ? msgstrings->Request(sectorName) : csInvalidStringID;
+
+	msg.AttachNew(new MsgEntry(sizeof(float)*3 + sizeof(uint8_t) + sizeof(uint32_t) + (sectorNameStrId == csInvalidStringID ? sectorName.Length() + 1 : 0), PRIORITY_HIGH, sequenceNumber));
+
+    msg->SetType(MSGTYPE_FORCE_POSITION);
+    msg->clientnum = client;
+
+    msg->Add(pos);
+
+    msg->Add((uint32_t) sectorNameStrId);
+    if (sectorNameStrId == csInvalidStringID)
+        msg->Add(sectorName);
+
+    // Sets valid flag based on message overrun state
+    valid=!(msg->overrun);
+}
+
+psForcePositionMessage::psForcePositionMessage(MsgEntry *me, csStringHashReversible *msgstrings, iEngine *engine)
+{
+    pos = me->GetVector();
+
+    csStringID sectorNameStrId = (csStringID) me->GetUInt32();
+    sectorName = sectorNameStrId != csInvalidStringID ? msgstrings->Request(sectorNameStrId) : me->GetStr();
+    sector = !sectorName.IsEmpty() ? engine->GetSectors()->FindByName(sectorName) : NULL;
+
+	valid = !(me->overrun);
+}
+
+void psForcePositionMessage::operator=(psForcePositionMessage & other)
+{
+    pos    = other.pos;
+    sector = other.sector;
+}
+
+csString psForcePositionMessage::ToString(AccessPointers * /*access_ptrs*/)
+{
+    csString msgtext;
+    msgtext.AppendFmt("Sector: %s ", sectorName.GetDataSafe());
+    msgtext.AppendFmt("Pos(%.2f,%.2f,%.2f)", pos.x, pos.y, pos.z);
+    return msgtext;
+}
+
 //--------------------------------------------------------------------------
 
 PSF_IMPLEMENT_MSG_FACTORY(psPersistWorldRequest,MSGTYPE_PERSIST_WORLD_REQUEST);
