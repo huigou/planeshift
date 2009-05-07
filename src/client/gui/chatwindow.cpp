@@ -1617,7 +1617,7 @@ void pawsChatWindow::TabCompleteCommand(const char *cmd)
         return;
 
     // Make sure we have our command list
-    if (!commandList.Count())
+    if (commandList.IsEmpty())
         RefreshCommandList();
 
     psString partial(cmd);
@@ -1633,25 +1633,28 @@ void pawsChatWindow::TabCompleteCommand(const char *cmd)
     int count = 0;
 
     // valid but not unique
-    psString list, *last=NULL;
+    psString list;
+    const psString *last=NULL;
     size_t max_common = 50; // big number gets pulled in
-    BinaryRBIterator<psString> loop(&commandList);
-    for (psString* found = loop.First(); found; found = ++loop)
+    csRedBlackTree<psString>::Iterator loop(commandList.GetIterator());
+    while (loop.HasNext())
     {
-        if (!found->PartialEquals(partial))
+    	const psString& found = loop.Next();
+    	
+        if (!found.PartialEquals(partial))
         {
             count++;
             if(!list.IsEmpty())
                 list.Append(" ");
             list.Append(*found);
             if (!last)
-                last = found;
-            size_t common = found->FindCommonLength(*last);
+                last = &found;
+            size_t common = found.FindCommonLength(*last);
 
             if (common < max_common)
             {
                 max_common = common;
-                last = found;
+                last = &found;
             }
         }
         else if (list.Length())

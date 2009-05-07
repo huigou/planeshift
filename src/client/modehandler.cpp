@@ -134,7 +134,14 @@ ModeHandler::ModeHandler(iSoundManager *sm,
 
 ModeHandler::~ModeHandler()
 {
+    csHash<WeatherInfo*, csString>::GlobalIterator loop(weatherlist.GetIterator());
+    WeatherInfo *wi;
 
+    while(loop.HasNext())
+    {
+    	wi = loop.Next();
+    	delete wi;
+    }
     RemovePortalWeather();
     RemoveWeather();
 
@@ -387,9 +394,7 @@ void ModeHandler::SetModeSounds(uint8_t mode)
 
 WeatherInfo* ModeHandler::GetWeatherInfo(const char* sector)
 {
-    WeatherInfo key;
-    key.sector = sector;
-    WeatherInfo *ri = weatherlist.Find(&key); // Get the weather info
+    WeatherInfo *ri = weatherlist.Get(sector, NULL); // Get the weather info
     return ri;
 }
 
@@ -407,7 +412,7 @@ WeatherInfo* ModeHandler::CreateWeatherInfo(const char* sector)
     wi->fog = NULL;
     wi->r = wi->g = wi->b = 0;
 
-    weatherlist.Insert(wi,true); // weatherlist owns data
+    weatherlist.Put(sector, wi); // weatherlist owns data
 
     return wi;
 }
@@ -1396,11 +1401,12 @@ void ModeHandler::UpdateWeather(csTicks when)
      * that rain etc are at the right level when
      * entering a new sector.
      */
-    BinaryRBIterator<WeatherInfo> loop(&weatherlist);
+    csHash<WeatherInfo*, csString>::GlobalIterator loop(weatherlist.GetIterator());
     WeatherInfo *wi, *current_wi = NULL;
 
-    for ( wi = loop.First(); wi; wi = ++loop)
+    while(loop.HasNext())
     {
+    	wi = loop.Next();
 
         wi->Fade(&wi->downfall_params,delta);
         if (wi->downfall_params.value <= 0)

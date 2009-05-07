@@ -890,21 +890,33 @@ psMapSoundSystem::psMapSoundSystem( psSoundManager* mngr, iObjectRegistry* objec
     sndmngr = mngr;
 }
 
+psMapSoundSystem::~psMapSoundSystem()
+{
+	csHash<psSectorSoundManager*, csString>::GlobalIterator iter(sectors.GetIterator());
+
+    while(iter.HasNext())
+    {
+    	psSectorSoundManager* sect = iter.Next();
+    	delete sect;
+    }
+}
+
 
 void psMapSoundSystem::EnableMusic( bool enable )
 {
-    BinaryRBIterator<psSectorSoundManager> iter(&sectors);
+	csHash<psSectorSoundManager*, csString>::GlobalIterator iter(sectors.GetIterator());
 
-    for ( psSectorSoundManager* sect = iter.First(); sect; sect = ++iter )
+    while(iter.HasNext())
     {
-         sect->Music( enable );
+    	psSectorSoundManager* sect = iter.Next();
+    	sect->Music( enable );
     }
 }
 
 
 void psMapSoundSystem::EnableSounds( bool enable )
 {
-    BinaryRBIterator<psSectorSoundManager> iter(&sectors);
+	csHash<psSectorSoundManager*, csString>::GlobalIterator iter(sectors.GetIterator());
     Fade_Direction dir;
 
     if  ( enable )
@@ -912,8 +924,9 @@ void psMapSoundSystem::EnableSounds( bool enable )
     else
         dir = FADE_DOWN;
 
-    for ( psSectorSoundManager* sect = iter.First(); sect; sect = ++iter )
+    while(iter.HasNext())
     {
+    	psSectorSoundManager* sect = iter.Next();
         sect->Sounds( enable );
     }
 }
@@ -921,10 +934,7 @@ void psMapSoundSystem::EnableSounds( bool enable )
 
 psSectorSoundManager* psMapSoundSystem::GetSoundSectorByName(const char* name)
 {
-    csString sectorStr(name);
-
-    psSectorSoundManager key( sectorStr, NULL, this );
-    psSectorSoundManager* sectora = sectors.Find(&key);
+    psSectorSoundManager* sectora = sectors.Get(name, NULL);
     return sectora;
 }
 
@@ -1025,7 +1035,7 @@ bool psMapSoundSystem::Initialize()
                 }
 
                 // we can now be sure we have a manager
-                sectors.Insert(manager);
+                sectors.Put(sectorName, manager);
                 Debug2( LOG_SOUND,0, "Added sector %s to the list",manager->GetSector());
 
                 csRef<iDocumentNodeIterator> ambientItr = sector->GetNodes("AMBIENT");

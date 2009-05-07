@@ -27,7 +27,7 @@
 #include "util/strutil.h"
 #include "util/psconst.h"
 
-bool psString::FindString(const char *border, unsigned int & pos, unsigned int & end)
+bool psString::FindString(const char *border, unsigned int & pos, unsigned int & end) const
 {
     pos = FindSubString(border, pos);
     if (pos == (unsigned int)-1)
@@ -41,7 +41,7 @@ bool psString::FindString(const char *border, unsigned int & pos, unsigned int &
     return true;
 }
 
-bool psString::FindNumber(unsigned int & pos, unsigned int & end)
+bool psString::FindNumber(unsigned int & pos, unsigned int & end) const
 {
     const char *myData = this->GetData();
 
@@ -163,7 +163,7 @@ int psString::FindSubStringReverse(psString& sub, size_t start, bool caseInsense
     }
 }
 
-void psString::GetSubString(psString& str, size_t from, size_t to)
+void psString::GetSubString(psString& str, size_t from, size_t to) const
 {
     str.Clear();
 
@@ -190,7 +190,7 @@ void GetSubString(csStringBase& src, csStringBase& str, size_t from, size_t to)
 
 
 
-void psString::GetWord(size_t pos, psString &buff, bool wantPunct)
+void psString::GetWord(size_t pos, psString &buff, bool wantPunct) const
 {
     size_t start = pos;
     size_t end   = pos;
@@ -220,12 +220,12 @@ void psString::GetWord(size_t pos, psString &buff, bool wantPunct)
     GetSubString(buff,start,end);
 }
 
-void psString::GetWordNumber(int which,psString& buff)
+void psString::GetWordNumber(int which,psString& buff) const
 {
     buff = ::GetWordNumber((csString) *this, which);
 }
     
-void psString::GetLine(size_t start,csString& line)
+void psString::GetLine(size_t start,csString& line) const
 {
     size_t end  = this->FindFirst('\n',start);
     size_t end2 = this->FindFirst('\r',start);
@@ -273,7 +273,7 @@ bool psString::ReplaceSubString(const char* what, const char* with)
         return false;
 }
 
-size_t psString::FindCommonLength(psString& other)
+size_t psString::FindCommonLength(const psString& other) const
 {
     const char *myData = this->GetData();
     const char *otherData = other.GetData();

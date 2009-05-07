@@ -53,15 +53,6 @@ struct WeatherInfo
     int r,g,b;
 
     static void Fade(WeatherParams* wp, int delta);
-    
-    bool operator==(WeatherInfo& other) const
-    {
-        return sector==other.sector;
-    };
-    bool operator<(WeatherInfo& other) const
-    {
-        return (strcmp(sector,other.sector)<0);
-    };
 };
 
 //-----------------------------------------------------------------------------

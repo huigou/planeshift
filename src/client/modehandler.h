@@ -33,8 +33,6 @@
 #include "net/cmdbase.h"
 #include "net/messages.h"
 
-#include "util/prb.h"
-
 //=============================================================================
 // Local Includes
 //=============================================================================
@@ -180,7 +178,7 @@ protected:
     csTicks                 last_weather_update;
     csTicks                 weather_update_time;
     
-    BinaryRBTree<WeatherInfo>   weatherlist;
+    csHash<WeatherInfo*, csString>   weatherlist;
 
     // Weather gfx object for current sector
     WeatherObject*              downfall; // Weather object following the player around

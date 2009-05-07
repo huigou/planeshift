@@ -521,15 +521,6 @@ public:
      */
     void ChangeTime( int newTime );
 
-    bool operator==(psSectorSoundManager& other ) const
-    {
-        return other.sector == this->sector;
-    }
-    bool operator<( psSectorSoundManager& other ) const
-    {
-        return  ( strcmp( this->sector.GetData(), other.sector.GetData()) < 0);
-    }
-
     void Enter( psSectorSoundManager* enterFrom, int timeOfDay, int weather, csVector3& position );
 
     void StartBackground();
@@ -588,12 +579,13 @@ class psMapSoundSystem
 {
 public:
     psMapSoundSystem( psSoundManager* manager, iObjectRegistry* object );
+    ~psMapSoundSystem();
     bool Initialize();
 
     void EnableMusic( bool enable );
     void EnableSounds( bool enable );
     csRef<iObjectRegistry> objectReg;
-    BinaryRBTree<psSectorSoundManager> sectors;
+    csHash<psSectorSoundManager*, csString> sectors;
     csArray<psSectorSoundManager*> pendingSectors;
     psSoundManager* sndmngr;
 

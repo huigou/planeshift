@@ -26,6 +26,7 @@
 
 // CS INCLUDES
 #include <csutil/array.h>
+#include <csutil/redblacktree.h>
 
 #include "net/cmdbase.h"
 //#include "util/psstring.h"
@@ -195,7 +196,7 @@ protected:
     csArray<csString> autoCompleteNames;
 
     /// list of last commands
-    BinaryRBTree<psString> commandList;
+    csRedBlackTree<psString> commandList;
     csArray<csString> systemTriggers;
     csArray<csString> chatTriggers;
 
