@@ -238,7 +238,7 @@ float NPCType::GetAngularVelocity(NPC * /*npc*/)
     }
     else
     {
-        return 90*TWO_PI/360;
+        return 360*TWO_PI/360;
     }
 }
 
