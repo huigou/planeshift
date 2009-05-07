@@ -477,10 +477,8 @@ const char *psUserCommands::HandleCommand(const char *cmd)
 
        csString spell;
        float KFactor;
-       unsigned int pct;
-       if (words.GetCount() > 2 && sscanf(words[1], "%3u", &pct) == 1)
+       if (words.GetCount() > 2 && sscanf(words[1], "%f", &KFactor) == 1)
        {
-           KFactor = float(pct)/100;
            spell = words.GetTail(2);
        }
        else
@@ -489,7 +487,10 @@ const char *psUserCommands::HandleCommand(const char *cmd)
            spell = words.GetTail(1);
        }
 
-       AskToSlayBeforeSending(new psSpellCastMessage(spell, psengine->GetKFactor()));
+       if (KFactor < 0 || KFactor > 100)
+           return "Spell power must be a percentage.";
+
+       AskToSlayBeforeSending(new psSpellCastMessage(spell, KFactor));
     }
 
     else if (words[0] == "/away")
