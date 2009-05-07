@@ -63,7 +63,7 @@ psUserCommands::psUserCommands(ClientMsgHandler* mh,CmdHandler *ch,iObjectRegist
   : psCmdBase(mh,ch,obj)
 {
 //    msgqueue->Subscribe(MSGTYPE_CHAT,this);
-
+	cmdsource->Subscribe("/?",             this);
     cmdsource->Subscribe("/admin",         this);
     cmdsource->Subscribe("/advice",        this);
     cmdsource->Subscribe("/advisor",       this);
@@ -871,6 +871,12 @@ const char *psUserCommands::HandleCommand(const char *cmd)
                 }
             }
         }
+    }
+    else if(words[0] == "/?")
+    {
+    	pawsWidget* widget = PawsManager::GetSingleton().FindWidget("HelpWindow");
+    	if(widget)
+    		widget->Show();
     }
     else
     {
