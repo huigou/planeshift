@@ -414,7 +414,7 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
         }
 
         
-        if (words[0] == "/say")
+        if (words[0] == "/say" || words[0] == "/s")
         {
             pPerson.Clear();
             words.GetTail(1, text);
@@ -446,7 +446,7 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
             inputText->SetText(words[0] + " ");
             DetermineChatTabAndSelect(CHAT_REPORT);
         }
-        else if (words[0] == "/guild")
+        else if (words[0] == "/guild" || words[0] == "/g")
         {
             pPerson.Clear();
             words.GetTail(1,text);
@@ -454,7 +454,7 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
             inputText->SetText(words[0] + " ");
             DetermineChatTabAndSelect(CHAT_GUILD);
         }
-        else if (words[0] == "/shout")
+        else if (words[0] == "/shout" || words[0] == "/sh")
         {
             pPerson.Clear();
             words.GetTail(1,text);
@@ -462,7 +462,7 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
             inputText->SetText(words[0] + " ");
             DetermineChatTabAndSelect(CHAT_SHOUT);
         }
-        else if (words[0] == "/group")
+        else if (words[0] == "/group" || words[0] == "/gr")
         {
             pPerson.Clear();
             words.GetTail(1,text);
@@ -470,7 +470,7 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
             inputText->SetText(words[0] + " ");
             DetermineChatTabAndSelect(CHAT_GROUP);
         }
-        else if (words[0] == "/tell")
+        else if (words[0] == "/tell" || words[0] == "/t")
         {
             pPerson = words[1];
             if (words.GetCount() == 2)
@@ -480,7 +480,7 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
             }
             words.GetTail(2,text);
             chattype = CHAT_TELL;
-            inputText->SetText(words[0] + " ");
+            inputText->SetText(words[0] + " " + words[1] + " ");
             DetermineChatTabAndSelect(CHAT_TELL);
         }
         else if (words[0] == "/auction")
@@ -1316,10 +1316,15 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
 void pawsChatWindow::SubscribeCommands()
 {
     cmdsource->Subscribe("/say",this);
+    cmdsource->Subscribe("/s",this);
     cmdsource->Subscribe("/shout",this);
+    cmdsource->Subscribe("/sh",this);
     cmdsource->Subscribe("/tell",this);
+    cmdsource->Subscribe("/t",this);
     cmdsource->Subscribe("/guild",this);
+    cmdsource->Subscribe("/g",this);
     cmdsource->Subscribe("/group",this);
+    cmdsource->Subscribe("/gr",this);
     cmdsource->Subscribe("/tellnpc",this);
     cmdsource->Subscribe("/tellnpcinternal",this);
 
