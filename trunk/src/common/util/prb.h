@@ -49,7 +49,7 @@ enum prb_colors
 };
 
 /* Tree data structure. */
-template <class T> class BinaryRBTree
+template <class T> class CS_DEPRECATED_TYPE_MSG("BinaryRBTree deprecated. Use csRedBlackTree instead.") BinaryRBTree
 {
     BinaryRBNode<T> *prb_root;        /* Tree's root. */
     size_t prb_count;                  /* Number of items in tree. */

@@ -40,9 +40,9 @@ public:
 
     int FindSubString(const char *sub, size_t start=0, bool caseInsense=XML_CASE_SENSITIVE,bool wholeWord=false) const;
     int FindSubStringReverse(psString& sub, size_t start, bool caseInsense=XML_CASE_SENSITIVE);
-    void GetSubString(psString& str, size_t from, size_t to);
-    bool FindNumber(unsigned int & pos, unsigned int & end);
-    bool FindString(const char *border, unsigned int & pos, unsigned int & end);
+    void GetSubString(psString& str, size_t from, size_t to) const;
+    bool FindNumber(unsigned int & pos, unsigned int & end) const;
+    bool FindString(const char *border, unsigned int & pos, unsigned int & end) const;
 
     /** Escapes special xml characters.*/
     const char* EscapeXML();
@@ -53,26 +53,26 @@ public:
         INCLUDE_PUNCT=1
     };
 
-    void GetWord(size_t pos,psString &buff,bool wantPunct=INCLUDE_PUNCT);
-    void GetWordNumber(int which,psString& buff);
-    void GetLine(size_t start,csString& line);
+    void GetWord(size_t pos,psString &buff,bool wantPunct=INCLUDE_PUNCT) const;
+    void GetWordNumber(int which,psString& buff) const;
+    void GetLine(size_t start,csString& line) const;
 
     bool ReplaceSubString(const char* what, const char* with);
     int ReplaceAllSubString(const char* what, const char* with, bool wholeWord=false);
 
-    bool operator==(psString& other)
+    bool operator==(const psString& other) const
     { return strcmp(GetData(),other.GetData())==0; }
 
-    bool operator<(psString& other)
+    bool operator<(const psString& other) const
     { return strcmp(GetData(),other.GetData())<0;  }
 
-    bool operator==(const char* other)
+    bool operator==(const char* other) const
     { return strcmp(GetData() ? GetData() : "",other ? other : "") == 0;}
 
-    int PartialEquals(psString& other)
+    int PartialEquals(const psString& other) const
     { return strncmp(GetData(),other.GetData(),other.Length()); }
 
-    size_t FindCommonLength(psString& other);
+    size_t FindCommonLength(const psString& other) const;
     
     bool IsVowel(size_t pos); /// Check if a character is a vowel
     void Plural(); /// Turn the last word of the string into an English plural
