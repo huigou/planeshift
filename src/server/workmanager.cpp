@@ -921,7 +921,8 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
         if (workEvent->client)
         {
             psserver->SendSystemInfo(workEvent->worker->GetClientID(),"You were not successful.");
-        } else
+        } 
+        else
         {
             Debug2(LOG_SUPERCLIENT,0,"%s where not successful.",workEvent->worker->GetName());
         }
@@ -929,6 +930,7 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
 
     //Assign experience and practice points
     int practicePoints;
+    int experiencePoints;
     float modifier;
     {
         MathEnvironment env;
@@ -937,11 +939,19 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
         calc_mining_exp->Evaluate(&env);
         practicePoints   = env.Lookup("ResultPractice")->GetValue();
         modifier = env.Lookup("ResultModifier")->GetValue();
+        MathVar *varResult = env.Lookup("Exp"); //optional variable
+        if(varResult)
+            experiencePoints = varResult->GetValue();
+        else
+            experiencePoints = 0;
     }
 
 
     // assign practice and experience
-    workEvent->client->GetCharacterData()->CalculateAddExperience((PSSKILL)workEvent->nr->skill->id, practicePoints, modifier);
+    if(practicePoints != 0)
+        workEvent->client->GetCharacterData()->CalculateAddExperience((PSSKILL)workEvent->nr->skill->id, practicePoints, modifier);
+    else
+        workEvent->client->GetCharacterData()->AddExperiencePointsNotify(experiencePoints);
 
     workEvent->worker->SetMode(PSCHARACTER_MODE_PEACE); // Actor isn't working anymore
 }
