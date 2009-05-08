@@ -24,6 +24,8 @@
 */
 
 // Edited by the Atomic Blue on 2004/11
+// This is deprecated in favour of csRedBlackTree
+#if 0
 #ifdef PRB_H
 #ifndef __PRB_CPP__
 #define __PRB_CPP__
@@ -848,4 +850,4 @@ int main()
 // End of test
 #endif
 #endif 
-
+#endif

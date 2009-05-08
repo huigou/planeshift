@@ -181,18 +181,6 @@ public:
         manager->CancelAdvisorSession( NULL, this, "timed out" );
         RemoveAdvisor();
     };
-
-    // The == and < operators for BinaryTree<> MUST be the same criteria!
-    int operator==(AdviceSession& other) const
-    {
-        return (AdviseeClientNum == other.AdviseeClientNum);
-    };
-
-    int operator<(AdviceSession& other) const
-    {
-        return (AdviseeClientNum < other.AdviseeClientNum);
-    };
-
 };
 
 /****************************************************************************/
@@ -343,6 +331,9 @@ AdviceManager::AdviceManager(psDatabase *db)
 
 AdviceManager::~AdviceManager()
 {
+	csHash<AdviceSession*>::GlobalIterator iter(AdviseeList.GetIterator());
+	while(iter.HasNext())
+		delete iter.Next();
     psserver->GetEventManager()->Unsubscribe( this, MSGTYPE_ADVICE );
 }
 
@@ -444,10 +435,11 @@ void AdviceManager::HandleAdviseeList( Client *advisor )
     // find existing Advicee in the List
     AdviceSession *activeSession;
     csString message("You are currently advising:");
-    BinaryRBIterator< AdviceSession > loop( &AdviseeList );
+    csHash< AdviceSession* >::GlobalIterator loop( AdviseeList.GetIterator() );
     bool found = false;
-    for ( activeSession = loop.First(); activeSession; activeSession = ++loop )
+    while(loop.HasNext())
     {
+    	activeSession = loop.Next();
         if (activeSession && activeSession->adviseeName.GetData() && activeSession->AdvisorClientNum == advisor->GetClientNum() )
         {
             message.Append("\n     " );
@@ -474,12 +466,13 @@ void AdviceManager::HandleAdviceList( Client *advisor )
     // find existing Advicee in the List
     AdviceSession *activeSession;
 
-    BinaryRBIterator< AdviceSession > loop( &AdviseeList );
+    csHash< AdviceSession* >::GlobalIterator loop( AdviseeList.GetIterator());
 
     bool found = false;
 
-    for ( activeSession = loop.First(); activeSession; activeSession = ++loop )
+    while(loop.HasNext())
     {
+    	activeSession = loop.Next();
         if ( activeSession && activeSession->adviseeName.GetData() && activeSession->lastRequest.GetData()
             && activeSession->status == SESSION_STATUS_UNKNOWN && !activeSession->answered )
         {
@@ -533,9 +526,7 @@ void AdviceManager::HandleAdviceRequest( Client *advisee, csString message )
     }
 
     // find existing Advicee in the List
-    AdviceSession key;
-    key.AdviseeClientNum = advisee->GetClientNum();
-    AdviceSession *activeSession = AdviseeList.Find(&key);
+    AdviceSession *activeSession = AdviseeList.Get(advisee->GetClientNum(), NULL);
 
     // Create an adviceSession if one doesn't exist and the message is valid
     if ( !activeSession )
@@ -551,7 +542,7 @@ void AdviceManager::HandleAdviceRequest( Client *advisee, csString message )
 
         Debug2( LOG_ANY, advisee->GetClientNum(), "Creating AdviceSession for %d", advisee->GetClientNum() );
         activeSession = new AdviceSession( this, NULL, advisee, message );
-        AdviseeList.Insert(activeSession);  // Advice is no longer pending.
+        AdviseeList.Put(activeSession->AdviseeClientNum, activeSession);  // Advice is no longer pending.
     }
     else
     {
@@ -670,7 +661,7 @@ void AdviceManager::HandleAdviceResponse( Client *advisor, csString sAdvisee, cs
     // find existing Advicee in the List
     AdviceSession key;
     key.AdviseeClientNum = advisee->GetClientNum();
-    AdviceSession *activeSession = AdviseeList.Find(&key);
+    AdviceSession *activeSession = AdviseeList.Get(advisee->GetClientNum(), NULL);
 
     if (!activeSession || (activeSession  && ( !activeSession->requestEvent ) && ( activeSession->GetAdvisor() == NULL ) ) )
     {
@@ -694,11 +685,12 @@ void AdviceManager::HandleAdviceResponse( Client *advisor, csString sAdvisee, cs
         // check to make sure advisor has only one claimed session.
         AdviceSession *loopSession;
 
-        BinaryRBIterator< AdviceSession > loop( &AdviseeList );
+        csHash< AdviceSession* >::GlobalIterator loop( AdviseeList.GetIterator() );
 
-        for ( loopSession = loop.First(); loopSession; loopSession = ++loop )
+        while(loop.HasNext())
         {
-            if (loopSession && activeSession->status == SESSION_STATUS_CLAIMED && loopSession->GetAdvisor() == advisor )
+        	loopSession = loop.Next();
+            if (activeSession->status == SESSION_STATUS_CLAIMED && loopSession->GetAdvisor() == advisor )
             {
                 psserver->SendSystemInfo(advisor->GetClientNum(), "You cannot have two messengers waiting for you at the same time, please answer %s's request first." , loopSession->adviseeName.GetData() );
                 return;
@@ -808,9 +800,7 @@ void AdviceManager::AddAdvisor(Client *client)
     }
 
     //check to see if there is an advice session from this user, and close it
-    AdviceSession key;
-    key.AdviseeClientNum = id;
-    AdviceSession *adviceSession = AdviseeList.Find(&key);
+    AdviceSession *adviceSession = AdviseeList.Get(id, NULL);
     if (adviceSession)
     {
         CancelAdvisorSession( NULL, adviceSession, "been canceled" );
@@ -848,18 +838,14 @@ void AdviceManager::RemoveAdvisor(uint32_t id, int connectionId)
         }
     }
 
-    // find existing Advisee in the List
-    AdviceSession key;
-    key.AdvisorClientNum = id;
-    key.AdviseeClientNum = 0;
-    AdviceSession *activeSession = AdviseeList.Find(&key);
+    AdviceSession *activeSession = AdviseeList.Get(id, NULL);
 
     while ( activeSession )
     {
         // Notify advisee his/her advisor is no longer available.
         CancelAdvisorSession( NULL, activeSession, "been canceled");
         RemoveSession( activeSession );
-        activeSession = AdviseeList.Find(&key);
+        activeSession = AdviseeList.Get(id, NULL);
     }
 
     //Send message to non-advisor that he/she isn't an advisor any more
@@ -990,7 +976,7 @@ void AdviceManager::RemoveSession( AdviceSession * adviceSession)
         adviceSession->requestEvent = NULL;
     }
 
-    AdviseeList.Delete( adviceSession );
+    AdviseeList.DeleteAll( adviceSession->AdviseeClientNum );
     delete adviceSession;
 }
 

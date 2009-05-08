@@ -375,8 +375,6 @@ void CacheManager::UnloadAll()
         }
     }
     
-    // only deletes the hash tables in the factions
-    // the factions themselves will be deleted by the RBTree
     {
         csHash<Faction*, int>::GlobalIterator it(factions_by_id.GetIterator ());
         while (it.HasNext())
@@ -388,6 +386,7 @@ void CacheManager::UnloadAll()
             csHash< FactionLifeEvent *, int >::GlobalIterator it3(newFaction->NegativeFactionEvents.GetIterator ());
             while (it3.HasNext ())
                 delete it3.Next();
+            delete newFaction;
         }
     }
     // ToDo: unload everything else    
@@ -2021,9 +2020,7 @@ psWay *CacheManager::GetWayByName(const csString & name)
 
 Faction *CacheManager::GetFaction(const char *name)
 {
-    Faction fac;
-    fac.name = name;
-    return factions.Find(&fac);
+    return factions.Get(name, NULL);
 }
 
 Faction *CacheManager::GetFactionByName(const char *name)
@@ -2429,7 +2426,7 @@ bool CacheManager::PreloadFactions()
             }
 
             // Stored two different ways
-            factions.Insert(f,TREE_OWNS_DATA);
+            factions.Put(f->name, f);
             factions_by_id.Put(f->id,f);
         }
     }

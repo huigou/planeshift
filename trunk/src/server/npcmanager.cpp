@@ -307,20 +307,6 @@ public:
 
         return maxTime;
     }
-
-    /// The == and < operators for BinaryTree<> MUST be the same criteria!
-    int operator==(PetOwnerSession& other) const
-    {
-        // use the familiar as the familiar can only have one owner
-        return ( petID == other.petID );
-    };
-
-    int operator<(PetOwnerSession& other) const
-    {
-        // use the familiar as the familiar can only have one owner
-        return ( petID < other.petID );
-    };
-
 };
 
 NPCManager::NPCManager(ClientConnectionSet *pCCS,
@@ -370,6 +356,9 @@ bool NPCManager::Initialize()
 
 NPCManager::~NPCManager()
 {
+	csHash<PetOwnerSession*, PID>::GlobalIterator iter(OwnerPetList.GetIterator());
+	while(iter.HasNext())
+		delete iter.Next();
     psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_NPCAUTHENT);
     psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_NPCOMMANDLIST);
     psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_NPCREADY);
@@ -1413,12 +1402,9 @@ void NPCManager::HandlePetCommand(MsgEntry * me,Client *client)
 
         if ( pet != NULL && pet->IsValid() )
         {
-            PetOwnerSession key, *session = NULL;
+            PetOwnerSession *session = NULL;
 
-            key.ownerID = 0;
-            key.petID = pet->GetCharacterData()->GetPID();
-
-            session = OwnerPetList.Find( &key );
+            session = OwnerPetList.Get( pet->GetCharacterData()->GetPID(), NULL );
             // Check for an existing session
             if ( !session )
             {
@@ -1469,12 +1455,9 @@ void NPCManager::HandlePetCommand(MsgEntry * me,Client *client)
 
         if (familiarID.IsValid())
         {
-            PetOwnerSession key, *session = NULL;
+            PetOwnerSession *session = NULL;
 
-            key.ownerID = 0;
-            key.petID = familiarID;
-
-            session = OwnerPetList.Find( &key );
+            session = OwnerPetList.Get( familiarID, NULL );
 
             psCharacter *petdata = psserver->CharacterLoader.LoadCharacterData( familiarID, false );
             // Check for an existing session
@@ -2048,7 +2031,7 @@ PetOwnerSession *NPCManager::CreatePetOwnerSession( gemActor *owner, psCharacter
         PetOwnerSession *session = new PetOwnerSession( this, owner, petData );
         if ( session )
         {
-            OwnerPetList.Insert( session );
+            OwnerPetList.Put( session->petID, session );
             return session;
         }
     }
@@ -2060,7 +2043,7 @@ void NPCManager::RemovePetOwnerSession( PetOwnerSession *session)
 {
     if ( session )
     {
-        OwnerPetList.Delete( session );
+        OwnerPetList.DeleteAll( session->petID );
         delete session;
     }
 }
@@ -2070,9 +2053,10 @@ void NPCManager::UpdatePetTime()
     PetOwnerSession *po;
 
     // Loop through all Sessions
-    BinaryRBIterator< PetOwnerSession > loop( &OwnerPetList );
-    for ( po = loop.First(); po; po = ++loop )      // Increase Pet Time in Game by NPC_TICK_INTERVAL
+    csHash< PetOwnerSession*, PID >::GlobalIterator loop( OwnerPetList.GetIterator() );
+    while(loop.HasNext())      // Increase Pet Time in Game by NPC_TICK_INTERVAL
     {
+    	po = loop.Next();
         if ( po->isActive )
         {
             po->UpdateElapsedTime( NPC_TICK_INTERVAL );

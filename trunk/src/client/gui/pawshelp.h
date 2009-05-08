@@ -25,7 +25,6 @@
 
 #include "paws/pawswidget.h"
 #include "paws/pawstree.h"
-#include "util/prb.h"
 #include "gui/pawscontrolwindow.h"
  
 class pawsProgressBar;

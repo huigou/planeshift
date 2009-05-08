@@ -126,7 +126,7 @@ protected:
 
     bool FloodControl(csString& newmessage, Client *client);
 
-    BinaryRBTree<AdviceSession> AdviseeList;
+    csHash<AdviceSession*> AdviseeList;
     csArray<AdvisorStruct>    advisors;
     size_t advisorPos;
     psDatabase              *database;

@@ -202,6 +202,10 @@ SpawnManager::~SpawnManager()
         LootEntrySet* loot = it.Next ();
         delete loot;
     }
+    
+    csHash<SpawnRule*>::GlobalIterator ruleIt(rules.GetIterator());
+    while(ruleIt.HasNext())
+    	delete ruleIt.Next();
 
     delete lootRandomizer;
 
@@ -553,7 +557,7 @@ void SpawnManager::PreloadDatabase()
 
         LoadSpawnRanges(newrule);
 
-        rules.Insert(newrule, true);
+        rules.Put(newrule->GetID(), newrule);
     }
 }
 
@@ -683,9 +687,7 @@ void SpawnManager::KillNPC(gemObject *obj, gemActor* killer)
     int spawnruleid = obj->GetCharacterData()->NPC_GetSpawnRuleID();
     if (spawnruleid)
     {
-        SpawnRule key;
-        key.SetID(spawnruleid);
-        respawn = rules.Find(&key);
+        respawn = rules.Get(spawnruleid, NULL);
     }
 
     if (respawn)
@@ -792,9 +794,7 @@ void SpawnManager::RemoveNPC(gemObject *obj)
     if (spawnruleid)
     {
         // Queue for respawn according to rules
-        SpawnRule key;
-        key.SetID(spawnruleid);
-        respawn = rules.Find(&key);
+        respawn = rules.Get(spawnruleid, NULL);
     }
 
     if (!respawn)
@@ -1068,6 +1068,12 @@ SpawnRule::SpawnRule()
     substituteplayer    = 0;
     fixedspawnx = fixedspawny = fixedspawnz = fixedspawnrot = 0;
 }
+SpawnRule::~SpawnRule()
+{
+	csHash<SpawnRange*>::GlobalIterator rangeIt(ranges.GetIterator());
+    while(rangeIt.HasNext())
+    	delete rangeIt.Next();
+}
 
 void SpawnRule::Initialize(int idval,
                            int minspawn,
@@ -1118,7 +1124,7 @@ void SpawnRule::DetermineSpawnLoc(psCharacter *ch, csVector3& pos, float& angle,
 {
     // ignore fixed point if there are ranges in this rule
 
-    size_t rcount = ranges.Count();
+    size_t rcount = ranges.GetSize();
 
     if (rcount > 0)
     {
@@ -1127,25 +1133,30 @@ void SpawnRule::DetermineSpawnLoc(psCharacter *ch, csVector3& pos, float& angle,
         // 1. Pick a range with probability proportional to area
         // 2. Pick a point in that range
 
-        BinaryRBIterator<SpawnRange> rangeit(&ranges);
+        csHash<SpawnRange*>::GlobalIterator rangeit(ranges.GetIterator());
 
         // Compute total area
         float totalarea = 0;
-        for (SpawnRange *range = rangeit.First(); range; range = ++rangeit)
-            totalarea += range->GetArea();
-
+        SpawnRange* range;
+        while(rangeit.HasNext())
+        {
+        	range = rangeit.Next();
+        	totalarea += range->GetArea();
+        }
         // aimed area level
         float aimed = randomgen->Get() * totalarea;
         // cumulative area level
         float cumul = 0;
-        for (SpawnRange *r = rangeit.First(); r; r = ++rangeit)
+        csHash<SpawnRange*>::GlobalIterator rangeit2(ranges.GetIterator());
+        while(rangeit2.HasNext())
         {
-            cumul += r->GetArea();
+        	range = rangeit.Next();
+            cumul += range->GetArea();
             if (cumul >= aimed)
             {
                 // got it!
-                pos = r->PickPos();
-                sectorname = r->GetSector();
+                pos = range->PickPos();
+                sectorname = range->GetSector();
                 if (ch && sectorname == "startlocation")
                     sectorname = ch->spawn_loc.loc_sector->name;
                 break;
@@ -1177,7 +1188,7 @@ void SpawnRule::DetermineSpawnLoc(psCharacter *ch, csVector3& pos, float& angle,
 
 void SpawnRule::AddRange(SpawnRange *range)
 {
-    ranges.Insert(range, true);
+    ranges.Put(range->GetID(), range);
 }
 
 /*----------------------------------------------------------------*/

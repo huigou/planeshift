@@ -32,7 +32,6 @@
 //=============================================================================
 #include "util/slots.h"
 #include "util/gameevent.h"
-#include "util/prb.h"
 
 #include "bulkobjects/pscharacter.h"
 #include "bulkobjects/psitemstats.h"
@@ -439,7 +438,7 @@ protected:
     csPDelArray<psItemCategory > itemCategoryList;
     csPDelArray<psWay > wayList;
     csHash<Faction*, int> factions_by_id;
-    BinaryRBTree<Faction> factions;
+    csHash<Faction*, csString> factions;
     csHash<ProgressionScript*,csString> scripts;
     csPDelArray<psSpell > spellList;
     //csArray<psItemStats *> basicitemstatslist;

@@ -102,6 +102,9 @@ QuestionManager::QuestionManager()
 
 QuestionManager::~QuestionManager()
 {
+	csHash<PendingQuestion*>::GlobalIterator iter(questions.GetIterator());
+	while(iter.HasNext())
+		delete iter.Next();
     psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_QUESTIONRESPONSE);
 }
 
@@ -116,9 +119,7 @@ void QuestionManager::HandleQuestionResponse(MsgEntry *me,Client *client)
     }
     
     // Find the question that we got response to
-    PendingQuestion key;
-    key.id = msg.questionID;
-    PendingQuestion *question = questions.Find(&key);
+    PendingQuestion *question = questions.Get(msg.questionID, NULL);
     if (!question)
     {
         Error2("Received psQuestionResponseMsg from client %u that was not questioned.",me->clientnum);
@@ -131,7 +132,7 @@ void QuestionManager::HandleQuestionResponse(MsgEntry *me,Client *client)
 
     question->HandleAnswer(msg.answer);
 
-    questions.Delete(question);  // Question is no longer pending.
+    questions.DeleteAll(msg.questionID);  // Question is no longer pending.
     delete question;
 }
 
@@ -146,7 +147,7 @@ void QuestionManager::SendQuestion(PendingQuestion *question)
                           question->type);
     msg.SendMessage();
     
-    questions.Insert(question);
+    questions.Put(question->id, question);
 
     Client * questionedClient = psserver->GetConnections()->Find(question->clientnum);
     if (questionedClient != NULL)
@@ -166,7 +167,7 @@ void QuestionManager::CancelQuestion(PendingQuestion *question)
     psQuestionCancelMessage cancel( question->clientnum, question->id );
     cancel.SendMessage();
 
-    questions.Delete(question);
+    questions.DeleteAll(question->id);
     delete question;
 }
 

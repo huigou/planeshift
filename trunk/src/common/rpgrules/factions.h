@@ -43,10 +43,6 @@ struct Faction
     float    weight;
     csHash<FactionLifeEvent*, int> PositiveFactionEvents; ///< Stores the Positive faction values life events
     csHash<FactionLifeEvent*, int> NegativeFactionEvents; ///< Stores the Negative faction values life events
-    bool operator==(Faction& other) const
-    { return name == other.name; }
-    bool operator<(Faction& other) const
-    { return strcmp(name,other.name)<0; }
 };
 
 

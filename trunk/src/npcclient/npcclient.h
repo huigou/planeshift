@@ -36,7 +36,6 @@ struct iCollideSystem;
 //=============================================================================
 #include "net/pstypes.h"
 
-#include "util/prb.h"
 #include "util/psconst.h"
 #include "util/serverconsole.h"
 #include "util/pspath.h"
@@ -456,7 +455,7 @@ protected:
     csRef<iVFS>                vfs;
 
     csHash<NPCType*, const char*> npctypes;
-    BinaryRBTree<LocationType> loctypes;
+    csHash<LocationType*, csString> loctypes;
     psPathNetwork             *pathNetwork;
     csArray<NPC*>              npcs;
     csArray<DeferredNPC>       npcsDeferred;

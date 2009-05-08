@@ -24,7 +24,9 @@
 */
 
 // Edited by the Atomic Blue on 2004/11
+// This is deprecated in favour of csRedBlackTree
 
+#if 0
 #ifndef PRB_H
 #define PRB_H 1
 
@@ -145,3 +147,4 @@ public:
 
 #include "prb.cpp"
 #endif /* prb.h */
+#endif
