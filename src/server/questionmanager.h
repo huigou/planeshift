@@ -28,7 +28,6 @@
 // Project Includes
 //=============================================================================
 #include "net/messages.h"
-#include "util/prb.h"
 
 //=============================================================================
 // Local Includes
@@ -86,15 +85,6 @@ public:
     PendingQuestion(int clientnum, const csString & question, psQuestionMessage::questionType_t type);
     virtual ~PendingQuestion() {};
 
-    int operator==(PendingQuestion& other) const
-    {
-        return id == other.id;
-    };
-    
-    int operator<(PendingQuestion& other) const
-    {
-        return id < other.id;
-    };
 
     /** This is called when user sends answer to this question, or when
         the question times out (because the user didn't respond in time)
@@ -128,7 +118,7 @@ protected:
     
     void HandleQuestionResponse(MsgEntry *pMsg,Client *client);
 
-    BinaryRBTree<PendingQuestion> questions; /** questions indexed by IDs */
+    csHash<PendingQuestion*> questions; /** questions indexed by IDs */
 };
 
 

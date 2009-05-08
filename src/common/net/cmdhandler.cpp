@@ -164,7 +164,7 @@ void CmdHandler::Execute(const char *script, bool breakSemiColon)
     }
 }
 
-void CmdHandler::GetSubscribedCommands(csRedBlackTree<psString> & tree)
+void CmdHandler::GetSubscribedCommands(csRedBlackTree<psString>& tree)
 {
     for ( size_t x = 0; x < subscribers.GetSize(); x++ )
     {

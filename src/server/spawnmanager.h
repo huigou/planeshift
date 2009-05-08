@@ -26,7 +26,6 @@ class psDatabase;
 class psScheduledItem;
 class psSectorInfo;
 
-#include <util/prb.h>
 #include <csgeom/vector3.h>
 #include <csutil/hash.h>
 #include "util/location.h"
@@ -43,7 +42,7 @@ class SpawnRange
 protected:
     csRandomGen* randomgen;
 
-    /// Unique ID used for ident and tree sorting
+    /// Unique ID used for ident
     int   id;
 
     char  type;  /// A = Area (rect) or L = Line Segment
@@ -79,6 +78,7 @@ public:
                     const char *sectorname);
 
     void SetID(int idval) { id = idval; };
+    int GetID() { return id; }
 
     /// Get range's XZ area
     float GetArea() { return area; };
@@ -88,15 +88,6 @@ public:
 
     /// Randomly pick a position within the range
     const csVector3 PickPos();
-
-    bool operator==(SpawnRange& other)
-    {
-        return id == other.id;
-    };
-    bool operator<(SpawnRange& other)
-    {
-        return id < other.id;
-    };
 };
 
 class LootEntrySet;
@@ -135,7 +126,7 @@ protected:
     InstanceID fixedinstance;
 
     /// Spawn ranges for the current rule
-    BinaryRBTree<SpawnRange> ranges;
+    csHash<SpawnRange*> ranges;
     
     /// Rules for generating loot when this npc is killed.
     LootEntrySet *loot;
@@ -146,6 +137,7 @@ public:
 
     /// Ctor clears all to zero
     SpawnRule();
+    ~SpawnRule();
 
     /// Setup variables
     void Initialize(int idval,
@@ -178,15 +170,6 @@ public:
     LootEntrySet *GetLootRules() { return loot; }
 
     int GetDeadRemainTime() { return dead_remain_time; }
-
-    bool operator==(SpawnRule& other) const
-    {
-        return id == other.id;
-    };
-    bool operator<(SpawnRule& other) const
-    {
-        return id < other.id;
-    };
 };
 
 class psItemStats;
@@ -306,7 +289,7 @@ class SpawnManager : public MessageManager
 {
 protected:
     psDatabase             *database;
-    BinaryRBTree<SpawnRule> rules;
+    csHash<SpawnRule*> rules;
     csHash<LootEntrySet*>   looting;
     LootRandomizer         *lootRandomizer;
 

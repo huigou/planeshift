@@ -81,6 +81,18 @@ NPCDialogDict::NPCDialogDict()
 
 NPCDialogDict::~NPCDialogDict()
 {
+	csHash<NpcTerm*, csString>::GlobalIterator phraseIter(phrases.GetIterator());
+	while(phraseIter.HasNext())
+		delete phraseIter.Next();
+	csHash<NpcTriggerGroupEntry*, csString>::GlobalIterator triggergroupIter(trigger_groups.GetIterator());
+	while(triggergroupIter.HasNext())
+		delete triggergroupIter.Next();	
+	csRedBlackTree<NpcTrigger*>::Iterator triggerIter(triggers.GetIterator());
+	while(triggerIter.HasNext())
+		delete triggerIter.Next();
+	csHash<NpcResponse*>::GlobalIterator responsesIter(responses.GetIterator());
+	while(responsesIter.HasNext())
+		delete responsesIter.Next();	
     wnclose();
     dict = NULL;
 }
@@ -135,12 +147,8 @@ bool NPCDialogDict::LoadDisallowedWords(iDataConnection *db)
 
     for (unsigned int i=0; i<result.Count(); i++)
     {
-        csString *newword = new csString(result[i]["word"]);
-        if (disallowed_words.Insert(newword,TREE_OWNS_DATA))
-        {
-            Error2("Found equal disallowed(%s) in disallowed_words\n",newword->GetData());
-            delete newword;
-        }
+        csString newword = result[i]["word"];
+        disallowed_words.Put(newword,true);
 
     }
 
@@ -153,12 +161,7 @@ NpcTerm* NPCDialogDict::AddTerm(const char *term)
     if (npc_term) return npc_term;
 
     NpcTerm *newphrase = new NpcTerm(term);
-    if (phrases.Insert(newphrase,TREE_OWNS_DATA))
-    {
-        delete newphrase;
-        return NULL;
-    }
-
+    phrases.Put(newphrase->term, newphrase);
     return newphrase;
 }
 
@@ -209,7 +212,7 @@ void NPCDialogDict::AddWords(csString& trigger)
             continue;
 
         // Check this word in the trigger for being disallowed.  If so, skip it.
-        csString *disallowed = disallowed_words.Find(&word);
+        bool disallowed = disallowed_words.Get(word, false);
         if (disallowed)
         {
             // Comment out warning here because disallowed words are actually skipped
@@ -227,9 +230,9 @@ void NPCDialogDict::AddWords(csString& trigger)
             continue;
         }
 
-        NpcTerm *found, key(word);
+        NpcTerm *found;
 
-        found = phrases.Find(&key);
+        found = phrases.Get(word, NULL);
         if (found)
         {
             if (found->synonym )
@@ -245,12 +248,7 @@ void NPCDialogDict::AddWords(csString& trigger)
             // add word
             found = new NpcTerm(word);
             //            CPrintf(CON_DEBUG, "Adding %s.\n",(const char *)word);
-            if (phrases.Insert(found,TREE_OWNS_DATA))
-            {
-                Error2("Found equal term(%s) in phrases\n",found->term.GetData());
-                delete found;
-                found = NULL;
-            }
+            phrases.Put(found->term, found);
         }
     }
 }
@@ -276,12 +274,7 @@ int NPCDialogDict::AddTriggerGroupEntry(int id,const char *txt, int equivID)
 
     NpcTriggerGroupEntry *newtge = new NpcTriggerGroupEntry(id,txt,parent);
 
-    if (trigger_groups.Insert(newtge,TREE_OWNS_DATA))
-    {
-        Error2("Found equal trigger(%s) in trigger groups\n",newtge->text.GetData());
-        delete newtge;
-        return -1;
-    }
+    trigger_groups.Put(newtge->text, newtge);
     trigger_groups_by_id.Put(newtge->id,newtge);
 
     AddWords(newtge->text); // Make sure these trigger words are in known word list.
@@ -377,7 +370,7 @@ bool NPCDialogDict::LoadTriggers(iDataConnection *db)
 
         AddWords(newtrig->trigger); // Make sure these trigger words are in known word list.
 
-        if (triggers.Insert(newtrig,TREE_OWNS_DATA))
+        if (triggers.Insert(newtrig))
         {
             Error4("Found equal trigger %d (%s) in triggers, area %s\n", newtrig->id, newtrig->trigger.GetDataSafe(), newtrig->area.GetDataSafe());
             delete newtrig;
@@ -428,12 +421,7 @@ bool NPCDialogDict::LoadResponses(iDataConnection *db)
 
 
 
-        if (responses.Insert(newresp,TREE_OWNS_DATA))
-        {
-            Error2("Found equal response(%s) in responses\n",newresp->response[0].GetData());
-            delete newresp;
-            return false;
-        }
+        responses.Put(newresp->id, newresp);
     }
     return true;
 }
@@ -441,9 +429,9 @@ bool NPCDialogDict::LoadResponses(iDataConnection *db)
 
 NpcTerm * NPCDialogDict::FindTerm(const char *term)
 {
-    NpcTerm key(term);
-    key.term.Downcase();
-    return phrases.Find(&key);
+    csString key = term;
+    key.Downcase();
+    return phrases.Get(key, NULL);
 }
 
 NpcTerm * NPCDialogDict::FindTermOrSynonym(const csString & term)
@@ -472,7 +460,7 @@ NpcResponse *NPCDialogDict::FindResponse(gemNPC * npc,
     key.trigger         = trigger;
     key.priorresponseID = priorresponse;
 
-    trig = triggers.Find(&key);
+    trig = triggers.Find(&key, NULL);
 
     if (trig)
     { 
@@ -504,16 +492,13 @@ NpcResponse *NPCDialogDict::FindResponse(gemNPC * npc,
 
 NpcResponse *NPCDialogDict::FindResponse(int responseID)
 {
-    NpcResponse key;
-    key.id = responseID;
-    return responses.Find(&key);
+    return responses.Get(responseID, NULL);
 }
 
 
 bool NPCDialogDict::CheckForTriggerGroup(csString& trigger)
 {
-    NpcTriggerGroupEntry key(0,trigger);
-    NpcTriggerGroupEntry *found = trigger_groups.Find(&key);
+    NpcTriggerGroupEntry *found = trigger_groups.Get(trigger, NULL);
 
     if (found && found->parent)
     {
@@ -574,7 +559,7 @@ bool NPCDialogDict::AddTrigger( iDataConnection* db, int triggerID , int respons
 
     AddWords( newtrig->trigger );
 
-    if ( (trig = triggers.Insert( newtrig, TREE_OWNS_DATA )) )
+    if ( trig = triggers.Find( newtrig, NULL) )
     {
         // There are already a trigger with this combination of
         // triggertext, KA, and prior respose so pushing the trigger
@@ -584,6 +569,8 @@ bool NPCDialogDict::AddTrigger( iDataConnection* db, int triggerID , int respons
 
         delete newtrig;
     }
+    else
+    	triggers.Insert(newtrig);
 
     return true;
 }
@@ -607,11 +594,7 @@ void NPCDialogDict::AddResponse( iDataConnection* db, int databaseID )
         return;
 
     }
-    if (responses.Insert(newresp,TREE_OWNS_DATA))
-    {
-        Error2("Found equal response(%s) in responses\n",newresp->response[0].GetData());
-        delete newresp;
-    }
+    responses.Put(newresp->id, newresp);
 }
 
 #ifndef min
@@ -732,12 +715,7 @@ NpcResponse *NPCDialogDict::AddResponse(const char *response_text,
         opStr.Clear();
     newresp->ParseResponseScript(opStr.GetDataSafe() );
 
-    if (responses.Insert(newresp,TREE_OWNS_DATA))
-    {
-        Error2("Found equal response(%s) in responses\n",newresp->response[0].GetData());
-        delete newresp;
-        return NULL;
-    }
+    responses.Put(newresp->id, newresp);
 
 
     return newresp;  // Make response available for script additions
@@ -750,28 +728,26 @@ NpcResponse *NPCDialogDict::AddResponse(const char *script)
     newresp->type = NpcResponse::VALID_RESPONSE;
     newresp->ParseResponseScript(script);
 
-    if (responses.Insert(newresp, TREE_OWNS_DATA))
-    {
-        Error2("Found equal response(%s) in responses\n",newresp->response[0].GetData());
-        delete newresp;
-        return NULL;
-    }
+    responses.Put(newresp->id, newresp);
 
     return newresp;
 }
 
 void NPCDialogDict::DeleteTriggerResponse(NpcTrigger * trigger, int responseId)
 {
-    NpcResponse dummy;
-    dummy.id = responseId;
-
-    responses.Delete(&dummy);
+    csHash<NpcResponse *>::Iterator iter(responses.GetIterator(responseId));
+    while(iter.HasNext())
+    	delete iter.Next();
+    responses.DeleteAll(responseId);
 
     if(trigger)
     {
         trigger->responseIDlist.Delete(responseId);
         if(trigger->responseIDlist.GetSize() == 0)
+        {
             triggers.Delete(trigger);
+            delete trigger;
+        }
     }
 }
 
@@ -790,7 +766,7 @@ NpcTrigger *NPCDialogDict::AddTrigger(const char *k_area,const char *mytrigger,i
     key.trigger         = mytrigger;
     key.priorresponseID = prior_response;
 
-    trig = triggers.Find(&key);
+    trig = triggers.Find(&key, NULL);
 
     if (trig)
     {
@@ -813,7 +789,7 @@ NpcTrigger *NPCDialogDict::AddTrigger(const char *k_area,const char *mytrigger,i
         AddWords( newtrig->trigger );
 
         NpcTrigger* oldtrig;
-        if ( (oldtrig = triggers.Insert( newtrig, TREE_OWNS_DATA )) )
+        if ( (oldtrig = triggers.Find( newtrig, NULL )) )
         {
             // There are already a trigger with this combination of
             // triggertext, KA, and prior respose so pushing the trigger
@@ -825,6 +801,7 @@ NpcTrigger *NPCDialogDict::AddTrigger(const char *k_area,const char *mytrigger,i
             delete newtrig;
             return oldtrig;
         }
+        triggers.Insert(newtrig);
 
 		if (!FindKnowledgeArea(newtrig->area))
 		{
@@ -935,10 +912,11 @@ void NPCDialogDict::Print(const char *area)
     if (area!=NULL && strlen(area))
     {
         CPrintf(CON_CMDOUTPUT ,"----------- Triggers/Responses of area %s----------\n",area);
-        BinaryRBIterator<NpcTrigger> trig_iter(&triggers);
+        csRedBlackTree<NpcTrigger*>::Iterator trig_iter(triggers.GetIterator());
         NpcTrigger * trig;
-        for (trig = trig_iter.First(); trig; trig = ++trig_iter)
+        while(trig_iter.HasNext())
         {
+        	trig = trig_iter.Next();
             // filter on given area
             if (area!=NULL && strcasecmp(trig->area.GetDataSafe(),area)!=0)
                 continue;
@@ -962,10 +940,11 @@ void NPCDialogDict::Print(const char *area)
     }
 
     CPrintf(CON_CMDOUTPUT ,"----------- All Triggers ----------\n");
-    BinaryRBIterator<NpcTrigger> trig_iter(&triggers);
+    csRedBlackTree<NpcTrigger*>::Iterator trig_iter(triggers.GetIterator());
     NpcTrigger * trig;
-    for (trig = trig_iter.First(); trig; trig = ++trig_iter)
+    while(trig_iter.HasNext())
     {
+    	trig = trig_iter.Next();
         PrintTrigger(trig);
         for (size_t i = 0; i < trig->responseIDlist.GetSize(); i++)
         {
@@ -975,20 +954,22 @@ void NPCDialogDict::Print(const char *area)
     }
 
     CPrintf(CON_CMDOUTPUT ,"----------- All Responses ---------\n");
-    BinaryRBIterator<NpcResponse> resp_iter(&responses);
+    csHash<NpcResponse*>::GlobalIterator resp_iter(responses.GetIterator());
     NpcResponse * resp;
-    for (resp = resp_iter.First(); resp; resp = ++resp_iter)
+    while(resp_iter.HasNext())
     {
+    	resp = resp_iter.Next();
         PrintResponse(resp);
     }
 
     CPrintf(CON_CMDOUTPUT ,"\n");
 
     CPrintf(CON_CMDOUTPUT ,"----------- All Terms ---------\n");
-    BinaryRBIterator<NpcTerm> term_iter(&phrases);
-    NpcTerm * term;
-    for (term = term_iter.First(); term; term = ++term_iter)
+    csHash<NpcTerm*,csString>::GlobalIterator term_iter(phrases.GetIterator());
+    NpcTerm* term;
+    while(term_iter.HasNext())
     {
+    	term = term_iter.Next();
         term->Print();
     }
 

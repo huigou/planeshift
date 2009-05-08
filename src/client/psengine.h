@@ -33,7 +33,6 @@
 #include "psinventorycache.h"
 #include "psnetmanager.h"
 
-#include "util/prb.h"
 #include "util/slots.h"
 
 class psCelClient;

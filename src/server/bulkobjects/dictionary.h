@@ -26,12 +26,11 @@
 #include <csutil/refcount.h>
 #include <csutil/parray.h>
 #include <csutil/hash.h>
+#include <csutil/redblacktree.h>
 
 //=============================================================================
 // Project Includes
 //=============================================================================
-#include "util/prb.h"
-
 #include "rpgrules/psmoney.h"
 
 #include "../tools/wordnet/wn.h"
@@ -64,13 +63,13 @@ struct Faction;
 class NPCDialogDict : public csRefCount
 {
 protected:
-    BinaryRBTree<NpcTerm>              phrases;
-    BinaryRBTree<NpcTriggerGroupEntry> trigger_groups;
+    csHash<NpcTerm*, csString>         phrases;
+    csHash<NpcTriggerGroupEntry*, csString> trigger_groups;
     csHash<NpcTriggerGroupEntry*>      trigger_groups_by_id;
-    BinaryRBTree<NpcTrigger>           triggers;
-    csHash<NpcTrigger>                 trigger_by_id;
-    BinaryRBTree<NpcResponse>          responses;
-    BinaryRBTree<csString>             disallowed_words;
+    csRedBlackTree<NpcTrigger*>           triggers;
+    csHash<NpcTrigger*>                 trigger_by_id;
+    csHash<NpcResponse*>          responses;
+    csHash<bool, csString>             disallowed_words;
 	csHash<csString,csString>		   knowledgeAreas;  /// Collection of all referenced knowledge areas
 
 	/// This is a storage area for popup menus parsed during quest loading, which is done before NPCs are spawned.
@@ -215,22 +214,6 @@ public:
     bool IsNoun();
 
     /**
-     * Compare if two terms are equal
-     */
-    bool operator==(NpcTerm& other) const
-    {
-        return term==other.term;
-    };
-
-    /**
-     * Compare if one term is less than the other.
-     */
-    bool operator<(NpcTerm& other) const
-    {
-        return (strcmp(term,other.term)<0);
-    };
-
-    /**
      * Dump the term to stdout.
      */
     void Print();
@@ -248,14 +231,6 @@ public:
         id = i;
         text = txt;
         parent = myParent;
-    }
-    bool operator<(NpcTriggerGroupEntry& other) const
-    {
-        return text < other.text;
-    }
-    bool operator==(NpcTriggerGroupEntry& other) const
-    {
-        return text == other.text;
     }
 };
 
@@ -407,16 +382,6 @@ class NpcResponse
      * @return True if prerequisite are all ok
      */
     bool CheckPrerequisite(psCharacter * character);
-
-    bool operator==(NpcResponse& other) const
-    {
-        return id==other.id;
-    };
-
-    bool operator<(NpcResponse& other) const
-    {
-        return id<other.id;
-    };
 };
 
 /**

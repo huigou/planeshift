@@ -25,7 +25,6 @@
 #include <iengine/sector.h>
 #include <csutil/weakref.h>
 
-#include "util/prb.h"
 #include "util/psdatabase.h"
 
 struct iEngine;
@@ -78,11 +77,6 @@ public:
     csArray<Location*>    locs;
 
     ~LocationType();
-
-    bool operator==(LocationType& other) const
-    { return name==other.name; }
-    bool operator<(LocationType& other) const
-    { return (strcmp(name,other.name)<0); }
 
     bool Load(iDocumentNode *node);
     bool Import(iDocumentNode *node, iDataConnection *db);

@@ -32,8 +32,6 @@
 //=============================================================================
 #include "net/clientmsghandler.h"
 
-#include "util/prb.h"
-
 #include "paws/pawswidget.h"
 #include "paws/psmousebinds.h"
 #include "paws/pawsmainwidget.h"

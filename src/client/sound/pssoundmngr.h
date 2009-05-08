@@ -30,7 +30,6 @@
 #include <csutil/parray.h>
 #include <csutil/stringarray.h>
 #include <iutil/comp.h>
-#include "util/prb.h"
 #include "csutil/hash.h"
 #include "isndsys/ss_structs.h"
 #include "isndsys/ss_data.h"

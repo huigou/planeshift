@@ -99,6 +99,9 @@ psNPCClient::psNPCClient () : serverconsole(NULL)
 
 psNPCClient::~psNPCClient()
 {
+	csHash<LocationType*, csString>::GlobalIterator iter(loctypes.GetIterator());
+	while(iter.HasNext())
+		delete iter.Next();
     running = false;
     delete network;
     delete serverconsole;
@@ -549,7 +552,7 @@ bool psNPCClient::LoadLocations()
 
         if (loctype->Load(rs[i],engine,db))
         {
-           loctypes.Insert(loctype);
+           loctypes.Put(loctype->name, loctype);
            CPrintf(CON_DEBUG, "Added location type '%s'(%d)\n",loctype->name.GetDataSafe(),loctype->id);
         }
         else
@@ -888,10 +891,7 @@ LocationType *psNPCClient::FindRegion(const char *regname)
     if (!regname)
         return NULL;
 
-    LocationType key;
-    key.name = regname;
-
-    LocationType *found = loctypes.Find(&key);
+    LocationType *found = loctypes.Get(regname, NULL);
     if (found && found->locs[0] && found->locs[0]->IsRegion())
     {
         return found;
@@ -904,10 +904,7 @@ LocationType *psNPCClient::FindLocation(const char *locname)
     if (!locname)
         return NULL;
 
-    LocationType key;
-    key.name = locname;
-
-    LocationType *found = loctypes.Find(&key);
+    LocationType *found = loctypes.Get(locname, NULL);
     return found;
 }
 
@@ -957,10 +954,8 @@ float psNPCClient::GetRunVelocity(csString &race)
 
 Location *psNPCClient::FindLocation(const char *loctype, const char *name)
 {
-    LocationType key;
-    key.name = loctype;
 
-    LocationType *found = loctypes.Find(&key);
+    LocationType *found = loctypes.Get(loctype, NULL);
     if (found)
     {
         for (size_t i=0; i<found->locs.GetSize(); i++)
@@ -976,10 +971,7 @@ Location *psNPCClient::FindLocation(const char *loctype, const char *name)
 
 Location *psNPCClient::FindNearestLocation(const char *loctype, csVector3& pos, iSector* sector, float range, float *found_range)
 {
-    LocationType key;
-    key.name = loctype;
-
-    LocationType *found = loctypes.Find(&key);
+    LocationType *found = loctypes.Get(loctype, NULL);
     if (found)
     {
         float min_range = range;    
@@ -1008,13 +1000,10 @@ Location *psNPCClient::FindNearestLocation(const char *loctype, csVector3& pos, 
 
 Location *psNPCClient::FindRandomLocation(const char *loctype, csVector3& pos, iSector* sector, float range, float *found_range)
 {
-    LocationType key;
-    key.name = loctype;
-
     csArray<Location*> nearby;
     csArray<float> dist;
 
-    LocationType *found = loctypes.Find(&key);
+    LocationType *found = loctypes.Get(loctype, NULL);
     if (found)
     {
         for (size_t i=0; i<found->locs.GetSize(); i++)
@@ -1292,12 +1281,13 @@ void psNPCClient::ListPaths(const char * pattern)
 
 void psNPCClient::ListLocations(const char * pattern)
 {
-    BinaryRBIterator<LocationType> iter(&loctypes);
+    csHash<LocationType*, csString>::GlobalIterator iter(loctypes.GetIterator());
     LocationType *loc;
 
     CPrintf(CON_CMDOUTPUT, "%9s %9s %-30s %-10s %10s\n", "Type id", "Loc id", "Name", "Region","");
-    for (loc = iter.First(); loc; loc = ++iter)
+    while(iter.HasNext())
     {
+    	loc = iter.Next();
         if (!pattern || strstr(loc->name.GetDataSafe(),pattern))
         {
             CPrintf(CON_CMDOUTPUT, "%9d %9s %-30s %-10s\n" ,
@@ -1421,10 +1411,11 @@ void psNPCClient::PerceptProximityItems()
 
 void psNPCClient::PerceptProximityLocations()
 {
-    BinaryRBIterator<LocationType> iter(&loctypes);
+    csHash<LocationType*, csString>::GlobalIterator iter(loctypes.GetIterator());
     LocationType *loc;
-    for (loc = iter.First(); loc; loc = ++iter)
+    while(iter.HasNext())
     {
+    	loc = iter.Next();
         for (size_t i = 0; i < loc->locs.GetSize(); i++)
         {
             LocationPerception pcpt_sensed("location sensed",loc->name, loc->locs[i], engine);  

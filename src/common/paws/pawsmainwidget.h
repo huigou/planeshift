@@ -27,7 +27,6 @@
 
 #include "pawswidget.h"
 #include "psmousebinds.h"
-#include "util/prb.h"
 
 
 /** A paws script key.

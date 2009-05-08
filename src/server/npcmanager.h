@@ -29,7 +29,6 @@
 //=============================================================================
 #include "net/netbase.h"                // PublishVector class
 #include "net/npcmessages.h"
-#include "util/prb.h"
 
 #include "bulkobjects/psskills.h"
 
@@ -186,7 +185,7 @@ protected:
     psNPCCommandsMessage *outbound;
     int cmd_count;
 
-    BinaryRBTree<PetOwnerSession> OwnerPetList;
+    csHash<PetOwnerSession*, PID> OwnerPetList;
 
     /* Math script setup for pet range check */
     MathScript *petRangeScript;
