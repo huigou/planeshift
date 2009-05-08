@@ -193,6 +193,6 @@ int main(int argc, char** argv)
     CCheck* ccheck = new CCheck(object_reg);
     ccheck->Run();
     delete ccheck;
-
+    CS_STATIC_VARIABLE_CLEANUP
     return 0;
 }
