@@ -2,8 +2,8 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.00"
-	Name="libpsclient_static_plugins_CRYSTAL"
-	ProjectGUID="{DF4973C1-0D2D-8028-32E7-B93470BF4E4C}"
+	Name="grptests_psminimalstatic"
+	ProjectGUID="{8AB66635-59F8-49CC-9657-3A1599E38956}"
 	SccProjectName=""
 	SccLocalPath="">
 	<Platforms>
@@ -12,8 +12,8 @@
 	<Configurations>
             		<Configuration
 			Name="Release (with static libs)|Win32"
-			OutputDirectory="..\..\out\release7\build\libpsclient_static_plugins_CRYSTAL\"
-			IntermediateDirectory="..\..\out\release7\build\libpsclient_static_plugins_CRYSTAL\"
+			OutputDirectory="..\..\out\release7\build\grptests_psminimalstatic\"
+			IntermediateDirectory="..\..\out\release7\build\grptests_psminimalstatic\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -24,14 +24,13 @@
 				EnableFunctionLevelLinking="TRUE"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="FALSE"
-				ProgramDataBaseFileName="..\..\out\release7\build\libpsclient_static_plugins_CRYSTAL\Win32\psclient_static_plugins_CRYSTAL.pdb"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32"
 				OptimizeForProcessor="1"
-				AdditionalOptions="/D CS_HAVE_CAL3D "
+				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\release7\build\libpsclient_static_plugins_CRYSTAL\libpsclient_static_plugins_CRYSTAL.pch"
-				AssemblerListingLocation="..\..\out\release7\build\libpsclient_static_plugins_CRYSTAL\"
-				ObjectFile="..\..\out\release7\build\libpsclient_static_plugins_CRYSTAL\"
+				PrecompiledHeaderFile="..\..\out\release7\build\grptests_psminimalstatic\grptests_psminimalstatic.pch"
+				AssemblerListingLocation="..\..\out\release7\build\grptests_psminimalstatic\"
+				ObjectFile="..\..\out\release7\build\grptests_psminimalstatic\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -48,14 +47,14 @@
 				EnableCOMDATFolding="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD"
-				AdditionalOptions="libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc7.lib libcrystalspace_windows.lib libcrystalspace_opengl.lib opengl32.lib version.lib libcrystalspace_staticplugins.lib libcrystalspace.lib libcrystalspace_directx.lib zlib.lib dsound.lib ddraw.lib dinput.lib "
+				AdditionalOptions=" "
 				AdditionalDependencies=""
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories=""
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\release7\libs\libpsclient_static_plugins_CRYSTAL.lib"
+				OutputFile="..\..\out\release7\libs\grptests_psminimalstatic.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -63,7 +62,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\release7\build\libpsclient_static_plugins_CRYSTAL\libpsclient_static_plugins_CRYSTAL.tlb"/>
+				TypeLibraryName="..\..\out\release7\build\grptests_psminimalstatic\grptests_psminimalstatic.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\release7\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release7\bin\&#x0D;&#x0A;"
@@ -75,7 +74,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\.;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -84,10 +83,9 @@
 		</Configuration>
       		<Configuration
 			Name="Release (with DLLs)|Win32"
-			OutputDirectory="..\..\out\release7\build\libpsclient_static_plugins_CRYSTAL\"
-			IntermediateDirectory="..\..\out\release7\build\libpsclient_static_plugins_CRYSTAL\"
-			ConfigurationType="2"
-			WholeProgramOptimization="1"
+			OutputDirectory="..\..\out\release7\build\grptests_psminimalstatic\"
+			IntermediateDirectory="..\..\out\release7\build\grptests_psminimalstatic\"
+			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -97,14 +95,13 @@
 				EnableFunctionLevelLinking="TRUE"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="FALSE"
-				ProgramDatabaseFileName="..\..\out\release7\build\libpsclient_static_plugins_CRYSTAL\Win32\psclient_static_plugins_CRYSTAL-0.4-vc7.pdb"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;WIN32;CS_BUILD_SHARED_LIBS"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
-				AdditionalOptions="/D CS_HAVE_CAL3D "
+				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\release7\build\libpsclient_static_plugins_CRYSTAL\libpsclient_static_plugins_CRYSTAL.pch"
-				AssemblerListingLocation="..\..\out\release7\build\libpsclient_static_plugins_CRYSTAL\"
-				ObjectFile="..\..\out\release7\build\libpsclient_static_plugins_CRYSTAL\"
+				PrecompiledHeaderFile="..\..\out\release7\build\grptests_psminimalstatic\grptests_psminimalstatic.pch"
+				AssemblerListingLocation="..\..\out\release7\build\grptests_psminimalstatic\"
+				ObjectFile="..\..\out\release7\build\grptests_psminimalstatic\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -121,24 +118,22 @@
 				EnableCOMDATFolding="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD"
-                        OutputFile="..\..\psclient_static_plugins_CRYSTAL-0.4-vc7.dll"
-				ImportLibrary="..\..\out\release7\libs\Win32\libpsclient_static_plugins_CRYSTAL.lib"
-				ProgramDatabaseFile="..\..\out\release7\build\libpsclient_static_plugins_CRYSTAL\Win32\psclient_static_plugins_CRYSTAL-0.4-vc7.pdb"
-				AdditionalOptions="libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc7.lib libcrystalspace_windows.lib libcrystalspace_opengl.lib opengl32.lib version.lib libcrystalspace_staticplugins.lib libcrystalspace.lib libcrystalspace_directx.lib zlib.lib dsound.lib ddraw.lib dinput.lib "
+				AdditionalOptions=" "
 				AdditionalDependencies=""
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories=""
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
+				OutputFile="..\..\out\release7\libs\grptests_psminimalstatic.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\release7\build\libpsclient_static_plugins_CRYSTAL\libpsclient_static_plugins_CRYSTAL.tlb"/>
+				TypeLibraryName="..\..\out\release7\build\grptests_psminimalstatic\grptests_psminimalstatic.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\release7\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release7\bin\&#x0D;&#x0A;"
@@ -149,8 +144,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=7"
+				AdditionalIncludeDirectories=".;..\..\.;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -159,8 +154,8 @@
 		</Configuration>
                 		<Configuration
 			Name="Debug (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\"
-			IntermediateDirectory="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\"
+			OutputDirectory="..\..\out\debug7\build\grptests_psminimalstatic\"
+			IntermediateDirectory="..\..\out\debug7\build\grptests_psminimalstatic\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -171,14 +166,13 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\Win32\psclient_static_plugins_CRYSTAL.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32"
 				OptimizeForProcessor="1"
-				AdditionalOptions="/D CS_HAVE_CAL3D "
+				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\libpsclient_static_plugins_CRYSTAL.pch"
-				AssemblerListingLocation="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\"
-				ObjectFile="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\"
+				PrecompiledHeaderFile="..\..\out\debug7\build\grptests_psminimalstatic\grptests_psminimalstatic.pch"
+				AssemblerListingLocation="..\..\out\debug7\build\grptests_psminimalstatic\"
+				ObjectFile="..\..\out\debug7\build\grptests_psminimalstatic\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -193,14 +187,14 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				AdditionalOptions="libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc7_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib ddraw.lib dinput.lib "
+				AdditionalOptions=" "
 				AdditionalDependencies=""
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories=""
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug7\libs\libpsclient_static_plugins_CRYSTAL_d.lib"
+				OutputFile="..\..\out\debug7\libs\grptests_psminimalstatic.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -208,7 +202,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\libpsclient_static_plugins_CRYSTAL.tlb"/>
+				TypeLibraryName="..\..\out\debug7\build\grptests_psminimalstatic\grptests_psminimalstatic.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug7\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug7\bin\&#x0D;&#x0A;"
@@ -220,7 +214,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\.;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -229,81 +223,8 @@
 		</Configuration>
       		<Configuration
 			Name="Debug (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\"
-			IntermediateDirectory="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\"
-			ConfigurationType="2"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE">
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				MinimalRebuild="TRUE"
-				RuntimeTypeInfo="TRUE"
-				RuntimeLibrary="3"
-
-
-				ProgramDatabaseFileName="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\Win32\psclient_static_plugins_CRYSTAL-0.4-vc7_d.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;WIN32;CS_BUILD_SHARED_LIBS"
-				OptimizeForProcessor="1"
-				AdditionalOptions="/D CS_HAVE_CAL3D "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\libpsclient_static_plugins_CRYSTAL.pch"
-				AssemblerListingLocation="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\"
-				ObjectFile="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\"
-				WarningLevel="3"
-				SuppressStartupBanner="TRUE"
-				Detect64BitPortabilityProblems="false"
-				TreatWChar_tAsBuiltInType="false"
-				ForceConformanceInForLoopScope="true"
-				DebugInformationFormat="4"
-				CompileAs="0"/>
-			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"
-				LinkIncremental="2"
-				GenerateDebugInformation="TRUE"
-				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-                        OutputFile="..\..\psclient_static_plugins_CRYSTAL-0.4-vc7_d.dll"
-				ImportLibrary="..\..\out\debug7\libs\Win32\libpsclient_static_plugins_CRYSTAL_d.lib"
-				ProgramDatabaseFile="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\Win32\psclient_static_plugins_CRYSTAL-0.4-vc7_d.pdb"
-				AdditionalOptions="libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc7_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib ddraw.lib dinput.lib "
-				AdditionalDependencies=""
-				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
-				TargetMachine="1"/>
-			<Tool
-				Name="VCLibrarianTool"
-				SuppressStartupBanner="TRUE"/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS"
-				MkTypLibCompatible="TRUE"
-				SuppressStartupBanner="TRUE"
-				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\libpsclient_static_plugins_CRYSTAL.tlb"/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug7\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug7\bin\&#x0D;&#x0A;"
-				/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				Culture="1033"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
-		</Configuration>
-                		<Configuration
-			Name="MemoryTracker (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\"
-			IntermediateDirectory="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\"
+			OutputDirectory="..\..\out\debug7\build\grptests_psminimalstatic\"
+			IntermediateDirectory="..\..\out\debug7\build\grptests_psminimalstatic\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -314,14 +235,13 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\Win32\psclient_static_plugins_CRYSTAL.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;WIN32"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
-				AdditionalOptions="/D CS_HAVE_CAL3D "
+				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\libpsclient_static_plugins_CRYSTAL.pch"
-				AssemblerListingLocation="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\"
-				ObjectFile="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\"
+				PrecompiledHeaderFile="..\..\out\debug7\build\grptests_psminimalstatic\grptests_psminimalstatic.pch"
+				AssemblerListingLocation="..\..\out\debug7\build\grptests_psminimalstatic\"
+				ObjectFile="..\..\out\debug7\build\grptests_psminimalstatic\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -336,14 +256,83 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				AdditionalOptions="libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc7_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib ddraw.lib dinput.lib "
+				AdditionalOptions=" "
 				AdditionalDependencies=""
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories=""
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug7\libs\libpsclient_static_plugins_CRYSTAL_d.lib"
+				OutputFile="..\..\out\debug7\libs\grptests_psminimalstatic.lib"
+				SuppressStartupBanner="TRUE"/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX"
+				MkTypLibCompatible="TRUE"
+				SuppressStartupBanner="TRUE"
+				TargetEnvironment="1"
+				TypeLibraryName="..\..\out\debug7\build\grptests_psminimalstatic\grptests_psminimalstatic.tlb"/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="md ..\..\out\debug7\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug7\bin\&#x0D;&#x0A;"
+				/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=7"
+				AdditionalIncludeDirectories=".;..\..\.;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				Culture="1033"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+		</Configuration>
+                		<Configuration
+			Name="MemoryTracker (with static libs)|Win32"
+			OutputDirectory="..\..\out\debug7\build\grptests_psminimalstatic\"
+			IntermediateDirectory="..\..\out\debug7\build\grptests_psminimalstatic\"
+			ConfigurationType="4"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE">
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				MinimalRebuild="TRUE"
+				RuntimeTypeInfo="TRUE"
+				RuntimeLibrary="3"
+
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;WIN32"
+				OptimizeForProcessor="1"
+				AdditionalOptions=" "
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				PrecompiledHeaderFile="..\..\out\debug7\build\grptests_psminimalstatic\grptests_psminimalstatic.pch"
+				AssemblerListingLocation="..\..\out\debug7\build\grptests_psminimalstatic\"
+				ObjectFile="..\..\out\debug7\build\grptests_psminimalstatic\"
+				WarningLevel="3"
+				SuppressStartupBanner="TRUE"
+				Detect64BitPortabilityProblems="false"
+				TreatWChar_tAsBuiltInType="false"
+				ForceConformanceInForLoopScope="true"
+				DebugInformationFormat="4"
+				CompileAs="0"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				LinkIncremental="2"
+				GenerateDebugInformation="TRUE"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
+				AdditionalOptions=" "
+				AdditionalDependencies=""
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories=""
+				TargetMachine="1"/>
+			<Tool
+				Name="VCLibrarianTool"
+				OutputFile="..\..\out\debug7\libs\grptests_psminimalstatic.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -351,7 +340,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\libpsclient_static_plugins_CRYSTAL.tlb"/>
+				TypeLibraryName="..\..\out\debug7\build\grptests_psminimalstatic\grptests_psminimalstatic.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug7\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug7\bin\&#x0D;&#x0A;"
@@ -363,7 +352,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\.;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -372,81 +361,8 @@
 		</Configuration>
       		<Configuration
 			Name="MemoryTracker (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\"
-			IntermediateDirectory="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\"
-			ConfigurationType="2"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE">
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				MinimalRebuild="TRUE"
-				RuntimeTypeInfo="TRUE"
-				RuntimeLibrary="3"
-
-
-				ProgramDatabaseFileName="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\Win32\psclient_static_plugins_CRYSTAL-0.4-vc7_d.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WINDOWS;WIN32;CS_BUILD_SHARED_LIBS"
-				OptimizeForProcessor="1"
-				AdditionalOptions="/D CS_HAVE_CAL3D "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\libpsclient_static_plugins_CRYSTAL.pch"
-				AssemblerListingLocation="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\"
-				ObjectFile="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\"
-				WarningLevel="3"
-				SuppressStartupBanner="TRUE"
-				Detect64BitPortabilityProblems="false"
-				TreatWChar_tAsBuiltInType="false"
-				ForceConformanceInForLoopScope="true"
-				DebugInformationFormat="4"
-				CompileAs="0"/>
-			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"
-				LinkIncremental="2"
-				GenerateDebugInformation="TRUE"
-				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-                        OutputFile="..\..\psclient_static_plugins_CRYSTAL-0.4-vc7_d.dll"
-				ImportLibrary="..\..\out\debug7\libs\Win32\libpsclient_static_plugins_CRYSTAL_d.lib"
-				ProgramDatabaseFile="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\Win32\psclient_static_plugins_CRYSTAL-0.4-vc7_d.pdb"
-				AdditionalOptions="libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc7_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib ddraw.lib dinput.lib "
-				AdditionalDependencies=""
-				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
-				TargetMachine="1"/>
-			<Tool
-				Name="VCLibrarianTool"
-				SuppressStartupBanner="TRUE"/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WINDOWS"
-				MkTypLibCompatible="TRUE"
-				SuppressStartupBanner="TRUE"
-				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\libpsclient_static_plugins_CRYSTAL.tlb"/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug7\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug7\bin\&#x0D;&#x0A;"
-				/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WINDOWS;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				Culture="1033"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
-		</Configuration>
-                		<Configuration
-			Name="RefTracker (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\"
-			IntermediateDirectory="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\"
+			OutputDirectory="..\..\out\debug7\build\grptests_psminimalstatic\"
+			IntermediateDirectory="..\..\out\debug7\build\grptests_psminimalstatic\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -457,14 +373,13 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\Win32\psclient_static_plugins_CRYSTAL.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;WIN32"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
-				AdditionalOptions="/D CS_HAVE_CAL3D "
+				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\libpsclient_static_plugins_CRYSTAL.pch"
-				AssemblerListingLocation="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\"
-				ObjectFile="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\"
+				PrecompiledHeaderFile="..\..\out\debug7\build\grptests_psminimalstatic\grptests_psminimalstatic.pch"
+				AssemblerListingLocation="..\..\out\debug7\build\grptests_psminimalstatic\"
+				ObjectFile="..\..\out\debug7\build\grptests_psminimalstatic\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -479,14 +394,83 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				AdditionalOptions="libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc7_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib ddraw.lib dinput.lib "
+				AdditionalOptions=" "
 				AdditionalDependencies=""
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories=""
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug7\libs\libpsclient_static_plugins_CRYSTAL_d.lib"
+				OutputFile="..\..\out\debug7\libs\grptests_psminimalstatic.lib"
+				SuppressStartupBanner="TRUE"/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER"
+				MkTypLibCompatible="TRUE"
+				SuppressStartupBanner="TRUE"
+				TargetEnvironment="1"
+				TypeLibraryName="..\..\out\debug7\build\grptests_psminimalstatic\grptests_psminimalstatic.tlb"/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="md ..\..\out\debug7\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug7\bin\&#x0D;&#x0A;"
+				/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;PROJECTGEN_VERSION=7"
+				AdditionalIncludeDirectories=".;..\..\.;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				Culture="1033"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+		</Configuration>
+                		<Configuration
+			Name="RefTracker (with static libs)|Win32"
+			OutputDirectory="..\..\out\debug7\build\grptests_psminimalstatic\"
+			IntermediateDirectory="..\..\out\debug7\build\grptests_psminimalstatic\"
+			ConfigurationType="4"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE">
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				MinimalRebuild="TRUE"
+				RuntimeTypeInfo="TRUE"
+				RuntimeLibrary="3"
+
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;WIN32"
+				OptimizeForProcessor="1"
+				AdditionalOptions=" "
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				PrecompiledHeaderFile="..\..\out\debug7\build\grptests_psminimalstatic\grptests_psminimalstatic.pch"
+				AssemblerListingLocation="..\..\out\debug7\build\grptests_psminimalstatic\"
+				ObjectFile="..\..\out\debug7\build\grptests_psminimalstatic\"
+				WarningLevel="3"
+				SuppressStartupBanner="TRUE"
+				Detect64BitPortabilityProblems="false"
+				TreatWChar_tAsBuiltInType="false"
+				ForceConformanceInForLoopScope="true"
+				DebugInformationFormat="4"
+				CompileAs="0"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				LinkIncremental="2"
+				GenerateDebugInformation="TRUE"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
+				AdditionalOptions=" "
+				AdditionalDependencies=""
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories=""
+				TargetMachine="1"/>
+			<Tool
+				Name="VCLibrarianTool"
+				OutputFile="..\..\out\debug7\libs\grptests_psminimalstatic.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -494,7 +478,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\libpsclient_static_plugins_CRYSTAL.tlb"/>
+				TypeLibraryName="..\..\out\debug7\build\grptests_psminimalstatic\grptests_psminimalstatic.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug7\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug7\bin\&#x0D;&#x0A;"
@@ -506,7 +490,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\.;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -515,81 +499,8 @@
 		</Configuration>
       		<Configuration
 			Name="RefTracker (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\"
-			IntermediateDirectory="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\"
-			ConfigurationType="2"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE">
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				MinimalRebuild="TRUE"
-				RuntimeTypeInfo="TRUE"
-				RuntimeLibrary="3"
-
-
-				ProgramDatabaseFileName="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\Win32\psclient_static_plugins_CRYSTAL-0.4-vc7_d.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WINDOWS;WIN32;CS_BUILD_SHARED_LIBS"
-				OptimizeForProcessor="1"
-				AdditionalOptions="/D CS_HAVE_CAL3D "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\libpsclient_static_plugins_CRYSTAL.pch"
-				AssemblerListingLocation="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\"
-				ObjectFile="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\"
-				WarningLevel="3"
-				SuppressStartupBanner="TRUE"
-				Detect64BitPortabilityProblems="false"
-				TreatWChar_tAsBuiltInType="false"
-				ForceConformanceInForLoopScope="true"
-				DebugInformationFormat="4"
-				CompileAs="0"/>
-			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"
-				LinkIncremental="2"
-				GenerateDebugInformation="TRUE"
-				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-                        OutputFile="..\..\psclient_static_plugins_CRYSTAL-0.4-vc7_d.dll"
-				ImportLibrary="..\..\out\debug7\libs\Win32\libpsclient_static_plugins_CRYSTAL_d.lib"
-				ProgramDatabaseFile="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\Win32\psclient_static_plugins_CRYSTAL-0.4-vc7_d.pdb"
-				AdditionalOptions="libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc7_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib ddraw.lib dinput.lib "
-				AdditionalDependencies=""
-				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
-				TargetMachine="1"/>
-			<Tool
-				Name="VCLibrarianTool"
-				SuppressStartupBanner="TRUE"/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WINDOWS"
-				MkTypLibCompatible="TRUE"
-				SuppressStartupBanner="TRUE"
-				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\libpsclient_static_plugins_CRYSTAL.tlb"/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug7\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug7\bin\&#x0D;&#x0A;"
-				/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WINDOWS;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				Culture="1033"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
-		</Configuration>
-                		<Configuration
-			Name="ThreadChecker (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\"
-			IntermediateDirectory="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\"
+			OutputDirectory="..\..\out\debug7\build\grptests_psminimalstatic\"
+			IntermediateDirectory="..\..\out\debug7\build\grptests_psminimalstatic\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -600,14 +511,13 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\Win32\psclient_static_plugins_CRYSTAL.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;WIN32"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
-				AdditionalOptions="/D CS_HAVE_CAL3D "
+				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\libpsclient_static_plugins_CRYSTAL.pch"
-				AssemblerListingLocation="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\"
-				ObjectFile="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\"
+				PrecompiledHeaderFile="..\..\out\debug7\build\grptests_psminimalstatic\grptests_psminimalstatic.pch"
+				AssemblerListingLocation="..\..\out\debug7\build\grptests_psminimalstatic\"
+				ObjectFile="..\..\out\debug7\build\grptests_psminimalstatic\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -622,14 +532,83 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				AdditionalOptions="libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc7_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib ddraw.lib dinput.lib "
+				AdditionalOptions=" "
 				AdditionalDependencies=""
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories=""
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug7\libs\libpsclient_static_plugins_CRYSTAL_d.lib"
+				OutputFile="..\..\out\debug7\libs\grptests_psminimalstatic.lib"
+				SuppressStartupBanner="TRUE"/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER"
+				MkTypLibCompatible="TRUE"
+				SuppressStartupBanner="TRUE"
+				TargetEnvironment="1"
+				TypeLibraryName="..\..\out\debug7\build\grptests_psminimalstatic\grptests_psminimalstatic.tlb"/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="md ..\..\out\debug7\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug7\bin\&#x0D;&#x0A;"
+				/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;PROJECTGEN_VERSION=7"
+				AdditionalIncludeDirectories=".;..\..\.;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				Culture="1033"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+		</Configuration>
+                		<Configuration
+			Name="ThreadChecker (with static libs)|Win32"
+			OutputDirectory="..\..\out\debug7\build\grptests_psminimalstatic\"
+			IntermediateDirectory="..\..\out\debug7\build\grptests_psminimalstatic\"
+			ConfigurationType="4"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE">
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				MinimalRebuild="TRUE"
+				RuntimeTypeInfo="TRUE"
+				RuntimeLibrary="3"
+
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;WIN32"
+				OptimizeForProcessor="1"
+				AdditionalOptions=" "
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				PrecompiledHeaderFile="..\..\out\debug7\build\grptests_psminimalstatic\grptests_psminimalstatic.pch"
+				AssemblerListingLocation="..\..\out\debug7\build\grptests_psminimalstatic\"
+				ObjectFile="..\..\out\debug7\build\grptests_psminimalstatic\"
+				WarningLevel="3"
+				SuppressStartupBanner="TRUE"
+				Detect64BitPortabilityProblems="false"
+				TreatWChar_tAsBuiltInType="false"
+				ForceConformanceInForLoopScope="true"
+				DebugInformationFormat="4"
+				CompileAs="0"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				LinkIncremental="2"
+				GenerateDebugInformation="TRUE"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
+				AdditionalOptions=" "
+				AdditionalDependencies=""
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories=""
+				TargetMachine="1"/>
+			<Tool
+				Name="VCLibrarianTool"
+				OutputFile="..\..\out\debug7\libs\grptests_psminimalstatic.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -637,7 +616,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\libpsclient_static_plugins_CRYSTAL.tlb"/>
+				TypeLibraryName="..\..\out\debug7\build\grptests_psminimalstatic\grptests_psminimalstatic.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug7\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug7\bin\&#x0D;&#x0A;"
@@ -649,7 +628,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\.;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -658,81 +637,8 @@
 		</Configuration>
       		<Configuration
 			Name="ThreadChecker (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\"
-			IntermediateDirectory="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\"
-			ConfigurationType="2"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE">
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				MinimalRebuild="TRUE"
-				RuntimeTypeInfo="TRUE"
-				RuntimeLibrary="3"
-
-
-				ProgramDatabaseFileName="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\Win32\psclient_static_plugins_CRYSTAL-0.4-vc7_d.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_WINDOWS;WIN32;CS_BUILD_SHARED_LIBS"
-				OptimizeForProcessor="1"
-				AdditionalOptions="/D CS_HAVE_CAL3D "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\libpsclient_static_plugins_CRYSTAL.pch"
-				AssemblerListingLocation="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\"
-				ObjectFile="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\"
-				WarningLevel="3"
-				SuppressStartupBanner="TRUE"
-				Detect64BitPortabilityProblems="false"
-				TreatWChar_tAsBuiltInType="false"
-				ForceConformanceInForLoopScope="true"
-				DebugInformationFormat="4"
-				CompileAs="0"/>
-			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"
-				LinkIncremental="2"
-				GenerateDebugInformation="TRUE"
-				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-                        OutputFile="..\..\psclient_static_plugins_CRYSTAL-0.4-vc7_d.dll"
-				ImportLibrary="..\..\out\debug7\libs\Win32\libpsclient_static_plugins_CRYSTAL_d.lib"
-				ProgramDatabaseFile="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\Win32\psclient_static_plugins_CRYSTAL-0.4-vc7_d.pdb"
-				AdditionalOptions="libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc7_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib ddraw.lib dinput.lib "
-				AdditionalDependencies=""
-				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
-				TargetMachine="1"/>
-			<Tool
-				Name="VCLibrarianTool"
-				SuppressStartupBanner="TRUE"/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_WINDOWS"
-				MkTypLibCompatible="TRUE"
-				SuppressStartupBanner="TRUE"
-				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\libpsclient_static_plugins_CRYSTAL.tlb"/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug7\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug7\bin\&#x0D;&#x0A;"
-				/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_WINDOWS;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				Culture="1033"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
-		</Configuration>
-                		<Configuration
-			Name="DebugPSReleaseCSCEL (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\"
-			IntermediateDirectory="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\"
+			OutputDirectory="..\..\out\debug7\build\grptests_psminimalstatic\"
+			IntermediateDirectory="..\..\out\debug7\build\grptests_psminimalstatic\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -743,14 +649,13 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\Win32\psclient_static_plugins_CRYSTAL.pdb"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
-				AdditionalOptions="/D CS_HAVE_CAL3D "
+				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\libpsclient_static_plugins_CRYSTAL.pch"
-				AssemblerListingLocation="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\"
-				ObjectFile="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\"
+				PrecompiledHeaderFile="..\..\out\debug7\build\grptests_psminimalstatic\grptests_psminimalstatic.pch"
+				AssemblerListingLocation="..\..\out\debug7\build\grptests_psminimalstatic\"
+				ObjectFile="..\..\out\debug7\build\grptests_psminimalstatic\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -765,14 +670,83 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				AdditionalOptions="libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc7_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib ddraw.lib dinput.lib "
+				AdditionalOptions=" "
 				AdditionalDependencies=""
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories=""
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug7\libs\libpsclient_static_plugins_CRYSTAL_d.lib"
+				OutputFile="..\..\out\debug7\libs\grptests_psminimalstatic.lib"
+				SuppressStartupBanner="TRUE"/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER"
+				MkTypLibCompatible="TRUE"
+				SuppressStartupBanner="TRUE"
+				TargetEnvironment="1"
+				TypeLibraryName="..\..\out\debug7\build\grptests_psminimalstatic\grptests_psminimalstatic.tlb"/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="md ..\..\out\debug7\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug7\bin\&#x0D;&#x0A;"
+				/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;PROJECTGEN_VERSION=7"
+				AdditionalIncludeDirectories=".;..\..\.;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				Culture="1033"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+		</Configuration>
+                		<Configuration
+			Name="DebugPSReleaseCSCEL (with static libs)|Win32"
+			OutputDirectory="..\..\out\debug7\build\grptests_psminimalstatic\"
+			IntermediateDirectory="..\..\out\debug7\build\grptests_psminimalstatic\"
+			ConfigurationType="4"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE">
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				MinimalRebuild="TRUE"
+				RuntimeTypeInfo="TRUE"
+				RuntimeLibrary="3"
+
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32"
+				OptimizeForProcessor="1"
+				AdditionalOptions=" "
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				PrecompiledHeaderFile="..\..\out\debug7\build\grptests_psminimalstatic\grptests_psminimalstatic.pch"
+				AssemblerListingLocation="..\..\out\debug7\build\grptests_psminimalstatic\"
+				ObjectFile="..\..\out\debug7\build\grptests_psminimalstatic\"
+				WarningLevel="3"
+				SuppressStartupBanner="TRUE"
+				Detect64BitPortabilityProblems="false"
+				TreatWChar_tAsBuiltInType="false"
+				ForceConformanceInForLoopScope="true"
+				DebugInformationFormat="4"
+				CompileAs="0"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				LinkIncremental="2"
+				GenerateDebugInformation="TRUE"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
+				AdditionalOptions=" "
+				AdditionalDependencies=""
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories=""
+				TargetMachine="1"/>
+			<Tool
+				Name="VCLibrarianTool"
+				OutputFile="..\..\out\debug7\libs\grptests_psminimalstatic.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -780,7 +754,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\libpsclient_static_plugins_CRYSTAL.tlb"/>
+				TypeLibraryName="..\..\out\debug7\build\grptests_psminimalstatic\grptests_psminimalstatic.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug7\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug7\bin\&#x0D;&#x0A;"
@@ -792,7 +766,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\.;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -801,9 +775,9 @@
 		</Configuration>
       		<Configuration
 			Name="DebugPSReleaseCSCEL (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\"
-			IntermediateDirectory="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\"
-			ConfigurationType="2"
+			OutputDirectory="..\..\out\debug7\build\grptests_psminimalstatic\"
+			IntermediateDirectory="..\..\out\debug7\build\grptests_psminimalstatic\"
+			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -813,15 +787,13 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-
-				ProgramDatabaseFileName="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\Win32\psclient_static_plugins_CRYSTAL-0.4-vc7_d.pdb"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;WIN32;CS_BUILD_SHARED_LIBS"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
-				AdditionalOptions="/D CS_HAVE_CAL3D "
+				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\libpsclient_static_plugins_CRYSTAL.pch"
-				AssemblerListingLocation="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\"
-				ObjectFile="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\"
+				PrecompiledHeaderFile="..\..\out\debug7\build\grptests_psminimalstatic\grptests_psminimalstatic.pch"
+				AssemblerListingLocation="..\..\out\debug7\build\grptests_psminimalstatic\"
+				ObjectFile="..\..\out\debug7\build\grptests_psminimalstatic\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -836,24 +808,22 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-                        OutputFile="..\..\psclient_static_plugins_CRYSTAL-0.4-vc7_d.dll"
-				ImportLibrary="..\..\out\debug7\libs\Win32\libpsclient_static_plugins_CRYSTAL_d.lib"
-				ProgramDatabaseFile="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\Win32\psclient_static_plugins_CRYSTAL-0.4-vc7_d.pdb"
-				AdditionalOptions="libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc7_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib ddraw.lib dinput.lib "
+				AdditionalOptions=" "
 				AdditionalDependencies=""
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories=""
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
+				OutputFile="..\..\out\debug7\libs\grptests_psminimalstatic.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug7\build\libpsclient_static_plugins_CRYSTAL\libpsclient_static_plugins_CRYSTAL.tlb"/>
+				TypeLibraryName="..\..\out\debug7\build\grptests_psminimalstatic\grptests_psminimalstatic.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug7\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug7\bin\&#x0D;&#x0A;"
@@ -864,8 +834,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=7"
+				AdditionalIncludeDirectories=".;..\..\.;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -874,16 +844,6 @@
 		</Configuration>
               	</Configurations>
 	<Files>
-		<Filter
-			Name="Source Files"
-			Filter="">
-			<File
-				RelativePath="..\..\mk\msvc\apppsclient_static_static_glue_lib_CRYSTAL.cpp">
-			</File>
-			<File
-				RelativePath="..\..\mk\msvc\apppsclient_static_staticuse_CRYSTAL.cpp">
-			</File>
-		</Filter>
 	</Files>
 	<Globals>
 	</Globals>
