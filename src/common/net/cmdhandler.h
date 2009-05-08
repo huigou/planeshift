@@ -24,12 +24,11 @@
 #include <csutil/list.h>
 #include <csutil/csstring.h>
 #include <csutil/parray.h>
-#include <csutil/stringarray.h>
+#include <csutil/redblacktree.h>
 #include <iutil/objreg.h>
 
 #include "net/subscriber.h"
 #include "net/cmdbase.h"
-#include "util/prb.h"
 #include "util/psstring.h"
 
 class psChatWindow;
@@ -86,7 +85,7 @@ public:
     void Execute(const char *script, bool breakSemiColon=true);
 
     /// Return a list (alpha-sorted with unique entries) of the subscribed commands
-    void GetSubscribedCommands(BinaryRBTree<psString>& tree);
+    void GetSubscribedCommands(csRedBlackTree<psString> & tree);
 };
 
 #endif
