@@ -583,6 +583,8 @@ void psServer::RemovePlayer (uint32_t clientnum,const char *reason)
     Notify3(LOG_CHARACTER, "Remove player '%s' (%d)\n", client->GetName(),client->GetClientNum() );
 
     client->Disconnect();
+    
+    chatmanager->RemoveAllChannels(client);
 
     authserver->SendDisconnect(client,reason);
 

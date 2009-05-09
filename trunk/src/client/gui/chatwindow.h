@@ -27,6 +27,7 @@
 // CS INCLUDES
 #include <csutil/array.h>
 #include <csutil/redblacktree.h>
+#include <csutil/hashr.h>
 
 #include "net/cmdbase.h"
 //#include "util/psstring.h"
@@ -78,6 +79,7 @@ struct ChatSettings
     int tellColor;
     int guildColor;
     int shoutColor;
+    int channelColor;
     int gmColor;
     int yourColor;
     int groupColor;
@@ -149,7 +151,7 @@ public:
     csString GetBracket(int type); ///generates a bracket like [tell] starting from the msgtype
 
     /// Function that handles output of various tabbed windows.
-    void ChatOutput(const char* data, int colour = -1, int type = CHAT_SYSTEM, bool flashEnabled = true, bool hasCharName = false);
+    void ChatOutput(const char* data, int colour = -1, int type = CHAT_SYSTEM, bool flashEnabled = true, bool hasCharName = false, int hotkeyChannel = 0);
 
     void AddAutoCompleteName(const char *name);
     void RemoveAutoCompleteName(const char *name);
@@ -169,6 +171,12 @@ public:
     
     /// mixes two colours and returns their mixed colour
     int mixColours(int colour1, int colour2);
+    
+    // Leaves the channel and removes the hotkey association
+    bool LeaveChannel(int hotkeyChannel);
+    
+    // Joins the channel and adds the hotkey when the server accepts the join.
+    void JoinChannel(csString name);
     
 protected:
 
@@ -231,6 +239,11 @@ protected:
 
     // Replay recent message history on load
     void ReplayMessages();
+    
+    // Subscribed channel name to server channel ID reversible mapping
+    csHashReversible<uint32_t, csString> channelIDs;
+    // Hotkeys for server channel IDs
+    csArray<uint16_t> channels;
 };
 
 //--------------------------------------------------------------------------

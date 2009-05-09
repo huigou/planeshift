@@ -91,6 +91,8 @@ psUserCommands::psUserCommands(ClientMsgHandler* mh,CmdHandler *ch,iObjectRegist
     cmdsource->Subscribe("/help",          this);
     cmdsource->Subscribe("/ignore",        this);
     cmdsource->Subscribe("/introduce",     this);
+    cmdsource->Subscribe("/join",          this);
+    cmdsource->Subscribe("/leave",         this);
     cmdsource->Subscribe("/loot",          this);
     cmdsource->Subscribe("/marriage",      this);
     cmdsource->Subscribe("/motd",          this);
@@ -156,6 +158,8 @@ psUserCommands::~psUserCommands()
     cmdsource->Unsubscribe("/help",                  this);
     cmdsource->Unsubscribe("/ignore",                this);
     cmdsource->Unsubscribe("/introduce",             this);
+    cmdsource->Unsubscribe("/join",                  this);
+    cmdsource->Unsubscribe("/leave",                 this);
     cmdsource->Unsubscribe("/loot",                  this);
     cmdsource->Unsubscribe("/marriage",              this);
     cmdsource->Unsubscribe("/motd",                  this);
@@ -878,6 +882,36 @@ const char *psUserCommands::HandleCommand(const char *cmd)
     	if(widget)
     		widget->Show();
     }
+    else if(words[0] == "/join")
+    {
+    	if(words.GetCount() < 2)
+    	{
+    		return "Please specify a channel name to join.";
+    	}
+    	else
+    	{
+    		pawsChatWindow* ChatWindow = (pawsChatWindow*) PawsManager::GetSingleton().FindWidget("ChatWindow");
+    		ChatWindow->JoinChannel(words.GetTail(1));
+    	}
+    }
+    else if(words[0] == "/leave")
+	{
+		if(words.GetCount() < 2)
+		{
+			return "Please specify a channel hotkey number to leave.";
+		}
+		else
+		{
+			pawsChatWindow* ChatWindow = (pawsChatWindow*) PawsManager::GetSingleton().FindWidget("ChatWindow");
+			int hotkeyChannel = words.GetInt(1);
+			if(hotkeyChannel < 1 || hotkeyChannel > 10)
+			{
+				return "Please specify a channel hotkey number to leave.";
+			}
+			if(!ChatWindow->LeaveChannel(hotkeyChannel))
+				return "You have not joined that channel.";
+		}
+	}
     else
     {
         psUserCmdMessage cmdmsg(cmd);

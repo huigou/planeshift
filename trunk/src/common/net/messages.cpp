@@ -428,7 +428,7 @@ csString psCharacterApprovedMessage::ToString(AccessPointers * /*access_ptrs*/)
 PSF_IMPLEMENT_MSG_FACTORY(psChatMessage,MSGTYPE_CHAT);
 
 psChatMessage::psChatMessage(uint32_t cnum, EID actorid, const char *person, const char * other,
-                 const char *chatMessage, uint8_t type, bool translate)
+                 const char *chatMessage, uint8_t type, bool translate, uint16_t channelID)
 {
     if (!chatMessage || !person)
         return;
@@ -443,6 +443,10 @@ psChatMessage::psChatMessage(uint32_t cnum, EID actorid, const char *person, con
     size_t sz = strlen(person) + 1 + strlen(chatMessage) + 1 + sizeof(uint8_t)*2 + sizeof(uint32_t);
     if (includeOther)
         sz += strlen(other) + 1;
+    
+    bool chanMsg = iChatType == CHAT_CHANNEL;
+    if(chanMsg)
+    	sz += sizeof(uint16_t);
 
     msg.AttachNew(new MsgEntry(sz));
 
@@ -454,6 +458,8 @@ psChatMessage::psChatMessage(uint32_t cnum, EID actorid, const char *person, con
     msg->Add(chatMessage);
     msg->Add(translate);
     msg->Add(actorid.Unbox());
+    if(chanMsg)
+    	msg->Add(channelID);
     if (includeOther)
         msg->Add(other);
 
@@ -468,11 +474,14 @@ psChatMessage::psChatMessage(MsgEntry *message)
 
     iChatType = message->GetUInt8();
     bool includeOther = iChatType == CHAT_ADVISOR;
+    bool chanMsg = iChatType == CHAT_CHANNEL;
 
     sPerson   = message->GetStr();
     sText     = message->GetStr();
     translate = message->GetBool();
     actor     = message->GetUInt32();
+    if(chanMsg)
+    	channelID = message->GetUInt16();
     if (includeOther && !message->IsEmpty())
         sOther = message->GetStr();
 
@@ -512,8 +521,101 @@ const char *psChatMessage::GetTypeText()
         case CHAT_REPORT:     return "Report";
         case CHAT_ADVISOR:    return "Advisor";
         case CHAT_ADVICE:     return "Advice";
+        case CHAT_CHANNEL:    return "Channel";
         default:              return "Unknown";
     }
+}
+
+// ---------------------------------------------------------------------------
+
+PSF_IMPLEMENT_MSG_FACTORY(psChannelJoinMessage,MSGTYPE_CHANNEL_JOIN);
+
+psChannelJoinMessage::psChannelJoinMessage(const char* name)
+{
+	msg.AttachNew(new MsgEntry(strlen(name) + 1));
+	msg->SetType(MSGTYPE_CHANNEL_JOIN);
+	msg->clientnum = 0;
+	
+	msg->Add(name);
+	
+	valid=!(msg->overrun);
+}
+
+psChannelJoinMessage::psChannelJoinMessage(MsgEntry* message)
+{
+    channel = message->GetStr();
+
+    // Sets valid flag based on message overrun state
+    valid=!(message->overrun);
+}
+
+csString psChannelJoinMessage::ToString(AccessPointers * /*access_ptrs*/)
+{
+	csString text;
+	text.Format("Channel name: %s", channel.GetData());
+	return text;
+}
+
+// ---------------------------------------------------------------------------
+
+PSF_IMPLEMENT_MSG_FACTORY(psChannelJoinedMessage,MSGTYPE_CHANNEL_JOINED);
+
+psChannelJoinedMessage::psChannelJoinedMessage(uint32_t clientnum, const char* name, uint16_t id)
+{
+	msg.AttachNew(new MsgEntry(strlen(name) + sizeof(uint16_t) + 1));
+	msg->SetType(MSGTYPE_CHANNEL_JOINED);
+	msg->clientnum = clientnum;
+	
+	msg->Add(name);
+	msg->Add(id);
+	
+	valid=!(msg->overrun);
+}
+
+psChannelJoinedMessage::psChannelJoinedMessage(MsgEntry* message)
+{
+    channel = message->GetStr();
+    id = message->GetUInt16();
+
+    // Sets valid flag based on message overrun state
+    valid=!(message->overrun);
+}
+
+csString psChannelJoinedMessage::ToString(AccessPointers * /*access_ptrs*/)
+{
+	csString text;
+	text.Format("Channel ID: %d, name: %s", id, channel.GetData());
+	return text;
+}
+
+// ---------------------------------------------------------------------------
+
+PSF_IMPLEMENT_MSG_FACTORY(psChannelLeaveMessage,MSGTYPE_CHANNEL_LEAVE);
+
+psChannelLeaveMessage::psChannelLeaveMessage(uint16_t chanID)
+{
+	msg.AttachNew(new MsgEntry(sizeof(uint16_t)));
+	msg->SetType(MSGTYPE_CHANNEL_LEAVE);
+	msg->clientnum = 0;
+	
+	msg->Add(chanID);
+	
+	valid=!(msg->overrun);
+}
+
+psChannelLeaveMessage::psChannelLeaveMessage(MsgEntry* message)
+{
+	chanID = message->GetUInt16();
+
+    // Sets valid flag based on message overrun state
+    valid=!(message->overrun);
+}
+
+csString psChannelLeaveMessage::ToString(AccessPointers * /*access_ptrs*/)
+{
+	csString text;
+	text.Format("Channel ID: %d", chanID);
+	return text;
 }
 
 // ---------------------------------------------------------------------------

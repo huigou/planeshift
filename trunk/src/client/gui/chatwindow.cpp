@@ -84,6 +84,7 @@ const char *CHAT_TYPES[] = {
 		"CHAT_GUILD",
 		"CHAT_AUCTION",
 		"CHAT_SHOUT",
+		"CHAT_CHANNEL",
 		"CHAT_TELLSELF",
 		"CHAT_REPORT",
 		"CHAT_ADVISOR",
@@ -122,21 +123,36 @@ pawsChatWindow::pawsChatWindow()
     settings.meFilters = 0;
     settings.vicinityFilters = 0;
     settings.echoScreenInSystem = false;
-    //TODO: REMOVE NEXT 3 LINES AFTER THE FIRST RELEASE MADE WITH THIS! (SO AFTER A RELEASE >= 0.4.03)
-    //sets a default color for npc and a default for mainBrackets and yourColorMix in order to
-    //allow safe update to next release
     settings.npcColor = graphics2D->FindRGB( 255, 0, 255 );
+    int white = graphics2D->FindRGB(255, 255, 255);
+    // Default to white
+    settings.playerColor = white;
+    settings.chatColor = white;
+    settings.systemColor = white;
+    settings.adminColor = white;
+    settings.tellColor = white;
+    settings.guildColor = white;
+    settings.shoutColor = white;
+    settings.channelColor = white;
+    settings.gmColor = white;
+    settings.yourColor = white;
+    settings.groupColor = white;
+    settings.auctionColor = white;
+    settings.helpColor = white;
     settings.mainBrackets = true;
     settings.yourColorMix = true;
 
 
     for (int i = 0; i < CHAT_NLOG; i++)
         logFile[i] = NULL;
+    
+    channels.SetSize(10, 0);
 }
 
 pawsChatWindow::~pawsChatWindow()
 {
     msgqueue->Unsubscribe(this, MSGTYPE_CHAT);
+    msgqueue->Unsubscribe(this, MSGTYPE_CHANNEL_JOINED);
     msgqueue->Unsubscribe(this, MSGTYPE_SYSTEM);
 
     delete chatHistory;
@@ -153,6 +169,7 @@ bool pawsChatWindow::PostSetup()
     soundmgr = psengine->GetSoundManager();
 
     msgqueue->Subscribe(this, MSGTYPE_CHAT);
+    msgqueue->Subscribe(this, MSGTYPE_CHANNEL_JOINED);
     msgqueue->Subscribe(this, MSGTYPE_SYSTEM);
 
     SubscribeCommands();
@@ -171,6 +188,7 @@ bool pawsChatWindow::PostSetup()
         return false;
     }
     ReplayMessages();
+    JoinChannel("gossip");
     return true;
 }
 
@@ -264,6 +282,7 @@ void pawsChatWindow::LoadChatSettings()
             if ( nodeName == "npctext") settings.npcColor = col;
             if ( nodeName == "telltext") settings.tellColor = col;
             if ( nodeName == "shouttext") settings.shoutColor = col;
+            if ( nodeName == "channeltext") settings.channelColor = col;
             if ( nodeName == "gmtext") settings.gmColor = col;
             if ( nodeName == "guildtext") settings.guildColor = col;
             if ( nodeName == "yourtext") settings.yourColor = col;
@@ -395,6 +414,7 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
     // Used to hold error message between calls
     static csString error;
     int chattype = 0;
+    int hotkeyChannel = 0;
 
     if (words.GetCount()==0)
         return NULL;
@@ -459,9 +479,78 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
             pPerson.Clear();
             words.GetTail(1,text);
             chattype = CHAT_SHOUT;
-            inputText->SetText(words[0] + " ");
             DetermineChatTabAndSelect(CHAT_SHOUT);
         }
+        else if (words[0] == "/1")
+        {
+        	pPerson.Clear();
+        	words.GetTail(1,text);
+        	chattype = CHAT_CHANNEL;
+        	hotkeyChannel = 1;
+        }
+        else if (words[0] == "/2")
+		{
+			pPerson.Clear();
+			words.GetTail(1,text);
+			chattype = CHAT_CHANNEL;
+			hotkeyChannel = 2;
+		}
+        else if (words[0] == "/3")
+		{
+			pPerson.Clear();
+			words.GetTail(1,text);
+			chattype = CHAT_CHANNEL;
+			hotkeyChannel = 3;
+		}
+        else if (words[0] == "/4")
+		{
+			pPerson.Clear();
+			words.GetTail(1,text);
+			chattype = CHAT_CHANNEL;
+			hotkeyChannel = 4;
+		}
+        else if (words[0] == "/5")
+		{
+			pPerson.Clear();
+			words.GetTail(1,text);
+			chattype = CHAT_CHANNEL;
+			hotkeyChannel = 5;
+		}
+        else if (words[0] == "/6")
+		{
+			pPerson.Clear();
+			words.GetTail(1,text);
+			chattype = CHAT_CHANNEL;
+			hotkeyChannel = 6;
+		}
+        else if (words[0] == "/7")
+		{
+			pPerson.Clear();
+			words.GetTail(1,text);
+			chattype = CHAT_CHANNEL;
+			hotkeyChannel = 7;
+		}
+        else if (words[0] == "/8")
+		{
+			pPerson.Clear();
+			words.GetTail(1,text);
+			chattype = CHAT_CHANNEL;
+			hotkeyChannel = 8;
+		}
+        else if (words[0] == "/9")
+		{
+			pPerson.Clear();
+			words.GetTail(1,text);
+			chattype = CHAT_CHANNEL;
+			hotkeyChannel = 9;
+		}
+        else if (words[0] == "/10")
+		{
+			pPerson.Clear();
+			words.GetTail(1,text);
+			chattype = CHAT_CHANNEL;
+			hotkeyChannel = 10;
+		}
         else if (words[0] == "/group" || words[0] == "/gr")
         {
             pPerson.Clear();
@@ -567,8 +656,17 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
         psCharIntroduction introduce;
         msgqueue->SendMessage(introduce.msg);
     }
-
-    psChatMessage chat(0, 0, pPerson.GetDataSafe(), 0, text.GetDataSafe(), chattype, false);
+    int channelID = 0;
+    if(chattype == CHAT_CHANNEL)
+    {
+    	channelID = channels[hotkeyChannel-1];
+		if(channelID == 0)
+		{
+			ChatOutput("No channel assigned to that channel hotkey!");
+			return NULL;
+		}
+    }
+    psChatMessage chat(0, 0, pPerson.GetDataSafe(), 0, text.GetDataSafe(), chattype, false, channelID);
     if (chattype != CHAT_NPCINTERNAL)
         msgqueue->SendMessage(chat.msg);  // Send all chat msgs to server...
     else
@@ -993,6 +1091,26 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
         HandleSystemMessage(me);
         return;
     }
+    if(me->GetType() == MSGTYPE_CHANNEL_JOINED)
+    {
+    	psChannelJoinedMessage joinedMsg(me);
+    	channelIDs.Put(joinedMsg.channel, joinedMsg.id);
+    	int hotkeyChannel = 10;
+    	for(size_t i = 0; i < channels.GetSize(); i++)
+    	{
+    		if(channels[i] == 0)
+    		{
+    			hotkeyChannel = i + 1;
+    			channels[i] = joinedMsg.id;
+    			break;
+    		}
+    	}
+    	csString msg;
+    	msg.Format("Channel %s has been added with hotkey /%d", joinedMsg.channel.GetData(), hotkeyChannel);
+        ChatOutput(msg, settings.channelColor, CHAT_CHANNEL, true, false, hotkeyChannel);
+
+    	return;
+    }
 
     psChatMessage msg(me);
 
@@ -1020,6 +1138,7 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
 
     csString buff;
     int colour = -1;
+    size_t channelID = 0;
 
     if ( !havePlayerName )  // save name for auto-complete later
     {
@@ -1056,13 +1175,8 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
         }
         case CHAT_SHOUT:
         {
-            if ( msg.sText.StartsWith("/me ") )
-                buff.Format("%s %s", (const char *)msg.sPerson, ((const char *)msg.sText)+4);
-            else if ( msg.sText.StartsWith("/my ") )
-                buff.Format("%s's %s", (const char *)msg.sPerson, ((const char *)msg.sText)+4);
-            else
-                buff.Format(PawsManager::GetSingleton().Translate("%s shouts: %s"),
-                        (const char *)msg.sPerson, (const char *)msg.sText);
+			buff.Format(PawsManager::GetSingleton().Translate("%s shouts: %s"),
+					(const char *)msg.sPerson, (const char *)msg.sText);
             colour = settings.shoutColor;
             break;
         }
@@ -1256,7 +1370,19 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
             colour = settings.helpColor;
             break;
         }
-
+        
+        case CHAT_CHANNEL:
+        {
+        	channelID = channels.Find(msg.channelID);
+        	// Not yet received channel join reply
+        	if(channelID == csArrayItemNotFound)
+        		return;
+        	channelID++;
+        	buff.Format(PawsManager::GetSingleton().Translate("[%d] %s: %s"), channelID,
+						(const char *)msg.sPerson, (const char *)msg.sText);
+			colour = settings.channelColor;
+			break;
+        }
         default:
         {
             buff.Format(PawsManager::GetSingleton().Translate("Unknown Chat Type: %d"), msg.iChatType);
@@ -1292,7 +1418,7 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
 
     if (!buff.IsEmpty())
     {
-        ChatOutput(buff.GetData(), colour, msg.iChatType, flashEnabled, hasCharName);
+        ChatOutput(buff.GetData(), colour, msg.iChatType, flashEnabled, hasCharName, channelID);
     }
 
     LogMessage(CHAT_LOG_ALL, buff.GetDataSafe(), msg.iChatType);
@@ -1310,6 +1436,24 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
         if ( errorMessage )
             ChatOutput( errorMessage );
     }
+}
+
+void pawsChatWindow::JoinChannel(csString chan)
+{
+	chan.Downcase();
+	psChannelJoinMessage cmdjoin(chan);
+	cmdjoin.SendMessage();
+}
+
+bool pawsChatWindow::LeaveChannel(int hotkeyChannel)
+{	
+	uint16_t channelID = channels[hotkeyChannel - 1];
+	if(channelID == 0)
+		return false;
+	channels[hotkeyChannel - 1] = 0;
+	psChannelLeaveMessage cmdleave(channelID);
+	cmdleave.SendMessage();
+	return true;
 }
 
 
@@ -1333,6 +1477,18 @@ void pawsChatWindow::SubscribeCommands()
     cmdsource->Subscribe("/mypet",this);
     cmdsource->Subscribe("/auction",this);
     cmdsource->Subscribe("/report",this);
+    
+    // channel shortcuts
+    cmdsource->Subscribe("/1", this);
+    cmdsource->Subscribe("/2", this);
+    cmdsource->Subscribe("/3", this);
+    cmdsource->Subscribe("/4", this);
+    cmdsource->Subscribe("/5", this);
+    cmdsource->Subscribe("/6", this);
+    cmdsource->Subscribe("/7", this);
+    cmdsource->Subscribe("/8", this);
+    cmdsource->Subscribe("/9", this);
+    cmdsource->Subscribe("/10", this);
 }
 
 bool pawsChatWindow::InputActive()
@@ -1885,15 +2041,17 @@ csString pawsChatWindow::GetBracket(int type) //according to the type return the
     return "";
 }
 
-void pawsChatWindow::ChatOutput(const char* data, int colour, int type, bool flashEnabled, bool hasCharName)
+void pawsChatWindow::ChatOutput(const char* data, int colour, int type, bool flashEnabled, bool hasCharName, int hotkeyChannel)
 {
     csString s = data;
     if (settings.enableBadWordsFilterIncoming && type != CHAT_SERVER_INFO)
     {
         BadWordsFilter(s);
     }
-
-    PawsManager::GetSingleton().Publish(CHAT_TYPES[type], s, colour );
+    csString pubName = CHAT_TYPES[type];
+    if(type == CHAT_CHANNEL)
+    	pubName += hotkeyChannel;
+    PawsManager::GetSingleton().Publish(pubName, s, colour );
 }
 
 void pawsChatWindow::AddAutoCompleteName(const char *cname)

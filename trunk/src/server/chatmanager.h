@@ -27,6 +27,7 @@
 // Crystal Space Includes
 //=============================================================================
 #include <csutil/ref.h>
+#include <csutil/hashr.h>
 
 //=============================================================================
 // Project Space Includes
@@ -76,10 +77,14 @@ public:
     virtual void HandleMessage(MsgEntry *pMsg,Client *client) { }
     void HandleChatMessage (MsgEntry *me, Client *client);
     void HandleCacheMessage(MsgEntry *me, Client *client);
+    void HandleChannelJoinMessage(MsgEntry *me, Client *client);
+    void HandleChannelLeaveMessage(MsgEntry *me, Client *client);
 
     void SendNotice(psChatMessage& msg);
 
     NpcResponse *CheckNPCEvent(Client *client,csString& trigger,gemNPC * &target);
+    
+    void RemoveAllChannels(Client *client);
 
     void SendGuild(const csString & sender, EID senderEID, psGuildInfo * guild, psChatMessage& msg);
 
@@ -103,6 +108,16 @@ protected:
 	
     /// If this returns true, all went well.  If it returns false, the client was muted
     bool FloodControl(csString& newMessage, Client *client);
+    
+    // Chat channel state
+    // uint32_t here to allow hashing
+    // csHashReversible is not used because it does not allow a many to many mapping
+    csHash<uint16_t, uint32_t> channelSubscriptions;
+    csHash<uint32_t, uint32_t> channelSubscribers;
+    
+    csHashReversible<uint32_t, csString> channelIDs;
+    
+    uint16_t nextChannelID;
 };
 
 

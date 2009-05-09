@@ -47,6 +47,16 @@
 			<subscribe data="CHAT_NPC_ME" />
 			<subscribe data="CHAT_NPC_MY" />
 			<subscribe data="CHAT_NPC_NARRATE" />
+			<subscribe data="CHAT_CHANNEL1" />
+			<subscribe data="CHAT_CHANNEL2" />
+			<subscribe data="CHAT_CHANNEL3" />
+			<subscribe data="CHAT_CHANNEL4" />
+			<subscribe data="CHAT_CHANNEL5" />
+			<subscribe data="CHAT_CHANNEL6" />
+			<subscribe data="CHAT_CHANNEL7" />
+			<subscribe data="CHAT_CHANNEL8" />
+			<subscribe data="CHAT_CHANNEL9" />
+			<subscribe data="CHAT_CHANNEL10" />
 		</subscriptions>
                 <frame x="6" y="2" width="320" height="95" border="no" />
 
