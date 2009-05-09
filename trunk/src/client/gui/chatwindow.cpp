@@ -141,6 +141,7 @@ pawsChatWindow::pawsChatWindow()
     settings.helpColor = white;
     settings.mainBrackets = true;
     settings.yourColorMix = true;
+    settings.joindefaultchannel = true;
 
 
     for (int i = 0; i < CHAT_NLOG; i++)
@@ -188,7 +189,8 @@ bool pawsChatWindow::PostSetup()
         return false;
     }
     ReplayMessages();
-    JoinChannel("gossip");
+    if(settings.joindefaultchannel)
+    	JoinChannel("Gossip");
     return true;
 }
 
@@ -248,6 +250,8 @@ void pawsChatWindow::LoadChatSettings()
                 settings.mainBrackets = option->GetAttributeValueAsBool("value", true);
             else if (nodeName == "yourcolormix")
                 settings.yourColorMix = option->GetAttributeValueAsBool("value", true);
+            else if (nodeName == "joindefaultchannel")
+            	settings.joindefaultchannel = option->GetAttributeValueAsBool("value", true);
             else
             {
                 for (int i = 0; i < CHAT_NLOG; i++)
@@ -1094,7 +1098,7 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
     if(me->GetType() == MSGTYPE_CHANNEL_JOINED)
     {
     	psChannelJoinedMessage joinedMsg(me);
-    	channelIDs.Put(joinedMsg.channel, joinedMsg.id);
+    	channelIDs.PutUnique(joinedMsg.channel, joinedMsg.id);
     	int hotkeyChannel = 10;
     	for(size_t i = 0; i < channels.GetSize(); i++)
     	{
@@ -1378,7 +1382,7 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
         	if(channelID == csArrayItemNotFound)
         		return;
         	channelID++;
-        	buff.Format(PawsManager::GetSingleton().Translate("[%d] %s: %s"), channelID,
+        	buff.Format("[%d: %s] %s: %s", channelID, channelIDs.GetKey(msg.channelID, "").GetData(),
 						(const char *)msg.sPerson, (const char *)msg.sText);
 			colour = settings.channelColor;
 			break;
@@ -1440,7 +1444,6 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
 
 void pawsChatWindow::JoinChannel(csString chan)
 {
-	chan.Downcase();
 	psChannelJoinMessage cmdjoin(chan);
 	cmdjoin.SendMessage();
 }
@@ -1453,6 +1456,10 @@ bool pawsChatWindow::LeaveChannel(int hotkeyChannel)
 	channels[hotkeyChannel - 1] = 0;
 	psChannelLeaveMessage cmdleave(channelID);
 	cmdleave.SendMessage();
+	csString msg;
+	msg.Format("Left channel %d.", hotkeyChannel);
+    ChatOutput(msg, settings.channelColor, CHAT_CHANNEL, true, false, hotkeyChannel);
+
 	return true;
 }
 
