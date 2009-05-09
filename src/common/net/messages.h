@@ -43,7 +43,7 @@ class psLinearMovement;
 
 // This holds the version number of the network code, remember to increase
 // this each time you do an update which breaks compatibility
-#define PS_NETVERSION   0x009C
+#define PS_NETVERSION   0x009D
 // Remember to bump the version in pscssetup.h, as well.
 
 
@@ -79,6 +79,9 @@ enum MSG_TYPES
     MSGTYPE_AUTHREJECTED,
     MSGTYPE_DISCONNECT,
     MSGTYPE_CHAT,
+    MSGTYPE_CHANNEL_JOIN,
+    MSGTYPE_CHANNEL_JOINED,
+    MSGTYPE_CHANNEL_LEAVE,
     MSGTYPE_GUILDCMD,
     MSGTYPE_USERCMD,
     MSGTYPE_SYSTEM,
@@ -744,6 +747,7 @@ enum {
     CHAT_GUILD,
     CHAT_AUCTION,
     CHAT_SHOUT,
+    CHAT_CHANNEL,
     CHAT_TELLSELF,
     CHAT_REPORT,
     CHAT_ADVISOR,
@@ -791,12 +795,14 @@ public:
 
     /** Keeps the eid of the originator client for chat bubbles */
     EID actor;
+    
+    uint16_t channelID;
 
     /** This function creates a PS Message struct given a chat text to send
      * out. This would be used for outgoing, new message creation
      */
     psChatMessage(uint32_t cnum, EID actorid, const char *person, const char * other, const char *chatMessage,
-          uint8_t type, bool translate);
+          uint8_t type, bool translate, uint16_t channelID = 0);
 
     /** This constructor receives a PS Message struct and cracks it apart
      * to provide more easily usable fields.  It is intended for use on
@@ -819,6 +825,70 @@ public:
     const char *GetTypeText();
 };
 
+/**
+ * Message from a client for a request to join a chat channel
+ */
+class psChannelJoinMessage : public psMessageCracker
+{
+public:
+	csString channel;
+	psChannelJoinMessage(const char* name);
+	psChannelJoinMessage(MsgEntry *message);
+	
+	PSF_DECLARE_MSG_FACTORY();
+
+    /**
+     * @brief Converts the message into human readable string.
+     *
+     * @param access_ptrs A struct to a number of access pointers.
+     * @return Return a human readable string for the message.
+     */
+    virtual csString ToString(AccessPointers * access_ptrs);
+};
+
+/**
+ * Message from the server with a channel id
+ */
+class psChannelJoinedMessage : public psMessageCracker
+{
+public:
+	uint16_t id;
+	csString channel;
+	psChannelJoinedMessage(uint32_t clientnum, const char* name, uint16_t id);
+	psChannelJoinedMessage(MsgEntry *message);
+	
+	PSF_DECLARE_MSG_FACTORY();
+
+    /**
+     * @brief Converts the message into human readable string.
+     *
+     * @param access_ptrs A struct to a number of access pointers.
+     * @return Return a human readable string for the message.
+     */
+    virtual csString ToString(AccessPointers * access_ptrs);
+};
+
+/**
+ * Message from a client for a request to leave a chat channel
+ */
+class psChannelLeaveMessage : public psMessageCracker
+{
+public:
+	uint16_t chanID;
+	psChannelLeaveMessage(uint16_t id);
+	psChannelLeaveMessage(MsgEntry *message);
+	
+	PSF_DECLARE_MSG_FACTORY();
+	
+
+    /**
+     * @brief Converts the message into human readable string.
+     *
+     * @param access_ptrs A struct to a number of access pointers.
+     * @return Return a human readable string for the message.
+     */
+    virtual csString ToString(AccessPointers * access_ptrs);
+};
 
 /**
  * Messages with system information sent to user.

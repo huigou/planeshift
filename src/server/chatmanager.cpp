@@ -24,6 +24,7 @@
 //=============================================================================
 // Crystal Space Includes
 //=============================================================================
+#include <csutil/hashr.h>
 
 //=============================================================================
 // Project Space Includes
@@ -54,14 +55,18 @@
 #include "adminmanager.h"
 
 
-ChatManager::ChatManager()
+ChatManager::ChatManager() : nextChannelID(1)
 {
+	psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ChatManager>(this,&ChatManager::HandleChannelJoinMessage),MSGTYPE_CHANNEL_JOIN,REQUIRE_ANY_CLIENT);
+	psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ChatManager>(this,&ChatManager::HandleChannelLeaveMessage),MSGTYPE_CHANNEL_LEAVE,REQUIRE_ANY_CLIENT);
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ChatManager>(this,&ChatManager::HandleChatMessage),MSGTYPE_CHAT,REQUIRE_ALIVE);
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ChatManager>(this,&ChatManager::HandleCacheMessage),MSGTYPE_CACHEFILE,REQUIRE_READY_CLIENT);
 }
 
 ChatManager::~ChatManager()
 {
+	psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_CHANNEL_JOIN);
+	psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_CHANNEL_LEAVE);
     psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_CHAT);
     psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_CACHEFILE);
 }
@@ -113,6 +118,36 @@ void ChatManager::HandleChatMessage(MsgEntry *me, Client *client)
 		  case CHAT_SHOUT:
 		  {
 			  SendShout(client, msg);
+			  break;
+		  }
+		  case CHAT_CHANNEL:
+		  {
+			  csArray<uint16_t> subscribed = channelSubscriptions.GetAll(client->GetClientNum());
+			  bool found = false;
+			  for(size_t i = 0; i < subscribed.GetSize(); i++)
+			  {
+				  if(subscribed[i] == msg.channelID)
+					  found = true;
+			  }
+			  if(!found)
+			  {
+				  psserver->SendSystemError(client->GetClientNum(), "You have not yet joined this channel.");
+				  break;
+			  }
+			  
+			  psChatMessage newMsg(client->GetClientNum(), client->GetActor()->GetEID(), client->GetName(), 0, msg.sText, msg.iChatType, msg.translate, msg.channelID);
+			  
+			  csArray<uint32_t> subscribers = channelSubscribers.GetAll(msg.channelID);
+			  csArray<PublishDestination> destArray;
+			  for (size_t i = 0; i < subscribers.GetSize(); i++)
+			  {
+				  destArray.Push(PublishDestination(subscribers[i], NULL, 0, 0));
+				  Client *target = psserver->GetConnections()->Find(subscribers[i]);
+				  if (target && target->IsReady())
+					  target->GetActor()->LogChatMessage(client->GetActor()->GetFirstName(), newMsg);
+			  }
+			  
+			  newMsg.Multicast(destArray, 0, PROX_LIST_ANY_RANGE );
 			  break;
 		  }
 		  case CHAT_PET_ACTION:
@@ -267,6 +302,78 @@ void ChatManager::HandleCacheMessage(MsgEntry *me, Client *client)
 	psCachedFileMessage msg(me);
 	printf("Got request for file '%s'\n",msg.hash.GetDataSafe());
 	SendAudioFile(client,msg.hash);
+}
+
+void ChatManager::HandleChannelJoinMessage(MsgEntry *me, Client *client)
+{
+	psChannelJoinMessage msg(me);
+	if(msg.channel.Length() == 0)
+		return;
+	
+	uint16_t channelID = channelIDs.Get(msg.channel, 0);
+	if(channelID == 0)
+	{
+		uint16_t start = channelID = nextChannelID++;
+		while(!channelSubscribers.GetAll(channelID).IsEmpty() && nextChannelID != start - 1)
+		{
+			channelID = nextChannelID++;
+			if(nextChannelID == 0)
+				nextChannelID++;
+		}
+		if(nextChannelID == start - 1)
+		{
+			psserver->SendSystemError(client->GetClientNum(), "Server channel limit reached!");
+			return;
+		}
+		channelIDs.Put(msg.channel, channelID);
+	}
+	else
+	{
+		csArray<uint16_t> subscribed = channelSubscriptions.GetAll(client->GetClientNum());
+		bool found = false;
+		for(size_t i = 0; i < subscribed.GetSize(); i++)
+		{
+		  if(subscribed[i] == channelID)
+			  found = true;
+		}
+		if(found)
+		{
+		  psserver->SendSystemError(client->GetClientNum(), "You have already joined this channel.");
+		  return;
+		}
+	}
+	if(!channelSubscriptions.GetAll(client->GetClientNum()).GetSize() > 10)
+	{
+		psserver->SendSystemError(client->GetClientNum(), "You have joined more than 10 channels, please leave some channels first.");
+		return;
+	}
+	csString reply;
+	reply.Format("Welcome to the %s channel! %d players in this channel.", msg.channel.GetData(), channelSubscribers.GetAll(channelID).GetSize());
+		
+	channelSubscriptions.Put(client->GetClientNum(), channelID);
+	channelSubscribers.Put(channelID, client->GetClientNum());
+	
+	psserver->SendSystemInfo(client->GetClientNum(), reply);
+	psChannelJoinedMessage replyMsg(client->GetClientNum(), msg.channel, channelID);
+	replyMsg.SendMessage();
+}
+
+void ChatManager::HandleChannelLeaveMessage(MsgEntry *me, Client *client)
+{
+	psChannelLeaveMessage msg(me);
+	
+	channelSubscriptions.Delete(client->GetClientNum(), msg.chanID);
+	channelSubscribers.Delete(msg.chanID, client->GetClientNum());
+}
+
+void ChatManager::RemoveAllChannels(Client *client)
+{
+	csHash<uint16_t, uint32_t>::Iterator iter(channelSubscriptions.GetIterator(client->GetClientNum()));
+	
+	while(iter.HasNext())
+		channelSubscribers.Delete(iter.Next(), client->GetClientNum());
+	
+	channelSubscriptions.DeleteAll(client->GetClientNum());
 }
 
 /// TODO: This function is guaranteed not to work atm.-Keith

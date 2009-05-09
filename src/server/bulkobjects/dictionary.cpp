@@ -370,12 +370,8 @@ bool NPCDialogDict::LoadTriggers(iDataConnection *db)
 
         AddWords(newtrig->trigger); // Make sure these trigger words are in known word list.
 
-        if (triggers.Insert(newtrig))
-        {
-            Error4("Found equal trigger %d (%s) in triggers, area %s\n", newtrig->id, newtrig->trigger.GetDataSafe(), newtrig->area.GetDataSafe());
-            delete newtrig;
-            continue;
-        }
+        triggers.Insert(newtrig);
+
 		if (!FindKnowledgeArea(newtrig->area))
 		{
 			printf("--------Adding KA: %s\n",newtrig->area.GetDataSafe());
