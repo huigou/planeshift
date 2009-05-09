@@ -1808,6 +1808,14 @@ void GEMClientActor::SetMode(uint8_t mode, bool newactor)
             cal3dstate->SetAnimAction("sit", 0.0f, 1.0f);
             SetIdleAnimation("sit idle");
             break;
+        
+        case psModeMessage::STATUE: //used to make statue like character which don't move
+            cal3dstate->ClearAllAnims();
+            cal3dstate->SetAnimAction("statue",0.0f,1.0f);
+            GetMovement()->SetVelocity(0);
+            GetMovement()->SetAngularVelocity(0);
+            cal3dstate->SetAnimationTime(9999);  // the very end of the animation
+            break;
 
         default:
             Error2("Unhandled mode: %d", mode);

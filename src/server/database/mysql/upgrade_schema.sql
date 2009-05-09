@@ -1191,6 +1191,11 @@ Exp = if(StartQuality < CurrentQuality, 2*(CurrentQuality-StartQuality), 0);
 
 ALTER TABLE `trade_processes` MODIFY COLUMN `secondary_skill_id` INTEGER;
 
+#1218 - added a statue column in character table to determine statue characters
+
+ALTER TABLE `characters` ADD COLUMN `statue` TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Determines if the character is a statue so will be put in STATUE mode' AFTER `banker`;
+UPDATE `server_options` SET `option_value`='1218' WHERE `option_name`='db_version';
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to
