@@ -86,7 +86,7 @@ const char *psCharacter::characterTypeName[] = { "player", "npc", "pet" };
 PoolAllocator<psCharacter> psCharacter::characterpool;
 
 const char * psCharacter::player_mode_to_str[] =
- {"unknown","peace","combat","spell casting","working","dead","sitting","carrying too much","exhausted", "defeated"};
+ {"unknown","peace","combat","spell casting","working","dead","sitting","carrying too much","exhausted", "defeated", "statued" };
 
 void *psCharacter::operator new(size_t allocSize)
 {
@@ -174,6 +174,7 @@ psCharacter::psCharacter() : inventory(this),
     lastResponse = -1;
 
     banker = false;
+    isStatue = false;
 }
 
 psCharacter::~psCharacter()
@@ -218,7 +219,7 @@ bool psCharacter::Load(iResultRow& row)
 
     SetFullName(row["name"], row["lastname"]);
     SetOldLastName( row["old_lastname"] );
-
+    
     unsigned int raceid = row.GetUInt32("racegender_id");
     psRaceInfo *raceinfo = CacheManager::GetSingleton().GetRaceInfoByID(raceid);
     if (!raceinfo)
@@ -499,6 +500,10 @@ bool psCharacter::Load(iResultRow& row)
     // Load if the character/npc is a banker
     if(row.GetInt("banker") == 1)
         banker = true;
+        
+     // Load if the character is a statue
+    if(row.GetInt("statue") == 1)
+        isStatue = true;
 
     loaded = true;
     return true;
@@ -1211,6 +1216,7 @@ bool psCharacter::CanSwitchMode(PSCHARACTER_MODE from, PSCHARACTER_MODE to)
         case PSCHARACTER_MODE_SIT:
         case PSCHARACTER_MODE_PEACE:
         case PSCHARACTER_MODE_DEAD:
+        case PSCHARACTER_MODE_STATUE:
         default:
             return true;
     }
@@ -1258,6 +1264,7 @@ void psCharacter::SetMode(PSCHARACTER_MODE newmode, uint32_t clientnum, uint32_t
                             newmode != PSCHARACTER_MODE_SIT &&
                             newmode != PSCHARACTER_MODE_EXHAUSTED &&
                             newmode != PSCHARACTER_MODE_OVERWEIGHT &&
+                            newmode != PSCHARACTER_MODE_STATUE &&
                             !isFrozen);
 
     actor->SetAlive(newmode != PSCHARACTER_MODE_DEAD);
@@ -1285,6 +1292,7 @@ void psCharacter::SetMode(PSCHARACTER_MODE newmode, uint32_t clientnum, uint32_t
 
         case PSCHARACTER_MODE_DEAD:
         case PSCHARACTER_MODE_OVERWEIGHT:
+        case PSCHARACTER_MODE_STATUE:
             SetStaminaRegenerationNone();  // no stamina regen while dead or overweight
             break;
         case PSCHARACTER_MODE_DEFEATED:
@@ -1306,7 +1314,10 @@ void psCharacter::SetMode(PSCHARACTER_MODE newmode, uint32_t clientnum, uint32_t
 
 void psCharacter::ResetMode()
 {
-    player_mode = PSCHARACTER_MODE_PEACE;
+    if(!isStatue)
+        player_mode = PSCHARACTER_MODE_PEACE;
+    else
+        player_mode = PSCHARACTER_MODE_STATUE;
     combat_stance = getStance("Normal");
 }
 

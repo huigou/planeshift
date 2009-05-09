@@ -1367,7 +1367,8 @@ public:
         SIT,
         OVERWEIGHT,
         EXHAUSTED,
-        DEFEATED
+        DEFEATED,
+        STATUE
     };
 
 public:

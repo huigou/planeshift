@@ -150,7 +150,8 @@ enum PSCHARACTER_MODE
     PSCHARACTER_MODE_OVERWEIGHT,
     PSCHARACTER_MODE_EXHAUSTED,
     PSCHARACTER_MODE_DEFEATED,
-    PSCHARACTER_MODE_COUNT
+    PSCHARACTER_MODE_STATUE,
+    PSCHARACTER_MODE_COUNT,
 };
 
 enum PSCHARACTER_CUSTOM
@@ -552,6 +553,8 @@ protected:
     int  lastResponse;
     /// Amount of money ready to be looted
     int  loot_money;
+    /// Says if this npc is a statue
+    bool isStatue;
 
 public:
     psCharacterInventory& Inventory() { return inventory; }
