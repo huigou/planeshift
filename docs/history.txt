@@ -1,3 +1,16 @@
+*** 2009-05-09 by Stefano Angeleri
+- Added statue support, which is handled by a column in the character table
+  which will set the mode STATUE to the character. this will run the statue
+  anim which is just another definition of the idle one and it's put on the
+  last frame in order to not make it actually play and make the npc stand
+  still (remember to put those impervious).
+  In order to make a race work correctly you must add a line like this in the
+  cal3d file:
+  <animation file="klyrosm_idle.CAF"        name="statue"        type="action"  lock="yes" />
+  and then set statue in the character table.
+- Fixed a memory leak on ccheck patch by Loyni
+- Added a separate Exp optional parameter for the mining experience math script
+
 *** 2009-05-06 by Kenny Graunke
 - Fixed terrible movement bugs by reverting two recent changes.
 - Changed server-forced position updates (i.e. teleporting) to use a new
