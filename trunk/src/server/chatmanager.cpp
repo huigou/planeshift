@@ -139,6 +139,10 @@ void ChatManager::HandleChatMessage(MsgEntry *me, Client *client)
 				  break;
 			  }
 			  
+			  // channel 1 is public
+			  if(msg.channelID == 1)
+				  CPrintf (CON_WARNING, "Gossip: %s\n", msg.sText.GetData());
+			  
 			  psChatMessage newMsg(client->GetClientNum(), client->GetActor()->GetEID(), client->GetName(), 0, msg.sText, msg.iChatType, msg.translate, msg.channelID);
 			  
 			  csArray<uint32_t> subscribers = channelSubscribers.GetAll(msg.channelID);
