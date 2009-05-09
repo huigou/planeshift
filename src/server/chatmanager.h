@@ -115,7 +115,10 @@ protected:
     csHash<uint16_t, uint32_t> channelSubscriptions;
     csHash<uint32_t, uint32_t> channelSubscribers;
     
-    csHashReversible<uint32_t, csString> channelIDs;
+    // case-insensitive
+    csHash<uint32_t, csString> channelIDs;
+    // case-sensitive
+    csHash<csString, uint32_t> channelNames;
     
     uint16_t nextChannelID;
 };

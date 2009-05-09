@@ -55,12 +55,16 @@
 #include "adminmanager.h"
 
 
-ChatManager::ChatManager() : nextChannelID(1)
+ChatManager::ChatManager() : nextChannelID(2)
 {
 	psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ChatManager>(this,&ChatManager::HandleChannelJoinMessage),MSGTYPE_CHANNEL_JOIN,REQUIRE_ANY_CLIENT);
 	psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ChatManager>(this,&ChatManager::HandleChannelLeaveMessage),MSGTYPE_CHANNEL_LEAVE,REQUIRE_ANY_CLIENT);
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ChatManager>(this,&ChatManager::HandleChatMessage),MSGTYPE_CHAT,REQUIRE_ALIVE);
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ChatManager>(this,&ChatManager::HandleCacheMessage),MSGTYPE_CACHEFILE,REQUIRE_READY_CLIENT);
+    
+    // Default channel
+    channelIDs.PutUnique("Gossip", 1);
+    channelNames.PutUnique(1, "Gossip");
 }
 
 ChatManager::~ChatManager()
@@ -307,10 +311,16 @@ void ChatManager::HandleCacheMessage(MsgEntry *me, Client *client)
 void ChatManager::HandleChannelJoinMessage(MsgEntry *me, Client *client)
 {
 	psChannelJoinMessage msg(me);
+	msg.channel.Trim();
 	if(msg.channel.Length() == 0)
 		return;
+	if(msg.channel.Length() > 30)
+		return;
 	
-	uint16_t channelID = channelIDs.Get(msg.channel, 0);
+	csString nocaseName = msg.channel;
+	nocaseName.Downcase();
+	// Search is case-insensitive
+	uint16_t channelID = channelIDs.Get(nocaseName, 0);
 	if(channelID == 0)
 	{
 		uint16_t start = channelID = nextChannelID++;
@@ -325,7 +335,9 @@ void ChatManager::HandleChannelJoinMessage(MsgEntry *me, Client *client)
 			psserver->SendSystemError(client->GetClientNum(), "Server channel limit reached!");
 			return;
 		}
-		channelIDs.Put(msg.channel, channelID);
+		// Channel creation is case-sensitive
+		channelIDs.PutUnique(msg.channel, channelID);
+		channelNames.PutUnique(channelID, msg.channel);
 	}
 	else
 	{
@@ -348,13 +360,13 @@ void ChatManager::HandleChannelJoinMessage(MsgEntry *me, Client *client)
 		return;
 	}
 	csString reply;
-	reply.Format("Welcome to the %s channel! %d players in this channel.", msg.channel.GetData(), channelSubscribers.GetAll(channelID).GetSize());
+	reply.Format("Welcome to the %s channel! %d players in this channel.", channelNames.Get(channelID, "").GetData(), (int)channelSubscribers.GetAll(channelID).GetSize());
 		
 	channelSubscriptions.Put(client->GetClientNum(), channelID);
 	channelSubscribers.Put(channelID, client->GetClientNum());
 	
 	psserver->SendSystemInfo(client->GetClientNum(), reply);
-	psChannelJoinedMessage replyMsg(client->GetClientNum(), msg.channel, channelID);
+	psChannelJoinedMessage replyMsg(client->GetClientNum(), channelNames.Get(channelID, "").GetData(), channelID);
 	replyMsg.SendMessage();
 }
 
