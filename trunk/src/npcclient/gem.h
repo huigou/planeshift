@@ -116,6 +116,8 @@ protected:
     bool visible;
     bool invincible;
     InstanceID  instance;
+    
+    csRef<iEngine> engine;
 };
 
 

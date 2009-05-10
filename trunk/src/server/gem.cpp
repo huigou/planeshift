@@ -139,6 +139,8 @@ GEMSupervisor::GEMSupervisor(iObjectRegistry *objreg,
     psserver->GetEventManager()->Subscribe(this,MSGTYPE_DAMAGE_EVENT,NO_VALIDATION);
     psserver->GetEventManager()->Subscribe(this,MSGTYPE_STATDRUPDATE, REQUIRE_READY_CLIENT );
     psserver->GetEventManager()->Subscribe(this,MSGTYPE_STATS, REQUIRE_READY_CLIENT);
+    
+    engine = csQueryRegistry<iEngine> (psserver->GetObjectReg());
 }
 
 GEMSupervisor::~GEMSupervisor()
@@ -518,7 +520,6 @@ gemObject* GEMSupervisor::FindAttachedObject( iObject* object )
 csArray<gemObject*> GEMSupervisor::FindNearbyEntities( iSector* sector, const csVector3& pos, float radius, bool doInvisible )
 {
     csArray<gemObject*> list;
-    csRef<iEngine> engine = csQueryRegistry<iEngine> (psserver->GetObjectReg());
 
     csRef<iMeshWrapperIterator> obj_it =  engine->GetNearbyMeshes( sector, pos, radius );
     while (obj_it->HasNext())

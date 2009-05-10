@@ -112,8 +112,6 @@ bool psEffectObjParticles::Render(const csVector3 &up)
 	mesh->GetMeshObject()->SetMixMode (mixmode);
 
     // disable culling
-    csRef<iStringSet> globalStringSet = csQueryRegistryTagInterface<iStringSet> 
-        (psCSSetup::object_reg, "crystalspace.shared.stringset");
     csStringID viscull_id = globalStringSet->Request ("viscull");
     mesh->GetMeshObject()->GetObjectModel()->SetTriangleData(viscull_id, 0);
 
