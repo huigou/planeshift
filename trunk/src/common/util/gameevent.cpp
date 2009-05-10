@@ -41,7 +41,8 @@ psGameEvent::psGameEvent(csTicks ticks,int offsetticks, const char* newType)
         triggerticks = csGetTicks() + offsetticks;
     }
 
-    strcpy(type,newType);
+    strncpy(type,newType, 31);
+    type[31] = '\0';
     id =  CS::Threading::AtomicOperations::Increment(&nextid);
     valid = true;
 }
