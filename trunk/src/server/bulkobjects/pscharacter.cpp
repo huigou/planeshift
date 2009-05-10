@@ -1836,7 +1836,7 @@ void psCharacter::SetStaminaRegenerationWork(int skill)
     // Stamina drain needs to be set depending on the complexity of the task.
     psSkillInfo* skillInfo = CacheManager::GetSingleton().GetSkillByID(skill);
     //if skill is none (-1) we set zero here
-    int factor = skillInfo? skillInfo->mental_factor : 0;
+    int factor = skillInfo? skillInfo->mental_factor : 100;
     GetPStaminaRate().SetBase(GetPStaminaRate().Base()-6.0*(100-factor)/100);
     GetMStaminaRate().SetBase(GetMStaminaRate().Base()-6.0*(100-factor)/100);
 }
