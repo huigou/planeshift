@@ -28,6 +28,9 @@
   DB VERSION BUMP 1218
 - patch for PS#2480 - setskill has bad fallback defaults - by making a missing
   value showing up an error in place of silently setting a default one
+- Fixed some warnings from MSVC patch by loyni
+- Fixed a bug which didn't allow to set skills as none (-1) for trasformations
+  and caused a crash in that case
 
 *** 2009-05-09 by Stefano Angeleri
 - Added statue support, which is handled by a column in the character table
