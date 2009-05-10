@@ -24,10 +24,11 @@
 *** 2009-05-10 by Stefano Angeleri
 - patch for PS#2917 - increased say range in guild houses. Added a column
   in sectors table which specifies the range of the say for that sector.
-  patch by aiken
-  DB VERSION BUMP 1218
+  patch by Aiken
+  DB VERSION BUMP 1219
 - patch for PS#2480 - setskill has bad fallback defaults - by making a missing
-  value showing up an error in place of silently setting a default one
+  value showing up an error in place of silently setting a default one 
+  patch by Aiken
 - Fixed some warnings from MSVC patch by loyni
 - Fixed a bug which didn't allow to set skills as none (-1) for trasformations
   and caused a crash in that case
