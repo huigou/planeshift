@@ -502,7 +502,10 @@ void AdviceManager::HandleListAdvisors( Client *advisor )
     for (size_t i = 0; i < advisors.GetSize(); i++)
     {
             Client * client = psserver->GetConnections()->Find(advisors[i].id);
-            psserver->SendSystemInfo(advisor->GetClientNum(),"%s %s", client->GetName(), advisors[i].GM ? "(GM)" : "");
+            //An advisor might have left the game in the same exact moment we are parsing this
+            //so better to check if it's still valid before going on
+            if(client)
+                psserver->SendSystemInfo(advisor->GetClientNum(),"%s %s", client->GetName(), advisors[i].GM ? "(GM)" : "");
 
     }
 }
