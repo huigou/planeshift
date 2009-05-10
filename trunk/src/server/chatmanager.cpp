@@ -25,6 +25,9 @@
 // Crystal Space Includes
 //=============================================================================
 #include <csutil/hashr.h>
+#include <iengine/movable.h>
+#include <iengine/mesh.h>
+
 
 //=============================================================================
 // Project Space Includes
@@ -40,6 +43,7 @@
 #include "bulkobjects/psnpcdialog.h"
 #include "bulkobjects/dictionary.h"
 #include "bulkobjects/psguildinfo.h"
+#include "bulkobjects/pssectorinfo.h"
 
 //=============================================================================
 // Local Space Includes
@@ -425,15 +429,26 @@ void ChatManager::SendShout(Client *c, psChatMessage& msg)
 
 void ChatManager::SendSay(uint32_t clientNum, gemActor *actor, psChatMessage& msg,const char* who)
 {
+    float range = 0;
+    psSectorInfo * sectorinfo;
+    iSector * sector = actor->GetMeshWrapper()->GetMovable()->GetSectors()->Get(0);
+
+    if (sector)
+        sectorinfo = CacheManager::GetSingleton().GetSectorInfoByName(sector->QueryObject()->GetName());
+    if (sectorinfo)
+        range = sectorinfo->say_range;
+    if (range == 0) // If 0 set default
+        range = CHAT_SAY_RANGE;
+
     psChatMessage newMsg(clientNum, actor->GetEID(), who, 0, msg.sText, msg.iChatType, msg.translate);
     csArray<PublishDestination>& clients = actor->GetMulticastClients();
-    newMsg.Multicast(clients, 0, CHAT_SAY_RANGE );
+    newMsg.Multicast(clients, 0, range);
 
     // The message is saved to the chat history of all the clients around (PS#2789)
     for (size_t i = 0; i < clients.GetSize(); i++)
     {
         Client *target = psserver->GetConnections()->Find(clients[i].client);
-        if (target && clients[i].dist < CHAT_SAY_RANGE)
+        if (target && clients[i].dist < range)
             target->GetActor()->LogChatMessage(actor->GetFirstName(), newMsg);
     }
 }

@@ -81,6 +81,8 @@ public:
     unsigned int fogFade;
     int r,g,b;
 
+    float say_range;
+
     csString god_name;
 };
 
