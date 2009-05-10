@@ -32,7 +32,7 @@ class EventManager;
  */
 class psGameEvent
 {
-    char type[70];          /// The type of this GameEvent, used for debugging
+    char type[32];          /// The type of this GameEvent, used for debugging
 public:
     static EventManager *eventmanager;
     
