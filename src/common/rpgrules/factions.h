@@ -68,7 +68,7 @@ protected:
     csHash<FactionStanding*, int>   factionstandings;
 
     /// A list of all the factions in this set
-    csHash<Faction*, int>   factions_by_id;
+    csHash<Faction*, int>*   factions_by_id;
 
 public:
     /** Construct the faction set based on the comma delimited text.
