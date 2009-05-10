@@ -36,6 +36,7 @@ CREATE TABLE `sectors` (
   `lightning_max_gap` int(10) unsigned NOT NULL default '0',
   `collide_objects` tinyint(1) NOT NULL default '0',
   `non_transient_objects` tinyint(1) NOT NULL default '0',
+  `say_range` float(5,2) unsigned NOT NULL default '0.0' COMMENT 'Determines the range of say in the specific sector. Set 0.0 to use default.',
   `god_name` VARCHAR(45) NOT NULL DEFAULT 'Laanx',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `name` (`name`)
@@ -46,14 +47,14 @@ CREATE TABLE `sectors` (
 --
 
 /*!40000 ALTER TABLE `sectors` DISABLE KEYS */;
-INSERT INTO `sectors` (`id`,`name`,`rain_enabled`,`rain_min_gap`,`rain_max_gap`,`rain_min_duration`,`rain_max_duration`,`rain_min_drops`,`rain_max_drops`,`rain_min_fade_in`,`rain_max_fade_in`,`rain_min_fade_out`,`rain_max_fade_out`,`lightning_min_gap`,`lightning_max_gap`,`collide_objects`, `non_transient_objects`, `god_name`) VALUES 
- (1,'room','N',0,0,0,0,0,0,0,0,0,0,0,0,0, 0, 'Laanx'),
- (2,'temple','N',0,0,0,0,0,0,0,0,0,0,0,0,0, 0,'Laanx'),
- (3,'NPCroom','N',15000,15000,10000,10000,8000,8000,5000,5000,5000,5000,4000,4000,0, 0,'Laanx'),
- (4,'NPCroom1','N',15000,15000,10000,10000,8000,8000,5000,5000,5000,5000,4000,4000,0, 0, 'Kemedes'),
- (5,'NPCroom2','N',15000,15000,10000,10000,8000,8000,5000,5000,5000,5000,4000,4000,0, 0, 'Laanx'),
- (6,'NPCroom3','N',15000,15000,10000,10000,8000,8000,5000,5000,5000,5000,4000,4000,1, 1, 'Laanx'),
- (7,'NPCroomwarp','N',15000,15000,10000,10000,8000,8000,5000,5000,5000,5000,4000,4000,0, 0, 'Laanx');
+INSERT INTO `sectors` (`id`,`name`,`rain_enabled`,`rain_min_gap`,`rain_max_gap`,`rain_min_duration`,`rain_max_duration`,`rain_min_drops`,`rain_max_drops`,`rain_min_fade_in`,`rain_max_fade_in`,`rain_min_fade_out`,`rain_max_fade_out`,`lightning_min_gap`,`lightning_max_gap`,`collide_objects`, `non_transient_objects`, `say_range`, `god_name`) VALUES 
+ (1,'room','N',0,0,0,0,0,0,0,0,0,0,0,0,0, 0, 10.0, 'Laanx'),
+ (2,'temple','N',0,0,0,0,0,0,0,0,0,0,0,0,0, 0, 10.0, 'Laanx'),
+ (3,'NPCroom','N',15000,15000,10000,10000,8000,8000,5000,5000,5000,5000,4000,4000,0, 0, 10.0, 'Laanx'),
+ (4,'NPCroom1','N',15000,15000,10000,10000,8000,8000,5000,5000,5000,5000,4000,4000,0, 0, 10.0, 'Kemedes'),
+ (5,'NPCroom2','N',15000,15000,10000,10000,8000,8000,5000,5000,5000,5000,4000,4000,0, 0, 10.0, 'Laanx'),
+ (6,'NPCroom3','N',15000,15000,10000,10000,8000,8000,5000,5000,5000,5000,4000,4000,1, 1, 10.0, 'Laanx'),
+ (7,'NPCroomwarp','N',15000,15000,10000,10000,8000,8000,5000,5000,5000,5000,4000,4000,0, 0, 10.0, 'Laanx');
 /*!40000 ALTER TABLE `sectors` ENABLE KEYS */;
 
 

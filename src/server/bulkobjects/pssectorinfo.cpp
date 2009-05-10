@@ -44,6 +44,7 @@ psSectorInfo::psSectorInfo()
     fog_density_old = 0;
     densitySaved = false;
     fogFade = 0;
+    say_range = 0;
     god_name.Clear();
 }
 
