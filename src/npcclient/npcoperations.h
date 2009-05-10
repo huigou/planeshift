@@ -350,7 +350,7 @@ protected:
     int       type;
     float     searchRange;
     float     chaseRange;
-    csVector3 offset;
+    float offset;
     EID       target_id;
     psAPath   path;
     csVector3 localDest;

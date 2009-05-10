@@ -1950,25 +1950,10 @@ bool ChaseOperation::Load(iDocumentNode *node)
         chaseRange = -1.0f; // Disable max chase range
     }    
 
-    if ( node->GetAttributeValue("offset_x") )
+    if ( node->GetAttributeValue("offset") )
     {
-        offset.x = node->GetAttributeValueAsFloat("offset_x");
+        offset = node->GetAttributeValueAsFloat("offset");
     }
-    else
-    {
-        offset.x = 0.5F;
-    }
-    
-    if ( node->GetAttributeValue( "offset_z" ) )
-    {
-        offset.z = node->GetAttributeValueAsFloat("offset_z");
-    }
-    else
-    {
-        offset.z = 0.5F;
-    }
-
-    offset.y = 0.0f;
 
     LoadVelocity(node);
     LoadCheckMoveOk(node);
@@ -2069,7 +2054,7 @@ bool ChaseOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
             npc->Printf("ChaseOperation: target's sector is not connected to ours!");
             return true;  // This operation is complete
         }
-        if ( Calc2DDistance( myPos, targetPos ) < sqrt((offset.x * offset.x)+(offset.z * offset.z)) )
+        if ( Calc2DDistance( myPos, targetPos ) < offset )
         {
             return true;  // This operation is complete
         }
@@ -2077,7 +2062,7 @@ bool ChaseOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         // This prevents NPCs from wanting to occupy the same physical space as something else
         csVector3 displacement = targetPos - myPos;
         displacement.y = 0;
-        float factor = sqrt((offset.x * offset.x)+(offset.z * offset.z)) / displacement.Norm();
+        float factor = offset / displacement.Norm();
         csVector3 destPos = myPos + (1 - factor) * displacement;
         destPos.y = targetPos.y;
 
@@ -2140,6 +2125,7 @@ void ChaseOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
     if (!targetActor || !target_entity) // no entity close to us
     {
         npc->Printf(5, "ChaseOp has no target now!");
+        npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior() );
         return;
     }
     
@@ -2155,6 +2141,7 @@ void ChaseOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
     if (!npcclient->GetWorld()->WarpSpace(targetSector, mySector, targetPos))
     {
         npc->Printf("ChaseOperation: target's sector is not connected to ours!");
+        npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior() );
         return;
     }
 
@@ -2177,7 +2164,7 @@ void ChaseOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
     }
     
 
-    float factor = sqrt((offset.x * offset.x)+(offset.z * offset.z)) / distance;
+    float factor = offset / distance;
     targetPos = myPos + (1 - factor) * displacement;
     targetPos.y = myPos.y;
 
