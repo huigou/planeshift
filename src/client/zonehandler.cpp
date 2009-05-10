@@ -230,11 +230,14 @@ void ZoneHandler::HandleMessage(MsgEntry* me)
 
         if(catchUp)
         {
+          // Move the player to a temporary sector while we clean out the world.
+          MovePlayerTo(msg.pos, "SectorWhereWeKeepEntitiesResidingInUnloadedMaps");
           Loader::GetSingleton().UpdatePosition(newPos, sectorToLoad, true);
         }
 
         if(catchUp && Loader::GetSingleton().GetLoadingCount() == 0)
         {
+            MovePlayerTo(msg.pos, msg.newSector);
             haveNewPos = false;
         }
         else if(psengine->IsGameLoaded() && FindLoadWindow())
