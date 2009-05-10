@@ -59,7 +59,7 @@ gemNPCObject::gemNPCObject(psNPCClient* npcclient, EID id)
     :eid(id), visible(true), invincible(false), instance(DEFAULT_INSTANCE)
 {
     this->npcclient = npcclient;
-
+    engine =  csQueryRegistry<iEngine> (npcclient->GetObjectReg());
 }    
 
 gemNPCObject::~gemNPCObject()
@@ -76,8 +76,6 @@ void gemNPCObject::Move(const csVector3& pos, float rotangle,  const char* room,
 
 void gemNPCObject::Move(const csVector3& pos, float rotangle,  const char* room)
 {
-    csRef<iEngine> engine =  csQueryRegistry<iEngine> (npcclient->GetObjectReg());
-
     // Position and sector
     iSector* sector = engine->FindSector(room);
     if ( sector == NULL )

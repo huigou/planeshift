@@ -354,6 +354,7 @@ protected:
     // CS references
     csRef<iEngine> engine;
     csRef<iView> view;
+    csRef<iStringSet> globalStringSet;
     
     /// region to store the CS objects
     csRef<iCollection> effectsCollection;

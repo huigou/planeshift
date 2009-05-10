@@ -71,7 +71,7 @@ psEffectObjLabel::~psEffectObjLabel()
 }
 
 bool psEffectObjLabel::Load(iDocumentNode *node, iLoaderContext* ldr_context)
-{
+{	        
     // get the attributes
     name.Clear();
     materialName.Clear();
@@ -259,8 +259,7 @@ bool psEffectObjLabel::Render(const csVector3 &up)
     mesh->SetRenderPriority(priority);
 
     // disable culling
-    csRef<iStringSet> globalStringSet = csQueryRegistryTagInterface<iStringSet> 
-        (psCSSetup::object_reg, "crystalspace.shared.stringset");
+    
     csStringID viscull_id = globalStringSet->Request ("viscull");
     mesh->GetMeshObject()->GetObjectModel()->SetTriangleData(viscull_id, 0);
 

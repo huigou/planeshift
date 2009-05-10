@@ -259,7 +259,9 @@ protected:
     int                 count_players;       ///< Total Number of players
 
     uint32              nextEID;             ///< The next ID available for an object.
-
+    
+	// Stored here to save expensive csQueryRegistry calls
+	csRef<iEngine> engine;
 };
 
 //-----------------------------------------------------------------------------
@@ -638,6 +640,7 @@ struct DamageHistory
 class gemActor :  public gemObject, public iDeathNotificationObject
 {
 protected:
+	
     psCharacter *psChar;
     FactionSet *factions;
     PID pid; ///< Player ID (also known as character ID or PID)
