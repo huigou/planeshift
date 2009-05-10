@@ -3554,7 +3554,7 @@ bool AdminManager::GetTargetOfTeleport(Client *client, psAdminCmdMessage& msg, A
     {
         if (data.sector.Length())
         {
-            // Verify the location first. Invalid values can crash the proxlist.
+            // Verify the location first. CS cannot handle positions greater than 100000.
             if (fabs(data.x) > 100000 || fabs(data.y) > 100000 || fabs(data.z) > 100000)
             {
                 psserver->SendSystemError(client->GetClientNum(), "Invalid location for teleporting");

@@ -2920,6 +2920,13 @@ void gemActor::Teleport(iSector *sector, const csVector3 & pos, float yrot)
 
 void gemActor::SetPosition(const csVector3& pos,float angle, iSector* sector)
 {
+    // Verify the location first. CS cannot handle positions greater than 100000.
+    if (fabs(pos.x) > 100000 || fabs(pos.y) > 100000 || fabs(pos.z) > 100000)
+    {
+    	MoveToSpawnPos();
+        Error5("Attempted to set position of actor pid %d to %g %g %g", pid.Unbox(), pos.x, pos.y, pos.z);
+        return;
+    }
     this->pos = pos;
     this->yRot = angle;
     this->sector = sector;
