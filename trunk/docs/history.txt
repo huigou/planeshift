@@ -1,3 +1,26 @@
+*** 2009-05-10 by Andrew Dai
+- Removed faction set duplication.
+- Fixed a buffer overflow possibility in psGameEvent.
+- Reduced NPC command sending interval.
+- Removed some slow csQueryRegistry calls from inner loops.
+- Fixed npc chasing behaviour by stopping the ChaseOp when there's no hope of
+  progress.
+- Fixed crash caused by exceeding the max bounds in the kdTree and attempting
+  to update the proxlist.
+- Added chat channels. Relevant commands are /join /leave and /#
+- Removed BinaryRBTree with no small amount of pain.
+- Deprecated BinaryRBTree and replaced some existing uses of it with csHash.
+  Added const qualifiers to psString.
+- Added /? command to show help window.
+- Fixed auto setting channel when using /tell.
+- Adding aliases for common chat channels.
+- Changed NPC turning speed to be more deadly.
+- Added very basic view of the server report into gmconsole.
+- The last 10 chat messages will now be replayed when the chatwindow is
+  loaded. No more digging around in the filesystem.
+- Added a LIVE view to viewnpcmap webconsole showing live
+  locations of all npcs and players.
+
 *** 2009-05-10 by Stefano Angeleri
 - patch for PS#2917 - increased say range in guild houses. Added a column
   in sectors table which specifies the range of the say for that sector.
