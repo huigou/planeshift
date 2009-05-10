@@ -640,7 +640,7 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         if (words.GetCount() >= 4)
             value = words.GetInt(3);
         else
-            value = 100;
+            value = -2;
         return true;
     }
     else if (command == "/set")
@@ -6423,7 +6423,7 @@ void AdminManager::ThawClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
 
 void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client* client, Client *target)
 {
-    if (data.skill.IsEmpty())
+    if (data.skill.IsEmpty() || data.value == -2)
     {
         psserver->SendSystemError(me->clientnum, "Syntax: /setskill [target] [skill|'all'] [value|-1]");
         return;
