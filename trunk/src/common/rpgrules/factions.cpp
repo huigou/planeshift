@@ -23,7 +23,7 @@
 
 FactionSet::FactionSet(const char *csv_list,csHash<Faction*, int> &factionset)
 {
-    factions_by_id = factionset;
+    factions_by_id = &factionset;
 
     if ( !csv_list )
         return;
@@ -32,14 +32,14 @@ FactionSet::FactionSet(const char *csv_list,csHash<Faction*, int> &factionset)
         return;
     
                 
-    char *buff = new char[temp.Length()+1];
+    char *buff = temp.Detach();
     strcpy(buff,csv_list);
                
     char *ptr = strtok(buff,",");
     while (ptr)
     {
         FactionStanding *fs = new FactionStanding;
-        fs->faction = factions_by_id.Get(atoi(ptr),0);
+        fs->faction = factions_by_id->Get(atoi(ptr),0);
         CS_ASSERT(fs->faction != NULL);
         ptr = strtok(NULL,",");
         if (!ptr)
@@ -87,7 +87,7 @@ void FactionSet::UpdateFactionStanding(int factionID, int delta)
     else
     {
         fs = new FactionStanding;        
-        fs->faction = factions_by_id.Get(factionID,0);
+        fs->faction = factions_by_id->Get(factionID,0);
         fs->score = delta;
         factionstandings.Put(fs->faction->id,fs);
     }
