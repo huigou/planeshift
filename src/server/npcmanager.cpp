@@ -84,7 +84,7 @@ public:
     virtual void Trigger();  ///< Abstract event processing function
 };
 
-#define NPC_TICK_INTERVAL 500  //msec
+const int NPC_TICK_INTERVAL = 300;  //msec
 
 /**
  * This class is the relationship of Owner to Pet ( which includes Familiars ).
