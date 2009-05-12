@@ -963,6 +963,7 @@ bool psEngine::Process3D(iEvent& ev)
         {
             if(camera)
             {
+              g3d->BeginDraw(CSDRAW_3DGRAPHICS);
               camera->Draw();
               return true;
             }
