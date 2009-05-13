@@ -3766,7 +3766,7 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
                         workEvent->GetTransformationType(), workEvent->GetTransformationSlot(),
                         workEvent->GetResultQuantity(), workEvent->GetResultQuality(),
                         workEvent->GetTranformationItem());
-                    if(transMath == TRANSFORM_GARBAGE)
+                    if(transMatch == TRANSFORM_GARBAGE)
                         psserver->SendSystemError(clientNum,"You are not sure what is going to happen to %d %s.", workEvent->GetTranformationItem()->GetStackCount(), workEvent->GetTranformationItem()->GetName());
                     return;
                 }
