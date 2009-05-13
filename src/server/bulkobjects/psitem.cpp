@@ -1512,6 +1512,11 @@ bool psItem::GetIsAmmo()
     return current_stats->GetIsAmmo();
 }
 
+bool psItem::GetIsArmor()
+{
+    return current_stats->GetIsArmor();
+}
+
 bool psItem::GetIsShield()
 {
     return current_stats->GetIsShield();
