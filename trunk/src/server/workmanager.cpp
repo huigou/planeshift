@@ -3756,6 +3756,7 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
             // Check to see if we have pattern
             if ( ValidateMind() )
             {
+                //TODO: Maybe all those function like this which seems copy & paste should be put in an unique one?
                 // Check if there is another transformation possible for the item just created
                 unsigned int transMatch = AnyTransform( patternId, groupPatternId, result, resultQty );
                 if ( (transMatch == TRANSFORM_MATCH ) || (transMatch == TRANSFORM_GARBAGE ) )
@@ -3765,6 +3766,8 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
                         workEvent->GetTransformationType(), workEvent->GetTransformationSlot(),
                         workEvent->GetResultQuantity(), workEvent->GetResultQuality(),
                         workEvent->GetTranformationItem());
+                    if(transMath == TRANSFORM_GARBAGE)
+                        psserver->SendSystemError(clientNum,"You are not sure what is going to happen to %d %s.", workEvent->GetTranformationItem()->GetStackCount(), workEvent->GetTranformationItem()->GetName());
                     return;
                 }
             }
