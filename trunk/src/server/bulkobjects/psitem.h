@@ -661,6 +661,7 @@ public:
     bool GetIsMeleeWeapon();
     bool GetIsRangeWeapon();
     bool GetIsAmmo();
+    bool GetIsArmor();
     bool GetIsShield();
     bool GetIsContainer();
     bool GetIsTrap();
