@@ -2609,7 +2609,7 @@ bool psItem::SendItemDescription( Client *client)
     }
 
     // Item is a weapon
-    if ( GetCategory()->id == 1 )
+    if ( GetIsMeleeWeapon() || GetIsRangeWeapon() )
     {
         csString speed, damage;
         // Weapon Speed
@@ -2634,7 +2634,7 @@ bool psItem::SendItemDescription( Client *client)
     }
 
     // Item is armor
-    if ( GetCategory()->id == 2)
+    if ( GetIsArmor() )
     {
         csString armor_type = "\n\n";
         switch (GetBaseStats()->Armor().Type())
