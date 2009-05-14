@@ -564,7 +564,6 @@ gemObject::gemObject(const char *name) : factname("")
     this->valid    = true;
     this->name     = name;
     pcmesh=NULL;
-    sector=NULL;
     worldInstance=0;
     prox_distance_desired=DEF_PROX_DIST;
     prox_distance_current=DEF_PROX_DIST;
@@ -736,9 +735,7 @@ void gemObject::Move(const csVector3& pos,float rotangle, iSector* room)
     // Position and sector
     pcmesh->MoveMesh(room, rotangle, pos);
 
-    this->pos    = pos;
     this->yRot   = rotangle;
-    this->sector = room;
 }
 
 #define PSABS(x)    ((x) < 0 ? -(x) : (x))
@@ -794,13 +791,11 @@ void gemObject::UpdateProxList( bool force )
 #endif
 
     // Find nearby entities
-    csVector3 pos;
-    float yrot;
-    iSector *sector;
+    const csVector3 & pos = GetPosition();
+    iSector *sector = GetSector();
 
     csTicks time = csGetTicks();
 
-    GetPosition(pos,yrot,sector);
     csArray<gemObject*> nearlist = cel->FindNearbyEntities(sector,pos,prox_distance_current, true);
 
     //CPrintf(CON_SPAM, "\nUpdating proxlist for %s\n--------------------------\n",GetName());
@@ -1020,34 +1015,31 @@ csArray< gemObject* > *gemObject::GetObjectsInRange( float range )
 
 void gemObject::GetPosition(csVector3& pos, float& yrot,iSector*& sector)
 {
-    // Rotation
     yrot = GetAngle();
-
     GetPosition(pos, sector);
+}
+
+const csVector3 & gemObject::GetPosition()
+{
+    return GetMeshWrapper()->GetMovable()->GetPosition();
 }
 
 void gemObject::GetPosition(csVector3& pos, iSector*& sector)
 {
-    // Position
-    if (GetMeshWrapper())
-        pos = GetMeshWrapper()->GetMovable()->GetPosition();
-    else
-        pos = this->pos;
-
-    // Sector
+    pos = GetPosition();
     sector = GetSector();
 }
 
 float gemObject::GetAngle()
 {
-    // Rotation
-    return this->yRot;
+    return yRot;
 }
 
 iSector* gemObject::GetSector()
 {
-    // Sector
-    return this->sector;
+    if (GetMeshWrapper()->GetMovable()->GetSectors()->GetCount())
+        return GetMeshWrapper()->GetMovable()->GetSectors()->Get(0);    
+    return NULL;
 }
 
 void gemObject::SendBehaviorMessage(const csString & str, gemObject *actor)
@@ -1339,8 +1331,8 @@ void gemItem::Broadcast(int clientnum, bool control )
                          -2,
                          name,
                          factname.Current(),
-                         sector->QueryObject()->GetName(),
-                         pos,
+                         GetSectorName(),
+                         GetPosition(),
                          xRot,
                          yRot,
                          zRot,
@@ -1407,8 +1399,8 @@ void gemItem::Send( int clientnum, bool , bool to_superclient)
                          -2,
                          name,
                          factname.Current(),
-                         sector->QueryObject()->GetName(),
-                         pos,
+                         GetSectorName(),
+                         GetPosition(),
                          xRot,
                          yRot,
                          zRot,
@@ -1776,7 +1768,7 @@ void gemActionLocation::Broadcast(int clientnum, bool control )
                                     eid,
                                     -2,
                                     name,
-                                    sector->QueryObject()->GetName(),
+                                    GetSectorName(),
                                     action->meshname
                                  );
 
@@ -1815,7 +1807,7 @@ void gemActionLocation::Send( int clientnum, bool , bool to_superclient )
                                     eid,
                                     -2,
                                     name.GetData(),
-                                    sector->QueryObject()->GetName(),
+                                    GetSectorName(),
                                     action->meshname
                                  );
 
@@ -1896,12 +1888,12 @@ nevertired(false), infinitemana(false), instantcast(false), safefall(false), giv
     this->factname.SetActor(this);
 
     Debug6(LOG_NPC,0,"Successfully created actor %s at %1.2f,%1.2f,%1.2f in sector %s.\n",
-        factname,pos.x,pos.y,pos.z,sector->QueryObject()->GetName() );
+        factname,pos.x,pos.y,pos.z,GetSectorName());
 
-    SetPrevTeleportLocation(pos, rotangle, sector);
+    SetPrevTeleportLocation(pos, rotangle, GetSector());
 
     // Set the initial valid location to be the spot the actor was created at.
-    UpdateValidLocation(pos, rotangle, sector, true);
+    UpdateValidLocation(pos, rotangle, GetSector(), true);
 
     GetCharacterData()->SetStaminaRegenerationStill();
 
@@ -2625,15 +2617,13 @@ bool gemActor::AddChatReport(gemActor *reporter)
 
         Notify2(LOG_ANY, "Logging of chat messages for '%s' started\n", ShowID(pid));
         
-        csVector3 pos;
-        float loc_yrot(.0f);
-        iSector* sector = NULL;
+        const csVector3 & pos = GetPosition();
+        iSector *sector = GetSector();
 
-        GetPosition(pos, loc_yrot, sector);
-        int degrees = (int)(loc_yrot * 180.0f / PI);
+        int degrees = (int)(yRot * 180.0f / PI);
 
-        csString sectorName = (sector) ? sector->QueryObject()->GetName() : "(null)";
-        csString regionName = (sector) ? sector->QueryObject()->GetObjectParent()->GetName() : "(null)";
+        csString sectorName = sector ? sector->QueryObject()->GetName() : "(null)";
+        csString regionName = sector ? sector->QueryObject()->GetObjectParent()->GetName() : "(null)";
 
         // Start with general information
         cssBuffer = "================================================================\n";
@@ -2921,7 +2911,7 @@ void gemActor::SetPosition(const csVector3& pos,float angle, iSector* sector)
 
     psSectorInfo* sectorInfo = NULL;
     if (sector != NULL)
-        sectorInfo = CacheManager::GetSingleton().GetSectorInfoByName( sector->QueryObject()->GetName() );
+        sectorInfo = CacheManager::GetSingleton().GetSectorInfoByName(sector->QueryObject()->GetName());
     if (sectorInfo != NULL)
     {
         psChar->SetLocationInWorld(worldInstance, sectorInfo, pos.x, pos.y, pos.z, angle );
@@ -3188,13 +3178,7 @@ void gemActor::MulticastDRUpdate()
 
 void gemActor::ForcePositionUpdate()
 {
-    float yrot;
-    csVector3 pos;
-    iSector *sector;
-
-    GetPosition(pos, yrot, sector);
-
-    psForcePositionMessage msg(GetClientID(), ++forceDRcounter, pos, sector,
+    psForcePositionMessage msg(GetClientID(), ++forceDRcounter, GetPosition(), GetSector(),
                                CacheManager::GetSingleton().GetMsgStrings());
     msg.SendMessage();
 }
@@ -4104,7 +4088,6 @@ void gemNPC::Send( int clientnum, bool control, bool to_superclient )
 
     psChar->MakeTextureString( texparts );
     psChar->MakeEquipmentString( equipmentParts );
-    GetPosition(pos,yRot,sector);
 
     csString guildName;
     guildName.Clear();

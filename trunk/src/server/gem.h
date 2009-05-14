@@ -327,10 +327,12 @@ public:
     OverridableMesh & GetOverridableMesh() { return factname; }
     void Move(const csVector3& pos,float rotangle,iSector* room);
     bool IsNear(gemObject *obj,float radius);
+    const csVector3 & GetPosition();
     void GetPosition(csVector3& pos, float& yrot,iSector*& sector);
     void GetPosition(csVector3& pos, iSector*& sector);
     float GetAngle();
     iSector* GetSector();
+    const char *GetSectorName() { return GetSector() ? GetSector()->QueryObject()->GetName() : "(null)"; }
     int FindAnimIndex(const char *name);
 
     csArray<gemObject*> *GetObjectsInRange( float range );
@@ -399,9 +401,7 @@ protected:
     csString name;                              ///< Name of this object, used mostly for debugging
     static GEMSupervisor *cel;                  ///< Static ptr back to main collection of all objects
     InstanceID worldInstance;                   ///< Only objects which match instances can see each other
-    csVector3 pos;                              ///< Position in 3d space
     float yRot;                                 ///< Left-Right rotation, in radians
-    iSector *sector;                            ///< Ptr to the CS sector inhabited
     bool is_alive;                              ///< Flag indicating whether object is alive or not
     OverridableMesh factname;                   ///< Name of CS Mesh Factory used to create this object
     EID eid;                                    ///< Entity ID (unique identifier for object)
