@@ -734,13 +734,10 @@ iMeshWrapper *gemObject::GetMeshWrapper()
 void gemObject::Move(const csVector3& pos,float rotangle, iSector* room)
 {
     // Position and sector
-    pcmesh->MoveMesh(room, pos);
-
-    // Rotation
-    csMatrix3 matrix = (csMatrix3) csYRotMatrix3 (rotangle);
-    pcmesh->GetMesh()->GetMovable()->GetTransform().SetO2T (matrix);
+    pcmesh->MoveMesh(room, rotangle, pos);
 
     this->pos    = pos;
+    this->yRot   = rotangle;
     this->sector = room;
 }
 
@@ -1363,10 +1360,8 @@ void gemItem::Broadcast(int clientnum, bool control )
 
 void gemItem::SetPosition(const csVector3& pos,float angle, iSector* sector, InstanceID instance)
 {
-    this->pos = pos;
-    this->yRot = angle;
-    this->sector = sector;
-    this->worldInstance = instance;
+    Move(pos, angle, sector);
+    SetInstance(instance);
 
     psSectorInfo* sectorInfo = NULL;
     if (sector != NULL)
@@ -2928,11 +2923,8 @@ void gemActor::SetPosition(const csVector3& pos,float angle, iSector* sector)
         Error5("Attempted to set position of actor pid %d to %g %g %g", pid.Unbox(), pos.x, pos.y, pos.z);
         return;
     }
-    this->pos = pos;
-    this->yRot = angle;
-    this->sector = sector;
 
-    pcmove->SetPosition(pos,angle,sector);
+    Move(pos, angle, sector);
 
     psSectorInfo* sectorInfo = NULL;
     if (sector != NULL)

@@ -93,9 +93,10 @@ public:
 
     /** Move a mesh.
      * @param room  The sector to move in.
+     * @param yrot The Y-axis rotation of the object.
      * @param position The position to place the mesh.
      */
-    void MoveMesh( iSector* sector, const csVector3& position );
+    void MoveMesh( iSector* sector, const float yrot, const csVector3& position );
 
 private:
     csRef<iMeshWrapper> mesh;               ///< This is the mesh we are using.

@@ -123,7 +123,7 @@ void gemMesh::RemoveMesh()
     }
 }
 
-void gemMesh::MoveMesh( iSector* sector, const csVector3& position )
+void gemMesh::MoveMesh( iSector* sector, const float yrot, const csVector3& position )
 {
     if (mesh)
     {
@@ -133,7 +133,11 @@ void gemMesh::MoveMesh( iSector* sector, const csVector3& position )
         }
 
         mesh->GetMovable()->SetPosition( position );
-        mesh->GetMovable()->UpdateMove();
     }
+
+    csMatrix3 matrix = (csMatrix3) csYRotMatrix3 (yrot);
+    mesh->GetMovable ()->GetTransform ().SetO2T (matrix);
+
+    mesh->GetMovable ()->UpdateMove ();
 }
 
