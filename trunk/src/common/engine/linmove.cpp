@@ -1006,14 +1006,13 @@ void psLinearMovement::SetFullPosition (const char* center_name, float yrot,
 void psLinearMovement::SetPosition (const csVector3& pos, float yrot,
 	const iSector* sector)
 {
-  // Position
+  // Position and Sector
   mesh->GetMovable ()->SetPosition ((iSector *)sector,pos);
 
   // Rotation
   csMatrix3 matrix = (csMatrix3) csYRotMatrix3 (yrot);
   mesh->GetMovable ()->GetTransform ().SetO2T (matrix);
 
-  // Sector
   mesh->GetMovable ()->UpdateMove ();
 }
 
