@@ -405,7 +405,7 @@ protected:
         if(FD_ISSET(pipe_fd[0], &set))
         {
             char throwaway[32];
-            read(pipe_fd[0], throwaway, 32);
+            int trashbin = read(pipe_fd[0], throwaway, 32);
         }
 #endif
 
