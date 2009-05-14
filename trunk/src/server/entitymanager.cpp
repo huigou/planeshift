@@ -862,25 +862,18 @@ gemObject *EntityManager::CreateItem( psItem *& iteminstance, bool transient )
     return obj;
 }
 
-bool EntityManager::CreateActionLocation( psActionLocation *instance, bool transient = false)
+bool EntityManager::CreateActionLocation(psActionLocation *al, bool transient = false)
 {
-    csVector3 newpos;
-    float yrot;
-    iSector *isec;
-    const char* sector = NULL;
-
-    instance->GetLocationInWorld( &sector, newpos.x, newpos.y, newpos.z, yrot );
-    isec = FindSector( sector );
-    if ( isec == NULL )
+    const csVector3 pos = al->GetPosition();
+    iSector *sector = FindSector(al->GetSectorName());
+    if (!sector)
     {
-        CPrintf(CON_ERROR, "Action Location ID %u : Sector not found!\n", instance->id);
+        CPrintf(CON_ERROR, "Action Location ID %u : Sector not found!\n", al->id);
         return false;
     }
 
-    gemActionLocation *obj = new gemActionLocation(instance, isec, 0);
+    gemActionLocation *obj = new gemActionLocation(al, sector, 0);
     
-    obj->Move( newpos, yrot, isec );
-
     // Add action location to all nearby clients
     obj->UpdateProxList( true );
 
