@@ -1382,7 +1382,7 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
         	if(channelID == csArrayItemNotFound)
         		return;
         	channelID++;
-        	buff.Format("[%d: %s] %s: %s", channelID, channelIDs.GetKey(msg.channelID, "").GetData(),
+        	buff.Format("[%zu: %s] %s: %s", channelID, channelIDs.GetKey(msg.channelID, "").GetData(),
 						(const char *)msg.sPerson, (const char *)msg.sText);
 			colour = settings.channelColor;
 			break;
