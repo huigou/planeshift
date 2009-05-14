@@ -72,7 +72,8 @@ public:
 
     gemItem * GetRealItem();
 
-    void GetLocationInWorld(const char **sectorname, float &loc_x, float &loc_y, float &loc_z, float &loc_yrot);
+    const csVector3 & GetPosition() { return position; }
+    const csString & GetSectorName() { return sectorname; }
     //void SetLocationInWorld(psSectorInfo *sectorinfo,float loc_x,float loc_y,float loc_z,float loc_yrot);
     void Send( int clientnum);
 
@@ -89,8 +90,8 @@ public:
     MathExpression *GetEnterScript() const { return enterScript; }
 
     /// Returns the entrance type in entrance action location response string
-    csString GetEntranceType() const { return entranceType; }
-    void SetEntranceType(csString newType) { entranceType = newType; }
+    const csString & GetEntranceType() const { return entranceType; }
+    void SetEntranceType(const csString & newType) { entranceType = newType; }
 
     /// Returns true if this action location is a minigame board
     bool IsGameBoard() const { return isGameBoard; }
@@ -114,32 +115,32 @@ public:
     void SetActive(bool flag) { isActive = flag; }
 
     /// Returns action location description 
-    csString GetDescription() const { return description; }
-    void SetDescription(csString newDescription) { description =  newDescription; }
+    const csString & GetDescription() const { return description; }
+    void SetDescription(const csString & newDescription) { description = newDescription; }
 
     /// Returns or sets entrance location memebers
     csVector3 GetEntrancePosition() const { return entrancePosition; }
     void SetEntrancePosition(csVector3 newPosition) { entrancePosition = newPosition; }
     float GetEntranceRotation() const { return entranceRot; }
     void SetEntranceRotation(float newRot) { entranceRot = newRot; }
-    csString GetEntranceSector() const { return entranceSector; }
-    void SetEntranceSector(csString newSector) { entranceSector = newSector; }
+    const csString & GetEntranceSector() const { return entranceSector; }
+    void SetEntranceSector(const csString & newSector) { entranceSector = newSector; }
 
     /// Returns or sets return location memebers
     csVector3 GetReturnPosition() const { return returnPosition; }
     void SetReturnPosition(csVector3 newPosition) { returnPosition = newPosition; }
     float GetReturnRotation() const { return returnRot; }
     void SetReturnRotation(float newRot) { returnRot = newRot; }
-    csString GetReturnSector() const { return returnSector; }
-    void SetReturnSector(csString newSector) { returnSector = newSector; }
+    const csString & GetReturnSector() const { return returnSector; }
+    void SetReturnSector(const csString & newSector) { returnSector = newSector; }
 
     /// Sets
-    void SetName(csString newname) { name = newname; }
-    void SetSectorName(csString newsector) { sectorname = newsector; }
-    void SetMeshName(csString newmeshname) { meshname = newmeshname; }
-    void SetTriggerType(csString newtrigger) { triggertype = newtrigger; }
-    void SetResponseType(csString newresponsetype) { responsetype = newresponsetype; }
-    void SetResponse(csString newresponse) { response = newresponse; }
+    void SetName(const csString & newname) { name = newname; }
+    void SetSectorName(const csString & newsector) { sectorname = newsector; }
+    void SetMeshName(const csString & newmeshname) { meshname = newmeshname; }
+    void SetTriggerType(const csString & newtrigger) { triggertype = newtrigger; }
+    void SetResponseType(const csString & newresponsetype) { responsetype = newresponsetype; }
+    void SetResponse(const csString & newresponse) { response = newresponse; }
     void SetPosition(csVector3 newposition) { position = newposition; }
     void SetRadius(float newradius) { radius = newradius; }
 

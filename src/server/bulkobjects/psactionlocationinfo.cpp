@@ -354,16 +354,6 @@ gemItem *psActionLocation::GetRealItem()
     return GEMSupervisor::GetSingleton().FindItemEntity( InstanceID );
 }
 
-
-void psActionLocation::GetLocationInWorld(const char **sectorname, float &loc_x, float &loc_y, float &loc_z, float &loc_yrot)
-{
-    *sectorname = this->sectorname.GetData();
-    loc_x = this->position.x;
-    loc_y = this->position.y;
-    loc_z = this->position.z;
-    loc_yrot = 0;
-}
-
 void psActionLocation::Send( int clientnum)
 {
     this->gemAction->Send( clientnum, false, false );

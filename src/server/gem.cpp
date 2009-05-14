@@ -1759,6 +1759,8 @@ gemActionLocation::gemActionLocation(psActionLocation *action, iSector *isec, in
     state->SetRadius(1.0);
 
     pcmesh->SetMesh( nullmesh );
+
+    Move(action->GetPosition(), 0, isec);
 }
 
 void gemActionLocation::Broadcast(int clientnum, bool control )
