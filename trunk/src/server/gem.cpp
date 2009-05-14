@@ -2158,16 +2158,16 @@ void gemActor::Resurrect()
     iSector *sector = pcmove->GetSector();
     if (sector && !strncmp ("NPCroom", sector->QueryObject()->GetName(), 7))
     {
-        Teleport("NPCroom", csVector3(-20, 1, -180), 0, worldInstance);
+        Teleport("NPCroom", csVector3(-20.0f, 1.0f, -180.0f), 0.0f, worldInstance);
     }
     else if (sector && !strncmp ("tutorial", sector->QueryObject()->GetName(), 8))
     {
-        Teleport("tutorial", csVector3(-232, 21.31, 31.5), 4, worldInstance);
+        Teleport("tutorial", csVector3(-232.0f, 21.31f, 31.5f), 4.0f, worldInstance);
     }
     else
     {
         // TODO: Get Death Realm location from db somewhere
-        Teleport("DR01", csVector3(-29.2, -119, 28.2), 0, DEFAULT_INSTANCE);
+        Teleport("DR01", csVector3(-29.2f, -119.0f, 28.2f), 0.0f, DEFAULT_INSTANCE);
     }
 
     psChar->SetHitPoints(psChar->GetMaxHP().Base());
