@@ -745,14 +745,8 @@ void gemObject::Move(const csVector3& pos,float rotangle, iSector* room)
 
 bool gemObject::IsNear(gemObject *obj, float radius)
 {
-    float distance = proxlist->RangeTo(obj);
-
-    if ( distance < radius)
-        return true;
-    else
-        return false;
+    return proxlist->RangeTo(obj) < radius;
 }
-
 
 float gemObject::RangeTo(gemObject* obj, bool ignoreY, bool ignoreInstance)
 {
@@ -776,9 +770,8 @@ bool gemObject::InitProximityList(float radius,int clientnum)
 
     proxlist->Initialize(clientnum,this); // store these for fast access later
 
-    bool subscribed_self=false;
     // A client should always subscribe to itself
-    if (!subscribed_self && clientnum)
+    if (clientnum)
     {
         // CPrintf(CON_DEBUG, "Forcing a self-subscription for %s\n",GetName());
         proxlist->StartMutualWatching(clientnum,this,0.0);
