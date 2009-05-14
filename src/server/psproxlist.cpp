@@ -89,7 +89,7 @@ ProximityList::~ProximityList()
     while (objectsThatIWatch.GetSize())
     {
 #ifdef PSPROXDEBUG
-        CPrintf(CON_DEBUG, "Unsubscribing from %s (%p).\n",obj->GetName(), this );
+        CPrintf(CON_DEBUG, "Unsubscribing from %s (%p).\n", objectsThatIWatch[0]->GetName(), this);
 #endif
 
         objectsThatIWatch[0]->GetProxList()->RemoveWatcher(self);
@@ -442,7 +442,7 @@ bool ProximityList::GetUntouched_ObjectThatIWatch(gemObject* &object)
 float ProximityList::RangeTo( gemObject* object, bool ignoreY, bool ignoreInstance)
 {
 #ifdef PSPROXDEBUG
-    CPrintf(CON_DEBUG, "[float ProximityList::RangeTo( gemObject* entity )]\n");
+    CPrintf(CON_DEBUG, "[float ProximityList::RangeTo(gemObject* object, bool ignoreY, bool ignoreInstance)]\n");
 #endif
 
     // If in different instances, except for the common 'all' instance, return a very big value.
@@ -460,13 +460,13 @@ float ProximityList::RangeTo( gemObject* object, bool ignoreY, bool ignoreInstan
     object->GetPosition(pos1,sector1);
 
 #ifdef PSPROXDEBUG
-    CPrintf(CON_DEBUG, "Entity %s is at (%f,%f,%f)\n", entity->GetName(), pos1.x, pos1.y, pos1.z);
+    CPrintf(CON_DEBUG, "Other Entity %s is at (%f,%f,%f)\n", object->GetName(), pos1.x, pos1.y, pos1.z);
 #endif
 
     self->GetPosition(pos2, sector2);
 
 #ifdef PSPROXDEBUG
-    CPrintf(CON_DEBUG, "Entity %s is at (%f,%f,%f)\n", GetEntity()->GetName(), pos2.x, pos2.y, pos2.z);
+    CPrintf(CON_DEBUG, "Self Entity %s is at (%f,%f,%f)\n", self->GetName(), pos2.x, pos2.y, pos2.z);
 #endif
 
     if ( ignoreY )
