@@ -1401,8 +1401,8 @@ psItem *psItemStats::InstantiateBasicItem(bool transient)
 
 bool psItemStats::SetAttribute(const csString & op, const csString & attrName, float modifier)
 {
-    float* value[5] = { NULL, NULL, NULL, NULL, NULL };
-     // Attribute Names:
+    float* value[3] = { NULL, NULL, NULL };
+    // Attribute Names:
     // item
     //        weight
     //        damage
@@ -1417,22 +1417,11 @@ bool psItemStats::SetAttribute(const csString & op, const csString & attrName, f
     //            ...
     //        speed
 
-    // target
-    // wielder
-
     csString AttributeName(attrName);
     AttributeName.Downcase();
     if ( AttributeName.Compare( "item.weight" ) )
     {
         value[0] = &this->weight;
-    }
-    else if ( AttributeName.Compare( "item.damage_value" ) )
-    {
-        value[0] = 0;
-    }
-    else if ( AttributeName.Compare( "item.attack_value" ) )
-    {
-        value[0] = 0;
     }
     else if ( AttributeName.Compare( "item.speed" ) )
     {
@@ -1476,7 +1465,7 @@ bool psItemStats::SetAttribute(const csString & op, const csString & attrName, f
     }
 
     // Operations  = ADD, MUL, SET
-    for ( int i = 0; i < 5; i++ )
+    for (int i = 0; i < 3; i++)
     {
         if (op.CompareNoCase("ADD"))
         {
