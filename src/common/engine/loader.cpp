@@ -1061,7 +1061,7 @@ void Loader::CleanSector(Sector* sector)
     if(sector->objectCount != 0)
     {
         csString msg;
-        msg.Format("Error cleaning sector. Sector still has %u objects!", sector->objectCount);
+        msg.Format("Error cleaning sector. Sector still has %zu objects!", sector->objectCount);
         CS_ASSERT_MSG(msg.GetData(), false);
     }
     CS_ASSERT_MSG("Error cleaning sector. Sector is invalid!", sector->object.IsValid());
