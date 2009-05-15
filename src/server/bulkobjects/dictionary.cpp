@@ -1120,14 +1120,14 @@ int NpcTrigger::GetRandomResponse( const csArray<int> &availableResponseList )
         return availableResponseList[0];
 }
 
-bool NpcTrigger::operator==(NpcTrigger& other) const
+bool NpcTrigger::operator==(const NpcTrigger& other) const
 {
     return (area==other.area &&
             trigger==other.trigger &&
             priorresponseID==other.priorresponseID);
 };
 
-bool NpcTrigger::operator<(NpcTrigger& other) const
+bool NpcTrigger::operator<(const NpcTrigger& other) const
 {
     if (strcmp(area,other.area)<0)
         return true;
