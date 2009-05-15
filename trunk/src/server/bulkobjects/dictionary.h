@@ -234,6 +234,16 @@ public:
     }
 };
 
+template<>
+class csComparator<NpcTrigger* , NpcTrigger*>
+{
+public:
+    static int Compare(NpcTrigger* const &r1, NpcTrigger* const &r2)
+    {
+        return csComparator<NpcTrigger, NpcTrigger>::Compare(*r1, *r2);
+    }
+};
+
 class NpcTrigger
 {
 public:
@@ -254,10 +264,10 @@ public:
     int  GetRandomResponse( const csArray<int> &availableResponseList);
 
     /// Compare two triggers. Used when searching for triggers.
-    bool operator==(NpcTrigger& other) const;
+    bool operator==(const NpcTrigger& other) const;
 
     /// Compare two triggers. Used when searching for triggers.
-    bool operator<(NpcTrigger& other) const;
+    bool operator<(const NpcTrigger& other) const;
 };
 
 
