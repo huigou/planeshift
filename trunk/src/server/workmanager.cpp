@@ -1399,7 +1399,7 @@ void WorkManager::HandleConstruct(Client *client)
     }
     else
     {
-        StartConstructWork(client);
+        StopConstructWork(client);
     }
 }
 
