@@ -620,7 +620,7 @@ NpcResponse *NPCDialogDict::AddResponse(const char *response_text,
     opStr = "<response>";
     csString resp(response_text);
 
-    printf("\nGot: %s\n",response_text);
+    // printf("\nGot: %s\n",response_text);
 
     while (end != resp.Length() )
     {
@@ -639,7 +639,7 @@ NpcResponse *NPCDialogDict::AddResponse(const char *response_text,
         {
             csString saySegment;
             resp.SubString(saySegment,start,end-start); // pull out the part before the [ ]
-            printf("Say: %s\n",(const char *)saySegment);
+            // printf("Say: %s\n",(const char *)saySegment);
             opStr.AppendFmt("<say text=\"%s\"/>", EscpXML(saySegment.GetDataSafe()).GetDataSafe() );
         }
         if (end == resp.Length())  // stop if at end of string already
