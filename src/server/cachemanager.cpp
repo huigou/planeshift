@@ -1386,7 +1386,7 @@ csString CacheManager::CreateTransCraftDescription(psTradeTransformations* tran,
 {
     csString desc("");
 
-    // Get item names or skip for 0 id
+    // Get base item or skip for 0 id
     psItemStats* itemStats = CacheManager::GetSingleton().GetBasicItemStatsByID( tran->GetItemId() );
     if (!itemStats)
     {
@@ -1409,31 +1409,17 @@ csString CacheManager::CreateTransCraftDescription(psTradeTransformations* tran,
 
     // Create craft message
     //  Example: "Bake with skill 2 waybread dough into a waybread using oven"
-    if (tran->GetItemQty() == 0)
-    {
-        desc.Format("%s %s into ", proc->GetName().GetData(), itemStats->GetName());
-    }
-    else if (tran->GetItemQty() == 1)
-    {
-        desc.Format("%s %s into ", proc->GetName().GetData(), itemStats->GetName());
-    }
-    else
-    {
+    if (tran->GetItemQty() > 1)
         desc.Format("%s %d %ss into ", proc->GetName().GetData(), tran->GetItemQty(), itemStats->GetName());
-    }
-    csString secondHalf;
-    if (tran->GetResultQty() == 0)
-    {
-        secondHalf.Format("%s using %s", resultStats->GetName(), workStats->GetName());
-    }
-    else if (tran->GetResultQty() == 1)
-    {
-        secondHalf.Format("%s using %s", resultStats->GetName(), workStats->GetName());
-    }
     else
-    {
+        desc.Format("%s %s into ", proc->GetName().GetData(), itemStats->GetName());
+    
+    csString secondHalf;
+    if (tran->GetResultQty() > 1)
         secondHalf.Format("%d %ss using %s", tran->GetResultQty(), resultStats->GetName(), workStats->GetName());
-    }
+    else
+        secondHalf.Format("%s using %s", resultStats->GetName(), workStats->GetName());
+    
     desc.Append(secondHalf);
 
     // Get tool name if one exists
@@ -1848,15 +1834,15 @@ bool CacheManager::PreloadRaceInfo()
     {
         newraceinfo=new psRaceInfo;
 
-    if (newraceinfo->Load(result[currentrow]))
-    {
-        newraceinfo->LoadBaseSpeeds(psserver->GetObjectReg());
-        raceinfolist.Push(newraceinfo);
-    }
-    else
-    {
-        delete newraceinfo;
-    }
+        if (newraceinfo->Load(result[currentrow]))
+        {
+            newraceinfo->LoadBaseSpeeds(psserver->GetObjectReg());
+            raceinfolist.Push(newraceinfo);
+        }
+        else
+        {
+            delete newraceinfo;
+        }
     }
 
     Notify2( LOG_STARTUP, "%lu Races Loaded", result.Count() );
