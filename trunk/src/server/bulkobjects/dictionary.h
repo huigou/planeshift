@@ -314,18 +314,20 @@ public:
 class NpcResponse
 {
  public:
-    int      id;                 /// xref from trigger response
-    csString response[MAX_RESP]; /// possible alternative answers for this response
-    csString him,her,it,them;    /// record antecedents for next question pronouns
-    csString triggerText;        /// This is the text that triggered the response.
-	csString voiceAudioPath;	 /// Optional vfs path to audio file to stream on demand to the client
-    int type;                    /// record the type of response
-    psQuest * quest;             /// Quest that this respons is part of
-    int active_quest;            /// which one should be run.  this is actually set by check quest avail op
-    csTicks timeDelay;           /// This tracks the current time delay for chat msgs in the responses, so a single script can have a sequence of things that take a while
-    csPDelArray<ResponseOperation> script;  /// list of ops in script to execute when triggered
-    csRef<psQuestPrereqOp> prerequisite; /// prerequisite for this Response to be available
-	NpcDialogMenu *menu;		/// List of possible player trigger replies for this response, for display to the player.
+    int      id;                 ///< xref from trigger response
+    csString response[MAX_RESP]; ///< possible alternative answers for this response
+    /**\name record antecedents for next question pronouns 
+     * @{ */
+    csString him,her,it,them;    /** @} */
+    csString triggerText;        ///< This is the text that triggered the response.
+	csString voiceAudioPath;	 ///< Optional vfs path to audio file to stream on demand to the client
+    int type;                    ///< record the type of response
+    psQuest * quest;             ///< Quest that this respons is part of
+    int active_quest;            ///< which one should be run.  this is actually set by check quest avail op
+    csTicks timeDelay;           ///< This tracks the current time delay for chat msgs in the responses, so a single script can have a sequence of things that take a while
+    csPDelArray<ResponseOperation> script;  ///< list of ops in script to execute when triggered
+    csRef<psQuestPrereqOp> prerequisite; ///< prerequisite for this Response to be available
+	NpcDialogMenu *menu;		///< List of possible player trigger replies for this response, for display to the player.
 
     enum
     {
