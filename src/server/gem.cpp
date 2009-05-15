@@ -584,7 +584,6 @@ gemObject::gemObject(const char* name,
 
     this->valid    = true;
     this->name     = name;
-    this->yRot     = rotangle;
     this->worldInstance = myInstance;
 
     proxlist = NULL;
@@ -732,10 +731,7 @@ iMeshWrapper *gemObject::GetMeshWrapper()
 
 void gemObject::Move(const csVector3& pos,float rotangle, iSector* room)
 {
-    // Position and sector
     pcmesh->MoveMesh(room, rotangle, pos);
-
-    this->yRot   = rotangle;
 }
 
 #define PSABS(x)    ((x) < 0 ? -(x) : (x))
@@ -1032,7 +1028,8 @@ void gemObject::GetPosition(csVector3& pos, iSector*& sector)
 
 float gemObject::GetAngle()
 {
-    return yRot;
+    csMatrix3 transf = GetMeshWrapper()->GetMovable()->GetTransform().GetT2O();
+    return psWorld::Matrix2YRot(transf);
 }
 
 iSector* gemObject::GetSector()
@@ -2622,7 +2619,7 @@ bool gemActor::AddChatReport(gemActor *reporter)
         const csVector3 & pos = GetPosition();
         iSector *sector = GetSector();
 
-        int degrees = (int)(yRot * 180.0f / PI);
+        int degrees = (int)(GetAngle() * 180.0f / PI);
 
         csString sectorName = sector ? sector->QueryObject()->GetName() : "(null)";
         csString regionName = sector ? sector->QueryObject()->GetObjectParent()->GetName() : "(null)";

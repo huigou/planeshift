@@ -401,7 +401,6 @@ protected:
     csString name;                              ///< Name of this object, used mostly for debugging
     static GEMSupervisor *cel;                  ///< Static ptr back to main collection of all objects
     InstanceID worldInstance;                   ///< Only objects which match instances can see each other
-    float yRot;                                 ///< Left-Right rotation, in radians
     bool is_alive;                              ///< Flag indicating whether object is alive or not
     OverridableMesh factname;                   ///< Name of CS Mesh Factory used to create this object
     EID eid;                                    ///< Entity ID (unique identifier for object)
@@ -461,6 +460,7 @@ protected:
     csWeakRef<psItem> itemdata;
     csString itemType;
     float xRot;
+    float yRot;
     float zRot;
 
 public:
