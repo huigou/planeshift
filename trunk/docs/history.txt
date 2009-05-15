@@ -3,6 +3,8 @@
   or "damage_value", as these were all unimplemented and unused in production.
 - Removed position and sector from gemObject, as this copy was rarely used and
   frequently out of date.  The definitive version is in the iMovable.
+- Removed y-rotation from gemObject, restoring GetAngle() to work the way it
+  did before r3617.  Fixes a bug where player rotation wasn't updating.
 
 *** 2009-05-10 by Andrew Dai
 - Removed faction set duplication.
