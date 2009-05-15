@@ -79,14 +79,16 @@
 
 const char *psCharacter::characterTypeName[] = { "player", "npc", "pet" };
 
+MathScript *psCharacter::maxRealmScript = NULL;
+MathScript *psCharacter::staminaCalc    = NULL;
+MathScript *psCharacter::expSkillCalc   = NULL;
 
 //-----------------------------------------------------------------------------
+
 
 // Definition of the itempool for psCharacter(s)
 PoolAllocator<psCharacter> psCharacter::characterpool;
 
-const char * psCharacter::player_mode_to_str[] =
- {"unknown","peace","combat","spell casting","working","dead","sitting","carrying too much","exhausted", "defeated", "statued" };
 
 void *psCharacter::operator new(size_t allocSize)
 {
@@ -161,15 +163,6 @@ psCharacter::psCharacter() : inventory(this),
     faction_standings.Clear();
 
     player_mode = PSCHARACTER_MODE_PEACE;
-    lastError = "None";
-
-    staminaCalc = psserver->GetMathScriptEngine()->FindScript("StaminaBase");
-    if( !staminaCalc)
-        Warning1(LOG_CHARACTER, "Can't find math script StaminaBase!");
-
-    expSkillCalc = psserver->GetMathScriptEngine()->FindScript("Calculate Skill Experience");
-    if( !expSkillCalc)
-        Warning1(LOG_CHARACTER, "Calculate Skill Experience");
 
     lastResponse = -1;
 
@@ -211,6 +204,37 @@ void psCharacter::SetActor( gemActor* newActor )
 
 bool psCharacter::Load(iResultRow& row)
 {
+    // Load the math scripts
+    if (!staminaCalc)
+    {
+        staminaCalc = psserver->GetMathScriptEngine()->FindScript("StaminaBase");
+        if (!staminaCalc)
+        {
+            Error1("Can't find math script StaminaBase!");
+            return false;
+        }
+    }
+
+    if (!expSkillCalc)
+    {
+        expSkillCalc = psserver->GetMathScriptEngine()->FindScript("Calculate Skill Experience");
+        if (!expSkillCalc)
+        {
+            Error1("Can't find 'Calculate Skill Experience' math script.");
+            return false;
+        }
+    }
+
+    if (!maxRealmScript)
+    {
+        maxRealmScript = psserver->GetMathScriptEngine()->FindScript("MaxRealm");
+        if (!maxRealmScript)
+        {
+            Error1("Can't find math script MaxRealm!");
+            return false;
+        }
+    }
+
     // TODO:  Link in account ID?
     csTicks start = csGetTicks();
     pid = row.GetInt("id");
@@ -488,14 +512,6 @@ bool psCharacter::Load(iResultRow& row)
 
     // Load the kill exp
     kill_exp = row.GetUInt32("kill_exp");
-
-    // Load the math script
-    maxRealmScript = psserver->GetMathScriptEngine()->FindScript("MaxRealm");
-    if ( !maxRealmScript )
-    {
-        Warning1(LOG_CHARACTER, "Can't find math script MaxRealm!");
-        return false;
-    }
 
     // Load if the character/npc is a banker
     if(row.GetInt("banker") == 1)
@@ -1194,6 +1210,7 @@ bool psCharacter::CheckMagicKnowledge( PSSKILL skill, int realm )
 
 const char * psCharacter::GetModeStr()
 {
+    static const char *player_mode_to_str[] = {"unknown","peace","combat","spell casting","working","dead","sitting","carrying too much","exhausted", "defeated", "statued" };
     return player_mode_to_str[player_mode];
 }
 
@@ -1840,13 +1857,9 @@ void psCharacter::SetStaminaRegenerationWork(int skill)
     GetPStaminaRate().SetBase(GetPStaminaRate().Base()-6.0*(100-factor)/100);
     GetMStaminaRate().SetBase(GetMStaminaRate().Base()-6.0*(100-factor)/100);
 }
+
 void psCharacter::CalculateMaxStamina()
 {
-    if(!staminaCalc)
-    {
-        CPrintf(CON_ERROR, "Called CalculateMaxStamina without mathscript!!!!");
-        return;
-    }
     MathEnvironment env;
     // Set all the skills vars
     env.Define("STR",  attributes[PSITEMSTATS_STAT_STRENGTH].Current());

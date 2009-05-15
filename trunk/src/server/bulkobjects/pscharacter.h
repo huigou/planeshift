@@ -136,8 +136,7 @@ enum PSCHARACTER_ADVANTAGE
 
 #define PSCHARACTER_ADVANTAGE_32BIT_BITFIELDS (PSCHARACTER_ADVANTAGE_COUNT-1)/32+1
 
-// Remember to update the translation table player_mode_to_str when
-// adding new modes.
+// Remember to update the translation table in GetModeStr when adding modes.
 enum PSCHARACTER_MODE
 {
     PSCHARACTER_MODE_UNKNOWN = 0,
@@ -592,7 +591,6 @@ public:
 
     psRaceInfo *raceinfo;
     PSCHARACTER_MODE player_mode;
-    static const char * player_mode_to_str[];
     Stance combat_stance;
     const Stance& getStance(csString name);
     csString faction_standings;
@@ -640,13 +638,6 @@ public:
     virtual void ProcessCacheTimeout() {};  ///< required for iCachedObject but not used here
     virtual void *RecoverObject() { return this; }  ///< Turn iCachedObject ptr into psCharacter
     virtual void DeleteSelf() { delete this; }  ///< Delete must come from inside object to handle operator::delete overrides.
-
-
-    struct st_bank
-    {
-        psItem *bulk[PSCHARACTER_BANK_BULK_COUNT];
-        psMoney money;
-    } bank;
 
     struct st_location
     {
@@ -721,7 +712,7 @@ public:
 
     unsigned int GetCharType() const { return characterType; }
     void SetCharType(unsigned int v) { CS_ASSERT(v < PSCHARACTER_TYPE_COUNT); characterType = v; }
-    const char *GetCharTypeName() { return psCharacter::characterTypeName[ characterType ]; }
+    const char *GetCharTypeName() { return characterTypeName[characterType]; }
 
     void SetLastLoginTime( const char* last_login = NULL, bool save = true);
     csString GetLastLoginTime() const { return lastlogintime; }
@@ -1126,10 +1117,6 @@ public:
     void CalculateEquipmentModifiers();
     float GetStatModifier(PSITEMSTATS_STAT attrib);
 
-    csString& GetLastError() { return lastError; }
-
-    csString lastError;
-
     // State information for merchants
     csRef<psMerchantInfo>  merchantInfo;
     bool tradingStopped;
@@ -1154,11 +1141,9 @@ public:
     Multiplier attackModifier;  ///< Attack  value is multiplied by this
     Multiplier defenseModifier; ///< Defense value is multiplied by this
 
-    MathScript* powerScript, *maxRealmScript; ///< The PowerLevel math script
-
-    MathScript* staminaCalc;  ///< The stamina calc script
-    MathScript* expSkillCalc; ///< The exp calc script to assign experience on skill ranking
-
+    static MathScript *maxRealmScript;
+    static MathScript *staminaCalc;  ///< The stamina calc script
+    static MathScript *expSkillCalc; ///< The exp calc script to assign experience on skill ranking
 
 protected:
     csString lastlogintime;///< String value copied from the database containing the last login time
