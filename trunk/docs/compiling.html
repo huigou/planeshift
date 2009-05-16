@@ -141,13 +141,13 @@ var compiler = "GCC";
 var userdeveloper = "User";
 var staticnorm = "Normal";
 
-// Sets 'elementName' for all 'tagName' with 'className' to 'value'
-function SetProperty(tagName,className,elementName,value)
+// Sets 'property' for all 'tagName' with 'className' to 'value'
+function SetProperty(tagName,className,property,value)
 {
     var elements = document.getElementsByTagName(tagName);
     for (var i=0; i < elements.length; i++)
         if (elements[i].className && elements[i].className == className)
-            elements[i].style[elementName] = value;
+            elements[i].style[property] = value;
 }
 
 function SetVisibility(set,state)
@@ -370,9 +370,9 @@ function Onload(){
       Andrew Craig, author of the first Linux guides that were available on <a href="http://laanx.fragnetics.com">Laanx website</a>;<br />
       Platyna, author of the first compiling guide for Slackware distribution.<br />
         Mike Gist, author of the static compiling guide.<br />
-</div>
+    </div>
 
-<div class="FreeBSD">
+    <div class="FreeBSD">
         This guide gives a fairly detailed description on how to get a working client up and
         running in FreeBSD. It gives instructions on how to get all the required tools and how
         to check out the source code and configure it. At the end there you will have a
@@ -386,8 +386,8 @@ function Onload(){
 
           Platyna, author of the first compiling guide for Slackware distribution.<br />
           Mike Gist, author of the static compiling guide.<br />
-</div>
-<div class="MacOSX">
+    </div>
+    <div class="MacOSX">
         This guide gives a very basic description on how to get a working client up and
         running on a Mac. It gives instructions on how to get to check out the source code and configure it. At the end there you will have a
         PlaneShift client and a PlaneShift updater application, and if you want also the server.<br /><br />
@@ -397,7 +397,7 @@ function Onload(){
     <p>Here is a basic Mac guide based on the linux guide, for more specifics refer to <a href="http://www.yliakum.com/psdocs/index.php?page=4">PSDocs</a>, a user maintained guide.</p>
             <div class="Static">There is no Mac static build guide at this time</div>
     </div>
-<br />
+    <br />
 </div>
 
 <!--************************************************************************************************-->
@@ -602,7 +602,8 @@ continue as indicated.<br /></p>
 <div class="Linux-Gentoo">
     <p>Note: This section is incomplete and untested, but contains the Gentoo specific build information that was previously in the manual.</p>
     <p>Due to the number of dependencies needed, if you wish to read the homepage listing, or dependency description please select Linux's generic dropdown selection.</p>
-    <p>via portage: <i class="command">#emerge jam</i></p>
+    via portage: <div class="commandBox">#emerge ftjam <br />
+                                      #emerge subversion</div><br />
 </div>
 <div class="Linux-Slackware">
     <p>Note: This section is incomplete and untested, but contains the Slackware specific build information that was previously in the manual.</p>
@@ -617,35 +618,8 @@ continue as indicated.<br /></p>
 <strong> BOTH of these above commands are assuming you do not need a server, if you do please follow directions in the <a href="#mysql">mysql</a> section for installing other required packages before moving on to building to save you time.</strong>
 </div>
 <div class="Linux-Ubuntu">
-    <p>The instructions here are tested using Ubuntu Hardy Heron and Intrepid Ibex.<br />
-    Since Hardy Heron is installed by default with minimal packages, many required packages for this project are not available. <br />
-    To correct this, you will first need to enable the universe and multiverse repositories.<br />
-    Please note that Intrepid has already these repositories enabled by default but in case they aren't you can follow the instruction here or enable them from the package manager (eg: synaptic, adept, ...)<br />
-    To enable these, do the following:</p>
-    <p><i class="command"># sudo gedit /etc/apt/sources.list</i></p>
-    Delete everything in the file that you have not added yourself. If you are not running Hardy Heron, replace each instance of the word "hardy" with the name of the distro you are using, i.e. hoary, warty, dapper, or edgy, gutsy, intrepid. Got that? Ok, Paste the following into the file and save it. Be sure to make the necessary changes if you are running a different version than Hardy:<br />
-    <br /><div class="commandBox">
-        # Ubuntu supported packages<br />
-        # GPG key: 437D05B5<br />
-        deb http://us.archive.ubuntu.com/ubuntu hardy main restricted<br />
-        deb http://us.archive.ubuntu.com/ubuntu hardy-updates main restricted<br />
-        deb http://security.ubuntu.com/ubuntu hardy-security main restricted<br /><br />
-
-        # Ubuntu community supported packages<br />
-        # GPG key: 437D05B5<br />
-        deb http://us.archive.ubuntu.com/ubuntu hardy universe multiverse<br />
-        deb http://us.archive.ubuntu.com/ubuntu hardy-updates universe multiverse<br />
-        deb http://security.ubuntu.com/ubuntu hardy-security universe multiverse<br /><br />
-
-        # Ubuntu backports project<br />
-        # GPG key: 437D05B5<br />
-        deb http://us.archive.ubuntu.com/ubuntu hardy-backports main restricted universe multiverse<br />
-        </div><br />
-    Now we need to double check that the gpg keys are added correctly to avoid gpg errors. Sounds scary, but worry not! All it takes is one simple command:<br />
-    <p><i class="command"># gpg --keyserver hkp://subkeys.pgp.net --recv-keys 437D05B5 &amp;&amp;  gpg --export --armor 437D05B5 | sudo apt-key add -</i></p>
-After that we need to refresh our sources.list file like so:<br />
-    <p><i class="command"># sudo apt-get update</i></p>
-    Once that is complete, we can fetch all the required packages using the following command:<br />
+    <p> Make sure the universe repository is enabled.<br />
+    Fetch all the required packages using the following command:
     <p class="commandBox"># sudo apt-get --assume-yes install libjpeg62-dev x11proto-gl-dev autoconf jam bison flex-old automake1.9 libcurl4-openssl-dev libmng-dev libmikmod2-dev libogg-dev libvorbis-dev zlib1g-dev libpng12-dev build-essential libtool libglu1-mesa-dev libglu1-xorg-dev xserver-xorg-dev libxt-dev libopenal0a libopenal-dev subversion zlibc libttf2 libfreetype6-dev libfreetype6 libasound2-dev alsa-oss libxxf86vm-dev libxext-dev x11proto-xext-dev libspeex-dev</p>
     In case you are using intrepid, we can fetch all the required packages using the following command:<br />
     <p class="commandBox"># sudo apt-get --assume-yes install libjpeg62-dev x11proto-gl-dev autoconf jam bison flex-old automake1.9 libcurl4-openssl-dev libmng-dev libmikmod2-dev libogg-dev libvorbis-dev zlib1g-dev libpng12-dev build-essential libtool libglu1-mesa-dev libglu1-xorg-dev xserver-xorg-dev libxt-dev libopenal1 libopenal-dev subversion zlibc libttf2 libfreetype6-dev libfreetype6 libasound2-dev alsa-oss libxxf86vm-dev libxext-dev x11proto-xext-dev libspeex-dev</p>
@@ -1660,11 +1634,20 @@ downloaded from the SVN are usually more recent and updated.
         <div class="MINGW">Also, you should use a Command Prompt in DOS for the MySQL client commands.</div>
     </div>
 You can start your MySQL server in this way:</div>
-<div class="Linux-Slackware Linux-OpenSUSE">
+<div class="Linux-Slackware">
     <p><i class="command"># chmod 755  /etc/rc.d/rc.mysqld</i></p>
 </div>
+<div class="Linux-OpenSUSE">
+    <p><i class="command"># chmod 755  /etc/rc.d/rc.mysqld</i></p>
+</div>
+
 <div class="Linux">
-    <p><i class="command"># /etc/rc.d/rc.mysqld start</i></p>
+    <p class="Linux-Debian"><i class="command"># /etc/rc.d/rc.mysqld start</i></p>
+    <p class="Linux-Ubuntu"><i class="command"># /etc/rc.d/rc.mysqld start</i></p>
+    <p class="Linux-Slackware"><i class="command"># /etc/rc.d/rc.mysqld start</i></p>
+    <p class="Linux-OpenSUSE"><i class="command"># /etc/rc.d/rc.mysqld start</i></p>
+    <p class="Linux-Gentoo"><i class="command"># /etc/init.d/mysql start</i></p>
+    
     Then login to the MySQL client using (default username with no password):
     <p><i class="command">$ mysql -u username -ppassword</i></p>
     The default username is root with no password.
