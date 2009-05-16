@@ -629,7 +629,7 @@ NpcResponse *NPCDialogDict::AddResponse(const char *response_text,
         if (start == resp.Length())
             break;
 
-        end = (int)min(min(min(resp.Find("[", start),resp.Find(". ", start)),resp.Find("! ", start)),resp.Find("? ", start));  // action delimiter or sentence delimiter whichever is first
+        end = resp.FindFirst("[.!?",start);  // action delimiter or sentence delimiter whichever is first
         if (end == SIZET_NOT_FOUND)
             end = resp.Length();
         if (end < resp.Length() && (resp.GetAt(end)=='.' || resp.GetAt(end) == '!' || resp.GetAt(end) == '?')) // include the period in this substring
