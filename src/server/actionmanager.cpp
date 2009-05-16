@@ -365,19 +365,8 @@ bool ActionManager::HandleProximityQuery( csRef<iDocumentNode> topNode, Client *
 
 psActionLocation *ActionManager::FindAction(EID id)
 {
-    psActionLocation* actionLocation;
-    csHash<psActionLocation *>::GlobalIterator iter ( actionLocationList.GetIterator() );
-
-    while ( iter.HasNext() )
-    {
-        actionLocation = iter.Next();
-
-        if (actionLocation->GetGemObject()->GetEID() == id)
-        {
-            return actionLocation;
-        }
-    }
-    return NULL;
+    
+    return actionLocation_by_id.Get(id.Unbox(), NULL);
 }
 
 psActionLocation *ActionManager::FindActionByID( uint32 id )
