@@ -365,7 +365,9 @@ bool ActionManager::HandleProximityQuery( csRef<iDocumentNode> topNode, Client *
 
 psActionLocation *ActionManager::FindAction(EID id)
 {
-    
+    // FIXME : at the moment, the ALID is used as the EID
+    // it's an ugly hack, that should be changed in the future.
+    // this function should be changed too when this is done
     return actionLocation_by_id.Get(id.Unbox(), NULL);
 }
 
