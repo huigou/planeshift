@@ -546,6 +546,7 @@ bool CacheManager::PreloadSectors()
 
         newsector->is_colliding = (result[currentrow].GetInt("collide_objects") != 0);
         newsector->is_non_transient = (result[currentrow].GetInt("non_transient_objects") != 0);
+        newsector->say_range = result[currentrow].GetFloat("say_range");
 
         newsector->god_name = result[currentrow]["god_name"];
 
