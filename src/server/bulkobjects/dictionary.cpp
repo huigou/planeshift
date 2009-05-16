@@ -629,10 +629,10 @@ NpcResponse *NPCDialogDict::AddResponse(const char *response_text,
         if (start == resp.Length())
             break;
 
-        end = (int)min(resp.Find("[", start),resp.Find(". ", start));  // action delimiter or sentence delimiter whichever is first
+        end = (int)min(min(min(resp.Find("[", start),resp.Find(". ", start)),resp.Find("! ", start)),resp.Find("? ", start));  // action delimiter or sentence delimiter whichever is first
         if (end == SIZET_NOT_FOUND)
             end = resp.Length();
-        if (end < resp.Length() && resp.GetAt(end)=='.') // include the period in this substring
+        if (end < resp.Length() && (resp.GetAt(end)=='.' || resp.GetAt(end) == '!' || resp.GetAt(end) == '?')) // include the period in this substring
             end++;
 
         if (end-start > 0)
@@ -645,7 +645,7 @@ NpcResponse *NPCDialogDict::AddResponse(const char *response_text,
         if (end == resp.Length())  // stop if at end of string already
             break;
 
-        if (end > 0 && resp.GetAt(end-1)=='.' && resp.GetAt(end) != '[') // skip action brackets if this was a sentence break
+        if (end > 0 && (resp.GetAt(end-1)=='.' || resp.GetAt(end-1)=='!' || resp.GetAt(end-1)=='?') && resp.GetAt(end) != '[') // skip action brackets if this was a sentence break
         {
             start = end;
             continue;
