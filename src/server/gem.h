@@ -70,6 +70,7 @@ class gemItem;
 class gemActor;
 class gemNPC;
 class gemPet;
+class gemActionLocation;
 class ClientConnectionSet;
 class PublishVector;
 class psLinearMovement;
@@ -306,6 +307,7 @@ public:
     gemActor* GetActorPtr();
     gemNPC* GetNPCPtr();
     gemPet* GetPetPtr();
+    gemActionLocation* GetALPtr();
 
     psItem* GetItem();
     virtual psCharacter *GetCharacterData() { return NULL; }

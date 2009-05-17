@@ -1595,7 +1595,7 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
         regionName = (sector) ? sector->QueryObject()->GetObjectParent()->GetName() : "(null)";
     }
 
-    if (target && strcmp(target->GetObjectType(), "ActionLocation") == 0) // Action location
+    if (target && target->GetALPtr()) // Action location
     {
         gemActionLocation *item = dynamic_cast<gemActionLocation *>(target);
         if (!item)
