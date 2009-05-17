@@ -245,20 +245,17 @@ const char * psCamera::HandleCommand(const char *cmd)
         if (!diff.x)
             diff.x = 0.00001F; // div/0 protect
 
-        float angle = atan2(-diff.x,-diff.z);
+        float angle = atan2(diff.z,diff.x);
         
         float npcrot = target->GetRotation();
         
         GEMClientActor* targetActor = dynamic_cast<GEMClientActor*>(target);
         
-        csVector3 velocity;
-        velocity = targetActor->GetVelocity();
-        float velNormSquared = velocity.SquaredNorm();
-        
-        
+        float velNormSquared = targetActor->GetVelocity().SquaredNorm();
+                
         if((angle-npcrot) < PI && (angle-npcrot) > -PI && velNormSquared == 0)
         {
-            psengine->GetCharManager()->StoreTarget();
+            npcOldRot = npcrot;
             target->SetPosition(target->GetPosition(), angle, target->GetSector());
         }
 
@@ -1434,7 +1431,7 @@ void psCamera::DoCameraIdealCalcs(const csTicks elapsedTicks, const csVector3& a
             psClientCharManager* clientChar = psengine->GetCharManager();
             if (npcModeTarget != clientChar->GetTarget() || npcModePosition != actor->GetMesh()->GetMovable()->GetFullPosition())
             {
-                clientChar->GetTargetStored()->SetPosition(clientChar->GetTargetStored()->GetPosition(), clientChar->GetOldRot(), clientChar->GetTargetStored()->GetSector());
+                npcModeTarget->SetPosition(npcModeTarget->GetPosition(), npcOldRot, npcModeTarget->GetSector());
                 SetCameraMode(lastCameraMode);
                 break;
             }
