@@ -25,7 +25,7 @@
 class csVector3;
 struct iObjectRegistry;
 
-struct iBgLoader : public iBase
+struct iBgLoader : public virtual iBase
 {
   SCF_INTERFACE(iBgLoader, 1, 0, 0);
 

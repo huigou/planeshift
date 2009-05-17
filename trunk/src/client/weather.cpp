@@ -37,8 +37,8 @@
 #include <iutil/vfs.h>
 #include <iutil/plugin.h>
 
+#include "iclient/ibgloader.h"
 #include "iclient/isoundmngr.h"
-#include "engine/loader.h"
 #include "pscelclient.h"
 #include "globals.h"
 #include "weather.h"
@@ -214,10 +214,10 @@ bool RainWeatherObject::CreateMesh()
     float speed = 5;
 
     // Attempt to fetch material.
-    csRef<iMaterialWrapper> mat = Loader::GetSingleton().LoadMaterial(matname);
+    csRef<iMaterialWrapper> mat = psengine->GetLoader()->LoadMaterial(matname);
     while (!mat)
     {
-        mat = Loader::GetSingleton().LoadMaterial(matname);
+        mat = psengine->GetLoader()->LoadMaterial(matname);
     }
 
     if(!mfw)
@@ -373,10 +373,10 @@ bool SnowWeatherObject::CreateMesh()
     float speed = 1.5f;
 
     // Attempt to fetch material.
-    csRef<iMaterialWrapper> mat = Loader::GetSingleton().LoadMaterial(matname);
+    csRef<iMaterialWrapper> mat = psengine->GetLoader()->LoadMaterial(matname);
     while (!mat)
     {
-        mat = Loader::GetSingleton().LoadMaterial(matname);
+        mat = psengine->GetLoader()->LoadMaterial(matname);
     }
 
     if(!mfw)
