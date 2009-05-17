@@ -1,14 +1,13 @@
 <?xml version="1.0"?>
-<!-- cssaver.csplugin -->
 <plugin>
   <scf>
     <classes>
       <class>
-        <name>crystalspace.level.saver</name>
-        <implementation>csSaver</implementation>
-        <description>Level and library file saver</description>
+        <name>crystalspace.bgloader</name>
+        <implementation>BgLoader</implementation>
+        <description>Background Loader</description>
         <requires>
-          <class>crystalspace.kernel.</class>
+          <class>crystalspace.level.threadedloader</class>
         </requires>
       </class>
     </classes>
