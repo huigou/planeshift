@@ -362,7 +362,7 @@ void ChatManager::HandleChannelJoinMessage(MsgEntry *me, Client *client)
 		  return;
 		}
 	}
-	if(channelSubscriptions.GetAll(client->GetClientNum()).GetSize() <= 10)
+	if(channelSubscriptions.GetAll(client->GetClientNum()).GetSize() > 10)
 	{
 		psserver->SendSystemError(client->GetClientNum(), "You have joined more than 10 channels, please leave some channels first.");
 		return;
