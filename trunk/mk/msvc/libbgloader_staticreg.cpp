@@ -17,33 +17,32 @@ namespace csStaticPluginInit
 {
 static char const metainfo_bgloader[] =
 "<?xml version=\"1.0\"?>"
-"<!-- cssaver.csplugin -->"
 "<plugin>"
 "  <scf>"
 "    <classes>"
 "      <class>"
-"        <name>crystalspace.level.saver</name>"
-"        <implementation>csSaver</implementation>"
-"        <description>Level and library file saver</description>"
+"        <name>crystalspace.bgloader</name>"
+"        <implementation>BgLoader</implementation>"
+"        <description>Background Loader</description>"
 "        <requires>"
-"          <class>crystalspace.kernel.</class>"
+"          <class>crystalspace.level.threadedloader</class>"
 "        </requires>"
 "      </class>"
 "    </classes>"
 "  </scf>"
 "</plugin>"
 ;
-  #ifndef csSaver_FACTORY_REGISTER_DEFINED 
-  #define csSaver_FACTORY_REGISTER_DEFINED 
-    SCF_DEFINE_FACTORY_FUNC_REGISTRATION(csSaver) 
+  #ifndef BgLoader_FACTORY_REGISTER_DEFINED 
+  #define BgLoader_FACTORY_REGISTER_DEFINED 
+    SCF_DEFINE_FACTORY_FUNC_REGISTRATION(BgLoader) 
   #endif
 
 class bgloader
 {
 SCF_REGISTER_STATIC_LIBRARY(bgloader,metainfo_bgloader)
-  #ifndef csSaver_FACTORY_REGISTERED 
-  #define csSaver_FACTORY_REGISTERED 
-    csSaver_StaticInit csSaver_static_init__; 
+  #ifndef BgLoader_FACTORY_REGISTERED 
+  #define BgLoader_FACTORY_REGISTERED 
+    BgLoader_StaticInit BgLoader_static_init__; 
   #endif
 public:
  bgloader();
