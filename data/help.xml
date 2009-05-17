@@ -492,6 +492,7 @@ To reward the participants (all of them, those within a specified range or an in
 /event reward [range 0-100 | all | player] # [item name]
 [item name] can be "exp" (experience) where # Progression Points are awarded.
 [item name] can be "faction [faction name]" to adjust the faction standing.
+NOTE: Exp is in PP not in experience, differently from awardexp and givekillexp
 
 If a GM wants to assume control of an ongoing event, because the original GM character has been deleted, or has abandoned it and is offline, the GM can enter:
 /event control [name]
