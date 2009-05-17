@@ -707,8 +707,8 @@ void UserManager::HandleEntranceMessage( MsgEntry* me, Client *client )
     CS_ASSERT(actor);
 
     // Check range
-    csWeakRef<gemObject> gemAction = action->GetGemObject();
-    if (gemAction.IsValid() && actor->RangeTo(gemAction, false, true) > RANGE_TO_SELECT)
+    gemObject* gemAction = action->GetGemObject();
+    if (gemAction && actor->RangeTo(gemAction, false, true) > RANGE_TO_SELECT)
     {
         psserver->SendSystemError(client->GetClientNum(), "You are no longer in range to do this.");
         return;
@@ -1372,7 +1372,7 @@ void UserManager::Attack(Stance stance, Client *client)
         psserver->SendSystemError(client->GetClientNum(),"You do not have a target selected.");
         return;
     }
-    if (target->GetItem() || strcmp(target->GetObjectType(), "ActionLocation") == 0 )
+    if (target->GetItem() || target->GetALPtr())
     {
         psserver->SendSystemError(client->GetClientNum(),"You cannot attack %s.", (const char*)target->GetName() );
         return;

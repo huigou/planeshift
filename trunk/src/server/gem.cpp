@@ -293,7 +293,7 @@ gemObject *GEMSupervisor::FindObject(const csString& name)
         gemObject* obj = i.Next();
         if ( name.CompareNoCase(obj->GetName()) )
                 return obj;
-        else if ( (csString) obj->GetObjectType() == "NPC" ) //Allow search for first name only with NPCs
+        else if ( obj->GetNPCPtr() ) //Allow search for first name only with NPCs
         {
             WordArray names (obj->GetName(), false);
             if(name.CompareNoCase(names[0]))
@@ -645,6 +645,11 @@ gemNPC* gemObject::GetNPCPtr()
 gemPet* gemObject::GetPetPtr()
 {
     return dynamic_cast<gemPet*>(this);
+}
+
+gemActionLocation* gemObject::GetALPtr()
+{
+    return dynamic_cast<gemActionLocation*>(this);
 }
 
 const char* gemObject::GetName()
