@@ -60,6 +60,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libxdelta3", "libxdelta3.vc
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libxpnet", "libxpnet.vcproj", "{9A00C04D-B432-07C4-0C79-25933213DCD5}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "plgbgloader", "plgbgloader.vcproj", "{2714CB33-59CC-A646-75B5-CC7B723BE5EE}"
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "plgdbmysql", "plgdbmysql.vcproj", "{44F637AC-3D1B-9DC4-22C0-3F216BF1EB41}"
 EndProject
 Global
@@ -129,7 +131,8 @@ Global
 		{2E2C8E39-B6EC-611F-FD00-1AF489F427F6}.19 = {A4D92586-089F-D6D3-52C4-F11AA71CA951}
 		{2E2C8E39-B6EC-611F-FD00-1AF489F427F6}.20 = {E048E636-1BDD-CC82-0479-CD22C187E490}
 		{2E2C8E39-B6EC-611F-FD00-1AF489F427F6}.21 = {9A00C04D-B432-07C4-0C79-25933213DCD5}
-		{2E2C8E39-B6EC-611F-FD00-1AF489F427F6}.22 = {44F637AC-3D1B-9DC4-22C0-3F216BF1EB41}
+		{2E2C8E39-B6EC-611F-FD00-1AF489F427F6}.22 = {2714CB33-59CC-A646-75B5-CC7B723BE5EE}
+		{2E2C8E39-B6EC-611F-FD00-1AF489F427F6}.23 = {44F637AC-3D1B-9DC4-22C0-3F216BF1EB41}
 		{54E717FD-1E32-4737-283B-F8EC3D55A60B}.0 = {5B4A2B5C-518A-C9D6-D6C0-91E11627AB32}
 		{54E717FD-1E32-4737-283B-F8EC3D55A60B}.1 = {D7B7BF86-AA99-ECF1-150B-AFF316BDA7D8}
 		{54E717FD-1E32-4737-283B-F8EC3D55A60B}.2 = {2B93E1CA-1F7B-06E9-D659-69FDCCE07099}
@@ -141,6 +144,7 @@ Global
 		{85098870-AAFB-02B7-7CC4-D55B92503009}.0 = {FEAFE33B-F1B6-42F9-55F1-7E6413431BF1}
 		{85098870-AAFB-02B7-7CC4-D55B92503009}.1 = {B1CE87F5-3C6B-77FA-DBAF-8F9DE20914BC}
 		{85098870-AAFB-02B7-7CC4-D55B92503009}.2 = {C0CD3069-8659-1151-26AC-40C98186358B}
+		{85098870-AAFB-02B7-7CC4-D55B92503009}.3 = {2714CB33-59CC-A646-75B5-CC7B723BE5EE}
 		{4BFC8AEF-865D-48F0-4F52-A4368CACCD7C}.0 = {44689D68-F60B-F78C-02E4-1659987614BD}
 		{4BFC8AEF-865D-48F0-4F52-A4368CACCD7C}.1 = {A04BE757-E4C1-A003-8FDB-47430BC64269}
 		{4BFC8AEF-865D-48F0-4F52-A4368CACCD7C}.2 = {56CFA369-1F2F-7609-9E86-069C1B5F5651}
@@ -155,7 +159,8 @@ Global
 		{4BFC8AEF-865D-48F0-4F52-A4368CACCD7C}.11 = {A4D92586-089F-D6D3-52C4-F11AA71CA951}
 		{4BFC8AEF-865D-48F0-4F52-A4368CACCD7C}.12 = {E048E636-1BDD-CC82-0479-CD22C187E490}
 		{4BFC8AEF-865D-48F0-4F52-A4368CACCD7C}.13 = {9A00C04D-B432-07C4-0C79-25933213DCD5}
-		{8A10F246-B625-AFC6-8F33-4B13D92E2BEF}.0 = {44F637AC-3D1B-9DC4-22C0-3F216BF1EB41}
+		{8A10F246-B625-AFC6-8F33-4B13D92E2BEF}.0 = {2714CB33-59CC-A646-75B5-CC7B723BE5EE}
+		{8A10F246-B625-AFC6-8F33-4B13D92E2BEF}.1 = {44F637AC-3D1B-9DC4-22C0-3F216BF1EB41}
 		{B2FA6B12-DFA3-38AD-47A5-D0D41A483D01}.0 = {D7B7BACC-11C8-CED6-DEEF-7CE8B0C8175E}
 		{B2FA6B12-DFA3-38AD-47A5-D0D41A483D01}.1 = {8783816D-CE3F-5245-D95F-1D459D5A9FD5}
 		{B2FA6B12-DFA3-38AD-47A5-D0D41A483D01}.2 = {44F637AC-3D1B-9DC4-22C0-3F216BF1EB41}
@@ -1614,6 +1619,54 @@ Global
 		{9A00C04D-B432-07C4-0C79-25933213DCD5}.DebugPSReleaseCSCEL (with DLLs).Build.0 = DebugPSReleaseCSCEL (with DLLs)|Win32
     		{9A00C04D-B432-07C4-0C79-25933213DCD5}.DebugPSReleaseCSCEL (with DLLs).ActiveCfg = DebugPSReleaseCSCEL (with DLLs)|x64
 		{9A00C04D-B432-07C4-0C79-25933213DCD5}.DebugPSReleaseCSCEL (with DLLs).Build.0 = DebugPSReleaseCSCEL (with DLLs)|x64
+            		{2714CB33-59CC-A646-75B5-CC7B723BE5EE}.Release (with static libs).ActiveCfg = Release (with static libs)|Win32
+		{2714CB33-59CC-A646-75B5-CC7B723BE5EE}.Release (with static libs).Build.0 = Release (with static libs)|Win32
+    		{2714CB33-59CC-A646-75B5-CC7B723BE5EE}.Release (with static libs).ActiveCfg = Release (with static libs)|x64
+		{2714CB33-59CC-A646-75B5-CC7B723BE5EE}.Release (with static libs).Build.0 = Release (with static libs)|x64
+          		{2714CB33-59CC-A646-75B5-CC7B723BE5EE}.Release (with DLLs).ActiveCfg = Release (with DLLs)|Win32
+		{2714CB33-59CC-A646-75B5-CC7B723BE5EE}.Release (with DLLs).Build.0 = Release (with DLLs)|Win32
+    		{2714CB33-59CC-A646-75B5-CC7B723BE5EE}.Release (with DLLs).ActiveCfg = Release (with DLLs)|x64
+		{2714CB33-59CC-A646-75B5-CC7B723BE5EE}.Release (with DLLs).Build.0 = Release (with DLLs)|x64
+            		{2714CB33-59CC-A646-75B5-CC7B723BE5EE}.Debug (with static libs).ActiveCfg = Debug (with static libs)|Win32
+		{2714CB33-59CC-A646-75B5-CC7B723BE5EE}.Debug (with static libs).Build.0 = Debug (with static libs)|Win32
+    		{2714CB33-59CC-A646-75B5-CC7B723BE5EE}.Debug (with static libs).ActiveCfg = Debug (with static libs)|x64
+		{2714CB33-59CC-A646-75B5-CC7B723BE5EE}.Debug (with static libs).Build.0 = Debug (with static libs)|x64
+          		{2714CB33-59CC-A646-75B5-CC7B723BE5EE}.Debug (with DLLs).ActiveCfg = Debug (with DLLs)|Win32
+		{2714CB33-59CC-A646-75B5-CC7B723BE5EE}.Debug (with DLLs).Build.0 = Debug (with DLLs)|Win32
+    		{2714CB33-59CC-A646-75B5-CC7B723BE5EE}.Debug (with DLLs).ActiveCfg = Debug (with DLLs)|x64
+		{2714CB33-59CC-A646-75B5-CC7B723BE5EE}.Debug (with DLLs).Build.0 = Debug (with DLLs)|x64
+            		{2714CB33-59CC-A646-75B5-CC7B723BE5EE}.MemoryTracker (with static libs).ActiveCfg = MemoryTracker (with static libs)|Win32
+		{2714CB33-59CC-A646-75B5-CC7B723BE5EE}.MemoryTracker (with static libs).Build.0 = MemoryTracker (with static libs)|Win32
+    		{2714CB33-59CC-A646-75B5-CC7B723BE5EE}.MemoryTracker (with static libs).ActiveCfg = MemoryTracker (with static libs)|x64
+		{2714CB33-59CC-A646-75B5-CC7B723BE5EE}.MemoryTracker (with static libs).Build.0 = MemoryTracker (with static libs)|x64
+          		{2714CB33-59CC-A646-75B5-CC7B723BE5EE}.MemoryTracker (with DLLs).ActiveCfg = MemoryTracker (with DLLs)|Win32
+		{2714CB33-59CC-A646-75B5-CC7B723BE5EE}.MemoryTracker (with DLLs).Build.0 = MemoryTracker (with DLLs)|Win32
+    		{2714CB33-59CC-A646-75B5-CC7B723BE5EE}.MemoryTracker (with DLLs).ActiveCfg = MemoryTracker (with DLLs)|x64
+		{2714CB33-59CC-A646-75B5-CC7B723BE5EE}.MemoryTracker (with DLLs).Build.0 = MemoryTracker (with DLLs)|x64
+            		{2714CB33-59CC-A646-75B5-CC7B723BE5EE}.RefTracker (with static libs).ActiveCfg = RefTracker (with static libs)|Win32
+		{2714CB33-59CC-A646-75B5-CC7B723BE5EE}.RefTracker (with static libs).Build.0 = RefTracker (with static libs)|Win32
+    		{2714CB33-59CC-A646-75B5-CC7B723BE5EE}.RefTracker (with static libs).ActiveCfg = RefTracker (with static libs)|x64
+		{2714CB33-59CC-A646-75B5-CC7B723BE5EE}.RefTracker (with static libs).Build.0 = RefTracker (with static libs)|x64
+          		{2714CB33-59CC-A646-75B5-CC7B723BE5EE}.RefTracker (with DLLs).ActiveCfg = RefTracker (with DLLs)|Win32
+		{2714CB33-59CC-A646-75B5-CC7B723BE5EE}.RefTracker (with DLLs).Build.0 = RefTracker (with DLLs)|Win32
+    		{2714CB33-59CC-A646-75B5-CC7B723BE5EE}.RefTracker (with DLLs).ActiveCfg = RefTracker (with DLLs)|x64
+		{2714CB33-59CC-A646-75B5-CC7B723BE5EE}.RefTracker (with DLLs).Build.0 = RefTracker (with DLLs)|x64
+            		{2714CB33-59CC-A646-75B5-CC7B723BE5EE}.ThreadChecker (with static libs).ActiveCfg = ThreadChecker (with static libs)|Win32
+		{2714CB33-59CC-A646-75B5-CC7B723BE5EE}.ThreadChecker (with static libs).Build.0 = ThreadChecker (with static libs)|Win32
+    		{2714CB33-59CC-A646-75B5-CC7B723BE5EE}.ThreadChecker (with static libs).ActiveCfg = ThreadChecker (with static libs)|x64
+		{2714CB33-59CC-A646-75B5-CC7B723BE5EE}.ThreadChecker (with static libs).Build.0 = ThreadChecker (with static libs)|x64
+          		{2714CB33-59CC-A646-75B5-CC7B723BE5EE}.ThreadChecker (with DLLs).ActiveCfg = ThreadChecker (with DLLs)|Win32
+		{2714CB33-59CC-A646-75B5-CC7B723BE5EE}.ThreadChecker (with DLLs).Build.0 = ThreadChecker (with DLLs)|Win32
+    		{2714CB33-59CC-A646-75B5-CC7B723BE5EE}.ThreadChecker (with DLLs).ActiveCfg = ThreadChecker (with DLLs)|x64
+		{2714CB33-59CC-A646-75B5-CC7B723BE5EE}.ThreadChecker (with DLLs).Build.0 = ThreadChecker (with DLLs)|x64
+            		{2714CB33-59CC-A646-75B5-CC7B723BE5EE}.DebugPSReleaseCSCEL (with static libs).ActiveCfg = DebugPSReleaseCSCEL (with static libs)|Win32
+		{2714CB33-59CC-A646-75B5-CC7B723BE5EE}.DebugPSReleaseCSCEL (with static libs).Build.0 = DebugPSReleaseCSCEL (with static libs)|Win32
+    		{2714CB33-59CC-A646-75B5-CC7B723BE5EE}.DebugPSReleaseCSCEL (with static libs).ActiveCfg = DebugPSReleaseCSCEL (with static libs)|x64
+		{2714CB33-59CC-A646-75B5-CC7B723BE5EE}.DebugPSReleaseCSCEL (with static libs).Build.0 = DebugPSReleaseCSCEL (with static libs)|x64
+          		{2714CB33-59CC-A646-75B5-CC7B723BE5EE}.DebugPSReleaseCSCEL (with DLLs).ActiveCfg = DebugPSReleaseCSCEL (with DLLs)|Win32
+		{2714CB33-59CC-A646-75B5-CC7B723BE5EE}.DebugPSReleaseCSCEL (with DLLs).Build.0 = DebugPSReleaseCSCEL (with DLLs)|Win32
+    		{2714CB33-59CC-A646-75B5-CC7B723BE5EE}.DebugPSReleaseCSCEL (with DLLs).ActiveCfg = DebugPSReleaseCSCEL (with DLLs)|x64
+		{2714CB33-59CC-A646-75B5-CC7B723BE5EE}.DebugPSReleaseCSCEL (with DLLs).Build.0 = DebugPSReleaseCSCEL (with DLLs)|x64
             		{44F637AC-3D1B-9DC4-22C0-3F216BF1EB41}.Release (with static libs).ActiveCfg = Release (with static libs)|Win32
 		{44F637AC-3D1B-9DC4-22C0-3F216BF1EB41}.Release (with static libs).Build.0 = Release (with static libs)|Win32
     		{44F637AC-3D1B-9DC4-22C0-3F216BF1EB41}.Release (with static libs).ActiveCfg = Release (with static libs)|x64
