@@ -25,7 +25,7 @@ Application psclient_static : [ Wildcard *.cpp *.h ] $(extrafiles) : independent
 CFlags psclient_static : [ FDefines CS_STATIC_LINKED ] $(CAL3D.CFLAGS) ;
 LFlags psclient_static : -lcrystalspace_staticplugins-$(CRYSTAL.VERSION) -lcal3d ;
 MsvcDefine psclient_static : CS_STATIC_LINKED ;
-LinkWith psclient_static : gui psnet psengine psrpgrules pssound psutil paws effects fparser ;
+LinkWith psclient_static : bgloaderstatic gui psnet psengine psrpgrules pssound psutil paws effects fparser ;
 
 #
 # The plugins that we need
