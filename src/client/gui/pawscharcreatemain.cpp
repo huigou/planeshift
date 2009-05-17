@@ -22,9 +22,9 @@
 #include <ivideo/txtmgr.h>
 #include <imap/loader.h>
 
-#include "../globals.h"
-#include "../charapp.h"
-#include "engine/loader.h"
+#include "globals.h"
+#include "charapp.h"
+#include "iclient/ibgloader.h"
 #include "net/messages.h"
 #include "net/clientmsghandler.h"
 #include "net/charmessages.h"
@@ -1032,7 +1032,7 @@ void pawsCreationMain::CheckLoadStatus()
 {
     if(!loaded)
     {
-        csRef<iMeshFactoryWrapper> factory = Loader::GetSingleton().LoadFactory(factName);
+        csRef<iMeshFactoryWrapper> factory = psengine->GetLoader()->LoadFactory(factName);
         if(factory.IsValid())
         {
             view->View(factory);

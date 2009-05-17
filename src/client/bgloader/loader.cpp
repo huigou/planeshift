@@ -38,8 +38,14 @@ CS_IMPLEMENT_PLUGIN
 
 CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
 {
+SCF_IMPLEMENT_FACTORY(BgLoader)
+
 BgLoader::BgLoader(iBase *p)
   : scfImplementationType (this, p), validPosition(false)
+{
+}
+
+BgLoader::~BgLoader()
 {
 }
 
@@ -61,6 +67,8 @@ bool BgLoader::Initialize(iObjectRegistry* object_reg)
     txtmgr = g3d->GetTextureManager();
 
     engine->SetClearZBuf(true);
+
+    return true;
 }
 
 void BgLoader::Setup(uint gfxFeatures, float loadRange)
@@ -69,7 +77,7 @@ void BgLoader::Setup(uint gfxFeatures, float loadRange)
     this->loadRange = loadRange;
 }
 
-THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
+THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive)
 {
     // Don't parse folders.
     csString vfsPath(path);
@@ -1250,13 +1258,13 @@ void BgLoader::LoadSector(const csVector3& pos, const csBox3& loadBox, const csB
     {
         if(!sector->meshes[i]->loading)
         {
-            if(sector->meshes[i]->InRange(pos, loadBox))
+            if(sector->meshes[i]->InRange(pos, loadBox, loadRange))
             {
                 sector->meshes[i]->loading = true;
                 loadingMeshes.Push(sector->meshes[i]);
                 ++sector->objectCount;
             }
-            else if(sector->meshes[i]->OutOfRange(pos, unloadBox))
+            else if(sector->meshes[i]->OutOfRange(pos, unloadBox, loadRange))
             {
                 sector->meshes[i]->object->GetMovable()->ClearSectors();
                 sector->meshes[i]->object->GetMovable()->UpdateMove();

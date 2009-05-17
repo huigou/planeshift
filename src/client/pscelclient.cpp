@@ -54,7 +54,6 @@
 #include "engine/psworld.h"
 #include "engine/solid.h"
 #include "engine/linmove.h"
-#include "engine/loader.h"
 #include "engine/colldet.h"
 
 #include "net/messages.h"
@@ -74,6 +73,7 @@
 //=============================================================================
 // Application Includes
 //=============================================================================
+#include "iclient/ibgloader.h"
 #include "pscelclient.h"
 #include "charapp.h"
 #include "clientvitals.h"
@@ -252,7 +252,7 @@ void psCelClient::HandleActor( MsgEntry* me )
     if ( local_player == NULL )
     {
         // Trigger a world load, as we now know where we are.
-        Loader::GetSingleton().UpdatePosition(mesg.pos, mesg.sectorName, true);
+        psengine->GetLoader()->UpdatePosition(mesg.pos, mesg.sectorName, true);
 
         // Set the sector.
         mesg.sector = psengine->GetEngine()->FindSector(mesg.sectorName);
@@ -322,7 +322,7 @@ void psCelClient::HandleMainActor( psPersistActor& mesg )
         csRef<iMeshFactoryWrapper> factory;
         while(!factory.IsValid())
         {
-            factory = Loader::GetSingleton().LoadFactory(mesg.factname);
+            factory = psengine->GetLoader()->LoadFactory(mesg.factname);
         }
 
         // New or resetting?
@@ -771,8 +771,8 @@ void psCelClient::Update(bool loaded)
     // Update loader.
     if(local_player)
     {
-      Loader::GetSingleton().UpdatePosition(local_player->Pos(), 
-        local_player->GetSector()->QueryObject()->GetName(), false);
+        psengine->GetLoader()->UpdatePosition(local_player->Pos(), 
+            local_player->GetSector()->QueryObject()->GetName(), false);
     }
 
     if(loaded)
@@ -1245,7 +1245,7 @@ bool GEMClientObject::InitMesh()
 
 void GEMClientObject::CheckLoadStatus()
 {
-    csRef<iMeshFactoryWrapper> factory = Loader::GetSingleton().LoadFactory(factName);
+    csRef<iMeshFactoryWrapper> factory = psengine->GetLoader()->LoadFactory(factName);
     if(!factory.IsValid())
     {
         return;

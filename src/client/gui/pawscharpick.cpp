@@ -22,9 +22,9 @@
 
 #include "util/log.h"
 #include "globals.h"
+#include "iclient/ibgloader.h"
 
 #include "charapp.h"
-#include "engine/loader.h"
 #include "pawscharpick.h"
 #include "pawsloginwindow.h"
 #include "paws/pawsbutton.h"
@@ -523,7 +523,7 @@ void pawsCharacterPickerWindow::CheckLoadStatus()
 {
     if(!loaded)
     {
-        csRef<iMeshFactoryWrapper> factory = Loader::GetSingleton().LoadFactory(models[selectedCharacter].factName);
+        csRef<iMeshFactoryWrapper> factory = psengine->GetLoader()->LoadFactory(models[selectedCharacter].factName);
         if (factory.IsValid())
         {
             psengine->UnregisterDelayedLoader(this);

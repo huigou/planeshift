@@ -36,20 +36,22 @@
 #include <iutil/objreg.h>
 #include <iutil/vfs.h>
 
-#include <../iclient/loader.h>
+#include <iclient/ibgloader.h>
 
 struct iCollideSystem;
 struct iSyntaxService;
 
 CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
 {
-class BgLoader : public ThreadedCallable<Loader>,
+class BgLoader : public ThreadedCallable<BgLoader>,
                  public scfImplementation2<BgLoader,
                                            iBgLoader,
                                            iComponent>
 {
 public:
     BgLoader(iBase *p);
+    virtual ~BgLoader();
+
     bool Initialize(iObjectRegistry* _object_reg);
 
     void Setup(uint gfxFeatures, float loadRange);
@@ -57,7 +59,7 @@ public:
     csPtr<iMaterialWrapper> LoadMaterial(const char* name, bool* failed = NULL);
     csPtr<iMeshFactoryWrapper> LoadFactory(const char* name);
 
-    THREADED_CALLABLE_DECL2(Loader, PrecacheData, csThreadReturn, const char*, path, bool, recursive, THREADEDL, false, false);
+    THREADED_CALLABLE_DECL2(BgLoader, PrecacheData, csThreadReturn, const char*, path, bool, recursive, THREADEDL, false, false);
     void UpdatePosition(const csVector3& pos, const char* sectorName, bool force);
 
     void ContinueLoading(bool waiting);
@@ -226,16 +228,16 @@ private:
         {
         }
 
-        inline bool InRange(const csVector3& curpos, const csBox3& curBBox)
+        inline bool InRange(const csVector3& curpos, const csBox3& curBBox, float loadRange)
         {
             return !object.IsValid() && (alwaysLoaded ||
-                (hasBBox ? curBBox.Overlap(bbox) : csVector3(pos - curpos).Norm() <= BgLoader::GetSingleton().loadRange));
+                (hasBBox ? curBBox.Overlap(bbox) : csVector3(pos - curpos).Norm() <= loadRange));
         }
 
-        inline bool OutOfRange(const csVector3& curpos, const csBox3& curBBox)
+        inline bool OutOfRange(const csVector3& curpos, const csBox3& curBBox, float loadRange)
         {
             return !alwaysLoaded && object.IsValid() &&
-                (hasBBox ? !curBBox.Overlap(bbox) : csVector3(pos - curpos).Norm() > BgLoader::GetSingleton().loadRange*1.5);
+                (hasBBox ? !curBBox.Overlap(bbox) : csVector3(pos - curpos).Norm() > loadRange*1.5);
         }
 
         csString name;

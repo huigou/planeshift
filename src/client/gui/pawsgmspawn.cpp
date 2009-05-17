@@ -20,12 +20,12 @@
 #include <psconfig.h>
 #include <iutil/objreg.h>
 
-#include "engine/loader.h"
 #include "net/cmdhandler.h"
 #include "net/clientmsghandler.h"
 #include "net/messages.h"
 
-#include "../globals.h"
+#include "globals.h"
+#include "iclient/ibgloader.h"
 #include "paws/pawslistbox.h"
 #include "paws/pawsyesnobox.h"
 #include "paws/pawsobjectview.h"
@@ -164,7 +164,7 @@ bool pawsGMSpawnWindow::OnSelected(pawsWidget* widget)
             item.mesh = fact_name;
             factName = item.mesh;
 
-            csRef<iMeshFactoryWrapper> factory = Loader::GetSingleton().LoadFactory(factName);
+            csRef<iMeshFactoryWrapper> factory = psengine->GetLoader()->LoadFactory(factName);
             if(!factory)
             {
                 loaded = false;
@@ -221,7 +221,7 @@ void pawsGMSpawnWindow::CheckLoadStatus()
 {
     if(!loaded)
     {
-        csRef<iMeshFactoryWrapper> factory = Loader::GetSingleton().LoadFactory(factName);
+        csRef<iMeshFactoryWrapper> factory = psengine->GetLoader()->LoadFactory(factName);
         if(factory.IsValid())
         {
             psengine->UnregisterDelayedLoader(this);
