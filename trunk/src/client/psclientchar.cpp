@@ -383,12 +383,6 @@ void psClientCharManager::HandleAction( MsgEntry* me )
         Error1("Received psUserActionMessage for invalid object.");
 }
 
-void psClientCharManager::StoreTarget()
-{
-    targetStored = target;
-    rotStored = targetStored->GetRotation();
-}
-
 void psClientCharManager::HandlePlaySound( MsgEntry* me )
 {
     csRef<iSoundManager> soundmanager = psengine->GetSoundManager();

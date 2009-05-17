@@ -107,15 +107,6 @@ public:
      *  @return the target.
      */
     GEMClientObject * GetTarget() { return target; };
-    
-    /// Get the old target
-    GEMClientObject * GetTargetStored() { return targetStored; };
-
-    ///get the old rotation
-    float GetOldRot() { return rotStored; };
-    
-    /// Store the target in targetStored and its rotation into targetOldRot
-    void StoreTarget();
 
 protected:
     /// Change a trait on a character.
@@ -151,12 +142,6 @@ protected:
     
     /// keeps track of what object you have targetted
     GEMClientObject * target;
-    
-    /// previous target (for npccamera)
-    GEMClientObject * targetStored;
-    
-    ///previous rotation (for npccamera)
-    float rotStored;
     
     psCelClient *cel;
     bool ready;

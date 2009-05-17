@@ -669,6 +669,7 @@ private:
 
     GEMClientObject* npcModeTarget;
     csVector3 npcModePosition;
+    float npcOldRot;
     int fixedDistClip;
 };
 
