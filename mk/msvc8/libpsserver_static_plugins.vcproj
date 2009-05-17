@@ -2,8 +2,8 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="apppsserver_static"
-	ProjectGUID="{3F021542-A6A4-6683-5C52-EB9048DD23DE}"
+	Name="libpsserver_static_plugins"
+	ProjectGUID="{775D7AA8-0CCB-D58D-740B-23CF5FB52417}"
 	SccProjectName=""
 	SccLocalPath="">
 	<Platforms>
@@ -13,11 +13,9 @@
 	<Configurations>
             		<Configuration
 			Name="Release (with static libs)|Win32"
-			OutputDirectory="..\..\out\release8\build\apppsserver_static\"
-			IntermediateDirectory="..\..\out\release8\build\apppsserver_static\"
-			ConfigurationType="1"
-			CharacterSet="2"
-			WholeProgramOptimization="1"
+			OutputDirectory="..\..\out\release8\build\libpsserver_static_plugins\"
+			IntermediateDirectory="..\..\out\release8\build\libpsserver_static_plugins\"
+			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -27,14 +25,14 @@
 				EnableFunctionLevelLinking="TRUE"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="FALSE"
-				ProgramDataBaseFileName="..\..\out\release8\build\apppsserver_static\Win32\psserver_static.pdb"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;WIN32"
+				ProgramDataBaseFileName="..\..\out\release8\build\libpsserver_static_plugins\Win32\psserver_static_plugins.pdb"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\release8\build\apppsserver_static\apppsserver_static.pch"
-				AssemblerListingLocation="..\..\out\release8\build\apppsserver_static\"
-				ObjectFile="..\..\out\release8\build\apppsserver_static\"
+				PrecompiledHeaderFile="..\..\out\release8\build\libpsserver_static_plugins\libpsserver_static_plugins.pch"
+				AssemblerListingLocation="..\..\out\release8\build\libpsserver_static_plugins\"
+				ObjectFile="..\..\out\release8\build\libpsserver_static_plugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -51,24 +49,22 @@
 				EnableCOMDATFolding="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD"
-				OutputFile="..\..\psserver_static.exe"
-				ProgramDatabaseFile="..\..\out\release8\build\apppsserver_static\Win32\psserver_static.pdb"
-				SubSystem="1"
-				AdditionalOptions="libcrystalspace_opengl.lib opengl32.lib cg.lib cgGL.lib libcrystalspace_staticplugins.lib libcrystalspace.lib zlib.lib "
+				AdditionalOptions=" "
 				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
+				OutputFile="..\..\out\release8\libs\libpsserver_static_plugins.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\release8\build\apppsserver_static\apppsserver_static.tlb"/>
+				TypeLibraryName="..\..\out\release8\build\libpsserver_static_plugins\libpsserver_static_plugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\release8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release8\bin\&#x0D;&#x0A;"
@@ -79,7 +75,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=8"
 				AdditionalIncludeDirectories=".;..\..\src\server;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
@@ -89,10 +85,9 @@
 		</Configuration>
       		<Configuration
 			Name="Release (with DLLs)|Win32"
-			OutputDirectory="..\..\out\release8\build\apppsserver_static\"
-			IntermediateDirectory="..\..\out\release8\build\apppsserver_static\"
-			ConfigurationType="1"
-			CharacterSet="2"
+			OutputDirectory="..\..\out\release8\build\libpsserver_static_plugins\"
+			IntermediateDirectory="..\..\out\release8\build\libpsserver_static_plugins\"
+			ConfigurationType="2"
 			WholeProgramOptimization="1"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -103,14 +98,14 @@
 				EnableFunctionLevelLinking="TRUE"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="FALSE"
-				ProgramDataBaseFileName="..\..\out\release8\build\apppsserver_static\Win32\psserver_static.pdb"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
+				ProgramDatabaseFileName="..\..\out\release8\build\libpsserver_static_plugins\Win32\psserver_static_plugins-0.4-vc8.pdb"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\release8\build\apppsserver_static\apppsserver_static.pch"
-				AssemblerListingLocation="..\..\out\release8\build\apppsserver_static\"
-				ObjectFile="..\..\out\release8\build\apppsserver_static\"
+				PrecompiledHeaderFile="..\..\out\release8\build\libpsserver_static_plugins\libpsserver_static_plugins.pch"
+				AssemblerListingLocation="..\..\out\release8\build\libpsserver_static_plugins\"
+				ObjectFile="..\..\out\release8\build\libpsserver_static_plugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -127,10 +122,10 @@
 				EnableCOMDATFolding="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD"
-				OutputFile="..\..\psserver_static.exe"
-				ProgramDatabaseFile="..\..\out\release8\build\apppsserver_static\Win32\psserver_static.pdb"
-				SubSystem="1"
-				AdditionalOptions="libcrystalspace_opengl.lib opengl32.lib cg.lib cgGL.lib libcrystalspace_staticplugins.lib libcrystalspace.lib zlib.lib "
+                        OutputFile="..\..\psserver_static_plugins-0.4-vc8.dll"
+				ImportLibrary="..\..\out\release8\libs\Win32\libpsserver_static_plugins.lib"
+				ProgramDatabaseFile="..\..\out\release8\build\libpsserver_static_plugins\Win32\psserver_static_plugins-0.4-vc8.pdb"
+				AdditionalOptions=" "
 				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
@@ -140,11 +135,11 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\release8\build\apppsserver_static\apppsserver_static.tlb"/>
+				TypeLibraryName="..\..\out\release8\build\libpsserver_static_plugins\libpsserver_static_plugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\release8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release8\bin\&#x0D;&#x0A;"
@@ -155,7 +150,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;PROJECTGEN_VERSION=8"
 				AdditionalIncludeDirectories=".;..\..\src\server;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
@@ -165,10 +160,9 @@
 		</Configuration>
                 		<Configuration
 			Name="Debug (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug8\build\apppsserver_static\"
-			IntermediateDirectory="..\..\out\debug8\build\apppsserver_static\"
-			ConfigurationType="1"
-			CharacterSet="2"
+			OutputDirectory="..\..\out\debug8\build\libpsserver_static_plugins\"
+			IntermediateDirectory="..\..\out\debug8\build\libpsserver_static_plugins\"
+			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -178,14 +172,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8\build\apppsserver_static\Win32\psserver_static.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;WIN32"
+				ProgramDataBaseFileName="..\..\out\debug8\build\libpsserver_static_plugins\Win32\psserver_static_plugins.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug8\build\apppsserver_static\apppsserver_static.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\apppsserver_static\"
-				ObjectFile="..\..\out\debug8\build\apppsserver_static\"
+				PrecompiledHeaderFile="..\..\out\debug8\build\libpsserver_static_plugins\libpsserver_static_plugins.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\libpsserver_static_plugins\"
+				ObjectFile="..\..\out\debug8\build\libpsserver_static_plugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -200,24 +194,22 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psserver_static.exe"
-				ProgramDatabaseFile="..\..\out\debug8\build\apppsserver_static\Win32\psserver_static.pdb"
-				SubSystem="1"
-				AdditionalOptions="libcrystalspace_opengl_d.lib opengl32.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
+				AdditionalOptions=" "
 				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
+				OutputFile="..\..\out\debug8\libs\libpsserver_static_plugins_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\apppsserver_static\apppsserver_static.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\libpsserver_static_plugins\libpsserver_static_plugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
@@ -228,7 +220,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=8"
 				AdditionalIncludeDirectories=".;..\..\src\server;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
@@ -238,10 +230,9 @@
 		</Configuration>
       		<Configuration
 			Name="Debug (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug8\build\apppsserver_static\"
-			IntermediateDirectory="..\..\out\debug8\build\apppsserver_static\"
-			ConfigurationType="1"
-			CharacterSet="2"
+			OutputDirectory="..\..\out\debug8\build\libpsserver_static_plugins\"
+			IntermediateDirectory="..\..\out\debug8\build\libpsserver_static_plugins\"
+			ConfigurationType="2"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -251,14 +242,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8\build\apppsserver_static\Win32\psserver_static.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
+
+				ProgramDatabaseFileName="..\..\out\debug8\build\libpsserver_static_plugins\Win32\psserver_static_plugins-0.4-vc8_d.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug8\build\apppsserver_static\apppsserver_static.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\apppsserver_static\"
-				ObjectFile="..\..\out\debug8\build\apppsserver_static\"
+				PrecompiledHeaderFile="..\..\out\debug8\build\libpsserver_static_plugins\libpsserver_static_plugins.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\libpsserver_static_plugins\"
+				ObjectFile="..\..\out\debug8\build\libpsserver_static_plugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -273,10 +265,10 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psserver_static.exe"
-				ProgramDatabaseFile="..\..\out\debug8\build\apppsserver_static\Win32\psserver_static.pdb"
-				SubSystem="1"
-				AdditionalOptions="libcrystalspace_opengl_d.lib opengl32.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
+                        OutputFile="..\..\psserver_static_plugins-0.4-vc8_d.dll"
+				ImportLibrary="..\..\out\debug8\libs\Win32\libpsserver_static_plugins_d.lib"
+				ProgramDatabaseFile="..\..\out\debug8\build\libpsserver_static_plugins\Win32\psserver_static_plugins-0.4-vc8_d.pdb"
+				AdditionalOptions=" "
 				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
@@ -286,11 +278,11 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\apppsserver_static\apppsserver_static.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\libpsserver_static_plugins\libpsserver_static_plugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
@@ -301,7 +293,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;PROJECTGEN_VERSION=8"
 				AdditionalIncludeDirectories=".;..\..\src\server;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
@@ -311,10 +303,9 @@
 		</Configuration>
                 		<Configuration
 			Name="MemoryTracker (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug8\build\apppsserver_static\"
-			IntermediateDirectory="..\..\out\debug8\build\apppsserver_static\"
-			ConfigurationType="1"
-			CharacterSet="2"
+			OutputDirectory="..\..\out\debug8\build\libpsserver_static_plugins\"
+			IntermediateDirectory="..\..\out\debug8\build\libpsserver_static_plugins\"
+			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -324,14 +315,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8\build\apppsserver_static\Win32\psserver_static.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_CONSOLE;CS_STATIC_LINKED;WIN32"
+				ProgramDataBaseFileName="..\..\out\debug8\build\libpsserver_static_plugins\Win32\psserver_static_plugins.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug8\build\apppsserver_static\apppsserver_static.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\apppsserver_static\"
-				ObjectFile="..\..\out\debug8\build\apppsserver_static\"
+				PrecompiledHeaderFile="..\..\out\debug8\build\libpsserver_static_plugins\libpsserver_static_plugins.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\libpsserver_static_plugins\"
+				ObjectFile="..\..\out\debug8\build\libpsserver_static_plugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -346,24 +337,22 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psserver_static.exe"
-				ProgramDatabaseFile="..\..\out\debug8\build\apppsserver_static\Win32\psserver_static.pdb"
-				SubSystem="1"
-				AdditionalOptions="libcrystalspace_opengl_d.lib opengl32.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
+				AdditionalOptions=" "
 				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
+				OutputFile="..\..\out\debug8\libs\libpsserver_static_plugins_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_CONSOLE;CS_STATIC_LINKED"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\apppsserver_static\apppsserver_static.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\libpsserver_static_plugins\libpsserver_static_plugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
@@ -374,7 +363,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_CONSOLE;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;PROJECTGEN_VERSION=8"
 				AdditionalIncludeDirectories=".;..\..\src\server;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
@@ -384,10 +373,9 @@
 		</Configuration>
       		<Configuration
 			Name="MemoryTracker (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug8\build\apppsserver_static\"
-			IntermediateDirectory="..\..\out\debug8\build\apppsserver_static\"
-			ConfigurationType="1"
-			CharacterSet="2"
+			OutputDirectory="..\..\out\debug8\build\libpsserver_static_plugins\"
+			IntermediateDirectory="..\..\out\debug8\build\libpsserver_static_plugins\"
+			ConfigurationType="2"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -397,14 +385,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8\build\apppsserver_static\Win32\psserver_static.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_CONSOLE;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
+
+				ProgramDatabaseFileName="..\..\out\debug8\build\libpsserver_static_plugins\Win32\psserver_static_plugins-0.4-vc8_d.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WINDOWS;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug8\build\apppsserver_static\apppsserver_static.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\apppsserver_static\"
-				ObjectFile="..\..\out\debug8\build\apppsserver_static\"
+				PrecompiledHeaderFile="..\..\out\debug8\build\libpsserver_static_plugins\libpsserver_static_plugins.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\libpsserver_static_plugins\"
+				ObjectFile="..\..\out\debug8\build\libpsserver_static_plugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -419,10 +408,10 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psserver_static.exe"
-				ProgramDatabaseFile="..\..\out\debug8\build\apppsserver_static\Win32\psserver_static.pdb"
-				SubSystem="1"
-				AdditionalOptions="libcrystalspace_opengl_d.lib opengl32.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
+                        OutputFile="..\..\psserver_static_plugins-0.4-vc8_d.dll"
+				ImportLibrary="..\..\out\debug8\libs\Win32\libpsserver_static_plugins_d.lib"
+				ProgramDatabaseFile="..\..\out\debug8\build\libpsserver_static_plugins\Win32\psserver_static_plugins-0.4-vc8_d.pdb"
+				AdditionalOptions=" "
 				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
@@ -432,11 +421,11 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_CONSOLE;CS_STATIC_LINKED"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WINDOWS"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\apppsserver_static\apppsserver_static.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\libpsserver_static_plugins\libpsserver_static_plugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
@@ -447,7 +436,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_CONSOLE;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WINDOWS;PROJECTGEN_VERSION=8"
 				AdditionalIncludeDirectories=".;..\..\src\server;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
@@ -457,10 +446,9 @@
 		</Configuration>
                 		<Configuration
 			Name="RefTracker (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug8\build\apppsserver_static\"
-			IntermediateDirectory="..\..\out\debug8\build\apppsserver_static\"
-			ConfigurationType="1"
-			CharacterSet="2"
+			OutputDirectory="..\..\out\debug8\build\libpsserver_static_plugins\"
+			IntermediateDirectory="..\..\out\debug8\build\libpsserver_static_plugins\"
+			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -470,14 +458,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8\build\apppsserver_static\Win32\psserver_static.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_CONSOLE;CS_STATIC_LINKED;WIN32"
+				ProgramDataBaseFileName="..\..\out\debug8\build\libpsserver_static_plugins\Win32\psserver_static_plugins.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug8\build\apppsserver_static\apppsserver_static.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\apppsserver_static\"
-				ObjectFile="..\..\out\debug8\build\apppsserver_static\"
+				PrecompiledHeaderFile="..\..\out\debug8\build\libpsserver_static_plugins\libpsserver_static_plugins.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\libpsserver_static_plugins\"
+				ObjectFile="..\..\out\debug8\build\libpsserver_static_plugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -492,24 +480,22 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psserver_static.exe"
-				ProgramDatabaseFile="..\..\out\debug8\build\apppsserver_static\Win32\psserver_static.pdb"
-				SubSystem="1"
-				AdditionalOptions="libcrystalspace_opengl_d.lib opengl32.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
+				AdditionalOptions=" "
 				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
+				OutputFile="..\..\out\debug8\libs\libpsserver_static_plugins_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_CONSOLE;CS_STATIC_LINKED"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\apppsserver_static\apppsserver_static.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\libpsserver_static_plugins\libpsserver_static_plugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
@@ -520,7 +506,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_CONSOLE;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;PROJECTGEN_VERSION=8"
 				AdditionalIncludeDirectories=".;..\..\src\server;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
@@ -530,10 +516,9 @@
 		</Configuration>
       		<Configuration
 			Name="RefTracker (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug8\build\apppsserver_static\"
-			IntermediateDirectory="..\..\out\debug8\build\apppsserver_static\"
-			ConfigurationType="1"
-			CharacterSet="2"
+			OutputDirectory="..\..\out\debug8\build\libpsserver_static_plugins\"
+			IntermediateDirectory="..\..\out\debug8\build\libpsserver_static_plugins\"
+			ConfigurationType="2"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -543,14 +528,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8\build\apppsserver_static\Win32\psserver_static.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_CONSOLE;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
+
+				ProgramDatabaseFileName="..\..\out\debug8\build\libpsserver_static_plugins\Win32\psserver_static_plugins-0.4-vc8_d.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WINDOWS;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug8\build\apppsserver_static\apppsserver_static.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\apppsserver_static\"
-				ObjectFile="..\..\out\debug8\build\apppsserver_static\"
+				PrecompiledHeaderFile="..\..\out\debug8\build\libpsserver_static_plugins\libpsserver_static_plugins.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\libpsserver_static_plugins\"
+				ObjectFile="..\..\out\debug8\build\libpsserver_static_plugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -565,10 +551,10 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psserver_static.exe"
-				ProgramDatabaseFile="..\..\out\debug8\build\apppsserver_static\Win32\psserver_static.pdb"
-				SubSystem="1"
-				AdditionalOptions="libcrystalspace_opengl_d.lib opengl32.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
+                        OutputFile="..\..\psserver_static_plugins-0.4-vc8_d.dll"
+				ImportLibrary="..\..\out\debug8\libs\Win32\libpsserver_static_plugins_d.lib"
+				ProgramDatabaseFile="..\..\out\debug8\build\libpsserver_static_plugins\Win32\psserver_static_plugins-0.4-vc8_d.pdb"
+				AdditionalOptions=" "
 				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
@@ -578,11 +564,11 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_CONSOLE;CS_STATIC_LINKED"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WINDOWS"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\apppsserver_static\apppsserver_static.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\libpsserver_static_plugins\libpsserver_static_plugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
@@ -593,7 +579,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_CONSOLE;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WINDOWS;PROJECTGEN_VERSION=8"
 				AdditionalIncludeDirectories=".;..\..\src\server;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
@@ -603,10 +589,9 @@
 		</Configuration>
                 		<Configuration
 			Name="ThreadChecker (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug8\build\apppsserver_static\"
-			IntermediateDirectory="..\..\out\debug8\build\apppsserver_static\"
-			ConfigurationType="1"
-			CharacterSet="2"
+			OutputDirectory="..\..\out\debug8\build\libpsserver_static_plugins\"
+			IntermediateDirectory="..\..\out\debug8\build\libpsserver_static_plugins\"
+			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -616,14 +601,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8\build\apppsserver_static\Win32\psserver_static.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_CONSOLE;CS_STATIC_LINKED;WIN32"
+				ProgramDataBaseFileName="..\..\out\debug8\build\libpsserver_static_plugins\Win32\psserver_static_plugins.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug8\build\apppsserver_static\apppsserver_static.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\apppsserver_static\"
-				ObjectFile="..\..\out\debug8\build\apppsserver_static\"
+				PrecompiledHeaderFile="..\..\out\debug8\build\libpsserver_static_plugins\libpsserver_static_plugins.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\libpsserver_static_plugins\"
+				ObjectFile="..\..\out\debug8\build\libpsserver_static_plugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -638,24 +623,22 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psserver_static.exe"
-				ProgramDatabaseFile="..\..\out\debug8\build\apppsserver_static\Win32\psserver_static.pdb"
-				SubSystem="1"
-				AdditionalOptions="libcrystalspace_opengl_d.lib opengl32.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
+				AdditionalOptions=" "
 				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
+				OutputFile="..\..\out\debug8\libs\libpsserver_static_plugins_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_CONSOLE;CS_STATIC_LINKED"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\apppsserver_static\apppsserver_static.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\libpsserver_static_plugins\libpsserver_static_plugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
@@ -666,7 +649,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_CONSOLE;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;PROJECTGEN_VERSION=8"
 				AdditionalIncludeDirectories=".;..\..\src\server;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
@@ -676,10 +659,9 @@
 		</Configuration>
       		<Configuration
 			Name="ThreadChecker (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug8\build\apppsserver_static\"
-			IntermediateDirectory="..\..\out\debug8\build\apppsserver_static\"
-			ConfigurationType="1"
-			CharacterSet="2"
+			OutputDirectory="..\..\out\debug8\build\libpsserver_static_plugins\"
+			IntermediateDirectory="..\..\out\debug8\build\libpsserver_static_plugins\"
+			ConfigurationType="2"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -689,14 +671,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8\build\apppsserver_static\Win32\psserver_static.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_CONSOLE;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
+
+				ProgramDatabaseFileName="..\..\out\debug8\build\libpsserver_static_plugins\Win32\psserver_static_plugins-0.4-vc8_d.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_WINDOWS;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug8\build\apppsserver_static\apppsserver_static.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\apppsserver_static\"
-				ObjectFile="..\..\out\debug8\build\apppsserver_static\"
+				PrecompiledHeaderFile="..\..\out\debug8\build\libpsserver_static_plugins\libpsserver_static_plugins.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\libpsserver_static_plugins\"
+				ObjectFile="..\..\out\debug8\build\libpsserver_static_plugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -711,10 +694,10 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psserver_static.exe"
-				ProgramDatabaseFile="..\..\out\debug8\build\apppsserver_static\Win32\psserver_static.pdb"
-				SubSystem="1"
-				AdditionalOptions="libcrystalspace_opengl_d.lib opengl32.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
+                        OutputFile="..\..\psserver_static_plugins-0.4-vc8_d.dll"
+				ImportLibrary="..\..\out\debug8\libs\Win32\libpsserver_static_plugins_d.lib"
+				ProgramDatabaseFile="..\..\out\debug8\build\libpsserver_static_plugins\Win32\psserver_static_plugins-0.4-vc8_d.pdb"
+				AdditionalOptions=" "
 				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
@@ -724,11 +707,11 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_CONSOLE;CS_STATIC_LINKED"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_WINDOWS"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\apppsserver_static\apppsserver_static.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\libpsserver_static_plugins\libpsserver_static_plugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
@@ -739,7 +722,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_CONSOLE;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_WINDOWS;PROJECTGEN_VERSION=8"
 				AdditionalIncludeDirectories=".;..\..\src\server;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
@@ -749,10 +732,9 @@
 		</Configuration>
                 		<Configuration
 			Name="DebugPSReleaseCSCEL (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug8\build\apppsserver_static\"
-			IntermediateDirectory="..\..\out\debug8\build\apppsserver_static\"
-			ConfigurationType="1"
-			CharacterSet="2"
+			OutputDirectory="..\..\out\debug8\build\libpsserver_static_plugins\"
+			IntermediateDirectory="..\..\out\debug8\build\libpsserver_static_plugins\"
+			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -762,14 +744,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8\build\apppsserver_static\Win32\psserver_static.pdb"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;WIN32"
+				ProgramDataBaseFileName="..\..\out\debug8\build\libpsserver_static_plugins\Win32\psserver_static_plugins.pdb"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug8\build\apppsserver_static\apppsserver_static.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\apppsserver_static\"
-				ObjectFile="..\..\out\debug8\build\apppsserver_static\"
+				PrecompiledHeaderFile="..\..\out\debug8\build\libpsserver_static_plugins\libpsserver_static_plugins.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\libpsserver_static_plugins\"
+				ObjectFile="..\..\out\debug8\build\libpsserver_static_plugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -784,24 +766,22 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psserver_static.exe"
-				ProgramDatabaseFile="..\..\out\debug8\build\apppsserver_static\Win32\psserver_static.pdb"
-				SubSystem="1"
-				AdditionalOptions="libcrystalspace_opengl_d.lib opengl32.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
+				AdditionalOptions=" "
 				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
+				OutputFile="..\..\out\debug8\libs\libpsserver_static_plugins_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\apppsserver_static\apppsserver_static.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\libpsserver_static_plugins\libpsserver_static_plugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
@@ -812,7 +792,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=8"
 				AdditionalIncludeDirectories=".;..\..\src\server;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
@@ -822,10 +802,9 @@
 		</Configuration>
       		<Configuration
 			Name="DebugPSReleaseCSCEL (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug8\build\apppsserver_static\"
-			IntermediateDirectory="..\..\out\debug8\build\apppsserver_static\"
-			ConfigurationType="1"
-			CharacterSet="2"
+			OutputDirectory="..\..\out\debug8\build\libpsserver_static_plugins\"
+			IntermediateDirectory="..\..\out\debug8\build\libpsserver_static_plugins\"
+			ConfigurationType="2"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -835,14 +814,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8\build\apppsserver_static\Win32\psserver_static.pdb"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
+
+				ProgramDatabaseFileName="..\..\out\debug8\build\libpsserver_static_plugins\Win32\psserver_static_plugins-0.4-vc8_d.pdb"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug8\build\apppsserver_static\apppsserver_static.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\apppsserver_static\"
-				ObjectFile="..\..\out\debug8\build\apppsserver_static\"
+				PrecompiledHeaderFile="..\..\out\debug8\build\libpsserver_static_plugins\libpsserver_static_plugins.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\libpsserver_static_plugins\"
+				ObjectFile="..\..\out\debug8\build\libpsserver_static_plugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -857,10 +837,10 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psserver_static.exe"
-				ProgramDatabaseFile="..\..\out\debug8\build\apppsserver_static\Win32\psserver_static.pdb"
-				SubSystem="1"
-				AdditionalOptions="libcrystalspace_opengl_d.lib opengl32.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
+                        OutputFile="..\..\psserver_static_plugins-0.4-vc8_d.dll"
+				ImportLibrary="..\..\out\debug8\libs\Win32\libpsserver_static_plugins_d.lib"
+				ProgramDatabaseFile="..\..\out\debug8\build\libpsserver_static_plugins\Win32\psserver_static_plugins-0.4-vc8_d.pdb"
+				AdditionalOptions=" "
 				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
@@ -870,11 +850,11 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\apppsserver_static\apppsserver_static.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\libpsserver_static_plugins\libpsserver_static_plugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
@@ -885,7 +865,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;PROJECTGEN_VERSION=8"
 				AdditionalIncludeDirectories=".;..\..\src\server;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
@@ -895,11 +875,9 @@
 		</Configuration>
                         		<Configuration
 			Name="Release (with static libs)|x64"
-			OutputDirectory="..\..\out\release8-x64\build\apppsserver_static\"
-			IntermediateDirectory="..\..\out\release8-x64\build\apppsserver_static\"
-			ConfigurationType="1"
-			CharacterSet="2"
-			WholeProgramOptimization="1"
+			OutputDirectory="..\..\out\release8-x64\build\libpsserver_static_plugins\"
+			IntermediateDirectory="..\..\out\release8-x64\build\libpsserver_static_plugins\"
+			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -909,14 +887,14 @@
 				EnableFunctionLevelLinking="TRUE"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="FALSE"
-				ProgramDataBaseFileName="..\..\out\release8-x64\build\apppsserver_static\x64\psserver_static.pdb"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;WIN32"
+				ProgramDataBaseFileName="..\..\out\release8-x64\build\libpsserver_static_plugins\x64\psserver_static_plugins.pdb"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\release8-x64\build\apppsserver_static\apppsserver_static.pch"
-				AssemblerListingLocation="..\..\out\release8-x64\build\apppsserver_static\"
-				ObjectFile="..\..\out\release8-x64\build\apppsserver_static\"
+				PrecompiledHeaderFile="..\..\out\release8-x64\build\libpsserver_static_plugins\libpsserver_static_plugins.pch"
+				AssemblerListingLocation="..\..\out\release8-x64\build\libpsserver_static_plugins\"
+				ObjectFile="..\..\out\release8-x64\build\libpsserver_static_plugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -933,24 +911,22 @@
 				EnableCOMDATFolding="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD"
-				OutputFile="..\..\psserver_static.exe"
-				ProgramDatabaseFile="..\..\out\release8-x64\build\apppsserver_static\x64\psserver_static.pdb"
-				SubSystem="1"
-				AdditionalOptions="libcrystalspace_opengl.lib opengl32.lib cg.lib cgGL.lib libcrystalspace_staticplugins.lib libcrystalspace.lib zlib.lib "
+				AdditionalOptions=" "
 				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
 			<Tool
 				Name="VCLibrarianTool"
+				OutputFile="..\..\out\release8-x64\libs\libpsserver_static_plugins.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\release8-x64\build\apppsserver_static\apppsserver_static.tlb"/>
+				TypeLibraryName="..\..\out\release8-x64\build\libpsserver_static_plugins\libpsserver_static_plugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\release8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release8-x64\bin\&#x0D;&#x0A;"
@@ -961,7 +937,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=8"
 				AdditionalIncludeDirectories=".;..\..\src\server;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
@@ -971,10 +947,9 @@
 		</Configuration>
       		<Configuration
 			Name="Release (with DLLs)|x64"
-			OutputDirectory="..\..\out\release8-x64\build\apppsserver_static\"
-			IntermediateDirectory="..\..\out\release8-x64\build\apppsserver_static\"
-			ConfigurationType="1"
-			CharacterSet="2"
+			OutputDirectory="..\..\out\release8-x64\build\libpsserver_static_plugins\"
+			IntermediateDirectory="..\..\out\release8-x64\build\libpsserver_static_plugins\"
+			ConfigurationType="2"
 			WholeProgramOptimization="1"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -985,14 +960,14 @@
 				EnableFunctionLevelLinking="TRUE"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="FALSE"
-				ProgramDataBaseFileName="..\..\out\release8-x64\build\apppsserver_static\x64\psserver_static.pdb"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
+				ProgramDatabaseFileName="..\..\out\release8-x64\build\libpsserver_static_plugins\x64\psserver_static_plugins-0.4-vc8-x64.pdb"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\release8-x64\build\apppsserver_static\apppsserver_static.pch"
-				AssemblerListingLocation="..\..\out\release8-x64\build\apppsserver_static\"
-				ObjectFile="..\..\out\release8-x64\build\apppsserver_static\"
+				PrecompiledHeaderFile="..\..\out\release8-x64\build\libpsserver_static_plugins\libpsserver_static_plugins.pch"
+				AssemblerListingLocation="..\..\out\release8-x64\build\libpsserver_static_plugins\"
+				ObjectFile="..\..\out\release8-x64\build\libpsserver_static_plugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1009,10 +984,10 @@
 				EnableCOMDATFolding="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD"
-				OutputFile="..\..\psserver_static.exe"
-				ProgramDatabaseFile="..\..\out\release8-x64\build\apppsserver_static\x64\psserver_static.pdb"
-				SubSystem="1"
-				AdditionalOptions="libcrystalspace_opengl.lib opengl32.lib cg.lib cgGL.lib libcrystalspace_staticplugins.lib libcrystalspace.lib zlib.lib "
+                        OutputFile="..\..\psserver_static_plugins-0.4-vc8-x64.dll"
+				ImportLibrary="..\..\out\release8-x64\libs\x64\libpsserver_static_plugins.lib"
+				ProgramDatabaseFile="..\..\out\release8-x64\build\libpsserver_static_plugins\x64\psserver_static_plugins-0.4-vc8-x64.pdb"
+				AdditionalOptions=" "
 				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
@@ -1022,11 +997,11 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\release8-x64\build\apppsserver_static\apppsserver_static.tlb"/>
+				TypeLibraryName="..\..\out\release8-x64\build\libpsserver_static_plugins\libpsserver_static_plugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\release8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release8-x64\bin\&#x0D;&#x0A;"
@@ -1037,7 +1012,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;PROJECTGEN_VERSION=8"
 				AdditionalIncludeDirectories=".;..\..\src\server;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
@@ -1047,10 +1022,9 @@
 		</Configuration>
                 		<Configuration
 			Name="Debug (with static libs)|x64"
-			OutputDirectory="..\..\out\debug8-x64\build\apppsserver_static\"
-			IntermediateDirectory="..\..\out\debug8-x64\build\apppsserver_static\"
-			ConfigurationType="1"
-			CharacterSet="2"
+			OutputDirectory="..\..\out\debug8-x64\build\libpsserver_static_plugins\"
+			IntermediateDirectory="..\..\out\debug8-x64\build\libpsserver_static_plugins\"
+			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -1060,14 +1034,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8-x64\build\apppsserver_static\x64\psserver_static.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;WIN32"
+				ProgramDataBaseFileName="..\..\out\debug8-x64\build\libpsserver_static_plugins\x64\psserver_static_plugins.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug8-x64\build\apppsserver_static\apppsserver_static.pch"
-				AssemblerListingLocation="..\..\out\debug8-x64\build\apppsserver_static\"
-				ObjectFile="..\..\out\debug8-x64\build\apppsserver_static\"
+				PrecompiledHeaderFile="..\..\out\debug8-x64\build\libpsserver_static_plugins\libpsserver_static_plugins.pch"
+				AssemblerListingLocation="..\..\out\debug8-x64\build\libpsserver_static_plugins\"
+				ObjectFile="..\..\out\debug8-x64\build\libpsserver_static_plugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1082,24 +1056,22 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psserver_static.exe"
-				ProgramDatabaseFile="..\..\out\debug8-x64\build\apppsserver_static\x64\psserver_static.pdb"
-				SubSystem="1"
-				AdditionalOptions="libcrystalspace_opengl_d.lib opengl32.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
+				AdditionalOptions=" "
 				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
 			<Tool
 				Name="VCLibrarianTool"
+				OutputFile="..\..\out\debug8-x64\libs\libpsserver_static_plugins_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8-x64\build\apppsserver_static\apppsserver_static.tlb"/>
+				TypeLibraryName="..\..\out\debug8-x64\build\libpsserver_static_plugins\libpsserver_static_plugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8-x64\bin\&#x0D;&#x0A;"
@@ -1110,7 +1082,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=8"
 				AdditionalIncludeDirectories=".;..\..\src\server;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
@@ -1120,10 +1092,9 @@
 		</Configuration>
       		<Configuration
 			Name="Debug (with DLLs)|x64"
-			OutputDirectory="..\..\out\debug8-x64\build\apppsserver_static\"
-			IntermediateDirectory="..\..\out\debug8-x64\build\apppsserver_static\"
-			ConfigurationType="1"
-			CharacterSet="2"
+			OutputDirectory="..\..\out\debug8-x64\build\libpsserver_static_plugins\"
+			IntermediateDirectory="..\..\out\debug8-x64\build\libpsserver_static_plugins\"
+			ConfigurationType="2"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -1133,14 +1104,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8-x64\build\apppsserver_static\x64\psserver_static.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
+
+				ProgramDatabaseFileName="..\..\out\debug8-x64\build\libpsserver_static_plugins\x64\psserver_static_plugins-0.4-vc8-x64_d.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug8-x64\build\apppsserver_static\apppsserver_static.pch"
-				AssemblerListingLocation="..\..\out\debug8-x64\build\apppsserver_static\"
-				ObjectFile="..\..\out\debug8-x64\build\apppsserver_static\"
+				PrecompiledHeaderFile="..\..\out\debug8-x64\build\libpsserver_static_plugins\libpsserver_static_plugins.pch"
+				AssemblerListingLocation="..\..\out\debug8-x64\build\libpsserver_static_plugins\"
+				ObjectFile="..\..\out\debug8-x64\build\libpsserver_static_plugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1155,10 +1127,10 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psserver_static.exe"
-				ProgramDatabaseFile="..\..\out\debug8-x64\build\apppsserver_static\x64\psserver_static.pdb"
-				SubSystem="1"
-				AdditionalOptions="libcrystalspace_opengl_d.lib opengl32.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
+                        OutputFile="..\..\psserver_static_plugins-0.4-vc8-x64_d.dll"
+				ImportLibrary="..\..\out\debug8-x64\libs\x64\libpsserver_static_plugins_d.lib"
+				ProgramDatabaseFile="..\..\out\debug8-x64\build\libpsserver_static_plugins\x64\psserver_static_plugins-0.4-vc8-x64_d.pdb"
+				AdditionalOptions=" "
 				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
@@ -1168,11 +1140,11 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8-x64\build\apppsserver_static\apppsserver_static.tlb"/>
+				TypeLibraryName="..\..\out\debug8-x64\build\libpsserver_static_plugins\libpsserver_static_plugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8-x64\bin\&#x0D;&#x0A;"
@@ -1183,7 +1155,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;PROJECTGEN_VERSION=8"
 				AdditionalIncludeDirectories=".;..\..\src\server;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
@@ -1193,10 +1165,9 @@
 		</Configuration>
                 		<Configuration
 			Name="MemoryTracker (with static libs)|x64"
-			OutputDirectory="..\..\out\debug8-x64\build\apppsserver_static\"
-			IntermediateDirectory="..\..\out\debug8-x64\build\apppsserver_static\"
-			ConfigurationType="1"
-			CharacterSet="2"
+			OutputDirectory="..\..\out\debug8-x64\build\libpsserver_static_plugins\"
+			IntermediateDirectory="..\..\out\debug8-x64\build\libpsserver_static_plugins\"
+			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -1206,14 +1177,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8-x64\build\apppsserver_static\x64\psserver_static.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_CONSOLE;CS_STATIC_LINKED;WIN32"
+				ProgramDataBaseFileName="..\..\out\debug8-x64\build\libpsserver_static_plugins\x64\psserver_static_plugins.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug8-x64\build\apppsserver_static\apppsserver_static.pch"
-				AssemblerListingLocation="..\..\out\debug8-x64\build\apppsserver_static\"
-				ObjectFile="..\..\out\debug8-x64\build\apppsserver_static\"
+				PrecompiledHeaderFile="..\..\out\debug8-x64\build\libpsserver_static_plugins\libpsserver_static_plugins.pch"
+				AssemblerListingLocation="..\..\out\debug8-x64\build\libpsserver_static_plugins\"
+				ObjectFile="..\..\out\debug8-x64\build\libpsserver_static_plugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1228,24 +1199,22 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psserver_static.exe"
-				ProgramDatabaseFile="..\..\out\debug8-x64\build\apppsserver_static\x64\psserver_static.pdb"
-				SubSystem="1"
-				AdditionalOptions="libcrystalspace_opengl_d.lib opengl32.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
+				AdditionalOptions=" "
 				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
 			<Tool
 				Name="VCLibrarianTool"
+				OutputFile="..\..\out\debug8-x64\libs\libpsserver_static_plugins_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_CONSOLE;CS_STATIC_LINKED"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8-x64\build\apppsserver_static\apppsserver_static.tlb"/>
+				TypeLibraryName="..\..\out\debug8-x64\build\libpsserver_static_plugins\libpsserver_static_plugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8-x64\bin\&#x0D;&#x0A;"
@@ -1256,7 +1225,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_CONSOLE;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;PROJECTGEN_VERSION=8"
 				AdditionalIncludeDirectories=".;..\..\src\server;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
@@ -1266,10 +1235,9 @@
 		</Configuration>
       		<Configuration
 			Name="MemoryTracker (with DLLs)|x64"
-			OutputDirectory="..\..\out\debug8-x64\build\apppsserver_static\"
-			IntermediateDirectory="..\..\out\debug8-x64\build\apppsserver_static\"
-			ConfigurationType="1"
-			CharacterSet="2"
+			OutputDirectory="..\..\out\debug8-x64\build\libpsserver_static_plugins\"
+			IntermediateDirectory="..\..\out\debug8-x64\build\libpsserver_static_plugins\"
+			ConfigurationType="2"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -1279,14 +1247,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8-x64\build\apppsserver_static\x64\psserver_static.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_CONSOLE;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
+
+				ProgramDatabaseFileName="..\..\out\debug8-x64\build\libpsserver_static_plugins\x64\psserver_static_plugins-0.4-vc8-x64_d.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WINDOWS;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug8-x64\build\apppsserver_static\apppsserver_static.pch"
-				AssemblerListingLocation="..\..\out\debug8-x64\build\apppsserver_static\"
-				ObjectFile="..\..\out\debug8-x64\build\apppsserver_static\"
+				PrecompiledHeaderFile="..\..\out\debug8-x64\build\libpsserver_static_plugins\libpsserver_static_plugins.pch"
+				AssemblerListingLocation="..\..\out\debug8-x64\build\libpsserver_static_plugins\"
+				ObjectFile="..\..\out\debug8-x64\build\libpsserver_static_plugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1301,10 +1270,10 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psserver_static.exe"
-				ProgramDatabaseFile="..\..\out\debug8-x64\build\apppsserver_static\x64\psserver_static.pdb"
-				SubSystem="1"
-				AdditionalOptions="libcrystalspace_opengl_d.lib opengl32.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
+                        OutputFile="..\..\psserver_static_plugins-0.4-vc8-x64_d.dll"
+				ImportLibrary="..\..\out\debug8-x64\libs\x64\libpsserver_static_plugins_d.lib"
+				ProgramDatabaseFile="..\..\out\debug8-x64\build\libpsserver_static_plugins\x64\psserver_static_plugins-0.4-vc8-x64_d.pdb"
+				AdditionalOptions=" "
 				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
@@ -1314,11 +1283,11 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_CONSOLE;CS_STATIC_LINKED"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WINDOWS"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8-x64\build\apppsserver_static\apppsserver_static.tlb"/>
+				TypeLibraryName="..\..\out\debug8-x64\build\libpsserver_static_plugins\libpsserver_static_plugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8-x64\bin\&#x0D;&#x0A;"
@@ -1329,7 +1298,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_CONSOLE;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WINDOWS;PROJECTGEN_VERSION=8"
 				AdditionalIncludeDirectories=".;..\..\src\server;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
@@ -1339,10 +1308,9 @@
 		</Configuration>
                 		<Configuration
 			Name="RefTracker (with static libs)|x64"
-			OutputDirectory="..\..\out\debug8-x64\build\apppsserver_static\"
-			IntermediateDirectory="..\..\out\debug8-x64\build\apppsserver_static\"
-			ConfigurationType="1"
-			CharacterSet="2"
+			OutputDirectory="..\..\out\debug8-x64\build\libpsserver_static_plugins\"
+			IntermediateDirectory="..\..\out\debug8-x64\build\libpsserver_static_plugins\"
+			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -1352,14 +1320,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8-x64\build\apppsserver_static\x64\psserver_static.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_CONSOLE;CS_STATIC_LINKED;WIN32"
+				ProgramDataBaseFileName="..\..\out\debug8-x64\build\libpsserver_static_plugins\x64\psserver_static_plugins.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug8-x64\build\apppsserver_static\apppsserver_static.pch"
-				AssemblerListingLocation="..\..\out\debug8-x64\build\apppsserver_static\"
-				ObjectFile="..\..\out\debug8-x64\build\apppsserver_static\"
+				PrecompiledHeaderFile="..\..\out\debug8-x64\build\libpsserver_static_plugins\libpsserver_static_plugins.pch"
+				AssemblerListingLocation="..\..\out\debug8-x64\build\libpsserver_static_plugins\"
+				ObjectFile="..\..\out\debug8-x64\build\libpsserver_static_plugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1374,24 +1342,22 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psserver_static.exe"
-				ProgramDatabaseFile="..\..\out\debug8-x64\build\apppsserver_static\x64\psserver_static.pdb"
-				SubSystem="1"
-				AdditionalOptions="libcrystalspace_opengl_d.lib opengl32.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
+				AdditionalOptions=" "
 				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
 			<Tool
 				Name="VCLibrarianTool"
+				OutputFile="..\..\out\debug8-x64\libs\libpsserver_static_plugins_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_CONSOLE;CS_STATIC_LINKED"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8-x64\build\apppsserver_static\apppsserver_static.tlb"/>
+				TypeLibraryName="..\..\out\debug8-x64\build\libpsserver_static_plugins\libpsserver_static_plugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8-x64\bin\&#x0D;&#x0A;"
@@ -1402,7 +1368,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_CONSOLE;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;PROJECTGEN_VERSION=8"
 				AdditionalIncludeDirectories=".;..\..\src\server;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
@@ -1412,10 +1378,9 @@
 		</Configuration>
       		<Configuration
 			Name="RefTracker (with DLLs)|x64"
-			OutputDirectory="..\..\out\debug8-x64\build\apppsserver_static\"
-			IntermediateDirectory="..\..\out\debug8-x64\build\apppsserver_static\"
-			ConfigurationType="1"
-			CharacterSet="2"
+			OutputDirectory="..\..\out\debug8-x64\build\libpsserver_static_plugins\"
+			IntermediateDirectory="..\..\out\debug8-x64\build\libpsserver_static_plugins\"
+			ConfigurationType="2"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -1425,14 +1390,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8-x64\build\apppsserver_static\x64\psserver_static.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_CONSOLE;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
+
+				ProgramDatabaseFileName="..\..\out\debug8-x64\build\libpsserver_static_plugins\x64\psserver_static_plugins-0.4-vc8-x64_d.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WINDOWS;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug8-x64\build\apppsserver_static\apppsserver_static.pch"
-				AssemblerListingLocation="..\..\out\debug8-x64\build\apppsserver_static\"
-				ObjectFile="..\..\out\debug8-x64\build\apppsserver_static\"
+				PrecompiledHeaderFile="..\..\out\debug8-x64\build\libpsserver_static_plugins\libpsserver_static_plugins.pch"
+				AssemblerListingLocation="..\..\out\debug8-x64\build\libpsserver_static_plugins\"
+				ObjectFile="..\..\out\debug8-x64\build\libpsserver_static_plugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1447,10 +1413,10 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psserver_static.exe"
-				ProgramDatabaseFile="..\..\out\debug8-x64\build\apppsserver_static\x64\psserver_static.pdb"
-				SubSystem="1"
-				AdditionalOptions="libcrystalspace_opengl_d.lib opengl32.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
+                        OutputFile="..\..\psserver_static_plugins-0.4-vc8-x64_d.dll"
+				ImportLibrary="..\..\out\debug8-x64\libs\x64\libpsserver_static_plugins_d.lib"
+				ProgramDatabaseFile="..\..\out\debug8-x64\build\libpsserver_static_plugins\x64\psserver_static_plugins-0.4-vc8-x64_d.pdb"
+				AdditionalOptions=" "
 				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
@@ -1460,11 +1426,11 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_CONSOLE;CS_STATIC_LINKED"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WINDOWS"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8-x64\build\apppsserver_static\apppsserver_static.tlb"/>
+				TypeLibraryName="..\..\out\debug8-x64\build\libpsserver_static_plugins\libpsserver_static_plugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8-x64\bin\&#x0D;&#x0A;"
@@ -1475,7 +1441,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_CONSOLE;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WINDOWS;PROJECTGEN_VERSION=8"
 				AdditionalIncludeDirectories=".;..\..\src\server;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
@@ -1485,10 +1451,9 @@
 		</Configuration>
                 		<Configuration
 			Name="ThreadChecker (with static libs)|x64"
-			OutputDirectory="..\..\out\debug8-x64\build\apppsserver_static\"
-			IntermediateDirectory="..\..\out\debug8-x64\build\apppsserver_static\"
-			ConfigurationType="1"
-			CharacterSet="2"
+			OutputDirectory="..\..\out\debug8-x64\build\libpsserver_static_plugins\"
+			IntermediateDirectory="..\..\out\debug8-x64\build\libpsserver_static_plugins\"
+			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -1498,14 +1463,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8-x64\build\apppsserver_static\x64\psserver_static.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_CONSOLE;CS_STATIC_LINKED;WIN32"
+				ProgramDataBaseFileName="..\..\out\debug8-x64\build\libpsserver_static_plugins\x64\psserver_static_plugins.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug8-x64\build\apppsserver_static\apppsserver_static.pch"
-				AssemblerListingLocation="..\..\out\debug8-x64\build\apppsserver_static\"
-				ObjectFile="..\..\out\debug8-x64\build\apppsserver_static\"
+				PrecompiledHeaderFile="..\..\out\debug8-x64\build\libpsserver_static_plugins\libpsserver_static_plugins.pch"
+				AssemblerListingLocation="..\..\out\debug8-x64\build\libpsserver_static_plugins\"
+				ObjectFile="..\..\out\debug8-x64\build\libpsserver_static_plugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1520,24 +1485,22 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psserver_static.exe"
-				ProgramDatabaseFile="..\..\out\debug8-x64\build\apppsserver_static\x64\psserver_static.pdb"
-				SubSystem="1"
-				AdditionalOptions="libcrystalspace_opengl_d.lib opengl32.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
+				AdditionalOptions=" "
 				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
 			<Tool
 				Name="VCLibrarianTool"
+				OutputFile="..\..\out\debug8-x64\libs\libpsserver_static_plugins_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_CONSOLE;CS_STATIC_LINKED"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8-x64\build\apppsserver_static\apppsserver_static.tlb"/>
+				TypeLibraryName="..\..\out\debug8-x64\build\libpsserver_static_plugins\libpsserver_static_plugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8-x64\bin\&#x0D;&#x0A;"
@@ -1548,7 +1511,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_CONSOLE;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;PROJECTGEN_VERSION=8"
 				AdditionalIncludeDirectories=".;..\..\src\server;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
@@ -1558,10 +1521,9 @@
 		</Configuration>
       		<Configuration
 			Name="ThreadChecker (with DLLs)|x64"
-			OutputDirectory="..\..\out\debug8-x64\build\apppsserver_static\"
-			IntermediateDirectory="..\..\out\debug8-x64\build\apppsserver_static\"
-			ConfigurationType="1"
-			CharacterSet="2"
+			OutputDirectory="..\..\out\debug8-x64\build\libpsserver_static_plugins\"
+			IntermediateDirectory="..\..\out\debug8-x64\build\libpsserver_static_plugins\"
+			ConfigurationType="2"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -1571,14 +1533,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8-x64\build\apppsserver_static\x64\psserver_static.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_CONSOLE;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
+
+				ProgramDatabaseFileName="..\..\out\debug8-x64\build\libpsserver_static_plugins\x64\psserver_static_plugins-0.4-vc8-x64_d.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_WINDOWS;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug8-x64\build\apppsserver_static\apppsserver_static.pch"
-				AssemblerListingLocation="..\..\out\debug8-x64\build\apppsserver_static\"
-				ObjectFile="..\..\out\debug8-x64\build\apppsserver_static\"
+				PrecompiledHeaderFile="..\..\out\debug8-x64\build\libpsserver_static_plugins\libpsserver_static_plugins.pch"
+				AssemblerListingLocation="..\..\out\debug8-x64\build\libpsserver_static_plugins\"
+				ObjectFile="..\..\out\debug8-x64\build\libpsserver_static_plugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1593,10 +1556,10 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psserver_static.exe"
-				ProgramDatabaseFile="..\..\out\debug8-x64\build\apppsserver_static\x64\psserver_static.pdb"
-				SubSystem="1"
-				AdditionalOptions="libcrystalspace_opengl_d.lib opengl32.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
+                        OutputFile="..\..\psserver_static_plugins-0.4-vc8-x64_d.dll"
+				ImportLibrary="..\..\out\debug8-x64\libs\x64\libpsserver_static_plugins_d.lib"
+				ProgramDatabaseFile="..\..\out\debug8-x64\build\libpsserver_static_plugins\x64\psserver_static_plugins-0.4-vc8-x64_d.pdb"
+				AdditionalOptions=" "
 				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
@@ -1606,11 +1569,11 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_CONSOLE;CS_STATIC_LINKED"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_WINDOWS"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8-x64\build\apppsserver_static\apppsserver_static.tlb"/>
+				TypeLibraryName="..\..\out\debug8-x64\build\libpsserver_static_plugins\libpsserver_static_plugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8-x64\bin\&#x0D;&#x0A;"
@@ -1621,7 +1584,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_CONSOLE;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_WINDOWS;PROJECTGEN_VERSION=8"
 				AdditionalIncludeDirectories=".;..\..\src\server;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
@@ -1631,10 +1594,9 @@
 		</Configuration>
                 		<Configuration
 			Name="DebugPSReleaseCSCEL (with static libs)|x64"
-			OutputDirectory="..\..\out\debug8-x64\build\apppsserver_static\"
-			IntermediateDirectory="..\..\out\debug8-x64\build\apppsserver_static\"
-			ConfigurationType="1"
-			CharacterSet="2"
+			OutputDirectory="..\..\out\debug8-x64\build\libpsserver_static_plugins\"
+			IntermediateDirectory="..\..\out\debug8-x64\build\libpsserver_static_plugins\"
+			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -1644,14 +1606,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8-x64\build\apppsserver_static\x64\psserver_static.pdb"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;WIN32"
+				ProgramDataBaseFileName="..\..\out\debug8-x64\build\libpsserver_static_plugins\x64\psserver_static_plugins.pdb"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug8-x64\build\apppsserver_static\apppsserver_static.pch"
-				AssemblerListingLocation="..\..\out\debug8-x64\build\apppsserver_static\"
-				ObjectFile="..\..\out\debug8-x64\build\apppsserver_static\"
+				PrecompiledHeaderFile="..\..\out\debug8-x64\build\libpsserver_static_plugins\libpsserver_static_plugins.pch"
+				AssemblerListingLocation="..\..\out\debug8-x64\build\libpsserver_static_plugins\"
+				ObjectFile="..\..\out\debug8-x64\build\libpsserver_static_plugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1666,24 +1628,22 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psserver_static.exe"
-				ProgramDatabaseFile="..\..\out\debug8-x64\build\apppsserver_static\x64\psserver_static.pdb"
-				SubSystem="1"
-				AdditionalOptions="libcrystalspace_opengl_d.lib opengl32.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
+				AdditionalOptions=" "
 				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
 			<Tool
 				Name="VCLibrarianTool"
+				OutputFile="..\..\out\debug8-x64\libs\libpsserver_static_plugins_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8-x64\build\apppsserver_static\apppsserver_static.tlb"/>
+				TypeLibraryName="..\..\out\debug8-x64\build\libpsserver_static_plugins\libpsserver_static_plugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8-x64\bin\&#x0D;&#x0A;"
@@ -1694,7 +1654,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=8"
 				AdditionalIncludeDirectories=".;..\..\src\server;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
@@ -1704,10 +1664,9 @@
 		</Configuration>
       		<Configuration
 			Name="DebugPSReleaseCSCEL (with DLLs)|x64"
-			OutputDirectory="..\..\out\debug8-x64\build\apppsserver_static\"
-			IntermediateDirectory="..\..\out\debug8-x64\build\apppsserver_static\"
-			ConfigurationType="1"
-			CharacterSet="2"
+			OutputDirectory="..\..\out\debug8-x64\build\libpsserver_static_plugins\"
+			IntermediateDirectory="..\..\out\debug8-x64\build\libpsserver_static_plugins\"
+			ConfigurationType="2"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
@@ -1717,14 +1676,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8-x64\build\apppsserver_static\x64\psserver_static.pdb"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
+
+				ProgramDatabaseFileName="..\..\out\debug8-x64\build\libpsserver_static_plugins\x64\psserver_static_plugins-0.4-vc8-x64_d.pdb"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug8-x64\build\apppsserver_static\apppsserver_static.pch"
-				AssemblerListingLocation="..\..\out\debug8-x64\build\apppsserver_static\"
-				ObjectFile="..\..\out\debug8-x64\build\apppsserver_static\"
+				PrecompiledHeaderFile="..\..\out\debug8-x64\build\libpsserver_static_plugins\libpsserver_static_plugins.pch"
+				AssemblerListingLocation="..\..\out\debug8-x64\build\libpsserver_static_plugins\"
+				ObjectFile="..\..\out\debug8-x64\build\libpsserver_static_plugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1739,10 +1699,10 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psserver_static.exe"
-				ProgramDatabaseFile="..\..\out\debug8-x64\build\apppsserver_static\x64\psserver_static.pdb"
-				SubSystem="1"
-				AdditionalOptions="libcrystalspace_opengl_d.lib opengl32.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
+                        OutputFile="..\..\psserver_static_plugins-0.4-vc8-x64_d.dll"
+				ImportLibrary="..\..\out\debug8-x64\libs\x64\libpsserver_static_plugins_d.lib"
+				ProgramDatabaseFile="..\..\out\debug8-x64\build\libpsserver_static_plugins\x64\psserver_static_plugins-0.4-vc8-x64_d.pdb"
+				AdditionalOptions=" "
 				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
@@ -1752,11 +1712,11 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8-x64\build\apppsserver_static\apppsserver_static.tlb"/>
+				TypeLibraryName="..\..\out\debug8-x64\build\libpsserver_static_plugins\libpsserver_static_plugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8-x64\bin\&#x0D;&#x0A;"
@@ -1767,7 +1727,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;PROJECTGEN_VERSION=8"
 				AdditionalIncludeDirectories=".;..\..\src\server;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
@@ -1781,321 +1741,10 @@
 			Name="Source Files"
 			Filter="">
 			<File
-				RelativePath="..\..\mk\msvc\apppsserver_static_static_glue_app.cpp">
+				RelativePath="..\..\mk\msvc\apppsserver_static_static_glue_lib.cpp">
 			</File>
 			<File
-				RelativePath="..\..\mk\msvc\apppsserver_static_static_glue_app_CRYSTAL.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\actionmanager.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\adminmanager.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\advicemanager.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\authentserver.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\bankmanager.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\cachemanager.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\chatmanager.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\client.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\clients.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\clientstatuslogger.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\combatmanager.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\command.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\commandmanager.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\creationmanager.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\economymanager.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\entitymanager.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\events.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\exchangemanager.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\gem.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\gemmesh.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\gmeventmanager.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\groupmanager.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\guildmanager.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\introductionmanager.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\invitemanager.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\main.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\marriagemanager.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\minigamemanager.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\msgmanager.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\netmanager.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\npcmanager.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\paladinjr.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\progressionmanager.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\psproxlist.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\psserver.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\psserverchar.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\psserverdr.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\questionmanager.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\questmanager.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\scripting.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\serverstatus.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\slotmanager.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\spawnmanager.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\spellmanager.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\tutorialmanager.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\usermanager.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\weathermanager.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\workmanager.cpp">
-			</File>
-		</Filter>
-		<Filter
-			Name="Header Files"
-			Filter="">
-			<File
-				RelativePath="..\..\src\server\actionmanager.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\adminmanager.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\advicemanager.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\authentserver.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\bankmanager.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\cachemanager.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\chatmanager.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\client.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\clients.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\clientstatuslogger.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\combatmanager.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\commandmanager.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\creationmanager.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\deathcallback.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\deleteobjcallback.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\economymanager.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\entitymanager.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\events.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\exchangemanager.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\gem.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\gemmesh.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\globals.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\gmeventmanager.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\groupmanager.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\guildmanager.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\icachedobject.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\introductionmanager.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\invitemanager.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\marriagemanager.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\minigamemanager.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\msgmanager.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\netmanager.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\npcmanager.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\paladinjr.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\playergroup.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\progressionmanager.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\psproxlist.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\psserver.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\psserverchar.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\psserverdr.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\questionmanager.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\questmanager.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\scripting.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\serverstatus.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\slotmanager.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\spawnmanager.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\spellmanager.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\tutorialmanager.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\usermanager.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\weathermanager.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\workmanager.h">
-			</File>
-		</Filter>
-		<Filter
-			Name="Resource Files"
-			Filter="">
-			<File
-				RelativePath="..\..\mk\msvc\apppsserver_static.manifest">
-			</File>
-			<File
-				RelativePath="..\..\mk\msvc\apppsserver_static.rc">
+				RelativePath="..\..\mk\msvc\apppsserver_static_staticuse.cpp">
 			</File>
 		</Filter>
 	</Files>

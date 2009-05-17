@@ -8,12 +8,12 @@
   { csStaticVarCleanup_csutil (p); }
   CS_DEFINE_STATIC_VARIABLE_REGISTRATION (csStaticVarCleanup_local);
 #endif
-struct CS_EXPORT_SYM _Bind_psserver_static_plugins_LIBMYSQLCLIENT
+struct CS_EXPORT_SYM _Bind_psclient_static_plugins
 {
-  _Bind_psserver_static_plugins_LIBMYSQLCLIENT ();
+  _Bind_psclient_static_plugins ();
 };
-struct _static_use_LIBMYSQLCLIENT { _static_use_LIBMYSQLCLIENT (); };
-_Bind_psserver_static_plugins_LIBMYSQLCLIENT::_Bind_psserver_static_plugins_LIBMYSQLCLIENT () {}
+struct _static_use { _static_use (); };
+_Bind_psclient_static_plugins::_Bind_psclient_static_plugins () {}
 // Needed to pull in _cs_static_use object file
-namespace { _static_use_LIBMYSQLCLIENT _static_use_LIBMYSQLCLIENT_bind; }
+namespace { _static_use _static_use_bind; }
 
