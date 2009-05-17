@@ -18,7 +18,7 @@ Application psserver_static : [ Wildcard *.cpp *.h ] $(extrafiles) : console ind
 CFlags psserver_static : [ FDefines CS_STATIC_LINKED ] ;
 LFlags psserver_static : -lcrystalspace_staticplugins-$(CRYSTAL.VERSION) ;
 MsvcDefine psserver_static : CS_STATIC_LINKED ;
-LinkWith psserver_static : bulkobjects fparser psnet psengine psutil psrpgrules ;
+LinkWith psserver_static : planeshift_staticplugins bulkobjects fparser psnet psengine psutil psrpgrules ;
 
 LinkStaticPlugins psserver_static :
   bindoc
