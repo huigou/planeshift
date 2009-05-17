@@ -55,7 +55,7 @@
 				ProgramDatabaseFile="..\..\out\release8\build\apppsserver_static\Win32\psserver_static.pdb"
 				SubSystem="1"
 				AdditionalOptions="libcrystalspace_opengl.lib opengl32.lib cg.lib cgGL.lib libcrystalspace_staticplugins.lib libcrystalspace.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -131,7 +131,7 @@
 				ProgramDatabaseFile="..\..\out\release8\build\apppsserver_static\Win32\psserver_static.pdb"
 				SubSystem="1"
 				AdditionalOptions="libcrystalspace_opengl.lib opengl32.lib cg.lib cgGL.lib libcrystalspace_staticplugins.lib libcrystalspace.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -204,7 +204,7 @@
 				ProgramDatabaseFile="..\..\out\debug8\build\apppsserver_static\Win32\psserver_static.pdb"
 				SubSystem="1"
 				AdditionalOptions="libcrystalspace_opengl_d.lib opengl32.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -277,7 +277,7 @@
 				ProgramDatabaseFile="..\..\out\debug8\build\apppsserver_static\Win32\psserver_static.pdb"
 				SubSystem="1"
 				AdditionalOptions="libcrystalspace_opengl_d.lib opengl32.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -350,7 +350,7 @@
 				ProgramDatabaseFile="..\..\out\debug8\build\apppsserver_static\Win32\psserver_static.pdb"
 				SubSystem="1"
 				AdditionalOptions="libcrystalspace_opengl_d.lib opengl32.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -423,7 +423,7 @@
 				ProgramDatabaseFile="..\..\out\debug8\build\apppsserver_static\Win32\psserver_static.pdb"
 				SubSystem="1"
 				AdditionalOptions="libcrystalspace_opengl_d.lib opengl32.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -496,7 +496,7 @@
 				ProgramDatabaseFile="..\..\out\debug8\build\apppsserver_static\Win32\psserver_static.pdb"
 				SubSystem="1"
 				AdditionalOptions="libcrystalspace_opengl_d.lib opengl32.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -569,7 +569,7 @@
 				ProgramDatabaseFile="..\..\out\debug8\build\apppsserver_static\Win32\psserver_static.pdb"
 				SubSystem="1"
 				AdditionalOptions="libcrystalspace_opengl_d.lib opengl32.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -642,7 +642,7 @@
 				ProgramDatabaseFile="..\..\out\debug8\build\apppsserver_static\Win32\psserver_static.pdb"
 				SubSystem="1"
 				AdditionalOptions="libcrystalspace_opengl_d.lib opengl32.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -715,7 +715,7 @@
 				ProgramDatabaseFile="..\..\out\debug8\build\apppsserver_static\Win32\psserver_static.pdb"
 				SubSystem="1"
 				AdditionalOptions="libcrystalspace_opengl_d.lib opengl32.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -788,7 +788,7 @@
 				ProgramDatabaseFile="..\..\out\debug8\build\apppsserver_static\Win32\psserver_static.pdb"
 				SubSystem="1"
 				AdditionalOptions="libcrystalspace_opengl_d.lib opengl32.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -861,7 +861,7 @@
 				ProgramDatabaseFile="..\..\out\debug8\build\apppsserver_static\Win32\psserver_static.pdb"
 				SubSystem="1"
 				AdditionalOptions="libcrystalspace_opengl_d.lib opengl32.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -937,7 +937,7 @@
 				ProgramDatabaseFile="..\..\out\release8-x64\build\apppsserver_static\x64\psserver_static.pdb"
 				SubSystem="1"
 				AdditionalOptions="libcrystalspace_opengl.lib opengl32.lib cg.lib cgGL.lib libcrystalspace_staticplugins.lib libcrystalspace.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
@@ -1013,7 +1013,7 @@
 				ProgramDatabaseFile="..\..\out\release8-x64\build\apppsserver_static\x64\psserver_static.pdb"
 				SubSystem="1"
 				AdditionalOptions="libcrystalspace_opengl.lib opengl32.lib cg.lib cgGL.lib libcrystalspace_staticplugins.lib libcrystalspace.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
@@ -1086,7 +1086,7 @@
 				ProgramDatabaseFile="..\..\out\debug8-x64\build\apppsserver_static\x64\psserver_static.pdb"
 				SubSystem="1"
 				AdditionalOptions="libcrystalspace_opengl_d.lib opengl32.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
@@ -1159,7 +1159,7 @@
 				ProgramDatabaseFile="..\..\out\debug8-x64\build\apppsserver_static\x64\psserver_static.pdb"
 				SubSystem="1"
 				AdditionalOptions="libcrystalspace_opengl_d.lib opengl32.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
@@ -1232,7 +1232,7 @@
 				ProgramDatabaseFile="..\..\out\debug8-x64\build\apppsserver_static\x64\psserver_static.pdb"
 				SubSystem="1"
 				AdditionalOptions="libcrystalspace_opengl_d.lib opengl32.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
@@ -1305,7 +1305,7 @@
 				ProgramDatabaseFile="..\..\out\debug8-x64\build\apppsserver_static\x64\psserver_static.pdb"
 				SubSystem="1"
 				AdditionalOptions="libcrystalspace_opengl_d.lib opengl32.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
@@ -1378,7 +1378,7 @@
 				ProgramDatabaseFile="..\..\out\debug8-x64\build\apppsserver_static\x64\psserver_static.pdb"
 				SubSystem="1"
 				AdditionalOptions="libcrystalspace_opengl_d.lib opengl32.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
@@ -1451,7 +1451,7 @@
 				ProgramDatabaseFile="..\..\out\debug8-x64\build\apppsserver_static\x64\psserver_static.pdb"
 				SubSystem="1"
 				AdditionalOptions="libcrystalspace_opengl_d.lib opengl32.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
@@ -1524,7 +1524,7 @@
 				ProgramDatabaseFile="..\..\out\debug8-x64\build\apppsserver_static\x64\psserver_static.pdb"
 				SubSystem="1"
 				AdditionalOptions="libcrystalspace_opengl_d.lib opengl32.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
@@ -1597,7 +1597,7 @@
 				ProgramDatabaseFile="..\..\out\debug8-x64\build\apppsserver_static\x64\psserver_static.pdb"
 				SubSystem="1"
 				AdditionalOptions="libcrystalspace_opengl_d.lib opengl32.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
@@ -1670,7 +1670,7 @@
 				ProgramDatabaseFile="..\..\out\debug8-x64\build\apppsserver_static\x64\psserver_static.pdb"
 				SubSystem="1"
 				AdditionalOptions="libcrystalspace_opengl_d.lib opengl32.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
@@ -1743,7 +1743,7 @@
 				ProgramDatabaseFile="..\..\out\debug8-x64\build\apppsserver_static\x64\psserver_static.pdb"
 				SubSystem="1"
 				AdditionalOptions="libcrystalspace_opengl_d.lib opengl32.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
@@ -1781,10 +1781,10 @@
 			Name="Source Files"
 			Filter="">
 			<File
-				RelativePath="..\..\mk\msvc\apppsserver_static_static_glue_app.cpp">
+				RelativePath="..\..\mk\msvc\apppsserver_static_static_glue_app_CRYSTAL.cpp">
 			</File>
 			<File
-				RelativePath="..\..\mk\msvc\apppsserver_static_static_glue_app_CRYSTAL.cpp">
+				RelativePath="..\..\mk\msvc\apppsserver_static_static_glue_app_LIBMYSQLCLIENT.cpp">
 			</File>
 			<File
 				RelativePath="..\..\src\server\actionmanager.cpp">

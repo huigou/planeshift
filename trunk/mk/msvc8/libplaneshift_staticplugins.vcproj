@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding = "Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
-	Name="libbgloaderstatic"
-	ProjectGUID="{1FF38D30-5EAF-1391-E863-CFA8AEB3BC27}"
+	Version="8.00"
+	Name="libplaneshift_staticplugins"
+	ProjectGUID="{DA886D16-6C20-BDA5-D8CC-0E06ABE8B5C7}"
 	SccProjectName=""
 	SccLocalPath="">
 	<Platforms>
@@ -13,8 +13,8 @@
 	<Configurations>
             		<Configuration
 			Name="Release (with static libs)|Win32"
-			OutputDirectory="..\..\out\release9\build\libbgloaderstatic\"
-			IntermediateDirectory="..\..\out\release9\build\libbgloaderstatic\"
+			OutputDirectory="..\..\out\release8\build\libplaneshift_staticplugins\"
+			IntermediateDirectory="..\..\out\release8\build\libplaneshift_staticplugins\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -25,14 +25,14 @@
 				EnableFunctionLevelLinking="TRUE"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="FALSE"
-				ProgramDataBaseFileName="..\..\out\release9\build\libbgloaderstatic\Win32\bgloaderstatic.pdb"
+				ProgramDataBaseFileName="..\..\out\release8\build\libplaneshift_staticplugins\Win32\planeshift_staticplugins.pdb"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\release9\build\libbgloaderstatic\libbgloaderstatic.pch"
-				AssemblerListingLocation="..\..\out\release9\build\libbgloaderstatic\"
-				ObjectFile="..\..\out\release9\build\libbgloaderstatic\"
+				PrecompiledHeaderFile="..\..\out\release8\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch"
+				AssemblerListingLocation="..\..\out\release8\build\libplaneshift_staticplugins\"
+				ObjectFile="..\..\out\release8\build\libplaneshift_staticplugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -52,11 +52,11 @@
 				AdditionalOptions=" "
 				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\release9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\release9\libs\libbgloaderstatic.lib"
+				OutputFile="..\..\out\release8\libs\libplaneshift_staticplugins.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -64,10 +64,10 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\release9\build\libbgloaderstatic\libbgloaderstatic.tlb"/>
+				TypeLibraryName="..\..\out\release8\build\libplaneshift_staticplugins\libplaneshift_staticplugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\release9\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release9\bin\&#x0D;&#x0A;"
+				CommandLine="md ..\..\out\release8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release8\bin\&#x0D;&#x0A;"
 				/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -75,8 +75,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				AdditionalIncludeDirectories=".;..\..\src;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -85,8 +85,8 @@
 		</Configuration>
       		<Configuration
 			Name="Release (with DLLs)|Win32"
-			OutputDirectory="..\..\out\release9\build\libbgloaderstatic\"
-			IntermediateDirectory="..\..\out\release9\build\libbgloaderstatic\"
+			OutputDirectory="..\..\out\release8\build\libplaneshift_staticplugins\"
+			IntermediateDirectory="..\..\out\release8\build\libplaneshift_staticplugins\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -97,14 +97,14 @@
 				EnableFunctionLevelLinking="TRUE"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="FALSE"
-				ProgramDataBaseFileName="..\..\out\release9\build\libbgloaderstatic\Win32\bgloaderstatic.pdb"
+				ProgramDataBaseFileName="..\..\out\release8\build\libplaneshift_staticplugins\Win32\planeshift_staticplugins.pdb"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\release9\build\libbgloaderstatic\libbgloaderstatic.pch"
-				AssemblerListingLocation="..\..\out\release9\build\libbgloaderstatic\"
-				ObjectFile="..\..\out\release9\build\libbgloaderstatic\"
+				PrecompiledHeaderFile="..\..\out\release8\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch"
+				AssemblerListingLocation="..\..\out\release8\build\libplaneshift_staticplugins\"
+				ObjectFile="..\..\out\release8\build\libplaneshift_staticplugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -124,11 +124,11 @@
 				AdditionalOptions=" "
 				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\release9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\release9\libs\libbgloaderstatic.lib"
+				OutputFile="..\..\out\release8\libs\libplaneshift_staticplugins.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -136,10 +136,10 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\release9\build\libbgloaderstatic\libbgloaderstatic.tlb"/>
+				TypeLibraryName="..\..\out\release8\build\libplaneshift_staticplugins\libplaneshift_staticplugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\release9\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release9\bin\&#x0D;&#x0A;"
+				CommandLine="md ..\..\out\release8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release8\bin\&#x0D;&#x0A;"
 				/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -147,8 +147,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				AdditionalIncludeDirectories=".;..\..\src;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -157,8 +157,8 @@
 		</Configuration>
                 		<Configuration
 			Name="Debug (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug9\build\libbgloaderstatic\"
-			IntermediateDirectory="..\..\out\debug9\build\libbgloaderstatic\"
+			OutputDirectory="..\..\out\debug8\build\libplaneshift_staticplugins\"
+			IntermediateDirectory="..\..\out\debug8\build\libplaneshift_staticplugins\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -169,14 +169,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug9\build\libbgloaderstatic\Win32\bgloaderstatic.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8\build\libplaneshift_staticplugins\Win32\planeshift_staticplugins.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug9\build\libbgloaderstatic\libbgloaderstatic.pch"
-				AssemblerListingLocation="..\..\out\debug9\build\libbgloaderstatic\"
-				ObjectFile="..\..\out\debug9\build\libbgloaderstatic\"
+				PrecompiledHeaderFile="..\..\out\debug8\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\libplaneshift_staticplugins\"
+				ObjectFile="..\..\out\debug8\build\libplaneshift_staticplugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -194,11 +194,11 @@
 				AdditionalOptions=" "
 				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug9\libs\libbgloaderstatic_d.lib"
+				OutputFile="..\..\out\debug8\libs\libplaneshift_staticplugins_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -206,10 +206,10 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug9\build\libbgloaderstatic\libbgloaderstatic.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\libplaneshift_staticplugins\libplaneshift_staticplugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug9\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug9\bin\&#x0D;&#x0A;"
+				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
 				/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -217,8 +217,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				AdditionalIncludeDirectories=".;..\..\src;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -227,8 +227,8 @@
 		</Configuration>
       		<Configuration
 			Name="Debug (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug9\build\libbgloaderstatic\"
-			IntermediateDirectory="..\..\out\debug9\build\libbgloaderstatic\"
+			OutputDirectory="..\..\out\debug8\build\libplaneshift_staticplugins\"
+			IntermediateDirectory="..\..\out\debug8\build\libplaneshift_staticplugins\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -239,14 +239,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug9\build\libbgloaderstatic\Win32\bgloaderstatic.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8\build\libplaneshift_staticplugins\Win32\planeshift_staticplugins.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug9\build\libbgloaderstatic\libbgloaderstatic.pch"
-				AssemblerListingLocation="..\..\out\debug9\build\libbgloaderstatic\"
-				ObjectFile="..\..\out\debug9\build\libbgloaderstatic\"
+				PrecompiledHeaderFile="..\..\out\debug8\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\libplaneshift_staticplugins\"
+				ObjectFile="..\..\out\debug8\build\libplaneshift_staticplugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -264,11 +264,11 @@
 				AdditionalOptions=" "
 				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug9\libs\libbgloaderstatic_d.lib"
+				OutputFile="..\..\out\debug8\libs\libplaneshift_staticplugins_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -276,10 +276,10 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug9\build\libbgloaderstatic\libbgloaderstatic.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\libplaneshift_staticplugins\libplaneshift_staticplugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug9\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug9\bin\&#x0D;&#x0A;"
+				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
 				/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -287,8 +287,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				AdditionalIncludeDirectories=".;..\..\src;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -297,8 +297,8 @@
 		</Configuration>
                 		<Configuration
 			Name="MemoryTracker (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug9\build\libbgloaderstatic\"
-			IntermediateDirectory="..\..\out\debug9\build\libbgloaderstatic\"
+			OutputDirectory="..\..\out\debug8\build\libplaneshift_staticplugins\"
+			IntermediateDirectory="..\..\out\debug8\build\libplaneshift_staticplugins\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -309,14 +309,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug9\build\libbgloaderstatic\Win32\bgloaderstatic.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8\build\libplaneshift_staticplugins\Win32\planeshift_staticplugins.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;CS_STATIC_LINKED;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug9\build\libbgloaderstatic\libbgloaderstatic.pch"
-				AssemblerListingLocation="..\..\out\debug9\build\libbgloaderstatic\"
-				ObjectFile="..\..\out\debug9\build\libbgloaderstatic\"
+				PrecompiledHeaderFile="..\..\out\debug8\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\libplaneshift_staticplugins\"
+				ObjectFile="..\..\out\debug8\build\libplaneshift_staticplugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -334,11 +334,11 @@
 				AdditionalOptions=" "
 				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug9\libs\libbgloaderstatic_d.lib"
+				OutputFile="..\..\out\debug8\libs\libplaneshift_staticplugins_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -346,10 +346,10 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug9\build\libbgloaderstatic\libbgloaderstatic.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\libplaneshift_staticplugins\libplaneshift_staticplugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug9\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug9\bin\&#x0D;&#x0A;"
+				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
 				/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -357,8 +357,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				AdditionalIncludeDirectories=".;..\..\src;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -367,8 +367,8 @@
 		</Configuration>
       		<Configuration
 			Name="MemoryTracker (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug9\build\libbgloaderstatic\"
-			IntermediateDirectory="..\..\out\debug9\build\libbgloaderstatic\"
+			OutputDirectory="..\..\out\debug8\build\libplaneshift_staticplugins\"
+			IntermediateDirectory="..\..\out\debug8\build\libplaneshift_staticplugins\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -379,14 +379,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug9\build\libbgloaderstatic\Win32\bgloaderstatic.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8\build\libplaneshift_staticplugins\Win32\planeshift_staticplugins.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug9\build\libbgloaderstatic\libbgloaderstatic.pch"
-				AssemblerListingLocation="..\..\out\debug9\build\libbgloaderstatic\"
-				ObjectFile="..\..\out\debug9\build\libbgloaderstatic\"
+				PrecompiledHeaderFile="..\..\out\debug8\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\libplaneshift_staticplugins\"
+				ObjectFile="..\..\out\debug8\build\libplaneshift_staticplugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -404,11 +404,11 @@
 				AdditionalOptions=" "
 				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug9\libs\libbgloaderstatic_d.lib"
+				OutputFile="..\..\out\debug8\libs\libplaneshift_staticplugins_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -416,10 +416,10 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug9\build\libbgloaderstatic\libbgloaderstatic.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\libplaneshift_staticplugins\libplaneshift_staticplugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug9\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug9\bin\&#x0D;&#x0A;"
+				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
 				/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -427,8 +427,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				AdditionalIncludeDirectories=".;..\..\src;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -437,8 +437,8 @@
 		</Configuration>
                 		<Configuration
 			Name="RefTracker (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug9\build\libbgloaderstatic\"
-			IntermediateDirectory="..\..\out\debug9\build\libbgloaderstatic\"
+			OutputDirectory="..\..\out\debug8\build\libplaneshift_staticplugins\"
+			IntermediateDirectory="..\..\out\debug8\build\libplaneshift_staticplugins\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -449,14 +449,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug9\build\libbgloaderstatic\Win32\bgloaderstatic.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8\build\libplaneshift_staticplugins\Win32\planeshift_staticplugins.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;CS_STATIC_LINKED;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug9\build\libbgloaderstatic\libbgloaderstatic.pch"
-				AssemblerListingLocation="..\..\out\debug9\build\libbgloaderstatic\"
-				ObjectFile="..\..\out\debug9\build\libbgloaderstatic\"
+				PrecompiledHeaderFile="..\..\out\debug8\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\libplaneshift_staticplugins\"
+				ObjectFile="..\..\out\debug8\build\libplaneshift_staticplugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -474,11 +474,11 @@
 				AdditionalOptions=" "
 				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug9\libs\libbgloaderstatic_d.lib"
+				OutputFile="..\..\out\debug8\libs\libplaneshift_staticplugins_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -486,10 +486,10 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug9\build\libbgloaderstatic\libbgloaderstatic.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\libplaneshift_staticplugins\libplaneshift_staticplugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug9\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug9\bin\&#x0D;&#x0A;"
+				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
 				/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -497,8 +497,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				AdditionalIncludeDirectories=".;..\..\src;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -507,8 +507,8 @@
 		</Configuration>
       		<Configuration
 			Name="RefTracker (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug9\build\libbgloaderstatic\"
-			IntermediateDirectory="..\..\out\debug9\build\libbgloaderstatic\"
+			OutputDirectory="..\..\out\debug8\build\libplaneshift_staticplugins\"
+			IntermediateDirectory="..\..\out\debug8\build\libplaneshift_staticplugins\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -519,14 +519,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug9\build\libbgloaderstatic\Win32\bgloaderstatic.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8\build\libplaneshift_staticplugins\Win32\planeshift_staticplugins.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug9\build\libbgloaderstatic\libbgloaderstatic.pch"
-				AssemblerListingLocation="..\..\out\debug9\build\libbgloaderstatic\"
-				ObjectFile="..\..\out\debug9\build\libbgloaderstatic\"
+				PrecompiledHeaderFile="..\..\out\debug8\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\libplaneshift_staticplugins\"
+				ObjectFile="..\..\out\debug8\build\libplaneshift_staticplugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -544,11 +544,11 @@
 				AdditionalOptions=" "
 				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug9\libs\libbgloaderstatic_d.lib"
+				OutputFile="..\..\out\debug8\libs\libplaneshift_staticplugins_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -556,10 +556,10 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug9\build\libbgloaderstatic\libbgloaderstatic.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\libplaneshift_staticplugins\libplaneshift_staticplugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug9\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug9\bin\&#x0D;&#x0A;"
+				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
 				/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -567,8 +567,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				AdditionalIncludeDirectories=".;..\..\src;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -577,8 +577,8 @@
 		</Configuration>
                 		<Configuration
 			Name="ThreadChecker (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug9\build\libbgloaderstatic\"
-			IntermediateDirectory="..\..\out\debug9\build\libbgloaderstatic\"
+			OutputDirectory="..\..\out\debug8\build\libplaneshift_staticplugins\"
+			IntermediateDirectory="..\..\out\debug8\build\libplaneshift_staticplugins\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -589,14 +589,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug9\build\libbgloaderstatic\Win32\bgloaderstatic.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8\build\libplaneshift_staticplugins\Win32\planeshift_staticplugins.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;CS_STATIC_LINKED;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug9\build\libbgloaderstatic\libbgloaderstatic.pch"
-				AssemblerListingLocation="..\..\out\debug9\build\libbgloaderstatic\"
-				ObjectFile="..\..\out\debug9\build\libbgloaderstatic\"
+				PrecompiledHeaderFile="..\..\out\debug8\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\libplaneshift_staticplugins\"
+				ObjectFile="..\..\out\debug8\build\libplaneshift_staticplugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -614,11 +614,11 @@
 				AdditionalOptions=" "
 				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug9\libs\libbgloaderstatic_d.lib"
+				OutputFile="..\..\out\debug8\libs\libplaneshift_staticplugins_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -626,10 +626,10 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug9\build\libbgloaderstatic\libbgloaderstatic.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\libplaneshift_staticplugins\libplaneshift_staticplugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug9\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug9\bin\&#x0D;&#x0A;"
+				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
 				/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -637,8 +637,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				AdditionalIncludeDirectories=".;..\..\src;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -647,8 +647,8 @@
 		</Configuration>
       		<Configuration
 			Name="ThreadChecker (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug9\build\libbgloaderstatic\"
-			IntermediateDirectory="..\..\out\debug9\build\libbgloaderstatic\"
+			OutputDirectory="..\..\out\debug8\build\libplaneshift_staticplugins\"
+			IntermediateDirectory="..\..\out\debug8\build\libplaneshift_staticplugins\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -659,14 +659,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug9\build\libbgloaderstatic\Win32\bgloaderstatic.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8\build\libplaneshift_staticplugins\Win32\planeshift_staticplugins.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug9\build\libbgloaderstatic\libbgloaderstatic.pch"
-				AssemblerListingLocation="..\..\out\debug9\build\libbgloaderstatic\"
-				ObjectFile="..\..\out\debug9\build\libbgloaderstatic\"
+				PrecompiledHeaderFile="..\..\out\debug8\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\libplaneshift_staticplugins\"
+				ObjectFile="..\..\out\debug8\build\libplaneshift_staticplugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -684,11 +684,11 @@
 				AdditionalOptions=" "
 				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug9\libs\libbgloaderstatic_d.lib"
+				OutputFile="..\..\out\debug8\libs\libplaneshift_staticplugins_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -696,10 +696,10 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug9\build\libbgloaderstatic\libbgloaderstatic.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\libplaneshift_staticplugins\libplaneshift_staticplugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug9\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug9\bin\&#x0D;&#x0A;"
+				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
 				/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -707,8 +707,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				AdditionalIncludeDirectories=".;..\..\src;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -717,8 +717,8 @@
 		</Configuration>
                 		<Configuration
 			Name="DebugPSReleaseCSCEL (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug9\build\libbgloaderstatic\"
-			IntermediateDirectory="..\..\out\debug9\build\libbgloaderstatic\"
+			OutputDirectory="..\..\out\debug8\build\libplaneshift_staticplugins\"
+			IntermediateDirectory="..\..\out\debug8\build\libplaneshift_staticplugins\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -729,14 +729,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug9\build\libbgloaderstatic\Win32\bgloaderstatic.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8\build\libplaneshift_staticplugins\Win32\planeshift_staticplugins.pdb"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug9\build\libbgloaderstatic\libbgloaderstatic.pch"
-				AssemblerListingLocation="..\..\out\debug9\build\libbgloaderstatic\"
-				ObjectFile="..\..\out\debug9\build\libbgloaderstatic\"
+				PrecompiledHeaderFile="..\..\out\debug8\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\libplaneshift_staticplugins\"
+				ObjectFile="..\..\out\debug8\build\libplaneshift_staticplugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -754,11 +754,11 @@
 				AdditionalOptions=" "
 				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\release9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug9\libs\libbgloaderstatic_d.lib"
+				OutputFile="..\..\out\debug8\libs\libplaneshift_staticplugins_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -766,10 +766,10 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug9\build\libbgloaderstatic\libbgloaderstatic.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\libplaneshift_staticplugins\libplaneshift_staticplugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug9\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug9\bin\&#x0D;&#x0A;"
+				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
 				/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -777,8 +777,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				AdditionalIncludeDirectories=".;..\..\src;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -787,8 +787,8 @@
 		</Configuration>
       		<Configuration
 			Name="DebugPSReleaseCSCEL (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug9\build\libbgloaderstatic\"
-			IntermediateDirectory="..\..\out\debug9\build\libbgloaderstatic\"
+			OutputDirectory="..\..\out\debug8\build\libplaneshift_staticplugins\"
+			IntermediateDirectory="..\..\out\debug8\build\libplaneshift_staticplugins\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -799,14 +799,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug9\build\libbgloaderstatic\Win32\bgloaderstatic.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8\build\libplaneshift_staticplugins\Win32\planeshift_staticplugins.pdb"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug9\build\libbgloaderstatic\libbgloaderstatic.pch"
-				AssemblerListingLocation="..\..\out\debug9\build\libbgloaderstatic\"
-				ObjectFile="..\..\out\debug9\build\libbgloaderstatic\"
+				PrecompiledHeaderFile="..\..\out\debug8\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\libplaneshift_staticplugins\"
+				ObjectFile="..\..\out\debug8\build\libplaneshift_staticplugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -824,11 +824,11 @@
 				AdditionalOptions=" "
 				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\release9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug9\libs\libbgloaderstatic_d.lib"
+				OutputFile="..\..\out\debug8\libs\libplaneshift_staticplugins_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -836,10 +836,10 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug9\build\libbgloaderstatic\libbgloaderstatic.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\libplaneshift_staticplugins\libplaneshift_staticplugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug9\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug9\bin\&#x0D;&#x0A;"
+				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
 				/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -847,8 +847,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				AdditionalIncludeDirectories=".;..\..\src;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -857,8 +857,8 @@
 		</Configuration>
                         		<Configuration
 			Name="Release (with static libs)|x64"
-			OutputDirectory="..\..\out\release9-x64\build\libbgloaderstatic\"
-			IntermediateDirectory="..\..\out\release9-x64\build\libbgloaderstatic\"
+			OutputDirectory="..\..\out\release8-x64\build\libplaneshift_staticplugins\"
+			IntermediateDirectory="..\..\out\release8-x64\build\libplaneshift_staticplugins\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -869,14 +869,14 @@
 				EnableFunctionLevelLinking="TRUE"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="FALSE"
-				ProgramDataBaseFileName="..\..\out\release9-x64\build\libbgloaderstatic\x64\bgloaderstatic.pdb"
+				ProgramDataBaseFileName="..\..\out\release8-x64\build\libplaneshift_staticplugins\x64\planeshift_staticplugins.pdb"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\release9-x64\build\libbgloaderstatic\libbgloaderstatic.pch"
-				AssemblerListingLocation="..\..\out\release9-x64\build\libbgloaderstatic\"
-				ObjectFile="..\..\out\release9-x64\build\libbgloaderstatic\"
+				PrecompiledHeaderFile="..\..\out\release8-x64\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch"
+				AssemblerListingLocation="..\..\out\release8-x64\build\libplaneshift_staticplugins\"
+				ObjectFile="..\..\out\release8-x64\build\libplaneshift_staticplugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -896,11 +896,11 @@
 				AdditionalOptions=" "
 				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\release9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\release9-x64\libs\libbgloaderstatic.lib"
+				OutputFile="..\..\out\release8-x64\libs\libplaneshift_staticplugins.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -908,10 +908,10 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\release9-x64\build\libbgloaderstatic\libbgloaderstatic.tlb"/>
+				TypeLibraryName="..\..\out\release8-x64\build\libplaneshift_staticplugins\libplaneshift_staticplugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\release9-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release9-x64\bin\&#x0D;&#x0A;"
+				CommandLine="md ..\..\out\release8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release8-x64\bin\&#x0D;&#x0A;"
 				/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -919,8 +919,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				AdditionalIncludeDirectories=".;..\..\src;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -929,8 +929,8 @@
 		</Configuration>
       		<Configuration
 			Name="Release (with DLLs)|x64"
-			OutputDirectory="..\..\out\release9-x64\build\libbgloaderstatic\"
-			IntermediateDirectory="..\..\out\release9-x64\build\libbgloaderstatic\"
+			OutputDirectory="..\..\out\release8-x64\build\libplaneshift_staticplugins\"
+			IntermediateDirectory="..\..\out\release8-x64\build\libplaneshift_staticplugins\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -941,14 +941,14 @@
 				EnableFunctionLevelLinking="TRUE"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="FALSE"
-				ProgramDataBaseFileName="..\..\out\release9-x64\build\libbgloaderstatic\x64\bgloaderstatic.pdb"
+				ProgramDataBaseFileName="..\..\out\release8-x64\build\libplaneshift_staticplugins\x64\planeshift_staticplugins.pdb"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\release9-x64\build\libbgloaderstatic\libbgloaderstatic.pch"
-				AssemblerListingLocation="..\..\out\release9-x64\build\libbgloaderstatic\"
-				ObjectFile="..\..\out\release9-x64\build\libbgloaderstatic\"
+				PrecompiledHeaderFile="..\..\out\release8-x64\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch"
+				AssemblerListingLocation="..\..\out\release8-x64\build\libplaneshift_staticplugins\"
+				ObjectFile="..\..\out\release8-x64\build\libplaneshift_staticplugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -968,11 +968,11 @@
 				AdditionalOptions=" "
 				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\release9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\release9-x64\libs\libbgloaderstatic.lib"
+				OutputFile="..\..\out\release8-x64\libs\libplaneshift_staticplugins.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -980,10 +980,10 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\release9-x64\build\libbgloaderstatic\libbgloaderstatic.tlb"/>
+				TypeLibraryName="..\..\out\release8-x64\build\libplaneshift_staticplugins\libplaneshift_staticplugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\release9-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release9-x64\bin\&#x0D;&#x0A;"
+				CommandLine="md ..\..\out\release8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release8-x64\bin\&#x0D;&#x0A;"
 				/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -991,8 +991,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				AdditionalIncludeDirectories=".;..\..\src;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1001,8 +1001,8 @@
 		</Configuration>
                 		<Configuration
 			Name="Debug (with static libs)|x64"
-			OutputDirectory="..\..\out\debug9-x64\build\libbgloaderstatic\"
-			IntermediateDirectory="..\..\out\debug9-x64\build\libbgloaderstatic\"
+			OutputDirectory="..\..\out\debug8-x64\build\libplaneshift_staticplugins\"
+			IntermediateDirectory="..\..\out\debug8-x64\build\libplaneshift_staticplugins\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -1013,14 +1013,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug9-x64\build\libbgloaderstatic\x64\bgloaderstatic.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8-x64\build\libplaneshift_staticplugins\x64\planeshift_staticplugins.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug9-x64\build\libbgloaderstatic\libbgloaderstatic.pch"
-				AssemblerListingLocation="..\..\out\debug9-x64\build\libbgloaderstatic\"
-				ObjectFile="..\..\out\debug9-x64\build\libbgloaderstatic\"
+				PrecompiledHeaderFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch"
+				AssemblerListingLocation="..\..\out\debug8-x64\build\libplaneshift_staticplugins\"
+				ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1038,11 +1038,11 @@
 				AdditionalOptions=" "
 				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug9-x64\libs\libbgloaderstatic_d.lib"
+				OutputFile="..\..\out\debug8-x64\libs\libplaneshift_staticplugins_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -1050,10 +1050,10 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug9-x64\build\libbgloaderstatic\libbgloaderstatic.tlb"/>
+				TypeLibraryName="..\..\out\debug8-x64\build\libplaneshift_staticplugins\libplaneshift_staticplugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug9-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug9-x64\bin\&#x0D;&#x0A;"
+				CommandLine="md ..\..\out\debug8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8-x64\bin\&#x0D;&#x0A;"
 				/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -1061,8 +1061,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				AdditionalIncludeDirectories=".;..\..\src;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1071,8 +1071,8 @@
 		</Configuration>
       		<Configuration
 			Name="Debug (with DLLs)|x64"
-			OutputDirectory="..\..\out\debug9-x64\build\libbgloaderstatic\"
-			IntermediateDirectory="..\..\out\debug9-x64\build\libbgloaderstatic\"
+			OutputDirectory="..\..\out\debug8-x64\build\libplaneshift_staticplugins\"
+			IntermediateDirectory="..\..\out\debug8-x64\build\libplaneshift_staticplugins\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -1083,14 +1083,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug9-x64\build\libbgloaderstatic\x64\bgloaderstatic.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8-x64\build\libplaneshift_staticplugins\x64\planeshift_staticplugins.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug9-x64\build\libbgloaderstatic\libbgloaderstatic.pch"
-				AssemblerListingLocation="..\..\out\debug9-x64\build\libbgloaderstatic\"
-				ObjectFile="..\..\out\debug9-x64\build\libbgloaderstatic\"
+				PrecompiledHeaderFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch"
+				AssemblerListingLocation="..\..\out\debug8-x64\build\libplaneshift_staticplugins\"
+				ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1108,11 +1108,11 @@
 				AdditionalOptions=" "
 				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug9-x64\libs\libbgloaderstatic_d.lib"
+				OutputFile="..\..\out\debug8-x64\libs\libplaneshift_staticplugins_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -1120,10 +1120,10 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug9-x64\build\libbgloaderstatic\libbgloaderstatic.tlb"/>
+				TypeLibraryName="..\..\out\debug8-x64\build\libplaneshift_staticplugins\libplaneshift_staticplugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug9-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug9-x64\bin\&#x0D;&#x0A;"
+				CommandLine="md ..\..\out\debug8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8-x64\bin\&#x0D;&#x0A;"
 				/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -1131,8 +1131,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				AdditionalIncludeDirectories=".;..\..\src;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1141,8 +1141,8 @@
 		</Configuration>
                 		<Configuration
 			Name="MemoryTracker (with static libs)|x64"
-			OutputDirectory="..\..\out\debug9-x64\build\libbgloaderstatic\"
-			IntermediateDirectory="..\..\out\debug9-x64\build\libbgloaderstatic\"
+			OutputDirectory="..\..\out\debug8-x64\build\libplaneshift_staticplugins\"
+			IntermediateDirectory="..\..\out\debug8-x64\build\libplaneshift_staticplugins\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -1153,14 +1153,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug9-x64\build\libbgloaderstatic\x64\bgloaderstatic.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8-x64\build\libplaneshift_staticplugins\x64\planeshift_staticplugins.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;CS_STATIC_LINKED;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug9-x64\build\libbgloaderstatic\libbgloaderstatic.pch"
-				AssemblerListingLocation="..\..\out\debug9-x64\build\libbgloaderstatic\"
-				ObjectFile="..\..\out\debug9-x64\build\libbgloaderstatic\"
+				PrecompiledHeaderFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch"
+				AssemblerListingLocation="..\..\out\debug8-x64\build\libplaneshift_staticplugins\"
+				ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1178,11 +1178,11 @@
 				AdditionalOptions=" "
 				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug9-x64\libs\libbgloaderstatic_d.lib"
+				OutputFile="..\..\out\debug8-x64\libs\libplaneshift_staticplugins_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -1190,10 +1190,10 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug9-x64\build\libbgloaderstatic\libbgloaderstatic.tlb"/>
+				TypeLibraryName="..\..\out\debug8-x64\build\libplaneshift_staticplugins\libplaneshift_staticplugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug9-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug9-x64\bin\&#x0D;&#x0A;"
+				CommandLine="md ..\..\out\debug8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8-x64\bin\&#x0D;&#x0A;"
 				/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -1201,8 +1201,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				AdditionalIncludeDirectories=".;..\..\src;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1211,8 +1211,8 @@
 		</Configuration>
       		<Configuration
 			Name="MemoryTracker (with DLLs)|x64"
-			OutputDirectory="..\..\out\debug9-x64\build\libbgloaderstatic\"
-			IntermediateDirectory="..\..\out\debug9-x64\build\libbgloaderstatic\"
+			OutputDirectory="..\..\out\debug8-x64\build\libplaneshift_staticplugins\"
+			IntermediateDirectory="..\..\out\debug8-x64\build\libplaneshift_staticplugins\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -1223,14 +1223,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug9-x64\build\libbgloaderstatic\x64\bgloaderstatic.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8-x64\build\libplaneshift_staticplugins\x64\planeshift_staticplugins.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug9-x64\build\libbgloaderstatic\libbgloaderstatic.pch"
-				AssemblerListingLocation="..\..\out\debug9-x64\build\libbgloaderstatic\"
-				ObjectFile="..\..\out\debug9-x64\build\libbgloaderstatic\"
+				PrecompiledHeaderFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch"
+				AssemblerListingLocation="..\..\out\debug8-x64\build\libplaneshift_staticplugins\"
+				ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1248,11 +1248,11 @@
 				AdditionalOptions=" "
 				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug9-x64\libs\libbgloaderstatic_d.lib"
+				OutputFile="..\..\out\debug8-x64\libs\libplaneshift_staticplugins_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -1260,10 +1260,10 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug9-x64\build\libbgloaderstatic\libbgloaderstatic.tlb"/>
+				TypeLibraryName="..\..\out\debug8-x64\build\libplaneshift_staticplugins\libplaneshift_staticplugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug9-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug9-x64\bin\&#x0D;&#x0A;"
+				CommandLine="md ..\..\out\debug8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8-x64\bin\&#x0D;&#x0A;"
 				/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -1271,8 +1271,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				AdditionalIncludeDirectories=".;..\..\src;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1281,8 +1281,8 @@
 		</Configuration>
                 		<Configuration
 			Name="RefTracker (with static libs)|x64"
-			OutputDirectory="..\..\out\debug9-x64\build\libbgloaderstatic\"
-			IntermediateDirectory="..\..\out\debug9-x64\build\libbgloaderstatic\"
+			OutputDirectory="..\..\out\debug8-x64\build\libplaneshift_staticplugins\"
+			IntermediateDirectory="..\..\out\debug8-x64\build\libplaneshift_staticplugins\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -1293,14 +1293,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug9-x64\build\libbgloaderstatic\x64\bgloaderstatic.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8-x64\build\libplaneshift_staticplugins\x64\planeshift_staticplugins.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;CS_STATIC_LINKED;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug9-x64\build\libbgloaderstatic\libbgloaderstatic.pch"
-				AssemblerListingLocation="..\..\out\debug9-x64\build\libbgloaderstatic\"
-				ObjectFile="..\..\out\debug9-x64\build\libbgloaderstatic\"
+				PrecompiledHeaderFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch"
+				AssemblerListingLocation="..\..\out\debug8-x64\build\libplaneshift_staticplugins\"
+				ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1318,11 +1318,11 @@
 				AdditionalOptions=" "
 				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug9-x64\libs\libbgloaderstatic_d.lib"
+				OutputFile="..\..\out\debug8-x64\libs\libplaneshift_staticplugins_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -1330,10 +1330,10 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug9-x64\build\libbgloaderstatic\libbgloaderstatic.tlb"/>
+				TypeLibraryName="..\..\out\debug8-x64\build\libplaneshift_staticplugins\libplaneshift_staticplugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug9-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug9-x64\bin\&#x0D;&#x0A;"
+				CommandLine="md ..\..\out\debug8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8-x64\bin\&#x0D;&#x0A;"
 				/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -1341,8 +1341,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				AdditionalIncludeDirectories=".;..\..\src;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1351,8 +1351,8 @@
 		</Configuration>
       		<Configuration
 			Name="RefTracker (with DLLs)|x64"
-			OutputDirectory="..\..\out\debug9-x64\build\libbgloaderstatic\"
-			IntermediateDirectory="..\..\out\debug9-x64\build\libbgloaderstatic\"
+			OutputDirectory="..\..\out\debug8-x64\build\libplaneshift_staticplugins\"
+			IntermediateDirectory="..\..\out\debug8-x64\build\libplaneshift_staticplugins\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -1363,14 +1363,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug9-x64\build\libbgloaderstatic\x64\bgloaderstatic.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8-x64\build\libplaneshift_staticplugins\x64\planeshift_staticplugins.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug9-x64\build\libbgloaderstatic\libbgloaderstatic.pch"
-				AssemblerListingLocation="..\..\out\debug9-x64\build\libbgloaderstatic\"
-				ObjectFile="..\..\out\debug9-x64\build\libbgloaderstatic\"
+				PrecompiledHeaderFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch"
+				AssemblerListingLocation="..\..\out\debug8-x64\build\libplaneshift_staticplugins\"
+				ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1388,11 +1388,11 @@
 				AdditionalOptions=" "
 				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug9-x64\libs\libbgloaderstatic_d.lib"
+				OutputFile="..\..\out\debug8-x64\libs\libplaneshift_staticplugins_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -1400,10 +1400,10 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug9-x64\build\libbgloaderstatic\libbgloaderstatic.tlb"/>
+				TypeLibraryName="..\..\out\debug8-x64\build\libplaneshift_staticplugins\libplaneshift_staticplugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug9-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug9-x64\bin\&#x0D;&#x0A;"
+				CommandLine="md ..\..\out\debug8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8-x64\bin\&#x0D;&#x0A;"
 				/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -1411,8 +1411,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				AdditionalIncludeDirectories=".;..\..\src;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1421,8 +1421,8 @@
 		</Configuration>
                 		<Configuration
 			Name="ThreadChecker (with static libs)|x64"
-			OutputDirectory="..\..\out\debug9-x64\build\libbgloaderstatic\"
-			IntermediateDirectory="..\..\out\debug9-x64\build\libbgloaderstatic\"
+			OutputDirectory="..\..\out\debug8-x64\build\libplaneshift_staticplugins\"
+			IntermediateDirectory="..\..\out\debug8-x64\build\libplaneshift_staticplugins\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -1433,14 +1433,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug9-x64\build\libbgloaderstatic\x64\bgloaderstatic.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8-x64\build\libplaneshift_staticplugins\x64\planeshift_staticplugins.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;CS_STATIC_LINKED;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug9-x64\build\libbgloaderstatic\libbgloaderstatic.pch"
-				AssemblerListingLocation="..\..\out\debug9-x64\build\libbgloaderstatic\"
-				ObjectFile="..\..\out\debug9-x64\build\libbgloaderstatic\"
+				PrecompiledHeaderFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch"
+				AssemblerListingLocation="..\..\out\debug8-x64\build\libplaneshift_staticplugins\"
+				ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1458,11 +1458,11 @@
 				AdditionalOptions=" "
 				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug9-x64\libs\libbgloaderstatic_d.lib"
+				OutputFile="..\..\out\debug8-x64\libs\libplaneshift_staticplugins_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -1470,10 +1470,10 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug9-x64\build\libbgloaderstatic\libbgloaderstatic.tlb"/>
+				TypeLibraryName="..\..\out\debug8-x64\build\libplaneshift_staticplugins\libplaneshift_staticplugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug9-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug9-x64\bin\&#x0D;&#x0A;"
+				CommandLine="md ..\..\out\debug8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8-x64\bin\&#x0D;&#x0A;"
 				/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -1481,8 +1481,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				AdditionalIncludeDirectories=".;..\..\src;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1491,8 +1491,8 @@
 		</Configuration>
       		<Configuration
 			Name="ThreadChecker (with DLLs)|x64"
-			OutputDirectory="..\..\out\debug9-x64\build\libbgloaderstatic\"
-			IntermediateDirectory="..\..\out\debug9-x64\build\libbgloaderstatic\"
+			OutputDirectory="..\..\out\debug8-x64\build\libplaneshift_staticplugins\"
+			IntermediateDirectory="..\..\out\debug8-x64\build\libplaneshift_staticplugins\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -1503,14 +1503,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug9-x64\build\libbgloaderstatic\x64\bgloaderstatic.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8-x64\build\libplaneshift_staticplugins\x64\planeshift_staticplugins.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug9-x64\build\libbgloaderstatic\libbgloaderstatic.pch"
-				AssemblerListingLocation="..\..\out\debug9-x64\build\libbgloaderstatic\"
-				ObjectFile="..\..\out\debug9-x64\build\libbgloaderstatic\"
+				PrecompiledHeaderFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch"
+				AssemblerListingLocation="..\..\out\debug8-x64\build\libplaneshift_staticplugins\"
+				ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1528,11 +1528,11 @@
 				AdditionalOptions=" "
 				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug9-x64\libs\libbgloaderstatic_d.lib"
+				OutputFile="..\..\out\debug8-x64\libs\libplaneshift_staticplugins_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -1540,10 +1540,10 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug9-x64\build\libbgloaderstatic\libbgloaderstatic.tlb"/>
+				TypeLibraryName="..\..\out\debug8-x64\build\libplaneshift_staticplugins\libplaneshift_staticplugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug9-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug9-x64\bin\&#x0D;&#x0A;"
+				CommandLine="md ..\..\out\debug8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8-x64\bin\&#x0D;&#x0A;"
 				/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -1551,8 +1551,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				AdditionalIncludeDirectories=".;..\..\src;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1561,8 +1561,8 @@
 		</Configuration>
                 		<Configuration
 			Name="DebugPSReleaseCSCEL (with static libs)|x64"
-			OutputDirectory="..\..\out\debug9-x64\build\libbgloaderstatic\"
-			IntermediateDirectory="..\..\out\debug9-x64\build\libbgloaderstatic\"
+			OutputDirectory="..\..\out\debug8-x64\build\libplaneshift_staticplugins\"
+			IntermediateDirectory="..\..\out\debug8-x64\build\libplaneshift_staticplugins\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -1573,14 +1573,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug9-x64\build\libbgloaderstatic\x64\bgloaderstatic.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8-x64\build\libplaneshift_staticplugins\x64\planeshift_staticplugins.pdb"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug9-x64\build\libbgloaderstatic\libbgloaderstatic.pch"
-				AssemblerListingLocation="..\..\out\debug9-x64\build\libbgloaderstatic\"
-				ObjectFile="..\..\out\debug9-x64\build\libbgloaderstatic\"
+				PrecompiledHeaderFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch"
+				AssemblerListingLocation="..\..\out\debug8-x64\build\libplaneshift_staticplugins\"
+				ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1598,11 +1598,11 @@
 				AdditionalOptions=" "
 				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\release9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug9-x64\libs\libbgloaderstatic_d.lib"
+				OutputFile="..\..\out\debug8-x64\libs\libplaneshift_staticplugins_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -1610,10 +1610,10 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug9-x64\build\libbgloaderstatic\libbgloaderstatic.tlb"/>
+				TypeLibraryName="..\..\out\debug8-x64\build\libplaneshift_staticplugins\libplaneshift_staticplugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug9-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug9-x64\bin\&#x0D;&#x0A;"
+				CommandLine="md ..\..\out\debug8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8-x64\bin\&#x0D;&#x0A;"
 				/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -1621,8 +1621,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				AdditionalIncludeDirectories=".;..\..\src;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1631,8 +1631,8 @@
 		</Configuration>
       		<Configuration
 			Name="DebugPSReleaseCSCEL (with DLLs)|x64"
-			OutputDirectory="..\..\out\debug9-x64\build\libbgloaderstatic\"
-			IntermediateDirectory="..\..\out\debug9-x64\build\libbgloaderstatic\"
+			OutputDirectory="..\..\out\debug8-x64\build\libplaneshift_staticplugins\"
+			IntermediateDirectory="..\..\out\debug8-x64\build\libplaneshift_staticplugins\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -1643,14 +1643,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug9-x64\build\libbgloaderstatic\x64\bgloaderstatic.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8-x64\build\libplaneshift_staticplugins\x64\planeshift_staticplugins.pdb"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug9-x64\build\libbgloaderstatic\libbgloaderstatic.pch"
-				AssemblerListingLocation="..\..\out\debug9-x64\build\libbgloaderstatic\"
-				ObjectFile="..\..\out\debug9-x64\build\libbgloaderstatic\"
+				PrecompiledHeaderFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch"
+				AssemblerListingLocation="..\..\out\debug8-x64\build\libplaneshift_staticplugins\"
+				ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1668,11 +1668,11 @@
 				AdditionalOptions=" "
 				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\CS\out\release9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
+				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug9-x64\libs\libbgloaderstatic_d.lib"
+				OutputFile="..\..\out\debug8-x64\libs\libplaneshift_staticplugins_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -1680,10 +1680,10 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug9-x64\build\libbgloaderstatic\libbgloaderstatic.tlb"/>
+				TypeLibraryName="..\..\out\debug8-x64\build\libplaneshift_staticplugins\libplaneshift_staticplugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="md ..\..\out\debug9-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug9-x64\bin\&#x0D;&#x0A;"
+				CommandLine="md ..\..\out\debug8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8-x64\bin\&#x0D;&#x0A;"
 				/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -1691,8 +1691,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=8"
+				AdditionalIncludeDirectories=".;..\..\src;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1710,67 +1710,67 @@
 						Name="Release (with static libs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\release9-x64\build\libbgloaderstatic\mk_msvc_libbgloader_staticreg.cpp.obj"/>
+							ObjectFile="..\..\out\release8-x64\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
 					</FileConfiguration>					<FileConfiguration
 						Name="Release (with DLLs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\release9-x64\build\libbgloaderstatic\mk_msvc_libbgloader_staticreg.cpp.obj"/>
+							ObjectFile="..\..\out\release8-x64\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
 					</FileConfiguration>
                                   					<FileConfiguration
 						Name="Debug (with static libs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug9-x64\build\libbgloaderstatic\mk_msvc_libbgloader_staticreg.cpp.obj"/>
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
 					</FileConfiguration>					<FileConfiguration
 						Name="Debug (with DLLs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug9-x64\build\libbgloaderstatic\mk_msvc_libbgloader_staticreg.cpp.obj"/>
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
 					</FileConfiguration>
                                   					<FileConfiguration
 						Name="MemoryTracker (with static libs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug9-x64\build\libbgloaderstatic\mk_msvc_libbgloader_staticreg.cpp.obj"/>
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
 					</FileConfiguration>					<FileConfiguration
 						Name="MemoryTracker (with DLLs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug9-x64\build\libbgloaderstatic\mk_msvc_libbgloader_staticreg.cpp.obj"/>
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
 					</FileConfiguration>
                                   					<FileConfiguration
 						Name="RefTracker (with static libs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug9-x64\build\libbgloaderstatic\mk_msvc_libbgloader_staticreg.cpp.obj"/>
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
 					</FileConfiguration>					<FileConfiguration
 						Name="RefTracker (with DLLs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug9-x64\build\libbgloaderstatic\mk_msvc_libbgloader_staticreg.cpp.obj"/>
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
 					</FileConfiguration>
                                   					<FileConfiguration
 						Name="ThreadChecker (with static libs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug9-x64\build\libbgloaderstatic\mk_msvc_libbgloader_staticreg.cpp.obj"/>
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
 					</FileConfiguration>					<FileConfiguration
 						Name="ThreadChecker (with DLLs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug9-x64\build\libbgloaderstatic\mk_msvc_libbgloader_staticreg.cpp.obj"/>
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
 					</FileConfiguration>
                                   					<FileConfiguration
 						Name="DebugPSReleaseCSCEL (with static libs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug9-x64\build\libbgloaderstatic\mk_msvc_libbgloader_staticreg.cpp.obj"/>
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
 					</FileConfiguration>					<FileConfiguration
 						Name="DebugPSReleaseCSCEL (with DLLs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug9-x64\build\libbgloaderstatic\mk_msvc_libbgloader_staticreg.cpp.obj"/>
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
 					</FileConfiguration>
 			</File>
 			<File
@@ -1779,67 +1779,67 @@
 						Name="Release (with static libs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\release9-x64\build\libbgloaderstatic\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
+							ObjectFile="..\..\out\release8-x64\build\libplaneshift_staticplugins\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
 					</FileConfiguration>					<FileConfiguration
 						Name="Release (with DLLs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\release9-x64\build\libbgloaderstatic\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
+							ObjectFile="..\..\out\release8-x64\build\libplaneshift_staticplugins\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
 					</FileConfiguration>
                                   					<FileConfiguration
 						Name="Debug (with static libs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug9-x64\build\libbgloaderstatic\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
 					</FileConfiguration>					<FileConfiguration
 						Name="Debug (with DLLs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug9-x64\build\libbgloaderstatic\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
 					</FileConfiguration>
                                   					<FileConfiguration
 						Name="MemoryTracker (with static libs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug9-x64\build\libbgloaderstatic\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
 					</FileConfiguration>					<FileConfiguration
 						Name="MemoryTracker (with DLLs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug9-x64\build\libbgloaderstatic\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
 					</FileConfiguration>
                                   					<FileConfiguration
 						Name="RefTracker (with static libs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug9-x64\build\libbgloaderstatic\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
 					</FileConfiguration>					<FileConfiguration
 						Name="RefTracker (with DLLs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug9-x64\build\libbgloaderstatic\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
 					</FileConfiguration>
                                   					<FileConfiguration
 						Name="ThreadChecker (with static libs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug9-x64\build\libbgloaderstatic\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
 					</FileConfiguration>					<FileConfiguration
 						Name="ThreadChecker (with DLLs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug9-x64\build\libbgloaderstatic\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
 					</FileConfiguration>
                                   					<FileConfiguration
 						Name="DebugPSReleaseCSCEL (with static libs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug9-x64\build\libbgloaderstatic\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
 					</FileConfiguration>					<FileConfiguration
 						Name="DebugPSReleaseCSCEL (with DLLs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug9-x64\build\libbgloaderstatic\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
 					</FileConfiguration>
 			</File>
 			<File
@@ -1848,67 +1848,67 @@
 						Name="Release (with static libs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\release9-x64\build\libbgloaderstatic\src_client_bgloader_loader.cpp.obj"/>
+							ObjectFile="..\..\out\release8-x64\build\libplaneshift_staticplugins\src_client_bgloader_loader.cpp.obj"/>
 					</FileConfiguration>					<FileConfiguration
 						Name="Release (with DLLs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\release9-x64\build\libbgloaderstatic\src_client_bgloader_loader.cpp.obj"/>
+							ObjectFile="..\..\out\release8-x64\build\libplaneshift_staticplugins\src_client_bgloader_loader.cpp.obj"/>
 					</FileConfiguration>
                                   					<FileConfiguration
 						Name="Debug (with static libs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug9-x64\build\libbgloaderstatic\src_client_bgloader_loader.cpp.obj"/>
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\src_client_bgloader_loader.cpp.obj"/>
 					</FileConfiguration>					<FileConfiguration
 						Name="Debug (with DLLs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug9-x64\build\libbgloaderstatic\src_client_bgloader_loader.cpp.obj"/>
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\src_client_bgloader_loader.cpp.obj"/>
 					</FileConfiguration>
                                   					<FileConfiguration
 						Name="MemoryTracker (with static libs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug9-x64\build\libbgloaderstatic\src_client_bgloader_loader.cpp.obj"/>
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\src_client_bgloader_loader.cpp.obj"/>
 					</FileConfiguration>					<FileConfiguration
 						Name="MemoryTracker (with DLLs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug9-x64\build\libbgloaderstatic\src_client_bgloader_loader.cpp.obj"/>
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\src_client_bgloader_loader.cpp.obj"/>
 					</FileConfiguration>
                                   					<FileConfiguration
 						Name="RefTracker (with static libs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug9-x64\build\libbgloaderstatic\src_client_bgloader_loader.cpp.obj"/>
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\src_client_bgloader_loader.cpp.obj"/>
 					</FileConfiguration>					<FileConfiguration
 						Name="RefTracker (with DLLs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug9-x64\build\libbgloaderstatic\src_client_bgloader_loader.cpp.obj"/>
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\src_client_bgloader_loader.cpp.obj"/>
 					</FileConfiguration>
                                   					<FileConfiguration
 						Name="ThreadChecker (with static libs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug9-x64\build\libbgloaderstatic\src_client_bgloader_loader.cpp.obj"/>
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\src_client_bgloader_loader.cpp.obj"/>
 					</FileConfiguration>					<FileConfiguration
 						Name="ThreadChecker (with DLLs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug9-x64\build\libbgloaderstatic\src_client_bgloader_loader.cpp.obj"/>
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\src_client_bgloader_loader.cpp.obj"/>
 					</FileConfiguration>
                                   					<FileConfiguration
 						Name="DebugPSReleaseCSCEL (with static libs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug9-x64\build\libbgloaderstatic\src_client_bgloader_loader.cpp.obj"/>
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\src_client_bgloader_loader.cpp.obj"/>
 					</FileConfiguration>					<FileConfiguration
 						Name="DebugPSReleaseCSCEL (with DLLs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug9-x64\build\libbgloaderstatic\src_client_bgloader_loader.cpp.obj"/>
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\src_client_bgloader_loader.cpp.obj"/>
 					</FileConfiguration>
 			</File>
 			<File
@@ -1917,67 +1917,67 @@
 						Name="Release (with static libs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\release9-x64\build\libbgloaderstatic\src_server_database_mysql_dal.cpp.obj"/>
+							ObjectFile="..\..\out\release8-x64\build\libplaneshift_staticplugins\src_server_database_mysql_dal.cpp.obj"/>
 					</FileConfiguration>					<FileConfiguration
 						Name="Release (with DLLs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\release9-x64\build\libbgloaderstatic\src_server_database_mysql_dal.cpp.obj"/>
+							ObjectFile="..\..\out\release8-x64\build\libplaneshift_staticplugins\src_server_database_mysql_dal.cpp.obj"/>
 					</FileConfiguration>
                                   					<FileConfiguration
 						Name="Debug (with static libs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug9-x64\build\libbgloaderstatic\src_server_database_mysql_dal.cpp.obj"/>
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\src_server_database_mysql_dal.cpp.obj"/>
 					</FileConfiguration>					<FileConfiguration
 						Name="Debug (with DLLs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug9-x64\build\libbgloaderstatic\src_server_database_mysql_dal.cpp.obj"/>
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\src_server_database_mysql_dal.cpp.obj"/>
 					</FileConfiguration>
                                   					<FileConfiguration
 						Name="MemoryTracker (with static libs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug9-x64\build\libbgloaderstatic\src_server_database_mysql_dal.cpp.obj"/>
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\src_server_database_mysql_dal.cpp.obj"/>
 					</FileConfiguration>					<FileConfiguration
 						Name="MemoryTracker (with DLLs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug9-x64\build\libbgloaderstatic\src_server_database_mysql_dal.cpp.obj"/>
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\src_server_database_mysql_dal.cpp.obj"/>
 					</FileConfiguration>
                                   					<FileConfiguration
 						Name="RefTracker (with static libs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug9-x64\build\libbgloaderstatic\src_server_database_mysql_dal.cpp.obj"/>
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\src_server_database_mysql_dal.cpp.obj"/>
 					</FileConfiguration>					<FileConfiguration
 						Name="RefTracker (with DLLs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug9-x64\build\libbgloaderstatic\src_server_database_mysql_dal.cpp.obj"/>
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\src_server_database_mysql_dal.cpp.obj"/>
 					</FileConfiguration>
                                   					<FileConfiguration
 						Name="ThreadChecker (with static libs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug9-x64\build\libbgloaderstatic\src_server_database_mysql_dal.cpp.obj"/>
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\src_server_database_mysql_dal.cpp.obj"/>
 					</FileConfiguration>					<FileConfiguration
 						Name="ThreadChecker (with DLLs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug9-x64\build\libbgloaderstatic\src_server_database_mysql_dal.cpp.obj"/>
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\src_server_database_mysql_dal.cpp.obj"/>
 					</FileConfiguration>
                                   					<FileConfiguration
 						Name="DebugPSReleaseCSCEL (with static libs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug9-x64\build\libbgloaderstatic\src_server_database_mysql_dal.cpp.obj"/>
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\src_server_database_mysql_dal.cpp.obj"/>
 					</FileConfiguration>					<FileConfiguration
 						Name="DebugPSReleaseCSCEL (with DLLs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug9-x64\build\libbgloaderstatic\src_server_database_mysql_dal.cpp.obj"/>
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\src_server_database_mysql_dal.cpp.obj"/>
 					</FileConfiguration>
 			</File>
 		</Filter>

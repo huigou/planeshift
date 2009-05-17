@@ -2,8 +2,8 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.00"
-	Name="libdbmysqlstatic"
-	ProjectGUID="{40B36497-9943-1300-33CB-533903E166D4}"
+	Name="libplaneshift_staticplugins"
+	ProjectGUID="{DA886D16-6C20-BDA5-D8CC-0E06ABE8B5C7}"
 	SccProjectName=""
 	SccLocalPath="">
 	<Platforms>
@@ -12,8 +12,8 @@
 	<Configurations>
             		<Configuration
 			Name="Release (with static libs)|Win32"
-			OutputDirectory="..\..\out\release7\build\libdbmysqlstatic\"
-			IntermediateDirectory="..\..\out\release7\build\libdbmysqlstatic\"
+			OutputDirectory="..\..\out\release7\build\libplaneshift_staticplugins\"
+			IntermediateDirectory="..\..\out\release7\build\libplaneshift_staticplugins\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -24,14 +24,14 @@
 				EnableFunctionLevelLinking="TRUE"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="FALSE"
-				ProgramDataBaseFileName="..\..\out\release7\build\libdbmysqlstatic\Win32\dbmysqlstatic.pdb"
+				ProgramDataBaseFileName="..\..\out\release7\build\libplaneshift_staticplugins\Win32\planeshift_staticplugins.pdb"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\release7\build\libdbmysqlstatic\libdbmysqlstatic.pch"
-				AssemblerListingLocation="..\..\out\release7\build\libdbmysqlstatic\"
-				ObjectFile="..\..\out\release7\build\libdbmysqlstatic\"
+				PrecompiledHeaderFile="..\..\out\release7\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch"
+				AssemblerListingLocation="..\..\out\release7\build\libplaneshift_staticplugins\"
+				ObjectFile="..\..\out\release7\build\libplaneshift_staticplugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -55,7 +55,7 @@
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\release7\libs\libdbmysqlstatic.lib"
+				OutputFile="..\..\out\release7\libs\libplaneshift_staticplugins.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -63,7 +63,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\release7\build\libdbmysqlstatic\libdbmysqlstatic.tlb"/>
+				TypeLibraryName="..\..\out\release7\build\libplaneshift_staticplugins\libplaneshift_staticplugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\release7\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release7\bin\&#x0D;&#x0A;"
@@ -75,7 +75,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\server\database\mysql;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				AdditionalIncludeDirectories=".;..\..\src;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -84,8 +84,8 @@
 		</Configuration>
       		<Configuration
 			Name="Release (with DLLs)|Win32"
-			OutputDirectory="..\..\out\release7\build\libdbmysqlstatic\"
-			IntermediateDirectory="..\..\out\release7\build\libdbmysqlstatic\"
+			OutputDirectory="..\..\out\release7\build\libplaneshift_staticplugins\"
+			IntermediateDirectory="..\..\out\release7\build\libplaneshift_staticplugins\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -96,14 +96,14 @@
 				EnableFunctionLevelLinking="TRUE"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="FALSE"
-				ProgramDataBaseFileName="..\..\out\release7\build\libdbmysqlstatic\Win32\dbmysqlstatic.pdb"
+				ProgramDataBaseFileName="..\..\out\release7\build\libplaneshift_staticplugins\Win32\planeshift_staticplugins.pdb"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\release7\build\libdbmysqlstatic\libdbmysqlstatic.pch"
-				AssemblerListingLocation="..\..\out\release7\build\libdbmysqlstatic\"
-				ObjectFile="..\..\out\release7\build\libdbmysqlstatic\"
+				PrecompiledHeaderFile="..\..\out\release7\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch"
+				AssemblerListingLocation="..\..\out\release7\build\libplaneshift_staticplugins\"
+				ObjectFile="..\..\out\release7\build\libplaneshift_staticplugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -127,7 +127,7 @@
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\release7\libs\libdbmysqlstatic.lib"
+				OutputFile="..\..\out\release7\libs\libplaneshift_staticplugins.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -135,7 +135,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\release7\build\libdbmysqlstatic\libdbmysqlstatic.tlb"/>
+				TypeLibraryName="..\..\out\release7\build\libplaneshift_staticplugins\libplaneshift_staticplugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\release7\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release7\bin\&#x0D;&#x0A;"
@@ -147,7 +147,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\server\database\mysql;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				AdditionalIncludeDirectories=".;..\..\src;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -156,8 +156,8 @@
 		</Configuration>
                 		<Configuration
 			Name="Debug (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug7\build\libdbmysqlstatic\"
-			IntermediateDirectory="..\..\out\debug7\build\libdbmysqlstatic\"
+			OutputDirectory="..\..\out\debug7\build\libplaneshift_staticplugins\"
+			IntermediateDirectory="..\..\out\debug7\build\libplaneshift_staticplugins\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -168,14 +168,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug7\build\libdbmysqlstatic\Win32\dbmysqlstatic.pdb"
+				ProgramDataBaseFileName="..\..\out\debug7\build\libplaneshift_staticplugins\Win32\planeshift_staticplugins.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug7\build\libdbmysqlstatic\libdbmysqlstatic.pch"
-				AssemblerListingLocation="..\..\out\debug7\build\libdbmysqlstatic\"
-				ObjectFile="..\..\out\debug7\build\libdbmysqlstatic\"
+				PrecompiledHeaderFile="..\..\out\debug7\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch"
+				AssemblerListingLocation="..\..\out\debug7\build\libplaneshift_staticplugins\"
+				ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -197,7 +197,7 @@
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug7\libs\libdbmysqlstatic_d.lib"
+				OutputFile="..\..\out\debug7\libs\libplaneshift_staticplugins_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -205,7 +205,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug7\build\libdbmysqlstatic\libdbmysqlstatic.tlb"/>
+				TypeLibraryName="..\..\out\debug7\build\libplaneshift_staticplugins\libplaneshift_staticplugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug7\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug7\bin\&#x0D;&#x0A;"
@@ -217,7 +217,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\server\database\mysql;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				AdditionalIncludeDirectories=".;..\..\src;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -226,8 +226,8 @@
 		</Configuration>
       		<Configuration
 			Name="Debug (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug7\build\libdbmysqlstatic\"
-			IntermediateDirectory="..\..\out\debug7\build\libdbmysqlstatic\"
+			OutputDirectory="..\..\out\debug7\build\libplaneshift_staticplugins\"
+			IntermediateDirectory="..\..\out\debug7\build\libplaneshift_staticplugins\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -238,14 +238,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug7\build\libdbmysqlstatic\Win32\dbmysqlstatic.pdb"
+				ProgramDataBaseFileName="..\..\out\debug7\build\libplaneshift_staticplugins\Win32\planeshift_staticplugins.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug7\build\libdbmysqlstatic\libdbmysqlstatic.pch"
-				AssemblerListingLocation="..\..\out\debug7\build\libdbmysqlstatic\"
-				ObjectFile="..\..\out\debug7\build\libdbmysqlstatic\"
+				PrecompiledHeaderFile="..\..\out\debug7\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch"
+				AssemblerListingLocation="..\..\out\debug7\build\libplaneshift_staticplugins\"
+				ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -267,7 +267,7 @@
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug7\libs\libdbmysqlstatic_d.lib"
+				OutputFile="..\..\out\debug7\libs\libplaneshift_staticplugins_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -275,7 +275,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug7\build\libdbmysqlstatic\libdbmysqlstatic.tlb"/>
+				TypeLibraryName="..\..\out\debug7\build\libplaneshift_staticplugins\libplaneshift_staticplugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug7\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug7\bin\&#x0D;&#x0A;"
@@ -287,7 +287,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\server\database\mysql;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				AdditionalIncludeDirectories=".;..\..\src;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -296,8 +296,8 @@
 		</Configuration>
                 		<Configuration
 			Name="MemoryTracker (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug7\build\libdbmysqlstatic\"
-			IntermediateDirectory="..\..\out\debug7\build\libdbmysqlstatic\"
+			OutputDirectory="..\..\out\debug7\build\libplaneshift_staticplugins\"
+			IntermediateDirectory="..\..\out\debug7\build\libplaneshift_staticplugins\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -308,14 +308,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug7\build\libdbmysqlstatic\Win32\dbmysqlstatic.pdb"
+				ProgramDataBaseFileName="..\..\out\debug7\build\libplaneshift_staticplugins\Win32\planeshift_staticplugins.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;CS_STATIC_LINKED;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug7\build\libdbmysqlstatic\libdbmysqlstatic.pch"
-				AssemblerListingLocation="..\..\out\debug7\build\libdbmysqlstatic\"
-				ObjectFile="..\..\out\debug7\build\libdbmysqlstatic\"
+				PrecompiledHeaderFile="..\..\out\debug7\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch"
+				AssemblerListingLocation="..\..\out\debug7\build\libplaneshift_staticplugins\"
+				ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -337,7 +337,7 @@
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug7\libs\libdbmysqlstatic_d.lib"
+				OutputFile="..\..\out\debug7\libs\libplaneshift_staticplugins_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -345,7 +345,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug7\build\libdbmysqlstatic\libdbmysqlstatic.tlb"/>
+				TypeLibraryName="..\..\out\debug7\build\libplaneshift_staticplugins\libplaneshift_staticplugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug7\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug7\bin\&#x0D;&#x0A;"
@@ -357,7 +357,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\server\database\mysql;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				AdditionalIncludeDirectories=".;..\..\src;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -366,8 +366,8 @@
 		</Configuration>
       		<Configuration
 			Name="MemoryTracker (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug7\build\libdbmysqlstatic\"
-			IntermediateDirectory="..\..\out\debug7\build\libdbmysqlstatic\"
+			OutputDirectory="..\..\out\debug7\build\libplaneshift_staticplugins\"
+			IntermediateDirectory="..\..\out\debug7\build\libplaneshift_staticplugins\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -378,14 +378,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug7\build\libdbmysqlstatic\Win32\dbmysqlstatic.pdb"
+				ProgramDataBaseFileName="..\..\out\debug7\build\libplaneshift_staticplugins\Win32\planeshift_staticplugins.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug7\build\libdbmysqlstatic\libdbmysqlstatic.pch"
-				AssemblerListingLocation="..\..\out\debug7\build\libdbmysqlstatic\"
-				ObjectFile="..\..\out\debug7\build\libdbmysqlstatic\"
+				PrecompiledHeaderFile="..\..\out\debug7\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch"
+				AssemblerListingLocation="..\..\out\debug7\build\libplaneshift_staticplugins\"
+				ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -407,7 +407,7 @@
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug7\libs\libdbmysqlstatic_d.lib"
+				OutputFile="..\..\out\debug7\libs\libplaneshift_staticplugins_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -415,7 +415,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug7\build\libdbmysqlstatic\libdbmysqlstatic.tlb"/>
+				TypeLibraryName="..\..\out\debug7\build\libplaneshift_staticplugins\libplaneshift_staticplugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug7\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug7\bin\&#x0D;&#x0A;"
@@ -427,7 +427,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\server\database\mysql;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				AdditionalIncludeDirectories=".;..\..\src;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -436,8 +436,8 @@
 		</Configuration>
                 		<Configuration
 			Name="RefTracker (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug7\build\libdbmysqlstatic\"
-			IntermediateDirectory="..\..\out\debug7\build\libdbmysqlstatic\"
+			OutputDirectory="..\..\out\debug7\build\libplaneshift_staticplugins\"
+			IntermediateDirectory="..\..\out\debug7\build\libplaneshift_staticplugins\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -448,14 +448,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug7\build\libdbmysqlstatic\Win32\dbmysqlstatic.pdb"
+				ProgramDataBaseFileName="..\..\out\debug7\build\libplaneshift_staticplugins\Win32\planeshift_staticplugins.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;CS_STATIC_LINKED;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug7\build\libdbmysqlstatic\libdbmysqlstatic.pch"
-				AssemblerListingLocation="..\..\out\debug7\build\libdbmysqlstatic\"
-				ObjectFile="..\..\out\debug7\build\libdbmysqlstatic\"
+				PrecompiledHeaderFile="..\..\out\debug7\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch"
+				AssemblerListingLocation="..\..\out\debug7\build\libplaneshift_staticplugins\"
+				ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -477,7 +477,7 @@
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug7\libs\libdbmysqlstatic_d.lib"
+				OutputFile="..\..\out\debug7\libs\libplaneshift_staticplugins_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -485,7 +485,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug7\build\libdbmysqlstatic\libdbmysqlstatic.tlb"/>
+				TypeLibraryName="..\..\out\debug7\build\libplaneshift_staticplugins\libplaneshift_staticplugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug7\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug7\bin\&#x0D;&#x0A;"
@@ -497,7 +497,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\server\database\mysql;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				AdditionalIncludeDirectories=".;..\..\src;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -506,8 +506,8 @@
 		</Configuration>
       		<Configuration
 			Name="RefTracker (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug7\build\libdbmysqlstatic\"
-			IntermediateDirectory="..\..\out\debug7\build\libdbmysqlstatic\"
+			OutputDirectory="..\..\out\debug7\build\libplaneshift_staticplugins\"
+			IntermediateDirectory="..\..\out\debug7\build\libplaneshift_staticplugins\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -518,14 +518,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug7\build\libdbmysqlstatic\Win32\dbmysqlstatic.pdb"
+				ProgramDataBaseFileName="..\..\out\debug7\build\libplaneshift_staticplugins\Win32\planeshift_staticplugins.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug7\build\libdbmysqlstatic\libdbmysqlstatic.pch"
-				AssemblerListingLocation="..\..\out\debug7\build\libdbmysqlstatic\"
-				ObjectFile="..\..\out\debug7\build\libdbmysqlstatic\"
+				PrecompiledHeaderFile="..\..\out\debug7\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch"
+				AssemblerListingLocation="..\..\out\debug7\build\libplaneshift_staticplugins\"
+				ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -547,7 +547,7 @@
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug7\libs\libdbmysqlstatic_d.lib"
+				OutputFile="..\..\out\debug7\libs\libplaneshift_staticplugins_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -555,7 +555,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug7\build\libdbmysqlstatic\libdbmysqlstatic.tlb"/>
+				TypeLibraryName="..\..\out\debug7\build\libplaneshift_staticplugins\libplaneshift_staticplugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug7\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug7\bin\&#x0D;&#x0A;"
@@ -567,7 +567,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\server\database\mysql;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				AdditionalIncludeDirectories=".;..\..\src;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -576,8 +576,8 @@
 		</Configuration>
                 		<Configuration
 			Name="ThreadChecker (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug7\build\libdbmysqlstatic\"
-			IntermediateDirectory="..\..\out\debug7\build\libdbmysqlstatic\"
+			OutputDirectory="..\..\out\debug7\build\libplaneshift_staticplugins\"
+			IntermediateDirectory="..\..\out\debug7\build\libplaneshift_staticplugins\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -588,14 +588,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug7\build\libdbmysqlstatic\Win32\dbmysqlstatic.pdb"
+				ProgramDataBaseFileName="..\..\out\debug7\build\libplaneshift_staticplugins\Win32\planeshift_staticplugins.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;CS_STATIC_LINKED;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug7\build\libdbmysqlstatic\libdbmysqlstatic.pch"
-				AssemblerListingLocation="..\..\out\debug7\build\libdbmysqlstatic\"
-				ObjectFile="..\..\out\debug7\build\libdbmysqlstatic\"
+				PrecompiledHeaderFile="..\..\out\debug7\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch"
+				AssemblerListingLocation="..\..\out\debug7\build\libplaneshift_staticplugins\"
+				ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -617,7 +617,7 @@
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug7\libs\libdbmysqlstatic_d.lib"
+				OutputFile="..\..\out\debug7\libs\libplaneshift_staticplugins_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -625,7 +625,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug7\build\libdbmysqlstatic\libdbmysqlstatic.tlb"/>
+				TypeLibraryName="..\..\out\debug7\build\libplaneshift_staticplugins\libplaneshift_staticplugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug7\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug7\bin\&#x0D;&#x0A;"
@@ -637,7 +637,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\server\database\mysql;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				AdditionalIncludeDirectories=".;..\..\src;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -646,8 +646,8 @@
 		</Configuration>
       		<Configuration
 			Name="ThreadChecker (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug7\build\libdbmysqlstatic\"
-			IntermediateDirectory="..\..\out\debug7\build\libdbmysqlstatic\"
+			OutputDirectory="..\..\out\debug7\build\libplaneshift_staticplugins\"
+			IntermediateDirectory="..\..\out\debug7\build\libplaneshift_staticplugins\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -658,14 +658,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug7\build\libdbmysqlstatic\Win32\dbmysqlstatic.pdb"
+				ProgramDataBaseFileName="..\..\out\debug7\build\libplaneshift_staticplugins\Win32\planeshift_staticplugins.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug7\build\libdbmysqlstatic\libdbmysqlstatic.pch"
-				AssemblerListingLocation="..\..\out\debug7\build\libdbmysqlstatic\"
-				ObjectFile="..\..\out\debug7\build\libdbmysqlstatic\"
+				PrecompiledHeaderFile="..\..\out\debug7\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch"
+				AssemblerListingLocation="..\..\out\debug7\build\libplaneshift_staticplugins\"
+				ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -687,7 +687,7 @@
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug7\libs\libdbmysqlstatic_d.lib"
+				OutputFile="..\..\out\debug7\libs\libplaneshift_staticplugins_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -695,7 +695,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug7\build\libdbmysqlstatic\libdbmysqlstatic.tlb"/>
+				TypeLibraryName="..\..\out\debug7\build\libplaneshift_staticplugins\libplaneshift_staticplugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug7\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug7\bin\&#x0D;&#x0A;"
@@ -707,7 +707,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\server\database\mysql;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				AdditionalIncludeDirectories=".;..\..\src;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -716,8 +716,8 @@
 		</Configuration>
                 		<Configuration
 			Name="DebugPSReleaseCSCEL (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug7\build\libdbmysqlstatic\"
-			IntermediateDirectory="..\..\out\debug7\build\libdbmysqlstatic\"
+			OutputDirectory="..\..\out\debug7\build\libplaneshift_staticplugins\"
+			IntermediateDirectory="..\..\out\debug7\build\libplaneshift_staticplugins\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -728,14 +728,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug7\build\libdbmysqlstatic\Win32\dbmysqlstatic.pdb"
+				ProgramDataBaseFileName="..\..\out\debug7\build\libplaneshift_staticplugins\Win32\planeshift_staticplugins.pdb"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug7\build\libdbmysqlstatic\libdbmysqlstatic.pch"
-				AssemblerListingLocation="..\..\out\debug7\build\libdbmysqlstatic\"
-				ObjectFile="..\..\out\debug7\build\libdbmysqlstatic\"
+				PrecompiledHeaderFile="..\..\out\debug7\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch"
+				AssemblerListingLocation="..\..\out\debug7\build\libplaneshift_staticplugins\"
+				ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -757,7 +757,7 @@
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug7\libs\libdbmysqlstatic_d.lib"
+				OutputFile="..\..\out\debug7\libs\libplaneshift_staticplugins_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -765,7 +765,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug7\build\libdbmysqlstatic\libdbmysqlstatic.tlb"/>
+				TypeLibraryName="..\..\out\debug7\build\libplaneshift_staticplugins\libplaneshift_staticplugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug7\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug7\bin\&#x0D;&#x0A;"
@@ -777,7 +777,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\server\database\mysql;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				AdditionalIncludeDirectories=".;..\..\src;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -786,8 +786,8 @@
 		</Configuration>
       		<Configuration
 			Name="DebugPSReleaseCSCEL (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug7\build\libdbmysqlstatic\"
-			IntermediateDirectory="..\..\out\debug7\build\libdbmysqlstatic\"
+			OutputDirectory="..\..\out\debug7\build\libplaneshift_staticplugins\"
+			IntermediateDirectory="..\..\out\debug7\build\libplaneshift_staticplugins\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -798,14 +798,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug7\build\libdbmysqlstatic\Win32\dbmysqlstatic.pdb"
+				ProgramDataBaseFileName="..\..\out\debug7\build\libplaneshift_staticplugins\Win32\planeshift_staticplugins.pdb"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug7\build\libdbmysqlstatic\libdbmysqlstatic.pch"
-				AssemblerListingLocation="..\..\out\debug7\build\libdbmysqlstatic\"
-				ObjectFile="..\..\out\debug7\build\libdbmysqlstatic\"
+				PrecompiledHeaderFile="..\..\out\debug7\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch"
+				AssemblerListingLocation="..\..\out\debug7\build\libplaneshift_staticplugins\"
+				ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -827,7 +827,7 @@
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug7\libs\libdbmysqlstatic_d.lib"
+				OutputFile="..\..\out\debug7\libs\libplaneshift_staticplugins_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -835,7 +835,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug7\build\libdbmysqlstatic\libdbmysqlstatic.tlb"/>
+				TypeLibraryName="..\..\out\debug7\build\libplaneshift_staticplugins\libplaneshift_staticplugins.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug7\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug7\bin\&#x0D;&#x0A;"
@@ -847,7 +847,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\server\database\mysql;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				AdditionalIncludeDirectories=".;..\..\src;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -860,72 +860,210 @@
 			Name="Source Files"
 			Filter="">
 			<File
-				RelativePath="..\..\mk\msvc\libdbmysql_staticreg.cpp">
+				RelativePath="..\..\mk\msvc\libbgloader_staticreg.cpp">
                                   					<FileConfiguration
 						Name="Release (with static libs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\release7-x64\build\libdbmysqlstatic\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
+							ObjectFile="..\..\out\release7-x64\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
 					</FileConfiguration>					<FileConfiguration
 						Name="Release (with DLLs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\release7-x64\build\libdbmysqlstatic\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
+							ObjectFile="..\..\out\release7-x64\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
 					</FileConfiguration>
                                   					<FileConfiguration
 						Name="Debug (with static libs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libdbmysqlstatic\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
+							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
 					</FileConfiguration>					<FileConfiguration
 						Name="Debug (with DLLs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libdbmysqlstatic\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
+							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
 					</FileConfiguration>
                                   					<FileConfiguration
 						Name="MemoryTracker (with static libs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libdbmysqlstatic\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
+							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
 					</FileConfiguration>					<FileConfiguration
 						Name="MemoryTracker (with DLLs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libdbmysqlstatic\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
+							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
 					</FileConfiguration>
                                   					<FileConfiguration
 						Name="RefTracker (with static libs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libdbmysqlstatic\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
+							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
 					</FileConfiguration>					<FileConfiguration
 						Name="RefTracker (with DLLs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libdbmysqlstatic\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
+							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
 					</FileConfiguration>
                                   					<FileConfiguration
 						Name="ThreadChecker (with static libs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libdbmysqlstatic\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
+							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
 					</FileConfiguration>					<FileConfiguration
 						Name="ThreadChecker (with DLLs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libdbmysqlstatic\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
+							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
 					</FileConfiguration>
                                   					<FileConfiguration
 						Name="DebugPSReleaseCSCEL (with static libs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libdbmysqlstatic\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
+							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
 					</FileConfiguration>					<FileConfiguration
 						Name="DebugPSReleaseCSCEL (with DLLs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libdbmysqlstatic\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
+							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
+					</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\mk\msvc\libdbmysql_staticreg.cpp">
+                                  					<FileConfiguration
+						Name="Release (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release7-x64\build\libplaneshift_staticplugins\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release7-x64\build\libplaneshift_staticplugins\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
+					</FileConfiguration>
+                                  					<FileConfiguration
+						Name="Debug (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
+					</FileConfiguration>
+                                  					<FileConfiguration
+						Name="MemoryTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
+					</FileConfiguration>
+                                  					<FileConfiguration
+						Name="RefTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
+					</FileConfiguration>
+                                  					<FileConfiguration
+						Name="ThreadChecker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
+					</FileConfiguration>
+                                  					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
+					</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\client\bgloader\loader.cpp">
+                                  					<FileConfiguration
+						Name="Release (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release7-x64\build\libplaneshift_staticplugins\src_client_bgloader_loader.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release7-x64\build\libplaneshift_staticplugins\src_client_bgloader_loader.cpp.obj"/>
+					</FileConfiguration>
+                                  					<FileConfiguration
+						Name="Debug (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\src_client_bgloader_loader.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\src_client_bgloader_loader.cpp.obj"/>
+					</FileConfiguration>
+                                  					<FileConfiguration
+						Name="MemoryTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\src_client_bgloader_loader.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\src_client_bgloader_loader.cpp.obj"/>
+					</FileConfiguration>
+                                  					<FileConfiguration
+						Name="RefTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\src_client_bgloader_loader.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\src_client_bgloader_loader.cpp.obj"/>
+					</FileConfiguration>
+                                  					<FileConfiguration
+						Name="ThreadChecker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\src_client_bgloader_loader.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\src_client_bgloader_loader.cpp.obj"/>
+					</FileConfiguration>
+                                  					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\src_client_bgloader_loader.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\src_client_bgloader_loader.cpp.obj"/>
 					</FileConfiguration>
 			</File>
 			<File
@@ -934,73 +1072,76 @@
 						Name="Release (with static libs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\release7-x64\build\libdbmysqlstatic\src_server_database_mysql_dal.cpp.obj"/>
+							ObjectFile="..\..\out\release7-x64\build\libplaneshift_staticplugins\src_server_database_mysql_dal.cpp.obj"/>
 					</FileConfiguration>					<FileConfiguration
 						Name="Release (with DLLs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\release7-x64\build\libdbmysqlstatic\src_server_database_mysql_dal.cpp.obj"/>
+							ObjectFile="..\..\out\release7-x64\build\libplaneshift_staticplugins\src_server_database_mysql_dal.cpp.obj"/>
 					</FileConfiguration>
                                   					<FileConfiguration
 						Name="Debug (with static libs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libdbmysqlstatic\src_server_database_mysql_dal.cpp.obj"/>
+							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\src_server_database_mysql_dal.cpp.obj"/>
 					</FileConfiguration>					<FileConfiguration
 						Name="Debug (with DLLs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libdbmysqlstatic\src_server_database_mysql_dal.cpp.obj"/>
+							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\src_server_database_mysql_dal.cpp.obj"/>
 					</FileConfiguration>
                                   					<FileConfiguration
 						Name="MemoryTracker (with static libs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libdbmysqlstatic\src_server_database_mysql_dal.cpp.obj"/>
+							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\src_server_database_mysql_dal.cpp.obj"/>
 					</FileConfiguration>					<FileConfiguration
 						Name="MemoryTracker (with DLLs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libdbmysqlstatic\src_server_database_mysql_dal.cpp.obj"/>
+							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\src_server_database_mysql_dal.cpp.obj"/>
 					</FileConfiguration>
                                   					<FileConfiguration
 						Name="RefTracker (with static libs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libdbmysqlstatic\src_server_database_mysql_dal.cpp.obj"/>
+							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\src_server_database_mysql_dal.cpp.obj"/>
 					</FileConfiguration>					<FileConfiguration
 						Name="RefTracker (with DLLs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libdbmysqlstatic\src_server_database_mysql_dal.cpp.obj"/>
+							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\src_server_database_mysql_dal.cpp.obj"/>
 					</FileConfiguration>
                                   					<FileConfiguration
 						Name="ThreadChecker (with static libs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libdbmysqlstatic\src_server_database_mysql_dal.cpp.obj"/>
+							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\src_server_database_mysql_dal.cpp.obj"/>
 					</FileConfiguration>					<FileConfiguration
 						Name="ThreadChecker (with DLLs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libdbmysqlstatic\src_server_database_mysql_dal.cpp.obj"/>
+							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\src_server_database_mysql_dal.cpp.obj"/>
 					</FileConfiguration>
                                   					<FileConfiguration
 						Name="DebugPSReleaseCSCEL (with static libs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libdbmysqlstatic\src_server_database_mysql_dal.cpp.obj"/>
+							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\src_server_database_mysql_dal.cpp.obj"/>
 					</FileConfiguration>					<FileConfiguration
 						Name="DebugPSReleaseCSCEL (with DLLs)|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libdbmysqlstatic\src_server_database_mysql_dal.cpp.obj"/>
+							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\src_server_database_mysql_dal.cpp.obj"/>
 					</FileConfiguration>
 			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="">
+			<File
+				RelativePath="..\..\src\client\bgloader\loader.h">
+			</File>
 			<File
 				RelativePath="..\..\src\server\database\mysql\dal.h">
 			</File>
