@@ -2207,7 +2207,7 @@ void UserManager::YieldDuel(Client *client)
 
     if (!canYield)
     {
-        psserver->SendSystemOK(client->GetClientNum(), "You have no opponents to yield to!");
+        psserver->SendSystemError(client->GetClientNum(), "You have no opponents to yield to!");
         return;
     }
 
