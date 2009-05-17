@@ -33,7 +33,7 @@ Application psnpcclient_static : main.cpp command.cpp $(extrafiles) : console in
 CFlags psnpcclient_static : [ FDefines CS_STATIC_LINKED ] ;
 LFlags psnpcclient_static : -lcrystalspace_staticplugins-$(CRYSTAL.VERSION) ;
 MsvcDefine psnpcclient_static : CS_STATIC_LINKED ;
-LinkWith psnpcclient_static : libpsnpcclient ;
+LinkWith psnpcclient_static : planeshift_staticplugins libpsnpcclient ;
 
 LinkStaticPlugins psnpcclient_static :
   bindoc
