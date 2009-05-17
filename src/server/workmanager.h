@@ -44,15 +44,15 @@ class Client;
 struct CombinationConstruction;
 
 // Define the work event types
-#define MANUFACTURE 0                   // Digging, collecting, farming
-#define PRODUCTION  1                   // Crafting
-#define LOCKPICKING 2                   // Picking of locks
-#define CLEANUP     3                   // Cleaning up of public containers
-#define REPAIR      4                   // Repairing items takes time too
+#define MANUFACTURE 0                   ///< Digging, collecting, farming
+#define PRODUCTION  1                   ///< Crafting
+#define LOCKPICKING 2                   ///< Picking of locks
+#define CLEANUP     3                   ///< Cleaning up of public containers
+#define REPAIR      4                   ///< Repairing items takes time too
 
-#define GARBAGE_PATTERNID   1           // Define for hard coded pattern IDs
-#define CLEANUP_DELAY       600         // Seconds to wait before performing cleanup event
-//#define CLEANUP_DELAY       10 // for testing only
+#define GARBAGE_PATTERNID   1           ///< Define for hard coded pattern IDs
+#define CLEANUP_DELAY       600         ///< Seconds to wait before performing cleanup event
+//#define CLEANUP_DELAY       10 ///< for testing only
 
 /** Holds the possible return values for a test to see if an item is transformable.
     This is binary since each transform atempt could have multiple reasons for failure
@@ -235,7 +235,7 @@ public:
     //@}
 
 
-    // Lockpicking
+    /// Lockpicking
     void StartLockpick(Client* client,psItem* item);
 
 
@@ -338,7 +338,7 @@ protected:
       * @param clientNum the client to send the message to.
       * @param result The error code from the transformable test.
       */
-    void SendTransformError( uint32 clientNum, unsigned int result, uint32 curItemId = 0, int CurItemQty = 0 );
+    void SendTransformError( uint32_t clientNum, unsigned int result, uint32 curItemId = 0, int CurItemQty = 0 );
 
     /** Returns with the result ID and quantity of the combination
       *  if work item container has the correct items in the correct amounts
@@ -412,7 +412,6 @@ protected:
       *
       * @return An indicator of pattern match status.
       */
-
     unsigned int IsTransformable(uint32 patternId, uint32 targetId, int targetQty);
 
     bool ScriptNoTarget();
@@ -482,7 +481,7 @@ private:
 
 //-----------------------------------------------------------------------------
 
-// work event class
+/// work event class
 class psWorkGameEvent : public psGameEvent, public iDeleteObjectCallback
 {
 public:
@@ -499,35 +498,35 @@ public:
 
     void Interrupt();
 
-    virtual void Trigger();  // Abstract event processing function
+    virtual void Trigger();  ///< Abstract event processing function
 
     virtual void DeleteObjectCallback(iDeleteNotificationObject * object);
 
-    // Set the active trade transformation for the event.
+    /// Set the active trade transformation for the event.
     void SetTransformation(psTradeTransformations *t) { transformation = t; }
 
-    // Return the active transformation, if any for this event.
+    /// Return the active transformation, if any for this event.
     psTradeTransformations *GetTransformation() { return transformation; }
 
-    // Set the active trade process for the event.
+    /// Set the active trade process for the event.
     void SetProcess(psTradeProcesses *p) { process = p; }
 
-    // Return the active process, if any for this event.
+    /// Return the active process, if any for this event.
     psTradeProcesses *GetProcess() { return process; }
 
-    // result quantity is only used when transaction result is zero
+    /// result quantity is only used when transaction result is zero
     int GetResultQuantity() { return resultQuantity; }
     void SetResultQuantity(int newQuantity) { resultQuantity = newQuantity; }
 
-    // result quality is calculated immediately before the event
+    /// result quality is calculated immediately before the event
     float GetResultQuality() { return resultQuality; }
     void SetResultQuality(float newQuality) { resultQuality = newQuality; }
 
-    // pattern Kfactor is based on the current pattern
+    /// pattern Kfactor is based on the current pattern
     float GetKFactor() { return KFactor; }
     void SetKFactor(float newFactor) { KFactor = newFactor; }
 
-    // slot to perform the transformation
+    /// slot to perform the transformation
     INVENTORY_SLOT_NUMBER GetTransformationSlot() { return transSlot; }
     void SetTransformationSlot(INVENTORY_SLOT_NUMBER curSlot) { transSlot = curSlot; }
 
@@ -540,7 +539,7 @@ public:
     gemObject* GetTargetGem() { return gemTarget; }
     void SetTargetGem(gemObject* g) { gemTarget = g; }
 
-    // transformation type
+    /// transformation type
     int GetTransformationType() { return transType; }
     void SetTransformationType(int t) { transType = t; }
 
@@ -556,7 +555,7 @@ public:
     psTradeProcesses* process;
     float repairAmount;
 
-    uint32_t effectID;      // The id of the psEffect tied to event.
+    uint32_t effectID;      ///< The id of the psEffect tied to event.
     csArray<PublishDestination> multi;
 
 private:
