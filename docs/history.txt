@@ -1,3 +1,6 @@
+*** 2009-05-17 by Andrew Dai
+- Added live position tracking of npcs to the wc live view.
+
 *** 2009-05-17 by Stefano Angeleri
 - Made sentence splitting also for ? and !. Now they are threated just
   like "." in quests.
