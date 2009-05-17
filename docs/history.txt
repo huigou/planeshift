@@ -1,3 +1,8 @@
+*** 2009-05-17 by Stefano Angeleri
+- Made sentence splitting also for ? and !. Now they are threated just
+  like "." in quests.
+- Fixed harcoded category ids checks in the items details data
+
 *** 2009-05-14 by Kenny Graunke
 - Removed loot modifiers which used "target", "wielder", "attack_value",
   or "damage_value", as these were all unimplemented and unused in production.
