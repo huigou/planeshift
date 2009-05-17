@@ -80,7 +80,7 @@ class PawsManager : public Singleton<PawsManager>
 public:
 
     PawsManager(iObjectRegistry* objectReg, const char* skin, const char* skinBase = NULL,
-                const char* pawsConfigFile = "/planeshift/userdata/planeshift.cfg", uint _gfxFeatures = useAll);
+                const char* pawsConfigFile = "/planeshift/userdata/planeshift.cfg", uint _gfxFeatures = psRegion::useAll);
 
     virtual ~PawsManager();
 

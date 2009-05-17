@@ -389,34 +389,34 @@ bool psEngine::Initialize (int level)
         csString shader("High");
         if(shader.CompareNoCase(GetConfig()->GetStr("PlaneShift.Graphics.Shaders")))
         {
-            gfxFeatures |= useHighShaders;
+            gfxFeatures |= psRegion::useHighShaders;
         }
         shader = "Medium";
         if(shader.CompareNoCase(GetConfig()->GetStr("PlaneShift.Graphics.Shaders")))
         {
-            gfxFeatures |= useMediumShaders;
+            gfxFeatures |= psRegion::useMediumShaders;
         }
         shader = "Low";
         if(shader.CompareNoCase(GetConfig()->GetStr("PlaneShift.Graphics.Shaders")))
         {
-            gfxFeatures |= useLowShaders;
+            gfxFeatures |= psRegion::useLowShaders;
         }
         shader = "Lowest";
         if(shader.CompareNoCase(GetConfig()->GetStr("PlaneShift.Graphics.Shaders")))
         {
-            gfxFeatures |= useLowestShaders;
+            gfxFeatures |= psRegion::useLowestShaders;
         }
 
         // Check if we're using real time shadows.
         if(GetConfig()->GetBool("PlaneShift.Graphics.Shadows"))
         {
-            gfxFeatures |= useShadows;
+            gfxFeatures |= psRegion::useShadows;
         }
 
         // Check if we're using meshgen.
         if(GetConfig()->GetBool("PlaneShift.Graphics.EnableGrass", true))
         {
-            gfxFeatures |= useMeshGen;
+            gfxFeatures |= psRegion::useMeshGen;
         }
 
         //Check if sound is on or off in psclient.cfg

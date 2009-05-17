@@ -1,7 +1,7 @@
 /*
- *  loader.h - Author: Mike Gist
+ * loader.h - Author: Mike Gist
  *
- * Copyright (C) 2008 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2009 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -36,16 +36,23 @@
 #include <iutil/objreg.h>
 #include <iutil/vfs.h>
 
-#include "util/singleton.h"
+#include <../iclient/loader.h>
 
 struct iCollideSystem;
-struct iObjectRegistry;
 struct iSyntaxService;
 
-class Loader : public Singleton<Loader>, public ThreadedCallable<Loader>
+CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
+{
+class BgLoader : public ThreadedCallable<Loader>,
+                 public scfImplementation2<BgLoader,
+                                           iBgLoader,
+                                           iComponent>
 {
 public:
-    void Init(iObjectRegistry* _object_reg, uint gfxFeatures, float loadRange);
+    BgLoader(iBase *p);
+    bool Initialize(iObjectRegistry* _object_reg);
+
+    void Setup(uint gfxFeatures, float loadRange);
 
     csPtr<iMaterialWrapper> LoadMaterial(const char* name, bool* failed = NULL);
     csPtr<iMeshFactoryWrapper> LoadFactory(const char* name);
@@ -55,21 +62,32 @@ public:
 
     void ContinueLoading(bool waiting);
 
-    inline iThreadedLoader* GetLoader() { return tloader; }
+    iThreadedLoader* GetLoader() { return tloader; }
 
-    inline size_t GetLoadingCount() { return loadingMeshes.GetSize() + finalisableMeshes.GetSize(); }
+    size_t GetLoadingCount() { return loadingMeshes.GetSize() + finalisableMeshes.GetSize(); }
 
     iObjectRegistry* GetObjectRegistry() const { return object_reg; }
 
-    inline void SetLoadRange(float r) { loadRange = r; }
+    void SetLoadRange(float r) { loadRange = r; }
 
-    inline bool HasValidPosition() const { return validPosition; }
+    bool HasValidPosition() const { return validPosition; }
 
 private:
-  class MeshGen;
-  class MeshObj;
-  class Portal;
-  class Light;
+    class MeshGen;
+    class MeshObj;
+    class Portal;
+    class Light;
+
+    enum gfxFeatures
+    {
+        useLowestShaders = 1,
+        useLowShaders,
+        useMediumShaders,
+        useHighShaders,
+        useShadows = 10,
+        useMeshGen = 20,
+        useAll = (useHighShaders | useShadows | useMeshGen)
+    };
 
     struct Shader
     {
@@ -211,13 +229,13 @@ private:
         inline bool InRange(const csVector3& curpos, const csBox3& curBBox)
         {
             return !object.IsValid() && (alwaysLoaded ||
-                (hasBBox ? curBBox.Overlap(bbox) : csVector3(pos - curpos).Norm() <= Loader::GetSingleton().loadRange));
+                (hasBBox ? curBBox.Overlap(bbox) : csVector3(pos - curpos).Norm() <= BgLoader::GetSingleton().loadRange));
         }
 
         inline bool OutOfRange(const csVector3& curpos, const csBox3& curBBox)
         {
             return !alwaysLoaded && object.IsValid() &&
-                (hasBBox ? !curBBox.Overlap(bbox) : csVector3(pos - curpos).Norm() > Loader::GetSingleton().loadRange*1.5);
+                (hasBBox ? !curBBox.Overlap(bbox) : csVector3(pos - curpos).Norm() > BgLoader::GetSingleton().loadRange*1.5);
         }
 
         csString name;
@@ -324,7 +342,6 @@ private:
     iObjectRegistry* object_reg;
     csRef<iEngine> engine;
     csRef<iTextureManager> txtmgr;
-    csRef<iLoader> loader;
     csRef<iThreadedLoader> tloader;
     csRef<iThreadManager> tman;
     csRef<iVFS> vfs;
@@ -359,5 +376,7 @@ private:
     CS::Threading::ReadWriteMutex meshLock;
     CS::Threading::ReadWriteMutex sLock;
 };
+}
+CS_PLUGIN_NAMESPACE_END(bgLoader)
 
 #endif // __LOADER_H__

@@ -41,15 +41,6 @@ struct iLoader;
 struct iObjectRegistry;
 struct iVFS;
 
-// Feature defines.
-#define useLowestShaders 0x01
-#define useLowShaders 0x02
-#define useMediumShaders 0x04
-#define useHighShaders 0x08
-#define useShadows 0x10
-#define useMeshGen 0x20
-#define useAll (useHighShaders | useShadows | useMeshGen)
-
 /**
 * Replacement class for iPcRegion from CEL.
 * This is more versatile for dynamic loading
@@ -114,6 +105,18 @@ public:
     * as disabled by the user (post proc effects for example).
     */
     csRef<iDocumentNode> Filter(csRef<iDocumentNode> worldNode, bool using3D);
+
+    // Feature defines.
+    enum gfxFeatures
+    {
+        useLowestShaders = 1,
+        useLowShaders,
+        useMediumShaders,
+        useHighShaders,
+        useShadows = 10,
+        useMeshGen = 20,
+        useAll = (useHighShaders | useShadows | useMeshGen)
+    };
 
 private:
    /**
