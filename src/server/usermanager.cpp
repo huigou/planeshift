@@ -1090,27 +1090,25 @@ void UserManager::NotifyGuildBuddies(Client * client, bool logged_in)
     if(client->GetActor())
         clientEID = client->GetActor()->GetEID();
 
-    if(charGuild)
+    if(!charGuild)
+        return;
+        
+    for(size_t i = 0; i < charGuild->members.GetSize(); i++)
     {
-        for(size_t i = 0; i < charGuild->members.GetSize(); i++)
+        psCharacter *notifiedmember = charGuild->members[i]->actor;
+        gemActor *notifiedactor = notifiedmember? notifiedmember->GetActor() : NULL;
+
+        if(notifiedactor && notifiedmember && (charGuild->members[i]->char_id != char_id)
+           && notifiedmember->IsGettingGuildNotifications())
         {
-            psCharacter *notifiedmember = charGuild->members[i]->actor;
-            gemActor *notifiedactor = notifiedmember? notifiedmember->GetActor() : NULL;
+            csString text;
+            if (logged_in)
+                text.Format("/me just joined PlaneShift");
+            else
+                text.Format("/me has quit");
 
-            if(notifiedactor && notifiedmember && (charGuild->members[i]->char_id != char_id))
-            {
-                if(notifiedmember->IsGettingGuildNotifications())
-                {
-                    csString text;
-                    if (logged_in)
-                        text.Format("/me just joined PlaneShift");
-                    else
-                        text.Format("/me has quit");
-
-                    psChatMessage guildmsg(notifiedactor->GetClientID(), clientEID, name.GetData(),0,text,CHAT_GUILD, false);
-                    guildmsg.SendMessage();
-                }
-            }
+            psChatMessage guildmsg(notifiedactor->GetClientID(), clientEID, name.GetData(),0,text,CHAT_GUILD, false);
+            guildmsg.SendMessage();
         }
     }
 }
