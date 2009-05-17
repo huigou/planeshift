@@ -25,16 +25,16 @@
 class csVector3;
 struct iObjectRegistry;
 
-struct iBgLoader
+struct iBgLoader : public iBase
 {
   SCF_INTERFACE(iBgLoader, 1, 0, 0);
 
-  virtual void Setup(iObjectRegistry* _object_reg, uint gfxFeatures, float loadRange) = 0;
+  virtual void Setup(uint gfxFeatures, float loadRange) = 0;
 
   virtual csPtr<iMaterialWrapper> LoadMaterial(const char* name, bool* failed = NULL) = 0;
   virtual csPtr<iMeshFactoryWrapper> LoadFactory(const char* name) = 0;
 
-  THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive) = 0;
+  THREADED_INTERFACE2(PrecacheData, const char* path, bool recursive);
   virtual void UpdatePosition(const csVector3& pos, const char* sectorName, bool force) = 0;
 
   virtual void ContinueLoading(bool waiting) = 0;

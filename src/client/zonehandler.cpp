@@ -50,9 +50,9 @@
 
 #include "gui/pawsloading.h"
 
-#include "engine/loader.h"
 #include "engine/psworld.h"
 
+#include "iclient/ibgloader.h"
 #include "iclient/isoundmngr.h"
 
 #include "psclientdr.h"
@@ -232,10 +232,10 @@ void ZoneHandler::HandleMessage(MsgEntry* me)
         {
           // Move the player to a temporary sector while we clean out the world.
           MovePlayerTo(msg.pos, "SectorWhereWeKeepEntitiesResidingInUnloadedMaps");
-          Loader::GetSingleton().UpdatePosition(newPos, sectorToLoad, true);
+          psengine->GetLoader()->UpdatePosition(newPos, sectorToLoad, true);
         }
 
-        if(catchUp && Loader::GetSingleton().GetLoadingCount() == 0)
+        if(catchUp && psengine->GetLoader()->GetLoadingCount() == 0)
         {
             MovePlayerTo(msg.pos, msg.newSector);
             haveNewPos = false;
@@ -430,9 +430,9 @@ bool ZoneHandler::ExecuteFlaggedRegions(const csString & sector)
         int executed = 2;
         if(background)
         {
-            if(Loader::GetSingleton().HasValidPosition())
+            if(psengine->GetLoader()->HasValidPosition())
             {
-                if(Loader::GetSingleton().GetLoadingCount() == 0)
+                if(psengine->GetLoader()->GetLoadingCount() == 0)
                 {
                     executed = 0;
                     psengine->GetEngine()->PrecacheDraw();
@@ -443,7 +443,7 @@ bool ZoneHandler::ExecuteFlaggedRegions(const csString & sector)
                     csSleep(1);
 
                     // Continue loading the world.
-                    Loader::GetSingleton().ContinueLoading(true);
+                    psengine->GetLoader()->ContinueLoading(true);
                 }
             }
         }
