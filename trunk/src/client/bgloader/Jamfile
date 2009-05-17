@@ -8,6 +8,3 @@ Plugin bgloader
 
 ExternalLibs bgloader : CRYSTAL ;
 CompileGroups bgloader : client ;
-
-StaticPluginLibrary bgloaderstatic ;
-ExternalLibs bgloaderstatic : CRYSTAL ;
