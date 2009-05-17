@@ -47,8 +47,6 @@
 #include "util/psstring.h"
 #include "util/strutil.h"
 
-#include "engine/loader.h"
-
 #include "gui/psmainwidget.h"
 
 #include "net/messages.h"
@@ -1744,7 +1742,7 @@ void psCamera::SetDistanceClipping(float dist)
     shadowManager->SetShadowRange(dist);
 
     // control load distance.
-    Loader::GetSingleton().SetLoadRange(dist+dist/10);
+    psengine->GetLoader()->SetLoadRange(dist+dist/10);
 }
 
 float psCamera::GetDistanceClipping()

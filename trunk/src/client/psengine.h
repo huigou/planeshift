@@ -38,6 +38,7 @@
 class psCelClient;
 class ClientMsgHandler;
 class psClientCharManager;
+struct iBgLoader;
 struct iCommandLineParser;
 struct iConfigManager;
 struct iDialogManager;
@@ -61,7 +62,6 @@ class psCal3DCallbackLoader;
 class psMainWidget;
 class psQuestionClient;
 class psOptions;
-class Loader;
 
 // Networking classes
 class psNetConnection;
@@ -173,6 +173,7 @@ public:
     iDocumentSystem*      GetXMLParser()          { return xmlparser; }
     iSoundManager*        GetSoundManager()       { return soundmanager; }
     iConfigManager*       GetConfig()             { return cfgmgr; }  ///< config file
+    iBgLoader*            GetLoader()             { return loader; }
 
     csRandomGen& GetRandomGen() { return random; }
     float GetRandom() { return random.Get(); }
@@ -386,8 +387,8 @@ private:
     psQuestionClient*         questionclient;
     PawsManager*              paws;         ///< Hold the ps AWS manager
     psMainWidget*             mainWidget;   ///< Hold the ps overridden version of the desktop
-    psInventoryCache*	      inventoryCache;///< inventory cache for client
-    Loader*                   loader;
+    psInventoryCache*	        inventoryCache;///< inventory cache for client
+    csRef<iBgLoader>          loader;
 
     /* status, misc. vars */
     bool gameLoaded; ///< determines if the game is loaded or not

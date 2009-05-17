@@ -14,11 +14,11 @@
 //=============================================================================
 // Project Includes
 //=============================================================================
+#include "iclient/ibgloader.h"
 #include "util/log.h"
 #include "util/psstring.h"
 #include "effects/pseffect.h"
 #include "effects/pseffectmanager.h"
-#include "engine/loader.h"
 
 //=============================================================================
 // Local Includes
@@ -420,7 +420,7 @@ bool psCharAppearance::ChangeMaterial(const char* part, const char* materialName
     csString materialNameParsed = ParseStrings(part, materialName);
 
     bool failed = false;
-    csRef<iMaterialWrapper> material = Loader::GetSingleton().LoadMaterial(materialNameParsed, &failed);
+    csRef<iMaterialWrapper> material = psengine->GetLoader()->LoadMaterial(materialNameParsed, &failed);
     if(!failed)
     {
         if(!material.IsValid())
@@ -486,7 +486,7 @@ bool psCharAppearance::Attach(const char* socketName, const char* meshFactName)
         return false;
     }
 
-    csRef<iMeshFactoryWrapper> factory = Loader::GetSingleton().LoadFactory(meshFactName);
+    csRef<iMeshFactoryWrapper> factory = psengine->GetLoader()->LoadFactory(meshFactName);
     if(!factory.IsValid())
     {
         Attachment attach(true);
@@ -563,7 +563,7 @@ void psCharAppearance::CheckLoadStatus()
 
         if(attach.factory)
         {
-            csRef<iMeshFactoryWrapper> factory = Loader::GetSingleton().LoadFactory(attach.factName);
+            csRef<iMeshFactoryWrapper> factory = psengine->GetLoader()->LoadFactory(attach.factName);
             if(factory.IsValid())
             {
                 ProcessAttach(factory, attach.factName, attach.socket);
@@ -572,7 +572,7 @@ void psCharAppearance::CheckLoadStatus()
         }
         else
         {
-            csRef<iMaterialWrapper> material = Loader::GetSingleton().LoadMaterial(attach.materialName);
+            csRef<iMaterialWrapper> material = psengine->GetLoader()->LoadMaterial(attach.materialName);
             if(material.IsValid())
             {
                 ProcessAttach(material, attach.materialName, attach.partName);

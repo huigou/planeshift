@@ -113,12 +113,12 @@ if (!myref)                                                  \
 #include "util/log.h"
 #include "util/strutil.h"
 #include "engine/psworld.h"
-#include "engine/loader.h"
 #include "util/psutil.h"
 #include "util/consoleout.h"
 #include "entitylabels.h"
 #include "chatbubbles.h"
 #include "questionclient.h"
+#include "iclient/ibgloader.h"
 
 /////////////////////////////////////////////////////////////////////////////
 //  PAWS Includes
@@ -554,9 +554,9 @@ bool psEngine::Initialize (int level)
     else if (level==1)
     {
         threadedWorldLoading = psengine->GetConfig()->GetBool("PlaneShift.Loading.ThreadedWorldLoad");
-        loader = new Loader();
+        loader = csQueryRegistry<iBgLoader>(object_reg);
         csRef<iThreadManager> tm = csQueryRegistry<iThreadManager>(object_reg);
-        Loader::GetSingleton().Init(object_reg, gfxFeatures, 200);
+        loader->Setup(gfxFeatures, 200);
 
         // Fill the loader cache.
         csRef<iStringArray> dirs = vfs->FindFiles("/planeshift/models/");
@@ -570,11 +570,11 @@ bool psEngine::Initialize (int level)
                 {
                     if(tm->GetThreadCount() == 1)
                     {
-                        Loader::GetSingleton().PrecacheDataWait(files->Get(j), false);
+                        loader->PrecacheDataWait(files->Get(j), false);
                     }
                     else
                     {
-                        modelPrecaches.Push(Loader::GetSingleton().PrecacheData(files->Get(j), false));
+                        modelPrecaches.Push(loader->PrecacheData(files->Get(j), false));
                     }
                 }
             }
@@ -591,11 +591,11 @@ bool psEngine::Initialize (int level)
                 {
                     if(tm->GetThreadCount() == 1)
                     {
-                        Loader::GetSingleton().PrecacheDataWait(files->Get(j), false);
+                        loader->PrecacheDataWait(files->Get(j), false);
                     }
                     else
                     {
-                        modelPrecaches.Push(Loader::GetSingleton().PrecacheData(files->Get(j), false));
+                        modelPrecaches.Push(loader->PrecacheData(files->Get(j), false));
                     }
                 }
             }
@@ -615,11 +615,11 @@ bool psEngine::Initialize (int level)
                   vpath.Append("world");
                   if(tm->GetThreadCount() == 1)
                   {
-                    Loader::GetSingleton().PrecacheDataWait(vpath.GetData(), false);
+                    loader->PrecacheDataWait(vpath.GetData(), false);
                   }
                   else
                   {
-                    mapPrecaches.Push(Loader::GetSingleton().PrecacheData(vpath.GetData(), false));
+                    mapPrecaches.Push(loader->PrecacheData(vpath.GetData(), false));
                   }
                 }
             }
@@ -633,7 +633,7 @@ bool psEngine::Initialize (int level)
                 {
                   csString vpath(maps->Get(i));
                   vpath.Append("world");
-                  mapPrecaches.Push(Loader::GetSingleton().PrecacheData(vpath.GetData(), false));
+                  mapPrecaches.Push(loader->PrecacheData(vpath.GetData(), false));
                 }
             }
         }
