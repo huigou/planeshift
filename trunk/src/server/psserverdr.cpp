@@ -286,6 +286,7 @@ void psServerDR::HandleDeadReckoning(MsgEntry* me,Client *client)
 
         actor->pcmove->SetOnGround(false);
         actor->MoveToSpawnPos();
+        actor->StopMoving(true);
     }
 }
 
