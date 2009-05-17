@@ -1,6 +1,7 @@
 SubDir TOP src client ;
 SubInclude TOP src client sound ;
 SubInclude TOP src client gui ;
+SubInclude TOP src client bgloader ;
 
 local extrafiles ;
 if [ Property build : projgen ] = msvc

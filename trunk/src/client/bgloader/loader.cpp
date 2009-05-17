@@ -17,8 +17,7 @@
  *
  */
 
-#include <psconfig.h>
-
+#include <cssysdef.h>
 #include <cstool/collider.h>
 #include <cstool/vfsdirchange.h>
 #include <csutil/scanstr.h>
@@ -26,6 +25,7 @@
 #include <iengine/portal.h>
 #include <imap/services.h>
 #include <imesh/object.h>
+#include <iutil/document.h>
 #include <iutil/stringarray.h>
 #include <iutil/object.h>
 #include <iutil/plugin.h>
@@ -33,19 +33,21 @@
 #include <ivideo/material.h>
 
 #include "loader.h"
-#include "util/strutil.h"
-#include "globals.h"
 
-void Loader::Init(iObjectRegistry* object_reg, uint gfxFeatures, float loadRange)
+CS_IMPLEMENT_PLUGIN
+
+CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
+{
+BgLoader::BgLoader(iBase *p)
+  : scfImplementationType (this, p), validPosition(false)
+{
+}
+
+bool BgLoader::Initialize(iObjectRegistry* object_reg)
 {
     this->object_reg = object_reg;
-    this->gfxFeatures = gfxFeatures;
-    this->loadRange = loadRange;
-    
-    validPosition = false;
 
     engine = csQueryRegistry<iEngine> (object_reg);
-    loader = csQueryRegistry<iLoader> (object_reg);
     tloader = csQueryRegistry<iThreadedLoader> (object_reg);
     tman = csQueryRegistry<iThreadManager> (object_reg);
     vfs = csQueryRegistry<iVFS> (object_reg);
@@ -59,6 +61,12 @@ void Loader::Init(iObjectRegistry* object_reg, uint gfxFeatures, float loadRange
     txtmgr = g3d->GetTextureManager();
 
     engine->SetClearZBuf(true);
+}
+
+void BgLoader::Setup(uint gfxFeatures, float loadRange)
+{
+    this->gfxFeatures = gfxFeatures;
+    this->loadRange = loadRange;
 }
 
 THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
@@ -854,7 +862,7 @@ THREADED_CALLABLE_IMPL2(Loader, PrecacheData, const char* path, bool recursive)
     return true;
 }
 
-void Loader::ContinueLoading(bool waiting)
+void BgLoader::ContinueLoading(bool waiting)
 {
     bool finishLoading = true;
     
@@ -901,7 +909,7 @@ void Loader::ContinueLoading(bool waiting)
     }
 }
 
-void Loader::UpdatePosition(const csVector3& pos, const char* sectorName, bool force)
+void BgLoader::UpdatePosition(const csVector3& pos, const char* sectorName, bool force)
 {
     validPosition = true;
 
@@ -984,7 +992,7 @@ void Loader::UpdatePosition(const csVector3& pos, const char* sectorName, bool f
     }
 }
 
-void Loader::CleanDisconnectedSectors(Sector* sector)
+void BgLoader::CleanDisconnectedSectors(Sector* sector)
 {
     // Create a list of connectedSectors;
     csRefArray<Sector> connectedSectors;
@@ -1000,7 +1008,7 @@ void Loader::CleanDisconnectedSectors(Sector* sector)
     }
 }
 
-void Loader::FindConnectedSectors(csRefArray<Sector>& connectedSectors, Sector* sector)
+void BgLoader::FindConnectedSectors(csRefArray<Sector>& connectedSectors, Sector* sector)
 {
     if(connectedSectors.Find(sector) != csArrayItemNotFound)
     {
@@ -1015,7 +1023,7 @@ void Loader::FindConnectedSectors(csRefArray<Sector>& connectedSectors, Sector* 
     }
 }
 
-void Loader::CleanSector(Sector* sector)
+void BgLoader::CleanSector(Sector* sector)
 {
     for(size_t i=0; i<sector->meshes.GetSize(); i++)
     {
@@ -1070,7 +1078,7 @@ void Loader::CleanSector(Sector* sector)
     sector->object.Invalidate();
 }
 
-void Loader::CleanMesh(MeshObj* mesh)
+void BgLoader::CleanMesh(MeshObj* mesh)
 {
     for(size_t i=0; i<mesh->meshfacts.GetSize(); ++i)
     {
@@ -1103,7 +1111,7 @@ void Loader::CleanMesh(MeshObj* mesh)
     }
 }
 
-void Loader::CleanMeshGen(MeshGen* meshgen)
+void BgLoader::CleanMeshGen(MeshGen* meshgen)
 {
   meshgen->sector->object->RemoveMeshGenerator(meshgen->name);
   meshgen->status.Invalidate();
@@ -1129,7 +1137,7 @@ void Loader::CleanMeshGen(MeshGen* meshgen)
   }
 }
 
-void Loader::CleanMeshFact(MeshFact* meshfact)
+void BgLoader::CleanMeshFact(MeshFact* meshfact)
 {
   if(--meshfact->useCount == 0)
   {
@@ -1153,7 +1161,7 @@ void Loader::CleanMeshFact(MeshFact* meshfact)
   }
 }
 
-void Loader::CleanMaterial(Material* material)
+void BgLoader::CleanMaterial(Material* material)
 {
   if(--material->useCount == 0)
   {
@@ -1176,7 +1184,7 @@ void Loader::CleanMaterial(Material* material)
   }
 }
 
-void Loader::CleanTexture(Texture* texture)
+void BgLoader::CleanTexture(Texture* texture)
 {
     if(--texture->useCount == 0)
     {
@@ -1190,7 +1198,7 @@ void Loader::CleanTexture(Texture* texture)
     }
 }
 
-void Loader::LoadSector(const csVector3& pos, const csBox3& loadBox, const csBox3& unloadBox,
+void BgLoader::LoadSector(const csVector3& pos, const csBox3& loadBox, const csBox3& unloadBox,
                         Sector* sector, uint depth)
 {
     sector->isLoading = true;
@@ -1405,7 +1413,7 @@ void Loader::LoadSector(const csVector3& pos, const csBox3& loadBox, const csBox
     sector->isLoading = false;
 }
 
-void Loader::FinishMeshLoad(MeshObj* mesh)
+void BgLoader::FinishMeshLoad(MeshObj* mesh)
 {
   mesh->object = scfQueryInterface<iMeshWrapper>(mesh->status->GetResultRefPtr());
   mesh->status.Invalidate();
@@ -1436,7 +1444,7 @@ void Loader::FinishMeshLoad(MeshObj* mesh)
   mesh->loading = false;
 }
 
-bool Loader::LoadMeshGen(MeshGen* meshgen)
+bool BgLoader::LoadMeshGen(MeshGen* meshgen)
 {
     bool ready = true;
     for(size_t i=0; i<meshgen->meshfacts.GetSize(); i++)
@@ -1478,7 +1486,7 @@ bool Loader::LoadMeshGen(MeshGen* meshgen)
     return false;
 }
 
-bool Loader::LoadMesh(MeshObj* mesh)
+bool BgLoader::LoadMesh(MeshObj* mesh)
 {
     if(mesh->object.IsValid())
       return true;
@@ -1525,7 +1533,7 @@ bool Loader::LoadMesh(MeshObj* mesh)
     return (mesh->status && mesh->status->IsFinished());
 }
 
-bool Loader::LoadMeshFact(MeshFact* meshfact)
+bool BgLoader::LoadMeshFact(MeshFact* meshfact)
 {
     if(meshfact->useCount != 0)
     {
@@ -1558,7 +1566,7 @@ bool Loader::LoadMeshFact(MeshFact* meshfact)
     return false;
 }
 
-bool Loader::LoadMaterial(Material* material)
+bool BgLoader::LoadMaterial(Material* material)
 {
     if(material->useCount != 0)
     {
@@ -1620,7 +1628,7 @@ bool Loader::LoadMaterial(Material* material)
     return false;
 }
 
-bool Loader::LoadTexture(Texture* texture)
+bool BgLoader::LoadTexture(Texture* texture)
 {
     if(texture->useCount != 0)
     {
@@ -1643,7 +1651,7 @@ bool Loader::LoadTexture(Texture* texture)
     return false;
 }
 
-csPtr<iMeshFactoryWrapper> Loader::LoadFactory(const char* name)
+csPtr<iMeshFactoryWrapper> BgLoader::LoadFactory(const char* name)
 {
     csRef<MeshFact> meshfact = meshfacts.Get(name, csRef<MeshFact>());
     {
@@ -1661,7 +1669,7 @@ csPtr<iMeshFactoryWrapper> Loader::LoadFactory(const char* name)
     return csPtr<iMeshFactoryWrapper>(0);
 }
 
-csPtr<iMaterialWrapper> Loader::LoadMaterial(const char* name, bool* failed)
+csPtr<iMaterialWrapper> BgLoader::LoadMaterial(const char* name, bool* failed)
 {
     csRef<Material> material = materials.Get(name, csRef<Material>());
     {
@@ -1686,3 +1694,5 @@ csPtr<iMaterialWrapper> Loader::LoadMaterial(const char* name, bool* failed)
 
     return csPtr<iMaterialWrapper>(0);
 }
+}
+CS_PLUGIN_NAMESPACE_END(bgLoader)

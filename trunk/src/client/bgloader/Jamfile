@@ -1,0 +1,13 @@
+SubDir TOP src client bgloader ;
+
+Description bgloader : "Background Loader" ;
+
+Plugin bgloader
+	: [ Wildcard *.cpp *.h ]
+;
+
+ExternalLibs bgloader : CRYSTAL ;
+CompileGroups bgloader : client ;
+
+StaticPluginLibrary bgloaderstatic ;
+ExternalLibs bgloaderstatic : CRYSTAL ;
