@@ -54,7 +54,7 @@
 				ProgramDatabaseFile="..\..\out\release71\build\apppsclient_static\Win32\psclient_static.pdb"
 				SubSystem="2"
 				AdditionalOptions="libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc71.lib libcrystalspace_windows.lib libcrystalspace_opengl.lib opengl32.lib version.lib libcrystalspace_staticplugins.lib libcrystalspace.lib libcrystalspace_directx.lib zlib.lib dsound.lib ddraw.lib dinput.lib "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -130,7 +130,7 @@
 				ProgramDatabaseFile="..\..\out\release71\build\apppsclient_static\Win32\psclient_static.pdb"
 				SubSystem="2"
 				AdditionalOptions="libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc71.lib libcrystalspace_windows.lib libcrystalspace_opengl.lib opengl32.lib version.lib libcrystalspace_staticplugins.lib libcrystalspace.lib libcrystalspace_directx.lib zlib.lib dsound.lib ddraw.lib dinput.lib "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -203,7 +203,7 @@
 				ProgramDatabaseFile="..\..\out\debug71\build\apppsclient_static\Win32\psclient_static.pdb"
 				SubSystem="1"
 				AdditionalOptions="libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc71_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib ddraw.lib dinput.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -276,7 +276,7 @@
 				ProgramDatabaseFile="..\..\out\debug71\build\apppsclient_static\Win32\psclient_static.pdb"
 				SubSystem="1"
 				AdditionalOptions="libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc71_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib ddraw.lib dinput.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -349,7 +349,7 @@
 				ProgramDatabaseFile="..\..\out\debug71\build\apppsclient_static\Win32\psclient_static.pdb"
 				SubSystem="1"
 				AdditionalOptions="libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc71_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib ddraw.lib dinput.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -422,7 +422,7 @@
 				ProgramDatabaseFile="..\..\out\debug71\build\apppsclient_static\Win32\psclient_static.pdb"
 				SubSystem="1"
 				AdditionalOptions="libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc71_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib ddraw.lib dinput.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -495,7 +495,7 @@
 				ProgramDatabaseFile="..\..\out\debug71\build\apppsclient_static\Win32\psclient_static.pdb"
 				SubSystem="1"
 				AdditionalOptions="libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc71_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib ddraw.lib dinput.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -568,7 +568,7 @@
 				ProgramDatabaseFile="..\..\out\debug71\build\apppsclient_static\Win32\psclient_static.pdb"
 				SubSystem="1"
 				AdditionalOptions="libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc71_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib ddraw.lib dinput.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -641,7 +641,7 @@
 				ProgramDatabaseFile="..\..\out\debug71\build\apppsclient_static\Win32\psclient_static.pdb"
 				SubSystem="1"
 				AdditionalOptions="libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc71_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib ddraw.lib dinput.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -714,7 +714,7 @@
 				ProgramDatabaseFile="..\..\out\debug71\build\apppsclient_static\Win32\psclient_static.pdb"
 				SubSystem="1"
 				AdditionalOptions="libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc71_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib ddraw.lib dinput.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -787,7 +787,7 @@
 				ProgramDatabaseFile="..\..\out\debug71\build\apppsclient_static\Win32\psclient_static.pdb"
 				SubSystem="1"
 				AdditionalOptions="libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc71_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib ddraw.lib dinput.lib "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -860,7 +860,7 @@
 				ProgramDatabaseFile="..\..\out\debug71\build\apppsclient_static\Win32\psclient_static.pdb"
 				SubSystem="1"
 				AdditionalOptions="libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc71_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib ddraw.lib dinput.lib "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libmysql.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
