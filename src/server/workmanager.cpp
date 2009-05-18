@@ -306,18 +306,6 @@ void WorkManager::HandleLockPick(MsgEntry* me,Client *client)
 // Repair
 //-----------------------------------------------------------------------------
 
-/**
-* This function handles commands like "/repair" using
-* the following sequence of steps.
-*
-* 1) Make sure client isn't already busy digging, etc.
-* 2) Check for repairable item in right hand slot
-* 3) Check for required repair kit item in any inventory slot
-* 4) Calculate time required for repair based on item and skill level
-* 5) Calculate result after repair
-* 6) Queue time event to trigger when repair is complete, if not canceled.
-*
-*/
 void WorkManager::HandleRepair(Client *client, psWorkCmdMessage &msg)
 {
     // Make sure client isn't already busy digging, etc.
@@ -329,7 +317,7 @@ void WorkManager::HandleRepair(Client *client, psWorkCmdMessage &msg)
 
     // No stamina checking yet for repairs.  Never discussed.
 
-    // Check for repairable item in right hand slot
+    // Check for repairable item in precised or default(right hand) slot
     int slotTarget;
     if ( msg.repairSlotName.IsEmpty() )
         slotTarget = PSCHARACTER_SLOT_RIGHTHAND;
@@ -437,15 +425,6 @@ void WorkManager::HandleRepair(Client *client, psWorkCmdMessage &msg)
     client->GetActor()->SetMode(PSCHARACTER_MODE_WORK);
 }
 
-/**
- * This function handles the conclusion timer of when a repair is completed.
- * It is not called if the event is cancelled.  It follows the following
- * sequence of steps.
- *
- * 1) The values are all pre-calculated, so just adjust the quality of the item directly.
- * 2) Consume the repair required item, if flagged to do so.
- * 3) Notify the user.
- */
 void WorkManager::HandleRepairEvent(psWorkGameEvent* workEvent)
 {
     psItem *repairTarget = workEvent->object;
@@ -543,17 +522,6 @@ void WorkManager::HandleRepairEvent(psWorkGameEvent* workEvent)
 // Production
 //-----------------------------------------------------------------------------
 
-/**
- * This function handles commands like "/dig for gold" using
- * the following sequence of steps:
- *
- *   Make sure client isn't already busy digging, etc.
- *   Find closest natural resource
- *   Validate category of equipped item
- *   Calculate time required
- *   Send anim and confirmation message to client
- *   Queue up game event for success
- */
 void WorkManager::HandleProduction(Client *client,const char *type,const char *reward)
 {
     if ( !LoadLocalVars(client) )
@@ -1031,7 +999,7 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
 // Stop doing work
 void WorkManager::StopWork(Client* client, psItem* item)
 {
-    // Assign the memeber vars
+    // Assign the member vars
     if ( !LoadLocalVars(client) )
     {
         return;
@@ -1077,7 +1045,7 @@ void WorkManager::StopWork(Client* client, psItem* item)
 // Handle /use command
 void WorkManager::HandleUse(Client *client)
 {
-    // Assign the memeber vars
+    // Assign the member vars
     if ( !LoadLocalVars(client) )
     {
         return;
@@ -1124,7 +1092,7 @@ void WorkManager::StartUseWork(Client* client)
 
     if ( workItem && workItem->GetIsContainer() ) // Check if the target is a container
     {
-        // cast a gem container to iterate thru
+        // cast a gem container to iterate through
         gemContainer *container = dynamic_cast<gemContainer*> (workItem->GetGemObject());
         if (!container)
         {
@@ -1132,7 +1100,7 @@ void WorkManager::StartUseWork(Client* client)
             return;
         }
 
-        // Load item array from the conatiner
+        // Load item array from the container
         csArray<psItem*> itemArray;
         gemContainer::psContainerIterator it(container);
         while (it.HasNext())
@@ -1161,7 +1129,7 @@ void WorkManager::StartUseWork(Client* client)
             uint32 itemID = itemArray[0]->GetBaseStats()->GetUID();
             int count = itemArray[0]->GetStackCount();
 
-            // Verify there is a valad transformation for the item that was dropped
+            // Verify there is a valid transformation for the item that was dropped
             unsigned int transMatch = AnyTransform( patternId, groupPatternId, itemID, count );
             if (( transMatch == TRANSFORM_MATCH ) || (transMatch == TRANSFORM_GARBAGE ))
             {
@@ -1194,7 +1162,7 @@ void WorkManager::StartUseWork(Client* client)
             uint32 handId = rhand->GetBaseStats()->GetUID();
             int handCount = rhand->GetStackCount();
 
-            // Verify there is a valad transformation for the item that was dropped
+            // Verify there is a valid transformation for the item that was dropped
             unsigned int rhandMatch = AnyTransform( patternId, groupPatternId, handId, handCount );
             if (( rhandMatch == TRANSFORM_MATCH ) || (rhandMatch == TRANSFORM_GARBAGE ))
             {
@@ -1220,7 +1188,7 @@ void WorkManager::StartUseWork(Client* client)
             uint32 handId = lhand->GetBaseStats()->GetUID();
             int handCount = lhand->GetStackCount();
 
-            // Verify there is a valad transformation for the item that was dropped
+            // Verify there is a valid transformation for the item that was dropped
             unsigned int lhandMatch = AnyTransform( patternId, groupPatternId, handId, handCount );
             if (( lhandMatch == TRANSFORM_MATCH ) || (lhandMatch == TRANSFORM_GARBAGE ))
             {
@@ -1386,7 +1354,7 @@ void WorkManager::StopCombineWork(Client* client)
 // Handle /construct command
 void WorkManager::HandleConstruct(Client *client)
 {
-    // Assign the memeber vars
+    // Assign the member vars
     if ( !LoadLocalVars(client) )
     {
         return;
@@ -1524,7 +1492,7 @@ void WorkManager::StartAutoWork(Client* client, gemContainer* container, psItem*
         // Check to see if we have pattern
         if (ValidateMind())
         {
-            // Verify there is a valad transformation for the item that was dropped
+            // Verify there is a valid transformation for the item that was dropped
             unsigned int transMatch = AnyTransform( patternId, groupPatternId, autoID, count );
             switch( transMatch )
             {
@@ -1596,7 +1564,7 @@ void WorkManager::StopAutoWork(Client* client, psItem* autoItem)
 // Check if possible to do some script work
 bool WorkManager::StartScriptWork(Client* client, gemObject *target, csString pattern)
 {
-    // Assign the memeber vars
+    // Assign the member vars
     if (!LoadLocalVars(client, target))
     {
         return false;
@@ -1680,7 +1648,7 @@ bool WorkManager::ScriptNoTarget()
         uint32 handId = rhand->GetBaseStats()->GetUID();
         int handCount = rhand->GetStackCount();
 
-        // Verify there is a valad transformation for the item targetted
+        // Verify there is a valid transformation for the item targetted
         unsigned int rhandMatch = AnyTransform( patternId, groupPatternId, handId, handCount );
         if (( rhandMatch == TRANSFORM_MATCH ) || (rhandMatch == TRANSFORM_GARBAGE ))
         {
@@ -1705,7 +1673,7 @@ bool WorkManager::ScriptNoTarget()
         uint32 handId = lhand->GetBaseStats()->GetUID();
         int handCount = lhand->GetStackCount();
 
-        // Verify there is a valad transformation for the item that was dropped
+        // Verify there is a valid transformation for the item that was dropped
         unsigned int lhandMatch = AnyTransform( patternId, groupPatternId, handId, handCount );
         if (( lhandMatch == TRANSFORM_MATCH ) || (lhandMatch == TRANSFORM_GARBAGE ))
         {
@@ -1746,7 +1714,7 @@ bool WorkManager::ScriptActor(gemActor* gemAct)
         uint32 handId = rhand->GetBaseStats()->GetUID();
         int handCount = rhand->GetStackCount();
 
-        // Verify there is a valad transformation for the item targetted
+        // Verify there is a valid transformation for the item targetted
         unsigned int rhandMatch = AnyTransform( patternId, groupPatternId, handId, handCount );
         if (( rhandMatch == TRANSFORM_MATCH ) || (rhandMatch == TRANSFORM_GARBAGE ))
         {
@@ -1771,7 +1739,7 @@ bool WorkManager::ScriptActor(gemActor* gemAct)
         uint32 handId = lhand->GetBaseStats()->GetUID();
         int handCount = lhand->GetStackCount();
 
-        // Verify there is a valad transformation for the item that was dropped
+        // Verify there is a valid transformation for the item that was dropped
         unsigned int lhandMatch = AnyTransform( patternId, groupPatternId, handId, handCount );
         if (( lhandMatch == TRANSFORM_MATCH ) || (lhandMatch == TRANSFORM_GARBAGE ))
         {
@@ -1817,7 +1785,7 @@ bool WorkManager::ScriptItem(gemItem* gemItm)
     uint32 itemId = gemItm->GetItem()->GetBaseStats()->GetUID();
     int itemCount = gemItm->GetItem()->GetStackCount();
 
-    // Verify there is a valad transformation for the item that was dropped
+    // Verify there is a valid transformation for the item that was dropped
     unsigned int transMatch = AnyTransform( patternId, groupPatternId, itemId, itemCount );
     switch( transMatch )
     {
@@ -2393,7 +2361,7 @@ void WorkManager::StartTransformationEvent(int transType, INVENTORY_SLOT_NUMBER 
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Loads up local memeber variables
+// Loads up local member variables
 bool WorkManager::LoadLocalVars(Client* client, gemObject *target)
 {
     if ( client == NULL )
@@ -2591,6 +2559,14 @@ bool WorkManager::ValidateStamina(Client* client)
     return true;
 }
 
+bool WorkManager::CheckStamina(psCharacter * owner) const
+{
+//todo- use factors based on the work to determine required stamina
+    return (owner->GetStamina(true) >= owner->GetMaxPStamina().Current()*.1  // physical
+         && owner->GetStamina(false) >= owner->GetMaxMStamina().Current()*.1 // mental
+        );
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Checks if equipment is in hand
 bool WorkManager::IsOnHand( uint32 equipId )
@@ -2680,21 +2656,14 @@ bool WorkManager::ValidateSkills(psTradeTransformations* transCandidate, psTrade
     return true;
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool WorkManager::CheckStamina(psCharacter * owner) const
-{
-//todo- use factors based on the work to determine required stamina
-    return (owner->GetStamina(true) >= owner->GetMaxPStamina().Current()*.1  // physical
-         && owner->GetStamina(false) >= owner->GetMaxMStamina().Current()*.1 // mental
-        );
-}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Validates player is not over skilled
 bool WorkManager::ValidateNotOverSkilled(psTradeTransformations* transCandidate, psTradeProcesses* processCandidate)
 {
-    // Check if players primary skill levels are less then minimum for that skill
+    // Check if players primary skill levels are less then maximum for that skill
     int priSkill = processCandidate->GetPrimarySkillId();
-    if ( priSkill > 0 )
+    if ( priSkill >= 0 )
     {
         unsigned int maxPriSkill = processCandidate->GetMaxPrimarySkill();
         unsigned int basePriSkill = owner->Skills().GetSkillRank((PSSKILL)priSkill).Current();
@@ -2704,9 +2673,9 @@ bool WorkManager::ValidateNotOverSkilled(psTradeTransformations* transCandidate,
         }
     }
 
-    // Check if players secondary skill levels are less then minimum for that skill
+    // Check if players secondary skill levels are less then maximum for that skill
     int secSkill = processCandidate->GetSecondarySkillId();
-    if ( secSkill > 0 )
+    if ( secSkill >= 0 )
     {
         unsigned int maxSecSkill = processCandidate->GetMaxSecondarySkill();
         unsigned int baseSecSkill = owner->Skills().GetSkillRank((PSSKILL)secSkill).Current();

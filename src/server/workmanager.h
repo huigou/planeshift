@@ -102,16 +102,16 @@ struct NaturalResource
     int sector;                 ///< The id of the sector this resource is in.
     csVector3 loc;              ///< Centre point of resource location.
     float    radius;            ///< Radius around the centre where resource can be found.
-    float    visible_radius;
+    float    visible_radius;    ///< Radius around the centre where resource is visible
     float    probability;       ///< Probability of finding resource on attempt.
     psSkillInfo *skill;         ///< Skill used to harvest resource.
     int      skill_level;       ///< Skill level required to be able to harvest resource.
-    unsigned int item_cat_id;
-    float    item_quality;
+    unsigned int item_cat_id;   ///< Category of tool needed for the ressource
+    float    item_quality;      ///< Quality of equipment for the ressource
     csString anim;                  ///< Name of animation to play while harvesting
     int      anim_duration_seconds; ///< Length of time the animation should play.
-    int      reward;
-    csString reward_nickname;
+    int      reward;                ///< Item ID of the reward
+    csString reward_nickname;       ///< Item name of the reward
     csString action;            ///< The action you need to take to get this resource.
 };
 
@@ -213,18 +213,25 @@ public:
       */
     void HandleProductionEvent(psWorkGameEvent* workEvent);
 
-    /** Handles a repair event, which occurs after a few seconds of repairing an item.
-    *
-    * @param event The work event that was in the queue to fire.
-    */
+    /** @brief Handles a repair event, which occurs after a few seconds of repairing an item.
+      *
+      * This function handles the conclusion timer of when a repair is completed.
+      * It is not called if the event is cancelled.  It follows the following
+      * sequence of steps.
+      *
+      * -# The values are all pre-calculated, so just adjust the quality of the item directly.
+      * -# Consume the repair required item, if flagged to do so.
+      * -# Notify the user.
+      * 
+      * @param event The work event that was in the queue to fire.
+      */
     void HandleRepairEvent(psWorkGameEvent* workEvent);
     void LockpickComplete(psWorkGameEvent* workEvent);
     //@}
 
 
     /** @name Constraint Functions
-    *
-    */
+      */
     //@{
     static bool constraintTime(WorkManager* that, char* param);
     static bool constraintFriends(WorkManager* that,char* param);
@@ -451,8 +458,32 @@ protected:
 
     void Initialize();
     bool ApplySkills(float factor, psItem* transItem);
+
+    /**
+      * This function handles commands like "/repair" using
+      * the following sequence of steps.
+      *
+      * -# Make sure client isn't already busy digging, etc.
+      * -# Check for repairable item in right hand slot
+      * -# Check for required repair kit item in any inventory slot
+      * -# Calculate time required for repair based on item and skill level
+      * -# Calculate result after repair
+      * -# Queue time event to trigger when repair is complete, if not canceled.
+      */
     void HandleRepair(Client *client, psWorkCmdMessage& msg);
-    /// Handle production events from clients
+
+    /** @brief Handle production events from clients
+      *
+      * This function handles commands like "/dig for gold" using
+      * the following sequence of steps:
+      *
+      * -# Make sure client isn't already busy digging, etc.
+      * -# Find closest natural resource
+      * -# Validate category of equipped item
+      * -# Calculate time required
+      * -# Send anim and confirmation message to client
+      * -# Queue up game event for success
+      */
     void HandleProduction(Client *client,const char *type,const char *reward);
 
     bool SameProductionPosition(gemActor *actor, const csVector3& startPos);
