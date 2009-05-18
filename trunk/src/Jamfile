@@ -7,5 +7,3 @@ SubInclude TOP src client ;
 SubInclude TOP src eedit ;
 SubInclude TOP src npcclient ;
 SubInclude TOP src pslaunch ;
-
-StaticPluginLibrary planeshift_staticplugins ;
