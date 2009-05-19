@@ -875,8 +875,11 @@ psItem *psCharacterInventory::RemoveItemIndex(size_t itemIndex, int count)
     {
         //maybe a bit over careful
         Client * charClient = owner->GetActor() ?  owner->GetActor()->GetClient() : NULL;
-        if(charClient) Exchange *exchange = psserver->exchangemanager->GetExchange(charClient->GetExchangeID());
-        if(exchange) exchange->RemoveItem(charClient, inventory[itemIndex].exchangeOfferSlot, inventory[itemIndex].exchangeStackCount);            
+        if(charClient) 
+        {
+            Exchange *exchange = psserver->exchangemanager->GetExchange(charClient->GetExchangeID());
+            if(exchange) exchange->RemoveItem(charClient, inventory[itemIndex].exchangeOfferSlot, inventory[itemIndex].exchangeStackCount);
+        }
     }
 
     // Remove ALL items in stack
