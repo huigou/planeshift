@@ -42,6 +42,7 @@
 #include "../client.h"
 #include "../cachemanager.h"
 #include "../globals.h"
+#include "../exchangemanager.h"
 
 //=============================================================================
 // Local Includes
@@ -865,6 +866,18 @@ psItem *psCharacterInventory::RemoveItemIndex(size_t itemIndex, int count)
         return NULL;
 
 //    inventoryCacheServer.SetSlotModified(bulkslot);   // update cache
+
+    //we have to update clients if we are dropping an item which is being exchanged. We send a removal
+    //also if we are only dropping a partial stack as something is happening in that slot and to avoid
+    //bugs and confusion on the user it's better removing the item entirely from the exchange window
+    //if he/she wants to add it again it's up to him/her to do it after
+    if(inExchangeMode && inventory[itemIndex].exchangeOfferSlot  != -1)
+    {
+        //maybe a bit over careful
+        Client * charClient = owner->GetActor() ?  owner->GetActor()->GetClient() : NULL;
+        if(charClient) Exchange *exchange = psserver->exchangemanager->GetExchange(charClient->GetExchangeID());
+        if(exchange) exchange->RemoveItem(charClient, inventory[itemIndex].exchangeOfferSlot, inventory[itemIndex].exchangeStackCount);            
+    }
 
     // Remove ALL items in stack
     if ( count == currentItem->GetStackCount() )
