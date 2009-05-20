@@ -25,6 +25,7 @@
 	    <defaultstyle widget="pawsButton" style="New Standard Tab"/>
 		<subscriptions overwrite = "false">
 			<subscribe data="CHAT_SYSTEM" />
+			<subscribe data="CHAT_COMBAT" />
 			<subscribe data="CHAT_SERVER_INFO" />
 			<subscribe data="CHAT_SAY" />
 			<subscribe data="CHAT_TELL" />

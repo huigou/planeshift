@@ -78,6 +78,7 @@ const char *logFileName[CHAT_NLOG] = {
 // Must match the chat types in messages.h
 const char *CHAT_TYPES[] = {
 		"CHAT_SYSTEM",
+		"CHAT_COMBAT",
 		"CHAT_SAY",
 		"CHAT_TELL",
 		"CHAT_GROUP",
@@ -890,6 +891,7 @@ void pawsChatWindow::SaveChatSettings()
     CreateSettingNode(colorNode,settings.yourColor,"yourtext");
     CreateSettingNode(colorNode,settings.guildColor,"guildtext");
     CreateSettingNode(colorNode,settings.shoutColor,"shouttext");
+    CreateSettingNode(colorNode,settings.channelColor,"channeltext");
     CreateSettingNode(colorNode,settings.npcColor, "npctext" );
     CreateSettingNode(colorNode,settings.tellColor,"telltext");
     CreateSettingNode(colorNode,settings.chatColor,"chattext");
@@ -1068,6 +1070,8 @@ void pawsChatWindow::HandleSystemMessage(MsgEntry *me)
                      msg.type == MSG_COMBAT_NEARLY_DEAD ||
                      msg.type == MSG_LOOT)
                 chatType = CHAT_SYSTEM_BASE;
+            else if (msg.type & MSG_COMBAT != 0)
+            	chatType = CHAT_COMBAT;
 
             WordArray playerName(psengine->GetMainPlayerName());
             bool hasCharName = noCaseMsg.Find(playerName[0].Downcase().GetData()) != (size_t)-1;
