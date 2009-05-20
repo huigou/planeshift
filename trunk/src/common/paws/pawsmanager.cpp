@@ -91,7 +91,6 @@
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-bool drawme = true;
 PawsManager::PawsManager(iObjectRegistry* object, const char* skin, const char* skinBase,
                          const char* pawsConfigFile, uint _gfxFeatures)
 {
@@ -273,7 +272,6 @@ bool PawsManager::HandleEvent( iEvent &event )
 
 bool PawsManager::HandleDoubleClick( iEvent& ev )
 {
-	drawme = false;
     pawsWidget* widget = NULL;
     psPoint event = MouseLocation(ev);
     uint button = csMouseEventHelper::GetButton(&ev);
@@ -606,8 +604,6 @@ bool PawsManager::HandleMouseMove( iEvent &ev )
 
 void PawsManager::Draw()
 {
-	if(!drawme)
-		return;
     mainWidget->DrawChildren();
     if ( modalWidget != NULL ) modalWidget->Draw();
 
