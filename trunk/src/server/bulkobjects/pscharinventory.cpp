@@ -1254,7 +1254,7 @@ csArray<psItem*> psCharacterInventory::GetItemsInCategory(psItemCategory * categ
     return items;
 }
 
-psItem* psCharacterInventory::StackNumberItems(const char * itemname, int count, bool container)
+psItem* psCharacterInventory::StackNumberItems(const csString & itemname, int count, bool container)
 {
     psItem* stackItem = NULL;
 
@@ -1262,7 +1262,7 @@ psItem* psCharacterInventory::StackNumberItems(const char * itemname, int count,
     unsigned int i;
     for (i = 1; i<inventory.GetSize(); i++)
     {
-        if (inventory[i].item->GetName() == itemname && !(inventory[i].item->IsInUse()) &&
+        if (itemname.CompareNoCase(inventory[i].item->GetName()) && !(inventory[i].item->IsInUse()) &&
             (container || (inventory[i].item->GetLocInParent(true) < PSCHARACTER_SLOT_BULK_END) ))
         {
             stackItem = inventory[i].item;
@@ -1275,7 +1275,7 @@ psItem* psCharacterInventory::StackNumberItems(const char * itemname, int count,
 
     for (unsigned int j = i+1;count > stackItem->GetStackCount() && j < inventory.GetSize(); j++)
     {
-        if (inventory[j].item->GetName() == itemname && !(inventory[j].item->IsInUse()) &&
+        if (itemname.CompareNoCase(inventory[i].item->GetName()) && !(inventory[j].item->IsInUse()) &&
             (container || (inventory[i].item->GetLocInParent(true) < PSCHARACTER_SLOT_BULK_END) ))
         {
             psItem* stackedItem = inventory[j].item;

@@ -65,11 +65,12 @@ class gemActor;
 
 //-----------------------------------------------------------------------------
 
+/// used by psCharacter::CreateGlyphList()
 struct glyphSlotInfo
 {
     psItemStats * glyphType;
-    int purifyStatus;   /* possible values are: 0=not purified    1=purifying    2=purified */
-};  // used by psCharacter::CreateGlyphList()
+    int purifyStatus;   ///< possible values are: 0=not purified    1=purifying    2=purified
+};
 
 
 //-----------------------------------------------------------------------------
@@ -87,7 +88,7 @@ public:
     class psCharacterInventoryItem
     {
         friend class psCharacterInventory;
-        psItem *item;               /// must be ptr for polymorphism
+        psItem *item;               ///< must be ptr for polymorphism
     public:
         psCharacterInventoryItem(psItem *it)
         {
@@ -95,8 +96,8 @@ public:
             exchangeOfferSlot  = -1;
             exchangeStackCount = 0;
         }
-        int    exchangeOfferSlot;   /// Slot in exchange offer window on client
-        int    exchangeStackCount;  /// count of items being offered, subset of stack in *item
+        int    exchangeOfferSlot;   ///< Slot in exchange offer window on client
+        int    exchangeStackCount;  ///< count of items being offered, subset of stack in *item
         psItem *GetItem() { return item; } // read-only, cannot clear
     };
 
@@ -325,7 +326,13 @@ public:
       */
     csArray<psItem*> GetItemsInCategory(psItemCategory * category);
     
-    psItem* StackNumberItems(const char * itemname, int count, bool container);
+    /** Iterates over the inventory, stacking items
+     * @param itemname Name of the item to be stacked
+     * @param count quantity up to which items should be stacked
+     * @param decide whether to look into containers in the inventory
+     * @return The pointer to the stacked item, or NULL if nothing is found
+     */ 
+    psItem* StackNumberItems(const csString & itemname, int count, bool container);
 
 
     size_t GetContainedItemCount(psItem *container);
@@ -350,7 +357,7 @@ public:
     /// Get the inventory cache handler
     psInventoryCacheServer * GetInventoryCacheServer (void) { return &inventoryCacheServer; }
 
-    // Check if the character has a list of required purified glyphs.
+    /// Check if the character has a list of required purified glyphs.
     bool HasPurifiedGlyphs(const glyphList_t glyphsToCheck);
 
     /// Make an array of types of glyphs in the inventory - prefer purified.
@@ -379,12 +386,14 @@ public:
      */
     INVENTORY_SLOT_NUMBER FindFreeEquipSlot(psItem* itemToPlace);
 
-    /// Return a count of items in the base inventory array.
-    /// This should be used only for debug output.
+    /** Return a count of items in the base inventory array.
+      * This should be used only for debug output.
+      */
     size_t GetInventoryIndexCount() { return inventory.GetSize();  }
 
-    /// Return the psItem at the inventory index specified
-    /// This should be used only for debug output
+    /** Return the psItem at the inventory index specified
+      *This should be used only for debug output
+      */
     psItem *GetInventoryIndexItem(size_t which) { return inventory[which].item; }
 
     /// Returns the exchange info and the item in the index specified
