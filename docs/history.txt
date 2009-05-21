@@ -1,3 +1,9 @@
+*** 2009-05-21 by Stefano Angeleri
+- fixing PS#2937 - [Trade Window] graphical glitch. Items wheren't removed
+  from the exchange window when removed from inventory (eg trough drop)
+- Updated fparser to 3.1.3 from 3.1.2:
+  Fixed a bug in the optimizer which manifested itself at least in gcc 4.4 
+
 *** 2009-05-17 by Andrew Dai
 - Added live position tracking of npcs to the wc live view.
 
