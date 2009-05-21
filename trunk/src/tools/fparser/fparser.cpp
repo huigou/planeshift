@@ -1,5 +1,5 @@
 //================================
-// Function parser v3.1.2 by Warp
+// Function parser v3.1.3 by Warp
 //================================
 
 #include "fpconfig.h"
@@ -236,7 +236,7 @@ FunctionParser::FunctionParser():
     delimiterChar(0),
     parseErrorType(FP_NO_ERROR), evalErrorType(0),
     data(new Data),
-    useDegreeConversion(false), isOptimized(false),
+    useDegreeConversion(false),
     evalRecursionLevel(0),
     StackPtr(0), errorLocation(0)
 {
@@ -254,7 +254,6 @@ FunctionParser::FunctionParser(const FunctionParser& cpy):
     evalErrorType(cpy.evalErrorType),
     data(cpy.data),
     useDegreeConversion(cpy.useDegreeConversion),
-    isOptimized(cpy.isOptimized),
     evalRecursionLevel(0),
     StackPtr(0), errorLocation(0)
 {
@@ -272,7 +271,6 @@ FunctionParser& FunctionParser::operator=(const FunctionParser& cpy)
         evalErrorType = cpy.evalErrorType;
         data = cpy.data;
         useDegreeConversion = cpy.useDegreeConversion;
-        isOptimized = cpy.isOptimized;
         evalRecursionLevel = cpy.evalRecursionLevel;
 
         ++(data->referenceCounter);
@@ -487,7 +485,6 @@ int FunctionParser::ParseFunction(const char* function, bool useDegrees)
 {
     useDegreeConversion = useDegrees;
     parseErrorType = FP_NO_ERROR;
-    isOptimized = false;
 
     data->ByteCode.clear(); data->ByteCode.reserve(128);
     data->Immed.clear(); data->Immed.reserve(128);

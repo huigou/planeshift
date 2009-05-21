@@ -1,4 +1,4 @@
-  Function parser for C++  v3.1.2 by Warp.
+  Function parser for C++  v3.1.3 by Warp.
   ========================================
 
   Optimization code contributed by Bisqwit (http://iki.fi/bisqwit/)
@@ -7,40 +7,9 @@
   The usage license of this library is located at the end of this text file.
 
 
-  What's new in v3.1.2
+  What's new in v3.1.3
   --------------------
-  - Fixed the bugs in the new optimizer code, and thus the new optimizer
-    has been restored.
-  - Small bugfixes and fine-tuning to make the library more compatible with
-    other compilers (especially MSVC++).
-
-  What's new in v3.1.1
-  --------------------
-  - Due to several bugs in the new optimizer, the old optimizer (from the
-    library version 3.0.3) has been temporarily restored, until these bugs
-    are fixed. The other new library features are not affected.
-
-  What's new in v3.1
-  ------------------
-  - The optimizer has been completely rewritten. The new optimizer contains
-    more and better optimization rules than before, and is more easily
-    extensible.
-  - The Parse() function now precalculates simple constant expressions
-    which can be calculated without compromising parsing speed. For example
-    the input function "x+7/2" will be byte-compiled into the equivalent of
-    "x+3.5". (Note that precalculation of constant expressions at parse
-    time is limited and doesn't work in all possible situations. For example
-    a function like "x+1+2" cannot be precalculated into "x+3" because of
-    the way single-token lookahead recursive descent parsing works. The
-    Optimize() function will do a much more comprehensive optimization work.)
-  - A new development version of the library is available. The development
-    version of the library contains the full optimizer sources, an extensive
-    regression testbed, a Makefile and other tools.
-  - Fixed bug: The size of the internal stack was incorrectly calculated
-    in certain situations where a user-defined function taking 0 parameters
-    was used. In some rare circumstances this could potentially cause an
-    out-of-boundaries array access.
-  - A new HTML version of this documentation is available.
+  - Fixed a bug in the optimizer which manifested itself at least in gcc 4.4
 
 
   Table of contents:

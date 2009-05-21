@@ -37,44 +37,9 @@
 <a name="whatsnew"></a>
 <h2>What's new</h2>
 
-<p>What's new in v3.1.2
+<p>What's new in v3.1.3
 <ul>
- <li>Fixed the bugs in the new optimizer code, and thus the new optimizer
-     has been restored.
- <li>Small bugfixes and fine-tuning to make the library more compatible with
-     other compilers (especially MSVC++).
-</ul>
-
-<p>What's new in v3.1.1
-<ul>
- <li>Due to several bugs in the new optimizer, the old optimizer (from the
-    library version 3.0.3) has been temporarily restored, until these bugs
-    are fixed. The other new library features are not affected.
-</ul>
-
-<p>What's new in v3.1
-<ul>
- <li>The optimizer has been completely rewritten. The new optimizer contains
-     more and better optimization rules than before, and is more easily
-     extensible.
- <li>The <code>Parse()</code> function now precalculates simple constant
-     expressions which can be calculated without compromising parsing speed.
-     For example the input function "<code>x+7/2</code>" will be byte-compiled
-     into the equivalent of "<code>x+3.5</code>". (Note that precalculation of
-     constant expressions at parse time is limited and doesn't work in all
-     possible situations. For example a function like "<code>x+1+2</code>"
-     cannot be precalculated into "<code>x+3</code>" because of the way
-     single-token lookahead recursive descent parsing works. The
-     <code>Optimize()</code> function will do a much more comprehensive
-     optimization work.)
- <li>A new development version of the library is available. The development
-     version of the library contains the full optimizer sources, an extensive
-     regression testbed, a Makefile and other tools.
- <li>Fixed bug: The size of the internal stack was incorrectly calculated
-     in certain situations where a user-defined function taking 0 parameters
-     was used. In some rare circumstances this could potentially cause an
-     out-of-boundaries array access.
- <li>A new HTML version of this documentation is available.
+ <li>Fixed a bug in the optimizer which manifested itself at least in gcc 4.4
 </ul>
 
 <!-- -------------------------------------------------------------------- ->

@@ -1,5 +1,5 @@
 /***************************************************************************\
-|* Function parser v3.1.2 by Warp                                          *|
+|* Function parser v3.1.3 by Warp                                          *|
 |* ------------------------------                                          *|
 |* Parses and evaluates the given function with the given variable values. *|
 |* See fparser.txt for details.                                            *|
@@ -89,7 +89,7 @@ private:
     struct Data;
     Data* data;
 
-    bool useDegreeConversion, isOptimized;
+    bool useDegreeConversion;
     unsigned evalRecursionLevel;
     unsigned StackPtr;
     const char* errorLocation;
