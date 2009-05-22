@@ -16,6 +16,10 @@
   
   Note that all gemActors have a psCharacter, but the reverse may not be true.
 
+- Added a new MathScript function: warn("epic fail", 42) evaluates to 42, but
+  but also prints "epic fail" to LOG_SCRIPT.  This should be useful for finding
+  rule bugs, for example: if (Dmg < 0, warn("Foo: Negative damage!", 0), Dmg)
+
 *** 2009-05-21 by Stefano Angeleri
 - fixing PS#2937 - [Trade Window] graphical glitch. Items wheren't removed
   from the exchange window when removed from inventory (eg trough drop)
