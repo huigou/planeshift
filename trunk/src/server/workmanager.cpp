@@ -311,7 +311,7 @@ void WorkManager::HandleRepair(Client *client, psWorkCmdMessage &msg)
     // Make sure client isn't already busy digging, etc.
     if ( client->GetActor()->GetMode() != PSCHARACTER_MODE_PEACE )
     {
-        psserver->SendSystemError(client->GetClientNum(),"You cannot repair anything because you are %s.", client->GetActor()->GetCharacterData()->GetModeStr());
+        psserver->SendSystemError(client->GetClientNum(),"You cannot repair anything because you are %s.", client->GetActor()->GetModeStr());
         return;
     }
 
@@ -417,7 +417,7 @@ void WorkManager::HandleRepair(Client *client, psWorkCmdMessage &msg)
     psWorkGameEvent *evt = new psWorkGameEvent(this, client->GetActor(),repairDuration,REPAIR,dummy,NULL,client,repairTarget,repairResult);
     psserver->GetEventManager()->Push(evt);  // wake me up when repair is done
 
-    client->GetActor()->GetCharacterData()->SetTradeWork(evt);
+    client->GetActor()->SetTradeWork(evt);
 
     repairTarget->SetInUse(true);
 
@@ -585,7 +585,7 @@ void WorkManager::HandleProduction(Client *client,const char *type,const char *r
     }
 
     // Validate category of equipped item
-    psItem *item = owner->Inventory().GetInventoryItem(PSCHARACTER_SLOT_RIGHTHAND);
+    psItem *item = owner->GetCharacterData()->Inventory().GetInventoryItem(PSCHARACTER_SLOT_RIGHTHAND);
     if (!item || nr->item_cat_id != item->GetCategory()->id)
     {
         psserver->SendSystemError(client->GetClientNum(),"You don't have a good tool to %s with, equipped in your right hand.",type);
@@ -607,7 +607,7 @@ void WorkManager::HandleProduction(Client *client,const char *type,const char *r
     psWorkGameEvent *ev = new psWorkGameEvent(this,client->GetActor(),time_req*1000,PRODUCTION,pos,nr,client);
     psserver->GetEventManager()->Push(ev);  // wake me up when digging is done
 
-    client->GetActor()->GetCharacterData()->SetTradeWork(ev);
+    client->GetActor()->SetTradeWork(ev);
 
     psserver->SendSystemInfo(client->GetClientNum(),"You start to %s.",type);
 }
@@ -683,7 +683,7 @@ void WorkManager::HandleProduction(gemActor *actor,const char *type,const char *
     psWorkGameEvent *ev = new psWorkGameEvent(this,actor,time_req*1000,PRODUCTION,pos,nr,NULL);
     psserver->GetEventManager()->Push(ev);  // wake me up when digging is done
 
-    actor->GetCharacterData()->SetTradeWork(ev);
+    actor->SetTradeWork(ev);
 
     //psserver->SendSystemInfo(client->GetClientNum(),"You start to %s.",type);
     Debug4(LOG_SUPERCLIENT,0,"%s start to %s for %s",actor->GetName(),type,reward);
@@ -1155,7 +1155,7 @@ void WorkManager::StartUseWork(Client* client)
     else // check for in hand use
     {
         // Check if player has any transformation items in right hand
-        psItem* rhand = owner->Inventory().GetInventoryItem(PSCHARACTER_SLOT_RIGHTHAND);
+        psItem* rhand = owner->GetCharacterData()->Inventory().GetInventoryItem(PSCHARACTER_SLOT_RIGHTHAND);
         if ( rhand != NULL )
         {
             // Find out if we can do a transformation on items in hand
@@ -1181,7 +1181,7 @@ void WorkManager::StartUseWork(Client* client)
         }
 
         // Check if player has any transformation items in left hand
-        psItem* lhand = owner->Inventory().GetInventoryItem(PSCHARACTER_SLOT_LEFTHAND);
+        psItem* lhand = owner->GetCharacterData()->Inventory().GetInventoryItem(PSCHARACTER_SLOT_LEFTHAND);
         if ( lhand != NULL )
         {
             // Find out if we can do a transformation on items in hand
@@ -1641,7 +1641,7 @@ bool WorkManager::StartScriptWork(Client* client, gemObject *target, csString pa
 bool WorkManager::ScriptNoTarget()
 {
     // Check if player has any items in right hand
-    psItem* rhand = owner->Inventory().GetInventoryItem(PSCHARACTER_SLOT_RIGHTHAND);
+    psItem* rhand = owner->GetCharacterData()->Inventory().GetInventoryItem(PSCHARACTER_SLOT_RIGHTHAND);
     if ( rhand )
     {
         // Find out if we can do a transformation on items in hand
@@ -1666,7 +1666,7 @@ bool WorkManager::ScriptNoTarget()
     }
 
     // Check if player has any items in left hand
-    psItem* lhand = owner->Inventory().GetInventoryItem(PSCHARACTER_SLOT_LEFTHAND);
+    psItem* lhand = owner->GetCharacterData()->Inventory().GetInventoryItem(PSCHARACTER_SLOT_LEFTHAND);
     if ( lhand )
     {
         // Find out if we can do a transformation on items in hand
@@ -2315,7 +2315,7 @@ void WorkManager::StartTransformationEvent(int transType, INVENTORY_SLOT_NUMBER 
     // Set event
     csVector3 pos(0,0,0);
     psWorkGameEvent* workEvent = new psWorkGameEvent(
-        this, owner->GetActor(), delay*1000, MANUFACTURE, pos, NULL, worker->GetClient() );
+        this, owner, delay*1000, MANUFACTURE, pos, NULL, worker->GetClient() );
     workEvent->SetTransformationType(transType);
     workEvent->SetTransformationSlot(transSlot);
     workEvent->SetResultQuality(resultQuality);
@@ -2333,7 +2333,7 @@ void WorkManager::StartTransformationEvent(int transType, INVENTORY_SLOT_NUMBER 
     {
         csVector3 offset(0,0,0);
         workEvent->effectID =  CacheManager::GetSingleton().NextEffectUID();
-        psEffectMessage newmsg( 0, process->GetRenderEffect(), offset, owner->GetActor()->GetEID(),0 ,workEvent->effectID );
+        psEffectMessage newmsg( 0, process->GetRenderEffect(), offset, owner->GetEID(),0 ,workEvent->effectID );
         newmsg.Multicast(workEvent->multi,0,PROX_LIST_ANY_RANGE);
     }
 
@@ -2352,7 +2352,7 @@ void WorkManager::StartTransformationEvent(int transType, INVENTORY_SLOT_NUMBER 
         owner->SetTradeWork(workEvent);
         if (process)
         {
-            owner->SetStaminaRegenerationWork(process->GetPrimarySkillId());
+            owner->GetCharacterData()->SetStaminaRegenerationWork(process->GetPrimarySkillId());
         }
     }
 
@@ -2384,8 +2384,8 @@ bool WorkManager::LoadLocalVars(Client* client, gemObject *target)
         return false;
     }
 
-    owner = worker->GetCharacterData();
-    if ( owner == NULL )
+    owner = worker;
+    if (!owner || !owner->GetCharacterData())
     {
         Error1("Bad client actor character data pointer.");
         return false;
@@ -2437,7 +2437,7 @@ bool WorkManager::ValidateWork()
 bool WorkManager::ValidateMind()
 {
     // Check for the existance of a design item
-    psItem* designitem = owner->Inventory().GetInventoryItem( PSCHARACTER_SLOT_MIND );
+    psItem* designitem = owner->GetCharacterData()->Inventory().GetInventoryItem(PSCHARACTER_SLOT_MIND);
     if ( !designitem )
     {
         patternId = 0;
@@ -2516,7 +2516,7 @@ bool WorkManager::ValidateTarget(Client* client)
     else
     {
         // Check if player has any containers in right hand
-        psItem* rhand = owner->Inventory().GetInventoryItem(PSCHARACTER_SLOT_RIGHTHAND);
+        psItem* rhand = owner->GetCharacterData()->Inventory().GetInventoryItem(PSCHARACTER_SLOT_RIGHTHAND);
         if ( rhand )
         {
             // If it's a container it's our target
@@ -2528,7 +2528,7 @@ bool WorkManager::ValidateTarget(Client* client)
         }
 
         // Check if player has any containers in left hand
-        psItem* lhand = owner->Inventory().GetInventoryItem(PSCHARACTER_SLOT_LEFTHAND);
+        psItem* lhand = owner->GetCharacterData()->Inventory().GetInventoryItem(PSCHARACTER_SLOT_LEFTHAND);
         if ( lhand )
         {
             // If it's a container it's our target
@@ -2572,7 +2572,7 @@ bool WorkManager::CheckStamina(psCharacter * owner) const
 bool WorkManager::IsOnHand( uint32 equipId )
 {
     // Check right hand
-    psItem* rhand = owner->Inventory().GetInventoryItem(PSCHARACTER_SLOT_RIGHTHAND);
+    psItem* rhand = owner->GetCharacterData()->Inventory().GetInventoryItem(PSCHARACTER_SLOT_RIGHTHAND);
     if ( rhand )
     {
         if ( equipId == rhand->GetCurrentStats()->GetUID() )
@@ -2582,7 +2582,7 @@ bool WorkManager::IsOnHand( uint32 equipId )
     }
 
     // Check left hand
-    psItem* lhand = owner->Inventory().GetInventoryItem(PSCHARACTER_SLOT_LEFTHAND);
+    psItem* lhand = owner->GetCharacterData()->Inventory().GetInventoryItem(PSCHARACTER_SLOT_LEFTHAND);
     if ( lhand )
     {
         if ( equipId == lhand->GetCurrentStats()->GetUID() )
@@ -2603,10 +2603,10 @@ bool WorkManager::ValidateTraining(psTradeTransformations* transCandidate, psTra
     if ( priSkill > 0 )
     {
         // If primary skill is zero, check if this skill should be trained first
-        unsigned int basePriSkill = owner->Skills().GetSkillRank((PSSKILL)priSkill).Current();
+        unsigned int basePriSkill = owner->GetCharacterData()->Skills().GetSkillRank((PSSKILL)priSkill).Current();
         if ( basePriSkill == 0 )
         {
-            if (owner->Skills().Get((PSSKILL)priSkill).CanTrain())
+            if (owner->GetCharacterData()->Skills().Get((PSSKILL)priSkill).CanTrain())
                 return false;
         }
     }
@@ -2616,10 +2616,10 @@ bool WorkManager::ValidateTraining(psTradeTransformations* transCandidate, psTra
     if ( secSkill > 0 )
     {
         // If secondary skill is zero, check if this skill should be trained first
-        unsigned int baseSecSkill = owner->Skills().GetSkillRank((PSSKILL)secSkill).Current();
+        unsigned int baseSecSkill = owner->GetCharacterData()->Skills().GetSkillRank((PSSKILL)secSkill).Current();
         if ( baseSecSkill == 0 )
         {
-            if (owner->Skills().Get((PSSKILL)secSkill).CanTrain())
+            if (owner->GetCharacterData()->Skills().Get((PSSKILL)secSkill).CanTrain())
                 return false;
         }
     }
@@ -2635,7 +2635,7 @@ bool WorkManager::ValidateSkills(psTradeTransformations* transCandidate, psTrade
     if ( priSkill > 0 )
     {
         unsigned int minPriSkill = processCandidate->GetMinPrimarySkill();
-        unsigned int basePriSkill = owner->Skills().GetSkillRank((PSSKILL)priSkill).Current();
+        unsigned int basePriSkill = owner->GetCharacterData()->Skills().GetSkillRank((PSSKILL)priSkill).Current();
         if ( minPriSkill > basePriSkill )
         {
             return false;
@@ -2647,7 +2647,7 @@ bool WorkManager::ValidateSkills(psTradeTransformations* transCandidate, psTrade
     if ( secSkill > 0 )
     {
         unsigned int minSecSkill = processCandidate->GetMinSecondarySkill();
-        unsigned int baseSecSkill = owner->Skills().GetSkillRank((PSSKILL)secSkill).Current();
+        unsigned int baseSecSkill = owner->GetCharacterData()->Skills().GetSkillRank((PSSKILL)secSkill).Current();
         if ( minSecSkill > baseSecSkill )
         {
             return false;
@@ -2666,7 +2666,7 @@ bool WorkManager::ValidateNotOverSkilled(psTradeTransformations* transCandidate,
     if ( priSkill >= 0 )
     {
         unsigned int maxPriSkill = processCandidate->GetMaxPrimarySkill();
-        unsigned int basePriSkill = owner->Skills().GetSkillRank((PSSKILL)priSkill).Current();
+        unsigned int basePriSkill = owner->GetCharacterData()->Skills().GetSkillRank((PSSKILL)priSkill).Current();
         if ( maxPriSkill < basePriSkill )
         {
             return false;
@@ -2678,7 +2678,7 @@ bool WorkManager::ValidateNotOverSkilled(psTradeTransformations* transCandidate,
     if ( secSkill >= 0 )
     {
         unsigned int maxSecSkill = processCandidate->GetMaxSecondarySkill();
-        unsigned int baseSecSkill = owner->Skills().GetSkillRank((PSSKILL)secSkill).Current();
+        unsigned int baseSecSkill = owner->GetCharacterData()->Skills().GetSkillRank((PSSKILL)secSkill).Current();
         if ( maxSecSkill < baseSecSkill )
         {
             return false;
@@ -2777,7 +2777,7 @@ psItem* WorkManager::CombineContainedItem(uint32 newId, int newQty, float itemQu
             }
 
             // Remove items and delete
-            it.RemoveCurrent(owner->GetActor()->GetClient() );
+            it.RemoveCurrent(owner->GetClient());
             if (!item->Destroy())
             {
                 Error2("CombineContainedItem() could not remove old item ID #%u from database.", item->GetUID());
@@ -2795,12 +2795,12 @@ psItem* WorkManager::CombineContainedItem(uint32 newId, int newQty, float itemQu
         return NULL;
     }
 
-    newItem->SetOwningCharacter(owner);
+    newItem->SetOwningCharacter(owner->GetCharacterData());
     // this is done by AddToContainer, as long as SetOwningCharacter is set _before_
     // newItem->SetGuardingCharacterID(owner->GetPID());
 
     // Locate item in container and save container
-    if (!container->AddToContainer(newItem,owner->GetActor()->GetClient()))
+    if (!container->AddToContainer(newItem, owner->GetClient()))
     {
         Error3("Bad container slot %i when trying to add item instance #%u.", PSCHARACTER_SLOT_NONE, newItem->GetUID());
         return NULL;
@@ -2821,7 +2821,7 @@ psItem* WorkManager::CombineContainedItem(uint32 newId, int newQty, float itemQu
     {
         Error6("Problem on item: item UID=%i crafterID=%s guildID=%i name=%s owner=%p",
           newItem->GetBaseStats()->GetUID(), ShowID(worker->GetPID()),
-          worker->GetGuildID(), owner->GetCharName(), owner);
+          worker->GetGuildID(), owner->GetFirstName(), owner);
         if (workItem && workItem->GetBaseStats())
         {
             Error2("workitem=%i",workItem->GetBaseStats()->GetUID());
@@ -2864,7 +2864,7 @@ psItem* WorkManager::TransformContainedItem(psItem* oldItem, uint32 newId, int n
     INVENTORY_SLOT_NUMBER oldslot = oldItem->GetLocInParent(false);
 
     // Remove items from container and destroy it
-    container->RemoveFromContainer(oldItem,owner->GetActor()->GetClient() );
+    container->RemoveFromContainer(oldItem, owner->GetClient());
     if (!oldItem->Destroy())
     {
         Error2("TransformContainedItem() could not remove old item ID #%u from database", oldItem->GetUID());
@@ -2884,12 +2884,12 @@ psItem* WorkManager::TransformContainedItem(psItem* oldItem, uint32 newId, int n
         return NULL;
     }
 
-    newItem->SetOwningCharacter(owner);
+    newItem->SetOwningCharacter(owner->GetCharacterData());
     // this is done by AddToContainer, as long as SetOwningCharacter is set _before_
     // newItem->SetGuardingCharacterID(owner->GetPID());
 
     // Locate item in container and save container
-    if (!container->AddToContainer(newItem,owner->GetActor()->GetClient(),oldslot))
+    if (!container->AddToContainer(newItem, owner->GetClient(), oldslot))
     {
         Error3("Bad container slot %i when trying to add item instance #%u.", PSCHARACTER_SLOT_NONE, newItem->GetUID());
         return NULL;
@@ -2910,7 +2910,7 @@ psItem* WorkManager::TransformContainedItem(psItem* oldItem, uint32 newId, int n
     {
         Error6("Problem on item: item UID=%i crafterID=%s guildID=%i name=%s owner=%p",
           newItem->GetBaseStats()->GetUID(), ShowID(worker->GetPID()),
-          worker->GetGuildID(), owner->GetCharName(), owner);
+          worker->GetGuildID(), owner->GetFirstName(), owner);
         if (workItem && workItem->GetBaseStats())
         {
             Error2("workitem=%i",workItem->GetBaseStats()->GetUID());
@@ -2927,7 +2927,7 @@ psItem* WorkManager::TransformContainedItem(psItem* oldItem, uint32 newId, int n
 psItem* WorkManager::TransformSlotItem(INVENTORY_SLOT_NUMBER slot, uint32 newId, int newQty, float itemQuality)
 {
     // Remove items from slot and destroy it
-    psItem *oldItem = owner->Inventory().RemoveItem(NULL,slot);
+    psItem *oldItem = owner->GetCharacterData()->Inventory().RemoveItem(NULL,slot);
     if (!oldItem)
     {
         Error2("TransformSlotItem() could not remove item in slot #%i", slot );
@@ -2962,12 +2962,12 @@ psItem* WorkManager::TransformSlotItem(INVENTORY_SLOT_NUMBER slot, uint32 newId,
     }
 
     // Locate item in owner's slot
-    newItem->SetOwningCharacter(owner);
-    owner->Inventory().Add(newItem);
-    if (!owner->Inventory().EquipItem(newItem,slot))
+    newItem->SetOwningCharacter(owner->GetCharacterData());
+    owner->GetCharacterData()->Inventory().Add(newItem);
+    if (!owner->GetCharacterData()->Inventory().EquipItem(newItem,slot))
     {
         // If can't equip then drop
-        owner->DropItem(newItem);
+        owner->GetCharacterData()->DropItem(newItem);
         psserver->SendSystemError(clientNum,
             "Item %s was dropped because it could not be equiped.",newItem->GetName() );
     }
@@ -2978,7 +2978,7 @@ psItem* WorkManager::TransformSlotItem(INVENTORY_SLOT_NUMBER slot, uint32 newId,
     {
         Error6("Problem on item: item UID=%i crafterID=%s guildID=%i name=%s owner=%p",
           newItem->GetBaseStats()->GetUID(), ShowID(worker->GetPID()),
-          worker->GetGuildID(), owner->GetCharName(), owner);
+          worker->GetGuildID(), owner->GetFirstName(), owner);
         if (workItem && workItem->GetBaseStats())
         {
             Error2("workitem=%i",workItem->GetBaseStats()->GetUID());
@@ -3130,7 +3130,7 @@ psItem* WorkManager::TransformTargetItem(psItem* oldItem, uint32 newId, int newQ
     {
         Error6("Problem on item: item UID=%i crafterID=%s guildID=%i name=%s owner=%p",
           newItem->GetBaseStats()->GetUID(), ShowID(worker->GetPID()),
-          worker->GetGuildID(), owner->GetCharName(), owner);
+          worker->GetGuildID(), owner->GetFirstName(), owner);
         if (workItem && workItem->GetBaseStats())
         {
             Error2("workitem=%i",workItem->GetBaseStats()->GetUID());
@@ -3227,7 +3227,7 @@ psItem* WorkManager::CreateTradeItem(uint32 newId, int newQty, float itemQuality
 
 #ifdef DEBUG_WORKMANAGER
         CPrintf(CON_DEBUG, "done creating item crafterID=%s guildID=%i name=%s owner=%p\n",
-                ShowID(worker->GetPID()), worker->GetGuildID(), owner->GetCharName(), owner);
+                ShowID(worker->GetPID()), worker->GetGuildID(), owner->GetFirstName(), owner);
 #endif
 
         return newItem;
@@ -3392,7 +3392,7 @@ bool WorkManager::constraintMode(WorkManager* that, char* param)
 bool WorkManager::constraintGender(WorkManager* that, char* param)
 {
     // Get race info
-    psRaceInfo* race = that->owner->GetRaceInfo();
+    psRaceInfo* race = that->owner->GetCharacterData()->GetRaceInfo();
 
     // Check constraint gender to player gender
     if ( strcmp( race->GetGender(), param) != 0 )
@@ -3406,7 +3406,7 @@ bool WorkManager::constraintGender(WorkManager* that, char* param)
 bool WorkManager::constraintRace(WorkManager* that, char* param)
 {
     // Get race info
-    psRaceInfo* race = that->owner->GetRaceInfo();
+    psRaceInfo* race = that->owner->GetCharacterData()->GetRaceInfo();
 
     // Check constraint race to player race
     if ( strcmp( race->GetRace(), param) != 0 )
@@ -3518,7 +3518,7 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
     if (transType == TRANSFORMTYPE_SLOT)
     {
         INVENTORY_SLOT_NUMBER slot = workEvent->GetTransformationSlot();
-        psItem *oldItem = owner->Inventory().GetInventoryItem(slot);
+        psItem *oldItem = owner->GetCharacterData()->Inventory().GetInventoryItem(slot);
         if (oldItem != workEvent->GetTranformationItem() || (oldItem && oldItem->GetStackCount() != originalQty))
         {
             psserver->SendSystemOK(clientNum,"You interrupted your work when you moved item.");
@@ -3676,7 +3676,7 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
             experiencePoints = env.Lookup("Exp")->GetValue();
         }
 
-        owner->AddExperiencePointsNotify(experiencePoints);
+        owner->GetCharacterData()->AddExperiencePointsNotify(experiencePoints);
 
         Debug2(LOG_TRADE, clientNum, "Giving experience points %i.\n",experiencePoints);
         if (secure) psserver->SendSystemInfo(clientNum,"Giving experience points %i.",experiencePoints);
@@ -3791,7 +3791,7 @@ bool WorkManager::ApplySkills(float factor, psItem* transItem)
         }
 
         // Get the players skill level using the transformations primary skill
-        unsigned int basePriSkill = owner->Skills().GetSkillRank((PSSKILL)priSkill).Current();
+        unsigned int basePriSkill = owner->GetCharacterData()->Skills().GetSkillRank((PSSKILL)priSkill).Current();
         unsigned int maxPriSkill = process->GetMaxPrimarySkill();
 
         // Get the quality factor for this primary skill
@@ -3827,7 +3827,7 @@ bool WorkManager::ApplySkills(float factor, psItem* transItem)
         {
             // Get some practice in
             int priPoints = process->GetPrimaryPracticePts();
-            owner->CalculateAddExperience((PSSKILL)priSkill, priPoints);
+            owner->GetCharacterData()->CalculateAddExperience((PSSKILL)priSkill, priPoints);
             if (secure) psserver->SendSystemInfo(clientNum,"Giving practice points %d to skill %d.",priPoints, priSkill);
         }
 
@@ -3850,7 +3850,7 @@ bool WorkManager::ApplySkills(float factor, psItem* transItem)
                 currentQuality = currentQuality * 2;
             }
 
-            unsigned int baseSecSkill = owner->Skills().GetSkillRank((PSSKILL)secSkill).Current();
+            unsigned int baseSecSkill = owner->GetCharacterData()->Skills().GetSkillRank((PSSKILL)secSkill).Current();
             unsigned int maxSecSkill = process->GetMaxSecondarySkill();
 
             // Get the quality factor for this secmary skill
@@ -3883,7 +3883,7 @@ bool WorkManager::ApplySkills(float factor, psItem* transItem)
             {
                 // Get some practice in
                 int secPoints = process->GetSecondaryPracticePts();
-                owner->CalculateAddExperience((PSSKILL)secSkill, secPoints);
+                owner->GetCharacterData()->CalculateAddExperience((PSSKILL)secSkill, secPoints);
                 if (secure) psserver->SendSystemInfo(clientNum,"Giving practice points %d to skill %d.",secPoints, secSkill);
             }
         }
@@ -4322,7 +4322,7 @@ CPrintf(CON_DEBUG, "Cleaning up item from auto-transform container...\n");
         else
         {
             // Setting character to peace will interrupt work event
-            worker->GetCharacterData()->SetTradeWork(NULL);
+            worker->SetTradeWork(NULL);
             worker->SetMode(PSCHARACTER_MODE_PEACE);
         }
     }
@@ -4333,8 +4333,8 @@ psWorkGameEvent::~psWorkGameEvent()
     if(worker.IsValid())
     {
         worker->UnregisterCallback(this);
-        if (worker->GetCharacterData()->GetTradeWork() == this)
-            worker->GetCharacterData()->SetTradeWork(NULL);
+        if (worker->GetTradeWork() == this)
+            worker->SetTradeWork(NULL);
     }
 
     // For manufactuing events only

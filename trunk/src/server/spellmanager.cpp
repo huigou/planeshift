@@ -100,7 +100,7 @@ SpellManager::~SpellManager()
 
 void SpellManager::HandleCancelSpell(MsgEntry* notused, Client* client)
 {
-    client->GetCharacterData()->InterruptSpellCasting();
+    client->GetActor()->InterruptSpellCasting();
 }
 
 void SpellManager::HandleAssembler(MsgEntry* me, Client* client)

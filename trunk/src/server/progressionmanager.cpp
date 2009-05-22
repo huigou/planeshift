@@ -316,10 +316,10 @@ void ProgressionManager::HandleSkill(MsgEntry *me, Client * client)
                 }
             }
 
-            if (character->GetMode() != PSCHARACTER_MODE_PEACE)
+            if (client->GetActor()->GetMode() != PSCHARACTER_MODE_PEACE)
             {
                 csString err;
-                err.Format("You can't train while %s.", character->GetModeStr());
+                err.Format("You can't train while %s.", client->GetActor()->GetModeStr());
                 psserver->SendSystemError(client->GetClientNum(), err);
                 return;
             }

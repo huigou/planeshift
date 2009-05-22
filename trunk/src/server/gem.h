@@ -65,6 +65,7 @@ class ProgressionManager;
 class psNPCDialog;
 class psAllEntityPosMessage;
 class psActionLocation;
+class psSpellCastEvent;
 class MathScript;
 class gemItem;
 class gemActor;
@@ -371,8 +372,6 @@ public:
     virtual void SendGroupMessage(MsgEntry *me) { };
 
     // Overridden functions in child classes
-    virtual PSCHARACTER_MODE GetMode() { return PSCHARACTER_MODE_UNKNOWN; }
-    virtual void SetMode(PSCHARACTER_MODE mode, uint32_t extraData = 0) { }
     virtual PID GetPID() { return 0; }
     virtual int GetGuildID() { return 0; }
     virtual psGuildInfo* GetGuild() { return 0; }
@@ -749,6 +748,15 @@ protected:
     bool isAllowedToMove; ///< Is a movement lockout in effect?
     bool atRest;          ///< Is this character stationary or moving?
 
+    PSCHARACTER_MODE player_mode;
+    Stance combat_stance;
+
+    psSpellCastGameEvent *spellCasting; ///< Hold a pointer to the game event
+                                        ///< for the spell currently cast.
+    psWorkGameEvent *workEvent; 
+
+    bool CanSwitchMode(PSCHARACTER_MODE from, PSCHARACTER_MODE to);
+
 public:
     psLinearMovement* pcmove;
 
@@ -772,8 +780,21 @@ public:
     void SetTextureParts(const char *parts);
     void SetEquipment(const char *equip);
 
-    void SetMode(PSCHARACTER_MODE mode, uint32_t extraData = 0) { psChar->SetMode(mode, GetClientID(), extraData); }
-    PSCHARACTER_MODE GetMode() { return psChar->GetMode(); }
+    PSCHARACTER_MODE GetMode() { return player_mode; }
+    const char* GetModeStr(); ///< Return a string name of the mode
+    void SetMode(PSCHARACTER_MODE newmode, uint32_t extraData = 0);
+    const Stance & GetCombatStance() { return combat_stance; }
+    virtual void SetCombatStance(const Stance & stance);
+
+    void SetSpellCasting(psSpellCastGameEvent *event) { spellCasting = event; }
+    bool IsSpellCasting() { return spellCasting != NULL; }
+    void InterruptSpellCasting() { if (spellCasting) spellCasting->Interrupt(); }
+
+    /// Assign trade work event so it can be accessed
+    void SetTradeWork(psWorkGameEvent *event) { workEvent = event; }
+    /// Return trade work event so it can be stopped
+    psWorkGameEvent *GetTradeWork() { return workEvent; }
+
     bool IsAllowedToMove() { return isAllowedToMove; }  ///< Covers sitting, death, and out-of-stamina
     void SetAllowedToMove(bool newvalue);
 
@@ -1042,6 +1063,8 @@ public:
            InstanceID myInstance,iSector* room,const csVector3& pos,float rotangle,int clientnum);
 
     virtual ~gemNPC();
+
+    virtual void SetCombatStance(const Stance & stance);
 
     virtual const char* GetObjectType()    { return "NPC";     }
     virtual psNPCDialog *GetNPCDialogPtr() { return npcdialog; }

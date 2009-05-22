@@ -162,7 +162,8 @@ void psCharacterInventory::CalculateLimits()
 
 void psCharacterInventory::UpdateEncumbrance()
 {
-    if (!owner->GetActor())
+    gemActor *actor = owner->GetActor();
+    if (!actor)
         return;
 
     /* TODO: http://www.hydlaa.com/bugtracker/bug.php?op=show&bugid=2618
@@ -171,14 +172,13 @@ void psCharacterInventory::UpdateEncumbrance()
      *       such items; dropping if theere was no space.
      */
 
-    int cnum = owner->GetActor()->GetClientID();
     if (doRestrictions && GetCurrentTotalWeight() > MaxWeight())
     {
-        owner->SetMode(PSCHARACTER_MODE_OVERWEIGHT, cnum);
+        actor->SetMode(PSCHARACTER_MODE_OVERWEIGHT);
     }
-    else if (owner->GetMode() == PSCHARACTER_MODE_OVERWEIGHT)
+    else if (actor->GetMode() == PSCHARACTER_MODE_OVERWEIGHT)
     {
-        owner->SetMode(PSCHARACTER_MODE_PEACE, cnum);
+        actor->SetMode(PSCHARACTER_MODE_PEACE);
     }
 }
 

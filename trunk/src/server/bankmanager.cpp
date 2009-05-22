@@ -716,7 +716,7 @@ void BankManager::HandleBanking( MsgEntry *me, Client *client )
     if (client->GetActor()->GetMode() != PSCHARACTER_MODE_PEACE)
     {
         csString err;
-        err.Format("You can't access your bank account while %s.", client->GetCharacterData()->GetModeStr());
+        err.Format("You can't access your bank account while %s.", client->GetActor()->GetModeStr());
         psserver->SendSystemError(client->GetClientNum(), err);
         return;
     }

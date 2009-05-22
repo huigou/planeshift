@@ -491,12 +491,12 @@ protected:
 
 private:
 
-    csWeakRef<gemObject> worker;    ///< Current worker that the work manager is dealing with.
+    csWeakRef<gemActor> worker;     ///< Current worker that the work manager is dealing with.
 
     uint32_t clientNum;             ///< Current client the work manager is dealing with.
     psItem* workItem;               ///< The current work item that is in use ( example, ore furnace )
     psItem* autoItem;               ///< The current item that is being transformed by auto-transformation container
-    psCharacter *owner;             ///< The character pointer of the current character being used.
+    gemActor *owner;                ///< The character pointer of the current character being used.
     gemObject *gemTarget;           ///< The object being targeted by the player.
     uint32 patternId;               ///< Current pattern ID
     uint32 groupPatternId;          ///< Current group pattern ID
@@ -575,7 +575,7 @@ public:
     void SetTransformationType(int t) { transType = t; }
 
     WorkManager* workmanager;
-    csWeakRef<gemObject> worker;
+    csWeakRef<gemActor> worker;
     NaturalResource* nr;
     Client* client;
     gemObject* gemTarget;

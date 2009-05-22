@@ -1,3 +1,21 @@
+*** 2009-05-22 by Kenny Graunke
+- Moved character modes and related data (combat stances, spell cast and work
+  events) from psCharacter to gemActor.  Removed a few small things that were
+  no longer necessary.
+
+  This is preliminary work on cleaning up the distinction between ps* and gem*.
+  Currently, many things appear to be placed in one or the other in a rather
+  ad-hoc manner, and this can confuse contributors.  As I see the two layers:
+
+  psCharacter
+  - represents a character sheet/intrinsic properties/who the character -is-
+  - contains persistent things affecting or belonging to the character
+  gemActor
+  - supports characters as entities within the world
+  - contains transient properties related to what the character is currently -doing-
+  
+  Note that all gemActors have a psCharacter, but the reverse may not be true.
+
 *** 2009-05-21 by Stefano Angeleri
 - fixing PS#2937 - [Trade Window] graphical glitch. Items wheren't removed
   from the exchange window when removed from inventory (eg trough drop)

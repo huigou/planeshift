@@ -73,6 +73,8 @@ public:
 
     void HandleCombatEvent(psCombatGameEvent *event);
 
+    static const Stance & GetStance(csString name);
+
     /***********************
      * Not implemented yet *
      ***********************

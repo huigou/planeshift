@@ -742,7 +742,7 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                     if (!target)
                     {
                         attacker->SetTarget(target);
-                        if (attacker->GetCharacterData()->GetMode() == PSCHARACTER_MODE_COMBAT)
+                        if (attacker->GetMode() == PSCHARACTER_MODE_COMBAT)
                         {
                             psserver->combatmanager->StopAttack(attacker);
                         }
@@ -759,7 +759,7 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                     else
                     {
                         attacker->SetTarget(target);
-                        if (attacker->GetCharacterData()->GetMode() == PSCHARACTER_MODE_COMBAT)
+                        if (attacker->GetMode() == PSCHARACTER_MODE_COMBAT)
                         {
                             psserver->combatmanager->StopAttack(attacker);
                         }
@@ -767,7 +767,7 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                         if ( !target->GetClient() || !target->GetActorPtr()->GetInvincibility() )
                         {
                             // NPCs only use 'Normal' stance for now.
-                            psserver->combatmanager->AttackSomeone(attacker,target,attacker->GetCharacterData()->getStance("Normal"));
+                            psserver->combatmanager->AttackSomeone(attacker,target,CombatManager::GetStance("Normal"));
                             Debug3(LOG_SUPERCLIENT, attacker_id.Unbox(), "%s is now attacking %s.\n", attacker->GetName(), target->GetName());
                         }
                         else
@@ -1559,7 +1559,7 @@ void NPCManager::HandlePetCommand(MsgEntry * me,Client *client)
                     }
                     else
                     {
-                        Stance stance = pet->GetCharacterData()->getStance("Aggressive");
+                        Stance stance = CombatManager::GetStance("Aggressive");
                         if ( words.GetCount() != 0 )
                         {
                             stance.stance_id = words.GetInt( 0 );

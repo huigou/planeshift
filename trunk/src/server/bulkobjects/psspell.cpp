@@ -246,7 +246,8 @@ bool psSpell::MatchGlyphs(const csArray<psItemStats*> & assembler)
 
 bool psSpell::CanCast(Client *client, float kFactor, csString & reason)
 {
-    psCharacter *caster = client->GetCharacterData();
+    gemActor *caster = client->GetActor();
+    psCharacter *casterChar = caster->GetCharacterData();
 
     const int mode = caster->GetMode();
     if (mode != PSCHARACTER_MODE_PEACE && mode != PSCHARACTER_MODE_COMBAT)
@@ -262,16 +263,16 @@ bool psSpell::CanCast(Client *client, float kFactor, csString & reason)
     }
 
     // Check for sufficient Mana
-    if (!caster->GetActor()->infinitemana)
+    if (!caster->infinitemana)
     {
-        float manaCost = ManaCost(caster, kFactor);
-        if (caster->GetMana() < manaCost)
+        float manaCost = ManaCost(casterChar, kFactor);
+        if (casterChar->GetMana() < manaCost)
         {
             reason.Format("You don't have the mana to cast %s.", name.GetData());
             return false;
         }
 
-        if (caster->GetStamina(false) < manaCost)
+        if (casterChar->GetStamina(false) < manaCost)
         {
             reason.Format("You are too tired to cast %s.", name.GetData());
             return false;
@@ -281,13 +282,13 @@ bool psSpell::CanCast(Client *client, float kFactor, csString & reason)
     // Skip testing some conditions for developers and game masters
     if (!CacheManager::GetSingleton().GetCommandManager()->Validate(client->GetSecurityLevel(), "cast all spells"))
     {
-        if (!caster->CheckMagicKnowledge(way->skill, realm))
+        if (!casterChar->CheckMagicKnowledge(way->skill, realm))
         {
             reason = "You have insufficient knowledge of this magic way to cast this spell.";
             return false;
         }
 
-        if (!caster->Inventory().HasPurifiedGlyphs(glyphList))
+        if (!casterChar->Inventory().HasPurifiedGlyphs(glyphList))
         {
             reason.Format("You don't have the purified glyphs to cast %s.", name.GetData());
             return false;
@@ -388,7 +389,7 @@ void psSpell::Affect(gemActor *caster, gemObject *target, float range, float kFa
 
         // Spell casting complete, we are now in PEACE mode again.
         caster->SetMode(PSCHARACTER_MODE_PEACE);
-        caster->GetCharacterData()->SetSpellCasting(NULL);
+        caster->SetSpellCasting(NULL);
         return;
     }
 
@@ -482,7 +483,7 @@ void psSpell::Affect(gemActor *caster, gemObject *target, float range, float kFa
 
     // Spell casting complete, we are now in PEACE mode again.
     caster->SetMode(PSCHARACTER_MODE_PEACE);
-    caster->GetCharacterData()->SetSpellCasting(NULL);
+    caster->SetSpellCasting(NULL);
 }
 
 bool psSpell::AffectTarget(gemActor *caster, gemObject *target, float power) const
@@ -561,7 +562,7 @@ psSpellCastGameEvent::psSpellCastGameEvent(const psSpell *spell,
 
     target->RegisterCallback(this);
     caster->GetActor()->RegisterCallback(this);
-    caster->GetCharacterData()->SetSpellCasting(this);
+    caster->GetActor()->SetSpellCasting(this);
 }
 
 psSpellCastGameEvent::~psSpellCastGameEvent()
@@ -608,7 +609,7 @@ void psSpellCastGameEvent::Interrupt()
     }
 
     caster->GetActor()->SetMode(PSCHARACTER_MODE_PEACE);
-    caster->GetCharacterData()->SetSpellCasting(NULL);
+    caster->GetActor()->SetSpellCasting(NULL);
 
     // Stop event from beeing executed when trigged.
     SetValid(false);

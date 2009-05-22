@@ -255,7 +255,6 @@ class psLootMessage;
 class psMerchantInfo;
 class psQuestListMessage;
 class psSpell;
-class psSpellCastGameEvent;
 class psTradeTransformations;
 class psTradeProcesses;
 class psTrainerInfo;
@@ -556,6 +555,7 @@ protected:
     bool isStatue;
 
 public:
+    bool IsStatue() { return isStatue; }
     psCharacterInventory& Inventory() { return inventory; }
 
     psMoney Money() { return money; }
@@ -590,9 +590,6 @@ public:
     csSet<PID> acquaintances;
 
     psRaceInfo *raceinfo;
-    PSCHARACTER_MODE player_mode;
-    Stance combat_stance;
-    const Stance& getStance(csString name);
     csString faction_standings;
     csString progressionScriptText; ///< flat string loaded from the DB.
     int     impervious_to_attack;
@@ -625,15 +622,6 @@ public:
      */
     psSkillCache *GetSkillCache() { return &skillCache; }
 
-    /// Set the work transformation state for the character.
-    void SetWorkState(PSCHARACTER_WORKSTATE state) { work_state = state; }
-    /// Return the work transformation state
-    PSCHARACTER_WORKSTATE GetWorkState() { return work_state; }
-    /// Assign trade work event so it can be accessed
-    void SetTradeWork(psWorkGameEvent * event);
-    /// Return trade work event so it can be stopped
-    psWorkGameEvent *GetTradeWork() { return workEvent; }
-
     // iCachedObject Functions below
     virtual void ProcessCacheTimeout() {};  ///< required for iCachedObject but not used here
     virtual void *RecoverObject() { return this; }  ///< Turn iCachedObject ptr into psCharacter
@@ -648,9 +636,6 @@ public:
     } location;
 
     unsigned int advantage_bitfield[PSCHARACTER_ADVANTAGE_32BIT_BITFIELDS];
-
-    psSpellCastGameEvent *spellCasting; ///< Hold a pointer to the game event
-                                        ///< for the spell currently cast.
 
     psServerVitals* vitals;
 
@@ -830,25 +815,12 @@ public:
     void SetProgressionPoints(unsigned int X,bool save);
     void UseProgressionPoints(unsigned int X);
 
-    void SetSpellCasting(psSpellCastGameEvent * event) { spellCasting = event; }
-    bool IsSpellCasting() { return spellCasting != NULL; }
-    void InterruptSpellCasting();
     /// Get the maximum realm the caster can cast with given skill
     int GetMaxAllowedRealm( PSSKILL skill );
     /// Checks if this character has enough knowledge to cast spell
     /// of given way and realm
     bool CheckMagicKnowledge( PSSKILL skill, int realm );
     SkillRank & GetSkillRank(PSSKILL skill) { return skills.GetSkillRank(skill); }
-
-    PSCHARACTER_MODE GetMode() { return player_mode; }
-    const char* GetModeStr(); ///< Return a string name of the mode
-    bool CanSwitchMode(PSCHARACTER_MODE from, PSCHARACTER_MODE to);
-    void SetMode(PSCHARACTER_MODE newmode, uint32_t clientnum, uint32_t extraData = 0);
-
-    /**
-     * Reset modes for NPCs
-     */
-    void ResetMode();
 
     void KilledBy(psCharacter* attacker) { deaths++; if(!attacker) suicides++; }
     void Kills(psCharacter* target) { kills++; }
@@ -956,9 +928,6 @@ public:
     void ResetSwings(csTicks timeofattack);
     void TagEquipmentObject(INVENTORY_SLOT_NUMBER slot,int eventId);
     int GetSlotEventId(INVENTORY_SLOT_NUMBER slot);
-
-    void SetCombatStance(const Stance& stance);
-    const Stance& GetCombatStance() { return combat_stance; }
 
     /// Retrieves the calculated Attack Value for the given weapon-slot
     //float GetAttackValue(psItem *slotitem);
@@ -1126,10 +1095,6 @@ public:
     //
     csRef<psTrainerInfo>  trainerInfo;
     psCharacter* trainer;
-
-//    psTradeTransformations * transformation;
-    PSCHARACTER_WORKSTATE work_state;
-    psWorkGameEvent * workEvent;
 
     csString description;     ///<Player description
     csString oocdescription;  ///<Player OOC description

@@ -124,7 +124,6 @@ psCharacter::psCharacter() : inventory(this),
     isMarried = false;
 
     raceinfo = NULL;
-    combat_stance = getStance("None");
     vitals = new psServerVitals(this);
 //    workInfo = new WorkInformation();
 
@@ -152,17 +151,11 @@ psCharacter::psCharacter() : inventory(this),
     timeconnected = 0;
     startTimeThisSession = csGetTicks();
 
-    spellCasting = NULL;
-
 //    transformation = NULL;
-    work_state = PSCHARACTER_WORKSTATE_HALTED;
-    workEvent = NULL;
     kill_exp = 0;
     impervious_to_attack = 0;
 
     faction_standings.Clear();
-
-    player_mode = PSCHARACTER_MODE_PEACE;
 
     lastResponse = -1;
 
@@ -193,12 +186,6 @@ void psCharacter::SetActor( gemActor* newActor )
     {
         inventory.RunEquipScripts();
         inventory.CalculateLimits();
-
-        // NPCs don't have stances yet, so reset modes
-        if (actor->GetClientID()==0)
-        {
-            ResetMode();
-        }
     }
 }
 
@@ -1165,19 +1152,6 @@ void psCharacter::UseProgressionPoints(unsigned int X)
     SetProgressionPoints(vitals->GetPP()-X,true);
 }
 
-void psCharacter::InterruptSpellCasting()
-{
-    if (spellCasting != NULL)
-    {
-        spellCasting->Interrupt();
-    }
-}
-
-void psCharacter::SetTradeWork(psWorkGameEvent * event)
-{
-    workEvent = event;
-}
-
 int psCharacter::GetMaxAllowedRealm( PSSKILL skill )
 {
     unsigned int waySkillRank = skills.GetSkillRank(skill).Current();
@@ -1206,164 +1180,6 @@ bool psCharacter::CheckMagicKnowledge( PSSKILL skill, int realm )
 
     // Special case for rank 0 people just starting.
     return (realm == 1 && skills.GetSkillRank(skill).Base() == 0 && !skills.Get(skill).CanTrain());
-}
-
-const char * psCharacter::GetModeStr()
-{
-    static const char *player_mode_to_str[] = {"unknown","peace","combat","spell casting","working","dead","sitting","carrying too much","exhausted", "defeated", "statued" };
-    return player_mode_to_str[player_mode];
-}
-
-bool psCharacter::CanSwitchMode(PSCHARACTER_MODE from, PSCHARACTER_MODE to)
-{
-    switch (to)
-    {
-        case PSCHARACTER_MODE_DEFEATED:
-            return from != PSCHARACTER_MODE_DEAD;
-        case PSCHARACTER_MODE_OVERWEIGHT:
-            return (from != PSCHARACTER_MODE_DEAD &&
-                    from != PSCHARACTER_MODE_DEFEATED);
-        case PSCHARACTER_MODE_EXHAUSTED:
-        case PSCHARACTER_MODE_COMBAT:
-        case PSCHARACTER_MODE_SPELL_CASTING:
-        case PSCHARACTER_MODE_WORK:
-            return (from != PSCHARACTER_MODE_OVERWEIGHT &&
-                    from != PSCHARACTER_MODE_DEAD &&
-                    from != PSCHARACTER_MODE_DEFEATED);
-        case PSCHARACTER_MODE_SIT:
-        case PSCHARACTER_MODE_PEACE:
-        case PSCHARACTER_MODE_DEAD:
-        case PSCHARACTER_MODE_STATUE:
-        default:
-            return true;
-    }
-}
-
-void psCharacter::SetMode(PSCHARACTER_MODE newmode, uint32_t clientnum, uint32_t extraData)
-{
-    // Assume combat messages need to be sent anyway, because the stance may have changed.
-    if (player_mode == newmode && newmode != PSCHARACTER_MODE_COMBAT)
-        return;
-
-    if (newmode < PSCHARACTER_MODE_PEACE || newmode >= PSCHARACTER_MODE_COUNT)
-    {
-        Error3("Unhandled mode: %d switching to %d", player_mode, newmode);
-        return;
-    }
-
-    if (!CanSwitchMode(player_mode, newmode))
-        return;
-
-    // Force mode to be OVERWEIGHT if encumbered and the proposed mode isn't
-    // more important.
-    if (!inventory.HasEnoughUnusedWeight(0) && CanSwitchMode(newmode, PSCHARACTER_MODE_OVERWEIGHT))
-        newmode = PSCHARACTER_MODE_OVERWEIGHT;
-
-    if (newmode != PSCHARACTER_MODE_COMBAT)
-    {
-        SetCombatStance(getStance("None"));
-    }
-
-    bool isFrozen = false;
-    if(clientnum)
-    {
-        isFrozen = actor->GetClient()->IsFrozen();
-    }
-
-    if (newmode == PSCHARACTER_MODE_COMBAT)
-        extraData = combat_stance.stance_id;
-
-    psModeMessage msg(clientnum, actor->GetEID(), (uint8_t) newmode, extraData);
-    msg.Multicast(actor->GetMulticastClients(), 0, PROX_LIST_ANY_RANGE);
-
-    actor->SetAllowedToMove(newmode != PSCHARACTER_MODE_DEAD &&
-                            newmode != PSCHARACTER_MODE_DEFEATED &&
-                            newmode != PSCHARACTER_MODE_SIT &&
-                            newmode != PSCHARACTER_MODE_EXHAUSTED &&
-                            newmode != PSCHARACTER_MODE_OVERWEIGHT &&
-                            newmode != PSCHARACTER_MODE_STATUE &&
-                            !isFrozen);
-
-    actor->SetAlive(newmode != PSCHARACTER_MODE_DEAD);
-
-    actor->SetAllowedToDisconnect(newmode != PSCHARACTER_MODE_SPELL_CASTING &&
-                                  newmode != PSCHARACTER_MODE_COMBAT &&
-                                  newmode != PSCHARACTER_MODE_DEFEATED);
-
-    //cancel ongoing work
-    if (player_mode == PSCHARACTER_MODE_WORK && workEvent)
-    {
-        workEvent->Interrupt();
-        workEvent = NULL;
-    }
-    switch( newmode )
-    {
-        case PSCHARACTER_MODE_EXHAUSTED:
-        case PSCHARACTER_MODE_COMBAT:
-            SetStaminaRegenerationStill();  // start stamina regen
-            break;
-
-        case PSCHARACTER_MODE_SIT:
-            SetStaminaRegenerationSitting();
-            break;
-
-        case PSCHARACTER_MODE_DEAD:
-        case PSCHARACTER_MODE_OVERWEIGHT:
-        case PSCHARACTER_MODE_STATUE:
-            SetStaminaRegenerationNone();  // no stamina regen while dead or overweight
-            break;
-        case PSCHARACTER_MODE_DEFEATED:
-            GetHPRate().SetBase(HP_REGEN_RATE);
-            SetStaminaRegenerationNone();
-            break;
-
-        case PSCHARACTER_MODE_WORK:
-            break;  // work manager sets it's own rates
-        default:
-            break;
-    }
-
-    player_mode = newmode;
-
-    if(newmode == PSCHARACTER_MODE_PEACE || newmode == PSCHARACTER_MODE_SPELL_CASTING)
-        actor->ProcessStamina();
-}
-
-void psCharacter::ResetMode()
-{
-    if(!isStatue)
-        player_mode = PSCHARACTER_MODE_PEACE;
-    else
-        player_mode = PSCHARACTER_MODE_STATUE;
-    combat_stance = getStance("Normal");
-}
-
-
-void psCharacter::SetCombatStance(const Stance& stance)
-{
-    // NPCs don't have stances yet
-    if (actor->GetClientID()==0)
-        return;  // Stance never changes from PSCHARACTER_STANCE_NORMAL for NPCs
-
-    CS_ASSERT(stance.stance_id >= 0 && stance.stance_id <= CacheManager::GetSingleton().stances.GetSize());
-
-    if (combat_stance.stance_id == stance.stance_id)
-        return;
-
-    combat_stance = stance;
-    Debug3(LOG_COMBAT, pid.Unbox(), "Setting stance to %s for %s", stance.stance_name.GetData(), actor->GetName());
-}
-
-const Stance& psCharacter::getStance(csString name)
-{
-    name.Downcase();
-    size_t ID = CacheManager::GetSingleton().stanceID.Find(name);
-    if(ID == csArrayItemNotFound)
-    {
-        name = "normal"; // Default to Normal stance.
-        ID = CacheManager::GetSingleton().stanceID.Find(name);
-    }
-    return CacheManager::GetSingleton().stances.Get(ID);
 }
 
 void psCharacter::DropItem(psItem *&item, csVector3 suggestedPos, bool guarded, bool transient, bool inplace)
@@ -2998,11 +2814,6 @@ double psCharacter::GetProperty(const char *ptr)
     else if (!strcasecmp(ptr,"AllArmorAgiMalus"))
     {
         return modifiers[PSITEMSTATS_STAT_AGILITY].Current();
-    }
-    else if (!strcasecmp(ptr,"CombatStance"))
-    {
-        // Backwards compatibility.
-        return GetCombatStance().stance_id;
     }
     else if (!strcasecmp(ptr,"PID"))
     {
