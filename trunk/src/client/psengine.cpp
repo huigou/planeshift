@@ -296,7 +296,6 @@ void psEngine::Cleanup()
     delete mouseBinds;
     delete guiHandler;
     delete inventoryCache;
-    delete loader;
 
     // celclient needs to be destroyed before the effectmanager.
     celclient.Invalidate();
