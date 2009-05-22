@@ -1302,6 +1302,7 @@ gemItem::gemItem(csWeakRef<psItem> item,
 {
     itemdata=item;
     xRot=xrotangle;
+    yRot=yrotangle;
     zRot=zrotangle;
     itemType.Format("Item(%s)",itemdata->GetItemType());
     itemdata->SetGemObject( this );
