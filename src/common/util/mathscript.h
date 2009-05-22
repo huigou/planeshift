@@ -217,6 +217,8 @@ public:
 
     static csStringSet stringLiterals;
     static csStringSet customCompoundFunctions;
+    /// warn("message", value) prints a warning and then returns the value.
+    static double Warn(const double *parms);
     static double RandomGen(const double *dummy);
     static double Power(const double *parms);
     static double CustomCompoundFunc(const double * parms);

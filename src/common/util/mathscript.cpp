@@ -348,6 +348,12 @@ double MathScriptEngine::Power(const double *parms)
     return pow(parms[0],parms[1]);
 }
 
+double MathScriptEngine::Warn(const double *args)
+{
+    Warning1(LOG_SCRIPT, GetString(args[0]));
+    return args[1];
+}
+
 double MathScriptEngine::CustomCompoundFunc(const double * parms)
 {
     size_t funcIndex = (size_t)parms[0];
@@ -367,6 +373,7 @@ MathExpression::MathExpression()
 {
     fp.AddFunction("rnd", MathScriptEngine::RandomGen, 1);
     fp.AddFunction("pow", MathScriptEngine::Power, 2);
+    fp.AddFunction("warn", MathScriptEngine::Warn, 2);
     for (int n = 2; n < 12; n++)
     {
         csString funcName("customCompoundFunc");
