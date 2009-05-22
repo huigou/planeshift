@@ -38,6 +38,7 @@
 #include "netmanager.h"
 #include "globals.h"
 #include "psserverchar.h"
+#include "cachemanager.h"
 
 /// This #define determines how far away people will get detailed combat events.
 #define MAX_COMBAT_EVENT_RANGE 30
@@ -215,14 +216,26 @@ bool CombatManager::InPVPRegion(csVector3& pos,iSector * sector)
     return false;
 }
 
+const Stance & CombatManager::GetStance(csString name)
+{
+    name.Downcase();
+    size_t id = CacheManager::GetSingleton().stanceID.Find(name);
+    if (id == csArrayItemNotFound)
+    {
+        name = "normal"; // Default to Normal stance.
+        id = CacheManager::GetSingleton().stanceID.Find(name);
+    }
+    return CacheManager::GetSingleton().stances.Get(id);
+}
+
 void CombatManager::AttackSomeone(gemActor *attacker,gemObject *target,Stance stance)
 {
     psCharacter *attacker_character = attacker->GetCharacterData();
 
-    if (attacker_character->GetMode() == PSCHARACTER_MODE_DEFEATED)
+    if (attacker->GetMode() == PSCHARACTER_MODE_DEFEATED)
         return;
 
-    if (attacker_character->GetMode() == PSCHARACTER_MODE_COMBAT)  // Already fighting
+    if (attacker->GetMode() == PSCHARACTER_MODE_COMBAT)  // Already fighting
     {
         SetCombat(attacker,stance);  // switch stance from Bloody to Defensive, etc.
         return;
@@ -304,12 +317,12 @@ void CombatManager::SetCombat(gemActor *combatant, Stance stance)
         return;
 
     // Change stance if new and for a player (NPCs don't have different stances)
-    if (combatant->GetClientID() && combatant->GetCharacterData()->GetCombatStance().stance_id != stance.stance_id)
+    if (combatant->GetClientID() && combatant->GetCombatStance().stance_id != stance.stance_id)
     {
         psSystemMessage msg(combatant->GetClientID(), MSG_COMBAT_STANCE, "%s changes to a %s stance", combatant->GetName(), stance.stance_name.GetData() );
         msg.Multicast(combatant->GetMulticastClients(),0,MAX_COMBAT_EVENT_RANGE);
 
-        combatant->GetCharacterData()->SetCombatStance(stance);
+        combatant->SetCombatStance(stance);
     }
 
     combatant->SetMode(PSCHARACTER_MODE_COMBAT); // Set mode and multicast new mode and/or stance
@@ -325,7 +338,7 @@ void CombatManager::StopAttack(gemActor *attacker)
     switch (attacker->GetMode())
     {
         case PSCHARACTER_MODE_SPELL_CASTING:
-            attacker->GetCharacterData()->InterruptSpellCasting();
+            attacker->InterruptSpellCasting();
             break;
         case PSCHARACTER_MODE_COMBAT:
             attacker->SetMode(PSCHARACTER_MODE_PEACE);
@@ -545,7 +558,7 @@ void CombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_result
                     gemTarget->GetClient()->SetTargetObject(gemAttacker,true);
 
                 // The default stance is 'Fully Defensive'.
-                Stance initialStance = gemAttacker->GetCharacterData()->getStance("FullyDefensive");
+                Stance initialStance = GetStance("FullyDefensive");
                 AttackSomeone(gemTarget,gemAttacker,initialStance);
             }
 
@@ -683,7 +696,7 @@ void CombatManager::HandleCombatEvent(psCombatGameEvent *event)
     target_data=event->GetTargetData();
 
     // If the attacker is no longer in attack mode abort.
-    if (attacker_data->GetMode() != PSCHARACTER_MODE_COMBAT)
+    if (gemAttacker->GetMode() != PSCHARACTER_MODE_COMBAT)
     {
         psserver->SendSystemError(event->AttackerCID,
                 "Combat stopped as you left combat mode.");
@@ -773,7 +786,7 @@ void CombatManager::HandleCombatEvent(psCombatGameEvent *event)
         }
     }
 
-    if (attacker_data->IsSpellCasting())
+    if (gemAttacker->IsSpellCasting())
     {
         psserver->SendSystemInfo(event->AttackerCID, "You can't attack while casting spells.");
         skipThisRound = true;

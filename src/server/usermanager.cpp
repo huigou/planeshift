@@ -350,27 +350,20 @@ void UserManager::HandleCharDetailsRequest(MsgEntry *me,Client *client)
 {
     psCharacterDetailsRequestMessage msg(me);
 
-    gemActor *myactor;
+    gemActor *actor;
     if (!msg.isMe)
     {
-        gemObject *target = client->GetTargetObject();
-        if (!target)    return;
-
-        myactor = target->GetActorPtr();
-        if (!myactor) return;
+        actor = dynamic_cast<gemActor*>(client->GetTargetObject());
     }
     else
     {
-        myactor = client->GetActor();
-        if (!myactor) return;
+        actor = client->GetActor();
     }
 
+    if (!actor)
+        return;
 
-    psCharacter* charData = myactor->GetCharacterData();
-    if (!charData) return;
-
-
-    SendCharacterDescription(client, charData, false, msg.isSimple, msg.requestor);
+    SendCharacterDescription(client, actor, false, msg.isSimple, msg.requestor);
 }
 
 csString fmtStatLine(const char *const label, unsigned int value, unsigned int buffed)
@@ -383,8 +376,9 @@ csString fmtStatLine(const char *const label, unsigned int value, unsigned int b
     return s;
 }
 
-void UserManager::SendCharacterDescription(Client * client, psCharacter * charData, bool full, bool simple, const csString & requestor)
+void UserManager::SendCharacterDescription(Client * client, gemActor *actor, bool full, bool simple, const csString & requestor)
 {
+    psCharacter *charData = actor->GetCharacterData();
     StatSet & playerAttr = client->GetCharacterData()->Stats();
     csString meshName = charData->GetActor()->GetMesh();
 
@@ -488,7 +482,7 @@ void UserManager::SendCharacterDescription(Client * client, psCharacter * charDa
     {
         // Don't guess strength if we can't attack the character or if he's
         //  dead or if we are viewing our own description
-        if ( !charData->impervious_to_attack && (charData->GetMode() != PSCHARACTER_MODE_DEAD) && !isSelf )
+        if (!charData->impervious_to_attack && actor->GetMode() != PSCHARACTER_MODE_DEAD && !isSelf)
         {
             if (playerAttr[PSITEMSTATS_STAT_INTELLIGENCE].Current() < 50)
                 desc.AppendFmt( "\n\nYou try to evaluate the strength of %s, but you have no clue.", charName.GetData() );
@@ -1348,7 +1342,7 @@ void UserManager::StopAllCombat(Client *client)
 
 void UserManager::HandleAttack(psUserCmdMessage& msg,Client *client)
 {
-    Attack(client->GetCharacterData()->getStance(msg.stance), client);
+    Attack(CombatManager::GetStance(msg.stance), client);
 }
 
 void UserManager::HandleStopAttack(psUserCmdMessage& msg,Client *client)
@@ -1756,7 +1750,7 @@ void UserManager::HandleTraining(psUserCmdMessage& msg, Client *client)
     if (client->GetActor()->GetMode() != PSCHARACTER_MODE_PEACE)
     {
         csString err;
-        err.Format("You can't train while %s.", client->GetCharacterData()->GetModeStr());
+        err.Format("You can't train while %s.", client->GetActor()->GetModeStr());
         psserver->SendSystemInfo(client->GetClientNum(), err);
         return;
     }
@@ -1801,7 +1795,7 @@ void UserManager::HandleBanking(psUserCmdMessage& msg, Client *client)
     if (client->GetActor()->GetMode() != PSCHARACTER_MODE_PEACE)
     {
         csString err;
-        err.Format("You can't access your bank account while %s.", client->GetCharacterData()->GetModeStr());
+        err.Format("You can't access your bank account while %s.", client->GetActor()->GetModeStr());
         psserver->SendSystemError(client->GetClientNum(), err);
         return;
     }
@@ -2219,7 +2213,7 @@ void UserManager::SwitchAttackTarget(Client *targeter, Client *targeted )
     // If we switch targets while in combat, start attacking the new
     // target, unless we no longer have a target.
     if (targeted)
-        Attack(targeter->GetCharacterData()->GetCombatStance(), targeter);
+        Attack(targeter->GetActor()->GetCombatStance(), targeter);
     else
         psserver->combatmanager->StopAttack(targeter->GetActor());
 }

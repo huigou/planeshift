@@ -117,7 +117,7 @@ public:
       *
       * If 'full' is true, it contains info about HP and basic stats like Strength.
       */
-    void SendCharacterDescription(Client * client, psCharacter * charData, bool full, bool simple, const csString & requestor);
+    void SendCharacterDescription(Client *client, gemActor *actor, bool full, bool simple, const csString & requestor);
 
     void Attack(Stance stance, Client *client);
 

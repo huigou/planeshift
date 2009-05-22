@@ -1901,6 +1901,12 @@ nevertired(false), infinitemana(false), instantcast(false), safefall(false), giv
 
     GetCharacterData()->SetStaminaRegenerationStill();
 
+    player_mode = PSCHARACTER_MODE_PEACE;
+    if (psChar->IsStatue())
+        player_mode = PSCHARACTER_MODE_STATUE;
+    combat_stance = CombatManager::GetStance("None");
+    spellCasting = NULL;
+    workEvent = NULL;
 }
 
 gemActor::~gemActor()
@@ -1945,7 +1951,13 @@ gemActor::~gemActor()
 double gemActor::GetProperty(const char *prop)
 {
     csString property(prop);
-    if (property == "IsAdvisorBanned")
+
+    if (property == "CombatStance")
+    {
+        // Backwards compatibility.
+        return GetCombatStance().stance_id;
+    }
+    else if (property == "IsAdvisorBanned")
     {
         return (double) (GetClient() ? GetClient()->IsAdvisorBanned() : true);
     }
@@ -2226,7 +2238,7 @@ void gemActor::DoDamage(gemActor * attacker, float damage, float damageRate, csT
 
     // Successful attack, if >30% max hp then interrupt spell
     if (damage > psChar->GetMaxHP().Current() * 0.3F)
-        this->GetCharacterData()->InterruptSpellCasting();
+        InterruptSpellCasting();
 
     if (damageRate == 0)
         if(GetCharacterData()->GetHP() - damage < 0)
@@ -2840,6 +2852,135 @@ void gemActor::SetEquipment(const char *equip)
 {
 }
 
+const char* gemActor::GetModeStr()
+{
+    static const char *strs[] = {"unknown","peace","combat","spell casting","working","dead","sitting","carrying too much","exhausted", "defeated", "statued" };
+    return strs[player_mode];
+}
+
+bool gemActor::CanSwitchMode(PSCHARACTER_MODE from, PSCHARACTER_MODE to)
+{
+    switch (to)
+    {
+        case PSCHARACTER_MODE_DEFEATED:
+            return from != PSCHARACTER_MODE_DEAD;
+        case PSCHARACTER_MODE_OVERWEIGHT:
+            return (from != PSCHARACTER_MODE_DEAD &&
+                    from != PSCHARACTER_MODE_DEFEATED);
+        case PSCHARACTER_MODE_EXHAUSTED:
+        case PSCHARACTER_MODE_COMBAT:
+        case PSCHARACTER_MODE_SPELL_CASTING:
+        case PSCHARACTER_MODE_WORK:
+            return (from != PSCHARACTER_MODE_OVERWEIGHT &&
+                    from != PSCHARACTER_MODE_DEAD &&
+                    from != PSCHARACTER_MODE_DEFEATED);
+        case PSCHARACTER_MODE_SIT:
+        case PSCHARACTER_MODE_PEACE:
+        case PSCHARACTER_MODE_DEAD:
+        case PSCHARACTER_MODE_STATUE:
+        default:
+            return true;
+    }
+}
+
+void gemActor::SetMode(PSCHARACTER_MODE newmode, uint32_t extraData)
+{
+    // Assume combat messages need to be sent anyway, because the stance may have changed.
+    // TODO: integrate this with extraData and remove this workaround?
+    if (player_mode == newmode && newmode != PSCHARACTER_MODE_COMBAT)
+        return;
+
+    if (newmode < PSCHARACTER_MODE_PEACE || newmode >= PSCHARACTER_MODE_COUNT)
+    {
+        Error3("Unhandled mode: %d switching to %d", player_mode, newmode);
+        return;
+    }
+
+    if (!CanSwitchMode(player_mode, newmode))
+        return;
+
+    // Force mode to be OVERWEIGHT if encumbered and the proposed mode isn't
+    // more important.
+    if (!psChar->Inventory().HasEnoughUnusedWeight(0) && CanSwitchMode(newmode, PSCHARACTER_MODE_OVERWEIGHT))
+        newmode = PSCHARACTER_MODE_OVERWEIGHT;
+
+    if (newmode != PSCHARACTER_MODE_COMBAT)
+    {
+        SetCombatStance(CombatManager::GetStance("None"));
+    }
+
+    if (newmode == PSCHARACTER_MODE_COMBAT)
+        extraData = combat_stance.stance_id;
+
+    psModeMessage msg(GetClientID(), GetEID(), (uint8_t) newmode, extraData);
+    msg.Multicast(GetMulticastClients(), 0, PROX_LIST_ANY_RANGE);
+
+    bool isFrozen = GetClientID() ? GetClient()->IsFrozen() : false;
+    SetAllowedToMove(newmode != PSCHARACTER_MODE_DEAD &&
+                     newmode != PSCHARACTER_MODE_DEFEATED &&
+                     newmode != PSCHARACTER_MODE_SIT &&
+                     newmode != PSCHARACTER_MODE_EXHAUSTED &&
+                     newmode != PSCHARACTER_MODE_OVERWEIGHT &&
+                     newmode != PSCHARACTER_MODE_STATUE &&
+                     !isFrozen);
+
+    SetAlive(newmode != PSCHARACTER_MODE_DEAD);
+
+    SetAllowedToDisconnect(newmode != PSCHARACTER_MODE_SPELL_CASTING &&
+                           newmode != PSCHARACTER_MODE_COMBAT &&
+                           newmode != PSCHARACTER_MODE_DEFEATED);
+
+    // cancel ongoing work
+    if (player_mode == PSCHARACTER_MODE_WORK && workEvent)
+    {
+        workEvent->Interrupt();
+        workEvent = NULL;
+    }
+
+    switch (newmode)
+    {
+        case PSCHARACTER_MODE_EXHAUSTED:
+        case PSCHARACTER_MODE_COMBAT:
+            psChar->SetStaminaRegenerationStill();  // start stamina regen
+            break;
+
+        case PSCHARACTER_MODE_SIT:
+            psChar->SetStaminaRegenerationSitting();
+            break;
+
+        case PSCHARACTER_MODE_DEAD:
+        case PSCHARACTER_MODE_OVERWEIGHT:
+        case PSCHARACTER_MODE_STATUE:
+            psChar->SetStaminaRegenerationNone();  // no stamina regen while dead or overweight
+            break;
+        case PSCHARACTER_MODE_DEFEATED:
+            psChar->GetHPRate().SetBase(HP_REGEN_RATE);
+            psChar->SetStaminaRegenerationNone();
+            break;
+
+        case PSCHARACTER_MODE_WORK:
+            break;  // work manager sets it's own rates
+        default:
+            break;
+    }
+
+    player_mode = newmode;
+
+    if (newmode == PSCHARACTER_MODE_PEACE || newmode == PSCHARACTER_MODE_SPELL_CASTING)
+        ProcessStamina();
+}
+
+void gemActor::SetCombatStance(const Stance & stance)
+{
+    CS_ASSERT(stance.stance_id >= 0 && stance.stance_id <= CacheManager::GetSingleton().stances.GetSize());
+
+    if (combat_stance.stance_id == stance.stance_id)
+        return;
+
+    combat_stance = stance;
+    Debug3(LOG_COMBAT, pid.Unbox(), "Setting stance to %s for %s", stance.stance_name.GetData(), GetName());
+}
+
 // This function should only be run on initial load
 void gemActor::SetGMDefaults()
 {
@@ -2985,13 +3126,13 @@ void gemActor::ApplyStaminaCalculations(const csVector3& v, float times)
             printf("Not moving\n");
         #endif
 
-        if (psChar->GetMode() == PSCHARACTER_MODE_PEACE || psChar->GetMode() == PSCHARACTER_MODE_SPELL_CASTING)
+        if (GetMode() == PSCHARACTER_MODE_PEACE || GetMode() == PSCHARACTER_MODE_SPELL_CASTING)
             psChar->SetStaminaRegenerationStill();
     }
     else // Moving
     {
         // unwork stuff
-        if (psChar->GetMode() == PSCHARACTER_MODE_WORK )
+        if (GetMode() == PSCHARACTER_MODE_WORK)
         {
             SetMode(PSCHARACTER_MODE_PEACE);
             psserver->SendSystemInfo(GetClientID(),"You stop working.");
@@ -3057,7 +3198,7 @@ void gemActor::ApplyStaminaCalculations(const csVector3& v, float times)
         #endif
 
         // Apply stuff
-        if (psChar->GetMode() == PSCHARACTER_MODE_PEACE || psChar->GetMode() == PSCHARACTER_MODE_SPELL_CASTING)
+        if (GetMode() == PSCHARACTER_MODE_PEACE || GetMode() == PSCHARACTER_MODE_SPELL_CASTING)
         {
             psChar->SetStaminaRegenerationWalk();
             VitalBuffable & pRate = psChar->GetPStaminaRate();
@@ -3113,9 +3254,9 @@ bool gemActor::SetDRData(psDRMessage& drmsg)
         {
             psChar->SetLocationInWorld(worldInstance,sectorInfo, drmsg.pos.x, drmsg.pos.y, drmsg.pos.z, drmsg.yrot );
 
-            if ( psChar->IsSpellCasting() && ( PSABS( drmsg.vel.SquaredNorm() ) > 13.0f ) )
+            if (IsSpellCasting() && PSABS(drmsg.vel.SquaredNorm()) > 13.0f)
             {
-                psChar->InterruptSpellCasting();
+                InterruptSpellCasting();
             }
         }
     }
@@ -3443,11 +3584,11 @@ void gemActor::SendBehaviorMessage(const csString & msg_id, gemObject *actor)
     }
     else if (msg_id == "playerdesc")
         psserver->usermanager->SendCharacterDescription(actor->GetClient(),
-                                                             GetCharacterData(), false, false, "behaviorMsg");
+                                                        this, false, false, "behaviorMsg");
     else if (msg_id == "exchange")
         psserver->exchangemanager->StartExchange(actor->GetClient(), true);
     else if (msg_id == "attack")
-        psserver->usermanager->Attack(actor->GetCharacterData()->getStance("Normal"), actor->GetClient());
+        psserver->usermanager->Attack(CombatManager::GetStance("Normal"), actor->GetClient());
 }
 
 void gemActor::SetAction(const char *anim,csTicks& timeDelay)
@@ -3679,6 +3820,12 @@ gemNPC::~gemNPC()
     npcdialog = NULL;
 }
 
+void gemNPC::SetCombatStance(const Stance & stance)
+{
+    // NPCs don't have stances yet
+    // Stance never changes from PSCHARACTER_STANCE_NORMAL for NPCs
+}
+
 void gemNPC::SetPosition(const csVector3& pos,float angle, iSector* sector)
 {
     gemActor::SetPosition(pos,angle,sector);
@@ -3840,8 +3987,10 @@ csString gemNPC::GetDefaultBehavior(const csString & dfltBehaviors)
     return ::GetDefaultBehavior(dfltBehaviors, behNum);
 }
 
-void gemNPC::SendBehaviorMessage(const csString & msg_id, gemObject *actor)
+void gemNPC::SendBehaviorMessage(const csString & msg_id, gemObject *obj)
 {
+    gemActor *actor = dynamic_cast<gemActor*>(obj);
+    CS_ASSERT(actor);
     unsigned int client = actor->GetClientID();
 
     if ( msg_id == "select" )
@@ -3939,9 +4088,9 @@ void gemNPC::SendBehaviorMessage(const csString & msg_id, gemObject *actor)
         psserver->exchangemanager->StartExchange(actor->GetClient(), false);
     else if (msg_id == "playerdesc")
         psserver->usermanager->SendCharacterDescription(actor->GetClient(),
-                                                        GetCharacterData(), false, false, "behaviorMsg");
+                                                        this, false, false, "behaviorMsg");
     else if (msg_id == "attack")
-        psserver->usermanager->Attack(actor->GetCharacterData()->getStance("Normal"), actor->GetClient());
+        psserver->usermanager->Attack(CombatManager::GetStance("Normal"), actor->GetClient());
     else if (msg_id == "loot")
         psserver->usermanager->Loot(actor->GetClient());
 	else if (msg_id == "talk")

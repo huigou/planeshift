@@ -865,7 +865,6 @@ void SpawnManager::Respawn(InstanceID instance, csVector3& where, float rot, csS
         return;
     }
 
-    chardata->ResetMode();
     chardata->SetLocationInWorld(instance,spawnsector,where.x,where.y,where.z,rot);
     chardata->GetHPRate().SetBase(HP_REGEN_RATE);
     chardata->GetManaRate().SetBase(MANA_REGEN_RATE);

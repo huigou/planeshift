@@ -101,7 +101,7 @@ public:
         if (invitedClient->GetActor()->GetMode() != PSCHARACTER_MODE_PEACE && invitedClient->GetActor()->GetMode() != PSCHARACTER_MODE_SIT && invitedClient->GetActor()->GetMode() != PSCHARACTER_MODE_OVERWEIGHT)
         {
             csString err;
-            err.Format("You can't trade while %s.",invitedClient->GetCharacterData()->GetModeStr());
+            err.Format("You can't trade while %s.", invitedClient->GetActor()->GetModeStr());
             psserver->SendSystemError(invitedClient->GetClientNum(), err);
 
             // Not telling the inviter what the invited client is doing...
@@ -1344,7 +1344,7 @@ void ExchangeManager::StartExchange( Client* client, bool withPlayer )
     if ( client->GetActor()->GetMode() != PSCHARACTER_MODE_PEACE && client->GetActor()->GetMode() != PSCHARACTER_MODE_SIT && client->GetActor()->GetMode() != PSCHARACTER_MODE_OVERWEIGHT )
     {
         csString err;
-        err.Format("You can't trade while %s.",client->GetCharacterData()->GetModeStr());
+        err.Format("You can't trade while %s.", client->GetActor()->GetModeStr());
         psserver->SendSystemInfo(client->GetClientNum(), err);
         return;
     }
