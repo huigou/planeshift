@@ -1,3 +1,9 @@
+*** 2009-05-23 by Kenny Graunke
+- Fixed a bug in pawsButton: I opened the options window, selected a pane,
+  and clicked "Reset", causing a modal Yes/No dialog to appear...but clicking
+  either button gave me "Not still in button so not pressed."  Apparently
+  MainWidget->WidgetAt() was returning the widget below the modal dialog.
+
 *** 2009-05-22 by Kenny Graunke
 - Moved character modes and related data (combat stances, spell cast and work
   events) from psCharacter to gemActor.  Removed a few small things that were

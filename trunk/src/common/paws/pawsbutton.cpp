@@ -377,8 +377,7 @@ bool pawsButton::OnMouseUp( int button, int modifiers, int x, int y )
     if (button != -1)  // triggered by keyboard
     {
         // Check to make sure mouse is still in this button
-        pawsWidget* newWidget = PawsManager::GetSingleton().GetMainWidget()->WidgetAt(x, y);
-        if (newWidget != this)
+        if (!Contains(x,y))
         {
             printf("Not still in button so not pressed.\n");
             return true;
