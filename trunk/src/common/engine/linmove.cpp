@@ -211,7 +211,11 @@ static float Matrix2YRot (const csMatrix3& mat)
   csVector3 vec (0.0f, 0.0f, 1.0f);
   vec = mat * vec;
 
-  return atan2(vec.z, vec.x);
+  float result = atan2(vec.z, vec.x);
+  // force the result in range [0;2*pi]
+  if(result < 0) result += TWO_PI;
+
+  return result;
 }
 
 // --------------------------------------------------------------------------
