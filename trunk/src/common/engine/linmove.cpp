@@ -206,27 +206,12 @@ void psLinearMovement::SetSpeed (float speedZ)
 
 // --------------------------------------------------------------------------
 
-// Small helper function that returns the angle when given an x and y
-// coordinate.
-static float GetAngle (float x, float y)
-{
-  if (x > 1.0f )  x = 1.0f;
-  if (x < -1.0f ) x = -1.0f;
-
-  float angle = acos (x);
-  if (y < 0.0f)
-    //angle *= 1.0f;  // in range (-pi, pi)
-    angle = 2.0f * PI - angle;  // in range (0, 2pi)
-
-  return angle;
-}
-
 static float Matrix2YRot (const csMatrix3& mat)
 {
   csVector3 vec (0.0f, 0.0f, 1.0f);
   vec = mat * vec;
 
-  return GetAngle (vec.z, vec.x);
+  return atan2(vec.z, vec.x);
 }
 
 // --------------------------------------------------------------------------
