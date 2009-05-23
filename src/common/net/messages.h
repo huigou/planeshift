@@ -43,7 +43,7 @@ class psLinearMovement;
 
 // This holds the version number of the network code, remember to increase
 // this each time you do an update which breaks compatibility
-#define PS_NETVERSION   0x009E
+#define PS_NETVERSION   0x009F
 // Remember to bump the version in pscssetup.h, as well.
 
 
@@ -2885,12 +2885,13 @@ class psForcePositionMessage : public psMessageCracker
 {
 public:
     csVector3 pos;       ///< Position vector
+    float yrot;          ///< Rotation around Y-axis in radians
     iSector *sector;     ///< Ptr to sector for mesh
     csString sectorName; ///< Name of the sector
 
     psForcePositionMessage() { }
     psForcePositionMessage(uint32_t client, uint8_t sequence,
-                           const csVector3& pos, iSector *sector,
+                           const csVector3& pos, float yRot, iSector *sector,
                            csStringHashReversible *msgstrings);
     psForcePositionMessage(MsgEntry *me, csStringHashReversible *msgstrings, iEngine *engine);
 

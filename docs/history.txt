@@ -5,6 +5,8 @@
   MainWidget->WidgetAt() was returning the widget below the modal dialog.
 - Fixed the Options window - there were duplicate "PanelParent" widgets
   (one was mislabeled), causing it to fail to show anything on the right.
+- Made teleport set y-rotation, just like it used to.
+  ==> NETVERSION BUMP (0x9F) <==
 
 *** 2009-05-22 by Kenny Graunke
 - Moved character modes and related data (combat stances, spell cast and work

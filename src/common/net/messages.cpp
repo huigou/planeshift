@@ -4450,19 +4450,20 @@ csString psDRMessage::ToString(AccessPointers * /*access_ptrs*/)
 PSF_IMPLEMENT_MSG_FACTORY2(psForcePositionMessage, MSGTYPE_FORCE_POSITION);
 
 psForcePositionMessage::psForcePositionMessage(uint32_t client, uint8_t sequenceNumber,
-                         const csVector3 & pos, iSector *sector,
+                         const csVector3 & pos, float yRot, iSector *sector,
                          csStringHashReversible *msgstrings)
 {
     CS_ASSERT(sector);
     csString sectorName = sector->QueryObject()->GetName();
     csStringID sectorNameStrId = msgstrings ? msgstrings->Request(sectorName) : csInvalidStringID;
 
-	msg.AttachNew(new MsgEntry(sizeof(float)*3 + sizeof(uint8_t) + sizeof(uint32_t) + (sectorNameStrId == csInvalidStringID ? sectorName.Length() + 1 : 0), PRIORITY_HIGH, sequenceNumber));
+	msg.AttachNew(new MsgEntry(sizeof(float)*4 + sizeof(uint8_t) + sizeof(uint32_t) + (sectorNameStrId == csInvalidStringID ? sectorName.Length() + 1 : 0), PRIORITY_HIGH, sequenceNumber));
 
     msg->SetType(MSGTYPE_FORCE_POSITION);
     msg->clientnum = client;
 
     msg->Add(pos);
+    msg->Add(yRot);
 
     msg->Add((uint32_t) sectorNameStrId);
     if (sectorNameStrId == csInvalidStringID)
@@ -4475,6 +4476,7 @@ psForcePositionMessage::psForcePositionMessage(uint32_t client, uint8_t sequence
 psForcePositionMessage::psForcePositionMessage(MsgEntry *me, csStringHashReversible *msgstrings, iEngine *engine)
 {
     pos = me->GetVector();
+    yrot = me->GetFloat();
 
     csStringID sectorNameStrId = (csStringID) me->GetUInt32();
     sectorName = sectorNameStrId != csInvalidStringID ? msgstrings->Request(sectorNameStrId) : me->GetStr();
@@ -4486,6 +4488,7 @@ psForcePositionMessage::psForcePositionMessage(MsgEntry *me, csStringHashReversi
 void psForcePositionMessage::operator=(psForcePositionMessage & other)
 {
     pos    = other.pos;
+    yrot   = other.yrot;
     sector = other.sector;
 }
 
@@ -4493,7 +4496,7 @@ csString psForcePositionMessage::ToString(AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
     msgtext.AppendFmt("Sector: %s ", sectorName.GetDataSafe());
-    msgtext.AppendFmt("Pos(%.2f,%.2f,%.2f)", pos.x, pos.y, pos.z);
+    msgtext.AppendFmt("Pos(%.2f,%.2f,%.2f), yRot: %.2f", pos.x, pos.y, pos.z, yrot);
     return msgtext;
 }
 
