@@ -167,7 +167,6 @@ public:
     void GetPosition(iMeshWrapper *entity, csVector3& pos, float* yrot, iSector*& sector);
 
     static float Matrix2YRot(const csMatrix3& mat);
-    static float GetAngle(float x, float y);
 
     void DumpWarpCache();
 private:

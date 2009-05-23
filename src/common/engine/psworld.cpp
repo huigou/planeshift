@@ -370,19 +370,6 @@ float psWorld::Matrix2YRot(const csMatrix3& mat)
 {
     csVector3 vec(0,0,1);
     vec = mat * vec;
-    vec.Normalize();
 
-    return GetAngle (vec.z, vec.x);
-}
-
-float psWorld::GetAngle(float x, float y)
-{
-    if ( x > 1.0 )  x = 1.0;
-    if ( x < -1.0 ) x = -1.0;
-
-    float angle = acos(x);
-    if (y < 0)
-        angle = 2*PI - angle;
-
-    return angle;
+    return atan2(vec.z, vec.x);
 }
