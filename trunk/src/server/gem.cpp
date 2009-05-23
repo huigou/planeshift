@@ -3324,7 +3324,7 @@ void gemActor::MulticastDRUpdate()
 
 void gemActor::ForcePositionUpdate()
 {
-    psForcePositionMessage msg(GetClientID(), ++forceDRcounter, GetPosition(), GetSector(),
+    psForcePositionMessage msg(GetClientID(), ++forceDRcounter, GetPosition(), GetAngle(), GetSector(),
                                CacheManager::GetSingleton().GetMsgStrings());
     msg.SendMessage();
 }

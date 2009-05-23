@@ -253,7 +253,7 @@ void psClientDR::HandleForcePosition(MsgEntry *me)
     else
     {
         CS_ASSERT(msg.sector);
-        actor->SetPosition(msg.pos, msg.sector);
+        actor->SetPosition(msg.pos, msg.yrot, msg.sector);
     }
 }
 
