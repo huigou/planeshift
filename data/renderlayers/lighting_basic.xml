@@ -1,13 +1,13 @@
 <layerconfig>
+	<staticlights>
+	  <!-- Don't draw static lights for meshes which have the 
+	       CS_ENTITY_STATICLIGHT flag set -->
+	  <nodraw />
+	</staticlights>
 	<layer>
 	      <defaultshader name="lighting_basic" file="/shader/lighting/lighting_basic.xml" />
 	        <!-- Draw layer, even if no lights are present -->
 		<ambient />
-		<staticlights>
-		  <!-- Don't draw static lights for meshes which have the 
-		       CS_ENTITY_STATICLIGHT flag set -->
-		  <nodraw />
-		</staticlights>
 		<maxlightpasses>0</maxlightpasses>
 		<shadertype>base</shadertype>
 		<shadertype>diffuse</shadertype>
