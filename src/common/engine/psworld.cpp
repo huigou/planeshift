@@ -371,5 +371,9 @@ float psWorld::Matrix2YRot(const csMatrix3& mat)
     csVector3 vec(0,0,1);
     vec = mat * vec;
 
-    return atan2(vec.z, vec.x);
+    float result = atan2(vec.z, vec.x);
+    // force the result in range [0;2*pi]
+    if(result < 0) result += TWO_PI;
+
+    return result;
 }
