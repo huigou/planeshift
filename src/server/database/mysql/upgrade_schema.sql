@@ -1201,6 +1201,10 @@ UPDATE `server_options` SET `option_value`='1218' WHERE `option_name`='db_versio
 ALTER TABLE `sectors` ADD COLUMN `say_range` FLOAT(5,2) unsigned NOT NULL DEFAULT '0.0' COMMENT 'Determines the range of say in the specific sector. Set 0.0 to use default.' AFTER `non_transient_objects`;
 UPDATE `server_options` SET `option_value`='1219' WHERE `option_name`='db_version';
 
+#1219 - Stefano Angeleri - Added a setkillexp others access rule and allowed setkillexp to have a target
+
+INSERT INTO command_group_assignment VALUES( "setkillexp others", 30 );
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to
