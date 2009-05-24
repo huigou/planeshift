@@ -233,7 +233,7 @@ protected:
     void Impersonate(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client);
 
     /// Set various GM/debug abilities (invisible, invincible, etc.)
-    void SetAttrib(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client);
+    void SetAttrib(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemActor* target);
 
     /// Set the label color for char
     void SetLabelColor(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemActor * subject);
@@ -414,7 +414,7 @@ protected:
      *  @param msg The cracked command message.
      *  @param client The GM client the command came from.
      */
-    void SetKillExp(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client );
+    void SetKillExp(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemActor* target );
 
     /** @brief Allows to change faction points of players.
      *
