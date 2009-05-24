@@ -450,6 +450,8 @@ int CombatManager::CalculateAttack(psCombatGameEvent *event, psItem* subWeapon)
     MathEnvironment env;
     env.Define("Attacker",              event->GetAttackerData());
     env.Define("Target",                event->GetTargetData());
+    env.Define("AttackerActor",         event->GetAttacker());
+    env.Define("TargetActor",           event->GetTarget());
     env.Define("AttackWeapon",          event->GetAttackerData()->Inventory().GetEffectiveWeaponInSlot(event->GetWeaponSlot()));
     env.Define("AttackWeaponSecondary", subWeapon);
     // FIXME: The original code defined and redefined TargetAttackWeapon, which can't be right.
