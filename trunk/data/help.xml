@@ -714,10 +714,10 @@ Set the color of the label of target to the given value. The normal setting will
         <topic name="/setitemname">/setitemname [target/eid/area/original name] [name] [description]
 
 Allows changing the name and description of the targeted item. Description is optional.</topic>
-        <topic name="/setkillexp">/setkillexp [exp amount]
+        <topic name="/setkillexp">/setkillexp [target] [exp amount]
 
-Allows to set the experience (not measured in PP) the gm will give to who kills him.
-This command doesn't support targeting and it's temporary.</topic>
+Allows to set the experience (not measured in PP) the target will give to who kills him.
+This command is temporary. Target is optional.</topic>
         <topic name="/setquality">/setquality [target/eid/area/name] [quality] [max quality]
 
 Allows changing the quality of the targeted item. Max quality is optional.</topic>

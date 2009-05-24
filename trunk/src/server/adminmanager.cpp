@@ -646,7 +646,15 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
     else if (command == "/set")
     {
         attribute = words[1];
-        setting = words[2];
+        if(words[2] == "on" || words[2] == "off")
+        {
+            setting = words[2];
+            player = words[3];
+        }
+        else
+        {
+            player = words[2];
+        }
         return true;
     }
     else if (command == "/setlabelcolor")
@@ -1033,9 +1041,17 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         subCmd  = words[2]; //save = save to db
         return true;
     }
-    else if (command == "/setkillexp") //allows to set the exp which will be given when killed. It doesn't support targeting on purpose
+    else if (command == "/setkillexp") //allows to set the exp which will be given when killed.
     {
-        value = words.GetInt(1);
+        if (words.GetCount() > 2)
+        {
+            player = words[1];
+            value = words.GetInt(2);
+        }
+        else
+        {
+            value = words.GetInt(1);
+        }
         return true;
     }
     else if (command == "/assignfaction")
@@ -1370,7 +1386,7 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, Client *client)
     }
     else if (data.command == "/set")
     {
-        SetAttrib(me, msg, data, client);
+        SetAttrib(me, msg, data, client, targetactor);
     }
     else if (data.command == "/setlabelcolor")
     {
@@ -1446,7 +1462,7 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, Client *client)
     }
     else if (data.command == "/setkillexp")
     {
-        SetKillExp(me, msg, data, client);
+        SetKillExp(me, msg, data, client, targetactor);
     }
     else if (data.command == "/assignfaction")
     {
@@ -1997,9 +2013,14 @@ void AdminManager::CreateHuntLocation(MsgEntry* me,psAdminCmdMessage& msg, Admin
     psserver->SendSystemInfo(me->clientnum,"New hunt location created!");
 }
 
-void AdminManager::SetAttrib(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client)
+void AdminManager::SetAttrib(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemActor* target)
 {
-    gemActor * actor = client->GetActor();
+    gemActor * actor;
+    //if there is a target take it else consider the gm issuing the command
+    if(target && psserver->CheckAccess(client, "move others"))
+        actor = target;
+    else
+        actor = client->GetActor();
 
     bool onoff = false;
     bool toggle = false;
@@ -8020,7 +8041,7 @@ void AdminManager::DisableQuest(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDa
     psserver->SendSystemInfo(client->GetClientNum(),"The quest %s was %s successfully.", quest->GetName(), quest->Active() ? "enabled" : "disabled");
 }
 
-void AdminManager::SetKillExp(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client )
+void AdminManager::SetKillExp(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemActor* target)
 {
     if(data.value < 0)
     {
@@ -8028,16 +8049,30 @@ void AdminManager::SetKillExp(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         return;
     }
 
-    if(client->GetActor() && client->GetActor()->GetCharacterData())
+    gemActor *actor;
+
+    if(!data.player.Length())
+        actor = client->GetActor();
+    else
+        actor = target;
+
+    //check access
+    if(actor != client->GetActor() && !psserver->CheckAccess(client, "setkillexp others", false))
     {
-        client->GetActor()->GetCharacterData()->SetKillExperience(data.value);
+        psserver->SendSystemInfo(client->GetClientNum(),"You are not allowed to setkillexp others.");
+        return;
+    }
+
+    if(actor && actor->GetCharacterData())
+    {
+        actor->GetCharacterData()->SetKillExperience(data.value);
         //tell the user that everything went fine
-        psserver->SendSystemInfo(client->GetClientNum(),"When killed you will now automatically award %d experience",data.value);
+        psserver->SendSystemInfo(client->GetClientNum(),"When killed the target will now automatically award %d experience",data.value);
     }
     else
     {
         //tell the user that everything went wrong
-        psserver->SendSystemInfo(client->GetClientNum(),"Unable to find your characterData.");
+        psserver->SendSystemInfo(client->GetClientNum(),"Unable to find target.");
     }
 }
 
