@@ -103,6 +103,7 @@ protected:
     WeatherInfo*                parent;
     csRef<iMeshWrapper>         mesh;
     csRef<iMeshFactoryWrapper>  mfw;
+    csRef<iMaterialWrapper>     mat;
 
     csRef<iSndSysSource>        weather_sound;  // looping background weather sound
 };

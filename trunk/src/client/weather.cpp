@@ -209,7 +209,6 @@ void RainWeatherObject::MoveTo(WeatherInfo* wi,iSector* sect)
 
 bool RainWeatherObject::CreateMesh()
 {
-    csRef<iMaterialWrapper> mat;
     if(!mfw)
     {
         // Create new rain
@@ -361,7 +360,6 @@ void SnowWeatherObject::MoveTo(WeatherInfo* wi,iSector* sect)
 
 bool SnowWeatherObject::CreateMesh()
 {
-    csRef<iMaterialWrapper> mat;
     if(!mfw)
     {
         // Create new snow
