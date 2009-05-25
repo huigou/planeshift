@@ -209,9 +209,19 @@ void RainWeatherObject::MoveTo(WeatherInfo* wi,iSector* sect)
 
 bool RainWeatherObject::CreateMesh()
 {
-    // Create new rain
-    iTextureWrapper* t = psengine->GetEngine()->CreateTexture("raindrop", "/this/art/effects/raindrop.dds", 0, 0);
-    csRef<iMaterialWrapper> mat = psengine->GetEngine()->CreateMaterial("raindrop", t);
+    csRef<iMaterialWrapper> mat;
+    if(!mfw)
+    {
+        // Create new rain
+        iTextureWrapper* t = psengine->GetEngine()->CreateTexture("raindrop", "/this/art/effects/raindrop.dds", 0, 0);
+        mat = psengine->GetEngine()->CreateMaterial("raindrop", t);
+        mfw = psengine->GetEngine ()->CreateMeshFactory ("crystalspace.mesh.object.particles", "rain");
+        if (!mfw)
+        {
+          Bug1("Could not create rain factory.");
+          return false;
+        }
+    }
 
     // Get the sector
     iSector* sector = psengine->GetEngine()->FindSector(parent->sector);
@@ -351,12 +361,23 @@ void SnowWeatherObject::MoveTo(WeatherInfo* wi,iSector* sect)
 
 bool SnowWeatherObject::CreateMesh()
 {
-    // Create new snow
-    iTextureWrapper* t = psengine->GetEngine()->CreateTexture("snowflake", "/this/art/effects/snow.dds", 0, 0);
-    csRef<iMaterialWrapper> mat = psengine->GetEngine()->CreateMaterial("snowflake", t);
+    csRef<iMaterialWrapper> mat;
+    if(!mfw)
+    {
+        // Create new snow
+        iTextureWrapper* t = psengine->GetEngine()->CreateTexture("snowflake", "/this/art/effects/snow.dds", 0, 0);
+        mat = psengine->GetEngine()->CreateMaterial("snowflake", t);
+        mfw = psengine->GetEngine ()->CreateMeshFactory ("crystalspace.mesh.object.particles", "snow");
+        if (!mfw)
+        {
+            Bug1("Could not create snow factory.");
+            return false;
+        }
+    }
 
     // Get the sector
     iSector* sector = psengine->GetEngine()->FindSector(parent->sector);
+
         
     // Create the mesh
     mesh = psengine->GetEngine ()->CreateMeshWrapper(mfw, "snow", sector,
