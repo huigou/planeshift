@@ -210,25 +210,8 @@ void RainWeatherObject::MoveTo(WeatherInfo* wi,iSector* sect)
 bool RainWeatherObject::CreateMesh()
 {
     // Create new rain
-    const char *matname = "raindrop";
-    float speed = 5;
-
-    // Attempt to fetch material.
-    csRef<iMaterialWrapper> mat = psengine->GetLoader()->LoadMaterial(matname);
-    while (!mat)
-    {
-        mat = psengine->GetLoader()->LoadMaterial(matname);
-    }
-
-    if(!mfw)
-    {
-        mfw = psengine->GetEngine ()->CreateMeshFactory ("crystalspace.mesh.object.particles", "rain");
-        if (!mfw)
-        {
-            Bug1("Could not create rain factory.");
-            return false;
-        }
-    }
+    iTextureWrapper* t = psengine->GetEngine()->CreateTexture("raindrop", "/this/art/effects/raindrop.dds", 0, 0);
+    csRef<iMaterialWrapper> mat = psengine->GetEngine()->CreateMaterial("raindrop", t);
 
     // Get the sector
     iSector* sector = psengine->GetEngine()->FindSector(parent->sector);
@@ -255,7 +238,7 @@ bool RainWeatherObject::CreateMesh()
     boxemit->SetInitialMass (5.0f, 7.5f);
     boxemit->SetUniformVelocity (true);
     boxemit->SetInitialTTL (2.5f, 2.5f);
-    boxemit->SetInitialVelocity (csVector3 (0, -speed, 0), csVector3 (0));
+    boxemit->SetInitialVelocity (csVector3 (0, -5, 0), csVector3 (0));
 
     csRef<iParticleBuiltinEffectorLinColor> lincol = eff_factory->
         CreateLinColor ();
@@ -369,25 +352,8 @@ void SnowWeatherObject::MoveTo(WeatherInfo* wi,iSector* sect)
 bool SnowWeatherObject::CreateMesh()
 {
     // Create new snow
-    const char *matname = "snowflake";
-    float speed = 1.5f;
-
-    // Attempt to fetch material.
-    csRef<iMaterialWrapper> mat = psengine->GetLoader()->LoadMaterial(matname);
-    while (!mat)
-    {
-        mat = psengine->GetLoader()->LoadMaterial(matname);
-    }
-
-    if(!mfw)
-    {
-        mfw = psengine->GetEngine ()->CreateMeshFactory ("crystalspace.mesh.object.particles", "snow");
-        if (!mfw)
-        {
-            Bug1("Could not create snow factory.");
-            return false;
-        }
-    }
+    iTextureWrapper* t = psengine->GetEngine()->CreateTexture("snowflake", "/this/art/effects/snow.dds", 0, 0);
+    csRef<iMaterialWrapper> mat = psengine->GetEngine()->CreateMaterial("snowflake", t);
 
     // Get the sector
     iSector* sector = psengine->GetEngine()->FindSector(parent->sector);
@@ -414,7 +380,7 @@ bool SnowWeatherObject::CreateMesh()
     boxemit->SetInitialMass (5.0f, 7.5f);
     boxemit->SetUniformVelocity (true);
     boxemit->SetInitialTTL (5.0f, 5.0f);
-    boxemit->SetInitialVelocity (csVector3 (0, -speed, 0), csVector3 (0));
+    boxemit->SetInitialVelocity (csVector3 (0, -1.5f, 0), csVector3 (0));
 
     csRef<iParticleBuiltinEffectorLinColor> lincol = eff_factory->
         CreateLinColor ();
