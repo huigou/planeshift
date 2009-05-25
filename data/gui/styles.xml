@@ -210,4 +210,8 @@
         <defaultstyle widget="pawsMultilineEditTextBox" style="New Standard MLE"/>
         <defaultstyle widget="pawsCheckBox"             style="New Standard Checkbox"/>
     </style>
+
+    <style name="QuestionBox" inherit="New Standard GUI">
+        <bgimage resource="YesNo" alpha="0"/>
+    </style>
 </styles>

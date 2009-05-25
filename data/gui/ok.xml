@@ -2,7 +2,7 @@
 
 <pawsOkBox name="OkWindow" 
            visible="no" savepositions="no" movable="yes" 
-           resizable="no" style="New Standard GUI" >
+           resizable="no" style="QuestionBox">
        
     <frame x="0" y="0" width="644" height="300" border="no" />
     

@@ -1,3 +1,6 @@
+*** 2009-05-25 by Kenny Graunke
+- Fixed Yes/No and OK dialogs to have a background.
+
 *** 2009-05-23 by Kenny Graunke
 - Fixed a bug in pawsButton: I opened the options window, selected a pane,
   and clicked "Reset", causing a modal Yes/No dialog to appear...but clicking
