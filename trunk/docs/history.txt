@@ -1,3 +1,6 @@
+*** 2009-05-26 by Stefano Angeleri
+- Added targeting support to /set (setattrib) and /setkillexp
+
 *** 2009-05-25 by Kenny Graunke
 - Fixed Yes/No and OK dialogs to have a background.
 
@@ -46,7 +49,7 @@
 - Made sentence splitting also for ? and !. Now they are threated just
   like "." in quests.
 - Fixed harcoded category ids checks in the items details data
-- bumped to cg to 2.2
+- bumped cg to 2.2
 
 *** 2009-05-14 by Kenny Graunke
 - Removed loot modifiers which used "target", "wielder", "attack_value",
