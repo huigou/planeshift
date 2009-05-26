@@ -693,10 +693,10 @@ Reloads the currently targeted item from the database.</topic>
 <topic name="/runscript">/runscript [script_name] [me/target/eid/pid/area/name]
 
 Runs a progression script on the target.</topic>
-        <topic name="/set">/set attribute on|off
+        <topic name="/set">/set target attribute on|off
 
 Many of these attribute are enabled by default for GMs.
-You can also do "/set list" to view your current attributes.
+You can also do "/set me list" to view your current attributes.
 
 Available attributes are:
 - invincible
