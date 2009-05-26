@@ -392,6 +392,7 @@ INSERT INTO `command_group_assignment` (`command_name`, `group_member`) VALUES
 	('view stats',24),
 	('view stats',25),
 	('view stats',30),
+    ('setattrib others',30),
     ('setkillexp others',30);
 /*!40000 ALTER TABLE `command_group_assignment` ENABLE KEYS*/;
 UNLOCK TABLES;
