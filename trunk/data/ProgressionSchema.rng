@@ -158,10 +158,6 @@
           </attribute>
         </element>
 
-        <element name="createfamiliar">
-          <attribute name="aim"/>
-        </element>
-
         <!-- TODO: summon -->
         <element name="fog">
           <optional>
