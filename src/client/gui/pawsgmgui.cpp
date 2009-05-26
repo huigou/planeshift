@@ -353,73 +353,73 @@ bool pawsGmGUIWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
     //////////////////////////////////////////
     case 1250:// list
     {
-        cmd.Format("/set list");
+        cmd.Format("/set me list");
         confirm = false;
         break;
     }
     case 1251:// invincible
     {
-        cmd.Format("/set invincible"); // Toggle
+        cmd.Format("/set me invincible"); // Toggle
         confirm = false;
         break;
     }
     case 1252:// invisible
     {
-        cmd.Format("/set invisible"); // Toggle
+        cmd.Format("/set me invisible"); // Toggle
         confirm = false;
         break;
     }
     case 1253:// viewall
     {
-        cmd.Format("/set viewall"); // Toggle
+        cmd.Format("/set me viewall"); // Toggle
         confirm = false;
         break;
     }
     case 1254:// nevertired
     {
-        cmd.Format("/set nevertired"); // Toggle
+        cmd.Format("/set me nevertired"); // Toggle
         confirm = false;
         break;
     }
     case 1255:// nofalldamage
     {
-        cmd.Format("/set nofalldamage"); // Toggle
+        cmd.Format("/set me nofalldamage"); // Toggle
         confirm = false;
         break;
     }
     case 1256:// infiniteinventory
     {
-        cmd.Format("/set infiniteinventory"); // Toggle
+        cmd.Format("/set me infiniteinventory"); // Toggle
         confirm = false;
         break;
     }
     case 1257:// questtester
     {
-        cmd.Format("/set questtester"); // Toggle
+        cmd.Format("/set me questtester"); // Toggle
         confirm = false;
         break;
     }
     case 1258:// infinitemana
     {
-        cmd.Format("/set infinitemana"); // Toggle
+        cmd.Format("/set me infinitemana"); // Toggle
         confirm = false;
         break;
     }
     case 1259:// instantcast
     {
-        cmd.Format("/set instantcast"); // Toggle
+        cmd.Format("/set me instantcast"); // Toggle
         confirm = false;
         break;
     }
     case 1267:// instantcast
     {
-        cmd.Format("/set givekillexp"); // Toggle
+        cmd.Format("/set me givekillexp"); // Toggle
         confirm = false;
         break;
     }
     case 1268:// instantcast
     {
-        cmd.Format("/set attackable"); // Toggle
+        cmd.Format("/set me attackable"); // Toggle
         confirm = false;
         break;
     }

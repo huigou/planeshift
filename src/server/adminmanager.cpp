@@ -645,16 +645,9 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
     }
     else if (command == "/set")
     {
-        attribute = words[1];
-        if(words[2] == "on" || words[2] == "off")
-        {
-            setting = words[2];
-            player = words[3];
-        }
-        else
-        {
-            player = words[2];
-        }
+        player = words[1];
+        attribute = words[2];
+        setting = words[3];
         return true;
     }
     else if (command == "/setlabelcolor")
@@ -2017,10 +2010,16 @@ void AdminManager::SetAttrib(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
 {
     gemActor * actor;
     //if there is a target take it else consider the gm issuing the command
-    if(target && psserver->CheckAccess(client, "move others"))
+    if(target)
         actor = target;
     else
         actor = client->GetActor();
+        
+    if(actor != client->GetActor() && !psserver->CheckAccess(client, "setattrib others"))
+    {
+        psserver->SendSystemInfo(me->clientnum, "You are not allowed to use this command on others");
+        return;
+    }
 
     bool onoff = false;
     bool toggle = false;
