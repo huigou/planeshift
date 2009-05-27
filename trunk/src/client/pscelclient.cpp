@@ -1931,7 +1931,10 @@ void GEMClientItem::UpdateItem( psPersistItem& mesg )
     sector = mesg.sector;
     flags = mesg.flags;
 
-    PostLoad(false);
+    if(pcmesh.IsValid())
+    {
+      PostLoad(false);
+    }
 }
 
 GEMClientActionLocation::GEMClientActionLocation( psCelClient* cel, psPersistActionLocation& mesg )
