@@ -1741,7 +1741,7 @@ gemActionLocation::gemActionLocation(psActionLocation *action, iSector *isec, in
     this->prox_distance_desired = 0.0F;
     this->prox_distance_current = 0.0F;
 
-    visible = false;
+    visible = true;
 
     SetName(name);
 
