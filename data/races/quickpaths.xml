@@ -13,7 +13,7 @@
 		<SkillBonus name="Body Development" rank="2" />
 		<Advantage name="Hard Skin" />
 	</path>
-	<path name="Enchanter" info="The enchanter is a pure wizard. She devotes herself to the study of the highest forms of magic, the kind of energies correlated to the light, the mind, and the very dweomer. Of course, every citizen has to learn a little about defending themselves as well." parents="Both parents work at the inn that they own." life="our fascination with magic started at an early age, when you hang around various way masters.">
+	<path name="Enchanter" info="The enchanter is a pure wizard. She devotes herself to the study of the highest forms of magic, the kind of energies correlated to the light, the mind, and the very dweomer. Of course, every citizen has to learn a little about defending themselves as well." parents="Both parents work at the inn that they own." life="Your fascination with magic started at an early age, when you hang around various way masters.">
 		<StatBonus name="Strength" value="0" />
 		<StatBonus name="Endurance" value="0" />
 		<StatBonus name="Agility" value="0.25" />
