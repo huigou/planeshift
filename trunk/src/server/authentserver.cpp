@@ -244,7 +244,7 @@ void AuthenticationServer::HandleAuthent(MsgEntry *me, Client *notused)
     if ( !acctinfo )
     {
         // invalid
-        psserver->RemovePlayer(me->clientnum,"No account found with that name");
+        psserver->RemovePlayer(me->clientnum,"Incorrect password or username.");
 
         Notify2(LOG_CONNECTIONS,"User '%s' authentication request rejected: No account found with that name.\n",
                 (const char *)msg.sUser);            
@@ -262,7 +262,7 @@ void AuthenticationServer::HandleAuthent(MsgEntry *me, Client *notused)
     csString encoded_hash = csMD5::Encode(passwordhashandclientnum).HexString();
     if (strcmp( encoded_hash.GetData() , msg.sPassword.GetData())) // authentication error
     {
-        psserver->RemovePlayer(me->clientnum, "Incorrect password.");
+        psserver->RemovePlayer(me->clientnum, "Incorrect password or username.");
         Notify2(LOG_CONNECTIONS,"User '%s' authentication request rejected (Bad password).",(const char *)msg.sUser);
         // No delete necessary because AddToCache will auto-delete
         // delete acctinfo;
