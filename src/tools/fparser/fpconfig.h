@@ -1,6 +1,8 @@
-//================================
-// Function parser v3.1.3 by Warp
-//================================
+/***************************************************************************\
+|* Function Parser for C++ v3.1.4                                          *|
+|*-------------------------------------------------------------------------*|
+|* Copyright: Juha Nieminen                                                *|
+\***************************************************************************/
 
 // Configuration file
 // ------------------
@@ -74,3 +76,9 @@
  */
 //#define FP_USE_THREAD_SAFE_EVAL
 //#define FP_USE_THREAD_SAFE_EVAL_WITH_ALLOCA
+
+/*
+ Uncomment (or define in your compiler options) to disable evaluation checks.
+ (Consult the documentation for details.)
+ */
+//#define FP_NO_EVALUATION_CHECKS

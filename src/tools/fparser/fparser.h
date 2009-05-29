@@ -1,9 +1,7 @@
 /***************************************************************************\
-|* Function parser v3.1.3 by Warp                                          *|
-|* ------------------------------                                          *|
-|* Parses and evaluates the given function with the given variable values. *|
-|* See fparser.txt for details.                                            *|
-|*                                                                         *|
+|* Function Parser for C++ v3.1.4                                          *|
+|*-------------------------------------------------------------------------*|
+|* Copyright: Juha Nieminen                                                *|
 \***************************************************************************/
 
 #ifndef ONCE_FPARSER_H_

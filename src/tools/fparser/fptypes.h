@@ -1,6 +1,8 @@
-//================================
-// Function parser v3.1.3 by Warp
-//================================
+/***************************************************************************\
+|* Function Parser for C++ v3.1.4                                          *|
+|*-------------------------------------------------------------------------*|
+|* Copyright: Juha Nieminen                                                *|
+\***************************************************************************/
 
 // NOTE:
 // This file contains only internal types for the function parser library.
@@ -48,6 +50,7 @@ namespace FUNCTIONPARSERTYPES
         cSqr,   /* squares the last operand in the stack, no push/pop */
         cRDiv,  /* reverse division (not x/y, but y/x) */
         cRSub,  /* reverse subtraction (not x-y, but y-x) */
+        cRSqrt, /* inverse square-root) */
         cNotNot, /* Protects the double-not sequence from optimizations */
 #endif
 
