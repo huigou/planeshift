@@ -224,23 +224,16 @@ MathScript* MathScript::Create(const char *name, const csString & script)
 
     while (start < script.Length())
     {
-        if(script.Slice(start).RTrim().GetAt(0) == '\r') //skips new lines
+        if(script.Slice(start).Trim().GetAt(0) == '\r' || script.Slice(start).RTrim().GetAt(0) == '\n') //skips new lines
         {
-            semicolonAt = script.FindFirst('\r', start);
+            semicolonAt = script.FindFirst("\r\n", start);
             start = semicolonAt+1;
             continue;
         }
 
-        if(script.Slice(start).RTrim().GetAt(0) == '\n')
+        if(script.Slice(start).Trim().StartsWith("//")) //manages full line comments like this
         {
-            semicolonAt = script.FindFirst('\n', start);
-            start = semicolonAt+1;
-            continue;
-        }
-
-        if(script.Slice(start).RTrim().StartsWith("//")) //manages full line comments like this
-        {
-            semicolonAt = script.FindFirst('\n', start);
+            semicolonAt = script.FindFirst("\r\n", start);
             if(semicolonAt == SIZET_NOT_FOUND)
                 semicolonAt = script.Length();
 
