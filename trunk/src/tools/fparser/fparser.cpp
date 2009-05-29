@@ -1,6 +1,8 @@
-//================================
-// Function parser v3.1.3 by Warp
-//================================
+/***************************************************************************\
+|* Function Parser for C++ v3.1.4                                          *|
+|*-------------------------------------------------------------------------*|
+|* Copyright: Juha Nieminen                                                *|
+\***************************************************************************/
 
 #include "fpconfig.h"
 #include "fparser.h"
@@ -1056,43 +1058,64 @@ double FunctionParser::Eval(const double* Vars)
         {
 // Functions:
           case   cAbs: Stack[SP] = fabs(Stack[SP]); break;
-          case  cAcos: if(Stack[SP] < -1 || Stack[SP] > 1)
+
+          case  cAcos:
+#                    ifndef FP_NO_EVALUATION_CHECKS
+                       if(Stack[SP] < -1 || Stack[SP] > 1)
                        { evalErrorType=4; return 0; }
+#                    endif
                        Stack[SP] = acos(Stack[SP]); break;
-#ifndef FP_NO_ASINH
+
+#       ifndef FP_NO_ASINH
           case cAcosh: Stack[SP] = acosh(Stack[SP]); break;
-#endif
-          case  cAsin: if(Stack[SP] < -1 || Stack[SP] > 1)
+#       endif
+
+          case  cAsin:
+#                    ifndef FP_NO_EVALUATION_CHECKS
+                       if(Stack[SP] < -1 || Stack[SP] > 1)
                        { evalErrorType=4; return 0; }
+#                    endif
                        Stack[SP] = asin(Stack[SP]); break;
-#ifndef FP_NO_ASINH
+
+#       ifndef FP_NO_ASINH
           case cAsinh: Stack[SP] = asinh(Stack[SP]); break;
-#endif
+#       endif
+
           case  cAtan: Stack[SP] = atan(Stack[SP]); break;
+
           case cAtan2: Stack[SP-1] = atan2(Stack[SP-1], Stack[SP]);
                        --SP; break;
-#ifndef FP_NO_ASINH
+
+#       ifndef FP_NO_ASINH
           case cAtanh: Stack[SP] = atanh(Stack[SP]); break;
-#endif
+#       endif
+
           case  cCeil: Stack[SP] = ceil(Stack[SP]); break;
+
           case   cCos: Stack[SP] = cos(Stack[SP]); break;
+
           case  cCosh: Stack[SP] = cosh(Stack[SP]); break;
 
           case   cCot:
               {
-                  double t = tan(Stack[SP]);
+                  const double t = tan(Stack[SP]);
+#               ifndef FP_NO_EVALUATION_CHECKS
                   if(t == 0) { evalErrorType=1; return 0; }
+#               endif
                   Stack[SP] = 1/t; break;
               }
+
           case   cCsc:
               {
-                  double s = sin(Stack[SP]);
+                  const double s = sin(Stack[SP]);
+#               ifndef FP_NO_EVALUATION_CHECKS
                   if(s == 0) { evalErrorType=1; return 0; }
+#               endif
                   Stack[SP] = 1/s; break;
               }
 
 
-#ifndef FP_DISABLE_EVAL
+#       ifndef FP_DISABLE_EVAL
           case  cEval:
               {
                   const unsigned varAmount =
@@ -1105,23 +1128,24 @@ double FunctionParser::Eval(const double* Vars)
                   else
                   {
                       ++evalRecursionLevel;
-#ifndef FP_USE_THREAD_SAFE_EVAL
+#                   ifndef FP_USE_THREAD_SAFE_EVAL
                       std::vector<double> tmpStack(Stack.size());
                       data->Stack.swap(tmpStack);
                       retVal = Eval(&tmpStack[SP - varAmount + 1]);
                       data->Stack.swap(tmpStack);
-#else
+#                   else
                       retVal = Eval(&Stack[SP - varAmount + 1]);
-#endif
+#                   endif
                       --evalRecursionLevel;
                   }
                   SP -= varAmount-1;
                   Stack[SP] = retVal;
                   break;
               }
-#endif
+#       endif
 
           case   cExp: Stack[SP] = exp(Stack[SP]); break;
+
           case cFloor: Stack[SP] = floor(Stack[SP]); break;
 
           case    cIf:
@@ -1137,36 +1161,63 @@ double FunctionParser::Eval(const double* Vars)
               }
 
           case   cInt: Stack[SP] = floor(Stack[SP]+.5); break;
-          case   cLog: if(Stack[SP] <= 0) { evalErrorType=3; return 0; }
+
+          case   cLog:
+#                    ifndef FP_NO_EVALUATION_CHECKS
+                       if(Stack[SP] <= 0) { evalErrorType=3; return 0; }
+#                    endif
                        Stack[SP] = log(Stack[SP]); break;
-          case  cLog2: if(Stack[SP] <= 0) { evalErrorType=3; return 0; }
+
+          case  cLog2:
+#                    ifndef FP_NO_EVALUATION_CHECKS
+                       if(Stack[SP] <= 0) { evalErrorType=3; return 0; }
+#                    endif
                        Stack[SP] = log(Stack[SP]) * 1.4426950408889634074;
                        //Stack[SP] = log2(Stack[SP]);
                        break;
-          case cLog10: if(Stack[SP] <= 0) { evalErrorType=3; return 0; }
+
+          case cLog10:
+#                    ifndef FP_NO_EVALUATION_CHECKS
+                       if(Stack[SP] <= 0) { evalErrorType=3; return 0; }
+#                    endif
                        Stack[SP] = log10(Stack[SP]); break;
+
           case   cMax: Stack[SP-1] = Max(Stack[SP-1], Stack[SP]);
                        --SP; break;
+
           case   cMin: Stack[SP-1] = Min(Stack[SP-1], Stack[SP]);
                        --SP; break;
+
           case   cPow: Stack[SP-1] = pow(Stack[SP-1], Stack[SP]);
                        --SP; break;
+
           case   cSec:
               {
-                  double c = cos(Stack[SP]);
+                  const double c = cos(Stack[SP]);
+#               ifndef FP_NO_EVALUATION_CHECKS
                   if(c == 0) { evalErrorType=1; return 0; }
+#               endif
                   Stack[SP] = 1/c; break;
               }
+
           case   cSin: Stack[SP] = sin(Stack[SP]); break;
+
           case  cSinh: Stack[SP] = sinh(Stack[SP]); break;
-          case  cSqrt: if(Stack[SP] < 0) { evalErrorType=2; return 0; }
+
+          case  cSqrt:
+#                    ifndef FP_NO_EVALUATION_CHECKS
+                       if(Stack[SP] < 0) { evalErrorType=2; return 0; }
+#                    endif
                        Stack[SP] = sqrt(Stack[SP]); break;
+
           case   cTan: Stack[SP] = tan(Stack[SP]); break;
+
           case  cTanh: Stack[SP] = tanh(Stack[SP]); break;
 
 
 // Misc:
           case cImmed: Stack[++SP] = Immed[DP++]; break;
+
           case  cJump: DP = ByteCode[IP+2];
                        IP = ByteCode[IP+1];
                        break;
@@ -1176,9 +1227,17 @@ double FunctionParser::Eval(const double* Vars)
           case   cAdd: Stack[SP-1] += Stack[SP]; --SP; break;
           case   cSub: Stack[SP-1] -= Stack[SP]; --SP; break;
           case   cMul: Stack[SP-1] *= Stack[SP]; --SP; break;
-          case   cDiv: if(Stack[SP] == 0) { evalErrorType=1; return 0; }
+
+          case   cDiv:
+#                    ifndef FP_NO_EVALUATION_CHECKS
+                       if(Stack[SP] == 0) { evalErrorType=1; return 0; }
+#                    endif
                        Stack[SP-1] /= Stack[SP]; --SP; break;
-          case   cMod: if(Stack[SP] == 0) { evalErrorType=1; return 0; }
+
+          case   cMod:
+#                    ifndef FP_NO_EVALUATION_CHECKS
+                       if(Stack[SP] == 0) { evalErrorType=1; return 0; }
+#                    endif
                        Stack[SP-1] = fmod(Stack[SP-1], Stack[SP]);
                        --SP; break;
 
@@ -1186,29 +1245,39 @@ double FunctionParser::Eval(const double* Vars)
           case cEqual: Stack[SP-1] =
                            (fabs(Stack[SP-1]-Stack[SP]) <= FP_EPSILON);
                        --SP; break;
+
           case cNEqual: Stack[SP-1] =
                             (fabs(Stack[SP-1] - Stack[SP]) >= FP_EPSILON);
                        --SP; break;
+
           case  cLess: Stack[SP-1] = (Stack[SP-1] < Stack[SP]-FP_EPSILON);
                        --SP; break;
+
           case  cLessOrEq: Stack[SP-1] = (Stack[SP-1] <= Stack[SP]+FP_EPSILON);
                        --SP; break;
+
           case cGreater: Stack[SP-1] = (Stack[SP-1]-FP_EPSILON > Stack[SP]);
                          --SP; break;
+
           case cGreaterOrEq: Stack[SP-1] =
                                  (Stack[SP-1]+FP_EPSILON >= Stack[SP]);
                          --SP; break;
 #else
           case cEqual: Stack[SP-1] = (Stack[SP-1] == Stack[SP]);
                        --SP; break;
+
           case cNEqual: Stack[SP-1] = (Stack[SP-1] != Stack[SP]);
                        --SP; break;
+
           case  cLess: Stack[SP-1] = (Stack[SP-1] < Stack[SP]);
                        --SP; break;
+
           case  cLessOrEq: Stack[SP-1] = (Stack[SP-1] <= Stack[SP]);
                        --SP; break;
+
           case cGreater: Stack[SP-1] = (Stack[SP-1] > Stack[SP]);
                          --SP; break;
+
           case cGreaterOrEq: Stack[SP-1] = (Stack[SP-1] >= Stack[SP]);
                          --SP; break;
 #endif
@@ -1217,10 +1286,12 @@ double FunctionParser::Eval(const double* Vars)
                            (doubleToInt(Stack[SP-1]) &&
                             doubleToInt(Stack[SP]));
                        --SP; break;
+
           case    cOr: Stack[SP-1] =
                            (doubleToInt(Stack[SP-1]) ||
                             doubleToInt(Stack[SP]));
                        --SP; break;
+
           case   cNot: Stack[SP] = !doubleToInt(Stack[SP]); break;
 
 // Degrees-radians conversion:
@@ -1262,20 +1333,27 @@ double FunctionParser::Eval(const double* Vars)
 #ifdef FP_SUPPORT_OPTIMIZER
           case   cVar: break;  // Paranoia. These should never exist
           case cNotNot: break; // Paranoia. These should never exist
+
           case   cDup: Stack[SP+1] = Stack[SP]; ++SP; break;
+
           case   cInv:
+#           ifndef FP_NO_EVALUATION_CHECKS
               if(Stack[SP] == 0.0) { evalErrorType=1; return 0; }
+#           endif
               Stack[SP] = 1.0/Stack[SP];
               break;
+
           case   cSqr:
               Stack[SP] = Stack[SP]*Stack[SP];
               break;
+
           case   cFetch:
               {
                   unsigned stackOffs = ByteCode[++IP];
                   Stack[SP+1] = Stack[stackOffs]; ++SP;
                   break;
               }
+
           case   cPopNMov:
               {
                   unsigned stackOffs_target = ByteCode[++IP];
@@ -1284,9 +1362,20 @@ double FunctionParser::Eval(const double* Vars)
                   SP = stackOffs_target;
                   break;
               }
+
           case   cRSub: Stack[SP-1] = Stack[SP] - Stack[SP-1]; --SP; break;
-          case   cRDiv: if(Stack[SP-1] == 0) { evalErrorType=1; return 0; }
+
+          case   cRDiv:
+#                    ifndef FP_NO_EVALUATION_CHECKS
+                        if(Stack[SP-1] == 0) { evalErrorType=1; return 0; }
+#                    endif
                         Stack[SP-1] = Stack[SP] / Stack[SP-1]; --SP; break;
+
+          case   cRSqrt:
+#                      ifndef FP_NO_EVALUATION_CHECKS
+                         if(Stack[SP] == 0) { evalErrorType=1; return 0; }
+#                      endif
+                         Stack[SP] = 1.0 / sqrt(Stack[SP]); break;
 #endif
 
           case cNop: break;
@@ -1424,6 +1513,7 @@ void FunctionParser::PrintByteCode(std::ostream& dest) const
                     }
                     case cRDiv: n = "rdiv"; break;
                     case cRSub: n = "rsub"; break;
+                    case cRSqrt: n = "rsqrt"; break;
 #endif
 
                     case cNop: n = "nop"; break;
