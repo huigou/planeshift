@@ -830,22 +830,12 @@ psItem *psCharacterInventory::GetItem(psItem *container,INVENTORY_SLOT_NUMBER sl
         return NULL;
 }
 
-bool psCharacterInventory::hasItemName(csString & itemname, bool includeBulk)
+bool psCharacterInventory::hasItemName(csString & itemname, bool includeEquipment, bool includeBulk)
 {
     for (size_t i=1; i < inventory.GetSize(); i++)
     {
         if (inventory[i].item && (csString)inventory[i].item->GetName() == itemname &&
-           (includeBulk || inventory[i].item->GetLocInParent(true) < PSCHARACTER_SLOT_BULK1))
-            return true;
-    }
-    return false;
-}
-
-bool psCharacterInventory::hasItemCategory(csString & categoryname, bool includeBulk)
-{
-    for (size_t i=1; i < inventory.GetSize(); i++)
-    {
-        if (inventory[i].item && inventory[i].item->GetCategory()->name == categoryname &&
+           (includeEquipment || inventory[i].item->GetLocInParent(true) >= PSCHARACTER_SLOT_BULK1) &&
            (includeBulk || inventory[i].item->GetLocInParent(true) < PSCHARACTER_SLOT_BULK1))
             return true;
     }
@@ -1237,6 +1227,35 @@ void psCharacterInventory::SetDoRestrictions(bool v)
         UpdateEncumbrance(); // this will unlock if already encumbered
 }
 
+
+bool psCharacterInventory::hasItemCategory(psItemCategory * category, bool includeEquipment, bool includeBulk)
+{
+    // Inventory indexes start at 1.  0 is reserved for the "NULL" item.
+    for (size_t i = 1; i < inventory.GetSize(); i++)
+    {
+        if (inventory[i].item->GetCategory() == category &&
+           (includeEquipment || inventory[i].item->GetLocInParent(true) >= PSCHARACTER_SLOT_BULK1) &&
+           (includeBulk || inventory[i].item->GetLocInParent(true) < PSCHARACTER_SLOT_BULK1))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool psCharacterInventory::hasItemCategory(csString & categoryname, bool includeEquipment, bool includeBulk)
+{
+    // Inventory indexes start at 1.  0 is reserved for the "NULL" item.
+    for (size_t i = 1; i < inventory.GetSize(); i++)
+    {
+        if (inventory[i].item && inventory[i].item->GetCategory()->name == categoryname &&
+           (includeEquipment || inventory[i].item->GetLocInParent(true) >= PSCHARACTER_SLOT_BULK1) &&
+           (includeBulk || inventory[i].item->GetLocInParent(true) < PSCHARACTER_SLOT_BULK1))
+            return true;
+    }
+    return false;
+}
 
 csArray<psItem*> psCharacterInventory::GetItemsInCategory(psItemCategory * category)
 {
