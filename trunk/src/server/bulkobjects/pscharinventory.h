@@ -219,15 +219,8 @@ public:
      * @param includeBulk searches for the item only in the equipment if true.
      * @return The item in the given slot. NULL if no item was found.
      */
-    bool hasItemName(csString & itemname, bool includeBulk);
+    bool hasItemName(csString & itemname, bool includeEquipment, bool includeBulk);
 
-    /** Check if the item of a certain category is in the character inventory.
-     * @param categoryname The name of the category of item to search for.
-     * @param includeBulk searches for the item only in the equipment if true.
-     * @return The item in the given slot. NULL if no item was found.
-     */
-    bool hasItemCategory(csString & categoryname, bool includeBulk);
-    
     /** Get an item that is in the equipment inventory.    
       * @param slot The slot in which we want to retrive the item ( if any ).
       * @return The item in the given slot. NULL if no item was found.
@@ -318,6 +311,19 @@ public:
       * @return a pointer to the item if one is there. Uses base_cloths otherwise.
       */    
     psItem *GetEffectiveArmorInSlot(INVENTORY_SLOT_NUMBER slot);
+
+    /** Check if the item of a certain category is in the character inventory.
+     * @param category  pointer to the psItemCategory structure to search for.
+     * @return true if the item was found, false if it wasn't.
+     */
+    bool hasItemCategory(psItemCategory * category, bool includeEquipment, bool includeBulk);
+
+    /** Check if the item of a certain category is in the character inventory.
+     * @param categoryname The name of the category of item to search for.
+     * @param includeBulk searches for the item only in the equipment if true.
+     * @return true if the item was found, false if it wasn't.
+     */
+    bool hasItemCategory(csString & categoryname, bool includeEquipment, bool includeBulk);
     
     /** Iterates over the entire inventory to get a list of all the items from a particular category.
       * This is useful for npc merchants when you want to get a list of all the items they have.
