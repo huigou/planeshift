@@ -253,8 +253,8 @@ namespace FPoptimizer_Grammar
 
     struct MatchResultType
     {
-        bool found:16;
-        bool has_more:16;
+        bool found;
+        bool has_more;
 
         MatchResultType(bool f,bool m) : found(f),has_more(m) { }
     };
