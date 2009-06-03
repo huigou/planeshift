@@ -24,6 +24,7 @@
   <alias name="surface" file="/shader/snippets/surface/surface-overlay.xml" />
   <alias name="specular" file="/shader/snippets/surface/specular-default.xml" />
   <alias name="staticspecular" file="/shader/snippets/lighting/staticspec-null.xml" />
+  <alias name="parallax" file="/shader/snippets/surface/parallax.xml" />
   
   <technique priority="300" minlights="3">
     <tag>per_pixel_lighting</tag>

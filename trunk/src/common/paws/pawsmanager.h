@@ -43,8 +43,6 @@
 #include <csutil/deprecated_warn_on.h>
 #include "isndsys/ss_renderer.h"
 
-#include "engine/psregion.h"
-
 #include "util/mathscript.h"
 #include "util/log.h"
 
@@ -80,7 +78,7 @@ class PawsManager : public Singleton<PawsManager>
 public:
 
     PawsManager(iObjectRegistry* objectReg, const char* skin, const char* skinBase = NULL,
-                const char* pawsConfigFile = "/planeshift/userdata/planeshift.cfg", uint _gfxFeatures = psRegion::useAll);
+                const char* pawsConfigFile = "/planeshift/userdata/planeshift.cfg", uint _gfxFeatures = useAll);
 
     virtual ~PawsManager();
 
@@ -507,6 +505,19 @@ protected:
 
     /// The font resizing factor for all widgets
     float fontFactor;
+
+    // Feature defines.
+    enum gfxFeatures
+    {
+        useLowestShaders = 0x1,
+        useLowShaders = 0x2,
+        useMediumShaders = 0x4,
+        useHighShaders = 0x8,
+        useHighestShaders = 0x10,
+        useShadows = 0x20,
+        useMeshGen = 0x40,
+        useAll = (useHighShaders | useShadows | useMeshGen)
+    };
 
     /// Graphics features we want to use.
     uint gfxFeatures;

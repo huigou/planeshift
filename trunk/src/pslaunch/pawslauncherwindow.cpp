@@ -540,6 +540,7 @@ void pawsLauncherWindow::LoadSettings()
 
     pawsComboBox* shaders = (pawsComboBox*)FindWidget("Shaders");
     shaders->Clear();
+    shaders->NewOption("Highest");
     shaders->NewOption("High");
     shaders->NewOption("Medium");
     shaders->NewOption("Low");
@@ -755,7 +756,7 @@ void pawsLauncherWindow::SaveSettings()
             enableShadows->SetState(true);
             enableBloom->SetState(true);
             enableHDR->SetState(true);
-            shaderSelection = "High";
+            shaderSelection = "Highest";
             configUser->SetInt("Video.ScreenDepth", 32);
             configUser->SetInt("Video.OpenGL.MultiSamples", 8);
             configUser->SetInt("Video.OpenGL.TextureFilterAnisotropy", 16);
@@ -869,7 +870,7 @@ void pawsLauncherWindow::SaveSettings()
     configUser->DeleteKey("RenderManager.Unshadowed.HDR.Enabled");
     configUser->DeleteKey("RenderManager.ShadowPSSM.HDR.Enabled");
 
-    if(shaderSelection == "High")
+    if(shaderSelection == "High" || shaderSelection == "Highest")
     {
         configUser->SetBool("PlaneShift.Graphics.Shadows", enableShadows->GetState());
         if(enableShadows->GetState())
