@@ -1,3 +1,23 @@
+*** 2009-06-03 by Stefano Angeleri
+- Made action locations be present in players proxlist in order to allow
+  the client to untarget them when out of scope
+- Made error for wrong username the same as wrong password in order to
+  not allow someone to enumerate usernames
+- Added new quickpaths life events/parents provided by valrion
+- Various fixes and improvements to comment support in math scripts
+- Updated fparser from 3.1.3 to 3.1.4:
+    * Added new optimizer rules (among others, one which groups common 
+      factors of subexpressions, ie. it optimizes functions of the form 
+    "a*b+a*c" into "a*(b+c)", where a, b and c are any expressions).
+    * Added support for compiling without evaluation checks (because 
+      it's impossible to catch all possible error situations in the first place). 
+      See the documentation for more info.
+    * Dropped the plain text documentation file in favor of the html file. 
+- Hide categories in buy dialog when merchant doesn't have items for that
+  category
+- Added support for dynamic experience based on mob/pc stats
+- Added MAXHP, MAXPStamina, MAXMStamina to math script pscharacter properties
+
 *** 2009-06-03 by Kenny Graunke
 - Restored old code for splitting kill experience, which went missing during my
   scripting system rewrite.  The "kill" progression script is now obsolete.
