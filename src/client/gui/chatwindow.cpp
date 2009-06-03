@@ -1070,7 +1070,7 @@ void pawsChatWindow::HandleSystemMessage(MsgEntry *me)
                      msg.type == MSG_COMBAT_NEARLY_DEAD ||
                      msg.type == MSG_LOOT)
                 chatType = CHAT_SYSTEM_BASE;
-            else if (msg.type & MSG_COMBAT != 0)
+            else if ((msg.type & MSG_COMBAT) != 0)
             	chatType = CHAT_COMBAT;
 
             WordArray playerName(psengine->GetMainPlayerName());

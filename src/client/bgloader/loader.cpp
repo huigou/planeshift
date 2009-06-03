@@ -227,22 +227,29 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                         node = nodeItr2->Next();
                         if(csString("texture").Compare(node->GetAttributeValue("type")))
                         {
-                            if(!(gfxFeatures & useHighShaders))
+                            if(gfxFeatures & (useHighShaders | useMediumShaders | useLowShaders | useLowestShaders))
                             {
                                 if(!strcmp(node->GetAttributeValue("name"), "tex height") ||
                                    !strcmp(node->GetAttributeValue("name"), "tex ambient occlusion"))
                                 {
                                     continue;
                                 }
-                            }
 
-                            if(!(gfxFeatures & useMediumShaders))
-                            {
-                                if(!strcmp(node->GetAttributeValue("name"), "tex normal") ||
-                                   !strcmp(node->GetAttributeValue("name"), "tex normal compressed") ||
-                                   !strcmp(node->GetAttributeValue("name"), "tex specular"))
+                                if(gfxFeatures & (useMediumShaders | useLowShaders | useLowestShaders))
                                 {
-                                    continue;
+                                    if(!strcmp(node->GetAttributeValue("name"), "tex specular"))
+                                    {
+                                        continue;
+                                    }
+                                }
+
+                                if(gfxFeatures & (useLowShaders | useLowestShaders))
+                                {
+                                    if(!strcmp(node->GetAttributeValue("name"), "tex normal") ||
+                                       !strcmp(node->GetAttributeValue("name"), "tex normal compressed"))
+                                    {
+                                        continue;
+                                    }
                                 }
                             }
 

@@ -109,12 +109,13 @@ public:
     // Feature defines.
     enum gfxFeatures
     {
-        useLowestShaders = 1,
-        useLowShaders,
-        useMediumShaders,
-        useHighShaders,
-        useShadows = 10,
-        useMeshGen = 20,
+        useLowestShaders = 0x1,
+        useLowShaders = 0x2,
+        useMediumShaders = 0x4,
+        useHighShaders = 0x8,
+        useHighestShaders = 0x10,
+        useShadows = 0x20,
+        useMeshGen = 0x40,
         useAll = (useHighShaders | useShadows | useMeshGen)
     };
 

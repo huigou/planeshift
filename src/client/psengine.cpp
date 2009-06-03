@@ -112,6 +112,7 @@ if (!myref)                                                  \
 #include "util/pscssetup.h"
 #include "util/log.h"
 #include "util/strutil.h"
+#include "engine/psregion.h"
 #include "engine/psworld.h"
 #include "util/psutil.h"
 #include "util/consoleout.h"
@@ -385,7 +386,12 @@ bool psEngine::Initialize (int level)
         }
 
         // Check the level of shader use.
-        csString shader("High");
+        csString shader("Highest");
+        if(shader.CompareNoCase(GetConfig()->GetStr("PlaneShift.Graphics.Shaders")))
+        {
+            gfxFeatures |= psRegion::useHighestShaders;
+        }
+        shader = "High";
         if(shader.CompareNoCase(GetConfig()->GetStr("PlaneShift.Graphics.Shaders")))
         {
             gfxFeatures |= psRegion::useHighShaders;
