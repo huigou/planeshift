@@ -2745,13 +2745,17 @@ double psCharacter::GetProperty(const char *ptr)
     {
         return GetHP();
     }
-    else if (!strcasecmp(ptr,"MAXHP"))
+    else if (!strcasecmp(ptr,"MaxHP"))
     {
         return GetMaxHP().Current();
     }
     else if (!strcasecmp(ptr,"Mana"))
     {
         return GetMana();
+    }
+    else if (!strcasecmp(ptr,"MaxMana"))
+    {
+        return GetMaxMana().Current();
     }
     else if (!strcasecmp(ptr,"PStamina"))
     {
@@ -2761,11 +2765,11 @@ double psCharacter::GetProperty(const char *ptr)
     {
         return GetStamina(false);
     }
-    else if (!strcasecmp(ptr,"MAXPStamina"))
+    else if (!strcasecmp(ptr,"MaxPStamina"))
     {
         return GetMaxPStamina().Current();
     }
-    else if (!strcasecmp(ptr,"MAXMStamina"))
+    else if (!strcasecmp(ptr,"MaxMStamina"))
     {
         return GetMaxMStamina().Current();
     }    
