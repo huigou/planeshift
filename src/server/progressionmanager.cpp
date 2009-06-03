@@ -245,7 +245,7 @@ void ProgressionManager::AllocateKillDamage(gemActor *deadActor, int exp)
         }
 
 
-        unsigned int final = unsigned int(exp * mod);
+        int final = int(exp * mod);
 
         psserver->SendSystemInfo(attacker->GetClientID(), "You gained %d experience points.", final);
         if (int pp = attacker->GetCharacterData()->AddExperiencePoints(final))

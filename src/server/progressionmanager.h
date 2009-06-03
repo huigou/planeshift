@@ -86,6 +86,7 @@ protected:
 
     csHash<csString, csString> affinitycategories;
     ClientConnectionSet    *clients;
+    MathScript *calc_dynamic_experience; ///< Math script used to calculate the dynamic experience
 };
 
 #endif
