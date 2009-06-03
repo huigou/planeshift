@@ -82,6 +82,8 @@ protected:
     void HandleDeathEvent(MsgEntry *me, Client *notused);
     void HandleZPointEvent(MsgEntry *me, Client *client);
 
+    void AllocateKillDamage(gemActor *deadActor, int exp);
+
     csHash<csString, csString> affinitycategories;
     ClientConnectionSet    *clients;
 };

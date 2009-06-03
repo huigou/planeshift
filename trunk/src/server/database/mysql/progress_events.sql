@@ -22,7 +22,6 @@ INSERT INTO progression_events VALUES("respawn",'<script><teleport aim="Target" 
 INSERT INTO progression_events VALUES("go to tic tac toe",'<script><teleport aim="Target" sector="NPCroom" x="-1.69" y="2.89" z="-217.21"/></script>');
 INSERT INTO progression_events VALUES("run to the hills",'<script><teleport aim="Target" sector="npcroom2"/></script>');
 INSERT INTO progression_events VALUES("give_exp",'<script><exp aim="Target" value="Exp"/></script>');
-INSERT INTO progression_events VALUES("kill",'<script><exp aim="Killer" value="KillExp"/></script>');
 INSERT INTO progression_events VALUES("cast Life Infusion",
     '<script>
        <hp aim="Target" value="10*Power"/>

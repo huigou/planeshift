@@ -136,15 +136,110 @@ void ProgressionManager::HandleDeathEvent(MsgEntry *me, Client *notused)
     // Only award experience if the dead actor is a NPC and not a pet, or a GM with the givekillexp flag.
     if (evt.killer && ((evt.deadActor->GetClientID()==0 && !evt.deadActor->GetCharacterData()->IsPet()) || evt.deadActor->givekillexp))
     {
-        ProgressionScript *script = FindScript("kill");
-        MathEnvironment env;
-        env.Define("Killer",    evt.killer);
-        env.Define("DeadActor", evt.deadActor);
-        env.Define("KillExp",   evt.deadActor->GetCharacterData()->GetKillExperience());
-        script->Run(&env);
+        AllocateKillDamage(evt.deadActor, evt.deadActor->GetCharacterData()->GetKillExperience());
     }
 }
 
+void ProgressionManager::AllocateKillDamage(gemActor *deadActor, int exp)
+{
+    // Convert to gemActor
+    csArray<gemActor*> attackers;
+    unsigned int timeOfDeath = csGetTicks(); // TODO: Should be recorded on death
+                                             //       in the deadActor.
+
+    // Last timestamp, used for breaking the loop when > 10 secs had gone
+    unsigned int lastTimestamp = 0;
+    float        totalDamage   = 0; // The denominator for the percentages
+
+    int i;
+    // First build list of attackers and determine how far to go back and what total dmg was.
+    for (i = (int) deadActor->GetDamageHistoryCount(); i > 0; i--)
+    {
+        DamageHistory* history = deadActor->GetDamageHistory(i-1);
+
+        // 15 secs passed
+        if (lastTimestamp - history->timestamp > 15000 && lastTimestamp != 0)
+        {
+            Debug1(LOG_COMBAT, 0, "15 secs passed between hits, breaking loop\n");
+            break;
+        }
+        lastTimestamp = history->timestamp;
+
+        // Special check for DoT adjustments if the target died before the DoT expired
+        if (history->damageRate != 0)
+        {
+            csTicks duration = -int(history->damage/history->damageRate);
+            if (duration > timeOfDeath - history->timestamp)
+            {
+                // Since damageRate should always be negative:
+                history->damage = -(history->damageRate * (timeOfDeath - history->timestamp));
+            }
+        }
+
+        totalDamage += history->damage;
+
+        bool found = false;
+
+        if (!history->attacker_ref.IsValid())
+            continue;  // This attacker has disconnected since he did this damage.
+
+        // Have we already added that player?
+        for (size_t j = 0; j < attackers.GetSize(); j++)
+        {
+            if (attackers[j] == history->attacker_ref)
+            {
+                found = true;
+                break;
+            }
+        }
+
+        // New player, add to list
+        if (!found)
+        {
+            attackers.Push(dynamic_cast<gemActor*>((gemObject *) history->attacker_ref)); // This is ok because it is ONLY used in this function
+        }
+    }
+    int lastHistory = i;
+
+    for(size_t i = 0; i < attackers.GetSize(); i++)
+    {
+        gemActor* attacker = attackers[i];
+        if (!attacker)
+            continue;  // should not happen with new safe ref system.
+
+        float dmgMade = 0;
+        float mod = 0;
+
+        for (int j = (int) deadActor->GetDamageHistoryCount(); j > lastHistory; j--)
+        {
+            const DamageHistory *history = deadActor->GetDamageHistory(j-1);
+            if(history->attacker_ref == attacker)
+            {
+                dmgMade += history->damage;
+            }
+        }
+
+        if (!totalDamage)
+        {
+            Error2("%s was found to have zero totalDamage in damagehistory!", deadActor->GetName());
+            continue;
+        }
+        // Use the latest HP (needs to be redesigned when NPCs can cast heal spells on eachoter)
+        mod = dmgMade / totalDamage; // Get a 0.something value or 1 if we did all dmg
+        if (mod > 1.0)
+            mod = 1.0;
+
+        int final = int(exp * mod);
+
+        psserver->SendSystemInfo(attacker->GetClientID(), "You gained %d experience points.", final);
+        if (int pp = attacker->GetCharacterData()->AddExperiencePoints(final))
+        {
+            psserver->SendSystemInfo(attacker->GetClientID(), "You gained %d progression points.", pp);
+        }
+    }
+
+    deadActor->ClearDamageHistory();
+}
 
 void ProgressionManager::HandleSkill(MsgEntry *me, Client * client)
 {
