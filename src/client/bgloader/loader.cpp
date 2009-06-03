@@ -148,7 +148,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
 
                     {
                         CS::Threading::ScopedWriteLock lock(sLock);
-                        if(!shaders.Contains(node->GetContentsValue()))
+                        if(shaders.Contains(node->GetContentsValue()) == csArrayItemNotFound)
                         {
                             shaders.Push(node->GetContentsValue());
                             loadShader = true;
