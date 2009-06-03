@@ -192,3 +192,6 @@ INSERT INTO math_scripts VALUES( "Calc Item Merchant Price Buy", "Result = ItemP
 
 INSERT INTO math_scripts VALUES( "Calc Item Merchant Price Sell", "Result = ItemPrice + CharData:getSkillValue(47)/10;");
 
+INSERT INTO math_scripts VALUES( "Calculate Dynamic Experience", "Exp = 0;");
+
+

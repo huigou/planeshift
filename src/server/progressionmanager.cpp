@@ -86,6 +86,12 @@ ProgressionManager::ProgressionManager(ClientConnectionSet *ccs)
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ProgressionManager>(this,&ProgressionManager::HandleSkill)      ,MSGTYPE_GUISKILL,    REQUIRE_READY_CLIENT);
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ProgressionManager>(this,&ProgressionManager::HandleDeathEvent) ,MSGTYPE_DEATH_EVENT, NO_VALIDATION);
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ProgressionManager>(this,&ProgressionManager::HandleZPointEvent),MSGTYPE_ZPOINT_EVENT,NO_VALIDATION);
+    
+    calc_dynamic_experience  = psserver->GetMathScriptEngine()->FindScript("Calculate Dynamic Experience");
+    if(!calc_dynamic_experience)
+    {
+        Error1("Could not find mathscript 'Calculate Dynamic Experience'");
+    }
 }
 
 
@@ -229,7 +235,17 @@ void ProgressionManager::AllocateKillDamage(gemActor *deadActor, int exp)
         if (mod > 1.0)
             mod = 1.0;
 
-        int final = int(exp * mod);
+        if(exp <= 0) //use automatically generated experience if exp doesn't have a valid value
+        {
+            MathEnvironment env;
+            env.Define("Killer",    attacker); 	 
+            env.Define("DeadActor", deadActor);
+            calc_dynamic_experience->Evaluate(&env);
+            exp = env.Lookup("Exp")->GetValue();
+        }
+
+
+        unsigned int final = unsigned int(exp * mod);
 
         psserver->SendSystemInfo(attacker->GetClientID(), "You gained %d experience points.", final);
         if (int pp = attacker->GetCharacterData()->AddExperiencePoints(final))
