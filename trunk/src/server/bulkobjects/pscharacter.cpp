@@ -1069,9 +1069,7 @@ unsigned int psCharacter::AddExperiencePointsNotify(unsigned int experiencePoint
         {
             if(PP > 0)
             {
-                csString message;
-                message.Format("You gained some experience points and %d progression points!", PP);
-                psserver->SendSystemInfo(GetActor()->GetClientID(), message.GetData());
+                psserver->SendSystemInfo(GetActor()->GetClientID(), "You gained some experience points and %d progression points!", PP);
             }
             else
             {
@@ -2747,6 +2745,10 @@ double psCharacter::GetProperty(const char *ptr)
     {
         return GetHP();
     }
+    else if (!strcasecmp(ptr,"MAXHP"))
+    {
+        return GetMaxHP().Current();
+    }
     else if (!strcasecmp(ptr,"Mana"))
     {
         return GetMana();
@@ -2759,6 +2761,14 @@ double psCharacter::GetProperty(const char *ptr)
     {
         return GetStamina(false);
     }
+    else if (!strcasecmp(ptr,"MAXPStamina"))
+    {
+        return GetMaxPStamina().Current();
+    }
+    else if (!strcasecmp(ptr,"MAXMStamina"))
+    {
+        return GetMaxMStamina().Current();
+    }    
     else if (!strcasecmp(ptr,"Strength"))
     {
         return attributes[PSITEMSTATS_STAT_STRENGTH].Current();
