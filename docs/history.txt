@@ -1,3 +1,7 @@
+*** 2009-06-03 by Kenny Graunke
+- Restored old code for splitting kill experience, which went missing during my
+  scripting system rewrite.  The "kill" progression script is now obsolete.
+
 *** 2009-05-26 by Stefano Angeleri
 - Added targeting support to /set (setattrib) and /setkillexp
 
