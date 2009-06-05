@@ -16,7 +16,10 @@
 - Hide categories in buy dialog when merchant doesn't have items for that
   category
 - Added support for dynamic experience based on mob/pc stats
-- Added MAXHP, MAXPStamina, MAXMStamina to math script pscharacter properties
+- Added MAXHP, MAXPStamina, MAXMStamina, BaseHP, BasePStamina and BaseMsStamina
+  to math script pscharacter properties
+- Now the mini inventory won't close if it was already open when opening
+  the exchange window patch by Tazen
 
 *** 2009-06-03 by Kenny Graunke
 - Restored old code for splitting kill experience, which went missing during my
