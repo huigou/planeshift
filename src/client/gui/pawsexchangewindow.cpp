@@ -114,7 +114,7 @@ bool pawsExchangeWindow::PostSetup()
     if (!bulkList)
         return false;
 
-    wasSmaillInventoryOpen = false;
+    wasSmallInventoryOpen = false;
 
     int colCount = bulkList->GetTotalColumns();
     int rowCount = (int) ceil(float(EXCHANGE_SLOT_COUNT)/colCount);
@@ -229,7 +229,7 @@ void pawsExchangeWindow::HandleMessage( MsgEntry* me )
         {     
             Hide();
             pawsWidget * widget = PawsManager::GetSingleton().FindWidget("SmallInventoryWindow");
-            if (widget && !wasSmaillInventoryOpen)
+            if (widget && !wasSmallInventoryOpen)
                 widget->Close();
             totalTriasOffered->SetText("");
             totalTriasReceived->SetText("");
@@ -327,7 +327,7 @@ void pawsExchangeWindow::HandleMessage( MsgEntry* me )
 void pawsExchangeWindow::Close()
 {
     pawsWidget * widget = PawsManager::GetSingleton().FindWidget("SmallInventoryWindow");
-    if (widget && !wasSmaillInventoryOpen)
+    if (widget && !wasSmallInventoryOpen)
         widget->Close();
 
     totalTriasOffered->SetText("");
