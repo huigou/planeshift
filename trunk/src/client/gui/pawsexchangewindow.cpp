@@ -114,6 +114,8 @@ bool pawsExchangeWindow::PostSetup()
     if (!bulkList)
         return false;
 
+    wasSmaillInventoryOpen = false;
+
     int colCount = bulkList->GetTotalColumns();
     int rowCount = (int) ceil(float(EXCHANGE_SLOT_COUNT)/colCount);
     int r, j, i;
@@ -197,8 +199,12 @@ void pawsExchangeWindow::StartExchange( csString& player, bool withPlayer )
 
     // Autoshow the inventory
     pawsWidget* widget = PawsManager::GetSingleton().FindWidget("SmallInventoryWindow");
-    if ( widget )
+    
+    if (widget)
+    {
+        wasSmallInventoryOpen = widget->IsVisible();
         widget->Show();
+    }
 }        
 
 
@@ -217,18 +223,17 @@ void pawsExchangeWindow::HandleMessage( MsgEntry* me )
         }
         
         ///////////////////////////////////////////////////////////
-        //  Close Exchange ( either by rejection or normal end
+        //  Close Exchange ( either by rejection or normal end )
         ///////////////////////////////////////////////////////////
         case MSGTYPE_EXCHANGE_END:
         {     
             Hide();
             pawsWidget * widget = PawsManager::GetSingleton().FindWidget("SmallInventoryWindow");
-            if ( widget )
+            if (widget && !wasSmaillInventoryOpen)
                 widget->Close();
             totalTriasOffered->SetText("");
             totalTriasReceived->SetText("");
-            int i;
-            for (i = 0; i < EXCHANGE_SLOT_COUNT; i++)
+            for (int i = 0; i < EXCHANGE_SLOT_COUNT; i++)
             {                   
                 offeringSlots[i]->Clear();
                 receivingSlots[i]->Clear();
@@ -322,15 +327,14 @@ void pawsExchangeWindow::HandleMessage( MsgEntry* me )
 void pawsExchangeWindow::Close()
 {
     pawsWidget * widget = PawsManager::GetSingleton().FindWidget("SmallInventoryWindow");
-    if ( widget )
+    if (widget && !wasSmaillInventoryOpen)
         widget->Close();
 
-	totalTriasOffered->SetText("");
-	totalTriasReceived->SetText("");
-    
+    totalTriasOffered->SetText("");
+    totalTriasReceived->SetText("");
     SendEnd();
-    Hide();        
-}
+    Hide();
+}   
 
 bool pawsExchangeWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
 {
@@ -418,4 +422,3 @@ void pawsExchangeWindow::Clear()
     offeringBG->SetBackground("Standard Background");            
     receivingBG->SetBackground("Standard Background");            
 }
-

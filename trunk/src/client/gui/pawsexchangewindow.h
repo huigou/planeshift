@@ -82,7 +82,10 @@ protected:
       * @withPlayer Is the user exchanging with other player, or with NPC ?
       */
     void StartExchange( csString& player, bool withPlayer );
-        
+
+    /// retain the state of the inventory window before opening the exchange
+    bool wasSmallInventoryOpen;
+    
     psExchangeType type;
     
     /// The background for the offering panel
