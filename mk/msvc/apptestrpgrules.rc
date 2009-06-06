@@ -1,3 +1,9 @@
+// This file is generated automatically.
+
+1 VERSIONINFO
+FILEVERSION 
+0,4,03,0
+PRODUCTVERSION 
 0,4,03,0
 #ifdef CS_DEBUG
 FILEFLAGS 0x1
