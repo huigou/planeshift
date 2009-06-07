@@ -86,30 +86,31 @@ CS_COMPILER_WARNINGS([C++], [cs_cv_prog_cxx_enable_warnings],
 	[$cs_cv_prog_cxx_enable_warnings], [+])])
 
 #------------------------------------------------------------------------------
-# Check for SIMD flags, enable -msse, -msse2 and -mfpmath=sse on intel osx.
+# Check for SIMD flags. These checks are performed after CS_CHECK_HOST() since
+# CS_CHECK_HOST() may alter the build environment in a way which affects these
+# tests. For instance, these tests might be impacted on Mac OS X by a universal
+# binary build.
 #------------------------------------------------------------------------------
+CS_CHECK_BUILD_FLAGS([for -mmmx flag], [cs_cv_prog_cc_mmmx],
+    [CS_CREATE_TUPLE([-mmmx])])
+CS_CHECK_BUILD_FLAGS([for -msse flag], [cs_cv_prog_cc_msse],
+    [CS_CREATE_TUPLE([-msse])])
+CS_CHECK_BUILD_FLAGS([for -msse2 flag], [cs_cv_prog_cc_msse2],
+    [CS_CREATE_TUPLE([-msse2])])
+CS_CHECK_BUILD_FLAGS([for -mfpmath=sse flag], [cs_cv_prog_cc_mfpmath_sse],
+    [CS_CREATE_TUPLE([-mfpmath=sse])])
 
-case $cs_host_target in
-    macosx)
-        CS_CHECK_BUILD_FLAGS([for -msse flag], [cs_cv_prog_cc_msse],
-		[CS_CREATE_TUPLE([-msse])])
-        AS_IF([test -n "$cs_cv_prog_cc_msse"],
-            [CS_EMIT_BUILD_PROPERTY([COMPILER.CFLAGS],
-             [$cs_cv_prog_cc_msse], [+])])
+AS_IF([test -n "$cs_cv_prog_cc_mmmx"],
+    [CS_EMIT_BUILD_PROPERTY([COMPILER.CFLAGS.MMX], [$cs_cv_prog_cc_mmmx],[+])])
 
-	CS_CHECK_BUILD_FLAGS([for -msse2 flag], [cs_cv_prog_cc_msse2],
-		[CS_CREATE_TUPLE([-msse2])])
-        AS_IF([test -n "$cs_cv_prog_cc_msse2"],
-            [CS_EMIT_BUILD_PROPERTY([COMPILER.CFLAGS],
-             [$cs_cv_prog_cc_msse2], [+])])
-
-	CS_CHECK_BUILD_FLAGS([for -mfpmath=sse flag], [cs_cv_prog_cc_mfpmath_sse],
-		[CS_CREATE_TUPLE([-mfpmath=sse])])
-        AS_IF([test -n "$cs_cv_prog_cc_mfpmath_sse"],
-            [CS_EMIT_BUILD_PROPERTY([COMPILER.CFLAGS],
-             [$cs_cv_prog_cc_mfpmath_sse], [+])])
-        ;;
-esac
+AS_IF([test -n "$cs_cv_prog_cc_mmmx"],
+    [CS_CHECK_BUILD([for mmintrin.h],
+        [cs_cv_header_mmintrin_h],
+        [AC_LANG_PROGRAM([[#include <mmintrin.h>]], [])],
+        [CS_CREATE_TUPLE([$cs_cv_prog_cc_mmmx])],
+        [C++],
+        [CS_HEADER_PROPERTY([CS_SUPPORTS_MMX])
+        CS_EMIT_BUILD_PROPERTY([CS_SUPPORTS_MMX], [yes])])])
  
 #------------------------------------------------------------------------------
 # Check for compiler- and CPU-specific code generation flags.  These flags are
