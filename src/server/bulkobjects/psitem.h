@@ -603,7 +603,6 @@ public:
 
     
     /** Returns the location of this item in it's parent item or in the players equipment, bulk or bank as appropriate.
-     *
      */
     INVENTORY_SLOT_NUMBER GetLocInParent(bool adjustSlot=false);
 
@@ -612,14 +611,12 @@ public:
 
     /** Used to set the UNIQUE flag in addition to setting base stats pointer
      * TODO: This is pretty much untested at this point.
-     *
      */
     void SetUniqueStats(psItemStats *statptr);
 
     /** Alters the base stats of this item instance.
      * If called on a unique item it revokes the unique item status of this item!
      * If called on a unique item the unique item stats should be destroyed elsewhere.
-     *
      */
     void SetBaseStats(psItemStats *statptr);
 
@@ -636,7 +633,6 @@ public:
 
     /** Gets a pointer to the current stats.  You probably dont want to use this.
      * Use the functions below which may apply additional logic to determine what value to return.
-     *
      */
     psItemStats *GetCurrentStats() const { return current_stats; }
 
