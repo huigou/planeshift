@@ -147,10 +147,6 @@ psLinearMovement::psLinearMovement (iObjectRegistry* object_reg)
     offset_err = 0;
     offset_rate = 0;
 
-    /*
-    * Speed affects all aspects of movement, including gravity.
-    * It's effectively a comparative rate of "time"
-    */
     speed = 1.0f;
 
     deltaLimit = 0.0f;

@@ -268,6 +268,8 @@ protected:
   // Linear vars
   float angDelta;
   bool stationary;
+  /** Speed affects all aspects of movement, including gravity.
+    * It's effectively a comparative rate of "time" */
   float speed;
   float gravity;
 
@@ -302,7 +304,7 @@ protected:
   /// The total change in displacement caused by space warping portals.
   csVector3 portalDisplaced;
 
-  // Maximum interval at which to perform CD
+  /// Maximum interval at which to perform CD
   csVector3 intervalSize;
 
   csTicks lastDRUpdate;
@@ -313,8 +315,8 @@ protected:
   float deltaLimit;
 
   // Variables for 'Soft Update' of position
-  csVector3 offset_err;    // Error in terms of absolute position
-  csVector3 offset_rate;   // Speed to bring error to ZERO within 1s
+  csVector3 offset_err;    ///< Error in terms of absolute position
+  csVector3 offset_rate;   ///< Speed to bring error to ZERO within 1s
 };
 
 #endif
