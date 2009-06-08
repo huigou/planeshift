@@ -1373,10 +1373,10 @@ sed 's/AM_USE_UNITTESTCPP/# AM_USE_UNITTESTCPP/' configure-old.in > configure.in
 <p class="commandBox">
     $HOME/development/planeshift$ ./autogen.sh<br />
     <i class="User">
-        $HOME/development/planeshift$ ./configure --with-cal3d=$HOME/development/cal3d<br />
+        $HOME/development/planeshift$ ./configure --disable-universal-binary --with-cal3d=$HOME/development/cal3d<br />
     </i>
     <i class="Developer">
-        $HOME/development/planeshift$ ./configure --enable-debug --with-cal3d=$HOME/development/cal3d<br />
+        $HOME/development/planeshift$ ./configure --disable-universal-binary --enable-debug --with-cal3d=$HOME/development/cal3d<br />
     </i>
     <i class="Normal">
         $HOME/development/planeshift$ jam -aq client
