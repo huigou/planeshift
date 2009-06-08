@@ -85,7 +85,7 @@ ProgressionManager::ProgressionManager(ClientConnectionSet *ccs)
 
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ProgressionManager>(this,&ProgressionManager::HandleSkill)      ,MSGTYPE_GUISKILL,    REQUIRE_READY_CLIENT);
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ProgressionManager>(this,&ProgressionManager::HandleDeathEvent) ,MSGTYPE_DEATH_EVENT, NO_VALIDATION);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ProgressionManager>(this,&ProgressionManager::HandleZPointEvent),MSGTYPE_ZPOINT_EVENT,NO_VALIDATION);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ProgressionManager>(this,&ProgressionManager::HandleZPointEvent),MSGTYPE_ZPOINT_EVENT,REQUIRE_READY_CLIENT);
     
     calc_dynamic_experience  = psserver->GetMathScriptEngine()->FindScript("Calculate Dynamic Experience");
     if(!calc_dynamic_experience)
