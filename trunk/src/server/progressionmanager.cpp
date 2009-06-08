@@ -244,7 +244,6 @@ void ProgressionManager::AllocateKillDamage(gemActor *deadActor, int exp)
             exp = env.Lookup("Exp")->GetValue();
         }
 
-
         int final = int(exp * mod);
 
         psserver->SendSystemInfo(attacker->GetClientID(), "You gained %d experience points.", final);

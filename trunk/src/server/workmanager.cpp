@@ -904,6 +904,7 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
         MathEnvironment env;
         env.Define("Success", roll < total);
         env.Define("Worker", workEvent->client->GetCharacterData());
+        env.Define("Probability", workEvent->nr->probability); // Probability of successful mining
         calc_mining_exp->Evaluate(&env);
         practicePoints   = env.Lookup("ResultPractice")->GetValue();
         modifier = env.Lookup("ResultModifier")->GetValue();
