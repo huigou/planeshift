@@ -1208,6 +1208,9 @@ INSERT INTO command_group_assignment VALUES( "setkillexp others", 30 );
 #1219 - Stefano Angeleri - Added a setattrib others access rule and allowed setattrib to have a target
 INSERT INTO command_group_assignment VALUES( "setattrib others", 30 );
 
+#1219 - Stefano Angeleri - /serverquit command
+INSERT INTO command_group_assignment VALUES( "/serverquit", 30 );
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to
