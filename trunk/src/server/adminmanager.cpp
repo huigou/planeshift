@@ -1054,6 +1054,19 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         value = words.GetInt(3);
         return true;
     }
+    else if (command == "/serverquit") 
+    {
+        if(words.GetCount() > 1)
+        {
+            value = atoi(words[1]);
+            reason = words[2];
+        }
+        else
+        {
+            value = -2;
+        }
+        return true;
+    }
 	else if (command == "/rndmsgtest")
 	{
 		text = words[1];
@@ -1460,6 +1473,10 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, Client *client)
     else if (data.command == "/assignfaction")
     {
         AssignFaction(me, msg, data, client, targetclient);
+    }
+    else if (data.command == "/serverquit")
+    {
+        HandleServerQuit(me, msg, data, client);
     }
 }
 
@@ -2197,7 +2214,7 @@ void AdminManager::SetAttrib(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
     }
     else
     {
-        psserver->SendSystemInfo(me->clientnum, "Correct syntax is: \"/set [attribute] [on|off]\"");
+        psserver->SendSystemInfo(me->clientnum, "Correct syntax is: \"/set [target] [attribute] [on|off]\"");
         return;
     }
 
@@ -2493,7 +2510,7 @@ void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
     }
 
     if ( dynamic_cast<gemActor*>(subject) ) // Record old location of actor, for undo
-        ((gemActor*)subject)->SetPrevTeleportLocation(oldpos, oldyrot, oldsector);
+        ((gemActor*)subject)->SetPrevTeleportLocation(oldpos, oldyrot, oldsector, oldInstance);
 
     // Send explanations
     if (subject->GetClientID() != client->GetClientNum())
@@ -8090,6 +8107,23 @@ void AdminManager::AssignFaction(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdD
     }
 
     AdjustFactionStandingOfTarget(client->GetClientNum(), target, data.name, data.value);
+}
+
+void AdminManager::HandleServerQuit(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client )
+{
+    if(data.value < -1)
+    {
+        psserver->SendSystemInfo(client->GetClientNum(),"Syntax: \"/serverquit [-1/time] <Reason>\"");
+        return;
+    }
+
+    if(data.reason.Length())
+    {
+        psSystemMessage newmsg(0, MSG_INFO_SERVER, "Server Admin: " + data.reason);
+        psserver->GetEventManager()->Broadcast(newmsg.msg);
+    }
+
+    psserver->QuitServer(data.value, client);
 }
 
 void AdminManager::RandomMessageTest(Client *client,bool sequential)

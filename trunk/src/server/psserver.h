@@ -507,6 +507,12 @@ public:
      */
     bool CheckAccess(Client* client, const char* command, bool returnError=true);
 
+    /** Quits the server and sends informative messages
+     * @param time: -1 to stop the quit, 0 to quit the server immediately, > 0 to delay the server quit
+     * @param client: the client we are checking. If null messages are sent only to server console
+     */    
+    void QuitServer(int time, Client *client);
+
     /**
      * Return a unused PID for temporary usage.
      */

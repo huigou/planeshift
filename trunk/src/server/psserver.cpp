@@ -1074,3 +1074,143 @@ bool psServer::CheckAccess(Client* client, const char* command, bool returnError
     
     return CacheManager::GetSingleton().GetCommandManager()->Validate(client->GetSecurityLevel(), command);
 }
+
+class psQuitEvent : public psGameEvent
+{
+public:
+    psQuitEvent(csTicks msecDelay, psQuitEvent *quit_event, csString message,
+                       bool server_lock, bool server_shutdown)
+        : psGameEvent(0,msecDelay,"psDelayedQuitEvent")
+    {
+       message_quit_event = quit_event;
+       mytext = message;
+       trigger_server_lock = server_lock;
+       trigger_server_shutdown = server_shutdown;
+    }
+    virtual void Trigger()
+    {
+        psSystemMessage newmsg(0, MSG_INFO_SERVER, mytext);
+        psserver->GetEventManager()->Broadcast(newmsg.msg);
+        CPrintf(CON_CMDOUTPUT, "%s\n", mytext.GetDataSafe());
+        if(trigger_server_lock) //This is triggering the server lock
+           EntityManager::GetSingleton().SetReady(false);
+        if(trigger_server_shutdown) //This is triggering the server shut down
+            psserver->GetEventManager()->Stop();
+    }
+    virtual bool CheckTrigger()
+    {   //If this is the event triggering the server shut down pass it's validity, else check that event if
+        //it's still valid
+        return message_quit_event == NULL ? valid : message_quit_event->CheckTrigger();
+    }
+    void Invalidate()
+    {
+        valid = false; //This is used to invalidate the server shut down event
+    }
+private:
+    csString mytext; ///< Keeps the message which will be sent to clients
+    bool trigger_server_lock; ///< If true this is the event locking the server
+    bool trigger_server_shutdown; ///< If true this is the event which will shut down the server
+    psQuitEvent *message_quit_event; ///< Stores a link to the master event which will shut down the server
+};
+
+psQuitEvent *server_quit_event; ///< Used to keep track of the shut down event
+
+/// Shuts down the server and exit program
+void psServer::QuitServer(int time, Client *client) //-1 for stop, 0 for now > 0 for timed shutdown
+{
+    if(time == -1) //if the user passed 'stop' (-1) we will abort the shut down process
+    {
+        if(server_quit_event == NULL) //if there is no shutdown event active avoid showing anything
+        {
+            csString error_msg = "The server is not restarting right now";
+            CPrintf(CON_CMDOUTPUT, "%s\n", error_msg.GetDataSafe());
+            if(client)
+                SendSystemInfo(client->GetClientNum(),error_msg.GetDataSafe());
+            return;
+        }
+        server_quit_event->Invalidate(); //there is a quit event let's make it invalid
+        if (IsMapLoaded() && HasBeenReady()) //remake the server available if it was locked in the process
+            EntityManager::GetSingleton().SetReady(true);
+        server_quit_event = NULL;  //we don't need it anymore so let's clean ourselves of it
+        //Let the user know about the new situation about the server
+        csString abort_msg = "Server Admin: The server is no longer restarting.";
+        psSystemMessage newmsg(0, MSG_INFO_SERVER, abort_msg);
+        GetEventManager()->Broadcast(newmsg.msg);
+        CPrintf(CON_CMDOUTPUT, "%s\n", abort_msg.GetDataSafe());
+    }
+    else
+    {
+        if(server_quit_event == NULL) //check that there isn't a quit event already running...
+        {
+            uint quit_delay = time; //if the user passed a number we will read it
+            if (quit_delay) //we have an argument > 0 so let's put an event for server shut down
+            {
+                if(quit_delay > 1440) //We limit the maximum quit delay to 24 hours
+                {
+                    csString error_msg = "The specified quit time is too high. Try with a lower value.";
+                    CPrintf(CON_CMDOUTPUT, "%s\n", error_msg.GetDataSafe());
+                    if(client)
+                        SendSystemInfo(client->GetClientNum(),error_msg.GetDataSafe());
+                    return;
+                }
+                //we got less than 5 minutes for shut down so let's lock the server immediately
+                if(quit_delay < 5) EntityManager::GetSingleton().SetReady(false); 
+
+                //generates the messages to alert the user and allocates them in the queque
+                for(uint i = 3; i > 0; i--) //i = 3 sets up the 0 seconds message and so is the event triggering
+                {                           //shutdown
+                    csString outtext = "Server Admin: The server will shut down in ";
+                             outtext += 60-(i*20);
+                             outtext += " seconds.";
+                    psQuitEvent *Quit_event = new psQuitEvent(((quit_delay-1)*60+i*20)*1000, server_quit_event,
+                                                                outtext, false, i == 3);
+                    GetEventManager()->Push(Quit_event);
+                    if(!server_quit_event) server_quit_event = Quit_event;
+                }
+                csString outtext = "Server Admin: The server will shut down in 1 minute.";
+                psQuitEvent *Quit_event = new psQuitEvent((quit_delay-1)*60*1000, server_quit_event, outtext,
+                                                          false, false);
+                GetEventManager()->Push(Quit_event);
+
+                if(quit_delay == 1) return; //if the time we had was 1 minute no reason to go on
+                uint quit_time = (quit_delay < 5)? quit_delay : 5; //manage the period 1<x<5 minutes
+                while(1)
+                {
+                    csString outtext = "Server Admin: The server will shut down in ";
+                             outtext += quit_time;
+                             outtext += " minutes.";
+                    psQuitEvent *Quit_event = new psQuitEvent((quit_delay-quit_time)*60*1000, server_quit_event,
+                                                                outtext, quit_time == 5, false);
+                    GetEventManager()->Push(Quit_event);
+                    if(quit_time == quit_delay) { break; } //we have got to the first message saying the server
+                                                           //will be shut down let's go out of the loop
+                    else if(quit_time+5 > quit_delay) { quit_time = quit_delay; } //we have reached the second message
+                                                                                  //saying the server will shut down
+                                                                                  //so manage the case of not multiple
+                                                                                  //of 5 minutes shut down times
+                    else { quit_time +=5; } //we have still a long way so let's go to the next 5 minutes message
+                }
+            }
+            else //we have no arguments or the argument passed is zero let's quit immediately
+            {
+                 GetEventManager()->Stop();
+            }
+        }
+        else //we have found a quit event so we will inform the user about that
+        {
+            uint planned_shutdown = (server_quit_event->triggerticks-csGetTicks())/1000; //gets the seconds
+                                                                                         //to the event
+            uint minutes = planned_shutdown/60; //get the minutes to the event
+            uint seconds = planned_shutdown%60; //get the seconds to the event when the minutes are subtracted
+            csString quitInfo = "The server is already shutting down in ";
+            if(minutes) //if we don't have minutes (so they are zero) skip them
+                quitInfo += minutes; quitInfo += "minutes ";
+            if(seconds) //if we don't have seconds (so they are zero) skip them
+                quitInfo += seconds; quitInfo += "seconds";
+            CPrintf(CON_CMDOUTPUT, "%s\n", quitInfo.GetDataSafe()); //send the message to the server console
+            if(client)
+                SendSystemInfo(client->GetClientNum(),quitInfo.GetDataSafe());
+        }
+    }
+    return;
+}
