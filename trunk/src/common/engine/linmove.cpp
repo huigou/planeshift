@@ -231,12 +231,8 @@ bool psLinearMovement::RotateV (float delta)
   csVector3 angle = angularVelocity * delta;
   if (angleToReachFlag)
   {
-    const csMatrix3& transf = mesh->GetMovable ()
-    	->GetTransform ().GetT2O ();
-    float current_yrot = Matrix2YRot (transf);
-    current_yrot = atan2f (sin (current_yrot), cos (current_yrot));
-    float yrot_delta = fabs (atan2f (sin (angleToReach.y - current_yrot),
-    	cos (angleToReach.y - current_yrot)));
+    float current_yrot = GetYRotation();
+    float yrot_delta = fabs (angleToReach.y - current_yrot);
     if (fabs(angle.y) > yrot_delta)
     {
       angle.y = (angle.y / fabs (angle.y)) * yrot_delta;
