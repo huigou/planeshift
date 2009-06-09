@@ -2777,14 +2777,14 @@ void psItem::GetComboInfoString(psCharacter* character, uint32 designID, csStrin
         {
             // Check if craft step minimum primary skill level is meet by client
             int priSkill = skillArray->Get(count)->priSkillId;
-            if(priSkill >= 0 && skillArray->Get(count)->minPriSkill >= character->Skills().GetSkillRank((PSSKILL) priSkill).Current())
+            if(priSkill >= 0 && skillArray->Get(count)->minPriSkill > character->Skills().GetSkillRank((PSSKILL) priSkill).Current())
             {
                 continue;
             }
 
             // Check if craft step minimum secondary skill level is meet by client
             int secSkill = skillArray->Get(count)->secSkillId;
-            if(secSkill >= 0 && skillArray->Get(count)->minSecSkill >= (int)character->Skills().GetSkillRank((PSSKILL) secSkill).Current())
+            if(secSkill >= 0 && skillArray->Get(count)->minSecSkill > (int)character->Skills().GetSkillRank((PSSKILL) secSkill).Current())
             {
                     continue;
             }
@@ -2805,14 +2805,14 @@ void psItem::GetTransInfoString(psCharacter* character, uint32 designID, csStrin
     {
         // Check if craft step minimum primary skill level is meet by client
         int priSkill = craftArray->Get(count)->priSkillId;
-        if(priSkill >= 0 && craftArray->Get(count)->minPriSkill >= character->Skills().GetSkillRank((PSSKILL) priSkill).Current())
+        if(priSkill >= 0 && craftArray->Get(count)->minPriSkill > character->Skills().GetSkillRank((PSSKILL) priSkill).Current())
         {
                 continue;
         }
 
         // Check if craft step minimum seconday skill level is meet by client
         int secSkill = craftArray->Get(count)->secSkillId;
-        if(secSkill >= 0 && craftArray->Get(count)->minSecSkill >= (int) character->Skills().GetSkillRank((PSSKILL) secSkill).Current())
+        if(secSkill >= 0 && craftArray->Get(count)->minSecSkill > (int) character->Skills().GetSkillRank((PSSKILL) secSkill).Current())
         {
                 continue;
         }
