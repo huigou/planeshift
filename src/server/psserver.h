@@ -86,6 +86,7 @@ struct iVFS;
 class  GMEventManager;
 class  BankManager;
 class  ServerConsole;
+class  psQuitEvent;
 
 /** The main server class.
  * The main server class holding references to important server objects.
@@ -565,6 +566,8 @@ protected:
     csString                        motd;
     GMEventManager*                 gmeventManager;
     BankManager*                    bankmanager;
+
+    psQuitEvent *server_quit_event; ///< Used to keep track of the shut down event
 
     /**
      * Unused PID. These are for temporary use.

@@ -1113,8 +1113,6 @@ private:
     psQuitEvent *message_quit_event; ///< Stores a link to the master event which will shut down the server
 };
 
-psQuitEvent *server_quit_event; ///< Used to keep track of the shut down event
-
 /// Shuts down the server and exit program
 void psServer::QuitServer(int time, Client *client) //-1 for stop, 0 for now > 0 for timed shutdown
 {
