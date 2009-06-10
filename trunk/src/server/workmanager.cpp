@@ -4346,7 +4346,7 @@ psWorkGameEvent::~psWorkGameEvent()
         if( transItem && transItem->GetTransformationEvent() == this)
             transItem->SetTransformationEvent(NULL);
 
-        // The garbase transformation is not cached and needs to be cleaned up
+        // The garbage transformation is not cached and needs to be cleaned up
         if(transformation && !transformation->GetTransformationCacheFlag() )
         {
             delete transformation;
