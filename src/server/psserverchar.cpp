@@ -589,7 +589,7 @@ void ServerCharManager::BeginTrading(Client * client, gemObject * target, const 
     for ( size_t z = 0; z < merchantInfo->categories.GetSize(); z++ )
     {
         psItemCategory * category = merchantInfo->categories[z];
-        if(type != "SELL" && merchant->Inventory().hasItemCategory(category,false,true))
+        if(type == "SELL" || merchant->Inventory().hasItemCategory(category,false,true))
         {
             csString escpxml = EscpXML(category->name);
             buff.Format("<CATEGORY ID=\"%d\" "
