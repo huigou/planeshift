@@ -1,3 +1,7 @@
+*** 2009-06-10 by Steven Patrick
+- Added account_id column to track accounts in gm_command_log
+- DB BUMP to 1220
+
 *** 2009-06-03 by Stefano Angeleri
 - Made action locations be present in players proxlist in order to allow
   the client to untarget them when out of scope
