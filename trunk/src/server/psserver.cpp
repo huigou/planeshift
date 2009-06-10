@@ -130,6 +130,7 @@ psServer::psServer ()
     cachemanager        = NULL;
     logcsv              = NULL;
     vfs                 = NULL;
+    server_quit_event   = NULL;
     unused_pid          = 0;
 
 }
