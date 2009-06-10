@@ -2964,7 +2964,7 @@ psItem* WorkManager::TransformSlotItem(INVENTORY_SLOT_NUMBER slot, uint32 newId,
 
     // Locate item in owner's slot
     newItem->SetOwningCharacter(owner->GetCharacterData());
-    owner->GetCharacterData()->Inventory().Add(newItem,false,true,slot);
+    owner->GetCharacterData()->Inventory().Add(newItem,false,false,slot);
     if (!owner->GetCharacterData()->Inventory().EquipItem(newItem,slot))
     {
         // If can't equip then drop
