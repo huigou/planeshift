@@ -670,7 +670,9 @@ protected:
         csVector3 pos;
         iSector* sector;
         float yrot;
+        InstanceID instance;
     } valid_location;
+
     DRstate newvalid_location;
     DRstate last_location;
     DRstate prev_teleport_location;
@@ -877,7 +879,7 @@ public:
     void SetPosition(const csVector3& pos,float angle, iSector* sector);
     void SetInstance(InstanceID worldInstance);
 
-    void UpdateValidLocation(const csVector3 & pos, float yrot, iSector *sector, bool force = false);
+    void UpdateValidLocation(const csVector3 & pos, float yrot, iSector *sector, InstanceID instance, bool force = false);
 
     bool SetDRData(psDRMessage& drmsg);
     void MulticastDRUpdate();
@@ -972,17 +974,17 @@ public:
 
     /// Restores actor to his last valid position
     bool MoveToValidPos(bool force = false);
-    void GetValidPos(csVector3& pos, float& yrot, iSector*& sector);
+    void GetValidPos(csVector3& pos, float& yrot, iSector*& sector, InstanceID &instance);
 
     /// Get the last reported location this actor was at
-    void GetLastLocation(csVector3 & pos, float & yrot, iSector*& sector);
+    void GetLastLocation(csVector3 & pos, float & yrot, iSector*& sector, InstanceID &instance);
     /// Moves player to his last reported location
     void MoveToLastPos();
 
     /// Record the location of this actor before he was teleported
-    void SetPrevTeleportLocation(const csVector3& pos, float yrot, iSector* sector);
+    void SetPrevTeleportLocation(const csVector3& pos, float yrot, iSector* sector, InstanceID instance);
     /// Get the location of the player before he was teleported
-    void GetPrevTeleportLocation(csVector3& pos, float& yrot, iSector*& sector);
+    void GetPrevTeleportLocation(csVector3& pos, float& yrot, iSector*& sector, InstanceID& instance);
 
     const DamageHistory* GetDamageHistory(int pos) const { return dmgHistory.Get(pos); }
     DamageHistory* GetDamageHistory(int pos) { return dmgHistory.Get(pos); }

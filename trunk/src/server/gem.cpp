@@ -739,8 +739,6 @@ void gemObject::Move(const csVector3& pos,float rotangle, iSector* room)
     pcmesh->MoveMesh(room, rotangle, pos);
 }
 
-#define PSABS(x)    ((x) < 0 ? -(x) : (x))
-
 bool gemObject::IsNear(gemObject *obj, float radius)
 {
     return proxlist->RangeTo(obj) < radius;
@@ -1895,7 +1893,7 @@ nevertired(false), infinitemana(false), instantcast(false), safefall(false), giv
     Debug6(LOG_NPC,0,"Successfully created actor %s at %1.2f,%1.2f,%1.2f in sector %s.\n",
         factname,pos.x,pos.y,pos.z,GetSectorName());
 
-    SetPrevTeleportLocation(pos, rotangle, GetSector());
+    SetPrevTeleportLocation(pos, rotangle, GetSector(), myInstance);
 
     // Set the initial valid location to be the spot the actor was created at.
     UpdateValidLocation(pos, rotangle, GetSector(), true);
@@ -2070,15 +2068,16 @@ bool gemActor::MoveToValidPos(bool force)
 
     isFalling = false;
     pcmove->SetOnGround(false);
-    Teleport(valid_location.sector, valid_location.pos, valid_location.yrot);
+    Teleport(valid_location.sector, valid_location.pos, valid_location.yrot, valid_location.instance);
     return true;
 }
 
-void gemActor::GetValidPos(csVector3& pos, float& yrot, iSector*& sector)
+void gemActor::GetValidPos(csVector3& pos, float& yrot, iSector*& sector, InstanceID &instance)
 {
     pos = valid_location.pos;
     yrot = valid_location.yrot;
     sector = valid_location.sector;
+    instance = valid_location.instance;
 }
 
 void gemActor::SetVisibility(bool visible)
@@ -3249,13 +3248,13 @@ bool gemActor::SetDRData(psDRMessage& drmsg)
 
     if (drmsg.sector != NULL)
     {
-        UpdateValidLocation(drmsg.pos, drmsg.yrot, drmsg.sector);
+        UpdateValidLocation(drmsg.pos, drmsg.yrot, drmsg.sector, worldInstance);
         psSectorInfo* sectorInfo = CacheManager::GetSingleton().GetSectorInfoByName( drmsg.sector->QueryObject()->GetName() );
         if (sectorInfo != NULL)
         {
             psChar->SetLocationInWorld(worldInstance,sectorInfo, drmsg.pos.x, drmsg.pos.y, drmsg.pos.z, drmsg.yrot );
 
-            if (IsSpellCasting() && PSABS(drmsg.vel.SquaredNorm()) > 13.0f)
+            if (IsSpellCasting() && drmsg.vel.SquaredNorm() > 13.0f)
             {
                 InterruptSpellCasting();
             }
@@ -3264,7 +3263,7 @@ bool gemActor::SetDRData(psDRMessage& drmsg)
     return true;
 }
 
-void gemActor::UpdateValidLocation(const csVector3 & pos, float yrot, iSector *sector, bool force)
+void gemActor::UpdateValidLocation(const csVector3 & pos, float yrot, iSector *sector, InstanceID instance, bool force)
 {
     // 10m hops
     if (force || (!isFalling && (pos - newvalid_location.pos).SquaredNorm() > 100.0f))
@@ -3273,6 +3272,7 @@ void gemActor::UpdateValidLocation(const csVector3 & pos, float yrot, iSector *s
         newvalid_location.pos = pos;
         newvalid_location.yrot = yrot;
         newvalid_location.sector = sector;
+        newvalid_location.instance = instance;
         if(force)
             valid_location = newvalid_location;
     }
@@ -3280,33 +3280,37 @@ void gemActor::UpdateValidLocation(const csVector3 & pos, float yrot, iSector *s
     last_location.pos = pos;
     last_location.yrot = yrot;
     last_location.sector = sector;
+    last_location.instance = instance;
 }
 
 void gemActor::MoveToLastPos()
 {
     pcmove->SetOnGround(false);
-    Teleport(last_location.sector, last_location.pos, last_location.yrot);
+    Teleport(last_location.sector, last_location.pos, last_location.yrot, last_location.instance);
 }
 
-void gemActor::GetLastLocation(csVector3& pos, float& yrot, iSector*& sector)
+void gemActor::GetLastLocation(csVector3& pos, float& yrot, iSector*& sector, InstanceID &instance)
 {
     pos = last_location.pos;
     yrot = last_location.yrot;
     sector = last_location.sector;
+    instance = last_location.instance;
 }
 
-void gemActor::SetPrevTeleportLocation(const csVector3& pos, float yrot, iSector* sector)
+void gemActor::SetPrevTeleportLocation(const csVector3& pos, float yrot, iSector* sector, InstanceID instance)
 {
     prev_teleport_location.pos = pos;
     prev_teleport_location.yrot = yrot;
     prev_teleport_location.sector = sector;
+    prev_teleport_location.instance = instance;
 }
 
-void gemActor::GetPrevTeleportLocation(csVector3& pos, float& yrot, iSector*& sector)
+void gemActor::GetPrevTeleportLocation(csVector3& pos, float& yrot, iSector*& sector, InstanceID& instance)
 {
     pos = prev_teleport_location.pos;
     yrot = prev_teleport_location.yrot;
     sector = prev_teleport_location.sector;
+    instance = prev_teleport_location.instance;
 }
 
 void gemActor::MulticastDRUpdate()
