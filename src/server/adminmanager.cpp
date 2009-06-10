@@ -1197,7 +1197,7 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, Client *client)
         targetID = targetobject->GetPID();
 
     if (me->clientnum)
-        LogGMCommand( client->GetPID(), targetID, msg.cmd );
+        LogGMCommand( client->GetAccountID(), client->GetPID(), targetID, msg.cmd );
 
     if (data.command == "/npc")
     {
@@ -5213,7 +5213,7 @@ bool AdminManager::AssignPetition(PID gmID, int petitionID)
     return true;
 }
 
-bool AdminManager::LogGMCommand(PID gmID, PID playerID, const char* cmd)
+bool AdminManager::LogGMCommand(AccountID accountID, PID gmID, PID playerID, const char* cmd)
 {
     if (!strncmp(cmd,"/slide",6)) // don't log all these.  spamming the GM log table.
         return true;
@@ -5221,8 +5221,8 @@ bool AdminManager::LogGMCommand(PID gmID, PID playerID, const char* cmd)
     csString escape;
     db->Escape( escape, cmd );
     int result = db->Command("INSERT INTO gm_command_log "
-                             "(gm,command,player,ex_time) "
-                             "VALUES (%u,\"%s\",%u,Now())", gmID.Unbox(), escape.GetData(), playerID.Unbox());
+                             "(account_id,gm,command,player,ex_time) "
+                             "VALUES (%u,%u,\"%s\",%u,Now())", accountID.Unbox(), gmID.Unbox(), escape.GetData(), playerID.Unbox());
     return (result != -1);
 }
 

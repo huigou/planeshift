@@ -1211,6 +1211,10 @@ INSERT INTO command_group_assignment VALUES( "setattrib others", 30 );
 #1219 - Stefano Angeleri - /serverquit command
 INSERT INTO command_group_assignment VALUES( "/serverquit", 30 );
 
+#1220 - Steven Patrick - Added account_id column to track accounts in gm_command_log
+ALTER TABLE `gm_command_log` ADD COLUMN `account_id` INT(10) UNSIGNED NOT NULL DEFAULT 0 AFTER `id`;
+UPDATE `server_options` SET `option_value`='1220' WHERE `option_name`='db_version';
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to
