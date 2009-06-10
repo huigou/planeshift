@@ -507,7 +507,7 @@ protected:
      *  @param cmd: the command the GM executed
      *  @return Returns either success or failure.
      */
-    bool LogGMCommand(PID gmID, PID playerID, const char* cmd);
+    bool LogGMCommand(AccountID accountID, PID gmID, PID playerID, const char* cmd);
 
 	/**
 	 * @brief Sends 10 messages in random order to the client for testing sequential delivery
