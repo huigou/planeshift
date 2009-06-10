@@ -696,11 +696,12 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
         csVector3 pos(0,0,0);
         psSectorInfo *sectorinfo;
         csString sector;
+        InstanceID instance;
         if ( actor->IsAlive() )
         {
             iSector* sec;
             // We want to save the last reported location
-            actor->GetLastLocation(pos, yrot, sec);
+            actor->GetLastLocation(pos, yrot, sec, instance);
             sector = sec->QueryObject()->GetName();
 
             sectorinfo = CacheManager::GetSingleton().GetSectorInfoByName(sector);
@@ -735,6 +736,8 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
             }
 
             sectorinfo =  CacheManager::GetSingleton().GetSectorInfoByName(sector);
+            
+            instance = actor->GetInstance();
         }
 
         if(!sectorinfo)
@@ -748,7 +751,7 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
         targetUpdate->AddField("loc_z", pos.z);
         targetUpdate->AddField("loc_yrot", yrot);
         targetUpdate->AddField("loc_sector_id", sectorinfo->uid);
-        targetUpdate->AddField("loc_instance", actor->GetInstance());
+        targetUpdate->AddField("loc_instance", instance);
         //Saves the guild notification setting: this is done only when the client correctly quits.
         //This is to avoid flodding with setting changes as much as possible
         targetUpdate->AddField("guild_notifications", chardata->IsGettingGuildNotifications() );
