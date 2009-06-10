@@ -739,6 +739,8 @@ void gemObject::Move(const csVector3& pos,float rotangle, iSector* room)
     pcmesh->MoveMesh(room, rotangle, pos);
 }
 
+#define PSABS(x)    ((x) < 0 ? -(x) : (x))
+
 bool gemObject::IsNear(gemObject *obj, float radius)
 {
     return proxlist->RangeTo(obj) < radius;
@@ -3254,7 +3256,7 @@ bool gemActor::SetDRData(psDRMessage& drmsg)
         {
             psChar->SetLocationInWorld(worldInstance,sectorInfo, drmsg.pos.x, drmsg.pos.y, drmsg.pos.z, drmsg.yrot );
 
-            if (IsSpellCasting() && drmsg.vel.SquaredNorm() > 13.0f)
+            if (IsSpellCasting() && PSABS(drmsg.vel.SquaredNorm()) > 13.0f)
             {
                 InterruptSpellCasting();
             }
