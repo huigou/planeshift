@@ -167,7 +167,8 @@ public:
     // Skills
     psSkillInfo *GetSkillByID(unsigned int id);
     psSkillInfo *GetSkillByName(const char *name);
-    //Get all skills belonging to a specific category
+    
+    ///Get all skills belonging to a specific category
     void GetSkillsListbyCategory(csArray <psSkillInfo>& listskill,int category );
 
     // Common Strings
@@ -195,9 +196,11 @@ public:
     psQuest *GetQuestByID(unsigned int id);
     psQuest *GetQuestByName(const char *name);
     psQuest *AddDynamicQuest(const char *name, psQuest *parentQuest, int step);
-    // Unloads a quest and its scripts
+    
+    /// Unloads a quest and its scripts
     bool UnloadQuest(int id);
-    // Loads a quest and its scripts
+    
+    /// Loads a quest and its scripts
     bool LoadQuest(int id);
     csHash<psQuest *>::GlobalIterator GetQuestIterator();
 
@@ -273,7 +276,11 @@ public:
     SpellIterator GetSpellIterator();
 
     // Trades
+    
+    /// Get set of transformations for that pattern
     csPDelArray<CombinationConstruction>* FindCombinationsList(uint32 patternid);
+    
+    /// Get transformation array for pattern and target item
     csPDelArray<psTradeTransformations>* FindTransformationsList(uint32 patternid, uint32 targetid);
     bool PreloadUniqueTradeTransformations();
     csArray<uint32>* GetTradeTransUniqueByID(uint32 id);
@@ -288,11 +295,19 @@ public:
     csArray<CraftComboInfo*>* GetTradeComboInfoByItemID(uint32 id);
 
     // Items
+    
+    /// Get item basic stats by hashed table
     psItemStats *GetBasicItemStatsByName(csString name);
+    
+    /// Get item basic stats by hashed table
     psItemStats *GetBasicItemStatsByID(uint32 id);
     psItemStats *CopyItemStats(uint32 id, csString newName);
+    
+    /// return id of item if 'name' exists already
     uint32 BasicItemStatsByNameExist(csString name);
     size_t ItemStatsSize(void) { return itemStats_IDHash.GetSize(); }
+    
+    /// If an item changes name (eg book title) keep cache up to date
     void CacheNameChange(csString oldName, csString newName);
 
     psItemSet *LoadWorldItems(psSectorInfo *sector,int &loadeditems);
@@ -305,7 +320,7 @@ public:
 
     PSITEMSTATS_STAT ConvertAttributeString(const char *attributestring);
     
-    // Converts the stat enum to a string.
+    /// Converts the stat enum to a string.
     const char* Attribute2String( PSITEMSTATS_STAT s );
     
     PSSKILL               ConvertSkillString(const char *skillstring);
@@ -315,7 +330,7 @@ public:
 
     //Tips
     void GetTipByID(int id, csString& tip);
-    unsigned int GetTipLength(); //Returns how many tips there is
+    unsigned int GetTipLength(); ///< Returns how many tips there is
 
     SlotNameHash slotNameHash;
 
@@ -345,16 +360,17 @@ public:
     /// This allows psServerChar to build a list of limitations for each player on demand.
     const psCharacterLimitation *GetLimitation(size_t index);
 
-    // List of stances.
+    /// List of stances.
     csArray<Stance> stances;
-    // Map of locations.
+    
+    /// Map of locations.
     csArray<csString> stanceID;
 
     void AddItemStatsToHashTable(psItemStats* newitem);
 
 protected:
     uint32_t effectID;
-    uint32_t maxCommonStrID;                //< The max common string id
+    uint32_t maxCommonStrID;                ///< The max common string id
     char CacheNameBuffer[15];
 
     bool PreloadSectors();
@@ -420,7 +436,7 @@ protected:
     public:
         psCacheExpireEvent(int delayticks,CachedObject *object);
         void CancelEvent() { valid = false;}
-        virtual void Trigger();  // Abstract event processing function
+        virtual void Trigger();  ///< Abstract event processing function
     };
 
     /** This cache is intended to keep database-loaded objects 

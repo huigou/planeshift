@@ -196,7 +196,6 @@ bool CacheManager::PreloadAll()
     if (!PreloadStances())
         return false;
 
-//    PreCreateCraftMessages();
     PreloadCommandGroups();
 
     return true;
@@ -923,7 +922,6 @@ bool CacheManager::PreloadTradeCombinations()
     return true;
 }
 
-// Get set of transformations for that pattern
 csPDelArray<CombinationConstruction>* CacheManager::FindCombinationsList(uint32 patternid)
 {
     return tradeCombinations_IDHash.Get(patternid,NULL);
@@ -978,7 +976,6 @@ bool CacheManager::PreloadTradeTransformations()
     return true;
 }
 
-// Get transformation array for pattern and target item
 csPDelArray<psTradeTransformations> *CacheManager::FindTransformationsList(uint32 patternid, uint32 targetid)
 {
     // First get transformation hash table using the patternid
@@ -2071,7 +2068,6 @@ CacheManager::SpellIterator CacheManager::GetSpellIterator()
 }
 
 
-// Get item basic stats by hashed table
 psItemStats *CacheManager::GetBasicItemStatsByName(csString name)
 {
     psItemStats *itemstats = itemStats_NameHash.Get(name.Downcase(),NULL);
@@ -2115,7 +2111,6 @@ psItemStats *CacheManager::GetBasicItemStatsByName(csString name)
     return itemstats;
 }
 
-// return id of item if 'name' exists already
 uint32 CacheManager::BasicItemStatsByNameExist(csString name)
 {
     psItemStats *itemstats = itemStats_NameHash.Get(name.Downcase(), NULL);
@@ -2127,7 +2122,6 @@ uint32 CacheManager::BasicItemStatsByNameExist(csString name)
     return 0;
 }
 
-// Get item basic stats by hashed table
 psItemStats *CacheManager::GetBasicItemStatsByID(uint32 id)
 {
     if ( id == 0 )
@@ -2169,18 +2163,17 @@ psItemStats *CacheManager::GetBasicItemStatsByID(uint32 id)
     return itemstats;
 }
 
-/// If an item changes name (eg book title) keep cache up to date
 void CacheManager::CacheNameChange(csString oldName, csString newName)
 {
     if (oldName.Length() > 0 && newName.Length() > 0)
     {
-        /// first remove old name
+        // first remove old name
         psItemStats *itemstats = itemStats_NameHash.Get(oldName.Downcase(), NULL);
         if (itemstats)
         {
             itemStats_NameHash.Delete(oldName.Downcase(), itemstats);
 
-            /// add new one
+            // add new one
             itemStats_NameHash.Put(newName.Downcase(), itemstats);
         }
         else
