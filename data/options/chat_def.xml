@@ -2,10 +2,42 @@
     <chatoptions>
         <selecttabstyle value="2" />
         <echoscreeninsystem value="1" />
+        <mainbrackets value="1" />
+        <yourcolormix value="1" />
         <loose value="0" />
         <logAllChat value="1" />
         <logSystemChat value="0" />
     </chatoptions>
+    <maintabincludes>
+        <npc value="no" />
+        <tell value="no" />
+        <guild value="no" />
+        <group value="no" />
+        <auction value="no" />
+        <system value="no" />
+        <systembase value="yes" />
+        <help value="no" />
+    </maintabincludes>
+    <flashingoptions>
+        <main value="yes" />
+        <npc value="yes" />
+        <tell value="yes" />
+        <guild value="yes" />
+        <group value="yes" />
+        <auction value="yes" />
+        <system value="yes" />
+        <help value="yes" />
+    </flashingoptions>
+	<flashingoncharoptions>
+        <main value="yes" />
+        <npc value="yes" />
+        <tell value="yes" />
+        <guild value="yes" />
+        <group value="yes" />
+        <auction value="yes" />
+        <system value="yes" />
+        <help value="yes" />
+    </flashingoncharoptions>
 
 		<chatcolors>
         <systemtext     r="0"   g="255" b="0" />
@@ -13,6 +45,7 @@
         <playernametext r="157" g="187" b="255" />
         <chattext       r="255" g="255" b="255" />
         <telltext       r="255" g="255" b="0" />
+        <npctext        r="255" g="0" b="255" />
         <shouttext      r="255" g="0"   b="255" />
         <guildtext      r="200" g="200" b="200" />
         <yourtext       r="255" g="255" b="255" />
@@ -26,61 +59,165 @@
             <!-- starting with George Carlin's Seven Dirty Words -->
             shit piss fuck cunt cocksucker motherfucker tits
             <!-- and tune to your liking -->
-            damn bastard bitch fuk asshole whore dickhead cybersex fag wanker fucking
+            damn goddamn dammit damnit goddammit goddamnit pissed pisser arse arses asshole assholes arsehole arseholes buttplug buttplug crap craps turd turds shitcock shitcocks shitstain shitstains shitter shitters shitting bullshit bullshitter bullshitters cybersex fuk fucking fucker fuckers fucked fuckwit fuckwits fuckhead fuckheads motherfuck mofo masturbate wank wanks bastard bastards penis penises smegma smeg bollok bollock bolloks bollocks dick dicks dickhead dickheads ballsack ballsacks ballsac ballsacs nutsack nutsacks nutsac nutsacs dildo dildoes dildos choad choads scrotum scrote scrotes blowjob blowjobs fellate fellatio dicksuck dicksucker dicksuckers cocksuck cocksucker cocksuckers bitch bitches whore whores tit titty titties tittys boobie boobies vagina vaginas pud puds twat twats poon poontang clit clitoris labia cuntlick cuntlicker cuntlickers cuntlicking cunnilingus fag fags dyke dykes homo homos homoes bugger buggers fudgepacker fudgepackers poofter poofters poufter poufters felch felches felcher felchers felching nazi nazis nigger niggers nigga niggas coon coons wop wops dago dagos dagoes wog wogs raghead ragheads towelhead towelheads polock polocks polack polacks kike kikes hebe hebes paki pakis pakies spic spics spick spicks wog
             <!-- you can specify a replacement word using a semicolon -->
             h4x0r;hacker
             <!-- or you can use this xml syntax -->
-        <replace bad="l33t" good="elite"/>
-        <replace bad="d00d" good="Sir"/>
-        <replace bad="1337" good="great"/>
-        <replace bad="l33tsp34k" good="RS talk"/>
-        <replace bad="ph34r" good="fear"/>
-        <replace bad="j0" good="hail"/>
-        <replace bad="j00" good="you"/>
-        <replace bad="r0x0rz" good="rocks"/>
-        <replace bad="pwnd" good="owned"/>
-        <replace bad="n00b" good="newbie"/>
-        <replace bad="omg" good="by the gods"/>
-        <replace bad="wtf" good="what the heck"/>
-        <replace bad="h8" good="hate"/>
-        <replace bad="w8" good="wait"/>
-        <replace bad="l8r" good="later"/>
-        <replace bad="some1" good="someone"/>
-        <replace bad="ne1" good="anyone"/>
-        <replace bad="hax0r" good="expert"/>
-        <replace bad="l4m3r" good="yokel"/>
-        <replace bad="sux0r" good="suck"/>
-        <replace bad="sux0rs" good="sucks"/>
-        <replace bad="sux0rz" good="sucks"/>
-        <replace bad="r0x0r" good="rock"/>
-        <replace bad="r0x0rs" good="rocks"/>
-        <replace bad="r0x0rz" good="rocks"/>
-        <replace bad="sk1||z" good="skills"/>
-        <replace bad="sk1llz" good="skills"/>
-        <replace bad="13wt" good="loot"/>
-        <replace bad="ub3r" good="great"/>
-        <replace bad="m4d" good="mad"/>
-        <replace bad="pr0n" good="nudity"/>
-        <replace bad="w00t" good="woohoo"/>
-        <replace bad="stfu" good="please be quiet"/>
-        <replace bad="teh" good="the"/>
-        <replace bad="r0xx0r" good="great"/>
-        <replace bad="@$$" good="backside"/>
-        <replace bad="g4y" good="gay"/>
-        <replace bad="u" good="you"/>
-        <replace bad="ur" good="your"/>
-        <replace bad="t3h" good="the"/>
-        <replace bad="n00blit" good="young newbie"/>
-        <replace bad="wh4ck0rs" good="weird"/>
-        <replace bad="ex0t|c" good="exotic"/>
-        <replace bad="wassup" good="how fare thee"/>
-        <replace bad="sup" good="how farest thou"/>
-        <replace bad="u2" good="you too"/>
+
+# general leetspeak replacements
+        <replace bad="brb" good="I will return shortly"/>
         <replace bad="cu" good="see you later"/>
         <replace bad="cya" good="see you later"/>
-        <replace bad="ty" good="thank you"/>
-        <replace bad="yw" good="you're welcome"/>
+        <replace bad="d00d" good="good citizen"/>
         <replace bad="dunno" good="don't know"/>
+        <replace bad="ex0t|c" good="exotic"/>
+        <replace bad="h8" good="hate"/>
+        <replace bad="h8r" good="negative person"/>
+        <replace bad="h4x0r" good="proficient"/>
+        <replace bad="hax0r" good="proficient"/>
+        <replace bad="haxor" good="proficient"/>
+        <replace bad="iz" good="is"/>
+        <replace bad="jk" good="I was only making a small jest"/>
+        <replace bad="j0" good="you"/>
+        <replace bad="j00" good="you"/>
+        <replace bad="kranistan" good="Gugrontid"/>
+        <replace bad="l4m3r" good="yokel"/>
+        <replace bad="lamer" good="yokel"/>
+        <replace bad="l8r" good="later"/>
+        <replace bad="1337" good="noble"/>
+        <replace bad="l33t" good="noble"/>
+        <replace bad="l33tsp34k" good="worthy speech"/>
+        <replace bad="13wt" good="loot"/>
+        <replace bad="100t" good="loot"/>
+        <replace bad="m4d" good="mad"/>
+        <replace bad="m3h" good="I'm feeling a tad disinterested"/>
+        <replace bad="meh" good="I'm feeling a tad disinterested"/>
+        <replace bad="n31" good="anyone"/>
+        <replace bad="ne1" good="anyone"/>
+        <replace bad="n00b" good="novice"/>
+        <replace bad="n00blet" good="neophyte"/>
+        <replace bad="n00blit" good="neophyte"/>
+        <replace bad="omg" good="by the gods"/>
+        <replace bad="omfg" good="by the mercy of the gods"/>
+        <replace bad="ph41l" good="fail"/>
+        <replace bad="ph4il" good="fail"/>
+        <replace bad="phail" good="fail"/>
+        <replace bad="ph34r" good="fear"/>
+        <replace bad="phear" good="fear"/>
+        <replace bad="pwn" good="utterly vanquish"/>
+        <replace bad="pwnz0r" good="utterly vanquish"/>
+        <replace bad="pwnzor" good="utterly vanquish"/>
+        <replace bad="pwnz" good="utterly vanquishes"/>
+        <replace bad="pwns" good="utterly vanquishes"/>
+        <replace bad="pwnt" good="utterly vanquished"/>
+        <replace bad="pwnd" good="utterly vanquished"/>
+        <replace bad="r0x0r" good="excel"/>
+        <replace bad="r0xx0r" good="excel"/>
+        <replace bad="roxor" good="excel"/>
+        <replace bad="r0x0rs" good="excels"/>
+        <replace bad="r0x0rz" good="excels"/>
+        <replace bad="roxors" good="excels"/>
+        <replace bad="roxorz" good="excels"/>
+        <replace bad="sk1||z" good="skills"/>
+        <replace bad="sk1llz" good="skills"/>
+        <replace bad="skillz" good="skills"/>
+        <replace bad="s0m31" good="someone"/>
+        <replace bad="some1" good="someone"/>
+        <replace bad="sup" good="how do you fare"/>
+        <replace bad="sux0r" good="fail to impress"/>
+        <replace bad="suxor" good="fail to impress"/>
+        <replace bad="suxx0r" good="fail to impress"/>
+        <replace bad="suxxor" good="fail to impress"/>
+        <replace bad="sux0rs" good="disappoints me greatly"/>
+        <replace bad="sux0rz" good="disappoints me greatly"/>
+        <replace bad="suxors" good="disappoints me greatly"/>
+        <replace bad="suxorz" good="disappoints me greatly"/>
+        <replace bad="t3h" good="the"/>
+        <replace bad="teh" good="the"/>
+        <replace bad="ty" good="thank you"/>
+        <replace bad="tyvm" good="thank you very much"/>
+        <replace bad="ub3r" good="exceedingly"/>
+        <replace bad="uber" good="exceedingly"/>
+        <replace bad="u" good="you"/>
+        <replace bad="u2" good="you too"/>
+        <replace bad="ur" good="your"/>
+        <replace bad="w8" good="wait"/>
+        <replace bad="wassup" good="how do you fare"/>
+        <replace bad="wh4ck0rs" good="weird"/>
+        <replace bad="w00t" good="huzzah"/>
+        <replace bad="yw" good="you're welcome"/>
+        <replace bad="zomg" good="by the gods"/>
+
+# replacements for naughtier leetspeak and words with dual meanings
+        <replace bad="anal" good="tense"/>
+        <replace bad="@$$" good="addlepated kormi"/>
+        <replace bad="ass" good="addlepated kormi"/>
+        <replace bad="@$$3s" good="addlepated kormis"/>
+        <replace bad="asses" good="addlepated kormis"/>
+        <replace bad="bum" good="vagrant"/>
+        <replace bad="bums" good="vagrants"/>
+        <replace bad="b3wb" good="shapely nose"/>
+        <replace bad="bewb" good="shapely nose"/>
+        <replace bad="b3wbs" good="gorgeous eyes"/>
+        <replace bad="bewbs" good="gorgeous eyes"/>
+        <replace bad="beeyatch" good="wonderful lady"/>
+        <replace bad="biatch" good="wonderful lady"/>
+        <replace bad="biotch" good="wonderful lady"/>
+        <replace bad="beeyatches" good="wonderful ladies"/>
+        <replace bad="biatches" good="wonderful ladies"/>
+        <replace bad="biotches" good="wonderful ladies"/>
+        <replace bad="beeyatchez" good="wonderful ladies"/>
+        <replace bad="biatchez" good="wonderful ladies"/>
+        <replace bad="biotchez" good="wonderful ladies"/>
+        <replace bad="cock" good="kikiri"/>
+        <replace bad="cocks" good="kikiri"/>
+        <replace bad="diarrhea" good="daintywhisp petals"/>
+        <replace bad="douche" good="water pouch"/>
+        <replace bad="douchebag" good="water pouch"/>
+        <replace bad="douches" good="water pouches"/>
+        <replace bad="douchebags" good="water pouches"/>
+        <replace bad="faggot" good="bundle of sticks"/>
+        <replace bad="faggots" good="bundles of sticks"/>
+        <replace bad="fagg0tz" good="bundles of sticks"/>
+        <replace bad="faggotz" good="bundles of sticks"/>
+        <replace bad="fu" good="go get lost in the Stone Labyrinths"/>
+        <replace bad="g4y" good="intriguing"/>
+        <replace bad="ghey" good="intriguing"/>
+        <replace bad="gh3y" good="intriguing"/>
+        <replace bad="muff" good="hand warmer"/>
+        <replace bad="muffs" good="hand warmers"/>
+        <replace bad="p33n" good="well-known personage"/>
+        <replace bad="p33n3r" good="well-known personage"/>
+        <replace bad="peen" good="well-known personage"/>
+        <replace bad="peener" good="well-known personage"/>
+        <replace bad="p33ns" good="well-known personages"/>
+        <replace bad="p33n3rs" good="well-known personages"/>
+        <replace bad="peens" good="well-known personages"/>
+        <replace bad="peeners" good="well-known personages"/>
+        <replace bad="p33nz" good="well-known personages"/>
+        <replace bad="p33n3rz" good="well-known personages"/>
+        <replace bad="peenz" good="well-known personages"/>
+        <replace bad="peenerz" good="well-known personages"/>
+        <replace bad="pr0n" good="citizens without cloaks"/>
+        <replace bad="pron" good="citizens without cloaks"/>
+        <replace bad="slut" good=""/>
+        <replace bad="sonofabeeyatch" good="talented gentleman"/>
+        <replace bad="sonofabiatch" good="talented gentleman"/>
+        <replace bad="sonofabitch" good="talented gentleman"/>
+        <replace bad="sonofabiotch" good="talented gentleman"/>
+        <replace bad="sonsofbeeyatches" good="talented gentlemen"/>
+        <replace bad="sonsofbiatches" good="talented gentlemen"/>
+        <replace bad="sonsofbitches" good="talented gentlemen"/>
+        <replace bad="sonsofbiotches" good="talented gentlemen"/>
+        <replace bad="sonsofbeeyatchez" good="talented gentlemen"/>
+        <replace bad="sonsofbiatchez" good="talented gentlemen"/>
+        <replace bad="sonsofbitchez" good="talented gentlemen"/>
+        <replace bad="sonsofbiotchez" good="talented gentlemen"/>
+        <replace bad="stfu" good="please be quiet"/>
+        <replace bad="wanker" good="kindly citizen"/>
+        <replace bad="wankers" good="kindly citziens"/>
+        <replace bad="wtf" good="Light of the Crystal, what was that"/>
+
     </badwords>
     </filters>
     <msgfilters>
