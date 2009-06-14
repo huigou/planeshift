@@ -3851,8 +3851,7 @@ bool AdminManager::MoveObject(Client *client, gemObject *target, csVector3& pos,
         }
 
         // Move the item
-        item->SetInstance(instance);
-        item->Move(pos,yrot,sector);
+        item->SetPosition(pos, yrot, sector, instance);
 
         // Check to see if this client has the admin level to move this spawn point
         if ( item->GetItem()->GetScheduledItem() && extras )
