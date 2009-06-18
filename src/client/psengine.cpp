@@ -606,40 +606,37 @@ bool psEngine::Initialize (int level)
             }
         }
 
-        if(threadedWorldLoading)
-        {
-            csRef<iStringArray> maps = vfs->FindFiles("/planeshift/world/");
+        csRef<iStringArray> maps = vfs->FindFiles("/planeshift/world/");
 
-            // Do the _common maps first.
-             for(size_t i=0; i<maps->GetSize(); ++i)
+        // Do the _common maps first.
+        for(size_t i=0; i<maps->GetSize(); ++i)
+        {
+            csRef<iDataBuffer> tmp = vfs->GetRealPath(maps->Get(i));
+            if(csString(tmp->GetData()).Find("common") != (size_t)-1)
             {
-                csRef<iDataBuffer> tmp = vfs->GetRealPath(maps->Get(i));
-                if(csString(tmp->GetData()).Find("common") != (size_t)-1)
+                csString vpath(maps->Get(i));
+                vpath.Append("world");
+                if(tm->GetThreadCount() == 1)
                 {
-                  csString vpath(maps->Get(i));
-                  vpath.Append("world");
-                  if(tm->GetThreadCount() == 1)
-                  {
                     loader->PrecacheDataWait(vpath.GetData(), false);
-                  }
-                  else
-                  {
+                }
+                else
+                {
                     mapPrecaches.Push(loader->PrecacheData(vpath.GetData(), false));
-                  }
                 }
             }
-            tm->Wait(mapPrecaches);
+        }
+        tm->Wait(mapPrecaches);
 
-            // Now everything else.
-            for(size_t i=0; i<maps->GetSize(); ++i)
+        // Now everything else.
+        for(size_t i=0; i<maps->GetSize(); ++i)
+        {
+            csRef<iDataBuffer> tmp = vfs->GetRealPath(maps->Get(i));
+            if(csString(tmp->GetData()).Find("common") == (size_t)-1)
             {
-                csRef<iDataBuffer> tmp = vfs->GetRealPath(maps->Get(i));
-                if(csString(tmp->GetData()).Find("common") == (size_t)-1)
-                {
-                  csString vpath(maps->Get(i));
-                  vpath.Append("world");
-                  mapPrecaches.Push(loader->PrecacheData(vpath.GetData(), false));
-                }
+                csString vpath(maps->Get(i));
+                vpath.Append("world");
+                mapPrecaches.Push(loader->PrecacheData(vpath.GetData(), false));
             }
         }
 
