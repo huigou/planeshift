@@ -1896,7 +1896,7 @@ nevertired(false), infinitemana(false), instantcast(false), safefall(false), giv
     SetPrevTeleportLocation(pos, rotangle, GetSector(), myInstance);
 
     // Set the initial valid location to be the spot the actor was created at.
-    UpdateValidLocation(pos, rotangle, GetSector(), true);
+    UpdateValidLocation(pos, rotangle, GetSector(), myInstance, true);
 
     GetCharacterData()->SetStaminaRegenerationStill();
 
@@ -3060,7 +3060,7 @@ void gemActor::SetPosition(const csVector3& pos,float angle, iSector* sector)
     if (sectorInfo != NULL)
     {
         psChar->SetLocationInWorld(worldInstance, sectorInfo, pos.x, pos.y, pos.z, angle );
-        UpdateValidLocation(pos, angle, sector, true);
+        UpdateValidLocation(pos, angle, sector, worldInstance, true);
     }
 }
 
