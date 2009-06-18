@@ -406,12 +406,6 @@ bool Client::IsAllowedToAttack(gemObject * target, bool inform)
     csString tmp;
     const char *sMsg = NULL;
 
-    // Am I a GM?
-       if (IsGM())
-       {
-           return true; /* Everything is attackable */
-       }
-
     if ( target == NULL )
     {
         sMsg = "The target selected is no more valid.";
@@ -421,6 +415,12 @@ bool Client::IsAllowedToAttack(gemObject * target, bool inform)
         }
 
         return false;
+    }
+
+    // Am I a GM?
+    if (IsGM())
+    {
+        return true; /* Everything is attackable */
     }
 
     switch ( this->GetTargetType( target ) )
