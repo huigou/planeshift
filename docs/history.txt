@@ -1,3 +1,12 @@
+*** 2009-06-18 by Stefano Angeleri
+- additions to chat default options (mostly badwords) patch by oomi
+- made teleport for items use setposition in place of manually going
+  with move + set instance. Making items save again to database
+- Moved the IsGM() check after the NULL check because GM shouldn't be allowed
+  to attack NULL
+- Fixed a crash depending on last_location not being set correctly during
+  character logging
+
 *** 2009-06-10 by Steven Patrick
 - Added account_id column to track accounts in gm_command_log
 - DB BUMP to 1220
