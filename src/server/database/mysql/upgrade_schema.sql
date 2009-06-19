@@ -1215,6 +1215,11 @@ INSERT INTO command_group_assignment VALUES( "/serverquit", 30 );
 ALTER TABLE `gm_command_log` ADD COLUMN `account_id` INT(10) UNSIGNED NOT NULL DEFAULT 0 AFTER `id`;
 UPDATE `server_options` SET `option_value`='1220' WHERE `option_name`='db_version';
 
+#1221 - Stefano Angeleri - Added vote and comment in the character_events table
+ALTER TABLE `planeshiftshardtrunk`.`character_events` MODIFY COLUMN `vote` TINYINT(2)  DEFAULT NULL COMMENT 'The vote expressed by the player on the specific event (range 1-10)',
+MODIFY COLUMN `comments` TEXT  DEFAULT NULL COMMENT 'A comment left by the player on the event';
+UPDATE `server_options` SET `option_value`='1221' WHERE `option_name`='db_version';
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to

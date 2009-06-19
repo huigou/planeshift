@@ -4996,11 +4996,12 @@ class psGMEventInfoMessage : public psMessageCracker
 public:
     enum
     {
-        CMD_QUERY,
-        CMD_INFO,
-        CMD_DISCARD
+        CMD_QUERY,   ///< command to request the list of events
+        CMD_INFO,    ///< command to get informations on the specific event (description, evaluatable status)
+        CMD_DISCARD, ///< command to discard an event
+        CMD_EVAL     ///< command to send an evaluation of the event
     };
-    psGMEventInfoMessage(int cnum, int cmd, int id, const char *name,const char *info);
+    psGMEventInfoMessage(int cnum, int cmd, int id, const char *name,const char *info, bool Evaluatable = false);
     psGMEventInfoMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
@@ -5014,7 +5015,8 @@ public:
     virtual csString ToString(AccessPointers * access_ptrs);
 
     int command,id;
-    csString xml;
+    bool Evaluatable; ///< Stores if an event can be evaluated
+    csString xml;     ///< Stores an xml string (various uses)
 };
 
 

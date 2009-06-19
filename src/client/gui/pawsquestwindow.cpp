@@ -52,6 +52,7 @@
 #define VIEW_BUTTON                       1200
 #define SAVE_BUTTON                       1203
 #define CANCEL_BUTTON                     1204
+#define EVALUATE_BUTTON                   1205
 #define TAB_UNCOMPLETED_QUESTS_OR_EVENTS  1000
 #define TAB_COMPLETED_QUESTS_OR_EVENTS    1001
 #define QUEST_TAB_BUTTON                   300
@@ -82,6 +83,8 @@ pawsQuestListWindow::pawsQuestListWindow()
     populateQuestLists = false;
 
     questID = -1;
+    
+    VoteBuffer = 10;
 
     filename = "/planeshift/userdata/questnotes_";
     filename.Append(psengine->GetMainPlayerName());
@@ -153,6 +156,8 @@ bool pawsQuestListWindow::PostSetup()
 
     description = (pawsMessageTextBox*)FindWidget("Description");
     notes = (pawsMultilineEditTextBox*)FindWidget("Notes");
+    
+    EvaluateBtn = (pawsButton*)FindWidget("Evaluate");
 
     return true;
 }
@@ -213,6 +218,7 @@ void pawsQuestListWindow::HandleMessage ( MsgEntry* me )
             uncompletedQuestList->Clear();
             description->Clear();
             notes->Clear();
+            EvaluateBtn->Hide();
             populateQuestLists = true;
 
             // Reset window
@@ -226,6 +232,7 @@ void pawsQuestListWindow::HandleMessage ( MsgEntry* me )
     case MSGTYPE_QUESTINFO:
     {
             psQuestInfoMessage message(me);
+            EvaluateBtn->Hide();
             SelfPopulateXML(message.xml);
             break;
     }
@@ -273,6 +280,7 @@ void pawsQuestListWindow::HandleMessage ( MsgEntry* me )
             uncompletedEventList->Clear();
             description->Clear();
             notes->Clear();
+            EvaluateBtn->Hide();
             populateGMEventLists = true;
 
             if (!currentTab || currentTab == eventTab)
@@ -285,6 +293,7 @@ void pawsQuestListWindow::HandleMessage ( MsgEntry* me )
         case MSGTYPE_GMEVENT_INFO:
         {
             psGMEventInfoMessage message(me);
+            EvaluateBtn->SetVisibility(message.Evaluatable);
             SelfPopulateXML(message.xml);
             break;
         }
@@ -356,6 +365,15 @@ bool pawsQuestListWindow::OnButtonPressed( int mouseButton, int keyModifier, paw
             psengine->GetMsgHandler()->SendMessage(msg.msg);
             break;
         }
+        
+        case EVALUATE_BUTTON:
+        {
+            if (currentTab == eventTab && questID != -1)
+            {
+                pawsNumberPromptWindow::Create(PawsManager::GetSingleton().Translate("Select a vote (1-10)"), 10, 1, 10, this, "vote");
+            }
+            break;
+        }
 
         // These cases are for the edit window child of this
         case SAVE_BUTTON:
@@ -402,8 +420,8 @@ bool pawsQuestListWindow::OnButtonPressed( int mouseButton, int keyModifier, paw
         case QUEST_TAB_BUTTON:
         case EVENT_TAB_BUTTON:
         {
-//            if (currentTab)
-//                currentTab->Hide();
+            if (currentTab)
+                currentTab->Hide();
 
             if (!currentTab || currentTab == eventTab)
             {
@@ -421,6 +439,28 @@ bool pawsQuestListWindow::OnButtonPressed( int mouseButton, int keyModifier, paw
         }
     }
     return true;
+}
+
+void pawsQuestListWindow::OnStringEntered(const char *name,int param,const char *value)
+{
+    if (!value)
+        return; // Cancel was clicked
+
+    csString text(value);
+    text.Trim();
+    EvaluateGMEvent(questID, VoteBuffer, text); //sends the data to the server
+    RequestGMEventData(questID); //refreshes the informations (just disables the evaluate button in practice for now)
+}
+
+void pawsQuestListWindow::OnNumberEntered(const char *name,int param, int value)
+{
+    if (value == -1) //not confirmed action
+        return;
+
+    VoteBuffer = value; //we store the value in a separate variable.
+
+    pawsStringPromptWindow::Create(PawsManager::GetSingleton().Translate("Add a comment about this event if you wish"), csString(""),
+                true, 500, 300, this, "comment", 0, true ); //now we can request a command
 }
 
 inline void pawsQuestListWindow::RequestQuestData(int id)
@@ -444,6 +484,14 @@ inline void pawsQuestListWindow::DiscardQuest(int id)
 inline void pawsQuestListWindow::DiscardGMEvent(int id)
 {
     psGMEventInfoMessage info(0,psGMEventInfoMessage::CMD_DISCARD,id,NULL,NULL);
+    msgqueue->SendMessage(info.msg);
+}
+
+inline void pawsQuestListWindow::EvaluateGMEvent(int Id, uint8_t Vote, csString Comment)
+{
+    csString Xml;
+    Xml.Format("<GMEventEvaluation vote=\"%d\" comments=\"%s\" />", Vote, EscpXML(Comment).GetDataSafe());
+    psGMEventInfoMessage info(0,psGMEventInfoMessage::CMD_EVAL,Id,NULL,Xml.GetData());
     msgqueue->SendMessage(info.msg);
 }
 
@@ -594,6 +642,7 @@ void pawsQuestListWindow::PopulateQuestTab(void)
     questTab->SetTab(TAB_UNCOMPLETED_QUESTS_OR_EVENTS);
     completedQuestList->Select(NULL);
     uncompletedQuestList->Select(NULL);
+    EvaluateBtn->Hide();
 
     currentTab->Show();
 }
@@ -611,6 +660,7 @@ void pawsQuestListWindow::PopulateGMEventTab(void)
     eventTab->SetTab(TAB_UNCOMPLETED_QUESTS_OR_EVENTS);
     completedEventList->Select(NULL);
     uncompletedEventList->Select(NULL);
+    EvaluateBtn->Hide();
 
     currentTab->Show();
 }

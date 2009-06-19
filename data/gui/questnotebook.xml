@@ -25,20 +25,20 @@
 
     <pawsTabWindow name="QuestTabs" id="400">
 
-        <frame x="0" y="10" width="250" height="220" border="yes" />
+        <frame x="0" y="30" width="250" height="220" border="yes" />
     
         <pawsButton name="UncompletedButton" id="1000">
-            <frame x="17" y="205" width="65" height="15" />
+            <frame x="17" y="185" width="65" height="15" />
             <label text="Uncompleted" />
         </pawsButton>
         <pawsButton name="CompletedButton" id="1001" >
-            <frame x="96" y="205"width="50" height="15" />
+            <frame x="96" y="185"width="50" height="15" />
             <label text="Completed" />
         </pawsButton>
 
 
         <pawsListBox name="UncompletedQuestList" xmlbinding="quests" id="1100">
-            <frame x="16" y="35" width="186" height="161" />
+            <frame x="16" y="10" width="186" height="161" />
             <columns height="20" headings="no" xmlbinding="q" >
               <column width="166" xmlbinding="desc" >
                 <pawsTextBox name="Name" style="label" />
@@ -53,7 +53,7 @@
         </pawsListBox>
 
         <pawsListBox name="CompletedQuestList" xmlbinding="quests" id="1101">
-            <frame x="16" y="35" width="186" height="161" />
+            <frame x="16" y="10" width="186" height="161" />
             <columns height="20" headings="no" xmlbinding="q" >
               <column width="166" xmlbinding="desc" >
                 <pawsTextBox name="Name" style="label" />
@@ -70,19 +70,19 @@
 
     <pawsTabWindow name="EventTabs" visible="no" id="401">
 
-        <frame x="0" y="10" width="250" height="220" border="yes" />
+        <frame x="0" y="30" width="250" height="220" border="yes" />
 
         <pawsButton name="UncompletedButton" id="1000">
-            <frame x="17" y="205" width="65" height="15"/>
+            <frame x="17" y="185" width="65" height="15"/>
             <label text="Uncompleted" />
         </pawsButton>
         <pawsButton name="CompletedButton" id="1001" >
-            <frame x="96" y="205" width="50" height="15" />
+            <frame x="96" y="185" width="50" height="15" />
             <label text="Completed" />
         </pawsButton>
 
         <pawsListBox name="UncompletedEventList" xmlbinding="gmevents" id="1100">
-            <frame x="16" y="35" width="186" height="161" />
+            <frame x="16" y="10" width="186" height="161" />
             <columns height="20" headings="no" xmlbinding="event" >
               <column width="166" xmlbinding="name" >
                 <pawsTextBox name="Name" style="label" />
@@ -100,7 +100,7 @@
         </pawsListBox>
 
         <pawsListBox name="CompletedEventList" xmlbinding="gmevents" id="1101">
-            <frame x="16" y="35" width="186" height="161" />
+            <frame x="16" y="10" width="186" height="161" />
             <columns height="20" headings="no" xmlbinding="event" >
               <column width="166" xmlbinding="name" >
                 <pawsTextBox name="Name" style="label" />
@@ -122,6 +122,11 @@
     <pawsButton name="Discard" id="1201">
         <frame x="450" y="225" width="78" height="15"/>
         <label text="Discard"/>
+    </pawsButton>
+    
+        <pawsButton name="Evaluate" id="1205" visible="no">
+        <frame x="350" y="225" width="78" height="15"/>
+        <label text="Evaluate"/>
     </pawsButton>
 
 

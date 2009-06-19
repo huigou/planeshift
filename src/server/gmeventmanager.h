@@ -37,6 +37,7 @@
 #define MAX_PLAYERS_PER_EVENT 100
 #define MAX_EVENT_NAME_LENGTH 40
 #define MAX_REGISTER_RANGE    100.0
+#define EVAL_LOCKOUT_TIME 24*60*60*1000 ///< how much time the player should be allowed to evalute an event (24 hours here)
 
 #define UNDEFINED_GMID        0
 
@@ -46,9 +47,9 @@ class psItemStats;
 
 enum GMEventStatus
 {
-    EMPTY = 0,                 // no GM event
-    RUNNING,                   // GM event is running
-    COMPLETED                  // GM event is complete
+    EMPTY = 0,                 ///< no GM event
+    RUNNING,                   ///< GM event is running
+    COMPLETED                  ///< GM event is complete
 };
 
 #define NO_RANGE -1.0
@@ -202,14 +203,21 @@ private:
 
     int nextEventID;
 
+    struct PlayerData
+    {
+        PID PlayerID; ///< The playerID of this player who partecipated an event
+        bool CanEvaluate; ///< Stores if this player is allowed to evaluate this event (more precisely if he didn't already)
+    };
+
     struct GMEvent
     {
-        int id;
-        GMEventStatus status;
-        PID gmID;
-        csString eventName;
-        csString eventDescription;
-        csArray<PID> playerID;
+        int id; ///< The id of the event, corresponds to db ids
+        GMEventStatus status; ///< The status of the event
+        PID gmID; ///< The id of the gm running this event
+        csTicks EndTime; ///< Stores the end time of the event. It's zero till the event is completed and after serve restart.
+        csString eventName; ///< The name of the event
+        csString eventDescription; ///< The description of the event
+        csArray<PlayerData> Player; ///< An array with all the players who parteciped in the event and additional data about them.
     };
     csArray<GMEvent*> gmEvents;    ///< cache of GM events
 
@@ -246,6 +254,33 @@ private:
      *  @return GMEvent*: ptr to GM event structure.
      */
     GMEvent* GetGMEventByPlayer(PID playerID, GMEventStatus status, int& startIndex);
+
+    /** @brief Return the index position of the particular player in an event
+     *
+     *  @param PlayerID: the player index.
+     *  @param GMEvent*: ptr to GM event structure.
+     *  @return size_t: the index position of the player
+     */
+    size_t GetPlayerFromEvent(PID& PlayerID, GMEvent *Event);
+
+    /** @brief Checks if a Player is allowed to evaluate an event
+     *  @note This is the function to change in order to change the rules
+     *        which allow to evaluate an event.
+     *
+     *  @param PlayerID: the player index.
+     *  @param GMEvent*: ptr to GM event structure.
+     *  @return bool: true if the player is allowed to evaluate an event
+     */
+    bool CheckEvalStatus(PID PlayerID, GMEvent *Event);
+
+    /** @brief Set if a player is allowed to evaluate an event
+     *
+     *  @param PlayerID: the player index.
+     *  @param GMEvent*: ptr to GM event structure.
+     *  @param NewStatus: true if the player is to be allowed to evaluate 
+     *                    an event, else false
+     */
+    void SetEvalStatus(PID PlayerID, GMEvent *Event, bool NewStatus);
 
     /** @brief Reward player in event.
      *
@@ -289,6 +324,14 @@ private:
      *  @return bool: true = success, false = failed.
      */
     bool EraseGMEvent(Client* client, GMEvent* gmEvent);
+
+    /** @brief Saves the comments from a player to the database
+     *
+     *  @param client: client pointer.
+     *  @param gmEvent: the event.
+     *  @return bool: true = success, false = failed.
+     */
+    void WriteGMEventEvaluation(Client* client, GMEvent* Event, csString XmlStr);
 };
 
 #endif

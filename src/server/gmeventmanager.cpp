@@ -58,7 +58,7 @@ GMEventManager::~GMEventManager()
 
     for (size_t e = 0; e < gmEvents.GetSize(); e++)
     {
-        gmEvents[e]->playerID.DeleteAll();
+        gmEvents[e]->Player.DeleteAll();
         delete gmEvents[e];
     }
     gmEvents.DeleteAll();
@@ -78,6 +78,7 @@ bool GMEventManager::Initialise(void)
             ongoingGMEvent->id = events[e].GetInt("id");
             ongoingGMEvent->status = static_cast<GMEventStatus>(events[e].GetInt("status"));
             ongoingGMEvent->gmID = events[e].GetInt("gm_id");
+            ongoingGMEvent->EndTime = 0;
             ongoingGMEvent->eventName = csString(events[e]["name"]);
             ongoingGMEvent->eventDescription = csString(events[e]["description"]);
             gmEvents.Push(ongoingGMEvent);
@@ -91,14 +92,15 @@ bool GMEventManager::Initialise(void)
         Result registeredPlayers(db->Select("SELECT * from character_events order by event_id"));
         if (registeredPlayers.IsValid())
         {
-            int eventPlayerID;
+            PlayerData eventPlayer;
             int eventID;
             for (unsigned long rp=0; rp<registeredPlayers.Count(); rp++)
             {
                 eventID = registeredPlayers[rp].GetInt("event_id");
-                eventPlayerID = registeredPlayers[rp].GetInt("player_id");
+                eventPlayer.PlayerID = registeredPlayers[rp].GetInt("player_id");
+                eventPlayer.CanEvaluate = (registeredPlayers[rp]["vote"] == NULL);
                 if ((ongoingGMEvent = GetGMEventByID(eventID)) != NULL)
-                    ongoingGMEvent->playerID.Push(eventPlayerID);
+                    ongoingGMEvent->Player.Push(eventPlayer);
                 else
                 {
                     Error1("GMEventManager: gm_events / character_events table mismatch.");
@@ -165,6 +167,7 @@ bool GMEventManager::AddNewGMEvent (Client* client, csString eventName, csString
     gmEvent = new GMEvent;
     gmEvent->id = newEventID;
     gmEvent->gmID = gmID;
+    gmEvent->EndTime = 0;
     gmEvent->eventName = eventName;
     gmEvent->eventDescription = eventDescription;
     gmEvent->status = RUNNING;
@@ -215,7 +218,7 @@ bool GMEventManager::RegisterPlayerInGMEvent (Client* client, Client* target)
         psserver->SendSystemInfo(clientnum, "%s is already registered in an event.", target->GetName());
         return false;
     }
-    if (gmEvent->playerID.GetSize() == MAX_PLAYERS_PER_EVENT)
+    if (gmEvent->Player.GetSize() == MAX_PLAYERS_PER_EVENT)
     {
         psserver->SendSystemInfo(clientnum,
                                  "There are already %d players in the \'%s\' event.",
@@ -226,7 +229,10 @@ bool GMEventManager::RegisterPlayerInGMEvent (Client* client, Client* target)
 
     // store the registration in db
     db->Command("INSERT INTO character_events(event_id, player_id) VALUES (%i, %i)", gmEvent->id, playerID.Unbox());
-    gmEvent->playerID.Push(playerID);
+    PlayerData eventPlayer;
+    eventPlayer.PlayerID = playerID;
+    eventPlayer.CanEvaluate = true;
+    gmEvent->Player.Push(eventPlayer);
 
     // keep psCharacter up to date
     target->GetActor()->GetCharacterData()->AssignGMEvent(gmEvent->id,false);
@@ -335,9 +341,9 @@ bool GMEventManager::CompleteGMEvent (Client* client, PID gmID, bool byTheContro
     // inform players
     ClientConnectionSet* clientConnections = psserver->GetConnections();
     Client* target;
-    for (size_t p = 0; p < theEvent->playerID.GetSize(); p++)
+    for (size_t p = 0; p < theEvent->Player.GetSize(); p++)
     {
-        if ((target = clientConnections->FindPlayer(theEvent->playerID[p])))
+        if ((target = clientConnections->FindPlayer(theEvent->Player[p].PlayerID)))
         {
             // psCharacter
             target->GetActor()->GetCharacterData()->CompleteGMEvent(false);
@@ -357,10 +363,12 @@ bool GMEventManager::CompleteGMEvent (Client* client, PID gmID, bool byTheContro
         theEvent->eventDescription += " (No GM)";
     else
         theEvent->eventDescription += " (" + csString(client->GetName()) + ")";
+    csString EscEventDescription;
+    db->Escape(EscEventDescription, theEvent->eventDescription);
     db->Command("UPDATE gm_events SET status = %d, description = '%s' WHERE id = %d",
-                COMPLETED, theEvent->eventDescription.GetDataSafe(), theEvent->id);
+                COMPLETED, EscEventDescription.GetDataSafe(), theEvent->id);
     theEvent->status = COMPLETED;
-
+    theEvent->EndTime = csGetTicks();
     psserver->SendSystemInfo(clientnum, "Event '%s' complete.", theEvent->eventName.GetDataSafe());
 
     return true;
@@ -515,9 +523,9 @@ bool GMEventManager::RewardPlayersInGMEvent (Client* client,
         // reward ALL players (incl. within range)
         ClientConnectionSet* clientConnections = psserver->GetConnections();
         gemActor* clientActor = client->GetActor();
-        for (size_t p = 0; p < gmEvent->playerID.GetSize(); p++)
+        for (size_t p = 0; p < gmEvent->Player.GetSize(); p++)
         {
-            if ((target = clientConnections->FindPlayer(gmEvent->playerID[p])))
+            if ((target = clientConnections->FindPlayer(gmEvent->Player[p].PlayerID)))
             {
                 if (rewardRecipient == ALL || clientActor->RangeTo(target->GetActor()) <= range)
                 {
@@ -588,10 +596,35 @@ int GMEventManager::GetAllGMEventsForPlayer (PID playerID,
     return (runningEvent);
 }
 
+bool GMEventManager::CheckEvalStatus(PID PlayerID, GMEvent *Event)
+{
+    if (Event->status == COMPLETED && PlayerID != Event->gmID &&
+        Event->EndTime != 0 && csGetTicks()-Event->EndTime < EVAL_LOCKOUT_TIME)
+    {
+        size_t PlayerIndex = GetPlayerFromEvent(PlayerID, Event);
+        if(PlayerIndex != SIZET_NOT_FOUND)
+        {
+            if(Event->Player.Get(PlayerIndex).CanEvaluate)
+                return true;
+        }
+    }
+    return false;
+}
+
+void GMEventManager::SetEvalStatus(PID PlayerID, GMEvent *Event, bool NewStatus)
+{
+    size_t PlayerIndex = GetPlayerFromEvent(PlayerID, Event);
+    if(PlayerIndex != SIZET_NOT_FOUND)
+    {
+        Event->Player.Get(PlayerIndex).CanEvaluate = false;
+    }
+}
+
 /// handle message from client
 void GMEventManager::HandleGMEventCommand(MsgEntry* me, Client* client)
 {
     psGMEventInfoMessage msg(me);
+    PID RequestingPlayerID = client->GetPID();
 
     if (msg.command == psGMEventInfoMessage::CMD_QUERY)
     {
@@ -610,13 +643,13 @@ void GMEventManager::HandleGMEventCommand(MsgEntry* me, Client* client)
             Client* target;
 
             // if this client is the GM, list the participants too
-            if (client->GetPID() == theEvent->gmID)
+            if (RequestingPlayerID == theEvent->gmID)
             {
-                eventDesc.AppendFmt(". Participants: %zu. Online: ", theEvent->playerID.GetSize());
-                csArray<PID>::Iterator iter = theEvent->playerID.GetIterator();
+                eventDesc.AppendFmt(". Participants: %zu. Online: ", theEvent->Player.GetSize());
+                csArray<PlayerData>::Iterator iter = theEvent->Player.GetIterator();
                 while (iter.HasNext())
                 {
-                    if ((target = clientConnections->FindPlayer(iter.Next())))
+                    if ((target = clientConnections->FindPlayer(iter.Next().PlayerID)))
                     {
                         eventDesc.AppendFmt("%s, ", target->GetName());
                     }
@@ -633,17 +666,40 @@ void GMEventManager::HandleGMEventCommand(MsgEntry* me, Client* client)
                     eventDesc.AppendFmt(" (%s)", target->GetName());
                 }
             }
-
+            
             psGMEventInfoMessage response(me->clientnum,
                                           psGMEventInfoMessage::CMD_INFO,
                                           msg.id,
                                           theEvent->eventName.GetDataSafe(),
-                                          eventDesc.GetDataSafe());
+                                          eventDesc.GetDataSafe(), 
+                                          CheckEvalStatus(RequestingPlayerID, theEvent));
             response.SendMessage();
         }
         else
         {
             Error3("Client %s requested unavailable GM Event %d", client->GetName(), msg.id);
+        }
+    }
+    else if (msg.command == psGMEventInfoMessage::CMD_EVAL)
+    {
+        GMEvent* Event;
+        if ((Event = GetGMEventByID(msg.id)) != NULL)
+        {
+            // check if we should allow to comment this event. Running Gm can't evaluate it
+            if(CheckEvalStatus(RequestingPlayerID, Event))
+            {
+                WriteGMEventEvaluation(client, Event, msg.xml);
+                psserver->SendSystemOK(client->GetClientNum(), "Thanks. Your evaluation was stored in the database.");
+                SetEvalStatus(RequestingPlayerID, Event, false);
+            }
+            else
+            {
+                psserver->SendSystemError(client->GetClientNum(), "You can't evaluate this event.");
+            }
+        }
+        else
+        {
+            Error3("Client %s evaluated an unavailable GM Event %d", client->GetName(), msg.id);
         }
     }
     else if (msg.command == psGMEventInfoMessage::CMD_DISCARD)
@@ -674,8 +730,12 @@ bool GMEventManager::RemovePlayerFromGMEvents(PID playerID)
         gmEvent = GetGMEventByID(runningEventID);
         if (gmEvent)
         {
-            gmEvent->playerID.Delete(playerID);
-            eventsFound = true;
+            size_t PlayerIndex = GetPlayerFromEvent(playerID, gmEvent);
+            if(PlayerIndex != SIZET_NOT_FOUND)
+            {
+                gmEvent->Player.DeleteIndex(PlayerIndex);
+                eventsFound = true;
+            }
         }
         else
             Error3("Cannot remove player %s from GM Event %d.", ShowID(playerID), runningEventID);
@@ -688,8 +748,12 @@ bool GMEventManager::RemovePlayerFromGMEvents(PID playerID)
         gmEvent = GetGMEventByID(gmEventID);
         if (gmEvent)
         {
-            gmEvent->playerID.Delete(playerID);
-            eventsFound = true;
+            size_t PlayerIndex = GetPlayerFromEvent(playerID, gmEvent);
+            if(PlayerIndex != SIZET_NOT_FOUND)
+            {
+                gmEvent->Player.DeleteIndex(PlayerIndex);
+                eventsFound = true;
+            }
          }
          else
             Error3("Cannot remove player %s from GM Event %d.", ShowID(playerID), runningEventID);
@@ -780,10 +844,10 @@ bool GMEventManager::AssumeControlOfGMEvent(Client* client, csString eventName)
                              "You now control the \'%s\' event.",
                              gmEvent->eventName.GetDataSafe());
 
-    csArray<PID>::Iterator iter = gmEvent->playerID.GetIterator();
+    csArray<PlayerData>::Iterator iter = gmEvent->Player.GetIterator();
     while (iter.HasNext())
     {
-        if ((target = clientConnections->FindPlayer(iter.Next())))
+        if ((target = clientConnections->FindPlayer(iter.Next().PlayerID)))
         {
             psserver->SendSystemInfo(target->GetClientNum(),
                                      "The GM %s is now controlling the \'%s\' event.",
@@ -814,6 +878,25 @@ bool GMEventManager::EraseGMEvent(Client* client, csString eventName)
 
     psserver->SendSystemError(client->GetClientNum(), "Cannot find this event...");
     return false;
+}
+
+void GMEventManager::WriteGMEventEvaluation(Client* client, GMEvent* Event, csString XmlStr)
+{
+    //NOTE: The xml format is <GMEventEvaluation vote=# comments="*" />
+    csRef<iDocumentNode> Node;
+    if ((Node = ParseString(XmlStr, "GMEventEvaluation")))
+    {    
+        csString EscpComment;
+        db->Escape(EscpComment, Node->GetAttributeValue("comments"));
+        /* We have to cap the vote in the 1-10 area. 
+         * In order to avoid hacks which alters results, although they 
+         * can be identified also in another place (upon inspecting the data)
+         */
+        int vote = Node->GetAttributeValueAsInt("vote"); 
+        if (vote > 10) vote = 10;
+        if (vote <  1) vote =  1;
+        db->Command("UPDATE character_events SET vote = %d, comments = \"%s\" WHERE player_id = %d AND event_id = %d", vote, EscpComment.GetDataSafe(), client->GetPID().Unbox(), Event->id);
+    }
 }
 
 /// returns details of an event
@@ -884,10 +967,10 @@ GMEventManager::GMEvent* GMEventManager::GetGMEventByPlayer(PID playerID, GMEven
         startIndex++;
         if (gmEvents[e]->status == status)
         {
-            csArray<PID>::Iterator iter = gmEvents[e]->playerID.GetIterator();
+            csArray<PlayerData>::Iterator iter = gmEvents[e]->Player.GetIterator();
             while (iter.HasNext())
             {
-                if (iter.Next() == playerID)
+                if (iter.Next().PlayerID == playerID)
                 {
                     return gmEvents[e];
                 }
@@ -896,6 +979,17 @@ GMEventManager::GMEvent* GMEventManager::GetGMEventByPlayer(PID playerID, GMEven
     }
 
     return NULL;
+}
+
+size_t GMEventManager::GetPlayerFromEvent(PID& PlayerID, GMEvent *Event)
+{
+    size_t Position = 0;
+    for(size_t Position = 0; Position < Event->Player.GetSize(); Position++)
+    {
+        if (Event->Player.Get(Position).PlayerID == PlayerID)
+            return Position;
+    }
+    return SIZET_NOT_FOUND;
 }
 
 /// reward an individual player.
@@ -998,7 +1092,9 @@ void GMEventManager::DiscardGMEvent(Client* client, int eventID)
 /// Actually remove player reference from GMEvent.
 bool GMEventManager::RemovePlayerRefFromGMEvent(GMEvent* gmEvent, Client* client, PID playerID)
 {
-    if (gmEvent->playerID.Delete(playerID))
+    size_t PlayerIndex = GetPlayerFromEvent(playerID, gmEvent);
+
+    if (PlayerIndex != SIZET_NOT_FOUND && gmEvent->Player.DeleteIndex(PlayerIndex))
     {
         // ...from the database
         db->Command("DELETE FROM character_events WHERE event_id = %d AND player_id = %d", gmEvent->id, playerID.Unbox());
@@ -1032,10 +1128,10 @@ bool GMEventManager::EraseGMEvent(Client* client, GMEvent* gmEvent)
     }
 
     // Remove players.
-    size_t noPlayers = gmEvent->playerID.GetSize();
+    size_t noPlayers = gmEvent->Player.GetSize();
     for (size_t p = 0; p < noPlayers; p++)
     {
-        PID playerID = gmEvent->playerID[p];
+        PID playerID = gmEvent->Player[p].PlayerID;
         if ((target = clientConnections->FindPlayer(playerID)))
         {
             // psCharacter
@@ -1046,7 +1142,7 @@ bool GMEventManager::EraseGMEvent(Client* client, GMEvent* gmEvent)
                                      gmEvent->eventName.GetDataSafe());
         }
     }
-    gmEvent->playerID.DeleteAll();
+    gmEvent->Player.DeleteAll();
 
     // remove GM
     if (discarderGMID == gmEvent->gmID  && gmEvent->gmID != UNDEFINED_GMID)
