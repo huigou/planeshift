@@ -25,6 +25,8 @@
 #include "paws/pawsbutton.h"
 #include "paws/pawstabwindow.h"
 #include "gui/pawscontrolwindow.h"
+#include "paws/pawsnumberpromptwindow.h"
+#include "paws/pawsstringpromptwindow.h"
 
 /// Enum of the columns for the quest listbox:
 enum
@@ -60,7 +62,7 @@ enum
  *  2) item name
  *  3) item id (hidden)
  */
-class pawsQuestListWindow : public pawsControlledWindow, public psCmdBase
+class pawsQuestListWindow : public pawsControlledWindow, public psCmdBase, public iOnStringEnteredAction, public iOnNumberEnteredAction
 {
 public:
     /// Constructor
@@ -94,6 +96,12 @@ public:
 
     /// Show quest notes
     void ShowNotes();
+    
+    /// Handle popup vote question window callback
+    void OnStringEntered(const char *name, int param, const char *value);
+    
+    /// Handle popup comment question window callback
+    void OnNumberEntered(const char *name, int param, int value);
 
 protected:
 
@@ -108,6 +116,14 @@ protected:
 
     /// Ask server to discard a given GM event
     void DiscardGMEvent(int id);
+    
+    /** @brief Sends an evaluation on the gm event to the server
+     * 
+     *  @param id: The id of the event which is being evaluated
+     *  @param vote: a number from 1 to 10 stating the vote to assign to the event
+     *  @param comment: A comment about the event
+     */
+    void EvaluateGMEvent(int id, uint8_t vote, csString comment);
 
     /// Populate Quest tab
     void PopulateQuestTab(void);
@@ -159,9 +175,14 @@ protected:
     pawsMessageTextBox* description;
 
     pawsMultilineEditTextBox* notes;
+    
+    /// The button which brings up the evaluation procedure
+    pawsButton* EvaluateBtn;
 
-    int questID;        // ID of selected quest (-1 = no quest selected)
-    int questIDBuffer;  // ID of pending discard (in case selection changes during prompt)
+    int questID;        ///< ID of selected quest (-1 = no quest selected)
+    int questIDBuffer;  ///< ID of pending discard (in case selection changes during prompt)
+    
+    int VoteBuffer;     ///< Last vote expressed
 
     csArray<QuestNote*> quest_notes;
 

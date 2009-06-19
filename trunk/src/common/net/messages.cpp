@@ -6868,30 +6868,38 @@ csString psGMEventListMessage::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psGMEventInfoMessage,MSGTYPE_GMEVENT_INFO);
 
-psGMEventInfoMessage::psGMEventInfoMessage(int cnum, int cmd, int id, const char *name, const char *info)
+psGMEventInfoMessage::psGMEventInfoMessage(int cnum, int cmd, int id, const char *name, const char *info, bool Evaluatable)
 {
     if (name)
     {
         csString escpxml_info = EscpXML(info);
         xml.Format("<QuestNotebook><Description text=\"%s\"/></QuestNotebook>",escpxml_info.GetData());
     }
+    else if(cmd == CMD_EVAL && info)
+        xml = info;
     else
         xml.Clear();
 
-    msg.AttachNew(new MsgEntry(sizeof(int32_t) + sizeof(uint8_t) + xml.Length() + 1));
+    msg.AttachNew(new MsgEntry(sizeof(int32_t) + 2*sizeof(uint8_t) + xml.Length() + 1));
 
     msg->SetType(MSGTYPE_GMEVENT_INFO);
     msg->clientnum = cnum;
 
-    msg->Add( (uint8_t) cmd );
+    msg->Add((uint8_t) cmd);
 
     if (cmd == CMD_QUERY || cmd == CMD_DISCARD)
     {
-        msg->Add( (int32_t) id );
+        msg->Add((int32_t) id);
     }
     else if (cmd == CMD_INFO)
     {
-        msg->Add( xml );
+        msg->Add(xml);
+        msg->Add((uint8_t) Evaluatable);
+    }
+    else if (cmd == CMD_EVAL)
+    {
+        msg->Add((int32_t) id);
+        msg->Add(xml);
     }
     msg->ClipToCurrentSize();
 
@@ -6904,7 +6912,16 @@ psGMEventInfoMessage::psGMEventInfoMessage(MsgEntry* msg)
     if (command == CMD_QUERY || command == CMD_DISCARD)
         id = msg->GetInt32();
     else if (command == CMD_INFO)
+    {
         xml = msg->GetStr();
+        Evaluatable = msg->GetBool();
+    }
+    else if (command == CMD_EVAL)
+    {
+        id = msg->GetInt32();
+        xml = msg->GetStr();
+    }
+    
     valid=!(msg->overrun);
 }
 
