@@ -45,7 +45,7 @@ public:
             parent = 0;
         }
     
-        void Update(unsigned int i)
+        void Update(csTicks elapsed, int num_verts, uint32 version_id)
         {
         }
 
