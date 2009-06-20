@@ -404,6 +404,23 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, csRef<psQuestP
 
         prerequisite.AttachNew(new psQuestPrereqOpKnownSpell(spell));
     }
+    else if ( strcmp( topNode->GetValue(), "trait" ) == 0 )
+    {
+        csString name = topNode->GetAttributeValue("name");
+        if (name.IsEmpty())
+        {
+            Error1("No name given for trait prerequisite operation");
+            return false;
+        }
+        csString location = topNode->GetAttributeValue("name");
+        if (location.IsEmpty())
+        {
+            Error1("No location given for trait prerequisite operation");
+            return false;
+        }
+
+        prerequisite.AttachNew(new psQuestPrereqOpTrait(name, location));
+    }
     else if ( strcmp( topNode->GetValue(), "guild" ) == 0 )
     {
         csString type = topNode->GetAttributeValue("type");
