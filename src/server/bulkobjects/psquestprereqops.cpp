@@ -40,6 +40,7 @@
 #include "cachemanager.h"
 #include "psraceinfo.h"
 #include "psguildinfo.h"
+#include "pstrait.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 
@@ -407,6 +408,37 @@ csPtr<psQuestPrereqOp> psQuestPrereqOpActiveMagic::Copy()
 {
     csRef<psQuestPrereqOpActiveMagic> copy;
     copy.AttachNew(new psQuestPrereqOpActiveMagic(activeMagic));
+    return csPtr<psQuestPrereqOp>(copy);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////
+
+bool psQuestPrereqOpTrait::Check(psCharacter * character)
+{
+    if (character->GetActor())
+    {
+        psTrait* TraitToCheck = character->GetTraitForLocation(TraitLocation);
+        if(TraitToCheck)
+        {
+            return TraitToCheck->name == TraitName;
+        }
+    }
+    return false;
+}
+
+csString psQuestPrereqOpTrait::GetScriptOp()
+{
+    csString script;
+
+    script.Format("<trait name=\"%s\" location=\"%s\"/>", TraitName.GetData(), psTrait::locationString[(int)TraitLocation]);
+
+    return script;
+}
+
+csPtr<psQuestPrereqOp> psQuestPrereqOpTrait::Copy()
+{
+    csRef<psQuestPrereqOpTrait> copy;
+    copy.AttachNew(new psQuestPrereqOpTrait(TraitName, psTrait::locationString[(int)TraitLocation]));
     return csPtr<psQuestPrereqOp>(copy);
 }
 

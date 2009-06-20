@@ -30,6 +30,8 @@
 // Project Includes
 //=============================================================================
 
+#include "pstrait.h"
+
 //=============================================================================
 // Local Includes
 //=============================================================================
@@ -682,6 +684,69 @@ class psQuestPrereqOpActiveMagic : public psQuestPrereqOp
      *
      * @param  character The character that are checking for a prerequisite
      * @return True if the magic is active.
+     */
+    virtual bool Check(psCharacter * character);
+
+    /**
+     * Convert the prerequisite operator to a xml string
+     *
+     * Convert the operator into the xml string:
+     * <activemagic name="-activemagic"/>
+     *
+     * @return XML string for the prerequisite operator.
+     */
+    virtual csString GetScriptOp();
+
+    /**
+     * Copy the prerequisite operator
+     *
+     * Override this function to return a copy of the prerequisite
+     * operator.
+     *
+     * @return Copy of the prerequisite operator.
+     */
+    virtual csPtr<psQuestPrereqOp> Copy();
+};
+
+/**
+ * Trait prerequisite operator
+ *
+ * The actor must have a certain Trait in a certain position.
+ */
+class psQuestPrereqOpTrait : public psQuestPrereqOp
+{
+ protected:
+    csString TraitName;
+    PSTRAIT_LOCATION TraitLocation;
+    
+ public:
+
+    /**
+     * Construct a Trait operator
+     *
+     * @param activeMagic The name of the magic that's required to be active
+     */
+    psQuestPrereqOpTrait(const char *TraitName, csString TraitLocationString):TraitName(TraitName)
+    {
+        for(int position = PSTRAIT_LOCATION_NONE; position < PSTRAIT_LOCATION_COUNT; position++)
+        {
+            if ((csString)psTrait::locationString[position] == TraitLocationString)
+            {
+                TraitLocation = (PSTRAIT_LOCATION) position;
+                break;
+            }
+        }
+       // TraitLocation = (PSTRAIT_LOCATION)1;
+        
+    };
+
+    virtual ~psQuestPrereqOpTrait() {}
+
+    /**
+     * Check if the specified trait is present
+     *
+     * @param  character The character that are checking for a prerequisite
+     * @return True if the trait is present.
      */
     virtual bool Check(psCharacter * character);
 
