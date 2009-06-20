@@ -1,3 +1,12 @@
+*** 2009-06-20 by Stefano Angeleri
+- Fixed an sql injection problem with event descriptions
+- Added an evaluation system in events
+- Fixed questbook tab functionality
+- DB BUMP 1221
+- Avoided (null) from showing in guild private/public notes
+- added a trait prerequisite operator eg: 
+  <trait name="Scar" location="FACE" />
+
 *** 2009-06-18 by Stefano Angeleri
 - additions to chat default options (mostly badwords) patch by oomi
 - made teleport for items use setposition in place of manually going
