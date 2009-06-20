@@ -922,7 +922,7 @@ void GuildManager::SendMemberData(Client *client,bool onlineOnly)
 
         open.AppendFmt("<m char_id=\"%i\" name=\"%s\" public=\"%s\" private=\"%s\" points=\"%i\" level=\"%i\"/>",
                        member->char_id.Unbox(), EscpXML(member->name).GetData(),
-                       EscpXML(member->public_notes).GetData(), escpxml_privatenotes.GetData(),
+                       EscpXML(member->public_notes).GetDataSafe(), escpxml_privatenotes.GetDataSafe(),
                        member->guild_points, member->guildlevel->level);
     }
     
