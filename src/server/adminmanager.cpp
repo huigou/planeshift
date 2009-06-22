@@ -5589,14 +5589,14 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         unsigned int buddyid;
 
         //If the target is offline then we select all the players online that have him in the buddylist
-        Result result2(db->Select("SELECT player_id FROM buddy_list WHERE player_buddy='%u'", pid.Unbox()));
+        Result result2(db->Select("SELECT character_id FROM character_relationships WHERE relationship_type = 'buddy' and related_id = '%u'", pid.Unbox()));
 
         if (result2.IsValid())
         {
             for(unsigned long j=0; j<result2.Count();j++)
             {
                 iResultRow& row = result2[j];
-                buddyid = row.GetUInt32("player_id");
+                buddyid = row.GetUInt32("character_id");
                 buddy = clients->FindPlayer(buddyid);
                 if (buddy && buddy->IsReady())
                 {
