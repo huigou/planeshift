@@ -1216,7 +1216,7 @@ ALTER TABLE `gm_command_log` ADD COLUMN `account_id` INT(10) UNSIGNED NOT NULL D
 UPDATE `server_options` SET `option_value`='1220' WHERE `option_name`='db_version';
 
 #1221 - Stefano Angeleri - Added vote and comment in the character_events table
-ALTER TABLE `character_events` ADDCOLUMN `vote` TINYINT(2)  DEFAULT NULL COMMENT 'The vote expressed by the player on the specific event (range 1-10)' AFTER `event_id`,
+ALTER TABLE `character_events` ADD COLUMN `vote` TINYINT(2)  DEFAULT NULL COMMENT 'The vote expressed by the player on the specific event (range 1-10)' AFTER `event_id`,
 ADD COLUMN `comments` TEXT  DEFAULT NULL COMMENT 'A comment left by the player on the event' AFTER `vote`;
 UPDATE `server_options` SET `option_value`='1221' WHERE `option_name`='db_version';
 
