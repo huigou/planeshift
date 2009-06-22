@@ -1,3 +1,6 @@
+*** 2009-06-21 by Stefano Angeleri
+- Fixed PS#2587 - Buddy list edits will not delete after name change patch by Aiken
+
 *** 2009-06-20 by Stefano Angeleri
 - Fixed an sql injection problem with event descriptions
 - Added an evaluation system in events
