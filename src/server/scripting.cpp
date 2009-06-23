@@ -1968,7 +1968,7 @@ public:
         stackCount = node->GetAttributeValueAsInt("count");
 
         csString location = node->GetAttributeValue("location");
-        if (location != "inventory" && location != "ground")
+        if (!location.IsEmpty() && location != "inventory" && location != "ground")
         {
             Error2("Error: Invalid location in <item location=\"%s\"/>\n", location.GetData());
             return false;
