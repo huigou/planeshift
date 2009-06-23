@@ -1948,19 +1948,14 @@ protected:
 //----------------------------------------------------------------------------
 
 /**
- * ItemOp
- * Create item or money
+ * ItemOp - create items or money and give them to a player
  *
- * Syntax:
- *    <item aim="target" name="%s" location="wallet|inventory|ground" count="#" />
- *        aim = "target" detach from target rather then default actor
- *        name = "%" item name
- *        location ="wallet" name must be "trias","hexas","octas", or "circles"
- *        location ="inventory" put item directly into inventory
- *        location ="ground" put item onto ground
+ * <item aim="target" name="..." location="inventory|ground" count="..."/>
  * Examples:
- *    Drop a stack of 5 longswords on the groud at the foot of the targeted player:
- *          <item aim="target" name="Longsword" location="ground" count="5" />
+ * - Drop a stack of 5 longswords on the groud at the foot of the targeted player:
+ *   <item aim="Target" name="Longsword" location="ground" count="5" />
+ * - Add 5 circles to the player's wallet:
+ *   <item aim="Target" name="Tria" location="inventory" count="5" />
  */
 class ItemOp : public Imperative1
 {
@@ -1970,19 +1965,16 @@ public:
     bool Load(iDocumentNode *node)
     {
         name = node->GetAttributeValue("name");
-        location = node->GetAttributeValue("location");
         stackCount = node->GetAttributeValueAsInt("count");
-        if (location != "inventory" && location != "wallet" && location != "ground")
+
+        csString location = node->GetAttributeValue("location");
+        if (location != "inventory" && location != "ground")
         {
             Error2("Error: Invalid location in <item location=\"%s\"/>\n", location.GetData());
             return false;
         }
+        placeOnGround = location == "ground";
 
-        if (location == "wallet" && name != "trias" && name != "hexas" && name != "octas" && name != "circles")
-        {
-            Error2("Error: <item/> specifies wallet as location but non-monetary item >%s<.\n", name.GetData());
-            return false;
-        }
         return !name.IsEmpty() && stackCount > 0 && Imperative1::Load(node);
     }
 
@@ -1990,38 +1982,39 @@ public:
     {
         psCharacter *c = GetCharacter(env, aim);
 
-        if (location == "wallet")
-        {
-            psMoney money;
-
-            if (name == "trias")
-                money.SetTrias(stackCount);
-            else if (name == "hexas")
-                money.SetHexas(stackCount);
-            else if (name == "octas")
-                money.SetOctas(stackCount);
-            else if (name == "circles")
-                money.SetCircles(stackCount);
-
-            psMoney charMoney = c->Money();
-            charMoney = charMoney + money;
-            c->SetMoney(charMoney);
-        }
-        else if (location == "inventory")
-        {
-            psItem *iteminstance = CreateItem(false);
-            if (!iteminstance)
-                return;
-
-            c->Inventory().AddOrDrop(iteminstance, false);
-        }
-        else if (location == "ground")
+        if (placeOnGround)
         {
             psItem *iteminstance = CreateItem(true);
             if (!iteminstance)
                 return;
 
             c->DropItem(iteminstance);
+        }
+        else if (name.CompareNoCase("tria") || name.CompareNoCase("hexa") || name.CompareNoCase("octa") || name.CompareNoCase("circle"))
+        {
+            // Handle money specially
+            psMoney money;
+
+            if (name.CompareNoCase("tria"))
+                money.SetTrias(stackCount);
+            else if (name.CompareNoCase("hexa"))
+                money.SetHexas(stackCount);
+            else if (name.CompareNoCase("octa"))
+                money.SetOctas(stackCount);
+            else if (name.CompareNoCase("circle"))
+                money.SetCircles(stackCount);
+
+            psMoney charMoney = c->Money();
+            charMoney = charMoney + money;
+            c->SetMoney(charMoney);
+        }
+        else
+        {
+            psItem *iteminstance = CreateItem(false);
+            if (!iteminstance)
+                return;
+
+            c->Inventory().AddOrDrop(iteminstance, false);
         }
     }
 
@@ -2054,8 +2047,8 @@ public:
 
 protected:
     csString name;
-    csString location;
     int stackCount;
+    bool placeOnGround;
 };
 
 //----------------------------------------------------------------------------

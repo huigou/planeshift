@@ -1,3 +1,15 @@
+*** 2009-06-22 by Kenny Graunke
+- Changed <item> progression script syntax:
+  - Made money names singular for consistency with items (and because "trias"
+    is grammatically incorrect.)
+  - Removed notion of "wallet" location from syntax in favor of simply making
+    "inventory" work for both money and normal items.  This means you can no
+    longer write semantic nonsense such as:
+    <item location="wallet" name="Short Sword" count="5"/>
+    Instead, you just get:
+    <item location="inventory" name="Tria" count="5"/>
+  - The location attribute is now optional and defaults to "inventory".
+
 *** 2009-06-21 by Stefano Angeleri
 - Fixed PS#2587 - Buddy list edits will not delete after name change patch by Aiken
 

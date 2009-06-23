@@ -194,7 +194,7 @@ INSERT INTO progression_events VALUES('PATH_Street Warrior',
        <skill aim="Actor" name="Body Development"  value="2"/>
      </script>');
 
-INSERT INTO progression_events VALUES('minigame_win', '<script><item aim="Actor" name="trias" location="wallet" count="50"/><exp aim="Actor" value="100"/><msg aim="Actor" text="You won 50 tria and 100 experience points!"/></script>');
+INSERT INTO progression_events VALUES('minigame_win', '<script><item aim="Actor" name="Tria" count="50"/><exp aim="Actor" value="100"/><msg aim="Actor" text="You won 50 tria and 100 experience points!"/></script>');
 
 INSERT INTO progression_events VALUES('explore_area',
     '<script>
