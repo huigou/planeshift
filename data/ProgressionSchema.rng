@@ -149,13 +149,14 @@
           <attribute name="aim"/>
           <attribute name="name"/>
           <attribute name="count"/>
-          <attribute name="location">
-            <choice>
-              <value>wallet</value>
-              <value>inventory</value>
-              <value>ground</value>
-            </choice>           
-          </attribute>
+          <optional>
+            <attribute name="location">
+              <choice>
+                <value>inventory</value>
+                <value>ground</value>
+              </choice>           
+            </attribute>
+          </optional>
         </element>
 
         <!-- TODO: summon -->
