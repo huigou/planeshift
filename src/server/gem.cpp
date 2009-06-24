@@ -2502,7 +2502,8 @@ void gemActor::Send( int clientnum, bool control, bool to_superclient  )
     }
 
     uint32_t flags = 0;
-    csString helmGroup = psChar->GetHelmGroup();
+    csString helmGroup   = psChar->GetHelmGroup();
+    csString BracerGroup = psChar->GetBracerGroup();
 
     if (!GetVisibility())    flags |= psPersistActor::INVISIBLE;
     if (GetInvincibility())  flags |= psPersistActor::INVINCIBLE;
@@ -2529,6 +2530,7 @@ void gemActor::Send( int clientnum, bool control, bool to_superclient  )
                          psChar->GetRaceInfo()->name,
                          psChar->GetRaceInfo()->gender,
                          helmGroup,
+                         BracerGroup,
                          top, bottom,offset,
                          texparts,
                          equipmentParts,
@@ -4273,7 +4275,8 @@ void gemNPC::Send( int clientnum, bool control, bool to_superclient )
                                                              flags |= psPersistActor::NAMEKNOWN;*/
     }
 
-    csString helmGroup = psChar->GetHelmGroup();
+    csString helmGroup   = psChar->GetHelmGroup();
+    csString BracerGroup = psChar->GetBracerGroup();
 
     psPersistActor mesg(
                          clientnum,
@@ -4286,6 +4289,7 @@ void gemNPC::Send( int clientnum, bool control, bool to_superclient )
                          psChar->GetRaceInfo()->name,
                          psChar->GetRaceInfo()->gender,
                          helmGroup,
+                         BracerGroup,
                          top, bottom,offset,
                          texparts,
                          equipmentParts,
