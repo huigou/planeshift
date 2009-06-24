@@ -41,6 +41,7 @@ CREATE TABLE `race_info` (
   `base_mental_regen_walk` float NOT NULL default '0',
   `armor_id` int(10) unsigned default '0',
   `helm` varchar(20) default '',
+  `bracer` VARCHAR(20) COMMENT 'Stores a bracer group allowing to use the same bracer mesh for more than one race, just like for the helm column' default '';
   `race` int(5) unsigned NOT NULL,
   PRIMARY KEY  USING BTREE (`id`)
 );

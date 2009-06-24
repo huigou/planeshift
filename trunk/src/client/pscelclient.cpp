@@ -1225,16 +1225,19 @@ bool GEMClientObject::InitMesh()
         return true;
     }
 
-    // Helm Mesh Check
-    // If there is helm specific item and we don't have any race yet, fall back to
+    // Helm/bracer Mesh Check
+    // If there is helm/bracer specific item and we don't have any race yet, fall back to
     // the stonebreaker model
     csString replacement("stonebm");
+    csString BracerReplacement("stonebm");
     if ( cel->GetMainPlayer() )
     {
         replacement = cel->GetMainPlayer()->helmGroup;
+        BracerReplacement = cel->GetMainPlayer()->BracerGroup;
     }
     psString factoryName(factName);
     factoryName.ReplaceAllSubString("$H", replacement);
+    factoryName.ReplaceAllSubString("$B", BracerReplacement);
     factName = factoryName;
 
     // Set up callback.
@@ -1308,6 +1311,7 @@ GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
     name = mesg.name;
     race = mesg.race;
     helmGroup = mesg.helmGroup;
+    BracerGroup = mesg.BracerGroup;
     type = mesg.type;
     masqueradeType = mesg.masqueradeType;
     guildName = mesg.guild;
@@ -1340,6 +1344,9 @@ GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
 
     if ( helmGroup.Length() == 0 )
         helmGroup = factName;
+        
+    if ( BracerGroup.Length() == 0 )
+        BracerGroup = factName;
 
     Debug3(LOG_CELPERSIST, 0, "Actor %s(%s) Received", mesg.name.GetData(), ShowID(mesg.entityid));
 

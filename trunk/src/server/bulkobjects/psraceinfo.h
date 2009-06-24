@@ -80,6 +80,7 @@ public:
     float GetBaseAttribute(PSITEMSTATS_STAT attrib);
     
     csString helmGroup;         /// The name of the helm group race is in.
+    csString BracerGroup;       /// The name of the helm group race is in.
     
 private:
     void  SetBaseAttribute(PSITEMSTATS_STAT attrib, float val);

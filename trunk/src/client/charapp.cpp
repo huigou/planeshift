@@ -31,6 +31,8 @@
 
 static const uint meshCount = 9;
 static const char* meshNames[meshCount] = { "Head", "Torso", "Hand", "Legs", "Foot", "Arm", "Eyes", "Hair", "Beard" };
+static const uint bracersSlotCount = 2;
+static csString BracersSlots[bracersSlotCount] = { "rightarm", "leftarm" };
 
 psCharAppearance::psCharAppearance(iObjectRegistry* objectReg)
 {
@@ -284,6 +286,12 @@ void psCharAppearance::ApplyEquipment(csString& equipment)
     csString helmGroup(helmNode->GetContentsValue());
     if ( helmGroup.Length() == 0 )
         helmGroup = baseMesh->GetFactory()->QueryObject()->GetName();
+        
+    // Do the bracer check.
+    csRef<iDocumentNode> bracerNode = doc->GetRoot()->GetNode("equiplist")->GetNode("bracer");
+    csString BracerGroup(bracerNode->GetContentsValue());
+    if ( BracerGroup.Length() == 0 )
+        BracerGroup = baseMesh->GetFactory()->QueryObject()->GetName();
 
     csRef<iDocumentNodeIterator> equipIter = doc->GetRoot()->GetNode("equiplist")->GetNodes("equip");
 
@@ -298,6 +306,8 @@ void psCharAppearance::ApplyEquipment(csString& equipment)
 
         //If the mesh has a $H it means it's an helm so search for replacement
         mesh.ReplaceAll("$H",helmGroup);
+        //If the mesh has a $H it means it's a bracer so search for replacement
+        mesh.ReplaceAll("$B",BracerGroup);
 
         Equip(slot, mesh, part, partMesh, texture);
     }
@@ -313,6 +323,17 @@ void psCharAppearance::Equip( csString& slotname,
                               csString& texture
                              )
 {
+
+    //Bracers must be managed separately as we have two slots in cal3d but only one slot here
+    //To resolve the problem we call recursively this same function with the "corrected" slot names
+    //which are rightarm leftarm
+    
+    if (slotname == "bracers")
+    {
+        for(int position = 0; position < bracersSlotCount; position++)
+            Equip(BracersSlots[position], mesh, part, subMesh, texture);
+        return;
+    }
 
     if ( slotname == "helm" )
     {
@@ -350,6 +371,16 @@ bool psCharAppearance::Dequip(csString& slotname,
                               csString& subMesh,
                               csString& texture)
 {
+    
+    //look Equip() for more informations on this: bracers must be managed separately
+    
+    if (slotname == "bracers")
+    {
+        for(int position = 0; position < bracersSlotCount; position++)
+            Dequip(BracersSlots[position], mesh, part, subMesh, texture);
+        return true;
+    }
+
     if ( slotname == "helm" )
     {
          ShowHair(true);
