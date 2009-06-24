@@ -1220,6 +1220,10 @@ ALTER TABLE `character_events` ADD COLUMN `vote` TINYINT(2)  DEFAULT NULL COMMEN
 ADD COLUMN `comments` TEXT  DEFAULT NULL COMMENT 'A comment left by the player on the event' AFTER `vote`;
 UPDATE `server_options` SET `option_value`='1221' WHERE `option_name`='db_version';
 
+#1222 - Stefano Angeleri - Added bracer support
+ALTER TABLE `race_info` ADD COLUMN `bracer` VARCHAR(20)  COMMENT 'Stores a bracer group allowing to use the same bracer mesh for more than one race, just like for the helm column' default '' AFTER `helm`;
+UPDATE `server_options` SET `option_value`='1221' WHERE `option_name`='db_version';
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to

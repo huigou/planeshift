@@ -419,6 +419,7 @@ void psClientCharManager::HandleEquipment( MsgEntry* me )
 
     //if the mesh has a $H it means it's an helm so search for replacement
     equip.mesh.ReplaceAll("$H",object->helmGroup);
+    equip.mesh.ReplaceAll("$B",object->BracerGroup);
 
     if ( equip.type == psEquipmentMessage::EQUIP )
     {

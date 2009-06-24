@@ -492,6 +492,7 @@ public:
 
     csString race;
     csString helmGroup;
+    csString BracerGroup;
     csString equipment;
     csString traits;
     csVector3 vel, angularVelocity;

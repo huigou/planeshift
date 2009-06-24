@@ -109,6 +109,7 @@ psCharacter::psCharacter() : inventory(this),
     characterType = PSCHARACTER_TYPE_UNKNOWN;
 
     helmGroup.Clear();
+    BracerGroup.Clear();
     help_event_flags = 0;
     memset(advantage_bitfield,0,sizeof(advantage_bitfield));
     accountid = 0;
@@ -241,7 +242,7 @@ bool psCharacter::Load(iResultRow& row)
     SetRaceInfo(raceinfo);
 
     //Assign the Helm Group
-    Result helmResult(db->Select("SELECT helm FROM race_info WHERE id=%d", raceid));
+    Result helmResult(db->Select("SELECT helm, bracer FROM race_info WHERE id=%d", raceid));
 
     if(csGetTicks() - start > 500)
     {
@@ -251,6 +252,8 @@ bool psCharacter::Load(iResultRow& row)
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
     helmGroup = helmResult[0]["helm"];
+    
+    BracerGroup = helmResult[0]["bracer"];
 
     SetDescription(row["description"]);
 
@@ -530,6 +533,7 @@ bool psCharacter::QuickLoad(iResultRow& row, bool noInventory)
         SetRaceInfo(raceinfo);
 
         helmGroup = raceinfo->helmGroup;
+        BracerGroup = raceinfo->BracerGroup;
 
         if (!LoadTraits(pid))
         {
@@ -2030,7 +2034,7 @@ void psCharacter::MakeTextureString( csString& traits)
 void psCharacter::MakeEquipmentString( csString& equipment )
 {
     equipment = "<equiplist>";
-    equipment.AppendFmt("<helm>%s</helm>", EscpXML(helmGroup).GetData());
+    equipment.AppendFmt("<helm>%s</helm><bracer>%s</bracer>", EscpXML(helmGroup).GetData(), EscpXML(BracerGroup).GetData());
 
     for (int i=0; i<PSCHARACTER_SLOT_BULK1; i++)
     {

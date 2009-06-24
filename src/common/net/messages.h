@@ -43,7 +43,7 @@ class psLinearMovement;
 
 // This holds the version number of the network code, remember to increase
 // this each time you do an update which breaks compatibility
-#define PS_NETVERSION   0x009F
+#define PS_NETVERSION   0x00A0
 // Remember to bump the version in pscssetup.h, as well.
 
 
@@ -3011,6 +3011,7 @@ public:
                     const char* raceName,
                     unsigned short int gender,
                     const char* helmGroup,
+                    const char* BracerGroup,
                     csVector3 collTop, csVector3 collBottom, csVector3 collOffset,
                     const char* texParts,
                     const char* equipmentParts,
@@ -3049,6 +3050,7 @@ public:
     csString race;
     unsigned short int gender;
     csString helmGroup;                 // Used for helm groupings.
+    csString BracerGroup;               // Used for bracers groupings.
     csVector3 top, bottom, offset;
     csString texParts;
     csString equipment;
