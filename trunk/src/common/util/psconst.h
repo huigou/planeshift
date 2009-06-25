@@ -52,30 +52,32 @@
 #define CS_LOADER_ONLY_REGION    true
 #define CS_LOADER_ACROSS_REGIONS false
 
-#define DEF_PROX_DIST   100        // 100m is trial distance here
-#define DEF_UPDATE_DIST   5        //  30m is trial (default) delta to update
-#define PROX_LIST_ANY_RANGE 0.0      // range of 0 means all members of proxlist in multicast.
-/*  Dynamic proxlist range settings.
+#define DEF_PROX_DIST   100        ///< 100m is trial distance here
+#define DEF_UPDATE_DIST   5        ///<  30m is trial (default) delta to update
+#define PROX_LIST_ANY_RANGE 0.0      ///< range of 0 means all members of proxlist in multicast.
+/** @name Dynamic proxlist range settings.
  *   The dynamic proxlist shrinks range in steps (maximum of 1 step per proxlist update)
  *   if the number of player entities on the proxlist exceeds PROX_LIST_SHRINK_THRESHOLD.
  *   When the number of entities is below PROX_LIST_REGROW_THRESHOLD and the range is
  *   below gemObject::prox_distance_desired, the range is increased.
  */
-#define PROX_LIST_SHRINK_THRESHOLD  50   // 50 players in range - start radius shrink
-#define PROX_LIST_REGROW_THRESHOLD  30   // 30 players in range - start radius grow
-#define PROX_LIST_STEP_SIZE         10   // grow by this much each attempt
+//@{
+#define PROX_LIST_SHRINK_THRESHOLD  50   ///< 50 players in range - start radius shrink
+#define PROX_LIST_REGROW_THRESHOLD  30   ///< 30 players in range - start radius grow
+#define PROX_LIST_STEP_SIZE         10   ///< grow by this much each attempt
+//@}
 
-#define DEFAULT_INSTANCE             0   // Instance 0 is where 99% of things happen
+#define DEFAULT_INSTANCE             0   ///< Instance 0 is where 99% of things happen
 typedef uint32 InstanceID;
 #define INSTANCE_ALL 0xffffffff
 
-#define ASSIST_MAX_DIST 25   // Maximum distance that the /assist command will work
+#define ASSIST_MAX_DIST 25   ///< Maximum distance that the /assist command will work
 
 #define EXCHANGE_SLOT_COUNT         8
 #define INVENTORY_BULK_COUNT        32
 #define INVENTORY_EQUIP_COUNT       16
 
-#define PSITEM_MAX_CONTAINER_SLOTS  16   // maximum number of items an object can contain
+#define PSITEM_MAX_CONTAINER_SLOTS  16   ///< maximum number of items an object can contain
 
 #define GLYPH_WAYS               6
 #define GLYPH_ASSEMBLER_SLOTS    4
@@ -86,8 +88,8 @@ typedef uint32 InstanceID;
 #define RANGE_TO_LOOT 3
 #define RANGE_TO_RECV_LOOT 100
 #define RANGE_TO_USE 2
-#define RANGE_TO_STACK 0.5  // Range to stack like items when dropping/creating in the world
-#define DROP_DISTANCE 0.55   // Distance in front of player to drop items (just more then RANGE_TO_STACK)
+#define RANGE_TO_STACK 0.5  ///< Range to stack like items when dropping/creating in the world
+#define DROP_DISTANCE 0.55   ///< Distance in front of player to drop items (just more then RANGE_TO_STACK)
 
 #define LONG_RANGE_PERCEPTION  30
 #define SHORT_RANGE_PERCEPTION 10
@@ -95,12 +97,15 @@ typedef uint32 InstanceID;
 
 #define IS_CONTAINER true
 
-// Minimum guild requirements
+/** @name Minimum guild requirements
+ */
+//@{
 #define GUILD_FEE 20000
 #define GUILD_MIN_MEMBERS 5
-#define GUILD_KICK_GRACE 5 // minutes
+#define GUILD_KICK_GRACE 5 ///< minutes
 
 #define MAX_GUILD_LEVEL    9
+//@}
 
 #define SIZET_NOT_FOUND ((size_t)-1)
 
@@ -118,9 +123,10 @@ enum SPELL_TYPE
     DEBUFF,
 };
 
-// Make unique integer types for various types of IDs.  This allows the
-// compiler to statically check for the right kind of ID, preventing various
-// kinds of mistakes.  It also documents which kind of ID is required.
+/** Make unique integer types for various types of IDs.  This allows the
+  * compiler to statically check for the right kind of ID, preventing various
+  * kinds of mistakes.  It also documents which kind of ID is required.
+  */
 #define MAKE_ID_TYPE(name)                                               \
 class name                                                               \
 {                                                                        \
@@ -153,16 +159,18 @@ public:                                                                  \
 // Note: The < operator allows us to use these as keys for sets and trees.
 //       The csHashComputer allows us to use them as keys in csHash.
 
-// Convenience wrapper so we don't have to write ugly things like
-// actor->GetEID().Show().GetData() all over the place.
+/** Convenience wrapper so we don't have to write ugly things like
+  * actor->GetEID().Show().GetData() all over the place.
+  */
 #define ShowID(id) id.Show().GetData()
 
-MAKE_ID_TYPE(EID);         /// GEM Entity IDs
-MAKE_ID_TYPE(PID);         /// Player IDs
-MAKE_ID_TYPE(AccountID);   /// Account IDs
+MAKE_ID_TYPE(EID);         ///< GEM Entity IDs
+MAKE_ID_TYPE(PID);         ///< Player IDs
+MAKE_ID_TYPE(AccountID);   ///< Account IDs
 
-// Container IDs are either EIDs (if > 100) or inventory slot IDs.
-// This is quite ugly; we don't try to add proper typing.
+/** Container IDs are either EIDs (if > 100) or inventory slot IDs.
+  * This is quite ugly; we don't try to add proper typing.
+  */
 typedef uint32_t ContainerID;
 
 #endif
