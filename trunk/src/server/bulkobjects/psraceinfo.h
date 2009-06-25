@@ -104,6 +104,10 @@ public:
 
     const char *GetGender() { return sex; }
     const char *GetRace() { return name; }
+    
+    const char *GetHelmGroup()   { return helmGroup.GetDataSafe(); }
+    const char *GetBracerGroup() { return BracerGroup.GetDataSafe(); }
+    
 };
 
 
