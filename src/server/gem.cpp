@@ -1839,7 +1839,23 @@ void gemActionLocation::Send( int clientnum, bool , bool to_superclient )
 void OverridableMesh::OnChange()
 {
     if (actor)
+    {
+        //NOTE: maybe we should change also the raceinfo of the character? But this would affect the output
+        //      of a lot of things, including the save functions of the character
+        psRaceInfo* race = CacheManager::GetSingleton().GetRaceInfoByMeshName(Current());
+        if (race != NULL)
+        {
+            actor->GetCharacterData()->SetHelmGroup(race->GetHelmGroup());
+            actor->GetCharacterData()->SetBracerGroup(race->GetBracerGroup());
+        }
+        else //default no group
+        {
+            actor->GetCharacterData()->SetHelmGroup("");
+            actor->GetCharacterData()->SetBracerGroup("");
+        }
+        
         actor->SetMesh(Current());
+    }
 }
 
 //--------------------------------------------------------------------------------------
