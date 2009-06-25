@@ -195,19 +195,19 @@ public:
       *  These are the functions fired when a psWorkGameEvent is Triggered.
       */
     //@{
-    /** Handles a transformation/combination event. Basically the manufacturing events.
+    /** @brief Handles a transformation/combination event. Basically the manufacturing events.
       *
       * @param event The work event that was in the queue to fire.
       */
     void HandleWorkEvent(psWorkGameEvent* workEvent);
 
-    /** Handles a cleanup event. Basically removing discarded items from public containers.
+    /** @brief Handles a cleanup event. Basically removing discarded items from public containers.
       *
       * @param event The work event that was in the queue to fire.
       */
     void HandleCleanupEvent(psWorkGameEvent* workEvent);
 
-    /** Handles a resource/harvesting event. Basically the production events.
+    /** @brief Handles a resource/harvesting event. Basically the production events.
       *
       * @param event The work event that was in the queue to fire.
       */
@@ -284,7 +284,7 @@ protected:
     void HandleLockPick(MsgEntry* me,Client *client);
     void HandleWorkCommand(MsgEntry* me,Client *client);
 
-    /** Stop auto work event.
+    /** @brief Stop auto work event.
      * This is called when a client removes an item from any container
      * before it has had a chance to transform the item.
      *
