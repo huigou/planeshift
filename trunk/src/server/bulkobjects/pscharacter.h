@@ -868,6 +868,9 @@ public:
 
     const char* GetHelmGroup() { return helmGroup.GetData(); }
     const char* GetBracerGroup() { return BracerGroup.GetData(); }
+    
+    void SetHelmGroup(const char* Group) { helmGroup = Group; }
+    void SetBracerGroup(const char* Group) { BracerGroup = Group; }
 
     size_t GetAssignedGMEvents(psGMEventListMessage& gmevents, int clientnum);
     void AssignGMEvent(int id, bool playerIsGM);
