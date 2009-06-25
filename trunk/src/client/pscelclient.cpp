@@ -355,6 +355,16 @@ void psCelClient::HandleMainActor( psPersistActor& mesg )
         // Update factory
         local_player->factName = mesg.factname;
 
+        // Update Bracer/Helm Group
+        if ( mesg.helmGroup.Length() == 0 )
+            local_player->helmGroup = local_player->GetMesh()->GetFactory()->QueryObject()->GetName();
+        else
+            local_player->helmGroup = mesg.helmGroup;
+        
+        if ( mesg.BracerGroup.Length() == 0 )
+            local_player->BracerGroup = local_player->GetMesh()->GetFactory()->QueryObject()->GetName();
+        else
+            local_player->BracerGroup = mesg.BracerGroup;
 
         // Update cal3d
         local_player->RefreshCal3d();
