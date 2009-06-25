@@ -349,6 +349,7 @@ void psCelClient::HandleMainActor( psPersistActor& mesg )
             // Reset
             local_player->GetMesh()->SetMeshObject(local_player_defaultMesh);
             local_player->GetMesh()->SetFactory(local_player_defaultFact);
+            local_player->charApp->SetMesh(local_player->GetMesh());
         }
 
         // Update factory
