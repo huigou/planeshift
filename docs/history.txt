@@ -1,3 +1,14 @@
+*** 2009-06-28 by Stefano Angeleri
+- Added bracer support with groups defined in db.
+- $B will substituite the racename in bracer meshfacts name
+- DB BUMP: 1222
+- NET BUMP: 0xA0
+- added a missing operation when resetting mesh. there was a data incongruency.
+- Made bracers/helmets group actually update when changing mesh. so you don't
+  see an enki with an ylian help and so on
+
+
+
 *** 2009-06-22 by Kenny Graunke
 - Changed <item> progression script syntax:
   - Made money names singular for consistency with items (and because "trias"
