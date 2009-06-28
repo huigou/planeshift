@@ -205,7 +205,7 @@ void psClientDR::ResetMsgStrings()
 void psClientDR::HandleDeadReckon( MsgEntry* me )
 {
     psDRMessage drmsg(me,msgstrings,psengine->GetEngine() );
-    GEMClientActor* gemActor = (GEMClientActor*)psengine->GetCelClient()->FindObject( drmsg.entityid );
+    GEMClientActor* gemActor = (GEMClientActor*)celclient->FindObject( drmsg.entityid );
      
     if (!gemActor)
     {
@@ -260,7 +260,7 @@ void psClientDR::HandleForcePosition(MsgEntry *me)
 void psClientDR::HandleStatsUpdate( MsgEntry* me )
 {
     psStatDRMessage statdrmsg(me);
-    GEMClientActor* gemObject  = (GEMClientActor*)psengine->GetCelClient()->FindObject( statdrmsg.entityid );
+    GEMClientActor* gemObject  = (GEMClientActor*)celclient->FindObject( statdrmsg.entityid );
     if (!gemObject)
     {
         Error2("Stat request failed because CelClient not ready for %s", ShowID(statdrmsg.entityid));
@@ -334,7 +334,7 @@ void psClientDR::HandleOverride( MsgEntry* me )
     if (!msg.valid)
         return;
 
-    GEMClientActor* gemActor = (GEMClientActor*)psengine->GetCelClient()->FindObject(msg.entity_id);
+    GEMClientActor* gemActor = (GEMClientActor*)celclient->FindObject(msg.entity_id);
     if (!gemActor)
         return;
 
