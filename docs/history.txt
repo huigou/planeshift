@@ -6,8 +6,7 @@
 - added a missing operation when resetting mesh. there was a data incongruency.
 - Made bracers/helmets group actually update when changing mesh. so you don't
   see an enki with an ylian help and so on
-
-
+- Fixed PS#3003 - Reduce unnecessary inline function call half of the patch by HikerHauk
 
 *** 2009-06-22 by Kenny Graunke
 - Changed <item> progression script syntax:
