@@ -28,7 +28,7 @@ enum PSTRAIT_LOCATION {
     PSTRAIT_LOCATION_EYE_COLOR,
     PSTRAIT_LOCATION_COUNT
 };
-                                                                                                                                                                                                            
+//NOTE: Remember to update the locationString in pstrait.cpp each time something is changed here
 
 ////////////////////////////////////////////////////////////////////////////////
 

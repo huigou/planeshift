@@ -31,7 +31,7 @@
 //=============================================================================
 #include "pstrait.h"
 
-const char *psTrait::locationString[] = {"NONE","FACE","HAIR_STYLE","BEARD_STYLE","HAIR_COLOR","SKIN_TONE","ITEM"};
+const char *psTrait::locationString[] = {"NONE","FACE","HAIR_STYLE","BEARD_STYLE","HAIR_COLOR","SKIN_TONE","ITEM", "EYE_COLOR"};
 
 psTrait::psTrait()
 {
