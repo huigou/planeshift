@@ -326,11 +326,12 @@ void AuthenticationServer::HandleAuthent(MsgEntry *me, Client *notused)
     {
         // Account not banned; try IP range
         ban = banmanager.GetBanByIPRange(client->GetIPRange());
-        if (ban && ban->end && now > ban->start + IP_RANGE_BAN_TIME)
-        {  
-            // Only ban by IP range for the first 2 days
-            ban = NULL;
-        }
+        // 2 day IP ban limit removed
+        //if (ban && ban->end && now > ban->start + IP_RANGE_BAN_TIME)
+        //{  
+        //    // Only ban by IP range for the first 2 days
+        //    ban = NULL;
+        //}
     }
     if (ban)
     {
@@ -601,13 +602,14 @@ BanManager::BanManager()
         newentry->start = result[i].GetUInt32("start");
         newentry->ipRange = result[i]["ip_range"];
         newentry->reason = result[i]["reason"];
+        newentry->banIP = (bool) result[i].GetUInt32("ban_ip");
         
         // If account ban, add to list
         if (newentry->account.IsValid())
             banList_IDHash.Put(newentry->account,newentry);
 
         // If IP range ban, add to list
-        if ( newentry->ipRange.Length() && (!end || now < newentry->start + IP_RANGE_BAN_TIME) )
+        if ( newentry->ipRange.Length() && newentry->banIP /*(!end || now < newentry->start + IP_RANGE_BAN_TIME)*/ )
             banList_IPRList.Push(newentry);
     }
 }
@@ -635,7 +637,7 @@ bool BanManager::RemoveBan(AccountID account)
     return true;
 }
 
-bool BanManager::AddBan(AccountID account, csString ipRange, time_t duration, csString reason)
+bool BanManager::AddBan(AccountID account, csString ipRange, time_t duration, csString reason, bool banIP)
 {
     if (GetBanByAccount(account))
         return false;  // Already banned
@@ -648,17 +650,19 @@ bool BanManager::AddBan(AccountID account, csString ipRange, time_t duration, cs
     newentry->end = now + duration;
     newentry->ipRange = ipRange;
     newentry->reason = reason;
+    newentry->banIP = banIP;
 
     csString escaped;
     db->Escape(escaped, reason.GetData());
     int ret = db->Command("INSERT INTO bans "
-                          "(account,ip_range,start,end,reason) "
-                          "VALUES ('%u','%s','%u','%u','%s')",
+                          "(account,ip_range,start,end,reason,ban_ip) "
+                          "VALUES ('%u','%s','%u','%u','%s','%u')",
                           newentry->account.Unbox(),
                           newentry->ipRange.GetData(),
                           newentry->start,
                           newentry->end,
-                          escaped.GetData() );
+                          escaped.GetData(),
+                          newentry->banIP );
     if (ret == -1)
     {
         delete newentry;
@@ -668,7 +672,7 @@ bool BanManager::AddBan(AccountID account, csString ipRange, time_t duration, cs
     if (newentry->account.IsValid())
         banList_IDHash.Put(newentry->account,newentry);
 
-    if (newentry->ipRange.Length())
+    if (newentry->ipRange.Length() && newentry->banIP)
         banList_IPRList.Push(newentry);
 
     return true;

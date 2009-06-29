@@ -633,6 +633,7 @@ void pawsGmGUIWindow::SetSecurity()
     case 25:
     case 24:
     case 23:
+    case 22:
         ShowWidget("Ban");
         ShowWidget("BanMin");
         ShowWidget("BanHrs");
@@ -640,7 +641,6 @@ void pawsGmGUIWindow::SetSecurity()
         ShowWidget("BanMinlbl");
         ShowWidget("BanHrslbl");
         ShowWidget("BanDayslbl");
-    case 22:
         ShowWidget("Kick");
         ShowWidget("ChangeName");
         ShowWidget("ChangeNameRnd");

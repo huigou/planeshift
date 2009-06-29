@@ -1222,7 +1222,18 @@ UPDATE `server_options` SET `option_value`='1221' WHERE `option_name`='db_versio
 
 #1222 - Stefano Angeleri - Added bracer support
 ALTER TABLE `race_info` ADD COLUMN `bracer` VARCHAR(20)  COMMENT 'Stores a bracer group allowing to use the same bracer mesh for more than one race, just like for the helm column' default '' AFTER `helm`;
-UPDATE `server_options` SET `option_value`='1221' WHERE `option_name`='db_version';
+UPDATE `server_options` SET `option_value`='1222' WHERE `option_name`='db_version';
+
+#1223 - Steven Patrick - Added optional IP ban
+ALTER TABLE `bans` ADD COLUMN `ban_ip` BOOLEAN NOT NULL DEFAULT 0 COMMENT 'Account banned by IP as well' AFTER `reason`;
+INSERT INTO command_group_assignment VALUES( "long bans", 30 );
+INSERT INTO command_group_assignment VALUES( "long bans", 25 );
+INSERT INTO command_group_assignment VALUES( "long bans", 24 );
+INSERT INTO command_group_assignment VALUES( "/ban", 23 );
+INSERT INTO command_group_assignment VALUES( "/ban", 22 );
+INSERT INTO command_group_assignment VALUES( "/unban", 23 );
+INSERT INTO command_group_assignment VALUES( "/unban", 22 );
+UPDATE `server_options` SET `option_value`='1223' WHERE `option_name`='db_version';
 
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.

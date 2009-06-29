@@ -430,10 +430,10 @@ Awards progression points to a player for the completion of a GM run event. (ent
 Shows what was told to the targeted npc and couldn't be understand by it.
 First and last entry must be defined and last entry must be greater than first entry.
 Example: /badtext 1 10 shows the latest 10 entries</topic>
-        <topic name="/ban">/ban name minutes hours days reason
-OR /ban name reason
+        <topic name="/ban">/ban name minutes hours days [IP] reason
+OR /ban name [IP] reason
 
-Bans a player from logging into the game for a specified amount of time.  (default is 1 year)  'Name' may be a character name, an account name, or an account number.  A reason must be specified.</topic>
+Bans a player from logging into the game for a specified amount of time.  (default is 2 days)  'Name' may be a character name, an account name, or an account number.  A reason must be specified. If IP is specified the ip will be banned as well.</topic>
         <topic name="/banadvisor">/banadvisor name
         
 Bans a player from advising until /unbanadvisor is used.</topic>
@@ -533,6 +533,9 @@ To change the lock on a the targeted item.  This removes ability to unlock targe
 
 Make a key out of item in right hand:
 /key make
+
+Make a master key out of item in right hand:
+/key makemaster
 
 Copy key item in hand:
 /key copy

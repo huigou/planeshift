@@ -8,5 +8,6 @@ CREATE TABLE bans (
   start int(20) unsigned default '0',
   end int(20) unsigned default '0',
   reason text default NULL,
+  ban_ip BOOLEAN NOT NULL DEFAULT 0 COMMENT 'Account banned by IP as well',
   PRIMARY KEY  (account)
 );
