@@ -43,10 +43,11 @@ struct BanEntry
     time_t   start;
     time_t   end;
     csString reason;
+    bool banIP;
 };
 
-// Length of time the server can ban by IP range
-#define IP_RANGE_BAN_TIME 60*60*24*2  // 2 days
+// Length of time the server can ban by IP range //Removed
+//#define IP_RANGE_BAN_TIME 60*60*24*2  // 2 days
 
 /// Holds list of banned accounts and IP ranges
 class BanManager
@@ -56,7 +57,7 @@ public:
     ~BanManager();
 
     bool RemoveBan(AccountID account);
-    bool AddBan(AccountID account, csString ipRange, time_t duration, csString reason);
+    bool AddBan(AccountID account, csString ipRange, time_t duration, csString reason, bool banIP);
     BanEntry* GetBanByAccount(AccountID account);
     BanEntry* GetBanByIPRange(csString IPRange);
 

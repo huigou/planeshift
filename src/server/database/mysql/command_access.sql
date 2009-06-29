@@ -70,12 +70,9 @@ INSERT INTO command_group_assignment VALUES( "move unpickupables/spawns", 30 );
 INSERT INTO command_group_assignment VALUES( "move unpickupables/spawns", 25 );
 
 # GM4 and above
-INSERT INTO command_group_assignment VALUES( "/ban", 30 );
-INSERT INTO command_group_assignment VALUES( "/ban", 25 );
-INSERT INTO command_group_assignment VALUES( "/ban", 24 );
-INSERT INTO command_group_assignment VALUES( "/unban", 30 );
-INSERT INTO command_group_assignment VALUES( "/unban", 25 );
-INSERT INTO command_group_assignment VALUES( "/unban", 24 );
+INSERT INTO command_group_assignment VALUES( "long bans", 30 );
+INSERT INTO command_group_assignment VALUES( "long bans", 25 );
+INSERT INTO command_group_assignment VALUES( "long bans", 24 );
 INSERT INTO command_group_assignment VALUES( "/fog", 30 );
 INSERT INTO command_group_assignment VALUES( "/fog", 25 );
 INSERT INTO command_group_assignment VALUES( "/fog", 24 );
@@ -159,6 +156,16 @@ INSERT INTO command_group_assignment VALUES( "/setkillexp", 24 );
 INSERT INTO command_group_assignment VALUES( "/setkillexp", 23 );
 
 # GM2 and above
+INSERT INTO command_group_assignment VALUES( "/ban", 30 );
+INSERT INTO command_group_assignment VALUES( "/ban", 25 );
+INSERT INTO command_group_assignment VALUES( "/ban", 24 );
+INSERT INTO command_group_assignment VALUES( "/ban", 23 );
+INSERT INTO command_group_assignment VALUES( "/ban", 22 );
+INSERT INTO command_group_assignment VALUES( "/unban", 30 );
+INSERT INTO command_group_assignment VALUES( "/unban", 25 );
+INSERT INTO command_group_assignment VALUES( "/unban", 24 );
+INSERT INTO command_group_assignment VALUES( "/unban", 23 );
+INSERT INTO command_group_assignment VALUES( "/unban", 22 );
 INSERT INTO command_group_assignment VALUES( "command area", 30 );
 INSERT INTO command_group_assignment VALUES( "command area", 25 );
 INSERT INTO command_group_assignment VALUES( "command area", 24 );

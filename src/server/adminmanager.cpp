@@ -226,12 +226,26 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         hours  = words.GetInt(3);
         days   = words.GetInt(4);
 
+        banIP = false;
+
         if (!mins && !hours && !days)
         {
+          if (words[2].Upcase() == "IP")
+          {
+            banIP = true;
+            reason = words.GetTail(3);
+          }
+          else
             reason = words.GetTail(2);
         }
         else
         {
+          if (words[5].Upcase() == "IP")
+          {
+            banIP = true;
+            reason = words.GetTail(6);
+          }
+          else
             reason = words.GetTail(5);
         }
 
@@ -5655,9 +5669,21 @@ void AdminManager::UnBanName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
 void AdminManager::BanClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data,Client *client)
 {
     const time_t year = 31536000UL; //one year should be enough
+    const time_t twodays = (2 * 24 * 60 * 60);
+
     time_t secs = (data.mins * 60) + (data.hours * 60 * 60) + (data.days * 24 * 60 * 60);
-    if ((secs > year) || (secs == 0))
+    
+    if (secs == 0)
+      secs = twodays; // Two day ban by default
+
+    if (secs > year)
         secs = year; //some errors if time was too high
+
+    if (secs > twodays && !psserver->CheckAccess(client, "long bans"))
+    {
+        psserver->SendSystemError(me->clientnum, "You can only ban for up to two days.");
+        return;
+    }
 
     if (data.player.Length() == 0)
     {
@@ -5713,7 +5739,7 @@ void AdminManager::BanClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
     // Ban by IP range, as well as account
     csString ip_range = Client::GetIPRange(result[0]["last_login_ip"]);
 
-    if ( !psserver->GetAuthServer()->GetBanManager()->AddBan(accountID,ip_range,secs,data.reason) )
+    if ( !psserver->GetAuthServer()->GetBanManager()->AddBan(accountID,ip_range,secs,data.reason, data.banIP) )
     {
         // Error adding; entry must already exist
         psserver->SendSystemError(me->clientnum, "%s is already banned", user.GetData() );
@@ -5738,10 +5764,11 @@ void AdminManager::BanClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
     csString notify;
     notify.Format("You%s banned '%s' off the server for ", (target)?" kicked and":"", user.GetData() );
     if (secs == year)
-        notify.Append("a year. ");
+        notify.Append("a year.");
     else
-        notify.AppendFmt("%d minutes, %d hours and %d days. ", data.mins, data.hours, data.days );
-    notify.AppendFmt("They will also be banned by IP range%s.", (secs > 60*60*24*2)?" for the first 2 days":"" );
+        notify.AppendFmt("%d minutes, %d hours and %d days.", data.mins, data.hours, data.days );
+    if (data.banIP)
+      notify.AppendFmt(" They will also be banned by IP range.");
 
     // Finally, notify the client who kicked the target
     psserver->SendSystemInfo(me->clientnum,notify);
@@ -5787,6 +5814,24 @@ void AdminManager::UnbanClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDat
     }
 
     csString user = result[0]["username"];
+
+    // How long is the ban?
+    result = db->Select("SELECT * FROM bans WHERE account = '%u' LIMIT 1",accountId.Unbox());
+    if (!result.IsValid()){
+        psserver->SendSystemError(me->clientnum, "%s is not banned", user.GetData() );
+        return;
+    }
+
+    const time_t twodays = (2 * 24 * 60 * 60);
+    time_t end = result[0].GetUInt32("end");
+    time_t start = result[0].GetUInt32("start");
+    
+    if ((end - start > twodays) && !psserver->CheckAccess(gm, "long bans")) // Longer than 2 days, must have special permission to unban
+    {
+        psserver->SendSystemResult(me->clientnum, "You can only unban players with less than a two day ban.");
+        return;
+    }
+
 
     if ( psserver->GetAuthServer()->GetBanManager()->RemoveBan(accountId) )
         psserver->SendSystemResult(me->clientnum, "%s has been unbanned", user.GetData() );

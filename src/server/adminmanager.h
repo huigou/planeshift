@@ -127,7 +127,7 @@ protected:
         int rainDrops, density, fade;
         unsigned int mins, hours, days;
         float amt, x, y, z, rot;
-        bool uniqueName, uniqueFirstName,help,insert;
+        bool uniqueName, uniqueFirstName, help, insert, banIP;
         float radius, range;
         unsigned short stackCount;
         InstanceID instance;
