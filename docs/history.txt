@@ -1,3 +1,8 @@
+*** 2009-06-29 by Steven Patrick
+- GM2+ may now ban for up to 2 days and unban same, GM4+ can still ban/unban like normal
+- Made IP bans optional and disabled by default
+- DB BUMP to 1223
+
 *** 2009-06-28 by Stefano Angeleri
 - Added bracer support with groups defined in db.
 - $B will substituite the racename in bracer meshfacts name
