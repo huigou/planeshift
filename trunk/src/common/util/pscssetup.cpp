@@ -46,6 +46,8 @@
 #include <csutil/databuf.h>
 #include <iutil/stringarray.h>
 
+#include <igraphic/imageio.h>
+
 #include "util/fileutil.h"
 #include "util/log.h"
 #include "util/consoleout.h"
@@ -71,6 +73,10 @@ psCSSetup::~psCSSetup()
 {
 }
 
+bool psCSSetup::AddWindowInformations(const char *Info)
+{
+    return InitCSWindow((csString)APPNAME + " [" + Info + "]");
+}
 
 bool psCSSetup::InitCSWindow(const char *name)
 {

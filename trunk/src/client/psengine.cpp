@@ -209,10 +209,10 @@ CS_IMPLEMENT_APPLICATION
 
 // ----------------------------------------------------------------------------
 
-psEngine::psEngine (iObjectRegistry *objectreg)
+psEngine::psEngine (iObjectRegistry *objectreg, psCSSetup *CSSetup)
 {
     object_reg = objectreg;
-
+    CS_Setup = CSSetup;
     // No no, no map loaded
     loadedMap = false;
     gameLoaded = false;
@@ -1228,6 +1228,13 @@ const char* psEngine::GetMainPlayerName()
 
 // ----------------------------------------------------------------------------
 
+bool psEngine::UpdateWindowTitleInformations()
+{
+    return CS_Setup->AddWindowInformations(GetMainPlayerName());
+}
+
+// ----------------------------------------------------------------------------
+
 void psEngine::AddLoadingWindowMsg(const csString & msg)
 {
     pawsLoadWindow* window = static_cast <pawsLoadWindow*> (paws->FindWidget("LoadWindow"));
@@ -1394,7 +1401,7 @@ void psEngine::LoadGame()
         LoadPawsWidget( "Container description window",    "data/gui/containerdesc.xml" );
         LoadPawsWidget( "Book Reading window", "data/gui/readbook.xml" );
         LoadPawsWidget( "Interact menu",           "data/gui/interact.xml" );
-       LoadPawsWidget( "Group status window",     "data/gui/group.xml" );
+        LoadPawsWidget( "Group status window",     "data/gui/group.xml" );
         LoadPawsWidget( "Exchange window",         "data/gui/exchange.xml" );
         LoadPawsWidget( "Glyph window",            "data/gui/glyph.xml" );
         LoadPawsWidget( "Merchant window",         "data/gui/merchant.xml" );
@@ -1874,14 +1881,14 @@ int main (int argc, char *argv[])
 #ifdef CS_COMPILER_MSVC
     _set_purecall_handler(pureCallHandler);
 #endif
-    psCSSetup* CSSetup = new psCSSetup( argc, argv, "/this/psclient.cfg", CONFIGFILENAME );
+    psCSSetup *CSSetup = new psCSSetup( argc, argv, "/this/psclient.cfg", CONFIGFILENAME );
     iObjectRegistry* object_reg = CSSetup->InitCS();
 
     pslog::Initialize (object_reg);
     pslog::disp_flag[LOG_LOAD] = true;
 
     // Create our application object
-    psengine = new psEngine(object_reg);
+    psengine = new psEngine(object_reg, CSSetup);
 
 
     // Initialize engine

@@ -294,6 +294,9 @@ void psCelClient::HandleActor( MsgEntry* me )
 
         // This triggers the server to update our proxlist
         local_player->SendDRUpdate(PRIORITY_LOW,GetClientDR()->GetMsgStrings());
+        
+        //update the window title with the char name
+        psengine->UpdateWindowTitleInformations();
     }
 
     entities.Push(actor);
@@ -665,6 +668,8 @@ void psCelClient::HandleNameChange( MsgEntry* me )
     // We don't have a label over our own char
     if (psengine->GetCelClient()->GetMainPlayer() != object)
         entityLabels->OnObjectArrived(object);
+    else //we have to update the window title
+        psengine->UpdateWindowTitleInformations();
 
     // If object is targeted update the target information.
     if (psengine->GetCharManager()->GetTarget() == object)
