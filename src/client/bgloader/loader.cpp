@@ -403,16 +403,10 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
 
                 csRef<Sector> s;
                 csString sectorName = node->GetAttributeValue("name");
+                sectorName.Downcase();
                 {
                     CS::Threading::ScopedReadLock lock(sLock);
-                    for(size_t i=0; i<sectors.GetSize(); i++)
-                    {
-                        if(sectors[i]->name.CompareNoCase(sectorName))
-                        {
-                            s = sectors[i];
-                            break;
-                        }
-                    }
+                    s = sectortree.Get(sectorName, csRef<Sector>());
                 }
 
                 if(!s.IsValid())
@@ -420,6 +414,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                     s = csPtr<Sector>(new Sector(sectorName));
                     CS::Threading::ScopedWriteLock lock(sLock);
                     sectors.Push(s);
+                    sectortree.Put(sectorName, s);
                 }
 
                 s->init = true;
@@ -432,7 +427,43 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                     node = node->GetParent();
                 }
 
-                csRef<iDocumentNodeIterator> nodeItr2 = node->GetNodes("meshobj");
+                csRef<iDocumentNodeIterator> nodeItr2 = node->GetNodes("key");
+                while(nodeItr2->HasNext())
+                {
+                    csRef<iDocumentNode> node2 = nodeItr2->Next();
+                    if(csString("water").Compare(node2->GetAttributeValue("name")))
+                    {
+                        csRef<iDocumentNodeIterator> nodeItr3 = node2->GetNodes("area");
+                        while(nodeItr3->HasNext())
+                        {
+                            csRef<iDocumentNode> area = nodeItr3->Next();
+                            WaterArea* wa = new WaterArea();
+                            s->waterareas.Push(wa);
+
+                            csRef<iDocumentNode> colour = area->GetNode("colour");
+                            if(colour.IsValid())
+                            {
+                                syntaxService->ParseColor(colour, wa->colour);
+                            }
+                            else
+                            {
+                                // Default.
+                                wa->colour = csColor4(0.0f, 0.17f, 0.49f, 0.6f);
+                            }
+
+                            csRef<iDocumentNodeIterator> vs = area->GetNodes("v");
+                            while(vs->HasNext())
+                            {
+                                csRef<iDocumentNode> v = vs->Next();
+                                csVector3 vector;
+                                syntaxService->ParseVector(v, vector);
+                                wa->bbox.AddBoundingVertex(vector);
+                            }
+                        }
+                    }
+                }
+
+                nodeItr2 = node->GetNodes("meshobj");
                 while(nodeItr2->HasNext())
                 {
                     csRef<iDocumentNode> node2 = nodeItr2->Next();
@@ -781,16 +812,10 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                         }
 
                         csString targetSector = node2->GetNode("sector")->GetContentsValue();
+                        targetSector.Downcase();
                         {
                             CS::Threading::ScopedReadLock lock(sLock);
-                            for(size_t i=0; i<sectors.GetSize(); i++)
-                            {
-                                if(targetSector.CompareNoCase(sectors[i]->name))
-                                {
-                                    p->targetSector = sectors[i];
-                                    break;
-                                }
-                            }
+                            p->targetSector = sectortree.Get(targetSector, csRef<Sector>());
                         }
 
                         if(!p->targetSector.IsValid())
@@ -798,6 +823,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                             p->targetSector = csPtr<Sector>(new Sector(targetSector));
                             CS::Threading::ScopedWriteLock lock(sLock);
                             sectors.Push(p->targetSector);
+                            sectortree.Put(targetSector, p->targetSector);
                         }
 
                         if(!p->ww_given)
@@ -949,13 +975,9 @@ void BgLoader::UpdatePosition(const csVector3& pos, const char* sectorName, bool
         sector = lastSector;
     }
 
-    for(size_t i=0; !sector.IsValid() && i<sectors.GetSize(); i++)
+    if(!sector.IsValid())
     {
-        if(sectors[i]->name.Compare(sectorName))
-        {
-            sector = sectors[i];
-            break;
-        }
+        sector = sectortree.Get(csString(sectorName).Downcase(), csRef<Sector>());
     }
 
     if(sector.IsValid())
@@ -1666,14 +1688,22 @@ bool BgLoader::LoadTexture(Texture* texture)
     return false;
 }
 
-csPtr<iMeshFactoryWrapper> BgLoader::LoadFactory(const char* name)
+csPtr<iMeshFactoryWrapper> BgLoader::LoadFactory(const char* name, bool* failed)
 {
     csRef<MeshFact> meshfact = meshfacts.Get(name, csRef<MeshFact>());
     {
-        // Validation.
-        csString msg;
-        msg.Format("Invalid factory reference '%s'", name);
-        CS_ASSERT_MSG(msg.GetData(), meshfact.IsValid());
+        if(!failed)
+        {
+            // Validation.
+            csString msg;
+            msg.Format("Invalid factory reference '%s'", name);
+            CS_ASSERT_MSG(msg.GetData(), meshfact.IsValid());
+        }
+        else if(!meshfact.IsValid())
+        {
+            *failed = true;
+            return csPtr<iMeshFactoryWrapper>(0);
+        }
     }
 
     if(LoadMeshFact(meshfact))
@@ -1709,5 +1739,27 @@ csPtr<iMaterialWrapper> BgLoader::LoadMaterial(const char* name, bool* failed)
 
     return csPtr<iMaterialWrapper>(0);
 }
+
+bool BgLoader::InWaterArea(const char* sector, csVector3* pos, csColor4** colour) const
+{
+    // Hack to work around the weird sector stuff we do.
+    if(!strcmp("SectorWhereWeKeepEntitiesResidingInUnloadedMaps", sector))
+        return false;
+
+    csRef<Sector> s = sectortree.Get(sector, csRef<Sector>());
+    CS_ASSERT_MSG("Invalid sector passed to InWaterArea().", s.IsValid());
+
+    for(size_t i=0; i<s->waterareas.GetSize(); ++i)
+    {
+        if(s->waterareas[i]->bbox.In(*pos))
+        {
+            *colour = &s->waterareas[i]->colour;
+            return true;
+        }
+    }
+
+    return false;
+}
+
 }
 CS_PLUGIN_NAMESPACE_END(bgLoader)

@@ -517,7 +517,14 @@ bool psCharAppearance::Attach(const char* socketName, const char* meshFactName)
         return false;
     }
 
-    csRef<iMeshFactoryWrapper> factory = psengine->GetLoader()->LoadFactory(meshFactName);
+    bool failed = false;
+    csRef<iMeshFactoryWrapper> factory = psengine->GetLoader()->LoadFactory(meshFactName, &failed);
+    if(failed)
+    {
+        Notify2(LOG_CHARACTER, "Mesh factory %s not found.", meshFactName );
+        return false;
+    }
+
     if(!factory.IsValid())
     {
         Attachment attach(true);

@@ -22,17 +22,18 @@
 
 #include <iutil/threadmanager.h>
 
+class csColor4;
 class csVector3;
 struct iObjectRegistry;
 
 struct iBgLoader : public virtual iBase
 {
-  SCF_INTERFACE(iBgLoader, 1, 0, 0);
+  SCF_INTERFACE(iBgLoader, 1, 1, 1);
 
   virtual void Setup(uint gfxFeatures, float loadRange) = 0;
 
   virtual csPtr<iMaterialWrapper> LoadMaterial(const char* name, bool* failed = NULL) = 0;
-  virtual csPtr<iMeshFactoryWrapper> LoadFactory(const char* name) = 0;
+  virtual csPtr<iMeshFactoryWrapper> LoadFactory(const char* name, bool* failed = NULL) = 0;
 
   THREADED_INTERFACE2(PrecacheData, const char* path, bool recursive);
   virtual void UpdatePosition(const csVector3& pos, const char* sectorName, bool force) = 0;
@@ -48,6 +49,8 @@ struct iBgLoader : public virtual iBase
   virtual void SetLoadRange(float r) = 0;
 
   virtual bool HasValidPosition() const = 0;
+
+  virtual bool InWaterArea(const char* sector, csVector3* pos, csColor4** colour) const = 0;
 };
 
 #endif // __IBGLOADER_H__

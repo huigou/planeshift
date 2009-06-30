@@ -57,7 +57,7 @@ public:
     void Setup(uint gfxFeatures, float loadRange);
 
     csPtr<iMaterialWrapper> LoadMaterial(const char* name, bool* failed = NULL);
-    csPtr<iMeshFactoryWrapper> LoadFactory(const char* name);
+    csPtr<iMeshFactoryWrapper> LoadFactory(const char* name, bool* failed = NULL);
 
     THREADED_CALLABLE_DECL2(BgLoader, PrecacheData, csThreadReturn, const char*, path, bool, recursive, THREADEDL, false, false);
     void UpdatePosition(const csVector3& pos, const char* sectorName, bool force);
@@ -73,6 +73,8 @@ public:
     void SetLoadRange(float r) { loadRange = r; }
 
     bool HasValidPosition() const { return validPosition; }
+
+    bool InWaterArea(const char* sector, csVector3* pos, csColor4** colour) const;
 
 private:
     class MeshGen;
@@ -90,6 +92,12 @@ private:
         useShadows = 0x20,
         useMeshGen = 0x40,
         useAll = (useHighShaders | useShadows | useMeshGen)
+    };
+
+    struct WaterArea
+    {
+        csBox3 bbox;
+        csColor4 colour;
     };
 
     struct Shader
@@ -174,6 +182,14 @@ private:
             ambient = csColor(0.0f);
         }
 
+        ~Sector()
+        {
+            while(!waterareas.IsEmpty())
+            {
+                delete waterareas.Pop();
+            }
+        }
+
         csString name;
         bool init;
         bool isLoading;
@@ -188,6 +204,7 @@ private:
         csRefArray<Portal> portals;
         csRefArray<Portal> activePortals;
         csRefArray<Light> lights;
+        csArray<WaterArea*> waterareas;
     };
 
     class MeshGen : public CS::Utility::FastRefCount<MeshObj>
@@ -371,6 +388,7 @@ private:
     csRedBlackTreeMap<csString, csRef<Material> > materials;
     csRedBlackTreeMap<csString, csRef<MeshFact> > meshfacts;
     csRedBlackTreeMap<csString, csRef<MeshObj> > meshes;
+    csRedBlackTreeMap<csString, csRef<Sector> > sectortree;
     csRefArray<Sector> sectors;
 
     CS::Threading::ReadWriteMutex tLock;
