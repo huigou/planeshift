@@ -62,6 +62,7 @@ class psCal3DCallbackLoader;
 class psMainWidget;
 class psQuestionClient;
 class psOptions;
+class psCSSetup;
 
 // Networking classes
 class psNetConnection;
@@ -101,7 +102,7 @@ public:
     };
 
     /// Default constructor. It calls csApp constructor.
-    psEngine (iObjectRegistry *object_reg);
+    psEngine (iObjectRegistry *object_reg, psCSSetup *CSSetup);
 
     /// Destructor
     virtual ~psEngine ();
@@ -178,7 +179,7 @@ public:
     csRandomGen& GetRandomGen() { return random; }
     float GetRandom() { return random.Get(); }
 
-    ClientMsgHandler *   GetMsgHandler()     { return netmanager->GetMsgHandler(); }
+    ClientMsgHandler *   GetMsgHandler()       { return netmanager->GetMsgHandler(); }
     CmdHandler*            GetCmdHandler()     { return netmanager->GetCmdHandler(); }
     psSlotManager*         GetSlotManager()    { return slotManager;}
     psClientCharManager*   GetCharManager()    { return charmanager; }
@@ -193,6 +194,7 @@ public:
     psMouseBinds*          GetMouseBinds();
     psCamera*              GetPSCamera()       { return camera; }
     psNetManager*          GetNetManager()     { return netmanager; }
+    psCSSetup*             GetCSSetup()        { return CS_Setup; }
 
     /// Access the player's petitioner target
     void SetTargetPetitioner(const char * pet) { targetPetitioner = pet; }
@@ -286,6 +288,9 @@ public:
     
     /// Get the main character's name
     const char* GetMainPlayerName();
+    
+    /// Update the window title with the current informations
+    bool UpdateWindowTitleInformations();
 
     /// Force the next frame to get drawn. Used when updating LoadWindow.
     void ForceRefresh() { elapsed = 0; }
@@ -385,9 +390,10 @@ private:
     psOptions*                options;
     psSlotManager*            slotManager;
     psQuestionClient*         questionclient;
-    PawsManager*              paws;         ///< Hold the ps AWS manager
-    psMainWidget*             mainWidget;   ///< Hold the ps overridden version of the desktop
-    psInventoryCache*	        inventoryCache;///< inventory cache for client
+    PawsManager*              paws;          ///< Hold the ps AWS manager
+    psMainWidget*             mainWidget;    ///< Hold the ps overridden version of the desktop
+    psInventoryCache*	      inventoryCache;///< inventory cache for client
+    psCSSetup*                CS_Setup;
     csRef<iBgLoader>          loader;
 
     /* status, misc. vars */

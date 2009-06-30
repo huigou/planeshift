@@ -52,6 +52,9 @@ public:
     iObjectRegistry* GetObjectRegistry(){return object_reg;}
     
     static iObjectRegistry* object_reg;
+    
+    ///Adds additional informations wraped in [] to the title bar
+    bool AddWindowInformations(const char *Info);
 protected:  
     //Unused part of initcs.inc, but included - better to than not to
     bool InitCSWindow(const char *);
