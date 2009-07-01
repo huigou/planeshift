@@ -466,6 +466,22 @@ bool QuestManager::HandleScriptCommand(csString& block,
                 response_requireop.AppendFmt("<not><timeofday min=\"%s\" max=\"%s\" /></not>", timeinfo[0].GetData(), timeinfo[1].GetData() );
             }
         }
+        else if (!strncasecmp(block,"Require trait",13))
+        {
+            csString arguments = block.Slice(14,block.Length()).Trim();
+            size_t delimiter = arguments.FindFirst(" in",0);
+            csString name = arguments.Slice(0,delimiter).Trim();
+            csString location = arguments.Slice(delimiter+4, block.Length()).Trim();
+            response_requireop.AppendFmt("<trait name=\"%s\" location=\"%s\" />", name.GetData(), location.GetData());
+        }
+        else if (!strncasecmp(block,"Require not trait",17))
+        {
+            csString arguments = block.Slice(18,block.Length()).Trim();
+            size_t delimiter = arguments.FindFirst(" in",0);
+            csString name = arguments.Slice(0,delimiter).Trim();
+            csString location = arguments.Slice(delimiter+4, block.Length()).Trim();
+            response_requireop.AppendFmt("<not><trait name=\"%s\" location=\"%s\" /></not>", name.GetData(), location.GetData());
+        }
         else if (!strncasecmp(block,"Require guild",13))  //NOTE: the both argument is implictly defined
         {
             csString type = block.Slice(14,block.Length()).Trim();
