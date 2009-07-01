@@ -34,8 +34,8 @@ INSERT INTO math_scripts VALUES( "Calculate Damage",
 
         RequiredInputVars = Target:AttackerTargeted+Attacker:getSkillValue(AttackWeapon:Skill1)+AttackLocationItem:Hardness;
 
-        AttackerStance = AttackerActor:CombatStance;
-        TargetStance = TargetActor:CombatStance;
+        AttackerStance = Attacker:CombatStance;
+        TargetStance = Target:CombatStance;
 
         AttackValue = WeaponSkill;
         TargetAttackValue = TargetWeaponSkill;
