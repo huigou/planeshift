@@ -89,7 +89,7 @@ private:
     csRandomGen* randomgen;
     LocationType* pvp_region;
 
-    MathScript *calc_damage; /// This is the particular calculation for damage.
+    MathScript *calc_damage; ///< This is the particular calculation for damage.
     // if the player is too tired, stop fighting. We stop if we don't have enough stamina to make an attack with the current stance.
     MathScript* staminacombat;
 
