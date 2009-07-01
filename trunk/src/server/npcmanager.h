@@ -187,10 +187,10 @@ protected:
 
     csHash<PetOwnerSession*, PID> OwnerPetList;
 
-    /* Math script setup for pet range check */
+    /// Math script setup for pet range check
     MathScript *petRangeScript;
 
-    /* Math script setup for pet should react check */
+    /// Math script setup for pet should react check
     MathScript *petReactScript;
 };
 

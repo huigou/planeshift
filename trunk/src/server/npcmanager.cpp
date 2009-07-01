@@ -98,8 +98,7 @@ public:
     bool isActive;
     gemActor *owner;
     NPCManager *manager;
-    // create time
-    double elapsedTime;
+    double elapsedTime; ///< create time
     csString curDate;
 
     PetOwnerSession()
@@ -134,7 +133,7 @@ public:
         elapsedTime = 0.0f;
         isActive = true;
 
-        /// Get pet characterdata
+        // Get pet characterdata
         if ( pet )
         {
             csString last_login = pet->GetLastLoginTime();
