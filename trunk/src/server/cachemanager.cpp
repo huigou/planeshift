@@ -427,11 +427,11 @@ bool CacheManager::PreloadSkills()
         return false;
     }
 
-    for (currentrow=0; currentrow<result.Count(); currentrow++)
+    for (currentrow = 0; currentrow < result.Count(); currentrow++)
     {
         if (result[currentrow]["skill_id"]!=NULL)
         {
-            newskill=new psSkillInfo;
+            newskill = new psSkillInfo;
 
             newskill->id = (PSSKILL) result[currentrow].GetInt("skill_id");
             newskill->name = result[currentrow]["name"];
@@ -441,19 +441,22 @@ bool CacheManager::PreloadSkills()
             newskill->price = psMoney(result[currentrow].GetInt("price"));
             newskill->baseCost = result[currentrow].GetInt("base_rank_cost");
 
-            csString type( result[currentrow]["category"] );
-            if ( type == "STATS" )
+            csString type(result[currentrow]["category"]);
+            if (type == "STATS")
                 newskill->category = PSSKILLS_CATEGORY_STATS;
-            else if ( type == "COMBAT" )
+            else if (type == "COMBAT")
                 newskill->category = PSSKILLS_CATEGORY_COMBAT;
-            else if ( type == "MAGIC" )
+            else if (type == "MAGIC")
                 newskill->category = PSSKILLS_CATEGORY_MAGIC;
-            else if ( type == "JOBS" )
+            else if (type == "JOBS")
                 newskill->category = PSSKILLS_CATEGORY_JOBS;
-            else if ( type == "VARIOUS" )
+            else if (type == "VARIOUS")
                 newskill->category = PSSKILLS_CATEGORY_VARIOUS;
 
-            skillinfolist.Push(newskill);
+            skillinfo_IDHash.Put((int)newskill->id, newskill);
+            skillinfo_NameHash.Put(newskill->name, newskill);
+            skillinfo_CategoryHash.Put((int)newskill->category, newskill);
+            
             maxCommonStrID++;
             msg_strings.Register(newskill->name,(csStringID)maxCommonStrID);
         }
@@ -1604,52 +1607,20 @@ psQuest *CacheManager::AddDynamicQuest(const char *name, psQuest *parentQuest, i
 
 
 
-// TODO: This should be done faster, probably not with an array
 psSkillInfo *CacheManager::GetSkillByID(unsigned int id)
 {
-    size_t i;
-    psSkillInfo *currentskill;
-
-    for (i=0;i<skillinfolist.GetSize();i++)
-    {
-        currentskill=skillinfolist.Get(i);
-        if (currentskill && (unsigned int)currentskill->id==id)
-        {
-            return currentskill;
-        }
-    }
-    return NULL;
-
+    return skillinfo_IDHash.Get((int)id, NULL);
 }
 
-// TODO: This should be done faster, probably not with an array
 psSkillInfo *CacheManager::GetSkillByName(const char *name)
 {
-    size_t i;
-    psSkillInfo *currentskill;
-
-    for (i=0;i<skillinfolist.GetSize();i++)
-    {
-        currentskill=skillinfolist.Get(i);
-        if (currentskill && currentskill->name.CompareNoCase(name) )
-        {
-            return currentskill;
-        }
-    }
-    return NULL;
+    return skillinfo_NameHash.Get(csString(name), NULL);
 }
 
-void CacheManager::GetSkillsListbyCategory(csArray <psSkillInfo>& listskill,int category )
+void CacheManager::GetSkillsListbyCategory(csArray <psSkillInfo*>& listskill, int category )
 {
-    psSkillInfo *currentskill;
-    for(size_t i=0;i<skillinfolist.GetSize();i++)
-    {
-        currentskill=skillinfolist.Get(i);
-        if(currentskill && currentskill->category == category)
-        {
-            listskill.Push(*currentskill);
-        }
-    }
+    listskill = skillinfo_CategoryHash.GetAll(category);
+    return;
 }
 
 

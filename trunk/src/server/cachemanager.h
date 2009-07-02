@@ -169,7 +169,7 @@ public:
     psSkillInfo *GetSkillByName(const char *name);
     
     ///Get all skills belonging to a specific category
-    void GetSkillsListbyCategory(csArray <psSkillInfo>& listskill,int category );
+    void GetSkillsListbyCategory(csArray <psSkillInfo*>& listskill,int category );
 
     // Common Strings
     const char *FindCommonString(unsigned int id);
@@ -450,7 +450,11 @@ protected:
     csHash<psSectorInfo *> sectorinfo_by_name; ///< Sector info list hashed by sector name
     csPDelArray<psTrait > traitlist;
     csPDelArray<psRaceInfo > raceinfolist;
-    csPDelArray<psSkillInfo > skillinfolist;
+
+    csHash<psSkillInfo*, int> skillinfo_IDHash;
+    csHash<psSkillInfo *, csString> skillinfo_NameHash;
+    csHash<psSkillInfo *, int> skillinfo_CategoryHash;
+
     csPDelArray<psItemCategory > itemCategoryList;
     csPDelArray<psWay > wayList;
     csHash<Faction*, int> factions_by_id;
