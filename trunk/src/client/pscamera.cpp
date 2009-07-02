@@ -46,6 +46,8 @@
 //=============================================================================
 #include "iclient/ibgloader.h"
 
+#include "engine/linmove.h"
+
 #include "util/psstring.h"
 #include "util/strutil.h"
 
@@ -238,28 +240,33 @@ const char * psCamera::HandleCommand(const char *cmd)
     if(GetCameraMode() != CAMERA_NPCTALK && actor->RangeTo(target, false) < NPC_MODE_DISTANCE)
     {
         //rotate the target so that it faces the player
-        csVector3 playerPos = psengine->GetCelClient()->GetMainPlayer()->Pos();
+        csVector3 playerPos = psengine->GetCelClient()->GetMainPlayer()->GetPosition();
         csVector3 targetPos = target->GetPosition();
 
         csVector3 diff = playerPos - targetPos;
         if (!diff.x)
             diff.x = 0.00001F; // div/0 protect
 
-        float angle = atan2(diff.z,diff.x);
+        float angle = -atan2(diff.x,-diff.z);
+        Error2("Raw angle %f", angle);
+        if(angle < 0) angle += TWO_PI;
+        Error2("new angle %f", angle);
         
         float npcrot = target->GetRotation();
+        Error2("npc angle %f", npcrot);
         
         GEMClientActor* targetActor = dynamic_cast<GEMClientActor*>(target);
         
         float velNormSquared = targetActor->GetVelocity().SquaredNorm();
                 
-        if((angle-npcrot) < PI && (angle-npcrot) > -PI && velNormSquared == 0)
+        if((angle-npcrot) < TWO_PI && (angle-npcrot) > 0 && velNormSquared == 0)
         {
             npcOldRot = npcrot;
-            target->SetPosition(target->GetPosition(), angle, target->GetSector());
+            //target->Rotate(0.0f, angle, 0.0f);
+            targetActor->GetMovement()->SetAngularVelocity(3.0f, csVector3(0.0f, angle, 0.0f));
         }
 
-        npcModeTarget = target;
+        npcModeTarget = targetActor;
         npcModePosition = actor->GetMesh()->GetMovable()->GetFullPosition();
         SetCameraMode(CAMERA_NPCTALK);
     }
@@ -1431,7 +1438,7 @@ void psCamera::DoCameraIdealCalcs(const csTicks elapsedTicks, const csVector3& a
             psClientCharManager* clientChar = psengine->GetCharManager();
             if (npcModeTarget != clientChar->GetTarget() || npcModePosition != actor->GetMesh()->GetMovable()->GetFullPosition())
             {
-                npcModeTarget->SetPosition(npcModeTarget->GetPosition(), npcOldRot, npcModeTarget->GetSector());
+                npcModeTarget->GetMovement()->SetAngularVelocity(2.5f, csVector3(0.0f, npcOldRot, 0.0f));
                 SetCameraMode(lastCameraMode);
                 break;
             }
