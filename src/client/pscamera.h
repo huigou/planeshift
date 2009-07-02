@@ -667,7 +667,7 @@ private:
 
     DistanceCfg distanceCfg;
 
-    GEMClientObject* npcModeTarget;
+    GEMClientActor* npcModeTarget;
     csVector3 npcModePosition;
     float npcOldRot;
     int fixedDistClip;
