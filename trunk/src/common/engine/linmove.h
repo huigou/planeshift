@@ -94,6 +94,7 @@ public:
   /**
    * Get the current angular velocity vector.
    */
+  virtual const csVector3 GetAngularVelocity () const;
   virtual void GetAngularVelocity (csVector3& v) const;
   
   virtual bool InitCD (const csVector3& body, const csVector3& legs, const csVector3& shift, iMeshWrapper* mesh);
