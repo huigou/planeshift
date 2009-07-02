@@ -5752,23 +5752,28 @@ void AdminManager::BanClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
         if (secs < year)
         {
             csString reason;
-            reason.Format("You were banned from the server by a GM for %d minutes, %d hours and %d days. Reason: %s",
-                          data.mins, data.hours, data.days, data.reason.GetData() );
+            if (secs == twodays)
+                reason.Format("You were banned from the server by a GM for two days. Reason: %s", data.reason.GetData() );
+            else
+                reason.Format("You were banned from the server by a GM for %d minutes, %d hours and %d days. Reason: %s",
+                              data.mins, data.hours, data.days, data.reason.GetData() );
 
             psserver->RemovePlayer(target->GetClientNum(),reason);
         }
         else
-            psserver->RemovePlayer(target->GetClientNum(),"You were banned from the server by a GM. Reason: " + data.reason);
+            psserver->RemovePlayer(target->GetClientNum(),"You were banned from the server by a GM for a year. Reason: " + data.reason);
     }
 
     csString notify;
     notify.Format("You%s banned '%s' off the server for ", (target)?" kicked and":"", user.GetData() );
     if (secs == year)
         notify.Append("a year.");
+    else if (secs == twodays)
+        notify.Append("two days.");
     else
         notify.AppendFmt("%d minutes, %d hours and %d days.", data.mins, data.hours, data.days );
     if (data.banIP)
-      notify.AppendFmt(" They will also be banned by IP range.");
+        notify.AppendFmt(" They will also be banned by IP range.");
 
     // Finally, notify the client who kicked the target
     psserver->SendSystemInfo(me->clientnum,notify);
@@ -5817,7 +5822,7 @@ void AdminManager::UnbanClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDat
 
     // How long is the ban?
     result = db->Select("SELECT * FROM bans WHERE account = '%u' LIMIT 1",accountId.Unbox());
-    if (!result.IsValid()){
+    if (!result.IsValid() || !result.Count()){
         psserver->SendSystemError(me->clientnum, "%s is not banned", user.GetData() );
         return;
     }
