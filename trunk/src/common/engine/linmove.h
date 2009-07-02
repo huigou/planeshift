@@ -100,11 +100,11 @@ public:
   virtual void GetCDDimensions (csVector3& body, csVector3& legs, csVector3& shift);
   virtual void SetSpeed (float speedz);
 
-  virtual float GetYRotation ();
-  const csVector3 GetPosition ();
-  const csVector3 GetFullPosition ();
+  virtual float GetYRotation () const;
+  const csVector3 GetPosition () const;
+  const csVector3 GetFullPosition () const;
 
-  virtual void GetLastPosition (csVector3& pos, float& yrot, iSector*& sector);
+  virtual void GetLastPosition (csVector3& pos, float& yrot, iSector*& sector) const;
   virtual void GetLastFullPosition (csVector3& pos, float& yrot, iSector*& sector);
   virtual void SetPosition (const csVector3& pos, float yrot, const iSector* sector);
   virtual void SetFullPosition (const csVector3& pos, float yrot, const iSector* sector);
@@ -161,7 +161,7 @@ public:
 
   virtual void TickEveryFrame ();
 
-  virtual iSector* GetSector ();
+  virtual iSector* GetSector () const; 
 
   /**
    * This function actually moves and rotates the mesh, relighting

@@ -866,7 +866,7 @@ void psLinearMovement::GetDRData (bool& on_ground, float& speed,
 }
 
 
-iSector* psLinearMovement::GetSector ()
+iSector* psLinearMovement::GetSector () const
 {
     if ( mesh->GetMovable()->GetSectors()->GetCount() > 0 )
     {
@@ -890,7 +890,7 @@ void psLinearMovement::SetPathAction (int which, const char *action)
 #define DRDBG(x)
 
 
-float psLinearMovement::GetYRotation ()
+float psLinearMovement::GetYRotation () const
 {
   // user will get a warning and a nothing if theres no mesh
   if (!mesh)  return 0.0;
@@ -898,13 +898,13 @@ float psLinearMovement::GetYRotation ()
     ->GetTransform ().GetT2O ();
   return Matrix2YRot (transf);
 }
-const csVector3 psLinearMovement::GetPosition ()
+const csVector3 psLinearMovement::GetPosition () const
 {
   // user will get a warning and a nothing if theres no mesh
   if (!mesh)  return csVector3 ();
   return mesh->GetMovable ()->GetPosition ();
 }
-const csVector3 psLinearMovement::GetFullPosition ()
+const csVector3 psLinearMovement::GetFullPosition () const
 {
   // user will get a warning and a nothing if theres no mesh
   if (!mesh)  return csVector3 ();
@@ -912,7 +912,7 @@ const csVector3 psLinearMovement::GetFullPosition ()
 }
 
 void psLinearMovement::GetLastPosition (csVector3& pos, float& yrot,
-    iSector*& sector)
+    iSector*& sector) const
 {
   if (!mesh)  return;
 
