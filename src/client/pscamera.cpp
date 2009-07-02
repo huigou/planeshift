@@ -248,12 +248,9 @@ const char * psCamera::HandleCommand(const char *cmd)
             diff.x = 0.00001F; // div/0 protect
 
         float angle = -atan2(diff.x,-diff.z);
-        Error2("Raw angle %f", angle);
         if(angle < 0) angle += TWO_PI;
-        Error2("new angle %f", angle);
         
         float npcrot = target->GetRotation();
-        Error2("npc angle %f", npcrot);
         
         GEMClientActor* targetActor = dynamic_cast<GEMClientActor*>(target);
         
