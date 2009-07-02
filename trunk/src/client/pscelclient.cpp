@@ -83,6 +83,7 @@
 #include "entitylabels.h"
 #include "shadowmanager.h"
 #include "pscharcontrol.h"
+#include "pscamera.h"
 #include "psclientchar.h"
 #include "pscal3dcallback.h"
 #include "meshattach.h"
@@ -792,6 +793,34 @@ void psCelClient::Update(bool loaded)
 
         // Update loader.
         psengine->GetLoader()->UpdatePosition(local_player->Pos(), sectorName, false);
+
+        // Check if we're inside a water area.
+        csColor4* waterColour = 0;
+        if(psengine->GetLoader()->InWaterArea(sectorName, &psengine->GetPSCamera()->GetPosition(), &waterColour))
+        {
+            psWeatherMessage::NetWeatherInfo fog;
+            fog.fogType = CS_FOG_MODE_EXP;
+            fog.fogColour = *waterColour;
+            fog.has_downfall = false;
+            fog.has_fog = true;
+            fog.has_lightning = false;
+            fog.sector = sectorName;
+            fog.fog_density = 100000;
+            fog.fog_fade = 0;
+            psengine->GetModeHandler()->ProcessFog(fog);
+        }
+        else
+        {
+            printf("Removing\n");
+            psWeatherMessage::NetWeatherInfo fog;
+            fog.has_downfall = false;
+            fog.has_fog = false;
+            fog.has_lightning = false;
+            fog.sector = sectorName;
+            fog.fog_density = 0;
+            fog.fog_fade = 0;
+            psengine->GetModeHandler()->ProcessFog(fog);
+        }
     }
 
     if(loaded)
@@ -1927,19 +1956,19 @@ const char* GEMClientActor::GetName(bool trueName)
 }
 
 GEMClientItem::GEMClientItem( psCelClient* cel, psPersistItem& mesg )
-               : GEMClientObject(cel, mesg.eid)
+               : GEMClientObject(cel, mesg.eid), post_load(new PostLoadData())
 {
     name = mesg.name;
     Debug3(LOG_CELPERSIST, 0, "Item %s(%s) Received", mesg.name.GetData(), ShowID(mesg.eid));
     type = mesg.type;
     factName = mesg.factname;
     solid = 0;
-    pos = mesg.pos;
-    xRot = mesg.xRot;
-    yRot = mesg.yRot;
-    zRot = mesg.zRot;
-    sector = mesg.sector;
-    flags = mesg.flags;
+    post_load->pos = mesg.pos;
+    post_load->xRot = mesg.xRot;
+    post_load->yRot = mesg.yRot;
+    post_load->zRot = mesg.zRot;
+    post_load->sector = mesg.sector;
+    post_load->flags = mesg.flags;
 
     if (!InitMesh())
     {
@@ -1955,9 +1984,9 @@ GEMClientItem::~GEMClientItem()
 
 void GEMClientItem::PostLoad(bool nullmesh)
 {
-    Move(pos, yRot, sector);
+    Move(post_load->pos, post_load->yRot, post_load->sector);
     
-    Rotate(xRot, yRot, zRot);
+    Rotate(post_load->xRot, post_load->yRot, post_load->zRot);
 
     if (flags & psPersistItem::COLLIDE)
     {
@@ -1968,18 +1997,23 @@ void GEMClientItem::PostLoad(bool nullmesh)
 
     cel->GetEntityLabels()->OnObjectArrived(this);
     cel->GetShadowManager()->CreateShadow(this);
+
+    delete post_load;
+    post_load = NULL;
 }
 
 void GEMClientItem::UpdateItem( psPersistItem& mesg )
 {
     name = mesg.name;
     Debug3(LOG_CELPERSIST, 0, "Item %s(%s) Updated", mesg.name.GetData(), ShowID(mesg.eid));
-    pos = mesg.pos;
-    xRot = mesg.xRot;
-    yRot = mesg.yRot;
-    zRot = mesg.zRot;
-    sector = mesg.sector;
-    flags = mesg.flags;
+
+    post_load = new PostLoadData();
+    post_load->pos = mesg.pos;
+    post_load->xRot = mesg.xRot;
+    post_load->yRot = mesg.yRot;
+    post_load->zRot = mesg.zRot;
+    post_load->sector = mesg.sector;
+    post_load->flags = mesg.flags;
 
     if(pcmesh.IsValid())
     {

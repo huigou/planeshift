@@ -589,12 +589,17 @@ protected:
 
 private:
     // Post load data.
-    csVector3 pos;
-    float xRot;
-    float yRot;
-    float zRot;
-    csString sector;
-    uint32_t flags;
+    struct PostLoadData
+    {
+        csVector3 pos;
+        float xRot;
+        float yRot;
+        float zRot;
+        csString sector;
+        uint32_t flags;
+    };
+
+    PostLoadData* post_load;
 };
 
 /** An action location on the client. */
