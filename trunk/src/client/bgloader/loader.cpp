@@ -1457,11 +1457,7 @@ void BgLoader::FinishMeshLoad(MeshObj* mesh)
   engine->SyncEngineListsNow(tloader);
 
   // Mark the mesh as being realtime lit depending on graphics setting.
-  if(gfxFeatures & useHighShaders)
-  {
-      mesh->object->GetFlags().Reset(CS_ENTITY_NOLIGHTING);
-  }
-  else
+  if(gfxFeatures & (useMediumShaders | useLowShaders | useLowestShaders))
   {
       mesh->object->GetFlags().Set(CS_ENTITY_NOLIGHTING);
   }
@@ -1746,7 +1742,7 @@ bool BgLoader::InWaterArea(const char* sector, csVector3* pos, csColor4** colour
     if(!strcmp("SectorWhereWeKeepEntitiesResidingInUnloadedMaps", sector))
         return false;
 
-    csRef<Sector> s = sectortree.Get(sector, csRef<Sector>());
+    csRef<Sector> s = sectortree.Get(csString(sector).Downcase(), csRef<Sector>());
     CS_ASSERT_MSG("Invalid sector passed to InWaterArea().", s.IsValid());
 
     for(size_t i=0; i<s->waterareas.GetSize(); ++i)
