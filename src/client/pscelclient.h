@@ -26,6 +26,7 @@
 #include <csutil/refarr.h>
 #include <csutil/list.h>
 #include <csutil/hash.h>
+#include <csutil/redblacktree.h>
 #include <csutil/strhashr.h>
 #include <iengine/collection.h>
 
@@ -128,6 +129,14 @@ private:
     void LoadEffectItems();
 
     bool ignore_others;
+
+    struct InstanceObject : public CS::Utility::FastRefCount<InstanceObject>
+    {
+      csRef<iMeshWrapper> pcmesh;
+      csRef<csShaderVariable> instances;
+    };
+
+    csRedBlackTreeMap<csString, csRef<InstanceObject> > meshObjects;
 
 public:
 
@@ -332,7 +341,10 @@ public:
     virtual float GetRotation();
 
     /** Get sector of entity */
-    virtual iSector* GetSector();
+    virtual iSector* GetSector() const;
+
+    /** Get list of sectors that entity is in */
+    virtual iSectorList* GetSectors() const;
 
     EID GetEID() { return eid; }
     csRef<iMeshWrapper> pcmesh;
@@ -365,11 +377,9 @@ public:
      psCharAppearance* charApp;
 
      /** Get the mesh that this object has.
-       * @return The iMeshWrapper or 0 if no mesh.
-       */
-     csRef<iMeshWrapper> GetMesh();
-
-     void SetMesh(iMeshWrapper* wrap);
+      * @return The iMeshWrapper or 0 if no mesh.
+      */
+     csRef<iMeshWrapper> GetMesh() const;
 
      virtual void Update();
 
@@ -449,9 +459,9 @@ public:
       */
     psClientVitals* GetVitalMgr() { return vitalManager; }
 
-    csVector3& Pos();
-    csVector3 Rot();
-    iSector *GetSector();
+    csVector3 Pos() const;
+    csVector3 Rot() const;
+    iSector *GetSector() const;
 
     virtual const char* GetName(bool realName = true);
 
@@ -495,7 +505,6 @@ public:
     csString BracerGroup;
     csString equipment;
     csString traits;
-    csVector3 vel, angularVelocity;
     csVector3 lastSentVelocity,lastSentRotation;
     bool stationary,path_sent;
     csTicks lastDRUpdateTime;
@@ -542,17 +551,25 @@ protected:
     uint8_t serverMode;
 
     // Post load data.
-    csVector3 pos;
-    float yrot;
-    csString sectorName;
-    csVector3 top;
-    csVector3 bottom;
-    csVector3 offset;
-    bool on_ground;
-    iSector* sector;
-    csVector3 worldVel;
-    float ang_vel;
-    csString texParts;};
+    struct PostLoadData
+    {
+        csVector3 pos;
+        float yrot;
+        csString sectorName;
+        iSector* sector;
+        csVector3 top;
+        csVector3 bottom;
+        csVector3 offset;
+        bool on_ground;
+        csVector3 vel;
+        csVector3 angularVelocity;
+        csVector3 worldVel;
+        float ang_vel;
+        csString texParts;
+    };
+
+    PostLoadData* post_load;
+};
 
 /** An item on the client. */
 class GEMClientItem : public GEMClientObject

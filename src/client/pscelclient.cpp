@@ -609,7 +609,7 @@ bool psCelClient::IsMeshSubjectToAction(const char* sector,const char* mesh)
     for(size_t i = 0; i < actions.GetSize();i++)
     {
         GEMClientActionLocation* action = actions[i];
-        const char* sec = action->GetMesh()->GetMovable()->GetSectors()->Get(0)->QueryObject()->GetName();
+        const char* sec = action->GetSector()->QueryObject()->GetName();
 
         if(!strcmp(action->GetMeshName(),mesh) && !strcmp(sector,sec))
             return true;
@@ -784,11 +784,14 @@ void psCelClient::CheckEntityQueues()
 
 void psCelClient::Update(bool loaded)
 {
-    // Update loader.
     if(local_player)
     {
-        psengine->GetLoader()->UpdatePosition(local_player->Pos(), 
-            local_player->GetSector()->QueryObject()->GetName(), false);
+        const char* sectorName = local_player->GetSector()->QueryObject()->GetName();
+        if(!sectorName)
+            return;
+
+        // Update loader.
+        psengine->GetLoader()->UpdatePosition(local_player->Pos(), sectorName, false);
     }
 
     if(loaded)
@@ -884,13 +887,11 @@ void psCelClient::OnRegionsDeleted(csArray<iCollection*>& regions)
 
     for (entNum = 0; entNum < entities.GetSize(); entNum++)
     {
-        csRef<iMeshWrapper> mesh = entities[entNum]->GetMesh();
-        if (mesh)
+        csRef<iSector> sector = entities[entNum]->GetSector();
+        if (sector.IsValid())
         {
-            iMovable* movable = mesh->GetMovable();
-            iSectorList* sectors = movable->GetSectors();
             // Shortcut the lengthy region check if possible
-            if(IsUnresSector(movable->GetSectors()->Get(0)))
+            if(IsUnresSector(sector))
                 continue;
 
             bool unresolved = true;
@@ -898,6 +899,7 @@ void psCelClient::OnRegionsDeleted(csArray<iCollection*>& regions)
             iSector* sectorToBeDeleted = 0;
 
             // Are all the sectors going to be unloaded?
+            iSectorList* sectors = entities[entNum]->GetSectors();
             for(int i = 0;i<sectors->GetCount();i++)
             {
                 // Get the iRegion this sector belongs to
@@ -917,7 +919,7 @@ void psCelClient::OnRegionsDeleted(csArray<iCollection*>& regions)
                 // All the sectors the mesh is in are going to be unloaded
                 Warning1(LOG_ANY,"Moving entity to temporary sector");
                 // put the mesh to the sector that server uses for keeping meshes located in unload maps
-                HandleUnresolvedPos(entities[entNum], movable->GetPosition(), 0.0f, sectorToBeDeleted->QueryObject ()->GetName ());
+                HandleUnresolvedPos(entities[entNum], entities[entNum]->GetPosition(), 0.0f, sectorToBeDeleted->QueryObject ()->GetName ());
             }
         }
     }
@@ -1137,16 +1139,6 @@ int GEMClientObject::GetMasqueradeType(void)
     return type;
 }
 
-void GEMClientObject::SetMesh(iMeshWrapper* wrap )
-{
-    pcmesh = wrap;
-}
-
-csRef<iMeshWrapper> GEMClientObject::GetMesh()
-{
-    return pcmesh;
-}
-
 bool GEMClientObject::SetPosition(const csVector3 & pos, float rot, iSector * sector)
 {
     if(pcmesh.IsValid())
@@ -1194,13 +1186,23 @@ float GEMClientObject::GetRotation()
     return psWorld::Matrix2YRot(transf);
 }
 
-iSector* GEMClientObject::GetSector()
+iSector* GEMClientObject::GetSector() const
 {
-    if(pcmesh->GetMovable()->InSector())
+    if(pcmesh && pcmesh->GetMovable()->InSector())
     {
         return pcmesh->GetMovable()->GetSectors()->Get(0);
     }
     return NULL;
+}
+
+iSectorList* GEMClientObject::GetSectors() const
+{
+  return pcmesh->GetMovable()->GetSectors();
+}
+
+csRef<iMeshWrapper> GEMClientObject::GetMesh() const
+{
+    return pcmesh;
 }
 
 void GEMClientObject::Update()
@@ -1320,9 +1322,8 @@ float GEMClientObject::RangeTo(GEMClientObject * obj, bool ignoreY)
 }
 
 GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
-               : GEMClientObject( cel, mesg.entityid )
+               : GEMClientObject( cel, mesg.entityid ), post_load(new PostLoadData)
 {
-    vel = 0;
     chatBubbleID = 0;
     name = mesg.name;
     race = mesg.race;
@@ -1344,19 +1345,19 @@ GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
     serverMode = mesg.serverMode;
     alive = true;
     vitalManager = new psClientVitals;
-    pos = mesg.pos;
-    yrot = mesg.yrot;
-    sectorName = mesg.sectorName;
-    top = mesg.top;
-    bottom = mesg.bottom;
-    offset = mesg.offset;
-    on_ground = mesg.on_ground;
-    sector = mesg.sector;
-    vel = mesg.vel;
-    worldVel = mesg.worldVel;
-    ang_vel = mesg.ang_vel;
-    texParts = mesg.texParts;
     equipment = mesg.equipment;
+    post_load->pos = mesg.pos;
+    post_load->yrot = mesg.yrot;
+    post_load->sectorName = mesg.sectorName;
+    post_load->top = mesg.top;
+    post_load->bottom = mesg.bottom;
+    post_load->offset = mesg.offset;
+    post_load->on_ground = mesg.on_ground;
+    post_load->sector = mesg.sector;
+    post_load->vel = mesg.vel;
+    post_load->worldVel = mesg.worldVel;
+    post_load->ang_vel = mesg.ang_vel;
+    post_load->texParts = mesg.texParts;
 
     if ( helmGroup.Length() == 0 )
         helmGroup = factName;
@@ -1385,17 +1386,19 @@ GEMClientActor::~GEMClientActor()
 
 void GEMClientActor::PostLoad(bool nullmesh)
 {
-    InitLinMove(pos, yrot, sectorName, top, bottom, offset );
-    if (sector != NULL)
-        linmove->SetDRData(on_ground, 1.0f, pos, yrot, sector, vel, worldVel, ang_vel);
+    InitLinMove(post_load->pos, post_load->yrot, post_load->sectorName,
+        post_load->top, post_load->bottom, post_load->offset);
+    if (post_load->sector != NULL)
+        linmove->SetDRData(post_load->on_ground, 1.0f, post_load->pos,
+        post_load->yrot, post_load->sector, post_load->vel, post_load->worldVel, post_load->ang_vel);
     else
-        cel->HandleUnresolvedPos(this, pos, yrot, sectorName);
+        cel->HandleUnresolvedPos(this, post_load->pos, post_load->yrot, post_load->sectorName);
 
     if(!nullmesh)
     {
-        InitCharData(texParts, equipment);
+        InitCharData(post_load->texParts, equipment);
         RefreshCal3d();
-        SetAnimationVelocity(vel);
+        SetAnimationVelocity(post_load->vel);
         SetMode(serverMode, true);
         if (!control && (flags & psPersistActor::NAMEKNOWN))
             cel->GetEntityLabels()->OnObjectArrived(this);
@@ -1403,13 +1406,16 @@ void GEMClientActor::PostLoad(bool nullmesh)
     }
 
     // Move into position
-    Move(pos, yrot, sectorName);
+    Move(post_load->pos, post_load->yrot, post_load->sectorName);
 
     lastDRUpdateTime = 0;
 
     ready = false;
 
     linmove->SetDeltaLimit(0.2f);
+
+    delete post_load;
+    post_load = NULL;
 }
 
 int GEMClientActor::GetAnimIndex (csStringHashReversible* msgstrings, csStringID animid)
@@ -1465,21 +1471,36 @@ const csVector3 GEMClientActor::GetVelocity () const
     return linmove->GetVelocity();
 }
 
-csVector3& GEMClientActor::Pos()
+csVector3 GEMClientActor::Pos() const
 {
+    csVector3 pos(0.0f);
+
     if(linmove)
+    {
+        csVector3 pos(0.0f);
+        float yrot;
+        iSector* sector;
         linmove->GetLastPosition (pos, yrot, sector);
+    }
+
     return pos;
 }
 
-csVector3 GEMClientActor::Rot()
+csVector3 GEMClientActor::Rot() const
 {
+    float yrot = 0.0f;
+
     if(linmove)
+    {
+        csVector3 pos(0.0f);
+        iSector* sector;
         linmove->GetLastPosition (pos, yrot, sector);
+    }
+
     return yrot;
 }
 
-iSector *GEMClientActor::GetSector()
+iSector *GEMClientActor::GetSector() const
 {
     csVector3 pos;
     float yrot;
@@ -1491,8 +1512,8 @@ iSector *GEMClientActor::GetSector()
 
 bool GEMClientActor::NeedDRUpdate(unsigned char& priority)
 {
-    vel = linmove->GetVelocity();
-    linmove->GetAngularVelocity(angularVelocity);
+    csVector3 vel = linmove->GetVelocity();
+    csVector3 angularVelocity = linmove->GetAngularVelocity();
 
     // Never send DR messages until client is "ready"
     if (!ready )
@@ -1559,12 +1580,17 @@ bool GEMClientActor::NeedDRUpdate(unsigned char& priority)
 
 void GEMClientActor::SendDRUpdate(unsigned char priority, csStringHashReversible* msgstrings)
 {
+    if(!linmove)
+        return;
+
     // send update out
     EID mappedid = eid;  // no mapping anymore, IDs are identical
-    float speed = 0.0;
+    float speed, yrot, ang_vel;
+    bool on_ground;
+    csVector3 pos, vel, worldVel;
+    iSector* sector;
 
-    if(linmove)
-        linmove->GetDRData(on_ground, speed, pos, yrot, sector, vel, worldVel, ang_vel);
+    linmove->GetDRData(on_ground, speed, pos, yrot, sector, vel, worldVel, ang_vel);
 
     ZoneHandler* zonehandler = cel->GetZoneHandler();
     if (zonehandler && zonehandler->IsMapLoadNeeded())
@@ -1585,7 +1611,8 @@ void GEMClientActor::SendDRUpdate(unsigned char priority, csStringHashReversible
 
     // ++DRcounter is the sequencer of these messages so the server and other
     // clients do not use out of date messages when delivered out of order.
-    psDRMessage drmsg(0, mappedid, on_ground, 0, ++DRcounter, pos, yrot, sector, sectorName, vel, worldVel, ang_vel, msgstrings);
+    psDRMessage drmsg(0, mappedid, on_ground, 0, ++DRcounter, pos, yrot, sector,
+        sector->QueryObject()->GetName(), vel, worldVel, ang_vel, msgstrings);
     drmsg.msg->priority = priority;
 
     //if (hackflag)
@@ -1871,7 +1898,7 @@ void GEMClientActor::SetAlive( bool newvalue, bool newactor )
 void GEMClientActor::SetIdleAnimation(const char* anim)
 {
     cal3dstate->SetDefaultIdleAnim(anim);
-    if (vel.IsZero())
+    if (lastSentVelocity.IsZero())
         cal3dstate->SetVelocity(0);
 }
 

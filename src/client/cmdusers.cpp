@@ -938,18 +938,13 @@ void psUserCommands::UpdateTarget(SearchDirection searchDirection,
     psCelClient* cel = psengine->GetCelClient();
 
     GEMClientObject* myEntity = cel->GetMainPlayer();
-
-
-    csRef<iMeshWrapper> myMesh = myEntity->GetMesh();
-    iMovable* myMov = myMesh->GetMovable();
-    csVector3 myPos = myMov->GetPosition();
+    csVector3 myPos = myEntity->GetPosition();
 
     float seDistance;
     csVector3 sePos;
     if (startingEntity != NULL)
     {
-        csRef<iMeshWrapper> seMesh = startingEntity->GetMesh();
-        sePos = seMesh->GetMovable()->GetPosition();
+        sePos = startingEntity->GetPosition();
         seDistance = csSquaredDist::PointPoint(myPos, sePos);
     }
     else
@@ -964,7 +959,7 @@ void psUserCommands::UpdateTarget(SearchDirection searchDirection,
        max_range = RANGE_TO_SELECT;
     }
 
-    csArray<GEMClientObject*> entities = cel->FindNearbyEntities(myMov->GetSectors()->Get(0),
+    csArray<GEMClientObject*> entities = cel->FindNearbyEntities(myEntity->GetSector(),
                                                                  myPos,
                                                                  max_range);
 
@@ -1001,8 +996,7 @@ void psUserCommands::UpdateTarget(SearchDirection searchDirection,
             || (entityType == PSENTITYTYPE_ITEM && eType != -2))
             continue;
 
-        csRef<iMeshWrapper> mesh = object->GetMesh();
-        csVector3 pos = mesh->GetMovable()->GetPosition();
+        csVector3 pos = object->GetPosition();
 
         // Calculate the squared distance, update if we found a better one.
         float distFromMe = csSquaredDist::PointPoint(myPos, pos);
@@ -1049,16 +1043,10 @@ void psUserCommands::UpdateTarget(SearchDirection searchDirection,
 GEMClientObject* psUserCommands::FindEntityWithName(const char *name)
 {
     psCelClient* cel = psengine->GetCelClient();
-
-    GEMClientObject* myEntity = cel->GetMainPlayer();
-    csRef<iMeshWrapper> myMesh = myEntity->GetMesh();
-    iMovable* myMov = myMesh->GetMovable();
-    csVector3 myPos = myMov->GetPosition();
-
-
+    csVector3 myPos = cel->GetMainPlayer()->GetPosition();
 
     // Find all entities within a certain radius.
-    csArray<GEMClientObject*> entities = cel->FindNearbyEntities(myMov->GetSectors()->Get(0),
+    csArray<GEMClientObject*> entities = cel->FindNearbyEntities(cel->GetMainPlayer()->GetSector(),
                                                                  myPos,
                                                                  NEARBY_TARGET_MAX_RANGE);
 

@@ -1102,6 +1102,11 @@ const csVector3 psLinearMovement::GetVelocity () const
     return velworld + velBody;
 }
 
+const csVector3 psLinearMovement::GetAngularVelocity () const
+{
+    return angularVelocity;
+}
+
 void psLinearMovement::GetAngularVelocity (csVector3& v) const
 {
     v = angularVelocity;
