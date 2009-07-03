@@ -64,7 +64,7 @@
             h4x0r;hacker
             <!-- or you can use this xml syntax -->
 
-# general leetspeak replacements
+		<!-- general leetspeak replacements --> 			
         <replace bad="brb" good="I will return shortly"/>
         <replace bad="cu" good="see you later"/>
         <replace bad="cya" good="see you later"/>
@@ -148,7 +148,7 @@
         <replace bad="yw" good="you're welcome"/>
         <replace bad="zomg" good="by the gods"/>
 
-# replacements for naughtier leetspeak and words with dual meanings
+		<!-- replacements for naughtier leetspeak and words with dual meanings --> 	
         <replace bad="anal" good="tense"/>
         <replace bad="@$$" good="addlepated kormi"/>
         <replace bad="ass" good="addlepated kormi"/>

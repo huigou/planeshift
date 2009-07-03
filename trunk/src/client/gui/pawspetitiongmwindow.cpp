@@ -329,7 +329,7 @@ void pawsPetitionGMWindow::HandleMessage ( MsgEntry* me )
     {
         csString message = PawsManager::GetSingleton().Translate("There are ");
         message += petCount;
-        message += PawsManager::GetSingleton().Translate(" unaswered petitions."); //make a nice message
+        message += PawsManager::GetSingleton().Translate(" unanswered petitions."); //make a nice message
 
         psSystemMessage alert(0,MSG_INFO,message); //and send it
         msgqueue->Publish(alert.msg);
