@@ -454,7 +454,7 @@ bool CacheManager::PreloadSkills()
                 newskill->category = PSSKILLS_CATEGORY_VARIOUS;
 
             skillinfo_IDHash.Put((int)newskill->id, newskill);
-            skillinfo_NameHash.Put(newskill->name, newskill);
+            skillinfo_NameHash.Put(csString(newskill->name).Upcase(), newskill);
             skillinfo_CategoryHash.Put((int)newskill->category, newskill);
             
             maxCommonStrID++;
@@ -1614,7 +1614,7 @@ psSkillInfo *CacheManager::GetSkillByID(unsigned int id)
 
 psSkillInfo *CacheManager::GetSkillByName(const char *name)
 {
-    return skillinfo_NameHash.Get(csString(name), NULL);
+    return skillinfo_NameHash.Get(csString(name).Upcase(), NULL);
 }
 
 void CacheManager::GetSkillsListbyCategory(csArray <psSkillInfo*>& listskill, int category )
