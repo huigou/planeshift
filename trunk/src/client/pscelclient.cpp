@@ -2082,8 +2082,10 @@ void GEMClientItem::CheckLoadStatus()
             -CS_BOUNDINGBOX_MAXVALUE, -CS_BOUNDINGBOX_MAXVALUE, CS_BOUNDINGBOX_MAXVALUE, CS_BOUNDINGBOX_MAXVALUE,
             CS_BOUNDINGBOX_MAXVALUE));
     }
-
-    position = instance->pcmesh->AddInstance(csVector3(0.0f), csMatrix3());
+ 
+    csVector3 Pos = csVector3(0.0f);
+    csMatrix3 Rot = csMatrix3();
+    position = instance->pcmesh->AddInstance(Pos, Rot);
 
     // Init nullmesh factory.
     factory = psengine->GetEngine()->CreateMeshFactory("crystalspace.mesh.object.null", factName + "_nullmesh");
