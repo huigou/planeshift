@@ -29,6 +29,7 @@
 #include <csutil/redblacktree.h>
 #include <csutil/strhashr.h>
 #include <iengine/collection.h>
+#include <iengine/sector.h>
 
 //=============================================================================
 // Project Includes
