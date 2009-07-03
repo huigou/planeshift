@@ -159,6 +159,7 @@ bool psEffectObjDecal::Render(const csVector3 &up)
     
     // create a nullmesh as placeholder
     mesh = engine->CreateMeshWrapper("crystalspace.mesh.object.null", meshName);
+    mesh->GetFlags().Set(CS_ENTITY_NOHITBEAM);
 	csRef<iNullMeshState> state =  scfQueryInterface<iNullMeshState> (mesh->GetMeshObject());
     if (!state)
     {
