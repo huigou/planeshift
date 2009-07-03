@@ -87,6 +87,12 @@ public:
     }
 };
 
+struct InstanceObject : public CS::Utility::FastRefCount<InstanceObject>
+{
+    csRef<iMeshWrapper> pcmesh;
+    csBox3 bbox;
+};
+
 /**
  * Client version of the Cel Manager
  */
@@ -130,13 +136,9 @@ private:
 
     bool ignore_others;
 
-    struct InstanceObject : public CS::Utility::FastRefCount<InstanceObject>
-    {
-      csRef<iMeshWrapper> pcmesh;
-      csRef<csShaderVariable> instances;
-    };
+    csRedBlackTreeMap<csString, csRef<InstanceObject> > instanceObjects;
 
-    csRedBlackTreeMap<csString, csRef<InstanceObject> > meshObjects;
+    csRef<iMeshFactoryWrapper> nullfact;
 
 public:
 
@@ -245,6 +247,24 @@ public:
       */
     csArray<GEMClientObject*> FindNearbyEntities (iSector* sector, const csVector3& pos, float radius, bool doInvisible = false);
 
+    /**
+     * Search for an instance object and return it if existing. Else return 0 csPtr.
+     */
+    csPtr<InstanceObject> FindInstanceObject(const char* name) const;
+
+    /**
+     * Add an instance object to the tree.
+     */
+    void AddInstanceObject(const char* name, csRef<InstanceObject> object);
+
+    /**
+     * Returns the nullmesh factory.
+     */
+    iMeshFactoryWrapper* GetNullFact() const
+    {
+        return nullfact;
+    }
+
 protected:
     friend class GEMClientActor;
 
@@ -346,6 +366,9 @@ public:
     /** Get list of sectors that entity is in */
     virtual iSectorList* GetSectors() const;
 
+    /** Return the bounding box of this entity. */
+    virtual const csBox3& GetBBox() const;
+
     EID GetEID() { return eid; }
     csRef<iMeshWrapper> pcmesh;
 
@@ -390,7 +413,7 @@ public:
      /**
       * Delayed mesh loading.
       */
-     void CheckLoadStatus();
+     virtual void CheckLoadStatus() {}
 
      /**
       * Delayed load 'post-process'.
@@ -412,7 +435,8 @@ protected:
     psEffect * shadow;
     bool hasShadow;
 
-
+    csRef<InstanceObject> instance;
+    csRef<csShaderVariable> position;
 };
 
 class psDRMessage;
@@ -500,6 +524,11 @@ public:
     // The following hash is used by GetAnimIndex().
     csHash<int,csStringID> anim_hash;
 
+    /**
+      * Delayed mesh loading.
+      */
+     virtual void CheckLoadStatus();
+
     csString race;
     csString helmGroup;
     csString BracerGroup;
@@ -581,6 +610,11 @@ public:
     virtual GEMOBJECT_TYPE GetObjectType() { return GEM_ITEM; }
     
     void UpdateItem( psPersistItem& mesg );
+
+    /**
+      * Delayed mesh loading.
+      */
+     virtual void CheckLoadStatus();
 
 protected:
     virtual void PostLoad(bool nullmesh);

@@ -35,9 +35,11 @@
 #include <iengine/sector.h>
 #include <iengine/scenenode.h>
 #include <imesh/object.h>
+#include <imesh/objmodel.h>
 #include <imesh/spritecal3d.h>
 #include <imesh/nullmesh.h>
 #include <imesh/nullmesh.h>
+#include <ivideo/material.h>
 #include <csgeom/math3d.h>
 
 //============================
@@ -176,6 +178,13 @@ bool psCelClient::Initialize(iObjectRegistry* object_reg,
 
     unresSector = psengine->GetEngine()->CreateSector("SectorWhereWeKeepEntitiesResidingInUnloadedMaps");
 
+    // Init nullmesh factory.
+    nullfact = psengine->GetEngine()->CreateMeshFactory("crystalspace.mesh.object.null", "nullmesh");
+    csRef<iNullFactoryState> nullstate = scfQueryInterface<iNullFactoryState> (nullfact->GetMeshObjectFactory());
+    csBox3 bbox;
+    bbox.AddBoundingVertex(csVector3(0.0f));
+    nullstate->SetBoundingBox(bbox);
+
     LoadEffectItems();
 
     return true;
@@ -206,7 +215,7 @@ void psCelClient::RequestServerWorld()
 
 bool psCelClient::IsReady()
 {
-    if ( local_player == NULL ||
+    if ( local_player == NULL || local_player->linmove == NULL ||
         (!psengine->ThreadedWorldLoading() && gameWorld == NULL))
         return false;
     else
@@ -793,7 +802,7 @@ void psCelClient::Update(bool loaded)
 
         // Update loader.
         psengine->GetLoader()->UpdatePosition(local_player->Pos(), sectorName, false);
-
+/*
         // Check if we're inside a water area.
         csColor4* waterColour = 0;
         if(psengine->GetLoader()->InWaterArea(sectorName, &psengine->GetPSCamera()->GetPosition(), &waterColour))
@@ -820,7 +829,7 @@ void psCelClient::Update(bool loaded)
             fog.fog_density = 0;
             fog.fog_fade = 0;
             psengine->GetModeHandler()->ProcessFog(fog);
-        }
+        }*/
     }
 
     if(loaded)
@@ -1124,7 +1133,15 @@ csArray<GEMClientObject*> psCelClient::FindNearbyEntities (iSector* sector, cons
     return list;
 }
 
+csPtr<InstanceObject> psCelClient::FindInstanceObject(const char* name) const
+{
+    return csPtr<InstanceObject> (instanceObjects.Get(name, csRef<InstanceObject>()));
+}
 
+void psCelClient::AddInstanceObject(const char* name, csRef<InstanceObject> object)
+{
+    instanceObjects.Put(name, object);
+}
 
 //-------------------------------------------------------------------------------
 
@@ -1182,6 +1199,22 @@ bool GEMClientObject::SetPosition(const csVector3 & pos, float rot, iSector * se
         pcmesh->GetMovable()->GetTransform().SetO2T (matrix);
         
         pcmesh->GetMovable ()->UpdateMove ();
+
+        if(instance.IsValid())
+        {
+            // Update the sector and position of real mesh.
+            if (sector)
+            {
+                instance->pcmesh->GetMovable ()->SetSector (sector);
+                instance->pcmesh->GetMovable()->SetPosition(0.0f);
+            }
+
+            // Set instancing transform.
+            csReversibleTransform rt;
+            rt.SetO2T(matrix);
+            rt.SetO2TTranslation(pos);
+            position->SetValue(rt);
+        }
     }
 
     return true;
@@ -1201,6 +1234,15 @@ void GEMClientObject::Rotate(float xRot, float yRot, float zRot)
     pcmesh->GetMovable ()->GetTransform().SetO2T (xmatrix*ymatrix*zmatrix);
     
     pcmesh->GetMovable ()->UpdateMove ();
+
+    // Set instancing transform.
+    if(instance.IsValid())
+    {
+        csReversibleTransform rt;
+        rt.SetO2T(pcmesh->GetMovable ()->GetTransform().GetO2T());
+        rt.SetO2TTranslation(pcmesh->GetMovable ()->GetPosition());
+        position->SetValue(rt);
+    }
 }
 
 csVector3 GEMClientObject::GetPosition()
@@ -1227,6 +1269,18 @@ iSector* GEMClientObject::GetSector() const
 iSectorList* GEMClientObject::GetSectors() const
 {
   return pcmesh->GetMovable()->GetSectors();
+}
+
+const csBox3& GEMClientObject::GetBBox() const
+{
+    if(instance.IsValid())
+    {
+        return instance->bbox;
+    }
+    else
+    {
+        return pcmesh->GetMeshObject()->GetObjectModel()->GetObjectBoundingBox();
+    }
 }
 
 csRef<iMeshWrapper> GEMClientObject::GetMesh() const
@@ -1294,40 +1348,6 @@ bool GEMClientObject::InitMesh()
     CheckLoadStatus();
 
     return true;
-}
-
-void GEMClientObject::CheckLoadStatus()
-{
-    csRef<iMeshFactoryWrapper> factory = psengine->GetLoader()->LoadFactory(factName);
-    if(!factory.IsValid())
-    {
-        return;
-    }
-
-    pcmesh = factory->CreateMeshWrapper();
-    pcmesh->GetFlags().Set(CS_ENTITY_NODECAL);
-    psengine->GetEngine()->GetMeshes()->Add(pcmesh);
-
-    if (!pcmesh)
-    {
-        Error2("Could not create Item because could not load %s file into mesh.", factName.GetData());
-        return;
-    }
-
-    csRef<iSpriteCal3DState> calstate = scfQueryInterface<iSpriteCal3DState> (pcmesh->GetMeshObject());
-    if (calstate)
-        calstate->SetUserData((void *)this);
-
-    charApp->SetMesh(pcmesh);
-
-    cel->AttachObject(pcmesh->QueryObject(), this);
-
-    psengine->UnregisterDelayedLoader(this);
-
-    PostLoad(false);
-
-    // Handle item effect if there is one.
-    cel->HandleItemEffect(factName, pcmesh);
 }
 
 void GEMClientObject::ChangeName(const char* name)
@@ -1955,6 +1975,31 @@ const char* GEMClientActor::GetName(bool trueName)
     return strUnknown;
 }
 
+void GEMClientActor::CheckLoadStatus()
+{
+    csRef<iMeshFactoryWrapper> factory = psengine->GetLoader()->LoadFactory(factName);
+    if(!factory.IsValid())
+    {
+        return;
+    }
+
+    pcmesh = factory->CreateMeshWrapper();
+    pcmesh->GetFlags().Set(CS_ENTITY_NODECAL);
+    psengine->GetEngine()->GetMeshes()->Add(pcmesh);
+
+    csRef<iSpriteCal3DState> calstate = scfQueryInterface<iSpriteCal3DState> (pcmesh->GetMeshObject());
+    if (calstate)
+        calstate->SetUserData((void *)this);
+
+    charApp->SetMesh(pcmesh);
+
+    cel->AttachObject(pcmesh->QueryObject(), this);
+
+    psengine->UnregisterDelayedLoader(this);
+
+    PostLoad(false);
+}
+
 GEMClientItem::GEMClientItem( psCelClient* cel, psPersistItem& mesg )
                : GEMClientObject(cel, mesg.eid), post_load(new PostLoadData())
 {
@@ -1979,7 +2024,86 @@ GEMClientItem::GEMClientItem( psCelClient* cel, psPersistItem& mesg )
 
 GEMClientItem::~GEMClientItem()
 {
+    if(instance)
+    {
+        // Remove instance.
+        instance->pcmesh->RemoveInstance(position);
+    }
+
     delete solid;
+}
+
+void GEMClientItem::CheckLoadStatus()
+{
+    csRef<iMeshFactoryWrapper> factory;
+
+    // Check if an instance of the mesh already exists.
+    instance = cel->FindInstanceObject(factName);
+    if(!instance.IsValid())
+    {
+        factory = psengine->GetLoader()->LoadFactory(factName);
+        if(!factory.IsValid())
+        {
+            return;
+        }
+
+        // Create the mesh.
+        instance = csPtr<InstanceObject>(new InstanceObject());
+        instance->pcmesh = factory->CreateMeshWrapper();
+        instance->pcmesh->GetFlags().Set(CS_ENTITY_NODECAL | CS_ENTITY_NOHITBEAM);
+        psengine->GetEngine()->GetMeshes()->Add(instance->pcmesh);
+        cel->AddInstanceObject(factName, instance);
+
+        // Set appropriate shader.
+        csRef<iShaderManager> shman = csQueryRegistry<iShaderManager>(psengine->GetObjectRegistry());
+        csRef<iStringSet> strings = csQueryRegistryTagInterface<iStringSet>(
+            psengine->GetObjectRegistry(), "crystalspace.shared.stringset");
+        csStringID shadertype = strings->Request("base");
+
+        iMaterial* material = factory->GetMeshObjectFactory()->GetMaterialWrapper()->GetMaterial();
+        iShader* shader = material->GetShader(shadertype);
+        if(!shader || !strcmp("lighting_default", shader->QueryObject()->GetName()))
+        {
+            shader = shman->GetShader("lighting_default_instance");
+        }
+        else if(!strcmp("lighting_default_binalpha", shader->QueryObject()->GetName()))
+        {
+            shader = shman->GetShader("lighting_default_instance_binalpha");
+        }
+        //else // Handle this case if/when it happens...
+
+        material->SetShader(shadertype, shader);
+        shadertype = strings->Request("diffuse");
+        material->SetShader(shadertype, shader);
+
+        // Set biggest bbox so that instances aren't wrongly culled.
+        instance->bbox = factory->GetMeshObjectFactory()->GetObjectModel()->GetObjectBoundingBox();
+        factory->GetMeshObjectFactory()->GetObjectModel()->SetObjectBoundingBox(csBox3(-CS_BOUNDINGBOX_MAXVALUE,
+            -CS_BOUNDINGBOX_MAXVALUE, -CS_BOUNDINGBOX_MAXVALUE, CS_BOUNDINGBOX_MAXVALUE, CS_BOUNDINGBOX_MAXVALUE,
+            CS_BOUNDINGBOX_MAXVALUE));
+    }
+
+    position = instance->pcmesh->AddInstance(csVector3(0.0f), csMatrix3());
+
+    // Init nullmesh factory.
+    factory = psengine->GetEngine()->CreateMeshFactory("crystalspace.mesh.object.null", factName + "_nullmesh");
+    csRef<iNullFactoryState> nullstate = scfQueryInterface<iNullFactoryState> (factory->GetMeshObjectFactory());
+    nullstate->SetBoundingBox(instance->bbox);
+
+    pcmesh = factory->CreateMeshWrapper();
+    pcmesh->GetFlags().Set(CS_ENTITY_NODECAL);
+    csRef<iNullMeshState> nullmeshstate = scfQueryInterface<iNullMeshState> (pcmesh->GetMeshObject());
+    nullmeshstate->SetHitBeamMeshObject(instance->pcmesh->GetMeshObject());
+    psengine->GetEngine()->GetMeshes()->Add(pcmesh);
+
+    cel->AttachObject(pcmesh->QueryObject(), this);
+
+    psengine->UnregisterDelayedLoader(this);
+
+    PostLoad(false);
+
+    // Handle item effect if there is one.
+    cel->HandleItemEffect(factName, pcmesh);
 }
 
 void GEMClientItem::PostLoad(bool nullmesh)

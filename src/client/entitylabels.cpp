@@ -306,7 +306,7 @@ void psEntityLabels::CreateLabelOfObject(GEMClientObject *object)
     DeleteLabelOfObject(object); // make sure the old label is gone
 
     // Get the height of the model
-    const csBox3& boundBox = mesh->GetMeshObject()->GetObjectModel()->GetObjectBoundingBox();
+    const csBox3& boundBox = object->GetBBox();
 
     psEffectManager* effectMgr = psengine->GetEffectManager();
 

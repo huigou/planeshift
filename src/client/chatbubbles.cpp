@@ -437,7 +437,7 @@ void psChatBubbles::HandleMessage(MsgEntry * msg, Client * client)
         return;
     }
 
-    const csBox3& boundBox = mesh->GetMeshObject()->GetObjectModel()->GetObjectBoundingBox();
+    const csBox3& boundBox = actor->GetBBox();
     unsigned int bubbleID = effectManager->RenderEffect("chatbubble", //effectName, 
           csVector3(0, boundBox.Max(1) + 0.5f, 0), mesh);
   
