@@ -25,6 +25,7 @@
 #include <iengine/portal.h>
 #include <imap/services.h>
 #include <imesh/object.h>
+#include <iutil/cfgmgr.h>
 #include <iutil/document.h>
 #include <iutil/stringarray.h>
 #include <iutil/object.h>
@@ -75,6 +76,37 @@ void BgLoader::Setup(uint gfxFeatures, float loadRange)
 {
     this->gfxFeatures = gfxFeatures;
     this->loadRange = loadRange;
+
+    // Parse basic set of shaders.
+    csRef<iConfigManager> config = csQueryRegistry<iConfigManager> (object_reg);
+    csString shaderList = config->GetStr("PlaneShift.Loading.ShaderList", "/shader/shaderlist.xml");
+    if(vfs->Exists(shaderList))
+    {
+        csRef<iDocumentSystem> docsys = csQueryRegistry<iDocumentSystem>(object_reg);
+        csRef<iDocument> doc = docsys->CreateDocument();
+        csRef<iDataBuffer> data = vfs->ReadFile(shaderList);
+        doc->Parse(data, true);
+
+        if(doc->GetRoot())
+        {
+            csRef<iDocumentNode> node = doc->GetRoot()->GetNode("shaders");
+            if(node.IsValid())
+            {
+                csRefArray<iThreadReturn> rets;
+
+                csRef<iDocumentNodeIterator> nodeItr = node->GetNodes("shader");
+                while(nodeItr->HasNext())
+                {
+                    node = nodeItr->Next()->GetNode("file");
+                    shaders.Push(node->GetContentsValue());
+                    rets.Push(tloader->LoadShader(vfs->GetCwd(), node->GetContentsValue()));
+                }
+
+                // Wait for shader loads to finish.
+                tman->Wait(rets);
+            }
+        }
+    }
 }
 
 THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive)
