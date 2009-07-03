@@ -242,6 +242,7 @@ void psNetConnection::CheckLinkDead (csTicks currenttime)
             psHeartBeatMsg heart((uint32_t)0);
             SendMessage(heart.msg);  // This should cause an ack to update the timestamp
         }
+#ifndef CS_DEBUG
         else
         {
             // Simulate message to self to inform user of quitting.
@@ -259,6 +260,7 @@ void psNetConnection::CheckLinkDead (csTicks currenttime)
                                      "Please check http://laanx.fragnetics.com/ or forums for more info.");
             HandleCompletedMessage(msgb.msg, server, &server->addr,NULL);
         }
+#endif
     }
     else
     {

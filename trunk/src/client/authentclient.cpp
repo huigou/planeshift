@@ -113,10 +113,12 @@ void psAuthenticationClient::HandleMessage(MsgEntry *me)
         
         case MSGTYPE_DISCONNECT:
         {
+#ifndef CS_DEBUG
             if ( psengine->GetNetManager()->IsConnected() )
             {
                 HandleDisconnect(me);
             }
+#endif
             break;          
         }
         
