@@ -369,15 +369,25 @@ void psCelClient::HandleMainActor( psPersistActor& mesg )
         local_player->factName = mesg.factname;
 
         // Update Bracer/Helm Group
-        if ( mesg.helmGroup.Length() == 0 )
+        if (mesg.helmGroup.Length() == 0)
             local_player->helmGroup = local_player->GetMesh()->GetFactory()->QueryObject()->GetName();
         else
             local_player->helmGroup = mesg.helmGroup;
         
-        if ( mesg.BracerGroup.Length() == 0 )
+        if (mesg.BracerGroup.Length() == 0)
             local_player->BracerGroup = local_player->GetMesh()->GetFactory()->QueryObject()->GetName();
         else
             local_player->BracerGroup = mesg.BracerGroup;
+
+        if (mesg.BeltGroup.Length() == 0)
+            local_player->BeltGroup = local_player->GetMesh()->GetFactory()->QueryObject()->GetName();
+        else
+            local_player->BeltGroup = mesg.BeltGroup;
+
+        if (mesg.CloakGroup.Length() == 0)
+            local_player->CloakGroup = local_player->GetMesh()->GetFactory()->QueryObject()->GetName();
+        else
+            local_player->CloakGroup = mesg.CloakGroup;
 
         // Update cal3d
         local_player->RefreshCal3d();
@@ -1329,16 +1339,22 @@ bool GEMClientObject::InitMesh()
     // Helm/bracer Mesh Check
     // If there is helm/bracer specific item and we don't have any race yet, fall back to
     // the stonebreaker model
-    csString replacement("stonebm");
+    csString HelmReplacement("stonebm");
     csString BracerReplacement("stonebm");
+    csString BeltReplacement("stonebm");
+    csString CloakReplacement("stonebm");
     if ( cel->GetMainPlayer() )
     {
-        replacement = cel->GetMainPlayer()->helmGroup;
+        HelmReplacement = cel->GetMainPlayer()->helmGroup;
         BracerReplacement = cel->GetMainPlayer()->BracerGroup;
+        BeltReplacement = cel->GetMainPlayer()->BeltGroup;
+        CloakReplacement = cel->GetMainPlayer()->CloakGroup;
     }
     psString factoryName(factName);
-    factoryName.ReplaceAllSubString("$H", replacement);
+    factoryName.ReplaceAllSubString("$H", HelmReplacement);
     factoryName.ReplaceAllSubString("$B", BracerReplacement);
+    factoryName.ReplaceAllSubString("$H", BeltReplacement);
+    factoryName.ReplaceAllSubString("$B", CloakReplacement);
     factName = factoryName;
 
     // Set up callback.
@@ -1378,6 +1394,8 @@ GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
     race = mesg.race;
     helmGroup = mesg.helmGroup;
     BracerGroup = mesg.BracerGroup;
+    BeltGroup = mesg.BeltGroup;
+    CloakGroup = mesg.CloakGroup;
     type = mesg.type;
     masqueradeType = mesg.masqueradeType;
     guildName = mesg.guild;
@@ -1408,11 +1426,17 @@ GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
     post_load->ang_vel = mesg.ang_vel;
     post_load->texParts = mesg.texParts;
 
-    if ( helmGroup.Length() == 0 )
+    if (helmGroup.Length() == 0)
         helmGroup = factName;
         
-    if ( BracerGroup.Length() == 0 )
+    if (BracerGroup.Length() == 0)
         BracerGroup = factName;
+        
+    if (BeltGroup.Length() == 0)
+        BeltGroup = factName;
+
+    if (CloakGroup.Length() == 0)
+        CloakGroup = factName;
 
     Debug3(LOG_CELPERSIST, 0, "Actor %s(%s) Received", mesg.name.GetData(), ShowID(mesg.entityid));
 

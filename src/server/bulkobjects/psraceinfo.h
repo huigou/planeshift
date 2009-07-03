@@ -80,7 +80,9 @@ public:
     float GetBaseAttribute(PSITEMSTATS_STAT attrib);
     
     csString helmGroup;         /// The name of the helm group race is in.
-    csString BracerGroup;       /// The name of the helm group race is in.
+    csString BracerGroup;       /// The name of the bracer group race is in.
+    csString BeltGroup;         /// The name of the belt group race is in.
+    csString CloakGroup;        /// The name of the cloak group race is in.
     
 private:
     void  SetBaseAttribute(PSITEMSTATS_STAT attrib, float val);
@@ -107,6 +109,8 @@ public:
     
     const char *GetHelmGroup()   { return helmGroup.GetDataSafe(); }
     const char *GetBracerGroup() { return BracerGroup.GetDataSafe(); }
+    const char *GetBeltGroup()   { return BeltGroup.GetDataSafe(); }
+    const char *GetCloakGroup()  { return CloakGroup.GetDataSafe(); }
     
 };
 

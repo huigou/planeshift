@@ -280,18 +280,32 @@ void psCharAppearance::ApplyEquipment(csString& equipment)
         Error2("Error in XML: %s", error );
         return;
     }
+    
+    csString BaseGroup = baseMesh->GetFactory()->QueryObject()->GetName();
 
     // Do the helm check.
     csRef<iDocumentNode> helmNode = doc->GetRoot()->GetNode("equiplist")->GetNode("helm");
     csString helmGroup(helmNode->GetContentsValue());
     if ( helmGroup.Length() == 0 )
-        helmGroup = baseMesh->GetFactory()->QueryObject()->GetName();
+        helmGroup = BaseGroup;
         
     // Do the bracer check.
-    csRef<iDocumentNode> bracerNode = doc->GetRoot()->GetNode("equiplist")->GetNode("bracer");
-    csString BracerGroup(bracerNode->GetContentsValue());
+    csRef<iDocumentNode> BracerNode = doc->GetRoot()->GetNode("equiplist")->GetNode("bracer");
+    csString BracerGroup(BracerNode->GetContentsValue());
     if ( BracerGroup.Length() == 0 )
-        BracerGroup = baseMesh->GetFactory()->QueryObject()->GetName();
+        BracerGroup = BaseGroup;
+        
+    // Do the belt check.
+    csRef<iDocumentNode> BeltNode = doc->GetRoot()->GetNode("equiplist")->GetNode("belt");
+    csString BeltGroup(BeltNode->GetContentsValue());
+    if ( BeltGroup.Length() == 0 )
+        BeltGroup = BaseGroup;
+
+    // Do the cloak check.
+    csRef<iDocumentNode> CloakNode = doc->GetRoot()->GetNode("equiplist")->GetNode("cloak");
+    csString CloakGroup(CloakNode->GetContentsValue());
+    if ( CloakGroup.Length() == 0 )
+        CloakGroup = BaseGroup;
 
     csRef<iDocumentNodeIterator> equipIter = doc->GetRoot()->GetNode("equiplist")->GetNodes("equip");
 
@@ -306,8 +320,12 @@ void psCharAppearance::ApplyEquipment(csString& equipment)
 
         //If the mesh has a $H it means it's an helm so search for replacement
         mesh.ReplaceAll("$H",helmGroup);
-        //If the mesh has a $H it means it's a bracer so search for replacement
+        //If the mesh has a $B it means it's a bracer so search for replacement
         mesh.ReplaceAll("$B",BracerGroup);
+        //If the mesh has a $E it means it's a belt so search for replacement
+        mesh.ReplaceAll("$E", BeltGroup);
+        //If the mesh has a $C it means it's a cloak so search for replacement
+        mesh.ReplaceAll("$C", CloakGroup);
 
         Equip(slot, mesh, part, partMesh, texture);
     }

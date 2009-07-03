@@ -868,9 +868,13 @@ public:
 
     const char* GetHelmGroup() { return helmGroup.GetData(); }
     const char* GetBracerGroup() { return BracerGroup.GetData(); }
-    
+    const char* GetBeltGroup() { return BeltGroup.GetData(); }
+    const char* GetCloakGroup() { return CloakGroup.GetData(); } 
+       
     void SetHelmGroup(const char* Group) { helmGroup = Group; }
-    void SetBracerGroup(const char* Group) { BracerGroup = Group; }
+    void SetBracerGroup(const char* Group) { BracerGroup = Group; }    
+    void SetBeltGroup(const char* Group) { BeltGroup = Group; }
+    void SetCloakGroup(const char* Group) { CloakGroup = Group; }
 
     size_t GetAssignedGMEvents(psGMEventListMessage& gmevents, int clientnum);
     void AssignGMEvent(int id, bool playerIsGM);
@@ -901,6 +905,10 @@ private:
     csString helmGroup;                 // Some races share helms so this tells which
                                         // group it's in. If empty assume in racial group.
     csString BracerGroup;               // Some races share bracers so this tells which
+                                        // group it's in. If empty assume in racial group.
+    csString BeltGroup;                 // Some races share belts so this tells which
+                                        // group it's in. If empty assume in racial group.
+    csString CloakGroup;                // Some races share cloaks so this tells which
                                         // group it's in. If empty assume in racial group.
     /* Whether or not the character is a banker */
     bool banker;
