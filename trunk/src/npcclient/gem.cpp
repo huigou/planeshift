@@ -121,10 +121,16 @@ bool gemNPCObject::InitMesh(    const char *factname,
         // Replace helm group token with the default race.
         psString fact_name(factname);
         fact_name.ReplaceAllSubString("$H", "stonebm");
+        fact_name.ReplaceAllSubString("$B", "stonebm");
+        fact_name.ReplaceAllSubString("$E", "stonebm");
+        fact_name.ReplaceAllSubString("$C", "stonebm");
         factname = fact_name;
 
         psString file_name(filename);
         file_name.ReplaceAllSubString("$H", "stonebm");
+        fact_name.ReplaceAllSubString("$B", "stonebm");
+        fact_name.ReplaceAllSubString("$E", "stonebm");
+        fact_name.ReplaceAllSubString("$C", "stonebm");
         filename = file_name;
 
         csRef<iVFS> vfs = csQueryRegistry<iVFS> (npcclient->GetObjectReg());

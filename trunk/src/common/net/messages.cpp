@@ -4612,6 +4612,8 @@ psPersistActor::psPersistActor( uint32_t clientNum,
                                 unsigned short int gender,
                                 const char* helmGroup,
                                 const char* bracerGroup,
+                                const char* BeltGroup,
+                                const char* CloakGroup,
                                 csVector3 collTop, csVector3 collBottom, csVector3 collOffSet,
                                 const char* texParts,
                                 const char* equipmentParts,
@@ -4650,6 +4652,8 @@ psPersistActor::psPersistActor( uint32_t clientNum,
     msg->Add ( gender );
     msg->Add( helmGroup );
     msg->Add(BracerGroup);
+    msg->Add(BeltGroup);
+    msg->Add(CloakGroup);
     msg->Add( collTop );
     msg->Add( collBottom );
     msg->Add( collOffSet );
@@ -4686,7 +4690,9 @@ psPersistActor::psPersistActor( MsgEntry* me, csStringHashReversible* msgstrings
     race        = csString ( me->GetStr() );
     gender      = me->GetInt16();
     helmGroup   = csString ( me->GetStr() );
-    BracerGroup = csString ( me->GetStr() );
+    BracerGroup = csString(me->GetStr());
+    BeltGroup   = csString(me->GetStr());
+    CloakGroup = csString(me->GetStr());
 
     top         = me->GetVector();
     bottom      = me->GetVector();

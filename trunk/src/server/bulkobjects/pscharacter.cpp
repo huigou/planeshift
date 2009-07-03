@@ -110,6 +110,8 @@ psCharacter::psCharacter() : inventory(this),
 
     helmGroup.Clear();
     BracerGroup.Clear();
+    BeltGroup.Clear();
+    CloakGroup.Clear();
     help_event_flags = 0;
     memset(advantage_bitfield,0,sizeof(advantage_bitfield));
     accountid = 0;
@@ -241,8 +243,8 @@ bool psCharacter::Load(iResultRow& row)
     }
     SetRaceInfo(raceinfo);
 
-    //Assign the Helm Group
-    Result helmResult(db->Select("SELECT helm, bracer FROM race_info WHERE id=%d", raceid));
+    //Assign the Helm/bracer/belt/cloak Group
+    Result GroupsResult(db->Select("SELECT helm, bracer, belt, cloak FROM race_info WHERE id=%d", raceid));
 
     if(csGetTicks() - start > 500)
     {
@@ -251,9 +253,14 @@ bool psCharacter::Load(iResultRow& row)
                       csGetTicks() - start, ShowID(pid), __FILE__, __LINE__);
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
-    helmGroup = helmResult[0]["helm"];
+
+    helmGroup = GroupsResult[0]["helm"];
     
-    BracerGroup = helmResult[0]["bracer"];
+    BracerGroup = GroupsResult[0]["bracer"];
+    
+    BeltGroup = GroupsResult[0]["belt"];
+    
+    CloakGroup = GroupsResult[0]["cloak"];
 
     SetDescription(row["description"]);
 
@@ -534,6 +541,8 @@ bool psCharacter::QuickLoad(iResultRow& row, bool noInventory)
 
         helmGroup = raceinfo->helmGroup;
         BracerGroup = raceinfo->BracerGroup;
+        BeltGroup = raceinfo->BeltGroup;
+        CloakGroup = raceinfo->CloakGroup;
 
         if (!LoadTraits(pid))
         {
@@ -2034,7 +2043,7 @@ void psCharacter::MakeTextureString( csString& traits)
 void psCharacter::MakeEquipmentString( csString& equipment )
 {
     equipment = "<equiplist>";
-    equipment.AppendFmt("<helm>%s</helm><bracer>%s</bracer>", EscpXML(helmGroup).GetData(), EscpXML(BracerGroup).GetData());
+    equipment.AppendFmt("<helm>%s</helm><bracer>%s</bracer><belt>%s</belt><cloak>%s</cloak>", EscpXML(helmGroup).GetData(), EscpXML(BracerGroup).GetData(), EscpXML(BeltGroup).GetData(), EscpXML(CloakGroup).GetData());
 
     for (int i=0; i<PSCHARACTER_SLOT_BULK1; i++)
     {

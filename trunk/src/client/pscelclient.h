@@ -533,6 +533,8 @@ public:
     csString race;
     csString helmGroup;
     csString BracerGroup;
+    csString BeltGroup;
+    csString CloakGroup;
     csString equipment;
     csString traits;
     csVector3 lastSentVelocity,lastSentRotation;

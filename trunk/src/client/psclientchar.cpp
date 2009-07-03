@@ -417,9 +417,11 @@ void psClientCharManager::HandleEquipment( MsgEntry* me )
 
     csString slotname(psengine->slotName.GetName(equip.slot));
 
-    //if the mesh has a $H it means it's an helm so search for replacement
+    //If the mesh has a $ it means it's an helm ($H) / bracher ($B) / belt ($E) / cloak ($C) so search for replacement
     equip.mesh.ReplaceAll("$H",object->helmGroup);
     equip.mesh.ReplaceAll("$B",object->BracerGroup);
+    equip.mesh.ReplaceAll("$E",object->BeltGroup);
+    equip.mesh.ReplaceAll("$C",object->CloakGroup);
 
     if ( equip.type == psEquipmentMessage::EQUIP )
     {

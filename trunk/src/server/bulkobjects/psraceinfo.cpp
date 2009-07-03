@@ -66,6 +66,8 @@ bool psRaceInfo::Load(iResultRow& row)
     race = row.GetUInt32("race");
     helmGroup = row["helm"];
     BracerGroup = row["bracer"];
+    BeltGroup = row["belt"];
+    CloakGroup = row["cloak"];
     sex = row["sex"];
 
     gender = CacheManager::GetSingleton().ConvertGenderString(row["sex"]);

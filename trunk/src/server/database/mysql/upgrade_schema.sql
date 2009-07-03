@@ -1235,6 +1235,11 @@ INSERT INTO command_group_assignment VALUES( "/unban", 23 );
 INSERT INTO command_group_assignment VALUES( "/unban", 22 );
 UPDATE `server_options` SET `option_value`='1223' WHERE `option_name`='db_version';
 
+#1224 - Stefano Angeleri - added belt/cloak support
+ALTER TABLE `race_info` ADD COLUMN `belt` VARCHAR(20)  COMMENT 'Stores a belt group allowing to use the same belt mesh for more than one race, just like for the helm column' default '' AFTER `bracer`;
+ALTER TABLE `race_info` ADD COLUMN `cloak` VARCHAR(20)  COMMENT 'Stores a cloak group allowing to use the same cloak mesh for more than one race, just like for the helm column' default '' AFTER `belt`;
+UPDATE `server_options` SET `option_value`='1224' WHERE `option_name`='db_version';
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to
