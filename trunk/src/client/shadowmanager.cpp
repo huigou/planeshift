@@ -148,7 +148,7 @@ void psShadowManager::CreateShadow(GEMClientObject * object)
         return;
 
     // calculate a suitable size for this shadow
-    const csBox3& boundBox = mesh->GetMeshObject()->GetObjectModel()->GetObjectBoundingBox();
+    const csBox3& boundBox = object->GetBBox();
     float scale = (boundBox.Max(0) + boundBox.Max(2)) * 0.75f;
     if (scale < 0.35f)
         scale = 0.35f;
