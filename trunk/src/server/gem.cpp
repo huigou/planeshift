@@ -1847,11 +1847,15 @@ void OverridableMesh::OnChange()
         {
             actor->GetCharacterData()->SetHelmGroup(race->GetHelmGroup());
             actor->GetCharacterData()->SetBracerGroup(race->GetBracerGroup());
+            actor->GetCharacterData()->SetBeltGroup(race->GetBeltGroup());
+            actor->GetCharacterData()->SetCloakGroup(race->GetCloakGroup());
         }
         else //default no group
         {
             actor->GetCharacterData()->SetHelmGroup("");
             actor->GetCharacterData()->SetBracerGroup("");
+            actor->GetCharacterData()->SetBeltGroup("");
+            actor->GetCharacterData()->SetCloakGroup("");
         }
         
         actor->SetMesh(Current());
@@ -2520,6 +2524,8 @@ void gemActor::Send( int clientnum, bool control, bool to_superclient  )
     uint32_t flags = 0;
     csString helmGroup   = psChar->GetHelmGroup();
     csString BracerGroup = psChar->GetBracerGroup();
+    csString BeltGroup   = psChar->GetBeltGroup();
+    csString CloakGroup  = psChar->GetCloakGroup();
 
     if (!GetVisibility())    flags |= psPersistActor::INVISIBLE;
     if (GetInvincibility())  flags |= psPersistActor::INVINCIBLE;
@@ -2547,6 +2553,8 @@ void gemActor::Send( int clientnum, bool control, bool to_superclient  )
                          psChar->GetRaceInfo()->gender,
                          helmGroup,
                          BracerGroup,
+                         BeltGroup,
+                         CloakGroup,
                          top, bottom,offset,
                          texparts,
                          equipmentParts,
@@ -4293,6 +4301,8 @@ void gemNPC::Send( int clientnum, bool control, bool to_superclient )
 
     csString helmGroup   = psChar->GetHelmGroup();
     csString BracerGroup = psChar->GetBracerGroup();
+    csString BeltGroup    = psChar->GetBeltGroup();
+    csString CloakGroup  = psChar->GetCloakGroup();
 
     psPersistActor mesg(
                          clientnum,
@@ -4306,6 +4316,8 @@ void gemNPC::Send( int clientnum, bool control, bool to_superclient )
                          psChar->GetRaceInfo()->gender,
                          helmGroup,
                          BracerGroup,
+                         BeltGroup,
+                         CloakGroup,
                          top, bottom,offset,
                          texparts,
                          equipmentParts,
