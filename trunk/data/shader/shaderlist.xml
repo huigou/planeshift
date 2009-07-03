@@ -1,0 +1,14 @@
+<shaders>
+  <shader>
+    <file>/shader/lighting/lighting_default.xml</file>
+  </shader>
+  <shader>
+    <file>/shader/lighting/lighting_default_binalpha.xml</file>
+  </shader>
+  <shader>
+    <file>/shader/lighting/lighting_default_instance.xml</file>
+  </shader>
+  <shader>
+    <file>/shader/lighting/lighting_default_instance_binalpha.xml</file>
+  </shader>
+</shaders>
