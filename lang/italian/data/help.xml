@@ -1,5 +1,89 @@
 <?xml version="1.0"?>
 <help>
+   <branch name="START HERE">Here are a few tips and tricks to help you enjoy the world of PlaneShift.
+   
+PlaneShift is a rich, varied and complex game, while this is a great thing as it allows you to fully immerse yourself in the fantastic world of Yliakum, on the other hand it will also require some time and just a little effort to get used to the client and the gameplay.
+You will learn how to talk with NPC's (Non Player Characters), how to use the various functions of the client and how to interact with the world itself. 
+
+We have a great group of players and GM's (Game Masters) ready to help you whenever you have difficulties.
+First of all look at the chat window, if you write /help [question] and then press enter the players or GM's playing in game may be able to answer your questions. Don't be afraid to use it! Players volunteer for it so please be as clear as possible and wait patiently for an answer.
+
+Another tool you have at your disposal is directly contacting the Game Masters, you can see if any of them are on-line by writing /who game master in the same chat window and pressing enter. You will get a list of Game Masters online and you will be able to contact them by writing /tell [name of the Game Master] [your question] and pressing enter again.
+
+The last tool you might find useful is called petitions. It's a way to leave offline messages for the Game Masters which then they will be able to review and answer back to you later. To use this click on the appropriate icon in the tool-bar (TIP: you can leave the mouse over an icon in order to see what it does) and click new. Then you will be able to write a message for Game Masters, as soon as one sees it he will claim it and you will see the name of the GM handling your petition appear in the Petition Window. When they have had the time to find an answer to your question, the status of your petition will change to closed and by clicking on the petition you will be able to read the Game Masters answer.
+    </branch>
+    <branch name="Files And Folders">File Locations
+
+Windows: %AppData%\PlaneShift
+Mac: ~/Library/Application Support/PlaneShift
+Linux: $HOME/.PlaneShift
+        <topic name="Files">Files
+
+options.cfg: This file contains some camera-settings
+
+planeshift.cfg: This file contains additional settings, like the email seen on the login-screen and options which can be set via the pssetup application.
+
+questnotes_YourCharactersFirstName_YourCharactersLastName.xml: This file contains all the notes you made on the quests you have done.
+        </topic>
+        <topic name="Folders">Folders
+
+books: This folder contains books you have saved from planeshift. It is also used to store texts you have created outside of planeshift and want to load into a book
+
+logs: This folder contains your log files.
+- Chat Log: 'YourCharactersFirstName_YourCharactersLastName_chat.txt'.
+- System Log: 'YourCharactersFirstName_YourCharactersLastName_system.txt'.
+
+options: The files within contain the options you can set from within planeshift itself.
+
+screenshots: The screenshots you take from within planeshift via the command '/screenshot' are saved here.
+
+sketches: The sketches (maps) you have saved from ingame. These are saved in .xml format.
+
+Description: This folder contains all the descriptions you have saved from ingame [yours only] and any you wish to upload.
+        </topic>
+    </branch>
+    <branch name="Using The Updater">Using The Updater
+
+The Updater is a utility to get your installed client files in sync with the lastest version available on the server.
+        <topic name="Updating">Updating
+
+To update PlaneShift you just need to launch PSlaunch and it will tell you if you need to update the game or not.
+        </topic>
+
+        <topic name="Repair">Repairing PlaneShift
+If your client is not working as well as it could, you can run the repair updater in PSlaunch. To do this just click "repair" in the launcher and it will tell you if there are any files that are not updated or dont match what it has to offer, then allow you the choice of updating those files or not.
+</topic>
+
+    </branch>
+    <branch name="Web Links">
+Web Links
+
+FAQ:
+http://www.planeshift.it/faq.html
+
+Players Guides:
+http://www.planeshift.it/guide/en/index.html
+http://pswiki.xordan.com
+
+Policies:
+http://www.planeshift.it/policies.html
+
+More Policies:
+http://www.hydlaaplaza.com/smf/index.php?topic=31960.0
+
+Tutorial Walkthrough:
+http://hydlaaplaza.com/smf/index.php?branch=30436.0
+
+Forums:
+http://forums.hydlaaplaza.com
+
+Bug Tracker:
+http://www.hydlaaplaza.com/flyspray
+
+Non-RP Server:
+Register: http://planeshift.ezpcusa.com/register
+Connect: planeshift.ezpcusa.com 7777
+    </branch>
     <branch name="Chat Commands">
 Commands used to talk.  You can also specify your chat method by simply typing into that method's tab.
         <topic name="/away">/away message
@@ -39,6 +123,9 @@ You can also use /my to describe yourself. Both these commands work in the tell,
         <topic name="/mypet">/mypet action
 
 Have your pet perform an action seen by those in its vicinity (within 10 meters).  This is a great roleplaying tool when you want your pet to do something not directly supported by the game. You can also use "/mypet 's property" to describe your pet, similar to the /my command.</topic>
+        <topic name="/npcmenu">/npcmenu
+
+Shows a menu to talk to npcs where available.</topic>
         <topic name="/report">/report player
 
 Makes the server log everything the indicated player says for 5 minutes. 
@@ -56,9 +143,6 @@ Talk to someone privately.  With this command you can send text only the person 
         <topic name="/tellnpc">/tellnpc message
 
 Talk to the currently targeted npc.</topic>
-        <topic name="/npcmenu">/npcmenu
-
-Shows a menu to talk to npcs where available.</topic>
     </branch>
     <branch name="User Commands">
 Commands to control various player actions.  Many of these are also available via windows and context menus.
@@ -177,10 +261,13 @@ Slot Names: righthand, lefthand, helm, legs, boots, bracers, torso, gloves, neck
 </topic>
         <topic name="/roll">/roll times sides target
 
-Rolls a certain number of dice with the specified sides and gives the answer.  Example: "/roll 2 6" rolls 2 6-sided dice.  If target is defined it will only announce the number of dice which got a number higher than the specified one. Example: "/roll 2 6 3" rolls a 2 6-sided dice and tells how many of them got a 3 or an higher number. Use this to invent your own gambling games.</topic>
-        <topic name="/rotate">/rotate target x y z
+Rolls a certain number of dice with the specified sides and gives the answer.
+Example: "/roll 2 6" rolls 2 6-sided dice.  If target is defined it will only announce the number of dice which got a number higher than the specified one.
+Example: "/roll 2 6 3" rolls a 2 6-sided dice and tells how many of them got a 3 or an higher number. Use this to invent your own gambling games.</topic>
+        <topic name="/rotate">/rotate target x y z  or /rotate [axis] [angle]
 
-Rotate an object along the x, y, and z axis. Values are in degrees. Please note that y is the vertical axis.</topic>
+Rotate an object along the x, y, and z axis. Values are in degrees. Please note that y is the vertical axis.
+The rotation is added to the item's current rotation. Instead of specifying an angle, you can input "reset" which will reset the rotation to 0.</topic>
         <topic name="/sell">/sell merchant
 
 Sell to specified merchant.  If no merchant specified, sell to current target.</topic>
@@ -240,7 +327,9 @@ Loots an available corpse if you have authority.</topic>
 Stops attacking.</topic>
         <topic name="/target">/target [next|prev] [npc|pc|item|any|clear OR a player name]
 
-Searches for a target that matches the parameters. With no parameters targets yourself.  You may search for an NPC, PC (player), or item.  'Any' will find anything to target, and 'clear' will deselect your target.  You may also specify your target by entering the player's name.  You may optionally specify the direction with 'next' (default) or 'prev', for searching outwards or inwards from your location.
+Searches for a target that matches the parameters. With no parameters targets yourself.
+You may search for an NPC, PC (player), or item.  'Any' will find anything to target, and 'clear' will deselect your target.
+You may also specify your target by entering the player's name.  You may optionally specify the direction with 'next' (default) or 'prev', for searching outwards or inwards from your location.
 
 Examples:  "/target Bob" will target the player named Bob.  "/target prev npc" will target the next closest NPC from the one you already have selected.</topic>
         <topic name="/targetinfo">/targetinfo target
@@ -385,7 +474,11 @@ Commands available to game master level characters.  Note that this is a full li
 Commands which act on a target all use the same system.  A number of keywords and features are available to make specifying the target easier and more flexible.
             <topic name="area">area syntax: 'area:[type]:range'
 
-Used run a command on all entities of a specific type within a range. (crosses portals; range doesn't include yourself) Available types are players (default), actors, npcs, items, and entities. (no spaces before/after colons) Note that this is a very powerful feature; be careful! Examples: "/info area:entities:30" lists info on everything within 30m, "/modify area:items:10 remove" deletes all litter within 10m, "/teleport area:players:5 hydlaa_plaza" teleports you and all players within 5m to the plaza</topic>
+Used to run a command on all entities of a specific type within a range. (crosses portals; range doesn't include yourself)
+Available types are players (default), actors, npcs, items, and entities. (no spaces before/after colons) Note that this is a very powerful feature; be careful! 
+Examples: "/info area:entities:30" lists info on everything within 30m, 
+"/modify area:items:10 remove" deletes all litter within 10m, 
+"/teleport area:players:5 hydlaa_plaza" teleports you and all players within 5m to the plaza</topic>
             <topic name="here">keyword 'here'
 
 Used to specify your current sector for sector based commands. Also may be used as a destination for /teleport to indicate your exact location. Examples: "/thunder here", "/teleport target here"</topic>
@@ -421,10 +514,10 @@ Awards progression points to a player for the completion of a GM run event. (ent
 Shows what was told to the targeted npc and couldn't be understand by it.
 First and last entry must be defined and last entry must be greater than first entry.
 Example: /badtext 1 10 shows the latest 10 entries</topic>
-        <topic name="/ban">/ban name minutes hours days reason
-OR /ban name reason
+        <topic name="/ban">/ban name minutes hours days [IP] reason
+OR /ban name [IP] reason
 
-Bans a player from logging into the game for a specified amount of time.  (default is 1 year)  'Name' may be a character name, an account name, or an account number.  A reason must be specified.</topic>
+Bans a player from logging into the game for a specified amount of time.  (default is 2 days)  'Name' may be a character name, an account name, or an account number.  A reason must be specified. If IP is specified the ip will be banned as well.</topic>
         <topic name="/banadvisor">/banadvisor name
         
 Bans a player from advising until /unbanadvisor is used.</topic>
@@ -483,6 +576,7 @@ To reward the participants (all of them, those within a specified range or an in
 /event reward [range 0-100 | all | player] # [item name]
 [item name] can be "exp" (experience) where # Progression Points are awarded.
 [item name] can be "faction [faction name]" to adjust the faction standing.
+NOTE: Exp is in PP not in experience, differently from awardexp and givekillexp
 
 If a GM wants to assume control of an ongoing event, because the original GM character has been deleted, or has abandoned it and is offline, the GM can enter:
 /event control [name]
@@ -524,6 +618,9 @@ To change the lock on a the targeted item.  This removes ability to unlock targe
 Make a key out of item in right hand:
 /key make
 
+Make a master key out of item in right hand:
+/key makemaster
+
 Copy key item in hand:
 /key copy
 
@@ -546,7 +643,7 @@ Kicks the named player off of the server.</topic>
 Kills the targeted NPC, using the current target if no name is given. The reload option recreates the NPC with stats and triggers from the DB.</topic>
         <topic name="/listwarnings">/listwarnings [me/target/eid/pid/area/name]
 List all warnings given to the targeted account.</topic>
-        <topic name="/giveitem">/loadquest questname
+        <topic name="/loadquest">/loadquest questname
 
 Reloads the given quest.
 Note that you might need to wrap it like this \"quest name\" in case the quest name has spaces</topic>
@@ -683,10 +780,10 @@ Reloads the currently targeted item from the database.</topic>
 <topic name="/runscript">/runscript [script_name] [me/target/eid/pid/area/name]
 
 Runs a progression script on the target.</topic>
-        <topic name="/set">/set attribute on|off
+        <topic name="/set">/set target attribute on|off
 
 Many of these attribute are enabled by default for GMs.
-You can also do "/set list" to view your current attributes.
+You can also do "/set me list" to view your current attributes.
 
 Available attributes are:
 - invincible
@@ -704,10 +801,10 @@ Set the color of the label of target to the given value. The normal setting will
         <topic name="/setitemname">/setitemname [target/eid/area/original name] [name] [description]
 
 Allows changing the name and description of the targeted item. Description is optional.</topic>
-        <topic name="/setkillexp">/setkillexp [exp amount]
+        <topic name="/setkillexp">/setkillexp [target] [exp amount]
 
-Allows to set the experience (not measured in PP) the gm will give to who kills him.
-This command doesn't support targeting and it's temporary.</topic>
+Allows to set the experience (not measured in PP) the target will give to who kills him.
+This command is temporary. Target is optional.</topic>
         <topic name="/setquality">/setquality [target/eid/area/name] [quality] [max quality]
 
 Allows changing the quality of the targeted item. Max quality is optional.</topic>
@@ -728,7 +825,9 @@ Note: The adequate gender for Krans is "none".</topic>
 Shows the GM GUI, a window with a player list and quick access to many commands.</topic>
         <topic name="/slide">/slide target direction distance
 
-Slides the target object/NPC/player in the direction specified (L,R,F,B,U,D,T). Moves one space or the distance specified. The "direction" 'T' turns the target.  (in degrees; default is 90)</topic>
+Slides the target object/NPC/player in the direction specified (L,R,F,B,U,D,T,I). Moves one space or the distance specified.
+The "direction" 'T' turns the target.  (in degrees; default is 90)
+The "direction" 'I' changes target instance. (it's relative to current instance)</topic>
         <topic name="/snow">/snow sector [flakes [length [fade]]|stop]
 
 It creates snow effect in a specific sector, with a specific number of flakes, the length of the effect (in milliseconds) and its fading
@@ -831,113 +930,6 @@ Default controls.  You may alter your settings to your liking via the options wi
         <topic name="X">Center the camera.</topic>
         <topic name="Z">Sit down or stand back up.</topic>
         <topic name="1 - 0">Shortcuts one through to ten in the Shortcuts Window.</topic>
-    </branch>
-    <branch name="Files And Folders">File Locations
-
-Windows: %AppData%\PlaneShift
-Mac: ~/Library/Application Support/PlaneShift
-Linux: $HOME/.PlaneShift
-        <topic name="Files">Files
-
-options.cfg: This file contains some camera-settings
-
-planeshift.cfg: This file contains additional settings, like the email seen on the login-screen and options which can be set via the pssetup application.
-
-questnotes_YourCharactersFirstName_YourCharactersLastName.xml: This file contains a list of all the quests you have taken in planeshift, together with all the notes you made on them.
-        </topic>
-        <topic name="Folders">Folders
-
-books: This folder contains books you have saved from planeshift. It is also used to store texts you have created outside of planeshift and want to load into a book
-
-logs: This folder contains your log files.
-- Chat Log: 'YourCharactersFirstName_YourCharactersLastName_chat.txt'.
-- System Log: 'YourCharactersFirstName_YourCharactersLastName_system.txt'.
-
-options: The files within contain the options you can set from within planeshift itself.
-
-screenshots: The screenshots you take from within planeshift via the command '/screenshot' are saved here.
-        </topic>
-    </branch>
-    <branch name="Using The Updater">Using The Updater
-
-The Updater is a utility to get your installed client files in sync with the lastest version available on the server.
-        <topic name="Auto-Update">Auto-Update
-
-Just doubleclick the PSUpdater application to start it. However, the Updater isn't complete yet. At the moment, if you start it, you won't get many hints that it is actually doing something. This is what happens and what you can do do to see if it worked properly:
-
-Windows: A dos-box should open and the updater should output status-messages about its behaviour there.
-
-Linux / Mac OS X: On these systems, the updater writes its output into a file. So, after running the updater, you can open a file named "updater.log" which resides in the Planeshift-gamefolder.
-        </topic>
-
-        <branch name="Integrity Check">Integrity Check
-
-PSUpdater can also be started via a console/terminal/dosbox/whatever commandline-tool there is on your system, in conjunction with the 'repair' parameter. It checks your installation and, if any of the files are changed, asks you to replace them with the official version. Beware: This will also check and therefore overwrite files like 'psclient.cfg' within the Planeshift-gamefolder. So any changes you made to them will be lost. This does not change any of the options you have set from within the options-window within the game itself.
-
-The way to use PSUpdater from the commandline is slightly more complicated and will be explained below (again, OS-specific):
-
-            <topic name="Windows">Windows
-
-1) Click on the Start-Button in your taskbar, then choose 'Run'
-
-2) In the upcoming dialog box, type in the following command:
-C:\thePathToWherePlaneshiftIsInstalled\Planeshift\psupdater.exe' -repair
-            </topic>
-            <topic name="Mac">Mac
-
-1) Go to the folder '/Applications/Utilities' and open the application named 'Terminal' or 'Terminal.app'
-
-2) cd into your planeshift-directory with this command (you can copy/paste it):
-cd /Applications/PlaneShift
-Attention: This path is only valid if you installed the game into the folder suggested by the installer ('Applications')
-
-3)Run this command (again, you can copy/paste it):
-./psupdater.app/Contents/MacOS/psupdater_static -repair
-Attention: As with the last step, this path is only valid if you installed the game into the 'Applications' folder
-            </topic>
-            <topic name="Linux">Linux
-
-1) start your commandline-utility (Console, Terminal, whatever you have)
-
-2) cd into your planeshift-directory with this command (you can copy/paste it):
-cd /opt/PlaneShift
-Attention: This path is only valid if you installed the game into the folder suggested by the installer ('opt')
-
-3)Run this command (again, you can copy/paste it):
-./psupdater -repair
-Attention: As with the last step, this path is only valid if you installed the game into the 'opt' folder
-            </topic>
-        </branch>
-
-    </branch>
-    <branch name="Web Links">
-Web Links
-
-FAQ:
-http://www.planeshift.it/faq.html
-
-Players Guides:
-http://www.planeshift.it/guide/en/index.html
-http://pswiki.xordan.com
-
-Policies:
-http://www.planeshift.it/policies.html
-
-More Policies:
-http://www.hydlaaplaza.com/smf/index.php?topic=31960.0
-
-Tutorial Walkthrough:
-http://hydlaaplaza.com/smf/index.php?branch=30436.0
-
-Forums:
-http://forums.hydlaaplaza.com
-
-Bug Tracker:
-http://www.hydlaaplaza.com/flyspray
-
-Non-RP Server:
-Register: http://planeshift.ezpcusa.com/register
-Connect: planeshift.ezpcusa.com 7777
     </branch>
 </help>
 
