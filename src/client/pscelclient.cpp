@@ -2076,6 +2076,7 @@ void GEMClientItem::CheckLoadStatus()
         instance->pcmesh = factory->CreateMeshWrapper();
         instance->pcmesh->GetFlags().Set(CS_ENTITY_NODECAL | CS_ENTITY_NOHITBEAM);
         psengine->GetEngine()->GetMeshes()->Add(instance->pcmesh);
+        psengine->GetEngine()->PrecacheMesh(instance->pcmesh);
         cel->AddInstanceObject(factName, instance);
 
         // Set appropriate shader.
@@ -2096,9 +2097,16 @@ void GEMClientItem::CheckLoadStatus()
         }
         //else // Handle this case if/when it happens...
 
-        material->SetShader(shadertype, shader);
+        // Construct a new material using the selected shaders.
+        csRef<iTextureWrapper> tex = psengine->GetEngine()->GetTextureList()->CreateTexture(material->GetTexture());
+        csRef<iMaterial> mat = psengine->GetEngine()->CreateBaseMaterial(tex);
+
+        mat->SetShader(shadertype, shader);
         shadertype = strings->Request("diffuse");
-        material->SetShader(shadertype, shader);
+        mat->SetShader(shadertype, shader);
+
+        csRef<iMaterialWrapper> matwrap = psengine->GetEngine()->GetMaterialList()->CreateMaterial(mat, factName + "_instancemat");
+        instance->pcmesh->GetMeshObject()->SetMaterialWrapper(matwrap);
 
         // Set biggest bbox so that instances aren't wrongly culled.
         instance->bbox = factory->GetMeshObjectFactory()->GetObjectModel()->GetObjectBoundingBox();
