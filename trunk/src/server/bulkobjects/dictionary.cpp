@@ -1423,7 +1423,7 @@ csTicks NpcResponse::ExecuteScript(gemActor *player, gemNPC* target)
             csString resp = script[i]->GetResponseScript();
             Error3("Error running script in %s operation for client %s.",
                 resp.GetData(), player->GetClient() ? player->GetClient()->GetName() : "NPC");
-            return SIZET_NOT_FOUND;
+            return (csTicks)SIZET_NOT_FOUND;
         }
     }
     return timeDelay;
