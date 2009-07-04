@@ -2087,13 +2087,16 @@ void GEMClientItem::CheckLoadStatus()
 
         iMaterial* material = factory->GetMeshObjectFactory()->GetMaterialWrapper()->GetMaterial();
         iShader* shader = material->GetShader(shadertype);
-        if(!shader || !strcmp("lighting_default", shader->QueryObject()->GetName()))
+
+        csStringArray shaders = psengine->GetLoader()->GetShaderName("default");
+        csStringArray shadersa = psengine->GetLoader()->GetShaderName("default_alpha");
+        if(!shader || shaders.Contains(shader->QueryObject()->GetName()))
         {
-            shader = shman->GetShader("lighting_default_instance");
+            shader = shman->GetShader(psengine->GetLoader()->GetShaderName("instance")[0]);
         }
-        else if(!strcmp("lighting_default_binalpha", shader->QueryObject()->GetName()))
+        else if(shadersa.Contains(shader->QueryObject()->GetName()))
         {
-            shader = shman->GetShader("lighting_default_instance_binalpha");
+            shader = shman->GetShader(psengine->GetLoader()->GetShaderName("instance_alpha")[0]);
         }
         //else // Handle this case if/when it happens...
 
@@ -2104,6 +2107,12 @@ void GEMClientItem::CheckLoadStatus()
         mat->SetShader(shadertype, shader);
         shadertype = strings->Request("diffuse");
         mat->SetShader(shadertype, shader);
+
+        // Copy all shadervars over.
+        for(size_t i=0; i<material->GetShaderVariables().GetSize(); ++i)
+        {
+            mat->AddVariable(material->GetShaderVariables().Get(i));
+        }
 
         csRef<iMaterialWrapper> matwrap = psengine->GetEngine()->GetMaterialList()->CreateMaterial(mat, factName + "_instancemat");
         instance->pcmesh->GetMeshObject()->SetMaterialWrapper(matwrap);

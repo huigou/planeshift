@@ -1,14 +1,30 @@
 <shaders>
-  <shader>
+  <shader name="lighting_default">
     <file>/shader/lighting/lighting_default.xml</file>
+    <type>default</type>
   </shader>
-  <shader>
+  <shader name="lighting_default_binalpha">
     <file>/shader/lighting/lighting_default_binalpha.xml</file>
+    <type>default_alpha</type>
   </shader>
-  <shader>
+  <shader name="lighting_default_pvl">
+    <file>/shader/lighting/lighting_default_pvl.xml</file>
+    <type>default</type>
+  </shader>
+  <shader name="lighting_default_binalpha_pvl">
+    <file>/shader/lighting/lighting_default_pvl_binalpha.xml</file>
+    <type>default_alpha</type>
+  </shader>
+  <shader name="lighting_default_instance">
     <file>/shader/lighting/lighting_default_instance.xml</file>
+    <type>instance</type>
   </shader>
-  <shader>
+  <shader name="lighting_default_instance_binalpha">
     <file>/shader/lighting/lighting_default_instance_binalpha.xml</file>
+    <type>instance_alpha</type>
+  </shader>
+  <shader name="lighting_character">
+    <file>/shader/lighting/lighting_character.xml</file>
+    <type>character</type>
   </shader>
 </shaders>

@@ -24,6 +24,7 @@
 #include <csgfx/shadervar.h>
 #include <csutil/redblacktree.h>
 #include <csutil/scf_implementation.h>
+#include <csutil/strhashr.h>
 #include <csutil/threading/rwmutex.h>
 #include <csutil/threadmanager.h>
 
@@ -75,6 +76,8 @@ public:
     bool HasValidPosition() const { return validPosition; }
 
     bool InWaterArea(const char* sector, csVector3* pos, csColor4** colour) const;
+
+    csStringArray GetShaderName(const char* usageType) const;
 
 private:
     class MeshGen;
@@ -384,6 +387,7 @@ private:
     csRefArray<MeshObj> finalisableMeshes;
     csRefArray<MeshObj> deleteQueue;
 
+    csStringHashReversible shadersByUsageType;
     csRedBlackTreeMap<csString, csRef<Texture> > textures;
     csRedBlackTreeMap<csString, csRef<Material> > materials;
     csRedBlackTreeMap<csString, csRef<MeshFact> > meshfacts;
