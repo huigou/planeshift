@@ -97,9 +97,14 @@ void BgLoader::Setup(uint gfxFeatures, float loadRange)
                 csRef<iDocumentNodeIterator> nodeItr = node->GetNodes("shader");
                 while(nodeItr->HasNext())
                 {
-                    node = nodeItr->Next()->GetNode("file");
-                    shaders.Push(node->GetContentsValue());
-                    rets.Push(tloader->LoadShader(vfs->GetCwd(), node->GetContentsValue()));
+                    node = nodeItr->Next();
+
+                    csRef<iDocumentNode> file = node->GetNode("file");
+                    shaders.Push(file->GetContentsValue());
+                    rets.Push(tloader->LoadShader(vfs->GetCwd(), file->GetContentsValue()));
+
+                    shadersByUsageType.Register(node->GetAttributeValue("name"),
+                        strings->Request(node->GetNode("type")->GetContentsValue()));
                 }
 
                 // Wait for shader loads to finish.
@@ -107,6 +112,20 @@ void BgLoader::Setup(uint gfxFeatures, float loadRange)
             }
         }
     }
+}
+
+csStringArray BgLoader::GetShaderName(const char* usageType) const
+{
+    csStringArray t;
+    csStringID id = strings->Request(usageType);
+    csArray<const char*> all = shadersByUsageType.RequestAll(id);
+
+    for(size_t i=0; i<all.GetSize(); ++i)
+    {
+        t.Push(all[i]);
+    }
+
+    return t;
 }
 
 THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive)

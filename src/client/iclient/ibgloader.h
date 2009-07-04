@@ -23,12 +23,13 @@
 #include <iutil/threadmanager.h>
 
 class csColor4;
+class csStringArray;
 class csVector3;
 struct iObjectRegistry;
 
 struct iBgLoader : public virtual iBase
 {
-  SCF_INTERFACE(iBgLoader, 1, 1, 1);
+  SCF_INTERFACE(iBgLoader, 1, 2, 0);
 
   virtual void Setup(uint gfxFeatures, float loadRange) = 0;
 
@@ -51,6 +52,8 @@ struct iBgLoader : public virtual iBase
   virtual bool HasValidPosition() const = 0;
 
   virtual bool InWaterArea(const char* sector, csVector3* pos, csColor4** colour) const = 0;
+
+  virtual csStringArray GetShaderName(const char* usageType) const = 0;
 };
 
 #endif // __IBGLOADER_H__
