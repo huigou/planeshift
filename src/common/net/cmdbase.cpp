@@ -52,7 +52,7 @@ void psCmdBase::Report(int severity, const char* msgtype, const char* descriptio
 
     vsnprintf(str,1024,description,args);
     str[1023]=0x00;
-    csReport(objreg,severity,msgtype,str);
+    csReport(objreg,severity,msgtype,"%s",str);
 
     va_end (args);
 }
