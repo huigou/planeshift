@@ -1,3 +1,17 @@
+*** 2009-07-04 by Stefano Angeleri
+- Added the possibility to add additional informations in runtime to 
+  the title bar (wrapped in []) and used it to add the char name to the title bar
+- Allowed to use the trait prerequisite in quest scripts
+- Added support for bracers/cloaks/belts in the gm spawn gui
+- Fixed comments in chatdef.xml and Fixed a spelling error patch by ThomPhoenix
+- Added support for belts and cloaks
+- Fixed missing changes in parts of code
+- NETBUMP 0x1224
+- NETVERBUMP 0xA1
+- Improved help by adding some new sections, and repositioning other sections
+- removed warnings in dictionary and cmdbase
+- updated italian files
+
 *** 2009-06-29 by Steven Patrick
 - GM2+ may now ban for up to 2 days and unban same, GM4+ can still ban/unban like normal
 - Made IP bans optional and disabled by default
