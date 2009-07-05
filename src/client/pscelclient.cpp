@@ -2106,7 +2106,7 @@ void GEMClientItem::CheckLoadStatus()
         }
         else
         {
-            Error3("Unhandled shader %s for mesh %s!\n", shader->QueryObject()->GetName(), factName);
+            Error3("Unhandled shader %s for mesh %s!\n", shader->QueryObject()->GetName(), factName.GetData());
         }
 
         // Construct a new material using the selected shaders.
