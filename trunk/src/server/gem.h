@@ -897,7 +897,7 @@ public:
     csPtr<PlayerGroup> GetGroup();
     void SetGroup(PlayerGroup *group);
     bool InGroup() const;
-    bool IsGroupedWith(gemActor *other) const;
+    bool IsGroupedWith(gemActor *other, bool IncludePets = false) const;
     int GetGroupID();
     void RemoveFromGroup();
 
