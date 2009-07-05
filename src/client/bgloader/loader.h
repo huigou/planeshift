@@ -77,7 +77,7 @@ public:
 
     bool InWaterArea(const char* sector, csVector3* pos, csColor4** colour) const;
 
-    csStringArray GetShaderName(const char* usageType) const;
+    csPtr<iStringArray> GetShaderName(const char* usageType) const;
 
 private:
     class MeshGen;
