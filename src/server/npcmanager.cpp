@@ -1533,11 +1533,13 @@ void NPCManager::HandlePetCommand(MsgEntry * me,Client *client)
                 if ( trg != NULL )
                 {
                     gemActor * targetActor = trg->GetActorPtr();
-
-                    if( targetActor == NULL ||
-                        trg->GetCharacterData()->impervious_to_attack ||
-                      ( trg->GetClient() && trg->GetActorPtr()->GetInvincibility() ) ||
-                      ( trg == pet ) )
+                    /* We check if the owner can attack the other entity in order to not allow players
+                     * to override permissions and at the same time allowing pet<->player, pet<->pet
+                     * when in pvp. We allow gm to do anything they want (can attack everything including
+                     * their own pet just like how it happens with players
+                     */
+                    if( targetActor == NULL || !owner->IsAllowedToAttack(trg, false) ||
+                      ( trg == pet && !owner->IsGM()) )
 
                     {
                         psserver->SendSystemInfo(me->clientnum,"Your familiar refuses.");

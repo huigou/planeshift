@@ -2420,8 +2420,8 @@ bool gemActor::CanBeAttackedBy(gemActor *attacker, gemActor ** lastAttacker) con
 
         // If someone else, except for attacker pet, hit first and attacker not grouped with them,
         // attacker locked out
-        if ( *lastAttacker != attacker && !attacker->IsGroupedWith(*lastAttacker) &&
-             !attacker->IsMyPet(*lastAttacker) )
+        if ( *lastAttacker != attacker && !attacker->IsGroupedWith(*lastAttacker, true) &&
+             !attacker->IsMyPet(*lastAttacker))
         {
             return false;
         }
@@ -3470,9 +3470,9 @@ bool gemActor::InGroup() const
     return group.IsValid();
 }
 
-bool gemActor::IsGroupedWith(gemActor *other) const
+bool gemActor::IsGroupedWith(gemActor *other, bool IncludePets) const
 {
-    return group.IsValid() && group->HasMember(other);
+    return group.IsValid() && group->HasMember(other, IncludePets);
 }
 
 void gemActor::RemoveFromGroup()

@@ -243,18 +243,17 @@ void PlayerGroup::BroadcastMemberList()
 
 }
 
-bool PlayerGroup::HasMember(gemActor *member)
+bool PlayerGroup::HasMember(gemActor *member, bool IncludePets)
 {
     for (size_t i = 0; i < members.GetSize(); i++)
     {
-        if (members[i] == member)
+        if (members[i] == member || (IncludePets && members[i]->IsMyPet(member)))
         {
             return true;
         }
     }
     return false;
 }
-
 
 //---------------------------------------------------------------------------
 

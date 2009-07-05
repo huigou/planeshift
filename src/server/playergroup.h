@@ -71,7 +71,7 @@ public:
     void BroadcastMemberList();
     size_t  GetMemberCount() { return members.GetSize(); }
     gemActor *GetMember(size_t which) { return members[which]; }
-    bool HasMember(gemActor *member);
+    bool HasMember(gemActor *member, bool IncludePets = false);
 
     int operator==(PlayerGroup& other)
     {
