@@ -640,7 +640,7 @@ private:
     /// perform collision detection between the camera target and position
     bool useCameraCD;
 
-    // use the npc chat camera when talking to NPCs
+    /// use the npc chat camera when talking to NPCs
     bool useNPCCam;
 
     /// Have the settings been loaded from file and the camera mode been initialized?
