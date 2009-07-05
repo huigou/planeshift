@@ -11,6 +11,9 @@
 - Improved help by adding some new sections, and repositioning other sections
 - removed warnings in dictionary and cmdbase
 - updated italian files
+- Removed various warnings
+- Changed pet targeting to allow only to target what the main char can. made so duel necessary for pet<->pet pet<->char attacks.
+  Gm can override any check (gm pets can attack everything including the pet itself: but no null!
 
 *** 2009-06-29 by Steven Patrick
 - GM2+ may now ban for up to 2 days and unban same, GM4+ can still ban/unban like normal
