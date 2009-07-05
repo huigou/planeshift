@@ -21,13 +21,13 @@
 #include <cstool/collider.h>
 #include <cstool/vfsdirchange.h>
 #include <csutil/scanstr.h>
+#include <csutil/scfstringarray.h>
 #include <iengine/movable.h>
 #include <iengine/portal.h>
 #include <imap/services.h>
 #include <imesh/object.h>
 #include <iutil/cfgmgr.h>
 #include <iutil/document.h>
-#include <iutil/stringarray.h>
 #include <iutil/object.h>
 #include <iutil/plugin.h>
 #include <ivaria/collider.h>
@@ -114,18 +114,18 @@ void BgLoader::Setup(uint gfxFeatures, float loadRange)
     }
 }
 
-csStringArray BgLoader::GetShaderName(const char* usageType) const
+csPtr<iStringArray> BgLoader::GetShaderName(const char* usageType) const
 {
-    csStringArray t;
+    csRef<iStringArray> t = csPtr<iStringArray>(new scfStringArray());
     csStringID id = strings->Request(usageType);
     csArray<csString> all = shadersByUsageType.GetAll(id);
 
     for(size_t i=0; i<all.GetSize(); ++i)
     {
-        t.Push(all[i]);
+        t->Push(all[i]);
     }
 
-    return t;
+    return csPtr<iStringArray>(t);
 }
 
 THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive)

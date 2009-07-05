@@ -27,6 +27,7 @@
 #include <cstool/collider.h>
 #include <iutil/cfgmgr.h>
 #include <iutil/objreg.h>
+#include <iutil/stringarray.h>
 #include <iutil/vfs.h>
 #include <ivaria/collider.h>
 #include <iengine/engine.h>
@@ -2091,15 +2092,17 @@ void GEMClientItem::CheckLoadStatus()
         iMaterial* material = factory->GetMeshObjectFactory()->GetMaterialWrapper()->GetMaterial();
         iShader* shader = material->GetShader(shadertype);
 
-        csStringArray shaders = psengine->GetLoader()->GetShaderName("default");
-        csStringArray shadersa = psengine->GetLoader()->GetShaderName("default_alpha");
-        if(!shader || shaders.Contains(shader->QueryObject()->GetName()) != csArrayItemNotFound)
+        csRef<iStringArray> shaders = psengine->GetLoader()->GetShaderName("default");
+        csRef<iStringArray> shadersa = psengine->GetLoader()->GetShaderName("default_alpha");
+        if(!shader || shaders->Contains(shader->QueryObject()->GetName()) != csArrayItemNotFound)
         {
-            shader = shman->GetShader(psengine->GetLoader()->GetShaderName("instance")[0]);
+            csRef<iStringArray> shaderName = psengine->GetLoader()->GetShaderName("instance");
+            shader = shman->GetShader(shaderName->Get(0));
         }
-        else if(shadersa.Contains(shader->QueryObject()->GetName()) != csArrayItemNotFound)
+        else if(shadersa->Contains(shader->QueryObject()->GetName()) != csArrayItemNotFound)
         {
-            shader = shman->GetShader(psengine->GetLoader()->GetShaderName("instance_alpha")[0]);
+            csRef<iStringArray> shaderName = psengine->GetLoader()->GetShaderName("instance_alpha");
+            shader = shman->GetShader(shaderName->Get(0));
         }
         else
         {
