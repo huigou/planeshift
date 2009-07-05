@@ -90,6 +90,7 @@ typedef uint32 InstanceID;
 #define RANGE_TO_USE 2
 #define RANGE_TO_STACK 0.5  ///< Range to stack like items when dropping/creating in the world
 #define DROP_DISTANCE 0.55   ///< Distance in front of player to drop items (just more then RANGE_TO_STACK)
+#define RANGE_TO_GUARD 5 ///< Range into which you can guard an item
 
 #define LONG_RANGE_PERCEPTION  30
 #define SHORT_RANGE_PERCEPTION 10

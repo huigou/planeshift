@@ -1536,7 +1536,8 @@ bool gemContainer::CanTake(Client *client, psItem* item)
     PID guard = item->GetGuardingCharacterID();
     gemActor* guardingActor = GEMSupervisor::GetSingleton().FindPlayerEntity(guard);
 
-    if ((!guard.IsValid() || guard == client->GetCharacterData()->GetPID() || !guardingActor) || (guardingActor->RangeTo(this) > 5))
+    if ((!guard.IsValid() || guard == client->GetCharacterData()->GetPID() || !guardingActor) ||
+        (guardingActor->RangeTo(this) > RANGE_TO_GUARD))
     {
         return true;
     }
