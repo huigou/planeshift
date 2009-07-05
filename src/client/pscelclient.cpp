@@ -806,12 +806,15 @@ void psCelClient::Update(bool loaded)
 {
     if(local_player)
     {
-        const char* sectorName = local_player->GetSector()->QueryObject()->GetName();
-        if(!sectorName)
-            return;
+        if(psengine->ThreadedWorldLoading())
+        {
+            const char* sectorName = local_player->GetSector()->QueryObject()->GetName();
+            if(!sectorName)
+                return;
 
-        // Update loader.
-        psengine->GetLoader()->UpdatePosition(local_player->Pos(), sectorName, false);
+            // Update loader.
+            psengine->GetLoader()->UpdatePosition(local_player->Pos(), sectorName, false);
+        }
 /*
         // Check if we're inside a water area.
         csColor4* waterColour = 0;
@@ -2090,15 +2093,18 @@ void GEMClientItem::CheckLoadStatus()
 
         csStringArray shaders = psengine->GetLoader()->GetShaderName("default");
         csStringArray shadersa = psengine->GetLoader()->GetShaderName("default_alpha");
-        if(!shader || shaders.Contains(shader->QueryObject()->GetName()))
+        if(!shader || shaders.Contains(shader->QueryObject()->GetName()) != csArrayItemNotFound)
         {
             shader = shman->GetShader(psengine->GetLoader()->GetShaderName("instance")[0]);
         }
-        else if(shadersa.Contains(shader->QueryObject()->GetName()))
+        else if(shadersa.Contains(shader->QueryObject()->GetName()) != csArrayItemNotFound)
         {
             shader = shman->GetShader(psengine->GetLoader()->GetShaderName("instance_alpha")[0]);
         }
-        //else // Handle this case if/when it happens...
+        else
+        {
+            Error3("Unhandled shader %s for mesh %s!\n", shader->QueryObject()->GetName(), factName);
+        }
 
         // Construct a new material using the selected shaders.
         csRef<iTextureWrapper> tex = psengine->GetEngine()->GetTextureList()->CreateTexture(material->GetTexture());

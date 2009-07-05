@@ -24,7 +24,7 @@
 #include <csgfx/shadervar.h>
 #include <csutil/redblacktree.h>
 #include <csutil/scf_implementation.h>
-#include <csutil/strhashr.h>
+#include <csutil/hash.h>
 #include <csutil/threading/rwmutex.h>
 #include <csutil/threadmanager.h>
 
@@ -387,7 +387,7 @@ private:
     csRefArray<MeshObj> finalisableMeshes;
     csRefArray<MeshObj> deleteQueue;
 
-    csStringHashReversible shadersByUsageType;
+    csHash<csString, csStringID> shadersByUsageType;
     csRedBlackTreeMap<csString, csRef<Texture> > textures;
     csRedBlackTreeMap<csString, csRef<Material> > materials;
     csRedBlackTreeMap<csString, csRef<MeshFact> > meshfacts;

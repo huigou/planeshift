@@ -103,8 +103,8 @@ void BgLoader::Setup(uint gfxFeatures, float loadRange)
                     shaders.Push(file->GetContentsValue());
                     rets.Push(tloader->LoadShader(vfs->GetCwd(), file->GetContentsValue()));
 
-                    shadersByUsageType.Register(node->GetAttributeValue("name"),
-                        strings->Request(node->GetNode("type")->GetContentsValue()));
+                    shadersByUsageType.Put(strings->Request(node->GetNode("type")->GetContentsValue()),
+                        node->GetAttributeValue("name"));
                 }
 
                 // Wait for shader loads to finish.
@@ -118,7 +118,7 @@ csStringArray BgLoader::GetShaderName(const char* usageType) const
 {
     csStringArray t;
     csStringID id = strings->Request(usageType);
-    csArray<const char*> all = shadersByUsageType.RequestAll(id);
+    csArray<csString> all = shadersByUsageType.GetAll(id);
 
     for(size_t i=0; i<all.GetSize(); ++i)
     {
