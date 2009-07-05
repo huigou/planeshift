@@ -95,9 +95,9 @@ struct psCharMode
 {
     uint32 id;
     csString name;
-    csVector3 move_mod;       /// motion multiplier
-    csVector3 rotate_mod;     /// rotation multiplier
-    csString idle_animation;  /// animation when not moving
+    csVector3 move_mod;       ///< motion multiplier
+    csVector3 rotate_mod;     ///< rotation multiplier
+    csString idle_animation;  ///< animation when not moving
 };
 
 /// A movement type and its properties
@@ -105,8 +105,8 @@ struct psMovement
 {
     uint32 id;
     csString name;
-    csVector3 base_move;    /// motion for this
-    csVector3 base_rotate;  /// rotation for this
+    csVector3 base_move;    ///< motion for this
+    csVector3 base_rotate;  ///< rotation for this
 };
 #endif
 
@@ -144,34 +144,49 @@ public:
     CacheManager();
     ~CacheManager();
     
-    // Sector Info Table cache
+    /** @name Sector Info Table cache
+    */
+    //@{
     psSectorInfo *GetSectorInfoByName(const char *name);
     psSectorInfo *GetSectorInfoByID(unsigned int id);
     csHash<psSectorInfo *>::GlobalIterator GetSectorIterator();
+    //@}
     
     psCommandManager* GetCommandManager() { return commandManager; }
-    // Traits
+    
+    /** @name Traits
+     */
+    //@{
     typedef csPDelArray<psTrait>::Iterator TraitIterator;
     psTrait *GetTraitByID(unsigned int id);
     psTrait *GetTraitByName(const char *name);
     TraitIterator GetTraitIterator();
+    //@}
 
-    // Races
+    /** @name Races
+     */
+    //@{
     size_t         GetRaceInfoCount();
     psRaceInfo *GetRaceInfoByIndex(int idx);
     psRaceInfo *GetRaceInfoByID(unsigned int id);
     psRaceInfo *GetRaceInfoByNameGender(const char *name,PSCHARACTER_GENDER gender);
     psRaceInfo *GetRaceInfoByNameGender(unsigned int id, PSCHARACTER_GENDER gender);
     psRaceInfo *GetRaceInfoByMeshName(const csString & meshname);
+    //@}
     
-    // Skills
+    /** @name Skills
+     */
+    //@{
     psSkillInfo *GetSkillByID(unsigned int id);
     psSkillInfo *GetSkillByName(const char *name);
     
     ///Get all skills belonging to a specific category
     void GetSkillsListbyCategory(csArray <psSkillInfo*>& listskill,int category );
+    //@}
 
-    // Common Strings
+    /** @name Common Strings
+    */
+    //@{
     const char *FindCommonString(unsigned int id);
     unsigned int FindCommonStringID(const char *name);
 
@@ -180,19 +195,28 @@ public:
      * @return Returns a reference to the message strings hash table.
      */
     csStringHashReversible *GetMsgStrings() { return &msg_strings; }
+    //@}
 
-    // Guilds
+    /** @name Guilds
+    */
+    //@{
     psGuildInfo *FindGuild(unsigned int id);
     psGuildInfo *FindGuild(const csString & name);
     bool CreateGuild(const char *guildname, Client *client);
     void RemoveGuild(psGuildInfo *which);
+    //@}
 
-    // Guild alliances
+    /** @name Guild alliances
+    */
+    //@{
     psGuildAlliance * FindAlliance(unsigned int id);
     bool CreateAlliance(const csString & name, psGuildInfo * founder, Client *client);
     bool RemoveAlliance(psGuildAlliance *which);
+    //@}
 
-    // Quests
+    /** @name Quests
+    */
+    //@{
     psQuest *GetQuestByID(unsigned int id);
     psQuest *GetQuestByName(const char *name);
     psQuest *AddDynamicQuest(const char *name, psQuest *parentQuest, int step);
@@ -203,9 +227,11 @@ public:
     /// Loads a quest and its scripts
     bool LoadQuest(int id);
     csHash<psQuest *>::GlobalIterator GetQuestIterator();
+    //@}
 
-    // Accounts
-
+    /** @name Accounts
+    */
+    //@{
     /** Retrieves account information given an accountid.
      *
      *  This is not the usual entry method.  The username will be used more often.
@@ -244,6 +270,7 @@ public:
      *  @return The accountid assigned to this account (also stored in the appropriate field in ainfo)
      */
     unsigned int NewAccountInfo(psAccountInfo *ainfo);
+    //@}
 
     /// Convenience function to preload all of the above in an appropriate order
     bool PreloadAll();
@@ -275,8 +302,9 @@ public:
     psSpell *GetSpellByName(const csString & name);
     SpellIterator GetSpellIterator();
 
-    // Trades
-    
+    /** @name Trades
+    */
+    //@{
     /// Get set of transformations for that pattern
     csPDelArray<CombinationConstruction>* FindCombinationsList(uint32 patternid);
     
@@ -293,9 +321,11 @@ public:
     csString CreateComboCraftDescription(CombinationConstruction* combArray);
     csArray<CraftTransInfo*>* GetTradeTransInfoByItemID(uint32 id);
     csArray<CraftComboInfo*>* GetTradeComboInfoByItemID(uint32 id);
+    //@}
 
-    // Items
-    
+    /** @name Items
+    */
+    //@{
     /// Get item basic stats by hashed table
     psItemStats *GetBasicItemStatsByName(csString name);
     
@@ -322,6 +352,7 @@ public:
     
     /// Converts the stat enum to a string.
     const char* Attribute2String( PSITEMSTATS_STAT s );
+    //@}
     
     PSSKILL               ConvertSkillString(const char *skillstring);
     PSSKILL               ConvertSkill(int skill_id);

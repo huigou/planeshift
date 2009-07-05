@@ -195,7 +195,7 @@ psItem::~psItem()
         flags &= ~PSITEM_FLAG_UNIQUE_ITEM;
     }
     
-	
+    
     if (item_quality != item_quality_original )
     {
         UpdateItemQuality(uid, item_quality);
@@ -242,7 +242,7 @@ bool psItem::Load(iResultRow& row)
     // Begin filling in the item properties
     // Item Unique ID #
     SetUID(row.GetUInt32("id"));
-	CS_ASSERT(uid != 0);
+    CS_ASSERT(uid != 0);
     parent_item_InstanceID = row.GetUInt32("parent_item_id");
     loc_in_parent = (INVENTORY_SLOT_NUMBER) row.GetInt("location_in_parent");
 
@@ -716,7 +716,7 @@ void psItem::Commit(bool children)
     else
     {
         // Existing Item, update
-		//printf("Saving item %d (%s owned by %s) through SQL Update\n", GetUID(), GetName(), owning_character? owning_character->GetCharName():"no one" );
+        //printf("Saving item %d (%s owned by %s) through SQL Update\n", GetUID(), GetName(), owning_character? owning_character->GetCharName():"no one" );
 
         // Save this entry
         
@@ -1335,15 +1335,15 @@ bool psItem::CheckStackableWith(const psItem *otheritem, bool precise) const
         return true;
     }
 
-	// This checks to make sure that if the quality is different that these 
-	// items can still be stacked and use an average qualiy system.
-	if (item_quality != otheritem->item_quality || GetMaxItemQuality() != otheritem->GetMaxItemQuality())
-	{
-		if ( GetCurrentStats()->GetFlags() & PSITEMSTATS_FLAG_AVERAGEQUALITY )
-			return true;
-		else
-			return false;
-	}
+    // This checks to make sure that if the quality is different that these 
+    // items can still be stacked and use an average qualiy system.
+    if (item_quality != otheritem->item_quality || GetMaxItemQuality() != otheritem->GetMaxItemQuality())
+    {
+        if ( GetCurrentStats()->GetFlags() & PSITEMSTATS_FLAG_AVERAGEQUALITY )
+            return true;
+        else
+            return false;
+    }
 
     return false;
 }
@@ -1410,7 +1410,7 @@ void psItem::Copy(psItem * target)
     // The guild_id is the same.
     target->guild_id = guild_id;
 
-	// The load status is the same
+    // The load status is the same
     target->loaded = loaded;
 
     // Make sure a cloned key can open same things
@@ -2278,7 +2278,7 @@ void psItem::ScheduleRespawn()
 }
 
 psScheduledItem::psScheduledItem(int id,uint32 itemID,csVector3& position, psSectorInfo* sector,InstanceID instance, int interval,int maxrnd,
-			float range)
+            float range)
 {
     spawnID = id;
     this->itemID = itemID;
@@ -2287,7 +2287,7 @@ psScheduledItem::psScheduledItem(int id,uint32 itemID,csVector3& position, psSec
     this->interval = interval;
     this->maxrnd = maxrnd;
     this->worldInstance = instance;
-	this->range = range;
+    this->range = range;
     wantToDie= false;
 }
 
@@ -2309,8 +2309,8 @@ psItem* psScheduledItem::CreateItem() // Spawns the item
         if (item)
         {
             // Create the item
-			float xpos = GetPosition().x - range + psserver->GetRandom() * range * 2; // Random position within range
-			float zpos = GetPosition().z - range + psserver->GetRandom() * range * 2;
+            float xpos = GetPosition().x - range + psserver->GetRandom() * range * 2; // Random position within range
+            float zpos = GetPosition().z - range + psserver->GetRandom() * range * 2;
             item->SetLocationInWorld(worldInstance,GetSector(),xpos, GetPosition().y, zpos, 0);
             if ( !EntityManager::GetSingleton().CreateItem(item,false) )
             {
@@ -2662,7 +2662,7 @@ bool psItem::SendItemDescription( Client *client)
     // Item is a container
     if(GetIsContainer())
     {
-    	itemInfo += csString().Format("\nCapacity: %d", GetContainerMaxSize());
+        itemInfo += csString().Format("\nCapacity: %d", GetContainerMaxSize());
     }
     
     if (strcmp(GetDescription(),"0") != 0)

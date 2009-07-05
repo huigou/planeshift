@@ -338,7 +338,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
     else if (words[0] == "/rotate")
     {
         if ( words.GetCount() < 2 )
-            return "Usage: /rotate [target] [x|reset] [y|reset] [z|reset]  or /rotate [x|y|z]";
+            return "Usage: /rotate [target] [x|reset] [y|reset] [z|reset]  or /rotate [target] [x|y|z] [angle]";
         
         bool targetGiven = false;
         
