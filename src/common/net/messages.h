@@ -1616,6 +1616,7 @@ public:
 
     /// Add an item to the output message buffer
     void AddItem(   const char* name,
+                    const char* meshName,
                     int containerID,
                     int slot,
                     int stackcount,
@@ -1636,6 +1637,7 @@ public:
     struct ItemDescription
     {
         csString name;
+        csString meshName;
         int slot;
         float weight;
         uint32 size;
