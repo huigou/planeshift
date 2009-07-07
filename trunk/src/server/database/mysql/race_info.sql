@@ -65,7 +65,7 @@ INSERT INTO `race_info` (`id`,`name`,`cstr_id_mesh`,`sex`,`size_x`,`size_y`,`siz
  (8,'Diaboli',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',8),
  (9,'Kran',105,'N',0.8,1.4,0.6,19,100,50,50,50,50,50,50,2.0,1.5,10,10,0,'','','','',9);
 INSERT INTO `race_info` (`id`,`name`,`cstr_id_mesh`,`sex`,`size_x`,`size_y`,`size_z`,`cstr_id_base_texture`,`initial_cp`,`start_str`,`start_end`,`start_agi`,`start_int`,`start_will`,`start_cha`,`base_physical_regen_still`,`base_physical_regen_walk`,`base_mental_regen_still`,`base_mental_regen_walk`,`armor_id`,`helm`,`bracer`,`belt`,`cloak`,`race`) VALUES 
- (10,'Lemur',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','','','',10),
+ (10,'Lemur',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',10),
  (11,'Klyros',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'ylianm','','','',11),
  (12,'Enkidukai',128,'F',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',1),
  (13,'StoneBreaker',126,'F',0.8,1.2,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'ylianm','','','',0),
