@@ -48,6 +48,7 @@
 #include "../client.h"
 #include "../globals.h"
 
+
 #include "util/psdatabase.h"
 #include "util/log.h"
 #include "util/psxmlparser.h"
@@ -71,6 +72,7 @@
 #include "servervitals.h"
 #include "pssectorinfo.h"
 #include "pstrait.h"
+#include "adminmanager.h"
 
 
 // The sizes and scripts need balancing.  For now, maxSize is disabled.
