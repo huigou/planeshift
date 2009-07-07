@@ -58,6 +58,7 @@ bool pawsSpellBookWindow::PostSetup()
 
     spellList        = (pawsListBox*)FindWidget("SpellList");
     spellDescription = (pawsMessageTextBox*)FindWidget("Description");
+    spellImage       = (pawsWidget*)FindWidget("Picture");
 
     spellList->SetSortingFunc(0, textBoxSortFunc);
     spellList->SetSortingFunc(5, textBoxSortFunc);
@@ -105,6 +106,7 @@ void pawsSpellBookWindow::HandleSpells( MsgEntry* me )
 {
     spellList->Clear();
     descriptions_Hash.Empty();
+    images_Hash.Empty();
 
     psSpellBookMessage mesg(me);
     for ( size_t x = 0; x < mesg.spells.GetSize(); x++ )
@@ -128,6 +130,7 @@ void pawsSpellBookWindow::HandleSpells( MsgEntry* me )
             glyph->SetBackground(mesg.spells[x].glyphs[i]);
         }
         descriptions_Hash.Put(mesg.spells[x].name, mesg.spells[x].description);
+        images_Hash.Put(mesg.spells[x].name, mesg.spells[x].image);
         if (selectedSpell == mesg.spells[x].name)
         {
             spellList->Select(row);
@@ -190,5 +193,6 @@ void pawsSpellBookWindow::OnListAction( pawsListBox* widget, int status )
         selectedSpell.Replace( spellName->GetText() );
         spellDescription->AddMessage(descriptions_Hash.Get(spellName->GetText(), "Unknown"));
         spellDescription->ResetScroll();        
+        spellImage->SetBackground(images_Hash.Get(spellName->GetText(), ""));
     }
 }
