@@ -2784,16 +2784,16 @@ psSpellBookMessage::psSpellBookMessage( MsgEntry* me )
         ns.glyphs[1] = me->GetStr();
         ns.glyphs[2] = me->GetStr();
         ns.glyphs[3] = me->GetStr();
-
+        ns.image = me->GetStr();
         spells.Push( ns );
     }
 
 }
 
-void psSpellBookMessage::AddSpell(const csString& name, const csString& description, const csString& way, int realm, const csString& glyph0, const csString& glyph1, const csString& glyph2, const csString& glyph3)
+void psSpellBookMessage::AddSpell(const csString& name, const csString& description, const csString& way, int realm, const csString& glyph0, const csString& glyph1, const csString& glyph2, const csString& glyph3, const csString& image)
 {
-    size+=(uint32_t)(name.Length() + description.Length() + way.Length()+ sizeof(int)+7 +
-    glyph0.Length()+glyph1.Length()+glyph2.Length()+glyph3.Length());
+    size+=(uint32_t)(name.Length() + description.Length() + way.Length()+ sizeof(int)+ 8 +
+    glyph0.Length()+glyph1.Length()+glyph2.Length()+glyph3.Length() + image.Length());
 
     psSpellBookMessage::NetworkSpell ns;
     ns.name = name;
@@ -2804,6 +2804,7 @@ void psSpellBookMessage::AddSpell(const csString& name, const csString& descript
     ns.glyphs[1] = glyph1;
     ns.glyphs[2] = glyph2;
     ns.glyphs[3] = glyph3;
+    ns.image = image;
 
     spells.Push( ns );
 }
@@ -2825,6 +2826,7 @@ void psSpellBookMessage::Construct()
         msg->Add( spells[x].glyphs[1] );
         msg->Add( spells[x].glyphs[2] );
         msg->Add( spells[x].glyphs[3] );
+        msg->Add(spells[x].image);
     }
 }
 
@@ -2836,10 +2838,11 @@ csString psSpellBookMessage::ToString(AccessPointers * /*access_ptrs*/)
 
     for ( size_t x = 0; x < spells.GetSize(); x++ )
     {
-        msgtext.AppendFmt("Spell: '%s' Way: '%s' Realm: %d ",
+        msgtext.AppendFmt("Spell: '%s' Way: '%s' Realm: %d image: %s",
             spells[x].name.GetDataSafe(),
             spells[x].way.GetDataSafe(),
-            spells[x].realm);
+            spells[x].realm,
+            spells[x].image.GetDataSafe());
         msgtext.AppendFmt("Glyphs: '%s', '%s', '%s', '%s' ",
             spells[x].glyphs[0].GetDataSafe(),
             spells[x].glyphs[1].GetDataSafe(),

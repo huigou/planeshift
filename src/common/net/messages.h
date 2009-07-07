@@ -2019,6 +2019,7 @@ public:
         csString way;
         int realm;
         csString glyphs[4];
+        csString image;
     };
 
     psSpellBookMessage();
@@ -2035,7 +2036,7 @@ public:
      */
     virtual csString ToString(AccessPointers * access_ptrs);
 
-    void AddSpell(const csString& name, const csString& description, const csString& way, int realm, const csString& glyph0, const csString& glyph1, const csString& glyph2, const csString& glyph3);
+    void AddSpell(const csString& name, const csString& description, const csString& way, int realm, const csString& glyph0, const csString& glyph1, const csString& glyph2, const csString& glyph3, const csString& image);
     void Construct();
 
     csArray<NetworkSpell> spells;

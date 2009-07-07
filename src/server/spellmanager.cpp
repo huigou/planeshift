@@ -273,7 +273,7 @@ void SpellManager::SendSpellBook(MsgEntry *notused, Client * client)
         mesg.AddSpell(spells[i]->GetName(), spells[i]->GetDescription(),
                       spells[i]->GetWay()->name, spells[i]->GetRealm(),
                       glyphImages[0], glyphImages[1],
-                      glyphImages[2], glyphImages[3]);
+                      glyphImages[2], glyphImages[3], spells[i]->GetImage());
     }
 
     mesg.Construct();
