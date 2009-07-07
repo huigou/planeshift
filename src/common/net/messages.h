@@ -3485,7 +3485,7 @@ public:
                        bool guarded=true,
                        bool inplace=true)
     {
-        msg.AttachNew(new MsgEntry( sizeof( int32_t ) * 5 + 3 * sizeof(float) + 2 * sizeof(bool) ));
+        msg.AttachNew(new MsgEntry( sizeof( int32_t ) * 5 + 3 * sizeof(float) + sizeof(float) + 2 * sizeof(bool) ));
 
         msg->SetType(MSGTYPE_SLOT_MOVEMENT);
         msg->clientnum  = 0;
