@@ -390,7 +390,7 @@ bool ServerCharManager::SendInventory( int clientNum, bool sendUpdatesOnly)
             invType = CONTAINER_INVENTORY_EQUIPMENT;
 
         Notify5(LOG_EXCHANGES, "  Inv item %s, slot %d, weight %1.1f, stack count %u\n",item->GetName(), slot, item->GetWeight(), item->GetStackCount() );
-        msgsize += strlen(item->GetName()) + 1 + item->GetMeshName() + 1 + sizeof(uint32_t) * 3 + sizeof(float) * 2 + strlen(item->GetImageName()) + 1 + sizeof(uint8_t);
+        msgsize += strlen(item->GetName()) + 1 + strlen(item->GetMeshName()) + 1 + sizeof(uint32_t) * 3 + sizeof(float) * 2 + strlen(item->GetImageName()) + 1 + sizeof(uint8_t);
     }
     
     psMoney m = chardata->Money();
