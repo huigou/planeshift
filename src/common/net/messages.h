@@ -43,7 +43,7 @@ class psLinearMovement;
 
 // This holds the version number of the network code, remember to increase
 // this each time you do an update which breaks compatibility
-#define PS_NETVERSION   0x00A1
+#define PS_NETVERSION   0x00A2
 // Remember to bump the version in pscssetup.h, as well.
 
 
@@ -4102,6 +4102,7 @@ class psExchangeAddItemMsg : public psMessageCracker
 public:
     psExchangeAddItemMsg(   uint32_t clientNum,
                             const csString& name,
+                            const csString& meshFactName,
                             int containerID,
                             int slot,
                             int stackcount,
@@ -4120,6 +4121,7 @@ public:
     virtual csString ToString(AccessPointers * access_ptrs);
 
     csString name;
+    csString meshFactName;
     int container;
     int slot;
     int stackCount;
