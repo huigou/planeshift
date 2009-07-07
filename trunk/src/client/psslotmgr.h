@@ -48,6 +48,7 @@ private:
     bool isPlacing;
     bool isRotating;
 
+    csVector3 pt3d;
     psPoint basePoint;
 
     csArray<pawsSlot*> slotsInUse;
@@ -60,7 +61,7 @@ private:
 
     void PlaceItem();
     void UpdateItem();
-    bool DropItem();
+    void DropItem();
 
     csString draggedMesh;
     csRef<iMeshWrapper> outline;
