@@ -1215,7 +1215,7 @@ void psCharacter::DropItem(psItem *&item, csVector3 suggestedPos, bool guarded, 
 
         // Future: Could make it drop in the direction specified, if not at the
         //         exact location...
-        if (dist > 2) // max drop distance is 15m
+        if (dist > 2 && actor->GetClient()->GetSecurityLevel() < GM_DEVELOPER) // max drop distance is 15m
             suggestedPos = 0;
     }
 
