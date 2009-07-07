@@ -64,6 +64,7 @@ private:
     csRef<MsgHandler> msgHandler;
     
     csHash<csString, csString> descriptions_Hash;
+    csHash<csString, csString> images_Hash;
 };
 
 CREATE_PAWS_FACTORY( pawsSpellBookWindow );
