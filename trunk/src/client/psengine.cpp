@@ -896,7 +896,12 @@ bool psEngine::ProcessLogic(iEvent& ev)
     else
     {
         bool handled = false;
-        if(paws->HandleEvent(ev))
+        if(slotManager && slotManager->HandleEvent(ev))
+        {
+          handled = true;
+        }
+
+        if(!handled && paws->HandleEvent(ev))
         {
           handled = true;
         }

@@ -25,6 +25,7 @@
 class csColor4;
 class csVector3;
 struct iObjectRegistry;
+struct iThreadedLoader;
 
 struct iBgLoader : public virtual iBase
 {

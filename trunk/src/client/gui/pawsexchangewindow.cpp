@@ -313,7 +313,7 @@ void pawsExchangeWindow::HandleMessage( MsgEntry* me )
             if ( itemSlot )
             {
                 itemSlot->Clear();
-                itemSlot->PlaceItem( item.icon, item.stackCount );
+                itemSlot->PlaceItem( item.icon, item.meshFactName, item.stackCount );
                 itemSlot->SetToolTip( item.name );
                 itemSlot->SetContainer( item.container );
                 itemSlot->SetSlotID( item.slot );

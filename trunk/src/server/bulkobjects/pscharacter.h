@@ -834,7 +834,7 @@ public:
       * @param Item to be dropped
       * @param Transient flag (decay?) (default=true)
       */
-    void DropItem(psItem *&item, csVector3 pos = 0, bool guarded = true, bool transient = true, bool inplace = false);
+    void DropItem(psItem *&item, csVector3 pos = 0, float yrot = 0, bool guarded = true, bool transient = true, bool inplace = false);
 
     float GetHP();
     float GetMana();

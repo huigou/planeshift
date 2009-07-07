@@ -322,13 +322,6 @@ bool psMainWidget::OnMouseDown( int button, int keyModifier, int x, int y )
         return false;
     }
 
-    // Check to see if we are dropping an item
-    if ( psengine->GetSlotManager() && psengine->GetSlotManager()->IsDragging() )
-    {
-        psengine->GetSlotManager()->DropItem();
-        return true;
-    }
-
     // Check to see if we are dropping a game piece
     pawsGameBoard *gameBoard = dynamic_cast<pawsGameBoard *>(FindWidget("GameBoardWindow"));
     if (gameBoard && gameBoard->IsDragging())
