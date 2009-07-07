@@ -456,4 +456,7 @@ void psCSSetup::MountArt()
     MountThings("crystalzip",    "crystal_way");
     MountThings("darkzip",       "dark_way");
     MountThings("redzip",        "red_way");
+
+    //spells icons
+    MountThings("spellszip",    "spells");
 }
