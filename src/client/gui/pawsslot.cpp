@@ -147,8 +147,10 @@ void pawsSlot::StackCount( int newCount )
     }
 }
 
-void pawsSlot::PlaceItem( const char* imageName, int count )
+void pawsSlot::PlaceItem( const char* imageName, const char* meshFactName, int count )
 {
+    meshfactName = meshFactName;
+
     empty = false;
 
     image = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(imageName);
@@ -254,7 +256,7 @@ bool pawsSlot::SelfPopulate( iDocumentNode *node)
     {
         this->DrawStackCount(false);
         this->SetDrag(false);
-        PlaceItem(node->GetAttributeValue("icon"),1);
+        PlaceItem(node->GetAttributeValue("icon"), "", 1);
     }
     
     return true;
@@ -288,14 +290,16 @@ void pawsSlot::OnUpdateData(const char *dataname,PAWSData& value)
         psString icon;
         psString count;
         psString name;
+        psString mesh;
         psString status;
 
-        data.GetWordNumber(1,icon);       
+        data.GetWordNumber(1,icon);
         data.GetWordNumber(2,count);
-        data.GetWordNumber(3,status);        
-        data.GetSubString( name, icon.Length()+count.Length()+status.Length()+3, data.Length());
-        
-        PlaceItem( icon, atoi(  count.GetData() ) );        
+        data.GetWordNumber(3,status);
+        data.GetWordNumber(4,mesh);
+        data.GetSubString( name, icon.Length()+count.Length()+status.Length()+mesh.Length()+3, data.Length());
+
+        PlaceItem( icon, mesh, atoi(  count.GetData() ) );        
         SetToolTip( name );
         SetPurifyStatus( atoi(status.GetData())  );
     }   

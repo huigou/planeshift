@@ -3481,6 +3481,7 @@ public:
                        int toSlotID,
                        int stackCount,
                        csVector3 *pt3d=NULL,
+                       float *yrot=NULL,
                        bool guarded=true,
                        bool inplace=true)
     {
@@ -3499,11 +3500,16 @@ public:
         else
         {
             csVector3 v = 0;
-            msg->Add(v);  // add dummy zeroes if not specified.
+            msg->Add(v);  // Add dummy zeroes if not specified.
+        }
+        if (yrot != NULL)
+          msg->Add( (float) *yrot );
+        else
+        {
+            msg->Add( (float) 0); // Add 0 rotation if not specified.
         }
         msg->Add( guarded );
         msg->Add( inplace );
-
     }
 
     psSlotMovementMsg( MsgEntry* me )
@@ -3514,9 +3520,9 @@ public:
         toSlot        = me->GetInt32();
         stackCount    = me->GetInt32();
         posWorld      = me->GetVector();
+        yrot          = me->GetFloat();
         guarded       = me->GetBool();
         inplace       = me->GetBool();
-
     }
 
     PSF_DECLARE_MSG_FACTORY();
@@ -3535,6 +3541,7 @@ public:
     int toSlot;
     int stackCount;
     csVector3 posWorld;
+    float yrot;
     bool guarded;
     bool inplace;
 };

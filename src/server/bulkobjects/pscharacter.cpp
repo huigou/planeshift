@@ -1195,7 +1195,7 @@ bool psCharacter::CheckMagicKnowledge( PSSKILL skill, int realm )
     return (realm == 1 && skills.GetSkillRank(skill).Base() == 0 && !skills.Get(skill).CanTrain());
 }
 
-void psCharacter::DropItem(psItem *&item, csVector3 suggestedPos, bool guarded, bool transient, bool inplace)
+void psCharacter::DropItem(psItem *&item, csVector3 suggestedPos, float yrot, bool guarded, bool transient, bool inplace)
 {
     if (!item)
         return;
@@ -1250,7 +1250,7 @@ void psCharacter::DropItem(psItem *&item, csVector3 suggestedPos, bool guarded, 
     gemObject* obj = EntityManager::GetSingleton().MoveItemToWorld(item,
                              location.worldInstance, location.loc_sector,
                              suggestedPos.x, suggestedPos.y, suggestedPos.z,
-                             location.loc_yrot, this, transient);
+                             yrot, this, transient);
 
     if (obj)
     {

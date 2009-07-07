@@ -209,7 +209,7 @@ void pawsMerchantWindow::UpdateMoney( const char* moneyName, const char* imageNa
     {
         if (value)
         {            
-            itemSlot->PlaceItem(imageName);
+            itemSlot->PlaceItem(imageName, "");
             itemSlot->StackCount(value);            
             itemSlot->DrawStackCount(true);
         } 

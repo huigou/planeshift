@@ -27,29 +27,49 @@
 
 class pawsSlot;
 class MsgHandler;
-
+struct iMeshWrapper;
 
 //------------------------------------------------------------------------------
 
 class psSlotManager : public iOnNumberEnteredAction
 {
 private:
-  struct DraggingSlot
+    struct DraggingSlot
     {       
         int containerID;
         int slotID;
         int stackCount;
         pawsSlot* slot;
+        csString meshFactName;
         int parentID;
-    }draggingSlot;
+    } draggingSlot;
   
     bool isDragging;
+    bool isPlacing;
+    bool isRotating;
+
+    psPoint basePoint;
 
     csArray<pawsSlot*> slotsInUse;
+
+    /// Shortcut for event mouse move
+    csEventID MouseMove;
+
+    /// Shortcut for event mouse down
+    csEventID MouseDown;
+
+    void PlaceItem();
+    void UpdateItem();
+    bool DropItem();
+
+    csString draggedMesh;
+    csRef<iMeshWrapper> outline;
 
 public:
     psSlotManager();
     virtual ~psSlotManager();
+
+    bool HandleEvent( iEvent& ev );
     
     void Handle( pawsSlot* slot, bool grabOne = false, bool grabAll = false );
     void SetDragDetails( pawsSlot* slot, int count );
@@ -61,7 +81,6 @@ public:
     
     int HoldingContainerID() { return draggingSlot.containerID; }
     int HoldingSlotID() { return draggingSlot.slotID; }
-    void DropItem();
 
     void CancelDrag();
     

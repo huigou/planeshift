@@ -36,6 +36,7 @@ class psInventoryCache : public psCache
         struct CachedItemDescription
         {
             csString name;
+            csString meshName;
             float weight;
             float size;
             int stackCount;
@@ -65,6 +66,7 @@ class psInventoryCache : public psCache
         bool SetInventoryItem(int slot,
                               int container,
                               csString name,
+                              csString meshName,
                               float weight,
                               float size,
                               int stackCount,

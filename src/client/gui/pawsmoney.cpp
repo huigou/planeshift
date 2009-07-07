@@ -115,7 +115,7 @@ bool pawsMoney::PostSetup()
     if (circles == NULL)
         return false;
     circles->SetEmptyOnZeroCount(false);
-    circles->PlaceItem("MoneyCircles");
+    circles->PlaceItem("MoneyCircles", "");
     circles->SetSlotID( MONEY_CIRCLES );
     if (border) circles->SetBackground("Bulk Item Slot");
             
@@ -123,7 +123,7 @@ bool pawsMoney::PostSetup()
     if (octas == NULL)
         return false;
     octas->SetEmptyOnZeroCount(false);                
-    octas->PlaceItem("MoneyOctas");
+    octas->PlaceItem("MoneyOctas", "");
     octas->SetSlotID( MONEY_OCTAS );    
     octas->SetRelativeFramePos(GetActualWidth(SLOT_SIZE+spacing), 0);
     if (border) octas->SetBackground("Bulk Item Slot");
@@ -132,7 +132,7 @@ bool pawsMoney::PostSetup()
     if (hexas == NULL)
         return false;
     hexas->SetEmptyOnZeroCount(false);        
-    hexas->PlaceItem("MoneyHexas");
+    hexas->PlaceItem("MoneyHexas", "");
     hexas->SetSlotID( MONEY_HEXAS );   
     hexas->SetRelativeFramePos(0, GetActualHeight(SLOT_SIZE+spacing));
     if (border) hexas->SetBackground("Bulk Item Slot");
@@ -141,7 +141,7 @@ bool pawsMoney::PostSetup()
     if (trias == NULL)
         return false;
     trias->SetEmptyOnZeroCount(false);        
-    trias->PlaceItem("MoneyTrias");
+    trias->PlaceItem("MoneyTrias", "");
     trias->SetSlotID( MONEY_TRIAS );     
     trias->SetRelativeFramePos(GetActualWidth(SLOT_SIZE+spacing), GetActualHeight(SLOT_SIZE+spacing));
     if (border) trias->SetBackground("Bulk Item Slot");

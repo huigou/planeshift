@@ -837,7 +837,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
            (words[i] == "octa" && (moneySlot=2)) || (words[i] == "circle" && (moneySlot=3)) )
         {
             psSlotMovementMsg moneydropmsg( CONTAINER_INVENTORY_MONEY, moneySlot,
-                                CONTAINER_WORLD, 0, quantity, 0, guard, inplace );
+                                CONTAINER_WORLD, 0, quantity, 0, 0, guard, inplace );
             moneydropmsg.SendMessage();
             return NULL;
         }

@@ -188,7 +188,7 @@ void pawsGlyphWindow::HandleGlyphList( MsgEntry* me )
 
         pawsGlyphSlot * itemSlot = FindFreeSlot(msg.glyphs[x].way);
         CS_ASSERT(itemSlot);
-        itemSlot->PlaceItem(msg.glyphs[x].image, 1);
+        itemSlot->PlaceItem(msg.glyphs[x].image, "", 1);
         itemSlot->SetStatID(msg.glyphs[x].statID);
         itemSlot->SetPurifyStatus(msg.glyphs[x].purifiedStatus);
         itemSlot->SetToolTip(msg.glyphs[x].name);
@@ -344,7 +344,7 @@ void pawsGlyphWindow::StartDrag(pawsGlyphSlot *sourceSlot)
         return;
     pawsGlyphSlot * floatingSlot = new pawsGlyphSlot();
 
-    floatingSlot->PlaceItem(sourceSlot->ImageName(), 1);
+    floatingSlot->PlaceItem(sourceSlot->ImageName(), "", 1);
     floatingSlot->SetStatID(sourceSlot->GetStatID());
     floatingSlot->SetPurifyStatus(sourceSlot->GetPurifyStatus());
     floatingSlot->SetWay(sourceSlot->Way());
@@ -364,7 +364,7 @@ void pawsGlyphWindow::StopDrag(pawsGlyphSlot *destSlot)
 
     pawsGlyphSlot *floatingSlot = dynamic_cast <pawsGlyphSlot*> (PawsManager::GetSingleton().GetDragDropWidget());
 
-    destSlot->PlaceItem(floatingSlot->ImageName(), 1);
+    destSlot->PlaceItem(floatingSlot->ImageName(), "", 1);
     destSlot->SetStatID(floatingSlot->GetStatID());
     destSlot->SetPurifyStatus(floatingSlot->GetPurifyStatus());
     destSlot->SetWay(floatingSlot->Way());
