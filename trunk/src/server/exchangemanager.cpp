@@ -691,9 +691,11 @@ bool Exchange::AddItem(Client* fromClient, INVENTORY_SLOT_NUMBER fromSlot, int s
 void Exchange::SendAddItemMessage(Client* fromClient, int slot, psCharacterInventory::psCharacterInventoryItem* invItem)
 {
     psItem* item = invItem->GetItem();
+
     psExchangeAddItemMsg msg(fromClient->GetClientNum(), item->GetName(),
-                             CONTAINER_EXCHANGE_OFFERING, slot,
-                             invItem->exchangeStackCount, item->GetImageName());
+      item->GetMeshName(), CONTAINER_EXCHANGE_OFFERING, slot, invItem->exchangeStackCount,
+      item->GetImageName());
+
     psserver->GetEventManager()->SendMessage(msg.msg);
 }
 
@@ -884,8 +886,9 @@ void PlayerToPlayerExchange::SendAddItemMessage(Client* fromClient, int slot, ps
     Client *toClient = GetOtherClient(fromClient);
 
     psExchangeAddItemMsg msg(toClient->GetClientNum(), item->GetName(),
-                             CONTAINER_EXCHANGE_RECEIVING, slot,
-                             invItem->exchangeStackCount, item->GetImageName());
+      item->GetMeshName(), CONTAINER_EXCHANGE_RECEIVING, slot, invItem->exchangeStackCount,
+      item->GetImageName());
+
     psserver->GetEventManager()->SendMessage(msg.msg);
 }
 

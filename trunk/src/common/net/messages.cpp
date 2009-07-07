@@ -5734,6 +5734,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psExchangeAddItemMsg,MSGTYPE_EXCHANGE_ADD_ITEM);
 
 psExchangeAddItemMsg::psExchangeAddItemMsg( uint32_t clientNum,
                                             const csString& name,
+                                            const csString& meshFactName,
                                             int containerID,
                                             int slot,
                                             int stackcount,
@@ -5744,6 +5745,7 @@ psExchangeAddItemMsg::psExchangeAddItemMsg( uint32_t clientNum,
     msg->clientnum = clientNum;
 
     msg->Add( name );
+    msg->Add( meshFactName );
     msg->Add( (uint32_t) containerID );
     msg->Add( (uint32_t) slot );
     msg->Add( (uint32_t) stackcount );
@@ -5753,11 +5755,12 @@ psExchangeAddItemMsg::psExchangeAddItemMsg( uint32_t clientNum,
 
 psExchangeAddItemMsg::psExchangeAddItemMsg( MsgEntry* me )
 {
-    name        = me->GetStr();
-    container   = me->GetUInt32();
-    slot        = me->GetUInt32();
-    stackCount  = me->GetUInt32();
-    icon        = me->GetStr();
+    name         = me->GetStr();
+    meshFactName = me->GetStr();
+    container    = me->GetUInt32();
+    slot         = me->GetUInt32();
+    stackCount   = me->GetUInt32();
+    icon         = me->GetStr();
 }
 
 csString psExchangeAddItemMsg::ToString(AccessPointers * /*access_ptrs*/)
