@@ -11,10 +11,10 @@
     
     <pawsSimpleTree name="ConfigTree" >
 
-        <frame x="10" y="10" width="200" height="300" border="no" />
+        <frame x="10" y="8" width="200" height="305" border="no" />
         
         <widget factory="pawsSimpleTreeNode">
-	    <frame x="225" y="10" width="400" height="300" border="yes" />
+	    <frame x="225" y="0" width="400" height="305" border="yes" />
 
             <widget factory="pawsSimpleTreeNode" label="Controls">
                 <widget factory="pawsSimpleTreeNode" label="Keys">
@@ -88,7 +88,7 @@
     </pawsSimpleTree>
 
     <pawsWidget name="PanelParent">
-        <frame x="220" y="5" width="440" height="310" border="no" />
+        <frame x="220" y="0" width="460" height="322" border="no" />
         <attachpoints>
             <attach point="ATTACH_RIGHT" />
             <attach point="ATTACH_TOP" />
