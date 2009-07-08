@@ -183,6 +183,7 @@ public:
     void RemoveGuildWar(psGuildInfo *other);
 
     int GetAllianceID() { return alliance; }
+    int GetID() { return id; }
     
 };
 
