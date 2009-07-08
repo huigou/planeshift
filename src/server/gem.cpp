@@ -741,11 +741,16 @@ void gemObject::Move(const csVector3& pos,float rotangle, iSector* room)
 
 bool gemObject::IsNear(gemObject *obj, float radius)
 {
-    return proxlist->RangeTo(obj) < radius;
+    return RangeTo(obj) < radius;
 }
 
 float gemObject::RangeTo(gemObject* obj, bool ignoreY, bool ignoreInstance)
 {
+    // Ugly hack : if an AL got (0,0,0) as a position, bypass the check
+    if((GetALPtr() && GetPosition() == csVector3(0,0,0)) ||
+        (obj->GetALPtr() && obj->GetPosition() == csVector3(0,0,0)))
+        return 0.0f;
+
     return proxlist->RangeTo(obj, ignoreY, ignoreInstance);
 }
 
