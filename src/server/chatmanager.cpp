@@ -117,6 +117,11 @@ void ChatManager::HandleChatMessage(MsgEntry *me, Client *client)
 			  SendGuild(client, msg);
 			  break;
 		  }
+		  case CHAT_ALLIANCE:
+		  {
+			  SendAlliance(client, msg);
+			  break;
+		  }
 		  case CHAT_GROUP:
 		  {
 			  SendGroup(client, msg);
@@ -223,7 +228,6 @@ void ChatManager::HandleChatMessage(MsgEntry *me, Client *client)
 			  NpcResponse *resp = CheckNPCResponse(msg,client,targetnpc);
 			  if (resp)
 			  {
-				  SendMultipleAudioFileHashes(client, resp->GetVoiceFile());
                   csTicks delay = resp->ExecuteScript(client->GetActor(), targetnpc);
 				  if (delay != SIZET_NOT_FOUND && resp->menu )
 					  resp->menu->ShowMenu(client, delay);
@@ -494,6 +498,55 @@ void ChatManager::SendGuild(const csString & sender, EID senderEID, psGuildInfo 
         client->GetActor()->LogChatMessage(sender.GetData(), msg);
     }
 }
+
+void ChatManager::SendAlliance(Client *client, psChatMessage& msg)
+{
+    psGuildInfo * guild;
+    psGuildLevel * level;
+
+    guild = client->GetCharacterData()->GetGuild();
+    if (guild == NULL)
+    {
+        psserver->SendSystemInfo(client->GetClientNum(), "You are not in a alliance.");
+        return;
+    }
+
+    level = client->GetCharacterData()->GetGuildLevel();
+    if (level && !level->HasRights(RIGHTS_CHAT))
+    {
+        psserver->SendSystemInfo(client->GetClientNum(), "You are not allowed to use your guild's chat channel.");
+        return;
+    }
+    
+    psGuildAlliance * alliance = CacheManager::GetSingleton().FindAlliance(guild->GetAllianceID());
+    if(alliance == NULL)
+    {
+        psserver->SendSystemInfo(client->GetClientNum(), "Your guild is not in an alliance.");
+        return;
+    }
+
+    SendAlliance(client->GetName(), client->GetActor()->GetEID(), alliance, msg);
+}
+
+void ChatManager::SendAlliance(const csString & sender, EID senderEID, psGuildAlliance * alliance, psChatMessage& msg)
+{
+    ClientIterator iter(*psserver->GetConnections());
+    psGuildLevel * level;
+
+    while(iter.HasNext())
+    {
+        Client *client = iter.Next();
+        if (!client->IsReady()) continue;
+        if (client->GetAllianceID() != alliance->GetID()) continue;
+        level = client->GetCharacterData()->GetGuildLevel();
+        if ( (!level) || (!level->HasRights(RIGHTS_VIEW_CHAT)) ) continue;
+        // Send the chat message
+        psChatMessage newMsg(client->GetClientNum(), senderEID, sender, 0, msg.sText, msg.iChatType, msg.translate);
+        newMsg.SendMessage();
+        // The message is saved to the chat history of all the clients in the same alliance (PS#2789)
+        client->GetActor()->LogChatMessage(sender.GetData(), msg);
+    }
+} 
 
 void ChatManager::SendGroup(Client * client, psChatMessage& msg)
 {

@@ -38,7 +38,7 @@
 #define USER_FILE     "/planeshift/userdata/options/chatbubbles.xml"
 
 #define LINES_IN_FRAME	13
-#define NO_CHAT_TYPES	14
+#define NO_CHAT_TYPES	15
 #define	SCROLLBAR_SIZE	15
 #define SCROLLBAR_LINES NO_CHAT_TYPES * 4 + 4 - LINES_IN_FRAME
 #define Y_START_POS		10
@@ -92,42 +92,46 @@ bool pawsConfigChatBubbles::PostSetup()
                 temp.chatType = CHAT_GUILD;
                 break;
             case 4:
+                temp.type = "alliance";
+                temp.chatType = CHAT_ALLIANCE;
+                break;
+            case 5:
                 temp.type = "shout";
                 temp.chatType = CHAT_SHOUT;
                 break;
-            case 5:
+            case 6:
                 temp.type = "npc";
                 temp.chatType = CHAT_NPC;
                 break;
-            case 6:
+            case 7:
                 temp.type = "auction";
                 temp.chatType = CHAT_AUCTION;
                 break;
-            case 7:
+            case 8:
                 temp.type = "me";
                 temp.chatType = CHATBUBBLE_ME;
                 break;
-            case 8:
+            case 9:
                 temp.type = "tellself";
                 temp.chatType = CHAT_TELLSELF;
                 break;
-            case 9:
+            case 10:
                 temp.type = "my";
                 temp.chatType = CHATBUBBLE_MY;
                 break;
-            case 10:
+            case 11:
                 temp.type = "npc_me";
                 temp.chatType = CHAT_NPC_ME;
                 break;
-            case 11:
+            case 12:
                 temp.type = "npc_my";
                 temp.chatType = CHAT_NPC_MY;
                 break;
-            case 12:
+            case 13:
                 temp.type = "npc_narrate";
                 temp.chatType = CHAT_NPC_NARRATE;
                 break;
-            case 13:
+            case 14:
                 temp.type = "npcinternal";
                 temp.chatType = CHAT_NPCINTERNAL;
                 break;
@@ -530,7 +534,7 @@ bool pawsConfigChatBubbles::SaveConfig()
 
     csString xml = "<?xml version=\"1.0\"?>\n";
     // xml += "<!-- Supported attributes for <chat>: type, color[R,G,B], shadow[R,G,B], outline[R,G,B], align, effectPrefix -->\n";
-    // xml += "<!-- Supported Chat Types: say, tell, group, guild, auction, shout, me, tellself, my, npc, npc_me, npc_my, npc_narrate -->\n";
+    // xml += "<!-- Supported Chat Types: say, tell, group, guild, alliance, auction, shout, me, tellself, my, npc, npc_me, npc_my, npc_narrate -->\n";
     // xml += "<!-- Supported Align Types: left, center, right -->\n\n";
     xml.AppendFmt("<chat_bubbles maxLineLen=\"%s\" shortPhraseCharCount=\"%s\" longPhraseLineCount=\"%s\" mixActionColours=\"%s\" enabled=\"%s\">\n",
         maxLineLen->GetText(), shortPhraseCharCount->GetText(), longPhraseLineCount->GetText(), mixActionColours->GetState() ? "yes" : "no", allEnabled->GetState() ? "yes" : "no");

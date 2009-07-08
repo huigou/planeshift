@@ -42,20 +42,24 @@
         <frame x="20" y="120" width="120" height="20" />
         <text string="Guild" />
     </widget>
-    <widget name="igroup" factory="pawsCheckBox">
+    <widget name="ialliance" factory="pawsCheckBox">
         <frame x="20" y="140" width="120" height="20" />
+        <text string="Alliance" />
+    </widget>
+    <widget name="igroup" factory="pawsCheckBox">
+        <frame x="20" y="160" width="120" height="20" />
         <text string="Group" />
     </widget>
     <widget name="iauction" factory="pawsCheckBox">
-        <frame x="20" y="160" width="120" height="20" />
+        <frame x="20" y="180" width="120" height="20" />
         <text string="Auction" />
     </widget>
     <widget name="isys" factory="pawsCheckBox">
-        <frame x="20" y="180" width="120" height="20" />
+        <frame x="20" y="200" width="120" height="20" />
         <text string="System" />
     </widget>
     <widget name="ihelp" factory="pawsCheckBox">
-        <frame x="20" y="200" width="120" height="20" />
+        <frame x="20" y="220" width="120" height="20" />
         <text string="Help" />
     </widget>
 
@@ -76,20 +80,24 @@
         <frame x="140" y="120" width="120" height="20" />
         <text string="Guild" />
     </widget>
-    <widget name="fgroup" factory="pawsCheckBox">
+    <widget name="falliance" factory="pawsCheckBox">
         <frame x="140" y="140" width="120" height="20" />
+        <text string="Alliance" />
+    </widget>
+    <widget name="fgroup" factory="pawsCheckBox">
+        <frame x="140" y="160" width="120" height="20" />
         <text string="Group" />
     </widget>
     <widget name="fauction" factory="pawsCheckBox">
-        <frame x="140" y="160" width="120" height="20" />
+        <frame x="140" y="180" width="120" height="20" />
         <text string="Auction" />
     </widget>
     <widget name="fsys" factory="pawsCheckBox">
-        <frame x="140" y="180" width="120" height="20" />
+        <frame x="140" y="200" width="120" height="20" />
         <text string="System" />
     </widget>
     <widget name="fhelp" factory="pawsCheckBox">
-        <frame x="140" y="200" width="120" height="20" />
+        <frame x="140" y="220" width="120" height="20" />
         <text string="Help" />
     </widget>
 
@@ -110,20 +118,24 @@
         <frame x="260" y="120" width="70" height="20" />
         <text string="Guild" />
 	</widget>
-    <widget name="fcgroup" factory="pawsCheckBox">
+    <widget name="fcalliance" factory="pawsCheckBox">
         <frame x="260" y="140" width="70" height="20" />
+        <text string="Alliance" />
+	</widget>
+    <widget name="fcgroup" factory="pawsCheckBox">
+        <frame x="260" y="160" width="70" height="20" />
         <text string="Group" />
 	</widget>
     <widget name="fcauction" factory="pawsCheckBox">
-        <frame x="260" y="160" width="70" height="20" />
+        <frame x="260" y="180" width="70" height="20" />
         <text string="Auction" />
 	</widget>
     <widget name="fcsys" factory="pawsCheckBox">
-        <frame x="260" y="180" width="70" height="20" />
+        <frame x="260" y="200" width="70" height="20" />
         <text string="System" />
 	</widget>
     <widget name="fchelp" factory="pawsCheckBox">
-        <frame x="260" y="200" width="70" height="20" />
+        <frame x="260" y="220" width="70" height="20" />
     	<text string="Help" />
 	</widget>
 

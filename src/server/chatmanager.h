@@ -47,6 +47,7 @@ class psServer;
 class psEndChatLoggingEvent;
 class NpcResponse;
 class psGuildInfo;
+class psGuildAlliance;
 class gemNPC;
 class gemActor;
 
@@ -87,6 +88,11 @@ public:
     void RemoveAllChannels(Client *client);
 
     void SendGuild(const csString & sender, EID senderEID, psGuildInfo * guild, psChatMessage& msg);
+    ///actually sends the message to all connected members of the alliance
+    void SendAlliance(const csString & sender, EID senderEID, psGuildAlliance * alliance, psChatMessage& msg);
+    
+    /// Starts the process of sending the specified list of files to the client
+	void SendMultipleAudioFileHashes(Client *client, const char *voiceFile);
 
 protected:
 	csPDelArray<CachedData> audioFileCache;
@@ -94,13 +100,13 @@ protected:
     void SendTell(psChatMessage& msg, const char* who, Client *client, Client *target);
     void SendSay(uint32_t clientNum, gemActor* actor, psChatMessage& msg, const char* who);
     void SendGuild(Client * client, psChatMessage& msg);
+    ///gets the message from a client to dispatch to the alliance chat
+    void SendAlliance(Client * client, psChatMessage& msg);
     void SendGroup(Client * client, psChatMessage& msg);
     void SendShout(Client * client, psChatMessage& msg);
 
     NpcResponse *CheckNPCResponse(psChatMessage& msg,Client *client,gemNPC * &target);
 
-	/// Starts the process of sending the specified list of files to the client
-	void SendMultipleAudioFileHashes(Client *client, const char *voiceFile);
 	/// Starts the process of sending the specified file to the client
 	void SendAudioFileHash(Client *client, const char *voiceFile, csTicks delay);
 	/// Sends the actual file to the client if needed

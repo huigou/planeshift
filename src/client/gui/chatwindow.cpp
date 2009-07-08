@@ -83,6 +83,7 @@ const char *CHAT_TYPES[] = {
 		"CHAT_TELL",
 		"CHAT_GROUP",
 		"CHAT_GUILD",
+        "CHAT_ALLIANCE",
 		"CHAT_AUCTION",
 		"CHAT_SHOUT",
 		"CHAT_CHANNEL",
@@ -133,6 +134,7 @@ pawsChatWindow::pawsChatWindow()
     settings.adminColor = white;
     settings.tellColor = white;
     settings.guildColor = white;
+    settings.allianceColor = white;
     settings.shoutColor = white;
     settings.channelColor = white;
     settings.gmColor = white;
@@ -290,6 +292,7 @@ void pawsChatWindow::LoadChatSettings()
             if ( nodeName == "channeltext") settings.channelColor = col;
             if ( nodeName == "gmtext") settings.gmColor = col;
             if ( nodeName == "guildtext") settings.guildColor = col;
+            if ( nodeName == "alliancetext") settings.allianceColor = col;
             if ( nodeName == "yourtext") settings.yourColor = col;
             if ( nodeName == "grouptext") settings.groupColor = col;
             if ( nodeName == "auctiontext") settings.auctionColor = col;
@@ -479,6 +482,14 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
             inputText->SetText(words[0] + " ");
             DetermineChatTabAndSelect(CHAT_GUILD);
         }
+        else if (words[0] == "/alliance" || words[0] == "/a")
+        {
+            pPerson.Clear();
+            words.GetTail(1,text);
+            chattype = CHAT_ALLIANCE;
+            inputText->SetText(words[0] + " ");
+            DetermineChatTabAndSelect(CHAT_ALLIANCE);
+        }
         else if (words[0] == "/shout" || words[0] == "/sh")
         {
             pPerson.Clear();
@@ -624,6 +635,12 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
                 chattype = CHAT_GUILD;
                 words.GetTail(0,text);
                 DetermineChatTabAndSelect(CHAT_GUILD);
+            }
+            else if (chatType == "AllianceText")
+            {
+                chattype = CHAT_ALLIANCE;
+                words.GetTail(0,text);
+                DetermineChatTabAndSelect(CHAT_ALLIANCE);
             }
             else if (chatType == "GroupText")
             {
@@ -890,6 +907,7 @@ void pawsChatWindow::SaveChatSettings()
     CreateSettingNode(colorNode,settings.groupColor,"grouptext");
     CreateSettingNode(colorNode,settings.yourColor,"yourtext");
     CreateSettingNode(colorNode,settings.guildColor,"guildtext");
+    CreateSettingNode(colorNode,settings.allianceColor,"alliancetext");
     CreateSettingNode(colorNode,settings.shoutColor,"shouttext");
     CreateSettingNode(colorNode,settings.channelColor,"channeltext");
     CreateSettingNode(colorNode,settings.npcColor, "npctext" );
@@ -1208,6 +1226,20 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
             colour = settings.guildColor;
             break;
         }
+        
+        case CHAT_ALLIANCE:
+        {
+            // allows /alliance <person> /me sits down for a private action
+            if ( msg.sText.StartsWith("/me ") )
+                buff.Format("%s %s", (const char *)msg.sPerson, ((const char *)msg.sText)+4);
+            else if ( msg.sText.StartsWith("/my ") )
+                buff.Format("%s's %s", (const char *)msg.sPerson, ((const char *)msg.sText)+4);
+            else
+                buff.Format(PawsManager::GetSingleton().Translate("%s says: %s"),
+                            (const char *)msg.sPerson,(const char *)msg.sText);
+            colour = settings.allianceColor;
+            break;
+        }
 
         case CHAT_AUCTION:
         {
@@ -1478,6 +1510,8 @@ void pawsChatWindow::SubscribeCommands()
     cmdsource->Subscribe("/t",this);
     cmdsource->Subscribe("/guild",this);
     cmdsource->Subscribe("/g",this);
+    cmdsource->Subscribe("/alliance",this);
+    cmdsource->Subscribe("/a",this);
     cmdsource->Subscribe("/group",this);
     cmdsource->Subscribe("/gr",this);
     cmdsource->Subscribe("/tellnpc",this);
@@ -1699,6 +1733,8 @@ void pawsChatWindow::SendChatLine(csString& textToSend)
             }
             else if (chatType == "GuildText")
                 textToSend.Insert(0, "/guild ");
+            else if (chatType == "AllianceText")
+                textToSend.Insert(0, "/alliance ");
             else if (chatType == "GroupText")
                 textToSend.Insert(0, "/group ");
             else if (chatType == "AuctionText")
@@ -2035,6 +2071,8 @@ csString pawsChatWindow::GetBracket(int type) //according to the type return the
             return "[Tell] ";
         case CHAT_GUILD:
             return "[Guild] ";
+        case CHAT_ALLIANCE:
+            return "[Alliance] ";
         case CHAT_GROUP:
             return "[Group] ";
         case CHAT_AUCTION:

@@ -117,6 +117,7 @@ protected:
 
     pawsMessageTextBox * description;
     pawsTextBox * spellName;
+    pawsWidget *spellImage;
     csArray <pawsListBox*> ways;
 
     pawsGlyphSlot * assembler[GLYPH_ASSEMBLER_SLOTS];
