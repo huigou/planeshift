@@ -1219,8 +1219,9 @@ bool GEMClientObject::SetPosition(const csVector3 & pos, float rot, iSector * se
             // Update the sector and position of real mesh.
             if (sector)
             {
-                instance->pcmesh->GetMovable ()->SetSector (sector);
+                instance->pcmesh->GetMovable()->SetSector (sector);
                 instance->pcmesh->GetMovable()->SetPosition(0.0f);
+                instance->pcmesh->GetMovable()->UpdateMove();
             }
 
             // Set instancing transform.
