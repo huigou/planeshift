@@ -189,6 +189,8 @@ public:
 
     /// The guild id value if player is member of guild.
     int GetGuildID();
+    /// the alliance id value if the player is member of a guild in an alliance
+    int GetAllianceID();
     //    bool IsGuildSecret() { return guild_is_secret; }
 
     void SetReady(bool rdy) { ready = rdy; }
