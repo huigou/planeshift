@@ -31,6 +31,7 @@
 			<subscribe data="CHAT_TELL" />
 			<subscribe data="CHAT_GROUP" />
 			<subscribe data="CHAT_GUILD" />
+            <subscribe data="CHAT_ALLIANCE" />
 			<subscribe data="CHAT_AUCTION" />
 			<subscribe data="CHAT_SHOUT" />
 			<subscribe data="CHAT_TELLSELF" />

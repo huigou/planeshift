@@ -283,7 +283,7 @@ public:
     virtual ~ResponseOperation() {};
     virtual bool Load(iDocumentNode *node) = 0;
     virtual csString GetResponseScript() = 0;
-    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay) = 0;
+    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber) = 0;
     const char *GetName() { return name; }
 };
 
@@ -330,7 +330,7 @@ class NpcResponse
      * @{ */
     csString him,her,it,them;    /** @} */
     csString triggerText;        ///< This is the text that triggered the response.
-	csString voiceAudioPath;	 ///< Optional vfs path to audio file to stream on demand to the client
+	csString voiceAudioPath[MAX_RESP];	 ///< Optional vfs path to audio file to stream on demand to the client
     int type;                    ///< record the type of response
     psQuest * quest;             ///< Quest that this respons is part of
     int active_quest;            ///< which one should be run.  this is actually set by check quest avail op
@@ -353,10 +353,12 @@ class NpcResponse
     void SetActiveQuest(int max);
     int  GetActiveQuest() { return active_quest; }
 
-    const char *GetResponse();
+    const char *GetResponse(int &number);
+    /// Used for when a response number is unneeded (debug printf around in psnpcdialog)
+    const char *GetResponse() { int number = 0; return GetResponse(number); }
 
 	/// Returns the VFS path to the audio file which represents this response on the server, or NULL if one was not specified.
-	const char *GetVoiceFile() { return voiceAudioPath; }
+	const char *GetVoiceFile(int &number) { return voiceAudioPath[number]; }
 
     /// Check for SayResponseOp with public flag set, which tells chat whether it is public or private.
     bool HasPublicResponse();
@@ -413,7 +415,7 @@ public:
     virtual ~SayResponseOp() { if (sayWhat) delete sayWhat; }
     virtual bool Load(iDocumentNode *node);
     virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay);
+    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
 };
 
 /**
@@ -431,7 +433,7 @@ public:
     virtual ~ActionResponseOp() { if (actWhat) delete actWhat; }
     virtual bool Load(iDocumentNode *node);
     virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay);
+    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
 };
 
 /**
@@ -449,7 +451,7 @@ public:
     virtual ~NPCCmdResponseOp() {};
     virtual bool Load(iDocumentNode *node);
     virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay);
+    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
 };
 
 class psQuest; 
@@ -470,7 +472,7 @@ public:
     virtual ~VerifyQuestCompletedResponseOp() {};
     virtual bool Load(iDocumentNode *node);
     virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay);
+    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
 };
 
 /**
@@ -490,7 +492,7 @@ public:
     virtual ~VerifyQuestAssignedResponseOp() {};
     virtual bool Load(iDocumentNode *node);
     virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay);
+    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
 };
 
 /*
@@ -503,7 +505,7 @@ public:
     virtual ~FireEventResponseOp() {};
     virtual bool Load(iDocumentNode *node);
     virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay);    
+    virtual bool Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);    
 };
 */
 
@@ -524,7 +526,7 @@ public:
     virtual ~VerifyQuestNotAssignedResponseOp() {};
     virtual bool Load(iDocumentNode *node);
     virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay);
+    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
 };
 
 /**
@@ -543,7 +545,7 @@ public:
     virtual ~AssignQuestResponseOp() {};
     virtual bool Load(iDocumentNode *node);
     virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay);
+    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
     const char *GetTimeoutMsg() { return timeout_msg; }
     psQuest *GetQuest(int n) { return quest[n]; }
     int      GetMaxQuests() { return num_quests; }
@@ -565,7 +567,7 @@ public:
     virtual ~AssignQuestSelectOp() {};
     virtual bool Load(iDocumentNode *node) { return true; }
     virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay);
+    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
 };
 
 
@@ -585,7 +587,7 @@ public:
     virtual ~CheckQuestTimeoutOp() {};
     virtual bool Load(iDocumentNode *node) { return true; }
     virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay);
+    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
 };
 
 /**
@@ -603,7 +605,7 @@ public:
     virtual ~CompleteQuestResponseOp() {};
     virtual bool Load(iDocumentNode *node);
     virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay);
+    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
 };
 
 class psItemStats;
@@ -623,7 +625,7 @@ public:
     virtual ~GiveItemResponseOp() {};
     virtual bool Load(iDocumentNode *node);
     virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay);
+    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
 };
 
 
@@ -641,7 +643,7 @@ public:
     virtual ~FactionResponseOp() {};
     virtual bool Load(iDocumentNode *node);
     virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay);
+    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
 };
 
 /**
@@ -662,7 +664,7 @@ public:
     virtual ~RunScriptResponseOp();
     virtual bool Load(iDocumentNode *node);
     virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay);
+    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
 };
 
 /**
@@ -680,7 +682,7 @@ public:
     virtual ~TrainResponseOp() {};
     virtual bool Load(iDocumentNode *node);
     virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay);
+    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
 };
 
 /**
@@ -696,7 +698,7 @@ public:
     virtual ~GuildAwardResponseOp() {};
     virtual bool Load(iDocumentNode *node);
     virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay);
+    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
 };
 
 
@@ -713,7 +715,7 @@ public:
     virtual ~OfferRewardResponseOp() {};
     virtual bool Load(iDocumentNode *node);
     virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay);
+    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
 };
 
 /**
@@ -730,7 +732,7 @@ public:
     virtual ~MoneyResponseOp() {};
     virtual bool Load(iDocumentNode *node);
     virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay);
+    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
 };
 
 /**
@@ -745,7 +747,7 @@ public:
     virtual ~IntroduceResponseOp() {};
     virtual bool Load(iDocumentNode *node);
     virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay);
+    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
 };
 
 /**
@@ -760,7 +762,7 @@ public:
     virtual ~DoAdminCommandResponseOp() {};
     virtual bool Load(iDocumentNode *node);
     virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay);
+    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
 };
 
 #endif

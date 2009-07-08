@@ -69,6 +69,9 @@ pawsConfigChat::pawsConfigChat()
     guildR = NULL;
     guildG = NULL;
     guildB = NULL;
+    allianceR = NULL;
+    allianceG = NULL;
+    allianceB = NULL;
     yourR = NULL;
     yourG = NULL;
     yourB = NULL;
@@ -89,6 +92,7 @@ pawsConfigChat::pawsConfigChat()
     echoScreenInSystem = NULL;
     mainBrackets = NULL;
     yourColorMix = NULL;
+    joinDefaultChannel = NULL;
 }
 
 bool pawsConfigChat::Initialize()
@@ -136,6 +140,9 @@ bool pawsConfigChat::PostSetup()
     guildR = (pawsEditTextBox*)FindWidget("guildtextr");
     guildG = (pawsEditTextBox*)FindWidget("guildtextg");
     guildB = (pawsEditTextBox*)FindWidget("guildtextb");
+    allianceR = (pawsEditTextBox*)FindWidget("alliancetextr");
+    allianceG = (pawsEditTextBox*)FindWidget("alliancetextg");
+    allianceB = (pawsEditTextBox*)FindWidget("alliancetextb");
     yourR = (pawsEditTextBox*)FindWidget("yourtextr");
     yourG = (pawsEditTextBox*)FindWidget("yourtextg");
     yourB = (pawsEditTextBox*)FindWidget("yourtextb");
@@ -157,6 +164,7 @@ bool pawsConfigChat::PostSetup()
     echoScreenInSystem = (pawsCheckBox*)FindWidget("echoscreeninsystem");
     mainBrackets = (pawsCheckBox*)FindWidget("mainbrackets");
     yourColorMix = (pawsCheckBox*)FindWidget("yourcolormix");
+    joinDefaultChannel = (pawsCheckBox*)FindWidget("joindefaultchannel");
                 
     return true;
 }
@@ -172,6 +180,7 @@ bool pawsConfigChat::LoadConfig()
     echoScreenInSystem->SetState(settings.echoScreenInSystem);
     mainBrackets->SetState(settings.mainBrackets);
     yourColorMix->SetState(settings.yourColorMix);
+    joinDefaultChannel->SetState(settings.joindefaultchannel);
 
     //gets the tabstyle from the chat settings
     switch (settings.selectTabStyle)
@@ -197,6 +206,7 @@ bool pawsConfigChat::LoadConfig()
     SET_WIDGET_VALUE(tell);
     SET_WIDGET_VALUE(shout);
     SET_WIDGET_VALUE(guild);
+    SET_WIDGET_VALUE(alliance);
     SET_WIDGET_VALUE(your);
     SET_WIDGET_VALUE(group);
     SET_WIDGET_VALUE(auction);
@@ -229,6 +239,7 @@ bool pawsConfigChat::SaveConfig()
     SET_CHAT_VALUE(group);
     SET_CHAT_VALUE(your);
     SET_CHAT_VALUE(guild);
+    SET_CHAT_VALUE(alliance);
     SET_CHAT_VALUE(shout);
     SET_CHAT_VALUE(npc);
     SET_CHAT_VALUE(tell);
@@ -246,6 +257,7 @@ bool pawsConfigChat::SaveConfig()
     settings.echoScreenInSystem = echoScreenInSystem->GetState();
     settings.mainBrackets = mainBrackets->GetState();
     settings.yourColorMix = yourColorMix->GetState();
+    settings.joindefaultchannel = joinDefaultChannel->GetState();
 
     chatWindow->SetSettings(settings);
 

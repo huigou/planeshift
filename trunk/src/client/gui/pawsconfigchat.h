@@ -77,6 +77,9 @@ protected:
     pawsEditTextBox* guildR;
     pawsEditTextBox* guildG;
     pawsEditTextBox* guildB;
+    pawsEditTextBox* allianceR;
+    pawsEditTextBox* allianceG;
+    pawsEditTextBox* allianceB;
     pawsEditTextBox* yourR;
     pawsEditTextBox* yourG;
     pawsEditTextBox* yourB;
@@ -97,7 +100,7 @@ protected:
     pawsCheckBox* echoScreenInSystem;
     pawsCheckBox* mainBrackets;
     pawsCheckBox* yourColorMix;
-
+    pawsCheckBox* joinDefaultChannel;
 };
 
 

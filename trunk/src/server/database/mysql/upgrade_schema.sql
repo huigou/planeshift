@@ -1240,6 +1240,14 @@ ALTER TABLE `race_info` ADD COLUMN `belt` VARCHAR(20)  COMMENT 'Stores a belt gr
 ALTER TABLE `race_info` ADD COLUMN `cloak` VARCHAR(20)  COMMENT 'Stores a cloak group allowing to use the same cloak mesh for more than one race, just like for the helm column' default '' AFTER `belt`;
 UPDATE `server_options` SET `option_value`='1224' WHERE `option_name`='db_version';
 
+#1224 - Stefano Angeleri - Added separate audio paths per response
+ALTER TABLE `npc_responses` CHANGE COLUMN `audio_path` `audio_path1` VARCHAR(100) DEFAULT NULL COMMENT 'This holds an optional VFS path to a speech file to be sent to the client and played on demand for response1.',
+ ADD COLUMN `audio_path2` VARCHAR(100)  DEFAULT NULL COMMENT 'This holds an optional VFS path to a speech file to be sent to the client and played on demand for response2.' AFTER `audio_path1`,
+ ADD COLUMN `audio_path3` VARCHAR(100)  DEFAULT NULL COMMENT 'This holds an optional VFS path to a speech file to be sent to the client and played on demand for response3.' AFTER `audio_path2`,
+ ADD COLUMN `audio_path4` VARCHAR(100)  DEFAULT NULL COMMENT 'This holds an optional VFS path to a speech file to be sent to the client and played on demand for response4.' AFTER `audio_path3`,
+ ADD COLUMN `audio_path5` VARCHAR(100)  DEFAULT NULL COMMENT 'This holds an optional VFS path to a speech file to be sent to the client and played on demand for response5.' AFTER `audio_path4`;
+
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to

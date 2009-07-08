@@ -145,6 +145,8 @@ bool psChatBubbles::Load(const char * filename, bool saveAgain)
             chat.chatType = CHAT_GROUP;
         else if (type == "guild")
             chat.chatType = CHAT_GUILD;
+        else if (type == "alliance")
+            chat.chatType = CHAT_ALLIANCE;
         else if (type == "auction")
             chat.chatType = CHAT_AUCTION;
         else if (type == "shout")

@@ -516,6 +516,7 @@ const char *psChatMessage::GetTypeText()
         case CHAT_SHOUT:      return "Shout";
         case CHAT_GM:         return "GM";
         case CHAT_GUILD:      return "GuildChat";
+        case CHAT_ALLIANCE:   return "AllianceChat";
         case CHAT_AUCTION:    return "Auction";
         case CHAT_PET_ACTION: return "Action";
         case CHAT_REPORT:     return "Report";

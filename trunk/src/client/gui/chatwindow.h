@@ -78,6 +78,7 @@ struct ChatSettings
     int npcColor;
     int tellColor;
     int guildColor;
+    int allianceColor;
     int shoutColor;
     int channelColor;
     int gmColor;
