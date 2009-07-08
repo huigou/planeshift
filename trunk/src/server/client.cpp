@@ -290,6 +290,19 @@ int Client::GetGuildID()
     return guild->id;
 }
 
+int Client::GetAllianceID()
+{
+    psCharacter * mychar = GetCharacterData();
+    if (mychar == NULL)
+        return 0;
+
+    psGuildInfo * guild = mychar->GetGuild();
+    if (guild == NULL)
+        return 0;
+    
+    return guild->GetAllianceID();
+}
+
 unsigned int Client::GetAccountTotalOnlineTime()
 {
     unsigned int totalTimeConnected = GetCharacterData()->GetOnlineTimeThisSession();
