@@ -2,7 +2,7 @@
 
 TOPDIR=$PWD
 OUTPUTDIR=$TOPDIR/updatefiles
-REPO=$TOPDIR/repo
+REPO=$TOPDIR/../repo
 VERSION=$1
 OLDPATH=$TOPDIR/old
 NEWPATH=$TOPDIR/new
@@ -10,13 +10,40 @@ XD3PATH=$TOPDIR/xdelta3
 MIRRORS=$TOPDIR/mirrors
 UPDATERNAME=psupdater
 
+function generatenew {
+local new=0
+
+for i in $(ls .);
+do
+  if [ -d $i ]
+  then
+    cd $i
+    generatenew $1$i"/"
+    new=$(($new + $?))
+    cd ..
+  else
+    if [ ! -e $OLDPATH/$1$i ]
+    then
+      EXEC=false
+      if [ -x $i ]
+      then
+        EXEC=true
+      fi
+      echo "    <newfile name=\""$1$i"\" exec=\""$EXEC"\" />" >> $OUTPUTDIR/newfiles.xml
+      if [ ! -d $OUTPUTDIR/$1 ]
+      then
+        mkdir -p $OUTPUTDIR/$1
+      fi
+      cp $i $OUTPUTDIR/$1$i
+      new=1
+    fi
+  fi
+done
+
+return $new
+}
+
 function generatedeleted {
-local madedir=0
-if [ ! -d $NEWPATH/$1 ]
- then
-    mkdir $NEWPATH/$1
-    madedir=1
-fi
 for i in $(ls .);
 do
   if [ -d $i ]
@@ -24,117 +51,55 @@ do
     cd $i
     generatedeleted $1$i"/"
     cd ..
-    continue
-  fi
-  removed=1
-  for j in $(ls $NEWPATH/$1);
-  do
-    if [ "$i" == "$j" ]
-    then
-      removed=0
-    fi
-  done
-  if [ $removed -eq 1 ]
-  then
+  else
     echo "    <deleted name=\""$1$i"\" />" >> $OUTPUTDIR/deletedfiles.xml
   fi
 done
-if [ $madedir -eq 1 ]
-then
-  rmdir $NEWPATH/$1
-fi
-}
-
-function generatenew {
-if [ ! -d $OUTPUTDIR/$1 ]
-then
-  mkdir $OUTPUTDIR/$1
-fi
-local madeoldpath=0
-if [ ! -d $OLDPATH/$1 ]
-then
-  mkdir $OLDPATH/$1
-  madeoldpath=1
-fi
-for i in $(ls .);
-do
-  if [ -d $i ]
-  then
-    cd $i
-    generatenew $1$i"/"
-    cd ..
-    continue
-  fi
-  new=1
-  for j in $(ls $OLDPATH/$1);
-  do
-    if [ $i == $j ]
-    then
-      new=0
-    fi
-  done
-  if [ $new == 1 ]
-  then
-    EXEC=false
-    if [ -x $NEWPATH/$1$i ]
-    then
-      EXEC=true
-    fi
-    echo "    <newfile name=\""$1$i"\" exec=\""$EXEC"\" />" >> $OUTPUTDIR/newfiles.xml
-    cp $NEWPATH/$1$i $OUTPUTDIR/$1$i
-  fi
-done
-if [ $madeoldpath -eq 1 ]
-then
-  rmdir $OLDPATH/$1
-fi
 }
 
 function generatechanged {
-local madedir=0
-if [ ! -d $NEWPATH/$1 ]
-then
-  mkdir $NEWPATH/$1
-  madedir=1
-fi
+local changed=0
+
 for i in $(ls .);
 do
   if [ -d $i ]
   then
     cd $i
-    generatechanged $1$i"/"
-    cd ..
-    continue
-  fi
-  for j in $(ls $NEWPATH/$1);
-  do
-    if [ $i != $j ]
+    if [ -d $NEWPATH/$1$i ]
     then
-      continue
-    fi
-    md5sum1=$(md5sum $i)
-    md5sum2=$(md5sum $NEWPATH/$1$j)
-    if [ ${md5sum1% $i} != ${md5sum2% $NEWPATH/$1$j} ]
-    then
-      path=$1$i
-      filemd5sum=${md5sum2% $NEWPATH/$1$j}
-      read filemd5sum <<< "$filemd5sum"
-      echo "    <changedfile filepath=\""$1$i"\" diff=\""$path".vcdiff\" md5sum=\""$filemd5sum"\" />" >> $OUTPUTDIR/changedfiles.xml
-      if [ ! -d $OUTPUTDIR"/"$1 ]
-      then
-        mkdir $OUTPUTDIR"/"$1
-      fi
-      $XD3PATH -f -e -9 -s $i $NEWPATH/$1$j $OUTPUTDIR/$path".vcdiff"
-      break;
+      generatechanged $1$i"/"
+      changed=$(($changed + $?))
     else
-      break;
+      generatedeleted $1$i"/"
+      changed=1
     fi
-  done
+    cd ..
+  else
+    if [ -e $NEWPATH/$1$i ]
+    then
+      md5sum1=$(md5sum $i)
+      md5sum2=$(md5sum $NEWPATH/$1$i)
+      if [ ${md5sum1% $i} != ${md5sum2% $NEWPATH/$1$i} ]
+      then
+        path=$1$i
+        filemd5sum=${md5sum2% $NEWPATH/$1$i}
+        read filemd5sum <<< "$filemd5sum"
+        echo "    <changedfile filepath=\""$1$i"\" diff=\""$path".vcdiff\" md5sum=\""$filemd5sum"\" />" >> $OUTPUTDIR/changedfiles.xml
+        if [ ! -d $OUTPUTDIR"/"$1 ]
+        then
+          mkdir -p $OUTPUTDIR"/"$1
+        fi
+        $XD3PATH -f -e -9 -s $i $NEWPATH/$1$i $OUTPUTDIR/$path".vcdiff"
+        changed=1
+      fi
+    else
+      echo "    <deleted name=\""$1$i"\" />" >> $OUTPUTDIR/deletedfiles.xml
+      changed=1
+    fi
+  fi  
 done
-if [ $madedir -eq 1 ]
-then
-  rmdir $NEWPATH/$1
-fi
+
+return $changed
 }
 
 function generateupdaterinfo {
@@ -150,7 +115,7 @@ then
 fi
 echo "    </mirrors>" >> $REPO/updaterinfo.xml
 
-UPDATER_VERSION=$(wget -q -O - 'http://planeshift.svn.sourceforge.net/viewvc/*checkout*/planeshift/trunk/src/pslaunch/updaterengine.h' | grep '^#define UPDATER_VERSION' | sed 's/^#define UPDATER_VERSION \([0-9]*\).*$/\1/g')
+UPDATER_VERSION=$(wget -q -O - 'http://planeshift.svn.sourceforge.net/viewvc/*checkout*/planeshift/stable/src/pslaunch/updaterengine.h' | grep '^#define UPDATER_VERSION' | sed 's/^#define UPDATER_VERSION \([.0-9]*\).*$/\1/g')
 md5win32updater=$(md5sum $REPO"/"$UPDATERNAME"win32.zip")
 md5win32updater=${md5win32updater% $REPO"/"$UPDATERNAME"win32.zip"}
 read md5win32updater<<< "$md5win32updater"
@@ -163,7 +128,10 @@ read md5lin64updater<<< "$md5lin64updater"
 md5osxupdater=$(md5sum $REPO"/"$UPDATERNAME"macosx.zip")
 md5osxupdater=${md5osxupdater% $REPO"/"$UPDATERNAME"macosx.zip"}
 read md5osxupdater<<< "$md5osxupdater"
-echo "    <updater version=\""$UPDATER_VERSION"\" md5win32=\""$md5win32updater"\" md5linux32=\""$md5lin32updater"\" md5linux64=\""$md5lin64updater"\" md5macosx=\""$md5osxupdater"\" />" >> $REPO/updaterinfo.xml
+md5osx1039updater=$(md5sum $REPO"/"$UPDATERNAME"macosx1039.zip")
+md5osx1039updater=${md5osx1039updater% $REPO"/"$UPDATERNAME"macosx1039.zip"}
+read md5osx1039updater<<< "$md5osx1039updater"
+echo "    <updater version=\""$UPDATER_VERSION"\" md5win32=\""$md5win32updater"\" md5linux32=\""$md5lin32updater"\" md5linux64=\""$md5lin64updater"\" md5macosx=\""$md5osxupdater"\" md5macosx1039=\""$md5osx1039updater"\" />" >> $REPO/updaterinfo.xml
 
 echo "    <client>" >> $REPO/updaterinfo.xml
 if [ -d $REPO"_backup" ]
@@ -184,19 +152,48 @@ then
     fi
   done
 fi
-md5win32=$(md5sum $REPO"/win32-"$VERSION".zip")
-md5win32=${md5win32% $REPO"/win32-"$VERSION".zip"}
-read md5win32<<< "$md5win32"
-md5lin32=$(md5sum $REPO"/linux32-"$VERSION".zip")
-md5lin32=${md5lin32% $REPO"/linux32-"$VERSION".zip"}
-read md5lin32<<< "$md5lin32"
-md5lin64=$(md5sum $REPO"/linux64-"$VERSION".zip")
-md5lin64=${md5lin64% $REPO"/linux64-"$VERSION".zip"}
-read md5lin64<<< "$md5lin64"
-md5osx=$(md5sum $REPO"/macosx-"$VERSION".zip")
-md5osx=${md5osx% $REPO"/macosx-"$VERSION".zip"}
-read md5osx<<< "$md5osx"
-echo "        <version name=\""$VERSION"\" md5win32=\""$md5win32"\" md5linux32=\""$md5lin32"\" md5linux64=\""$md5lin64"\" md5macosx=\""$md5osx"\" />" >> $REPO/updaterinfo.xml
+
+if [ ! $1 -eq 0 ]
+then
+  md5lin32=$(md5sum $REPO"/linux32-"$VERSION".zip")
+  md5lin32=${md5lin32% $REPO"/linux32-"$VERSION".zip"}
+  read md5lin32<<< "$md5lin32"
+fi
+if [ ! $2 -eq 0 ]
+then
+  md5lin64=$(md5sum $REPO"/linux64-"$VERSION".zip")
+  md5lin64=${md5lin64% $REPO"/linux64-"$VERSION".zip"}
+  read md5lin64<<< "$md5lin64"
+fi
+if [ ! $3 -eq 0 ]
+then
+  md5osx=$(md5sum $REPO"/macosx-"$VERSION".zip")
+  md5osx=${md5osx% $REPO"/macosx-"$VERSION".zip"}
+  read md5osx<<< "$md5osx"
+fi
+if [ ! $4 -eq 0 ]
+then
+  md5osx1039=$(md5sum $REPO"/macosx1039-"$VERSION".zip")
+  md5osx1039=${md5osx1039% $REPO"/macosx1039-"$VERSION".zip"}
+  read md5osx1039<<< "$md5osx1039"
+fi
+if [ ! $5 -eq 0 ]
+then
+  md5win32=$(md5sum $REPO"/win32-"$VERSION".zip")
+  md5win32=${md5win32% $REPO"/win32-"$VERSION".zip"}
+  read md5win32<<< "$md5win32"
+fi
+if [ ! $6 -eq 0 ]
+then
+  md5generic=$(md5sum $REPO"/generic-"$VERSION".zip")
+  md5generic=${md5generic% $REPO"/generic-"$VERSION".zip"}
+  read md5generic<<< "$md5generic"
+fi
+
+if [ ! $(($1 + $2 + $3 + $4 + $5 + $6)) -eq 0 ]
+then
+  echo "        <version name=\""$VERSION"\" md5win32=\""$md5win32"\" md5linux32=\""$md5lin32"\" md5linux64=\""$md5lin64"\" md5macosx=\""$md5osx"\" md5macosx1039=\""$md5osx1039"\" md5generic=\""$md5generic"\" />" >> $REPO/updaterinfo.xml
+fi
 echo "    </client>" >> $REPO/updaterinfo.xml
 echo "</config>" >> $REPO/updaterinfo.xml
 }
@@ -208,26 +205,25 @@ then
 fi
 mkdir $OUTPUTDIR
 
-echo "Checking for deleted files."
-echo "<deletedfiles>" > $OUTPUTDIR/deletedfiles.xml
-cd $OLDPATH
-generatedeleted
-cd $TOPDIR
-echo "</deletedfiles>" >> $OUTPUTDIR/deletedfiles.xml
-
-echo "Checking for new files."
+echo "  Checking for new files."
 echo "<newfiles>" > $OUTPUTDIR/newfiles.xml
 cd $NEWPATH
 generatenew
+new=$?
 cd $TOPDIR
 echo "</newfiles>" >> $OUTPUTDIR/newfiles.xml
 
-echo "Checking for changed files."
+echo "  Checking for changed files."
+echo "<deletedfiles>" > $OUTPUTDIR/deletedfiles.xml
 echo "<changedfiles>" > $OUTPUTDIR/changedfiles.xml
 cd $OLDPATH
 generatechanged
+changed=$?
 cd $TOPDIR
 echo "</changedfiles>" >> $OUTPUTDIR/changedfiles.xml
+echo "</deletedfiles>" >> $OUTPUTDIR/deletedfiles.xml
+
+return $(($new + $changed))
 }
 
 # Check for version
@@ -238,11 +234,24 @@ then
   exit
 fi
 
+if [ -d $REPO ]
+then
+  cd $REPO
+  if [ -f "win32-"$VERSION".zip" ]
+  then
+    echo "That version already exists! Use another one!"
+    exit
+  fi
+cd $ROOT
+fi
+
 # Create repository.
 if [ ! -d $REPO ]
 then
+  echo "Creating repository."
   mkdir $REPO
 else
+  echo "Creating a temporary backup of the repository."
   # Create backup.
   if [ -d $REPO"_backup" ]
   then
@@ -256,53 +265,62 @@ else
   cd $TOPDIR
 fi
 
+echo "Updating base repository files."
 # Move new 'backup' download files to the repo.
 cp -R $NEWPATH $REPO/backup
 
 # Move platform specific files out of 'new' and 'old'
 mkdir platform
 mkdir platform/new
+mkdir platform/new/cfg
+mkdir platform/new/generic
 mkdir platform/old
+mkdir platform/old/cfg
+mkdir platform/old/generic
+mkdir platform/launcher
+mkdir platform/launcher/data
+mkdir platform/launcher/data/gui
+mkdir platform/launcher/art
 mv $NEWPATH/win32 platform/new/win32
 mv $NEWPATH/linux32 platform/new/linux32
-mv $NEWPATH/osx platform/new/osx
+mv $NEWPATH/macosx platform/new/macosx
 mv $NEWPATH/linux64 platform/new/linux64
+mv $NEWPATH/macosx1039 platform/new/macosx1039
+mv $NEWPATH/*.cfg platform/new/cfg
+mv $NEWPATH/* platform/new/generic
 mv $OLDPATH/win32 platform/old/win32
 mv $OLDPATH/linux32 platform/old/linux32
-mv $OLDPATH/osx platform/old/osx
+mv $OLDPATH/macosx platform/old/macosx
 mv $OLDPATH/linux64 platform/old/linux64
+mv $OLDPATH/macosx1039 platform/old/macosx1039
+mv $OLDPATH/*.cfg platform/old/cfg
+mv $OLDPATH/* platform/old/generic
+mv platform/new/generic/data/gui/pslaunch.xml platform/launcher/
+mv platform/new/generic/art/pslaunch.zip platform/launcher/
+if [ -e platform/old/generic/data/gui/pslaunch.xml ]
+then
+  rm platform/old/generic/data/gui/pslaunch.xml
+fi
+if [ -e platform/old/generic/art/pslaunch.zip ]
+then
+  rm platform/old/generic/art/pslaunch.zip
+fi
 find $TOPDIR/platform/ -name .svn -print | xargs rm -Rf
 
-echo "Creating 32-bit Linux update."
+echo "Creating 32-bit Linux update:"
 cd platform/new/linux32
-zip -9 $REPO/psupdaterlinux32.zip $UPDATERNAME".bin" $UPDATERNAME
+mkdir data
+mkdir data/gui
+mkdir art
+cp ../../launcher/pslaunch.zip art/
+cp ../../launcher/pslaunch.xml data/gui/
+zip -r -9 -q $REPO/$UPDATERNAME"linux32.zip" $UPDATERNAME".bin" $UPDATERNAME data art
+rm -R art data
 cd $TOPDIR
-cp -R platform/old/linux32/* $OLDPATH
-cp -R platform/new/linux32/* $NEWPATH
-if [ -e $OLDPATH/$UPDATERNAME ]
-then
-rm $OLDPATH/$UPDATERNAME
-fi
-if [ -e $OLDPATH/$UPDATERNAME".bin" ]
-then
-  rm $OLDPATH/$UPDATERNAME".bin"
-fi
-rm $NEWPATH/$UPDATERNAME $NEWPATH/$UPDATERNAME".bin"
-createupdate
-cd $OUTPUTDIR
-zip -r -9 $REPO/linux32-"$VERSION".zip *
-cd $OLDPATH
-rm -Rf $(ls $TOPDIR/platform/old/linux32/)
-cd $NEWPATH
-rm -Rf $(ls $TOPDIR/platform/new/linux32/)
-cd $TOPDIR
-
-echo "Creating 64-bit Linux update."
-cd platform/new/linux64
-zip -9 $REPO/psupdaterlinux64.zip $UPDATERNAME".bin" $UPDATERNAME
-cd $TOPDIR
-cp -R platform/old/linux64/* $OLDPATH
-cp -R platform/new/linux64/* $NEWPATH
+mv platform/old/cfg/* $OLDPATH
+mv platform/new/cfg/* $NEWPATH
+mv platform/old/linux32/* $OLDPATH
+mv platform/new/linux32/* $NEWPATH
 if [ -e $OLDPATH/$UPDATERNAME ]
 then
   rm $OLDPATH/$UPDATERNAME
@@ -311,69 +329,243 @@ if [ -e $OLDPATH/$UPDATERNAME".bin" ]
 then
   rm $OLDPATH/$UPDATERNAME".bin"
 fi
-rm $NEWPATH/$UPDATERNAME $NEWPATH/$UPDATERNAME".bin"
+if [ -e $NEWPATH/$UPDATERNAME ]
+then
+  rm $NEWPATH/$UPDATERNAME
+fi
+if [ -e $NEWPATH/$UPDATERNAME".bin" ]
+then
+  rm $NEWPATH/$UPDATERNAME".bin"
+fi
 createupdate
-cd $OUTPUTDIR
-zip -r -9 $REPO/linux64-"$VERSION".zip *
-cd $OLDPATH
-rm -Rf $(ls $TOPDIR/platform/old/linux64/)
-cd $NEWPATH
-rm -fR $(ls $TOPDIR/platform/new/linux64/)
+linux32=$?
+if [ ! $linux32 -eq 0 ]
+then
+  cd $OUTPUTDIR
+  echo "  Packaging files."
+  zip -r -9 -q $REPO/linux32-"$VERSION".zip *
+else
+  echo "  Nothing to update!"
+fi
 cd $TOPDIR
+mv $OLDPATH/*.cfg platform/old/cfg/
+mv $NEWPATH/*.cfg platform/new/cfg/
+mv $OLDPATH/* platform/old/linux32/
+mv $NEWPATH/* platform/new/linux32/
 
-echo "Creating OSX update."
-cd platform/new/osx
-zip -r -9 $REPO/psupdatermacosx.zip $UPDATERNAME".app"
+echo "Creating 64-bit Linux update:"
+cd platform/new/linux64
+mkdir data
+mkdir data/gui
+mkdir art
+cp ../../launcher/pslaunch.zip art/
+cp ../../launcher/pslaunch.xml data/gui/
+zip -r -9 -q $REPO/$UPDATERNAME"linux64.zip" $UPDATERNAME".bin" $UPDATERNAME data art
+rm -R art data
 cd $TOPDIR
-cp -R platform/old/osx/* $OLDPATH
-cp -R platform/new/osx/* $NEWPATH
+mv platform/old/cfg/* $OLDPATH
+mv platform/new/cfg/* $NEWPATH
+mv platform/old/linux64/* $OLDPATH
+mv platform/new/linux64/* $NEWPATH
+if [ -e $OLDPATH/$UPDATERNAME ]
+then
+  rm $OLDPATH/$UPDATERNAME
+fi
+if [ -e $OLDPATH/$UPDATERNAME".bin" ]
+then
+  rm $OLDPATH/$UPDATERNAME".bin"
+fi
+if [ -e $NEWPATH/$UPDATERNAME ]
+then
+  rm $NEWPATH/$UPDATERNAME
+fi
+if [ -e $NEWPATH/$UPDATERNAME".bin" ]
+then
+  rm $NEWPATH/$UPDATERNAME".bin"
+fi
+createupdate
+linux64=$?
+if [ ! $linux64 -eq 0 ]
+then
+  cd $OUTPUTDIR
+  echo "  Packaging files."
+  zip -r -9 -q $REPO/linux64-"$VERSION".zip *
+else
+  echo "  Nothing to update!"
+fi
+cd $TOPDIR
+mv $OLDPATH/*.cfg platform/old/cfg/
+mv $NEWPATH/*.cfg platform/new/cfg/
+mv $OLDPATH/* platform/old/linux64/
+mv $NEWPATH/* platform/new/linux64/
+
+echo "Creating OSX update:"
+cd platform/new/macosx
+mkdir data
+mkdir data/gui
+mkdir art
+cp ../../launcher/pslaunch.zip art/
+cp ../../launcher/pslaunch.xml data/gui/
+zip -r -9 -q $REPO/$UPDATERNAME"macosx.zip" $UPDATERNAME".app" data art
+rm -R art data
+cd $TOPDIR
+mv platform/old/cfg/* $OLDPATH
+mv platform/new/cfg/* $NEWPATH
+mv platform/old/macosx/* $OLDPATH
+mv platform/new/macosx/* $NEWPATH
 if [ -d $OLDPATH/$UPDATERNAME".app" ]
 then
   rm -Rf $OLDPATH/$UPDATERNAME".app"
 fi
-rm -Rf $NEWPATH/$UPDATERNAME".app"
+if [ -d $NEWPATH/$UPDATERNAME".app" ]
+then
+  rm -Rf $NEWPATH/$UPDATERNAME".app"
+fi
 createupdate
-cd $OUTPUTDIR
-zip -r -9 $REPO/macosx-"$VERSION".zip *
-cd $OLDPATH
-rm -Rf $(ls $TOPDIR/platform/old/osx/)
-cd $NEWPATH
-rm -Rf $(ls $TOPDIR/platform/new/osx/)
+macosx=$?
+if [ ! $macosx -eq 0 ]
+then
+  cd $OUTPUTDIR
+  echo "  Packaging files."
+  zip -r -9 -q $REPO/macosx-"$VERSION".zip *
+else
+  echo "  Nothing to update!"
+fi
 cd $TOPDIR
+mv $OLDPATH/*.cfg platform/old/cfg/
+mv $NEWPATH/*.cfg platform/new/cfg/
+mv $OLDPATH/* platform/old/macosx/
+mv $NEWPATH/* platform/new/macosx/
 
-echo "Creating Windows update."
-cd platform/new/win32
-zip -9 $REPO/psupdaterwin32.zip $UPDATERNAME".exe"
+echo "Creating OSX 10.3.9 update:"
+cd platform/new/macosx1039
+mkdir data
+mkdir data/gui
+mkdir art
+cp ../../launcher/pslaunch.zip art/
+cp ../../launcher/pslaunch.xml data/gui/
+zip -r -9 -q $REPO/$UPDATERNAME"macosx1039.zip" $UPDATERNAME".app" data art
+rm -R art data
 cd $TOPDIR
-cp -R platform/old/win32/* $OLDPATH
-cp -R platform/new/win32/* $NEWPATH
+mv platform/old/cfg/* $OLDPATH
+mv platform/new/cfg/* $NEWPATH
+mv platform/old/macosx1039/* $OLDPATH
+mv platform/new/macosx1039/* $NEWPATH
+if [ -d $OLDPATH/$UPDATERNAME".app" ]
+then
+  rm -Rf $OLDPATH/$UPDATERNAME".app"
+fi
+if [ -d $NEWPATH/$UPDATERNAME".app" ]
+then
+  rm -Rf $NEWPATH/$UPDATERNAME".app"
+fi
+createupdate
+macosx1039=$?
+if [ ! $macosx1039 -eq 0 ]
+then
+  cd $OUTPUTDIR
+  echo "  Packaging files."
+  zip -r -9 -q $REPO/macosx1039-"$VERSION".zip *
+else
+  echo "  Nothing to update!"
+fi
+cd $TOPDIR
+mv $OLDPATH/*.cfg platform/old/cfg/
+mv $NEWPATH/*.cfg platform/new/cfg/
+mv $OLDPATH/* platform/old/macosx1039/
+mv $NEWPATH/* platform/new/macosx1039/
+
+echo "Creating Windows update:"
+cd platform/new/win32
+mkdir data
+mkdir data/gui
+mkdir art
+cp ../../launcher/pslaunch.zip art/
+cp ../../launcher/pslaunch.xml data/gui/
+zip -r -9 -q $REPO/$UPDATERNAME"win32.zip" $UPDATERNAME".exe" art data
+rm -R art data
+cd $TOPDIR
+mv platform/old/cfg/* $OLDPATH
+mv platform/new/cfg/* $NEWPATH
+mv platform/old/win32/* $OLDPATH
+mv platform/new/win32/* $NEWPATH
 if [ -e $OLDPATH/$UPDATERNAME".exe" ]
 then
   rm $OLDPATH/$UPDATERNAME".exe"
 fi
-rm $NEWPATH/$UPDATERNAME".exe"
+if [ -e $NEWPATH/$UPDATERNAME".exe" ]
+then
+  rm $NEWPATH/$UPDATERNAME".exe"
+fi
 createupdate
-cd $OUTPUTDIR
-zip -r -9 $REPO/win32-"$VERSION".zip *
-cd $OLDPATH
-rm -Rf $(ls $TOPDIR/platform/old/win32/ | grep -v $UPDATERNAME".exe")
-cd $NEWPATH
-rm -Rf $(ls $TOPDIR/platform/new/win32/ | grep -v $UPDATERNAME".exe")
+win32=$?
+if [ ! $win32 -eq 0 ]
+then
+  cd $OUTPUTDIR
+  echo "  Packaging files."
+  zip -r -9 -q $REPO/win32-"$VERSION".zip *
+else
+  echo "  Nothing to update!"
+fi
 cd $TOPDIR
+mv $OLDPATH/*.cfg platform/old/cfg/
+mv $NEWPATH/*.cfg platform/new/cfg/
+mv $OLDPATH/* platform/old/win32/
+mv $NEWPATH/* platform/new/win32/
+
+echo "Creating Generic update:"
+mv platform/old/generic/* $OLDPATH
+mv platform/new/generic/* $NEWPATH
+createupdate
+generic=$?
+if [ ! $generic -eq 0 ]
+then
+  cd $OUTPUTDIR
+  echo "  Packaging files."
+  zip -r -q -9 $REPO/generic-"$VERSION".zip *
+else
+  echo "  Nothing to update!"
+fi
+cd $TOPDIR
+mv $OLDPATH/* platform/old/generic/
+mv $NEWPATH/* platform/new/generic/
 
 # Restore platform files and clean up.
+echo "Cleaning Up."
 mv platform/new/win32 $NEWPATH/win32
 mv platform/new/linux32 $NEWPATH/linux32
-mv platform/new/osx $NEWPATH/osx
+mv platform/new/macosx $NEWPATH/macosx
+mv platform/new/macosx1039 $NEWPATH/macosx1039
 mv platform/new/linux64 $NEWPATH/linux64
+mv platform/new/cfg/* $NEWPATH
+mv platform/launcher/pslaunch.xml platform/new/generic/data/gui/
+mv platform/launcher/pslaunch.zip platform/new/generic/art/
+mv platform/new/generic/* $NEWPATH
 mv platform/old/win32 $OLDPATH/win32
 mv platform/old/linux32 $OLDPATH/linux32
-mv platform/old/osx $OLDPATH/osx
+mv platform/old/macosx $OLDPATH/macosx
+mv platform/old/macosx1039 $OLDPATH/macosx1039
 mv platform/old/linux64 $OLDPATH/linux64
+mv platform/old/cfg/* $OLDPATH
+mv platform/old/generic/* $OLDPATH
 rm -Rf platform
 rm -Rf updatefiles
 
 # Generate updaterinfo.xml
-generateupdaterinfo
+generateupdaterinfo $linux32 $linux64 $macosx $macosx1039 $win32 $generic
+
+# Remove backup of repo.
+if [ -d $REPO"_backup" ]
+then
+  rm -Rf $REPO"_backup"
+fi
+
+# Make integrity check file.
+echo "Making integrity check file."
+./makeintegrity
+
+# Mirror files.
+echo "Copying files to updater mirrors."
+./mirrorfiles $VERSION
 
 echo "Done!"
