@@ -163,6 +163,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
             vfsPath = vfs->GetCwd();
         }
 
+        // Begin document parsing.
         csRef<iDocumentNode> root = doc->GetRoot()->GetNode("library");
         if(!root.IsValid())
         {
@@ -174,6 +175,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
             csRef<iDocumentNode> node;
             csRef<iDocumentNodeIterator> nodeItr;
 
+            // Parse referenced libraries.
             nodeItr = root->GetNodes("library");
             while(nodeItr->HasNext())
             {
@@ -181,12 +183,14 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                 PrecacheDataTC(ret, false, node->GetContentsValue(), true);
             }
 
+            // Parse needed plugins.
             node = root->GetNode("plugins");
             if(node.IsValid())
             {
               rets.Push(tloader->LoadNode(vfs->GetCwd(), node));
             }
 
+            // Parse referenced shaders.
             node = root->GetNode("shaders");
             if(node.IsValid())
             {
@@ -198,6 +202,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                     node = node->GetNode("file");
 
                     {
+                        // Keep track of shaders that have already been parsed.
                         CS::Threading::ScopedWriteLock lock(sLock);
                         if(shaders.Contains(node->GetContentsValue()) == csArrayItemNotFound)
                         {
@@ -208,11 +213,13 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
 
                     if(loadShader)
                     {
+                        // Dispatch shader load to a thread.
                         rets.Push(tloader->LoadShader(vfs->GetCwd(), node->GetContentsValue()));
                     }
                 }
             }
 
+            // Parse all referenced textures.
             node = root->GetNode("textures");
             if(node.IsValid())
             {
@@ -228,6 +235,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                 }
             }
 
+            // Parse all referenced materials.
             node = root->GetNode("materials");
             if(node.IsValid())
             {
@@ -241,6 +249,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                         materials.Put(m->name, m);
                     }
 
+                    // Parse the texture for a material. Construct a shader variable for it.
                     if(node->GetNode("texture"))
                     {
                         node = node->GetNode("texture");
@@ -264,6 +273,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                         node = node->GetParent();
                     }
 
+                    // Parse the shaders attached to this material.
                     csRef<iDocumentNodeIterator> nodeItr2 = node->GetNodes("shader");
                     while(nodeItr2->HasNext())
                     {
@@ -272,12 +282,16 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                         node = node->GetParent();
                     }
 
+                    // Parse the shader variables attached to this material.
                     nodeItr2 = node->GetNodes("shadervar");
                     while(nodeItr2->HasNext())
                     {
                         node = nodeItr2->Next();
+
+                        // Parse the different types. Currently texture, vector2 and vector3 are supported.
                         if(csString("texture").Compare(node->GetAttributeValue("type")))
                         {
+                            // Ignore some shader variables if the functionality they bring is not enabled.
                             if(gfxFeatures & (useHighShaders | useMediumShaders | useLowShaders | useLowestShaders))
                             {
                                 if(!strcmp(node->GetAttributeValue("name"), "tex height") ||
@@ -326,17 +340,25 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                             csScanStr (node->GetContentsValue(), "%f,%f", &sv.vec2.x, &sv.vec2.y);
                             m->shadervars.Push(sv);
                         }
+                        else if(csString("vector3").Compare(node->GetAttributeValue("type")))
+                        {
+                            ShaderVar sv(node->GetAttributeValue("name"), csShaderVariable::VECTOR3);
+                            csScanStr (node->GetContentsValue(), "%f,%f,%f", &sv.vec3.x, &sv.vec3.y, &sv.vec3.z);
+                            m->shadervars.Push(sv);
+                        }
                         node = node->GetParent();
                     }
                 }
             }
 
+            // Parse all mesh factories.
             nodeItr = root->GetNodes("meshfact");
             while(nodeItr->HasNext())
             {
                 node = nodeItr->Next();
                 csRef<MeshFact> mf = csPtr<MeshFact>(new MeshFact(node->GetAttributeValue("name"), vfsPath, node));
 
+                // Parse mesh params to get the materials that we depend on.
                 if(node->GetNode("params")->GetNode("material"))
                 {
                     csRef<Material> material;
@@ -394,6 +416,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                     mf->checked.Push(false);
                 }
 
+                // Parse terrain cells for materials.
                 if(node->GetNode("params")->GetNode("cells"))
                 {
                     node = node->GetNode("params")->GetNode("cells")->GetNode("celldefault")->GetNode("basematerial");
@@ -447,6 +470,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                 meshfacts.Put(mf->name, mf);
             }
 
+            // Parse all sectors.
             nodeItr = root->GetNodes("sector");
             while(nodeItr->HasNext())
             {
@@ -460,16 +484,21 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                     s = sectortree.Get(sectorName, csRef<Sector>());
                 }
 
+                // This sector may have already been created (referenced by a portal somewhere else).
                 if(!s.IsValid())
                 {
+                    // But if not then create its representation.
                     s = csPtr<Sector>(new Sector(sectorName));
                     CS::Threading::ScopedWriteLock lock(sLock);
                     sectors.Push(s);
                     sectortree.Put(sectorName, s);
                 }
 
+                // Get culler properties.
                 s->init = true;
                 s->culler = node->GetNode("cullerp")->GetContentsValue();
+
+                // Get ambient lighting.
                 if(node->GetNode("ambient"))
                 {
                     node = node->GetNode("ambient");
@@ -478,6 +507,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                     node = node->GetParent();
                 }
 
+                // Get water bodies in this sector.
                 csRef<iDocumentNodeIterator> nodeItr2 = node->GetNodes("key");
                 while(nodeItr2->HasNext())
                 {
@@ -514,6 +544,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                     }
                 }
 
+                // Get all mesh instances in this sector.
                 nodeItr2 = node->GetNodes("meshobj");
                 while(nodeItr2->HasNext())
                 {
@@ -521,12 +552,14 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                     csRef<MeshObj> m = csPtr<MeshObj>(new MeshObj(node2->GetAttributeValue("name"), vfsPath, node2));
                     m->sector = s;
 
+                    // alwaysloaded ignores range checks. If the sector is loaded then so is this mesh.
                     if(node2->GetAttributeValueAsBool("alwaysloaded"))
                     {
                         ++s->alwaysLoadedCount;
                         m->alwaysLoaded = true;
                     }
 
+                    // Get world space position.
                     csRef<iDocumentNode> move = node2->GetNode("move");
                     if(move.IsValid())
                     {
@@ -536,6 +569,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                         move = move->GetParent();
                     }
 
+                    // Check for a params file and switch to use it to continue parsing.
                     if(node2->GetNode("paramsfile"))
                     {
                         csRef<iDocument> pdoc = docsys->CreateDocument();
@@ -544,6 +578,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                         node2 = pdoc->GetRoot();
                     }
 
+                    // Parse all materials and shader variables this mesh depends on.
                     csRef<iDocumentNodeIterator> nodeItr3 = node2->GetNode("params")->GetNodes("submesh");
                     while(nodeItr3->HasNext())
                     {
@@ -664,6 +699,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                     }
                     node2 = node2->GetParent();
 
+                    // Continue material parsing.
                     if(node2->GetNode("material"))
                     {
                         node2 = node2->GetNode("material");
@@ -684,7 +720,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                         node2 = node2->GetParent();
                     }
 
-
+                    // materialpalette for terrain.
                     if(node2->GetNode("materialpalette"))
                     {
                         nodeItr3 = node2->GetNode("materialpalette")->GetNodes("material");
@@ -745,6 +781,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                     meshes.Put(m->name, m);
                 }
 
+                // Parse mesh generators (for foliage, rocks etc.)
                 if(gfxFeatures & useMeshGen)
                 {
                     nodeItr2 = node->GetNodes("meshgen");
@@ -815,6 +852,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                     }
                 }
 
+                // Parse all portals.
                 nodeItr2 = node->GetNodes("portals");
                 while(nodeItr2->HasNext())
                 {
@@ -824,6 +862,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                         csRef<iDocumentNode> node2 = nodeItr3->Next();
                         csRef<Portal> p = csPtr<Portal>(new Portal(node2->GetAttributeValue("name")));
 
+                        // Warping
                         if(node2->GetNode("matrix"))
                         {
                             p->warp = true;
@@ -843,6 +882,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                             syntaxService->ParseVector(node2->GetNode("ww"), p->ww);
                         }
 
+                        // Other options.
                         if(node2->GetNode("clip"))
                         {
                             p->clip = true;
@@ -886,6 +926,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                     }
                 }
 
+                // Parse all sector lights.
                 nodeItr2 = node->GetNodes("light");
                 while(nodeItr2->HasNext())
                 {
@@ -1334,6 +1375,7 @@ void BgLoader::LoadSector(const csVector3& pos, const csBox3& loadBox, const csB
         }
     }
 
+    // Check all meshes in this sector.
     for(size_t i=0; i<sector->meshes.GetSize(); i++)
     {
         if(!sector->meshes[i]->loading)
@@ -1356,6 +1398,7 @@ void BgLoader::LoadSector(const csVector3& pos, const csBox3& loadBox, const csB
         }
     }
 
+    // Check all meshgen in this sector.
     for(size_t i=0; i<sector->meshgen.GetSize(); i++)
     {
         if(!sector->meshgen[i]->loading)
@@ -1374,6 +1417,7 @@ void BgLoader::LoadSector(const csVector3& pos, const csBox3& loadBox, const csB
         }
     }
 
+    // Check all portals in this sector... and recurse into the sectors they lead to.
     for(size_t i=0; i<sector->portals.GetSize(); i++)
     {
         if(depth < maxPortalDepth && sector->portals[i]->InRange(loadBox))
@@ -1460,6 +1504,7 @@ void BgLoader::LoadSector(const csVector3& pos, const csBox3& loadBox, const csB
         }
     }
 
+    // Check all sector lights.
     for(size_t i=0; i<sector->lights.GetSize(); i++)
     {
         if(sector->lights[i]->InRange(loadBox))
@@ -1479,8 +1524,10 @@ void BgLoader::LoadSector(const csVector3& pos, const csBox3& loadBox, const csB
         }
     }
 
+    // Check whether this sector is empty and should be unloaed.
     if(sector->objectCount == sector->alwaysLoadedCount && sector->object.IsValid())
     {
+        // Unload all 'always loaded' meshes before destroying sector.
         for(size_t i=0; i<sector->meshes.GetSize(); i++)
         {
             if(sector->meshes[i]->alwaysLoaded)
@@ -1493,6 +1540,7 @@ void BgLoader::LoadSector(const csVector3& pos, const csBox3& loadBox, const csB
             }
         }
 
+        // Remove the sector from the engine.
         engine->GetSectors()->Remove(sector->object);
         sector->object.Invalidate();
     }
@@ -1683,14 +1731,15 @@ bool BgLoader::LoadMaterial(Material* material)
 
         for(size_t i=0; i<material->shadervars.GetSize(); i++)
         {
+            csShaderVariable* var = mat->GetVariableAdd(svstrings->Request(material->shadervars[i].name));
+            var->SetType(material->shadervars[i].type);
+
             if(material->shadervars[i].type == csShaderVariable::TEXTURE)
             {
                 for(size_t j=0; j<material->textures.GetSize(); j++)
                 {
                     if(material->textures[j]->name.Compare(material->shadervars[i].value))
                     {
-                        csShaderVariable* var = mat->GetVariableAdd(svstrings->Request(material->shadervars[i].name));
-                        var->SetType(material->shadervars[i].type);
                         csRef<iTextureWrapper> tex = scfQueryInterface<iTextureWrapper>(material->textures[j]->status->GetResultRefPtr());
                         var->SetValue(tex);
                         break;
@@ -1699,9 +1748,11 @@ bool BgLoader::LoadMaterial(Material* material)
             }
             else if(material->shadervars[i].type == csShaderVariable::VECTOR2)
             {
-                csShaderVariable* var = mat->GetVariableAdd(svstrings->Request(material->shadervars[i].name));
-                var->SetType(material->shadervars[i].type);
                 var->SetValue(material->shadervars[i].vec2);
+            }
+            else if(material->shadervars[i].type == csShaderVariable::VECTOR3)
+            {
+                var->SetValue(material->shadervars[i].vec3);
             }
         }
 
