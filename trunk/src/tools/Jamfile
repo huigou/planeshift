@@ -6,3 +6,4 @@ SubInclude TOP src tools libxpnet ;
 SubInclude TOP src tools wordnet ;
 SubInclude TOP src tools xdelta3 ;
 SubInclude TOP src tools pawseditor ;
+SubInclude TOP src tools worldeditor ;

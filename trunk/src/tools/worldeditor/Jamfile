@@ -1,0 +1,8 @@
+SubDir TOP src tools worldeditor ;
+
+Application worldeditor :
+	[ Wildcard *.cpp *.h ]
+;
+CompileGroups worldeditor : tools ;
+ExternalLibs worldeditor : CRYSTAL ;
+LinkWith worldeditor : paws psutil ;
