@@ -30,6 +30,7 @@
 class pawsEditTextBox;
 class pawsTextBox;
 class pawsListBox;
+class pawsMultiLineTextBox;
     
 class pawsLoginWindow : public pawsWidget
 {
@@ -60,7 +61,7 @@ private:
     pawsEditTextBox* login;
     pawsEditTextBox* passwd;    
     pawsListBox* listBox;
-    pawsTextBox* connectingLabel;
+    pawsMultiLineTextBox* connectingLabel;
     pawsCheckBox* checkBox;
 
     /// Used to wait to see if there is a server running. 

@@ -34,7 +34,7 @@ public:
                         FULL,
                         LOCKED};
     
-    psServerPinger(const csString & serverName, const csString & address, int port, iObjectRegistry * objReg);
+    psServerPinger(const csString & serverName, const csString& description, const csString & address, int port, iObjectRegistry * objReg);
     ~psServerPinger();
 
     /** Opens connection to server. Returns: success */
@@ -63,12 +63,14 @@ public:
             return (float)lost/sent;
     }
 
-    csString GetName()     { return name;    }
-    csString GetAddress()  { return address; }
-    int      GetPort()     { return port;    }
+    csString GetName()       { return name;        }
+    csString GetDescription(){ return description; }
+    csString GetAddress()    { return address;     }
+    int      GetPort()       { return port;        }
 
 protected:
     csString name;      // server info
+    csString description;
     csString address;
     int port;
 

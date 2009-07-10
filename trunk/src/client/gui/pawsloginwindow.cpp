@@ -111,9 +111,11 @@ bool pawsLoginWindow::PostSetup()
         return false;
     passwd->SetPassword(true);
 
-    connectingLabel = dynamic_cast <pawsTextBox*> (FindWidget("connecting"));
+    connectingLabel = dynamic_cast <pawsMultiLineTextBox*> (FindWidget("connecting"));
     if (connectingLabel == NULL)
         return false;
+        
+    connectingLabel->SetText(servers[listBox->GetSelectedRowNum()]->GetDescription());
 
     UpdateUserPasswdFromConfig();
 
@@ -440,6 +442,7 @@ bool pawsLoginWindow::LoadServerList()
         else
             port = 13331;
         psServerPinger * server = new psServerPinger(node->GetAttributeValue( "name" ),
+                                                     node->GetAttributeValue( "description"),
                                                      node->GetAttributeValue( "ip" ),
                                                      port,
                                                      PawsManager::GetSingleton().GetObjectRegistry());
@@ -457,6 +460,7 @@ void pawsLoginWindow::OnListAction( pawsListBox* selected, int status )
 
     serverIP = listBox->GetTextCellValue(listBox->GetSelectedRowNum(), 1);
     serverPort = servers[listBox->GetSelectedRowNum()]->GetPort();
+    connectingLabel->SetText(servers[listBox->GetSelectedRowNum()]->GetDescription());
 
     UpdateUserPasswdFromConfig();
 }
