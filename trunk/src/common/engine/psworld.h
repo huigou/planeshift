@@ -166,7 +166,9 @@ public:
     /// Return an enties position
     void GetPosition(iMeshWrapper *entity, csVector3& pos, float* yrot, iSector*& sector);
 
+    static float Matrix2XRot(const csMatrix3& mat);
     static float Matrix2YRot(const csMatrix3& mat);
+    static float Matrix2ZRot(const csMatrix3& mat);
 
     void DumpWarpCache();
 private:

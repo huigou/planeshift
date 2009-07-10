@@ -1304,9 +1304,7 @@ gemItem::gemItem(csWeakRef<psItem> item,
                      : gemActiveObject(item->GetName(),factname,instance,room,pos,yrotangle,clientnum)
 {
     itemdata=item;
-    xRot=xrotangle;
-    yRot=yrotangle;
-    zRot=zrotangle;
+    SetRotation(xrotangle, yrotangle, zrotangle);
     itemType.Format("Item(%s)",itemdata->GetItemType());
     itemdata->SetGemObject( this );
     cel->AddItemEntity(this);
@@ -1331,6 +1329,9 @@ void gemItem::Broadcast(int clientnum, bool control )
     if (!IsPickable()) flags |= psPersistItem::NOPICKUP;
     if (IsUsingCD()) flags |= psPersistItem::COLLIDE;
 
+    csVector3 rotation;
+    GetRotation(rotation);
+
     psPersistItem mesg(
                          clientnum,
                          eid,
@@ -1339,9 +1340,9 @@ void gemItem::Broadcast(int clientnum, bool control )
                          factname.Current(),
                          GetSectorName(),
                          GetPosition(),
-                         xRot,
-                         yRot,
-                         zRot,
+                         rotation.x,
+                         rotation.y,
+                         rotation.z,
                          flags
                          );
 
@@ -1368,19 +1369,19 @@ void gemItem::SetPosition(const csVector3& pos,float angle, iSector* sector, Ins
 
 void gemItem::SetRotation(float xrotangle, float yrotangle, float zrotangle)
 {
-    this->xRot = xrotangle;
-    this->yRot = yrotangle;
-    this->zRot = zrotangle;
+    pcmesh->RotateMesh(xrotangle, yrotangle, zrotangle);
 
-    itemdata->SetRotationInWorld(xrotangle,yrotangle,zrotangle);
+    itemdata->SetRotationInWorld(xrotangle, yrotangle, zrotangle);
 	itemdata->Save(false);
 }
 
-void gemItem::GetRotation(float& xrotangle, float& yrotangle, float& zrotangle)
+void gemItem::GetRotation(csVector3 & rotation)
 {
-    xrotangle = this->xRot;
-    yrotangle = this->yRot;
-    zrotangle = this->zRot;
+    csMatrix3 transf = GetMeshWrapper()->GetMovable()->GetTransform().GetT2O();
+    
+    rotation.x = psWorld::Matrix2XRot(transf);
+    rotation.y = psWorld::Matrix2YRot(transf);
+    rotation.z = psWorld::Matrix2ZRot(transf);
 }
 
 float gemItem::GetBaseAdvertiseRange()
@@ -1399,6 +1400,9 @@ void gemItem::Send( int clientnum, bool , bool to_superclient)
     if (IsUsingCD() ||
         GetItem()->GetSector()->GetIsColliding()) flags |= psPersistItem::COLLIDE;
 
+    csVector3 rotation;
+    GetRotation(rotation);
+
     psPersistItem mesg(
                          clientnum,
                          eid,
@@ -1407,9 +1411,9 @@ void gemItem::Send( int clientnum, bool , bool to_superclient)
                          factname.Current(),
                          GetSectorName(),
                          GetPosition(),
-                         xRot,
-                         yRot,
-                         zRot,
+                         rotation.x,
+                         rotation.y,
+                         rotation.z,
                          flags
                          );
 
