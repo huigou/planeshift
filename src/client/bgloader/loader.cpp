@@ -1904,13 +1904,19 @@ iMeshWrapper* BgLoader::SelectMesh(iCamera* camera, const csVector2& pos)
     // Get WS position.
     csScreenTargetResult result = csEngineTools::FindScreenTarget(pos, 1000, camera);
 
+    // Reset flags.
     if(selectedMesh && resetHitbeam)
     {
         selectedMesh->GetFlags().Reset(CS_ENTITY_NOHITBEAM);
     }
+
+    // Get new selected mesh.
     selectedMesh = result.mesh;
-    resetHitbeam = !selectedMesh->GetFlags().Check(CS_ENTITY_NOHITBEAM);
-    selectedMesh->GetFlags().Set(CS_ENTITY_NOHITBEAM);
+    if(selectedMesh)
+    {
+        resetHitbeam = !selectedMesh->GetFlags().Check(CS_ENTITY_NOHITBEAM);
+        selectedMesh->GetFlags().Set(CS_ENTITY_NOHITBEAM);
+    }
 
     // Update stored position.
     previousPosition = pos;

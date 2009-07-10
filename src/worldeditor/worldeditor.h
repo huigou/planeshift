@@ -23,6 +23,7 @@
 class pawsMainWidget;
 class PawsManager;
 struct iObjectRegistry;
+struct iSceneManipulate;
 struct iView;
 
 class WorldEditor
@@ -48,4 +49,10 @@ private:
     // PS
     PawsManager* paws;
     pawsMainWidget* mainWidget;
+    csRef<iSceneManipulate> sceneManipulator;
+
+    // Event ids.
+    csEventID MouseMove;
+    csEventID MouseDown;
+    csEventID FrameEvent;
 };
