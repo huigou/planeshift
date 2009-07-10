@@ -5,7 +5,7 @@ Application worldeditor :
 ;
 CompileGroups worldeditor : tools ;
 ExternalLibs worldeditor : CRYSTAL ;
-LinkWith worldeditor : paws psutil ;
+LinkWith worldeditor : fparser paws psutil ;
 
 if $(HAVE_STATIC_PLUGINS) = "yes"
 {
@@ -19,7 +19,7 @@ if $(HAVE_STATIC_PLUGINS) = "yes"
   CompileGroups worldeditor_static : tools ;
   ExternalLibs worldeditor_static : CRYSTAL ;
   MsvcDefine worldeditor_static : CS_STATIC_LINKED ;
-  LinkWith worldeditor_static : paws psutil ;
+  LinkWith worldeditor_static : fparser paws psutil ;
 
 STATIC.PLUGINLIST =
   bindoc
