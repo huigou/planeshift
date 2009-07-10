@@ -28,22 +28,23 @@
 #define PING_INTERVAL   1000    // how long do we wait after receiving a response or a timeout
 #define PING_TIMEOUT    4000    // when do we give up waiting for response
 
-psServerPinger::psServerPinger(const csString & name, const csString & address, int port, iObjectRegistry * objReg)
+psServerPinger::psServerPinger(const csString & name, const csString& description, const csString & address, int port, iObjectRegistry * objReg)
 {
-    this->name     =  name;
-    this->address  =  address;
-    this->port     =  port;
-    this->objReg   =  objReg;
+    this->name        = name;
+    this->description = description;
+    this->address     = address;
+    this->port        = port;
+    this->objReg      = objReg;
 
-    connection    = NULL;
-    queue         = NULL;
+    connection        = NULL;
+    queue             = NULL;
 
-    lastPingTime  = 0;
-    waiting       = false;
-    pingID        = 0;
-    ping          = 9999;
-    lost          = 0;
-    sent          = 0;
+    lastPingTime      = 0;
+    waiting           = false;
+    pingID            = 0;
+    ping              = 9999;
+    lost              = 0;
+    sent              = 0;
 }
 
 bool psServerPinger::Connect()

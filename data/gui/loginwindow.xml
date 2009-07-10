@@ -61,8 +61,8 @@
         </widget>
 
         <!-- Connecting -->
-        <widget name="connecting" factory="pawsTextBox" visible="yes">
-            <frame x="130" y="545" width="540" height="30" border="no"/>
+        <widget name="connecting" factory="pawsMultiLineTextBox" visible="yes">
+            <frame x="130" y="515" width="540" height="60" border="no"/>
 	    <font name="/planeshift/data/ttf/cupandtalon.ttf" size="16" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
             <bgimage resource="Standard Background" alpha="120" />
             <text string="New User? Register at http://laanx.fragnetics.com/register" horizAdjust="CENTRE" vertAdjust="CENTRE" />
