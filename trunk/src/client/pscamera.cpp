@@ -231,13 +231,14 @@ const char * psCamera::HandleCommand(const char *cmd)
 {
     WordArray words(cmd);
 
-    GEMClientObject* target = psengine->GetCharManager()->GetTarget();
+    GEMClientActor* target = dynamic_cast<GEMClientActor*>(psengine->GetCharManager()->GetTarget());
 
     if (words.GetCount() == 0 || !target || !useNPCCam || target == actor)
         return 0;
 
-    // enable npc mode if the targeted npc is in talking distance
-    if(GetCameraMode() != CAMERA_NPCTALK && actor->RangeTo(target, false) < NPC_MODE_DISTANCE)
+    // enable npc mode if the targeted npc is in talking distance and not a statue
+    if(GetCameraMode() != CAMERA_NPCTALK && actor->RangeTo(target, false) < NPC_MODE_DISTANCE &&
+       target->GetMode() != psModeMessage::STATUE)
     {
         //rotate the target so that it faces the player
         csVector3 playerPos = psengine->GetCelClient()->GetMainPlayer()->GetPosition();
@@ -252,18 +253,18 @@ const char * psCamera::HandleCommand(const char *cmd)
         
         float npcrot = target->GetRotation();
         
-        GEMClientActor* targetActor = dynamic_cast<GEMClientActor*>(target);
         
-        float velNormSquared = targetActor->GetVelocity().SquaredNorm();
+        float velNormSquared = target->GetVelocity().SquaredNorm();
                 
         if((angle-npcrot) < TWO_PI && (angle-npcrot) > 0 && velNormSquared == 0)
         {
             npcOldRot = npcrot;
-            //target->Rotate(0.0f, angle, 0.0f);
-            targetActor->GetMovement()->SetAngularVelocity(3.0f, csVector3(0.0f, angle, 0.0f));
+            // decide to turn clockwise or counterclockwise (angle < 180 degrees)
+            vel = ((angle-npcrot) < PI) ? 3.0f : -3.0f;
+            target->GetMovement()->SetAngularVelocity(-vel, csVector3(0.0f, angle, 0.0f));
         }
 
-        npcModeTarget = targetActor;
+        npcModeTarget = target;
         npcModePosition = actor->GetMesh()->GetMovable()->GetFullPosition();
         SetCameraMode(CAMERA_NPCTALK);
     }
@@ -1433,9 +1434,10 @@ void psCamera::DoCameraIdealCalcs(const csTicks elapsedTicks, const csVector3& a
                 break;
 
             psClientCharManager* clientChar = psengine->GetCharManager();
+            // Check that we still have the same npc targeted, and that we did not move
             if (npcModeTarget != clientChar->GetTarget() || npcModePosition != actor->GetMesh()->GetMovable()->GetFullPosition())
             {
-                npcModeTarget->GetMovement()->SetAngularVelocity(2.5f, csVector3(0.0f, npcOldRot, 0.0f));
+                npcModeTarget->GetMovement()->SetAngularVelocity(vel, csVector3(0.0f, npcOldRot, 0.0f));
                 SetCameraMode(lastCameraMode);
                 break;
             }

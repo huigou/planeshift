@@ -1128,7 +1128,7 @@ void psLinearMovement::SetHugGround (bool hugGround)
 void psLinearMovement::SetGravity (float grav)
 {
     gravity = grav;
-  }
+}
 
 float psLinearMovement::GetGravity ()
 {
