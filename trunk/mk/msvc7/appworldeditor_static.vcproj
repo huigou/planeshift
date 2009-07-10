@@ -906,6 +906,16 @@
 			<File
 				RelativePath="..\..\src\worldeditor\main.cpp">
 			</File>
+			<File
+				RelativePath="..\..\src\worldeditor\worldeditor.cpp">
+			</File>
+		</Filter>
+		<Filter
+			Name="Header Files"
+			Filter="">
+			<File
+				RelativePath="..\..\src\worldeditor\worldeditor.h">
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
