@@ -1,4 +1,4 @@
-SubDir TOP src tools worldeditor ;
+SubDir TOP src worldeditor ;
 
 Application worldeditor :
 	[ Wildcard *.cpp *.h ]
