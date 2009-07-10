@@ -135,9 +135,19 @@ void gemMesh::MoveMesh( iSector* sector, const float yrot, const csVector3& posi
         mesh->GetMovable()->SetPosition( position );
     }
 
-    csMatrix3 matrix = (csMatrix3) csYRotMatrix3 (yrot);
+    csMatrix3 matrix = csYRotMatrix3 (yrot);
     mesh->GetMovable ()->GetTransform ().SetO2T (matrix);
 
     mesh->GetMovable ()->UpdateMove ();
 }
 
+void gemMesh::RotateMesh( const float xrot, const float yrot, const float zrot )
+{
+    csMatrix3 xmatrix = csXRotMatrix3 (xrot);
+    csMatrix3 ymatrix = csYRotMatrix3 (yrot);
+    csMatrix3 zmatrix = csZRotMatrix3 (zrot);
+
+    mesh->GetMovable ()->GetTransform ().SetO2T (xmatrix*ymatrix*zmatrix);
+    
+    mesh->GetMovable ()->UpdateMove ();
+}

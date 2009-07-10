@@ -1959,76 +1959,72 @@ void UserManager::Rotate(Client *client, gemObject* target, csString action)
     // only rotate the object if it's an item
     rotItem = dynamic_cast<gemItem*> (target);
 
-    if (rotItem)
+    if (!rotItem)
     {
-        // rotate an item only if the client is guarding it,
-        // or has the right to rotate all items
-        if (!(rotItem->GetItem()->GetGuardingCharacterID() == client->GetPID()) &&
-            !psserver->CheckAccess(client, "rotate all"))
-        {
-            psserver->SendSystemInfo(client->GetClientNum(), "You can't rotate %s", rotItem->GetItem()->GetName());
-            return;
-        }
-        
-        float oldxrot, oldyrot, oldzrot;
-        rotItem->GetRotation(oldxrot, oldyrot, oldzrot);
-        // rotation is stored in radians,
-        // we are converting the angles to degrees
-        oldxrot = oldxrot*180/PI;
-        oldyrot = oldyrot*180/PI;
-        oldzrot = oldzrot*180/PI;
-        // the specified rotation is added to the item's current rotation
-        float xrot=oldxrot, yrot=oldyrot, zrot=oldzrot;
-        WordArray words(action);
-        if (words[0] == "x")
-        {
-            if (words[1] != "reset")
-                xrot = oldxrot + atof(words[1]);
-            else
-                xrot = 0;
-        }
-        else if (words[0] == "y")
-        {
-            if (words[1] != "reset")
-                yrot = oldyrot + atof(words[1]);
-            else
-                yrot = 0;
-        }
-        else if (words[0] == "z")
-        {
-            if (words[1] != "reset")
-                zrot = oldzrot + atof(words[1]);
-            else
-                zrot = 0;
-        }
+        psserver->SendSystemError(client->GetClientNum(), "Item not found.");
+        return;
+    }
+    
+    // rotate an item only if the client is guarding it,
+    // or has the right to rotate all items
+    if (!(rotItem->GetItem()->GetGuardingCharacterID() == client->GetPID()) &&
+        !psserver->CheckAccess(client, "rotate all"))
+    {
+        psserver->SendSystemInfo(client->GetClientNum(), "You can't rotate %s", rotItem->GetItem()->GetName());
+        return;
+    }
+    
+    csVector3 oldrot;
+    rotItem->GetRotation(oldrot);
+    // rotation is stored in radians,
+    // we are converting the angles to degrees
+    oldrot = oldrot*180/PI;
+    
+    // the specified rotation is added to the item's current rotation
+    csVector3 newrot = oldrot;
+    WordArray words(action);
+    if (words[0] == "x")
+    {
+        if (words[1] != "reset")
+            newrot.x = oldrot.x + atof(words[1]);
         else
-        {
-            if (words[0] != "reset")
-                xrot = oldxrot + atof(words[0]);
-            else
-                xrot = 0;
-            if (words[1] != "reset")
-                yrot = oldyrot + atof(words[1]);
-            else
-                yrot = 0;
-            if (words[2] != "reset")
-                zrot = oldzrot + atof(words[2]);
-            else
-                zrot = 0;
-        }
-        // rotation is given in degrees, converting that to radians
-        xrot = xrot/180*PI;
-        yrot = yrot/180*PI;
-        zrot = zrot/180*PI;
-        rotItem->SetRotation(xrot, yrot, zrot);
-        rotItem->UpdateProxList(true);
-        psserver->SendSystemInfo(client->GetClientNum(), "You have rotated %s", rotItem->GetItem()->GetName());
+            newrot.x = 0;
+    }
+    else if (words[0] == "y")
+    {
+        if (words[1] != "reset")
+            newrot.y = oldrot.y + atof(words[1]);
+        else
+            newrot.y = 0;
+    }
+    else if (words[0] == "z")
+    {
+        if (words[1] != "reset")
+            newrot.z = oldrot.z + atof(words[1]);
+        else
+            newrot.z = 0;
     }
     else
     {
-        psserver->SendSystemError(client->GetClientNum(),
-                        "Item not found.");
+        if (words[0] != "reset")
+            newrot.x = oldrot.x + atof(words[0]);
+        else
+            newrot.x = 0;
+        if (words[1] != "reset")
+            newrot.y = oldrot.y + atof(words[1]);
+        else
+            newrot.y = 0;
+        if (words[2] != "reset")
+            newrot.z = oldrot.z + atof(words[2]);
+        else
+            newrot.z = 0;
     }
+    // rotation is given in degrees, converting that to radians
+    newrot = newrot/180*PI;
+
+    rotItem->SetRotation(newrot.x, newrot.y, newrot.z);
+    rotItem->UpdateProxList(true);
+    psserver->SendSystemInfo(client->GetClientNum(), "You have rotated %s", rotItem->GetItem()->GetName());
 }
 
 void UserManager::GiveTip(psUserCmdMessage& msg, Client *client)

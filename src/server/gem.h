@@ -460,9 +460,6 @@ class gemItem : public gemActiveObject
 protected:
     csWeakRef<psItem> itemdata;
     csString itemType;
-    float xRot;
-    float yRot;
-    float zRot;
 
 public:
     gemItem(csWeakRef<psItem> item,
@@ -505,12 +502,11 @@ public:
      * @param zrotangle the variable used to set the z rotation of the item
      */
     virtual void SetRotation(float xrotangle, float yrotangle, float zrotangle);
+    
     /** Get the x,y and z axis rotations for the item
-     * @param xrotangle the variable in which the x rotation will be stored
-     * @param yrotangle the variable in which the y rotation will be stored
-     * @param zrotangle the variable in which the z rotation will be stored
+     * @param rotation the variable in which the rotation will be stored
      */
-    virtual void GetRotation(float& xrotangle, float& yrotangle, float& zrotangle);
+    virtual void GetRotation(csVector3 & rotation);
 
     virtual bool IsPickable();
     virtual bool IsLockable();
