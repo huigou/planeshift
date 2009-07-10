@@ -26,11 +26,13 @@
 #include <iengine/sector.h>
 #include <iutil/cfgmgr.h>
 #include <iutil/eventq.h>
+#include <iutil/object.h>
 #include <ivaria/view.h>
 #include <ivideo/graph2d.h>
 #include <ivideo/natwin.h>
 
 #include "iclient/ibgloader.h"
+#include "iclient/iscenemanipulate.h"
 #include "paws/pawsmanager.h"
 #include "paws/pawsmainwidget.h"
 #include "util/log.h"
@@ -42,15 +44,23 @@
 
 WorldEditor::WorldEditor(int argc, char* argv[]) : paws(0)
 {
+    // Init CS.
     objectReg = csInitializer::CreateEnvironment(argc, argv);
     csInitializer::SetupConfigManager(objectReg, WEDIT_CONFIG_FILENAME);
     csInitializer::RequestPlugins(objectReg, CS_REQUEST_FONTSERVER,
         CS_REQUEST_IMAGELOADER, CS_REQUEST_OPENGL3D, CS_REQUEST_END);
+
+    // Initialize event shortcuts.
+    csRef<iEventNameRegistry> eventNameReg = csEventNameRegistry::GetRegistry (objectReg);
+    FrameEvent = csevFrame (eventNameReg);
+    MouseMove = csevMouseMove (eventNameReg, 0);
+    MouseDown = csevMouseDown (eventNameReg, 0);
 }
 
 WorldEditor::~WorldEditor()
 {
     view.Invalidate();
+    sceneManipulator.Invalidate();
     csInitializer::DestroyApplication(objectReg);
 }
 
@@ -126,6 +136,8 @@ bool WorldEditor::Init()
         return false;
     }
 
+    sceneManipulator = scfQueryInterface<iSceneManipulate>(loader);
+
     if(!csInitializer::OpenApplication(objectReg))
     {
         printf("Error initialising app (CRYSTAL not set?)\n");
@@ -198,18 +210,31 @@ bool WorldEditor::Init()
 
 bool WorldEditor::HandleEvent (iEvent &ev)
 {
-    if(ev.Name == csevFrame (objectReg))
+    if(ev.Name == FrameEvent)
     {
         view->Draw();
     }
-
-    if(ev.Name == csevMouseDown (PawsManager::GetSingleton().GetEventNameRegistry(), 0))
+    
+    bool handled = paws->HandleEvent(ev);
+    if(!handled)
     {
-      psPoint p = PawsManager::GetSingleton().GetMouse()->GetPosition();
-      printf("Point: %i, %i\n", p.x, p.y);
-      csScreenTargetResult result = csEngineTools::FindScreenTarget(csVector2(p.x, p.y), 1000, view->GetCamera());
-      printf("Hit at: %s\n", result.isect.Description().GetData());
+        if(ev.Name == MouseDown)
+        {
+            psPoint p = PawsManager::GetSingleton().GetMouse()->GetPosition();
+            iMeshWrapper* selected = sceneManipulator->SelectMesh(view->GetCamera(), csVector2(p.x, p.y));
+            if(selected)
+            {
+                printf("Selected mesh: %s\n", selected->QueryObject()->GetName());
+            }
+            else
+            {
+                printf("No mesh selected!\n");
+            }
+        }
+        else if(ev.Name == MouseMove)
+        {
+        }
     }
     
-    return paws->HandleEvent(ev);
+    return false;
 }
