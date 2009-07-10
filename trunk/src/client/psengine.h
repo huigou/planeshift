@@ -47,6 +47,7 @@ struct iEvent;
 struct iEventQueue;
 struct iMeshFactoryWrapper;
 struct iThreadedLoader;
+struct iSceneManipulate;
 struct iSoundManager;
 struct iVFS;
 struct iVirtualClock;
@@ -175,6 +176,7 @@ public:
     iSoundManager*        GetSoundManager()       { return soundmanager; }
     iConfigManager*       GetConfig()             { return cfgmgr; }  ///< config file
     iBgLoader*            GetLoader()             { return loader; }
+    iSceneManipulate*     GetSceneManipulator()   { return scenemanipulator; }
 
     csRandomGen& GetRandomGen() { return random; }
     float GetRandom() { return random.Get(); }
@@ -395,6 +397,7 @@ private:
     psInventoryCache*	      inventoryCache;///< inventory cache for client
     psCSSetup*                CS_Setup;
     csRef<iBgLoader>          loader;
+    csRef<iSceneManipulate>   scenemanipulator;
 
     /* status, misc. vars */
     bool gameLoaded; ///< determines if the game is loaded or not

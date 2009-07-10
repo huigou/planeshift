@@ -38,6 +38,7 @@
 #include <iutil/vfs.h>
 
 #include <iclient/ibgloader.h>
+#include <iclient/iscenemanipulate.h>
 
 struct iCollideSystem;
 struct iSyntaxService;
@@ -45,8 +46,9 @@ struct iSyntaxService;
 CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
 {
 class BgLoader : public ThreadedCallable<BgLoader>,
-                 public scfImplementation2<BgLoader,
+                 public scfImplementation3<BgLoader,
                                            iBgLoader,
+                                           iSceneManipulate,
                                            iComponent>
 {
 public:
@@ -146,6 +148,51 @@ public:
     * E.g. 'default_alpha' to get an array of all default world alpha shaders.
     */
     csPtr<iStringArray> GetShaderName(const char* usageType) const;
+
+   /**
+    * Creates a new instance of the given factory at the given screen space coordinates.
+    * @param factName The name of the factory to be used to create the mesh.
+    * @param camera The camera related to the screen space coordinates.
+    * @param pos The screen space coordinates.
+    */
+    iMeshWrapper* CreateAndSelectMesh(const char* factName, iCamera* camera, const csVector2& pos);
+
+   /**
+    * Selects the closest mesh at the given screen space coordinates.
+    * @param camera The camera related to the screen space coordinates.
+    * @param pos The screen space coordinates.
+    */
+    iMeshWrapper* SelectMesh(iCamera* camera, const csVector2& pos);
+
+   /**
+    * Translates the mesh selected by CreateAndSelectMesh() or SelectMesh().
+    * @param vertical True if you want to translate vertically (along y-axis).
+    * False to translate snapped to the mesh at the screen space coordinates.
+    * @param camera The camera related to the screen space coordinates.
+    * @param pos The screen space coordinates.
+    */
+    bool TranslateSelected(bool vertical, iCamera* camera, const csVector2& pos);
+
+   /**
+    * Rotates the mesh selected by CreateAndSelectMesh() or SelectMesh().
+    * @param pos The screen space coordinates to use to base the rotation, relative to the last saved coordinates.
+    */
+    void RotateSelected(const csVector2& pos);
+
+   /**
+    * Removes the currently selected mesh from the scene.
+    */
+    void RemoveSelected();
+
+   /**
+    * Saves the passed coordinates for use as a position reference.
+    * E.g. Do this after a translate and before a rotate,then the rotation
+    * will be based on the difference between these and the given rotation coordinates.
+    */
+    void SaveCoordinates(const csVector2& pos)
+    {
+        previousPosition = pos;
+    }
 
 private:
     class MeshGen;
@@ -441,6 +488,7 @@ private:
     // Pointers to other needed plugins.
     iObjectRegistry* object_reg;
     csRef<iEngine> engine;
+    csRef<iGraphics2D> g2d;
     csRef<iTextureManager> txtmgr;
     csRef<iThreadedLoader> tloader;
     csRef<iThreadManager> tman;
@@ -489,6 +537,11 @@ private:
     CS::Threading::ReadWriteMutex mfLock;
     CS::Threading::ReadWriteMutex meshLock;
     CS::Threading::ReadWriteMutex sLock;
+
+    // For world manipulation.
+    csRef<iMeshWrapper> selectedMesh;
+    csVector2 previousPosition;
+    bool resetHitbeam;
 };
 }
 CS_PLUGIN_NAMESPACE_END(bgLoader)
