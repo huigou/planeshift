@@ -1,5 +1,5 @@
 /*
-* main.cpp - Author: Mike Gist
+* worldeditor.h - Author: Mike Gist
 *
 * Copyright (C) 2009 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
 *
@@ -17,19 +17,35 @@
 *
 */
 
-#include <psconfig.h>
+#include <csutil/ref.h>
+#include "util/genericevent.h"
 
-#include "worldeditor.h"
+class pawsMainWidget;
+class PawsManager;
+struct iObjectRegistry;
+struct iView;
 
-CS_IMPLEMENT_APPLICATION
-
-int main(int argc, char* argv[])
+class WorldEditor
 {
-    WorldEditor* worldEditor = new WorldEditor(argc, argv);
+public:
+    WorldEditor(int argc, char* argv[]);
+    ~WorldEditor();
 
-    worldEditor->Run();
+    void Run();
 
-    delete worldEditor;
+private:
+    /* Handles an event from the event handler */
+    bool HandleEvent (iEvent &ev);
 
-    return 0;
-}
+    /* Init plugins, paws, world etc. */
+    bool Init();
+
+    // CS
+    iObjectRegistry* objectReg;
+    csRef<iView> view;
+    DeclareGenericEventHandler(EventHandler, WorldEditor, "worldeditor");
+
+    // PS
+    PawsManager* paws;
+    pawsMainWidget* mainWidget;
+};
