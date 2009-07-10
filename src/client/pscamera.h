@@ -667,9 +667,18 @@ private:
 
     DistanceCfg distanceCfg;
 
+    /** @brief Keep a pointer to the rotated npc
+     * In case we change of target, this allows to restore the rotation
+     * of the previously selected npc
+     */
     GEMClientActor* npcModeTarget;
+
+    /// Keep our position when we started talking to the npc
     csVector3 npcModePosition;
+
+    /// Keep the old rotation of the npc
     float npcOldRot;
+    float vel;
     int fixedDistClip;
 };
 
