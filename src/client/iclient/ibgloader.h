@@ -1,5 +1,5 @@
 /*
- * loader.h - Author: Mike Gist
+ * ibgloader.h - Author: Mike Gist
  *
  * Copyright (C) 2009 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
  *

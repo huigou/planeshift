@@ -120,6 +120,7 @@ if (!myref)                                                  \
 #include "chatbubbles.h"
 #include "questionclient.h"
 #include "iclient/ibgloader.h"
+#include "iclient/iscenemanipulate.h"
 
 /////////////////////////////////////////////////////////////////////////////
 //  PAWS Includes
@@ -560,6 +561,7 @@ bool psEngine::Initialize (int level)
     {
         threadedWorldLoading = psengine->GetConfig()->GetBool("PlaneShift.Loading.ThreadedWorldLoad");
         loader = csQueryRegistry<iBgLoader>(object_reg);
+        scenemanipulator = scfQueryInterface<iSceneManipulate>(loader);
         csRef<iThreadManager> tm = csQueryRegistry<iThreadManager>(object_reg);
         loader->Setup(gfxFeatures, 200);
 

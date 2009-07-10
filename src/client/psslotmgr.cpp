@@ -28,7 +28,7 @@
 #include "gui/pawsslot.h"
 #include "paws/pawsmainwidget.h"
 
-#include "iclient/ibgloader.h"
+#include "iclient/iscenemanipulate.h"
 #include "pscelclient.h"
 #include "psslotmgr.h"
 #include "pscamera.h"
@@ -79,6 +79,7 @@ bool psSlotManager::HandleEvent( iEvent& ev )
                   // Else begin rotate...
                   isRotating = true;
                   basePoint = PawsManager::GetSingleton().GetMouse()->GetPosition();
+                  psengine->GetSceneManipulator()->SaveCoordinates(csVector2(basePoint.x, basePoint.y));
                   return false;
               }
 
@@ -95,9 +96,7 @@ bool psSlotManager::HandleEvent( iEvent& ev )
                   PawsManager::GetSingleton().GetMainWidget()->FindWidget("InventoryWindow")->Show();
 
                   // Remove outline mesh.
-                  outline->GetMovable()->SetSector(0);
-                  outline->GetMovable()->UpdateMove();
-                  outline.Invalidate();
+                  psengine->GetSceneManipulator()->RemoveSelected();
 
                   isPlacing = false;
               }
@@ -189,33 +188,19 @@ void psSlotManager::PlaceItem()
 {
     // Get WS position.
     psPoint p = PawsManager::GetSingleton().GetMouse()->GetPosition();
-    iMeshWrapper *mesh = psengine->GetPSCamera()->Get3DPointFrom2D(p.x, p.y, &pt3d);
 
-    // If mesh under mouse is valid (so the position is valid).
-    if(mesh)
+    // Create mesh.
+    outline = psengine->GetSceneManipulator()->CreateAndSelectMesh(draggingSlot.meshFactName,
+        psengine->GetPSCamera()->GetICamera()->GetCamera(), csVector2(p.x, p.y));
+
+    // If created mesh is valid.
+    if(outline)
     {
         // Hide the inventory so we can see where we're dropping.
         PawsManager::GetSingleton().GetMainWidget()->FindWidget("InventoryWindow")->Hide();
 
         // Get rid of icon.
         PawsManager::GetSingleton().SetDragDropWidget( NULL );
-
-        // Create item.
-        csRef<iMeshFactoryWrapper> meshfact;
-        while(!meshfact.IsValid())
-        {
-          bool failed = false;
-          meshfact = psengine->GetLoader()->LoadFactory(draggingSlot.meshFactName, &failed);
-          if(failed)
-          {
-            Error2("Failed to load meshfact %s\n", draggingSlot.meshFactName.GetData());
-            return;
-          }
-        }
-
-        outline = meshfact->CreateMeshWrapper();
-        outline->GetMovable()->SetPosition(psengine->GetCelClient()->GetMainPlayer()->GetSector(), pt3d);
-        outline->GetMovable()->UpdateMove();
 
         // Mark placing.
         isPlacing = true;
@@ -224,26 +209,20 @@ void psSlotManager::PlaceItem()
 
 void psSlotManager::UpdateItem()
 {
-    // Get new WS position.
+    // Get new position.
     psPoint p = PawsManager::GetSingleton().GetMouse()->GetPosition();
 
     // If we're rotating then we use mouse movement to determine rotation.
     if(isRotating)
     {
-      float d = 6 * PI * ((float)p.x - basePoint.x) / psengine->GetG2D()->GetWidth();
-      csYRotMatrix3 rotation(d);
-
-      outline->GetMovable()->GetTransform().SetO2T(rotation);
+        psengine->GetSceneManipulator()->RotateSelected(csVector2(p.x, p.y));
     }
     else
     {
-      // Else we use it to determine item position.
-      iMeshWrapper *mesh = psengine->GetPSCamera()->Get3DPointFrom2D(p.x, p.y, &pt3d);
-
-      outline->GetMovable()->SetPosition(pt3d);
+        // Else we use it to determine item position.
+        psengine->GetSceneManipulator()->TranslateSelected(false,
+            psengine->GetPSCamera()->GetICamera()->GetCamera(), csVector2(p.x, p.y));
     }
-
-    outline->GetMovable()->UpdateMove();
 }
 
 void psSlotManager::DropItem()
@@ -253,20 +232,20 @@ void psSlotManager::DropItem()
     float yrot = 6 * PI * ((float)p.x - basePoint.x) / psengine->GetG2D()->GetWidth();
 
     // Send drop message.
+    csVector3 pos = outline->GetMovable()->GetPosition();
     psSlotMovementMsg msg( draggingSlot.containerID, draggingSlot.slotID,
-      CONTAINER_WORLD, 0, draggingSlot.stackCount, &pt3d,
+      CONTAINER_WORLD, 0, draggingSlot.stackCount, &pos,
       &yrot);
     msg.SendMessage();
 
     // Remove outline mesh.
-    outline->GetMovable()->SetSector(0);
-    outline.Invalidate();
+    psengine->GetSceneManipulator()->RemoveSelected();
 
     // Show inventory window again.
     PawsManager::GetSingleton().GetMainWidget()->FindWidget("InventoryWindow")->Show();
 
     // Reset flags.
-    isDragging = false;  
+    isDragging = false;
     isPlacing = false;
     isRotating = false;
 }

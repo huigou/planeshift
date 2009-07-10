@@ -19,9 +19,11 @@
 
 #include <cssysdef.h>
 #include <cstool/collider.h>
+#include <cstool/enginetools.h>
 #include <cstool/vfsdirchange.h>
 #include <csutil/scanstr.h>
 #include <csutil/scfstringarray.h>
+#include <iengine/camera.h>
 #include <iengine/movable.h>
 #include <iengine/portal.h>
 #include <imap/services.h>
@@ -31,6 +33,7 @@
 #include <iutil/object.h>
 #include <iutil/plugin.h>
 #include <ivaria/collider.h>
+#include <ivideo/graph2d.h>
 #include <ivideo/material.h>
 
 #include "loader.h"
@@ -42,7 +45,8 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
 SCF_IMPLEMENT_FACTORY(BgLoader)
 
 BgLoader::BgLoader(iBase *p)
-  : scfImplementationType (this, p), validPosition(false)
+  : scfImplementationType (this, p), validPosition(false),
+    resetHitbeam(true)
 {
 }
 
@@ -55,12 +59,13 @@ bool BgLoader::Initialize(iObjectRegistry* object_reg)
     this->object_reg = object_reg;
 
     engine = csQueryRegistry<iEngine> (object_reg);
+    g2d = csQueryRegistry<iGraphics2D> (object_reg);
     tloader = csQueryRegistry<iThreadedLoader> (object_reg);
     tman = csQueryRegistry<iThreadManager> (object_reg);
     vfs = csQueryRegistry<iVFS> (object_reg);
     svstrings = csQueryRegistryTagInterface<iShaderVarStringSet>(object_reg, "crystalspace.shader.variablenameset");
     strings = csQueryRegistryTagInterface<iStringSet>(object_reg, "crystalspace.shared.stringset");
-    cdsys = csQueryRegistry<iCollideSystem> (object_reg);
+    cdsys = csQueryRegistry<iCollideSystem> (object_reg); 
 
     syntaxService = csQueryRegistryOrLoad<iSyntaxService>(object_reg, "crystalspace.syntax.loader.service.text");
 
@@ -1857,6 +1862,105 @@ bool BgLoader::InWaterArea(const char* sector, csVector3* pos, csColor4** colour
     }
 
     return false;
+}
+
+iMeshWrapper* BgLoader::CreateAndSelectMesh(const char* factName, iCamera* camera, const csVector2& pos)
+{
+    // Check that requested mesh is valid.
+    csRef<MeshFact> meshfact = meshfacts.Get(factName, csRef<MeshFact>());
+    if(!meshfact.IsValid())
+        return 0;
+
+    // Get WS position.
+    csScreenTargetResult result = csEngineTools::FindScreenTarget(pos, 1000, camera);
+
+    // If there's no hit then we can't create.
+    if(result.mesh == 0)
+        return 0;
+
+    // Load meshfactory.
+    while(!LoadMeshFact(meshfact));
+    csRef<iMeshFactoryWrapper> factory = scfQueryInterface<iMeshFactoryWrapper>(meshfact->status->GetResultRefPtr());
+
+    // Update stored position.
+    previousPosition = pos;
+
+    // Create new mesh.
+    if(selectedMesh && resetHitbeam)
+    {
+        selectedMesh->GetFlags().Reset(CS_ENTITY_NOHITBEAM);
+    }
+    resetHitbeam = false;
+    selectedMesh = factory->CreateMeshWrapper();
+    selectedMesh->GetFlags().Set(CS_ENTITY_NOHITBEAM);
+    selectedMesh->GetMovable()->SetPosition(camera->GetSector(), result.isect);
+    selectedMesh->GetMovable()->UpdateMove();
+
+    return selectedMesh;
+}
+
+iMeshWrapper* BgLoader::SelectMesh(iCamera* camera, const csVector2& pos)
+{
+    // Get WS position.
+    csScreenTargetResult result = csEngineTools::FindScreenTarget(pos, 1000, camera);
+
+    if(selectedMesh && resetHitbeam)
+    {
+        selectedMesh->GetFlags().Reset(CS_ENTITY_NOHITBEAM);
+    }
+    selectedMesh = result.mesh;
+    resetHitbeam = !selectedMesh->GetFlags().Check(CS_ENTITY_NOHITBEAM);
+    selectedMesh->GetFlags().Set(CS_ENTITY_NOHITBEAM);
+
+    // Update stored position.
+    previousPosition = pos;
+
+    return selectedMesh;
+}
+
+bool BgLoader::TranslateSelected(bool vertical, iCamera* camera, const csVector2& pos)
+{
+    if(selectedMesh.IsValid())
+    {
+        if(vertical)
+        {
+            float d = 10 * float(pos.y - previousPosition.y) / g2d->GetWidth();
+            csVector3 position = selectedMesh->GetMovable()->GetPosition();
+            selectedMesh->GetMovable()->SetPosition(position + csVector3(0.0f, d, 0.0f));
+        }
+        else
+        {
+            // Get WS position.
+            csScreenTargetResult result = csEngineTools::FindScreenTarget(pos, 1000, camera);
+            if(result.mesh)
+            {
+                selectedMesh->GetMovable()->SetPosition(result.isect);
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+void BgLoader::RotateSelected(const csVector2& pos)
+{
+    if(selectedMesh.IsValid())
+    {
+        float d = 6 * PI * ((float)pos.x - previousPosition.x) / g2d->GetWidth();
+        csYRotMatrix3 rotation(d);
+
+        selectedMesh->GetMovable()->GetTransform().SetO2T(rotation);
+    }
+}
+
+void BgLoader::RemoveSelected()
+{
+    if(selectedMesh.IsValid())
+    {
+        selectedMesh->GetMovable()->SetSector(0);
+        selectedMesh.Invalidate();
+    }
 }
 
 }
