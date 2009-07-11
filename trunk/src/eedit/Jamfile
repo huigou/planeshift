@@ -5,6 +5,71 @@ Application eedit :
 ;
 
 CompileGroups eedit : tools ;
-CFlags eedit : $(CAL3D.CFLAGS) ;
-ExternalLibs eedit : CRYSTAL CEL ;
+ExternalLibs eedit : CRYSTAL ;
 LinkWith eedit : paws psutil effects fparser ;
+
+if $(HAVE_STATIC_PLUGINS) = "yes"
+{
+  SubVariant static ;
+
+  Application eedit_static :
+      [ Wildcard *.cpp *.h ]
+  ;
+  CFlags eedit_static : [ FDefines CS_STATIC_LINKED ]
+  LFlags eedit_static : -lcrystalspace_staticplugins-$(CRYSTAL.VERSION)
+  CompileGroups eedit_static : tools ;
+  ExternalLibs eedit_static : CRYSTAL ;
+  MsvcDefine eedit_static : CS_STATIC_LINKED ;
+  LinkWith eedit_static : paws psutil effects fparser ;
+
+STATIC.PLUGINLIST =
+  bindoc
+  csddsimg
+  csfont
+  csgifimg
+  csjpgimg
+  csjngimg
+  csopcode
+  csparser
+  cspngimg
+  cssynldr
+  cstgaimg
+  dsplex
+  engine
+  fontplex
+  freefnt2
+  frustvis
+  genmesh
+  gl3d
+  glshader_cg
+  glshader_fixed
+  glshader_ps1
+  gmeshldr
+  imgplex
+  particles
+  particlesldr
+  ptanimimg
+  ptpdlight
+  rendstep_std
+  reporter
+  rm_unshadowed
+  shadermgr
+  shaderweaver
+  stdrep
+  vfs
+  xmlshader
+  xmltiny
+  ;
+
+if $(TARGET.OS) != "WIN32" { if $(TARGET.OS) != "MACOS_X" { STATIC.PLUGINLIST += xwin xext86vm glx2d ; } }
+if $(TARGET.OS) = "WIN32" { STATIC.PLUGINLIST += glwin32 ; }
+if $(TARGET.OS) = "MACOS_X" { STATIC.PLUGINLIST += glosx2d ; }
+
+LinkStaticPlugins eedit_static : $(STATIC.PLUGINLIST)
+:
+: CRYSTAL
+;
+
+  SubVariant ;
+}
+
