@@ -121,10 +121,10 @@ struct psMovement
  */
 struct psCharacterLimitation
 {
-    uint32 id;              /// unique id
-    csString limit_type;    /// 'SKETCH' limitations all have this word here
-    int      min_score;     /// What must a player score to earn this ability
-    csString value;         /// What is the name of the ability they earn
+    uint32 id;              ///< unique id
+    csString limit_type;    ///< 'SKETCH' limitations all have this word here
+    int      min_score;     ///< What must a player score to earn this ability
+    csString value;         ///< What is the name of the ability they earn
 };
 
 
