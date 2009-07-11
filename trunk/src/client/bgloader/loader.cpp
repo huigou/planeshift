@@ -991,6 +991,16 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                     node = node->GetParent();
                 }
             }
+
+            // Parse the start position.
+            node = root->GetNode("start");
+            if(node.IsValid())
+            {
+                csRef<StartPosition> startPos = csPtr<StartPosition>(new StartPosition());
+                startPos->sector = node->GetNode("sector")->GetContentsValue();
+                syntaxService->ParseVector(node->GetNode("position"), startPos->position);
+                startPositions.Push(startPos);
+            }
         }
 
         // Wait for plugin and shader loads to finish.
@@ -1930,9 +1940,10 @@ bool BgLoader::TranslateSelected(bool vertical, iCamera* camera, const csVector2
     {
         if(vertical)
         {
-            float d = 10 * float(pos.y - previousPosition.y) / g2d->GetWidth();
+            float d = 5 * float(previousPosition.y - pos.y) / g2d->GetWidth();
             csVector3 position = selectedMesh->GetMovable()->GetPosition();
             selectedMesh->GetMovable()->SetPosition(position + csVector3(0.0f, d, 0.0f));
+            previousPosition = pos;
         }
         else
         {
@@ -1953,7 +1964,7 @@ void BgLoader::RotateSelected(const csVector2& pos)
 {
     if(selectedMesh.IsValid())
     {
-        float d = 6 * PI * ((float)pos.x - previousPosition.x) / g2d->GetWidth();
+        float d = 6 * PI * ((float)previousPosition.x - pos.x) / g2d->GetWidth();
         csYRotMatrix3 rotation(d);
 
         selectedMesh->GetMovable()->GetTransform().SetO2T(rotation);

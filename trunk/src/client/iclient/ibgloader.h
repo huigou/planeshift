@@ -28,6 +28,15 @@ struct iObjectRegistry;
 struct iThreadedLoader;
 
 /**
+ * Structure holding start position data.
+ */
+struct StartPosition : public csRefCount
+{
+    csString sector;
+    csVector3 position;
+};
+
+/**
  * Interface to the background loader plugin.
  */
 struct iBgLoader : public virtual iBase
@@ -78,7 +87,10 @@ struct iBgLoader : public virtual iBase
   * Useful when you are waiting for a load to finish (load into the world, teleport),
   * but want to continue rendering while you wait.
   * Will return after processing a number of objects.
-  * @param waiting Set as 'true' if you wish the loader to not return until all objects are loaded.
+  * @param waiting Set as 'true' if you're waiting for the load to finish.
+  * This will make it process more before returning (lower overhead).
+  * Note that you should process a frame after each call, as spawned threads
+  * may depend on the main thread to handle requests.
   */
   virtual void ContinueLoading(bool waiting) = 0;
 
@@ -122,6 +134,11 @@ struct iBgLoader : public virtual iBase
   * E.g. 'default_alpha' to get an array of all default world alpha shaders.
   */
   virtual csPtr<iStringArray> GetShaderName(const char* usageType) const = 0;
+
+  /**
+   * Returns an array of start positions in the world.
+   */
+  virtual csRefArray<StartPosition>* GetStartPositions() = 0;
 };
 
 #endif // __IBGLOADER_H__
