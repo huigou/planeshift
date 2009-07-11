@@ -289,7 +289,7 @@ bool WorldEditor::HandleEvent (iEvent &ev)
                     iMeshWrapper* selected = sceneManipulator->SelectMesh(view->GetCamera(), csVector2(p.x, p.y));
                     if(selected)
                     {
-                        printf("Removing mesh: %\n", selected->QueryObject()->GetName());
+                        printf("Removing mesh: %s\n", selected->QueryObject()->GetName());
                         sceneManipulator->RemoveSelected();
                     }
                     break;
