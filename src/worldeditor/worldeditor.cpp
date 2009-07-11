@@ -23,8 +23,11 @@
 #include <cstool/enginetools.h>
 #include <cstool/genmeshbuilder.h>
 #include <cstool/initapp.h>
+#include <csutil/event.h>
 #include <iengine/sector.h>
 #include <iutil/cfgmgr.h>
+#include <iutil/cmdline.h>
+#include <iutil/csinput.h>
 #include <iutil/eventq.h>
 #include <iutil/object.h>
 #include <ivaria/view.h>
@@ -42,7 +45,8 @@
 #define APPNAME "PlaneShift World Editor"
 #define WEDIT_CONFIG_FILENAME "/this/worldeditor.cfg"
 
-WorldEditor::WorldEditor(int argc, char* argv[]) : paws(0)
+WorldEditor::WorldEditor(int argc, char* argv[]) :
+paws(0), editMode(Select), rotX(0), rotY(0)
 {
     // Init CS.
     objectReg = csInitializer::CreateEnvironment(argc, argv);
@@ -53,6 +57,7 @@ WorldEditor::WorldEditor(int argc, char* argv[]) : paws(0)
     // Initialize event shortcuts.
     csRef<iEventNameRegistry> eventNameReg = csEventNameRegistry::GetRegistry (objectReg);
     FrameEvent = csevFrame (eventNameReg);
+    KeyDown = csevKeyboardDown(eventNameReg);
     MouseMove = csevMouseMove (eventNameReg, 0);
     MouseDown = csevMouseDown (eventNameReg, 0);
 }
@@ -108,7 +113,7 @@ bool WorldEditor::Init()
         return false;
     }
 
-    csRef<iGraphics3D> g3d = csQueryRegistry<iGraphics3D> (objectReg);
+    g3d = csQueryRegistry<iGraphics3D> (objectReg);
     if (!g3d)
     {
         printf("iGraphics3D failed to Init!\n");
@@ -122,10 +127,17 @@ bool WorldEditor::Init()
         return false;
     }
 
-    csRef<iEngine> engine = csQueryRegistry<iEngine> (objectReg);
+    engine = csQueryRegistry<iEngine> (objectReg);
     if (!engine)
     {
         printf("iEngine failed to Init!\n");
+        return false;
+    }
+
+    csRef<iThreadManager> threadman = csQueryRegistry<iThreadManager> (objectReg);
+    if (!threadman)
+    {
+        printf("iThreadManager failed to Init!\n");
         return false;
     }
 
@@ -136,6 +148,7 @@ bool WorldEditor::Init()
         return false;
     }
 
+    loader->Setup(0x10, 1000);
     sceneManipulator = scfQueryInterface<iSceneManipulate>(loader);
 
     if(!csInitializer::OpenApplication(objectReg))
@@ -182,6 +195,7 @@ bool WorldEditor::Init()
     // Set up view.
     view.AttachNew(new csView(engine, g3d));
     view->SetRectangle(0, 0, g2d->GetWidth(), g2d->GetHeight());
+    view->GetPerspectiveCamera()->SetPerspectiveCenter(0.5, 0.5);
 
     // Create blackbox world.
     iSector* blackbox = engine->CreateSector("BlackBox");
@@ -201,9 +215,28 @@ bool WorldEditor::Init()
 
     // Create and set material.
     bbox->GetMeshObject ()->SetMaterialWrapper(engine->CreateMaterial("black", engine->CreateBlackTexture("black", 2, 2, 0, 0)));
+    bbox->GetFlags().Set(CS_ENTITY_NOHITBEAM);
+
+    // Check for world to load (will be done via gui in future).
+    csRef<iCommandLineParser> cmdLine = csQueryRegistry<iCommandLineParser> (objectReg);
+    const char* mapPath = cmdLine->GetOption("map");
+    if(mapPath)
+    {
+        loader->PrecacheDataWait(mapPath, false);
+        csRef<StartPosition> startPos = loader->GetStartPositions()->Get(0);
+        loader->UpdatePosition(startPos->position, startPos->sector, true);
+        while(loader->GetLoadingCount() != 0)
+        {
+            threadman->Process(10);
+            loader->ContinueLoading(true);
+        }
+        view->GetCamera()->SetSector(engine->GetSectors()->FindByName(startPos->sector));
+        view->GetCamera()->GetTransform().SetOrigin(startPos->position);
+    }
 
     // Prepare engine.
     engine->Prepare();
+    engine->PrecacheDraw();
 
     return true;
 }
@@ -212,7 +245,11 @@ bool WorldEditor::HandleEvent (iEvent &ev)
 {
     if(ev.Name == FrameEvent)
     {
+        g3d->BeginDraw(engine->GetBeginDrawFlags() | CSDRAW_3DGRAPHICS);
         view->Draw();
+        g3d->FinishDraw();
+        g3d->Print(0);
+        return false;
     }
     
     bool handled = paws->HandleEvent(ev);
@@ -221,18 +258,149 @@ bool WorldEditor::HandleEvent (iEvent &ev)
         if(ev.Name == MouseDown)
         {
             psPoint p = PawsManager::GetSingleton().GetMouse()->GetPosition();
-            iMeshWrapper* selected = sceneManipulator->SelectMesh(view->GetCamera(), csVector2(p.x, p.y));
-            if(selected)
+            switch(editMode)
             {
-                printf("Selected mesh: %s\n", selected->QueryObject()->GetName());
-            }
-            else
-            {
-                printf("No mesh selected!\n");
+            case Select:
+                {
+                    iMeshWrapper* selected = sceneManipulator->SelectMesh(view->GetCamera(), csVector2(p.x, p.y));
+                    if(selected)
+                    {
+                        printf("Selected mesh: %s\n", selected->QueryObject()->GetName());
+                    }
+                    else
+                    {
+                        printf("Selection cleared!\n");
+                    }
+                    break;
+                }
+            case Create:
+                {
+                    break;
+                }
+            case TranslateXZ:
+            case TranslateY:
+            case Rotate:
+                {
+                    editMode = Select;
+                    break;
+                }
+            case Remove:
+                {
+                    iMeshWrapper* selected = sceneManipulator->SelectMesh(view->GetCamera(), csVector2(p.x, p.y));
+                    if(selected)
+                    {
+                        printf("Removing mesh: %\n", selected->QueryObject()->GetName());
+                        sceneManipulator->RemoveSelected();
+                    }
+                    break;
+                }
             }
         }
         else if(ev.Name == MouseMove)
         {
+            psPoint p = PawsManager::GetSingleton().GetMouse()->GetPosition();
+            switch(editMode)
+            {
+            case TranslateXZ:
+                {
+                    sceneManipulator->TranslateSelected(false, view->GetCamera(), csVector2(p.x, p.y));
+                    break;
+                }
+            case TranslateY:
+                {
+                    sceneManipulator->TranslateSelected(true, view->GetCamera(), csVector2(p.x, p.y));
+                    break;
+                }
+            case Rotate:
+                {
+                    sceneManipulator->RotateSelected(csVector2(p.x, p.y));
+                    break;
+                }
+            }
+        }
+        else if(ev.Name == KeyDown)
+        {
+            bool rotated = false;
+
+            int cooked = csKeyEventHelper::GetCookedCode(&ev);
+            switch(cooked)
+            {
+            case 'c':
+                {
+                    editMode = Create;
+                    break;
+                }
+            case 'z':
+                {
+                    editMode = TranslateXZ;
+                    break;
+                }
+            case 'y':
+                {
+                    psPoint p = PawsManager::GetSingleton().GetMouse()->GetPosition();
+                    sceneManipulator->SaveCoordinates(csVector2(p.x, p.y));
+                    editMode = TranslateY;
+                    break;
+                }
+            case 'r':
+                {
+                    psPoint p = PawsManager::GetSingleton().GetMouse()->GetPosition();
+                    sceneManipulator->SaveCoordinates(csVector2(p.x, p.y));
+                    editMode = Rotate;
+                    break;
+                }
+            case 'x':
+                {
+                    editMode = Remove;
+                    break;
+                }
+            case CSKEY_UP:
+                {
+                    view->GetCamera()->Move (CS_VEC_FORWARD/5);
+                    break;
+                }
+            case CSKEY_DOWN:
+                {
+                    view->GetCamera()->Move (CS_VEC_BACKWARD/5);
+                    break;
+                }
+            case CSKEY_RIGHT:
+                {
+                    rotated = true;
+                    rotY += 0.02f;
+                    break;
+                }
+            case CSKEY_LEFT:
+                {
+                    rotated = true;
+                    rotY -= 0.02f;
+                    break;
+                }
+            case CSKEY_PGUP:
+                {
+                    rotated = true;
+                    rotX += 0.02f;
+                    break;
+                }
+            case CSKEY_PGDN:
+                {
+                    rotated = true;
+                    rotX -= 0.02f;
+                    break;
+                }
+            default:
+                {
+                    editMode = Select;
+                    break;
+                }
+            }
+
+            if(rotated)
+            {
+                csMatrix3 rot = csXRotMatrix3 (rotX) * csYRotMatrix3 (rotY);
+                csOrthoTransform ot (rot, view->GetCamera()->GetTransform ().GetOrigin ());
+                view->GetCamera()->SetTransform (ot);
+            }
         }
     }
     

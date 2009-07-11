@@ -22,6 +22,8 @@
 
 class pawsMainWidget;
 class PawsManager;
+struct iEngine;
+struct iGraphics3D;
 struct iObjectRegistry;
 struct iSceneManipulate;
 struct iView;
@@ -41,18 +43,36 @@ private:
     /* Init plugins, paws, world etc. */
     bool Init();
 
+    // Editing modes
+    enum EditMode
+    {
+        Select = 0,
+        Create,
+        TranslateXZ,
+        TranslateY,
+        Rotate,
+        Remove
+    };
+
+    EditMode editMode;
+
     // CS
     iObjectRegistry* objectReg;
     csRef<iView> view;
+    csRef<iGraphics3D> g3d;
+    csRef<iEngine> engine;
     DeclareGenericEventHandler(EventHandler, WorldEditor, "worldeditor");
 
     // PS
     PawsManager* paws;
     pawsMainWidget* mainWidget;
     csRef<iSceneManipulate> sceneManipulator;
+    /// Current orientation of the camera.
+    float rotX, rotY;
 
     // Event ids.
     csEventID MouseMove;
     csEventID MouseDown;
+    csEventID KeyDown;
     csEventID FrameEvent;
 };
