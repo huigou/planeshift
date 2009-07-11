@@ -40,7 +40,7 @@ public:
     virtual ~EEditReporter();
 
     THREADED_CALLABLE_DECL4(EEditReporter, Report, csThreadReturn, iReporter*, reporter,
-      int, severity, const char*, msgId,	const char*, description, HIGH, true, false);
+      int, severity, const char*, msgId, const char*, description, HIGH, false, false);
 
     void SetErrorToolbox(EEditErrorToolbox * toolbox);
 
