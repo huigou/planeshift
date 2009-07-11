@@ -207,6 +207,18 @@ iObjectRegistry* psCSSetup::InitCS(iReporterListener * customReporter)
 
     // Reset the window name because with Xwindows OpenApplication changes it
     InitCSWindow(APPNAME);
+    
+    csRef<iImage> ifile;
+    printf("exists? %d\n",vfs->Exists("/planeshift/support/icons/psicon.png"));
+    //csRef<iDataBuffer> buf( vfs->ReadFile( "/planeshift/support/icons/psicon.png", false ) );
+    csRef<iDataBuffer> buf( vfs->ReadFile( "/planeshift/support/icons/psicon.png", false ) );
+    csRef<iImageIO> imageLoader =  csQueryRegistry<iImageIO >( object_reg);
+    ifile = imageLoader->Load(buf,CS_IMGFMT_ANY);
+    csRef<iGraphics3D> g3d2 =  csQueryRegistry<iGraphics3D> (object_reg);
+ 
+    iNativeWindow *nw2 = g3d2->GetDriver2D()->GetNativeWindow();
+    if (nw2)
+        nw2->SetIcon(ifile);
 
     // tweak reporter plugin to report everything...
     // is there a command line switch or something to do this which I've missed?
@@ -448,6 +460,7 @@ void psCSSetup::MountArt()
     MountThings("jewelryzip",    "jewelry");
     MountThings("furniturezip",  "furniture");
     MountThings("foliagezip",    "foliage");
+    MountThings("plantszip",     "plants");
 
     // Create the mount points for glyphs
     MountThings("azurezip",      "azure_way");
