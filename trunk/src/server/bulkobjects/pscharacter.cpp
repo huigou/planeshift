@@ -2602,6 +2602,14 @@ psGuildLevel * psCharacter::GetGuildLevel()
     return membership->guildlevel;
 }
 
+psGuildMember * psCharacter::GetGuildMembership()
+{
+    if (guildinfo == NULL)
+        return 0;
+
+    return guildinfo->FindMember(pid);
+}
+
 bool psCharacter::Knows(PID charID)
 {
     // Introduction system is currently disabled - it's trivially worked
@@ -3713,6 +3721,7 @@ void SkillSet::SetSkillRank( PSSKILL which, unsigned int rank, bool recalculates
         rank = MAX_STAT;
 
     skills[which].rank.SetBase(rank);
+    skills[which].y = skills[which].z = 0; // PS#2906 - setskill should reset training values
     skills[which].CalculateCosts(self);
     skills[which].dirtyFlag = true;
 
