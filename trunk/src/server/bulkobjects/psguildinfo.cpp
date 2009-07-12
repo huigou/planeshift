@@ -95,6 +95,8 @@ bool psGuildInfo::Load(iResultRow& row)
 
     if (row["secret_ind"])
         secret = (*row["secret_ind"]=='Y');
+        
+    max_guild_points = row.GetInt("max_guild_points");
 
     // Now get levels
     Result result(db->Select("select * from guildlevels where guild_id=%d order by level",id));
@@ -114,7 +116,7 @@ bool psGuildInfo::Load(iResultRow& row)
     }
 
     // Now preload members
-    Result member(db->Select("select id,name,guild_level,guild_points,guild_public_notes,guild_private_notes, last_login"
+    Result member(db->Select("select id,name,guild_level,guild_points,guild_public_notes,guild_private_notes, last_login, guild_additional_privileges, guild_denied_privileges"
         "  from characters"
         " where guild_member_of=%d",id));
 
@@ -135,10 +137,12 @@ bool psGuildInfo::Load(iResultRow& row)
         gm->actor         = NULL;
         gm->guildlevel    = FindLevel(member[i].GetInt("guild_level"));
 
-        gm->guild_points  = member[i].GetInt("guild_points");
-        gm->public_notes  = member[i]["guild_public_notes"];
-        gm->private_notes = member[i]["guild_private_notes"];
-        gm->last_login    = member[i]["last_login"];
+        gm->guild_points         = member[i].GetInt("guild_points");
+        gm->public_notes         = member[i]["guild_public_notes"];
+        gm->private_notes        = member[i]["guild_private_notes"];
+        gm->last_login           = member[i]["last_login"];
+        gm->privileges           = member[i].GetInt("guild_additional_privileges");
+        gm->removedPrivileges    = member[i].GetInt("guild_denied_privileges");
 
         if (!gm->guildlevel)
         {
@@ -171,9 +175,12 @@ bool psGuildInfo::InsertNew(PID leader_char_id)
     db->Escape(guildEsc,this->name);
 
 
-    if (db->Command("insert into guilds (name,char_id_founder,date_created) "
-        "values ('%s', %d, Now() )",
-        guildEsc.GetData(), leader_char_id.Unbox()) != 1)
+    if (db->Command("insert into guilds (name,char_id_founder,date_created,max_guild_points) "
+        "values ('%s', %d, Now(), %d )",
+        guildEsc.GetData(), 
+        leader_char_id.Unbox(), 
+        DEFAULT_MAX_GUILD_POINTS) 
+        != 1)
     {
         Error3 ("Couldn't create new guild.\nCommand was "
             "<%s>.\nError returned was <%s>\n",db->GetLastQuery(),db->GetLastError());
@@ -308,6 +315,8 @@ bool psGuildInfo::AddNewMember(psCharacter *player, int level)
     gm->guild_points = 0;
     gm->guildlevel = FindLevel(level);
     gm->name = player->name;
+    gm->privileges = 0;
+    gm->removedPrivileges = 0;
 
     members.Push(gm);
 
@@ -487,7 +496,66 @@ bool psGuildInfo::SetPrivilege(int level, GUILD_PRIVILEGE privilege, bool on)
         return false;    
 }
 
+bool psGuildInfo::SetMemberPrivilege(psGuildMember *member, GUILD_PRIVILEGE privilege, bool on)
+{
+    psGuildLevel *lev = member->guildlevel;
 
+    if (lev)
+    {
+        if (on)
+        {
+            if(!member->HasRights(privilege)) //we operate only if the character doesn't have the privilege
+            {
+                if(lev->HasRights(privilege)) //should the character have the right because of his level?
+                {
+                    //if so remove this privilege among the specially denied privileges
+                    member->removedPrivileges &= ~privilege;
+                }
+                else //we are adding it as a special privilege for the character
+                {
+                    member->privileges |= privilege;
+                }
+            }
+            else
+            {
+                return false; //nothing to do here
+            }
+        } 
+        else
+        {
+            if(member->HasRights(privilege)) //we operate only if the character has the privilege
+            {
+                if(lev->HasRights(privilege)) //does the character have the right because of his level?
+                {
+                    //if so add this privilege among the specially denied privileges
+                    member->removedPrivileges |= privilege;
+                }
+                else //it was a special privilege the character had, so just remove it
+                {
+                    member->privileges &= ~privilege;
+                }
+            }
+            else
+            {
+                return false; //nothing to do the character doesn't have the privilege
+            }
+        }
+
+        unsigned long res = db->Command("update characters"
+            "   set guild_additional_privileges='%d' guild_denied_privileges='%d'"
+            " where id = '%d'",
+            member->privileges, member->removedPrivileges, member->char_id.Unbox());
+
+        if (res == QUERY_FAILED)
+        {
+            Error2("sql error: %s", db->GetLastError());
+            return false;
+        }
+        return true;
+    }
+    else
+        return false;    
+}
 
 bool psGuildInfo::UpdateMemberLevel(psGuildMember *target,int level)
 {
@@ -534,12 +602,31 @@ void psGuildInfo::SaveBankMoney()
 
 bool psGuildInfo::SetMemberPoints(psGuildMember * member, int points)
 {
+    if (points > max_guild_points)
+        return false;
+
     member->guild_points = points;
 
     unsigned long res = db->Command("UPDATE characters SET guild_points=%d WHERE id=%u", points, member->char_id.Unbox());
     if (res != 1)
     {
         Error3("Couldn't save guild_points of %s: %s", ShowID(member->char_id), db->GetLastError());
+        return false;
+    }
+    return true;
+}
+
+bool psGuildInfo::SetMaxMemberPoints(int points)
+{
+    if (points > MAX_GUILD_POINTS_LIMIT)
+        points = MAX_GUILD_POINTS_LIMIT;
+
+    max_guild_points = points;
+
+    unsigned long res = db->Command("UPDATE guilds SET max_guild_points=%d WHERE id=%u", points, id);
+    if (res != 1)
+    {
+        Error3("Couldn't save max guild_points of %d: %s", id, db->GetLastError());
         return false;
     }
     return true;

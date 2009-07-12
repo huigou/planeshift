@@ -106,6 +106,8 @@ typedef uint32 InstanceID;
 #define GUILD_KICK_GRACE 5 ///< minutes
 
 #define MAX_GUILD_LEVEL    9
+#define DEFAULT_MAX_GUILD_POINTS 100
+#define MAX_GUILD_POINTS_LIMIT 9999
 //@}
 
 #define SIZET_NOT_FOUND ((size_t)-1)

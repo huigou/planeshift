@@ -460,7 +460,7 @@ void ChatManager::SendSay(uint32_t clientNum, gemActor *actor, psChatMessage& ms
 void ChatManager::SendGuild(Client *client, psChatMessage& msg)
 {
     psGuildInfo * guild;
-    psGuildLevel * level;
+    psGuildMember * member;
 
     guild = client->GetCharacterData()->GetGuild();
     if (guild == NULL)
@@ -469,8 +469,8 @@ void ChatManager::SendGuild(Client *client, psChatMessage& msg)
         return;
     }
 
-    level = client->GetCharacterData()->GetGuildLevel();
-    if (level && !level->HasRights(RIGHTS_CHAT))
+    member = client->GetCharacterData()->GetGuildMembership();
+    if (member && !member->HasRights(RIGHTS_CHAT))
     {
         psserver->SendSystemInfo(client->GetClientNum(), "You are not allowed to use your guild's chat channel.");
         return;
@@ -482,15 +482,15 @@ void ChatManager::SendGuild(Client *client, psChatMessage& msg)
 void ChatManager::SendGuild(const csString & sender, EID senderEID, psGuildInfo * guild, psChatMessage& msg)
 {
     ClientIterator iter(*psserver->GetConnections());
-    psGuildLevel * level;
+    psGuildMember * member;
 
     while(iter.HasNext())
     {
         Client *client = iter.Next();
         if (!client->IsReady()) continue;
         if (client->GetGuildID() != guild->id) continue;
-        level = client->GetCharacterData()->GetGuildLevel();
-        if ( (!level) || (!level->HasRights(RIGHTS_VIEW_CHAT)) ) continue;
+        member = client->GetCharacterData()->GetGuildMembership();
+        if ( (!member) || (!member->HasRights(RIGHTS_VIEW_CHAT)) ) continue;
         // Send the chat message
         psChatMessage newMsg(client->GetClientNum(), senderEID, sender, 0, msg.sText, msg.iChatType, msg.translate);
         newMsg.SendMessage();
@@ -502,7 +502,7 @@ void ChatManager::SendGuild(const csString & sender, EID senderEID, psGuildInfo 
 void ChatManager::SendAlliance(Client *client, psChatMessage& msg)
 {
     psGuildInfo * guild;
-    psGuildLevel * level;
+    psGuildMember * member;
 
     guild = client->GetCharacterData()->GetGuild();
     if (guild == NULL)
@@ -511,10 +511,10 @@ void ChatManager::SendAlliance(Client *client, psChatMessage& msg)
         return;
     }
 
-    level = client->GetCharacterData()->GetGuildLevel();
-    if (level && !level->HasRights(RIGHTS_CHAT))
+    member = client->GetCharacterData()->GetGuildMembership();
+    if (member && !member->HasRights(RIGHTS_CHAT_ALLIANCE))
     {
-        psserver->SendSystemInfo(client->GetClientNum(), "You are not allowed to use your guild's chat channel.");
+        psserver->SendSystemInfo(client->GetClientNum(), "You are not allowed to use your alliance's chat channel.");
         return;
     }
     
@@ -531,15 +531,15 @@ void ChatManager::SendAlliance(Client *client, psChatMessage& msg)
 void ChatManager::SendAlliance(const csString & sender, EID senderEID, psGuildAlliance * alliance, psChatMessage& msg)
 {
     ClientIterator iter(*psserver->GetConnections());
-    psGuildLevel * level;
+    psGuildMember * member;
 
     while(iter.HasNext())
     {
         Client *client = iter.Next();
         if (!client->IsReady()) continue;
         if (client->GetAllianceID() != alliance->GetID()) continue;
-        level = client->GetCharacterData()->GetGuildLevel();
-        if ( (!level) || (!level->HasRights(RIGHTS_VIEW_CHAT)) ) continue;
+        member = client->GetCharacterData()->GetGuildMembership();
+        if ( (!member) || (!member->HasRights(RIGHTS_VIEW_CHAT_ALLIANCE)) ) continue;
         // Send the chat message
         psChatMessage newMsg(client->GetClientNum(), senderEID, sender, 0, msg.sText, msg.iChatType, msg.translate);
         newMsg.SendMessage();

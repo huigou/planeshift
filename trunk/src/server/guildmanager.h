@@ -95,6 +95,7 @@ protected:
     void HandleRemoveMember(Client *client,iDocumentNode * root);
     void HandleSetMemberLevel(Client *client,iDocumentNode * root);
     void HandleSetMemberPoints(Client *client,iDocumentNode * root);
+    void HandleSetMaxMemberPoints(Client *client,iDocumentNode * root);
     void HandleSetMemberNotes(Client *client,iDocumentNode * root, bool isPublic);
 
     /** Checks if client has right 'priv' */
@@ -109,6 +110,13 @@ protected:
     void SendAllianceData(Client *client);
 
     csString MakeAllianceMemberXML(psGuildInfo * member, bool allianceLeader);
+    
+    /** Parses a right string in order to be used by the right assignment functions.
+     *  @param privilege: A string with the privilege name
+     *  @param right: Where the result is stored
+     *  @return bool true if the right was found
+     */
+    bool ParseRightString(csString privilege,  GUILD_PRIVILEGE& right);
 
     void CreateGuild(psGuildCmdMessage& msg,Client *client);
 
@@ -124,6 +132,8 @@ protected:
     void Remove(psGuildCmdMessage& msg,Client *client);
     void Rename(psGuildCmdMessage& msg,Client *client);
     void Promote(psGuildCmdMessage& msg,Client *client);
+    void GetMemberPermissions(psGuildCmdMessage& msg,Client *client);
+    void SetMemberPermissions(psGuildCmdMessage& msg,Client *client);
     void ListMembers(psGuildCmdMessage& msg,Client *client);
     void Secret(psGuildCmdMessage &msg, Client *client);
     void Web(psGuildCmdMessage &msg, Client *client);

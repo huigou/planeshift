@@ -47,32 +47,39 @@ class iResultRow;
 
 enum GUILD_PRIVILEGE
 {
-    RIGHTS_VIEW_CHAT   = 1,            // User can view guild chat (command /guild)
+    RIGHTS_VIEW_CHAT         = 1,            // User can view guild chat (command /guild)
     
-    RIGHTS_CHAT        = 2,            // User can send guild chat messages (command /guild)
+    RIGHTS_CHAT              = 2,            // User can send guild chat messages (command /guild)
     
-    RIGHTS_INVITE      = 4,            // User can invite players to guild
+    RIGHTS_INVITE            = 4,            // User can invite players to guild
     
-    RIGHTS_REMOVE      = 8,            // User can remove player of lower level from guild
+    RIGHTS_REMOVE            = 8,            // User can remove player of lower level from guild
     
-    RIGHTS_PROMOTE     = 16,           // User can promote/demote players of lower level to another lower level
-                                       //      User at level 9 (leader) can promote other player to level 9,
-                                       //      which in turn demotes the leader to level 8.
-                                       //      Leader cannot just demote himself.
-                                       //      Leader cannot leave guild.
-                                       //      This means that each guild has _just_ one level 9 person.
+    RIGHTS_PROMOTE           = 16,           // User can promote/demote players of lower level to another lower level
+                                             //      User at level 9 (leader) can promote other player to level 9,
+                                             //      which in turn demotes the leader to level 8.
+                                             //      Leader cannot just demote himself.
+                                             //      Leader cannot leave guild.
+                                             //      This means that each guild has _just_ one level 9 person.
                                        
-    RIGHTS_EDIT_LEVEL  = 32,           // User can change privileges of lower guild levels
+    RIGHTS_EDIT_LEVEL         = 32,           // User can change privileges of lower guild levels
     
-    RIGHTS_EDIT_POINTS = 64,           // User can change guild points of players of lower level
+    RIGHTS_EDIT_POINTS        = 64,           // User can change guild points of players of lower level
     
-    RIGHTS_EDIT_GUILD  = 128,          // User can change guild name, guild secrecy, guild web page, can disband guild
+    RIGHTS_EDIT_GUILD         = 128,          // User can change guild name, guild secrecy, guild web page, can disband guild,
+                                              // max guild points
     
-    RIGHTS_EDIT_PUBLIC = 256,          // User can edit public notes of player of lower level,
-                                       //     but the notes are visible to all guild members
+    RIGHTS_EDIT_PUBLIC        = 256,          // User can edit public notes of player of lower level,
+                                              //     but the notes are visible to all guild members
                                        
-    RIGHTS_EDIT_PRIVATE = 512         // User can view and edit private notes of player of lower level,
-                                       //     others can neither view nor edit them
+    RIGHTS_EDIT_PRIVATE       = 512,          // User can view and edit private notes of player of lower level,
+                                              //     others can neither view nor edit them
+                                       
+    RIGHTS_VIEW_CHAT_ALLIANCE = 1024,         // User can view alliance chat (command /alliance /a)
+
+    RIGHTS_CHAT_ALLIANCE      = 2048,         // User can send alliace chat messages (command /alliace /a)
+    
+    RIGHTS_USE_BANK           = 4096         // User can use guild bank
 };
 
 /** Defines a level inside a guild.
@@ -103,6 +110,11 @@ public:
     csString public_notes;      ///< The public notes the member has.
     csString private_notes;     ///< Private Guild notes for the player.
     csString last_login;        ///< The last login time for that user. 
+    int privileges;             ///< Bit field for additional privileges.
+    int removedPrivileges;      ///< Bit field for privileges removed from this member.
+    
+    bool HasRights(GUILD_PRIVILEGE rights)
+    { return (guildlevel->HasRights(rights) && !(removedPrivileges & rights) ||  (privileges & rights)); }
 };
 
 //------------------------------------------------------------------------------
@@ -125,6 +137,7 @@ protected:
 
 private:
     psMoney bankMoney;          ///< Money stored in the guild bank account.
+    int max_guild_points;       ///< Maximum guild points obtainable in the guild.
 
 public:
     int alliance;
@@ -157,6 +170,7 @@ public:
 
     bool RenameLevel(int level, const char *levelname);
     bool SetPrivilege(int level, GUILD_PRIVILEGE privilege, bool on);
+    bool SetMemberPrivilege(psGuildMember *member, GUILD_PRIVILEGE privilege, bool on);
     bool UpdateMemberLevel(psGuildMember *target,int level);
 
     void AdjustMoney(psMoney money, bool);
@@ -164,6 +178,9 @@ public:
     void SaveBankMoney();
 
     csString& GetName(){ return name; }
+
+    bool SetMaxMemberPoints(int points);
+    int GetMaxMemberPoints() { return max_guild_points; }
 
     bool SetMemberPoints(psGuildMember * member, int points);
     bool SetMemberNotes(psGuildMember * member, const csString & notes, bool isPublic);

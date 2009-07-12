@@ -1072,7 +1072,7 @@ public:
 class psGuildCmdMessage : public psMessageCracker
 {
 public:
-    csString command, guildname, player, levelname, accept, secret, web_page,motd, alliancename;
+    csString command, subCmd, permission, guildname, player, levelname, accept, secret, web_page,motd, alliancename;
     int level;
 
 
@@ -1119,7 +1119,8 @@ public:
 
                    SET_LEVEL_RIGHT,            ///< Clients changes right for guild level
 
-                   SET_MEMBER_POINTS,
+                   SET_MEMBER_POINTS,          ///< Sets the amount of guild points assigned to a member
+                   SET_MAX_GUILD_POINTS,       ///< Sets the maximum amount of guild points for the guild
                    SET_MEMBER_PUBLIC_NOTES,
                    SET_MEMBER_PRIVATE_NOTES,
 

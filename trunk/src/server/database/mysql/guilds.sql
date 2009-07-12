@@ -15,6 +15,7 @@ CREATE TABLE guilds (
   date_created datetime NOT NULL DEFAULT '0000-00-00 00:00:00' ,
   karma_points int(10) NOT NULL DEFAULT '0' ,
   secret_ind char(1) ,
+  max_guild_points int(10) NOT NULL DEFAULT '100' COMMENT 'Stores the maximum amount of gp allowed for assignment in this guild',
   motd char(200) ,
   alliance int(11),
   bank_money_circles int(10) unsigned NOT NULL default '0',
@@ -32,5 +33,5 @@ CREATE TABLE guilds (
 # Dumping data for table 'guilds'
 #
 
-INSERT INTO guilds VALUES("1","Insomniac Developers","2","www.yahoo.com","2002-05-08 00:07:37","0","N","Guild MOTD", 1, 1, 1, 1, 1);
-INSERT INTO guilds VALUES("11","Karmic Fanboys","1","www.linux.org","2003-07-25 00:07:37","0","N","", 1, 0, 0, 0, 0);
+INSERT INTO guilds VALUES("1","Insomniac Developers","2","www.yahoo.com","2002-05-08 00:07:37","0","N",100,"Guild MOTD", 1, 1, 1, 1, 1);
+INSERT INTO guilds VALUES("11","Karmic Fanboys","1","www.linux.org","2003-07-25 00:07:37","0","N",100,"", 1, 0, 0, 0, 0);
