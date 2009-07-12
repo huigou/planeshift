@@ -104,7 +104,7 @@ struct OrderedMessageChannel
 	int nextSequenceNumber;
 	csRefArray<MsgEntry> pendingMessages;
 
-	OrderedMessageChannel() : nextSequenceNumber(1) { }
+	OrderedMessageChannel() : nextSequenceNumber(0) { }
 	int GetCurrentSequenceNumber() { return nextSequenceNumber; }
 
 	int IncrementSequenceNumber()

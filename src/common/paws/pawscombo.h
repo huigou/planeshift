@@ -90,7 +90,7 @@ private:
     int rowHeight;
     int listalpha;
     
-    csString text;
+    csString text, upButton, upButtonPressed, downButton, downButtonPressed;
 };
 
 CREATE_PAWS_FACTORY ( pawsComboBox );
