@@ -132,17 +132,7 @@ bool psRegion::Load(bool loadMeshes)
         return false;
     }
 
-    if(gfxFeatures & useHighShaders)
-    {
-        for(int m=0; m<engine->GetMeshes()->GetCount(); ++m)
-        {
-            if(collection->IsParentOf(engine->GetMeshes()->Get(m)->QueryObject()))
-            {
-                engine->GetMeshes()->Get(m)->GetFlags().Reset(CS_ENTITY_NOLIGHTING);
-            }
-        }
-    }
-    else
+    if(gfxFeatures & (useMediumShaders | useLowShaders | useLowestShaders))
     {
         for(int m=0; m<engine->GetMeshes()->GetCount(); ++m)
         {
