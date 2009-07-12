@@ -2,13 +2,13 @@
 
 
 
-    <widget name="GuildWindow" factory="pawsGuildWindow" savepositions="yes" 
+    <widget name="GuildWindow" factory="pawsGuildWindow" savepositions="yes"
 
             visible="no" movable="yes" resizable="no" configurable="yes">
 
         <frame x="100" y="200" width="630" height="385" border="yes"/>
 
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />       
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
 
         <bgimage resource="Guild Main Background" alpha="128" />
 
@@ -16,7 +16,7 @@
 
     <!--        <childborders>
 
-            <colour r="0" g="0" b="0" />        
+            <colour r="0" g="0" b="0" />
 
             <colour r="0" g="0" b="255" />
 
@@ -102,7 +102,7 @@
 
         </widget>
 
-        
+
 
 
 
@@ -117,7 +117,7 @@
             <widget name="" factory="pawsTextBox" vertical="yes" >
 
                 <frame x="151" y="15" width="25" height="130" />
-		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9" />
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9" />
 
                 <text string="View chat" vertAdjust="BOTTOM"/>
 
@@ -126,7 +126,7 @@
             <widget name="" factory="pawsTextBox" vertical="yes" >
 
                 <frame x="174" y="15" width="25" height="130" />
-		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9" />
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9" />
 
                 <text string="Chat" vertAdjust="BOTTOM"/>
 
@@ -135,7 +135,7 @@
             <widget name="" factory="pawsTextBox" vertical="yes" >
 
                 <frame x="199" y="15" width="25" height="130" />
-		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9" />
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9" />
 
                 <text string="Invite" vertAdjust="BOTTOM"/>
 
@@ -144,7 +144,7 @@
             <widget name="" factory="pawsTextBox" vertical="yes" >
 
                 <frame x="219" y="15" width="25" height="130" />
-		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9" />
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9" />
 
                 <text string="Remove" vertAdjust="BOTTOM"/>
 
@@ -153,7 +153,7 @@
             <widget name="" factory="pawsTextBox" vertical="yes" >
 
                 <frame x="243" y="15" width="25" height="130" />
-		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9" />
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9" />
 
                 <text string="Promote" vertAdjust="BOTTOM"/>
 
@@ -162,7 +162,7 @@
             <widget name="" factory="pawsTextBox" vertical="yes" >
 
                 <frame x="268" y="15" width="25" height="130" />
-		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9" />
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9" />
 
                 <text string="Privil." vertAdjust="BOTTOM"/>
 
@@ -171,7 +171,7 @@
             <widget name="" factory="pawsTextBox" vertical="yes" >
 
                 <frame x="292" y="15" width="25" height="130" />
-		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9" />
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9" />
 
                 <text string="Points" vertAdjust="BOTTOM"/>
 
@@ -180,7 +180,7 @@
             <widget name="" factory="pawsTextBox" vertical="yes" >
 
                 <frame x="316" y="15" width="25" height="130" />
-		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9" />
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9" />
 
                 <text string="Edit" vertAdjust="BOTTOM"/>
 
@@ -189,7 +189,7 @@
             <widget name="" factory="pawsTextBox" vertical="yes" >
 
                 <frame x="338" y="17" width="25" height="130" />
-		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9" />
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9" />
 
                 <text string="Pub notes" vertAdjust="BOTTOM"/>
 
@@ -198,34 +198,34 @@
             <widget name="" factory="pawsTextBox" vertical="yes" >
 
                 <frame x="361" y="17" width="25" height="130" />
-		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9" />
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9" />
 
                 <text string="Prv notes" vertAdjust="BOTTOM"/>
 
             </widget>
-            
+
             <widget name="" factory="pawsTextBox" vertical="yes" >
 
                 <frame x="384" y="17" width="25" height="130" />
-		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="7" />
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="7" />
 
                 <text string="View al.Chat" vertAdjust="BOTTOM"/>
 
             </widget>
-            
+
             <widget name="" factory="pawsTextBox" vertical="yes" >
 
                 <frame x="407" y="17" width="25" height="130" />
-		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="8" />
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="8" />
 
                 <text string="All. Chat" vertAdjust="BOTTOM"/>
 
             </widget>
-            
+
             <widget name="" factory="pawsTextBox" vertical="yes" >
 
                 <frame x="430" y="17" width="25" height="130" />
-		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="8" />
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="8" />
 
                 <text string="Guild Bank" vertAdjust="BOTTOM"/>
 
@@ -238,7 +238,7 @@
             <widget name="LevelList" factory="pawsListBox" xmlbinding="levellist" id="1100" autoid="yes"  selectable="0">
 
                 <frame x="25" y="156" width="610" height="195" border="no"/>
-		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9" />
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9" />
 
         <highlight resource="Hightlight" alpha="128" />
 
@@ -325,13 +325,13 @@
                          <widget name="Edit private" factory="pawsCheckBox"><text string="" position="right"/></widget>
 
                     </column>
-                    
+
                     <column width="23" xmlbinding="alliance_view_chat" >
 
                          <widget name="View alliance chat" factory="pawsCheckBox"><text string="" position="right"/></widget>
 
                     </column>
-                    
+
                     <column width="23" xmlbinding="alliance_chat" >
 
                          <widget name="Alliance chat" factory="pawsCheckBox"><text string="" position="right"/></widget>
@@ -348,7 +348,7 @@
 
             </widget>
 
-        
+
 
         </widget>
 
@@ -374,7 +374,7 @@
 
             </widget>
 
-            
+
 
             <widget name="MemberCount" factory="pawsTextBox">
 
@@ -384,7 +384,7 @@
 
             </widget>
 
-            
+
 
             <widget name="Invite" factory="pawsButton" id="305">
 
@@ -396,7 +396,7 @@
 
             </widget>
 
-            
+
 
             <widget name="Leave" factory="pawsButton" id="306">
 
@@ -408,7 +408,7 @@
 
             </widget>
 
-            
+
 
             <widget name="MemberList" factory="pawsListBox" xmlbinding="memberlist" >
 
@@ -467,7 +467,7 @@
 
                 <text string="Notify when members login/logout" position="right" />
 
-            </widget>           
+            </widget>
 
             <widget name="RemoveMember" factory="pawsButton" id="300">
 
@@ -518,7 +518,7 @@
                 <label text="Private notes" />
 
             </widget>
-            
+
             <widget name="EditMaxGuildPoints" factory="pawsButton" id="311">
 
                 <frame x="510" y="320" width="90" height="19" />
@@ -529,7 +529,7 @@
 
             </widget>
 
-            
+
 
         </widget>
 
@@ -541,7 +541,7 @@
 
             <frame x="5" y="30" width="620" height="345" border="yes"/>
 
-            
+
 
             <widget name="AllianceNameLabel" factory="pawsTextBox">
 
@@ -559,7 +559,7 @@
 
             </widget>
 
-            
+
 
             <widget name="Invite" factory="pawsButton" id="502">
 
@@ -607,7 +607,7 @@
 
             </widget>
 
-            
+
 
             <widget name="AllianceMemberList" factory="pawsListBox">
 
@@ -671,7 +671,7 @@
 
         </widget>
 
-        
+
 
         <!-- Settings_Panel -->
 
@@ -687,11 +687,11 @@
 
                 <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="12" />
 
-                <text string="Guild message of the day (A short message):" />    
+                <text string="Guild message of the day (A short message):" />
 
             </widget>
 
-        
+
 
             <widget name="motd" factory="pawsMultilineEditTextBox">
 
@@ -731,7 +731,7 @@
 
             </widget>
 
-            
+
 
             <!-- Guild Name -->
 
@@ -759,7 +759,7 @@
 
             </widget>
 
-            
+
 
             <!-- Guild Web Page -->
 
