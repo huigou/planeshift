@@ -195,6 +195,10 @@ public:
     void SaveCoordinates(const csVector2& pos)
     {
         previousPosition = pos;
+        if(selectedMesh)
+        {
+            origRotation = selectedMesh->GetMovable()->GetTransform().GetO2T();
+        }
     }
 
    /**
@@ -553,6 +557,7 @@ private:
     // For world manipulation.
     csRef<iMeshWrapper> selectedMesh;
     csVector2 previousPosition;
+    csMatrix3 origRotation;
     bool resetHitbeam;
 };
 }
