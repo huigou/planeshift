@@ -1,21 +1,28 @@
 ﻿*** 2009-07-12 by Stefano Angeleri
-- fixed an error in the compiling guide. thanks to valrion for finding it
-- spell images strings are now sent to clients also for the spell window
+- Fixed an error in the compiling guide. thanks to valrion for finding it
+- Spell images strings are now sent to clients also for the spell window
   messages, and the icon is shown there
-- added spells.zip and plants.zip to mount points
-- fixed an overflow in inventory messages
-- raceinfo table fix patch by aiken
-- disabled drop distance check for developers
-- added some function which are more proper to access ids of guild/alliance
+- Added spells.zip and plants.zip to mount points
+- Fixed an overflow in inventory messages
+- Raceinfo table fix patch by Aiken
+- Disabled drop distance check for developers
+- Added some function which are more proper to access ids of guild/alliance
   classes
-- fixed and improved some windows
+- Fixed and improved some windows
 - Added support for multiple voice per ka when you have more responses per ka, 
   fixed various glitches in chat windows, added the option to disable the chat window, 
   added a new control in the glyph window, improved graphic of the chat config windows  
   and some minor additions to chat manager and guilds.
 - Added the possibility to change the text on the bottom of the login window depending on 
   the selected server. use description="" in the server list to declare it
-- added psnpcclient in the compile group of the mysql plugin as it's required
+- Added psnpcclient in the compile group of the mysql plugin as it's required
+- Fixed PS#2501 - NPCclient crash when writing logfile. patch by vornne
+- Fixed PS#2994 - Guildwindow last online isn't correct. patch by Aiken
+- Fixed PS#2906 - setskill should reset training values patch by loyni
+- Fixed PS#1260 - /screenshot stops autorun patch by loyni
+- Fixed PS#1724 Attacking 2 targets simultaneously - Kill one stops combat patch by celestar
+- Improved comments, fixed code style on some files, increased point limit to 99999
+
 
 *** 2009-07-09 by Keith Fulton
 - Fixed the voice sequencing.  I think it should work now.
