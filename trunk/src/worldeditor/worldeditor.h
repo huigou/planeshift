@@ -24,8 +24,10 @@ class pawsMainWidget;
 class PawsManager;
 struct iEngine;
 struct iGraphics3D;
+struct iKeyboardDriver;
 struct iObjectRegistry;
 struct iSceneManipulate;
+struct iVirtualClock;
 struct iView;
 
 class WorldEditor
@@ -38,10 +40,16 @@ public:
 
 private:
     /* Handles an event from the event handler */
-    bool HandleEvent (iEvent &ev);
+    bool HandleEvent(iEvent &ev);
 
     /* Init plugins, paws, world etc. */
     bool Init();
+
+    /* Handles camera movement */
+    void HandleMovement();
+
+    /* Handles mesh manipulation */
+    void HandleMeshManipulation(iEvent &ev);
 
     // Editing modes
     enum EditMode
@@ -56,11 +64,16 @@ private:
 
     EditMode editMode;
 
+    // Whether to move the camera or the mesh.
+    bool moveCamera;
+
     // CS
     iObjectRegistry* objectReg;
     csRef<iView> view;
     csRef<iGraphics3D> g3d;
     csRef<iEngine> engine;
+    csRef<iKeyboardDriver> kbd;
+    csRef<iVirtualClock> vc;
     DeclareGenericEventHandler(EventHandler, WorldEditor, "worldeditor");
 
     // PS

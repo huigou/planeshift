@@ -30,6 +30,7 @@
 #include <iutil/csinput.h>
 #include <iutil/eventq.h>
 #include <iutil/object.h>
+#include <iutil/virtclk.h>
 #include <ivaria/view.h>
 #include <ivideo/graph2d.h>
 #include <ivideo/natwin.h>
@@ -46,7 +47,7 @@
 #define WEDIT_CONFIG_FILENAME "/this/worldeditor.cfg"
 
 WorldEditor::WorldEditor(int argc, char* argv[]) :
-paws(0), editMode(Select), rotX(0), rotY(0)
+paws(0), editMode(Select), rotX(0), rotY(0), moveCamera(true)
 {
     // Init CS.
     objectReg = csInitializer::CreateEnvironment(argc, argv);
@@ -131,6 +132,20 @@ bool WorldEditor::Init()
     if (!engine)
     {
         printf("iEngine failed to Init!\n");
+        return false;
+    }
+
+    kbd = csQueryRegistry<iKeyboardDriver> (objectReg);
+    if (!kbd)
+    {
+        printf("iKeyboardDriver failed to Init!\n");
+        return false;
+    }
+
+    vc = csQueryRegistry<iVirtualClock> (objectReg);
+    if (!vc)
+    {
+        printf("iVirtualClock failed to Init!\n");
         return false;
     }
 
@@ -245,164 +260,189 @@ bool WorldEditor::HandleEvent (iEvent &ev)
 {
     if(ev.Name == FrameEvent)
     {
+        if(moveCamera)
+        {
+            HandleMovement();
+        }
+
         g3d->BeginDraw(engine->GetBeginDrawFlags() | CSDRAW_3DGRAPHICS);
         view->Draw();
         g3d->FinishDraw();
         g3d->Print(0);
         return false;
     }
-    
-    bool handled = paws->HandleEvent(ev);
-    if(!handled)
+
+    if(!paws->HandleEvent(ev))
     {
-        if(ev.Name == MouseDown)
-        {
-            psPoint p = PawsManager::GetSingleton().GetMouse()->GetPosition();
-            switch(editMode)
-            {
-            case Select:
-                {
-                    iMeshWrapper* selected = sceneManipulator->SelectMesh(view->GetCamera(), csVector2(p.x, p.y));
-                    if(selected)
-                    {
-                        printf("Selected mesh: %s\n", selected->QueryObject()->GetName());
-                    }
-                    else
-                    {
-                        printf("Selection cleared!\n");
-                    }
-                    break;
-                }
-            case Create:
-                {
-                    break;
-                }
-            case TranslateXZ:
-            case TranslateY:
-            case Rotate:
-                {
-                    editMode = Select;
-                    break;
-                }
-            case Remove:
-                {
-                    iMeshWrapper* selected = sceneManipulator->SelectMesh(view->GetCamera(), csVector2(p.x, p.y));
-                    if(selected)
-                    {
-                        printf("Removing mesh: %s\n", selected->QueryObject()->GetName());
-                        sceneManipulator->RemoveSelected();
-                    }
-                    break;
-                }
-            }
-        }
-        else if(ev.Name == MouseMove)
-        {
-            psPoint p = PawsManager::GetSingleton().GetMouse()->GetPosition();
-            switch(editMode)
-            {
-            case TranslateXZ:
-                {
-                    sceneManipulator->TranslateSelected(false, view->GetCamera(), csVector2(p.x, p.y));
-                    break;
-                }
-            case TranslateY:
-                {
-                    sceneManipulator->TranslateSelected(true, view->GetCamera(), csVector2(p.x, p.y));
-                    break;
-                }
-            case Rotate:
-                {
-                    sceneManipulator->RotateSelected(csVector2(p.x, p.y));
-                    break;
-                }
-            }
-        }
-        else if(ev.Name == KeyDown)
-        {
-            bool rotated = false;
-
-            int cooked = csKeyEventHelper::GetCookedCode(&ev);
-            switch(cooked)
-            {
-            case 'c':
-                {
-                    editMode = Create;
-                    break;
-                }
-            case 'z':
-                {
-                    editMode = TranslateXZ;
-                    break;
-                }
-            case 'y':
-                {
-                    psPoint p = PawsManager::GetSingleton().GetMouse()->GetPosition();
-                    sceneManipulator->SaveCoordinates(csVector2(p.x, p.y));
-                    editMode = TranslateY;
-                    break;
-                }
-            case 'r':
-                {
-                    psPoint p = PawsManager::GetSingleton().GetMouse()->GetPosition();
-                    sceneManipulator->SaveCoordinates(csVector2(p.x, p.y));
-                    editMode = Rotate;
-                    break;
-                }
-            case 'x':
-                {
-                    editMode = Remove;
-                    break;
-                }
-            case CSKEY_UP:
-                {
-                    view->GetCamera()->Move (CS_VEC_FORWARD/5);
-                    break;
-                }
-            case CSKEY_DOWN:
-                {
-                    view->GetCamera()->Move (CS_VEC_BACKWARD/5);
-                    break;
-                }
-            case CSKEY_RIGHT:
-                {
-                    rotated = true;
-                    rotY += 0.02f;
-                    break;
-                }
-            case CSKEY_LEFT:
-                {
-                    rotated = true;
-                    rotY -= 0.02f;
-                    break;
-                }
-            case CSKEY_PGUP:
-                {
-                    rotated = true;
-                    rotX += 0.02f;
-                    break;
-                }
-            case CSKEY_PGDN:
-                {
-                    rotated = true;
-                    rotX -= 0.02f;
-                    break;
-                }
-            default:
-                {
-                    editMode = Select;
-                    break;
-                }
-            }
-
-            if(rotated)
-            {
-                csMatrix3 rot = csXRotMatrix3 (rotX) * csYRotMatrix3 (rotY);
-                csOrthoTransform ot (rot, view->GetCamera()->GetTransform ().GetOrigin ());
-                view->GetCamera()->SetTransform (ot);
-            }
-        }
+        HandleMeshManipulation(ev);
     }
     
     return false;
+}
+
+void WorldEditor::HandleMovement()
+{
+    // Handle camera movement.
+    bool rotated = false;
+    csTicks elapsedTicks = vc->GetElapsedTicks();
+    float elapsedSeconds = elapsedTicks / 1000.0f;
+
+    if(kbd->GetKeyState(CSKEY_UP))
+    {
+        view->GetCamera()->Move(CS_VEC_FORWARD * 5.0f * elapsedSeconds);
+    }
+
+    if(kbd->GetKeyState(CSKEY_DOWN))
+    {
+        view->GetCamera()->Move(CS_VEC_BACKWARD * 5.0f * elapsedSeconds);
+    }
+
+    if(kbd->GetKeyState(CSKEY_LEFT))
+    {
+        rotated = true;
+        rotY -= 1.20f * elapsedSeconds;
+    }
+
+    if(kbd->GetKeyState(CSKEY_RIGHT))
+    {
+        rotated = true;
+        rotY += 1.20f * elapsedSeconds;
+    }
+
+    if(kbd->GetKeyState(CSKEY_PGUP))
+    {
+        rotated = true;
+        rotX += 1.20f * elapsedSeconds;
+    }
+
+    if(kbd->GetKeyState(CSKEY_PGDN))
+    {
+        rotated = true;
+        rotX -= 1.20f * elapsedSeconds;
+    }
+
+    if(rotated)
+    {
+        csMatrix3 rot = csXRotMatrix3 (rotX) * csYRotMatrix3 (rotY);
+        csOrthoTransform ot (rot, view->GetCamera()->GetTransform ().GetOrigin ());
+        view->GetCamera()->SetTransform (ot);
+    }
+}
+
+void WorldEditor::HandleMeshManipulation(iEvent &ev)
+{
+    if(ev.Name == MouseDown)
+    {
+        psPoint p = PawsManager::GetSingleton().GetMouse()->GetPosition();
+        switch(editMode)
+        {
+        case Select:
+            {
+                iMeshWrapper* selected = sceneManipulator->SelectMesh(view->GetCamera(), csVector2(p.x, p.y));
+                if(selected)
+                {
+                    printf("Selected mesh: %s\n", selected->QueryObject()->GetName());
+                }
+                else
+                {
+                    printf("Selection cleared!\n");
+                }
+                break;
+            }
+        case Create:
+            {
+                break;
+            }
+        case TranslateXZ:
+        case TranslateY:
+        case Rotate:
+            {
+                editMode = Select;
+                break;
+            }
+        case Remove:
+            {
+                iMeshWrapper* selected = sceneManipulator->SelectMesh(view->GetCamera(), csVector2(p.x, p.y));
+                if(selected)
+                {
+                    printf("Removing mesh: %s\n", selected->QueryObject()->GetName());
+                    sceneManipulator->RemoveSelected();
+                }
+                break;
+            }
+        }
+    }
+    else if(ev.Name == MouseMove)
+    {
+        psPoint p = PawsManager::GetSingleton().GetMouse()->GetPosition();
+        switch(editMode)
+        {
+        case TranslateXZ:
+            {
+                sceneManipulator->TranslateSelected(false, view->GetCamera(), csVector2(p.x, p.y));
+                break;
+            }
+        case TranslateY:
+            {
+                sceneManipulator->TranslateSelected(true, view->GetCamera(), csVector2(p.x, p.y));
+                break;
+            }
+        case Rotate:
+            {
+                sceneManipulator->RotateSelected(csVector2(p.x, p.y));
+                break;
+            }
+        }
+    }
+    else if(ev.Name == KeyDown)
+    {
+        int cooked = csKeyEventHelper::GetCookedCode(&ev);
+        switch(cooked)
+        {
+        case 'c':
+            {
+                editMode = Create;
+                break;
+            }
+        case 'z':
+            {
+                editMode = TranslateXZ;
+                break;
+            }
+        case 'y':
+            {
+                psPoint p = PawsManager::GetSingleton().GetMouse()->GetPosition();
+                sceneManipulator->SaveCoordinates(csVector2(p.x, p.y));
+                editMode = TranslateY;
+                break;
+            }
+        case 'r':
+            {
+                psPoint p = PawsManager::GetSingleton().GetMouse()->GetPosition();
+                sceneManipulator->SaveCoordinates(csVector2(p.x, p.y));
+                editMode = Rotate;
+                break;
+            }
+        case 'x':
+            {
+                editMode = Remove;
+                break;
+            }
+        case 's':
+            {
+                editMode = Select;
+                break;
+            }
+        case 'e':
+            {
+                moveCamera = false;
+                break;
+            }
+        case 'm':
+            {
+                moveCamera = true;
+                break;
+            }
+        }
+    }
 }

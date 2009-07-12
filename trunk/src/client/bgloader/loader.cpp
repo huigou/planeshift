@@ -1967,7 +1967,7 @@ void BgLoader::RotateSelected(const csVector2& pos)
         float d = 6 * PI * ((float)previousPosition.x - pos.x) / g2d->GetWidth();
         csYRotMatrix3 rotation(d);
 
-        selectedMesh->GetMovable()->GetTransform().SetO2T(rotation);
+        selectedMesh->GetMovable()->GetTransform().SetO2T(origRotation*rotation);
     }
 }
 
