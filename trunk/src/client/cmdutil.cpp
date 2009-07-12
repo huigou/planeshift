@@ -359,7 +359,8 @@ void psUtilityCommands::HandleConfirm( WordArray& words, csString& error )
 void psUtilityCommands::HandleScreenShot(bool compress)
 {
     // This is needed for some players who exploit the movement of "laggieness"
-    psengine->GetCharControl()->GetMovementManager()->StopAllMovement();
+    // The following line was commented out check PS#1260 for details.
+    //psengine->GetCharControl()->GetMovementManager()->StopAllMovement();
 
     const char* format = compress ? "jpg" : "png" ;
     unsigned int ssNumber = psengine->GetConfig()->GetInt("PlaneShift.Screenshot.LastUsed",0);
