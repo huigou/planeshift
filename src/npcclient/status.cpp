@@ -73,9 +73,12 @@ void psNPCStatusRunEvent::Trigger ()
         timeString.GetData(), now, NPCStatus::count);
     reportString.Append( "</npc_report>" );
     
-    csRef<iFile> logFile = npcclient->GetVFS()->Open( NPCStatus::reportFile, VFS_FILE_WRITE );            
-    logFile->Write( reportString, reportString.Length() );                         
-    logFile->Flush();
+    csRef<iFile> logFile = npcclient->GetVFS()->Open( NPCStatus::reportFile, VFS_FILE_WRITE );
+    if (logFile.IsValid())
+    {
+      logFile->Write( reportString, reportString.Length() );
+      logFile->Flush();
+    }
 
         
     NPCStatus::count++;
