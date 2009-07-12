@@ -251,6 +251,7 @@ class MathScript;
 class NpcResponse;
 class gemActor;
 struct psGuildLevel;
+struct psGuildMember;
 class psLootMessage;
 class psMerchantInfo;
 class psQuestListMessage;
@@ -608,6 +609,8 @@ public:
     psGuildInfo  *GetGuild() { return guildinfo; }
     /// Return the guild level for this character, if any.
     psGuildLevel *GetGuildLevel();
+    /// Return the guild membership for this character, if any.
+    psGuildMember *GetGuildMembership();
 
     ///Returns if the client should receive notifications about guild members logging in
     bool IsGettingGuildNotifications() { return guildNotified; }
