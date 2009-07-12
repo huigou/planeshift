@@ -1,4 +1,23 @@
-﻿*** 2009-07-09 by Keith Fulton
+﻿*** 2009-07-12 by Stefano Angeleri
+- fixed an error in the compiling guide. thanks to valrion for finding it
+- spell images strings are now sent to clients also for the spell window
+  messages, and the icon is shown there
+- added spells.zip and plants.zip to mount points
+- fixed an overflow in inventory messages
+- raceinfo table fix patch by aiken
+- disabled drop distance check for developers
+- added some function which are more proper to access ids of guild/alliance
+  classes
+- fixed and improved some windows
+- Added support for multiple voice per ka when you have more responses per ka, 
+  fixed various glitches in chat windows, added the option to disable the chat window, 
+  added a new control in the glyph window, improved graphic of the chat config windows  
+  and some minor additions to chat manager and guilds.
+- Added the possibility to change the text on the bottom of the login window depending on 
+  the selected server. use description="" in the server list to declare it
+- added psnpcclient in the compile group of the mysql plugin as it's required
+
+*** 2009-07-09 by Keith Fulton
 - Fixed the voice sequencing.  I think it should work now.
 - Also committed improvements to the combobox control from several 
   weeks ago.
