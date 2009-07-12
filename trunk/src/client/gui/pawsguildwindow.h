@@ -46,7 +46,7 @@ public:
 
     pawsGuildWindow();
     virtual ~pawsGuildWindow();
-    
+
     virtual bool PostSetup();
     virtual bool OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget );
     virtual void Show();
@@ -69,11 +69,11 @@ private:
     /// Are we creating a guild already? (I.e, don't open the box twice)
     bool creatingGuild;
 
-    /** Level names in listbox of levels are clickable buttons. 
+    /** Level names in listbox of levels are clickable buttons.
       * This method assigns widget IDs and notification target for each of them.
       */
     void SetupLevelNameButtons();
-    
+
     /** Hides window and sends UNSUBSCRIBE_GUILD_DATA to server */
     void Deactivate();
 
@@ -81,28 +81,28 @@ private:
     void HandleLevelData( csString& openString );
     void HandleMemberData( csString& openString );
     void HandleAllianceData( csString& openString );
-    
+
     guildMemberInfo * FindSelectedMemberInfo();
     guildMemberInfo * FindMemberInfo(const csString & name);
     guildMemberInfo * FindMemberInfo(int char_id);
     int FindMemberInListBox(const csString & name);
-    
+
     /** Sets value of cell in listbox of guild members */
 //    void SetMemberTextCell(int char_id, int colNum, const csString & text);
-    
+
     void ExtractLevelInfo(csRef<iDocumentNode> levelNode);
     void HideLeaderCheckboxes();
-    
+
     /** Opens pawsYesNoBox asking, if player really wants to leave his guild */
     void OpenGuildLeaveConfirm();
-    
+
     /** Sets visibility of widgets in alliance tab according to mode:
       *     0=guild is not in alliance
       *     1=guild is alliance leader
       *     2=guild is alliance member
       */
     void SetAllianceWidgetVisibility(int mode);
-    
+
     /** Sets window background image depending on what tab is active */
     void SetTheRightBackground();
 
@@ -124,19 +124,19 @@ private:
 
     csRef<iDocumentSystem> xml;
     csRef<MsgHandler> msgHandler;
-    
+
     csArray<guildMemberInfo> members;
-    
+
     int char_id;            ///< character_id of our player
     int playerLevel;        ///< guild level of our player
-    
+
     int max_guild_points;   ///< keeps the max amount of guild points allowed in this guild
-    
+
     /** Stores names of guild levels. Number of the level is equal to the index in array so the 0. array member
       * is empty and should be ignored.
       */
     csArray<csString> levels;
-    
+
     pawsChatWindow* chatWindow;
 };
 

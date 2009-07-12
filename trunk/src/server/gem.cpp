@@ -139,7 +139,7 @@ GEMSupervisor::GEMSupervisor(iObjectRegistry *objreg,
     psserver->GetEventManager()->Subscribe(this,MSGTYPE_DAMAGE_EVENT,NO_VALIDATION);
     psserver->GetEventManager()->Subscribe(this,MSGTYPE_STATDRUPDATE, REQUIRE_READY_CLIENT );
     psserver->GetEventManager()->Subscribe(this,MSGTYPE_STATS, REQUIRE_READY_CLIENT);
-    
+
     engine = csQueryRegistry<iEngine> (psserver->GetObjectReg());
 }
 
@@ -1043,7 +1043,7 @@ float gemObject::GetAngle()
 iSector* gemObject::GetSector()
 {
     if (GetMeshWrapper()->GetMovable()->GetSectors()->GetCount())
-        return GetMeshWrapper()->GetMovable()->GetSectors()->Get(0);    
+        return GetMeshWrapper()->GetMovable()->GetSectors()->Get(0);
     return NULL;
 }
 
@@ -1372,13 +1372,13 @@ void gemItem::SetRotation(float xrotangle, float yrotangle, float zrotangle)
     pcmesh->RotateMesh(xrotangle, yrotangle, zrotangle);
 
     itemdata->SetRotationInWorld(xrotangle, yrotangle, zrotangle);
-	itemdata->Save(false);
+    itemdata->Save(false);
 }
 
 void gemItem::GetRotation(csVector3 & rotation)
 {
     csMatrix3 transf = GetMeshWrapper()->GetMovable()->GetTransform().GetT2O();
-    
+
     rotation.x = psWorld::Matrix2XRot(transf);
     rotation.y = psWorld::Matrix2YRot(transf);
     rotation.z = psWorld::Matrix2ZRot(transf);
@@ -1739,7 +1739,7 @@ gemActionLocation::gemActionLocation(psActionLocation *action, iSector *isec, in
 {
     this->action = action;
     action->SetGemObject( this );
- 
+
     // action locations use the AL ID as their EID for some reason
     // ugly hack, to put the AL in the entity hash
     cel->RemoveEntity(this);
@@ -1867,7 +1867,7 @@ void OverridableMesh::OnChange()
             actor->GetCharacterData()->SetBeltGroup("");
             actor->GetCharacterData()->SetCloakGroup("");
         }
-        
+
         actor->SetMesh(Current());
     }
 }
@@ -2344,7 +2344,7 @@ void gemActor::DoDamage(gemActor * attacker, float damage, float damageRate, csT
 
         // if damage due to spell then spell is ending anyway, so no need to force
         // 'stop attack.'
-        if (attacker && attacker->GetMode() == PSCHARACTER_MODE_COMBAT && 
+        if (attacker && attacker->GetMode() == PSCHARACTER_MODE_COMBAT &&
             attacker->GetClient()->GetTargetObject() == this)
         {
             psserver->combatmanager->StopAttack(attacker);
@@ -2641,10 +2641,10 @@ const char* gemActor::GetGuildName()
 bool gemActor::AddChatReport(gemActor *reporter)
 {
     activeReports++;
-    
+
     csString cssBuffer("");
     csString cssTempLine("");
-    
+
     if (activeReports == 1)
     {
         // this is the first report. Let's open the log file
@@ -2669,7 +2669,7 @@ bool gemActor::AddChatReport(gemActor *reporter)
         }
 
         Notify2(LOG_ANY, "Logging of chat messages for '%s' started\n", ShowID(pid));
-        
+
         const csVector3 & pos = GetPosition();
         iSector *sector = GetSector();
 
@@ -2693,7 +2693,7 @@ bool gemActor::AddChatReport(gemActor *reporter)
             cssBuffer += cssTempLine;
         }
     }
-    
+
     // Add /report line
     ChatHistoryEntry cheReport(csString().Format("-- At this point player got reported by %s --", reporter->GetName()).GetData());
     cheReport.GetLogLine(cssTempLine);
@@ -2702,7 +2702,7 @@ bool gemActor::AddChatReport(gemActor *reporter)
     // Write the data to the file
     logging_chat_file->Write(cssBuffer.GetData(), cssBuffer.Length());
     logging_chat_file->Flush(); // flush
-    
+
     return true; // been there, done that
 }
 
@@ -3085,7 +3085,7 @@ void gemActor::SetPosition(const csVector3& pos,float angle, iSector* sector)
     // Verify the location first. CS cannot handle positions greater than 100000.
     if (fabs(pos.x) > 100000 || fabs(pos.y) > 100000 || fabs(pos.z) > 100000)
     {
-    	MoveToSpawnPos();
+        MoveToSpawnPos();
         Error5("Attempted to set position of actor pid %d to %g %g %g", pid.Unbox(), pos.x, pos.y, pos.z);
         return;
     }
@@ -3577,7 +3577,7 @@ void gemActor::SendBehaviorMessage(const csString & msg_id, gemObject *actor)
                     options |= psGUIInteractMessage::EXCHANGE;
 
                 // Can we attack this player?
-                
+
                 Client* attackerClient = psserver->GetNetManager()->GetClient(activeActor->GetClientID());
                 if (IsAlive() && activeActor->IsAlive() && attackerClient && attackerClient->IsAllowedToAttack(this,false))
                     options |= psGUIInteractMessage::ATTACK;
@@ -3877,23 +3877,23 @@ void gemNPC::SetPosition(const csVector3& pos,float angle, iSector* sector)
 
 void gemNPC::SetupDialog(PID npcID, bool force)
 {
-	if (!force)
-		force = dict->FindKnowledgeArea(name);  // present in Quest Script but not in the queried table
+    if (!force)
+        force = dict->FindKnowledgeArea(name);  // present in Quest Script but not in the queried table
 
-	if (force || db->SelectSingleNumber("SELECT count(*) FROM npc_knowledge_areas WHERE player_id=%d", npcID.Unbox()) > 0)
+    if (force || db->SelectSingleNumber("SELECT count(*) FROM npc_knowledge_areas WHERE player_id=%d", npcID.Unbox()) > 0)
     {
         npcdialog = new psNPCDialog(this);
         if (!npcdialog->Initialize(db,npcID))
         {
             Error2("Failed to initialize NPC dialog for %s\n", ShowID(npcID));
         }
-		if (force)
-		{
-			csString newArea(name);
-			newArea.Downcase();
+        if (force)
+        {
+            csString newArea(name);
+            newArea.Downcase();
             newArea.Trim();
-			npcdialog->AddKnowledgeArea(newArea);
-		}
+            npcdialog->AddKnowledgeArea(newArea);
+        }
     }
 }
 
@@ -4020,8 +4020,8 @@ csString gemNPC::GetDefaultBehavior(const csString & dfltBehaviors)
     int behNum;
     if (psChar->IsMerchant())
         behNum = 2;
-	else if (GetNPCDialogPtr() != NULL)
-		return csString("talk");
+    else if (GetNPCDialogPtr() != NULL)
+        return csString("talk");
     else if (IsAlive())
         behNum = 3;
     else
@@ -4136,8 +4136,8 @@ void gemNPC::SendBehaviorMessage(const csString & msg_id, gemObject *obj)
         psserver->usermanager->Attack(CombatManager::GetStance("Normal"), actor->GetClient());
     else if (msg_id == "loot")
         psserver->usermanager->Loot(actor->GetClient());
-	else if (msg_id == "talk")
-		ShowPopupMenu(actor->GetClient());
+    else if (msg_id == "talk")
+        ShowPopupMenu(actor->GetClient());
 }
 
 void gemNPC::AddLootableClient(int cnum)

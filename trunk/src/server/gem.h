@@ -261,9 +261,9 @@ protected:
     int                 count_players;       ///< Total Number of players
 
     uint32              nextEID;             ///< The next ID available for an object.
-    
-	// Stored here to save expensive csQueryRegistry calls
-	csRef<iEngine> engine;
+
+    // Stored here to save expensive csQueryRegistry calls
+    csRef<iEngine> engine;
 };
 
 //-----------------------------------------------------------------------------
@@ -491,9 +491,9 @@ public:
       * @param angle The y rotation angle
       * @param sector The sector in which the object is
       * @param instance The instance the object is in
-      * 
+      *
       * @return Set the position of the item in given sector, instance and position. Also sets the item y rotation
-      */    
+      */
     virtual void SetPosition(const csVector3& pos,float angle, iSector* sector, InstanceID instance);
 
     /** Set the x, y and z axis rotations for the item
@@ -502,7 +502,7 @@ public:
      * @param zrotangle the variable used to set the z rotation of the item
      */
     virtual void SetRotation(float xrotangle, float yrotangle, float zrotangle);
-    
+
     /** Get the x,y and z axis rotations for the item
      * @param rotation the variable in which the rotation will be stored
      */
@@ -637,7 +637,7 @@ struct DamageHistory
 class gemActor :  public gemObject, public iDeathNotificationObject
 {
 protected:
-	
+
     psCharacter *psChar;
     FactionSet *factions;
     PID pid; ///< Player ID (also known as character ID or PID)
@@ -676,7 +676,7 @@ protected:
     // used by /report command.
     // for details on current /report implementation
     // check PS#2789.
-    
+
     /// struct ChatHistoryEntry
     /// Info: Stores a chat history element.
     struct ChatHistoryEntry
@@ -751,7 +751,7 @@ protected:
 
     psSpellCastGameEvent *spellCasting; ///< Hold a pointer to the game event
                                         ///< for the spell currently cast.
-    psWorkGameEvent *workEvent; 
+    psWorkGameEvent *workEvent;
 
     bool CanSwitchMode(PSCHARACTER_MODE from, PSCHARACTER_MODE to);
 
@@ -827,14 +827,14 @@ public:
      * @return true on success, or false on error (failure to start logging probably)
      */
     bool AddChatReport(gemActor *reporter);
-    
+
     /**
      * @brief Removes an active report (file logging session) for this actor.
      * This function is invoked automatically after a specific amount of time
      * from the report activation.
      */
     void RemoveChatReport();
-    
+
     /**
      * @brief Returns /report file logging status.
      */
@@ -904,6 +904,9 @@ public:
     const char *GetGuildName();
     psGuildInfo *GetGuild() { return psChar->GetGuild(); }
     psGuildLevel *GetGuildLevel() { return psChar->GetGuildLevel(); }
+    /** Gets the psguildmember structure refereed to this actor, if in a guild
+     *  @return psGuildMember: A pointer to the psGuildMember structure of this actor
+     */
     psGuildMember *GetGuildMembership() { return psChar->GetGuildMembership(); }
 
     void DoDamage(gemActor *attacker, float damage, float damageRate = 0.0f, csTicks duration=0);
@@ -1074,7 +1077,7 @@ public:
 
     void SetupDialog(PID npcID,bool force=false);
     void ReactToPlayerApproach(psNPCCommandsMessage::PerceptionType type,gemActor *player);
-    
+
     virtual void ApplyStaminaCalculations(const csVector3& velocity, float times) { } // NPCs usually have 0 stamina.
     // Before this fix, this caused a major long term bug where NPCs would give up attacking after a few hits and expending all stamina.
 
@@ -1101,7 +1104,7 @@ public:
     virtual gemObject* GetTarget() { return this->target; }
 
     virtual void SetOwner(gemObject* owner);
-    
+
     virtual gemObject* GetOwner() { return this->owner; }
 
     virtual void SetPosition(const csVector3& pos, float angle, iSector* sector);

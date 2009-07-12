@@ -443,10 +443,10 @@ psChatMessage::psChatMessage(uint32_t cnum, EID actorid, const char *person, con
     size_t sz = strlen(person) + 1 + strlen(chatMessage) + 1 + sizeof(uint8_t)*2 + sizeof(uint32_t);
     if (includeOther)
         sz += strlen(other) + 1;
-    
+
     bool chanMsg = iChatType == CHAT_CHANNEL;
     if(chanMsg)
-    	sz += sizeof(uint16_t);
+        sz += sizeof(uint16_t);
 
     msg.AttachNew(new MsgEntry(sz));
 
@@ -459,7 +459,7 @@ psChatMessage::psChatMessage(uint32_t cnum, EID actorid, const char *person, con
     msg->Add(translate);
     msg->Add(actorid.Unbox());
     if(chanMsg)
-    	msg->Add(channelID);
+        msg->Add(channelID);
     if (includeOther)
         msg->Add(other);
 
@@ -481,7 +481,7 @@ psChatMessage::psChatMessage(MsgEntry *message)
     translate = message->GetBool();
     actor     = message->GetUInt32();
     if(chanMsg)
-    	channelID = message->GetUInt16();
+        channelID = message->GetUInt16();
     if (includeOther && !message->IsEmpty())
         sOther = message->GetStr();
 
@@ -533,13 +533,13 @@ PSF_IMPLEMENT_MSG_FACTORY(psChannelJoinMessage,MSGTYPE_CHANNEL_JOIN);
 
 psChannelJoinMessage::psChannelJoinMessage(const char* name)
 {
-	msg.AttachNew(new MsgEntry(strlen(name) + 1));
-	msg->SetType(MSGTYPE_CHANNEL_JOIN);
-	msg->clientnum = 0;
-	
-	msg->Add(name);
-	
-	valid=!(msg->overrun);
+    msg.AttachNew(new MsgEntry(strlen(name) + 1));
+    msg->SetType(MSGTYPE_CHANNEL_JOIN);
+    msg->clientnum = 0;
+
+    msg->Add(name);
+
+    valid=!(msg->overrun);
 }
 
 psChannelJoinMessage::psChannelJoinMessage(MsgEntry* message)
@@ -552,9 +552,9 @@ psChannelJoinMessage::psChannelJoinMessage(MsgEntry* message)
 
 csString psChannelJoinMessage::ToString(AccessPointers * /*access_ptrs*/)
 {
-	csString text;
-	text.Format("Channel name: %s", channel.GetData());
-	return text;
+    csString text;
+    text.Format("Channel name: %s", channel.GetData());
+    return text;
 }
 
 // ---------------------------------------------------------------------------
@@ -563,14 +563,14 @@ PSF_IMPLEMENT_MSG_FACTORY(psChannelJoinedMessage,MSGTYPE_CHANNEL_JOINED);
 
 psChannelJoinedMessage::psChannelJoinedMessage(uint32_t clientnum, const char* name, uint16_t id)
 {
-	msg.AttachNew(new MsgEntry(strlen(name) + sizeof(uint16_t) + 1));
-	msg->SetType(MSGTYPE_CHANNEL_JOINED);
-	msg->clientnum = clientnum;
-	
-	msg->Add(name);
-	msg->Add(id);
-	
-	valid=!(msg->overrun);
+    msg.AttachNew(new MsgEntry(strlen(name) + sizeof(uint16_t) + 1));
+    msg->SetType(MSGTYPE_CHANNEL_JOINED);
+    msg->clientnum = clientnum;
+
+    msg->Add(name);
+    msg->Add(id);
+
+    valid=!(msg->overrun);
 }
 
 psChannelJoinedMessage::psChannelJoinedMessage(MsgEntry* message)
@@ -584,9 +584,9 @@ psChannelJoinedMessage::psChannelJoinedMessage(MsgEntry* message)
 
 csString psChannelJoinedMessage::ToString(AccessPointers * /*access_ptrs*/)
 {
-	csString text;
-	text.Format("Channel ID: %d, name: %s", id, channel.GetData());
-	return text;
+    csString text;
+    text.Format("Channel ID: %d, name: %s", id, channel.GetData());
+    return text;
 }
 
 // ---------------------------------------------------------------------------
@@ -595,18 +595,18 @@ PSF_IMPLEMENT_MSG_FACTORY(psChannelLeaveMessage,MSGTYPE_CHANNEL_LEAVE);
 
 psChannelLeaveMessage::psChannelLeaveMessage(uint16_t chanID)
 {
-	msg.AttachNew(new MsgEntry(sizeof(uint16_t)));
-	msg->SetType(MSGTYPE_CHANNEL_LEAVE);
-	msg->clientnum = 0;
-	
-	msg->Add(chanID);
-	
-	valid=!(msg->overrun);
+    msg.AttachNew(new MsgEntry(sizeof(uint16_t)));
+    msg->SetType(MSGTYPE_CHANNEL_LEAVE);
+    msg->clientnum = 0;
+
+    msg->Add(chanID);
+
+    valid=!(msg->overrun);
 }
 
 psChannelLeaveMessage::psChannelLeaveMessage(MsgEntry* message)
 {
-	chanID = message->GetUInt16();
+    chanID = message->GetUInt16();
 
     // Sets valid flag based on message overrun state
     valid=!(message->overrun);
@@ -614,9 +614,9 @@ psChannelLeaveMessage::psChannelLeaveMessage(MsgEntry* message)
 
 csString psChannelLeaveMessage::ToString(AccessPointers * /*access_ptrs*/)
 {
-	csString text;
-	text.Format("Channel ID: %d", chanID);
-	return text;
+    csString text;
+    text.Format("Channel ID: %d", chanID);
+    return text;
 }
 
 // ---------------------------------------------------------------------------
@@ -1490,7 +1490,7 @@ csString psUserCmdMessage::ToString(AccessPointers * /*access_ptrs*/)
          command == "/tip" || command == "/motd" ||
          command == "/challenge" || command == "/yield" ||
          command == "/admin" ||
-         command == "/list" || 
+         command == "/list" ||
          command == "/sit" || command == "/stand" ||
          command == "/bank")
     {
@@ -2150,7 +2150,7 @@ psGUIInventoryMessage::psGUIInventoryMessage(MsgEntry *message)
             if (command == UPDATE_LIST)
                 totalEmptiedSlots = message->GetUInt32();
             maxWeight = message->GetFloat();
-			version = message->GetUInt32();
+            version = message->GetUInt32();
             for ( size_t x = 0; x < totalItems; x++ )
             {
                 ItemDescription item;
@@ -2190,7 +2190,7 @@ psGUIInventoryMessage::psGUIInventoryMessage(uint32_t clientnum,
                                              uint32_t totalItems,
                                              uint32_t totalEmptiedSlots,
                                              float maxWeight,
-											 uint32_t cache_version,
+                                             uint32_t cache_version,
                                              size_t msgsize)
 {
     // add on this header size
@@ -2257,7 +2257,7 @@ csString psGUIInventoryMessage::ToString(AccessPointers * /*access_ptrs*/)
     msgtext.AppendFmt("Command: %d", command);
     if (command == LIST || command == UPDATE_LIST)
     {
-		msgtext.AppendFmt(" Total Items: %zu Max Weight: %.3f Cache Version: %d", totalItems, maxWeight, version);
+        msgtext.AppendFmt(" Total Items: %zu Max Weight: %.3f Cache Version: %d", totalItems, maxWeight, version);
 
         msgtext.AppendFmt(" List: ");
         for ( size_t x = 0; x < totalItems; x++ )
@@ -3296,7 +3296,7 @@ psMsgStringsMessage::psMsgStringsMessage(uint32_t clientnum, csStringHashReversi
            length, z.total_out,
            int(length)-int(z.total_out),
            1.0f-(float(z.total_out)/float(length)));
-           
+
 */
     delete[] buff1;
     delete[] buff2;
@@ -4470,7 +4470,7 @@ psForcePositionMessage::psForcePositionMessage(uint32_t client, uint8_t sequence
     csString sectorName = sector->QueryObject()->GetName();
     csStringID sectorNameStrId = msgstrings ? msgstrings->Request(sectorName) : csInvalidStringID;
 
-	msg.AttachNew(new MsgEntry(sizeof(float)*4 + sizeof(uint8_t) + sizeof(uint32_t) + (sectorNameStrId == csInvalidStringID ? sectorName.Length() + 1 : 0), PRIORITY_HIGH, sequenceNumber));
+    msg.AttachNew(new MsgEntry(sizeof(float)*4 + sizeof(uint8_t) + sizeof(uint32_t) + (sectorNameStrId == csInvalidStringID ? sectorName.Length() + 1 : 0), PRIORITY_HIGH, sequenceNumber));
 
     msg->SetType(MSGTYPE_FORCE_POSITION);
     msg->clientnum = client;
@@ -4495,7 +4495,7 @@ psForcePositionMessage::psForcePositionMessage(MsgEntry *me, csStringHashReversi
     sectorName = sectorNameStrId != csInvalidStringID ? msgstrings->Request(sectorNameStrId) : me->GetStr();
     sector = !sectorName.IsEmpty() ? engine->GetSectors()->FindByName(sectorName) : NULL;
 
-	valid = !(me->overrun);
+    valid = !(me->overrun);
 }
 
 void psForcePositionMessage::operator=(psForcePositionMessage & other)
@@ -6946,7 +6946,7 @@ psGMEventInfoMessage::psGMEventInfoMessage(MsgEntry* msg)
         id = msg->GetInt32();
         xml = msg->GetStr();
     }
-    
+
     valid=!(msg->overrun);
 }
 
@@ -7465,18 +7465,18 @@ PSF_IMPLEMENT_MSG_FACTORY(psOrderedMessage,MSGTYPE_ORDEREDTEST);
 
 psOrderedMessage::psOrderedMessage( uint32_t client, int valueToSend, int sequenceNumber)
 {
-	printf("Creating orderedMessage with sequence number %d, value %d.\n", sequenceNumber, valueToSend);
+    printf("Creating orderedMessage with sequence number %d, value %d.\n", sequenceNumber, valueToSend);
 
-	msg.AttachNew(new MsgEntry(sizeof(uint32_t),PRIORITY_HIGH, (uint8_t)sequenceNumber) );
-	msg->SetType(MSGTYPE_ORDEREDTEST);
-	msg->clientnum = client;
-	msg->Add(valueToSend);
-	valid=!(msg->overrun);
+    msg.AttachNew(new MsgEntry(sizeof(uint32_t),PRIORITY_HIGH, (uint8_t)sequenceNumber) );
+    msg->SetType(MSGTYPE_ORDEREDTEST);
+    msg->clientnum = client;
+    msg->Add(valueToSend);
+    valid=!(msg->overrun);
 }
 
 psOrderedMessage::psOrderedMessage( MsgEntry* me )
 {
-	value   = me->GetUInt32();
-	valid = !(me->overrun);
+    value   = me->GetUInt32();
+    valid = !(me->overrun);
 }
 

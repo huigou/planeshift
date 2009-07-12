@@ -253,10 +253,10 @@ enum MSG_TYPES
 
     MSGTYPE_INTRODUCTION,
 
-	MSGTYPE_CACHEFILE,
+    MSGTYPE_CACHEFILE,
     MSGTYPE_DIALOG_MENU,
     MSGTYPE_SIMPLE_STRING,
-	MSGTYPE_ORDEREDTEST
+    MSGTYPE_ORDEREDTEST
 };
 
 class psMessageCracker;
@@ -797,7 +797,7 @@ public:
 
     /** Keeps the eid of the originator client for chat bubbles */
     EID actor;
-    
+
     uint16_t channelID;
 
     /** This function creates a PS Message struct given a chat text to send
@@ -833,11 +833,11 @@ public:
 class psChannelJoinMessage : public psMessageCracker
 {
 public:
-	csString channel;
-	psChannelJoinMessage(const char* name);
-	psChannelJoinMessage(MsgEntry *message);
-	
-	PSF_DECLARE_MSG_FACTORY();
+    csString channel;
+    psChannelJoinMessage(const char* name);
+    psChannelJoinMessage(MsgEntry *message);
+
+    PSF_DECLARE_MSG_FACTORY();
 
     /**
      * @brief Converts the message into human readable string.
@@ -854,12 +854,12 @@ public:
 class psChannelJoinedMessage : public psMessageCracker
 {
 public:
-	uint16_t id;
-	csString channel;
-	psChannelJoinedMessage(uint32_t clientnum, const char* name, uint16_t id);
-	psChannelJoinedMessage(MsgEntry *message);
-	
-	PSF_DECLARE_MSG_FACTORY();
+    uint16_t id;
+    csString channel;
+    psChannelJoinedMessage(uint32_t clientnum, const char* name, uint16_t id);
+    psChannelJoinedMessage(MsgEntry *message);
+
+    PSF_DECLARE_MSG_FACTORY();
 
     /**
      * @brief Converts the message into human readable string.
@@ -876,12 +876,12 @@ public:
 class psChannelLeaveMessage : public psMessageCracker
 {
 public:
-	uint16_t chanID;
-	psChannelLeaveMessage(uint16_t id);
-	psChannelLeaveMessage(MsgEntry *message);
-	
-	PSF_DECLARE_MSG_FACTORY();
-	
+    uint16_t chanID;
+    psChannelLeaveMessage(uint16_t id);
+    psChannelLeaveMessage(MsgEntry *message);
+
+    PSF_DECLARE_MSG_FACTORY();
+
 
     /**
      * @brief Converts the message into human readable string.
@@ -1595,7 +1595,7 @@ public:
                            uint32_t totalItems,
                            uint32_t totalEmptiedSlots,
                            float maxWeight,
-						   uint32_t cache_version,
+                           uint32_t cache_version,
                            size_t msgsize);
 
 
@@ -1655,7 +1655,7 @@ public:
     size_t totalEmptiedSlots;
     float maxWeight;    ///< The total max weight the player can carry.
     psMoney money;
-	uint32 version;		/// cache version (PS#2691)
+    uint32 version;     /// cache version (PS#2691)
 };
 
 //---------------------------------------------------------------------------
@@ -5199,10 +5199,10 @@ class psCachedFileMessage : public psMessageCracker
 {
 
 public:
-	csString hash;
-	csRef<iDataBuffer> databuf;
+    csString hash;
+    csRef<iDataBuffer> databuf;
 
-	psCachedFileMessage( uint32_t client, uint8_t sequence, const char *pathname, iDataBuffer *contents);
+    psCachedFileMessage( uint32_t client, uint8_t sequence, const char *pathname, iDataBuffer *contents);
     psCachedFileMessage( MsgEntry* me );
 
     PSF_DECLARE_MSG_FACTORY();
@@ -5228,7 +5228,7 @@ public:
 class psDialogMenuMessage : public psMessageCracker
 {
 public:
-	csString xml;
+    csString xml;
 
     psDialogMenuMessage();
     psDialogMenuMessage( MsgEntry* message );
@@ -5236,7 +5236,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
 
-	void BuildMsg(int clientnum);
+    void BuildMsg(int clientnum);
 
     /**
      * @brief Converts the message into human readable string.
@@ -5246,19 +5246,19 @@ public:
      */
     virtual csString ToString(AccessPointers * access_ptrs);
 
-	struct DialogResponse
-	{
-		uint32_t id;
-		csString menuText;
-		csString triggerText;
-		uint32_t flags;
-	};
+    struct DialogResponse
+    {
+        uint32_t id;
+        csString menuText;
+        csString triggerText;
+        uint32_t flags;
+    };
 
-	void AddResponse( uint32_t id, const csString& menuText, const csString& triggerText, 
-		              const csString& playerName, const csString& playerRace, const csString& honorific,
-									  const csString& possessive, uint32_t flags = 0x00 );
+    void AddResponse( uint32_t id, const csString& menuText, const csString& triggerText,
+                      const csString& playerName, const csString& playerRace, const csString& honorific,
+                                      const csString& possessive, uint32_t flags = 0x00 );
 
-	csArray<DialogResponse> responses;
+    csArray<DialogResponse> responses;
 };
 
 /**
@@ -5268,9 +5268,9 @@ class psSimpleStringMessage : public psMessageCracker
 {
 
 public:
-	csString str;
+    csString str;
 
-	psSimpleStringMessage( uint32_t client,MSG_TYPES type, const char *string);
+    psSimpleStringMessage( uint32_t client,MSG_TYPES type, const char *string);
     psSimpleStringMessage( MsgEntry* me );
 
     PSF_DECLARE_MSG_FACTORY();
@@ -5295,23 +5295,23 @@ class psOrderedMessage : public psMessageCracker
 {
 
 public:
-	int value;
+    int value;
 
-	psOrderedMessage( uint32_t client, int valueToSend, int sequenceNumber);
-	psOrderedMessage( MsgEntry* me );
+    psOrderedMessage( uint32_t client, int valueToSend, int sequenceNumber);
+    psOrderedMessage( MsgEntry* me );
 
-	PSF_DECLARE_MSG_FACTORY();
+    PSF_DECLARE_MSG_FACTORY();
 
-	/**
-	* @brief Converts the message into human readable string.
-	*
-	* @param access_ptrs A struct to a number of access pointers.
-	* @return Return a human readable string for the message.
-	*/
-	virtual csString ToString(AccessPointers * access_ptrs)
-	{
-		return csString("not implemented");
-	}
+    /**
+    * @brief Converts the message into human readable string.
+    *
+    * @param access_ptrs A struct to a number of access pointers.
+    * @return Return a human readable string for the message.
+    */
+    virtual csString ToString(AccessPointers * access_ptrs)
+    {
+        return csString("not implemented");
+    }
 
 };
 

@@ -1,7 +1,7 @@
 /*
  * cmdguilds.cpp - Author: Keith Fulton
  *
- * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -77,22 +77,22 @@ psGuildCommands::~psGuildCommands()
 {
     cmdsource->Unsubscribe("/guildinfo",this);
     cmdsource->Unsubscribe("/newguild",this);
-    cmdsource->Unsubscribe("/endguild",this);     
-    cmdsource->Unsubscribe("/guildinvite",this);  
-    cmdsource->Unsubscribe("/guildremove",this);  
-    cmdsource->Unsubscribe("/guildlevel",this);   
-    cmdsource->Unsubscribe("/guildpromote",this); 
+    cmdsource->Unsubscribe("/endguild",this);
+    cmdsource->Unsubscribe("/guildinvite",this);
+    cmdsource->Unsubscribe("/guildremove",this);
+    cmdsource->Unsubscribe("/guildlevel",this);
+    cmdsource->Unsubscribe("/guildpromote",this);
     cmdsource->Unsubscribe("/getmemberpermissions",this);
     cmdsource->Unsubscribe("/setmemberpermissions",this);
-    cmdsource->Unsubscribe("/guildmembers",this); 
-    cmdsource->Unsubscribe("/guildpoints",this); 
+    cmdsource->Unsubscribe("/guildmembers",this);
+    cmdsource->Unsubscribe("/guildpoints",this);
     cmdsource->Unsubscribe("/guildname", this);
     cmdsource->Unsubscribe("/guildsecret", this);
     cmdsource->Unsubscribe("/guildweb", this);
     cmdsource->Unsubscribe("/guildmotd", this);
     cmdsource->Unsubscribe("/guildwar", this);
     cmdsource->Unsubscribe("/guildyield", this);
-    
+
     cmdsource->Unsubscribe("/newalliance", this);
     cmdsource->Unsubscribe("/allianceinvite", this);
     cmdsource->Unsubscribe("/allianceremove", this);
@@ -114,13 +114,13 @@ const char *psGuildCommands::HandleCommand(const char *cmd)
         msg.SendMessage();
         if ( words.GetCount() == 2 )
         {
-			if ((words[1]!="yes")&&(words[1]!="no"))
-				return "Syntax: /guildinfo yes|no";
+            if ((words[1]!="yes")&&(words[1]!="no"))
+                return "Syntax: /guildinfo yes|no";
             if(PawsManager::GetSingleton().FindWidget("GuildWindow")) //we can't be sure this is loaded
             {
                 pawsCheckBox* onlineOnly = (pawsCheckBox*)PawsManager::GetSingleton().FindWidget("GuildWindow")->FindWidget("OnlineOnly");
                 if(onlineOnly)
-			        onlineOnly->SetState(words[1]=="yes");
+                    onlineOnly->SetState(words[1]=="yes");
             }
             csString command;
             command.Format("<r onlineonly=\"%s\"/>", (const char*)words[1] );
@@ -133,7 +133,7 @@ const char *psGuildCommands::HandleCommand(const char *cmd)
             pawsCheckBox* onlineOnly = NULL;
             if(PawsManager::GetSingleton().FindWidget("GuildWindow")) //we can't be sure this is loaded
                 onlineOnly = (pawsCheckBox*)PawsManager::GetSingleton().FindWidget("GuildWindow")->FindWidget("OnlineOnly");
-            command.Format("<r onlineonly=\"%s\"/>", !onlineOnly || onlineOnly->GetState() ? "yes":"no");    
+            command.Format("<r onlineonly=\"%s\"/>", !onlineOnly || onlineOnly->GetState() ? "yes":"no");
             psGUIGuildMessage msg2(psGUIGuildMessage::SET_ONLINE, command );
             msg2.SendMessage();
         }
@@ -141,7 +141,7 @@ const char *psGuildCommands::HandleCommand(const char *cmd)
     else
     {
         psGuildCmdMessage cmdmsg(cmd);
-        cmdmsg.SendMessage();        
+        cmdmsg.SendMessage();
     }
 
     return NULL;

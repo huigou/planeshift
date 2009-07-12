@@ -31,7 +31,7 @@
 //=============================================================================
 // Local Includes
 //=============================================================================
-#include "bankmanager.h" 
+#include "bankmanager.h"
 #include "client.h"
 #include "cachemanager.h"
 #include "progressionmanager.h"
@@ -118,7 +118,7 @@ void BankManager::TaxAccount(T guildOrChar, MoneyEvent monEvt, int index)
         octasAvail = mon.GetOctas();
         hexasAvail = mon.GetHexas();
         triasAvail = mon.GetTrias();
-    }       
+    }
     else
     {
         psCharacter *c = (psCharacter*)guildOrChar;
@@ -683,7 +683,7 @@ void BankManager::HandleBanking( MsgEntry *me, Client *client )
     }
     // Check we're still near the banker.
     gemObject *banker = NULL;
-    banker = client->GetTargetObject();    
+    banker = client->GetTargetObject();
     if (!banker || !banker->GetCharacterData() || !banker->GetCharacterData()->IsBanker())
     {
         psserver->SendSystemError(client->GetClientNum(), "Your target must be a banker!");
@@ -745,7 +745,7 @@ void BankManager::HandleBanking( MsgEntry *me, Client *client )
                 SendBankWindow(client, msg.guild, false);
                 return;
             }
-            
+
             ExchangeFunds(client, msg.guild, msg.coins, msg.coin);
             SendBankWindow(client, msg.guild, false);
             break;
@@ -760,7 +760,7 @@ int BankManager::CoinsForExchange(psCharacter* pschar, bool guild, int type, flo
     switch(type)
     {
     case CIRCLE:
-        { 
+        {
             int totalAvail = (int)((mon->GetTotal() - mon->GetCircles() * 250) * (100-fee) / 100);
             return (totalAvail / 250);
         }
@@ -812,7 +812,7 @@ int BankManager::CalculateAccountLevel(psCharacter *pschar, bool guild)
 }
 
 float BankManager::CalculateFee(psCharacter* pschar, bool guild)
-{ 
+{
     MathEnvironment env;
     env.Define("AccountLevel", CalculateAccountLevel(pschar, guild));
     CalcBankFeeScript->Evaluate(&env);

@@ -235,7 +235,7 @@ bool psCharacter::Load(iResultRow& row)
 
     SetFullName(row["name"], row["lastname"]);
     SetOldLastName( row["old_lastname"] );
-    
+
     unsigned int raceid = row.GetUInt32("racegender_id");
     psRaceInfo *raceinfo = CacheManager::GetSingleton().GetRaceInfoByID(raceid);
     if (!raceinfo)
@@ -257,11 +257,11 @@ bool psCharacter::Load(iResultRow& row)
     }
 
     helmGroup = GroupsResult[0]["helm"];
-    
+
     BracerGroup = GroupsResult[0]["bracer"];
-    
+
     BeltGroup = GroupsResult[0]["belt"];
-    
+
     CloakGroup = GroupsResult[0]["cloak"];
 
     SetDescription(row["description"]);
@@ -515,7 +515,7 @@ bool psCharacter::Load(iResultRow& row)
     // Load if the character/npc is a banker
     if(row.GetInt("banker") == 1)
         banker = true;
-        
+
      // Load if the character is a statue
     if(row.GetInt("statue") == 1)
         isStatue = true;
