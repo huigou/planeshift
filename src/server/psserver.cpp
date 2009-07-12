@@ -89,7 +89,7 @@
 #include "workmanager.h"
 
 // Remember to bump this in server_options.sql and add to upgrade_schema.sql!
-#define DATABASE_VERSION_STR "1224"
+#define DATABASE_VERSION_STR "1225"
 
 
 psCharacterLoader psServer::CharacterLoader;
@@ -584,7 +584,7 @@ void psServer::RemovePlayer (uint32_t clientnum,const char *reason)
     Notify3(LOG_CHARACTER, "Remove player '%s' (%d)\n", client->GetName(),client->GetClientNum() );
 
     client->Disconnect();
-    
+
     chatmanager->RemoveAllChannels(client);
 
     authserver->SendDisconnect(client,reason);
@@ -683,7 +683,7 @@ void psServer::SendSystemInfo(int clientnum, const char *fmt, ... )
     va_start(args, fmt);
     csString cssLine = csString().FormatV(fmt, args);
     va_end(args);
-    
+
     psSystemMessage newmsg(clientnum ,MSG_INFO, cssLine.GetData());
 
     if (newmsg.valid)
@@ -708,7 +708,7 @@ void psServer::SendSystemBaseInfo(int clientnum, const char *fmt, ...)
     va_start(args, fmt);
     csString cssLine = csString().FormatV(fmt, args);
     va_end(args);
-    
+
     psSystemMessage newmsg(clientnum ,MSG_INFO_BASE, cssLine.GetData());
 
     if (newmsg.valid)
@@ -758,7 +758,7 @@ void psServer::SendSystemOK(int clientnum, const char *fmt, ... )
     va_start(args, fmt);
     csString cssLine = csString().FormatV(fmt, args);
     va_end(args);
-    
+
     psSystemMessage newmsg(clientnum ,MSG_OK, cssLine.GetData());
 
     if (newmsg.valid)
@@ -1068,11 +1068,11 @@ bool psServer::CheckAccess(Client* client, const char* command, bool returnError
         gotAccess = CacheManager::GetSingleton().GetCommandManager()->Validate(client->GetSecurityLevel(), command, errorMessage);
         if(gotAccess)
             return true;
-        
+
         SendSystemError(client->GetClientNum(), errorMessage);
         return false;
     }
-    
+
     return CacheManager::GetSingleton().GetCommandManager()->Validate(client->GetSecurityLevel(), command);
 }
 
@@ -1153,7 +1153,7 @@ void psServer::QuitServer(int time, Client *client) //-1 for stop, 0 for now > 0
                     return;
                 }
                 //we got less than 5 minutes for shut down so let's lock the server immediately
-                if(quit_delay < 5) EntityManager::GetSingleton().SetReady(false); 
+                if(quit_delay < 5) EntityManager::GetSingleton().SetReady(false);
 
                 //generates the messages to alert the user and allocates them in the queque
                 for(uint i = 3; i > 0; i--) //i = 3 sets up the 0 seconds message and so is the event triggering
