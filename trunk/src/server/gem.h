@@ -904,6 +904,7 @@ public:
     const char *GetGuildName();
     psGuildInfo *GetGuild() { return psChar->GetGuild(); }
     psGuildLevel *GetGuildLevel() { return psChar->GetGuildLevel(); }
+    psGuildMember *GetGuildMembership() { return psChar->GetGuildMembership(); }
 
     void DoDamage(gemActor *attacker, float damage, float damageRate = 0.0f, csTicks duration=0);
     void AddAttackerHistory(gemActor * attacker, float damage, float damageRate = 0.0f, csTicks duration = 0 );
