@@ -104,6 +104,7 @@ bool ClientMsgHandler::DispatchQueue()
 			{
 				printf("Adding new sequence channel for msgtype %d.\n", msg->GetType());
 				channel = new OrderedMessageChannel;
+                channel->IncrementSequenceNumber(); // prime the pump
 				orderedMessages.Put(msg->GetType(), channel);
 			}
 			int nextSequenceExpected  = channel->GetCurrentSequenceNumber();

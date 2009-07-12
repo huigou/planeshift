@@ -59,6 +59,21 @@ bool pawsComboBox::Setup( iDocumentNode* node )
     fliptotop = listNode->GetAttributeValueAsBool("fliptotop");
     useScrollBar = listNode->GetAttributeValueAsBool("useScrollBar", true);
     
+	listNode = node->GetNode("button");
+	if (!listNode)
+	{
+		upButton = "New Up Arrow";
+		downButton = "New Down Arrow";
+		upButtonPressed = "New Up Arrow Pressed";
+		downButtonPressed = "New Down Arrow Pressed";
+	}
+	else
+	{
+		upButton   = listNode->GetAttributeValue("upButton");
+		downButton = listNode->GetAttributeValue("downButton");
+		upButtonPressed   = listNode->GetAttributeValue("upButtonPressed");
+		downButtonPressed = listNode->GetAttributeValue("downButtonPressed");
+	}
     return true;
 }
 
@@ -73,9 +88,9 @@ bool pawsComboBox::PostSetup()
     AddChild( arrow );
 
     // Puts the button at the edge of the text box widget
-    arrow->SetRelativeFrame( defaultFrame.Width()-16, 4, 16, 16 );
-    arrow->SetUpImage( "Down Arrow" );
-    arrow->SetDownImage( "Down Arrow" );
+    arrow->SetRelativeFrame( defaultFrame.Width()-18, 4, 18, 16 );
+    arrow->SetUpImage(downButton);
+    arrow->SetDownImage(downButtonPressed);
     arrow->SetID( SHOW_LIST );
     
     ok = arrow->PostSetup();    
@@ -85,10 +100,11 @@ bool pawsComboBox::PostSetup()
     // Create the textbox that has the current selected choice
     ///////////////////////////////////////////////////////////////////////    
     itemChoice = new pawsTextBox;
+	itemChoice->SetBackground("Scaling Widget Background");
     AddChild( itemChoice );
 
     // Puts the button at the edge of the text box widget
-    itemChoice->SetRelativeFrame( 0 , 4, defaultFrame.Width()-16, defaultFrame.Height() );
+    itemChoice->SetRelativeFrame( 0 , 4, defaultFrame.Width()-23, defaultFrame.Height() );
     ok = ok && itemChoice->PostSetup();
 
     itemChoice->SetText(text);
@@ -99,7 +115,7 @@ bool pawsComboBox::PostSetup()
     // Create the drop down list box
     ///////////////////////////////////////////////////////////////////////   
     listChoice = new pawsListBox;
-    AddChild( listChoice );
+	AddChild( listChoice );
 
     if (fliptotop)
     {
@@ -112,8 +128,8 @@ bool pawsComboBox::PostSetup()
 
     listChoice->Hide();
     listChoice->UseTitleRow( false ); 
-    listChoice->SetID( id );
-    listChoice->SetBackground("Standard Background");
+	listChoice->SetBackground("Scaling Widget Background");
+	listChoice->SetID( id );
     listChoice->SetBackgroundAlpha(listalpha);
     listChoice->UseBorder("line");
     listChoice->SetAlwaysOnTop(true);
@@ -158,8 +174,8 @@ bool pawsComboBox::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget
         {
             if ( closed )
             {
-                arrow->SetUpImage( "Up Arrow" );
-                arrow->SetDownImage( "Up Arrow" );
+                arrow->SetUpImage(upButton);
+                arrow->SetDownImage(upButtonPressed);
                 oldHeight = ScreenFrame().Height();    
                 oldWidth  = ScreenFrame().Width();    
                 SetSize( ScreenFrame().Width(), defaultFrame.Height()+rows*GetActualHeight(rowHeight)+15 );
@@ -175,8 +191,8 @@ bool pawsComboBox::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget
             }
             else
             {
-                arrow->SetUpImage( "Down Arrow" );
-                arrow->SetDownImage( "Down Arrow" );
+                arrow->SetUpImage(downButton);
+                arrow->SetDownImage(downButtonPressed);
                 SetSize( oldWidth, oldHeight );
                 if (fliptotop)
                 {
@@ -211,8 +227,8 @@ void pawsComboBox::OnListAction( pawsListBox* widget, int status )
     
     if (!closed)
     {
-        arrow->SetUpImage( "Down Arrow" );
-        arrow->SetDownImage( "Down Arrow" );
+        arrow->SetUpImage(downButton);
+        arrow->SetDownImage(downButtonPressed);
         SetSize( oldWidth, oldHeight );
         if (fliptotop)
         {
@@ -245,8 +261,8 @@ pawsListBoxRow* pawsComboBox::Select(int optionNum)
     
     if (!closed)
     {
-        arrow->SetUpImage( "Down Arrow" );
-        arrow->SetDownImage( "Down Arrow" );
+        arrow->SetUpImage("New Down Arrow");
+        arrow->SetDownImage("New Down Arrow");
         SetSize( oldWidth, oldHeight );
         if (fliptotop)
         {

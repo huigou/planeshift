@@ -217,8 +217,8 @@ iObjectRegistry* psCSSetup::InitCS(iReporterListener * customReporter)
     csRef<iGraphics3D> g3d2 =  csQueryRegistry<iGraphics3D> (object_reg);
  
     iNativeWindow *nw2 = g3d2->GetDriver2D()->GetNativeWindow();
-    if (nw2)
-        nw2->SetIcon(ifile);
+    //if (nw2)
+      //  nw2->SetIcon(ifile);
 
     // tweak reporter plugin to report everything...
     // is there a command line switch or something to do this which I've missed?

@@ -148,12 +148,11 @@ void LogMessage (const char* file, int line, const char* function,
         csString msgid;
         if(con < CON_WARNING && con > CON_CMDOUTPUT)
         {
-            msgid.Format("<%s:%d %s SEVERE>\n",
-                      file, line, function);
+            msgid.Format("<%s:%d %s SEVERE>\n",file, line, function);
         }
         else
-            msgid.Format("<%s:%d %s>\n",
-            file, line, function);
+			msgid = ""; // File, Line, Function is too much spam on the console for debug output
+            //msgid.Format("<%s:%d %s>\n", file, line, function);
 
         csString description;
         va_start(arg, msg);
