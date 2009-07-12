@@ -69,7 +69,7 @@ private:
     csRef<iSector> stage;
     csRef<iView>   view;
     csRef<iEngine> engine;
-    csRef<iCollection> collection;
+    csRef<iCollection> col;
 
     csVector3 objectPos;
     static int idName;

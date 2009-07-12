@@ -40,7 +40,7 @@ pawsGenericView::pawsGenericView()
 
     char newName[10];
     sprintf(newName, "NAME%d\n", idName );
-    collection = engine->CreateCollection(newName);
+    col = engine->CreateCollection(newName);
 
     loadedMap = false;
 }   
@@ -70,42 +70,41 @@ bool pawsGenericView::LoadMap( const char* map, const char* sector )
     csRef<iEngine> engine =  csQueryRegistry<iEngine > ( PawsManager::GetSingleton().GetObjectRegistry());
     csRef<iThreadedLoader> loader =  csQueryRegistry<iThreadedLoader> ( PawsManager::GetSingleton().GetObjectRegistry());
     csRef<iVFS> VFS =  csQueryRegistry<iVFS> ( PawsManager::GetSingleton().GetObjectRegistry());
-             
-    mapName = map;
 
-    csString sectorName;
+    col = engine->CreateCollection(sector);
+    stage = engine->FindSector( sector );
 
-    // Clear out the collection.
-    collection->ReleaseAllObjects();
-
-    // Now load the map into the selected region
-    VFS->ChDir (map);
-    VFS->SetSyncDir(VFS->GetCwd());
-    engine->SetCacheManager(NULL);
-    csRef<iThreadReturn> itr = loader->LoadMapFile(map, "world", CS_LOADER_KEEP_WORLD, collection);
-    itr->Wait();
-    if(!itr->WasSuccessful())
-    {
-        return false;
-    }
-    engine->SyncEngineListsNow(loader);
-    VFS->ChDir (map);
-
-    if (sector)
-        sectorName = sector;
-    else if (engine->GetCameraPositions()->GetCount() > 0)
-        sectorName = engine->GetCameraPositions()->Get(0)->GetSector();
-    else
-        return false;
-
-    stage = engine->FindSector(sectorName);
-    CS_ASSERT( stage );
-    collection->Add( stage->QueryObject() );
     if ( !stage )
+    {
+        csRef<iDocumentSystem> xml (
+            csQueryRegistry<iDocumentSystem> (PawsManager::GetSingleton().GetObjectRegistry()));
+
+        csRef<iDocument> doc = xml->CreateDocument();
+        csString filename = map;
+        filename.Append("/world");
+        csRef<iDataBuffer> buf (VFS->ReadFile (filename, false));
+        const char* error = doc->Parse(buf);
+        if(error)
+        {
+            printf("pawsObjectView world parse error: %s\n", error);
+        }
+
+        csRef<iDocumentNode> worldNode = doc->GetRoot()->GetNode("world");
+
+        // Now load the map into the selected region
+        csRef<iThreadReturn> itr = loader->LoadMapWait(map, worldNode, CS_LOADER_KEEP_WORLD, col);
+        if (!itr->WasSuccessful())
             return false;
 
-    view = csPtr<iView> (new csView( engine, PawsManager::GetSingleton().GetGraphics3D() ));
+        stage = engine->FindSector( sector );
+        stage->PrecacheDraw();
+        CS_ASSERT( stage );
+        col->Add( stage->QueryObject() );
+        if ( !stage )
+             return false;
+    }
 
+    view = csPtr<iView> (new csView( engine, PawsManager::GetSingleton().GetGraphics3D() ));
     if (engine->GetCameraPositions()->GetCount() > 0)
     {
         iCameraPosition * cp = engine->GetCameraPositions()->Get(0);
@@ -119,35 +118,45 @@ bool pawsGenericView::LoadMap( const char* map, const char* sector )
         view->GetCamera()->GetTransform().SetOrigin(csVector3(-33,1,-198));
         view->GetCamera()->GetTransform().LookAt(csVector3(0,0,4), csVector3(0,1,0));
     }
-        
-    view->SetRectangle(screenFrame.xmin, screenFrame.ymin,
-                       screenFrame.Width(),screenFrame.Height());
-   
-    loadedMap = true;        
-    return true;        
+
+    view->SetRectangle(screenFrame.xmin, screenFrame.ymin, screenFrame.Width(), screenFrame.Height());
+
+    return true;
 }
 
 void pawsGenericView::Draw()
 {
-    graphics2D->SetClipRect( 0,0, graphics2D->GetWidth(), graphics2D->GetHeight());
-    // tell CS to render the scene
-    if (!PawsManager::GetSingleton().GetGraphics3D()->BeginDraw(CSDRAW_3DGRAPHICS))
+    if(screenFrame.xmin > graphics2D->GetWidth() || screenFrame.ymin > graphics2D->GetHeight() ||
+       screenFrame.xmax < 0 || screenFrame.ymax < 0)
+    {
+       return;
+    }
+
+    graphics2D->SetClipRect(0, 0, graphics2D->GetWidth(), graphics2D->GetHeight());
+    if(!PawsManager::GetSingleton().GetGraphics3D()->BeginDraw(CSDRAW_3DGRAPHICS))
+    {
         return;
+    }
 
-    view->SetRectangle( screenFrame.xmin, 
+    if(!view)
+    {
+        return;
+    }
+
+    iGraphics3D* og3d = view->GetContext();
+
+    view->SetContext(PawsManager::GetSingleton().GetGraphics3D());
+
+    view->SetRectangle(screenFrame.xmin,
                        PawsManager::GetSingleton().GetGraphics3D()->GetHeight() - screenFrame.ymax ,
-                       screenFrame.Width(),
-                       screenFrame.Height() );
+                       screenFrame.Width(), screenFrame.Height());
 
-    view->GetPerspectiveCamera()->SetPerspectiveCenter(
-                       screenFrame.xmin + (screenFrame.Width() >> 1),
-                       PawsManager::GetSingleton().GetGraphics3D()->GetHeight() - screenFrame.Height() - 
-                       screenFrame.ymin + (screenFrame.Height() >> 1) );
-
-    view->GetPerspectiveCamera()->SetFOV( view->GetPerspectiveCamera()->GetFOV(), screenFrame.Width() );
-    
+    view->GetPerspectiveCamera()->SetPerspectiveCenter((float)(screenFrame.xmin+(screenFrame.Width() >> 1))/graphics2D->GetWidth(),
+                                                       1-(float)(screenFrame.ymin+(screenFrame.Height() >> 1))/graphics2D->GetHeight());
     view->Draw();
 
     PawsManager::GetSingleton().GetGraphics3D()->BeginDraw( CSDRAW_2DGRAPHICS );
+
+    view->SetContext( og3d );
     pawsWidget::Draw();
 }
