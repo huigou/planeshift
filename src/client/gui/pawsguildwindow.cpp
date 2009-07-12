@@ -66,6 +66,7 @@
 #define EDIT_PRIVATE_NOTES_BUTTON 304
 #define INVITE_BUTTON  305
 #define LEAVE_BUTTON   306
+#define EDIT_GUILD_MAX_POINTS_BUTTON 311
 
 #define REMOVE_GUILD            500
 #define SET_ALLIANCE_LEADER     501
@@ -340,6 +341,7 @@ void pawsGuildWindow::HandleGuildData( csString& openString )
         guildName->SetText(guildNode->GetAttributeValue("name"));
         guildSecret->SetState(strcmp(guildNode->GetAttributeValue("secret"),"yes")==0);
         guildWebPage->SetText(guildNode->GetAttributeValue("web_page"));
+        max_guild_points = guildNode->GetAttributeValueAsInt("max_points");
     }
     else
         Error1("No <guild> tag in Open List");
@@ -427,6 +429,12 @@ void pawsGuildWindow::HandleMemberData( csString& openString )
             member.points          =  memberNode->GetAttributeValueAsInt("points");
             member.level           =  memberNode->GetAttributeValueAsInt("level");
             chatWindow->AddAutoCompleteName( memberNode->GetAttributeValue("name") );
+            
+            //we crop the points client side less strain on the server and less complexity of code
+            //this way if someone makes a wrong change they can recover the points
+            
+            if(member.points > max_guild_points)
+                member.points = max_guild_points;
             
             members.Push(member);
         }
@@ -819,8 +827,15 @@ bool pawsGuildWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
         {
             member = FindSelectedMemberInfo();
             if (member != NULL)
-                pawsNumberPromptWindow::Create("Enter points", member->points, 0, 100, 
+                pawsNumberPromptWindow::Create("Enter points", member->points, 0, max_guild_points, 
                                                this, "GuildPoints",member->char_id);
+            retVal = true;                                                                                              
+            break;
+        }
+        case EDIT_GUILD_MAX_POINTS_BUTTON:
+        {
+                pawsNumberPromptWindow::Create("Enter Maximum points", max_guild_points, 0, MAX_GUILD_POINTS_LIMIT, 
+                                               this, "MaxGuildPoints");
             retVal = true;                                                                                              
             break;
         }
@@ -1133,15 +1148,22 @@ void pawsGuildWindow::OnStringEntered(const char *name,int param,const char *val
 
 void pawsGuildWindow::OnNumberEntered(const char *name,int param,int value)
 {
+    if (value == -1)
+        return;
+
     if (!strcmp(name,"GuildPoints"))
     {
-        if (value == -1)
-            return;
-
         csString command;
         command.Format("<p char_id=\"%i\" points=\"%i\"/>", param, value);
         psGUIGuildMessage msg(psGUIGuildMessage::SET_MEMBER_POINTS, command);
         msg.SendMessage();
+    }
+    else if (!strcmp(name,"MaxGuildPoints"))
+    {
+        csString command;
+        command.Format("<mp max_guild_points=\"%i\"/>", value);
+        psGUIGuildMessage msg(psGUIGuildMessage::SET_MAX_GUILD_POINTS, command);
+        msg.SendMessage();        
     }
 }
 

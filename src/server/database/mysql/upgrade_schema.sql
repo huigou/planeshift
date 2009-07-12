@@ -1246,7 +1246,12 @@ ALTER TABLE `npc_responses` CHANGE COLUMN `audio_path` `audio_path1` VARCHAR(100
  ADD COLUMN `audio_path3` VARCHAR(100)  DEFAULT NULL COMMENT 'This holds an optional VFS path to a speech file to be sent to the client and played on demand for response3.' AFTER `audio_path2`,
  ADD COLUMN `audio_path4` VARCHAR(100)  DEFAULT NULL COMMENT 'This holds an optional VFS path to a speech file to be sent to the client and played on demand for response4.' AFTER `audio_path3`,
  ADD COLUMN `audio_path5` VARCHAR(100)  DEFAULT NULL COMMENT 'This holds an optional VFS path to a speech file to be sent to the client and played on demand for response5.' AFTER `audio_path4`;
-
+ 
+#1225 - Stefano Angeleri - Added max guild points and per character permissions
+ALTER TABLE `guilds` ADD COLUMN `max_guild_points` INT(10)  NOT NULL DEFAULT 100 COMMENT 'Stores the maximum amount of gp allowed for assignment in this guild' AFTER `secret_ind`;
+ALTER TABLE `characters` ADD COLUMN `guild_additional_privileges` SMALLINT(3) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Contains a bitfield with the additional priviledges assigned to this char (additional to the guild level it\'s in)' AFTER `guild_level`,
+ ADD COLUMN `guild_denied_privileges` SMALLINT(3) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Contains a bitfield with the removed priviledges from this char (removed from the guild level it\'s in)' AFTER `guild_additional_privileges`;
+UPDATE `server_options` SET `option_value`='1225' WHERE `option_name`='db_version';
 
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.

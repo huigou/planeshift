@@ -283,6 +283,14 @@ void GuildManager::HandleCmdMessage( MsgEntry *me,Client *client )
     {
         NewAlliance(msg,client);
     }
+    else if (msg.command == "/getmemberpermissions")
+    {
+        GetMemberPermissions(msg,client);
+    }
+    else if (msg.command == "/setmemberpermissions")
+    {
+        SetMemberPermissions(msg,client);
+    }
     else if (msg.command == "/allianceinvite")
     {
         AllianceInvite(msg,client);
@@ -346,6 +354,9 @@ void GuildManager::HandleGUIMessage(MsgEntry *me,Client *client)
     case psGUIGuildMessage::SET_MEMBER_POINTS:
         HandleSetMemberPoints(client, doc->GetRoot());
         break;
+    case psGUIGuildMessage::SET_MAX_GUILD_POINTS:
+        HandleSetMaxMemberPoints(client, doc->GetRoot());
+        break;
     case psGUIGuildMessage::SET_MEMBER_PUBLIC_NOTES:
         HandleSetMemberNotes(client, doc->GetRoot(), true);
         break;
@@ -402,13 +413,13 @@ int GuildManager::GetClientLevel(Client * client)
   */
 bool GuildManager::CheckClientRights(Client * client, GUILD_PRIVILEGE priv)
 {
-    psGuildLevel * level;
+    psGuildMember *member;
 
-    level = client->GetActor()->GetGuildLevel();
-    if (level == NULL)
+    member = client->GetActor()->GetGuildMembership();
+    if (member == NULL)
         return false;
 
-    if (level->HasRights(priv))
+    if (member->HasRights(priv))
         return true;
     else
         return false;
@@ -595,6 +606,55 @@ GuildNotifySubscription * GuildManager::FindNotifySubscr(Client * client)
     return NULL;
 }
 
+bool GuildManager::ParseRightString(csString privilege,  GUILD_PRIVILEGE& right)
+{
+    if (privilege == "view_chat")
+    {
+        right = RIGHTS_VIEW_CHAT;
+    } else if (privilege == "chat")
+    {
+        right = RIGHTS_CHAT;
+    } else if (privilege == "invite")
+    {
+        right = RIGHTS_INVITE;
+    } else if (privilege == "remove")
+    {
+        right = RIGHTS_REMOVE;
+    } else if (privilege == "promote")
+    {
+        right = RIGHTS_PROMOTE;
+    } else if (privilege == "edit_level")
+    {
+        right = RIGHTS_EDIT_LEVEL;
+    } else if (privilege == "edit_points")
+    {
+        right = RIGHTS_EDIT_POINTS;
+    } else if (privilege == "edit_guild")
+    {
+        right = RIGHTS_EDIT_GUILD;
+    } else if (privilege == "edit_public")
+    {
+        right = RIGHTS_EDIT_PUBLIC;
+    } else if (privilege == "edit_private")
+    {
+        right = RIGHTS_EDIT_PRIVATE;
+    } else if (privilege == "alliance_view_chat")
+    {
+        right = RIGHTS_VIEW_CHAT_ALLIANCE;
+    } else if (privilege == "alliance_chat")
+    {
+        right = RIGHTS_CHAT_ALLIANCE;
+    } else if (privilege == "guild_bank")
+    {
+        right = RIGHTS_USE_BANK;
+    } else
+    {
+        Error2("Unkown privilege %s",privilege.GetData());
+        return false;
+    }    
+    return true;
+}
+
 void GuildManager::HandleSetLevelRight(Client * client, iDocumentNode* root)
 {
     csRef<iDocumentNode> topNode = root->GetNode("l");
@@ -626,42 +686,9 @@ void GuildManager::HandleSetLevelRight(Client * client, iDocumentNode* root)
     }
     
     GUILD_PRIVILEGE right;
-    if (privilege == "view_chat")
-    {
-        right = RIGHTS_VIEW_CHAT;
-    } else if (privilege == "chat")
-    {
-        right = RIGHTS_CHAT;
-    } else if (privilege == "invite")
-    {
-        right = RIGHTS_INVITE;
-    } else if (privilege == "remove")
-    {
-        right = RIGHTS_REMOVE;
-    } else if (privilege == "promote")
-    {
-        right = RIGHTS_PROMOTE;
-    } else if (privilege == "edit_level")
-    {
-        right = RIGHTS_EDIT_LEVEL;
-    } else if (privilege == "edit_points")
-    {
-        right = RIGHTS_EDIT_POINTS;
-    } else if (privilege == "edit_guild")
-    {
-        right = RIGHTS_EDIT_GUILD;
-    } else if (privilege == "edit_public")
-    {
-        right = RIGHTS_EDIT_PUBLIC;
-    } else if (privilege == "edit_private")
-    {
-        right = RIGHTS_EDIT_PRIVATE;
-    } else
-    {
-        Error2("Unkown privilege %s",privilege.GetData());
+    if(!ParseRightString(privilege, right))
         return;
-    }
-
+    
     if ( ! IsLeader(client))
     {
         if ( ! CheckClientRights(client, right, "You cannot change a privilege that you do not have yourself."))
@@ -669,6 +696,7 @@ void GuildManager::HandleSetLevelRight(Client * client, iDocumentNode* root)
             return;
         }
     }
+    
     if (guild->SetPrivilege(level,right,state=="on"))
     {
         psGuildLevel *lev = guild->FindLevel(level);
@@ -733,6 +761,29 @@ void GuildManager::HandleSetMemberPoints(Client *client,iDocumentNode * root)
 	}
 }
 
+void GuildManager::HandleSetMaxMemberPoints(Client *client,iDocumentNode * root)
+{
+    csRef<iDocumentNode> topNode = root->GetNode("mp");
+    if (topNode == NULL) return;
+
+    int points = topNode->GetAttributeValueAsInt("max_guild_points");
+
+    psGuildInfo * guild = client->GetCharacterData()->GetGuild();
+    if (guild == NULL) 
+        return;
+    
+    if ( ! IsLeader(client))
+    {
+        if ( !CheckClientRights(client, RIGHTS_EDIT_GUILD, "You do not have the rights to change the max guild points in your guild."))
+            return;
+    }
+    
+    guild->SetMaxMemberPoints(points);
+    
+    SendNotifications(guild->id, psGUIGuildMessage::GUILD_DATA);
+
+}
+
 void GuildManager::HandleSetMemberNotes(Client *client,iDocumentNode * root, bool isPublic)
 {    
     csRef<iDocumentNode> topNode = root->GetNode("n");
@@ -794,10 +845,11 @@ void GuildManager::SendGuildData(Client *client)
     
     csString escpxml_guild = EscpXML(guild->GetName());
     csString escpxml_webpage = EscpXML(guild->web_page);
-    open.AppendFmt("<guild name=\"%s\" secret=\"%s\" web_page=\"%s\"/>",
+    open.AppendFmt("<guild name=\"%s\" secret=\"%s\" web_page=\"%s\" max_points=\"%d\"/>",
                       escpxml_guild.GetData(),
                       guild->IsSecret()?"yes":"no",
-                      escpxml_webpage.GetData());
+                      escpxml_webpage.GetData(),
+                      guild->GetMaxMemberPoints());
 
     psGUIGuildMessage cmd(clientnum,psGUIGuildMessage::GUILD_DATA,open);
     cmd.SendMessage();
@@ -836,6 +888,9 @@ void GuildManager::SendLevelData(Client *client)
         open.AppendFmt("<edit_guild down=\"%s\"/>",BoolToText(level->HasRights(RIGHTS_EDIT_GUILD)));
         open.AppendFmt("<edit_public down=\"%s\"/>",BoolToText(level->HasRights(RIGHTS_EDIT_PUBLIC)));
         open.AppendFmt("<edit_private down=\"%s\"/>",BoolToText(level->HasRights(RIGHTS_EDIT_PRIVATE)));
+        open.AppendFmt("<alliance_view_chat down=\"%s\"/>",BoolToText(level->HasRights(RIGHTS_VIEW_CHAT_ALLIANCE)));
+        open.AppendFmt("<alliance_chat down=\"%s\"/>",BoolToText(level->HasRights(RIGHTS_CHAT_ALLIANCE)));
+        open.AppendFmt("<guild_bank down=\"%s\"/>",BoolToText(level->HasRights(RIGHTS_USE_BANK)));
 
         open.Append("</l>");
     }
@@ -1662,6 +1717,140 @@ void GuildManager::Promote(psGuildCmdMessage& msg,Client *client)
         chatserver->SendGuild(client->GetCharacterData()->GetCharName(), client->GetActor()->GetEID(), guild, guildmsg);
 
     SendNotifications(guild->id, psGUIGuildMessage::MEMBER_DATA);
+}
+
+void GuildManager::GetMemberPermissions(psGuildCmdMessage& msg,Client *client)
+{
+    int clientnum = client->GetClientNum();
+
+    psGuildInfo *guild = client->GetActor()->GetGuild();
+    if (!guild)
+    {
+        psserver->SendSystemError(clientnum,"You are not in a guild.");
+        return;
+    }
+
+    if (! (const char *)msg.player)
+    {
+        psserver->SendSystemError(clientnum,"You must specify the player to get the permissions.");
+        return;
+    }
+
+    psGuildMember *target = guild->FindMember(msg.player);
+    if (!target)
+    {
+        psserver->SendSystemError(clientnum,"Player %s is not a member of your guild.",(const char *)msg.player);
+        return;
+    }
+
+
+    if ( ! IsLeader(client))    
+    {
+        if ( ! CheckClientRights(client, RIGHTS_EDIT_LEVEL, "You do not have the rights in your guild to get the permissions."))
+            return;
+        if (GetClientLevel(client) <= target->guildlevel->level)
+        {
+            psserver->SendSystemError(clientnum,"You can't get the permissions of a player of higher or equal level.",(const char *)msg.player);
+            return;
+        }
+    }
+
+        csString permissionText = "Player " + msg.player + " has these permissions: ";
+        if(target->HasRights(RIGHTS_VIEW_CHAT))
+            permissionText.Append("view_chat ");
+        if(target->HasRights(RIGHTS_VIEW_CHAT))
+            permissionText.Append("chat ");
+        if(target->HasRights(RIGHTS_VIEW_CHAT))
+            permissionText.Append("invite ");
+        if(target->HasRights(RIGHTS_VIEW_CHAT))
+            permissionText.Append("remove ");
+        if(target->HasRights(RIGHTS_VIEW_CHAT))
+            permissionText.Append("promote ");
+        if(target->HasRights(RIGHTS_VIEW_CHAT))
+            permissionText.Append("edit_level ");
+        if(target->HasRights(RIGHTS_VIEW_CHAT))
+            permissionText.Append("edit_points ");
+        if(target->HasRights(RIGHTS_VIEW_CHAT))
+            permissionText.Append("edit_public ");
+        if(target->HasRights(RIGHTS_VIEW_CHAT))
+            permissionText.Append("alliance_view_chat ");
+        if(target->HasRights(RIGHTS_VIEW_CHAT))
+            permissionText.Append("alliance_chat ");
+        if(target->HasRights(RIGHTS_VIEW_CHAT))
+            permissionText.Append("guild_bank ");
+            
+        psserver->SendSystemInfo(clientnum,permissionText.Trim().GetDataSafe());
+}
+
+void GuildManager::SetMemberPermissions(psGuildCmdMessage& msg,Client *client)
+{
+    int clientnum = client->GetClientNum();
+
+    psGuildInfo *guild = client->GetActor()->GetGuild();
+    if (!guild)
+    {
+        psserver->SendSystemError(clientnum,"You are not in a guild.");
+        return;
+    }
+
+    if (! (const char *)msg.player)
+    {
+        psserver->SendSystemError(clientnum,"You must specify the player to set the permissions.");
+        return;
+    }
+
+    psGuildMember *target = guild->FindMember(msg.player);
+    if (!target)
+    {
+        psserver->SendSystemError(clientnum,"Player %s is not a member of your guild.",(const char *)msg.player);
+        return;
+    }
+
+    if ( ! IsLeader(client))    
+    {
+        if ( ! CheckClientRights(client, RIGHTS_EDIT_LEVEL, "You do not have the rights in your guild to get the permissions."))
+            return;
+        if (GetClientLevel(client) <= target->guildlevel->level)
+        {
+            psserver->SendSystemError(clientnum,"You can't get the permissions of a player of higher or equal level.",(const char *)msg.player);
+            return;
+        }
+    }
+
+    GUILD_PRIVILEGE right;
+    if(!msg.permission.Length() || !ParseRightString(msg.permission, right))
+    {
+        psserver->SendSystemError(clientnum,"You need to specify a valid permission name.");
+        return;
+    }
+    
+    if ( ! IsLeader(client))
+    {
+        if ( ! CheckClientRights(client, right, "You cannot change a privilege that you do not have yourself."))
+        {
+            return;
+        }
+    }
+    
+    if(msg.subCmd == "add")
+    {
+        if(guild->SetMemberPrivilege(target, right, true))
+            psserver->SendSystemInfo(clientnum,"The permission %s has been added to %s",msg.permission.GetDataSafe(), msg.player.GetDataSafe());
+        else
+            psserver->SendSystemInfo(clientnum,"Unable to set the permission %s on %s",msg.permission.GetDataSafe(), msg.player.GetDataSafe());
+    }
+    else if(msg.subCmd == "remove")
+    {
+        if(guild->SetMemberPrivilege(target, right, false))
+            psserver->SendSystemInfo(clientnum,"The permission %s has been removed %s",msg.permission.GetDataSafe(), msg.player.GetDataSafe());   
+        else
+            psserver->SendSystemInfo(clientnum,"Unable to set the permission %s on %s",msg.permission.GetDataSafe(), msg.player.GetDataSafe());
+    }
+    else
+    {
+        psserver->SendSystemError(clientnum,"You need to specify if the permission must be added (add) or removed (remove).");
+        return;
+    }
 }
 
 /** Sends list of guild members of given level as text messages to client

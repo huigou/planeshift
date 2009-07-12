@@ -127,8 +127,10 @@ private:
     
     csArray<guildMemberInfo> members;
     
-    int char_id;            // character_id of our player
-    int playerLevel;        // guild level of our player
+    int char_id;            ///< character_id of our player
+    int playerLevel;        ///< guild level of our player
+    
+    int max_guild_points;   ///< keeps the max amount of guild points allowed in this guild
     
     /** Stores names of guild levels. Number of the level is equal to the index in array so the 0. array member
       * is empty and should be ignored.

@@ -1043,10 +1043,16 @@ psGuildCmdMessage::psGuildCmdMessage(MsgEntry *message)
         guildname = words.GetTail(1);
         return;
     }
-    if (command == "/guildinvite" || command == "/guildremove" || command == "/allianceinvite")
+    if (command == "/guildinvite" || command == "/guildremove" || command == "/allianceinvite" || command == "/getmemberpermissions")
     {
         player = words[1];
         return;
+    }
+    if (command == "/setmemberpermissions")
+    {
+        player = words[1];
+        subCmd = words[2];
+        permission = words[3];
     }
     if (command == "/guildlevel")
     {

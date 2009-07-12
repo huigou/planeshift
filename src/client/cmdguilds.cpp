@@ -54,6 +54,8 @@ psGuildCommands::psGuildCommands( ClientMsgHandler* mh,
     cmdsource->Subscribe("/guildremove",this);  // remove player from guild
     cmdsource->Subscribe("/guildlevel",this);   // name guild level something (ranks)
     cmdsource->Subscribe("/guildpromote",this); // promote player in guild to level #
+    cmdsource->Subscribe("/getmemberpermissions",this); // pgets the permissions of a particular player
+    cmdsource->Subscribe("/setmemberpermissions",this); // sets the permissions of a particular player
     cmdsource->Subscribe("/guildmembers",this); // see list of members (optional level #)
     cmdsource->Subscribe("/guildpoints",this);  // view "karma points" of named guild
     cmdsource->Subscribe("/guildname",this);  // view "karma points" of named guild
@@ -80,6 +82,8 @@ psGuildCommands::~psGuildCommands()
     cmdsource->Unsubscribe("/guildremove",this);  
     cmdsource->Unsubscribe("/guildlevel",this);   
     cmdsource->Unsubscribe("/guildpromote",this); 
+    cmdsource->Unsubscribe("/getmemberpermissions",this);
+    cmdsource->Unsubscribe("/setmemberpermissions",this);
     cmdsource->Unsubscribe("/guildmembers",this); 
     cmdsource->Unsubscribe("/guildpoints",this); 
     cmdsource->Unsubscribe("/guildname", this);

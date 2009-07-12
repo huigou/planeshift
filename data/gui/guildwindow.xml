@@ -203,6 +203,33 @@
                 <text string="Prv notes" vertAdjust="BOTTOM"/>
 
             </widget>
+            
+            <widget name="" factory="pawsTextBox" vertical="yes" >
+
+                <frame x="384" y="17" width="25" height="130" />
+		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="7" />
+
+                <text string="View al.Chat" vertAdjust="BOTTOM"/>
+
+            </widget>
+            
+            <widget name="" factory="pawsTextBox" vertical="yes" >
+
+                <frame x="407" y="17" width="25" height="130" />
+		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="8" />
+
+                <text string="All. Chat" vertAdjust="BOTTOM"/>
+
+            </widget>
+            
+            <widget name="" factory="pawsTextBox" vertical="yes" >
+
+                <frame x="430" y="17" width="25" height="130" />
+		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="8" />
+
+                <text string="Guild Bank" vertAdjust="BOTTOM"/>
+
+            </widget>
 
 
 
@@ -296,6 +323,24 @@
                     <column width="23" xmlbinding="edit_private" >
 
                          <widget name="Edit private" factory="pawsCheckBox"><text string="" position="right"/></widget>
+
+                    </column>
+                    
+                    <column width="23" xmlbinding="alliance_view_chat" >
+
+                         <widget name="View alliance chat" factory="pawsCheckBox"><text string="" position="right"/></widget>
+
+                    </column>
+                    
+                    <column width="23" xmlbinding="alliance_chat" >
+
+                         <widget name="Alliance chat" factory="pawsCheckBox"><text string="" position="right"/></widget>
+
+                    </column>
+
+                    <column width="23" xmlbinding="guild_bank" >
+
+                         <widget name="Guild bank" factory="pawsCheckBox"><text string="" position="right"/></widget>
 
                     </column>
 
@@ -422,7 +467,7 @@
 
                 <text string="Notify when members login/logout" position="right" />
 
-            </widget>            
+            </widget>           
 
             <widget name="RemoveMember" factory="pawsButton" id="300">
 
@@ -471,6 +516,16 @@
                 <bgimage resource="Standard Button" />
 
                 <label text="Private notes" />
+
+            </widget>
+            
+            <widget name="EditMaxGuildPoints" factory="pawsButton" id="311">
+
+                <frame x="510" y="320" width="90" height="19" />
+
+                <bgimage resource="Standard Button" />
+
+                <label text="Edit Max GP" />
 
             </widget>
 
