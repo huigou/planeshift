@@ -7,6 +7,7 @@
 # Table structure for table 'sc_waypoint_links'
 #
 
+DROP TABLE IF EXISTS `sc_waypoint_links`;
 CREATE TABLE `sc_waypoint_links` (
   `id` int(8) unsigned NOT NULL auto_increment,
   `name` varchar(30) NOT NULL DEFAULT '' ,

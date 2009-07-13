@@ -18,6 +18,7 @@
 # Table structure for table item_categories
 #
 
+DROP TABLE IF EXISTS `item_categories`;
 CREATE TABLE `item_categories` (
   `category_id` int(8) unsigned NOT NULL auto_increment,
   `name` varchar(20) NOT NULL default '',

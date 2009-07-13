@@ -18,6 +18,7 @@
 # Table structure for table armor_vs_weapon
 #
 
+DROP TABLE IF EXISTS `armor_vs_weapon`;
 CREATE TABLE `armor_vs_weapon` (
   `id` int(5) NOT NULL auto_increment,
   `1a` float NOT NULL default '0',

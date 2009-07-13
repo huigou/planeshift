@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS `stances`;
 CREATE TABLE stances(
   id int(8) unsigned NOT NULL auto_increment,
   name varchar(30) DEFAULT '0' ,

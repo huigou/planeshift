@@ -7,28 +7,29 @@
 # Table structure for table 'trade_processes'
 #
 
+DROP TABLE IF EXISTS `trade_processes`;
 CREATE TABLE trade_processes (
   process_id int(10) unsigned NOT NULL,
-  subprocess_number int(4) unsigned NOT NULL,			# subprocess number
-  name varchar(40) default NULL,				# process name
-  animation varchar(30) ,                                       # transformation animation
-  render_effect CHAR(32) default NULL,                          # transformation render effect
-  workitem_id int(10) unsigned NOT NULL,                        # target item to complete transformation
-  equipment_id int(10) unsigned  ,                              # required equipted item
-  constraints varchar(64) NOT NULL DEFAULT '',                  # constraints that apply to transformation
-  garbage_id int(10) unsigned ,                                 # garbage item for flubbed transformations
-  garbage_qty int(8) unsigned ,                                 # garbage quantity for flubbed transformations
-  primary_skill_id int(10) ,                                    # primary skill for transformation
-  primary_min_skill int(8) unsigned ,                           # minimum primary skill level required to perform transformation, 0 is no minimum
-  primary_max_skill int(8) unsigned ,                           # maximum primary skill level at which practice and quality are effected, 0 is no maximum
-  primary_practice_points int(4) ,                              # number of practice primary skill points gained for performing transformation
-  primary_quality_factor int(3) unsigned DEFAULT '0' ,          # percentage of the primary skill range that applies to quality
-  secondary_skill_id int(10)  ,                                 # secondary skill foriegn key
-  secondary_min_skill int(8) unsigned ,                         # minimum secondary skill level required to perform transformation, 0 is no minimum
-  secondary_max_skill int(8) unsigned ,                         # maximum secondary skill level at which practice and quality are effected, 0 is no maximum
-  secondary_practice_points int(4) ,                            # number of practice secondary skill points gained for performing transformation
-  secondary_quality_factor int(3) unsigned ,                    # percentage of the secondary skill range that applies to quality
-  description varchar(255) NOT NULL DEFAULT '' ,
+  subprocess_number int(4) unsigned NOT NULL            COMMENT 'subprocess number',
+  name varchar(40) default NULL                         COMMENT 'process name',
+  animation varchar(30)                                 COMMENT 'transformation animation',
+  render_effect CHAR(32) default NULL                   COMMENT 'transformation render effect',
+  workitem_id int(10) unsigned NOT NULL                 COMMENT 'target item to complete transformation',
+  equipment_id int(10) unsigned                         COMMENT 'required equipted item',
+  constraints varchar(64) NOT NULL DEFAULT ''           COMMENT 'constraints that apply to transformation',
+  garbage_id int(10) unsigned                           COMMENT 'garbage item for flubbed transformations',
+  garbage_qty int(8) unsigned                           COMMENT 'garbage quantity for flubbed transformations',
+  primary_skill_id int(10)                              COMMENT 'primary skill for transformation',
+  primary_min_skill int(8) unsigned                     COMMENT 'minimum primary skill level required to perform transformation, 0 is no minimum',
+  primary_max_skill int(8) unsigned                     COMMENT 'maximum primary skill level at which practice and quality are effected, 0 is no maximum',
+  primary_practice_points int(4)                        COMMENT 'number of practice primary skill points gained for performing transformation',
+  primary_quality_factor int(3) unsigned DEFAULT '0'    COMMENT 'percentage of the primary skill range that applies to quality',
+  secondary_skill_id int(10)                            COMMENT 'secondary skill foriegn key',
+  secondary_min_skill int(8) unsigned                   COMMENT 'minimum secondary skill level required to perform transformation, 0 is no minimum',
+  secondary_max_skill int(8) unsigned                   COMMENT 'maximum secondary skill level at which practice and quality are effected, 0 is no maximum',
+  secondary_practice_points int(4)                      COMMENT 'number of practice secondary skill points gained for performing transformation',
+  secondary_quality_factor int(3) unsigned              COMMENT 'percentage of the secondary skill range that applies to quality',
+  description varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (process_id,subprocess_number)
 );
 

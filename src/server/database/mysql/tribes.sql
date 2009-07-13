@@ -6,6 +6,7 @@
 # Use max_size = -1 for unlimited tribe size.
 #
 
+DROP TABLE IF EXISTS `tribes`;
 CREATE TABLE `tribes` 
 (
   id int(10) NOT NULL auto_increment,

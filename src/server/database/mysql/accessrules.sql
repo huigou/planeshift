@@ -45,6 +45,7 @@
 #      If someone with level 20 connects he will be able to see all quests except "Leila Rescue"
 #
 
+DROP TABLE IF EXISTS `accessrules`;
 CREATE TABLE accessrules (
   objecttype varchar(50),
   fieldname varchar(50),
@@ -57,7 +58,7 @@ CREATE TABLE accessrules (
 
 
 #
-# Dumping data for table 'accounts'
+# Dumping data for table 'accessrules'
 #
 INSERT INTO accessrules VALUES ('quest','','','30','31','31','50');
 INSERT INTO accessrules VALUES ('quest','name','Leila Rescue','41','41','','50');

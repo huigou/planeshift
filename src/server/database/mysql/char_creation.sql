@@ -7,6 +7,7 @@
 # Table structure for table 'char_creation'
 #
 
+DROP TABLE IF EXISTS `character_creation`;
 CREATE TABLE character_creation (
   id                int(8) unsigned NOT NULL auto_increment,
   name              varchar(80) NOT NULL DEFAULT '0' ,
@@ -113,6 +114,7 @@ INSERT INTO character_creation VALUES (223,'Novari','','-9','charcreate_223','ZO
 INSERT INTO character_creation VALUES (224,'Yndoli','','-10','charcreate_224','ZODIAC');
 
 
+DROP TABLE IF EXISTS `char_create_life`;
 CREATE TABLE char_create_life (
   id                int(8) unsigned NOT NULL auto_increment,
   name              varchar(80) NOT NULL DEFAULT '0' ,
@@ -133,6 +135,7 @@ Insert INTO char_create_life values ( "3", "Married a lumberjack", "lumberjack",
 Insert INTO char_create_life values ( "4", "Spouse brought home a diamond", "diamond", "5", "charcreate_7", 'N' );
 
 
+DROP TABLE IF EXISTS `char_create_life_relations`;
 CREATE TABLE char_create_life_relations (
   choice                int(8),
   adds_choice           int(8) default '0' ,

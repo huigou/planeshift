@@ -7,6 +7,7 @@
 # Table structure for table 'common_strings'
 #
 
+DROP TABLE IF EXISTS `common_strings`;
 CREATE TABLE common_strings (
   id int(8) unsigned NOT NULL auto_increment,
   string varchar(60) NOT NULL DEFAULT 'undefined' ,

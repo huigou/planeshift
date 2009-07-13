@@ -7,6 +7,7 @@
 # Table structure for table 'npc_trigger_groups'
 #
 
+DROP TABLE IF EXISTS `npc_trigger_groups`;
 CREATE TABLE npc_trigger_groups (
   id int(10) unsigned NOT NULL auto_increment,
   trigger_text varchar(40) NOT NULL DEFAULT '' ,

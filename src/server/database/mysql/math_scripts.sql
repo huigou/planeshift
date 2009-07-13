@@ -7,6 +7,7 @@
 # Table structure for table 'math_scripts'
 #
 
+DROP TABLE IF EXISTS `math_scripts`;
 CREATE TABLE math_scripts (
   name varchar(40) NOT NULL DEFAULT '' ,
   math_script text NOT NULL,

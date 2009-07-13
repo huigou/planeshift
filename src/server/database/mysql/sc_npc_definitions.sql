@@ -7,6 +7,7 @@
 # Table structure for table 'sc_npc_definitions'
 #
 
+DROP TABLE IF EXISTS `sc_npc_definitions`;
 CREATE TABLE sc_npc_definitions (
   char_id int(10) NOT NULL DEFAULT '0' ,
   name varchar(30) ,

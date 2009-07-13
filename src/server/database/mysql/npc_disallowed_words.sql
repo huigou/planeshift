@@ -7,6 +7,7 @@
 # Table structure for table 'npc_disallowed_words'
 #
 
+DROP TABLE IF EXISTS `npc_disallowed_words`;
 CREATE TABLE npc_disallowed_words (
   word varchar(30) NOT NULL DEFAULT '' ,
   PRIMARY KEY (word)

@@ -1,6 +1,8 @@
 #
 # Table to register players to GM events
 #
+
+DROP TABLE IF EXISTS `character_events`;
 CREATE TABLE `character_events` (
   `player_id` int(10) NOT NULL default '0',
   `event_id` int(10) NOT NULL default '0',

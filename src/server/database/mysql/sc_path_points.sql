@@ -3,6 +3,7 @@
 -- Table structure for table `sc_path_points`
 --
 
+DROP TABLE IF EXISTS `sc_path_points`;
 CREATE TABLE `sc_path_points` (
   `id` int(8) unsigned NOT NULL auto_increment,
   `path_id` int(8) unsigned NOT NULL default '0',

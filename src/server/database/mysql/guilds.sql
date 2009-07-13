@@ -7,6 +7,7 @@
 # Table structure for table 'guilds'
 #
 
+DROP TABLE IF EXISTS `guilds`;
 CREATE TABLE guilds (
   id int(11) NOT NULL auto_increment,
   name varchar(25) NOT NULL DEFAULT '' ,

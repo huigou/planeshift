@@ -2,6 +2,7 @@
 # Defines all available character states and motions.
 
 # List of character modes and their properties.  normal, run, combat, swim, etc.
+DROP TABLE IF EXISTS `movement_modes`;
 CREATE TABLE `movement_modes` (
   `id` int(11) NOT NULL,
   `name` varchar(100) NOT NULL default '',
@@ -16,6 +17,7 @@ CREATE TABLE `movement_modes` (
 );
 
 # List of base movement types and their properties.  forward, backwards, jump, etc.
+DROP TABLE IF EXISTS `movement_types`;
 CREATE TABLE `movement_types` (
   `id` int(11) NOT NULL,
   `name` varchar(100) NOT NULL default '',

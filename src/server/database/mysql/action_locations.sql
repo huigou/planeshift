@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS `action_locations`;
 CREATE TABLE action_locations
 (
   id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,

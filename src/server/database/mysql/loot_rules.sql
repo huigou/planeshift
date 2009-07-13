@@ -7,6 +7,7 @@
 # Table structure for table 'loot_rules'
 #
 
+DROP TABLE IF EXISTS `loot_rules`;
 CREATE TABLE loot_rules (
   id int(10) unsigned NOT NULL auto_increment,
   name varchar(30) ,

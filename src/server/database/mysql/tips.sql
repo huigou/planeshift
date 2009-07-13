@@ -7,6 +7,7 @@
 # Table structure for table tips
 #
 
+DROP TABLE IF EXISTS `tips`;
 CREATE TABLE `tips` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `tip` text NOT NULL,

@@ -7,6 +7,7 @@
 # Table structure for table 'player_spells'
 #
 
+DROP TABLE IF EXISTS `player_spells`;
 CREATE TABLE player_spells (
   player_id int(10) unsigned NOT NULL DEFAULT '0' ,
   spell_id int(8) unsigned NOT NULL DEFAULT '0' ,

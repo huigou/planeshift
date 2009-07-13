@@ -7,6 +7,7 @@
 # Table structure for table 'hunt_locations'
 #
 
+DROP TABLE IF EXISTS `hunt_locations`;
 CREATE TABLE `hunt_locations` (
   `id` int(8) unsigned NOT NULL auto_increment,
   `x` double(10,2) NOT NULL default '0.00',

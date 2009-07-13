@@ -7,6 +7,7 @@
 # Table structure for table 'npc_synonyms'
 #
 
+DROP TABLE IF EXISTS `npc_synonyms`;
 CREATE TABLE npc_synonyms (
   word varchar(30) NOT NULL DEFAULT '' ,
   synonym_of varchar(30) ,

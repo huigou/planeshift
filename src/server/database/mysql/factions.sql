@@ -7,6 +7,7 @@
 # Table structure for table 'factions'
 #
 
+DROP TABLE IF EXISTS `factions`;
 CREATE TABLE factions (
   id int(8) unsigned NOT NULL auto_increment,
   faction_name varchar(40) NOT NULL DEFAULT '' ,

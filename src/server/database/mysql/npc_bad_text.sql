@@ -18,6 +18,7 @@
 # Table structure for table npc_bad_text
 #
 
+DROP TABLE IF EXISTS `npc_bad_text`;
 CREATE TABLE `npc_bad_text` (
   `id` int(10) NOT NULL auto_increment,
   `badtext` varchar(255) NOT NULL default '0',

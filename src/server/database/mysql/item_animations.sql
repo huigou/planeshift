@@ -7,6 +7,7 @@
 # Table structure for table 'item_animations'
 #
 
+DROP TABLE IF EXISTS `item_animations`;
 CREATE TABLE item_animations (
   id int(10) unsigned NOT NULL DEFAULT '0' ,
   cstr_id_animation int(10) unsigned NOT NULL DEFAULT '0' ,

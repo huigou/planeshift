@@ -7,6 +7,7 @@
 # Table structure for table 'alliances'
 #
 
+DROP TABLE IF EXISTS `alliances`;
 CREATE TABLE alliances (
   id int(11) NOT NULL auto_increment,
   name varchar(25) NOT NULL,

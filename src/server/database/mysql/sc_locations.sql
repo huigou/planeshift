@@ -7,6 +7,7 @@
 # Table structure for table 'sc_locations'
 #
 
+DROP TABLE IF EXISTS `sc_locations`;
 CREATE TABLE `sc_locations` (
   `id` int(8) unsigned NOT NULL auto_increment,
   `type_id` int(8) unsigned NOT NULL DEFAULT '0',

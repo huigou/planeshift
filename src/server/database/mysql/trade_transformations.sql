@@ -7,17 +7,18 @@
 # Table structure for table 'trade_transformations'
 #
 
+DROP TABLE IF EXISTS `familiar_types`;
 CREATE TABLE trade_transformations (
   id int(10) unsigned NOT NULL auto_increment,
-  pattern_id int(10) unsigned NOT NULL,                         # pattern for transformation
-  process_id int(10) unsigned NOT NULL,                         # process for transformation
-  result_id int(10) unsigned NOT NULL,                  	# resulting item
-  result_qty int(8) unsigned NOT NULL ,                         # resulting item quantity
-  item_id int(10) unsigned NOT NULL,                         	# item to be transformed
-  item_qty int(8) unsigned NOT NULL ,                           # required quantity for transformation
-  trans_points int(8) unsigned NOT NULL DEFAULT '0' ,           # ammount of time to complete transformation
-  penilty_pct float(10,6) NOT NULL DEFAULT '1.000000' ,     # percent of quality for resulting item 
-  description varchar(255) NOT NULL DEFAULT '' ,
+  pattern_id int(10) unsigned NOT NULL                  COMMENT 'pattern for transformation',
+  process_id int(10) unsigned NOT NULL                  COMMENT 'process for transformation',
+  result_id int(10) unsigned NOT NULL                   COMMENT 'resulting item',
+  result_qty int(8) unsigned NOT NULL                   COMMENT 'resulting item quantity',
+  item_id int(10) unsigned NOT NULL                     COMMENT 'item to be transformed',
+  item_qty int(8) unsigned NOT NULL                     COMMENT 'required quantity for transformation',
+  trans_points int(8) unsigned NOT NULL DEFAULT '0'     COMMENT 'ammount of time to complete transformation',
+  penilty_pct float(10,6) NOT NULL DEFAULT '1.000000'   COMMENT 'percent of quality for resulting item',
+  description varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (id)
 );
 

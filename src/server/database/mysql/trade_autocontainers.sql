@@ -7,6 +7,7 @@
 # Table structure for table 'trade_autocontainers'
 #
 
+DROP TABLE IF EXISTS `trade_autocontainers`;
 CREATE TABLE trade_autocontainers (
   id int(10) unsigned NOT NULL auto_increment,
   item_instance_id int(10) unsigned DEFAULT '0' ,

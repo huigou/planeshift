@@ -7,6 +7,7 @@
 # Table structure for table 'character_skills'
 #
 
+DROP TABLE IF EXISTS `character_skills`;
 CREATE TABLE character_skills (
   character_id int(10) unsigned NOT NULL DEFAULT '0' ,      # Key into characters table
   skill_id int(10) unsigned NOT NULL DEFAULT '0' ,          # Key into skills table

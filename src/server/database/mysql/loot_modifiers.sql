@@ -1,4 +1,5 @@
 
+DROP TABLE IF EXISTS `loot_modifiers`;
 CREATE TABLE loot_modifiers (
   id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
   modifier_type VARCHAR(20) NULL,

@@ -18,6 +18,7 @@
 # Table structure for table npc_triggers
 #
 
+DROP TABLE IF EXISTS `npc_triggers`;
 CREATE TABLE `npc_triggers` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `trigger_text` varchar(255) default NULL,

@@ -1,6 +1,7 @@
 #
 # Table for GM Events
 #
+DROP TABLE IF EXISTS `gm_events`;
 CREATE TABLE `gm_events` (
   `id` int(10) NOT NULL default '0',
   `name` varchar(40) NOT NULL default '',

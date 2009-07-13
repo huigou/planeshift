@@ -38,6 +38,7 @@
 # The setting team will be responsible for building these correctly, from the server console.
 #
 
+DROP TABLE IF EXISTS `traits`;
 CREATE TABLE traits (
   id int(10) unsigned NOT NULL auto_increment,  
   next_trait int(10) NOT NULL DEFAULT '-1',
