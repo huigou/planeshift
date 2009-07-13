@@ -1,7 +1,7 @@
 /*
  * chatmanager.h - Author: Matthias Braun <MatzeBraun@gmx.de>
  *
- * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -56,16 +56,16 @@ class gemActor;
 
 struct CachedData
 {
-	csString key;
-	csString alternate;
-	csRef<iDataBuffer> data;
+    csString key;
+    csString alternate;
+    csRef<iDataBuffer> data;
 
-	CachedData(iDataBuffer *buffer, const char *n, const char *alt)
-	{
-		data = buffer;
-		key = n;
-		alternate = alt;
-	}
+    CachedData(iDataBuffer *buffer, const char *n, const char *alt)
+    {
+        data = buffer;
+        key = n;
+        alternate = alt;
+    }
 };
 
 class ChatManager : public MessageManager
@@ -84,18 +84,18 @@ public:
     void SendNotice(psChatMessage& msg);
 
     NpcResponse *CheckNPCEvent(Client *client,csString& trigger,gemNPC * &target);
-    
+
     void RemoveAllChannels(Client *client);
 
     void SendGuild(const csString & sender, EID senderEID, psGuildInfo * guild, psChatMessage& msg);
     ///actually sends the message to all connected members of the alliance
     void SendAlliance(const csString & sender, EID senderEID, psGuildAlliance * alliance, psChatMessage& msg);
-    
+
     /// Starts the process of sending the specified list of files to the client
-	void SendMultipleAudioFileHashes(Client *client, const char *voiceFile);
+    void SendMultipleAudioFileHashes(Client *client, const char *voiceFile);
 
 protected:
-	csPDelArray<CachedData> audioFileCache;
+    csPDelArray<CachedData> audioFileCache;
 
     void SendTell(psChatMessage& msg, const char* who, Client *client, Client *target);
     void SendSay(uint32_t clientNum, gemActor* actor, psChatMessage& msg, const char* who);
@@ -107,25 +107,25 @@ protected:
 
     NpcResponse *CheckNPCResponse(psChatMessage& msg,Client *client,gemNPC * &target);
 
-	/// Starts the process of sending the specified file to the client
-	void SendAudioFileHash(Client *client, const char *voiceFile, csTicks delay);
-	/// Sends the actual file to the client if needed
-	void SendAudioFile(Client *client, const char *voiceFile);
-	
+    /// Starts the process of sending the specified file to the client
+    void SendAudioFileHash(Client *client, const char *voiceFile, csTicks delay);
+    /// Sends the actual file to the client if needed
+    void SendAudioFile(Client *client, const char *voiceFile);
+
     /// If this returns true, all went well.  If it returns false, the client was muted
     bool FloodControl(csString& newMessage, Client *client);
-    
+
     // Chat channel state
     // uint32_t here to allow hashing
     // csHashReversible is not used because it does not allow a many to many mapping
     csHash<uint16_t, uint32_t> channelSubscriptions;
     csHash<uint32_t, uint32_t> channelSubscribers;
-    
+
     // case-insensitive
     csHash<uint32_t, csString> channelIDs;
     // case-sensitive
     csHash<csString, uint32_t> channelNames;
-    
+
     uint16_t nextChannelID;
 };
 

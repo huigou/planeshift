@@ -95,6 +95,11 @@ protected:
     void HandleRemoveMember(Client *client,iDocumentNode * root);
     void HandleSetMemberLevel(Client *client,iDocumentNode * root);
     void HandleSetMemberPoints(Client *client,iDocumentNode * root);
+
+    /** Handles the message from the client asking for a change in max member points
+     *  @param client: the client asking the operation
+     *  @param root: the document node which starts the data for this command
+     */
     void HandleSetMaxMemberPoints(Client *client,iDocumentNode * root);
     void HandleSetMemberNotes(Client *client,iDocumentNode * root, bool isPublic);
 
@@ -110,7 +115,7 @@ protected:
     void SendAllianceData(Client *client);
 
     csString MakeAllianceMemberXML(psGuildInfo * member, bool allianceLeader);
-    
+
     /** Parses a right string in order to be used by the right assignment functions.
      *  @param privilege: A string with the privilege name
      *  @param right: Where the result is stored
@@ -132,7 +137,23 @@ protected:
     void Remove(psGuildCmdMessage& msg,Client *client);
     void Rename(psGuildCmdMessage& msg,Client *client);
     void Promote(psGuildCmdMessage& msg,Client *client);
+
+    /** Handles the /getmemberpermissions command and returns the permissions
+     *  of the member to the requesting client. The client can only check
+     *  permissions of members he can change permissions too.
+     *
+     *  @param msg: the message coming from the client
+     *  @param client: the client sending the request
+     */
     void GetMemberPermissions(psGuildCmdMessage& msg,Client *client);
+
+    /** Handles the /setmemberpermissions command and allows to change
+     *  the permissions of a particular member of a guild (addition/removal
+     *  from the guild level permissions)
+     *
+     *  @param msg: the message coming from the client
+     *  @param client: the client sending the request
+     */
     void SetMemberPermissions(psGuildCmdMessage& msg,Client *client);
     void ListMembers(psGuildCmdMessage& msg,Client *client);
     void Secret(psGuildCmdMessage &msg, Client *client);
