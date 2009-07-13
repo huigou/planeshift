@@ -4,6 +4,7 @@
 #       group_name   - The name of the group
 ###############################################################################
 
+DROP TABLE IF EXISTS `command_groups`;
 CREATE TABLE command_groups (
   id int(8) unsigned NOT NULL,
   group_name varchar(40) NOT NULL DEFAULT '' ,
@@ -28,6 +29,7 @@ INSERT INTO command_groups VALUES(30, "Developers");
 ###############################################################################
 #   Table for the command to group assignments
 ###############################################################################
+DROP TABLE IF EXISTS `command_group_assignment`;
 CREATE TABLE command_group_assignment (
   command_name varchar(40) NOT NULL DEFAULT '' ,
   group_member int(8) NOT NULL,

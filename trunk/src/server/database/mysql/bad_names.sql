@@ -2,6 +2,7 @@
 # Table structure for table `bad_names`
 #
 
+DROP TABLE IF EXISTS `bad_names`;
 CREATE TABLE `bad_names` (
   `id` int(8) NOT NULL auto_increment,
   `name` text NOT NULL,

@@ -18,6 +18,7 @@
 # Table structure for table character_limitations
 #
 
+DROP TABLE IF EXISTS `character_limitations`;
 CREATE TABLE `character_limitations` (
   `id` int(11) NOT NULL auto_increment,
   `limit_type` char(6) NOT NULL default '' COMMENT '3 letter abbrev of type of limit, such as "sketch"',

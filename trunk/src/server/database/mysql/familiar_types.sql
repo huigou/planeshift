@@ -7,6 +7,7 @@
 # Table structure for table 'familiar_types'
 #
 
+DROP TABLE IF EXISTS `familiar_types`;
 CREATE TABLE `familiar_types`
 (
 	`id` INT UNSIGNED NOT NULL ,

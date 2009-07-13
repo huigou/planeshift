@@ -18,6 +18,7 @@
 # Table structure for table item_instances
 #
 
+DROP TABLE IF EXISTS `item_instances`;
 CREATE TABLE `item_instances` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `char_id_owner` int(10) unsigned default '0',

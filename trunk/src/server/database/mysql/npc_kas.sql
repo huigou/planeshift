@@ -7,6 +7,7 @@
 # Table structure for table 'npc_knowledge_areas'
 #
 
+DROP TABLE IF EXISTS `npc_knowledge_areas`;
 CREATE TABLE npc_knowledge_areas (
   player_id int(10) unsigned NOT NULL DEFAULT '0' ,
   area varchar(30) NOT NULL DEFAULT '0' ,

@@ -7,6 +7,7 @@
 # Table structure for table 'merchant_item_categories'
 #
 
+DROP TABLE IF EXISTS `trainer_skills`;
 CREATE TABLE trainer_skills (
   player_id int(8) unsigned NOT NULL DEFAULT '0' ,
   skill_id int(8) unsigned NOT NULL DEFAULT '0' ,

@@ -7,6 +7,7 @@
 # Table structure for table 'sc_waypoint_aliases'
 #
 
+DROP TABLE IF EXISTS `sc_waypoint_aliases`;
 CREATE TABLE `sc_waypoint_aliases` (
   `id` int(8) unsigned NOT NULL auto_increment,
   `wp_id` int(8) unsigned NOT NULL default '0',

@@ -7,6 +7,7 @@
 # Table structure for table 'character_relationships'
 #
 
+DROP TABLE IF EXISTS `character_relationships`;
 CREATE TABLE `character_relationships` 
 ( 
 	character_id int(11) NOT NULL default '0' 			COMMENT 'character id from the characters table' ,

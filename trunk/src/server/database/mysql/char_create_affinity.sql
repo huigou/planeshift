@@ -7,6 +7,7 @@
 # Table structure for table 'char_create_affinity'
 #
 
+DROP TABLE IF EXISTS `char_create_affinity`;
 CREATE TABLE char_create_affinity (
   attribute varchar(20) NOT NULL,
   category varchar(20) NOT NULL,

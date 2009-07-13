@@ -18,6 +18,7 @@
 # Table structure for table npc_responses
 #
 
+DROP TABLE IF EXISTS `npc_responses`;
 CREATE TABLE `npc_responses` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `trigger_id` int(10) unsigned default '0',

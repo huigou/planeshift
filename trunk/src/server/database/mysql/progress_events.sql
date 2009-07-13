@@ -7,6 +7,7 @@
 # Table structure for table 'progression_events'
 #
 
+DROP TABLE IF EXISTS `progression_events`;
 CREATE TABLE progression_events (
   name varchar(40) NOT NULL DEFAULT '' ,
   event_script text NOT NULL,

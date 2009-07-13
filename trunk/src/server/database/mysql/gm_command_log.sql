@@ -2,6 +2,7 @@
 # Table structure for table 'gm_command_log'
 #
 
+DROP TABLE IF EXISTS `gm_command_log`;
 CREATE TABLE gm_command_log (
   id int(10) unsigned NOT NULL auto_increment,
   account_id INT(10) UNSIGNED NOT NULL DEFAULT '0',

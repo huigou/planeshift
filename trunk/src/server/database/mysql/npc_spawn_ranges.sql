@@ -7,6 +7,7 @@
 # Table structure for table 'npc_spawn_ranges'
 #
 
+DROP TABLE IF EXISTS `npc_spawn_ranges`;
 CREATE TABLE npc_spawn_ranges (
   id int(10) unsigned NOT NULL auto_increment,
   npc_spawn_rule_id int(10) unsigned NOT NULL DEFAULT '0' ,

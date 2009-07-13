@@ -7,6 +7,7 @@
 # Table structure for table 'ways'
 #
 
+DROP TABLE IF EXISTS `ways`;
 CREATE TABLE ways (
   id int(8) unsigned NOT NULL auto_increment,
   name varchar(20) NOT NULL DEFAULT '' ,

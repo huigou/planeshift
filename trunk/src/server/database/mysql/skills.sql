@@ -18,6 +18,7 @@
 # Table structure for table skills
 #
 
+DROP TABLE IF EXISTS `skills`;
 CREATE TABLE `skills` (
   `skill_id` int(10) NOT NULL default '0',
   `name` varchar(35) NOT NULL default '',

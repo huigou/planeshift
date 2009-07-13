@@ -7,6 +7,7 @@
 # Table structure for table 'guildlevels'
 #
 
+DROP TABLE IF EXISTS `guildlevels`;
 CREATE TABLE guildlevels (
   guild_id int(11) unsigned NOT NULL DEFAULT '0' ,
   level smallint(3) unsigned NOT NULL DEFAULT '0' ,

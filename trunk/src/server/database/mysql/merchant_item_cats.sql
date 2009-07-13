@@ -7,6 +7,7 @@
 # Table structure for table 'merchant_item_categories'
 #
 
+DROP TABLE IF EXISTS `merchant_item_categories`;
 CREATE TABLE merchant_item_categories (
   player_id int(8) unsigned NOT NULL DEFAULT '0' ,
   category_id int(8) unsigned NOT NULL DEFAULT '0' ,

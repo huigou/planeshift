@@ -7,6 +7,7 @@
 # Table structure for table 'character_advantages'
 #
 
+DROP TABLE IF EXISTS `character_advantages`;
 CREATE TABLE character_advantages (
   character_id int(10) unsigned NOT NULL DEFAULT '0' ,
   advantage_id int(10) unsigned NOT NULL DEFAULT '0' ,

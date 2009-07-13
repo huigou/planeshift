@@ -7,6 +7,7 @@
 # Table structure for table 'spell_glyphs'
 #
 
+DROP TABLE IF EXISTS `spell_glyphs`;
 CREATE TABLE spell_glyphs (
   spell_id int(8) unsigned NOT NULL DEFAULT '0' ,
   item_id int(10) unsigned NOT NULL DEFAULT '0' ,

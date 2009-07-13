@@ -18,6 +18,7 @@
 # Table structure for table server_options
 #
 
+DROP TABLE IF EXISTS `server_options`;
 CREATE TABLE `server_options` (
   `option_name` varchar(50) NOT NULL default '',
   `option_value` varchar(90) NOT NULL default '',

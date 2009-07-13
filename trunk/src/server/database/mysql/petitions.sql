@@ -7,6 +7,7 @@
 # Table structure for table 'petitions'
 #
 
+DROP TABLE IF EXISTS `petitions`;
 CREATE TABLE petitions (
   id int(10) unsigned NOT NULL auto_increment,
   player int(11) NOT NULL DEFAULT '0' ,

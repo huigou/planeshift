@@ -7,6 +7,7 @@
 # Table structure for table 'loot_rule_details'
 #
 
+DROP TABLE IF EXISTS `loot_rule_details`;
 CREATE TABLE loot_rule_details (
   id int(10) unsigned NOT NULL auto_increment,
   loot_rule_id int(10) unsigned NOT NULL DEFAULT '0' ,

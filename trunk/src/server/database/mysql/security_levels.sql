@@ -7,6 +7,7 @@
 # Table structure for table 'security_levels'
 #
 
+DROP TABLE IF EXISTS `security_levels`;
 CREATE TABLE security_levels (
   level tinyint(3) unsigned NOT NULL DEFAULT '0' ,
   title varchar(30) NOT NULL DEFAULT '0' ,

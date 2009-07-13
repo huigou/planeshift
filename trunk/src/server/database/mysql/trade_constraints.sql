@@ -7,6 +7,7 @@
 # Table structure for table 'trade_constraints'
 #
 
+DROP TABLE IF EXISTS `trade_constraints`;
 CREATE TABLE trade_constraints (
   id int(10) unsigned NOT NULL auto_increment,
   constrnt varchar(64) NOT NULL DEFAULT '',

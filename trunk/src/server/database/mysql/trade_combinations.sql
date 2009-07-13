@@ -7,6 +7,7 @@
 # Table structure for table 'trade_combinations'
 #
 
+DROP TABLE IF EXISTS `trade_combinations`;
 CREATE TABLE trade_combinations (
   id int(10) unsigned NOT NULL auto_increment,
   pattern_id int(10) unsigned NOT NULL ,

@@ -18,6 +18,7 @@
 # Table structure for table characters
 #
 
+DROP TABLE IF EXISTS `characters`;
 CREATE TABLE `characters` (
   `id` int(10) NOT NULL auto_increment,
   `name` varchar(30) NOT NULL default '',

@@ -2,6 +2,7 @@
  * Table structure for table 'spells'
  */
 
+DROP TABLE IF EXISTS `spells`;
 CREATE TABLE spells (
   `id` int(8) unsigned NOT NULL auto_increment,
   `name` varchar(30) NOT NULL,

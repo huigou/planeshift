@@ -2,6 +2,7 @@
 # Table structure for mini game boards
 #
 
+DROP TABLE IF EXISTS `gameboards`;
 CREATE TABLE gameboards
 (
   name VARCHAR(30) NOT NULL,

@@ -18,6 +18,7 @@
 # Table structure for table accounts
 #
 
+DROP TABLE IF EXISTS `accounts`;
 CREATE TABLE  `accounts` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `username` varchar(50) NOT NULL DEFAULT '0',

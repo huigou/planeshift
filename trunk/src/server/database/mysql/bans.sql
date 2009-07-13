@@ -2,6 +2,7 @@
 # Table structure for table 'bans'
 #
 
+DROP TABLE IF EXISTS `bans`;
 CREATE TABLE bans (
   account int(10) unsigned NOT NULL DEFAULT '0',
   ip_range CHAR(15) default NULL,

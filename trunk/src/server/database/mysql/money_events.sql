@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS `money_events`;
 CREATE TABLE money_events(
   id int(8) unsigned NOT NULL,
   taxid int(8) unsigned NOT NULL,

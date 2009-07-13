@@ -7,6 +7,7 @@
 # Table structure for table 'sc_location_type'
 #
 
+DROP TABLE IF EXISTS `sc_location_type`;
 CREATE TABLE `sc_location_type` (
   `id` int(8) unsigned NOT NULL auto_increment,
   `name` varchar(30) NOT NULL DEFAULT '' ,
