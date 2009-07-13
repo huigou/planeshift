@@ -139,6 +139,7 @@ MsvcGenConfig CAL3D.LIBS.DEBUG.9 : "cal3d-vc9_d.lib" ;
 
 # Write a description of each compile group for 'jam help'
 Description server : "Server components" ;
+Description psnpcclient : "NPC client components" ;
 Description client : "Client components" ;
 Description tests : "Tests" ;
 Description tools : "Tools" ;
@@ -147,7 +148,7 @@ Description server_static : "Static server components" ;
 
 # Register the compile groups. To add a project to a compile group, add the line CompileGroups project : compilegroup ; in the projects Jamfile.
 
-RegisterCompileGroups server client tests tools client_static server_static ;
+RegisterCompileGroups server psnpcclient client tests tools client_static server_static ;
 
 # List the first layer of subdirectories containing the jamfiles for the projects you wish to compile. This is order sensistive.
 # Library targets must be seen by Jam before Application and Plugin targets.
