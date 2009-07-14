@@ -7,7 +7,7 @@
 # Table structure for table 'trade_transformations'
 #
 
-DROP TABLE IF EXISTS `familiar_types`;
+DROP TABLE IF EXISTS `trade_transformations`;
 CREATE TABLE trade_transformations (
   id int(10) unsigned NOT NULL auto_increment,
   pattern_id int(10) unsigned NOT NULL                  COMMENT 'pattern for transformation',
