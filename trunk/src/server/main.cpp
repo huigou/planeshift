@@ -48,7 +48,7 @@ extern iDataConnection *db;
 #undef APPNAME
 #endif
 
-#define APPNAME "PlaneShift Steel Blue - Server"
+#define APPNAME "PlaneShift Arcane Chrysalis - Server"
 
 #include "util/strutil.h"
 
