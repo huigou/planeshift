@@ -1,4 +1,9 @@
-﻿*** 2009-07-12 by Stefano Angeleri
+﻿*** 2009-07-15 by Stefano Angeleri
+- Added psnpcclient compile group so it builds the db plugin also when not building the server
+- Added $npc substitution in voicefilepaths with the name of the npc speaking
+- Fixed PS#2979 - garbage item has 0/0 quality 
+
+*** 2009-07-12 by Stefano Angeleri
 - Fixed an error in the compiling guide. thanks to valrion for finding it
 - Spell images strings are now sent to clients also for the spell window
   messages, and the icon is shown there
@@ -21,6 +26,11 @@
 - Fixed PS#2906 - setskill should reset training values patch by loyni
 - Fixed PS#1260 - /screenshot stops autorun patch by loyni
 - Fixed PS#1724 Attacking 2 targets simultaneously - Kill one stops combat patch by celestar
+- Added support for per character permissions in guilds, Added some missing
+  permissions (among them guild banking permission), made some code shared among
+  various methods, Allowed to define the max guild points attribuible in a guild
+  (there is still a higher maximum but the players can decide their scale)
+  DB BUMP 1225
 - Improved comments, fixed code style on some files, increased point limit to 99999
 
 
