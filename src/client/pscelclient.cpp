@@ -2032,14 +2032,11 @@ GEMClientItem::GEMClientItem( psCelClient* cel, psPersistItem& mesg )
     factName = mesg.factname;
     solid = 0;
     post_load->pos = mesg.pos;
-    if(mesg.xRot > 0.1) printf("xRotate for mesh %s (%u) is %f\n", factName.GetData(), mesg.eid.Unbox(), mesg.xRot);
     post_load->xRot = mesg.xRot;
     post_load->yRot = mesg.yRot;
     post_load->zRot = mesg.zRot;
     post_load->sector = mesg.sector;
     post_load->flags = mesg.flags;
-
-    printf("%f, %f, %f\n", mesg.xRot, mesg.yRot, mesg.zRot);
 
     if (!InitMesh())
     {
