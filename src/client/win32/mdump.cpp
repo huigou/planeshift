@@ -280,7 +280,7 @@ LONG MiniDumper::TopLevelFilter( struct _EXCEPTION_POINTERS *pExceptionInfo )
 
 
             char crashMsg[512];
-            sprintf(crashMsg, "Something unexpected happened in PlaneShift: Steel Blue\nDetails: %s at %p\n\nWould you like to save a diagnostic file?",
+            sprintf(crashMsg, "Something unexpected happened in PlaneShift!\nDetails: %s at %p\n\nWould you like to save a diagnostic file?",
                 exceptionType, pExceptionInfo->ExceptionRecord->ExceptionAddress);
 
             // ask the user if they want to save a dump file unless the crash action is to always generate a dump
