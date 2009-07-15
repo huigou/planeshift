@@ -1225,10 +1225,7 @@ bool GEMClientObject::SetPosition(const csVector3 & pos, float rot, iSector * se
             }
 
             // Set instancing transform.
-            csReversibleTransform rt;
-            rt.SetO2T(matrix);
-            rt.SetO2TTranslation(pos);
-            position->SetValue(rt);
+            position->SetValue(pcmesh->GetMovable()->GetTransform());
         }
     }
 
@@ -1253,10 +1250,7 @@ void GEMClientObject::Rotate(float xRot, float yRot, float zRot)
     // Set instancing transform.
     if(instance.IsValid())
     {
-        csReversibleTransform rt;
-        rt.SetO2T(pcmesh->GetMovable ()->GetTransform().GetO2T());
-        rt.SetO2TTranslation(pcmesh->GetMovable ()->GetPosition());
-        position->SetValue(rt);
+        position->SetValue(pcmesh->GetMovable ()->GetTransform());
     }
 }
 
@@ -2038,11 +2032,14 @@ GEMClientItem::GEMClientItem( psCelClient* cel, psPersistItem& mesg )
     factName = mesg.factname;
     solid = 0;
     post_load->pos = mesg.pos;
+    if(mesg.xRot > 0.1) printf("xRotate for mesh %s (%u) is %f\n", factName.GetData(), mesg.eid.Unbox(), mesg.xRot);
     post_load->xRot = mesg.xRot;
     post_load->yRot = mesg.yRot;
     post_load->zRot = mesg.zRot;
     post_load->sector = mesg.sector;
     post_load->flags = mesg.flags;
+
+    printf("%f, %f, %f\n", mesg.xRot, mesg.yRot, mesg.zRot);
 
     if (!InitMesh())
     {
