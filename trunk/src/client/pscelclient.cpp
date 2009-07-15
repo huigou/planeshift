@@ -2070,9 +2070,16 @@ void GEMClientItem::CheckLoadStatus()
     instance = cel->FindInstanceObject(factName);
     if(!instance.IsValid())
     {
-        factory = psengine->GetLoader()->LoadFactory(factName);
+        bool failed = false;
+        factory = psengine->GetLoader()->LoadFactory(factName, &failed);
         if(!factory.IsValid())
         {
+            if(failed)
+            {
+                Error2("Unable to load item with factory %s!\n", factName.GetData());
+                psengine->UnregisterDelayedLoader(this);
+            }
+
             return;
         }
 
