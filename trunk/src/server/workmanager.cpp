@@ -3552,7 +3552,7 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
             resultQty = process->GetGarbageQty();
             psItemStats* Stats = CacheManager::GetSingleton().GetBasicItemStatsByID( result );
             if(Stats)
-            startQuality = currentQuality = Stats->GetQuality();
+                startQuality = currentQuality = Stats->GetQuality();
         }
     }
 
