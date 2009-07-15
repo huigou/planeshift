@@ -365,17 +365,6 @@ void psWorld::GetPosition(iMeshWrapper *pcmesh, csVector3& pos, float* yrot,iSec
     }
 }
 
-float psWorld::Matrix2XRot(const csMatrix3& mat)
-{
-    csVector3 vec(0,0,1);
-    vec = mat * vec;
- 
-    float result = atan2(vec.y, vec.z);
-    // force the result in range [0;2*pi]
-    if(result < 0) result += TWO_PI;
-
-    return result;
-}
 
 float psWorld::Matrix2YRot(const csMatrix3& mat)
 {
@@ -383,18 +372,6 @@ float psWorld::Matrix2YRot(const csMatrix3& mat)
     vec = mat * vec;
 
     float result = atan2(vec.x, vec.z);
-    // force the result in range [0;2*pi]
-    if(result < 0) result += TWO_PI;
-
-    return result;
-}
-
-float psWorld::Matrix2ZRot(const csMatrix3& mat)
-{
-    csVector3 vec(0,1,0);
-    vec = mat * vec;
-
-    float result = atan2(vec.x, vec.y);
     // force the result in range [0;2*pi]
     if(result < 0) result += TWO_PI;
 
