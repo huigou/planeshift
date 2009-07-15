@@ -280,6 +280,7 @@ void psGuildInfo::Disconnect(psCharacter *player)
         {
             player->SetGuild(NULL);
             members[i]->actor = NULL;
+            members[i]->last_login = player->GetLastLoginTime();
             break;
         }
     }
