@@ -72,13 +72,13 @@
         </widget>
 
         <widget name="ButtonExchange" factory="pawsButton" id="1400" tooltip="Exchange">
-             <frame x="0" y="64" width="64" height="64" />
-             <bgimage resource="ButtonGive" />
+            <frame x="0" y="64" width="64" height="64" />
+            <bgimage resource="ButtonGive" />
         </widget>
 
         <widget name="ButtonTrain" factory="pawsButton" id="1500" tooltip="Train">
-             <frame x="128" y="0" width="64" height="64" />
-             <bgimage resource="ButtonTrain" />
+            <frame x="128" y="0" width="64" height="64" />
+            <bgimage resource="ButtonTrain" />
         </widget>
 
         <widget name="ButtonNPCTalk" factory="pawsButton" id="1600" tooltip="Talk">
@@ -97,13 +97,13 @@
         </widget>
 
         <widget name="ButtonMarriage" factory="pawsButton" id="1900" tooltip="Marry">
-             <frame x="128" y="64" width="64" height="64" />
-             <bgimage resource="ButtonMarriage" />
+            <frame x="128" y="64" width="64" height="64" />
+            <bgimage resource="ButtonMarriage" />
         </widget>
 
         <widget name="ButtonDivorce" factory="pawsButton" id="2000" tooltip="Divorce">
-             <frame x="128" y="64" width="64" height="64" />
-             <bgimage resource="ButtonDivorce" />
+            <frame x="128" y="64" width="64" height="64" />
+            <bgimage resource="ButtonDivorce" />
         </widget>
 
         <widget name="ButtonPlayGame" factory="pawsButton" id="2100" tooltip="Play/Solve">
@@ -127,24 +127,26 @@
         </widget>
 
         <widget name="ButtonBank" factory="pawsButton" id="2500" tooltip="Start Personal Banking">
-             <frame x="0" y="128" width="64" height="64" />
-             <bgimage resource="ButtonBanking" />
+            <frame x="0" y="128" width="64" height="64" />
+            <bgimage resource="ButtonBanking" />
         </widget>
 
 
         <widget name="ButtonIntroduce" factory="pawsButton" id="2600" tooltip="Introduce yourself">
-             <frame x="128" y="128" width="64" height="64" />
-             <bgimage resource="ButtonIntroduce" />
+            <frame x="128" y="128" width="64" height="64" />
+            <bgimage resource="ButtonIntroduce" />
         </widget>
+
         <widget name="ButtonMount" factory="pawsButton" id="2700" tooltip="Mount">
-            <frame x="128" y="128" width="64" height="64"/>
-            <bgimage resource="ButtonCombine"/>
+            <frame x="128" y="128" width="64" height="64" />
+            <bgimage resource="ButtonCombine" />
         </widget>
-−
+
         <widget name="ButtonUnmount" factory="pawsButton" id="2800" tooltip="Unmount">
-            <frame x="128" y="128" width="64" height="64"/>
-            <bgimage resource="ButtonBanking"/>
+            <frame x="128" y="128" width="64" height="64" />
+            <bgimage resource="ButtonBanking" />
         </widget>
+
     </widget>
     
 </widget_description>
