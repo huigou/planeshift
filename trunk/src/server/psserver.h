@@ -339,6 +339,13 @@ public:
      * @return returns a reference to the Bank manager for the server.
      */
     BankManager *GetBankManager() { return bankmanager; }
+    
+
+    /** Returns the User Manager
+     *
+     * @return returns a reference to the User manager for the server.
+     */
+    UserManager *GetUserManager() { return usermanager; }
 
     /** Returns the Introduction Manager
      *

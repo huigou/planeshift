@@ -232,7 +232,9 @@ void CombatManager::AttackSomeone(gemActor *attacker,gemObject *target,Stance st
 {
     psCharacter *attacker_character = attacker->GetCharacterData();
 
-    if (attacker->GetMode() == PSCHARACTER_MODE_DEFEATED)
+    //we don't allow an overweight or defeated char to fight
+    if (attacker->GetMode() == PSCHARACTER_MODE_DEFEATED || 
+        attacker->GetMode() == PSCHARACTER_MODE_OVERWEIGHT)
         return;
 
     if (attacker->GetMode() == PSCHARACTER_MODE_COMBAT)  // Already fighting
@@ -240,6 +242,8 @@ void CombatManager::AttackSomeone(gemActor *attacker,gemObject *target,Stance st
         SetCombat(attacker,stance);  // switch stance from Bloody to Defensive, etc.
         return;
     } else {
+        if (attacker->GetMode() == PSCHARACTER_MODE_SIT) //we are sitting force the char to stand
+            attacker->Stand();
         attacker_character->ResetSwings(csGetTicks());
     }
 

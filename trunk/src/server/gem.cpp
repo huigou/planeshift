@@ -2074,6 +2074,21 @@ void gemActor::SetAllowedToMove(bool newvalue)
     msg.SendMessage();
 }
 
+void gemActor::Stand()
+{
+    if (GetMode() == PSCHARACTER_MODE_SIT)
+    {
+        SetMode(PSCHARACTER_MODE_PEACE);
+        psUserActionMessage anim(GetClient()->GetClientNum(), GetEID(), "stand up");
+        anim.Multicast(GetClient()->GetActor()->GetMulticastClients(),0,PROX_LIST_ANY_RANGE );
+        psserver->GetUserManager()->Emote("%s stands up.", "%s stands up.", "stand", GetClient());
+    }
+    else if (GetMode() == PSCHARACTER_MODE_OVERWEIGHT)
+    {
+        psserver->SendSystemError(GetClient()->GetClientNum(), "You can't stand up because you're overloaded!");
+    }
+}
+
 void gemActor::SetAllowedToDisconnect(bool allowed)
 {
     Client * client = GetClient();
