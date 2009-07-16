@@ -119,6 +119,32 @@ public:
     void HandleAnswer(const csString & answer);
 };
 
+/** A structure to hold the clients that are pending on mounting invite.
+*/
+class PendingMountInvite : public PendingInvite
+{
+public:
+
+    PendingMountInvite(Client *inviter,
+        Client *invitee,
+        const char *question)
+        : PendingInvite( inviter, invitee, true,
+        question,"Accept","Decline",
+        "You have asked %s to be your mount.",
+        "You have been asked to be %s's mount.",
+        "%s has accepted to be your mount.",
+        "You have accepted to be %s's mount.",
+        "%s has declined your proposition.",
+        "You have declined %s's proposition.",
+        psQuestionMessage::generalConfirm)
+    {
+    }
+
+    virtual ~PendingMountInvite() {}
+
+    void HandleAnswer(const csString & answer);
+};
+
 /***********************************************************************/
 
 UserManager::UserManager(ClientConnectionSet *cs)
@@ -1875,30 +1901,67 @@ void UserManager::HandleMount(psUserCmdMessage& msg, Client *client)
     mount = gem->FindObject(targetEID);
 
     // can only mount mounts
-    if (!mount || !mount->GetActorPtr() || !mount->GetCharacterData()->IsMount())
+    if (!mount || !mount->GetActorPtr() || client->GetActor() == mount
+    || !mount->GetCharacterData()->IsMount()) //remove that last test to allow for player mounting
     {
         psserver->SendSystemError(client->GetClientNum(),
                 "Can't mount %s", mount->GetName());
         return;
     }
 
-    // maybe also add a range check
     if(!client->GetActor()->IsNear(mount, RANGE_TO_USE))
     {
         psserver->SendSystemError(client->GetClientNum(),
                 "You are too far away from the mount");
         return;
     }
+
+    Client *targetClient = mount->GetClient();
+    if(targetClient)
+    {
+        csString question;
+        question.Format("You have been asked to be %s's mount. Do you accept?",
+            client->GetName() );
+        PendingMountInvite *invite = new PendingMountInvite(client,
+            targetClient,
+            question);
+        psserver->questionmanager->SendQuestion(invite);
+        return;
+    }
     
     // If you are not the rider(passenger), you shouldn't be allowed to move
     // client->GetActor()->SetAllowedToMove(false);
 
-    
-   if(client->GetActor()->SetMount(mount->GetActorPtr(), true))
-   {
-        psserver->SendSystemOK(client->GetClientNum(),
-                "You are mounting %s", msg.target.GetData());
-    }
+    Mount(client->GetActor(), mount->GetActorPtr());
+
+    return;
+}
+
+void PendingMountInvite::HandleAnswer(const csString & answer)
+{
+    Client * client = psserver->GetConnections()->Find(clientnum);
+    gemActor *mount = client->GetActor();
+    Client * inviterClient = psserver->GetConnections()->Find(inviterClientNum);
+    gemActor *rider = inviterClient->GetActor();
+
+    if (!mount || !rider)
+        return;
+
+    PendingInvite::HandleAnswer(answer);
+
+    if (answer == "yes")
+    if(!rider->SetMount(mount, true))
+        return;
+}
+
+void UserManager::Mount(gemActor *rider, gemActor *mount)
+{
+    if(rider->SetMount(mount, true))
+        psserver->SendSystemOK(rider->GetClientID(),
+                "You are mounting %s", mount->GetName());
+    else
+        psserver->SendSystemError(rider->GetClientID(),
+                "Could not mount %s", mount->GetName());
 
     return;
 }
