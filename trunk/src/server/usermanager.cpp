@@ -1874,11 +1874,11 @@ void UserManager::HandleMount(psUserCmdMessage& msg, Client *client)
     
     mount = gem->FindObject(targetEID);
 
-    // can only mount actors
-    if (!mount || !mount->GetActorPtr())
+    // can only mount mounts
+    if (!mount || !mount->GetActorPtr() || !mount->GetCharacterData()->IsMount())
     {
         psserver->SendSystemError(client->GetClientNum(),
-                "Can't mount %s", msg.target.GetData());
+                "Can't mount %s", mount->GetName());
         return;
     }
 
