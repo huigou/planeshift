@@ -1,6 +1,8 @@
 ﻿*** 2009-07-17 by Tristan Cragnolini
 - Merged mount code into trunk, it's now possible to mount npcs of the
   "mount" type.
+- Fix to interact.xml by f-rd
+- Fix to PS#2443 - Wrong Stacking Behavior
 
 *** 2009-07-16 by Stefano Angeleri
 - Fixed PS#2347 - Xargon reward has no message
