@@ -2905,6 +2905,11 @@ bool gemActor::SetMount(gemActor *newMount, bool mounting)
         psserver->SendSystemError(GetClientID(), "You are already on a mount.");
         return false;
     }
+    else if(newMount->GetMount())
+    {
+        psserver->SendSystemError(GetClientID(), "%s is on a mount.", newMount->GetName());
+        return false;
+    }
     else
     {
         this->mount = mounting ? newMount : NULL;

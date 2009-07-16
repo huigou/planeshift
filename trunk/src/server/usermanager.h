@@ -387,6 +387,8 @@ protected:
       */	
     void HandleMount(psUserCmdMessage& msg, Client *client);
 
+    void Mount(gemActor *rider, gemActor *mount);
+
     /** @brief Handles a player command to unmount.
 	  *	
       * @param msg the user command message
