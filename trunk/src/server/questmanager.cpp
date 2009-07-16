@@ -1300,16 +1300,27 @@ bool QuestManager::GiveRewardToPlayer(Client *who, psItemStats* itemstat)
         return false;
 
     // create the item
-    psItem *item = itemstat->InstantiateBasicItem();
-    if (item==NULL)
+    psItem *item = itemstat->InstantiateBasicItem(false); // Not a transient item
+    if (!item)
+    {
+        Error3("Couldn't give item %u to player %s!\n",itemstat->GetUID(), who->GetName());
         return false;
+    }
 
     item->SetLoaded();  // Item is fully created
 
     csString itemName = item->GetName();
 
-    psSystemMessage given(who->GetClientNum(),MSG_INFO,"%s has received a %s!",who->GetName(),itemName.GetData());
-    chardata->Inventory().AddOrDrop(item);
+    if (!chardata->Inventory().AddOrDrop(item))
+	{
+		psSystemMessage given(who->GetClientNum(),MSG_ERROR,"You received %s, but dropped it because you can't carry any more.", itemName.GetData());
+		given.SendMessage();
+	}
+	else
+	{
+		psSystemMessage given(who->GetClientNum(),MSG_INFO,"You have received %s.", itemName.GetData());
+		given.SendMessage();
+	}
     
     // player got his reward
     return true;
