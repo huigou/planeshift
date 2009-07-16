@@ -1325,7 +1325,9 @@ bool psItem::CheckStackableWith(const psItem *otheritem, bool precise) const
             return false;
     }
 
-    if (GetGuardingCharacterID() != otheritem->GetGuardingCharacterID())
+    // if both are non null and different
+    if (GetGuardingCharacterID() != otheritem->GetGuardingCharacterID() &&
+        GetGuardingCharacterID() != 0 && otheritem->GetGuardingCharacterID() != 0)
         return false;
 
     // TODO: Check effects
@@ -1475,6 +1477,10 @@ void psItem::CombineStack(psItem *& stackme)
 
     if (owning_character)
         owning_character->Inventory().UpdateEncumbrance();
+
+    // if this item has no guarding character, and the other has one, keep it
+    if(GetGuardingCharacterID() == 0)
+        SetGuardingCharacterID(stackme->GetGuardingCharacterID());
 
     // Average charges
     int newCharges = (GetCharges()*GetStackCount() + stackme->GetCharges()*stackme->GetStackCount())/newStackCount;

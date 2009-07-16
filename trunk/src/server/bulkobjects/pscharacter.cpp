@@ -1247,6 +1247,9 @@ void psCharacter::DropItem(psItem *&item, csVector3 suggestedPos, float yrot, bo
     // already have a pointer.  Plus, well get NULL and crash if it isn't...
     inventory.RemoveItemID(item->GetUID());
 
+    if(guarded) //if we want to guard the item assign the guarding pid
+        item->SetGuardingCharacterID(pid);
+
     gemObject* obj = EntityManager::GetSingleton().MoveItemToWorld(item,
                              location.worldInstance, location.loc_sector,
                              suggestedPos.x, suggestedPos.y, suggestedPos.z,
@@ -1256,8 +1259,6 @@ void psCharacter::DropItem(psItem *&item, csVector3 suggestedPos, float yrot, bo
     {
         // Assign new object to replace the original object
         item = obj->GetItem();
-        if(guarded) //if we want to guard the item assign the guarding pid
-            item->SetGuardingCharacterID(pid);
     }
 
     psMoney money;
