@@ -408,7 +408,6 @@ void psCharAppearance::Equip( csString& slotname,
     // If it's a new mesh attach that mesh.
     if ( mesh.Length() )
     {
-        Error3("Attach mesh %s to slot %s", mesh.GetData(), slotname.GetData());
         Attach(slotname, mesh);
     }
 
