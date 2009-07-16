@@ -24,3 +24,4 @@ CREATE TABLE `character_relationships`
 INSERT INTO character_relationships VALUES( 2,   1, "buddy" , "" ); 
 INSERT INTO character_relationships VALUES( 9,   2, "buddy" , "" ); 
 INSERT INTO character_relationships VALUES( 1,  11, "familiar" , "" ); 
+INSERT INTO character_relationships VALUES( 1,  61, "familiar" , "" );

@@ -1880,7 +1880,7 @@ gemActor::gemActor( psCharacter *chardata,
                        float rotangle,
                        int clientnum) :
   gemObject(chardata->GetCharFullName(),factname,myInstance,room,pos,rotangle,clientnum),
-psChar(chardata), factions(NULL), DRcounter(0), forceDRcounter(0), lastDR(0), lastV(0), lastSentSuperclientPos(0, 0, 0),
+psChar(chardata), factions(NULL), mount(NULL), DRcounter(0), forceDRcounter(0), lastDR(0), lastV(0), lastSentSuperclientPos(0, 0, 0),
 lastSentSuperclientInstance(-1), activeReports(0), isFalling(false), invincible(false), visible(true), viewAllObjects(false),
 movementMode(0), isAllowedToMove(true), atRest(true), pcmove(NULL),
 nevertired(false), infinitemana(false), instantcast(false), safefall(false), givekillexp(false), attackable(false)
@@ -2893,6 +2893,34 @@ bool gemActor::InitCharData(Client* c)
 
 }
 
+bool gemActor::SetMount(gemActor *newMount, bool mounting)
+{
+    if(!newMount)
+    {
+        Error1("No mount precised for SetMount()");
+        return false;
+    }
+    else if(GetMount() && mounting)
+    {
+        psserver->SendSystemError(GetClientID(), "You are already on a mount.");
+        return false;
+    }
+    else
+    {
+        this->mount = mounting ? newMount : NULL;
+        psMountingMessage mountmsg(GetClientID(), newMount->GetEID(), GetEID(), mounting);
+        CS_ASSERT( mountmsg.valid );
+        
+        psserver->GetEventManager()->Multicast( mountmsg.msg, GetMulticastClients(),
+                0, // Multicast to all without exception
+                PROX_LIST_ANY_RANGE );
+
+        // the actor stays suspend in midair after dismounting, and this does not seem to help...
+        //FallBegan(GetPosition(), GetSector());
+        return true;
+    }
+}
+
 void gemActor::SetTextureParts(const char *parts)
 {
 }
@@ -3290,6 +3318,9 @@ bool gemActor::SetDRData(psDRMessage& drmsg)
         //       this->GetEntity()->GetID(), this->name.GetData(), DRcounter, drmsg.counter);
         return false;  // don't do the rest of this if this msg is out of date
     }
+
+    if(GetMount())
+        GetMount()->SetDRData(drmsg);
 
     // Apply stamina only on PCs
     if (GetClientID())
@@ -4043,10 +4074,9 @@ csString gemNPC::GetDefaultBehavior(const csString & dfltBehaviors)
 
 void gemNPC::SendBehaviorMessage(const csString & msg_id, gemObject *obj)
 {
-    gemActor *actor = dynamic_cast<gemActor*>(obj);
+    gemActor *actor = obj->GetActorPtr();
     CS_ASSERT(actor);
     unsigned int client = actor->GetClientID();
-
     if ( msg_id == "select" )
     {
         // If the player is in range of the item.
@@ -4077,6 +4107,28 @@ void gemNPC::SendBehaviorMessage(const csString & msg_id, gemObject *obj)
                 {
                     options |= psGUIInteractMessage::VIEWSTATS;
                     options |= psGUIInteractMessage::DISMISS;
+
+                    // If we are in a peaceful mode we can possibly do some trading.
+                    if (actor->GetMode() == PSCHARACTER_MODE_PEACE)
+                        options |= psGUIInteractMessage::GIVE;
+
+                    //If we are alive then we can talk with an NPC
+                    if (IsAlive())
+                        options |= psGUIInteractMessage::NPCTALK;
+                }
+                else
+                    options |= psGUIInteractMessage::PLAYERDESC;
+            }
+            else if (psChar->IsMount())
+            {
+                // Mine? for now bypass
+                if (true) //(psChar->GetOwnerID() == actor->GetCharacterData()->GetPID())
+                {
+                    options |= psGUIInteractMessage::VIEWSTATS;
+                    if(actor->GetMount())
+                        options |= psGUIInteractMessage::UNMOUNT;
+                    else
+                        options |= psGUIInteractMessage::MOUNT;
 
                     // If we are in a peaceful mode we can possibly do some trading.
                     if (actor->GetMode() == PSCHARACTER_MODE_PEACE)

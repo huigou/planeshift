@@ -110,26 +110,34 @@ public:
 
 protected:
     /// Change a trait on a character.
-    void ChangeTrait( MsgEntry* me );
+    void ChangeTrait(MsgEntry* me);
     
     /// Handle animation changes for things from the server.
-    void HandleAction( MsgEntry* me );
+    void HandleAction(MsgEntry* me);
 
     /// Handle the equipment messages comming from the server. 
-    void HandleEquipment( MsgEntry* me );
+    void HandleEquipment(MsgEntry* me);
 
     /// Handle the effect message comming from the server.
-    void HandleEffect( MsgEntry* me );
+    void HandleEffect(MsgEntry* me);
     
-    void HandleEffectStop(MsgEntry* me);    
+    void HandleEffectStop(MsgEntry* me);
+    
+    /** Handle a mounting message : find the mount object,
+     * and change its appearance by attaching the rider mesh on it.
+     * 
+     * @param me The message to handle
+     */
+    void HandleMounting(MsgEntry* me);
+    
     /// Handle a rejection of a character
-    void HandleRejectCharMessage( MsgEntry* me );
+    void HandleRejectCharMessage(MsgEntry* me);
 
     /// Handle the play sound message from the server
-    void HandlePlaySound( MsgEntry* me );
+    void HandlePlaySound(MsgEntry* me);
  
     /// Handle update target message from the server
-    void HandleTargetUpdate( MsgEntry* me );
+    void HandleTargetUpdate(MsgEntry* me);
     
     csRef<MsgHandler>         msghandler;
     iObjectRegistry*          objectReg;

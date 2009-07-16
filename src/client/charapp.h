@@ -103,6 +103,17 @@ public:
       *               to apply.
       */    
     void ApplyEquipment(csString& equipment);
+
+    /** Handle the visual aspect of mounting, by attaching the rider's mesh
+      * on the back of the actor
+      * @param riderID The character's ID to put on the back of the mount
+      */
+    void ApplyRider(GEMClientActor* rider);
+    
+    /** Remove the rider's mesh of the back of the actor
+      * @param riderID The character's ID to put on the back of the mount
+      */
+    void RemoveRider(GEMClientActor* rider);
     
     /** Equip an item onto the model.
       * @param slotname The socket we want to place the item.
@@ -111,7 +122,7 @@ public:
       * @param subMesh  The submesh we want to use ( ie $P_Plate )
       * @param texture  The texture to apply to that part.
       */
-    void Equip( csString& slotname, csString& mesh, csString& part, csString& subMesh, csString& texture);
+    void Equip(csString& slotname, csString& mesh, csString& part, csString& subMesh, csString& texture);
     
     
     /** Remove an item from the model.
