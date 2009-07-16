@@ -271,7 +271,7 @@ void UserManager::Emote(csString general, csString specific, csString animation,
     else
         cssText.Format(general, client->GetActor()->GetName());
 
-    // retrive priximity list
+    // retrieve priximity list
     csArray<PublishDestination>& clients = client->GetActor()->GetMulticastClients();
 
     // Create and multicast the message
@@ -630,17 +630,7 @@ void UserManager::HandleMarriage(psUserCmdMessage& msg, Client *client)
 
 void UserManager::HandleStand(psUserCmdMessage& msg, Client *client)
 {
-    if (client->GetActor()->GetMode() == PSCHARACTER_MODE_SIT)
-    {
-        client->GetActor()->SetMode(PSCHARACTER_MODE_PEACE);
-        psUserActionMessage anim(client->GetClientNum(), client->GetActor()->GetEID(), "stand up");
-        anim.Multicast( client->GetActor()->GetMulticastClients(),0,PROX_LIST_ANY_RANGE );
-        Emote("%s stands up.", "%s stands up.", "stand", client);
-    }
-    else if (client->GetActor()->GetMode() == PSCHARACTER_MODE_OVERWEIGHT)
-    {
-        psserver->SendSystemError(client->GetClientNum(), "You can't stand up because you're overloaded!");
-    }
+    client->GetActor()->Stand();
 }
 
 void UserManager::HandleTargetEvent(MsgEntry *me, Client *notused)

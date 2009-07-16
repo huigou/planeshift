@@ -143,6 +143,14 @@ public:
 
     /// Load emotes from xml.
     bool LoadEmotes(const char *xmlfile, iVFS *vfs);
+    
+     /** @brief Process an emote command.
+     *
+     *  @param general   The phrase to broadcast if no target is selected.
+     *  @param specific  The phrase to broadcast if a target is selected.
+     *  @param animation The animation for the emote. If there isn't one pass "noanim".
+     */
+    void Emote(csString general, csString specific, csString animation, Client *client);
 
 protected:
     /** @brief Send a list of the players that are online to a client.
@@ -430,14 +438,6 @@ protected:
     void HandleEntranceMessage( MsgEntry* me, Client *client );
 
     void SwitchAttackTarget(Client *targeter, Client *targeted);
-
-    /** @brief Process an emote command.
-     *
-     *  @param general   The phrase to broadcast if no target is selected.
-     *  @param specific  The phrase to broadcast if a target is selected.
-     *  @param animation The animation for the emote. If there isn't one pass "noanim".
-     */
-    void Emote(csString general, csString specific, csString animation, Client *client);
 
     /** @brief Check to see if command is an emote.
      *

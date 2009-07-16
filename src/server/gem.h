@@ -799,6 +799,13 @@ public:
 
     bool IsAllowedToMove() { return isAllowedToMove; }  ///< Covers sitting, death, and out-of-stamina
     void SetAllowedToMove(bool newvalue);
+    
+    /**
+     * @brief Makes the character stand up
+     * 
+     * @param the client who stand
+     */
+    void Stand();
 
     /**
      * Call this to ask the actor to set allowed to disconnect in the connected client.
