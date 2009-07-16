@@ -1,4 +1,10 @@
-﻿*** 2009-07-15 by Stefano Angeleri
+﻿*** 2009-07-16 by Stefano Angeleri
+- Fixed PS#2347 - Xargon reward has no message
+- Fixed PS#2288 - Character is teleported to their feet instead of standing up when 
+  they attack something. moved also some code which has more sense to be in an actor 
+  than in usermanager (stand)
+
+*** 2009-07-15 by Stefano Angeleri
 - Added psnpcclient compile group so it builds the db plugin also when not building the server
 - Added $npc substitution in voicefilepaths with the name of the npc speaking
 - Fixed PS#2979 - garbage item has 0/0 quality 
