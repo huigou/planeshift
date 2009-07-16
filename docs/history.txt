@@ -1,4 +1,8 @@
-﻿*** 2009-07-16 by Stefano Angeleri
+﻿*** 2009-07-17 by Tristan Cragnolini
+- Merged mount code into trunk, it's now possible to mount npcs of the
+  "mount" type.
+
+*** 2009-07-16 by Stefano Angeleri
 - Fixed PS#2347 - Xargon reward has no message
 - Fixed PS#2288 - Character is teleported to their feet instead of standing up when 
   they attack something. moved also some code which has more sense to be in an actor 
