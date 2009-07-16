@@ -108,6 +108,10 @@ bool Client::Disconnect()
         psserver->GetAdviceManager()->RemoveAdvisor( this->GetClientNum(), 0);
     }
 
+    // take the player off his mount if he got one
+    if(GetActor() && GetActor()->GetMount())
+        GetActor()->SetMount(GetActor()->GetMount(), false);
+
     if (GetActor() && GetActor()->InGroup())
     {
         GetActor()->RemoveFromGroup();

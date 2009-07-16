@@ -143,6 +143,7 @@ UserManager::UserManager(ClientConnectionSet *cs)
     userCommandHash.Put("/loot",         &UserManager::HandleLoot);
     userCommandHash.Put("/marriage",     &UserManager::HandleMarriage);
     userCommandHash.Put("/motd",         &UserManager::GiveMOTD);
+    userCommandHash.Put("/mount",        &UserManager::HandleMount);
     userCommandHash.Put("/npcmenu",      &UserManager::ShowNpcMenu);
     userCommandHash.Put("/pickup",       &UserManager::HandlePickup);
     userCommandHash.Put("/pos",          &UserManager::ReportPosition);
@@ -157,6 +158,7 @@ UserManager::UserManager(ClientConnectionSet *cs)
     userCommandHash.Put("/stoptrading",  &UserManager::StopTrading);
     userCommandHash.Put("/tip",          &UserManager::GiveTip);
     userCommandHash.Put("/train",        &UserManager::HandleTraining);
+    userCommandHash.Put("/unmount",      &UserManager::HandleUnmount);
     userCommandHash.Put("/unstick",      &UserManager::HandleUnstick);
     userCommandHash.Put("/who",          &UserManager::Who);
     userCommandHash.Put("/yield",        &UserManager::HandleYield);
@@ -250,7 +252,6 @@ void UserManager::HandleUserCommand(MsgEntry *me,Client *client)
         psserver->SendSystemError(me->clientnum,"Command not supported by server yet.");
         return;
     }
-
 }
 
 bool UserManager::CheckForEmote(csString command, bool execute, Client *client)
@@ -1849,6 +1850,74 @@ void UserManager::Pickup(Client *client, csString target)
     else
         psserver->SendSystemError(client->GetClientNum(),
                 "Item not found %s", target.GetData());
+}
+
+void UserManager::HandleMount(psUserCmdMessage& msg, Client *client)
+{
+    // Add some check to see if the player is allowed to mount
+    
+    // check if already mounted
+    // For now, player can only mount if the mount is its pet or its familiar
+
+    // If player can mount other players, should add some check to prevent circular mounting
+    
+    // If accepted, do whatever we need server side, and send a message back to the client
+
+    gemObject* mount;
+    GEMSupervisor *gem = GEMSupervisor::GetSingletonPtr();
+    
+    csString eid_str = msg.target.Slice(4);
+    EID targetEID = EID(strtoul(eid_str.GetDataSafe(), NULL, 10));
+
+    if (!targetEID.IsValid())
+        return;
+    
+    mount = gem->FindObject(targetEID);
+
+    // can only mount actors
+    if (!mount || !mount->GetActorPtr())
+    {
+        psserver->SendSystemError(client->GetClientNum(),
+                "Can't mount %s", msg.target.GetData());
+        return;
+    }
+
+    // maybe also add a range check
+    if(!client->GetActor()->IsNear(mount, RANGE_TO_USE))
+    {
+        psserver->SendSystemError(client->GetClientNum(),
+                "You are too far away from the mount");
+        return;
+    }
+    
+    // If you are not the rider(passenger), you shouldn't be allowed to move
+    // client->GetActor()->SetAllowedToMove(false);
+
+    
+   if(client->GetActor()->SetMount(mount->GetActorPtr(), true))
+   {
+        psserver->SendSystemOK(client->GetClientNum(),
+                "You are mounting %s", msg.target.GetData());
+    }
+
+    return;
+}
+
+void UserManager::HandleUnmount(psUserCmdMessage& msg, Client *client)
+{
+    //client->GetActor()->SetAllowedToMove(true);
+
+    if (!client->GetActor()->GetMount())
+    {
+        psserver->SendSystemError(client->GetClientNum(),
+                "You are not on a mount.");
+        return;
+    }
+
+    client->GetActor()->SetMount(client->GetActor()->GetMount(), false);
+
+    //psserver->SendSystemOK(client->GetClientNum(), "In the future, that will take you off your mount!");
+    return;
 }
 
 void UserManager::HandleGuard(psUserCmdMessage& msg, Client *client)

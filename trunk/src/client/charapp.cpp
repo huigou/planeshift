@@ -264,6 +264,53 @@ void psCharAppearance::SetSkinTone(csString& part, csString& material)
     }
 }
 
+void psCharAppearance::ApplyRider(GEMClientActor* rider)
+{    
+    csRef<iMeshWrapper> meshWrap = rider->pcmesh;
+
+    csRef<iSpriteCal3DSocket> socket = state->FindSocket("back");
+    if ( !socket )
+    {
+        Error1("\"back\" socket not found.");
+        return;
+    }
+
+    csString keyName = "socket_back";
+
+    // Variables for transform to be specified
+    float trans_x = 0, trans_y = 0, trans_z = 0, rot_x = -PI/2, rot_y = 0, rot_z = 0;
+
+    meshWrap->QuerySceneNode()->SetParent( baseMesh->QuerySceneNode ());
+    socket->SetMeshWrapper( meshWrap );
+
+    socket->SetTransform( csTransform(csZRotMatrix3(rot_z)*csYRotMatrix3(rot_y)*csXRotMatrix3(rot_x), csVector3(trans_x,trans_y,trans_z)) );
+
+    usedSlots.PushSmart("back");
+
+}
+
+void psCharAppearance::RemoveRider(GEMClientActor* rider)
+{
+    csRef<iSpriteCal3DSocket> socket = state->FindSocket("back");
+    if ( !socket )
+    {
+        Error1("\"back\" socket not found.");
+        return;
+    }
+
+    csRef<iMeshWrapper> meshWrap = rider->pcmesh;
+
+    csVector3 rpos = rider->GetPosition();
+    float rrot = rider->GetRotation();
+
+    meshWrap->QuerySceneNode()->SetParent(0);
+    meshWrap->GetMovable()->SetSector(baseMesh->GetMovable()->GetSectors()->Get(0));
+
+    rider->SetPosition(rpos, rrot, rider->GetSector());
+
+    socket->SetMeshWrapper(NULL);
+    usedSlots.Delete("back");
+}
 
 void psCharAppearance::ApplyEquipment(csString& equipment)
 {
@@ -361,6 +408,7 @@ void psCharAppearance::Equip( csString& slotname,
     // If it's a new mesh attach that mesh.
     if ( mesh.Length() )
     {
+        Error3("Attach mesh %s to slot %s", mesh.GetData(), slotname.GetData());
         Attach(slotname, mesh);
     }
 
@@ -531,7 +579,7 @@ bool psCharAppearance::Attach(const char* socketName, const char* meshFactName)
     csRef<iSpriteCal3DSocket> socket = state->FindSocket( socketName );
     if ( !socket )
     {
-        Notify2(LOG_CHARACTER, "Socket %s not found.", socketName );
+        Error2("Socket %s not found.", socketName);
         return false;
     }
 
@@ -540,6 +588,12 @@ bool psCharAppearance::Attach(const char* socketName, const char* meshFactName)
     if(failed)
     {
         Notify2(LOG_CHARACTER, "Mesh factory %s not found.", meshFactName );
+        return false;
+    }
+
+    if(!factory)
+    {
+        Error2("Mesh factory %s not found.", meshFactName);
         return false;
     }
 
@@ -850,7 +904,7 @@ bool psCharAppearance::Detach(const char* socketName )
     }
     else
     {
-        meshWrap->QuerySceneNode ()->SetParent (0);
+        meshWrap->QuerySceneNode()->SetParent (0);
         socket->SetMeshWrapper( NULL );
         engine->RemoveObject( meshWrap );
     }

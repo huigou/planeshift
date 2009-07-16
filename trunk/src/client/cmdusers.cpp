@@ -96,6 +96,7 @@ psUserCommands::psUserCommands(ClientMsgHandler* mh,CmdHandler *ch,iObjectRegist
     cmdsource->Subscribe("/loot",          this);
     cmdsource->Subscribe("/marriage",      this);
     cmdsource->Subscribe("/motd",          this);
+    cmdsource->Subscribe("/mount",         this);
     cmdsource->Subscribe("/npcmenu",       this);
     cmdsource->Subscribe("/pet",           this);
     cmdsource->Subscribe("/picklock",      this);
@@ -120,6 +121,7 @@ psUserCommands::psUserCommands(ClientMsgHandler* mh,CmdHandler *ch,iObjectRegist
     cmdsource->Subscribe("/tip",           this);
     cmdsource->Subscribe("/trade",         this);
     cmdsource->Subscribe("/train",         this);
+    cmdsource->Subscribe("/unmount",       this);
     cmdsource->Subscribe("/unstick",       this);
     cmdsource->Subscribe("/use",           this);
     cmdsource->Subscribe("/who",           this); // list players on server
@@ -163,6 +165,7 @@ psUserCommands::~psUserCommands()
     cmdsource->Unsubscribe("/loot",                  this);
     cmdsource->Unsubscribe("/marriage",              this);
     cmdsource->Unsubscribe("/motd",                  this);
+    cmdsource->Unsubscribe("/mount",                 this);
     cmdsource->Unsubscribe("/npcmenu",               this);
     cmdsource->Unsubscribe("/pet",                   this);
     cmdsource->Unsubscribe("/picklock",              this);
@@ -187,6 +190,7 @@ psUserCommands::~psUserCommands()
     cmdsource->Unsubscribe("/tip",                   this);
     cmdsource->Unsubscribe("/trade",                 this);
     cmdsource->Unsubscribe("/train",                 this);
+    cmdsource->Unsubscribe("/unmount",               this);
     cmdsource->Unsubscribe("/unstick",               this);
     cmdsource->Unsubscribe("/use",                   this);
     cmdsource->Unsubscribe("/who",                   this);
@@ -875,6 +879,33 @@ const char *psUserCommands::HandleCommand(const char *cmd)
                 }
             }
         }
+    }
+    else if(words[0] == "/mount")
+    {
+         GEMClientObject *object = NULL;
+
+         if (words[1].IsEmpty())
+             object = psengine->GetCharManager()->GetTarget();
+         else
+             object = FindEntityWithName(words[1]);
+         if (object)
+         {
+             psengine->GetCharManager()->SetTarget(object,"select");
+             EID mappedID = object->GetEID();
+             csString newCmd;
+             newCmd.Format("/mount eid:%u", mappedID.Unbox());
+             psUserCmdMessage cmdmsg(newCmd);
+             cmdmsg.SendMessage();
+         }
+         else
+            return "Mount not found!";
+    }
+    else if(words[0] == "/unmount")
+    {
+        csString newCmd;
+        newCmd.Format("/unmount");
+        psUserCmdMessage cmdmsg(newCmd);
+        cmdmsg.SendMessage();
     }
     else if(words[0] == "/?")
     {

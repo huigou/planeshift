@@ -37,6 +37,7 @@ CREATE TABLE `movement_types` (
 INSERT INTO `movement_modes` VALUES (0, 'normal', 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 'stand'        );
 INSERT INTO `movement_modes` VALUES (1, 'run',    1.2, 1.8, 2.0, 1.0, 1.5, 1.0, 'stand'        );
 INSERT INTO `movement_modes` VALUES (2, 'sneak',  0.4, 0.4, 0.4, 0.8, 0.8, 0.8, 'stand'        );
+INSERT INTO `movement_modes` VALUES (3, 'ride',   2.4, 3.6, 4.0, 2.0, 3.0, 2.0, 'stand'        );
 
 # Motions                            #    name            x     y     z     xr    yr    zr
 INSERT INTO `movement_types` VALUES (0, 'none',          0.0,  0.0,  0.0,  0.0,  0.0,  0.0);

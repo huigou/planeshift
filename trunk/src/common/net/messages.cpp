@@ -1364,7 +1364,8 @@ psUserCmdMessage::psUserCmdMessage(MsgEntry *message)
          command == "/admin" ||
          command == "/npcmenu" ||
          command == "/sit" ||
-         command == "/stand")
+         command == "/stand" ||
+         command == "/unmount")
     {
         return;
     }
@@ -1434,6 +1435,11 @@ psUserCmdMessage::psUserCmdMessage(MsgEntry *message)
     {
         target = words.Get(1);
         action = words.Get(2);
+        return;
+    }
+    if ( command == "/mount" )
+    {
+        target = words.Get(1);
         return;
     }
     if ( command == "/rotate" )
@@ -1777,6 +1783,10 @@ csString psGUIInteractMessage::ToString(AccessPointers * /*access_ptrs*/)
         msgtext.Append(" ENTER");
     if (options & psGUIInteractMessage::ENTERLOCKED)
         msgtext.Append(" ENTERLOCKED");
+    if (options & psGUIInteractMessage::MOUNT)
+        msgtext.Append(" MOUNT");
+    if (options & psGUIInteractMessage::UNMOUNT)
+        msgtext.Append(" UNMOUNT");
 
     return msgtext;
 }
@@ -2617,6 +2627,52 @@ csString psEquipmentMessage::ToString(AccessPointers * /*access_ptrs*/)
     msgtext.AppendFmt(" Part: '%s'",part.GetDataSafe());
     msgtext.AppendFmt(" Texture: '%s'",texture.GetDataSafe());
     msgtext.AppendFmt(" PartMesh: '%s'",partMesh.GetDataSafe());
+
+    return msgtext;
+}
+
+//--------------------------------------------------------------------------
+
+PSF_IMPLEMENT_MSG_FACTORY(psMountingMessage,MSGTYPE_MOUNTING);
+
+psMountingMessage::psMountingMessage( uint32_t clientNum,
+                                      EID mountid,
+                                      EID riderid,
+                                      bool mounting )
+{
+    msg.AttachNew(new MsgEntry( sizeof(uint32_t)*2 + sizeof(bool) +1));
+
+    msg->SetType(MSGTYPE_MOUNTING);
+    msg->clientnum  = clientNum;
+
+    msg->Add(mountid.Unbox());
+    msg->Add(riderid.Unbox());
+    msg->Add(mounting);
+
+    // Sets valid flag based on message overrun state
+    valid=!(msg->overrun);
+}
+
+psMountingMessage::psMountingMessage( MsgEntry* message )
+{
+    if ( !message )
+        return;
+
+    mount = message->GetUInt32();
+    rider = message->GetUInt32();
+    mounting = message->GetBool();
+
+    // Sets valid flag based on message overrun state
+    valid=!(message->overrun);
+}
+
+csString psMountingMessage::ToString(AccessPointers * /*access_ptrs*/)
+{
+    csString msgtext;
+
+    msgtext.AppendFmt(" Mount: %d",mount);
+    msgtext.AppendFmt(" Rider: %d",rider);
+    msgtext.AppendFmt(" Operation : %s", (mounting ? "mounting" : "dismounting"));
 
     return msgtext;
 }

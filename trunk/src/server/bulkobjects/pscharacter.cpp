@@ -79,7 +79,7 @@
 #define ENABLE_MAX_CAPACITY 0
 
 
-const char *psCharacter::characterTypeName[] = { "player", "npc", "pet" };
+const char *psCharacter::characterTypeName[] = { "player", "npc", "pet", "mount" };
 
 MathScript *psCharacter::maxRealmScript = NULL;
 MathScript *psCharacter::staminaCalc    = NULL;

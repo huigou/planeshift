@@ -99,7 +99,8 @@ enum PSCHARACTER_TYPE
     PSCHARACTER_TYPE_PLAYER = 0,
     PSCHARACTER_TYPE_NPC    = 1,
     PSCHARACTER_TYPE_PET    = 2,
-    PSCHARACTER_TYPE_COUNT  = 3,
+    PSCHARACTER_TYPE_MOUNT  = 3,
+    PSCHARACTER_TYPE_COUNT  = 4,
     PSCHARACTER_TYPE_UNKNOWN = ~0
 } ;
 
@@ -922,6 +923,8 @@ public:
 
     /// Used to determine if this NPC is a pet
     bool IsPet() { return characterType == PSCHARACTER_TYPE_PET; };
+    /// Used to determine if this NPC is a mount
+    bool IsMount() { return characterType == PSCHARACTER_TYPE_MOUNT; };
     PID  GetFamiliarID() { return familiar_id; };
     void SetFamiliarID(PID v);
     bool CanSummonFamiliar() { return GetFamiliarID() != 0 && canSummonFamiliar.Current() > 0; }

@@ -208,6 +208,7 @@ void psServerDR::HandleDeadReckoning(MsgEntry* me,Client *client)
     // Go ahead and update the server version
     if (!actor->SetDRData(drmsg)) // out of date message if returns false
         return;
+    // if this message is OK, update the riders' DR data
 
     // Check for Movement Tutorial Required.
     // Usually we don't want to check but DR msgs are so frequent,

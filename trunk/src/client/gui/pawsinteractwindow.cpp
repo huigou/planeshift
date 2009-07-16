@@ -78,6 +78,8 @@
 #define INTERACT_ENTERLOCKED 2400
 #define INTERACT_BANK        2500
 #define INTERACT_INTRODUCE   2600
+#define INTERACT_MOUNT       2700
+#define INTERACT_UNMOUNT     2800
 
 //////////////////////////////////////////////////////////////////////
 
@@ -109,6 +111,8 @@ pawsInteractWindow::pawsInteractWindow()
     names.Push("ButtonLock");
     names.Push("ButtonEnterLocked");
     names.Push("ButtonIntroduce");
+    names.Push("ButtonMount");
+    names.Push("ButtonUnmount");
 
     types.Push(psGUIInteractMessage::EXAMINE);
     types.Push(psGUIInteractMessage::UNLOCK);
@@ -136,6 +140,8 @@ pawsInteractWindow::pawsInteractWindow()
     types.Push(psGUIInteractMessage::LOCK);
     types.Push(psGUIInteractMessage::ENTERLOCKED);
     types.Push(psGUIInteractMessage::INTRODUCE);
+    types.Push(psGUIInteractMessage::MOUNT);
+    types.Push(psGUIInteractMessage::UNMOUNT);
     openTick = 0;
 }
 
@@ -403,6 +409,20 @@ bool pawsInteractWindow::OnButtonPressed( int mouseButton, int keyModifier, paws
         case INTERACT_PLAYGAME:
         {
             psengine->GetCmdHandler()->Execute("/game");
+            Hide();
+            PawsManager::GetSingleton().SetCurrentFocusedWidget( NULL );
+            return true;
+        }
+        case INTERACT_MOUNT:
+        {
+            psengine->GetCmdHandler()->Execute("/mount");
+            Hide();
+            PawsManager::GetSingleton().SetCurrentFocusedWidget( NULL );
+            return true;
+        }
+        case INTERACT_UNMOUNT:
+        {
+            psengine->GetCmdHandler()->Execute("/unmount");
             Hide();
             PawsManager::GetSingleton().SetCurrentFocusedWidget( NULL );
             return true;

@@ -380,6 +380,20 @@ protected:
       */
     void Pickup(Client *client, csString target);
 
+    /** @brief Handles a player command to mount.
+	  *	
+      * @param msg the user command message
+	  * @param client The client that issued the command.
+      */	
+    void HandleMount(psUserCmdMessage& msg, Client *client);
+
+    /** @brief Handles a player command to unmount.
+	  *	
+      * @param msg the user command message
+	  * @param client The client that issued the command.
+      */	
+    void HandleUnmount(psUserCmdMessage& msg, Client *client);
+
     /// Handle the /guard command, send it to Guard()
     void HandleGuard(psUserCmdMessage& msg, Client *client);
 

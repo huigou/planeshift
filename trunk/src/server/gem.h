@@ -646,6 +646,8 @@ protected:
     FactionSet *factions;
     PID pid; ///< Player ID (also known as character ID or PID)
     csRef<PlayerGroup> group;
+    
+    gemActor *mount;
 
     csVector3 top, bottom, offset;
     csVector3 last_production_pos;
@@ -781,6 +783,9 @@ public:
 
     void SetTextureParts(const char *parts);
     void SetEquipment(const char *equip);
+    
+    gemActor* GetMount() { return mount; }
+    bool SetMount(gemActor *newMount, bool mounting);
 
     PSCHARACTER_MODE GetMode() { return player_mode; }
     const char* GetModeStr(); ///< Return a string name of the mode
