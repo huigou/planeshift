@@ -1862,20 +1862,24 @@ void UserManager::Pickup(Client *client, csString target)
         if (eID.IsValid())
         {
             object = gem->FindObject(eID);
-            if (object && object->GetItem())
+            if (object)
             {
-                object->SendBehaviorMessage("pickup", client->GetActor() );
+                if(object->GetItem())
+                    object->SendBehaviorMessage("pickup", client->GetActor() );
+                else
+                    psserver->SendSystemError(client->GetClientNum(),
+                                "You can't pickup objects which aren't items");
             }
             else
             {
                 psserver->SendSystemError(client->GetClientNum(),
-                                "Item not found %s", target.GetData());
+                                "Object not found %s", target.GetData());
             }
         }
     }
     else
         psserver->SendSystemError(client->GetClientNum(),
-                "Item not found %s", target.GetData());
+                "Object not found %s", target.GetData());
 }
 
 void UserManager::HandleMount(psUserCmdMessage& msg, Client *client)
