@@ -531,14 +531,14 @@ bool psItemStats::ReadItemStats(iResultRow& row)
     }
     
     const char *partmeshname = CacheManager::GetSingleton().FindCommonString(row.GetUInt32("cstr_id_part_mesh"));
-    if (row.GetUInt32("cstr_id_gfx_icon")!=0 && !texturename)
+    if (row.GetUInt32("cstr_id_part_mesh")!=0 && !texturename)
     {
         Error3("Error, no commonstring exists with number %lu (cstr_id_part_mesh) while loading item_stats.id %u.\n",row.GetUInt32("cstr_id_part_mesh"),uid);
         return false;
     }
     else
     {
-        SetPartMeshName(imagename);
+        SetPartMeshName(partmeshname);
     }
 
     SetPrice(row.GetInt("base_sale_price"));
