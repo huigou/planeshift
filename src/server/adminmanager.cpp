@@ -1402,7 +1402,7 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, Client *client)
     }
     else if (data.command == "/setskill")
     {
-        SetSkill(me, msg, data, client, targetclient);
+        SetSkill(me, msg, data, client, targetactor);
     }
     else if (data.command == "/set")
     {
@@ -6507,7 +6507,7 @@ void AdminManager::ThawClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     psserver->SendSystemInfo(me->clientnum, "You released '%s'.",(const char*)data.player);
 }
 
-void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client* client, Client *target)
+void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client* client, gemActor *target)
 {
     if (data.skill.IsEmpty() || data.value == -2)
     {
@@ -6522,13 +6522,19 @@ void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
     }
 
     // Check the permission to set skills for other characters
-    if (target != client && !psserver->CheckAccess(client, "setskill others"))
+    if (target->GetClient() != client && !psserver->CheckAccess(client, "setskill others"))
         return;
 
     psCharacter * pchar = target->GetCharacterData();
     if (!pchar)
     {
         psserver->SendSystemError(me->clientnum, "No character data!");
+        return;
+    }
+    
+    if(pchar->IsNPC())
+    {
+        psserver->SendSystemError(me->clientnum, "You can't use this command on npcs!");
         return;
     }
 
@@ -6565,10 +6571,10 @@ void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
         if(data.value != -1)
             return;
 
-        if (target != client)
+        if (target->GetClient() && target->GetClient() != client)
         {
             // Inform the other player.
-            psserver->SendSystemOK(target->GetClientNum(), "All your skills were set to %d by a GM", data.value);
+            psserver->SendSystemOK(target->GetClientID(), "All your skills were set to %d by a GM", data.value);
         }
     }
     else
@@ -6600,15 +6606,16 @@ void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
         pchar->SetSkillRank(skill->id, value);
         psserver->SendSystemInfo(me->clientnum, "Changed '%s' of '%s' from %u to %u", skill->name.GetDataSafe(), target->GetName(), old_value,data.value);
 
-        if (target != client)
+        if (target->GetClient() &&  target->GetClient() != client)
         {
             // Inform the other player.
-            psserver->SendSystemOK(target->GetClientNum(), "Your '%s' level was set to %d by a GM", data.skill.GetDataSafe(), data.value);
+            psserver->SendSystemOK(target->GetClientID(), "Your '%s' level was set to %d by a GM", data.skill.GetDataSafe(), data.value);
         }
     }
 
     // Send updated skill list to client
-    psserver->GetProgressionManager()->SendSkillList(target, false);
+    if(target->GetClient())
+        psserver->GetProgressionManager()->SendSkillList(target->GetClient(), false);
 }
 
 void AdminManager::UpdateRespawn(AdminCmdData& data, Client* client, gemActor* target)

@@ -351,7 +351,7 @@ protected:
     void Inspect(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client* client, gemActor* target);
 
     /// Changes the skill of the target
-    void SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client* client, Client *target);
+    void SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client* client, gemActor *target);
 
     /// Temporarily changes the mesh for a player
     void Morph(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client* client, Client *targetclient);
