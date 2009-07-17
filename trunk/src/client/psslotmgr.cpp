@@ -230,7 +230,7 @@ void psSlotManager::DropItem()
 {
     // Get final rotation.
     psPoint p = PawsManager::GetSingleton().GetMouse()->GetPosition();
-    float yrot = 6 * PI * ((float)p.x - basePoint.x) / psengine->GetG2D()->GetWidth();
+    float yrot = 6 * PI * ((float)basePoint.x - p.x) / psengine->GetG2D()->GetWidth();
 
     // Send drop message.
     csVector3 pos = outline->GetMovable()->GetPosition();
