@@ -25,42 +25,53 @@
 
 #include "serverpinger.h"
 
-#define PING_INTERVAL   1000    // how long do we wait after receiving a response or a timeout
-#define PING_TIMEOUT    4000    // when do we give up waiting for response
+#define PING_INTERVAL   1000    ///< how long do we wait after receiving a response or a timeout
+#define PING_TIMEOUT    4000    ///< when do we give up waiting for response
 
-psServerPinger::psServerPinger(const csString & name, const csString& description, const csString & address, int port, iObjectRegistry * objReg)
+psServerPinger::psServerPinger(const csString & name, const csString& description, const csString & address, int port, iObjectRegistry * objReg) :
+    name         (name),
+    description  (description),
+    address      (address),
+    port         (port),
+
+    connection   (NULL),
+    queue        (NULL),
+
+    ping         (9999),
+    lastPingTime (0),
+    sent         (0),
+    lost         (0),
+    waiting      (false),
+    flags        (0),
+    pingID       (0),
+    objReg       (objReg)
 {
-    this->name        = name;
-    this->description = description;
-    this->address     = address;
-    this->port        = port;
-    this->objReg      = objReg;
-
-    connection        = NULL;
-    queue             = NULL;
-
-    lastPingTime      = 0;
-    waiting           = false;
-    pingID            = 0;
-    ping              = 9999;
-    lost              = 0;
-    sent              = 0;
 }
 
-bool psServerPinger::Connect()
+bool psServerPinger::Initialize()
 {
     connection = new psNetConnection;
     if (!connection->Initialize(objReg))
     {
         Error1("psServerPinger connection failed to initialize");
+        delete connection;
+        connection = NULL;
         return false;
     }
+    return true;
+}
 
+bool psServerPinger::Connect()
+{
     queue = new MsgQueue();
     connection->AddMsgQueue(queue);
     if (!connection->Connect(address, port))
     {
-        Error2("psServerPinger connection couldn't resolve hostname %s", address.GetData());
+        Notify2(LOG_CONNECTIONS,"psServerPinger connection couldn't resolve hostname %s", address.GetData());
+        ping = -1;
+        connection->RemoveMsgQueue(queue);
+        delete queue;
+        queue = NULL;
         return false;
     }
 
@@ -87,6 +98,9 @@ psServerPinger::~psServerPinger()
 void psServerPinger::DoYourWork()
 {
     if(!connection)
+        if(!Initialize()) return;
+
+    if(!queue)
         if(!Connect()) return;
 
     int timeNow = csGetTicks();

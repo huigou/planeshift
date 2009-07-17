@@ -331,7 +331,7 @@ void pawsLoginWindow::ConnectToServer()
         return;
     }
       
-    /// Set up the picker window here. 
+    // Set up the picker window here. 
     if ( PawsManager::GetSingleton().FindWidget("CharPickerWindow") == 0 )
         PawsManager::GetSingleton().LoadWidget("data/gui/charpick.xml");
 
@@ -446,7 +446,6 @@ bool pawsLoginWindow::LoadServerList()
                                                      node->GetAttributeValue( "ip" ),
                                                      port,
                                                      PawsManager::GetSingleton().GetObjectRegistry());
-        server->Connect();
         servers.Push( server );
     }
 
