@@ -1435,9 +1435,24 @@ void BgLoader::LoadSector(const csVector3& pos, const csBox3& loadBox, const csB
     // Check all portals in this sector... and recurse into the sectors they lead to.
     for(size_t i=0; i<sector->portals.GetSize(); i++)
     {
-        if(depth < maxPortalDepth && sector->portals[i]->InRange(loadBox))
+        if(sector->portals[i]->InRange(loadBox))
         {
-            if(!sector->portals[i]->targetSector->isLoading && !sector->portals[i]->targetSector->checked)
+            bool recurse = true;
+            if(depth >= maxPortalDepth)
+            {
+                // If we've reached the recursion limit then check if the
+                // target sector is valid. If so then create a portal to it.
+                if(sector->portals[i]->targetSector->object.IsValid())
+                {
+                    recurse = false;
+                }
+                else // Else check the next portal.
+                {
+                    continue;
+                }
+            }
+
+            if(!sector->portals[i]->targetSector->isLoading && !sector->portals[i]->targetSector->checked && recurse)
             {
                 csVector3 wwPos = pos;
                 csBox3 wwLoadBox = loadBox;
