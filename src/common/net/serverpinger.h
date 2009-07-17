@@ -22,7 +22,7 @@
 
 #include <net/connection.h>
 
-// Class psServerPinger takes care about sending pings to a server in Login screen.
+/// Class psServerPinger takes care about sending pings to a server in Login screen.
 class psServerPinger
 {
 public:
@@ -37,7 +37,12 @@ public:
     psServerPinger(const csString & serverName, const csString& description, const csString & address, int port, iObjectRegistry * objReg);
     ~psServerPinger();
 
-    /** Opens connection to server. Returns: success */
+    /** Initialize the connection.
+     * @return success of the initialization */
+    bool Initialize();
+
+    /** Opens connection to server.
+     * @return success of the connection */
     bool Connect();
 
     /** Sends server disconnection message */
@@ -69,7 +74,7 @@ public:
     int      GetPort()       { return port;        }
 
 protected:
-    csString name;      // server info
+    csString name;      ///< server info
     csString description;
     csString address;
     int port;
@@ -77,13 +82,13 @@ protected:
     psNetConnection * connection;
     MsgQueue * queue;
 
-    int ping;           // last measured ping (-1 means timeout, 9999 means wait)
-    int lastPingTime;   // the time when we sent our last ping to server
-    unsigned int sent;  // the number of ping messages sent
-    unsigned int lost;  // the number of ping messages lost
-    bool waiting;       // are we waiting for ping response from server ?
-    unsigned int pingID;// unique identifier of ping message - enables us to ignore ping responses that come after timeout
-    unsigned int flags; // Last flags returned from server. Should only be used if ping != -1 && ping != 9999
+    int ping;           ///< last measured ping (-1 means timeout, 9999 means wait)
+    int lastPingTime;   ///< the time when we sent our last ping to server
+    unsigned int sent;  ///< the number of ping messages sent
+    unsigned int lost;  ///< the number of ping messages lost
+    bool waiting;       ///< are we waiting for ping response from server ?
+    unsigned int pingID;///< unique identifier of ping message - enables us to ignore ping responses that come after timeout
+    unsigned int flags; ///< Last flags returned from server. Should only be used if ping != -1 && ping != 9999
     iObjectRegistry * objReg;
 };
 
