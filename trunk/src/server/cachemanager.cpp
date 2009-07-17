@@ -2174,22 +2174,23 @@ unsigned int CacheManager::GetTipLength()
     return (unsigned int)tips_list.GetSize();
 }
 
+//this is used only by the char creation!
 const char* CacheManager::Attribute2String( PSITEMSTATS_STAT s )
 {
     switch ( s )
     {
         case PSITEMSTATS_STAT_STRENGTH:
-            return "STRENGTH";
+            return "Strength";
         case PSITEMSTATS_STAT_AGILITY:
-            return "AGILITY";
+            return "Agility";
         case PSITEMSTATS_STAT_ENDURANCE:
-            return "ENDURANCE";
+            return "Endurance";
         case PSITEMSTATS_STAT_INTELLIGENCE:
-            return "INTELLIGENCE";
+            return "Intelligence";
         case PSITEMSTATS_STAT_WILL:
-            return "WILL";
+            return "Will";
         case PSITEMSTATS_STAT_CHARISMA:
-            return "CHARISMA";
+            return "Charisma";
         default:
             return "None";
     }
