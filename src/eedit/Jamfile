@@ -5,7 +5,7 @@ Application eedit :
 ;
 
 CompileGroups eedit : tools ;
-ExternalLibs eedit : CRYSTAL ;
+ExternalLibs eedit : CRYSTAL CAL3D ;
 LinkWith eedit : paws psutil effects fparser ;
 
 if $(HAVE_STATIC_PLUGINS) = "yes"
