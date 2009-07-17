@@ -62,8 +62,6 @@
 pawsGlyphWindow::pawsGlyphWindow()
 
 {
-    msgHandler = NULL;
-
     for (int i = 0; i < GLYPH_ASSEMBLER_SLOTS; i++)
         assembler[i] = NULL;
 }
@@ -79,7 +77,7 @@ void pawsGlyphWindow::Show()
 
     // Ask the server to send us the glyphs
     psRequestGlyphsMessage outGoingMessage;
-    msgHandler->SendMessage( outGoingMessage.msg );
+    psengine->GetMsgHandler()->SendMessage( outGoingMessage.msg );
 }
 
 void pawsGlyphWindow::Hide()
@@ -93,13 +91,9 @@ void pawsGlyphWindow::Hide()
 
 bool pawsGlyphWindow::PostSetup()
 {
-    msgHandler = psengine->GetMsgHandler();
-    if ( !msgHandler ) return false;
-
     // Subscribe our message types that we are interested in.
-    if ( !msgHandler->Subscribe( this, MSGTYPE_GLYPH_REQUEST ) ) return false;
-    if ( !msgHandler->Subscribe( this, MSGTYPE_GLYPH_ASSEMBLE ) ) return false;
-    
+    if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_GLYPH_REQUEST))  return false;
+    if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_GLYPH_ASSEMBLE)) return false;
     
     description = dynamic_cast <pawsMessageTextBox*> (FindWidget("SpellDescription"));
     if ( !description ) return false;
@@ -272,7 +266,7 @@ bool pawsGlyphWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
         if (floatingSlot!=NULL  && floatingSlot->GetPurifyStatus()==0)
         {
             psPurifyGlyphMessage mesg( floatingSlot->GetStatID() );
-            msgHandler->SendMessage( mesg.msg );
+            mesg.SendMessage();
 
             PawsManager::GetSingleton().SetDragDropWidget(NULL);
         }
@@ -289,7 +283,7 @@ bool pawsGlyphWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
         {
             csString name(spellName->GetText());
             psSpellCastMessage mesg( name, psengine->GetKFactor() );
-            msgHandler->SendMessage( mesg.msg );
+            mesg.SendMessage();
         }
         return true;
     }
@@ -381,5 +375,5 @@ void pawsGlyphWindow::SendAssembler(bool infoRequest)
                                  assembler[3]->GetStatID(),
 								 infoRequest);
                                  
-    msgHandler->SendMessage( mesg.msg );                                 
+    mesg.SendMessage();
 }

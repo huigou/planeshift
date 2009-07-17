@@ -113,8 +113,6 @@ protected:
     /*** Clears the Spell name and Description fields. ***/
     void ClearSpell();
 
-    csRef<MsgHandler> msgHandler;
-
     pawsMessageTextBox * description;
     pawsTextBox * spellName;
     pawsWidget *spellImage;
