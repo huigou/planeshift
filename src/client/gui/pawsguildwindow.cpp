@@ -162,21 +162,20 @@ pawsGuildWindow::pawsGuildWindow()
 
 pawsGuildWindow::~pawsGuildWindow()
 {
-    msgHandler->Unsubscribe( this, MSGTYPE_GUIGUILD );
-    msgHandler->Unsubscribe( this, MSGTYPE_MOTD );
+    psengine->GetMsgHandler()->Unsubscribe(this, MSGTYPE_GUIGUILD);
+    psengine->GetMsgHandler()->Unsubscribe(this, MSGTYPE_MOTD);
 }
 
 bool pawsGuildWindow::PostSetup()
 {
-    msgHandler = psengine->GetMsgHandler();
-    if ( !msgHandler->Subscribe( this, MSGTYPE_GUIGUILD ) )
+    if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_GUIGUILD))
         return false;
 
-    if ( !msgHandler->Subscribe( this, MSGTYPE_MOTD ) )
+    if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_MOTD))
         return false;
     //Request a MOTD for the guild
     psMOTDRequestMessage motdReq;
-    msgHandler->SendMessage(motdReq.msg);
+    motdReq.SendMessage();
 
     xml =  csQueryRegistry<iDocumentSystem > ( PawsManager::GetSingleton().GetObjectRegistry());
 
@@ -663,7 +662,7 @@ bool pawsGuildWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
             command.Format("<l level=\"%d\" privilege=\"%s\" state=\"%s\"/>",
                            level+1,widget->GetXMLBinding().GetData(),checkBox->GetState()?"on":"off");
             psGUIGuildMessage msg(psGUIGuildMessage::SET_LEVEL_RIGHT,command);
-            msgHandler->SendMessage(msg.msg);
+            msg.SendMessage();
 
             /* We revert the checkbox back and let the server do the change.
                If the server allows the change, it will be set to new state by a LEVEL_DATA message.
@@ -762,7 +761,7 @@ bool pawsGuildWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
             csString command;
             command.Format("<r onlineonly=\"%s\"/>", onlineOnly->GetState() ? "yes":"no");
             psGUIGuildMessage msg(psGUIGuildMessage::SET_ONLINE, command);
-            msgHandler->SendMessage(msg.msg);
+            msg.SendMessage();
             retVal = true;
             break;
         }
@@ -772,7 +771,7 @@ bool pawsGuildWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
             csString command;
             command.Format("<r guildnotifications=\"%s\"/>", guildNotifications->GetState() ? "yes":"no");
             psGUIGuildMessage msg(psGUIGuildMessage::SET_GUILD_NOTIFICATION, command);
-            msgHandler->SendMessage(msg.msg);
+            msg.SendMessage();
             retVal = true;
             break;
         }
@@ -906,14 +905,14 @@ bool pawsGuildWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
             csString nameMsg(guildName->GetText());
 
             psGuildMOTDSetMessage motdSet(motdMsg,nameMsg);
-            msgHandler->SendMessage(motdSet.msg);
+            motdSet.SendMessage();
             retVal = true;
             break;
         }
         case REFRESH_MOTD_BUTTON:
         {
             psMOTDRequestMessage motdReq;
-            msgHandler->SendMessage(motdReq.msg);
+            motdReq.SendMessage();
             retVal = true;
             break;
         }
@@ -1051,8 +1050,7 @@ void pawsGuildWindow::Hide()
         pawsControlledWindow::Hide();
 
         psGUIGuildMessage msg(psGUIGuildMessage::UNSUBSCRIBE_GUILD_DATA, "<x/>");
-        if (msgHandler != NULL)
-            msgHandler->SendMessage(msg.msg);
+        msg.SendMessage();
     }
 }
 

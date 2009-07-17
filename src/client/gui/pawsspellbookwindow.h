@@ -25,7 +25,6 @@
 class pawsTextBox;
 class pawsListBox;
 class pawsMessageTextBox;
-class MsgHandler;
 
 #include "net/cmdbase.h"
 #include "gui/pawscontrolwindow.h"
@@ -61,7 +60,6 @@ private:
     pawsWidget*         spellImage;
 
     csString selectedSpell;
-    csRef<MsgHandler> msgHandler;
     
     csHash<csString, csString> descriptions_Hash;
     csHash<csString, csString> images_Hash;

@@ -52,8 +52,7 @@ pawsSpellBookWindow::~pawsSpellBookWindow()
 
 bool pawsSpellBookWindow::PostSetup()
 {
-    msgHandler = psengine->GetMsgHandler();
-    if ( !msgHandler->Subscribe( this, MSGTYPE_SPELL_BOOK ) )
+    if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_SPELL_BOOK))
         return false;
 
     spellList        = (pawsListBox*)FindWidget("SpellList");
@@ -152,8 +151,8 @@ void pawsSpellBookWindow::Cast()
 {
     if ( selectedSpell.Length() > 0 )
     {
-        psSpellCastMessage mesg( selectedSpell, psengine->GetKFactor() );
-        msgHandler->SendMessage(mesg.msg);
+        psSpellCastMessage msg(selectedSpell, psengine->GetKFactor());
+        msg.SendMessage();
     }
 }
 
@@ -170,8 +169,8 @@ void pawsSpellBookWindow::ShowActiveMagic()
 void pawsSpellBookWindow::Show()
 {
     pawsControlledWindow::Show();
-    psSpellBookMessage mesg;
-    msgHandler->SendMessage(mesg.msg);
+    psSpellBookMessage msg;
+    msg.SendMessage();
 }
 
 

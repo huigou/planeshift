@@ -27,8 +27,6 @@
 #include "paws/pawslistbox.h"
 #include "paws/pawsradio.h"
 
-class MsgHandler;
-
 /** The bank window in PlaneShift.
  * This is the window that people will use to interact with their bank accounts.
  */
@@ -82,8 +80,6 @@ protected:
 
     /* Whether or not this is a guild bank account. */
     bool guild;
-
-    csRef<MsgHandler> msgHandler;
 }; 
 
 CREATE_PAWS_FACTORY( pawsBankWindow );

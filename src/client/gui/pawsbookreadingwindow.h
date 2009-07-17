@@ -39,9 +39,6 @@ public:
     bool OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget );
 
 private:
-//Commented out because it made some IncRef and DecRef stuff mysteriously invisible!
-    csRef<MsgHandler> msgHandler;
-
     pawsTextBox*            name;
     pawsMultiLineTextBox*   description;
     pawsMultiLineTextBox*   descriptionCraft;

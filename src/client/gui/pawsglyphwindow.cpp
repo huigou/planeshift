@@ -76,8 +76,8 @@ void pawsGlyphWindow::Show()
     pawsWidget::Show();
 
     // Ask the server to send us the glyphs
-    psRequestGlyphsMessage outGoingMessage;
-    psengine->GetMsgHandler()->SendMessage( outGoingMessage.msg );
+    psRequestGlyphsMessage msg;
+    msg.SendMessage();
 }
 
 void pawsGlyphWindow::Hide()

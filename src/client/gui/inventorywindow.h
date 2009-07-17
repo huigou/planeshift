@@ -103,8 +103,6 @@ protected:
     /// A quick pointer to the object view that is the mesh doll.
     pawsInventoryDollView* view;
     
-    csRef<ClientMsgHandler> msgHandler;
-
     void UpdateMoney( const char* moneyName, const char* imageName, int value );
     
     csRef<iThreadedLoader> loader;

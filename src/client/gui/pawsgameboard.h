@@ -198,10 +198,6 @@ class pawsGameBoard : public pawsWidget, public psClientNetSubscriber
         const csString PieceArtName(uint8_t piece) const;
 
     private:
-
-        /// Message handler.
-        csRef<MsgHandler> msgHandler;
-
         /// Array of game tiles.
         csArray<pawsGameTile *> tiles;
 

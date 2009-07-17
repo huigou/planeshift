@@ -53,8 +53,6 @@ protected:
     pawsMultiLineTextBox* textBox;
         
 //    pawsSimpleTree* itemTree;
-
-    csRef<MsgHandler> msgHandler;    
     
 //    void Add( const char* parent, const char* realParent, psMsgCraftingInfo::CraftingItem* item );
     

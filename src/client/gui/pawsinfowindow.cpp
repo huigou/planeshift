@@ -48,14 +48,14 @@
 
 pawsInfoWindow::~pawsInfoWindow()
 {
-    msgHandler->Unsubscribe(this,MSGTYPE_MODE);
+    psengine->GetMsgHandler()->Unsubscribe(this, MSGTYPE_MODE);
 }
 
 
 void pawsInfoWindow::Show()
 {
     psStatDRMessage msg;
-    psengine->GetMsgHandler()->SendMessage( msg.msg );
+    msg.SendMessage();
     pawsControlledWindow::Show();
 }
 
@@ -69,8 +69,7 @@ bool pawsInfoWindow::PostSetup()
 {
     pawsControlledWindow::PostSetup();
 
-    msgHandler = psengine->GetMsgHandler();
-    if ( !msgHandler->Subscribe(this,MSGTYPE_MODE) )
+    if (!psengine->GetMsgHandler()->Subscribe(this,MSGTYPE_MODE))
         return false;
 
     targetName = (pawsTextBox*)FindWidget( "Targeted" );

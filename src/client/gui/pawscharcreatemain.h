@@ -129,13 +129,9 @@ private:
     /// Gender radio button group
     pawsRadioButtonGroup* gender;        
     
-    /// For outgoing messages.    
-    csRef<MsgHandler> msgHandler; 
-  
     csRef<iPawsImage> femaleImage;
     csRef<iPawsImage> neutralImage;
 
-    
     /// Paper doll view of model.
     pawsObjectView* view;   
     

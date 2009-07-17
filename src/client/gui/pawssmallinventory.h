@@ -26,8 +26,6 @@
 #include "rpgrules/psmoney.h"
 #include "gui/pawscontrolwindow.h"
 
-class MsgHandler;
-
 class pawsSlot;
 class pawsMoney;
 
@@ -48,7 +46,6 @@ private:
     csArray<pawsSlot*>  bulkSlots; 
     void UpdateMoney( const char* moneyName, const char* imageName, int value );
         
-    MsgHandler* msgHandler;
     pawsMoney * money;
 
     bool OnMouseDown( int button, int keyModifier, int x, int y );

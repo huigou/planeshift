@@ -62,31 +62,28 @@ pawsExchangeWindow::pawsExchangeWindow()
 
 pawsExchangeWindow::~pawsExchangeWindow()
 {
-    msgHandler->Unsubscribe( this, MSGTYPE_GUIEXCHANGE );
-    msgHandler->Unsubscribe( this, MSGTYPE_EXCHANGE_REQUEST );
-    msgHandler->Unsubscribe( this, MSGTYPE_EXCHANGE_ADD_ITEM );
-    msgHandler->Unsubscribe( this, MSGTYPE_EXCHANGE_REMOVE_ITEM );
-    msgHandler->Unsubscribe( this, MSGTYPE_EXCHANGE_ACCEPT );       
-    msgHandler->Unsubscribe( this, MSGTYPE_EXCHANGE_END );
-    msgHandler->Unsubscribe( this, MSGTYPE_EXCHANGE_STATUS );
-    msgHandler->Unsubscribe( this, MSGTYPE_EXCHANGE_MONEY );
+    psengine->GetMsgHandler()->Unsubscribe(this, MSGTYPE_GUIEXCHANGE);
+    psengine->GetMsgHandler()->Unsubscribe(this, MSGTYPE_EXCHANGE_REQUEST);
+    psengine->GetMsgHandler()->Unsubscribe(this, MSGTYPE_EXCHANGE_ADD_ITEM);
+    psengine->GetMsgHandler()->Unsubscribe(this, MSGTYPE_EXCHANGE_REMOVE_ITEM);
+    psengine->GetMsgHandler()->Unsubscribe(this, MSGTYPE_EXCHANGE_ACCEPT);
+    psengine->GetMsgHandler()->Unsubscribe(this, MSGTYPE_EXCHANGE_END);
+    psengine->GetMsgHandler()->Unsubscribe(this, MSGTYPE_EXCHANGE_STATUS);
+    psengine->GetMsgHandler()->Unsubscribe(this, MSGTYPE_EXCHANGE_MONEY);
 }
 
 bool pawsExchangeWindow::PostSetup()
 {
     csString slotName;
     
-    msgHandler = psengine->GetMsgHandler();
-    if ( !msgHandler ) return false;
-
-    if ( !msgHandler->Subscribe( this, MSGTYPE_GUIEXCHANGE ) ) return false;
-    if ( !msgHandler->Subscribe( this, MSGTYPE_EXCHANGE_REQUEST ) ) return false;
-    if ( !msgHandler->Subscribe( this, MSGTYPE_EXCHANGE_ADD_ITEM ) ) return false;
-    if ( !msgHandler->Subscribe( this, MSGTYPE_EXCHANGE_REMOVE_ITEM ) ) return false;
-    if ( !msgHandler->Subscribe( this, MSGTYPE_EXCHANGE_ACCEPT ) ) return false;        
-    if ( !msgHandler->Subscribe( this, MSGTYPE_EXCHANGE_END ) ) return false;        
-    if ( !msgHandler->Subscribe( this, MSGTYPE_EXCHANGE_STATUS ) ) return false;           
-    if ( !msgHandler->Subscribe( this, MSGTYPE_EXCHANGE_MONEY ) ) return false;               
+    if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_GUIEXCHANGE)) return false;
+    if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_EXCHANGE_REQUEST)) return false;
+    if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_EXCHANGE_ADD_ITEM)) return false;
+    if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_EXCHANGE_REMOVE_ITEM)) return false;
+    if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_EXCHANGE_ACCEPT)) return false;
+    if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_EXCHANGE_END)) return false;
+    if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_EXCHANGE_STATUS)) return false;
+    if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_EXCHANGE_MONEY)) return false;
      
     // the two backgrounds for the offering/receiving frame
     offeringBG  = FindWidget("Offering Frame");
@@ -397,16 +394,15 @@ void pawsExchangeWindow::HandleMoney( MsgEntry* me )
 
 void pawsExchangeWindow::SendAccept()
 {    
-    psExchangeAcceptMsg mesg;
-    msgHandler->SendMessage(mesg.msg);
+    psExchangeAcceptMsg msg;
+    msg.SendMessage();
 }
 
 void pawsExchangeWindow::SendEnd()
 {
-    psExchangeEndMsg outgoing;
-    msgHandler->SendMessage(outgoing.msg);
+    psExchangeEndMsg msg;
+    msg.SendMessage();
 }
-
 
 void pawsExchangeWindow::Clear()
 {

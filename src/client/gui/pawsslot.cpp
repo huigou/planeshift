@@ -90,7 +90,7 @@ bool pawsSlot::OnMouseDown( int button, int modifiers, int x, int y )
     if ( !empty && psengine->GetMouseBinds()->CheckBind("ContextMenu",button,modifiers) )
     {
         psViewItemDescription out(containerID, slotID);
-        psengine->GetMsgHandler()->SendMessage( out.msg );
+        out.SendMessage();
         return true;
     }
     else

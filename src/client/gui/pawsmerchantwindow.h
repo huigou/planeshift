@@ -26,10 +26,7 @@
 #include "paws/pawslistbox.h"
 #include "paws/pawsnumberpromptwindow.h"
 
-class MsgHandler;
 class pawsListBox;
-
-
 
 /** The window that deals with interacting with a NPC merchant.
  */
@@ -51,8 +48,6 @@ public:
     void OnNumberEntered(const char *name,int param,int value);
 
 protected:
-    csRef<MsgHandler> msgHandler;
-
     // Handle messages from the server.
     void HandleMerchant( const char* data );
     void HandleCategories( const char* data );

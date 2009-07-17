@@ -20,7 +20,6 @@
 #define PS_INVENTORY_CACHE
 
 #include "util/pscache.h"
-#include "net/clientmsghandler.h"
 
 /**
  * @class psInventoryCache
@@ -108,8 +107,6 @@ class psInventoryCache : public psCache
         csHash<CachedItemDescription*> itemhash;  // all cached items in equip, bulk or containers
         // CachedItemDescription bulkItems[INVENTORY_BULK_COUNT];    /// cached bulk items
         // CachedItemDescription equipItems[INVENTORY_EQUIP_COUNT];  /// cached equip items
-
-        csRef<MsgHandler> msgHandler;
 
 		uint32 version; // Current cache version (PS#2691)
 };

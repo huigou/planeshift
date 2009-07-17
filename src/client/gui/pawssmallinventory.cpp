@@ -41,11 +41,9 @@ void pawsSmallInventoryWindow::Show()
 {
     pawsWidget::Show();
     // Ask the server to send us the inventory
-    psGUIInventoryMessage outGoingMessage;
-    msgHandler->SendMessage( outGoingMessage.msg );
+    psGUIInventoryMessage request;
+    request.SendMessage();
 }
-
-
 
 bool pawsSmallInventoryWindow::PostSetup()
 {
@@ -95,18 +93,11 @@ bool pawsSmallInventoryWindow::PostSetup()
             }
         }
         money = dynamic_cast <pawsMoney*> (FindWidget("Money")); 
-        if ( money ){
-        money->SetContainer( CONTAINER_INVENTORY_MONEY );}        
-        
-        
-        // We want to know about inventory messages. 
-        msgHandler = psengine->GetMsgHandler();
-        if ( !msgHandler ) 
-            return false;
-            
-        return true;            
+        if (money)
+        {
+            money->SetContainer(CONTAINER_INVENTORY_MONEY);
+        }
     }
-    
     return true;    
 }
 

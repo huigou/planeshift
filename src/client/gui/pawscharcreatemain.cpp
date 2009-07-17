@@ -68,9 +68,8 @@ pawsCreationMain::pawsCreationMain()
 {      
     createManager = psengine->GetCharManager()->GetCreation();
     
-    msgHandler = psengine->GetMsgHandler();
-    msgHandler->Subscribe(this, MSGTYPE_CHAR_CREATE_CP); 
-    msgHandler->Subscribe(this, MSGTYPE_CHAR_CREATE_NAME);
+    psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_CHAR_CREATE_CP); 
+    psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_CHAR_CREATE_NAME);
     createManager->SetGender( PSCHARACTER_GENDER_MALE ); 
     currentGender = PSCHARACTER_GENDER_MALE;
     lastGender = -1;
@@ -946,8 +945,8 @@ bool pawsCreationMain::OnButtonPressed( int mouseButton, int keyModifier, pawsWi
                 newWindow = "Paths";               
             }                
                 
-            psNameCheckMessage msg( name->GetText() );
-            msgHandler->SendMessage( msg.msg );                                                   
+            psNameCheckMessage msg(name->GetText());
+            msg.SendMessage();
         }
                              
     }    

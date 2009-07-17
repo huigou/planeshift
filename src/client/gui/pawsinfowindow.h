@@ -27,7 +27,6 @@
 #include "net/cmdbase.h"
 #include "gui/pawscontrolwindow.h"
 #include "net/message.h"
-#include "net/clientmsghandler.h"
 
 class pawsTextBox;
 class pawsProgressBar;
@@ -71,7 +70,6 @@ private:
     pawsButton      *stanceButton5;
 
     pawsTextBox* timeOfDay;
-    csRef<MsgHandler> msgHandler;
     csString stanceConvert(const uint ID);
 
     uint selectedstance;

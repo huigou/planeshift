@@ -29,7 +29,6 @@
 #include "util/psconst.h"
 #include "gui/inventorywindow.h"
 
-class MsgHandler;
 class pawsMoney;
 
 #define EXCHANGE_VISIBLE            4
@@ -99,9 +98,6 @@ protected:
     //Text that shows the total amount of trias
     pawsTextBox * totalTriasOffered, *totalTriasReceived;
 
-    csRef<MsgHandler> msgHandler;
-    
-    
     /// List of slots for items that have been offered.
     pawsSlot* offeringSlots[EXCHANGE_SLOT_COUNT];
     

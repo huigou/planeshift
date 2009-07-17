@@ -74,22 +74,16 @@ pawsCharacterPickerWindow::~pawsCharacterPickerWindow()
 {
     psengine->UnregisterDelayedLoader(this);
     delete charApp;
-    if(msgHandler)
-    {
-        msgHandler->Unsubscribe( this, MSGTYPE_AUTHAPPROVED );
-        msgHandler->Unsubscribe( this, MSGTYPE_CHAR_DELETE );
-    }
+    psengine->GetMsgHandler()->Unsubscribe(this, MSGTYPE_AUTHAPPROVED);
+    psengine->GetMsgHandler()->Unsubscribe(this, MSGTYPE_CHAR_DELETE);
 }
 
 
 bool pawsCharacterPickerWindow::PostSetup()
 {
-    msgHandler = psengine->GetMsgHandler();
-    if ( !msgHandler ) return false;
-
     // Subscribe our message types that we are interested in. 
-    msgHandler->Subscribe(this,MSGTYPE_AUTHAPPROVED);
-    msgHandler->Subscribe( this, MSGTYPE_CHAR_DELETE );
+    psengine->GetMsgHandler()->Subscribe(this,MSGTYPE_AUTHAPPROVED);
+    psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_CHAR_DELETE);
         
     view = (pawsObjectView*)FindWidget("PaperDollView");
     view->Rotate(10,0.01f);
@@ -201,8 +195,8 @@ void pawsCharacterPickerWindow::OnStringEntered(const char *name, int param,cons
         psString charFirstName;
         charFullName.GetWord( 0, charFirstName );
 
-        psCharDeleteMessage out( charFirstName, 0 );
-        msgHandler->SendMessage( out.msg );
+        psCharDeleteMessage msg(charFirstName, 0);
+        msg.SendMessage();
     }
 }
 
@@ -274,8 +268,8 @@ bool pawsCharacterPickerWindow::OnButtonPressed( int mouseButton, int keyModifer
             psString charFirstName;
             charFullName.GetWord( 0, charFirstName );
 
-            psCharDeleteMessage out( charFirstName, 0 );
-            msgHandler->SendMessage( out.msg );
+            psCharDeleteMessage msg(charFirstName, 0);
+            msg.SendMessage();
 
             return true;
         }
@@ -313,8 +307,8 @@ bool pawsCharacterPickerWindow::OnButtonPressed( int mouseButton, int keyModifer
                 // Send the name of the character to the server. 
                 csString charname( ((pawsButton*)FindWidget(name))->GetText() );
                                 
-                psCharacterPickerMessage out( charname );
-                msgHandler->SendMessage( out.msg );
+                psCharacterPickerMessage msg(charname);
+                msg.SendMessage();
             }
             
             return true;

@@ -64,13 +64,10 @@ pawsContainerDescWindow::~pawsContainerDescWindow()
 
 bool pawsContainerDescWindow::PostSetup()
 {
-    msgHandler = psengine->GetMsgHandler();
-
-    if ( !msgHandler ) return false;
-    if ( !msgHandler->Subscribe(this, MSGTYPE_VIEW_CONTAINER ) )
-        return false;        
-    if ( !msgHandler->Subscribe(this, MSGTYPE_UPDATE_ITEM ) )
-        return false;        
+    if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_VIEW_CONTAINER))
+        return false;
+    if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_UPDATE_ITEM))
+        return false;
 
     // Store some of our children for easy access later on.
     name = (pawsTextBox*)FindWidget("ItemName");
@@ -241,7 +238,7 @@ bool pawsContainerDescWindow::OnButtonPressed( int mouseButton, int keyModifier,
         {            
             psViewItemDescription out(psengine->GetSlotManager()->HoldingContainerID(),
                                       psengine->GetSlotManager()->HoldingSlotID());
-            msgHandler->SendMessage( out.msg );
+            out.SendMessage();
 
             psengine->GetSlotManager()->CancelDrag();
         }

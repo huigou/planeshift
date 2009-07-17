@@ -57,15 +57,13 @@ pawsGroupWindow::pawsGroupWindow()
 
 pawsGroupWindow::~pawsGroupWindow()
 {
-    msgHandler->Unsubscribe( this, MSGTYPE_GUIGROUP );
+    psengine->GetMsgHandler()->Unsubscribe(this, MSGTYPE_GUIGROUP);
 }
 
 bool pawsGroupWindow::PostSetup()
 {
-    msgHandler = psengine->GetMsgHandler();
-
-    if ( !msgHandler ) return false;
-    if ( !msgHandler->Subscribe( this, MSGTYPE_GUIGROUP ) ) return false;
+    if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_GUIGROUP))
+        return false;
 
     memberList = (pawsListBox*)FindWidget("List");
     if ( !memberList ) return false;
