@@ -590,12 +590,6 @@ bool psCharAppearance::Attach(const char* socketName, const char* meshFactName)
         return false;
     }
 
-    if(!factory)
-    {
-        Error2("Mesh factory %s not found.", meshFactName);
-        return false;
-    }
-
     if(!factory.IsValid())
     {
         Attachment attach(true);
