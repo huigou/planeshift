@@ -128,13 +128,29 @@ bool WeatherManager::StartWeather(psSectorInfo *si)
     return false;
 }
 
+void WeatherManager::StopWeather(psSectorInfo *si)
+{
+    CS::Threading::MutexScopedLock lock (eventsMutex);
+    psWeatherGameEvent* evt = NULL;
+    for (size_t i = 0; i < events.GetSize(); i++)
+    {
+        evt = events[i];
+        if (evt->si == si && (evt->type == psWeatherMessage::RAIN || evt->type == psWeatherMessage::SNOW))
+        {
+            ignored.Push(evt); // Ignore when the eventmanager handles the event
+            events.DeleteIndex(i);
+            i--;
+        }
+    }
+}
+
 void WeatherManager::UpdateClient(uint32_t cnum)
 {
     psWeatherMessage::NetWeatherInfo info;
 
     // Update client with weather for all sectors
     csHash<psSectorInfo *>::GlobalIterator iter = CacheManager::GetSingleton().GetSectorIterator();
-    while (iter.HasNext() )
+    while (iter.HasNext())
     {
         psSectorInfo *sector = iter.Next();
         info.has_downfall  = false;
@@ -150,7 +166,7 @@ void WeatherManager::UpdateClient(uint32_t cnum)
             info.downfall_drops = sector->current_rain_drops;
             info.downfall_fade = 0; // Don't fade in
         }
-        else if (sector->is_snowing ) //If it is snowing
+        else if (sector->is_snowing) //If it is snowing
         {
             info.has_downfall = true;
             info.downfall_is_snow = true;
@@ -159,7 +175,7 @@ void WeatherManager::UpdateClient(uint32_t cnum)
             info.downfall_fade = 0; // Don't fade in
         }
         
-        if( sector->fog_density > 0 )
+        if( sector->fog_density > 0)
         {
             info.has_fog = true;
             info.fog_density = sector->fog_density;
