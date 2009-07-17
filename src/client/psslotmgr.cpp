@@ -99,6 +99,7 @@ bool psSlotManager::HandleEvent( iEvent& ev )
                   psengine->GetSceneManipulator()->RemoveSelected();
 
                   isPlacing = false;
+                  isRotating = false;
               }
           }
         }
