@@ -617,6 +617,8 @@ void psSpellCastGameEvent::Interrupt()
 
 void psSpellCastGameEvent::Trigger()
 {
-    spell->Affect(caster->GetActor(), target, max_range, kFactor, powerLevel);
+    // Make sure caster is alive...there might be UDP jitter problems (PS#2728).
+    if (caster->IsAlive())
+        spell->Affect(caster->GetActor(), target, max_range, kFactor, powerLevel);
 }
 
