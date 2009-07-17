@@ -2,6 +2,8 @@
 - Fixed PS#2460 - Summary of stats in char create are all in caps patch by caarie
 - Fixed PS#2604 - Server crash due to wrong defined item in DB. 
   Improved error messages and checking for more bad data from the item_stats table.
+- Fixed PS#2820 - Bad error message by making a more explicit error message
+- Fixed PS#969 - cant setskill on pets
 
 *** 2009-07-17 by Kenny Graunke
 - Fixed PS#517 by using dynamic binding for pawsSlot::Clear().  This way,
