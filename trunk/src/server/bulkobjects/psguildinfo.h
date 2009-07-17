@@ -116,7 +116,7 @@ public:
 
     ///checks if the request right is possessed by this guild member
     bool HasRights(GUILD_PRIVILEGE rights)
-    { return (guildlevel->HasRights(rights) && !(removedPrivileges & rights) ||  (privileges & rights)); }
+    { return (guildlevel->HasRights(rights) && !(removedPrivileges & rights)) || (privileges & rights); }
 };
 
 //------------------------------------------------------------------------------
