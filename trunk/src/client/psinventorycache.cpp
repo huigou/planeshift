@@ -23,7 +23,6 @@
 
 psInventoryCache::psInventoryCache () : version(0)
 {
-    msgHandler = psengine->GetMsgHandler();
     EmptyInventory();
 }
 
@@ -40,24 +39,21 @@ psInventoryCache::~psInventoryCache ()
     itemhash.Empty();
 }
 
-bool psInventoryCache::GetInventory (void)
+bool psInventoryCache::GetInventory()
 {
-    if (!msgHandler)
-        return false;
-
     // testing if need to request full inventory or
     // just to refresh local cache.
     if (cacheStatus == INVALID)
     {
         // full list request
-        psGUIInventoryMessage outGoingMessage;
-        msgHandler->SendMessage( outGoingMessage.msg );
+        psGUIInventoryMessage request;
+        request.SendMessage();
     }
     else
     {
         // updates request
-        psGUIInventoryMessage outGoingMessage(psGUIInventoryMessage::UPDATE_REQUEST);
-        msgHandler->SendMessage( outGoingMessage.msg );
+        psGUIInventoryMessage request(psGUIInventoryMessage::UPDATE_REQUEST);
+        request.SendMessage();
     }
     
     return true;

@@ -55,7 +55,6 @@ class psChatBubbles : public iNetSubscriber
 {
 private:
     psEngine *      psengine;
-    MsgHandler *    msgHandler;
 
     csArray<BubbleChatType> chatTypes;
 

@@ -85,24 +85,17 @@ pawsSkillWindow::~pawsSkillWindow()
 
 bool pawsSkillWindow::PostSetup()
 {
-    msgHandler = psengine->GetMsgHandler();
-    if ( !msgHandler )
-    {
-        return false;
-    }
-
     // Setup the Doll
     if ( !SetupDoll() )
     {
         return false;
     }
 
-    msgHandler = psengine->GetMsgHandler();
-    if ( !msgHandler->Subscribe( this, MSGTYPE_GUISKILL ) )
+    if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_GUISKILL))
     {
         return false;
     }
-    if ( !msgHandler->Subscribe( this, MSGTYPE_FACTION_INFO ) )
+    if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_FACTION_INFO))
     {
         return false;
     }
@@ -631,8 +624,7 @@ void pawsSkillWindow::OnNumberEntered(const char *name,int param,int number)
 
     commandData.Format("<B NAME=\"%s\" AMOUNT=\"%d\"/>", EscpXML(selectedSkill).GetData(), number);
     psGUISkillMessage outgoing(psGUISkillMessage::BUY_SKILL, commandData);
-
-    msgHandler->SendMessage( outgoing.msg );
+    outgoing.SendMessage();
 }
 
 void pawsSkillWindow::BuyMaxSkill()
@@ -658,9 +650,8 @@ void pawsSkillWindow::BuyMaxSkill()
         possibleTraining = skillCache.getProgressionPoints();
 
     commandData.Format("<B NAME=\"%s\" AMOUNT=\"%d\"/>", EscpXML(selectedSkill).GetData(), possibleTraining);
-    psGUISkillMessage outgoing( psGUISkillMessage::BUY_SKILL, commandData);
-
-    msgHandler->SendMessage( outgoing.msg );
+    psGUISkillMessage msg(psGUISkillMessage::BUY_SKILL, commandData);
+    msg.SendMessage();
 }
 
 void pawsSkillWindow::BuySkill()
@@ -694,7 +685,7 @@ void pawsSkillWindow::Show()
     {
         skillCache.clear(); // Clear the skill cache before the new request
         psGUISkillMessage outgoing(psGUISkillMessage::REQUEST, "");
-        msgHandler->SendMessage(outgoing.msg);
+        outgoing.SendMessage();
     }
 
     // If this is the first time the window is open then we need to get our
@@ -703,17 +694,14 @@ void pawsSkillWindow::Show()
     {
         psFactionMessage factionRequest(0, psFactionMessage::MSG_FULL_LIST);
         factionRequest.BuildMsg();
-        msgHandler->SendMessage(factionRequest.msg);
+        factionRequest.SendMessage();
     }
 }
 
 void pawsSkillWindow::Hide()
 {
-    if (msgHandler)
-    {
-        psGUISkillMessage outgoing(psGUISkillMessage::QUIT, "");
-        msgHandler->SendMessage(outgoing.msg);
-    }
+    psGUISkillMessage outgoing(psGUISkillMessage::QUIT, "");
+    outgoing.SendMessage();
     skillCache.clear();
     pawsControlledWindow::Hide();
 }
@@ -745,8 +733,7 @@ void pawsSkillWindow::OnListAction( pawsListBox* widget, int status )
             csString commandData;
             commandData.Format("<S NAME=\"%s\" />", EscpXML(selectedSkill).GetData());
             psGUISkillMessage outgoing( psGUISkillMessage::SKILL_SELECTED, commandData);
-
-            msgHandler->SendMessage( outgoing.msg );
+            outgoing.SendMessage();
         }
         else
         {

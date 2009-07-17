@@ -102,10 +102,7 @@ pawsMerchantWindow::~pawsMerchantWindow()
 
 bool pawsMerchantWindow::PostSetup()
 {
-    msgHandler = psengine->GetMsgHandler();
-    if ( !msgHandler ) return false;
-
-    if ( !msgHandler->Subscribe( this, MSGTYPE_GUIMERCHANT ) )
+    if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_GUIMERCHANT))
         return false;
 
     categoryBox = (pawsListBox*)FindWidget("Categories");
@@ -401,7 +398,7 @@ void pawsMerchantWindow::OnListAction( pawsListBox* widget, int status )
                                EscpXML(nameWidget->GetText()).GetData());
 
             psGUIMerchantMessage outgoing(psGUIMerchantMessage::CATEGORY, commandData);
-            msgHandler->SendMessage( outgoing.msg );
+            outgoing.SendMessage();
         }
     }
     else if ( widget->GetID()==ITEM_LIST  &&  status==LISTBOX_SELECTED )
@@ -417,7 +414,7 @@ void pawsMerchantWindow::Close()
                            
     commandData.Format("<C ID=\"%d\"/>", merchantID);
     psGUIMerchantMessage outgoing(psGUIMerchantMessage::CANCEL, commandData);
-    msgHandler->SendMessage(outgoing.msg);
+    outgoing.SendMessage();
 
     // Clean the boxes
     categoryBox->Clear();
@@ -473,7 +470,7 @@ bool pawsMerchantWindow::OnButtonPressed( int mouseButton, int keyModifier, paws
                         merchantID, tradeCommand, escpxml.GetData(), cmdtxt.GetData());
 
                 psGUIMerchantMessage outgoing(psGUIMerchantMessage::VIEW, commandData);
-                msgHandler->SendMessage(outgoing.msg);
+                outgoing.SendMessage();
             }
             return true;
         }
@@ -487,12 +484,12 @@ void pawsMerchantWindow::SetTradeMode( bool buy )
     if (buy)
     {
         psGUIMerchantMessage exchange(psGUIMerchantMessage::REQUEST,"<R TYPE=\"BUY\"/>");
-        msgHandler->SendMessage(exchange.msg);
+        exchange.SendMessage();
     }
     else
     {
         psGUIMerchantMessage exchange(psGUIMerchantMessage::REQUEST,"<R TYPE=\"SELL\"/>");
-        msgHandler->SendMessage(exchange.msg);
+        exchange.SendMessage();
     }
     itemsBox->Clear();
     categoryBox->Clear();
@@ -505,7 +502,7 @@ void pawsMerchantWindow::DoTrade(int count,const char* itemName,const char* item
     sprintf(commandData, "<T ID=\"%d\" ITEM=\"%s\" COUNT=\"%d\" ITEM_ID=\"%s\" />", 
             merchantID, escpxml.GetData(), count, itemID);
     psGUIMerchantMessage outgoing(tradeCommand, commandData);
-    msgHandler->SendMessage(outgoing.msg);
+    outgoing.SendMessage();
     Error2("%s", commandData);
 }
 

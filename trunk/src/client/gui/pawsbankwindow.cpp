@@ -44,16 +44,12 @@ pawsBankWindow::pawsBankWindow()
 
 pawsBankWindow::~pawsBankWindow()
 {
-    msgHandler->Unsubscribe(this, MSGTYPE_BANKING);
+    psengine->GetMsgHandler()->Unsubscribe(this, MSGTYPE_BANKING);
 }
 
 bool pawsBankWindow::PostSetup()
 {
-    msgHandler = psengine->GetMsgHandler();
-    if(!msgHandler)
-        return false;
-
-    if(!msgHandler->Subscribe(this, MSGTYPE_BANKING))
+    if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_BANKING))
         return false;
 
     Money = (pawsButton*)(FindWidget("MoneyButton"));
@@ -296,8 +292,7 @@ bool pawsBankWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidg
 
         psGUIBankingMessage outgoing(psGUIBankingMessage::WITHDRAWFUNDS,
                                      guild, circles, octas, hexas, trias);
-
-        msgHandler->SendMessage( outgoing.msg );
+        outgoing.SendMessage();
 
         // Reset to 0.
         circlesToWithdraw->SetText("0");
@@ -326,8 +321,7 @@ bool pawsBankWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidg
 
         psGUIBankingMessage outgoing(psGUIBankingMessage::DEPOSITFUNDS,
                                      guild, circles, octas, hexas, trias);
-
-        msgHandler->SendMessage( outgoing.msg );
+        outgoing.SendMessage();
 
         // Reset to 0.
         circlesToDeposit->SetText("0");
@@ -370,8 +364,7 @@ bool pawsBankWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidg
         {
             psGUIBankingMessage outgoing(psGUIBankingMessage::EXCHANGECOINS,
                                          guild, coins, coin);
-
-            msgHandler->SendMessage( outgoing.msg );
+            outgoing.SendMessage();
         }
 
         // Reset to 0.

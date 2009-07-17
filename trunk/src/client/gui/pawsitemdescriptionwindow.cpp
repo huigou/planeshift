@@ -45,18 +45,13 @@ pawsItemDescriptionWindow::pawsItemDescriptionWindow()
 
 pawsItemDescriptionWindow::~pawsItemDescriptionWindow()
 {
-    if(msgHandler)
-    {
-        msgHandler->Unsubscribe(this,MSGTYPE_VIEW_ITEM);
-    }
+    psengine->GetMsgHandler()->Unsubscribe(this, MSGTYPE_VIEW_ITEM);
 }
 
 bool pawsItemDescriptionWindow::PostSetup()
 {
-    msgHandler = psengine->GetMsgHandler();
-
-    if ( !msgHandler ) return false;
-    if ( !msgHandler->Subscribe( this,  MSGTYPE_VIEW_ITEM ) ) return false;
+    if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_VIEW_ITEM))
+        return false;
 
     // Store some of our children for easy access later on.
     

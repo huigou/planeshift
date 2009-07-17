@@ -31,14 +31,7 @@
   
 bool pawsCraftWindow::PostSetup()
 {
-//    itemTree = NULL;
-    msgHandler = psengine->GetMsgHandler();
-    if ( !msgHandler ) return false;
-
-    if ( !msgHandler->Subscribe( this, MSGTYPE_CRAFT_INFO ) )
-        return false;
-        
-    return true;    
+    return psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_CRAFT_INFO);
 }
 
 void pawsCraftWindow::Show()

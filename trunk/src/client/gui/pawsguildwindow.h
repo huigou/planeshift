@@ -123,7 +123,6 @@ private:
     pawsListBox     *allianceMemberList;
 
     csRef<iDocumentSystem> xml;
-    csRef<MsgHandler> msgHandler;
 
     csArray<guildMemberInfo> members;
 

@@ -47,7 +47,6 @@ public:
 private:
     void HandleUpdateItem( MsgEntry* me );
     void HandleViewItem( MsgEntry* me );
-    csRef<MsgHandler> msgHandler;
 
     pawsTextBox*        name;
     pawsMultiLineTextBox* description;

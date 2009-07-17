@@ -65,24 +65,15 @@ pawsGameBoard::pawsGameBoard()
 
 pawsGameBoard::~pawsGameBoard()
 {
-    if (msgHandler)
-    {
-        msgHandler->Unsubscribe(this, MSGTYPE_MINIGAME_BOARD);
-        msgHandler->Unsubscribe(this, MSGTYPE_MINIGAME_STARTSTOP);
-    }
+    psengine->GetMsgHandler()->Unsubscribe(this, MSGTYPE_MINIGAME_BOARD);
+    psengine->GetMsgHandler()->Unsubscribe(this, MSGTYPE_MINIGAME_STARTSTOP);
 }
 
 bool pawsGameBoard::PostSetup()
 {
-
-    // Setup this widget to receive messages and commands
-    msgHandler = psengine->GetMsgHandler();
-    if (!msgHandler)
-        return false;
-
     // Subscribe to Minigame messages
-    msgHandler->Subscribe(this, MSGTYPE_MINIGAME_BOARD);
-    msgHandler->Subscribe(this, MSGTYPE_MINIGAME_STARTSTOP);
+    psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_MINIGAME_BOARD);
+    psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_MINIGAME_STARTSTOP);
 
     return true;
 }
@@ -154,18 +145,12 @@ void pawsGameBoard::Hide()
     pawsWidget::Hide();
 
     // Stop the game
-    if (msgHandler)
-    {
-        psMGStartStopMessage msg(0, false);
-        msgHandler->SendMessage(msg.msg);
-    }
+    psMGStartStopMessage msg(0, false);
+    msg.SendMessage();
 }
 
 void pawsGameBoard::StartGame()
 {
-    if (!msgHandler)
-        return;
-
     // Clean the board
     CleanBoard();
 
@@ -175,7 +160,7 @@ void pawsGameBoard::StartGame()
 
     // Request to start the game
     psMGStartStopMessage msg(0, true);
-    msgHandler->SendMessage(msg.msg);
+    msg.SendMessage();
 }
 
 void pawsGameBoard::CleanBoard()
@@ -411,9 +396,6 @@ void pawsGameBoard::DropPiece(pawsGameTile *tile)
     pawsGameTile *oldTile = draggingPiece;
     draggingPiece = NULL;
 
-    if (!msgHandler)
-        return;
-
     // Don't send updates if the old tile and new tile are the same
     if (oldTile && tile &&
         oldTile->GetColumn() == tile->GetColumn() && oldTile->GetRow() == tile->GetRow())
@@ -443,13 +425,13 @@ void pawsGameBoard::DropPiece(pawsGameTile *tile)
     if (cnt > 0)
     {
         psMGUpdateMessage msg(0, ++currentCounter, gameID, cnt, updates);
-        msgHandler->SendMessage(msg.msg);
+        msg.SendMessage();
     }
 }
 
 void pawsGameBoard::UpdatePiece(pawsGameTile *tile)
 {
-    if (!tile || !msgHandler)
+    if (!tile)
         return;
 
     // Fill in the buffer with updates.
@@ -459,7 +441,7 @@ void pawsGameBoard::UpdatePiece(pawsGameTile *tile)
 
     // Send to the server.
     psMGUpdateMessage msg(0, ++currentCounter, gameID, 1, updates);
-    msgHandler->SendMessage(msg.msg);
+    msg.SendMessage();
 }
 
 void pawsGameBoard::StartDragging(pawsGameTile *tile)

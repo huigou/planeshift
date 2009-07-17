@@ -4,7 +4,6 @@
 #include "paws/pawsstringpromptwindow.h"
 #include "paws/pawswidget.h"
 #include "net/message.h"
-#include "net/clientmsghandler.h"
 
 #include "psengine.h"
 
@@ -64,8 +63,6 @@ private:
     
     virtual void OnStringEntered(const char *name, int param,const char *value);
 
-    csRef<MsgHandler> msgHandler;
-    
     int charactersFound;
     int selectedCharacter;
 

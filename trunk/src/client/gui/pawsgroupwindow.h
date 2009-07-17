@@ -51,8 +51,6 @@ public:
     void SetStats( GEMClientActor * actor );
 
 private:
-    csRef<MsgHandler> msgHandler;
-
     pawsListBox* memberList;
 
     void Draw();

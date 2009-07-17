@@ -254,7 +254,7 @@ void psUserCommands::HandleSlay(bool answeredYes, void *data)
 {
     psMessageCracker *msg = (psMessageCracker*) data;
     if (answeredYes)
-        psengine->GetMsgHandler()->SendMessage(msg->msg);
+        msg->SendMessage();
     delete msg;
 }
 

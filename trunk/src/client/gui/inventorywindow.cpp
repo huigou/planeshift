@@ -65,8 +65,6 @@
 
 pawsInventoryWindow::pawsInventoryWindow()
 {
-    msgHandler = NULL;
-
     loader =  csQueryRegistry<iThreadedLoader> ( PawsManager::GetSingleton().GetObjectRegistry() );
 
     bulkSlots.SetSize( 32 );
@@ -116,11 +114,6 @@ bool pawsInventoryWindow::SetupSlot( const char* slotName )
 
 bool pawsInventoryWindow::PostSetup()
 {
-    //printf("Inventory setup\n");
-    msgHandler = psengine->GetMsgHandler();
-    if ( !msgHandler )
-        return false;
-
     // Setup the Doll
     if ( !SetupDoll() )
         return false;
@@ -271,7 +264,7 @@ bool pawsInventoryWindow::OnButtonPressed( int mouseButton, int keyModifer, paws
         {
             psViewItemDescription out(psengine->GetSlotManager()->HoldingContainerID(),
                                       psengine->GetSlotManager()->HoldingSlotID());
-            msgHandler->SendMessage( out.msg );
+            out.SendMessage();
 
             psengine->GetSlotManager()->CancelDrag();
         }
@@ -341,13 +334,9 @@ void pawsInventoryWindow::Dequip( const char* itemName )
                                        freeSlot->ID(),
                                        stackCount );
                 freeSlot->Reserve();
-
-                               
-                msgHandler->SendMessage( msg.msg );                                               
+                msg.SendMessage();               
                 fromSlot->Clear();
-	
             }
-
         }
     }
 }
@@ -377,11 +366,10 @@ void pawsInventoryWindow::Equip( const char* itemName, int stackCount )
             int slot        = fromSlot->ID();
 
             //psItem* item = charData->GetItemInSlot( slot );
-            csRef<MsgHandler> msgHandler = psengine->GetMsgHandler();
             psSlotMovementMsg msg( container, slot,
                                CONTAINER_INVENTORY_EQUIPMENT, -1,
                                stackCount );
-            msgHandler->SendMessage( msg.msg );
+            msg.SendMessage();
         }
     }
 }
@@ -432,9 +420,8 @@ void pawsInventoryWindow::Write( const char* itemName )
             int slot        = fromSlot->ID();
 
             //psItem* item = charData->GetItemInSlot( slot );
-            csRef<MsgHandler> msgHandler = psengine->GetMsgHandler();
             psWriteBookMessage msg(slot, container);
-            msgHandler->SendMessage( msg.msg );
+            msg.SendMessage();
         }
     }
 

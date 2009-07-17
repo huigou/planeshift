@@ -29,6 +29,7 @@
 //=============================================================================
 // Project Includes
 //=============================================================================
+#include "net/clientmsghandler.h"
 #include "gui/chatwindow.h"
 
 #include "effects/pseffectmanager.h"
@@ -47,22 +48,19 @@
 #define USER_FILE     "/planeshift/userdata/options/chatbubbles.xml"
 
 psChatBubbles::psChatBubbles()
-             : psengine(0), msgHandler(0)
+             : psengine(NULL)
 {
 }
 
 psChatBubbles::~psChatBubbles()
 {
-    if (msgHandler)
-        msgHandler->Unsubscribe(this, MSGTYPE_CHAT);
+    psengine->GetMsgHandler()->Unsubscribe(this, MSGTYPE_CHAT);
 }
 
 bool psChatBubbles::Initialize(psEngine * psengine)
 {
     this->psengine = psengine;
-    msgHandler = psengine->GetMsgHandler();
-
-    msgHandler->Subscribe(this, MSGTYPE_CHAT);
+    psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_CHAT);
     return (Load(USER_FILE) || Load(DEFAULT_FILE, true));
 }
 

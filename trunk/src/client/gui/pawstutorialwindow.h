@@ -55,8 +55,6 @@ public:
     bool NextTutorial();
 
 protected:
-    
-    csRef<MsgHandler> msgHandler;
     /// Ptr to the widget that popups when you click the alerter
     pawsWidget *instr_container;
     /// Ptr to the widget that displays the actual text of the instructions for this message.

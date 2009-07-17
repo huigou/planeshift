@@ -50,8 +50,7 @@ bool pawsActiveMagicWindow::PostSetup()
     if (!debuffCategories)
         return false;
 
-    msgHandler = psengine->GetMsgHandler();
-    if ( !msgHandler->Subscribe( this, MSGTYPE_ACTIVEMAGIC ) )
+    if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_ACTIVEMAGIC))
         return false;
 
     // do something here....

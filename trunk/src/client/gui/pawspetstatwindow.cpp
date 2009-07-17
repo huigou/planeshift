@@ -77,10 +77,7 @@ pawsPetStatWindow::~pawsPetStatWindow()
 
 bool pawsPetStatWindow::PostSetup()
 {
-    msgHandler = psengine->GetMsgHandler();
-    if ( !msgHandler ) return false;
-
-    if ( !msgHandler->Subscribe( this, MSGTYPE_PET_SKILL ) )
+    if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_PET_SKILL))
         return false;
 
     xml =  csQueryRegistry<iDocumentSystem > ( PawsManager::GetSingleton().GetObjectRegistry());
@@ -494,8 +491,7 @@ void pawsPetStatWindow::BuySkill()
     csString commandData;
     commandData.Format("<B NAME=\"%s\" />", EscpXML(selectedSkill).GetData());
     psPetSkillMessage outgoing( psPetSkillMessage::BUY_SKILL, commandData);
-
-    msgHandler->SendMessage( outgoing.msg );
+    outgoing.SendMessage();
 }
 
 void pawsPetStatWindow::Show()
@@ -505,24 +501,17 @@ void pawsPetStatWindow::Show()
     // Hack set to no when show called because of an incoming skill table.
     if (skillString != "no")
     {
-        if ( msgHandler )
-        {
-            psPetSkillMessage outgoing(psPetSkillMessage::REQUEST, "");
-            msgHandler->SendMessage(outgoing.msg);
-        }
+        psPetSkillMessage msg(psPetSkillMessage::REQUEST, "");
+        msg.SendMessage();
     }
 }
 
 void pawsPetStatWindow::Hide()
 {
-    if (msgHandler)
-    {
-        psPetSkillMessage outgoing(psPetSkillMessage::QUIT, "");
-        msgHandler->SendMessage(outgoing.msg);
-    }
+    psPetSkillMessage msg(psPetSkillMessage::QUIT, "");
+    msg.SendMessage();
     pawsWidget::Hide();
 }
-
 
 void pawsPetStatWindow::OnListAction( pawsListBox* widget, int status )
 {
@@ -536,12 +525,10 @@ void pawsPetStatWindow::OnListAction( pawsListBox* widget, int status )
 
         csString commandData;
         commandData.Format("<S NAME=\"%s\" />", EscpXML(selectedSkill).GetData());
-        psPetSkillMessage outgoing( psPetSkillMessage::SKILL_SELECTED, commandData);
-
-        msgHandler->SendMessage( outgoing.msg );
+        psPetSkillMessage msg(psPetSkillMessage::SKILL_SELECTED, commandData);
+        msg.SendMessage();
     }
 }
-
 
 void pawsPetStatWindow::Draw()
 {    

@@ -24,7 +24,6 @@
 class pawsTextBox;
 class pawsListBox;
 class pawsMessageTextBox;
-class MsgHandler;
 class pawsProgressBar;
 
 #include "net/subscriber.h"
@@ -44,15 +43,10 @@ public:
     virtual void Close();
 
 private:
-
     pawsListBox*    buffCategories;
     pawsListBox*    debuffCategories;
-
-    csRef<MsgHandler> msgHandler;
-
 };
 
 CREATE_PAWS_FACTORY( pawsActiveMagicWindow );
-
 
 #endif 

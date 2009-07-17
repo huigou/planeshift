@@ -30,7 +30,6 @@ class pawsTextBox;
 class pawsListBox;
 class pawsListBoxRow;
 class pawsMultiLineTextBox;
-class MsgHandler;
 class pawsProgressBar;
 class pawsObjectView;
 class psCharAppearance;
@@ -140,7 +139,6 @@ protected:
     int currentTab, previousTab; ///< Used for storing which is the current tab and the previous one
 
     csRef<iDocumentSystem> xml;
-    csRef<MsgHandler> msgHandler;
 
     psSkillCache skillCache; ///< Local copy of skills and stats
     csHash<psSkillDescription *> skillDescriptions; ///< Local copy of skill and stat descriptions

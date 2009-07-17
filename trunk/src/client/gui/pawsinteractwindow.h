@@ -47,8 +47,6 @@ public:
     void OnStringEntered(const char *name,int param,const char *value);
 
 private:
-    csRef<MsgHandler> msgHandler;
-
     csArray<csString> names;
     csArray<int> types;
 

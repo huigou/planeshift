@@ -21,7 +21,6 @@
 
 // COMMON INCLUDES
 #include "net/messages.h"
-#include "net/clientmsghandler.h"
 #include "util/strutil.h"
 
 // CLIENT INCLUDES
@@ -92,8 +91,8 @@ bool pawsSpellCancelWindow::OnButtonPressed( int mouseButton, int keyModifier, p
 
 void pawsSpellCancelWindow::Cancel()
 {
-    psSpellCancelMessage mesg;
-    psengine->GetMsgHandler()->SendMessage(mesg.msg);
+    psSpellCancelMessage msg;
+    msg.SendMessage();
     
     castingTime = 0;
     Hide();

@@ -25,7 +25,6 @@ class pawsTextBox;
 class pawsListBox;
 class pawsListBoxRow;
 class pawsMultiLineTextBox;
-class MsgHandler;
 class pawsProgressBar;
 class pawsObjectView;
 class psCharAppearance;
@@ -82,7 +81,6 @@ protected:
     int hitpointsMax, manaMax, physStaminaMax, menStaminaMax;
 
     csRef<iDocumentSystem> xml;
-    csRef<MsgHandler> msgHandler;
 
     GEMClientActor* target;
     csString targetID;

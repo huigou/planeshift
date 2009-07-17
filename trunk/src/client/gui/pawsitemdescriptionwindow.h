@@ -42,8 +42,6 @@ public:
     void ShowItemDescription(csString &desc, csString &itemName, csString &icon, int count);
 
 private:
-    csRef<MsgHandler> msgHandler;
-
     pawsTextBox*            name;
     pawsMultiLineTextBox*   description;
     pawsWidget*             pic;

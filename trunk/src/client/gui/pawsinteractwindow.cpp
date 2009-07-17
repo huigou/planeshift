@@ -151,12 +151,7 @@ pawsInteractWindow::~pawsInteractWindow()
 
 bool pawsInteractWindow::PostSetup()
 {
-    msgHandler = psengine->GetMsgHandler();
-
-    if ( !msgHandler ) return false;
-    if ( !msgHandler->Subscribe( this, MSGTYPE_GUIINTERACT) ) return false;
-
-    return true;
+    return psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_GUIINTERACT);
 }
 
 void pawsInteractWindow::HandleMessage( MsgEntry* me )
@@ -234,7 +229,7 @@ bool pawsInteractWindow::OnButtonPressed( int mouseButton, int keyModifier, paws
 
             // Send message to server
             psViewItemDescription out(id.Unbox(), -1);   
-            msgHandler->SendMessage( out.msg );                                       
+            out.SendMessage();
            
             Hide();
             PawsManager::GetSingleton().SetCurrentFocusedWidget( NULL );
@@ -251,7 +246,7 @@ bool pawsInteractWindow::OnButtonPressed( int mouseButton, int keyModifier, paws
             // Find entity id
             EID id = object->GetEID();
             psEntranceMessage out(id);
-            msgHandler->SendMessage( out.msg );                                       
+            out.SendMessage();
            
             Hide();
             PawsManager::GetSingleton().SetCurrentFocusedWidget( NULL );

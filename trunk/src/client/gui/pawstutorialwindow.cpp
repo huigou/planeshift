@@ -55,23 +55,14 @@ pawsTutorialNotifyWindow::pawsTutorialNotifyWindow()
 
 pawsTutorialNotifyWindow::~pawsTutorialNotifyWindow()
 {
-    if (msgHandler)
-    {
-        msgHandler->Unsubscribe(this, MSGTYPE_TUTORIAL);
-    }
+    psengine->GetMsgHandler()->Unsubscribe(this, MSGTYPE_TUTORIAL);
 }
 
 bool pawsTutorialNotifyWindow::PostSetup()
 {
-    // Setup this widget to receive messages and commands
-    msgHandler = psengine->GetMsgHandler();
-
-    if (!msgHandler ) 
-        return false;
-
     // Subscribe to the messages we want to handle.
     // Receiving this message will popup the first window.
-    msgHandler->Subscribe(this, MSGTYPE_TUTORIAL);
+    psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_TUTORIAL);
 
     instr_container = psengine->GetMainWidget()->FindWidget("Tutorial");
     instructions = (pawsMultiLineTextBox*)instr_container->FindWidget("TutorialInstructions");
