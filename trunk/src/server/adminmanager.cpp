@@ -7663,7 +7663,28 @@ void AdminManager::HandleCompleteQuest(MsgEntry* me,psAdminCmdMessage& msg, Admi
         }
         else
         {
-            psserver->SendSystemError(me->clientnum,"Unable to complete quests: player %s is offline!", name.GetData());
+            if(!quest->GetParentQuest()) //only allow to complete main quest entries (no steps)
+            {
+                if(db->CommandPump("insert into character_quests "
+                    "(player_id, assigner_id, quest_id, "
+                    "status, remaininglockout, last_response, last_response_npc_id) "
+                    "values (%d, %d, %d, '%c', %d, %d, %d) "
+                    "ON DUPLICATE KEY UPDATE "
+                    "status='%c',remaininglockout=%ld,last_response=%ld,last_response_npc_id=%ld;",
+                    pid.Unbox(), 0, quest->GetID(), 'C', 0, -1, 0, 'C', 0, -1, 0))
+                {
+                    psserver->SendSystemInfo(me->clientnum, "Quest %s completed for %s!", data.text.GetData(), name.GetData());
+                }
+                else
+                {
+                    psserver->SendSystemError(me->clientnum,"Unable to complete quest of offline player %s!", name.GetData());
+                }
+                
+            }
+            else
+            {
+                psserver->SendSystemError(me->clientnum,"Unable to complete substeps: player %s is offline!", name.GetData());
+            }
         }
     }
     else if (data.subCmd == "discard")
@@ -7695,8 +7716,8 @@ void AdminManager::HandleCompleteQuest(MsgEntry* me,psAdminCmdMessage& msg, Admi
         }
         else //the player is offline so we have to hit the database
         {
-            Result result(db->Select("DELETE FROM character_quests WHERE player_id=%u AND quest_id=%u",pid.Unbox(), quest->GetID()));
-            if (result.IsValid())
+            
+            if (db->CommandPump("DELETE FROM character_quests WHERE player_id=%u AND quest_id=%u",pid.Unbox(), quest->GetID()))
             {
                 psserver->SendSystemInfo(me->clientnum, "Quest %s discarded for %s!", data.text.GetData(), name.GetData());
             }
