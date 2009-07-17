@@ -1,4 +1,13 @@
-﻿*** 2009-07-17 by Tristan Cragnolini
+﻿*** 2009-07-17 by Kenny Graunke
+- Fixed PS#517 by using dynamic binding for pawsSlot::Clear().  This way,
+  pawsGlyphSlot::Clear() runs which then resets the stat ID to 0.
+  This means that sigClearGlyphSlots clears the assembler correctly.
+- Double check if caster is alive just before a spell triggers, as UDP jitter
+  can apparently cause spell casts to happen after death.  Fixes PS#2728.
+- Made psCharacter::SetLocationInWorld save to the DB on instance changes, not
+  only sector changes.  Fixes PS#2151.
+
+*** 2009-07-17 by Tristan Cragnolini
 - Merged mount code into trunk, it's now possible to mount npcs of the
   "mount" type.
 - Fix to interact.xml by f-rd
