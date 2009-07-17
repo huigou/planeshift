@@ -1945,6 +1945,7 @@ void psCharacter::GetLocationInWorld(InstanceID &instance,psSectorInfo *&sectori
 void psCharacter::SetLocationInWorld(InstanceID instance, psSectorInfo *sectorinfo,float loc_x,float loc_y,float loc_z,float loc_yrot)
 {
     psSectorInfo *oldsector = location.loc_sector;
+    InstanceID oldInstance = location.worldInstance;
 
     location.loc_sector=sectorinfo;
     location.loc.x=loc_x;
@@ -1953,7 +1954,7 @@ void psCharacter::SetLocationInWorld(InstanceID instance, psSectorInfo *sectorin
     location.loc_yrot=loc_yrot;
     location.worldInstance = instance;
 
-    if (oldsector!=NULL  &&  oldsector!=sectorinfo)
+    if (oldInstance != instance || (oldsector && oldsector != sectorinfo))
     {
         if ( dynamic_cast<gemNPC*>(actor) == NULL ) // NOT an NPC so it's ok to save location info
             SaveLocationInWorld();
