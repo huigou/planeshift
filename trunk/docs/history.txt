@@ -1,4 +1,8 @@
-﻿*** 2009-07-17 by Stefano Angeleri
+﻿*** 2009-07-18 by Tristan Cragnolini
+- Fixed PS#1465 - Client fails to detect if server DNS information becomes available 
+- Remove 'after rain' when turning automatic weather off, see PS#2130
+
+*** 2009-07-17 by Stefano Angeleri
 - Fixed PS#2460 - Summary of stats in char create are all in caps patch by caarie
 - Fixed PS#2604 - Server crash due to wrong defined item in DB. 
   Improved error messages and checking for more bad data from the item_stats table.
