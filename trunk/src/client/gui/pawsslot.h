@@ -44,7 +44,7 @@ public:
     int ID() { return slotID; }
     void SetSlotID( int id ) { slotID = id; }
 
-    void Clear();
+    virtual void Clear();
     bool IsEmpty() { if(!reserved) return empty; else return false; }
 
     void Reserve() { reserved = true; }
