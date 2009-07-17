@@ -69,6 +69,14 @@ public:
                         int b = 0);
 
     bool StartWeather(psSectorInfo *si);
+
+    /** @brief Stops automatic weather in a sector
+     *  Puts all events from the automatic weather (rain and snow for now)
+     * in the sector into the ignored array,
+     * removing them from the events array
+     * @param si The sector in which we stop the automatic weather
+     */
+    void StopWeather(psSectorInfo *si);
     void HandleWeatherEvent(psWeatherGameEvent *event);
     void SendClientGameTime(int cnum);
     void BroadcastGameTime();
@@ -95,7 +103,7 @@ protected:
     int gameTimeMonth;
     int gameTimeYear;
 
-    csArray<psWeatherGameEvent*> ignored; // Used for overriding commands like /rain
+    csArray<psWeatherGameEvent*> ignored; ///< Used for overriding commands like /rain
     
     CS::Threading::Mutex eventsMutex;
     csArray<psWeatherGameEvent*> events; // Ugly, but we need a copy of our events
@@ -121,7 +129,7 @@ public:
                        int g = 0,
                        int b = 0);
 
-    virtual void Trigger();  // Abstract event processing function
+    virtual void Trigger();  ///< Abstract event processing function
 
     const char *GetType();
 

@@ -876,7 +876,7 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         }
         else if (subCmd == "register")
         {
-            /// 'register' expects either 'range' numeric value or a player name.
+            // 'register' expects either 'range' numeric value or a player name.
             if (words[2] == "range")
             {
                 player.Empty();
@@ -6947,6 +6947,7 @@ void AdminManager::Weather(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& d
         if (sectorinfo->rain_enabled)
         {
             sectorinfo->rain_enabled = false;
+            psserver->GetWeatherManager()->StopWeather(sectorinfo);
             psserver->SendSystemInfo(me->clientnum,"Automatic weather stopped in sector %s",
                                  data.sector.GetDataSafe());
         }
