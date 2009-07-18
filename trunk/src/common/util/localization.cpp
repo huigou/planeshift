@@ -115,7 +115,7 @@ csString psLocalization::FindLocalizedFile(const csString & shortPath)
 {
     csString fullPath;
 
-    fullPath.Format("/this/lang/%s/%s",language,shortPath);
+    fullPath.Format("/this/lang/%s/%s",language.GetDataSafe(),shortPath.GetDataSafe());
     if (FileExists(fullPath))
         return fullPath;
 
