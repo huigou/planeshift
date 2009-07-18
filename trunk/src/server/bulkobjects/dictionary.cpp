@@ -556,7 +556,8 @@ bool NPCDialogDict::AddTrigger( iDataConnection* db, int triggerID , int respons
 
     AddWords( newtrig->trigger );
 
-    if ( trig = triggers.Find( newtrig, NULL) )
+    trig = triggers.Find( newtrig, NULL);
+    if (trig)
     {
         // There are already a trigger with this combination of
         // triggertext, KA, and prior respose so pushing the trigger
@@ -2458,10 +2459,10 @@ void NpcDialogMenu::Add(NpcDialogMenu *add)
 
 	for (size_t i=0; i < add->triggers.GetSize(); i++)
 	{
-		printf("Adding '%s' to menu.\n", add->triggers[i].menuText.GetData() );
+		//printf("Adding '%s' to menu.\n", add->triggers[i].menuText.GetData() );
 		AddTrigger(add->triggers[i].menuText, add->triggers[i].trigger, add->triggers[i].quest, add->triggers[i].prerequisite);
 	}
-	printf("Added %lu triggers to menu.\n", (unsigned long) add->triggers.GetSize());
+	//printf("Added %lu triggers to menu.\n", (unsigned long) add->triggers.GetSize());
 }
 
 void NpcDialogMenu::ShowMenu(Client *client,csTicks delay)
@@ -2537,7 +2538,7 @@ void NpcDialogMenu::SetPrerequisiteScript(psQuestPrereqOp *script)
 
     if (!prereq.IsEmpty())
     {
-        printf("Setting menu %p to have trigger prereq : %s\n", this, prereq.GetDataSafe());
+        //printf("Setting menu %p to have trigger prereq : %s\n", this, prereq.GetDataSafe());
     }
 
     // Each item must have its own prequisite script so they can be different when menus are merged

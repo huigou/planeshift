@@ -602,7 +602,7 @@ BanManager::BanManager()
         newentry->start = result[i].GetUInt32("start");
         newentry->ipRange = result[i]["ip_range"];
         newentry->reason = result[i]["reason"];
-        newentry->banIP = (bool) result[i].GetUInt32("ban_ip");
+        newentry->banIP = result[i].GetUInt32("ban_ip") != 0;
         
         // If account ban, add to list
         if (newentry->account.IsValid())

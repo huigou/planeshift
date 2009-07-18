@@ -983,7 +983,6 @@ GMEventManager::GMEvent* GMEventManager::GetGMEventByPlayer(PID playerID, GMEven
 
 size_t GMEventManager::GetPlayerFromEvent(PID& PlayerID, GMEvent *Event)
 {
-    size_t Position = 0;
     for(size_t Position = 0; Position < Event->Player.GetSize(); Position++)
     {
         if (Event->Player.Get(Position).PlayerID == PlayerID)
