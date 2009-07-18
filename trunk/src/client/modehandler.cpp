@@ -2138,9 +2138,11 @@ void ModeHandler::SetCombatAnim( GEMClientActor* atObject, csStringID anim )
 void ModeHandler::HandleCachedFile(MsgEntry* me)
 {
     psCachedFileMessage msg(me);
-    if (!msg.valid)
+    if (!msg.valid) 
+    {
+        printf("Cached File Message received was not valid!\n");
         return;
-
+    }
     if (psengine->GetSoundStatus() && soundmanager->PlayingVoices()) // PS#2744
     {
         csString fname;

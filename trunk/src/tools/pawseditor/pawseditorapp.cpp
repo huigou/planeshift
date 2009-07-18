@@ -178,7 +178,7 @@ bool PawsEditorApp::Init()
 
     // Mount base skin to satisfy unskined elements
 	csString skinPath = cfgmgr->GetStr("Planeshift.GUI.Skin.Base","/planeshift/art/skins/base/client_base.zip");
-	if(!paws->LoadAdditionalSkin(skinPath))
+	if(!paws->LoadSkinDefinition(skinPath))
         Error2("Couldn't load base skin '%s'!\n",skinPath.GetData());
 
     mainWidget = new pawsMainWidget();

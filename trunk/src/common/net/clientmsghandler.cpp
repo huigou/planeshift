@@ -86,6 +86,7 @@ bool ClientMsgHandler::DispatchQueue()
 
     while((msg = queue->Get()))
     {
+        printf("Got a message from the client msg queue.\n");
 		// Check for out of sequence messages.  Handle normally if not sequenced.
 		if (msg->GetSequenceNumber() == 0)
 		{
@@ -121,6 +122,7 @@ bool ClientMsgHandler::DispatchQueue()
 			
 			if (seqnum == nextSequenceExpected) // have something to publish
 			{
+                printf("Ok we have at least one message to publish.\n");
 				while (channel->pendingMessages.GetSize() && channel->pendingMessages[0] != NULL)
 				{
 					printf("Publishing sequence number %d.\n", channel->GetCurrentSequenceNumber());
@@ -130,6 +132,10 @@ bool ClientMsgHandler::DispatchQueue()
 					channel->IncrementSequenceNumber();
 				}
 			}
+            else
+            {
+                printf("Nothing to publish yet from this channel.\n");
+            }
 		}
 	}
     return false;  // this function should not eat the event

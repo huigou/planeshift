@@ -37,7 +37,7 @@
 
 bool pawsConfigPvP::Initialize()
 {
-    if ( ! LoadFromFile("data/gui/configpvp.xml"))
+    if ( ! LoadFromFile("configpvp.xml"))
         return false;
        
     csRef<psCelClient> celclient = psengine->GetCelClient();

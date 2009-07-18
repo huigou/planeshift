@@ -83,7 +83,7 @@ public:
     void Initialize(const csString & filename, const csString & filter, iOnFileSelectedAction * action);
     
     static pawsFileNavigation * Create(
-                const csString & label, const csString & filter, iOnFileSelectedAction * action, const char * xmlWidget = "data/gui/filenavigation.xml");
+                const csString & label, const csString & filter, iOnFileSelectedAction * action, const char * xmlWidget = "filenavigation.xml");
 
 protected:
     /// Called to set the filterfunction.

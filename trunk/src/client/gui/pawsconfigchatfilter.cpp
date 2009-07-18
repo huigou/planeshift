@@ -52,7 +52,7 @@ bool pawsConfigChatFilter::PostSetup()
 
 bool pawsConfigChatFilter::Initialize()
 {
-    if (!LoadFromFile("data/gui/configchatfilter.xml"))
+    if (!LoadFromFile("configchatfilter.xml"))
         return false;
 
     return true;

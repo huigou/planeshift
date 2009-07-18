@@ -42,7 +42,7 @@
 
 bool pawsConfigDetails::Initialize()
 {
-    return LoadFromFile("data/gui/configdetails.xml");
+    return LoadFromFile("configdetails.xml");
 }
 
 bool pawsConfigDetails::PostSetup()

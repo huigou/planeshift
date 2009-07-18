@@ -37,7 +37,7 @@
 
 bool pawsConfigEntityLabels::Initialize()
 {
-    if ( ! LoadFromFile("data/gui/configentitylabels.xml"))
+    if ( ! LoadFromFile("configentitylabels.xml"))
         return false;
        
     csRef<psCelClient> celclient = psengine->GetCelClient();

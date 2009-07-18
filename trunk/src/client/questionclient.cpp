@@ -49,7 +49,7 @@ public:
     {
         wnd = new pawsYesNoBox;
         PawsManager::GetSingleton().GetMainWidget()->AddChild(wnd);
-        wnd->LoadFromFile("data/gui/yesno.xml");
+        wnd->LoadFromFile("yesno.xml");
         //wnd->CenterToMouse();
         wnd->MoveTo( (PawsManager::GetSingleton().GetGraphics2D()->GetWidth() - wnd->GetActualWidth(512) ) / 2,
                        (PawsManager::GetSingleton().GetGraphics2D()->GetHeight() - wnd->GetActualHeight(256))/2 );

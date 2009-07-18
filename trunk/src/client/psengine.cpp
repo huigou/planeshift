@@ -505,14 +505,14 @@ bool psEngine::Initialize (int level)
         }
 
 
-        if ( ! paws->LoadWidget("data/gui/splash.xml") )
+        if ( ! paws->LoadWidget("splash.xml") )
             return false;
-        if ( ! paws->LoadWidget("data/gui/ok.xml") )
+        if ( ! paws->LoadWidget("ok.xml") )
             return false;
-        if ( ! paws->LoadWidget("data/gui/quitinfo.xml") )
+        if ( ! paws->LoadWidget("quitinfo.xml") )
             return false;
 
-        LoadPawsWidget( "Yes / No dialog",         "data/gui/yesno.xml" );
+        LoadPawsWidget("Yes / No dialog","yesno.xml" );
 
         //Load confirmation information for duels
         if (!LoadDuelConfirm())
@@ -708,7 +708,7 @@ bool psEngine::Initialize (int level)
 
 
         // This widget requires NetManager to exist so must be in this stage
-        if ( ! paws->LoadWidget("data/gui/charpick.xml") )
+        if ( ! paws->LoadWidget("charpick.xml") )
             return false;
 
         // Load effects now, before we have actors
@@ -1266,8 +1266,8 @@ void psEngine::LoadGame()
 
     case LS_LOAD_SCREEN:
     {
-        paws->LoadWidget("data/gui/loadwindow.xml");
-        LoadPawsWidget( "Active Magic window",     "data/gui/activemagicwindow.xml" );
+        paws->LoadWidget("loadwindow.xml");
+        LoadPawsWidget("Active Magic window","activemagicwindow.xml" );
         HideWindow("ActiveMagicWindow");
 
         pawsLoadWindow* window = dynamic_cast <pawsLoadWindow*> (paws->FindWidget("LoadWindow"));
@@ -1393,56 +1393,56 @@ void psEngine::LoadGame()
     case LS_CREATE_GUI:
     {
         // Must be first!!!
-        if (!paws->LoadWidget( "data/gui/control.xml" ))
+        if (!paws->LoadWidget( "control.xml" ))
         {
             GetMainWidget()->LockPlayer();
             FatalError("The toolbar couldn't be loaded\nPlease check your logs");
             return;
         }
 
-        LoadPawsWidget( "Status window",           "data/gui/infowindow.xml" );
-        LoadPawsWidget( "Ignore window",           "data/gui/ignorewindow.xml" );
-        LoadPawsWidget( "Communications window",   "data/gui/chat.xml" );
-        LoadPawsWidget( "Inventory window",        "data/gui/inventory.xml" );
-        LoadPawsWidget( "Item description window", "data/gui/itemdesc.xml" );
-        LoadPawsWidget( "Container description window",    "data/gui/containerdesc.xml" );
-        LoadPawsWidget( "Book Reading window", "data/gui/readbook.xml" );
-        LoadPawsWidget( "Interact menu",           "data/gui/interact.xml" );
-        LoadPawsWidget( "Group status window",     "data/gui/group.xml" );
-        LoadPawsWidget( "Exchange window",         "data/gui/exchange.xml" );
-        LoadPawsWidget( "Glyph window",            "data/gui/glyph.xml" );
-        LoadPawsWidget( "Merchant window",         "data/gui/merchant.xml" );
-        LoadPawsWidget( "Petition window",         "data/gui/petition.xml" );
-        LoadPawsWidget( "Petititon GM window",     "data/gui/petitiongm.xml" );
-        LoadPawsWidget( "Spellbook window",        "data/gui/spellwindow.xml" );
-        LoadPawsWidget( "Shortcut window",         "data/gui/shortcutwindow.xml" );
-        LoadPawsWidget( "GM GUI window",           "data/gui/gmguiwindow.xml" );
-        LoadPawsWidget( "Control panel",           "data/gui/configwindow.xml" );
-        LoadPawsWidget( "Fingering window",        "data/gui/fingering.xml" );
-        LoadPawsWidget( "Guild information window","data/gui/guildwindow.xml" );
-        LoadPawsWidget( "Loot window",             "data/gui/loot.xml" );
-        LoadPawsWidget( "Skills window",           "data/gui/skillwindow.xml" );
-        LoadPawsWidget( "PetStats window",         "data/gui/petstatwindow.xml" );
-        LoadPawsWidget( "Quest notebook window",   "data/gui/questnotebook.xml" );
-        LoadPawsWidget( "Spell cast status window","data/gui/spellcancelwindow.xml" );
-        LoadPawsWidget( "Help window",             "data/gui/helpwindow.xml" );
-        LoadPawsWidget( "Buddy window",            "data/gui/buddy.xml" );
-        LoadPawsWidget( "Action Location window",  "data/gui/actionlocation.xml" );
-        LoadPawsWidget( "Details window",          "data/gui/detailwindow.xml" );
-        LoadPawsWidget( "Character description window",    "data/gui/chardescwindow.xml" );
-        LoadPawsWidget( "Quest reward window",     "data/gui/questrewardwindow.xml" );
-        LoadPawsWidget( "GM Spawn interface",      "data/gui/gmspawn.xml" );
-        //LoadPawsWidget( "Active Magic window",     "data/gui/activemagicwindow.xml" );
-        LoadPawsWidget( "Small Inventory Window",  "data/gui/smallinventory.xml" );
-        LoadPawsWidget( "GM Action Location Edit", "data/gui/gmaddeditaction.xml" );
-        LoadPawsWidget( "Crafting",                "data/gui/craft.xml");
-        LoadPawsWidget( "Tutorial",                "data/gui/tutorial.xml");
-        LoadPawsWidget( "Sketch",                  "data/gui/illumination.xml");
-        LoadPawsWidget( "GameBoard",               "data/gui/gameboard.xml");
-        LoadPawsWidget( "Writing window",          "data/gui/bookwriting.xml");
-        LoadPawsWidget( "NPC dialog window",       "data/gui/dialog.xml");
+        LoadPawsWidget( "Status window",           "infowindow.xml" );
+        LoadPawsWidget( "Ignore window",           "ignorewindow.xml" );
+        LoadPawsWidget( "Communications window",   "chat.xml" );
+        LoadPawsWidget( "Inventory window",        "inventory.xml" );
+        LoadPawsWidget( "Item description window", "itemdesc.xml" );
+        LoadPawsWidget( "Container description window","containerdesc.xml" );
+        LoadPawsWidget( "Book Reading window", "readbook.xml" );
+        LoadPawsWidget( "Interact menu",           "interact.xml" );
+        LoadPawsWidget( "Group status window",     "group.xml" );
+        LoadPawsWidget( "Exchange window",         "exchange.xml" );
+        LoadPawsWidget( "Glyph window",            "glyph.xml" );
+        LoadPawsWidget( "Merchant window",         "merchant.xml" );
+        LoadPawsWidget( "Petition window",         "petition.xml" );
+        LoadPawsWidget( "Petititon GM window",     "petitiongm.xml" );
+        LoadPawsWidget( "Spellbook window",        "spellwindow.xml" );
+        LoadPawsWidget( "Shortcut window",         "shortcutwindow.xml" );
+        LoadPawsWidget( "GM GUI window",           "gmguiwindow.xml" );
+        LoadPawsWidget( "Control panel",           "configwindow.xml" );
+        LoadPawsWidget( "Fingering window",        "fingering.xml" );
+        LoadPawsWidget( "Guild information window","guildwindow.xml" );
+        LoadPawsWidget( "Loot window",             "loot.xml" );
+        LoadPawsWidget( "Skills window",           "skillwindow.xml" );
+        LoadPawsWidget( "PetStats window",         "petstatwindow.xml" );
+        LoadPawsWidget( "Quest notebook window",   "questnotebook.xml" );
+        LoadPawsWidget( "Spell cast status window","spellcancelwindow.xml" );
+        LoadPawsWidget( "Help window",             "helpwindow.xml" );
+        LoadPawsWidget( "Buddy window",            "buddy.xml" );
+        LoadPawsWidget( "Action Location window",  "actionlocation.xml" );
+        LoadPawsWidget( "Details window",          "detailwindow.xml" );
+        LoadPawsWidget( "Character description window","chardescwindow.xml" );
+        LoadPawsWidget( "Quest reward window",     "questrewardwindow.xml" );
+        LoadPawsWidget( "GM Spawn interface",      "gmspawn.xml" );
+        //LoadPawsWidget( "Active Magic window",   "activemagicwindow.xml" );
+        LoadPawsWidget( "Small Inventory Window",  "smallinventory.xml" );
+        LoadPawsWidget( "GM Action Location Edit", "gmaddeditaction.xml" );
+        LoadPawsWidget( "Crafting",                "craft.xml");
+        LoadPawsWidget( "Tutorial",                "tutorial.xml");
+        LoadPawsWidget( "Sketch",                  "illumination.xml");
+        LoadPawsWidget( "GameBoard",               "gameboard.xml");
+        LoadPawsWidget( "Writing window",          "bookwriting.xml");
+        LoadPawsWidget( "NPC dialog window",       "dialog.xml");
 
-        LoadCustomPawsWidgets("/this/data/gui/customwidgetslist.xml");
+        LoadCustomPawsWidgets("/data/gui/customwidgetslist.xml");
 
         HideWindow("DescriptionEdit");
         HideWindow("ItemDescWindow");

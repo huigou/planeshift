@@ -64,7 +64,7 @@ bool pawsStyles::LoadStyles(const csString & fileName)
         csString name = styleNode->GetAttributeValue("name");
         if (styles.In(csString(name)))
         {
-            Error2("Warning: PAWS style %s defined more than once", name.GetData());
+            Error2("Warning: PAWS style '%s' defined more than once", name.GetData());
         }
         else
             styles.Put(csString(name), styleNode);

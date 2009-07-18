@@ -33,7 +33,7 @@ pawsConfigChatTabs::pawsConfigChatTabs()
 
 bool pawsConfigChatTabs::Initialize()
 {
-    if (!LoadFromFile("data/gui/configchattabs.xml"))
+    if (!LoadFromFile("configchattabs.xml"))
         return false;
 
     return true;

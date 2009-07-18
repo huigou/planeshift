@@ -44,7 +44,7 @@ pawsConfigSound::pawsConfigSound()
 
 bool pawsConfigSound::Initialize()
 {
-    if ( ! LoadFromFile("data/gui/configsound.xml"))
+    if ( ! LoadFromFile("configsound.xml"))
         return false;
 
     return true;

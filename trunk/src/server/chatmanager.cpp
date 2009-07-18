@@ -727,6 +727,7 @@ void ChatManager::SendAudioFileHash(Client *client, const char *voiceFile, csTic
                             timestamp,                                          //hash id value
                             NULL);                                              //null buffer means check in client-side cache first
     msg.SendMessage();
+    printf("Cached file hash message sent.");
 }
 
 void ChatManager::SendAudioFile(Client *client, const char *voiceFileHash)
@@ -755,6 +756,7 @@ void ChatManager::SendAudioFile(Client *client, const char *voiceFileHash)
 
             psCachedFileMessage msg(client->GetClientNum(),client->GetOrderedMessageChannel(MSGTYPE_CACHEFILE)->IncrementSequenceNumber(), timestamp, buffer);
             msg.SendMessage();
+            printf("Cached file message sent to client with buffer attached.\n");
             return;
         }
     }

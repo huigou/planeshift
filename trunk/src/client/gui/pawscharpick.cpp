@@ -333,7 +333,7 @@ void pawsCharacterPickerWindow::ReturnToLoginWindow()
     pawsLoginWindow* loginWin = (pawsLoginWindow*)PawsManager::GetSingleton().FindWidget("LoginWindow");
     if ( !loginWin )
     {
-        PawsManager::GetSingleton().LoadWidget("data/gui/loginwindow.xml");
+        PawsManager::GetSingleton().LoadWidget("loginwindow.xml");
         loginWin = (pawsLoginWindow*)PawsManager::GetSingleton().FindWidget("LoginWindow");
     }
 
@@ -350,13 +350,13 @@ void pawsCharacterPickerWindow::SetupCharacterCreationScreens()
     {
         static const char* screenFiles[] = 
         {
-           "data/gui/charcreate.xml",
-           "data/gui/birth.xml",
-           "data/gui/parents.xml",
-           "data/gui/childhood.xml",
-           "data/gui/lifeevents.xml",           
-           "data/gui/paths.xml",
-           "data/gui/summary.xml",
+           "charcreate.xml",
+           "birth.xml",
+           "parents.xml",
+           "childhood.xml",
+           "lifeevents.xml",           
+           "paths.xml",
+           "summary.xml",
            0
         };
     

@@ -422,8 +422,8 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
             fontName = fontAttribute->GetAttributeValue("name");
             defaultFontSize = fontAttribute->GetAttributeValueAsFloat("size");
             fontSize = defaultFontSize;
-            bool scaleToScreen = fontAttribute->GetAttributeValueAsBool("resizetoscreen", false);
-            scaleFont = fontAttribute->GetAttributeValueAsBool("scalefont", true);
+            bool scaleToScreen = fontAttribute->GetAttributeValueAsBool("resizetoscreen", true);
+            scaleFont = fontAttribute->GetAttributeValueAsBool("scalefont", false);
 
             if ( this->resizeToScreen && scaleToScreen )
                 fontSize *= PawsManager::GetSingleton().GetFontFactor();
@@ -1349,7 +1349,7 @@ void pawsWidget::CreateWidgetConfigWindow()
     if ( widget ==NULL)
     {
         configWindow = new WidgetConfigWindow();
-        configWindow->LoadFromFile("data/gui/widgetconfigwindow.xml");
+        configWindow->LoadFromFile("widgetconfigwindow.xml");
         configWindow->SetConfigurableWidget(this);
         configWindow->SetName(title);
         configWindow->Show();
