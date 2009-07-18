@@ -838,8 +838,8 @@ void pawsChatWindow::SaveChatSettings()
     csRef<iDocument> doc = docsys->CreateDocument();
     csRef<iDocumentNode> root,chatNode, colorNode, optionNode,looseNode,filtersNode,
                          badWordsNode,badWordsTextNode,cNode, logNode, selectTabStyleNode,
-                         echoScreenInSystemNode, mainBracketsNode, yourColorMixNode,mainTabNode,
-                         flashingNode, flashingOnCharNode, node;
+                         echoScreenInSystemNode, mainBracketsNode, yourColorMixNode, joindefaultchannelNode,
+                         mainTabNode, flashingNode, flashingOnCharNode, node;
 
     root = doc->CreateRoot();
 
@@ -864,6 +864,10 @@ void pawsChatWindow::SaveChatSettings()
     yourColorMixNode = optionNode->CreateNodeBefore(CS_NODE_ELEMENT,0);
     yourColorMixNode->SetValue("yourcolormix");
     yourColorMixNode->SetAttributeAsInt("value",(int)settings.yourColorMix);
+    
+    joindefaultchannelNode = optionNode->CreateNodeBefore(CS_NODE_ELEMENT,0);
+    joindefaultchannelNode->SetValue("joindefaultchannel");
+    joindefaultchannelNode->SetAttributeAsInt("value",(int)settings.joindefaultchannel);
 
     looseNode = optionNode->CreateNodeBefore(CS_NODE_ELEMENT,0);
     looseNode->SetValue("loose");
