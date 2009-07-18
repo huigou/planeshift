@@ -1,4 +1,13 @@
-﻿*** 2009-07-18 by Tristan Cragnolini
+﻿*** 2009-07-18 by Keith Fulton
+- Changed PAWS skin loading to preferentially load widget xml files
+  from the skin mounted, then the localization directory, then
+  the default /data/gui directory as a last resort.  This means
+  someone like Cherppow can deliver an entire working skin in
+  one zip file, saved under /art/skins and then it's usable.
+- Some additional debug printfs in voicing file protocol, which is 
+  still mysteriously not reliable all of a sudden.
+
+*** 2009-07-18 by Tristan Cragnolini
 - Fixed PS#1465 - Client fails to detect if server DNS information becomes available 
 - Remove 'after rain' when turning automatic weather off, see PS#2130
 
