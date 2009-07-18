@@ -135,7 +135,7 @@ PawsManager::PawsManager(iObjectRegistry* object, const char* skin, const char* 
     csString stylePath = csString(skin) + "/styles.xml";
     if (!styles->LoadStyles(stylePath))
     {
-        Error1("Failed to load styles from skin: %s.");
+        Error1("Failed to load styles from skin: %s.",stylePath.GetData() );
     }
 
     // now load standard styles for anything else
