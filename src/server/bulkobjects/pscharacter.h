@@ -252,7 +252,7 @@ class MathScript;
 class NpcResponse;
 class gemActor;
 struct psGuildLevel;
-struct psGuildMember;
+class psGuildMember;
 class psLootMessage;
 class psMerchantInfo;
 class psQuestListMessage;
