@@ -112,7 +112,7 @@ public:
     inline uint GetGFXFeatures() { return gfxFeatures; }
 
     /// Loads a skin and loades unregistered resources
-    bool LoadAdditionalSkin(const char* zip);
+    bool LoadSkinDefinition(const char* zip);
 
     /** @brief Add a new factory to the list that the manager knows about.
      *
@@ -359,6 +359,9 @@ protected:
      * of the mouse cursor.
      */
     void PositionDragDropWidget();
+
+    /// VFS Mount directory mapping to the specified skin zip file
+    csString vfsPathToSkin;
 
     /// Localized file object registry.
     psLocalization * localization;

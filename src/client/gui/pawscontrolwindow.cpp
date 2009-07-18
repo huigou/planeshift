@@ -510,7 +510,7 @@ void pawsControlWindow::NextStyle()
     // restart the client
     //Increase style
     style++;
-    csString filename = "/this/data/gui/control_styles.xml";
+    csString filename = "control_styles.xml";
     if (!psengine->GetVFS()->Exists(filename.GetData()))
     {
         Error2( "Could not find XML: %s",filename.GetData());

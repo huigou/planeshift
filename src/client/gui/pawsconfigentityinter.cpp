@@ -40,7 +40,7 @@ pawsConfigEntityInteraction::pawsConfigEntityInteraction()
 
 bool pawsConfigEntityInteraction::Initialize()
 {
-    return LoadFromFile("data/gui/configentityinter.xml");
+    return LoadFromFile("configentityinter.xml");
 }
 
 bool pawsConfigEntityInteraction::PostSetup()

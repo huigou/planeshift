@@ -66,7 +66,7 @@ bool pawsCreditsWindow::PostSetup()
     font = PawsManager::GetSingleton().GetPrefs()->GetDefaultFont();
 
 
-    csString filename = "/this/data/gui/credits_config.xml";
+    csString filename = "credits_config.xml";
     if (!psengine->GetVFS()->Exists(filename.GetData()))
     {
         Error2( "Could not find XML: %s",filename.GetData());

@@ -115,14 +115,13 @@ csString psLocalization::FindLocalizedFile(const csString & shortPath)
 {
     csString fullPath;
 
-    fullPath = "/this/lang/";
-    fullPath += language;
-    fullPath += "/";
-    fullPath += shortPath;
+    fullPath.Format("/this/lang/%s/%s",language,shortPath);
     if (FileExists(fullPath))
         return fullPath;
-    else if (FileExists(shortPath))
-        return shortPath;
+
+    fullPath = "/this/data/gui/" + shortPath;
+    if (FileExists(fullPath))
+        return fullPath;
     else
     {    
         fullPath = DEFAULT_FILE_PATH + shortPath;

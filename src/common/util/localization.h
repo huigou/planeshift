@@ -53,16 +53,18 @@ public:
      * It tries to search for the file in directory of the current language /this/lang/<language>/<shortPath> .
      * If not found, then the standard path is simply returned back with "/this/" prefix.
      *
-     * Examples of shortPath:   "data/gui/charpick.xml"
+     * Examples of shortPath:   "charpick.xml"
      *                          "art/buttons/group.gif"
      */
     csString FindLocalizedFile(const csString & shortPath);
     
-    // Translates string 'orig' using stringtable of the current language.
+    /// Translates string 'orig' using stringtable of the current language.
     const csString& Translate(const csString & orig);
 
-protected:
+    /// This is a utility function which queries for vfs and then checks for the file
     bool FileExists(const csString & fileName);
+
+protected:
     void ClearStringTable();
     void WriteStringTable();
     

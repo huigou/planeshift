@@ -165,11 +165,11 @@ void pawsCreationMain::ResetAllWindows()
 {  
     const char *names[] =
     {
-        "CharBirth", "data/gui/birth.xml",
-        "Childhood", "data/gui/childhood.xml",
-        "LifeEvents","data/gui/lifeevents.xml",
-        "Parents","data/gui/parents.xml", 
-        /*"Paths","data/gui/paths.xml",*/ 
+        "CharBirth", "birth.xml",
+        "Childhood", "childhood.xml",
+        "LifeEvents","lifeevents.xml",
+        "Parents","parents.xml", 
+        /*"Paths","paths.xml",*/ 
         NULL
     };
     

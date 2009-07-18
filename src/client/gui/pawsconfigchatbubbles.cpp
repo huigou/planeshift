@@ -448,7 +448,7 @@ void pawsConfigChatBubbles::drawFrame()
 
 bool pawsConfigChatBubbles::Initialize()
 {
-    if ( ! LoadFromFile("data/gui/configchatbubbles.xml"))
+    if ( ! LoadFromFile("configchatbubbles.xml"))
         return false;
 
     return true;

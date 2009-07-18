@@ -131,6 +131,14 @@ PawsManager::PawsManager(iObjectRegistry* object, const char* skin, const char* 
     csString borderFile = cfg->GetStr("PlaneShift.GUI.BorderFile", "/this/data/gui/borderlist.xml");
 
     styles = new pawsStyles( objectReg );
+    // Load custom styles first to override base styles
+    csString stylePath = csString(skin) + "/styles.xml";
+    if (!styles->LoadStyles(stylePath))
+    {
+        Error1("Failed to load styles from skin: %s.");
+    }
+
+    // now load standard styles for anything else
     if (!styles->LoadStyles("/this/data/gui/styles.xml"))
     {
         Error1("Failed to load PAWS styles, all style application attempts will be ignored");
@@ -138,7 +146,7 @@ PawsManager::PawsManager(iObjectRegistry* object, const char* skin, const char* 
         styles = NULL;
     }
 
-    if(!LoadAdditionalSkin(skin))
+    if(!LoadSkinDefinition(skin))
     {
         Error2("Failed to load skin %s!", skin);
     }
@@ -146,7 +154,7 @@ PawsManager::PawsManager(iObjectRegistry* object, const char* skin, const char* 
     // Mount base skin to satisfy unskinned elements
     if(skinBase)
     {
-        if(!LoadAdditionalSkin(skinBase))
+        if(!LoadSkinDefinition(skinBase))
         {
             Error2("Couldn't load base skin '%s'!\n", skinBase);
         }
@@ -312,7 +320,7 @@ bool PawsManager::HandleDoubleClick( iEvent& ev )
 
 
 
-bool PawsManager::LoadAdditionalSkin(const char* zip)
+bool PawsManager::LoadSkinDefinition(const char* zip)
 {
     //Mount the skin
     printf("Mounting skin: %s\n", zip);
@@ -358,8 +366,14 @@ bool PawsManager::LoadAdditionalSkin(const char* zip)
         Error1("There was no mount_path found in the skin.xml file.  Please check the <xml> node to make sure mount_path is defined");
         return false;
     }
-    csString mountPlace = mount->GetContentsValue();
-    mountPlace.ReplaceAll("\\","/");
+
+    if (vfsPathToSkin.Length() == 0) 
+    {
+        vfsPathToSkin = mount->GetContentsValue();
+        vfsPathToSkin.ReplaceAll("\\","/");
+        vfsPathToSkin.Append("/");
+    }
+    csString mountPath = mount->GetContentsValue();
 
     // Unmount the temp location and remount real
     vfs->Unmount(TEMP_SKIN_MOUNT,realPath->GetData());
@@ -369,18 +383,18 @@ bool PawsManager::LoadAdditionalSkin(const char* zip)
     for(size_t i = 0; i < mounts->GetSize(); i++)
     {
         csString mount = mounts->Get(i);
-        if(mount == mountPlace || mount == mountPlace + "/")
+        if(mount == mountPath || mount == mountPath + "/")
         {
-            Error3("The mount place (%s) for skin '%s' is already taken!",mountPlace.GetData(),zip);
+            Error3("The mount place (%s) for skin '%s' is already taken!",mountPath.GetData(),zip);
             return false;
         }
     }
 
     // mount
-    vfs->Mount(mountPlace,realPath->GetData());
+    vfs->Mount(mountPath,realPath->GetData());
 
     // Load additional styles
-    csString stylesFile = mountPlace + "/styles.xml";
+    csString stylesFile = mountPath + "/styles.xml";
     if (vfs->Exists(stylesFile) && !styles->LoadStyles(stylesFile))
     {
         Error2("Couldn't load styles file: %s", stylesFile.GetData());
@@ -388,7 +402,7 @@ bool PawsManager::LoadAdditionalSkin(const char* zip)
     }
 
     // Load additional resources
-    csString imageFile = mountPlace + "/imagelist.xml";
+    csString imageFile = mountPath + "/imagelist.xml";
     textureManager->LoadImageList(imageFile);
 
     return true;
@@ -640,10 +654,10 @@ csRef<iDocumentNode> PawsManager::ParseWidgetFile( const char* widgetFile )
     doc=xml->CreateDocument();
     error=doc->Parse(buff);
     if ( error )
-        {
-            Error3("Parse error in %s: %s", widgetFile, error);
-            return NULL;
-        }
+    {
+        Error3("Parse error in %s: %s", widgetFile, error);
+        return NULL;
+    }
 
     csRef<iDocumentNode> root;
     if((root=doc->GetRoot()))
@@ -663,7 +677,13 @@ csRef<iDocumentNode> PawsManager::ParseWidgetFile( const char* widgetFile )
 
 bool PawsManager::LoadWidget( const char* widgetFile )
 {
-    csString fullPath = localization->FindLocalizedFile(widgetFile);
+    // check for file in skin zip, then localized, then /data/gui, then /this
+    csString fullPath;
+    fullPath = vfsPathToSkin + widgetFile;
+    if (!localization->FileExists(fullPath) )
+    {
+        fullPath = localization->FindLocalizedFile(widgetFile);
+    }
     csRef<iDocumentNode> topNode = ParseWidgetFile( fullPath );
     if (!topNode)
     {
@@ -857,7 +877,7 @@ void PawsManager::CreateWarningBox( const char* message, pawsWidget* notify, boo
     pawsOkBox* ok = (pawsOkBox*)FindWidget("OkWindow");
     if ( !ok )
     {
-        LoadWidget("data/gui/ok.xml");
+        LoadWidget("ok.xml");
         ok = (pawsOkBox*)FindWidget("OkWindow");
         if ( !ok )
         {
@@ -884,7 +904,7 @@ void PawsManager::CreateYesNoBox( const char* message, pawsWidget* notify, bool 
 
     if ( !yesNoBox )
     {
-        LoadWidget("data/gui/yesno.xml");
+        LoadWidget("yesno.xml");
         yesNoBox = (pawsYesNoBox*)FindWidget("YesNoWindow");
         if ( !yesNoBox )
         {

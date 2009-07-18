@@ -80,7 +80,7 @@ void pawsConfigShadows::drawFrame()
 
 bool pawsConfigShadows::Initialize()
 {
-    if ( ! LoadFromFile("data/gui/configshadows.xml"))
+    if ( ! LoadFromFile("configshadows.xml"))
         return false;
        
     return true;

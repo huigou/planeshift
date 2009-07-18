@@ -52,7 +52,7 @@ void pawsSplashWindow::Draw()
     }
     
     psengine->Initialize(1);
-    PawsManager::GetSingleton().LoadWidget("data/gui/loginwindow.xml");
+    PawsManager::GetSingleton().LoadWidget("loginwindow.xml");
     Hide();
     PawsManager::GetSingleton().GetMouse()->ChangeImage("Standard Mouse Pointer");
     PawsManager::GetSingleton().GetMouse()->Hide(false);

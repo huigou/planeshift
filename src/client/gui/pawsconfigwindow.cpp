@@ -41,7 +41,7 @@
 #include "paws/pawsyesnobox.h"
 #include "paws/pawsokbox.h"
 
-#define TREE_FILE_NAME "data/gui/configtree.xml"
+#define TREE_FILE_NAME "configtree.xml"
 #define RESET_OPTIONS_CONFIRM_TEXT "Do you really want to reset options to default values?"
 
 // config window layout:

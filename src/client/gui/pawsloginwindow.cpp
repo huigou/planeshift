@@ -288,7 +288,7 @@ bool pawsLoginWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
             pawsWidget* wdg = PawsManager::GetSingleton().FindWidget("CreditsWindow");
             if (!wdg)
             {
-                PawsManager::GetSingleton().LoadWidget("data/gui/creditswindow.xml");
+                PawsManager::GetSingleton().LoadWidget("creditswindow.xml");
                 Hide();
                 return true;
             }
@@ -333,7 +333,7 @@ void pawsLoginWindow::ConnectToServer()
       
     // Set up the picker window here. 
     if ( PawsManager::GetSingleton().FindWidget("CharPickerWindow") == 0 )
-        PawsManager::GetSingleton().LoadWidget("data/gui/charpick.xml");
+        PawsManager::GetSingleton().LoadWidget("charpick.xml");
 
     if (passwdChanged) 
     {

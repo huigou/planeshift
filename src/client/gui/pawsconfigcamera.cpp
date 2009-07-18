@@ -95,7 +95,7 @@ bool pawsConfigCamera::CreateTree()
     tree->SetTreeDecorator(new pawsStdTreeDecorator(tree, graphics2D, 0x0000ff, 0x00ffff, 13));
     AddChild(tree);
 
-    if ( ! tree->LoadFromFile("data/gui/configcamera.xml"))
+    if ( ! tree->LoadFromFile("configcamera.xml"))
         return false;
 
     root = tree->GetRoot();

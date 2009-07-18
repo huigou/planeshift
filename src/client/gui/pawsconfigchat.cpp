@@ -97,7 +97,7 @@ pawsConfigChat::pawsConfigChat()
 
 bool pawsConfigChat::Initialize()
 {
-    if ( ! LoadFromFile("data/gui/configchat.xml"))
+    if ( ! LoadFromFile("configchat.xml"))
         return false;
        
     csRef<psCelClient> celclient = psengine->GetCelClient();

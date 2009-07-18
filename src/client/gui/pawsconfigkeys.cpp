@@ -109,7 +109,7 @@ bool pawsConfigKeys::CreateTree()
     tree->SetTreeDecorator(new pawsStdTreeDecorator(tree, graphics2D, 0x0000ff, 0x00ffff, 13));
     AddChild(tree);
 
-    if ( !tree->LoadFromFile("data/gui/configkeys.xml") )
+    if ( !tree->LoadFromFile("configkeys.xml") )
         return false;
 
     root = tree->GetRoot();
@@ -117,7 +117,7 @@ bool pawsConfigKeys::CreateTree()
         CreateTreeWidgets(root);
     ****************/
 
-	if (!LoadFromFile("data/gui/configkeys.xml") )
+	if (!LoadFromFile("configkeys.xml") )
 		return false;
 
     return true;

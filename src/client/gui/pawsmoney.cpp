@@ -33,7 +33,7 @@
 #include "inventorywindow.h"
 
 
-#define MONEY_FILE_NAME  "data/gui/money.xml"
+#define MONEY_FILE_NAME  "money.xml"
 #define SLOT_SIZE        48
 
 csRef<iDocumentNode> FindFirstWidget(iDocument * doc);
