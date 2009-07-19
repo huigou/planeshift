@@ -48,6 +48,7 @@
 #include "progressionmanager.h"
 #include "cachemanager.h"
 #include "iserver/idal.h"
+#include "tutorialmanager.h"
 
 
 // The number of characters per email account
@@ -800,6 +801,10 @@ void CharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
     {
         raceinfo->GetStartingLocation(x,y,z,yrot,sectorname);
         sectorinfo = CacheManager::GetSingleton().GetSectorInfoByName(sectorname);
+        
+        //As we aren't going in the tutorial disable the tutorial help messages disable them
+        for(int i = 0; i < TutorialManager::TUTOREVENTTYPE_COUNT; i++)
+            chardata->CompleteHelpEvent(i);
     }
     else
     {
