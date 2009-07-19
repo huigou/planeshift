@@ -52,6 +52,8 @@ public:
         if ( !wnd )
         {
             Error1("Cannot Find YesNo Window");
+           qc->DeleteQuestion(questionID);
+           return;
         }
 
         wnd->MoveTo( (PawsManager::GetSingleton().GetGraphics2D()->GetWidth() - wnd->GetActualWidth(512) ) / 2,
@@ -70,7 +72,7 @@ public:
     /** Destructs window and itself */
     void CleanUp()
     {
-        wnd->DeleteYourself();
+        wnd->Hide(); //keep window for reuse.
         qc->DeleteQuestion(questionID);
         //our object has been destructed at this point
     }
