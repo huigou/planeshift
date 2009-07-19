@@ -275,41 +275,18 @@ void psCharAppearance::ApplyRider(GEMClientActor* rider)
         return;
     }
 
-    csString keyName = "socket_back";
-
-    // Variables for transform to be specified
-    float trans_x = 0, trans_y = 0, trans_z = 0, rot_x = -PI/2, rot_y = 0, rot_z = 0;
-
-    meshWrap->QuerySceneNode()->SetParent( baseMesh->QuerySceneNode ());
-    socket->SetMeshWrapper( meshWrap );
-
-    socket->SetTransform( csTransform(csZRotMatrix3(rot_z)*csYRotMatrix3(rot_y)*csXRotMatrix3(rot_x), csVector3(trans_x,trans_y,trans_z)) );
-
-    usedSlots.PushSmart("back");
-
+    ProcessAttach(meshWrap, socket);
 }
 
 void psCharAppearance::RemoveRider(GEMClientActor* rider)
 {
-    csRef<iSpriteCal3DSocket> socket = state->FindSocket("back");
-    if ( !socket )
-    {
-        Error1("\"back\" socket not found.");
-        return;
-    }
-
-    csRef<iMeshWrapper> meshWrap = rider->pcmesh;
-
     csVector3 rpos = rider->GetPosition();
     float rrot = rider->GetRotation();
+    
+    Detach("back", false);
 
-    meshWrap->QuerySceneNode()->SetParent(0);
-    meshWrap->GetMovable()->SetSector(baseMesh->GetMovable()->GetSectors()->Get(0));
-
+    rider->pcmesh->GetMovable()->SetSector(baseMesh->GetMovable()->GetSectors()->Get(0));
     rider->SetPosition(rpos, rrot, rider->GetSector());
-
-    socket->SetMeshWrapper(NULL);
-    usedSlots.Delete("back");
 }
 
 void psCharAppearance::ApplyEquipment(csString& equipment)
@@ -612,8 +589,16 @@ bool psCharAppearance::Attach(const char* socketName, const char* meshFactName)
 void psCharAppearance::ProcessAttach(csRef<iMeshFactoryWrapper> factory, const char* meshFactName, csRef<iSpriteCal3DSocket> socket)
 {
      csRef<iMeshWrapper> meshWrap = engine->CreateMeshWrapper( factory, meshFactName );
-     meshWrap->GetFlags().Set(CS_ENTITY_NODECAL);
-     const char* socketName = socket->GetName();
+
+    ProcessAttach(meshWrap, socket);
+
+    psengine->GetCelClient()->HandleItemEffect(factory->QueryObject()->GetName(), socket->GetMeshWrapper(), false, socket->GetName(), &effectids, &lightids);
+}
+
+void psCharAppearance::ProcessAttach(csRef<iMeshWrapper> meshWrap, csRef<iSpriteCal3DSocket> socket)
+{
+    meshWrap->GetFlags().Set(CS_ENTITY_NODECAL);
+    const char* socketName = socket->GetName();
 
     // Given a socket name of "righthand", we're looking for a key in the form of "socket_righthand"
     csString keyName = "socket_";
@@ -621,7 +606,7 @@ void psCharAppearance::ProcessAttach(csRef<iMeshFactoryWrapper> factory, const c
 
     // Variables for transform to be specified
     float trans_x = 0, trans_y = 0.0, trans_z = 0, rot_x = -PI/2, rot_y = 0, rot_z = 0;
-    csRef<iObjectIterator> it = factory->QueryObject()->GetIterator();
+    csRef<iObjectIterator> it = meshWrap->GetFactory()->QueryObject()->GetIterator();
 
     while ( it->HasNext() )
     {
@@ -637,8 +622,6 @@ void psCharAppearance::ProcessAttach(csRef<iMeshFactoryWrapper> factory, const c
     socket->SetTransform( csTransform(csZRotMatrix3(rot_z)*csYRotMatrix3(rot_y)*csXRotMatrix3(rot_x), csVector3(trans_x,trans_y,trans_z)) );
 
     usedSlots.PushSmart(socketName);
-
-    psengine->GetCelClient()->HandleItemEffect(factory->QueryObject()->GetName(), socket->GetMeshWrapper(), false, socketName, &effectids, &lightids);
 }
 
 void psCharAppearance::ProcessAttach(csRef<iMaterialWrapper> material, const char* materialName, const char* partName)
@@ -875,7 +858,7 @@ void psCharAppearance::ClearEquipment(const char* slot)
 }
 
 
-bool psCharAppearance::Detach(const char* socketName )
+bool psCharAppearance::Detach(const char* socketName, bool removeItem )
 {
     if (!socketName)
     {
@@ -899,7 +882,8 @@ bool psCharAppearance::Detach(const char* socketName )
     {
         meshWrap->QuerySceneNode()->SetParent (0);
         socket->SetMeshWrapper( NULL );
-        engine->RemoveObject( meshWrap );
+        if(removeItem)
+            engine->RemoveObject( meshWrap );
     }
 
     usedSlots.Delete(socketName);

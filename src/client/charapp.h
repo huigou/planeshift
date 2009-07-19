@@ -194,7 +194,7 @@ private:
       *
       * @return True if the item was successfully removed from the socket.
       */
-    bool Detach(const char* socketName);
+    bool Detach(const char* socketName, bool removeItem = true);
     
     /** Set the default material back onto a particular part of the model.
       * @param part The part we want to set the default material back on.
@@ -209,6 +209,7 @@ private:
     void DefaultMesh(const char* part);
 
     void ProcessAttach(csRef<iMeshFactoryWrapper> factory, const char* meshFactName, csRef<iSpriteCal3DSocket> socket);
+    void ProcessAttach(csRef<iMeshWrapper> meshWrap, csRef<iSpriteCal3DSocket> socket);
     void ProcessAttach(csRef<iMaterialWrapper> material, const char* materialName, const char* partName);
                
     csRef<iMeshWrapper> baseMesh;                           // The mesh that is our base model.
