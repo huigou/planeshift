@@ -55,6 +55,7 @@ public:
         // ENEMY_SELECT  = 8, // Now that you have a monster selected, you can attack it by pressing 'A' and watching it die.
         // ENEMY_DEATH   = 9, // When you kill a monster, it is often carrying things you can use.  Right-click and select the Hand to loot the monster.
         // LOOT_COMPLETE = 10 // Now that you picked up your loot, check your inventory by pressing 'I' and see that you have those items now.
+        TUTOREVENTTYPE_COUNT,
     };
 
     TutorialManager(ClientConnectionSet *pCCS);
