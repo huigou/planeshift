@@ -174,6 +174,8 @@ public:
                                           csString& description);
 
      virtual void HandleMessage(MsgEntry *me, Client *client) { };
+     
+     /// handle message from client
      virtual void HandleGMEventCommand(MsgEntry *me, Client *client);
 
      /** @brief Removes a player from any GM event they maybe involved with (eg player being deleted)
@@ -233,7 +235,7 @@ private:
      *  @param gmID: player id of the GM.
      *  @param status: event of status looked for.
      *  @param startIndex: start index into array.
-     *  @return GMEvent*: ptr to GM event structure.
+     *  @return GMEvent*: ptr to GM event structure, or NULL
      */
     GMEvent* GetGMEventByGM(PID gmID, GMEventStatus status, int& startIndex);
 
@@ -242,12 +244,16 @@ private:
      *  @param eventName: Name of the event.
      *  @param status: event of status looked for.
      *  @param startIndex: start index into array.
-     *  @return GMEvent*: ptr to GM event structure.
+     *  @return GMEvent*: ptr to GM event structure, or NULL
      */
     GMEvent* GetGMEventByName(csString eventName, GMEventStatus status, int& startIndex);
 
     /** @brief Find any event that a player may be/was registered to, returns index.
      *
+     * get the index into the gmEvents array for the next event of a specified
+     * status for a particular player. Note startIndex will be modified upon
+     * return.
+     * 
      *  @param playerID: the player index.
      *  @param status: event of status looked for.
      *  @param startIndex: start index into array.

@@ -1,4 +1,4 @@
-/** gmeventmanager.cpp
+/* gmeventmanager.cpp
  *
  * Copyright (C) 2006 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
@@ -121,7 +121,6 @@ bool GMEventManager::Initialise(void)
     return false;
 }
 
-/// GameMaster creates a new event for players.
 bool GMEventManager::AddNewGMEvent (Client* client, csString eventName, csString eventDescription)
 {
     int newEventID, zero=0;
@@ -183,7 +182,6 @@ bool GMEventManager::AddNewGMEvent (Client* client, csString eventName, csString
     return true;
 }
 
-/// GM registers player into his/her event
 bool GMEventManager::RegisterPlayerInGMEvent (Client* client, Client* target)
 {
     PID playerID;
@@ -254,7 +252,6 @@ bool GMEventManager::RegisterPlayerInGMEvent (Client* client, Client* target)
     return true;
 }
 
-/// Register all players within range (upto 100m)
 bool GMEventManager::RegisterPlayersInRangeInGMEvent (Client *client, float range)
 {
     int clientnum = client->GetClientNum(), zero = 0;
@@ -323,7 +320,6 @@ bool GMEventManager::CompleteGMEvent (Client* client, csString eventName)
     return CompleteGMEvent(client, theEvent->gmID, (theEvent->gmID == client->GetPID()));
 }
 
-/// GM completes their event
 bool GMEventManager::CompleteGMEvent (Client* client, PID gmID, bool byTheControllerGM)
 {
     int zero = 0;
@@ -374,7 +370,6 @@ bool GMEventManager::CompleteGMEvent (Client* client, PID gmID, bool byTheContro
     return true;
 }
 
-/// GM removes player from incomplete event
 bool GMEventManager::RemovePlayerFromGMEvent (Client* client, Client* target)
 {
     PID playerID;
@@ -423,7 +418,6 @@ bool GMEventManager::RemovePlayerFromGMEvent (Client* client, Client* target)
     return true;
 }
 
-/// Reward player(s). Create reward item(s) and put in player's inventory if possible.
 bool GMEventManager::RewardPlayersInGMEvent (Client* client,
                                              RangeSpecifier rewardRecipient,
                                              float range,
@@ -543,7 +537,6 @@ bool GMEventManager::RewardPlayersInGMEvent (Client* client,
     return true;
 }
 
-/// return all events, running & complete, for a specified player
 int GMEventManager::GetAllGMEventsForPlayer (PID playerID,
                                              csArray<int>& completedEvents,
                                              int& runningEventAsGM,
@@ -620,7 +613,6 @@ void GMEventManager::SetEvalStatus(PID PlayerID, GMEvent *Event, bool NewStatus)
     }
 }
 
-/// handle message from client
 void GMEventManager::HandleGMEventCommand(MsgEntry* me, Client* client)
 {
     psGMEventInfoMessage msg(me);
@@ -708,8 +700,6 @@ void GMEventManager::HandleGMEventCommand(MsgEntry* me, Client* client)
     }
 }
 
-/// remove players complete references to GM events they were involved with,
-/// e.g. if a character is deleted.
 bool GMEventManager::RemovePlayerFromGMEvents(PID playerID)
 {
     int runningEventIDAsGM;
@@ -791,7 +781,6 @@ bool GMEventManager::RemovePlayerFromGMEvents(PID playerID)
     return true;
 }
 
-/// GM assumes control of ongoing event.
 bool GMEventManager::AssumeControlOfGMEvent(Client* client, csString eventName)
 {
     int zero=0;
@@ -899,7 +888,6 @@ void GMEventManager::WriteGMEventEvaluation(Client* client, GMEvent* Event, csSt
     }
 }
 
-/// returns details of an event
 GMEventStatus GMEventManager::GetGMEventDetailsByID (int id,
                                                      csString& name,
                                                      csString& description)
@@ -919,7 +907,6 @@ GMEventStatus GMEventManager::GetGMEventDetailsByID (int id,
     return EMPTY;
 }
 
-/// returns the specified GM Event
 GMEventManager::GMEvent* GMEventManager::GetGMEventByID(int id)
 {
     for (size_t e = 0; e < gmEvents.GetSize(); e++)
@@ -931,7 +918,6 @@ GMEventManager::GMEvent* GMEventManager::GetGMEventByID(int id)
     return NULL;
 }
 
-/// returns a RUNNING event for a GM, or NULL
 GMEventManager::GMEvent* GMEventManager::GetGMEventByGM(PID gmID, GMEventStatus status, int& startIndex)
 {
     for (size_t e = startIndex; e < gmEvents.GetSize(); e++)
@@ -944,7 +930,6 @@ GMEventManager::GMEvent* GMEventManager::GetGMEventByGM(PID gmID, GMEventStatus 
     return NULL;
 }
 
-/// returns a RUNNING event by name or NULL
 GMEventManager::GMEvent* GMEventManager::GetGMEventByName(csString eventName, GMEventStatus status, int& startIndex)
 {
     for (size_t e = startIndex; e < gmEvents.GetSize(); e++)
@@ -957,9 +942,6 @@ GMEventManager::GMEvent* GMEventManager::GetGMEventByName(csString eventName, GM
     return NULL;
 }
 
-/// get the index into the gmEvents array for the next event of a specified
-/// status for a particular player. Note startIndex will be modified upon
-/// return.
 GMEventManager::GMEvent* GMEventManager::GetGMEventByPlayer(PID playerID, GMEventStatus status, int& startIndex)
 {
     for (size_t e = startIndex; e < gmEvents.GetSize(); e++)
@@ -991,7 +973,6 @@ size_t GMEventManager::GetPlayerFromEvent(PID& PlayerID, GMEvent *Event)
     return SIZET_NOT_FOUND;
 }
 
-/// reward an individual player.
 void GMEventManager::RewardPlayer(int clientnum, Client* target, short stackCount, psItemStats* basestats)
 {
     // generate the prize item
@@ -1024,14 +1005,12 @@ void GMEventManager::RewardPlayer(int clientnum, Client* target, short stackCoun
     psserver->SendSystemInfo(clientnum, "%s has not been rewarded.", target->GetName());
 }
 
-/// allocates the next GM event id
 int GMEventManager::GetNextEventID(void)
 {
     // TODO this is just too simple
     return nextEventID++;
 }
 
-/// player discards GM event
 void GMEventManager::DiscardGMEvent(Client* client, int eventID)
 {
     int runningEventIDAsGM;
@@ -1088,7 +1067,6 @@ void GMEventManager::DiscardGMEvent(Client* client, int eventID)
     }
 }
 
-/// Actually remove player reference from GMEvent.
 bool GMEventManager::RemovePlayerRefFromGMEvent(GMEvent* gmEvent, Client* client, PID playerID)
 {
     size_t PlayerIndex = GetPlayerFromEvent(playerID, gmEvent);
