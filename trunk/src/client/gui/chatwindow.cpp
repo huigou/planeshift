@@ -2097,7 +2097,8 @@ csString pawsChatWindow::GetBracket(int type) //according to the type return the
 void pawsChatWindow::ChatOutput(const char* data, int colour, int type, bool flashEnabled, bool hasCharName, int hotkeyChannel)
 {
     csString s = data;
-    if (settings.enableBadWordsFilterIncoming && type != CHAT_SERVER_INFO)
+    if (settings.enableBadWordsFilterIncoming && type != CHAT_SERVER_INFO && 
+        type != CHAT_NPC && type != CHAT_NPC_ME && type != CHAT_NPC_MY && type != CHAT_NPC_NARRATE)
     {
         BadWordsFilter(s);
     }
