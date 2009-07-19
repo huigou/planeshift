@@ -1,4 +1,12 @@
-﻿*** 2009-07-18 by Keith Fulton
+﻿*** 2009-07-19 by Stefano Angeleri
+- Fixed crash on questions windows showing patch by lanarel
+- Fixed PS#1171 - Popup tutor error
+- Fixed PS#3005 - Client crash due to removal of "SystemText" widget
+- Fix for zodiac loading patch by lanarel
+- Fixed PS#842 - NPCs get chat filtered, we need to not replace text from 
+  npcs/npcclient by disabling filters for npc dialogs sent from the server
+
+*** 2009-07-18 by Keith Fulton
 - Changed PAWS skin loading to preferentially load widget xml files
   from the skin mounted, then the localization directory, then
   the default /data/gui directory as a last resort.  This means
