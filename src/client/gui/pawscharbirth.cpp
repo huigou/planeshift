@@ -76,7 +76,12 @@ bool pawsCharBirth::PostSetup()
     }
 
     // Load the zodiacs
-    csRef<iDocument> doc = ParseFile(psengine->GetObjectRegistry(),"zodiacs.xml");
+    csRef<iDocument> doc = ParseFile(psengine->GetObjectRegistry(),"/this/data/gui/zodiacs.xml");
+    if (!doc)
+    {
+        //error message will be shown in ParseFile
+        return false;
+    }
     csRef<iDocumentNode> root = doc->GetRoot();    
     if (!root)
     {
