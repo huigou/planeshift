@@ -73,9 +73,9 @@ class psLinearMovement;
 class UnresolvedPos
 {
 public:
-    GEMClientObject * entity;  // our object ..
+    GEMClientObject * entity;  ///< our object ..
 
-    csVector3 pos;             // .. and its position that could not be set
+    csVector3 pos;             ///< .. and its position that could not be set
     float rot;
     csString sector;
 
@@ -132,7 +132,7 @@ private:
 
     csHash<ItemEffect*, csString> effectItems;
 
-    // Load items that have effects attached to them into the effectItems array.
+    /// Load items that have effects attached to them into the effectItems array.
     void LoadEffectItems();
 
     bool ignore_others;
@@ -175,7 +175,7 @@ public:
 
     ZoneHandler* GetZoneHandler() { return zonehandler; }
 
-    /* Check if the item has an effect attached to it and process it if so. */
+    /** Check if the item has an effect attached to it and process it if so. */
     void HandleItemEffect( const char* factName, csRef<iMeshWrapper> mw, bool onGround = true, const char* slot = 0,
                            csHash<int, csString> *effectids = 0, csHash<int, csString> *lightids = 0 );
 
@@ -564,7 +564,7 @@ protected:
     unsigned int groupID;
     EID ownerEID;
     csString guildName;
-    uint8_t  DRcounter;  /// increments in loop to prevent out of order packet overwrites of better data
+    uint8_t  DRcounter;  ///< increments in loop to prevent out of order packet overwrites of better data
     bool DRcounter_set;
 
     virtual void PostLoad(bool nullmesh);
@@ -582,7 +582,7 @@ protected:
     size_t movementMode;
     uint8_t serverMode;
 
-    // Post load data.
+    /// Post load data.
     struct PostLoadData
     {
         csVector3 pos;
@@ -625,7 +625,7 @@ protected:
     psSolid* solid;
 
 private:
-    // Post load data.
+    /// Post load data.
     struct PostLoadData
     {
         csVector3 pos;
