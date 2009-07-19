@@ -20,12 +20,13 @@
 #ifndef PAWS_SHORTCUT_WINDOW
 #define PAWS_SHORTCUT_WINDOW 
 
-// CS INCLUDES
+// PS INCLUDES
 #include "paws/pawswidget.h"
 #include "paws/pawsbutton.h"
 #include "net/cmdbase.h"
 #include "gui/pawscontrolwindow.h"
 #include "gui/pawsconfigkeys.h"
+#include "chatwindow.h"
 
 #include "pscharcontrol.h"
 
@@ -67,8 +68,8 @@ public:
     void LoadDefaultCommands();
     
 protected:
-    /// System text for easy access
-    pawsMessageTextBox* systemText;
+    /// chat window for easy access
+    pawsChatWindow* chatWindow;
     void LoadCommands(const char * fileName);
     void SaveCommands(void);
     CmdHandler *cmdsource;

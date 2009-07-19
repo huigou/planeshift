@@ -19,7 +19,7 @@
 
 #ifndef PAWS_GMGUI_WINDOW
 #define PAWS_GMGUI_WINDOW
-// CS INCLUDES
+// PS INCLUDES
 #include "paws/pawswidget.h"
 #include "paws/pawsbutton.h"
 #include "paws/pawstextbox.h"
@@ -27,6 +27,7 @@
 #include "paws/pawslistbox.h"
 #include "paws/pawsstringpromptwindow.h"
 #include "net/cmdbase.h"
+#include "chatwindow.h"
 
 class pawsGmGUIWindow : public pawsWidget, public psCmdBase, public iOnStringEnteredAction
 {
@@ -74,7 +75,7 @@ public:
     int GetCurrentTab() { return currentTab; };
 
 protected:
-    pawsMessageTextBox* systemText;
+    pawsChatWindow* chatWindow;
     CmdHandler *cmdsource;
 
     csRef<iVFS> vfs;

@@ -71,7 +71,7 @@ pawsGmGUIWindow::pawsGmGUIWindow()
     xml = psengine->GetXMLParser ();
 
     cmdsource = psengine->GetCmdHandler();
-    systemText = (pawsMessageTextBox*)PawsManager::GetSingleton().FindWidget("SystemText");
+    chatWindow = (pawsChatWindow*)PawsManager::GetSingleton().FindWidget("ChatWindow");
     actionXML.Clear();
     isVisible = true;
     isInvincible = false;
@@ -262,7 +262,7 @@ bool pawsGmGUIWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
     case -10:
         errorMessage = cmdsource->Publish( cmdToExectute );
         if ( errorMessage )
-            systemText->AddMessage( errorMessage );
+            chatWindow->ChatOutput( errorMessage );
     case 1000: // Players tab
     case 1002: // Action Tab
     case 1003: // Attributes Tab
@@ -542,7 +542,7 @@ bool pawsGmGUIWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
         {
             errorMessage = cmdsource->Publish( cmd );
             if ( errorMessage )
-                systemText->AddMessage( errorMessage );
+                chatWindow->ChatOutput( errorMessage );
         }
     }
     if(updateAfter)

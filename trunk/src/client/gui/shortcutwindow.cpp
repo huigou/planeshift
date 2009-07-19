@@ -77,7 +77,7 @@ pawsShortcutWindow::pawsShortcutWindow()
     LoadCommands(fileName);
 
     cmdsource = psengine->GetCmdHandler();
-    systemText = (pawsMessageTextBox*)PawsManager::GetSingleton().FindWidget("SystemText");
+    chatWindow = (pawsChatWindow*)PawsManager::GetSingleton().FindWidget("ChatWindow");
     subWidget = NULL;
     shortcutText = NULL;
     textBox = NULL;
@@ -648,7 +648,7 @@ void pawsShortcutWindow::ExecuteCommand(int shortcutNum, bool local)
             }
             const char* errorMessage = cmdsource->Publish( command );
             if ( errorMessage )
-                systemText->AddMessage( errorMessage );
+                chatWindow->ChatOutput( errorMessage );
             
         }
         
