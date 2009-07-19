@@ -47,10 +47,13 @@ public:
               psQuestionClient * qc) 
                     : psQuestion(questionID)
     {
-        wnd = new pawsYesNoBox;
-        PawsManager::GetSingleton().GetMainWidget()->AddChild(wnd);
-        wnd->LoadFromFile("yesno.xml");
-        //wnd->CenterToMouse();
+        wnd = (pawsYesNoBox*) PawsManager::GetSingleton().FindWidget("YesNoWindow");
+
+        if ( !wnd )
+        {
+            Error1("Cannot Find YesNo Window");
+        }
+
         wnd->MoveTo( (PawsManager::GetSingleton().GetGraphics2D()->GetWidth() - wnd->GetActualWidth(512) ) / 2,
                        (PawsManager::GetSingleton().GetGraphics2D()->GetHeight() - wnd->GetActualHeight(256))/2 );
         wnd->SetID();
