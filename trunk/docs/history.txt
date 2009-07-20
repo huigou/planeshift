@@ -1,4 +1,11 @@
-﻿*** 2009-07-19 by Stefano Angeleri
+﻿*** 2009-07-19 by Keith Fulton
+- Fixed hardcoded path to controlwindow styles.
+- Fixed hardcoded path to pawsMoney definition file 
+- Fixed pawsMoney creation being hardcoded to certain layouts and
+  sizes despite being loaded from a file, which is retarded.
+- Changed and centralized how paths to widget files are determined.
+
+*** 2009-07-19 by Stefano Angeleri
 - Fixed crash on questions windows showing patch by lanarel
 - Fixed PS#1171 - Popup tutor error
 - Fixed PS#3005 - Client crash due to removal of "SystemText" widget
