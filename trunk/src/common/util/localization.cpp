@@ -25,6 +25,7 @@
 
 // COMMON INCLUDES
 #include "util/log.h"
+#include "paws/pawsmanager.h"
 
 // CLIENT INCLUDES
 #include "localization.h"
@@ -114,6 +115,11 @@ void psLocalization::SetLanguage(const csString & _lang)
 csString psLocalization::FindLocalizedFile(const csString & shortPath)
 {
     csString fullPath;
+
+    PawsManager &paws = PawsManager::GetSingleton();
+    fullPath = paws.getVFSPathToSkin() + shortPath;
+    if (FileExists(fullPath))
+        return fullPath;
 
     fullPath.Format("/this/lang/%s/%s",language.GetDataSafe(),shortPath.GetDataSafe());
     if (FileExists(fullPath))

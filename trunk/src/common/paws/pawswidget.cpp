@@ -883,7 +883,7 @@ void pawsWidget::SetRelativeFramePos( int x, int y )
     if (parent != NULL)
         MoveRect(screenFrame, parent->ScreenFrame().xmin + x, parent->ScreenFrame().ymin + y);
     else
-        MoveRect(screenFrame, y, y);
+        MoveRect(screenFrame, x, y);
     
     for ( size_t x = 0; x < children.GetSize(); x++ )        
         children[x]->RecalcScreenPositions();         

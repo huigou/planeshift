@@ -63,6 +63,7 @@ public:
     void SetContainer( int containerID );
     void Drag( bool dragOn );
 
+    void Draw();
     void OnUpdateData(const char *dataname,PAWSData& value);
 
 protected:
