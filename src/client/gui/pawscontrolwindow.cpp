@@ -42,6 +42,7 @@
 #include "paws/pawsbutton.h"
 #include "paws/pawsmanager.h"
 #include "paws/pawsyesnobox.h"
+#include "util/localization.h"
 
 #include "net/cmdhandler.h"
 #include "net/clientmsghandler.h"
@@ -510,7 +511,8 @@ void pawsControlWindow::NextStyle()
     // restart the client
     //Increase style
     style++;
-    csString filename = "control_styles.xml";
+    csString filename;
+    filename = PawsManager::GetSingleton().GetLocalization()->FindLocalizedFile("control_styles.xml");
     if (!psengine->GetVFS()->Exists(filename.GetData()))
     {
         Error2( "Could not find XML: %s",filename.GetData());

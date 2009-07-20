@@ -350,6 +350,8 @@ public:
 
     MathEnvironment & ExtraScriptVars() { return extraScriptVars; }
 
+    csString &getVFSPathToSkin() { return vfsPathToSkin; }
+
 protected:
     MathEnvironment extraScriptVars;
 

@@ -58,8 +58,7 @@ bool pawsMoney::Setup(iDocumentNode * node)
 {
     csString borderStr;
     
-    borderStr = node->GetAttributeValue("border");
-    border = borderStr == "yes";
+    border = node->GetAttributeValueAsBool("border");
     
     spacing = node->GetAttributeValueAsInt("spacing");
     return CreateGUI();
@@ -83,13 +82,20 @@ bool pawsMoney::CreateGUI()
         return false;
     }
     
+    // This is a weird case because we need to remember the left,top from the original widget spec
+    // but the width and height from this one
+    csRect rect=this->DefaultFrame(); // save them here
+    if (!LoadAttributes(widgetNode))
+        return false;
+    this->SetRelativeFramePos(rect.xmin,rect.ymin); // restore them here
+
     if ( ! LoadChildren(widgetNode) )
     {
         Error2("Failed to load children from %s", MONEY_FILE_NAME);
         return false;
     }
     
-    SetRelativeFrameSize(GetActualWidth(100), GetActualHeight(100));
+    // SetRelativeFrameSize(GetActualWidth(100), GetActualHeight(100));
     return true;
 }
 
@@ -117,25 +123,27 @@ bool pawsMoney::PostSetup()
     circles->SetEmptyOnZeroCount(false);
     circles->PlaceItem("MoneyCircles", "");
     circles->SetSlotID( MONEY_CIRCLES );
-    if (border) circles->SetBackground("Bulk Item Slot");
+    //if (border) 
+    //    circles->SetBackground("Bulk Item Slot");
             
-    octas    =  dynamic_cast <pawsSlot*> (FindWidget("Octas"));
+    octas = dynamic_cast <pawsSlot*> (FindWidget("Octas"));
     if (octas == NULL)
         return false;
     octas->SetEmptyOnZeroCount(false);                
     octas->PlaceItem("MoneyOctas", "");
     octas->SetSlotID( MONEY_OCTAS );    
-    octas->SetRelativeFramePos(GetActualWidth(SLOT_SIZE+spacing), 0);
-    if (border) octas->SetBackground("Bulk Item Slot");
+    //octas->SetRelativeFramePos(GetActualWidth(SLOT_SIZE+spacing), 0);
+    //if (border) 
+    //    octas->SetBackground("Bulk Item Slot");
     
-    hexas    =  dynamic_cast <pawsSlot*> (FindWidget("Hexas"));
+    hexas =  dynamic_cast <pawsSlot*> (FindWidget("Hexas"));
     if (hexas == NULL)
         return false;
     hexas->SetEmptyOnZeroCount(false);        
     hexas->PlaceItem("MoneyHexas", "");
     hexas->SetSlotID( MONEY_HEXAS );   
-    hexas->SetRelativeFramePos(0, GetActualHeight(SLOT_SIZE+spacing));
-    if (border) hexas->SetBackground("Bulk Item Slot");
+    //hexas->SetRelativeFramePos(0, GetActualHeight(SLOT_SIZE+spacing));
+    //if (border) hexas->SetBackground("Bulk Item Slot");
     
     trias    =  dynamic_cast <pawsSlot*> (FindWidget("Trias"));
     if (trias == NULL)
@@ -143,10 +151,15 @@ bool pawsMoney::PostSetup()
     trias->SetEmptyOnZeroCount(false);        
     trias->PlaceItem("MoneyTrias", "");
     trias->SetSlotID( MONEY_TRIAS );     
-    trias->SetRelativeFramePos(GetActualWidth(SLOT_SIZE+spacing), GetActualHeight(SLOT_SIZE+spacing));
-    if (border) trias->SetBackground("Bulk Item Slot");
+    //trias->SetRelativeFramePos(GetActualWidth(SLOT_SIZE+spacing), GetActualHeight(SLOT_SIZE+spacing));
+    //if (border) trias->SetBackground("Bulk Item Slot");
     
     return true;
+}
+
+void pawsMoney::Draw()
+{
+    pawsWidget::Draw();
 }
 
 void pawsMoney::Drag( bool dragOn )
