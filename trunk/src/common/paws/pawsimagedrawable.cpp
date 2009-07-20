@@ -20,7 +20,10 @@
 #include <psconfig.h>
 
 #include <csutil/xmltiny.h>
+#include <iengine/engine.h>
+#include <iengine/texture.h>
 #include <iutil/databuff.h>
+#include <iutil/object.h>
 #include <igraphic/imageio.h>
 #include <igraphic/image.h>
 
@@ -40,60 +43,72 @@ bool pawsImageDrawable::PreparePixmap()
     if (imageFileLocation.Length() == 0) // tileable background
         return true;
 
-    csRef<iVFS> vfs = csQueryRegistry<iVFS>(PawsManager::GetSingleton().GetObjectRegistry());
-    csRef<iImageIO> imageLoader = csQueryRegistry<iImageIO>(PawsManager::GetSingleton().GetObjectRegistry());
-    graphics3D  =  PawsManager::GetSingleton().GetGraphics3D();
-
-    csRef<iTextureManager> textureManager = graphics3D->GetTextureManager();
-
-    int textureFormat = textureManager->GetTextureFormat();
-
-    csRef<iImage> ifile;
-    csRef<iDataBuffer> buf( vfs->ReadFile( imageFileLocation, false ) );
-
-    if (!buf.IsValid())
+    // Check if already loaded first.
+    csRef<iEngine> engine = csQueryRegistry<iEngine>(PawsManager::GetSingleton().GetObjectRegistry());
+    iTextureWrapper* tex = engine->GetTextureList()->FindByName(imageFileLocation);
+    if(tex)
     {
-        Error2( "Could not open image: >%s<", (const char*)imageFileLocation );
-        return false;
+        textureHandle = tex->GetTextureHandle();
+    }
+    else // Else load.
+    {
+        csRef<iVFS> vfs = csQueryRegistry<iVFS>(PawsManager::GetSingleton().GetObjectRegistry());
+        csRef<iImageIO> imageLoader = csQueryRegistry<iImageIO>(PawsManager::GetSingleton().GetObjectRegistry());
+        graphics3D  =  PawsManager::GetSingleton().GetGraphics3D();
+        csRef<iTextureManager> textureManager = graphics3D->GetTextureManager();
+
+        int textureFormat = textureManager->GetTextureFormat();
+
+        csRef<iImage> ifile;
+        csRef<iDataBuffer> buf( vfs->ReadFile( imageFileLocation, false ) );
+
+        if (!buf.IsValid())
+        {
+            Error2( "Could not open image: >%s<", (const char*)imageFileLocation );
+            return false;
+        }
+
+        ifile = imageLoader->Load( buf, textureFormat );
+
+
+        if ( !ifile )
+        {
+            Error2( "Image >%s< could not be loaded by the iImageID", 
+                (const char*)imageFileLocation );
+            return false;
+        }
+
+        textureHandle = textureManager->RegisterTexture( ifile, 
+            CS_TEXTURE_2D |
+            CS_TEXTURE_3D |
+            CS_TEXTURE_NOMIPMAPS |
+            //  This doesn't seem to have an effect, and crashes some Macs.
+            CS_TEXTURE_CLAMP |
+            CS_TEXTURE_NPOTS);
+
+        if (!textureHandle)
+        {
+            Error1("Failed to Register Texture");
+            return false;
+        }
+
+        // Store wrapped handle in the engine for later use.
+        tex = engine->GetTextureList()->NewTexture(textureHandle);
+        tex->QueryObject()->SetName(imageFileLocation);
+
+        // If colour key exists.
+        if ( defaultTransparentColourBlue  != -1 &&
+            defaultTransparentColourGreen != -1 &&
+            defaultTransparentColourRed   != -1 )
+        {
+            textureHandle->SetKeyColor( defaultTransparentColourRed, 
+                defaultTransparentColourGreen, 
+                defaultTransparentColourBlue );
+        }
     }
 
-    ifile = imageLoader->Load( buf, textureFormat );
-
-
-    if ( !ifile )
-    {
-        Error2( "Image >%s< could not be loaded by the iImageID", 
-            (const char*)imageFileLocation );
-        return false;
-    }
-
-    width = ifile->GetWidth();
-    height = ifile->GetHeight();
-
-
-    textureHandle = textureManager->RegisterTexture( ifile, 
-        CS_TEXTURE_2D |
-        CS_TEXTURE_3D |
-        CS_TEXTURE_NOMIPMAPS |
-        //  This doesn't seem to have an effect, and crashes some Macs.
-        CS_TEXTURE_CLAMP |
-        CS_TEXTURE_NPOTS);
-
-    if (!textureHandle)
-    {
-        Error1("Failed to Register Texture");
-        return false;
-    }
-
-    // If colour key exists.
-    if ( defaultTransparentColourBlue  != -1 &&
-        defaultTransparentColourGreen != -1 &&
-        defaultTransparentColourRed   != -1 )
-    {
-        textureHandle->SetKeyColor( defaultTransparentColourRed, 
-            defaultTransparentColourGreen, 
-            defaultTransparentColourBlue );
-    }
+    // Get other texture data.
+    tex->GetTextureHandle()->GetOriginalDimensions(width, height);
 
     if ( textureRectangle.Width() == 0 || textureRectangle.Height() == 0 )
     {
