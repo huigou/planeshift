@@ -1880,7 +1880,7 @@ gemActor::gemActor( psCharacter *chardata,
                        float rotangle,
                        int clientnum) :
   gemObject(chardata->GetCharFullName(),factname,myInstance,room,pos,rotangle,clientnum),
-psChar(chardata), factions(NULL), mount(NULL), DRcounter(0), forceDRcounter(0), lastDR(0), lastV(0), lastSentSuperclientPos(0, 0, 0),
+psChar(chardata), factions(NULL), controller(NULL), mount(NULL), DRcounter(0), forceDRcounter(0), lastDR(0), lastV(0), lastSentSuperclientPos(0, 0, 0),
 lastSentSuperclientInstance(-1), activeReports(0), isFalling(false), invincible(false), visible(true), viewAllObjects(false),
 movementMode(0), isAllowedToMove(true), atRest(true), pcmove(NULL),
 nevertired(false), infinitemana(false), instantcast(false), safefall(false), givekillexp(false), attackable(false)
@@ -2891,39 +2891,6 @@ bool gemActor::InitCharData(Client* c)
 
     return SetupCharData();
 
-}
-
-bool gemActor::SetMount(gemActor *newMount, bool mounting)
-{
-    if(!newMount)
-    {
-        Error1("No mount precised for SetMount()");
-        return false;
-    }
-    else if(GetMount() && mounting)
-    {
-        psserver->SendSystemError(GetClientID(), "You are already on a mount.");
-        return false;
-    }
-    else if(newMount->GetMount())
-    {
-        psserver->SendSystemError(GetClientID(), "%s is on a mount.", newMount->GetName());
-        return false;
-    }
-    else
-    {
-        this->mount = mounting ? newMount : NULL;
-        psMountingMessage mountmsg(GetClientID(), newMount->GetEID(), GetEID(), mounting);
-        CS_ASSERT( mountmsg.valid );
-        
-        psserver->GetEventManager()->Multicast( mountmsg.msg, GetMulticastClients(),
-                0, // Multicast to all without exception
-                PROX_LIST_ANY_RANGE );
-
-        // the actor stays suspend in midair after dismounting, and this does not seem to help...
-        //FallBegan(GetPosition(), GetSector());
-        return true;
-    }
 }
 
 void gemActor::SetTextureParts(const char *parts)

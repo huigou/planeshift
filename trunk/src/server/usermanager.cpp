@@ -1886,13 +1886,6 @@ void UserManager::HandleMount(psUserCmdMessage& msg, Client *client)
 {
     // Add some check to see if the player is allowed to mount
     
-    // check if already mounted
-    // For now, player can only mount if the mount is its pet or its familiar
-
-    // If player can mount other players, should add some check to prevent circular mounting
-    
-    // If accepted, do whatever we need server side, and send a message back to the client
-
     gemObject* mount;
     GEMSupervisor *gem = GEMSupervisor::GetSingletonPtr();
     
@@ -1954,13 +1947,12 @@ void PendingMountInvite::HandleAnswer(const csString & answer)
     PendingInvite::HandleAnswer(answer);
 
     if (answer == "yes")
-    if(!rider->SetMount(mount, true))
-        return;
+        psserver->usermanager->Mount(rider, mount);
 }
 
 void UserManager::Mount(gemActor *rider, gemActor *mount)
 {
-    if(rider->SetMount(mount, true))
+    if(EntityManager::GetSingleton().AddRideRelation(rider, mount))
         psserver->SendSystemOK(rider->GetClientID(),
                 "You are mounting %s", mount->GetName());
     else
@@ -1981,9 +1973,8 @@ void UserManager::HandleUnmount(psUserCmdMessage& msg, Client *client)
         return;
     }
 
-    client->GetActor()->SetMount(client->GetActor()->GetMount(), false);
+    EntityManager::GetSingleton().RemoveRideRelation(client->GetActor(), client->GetActor()->GetMount());
 
-    //psserver->SendSystemOK(client->GetClientNum(), "In the future, that will take you off your mount!");
     return;
 }
 

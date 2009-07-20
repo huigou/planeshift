@@ -151,7 +151,9 @@ public:
      */
     csHash<gemObject*, EID> & GetAllGEMS() { return entities_by_eid; }
 
-    // Search functions
+    /** @name Search functions
+     */
+    //@{
     /** @brief Find an entity ID for an item.
      *
      *  @param item The psItem that we want to find the entity ID for.
@@ -166,6 +168,7 @@ public:
     gemActor  *FindPlayerEntity(PID player_id);
     gemNPC    *FindNPCEntity(PID npc_id);
     gemItem   *FindItemEntity(uint32 item_id);
+    //@}
 
     EID  CreateEntity(gemObject *obj);
     void AddEntity(gemObject *obj, EID objEid); ///< Ugly function, used for gemAL
@@ -262,7 +265,7 @@ protected:
 
     uint32              nextEID;             ///< The next ID available for an object.
 
-    // Stored here to save expensive csQueryRegistry calls
+    /// Stored here to save expensive csQueryRegistry calls
     csRef<iEngine> engine;
 };
 
@@ -324,7 +327,9 @@ public:
     void RegisterCallback(iDeleteObjectCallback * receiver) { receivers.Push(receiver); }
     void UnregisterCallback(iDeleteObjectCallback * receiver) { receivers.Delete(receiver); }
 
-    // Mesh related functions
+    /** @name Mesh related functions
+     */
+    //@{
     iMeshWrapper *GetMeshWrapper();
     csString GetMesh() { return factname.Current(); }
     OverridableMesh & GetOverridableMesh() { return factname; }
@@ -339,8 +344,11 @@ public:
     int FindAnimIndex(const char *name);
 
     csArray<gemObject*> *GetObjectsInRange( float range );
+    //@}
 
-    // Proxlist related functions
+    /** @name Proxlist related functions
+     */
+    //@{
     ProximityList *GetProxList() { return proxlist; };
     csArray<PublishDestination>& GetMulticastClients();
 
@@ -351,6 +359,7 @@ public:
 
     void SetAlwaysWatching(bool w) { alwaysWatching = w; }
     bool AlwaysWatching() { return alwaysWatching; }
+    //@}
 
     float RangeTo(gemObject *obj, bool ignoreY = false, bool ignoreInstance = false);
 
@@ -366,12 +375,17 @@ public:
      */
     virtual void Dump();
 
-    // Networking functions
+    /** @name Networking functions
+     */
+    //@{
     virtual void Broadcast(int clientnum, bool control);
     virtual void Send( int clientnum, bool control, bool to_superclient) {}
     virtual void SendGroupMessage(MsgEntry *me) { };
+    //@}
 
-    // Overridden functions in child classes
+    /** @name Overridden functions in child classes
+     */
+    //@{
     virtual PID GetPID() { return 0; }
     virtual int GetGuildID() { return 0; }
     virtual psGuildInfo* GetGuild() { return 0; }
@@ -392,6 +406,7 @@ public:
     virtual bool SeesObject(gemObject * object, float range) { return false; }
 
     virtual gemObject* GetOwner() { return NULL; }
+    //@}
 
 protected:
     bool valid;                                 ///< Is object fully loaded
@@ -420,9 +435,8 @@ protected:
 
 //-----------------------------------------------------------------------------
 
-/*
-* Any PS Object with which a player may have interaction (i.e. clickable).
-*/
+/** Any PS Object with which a player may have interaction (i.e. clickable).
+ */
 class gemActiveObject : public gemObject
 {
 public:
@@ -621,9 +635,8 @@ public:
 
 //-----------------------------------------------------------------------------
 
-/*
-    Struct for damage history
-*/
+/** Struct for damage history
+ */
 struct DamageHistory
 {
     csWeakRef<gemActor> attacker_ref;
@@ -635,9 +648,8 @@ struct DamageHistory
 
 //-----------------------------------------------------------------------------
 
-/*
-* Any semi-autonomous object, either a player or an NPC.
-*/
+/** Any semi-autonomous object, either a player or an NPC.
+ */
 class gemActor :  public gemObject, public iDeathNotificationObject
 {
 protected:
@@ -646,6 +658,9 @@ protected:
     FactionSet *factions;
     PID pid; ///< Player ID (also known as character ID or PID)
     csRef<PlayerGroup> group;
+
+    //csArray<gemActor *> riders;
+    gemActor *controller;
     
     gemActor *mount;
 
@@ -783,9 +798,11 @@ public:
 
     void SetTextureParts(const char *parts);
     void SetEquipment(const char *equip);
-    
+
     gemActor* GetMount() { return mount; }
-    bool SetMount(gemActor *newMount, bool mounting);
+    void SetMount(gemActor *newMount) { mount = newMount; }
+    gemActor* GetRider() { return controller; }
+    void SetRider(gemActor *newRider) { controller = newRider; }
 
     PSCHARACTER_MODE GetMode() { return player_mode; }
     const char* GetModeStr(); ///< Return a string name of the mode

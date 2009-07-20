@@ -126,6 +126,9 @@ public:
     virtual void HandleMessage(MsgEntry* me,Client *client) {};
 
     bool RemoveActor(gemObject *actor);
+
+    bool AddRideRelation(gemActor *rider, gemActor *mount);
+    void RemoveRideRelation(gemActor *rider, gemActor *mount);
     
     void SetReady(bool flag);
     bool IsReady() { return ready; }
