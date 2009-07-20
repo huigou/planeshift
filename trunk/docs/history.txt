@@ -1,4 +1,9 @@
-﻿*** 2009-07-19 by Keith Fulton
+﻿*** 2009-07-20 by Stefano Angeleri
+- Added some additional alliance notifications on join/part/creation/disband
+- fixed PS#1555 - Chat filters stop filtering "badwords" if they were part 
+  of a previous word in the sentence
+
+*** 2009-07-19 by Keith Fulton
 - Fixed hardcoded path to controlwindow styles.
 - Fixed hardcoded path to pawsMoney definition file 
 - Fixed pawsMoney creation being hardcoded to certain layouts and
