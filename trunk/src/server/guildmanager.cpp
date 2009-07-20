@@ -1098,7 +1098,7 @@ void GuildManager::RequirementsDeadline(int guild_id)
 
     if (!guild->MeetsMinimumRequirements())
     {
-        printf("Removing guild <%s> for failure to meet minimum requirements.\n",guild->GetName().GetDataSafe() );
+        printf("Removing guild <%s> for failure to meet minimum requirements.\n",guild->GetName().GetDataSafe());
         EndGuild(guild,0);
     }
 }
@@ -2321,9 +2321,10 @@ public:
         
         if(client->GetActor())
         {
-            text.Format("The guild %s has been added in the alliance!", guild->GetName() );
+            csString text;
+            text.Format("The guild %s has been added in the alliance!", guild->GetName().GetDataSafe());
             psChatMessage guildmsg(client->GetClientNum(),0,"System",0,text,CHAT_ALLIANCE, false);
-            chatserver->SendGuild(client->GetName(), client->GetActor()->GetEID(), alliance, guildmsg);
+            psserver->GetChatManager()->SendAlliance(client->GetName(), client->GetActor()->GetEID(), alliance, guildmsg);
         }
         
     }
@@ -2411,12 +2412,13 @@ void GuildManager::NewAlliance(psGuildCmdMessage &msg, Client *client)
     if (alliance != NULL)
     {
         SendAllianceNotifications(alliance);
-        csString text;
+
         if(client->GetActor())
         {
-            text.Format("The alliance %s has been created by %s!", msg.alliancename, guild->GetName() );
+            csString text;
+            text.Format("The alliance %s has been created by %s!", msg.alliancename.GetDataSafe(), guild->GetName().GetDataSafe());
             psChatMessage guildmsg(client->GetClientNum(),0,"System",0,text,CHAT_ALLIANCE, false);
-            chatserver->SendGuild(client->GetName(), client->GetActor()->GetEID(), alliance, guildmsg);
+            chatserver->SendAlliance(client->GetName(), client->GetActor()->GetEID(), alliance, guildmsg);
         }
     }
 }
@@ -2554,9 +2556,10 @@ void GuildManager::RemoveMemberFromAlliance(Client * client, psGuildInfo * guild
     
     if(client->GetActor())
     {
-        text.Format("The guild %s is no longer in the alliance!", guild->GetName() );
+        csString text;
+        text.Format("The guild %s is no longer in the alliance!", guild->GetName().GetDataSafe());
         psChatMessage guildmsg(client->GetClientNum(),0,"System",0,text,CHAT_ALLIANCE, false);
-        chatserver->SendGuild(client->GetName(), client->GetActor()->GetEID(), alliance, guildmsg);
+        chatserver->SendAlliance(client->GetName(), client->GetActor()->GetEID(), alliance, guildmsg);
     }
     
 }
@@ -2608,9 +2611,10 @@ void GuildManager::AllianceLeader(psGuildCmdMessage &msg, Client *client)
     
     if(client->GetActor())
     {
-        text.Format("The alliance leader is now %s!", newLeader->GetName() );
+        csString text;
+        text.Format("The alliance leader is now %s!", newLeader->GetName().GetDataSafe());
         psChatMessage guildmsg(client->GetClientNum(),0,"System",0,text,CHAT_ALLIANCE, false);
-        chatserver->SendGuild(client->GetName(), client->GetActor()->GetEID(), alliance, guildmsg);
+        chatserver->SendAlliance(client->GetName(), client->GetActor()->GetEID(), alliance, guildmsg);
     } 
 }
 
@@ -2628,9 +2632,9 @@ void GuildManager::EndAlliance(psGuildCmdMessage &msg, Client *client)
     
     if(client->GetActor())
     {
-        text.Format("The alliance is being disbanded!", newLeader->GetName() );
+        csString text = "The alliance is being disbanded!";
         psChatMessage guildmsg(client->GetClientNum(),0,"System",0,text,CHAT_ALLIANCE, false);
-        chatserver->SendGuild(client->GetName(), client->GetActor()->GetEID(), alliance, guildmsg);
+        chatserver->SendAlliance(client->GetName(), client->GetActor()->GetEID(), alliance, guildmsg);
     } 
 
     if (CacheManager::GetSingleton().RemoveAlliance(alliance))
