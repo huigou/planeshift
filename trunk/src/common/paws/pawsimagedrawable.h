@@ -54,8 +54,6 @@ private:
     */
     csRef<iImage> image;
 
-    csRef<iGraphics3D> graphics3D;
-
     bool PreparePixmap();
 
 public:
