@@ -45,6 +45,8 @@
 #include "net/clientmsghandler.h"
 #include "net/charmessages.h"
 
+#include "engine/linmove.h"
+
 #include "iclient/isoundmngr.h"
 
 #include "paws/pawsmanager.h"
@@ -519,7 +521,10 @@ void psClientCharManager::HandleMounting(MsgEntry*me)
     if(msg.mounting)
         mount->charApp->ApplyRider(rider);
     else
-        mount->charApp->RemoveRider(rider);    
+    {
+        mount->charApp->RemoveRider(rider);
+        rider->GetMovement()->SetOnGround(false);
+    }
 
     // Update our camera, if we are the one mounting
     // Note : maybe this could be done in a better way?

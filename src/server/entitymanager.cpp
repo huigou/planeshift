@@ -1141,9 +1141,6 @@ bool EntityManager::AddRideRelation(gemActor *rider, gemActor *mount)
             0, // Multicast to all without exception
             PROX_LIST_ANY_RANGE );
 
-    // the actor stays suspend in midair after dismounting, and this does not seem to help...
-    //FallBegan(GetPosition(), GetSector());
-    
     return true;
 }
 
