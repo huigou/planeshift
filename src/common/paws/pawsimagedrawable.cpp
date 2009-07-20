@@ -54,8 +54,7 @@ bool pawsImageDrawable::PreparePixmap()
     {
         csRef<iVFS> vfs = csQueryRegistry<iVFS>(PawsManager::GetSingleton().GetObjectRegistry());
         csRef<iImageIO> imageLoader = csQueryRegistry<iImageIO>(PawsManager::GetSingleton().GetObjectRegistry());
-        graphics3D  =  PawsManager::GetSingleton().GetGraphics3D();
-        csRef<iTextureManager> textureManager = graphics3D->GetTextureManager();
+        csRef<iTextureManager> textureManager = PawsManager::GetSingleton().GetGraphics3D()->GetTextureManager();
 
         int textureFormat = textureManager->GetTextureFormat();
 
@@ -200,7 +199,7 @@ void pawsImageDrawable::Draw(int x, int y, int alpha)
         alpha = defaultAlphaValue;
     int w = textureRectangle.Width();
     int h = textureRectangle.Height();
-    graphics3D->DrawPixmap(textureHandle, x, y, w, h, textureRectangle.xmin, textureRectangle.ymin, w, h, alpha);
+    PawsManager::GetSingleton().GetGraphics3D()->DrawPixmap(textureHandle, x, y, w, h, textureRectangle.xmin, textureRectangle.ymin, w, h, alpha);
 }
 
 void pawsImageDrawable::Draw(csRect rect, int alpha)
@@ -224,7 +223,7 @@ void pawsImageDrawable::Draw(int x, int y, int newWidth, int newHeight, int alph
         newHeight = height;
 
     if (!tiled)
-        graphics3D->DrawPixmap(textureHandle, x, y, newWidth, newHeight, textureRectangle.xmin, textureRectangle.ymin, w, h, alpha);
+        PawsManager::GetSingleton().GetGraphics3D()->DrawPixmap(textureHandle, x, y, newWidth, newHeight, textureRectangle.xmin, textureRectangle.ymin, w, h, alpha);
     else
     {
         int left = x;
@@ -237,7 +236,7 @@ void pawsImageDrawable::Draw(int x, int y, int newWidth, int newHeight, int alph
             {
                 int dw = csMin<int>(w, right - x);
                 int dh = csMin<int>(h, bottom - y);
-                graphics3D->DrawPixmap(textureHandle, x, y, dw, dh, textureRectangle.xmin, textureRectangle.ymin, dw, dh, alpha);
+                PawsManager::GetSingleton().GetGraphics3D()->DrawPixmap(textureHandle, x, y, dw, dh, textureRectangle.xmin, textureRectangle.ymin, dw, dh, alpha);
             }
         }
     }
