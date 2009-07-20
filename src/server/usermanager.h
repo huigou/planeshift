@@ -152,6 +152,8 @@ public:
      */
     void Emote(csString general, csString specific, csString animation, Client *client);
 
+    void Mount(gemActor *rider, gemActor *mount);
+
 protected:
     /** @brief Send a list of the players that are online to a client.
       *
@@ -386,8 +388,6 @@ protected:
 	  * @param client The client that issued the command.
       */	
     void HandleMount(psUserCmdMessage& msg, Client *client);
-
-    void Mount(gemActor *rider, gemActor *mount);
 
     /** @brief Handles a player command to unmount.
 	  *	

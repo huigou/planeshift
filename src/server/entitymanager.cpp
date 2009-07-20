@@ -612,6 +612,10 @@ bool EntityManager::DeletePlayer(Client * client)
     gemActor *actor = client->GetActor();
     if (actor && actor->GetCharacterData()!=NULL)
     {
+        // take the actor off his mount if he got one
+        if(actor->GetMount())
+            RemoveRideRelation(actor, actor->GetMount());
+        
         // Check for buddy list members
         usermanager->NotifyBuddies(client, UserManager::LOGGED_OFF);
         
@@ -1093,6 +1097,70 @@ bool EntityManager::RemoveActor(gemObject *actor)
     actor = NULL;
 
     return true;
+}
+
+bool EntityManager::AddRideRelation(gemActor *rider, gemActor *mount)
+{
+    if(!rider || !mount)
+    {
+        Error1("Wrong pointers in AddRideRelation()");
+        return false;
+    }
+
+    if(rider->GetMount())
+    {
+        psserver->SendSystemError(rider->GetClientID(), "You are already on a mount.");
+        return false;
+    }
+
+    if(rider->GetRider())
+    {
+        psserver->SendSystemError(rider->GetClientID(), "You are already the mount of %s.", rider->GetRider()->GetName());
+        return false;
+    }
+
+    if(mount->GetMount())
+    {
+        psserver->SendSystemError(rider->GetClientID(), "%s is on a mount.", mount->GetName());
+        return false;
+    }
+
+    if(mount->GetRider())
+    {
+        psserver->SendSystemError(rider->GetClientID(), "%s is already the mount of %s.", mount->GetName(), mount->GetRider()->GetName());
+        return false;
+    }
+    
+    rider->SetMount(mount);
+    mount->SetRider(rider);
+    
+    psMountingMessage mountmsg(rider->GetClientID(), mount->GetEID(), rider->GetEID(), true);
+    CS_ASSERT( mountmsg.valid );
+    
+    psserver->GetEventManager()->Multicast( mountmsg.msg, rider->GetMulticastClients(),
+            0, // Multicast to all without exception
+            PROX_LIST_ANY_RANGE );
+
+    // the actor stays suspend in midair after dismounting, and this does not seem to help...
+    //FallBegan(GetPosition(), GetSector());
+    
+    return true;
+}
+
+void EntityManager::RemoveRideRelation(gemActor *rider, gemActor *mount)
+{
+    if(rider != mount->GetRider() || mount != rider->GetMount())
+        Error1("Invalid info in RemoveRideRelation");
+
+    rider->SetMount(NULL);
+    mount->SetRider(NULL);
+    
+    psMountingMessage mountmsg(rider->GetClientID(), mount->GetEID(), rider->GetEID(), false);
+    CS_ASSERT( mountmsg.valid );
+    
+    psserver->GetEventManager()->Multicast( mountmsg.msg, rider->GetMulticastClients(),
+            0, // Multicast to all without exception
+            PROX_LIST_ANY_RANGE );
 }
 
 void EntityManager::SetReady(bool flag)
