@@ -2024,11 +2024,12 @@ void pawsChatWindow::BadWordsFilter(csString& s)
     for (size_t i = 0; i < settings.badWords.GetSize(); i++)
     {
         size_t pos = 0;
+        csString badWord = settings.badWords[i];
+        csString replace = settings.goodWords[i];
         while (true)
         {
             csString badWord = settings.badWords[i];
             csString replace = settings.goodWords[i];
-
             badwordPos = lowercase.FindStr(badWord.GetDataSafe(),pos);
 
             // LOOP EXIT:
@@ -2039,13 +2040,13 @@ void pawsChatWindow::BadWordsFilter(csString& s)
             if (badwordPos>0 && isalpha(lowercase[badwordPos-1]))
             {
                 pos++;
-                break;
+                continue;
             }
             // now verify end of word
             if (badwordPos+badWord.Length() < lowercase.Length() && isalpha(lowercase[badwordPos+badWord.Length()]))
             {
                 pos++;
-                break;
+                continue;
             }
 
             if (replace.Length() == 0)
