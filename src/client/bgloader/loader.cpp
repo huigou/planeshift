@@ -289,6 +289,9 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
 
                     // Parse the shader variables attached to this material.
                     nodeItr2 = node->GetNodes("shadervar");
+                    // Workaround for PS#2847
+                    bool hasSpecularTex = false;
+                    bool hasSpecularVar = false;
                     while(nodeItr2->HasNext())
                     {
                         node = nodeItr2->Next();
@@ -323,6 +326,12 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                                 }
                             }
 
+                            // Workaround for PS#2847
+                            if(!strcmp(node->GetAttributeValue("name"), "tex specular"))
+                            {
+                                hasSpecularTex = true;
+                            }
+
                             ShaderVar sv(node->GetAttributeValue("name"), csShaderVariable::TEXTURE);
                             sv.value = node->GetContentsValue();
                             m->shadervars.Push(sv);
@@ -348,10 +357,32 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                         else if(csString("vector3").Compare(node->GetAttributeValue("type")))
                         {
                             ShaderVar sv(node->GetAttributeValue("name"), csShaderVariable::VECTOR3);
-                            csScanStr (node->GetContentsValue(), "%f,%f,%f", &sv.vec3.x, &sv.vec3.y, &sv.vec3.z);
+
+                            // Workaround for PS#2847
+                            if(sv.name == "specular")
+                            {
+                                hasSpecularVar = true;
+                            }
+
+                            if(sv.name == "specular" && !hasSpecularTex)
+                            {
+                                sv.vec3 = csVector3(0.0f);
+                            }
+                            else
+                            {
+                                csScanStr (node->GetContentsValue(), "%f,%f,%f", &sv.vec3.x, &sv.vec3.y, &sv.vec3.z);
+                            }
                             m->shadervars.Push(sv);
                         }
                         node = node->GetParent();
+                    }
+
+                    // Workaround for PS#2847
+                    if(!hasSpecularVar && !hasSpecularTex)
+                    {
+                        ShaderVar sv("specular", csShaderVariable::VECTOR3);
+                        sv.vec3 = csVector3(0.0f);
+                        m->shadervars.Push(sv);
                     }
                 }
             }
