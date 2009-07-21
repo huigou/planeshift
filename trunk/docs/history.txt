@@ -2,6 +2,7 @@
 - Added some additional alliance notifications on join/part/creation/disband
 - fixed PS#1555 - Chat filters stop filtering "badwords" if they were part 
   of a previous word in the sentence
+- Fixed an overflow in wordnet patch by lanarel
 
 *** 2009-07-19 by Keith Fulton
 - Fixed hardcoded path to controlwindow styles.
