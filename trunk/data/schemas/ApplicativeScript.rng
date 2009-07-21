@@ -20,8 +20,6 @@
   <include href="CommonScripting.rng"/>
 
   <start>
-    <element name="apply">
-      <ref name="ApplyMode"/>
-    </element>
+    <ref name="apply"/>
   </start>
 </grammar>
