@@ -38,13 +38,7 @@
             </element>
           </optional>
         </element>
-        <element name="apply">
-          <attribute name="aim"/>
-          <attribute name="name"/>
-          <ref name="SpellType"/>
-          <attribute name="duration"/>
-          <ref name="ApplyMode"/>
-        </element>
+        <ref name="apply"/>
         <element name="apply-linked">
           <attribute name="name"/>
           <attribute name="duration"/>
@@ -306,6 +300,18 @@
         <value>item</value>
       </choice>
     </attribute>
+  </define>
+
+  <define name="apply">
+    <element name="apply">
+      <attribute name="aim"/>
+      <attribute name="name"/>
+      <ref name="SpellType"/>
+      <optional>
+        <attribute name="duration"/>
+      </optional>
+      <ref name="ApplyMode"/>
+    </element>
   </define>
 
   <define name="teleport">
