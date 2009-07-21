@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
-  ProgressionSchema.rng - a RelaxNG schema for PlaneShift Progression Scripts.
+  CommonScripting.rng - a RelaxNG schema for PlaneShift scripting.
 
   Author: Kenny Graunke <kenny@whitecape.org>
   Copyright (C) 2009 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
@@ -17,12 +17,6 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  -->
 <grammar xmlns="http://relaxng.org/ns/structure/1.0">
-  <start>
-    <element name="script">
-      <ref name="ImperativeMode"/>
-    </element>
-  </start>
-
   <define name="ImperativeMode">
     <zeroOrMore>
       <choice>
