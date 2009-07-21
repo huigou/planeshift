@@ -598,6 +598,8 @@ NpcResponse *psNPCDialog::Respond(const char * text,Client *client)
     NpcResponse *resp;
     NpcTriggerSentence trigger,generalized;
     psString pstext(text);
+    //limit text to the maximum allocated in wordnet.
+    pstext.Truncate(WORDBUF); 
     
     currentplayer = client->GetActor();
     currentClient = client;
