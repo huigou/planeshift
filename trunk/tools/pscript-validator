@@ -51,5 +51,5 @@ echo "==== Validating progression scripts ================\n";
 validate($progression_schema, 'SELECT name, event_script AS script FROM progression_events');
 
 echo "==== Validating item equip scripts ===========\n";
-validate($applicative_schema, 'SELECT name, equip_script AS script FROM progression_events WHERE equip_script <> ""');
+validate($applicative_schema, 'SELECT name, equip_script AS script FROM item_stats WHERE equip_script <> ""');
 ?>
