@@ -95,8 +95,29 @@ public:
             psItem *item = obj->GetItem();
             if (item)
             {
-                EntityManager::GetSingleton().RemoveActor(obj);
-                item->Destroy();  // obj is deleted in RemoveActor
+                // Is the item being guarded?
+                // Alot of stuff simply to get the instance...
+                float locx,locy,locz,locyrot;
+                psSectorInfo *sectorinfo;
+                InstanceID instance;
+                
+                item->GetLocationInWorld(instance,&sectorinfo,locx,locy,locz,locyrot);
+
+                // Do checks
+                PID guardCharacterID = item->GetGuardingCharacterID();
+                gemActor* guardActor = GEMSupervisor::GetSingleton().FindPlayerEntity(guardCharacterID);
+                if (guardCharacterID.IsValid() &&
+                    guardActor &&
+                    guardActor->RangeTo(item->GetGemObject()) < RANGE_TO_SELECT &&
+                    (guardActor->GetInstance() == instance)) 
+                {
+                    // Item is guarded, reschedule
+                    item->ScheduleRemoval();
+                } else {
+                    // Item isn't guarded, remove
+                    EntityManager::GetSingleton().RemoveActor(obj);
+                    item->Destroy();  // obj is deleted in RemoveActor
+                }
             }
         }
     }
