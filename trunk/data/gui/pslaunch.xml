@@ -4,7 +4,7 @@
     <bgimage resource="Launcher BG1" alpha="0"/>
     <frame x="0" y="0" width="850" height="600" border="no"/>
     <title resource="Blue Title" text="PlaneShift Launcher" align="left"/>
-    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10"/>
+    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="8"/>
 
     <widget name="LauncherMain" factory="pawsWidget" visible="yes" savepositions="no" movable="no" resizable="no" resizetoscreen="yes" id="11">
 
@@ -276,7 +276,7 @@
 
     	  <widget name="AntiAiasing" factory="pawsComboBox" id="13104" alwaysontop="true">
           <frame x="120" y="20" width="70" height="20" border="no" />
-          <listbox rows="6" height="25" useScrollBar="false" />
+          <listbox rows="7" height="25" useScrollBar="false" />
     	  </widget>
 
         <widget name="AnisotropicFilteringText" factory="pawsTextBox" id="13105">
@@ -296,7 +296,7 @@
 
     	  <widget name="TextureQuality" factory="pawsComboBox" id="13108" alwaysontop="true">
           <frame x="120" y="60" width="70" height="20" border="no" />
-          <listbox rows="3" height="25" useScrollBar="false" />
+          <listbox rows="4" height="25" useScrollBar="false" />
     	  </widget>
 
         <widget name="ShadersText" factory="pawsTextBox" id="13109">
