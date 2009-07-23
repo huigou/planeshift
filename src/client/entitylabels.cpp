@@ -321,6 +321,9 @@ void psEntityLabels::CreateLabelOfObject(GEMClientObject *object)
 
     // Update text
     SetObjectText(object);
+
+    // Set to invisible by default.
+    ShowLabelOfObject(object, false);
 }
 
 
