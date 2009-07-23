@@ -81,7 +81,6 @@ bool pawsImageDrawable::PreparePixmap()
             CS_TEXTURE_2D |
             CS_TEXTURE_3D |
             CS_TEXTURE_NOMIPMAPS |
-            //  This doesn't seem to have an effect, and crashes some Macs.
             CS_TEXTURE_CLAMP |
             CS_TEXTURE_NPOTS);
 
@@ -90,6 +89,9 @@ bool pawsImageDrawable::PreparePixmap()
             Error1("Failed to Register Texture");
             return false;
         }
+
+        // Set texture class to 'cegui' defined in CS.
+        textureHandle->SetTextureClass("cegui");
 
         // Store wrapped handle in the engine for later use.
         tex = engine->GetTextureList()->NewTexture(textureHandle);
