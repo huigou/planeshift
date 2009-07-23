@@ -1129,6 +1129,10 @@ public:
     static MathScript *maxRealmScript;
     static MathScript *staminaCalc;  ///< The stamina calc script
     static MathScript *expSkillCalc; ///< The exp calc script to assign experience on skill ranking
+    static MathScript *staminaRatioWalk; ///< The stamina regen ration while walking script
+    static MathScript *staminaRatioStand;///< The stamina regen ration while standing script
+    static MathScript *staminaRatioSit;  ///< The stamina regen ration while sitting script
+    static MathScript *staminaRatioWork; ///< The stamina regen ration while working script
 
 protected:
     csString lastlogintime;///< String value copied from the database containing the last login time

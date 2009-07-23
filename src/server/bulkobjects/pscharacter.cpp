@@ -81,9 +81,13 @@
 
 const char *psCharacter::characterTypeName[] = { "player", "npc", "pet", "mount" };
 
-MathScript *psCharacter::maxRealmScript = NULL;
-MathScript *psCharacter::staminaCalc    = NULL;
-MathScript *psCharacter::expSkillCalc   = NULL;
+MathScript *psCharacter::maxRealmScript    = NULL;
+MathScript *psCharacter::staminaCalc       = NULL;
+MathScript *psCharacter::expSkillCalc      = NULL;
+MathScript *psCharacter::staminaRatioWalk  = NULL;
+MathScript *psCharacter::staminaRatioStand = NULL;
+MathScript *psCharacter::staminaRatioSit   = NULL;
+MathScript *psCharacter::staminaRatioWork  = NULL;
 
 //-----------------------------------------------------------------------------
 
@@ -203,6 +207,46 @@ bool psCharacter::Load(iResultRow& row)
         if (!staminaCalc)
         {
             Error1("Can't find math script StaminaBase!");
+            return false;
+        }
+    }
+
+    if (!staminaRatioWalk)
+    {
+        staminaRatioWalk = psserver->GetMathScriptEngine()->FindScript("StaminaRatioWalk");
+        if (!staminaRatioWalk)
+        {
+            Error1("Can't find math script StaminaRatioWalk!");
+            return false;
+        }
+    }
+    
+    if (!staminaRatioStand)
+    {
+        staminaRatioStand = psserver->GetMathScriptEngine()->FindScript("StaminaRatioStand");
+        if (!staminaRatioStand)
+        {
+            Error1("Can't find math script StaminaRatioStand!");
+            return false;
+        }
+    }
+    
+    if (!staminaRatioSit)
+    {
+        staminaRatioSit = psserver->GetMathScriptEngine()->FindScript("StaminaRatioSit");
+        if (!staminaRatioSit)
+        {
+            Error1("Can't find math script StaminaRatioSit!");
+            return false;
+        }
+    }
+    
+    if (!staminaRatioWork)
+    {
+        staminaRatioWork = psserver->GetMathScriptEngine()->FindScript("StaminaRatioWork");
+        if (!staminaRatioWork)
+        {
+            Error1("Can't find math script StaminaRatioWork!");
             return false;
         }
     }
@@ -1657,20 +1701,60 @@ void psCharacter::SetStaminaRegenerationNone(bool physical,bool mental)
 
 void psCharacter::SetStaminaRegenerationWalk(bool physical,bool mental)
 {
-    if(physical) GetPStaminaRate().SetBase(GetMaxPStamina().Current()/100 * GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_PHYSICAL_WALK]);
-    if(mental)   GetMStaminaRate().SetBase(GetMaxMStamina().Current()/100 * GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_MENTAL_WALK]);
+    MathEnvironment env;
+    env.Define("Character", this);
+    env.Define("BaseRegenPhysical", GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_PHYSICAL_WALK]);
+    env.Define("BaseRegenMental",   GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_MENTAL_WALK]);
+    
+    staminaCalc->Evaluate(&env);
+    
+    MathVar *ratePhy = env.Lookup("PStaminaRate");
+    MathVar *rateMen = env.Lookup("MStaminaRate");
+    
+    if(physical && ratePhy) GetPStaminaRate().SetBase(ratePhy->GetValue());
+    if(mental   && rateMen) GetMStaminaRate().SetBase(rateMen->GetValue());
+    
+    //if(physical) GetPStaminaRate().SetBase(GetMaxPStamina().Current()/100 * GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_PHYSICAL_WALK]);
+    //if(mental)   GetMStaminaRate().SetBase(GetMaxMStamina().Current()/100 * GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_MENTAL_WALK]);
 }
 
 void psCharacter::SetStaminaRegenerationSitting()
 {
-    GetPStaminaRate().SetBase(GetMaxPStamina().Current() * 0.015 * GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_PHYSICAL_STILL]);
-    GetMStaminaRate().SetBase(GetMaxMStamina().Current() * 0.015 * GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_MENTAL_STILL]);
+    MathEnvironment env;
+    env.Define("Character", this);
+    env.Define("BaseRegenPhysical", GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_PHYSICAL_STILL]);
+    env.Define("BaseRegenMental",   GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_MENTAL_STILL]);
+    
+    staminaCalc->Evaluate(&env);
+    
+    MathVar *ratePhy = env.Lookup("PStaminaRate");
+    MathVar *rateMen = env.Lookup("MStaminaRate");
+    
+    if(ratePhy) GetPStaminaRate().SetBase(ratePhy->GetValue());
+    if(rateMen) GetMStaminaRate().SetBase(rateMen->GetValue());
+    
+    //GetPStaminaRate().SetBase(GetMaxPStamina().Current() * 0.015 * GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_PHYSICAL_STILL]);
+    //GetMStaminaRate().SetBase(GetMaxMStamina().Current() * 0.015 * GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_MENTAL_STILL]);
 }
 
 void psCharacter::SetStaminaRegenerationStill(bool physical,bool mental)
 {
-    if(physical) GetPStaminaRate().SetBase(GetMaxPStamina().Current()/100 * GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_PHYSICAL_STILL]);
-    if(mental)   GetMStaminaRate().SetBase(GetMaxMStamina().Current()/100 * GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_MENTAL_STILL]);
+    
+    MathEnvironment env;
+    env.Define("Character", this);
+    env.Define("BaseRegenPhysical", GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_PHYSICAL_STILL]);
+    env.Define("BaseRegenMental",   GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_MENTAL_STILL]);
+    
+    staminaCalc->Evaluate(&env);
+    
+    MathVar *ratePhy = env.Lookup("PStaminaRate");
+    MathVar *rateMen = env.Lookup("MStaminaRate");
+    
+    if(physical && ratePhy) GetPStaminaRate().SetBase(ratePhy->GetValue());
+    if(mental   && rateMen) GetMStaminaRate().SetBase(rateMen->GetValue());
+
+    //if(physical) GetPStaminaRate().SetBase(GetMaxPStamina().Current()/100 * GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_PHYSICAL_STILL]);
+    //if(mental)   GetMStaminaRate().SetBase(GetMaxMStamina().Current()/100 * GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_MENTAL_STILL]);
 }
 
 void psCharacter::SetStaminaRegenerationWork(int skill)
@@ -1679,13 +1763,29 @@ void psCharacter::SetStaminaRegenerationWork(int skill)
     if (actor->nevertired)
         return;
 
+    MathEnvironment env;
+    env.Define("Character", this);
+    env.Define("BaseRegenPhysical", GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_PHYSICAL_STILL]);
+    env.Define("BaseRegenMental",   GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_MENTAL_STILL]);
+    
     // Need real formula for this. Shouldn't be hard coded anyway.
     // Stamina drain needs to be set depending on the complexity of the task.
     psSkillInfo* skillInfo = CacheManager::GetSingleton().GetSkillByID(skill);
     //if skill is none (-1) we set zero here
     int factor = skillInfo? skillInfo->mental_factor : 100;
-    GetPStaminaRate().SetBase(GetPStaminaRate().Base()-6.0*(100-factor)/100);
-    GetMStaminaRate().SetBase(GetMStaminaRate().Base()-6.0*(100-factor)/100);
+
+    env.Define("SkillMentalFactor",  factor);
+    
+    staminaCalc->Evaluate(&env);
+    
+    MathVar *ratePhy = env.Lookup("PStaminaRate");
+    MathVar *rateMen = env.Lookup("MStaminaRate");
+    
+    if(ratePhy) GetPStaminaRate().SetBase(ratePhy->GetValue());
+    if(rateMen) GetMStaminaRate().SetBase(rateMen->GetValue());
+
+    //GetPStaminaRate().SetBase(GetPStaminaRate().Base()-6.0*(100-factor)/100);
+    //GetMStaminaRate().SetBase(GetMStaminaRate().Base()-6.0*(100-factor)/100);
 }
 
 void psCharacter::CalculateMaxStamina()
