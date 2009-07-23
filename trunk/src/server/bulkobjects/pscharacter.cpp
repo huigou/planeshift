@@ -85,7 +85,7 @@ MathScript *psCharacter::maxRealmScript    = NULL;
 MathScript *psCharacter::staminaCalc       = NULL;
 MathScript *psCharacter::expSkillCalc      = NULL;
 MathScript *psCharacter::staminaRatioWalk  = NULL;
-MathScript *psCharacter::staminaRatioStand = NULL;
+MathScript *psCharacter::staminaRatioStill = NULL;
 MathScript *psCharacter::staminaRatioSit   = NULL;
 MathScript *psCharacter::staminaRatioWork  = NULL;
 
@@ -1706,7 +1706,7 @@ void psCharacter::SetStaminaRegenerationWalk(bool physical,bool mental)
     env.Define("BaseRegenPhysical", GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_PHYSICAL_WALK]);
     env.Define("BaseRegenMental",   GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_MENTAL_WALK]);
     
-    staminaCalc->Evaluate(&env);
+    staminaRatioWalk->Evaluate(&env);
     
     MathVar *ratePhy = env.Lookup("PStaminaRate");
     MathVar *rateMen = env.Lookup("MStaminaRate");
@@ -1725,7 +1725,7 @@ void psCharacter::SetStaminaRegenerationSitting()
     env.Define("BaseRegenPhysical", GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_PHYSICAL_STILL]);
     env.Define("BaseRegenMental",   GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_MENTAL_STILL]);
     
-    staminaCalc->Evaluate(&env);
+    staminaRatioSit->Evaluate(&env);
     
     MathVar *ratePhy = env.Lookup("PStaminaRate");
     MathVar *rateMen = env.Lookup("MStaminaRate");
@@ -1745,7 +1745,7 @@ void psCharacter::SetStaminaRegenerationStill(bool physical,bool mental)
     env.Define("BaseRegenPhysical", GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_PHYSICAL_STILL]);
     env.Define("BaseRegenMental",   GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_MENTAL_STILL]);
     
-    staminaCalc->Evaluate(&env);
+    staminaRatioStill->Evaluate(&env);
     
     MathVar *ratePhy = env.Lookup("PStaminaRate");
     MathVar *rateMen = env.Lookup("MStaminaRate");
@@ -1776,7 +1776,7 @@ void psCharacter::SetStaminaRegenerationWork(int skill)
 
     env.Define("SkillMentalFactor",  factor);
     
-    staminaCalc->Evaluate(&env);
+    staminaRatioWork->Evaluate(&env);
     
     MathVar *ratePhy = env.Lookup("PStaminaRate");
     MathVar *rateMen = env.Lookup("MStaminaRate");
