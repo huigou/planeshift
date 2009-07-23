@@ -1549,7 +1549,6 @@ csVector3 GEMClientActor::Pos() const
 
     if(linmove)
     {
-        csVector3 pos(0.0f);
         float yrot;
         iSector* sector;
         linmove->GetLastPosition (pos, yrot, sector);
