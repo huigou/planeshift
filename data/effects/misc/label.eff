@@ -9,6 +9,7 @@
         <texture name="labelfonttable">
             <file>/this/art/effects/character_set_baar_sophia.dds</file>
             <alpha><binary /></alpha>
+            <class>cegui</class>
         </texture>
     </textures>
     <materials>

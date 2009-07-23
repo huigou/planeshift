@@ -186,8 +186,6 @@ bool psEffectObjLabel::CreateMeshFact()
     csRef<iMaterialWrapper> mat = effectsCollection->FindMaterial(materialName);
     if (mat)
     {
-        // Set texture class to 'cegui' defined in CS.
-        mat->GetMaterial()->GetTexture()->SetTextureClass("cegui");
         fact->SetMaterialWrapper(mat);
     } else {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "No material for label mesh: %s\n", materialName.GetData());
