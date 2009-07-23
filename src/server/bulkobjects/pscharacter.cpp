@@ -221,12 +221,12 @@ bool psCharacter::Load(iResultRow& row)
         }
     }
     
-    if (!staminaRatioStand)
+    if (!staminaRatioStill)
     {
-        staminaRatioStand = psserver->GetMathScriptEngine()->FindScript("StaminaRatioStand");
-        if (!staminaRatioStand)
+        staminaRatioStill = psserver->GetMathScriptEngine()->FindScript("StaminaRatioStill");
+        if (!staminaRatioStill)
         {
-            Error1("Can't find math script StaminaRatioStand!");
+            Error1("Can't find math script StaminaRatioStill!");
             return false;
         }
     }
