@@ -117,7 +117,7 @@ INSERT INTO math_scripts VALUES( "StaminaRatioWalk",
 "PStaminaRate = Actor:MaxPStamina/100*BaseRegenPhysical;
 MStaminaRate = Actor:MaxMStamina/100*BaseRegenMental;");
 
-INSERT INTO math_scripts VALUES( "StaminaRatioStand", 
+INSERT INTO math_scripts VALUES( "StaminaRatioStill", 
 "PStaminaRate = Actor:MaxPStamina/100*BaseRegenPhysical;
 MStaminaRate = Actor:MaxMStamina/100*BaseRegenMental;");
 
