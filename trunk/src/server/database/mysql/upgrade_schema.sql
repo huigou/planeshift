@@ -1253,6 +1253,11 @@ ALTER TABLE `characters` ADD COLUMN `guild_additional_privileges` SMALLINT(3) UN
  ADD COLUMN `guild_denied_privileges` SMALLINT(3) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Contains a bitfield with the removed priviledges from this char (removed from the guild level it\'s in)' AFTER `guild_additional_privileges`;
 UPDATE `server_options` SET `option_value`='1225' WHERE `option_name`='db_version';
 
+#1225 - Stefano Angeleri - Deputize allowed to gm2
+
+INSERT INTO command_group_assignment VALUES( "/deputize", 23 );
+INSERT INTO command_group_assignment VALUES( "/deputize", 22 );
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to

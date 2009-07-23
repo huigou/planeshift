@@ -7331,10 +7331,8 @@ void AdminManager::TempSecurityLevel(MsgEntry* me, psAdminCmdMessage& msg, Admin
         return;
     }
 
-    // Can only set others to a max of 1 level below own level (ex: GM4 can set someone to GM3)
-    // Devs can override this
-    int maxleveltoset = client->GetSecurityLevel() >= GM_DEVELOPER ?
-                        client->GetSecurityLevel() : client->GetSecurityLevel() - 1;
+    // Can only set at maximum the same level of the one the client is
+    int maxleveltoset = client->GetSecurityLevel();
 
     int value;
 
@@ -7411,7 +7409,7 @@ void AdminManager::TempSecurityLevel(MsgEntry* me, psAdminCmdMessage& msg, Admin
         psserver->SendSystemInfo(target->GetClientNum(),"Your access level has been changed for this session.");
     }
 
-    if (value < GM_LEVEL_4) // Cannot access this command, but may still reset
+    if (!CacheManager::GetSingleton().GetCommandManager()->Validate(value, "/deputize")) // Cannot access this command, but may still reset
     {
         psserver->SendSystemInfo(target->GetClientNum(),"You may do \"/deputize me reset\" at any time to reset yourself. "
                                  " The temporary access level will also expire on logout.");

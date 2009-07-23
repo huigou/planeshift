@@ -99,9 +99,6 @@ INSERT INTO command_group_assignment VALUES( "/event", 24 );
 INSERT INTO command_group_assignment VALUES( "/awardexp", 30 );
 INSERT INTO command_group_assignment VALUES( "/awardexp", 25 );
 INSERT INTO command_group_assignment VALUES( "/awardexp", 24 );
-INSERT INTO command_group_assignment VALUES( "/deputize", 30 );
-INSERT INTO command_group_assignment VALUES( "/deputize", 25 );
-INSERT INTO command_group_assignment VALUES( "/deputize", 24 );
 INSERT INTO command_group_assignment VALUES( "quest change others", 30 );
 INSERT INTO command_group_assignment VALUES( "quest change others", 25 );
 INSERT INTO command_group_assignment VALUES( "quest change others", 24 );
@@ -289,7 +286,11 @@ INSERT INTO command_group_assignment VALUES( "rotate all", 25 );
 INSERT INTO command_group_assignment VALUES( "rotate all", 24 );
 INSERT INTO command_group_assignment VALUES( "rotate all", 23 );
 INSERT INTO command_group_assignment VALUES( "rotate all", 22 );
-
+INSERT INTO command_group_assignment VALUES( "/deputize", 30 );
+INSERT INTO command_group_assignment VALUES( "/deputize", 25 );
+INSERT INTO command_group_assignment VALUES( "/deputize", 24 );
+INSERT INTO command_group_assignment VALUES( "/deputize", 23 );
+INSERT INTO command_group_assignment VALUES( "/deputize", 22 );
 
 # GM1 and above
 INSERT INTO command_group_assignment VALUES( "view stats", 30 );
