@@ -2995,13 +2995,13 @@ void gemActor::SetMode(PSCHARACTER_MODE newmode, uint32_t extraData)
             break;
 
         case PSCHARACTER_MODE_SIT:
+        case PSCHARACTER_MODE_OVERWEIGHT:
             psChar->SetStaminaRegenerationSitting();
             break;
 
         case PSCHARACTER_MODE_DEAD:
-        case PSCHARACTER_MODE_OVERWEIGHT:
         case PSCHARACTER_MODE_STATUE:
-            psChar->SetStaminaRegenerationNone();  // no stamina regen while dead or overweight
+            psChar->SetStaminaRegenerationNone();  // no stamina regen while dead
             break;
         case PSCHARACTER_MODE_DEFEATED:
             psChar->GetHPRate().SetBase(HP_REGEN_RATE);
