@@ -113,6 +113,22 @@ INSERT INTO math_scripts VALUES( "StaminaBase",
         BaseMen = (INT + WILL + CHA) / 3;
 ");
 
+INSERT INTO math_scripts VALUES( "StaminaRatioWalk", 
+"PStaminaRate = Actor:MaxPStamina/100*BaseRegenPhysical;
+MStaminaRate = Actor:MaxMStamina/100*BaseRegenMental;");
+
+INSERT INTO math_scripts VALUES( "StaminaRatioStand", 
+"PStaminaRate = Actor:MaxPStamina/100*BaseRegenPhysical;
+MStaminaRate = Actor:MaxMStamina/100*BaseRegenMental;");
+
+INSERT INTO math_scripts VALUES( "StaminaRatioSit", 
+"PStaminaRate = Actor:MaxPStamina*0.015*BaseRegenPhysical;
+MStaminaRate = Actor:MaxMStamina*0.015*BaseRegenMental;");
+
+INSERT INTO math_scripts VALUES( "StaminaRatioWork", 
+"PStaminaRate = Actor:MaxPStamina-6.0*(100-SkillMentalFactor)/100;
+MStaminaRate = Actor:MaxMStamina-6.0*(100-SkillMentalFactor)/100;");
+
 INSERT INTO math_scripts VALUES( "CalculateMaxHP", "MaxHP = Actor:Will + Actor:Agility + Actor:Strength;");
 
 INSERT INTO math_scripts VALUES( "CalculateMaxMana", "MaxMana = Actor:Will + Actor:Intelligence;");
@@ -194,5 +210,6 @@ INSERT INTO math_scripts VALUES( "Calc Item Merchant Price Buy", "Result = ItemP
 INSERT INTO math_scripts VALUES( "Calc Item Merchant Price Sell", "Result = ItemPrice + CharData:getSkillValue(47)/10;");
 
 INSERT INTO math_scripts VALUES( "Calculate Dynamic Experience", "Exp = 0;");
+
 
 
