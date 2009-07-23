@@ -1702,7 +1702,7 @@ void psCharacter::SetStaminaRegenerationNone(bool physical,bool mental)
 void psCharacter::SetStaminaRegenerationWalk(bool physical,bool mental)
 {
     MathEnvironment env;
-    env.Define("Character", this);
+    env.Define("Actor", this);
     env.Define("BaseRegenPhysical", GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_PHYSICAL_WALK]);
     env.Define("BaseRegenMental",   GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_MENTAL_WALK]);
     
@@ -1721,7 +1721,7 @@ void psCharacter::SetStaminaRegenerationWalk(bool physical,bool mental)
 void psCharacter::SetStaminaRegenerationSitting()
 {
     MathEnvironment env;
-    env.Define("Character", this);
+    env.Define("Actor", this);
     env.Define("BaseRegenPhysical", GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_PHYSICAL_STILL]);
     env.Define("BaseRegenMental",   GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_MENTAL_STILL]);
     
@@ -1741,7 +1741,7 @@ void psCharacter::SetStaminaRegenerationStill(bool physical,bool mental)
 {
     
     MathEnvironment env;
-    env.Define("Character", this);
+    env.Define("Actor", this);
     env.Define("BaseRegenPhysical", GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_PHYSICAL_STILL]);
     env.Define("BaseRegenMental",   GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_MENTAL_STILL]);
     
@@ -1764,7 +1764,7 @@ void psCharacter::SetStaminaRegenerationWork(int skill)
         return;
 
     MathEnvironment env;
-    env.Define("Character", this);
+    env.Define("Actor", this);
     env.Define("BaseRegenPhysical", GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_PHYSICAL_STILL]);
     env.Define("BaseRegenMental",   GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_MENTAL_STILL]);
     
