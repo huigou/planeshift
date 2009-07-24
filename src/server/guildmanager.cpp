@@ -815,13 +815,18 @@ void GuildManager::HandleSetMemberNotes(Client *client,iDocumentNode * root, boo
     }
     else
     {
-        if ( !CheckClientRights(client, RIGHTS_EDIT_PRIVATE) )
+        //allows to add private notes to others and to edit them for the member target of the
+        //notes (else he will get an infinitely filling entry which he can't clean when read)
+        if ( !CheckClientRights(client, RIGHTS_EDIT_PRIVATE) || client->GetPID() == char_id)
         {
             psserver->SendSystemError(client->GetClientNum(),"You do not have the rights to edit private notes.");
             return;
         }
         if (client->GetPID() != char_id)// if this is not my info
-            notes = member->private_notes + notes+ "\n";// append the notes to the end
+        {
+            if(member->private_notes.Length()) // append the notes to the end
+                notes = member->private_notes + (member->private_notes.Length() ? "\n" : "") + notes;
+        }
     }
 
     guild->SetMemberNotes(member, notes, isPublic);
