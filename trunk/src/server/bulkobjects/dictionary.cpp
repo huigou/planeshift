@@ -2072,7 +2072,7 @@ bool GiveItemResponseOp::Load(iDocumentNode *node)
 csString GiveItemResponseOp::GetResponseScript()
 {
     psString resp = GetName();
-    resp.AppendFmt(" item_id=\"%s\"",itemstat->GetName());
+    resp.AppendFmt(" item=\"%s\"",itemstat->GetName());
     if (count != 1)
     {
         resp.AppendFmt(" count=\"%d\"",count);
