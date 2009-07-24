@@ -3178,6 +3178,8 @@ void gemActor::ApplyStaminaCalculations(const csVector3& v, float times)
 
         if (GetMode() == PSCHARACTER_MODE_PEACE || GetMode() == PSCHARACTER_MODE_SPELL_CASTING)
             psChar->SetStaminaRegenerationStill();
+        else if (GetMode() == PSCHARACTER_MODE_SIT)
+            psChar->SetStaminaRegenerationSitting();
     }
     else // Moving
     {
