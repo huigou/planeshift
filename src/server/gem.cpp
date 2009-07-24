@@ -3253,7 +3253,6 @@ void gemActor::ApplyStaminaCalculations(const csVector3& v, float times)
             psChar->SetStaminaRegenerationWalk();
             VitalBuffable & pRate = psChar->GetPStaminaRate();
             pRate.SetBase(pRate.Base()-value);
-            psChar->AdjustStamina(-value*times,true);
         }
         else  // Another regen in place
         {
