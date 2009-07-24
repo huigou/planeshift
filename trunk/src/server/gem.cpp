@@ -3236,6 +3236,7 @@ void gemActor::ApplyStaminaCalculations(const csVector3& v, float times)
         env.Define("AscentAngle", Angle);                                       // How steep your climb is
         env.Define("Weight",      psChar->Inventory().GetCurrentTotalWeight()); // How much you're carrying
         env.Define("MaxWeight",   psChar->Inventory().MaxWeight());             // How much you can carry
+        env.Define("MaxStamina",  psChar->GetMaxPStamina().Current());          // Max stamina of the character
 
         // Do stuff with stuff
         script->Evaluate(&env);
