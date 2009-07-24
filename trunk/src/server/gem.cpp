@@ -2904,7 +2904,7 @@ void gemActor::SetEquipment(const char *equip)
 
 const char* gemActor::GetModeStr()
 {
-    static const char *strs[] = {"unknown","peace","combat","spell casting","working","dead","sitting","carrying too much","exhausted", "defeated", "statued" };
+    static const char *strs[] = {"unknown","doing nothing","in combat","spell casting","working","dead","sitting","carrying too much","exhausted", "defeated", "statued" };
     return strs[player_mode];
 }
 
@@ -3114,7 +3114,7 @@ void gemActor::SetPosition(const csVector3& pos,float angle, iSector* sector)
     }
 }
 
-//#define STAMINA_PROCESS_DEBUG
+#define STAMINA_PROCESS_DEBUG
 
 void gemActor::ProcessStamina()
 {
