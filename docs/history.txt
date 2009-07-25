@@ -1,4 +1,16 @@
-﻿*** 2009-07-22 by Steven Patrick
+﻿*** 2009-07-25 by Stefano Angeleri
+- deputize is now gm2+ and you can deputize up to your level even if not developer
+- made the stamina regen ratio function use math scripts. 
+- fixed grammar in system messages
+- private notes can be always be edited by the owner (even if without the permission). 
+  fixed appending behaviour.
+- fixed a wrong name in the giveitem op
+- Fixed a bug with exchanging item with an npc when they had a script: 
+  made the script run two times and show the npc doesn't need it error
+- made a printf a Debug2 so it shows only if quest logging is enabled
+- fixed credits window
+
+*** 2009-07-22 by Steven Patrick
 - Fixed PS#2253 - items should not be removed by transient while guarded
 - Fixed PS#2341 - TRANSIENT isn't reset if you pick up an item - server 
   crash, patch by peeg.
