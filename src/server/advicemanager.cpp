@@ -558,7 +558,14 @@ void AdviceManager::HandleAdviceRequest( Client *advisee, csString message )
     }
 
     // Create psAdviceRequestTimeoutGameEvent to timeout question.
-    if ( activeSession && activeSession->requestEvent == NULL )
+    if ( activeSession && activeSession->timeoutEvent == NULL && activeSession->requestEvent == NULL)
+    {
+        psAdviceRequestTimeoutGameEvent *ev = new psAdviceRequestTimeoutGameEvent( this, ADVICE_QUESTION_TIMEOUT, advisee->GetActor(), activeSession );
+        activeSession->requestEvent = ev;
+        psserver->GetEventManager()->Push(ev);
+        activeSession->answered = false;
+    }
+    else if ( activeSession )
     {
         WordArray words(message);
 
@@ -569,13 +576,7 @@ void AdviceManager::HandleAdviceRequest( Client *advisee, csString message )
             activeSession->answered = true;
             return;
         }
-        psAdviceRequestTimeoutGameEvent *ev = new psAdviceRequestTimeoutGameEvent( this, ADVICE_QUESTION_TIMEOUT, advisee->GetActor(), activeSession );
-        activeSession->requestEvent = ev;
-        psserver->GetEventManager()->Push(ev);
-        activeSession->answered = false;
-    }
-    else if ( activeSession )
-    {
+
         if ( activeSession->timeoutEvent )
         {
             activeSession->timeoutEvent->valid = false;
@@ -583,7 +584,9 @@ void AdviceManager::HandleAdviceRequest( Client *advisee, csString message )
         psAdviceSessionTimeoutGameEvent *ev = new psAdviceSessionTimeoutGameEvent( this, activeSession->answered?ADVICE_SESSION_TIMEOUT:ADVICE_SESSION_TIMEOUT/2, advisee->GetActor(), activeSession );
         activeSession->timeoutEvent = ev;
         psserver->GetEventManager()->Push(ev);
+        activeSession->answered = false;
     }
+
     activeSession->lastRequest = message;
 
     csString buf;
