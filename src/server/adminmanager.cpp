@@ -203,13 +203,18 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
              command == "/unban" ||
              command == "/banadvisor" ||
              command == "/unbanadvisor" ||
-             command == "/death" ||
              command == "/info" ||
              command == "/charlist" ||
              command == "/inspect" ||
              command == "/npc")
     {
         player = words[1];
+        return true;
+    }
+    else if (command == "/death")
+    {
+        player = words[1];
+        requestor = words[2];
         return true;
     }
     else if (command == "/warn" ||
@@ -4624,7 +4629,27 @@ void AdminManager::Death( MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& da
     target->Kill(NULL);  // Have a nice day ;)
 
     if (target->GetClientID() != 0)
-        psserver->SendSystemError(target->GetClientID(), "You were killed by a GM");
+    {
+        if (data.requestor.Length() && (client->GetActor() == target || psserver->CheckAccess(client, "requested death")))
+        {
+            csString message = "You were struck down by ";
+            if(data.requestor == "god") //get the god from the sector
+            {
+                if(target->GetCharacterData() && target->GetCharacterData()->location.loc_sector)
+                    message += target->GetCharacterData()->location.loc_sector->god_name.GetData();
+                else
+                    message += "the gods";
+            }
+            else //use the assigned requestor
+                message += data.requestor;
+
+            psserver->SendSystemError(target->GetClientID(), message);
+        }
+        else
+        {
+            psserver->SendSystemError(target->GetClientID(), "You were killed by a GM");
+        }
+    }
 }
 
 
@@ -6617,6 +6642,42 @@ void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
     if(target->GetClient())
         psserver->GetProgressionManager()->SendSkillList(target->GetClient(), false);
 }
+/*
+void AdminManager::AwardSkillToTarget(int gmClientnum, Client* target, csSring skillName, csString recipient, int levelAward, int limit, bool relative)
+{
+    psCharacter* charData = player->GetCharacterData();
+    unsigned int value = abs(data.value);
+    unsigned int max = MAX(MAX_SKILL, MAX_STAT);
+    
+    if(skillName == "all")
+    {
+        
+    }
+    else
+    {
+        psSkillInfo * skill = CacheManager::GetSingleton().GetSkillByName(skillName);
+        if (skill == NULL)
+        {
+            psserver->SendSystemError(me->clientnum, "Skill not found");
+            return;
+        }
+        unsigned int oldValue = charData->Skills().GetSkillRank(skill->id).Current();
+                charData->SetSkillRank(skill->id, value);
+        psserver->SendSystemInfo(me->clientnum, "Changed '%s' of '%s' from %u to %u", skill->name.GetDataSafe(), target->GetName(), old_value,data.value);
+
+        if (target->GetClient() &&  target->GetClient() != client)
+        {
+            // Inform the other player.
+            psserver->SendSystemOK(target->GetClientID(), "Your '%s' level was set to %d by a GM", data.skill.GetDataSafe(), data.value);
+        }
+    }
+
+        // Send updated skill list to client
+    if(target->GetClient())
+        psserver->GetProgressionManager()->SendSkillList(target->GetClient(), false);
+    
+
+}*/
 
 void AdminManager::UpdateRespawn(AdminCmdData& data, Client* client, gemActor* target)
 {

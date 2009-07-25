@@ -1258,6 +1258,10 @@ UPDATE `server_options` SET `option_value`='1225' WHERE `option_name`='db_versio
 INSERT INTO command_group_assignment VALUES( "/deputize", 23 );
 INSERT INTO command_group_assignment VALUES( "/deputize", 22 );
 
+#1225 - Stefano Angeleri - Allow death to have a requestor (which can be anything)
+
+INSERT INTO command_group_assignment VALUES( "requested death", 30 );
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to
