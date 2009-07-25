@@ -36,12 +36,13 @@ class PaladinJr
 {
 public:
 
-    // Extrapolate the current position from last DR packet
-    bool ValidateMovement(Client*, psDRMessage& drmsg);
+    /// Extrapolate the current position from last DR packet
+    bool ValidateMovement(Client* client, gemActor* actor, psDRMessage& drmsg);
 
-    // Compare extrapolated displacement with new displacement from new DR packet
-    // Should be called after actor has been updated with newest recieved DR packet
-    bool CheckCollDetection(Client*);
+    /** Compare extrapolated displacement with new displacement from new DR packet
+     * Should be called after actor has been updated with newest recieved DR packet
+     */
+    bool CheckCollDetection(Client* client, gemActor* actor);
 
     void Initialize(EntityManager* celbase);
     PaladinJr()
@@ -59,7 +60,7 @@ private:
     bool enabled;
     unsigned int watchTime;
 
-    bool SpeedCheck(Client* client, psDRMessage& currUpdate);
+    bool SpeedCheck(Client* client, gemActor* actor, psDRMessage& currUpdate);
 
 
     EntityManager         *entitymanager;
@@ -72,8 +73,10 @@ private:
 
     /// Time at which we started to check target client
     csTicks started;
+
     /// Predicted, extrapolated, position based on last recieved DR packet
     csVector3 predictedPos;
+
     /// Position before extrapolation
     csVector3 origPos;
     csVector3 vel;
