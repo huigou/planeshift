@@ -3114,7 +3114,7 @@ void gemActor::SetPosition(const csVector3& pos,float angle, iSector* sector)
     }
 }
 
-#define STAMINA_PROCESS_DEBUG
+//#define STAMINA_PROCESS_DEBUG
 
 void gemActor::ProcessStamina()
 {
