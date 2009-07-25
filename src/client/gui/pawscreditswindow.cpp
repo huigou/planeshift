@@ -44,6 +44,7 @@
 #include "pawscreditswindow.h"
 #include "iclient/isoundmngr.h"
 #include "util/psxmlparser.h"
+#include "util/localization.h"
 
 
 //-------------------------------------------------------------------
@@ -66,7 +67,7 @@ bool pawsCreditsWindow::PostSetup()
     font = PawsManager::GetSingleton().GetPrefs()->GetDefaultFont();
 
 
-    csString filename = "/this/data/gui/credits_config.xml";
+    csString filename = PawsManager::GetSingleton().GetLocalization()->FindLocalizedFile("credits_config.xml");
     if (!psengine->GetVFS()->Exists(filename.GetData()))
     {
         Error2( "Could not find XML: %s",filename.GetData());
