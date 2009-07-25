@@ -2429,7 +2429,7 @@ bool DoAdminCommandResponseOp::Run(gemNPC *who, gemActor *target,NpcResponse *ow
     modifiedCommandString.ReplaceAll("sourcenpc", format);
     psAdminCmdMessage msg(modifiedCommandString, 0);
     msg.msg->current=0;
-    psserver->GetAdminManager()->HandleMessage(msg.msg, target->GetClient());
+    psserver->GetAdminManager()->HandleNpcCommand(msg.msg, target->GetClient());
     return true;
 }
 

@@ -175,6 +175,13 @@ bool AdminManager::IsReseting(const csString& command)
     return command.Slice(command.FindFirst(' ')+1,8) == "me reset";
 }
 
+//TODO: To be expanded to make the implementation better than how it is now 
+//      when an NPC issues an admin command
+void AdminManager::HandleNpcCommand(MsgEntry *pMsg, Client *client)
+{
+    HandleAdminCmdMessage(pMsg, client);
+}
+
 bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCmdMessage& msg, Client *client)
 {
     WordArray words (msg.cmd, false);
