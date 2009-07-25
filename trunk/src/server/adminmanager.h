@@ -104,6 +104,9 @@ public:
 
     /** Get sector and coordinates of starting point of a map. Returns success. */
     bool GetStartOfMap(int clientnum, const csString & map, iSector * & targetSector,  csVector3 & targetPoint);
+    
+    ///wrapper for internal use from npc
+    void HandleNpcCommand(MsgEntry *pMsg, Client *client);
 
 protected:
 
