@@ -9,6 +9,16 @@
   made the script run two times and show the npc doesn't need it error
 - made a printf a Debug2 so it shows only if quest logging is enabled
 - fixed credits window
+- added a requestor in Death() this allows messages like you have been struck
+  by laanx or you have been struck by zak in place of you have been killed by a gm
+  Only who has requested death access can use this (or if used on himself to allow
+  the npc to use it too - the admin command manager from npc definitely
+  requires some changes)
+- Fixed a code flow problem which treathed answers from the requester like
+  if it was the first time they were done. This not only blocked the request
+  lenght checking (> 2 words) but also didn't allow to reset the advicetimeout
+  in case the requester talked (and only did if the advisor talked) increasing
+  the amount of useless events being pushed and not allowing to answer effectively
 
 *** 2009-07-22 by Steven Patrick
 - Fixed PS#2253 - items should not be removed by transient while guarded
