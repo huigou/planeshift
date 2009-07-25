@@ -74,14 +74,14 @@ void PaladinJr::Initialize(EntityManager* celbase)
     entitymanager = celbase;
 }
 
-bool PaladinJr::ValidateMovement(Client* client, psDRMessage& currUpdate)
+bool PaladinJr::ValidateMovement(Client* client, gemActor* actor, psDRMessage& currUpdate)
 {
     // Don't check GMs/Devs
     //if(client->GetSecurityLevel())
     //    return;
 
     // Speed check always enabled
-    if (!SpeedCheck(client, currUpdate))
+    if (!SpeedCheck(client, actor, currUpdate))
         return false;  // DON'T USE THIS CLIENT POINTER AGAIN
 
     if (!enabled)
@@ -129,7 +129,7 @@ bool PaladinJr::ValidateMovement(Client* client, psDRMessage& currUpdate)
     iSector* sector;
 
 
-    client->GetActor()->SetDRData(lastUpdate);
+    actor->SetDRData(lastUpdate);
 
     origPos = lastUpdate.pos;
     vel = lastUpdate.vel;
@@ -143,17 +143,17 @@ bool PaladinJr::ValidateMovement(Client* client, psDRMessage& currUpdate)
 
     // Paladin Jr needs CD enabled on the entity.
     //kwf client->GetActor()->pcmove->UseCD(true);
-    client->GetActor()->pcmove->SetVelocity(vel);
+    actor->pcmove->SetVelocity(vel);
 
     // TODO: Assuming maximum lag, need to add some kind of lag prediction here.
     // Note this ignores actual DR packet time interval because we cannot rely
     // on it so must assume a maximal value.
     //
     // Perform the extrapolation here:
-    client->GetActor()->pcmove->UpdateDRDelta(2000);
+    actor->pcmove->UpdateDRDelta(2000);
 
     // Find the extrapolated position
-    client->GetActor()->pcmove->GetLastPosition(predictedPos,yrot,sector);
+    actor->pcmove->GetLastPosition(predictedPos,yrot,sector);
 
 #ifdef PALADIN_DEBUG
     CPrintf(CON_DEBUG, "Predicted: pos.x = %f, pos.y = %f, pos.z = %f\n",predictedPos.x,predictedPos.y,predictedPos.z);
@@ -162,14 +162,14 @@ bool PaladinJr::ValidateMovement(Client* client, psDRMessage& currUpdate)
     maxmove = predictedPos-origPos;
 
     // No longer need CD checking
-    client->GetActor()->pcmove->UseCD(false);
+    actor->pcmove->UseCD(false);
 
     lastUpdate = currUpdate;
     checkClient = true;
     return true;
 }
 
-bool PaladinJr::CheckCollDetection(Client* client)
+bool PaladinJr::CheckCollDetection(Client* client, gemActor* actor)
 {
     if (!enabled || !checkClient || client->GetSecurityLevel())
         return true;
@@ -180,7 +180,7 @@ bool PaladinJr::CheckCollDetection(Client* client)
     csVector3 posChange;
 
 
-    client->GetActor()->GetPosition(pos,yrot,sector);
+    actor->GetPosition(pos,yrot,sector);
     posChange = pos-origPos;
 
 //#ifdef PALADIN_DEBUG
@@ -213,14 +213,14 @@ bool PaladinJr::CheckCollDetection(Client* client)
     return true;
 }
 
-bool PaladinJr::SpeedCheck(Client* client, psDRMessage& currUpdate)
+bool PaladinJr::SpeedCheck(Client* client, gemActor* actor, psDRMessage& currUpdate)
 {
     csVector3 oldpos;
     // Dummy variables
     float yrot;
     iSector* sector;
 
-    client->GetActor()->pcmove->GetLastClientPosition (oldpos, yrot, sector);
+    actor->pcmove->GetLastClientPosition (oldpos, yrot, sector);
     
     // If no previous observations then we have nothing to check against.
     if (!sector)
@@ -229,11 +229,11 @@ bool PaladinJr::SpeedCheck(Client* client, psDRMessage& currUpdate)
     float dist = sqrtf ( (currUpdate.pos.x - oldpos.x)*(currUpdate.pos.x - oldpos.x) +
                         (currUpdate.pos.z - oldpos.z)*(currUpdate.pos.z - oldpos.z) );
 
-    csTicks timedelta = client->GetActor()->pcmove->ClientTimeDiff();
+    csTicks timedelta = actor->pcmove->ClientTimeDiff();
 
     // We use the last reported vel, not the new vel, to calculate how far he should have gone since the last DR update
     csVector3 vel;
-    vel = client->GetActor()->pcmove->GetVelocity();
+    vel = actor->pcmove->GetVelocity();
     float reported_distance = sqrtf(vel.x * vel.x + vel.z * vel.z)*timedelta/1000;
 
     printf("Player went %1.3fm in %u ticks when %1.3fm was allowed.\n",dist, timedelta, reported_distance);
@@ -308,7 +308,7 @@ bool PaladinJr::SpeedCheck(Client* client, psDRMessage& currUpdate)
             return true;  // not cheating
         }
         
-        client->GetActor()->pcmove->GetAngularVelocity(angVel);
+        actor->pcmove->GetAngularVelocity(angVel);
         buf.Format("%s, %s, %s, %.3f %.3f %.3f, %.3f 0 %.3f, %.3f %.3f %.3f, %.3f %.3f %.3f, %.3f %.3f %.3f, %s\n",
                    client->GetName(), type.GetData(), sectorName.GetData(),oldpos.x, oldpos.y, oldpos.z,
                    max_noncheat_distance, max_noncheat_distance, 

@@ -799,9 +799,9 @@ public:
     void SetTextureParts(const char *parts);
     void SetEquipment(const char *equip);
 
-    gemActor* GetMount() { return mount; }
+    gemActor* GetMount() const { return mount; }
     void SetMount(gemActor *newMount) { mount = newMount; }
-    gemActor* GetRider() { return controller; }
+    gemActor* GetRider() const { return controller; }
     void SetRider(gemActor *newRider) { controller = newRider; }
 
     PSCHARACTER_MODE GetMode() { return player_mode; }
@@ -1103,7 +1103,6 @@ public:
 
     virtual const char* GetObjectType()    { return "NPC";     }
     virtual psNPCDialog *GetNPCDialogPtr() { return npcdialog; }
-    virtual Client* GetClient() const      { return NULL;      }
 
     virtual AccountID GetSuperclientID()        { return superClientID; }
     virtual void SetSuperclientID(AccountID id) { superClientID = id; }

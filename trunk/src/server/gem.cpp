@@ -1883,7 +1883,7 @@ gemActor::gemActor( psCharacter *chardata,
   gemObject(chardata->GetCharFullName(),factname,myInstance,room,pos,rotangle,clientnum),
 psChar(chardata), factions(NULL), controller(NULL), mount(NULL), DRcounter(0), forceDRcounter(0), lastDR(0), lastV(0), lastSentSuperclientPos(0, 0, 0),
 lastSentSuperclientInstance(-1), activeReports(0), isFalling(false), invincible(false), visible(true), viewAllObjects(false),
-movementMode(0), isAllowedToMove(true), atRest(true), pcmove(NULL),
+movementMode(0), isAllowedToMove(true), atRest(true), spellCasting(NULL), workEvent(NULL), pcmove(NULL),
 nevertired(false), infinitemana(false), instantcast(false), safefall(false), givekillexp(false), attackable(false)
 {
     pid = chardata->GetPID();
@@ -1891,9 +1891,8 @@ nevertired(false), infinitemana(false), instantcast(false), safefall(false), giv
     cel->AddActorEntity(this);
 
     // Store a safe reference to the client
-    Client* client = psserver->GetConnections()->FindAny(clientnum);
-    if (client) clientRef = client;
-    if (clientnum && !client)
+    clientRef = psserver->GetConnections()->FindAny(clientnum);
+    if (clientnum && !clientRef)
     {
         Error3("Failed to find client %d for %s!", clientnum, ShowID(pid));
         return;
@@ -1909,7 +1908,7 @@ nevertired(false), infinitemana(false), instantcast(false), safefall(false), giv
 
     chardata->SetActor(this);
 
-    if (!InitCharData(client))
+    if (!InitCharData(clientRef))
     {
         Error1("Could not init char data.  Actor not created.");
         return;
@@ -1931,8 +1930,6 @@ nevertired(false), infinitemana(false), instantcast(false), safefall(false), giv
     if (psChar->IsStatue())
         player_mode = PSCHARACTER_MODE_STATUE;
     combat_stance = CombatManager::GetStance("None");
-    spellCasting = NULL;
-    workEvent = NULL;
 }
 
 gemActor::~gemActor()
@@ -2756,21 +2753,11 @@ bool gemActor::LogChatMessage(const char *who, const psChatMessage &msg)
     return LogLine(cssLine.GetData());
 }
 
-/**
- * @brief Saves a system message to this actor's chat history and logs it to
- * a file, if there are active reports.
- * @return Returns true if the line was written to the log file
- */
 bool gemActor::LogSystemMessage(const char* szLine)
 {
     return LogLine(csString().Format("> %s", szLine).GetData());
 }
 
-/**
- * @brief Saves a line to this actor's chat history and logs it to
- * a file, if there are active reports.
- * @return Returns true if the line was written to the log file
- */
 bool gemActor::LogLine(const char* szLine)
 {
     // Add to chat history
@@ -3059,6 +3046,8 @@ void gemActor::SetGMDefaults()
 void gemActor::SetInstance(InstanceID worldInstance)
 {
     this->worldInstance = worldInstance;
+    if(GetRider())
+        GetRider()->SetInstance(worldInstance);
 }
 
 void gemActor::Teleport(const char *sectorName, const csVector3 & pos, float yrot, InstanceID instance)
@@ -3075,6 +3064,12 @@ void gemActor::Teleport(const char *sectorName, const csVector3 & pos, float yro
 
 void gemActor::Teleport(iSector *sector, const csVector3 & pos, float yrot, InstanceID instance)
 {
+    if(GetMount())
+    {
+        GetMount()->Teleport(sector, pos, yrot, instance);
+        return;
+    }
+    
     SetInstance(instance);
     Teleport(sector, pos, yrot);
 }
@@ -3112,6 +3107,8 @@ void gemActor::SetPosition(const csVector3& pos,float angle, iSector* sector)
         psChar->SetLocationInWorld(worldInstance, sectorInfo, pos.x, pos.y, pos.z, angle );
         UpdateValidLocation(pos, angle, sector, worldInstance, true);
     }
+    if(GetRider())
+        GetRider()->SetPosition(pos, angle, sector);
 }
 
 //#define STAMINA_PROCESS_DEBUG
@@ -3294,9 +3291,6 @@ bool gemActor::SetDRData(psDRMessage& drmsg)
         return false;  // don't do the rest of this if this msg is out of date
     }
 
-    if(GetMount())
-        GetMount()->SetDRData(drmsg);
-
     // Apply stamina only on PCs
     if (GetClientID())
         ProcessStamina(drmsg.vel + drmsg.worldVel);
@@ -3314,6 +3308,8 @@ bool gemActor::SetDRData(psDRMessage& drmsg)
                 InterruptSpellCasting();
             }
         }
+        if(GetRider())
+            GetRider()->SetPosition(csVector3(drmsg.pos.x, drmsg.pos.y, drmsg.pos.z), drmsg.yrot, drmsg.sector);
     }
     return true;
 }
@@ -3383,7 +3379,13 @@ void gemActor::MulticastDRUpdate()
 
 void gemActor::ForcePositionUpdate()
 {
-    psForcePositionMessage msg(GetClientID(), ++forceDRcounter, GetPosition(), GetAngle(), GetSector(),
+    uint32_t clientnum;
+    if(GetRider())
+        clientnum = GetRider()->GetClientID();
+    else
+        clientnum = GetClientID();
+    
+    psForcePositionMessage msg(clientnum, ++forceDRcounter, GetPosition(), GetAngle(), GetSector(),
                                CacheManager::GetSingleton().GetMsgStrings());
     msg.SendMessage();
 }

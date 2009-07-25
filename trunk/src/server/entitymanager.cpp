@@ -615,6 +615,9 @@ bool EntityManager::DeletePlayer(Client * client)
         // take the actor off his mount if he got one
         if(actor->GetMount())
             RemoveRideRelation(actor, actor->GetMount());
+        // take the riders off thos mount if there are any
+        if(actor->GetRider())
+            RemoveRideRelation(actor->GetRider(), actor);
         
         // Check for buddy list members
         usermanager->NotifyBuddies(client, UserManager::LOGGED_OFF);
@@ -1023,8 +1026,6 @@ void EntityManager::HandleUserAction(MsgEntry* me, Client *client)
 
     gemObject *object = gem->FindObject(actionMsg.target);
 
-    client->SetTargetObject(object);  // have special tracking for this for fast processing of other messages
-
     if (actionMsg.target.IsValid() && !object)
     {
         Debug2(LOG_ANY, me->clientnum, "User action on unknown entity (%s)!\n", ShowID(actionMsg.target));
@@ -1037,6 +1038,8 @@ void EntityManager::HandleUserAction(MsgEntry* me, Client *client)
         Debug2(LOG_ANY, me->clientnum, "User action on none or unknown object (%s)!\n", ShowID(actionMsg.target));
         return;
     }
+
+    client->SetTargetObject(object);  // have special tracking for this for fast processing of other messages
 
     // Resolve default behaviour
     action = actionMsg.action;
@@ -1082,6 +1085,8 @@ bool EntityManager::SendActorList(Client *client)
 
 bool EntityManager::RemoveActor(gemObject *actor)
 {
+    Error3("Remove actor %s (%u)",actor->GetName(), actor->GetEID().Unbox());
+    
     // Do network commmand to remove entity from all clients
     psRemoveObject msg(0, actor->GetEID());
     

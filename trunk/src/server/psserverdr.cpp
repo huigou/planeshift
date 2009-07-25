@@ -147,7 +147,10 @@ void psServerDR::HandleDeadReckoning(MsgEntry* me,Client *client)
         return;
     }
 
-    gemActor *actor = client->GetActor();
+    gemActor *actor = client->GetActor()->GetMount();
+    if(!actor)
+        actor = client->GetActor();
+    
     if (actor == NULL)
     {
         Error1("Received DR data for NULL actor.");
@@ -202,13 +205,12 @@ void psServerDR::HandleDeadReckoning(MsgEntry* me,Client *client)
         return;
     }
 
-    if (!paladin->ValidateMovement(client, drmsg)) // client ptr has been deleted if this is false
+    if (!paladin->ValidateMovement(client, actor, drmsg)) // client ptr has been deleted if this is false
         return;
 
     // Go ahead and update the server version
     if (!actor->SetDRData(drmsg)) // out of date message if returns false
         return;
-    // if this message is OK, update the riders' DR data
 
     // Check for Movement Tutorial Required.
     // Usually we don't want to check but DR msgs are so frequent,
@@ -267,7 +269,7 @@ void psServerDR::HandleDeadReckoning(MsgEntry* me,Client *client)
                           actor->GetMulticastClients(),
                           me->clientnum,PROX_LIST_ANY_RANGE);
 
-    paladin->CheckCollDetection(client);
+    paladin->CheckCollDetection(client, actor);
 
     // Swap lines for easy Death Penalty testing.            
     //if (strcmp(drmsg.sector->QueryObject()->GetName(), "NPCroom1") == 0)
