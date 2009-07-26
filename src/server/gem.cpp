@@ -2348,6 +2348,12 @@ void gemActor::DoDamage(gemActor * attacker, float damage, float damageRate, csT
                 psserver->SendSystemError(GetClientID(), "You've been slain by %s!", attacker->GetName());
                 GetClient()->AnnounceToDuelClients(attacker, "slain");
             }
+            
+            if (GetRider())
+                EntityManager::GetSingleton().RemoveRideRelation(GetRider(), this);
+            else if(GetMount())
+                EntityManager::GetSingleton().RemoveRideRelation(this, GetMount());
+            
             SetMode(PSCHARACTER_MODE_DEAD);
         }
 

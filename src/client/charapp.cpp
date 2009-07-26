@@ -276,6 +276,8 @@ void psCharAppearance::ApplyRider(GEMClientActor* rider)
     }
 
     ProcessAttach(meshWrap, socket);
+
+    rider->SetIdleAnimation("ride");
 }
 
 void psCharAppearance::RemoveRider(GEMClientActor* rider)

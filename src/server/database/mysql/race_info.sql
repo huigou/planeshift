@@ -72,7 +72,7 @@ INSERT INTO `race_info` (`id`,`name`,`cstr_id_mesh`,`sex`,`size_x`,`size_y`,`siz
  (14,'Ynnwn',130,'F',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',2),
  (15,'Ylian',125,'F',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',3),
  (16,'Xacha',125,'F',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',4),
- (17,'Nolthrir',125,'F',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',5),
+ (17,'Nolthrir',401,'F',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',5),
  (18,'Dermorian',125,'F',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.2,0.8,10,10,0,'','','','',6),
  (19,'Hammerwielder',125,'F',0.8,1.2,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',7);
 INSERT INTO `race_info` (`id`,`name`,`cstr_id_mesh`,`sex`,`size_x`,`size_y`,`size_z`,`cstr_id_base_texture`,`initial_cp`,`start_str`,`start_end`,`start_agi`,`start_int`,`start_will`,`start_cha`,`base_physical_regen_still`,`base_physical_regen_walk`,`base_mental_regen_still`,`base_mental_regen_walk`,`armor_id`,`helm`,`bracer`,`belt`,`cloak`,`race`) VALUES 
@@ -89,7 +89,7 @@ INSERT INTO `race_info` (`id`,`name`,`cstr_id_mesh`,`sex`,`size_x`,`size_y`,`siz
 INSERT INTO `race_info` (`id`,`name`,`cstr_id_mesh`,`sex`,`size_x`,`size_y`,`size_z`,`cstr_id_base_texture`,`initial_cp`,`start_str`,`start_end`,`start_agi`,`start_int`,`start_will`,`start_cha`,`base_physical_regen_still`,`base_physical_regen_walk`,`base_mental_regen_still`,`base_mental_regen_walk`,`armor_id`,`helm`,`bracer`,`belt`,`cloak`,`race`) VALUES 
  (30,'Ulbernaut',123,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',19),
  (31,'Tefusang',124,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,2.0,1.5,10,10,0,'','','','',20),
- (32,'Drifter',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',21);
+ (32,'Drifter',400,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',21);
 INSERT INTO `race_info` (`id`,`name`,`cstr_id_mesh`,`sex`,`size_x`,`size_y`,`size_z`,`cstr_id_base_texture`,`initial_cp`,`start_str`,`start_end`,`start_agi`,`start_int`,`start_will`,`start_cha`,`base_physical_regen_still`,`base_physical_regen_walk`,`base_mental_regen_still`,`base_mental_regen_walk`,`armor_id`,`helm`,`bracer`,`belt`,`cloak`,`race`) VALUES 
  (9999,'Special',9999,'N',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',9999);
 /*!40000 ALTER TABLE `race_info` ENABLE KEYS */;
