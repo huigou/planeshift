@@ -61,6 +61,7 @@ public:
         wnd->SetID();
         wnd->SetCallBack(yesNoCallback, this, question);
         wnd->Show();
+        PawsManager::GetSingleton().SetCurrentFocusedWidget(wnd);
         
         //Players should be able to re-equip, close other windows and target before having to accept a pvp duel
         //paws->SetModalWidget(wnd);
