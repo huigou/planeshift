@@ -701,10 +701,16 @@ void UserManager::HandleCharDescUpdate(MsgEntry *me,Client *client)
 
 void UserManager::HandleSit(psUserCmdMessage& msg, Client *client)
 {
-    if (client->GetActor()->GetMode() == PSCHARACTER_MODE_PEACE 
-    && client->GetActor()->AtRest() && !client->GetActor()->IsFalling())
+    gemActor *actor;
+    if(client->GetActor()->GetMount())
+        actor = client->GetActor()->GetMount();
+    else
+        actor = client->GetActor();
+    
+    if (actor->GetMode() == PSCHARACTER_MODE_PEACE 
+    && actor->AtRest() && !actor->IsFalling())
     {
-        client->GetActor()->SetMode(PSCHARACTER_MODE_SIT);
+        actor->SetMode(PSCHARACTER_MODE_SIT);
         Emote("%s takes a seat.", "%s takes a seat by %s.", "sit", client);
     }
 }
@@ -752,7 +758,13 @@ void UserManager::HandleMarriage(psUserCmdMessage& msg, Client *client)
 
 void UserManager::HandleStand(psUserCmdMessage& msg, Client *client)
 {
-    client->GetActor()->Stand();
+    gemActor *actor;
+    if(client->GetActor()->GetMount())
+        actor = client->GetActor()->GetMount();
+    else
+        actor = client->GetActor();
+    
+    actor->Stand();
 }
 
 void UserManager::HandleTargetEvent(MsgEntry *me, Client *notused)
@@ -1399,6 +1411,9 @@ void UserManager::HandleUnstick(psUserCmdMessage& msg, Client *client)
     if (!actor)
         return;
 
+    if(actor->GetMount())
+        actor = actor->GetMount();
+
     StopAllCombat(client);
     LogStuck(client);
 
@@ -2005,6 +2020,13 @@ void UserManager::HandleMount(psUserCmdMessage& msg, Client *client)
     {
         psserver->SendSystemError(client->GetClientNum(),
                 "You are too far away from the mount");
+        return;
+    }
+
+    if(!mount->IsAlive())
+    {
+        psserver->SendSystemError(client->GetClientNum(),
+                "You cannot ride a dead corpse.");
         return;
     }
 

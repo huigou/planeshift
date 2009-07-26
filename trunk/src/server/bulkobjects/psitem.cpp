@@ -96,13 +96,8 @@ public:
             if (item)
             {
                 // Is the item being guarded?
-                // Alot of stuff simply to get the instance...
-                float locx,locy,locz,locyrot;
-                psSectorInfo *sectorinfo;
-                InstanceID instance;
+                InstanceID instance = obj->GetInstance();
                 
-                item->GetLocationInWorld(instance,&sectorinfo,locx,locy,locz,locyrot);
-
                 // Do checks
                 PID guardCharacterID = item->GetGuardingCharacterID();
                 gemActor* guardActor = GEMSupervisor::GetSingleton().FindPlayerEntity(guardCharacterID);
