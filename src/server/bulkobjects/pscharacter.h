@@ -981,7 +981,7 @@ public:
     void MakeEquipmentString( csString& equipmentString );
 
     /// Returns a level of character based on his 6 base stats.
-    unsigned int GetCharLevel();
+    unsigned int GetCharLevel(bool physical);
 
     bool IsMerchant() { return (merchantInfo != NULL); }
     psMerchantInfo *GetMerchantInfo() { return merchantInfo; }

@@ -3299,14 +3299,20 @@ void psCharacter::SetSkillRank(PSSKILL which, unsigned int rank)
         attributes[PSITEMSTATS_STAT_WILL].SetBase(rank);
 }
 
-unsigned int psCharacter::GetCharLevel()
+unsigned int psCharacter::GetCharLevel(bool physical)
 {
-    return (attributes[PSITEMSTATS_STAT_STRENGTH].Current()     +
+    if(physical)
+    {
+        return (attributes[PSITEMSTATS_STAT_STRENGTH].Current()     +
             attributes[PSITEMSTATS_STAT_ENDURANCE].Current()    +
-            attributes[PSITEMSTATS_STAT_AGILITY].Current()      +
-            attributes[PSITEMSTATS_STAT_INTELLIGENCE].Current() +
+            attributes[PSITEMSTATS_STAT_AGILITY].Current()) / 3;
+    }
+    else
+    {
+        return (attributes[PSITEMSTATS_STAT_INTELLIGENCE].Current() +
             attributes[PSITEMSTATS_STAT_WILL].Current()         +
-            attributes[PSITEMSTATS_STAT_CHARISMA].Current()) / 6;
+            attributes[PSITEMSTATS_STAT_CHARISMA].Current()) / 3;
+    }
 }
 
 //This function recalculates Hp, Mana, and Stamina when needed (char creation, combats, training sessions)

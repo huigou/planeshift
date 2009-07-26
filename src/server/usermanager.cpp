@@ -511,53 +511,148 @@ void UserManager::SendCharacterDescription(Client * client, gemActor *actor, boo
         //  dead or if we are viewing our own description
         if (!charData->impervious_to_attack && actor->GetMode() != PSCHARACTER_MODE_DEAD && !isSelf)
         {
-            if (playerAttr[PSITEMSTATS_STAT_INTELLIGENCE].Current() < 50)
-                desc.AppendFmt( "\n\nYou try to evaluate the strength of %s, but you have no clue.", charName.GetData() );
+            // Begin by gathering stats. We will get overall strength for physical and magical and also a comparison.
+            int myPhysical = charData->GetCharLevel(true);
+            int myMagical = charData->GetCharLevel(false);
+            int theirPhysical = client->GetCharacterData()->GetCharLevel(true);
+            int theirMagical = client->GetCharacterData()->GetCharLevel(false);
+
+            /* TODO (needs extra work to determine direction of inaccuracy)
+            // Intellect is weighed against charisma.
+            int myIntellect = playerAttr[PSITEMSTATS_STAT_INTELLIGENCE].Current();
+            int opponentCharisma = client->GetCharacterData()->Stats().Get(PSITEMSTATS_STAT_CHARISMA).Current();
+
+            // The difference between the two gives a bonus (or malus) to examination accuracy.
+            int overallModifier = opponentCharisma - myIntellect;
+            overallModifier = (overallModifier < 0) ? 0 : overallModifier;*/
+
+            // We also take skill into consideration.
+            int physicalDifference = 0;
+            int physicalModifier = 0;
+            int magicalDifference = 0;
+            int magicalModifier = 0;
+
+            for(int i=0; i<PSSKILL_COUNT; ++i)
+            {
+                int* difference = 0;
+                int* modifier = 0;
+                Skill& mySkill = charData->Skills().Get((PSSKILL)i);
+
+                if(mySkill.info->category == PSSKILLS_CATEGORY_COMBAT)
+                {
+                    difference = &physicalDifference;
+                    modifier = &physicalModifier;
+                }
+                else if(mySkill.info->category == PSSKILLS_CATEGORY_MAGIC)
+                {
+                    difference = &magicalDifference;
+                    modifier = &magicalModifier;
+                }
+                else
+                {
+                    continue;
+                }
+
+                int mod = 0;
+                Skill& theirSkill = client->GetCharacterData()->Skills().Get((PSSKILL)i);
+
+                if(mySkill.rank.Current() < theirSkill.rank.Current())
+                {
+                    // Reduce accuracy of skill check.
+                    mod = mySkill.rank.Current() + (theirSkill.rank.Current() - mySkill.rank.Current()) / 1.5;
+                }
+                else
+                {
+                    mod = theirSkill.rank.Current();
+                }
+
+                if(*modifier < mod)
+                {
+                    *difference = theirSkill.rank.Current() - mySkill.rank.Current();
+                    *modifier = mod;
+                }
+            }
+
+            // We calculate two 'levels', one physical and one magical.
+            int physicalLevel = (theirPhysical + physicalModifier * 2) / 100;
+            physicalLevel = (physicalLevel > 7) ? 7 : physicalLevel;
+            int magicalLevel = (theirMagical + magicalModifier * 2) / 100;
+            magicalLevel = (magicalLevel > 7) ? 7 : magicalLevel;
+
+            // And also a comparative difference for each.
+            int physicalDiff = physicalDifference;
+            if(abs(physicalDiff) < 5)
+            {
+                physicalDiff = myPhysical - theirPhysical;
+                physicalDiff /= 10;
+            }
             else
             {
-                // Character's Strength assessment code below.
-                static const char* const StrengthGuessPhrases[] =
-                { "won't require any effort to defeat",
+                physicalDiff /= 5;
+            }
+
+            physicalDiff = (physicalDiff < -4) ? -4 : physicalDiff;
+            physicalDiff = (physicalDiff > 4) ? 4 : physicalDiff;
+
+            int magicalDiff = magicalDifference;
+            if(abs(magicalDiff) < 5)
+            {
+                magicalDiff = myMagical - theirMagical;
+                magicalDiff /= 10;
+            }
+            else
+            {
+                magicalDiff /= 5;
+            }
+
+            magicalDiff = (magicalDiff < -4) ? -4 : magicalDiff;
+            magicalDiff = (magicalDiff > 4) ? 4 : magicalDiff;
+
+            int overallLevelComparison = 4 + (physicalDiff + magicalDiff) / 2;
+
+            // Character's magical strength assessment.
+            static const char* const MagicalStrengthAssessPhrases[] =
+            {
+                "to be as intelligent as a stone",
+                "to have no magic skill of worth",
+                "to be an apprentice magic user",
+                "to be an advanced apprentice in magic use",
+                "to be a competant magic user",
+                "to be an above average mage",
+                "to be highly advanced in the arcane arts",
+                "to be surrounded by a powerful magic aura"
+            };
+
+            // Character's physical strength assessment.
+            static const char* const PhysicalStrengthAssessPhrases[] =
+            {
+                "to be very frail and feeble in physical combat",
+                "to be weak and poorly trained in physical combat",
+                "to be a trainee fighter with mediocre fighting abilities",
+                "to be fit and have respectable fighting skills",
+                "to be in very good shape, with much experience in the fighting arts",
+                "to be strong, tough and agile with advanced fighting abilities",
+                "to have a body and mind honed for combat",
+                "to be physically perfect and a master in combat",
+            };
+
+            // Character's overall comparison.
+            static const char* const OverallComparePhrases[] =
+            {
+                "wouldn't require any effort to defeat",
                 "is noticeably weaker than you",
-                "won't pose much of a challenge",
+                "wouldn't pose much of a challenge",
                 "is not quite as strong as you",
                 "is about as strong as you",
-                "is somewhat stronger than you",
-                "will pose a challenge to defeat",
+                "is a fair bit stronger than you",
+                "would pose a great challenge to defeat",
                 "is significantly more powerful than you",
-                "may be impossible to defeat" };
+                "would be impossible to defeat"
+            };
 
-                bool smart = (playerAttr[PSITEMSTATS_STAT_INTELLIGENCE].Current() >= 100);
-
-                int CharsLvl      = charData->GetCharLevel();
-                int PlayersLvl    = client->GetCharacterData()->GetCharLevel();
-                int LvlDifference = PlayersLvl - CharsLvl;
-                int Phrase        = 0;
-
-                if ( LvlDifference >= 50 )
-                    Phrase = 0;
-                else if ( LvlDifference > 30 )
-                    Phrase = 1;
-                else if ( LvlDifference > 15 && smart)
-                    Phrase = 2;
-                else if ( LvlDifference > 5 )
-                    Phrase = 3;
-                else if ( LvlDifference >= -5 )
-                    Phrase = 4;
-                else if ( LvlDifference >= -15 )
-                    Phrase = 5;
-                else if ( LvlDifference >= -30 && smart)
-                    Phrase = 6;
-                else if ( LvlDifference > -50 )
-                    Phrase = 7;
-                else
-                    Phrase = 8;
-
-                // Enable for Debugging only
-                // desc+="\n CharsLvl: "; desc+=CharsLvl; desc+=" | YourLvl: "; desc+=PlayersLvl; desc+="\n";
-
-                desc.AppendFmt( "\n\nYou evaluate that %s %s.", charName.GetData(), StrengthGuessPhrases[Phrase] );
-            }
+            desc.AppendFmt("\n\n%s appears %s, while also appearing %s. You judge that %s %s.", charName.GetData(),
+                MagicalStrengthAssessPhrases[magicalLevel], PhysicalStrengthAssessPhrases[physicalLevel],
+                charName.GetData(), OverallComparePhrases[overallLevelComparison]);
         }
 
         // Show spouse name if character is married
