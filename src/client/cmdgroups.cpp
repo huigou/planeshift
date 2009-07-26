@@ -43,11 +43,13 @@ psGroupCommands::psGroupCommands(ClientMsgHandler* mh,
                                  iObjectRegistry* obj)
   : psCmdBase(mh,ch,obj)
 {
-    cmdsource->Subscribe("/invite",this);  // ask player to join group
-    cmdsource->Subscribe("/disband",this);     // disband group (leader only)
-    cmdsource->Subscribe("/groupremove",this);  // remove player from group (leader only)
-    cmdsource->Subscribe("/leavegroup",this);   // name group level something (ranks)
-    cmdsource->Subscribe("/groupmembers",this); // see list of members (optional level #)
+    cmdsource->Subscribe("/invite",this);        // ask player to join group
+    cmdsource->Subscribe("/disband",this);       // disband group (leader only)
+    cmdsource->Subscribe("/groupremove",this);   // remove player from group (leader only)
+    cmdsource->Subscribe("/leavegroup",this);    // name group level something (ranks)
+    cmdsource->Subscribe("/groupmembers",this);  // see list of members (optional level #)
+    cmdsource->Subscribe("/groupchallenge",this);// challenges another group (leader only)
+    cmdsource->Subscribe("/groupyield",this);    //yields to all the groups in challenge (leader only)
 }
 
 psGroupCommands::~psGroupCommands()
@@ -56,7 +58,9 @@ psGroupCommands::~psGroupCommands()
     cmdsource->Unsubscribe("/disband",this);     
     cmdsource->Unsubscribe("/groupremove",this);  // remove player from group (leader only)
     cmdsource->Unsubscribe("/leavegroup",this);  
-    cmdsource->Unsubscribe("/groupmembers",this); 
+    cmdsource->Unsubscribe("/groupmembers",this);
+    cmdsource->Unsubscribe("/groupchallenge",this);
+    cmdsource->Unsubscribe("/groupyield",this);
 }
 
 const char *psGroupCommands::HandleCommand(const char *cmd)

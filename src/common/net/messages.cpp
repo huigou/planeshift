@@ -1268,14 +1268,15 @@ psGroupCmdMessage::psGroupCmdMessage(MsgEntry *message)
     WordArray words(message->GetStr());
     command = words[0];
 
-    if (command == "/invite" || command == "/groupremove")
+    if (command == "/invite" || command == "/groupremove" || command == "/groupchallenge")
     {
         player = words[1];
         return;
     }
     if (command == "/disband" ||
          command == "/leavegroup" ||
-         command == "/groupmembers")
+         command == "/groupmembers" ||
+         command == "/groupyield")
     {
         return;
     }

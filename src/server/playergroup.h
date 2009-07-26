@@ -47,6 +47,7 @@ private:
     // TODO: Client should use csRefArray but then the client have to
     // be ref counted.
     csArray<gemActor*> members;
+    csArray<PlayerGroup*> DuelGroups;
 
 public:
     PlayerGroup();
@@ -61,11 +62,24 @@ public:
 
     /// Remove a client from this group.
     void Remove(gemActor * member);
+    
+    /// Add a new group to the list of those in duel with this.
+    bool AddDuelGroup(PlayerGroup *OtherGroup);
+
+    /// Remove a group from the list of those in duel with this.
+    void RemoveDuelGroup(PlayerGroup *OtherGroup);
+    
+    /// Yield to all groups in duel with this.
+    void DuelYield();
+
+    /// Check if we are in duel with the requester
+    bool IsInDuelWith(PlayerGroup *OtherGroup);
 
     /// Send a message to all members in this group.
     void Broadcast(MsgEntry *me);
     void ListMembers(gemActor * client);
     bool IsLeader(gemActor * client);
+    gemActor *GetLeader();
     void Disband();
     bool IsEmpty();
     void BroadcastMemberList();

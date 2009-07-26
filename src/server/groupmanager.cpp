@@ -74,8 +74,34 @@ public:
     void HandleAnswer(const csString & answer);
 };
 
+/** A structure to hold the clients that are pending on challenging a group.
+ */
+class PendingGroupChallenge : public PendingInvite
+{
+public:
+    int groupID;
 
+    PendingGroupChallenge(Client *inviter,
+                          Client *invitee,
+                          const char *Question,
+                          PlayerGroup *Group)
+        : PendingInvite( inviter, invitee, true, 
+                        Question,"Accept","Decline",
+                        "Your group has challenged %s's group.",
+                        "%s has challenged your group.",
+                        "%s has accepted the challenge.",
+                        "You accepted the challenge.",
+                        "%s has declined your challenge.",
+                        "You have declined %s's challenge.",
+                        psQuestionMessage::generalConfirm)
+    {
+        groupID   = Group->GetGroupID();
+    }
 
+    virtual ~PendingGroupChallenge() {}
+
+    void HandleAnswer(const csString & answer);
+};
 
 PlayerGroup::PlayerGroup()
     :id(next_id++)
@@ -180,8 +206,16 @@ bool PlayerGroup::IsLeader(gemActor * client)
     return (leader == client);
 }
 
+gemActor *PlayerGroup::GetLeader()
+{
+    return leader;
+}
+
 void PlayerGroup::Disband()
 {
+    //first of all we yield from all the duels if in place
+    DuelYield();
+    
     psGUIGroupMessage msg(0,psGUIGroupMessage::LEAVE,"Group Disbanded By Leader");
     if (!msg.valid)
     {
@@ -255,6 +289,35 @@ bool PlayerGroup::HasMember(gemActor *member, bool IncludePets)
     return false;
 }
 
+// group duel functions
+
+bool PlayerGroup::AddDuelGroup(PlayerGroup *OtherGroup)
+{
+    if(IsInDuelWith(OtherGroup)) //duplicate
+        return false;
+
+    DuelGroups.Push(OtherGroup);
+}    
+
+void PlayerGroup::RemoveDuelGroup(PlayerGroup *OtherGroup)
+{
+    DuelGroups.Delete(OtherGroup);
+}
+
+void PlayerGroup::DuelYield()
+{
+    for (size_t pos = 0; pos < DuelGroups.GetSize(); pos++)
+        DuelGroups.Get(pos)->RemoveDuelGroup(this);
+    
+    DuelGroups.DeleteAll();
+}
+
+bool PlayerGroup::IsInDuelWith(PlayerGroup *OtherGroup)
+{
+    return DuelGroups.Find(OtherGroup) != csArrayItemNotFound;
+}
+
+
 //---------------------------------------------------------------------------
 
 int PlayerGroup::next_id = 1;
@@ -303,10 +366,156 @@ void GroupManager::HandleGroupCommand(MsgEntry *me, Client *client)
     {
         ListMembers(msg,client->GetActor());
     }
+    else if (msg.command == "/groupchallenge")
+    {
+        Challenge(msg,client);
+    }
+    else if (msg.command == "/groupyield")
+    {
+        Yield(msg,client);
+    }
     else
     {
 		Error2("Group command %s is not supported by server.", msg.command.GetDataSafe());
     }
+}
+
+void GroupManager::Challenge(psGroupCmdMessage& msg,Client *Challenger)
+{
+    csRef<PlayerGroup> ChallengerGroup = Challenger->GetActor()->GetGroup();
+    
+    if (!ChallengerGroup)
+    {
+        psserver->SendSystemError(Challenger->GetClientNum(),"You aren't a member of a group.");
+        return;
+    }
+    
+    if(!ChallengerGroup->IsLeader(Challenger->GetActor())) //only the group leader can challenge other groups
+    {
+        psserver->SendSystemError(Challenger->GetClientNum(),"Only group leaders can challenge other groups.");
+        return;
+    }
+
+    csString PlayerName = msg.player;
+    //Check for empty player name. If we don't do this, the server crashes
+    if (PlayerName=="")
+    {
+        psserver->SendSystemError(Challenger->GetClientNum(), "Please specify the player name to invite to your group.");
+        return;
+    }
+    
+    PlayerName = NormalizeCharacterName(PlayerName);
+        
+    // Check to see if the player is trying to invite themself.
+    if ( PlayerName == Challenger->GetName() )
+    {
+        psserver->SendSystemError(Challenger->GetClientNum(), "Cannot challenge yourself.");
+        return;
+    }
+
+    // challenged player must be online when invited
+    Client *Challenged = clients->Find(PlayerName);
+
+    if (!Challenged)
+    {
+        psserver->SendSystemError(Challenger->GetClientNum(),"%s is not online right now.", PlayerName.GetData());
+        return;
+    }
+    
+    if (!Challenged->GetActor()->InGroup())
+    {
+        psserver->SendSystemError(Challenger->GetClientNum(),"That player is not a member of a group.");
+        return;
+    }
+    
+    csRef<PlayerGroup> ChallengedGroup = Challenged->GetActor()->GetGroup();
+    
+    if(ChallengerGroup == ChallengedGroup)
+    {
+        psserver->SendSystemError(Challenger->GetClientNum(),"Your hroup cannot challenge itself.");
+        return;
+    }
+
+    if(ChallengerGroup->IsInDuelWith(ChallengedGroup))
+    {
+        psserver->SendSystemError(Challenger->GetClientNum(),"This group is already in challenge with you.");
+        return;
+    }
+    
+    //we have to work with the guildleader: so now that we know all is ok we change our "target" to the leader
+    Challenged = ChallengedGroup->GetLeader()->GetClient();
+        
+    /**
+     * Notify the challenger that the invitation has been sent.
+     * Notify the challenged that he/she has been invited and ask them to confirm.
+     */
+    psserver->SendSystemInfo(Challenger->GetClientNum(),"Confirming group challenge invitation with %s now...",Challenged->GetName() );
+
+    csString Invitation;
+    Invitation.Format("%s has challenged your group.  Would you like to allow it?", Challenger->GetName() );
+    PendingGroupChallenge *pnew = new PendingGroupChallenge(Challenger, Challenged, Invitation, ChallengerGroup);
+        
+    // Track who is invited where, to verify confirmations
+    psserver->questionmanager->SendQuestion(pnew);
+}
+
+void PendingGroupChallenge::HandleAnswer(const csString & answer)
+{
+    Client * client = psserver->GetConnections()->Find(clientnum);
+    //is the client valid, still in a group and is still leader?
+    if (!client  ||  !client->GetActor()->InGroup())
+        return;
+    
+            
+    PendingInvite::HandleAnswer(answer);
+    
+    if (answer == "yes")
+        psserver->groupmanager->HandleChallengeGroup(this);                        
+}
+
+void GroupManager::HandleChallengeGroup(PendingGroupChallenge *invite)
+{
+    csRef<PlayerGroup> ChallengerGroup = FindGroup(invite->groupID);
+    if (!ChallengerGroup)
+        return;
+
+    Client * ChallengedClient = clients->Find(invite->clientnum);
+    if(!ChallengedClient)
+        return;
+        
+    csRef<PlayerGroup> ChallengedGroup = ChallengedClient->GetActor()->GetGroup();
+    if(!ChallengedGroup || ChallengedGroup->IsLeader(ChallengedClient->GetActor()))
+        return;
+
+    Client * ChallengerClient = clients->Find(invite->inviterClientNum);
+
+    
+    if (!AddGroupChallenge(ChallengerGroup, ChallengedGroup))
+    {
+        Error1("Error challenging group!\n" );
+        return;
+    }
+
+    if (ChallengerClient != NULL)
+        GroupChat(ChallengerClient->GetActor(),"%s's group is now in challenge with this group!",invite->inviteeName.GetData() );
+
+        GroupChat(ChallengedClient->GetActor(),"%s's group is now in challenge with this group!",invite->inviterName.GetData() );
+}
+
+bool GroupManager::AddGroupChallenge(PlayerGroup *ChallengerGroup, PlayerGroup *ChallengedGroup)
+{
+    //we have to add the challenge to both groups. If at this point a group has a duplicate we have a bug
+    if(ChallengerGroup->AddDuelGroup(ChallengedGroup))
+        if(ChallengedGroup->AddDuelGroup(ChallengerGroup))
+            return true;
+    return false;
+}
+
+void GroupManager::Yield(psGroupCmdMessage& msg,Client *Yielder)
+{
+    csRef<PlayerGroup> Group = Yielder->GetActor()->GetGroup();
+    if(Group->IsLeader(Yielder->GetActor())) //only the group leader can yield to the group challengers
+        Group->DuelYield();
 }
 
 void GroupManager::Invite(psGroupCmdMessage& msg,Client *inviter)

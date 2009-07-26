@@ -519,13 +519,11 @@ int Client::GetTargetType(gemObject* target)
     {
         if (target->GetCharacterData()->IsPet())
         {
-            /* Pet's target type depends on its owner's (enable when they can defend themselves)
+            // Pet's target type depends on its owner's (enable when they can defend themselves)
             gemObject* owner = GEMSupervisor::GetSingleton().FindPlayerEntity( target->GetCharacterData()->GetOwnerID() );
             if ( !owner || !IsAllowedToAttack(owner,false) )
-            */
                 return TARGET_FRIEND;
         }
-
         return TARGET_FOE; /* Foe */
     }
 
@@ -571,6 +569,14 @@ int Client::GetTargetType(gemObject* target)
         targetguild->IsGuildWarActive(attackguild))
     {
         return TARGET_FOE; /* Attackable player */
+    }
+    
+    if(GetActor()->InGroup() && targetclient->GetActor()->InGroup())
+    {
+        csRef<PlayerGroup> AttackerGroup = GetActor()->GetGroup();
+        csRef<PlayerGroup> TargetGroup = targetclient->GetActor()->GetGroup();
+        if(AttackerGroup->IsInDuelWith(TargetGroup))
+            return TARGET_FOE;
     }
 
     return TARGET_FRIEND; /* Friend */
