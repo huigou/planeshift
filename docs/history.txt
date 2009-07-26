@@ -19,6 +19,9 @@
   lenght checking (> 2 words) but also didn't allow to reset the advicetimeout
   in case the requester talked (and only did if the advisor talked) increasing
   the amount of useless events being pushed and not allowing to answer effectively
+- Added group duels with /groupchallenge <name of a member of a group> and /groupyield
+  still needs some refinement but essentially working 
+  Fixing PS#1507 - More advanced groups: group vs. group duels. 
 
 *** 2009-07-22 by Steven Patrick
 - Fixed PS#2253 - items should not be removed by transient while guarded
