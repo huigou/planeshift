@@ -48,6 +48,7 @@ class ClientConnectionSet;
 
 //---------------------------------------------------------------------------
 class PendingGroupInvite;
+class PendingGroupChallenge;
 
 /** Main PlayerGroup Manager that holds all the groups.
  * This maintains all the groups on the servers and is responsible for all 
@@ -62,6 +63,7 @@ public:
 
     virtual void HandleMessage(MsgEntry *pMsg,Client *client) { }
     void HandleJoinGroup(PendingGroupInvite *invite);
+    void HandleChallengeGroup(PendingGroupChallenge *invite);
     
 protected:
     friend class PlayerGroup;
@@ -73,6 +75,10 @@ protected:
     void Leave(psGroupCmdMessage& msg,gemActor *client);
     void ListMembers(psGroupCmdMessage& msg,gemActor *client);
     void RemovePlayerFromGroup(psGroupCmdMessage& msg,gemActor *client);
+    
+    void Challenge(psGroupCmdMessage& msg,Client *Challenger);
+    void Yield(psGroupCmdMessage& msg,Client *Yielder);
+    bool AddGroupChallenge(PlayerGroup *ChallengerGroup, PlayerGroup *ChallengedGroup);
 
     void SendGroup(gemActor * client);
     void SendLeave(gemActor * client);
