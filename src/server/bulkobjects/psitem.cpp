@@ -2551,8 +2551,18 @@ bool psItem::SendItemDescription( Client *client)
     }
 
     itemCategory.Format( "Category: %s", current_stats->GetCategory()->name.GetData() );
-    weight.Format("\nWeight: %.2f", GetWeight() );
-    size.Format("\nSize: %hu", GetItemSize() );
+    float fweight = GetWeight();
+    unsigned short ssize = GetItemSize();
+    if(stack_count > 1)
+    {
+        weight.Format("\nWeight: %.2f (%hu x %.2f)", fweight, stack_count, fweight/stack_count);
+        size.Format("\nSize: %hu (%hu x %hu)", ssize*stack_count, stack_count, ssize);
+    }
+    else
+    {
+        weight.Format("\nWeight: %.2f", fweight);
+        size.Format("\nSize: %hu", ssize);
+    }
     itemInfo += itemCategory+weight+size;
 
     // Check identify skill before sending quality detail
