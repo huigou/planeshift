@@ -611,6 +611,14 @@ NpcResponse *NPCDialogDict::AddResponse(const char *response_text,
 {
     NpcResponse *newresp = new NpcResponse;
 
+    // Need to chop the KA name up so that /narrate only has to match first name
+    csString npc_first_name(npc_name);
+    int space = npc_first_name.FindFirst(' ');
+    if (space != SIZET_NOT_FOUND)
+    {
+        npc_first_name = npc_first_name.Slice(0, space);
+    }
+
     if (!new_id)
         new_id = dynamic_id++;
 
@@ -672,14 +680,14 @@ NpcResponse *NPCDialogDict::AddResponse(const char *response_text,
             csString actionSegment;
             resp.SubString(actionSegment,start+1,end-start-1);
              // If action does not start with npc's name, it is a 3rd person statement, not /me
-            if (strncasecmp(actionSegment,npc_name,strlen(npc_name)))
+            if (strncasecmp(actionSegment,npc_first_name,strlen(npc_first_name)))
             {
                 opStr.AppendFmt("<narrate text=\"%s\"/>", EscpXML(actionSegment.GetDataSafe()).GetDataSafe() );
             }
             else // now look for /me or /my because the npc name matches
             {
                 size_t spc = actionSegment.FindFirst(" ");
-                if (resp[strlen(npc_name)] == '\'') // apostrophe after name means /my
+                if (resp[strlen(npc_name)] == '\'' || resp[npc_first_name.Length()] == '\'') // apostrophe after name means /my
                 {
                     actionSegment.DeleteAt(0,spc+1);
                     opStr.AppendFmt("<actionmy text=\"%s\"/>", EscpXML(actionSegment.GetDataSafe()).GetDataSafe() );
