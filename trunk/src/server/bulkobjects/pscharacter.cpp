@@ -206,7 +206,7 @@ bool psCharacter::Load(iResultRow& row)
         staminaCalc = psserver->GetMathScriptEngine()->FindScript("StaminaBase");
         if (!staminaCalc)
         {
-            Error1("Can't find math script StaminaBase!");
+            Error1("Can't find math script StaminaBase! Character loading failed.");
             return false;
         }
     }
@@ -216,7 +216,7 @@ bool psCharacter::Load(iResultRow& row)
         staminaRatioWalk = psserver->GetMathScriptEngine()->FindScript("StaminaRatioWalk");
         if (!staminaRatioWalk)
         {
-            Error1("Can't find math script StaminaRatioWalk!");
+            Error1("Can't find math script StaminaRatioWalk! Character loading failed.");
             return false;
         }
     }
@@ -226,7 +226,7 @@ bool psCharacter::Load(iResultRow& row)
         staminaRatioStill = psserver->GetMathScriptEngine()->FindScript("StaminaRatioStill");
         if (!staminaRatioStill)
         {
-            Error1("Can't find math script StaminaRatioStill!");
+            Error1("Can't find math script StaminaRatioStill! Character loading failed.");
             return false;
         }
     }
@@ -236,7 +236,7 @@ bool psCharacter::Load(iResultRow& row)
         staminaRatioSit = psserver->GetMathScriptEngine()->FindScript("StaminaRatioSit");
         if (!staminaRatioSit)
         {
-            Error1("Can't find math script StaminaRatioSit!");
+            Error1("Can't find math script StaminaRatioSit! Character loading failed.");
             return false;
         }
     }
@@ -246,7 +246,7 @@ bool psCharacter::Load(iResultRow& row)
         staminaRatioWork = psserver->GetMathScriptEngine()->FindScript("StaminaRatioWork");
         if (!staminaRatioWork)
         {
-            Error1("Can't find math script StaminaRatioWork!");
+            Error1("Can't find math script StaminaRatioWork! Character loading failed.");
             return false;
         }
     }
@@ -256,7 +256,7 @@ bool psCharacter::Load(iResultRow& row)
         expSkillCalc = psserver->GetMathScriptEngine()->FindScript("Calculate Skill Experience");
         if (!expSkillCalc)
         {
-            Error1("Can't find 'Calculate Skill Experience' math script.");
+            Error1("Can't find 'Calculate Skill Experience' math script. Character loading failed.");
             return false;
         }
     }
@@ -266,7 +266,7 @@ bool psCharacter::Load(iResultRow& row)
         maxRealmScript = psserver->GetMathScriptEngine()->FindScript("MaxRealm");
         if (!maxRealmScript)
         {
-            Error1("Can't find math script MaxRealm!");
+            Error1("Can't find math script MaxRealm! Character loading failed.");
             return false;
         }
     }
@@ -284,7 +284,7 @@ bool psCharacter::Load(iResultRow& row)
     psRaceInfo *raceinfo = CacheManager::GetSingleton().GetRaceInfoByID(raceid);
     if (!raceinfo)
     {
-        Error3("Character ID %s has unknown race id %s.",row["id"],row["racegender_id"]);
+        Error3("Character ID %s has unknown race id %s. Character loading failed.",row["id"],row["racegender_id"]);
         return false;
     }
     SetRaceInfo(raceinfo);
@@ -339,7 +339,7 @@ bool psCharacter::Load(iResultRow& row)
 
     if (!LoadSkills(use_id))
     {
-        Error2("Cannot load skills for Character %s.", ShowID(pid));
+        Error2("Cannot load skills for Character %s. Character loading failed.", ShowID(pid));
         return false;
     }
 
@@ -423,7 +423,7 @@ bool psCharacter::Load(iResultRow& row)
 
     if (!LoadTraits(use_id))
     {
-        Error2("Cannot load traits for Character %s.", ShowID(pid));
+        Error2("Cannot load traits for Character %s. Character loading failed.", ShowID(pid));
         return false;
     }
 
@@ -436,7 +436,7 @@ bool psCharacter::Load(iResultRow& row)
     }
     if (!LoadAdvantages(use_id))
     {
-        Error2("Cannot load advantages for Character %s.", ShowID(pid));
+        Error2("Cannot load advantages for Character %s. Character loading failed.", ShowID(pid));
         return false;
     }
 
@@ -452,13 +452,13 @@ bool psCharacter::Load(iResultRow& row)
     {
         if (!LoadQuestAssignments())
         {
-            Error2("Cannot load quest assignments for Character %s.", ShowID(pid));
+            Error2("Cannot load quest assignments for Character %s. Character loading failed.", ShowID(pid));
             return false;
         }
 
         if (!LoadGMEvents())
         {
-            Error2("Cannot load GM Events for Character %s.", ShowID(pid));
+            Error2("Cannot load GM Events for Character %s. Character loading failed.", ShowID(pid));
             return false;
         }
 
@@ -477,7 +477,7 @@ bool psCharacter::Load(iResultRow& row)
         // from the master npc.
         if (!inventory.Load(use_id))
         {
-            Error2("Cannot load character specific items for Character %s.", ShowID(pid));
+            Error2("Cannot load character specific items for Character %s. Character loading failed.", ShowID(pid));
             return false;
         }
     }
@@ -535,7 +535,7 @@ bool psCharacter::Load(iResultRow& row)
     }
     if (!LoadSpells(use_id))
     {
-        Error2("Cannot load spells for Character %s.", ShowID(pid));
+        Error2("Cannot load spells for Character %s. Character loading failed.", ShowID(pid));
         return false;
     }
 
