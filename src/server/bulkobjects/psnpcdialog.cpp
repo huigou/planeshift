@@ -388,7 +388,8 @@ NpcResponse *psNPCDialog::FindResponseWithAllPrior(const char *area,const char *
     if (currentClient && !resp && TestedWithoutLastResponse)
     {
         //set general last response to -1 so it is not tested again later on
-        currentClient->GetCharacterData()->SetLastResponse(-1);
+        //currentClient->GetCharacterData()->SetLastResponse(-1);
+        // I commented out the above because searching unsuccessfully should not have the side effect of blowing away the last valid response.  KWF
     }
     return resp;
 }
