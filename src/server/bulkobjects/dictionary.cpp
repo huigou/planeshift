@@ -2465,7 +2465,7 @@ void NpcDialogMenu::Add(NpcDialogMenu *add)
 	//printf("Added %lu triggers to menu.\n", (unsigned long) add->triggers.GetSize());
 }
 
-void NpcDialogMenu::ShowMenu(Client *client,csTicks delay)
+void NpcDialogMenu::ShowMenu(Client *client,csTicks delay, PID npcPID)
 {
 	if( client == NULL )
 		return;
@@ -2474,10 +2474,16 @@ void NpcDialogMenu::ShowMenu(Client *client,csTicks delay)
 
     csString currentQuest;
 	int count = 0;
+    
+    bool IsTesting = client->GetCharacterData()->GetActor()->questtester;
+    bool IsGm = client->IsGM();
 
 	for (size_t i=0; i < counter; i++ )
 	{
         csString prereq;
+        
+        if(!triggers[i].quest->Active() && !IsTesting)
+            continue;
 
         if (triggers[i].prerequisite)
             prereq = triggers[i].prerequisite->GetScript();
@@ -2490,8 +2496,8 @@ void NpcDialogMenu::ShowMenu(Client *client,csTicks delay)
         //{
         //    printf("Item %lu has no prereqs.\n", (unsigned long) i);
         //}
-
-        if (triggers[i].prerequisite)
+                     
+        if (triggers[i].prerequisite && !IsTesting)
         {
             if (!triggers[i].prerequisite->Check(client->GetCharacterData()))
             {
@@ -2499,6 +2505,11 @@ void NpcDialogMenu::ShowMenu(Client *client,csTicks delay)
                 continue;
             }
         }
+        
+        //check avilability (as per lockout). Note as gm we show quest even if in lockout as > gm get 
+        //an error message in system even if they can't get it because testermode is off
+        if(!IsGm && !IsTesting && !client->GetCharacterData()->CheckQuestAvailable(triggers[i].quest, npcPID))
+            continue;
 
         // Check to see about inserting a quest heading
         if (!(currentQuest == (triggers[i].quest ? triggers[i].quest->GetName() : "(Unknown)")))

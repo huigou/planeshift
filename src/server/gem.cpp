@@ -4024,7 +4024,7 @@ void gemNPC::ShowPopupMenu(Client *client)
         menu.Add(npcmenu);
 
     if (menu.triggers.GetSize())
-        menu.ShowMenu(client,0);
+        menu.ShowMenu(client,0, GetPID());
     else
         psserver->SendSystemError(client->GetClientNum(), "This NPC has nothing to say to you.");
 }
