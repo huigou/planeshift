@@ -312,7 +312,7 @@ public:
 
 	void AddTrigger( const csString &menuText, const csString &trigger, psQuest *quest, psQuestPrereqOp *script=NULL );
 	void Add( NpcDialogMenu *add);
-	void ShowMenu(Client *client,csTicks delay);
+	void ShowMenu(Client *client,csTicks delay, PID npcPID);
     void SetPrerequisiteScript(psQuestPrereqOp *script);
 };
 
