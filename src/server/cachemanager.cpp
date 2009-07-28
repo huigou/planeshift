@@ -379,12 +379,8 @@ void CacheManager::UnloadAll()
         while (it.HasNext())
         {
             Faction* newFaction = it.Next();
-            csHash< FactionLifeEvent *, int >::GlobalIterator it2(newFaction->PositiveFactionEvents.GetIterator ());
-            while (it2.HasNext ())
-                delete it2.Next();
-            csHash< FactionLifeEvent *, int >::GlobalIterator it3(newFaction->NegativeFactionEvents.GetIterator ());
-            while (it3.HasNext ())
-                delete it3.Next();
+            newFaction->PositiveFactionEvents.DeleteAll();
+            newFaction->NegativeFactionEvents.DeleteAll();
             delete newFaction;
         }
     }
@@ -2327,6 +2323,42 @@ bool CacheManager::PreloadWays()
     return true;
 }
 
+bool CacheManager::PreloadFactionCharacterEvents(const char* script, Faction* faction)
+{
+    csString factionCharacterEvents = script;
+    while(factionCharacterEvents.Length())
+    {
+        //get the value from the string
+        size_t cutpos = factionCharacterEvents.FindFirst(' ', 0);
+        if(cutpos == (size_t) -1) //script error or finished parsing bail out
+            break;
+        size_t cutpos2 = factionCharacterEvents.FindFirst('\n', 0);
+        if(cutpos2 == (size_t) -1) //script error or finished parsing bail out
+            break;
+
+        //get the value of the faction which will trigger the text
+        int value = atoi(factionCharacterEvents.Slice(0,cutpos).GetDataSafe());
+        if(value == 0) //script error or finished parsing bail out
+            break;
+
+        //take out the string we need
+        csString entry_text = factionCharacterEvents.Slice(cutpos+1, cutpos2-cutpos-1);
+
+        //prepare the struct containing the parsed data
+        FactionLifeEvent factionevt;
+        factionevt.event_description = entry_text;
+        factionevt.value = abs(value); //we want a positive value for checking later
+        if(value > 0) //check what cshash should get the parsed data
+            faction->PositiveFactionEvents.PushSmart(factionevt); //this was a positive value
+        else
+            faction->NegativeFactionEvents.PushSmart(factionevt); //this was a negative value
+
+        //prepare for the next line
+        factionCharacterEvents = factionCharacterEvents.Slice(cutpos2+1);
+    }
+    return true;
+}
+
 bool CacheManager::PreloadFactions()
 {
     Result result_factions(db->Select("SELECT * from factions"));
@@ -2344,38 +2376,7 @@ bool CacheManager::PreloadFactions()
             f->weight = atof( result_factions[x]["faction_weight"] );
             // Parses the script for factions dynamic life events and populates the arrays for it
             // used to store the script to be parsed to generate dynamic life events
-            csString factionCharacterEvents = result_factions[x]["faction_character"];
-            // Parsing of the script
-            while(factionCharacterEvents.Length())
-            {
-                //get the value from the string
-                size_t cutpos = factionCharacterEvents.FindFirst(' ', 0);
-                if(cutpos == (size_t) -1) //script error or finished parsing bail out
-                    break;
-                size_t cutpos2 = factionCharacterEvents.FindFirst('\n', 0);
-                if(cutpos2 == (size_t) -1) //script error or finished parsing bail out
-                    break;
-
-                //get the value of the faction which will trigger the text
-                int value = atoi(factionCharacterEvents.Slice(0,cutpos).GetDataSafe());
-                if(value == 0) //script error or finished parsing bail out
-                    break;
-
-                //take out the string we need
-                csString entry_text = factionCharacterEvents.Slice(cutpos+1, cutpos2-cutpos-1);
-
-                //prepare the struct containing the parsed data
-                FactionLifeEvent * factionevt = new FactionLifeEvent;
-                factionevt->event_description = entry_text;
-                factionevt->value = abs(value); //we want a positive value for checking later
-                if(value > 0) //check what cshash should get the parsed data
-                    f->PositiveFactionEvents.Put(0, factionevt); //this was a positive value
-                else
-                    f->NegativeFactionEvents.Put(0, factionevt); //this was a negative value
-
-                //prepare for the next line
-                factionCharacterEvents = factionCharacterEvents.Slice(cutpos2+1);
-            }
+            PreloadFactionCharacterEvents(result_factions[x]["faction_character"], f);
 
             // Stored two different ways
             factions.Put(f->name, f);
