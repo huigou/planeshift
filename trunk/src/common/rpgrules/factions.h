@@ -30,6 +30,9 @@ struct FactionLifeEvent
 {
     int value;                  ///< Value from which this life event is attribuited
     csString event_description; ///< The text of this life event
+    
+    bool operator== (FactionLifeEvent OtherEvt) const { return value == OtherEvt.value; }
+    bool operator<  (FactionLifeEvent OtherEvt) const { return value <  OtherEvt.value; }
 };
 
 /** An ingame faction group.
@@ -41,8 +44,8 @@ struct Faction
     csString description;
     int      id;
     float    weight;
-    csHash<FactionLifeEvent*, int> PositiveFactionEvents; ///< Stores the Positive faction values life events
-    csHash<FactionLifeEvent*, int> NegativeFactionEvents; ///< Stores the Negative faction values life events
+    csArray<FactionLifeEvent> PositiveFactionEvents; ///< Stores the Positive faction values life events
+    csArray<FactionLifeEvent> NegativeFactionEvents; ///< Stores the Negative faction values life events
 };
 
 
