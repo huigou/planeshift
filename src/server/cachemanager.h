@@ -413,7 +413,7 @@ protected:
     bool PreloadItemCategories();
     bool PreloadWays();
     ///preloads the character events script for a faction
-    bool PreloadFactionCharacterEvents(const char* script, Faction* faction);
+    void PreloadFactionCharacterEvents(const char* script, Faction* faction);
     bool PreloadFactions();
     bool PreloadScripts();
     bool PreloadSpells();

@@ -2323,7 +2323,7 @@ bool CacheManager::PreloadWays()
     return true;
 }
 
-bool CacheManager::PreloadFactionCharacterEvents(const char* script, Faction* faction)
+void CacheManager::PreloadFactionCharacterEvents(const char* script, Faction* faction)
 {
     csString factionCharacterEvents = script;
     while(factionCharacterEvents.Length())
@@ -2356,7 +2356,9 @@ bool CacheManager::PreloadFactionCharacterEvents(const char* script, Faction* fa
         //prepare for the next line
         factionCharacterEvents = factionCharacterEvents.Slice(cutpos2+1);
     }
-    return true;
+    //sort the entries. It's needed to have a faster runtime access.
+    faction->PositiveFactionEvents.Sort();
+    faction->NegativeFactionEvents.Sort();
 }
 
 bool CacheManager::PreloadFactions()
@@ -2374,6 +2376,7 @@ bool CacheManager::PreloadFactions()
             f->name = result_factions[x]["faction_name"];
             f->description = result_factions[x]["faction_description"];
             f->weight = atof( result_factions[x]["faction_weight"] );
+
             // Parses the script for factions dynamic life events and populates the arrays for it
             // used to store the script to be parsed to generate dynamic life events
             PreloadFactionCharacterEvents(result_factions[x]["faction_character"], f);

@@ -3591,7 +3591,7 @@ bool psCharacter::GetFactionEventsDescription(csString & factionDescription)
         int score = 0; //used to store the current score
         if(standing->score >= 0) //positive factions
         {
-            csArray<FactionLifeEvent>::Iterator scoreIter = standing->faction->PositiveFactionEvents.GetIterator();
+            csArray<FactionLifeEvent>::ReverseIterator scoreIter = standing->faction->PositiveFactionEvents.GetReverseIterator();
             score = standing->score;
             while (scoreIter.HasNext())
             {
@@ -3605,7 +3605,7 @@ bool psCharacter::GetFactionEventsDescription(csString & factionDescription)
         }
         else //negative factions
         {
-            csArray<FactionLifeEvent>::Iterator scoreIter = standing->faction->NegativeFactionEvents.GetIterator();
+            csArray<FactionLifeEvent>::ReverseIterator scoreIter = standing->faction->NegativeFactionEvents.GetReverseIterator();
             score = abs(standing->score); //we store values as positive to make things easier and faster so take the
                                           //absolute value
             while (scoreIter.HasNext())
