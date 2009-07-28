@@ -3591,31 +3591,29 @@ bool psCharacter::GetFactionEventsDescription(csString & factionDescription)
         int score = 0; //used to store the current score
         if(standing->score >= 0) //positive factions
         {
-            csHash<FactionLifeEvent*, int>::GlobalIterator scoreIter = standing->faction->PositiveFactionEvents.GetIterator();
+            csArray<FactionLifeEvent>::Iterator scoreIter = standing->faction->PositiveFactionEvents.GetIterator();
             score = standing->score;
             while (scoreIter.HasNext())
             {
-                FactionLifeEvent* lifevt = scoreIter.Next();
-                if(score > lifevt->value) //check if the score is enough to attribuite this life event
+                FactionLifeEvent& lifevt = scoreIter.Next();
+                if(score > lifevt.value) //check if the score is enough to attribuite this life event
                 {
-                    factionDescription += lifevt->event_description; //add the life event to the description
-                    factionDescription += "\n";
+                    factionDescription += lifevt.event_description + "\n"; //add the life event to the description
                     break; //nothing else to do as we found what we needed so bail out
                 }
             }
         }
         else //negative factions
         {
-            csHash<FactionLifeEvent*, int>::GlobalIterator scoreIter = standing->faction->NegativeFactionEvents.GetIterator();
+            csArray<FactionLifeEvent>::Iterator scoreIter = standing->faction->NegativeFactionEvents.GetIterator();
             score = abs(standing->score); //we store values as positive to make things easier and faster so take the
                                           //absolute value
             while (scoreIter.HasNext())
             {
-                FactionLifeEvent* lifevt = scoreIter.Next();
-                if(score >= lifevt->value)
+                FactionLifeEvent& lifevt = scoreIter.Next();
+                if(score >= lifevt.value)
                 {
-                    factionDescription += lifevt->event_description;
-                    factionDescription += "\n";
+                    factionDescription += lifevt.event_description + "\n";
                     break;
                 }
             }
