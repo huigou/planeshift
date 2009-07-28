@@ -37,9 +37,7 @@ public:
     void SetTab(int id);
     void SetTab(const csString & name);
 
-    int GetTab(void) { return lastButton->GetID();}
-
-    pawsWidget* GetActiveTab(){ return activeTab; };
+    pawsWidget* GetActiveTab() { return activeTab; }
     
     bool OnChange(pawsWidget * widget)
     {
