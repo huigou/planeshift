@@ -8,6 +8,8 @@
   in the script and removing the hashes in favour of the array.
 - Fixed group challenges and made the output from challenge invites
   and invites work again
+- Added additional messages to group challenge yielding
+- Fixed PS#3008 - Pet summon time not correct patch by Tucos
 
 *** 2009-07-25 by Stefano Angeleri
 - deputize is now gm2+ and you can deputize up to your level even if not developer
