@@ -63,16 +63,33 @@ public:
     /// Remove a client from this group.
     void Remove(gemActor * member);
     
-    /// Add a new group to the list of those in duel with this.
+    /** Add a new group to the list of those in duel with this.
+     *  
+     *  @param OtherGroup A pointer to the PlayerGroup we are adding in the duel groups.
+     *  @param false if the group was already in the list else true.
+     */
     bool AddDuelGroup(PlayerGroup *OtherGroup);
 
-    /// Remove a group from the list of those in duel with this.
+    /** Remove a group from the list of those in duel with this.
+     * 
+     *  @param OtherGroup A pointer to the PlayerGroup we are removing from the duel groups.
+     */
     void RemoveDuelGroup(PlayerGroup *OtherGroup);
+    
+    /** Notify the group of the yielding of another group.
+     * 
+     * @param OtherGroup A pointer to the PlayerGroup which is yielding to this group.
+     */
+    void NotifyDuelYield(PlayerGroup *OtherGroup)
     
     /// Yield to all groups in duel with this.
     void DuelYield();
 
-    /// Check if we are in duel with the requester
+    /** Check if we are in duel with another group.
+     * 
+     *  @param OtherGroup A pointer to the PlayerGroup we are checking if it's in duel with this group.
+     *  @return false if it's not in duel with this group, true if it is.
+     */
     bool IsInDuelWith(PlayerGroup *OtherGroup);
 
     /// Send a message to all members in this group.

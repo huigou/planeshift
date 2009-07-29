@@ -306,10 +306,18 @@ void PlayerGroup::RemoveDuelGroup(PlayerGroup *OtherGroup)
     DuelGroups.Delete(OtherGroup);
 }
 
+void PlayerGroup::NotifyDuelYield(PlayerGroup *OtherGroup)
+{
+    manager->GroupChat(leader,"%s's group has yielded!",OtherGroup->GetLeader()->GetName());
+}
+
 void PlayerGroup::DuelYield()
 {
     for (size_t pos = 0; pos < DuelGroups.GetSize(); pos++)
+    {
         DuelGroups.Get(pos)->RemoveDuelGroup(this);
+        DuelGroups.Get(pos)->NotifyDuelYield(this);
+    }
     
     DuelGroups.DeleteAll();
 }
@@ -518,7 +526,7 @@ void GroupManager::Yield(psGroupCmdMessage& msg,Client *Yielder)
     if(Group->IsLeader(Yielder->GetActor())) //only the group leader can yield to the group challengers
     {
         Group->DuelYield();
-        psserver->SendSystemOK(Yielder->GetClientNum(), "Your group has yielded to all it's challengers.");
+        manager->GroupChat(Yielder->GetClientNum(),"Our group has yielded to all our challengers!");
     }
     else
     {

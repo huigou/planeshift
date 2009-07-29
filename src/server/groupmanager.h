@@ -63,6 +63,12 @@ public:
 
     virtual void HandleMessage(MsgEntry *pMsg,Client *client) { }
     void HandleJoinGroup(PendingGroupInvite *invite);
+    
+    /** Handles the answer to the request of challenge.
+     * 
+     *  @param invite The class which handled the question to the 
+     *                challenged client.
+     */
     void HandleChallengeGroup(PendingGroupChallenge *invite);
     
 protected:
@@ -75,9 +81,27 @@ protected:
     void Leave(psGroupCmdMessage& msg,gemActor *client);
     void ListMembers(psGroupCmdMessage& msg,gemActor *client);
     void RemovePlayerFromGroup(psGroupCmdMessage& msg,gemActor *client);
-    
+
+    /** Handles /groupchallenge and challenges another group after checking all requirements
+     *  are in order.
+     * 
+     *  @param msg the prepared message from the network.
+     *  @param Challenger A pointer to the client which issued this command.
+     */
     void Challenge(psGroupCmdMessage& msg,Client *Challenger);
+    /** Handles /groupyield and yields to all the group in duel with the
+     *  one requesting it after checking all requirements are in order.
+     * 
+     *  @param msg the prepared message from the network.
+     *  @param Yielder A pointer to the client which issued this command.
+     */
     void Yield(psGroupCmdMessage& msg,Client *Yielder);
+
+    /** Makes two group be in challenge each other.
+     * 
+     *  @param ChallengerGroup the group which is starting the challenge.
+     *  @param ChallengedGroup the group which is being challenged.
+     */
     bool AddGroupChallenge(PlayerGroup *ChallengerGroup, PlayerGroup *ChallengedGroup);
 
     void SendGroup(gemActor * client);
