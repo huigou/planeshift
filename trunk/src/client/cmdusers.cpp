@@ -735,7 +735,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
             cmdmsg.SendMessage();
         }
         else
-            return "You need to precise a target or to select one";
+            return "You need to specify a target or to select one";
     }
 
     else if (words[0] == "/pickup")
@@ -755,7 +755,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
             cmdmsg.SendMessage();
         }
         else
-            return "You need to precise a target or to select one";
+            return "You need to specify a target or to select one";
     }
 
     else if ( words[0] == "/game" )
