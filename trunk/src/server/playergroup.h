@@ -80,7 +80,7 @@ public:
      * 
      * @param OtherGroup A pointer to the PlayerGroup which is yielding to this group.
      */
-    void NotifyDuelYield(PlayerGroup *OtherGroup)
+    void NotifyDuelYield(PlayerGroup *OtherGroup);
     
     /// Yield to all groups in duel with this.
     void DuelYield();
