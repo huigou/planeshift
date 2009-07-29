@@ -297,6 +297,8 @@ bool PlayerGroup::AddDuelGroup(PlayerGroup *OtherGroup)
         return false;
 
     DuelGroups.Push(OtherGroup);
+
+    return true;
 }    
 
 void PlayerGroup::RemoveDuelGroup(PlayerGroup *OtherGroup)
