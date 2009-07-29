@@ -526,7 +526,7 @@ void GroupManager::Yield(psGroupCmdMessage& msg,Client *Yielder)
     if(Group->IsLeader(Yielder->GetActor())) //only the group leader can yield to the group challengers
     {
         Group->DuelYield();
-        GroupChat(Yielder->GetClientNum(),"Our group has yielded to all our challengers!");
+        GroupChat(Yielder->GetActor(),"Our group has yielded to all our challengers!");
     }
     else
     {
