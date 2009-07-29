@@ -2514,7 +2514,7 @@ void NpcDialogMenu::ShowMenu(Client *client,csTicks delay, PID npcPID)
             }
         }
         
-        //check avilability (as per lockout). Note as gm we show quest even if in lockout as > gm get 
+        //check availability (as per lockout). Note as gm we show quest even if in lockout as > gm get 
         //an error message in system even if they can't get it because testermode is off
         if(!IsGm && !IsTesting && !client->GetCharacterData()->CheckQuestAvailable(triggers[i].quest, npcPID))
             continue;
