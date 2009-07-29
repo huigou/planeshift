@@ -402,7 +402,7 @@ void GroupManager::Challenge(psGroupCmdMessage& msg,Client *Challenger)
     //Check for empty player name. If we don't do this, the server crashes
     if (PlayerName=="")
     {
-        psserver->SendSystemError(Challenger->GetClientNum(), "Please specify the player name to invite to your group.");
+        psserver->SendSystemError(Challenger->GetClientNum(), "Please specify the player name of a player in a group to challenge your group.");
         return;
     }
     
@@ -434,7 +434,7 @@ void GroupManager::Challenge(psGroupCmdMessage& msg,Client *Challenger)
     
     if(ChallengerGroup == ChallengedGroup)
     {
-        psserver->SendSystemError(Challenger->GetClientNum(),"Your hroup cannot challenge itself.");
+        psserver->SendSystemError(Challenger->GetClientNum(),"Your group cannot challenge itself.");
         return;
     }
 
@@ -480,13 +480,13 @@ void GroupManager::HandleChallengeGroup(PendingGroupChallenge *invite)
     csRef<PlayerGroup> ChallengerGroup = FindGroup(invite->groupID);
     if (!ChallengerGroup)
         return;
-
+        
     Client * ChallengedClient = clients->Find(invite->clientnum);
     if(!ChallengedClient)
         return;
         
     csRef<PlayerGroup> ChallengedGroup = ChallengedClient->GetActor()->GetGroup();
-    if(!ChallengedGroup || ChallengedGroup->IsLeader(ChallengedClient->GetActor()))
+    if(!ChallengedGroup || !ChallengedGroup->IsLeader(ChallengedClient->GetActor()))
         return;
 
     Client * ChallengerClient = clients->Find(invite->inviterClientNum);
@@ -500,8 +500,7 @@ void GroupManager::HandleChallengeGroup(PendingGroupChallenge *invite)
 
     if (ChallengerClient != NULL)
         GroupChat(ChallengerClient->GetActor(),"%s's group is now in challenge with this group!",invite->inviteeName.GetData() );
-
-        GroupChat(ChallengedClient->GetActor(),"%s's group is now in challenge with this group!",invite->inviterName.GetData() );
+    GroupChat(ChallengedClient->GetActor(),"%s's group is now in challenge with this group!",invite->inviterName.GetData() );
 }
 
 bool GroupManager::AddGroupChallenge(PlayerGroup *ChallengerGroup, PlayerGroup *ChallengedGroup)
@@ -517,7 +516,14 @@ void GroupManager::Yield(psGroupCmdMessage& msg,Client *Yielder)
 {
     csRef<PlayerGroup> Group = Yielder->GetActor()->GetGroup();
     if(Group->IsLeader(Yielder->GetActor())) //only the group leader can yield to the group challengers
+    {
         Group->DuelYield();
+        psserver->SendSystemOK(Yielder->GetClientNum(), "Your group has yielded to all it's challengers.");
+    }
+    else
+    {
+        psserver->SendSystemError(Yielder->GetClientNum(), "Only the group leader can yield.");
+    }
 }
 
 void GroupManager::Invite(psGroupCmdMessage& msg,Client *inviter)
@@ -576,7 +582,6 @@ void GroupManager::Invite(psGroupCmdMessage& msg,Client *inviter)
         group = NewGroup(inviter->GetActor());        
         psserver->SendSystemInfo(inviter->GetClientNum(),"You are group leader for the new group.");
     }
-    
 
     /**
      * Notify the inviter that the invitation has been sent.
@@ -777,7 +782,6 @@ void GroupManager::Remove(PlayerGroup * group)
     groups.Delete(group);
 }
 
-
 void GroupManager::GroupChat(gemActor * client, const char *fmt, ...)
 {
     csString text;
@@ -791,8 +795,7 @@ void GroupManager::GroupChat(gemActor * client, const char *fmt, ...)
     if (groupmsg.valid)
     {
         groupmsg.msg->Reset();
-        Client *c = psserver->GetConnections()->Find(client->GetClientID());
-        chatserver->HandleMessage(groupmsg.msg,c);
+        groupmsg.FireEvent();
     }
     else
     {
