@@ -100,6 +100,7 @@ public:
     NPCManager *manager;
     double elapsedTime; ///< create time
     csString curDate;
+    csString curTime;
 
     PetOwnerSession()
     {
@@ -142,7 +143,6 @@ public:
                 curDate = last_login.Truncate( 10 ); // YYYY-MM-DD
                 CPrintf(CON_DEBUG,"Last Logged Date : %s\n", curDate.GetData() );
 
-                csString curTime ;
                 pet->GetLastLoginTime().SubString(curTime, 11 );
                 CPrintf(CON_DEBUG,"Last Logged time : %s\n", curTime.GetData() );
 
@@ -258,19 +258,29 @@ public:
     bool CheckSession()
     {
         double maxTime = GetMaxPetTime();
-        csString thisDate;
 
-        time_t curr=time(0);
-        tm* gmtm = gmtime(&curr);
+        time_t old;
+        time(&old);
+        tm* tm_old = localtime(&old);
 
-        thisDate.Format("%d-%02d-%02d",
-                        gmtm->tm_year+1900,
-                        gmtm->tm_mon+1,
-                        gmtm->tm_mday);
+        int year;
+        sscanf(curDate, "%d-%d-%d", &year, &tm_old->tm_mon, &tm_old->tm_mday);
+        year = year - 1900;
+        tm_old->tm_year = year;
 
-        if ( !curDate.Compare( thisDate ) )
+        sscanf(curTime, "%d:%d:%d", &tm_old->tm_hour, &tm_old->tm_min, &tm_old->tm_sec);
+        old = mktime(tm_old);
+
+        time_t curr;
+        time(&curr);
+        tm* tm_curr = localtime(&curr);
+
+        int secsdiff = difftime(curr, old);
+        if (secsdiff >= 240*60)
         {
-            curDate = thisDate;
+            year = tm_curr->tm_year+1900;
+            curDate.Format("%d-%d-%d", year, tm_curr->tm_mon, tm_curr->tm_mday);
+            curTime.Format("%d:%d:%d", tm_curr->tm_hour, tm_curr->tm_min, tm_curr->tm_sec);
             elapsedTime = 0;
         }
 
@@ -1513,7 +1523,7 @@ void NPCManager::HandlePetCommand(MsgEntry * me,Client *client)
             }
             else
             {
-                psserver->SendSystemInfo(me->clientnum,"You are too weak to call your familiar to you any more today.");
+                psserver->SendSystemInfo(me->clientnum,"The power of the ring of familiar is currently depleted, it will take more time to summon a pet again.");
             }
         }
         else
