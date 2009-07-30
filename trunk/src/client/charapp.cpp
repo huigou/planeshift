@@ -1,3 +1,22 @@
+/*
+ * charapp.cpp
+ * 
+ * Copyright (C) 2002-2009 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
+ *
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation (version 2 of the License)
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ */
+
 #include <psconfig.h>
 //=============================================================================
 // Crystal Space Includes
@@ -29,9 +48,9 @@
 #include "psclientchar.h"
 #include "globals.h"
 
-static const uint meshCount = 9;
+static const unsigned int meshCount = 9;
 static const char* meshNames[meshCount] = { "Head", "Torso", "Hand", "Legs", "Foot", "Arm", "Eyes", "Hair", "Beard" };
-static const uint bracersSlotCount = 2;
+static const unsigned int bracersSlotCount = 2;
 static csString BracersSlots[bracersSlotCount] = { "rightarm", "leftarm" };
 
 psCharAppearance::psCharAppearance(iObjectRegistry* objectReg)
@@ -374,7 +393,7 @@ void psCharAppearance::Equip( csString& slotname,
     
     if (slotname == "bracers")
     {
-        for(int position = 0; position < bracersSlotCount; position++)
+        for(unsigned int position = 0; position < bracersSlotCount; position++)
             Equip(BracersSlots[position], mesh, part, subMesh, texture);
         return;
     }
@@ -420,7 +439,7 @@ bool psCharAppearance::Dequip(csString& slotname,
     
     if (slotname == "bracers")
     {
-        for(int position = 0; position < bracersSlotCount; position++)
+        for(unsigned int position = 0; position < bracersSlotCount; position++)
             Dequip(BracersSlots[position], mesh, part, subMesh, texture);
         return true;
     }

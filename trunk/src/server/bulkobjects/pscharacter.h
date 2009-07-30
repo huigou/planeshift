@@ -900,22 +900,29 @@ public:
      */
     bool CheckFaction(Faction * faction, int value);
 
-    /* Check if the character is a banker */
+    /** Check if the character is a banker */
     bool IsBanker() const { return banker; }
 
 private:
     int FindGlyphSlot(const csArray<glyphSlotInfo>& slots, psItemStats * glyphType, int purifyStatus);
 
-    csString helmGroup;                 // Some races share helms so this tells which
-                                        // group it's in. If empty assume in racial group.
-    csString BracerGroup;               // Some races share bracers so this tells which
-                                        // group it's in. If empty assume in racial group.
-    csString BeltGroup;                 // Some races share belts so this tells which
-                                        // group it's in. If empty assume in racial group.
-    csString CloakGroup;                // Some races share cloaks so this tells which
-                                        // group it's in. If empty assume in racial group.
-    /* Whether or not the character is a banker */
-    bool banker;
+    /** Some races share helms so this tells which
+        group it's in. If empty assume in racial group. */
+    csString helmGroup;
+
+    /** Some races share bracers so this tells which
+        group it's in. If empty assume in racial group.*/
+    csString BracerGroup;
+
+    /** Some races share belts so this tells which
+        group it's in. If empty assume in racial group.*/
+    csString BeltGroup;
+
+    /** Some races share cloaks so this tells which
+        group it's in. If empty assume in racial group.*/
+    csString CloakGroup;
+    
+    bool banker;    ///< Whether or not the character is a banker
 public:
     void RecalculateStats();
 

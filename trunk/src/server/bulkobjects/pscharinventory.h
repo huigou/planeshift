@@ -98,7 +98,7 @@ public:
         }
         int    exchangeOfferSlot;   ///< Slot in exchange offer window on client
         int    exchangeStackCount;  ///< count of items being offered, subset of stack in *item
-        psItem *GetItem() { return item; } // read-only, cannot clear
+        psItem *GetItem() { return item; } ///< read-only, cannot clear
     };
 
 protected:

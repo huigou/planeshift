@@ -51,8 +51,8 @@ public:
 
     static psItem* FindItem(Client* client, int containerID, INVENTORY_SLOT_NUMBER slotID);
 
-    gemContainer *worldContainer;   // Working world GEM container we are using.
-    int  containerEntityID;         // Working ID of the container ID
+    gemContainer *worldContainer;   ///< Working world GEM container we are using.
+    int  containerEntityID;         ///< Working ID of the container ID
 
 private:
 

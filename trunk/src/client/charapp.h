@@ -1,3 +1,22 @@
+/*
+ * charapp.h
+ * 
+ * Copyright (C) 2002-2009 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
+ *
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation (version 2 of the License)
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ */
+
 #ifndef CHAR_APP_HEADER
 #define CHAR_APP_HEADER
 //=============================================================================
@@ -34,8 +53,8 @@ struct iStringSet;
 */  
 struct SkinToneSet
 {
-    csString part;                  // The part of the model to adjust.
-    csString material;              // The material to place on that part.
+    csString part;                  ///< The part of the model to adjust.
+    csString material;              ///< The material to place on that part.
 };
 
 /** A manager class that handles all the details of a characters appearance.
@@ -212,43 +231,46 @@ private:
     void ProcessAttach(csRef<iMeshWrapper> meshWrap, csRef<iSpriteCal3DSocket> socket);
     void ProcessAttach(csRef<iMaterialWrapper> material, const char* materialName, const char* partName);
                
-    csRef<iMeshWrapper> baseMesh;                           // The mesh that is our base model.
+    csRef<iMeshWrapper> baseMesh;                           ///< The mesh that is our base model.
 
-    csRef<iSpriteCal3DFactoryState>  stateFactory;      // The Cal3D factory object
-    csRef<iSpriteCal3DState>    state;                  // The Cal3D sprite state
+    csRef<iSpriteCal3DFactoryState>  stateFactory;      ///< The Cal3D factory object
+    csRef<iSpriteCal3DState>    state;                  ///< The Cal3D sprite state
     
-    csRef<iShaderVarStringSet>  stringSet;              // Used by shader variables.
+    csRef<iShaderVarStringSet>  stringSet;              ///< Used by shader variables.
     
-    // Crystal space objects.
+    /** @name Crystal space objects.
+     */
+    //@{
     csRef<iEngine>              engine;
     csRef<iVFS>                 vfs;
     csRef<iGraphics3D>          g3d;
-    csRef<iTextureManager>      txtmgr;    
-    csRef<iDocumentSystem>      xmlparser; 
+    csRef<iTextureManager>      txtmgr;
+    csRef<iDocumentSystem>      xmlparser;
+    //@}
         
-    csString eyeMesh;                                   // Default eye mesh.
-    csString hairMesh;                                  // Default hair mesh.
-    csString beardMesh;                                 // Beard mesh.
+    csString eyeMesh;                                   ///< Default eye mesh.
+    csString hairMesh;                                  ///< Default hair mesh.
+    csString beardMesh;                                 ///< Beard mesh.
     
-    csVector3 eyeShader;                                // Default eye colour.
-    csVector3 hairShader;                               // Default hair colour.
+    csVector3 eyeShader;                                ///< Default eye colour.
+    csVector3 hairShader;                               ///< Default hair colour.
     
-    bool hairAttached;                                  // Flag if hair is on/off                        
-    bool beardAttached;                                 // Flag if beard is on/off.
+    bool hairAttached;                                  ///< Flag if hair is on/off                        
+    bool beardAttached;                                 ///< Flag if beard is on/off.
     
-    bool eyeColorSet;                                   // Flag if eye colour set.
-    bool hairColorSet;                                  // Flag if hair colour set.
+    bool eyeColorSet;                                   ///< Flag if eye colour set.
+    bool hairColorSet;                                  ///< Flag if hair colour set.
 
-    bool sneak;                                         // Flag if we're in sneak mode.
+    bool sneak;                                         ///< Flag if we're in sneak mode.
     
-    csString faceMaterial;                              // Default face materail.
-    csArray<SkinToneSet> skinToneSet;                   // Default skin colours. 
+    csString faceMaterial;                              ///< Default face materail.
+    csArray<SkinToneSet> skinToneSet;                   ///< Default skin colours. 
     
-    csArray<csString> usedSlots;                        // Slots that have been used.
-    csHash<int, csString> effectids;                    // Array of effects that are in use.
-    csHash<int, csString> lightids;                    // Array of lights that are in use.
+    csArray<csString> usedSlots;                        ///< Slots that have been used.
+    csHash<int, csString> effectids;                    ///< Array of effects that are in use.
+    csHash<int, csString> lightids;                     ///< Array of lights that are in use.
 
-    // Delayed loading.
+    /// Delayed loading.
     struct Attachment
     {
         bool factory;
