@@ -79,7 +79,11 @@ public:
     void SetValue(double v)
     {
         if (type == VARTYPE_OBJ)
-            obj = *reinterpret_cast<iScriptableVar**>(&v); // Scary non-portible madness!
+        {
+            // Scary non-portible madness!
+            void **ptr = reinterpret_cast<void**>(&v);
+            obj = *reinterpret_cast<iScriptableVar**>(ptr);
+        }
         else
             value = v;
 
