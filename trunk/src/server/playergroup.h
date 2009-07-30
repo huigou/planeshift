@@ -66,7 +66,7 @@ public:
     /** Add a new group to the list of those in duel with this.
      *  
      *  @param OtherGroup A pointer to the PlayerGroup we are adding in the duel groups.
-     *  @param false if the group was already in the list else true.
+     *  @return false if the group was already in the list else true.
      */
     bool AddDuelGroup(PlayerGroup *OtherGroup);
 
