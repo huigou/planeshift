@@ -115,6 +115,17 @@ bool pawsTextureManager::LoadImageList( const char* listName )
     return true;     
 }
 
+bool pawsTextureManager::AddImage(const char* resource)
+{
+    iPawsImage *element = NULL;
+    element = new pawsImageDrawable(resource, resource);
+    if(element)
+    {
+        AddPawsImage(element);
+        return true;
+    }
+    return false;
+}
 
 void pawsTextureManager::Remove( const char* resource )
 {

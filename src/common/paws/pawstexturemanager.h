@@ -83,6 +83,7 @@ public:
     void Remove( const char* name );
     
    csPtr<iPawsImage> GetPawsImage(const char *name);
+   bool AddImage(const char* resource);
    void AddPawsImage(iPawsImage *element);
     
 public:
