@@ -184,6 +184,19 @@ pawsImageDrawable::pawsImageDrawable(const char * file, const char * resource, b
     PreparePixmap();
 }
 
+pawsImageDrawable::pawsImageDrawable(const char * file, const char * resource)
+                 : scfImplementationType (this)
+{
+    imageFileLocation = file;
+    resourceName = file;
+    this->tiled = false;
+    defaultAlphaValue = 0;
+    defaultTransparentColourRed   = -1;
+    defaultTransparentColourGreen = -1;
+    defaultTransparentColourBlue  = -1;
+    PreparePixmap();
+}
+
 pawsImageDrawable::~pawsImageDrawable()
 {
 }
