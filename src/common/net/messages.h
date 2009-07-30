@@ -1228,7 +1228,7 @@ public:
     csString player;
     csString filter;
 
-    csString repairSlotName;        // The name of the slot to repair.
+    csString repairSlotName;        ///< The name of the slot to repair.
 
     psWorkCmdMessage(const char *cmd);
     psWorkCmdMessage(MsgEntry *message);

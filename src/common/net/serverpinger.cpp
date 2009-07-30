@@ -42,8 +42,8 @@ psServerPinger::psServerPinger(const csString & name, const csString& descriptio
     sent         (0),
     lost         (0),
     waiting      (false),
-    flags        (0),
     pingID       (0),
+    flags        (0),
     objReg       (objReg)
 {
 }

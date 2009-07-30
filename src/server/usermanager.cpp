@@ -298,7 +298,7 @@ void UserManager::Emote(csString general, csString specific, csString animation,
     else
         cssText.Format(general, client->GetActor()->GetName());
 
-    // retrieve priximity list
+    // retrieve proximity list
     csArray<PublishDestination>& clients = client->GetActor()->GetMulticastClients();
 
     // Create and multicast the message
@@ -406,7 +406,7 @@ csString fmtStatLine(const char *const label, unsigned int value, unsigned int b
 void UserManager::SendCharacterDescription(Client * client, gemActor *actor, bool full, bool simple, const csString & requestor)
 {
     psCharacter *charData = actor->GetCharacterData();
-    StatSet & playerAttr = client->GetCharacterData()->Stats();
+    //StatSet & playerAttr = client->GetCharacterData()->Stats();
     csString meshName = charData->GetActor()->GetMesh();
 
     bool isSelf = (charData->GetPID() == client->GetCharacterData()->GetPID());
