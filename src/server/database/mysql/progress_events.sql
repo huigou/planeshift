@@ -162,6 +162,7 @@ INSERT INTO progression_events VALUES('rain','<script><msg aim="Actor" text="rai
 -- I don't think we can do the original Nitroglycerin effect anymore. :(
 -- We'd need to have consume scripts list an AOE spell rather than a script directly.
 INSERT INTO progression_events VALUES("explosion",'<script><msg aim="Actor" text="The bottle explodes and kills you!"/><hp aim="Actor" value="-Actor:HP"/></script>');
+INSERT INTO progression_events VALUES("food",'<script><msg aim="Actor" text="You eat and you feel better!"/><hp aim="Actor" value="20"/></script>');
 INSERT INTO progression_events VALUES('ResearchSpellSuccess','<script><msg aim="Actor" text="You have discovered a new spell!"/></script>');
 INSERT INTO progression_events VALUES('ResearchSpellFailure','<script><msg aim="Actor" text="You fail to discover a new spell."/></script>');
 INSERT INTO progression_events VALUES('drop_marker','<script><fx target="Target" type="attached" name="shadow"/><msg aim="Actor" text="Spot Marked!"/></script>');
