@@ -197,7 +197,7 @@
 
     	  <widget name="AspectRatio" factory="pawsComboBox" id="1394" alwaysontop="true">
           <frame x="100" y="20" width="90" height="20" border="no" />
-          <listbox rows="4" height="25" useScrollBar="false" />
+          <listbox rows="4" height="25" useScrollBar="true" />
     	  </widget>
 
         <widget name="ScreenResolutionText" factory="pawsTextBox" id="1395">
