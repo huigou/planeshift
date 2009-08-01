@@ -414,7 +414,7 @@ public:
      /**
       * Delayed mesh loading.
       */
-     virtual bool CheckLoadStatus() {}
+     virtual bool CheckLoadStatus() { return false; }
 
      /**
       * Delayed load 'post-process'.
