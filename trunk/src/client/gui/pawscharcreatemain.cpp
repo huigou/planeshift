@@ -1027,7 +1027,7 @@ void pawsCreationMain::UpdateRace(int id)
     CheckLoadStatus();
 }
 
-void pawsCreationMain::CheckLoadStatus()
+bool pawsCreationMain::CheckLoadStatus()
 {
     if(!loaded)
     {
@@ -1041,7 +1041,7 @@ void pawsCreationMain::CheckLoadStatus()
             if (!mesh)
             {
                 PawsManager::GetSingleton().CreateWarningBox("Couldn't find mesh! Please run the updater");
-                return;
+                return true;
             }
 
             csRef<iSpriteCal3DState> spstate =  scfQueryInterface<iSpriteCal3DState> (mesh->GetMeshObject());
@@ -1069,6 +1069,8 @@ void pawsCreationMain::CheckLoadStatus()
             loaded = true;
         }
     }
+
+    return false;
 }
 
 

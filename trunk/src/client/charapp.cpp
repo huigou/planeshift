@@ -662,7 +662,7 @@ void psCharAppearance::ProcessAttach(csRef<iMaterialWrapper> material, const cha
     }
 }
 
-void psCharAppearance::CheckLoadStatus()
+bool psCharAppearance::CheckLoadStatus()
 {
     if(!delayedAttach.IsEmpty())
     {
@@ -686,10 +686,13 @@ void psCharAppearance::CheckLoadStatus()
                 delayedAttach.PopFront();
             }
         }
+
+        return true;
     }
     else
     {
         psengine->UnregisterDelayedLoader(this);
+        return false;
     }
 }
 
@@ -934,6 +937,7 @@ void psCharAppearance::SetSneak(bool sneaking)
     {
         sneak = sneaking;
 
+        // Apply to base/core mesh.
         if(sneaking)
         {
             baseMesh->SetRenderPriority(engine->GetRenderPriority("alpha"));
@@ -961,6 +965,24 @@ void psCharAppearance::SetSneak(bool sneaking)
                       var->SetValue(1.0f);
                   }
                 }
+            }
+        }
+
+        // Apply to equipped meshes too.
+        for(size_t i=0; i < usedSlots.GetSize(); ++i)
+        {
+            csRef<iMeshWrapper> meshWrap = state->FindSocket(usedSlots[i])->GetMeshWrapper();
+            csShaderVariable* var = meshWrap->GetSVContext()->GetVariableAdd(varName);
+
+            if(sneaking)
+            {
+                meshWrap->SetRenderPriority(engine->GetRenderPriority("alpha"));
+                var->SetValue(0.5f);
+            }
+            else
+            {
+                meshWrap->SetRenderPriority(engine->GetRenderPriority("object"));
+                var->SetValue(1.0f);
             }
         }
     }

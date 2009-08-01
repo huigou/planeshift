@@ -1113,7 +1113,9 @@ void pawsLauncherWindow::LoadSkin(const char* name)
 
     if(!success)
     {
-        PawsManager::GetSingleton().CreateWarningBox("Couldn't load skin! Check the console for detailed output");
+        csString str;
+        str.Format("Couldn't load skin %s! Check the console for detailed output.", skinname.GetData());
+        PawsManager::GetSingleton().CreateWarningBox(str);
         return;
     }
 

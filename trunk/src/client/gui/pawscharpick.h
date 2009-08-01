@@ -49,7 +49,7 @@ public:
     
     void StoreHashedPassword(csString passwordHash) {passHash = passwordHash;}
 
-    void CheckLoadStatus();
+    bool CheckLoadStatus();
 private:
 
     /// Creates the character creation screens.

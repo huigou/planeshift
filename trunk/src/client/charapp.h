@@ -162,7 +162,7 @@ public:
     /** Clears the equipment on a mesh. */
     void ClearEquipment(const char* slot = NULL);
 
-    void CheckLoadStatus();
+    bool CheckLoadStatus();
 
     void SetSneak(bool sneaking);
     
@@ -237,6 +237,10 @@ private:
     csRef<iSpriteCal3DState>    state;                  ///< The Cal3D sprite state
     
     csRef<iShaderVarStringSet>  stringSet;              ///< Used by shader variables.
+    csRef<iStringSet> strings;                          // Used by shader types.
+
+    // Character shader.
+    iShader* charShader;
     
     /** @name Crystal space objects.
      */
@@ -247,6 +251,7 @@ private:
     csRef<iTextureManager>      txtmgr;
     csRef<iDocumentSystem>      xmlparser;
     //@}
+    csRef<iShaderManager>       shman;
         
     csString eyeMesh;                                   ///< Default eye mesh.
     csString hairMesh;                                  ///< Default hair mesh.

@@ -78,7 +78,7 @@ class GUIHandler;
 
 struct DelayedLoader : public CS::Utility::WeakReferenced
 {
-    virtual void CheckLoadStatus() = 0;
+    virtual bool CheckLoadStatus() = 0;
     virtual ~DelayedLoader() { };
 };
 

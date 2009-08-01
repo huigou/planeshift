@@ -220,7 +220,7 @@ bool pawsGMSpawnWindow::OnSelected(pawsWidget* widget)
     return true;
 }
 
-void pawsGMSpawnWindow::CheckLoadStatus()
+bool pawsGMSpawnWindow::CheckLoadStatus()
 {
     if(!loaded)
     {
@@ -236,6 +236,8 @@ void pawsGMSpawnWindow::CheckLoadStatus()
             psengine->RegisterDelayedLoader(this);
         }
     }
+
+    return true;
 }
 
 bool pawsGMSpawnWindow::OnButtonPressed(int button,int keyModifier,pawsWidget* widget)
