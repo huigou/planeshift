@@ -932,12 +932,13 @@ bool psEngine::Process3D(iEvent& ev)
 {
     lastEvent = &ev;
 
-    if(!delayedLoaders.IsEmpty())
+    while(!delayedLoaders.IsEmpty())
     {
         csWeakRef<DelayedLoader> dl = delayedLoaders.Get(0);
         if(dl.IsValid())
         {
-            dl->CheckLoadStatus();
+            if(dl->CheckLoadStatus())
+                break;
         }
         else
         {

@@ -60,7 +60,7 @@ public:
 	bool OnChange(pawsWidget *widget);
     void Draw();
     void Show();
-    void CheckLoadStatus();
+    bool CheckLoadStatus();
 
     /* Reloads all character creation windows so that they reset */
     void ResetAllWindows();    

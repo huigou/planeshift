@@ -513,7 +513,7 @@ void pawsCharacterPickerWindow::SelectCharacter(int character, pawsWidget* widge
     }
 }
 
-void pawsCharacterPickerWindow::CheckLoadStatus()
+bool pawsCharacterPickerWindow::CheckLoadStatus()
 {
     if(!loaded)
     {
@@ -527,7 +527,7 @@ void pawsCharacterPickerWindow::CheckLoadStatus()
             if (!mesh)
             {
                 PawsManager::GetSingleton().CreateWarningBox("Couldn't find mesh! Please run the updater");
-                return;
+                return true;
             }
             charApp->ClearEquipment();
             charApp->SetMesh(mesh);
@@ -548,12 +548,16 @@ void pawsCharacterPickerWindow::CheckLoadStatus()
                 charApp->ApplyEquipment(equipment);
             }
             loaded = true;
+
+            return true;
         }
         else
         {
             psengine->RegisterDelayedLoader(this);
         }
     }
+
+    return false;
 }
 
 void pawsCharacterPickerWindow::Draw()

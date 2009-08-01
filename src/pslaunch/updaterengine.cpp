@@ -80,7 +80,7 @@ void UpdaterEngine::Init(csStringArray& args, iObjectRegistry* _object_reg, cons
 
 UpdaterEngine::~UpdaterEngine()
 {
-    log = NULL;
+    log.Invalidate();
     delete fileUtil;
     delete config;
     fileUtil = NULL;

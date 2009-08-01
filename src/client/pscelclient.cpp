@@ -1997,12 +1997,12 @@ const char* GEMClientActor::GetName(bool trueName)
     return strUnknown;
 }
 
-void GEMClientActor::CheckLoadStatus()
+bool GEMClientActor::CheckLoadStatus()
 {
     csRef<iMeshFactoryWrapper> factory = psengine->GetLoader()->LoadFactory(factName);
     if(!factory.IsValid())
     {
-        return;
+        return true;
     }
 
     pcmesh = factory->CreateMeshWrapper();
@@ -2020,6 +2020,8 @@ void GEMClientActor::CheckLoadStatus()
     psengine->UnregisterDelayedLoader(this);
 
     PostLoad(false);
+
+    return true;
 }
 
 GEMClientItem::GEMClientItem( psCelClient* cel, psPersistItem& mesg )
@@ -2055,7 +2057,7 @@ GEMClientItem::~GEMClientItem()
     delete solid;
 }
 
-void GEMClientItem::CheckLoadStatus()
+bool GEMClientItem::CheckLoadStatus()
 {
     csRef<iMeshFactoryWrapper> factory;
 
@@ -2073,7 +2075,7 @@ void GEMClientItem::CheckLoadStatus()
                 psengine->UnregisterDelayedLoader(this);
             }
 
-            return;
+            return true;
         }
 
         // Create the mesh.
@@ -2157,6 +2159,8 @@ void GEMClientItem::CheckLoadStatus()
 
     // Handle item effect if there is one.
     cel->HandleItemEffect(factName, pcmesh);
+
+    return true;
 }
 
 void GEMClientItem::PostLoad(bool nullmesh)

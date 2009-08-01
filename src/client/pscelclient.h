@@ -414,7 +414,7 @@ public:
      /**
       * Delayed mesh loading.
       */
-     virtual void CheckLoadStatus() {}
+     virtual bool CheckLoadStatus() {}
 
      /**
       * Delayed load 'post-process'.
@@ -526,9 +526,9 @@ public:
     csHash<int,csStringID> anim_hash;
 
     /**
-      * Delayed mesh loading.
-      */
-     virtual void CheckLoadStatus();
+     * Delayed mesh loading.
+     */
+    virtual bool CheckLoadStatus();
 
     csString race;
     csString helmGroup;
@@ -617,7 +617,7 @@ public:
     /**
       * Delayed mesh loading.
       */
-     virtual void CheckLoadStatus();
+     virtual bool CheckLoadStatus();
 
 protected:
     virtual void PostLoad(bool nullmesh);
