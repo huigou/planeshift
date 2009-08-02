@@ -267,7 +267,7 @@ bool psCharacterInventory::Load(PID use_id)
 
 bool psCharacterInventory::QuickLoad(PID use_id)
 {    
-    Result items(db->Select("SELECT id, item_stats_id_standard, location_in_parent FROM item_instances WHERE char_id_owner = %u AND location_in_parent != -1", use_id.Unbox()));
+    Result items(db->Select("SELECT id, item_stats_id_standard, location_in_parent FROM item_instances WHERE char_id_owner = %u AND location_in_parent != -1 AND location_in_parent < %d AND (parent_item_id IS NULL OR parent_item_id = 0)" , use_id.Unbox(), PSCHARACTER_SLOT_BULK1));
 
     if ( items.IsValid() )
     {
