@@ -1867,6 +1867,19 @@ csPtr<iMeshFactoryWrapper> BgLoader::LoadFactory(const char* name, bool* failed)
 
     if(LoadMeshFact(meshfact))
     {
+        if(!failed)
+        {
+            // Check success.
+            csString msg;
+            msg.Format("Failed to load factory '%s'", name);
+            CS_ASSERT_MSG(msg.GetData(), meshfact->status->WasSuccessful());
+        }
+        else if(!meshfact->status->WasSuccessful())
+        {
+            *failed = true;
+            return csPtr<iMeshFactoryWrapper>(0);
+        }
+
         return scfQueryInterface<iMeshFactoryWrapper>(meshfact->status->GetResultRefPtr());
     }
 
