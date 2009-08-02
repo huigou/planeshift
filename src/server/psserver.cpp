@@ -255,7 +255,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
 
     if (!configmanager || !vfs)
     {
-        Error1 ("Couldn't find Configmanager!\n");
+        Error1 ("Couldn't find Configmanager!");
         return false;
     }
 
@@ -283,7 +283,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     db_name = configmanager->GetStr("PlaneShift.Database.name", "planeshift");
     db_port = configmanager->GetInt("PlaneShift.Database.port");
 
-    Debug5(LOG_STARTUP,0,COL_BLUE "Database Host: '%s' User: '%s' Databasename: '%s' Port: %d\n" COL_NORMAL,
+    Debug5(LOG_STARTUP,0,COL_BLUE "Database Host: '%s' User: '%s' Databasename: '%s' Port: %d" COL_NORMAL,
       (const char*) db_host, (const char*) db_user, (const char*) db_name, db_port);
 
     if (!database->Initialize(db_host, db_port, db_user, db_pass, db_name))
@@ -297,7 +297,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     csString db_version;
     if ( ! GetServerOption("db_version", db_version) )
     {
-        CPrintf (CON_ERROR, "Couldn't determine database version.  Error was %s.\n", db->GetLastError() );
+        CPrintf (CON_ERROR, "Couldn't determine database version.  Error was %s.", db->GetLastError() );
         db = NULL;
         return false;
     }
@@ -310,7 +310,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     }
 
 
-    Debug1(LOG_STARTUP,0,"Started Database\n");
+    Debug1(LOG_STARTUP,0,"Started Database");
 
     cachemanager = new CacheManager();
 
@@ -339,7 +339,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
         return false;
     }
 
-    Debug1(LOG_STARTUP,0,"Preloaded mesh names, texture names, part names, image names, race info, sector info, traits, item categories, item stats, ways and spells.\n");
+    Debug1(LOG_STARTUP,0,"Preloaded mesh names, texture names, part names, image names, race info, sector info, traits, item categories, item stats, ways and spells.");
 
     if (!CharacterLoader.Initialize())
     {
@@ -362,7 +362,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
         configmanager->GetStr("PlaneShift.Server.Addr", "0.0.0.0");
     int port =
     configmanager->GetInt("PlaneShift.Server.Port", 1243);
-    Debug3(LOG_STARTUP,0,COL_BLUE "Listening on '%s' Port %d.\n" COL_NORMAL,
+    Debug3(LOG_STARTUP,0,COL_BLUE "Listening on '%s' Port %d." COL_NORMAL,
             (const char*) serveraddr, port);
     if (!netmanager->Bind(serveraddr, port))
     {
@@ -370,7 +370,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
         netmanager = NULL;
         return false;
     }
-    Debug1(LOG_STARTUP,0,"Started Network Thread\n");
+    Debug1(LOG_STARTUP,0,"Started Network Thread");
 
 
     // Start Event Manager
@@ -389,30 +389,30 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     if (!eventmanager->Initialize(netmanager, 1000))
         return false;
 
-    Debug1(LOG_STARTUP,0,"Started Event Manager Thread\n");
+    Debug1(LOG_STARTUP,0,"Started Event Manager Thread");
 
 
     usermanager = new UserManager(GetConnections());
-    Debug1(LOG_STARTUP,0,"Started User Manager\n");
+    Debug1(LOG_STARTUP,0,"Started User Manager");
 
     // Load emotes
     if(!usermanager->LoadEmotes("/planeshift/data/emotes.xml", vfs))
     {
-        CPrintf(CON_ERROR, "Could not load emotes from emotes.xml\n");
+        CPrintf(CON_ERROR, "Could not load emotes from emotes.xml");
         return false;
     }
 
     entitymanager = new EntityManager;
     if (!entitymanager->Initialize(object_reg, GetConnections(), usermanager))
     {
-        Error1("Failed to initialise CEL!\n");
+        Error1("Failed to initialise CEL!");
         delete entitymanager;
         entitymanager = NULL;
         return false;
     }
     entitymanager->SetReady(false);
     netmanager->SetEngine(entitymanager->GetEngine());
-    Debug1(LOG_STARTUP,0,"Started CEL\n");
+    Debug1(LOG_STARTUP,0,"Started CEL");
 
     // Start Combat Manager
     combatmanager = new CombatManager();
@@ -420,16 +420,16 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     {
         return false;
     }
-    Debug1(LOG_STARTUP,0,"Started Combat Manager\n");
+    Debug1(LOG_STARTUP,0,"Started Combat Manager");
 
     // Start Spell Manager
     spellmanager = new SpellManager(GetConnections(), object_reg);
-    Debug1(LOG_STARTUP,0,"Started Spell Manager\n");
+    Debug1(LOG_STARTUP,0,"Started Spell Manager");
 
     // Start Weather Manager
     weathermanager = new WeatherManager();
     weathermanager->Initialize();
-    Debug1(LOG_STARTUP,0,"Started Weather Manager\n");
+    Debug1(LOG_STARTUP,0,"Started Weather Manager");
 
     marriageManager = new psMarriageManager();
 
@@ -439,41 +439,41 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
         return false;
 
     chatmanager = csPtr<ChatManager> (new ChatManager);
-    Debug1(LOG_STARTUP,0,"Started Chat Manager\n");
+    Debug1(LOG_STARTUP,0,"Started Chat Manager");
 
     guildmanager = csPtr<GuildManager>(new GuildManager(GetConnections(), chatmanager));
-    Debug1(LOG_STARTUP,0,"Started Guild Manager\n");
+    Debug1(LOG_STARTUP,0,"Started Guild Manager");
 
     questionmanager = csPtr<QuestionManager>(new QuestionManager() );
-    Debug1(LOG_STARTUP,0,"Started Question Manager\n");
+    Debug1(LOG_STARTUP,0,"Started Question Manager");
 
     advicemanager = csPtr<AdviceManager>(new AdviceManager( database ) );
-    Debug1(LOG_STARTUP,0,"Started Advice Manager\n");
+    Debug1(LOG_STARTUP,0,"Started Advice Manager");
 
     groupmanager = csPtr<GroupManager>(new GroupManager(GetConnections(), chatmanager));
-    Debug1(LOG_STARTUP,0,"Started Group Manager\n");
+    Debug1(LOG_STARTUP,0,"Started Group Manager");
 
     charmanager = new ServerCharManager();
     if (!charmanager->Initialize())
         return false;
-    Debug1(LOG_STARTUP,0,"Started Character Manager\n");
+    Debug1(LOG_STARTUP,0,"Started Character Manager");
 
     spawnmanager = new SpawnManager(database);
-    Debug1(LOG_STARTUP,0,"Started NPC Spawn Manager\n");
+    Debug1(LOG_STARTUP,0,"Started NPC Spawn Manager");
 
     adminmanager = new AdminManager;
-    Debug1(LOG_STARTUP,0,"Started Admin Manager\n");
+    Debug1(LOG_STARTUP,0,"Started Admin Manager");
 
     tutorialmanager = new TutorialManager(GetConnections());
 
     actionmanager = csPtr<ActionManager>(new ActionManager( database));
-    Debug1(LOG_STARTUP,0,"Started Action Manager\n");
+    Debug1(LOG_STARTUP,0,"Started Action Manager");
 
     authserver = csPtr<AuthenticationServer>(new AuthenticationServer(GetConnections(), usermanager, guildmanager));
-    Debug1(LOG_STARTUP,0,"Started Authentication Server\n");
+    Debug1(LOG_STARTUP,0,"Started Authentication Server");
 
     exchangemanager = new ExchangeManager(GetConnections());
-    Debug1(LOG_STARTUP,0,"Started Exchange Manager\n");
+    Debug1(LOG_STARTUP,0,"Started Exchange Manager");
 
     npcmanager = new NPCManager(GetConnections(), database, eventmanager);
     if ( !npcmanager->Initialize())
@@ -482,7 +482,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
         return false;
 
     }
-    Debug1(LOG_STARTUP,0,"Started NPC Superclient Manager\n");
+    Debug1(LOG_STARTUP,0,"Started NPC Superclient Manager");
 
     progression = new ProgressionManager(GetConnections());
     if ( !progression->Initialize())
@@ -491,15 +491,15 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
         return false;
     }
 
-    Debug1(LOG_STARTUP,0,"Started Progression Manager\n");
+    Debug1(LOG_STARTUP,0,"Started Progression Manager");
 
     // Start work manager
     workmanager = new WorkManager();
-    Debug1(LOG_STARTUP,0,"Started Work Manager\n");
+    Debug1(LOG_STARTUP,0,"Started Work Manager");
 
     // Start economy manager
     economymanager = new EconomyManager();
-    Debug1(LOG_STARTUP,0,"Started Economy Manager\n");
+    Debug1(LOG_STARTUP,0,"Started Economy Manager");
     // Start droping
     economymanager->ScheduleDrop(1 * 60 * 60 * 1000,true); // 1 hour
 
@@ -510,7 +510,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
         Error1("Failed to load minigame data");
         return false;
     }
-    Debug1(LOG_STARTUP, 0, "Started Minigame Manager\n");
+    Debug1(LOG_STARTUP, 0, "Started Minigame Manager");
 
     charCreationManager = new CharCreationManager();
     if ( !charCreationManager->Initialize() )
@@ -539,7 +539,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     }
     else
     {
-        Debug1(LOG_STARTUP,0,"Server status reporter initialized.\n");
+        Debug1(LOG_STARTUP,0,"Server status reporter initialized.");
     }
 
     weathermanager->StartGameTime();
@@ -581,7 +581,7 @@ void psServer::RemovePlayer (uint32_t clientnum,const char *reason)
 
     psserver->GetLogCSV()->Write(CSV_AUTHENT, status);
 
-    Notify3(LOG_CHARACTER, "Remove player '%s' (%d)\n", client->GetName(),client->GetClientNum() );
+    Notify3(LOG_CHARACTER, "Remove player '%s' (%d)", client->GetName(),client->GetClientNum() );
 
     client->Disconnect();
 
@@ -695,7 +695,7 @@ void psServer::SendSystemInfo(int clientnum, const char *fmt, ... )
     }
     else
     {
-        Bug2("Could not create valid psSystemMessage for client %u.\n",clientnum);
+        Bug2("Could not create valid psSystemMessage for client %u.",clientnum);
     }
 }
 
@@ -720,7 +720,7 @@ void psServer::SendSystemBaseInfo(int clientnum, const char *fmt, ...)
     }
     else
     {
-        Bug2("Could not create valid psSystemMessage for client %u.\n",clientnum);
+        Bug2("Could not create valid psSystemMessage for client %u.",clientnum);
     }
 }
 
@@ -745,7 +745,7 @@ void psServer::SendSystemResult(int clientnum, const char *fmt, ... )
     }
     else
     {
-        Bug2("Could not create valid psSystemMessage for client %u.\n",clientnum);
+        Bug2("Could not create valid psSystemMessage for client %u.",clientnum);
     }
 }
 
@@ -770,7 +770,7 @@ void psServer::SendSystemOK(int clientnum, const char *fmt, ... )
     }
     else
     {
-        Bug2("Could not create valid psSystemMessage for client %u.\n",clientnum);
+        Bug2("Could not create valid psSystemMessage for client %u.",clientnum);
     }
 }
 
@@ -795,7 +795,7 @@ void psServer::SendSystemError(int clientnum, const char *fmt, ... )
     }
     else
     {
-        Bug2("Could not create valid psSystemMessage for client %u.\n",clientnum);
+        Bug2("Could not create valid psSystemMessage for client %u.",clientnum);
     }
 }
 
