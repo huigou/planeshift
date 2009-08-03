@@ -931,8 +931,20 @@ void pawsWidget::SetBackground( const char* image )
         if ( parent )
             parentName = parent->GetName();
         
-        Warning4( LOG_PAWS, "Widget: %s (Parent: %s) Could Not load image: %s", name.GetData(), parentName.GetData(), image );
-        return;
+        if(PawsManager::GetSingleton().GetTextureManager()->AddImage(image)) //try on demand loading
+        {
+            //try getting the image again
+            bgImage = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(image);
+        }
+        if(!bgImage)
+        {
+            Warning4(LOG_PAWS, "Widget: %s (Parent: %s) Could Not load image: %s", name.GetData(), parentName.GetData(), image );
+            return;
+        }
+        else
+        {
+            Warning4(LOG_PAWS, "Widget: %s (Parent: %s) The image %s was missing from the imagelist.xml and was loaded on demand. Add the image there!", name.GetData(), parentName.GetData(), image );
+        }
     }
 
     alpha = bgImage->GetDefaultAlpha();
