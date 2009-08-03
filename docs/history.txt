@@ -1,4 +1,19 @@
-﻿*** 2009-07-29 by Stefano Angeleri
+﻿*** 2009-08-03 by Stefano Angeleri
+- Added support for dynamic slot amount per item type (so a forge can have 
+  40 slots while a sack 20). Any value from 0 (not really useful as it
+  shows actually zero slots) to 83 should work fine. 
+- Fixed an exploit.
+- Added dynamic image loading when missing from the texturemanager cache.
+- Style Fixes.
+- Fixed a crash during money pickup although peeg should review this.
+
+*** 2009-08-02 by Stefano Angeleri
+- Cleaned up and improved faction events allowing also to not have a strict order on the script
+- Made waybread consumable in svn data
+- Removed various unedded newlines making the server show blank lines
+- Optimized quickloading by actually loading only the equipment and not items in containers or in bulk
+
+*** 2009-07-29 by Stefano Angeleri
 - The menu now don't show anymore the entries the player can't access to because
   the quest is disabled or under lockout. A quest tester can still see all the
   quest (including disabled ones) as he can actually do them and a gm gets
