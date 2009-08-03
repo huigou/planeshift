@@ -2350,12 +2350,12 @@ void gemActor::DoDamage(gemActor * attacker, float damage, float damageRate, csT
                 psserver->SendSystemError(GetClientID(), "You've been slain by %s!", attacker->GetName());
                 GetClient()->AnnounceToDuelClients(attacker, "slain");
             }
-            
+
             if (GetRider())
                 EntityManager::GetSingleton().RemoveRideRelation(GetRider(), this);
             else if(GetMount())
                 EntityManager::GetSingleton().RemoveRideRelation(this, GetMount());
-            
+
             SetMode(PSCHARACTER_MODE_DEAD);
         }
 
@@ -3077,7 +3077,7 @@ void gemActor::Teleport(iSector *sector, const csVector3 & pos, float yrot, Inst
         GetMount()->Teleport(sector, pos, yrot, instance);
         return;
     }
-    
+
     SetInstance(instance);
     Teleport(sector, pos, yrot);
 }
@@ -3392,7 +3392,7 @@ void gemActor::ForcePositionUpdate()
         clientnum = GetRider()->GetClientID();
     else
         clientnum = GetClientID();
-    
+
     psForcePositionMessage msg(clientnum, ++forceDRcounter, GetPosition(), GetAngle(), GetSector(),
                                CacheManager::GetSingleton().GetMsgStrings());
     msg.SendMessage();

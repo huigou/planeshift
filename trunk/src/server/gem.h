@@ -661,7 +661,7 @@ protected:
 
     //csArray<gemActor *> riders;
     gemActor *controller;
-    
+
     gemActor *mount;
 
     csVector3 top, bottom, offset;
@@ -821,10 +821,10 @@ public:
 
     bool IsAllowedToMove() { return isAllowedToMove; }  ///< Covers sitting, death, and out-of-stamina
     void SetAllowedToMove(bool newvalue);
-    
+
     /**
      * @brief Makes the character stand up
-     * 
+     *
      * @param the client who stand
      */
     void Stand();

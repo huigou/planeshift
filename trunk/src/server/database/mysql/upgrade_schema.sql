@@ -207,17 +207,17 @@ UPDATE server_options SET option_value=1109 where option_name='db_version';
 #from 1109 to 1110
 
 ### Create character_relationships table
-CREATE TABLE `character_relationships` 
-( 
-	character_id int(11) NOT NULL default '0' 			COMMENT 'character id from the characters table' ,
-	related_id int(11) NOT NULL default '0'             COMMENT 'character id of the related character' ,
-	relationship_type varchar(15) NOT NULL default ''   COMMENT 'one of three values currently `familiar`, `buddy`, or `spouse` ' ,
-	spousename  varchar(30) default NULL                COMMENT 'used for marriages, historical data in case of deletion' ,
-	
-	PRIMARY KEY (`character_id`, `relationship_type`, `related_id` ), 
-	KEY ( `character_id` ),
-	KEY (`related_id`, `relationship_type`) 
-); 
+CREATE TABLE `character_relationships`
+(
+    character_id int(11) NOT NULL default '0'           COMMENT 'character id from the characters table' ,
+    related_id int(11) NOT NULL default '0'             COMMENT 'character id of the related character' ,
+    relationship_type varchar(15) NOT NULL default ''   COMMENT 'one of three values currently `familiar`, `buddy`, or `spouse` ' ,
+    spousename  varchar(30) default NULL                COMMENT 'used for marriages, historical data in case of deletion' ,
+
+    PRIMARY KEY (`character_id`, `relationship_type`, `related_id` ),
+    KEY ( `character_id` ),
+    KEY (`related_id`, `relationship_type`)
+);
 
 ### Copy Buddies
 INSERT INTO character_relationships ( character_id, related_id, relationship_type )
@@ -227,21 +227,21 @@ DROP TABLE buddy_list;
 ### Copy Marriage Data
 ALTER TABLE characters ADD COLUMN old_lastname VARCHAR(30) NOT NULL DEFAULT '' AFTER lastname;
 UPDATE characters c, character_marriage_details cmd SET c.old_lastname = cmd.old_lastname
-	WHERE cmd.character_id = c.id;
-	
+    WHERE cmd.character_id = c.id;
+
 INSERT INTO character_relationships ( character_id, related_id, relationship_type, spousename )
-	SELECT character_id, spouse.id, 'spouse', CONCAT( spouse.name, ' ', spouse.lastname )
-	FROM character_marriage_details cmd, characters spouse
-	WHERE STRCMP( cmd.spousename , CONCAT( spouse.name, ' ', spouse.lastname ) ) = 0;
-	
+    SELECT character_id, spouse.id, 'spouse', CONCAT( spouse.name, ' ', spouse.lastname )
+    FROM character_marriage_details cmd, characters spouse
+    WHERE STRCMP( cmd.spousename , CONCAT( spouse.name, ' ', spouse.lastname ) ) = 0;
+
 DROP TABLE character_marriage_details;
 
 ### Copy Pet Data
 INSERT INTO character_relationships ( character_id, related_id, relationship_type )
-	SELECT owner_id, id, 'familiar'
-	FROM characters
-	WHERE owner_id <> 0;
-	
+    SELECT owner_id, id, 'familiar'
+    FROM characters
+    WHERE owner_id <> 0;
+
 ALTER TABLE characters DROP COLUMN owner_id;
 
 
@@ -316,24 +316,24 @@ SOURCE movement.sql;
 UPDATE `server_options` SET `option_value`='1119' WHERE `option_name`='db_version';
 
 
-### 1119 to 1120 - Acraig,  adding render_effect column to trades 
+### 1119 to 1120 - Acraig,  adding render_effect column to trades
 ALTER TABLE trade_transformations ADD COLUMN render_effect CHAR(32) default NULL AFTER animation;
 UPDATE `server_options` SET `option_value`='1120' WHERE `option_name`='db_version';
 
 ### 1120 to 1121 - Michael - Added familiar types to complete familiar affinity
 CREATE TABLE `familiar_types`
 (
-	`id` INT UNSIGNED NOT NULL ,
-	`name` VARCHAR(30) NOT NULL,
-	`type` VARCHAR(30) NOT NULL,
-	`lifecycle` VARCHAR(30) NOT NULL,
-	`attacktool` VARCHAR(30) NOT NULL,
-	`attacktype` VARCHAR(30) NOT NULL,
-	`magicalaffinity` VARCHAR(30) NOT NULL,
-	`vision` INT NULL,   /* 1 = enhanced, 0 = normal, -1 = limited */
-	`speed` INT NULL,    /* 1 = enhanced, 0 = normal, -1 = limited */
-	`hearing` INT NULL,  /* 1 = enhanced, 0 = normal, -1 = limited */
-	PRIMARY KEY (`id`)
+    `id` INT UNSIGNED NOT NULL ,
+    `name` VARCHAR(30) NOT NULL,
+    `type` VARCHAR(30) NOT NULL,
+    `lifecycle` VARCHAR(30) NOT NULL,
+    `attacktool` VARCHAR(30) NOT NULL,
+    `attacktype` VARCHAR(30) NOT NULL,
+    `magicalaffinity` VARCHAR(30) NOT NULL,
+    `vision` INT NULL,   /* 1 = enhanced, 0 = normal, -1 = limited */
+    `speed` INT NULL,    /* 1 = enhanced, 0 = normal, -1 = limited */
+    `hearing` INT NULL,  /* 1 = enhanced, 0 = normal, -1 = limited */
+    PRIMARY KEY (`id`)
 ) ENGINE=MyISAM ;
 UPDATE `server_options` SET `option_value`='1121' WHERE `option_name`='db_version';
 
@@ -384,12 +384,12 @@ CREATE TABLE trade_transformations (
   id int(10) unsigned NOT NULL auto_increment,
   pattern_id int(10) unsigned NOT NULL,                         # pattern for transformation
   process_id int(10) unsigned NOT NULL,                         # process for transformation
-  result_id int(10) unsigned NOT NULL,                  	# resulting item
+  result_id int(10) unsigned NOT NULL,                      # resulting item
   result_qty int(8) unsigned NOT NULL ,                         # resulting item quantity
-  item_id int(10) unsigned NOT NULL,                         	# item to be transformed
+  item_id int(10) unsigned NOT NULL,                            # item to be transformed
   item_qty int(8) unsigned NOT NULL ,                           # required quantity for transformation
   trans_points int(8) unsigned NOT NULL DEFAULT '0' ,           # ammount of time to complete transformation
-  penilty_pct float(10,6) NOT NULL DEFAULT '1.000000' ,     # percent of quality for resulting item 
+  penilty_pct float(10,6) NOT NULL DEFAULT '1.000000' ,     # percent of quality for resulting item
   description varchar(255) NOT NULL DEFAULT '' ,
   PRIMARY KEY (id)
 );
@@ -422,7 +422,7 @@ UPDATE `server_options` SET `option_value`='1130' WHERE `option_name`='db_versio
 DROP TABLE trade_processes;
 CREATE TABLE trade_processes (
   process_id int(10) unsigned NOT NULL auto_increment,
-  name varchar(40) default NULL,				# process name
+  name varchar(40) default NULL,                # process name
   animation varchar(30) ,                                       # transformation animation
   render_effect CHAR(32) default NULL,                          # transformation render effect
   workitem_id int(10) unsigned NOT NULL,                        # target item to complete transformation
@@ -542,13 +542,13 @@ INSERT INTO command_group_assignment VALUES( "/action", 30 );
 
 # Item inventory updates -- THIS IS NOT COMPLETE YET AND WILL NOT PRESERVE DATA YET
 ALTER TABLE `item_instances`
-  CHANGE COLUMN `location_in_parent` `location_in_parent` smallint(4) NULL 
+  CHANGE COLUMN `location_in_parent` `location_in_parent` smallint(4) NULL
   DEFAULT 0 COMMENT 'Slot number in inventory, container or -1 in world.';
 
 ### 1142 to 1144 - Daniel Fryer - Books keeping text in new unique_content table
 SOURCE unique_content.sql;
 
-#First get the content from the descriptions (where they used to be stored..) 
+#First get the content from the descriptions (where they used to be stored..)
 INSERT INTO unique_content (content) SELECT description FROM item_stats WHERE flags like "%readable%";
 
 #Then update the item_instances so that their content key is pointing at the same text that was just copied from their description
@@ -636,18 +636,18 @@ update item_instances set location_in_parent=4 where location='E' and equipped_s
 update item_instances set location_in_parent=5 where location='E' and equipped_slot='head' and char_id_owner is not null;
 update item_instances set location_in_parent=6 where location='E' and equipped_slot='neck' and char_id_owner is not null;
 update item_instances set location_in_parent=7 where location='E' and equipped_slot='back' and char_id_owner is not null;
-update item_instances set location_in_parent=8 where location='E' and equipped_slot='arms' and char_id_owner is not null;    
-update item_instances set location_in_parent=9 where location='E' and equipped_slot='gloves' and char_id_owner is not null;        
-update item_instances set location_in_parent=10 where location='E' and equipped_slot='boots' and char_id_owner is not null;            
-update item_instances set location_in_parent=11 where location='E' and equipped_slot='legs' and char_id_owner is not null;            
-update item_instances set location_in_parent=12 where location='E' and equipped_slot='belt' and char_id_owner is not null;                
-update item_instances set location_in_parent=13 where location='E' and equipped_slot='bracers' and char_id_owner is not null;            
-update item_instances set location_in_parent=14 where location='E' and equipped_slot='torso' and char_id_owner is not null;                
+update item_instances set location_in_parent=8 where location='E' and equipped_slot='arms' and char_id_owner is not null;
+update item_instances set location_in_parent=9 where location='E' and equipped_slot='gloves' and char_id_owner is not null;
+update item_instances set location_in_parent=10 where location='E' and equipped_slot='boots' and char_id_owner is not null;
+update item_instances set location_in_parent=11 where location='E' and equipped_slot='legs' and char_id_owner is not null;
+update item_instances set location_in_parent=12 where location='E' and equipped_slot='belt' and char_id_owner is not null;
+update item_instances set location_in_parent=13 where location='E' and equipped_slot='bracers' and char_id_owner is not null;
+update item_instances set location_in_parent=14 where location='E' and equipped_slot='torso' and char_id_owner is not null;
 update item_instances set location_in_parent=15 where location='E' and equipped_slot='mind' and char_id_owner is not null;
 
 #update containers owned by players, which have location_in_parent 16-based instead of 0-based
 delete from temp;
-insert into temp 
+insert into temp
 (select i.id from item_instances i, item_stats s where i.item_stats_id_standard=s.id and char_id_owner!=0 and container_max_size>0 and item_stats_id_standard<300);
 
 update item_instances set location_in_parent=
@@ -915,7 +915,7 @@ UPDATE `server_options` SET `option_value`='1186' WHERE `option_name`='db_versio
 
 #### 1187 - Frank Barton - changing stat_type to appropriate value for random loot an unique items
 UPDATE `item_stats` SET `stat_type`='R' WHERE `id`>'10000';
-UPDATE `item_stats` SET `stat_type`='U' WHERE `stat_type`='R' AND `flags` LIKE '%PERSONALISE%'; 
+UPDATE `item_stats` SET `stat_type`='U' WHERE `stat_type`='R' AND `flags` LIKE '%PERSONALISE%';
 UPDATE `server_options` SET `option_value`='1187' WHERE `option_name`='db_version';
 
 #### 1188 - Steven Patrick - Adding advisor_ban field
@@ -1246,7 +1246,7 @@ ALTER TABLE `npc_responses` CHANGE COLUMN `audio_path` `audio_path1` VARCHAR(100
  ADD COLUMN `audio_path3` VARCHAR(100)  DEFAULT NULL COMMENT 'This holds an optional VFS path to a speech file to be sent to the client and played on demand for response3.' AFTER `audio_path2`,
  ADD COLUMN `audio_path4` VARCHAR(100)  DEFAULT NULL COMMENT 'This holds an optional VFS path to a speech file to be sent to the client and played on demand for response4.' AFTER `audio_path3`,
  ADD COLUMN `audio_path5` VARCHAR(100)  DEFAULT NULL COMMENT 'This holds an optional VFS path to a speech file to be sent to the client and played on demand for response5.' AFTER `audio_path4`;
- 
+
 #1225 - Stefano Angeleri - Added max guild points and per character permissions
 ALTER TABLE `guilds` ADD COLUMN `max_guild_points` INT(10)  NOT NULL DEFAULT 100 COMMENT 'Stores the maximum amount of gp allowed for assignment in this guild' AFTER `secret_ind`;
 ALTER TABLE `characters` ADD COLUMN `guild_additional_privileges` SMALLINT(3) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Contains a bitfield with the additional priviledges assigned to this char (additional to the guild level it\'s in)' AFTER `guild_level`,

@@ -67,7 +67,7 @@ class psString;
 #define REMOVAL_INTERVAL_MINIMUM  1200
 
 /// This indicates that the item has been deleted from the database and should not be updated
-#define  ID_DONT_SAVE_ITEM 0xffffffff   
+#define  ID_DONT_SAVE_ITEM 0xffffffff
 
 /// The crafter ID field contains the id of the character that made this item
 #define PSITEM_FLAG_CRAFTER_ID_IS_VALID 0x00000001
@@ -153,8 +153,8 @@ class psWorkGameEvent;
 
 /** This class embodies item instances in the game.
 * Every item that can be picked up, dropped, traded, equipped, bought or sold is a psitem.
-* 
-* This class has some specific design philosophy.  
+*
+* This class has some specific design philosophy.
 *
 * First, each item instance has a unique 32 bit identifier.  The database ensures that there can be only one entry
 *  per item identifier.  This means if an item is truly duped it will not persist between world resets since the next
@@ -166,7 +166,7 @@ class psWorkGameEvent;
 *  to basically reconstruct the item from the ground up.  The new item will be a truly new item.  Do not take this lightly.
 *
 *  ----The only time an item instance should be duplicated is for Game Master level functions.----
-*  
+*
 * Items are built from statistic entries (item stats).  Most items will have a base item stat entry and 0 or more item stat
 *  entries that act as modifiers.  Modifiers are permanent additions to an item instance.  For example, you may be able to buy
 *  a normal 'short sword' from a merchant.  This would be the base stat of the item.  If you use a trade skill to sharpen the
@@ -191,7 +191,7 @@ class psWorkGameEvent;
 * Weight Rules:
 *   TODO: Containers will have a maximum carrying weight.
 *   Weight of stacks is a the count of the stack multiplied by the weight of the base item stat.
-*   
+*
 * Size Rules:
 *   Size is single number (unsigned short) that relates to the length of the longest dimension measured in centimeters.
 *   Stacks do not affect size.
@@ -205,7 +205,7 @@ class psItem : public iScriptableVar, public iDeleteObjectCallback, public CS::U
 {
 public:
 
-    /** Constructs a psItem.  Does not assign a UID. 
+    /** Constructs a psItem.  Does not assign a UID.
      * After construction the caller should set the location in the world or place the item into a container
      * with the parent's AddItemToContainer() member function.  It should then call Save() to save the instance
      * to the database.
@@ -228,14 +228,14 @@ public:
 
     /// Handles deleted gem objects.
     virtual void DeleteObjectCallback(iDeleteNotificationObject * object);
-    
+
     //inform clients on view updates
     void UpdateView(Client *fromClient, EID eid, bool clear);
 
     bool SendItemDescription( Client *client);
-    
+
     bool SendContainerContents(Client *client, int containerID = CONTAINER_INVENTORY_BULK);
-    
+
     /** Send an item to the client.
      * @param client The client the message is for.
      * @param containerID the ID of the owning container
@@ -243,12 +243,12 @@ public:
      * TODO check if we can't get the data our self
      */
     void ViewItem(Client* client, int containerID, INVENTORY_SLOT_NUMBER slotID);
-    
+
     bool SendActionContents(Client *client, psActionLocation *action);
-    
+
 private:
 
-    
+
     /** Fills up the message with the details about the items in the container.
       * @param client The client the message is for. Used to figure out ownership flags.
       * @param outgoing The message that needs to be populated.
@@ -256,13 +256,13 @@ private:
     void FillContainerMsg(Client* client, psViewItemDescription& outgoing);
 
     void SendCraftTransInfo( Client *client);
-    
+
     void GetComboInfoString(psCharacter* character, uint32 designID, csString & comboString);
 
     void GetTransInfoString(psCharacter* character, uint32 designID, csString & transString);
-    
+
     bool SendBookText( Client *client, int containerID, int slotID);
-    
+
     void SendSketchDefinition(Client *client);
 
     /// The 32 bit Unique Identifier of this item.
@@ -286,11 +286,11 @@ private:
     /// 0% means item does not reduce decay at all.  100% means item does not decay.
     float decay_resistance; // percent 3.2
 
-    
+
     float item_quality;                     ///< Current quality of item
     float crafted_quality;                  ///< The crafted max quality of the item.
-    
-    
+
+
     /// Original quality of item, used to detect save requirements
     float item_quality_original;
 
@@ -346,15 +346,15 @@ private:
      *
      */
     psCharacter *owning_character;
-    
+
     /** The owner of the item may not be infact online so have to store the ID since the
-        above may be undefined in some cases. 
-    */    
+        above may be undefined in some cases.
+    */
     PID owningCharacterID;
     PID guardingCharacterID;
 
     /** The basic stats of this item.
-     * This can point to a common shared entry from the basic stats list, or a unique entry.  
+     * This can point to a common shared entry from the basic stats list, or a unique entry.
      * Check for the PSITEM_FLAG_UNIQUE_ITEM flag to see which.
      */
     psItemStats *base_stats;
@@ -364,7 +364,7 @@ private:
      * and effects on top of the base.
      */
     psItemStats *current_stats;
-    /** The list of modifiers for this item. 
+    /** The list of modifiers for this item.
      * We could keep just the base and current, but then we wouldn't be able to track what kinds of modifiers
      * had been applied to this item instance, and it would be difficult to find where to add the modifiers in
      * the database.
@@ -516,14 +516,14 @@ public:
      *       modifier.
      */
     bool HasModifier(psItemStats *modifier);
-    
+
     /** Adds a modifier to this item instance if there is space available.
      * Current stats are automaticaly updated.
      *
      * TODO: A DeleteModifier() function may be warranted in the future.
      */
     bool AddModifier(psItemStats *modifier);
-    
+
     /** Returns the modifier at a specific index 0 through PSITEM_MAX_MODIFIERS-1
      *
      */
@@ -543,7 +543,7 @@ public:
     /** Copies values of its attributes to item 'target'.
       */
     virtual void Copy(psItem * target);
-    
+
     /** Splits an item instance representing a stack into two smaller stacks.
      *  The parameter is the size of the new stack.
      *  The return value must be checked for NULL.
@@ -583,7 +583,7 @@ public:
      * This should always be valid since items should be destroyed when the character logs off
      */
     psCharacter *GetOwningCharacter() { return owning_character; }
-    /** Get the ID of the owning character.  This is required in cases where the owning 
+    /** Get the ID of the owning character.  This is required in cases where the owning
       * character may not be online and the above pointer is undefined.
       */
     PID GetOwningCharacterID() const { return owningCharacterID; }
@@ -601,7 +601,7 @@ public:
     { return parent_item_InstanceID; }
     void SetContainerID(uint32 parentId) { parent_item_InstanceID = parentId; }
 
-    
+
     /** Returns the location of this item in it's parent item or in the players equipment, bulk or bank as appropriate.
      */
     INVENTORY_SLOT_NUMBER GetLocInParent(bool adjustSlot=false);
@@ -625,7 +625,7 @@ public:
      */
     psItemStats *GetBaseStats() const { return base_stats; }
 
-    /** Sets the current item stats.  DO NOT USE! 
+    /** Sets the current item stats.  DO NOT USE!
      * This is used mostly internally.  The current stats either point to the same entry as the base stats or a stats entry that
      * is the sum of the base stats plus modifiers and effects.
      */
@@ -698,12 +698,12 @@ public:
     unsigned short GetItemSize();
     /// Gets the total size of the items in the stack.
     uint GetTotalStackSize() { return GetItemSize()*stack_count; }
-    
+
     unsigned short GetContainerMaxSize();
 
     /** Gets the slots available in this item (only containers) which means
      *  also the maximum amount of items which can be stored in this container.
-     * 
+     *
      *  @note this function uses the base item stats of this item.
      *  @return The number of slots available in this container.
      */
@@ -754,20 +754,20 @@ public:
      *  Used for standalone or weilded mesh.
      */
     const char *GetMeshName();
-    
+
     /** Get the Texture Name for the item.
      *
      *  Used when worn and attached to the mesh given by part name.
      */
     const char *GetTextureName();
-    
+
     /** Get the Part Name for the item.
      *
      *  This is the name of the part that the texture should be attached to
      *  if no change of mesh.
      */
     const char *GetPartName();
-    
+
     /** Get the Part Mesh Name for the item.
      *
      *  This is the new mesh to be attached to the location given
@@ -835,7 +835,7 @@ public:
     bool GetIsNpcOwned() const { return (flags & PSITEM_FLAG_NPCOWNED) != 0; }
     void SetIsNpcOwned(bool v);
 
-    bool GetIsKey() const { return ((flags & PSITEM_FLAG_KEY)? true : false); } 
+    bool GetIsKey() const { return ((flags & PSITEM_FLAG_KEY)? true : false); }
     void SetIsKey(bool v);
 
     bool GetIsMasterKey() const { return ((flags & PSITEM_FLAG_MASTERKEY)? true : false); }
@@ -873,7 +873,7 @@ public:
 
     /// Gets the reduction of this weapon against the armor given
     float GetArmorVSWeaponResistance(psItemStats* armor);
-    
+
     /// Gets the book text, should only be used if this is a book.
     csString GetBookText() { return GetBaseStats()->GetLiteratureText(); }
     /// Sets the book text, should only be used if this is a book.
@@ -886,7 +886,7 @@ public:
     void SetCharges(int charges);
     int GetCharges() const;
     int GetMaxCharges() const;
-    
+
     /** Called when an item is completely destroyed from the persistant world
      *
      *  Persistant refers to the item existing through a reset of the server.  This definition can affect when an item
@@ -938,8 +938,8 @@ private:
 class psScheduledItem
 {
 public:
-    psScheduledItem(int spawnID,uint32 itemID,csVector3& position, psSectorInfo* sector,InstanceID instance, int interval,int maxrnd, 
-				float range);
+    psScheduledItem(int spawnID,uint32 itemID,csVector3& position, psSectorInfo* sector,InstanceID instance, int interval,int maxrnd,
+                float range);
 
     psItem* CreateItem();
     uint32 GetItemID() { return itemID;}
@@ -968,7 +968,7 @@ private:
     InstanceID worldInstance;     ///< Instance ID to spawn in
     int interval;          ///< Interval in msecs
     int maxrnd;            ///< Maximum random interval modifier in msecs
-	float range;		   ///< Range in which to spawn item
+    float range;           ///< Range in which to spawn item
     csTicks lastSpawn;     ///< When we last spawned it, good for something perhaps? :)
 };
 

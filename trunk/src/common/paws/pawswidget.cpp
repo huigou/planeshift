@@ -121,7 +121,7 @@ pawsWidget::~pawsWidget()
         if (wdg)
             delete wdg;
     }
-    
+
     if (contextMenu != NULL)
     {
         PawsManager::GetSingleton().GetMainWidget()->DeleteChild(contextMenu);
@@ -137,7 +137,7 @@ pawsWidget::~pawsWidget()
 
     if (extraData)
         delete extraData;
-    
+
     if (parent)
         parent->RemoveChild(this);
 
@@ -162,19 +162,19 @@ const char *pawsWidget::GetFilename()
 }
 
 bool pawsWidget::CheckButtonPressed( int button, int modifiers, pawsWidget* pressedWidget )
-{  
+{
     if ( pressedWidget->GetName()!=NULL  &&  GetCloseName()!=NULL  &&  strcmp( pressedWidget->GetName(),GetCloseName())==0 )
     {
         if (modifiers == (CSMASK_CTRL | CSMASK_ALT))
             ReloadWidget();
         else
             Close();
-    
+
         return true;
     }
     else
         return OnButtonPressed( button, modifiers, pressedWidget );
-}                 
+}
 
 /*
  * Check to see if this widget contains these coordinates at all.
@@ -190,31 +190,31 @@ pawsWidget* pawsWidget::WidgetAt( int x, int y )
     for (size_t z = 0; z < children.GetSize(); z++ )
     {
         if ( !children[z]->ignore  &&  children[z]->IsVisible() )
-        { 
+        {
             if ( children[z]->Contains(x,y) )
                 return children[z]->WidgetAt( x , y );
         }
     }
-    
+
     //Return this widget if no children contain the coords.
     return this;
 }
 
 bool pawsWidget::Contains( int x, int y )
-{   
-    bool val = false; 
+{
+    bool val = false;
 
     if (titleBar)
-    {        
+    {
         val = titleBar->screenFrame.Contains(x,y) || screenFrame.Contains(x,y);
     }
     else if ( border )
     {
         val = border->GetRect().Contains(x,y);
-    }           
+    }
     else
     {
-        val = screenFrame.Contains(x,y);       
+        val = screenFrame.Contains(x,y);
     }
 
     return val;
@@ -244,7 +244,7 @@ void pawsWidget::RemoveChild( pawsWidget* widget )
     if ( !widget )
         return;
 
-    children.Delete( widget );   
+    children.Delete( widget );
 }
 
 void pawsWidget::DeleteChild( pawsWidget* widget )
@@ -281,7 +281,7 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
         return false;
     }
     */
-        
+
     atr = node->GetAttribute("style");
 
     if (name=="ChatWindow")
@@ -301,7 +301,7 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
         if ( choice == "yes" ) ignore = true;
         if ( choice == "no"  ) ignore = false;
     }
-    
+
     // Check to see if this widget is visible directly after a load.
     atr = node->GetAttribute( "visible" );
     if ( atr )
@@ -310,7 +310,7 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
         if ( choice == "yes" ) Show();
         if ( choice == "no"  ) Hide();
     }
-    
+
 
     // Check to see if this widget should save it's position
     atr = node->GetAttribute("savepositions");
@@ -318,7 +318,7 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
     {
         csString choice = csString(atr->GetValue());
         if ( choice == "yes" ) saveWidgetPositions = true;
-        if ( choice == "no"  ) saveWidgetPositions = false;        
+        if ( choice == "no"  ) saveWidgetPositions = false;
     }
 
     // Check to see if this widget is movable
@@ -327,7 +327,7 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
     {
         csString choice = csString(atr->GetValue());
         if ( choice == "yes" ) movable = true;
-        if ( choice == "no"  ) movable = false;        
+        if ( choice == "no"  ) movable = false;
     }
 
     // Check to see if this widget is configurable
@@ -336,9 +336,9 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
     {
         csString choice = csString(atr->GetValue());
         if ( choice == "yes" ) configurable = true;
-        if ( choice == "no"  ) configurable = false;        
+        if ( choice == "no"  ) configurable = false;
     }
-    
+
     atr = node->GetAttribute( "resizable" );
     if ( atr )
     {
@@ -381,7 +381,7 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
     }
 
     alwaysOnTop = node->GetAttributeValueAsBool( "alwaysontop", false );
-   
+
     // Get tool tip, if any
     atr = node->GetAttribute( "tooltip" );
     if (atr)
@@ -434,8 +434,8 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
                 Error2("Could not load font: >%s<", (const char*)fontName );
                 return false;
             }
-            int r = fontAttribute->GetAttributeValueAsInt( "r" );            
-            int g = fontAttribute->GetAttributeValueAsInt( "g" );            
+            int r = fontAttribute->GetAttributeValueAsInt( "r" );
+            int g = fontAttribute->GetAttributeValueAsInt( "g" );
             int b = fontAttribute->GetAttributeValueAsInt( "b" );
 
             if ( r == -1  &&  g == -1  &&  b == -1 )
@@ -443,12 +443,12 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
             else
                 defaultFontColour = graphics2D->FindRGB( r, g, b );
 
-            r = fontAttribute->GetAttributeValueAsInt( "sr" );            
-            g = fontAttribute->GetAttributeValueAsInt( "sg" );            
+            r = fontAttribute->GetAttributeValueAsInt( "sr" );
+            g = fontAttribute->GetAttributeValueAsInt( "sg" );
             b = fontAttribute->GetAttributeValueAsInt( "sb" );
 
             defaultFontShadowColour = graphics2D->FindRGB( r, g, b );
-            
+
             if (fontAttribute->GetAttributeValueAsBool( "shadow" ))
                 fontStyle |= FONT_STYLE_DROPSHADOW;
             if (fontAttribute->GetAttributeValueAsBool( "bold" ))
@@ -456,19 +456,19 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
     }
 
     // Get the frame for this widget.
-    csRef<iDocumentNode> frameNode = node->GetNode( "frame" );    
+    csRef<iDocumentNode> frameNode = node->GetNode( "frame" );
     if ( frameNode )
     {
         defaultFrame.xmin = GetActualWidth(frameNode->GetAttributeValueAsInt("x"));
         defaultFrame.ymin = GetActualHeight(frameNode->GetAttributeValueAsInt("y"));
         int width  = GetActualWidth(frameNode->GetAttributeValueAsInt("width"));
         int height = GetActualHeight(frameNode->GetAttributeValueAsInt("height"));
-        
+
         if (width < min_width)
             width = min_width;
         if (height < min_height)
             height = min_height;
-        
+
         defaultFrame.SetSize( width, height );
 
         // If this widget has a parent then move it to it's correct relative position.
@@ -483,23 +483,23 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
             MoveTo( defaultFrame.xmin, defaultFrame.ymin );
             SetSize( defaultFrame.Width(), defaultFrame.Height() );
         }
-        
+
         csRef<iDocumentAttribute> useBorder = frameNode->GetAttribute("border");
         if ( useBorder )
         {
             csString borderString = useBorder->GetValue();
-           
+
             if ( borderString != "no" )
             {
                 if ( borderString == "yes" )
-                    borderString.Replace("line");            
-    
+                    borderString.Replace("line");
+
                 if (border)
                     delete border;
 
                 border = new pawsBorder(borderString );
-                border->SetParent(this);                 
-            }                          
+                border->SetParent(this);
+            }
         }
 
         if ( border )
@@ -524,12 +524,12 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
     if (titleNode)
     {
         csString title = titleNode->GetAttributeValue("text");
-        csString image = titleNode->GetAttributeValue("resource");               
-        csString align = titleNode->GetAttributeValue("align");        
+        csString image = titleNode->GetAttributeValue("resource");
+        csString align = titleNode->GetAttributeValue("align");
         csString close = titleNode->GetAttributeValue("close_button");
         bool shadowTitle = titleNode->GetAttributeValueAsBool("shadow", true);
 
-        SetTitle( title, image, align, close, shadowTitle ); 
+        SetTitle( title, image, align, close, shadowTitle );
     }
 
     // new title bar
@@ -537,15 +537,15 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
     if (newTitleNode)
         titleBar = new pawsTitle(this, newTitleNode);
 
-    csRef<iDocumentNode> borderNode = node->GetNode( "childborders" );    
+    csRef<iDocumentNode> borderNode = node->GetNode( "childborders" );
     if (borderNode)
         LoadBorderColours(borderNode);
 
-    csRef<iDocumentNode> bgColourNode = node->GetNode( "bgcolour" );    
+    csRef<iDocumentNode> bgColourNode = node->GetNode( "bgcolour" );
     if ( bgColourNode )
     {
         int r = bgColourNode->GetAttributeValueAsInt("r");
-        int g = bgColourNode->GetAttributeValueAsInt("g");     
+        int g = bgColourNode->GetAttributeValueAsInt("g");
         int b = bgColourNode->GetAttributeValueAsInt("b");
 
         bgColour = graphics2D->FindRGB( r, g, b );
@@ -554,21 +554,21 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
     {
         bgColour = -1;
     }
-    
+
     // Get the background image attribute
-    csRef<iDocumentNode> bgImageNode = node->GetNode( "bgimage" );    
+    csRef<iDocumentNode> bgImageNode = node->GetNode( "bgimage" );
     if ( bgImageNode )
     {
-        csString image = bgImageNode->GetAttributeValue("resource");               
+        csString image = bgImageNode->GetAttributeValue("resource");
         bgImage = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(image);
         if(!bgImage)
         {
             Warning2(LOG_PAWS, "GUI image '%s' not found.\n", image.GetData());
         }
-        else 
+        else
         {
             csRef<iDocumentAttribute> alphaattr = bgImageNode->GetAttribute("alpha");
-            if ( alphaattr )    
+            if ( alphaattr )
                 alpha = alphaattr->GetValueAsInt();
             else
                 alpha = bgImage->GetDefaultAlpha();
@@ -586,7 +586,7 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
     }
 
     // Get the masking image attribute
-    csRef<iDocumentNode> maskImageNode = node->GetNode( "mask" );    
+    csRef<iDocumentNode> maskImageNode = node->GetNode( "mask" );
     if ( maskImageNode )
     {
         csString imageStr = maskImageNode->GetAttributeValue("resource");
@@ -595,7 +595,7 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
     }
 
     // Get the data subscriptions
-    csRef<iDocumentNode> subsNode = node->GetNode( "subscriptions" );   
+    csRef<iDocumentNode> subsNode = node->GetNode( "subscriptions" );
     if ( subsNode )
     {
         overwrite_subscription = subsNode->GetAttributeValueAsBool("overwrite",true);
@@ -608,7 +608,7 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
             {
                 PawsManager::GetSingleton().Subscribe(point->GetAttributeValue("data"),this);
             }
-        }            
+        }
     }
 
     // Get the data we publish
@@ -619,18 +619,18 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
         csString data = publishNode->GetAttributeValue("data");
         if (!data.IsEmpty())
             publishList.Push(data);
-    }   
+    }
 
     // Get the attachment points
-    csRef<iDocumentNode> attachPointsNode = node->GetNode( "attachpoints" );   
+    csRef<iDocumentNode> attachPointsNode = node->GetNode( "attachpoints" );
     if ( attachPointsNode )
     {
         csRef<iDocumentNodeIterator> points = attachPointsNode->GetNodes();
         while ( points->HasNext() )
         {
             csRef<iDocumentNode> point = points->Next();
-            attachFlags |= GetAttachFlag( point->GetAttributeValue("point") );                                              
-        }            
+            attachFlags |= GetAttachFlag( point->GetAttributeValue("point") );
+        }
     }
 
     // Get the min width and height
@@ -699,9 +699,9 @@ bool pawsWidget::Load( iDocumentNode* node )
 {
     if ( ! LoadAttributes(node) )
         return false;
- 
-    // Call the setup for this widget.     
-    if ( !Setup( node ) ) 
+
+    // Call the setup for this widget.
+    if ( !Setup( node ) )
     {
         Error2("Widget %s Setup Failed", GetName() );
         return false;
@@ -712,7 +712,7 @@ bool pawsWidget::Load( iDocumentNode* node )
 
     if ( ! LoadChildren(node) )
         return false;
-        
+
 
     // load scripts after we've loaded all children
     if (!LoadEventScripts(node))
@@ -724,32 +724,32 @@ bool pawsWidget::Load( iDocumentNode* node )
         return false;
     }
 
-    // Check to see if we have possible saved positions to use. 
+    // Check to see if we have possible saved positions to use.
     if ( saveWidgetPositions )
     {
         csRect pos = LoadPositions();
         // Resize to loaded positions.
         MoveTo( pos.xmin, pos.ymin );
-       
+
         //only set size if widget is resizable
         if ( IsResizable() )
-            SetSize( pos.Width(), pos.Height() );        
+            SetSize( pos.Width(), pos.Height() );
     }
-    
-    Resize();       
+
+    Resize();
     Resize( 0, 0, RESIZE_RIGHT | RESIZE_BOTTOM | RESIZE_TOP | RESIZE_BOTTOM );
     StopResize();
 
     if (visible)
         RunScriptEvent(PW_SCRIPT_EVENT_SHOW);
-    return true;                     
+    return true;
 }
 
 bool pawsWidget::LoadChildren( iDocumentNode* node )
 {
     pawsWidget* widget;
 
-    // Get an iterator over all the child widgets       
+    // Get an iterator over all the child widgets
     csRef<iDocumentNodeIterator> childIter = node->GetNodes();
 
     while ( childIter->HasNext() )
@@ -761,7 +761,7 @@ bool pawsWidget::LoadChildren( iDocumentNode* node )
 
         widget=NULL;
 
-        // Check if the child should be loaded from 
+        // Check if the child should be loaded from
         csString file = childWidgetNode->GetAttributeValue( "file" );
         if (!file.IsEmpty())
         {
@@ -778,7 +778,7 @@ bool pawsWidget::LoadChildren( iDocumentNode* node )
             if (childarray.GetSize())
                 widget=childarray[0];
         }
-  
+
         // If a widget hasn't been loaded here - either due to a failure to load above or
         //  because no file was specified, parse this node as an embedded widget definition
         if (!widget)
@@ -795,7 +795,7 @@ bool pawsWidget::LoadChildren( iDocumentNode* node )
             widget = PawsManager::GetSingleton().CreateWidget( factory );
             CS_ASSERT_MSG("Creating widget from factory name failed.", widget!=NULL);
 
-            AddChild( widget );            
+            AddChild( widget );
         }
 
         // Let the widget parse the rest of the node information
@@ -807,7 +807,7 @@ bool pawsWidget::LoadChildren( iDocumentNode* node )
     }
 
     // Need to load form properties here, because we need to have the children loaded
-    
+
     // Get form properties
     csRef<iDocumentNode> formNode = node->GetNode("form");
     if (formNode)
@@ -837,8 +837,8 @@ bool pawsWidget::LoadChildren( iDocumentNode* node )
 void pawsWidget::ShowBehind()
 {
     visible = true;
-    if ( border ) border->Show();   
-    
+    if ( border ) border->Show();
+
     pawsWidget * focused = PawsManager::GetSingleton().GetCurrentFocusedWidget();
     if ( focused )
         focused->Show();
@@ -847,25 +847,25 @@ void pawsWidget::ShowBehind()
 void pawsWidget::Show()
 {
     visible = true;
-    if ( border ) border->Show();    
+    if ( border ) border->Show();
     BringToTop( this );
     RunScriptEvent(PW_SCRIPT_EVENT_SHOW);
 }
-    
+
 void pawsWidget::Hide()
-{ 
-    visible = false; 
-    if ( border ) 
+{
+    visible = false;
+    if ( border )
         border->Hide();
 
-    PawsManager::GetSingleton().OnWidgetHidden(this);  
+    PawsManager::GetSingleton().OnWidgetHidden(this);
     RunScriptEvent(PW_SCRIPT_EVENT_HIDE);
-}    
+}
 
 void pawsWidget::SetRelativeFrame( int x, int y, int width, int height )
 {
-	// Must set width and height first so children don't get squeezed
-	SetRelativeFrameSize( width, height );
+    // Must set width and height first so children don't get squeezed
+    SetRelativeFrameSize( width, height );
     SetRelativeFramePos( x, y );
 }
 
@@ -873,7 +873,7 @@ void MoveRect(csRect & rect, int x, int y)
 {
     int width  = rect.Width();
     int height = rect.Height();
-    
+
     rect.Set(x, y, x+width, y+height);
 }
 
@@ -884,9 +884,9 @@ void pawsWidget::SetRelativeFramePos( int x, int y )
         MoveRect(screenFrame, parent->ScreenFrame().xmin + x, parent->ScreenFrame().ymin + y);
     else
         MoveRect(screenFrame, x, y);
-    
-    for ( size_t x = 0; x < children.GetSize(); x++ )        
-        children[x]->RecalcScreenPositions();         
+
+    for ( size_t x = 0; x < children.GetSize(); x++ )
+        children[x]->RecalcScreenPositions();
 }
 
 void pawsWidget::SetRelativeFrameSize( int width, int height )
@@ -895,9 +895,9 @@ void pawsWidget::SetRelativeFrameSize( int width, int height )
     screenFrame  .SetSize( width, height );
 
     OnResize();
-    
-    for ( size_t x = 0; x < children.GetSize(); x++ )        
-        children[x]->RecalcScreenPositions();         
+
+    for ( size_t x = 0; x < children.GetSize(); x++ )
+        children[x]->RecalcScreenPositions();
 }
 
 void pawsWidget::RecalcScreenPositions()
@@ -908,17 +908,17 @@ void pawsWidget::RecalcScreenPositions()
         screenFrame.ymin  = parent->ScreenFrame().ymin + defaultFrame.ymin;
         screenFrame.SetSize( defaultFrame.Width(), defaultFrame.Height() );
 
-        for ( size_t x = 0; x < children.GetSize(); x++ )        
-            children[x]->RecalcScreenPositions();         
+        for ( size_t x = 0; x < children.GetSize(); x++ )
+            children[x]->RecalcScreenPositions();
     }
 }
-    
+
 void pawsWidget::UseBorder( const char* style )
 {
     if (border)
         delete border;
     border = new pawsBorder( style );
-    border->SetParent( this );    
+    border->SetParent( this );
 }
 
 void pawsWidget::SetBackground( const char* image )
@@ -930,7 +930,7 @@ void pawsWidget::SetBackground( const char* image )
         csString parentName("None");
         if ( parent )
             parentName = parent->GetName();
-        
+
         if(PawsManager::GetSingleton().GetTextureManager()->AddImage(image)) //try on demand loading
         {
             //try getting the image again
@@ -969,7 +969,7 @@ pawsWidget* pawsWidget::FindWidget( const char* name, bool complain )
 {
     if (!name)
          return NULL;
-    
+
     if ( this->name == name )
         return this;
 
@@ -979,9 +979,9 @@ pawsWidget* pawsWidget::FindWidget( const char* name, bool complain )
          if ( widget != NULL )
              return widget;
     }
-    /*This check needs to be done here, because it might happen that even if this->name == "None", 
+    /*This check needs to be done here, because it might happen that even if this->name == "None",
     it has children and so it can return a widget! */
-    if (this->name == "None") 
+    if (this->name == "None")
         return NULL;
     if (complain)
         Error4( "Could not locate widget %s in %s (%s)", name, this->name.GetData(), this->GetFilename());
@@ -1008,7 +1008,7 @@ pawsWidget* pawsWidget::FindWidget( int ID, bool complain )
 
 pawsWidget* pawsWidget::FindWidgetXMLBinding( const char* xmlbinding )
 {
-    if ( (this->xmlbinding == xmlbinding) || 
+    if ( (this->xmlbinding == xmlbinding) ||
          (this->xmlbinding.IsEmpty() && name == xmlbinding ))
         return this;
 
@@ -1026,10 +1026,10 @@ void pawsWidget::DrawBackground()
     int drawAlpha;
 
     if ( bgColour != -1 )
-    {        
+    {
         graphics2D->DrawBox( screenFrame.xmin,
                              screenFrame.ymin,
-                             screenFrame.Width(), 
+                             screenFrame.Width(),
                              screenFrame.Height(),
                              bgColour );
     }
@@ -1046,10 +1046,10 @@ void pawsWidget::DrawBackground()
 
         drawAlpha = -1;
          // if the fading feature for this widget is enabled
-        if (alpha && fade) 
+        if (alpha && fade)
         {
             // if the widget hasn't got the focus
-            if (!focus)    
+            if (!focus)
             {
                 // and the mouse is inside the widget
                 if (hasMouseFocus)
@@ -1068,12 +1068,12 @@ void pawsWidget::DrawBackground()
             drawAlpha = (int)(alphaMin + (alpha-alphaMin) * fadeVal * 0.010);
         }
 
-        bgImage->Draw(screenFrame, drawAlpha);  
+        bgImage->Draw(screenFrame, drawAlpha);
     }
-        
+
     if ( border )
         border->Draw();
-        
+
     if ( IsResizable() && showResize )
     {
         csRef<iPawsImage> resize = PawsManager::GetSingleton().GetResizeImage();
@@ -1092,7 +1092,7 @@ void pawsWidget::Draw()
         return;
 
     DrawBackground();
-    
+
     ClipToParent(false);
     DrawChildren();
 
@@ -1107,8 +1107,8 @@ void pawsWidget::Draw()
     }
     if (maskImage)
     {
-        graphics2D->SetClipRect( 0,0, graphics2D->GetWidth(), graphics2D->GetHeight());         
-        maskImage->Draw(screenFrame.xmin, screenFrame.ymin, screenFrame.Width(), screenFrame.Height(), drawAlpha);  
+        graphics2D->SetClipRect( 0,0, graphics2D->GetWidth(), graphics2D->GetHeight());
+        maskImage->Draw(screenFrame.xmin, screenFrame.ymin, screenFrame.Width(), screenFrame.Height(), drawAlpha);
     }
 
     if (titleBar)
@@ -1144,7 +1144,7 @@ void pawsWidget::DrawWidgetText(const char *text, int x, int y, int style)
         if (style & FONT_STYLE_DROPSHADOW)
             graphics2D->Write( font, x+2, y+2, GetFontShadowColour(), -1, text );
 
-        graphics2D->Write( font, x, y, GetFontColour(), -1, text);    
+        graphics2D->Write( font, x, y, GetFontColour(), -1, text);
         if (style & FONT_STYLE_BOLD)
         {
             graphics2D->Write( font, x+1, y, GetFontColour(), -1, text);
@@ -1188,12 +1188,12 @@ void pawsWidget::FormatToolTip( const char *fmt, ... )
     va_list args;
     va_start(args, fmt);
     cs_vsnprintf(text,sizeof(text),fmt,args);
-    va_end(args);    
+    va_end(args);
     SetToolTip( (const char*)text );
-}    
+}
 
 void pawsWidget::DrawToolTip(int x, int y)
-{    
+{
     if (toolTip.Length() == 0)
         return;
 
@@ -1216,7 +1216,7 @@ void pawsWidget::DrawToolTip(int x, int y)
         Error2("Couldn't load font '%s', reverting to default",fontName.GetData());
         fontPtr = GetFont();
     }
-    
+
     fontPtr->GetDimensions( toolTip , width, height );
 
     // Draw above the cursor for the time being
@@ -1227,7 +1227,7 @@ void pawsWidget::DrawToolTip(int x, int y)
 
     if (realY < 0)
     {
-        realY = 5; 
+        realY = 5;
         realX += PawsManager::GetSingleton().GetMouse()->GetImageSize().width + 2;
     }
 
@@ -1237,7 +1237,7 @@ void pawsWidget::DrawToolTip(int x, int y)
     // Note: negative value on realX is impossible
 
     //Shadow
-    graphics2D->Write( fontPtr, 
+    graphics2D->Write( fontPtr,
         realX+1,
         realY+1,
         graphics2D->FindRGB(0, 0, 0),
@@ -1245,7 +1245,7 @@ void pawsWidget::DrawToolTip(int x, int y)
         toolTip);
 
     //Text
-    graphics2D->Write( fontPtr, 
+    graphics2D->Write( fontPtr,
         realX,
         realY,
         graphics2D->FindRGB(255, 255, 255),
@@ -1255,7 +1255,7 @@ void pawsWidget::DrawToolTip(int x, int y)
 
 
 void pawsWidget::DrawChildren()
-{    
+{
     for ( size_t x = children.GetSize(); x-- > 0; )
     {
         if ( children[x]->IsVisible() && children[x] != titleBar )
@@ -1268,8 +1268,8 @@ void pawsWidget::DrawChildren()
 int pawsWidget::CalcChildPosition(pawsWidget * child)
 {
     int pos;
-    
-    pos = 0;    
+
+    pos = 0;
     if ( ! child->IsAlwaysOnTop() )
     {
         for (size_t x = 0; x < children.GetSize(); x++ )
@@ -1278,7 +1278,7 @@ int pawsWidget::CalcChildPosition(pawsWidget * child)
     }
     return pos;
 }
-    
+
 void pawsWidget::BringToTop( pawsWidget* widget )
 {
     for (size_t x = 0; x < children.GetSize(); x++ )
@@ -1310,7 +1310,7 @@ void pawsWidget::SaveSettings()
     csRef<iConfigManager> cfgMgr;
     cfgMgr =  csQueryRegistry<iConfigManager > ( PawsManager::GetSingleton().GetObjectRegistry());
 
-    csRef<iConfigFile> config = cfgMgr->LookupDomain(PawsManager::GetSingleton().GetConfigFile());        
+    csRef<iConfigFile> config = cfgMgr->LookupDomain(PawsManager::GetSingleton().GetConfigFile());
 
     csString configName;
 
@@ -1333,7 +1333,7 @@ void pawsWidget::LoadSettings()
 {
     csRef<iConfigManager> cfgMgr;
     cfgMgr =  csQueryRegistry<iConfigManager > ( PawsManager::GetSingleton().GetObjectRegistry());
-  
+
     csRef<iConfigFile> config = cfgMgr->LookupDomain(PawsManager::GetSingleton().GetConfigFile());
 
     csString configName;
@@ -1355,7 +1355,7 @@ void pawsWidget::CreateWidgetConfigWindow()
 {
     psString title = name + "settings";
     pawsWidget * widget = PawsManager::GetSingleton().GetMainWidget()->FindWidget(title);
-    
+
     // there can only be one config window active for each widget
     WidgetConfigWindow* configWindow = dynamic_cast<WidgetConfigWindow*>(widget);
     if ( widget ==NULL)
@@ -1365,7 +1365,7 @@ void pawsWidget::CreateWidgetConfigWindow()
         configWindow->SetConfigurableWidget(this);
         configWindow->SetName(title);
         configWindow->Show();
-        PawsManager::GetSingleton().GetMainWidget()->AddChild(configWindow);    
+        PawsManager::GetSingleton().GetMainWidget()->AddChild(configWindow);
     }
     else
     {
@@ -1378,7 +1378,7 @@ void pawsWidget::DestroyWidgetConfigWindow()
 {
     psString title = name + "settings";
     pawsWidget * widget = PawsManager::GetSingleton().GetMainWidget()->FindWidget(title);
-    
+
     // there can only be one config window active for each widget
     WidgetConfigWindow* configWindow = dynamic_cast<WidgetConfigWindow*>(widget);
     if(configWindow)
@@ -1391,9 +1391,9 @@ void pawsWidget::DestroyWidgetConfigWindow()
 bool pawsWidget::CreateContextMenu()
 {
     psPoint mousePos;
-    
+
     mousePos = PawsManager::GetSingleton().GetMouse()->GetPosition();
-    
+
     contextMenu = new pawsMenu();
     if ( ! contextMenu->LoadFromFile(contextMenuFile) )
     {
@@ -1440,42 +1440,42 @@ int pawsWidget::ResizeFlags( int x, int y )
     csRect frame = ScreenFrame();
     csRect hotButton( 0,0,0,0 );
     int flag = 0;
-    
-    hotButton= csRect( frame.xmax-8, 
-                       frame.ymax-8, 
+
+    hotButton= csRect( frame.xmax-8,
+                       frame.ymax-8,
                        frame.xmax,
                        frame.ymax );
-        
+
     if ( hotButton.Contains(x,y) )
     {
-        flag |= RESIZE_BOTTOM;    
+        flag |= RESIZE_BOTTOM;
         flag |= RESIZE_RIGHT;
     }
-    return flag; 
+    return flag;
 }
 
 bool pawsWidget::OnMouseEnter()
 {
     if ( parent )
         return parent->OnChildMouseEnter( this );
-    else return true;        
+    else return true;
 }
 
 bool pawsWidget::OnChildMouseEnter( pawsWidget* widget )
 {
-    return true;        
+    return true;
 }
 
 bool pawsWidget::OnMouseExit()
 {
     if ( parent )
         return parent->OnChildMouseExit( this );
-    else return true;        
+    else return true;
 }
 
 bool pawsWidget::OnChildMouseExit( pawsWidget* child )
 {
-    return true;        
+    return true;
 }
 
 
@@ -1509,7 +1509,7 @@ bool pawsWidget::OnMouseDown( int button, int modifiers, int x, int y )
             {
                 // Check to see if the mouse was in the resizing flags
                 int flags = ResizeFlags(x,y) ;
-            
+
                 if ( flags )
                 {
                     PawsManager::GetSingleton().ResizingWidget( this, flags );
@@ -1530,7 +1530,7 @@ bool pawsWidget::OnMouseDown( int button, int modifiers, int x, int y )
             {
                 CreateContextMenu();
                 return true;
-            }                
+            }
             else if (contextMenuFile.IsEmpty() && configurable)
             {
                 CreateWidgetConfigWindow();
@@ -1538,7 +1538,7 @@ bool pawsWidget::OnMouseDown( int button, int modifiers, int x, int y )
             }
         }
     }
-    
+
     if ( parent )
         return parent->OnMouseDown( button, modifiers, x, y );
 
@@ -1548,7 +1548,7 @@ bool pawsWidget::OnMouseDown( int button, int modifiers, int x, int y )
 bool pawsWidget::OnMenuAction ( pawsWidget * widget, const pawsMenuAction & action )
 {
     if (action.name == MENU_DESTROY_ACTION_NAME)
-    {       
+    {
         PawsManager::GetSingleton().GetMainWidget()->DeleteChild(widget);
         if (widget == contextMenu)
             contextMenu = NULL;
@@ -1562,8 +1562,8 @@ bool pawsWidget::OnMenuAction ( pawsWidget * widget, const pawsMenuAction & acti
 }
 
 csRect pawsWidget::ScreenFrame()
-{ 
-    return screenFrame; 
+{
+    return screenFrame;
 }
 
 
@@ -1636,7 +1636,7 @@ bool pawsWidget::OnKeyDown( int keyCode, int key, int modifiers )
                     z = 0;
             else
                 if (z - 1 >= 0)
-                    z--;                
+                    z--;
                 else
                     z = (int)taborder.GetSize() - 1;
 
@@ -1648,7 +1648,7 @@ bool pawsWidget::OnKeyDown( int keyCode, int key, int modifiers )
         // Set current focued widget
         PawsManager::GetSingleton().SetCurrentFocusedWidget(taborder[z]);
     }
-    
+
     if (keyCode < 255 && keyCode > 31)
     {
         for (size_t i=0; i<children.GetSize(); i++)
@@ -1658,7 +1658,7 @@ bool pawsWidget::OnKeyDown( int keyCode, int key, int modifiers )
                 return true;
         }
     }
-    if ( parent ) 
+    if ( parent )
         return parent->OnKeyDown( keyCode, key, modifiers );
 
     return false;
@@ -1677,11 +1677,11 @@ void pawsWidget::MoveDelta( int deltaX, int deltaY )
         if (border && border->GetTitle()) titleHeight = 20;
         else titleHeight = 0;
 
-        if (abs(screenFrame.xmin + deltaX) < SNAP_RANGE) 
+        if (abs(screenFrame.xmin + deltaX) < SNAP_RANGE)
             deltaX = 0 - screenFrame.xmin;
         else if (abs(screenFrame.xmax + deltaX - screenWidth) < SNAP_RANGE)
             deltaX = screenWidth - screenFrame.xmax;
-        if (abs(screenFrame.ymin + deltaY - titleHeight) < SNAP_RANGE) 
+        if (abs(screenFrame.ymin + deltaY - titleHeight) < SNAP_RANGE)
             deltaY = 0 + titleHeight - screenFrame.ymin;
          else if (abs(screenFrame.ymax + deltaY - screenHeight) < SNAP_RANGE)
             deltaY = screenHeight - screenFrame.ymax;
@@ -1698,7 +1698,7 @@ void pawsWidget::MoveDelta( int deltaX, int deltaY )
     {
         children[x]->MoveDelta( deltaX, deltaY );
     }
-}         
+}
 
 
 void pawsWidget::MoveTo( int x, int y )
@@ -1719,11 +1719,11 @@ void pawsWidget::MoveTo( int x, int y )
     {
         children[z]->MoveDelta(deltaX, deltaY );
     }
-    
+
     for ( size_t z = 0; z < children.GetSize(); z++ )
-    {    
+    {
         children[z]->RecalcScreenPositions();
-    } 
+    }
 }
 
 void pawsWidget::CenterTo( int x, int y )
@@ -1743,14 +1743,14 @@ csRect pawsWidget::LoadPositions()
 {
     csRef<iConfigManager> cfgMgr;
     cfgMgr =  csQueryRegistry<iConfigManager > ( PawsManager::GetSingleton().GetObjectRegistry());
-  
+
     csRef<iConfigFile> config = cfgMgr->LookupDomain(PawsManager::GetSingleton().GetConfigFile());
- 
+
     csString configName;
 
     configName.Format("PlaneShift.GUI.%s.Visible", GetName());
     SetVisibility(config->GetBool(configName, visible));
-                          
+
     configName.Format("PlaneShift.GUI.%s.PosX", GetName());
     int winPosX = config->GetInt(configName, defaultFrame.xmin);
 
@@ -1792,7 +1792,7 @@ csRect pawsWidget::LoadPositions()
             winWidth = GetActualWidth( winWidth );
             winHeight = GetActualHeight( winHeight );
         }
-    
+
         if ( winWidth < min_width ) winWidth = min_width;
         if ( winHeight < min_height ) winHeight = min_height;
     }
@@ -1812,13 +1812,13 @@ void pawsWidget::PerformAction( const char* action )
     csString temp(action);
     if ( temp == "togglevisibility" )
     {
-        if ( IsVisible() ) 
+        if ( IsVisible() )
         {
-            Hide(); 
+            Hide();
         }
-        else 
+        else
         {
-            Show(); 
+            Show();
         }
         return;
     }
@@ -1829,10 +1829,10 @@ void pawsWidget::SavePosition()
     csRef<iConfigManager> cfgMgr;
     cfgMgr =  csQueryRegistry<iConfigManager > ( PawsManager::GetSingleton().GetObjectRegistry());
 
-    csRef<iConfigFile> config = cfgMgr->LookupDomain(PawsManager::GetSingleton().GetConfigFile());        
+    csRef<iConfigFile> config = cfgMgr->LookupDomain(PawsManager::GetSingleton().GetConfigFile());
 
 
-    int desktopWidth  = graphics2D->GetWidth(); 
+    int desktopWidth  = graphics2D->GetWidth();
     int desktopHeight = graphics2D->GetHeight();
 
     float ratioX = (float) 800.0f / (float)desktopWidth;
@@ -1865,19 +1865,19 @@ void pawsWidget::SavePosition()
 }
 
 void pawsWidget::SetForceSize( int newWidth, int newHeight )
-{   
+{
     screenFrame.SetSize( newWidth, newHeight );
     OnResize();
 }
 
 void pawsWidget::SetSize( int newWidth, int newHeight )
-{   
+{
     SetForceSize(newWidth,newHeight);
-    
+
     for ( size_t x = children.GetSize(); x-- > 0; )
     {
         children[x]->Resize();
-    }    
+    }
 }
 
 void pawsWidget::StopResize()
@@ -1944,13 +1944,13 @@ void pawsWidget::Resize( int flags )
     if (newFrame.ymax - newFrame.ymin > max_height) newFrame.ymax = max_height + newFrame.ymin;
 
     screenFrame = newFrame;
-    
+
     OnResize();
 
     for ( size_t x = children.GetSize(); x-- > 0; )
     {
         children[x]->Resize();
-    }    
+    }
 }
 
 void pawsWidget::Resize( int deltaX, int deltaY, int flags )
@@ -1999,14 +1999,14 @@ void pawsWidget::Resize( int deltaX, int deltaY, int flags )
     if (newFrame.ymax - newFrame.ymin > max_height) newFrame.ymax = max_height + newFrame.ymin;
 
     screenFrame = newFrame;
-    
+
     OnResize();
 
     for ( size_t x = children.GetSize(); x-- > 0; )
     {
         children[x]->Resize();
-    }    
-}  
+    }
+}
 
 
 void pawsWidget::Resize()
@@ -2015,15 +2015,15 @@ void pawsWidget::Resize()
     {
         int width = screenFrame.Width();
 
-        screenFrame.xmin = parent->ScreenFrame().xmin + defaultFrame.xmin;    
+        screenFrame.xmin = parent->ScreenFrame().xmin + defaultFrame.xmin;
         screenFrame.SetSize( width, screenFrame.Height() );
 
         // Left-Right Attachment
         if ( attachFlags & ATTACH_RIGHT )
         {
-            int newX = parent->DefaultFrame().Width() - (defaultFrame.xmin + defaultFrame.Width());        
-            screenFrame.xmax = parent->ScreenFrame().xmax - newX;            
-        }   
+            int newX = parent->DefaultFrame().Width() - (defaultFrame.xmin + defaultFrame.Width());
+            screenFrame.xmax = parent->ScreenFrame().xmax - newX;
+        }
 
         // Left-Right Proportional Attachment
         if ( attachFlags & PROPORTIONAL_RIGHT )
@@ -2040,25 +2040,25 @@ void pawsWidget::Resize()
     {
         //Attach Right Only
         if ( !(attachFlags & ATTACH_LEFT) )
-        {            
+        {
             int width = screenFrame.Width();
             screenFrame.xmin = parent->ScreenFrame().xmax - ( parent->DefaultFrame().Width() - defaultFrame.xmax + width );
-            screenFrame.SetSize( width, screenFrame.Height() );                    
-        }   
+            screenFrame.SetSize( width, screenFrame.Height() );
+        }
 
-        //Attach Right-Left Proportional               
+        //Attach Right-Left Proportional
         if ( attachFlags & PROPORTIONAL_LEFT )
-        {            
+        {
             int z = (parent->ScreenFrame().Width() *  defaultFrame.xmin ) /
                 parent->DefaultFrame().Width();
 
             int newMin = parent->ScreenFrame().xmin + z;
-            screenFrame.xmin = newMin;            
+            screenFrame.xmin = newMin;
         }
     }
 
     if ( attachFlags & PROPORTIONAL_RIGHT )
-    {       
+    {
         //Attach Proportional RIGHT Only
         if ( ! (attachFlags & ATTACH_LEFT) && !(attachFlags & PROPORTIONAL_LEFT) )
         {
@@ -2068,9 +2068,9 @@ void pawsWidget::Resize()
 
             int newMin = parent->ScreenFrame().xmax - z - defaultFrame.Width();
             int width = screenFrame.Width();
-            screenFrame.xmin = newMin;      
-            screenFrame.SetSize( width, screenFrame.Height() );      
-        }                                        
+            screenFrame.xmin = newMin;
+            screenFrame.SetSize( width, screenFrame.Height() );
+        }
         //Attach PropLeft-PropRight
         if ( attachFlags & PROPORTIONAL_LEFT )
         {
@@ -2084,7 +2084,7 @@ void pawsWidget::Resize()
                 parent->DefaultFrame().Width();
 
             int newMin = parent->ScreenFrame().xmin + z;
-            screenFrame.xmin = newMin;            
+            screenFrame.xmin = newMin;
         }
     }
 
@@ -2098,9 +2098,9 @@ void pawsWidget::Resize()
 
             int newMin = parent->ScreenFrame().xmin + z;
             int width = screenFrame.Width();
-            screenFrame.xmin = newMin;      
-            screenFrame.SetSize( width, screenFrame.Height() );      
-        }                                        
+            screenFrame.xmin = newMin;
+            screenFrame.SetSize( width, screenFrame.Height() );
+        }
     }
     //printf("Before %i\n", screenFrame.Height());
 
@@ -2109,13 +2109,13 @@ void pawsWidget::Resize()
         int height = defaultFrame.Height();
         //printf("Height: %i\n", height);
 
-        screenFrame.ymin = parent->ScreenFrame().ymin + defaultFrame.ymin; 
+        screenFrame.ymin = parent->ScreenFrame().ymin + defaultFrame.ymin;
         screenFrame.SetSize( screenFrame.Width(), height );
 
         //Attach TOP-BOTTOM
         if ( attachFlags & ATTACH_BOTTOM )
-        {            
-            int newY = parent->DefaultFrame().Height() - (defaultFrame.ymin + defaultFrame.Height());        
+        {
+            int newY = parent->DefaultFrame().Height() - (defaultFrame.ymin + defaultFrame.Height());
             screenFrame.ymax = parent->ScreenFrame().ymax - newY;
         }
 
@@ -2128,7 +2128,7 @@ void pawsWidget::Resize()
             int newMax = parent->ScreenFrame().ymax - z;
             screenFrame.ymax = newMax;
         }
-    }                 
+    }
     //printf("After %i\n", screenFrame.Height());
     if ( attachFlags & ATTACH_BOTTOM )
     {
@@ -2139,16 +2139,16 @@ void pawsWidget::Resize()
             int height = screenFrame.Height();
             screenFrame.ymin = parent->ScreenFrame().ymax - ( parent->DefaultFrame().Height() - defaultFrame.ymax + height );
             screenFrame.SetSize( screenFrame.Width(), height );
-        } 
+        }
 
         //Attach BOTTOM-TOP Proportional
         if ( attachFlags & PROPORTIONAL_TOP )
-        {            
+        {
             int z = (parent->ScreenFrame().Height() *  defaultFrame.ymin ) /
                 parent->DefaultFrame().Height();
 
             int newMin = parent->ScreenFrame().ymin + z;
-            screenFrame.ymin = newMin;            
+            screenFrame.ymin = newMin;
         }
     }
 
@@ -2162,9 +2162,9 @@ void pawsWidget::Resize()
 
             int newMin = parent->ScreenFrame().ymin + z;
             int height = screenFrame.Height();
-            screenFrame.ymin = newMin;      
-            screenFrame.SetSize( screenFrame.Width(), height );      
-        }                                        
+            screenFrame.ymin = newMin;
+            screenFrame.SetSize( screenFrame.Width(), height );
+        }
     }
 
     if ( attachFlags & PROPORTIONAL_BOTTOM )
@@ -2177,13 +2177,13 @@ void pawsWidget::Resize()
 
             int newMin = parent->ScreenFrame().ymax - z - defaultFrame.Height();
             int height = screenFrame.Height();
-            screenFrame.ymin = newMin;      
-            screenFrame.SetSize( screenFrame.Width(), height );      
-        }                                        
+            screenFrame.ymin = newMin;
+            screenFrame.SetSize( screenFrame.Width(), height );
+        }
 
         // Attach PropTOP-PropBOTTOM
         if ( attachFlags & PROPORTIONAL_TOP )
-        {            
+        {
             int z = (parent->ScreenFrame().Height() * ( parent->DefaultFrame().Height() - defaultFrame.ymax ) ) /
                 parent->DefaultFrame().Height();
 
@@ -2194,16 +2194,16 @@ void pawsWidget::Resize()
                 parent->DefaultFrame().Height();
 
             int newMin = parent->ScreenFrame().ymin + z;
-            screenFrame.ymin = newMin;            
+            screenFrame.ymin = newMin;
         }
     }
 
     OnResize();
 
     for ( size_t x = children.GetSize(); x-- > 0; )
-    {    
+    {
         children[x]->Resize();
-    }   
+    }
 
     /// Scale the font to match the change in size.
     if (scaleFont && !resizeToScreen)
@@ -2213,8 +2213,8 @@ void pawsWidget::Resize()
             float newSize = defaultFontSize * float(screenFrame.Width())/float(defaultFrame.Width());
             ChangeFontSize(newSize);
         }
-    } 
-}       
+    }
+}
 
 void pawsWidget::OnResize()
 {
@@ -2234,7 +2234,7 @@ void pawsWidget::SetModalState( bool isModal )
 
 
 int pawsWidget::GetAttachFlag( const char* flag )
-{    
+{
     csString str( flag );
 
     if ( str == "ATTACH_RIGHT" ) return ATTACH_RIGHT;
@@ -2243,7 +2243,7 @@ int pawsWidget::GetAttachFlag( const char* flag )
     if ( str == "ATTACH_TOP" ) return ATTACH_TOP;
 
     if ( str == "PROPORTIONAL_LEFT" ) return PROPORTIONAL_LEFT;
-    if ( str == "PROPORTIONAL_RIGHT" ) return PROPORTIONAL_RIGHT;  
+    if ( str == "PROPORTIONAL_RIGHT" ) return PROPORTIONAL_RIGHT;
     if ( str == "PROPORTIONAL_TOP" ) return  PROPORTIONAL_TOP;
     if ( str == "PROPORTIONAL_BOTTOM" ) return  PROPORTIONAL_BOTTOM;
 
@@ -2261,12 +2261,12 @@ bool pawsWidget::LoadFromFile(const csString & fileName)
 {
     csRef<iDocument> doc;
     csRef<iDocumentNode> root, topNode, widgetNode;
-    
-    doc = ParseFile(PawsManager::GetSingleton().GetObjectRegistry(), 
+
+    doc = ParseFile(PawsManager::GetSingleton().GetObjectRegistry(),
                     PawsManager::GetSingleton().GetLocalization()->FindLocalizedFile(fileName));
     if (doc == NULL)
         return false;
-        
+
     root = doc->GetRoot();
     if (root == NULL)
     {
@@ -2285,10 +2285,10 @@ bool pawsWidget::LoadFromFile(const csString & fileName)
         Error1("No <widget> in <widget_description>");
         return false;
     }
-    
+
     if ( ! Load(widgetNode) )
         return false;
-    
+
     return true;
 }
 
@@ -2296,12 +2296,12 @@ void pawsWidget::MakeFullyVisible()
 {
     csRect parentFrame;
     int targetX, targetY;
-    
+
     if (parent == NULL)
         return;
-    
+
     parentFrame = parent->ScreenFrame();
-    
+
     if (screenFrame.xmin < parentFrame.xmin)
         targetX = parentFrame.xmin;
     else if (screenFrame.xmax > parentFrame.xmax)
@@ -2314,7 +2314,7 @@ void pawsWidget::MakeFullyVisible()
         targetY = parentFrame.ymax - screenFrame.Height() + 1;
     else
         targetY = screenFrame.ymin;
-    
+
     if ((targetX != screenFrame.xmin) || (targetY != screenFrame.ymin))
         MoveTo(targetX, targetY);
 }
@@ -2355,7 +2355,7 @@ void pawsWidget::ClipToParent(bool allowForBackgroundBorder)
             return;
 
         // Adjust the canvas clipping for future draw calls to clip to our allowed area
-        graphics2D->SetClipRect( ClipRect().xmin, ClipRect().ymin, 
+        graphics2D->SetClipRect( ClipRect().xmin, ClipRect().ymin,
                                  ClipRect().xmax, ClipRect().ymax );
     }
 
@@ -2364,19 +2364,19 @@ void pawsWidget::ClipToParent(bool allowForBackgroundBorder)
 void pawsWidget::LoadBorderColours( iDocumentNode* node )
 {
     csRef<iDocumentNodeIterator> iter = node->GetNodes();
-    
+
     int index = 0;
     while ( index < 5 && iter->HasNext() )
     {
         csRef<iDocumentNode> colour = iter->Next();
-        
-        int r = colour->GetAttributeValueAsInt( "r" );            
-        int g = colour->GetAttributeValueAsInt( "g" );            
-        int b = colour->GetAttributeValueAsInt( "b" );            
-        
+
+        int r = colour->GetAttributeValueAsInt( "r" );
+        int g = colour->GetAttributeValueAsInt( "g" );
+        int b = colour->GetAttributeValueAsInt( "b" );
+
         int col = graphics2D->FindRGB( r, g, b );
         borderColours[index++] = col;
-    }    
+    }
     hasBorderColours = true;
 }
 
@@ -2488,7 +2488,7 @@ int pawsWidget::GetFontStyle()
     else if (parent)
         return parent->GetFontStyle();
     else
-        return DEFAULT_FONT_STYLE;   
+        return DEFAULT_FONT_STYLE;
 }
 
 void pawsWidget::SetFontStyle(int style)
@@ -2499,7 +2499,7 @@ void pawsWidget::SetFontStyle(int style)
 bool pawsWidget::SelfPopulateXML( const char *xmlstr )
 {
     csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
-    
+
     csRef<iDocument> doc= xml->CreateDocument();
     const char *error = doc->Parse( xmlstr );
     if (error)
@@ -2589,7 +2589,7 @@ pawsWidget* pawsWidgetFactory::Create()
 void pawsWidget::SetCloseButtonPos()
 {
     pawsButton * button = dynamic_cast <pawsButton*> (FindWidget(GetCloseName(), false));
-    
+
     if (button != NULL)
         button->SetRelativeFrame( defaultFrame.Width() - 20, - 18, 16, 16 );
 }
@@ -2603,13 +2603,13 @@ void pawsWidget::RemoveTitle()
     if(close_widget)
         close_widget->DeleteYourself();
 }
-    
+
 bool pawsWidget::SetTitle( const char* text, const char* image, const char* align, const char* close_button, const bool shadowTitle )
 {
     if ( !border )
     {
         return false;
-    }        
+    }
     else
     {
         borderTitleShadow = shadowTitle;
@@ -2626,7 +2626,7 @@ bool pawsWidget::SetTitle( const char* text, const char* image, const char* alig
                 alignValue = ALIGN_RIGHT;
         }
         border->SetTitleAlign(alignValue);
-        
+
         if ( close_button && (strcmp(close_button,"yes") == 0) )
         {
             close_widget = new pawsButton;
@@ -2635,27 +2635,27 @@ bool pawsWidget::SetTitle( const char* text, const char* image, const char* alig
             csString name( GetName() );
             name.Append( "_close" );
             close_widget->SetName( name );
-           
+
             int flags = ATTACH_TOP | ATTACH_RIGHT;
             close_widget->SetAttachFlags( flags );
             AddChild( close_widget );
-            SetCloseButtonPos();       
+            SetCloseButtonPos();
             close_widget->SetSound("gui.cancel");
-        }   
-    }  
-    
-    return true;                                      
+        }
+    }
+
+    return true;
 }
 
 csString pawsWidget::GetPathInWidgetTree()
 {
     csString path, widget;
-    
+
     widget =  "n=";
     widget += name;
     widget +=" f=";
     widget += factory;
-    
+
     if (parent != NULL)
     {
         csString path;
@@ -2743,14 +2743,14 @@ bool pawsWidget::ReadDefaultWidgetStyles( iDocumentNode *node )
             //printf("Adding style %s for widget %s.\n",child->GetAttributeValue("style"),child->GetAttributeValue("widget"));
             defaultWidgetStyles.Put(child->GetAttributeValue("widget"),child->GetAttributeValue("style"));
         }
-    } 
+    }
     return true;
 }
 
 const char *pawsWidget::FindDefaultWidgetStyle(const char *factoryName)
 {
     static csString style;
-    
+
     if (name=="ChatWindow")
         printf("Finding default style for factory '%s'\n", factoryName);
 
