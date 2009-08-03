@@ -588,7 +588,7 @@ public:
     psItem* RemoveFromContainer(psItem *itemStack, int fromSlot, Client *fromClient, int stackCount);
 
     psItem *FindItemInSlot(int slot, int stackCount = -1);
-    int SlotCount() const { return PSITEM_MAX_CONTAINER_SLOTS; }
+    int SlotCount() { return GetItemData()->GetContainerMaxSlots(); }
     size_t CountItems() { return itemlist.GetSize(); }
     psItem *GetIndexItem(size_t i) { return itemlist[i]; }
 

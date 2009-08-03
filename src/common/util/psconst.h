@@ -77,8 +77,6 @@ typedef uint32 InstanceID;
 #define INVENTORY_BULK_COUNT        32
 #define INVENTORY_EQUIP_COUNT       16
 
-#define PSITEM_MAX_CONTAINER_SLOTS  16   ///< maximum number of items an object can contain
-
 #define GLYPH_WAYS               6
 #define GLYPH_ASSEMBLER_SLOTS    4
 

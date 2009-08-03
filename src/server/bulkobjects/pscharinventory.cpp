@@ -308,7 +308,7 @@ bool psCharacterInventory::QuickLoad(PID use_id)
 
 bool psCharacterInventory::AddLoadedItem(uint32 parentID, INVENTORY_SLOT_NUMBER slot, psItem *item)
 {
-    if (slot < PSCHARACTER_SLOT_NONE || slot >= PSCHARACTER_SLOT_BULK_END)
+    if (!parentID && (slot < PSCHARACTER_SLOT_NONE || slot >= PSCHARACTER_SLOT_BULK_END))
     {
         csString error;
         error.Format("Item %s(%u) Could not be placed in %s(%s) inventory into slot %d because its slot was illegal.", 
@@ -409,10 +409,17 @@ bool psCharacterInventory::CheckSlotRequirements(psItem *item, INVENTORY_SLOT_NU
 
         // make sure the destination slot actually exists!
         int parentSlotID = proposedSlot/100;
+        int internalSlotID = proposedSlot%100-PSCHARACTER_SLOT_BULK1; //this is summed somewhere else we need to remove it for checking
         psItem *parentItem = GetItem(NULL,(INVENTORY_SLOT_NUMBER) parentSlotID);
         if (!parentItem || !parentItem->GetIsContainer())
         {
             Error2("Client requested transfer to destination slot %d but the parent container doesn't exist.", proposedSlot);
+            return false;
+        }
+
+        if(internalSlotID >= parentItem->GetContainerMaxSlots())
+        {
+            Error2("Client requested transfer to destination slot %d but the parent container doesn't have that slot.", proposedSlot);
             return false;
         }
 

@@ -141,7 +141,7 @@ void pawsContainerDescWindow::HandleViewItem( MsgEntry* me )
             Debug2(LOG_CHARACTER, 0, "Setting up container %d.\n", mesg.containerID);
 
             contents->Clear();
-            containerSlots = PSITEM_MAX_CONTAINER_SLOTS;
+            containerSlots = mesg.ContainerSlots;
 
             const int cols = contents->GetTotalColumns(); //6;
             const int rows = (int) ceil(float(containerSlots)/cols);
