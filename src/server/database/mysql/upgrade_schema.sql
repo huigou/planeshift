@@ -1264,7 +1264,7 @@ INSERT INTO command_group_assignment VALUES( "requested death", 30 );
 
 #1226 - Stefano Angeleri - Added selectable max slots for a container
 
-ALTER TABLE `item_stats` ADD COLUMN `container_max_slots` INT(5) UNSIGNED NOT NULL DEFAULT 0 AFTER `container_max_size`;
+ALTER TABLE `item_stats` ADD COLUMN `container_max_slots` INT(5) UNSIGNED NOT NULL DEFAULT 0 COMMENT "The amount of slots which will be available in this item to store items inside if it's a container" AFTER `container_max_size`;
 UPDATE item_stats set container_max_slots=16 where flags like "%CONTAINER%";
 UPDATE `server_options` SET `option_value`='1226' WHERE `option_name`='db_version';
 

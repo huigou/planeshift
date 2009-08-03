@@ -28,7 +28,7 @@ CREATE TABLE `item_stats` (
   `visible_distance` float(10,2) NOT NULL default '100.00',
   `size` int(5) unsigned NOT NULL default '1',
   `container_max_size` int(5) unsigned NOT NULL default '1',
-  `container_max_slots` INT(5) UNSIGNED NOT NULL DEFAULT '0',
+  `container_max_slots` INT(5) UNSIGNED NOT NULL DEFAULT '0' COMMENT "The amount of slots which will be available in this item to store items inside if it's a container",
   `valid_slots` varchar(255) default 'BULK',
   `flags` varchar(255) default NULL,
   `decay_rate` float(3,2) NOT NULL default '0.10',
