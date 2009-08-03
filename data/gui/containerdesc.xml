@@ -1,11 +1,11 @@
 <widget_description>
 
-    <widget name="ContainerDescWindow" factory="pawsContainerDescWindow" 
+    <widget name="ContainerDescWindow" factory="pawsContainerDescWindow"
             visible="no" movable="yes">
         <frame x="100" y="100" width="310" height="280" border="yes"/>
         <bgimage resource="Container Desc Background" />
-        <title resource="Blue Title" text="Examine" align="left" close_button="yes"/>        
-        
+        <title resource="Blue Title" text="Examine" align="left" close_button="yes"/>
+
         <widget name="SmallInvButton" factory="pawsButton" tooltip="Open Inventory">
             <frame x="16" y="92" width="32" height="32"/>
             <bgimage resource="InventoryBulk" alpha="0"/>
@@ -27,22 +27,22 @@
         </widget>
 
 
-        <widget name="ItemImage" factory="pawsWidget" 
+        <widget name="ItemImage" factory="pawsWidget"
             visible="yes" >
             <frame x="17" y="41" width="43.57" height="43.57" border="no"/>
         </widget>
 
         <widget name="ItemName" factory="pawsTextBox" >
-            <frame x="116" y="2" width="270" height="20"/>    
-	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="225" g="225" b="255" size="10" />
+            <frame x="116" y="2" width="270" height="20"/>
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="225" g="225" b="255" size="10" />
         </widget>
 
 
         <widget name="ItemDescription" factory="pawsMultiLineTextBox" >
             <frame x="89" y="27" width="200" height="73" border="no"/>
-	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="225" g="255" b="225" size="10" />
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="225" g="255" b="225" size="10" />
         </widget>
-        
+
         <widget name="BulkList" factory="pawsListBox" selectable="0">
             <frame x="26" y="145" width="275" height="133" border="no"/>
             <columns height="43.57" headings="no" >
@@ -83,7 +83,7 @@
                     </widget>
                 </column>
             </columns>
-        </widget>                
+        </widget>
     </widget>
 
 </widget_description>

@@ -78,7 +78,7 @@ protected:
     EID item_to_remove;
 
 public:
-    psItemRemovalEvent(int delayticks, EID gemID)    
+    psItemRemovalEvent(int delayticks, EID gemID)
         : psGameEvent(0,delayticks*1000,"psItemRemovalEvent")
     {
         item_to_remove = gemID;
@@ -97,14 +97,14 @@ public:
             {
                 // Is the item being guarded?
                 InstanceID instance = obj->GetInstance();
-                
+
                 // Do checks
                 PID guardCharacterID = item->GetGuardingCharacterID();
                 gemActor* guardActor = GEMSupervisor::GetSingleton().FindPlayerEntity(guardCharacterID);
                 if (guardCharacterID.IsValid() &&
                     guardActor &&
                     guardActor->RangeTo(item->GetGemObject()) < RANGE_TO_SELECT &&
-                    (guardActor->GetInstance() == instance)) 
+                    (guardActor->GetInstance() == instance))
                 {
                     // Item is guarded, reschedule
                     item->ScheduleRemoval();
@@ -147,7 +147,7 @@ psItem::psItem() : transformationEvent(NULL), gItem(NULL), pendingsave(false), l
 
 ////////    for (i=0;i<GetContainerMaxSlots();i++)
 ////////        container_data.contained_item_ptr[i]=NULL;
-        
+
     decay_resistance = 0;
     item_quality = 0;
     crafted_quality = -1;
@@ -180,7 +180,7 @@ psItem::psItem() : transformationEvent(NULL), gItem(NULL), pendingsave(false), l
         modifiers[i]=NULL;
 
     lockStrength = 0;
-    lockpickSkill = PSSKILL_NONE;    
+    lockpickSkill = PSSKILL_NONE;
     schedule = NULL;
 }
 
@@ -210,8 +210,8 @@ psItem::~psItem()
         flags |= PSITEM_FLAG_USES_BASIC_ITEM;
         flags &= ~PSITEM_FLAG_UNIQUE_ITEM;
     }
-    
-    
+
+
     if (item_quality != item_quality_original )
     {
         UpdateItemQuality(uid, item_quality);
@@ -363,7 +363,7 @@ bool psItem::Load(iResultRow& row)
     {
         if (w == "SKEL")
             openableLocks.Push(KEY_SKELETON);
-        else 
+        else
         {
             unsigned int u;
             sscanf(w.GetData(), "%u", &u);
@@ -390,13 +390,13 @@ bool psItem::Load(iResultRow& row)
     }
 
     SetCharges(row.GetInt("charges"));
-    
-    // Set the crafted quality for this item. 
+
+    // Set the crafted quality for this item.
     crafted_quality = row.GetFloat("crafted_quality");
 
     owningCharacterID = row.GetUInt32("char_id_owner");
     guardingCharacterID = row.GetUInt32("char_id_guardian");
-                   
+
     if(row.GetInt("location_in_parent") == -1 ||  // SLOT_NONE
       (row.GetInt("location_in_parent") == 0 &&
        row.GetInt("char_id_owner") == 0 &&
@@ -432,14 +432,14 @@ bool psItem::Load(iResultRow& row)
 
 
     // TODO:Modifiers loaded and resolved later
-    
-    
+
+
     // Unique item handling, stats specified are deltas to standard stats
-   
+
     stats_id = row.GetUInt32("item_stats_id_unique");
     if (stats_id)
     {
-         
+
         Result result(db->Select("SELECT * from item_stats where id=%u",stats_id));
         if (!result.IsValid())
         {
@@ -455,7 +455,7 @@ bool psItem::Load(iResultRow& row)
             return false;
         }
         SetUniqueStats(stats);
-       
+
     }
 
     item_name = row["item_name"];
@@ -476,7 +476,7 @@ void psItem::Save(bool children)
         {
             /// Store the function that queued this save (check this with a debugger if Commit() fails)
             last_save_queued_from = stack->GetEntryAll(1,true);
-                
+
 #if SAVE_DEBUG
             printf("\n%s::Save() for '%s', queued from stack:\n", typeid(*(item)).name(), GetName() );
             stack->Print();
@@ -493,11 +493,11 @@ void psItem::Save(bool children)
 #elif SAVE_DEBUG
         printf("%s::Save() for '%s' queued\n", typeid(*(item)).name(), GetName() );
 #endif
-        
+
         pendingsave = true;
         Commit(children);
     }
-    
+
 #if SAVE_DEBUG
     else if (loaded) printf("%s::Save() for '%s' skipped\n", typeid(*(GetSafeReference()->item)).name(), GetName() );
 #endif
@@ -515,9 +515,9 @@ void psItem::Commit(bool children)
 
     static iRecord* updateQuery;
     static iRecord* insertQuery;
-    
+
     iRecord* targetQuery;
-    
+
     if (GetUID()==0)
     {
         if(insertQuery == NULL)
@@ -530,31 +530,31 @@ void psItem::Commit(bool children)
             updateQuery = db->NewUpdatePreparedStatement("item_instances", "id", 27, __FILE__, __LINE__); // 26 fields + 1 id field
         targetQuery = updateQuery;
     }
-    
+
     targetQuery->Reset();
-    
+
     targetQuery->AddField("char_id_owner", owning_character ? owning_character->GetPID().Unbox() : 0);
     targetQuery->AddField("char_id_guardian", guardingCharacterID.Unbox());
     targetQuery->AddField("stack_count",GetStackCount());
     targetQuery->AddField("item_quality",GetItemQuality());
     targetQuery->AddField("crafted_quality",GetMaxItemQuality());
     targetQuery->AddField("decay_resistance",GetDecayResistance());
-    
+
     // Crafter ID
     if (GetIsCrafterIDValid())
         targetQuery->AddField("creator_mark_id", GetCrafterID().Unbox());
     else
         targetQuery->AddFieldNull("creator_mark_id");
-    
+
     // Guild ID
     if (GetIsGuildIDValid())
         targetQuery->AddField("guild_mark_id",GetGuildID());
     else
         targetQuery->AddFieldNull("guild_mark_id");
-    
+
     // Flags
     csString flagString;
-    
+
     // Thise two are actualy glyhs things and should be moved to psGlyph
     // if a generic way of updating flags are implemented.
     if (flags & PSITEM_FLAG_PURIFIED)
@@ -632,16 +632,16 @@ void psItem::Commit(bool children)
         if (!flagString.IsEmpty()) flagString.Append(",");
         flagString.Append("SETTINGITEM");
     }
-    
+
     targetQuery->AddField("flags",flagString);
-    
+
     // item_stats_id_standard - base stats if non unique, unique stats if unique
     targetQuery->AddField("item_stats_id_standard",GetBaseStats()->GetUID());
-    
+
     // Container stuff
     if (!parent_item_InstanceID)  // if not in container
     {
-        targetQuery->AddFieldNull("parent_item_id");  // id of object containing this one        
+        targetQuery->AddFieldNull("parent_item_id");  // id of object containing this one
         targetQuery->AddField("location_in_parent",loc_in_parent);  // slot number, or -1 if out in the world
     }
     else // in container
@@ -649,15 +649,15 @@ void psItem::Commit(bool children)
         targetQuery->AddField("parent_item_id",parent_item_InstanceID);
         targetQuery->AddField("location_in_parent",loc_in_parent);
     }
-    
-    
+
+
     float locx,locy,locz,locxrot,locyrot,loczrot;
     psSectorInfo *sectorinfo;
     InstanceID instance;
-    
+
     GetLocationInWorld(instance,&sectorinfo,locx,locy,locz,locyrot);
     GetXZRotationInWorld(locxrot,loczrot);
-    
+
     if (!sectorinfo || parent_item_InstanceID)
     {
         targetQuery->AddFieldNull("loc_x");
@@ -686,10 +686,10 @@ void psItem::Commit(bool children)
             CS_ASSERT(!"Attempt to save item without a parent in a NULL position");
         }
     }
-    
+
     targetQuery->AddField("lock_str",GetLockStrength());
     targetQuery->AddField("lock_skill",GetLockpickSkill());
-    
+
     // push openableLocks
     csString openableLocksString;
     csArray<unsigned int>::Iterator iter = openableLocks.GetIterator();
@@ -700,7 +700,7 @@ void psItem::Commit(bool children)
         if (!openableLocksString.IsEmpty()) openableLocksString.Append(" "); // Space to sparate since GetWordNumber is used to decode
         if (n == KEY_SKELETON)
             openableLocksString.Append("SKEL");
-        else 
+        else
         {
             tmp.Format( "%u", n);
             openableLocksString.Append(tmp);
@@ -711,7 +711,7 @@ void psItem::Commit(bool children)
 
     targetQuery->AddField("item_name", item_name);
     targetQuery->AddField("item_description", item_description);
-    
+
     targetQuery->AddField("charges",GetCharges());
 
     if (GetUID()==0)
@@ -735,7 +735,7 @@ void psItem::Commit(bool children)
         //printf("Saving item %d (%s owned by %s) through SQL Update\n", GetUID(), GetName(), owning_character? owning_character->GetCharName():"no one" );
 
         // Save this entry
-        
+
         if ( !targetQuery->Execute(GetUID()) )
         {
             Error3("Failed to save item instance %u!\nError: %s", GetUID(), db->GetLastError());
@@ -760,7 +760,7 @@ void psItem::ForceSaveIfNew()
     }
 }
 
-INVENTORY_SLOT_NUMBER psItem::GetLocInParent(bool adjustSlot) 
+INVENTORY_SLOT_NUMBER psItem::GetLocInParent(bool adjustSlot)
 {
     if (adjustSlot && parent_item_InstanceID)
     {
@@ -775,7 +775,7 @@ INVENTORY_SLOT_NUMBER psItem::GetLocInParent(bool adjustSlot)
     }
     else
     {
-        return loc_in_parent; 
+        return loc_in_parent;
     }
 }
 
@@ -847,7 +847,7 @@ void psItem::SetMaxItemQuality(float v)
     if (v > 300)
         v = 300; // Clamp item quality to no more than 300
 
-    crafted_quality = v;    
+    crafted_quality = v;
 }
 
 float psItem::GetItemQuality() const
@@ -871,7 +871,7 @@ void psItem::SetDecayResistance(float v)
 
 float psItem::AddDecay(float severityFactor)
 {
-    if (!this) 
+    if (!this)
         return 0;
 
     item_quality -= base_stats->GetDecayRate() * severityFactor * (1.0F-decay_resistance);
@@ -1211,7 +1211,7 @@ psItemStats *psItem::GetModifier(int index)
 
 bool psItem::IsEquipped() const
 {
-    return (loc_in_parent < PSCHARACTER_SLOT_BULK1 
+    return (loc_in_parent < PSCHARACTER_SLOT_BULK1
         && loc_in_parent >= 0);
 }
 
@@ -1332,7 +1332,7 @@ bool psItem::CheckStackableWith(const psItem *otheritem, bool precise) const
     // Check for keys
     if (GetIsKey() != otheritem->GetIsKey() || GetIsMasterKey() != otheritem->GetIsMasterKey())
         return false;
-    
+
     if (GetIsKey())
     {
         // Both are either keys or master keys
@@ -1353,7 +1353,7 @@ bool psItem::CheckStackableWith(const psItem *otheritem, bool precise) const
         return true;
     }
 
-    // This checks to make sure that if the quality is different that these 
+    // This checks to make sure that if the quality is different that these
     // items can still be stacked and use an average qualiy system.
     if (item_quality != otheritem->item_quality || GetMaxItemQuality() != otheritem->GetMaxItemQuality())
     {
@@ -1386,7 +1386,7 @@ psItem *psItem::Copy(unsigned short newstackcount)
     // Cannot copy unique items
     if (GetIsUnique())
         return NULL;
-    
+
     // Allocate a new item
     newitem = CreateNew();
     Copy(newitem);
@@ -1408,7 +1408,7 @@ void psItem::Copy(psItem * target)
 
     // Base stats are the same
     target->SetBaseStats(GetBaseStats());
-    
+
     // The decay is the same.
     target->SetDecayResistance(decay_resistance);
 
@@ -1479,10 +1479,10 @@ void psItem::CombineStack(psItem *& stackme)
     {
         if (!schedule)  // Absorb schedule
             SetScheduledItem( stackme->schedule );
-            
+
         stackme->schedule = NULL; // Prevent deleting of shedule later in delete in RemoveInstance
     }
-        
+
     // Average the qualities and set stack count
     unsigned short newStackCount = stack_count + stackme->GetStackCount();
     float newQuality = ((GetItemQuality()*GetStackCount())+(stackme->GetItemQuality()*stackme->GetStackCount()))/newStackCount;
@@ -1501,7 +1501,7 @@ void psItem::CombineStack(psItem *& stackme)
     // Average charges
     int newCharges = (GetCharges()*GetStackCount() + stackme->GetCharges()*stackme->GetStackCount())/newStackCount;
     SetCharges(newCharges);
-    
+
     CacheManager::GetSingleton().RemoveInstance(stackme);
 
     // Point to the final stack
@@ -1960,7 +1960,7 @@ double psItem::GetProperty(const char *ptr)
     }
     else if (!strcasecmp(ptr,"ExtraDamagePctSlash"))
     {
-        return 0; // in the future, this should be read from weapon/armor XML 
+        return 0; // in the future, this should be read from weapon/armor XML
     }
     else if (!strcasecmp(ptr,"DamageBlunt"))
     {
@@ -1972,7 +1972,7 @@ double psItem::GetProperty(const char *ptr)
     }
     else if (!strcasecmp(ptr,"ExtraDamagePctBlunt"))
     {
-        return 0; // in the future, this should be read from weapon/armor XML 
+        return 0; // in the future, this should be read from weapon/armor XML
     }
     else if (!strcasecmp(ptr,"DamagePierce"))
     {
@@ -1984,7 +1984,7 @@ double psItem::GetProperty(const char *ptr)
     }
     else if (!strcasecmp(ptr,"ExtraDamagePctPierce"))
     {
-        return 0; // in the future, this should be read from weapon/armor XML 
+        return 0; // in the future, this should be read from weapon/armor XML
     }
     else if (!strcasecmp(ptr,"StrMalus"))
     {
@@ -2206,7 +2206,7 @@ csString psItem::GetOpenableLockNames()
         if (!openableLocksString.IsEmpty()) openableLocksString.Append(", ");
         if (idNum == KEY_SKELETON)
             openableLocksString.Append("All locks");
-        else 
+        else
         {
             // find lock gem
             gemItem* lockItem = GEMSupervisor::GetSingleton().FindItemEntity( idNum );
@@ -2463,9 +2463,9 @@ void psItem::UpdateView(Client *fromClient, EID eid, bool clear)
 {
     if (!fromClient)
         return;
-    
+
     gemActor *guardian = clear ? 0 : GEMSupervisor::GetSingleton().FindPlayerEntity(GetGuardingCharacterID());
-    psViewItemUpdate mesg(fromClient->GetClientNum(), 
+    psViewItemUpdate mesg(fromClient->GetClientNum(),
                           eid,
                           GetLocInParent(),
                           clear,
@@ -2473,7 +2473,7 @@ void psItem::UpdateView(Client *fromClient, EID eid, bool clear)
                           GetImageName(),
                           GetStackCount(),
                           guardian ? guardian->GetEID() : 0);
-    
+
     mesg.Multicast(fromClient->GetActor()->GetMulticastClients(),0,5);
 }
 
@@ -2571,7 +2571,7 @@ bool psItem::SendItemDescription( Client *client)
     int idMin = GetIdentifyMinSkill();
     if (!idSkill || idMin < client->GetCharacterData()->Skills().GetSkillRank((PSSKILL) idSkill).Current())
     {
-        // If the item is an average stackable type object it has no max quality so don't 
+        // If the item is an average stackable type object it has no max quality so don't
         // send that information to the client since it is not applicable.
         if ( current_stats->GetFlags() & PSITEMSTATS_FLAG_AVERAGEQUALITY )
         {
@@ -2598,9 +2598,9 @@ bool psItem::SendItemDescription( Client *client)
     }
     else
     {
-        itemName = GetName();        
+        itemName = GetName();
     }
-    
+
     // Item was crafted
     if ( crafter_id != 0 )
     {
@@ -2612,7 +2612,7 @@ bool psItem::SendItemDescription( Client *client)
             crafterInfo.Format( "\n\nCrafter: %s", charData->GetCharFullName());
             itemInfo += crafterInfo;
         }
-        
+
         // Item was crafted by a guild member
         if ( GetGuildID() != 0 )
         {
@@ -2656,7 +2656,7 @@ bool psItem::SendItemDescription( Client *client)
         csString speed, damage;
         // Weapon Speed
         speed.Format( "\n\nAttack delay: %.2f", current_stats->Weapon().Latency() );
-        
+
         // Weapon Damage Type
         damage = "\n\nDamage:";
         float dmgSlash, dmgBlunt, dmgPierce;
@@ -2701,13 +2701,13 @@ bool psItem::SendItemDescription( Client *client)
     {
         itemInfo += csString().Format("\nCapacity: %d", GetContainerMaxSize());
     }
-    
+
     if (strcmp(GetDescription(),"0") != 0)
     {
         itemInfo += "\n\nDescription: ";
         itemInfo += GetDescription();
     }
-   
+
     psViewItemDescription outgoing( client->GetClientNum(), itemName.GetData(), itemInfo.GetData(), GetImageName(), stack_count );
 
     if ( outgoing.valid )
@@ -2727,11 +2727,11 @@ bool psItem::SendContainerContents(Client *client, int containerID)
         return SendItemDescription(client);
 
     csString desc( GetDescription() );
-    
+
     // FIXME: This function is called for world containers too...
     desc.AppendFmt("\n\nWeight: %.2f\nCapacity: %u/%u",
-                    client->GetCharacterData()->Inventory().GetContainedWeight(this), 
-                    client->GetCharacterData()->Inventory().GetContainedSize(this), 
+                    client->GetCharacterData()->Inventory().GetContainedWeight(this),
+                    client->GetCharacterData()->Inventory().GetContainedSize(this),
                     GetContainerMaxSize() );
 
     psViewItemDescription outgoing( client->GetClientNum(),
@@ -2740,7 +2740,7 @@ bool psItem::SendContainerContents(Client *client, int containerID)
                                     GetImageName(),
                                     0,
                                     IS_CONTAINER );
-                                          
+
     if (gItem != NULL )
         outgoing.containerID = gItem->GetEID().Unbox();
     else
@@ -2749,7 +2749,7 @@ bool psItem::SendContainerContents(Client *client, int containerID)
     outgoing.ContainerSlots = GetContainerMaxSlots();
 
     FillContainerMsg( client, outgoing);
-    
+
     outgoing.ConstructMsg();
     outgoing.SendMessage();
 
@@ -2874,10 +2874,10 @@ bool psItem::SendBookText(Client *client, int containerID, int slotID)
     //and send the appropriate information if so
 
     //is it a writable book?  In our inventory? Are we the author?
-    bool shouldWrite = (GetBaseStats()->GetIsWriteable() && 
+    bool shouldWrite = (GetBaseStats()->GetIsWriteable() &&
         GetOwningCharacter() == client->GetCharacterData() &&
         GetBaseStats()->IsThisTheCreator(client->GetCharacterData()->GetPID()));
-    
+
   //  CPrintf(CON_DEBUG,"Sent text for book %u %u\n",slotID, containerID);
     psReadBookTextMessage outgoing(client->GetClientNum(), name, text, shouldWrite, slotID, containerID);
 
@@ -2921,7 +2921,7 @@ void psItem::SendSketchDefinition(Client *client)
     xml.AppendFmt("<count>%d</count>",primCount);  // This limits how many things you can add on the client.
 
     // writeable sketch? in inventory? author?
-    bool sketchReadOnly = !(GetBaseStats()->GetIsWriteable() && 
+    bool sketchReadOnly = !(GetBaseStats()->GetIsWriteable() &&
           GetOwningCharacter() == client->GetCharacterData() &&
           GetBaseStats()->IsThisTheCreator(client->GetCharacterData()->GetPID()));
     if (sketchReadOnly)
@@ -2965,8 +2965,8 @@ void psItem::ViewItem(Client* client, int containerID,
 
     //for now, we pretend that /examine reads.  When we implement /read, this will change to only send the description of the book
     //e.g. "This book is bound in a leathery Pterosaur hide and branded with the insignia of the Sunshine Squadron"
-    //NOTE that this logic is sensitive to ordering; Books currently have a nonzero "sketch" length since that's where they 
-    //store their content.         
+    //NOTE that this logic is sensitive to ordering; Books currently have a nonzero "sketch" length since that's where they
+    //store their content.
     else if (GetBaseStats()->GetIsReadable() && (client->GetCharacterData()
             == owningCharacter || !owningCharacter))
     {
@@ -3005,7 +3005,7 @@ bool psItem::SendActionContents(Client *client, psActionLocation *action)
     }
 
     bool isContainer = GetIsContainer();
-    
+
     psViewItemDescription outgoing( client->GetClientNum(),
                                     name,
                                     desc,
@@ -3025,11 +3025,11 @@ bool psItem::SendActionContents(Client *client, psActionLocation *action)
     outgoing.ContainerSlots = GetContainerMaxSlots();
 
     if ( isContainer )
-    {           
+    {
         FillContainerMsg( client, outgoing );
-        outgoing.ConstructMsg();    
+        outgoing.ConstructMsg();
     }
-    
+
     outgoing.SendMessage();
     return true;
 }

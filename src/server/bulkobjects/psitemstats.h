@@ -1,7 +1,7 @@
 /*
  * psitemstats.h
  *
- * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -183,7 +183,7 @@ typedef unsigned int PSITEMSTATS_SLOTLIST;
 #define PSITEMSTATS_FLAG_IS_EQUIP_STACKABLE  0x00010000
 #define PSITEMSTATS_FLAG_IS_WRITEABLE        0x00020000
 #define PSITEMSTATS_FLAG_NOPICKUP            0x00040000
-#define PSITEMSTATS_FLAG_AVERAGEQUALITY      0x00080000		//< Flag if the item can stack and average out quality.
+#define PSITEMSTATS_FLAG_AVERAGEQUALITY      0x00080000     //< Flag if the item can stack and average out quality.
 #define PSITEMSTATS_FLAG_CREATIVE            0x00100000         // A creative thing, eg book, sketch
 #define PSITEMSTATS_FLAG_BUY_PERSONALISE     0x00200000         // duplicate & personalise at purchase
 #define PSITEMSTATS_FLAG_IS_RECHARGEABLE     0x00400000
@@ -203,7 +203,7 @@ struct st_attribute_bonus {
 
 /**
  * This is a struct used by item stats to say that a person
- * must have a certain level at a certain skill to use the 
+ * must have a certain level at a certain skill to use the
  * weapon effectively.
  */
 struct ItemRequirement
@@ -213,7 +213,7 @@ struct ItemRequirement
 };
 
 /**
- * Each weapon specifies what anims can be used with it.  This is for 
+ * Each weapon specifies what anims can be used with it.  This is for
  * cosmetic purposes only on the client and is not used in calculations.
  */
 struct psItemAnimation
@@ -233,15 +233,15 @@ class psItemArmorStats
 public:
     friend class psItemStats;
     psItemArmorStats();
-    
+
     /** Read the armour related details from the database. */
     void ReadStats( iResultRow& row );
-    
+
     PSITEMSTATS_ARMORTYPE Type() { return armor_type; }
     char Class() { return armor_class; }
     float Protection( PSITEMSTATS_DAMAGETYPE dmgtype );
     float Hardness() { return hardness; }
-            
+
 private:
     PSITEMSTATS_ARMORTYPE armor_type; ///< See the  PSITEMSTATS_ARMORTYPE enum for the list
     char armor_class;
@@ -249,7 +249,7 @@ private:
     float hardness;
 };
 
-/** This class holds the various cached database information relating 
+/** This class holds the various cached database information relating
   * to the weapon skills of a an item_stat. */
 class psItemWeaponStats
 {
@@ -257,14 +257,14 @@ class psItemWeaponStats
 public:
     friend class psItemStats;
     psItemWeaponStats();
-    
+
     /** Read the weapon related details from the database. */
     void ReadStats( iResultRow& row );
-    
+
     PSITEMSTATS_WEAPONTYPE Type() { return weapon_type; }
-    
+
     PSSKILL Skill(PSITEMSTATS_WEAPONSKILL_INDEX index);
-    
+
     float Latency() { return latency; }
     float Damage(PSITEMSTATS_DAMAGETYPE dmgtype);
     float ExtraDamagePercent(PSITEMSTATS_DAMAGETYPE dmgtype);
@@ -273,20 +273,20 @@ public:
     float UntargetedBlockValue() { return untargeted_block_value;}
     float TargetedBlockValue(){ return targeted_block_value;}
     float CounterBlockValue(){ return counter_block_value; }
-    
+
     PSITEMSTATS_STAT AttributeBonusType(int index);
     float AttributeBonusMax(int index);
-         
+
 private:
     PSITEMSTATS_WEAPONTYPE weapon_type;
     PSSKILL weapon_skill[PSITEMSTATS_WEAPONSKILL_INDEX_COUNT];
     st_attribute_bonus attribute_bonuses[PSITEMSTATS_STAT_BONUS_COUNT];
     float latency;
-    float damages[PSITEMSTATS_DAMAGETYPE_COUNT];  // 4.3 precision 
+    float damages[PSITEMSTATS_DAMAGETYPE_COUNT];  // 4.3 precision
     float penetration;
     float untargeted_block_value;
     float targeted_block_value;
-    float counter_block_value;        
+    float counter_block_value;
 };
 
 /** This little class holds info about Ammunition for Ranged Weapons. */
@@ -295,11 +295,11 @@ class psItemAmmoStats
 public:
     psItemAmmoStats();
     ~psItemAmmoStats();
-    
+
     /** Read the Ammo related details from the database. */
     void ReadStats( iResultRow& row );
-    
-    PSITEMSTATS_AMMOTYPE AmmoType() { return ammunition_type; } 
+
+    PSITEMSTATS_AMMOTYPE AmmoType() { return ammunition_type; }
 private:
     PSITEMSTATS_AMMOTYPE ammunition_type;
 };
@@ -351,7 +351,7 @@ class psItemStats
 public:
     psItemStats ();
     ~psItemStats ();
-        
+
 private:
     uint32       uid;
     csString     uid_str;
@@ -377,7 +377,7 @@ private:
      *  Only valid if this is a container.
      */
     unsigned short container_max_size;
-    
+
     /** Maximum amount of slots available for this container. This is used
      *  to decide how many slots to show client side to store items.
      */
@@ -389,7 +389,7 @@ private:
     /// Scripts The name of a progression script that this event can trigger on equip, unequip, or consuming.
     ApplicativeScript *equipScript;
     csString consumeScriptName;
-    
+
     PSITEMSTATS_SLOTLIST valid_slots;
     csArray<INVENTORY_SLOT_NUMBER> valid_slots_array;
     PSITEMSTATS_FLAGS flags;
@@ -401,7 +401,7 @@ private:
      *  visibility modifiers and character perception enhancements may be combined with this
      *  to determine wether an object is ultimately visible.
      *
-     *  At this time the default proximity distance is 100.0  (DEF_PROX_DIST in psconst.h), and 
+     *  At this time the default proximity distance is 100.0  (DEF_PROX_DIST in psconst.h), and
      *  visible distances greater than this value will have no effect.
      */
     float visible_distance;
@@ -411,35 +411,35 @@ private:
     csString stat_type;
 
     ItemRequirement reqs[3];
-    int spell_id_on_hit; 
+    int spell_id_on_hit;
     float spell_on_hit_probability;
-    int spell_id_feature;  
-    int spell_feature_charges;   
+    int spell_id_feature;
+    int spell_feature_charges;
     int spell_feature_timing;
 
     /// The maximum number of charges an item of this type
     /// can ever hold. -1 Indicate that this is an item without
     /// the possiblity to be charged.
     int maxCharges;
-    
+
     /// Tracks if this item can be consumed, can be potions/scrolls/etc
     bool isConsumable;
-    
+
     // Animation eye candy things
     csPDelArray<psItemAnimation> *anim_list;
 
     // These temporary fields point to strings used for the mesh, texture, part and image names respectively
     const char *mesh_name;
-    
+
     /// Stores a texture change
     csString texture_name;
-    
+
     /// Stores the mesh that the above texture should go on.
     csString texturepart_name;
 
     /// Stores the new mesh to be attached on a mesh change.
     csString partmesh_name;
-    
+
     const char *image_name;
 
     /* mesh names, texture names, texture part names, and image names are currently stored as strings
@@ -464,17 +464,17 @@ private:
 
     csString sound;
     csString weapon_type;
-    
+
     /** Loads in the valid slots from the database for this particular item.
       * @param row The database row to load information from.
       */
-    void LoadSlots(iResultRow& row); 
-    
+    void LoadSlots(iResultRow& row);
+
     /** Parses the flag information and sets the internal flags.
       * @param row The database row to load information from.
       */
-    void ParseFlags(iResultRow& row); 
-            
+    void ParseFlags(iResultRow& row);
+
 public:
     psItemArmorStats& Armor() { return armorStats; }
     psItemWeaponStats& Weapon() { return weaponStats; }
@@ -496,8 +496,8 @@ public:
     bool GetUsesAmmo();
     bool GetIsStackable();
     bool GetIsEquipStackable();
-    bool GetIsGlyph();    
-    bool GetIsConsumable();    
+    bool GetIsGlyph();
+    bool GetIsConsumable();
     bool GetIsReadable();
     bool GetIsWriteable();
     PSITEMSTATS_CREATIVETYPE GetCreative();
@@ -519,16 +519,17 @@ public:
     PSITEMSTATS_AMMOTYPE GetAmmoType();
     float GetQuality() const { return item_quality; }
     void SetQuality(float f){ item_quality = f; }
-    
+
     void GetArmorVsWeaponType(csString& buff);
     void SetArmorVsWeaponType(const char* v);
-    
+
     float GetWeight();
     unsigned short GetSize();
     unsigned short GetContainerMaxSize();
+
     /** Gets the slots available in this item (only containers) which means
      *  also the maximum amount of items which can be stored in this container.
-     * 
+     *
      *  @return The number of slots available in this container.
      */
     int GetContainerMaxSlots();
@@ -536,7 +537,7 @@ public:
     PSITEMSTATS_SLOTLIST GetValidSlots();
     bool FitsInSlots(PSITEMSTATS_SLOTLIST slotmask);
     float GetDecayRate();
-    
+
     int GetAttackAnimID(unsigned int skill_level);
 
     csString FlagsToText();
@@ -554,26 +555,26 @@ public:
      *  Used for standalone or weilded mesh.
      */
     const char *GetMeshName();
-    
+
     void SetMeshName(const char *v);
-    
+
     /** Get the Texture Name for the item.
      *
      *  Used when worn and attached to the mesh given by part name.
      */
     const char *GetTextureName();
-    
+
     void SetTextureName(const char *v);
-    
+
     /** Get the Part Name for the item.
      *
      *  This is the name of the part that the texture should be attached to
      *  if no change of mesh.
      */
     const char *GetPartName();
-    
+
     void SetPartName(const char *v);
-    
+
     /** Get the Part Mesh Name for the item.
      *
      *  This is the new mesh to be attached to the location given
@@ -589,7 +590,7 @@ public:
      *  by a 2D image.
      */
     const char *GetImageName();
-    
+
     void SetImageName(const char *v);
 
     // For future use, see notes for mesh_index variables, etc.
@@ -610,7 +611,7 @@ public:
     psItemCategory* GetCategory();
     csArray<INVENTORY_SLOT_NUMBER> GetSlots() { return valid_slots_array; }
 
-    // 
+    //
     const char *GetSound();
     void SetSound(const char *v);
 
@@ -619,14 +620,14 @@ public:
 
     /// Sets a new equip script and saves it to the DB.  Mostly for the loot generator.
     bool SetEquipScript(const csString & script);
-    
+
     /** Checks to see if the character meets the requirements to equip an item
       * with these stats.
       */
     bool CheckRequirements( psCharacter* charData, csString& resp );
     bool SetRequirement(const csString & statName, float statValue);
 
-    /** 
+    /**
      *  Called to create an instance of an item using basic item stats.
      *  The item instance can be modified by the caller after it's created (modifiers, uniqueness, etc)
      *  You MUST call Loaded() on the returned item once it is in a ready state, to allow saving.

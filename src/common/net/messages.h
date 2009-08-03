@@ -3898,7 +3898,7 @@ public:
 
     /// The container ID for this item.
     int containerID;
-    
+
     ///The slots available in this container
     int ContainerSlots;
 

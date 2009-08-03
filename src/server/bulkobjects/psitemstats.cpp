@@ -509,7 +509,7 @@ bool psItemStats::ReadItemStats(iResultRow& row)
     {
         SetTextureName(texturename);
     }
-    
+
     const char *partname = CacheManager::GetSingleton().FindCommonString(row.GetUInt32("cstr_id_part"));
     if (row.GetUInt32("cstr_id_part")!=0 && !texturename)
     {
@@ -520,7 +520,7 @@ bool psItemStats::ReadItemStats(iResultRow& row)
     {
         SetPartName(partname);
     }
-    
+
     const char *imagename = CacheManager::GetSingleton().FindCommonString(row.GetUInt32("cstr_id_gfx_icon"));
     if (row.GetUInt32("cstr_id_gfx_icon")!=0 && !texturename)
     {
@@ -531,7 +531,7 @@ bool psItemStats::ReadItemStats(iResultRow& row)
     {
         SetImageName(imagename);
     }
-    
+
     const char *partmeshname = CacheManager::GetSingleton().FindCommonString(row.GetUInt32("cstr_id_part_mesh"));
     if (row.GetUInt32("cstr_id_part_mesh")!=0 && !texturename)
     {

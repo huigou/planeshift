@@ -77,11 +77,11 @@ bool pawsContainerDescWindow::PostSetup()
     description = dynamic_cast<pawsMultiLineTextBox*> (FindWidget("ItemDescription"));
     if (!description)
         return false;
-    
+
     pic = (pawsWidget*)FindWidget("ItemImage");
     if (!pic)
         return false;
-    
+
     // Create bulk slots.
     contents = dynamic_cast <pawsListBox*> (FindWidget("BulkList"));
     if (!contents)
@@ -120,9 +120,9 @@ void pawsContainerDescWindow::HandleViewItem( MsgEntry* me )
 {
     Show();
     psViewItemDescription mesg( me );
-    
+
     description->SetText( mesg.itemDescription );
-    name->SetText( mesg.itemName );       
+    name->SetText( mesg.itemName );
     pic->Show();
     pic->SetBackground(mesg.itemIcon);
     if (pic->GetBackground() != mesg.itemIcon) // if setting the background failed...hide it
@@ -216,26 +216,26 @@ void pawsContainerDescWindow::HandleMessage( MsgEntry* me )
             break;
         }
     }
-    
+
 }
 
 bool pawsContainerDescWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
-{   
+{
     csString widgetName(widget->GetName());
-    
+
     if ( widgetName == "SmallInvButton" )
     {
         pawsWidget* widget = PawsManager::GetSingleton().FindWidget("SmallInventoryWindow");
         if ( widget )
             widget->Show();
-        return true;        
+        return true;
     }
-    
+
     // Check to see if this was the view button.
     if ( widget->GetID() == VIEW_BUTTON )
-    {     
+    {
         if ( psengine->GetSlotManager()->IsDragging() )
-        {            
+        {
             psViewItemDescription out(psengine->GetSlotManager()->HoldingContainerID(),
                                       psengine->GetSlotManager()->HoldingSlotID());
             out.SendMessage();
@@ -246,12 +246,12 @@ bool pawsContainerDescWindow::OnButtonPressed( int mouseButton, int keyModifier,
         return true;
     }
     else if ( widget->GetID() == INVENTORY_BUTTON )
-    {     
+    {
         if ( psengine->GetSlotManager()->IsDragging() )
-        {            
+        {
             pawsInventoryWindow* inv = (pawsInventoryWindow*)PawsManager::GetSingleton().FindWidget("InventoryWindow");
             pawsSlot* slot = inv->GetFreeSlot();
-        
+
             if(!slot)
             {
                 PawsManager::GetSingleton().CreateWarningBox("Your inventory is full!");
