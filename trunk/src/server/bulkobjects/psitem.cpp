@@ -145,7 +145,7 @@ psItem::psItem() : transformationEvent(NULL), gItem(NULL), pendingsave(false), l
     loc_in_parent = PSCHARACTER_SLOT_NONE;
     item_in_use   = false;
 
-////////    for (i=0;i<PSITEM_MAX_CONTAINER_SLOTS;i++)
+////////    for (i=0;i<GetContainerMaxSlots();i++)
 ////////        container_data.contained_item_ptr[i]=NULL;
         
     decay_resistance = 0;
@@ -1736,6 +1736,11 @@ unsigned short psItem::GetContainerMaxSize()
     return current_stats->GetContainerMaxSize();
 }
 
+int psItem::GetContainerMaxSlots()
+{
+    return current_stats->GetContainerMaxSlots();
+}
+
 PSITEMSTATS_SLOTLIST psItem::GetValidSlots()
 {
     return current_stats->GetValidSlots();
@@ -2504,7 +2509,7 @@ void psItem::FillContainerMsg(Client* client, psViewItemDescription& outgoing)
 
     if (!container)
     {
-        // This is not a container in the world so it must be a container inside the pserson's
+        // This is not a container in the world so it must be a container inside the person's
         // inventory.  So check to see which items the player has that are in the container.
         int slot = 0;
         for (size_t i = 0; i < client->GetCharacterData()->Inventory().GetInventoryIndexCount(); i++)
@@ -2739,7 +2744,9 @@ bool psItem::SendContainerContents(Client *client, int containerID)
     if (gItem != NULL )
         outgoing.containerID = gItem->GetEID().Unbox();
     else
-        outgoing.containerID = containerID;        
+        outgoing.containerID = containerID;
+
+    outgoing.ContainerSlots = GetContainerMaxSlots();
 
     FillContainerMsg( client, outgoing);
     
@@ -3014,6 +3021,8 @@ bool psItem::SendActionContents(Client *client, psActionLocation *action)
     */
 
     outgoing.containerID = gItem->GetEID().Unbox();
+
+    outgoing.ContainerSlots = GetContainerMaxSlots();
 
     if ( isContainer )
     {           

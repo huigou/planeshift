@@ -700,6 +700,14 @@ public:
     uint GetTotalStackSize() { return GetItemSize()*stack_count; }
     
     unsigned short GetContainerMaxSize();
+
+    /** Gets the slots available in this item (only containers) which means
+     *  also the maximum amount of items which can be stored in this container.
+     * 
+     *  @note this function uses the base item stats of this item.
+     *  @return The number of slots available in this container.
+     */
+    int GetContainerMaxSlots();
     PSITEMSTATS_SLOTLIST GetValidSlots();
     bool FitsInSlots(PSITEMSTATS_SLOTLIST slotmask);
     bool FitsInSlot(INVENTORY_SLOT_NUMBER slot);

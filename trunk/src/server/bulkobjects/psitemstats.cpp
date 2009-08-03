@@ -407,6 +407,7 @@ psItemStats::psItemStats()
     weight=0.0f;
     size=0;
     container_max_size=0;
+    container_max_slots=0;
 
     valid_slots=0x00000000;
     decay_rate=0;
@@ -458,11 +459,12 @@ bool psItemStats::ReadItemStats(iResultRow& row)
         // Clamp item quality to 300 or less so cheats and bugs don't result in ridiculous items
         item_quality = 300;
     }
-    weight             = row.GetFloat("weight");
-    size               = (unsigned short)row.GetInt("size");
-    container_max_size = (unsigned short)row.GetInt("container_max_size");
-    visible_distance   = row.GetFloat("visible_distance");
-    decay_rate         = row.GetFloat("decay_rate");
+    weight              = row.GetFloat("weight");
+    size                = (unsigned short)row.GetInt("size");
+    container_max_size  = (unsigned short)row.GetInt("container_max_size");
+    container_max_slots = row.GetInt("container_max_slots");
+    visible_distance    = row.GetFloat("visible_distance");
+    decay_rate          = row.GetFloat("decay_rate");
 
     // Load in the valid slots for the item.
     LoadSlots( row );
@@ -765,7 +767,7 @@ bool psItemStats::Save()
     static iRecord* update;
 
     if(update == NULL)
-        update = db->NewUpdatePreparedStatement("item_stats", "id", 28, __FILE__, __LINE__); // 27 parameters plus 1 id
+        update = db->NewUpdatePreparedStatement("item_stats", "id", 29, __FILE__, __LINE__); // 28 parameters plus 1 id
 
     update->Reset();
 
@@ -786,6 +788,7 @@ bool psItemStats::Save()
     update->AddField("visible_distance", visible_distance);
     update->AddField("size", size);
     update->AddField("container_max_size", container_max_size);
+    update->AddField("container_max_slots", container_max_slots);
     update->AddField("decay_rate", decay_rate);
     update->AddField("category_id", category->id);
     update->AddField("base_sale_price", price.GetTotal());
@@ -1187,6 +1190,11 @@ unsigned short psItemStats::GetSize()
 unsigned short psItemStats::GetContainerMaxSize()
 {
     return container_max_size;
+}
+
+int psItemStats::GetContainerMaxSlots()
+{
+    return container_max_slots;
 }
 
 float psItemStats::GetVisibleDistance()

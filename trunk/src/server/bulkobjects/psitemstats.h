@@ -377,6 +377,11 @@ private:
      *  Only valid if this is a container.
      */
     unsigned short container_max_size;
+    
+    /** Maximum amount of slots available for this container. This is used
+     *  to decide how many slots to show client side to store items.
+     */
+    int container_max_slots;
 
     /// How much is the default decay to item_quality per use
     float decay_rate;
@@ -521,6 +526,12 @@ public:
     float GetWeight();
     unsigned short GetSize();
     unsigned short GetContainerMaxSize();
+    /** Gets the slots available in this item (only containers) which means
+     *  also the maximum amount of items which can be stored in this container.
+     * 
+     *  @return The number of slots available in this container.
+     */
+    int GetContainerMaxSlots();
     float GetVisibleDistance();
     PSITEMSTATS_SLOTLIST GetValidSlots();
     bool FitsInSlots(PSITEMSTATS_SLOTLIST slotmask);

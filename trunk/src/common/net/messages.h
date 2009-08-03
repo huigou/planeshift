@@ -43,7 +43,7 @@ class psLinearMovement;
 
 // This holds the version number of the network code, remember to increase
 // this each time you do an update which breaks compatibility
-#define PS_NETVERSION   0x00A3
+#define PS_NETVERSION   0x00A4
 // Remember to bump the version in pscssetup.h, as well.
 
 
@@ -3898,6 +3898,9 @@ public:
 
     /// The container ID for this item.
     int containerID;
+    
+    ///The slots available in this container
+    int ContainerSlots;
 
     /// Where this item is in the container.
     int slotID;

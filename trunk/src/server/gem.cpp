@@ -1472,6 +1472,9 @@ bool gemContainer::CanAdd(unsigned short amountToAdd, psItem *item, int slot)
     if (!item)
         return false;
 
+    if(slot >= SlotCount())
+        return false;
+
     PID guard = GetItem()->GetGuardingCharacterID();
     gemActor* guardingActor = GEMSupervisor::GetSingleton().FindPlayerEntity(guard);
 
@@ -1494,7 +1497,6 @@ bool gemContainer::CanAdd(unsigned short amountToAdd, psItem *item, int slot)
     }
     if (item->GetItemSize()*amountToAdd + currentSize > itemdata->GetContainerMaxSize())
         return false;
-
 
     unsigned short savedCount = item->GetStackCount();
     item->SetStackCount(amountToAdd);

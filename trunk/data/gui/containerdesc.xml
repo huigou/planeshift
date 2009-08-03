@@ -44,8 +44,7 @@
         </widget>
         
         <widget name="BulkList" factory="pawsListBox" selectable="0">
-            <frame x="26" y="145" width="260" height="133" border="no"/>
-            <scrollbar heightmod="-1" />
+            <frame x="26" y="145" width="275" height="133" border="no"/>
             <columns height="43.57" headings="no" >
                 <column width="43.57" >
                     <widget name="Bulk0" factory="pawsSlot">

@@ -5381,7 +5381,7 @@ psViewItemDescription::psViewItemDescription(uint32_t to, const char *itemName, 
         this->itemDescription = description;
         this->itemIcon = icon;
         this->to = to;
-        msgSize = (int) (sizeof(uint8_t) + sizeof(bool) + name.Length() + desc.Length() + iconName.Length() + 3 + sizeof(int32_t) + sizeof(uint32_t));
+        msgSize = (int) (sizeof(uint8_t) + sizeof(bool) + name.Length() + desc.Length() + iconName.Length() + 3 + sizeof(int32_t) + sizeof(int32_t) + sizeof(uint32_t));
     }
 }
 
@@ -5412,6 +5412,7 @@ void psViewItemDescription::ConstructMsg()
     msg->Add( itemDescription );
     msg->Add( itemIcon );
     msg->Add( (int32_t)containerID );
+    msg->Add( (int32_t)ContainerSlots);
     msg->Add( (uint32_t)contents.GetSize() );
     for ( size_t n = 0; n < contents.GetSize(); n++ )
     {
@@ -5451,6 +5452,7 @@ psViewItemDescription::psViewItemDescription( MsgEntry* me )
         if ( hasContents )
         {
             containerID = me->GetInt32();
+            ContainerSlots = me->GetInt32();
             size_t length = me->GetUInt32();
 
             for ( size_t n = 0; n < length; n++ )
@@ -5485,7 +5487,7 @@ csString psViewItemDescription::ToString(AccessPointers * /*access_ptrs*/)
 
         if ( hasContents )
         {
-            msgtext.AppendFmt("Container ID: %d Contains ", containerID);
+            msgtext.AppendFmt("Container ID: %d has %d slots and Contains ", ContainerSlots, containerID);
 
             for (size_t n = 0; n < contents.GetSize(); n++)
             {

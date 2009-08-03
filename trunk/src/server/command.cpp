@@ -1373,7 +1373,7 @@ void com_showinv_item(bool moreiteminfo, psItem *currentitem, const char *slotna
             workingset[0]=currentitem;
             positionset[0]=0;
             depth=1;
-            while (depth>1 || positionset[depth-1]<PSITEM_MAX_CONTAINER_SLOTS)
+            while (depth>1 || positionset[depth-1]<currentitem->GetContainerMaxSlots())
             {
                 currentitem=workingset[depth-1]->GetItemInSlot(positionset[depth-1]);
                 if (currentitem!=NULL)
@@ -1407,7 +1407,7 @@ void com_showinv_item(bool moreiteminfo, psItem *currentitem, const char *slotna
                 positionset[depth-1]++;
 
                 // Drop to previous level
-                while (depth>1 && positionset[depth-1]>=PSITEM_MAX_CONTAINER_SLOTS)
+                while (depth>1 && positionset[depth-1]>=currentitem->GetContainerMaxSlots())
                 {
                     depth--;
                     positionset[depth-1]++;
