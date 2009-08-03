@@ -53,11 +53,28 @@ public:
     
     static iObjectRegistry* object_reg;
     
-    ///Adds additional informations wraped in [] to the title bar
+    /** Adds additional informations wraped in [] to the title bar.
+     * 
+     *  @param Info The data to add inside the [] in the title bar.
+     */
     bool AddWindowInformations(const char *Info);
 protected:  
     //Unused part of initcs.inc, but included - better to than not to
     bool InitCSWindow(const char *);
+    
+    /** Sets an icon for the main window using a file name.
+     * 
+     *  @param ImageFileLocation The VFS path to the icon file.
+     *  @return true if the icon was found and was possible to set it up
+     */
+    bool SetIcon(const char* ImageFileLocation);
+
+    /** Sets an icon for the main window using an iImage.
+     * 
+     *  @param Image an iImage containing the imagine we want to set for the window.
+     *  @return true if it was possible to ask cs to set the icon.
+     */
+    bool SetIcon(iImage* Image);
   
     char * PS_GetFileName(char*);
 
