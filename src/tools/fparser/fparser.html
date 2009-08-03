@@ -3,11 +3,11 @@
 <head>
  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
  <link href="style.css" rel="stylesheet" type="text/css" title="normal" media=screen>
- <title>Function Parser for C++ v3.1.4  : Documentation</title>
+ <title>Function Parser for C++ v3.1.5  : Documentation</title>
 </head>
 
 <body>
-<h1>Function Parser for C++ v3.1.4  </h1>
+<h1>Function Parser for C++ v3.1.5  </h1>
 
 <p>Optimization code contributed by Bisqwit
 (<a href="http://iki.fi/bisqwit/">http://iki.fi/bisqwit/</a>).
@@ -37,6 +37,12 @@
 
 <a name="whatsnew"></a>
 <h2>What's new</h2>
+
+<p>What's new in v3.1.5
+<ul>
+ <li>Added a new <code>RemoveIdentifier()</code> function to the class which
+     can be used to remove existing constants, units and user-defined functions.
+</ul>
 
 <p>What's new in v3.1.4
 <ul>
@@ -293,6 +299,14 @@ bool AddFunction(const std::string& name, FunctionParser&);
 <p>Add a user-defined function to the parser (as a <code>FunctionParser</code>
 instance). Returns <code>false</code> if the name of the function is invalid,
 else <code>true</code>.
+
+<hr>
+<pre>
+bool RemoveIdentifier(const std::string& name);
+</pre>
+
+<p>Removes the constant, unit or user-defined function with the specified
+name from the parser.
 
 
 <!-- -------------------------------------------------------------------- -->
@@ -740,6 +754,11 @@ instance.
  <li><code>AddFunction()</code> will fail (ie. return <code>false</code>)
       if a recursive loop is
       formed. The method specifically checks that no such loop is built.
+
+ <li>The FunctionParser instance given as parameter will <em>not</em> be
+     copied internally, only referenced. Thus the FunctionParser instance
+     given as parameter must exist for as long as the other FunctionParser
+     instance uses it.
 </ul>
 
 <p>Example:
@@ -753,6 +772,20 @@ eg. chain user-given functions. For example, ask the user for a function F1,
     and then ask the user another function F2, but now the user can
     call F1 in this second function if he wants (and so on with a third
     function F3, where he can call F1 and F2, etc).
+
+<hr>
+<pre>
+bool RemoveIdentifier(const std::string& name);
+</pre>
+
+<p>If a constant, unit or user-defined function with the specified name
+exists in the parser, it will be removed and the return value will be
+<code>true</code>, else nothing will be done and the return value will be
+<code>false</code>.
+
+<p>(Note: If you want to remove <em>everything</em> from an existing
+FunctionParser instance, simply assign a fresh instance to it, ie. like
+"<code>parser&nbsp;=&nbsp;FunctionParser();</code>")
 
 
 <!-- -------------------------------------------------------------------- -->

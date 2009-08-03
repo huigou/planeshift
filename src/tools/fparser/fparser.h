@@ -1,5 +1,5 @@
 /***************************************************************************\
-|* Function Parser for C++ v3.1.4                                          *|
+|* Function Parser for C++ v3.1.5                                          *|
 |*-------------------------------------------------------------------------*|
 |* Copyright: Juha Nieminen                                                *|
 \***************************************************************************/
@@ -49,6 +49,8 @@ public:
     bool AddFunction(const std::string& name,
                      FunctionPtr, unsigned paramsAmount);
     bool AddFunction(const std::string& name, FunctionParser&);
+
+    bool RemoveIdentifier(const std::string& name);
 
     void Optimize();
 

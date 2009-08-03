@@ -1,5 +1,5 @@
 /***************************************************************************\
-|* Function Parser for C++ v3.1.4                                          *|
+|* Function Parser for C++ v3.1.5                                          *|
 |*-------------------------------------------------------------------------*|
 |* Copyright: Juha Nieminen                                                *|
 \***************************************************************************/
@@ -373,6 +373,21 @@ bool FunctionParser::AddFunction(const std::string& name, FunctionParser& fp)
     const bool retval = addNewNameData(data->nameData, data->namePtrs, newData);
     if(!retval) data->FuncParsers.pop_back();
     return retval;
+}
+
+bool FunctionParser::RemoveIdentifier(const std::string& name)
+{
+    const NameData dataToRemove(NameData::CONSTANT, name);
+    std::set<NameData>::iterator dataIter = data->nameData.find(dataToRemove);
+
+    if(dataIter != data->nameData.end())
+    {
+        data->namePtrs.erase(NamePtr(&(dataIter->name[0]),
+                                     unsigned(dataIter->name.size())));
+        data->nameData.erase(dataIter);
+        return true;
+    }
+    return false;
 }
 
 
