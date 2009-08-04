@@ -1125,7 +1125,7 @@ ALTER TABLE spells CHANGE caster_effect casting_effect varchar(255),
                    DROP saving_throw_value,
                    ADD exclude_target boolean DEFAULT false AFTER target_type,
                    ADD cast_duration text NOT NULL AFTER exclude_target,
-                   ADD range text AFTER cast_duration,
+                   ADD `range` text AFTER cast_duration,
                    ADD aoe_radius text AFTER range,
                    ADD aoe_angle text AFTER aoe_radius,
                    CHANGE progression_event outcome text NOT NULL AFTER aoe_angle;
