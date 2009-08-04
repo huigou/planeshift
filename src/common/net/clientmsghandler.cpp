@@ -86,7 +86,7 @@ bool ClientMsgHandler::DispatchQueue()
 
     while((msg = queue->Get()))
     {
-        printf("Got a message from the client msg queue.\n");
+        // printf("Got a message from the client msg queue.\n");
 		// Check for out of sequence messages.  Handle normally if not sequenced.
 		if (msg->GetSequenceNumber() == 0)
 		{
@@ -103,13 +103,13 @@ bool ClientMsgHandler::DispatchQueue()
 			OrderedMessageChannel *channel = orderedMessages.Get(msg->GetType(),NULL);
 			if (!channel) // new type of sequence to track
 			{
-				printf("Adding new sequence channel for msgtype %d.\n", msg->GetType());
+				// printf("Adding new sequence channel for msgtype %d.\n", msg->GetType());
 				channel = new OrderedMessageChannel;
                 channel->IncrementSequenceNumber(); // prime the pump
 				orderedMessages.Put(msg->GetType(), channel);
 			}
 			int nextSequenceExpected  = channel->GetCurrentSequenceNumber();
-			printf("Expecting sequence number %d, got %d.\n", nextSequenceExpected, seqnum);
+			// printf("Expecting sequence number %d, got %d.\n", nextSequenceExpected, seqnum);
 
 			if (seqnum < nextSequenceExpected)
 			{
@@ -118,7 +118,7 @@ bool ClientMsgHandler::DispatchQueue()
 			}
 
 			channel->pendingMessages.Put(seqnum - nextSequenceExpected, msg);
-			printf("Added as element %u to pending queue.\n", seqnum - nextSequenceExpected);
+			// printf("Added as element %u to pending queue.\n", seqnum - nextSequenceExpected);
 			
 			if (seqnum == nextSequenceExpected) // have something to publish
 			{
@@ -134,7 +134,7 @@ bool ClientMsgHandler::DispatchQueue()
 			}
             else
             {
-                printf("Nothing to publish yet from this channel.\n");
+               // printf("Nothing to publish yet from this channel.\n");
             }
 		}
 	}
