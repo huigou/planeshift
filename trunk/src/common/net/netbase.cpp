@@ -538,29 +538,26 @@ bool NetBase::SendMergedPackets(NetPacketQueue *q)
     if (!queueget)
         return false;
     
-    final = queueget;
+    final = queueget;  // This was packet 0 in the pending queue
 
-	if (final->packet->GetSequence() == 0)  // sequence numbers are lost in packet merging, so cannot be merged.
+	// Try to merge additional packets into a single send.
+	while ((queueget=q->Get()))  // This is now looping through packets 1-N
 	{
-		// Try to merge additional packets into a single send.
-		while ((queueget=q->Get()))
+		candidate = queueget;
+		if (candidate->packet->GetSequence() != 0) // sequenced packet is following a non-sequenced packet
 		{
-			candidate = queueget;
-			if (candidate->packet->GetSequence() != 0) // sequenced packet is following a non-sequenced packet
-			{
-				SendSinglePacket(candidate); // Go ahead and send the sequenced one, but keep building the merged one.
-				continue;
-			}
-			if(!final->Append(candidate))
-			{
-				// A failed append means that the packet can't fit or is a resent packet.
-				// Resent packets MUST NOT be merged because it circumvents clientside packet dup
-				// detection
-				SendSinglePacket(final);
-	            
-				// Start the process again with the packet that wouldn't fit
-				final = candidate;
-			}
+			SendSinglePacket(candidate); // Go ahead and send the sequenced one, but keep building the merged one.
+			continue;
+		}
+		if(!final->Append(candidate))
+		{
+			// A failed append means that the packet can't fit or is a resent packet.
+			// Resent packets MUST NOT be merged because it circumvents clientside packet dup
+			// detection
+			SendSinglePacket(final);
+            
+			// Start the process again with the packet that wouldn't fit
+			final = candidate;
 		}
 	}
 
@@ -584,7 +581,6 @@ bool NetBase::SendSinglePacket(csRef<psNetPacketEntry> pkt)
     */
     if (pkt->packet->GetPriority() == PRIORITY_HIGH)
     {
-
 #ifdef PACKETDEBUG
         Debug3(LOG_NET,0,"Sent HIGH pkt id %d to client %d.\n", 
             pkt->packet->pktid, pkt->clientnum);
@@ -623,7 +619,7 @@ bool NetBase::SendFinalPacket(csRef<psNetPacketEntry> pkt, LPSOCKADDR_IN addr)
         pkt->packet->pktid, pkt->clientnum, pkt->packet->pktsize, pkt->packet->flags);
 #endif
 
-	// printf("Sending packet sequence %d on the wire.\n", pkt->packet->GetSequence());
+	// printf("Sending packet sequence %d, length %d on the wire.\n", pkt->packet->GetSequence(),pkt->packet->GetPacketSize() );
 
     uint16_t size = (uint16_t)pkt->packet->GetPacketSize();
     void *data = pkt->GetData();
@@ -984,7 +980,7 @@ bool NetBase::SendMessage(MsgEntry* me,NetPacketQueueRefCount *queue)
     LogMessages('S',me);
     
     // fragments must have the same packet id, this needs to be fixed to use sequential numbering at some time in the future
-    if(bytesleft > MAXPACKETSIZE-sizeof(struct psNetPacket))
+    if (bytesleft > MAXPACKETSIZE-sizeof(struct psNetPacket))
         id = GetRandomID();
 
     
@@ -1012,6 +1008,10 @@ bool NetBase::SendMessage(MsgEntry* me,NetPacketQueueRefCount *queue)
                 Error2("Target full. Could not add packet with clientnum %d.\n", me->clientnum);
             }
             return false;
+        }
+        else 
+        {
+            // printf("Sent packet.  Length %u of %u total.\n", pktlen, me->bytes->GetTotalSize());
         }
         
 #ifndef CS_PLATFORM_WIN32
@@ -1156,7 +1156,18 @@ csPtr<MsgEntry> NetBase::CheckCompleteMessage(uint32_t client, uint32_t id)
 #endif
         return NULL;
     }
-    
+
+    // Check total size of packets before bothering with msg building
+    size_t total = 0;
+    for (size_t i=0; i<pkts.GetSize(); i++)
+    {
+        total += pkts[i]->packet->pktsize;
+    }
+    if (total != pkts[0]->packet->msgsize)
+    {
+        // printf("Msg not complete yet. %u vs %u\n", total, pkts[0]->packet->msgsize);
+        return NULL;  // not all packets are here yet
+    }
     // Sort the packets on offsets
     pkts.Sort();
     
@@ -1209,6 +1220,7 @@ csPtr<MsgEntry> NetBase::CheckCompleteMessage(uint32_t client, uint32_t id)
      */
     if (!invalidated && length != totallength) // sum of all packets is entire message
     {
+        Error1("Passed initial check of msg size in packets but now not complete.");
         // We didn't get the entire message.  The smartpointer will take care of releasing the message object
         return NULL;
     }
@@ -1218,7 +1230,7 @@ csPtr<MsgEntry> NetBase::CheckCompleteMessage(uint32_t client, uint32_t id)
     *
     * We start out with the known client id, packet id, and 0 offset.  We add the length field of the found packet
     *   to the offset of the test packet, delete the found packet and repeat until the total length is accounted for
-    *   or we don't find any more (the later should not happen).
+    *   or we don't find any more (the latter should not happen).
     *
     */
     uint32_t offset = 0;
@@ -1229,13 +1241,14 @@ csPtr<MsgEntry> NetBase::CheckCompleteMessage(uint32_t client, uint32_t id)
         // We don't care how many times it's in the queue, there's a mistake if it's over 1. Let's fix it now.
         packets.Delete(PacketKey(client, id), pkt);
     }
+
     /* If the search offset didnt finish at the end of the packet, we have gaps, not all pieces were deleted,
      * someone is trying to play games, and we should ignore the message, and 
      * TODO:  disconnect the connection (if connected) and blacklist the IP for a short period (5 minutes?)
      */
     if (!invalidated && offset != totallength)
     {
-        Warning2(LOG_NET,"Discarding MALICIOUS message.  Gaps in fragments attempt to capture data from uninitialized memory.  Missing packet with offset %u. (but total length of remaining fragments equals total message length).\n",
+        Error2("Discarding MALICIOUS message.  Gaps in fragments attempt to capture data from uninitialized memory.  Missing packet with offset %u. (but total length of remaining fragments equals total message length).\n",
                             offset);
         invalidated=true;
     }
@@ -1261,6 +1274,7 @@ bool NetBase::QueueMessage(MsgEntry *me)
             // Block permanently on the full queue so we don't have a problem with fake acks
             CS_ASSERT(inqueues[i]->AddWait(me));
         }
+        printf("Just queued inbound message to be processed.\n");
     }
     return success;
 }

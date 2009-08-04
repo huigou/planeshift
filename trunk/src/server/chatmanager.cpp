@@ -754,9 +754,10 @@ void ChatManager::SendAudioFile(Client *client, const char *voiceFileHash)
             timestamp = audioFileCache[i]->alternate;
             voiceFile = audioFileCache[i]->key;
 
-            psCachedFileMessage msg(client->GetClientNum(),client->GetOrderedMessageChannel(MSGTYPE_CACHEFILE)->IncrementSequenceNumber(), timestamp, buffer);
+            int sequence = client->GetOrderedMessageChannel(MSGTYPE_CACHEFILE)->IncrementSequenceNumber();
+            psCachedFileMessage msg(client->GetClientNum(),sequence, timestamp, buffer);
             msg.SendMessage();
-            printf("Cached file message sent to client with buffer attached.\n");
+            printf("Cached file message sent to client with buffer attached, seq=%d.\n",sequence);
             return;
         }
     }
