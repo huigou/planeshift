@@ -22,8 +22,8 @@
         <bgimage resource="ActiveMagicButton" />
     </pawsButton>
 
-    <pawsMessageTextBox name="Picture" style="Fancy Standard MsgText" >
-        <frame x="45" y="50" width="60" height="60" border="no" />
+    <pawsMessageTextBox name="SpellImage" style="Fancy Standard MsgText" >
+        <frame x="45" y="50" width="64" height="64" border="yes" />
     </pawsMessageTextBox>
 
     <pawsMessageTextBox name="Description" style="Fancy Standard MsgText" >
