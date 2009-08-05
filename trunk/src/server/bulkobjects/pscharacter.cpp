@@ -420,6 +420,9 @@ bool psCharacter::Load(iResultRow& row)
     animal_affinity  = row[ "animal_affinity" ];
     //owner_id         = row.GetUInt32( "owner_id" );
     help_event_flags = row.GetUInt32("help_event_flags");
+    
+    timeconnected        = row.GetUInt32("time_connected_sec");
+    startTimeThisSession = csGetTicks();
 
     if (!LoadTraits(use_id))
     {
@@ -546,8 +549,6 @@ bool psCharacter::Load(iResultRow& row)
                       csGetTicks() - start, ShowID(pid), __FILE__, __LINE__);
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
-    timeconnected        = row.GetUInt32("time_connected_sec");
-    startTimeThisSession = csGetTicks();
 
     // Load Experience Points W and Progression Points X
     SetExperiencePoints(row.GetUInt32("experience_points"));
