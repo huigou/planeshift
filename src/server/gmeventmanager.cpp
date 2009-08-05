@@ -467,10 +467,18 @@ bool GMEventManager::RewardPlayersInGMEvent (Client* client,
             Error2("'%s' was not found as a valid base item.", itemName.GetDataSafe());
             return false;
         }
+
         if (stackCount <= 0)
         {
            psserver->SendSystemInfo(clientnum,
                                 "You must reward at least 1 item to participant(s).");
+           return false;
+        }
+        
+        if (stackCount >= 65 && !basestats->IsMoney())
+        {
+           psserver->SendSystemInfo(clientnum,
+                                "You can't reward that amount of items to partecipant(s).");
            return false;
         }
 
@@ -975,6 +983,19 @@ size_t GMEventManager::GetPlayerFromEvent(PID& PlayerID, GMEvent *Event)
 
 void GMEventManager::RewardPlayer(int clientnum, Client* target, short stackCount, psItemStats* basestats)
 {
+    // If it's money don't instantiate them just directly give them.
+    if(basestats->IsMoney())
+    {
+        target->GetActor()->GetCharacterData()->SetMoney(basestats, stackCount);
+        psserver->SendSystemInfo(target->GetClientNum(),
+                                 "You have been rewarded %d %s%s for participating in this event.",
+                                 stackCount, basestats->GetName(), (stackCount>1)?"s":"");
+        psserver->SendSystemInfo(clientnum, "%s has been rewarded %d %s%s.",
+                                 target->GetName(), stackCount,
+                                 basestats->GetName(), (stackCount>1)?"s":"");
+        return;
+    }
+
     // generate the prize item
     psItem* newitem = basestats->InstantiateBasicItem(true);
     if (newitem == NULL)
