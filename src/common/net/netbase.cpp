@@ -1274,7 +1274,7 @@ bool NetBase::QueueMessage(MsgEntry *me)
             // Block permanently on the full queue so we don't have a problem with fake acks
             CS_ASSERT(inqueues[i]->AddWait(me));
         }
-        printf("Just queued inbound message to be processed.\n");
+        // printf("Just queued inbound message to be processed.\n");
     }
     return success;
 }
