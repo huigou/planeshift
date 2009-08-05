@@ -131,11 +131,10 @@ PawsManager::PawsManager(iObjectRegistry* object, const char* skin, const char* 
     csString borderFile = cfg->GetStr("PlaneShift.GUI.BorderFile", "/this/data/gui/borderlist.xml");
 
     styles = new pawsStyles( objectReg );
-    // Load custom styles first to override base styles
-    csString stylePath = csString(skin) + "/styles.xml";
-    if (!styles->LoadStyles(stylePath))
+
+    if(!LoadSkinDefinition(skin))
     {
-        Error2("Failed to load styles from skin: %s.",stylePath.GetData() );
+        Error2("Failed to load skin %s!", skin);
     }
 
     // now load standard styles for anything else
@@ -144,11 +143,6 @@ PawsManager::PawsManager(iObjectRegistry* object, const char* skin, const char* 
         Error1("Failed to load PAWS styles, all style application attempts will be ignored");
         delete styles;
         styles = NULL;
-    }
-
-    if(!LoadSkinDefinition(skin))
-    {
-        Error2("Failed to load skin %s!", skin);
     }
 
     // Mount base skin to satisfy unskinned elements
