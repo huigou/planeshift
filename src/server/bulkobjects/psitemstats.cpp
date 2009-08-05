@@ -638,7 +638,7 @@ void psItemStats::LoadSlots( iResultRow& row )
     // Valid slots
     csStringArray slots;
     if(row["valid_slots"]) //check if it's valid (aka the row is not NULL)
-        slots.SplitString(row["valid_slots"],  " ");
+        slots.SplitString(row["valid_slots"],  " ,");
 
     for(size_t i = 0; i < slots.GetSize(); i++)
     {
