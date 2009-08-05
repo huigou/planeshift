@@ -570,6 +570,15 @@ public:
       * @param moneyObject The money object that was just picked up.
       */
     void SetMoney( psItem *& moneyObject );
+
+    /** @brief Add a certain amount of a money object to the current wallet based on the baseitem data.
+      *
+      * This is used to give rewards in gmeventmanager for now.
+      *
+      * @param MoneyObject The money  base object which was rewarded.
+      * @param amount The amount of the base object which was rewarded.
+      */    
+    void SetMoney(psItemStats* MoneyObject,  int amount)
     void AdjustMoney(psMoney m, bool bank);
     void SaveMoney(bool bank);
 
