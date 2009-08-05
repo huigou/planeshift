@@ -578,7 +578,7 @@ public:
       * @param MoneyObject The money  base object which was rewarded.
       * @param amount The amount of the base object which was rewarded.
       */    
-    void SetMoney(psItemStats* MoneyObject,  int amount)
+    void SetMoney(psItemStats* MoneyObject,  int amount);
     void AdjustMoney(psMoney m, bool bank);
     void SaveMoney(bool bank);
 
