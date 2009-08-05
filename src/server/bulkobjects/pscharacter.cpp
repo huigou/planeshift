@@ -1507,7 +1507,7 @@ void psCharacter::SetMoney( psItem *& itemdata )
     /// Check to see if the item is a money item and treat as a special case.
     if ( itemdata->GetBaseStats()->GetFlags() & PSITEMSTATS_FLAG_TRIA )
         money.AdjustTrias( itemdata->GetStackCount() );
-
+    
     if ( itemdata->GetBaseStats()->GetFlags() & PSITEMSTATS_FLAG_HEXA )
         money.AdjustHexas( itemdata->GetStackCount() );
 
@@ -1521,7 +1521,23 @@ void psCharacter::SetMoney( psItem *& itemdata )
     SaveMoney(false);
 }
 
+void psCharacter::SetMoney(psItemStats* MoneyObject,  int amount)
+{
+    /// Check to see if the item is a money item and treat as a special case.
+    if ( MoneyObject->GetFlags() & PSITEMSTATS_FLAG_TRIA )
+        money.AdjustTrias(amount);
 
+    if ( MoneyObject->GetFlags() & PSITEMSTATS_FLAG_HEXA )
+        money.AdjustHexas(amount);
+
+    if ( MoneyObject->GetFlags() & PSITEMSTATS_FLAG_OCTA )
+        money.AdjustOctas(amount);
+
+    if ( MoneyObject->GetFlags() & PSITEMSTATS_FLAG_CIRCLE )
+        money.AdjustCircles(amount);
+
+    SaveMoney(false);
+}
 
 void psCharacter::AdjustMoney(psMoney m, bool bank)
 {
