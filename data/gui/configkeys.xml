@@ -1,11 +1,14 @@
 <widget_description>
 
-  <widget name="ConfigKeysTree" factory="pawsTree"
+  <widget name="ConfigKeysTree" factory="pawsConfigKeys"
           visible="yes" savepositions="no" movable="no" resizable="no" style="New Standard GUI">
 
-    <frame x="10" y="100" width="680" height="346" border="yes" />
-    
-    <widget factory="pawsSeqTreeNode">
+    <widget factory="pawsTree">
+      <decorator selR="0" selG="0" selB="255" lineR="0" lineG="255" lineB="255" colSpacing="13" />
+      <layout rowSpacing="5" levelSpacing="20" />
+
+      <widget factory="pawsSeqTreeNode">
+
         <widget factory="pawsWidgetTreeNode" name="Movement">
             <nodewidget>
                 <widget factory="pawsTextBox" name="Movement label">
@@ -13,9 +16,9 @@
                     <text string="Movements"/>
                 </widget>
             </nodewidget>
-            <widget factory="pawsSeqTreeNode" name="Forward"/>
-            <widget factory="pawsSeqTreeNode" name="Backward"/>
-            <widget factory="pawsSeqTreeNode" name="Rotate left"/>
+            <widget factory="pawsSeqTreeNode" id="1" name="Forward"/>
+            <widget factory="pawsSeqTreeNode" id="2" name="Backward"/>
+            <widget factory="pawsSeqTreeNode" id="3" name="Rotate left"/>
             <widget factory="pawsSeqTreeNode" name="Rotate right"/>
             <widget factory="pawsSeqTreeNode" name="Strafe left"/>
             <widget factory="pawsSeqTreeNode" name="Strafe right"/>
@@ -145,8 +148,8 @@
             <widget factory="pawsSeqTreeNode" name="Shortcut 38"/>
             <widget factory="pawsSeqTreeNode" name="Shortcut 39"/>
             <widget factory="pawsSeqTreeNode" name="Shortcut 40"/>
-       </widget>
-    </widget>
+         </widget>
+      </widget>
+   </widget>
   </widget>
-
 </widget_description>
