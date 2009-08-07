@@ -13,7 +13,7 @@
 
     <widget name="items" factory="pawsComboBox" >
         <listbox rows="5" height="20" text="Day" />
-        <frame x="150" y="20" width="200" height="25" border="no" />
+        <frame x="150" y="20" width="200" height="25" style="New Standard Field" />
     </widget>
     
     <widget name="players_label" factory="pawsTextBox">

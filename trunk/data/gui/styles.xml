@@ -183,6 +183,17 @@
         </attachpoints>
     </style>
 
+    <style name="New Standard MsgText Large" >
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="240" g="240" b="200" size="12" scalefont="false" />
+        <attachpoints>
+            <attach point="ATTACH_RIGHT" />
+            <attach point="ATTACH_TOP" />
+            <attach point="ATTACH_LEFT" />
+            <attach point="ATTACH_BOTTOM" />
+        </attachpoints>
+    </style>
+
+
     <style name="Fancy Standard MsgText" inherit="New Standard MsgText">
         <bgimage resource="Scaling Widget Background" alpha="128"/>
     </style>
