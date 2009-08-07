@@ -212,7 +212,8 @@ void pawsTreeNode::InsertChild(pawsTreeNode * node, pawsTreeNode * nextSibling)
 
     tree->NewNode(node);
     
-    if (tree != NULL) tree->NodeChanged();
+    if (tree != NULL)
+        tree->NodeChanged();
 }
 
 void pawsTreeNode::MoveChild(pawsTreeNode * node, pawsTreeNode * nextSibling)
@@ -1091,6 +1092,11 @@ bool pawsTree::Setup(iDocumentNode * node)
     return true;
 }
 
+bool pawsTree::PostSetup()
+{
+    return true;
+}
+
 void pawsTree::Draw()
 {
     csRect oldClip;
@@ -1315,10 +1321,10 @@ void pawsSeqTreeNode::AddSeqWidget(pawsWidget * w, int width)
     w->MoveTo(screenFrame.xmax+1, screenFrame.ymin);
     w->Show();
 
-    Resize(width, 0, RESIZE_RIGHT);
-    widgetFrame = w->ScreenFrame();
-    if (widgetFrame.ymax > screenFrame.ymax)
-        Resize(0, widgetFrame.ymax - screenFrame.ymax, RESIZE_BOTTOM);
+    int newWidth = width + defaultFrame.Width();
+    int newHeight = MAX(w->DefaultFrame().Height(),defaultFrame.Height());
+
+    SetRelativeFrameSize(newWidth, newHeight);
 }
 
 void pawsSeqTreeNode::AddSeqWidget(pawsWidget * widget)
@@ -1347,6 +1353,11 @@ pawsWidget * pawsSeqTreeNode::GetSeqWidget(int index)
 bool pawsSeqTreeNode::Load(iDocumentNode *node)
 {
     return pawsTreeNode::Load(node);
+}
+
+void pawsSeqTreeNode::Draw()
+{
+    pawsWidget::Draw();
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -1409,7 +1420,7 @@ void pawsWidgetTreeNode::SetWidget(pawsWidget * _widget)
     widget = _widget;
     widget->MoveTo(screenFrame.xmin, screenFrame.ymin);
     widgetFrame = widget->ScreenFrame();
-    SetSize(widgetFrame.Width(), widgetFrame.Height());
+    SetRelativeFrameSize(widgetFrame.Width(), widgetFrame.Height());
     AddChild(widget);
 }
 

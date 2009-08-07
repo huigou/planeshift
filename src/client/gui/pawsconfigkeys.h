@@ -76,6 +76,8 @@ public:
 
     /// from pawsWidget:
     virtual bool OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget );
+    virtual void Draw();
+
     /// from FingeringWindow
     virtual bool OnFingering(csString string, psControl::Device device, uint button, uint32 mods);
 

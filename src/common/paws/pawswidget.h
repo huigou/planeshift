@@ -118,11 +118,6 @@ protected:
     /// factory name
     csString factory;
 
-    pawsTitle * titleBar;
-
-    /// filename to load from or save to. 
-    csString filename;
-
     /// The id of the widget. 
     int id;
 
@@ -132,11 +127,20 @@ protected:
     /// The 2D graphics interface.
     csRef<iGraphics2D> graphics2D;
     
+    /// The default frame for the widget.
+    csRect defaultFrame;
+
     /// The screen area of the widget.
     csRect screenFrame;
     
     /// Current clipping rectangle.
     csRect clipRect;
+
+    /// reference to titleBar object, if any
+    pawsTitle *titleBar;
+
+    /// filename to load from or save to. 
+    csString filename;
 
     /// Used in SetTitle() for the new close button.
     pawsButton* close_widget;
@@ -204,9 +208,6 @@ protected:
 
     /// Old name of the widget with "_close" appended by SetName().
     csString closeName;
-
-    /// The default frame for the widget.
-    csRect defaultFrame;
 
     /// The variable that this widget is subscribed to
     csString subscribedVar;

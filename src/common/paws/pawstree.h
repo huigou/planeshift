@@ -220,6 +220,8 @@ public:
 
     // from pawsWidget:
     virtual bool Setup(iDocumentNode * node);
+    virtual bool PostSetup();
+    
     virtual void Draw();
     virtual bool OnMouseDown(int button, int modifiers, int x, int y);
     virtual bool OnKeyDown( int keyCode, int keyChar, int modifiers );
@@ -433,6 +435,9 @@ public:
         // calls AddWidget() with width of widget
         // OWNERSHIP of widget goes to pawsSeqTreeNode
     virtual pawsWidget * GetSeqWidget(int index);
+
+    virtual void Draw();
+
 protected:
     csList<pawsSeqTreeNode_widget> widgets;
 };
