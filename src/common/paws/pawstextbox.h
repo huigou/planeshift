@@ -66,7 +66,7 @@ public:
     void VertAdjust (pawsVertAdjust horiz);
 
     // Sets size of the widget to fit the text that it displays:
-    void SetSizeByText();
+    void SetSizeByText(int padX,int padY);
     
     // Normal text boxes should not be focused.
     virtual bool OnGainFocus( bool notifyParent = true ) {return false;}

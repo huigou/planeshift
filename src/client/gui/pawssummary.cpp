@@ -61,7 +61,7 @@ void pawsSummaryWindow::Update()
     pawsTextBox* label_name = (pawsTextBox*) FindWidget("label_name");
     label_name->HorizAdjust(pawsTextBox::horizCENTRE);
     label_name->SetText(createManager->GetName().GetData());
-    label_name->SetSizeByText();
+    label_name->SetSizeByText(5,5);
 
     csString textString;
     csString lifeString;

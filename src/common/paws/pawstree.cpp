@@ -828,28 +828,28 @@ void pawsStdTreeDecorator::DecorateSubtree(pawsTreeNode * node)
         {
             hasCollSign = child->IsCollapsable() && (child->GetFirstChild() != NULL);
             childFrame = child->ScreenFrame();
-            horizLineY = (childFrame.ymin + childFrame.ymax) / 2;
             GetCollapseSignFrame(child, collSignFrame);
-            if (hasCollSign)
-            {
-                horizLineXMin = collSignFrame.xmax;
-                vertLineYMax = collSignFrame.ymin-1;
-            }
-            else
-            {
-                horizLineXMin = vertLineX;
-                vertLineYMax = horizLineY;
-            }
-            g2d->DrawLine(vertLineX, vertLineYMin, vertLineX, vertLineYMax, lineColor);
+        
+            horizLineY = (childFrame.ymin + childFrame.ymax) / 2;
+            horizLineXMin = (hasCollSign) ? collSignFrame.xmax : vertLineX;
+
+            vertLineYMax = (hasCollSign) ? collSignFrame.ymin-1 : horizLineY;
+            
+            if (child != tree->GetRoot() )
+                g2d->DrawLine(vertLineX, vertLineYMin, vertLineX, vertLineYMax, lineColor);
+    
             g2d->DrawLine(horizLineXMin, horizLineY, childFrame.xmin - 3, horizLineY, lineColor);
+
+            // These draw an outline on the bounding box of the node widget to check bounds
+            //g2d->DrawLine(childFrame.xmin, childFrame.ymin, childFrame.xmax, childFrame.ymin, lineColor);
+            //g2d->DrawLine(childFrame.xmin, childFrame.ymin, childFrame.xmin, childFrame.ymax, lineColor);
+            //g2d->DrawLine(childFrame.xmin, childFrame.ymax, childFrame.xmax, childFrame.ymax, lineColor);
+            //g2d->DrawLine(childFrame.xmax, childFrame.ymin, childFrame.xmax, childFrame.ymax, lineColor);
+           
             DecorateSubtree(child);
             
-            // determines vertLineYMin for next sibling:
-            if (hasCollSign)
-                vertLineYMin = collSignFrame.ymax+1;
-            else
-                vertLineYMin = horizLineY;
-
+            // determine vertLineYMin for next sibling
+            vertLineYMin = (hasCollSign) ? collSignFrame.ymax+1 : horizLineY;
 
             child = child->GetNextSibling();
         }
@@ -1510,7 +1510,8 @@ void pawsSimpleTreeNode::Set(int mode, bool checked, const csString & imageName,
         if (textBox == NULL)
             return;
         textBox->SetText(label);
-        textBox->SetSizeByText();
+        textBox->SetSizeByText(5,5);
+        textBox->VertAdjust(pawsTextBox::vertCENTRE);
         textBox->MoveTo(lastX+1,0);
         
         widget->AddChild(textBox);
