@@ -1,4 +1,12 @@
-﻿*** 2009-08-03 by Stefano Angeleri
+﻿*** 2009-08-06 by Keith Fulton
+- GUI updates, most notably the configkeys.xml one for Options.
+- pawsConfigKeys is now working although it still doesn't look
+  perfect.  Whoever wrote the pawsTree code should be taken out and
+  shot.
+- NB: Very possible that new GUI and new Tree bugs are introduced
+  by this set of "fixes".  Please test well.
+
+*** 2009-08-03 by Stefano Angeleri
 - Added support for dynamic slot amount per item type (so a forge can have 
   40 slots while a sack 20). Any value from 0 (not really useful as it
   shows actually zero slots) to 83 should work fine. 
