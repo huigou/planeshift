@@ -97,13 +97,12 @@ bool pawsConfigKeys::Initialize()
 
 bool pawsConfigKeys::CreateTree()
 {
-	/***********
     pawsTreeNode * root;
 
+    /****************
     CS_ASSERT(tree == NULL);
     tree = new pawsTree();
-    tree->MoveTo(screenFrame.xmin, screenFrame.ymin);
-    tree->SetSize(screenFrame.Width(), screenFrame.Height());
+    tree->SetRelativeFrame(0, 0,parent->DefaultFrame().Width(),parent->DefaultFrame().Height());
     tree->SetScrollBars(false, true);
     tree->SetTreeLayout(new pawsStdTreeLayout(tree, 5, 20));
     tree->SetTreeDecorator(new pawsStdTreeDecorator(tree, graphics2D, 0x0000ff, 0x00ffff, 13));
@@ -111,14 +110,18 @@ bool pawsConfigKeys::CreateTree()
 
     if ( !tree->LoadFromFile("configkeys.xml") )
         return false;
+    *********************/
+
+    if (!LoadFromFile("configkeys.xml") )
+		return false;
+
+    tree = dynamic_cast<pawsTree *>(children[0]);
+    tree->SetRelativeFrameSize(parent->ScreenFrame().Width(), parent->ScreenFrame().Height());
 
     root = tree->GetRoot();
     if (root != NULL)
         CreateTreeWidgets(root);
-    ****************/
 
-	if (!LoadFromFile("configkeys.xml") )
-		return false;
 
     return true;
 }
@@ -180,7 +183,7 @@ void pawsConfigKeys::CreateTreeWidgets(pawsTreeNode * subtreeRoot)
     if (rootAsSeq != NULL   &&   rootAsSeq != tree->GetRoot())
     {
         label = new pawsTextBox();
-        label->SetSize(GetActualWidth(COMMAND_WIDTH), 20);
+        label->SetRelativeFrameSize(GetActualWidth(COMMAND_WIDTH), 20);
         label->SetColour(0xffffff);
         label->Show();
         label->SetParent( this );
@@ -188,7 +191,7 @@ void pawsConfigKeys::CreateTreeWidgets(pawsTreeNode * subtreeRoot)
         rootAsSeq->AddSeqWidget(label, GetActualWidth(COMMAND_WIDTH) + GetActualWidth(COLUMN_SPACING));
 
         key = new pawsTextBox();        
-        key->SetSize(GetActualWidth(TRIGGER_WIDTH), 20);
+        key->SetRelativeFrameSize(GetActualWidth(TRIGGER_WIDTH), 20);
         key->SetColour(0xffffff);
         key->Show();
         key->SetParent( this );
@@ -198,7 +201,7 @@ void pawsConfigKeys::CreateTreeWidgets(pawsTreeNode * subtreeRoot)
         button = new pawsButton();
         button->SetParent( this );
         button->SetNotify(this);
-        button->SetSize(30, 20);
+        button->SetRelativeFrameSize(30, 20);
         button->SetUpImage("Blue Title");
         button->SetDownImage("Blue Title");
         button->SetText("Set");
@@ -214,6 +217,11 @@ void pawsConfigKeys::CreateTreeWidgets(pawsTreeNode * subtreeRoot)
         CreateTreeWidgets(child);
         child = child->GetNextSibling();
     }
+}
+
+void pawsConfigKeys::Draw()
+{
+    pawsWidget::Draw();
 }
 
 void pawsConfigKeys::UpdateNicks(pawsTreeNode * subtreeRoot)
