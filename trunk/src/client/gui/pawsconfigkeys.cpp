@@ -188,6 +188,7 @@ void pawsConfigKeys::CreateTreeWidgets(pawsTreeNode * subtreeRoot)
         label->Show();
         label->SetParent( this );
         label->SetRelativeFrame( 0, 0, GetActualWidth(COMMAND_WIDTH), 20 );
+        label->VertAdjust(pawsTextBox::vertCENTRE);
         rootAsSeq->AddSeqWidget(label, GetActualWidth(COMMAND_WIDTH) + GetActualWidth(COLUMN_SPACING));
 
         key = new pawsTextBox();        
@@ -196,6 +197,7 @@ void pawsConfigKeys::CreateTreeWidgets(pawsTreeNode * subtreeRoot)
         key->Show();
         key->SetParent( this );
         key->SetRelativeFrame( GetActualWidth(COMMAND_WIDTH)+5, 0, GetActualWidth(TRIGGER_WIDTH), 20 );
+        key->VertAdjust(pawsTextBox::vertCENTRE);
         rootAsSeq->AddSeqWidget(key, GetActualWidth(TRIGGER_WIDTH) + GetActualWidth(COLUMN_SPACING));
 
         button = new pawsButton();

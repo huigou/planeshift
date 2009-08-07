@@ -74,7 +74,7 @@ bool pawsPromptWindow::PostSetup()
 void pawsPromptWindow::SetLabel(const csString & label)
 {
     this->label->SetText(label);
-    this->label->SetSizeByText();
+    this->label->SetSizeByText(5,5);
     LayoutWindow();
 }
 

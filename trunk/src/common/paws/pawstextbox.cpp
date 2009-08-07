@@ -108,7 +108,7 @@ void pawsTextBox::CalcTextPos()
     int width, height;
 
 	if (!screenFrame.Height())
-		SetSizeByText();
+		SetSizeByText(0,0);
 
     if (horizAdjust==horizRIGHT  ||  horizAdjust==horizCENTRE  ||  vertAdjust==vertBOTTOM  ||  vertAdjust==vertCENTRE)
         CalcTextSize(width, height);
@@ -216,13 +216,12 @@ void pawsTextBox::CalcTextSize(int& width, int& height)
     else if (text.GetData() != NULL)
     {
         GetFont()->GetDimensions( (const char*)text, width, height );
-        width+=5;
-        height+=5;
+        //width+=5;
+        //height+=5;
     }        
     else
     {
-        width  = 0;
-        height = 0;
+        GetFont()->GetDimensions("Sample", width, height);  // Example text with full height caps and descenders
     }
 }
 
@@ -268,12 +267,13 @@ void pawsTextBox::SetText( const char* newText )
     CalcTextPos();
 }
 
-void pawsTextBox::SetSizeByText()
+void pawsTextBox::SetSizeByText(int padX, int padY)
 {
     int width, height;
-    
+ 
+    // These padding parameters used to be hardcoded to 5,5 in all cases inside CalcTextSize.
     CalcTextSize(width, height);
-    SetRelativeFrameSize(width, height);
+    SetRelativeFrameSize(width+padX, height+padY);
     textX = 0;
     textY = 0;
 }

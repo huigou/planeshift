@@ -119,7 +119,7 @@ bool pawsMenuItem::Setup(iDocumentNode * node)
     if (attr != NULL)
     {
         label->SetText(PawsManager::GetSingleton().Translate(attr->GetValue()));
-        label->SetSizeByText();
+        label->SetSizeByText(5,5);
     }
     
     attr = node->GetAttribute("colour");
@@ -264,7 +264,7 @@ void pawsMenuItem::SetImage(const csString & newImage)
 void pawsMenuItem::SetSizes(int labelWidth, int _spacing, int _border)
 {
     if (labelWidth == -1)
-        label->SetSizeByText();
+        label->SetSizeByText(5,5);
     else
         label->SetRelativeFrameSize(labelWidth, label->DefaultFrame().Height());
     spacing = _spacing;
@@ -473,7 +473,7 @@ bool pawsMenu::Setup(iDocumentNode * node)
     if (node->GetAttributeValue("label"))
     {
         label->SetText(PawsManager::GetSingleton().Translate(node->GetAttributeValue("label")));
-        label->SetSizeByText();
+        label->SetSizeByText(5,5);
         label->Show();
         AddChild(label);
     }
