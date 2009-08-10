@@ -114,7 +114,7 @@ public:
      * then call the appropiate function of eithre: HandleAuthent() or
      * HandleDisconnect() .
      */
-    virtual void HandleMessage(MsgEntry *me,Client *client);
+    virtual void HandleMessage(MsgEntry *me,Client *client) {}
 
     /** Sends a disconnect message to the given client. 
      * This will send a disconnect to the given client. Before doing that it

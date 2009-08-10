@@ -103,10 +103,6 @@ AuthenticationServer::~AuthenticationServer()
         delete msgstringsmessage;
 }
 
-void AuthenticationServer::HandleMessage(MsgEntry *me,Client *client)
-{
-    // required for backward compatibility with pre-functor days but not used here
-}
 
 void AuthenticationServer::HandleAuthCharacter( MsgEntry* me, Client *client )
 {

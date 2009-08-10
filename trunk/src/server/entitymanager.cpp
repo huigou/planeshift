@@ -589,11 +589,12 @@ bool EntityManager::CreatePlayer (Client* client)
   
     chardata->LoadActiveSpells();
 
+    // These are commented out now because they are handled by psConnectEvent published
     // Check for buddy list members
-    usermanager->NotifyBuddies(client, UserManager::LOGGED_ON);
+    // usermanager->NotifyBuddies(client, UserManager::LOGGED_ON);
     
     // Check for Guild members to notify
-    usermanager->NotifyGuildBuddies(client, UserManager::LOGGED_ON);
+    // usermanager->NotifyGuildBuddies(client, UserManager::LOGGED_ON);
 
     // Set default state
     actor->SetMode(PSCHARACTER_MODE_PEACE);
