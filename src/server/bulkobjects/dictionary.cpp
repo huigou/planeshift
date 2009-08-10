@@ -613,7 +613,7 @@ NpcResponse *NPCDialogDict::AddResponse(const char *response_text,
 
     // Need to chop the KA name up so that /narrate only has to match first name
     csString npc_first_name(npc_name);
-    int space = npc_first_name.FindFirst(' ');
+    size_t space = npc_first_name.FindFirst(' ');
     if (space != SIZET_NOT_FOUND)
     {
         npc_first_name = npc_first_name.Slice(0, space);

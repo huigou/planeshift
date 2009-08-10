@@ -241,7 +241,9 @@ void CombatManager::AttackSomeone(gemActor *attacker,gemObject *target,Stance st
     {
         SetCombat(attacker,stance);  // switch stance from Bloody to Defensive, etc.
         return;
-    } else {
+    }
+    else
+    {
         if (attacker->GetMode() == PSCHARACTER_MODE_SIT) //we are sitting force the char to stand
             attacker->Stand();
         attacker_character->ResetSwings(csGetTicks());
