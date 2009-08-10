@@ -151,12 +151,13 @@ UserManager::UserManager(ClientConnectionSet *cs)
 {
     clients       = cs;
 
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<UserManager>(this,&UserManager::HandleUserCommand),MSGTYPE_USERCMD,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<UserManager>(this,&UserManager::HandleMOTDRequest),MSGTYPE_MOTDREQUEST,REQUIRE_ANY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<UserManager>(this,&UserManager::HandleUserCommand),    MSGTYPE_USERCMD,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<UserManager>(this,&UserManager::HandleMOTDRequest),    MSGTYPE_MOTDREQUEST,REQUIRE_ANY_CLIENT);
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<UserManager>(this,&UserManager::HandleCharDetailsRequest),MSGTYPE_CHARDETAILSREQUEST,REQUIRE_READY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<UserManager>(this,&UserManager::HandleCharDescUpdate),MSGTYPE_CHARDESCUPDATE,REQUIRE_READY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<UserManager>(this,&UserManager::HandleTargetEvent),MSGTYPE_TARGET_EVENT,NO_VALIDATION);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<UserManager>(this,&UserManager::HandleCharDescUpdate), MSGTYPE_CHARDESCUPDATE,REQUIRE_READY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<UserManager>(this,&UserManager::HandleTargetEvent),    MSGTYPE_TARGET_EVENT,NO_VALIDATION);
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<UserManager>(this,&UserManager::HandleEntranceMessage),MSGTYPE_ENTRANCE,REQUIRE_READY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<UserManager>(this,&UserManager::HandleClientReady),    MSGTYPE_CONNECT_EVENT, REQUIRE_ANY_CLIENT);
 
     userCommandHash.Put("/admin",        &UserManager::HandleAdminCommand);
     userCommandHash.Put("/assist",       &UserManager::Assist);
@@ -1173,9 +1174,20 @@ void UserManager::BuddyList(Client *client,int clientnum,bool filter)
     mesg.SendMessage();
 }
 
+void UserManager::HandleClientReady( MsgEntry* me, Client *client )
+{
+    // This function catches the event published by AuthentServer when a client is ready for the first time
+    psConnectEvent evt(me);
+    if (client)
+    {
+        NotifyBuddies(client, LOGGED_ON);
+        NotifyGuildBuddies(client, LOGGED_ON);
+    }
+}
+
 void UserManager::NotifyBuddies(Client * client, bool logged_in)
 {
-    csString name (client->GetName());
+    csString name (client->GetActor()->GetFirstName());
 
     for (size_t i=0; i< client->GetCharacterData()->buddyOfList.GetSize(); i++)
     {
@@ -1192,7 +1204,7 @@ void UserManager::NotifyBuddies(Client * client, bool logged_in)
             }
             else
             {
-                psserver->SendSystemInfo(buddy->GetClientNum(),"%s has quit",name.GetData());
+                psserver->SendSystemInfo(buddy->GetClientNum(),"%s has left PlaneShift",name.GetData());
             }
         }
     }

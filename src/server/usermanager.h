@@ -452,6 +452,7 @@ protected:
     void HandleCharDetailsRequest(MsgEntry *me,Client *client);
     void HandleTargetEvent(MsgEntry *me,Client *client);
     void HandleEntranceMessage( MsgEntry* me, Client *client );
+    void HandleClientReady( MsgEntry* me, Client *client );
 
     void SwitchAttackTarget(Client *targeter, Client *targeted);
 
