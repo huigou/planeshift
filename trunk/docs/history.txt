@@ -1,4 +1,14 @@
-﻿*** 2009-08-06 by Keith Fulton
+﻿*** 2009-08-10 by Keith Fulton
+- Changed buddy notifications to actually use first name of character
+  instead of using Client Name, which was coincidentally the first
+  name of the character most of the time, but not required to be.
+  (Sometimes the email address.)
+- This fixes bug #2354, requested by Rizin.
+- Also changed buddy notifications to happen when the player enters
+  the world instead of when they first connect, which is confusing
+  when certain people take a long time to load initially.
+
+*** 2009-08-06 by Keith Fulton
 - GUI updates, most notably the configkeys.xml one for Options.
 - pawsConfigKeys is now working although it still doesn't look
   perfect.  Whoever wrote the pawsTree code should be taken out and
