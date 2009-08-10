@@ -32,33 +32,17 @@
 //=============================================================================
 // Project Includes
 //=============================================================================
-//#include "net/messages.h"           // Message definitions
-//#include "net/msghandler.h"         // Network access
-//
-//#include "util/psdatabase.h"        // Database
-
-//#include "bulkobjects/pscharacter.h" // Stances
 
 //=============================================================================
 // Local Includes
 //=============================================================================
-//#include "client.h"                 // Client, and ClientConnectionSet classes
 #include "msgmanager.h"             // Parent class
 
 ///////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
 ///////////////////////////////////////////////////////////////////////////////
-class EntityManager;
-class CombatManager;
-class psServer;
-class AdminManager;
 class ClientConnectionSet;
-class psDatabase;
-class EventManager;
-class CombatManager;
 class PendingDuelInvite;
-class AdviceManager;
-class StatSet;
 
 /** Used to manage incoming user commands from a client. Most commands are in
  * the format of /command param1 param2 ... paramN
@@ -474,12 +458,6 @@ protected:
     csHash<EMOTE *, csString> emoteHash;
 
     ClientConnectionSet     *clients;
-//    psDatabase              *database;
-//    csRandomGen             *randomgen;
-//    EventManager            *eventmanager;
-//    CombatManager         *combatmanager;
-//    psServer                *server;
-//    AdminManager            *adminmanager;
 
     /// pointer to member function typedef, improves readability
     typedef void (UserManager::*userCmdPointer)(psUserCmdMessage& msg, Client *client);
