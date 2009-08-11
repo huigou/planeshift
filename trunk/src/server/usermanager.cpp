@@ -513,15 +513,15 @@ void UserManager::SendCharacterDescription(Client * client, gemActor *actor, boo
         if (!charData->impervious_to_attack && actor->GetMode() != PSCHARACTER_MODE_DEAD && !isSelf)
         {
             // Begin by gathering stats. We will get overall strength for physical and magical and also a comparison.
-            int myPhysical = charData->GetCharLevel(true);
-            int myMagical = charData->GetCharLevel(false);
-            int theirPhysical = client->GetCharacterData()->GetCharLevel(true);
-            int theirMagical = client->GetCharacterData()->GetCharLevel(false);
+            int myPhysical = client->GetCharacterData()->GetCharLevel(true);
+            int myMagical = client->GetCharacterData()->GetCharLevel(false);
+            int theirPhysical = charData->GetCharLevel(true);
+            int theirMagical = charData->GetCharLevel(false);
 
             /* TODO (needs extra work to determine direction of inaccuracy)
             // Intellect is weighed against charisma.
             int myIntellect = playerAttr[PSITEMSTATS_STAT_INTELLIGENCE].Current();
-            int opponentCharisma = client->GetCharacterData()->Stats().Get(PSITEMSTATS_STAT_CHARISMA).Current();
+            int opponentCharisma = charData->Stats().Get(PSITEMSTATS_STAT_CHARISMA).Current();
 
             // The difference between the two gives a bonus (or malus) to examination accuracy.
             int overallModifier = opponentCharisma - myIntellect;
@@ -537,7 +537,7 @@ void UserManager::SendCharacterDescription(Client * client, gemActor *actor, boo
             {
                 int* difference = 0;
                 int* modifier = 0;
-                Skill& mySkill = charData->Skills().Get((PSSKILL)i);
+                Skill& mySkill = client->GetCharacterData()->Skills().Get((PSSKILL)i);
 
                 if(mySkill.info->category == PSSKILLS_CATEGORY_COMBAT)
                 {
@@ -555,7 +555,7 @@ void UserManager::SendCharacterDescription(Client * client, gemActor *actor, boo
                 }
 
                 int mod = 0;
-                Skill& theirSkill = client->GetCharacterData()->Skills().Get((PSSKILL)i);
+                Skill& theirSkill = charData->Skills().Get((PSSKILL)i);
 
                 if(mySkill.rank.Current() < theirSkill.rank.Current())
                 {
