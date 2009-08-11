@@ -73,7 +73,6 @@ STATIC.PLUGINLIST =
   rendloop_loader
   rendstep_std
   reporter
-  rm_rlcompat
   rm_shadow_pssm
   rm_unshadowed
   sequence
