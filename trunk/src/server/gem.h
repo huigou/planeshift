@@ -406,6 +406,15 @@ public:
     virtual bool SeesObject(gemObject * object, float range) { return false; }
 
     virtual gemObject* GetOwner() { return NULL; }
+
+    /** Returns if the object has killsteal protection.
+	 *  
+	 * Rules about killsteal protection should be implmented here. 
+	 * Generic objects don't have killsteal protection
+     *
+     * @return A boolean indicating if this gemObject must have killsteal protection.
+     */
+	virtual bool HasKillStealProtection() { return false; }
     //@}
 
 protected:
@@ -1140,6 +1149,16 @@ public:
     virtual gemObject* GetOwner() { return this->owner; }
 
     virtual void SetPosition(const csVector3& pos, float angle, iSector* sector);
+
+
+    /** Returns if the npc has killsteal protection.
+	 *  
+	 * Rules about killsteal protection should be implmented here. 
+	 * Generic NPCs have killsteal protection, pet don't have it.
+     *
+     * @return A boolean indicating if this gemNPC must have killsteal protection.
+     */
+	virtual bool HasKillStealProtection() { return !GetCharacterData()->IsPet(); }
 };
 
 //-----------------------------------------------------------------------------
