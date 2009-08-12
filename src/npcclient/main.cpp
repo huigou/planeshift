@@ -11,6 +11,7 @@
 #include "util/serverconsole.h"
 #include "util/pscssetup.h"
 #include "npcclient.h"
+#include "npcgui.h"
 //#include "net/netpacket.h"
 #include "util/log.h"
 
@@ -27,6 +28,7 @@ CS_IMPLEMENT_APPLICATION
 #define APPNAME "PlaneShift NPC Client"
 
 #include "util/strutil.h"
+#include <iutil/cmdline.h>
 
 
 int main(int argc, char **argv)
@@ -52,7 +54,18 @@ int main(int argc, char **argv)
         return 1;
     }
 
+    // Check whether to init debug gui.
+    NpcGui* gui = 0;
+    csRef<iCommandLineParser> clp = csQueryRegistry<iCommandLineParser>(object_reg);
+    if(clp->GetBoolOption("gui"))
+    {
+      gui = new NpcGui(object_reg, npcclient);
+      CS_ASSERT_MSG("GUI failed to initialise!", gui->Initialise());
+    }
+
     npcclient->MainLoop ();
+
+    delete gui;
     delete npcclient;
 
     // Save Configuration
