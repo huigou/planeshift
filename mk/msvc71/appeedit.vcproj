@@ -54,7 +54,7 @@
 				ProgramDatabaseFile="..\..\out\release71\build\appeedit\Win32\eedit.pdb"
 				SubSystem="2"
 				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib cal3d-vc71.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -130,7 +130,7 @@
 				ProgramDatabaseFile="..\..\out\release71\build\appeedit\Win32\eedit.pdb"
 				SubSystem="2"
 				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib cal3d-vc71.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -203,7 +203,7 @@
 				ProgramDatabaseFile="..\..\out\debug71\build\appeedit\Win32\eedit.pdb"
 				SubSystem="1"
 				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc71_d.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -276,7 +276,7 @@
 				ProgramDatabaseFile="..\..\out\debug71\build\appeedit\Win32\eedit.pdb"
 				SubSystem="1"
 				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc71_d.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -349,7 +349,7 @@
 				ProgramDatabaseFile="..\..\out\debug71\build\appeedit\Win32\eedit.pdb"
 				SubSystem="1"
 				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc71_d.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -422,7 +422,7 @@
 				ProgramDatabaseFile="..\..\out\debug71\build\appeedit\Win32\eedit.pdb"
 				SubSystem="1"
 				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc71_d.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -495,7 +495,7 @@
 				ProgramDatabaseFile="..\..\out\debug71\build\appeedit\Win32\eedit.pdb"
 				SubSystem="1"
 				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc71_d.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -568,7 +568,7 @@
 				ProgramDatabaseFile="..\..\out\debug71\build\appeedit\Win32\eedit.pdb"
 				SubSystem="1"
 				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc71_d.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -641,7 +641,7 @@
 				ProgramDatabaseFile="..\..\out\debug71\build\appeedit\Win32\eedit.pdb"
 				SubSystem="1"
 				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc71_d.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -714,7 +714,7 @@
 				ProgramDatabaseFile="..\..\out\debug71\build\appeedit\Win32\eedit.pdb"
 				SubSystem="1"
 				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc71_d.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -787,7 +787,7 @@
 				ProgramDatabaseFile="..\..\out\debug71\build\appeedit\Win32\eedit.pdb"
 				SubSystem="1"
 				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib cal3d-vc71.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -860,7 +860,7 @@
 				ProgramDatabaseFile="..\..\out\debug71\build\appeedit\Win32\eedit.pdb"
 				SubSystem="1"
 				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib cal3d-vc71.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release71\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release71\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
