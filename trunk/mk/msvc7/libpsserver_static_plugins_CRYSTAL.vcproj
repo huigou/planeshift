@@ -884,6 +884,13 @@
 				RelativePath="..\..\mk\msvc\apppsserver_static_staticuse_CRYSTAL.cpp">
 			</File>
 		</Filter>
+		<Filter
+			Name="Resource Files"
+			Filter="">
+			<File
+				RelativePath="..\..\mk\msvc\libpsserver_static_plugins_CRYSTAL.rc">
+			</File>
+		</Filter>
 	</Files>
 	<Globals>
 	</Globals>

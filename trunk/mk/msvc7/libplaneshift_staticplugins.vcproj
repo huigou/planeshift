@@ -28,7 +28,7 @@
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				PrecompiledHeaderFile="..\..\out\release7\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch"
 				AssemblerListingLocation="..\..\out\release7\build\libplaneshift_staticplugins\"
 				ObjectFile="..\..\out\release7\build\libplaneshift_staticplugins\"
@@ -75,7 +75,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -100,7 +100,7 @@
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				PrecompiledHeaderFile="..\..\out\release7\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch"
 				AssemblerListingLocation="..\..\out\release7\build\libplaneshift_staticplugins\"
 				ObjectFile="..\..\out\release7\build\libplaneshift_staticplugins\"
@@ -147,7 +147,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -172,7 +172,7 @@
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				PrecompiledHeaderFile="..\..\out\debug7\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch"
 				AssemblerListingLocation="..\..\out\debug7\build\libplaneshift_staticplugins\"
 				ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\"
@@ -217,7 +217,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -242,7 +242,7 @@
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				PrecompiledHeaderFile="..\..\out\debug7\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch"
 				AssemblerListingLocation="..\..\out\debug7\build\libplaneshift_staticplugins\"
 				ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\"
@@ -287,7 +287,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -312,7 +312,7 @@
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;CS_STATIC_LINKED;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				PrecompiledHeaderFile="..\..\out\debug7\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch"
 				AssemblerListingLocation="..\..\out\debug7\build\libplaneshift_staticplugins\"
 				ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\"
@@ -357,7 +357,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -382,7 +382,7 @@
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				PrecompiledHeaderFile="..\..\out\debug7\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch"
 				AssemblerListingLocation="..\..\out\debug7\build\libplaneshift_staticplugins\"
 				ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\"
@@ -427,7 +427,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -452,7 +452,7 @@
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;CS_STATIC_LINKED;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				PrecompiledHeaderFile="..\..\out\debug7\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch"
 				AssemblerListingLocation="..\..\out\debug7\build\libplaneshift_staticplugins\"
 				ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\"
@@ -497,7 +497,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -522,7 +522,7 @@
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				PrecompiledHeaderFile="..\..\out\debug7\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch"
 				AssemblerListingLocation="..\..\out\debug7\build\libplaneshift_staticplugins\"
 				ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\"
@@ -567,7 +567,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -592,7 +592,7 @@
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;CS_STATIC_LINKED;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				PrecompiledHeaderFile="..\..\out\debug7\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch"
 				AssemblerListingLocation="..\..\out\debug7\build\libplaneshift_staticplugins\"
 				ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\"
@@ -637,7 +637,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -662,7 +662,7 @@
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				PrecompiledHeaderFile="..\..\out\debug7\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch"
 				AssemblerListingLocation="..\..\out\debug7\build\libplaneshift_staticplugins\"
 				ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\"
@@ -707,7 +707,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -732,7 +732,7 @@
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;WIN32"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				PrecompiledHeaderFile="..\..\out\debug7\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch"
 				AssemblerListingLocation="..\..\out\debug7\build\libplaneshift_staticplugins\"
 				ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\"
@@ -777,7 +777,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -802,7 +802,7 @@
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				PrecompiledHeaderFile="..\..\out\debug7\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch"
 				AssemblerListingLocation="..\..\out\debug7\build\libplaneshift_staticplugins\"
 				ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\"
@@ -847,7 +847,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=7"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -861,519 +861,15 @@
 			Filter="">
 			<File
 				RelativePath="..\..\mk\msvc\libbgloader_staticreg.cpp">
-                                  				    					<FileConfiguration
-						Name="Release (with static libs)|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\release7\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
-					</FileConfiguration>					<FileConfiguration
-						Name="Release (with static libs)|x64">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\release7-x64\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
-					</FileConfiguration>				    					<FileConfiguration
-						Name="Release (with DLLs)|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\release7\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
-					</FileConfiguration>					<FileConfiguration
-						Name="Release (with DLLs)|x64">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\release7-x64\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
-					</FileConfiguration>
-                                  				    					<FileConfiguration
-						Name="Debug (with static libs)|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
-					</FileConfiguration>					<FileConfiguration
-						Name="Debug (with static libs)|x64">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
-					</FileConfiguration>				    					<FileConfiguration
-						Name="Debug (with DLLs)|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
-					</FileConfiguration>					<FileConfiguration
-						Name="Debug (with DLLs)|x64">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
-					</FileConfiguration>
-                                  				    					<FileConfiguration
-						Name="MemoryTracker (with static libs)|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
-					</FileConfiguration>					<FileConfiguration
-						Name="MemoryTracker (with static libs)|x64">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
-					</FileConfiguration>				    					<FileConfiguration
-						Name="MemoryTracker (with DLLs)|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
-					</FileConfiguration>					<FileConfiguration
-						Name="MemoryTracker (with DLLs)|x64">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
-					</FileConfiguration>
-                                  				    					<FileConfiguration
-						Name="RefTracker (with static libs)|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
-					</FileConfiguration>					<FileConfiguration
-						Name="RefTracker (with static libs)|x64">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
-					</FileConfiguration>				    					<FileConfiguration
-						Name="RefTracker (with DLLs)|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
-					</FileConfiguration>					<FileConfiguration
-						Name="RefTracker (with DLLs)|x64">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
-					</FileConfiguration>
-                                  				    					<FileConfiguration
-						Name="ThreadChecker (with static libs)|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
-					</FileConfiguration>					<FileConfiguration
-						Name="ThreadChecker (with static libs)|x64">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
-					</FileConfiguration>				    					<FileConfiguration
-						Name="ThreadChecker (with DLLs)|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
-					</FileConfiguration>					<FileConfiguration
-						Name="ThreadChecker (with DLLs)|x64">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
-					</FileConfiguration>
-                                  				    					<FileConfiguration
-						Name="DebugPSReleaseCSCEL (with static libs)|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
-					</FileConfiguration>					<FileConfiguration
-						Name="DebugPSReleaseCSCEL (with static libs)|x64">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
-					</FileConfiguration>				    					<FileConfiguration
-						Name="DebugPSReleaseCSCEL (with DLLs)|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
-					</FileConfiguration>					<FileConfiguration
-						Name="DebugPSReleaseCSCEL (with DLLs)|x64">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
-					</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\mk\msvc\libdbmysql_staticreg.cpp">
-                                  				    					<FileConfiguration
-						Name="Release (with static libs)|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\release7\build\libplaneshift_staticplugins\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
-					</FileConfiguration>					<FileConfiguration
-						Name="Release (with static libs)|x64">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\release7-x64\build\libplaneshift_staticplugins\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
-					</FileConfiguration>				    					<FileConfiguration
-						Name="Release (with DLLs)|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\release7\build\libplaneshift_staticplugins\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
-					</FileConfiguration>					<FileConfiguration
-						Name="Release (with DLLs)|x64">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\release7-x64\build\libplaneshift_staticplugins\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
-					</FileConfiguration>
-                                  				    					<FileConfiguration
-						Name="Debug (with static libs)|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
-					</FileConfiguration>					<FileConfiguration
-						Name="Debug (with static libs)|x64">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
-					</FileConfiguration>				    					<FileConfiguration
-						Name="Debug (with DLLs)|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
-					</FileConfiguration>					<FileConfiguration
-						Name="Debug (with DLLs)|x64">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
-					</FileConfiguration>
-                                  				    					<FileConfiguration
-						Name="MemoryTracker (with static libs)|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
-					</FileConfiguration>					<FileConfiguration
-						Name="MemoryTracker (with static libs)|x64">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
-					</FileConfiguration>				    					<FileConfiguration
-						Name="MemoryTracker (with DLLs)|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
-					</FileConfiguration>					<FileConfiguration
-						Name="MemoryTracker (with DLLs)|x64">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
-					</FileConfiguration>
-                                  				    					<FileConfiguration
-						Name="RefTracker (with static libs)|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
-					</FileConfiguration>					<FileConfiguration
-						Name="RefTracker (with static libs)|x64">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
-					</FileConfiguration>				    					<FileConfiguration
-						Name="RefTracker (with DLLs)|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
-					</FileConfiguration>					<FileConfiguration
-						Name="RefTracker (with DLLs)|x64">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
-					</FileConfiguration>
-                                  				    					<FileConfiguration
-						Name="ThreadChecker (with static libs)|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
-					</FileConfiguration>					<FileConfiguration
-						Name="ThreadChecker (with static libs)|x64">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
-					</FileConfiguration>				    					<FileConfiguration
-						Name="ThreadChecker (with DLLs)|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
-					</FileConfiguration>					<FileConfiguration
-						Name="ThreadChecker (with DLLs)|x64">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
-					</FileConfiguration>
-                                  				    					<FileConfiguration
-						Name="DebugPSReleaseCSCEL (with static libs)|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
-					</FileConfiguration>					<FileConfiguration
-						Name="DebugPSReleaseCSCEL (with static libs)|x64">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
-					</FileConfiguration>				    					<FileConfiguration
-						Name="DebugPSReleaseCSCEL (with DLLs)|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
-					</FileConfiguration>					<FileConfiguration
-						Name="DebugPSReleaseCSCEL (with DLLs)|x64">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\mk_msvc_libdbmysql_staticreg.cpp.obj"/>
-					</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\src\client\bgloader\loader.cpp">
-                                  				    					<FileConfiguration
-						Name="Release (with static libs)|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\release7\build\libplaneshift_staticplugins\src_client_bgloader_loader.cpp.obj"/>
-					</FileConfiguration>					<FileConfiguration
-						Name="Release (with static libs)|x64">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\release7-x64\build\libplaneshift_staticplugins\src_client_bgloader_loader.cpp.obj"/>
-					</FileConfiguration>				    					<FileConfiguration
-						Name="Release (with DLLs)|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\release7\build\libplaneshift_staticplugins\src_client_bgloader_loader.cpp.obj"/>
-					</FileConfiguration>					<FileConfiguration
-						Name="Release (with DLLs)|x64">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\release7-x64\build\libplaneshift_staticplugins\src_client_bgloader_loader.cpp.obj"/>
-					</FileConfiguration>
-                                  				    					<FileConfiguration
-						Name="Debug (with static libs)|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\src_client_bgloader_loader.cpp.obj"/>
-					</FileConfiguration>					<FileConfiguration
-						Name="Debug (with static libs)|x64">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\src_client_bgloader_loader.cpp.obj"/>
-					</FileConfiguration>				    					<FileConfiguration
-						Name="Debug (with DLLs)|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\src_client_bgloader_loader.cpp.obj"/>
-					</FileConfiguration>					<FileConfiguration
-						Name="Debug (with DLLs)|x64">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\src_client_bgloader_loader.cpp.obj"/>
-					</FileConfiguration>
-                                  				    					<FileConfiguration
-						Name="MemoryTracker (with static libs)|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\src_client_bgloader_loader.cpp.obj"/>
-					</FileConfiguration>					<FileConfiguration
-						Name="MemoryTracker (with static libs)|x64">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\src_client_bgloader_loader.cpp.obj"/>
-					</FileConfiguration>				    					<FileConfiguration
-						Name="MemoryTracker (with DLLs)|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\src_client_bgloader_loader.cpp.obj"/>
-					</FileConfiguration>					<FileConfiguration
-						Name="MemoryTracker (with DLLs)|x64">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\src_client_bgloader_loader.cpp.obj"/>
-					</FileConfiguration>
-                                  				    					<FileConfiguration
-						Name="RefTracker (with static libs)|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\src_client_bgloader_loader.cpp.obj"/>
-					</FileConfiguration>					<FileConfiguration
-						Name="RefTracker (with static libs)|x64">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\src_client_bgloader_loader.cpp.obj"/>
-					</FileConfiguration>				    					<FileConfiguration
-						Name="RefTracker (with DLLs)|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\src_client_bgloader_loader.cpp.obj"/>
-					</FileConfiguration>					<FileConfiguration
-						Name="RefTracker (with DLLs)|x64">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\src_client_bgloader_loader.cpp.obj"/>
-					</FileConfiguration>
-                                  				    					<FileConfiguration
-						Name="ThreadChecker (with static libs)|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\src_client_bgloader_loader.cpp.obj"/>
-					</FileConfiguration>					<FileConfiguration
-						Name="ThreadChecker (with static libs)|x64">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\src_client_bgloader_loader.cpp.obj"/>
-					</FileConfiguration>				    					<FileConfiguration
-						Name="ThreadChecker (with DLLs)|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\src_client_bgloader_loader.cpp.obj"/>
-					</FileConfiguration>					<FileConfiguration
-						Name="ThreadChecker (with DLLs)|x64">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\src_client_bgloader_loader.cpp.obj"/>
-					</FileConfiguration>
-                                  				    					<FileConfiguration
-						Name="DebugPSReleaseCSCEL (with static libs)|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\src_client_bgloader_loader.cpp.obj"/>
-					</FileConfiguration>					<FileConfiguration
-						Name="DebugPSReleaseCSCEL (with static libs)|x64">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\src_client_bgloader_loader.cpp.obj"/>
-					</FileConfiguration>				    					<FileConfiguration
-						Name="DebugPSReleaseCSCEL (with DLLs)|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\src_client_bgloader_loader.cpp.obj"/>
-					</FileConfiguration>					<FileConfiguration
-						Name="DebugPSReleaseCSCEL (with DLLs)|x64">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\src_client_bgloader_loader.cpp.obj"/>
-					</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\src\server\database\mysql\dal.cpp">
-                                  				    					<FileConfiguration
-						Name="Release (with static libs)|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\release7\build\libplaneshift_staticplugins\src_server_database_mysql_dal.cpp.obj"/>
-					</FileConfiguration>					<FileConfiguration
-						Name="Release (with static libs)|x64">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\release7-x64\build\libplaneshift_staticplugins\src_server_database_mysql_dal.cpp.obj"/>
-					</FileConfiguration>				    					<FileConfiguration
-						Name="Release (with DLLs)|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\release7\build\libplaneshift_staticplugins\src_server_database_mysql_dal.cpp.obj"/>
-					</FileConfiguration>					<FileConfiguration
-						Name="Release (with DLLs)|x64">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\release7-x64\build\libplaneshift_staticplugins\src_server_database_mysql_dal.cpp.obj"/>
-					</FileConfiguration>
-                                  				    					<FileConfiguration
-						Name="Debug (with static libs)|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\src_server_database_mysql_dal.cpp.obj"/>
-					</FileConfiguration>					<FileConfiguration
-						Name="Debug (with static libs)|x64">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\src_server_database_mysql_dal.cpp.obj"/>
-					</FileConfiguration>				    					<FileConfiguration
-						Name="Debug (with DLLs)|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\src_server_database_mysql_dal.cpp.obj"/>
-					</FileConfiguration>					<FileConfiguration
-						Name="Debug (with DLLs)|x64">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\src_server_database_mysql_dal.cpp.obj"/>
-					</FileConfiguration>
-                                  				    					<FileConfiguration
-						Name="MemoryTracker (with static libs)|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\src_server_database_mysql_dal.cpp.obj"/>
-					</FileConfiguration>					<FileConfiguration
-						Name="MemoryTracker (with static libs)|x64">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\src_server_database_mysql_dal.cpp.obj"/>
-					</FileConfiguration>				    					<FileConfiguration
-						Name="MemoryTracker (with DLLs)|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\src_server_database_mysql_dal.cpp.obj"/>
-					</FileConfiguration>					<FileConfiguration
-						Name="MemoryTracker (with DLLs)|x64">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\src_server_database_mysql_dal.cpp.obj"/>
-					</FileConfiguration>
-                                  				    					<FileConfiguration
-						Name="RefTracker (with static libs)|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\src_server_database_mysql_dal.cpp.obj"/>
-					</FileConfiguration>					<FileConfiguration
-						Name="RefTracker (with static libs)|x64">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\src_server_database_mysql_dal.cpp.obj"/>
-					</FileConfiguration>				    					<FileConfiguration
-						Name="RefTracker (with DLLs)|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\src_server_database_mysql_dal.cpp.obj"/>
-					</FileConfiguration>					<FileConfiguration
-						Name="RefTracker (with DLLs)|x64">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\src_server_database_mysql_dal.cpp.obj"/>
-					</FileConfiguration>
-                                  				    					<FileConfiguration
-						Name="ThreadChecker (with static libs)|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\src_server_database_mysql_dal.cpp.obj"/>
-					</FileConfiguration>					<FileConfiguration
-						Name="ThreadChecker (with static libs)|x64">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\src_server_database_mysql_dal.cpp.obj"/>
-					</FileConfiguration>				    					<FileConfiguration
-						Name="ThreadChecker (with DLLs)|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\src_server_database_mysql_dal.cpp.obj"/>
-					</FileConfiguration>					<FileConfiguration
-						Name="ThreadChecker (with DLLs)|x64">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\src_server_database_mysql_dal.cpp.obj"/>
-					</FileConfiguration>
-                                  				    					<FileConfiguration
-						Name="DebugPSReleaseCSCEL (with static libs)|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\src_server_database_mysql_dal.cpp.obj"/>
-					</FileConfiguration>					<FileConfiguration
-						Name="DebugPSReleaseCSCEL (with static libs)|x64">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\src_server_database_mysql_dal.cpp.obj"/>
-					</FileConfiguration>				    					<FileConfiguration
-						Name="DebugPSReleaseCSCEL (with DLLs)|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7\build\libplaneshift_staticplugins\src_server_database_mysql_dal.cpp.obj"/>
-					</FileConfiguration>					<FileConfiguration
-						Name="DebugPSReleaseCSCEL (with DLLs)|x64">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="..\..\out\debug7-x64\build\libplaneshift_staticplugins\src_server_database_mysql_dal.cpp.obj"/>
-					</FileConfiguration>
 			</File>
 		</Filter>
 		<Filter

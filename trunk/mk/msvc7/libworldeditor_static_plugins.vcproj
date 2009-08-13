@@ -884,6 +884,13 @@
 				RelativePath="..\..\mk\msvc\appworldeditor_static_staticuse.cpp">
 			</File>
 		</Filter>
+		<Filter
+			Name="Resource Files"
+			Filter="">
+			<File
+				RelativePath="..\..\mk\msvc\libworldeditor_static_plugins.rc">
+			</File>
+		</Filter>
 	</Files>
 	<Globals>
 	</Globals>
