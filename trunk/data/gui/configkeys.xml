@@ -16,9 +16,9 @@
                     <text string="Movements"/>
                 </widget>
             </nodewidget>
-            <widget factory="pawsSeqTreeNode" id="1" name="Forward"/>
-            <widget factory="pawsSeqTreeNode" id="2" name="Backward"/>
-            <widget factory="pawsSeqTreeNode" id="3" name="Rotate left"/>
+            <widget factory="pawsSeqTreeNode" name="Forward"/>
+            <widget factory="pawsSeqTreeNode" name="Backward"/>
+            <widget factory="pawsSeqTreeNode" name="Rotate left"/>
             <widget factory="pawsSeqTreeNode" name="Rotate right"/>
             <widget factory="pawsSeqTreeNode" name="Strafe left"/>
             <widget factory="pawsSeqTreeNode" name="Strafe right"/>
