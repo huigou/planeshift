@@ -996,6 +996,135 @@
 			<File
 				RelativePath="..\..\src\client\zonehandler.cpp">
 			</File>
+			<File
+				RelativePath="..\..\src\client\win32\mdump.cpp">
+                                  				    					<FileConfiguration
+						Name="Release (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release7\build\apppsclient_static\src_client_win32_mdump.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release7-x64\build\apppsclient_static\src_client_win32_mdump.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Release (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release7\build\apppsclient_static\src_client_win32_mdump.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release7-x64\build\apppsclient_static\src_client_win32_mdump.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="Debug (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug7\build\apppsclient_static\src_client_win32_mdump.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug7-x64\build\apppsclient_static\src_client_win32_mdump.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Debug (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug7\build\apppsclient_static\src_client_win32_mdump.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug7-x64\build\apppsclient_static\src_client_win32_mdump.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="MemoryTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug7\build\apppsclient_static\src_client_win32_mdump.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug7-x64\build\apppsclient_static\src_client_win32_mdump.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug7\build\apppsclient_static\src_client_win32_mdump.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug7-x64\build\apppsclient_static\src_client_win32_mdump.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="RefTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug7\build\apppsclient_static\src_client_win32_mdump.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug7-x64\build\apppsclient_static\src_client_win32_mdump.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="RefTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug7\build\apppsclient_static\src_client_win32_mdump.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug7-x64\build\apppsclient_static\src_client_win32_mdump.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="ThreadChecker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug7\build\apppsclient_static\src_client_win32_mdump.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug7-x64\build\apppsclient_static\src_client_win32_mdump.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug7\build\apppsclient_static\src_client_win32_mdump.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug7-x64\build\apppsclient_static\src_client_win32_mdump.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug7\build\apppsclient_static\src_client_win32_mdump.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug7-x64\build\apppsclient_static\src_client_win32_mdump.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug7\build\apppsclient_static\src_client_win32_mdump.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug7-x64\build\apppsclient_static\src_client_win32_mdump.cpp.obj"/>
+					</FileConfiguration>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -1095,6 +1224,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\client\zonehandler.h">
+			</File>
+			<File
+				RelativePath="..\..\src\client\win32\mdump.h">
 			</File>
 		</Filter>
 		<Filter
