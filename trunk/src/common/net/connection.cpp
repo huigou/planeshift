@@ -31,19 +31,19 @@
 #include "net/messages.h"
 #include "net/netpacket.h"
 
-// check every 3 seconds if we're linkdead
+/// check every 3 seconds if we're linkdead
 #define LINKCHECK 3000
-// check resend every 200ms
+/// check resend every 200ms
 #define RESENDCHECK 200
-// Redisplay network server stats every 60 seconds
+/// Redisplay network server stats every 60 seconds
 #define STATDISPLAYCHECK 60000
-// timeout when the server is considered linkdead, now longer in DEBUG to allow more steptracing of one side or other
+/// timeout when the server is considered linkdead, now longer in DEBUG to allow more steptracing of one side or other
 #ifndef DEBUG
 #define LINKDEAD_TIMEOUT    5000
 #else
 #define LINKDEAD_TIMEOUT    60000
 #endif
-#define LINKDEAD_ATTEMPTS   6    // 6 attempts with 5sec timeout gives 30secs
+#define LINKDEAD_ATTEMPTS   6    ///< 6 attempts with 5sec timeout gives 30secs
 
 psNetConnection::psNetConnection(int queueLength)
     : NetBase (queueLength)
