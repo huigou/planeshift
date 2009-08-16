@@ -61,7 +61,7 @@ class QuestManager : public MessageManager
 protected:
     csArray<QuestRewardOffer*>  offers;
 
-    csString lastError;     // Last error message to send to client on loadquest.
+    csString lastError;     ///< Last error message to send to client on loadquest.
             
     /**
      * Load all scripts from db
