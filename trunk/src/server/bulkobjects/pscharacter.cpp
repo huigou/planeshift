@@ -170,6 +170,71 @@ psCharacter::psCharacter() : inventory(this),
 
     banker = false;
     isStatue = false;
+    
+    // Load the math scripts
+    if (!staminaCalc)
+    {
+        staminaCalc = psserver->GetMathScriptEngine()->FindScript("StaminaBase");
+        if (!staminaCalc)
+        {
+            Error1("Can't find math script StaminaBase! Character loading failed.");
+        }
+    }
+
+    if (!staminaRatioWalk)
+    {
+        staminaRatioWalk = psserver->GetMathScriptEngine()->FindScript("StaminaRatioWalk");
+        if (!staminaRatioWalk)
+        {
+            Error1("Can't find math script StaminaRatioWalk! Character loading failed.");
+        }
+    }
+    
+    if (!staminaRatioStill)
+    {
+        staminaRatioStill = psserver->GetMathScriptEngine()->FindScript("StaminaRatioStill");
+        if (!staminaRatioStill)
+        {
+            Error1("Can't find math script StaminaRatioStill! Character loading failed.");
+        }
+    }
+    
+    if (!staminaRatioSit)
+    {
+        staminaRatioSit = psserver->GetMathScriptEngine()->FindScript("StaminaRatioSit");
+        if (!staminaRatioSit)
+        {
+            Error1("Can't find math script StaminaRatioSit! Character loading failed.");
+        }
+    }
+    
+    if (!staminaRatioWork)
+    {
+        staminaRatioWork = psserver->GetMathScriptEngine()->FindScript("StaminaRatioWork");
+        if (!staminaRatioWork)
+        {
+            Error1("Can't find math script StaminaRatioWork! Character loading failed.");
+        }
+    }
+
+    if (!expSkillCalc)
+    {
+        expSkillCalc = psserver->GetMathScriptEngine()->FindScript("Calculate Skill Experience");
+        if (!expSkillCalc)
+        {
+            Error1("Can't find 'Calculate Skill Experience' math script. Character loading failed.");
+        }
+    }
+
+    if (!maxRealmScript)
+    {
+        maxRealmScript = psserver->GetMathScriptEngine()->FindScript("MaxRealm");
+        if (!maxRealmScript)
+        {
+            Error1("Can't find math script MaxRealm! Character loading failed.");
+        }
+    }
+
 }
 
 psCharacter::~psCharacter()
@@ -200,76 +265,6 @@ void psCharacter::SetActor( gemActor* newActor )
 
 bool psCharacter::Load(iResultRow& row)
 {
-    // Load the math scripts
-    if (!staminaCalc)
-    {
-        staminaCalc = psserver->GetMathScriptEngine()->FindScript("StaminaBase");
-        if (!staminaCalc)
-        {
-            Error1("Can't find math script StaminaBase! Character loading failed.");
-            return false;
-        }
-    }
-
-    if (!staminaRatioWalk)
-    {
-        staminaRatioWalk = psserver->GetMathScriptEngine()->FindScript("StaminaRatioWalk");
-        if (!staminaRatioWalk)
-        {
-            Error1("Can't find math script StaminaRatioWalk! Character loading failed.");
-            return false;
-        }
-    }
-    
-    if (!staminaRatioStill)
-    {
-        staminaRatioStill = psserver->GetMathScriptEngine()->FindScript("StaminaRatioStill");
-        if (!staminaRatioStill)
-        {
-            Error1("Can't find math script StaminaRatioStill! Character loading failed.");
-            return false;
-        }
-    }
-    
-    if (!staminaRatioSit)
-    {
-        staminaRatioSit = psserver->GetMathScriptEngine()->FindScript("StaminaRatioSit");
-        if (!staminaRatioSit)
-        {
-            Error1("Can't find math script StaminaRatioSit! Character loading failed.");
-            return false;
-        }
-    }
-    
-    if (!staminaRatioWork)
-    {
-        staminaRatioWork = psserver->GetMathScriptEngine()->FindScript("StaminaRatioWork");
-        if (!staminaRatioWork)
-        {
-            Error1("Can't find math script StaminaRatioWork! Character loading failed.");
-            return false;
-        }
-    }
-
-    if (!expSkillCalc)
-    {
-        expSkillCalc = psserver->GetMathScriptEngine()->FindScript("Calculate Skill Experience");
-        if (!expSkillCalc)
-        {
-            Error1("Can't find 'Calculate Skill Experience' math script. Character loading failed.");
-            return false;
-        }
-    }
-
-    if (!maxRealmScript)
-    {
-        maxRealmScript = psserver->GetMathScriptEngine()->FindScript("MaxRealm");
-        if (!maxRealmScript)
-        {
-            Error1("Can't find math script MaxRealm! Character loading failed.");
-            return false;
-        }
-    }
 
     // TODO:  Link in account ID?
     csTicks start = csGetTicks();
