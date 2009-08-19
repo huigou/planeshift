@@ -109,23 +109,16 @@ void SpellManager::HandleAssembler(MsgEntry* me, Client* client)
     mesg.FromClient(me);
     
     csArray<psItemStats*> assembler;
-    assembler.SetSize(GLYPH_ASSEMBLER_SLOTS);   // set to maximum length so the glyphs will fit in
-
-    size_t numGlyphs = 0;
-    for (size_t slotNum=0; slotNum < GLYPH_ASSEMBLER_SLOTS; slotNum++)
+    for (size_t i = 0; i < GLYPH_ASSEMBLER_SLOTS; i++)
     {        
-        int statID = mesg.glyphs[slotNum];
-        psItemStats *stats = CacheManager::GetSingleton().GetBasicItemStatsByID(statID);
-        if (stats != NULL)
+        if (mesg.glyphs[i] != 0)
         {
-            numGlyphs++;
-            assembler[numGlyphs-1] = stats;
+            psItemStats* stats = CacheManager::GetSingleton().GetBasicItemStatsByID(mesg.glyphs[i]);
+            if (stats)
+                assembler.Push(stats);
         }
     }
-    assembler.SetSize(numGlyphs);   // set assembler to actual length
     
-    //DumpAssembler(client, assembler);
-
     if (!client->GetCharacterData()->Inventory().HasPurifiedGlyphs(assembler))
     {
         Error2("Client %i tried to research spell with glyphs he actually doesn't have", client->GetClientNum());
