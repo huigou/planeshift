@@ -1,3 +1,22 @@
+/*
+* pslaunch.h - Author: Mike Gist
+*
+* Copyright (C) 2009 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
+*
+*
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License
+* as published by the Free Software Foundation (version 2 of the License)
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+*
+*/
+
 #include <psconfig.h>
 
 #include <cstool/initapp.h>
@@ -64,8 +83,21 @@ bool NpcGui::Initialise()
   mainWidget = new pawsMainWidget();
   paws->SetMainWidget(mainWidget);
 
+  // Register factory
+  guiWidget = new pawsNPCClientWindowFactory();
+
   // Load and assign a default button click sound for pawsbutton
   paws->LoadSound("/planeshift/art/sounds/gui/next.wav","sound.standardButtonClick");
+
+  // Load widgets
+  if (!paws->LoadWidget("data/gui/npcclient.xml"))
+  {
+    printf("Warning: Loading 'data/gui/npcclient.xml' failed!");
+    return false;
+  }
+
+  pawsWidget* npcclientWidget = paws->FindWidget("NPCClient");
+  npcclientWidget->SetBackgroundAlpha(0);
 
   // Set mouse image.
   paws->GetMouse()->ChangeImage("Standard Mouse Pointer");
@@ -143,4 +175,8 @@ void NpcGui::FrameLimit()
     csSleep(sleeptime - elapsedTime);
 
   elapsed = csGetTicks();
+}
+
+pawsNPCClientWindow::pawsNPCClientWindow()
+{
 }
