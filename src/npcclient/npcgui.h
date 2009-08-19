@@ -1,5 +1,5 @@
 /*
-* pslaunch.h - Author: Mike Gist
+* npcgui.h - Author: Mike Gist
 *
 * Copyright (C) 2009 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
 *
