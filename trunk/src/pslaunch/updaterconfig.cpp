@@ -123,6 +123,9 @@ Config::Config()
 
 bool Config::Initialize(csRef<iDocumentNode> node)
 {
+    // Get activity state.
+    active = node->GetAttributeValueAsBool("active", true);
+
     // Get Updater info.
     csRef<iDocumentNode> updaterNode = node->GetNode("updater");
     if(updaterNode)

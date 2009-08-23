@@ -131,6 +131,8 @@ public:
     /* Get latest updater version md5sum */
     const char* GetUpdaterVersionLatestMD5() const { return updaterVersionLatestMD5; }
 
+    /* Get whether the updater mirror is active */
+    bool IsActive() const { return active; }
 
 private:
     /* Latest updater version */
@@ -144,6 +146,9 @@ private:
 
     /* List of client versions */
     csRefArray<ClientVersion> clientVersions;
+
+    /* Whether the updater mirror is active */
+    bool active;
 };
 
 class UpdaterConfig : public Singleton<UpdaterConfig>
