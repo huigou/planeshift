@@ -1,4 +1,8 @@
-﻿*** 2009-08-10 by Keith Fulton
+﻿*** 2009-08-23 by Stefano Angeleri
+- Added public actions/narrate/actionmy support for npcs
+- Fixed some bugs with the item prereqop
+
+*** 2009-08-10 by Keith Fulton
 - Changed buddy notifications to actually use first name of character
   instead of using Client Name, which was coincidentally the first
   name of the character most of the time, but not required to be.
@@ -24,6 +28,7 @@
 - Added dynamic image loading when missing from the texturemanager cache.
 - Style Fixes.
 - Fixed a crash during money pickup although peeg should review this.
+- Updated fparser to 3.1.5
 
 *** 2009-08-02 by Stefano Angeleri
 - Cleaned up and improved faction events allowing also to not have a strict order on the script
