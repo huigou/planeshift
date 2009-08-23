@@ -1,6 +1,8 @@
 ﻿*** 2009-08-23 by Stefano Angeleri
 - Added public actions/narrate/actionmy support for npcs
 - Fixed some bugs with the item prereqop
+- Fixed a bug which made the search for name in the area commands only 
+  check the first letter in place of the entire string entered
 
 *** 2009-08-10 by Keith Fulton
 - Changed buddy notifications to actually use first name of character
