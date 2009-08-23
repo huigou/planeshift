@@ -625,7 +625,7 @@ class psQuestPrereqOpItem : public psQuestPrereqOp
      *                         else only inventory.
      * @param name The name of the base item we are searching for.
      */
-    psQuestPrereqOpItem(const char *itemName, const char *category, bool includeInventory):itemName(itemName),categoryName(categoryName),includeInventory(includeInventory){};
+    psQuestPrereqOpItem(const char *itemName, const char *categoryName, bool includeInventory):itemName(itemName),categoryName(categoryName),includeInventory(includeInventory){};
 
     virtual ~psQuestPrereqOpItem() {}
 
