@@ -356,8 +356,7 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, csRef<psQuestP
             return false;
         }
 
-        bool includeInventory = topNode->GetAttributeValueAsBool("position", false);
-
+        bool includeInventory = topNode->GetAttributeValueAsBool("inventory", false);
         prerequisite.AttachNew(new psQuestPrereqOpItem(name, category, includeInventory));
     }
     else if ( strcmp( topNode->GetValue(), "activemagic" ) == 0 )
