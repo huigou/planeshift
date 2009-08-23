@@ -967,7 +967,7 @@ public:
     virtual void SendGroupStats();
 
     void SetAction(const char *anim,csTicks& timeDelay);
-    void ActionCommand(bool actionMy, bool actionNarrate, const char *actText,int destClientID,csTicks& timeDelay);
+    void ActionCommand(bool actionMy, bool actionNarrate, const char *actText,int destClientID, bool ActionPublic, csTicks& timeDelay);
 
     virtual void Broadcast(int clientnum, bool control);
     /**
