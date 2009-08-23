@@ -915,7 +915,7 @@ int com_newacct(char *userpass)
     }
     *slash = 0;  // term the user str
     password=slash+1;
-    slash = strchr(password,'/'); //used for the level  
+    slash = strchr(password,'/'); //used for the level
     if(slash != NULL)
     {
         *slash = 0; // term the pass str
@@ -2110,8 +2110,8 @@ int com_killnpc(char* input)
     gemActor* object = (gemActor*)GEMSupervisor::GetSingleton().FindObject(eid);
     if (!object)
     {
-    	CPrintf(CON_CMDOUTPUT, "NPC with %s not found!\n", ShowID(eid));
-    	return 0;
+        CPrintf(CON_CMDOUTPUT, "NPC with %s not found!\n", ShowID(eid));
+        return 0;
     }
     object->Kill(NULL);
     return 0;
