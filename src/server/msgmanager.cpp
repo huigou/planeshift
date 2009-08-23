@@ -136,7 +136,7 @@ csArray<csString> MessageManager::DecodeCommandArea(Client *client, csString tar
     }
 
     csString itemName = splitTarget[1];
-    csString* nameFilter = splitSize > 3 ? &splitTarget[3] : 0;
+    csString nameFilter = splitSize > 3 ? splitTarget[3] : "all";
 
     const int range = atoi(splitTarget[2].GetData());
     if (range <= 0)
@@ -147,7 +147,7 @@ csArray<csString> MessageManager::DecodeCommandArea(Client *client, csString tar
     }
 
     bool allNames = true;
-    if (nameFilter && (*nameFilter!="all"))
+    if (nameFilter.Length() && nameFilter != "all")
         allNames = false;
 
     int mode;
@@ -200,7 +200,7 @@ csArray<csString> MessageManager::DecodeCommandArea(Client *client, csString tar
         if (!allNames)
         {
             csString nearobjName = nearobj->GetName();
-            if (!nearobjName.StartsWith(*nameFilter->GetData(), true))
+            if (!nearobjName.StartsWith(nameFilter.GetData(), true))
                 continue;
         }
 
