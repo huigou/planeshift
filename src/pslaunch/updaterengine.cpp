@@ -313,6 +313,12 @@ bool UpdaterEngine::CheckUpdater()
 
 bool UpdaterEngine::CheckGeneral()
 {
+    // Check if general updating is enabled.
+    if(!config->GetCurrentConfig()->IsActive())
+    {
+      return false;
+    }
+
     /*
     * Compare length of both old and new client version lists.
     * If they're the same, then compare the last lines to be extra sure.
