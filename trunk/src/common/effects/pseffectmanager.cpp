@@ -127,6 +127,14 @@ psEffectManager::~psEffectManager()
     }
     actualEffects.DeleteAll();
     effectsCollection->ReleaseAllObjects();
+
+    csArray<psLight *> lights = lightList.GetAll();
+    while (lights.GetSize())
+    {
+      delete lights.Pop();
+    }
+
+    lightList.DeleteAll();
 #endif
     effectLoader->SetManager(NULL);
     psCSSetup::object_reg->Unregister((psEffectLoader *)effectLoader, "PSEffects");
@@ -363,7 +371,7 @@ void psEffectManager::DetachLight(unsigned int lightID)
     lights = lightList.GetAll(lightID);
     while (lights.GetSize())
     {
-        delete lights.Pop();
+      delete lights.Pop();
     }
 
     lightList.DeleteAll(lightID);
