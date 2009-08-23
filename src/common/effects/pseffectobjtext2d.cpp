@@ -406,7 +406,7 @@ bool psEffectObjText2D::Update(csTicks elapsed)
         p += LERP_VEC_KEY(KA_POS);
 
 		// calculate alpha
-		lerpAlpha = (int)LERP_KEY(KA_ALPHA) * 255;
+		lerpAlpha = (int) (LERP_KEY(KA_ALPHA) * 255);
     }
 
     // transform 3D to camera
