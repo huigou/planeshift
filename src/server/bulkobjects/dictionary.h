@@ -285,6 +285,7 @@ public:
     virtual csString GetResponseScript() = 0;
     virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber) = 0;
     const char *GetName() { return name; }
+    virtual bool IsPublic() { return false; }
 };
 
 /**
@@ -416,6 +417,7 @@ public:
     virtual bool Load(iDocumentNode *node);
     virtual csString GetResponseScript();    
     virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
+    virtual bool IsPublic() { return saypublic; }
 };
 
 /**
@@ -426,14 +428,17 @@ class ActionResponseOp : public ResponseOperation
 {
 protected:
     bool actionMy,actionNarrate;
+    /// Indicates whether the response action should be shown publicly or in private
+    bool actionpublic; 
     csString anim;
     csString *actWhat;
 public:
-    ActionResponseOp(bool my,bool narrate) { actionMy = my; actionNarrate=narrate; name = "action"; }
+    ActionResponseOp(bool my,bool narrate, bool is_public) { actionMy = my; actionNarrate=narrate; name = "action"; actionpublic = is_public; }
     virtual ~ActionResponseOp() { if (actWhat) delete actWhat; }
     virtual bool Load(iDocumentNode *node);
     virtual csString GetResponseScript();    
     virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
+    virtual bool IsPublic() { return actionpublic; }
 };
 
 /**

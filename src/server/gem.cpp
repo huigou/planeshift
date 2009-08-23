@@ -3669,7 +3669,7 @@ void gemActor::SetAction(const char *anim,csTicks& timeDelay)
     action.Multicast(GetMulticastClients(),-1,0);
 }
 
-void gemActor::ActionCommand(bool actionMy, bool actionNarrate, const char *actText,int destClientID, csTicks& timeDelay)
+void gemActor::ActionCommand(bool actionMy, bool actionNarrate, const char *actText,int destClientID, bool ActionPublic, csTicks& timeDelay)
 {
     int chtype = CHAT_NPC_ME;
 
@@ -3677,15 +3677,26 @@ void gemActor::ActionCommand(bool actionMy, bool actionNarrate, const char *actT
         chtype = CHAT_NPC_MY;
     else if (actionNarrate)
         chtype = CHAT_NPC_NARRATE;
+        
+    if (destClientID && !ActionPublic)
+    {
+        Notify2(LOG_CHAT,"Private NPC action: %s\n", actText);
 
-    // first response gets 1 second delay to simulate NPC thinking
-    // subsequent ones add to the current time delay, and send delayed
-    if (timeDelay==0)
-        timeDelay = (csTicks)(1000);
-    psChatMessage msg(destClientID,eid,GetName(),0,actText,chtype,false);
-    psserver->GetEventManager()->SendMessageDelayed(msg.msg,timeDelay);
+        // first response gets 1 second delay to simulate NPC thinking
+        // subsequent ones add to the current time delay, and send delayed
+        if (timeDelay==0)
+            timeDelay = (csTicks)(1000);
+        psChatMessage msg(destClientID,eid,GetName(),0,actText,chtype,false);
+        psserver->GetEventManager()->SendMessageDelayed(msg.msg,timeDelay);
 
-    timeDelay += (csTicks)(1000 + 30*strlen(actText));
+        timeDelay += (csTicks)(1000 + 30*strlen(actText));
+    }
+    else
+    {
+        Notify2(LOG_CHAT,"Public NPC action: %s\n", actText)
+        psChatMessage msg(0,eid,GetName(),0,actText,chtype,false);
+        msg.Multicast(GetMulticastClients(), 0, CHAT_SAY_RANGE );
+    }
 }
 
 float gemActor::FallEnded(const csVector3& pos, iSector* sector)

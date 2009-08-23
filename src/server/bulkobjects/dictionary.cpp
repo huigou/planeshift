@@ -1304,10 +1304,16 @@ bool NpcResponse::ParseResponseScript(const char *xmlstr,bool insertBeginning)
         }
         else if ( strcmp( node->GetValue(), "action" ) == 0 ||
                   strcmp( node->GetValue(), "actionmy" ) == 0 ||
-                  strcmp( node->GetValue(), "narrate") == 0)
+                  strcmp( node->GetValue(), "narrate") == 0 ||
+                  strcmp( node->GetValue(), "actionpublic" ) == 0 ||
+                  strcmp( node->GetValue(), "actionmypublic" ) == 0 ||
+                  strcmp( node->GetValue(), "narratepublic") == 0 )
         {
-            op = new ActionResponseOp(strcmp( node->GetValue(), "actionmy" ) == 0, // true for actionmy, false for action
-                                      strcmp( node->GetValue(), "narrate" )  == 0);
+            op = new ActionResponseOp(strncmp( node->GetValue(), "actionmy", 8 ) == 0 , // true for actionmy, false for action
+                                      strncmp( node->GetValue(), "narrate", 7 )  == 0,
+                                      strcmp( node->GetValue(), "actionpublic") == 0 || //true in case it's public
+                                      strcmp( node->GetValue(), "actionmypublic") == 0 ||
+                                      strcmp( node->GetValue(), "narratepublic") == 0);
         }
         else if ( strcmp( node->GetValue(), "npccmd" ) == 0 )
         {
@@ -1415,8 +1421,8 @@ bool NpcResponse::HasPublicResponse()
 {
     for (size_t i=0; i<script.GetSize(); i++)
     {
-        SayResponseOp *op = dynamic_cast<SayResponseOp*>(script[i]);
-        if (op && op->saypublic)
+        ResponseOperation *op = script[i];
+        if (op && op->IsPublic())
             return true;
     }
     return false;
@@ -1523,7 +1529,9 @@ bool NpcResponse::AddPrerequisite(csRef<psQuestPrereqOp> op, bool insertBeginnin
 bool NpcResponse::CheckPrerequisite(psCharacter * character)
 {
     if (prerequisite)
+    {
         return prerequisite->Check(character);
+    }
 
     return true; // No prerequisite so its ok to do this quest
 }
@@ -1658,7 +1666,7 @@ bool SayResponseOp::Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks
     if (target->GetSecurityLevel() >= GM_DEVELOPER)
         response.AppendFmt(" (%s)",owner->triggerText.GetDataSafe() );
 
-    who->Say(response,target->GetClient(),saypublic,timeDelay);
+    who->Say(response,target->GetClient(), saypublic && target->GetVisibility(),timeDelay);
 
     return true;
 }
@@ -1690,7 +1698,7 @@ bool ActionResponseOp::Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTi
     {
         csString response(*actWhat);
         who->GetNPCDialogPtr()->SubstituteKeywords(target->GetClient(),response);
-        who->ActionCommand(actionMy, actionNarrate, response.GetDataSafe(), target->GetClient()->GetClientNum(),timeDelay );
+        who->ActionCommand(actionMy, actionNarrate, response.GetDataSafe(), target->GetClient()->GetClientNum(), IsPublic() && target->GetVisibility(), timeDelay );
     }
 
     return true;
@@ -2504,7 +2512,7 @@ void NpcDialogMenu::ShowMenu(Client *client,csTicks delay, PID npcPID)
         //{
         //    printf("Item %lu has no prereqs.\n", (unsigned long) i);
         //}
-                     
+
         if (triggers[i].prerequisite && !IsTesting)
         {
             if (!triggers[i].prerequisite->Check(client->GetCharacterData()))
