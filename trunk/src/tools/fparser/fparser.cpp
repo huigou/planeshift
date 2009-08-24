@@ -1,5 +1,5 @@
 /***************************************************************************\
-|* Function Parser for C++ v3.1.5                                          *|
+|* Function Parser for C++ v3.2                                            *|
 |*-------------------------------------------------------------------------*|
 |* Copyright: Juha Nieminen                                                *|
 \***************************************************************************/
@@ -565,11 +565,9 @@ inline void FunctionParser::AddFunctionOpcode(unsigned opcode)
         switch(opcode)
         {
           case cAcos:
-#ifndef FP_NO_ASINH
           case cAcosh:
           case cAsinh:
           case cAtanh:
-#endif
           case cAsin:
           case cAtan:
           case cAtan2:
@@ -1045,7 +1043,6 @@ const char* FunctionParser::CompileExpression(const char* function)
     return function;
 }
 
-
 //===========================================================================
 // Function evaluation
 //===========================================================================
@@ -1081,9 +1078,7 @@ double FunctionParser::Eval(const double* Vars)
 #                    endif
                        Stack[SP] = acos(Stack[SP]); break;
 
-#       ifndef FP_NO_ASINH
-          case cAcosh: Stack[SP] = acosh(Stack[SP]); break;
-#       endif
+          case cAcosh: Stack[SP] = fp_acosh(Stack[SP]); break;
 
           case  cAsin:
 #                    ifndef FP_NO_EVALUATION_CHECKS
@@ -1092,18 +1087,14 @@ double FunctionParser::Eval(const double* Vars)
 #                    endif
                        Stack[SP] = asin(Stack[SP]); break;
 
-#       ifndef FP_NO_ASINH
-          case cAsinh: Stack[SP] = asinh(Stack[SP]); break;
-#       endif
+          case cAsinh: Stack[SP] = fp_asinh(Stack[SP]); break;
 
           case  cAtan: Stack[SP] = atan(Stack[SP]); break;
 
           case cAtan2: Stack[SP-1] = atan2(Stack[SP-1], Stack[SP]);
                        --SP; break;
 
-#       ifndef FP_NO_ASINH
-          case cAtanh: Stack[SP] = atanh(Stack[SP]); break;
-#       endif
+          case cAtanh: Stack[SP] = fp_atanh(Stack[SP]); break;
 
           case  cCeil: Stack[SP] = ceil(Stack[SP]); break;
 
@@ -1161,6 +1152,14 @@ double FunctionParser::Eval(const double* Vars)
 
           case   cExp: Stack[SP] = exp(Stack[SP]); break;
 
+          case   cExp2:
+            //#ifdef FP_SUPPORT_EXP2
+            //  Stack[SP] = exp2(Stack[SP]);
+            //#else
+              Stack[SP] = pow(2.0, Stack[SP]);
+            //#endif
+              break;
+
           case cFloor: Stack[SP] = floor(Stack[SP]); break;
 
           case    cIf:
@@ -1183,19 +1182,22 @@ double FunctionParser::Eval(const double* Vars)
 #                    endif
                        Stack[SP] = log(Stack[SP]); break;
 
-          case  cLog2:
-#                    ifndef FP_NO_EVALUATION_CHECKS
-                       if(Stack[SP] <= 0) { evalErrorType=3; return 0; }
-#                    endif
-                       Stack[SP] = log(Stack[SP]) * 1.4426950408889634074;
-                       //Stack[SP] = log2(Stack[SP]);
-                       break;
-
           case cLog10:
 #                    ifndef FP_NO_EVALUATION_CHECKS
                        if(Stack[SP] <= 0) { evalErrorType=3; return 0; }
 #                    endif
                        Stack[SP] = log10(Stack[SP]); break;
+
+          case  cLog2:
+#                    ifndef FP_NO_EVALUATION_CHECKS
+                       if(Stack[SP] <= 0) { evalErrorType=3; return 0; }
+#                    endif
+                     #ifdef FP_SUPPORT_LOG2
+                       Stack[SP] = log2(Stack[SP]);
+                     #else
+                       Stack[SP] = log(Stack[SP]) * 1.4426950408889634074;
+                     #endif
+                       break;
 
           case   cMax: Stack[SP-1] = Max(Stack[SP-1], Stack[SP]);
                        --SP; break;
@@ -1297,6 +1299,8 @@ double FunctionParser::Eval(const double* Vars)
                          --SP; break;
 #endif
 
+          case   cNot: Stack[SP] = !doubleToInt(Stack[SP]); break;
+
           case   cAnd: Stack[SP-1] =
                            (doubleToInt(Stack[SP-1]) &&
                             doubleToInt(Stack[SP]));
@@ -1306,8 +1310,6 @@ double FunctionParser::Eval(const double* Vars)
                            (doubleToInt(Stack[SP-1]) ||
                             doubleToInt(Stack[SP]));
                        --SP; break;
-
-          case   cNot: Stack[SP] = !doubleToInt(Stack[SP]); break;
 
 // Degrees-radians conversion:
           case   cDeg: Stack[SP] = RadiansToDegrees(Stack[SP]); break;
@@ -1347,7 +1349,6 @@ double FunctionParser::Eval(const double* Vars)
 
 #ifdef FP_SUPPORT_OPTIMIZER
           case   cVar: break;  // Paranoia. These should never exist
-          case cNotNot: break; // Paranoia. These should never exist
 
           case   cDup: Stack[SP+1] = Stack[SP]; ++SP; break;
 
@@ -1356,10 +1357,6 @@ double FunctionParser::Eval(const double* Vars)
               if(Stack[SP] == 0.0) { evalErrorType=1; return 0; }
 #           endif
               Stack[SP] = 1.0/Stack[SP];
-              break;
-
-          case   cSqr:
-              Stack[SP] = Stack[SP]*Stack[SP];
               break;
 
           case   cFetch:
@@ -1378,7 +1375,9 @@ double FunctionParser::Eval(const double* Vars)
                   break;
               }
 
-          case   cRSub: Stack[SP-1] = Stack[SP] - Stack[SP-1]; --SP; break;
+          case   cSqr:
+              Stack[SP] = Stack[SP]*Stack[SP];
+              break;
 
           case   cRDiv:
 #                    ifndef FP_NO_EVALUATION_CHECKS
@@ -1386,11 +1385,15 @@ double FunctionParser::Eval(const double* Vars)
 #                    endif
                         Stack[SP-1] = Stack[SP] / Stack[SP-1]; --SP; break;
 
+          case   cRSub: Stack[SP-1] = Stack[SP] - Stack[SP-1]; --SP; break;
+
           case   cRSqrt:
 #                      ifndef FP_NO_EVALUATION_CHECKS
                          if(Stack[SP] == 0) { evalErrorType=1; return 0; }
 #                      endif
                          Stack[SP] = 1.0 / sqrt(Stack[SP]); break;
+
+          case cNotNot: Stack[SP] = !!doubleToInt(Stack[SP]); break;
 #endif
 
           case cNop: break;
@@ -1408,144 +1411,291 @@ double FunctionParser::Eval(const double* Vars)
 
 #ifdef FUNCTIONPARSER_SUPPORT_DEBUG_OUTPUT
 #include <iomanip>
+#include <sstream>
 namespace
 {
     inline void printHex(std::ostream& dest, unsigned n)
     {
         std::ios::fmtflags flags = dest.flags();
-        dest.width(8); dest.fill('0'); std::hex(dest); //uppercase(dest);
+        dest.width(4); dest.fill('0'); std::hex(dest); //uppercase(dest);
         dest << n;
         dest.flags(flags);
     }
+
+    void padLine(std::ostringstream& dest, unsigned destLength)
+    {
+        for(unsigned currentLength = dest.str().length();
+            currentLength < destLength;
+            ++currentLength)
+        {
+            dest << ' ';
+        }
+    }
+
+    typedef std::map<FUNCTIONPARSERTYPES::NamePtr, unsigned> VariablesMap;
+    std::string findVariableName(const VariablesMap& varMap, unsigned index)
+    {
+        for(VariablesMap::const_iterator iter = varMap.begin();
+            iter != varMap.end();
+            ++iter)
+        {
+            if(iter->second == index)
+                return std::string(iter->first.name,
+                                   iter->first.name + iter->first.nameLength);
+        }
+        return "?";
+    }
 }
 
-void FunctionParser::PrintByteCode(std::ostream& dest) const
+void FunctionParser::PrintByteCode(std::ostream& dest,
+                                   bool showExpression) const
 {
     dest << "Size of stack: " << data->StackSize << "\n";
+
+    std::ostringstream outputBuffer;
+    std::ostream& output = (showExpression ? outputBuffer : dest);
 
     const std::vector<unsigned>& ByteCode = data->ByteCode;
     const std::vector<double>& Immed = data->Immed;
 
-    for(unsigned IP = 0, DP = 0; IP < ByteCode.size(); ++IP)
+    std::vector<std::pair<int,std::string> > stack;
+    std::vector<unsigned> if_stack;
+
+    for(unsigned IP = 0, DP = 0; IP <= ByteCode.size(); ++IP)
     {
-        printHex(dest, IP);
-        dest << ": ";
+        std::string n;
+        bool out_params = false;
+        unsigned params = 2, produces = 1, opcode = 0;
 
-        unsigned opcode = ByteCode[IP];
-
-        switch(opcode)
+        if(showExpression && !if_stack.empty() && if_stack.back() == IP)
         {
-          case cIf:
-              dest << "jz\t";
-              printHex(dest, ByteCode[IP+1]+1);
-              dest << endl;
-              IP += 2;
-              break;
-
-          case cJump:
-              dest << "jump\t";
-              printHex(dest, ByteCode[IP+1]+1);
-              dest << endl;
-              IP += 2;
-              break;
-          case cImmed:
-              dest.precision(10);
-              dest << "push\t" << Immed[DP++] << endl;
-              break;
-
-          case cFCall:
-              {
-                  const unsigned index = ByteCode[++IP];
-                  std::set<NameData>::const_iterator iter =
-                      data->nameData.begin();
-                  while(iter->type != NameData::FUNC_PTR ||
-                        iter->index != index)
-                      ++iter;
-                  dest << "fcall\t" << iter->name
-                       << " (" << data->FuncPtrs[index].params << ")" << endl;
-                  break;
-              }
-
-          case cPCall:
-              {
-                  const unsigned index = ByteCode[++IP];
-                  std::set<NameData>::const_iterator iter =
-                      data->nameData.begin();
-                  while(iter->type != NameData::PARSER_PTR ||
-                        iter->index != index)
-                      ++iter;
-                  dest << "pcall\t" << iter->name
-                       << " (" << data->FuncParsers[index].params
-                       << ")" << endl;
-                  break;
-              }
-
-          default:
-              if(OPCODE(opcode) < VarBegin)
-              {
-                  string n;
-                  unsigned params = 1;
-                  switch(opcode)
-                  {
-                    case cNeg: n = "neg"; break;
-                    case cAdd: n = "add"; break;
-                    case cSub: n = "sub"; break;
-                    case cMul: n = "mul"; break;
-                    case cDiv: n = "div"; break;
-                    case cMod: n = "mod"; break;
-                    case cPow: n = "pow"; break;
-                    case cEqual: n = "eq"; break;
-                    case cNEqual: n = "neq"; break;
-                    case cLess: n = "lt"; break;
-                    case cLessOrEq: n = "le"; break;
-                    case cGreater: n = "gt"; break;
-                    case cGreaterOrEq: n = "ge"; break;
-                    case cAnd: n = "and"; break;
-                    case cOr: n = "or"; break;
-                    case cNot: n = "not"; break;
-                    case cDeg: n = "deg"; break;
-                    case cRad: n = "rad"; break;
-
-#ifndef FP_DISABLE_EVAL
-                    case cEval: n = "call\t0"; break;
-#endif
-
-#ifdef FP_SUPPORT_OPTIMIZER
-                    case cVar:    n = "(var)"; break;
-                    case cNotNot: n = "(notnot)"; break;
-                    case cDup: n = "dup"; break;
-                    case cInv: n = "inv"; break;
-                    case cSqr: n = "sqr"; break;
-                    case cFetch:
-                        dest << "cFetch(" << ByteCode[++IP] << ")";
-                        break;
-                    case cPopNMov:
-                    {
-                        size_t a = ByteCode[++IP];
-                        size_t b = ByteCode[++IP];
-                        dest << "cPopNMov(" << a << ", " << b << ")";
-                        break;
-                    }
-                    case cRDiv: n = "rdiv"; break;
-                    case cRSub: n = "rsub"; break;
-                    case cRSqrt: n = "rsqrt"; break;
-#endif
-
-                    case cNop: n = "nop"; break;
-
-                    default:
-                        n = Functions[opcode-cAbs].name;
-                        params = Functions[opcode-cAbs].params;
-                  }
-                  dest << n;
-                  if(params != 1) dest << " (" << params << ")";
-                  dest << endl;
-              }
-              else
-              {
-                  dest << "push\tVar" << opcode-VarBegin << endl;
-              }
+            printHex(output, IP);
+            output << ": (end)";
+            opcode = cIf;
+            params = 3;
+            --IP;
+            if_stack.resize(if_stack.size()-1); // pop_back
         }
+        else
+        {
+            if(IP >= ByteCode.size()) break;
+            opcode = ByteCode[IP];
+
+            printHex(output, IP);
+            output << ": ";
+
+            switch(opcode)
+            {
+              case cIf:
+              {
+                  unsigned label = ByteCode[IP+1]+1;
+                  output << "jz ";
+                  printHex(output, label);
+                  params = 1;
+                  produces = 0;
+                  IP += 2;
+                  break;
+              }
+
+              case cJump:
+              {
+                  unsigned label = ByteCode[IP+1]+1;
+
+                  if(showExpression)
+                      if_stack.push_back(label);
+
+                  output << "jump ";
+                  printHex(output, label);
+                  params = 0;
+                  produces = 0;
+                  IP += 2;
+                  break;
+              }
+              case cImmed:
+              {
+                  if(showExpression)
+                  {
+                      std::ostringstream buf;
+                      buf.precision(8);
+                      buf << Immed[DP];
+                      stack.push_back( std::make_pair(0, buf.str()) );
+                  }
+                  output.precision(8);
+                  output << "push " << Immed[DP];
+                  ++DP;
+                  produces = 0;
+                  break;
+              }
+
+              case cFCall:
+                  {
+                      const unsigned index = ByteCode[++IP];
+                      params = data->FuncPtrs[index].params;
+                      std::set<NameData>::const_iterator iter =
+                          data->nameData.begin();
+                      while(iter->type != NameData::FUNC_PTR ||
+                            iter->index != index)
+                          ++iter;
+                      output << "fcall " << iter->name;
+                      out_params = true;
+                      break;
+                  }
+
+              case cPCall:
+                  {
+                      const unsigned index = ByteCode[++IP];
+                      params = data->FuncParsers[index].params;
+                      std::set<NameData>::const_iterator iter =
+                          data->nameData.begin();
+                      while(iter->type != NameData::PARSER_PTR ||
+                            iter->index != index)
+                          ++iter;
+                      output << "pcall " << iter->name;
+                      out_params = true;
+                      break;
+                  }
+
+              default:
+                  if(OPCODE(opcode) < VarBegin)
+                  {
+                      switch(opcode)
+                      {
+                        case cNeg: n = "neg"; params = 1; break;
+                        case cAdd: n = "add"; break;
+                        case cSub: n = "sub"; break;
+                        case cMul: n = "mul"; break;
+                        case cDiv: n = "div"; break;
+                        case cMod: n = "mod"; break;
+                        case cPow: n = "pow"; break;
+                        case cEqual: n = "eq"; break;
+                        case cNEqual: n = "neq"; break;
+                        case cLess: n = "lt"; break;
+                        case cLessOrEq: n = "le"; break;
+                        case cGreater: n = "gt"; break;
+                        case cGreaterOrEq: n = "ge"; break;
+                        case cAnd: n = "and"; break;
+                        case cOr: n = "or"; break;
+                        case cNot: n = "not"; params = 1; break;
+                        case cDeg: n = "deg"; break;
+                        case cRad: n = "rad"; break;
+
+    #ifndef FP_DISABLE_EVAL
+                        case cEval: n = "call 0"; break;
+    #endif
+
+    #ifdef FP_SUPPORT_OPTIMIZER
+                        case cVar:    n = "(var)"; break;
+                        case cNotNot: n = "(notnot)"; break;
+                        case cInv: n = "inv"; params = 1; break;
+                        case cSqr: n = "sqr"; params = 1; break;
+                        case cFetch:
+                        {
+                            unsigned index = ByteCode[++IP];
+                            if(showExpression)
+                                stack.push_back(stack[index]);
+                            output << "cFetch(" << index << ")";
+                            produces = 0;
+                            break;
+                        }
+                        case cDup:
+                        {
+                            if(showExpression)
+                                stack.push_back(stack.back());
+                            output << "dup";
+                            produces = 0;
+                            break;
+                        }
+                        case cPopNMov:
+                        {
+                            size_t a = ByteCode[++IP];
+                            size_t b = ByteCode[++IP];
+                            if(showExpression)
+                            {
+                                std::pair<int, std::string> stacktop = stack[b];
+                                stack.resize(a);
+                                stack.push_back(stacktop);
+                            }
+                            output << "cPopNMov(" << a << ", " << b << ")";
+                            produces = 0;
+                            break;
+                        }
+                        case cRDiv: n = "rdiv"; break;
+                        case cRSub: n = "rsub"; break;
+                        case cRSqrt: n = "rsqrt"; params = 1; break;
+    #endif
+
+                        case cNop:
+                            output << "nop"; params = 0; produces = 0;
+                            break;
+
+                        default:
+                            n = Functions[opcode-cAbs].name;
+                            params = Functions[opcode-cAbs].params;
+                            out_params = params != 1;
+                      }
+                  }
+                  else
+                  {
+                      if(showExpression)
+                      {
+                          stack.push_back(std::make_pair(0,
+                              (findVariableName(data->variableRefs, opcode))));
+                      }
+                      output << "push Var" << opcode-VarBegin;
+                      produces = 0;
+                  }
+            }
+        }
+        if(produces) output << n;
+        if(out_params) output << " (" << params << ")";
+        if(showExpression)
+        {
+            padLine(outputBuffer, 20);
+
+            if(produces > 0)
+            {
+                std::ostringstream buf;
+                const char *paramsep = ",", *suff = "";
+                int prio = 0;
+                switch(opcode)
+                {
+                    case cIf: buf << "if(!"; suff = ")"; break;
+                    case cAdd: prio = 4; paramsep = "+"; break;
+                    case cSub: prio = 4; paramsep = "-"; break;
+                    case cMul: prio = 3; paramsep = "*"; break;
+                    case cDiv: prio = 3; paramsep = "/"; break;
+                    case cPow: prio = 2; paramsep = "^"; break;
+#ifdef FP_SUPPORT_OPTIMIZER
+                    case cSqr: prio = 2; suff = "^2"; break;
+#endif
+                    case cNeg: buf << "(-"; suff = ")"; break;
+                    default: buf << n << '('; suff = ")";
+                }
+                const char* sep = "";
+                for(unsigned a=0; a<params; ++a)
+                {
+                    buf << sep;
+                    if(prio > 0 && stack[stack.size() - params + a].first > prio) buf << '(';
+                    buf << stack[stack.size() - params + a].second;
+                    if(prio > 0 && stack[stack.size() - params + a].first > prio) buf << ')';
+                    sep = paramsep;
+                }
+                stack.resize(stack.size() - params);
+                buf << suff;
+                stack.push_back(std::make_pair(prio, buf.str()));
+                //if(n.size() <= 4 && !out_params) padLine(outputBuffer, 20);
+            }
+            //padLine(outputBuffer, 20);
+            output << "= " << stack.back().second;
+        }
+
+        if(showExpression)
+        {
+            dest << outputBuffer.str() << std::endl;
+            outputBuffer.str("");
+        }
+        else
+            output << std::endl;
     }
 }
 #endif

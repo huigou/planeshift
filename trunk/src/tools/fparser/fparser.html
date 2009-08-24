@@ -3,16 +3,18 @@
 <head>
  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
  <link href="style.css" rel="stylesheet" type="text/css" title="normal" media=screen>
- <title>Function Parser for C++ v3.1.5  : Documentation</title>
+ <title>Function Parser for C++ v3.2    : Documentation</title>
 </head>
 
 <body>
-<h1>Function Parser for C++ v3.1.5  </h1>
+<h1>Function Parser for C++ v3.2    </h1>
 
-<p>Optimization code contributed by Bisqwit
+<p>Authors: Juha Nieminen
+(<a href="http://iki.fi/warp/">http://iki.fi/warp/</a>),
+Joel Yliluoma
 (<a href="http://iki.fi/bisqwit/">http://iki.fi/bisqwit/</a>).
 
-<p>The usage license of this library is located at the end of this text file.
+<p>The usage license of this library is located at the end of this file.
 
 <h2>Table of contents:</h2>
 
@@ -30,31 +32,36 @@
  <li><a href="#evaluationchecks">About evaluation-time checks</a>
  <li><a href="#threadsafety">About thread safety</a>
  <li><a href="#functionsyntax">The function string syntax</a>
+ <li><a href="#tipsandtricks">Tips and tricks</a>
  <li><a href="#contact">Contacting the author</a>
- <li><a href="#algorithm">The algorithm used in the library</a>
+<!-- <li><a href="#algorithm">The algorithm used in the library</a> -->
  <li><a href="#license">Usage license</a>
 </ul>
 
 <a name="whatsnew"></a>
 <h2>What's new</h2>
 
-<p>What's new in v3.1.5
+<p>What's new in v3.2
 <ul>
- <li>Added a new <code>RemoveIdentifier()</code> function to the class which
-     can be used to remove existing constants, units and user-defined functions.
+ <li>The <code>FP_SUPPORT_ASINH</code> and <code>FP_NO_ASINH</code>
+   precompiler constants have been replaced with a more generic
+   <code>FP_SUPPORT_TR1_MATH_FUNCS</code> precompiler constant, which
+   enables other similar functions as well. Consult the documentation
+   on this subject for details.
+ <li>The "<code>asinh</code>", "<code>acosh</code>" and "<code>atanh</code>"
+   functions are now <em>always</em> available in the function syntax
+   regardless of whether <code>FP_SUPPORT_TR1_MATH_FUNCS</code> has been
+   defined or not. (If it's not, then they will be calculated using
+   equivalent formulas.)
+ <li>Significant refactoring of the optimizer code, and addition of numerous
+   new optimization rules (related to the <code>abs()</code> function in
+   diverse situations, some exponentiation, logarithm and hyperbolic
+   trigonometry optimizations, and others).
+ <li>Fixed bug in the optimizer which caused functions like
+   <code>"sqrt(x*x)"</code> and <code>"(x*x)^0.25"</code> to be optimized
+   incorrectly (for negative values of <code>x</code>).
 </ul>
 
-<p>What's new in v3.1.4
-<ul>
- <li>Added new optimizer rules (among others, one which groups common factors
-     of subexpressions, ie. it optimizes functions of the form
-     <code>"a*b+a*c"</code> into <code>"a*(b+c)"</code>, where <code>a</code>,
-     <code>b</code> and <code>c</code> are any expressions).
- <li>Added support for compiling without evaluation checks (because it's
-     impossible to catch all possible error situations in the first place).
-     See the documentation for more info.
- <li>Dropped the plain text documentation file in favor of the html file.
-</ul>
 
 <!-- -------------------------------------------------------------------- -->
 <a name="preface"></a>
@@ -104,28 +111,29 @@ leave the latter file out.
 <h3>Configuring the compilation</h3>
 
 <p>There is a set of precompiler options in the <code>fpconfig.hh</code> file
-which can be used for setting certain features on or off:
+which can be used for setting certain features on or off. All of these options
+can also be specified from the outside, using precompiler settings (eg. the
+<code>-D</code> option in gcc), and thus it's not necessary to modify this
+file.
 
 <dl>
- <dt><p><code>FP_NO_ASINH</code> : (Default on)
- <dd><p>By default the library does not support the <code>asinh()</code>,
-       <code>acosh()</code> and <code>atanh()</code> functions because they
-       are not part of the ISO C++ standard. If your compiler supports them
-       and you want the parser to support them as well, comment out this line.
-       Alternatively you can define the <code>FP_SUPPORT_ASINH</code>
-       precompiler constant in your compiler settings to turn on the support
-       (eg. with <code>-DFP_SUPPORT_ASINH</code> in gcc).
+ <dt><p><code>FP_SUPPORT_TR1_MATH_FUNCS</code> : (Default off)
+ <dd><p>Define this precompiler constant to make the library use additional
+     math functions defined in the C99 standard and the C++ TR1 standard
+     proposal (but not yet in the official C++ standard). This can make
+     evaluation faster when these functions are involved.
+   <p>The C++ TR1 math functions in question are: <code>asinh()</code>,
+     <code>acosh()</code>, <code>atanh()</code>, <code>exp2()</code> and
+     <code>log2()</code>.
 
- <dt><p><code>FP_DISABLE_EVAL</code> : (Default on)
+ <dt><p><code>FP_ENABLE_EVAL</code> : (Default off)
  <dd><p>Even though the maximum recursion level of the <code>eval()</code>
        function is limited, it is still possible to write functions which never
        reach this maximum recursion level but take enormous amounts of
        time to evaluate (this can be undesirable eg. in web server-side
        applications). For this reason this function is disabled by default.
        You can add support for the <code>eval()</code> function by
-       uncommenting this line or, alternatively, you can define the
-       <code>FP_ENABLE_EVAL</code> precompiler constant in your compiler
-       settings.
+       defining this precompiler constant.
 
  <dt><p><code>FP_EVAL_MAX_REC_LEVEL</code> : (Default 1000)
  <dd><p>Sets the maximum recursion level allowed for <code>eval()</code>.
@@ -138,7 +146,7 @@ which can be used for setting certain features on or off:
 
        <p>You can also disable the optimizer by specifying the
        <code>FP_NO_SUPPORT_OPTIMIZER</code> precompiler constant in your
-       compiler.
+       compiler settings.
 
  <dt><p><code>FP_EPSILON</code> : (Default <code>1e-14</code>)
  <dd><p>Epsilon value used in comparison operators.
@@ -151,7 +159,7 @@ which can be used for setting certain features on or off:
        Note that defining this may make <code>Eval()</code> slightly slower.
 
  <dt><p><code>FP_USE_THREAD_SAFE_EVAL_WITH_ALLOCA</code> : (Default off)
- <dd><p>This like the previous, but makes <code>Eval()</code> use the
+ <dd><p>This is like the previous, but makes <code>Eval()</code> use the
        <code>alloca()</code> function (instead of <code>std::vector</code>).
        This will make it faster, but the <code>alloca()</code>
        function is not standard and thus not supported by all compilers.
@@ -1055,6 +1063,41 @@ in the <code>fpconfig.hh</code> file.
 
 
 <!-- -------------------------------------------------------------------- -->
+<a name="tipsandtricks"></a>
+<h2>Tips and tricks</h2>
+
+<h3>Add constants automatically to all parser objects</h3>
+
+<p>Often the same constants (such as <em>pi</em> and <em>e</em>) and other
+user-defined identifiers (such as units) are always used in all the
+<code>FunctionParser</code> objects throughout the program. It would be
+troublesome to always have to manually add these constants every time a
+new parser object is created.
+
+<p>There is, however, a simple way to always add these user-defined identifiers
+to all instances. Write a class like this:
+
+<pre>
+    class ParserWithConsts: public FunctionParser
+    {
+     public:
+        ParserWithConsts()
+        {
+            AddConstant("pi", 3.14159265358979323846);
+            AddConstant("e", 2.71828182845904523536);
+        }
+    };
+</pre>
+
+<p>Now instead of using <code>FunctionParser</code>, always use
+<code>ParserWithConsts</code>. It will behave identically except that the
+constants (and possibly other user-defined identifiers) will always be
+automatically defined. (Objects of this type even survive
+<a href="http://en.wikipedia.org/wiki/Object_slicing">slicing</a>, so
+they are completely safe to use anywhere.)
+
+
+<!-- -------------------------------------------------------------------- -->
 <a name="contact"></a>
 <h2>Contacting the author</h2>
 
@@ -1062,6 +1105,7 @@ in the <code>fpconfig.hh</code> file.
 
 
 <!-- -------------------------------------------------------------------- -->
+<!--
 <a name="algorithm"></a>
 <h2>The algorithm used in the library</h2>
 
@@ -1137,7 +1181,7 @@ it byte by byte, from the beginning to the end. You never have to go back,
 make loops or anything.
 
 <p>This is what makes byte-coded stack arithmetic so fast.
-
+-->
 
 
 <!-- -------------------------------------------------------------------- -->

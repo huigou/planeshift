@@ -1,5 +1,5 @@
 /***************************************************************************\
-|* Function Parser for C++ v3.1.5                                          *|
+|* Function Parser for C++ v3.2                                            *|
 |*-------------------------------------------------------------------------*|
 |* Function optimizer                                                      *|
 |*-------------------------------------------------------------------------*|
@@ -25,22 +25,46 @@
 
 #ifdef _MSC_VER
 
-typedef unsigned long long fphash_t;
+typedef unsigned long long fphash_value_t;
 #define FPHASH_CONST(x) x##ULL
 #pragma warning(disable:4351)
 
 #else
 
 #include <stdint.h>
-typedef uint_fast64_t fphash_t;
+typedef uint_fast64_t fphash_value_t;
 #define FPHASH_CONST(x) x##ULL
 
+namespace FUNCTIONPARSERTYPES
+{
+struct fphash_t
+{
+    fphash_value_t hash1, hash2;
+
+    bool operator==(const fphash_t& rhs) const
+    { return hash1 == rhs.hash1 && hash2 == rhs.hash2; }
+
+    bool operator!=(const fphash_t& rhs) const
+    { return hash1 != rhs.hash1 || hash2 != rhs.hash2; }
+
+    bool operator<(const fphash_t& rhs) const
+    { return hash1 != rhs.hash1 ? hash1 < rhs.hash1 : hash2 < rhs.hash2; }
+};
+
 #endif
+}
 #include <vector>
+#include <utility>
 
 #include "fpconfig.h"
 #include "fparser.h"
 
+
+#ifdef FP_EPSILON
+ #define NEGATIVE_MAXIMUM (-FP_EPSILON)
+#else
+ #define NEGATIVE_MAXIMUM (-1e-14)
+#endif
 
 namespace FPoptimizer_Grammar
 {
@@ -100,6 +124,11 @@ namespace FPoptimizer_CodeTree
             Param()                           : param(),  sign()  {}
             Param(CodeTree*        p, bool s) : param(p), sign(s) {}
             Param(const CodeTreeP& p, bool s) : param(p), sign(s) {}
+
+            bool IsIdenticalTo(const Param& b) const
+            {
+                return sign == b.sign && param->IsIdenticalTo(*b.param);
+            }
         };
 
         // Parameters for the function
@@ -122,13 +151,15 @@ namespace FPoptimizer_CodeTree
         std::vector<Param> Params;
 
         /* Internal operation */
-        fphash_t      Hash;
+        FUNCTIONPARSERTYPES::fphash_t      Hash;
         size_t        Depth;
         CodeTree*     Parent;
         const FPoptimizer_Grammar::Grammar* OptimizedUsing;
     public:
         CodeTree();
         ~CodeTree();
+
+        explicit CodeTree(double v); // produce an immed
 
         /* Generates a CodeTree from the given bytecode */
         static CodeTreeP GenerateFrom(
@@ -171,8 +202,33 @@ namespace FPoptimizer_CodeTree
         void InvertImmed() { if(IsImmed()) Value = 1.0 / Value;  }
         void NotTheImmed() { if(IsImmed()) Value = Value == 0.0; }
 
-    private:
+        struct MinMaxTree
+        {
+            double min,max;
+            bool has_min, has_max;
+            MinMaxTree() : min(),max(),has_min(false),has_max(false) { }
+            MinMaxTree(double mi,double ma): min(mi),max(ma),has_min(true),has_max(true) { }
+            MinMaxTree(bool,double ma): min(),max(ma),has_min(false),has_max(true) { }
+            MinMaxTree(double mi,bool): min(mi),max(),has_min(true),has_max(false) { }
+        };
+        /* This function calculates the minimum and maximum values
+         * of the tree's result. If an estimate cannot be made,
+         * has_min/has_max are indicated as false.
+         */
+        MinMaxTree CalculateResultBoundaries_do() const;
+        MinMaxTree CalculateResultBoundaries() const;
+
+        enum TriTruthValue { IsAlways, IsNever, Unknown };
+        TriTruthValue GetEvennessInfo() const;
+
+        bool IsAlwaysSigned(bool positive) const;
+        bool IsAlwaysParity(bool odd) const
+            { return GetEvennessInfo() == (odd?IsNever:IsAlways); }
+        bool IsAlwaysInteger() const;
+
         void ConstantFolding();
+
+        bool IsIdenticalTo(const CodeTree& b) const;
 
     private:
         CodeTree(const CodeTree&);
@@ -218,6 +274,31 @@ namespace FPoptimizer_Grammar
         Negate,  // 0-x
         Invert,  // 1/x
         NotThe   // !x
+    };
+
+    enum ImmedConstraint_Value
+    {
+        ValueMask = 0x07,
+        Value_AnyNum     = 0x0, // any value
+        Value_EvenInt    = 0x1, // any even integer (0,2,4, etc)
+        Value_OddInt     = 0x2, // any odd integer (1,3, etc)
+        Value_IsInteger  = 0x3, // any integer-value (excludes e.g. 0.2)
+        Value_NonInteger = 0x4  // any non-integer (excludes e.g. 1 or 5)
+    };
+    enum ImmedConstraint_Sign
+    {
+        SignMask  = 0x18,
+        Sign_AnySign     = 0x00, // - or +
+        Sign_Positive    = 0x08, // positive only
+        Sign_Negative    = 0x10, // negative only
+        Sign_NoIdea      = 0x18  // where sign cannot be guessed
+    };
+    enum ImmedConstraint_Oneness
+    {
+        OnenessMask   = 0x60,
+        Oneness_Any      = 0x00,
+        Oneness_One      = 0x20, // +1 or -1
+        Oneness_NotOne   = 0x40  // anything but +1 or -1
     };
 
     enum SpecialOpcode
@@ -276,13 +357,19 @@ namespace FPoptimizer_Grammar
 
     /***/
 
+#ifdef __GNUC__
+# define PACKED_GRAMMAR_ATTRIBUTE __attribute__((packed))
+#else
+# define PACKED_GRAMMAR_ATTRIBUTE
+#endif
+
     struct MatchedParams
     {
-        ParamMatchingType type    : 6;
-        SignBalanceType   balance : 2;
+        ParamMatchingType type    : 4; // needs 2
+        SignBalanceType   balance : 4; // needs 2
         // count,index to plist[]
-        unsigned         count : 8;
-        unsigned         index : 16;
+        unsigned         count : 8;   // needs 2
+        unsigned         index : 16;  // needs 10
 
         struct CodeTreeMatch;
 
@@ -302,7 +389,7 @@ namespace FPoptimizer_Grammar
             FPoptimizer_CodeTree::CodeTree& tree,
             const MatchedParams& matcher,
             MatchedParams::CodeTreeMatch& match) const;
-    };
+    } PACKED_GRAMMAR_ATTRIBUTE;
 
     struct ParamSpec
     {
@@ -314,10 +401,10 @@ namespace FPoptimizer_Grammar
         bool     anyrepeat : 1;
 
         // For NumConstant:   index to clist[]
-        // For ImmedHolder:   index is the slot
+        // For ImmedHolder:   index is the slot, count is an ImmedConstraint
         // For RestHolder:    index is the slot
-        // For NamedHolder:   index is the slot
-        // For SubFunction:   index to flist[]
+        // For NamedHolder:   index is the slot, count is an ImmedConstraint
+        // For SubFunction:   index to flist[],  count is an ImmedConstraint
         // For anything else
         //  =  GroupFunction: index,count to plist[]
         unsigned count : 8;
@@ -337,7 +424,7 @@ namespace FPoptimizer_Grammar
             FPoptimizer_CodeTree::CodeTree& tree,
             const MatchedParams& matcher,
             MatchedParams::CodeTreeMatch& match) const;
-    };
+    } PACKED_GRAMMAR_ATTRIBUTE;
     struct Function
     {
         OpcodeType opcode : 16;
@@ -348,18 +435,17 @@ namespace FPoptimizer_Grammar
             Match(FPoptimizer_CodeTree::CodeTree& tree,
                   MatchedParams::CodeTreeMatch& match,
                   unsigned long match_index) const;
-    };
+    } PACKED_GRAMMAR_ATTRIBUTE;
     struct Rule
     {
         unsigned  n_minimum_params : 8;
         RuleType  type             : 8;
         // index to mlist[]
         unsigned  repl_index       : 16;
-
         Function  func;
 
         bool ApplyTo(FPoptimizer_CodeTree::CodeTree& tree) const;
-    };
+    } PACKED_GRAMMAR_ATTRIBUTE;
     struct Grammar
     {
         // count,index to rlist[]
@@ -368,7 +454,7 @@ namespace FPoptimizer_Grammar
 
         bool ApplyTo(FPoptimizer_CodeTree::CodeTree& tree,
                      bool recursion=false) const;
-    };
+    } PACKED_GRAMMAR_ATTRIBUTE;
 
     extern const struct GrammarPack
     {
@@ -377,7 +463,7 @@ namespace FPoptimizer_Grammar
         const MatchedParams*  mlist;
         const Function*       flist;
         const Rule*           rlist;
-        Grammar               glist[3];
+        Grammar               glist[4];
     } pack;
 }
 #ifndef M_PI
@@ -385,6 +471,9 @@ namespace FPoptimizer_Grammar
 #endif
 
 #define CONSTANT_E     2.71828182845904509080  // exp(1)
+#define CONSTANT_EI    0.3678794411714423215955 // exp(-1)
+#define CONSTANT_2E    7.3890560989306502272304 // exp(2)
+#define CONSTANT_2EI   0.135335283236612691894 // exp(-2)
 #define CONSTANT_PI    M_PI                    // atan2(0,-1)
 #define CONSTANT_L10   2.30258509299404590109  // log(10)
 #define CONSTANT_L2    0.69314718055994530943  // log(2)
@@ -392,12 +481,18 @@ namespace FPoptimizer_Grammar
 #define CONSTANT_L2I   1.4426950408889634074   // 1/log(2)
 #define CONSTANT_L10E  CONSTANT_L10I           // log10(e)
 #define CONSTANT_L10EI CONSTANT_L10            // 1/log10(e)
+#define CONSTANT_L10B  0.3010299956639811952137 // log10(2)
+#define CONSTANT_L10BI 3.3219280948873623478703 // 1/log10(2)
+#define CONSTANT_LB10  CONSTANT_L10BI          // log2(10)
+#define CONSTANT_LB10I CONSTANT_L10B           // 1/log2(10)
 #define CONSTANT_L2E   CONSTANT_L2I            // log2(e)
 #define CONSTANT_L2EI  CONSTANT_L2             // 1/log2(e)
 #define CONSTANT_DR    (180.0 / M_PI)          // 180/pi
 #define CONSTANT_RD    (M_PI / 180.0)          // pi/180
 
-
+#define CONSTANT_POS_INF     HUGE_VAL  // positive infinity, from math.h
+#define CONSTANT_NEG_INF   (-HUGE_VAL) // negative infinity
+#define CONSTANT_PIHALF (M_PI / 2)
 #include <string>
 
 const std::string FP_GetOpcodeName(unsigned opcode, bool pad=false);
@@ -492,6 +587,7 @@ const std::string FP_GetOpcodeName(unsigned opcode, bool pad)
         case cCsc: p = "cCsc"; break;
         case cEval: p = "cEval"; break;
         case cExp: p = "cExp"; break;
+        case cExp2: p = "cExp2"; break;
         case cFloor: p = "cFloor"; break;
         case cIf: p = "cIf"; break;
         case cInt: p = "cInt"; break;
@@ -552,7 +648,7 @@ const std::string FP_GetOpcodeName(unsigned opcode, bool pad)
         case SubFunction:   p = "SubFunction"; break;
       //case GroupFunction: p = "GroupFunction"; break;
     }
-    std::stringstream tmp;
+    std::ostringstream tmp;
     //if(!p) std::cerr << "o=" << opcode << "\n";
     assert(p);
     tmp << p;
@@ -560,7 +656,7 @@ const std::string FP_GetOpcodeName(unsigned opcode, bool pad)
     return tmp.str();
 #else
     /* Just numeric meanings */
-    std::stringstream tmp;
+    std::ostringstream tmp;
     tmp << opcode;
     if(pad) while(tmp.str().size() < 5) tmp << ' ';
     return tmp.str();
@@ -570,20 +666,36 @@ const std::string FP_GetOpcodeName(unsigned opcode, bool pad)
 #include <list>
 #include <algorithm>
 
-#include "fptypes.h"
+#include <cmath> /* for CalculateResultBoundaries() */
 
+#include "fptypes.h"
 
 #ifdef FP_SUPPORT_OPTIMIZER
 
 using namespace FUNCTIONPARSERTYPES;
 //using namespace FPoptimizer_Grammar;
 
+//#define DEBUG_SUBSTITUTIONS
+
+#ifdef DEBUG_SUBSTITUTIONS
+namespace FPoptimizer_Grammar
+{
+    void DumpTree(const FPoptimizer_CodeTree::CodeTree& tree, std::ostream& o = std::cout);
+}
+#endif
 
 namespace FPoptimizer_CodeTree
 {
     CodeTree::CodeTree()
         : RefCount(0), Opcode(), Params(), Hash(), Depth(1), Parent(), OptimizedUsing(0)
     {
+    }
+
+    CodeTree::CodeTree(double i)
+        : RefCount(0), Opcode(cImmed), Params(), Hash(), Depth(1), Parent(), OptimizedUsing(0)
+    {
+        Value = i;
+        Recalculate_Hash_NoRecursion();
     }
 
     CodeTree::~CodeTree()
@@ -668,21 +780,33 @@ namespace FPoptimizer_CodeTree
 
     void CodeTree::Recalculate_Hash_NoRecursion()
     {
-        fphash_t NewHash = Opcode * FPHASH_CONST(0x3A83A83A83A83A0);
+        fphash_t NewHash = { Opcode * FPHASH_CONST(0x3A83A83A83A83A0),
+                             Opcode * FPHASH_CONST(0x1131462E270012B)};
         Depth = 1;
         switch(Opcode)
         {
             case cImmed:
-                // FIXME: not portable - we're casting double* into uint_least64_t*
+            {
                 if(Value != 0.0)
-                    NewHash ^= *(fphash_t*)&Value;
+                {
+                    crc32_t crc = crc32::calc( (const unsigned char*) &Value,
+                                                sizeof(Value) );
+                    NewHash.hash1 ^= crc | (fphash_value_t(crc) << FPHASH_CONST(32));
+                    NewHash.hash2 += ((~fphash_value_t(crc)) * 3) ^ 1234567;
+                }
                 break; // no params
+            }
             case cVar:
-                NewHash ^= (Var<<24) | (Var>>24);
+                NewHash.hash1 ^= (Var<<24) | (Var>>24);
+                NewHash.hash2 += (fphash_value_t(Var)*5) ^ 2345678;
                 break; // no params
             case cFCall: case cPCall:
-                NewHash ^= (Funcno<<24) | (Funcno>>24);
+            {
+                crc32_t crc = crc32::calc( (const unsigned char*) &Funcno, sizeof(Funcno) );
+                NewHash.hash1 ^= (crc<<24) | (crc>>24);
+                NewHash.hash2 += ((~fphash_value_t(crc)) * 7) ^ 3456789;
                 /* passthru */
+            }
             default:
             {
                 size_t MaxChildDepth = 0;
@@ -691,10 +815,14 @@ namespace FPoptimizer_CodeTree
                     if(Params[a].param->Depth > MaxChildDepth)
                         MaxChildDepth = Params[a].param->Depth;
 
-                    NewHash += (1+Params[a].sign)*FPHASH_CONST(0x2492492492492492);
-                    NewHash *= FPHASH_CONST(1099511628211);
+                    NewHash.hash1 += (1+Params[a].sign)*FPHASH_CONST(0x2492492492492492);
+                    NewHash.hash1 *= FPHASH_CONST(1099511628211);
                     //assert(&*Params[a].param != this);
-                    NewHash += Params[a].param->Hash;
+                    NewHash.hash1 += Params[a].param->Hash.hash1;
+
+                    NewHash.hash2 += (3+Params[a].sign)*FPHASH_CONST(0x9ABCD801357);
+                    NewHash.hash2 *= FPHASH_CONST(0xECADB912345);
+                    NewHash.hash2 += (~Params[a].param->Hash.hash1) ^ 4567890;
                 }
                 Depth += MaxChildDepth;
             }
@@ -757,6 +885,668 @@ namespace FPoptimizer_CodeTree
     {
         Params.erase(Params.begin() + index);
     }
+
+    CodeTree::MinMaxTree CodeTree::CalculateResultBoundaries() const
+#ifdef DEBUG_SUBSTITUTIONS
+    {
+        MinMaxTree tmp = CalculateResultBoundaries_do();
+        std::cout << std::flush;
+        fprintf(stderr, "Estimated boundaries: %g%s .. %g%s: ",
+            tmp.min, tmp.has_min?"":"(unknown)",
+            tmp.max, tmp.has_max?"":"(unknown)");
+        fflush(stderr);
+        FPoptimizer_Grammar::DumpTree(*this);
+        std::cout << std::flush;
+        fprintf(stderr, " \n");
+        fflush(stderr);
+        return tmp;
+    }
+    CodeTree::MinMaxTree CodeTree::CalculateResultBoundaries_do() const
+#endif
+    {
+        using namespace std;
+        switch( (OPCODE) Opcode)
+        {
+            case cImmed:
+                return MinMaxTree(Value, Value); // a definite value.
+            case cAnd:
+            case cOr:
+            case cNot:
+            case cNotNot:
+            case cEqual:
+            case cNEqual:
+            case cLess:
+            case cLessOrEq:
+            case cGreater:
+            case cGreaterOrEq:
+            {
+                /* These operations always produce truth values (0 or 1) */
+                /* Narrowing them down is a matter of performing Constant optimization */
+                return MinMaxTree( 0.0, 1.0 );
+            }
+            case cAbs:
+            {
+                /* cAbs always produces a positive value */
+                MinMaxTree m = Params[0].param->CalculateResultBoundaries();
+                if(m.has_min && m.has_max)
+                {
+                    if(m.min < 0.0 && m.max >= 0.0) // ex. -10..+6 or -6..+10
+                    {
+                        /* -x..+y: spans across zero. min=0, max=greater of |x| and |y|. */
+                        double tmp = -m.min; if(tmp > m.max) m.max = tmp;
+                        m.min = 0.0; m.has_min = true;
+                    }
+                    else if(m.min < 0.0) // ex. -10..-4
+                        { double tmp = m.max; m.max = -m.min; m.min = -tmp; }
+                }
+                else if(!m.has_min && m.has_max && m.max < 0.0) // ex. -inf..-10
+                {
+                    m.min = fabs(m.max); m.has_min = true; m.has_max = false;
+                }
+                else if(!m.has_max && m.has_min && m.min > 0.0) // ex. +10..+inf
+                {
+                    m.min = fabs(m.min); m.has_min = true; m.has_max = false;
+                }
+                else // ex. -inf..+inf, -inf..+10, -10..+inf
+                {
+                    // all of these cover -inf..0, 0..+inf, or both
+                    m.min = 0.0; m.has_min = true; m.has_max = false;
+                }
+                return m;
+            }
+
+            case cLog: /* Defined for 0.0 < x <= inf */
+            {
+                MinMaxTree m = Params[0].param->CalculateResultBoundaries();
+                if(m.has_min) { if(m.min < 0.0) m.has_min = false; else m.min = log(m.min); } // No boundaries
+                if(m.has_max) { if(m.max < 0.0) m.has_max = false; else m.max = log(m.max); }
+                return m;
+            }
+
+            case cLog2: /* Defined for 0.0 < x <= inf */
+            {
+                MinMaxTree m = Params[0].param->CalculateResultBoundaries();
+                if(m.has_min) { if(m.min < 0.0) m.has_min = false; else m.min = log(m.min)*CONSTANT_L2I; } // No boundaries
+                if(m.has_max) { if(m.max < 0.0) m.has_max = false; else m.max = log(m.max)*CONSTANT_L2I; }
+                return m;
+            }
+
+            case cAcosh: /* defined for             1.0 <  x <= inf */
+            {
+                MinMaxTree m = Params[0].param->CalculateResultBoundaries();
+                if(m.has_min) { if(m.min <= 1.0) m.has_min = false; else m.min = fp_acosh(m.min); } // No boundaries
+                if(m.has_max) { if(m.max <= 1.0) m.has_max = false; else m.max = fp_acosh(m.max); }
+                return m;
+            }
+            case cAsinh: /* defined for all values -inf <= x <= inf */
+            {
+                MinMaxTree m = Params[0].param->CalculateResultBoundaries();
+                if(m.has_min) m.min = fp_asinh(m.min); // No boundaries
+                if(m.has_max) m.max = fp_asinh(m.max);
+                return m;
+            }
+            case cAtanh: /* defined for all values -inf <= x <= inf */
+            {
+                MinMaxTree m = Params[0].param->CalculateResultBoundaries();
+                if(m.has_min) m.min = fp_atanh(m.min); // No boundaries
+                if(m.has_max) m.max = fp_atanh(m.max);
+                return m;
+            }
+            case cAcos: /* defined for -1.0 <= x < 1, results within CONSTANT_PI..0 */
+            {
+                /* Somewhat complicated to narrow down from this */
+                /* TODO: A resourceful programmer may add it later. */
+                return MinMaxTree( 0.0, CONSTANT_PI );
+            }
+            case cAsin: /* defined for -1.0 <= x < 1, results within -CONSTANT_PIHALF..CONSTANT_PIHALF */
+            {
+                /* Somewhat complicated to narrow down from this */
+                /* TODO: A resourceful programmer may add it later. */
+                return MinMaxTree( -CONSTANT_PIHALF, CONSTANT_PIHALF );
+            }
+            case cAtan: /* defined for all values -inf <= x <= inf */
+            {
+                MinMaxTree m = Params[0].param->CalculateResultBoundaries();
+                if(m.has_min) m.min = atan(m.min); else { m.min = -CONSTANT_PIHALF; m.has_min = true; }
+                if(m.has_max) m.max = atan(m.max); else { m.max =  CONSTANT_PIHALF; m.has_max = true; }
+                return m;
+            }
+            case cAtan2: /* too complicated to estimate */
+            {
+                /* Somewhat complicated to narrow down from this */
+                /* TODO: A resourceful programmer may add it later. */
+                return MinMaxTree(-CONSTANT_PI, CONSTANT_PI);
+            }
+
+            case cSin:
+            case cCos:
+            {
+                /* Could be narrowed down from here,
+                 * but it's too complicated due to
+                 * the cyclic nature of the function. */
+                /* TODO: A resourceful programmer may add it later. */
+                return MinMaxTree(-1.0, 1.0);
+            }
+            case cTan:
+            {
+                /* Could be narrowed down from here,
+                 * but it's too complicated due to
+                 * the cyclic nature of the function */
+                /* TODO: A resourceful programmer may add it later. */
+                return MinMaxTree(); // (CONSTANT_NEG_INF, CONSTANT_POS_INF);
+            }
+
+            case cCeil:
+            {
+                MinMaxTree m = Params[0].param->CalculateResultBoundaries();
+                m.max = std::ceil(m.max); // ceil() may increase the value, may not decrease
+                return m;
+            }
+            case cFloor:
+            {
+                MinMaxTree m = Params[0].param->CalculateResultBoundaries();
+                m.min = std::floor(m.min); // floor() may decrease the value, may not increase
+                return m;
+            }
+            case cInt:
+            {
+                MinMaxTree m = Params[0].param->CalculateResultBoundaries();
+                m.min = std::floor(m.min); // int() may either increase or decrease the value
+                m.max = std::ceil(m.max); // for safety, we assume both
+                return m;
+            }
+            case cSinh: /* defined for all values -inf <= x <= inf */
+            {
+                MinMaxTree m = Params[0].param->CalculateResultBoundaries();
+                if(m.has_min) m.min = sinh(m.min); // No boundaries
+                if(m.has_max) m.max = sinh(m.max);
+                return m;
+            }
+            case cTanh: /* defined for all values -inf <= x <= inf */
+            {
+                MinMaxTree m = Params[0].param->CalculateResultBoundaries();
+                if(m.has_min) m.min = tanh(m.min); // No boundaries
+                if(m.has_max) m.max = tanh(m.max);
+                return m;
+            }
+            case cCosh: /* defined for all values -inf <= x <= inf, results within 1..inf */
+            {
+                MinMaxTree m = Params[0].param->CalculateResultBoundaries();
+                if(m.has_min)
+                {
+                    if(m.has_max) // max, min
+                    {
+                        if(m.min >= 0.0 && m.max >= 0.0) // +x .. +y
+                            { m.min = cosh(m.min); m.max = cosh(m.max); }
+                        else if(m.min < 0.0 && m.max >= 0.0) // -x .. +y
+                            { double tmp = cosh(m.min); m.max = cosh(m.max);
+                              if(tmp > m.max) m.max = tmp;
+                              m.min = 1.0; }
+                        else // -x .. -y
+                            { m.min = cosh(m.min); m.max = cosh(m.max);
+                              std::swap(m.min, m.max); }
+                    }
+                    else // min, no max
+                    {
+                        if(m.min >= 0.0) // 0..inf -> 1..inf
+                            { m.has_max = true; m.max = cosh(m.min); m.min = 1.0; }
+                        else
+                            { m.has_max = false; m.min = 1.0; } // Anything between 1..inf
+                    }
+                }
+                else // no min
+                {
+                    m.has_min = true; m.min = 1.0; // always a lower boundary
+                    if(m.has_max) // max, no min
+                    {
+                        m.min = cosh(m.max); // n..inf
+                        m.has_max = false; // No upper boundary
+                    }
+                    else // no max, no min
+                        m.has_max = false; // No upper boundary
+                }
+                return m;
+            }
+
+            case cIf:
+            {
+                // No guess which branch is chosen. Produce a spanning min & max.
+                MinMaxTree res1 = Params[1].param->CalculateResultBoundaries();
+                MinMaxTree res2 = Params[2].param->CalculateResultBoundaries();
+                if(!res2.has_min) res1.has_min = false; else if(res2.min < res1.min) res1.min = res2.min;
+                if(!res2.has_max) res1.has_max = false; else if(res2.max > res1.max) res1.max = res2.max;
+                return res1;
+            }
+
+            case cMin:
+            {
+                bool has_unknown_min = false;
+                bool has_unknown_max = false;
+
+                MinMaxTree result;
+                for(size_t a=0; a<Params.size(); ++a)
+                {
+                    MinMaxTree m = Params[a].param->CalculateResultBoundaries();
+                    if(!m.has_min)
+                        has_unknown_min = true;
+                    else if(!result.has_min || m.min < result.min)
+                        result.min = m.min;
+
+                    if(!m.has_max)
+                        has_unknown_max = true;
+                    else if(!result.has_max || m.max < result.max)
+                        result.max = m.max;
+                }
+                if(has_unknown_min) result.has_min = false;
+                if(has_unknown_max) result.has_max = false;
+                return result;
+            }
+            case cMax:
+            {
+                bool has_unknown_min = false;
+                bool has_unknown_max = false;
+
+                MinMaxTree result;
+                for(size_t a=0; a<Params.size(); ++a)
+                {
+                    MinMaxTree m = Params[a].param->CalculateResultBoundaries();
+                    if(!m.has_min)
+                        has_unknown_min = true;
+                    else if(!result.has_min || m.min > result.min)
+                        result.min = m.min;
+
+                    if(!m.has_max)
+                        has_unknown_max = true;
+                    else if(!result.has_max || m.max > result.max)
+                        result.max = m.max;
+                }
+                if(has_unknown_min) result.has_min = false;
+                if(has_unknown_max) result.has_max = false;
+                return result;
+            }
+            case cAdd:
+            {
+                /* It's complicated. Follow the logic below. */
+                /* Note: This also deals with the following opcodes:
+                 *       cNeg, cSub, cRSub
+                 */
+                MinMaxTree result(0.0, 0.0);
+                for(size_t a=0; a<Params.size(); ++a)
+                {
+                    const Param& p = Params[a];
+                    MinMaxTree item = p.param->CalculateResultBoundaries();
+
+                    if(item.has_min) result.min += item.min;
+                    else             result.has_min = false;
+                    if(item.has_max) result.max += item.max;
+                    else             result.has_max = false;
+
+                    if(!result.has_min && !result.has_max) break; // hopeless
+                }
+                if(result.has_min && result.has_max
+                && result.min > result.max) std::swap(result.min, result.max);
+                return result;
+            }
+            case cMul:
+            {
+                /* It's complicated. Follow the logic below. */
+                /* Note: This also deals with the following opcodes:
+                 *       cInv, cDiv, cRDiv, cRad, cDeg, cSqr
+                 *       cCot, Sec, cCsc, cLog2, cLog10
+                 */
+
+                struct Value
+                {
+                    enum ValueType { Finite, MinusInf, PlusInf };
+                    ValueType valueType;
+                    double value;
+
+                    Value(ValueType t): valueType(t), value(0) {}
+                    Value(double v): valueType(Finite), value(v) {}
+
+                    bool isNegative() const
+                    {
+                        return valueType == MinusInf ||
+                            (valueType == Finite && value < 0.0);
+                    }
+
+                    void operator*=(const Value& rhs)
+                    {
+                        if(valueType == Finite && rhs.valueType == Finite)
+                            value *= rhs.value;
+                        else
+                            valueType = (isNegative() != rhs.isNegative() ?
+                                         MinusInf : PlusInf);
+                    }
+
+                    bool operator<(const Value& rhs) const
+                    {
+                        return
+                            (valueType == MinusInf && rhs.valueType != MinusInf) ||
+                            (valueType == Finite &&
+                             (rhs.valueType == PlusInf ||
+                              (rhs.valueType == Finite && value < rhs.value)));
+                    }
+                };
+
+                struct MultiplicationRange
+                {
+                    Value minValue, maxValue;
+
+                    MultiplicationRange():
+                        minValue(Value::PlusInf),
+                        maxValue(Value::MinusInf) {}
+
+                    void multiply(Value value1, const Value& value2)
+                    {
+                        value1 *= value2;
+                        if(value1 < minValue) minValue = value1;
+                        if(maxValue < value1) maxValue = value1;
+                    }
+                };
+
+                MinMaxTree result(1.0, 1.0);
+                for(size_t a=0; a<Params.size(); ++a)
+                {
+                    const Param& p = Params[a];
+                    MinMaxTree item = p.param->CalculateResultBoundaries();
+                    if(!item.has_min && !item.has_max) return MinMaxTree(); // hopeless
+
+                    Value minValue0 = result.has_min ? Value(result.min) : Value(Value::MinusInf);
+                    Value maxValue0 = result.has_max ? Value(result.max) : Value(Value::PlusInf);
+                    Value minValue1 = item.has_min ? Value(item.min) : Value(Value::MinusInf);
+                    Value maxValue1 = item.has_max ? Value(item.max) : Value(Value::PlusInf);
+
+                    MultiplicationRange range;
+                    range.multiply(minValue0, minValue1);
+                    range.multiply(minValue0, maxValue1);
+                    range.multiply(maxValue0, minValue1);
+                    range.multiply(maxValue0, maxValue1);
+
+                    if(range.minValue.valueType == Value::Finite)
+                        result.min = range.minValue.value;
+                    else result.has_min = false;
+
+                    if(range.maxValue.valueType == Value::Finite)
+                        result.max = range.maxValue.value;
+                    else result.has_max = false;
+
+                    if(!result.has_min && !result.has_max) break; // hopeless
+                }
+                if(result.has_min && result.has_max
+                && result.min > result.max) std::swap(result.min, result.max);
+                return result;
+            }
+            case cMod:
+            {
+                /* TODO: The boundaries of modulo operator could be estimated better. */
+
+                MinMaxTree x = Params[0].param->CalculateResultBoundaries();
+                MinMaxTree y = Params[1].param->CalculateResultBoundaries();
+
+                if(y.has_max)
+                {
+                    if(y.max >= 0.0)
+                    {
+                        if(!x.has_min || x.min < 0)
+                            return MinMaxTree(-y.max, y.max);
+                        else
+                            return MinMaxTree(0.0, y.max);
+                    }
+                    else
+                    {
+                        if(!x.has_max || x.max >= 0)
+                            return MinMaxTree(y.max, -y.max);
+                        else
+                            return MinMaxTree(y.max, NEGATIVE_MAXIMUM);
+                    }
+                }
+                else
+                    return MinMaxTree();
+            }
+            case cPow:
+            {
+                if(Params[1].param->IsImmed() && FloatEqual(Params[1].param->GetImmed(), 0.0))
+                {
+                    // Note: This makes 0^0 evaluate into 1.
+                    return MinMaxTree(1.0, 1.0); // x^0 = 1
+                }
+                if(Params[0].param->IsImmed() && FloatEqual(Params[0].param->GetImmed(), 0.0))
+                {
+                    // Note: This makes 0^0 evaluate into 0.
+                    return MinMaxTree(0.0, 0.0); // 0^x = 0
+                }
+                if(Params[0].param->IsImmed() && FloatEqual(Params[0].param->GetImmed(), 1.0))
+                {
+                    return MinMaxTree(1.0, 1.0); // 1^x = 1
+                }
+
+                MinMaxTree p0 = Params[0].param->CalculateResultBoundaries();
+                MinMaxTree p1 = Params[1].param->CalculateResultBoundaries();
+                TriTruthValue p0_positivity =
+                    (p0.has_min && p0.has_max)
+                        ? ( (p0.min >= 0.0 && p0.max >= 0.0) ? IsAlways
+                          : (p0.min <  0.0 && p0.max <  0.0) ? IsNever
+                          : Unknown)
+                        : Unknown;
+                TriTruthValue p1_evenness = Params[1].param->GetEvennessInfo();
+
+                /* If param0 IsAlways, the return value is also IsAlways */
+                /* If param1 is even, the return value is IsAlways */
+                /* If param1 is odd, the return value is same as param0's */
+                /* If param0 is negative and param1 is not integer,
+                 * the return value is imaginary (assumed Unknown)
+                 *
+                 * Illustrated in this truth table:
+                 *  P=positive, N=negative
+                 *  E=even, O=odd, U=not integer
+                 *  *=unknown, X=invalid (unknown), x=maybe invalid (unknown)
+                 *
+                 *   param1: PE PO P* NE NO N* PU NU *
+                 * param0:
+                 *   PE      P  P  P  P  P  P  P  P  P
+                 *   PO      P  P  P  P  P  P  P  P  P
+                 *   PU      P  P  P  P  P  P  P  P  P
+                 *   P*      P  P  P  P  P  P  P  P  P
+                 *   NE      P  N  *  P  N  *  X  X  x
+                 *   NO      P  N  *  P  N  *  X  X  x
+                 *   NU      P  N  *  P  N  *  X  X  x
+                 *   N*      P  N  *  P  N  *  X  X  x
+                 *   *       P  *  *  P  *  *  x  x  *
+                 *
+                 * Note: This also deals with the following opcodes:
+                 *       cSqrt  (param0, PU) (x^0.5)
+                 *       cRSqrt (param0, NU) (x^-0.5)
+                 *       cExp   (PU, param1) (CONSTANT_E^x)
+                 */
+                TriTruthValue result_positivity = Unknown;
+                switch(p0_positivity)
+                {
+                    case IsAlways:
+                        // e.g.   5^x = positive.
+                        result_positivity = IsAlways;
+                        break;
+                    case IsNever:
+                    {
+                        result_positivity = p1_evenness;
+                        break;
+                    }
+                    default:
+                        switch(p1_evenness)
+                        {
+                            case IsAlways:
+                                // e.g. x^( 4) = positive
+                                // e.g. x^(-4) = positive
+                                result_positivity = IsAlways;
+                                break;
+                            case IsNever:
+                                break;
+                            case Unknown:
+                            {
+                                /* If p1 is const non-integer,
+                                 * assume the result is positive
+                                 * though it may be NaN instead.
+                                 */
+                                if(Params[1].param->IsImmed()
+                                && !Params[1].param->IsAlwaysInteger()
+                                && Params[1].param->GetImmed() >= 0.0)
+                                {
+                                    result_positivity = IsAlways;
+                                }
+                                break;
+                            }
+                        }
+                }
+                switch(result_positivity)
+                {
+                    case IsAlways:
+                    {
+                        /* The result is always positive.
+                         * Figure out whether we know the minimum value. */
+                        double min = 0.0;
+                        if(p0.has_min && p1.has_min)
+                        {
+                            min = pow(p0.min, p1.min);
+                            if(p0.min < 0.0 && (!p1.has_max || p1.max >= 0.0) && min >= 0.0)
+                                min = 0.0;
+                        }
+                        if(p0.has_min && p0.min >= 0.0 && p0.has_max && p1.has_max)
+                        {
+                            double max = pow(p0.max, p1.max);
+                            if(min > max) std::swap(min, max);
+                            return MinMaxTree(min, max);
+                        }
+                        return MinMaxTree(min, false);
+                    }
+                    case IsNever:
+                    {
+                        /* The result is always negative.
+                         * TODO: Figure out whether we know the maximum value.
+                         */
+                        return MinMaxTree(false, NEGATIVE_MAXIMUM);
+                    }
+                    default:
+                    {
+                        /* It can be negative or positive.
+                         * We know nothing about the boundaries. */
+                        break;
+                    }
+                }
+                break;
+            }
+
+            /* The following opcodes are processed by GenerateFrom()
+             * within fpoptimizer_bytecode_to_codetree.cc and thus
+             * they will never occur in the calling context:
+             */
+            case cNeg: // converted into cAdd ~x
+            case cInv: // converted into cMul ~x
+            case cDiv: // converted into cMul ~x
+            case cRDiv: // similar to above
+            case cSub: // converted into cAdd ~x
+            case cRSub: // similar to above
+            case cRad: // converted into cMul x CONSTANT_RD
+            case cDeg: // converted into cMul x CONSTANT_DR
+            case cSqr: // converted into cMul x x
+            case cExp: // converted into cPow CONSTANT_E x
+            case cExp2: // converted into cPow 2 x
+            case cSqrt: // converted into cPow x 0.5
+            case cRSqrt: // converted into cPow x -0.5
+            case cCot: // converted into cMul ~(cTan x)
+            case cSec: // converted into cMul ~(cCos x)
+            case cCsc: // converted into cMul ~(cSin x)
+            case cLog10: // converted into cMul CONSTANT_L10I (cLog x)
+                break; /* Should never occur */
+
+            /* Opcodes that do not occur in the tree for other reasons */
+            case cDup:
+            case cFetch:
+            case cPopNMov:
+            case cNop:
+            case cJump:
+            case VarBegin:
+                break; /* Should never occur */
+
+            /* Opcodes that are completely unpredictable */
+            case cVar:
+            case cPCall:
+            case cFCall:
+#         ifndef FP_DISABLE_EVAL
+            case cEval:
+#endif
+                break; // Cannot deduce
+
+
+            //default:
+                break;
+        }
+        return MinMaxTree(); /* Cannot deduce */
+    }
+
+    /* Is the value of this tree definitely odd(true) or even(false)? */
+    CodeTree::TriTruthValue CodeTree::GetEvennessInfo() const
+    {
+        if(!IsImmed()) return Unknown;
+        if(!IsLongIntegerImmed()) return Unknown;
+        return (GetLongIntegerImmed() & 1) ? IsNever : IsAlways;
+    }
+
+    bool CodeTree::IsAlwaysInteger() const
+    {
+        switch( (OPCODE) Opcode)
+        {
+            case cImmed:
+                return IsLongIntegerImmed();
+            case cAnd:
+            case cOr:
+            case cNot:
+            case cNotNot:
+            case cEqual:
+            case cNEqual:
+            case cLess:
+            case cLessOrEq:
+            case cGreater:
+            case cGreaterOrEq:
+                /* These operations always produce truth values (0 or 1) */
+                return true; /* 0 and 1 are both integers */
+            default:
+                break;
+        }
+        return false; /* Don't know whether it's integer. */
+    }
+
+    bool CodeTree::IsAlwaysSigned(bool positive) const
+    {
+        MinMaxTree tmp = CalculateResultBoundaries();
+
+        if(positive)
+            return tmp.has_min && tmp.min >= 0.0
+              && (!tmp.has_max || tmp.max >= 0.0);
+        else
+            return tmp.has_max && tmp.max < 0.0
+              && (!tmp.has_min || tmp.min < 0.0);
+    }
+
+    bool CodeTree::IsIdenticalTo(const CodeTree& b) const
+    {
+        if(Hash   != b.Hash) return false; // a quick catch-all
+        if(Opcode != b.Opcode) return false;
+        switch(Opcode)
+        {
+            case cImmed: if(Value != b.Value) return false; return true;
+            case cVar:   if(Var   != b.Var)   return false; return true;
+            case cFCall:
+            case cPCall: if(Funcno != b.Funcno) return false; break;
+        }
+        if(Params.size() != b.Params.size()) return false;
+        for(size_t a=0; a<Params.size(); ++a)
+        {
+            if(Params[a].sign != b.Params[a].sign) return false;
+            if(!Params[a].param->IsIdenticalTo(
+               *b.Params[a].param)) return false;
+        }
+        return true;
+    }
 }
 
 #endif
@@ -771,2572 +1561,2134 @@ namespace
 {
     const double clist[] =
     {
-        3.141592653589793115997963468544185161590576171875, /* 0 */
-        0.5, /* 1 */
-        0, /* 2 */
-        1, /* 3 */
-        2.7182818284590450907955982984276488423347473144531, /* 4 */
-        -1, /* 5 */
-        2, /* 6 */
-        -2, /* 7 */
-        -0.5, /* 8 */
-        0.017453292519943295474371680597869271878153085708618, /* 9 */
-        57.29577951308232286464772187173366546630859375, /* 10 */
-        0.4342944819032517611567811854911269620060920715332, /* 11 */
-        1.4426950408889633870046509400708600878715515136719, /* 12 */
-        0.69314718055994528622676398299518041312694549560547, /* 13 */
-        2.3025850929940459010936137929093092679977416992188, /* 14 */
+        2, /* 0 */
+        -1, /* 1 */
+        0.5, /* 2 */
+        0.69314718055994528622676398299518041312694549560547, /* 3 */
+        1, /* 4 */
+        0.36787944117144233402427744294982403516769409179688, /* 5 */
+        7.3890560989306504069418224389664828777313232421875, /* 6 */
+        1.5707963267948965579989817342720925807952880859375, /* 7 */
+        0, /* 8 */
+        -2, /* 9 */
+        1.4426950408889633870046509400708600878715515136719, /* 10 */
+        2.7182818284590450907955982984276488423347473144531, /* 11 */
+        0.13533528323661270231781372785917483270168304443359, /* 12 */
+        0.017453292519943295474371680597869271878153085708618, /* 13 */
+        57.29577951308232286464772187173366546630859375, /* 14 */
+        0.4342944819032517611567811854911269620060920715332, /* 15 */
+        0.30102999566398119801746702250966336578130722045898, /* 16 */
+        2.3025850929940459010936137929093092679977416992188, /* 17 */
+        3.3219280948873621817085677321301773190498352050781, /* 18 */
     };
 
     const ParamSpec plist[] =
     {
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 0 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	0	}, /* 1    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 2 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	1	}, /* 3    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	0	}, /* 4    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	0	}, /* 5    	*/
-        {cAcos       , false, None  , 1, false, 1,	5	}, /* 6    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	0	}, /* 7    	*/
-        {cAcosh      , false, None  , 1, false, 1,	7	}, /* 8    	*/
-        {cAsin       , false, None  , 1, false, 1,	4	}, /* 9    	*/
-        {cAsinh      , false, None  , 1, false, 1,	4	}, /* 10    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	0	}, /* 11    	*/
-        {cAtan       , false, None  , 1, false, 1,	5	}, /* 12    	*/
-        {cAtanh      , false, None  , 1, false, 1,	7	}, /* 13    	*/
-        {cCeil       , false, None  , 1, false, 1,	11	}, /* 14    	*/
-        {cCos        , false, None  , 1, false, 1,	5	}, /* 15    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 16 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	2	}, /* 17    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 18 "x"	*/
-        {NamedHolder , true , None  , 1, false, 0,	0	}, /* 19 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	3	}, /* 20    	*/
-        {NumConstant , false, None  , 1, false, 0,	0	}, /* 21    	*/
-        {NumConstant , false, None  , 1, false, 0,	1	}, /* 22    	*/
-        {cMul        , false, None  , 1, false, 2,	21	}, /* 23    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 24 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	4	}, /* 25    	*/
-        {SubFunction , false, None  , 1, false, 0,	5	}, /* 26    	*/
-        {cCosh       , false, None  , 1, false, 1,	7	}, /* 27    	*/
-        {cFloor      , false, None  , 1, false, 1,	7	}, /* 28    	*/
-        {NumConstant , false, None  , 1, false, 0,	2	}, /* 29    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 30 "x"	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 31 "y"	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 32 "y"	*/
-        {NumConstant , false, None  , 1, false, 0,	3	}, /* 33    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 34 "x"	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 35 "y"	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 36 "y"	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 37 "x"	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 38 "x"	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 39 "x"	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 40    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 41    	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 42 "y"	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 43 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	6	}, /* 44    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 45    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 46    	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 47 "y"	*/
-        {NumConstant , false, None  , 1, false, 0,	2	}, /* 48    	*/
-        {SubFunction , false, None  , 1, false, 0,	7	}, /* 49    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 50 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	8	}, /* 51    	*/
-        {SubFunction , false, None  , 1, false, 0,	9	}, /* 52    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 53 "x"	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 54    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 55    	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 56 "y"	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 57 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	10	}, /* 58    	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 59 "y"	*/
-        {NumConstant , false, None  , 1, false, 0,	3	}, /* 60    	*/
-        {SubFunction , false, None  , 1, false, 0,	11	}, /* 61    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 62 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	12	}, /* 63    	*/
-        {SubFunction , false, None  , 1, false, 0,	13	}, /* 64    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 65 "x"	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 66    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 67    	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 68 "y"	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 69 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	14	}, /* 70    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 71    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 72    	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 73 "y"	*/
-        {NumConstant , false, None  , 1, false, 0,	2	}, /* 74    	*/
-        {SubFunction , false, None  , 1, false, 0,	15	}, /* 75    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 76 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	16	}, /* 77    	*/
-        {SubFunction , false, None  , 1, false, 0,	17	}, /* 78    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 79 "x"	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 80    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 81    	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 82 "y"	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 83 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	18	}, /* 84    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 85    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 86    	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 87 "y"	*/
-        {NumConstant , false, None  , 1, false, 0,	3	}, /* 88    	*/
-        {SubFunction , false, None  , 1, false, 0,	19	}, /* 89    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 90 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	20	}, /* 91    	*/
-        {SubFunction , false, None  , 1, false, 0,	21	}, /* 92    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 93 "x"	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 94    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 95    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 96 "x"	*/
-        {RestHolder  , false, None  , 1, false, 0,	3	}, /* 97    	*/
-        {RestHolder  , true , None  , 1, false, 0,	4	}, /* 98    	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 99 "y"	*/
-        {SubFunction , false, None  , 1, false, 0,	22	}, /* 100    	*/
-        {SubFunction , false, None  , 1, false, 0,	23	}, /* 101    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 102    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 103    	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 104 "y"	*/
-        {SubFunction , false, None  , 1, false, 0,	24	}, /* 105    	*/
-        {SubFunction , false, None  , 1, false, 0,	25	}, /* 106    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 107 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	26	}, /* 108    	*/
-        {SubFunction , false, None  , 1, false, 0,	27	}, /* 109    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 110 "x"	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 111    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 112    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 113 "x"	*/
-        {RestHolder  , false, None  , 1, false, 0,	3	}, /* 114    	*/
-        {RestHolder  , true , None  , 1, false, 0,	4	}, /* 115    	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 116 "y"	*/
-        {SubFunction , false, None  , 1, false, 0,	28	}, /* 117    	*/
-        {SubFunction , false, None  , 1, false, 0,	29	}, /* 118    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 119    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 120    	*/
-        {RestHolder  , false, None  , 1, false, 0,	3	}, /* 121    	*/
-        {RestHolder  , true , None  , 1, false, 0,	4	}, /* 122    	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 123 "y"	*/
-        {SubFunction , false, None  , 1, false, 0,	30	}, /* 124    	*/
-        {SubFunction , false, None  , 1, false, 0,	31	}, /* 125    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 126 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	32	}, /* 127    	*/
-        {SubFunction , false, None  , 1, false, 0,	33	}, /* 128    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 129 "x"	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 130    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 131    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 132 "x"	*/
-        {RestHolder  , false, None  , 1, false, 0,	3	}, /* 133    	*/
-        {RestHolder  , true , None  , 1, false, 0,	4	}, /* 134    	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 135 "y"	*/
-        {SubFunction , false, None  , 1, false, 0,	34	}, /* 136    	*/
-        {SubFunction , false, None  , 1, false, 0,	35	}, /* 137    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 138    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 139    	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 140 "y"	*/
-        {SubFunction , false, None  , 1, false, 0,	36	}, /* 141    	*/
-        {SubFunction , false, None  , 1, false, 0,	37	}, /* 142    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 143 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	38	}, /* 144    	*/
-        {SubFunction , false, None  , 1, false, 0,	39	}, /* 145    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 146 "x"	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 147    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 148    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 149 "x"	*/
-        {RestHolder  , false, None  , 1, false, 0,	3	}, /* 150    	*/
-        {RestHolder  , true , None  , 1, false, 0,	4	}, /* 151    	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 152 "y"	*/
-        {SubFunction , false, None  , 1, false, 0,	40	}, /* 153    	*/
-        {SubFunction , false, None  , 1, false, 0,	41	}, /* 154    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 155    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 156    	*/
-        {RestHolder  , false, None  , 1, false, 0,	3	}, /* 157    	*/
-        {RestHolder  , true , None  , 1, false, 0,	4	}, /* 158    	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 159 "y"	*/
-        {SubFunction , false, None  , 1, false, 0,	42	}, /* 160    	*/
-        {SubFunction , false, None  , 1, false, 0,	43	}, /* 161    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 162 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	44	}, /* 163    	*/
-        {SubFunction , false, None  , 1, false, 0,	45	}, /* 164    	*/
-        {SubFunction , false, None  , 1, false, 0,	46	}, /* 165    	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 166 "y"	*/
-        {NamedHolder , false, None  , 1, false, 0,	2	}, /* 167 "z"	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 168 "x"	*/
-        {NamedHolder , false, None  , 1, false, 0,	2	}, /* 169 "z"	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 170 "y"	*/
-        {SubFunction , false, None  , 1, false, 0,	47	}, /* 171    	*/
-        {SubFunction , false, None  , 1, false, 0,	48	}, /* 172    	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 173 "y"	*/
-        {NamedHolder , false, None  , 1, false, 0,	2	}, /* 174 "z"	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 175 "x"	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 176 "y"	*/
-        {NamedHolder , false, None  , 1, false, 0,	2	}, /* 177 "z"	*/
-        {SubFunction , false, None  , 1, false, 0,	49	}, /* 178    	*/
-        {cLog        , false, None  , 1, false, 1,	5	}, /* 179    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 180 "x"	*/
-        {NamedHolder , false, None  , 1, false, 0,	2	}, /* 181 "z"	*/
-        {SubFunction , false, None  , 1, false, 0,	50	}, /* 182    	*/
-        {NamedHolder , false, None  , 1, false, 0,	2	}, /* 183 "z"	*/
-        {SubFunction , false, None  , 1, false, 0,	51	}, /* 184    	*/
-        {SubFunction , false, None  , 1, false, 0,	52	}, /* 185    	*/
-        {NumConstant , false, None  , 1, false, 0,	4	}, /* 186    	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 187 "y"	*/
-        {SubFunction , false, None  , 1, false, 0,	53	}, /* 188    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 189    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 190    	*/
-        {SubFunction , false, None  , 1, false, 0,	54	}, /* 191    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 192    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 193    	*/
-        {SubFunction , false, None  , 1, false, 0,	55	}, /* 194    	*/
-        {SubFunction , false, None  , 1, false, 0,	56	}, /* 195    	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 196 "y"	*/
-        {SubFunction , false, None  , 1, false, 0,	57	}, /* 197    	*/
-        {SubFunction , false, None  , 1, false, 0,	58	}, /* 198    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	0	}, /* 199    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	1	}, /* 200    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	0	}, /* 201    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	1	}, /* 202    	*/
-        {cMax        , false, None  , 1, false, 2,	201	}, /* 203    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 204 "x"	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 205 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	59	}, /* 206    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	0	}, /* 207    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	1	}, /* 208    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	0	}, /* 209    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	1	}, /* 210    	*/
-        {cMin        , false, None  , 1, false, 2,	209	}, /* 211    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 212 "x"	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 213 "x"	*/
-        {NumConstant , false, None  , 1, false, 0,	2	}, /* 214    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 215 "x"	*/
-        {NumConstant , false, None  , 1, false, 0,	3	}, /* 216    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 217 "x"	*/
-        {NumConstant , false, None  , 1, false, 0,	4	}, /* 218    	*/
-        {SubFunction , false, None  , 1, false, 0,	60	}, /* 219    	*/
-        {SubFunction , false, None  , 1, false, 0,	61	}, /* 220    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 221    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 222    	*/
-        {NumConstant , false, None  , 1, false, 0,	4	}, /* 223    	*/
-        {SubFunction , false, None  , 1, false, 0,	62	}, /* 224    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 225    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 226    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 227 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	63	}, /* 228    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	0	}, /* 229    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	1	}, /* 230    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	0	}, /* 231    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	1	}, /* 232    	*/
-        {cPow        , false, None  , 1, false, 2,	231	}, /* 233    	*/
-        {cLog        , false, Invert, 1, false, 1,	4	}, /* 234    	*/
-        {SubFunction , false, None  , 1, false, 0,	61	}, /* 235    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 236    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 237    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	0	}, /* 238    	*/
-        {SubFunction , false, None  , 1, false, 0,	64	}, /* 239    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 240    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 241    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 242 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	65	}, /* 243    	*/
-        {cLog        , true , None  , 1, false, 1,	5	}, /* 244    	*/
-        {SubFunction , false, None  , 1, false, 0,	60	}, /* 245    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 246    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 247    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	0	}, /* 248    	*/
-        {SubFunction , false, None  , 1, false, 0,	66	}, /* 249    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 250    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 251    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 252 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	67	}, /* 253    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 254 "x"	*/
-        {NumConstant , false, None  , 1, false, 0,	5	}, /* 255    	*/
-        {NamedHolder , true , None  , 1, false, 0,	0	}, /* 256 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	68	}, /* 257    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 258 "x"	*/
-        {NumConstant , false, None  , 1, false, 0,	2	}, /* 259    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 260 "x"	*/
-        {NumConstant , false, None  , 1, false, 0,	3	}, /* 261    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 262 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	69	}, /* 263    	*/
-        {RestHolder  , true , None  , 1, false, 0,	1	}, /* 264    	*/
-        {RestHolder  , false, None  , 1, false, 0,	2	}, /* 265    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 266 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	70	}, /* 267    	*/
-        {SubFunction , true , None  , 1, false, 0,	71	}, /* 268    	*/
-        {SubFunction , false, None  , 1, false, 0,	72	}, /* 269    	*/
-        {NamedHolder , false, None  , 1, false, 0,	2	}, /* 270 "z"	*/
-        {SubFunction , true , None  , 1, false, 0,	73	}, /* 271    	*/
-        {SubFunction , false, None  , 1, false, 0,	61	}, /* 272    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 273    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 274    	*/
-        {NamedHolder , false, None  , 1, false, 0,	2	}, /* 275 "z"	*/
-        {SubFunction , false, None  , 1, false, 0,	74	}, /* 276    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 277    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 278    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 279 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	75	}, /* 280    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 281 "x"	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 282 "y"	*/
-        {SubFunction , false, None  , 1, false, 0,	76	}, /* 283    	*/
-        {NamedHolder , false, None  , 1, false, 0,	2	}, /* 284 "z"	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 285 "y"	*/
-        {NamedHolder , false, None  , 1, false, 0,	2	}, /* 286 "z"	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 287 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	77	}, /* 288    	*/
-        {cSin        , false, None  , 1, false, 1,	4	}, /* 289    	*/
-        {SubFunction , false, None  , 1, false, 0,	78	}, /* 290    	*/
-        {SubFunction , false, None  , 1, false, 0,	79	}, /* 291    	*/
-        {SubFunction , true , None  , 1, false, 0,	80	}, /* 292    	*/
-        {SubFunction , false, None  , 1, false, 0,	81	}, /* 293    	*/
-        {NumConstant , false, None  , 1, false, 0,	0	}, /* 294    	*/
-        {NumConstant , false, None  , 1, false, 0,	1	}, /* 295    	*/
-        {cMul        , false, None  , 1, false, 2,	294	}, /* 296    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 297 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	82	}, /* 298    	*/
-        {SubFunction , false, None  , 1, false, 0,	83	}, /* 299    	*/
-        {cSinh       , false, None  , 1, false, 1,	5	}, /* 300    	*/
-        {cTan        , false, None  , 1, false, 1,	5	}, /* 301    	*/
-        {SubFunction , false, None  , 1, false, 0,	84	}, /* 302    	*/
-        {NamedHolder , true , None  , 1, false, 0,	0	}, /* 303 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	85	}, /* 304    	*/
-        {SubFunction , true , None  , 1, false, 0,	86	}, /* 305    	*/
-        {SubFunction , false, None  , 1, false, 0,	87	}, /* 306    	*/
-        {cTanh       , false, None  , 1, false, 1,	4	}, /* 307    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 308    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 309    	*/
-        {SubFunction , false, None  , 1, false, 0,	88	}, /* 310    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 311    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 312    	*/
-        {RestHolder  , false, None  , 1, false, 0,	3	}, /* 313    	*/
-        {RestHolder  , true , None  , 1, false, 0,	4	}, /* 314    	*/
-        {SubFunction , false, None  , 1, false, 0,	89	}, /* 315    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 316    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 317    	*/
-        {SubFunction , false, None  , 1, false, 0,	90	}, /* 318    	*/
-        {RestHolder  , true , None  , 1, false, 0,	3	}, /* 319    	*/
-        {RestHolder  , false, None  , 1, false, 0,	4	}, /* 320    	*/
-        {SubFunction , false, None  , 1, false, 0,	91	}, /* 321    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 322    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 323    	*/
-        {SubFunction , true , None  , 1, false, 0,	92	}, /* 324    	*/
-        {ImmedHolder , true , None  , 1, false, 0,	0	}, /* 325    	*/
-        {ImmedHolder , false, Negate, 1, false, 0,	0	}, /* 326    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 327    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 328    	*/
-        {SubFunction , true , None  , 1, false, 0,	93	}, /* 329    	*/
-        {RestHolder  , true , None  , 1, false, 0,	1	}, /* 330    	*/
-        {RestHolder  , false, None  , 1, false, 0,	2	}, /* 331    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	0	}, /* 332    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 333    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 334    	*/
-        {SubFunction , true , None  , 1, false, 0,	94	}, /* 335    	*/
-        {ImmedHolder , false, Negate, 1, false, 0,	0	}, /* 336    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 337    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 338    	*/
-        {SubFunction , false, None  , 1, false, 0,	95	}, /* 339    	*/
-        {RestHolder  , false, None  , 1, false, 0,	3	}, /* 340    	*/
-        {RestHolder  , true , None  , 1, false, 0,	4	}, /* 341    	*/
-        {SubFunction , false, None  , 1, false, 0,	96	}, /* 342    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 343    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 344    	*/
-        {SubFunction , true , None  , 1, false, 0,	97	}, /* 345    	*/
-        {RestHolder  , true , None  , 1, false, 0,	3	}, /* 346    	*/
-        {RestHolder  , false, None  , 1, false, 0,	4	}, /* 347    	*/
-        {SubFunction , false, None  , 1, false, 0,	98	}, /* 348    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 349    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 350    	*/
-        {SubFunction , false, None  , 1, false, 0,	99	}, /* 351    	*/
-        {SubFunction , false, None  , 1, false, 0,	100	}, /* 352    	*/
-        {NumConstant , false, None  , 1, false, 0,	6	}, /* 353    	*/
-        {NumConstant , false, None  , 1, false, 0,	3	}, /* 354    	*/
-        {SubFunction , true , None  , 1, false, 0,	101	}, /* 355    	*/
-        {SubFunction , false, None  , 1, false, 0,	5	}, /* 356    	*/
-        {NumConstant , false, None  , 1, false, 0,	6	}, /* 357    	*/
-        {SubFunction , false, None  , 1, false, 0,	102	}, /* 358    	*/
-        {SubFunction , false, None  , 1, false, 0,	5	}, /* 359    	*/
-        {NumConstant , false, None  , 1, false, 0,	6	}, /* 360    	*/
-        {NumConstant , false, None  , 1, false, 0,	3	}, /* 361    	*/
-        {SubFunction , true , None  , 1, false, 0,	103	}, /* 362    	*/
-        {SubFunction , false, None  , 1, false, 0,	100	}, /* 363    	*/
-        {NumConstant , false, None  , 1, false, 0,	6	}, /* 364    	*/
-        {SubFunction , false, None  , 1, false, 0,	104	}, /* 365    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	0	}, /* 366    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	1	}, /* 367    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	0	}, /* 368    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	1	}, /* 369    	*/
-        {cAdd        , false, None  , 1, false, 2,	368	}, /* 370    	*/
-        {SubFunction , false, None  , 1, false, 0,	60	}, /* 371    	*/
-        {SubFunction , false, None  , 1, false, 0,	105	}, /* 372    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 373 "x"	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 374 "y"	*/
-        {SubFunction , false, None  , 1, false, 0,	106	}, /* 375    	*/
-        {SubFunction , false, None  , 1, false, 0,	107	}, /* 376    	*/
-        {SubFunction , false, None  , 1, false, 0,	80	}, /* 377    	*/
-        {NumConstant , false, None  , 1, false, 0,	6	}, /* 378    	*/
-        {SubFunction , false, None  , 1, false, 0,	108	}, /* 379    	*/
-        {SubFunction , false, None  , 1, false, 0,	101	}, /* 380    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 381    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 382    	*/
-        {RestHolder  , false, None  , 1, false, 0,	3	}, /* 383    	*/
-        {RestHolder  , true , None  , 1, false, 0,	4	}, /* 384    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 385    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 386    	*/
-        {RestHolder  , false, None  , 1, false, 0,	5	}, /* 387    	*/
-        {RestHolder  , true , None  , 1, false, 0,	6	}, /* 388    	*/
-        {SubFunction , false, None  , 1, false, 0,	109	}, /* 389    	*/
-        {SubFunction , false, None  , 1, false, 0,	110	}, /* 390    	*/
-        {SubFunction , false, None  , 1, false, 0,	111	}, /* 391    	*/
-        {SubFunction , false, None  , 1, false, 0,	112	}, /* 392    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 393    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 394    	*/
-        {SubFunction , false, None  , 1, false, 0,	113	}, /* 395    	*/
-        {SubFunction , false, None  , 1, false, 0,	114	}, /* 396    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 397    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 398    	*/
-        {RestHolder  , false, None  , 1, false, 0,	3	}, /* 399    	*/
-        {RestHolder  , true , None  , 1, false, 0,	4	}, /* 400    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 401    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 402    	*/
-        {RestHolder  , false, None  , 1, false, 0,	5	}, /* 403    	*/
-        {RestHolder  , true , None  , 1, false, 0,	6	}, /* 404    	*/
-        {SubFunction , false, None  , 1, false, 0,	115	}, /* 405    	*/
-        {SubFunction , true , None  , 1, false, 0,	116	}, /* 406    	*/
-        {SubFunction , false, None  , 1, false, 0,	111	}, /* 407    	*/
-        {SubFunction , true , None  , 1, false, 0,	112	}, /* 408    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 409    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 410    	*/
-        {SubFunction , false, None  , 1, false, 0,	117	}, /* 411    	*/
-        {SubFunction , false, None  , 1, false, 0,	118	}, /* 412    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 413 "x"	*/
-        {RestHolder  , false, None  , 1, false, 0,	3	}, /* 414    	*/
-        {RestHolder  , true , None  , 1, false, 0,	4	}, /* 415    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 416 "x"	*/
-        {ImmedHolder , false, None  , 1, false, 0,	1	}, /* 417    	*/
-        {SubFunction , false, None  , 1, false, 0,	120	}, /* 418    	*/
-        {RestHolder  , false, None  , 1, false, 0,	5	}, /* 419    	*/
-        {RestHolder  , true , None  , 1, false, 0,	6	}, /* 420    	*/
-        {SubFunction , false, None  , 1, false, 0,	119	}, /* 421    	*/
-        {SubFunction , true , None  , 1, false, 0,	121	}, /* 422    	*/
-        {NumConstant , false, None  , 1, false, 0,	3	}, /* 423    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	1	}, /* 424    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 425 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	122	}, /* 426    	*/
-        {NumConstant , false, None  , 1, false, 0,	3	}, /* 427    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	1	}, /* 428    	*/
-        {NumConstant , false, None  , 1, false, 0,	3	}, /* 429    	*/
-        {SubFunction , true , None  , 1, false, 0,	124	}, /* 430    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 431 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	125	}, /* 432    	*/
-        {RestHolder  , false, None  , 1, false, 0,	3	}, /* 433    	*/
-        {RestHolder  , true , None  , 1, false, 0,	4	}, /* 434    	*/
-        {SubFunction , false, None  , 1, false, 0,	126	}, /* 435    	*/
-        {NumConstant , false, None  , 1, false, 0,	3	}, /* 436    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	1	}, /* 437    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	1	}, /* 438    	*/
-        {SubFunction , true , None  , 1, false, 0,	128	}, /* 439    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 440 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	129	}, /* 441    	*/
-        {RestHolder  , false, None  , 1, false, 0,	5	}, /* 442    	*/
-        {RestHolder  , true , None  , 1, false, 0,	6	}, /* 443    	*/
-        {SubFunction , false, None  , 1, false, 0,	130	}, /* 444    	*/
-        {SubFunction , false, None  , 1, false, 0,	127	}, /* 445    	*/
-        {SubFunction , true , None  , 1, false, 0,	131	}, /* 446    	*/
-        {SubFunction , false, None  , 1, false, 0,	123	}, /* 447    	*/
-        {SubFunction , false, None  , 1, false, 0,	132	}, /* 448    	*/
-        {SubFunction , false, None  , 1, false, 0,	133	}, /* 449    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 450 "x"	*/
-        {ImmedHolder , false, None  , 1, false, 0,	0	}, /* 451    	*/
-        {SubFunction , false, None  , 1, false, 0,	134	}, /* 452    	*/
-        {RestHolder  , false, None  , 1, false, 0,	3	}, /* 453    	*/
-        {RestHolder  , true , None  , 1, false, 0,	4	}, /* 454    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 455 "x"	*/
-        {RestHolder  , false, None  , 1, false, 0,	5	}, /* 456    	*/
-        {RestHolder  , true , None  , 1, false, 0,	6	}, /* 457    	*/
-        {SubFunction , false, None  , 1, false, 0,	135	}, /* 458    	*/
-        {SubFunction , false, None  , 1, false, 0,	136	}, /* 459    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	0	}, /* 460    	*/
-        {NumConstant , false, None  , 1, false, 0,	3	}, /* 461    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 462 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	137	}, /* 463    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	0	}, /* 464    	*/
-        {NumConstant , false, None  , 1, false, 0,	3	}, /* 465    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	0	}, /* 466    	*/
-        {SubFunction , true , None  , 1, false, 0,	139	}, /* 467    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 468 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	140	}, /* 469    	*/
-        {RestHolder  , false, None  , 1, false, 0,	3	}, /* 470    	*/
-        {RestHolder  , true , None  , 1, false, 0,	4	}, /* 471    	*/
-        {SubFunction , false, None  , 1, false, 0,	141	}, /* 472    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	0	}, /* 473    	*/
-        {NumConstant , false, None  , 1, false, 0,	3	}, /* 474    	*/
-        {NumConstant , false, None  , 1, false, 0,	3	}, /* 475    	*/
-        {SubFunction , true , None  , 1, false, 0,	143	}, /* 476    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 477 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	144	}, /* 478    	*/
-        {RestHolder  , false, None  , 1, false, 0,	5	}, /* 479    	*/
-        {RestHolder  , true , None  , 1, false, 0,	6	}, /* 480    	*/
-        {SubFunction , false, None  , 1, false, 0,	145	}, /* 481    	*/
-        {SubFunction , false, None  , 1, false, 0,	142	}, /* 482    	*/
-        {SubFunction , false, None  , 1, false, 0,	146	}, /* 483    	*/
-        {SubFunction , false, None  , 1, false, 0,	138	}, /* 484    	*/
-        {SubFunction , false, None  , 1, false, 0,	147	}, /* 485    	*/
-        {SubFunction , false, None  , 1, false, 0,	148	}, /* 486    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 487 "x"	*/
-        {ImmedHolder , false, None  , 1, false, 0,	0	}, /* 488    	*/
-        {SubFunction , false, None  , 1, false, 0,	149	}, /* 489    	*/
-        {RestHolder  , false, None  , 1, false, 0,	3	}, /* 490    	*/
-        {RestHolder  , true , None  , 1, false, 0,	4	}, /* 491    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 492 "x"	*/
-        {ImmedHolder , false, None  , 1, false, 0,	1	}, /* 493    	*/
-        {SubFunction , false, None  , 1, false, 0,	151	}, /* 494    	*/
-        {RestHolder  , false, None  , 1, false, 0,	5	}, /* 495    	*/
-        {RestHolder  , true , None  , 1, false, 0,	6	}, /* 496    	*/
-        {SubFunction , false, None  , 1, false, 0,	150	}, /* 497    	*/
-        {SubFunction , false, None  , 1, false, 0,	152	}, /* 498    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	0	}, /* 499    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	1	}, /* 500    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 501 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	153	}, /* 502    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	0	}, /* 503    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	1	}, /* 504    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	0	}, /* 505    	*/
-        {SubFunction , true , None  , 1, false, 0,	155	}, /* 506    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 507 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	156	}, /* 508    	*/
-        {RestHolder  , false, None  , 1, false, 0,	3	}, /* 509    	*/
-        {RestHolder  , true , None  , 1, false, 0,	4	}, /* 510    	*/
-        {SubFunction , false, None  , 1, false, 0,	157	}, /* 511    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	0	}, /* 512    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	1	}, /* 513    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	1	}, /* 514    	*/
-        {SubFunction , true , None  , 1, false, 0,	159	}, /* 515    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 516 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	160	}, /* 517    	*/
-        {RestHolder  , false, None  , 1, false, 0,	5	}, /* 518    	*/
-        {RestHolder  , true , None  , 1, false, 0,	6	}, /* 519    	*/
-        {SubFunction , false, None  , 1, false, 0,	161	}, /* 520    	*/
-        {SubFunction , false, None  , 1, false, 0,	158	}, /* 521    	*/
-        {SubFunction , false, None  , 1, false, 0,	162	}, /* 522    	*/
-        {SubFunction , false, None  , 1, false, 0,	154	}, /* 523    	*/
-        {SubFunction , false, None  , 1, false, 0,	163	}, /* 524    	*/
-        {SubFunction , false, None  , 1, false, 0,	164	}, /* 525    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 526 "x"	*/
-        {ImmedHolder , false, None  , 1, false, 0,	0	}, /* 527    	*/
-        {SubFunction , false, None  , 1, false, 0,	165	}, /* 528    	*/
-        {RestHolder  , false, None  , 1, false, 0,	3	}, /* 529    	*/
-        {RestHolder  , true , None  , 1, false, 0,	4	}, /* 530    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 531 "x"	*/
-        {RestHolder  , false, None  , 1, false, 0,	5	}, /* 532    	*/
-        {RestHolder  , true , None  , 1, false, 0,	6	}, /* 533    	*/
-        {SubFunction , false, None  , 1, false, 0,	166	}, /* 534    	*/
-        {SubFunction , true , None  , 1, false, 0,	167	}, /* 535    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	0	}, /* 536    	*/
-        {NumConstant , false, None  , 1, false, 0,	3	}, /* 537    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 538 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	168	}, /* 539    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	0	}, /* 540    	*/
-        {NumConstant , false, None  , 1, false, 0,	3	}, /* 541    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	0	}, /* 542    	*/
-        {SubFunction , true , None  , 1, false, 0,	170	}, /* 543    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 544 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	171	}, /* 545    	*/
-        {RestHolder  , false, None  , 1, false, 0,	3	}, /* 546    	*/
-        {RestHolder  , true , None  , 1, false, 0,	4	}, /* 547    	*/
-        {SubFunction , false, None  , 1, false, 0,	172	}, /* 548    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	0	}, /* 549    	*/
-        {NumConstant , false, None  , 1, false, 0,	3	}, /* 550    	*/
-        {NumConstant , false, None  , 1, false, 0,	3	}, /* 551    	*/
-        {SubFunction , true , None  , 1, false, 0,	174	}, /* 552    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 553 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	175	}, /* 554    	*/
-        {RestHolder  , false, None  , 1, false, 0,	5	}, /* 555    	*/
-        {RestHolder  , true , None  , 1, false, 0,	6	}, /* 556    	*/
-        {SubFunction , false, None  , 1, false, 0,	176	}, /* 557    	*/
-        {SubFunction , false, None  , 1, false, 0,	173	}, /* 558    	*/
-        {SubFunction , true , None  , 1, false, 0,	177	}, /* 559    	*/
-        {SubFunction , false, None  , 1, false, 0,	169	}, /* 560    	*/
-        {SubFunction , false, None  , 1, false, 0,	178	}, /* 561    	*/
-        {SubFunction , false, None  , 1, false, 0,	179	}, /* 562    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 563 "x"	*/
-        {ImmedHolder , false, None  , 1, false, 0,	0	}, /* 564    	*/
-        {SubFunction , false, None  , 1, false, 0,	180	}, /* 565    	*/
-        {RestHolder  , false, None  , 1, false, 0,	3	}, /* 566    	*/
-        {RestHolder  , true , None  , 1, false, 0,	4	}, /* 567    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 568 "x"	*/
-        {ImmedHolder , false, None  , 1, false, 0,	1	}, /* 569    	*/
-        {SubFunction , false, None  , 1, false, 0,	182	}, /* 570    	*/
-        {RestHolder  , false, None  , 1, false, 0,	5	}, /* 571    	*/
-        {RestHolder  , true , None  , 1, false, 0,	6	}, /* 572    	*/
-        {SubFunction , false, None  , 1, false, 0,	181	}, /* 573    	*/
-        {SubFunction , true , None  , 1, false, 0,	183	}, /* 574    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	0	}, /* 575    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	1	}, /* 576    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 577 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	184	}, /* 578    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	0	}, /* 579    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	1	}, /* 580    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	0	}, /* 581    	*/
-        {SubFunction , true , None  , 1, false, 0,	186	}, /* 582    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 583 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	187	}, /* 584    	*/
-        {RestHolder  , false, None  , 1, false, 0,	3	}, /* 585    	*/
-        {RestHolder  , true , None  , 1, false, 0,	4	}, /* 586    	*/
-        {SubFunction , false, None  , 1, false, 0,	188	}, /* 587    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	0	}, /* 588    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	1	}, /* 589    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	1	}, /* 590    	*/
-        {SubFunction , true , None  , 1, false, 0,	190	}, /* 591    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 592 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	191	}, /* 593    	*/
-        {RestHolder  , false, None  , 1, false, 0,	5	}, /* 594    	*/
-        {RestHolder  , true , None  , 1, false, 0,	6	}, /* 595    	*/
-        {SubFunction , false, None  , 1, false, 0,	192	}, /* 596    	*/
-        {SubFunction , false, None  , 1, false, 0,	189	}, /* 597    	*/
-        {SubFunction , true , None  , 1, false, 0,	193	}, /* 598    	*/
-        {SubFunction , false, None  , 1, false, 0,	185	}, /* 599    	*/
-        {SubFunction , false, None  , 1, false, 0,	194	}, /* 600    	*/
-        {SubFunction , false, None  , 1, false, 0,	195	}, /* 601    	*/
-        {SubFunction , false, None  , 1, false, 0,	100	}, /* 602    	*/
-        {SubFunction , false, None  , 1, false, 0,	196	}, /* 603    	*/
-        {SubFunction , false, None  , 1, false, 0,	5	}, /* 604    	*/
-        {SubFunction , false, None  , 1, false, 0,	198	}, /* 605    	*/
-        {SubFunction , false, None  , 1, false, 0,	197	}, /* 606    	*/
-        {SubFunction , false, None  , 1, false, 0,	199	}, /* 607    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 608 "x"	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 609 "y"	*/
-        {SubFunction , false, None  , 1, false, 0,	200	}, /* 610    	*/
-        {SubFunction , false, None  , 1, false, 0,	201	}, /* 611    	*/
-        {SubFunction , false, None  , 1, false, 0,	100	}, /* 612    	*/
-        {SubFunction , false, None  , 1, false, 0,	196	}, /* 613    	*/
-        {SubFunction , false, None  , 1, false, 0,	80	}, /* 614    	*/
-        {SubFunction , false, None  , 1, false, 0,	203	}, /* 615    	*/
-        {SubFunction , false, None  , 1, false, 0,	202	}, /* 616    	*/
-        {SubFunction , true , None  , 1, false, 0,	204	}, /* 617    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 618 "x"	*/
-        {NamedHolder , true , None  , 1, false, 0,	1	}, /* 619 "y"	*/
-        {SubFunction , false, None  , 1, false, 0,	205	}, /* 620    	*/
-        {SubFunction , false, None  , 1, false, 0,	206	}, /* 621    	*/
-        {SubFunction , false, None  , 1, false, 0,	80	}, /* 622    	*/
-        {SubFunction , false, None  , 1, false, 0,	207	}, /* 623    	*/
-        {SubFunction , false, None  , 1, false, 0,	100	}, /* 624    	*/
-        {SubFunction , false, None  , 1, false, 0,	198	}, /* 625    	*/
-        {SubFunction , false, None  , 1, false, 0,	208	}, /* 626    	*/
-        {SubFunction , false, None  , 1, false, 0,	209	}, /* 627    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 628 "x"	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 629 "y"	*/
-        {SubFunction , false, None  , 1, false, 0,	210	}, /* 630    	*/
-        {SubFunction , false, None  , 1, false, 0,	211	}, /* 631    	*/
-        {SubFunction , false, None  , 1, false, 0,	5	}, /* 632    	*/
-        {SubFunction , false, None  , 1, false, 0,	196	}, /* 633    	*/
-        {SubFunction , false, None  , 1, false, 0,	83	}, /* 634    	*/
-        {SubFunction , false, None  , 1, false, 0,	203	}, /* 635    	*/
-        {SubFunction , false, None  , 1, false, 0,	212	}, /* 636    	*/
-        {SubFunction , true , None  , 1, false, 0,	213	}, /* 637    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 638 "x"	*/
-        {NamedHolder , true , None  , 1, false, 0,	1	}, /* 639 "y"	*/
-        {SubFunction , false, None  , 1, false, 0,	214	}, /* 640    	*/
-        {SubFunction , false, None  , 1, false, 0,	215	}, /* 641    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 642 "x"	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 643    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 644    	*/
-        {NamedHolder , false, None  , 1, true , 0,	0	}, /* 645 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	216	}, /* 646    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 647    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 648    	*/
-        {NamedHolder , false, None  , 1, true , 0,	0	}, /* 649 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	217	}, /* 650    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 651 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	218	}, /* 652    	*/
-        {SubFunction , false, None  , 1, false, 0,	219	}, /* 653    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 654 "x"	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 655    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 656    	*/
-        {NamedHolder , false, None  , 1, true , 0,	0	}, /* 657 "x"	*/
-        {SubFunction , true , None  , 1, false, 0,	220	}, /* 658    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 659    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 660    	*/
-        {NamedHolder , false, None  , 1, true , 0,	0	}, /* 661 "x"	*/
-        {SubFunction , true , None  , 1, false, 0,	221	}, /* 662    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 663 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	222	}, /* 664    	*/
-        {SubFunction , false, None  , 1, false, 0,	223	}, /* 665    	*/
-        {SubFunction , false, None  , 1, false, 0,	224	}, /* 666    	*/
-        {SubFunction , false, None  , 1, false, 0,	225	}, /* 667    	*/
-        {SubFunction , false, None  , 1, false, 0,	80	}, /* 668    	*/
-        {SubFunction , false, None  , 1, false, 0,	203	}, /* 669    	*/
-        {SubFunction , true , None  , 1, false, 0,	226	}, /* 670    	*/
-        {SubFunction , false, None  , 1, false, 0,	227	}, /* 671    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 672 "x"	*/
-        {NamedHolder , true , None  , 1, false, 0,	1	}, /* 673 "y"	*/
-        {SubFunction , false, None  , 1, false, 0,	228	}, /* 674    	*/
-        {SubFunction , true , None  , 1, false, 0,	229	}, /* 675    	*/
-        {SubFunction , false, None  , 1, false, 0,	83	}, /* 676    	*/
-        {SubFunction , false, None  , 1, false, 0,	207	}, /* 677    	*/
-        {SubFunction , false, None  , 1, false, 0,	5	}, /* 678    	*/
-        {SubFunction , false, None  , 1, false, 0,	198	}, /* 679    	*/
-        {SubFunction , true , None  , 1, false, 0,	230	}, /* 680    	*/
-        {SubFunction , true , None  , 1, false, 0,	231	}, /* 681    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 682 "x"	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 683 "y"	*/
-        {SubFunction , false, None  , 1, false, 0,	232	}, /* 684    	*/
-        {SubFunction , true , None  , 1, false, 0,	233	}, /* 685    	*/
-        {SubFunction , false, None  , 1, false, 0,	5	}, /* 686    	*/
-        {SubFunction , false, None  , 1, false, 0,	196	}, /* 687    	*/
-        {SubFunction , true , None  , 1, false, 0,	234	}, /* 688    	*/
-        {SubFunction , true , None  , 1, false, 0,	213	}, /* 689    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 690 "x"	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 691 "y"	*/
-        {SubFunction , false, None  , 1, false, 0,	235	}, /* 692    	*/
-        {SubFunction , true , None  , 1, false, 0,	236	}, /* 693    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 694 "x"	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 695    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 696    	*/
-        {NamedHolder , true , None  , 1, true , 0,	0	}, /* 697 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	237	}, /* 698    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 699    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 700    	*/
-        {NamedHolder , true , None  , 1, true , 0,	0	}, /* 701 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	238	}, /* 702    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 703 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	239	}, /* 704    	*/
-        {SubFunction , false, None  , 1, false, 0,	240	}, /* 705    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 706 "x"	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 707    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 708    	*/
-        {NamedHolder , true , None  , 1, true , 0,	0	}, /* 709 "x"	*/
-        {SubFunction , true , None  , 1, false, 0,	241	}, /* 710    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 711    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 712    	*/
-        {NamedHolder , true , None  , 1, true , 0,	0	}, /* 713 "x"	*/
-        {SubFunction , true , None  , 1, false, 0,	242	}, /* 714    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 715 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	243	}, /* 716    	*/
-        {SubFunction , false, None  , 1, false, 0,	244	}, /* 717    	*/
-        {NamedHolder , false, None  , 2, true , 0,	0	}, /* 718 "x"	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 719 "x"	*/
-        {NamedHolder , false, None  , 2, true , 0,	0	}, /* 720 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	245	}, /* 721    	*/
-        {NamedHolder , true , None  , 2, true , 0,	0	}, /* 722 "x"	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 723 "x"	*/
-        {NamedHolder , false, None  , 2, true , 0,	0	}, /* 724 "x"	*/
-        {SubFunction , true , None  , 1, false, 0,	246	}, /* 725    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 726 "a"	*/
-        {NumConstant , false, None  , 1, false, 0,	6	}, /* 727    	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 728 "b"	*/
-        {NumConstant , false, None  , 1, false, 0,	6	}, /* 729    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 730 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 731 "b"	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 732    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 733    	*/
-        {SubFunction , false, None  , 1, false, 0,	247	}, /* 734    	*/
-        {SubFunction , false, None  , 1, false, 0,	248	}, /* 735    	*/
-        {SubFunction , false, None  , 1, false, 0,	249	}, /* 736    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 737 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 738 "b"	*/
-        {SubFunction , false, None  , 1, false, 0,	250	}, /* 739    	*/
-        {NumConstant , false, None  , 1, false, 0,	6	}, /* 740    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 741    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 742    	*/
-        {SubFunction , false, None  , 1, false, 0,	252	}, /* 743    	*/
-        {NumConstant , false, None  , 1, false, 0,	7	}, /* 744    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 745 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 746 "b"	*/
-        {SubFunction , false, None  , 1, false, 0,	253	}, /* 747    	*/
-        {SubFunction , false, None  , 1, false, 0,	251	}, /* 748    	*/
-        {SubFunction , false, None  , 1, false, 0,	254	}, /* 749    	*/
-        {NumConstant , false, None  , 1, false, 0,	0	}, /* 750    	*/
-        {NumConstant , false, None  , 1, false, 0,	1	}, /* 751    	*/
-        {cMul        , false, None  , 1, false, 2,	750	}, /* 752    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 753 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	255	}, /* 754    	*/
-        {SubFunction , true , None  , 1, false, 0,	256	}, /* 755    	*/
-        {SubFunction , false, None  , 1, false, 0,	86	}, /* 756    	*/
-        {NumConstant , false, None  , 1, false, 0,	5	}, /* 757    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 758    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 759    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 760    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 761    	*/
-        {SubFunction , true , None  , 1, false, 0,	257	}, /* 762    	*/
-        {SubFunction , false, None  , 1, false, 0,	258	}, /* 763    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 764    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 765    	*/
-        {SubFunction , false, None  , 1, false, 0,	259	}, /* 766    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 767    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 768    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 769 "x"	*/
-        {ImmedHolder , false, None  , 1, false, 0,	0	}, /* 770    	*/
-        {SubFunction , true , None  , 1, false, 0,	260	}, /* 771    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 772 "x"	*/
-        {ImmedHolder , false, Negate, 1, false, 0,	0	}, /* 773    	*/
-        {SubFunction , false, None  , 1, false, 0,	261	}, /* 774    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 775    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 776    	*/
-        {SubFunction , true , None  , 1, false, 0,	262	}, /* 777    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	0	}, /* 778    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	1	}, /* 779    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	0	}, /* 780    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	1	}, /* 781    	*/
-        {cMul        , false, None  , 1, false, 2,	780	}, /* 782    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	0	}, /* 783    	*/
-        {ImmedHolder , true , None  , 1, false, 0,	1	}, /* 784    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	0	}, /* 785    	*/
-        {ImmedHolder , false, Invert, 1, false, 0,	1	}, /* 786    	*/
-        {cMul        , false, None  , 1, false, 2,	785	}, /* 787    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	0	}, /* 788    	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 789 "y"	*/
-        {SubFunction , false, None  , 1, false, 0,	263	}, /* 790    	*/
-        {SubFunction , false, None  , 1, false, 0,	264	}, /* 791    	*/
-        {cLog        , false, Invert, 1, false, 1,	5	}, /* 792    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	0	}, /* 793    	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 794 "y"	*/
-        {SubFunction , false, None  , 1, false, 0,	265	}, /* 795    	*/
-        {SubFunction , false, None  , 1, false, 0,	266	}, /* 796    	*/
-        {cLog        , true , None  , 1, false, 1,	4	}, /* 797    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 798 "x"	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 799 "y"	*/
-        {SubFunction , false, None  , 1, false, 0,	267	}, /* 800    	*/
-        {SubFunction , false, None  , 1, false, 0,	268	}, /* 801    	*/
-        {SubFunction , true , None  , 1, false, 0,	60	}, /* 802    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	0	}, /* 803    	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 804 "y"	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 805 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	269	}, /* 806    	*/
-        {SubFunction , false, None  , 1, false, 0,	270	}, /* 807    	*/
-        {SubFunction , false, None  , 1, false, 0,	271	}, /* 808    	*/
-        {cLog        , false, Invert, 1, false, 1,	5	}, /* 809    	*/
-        {SubFunction , false, None  , 1, false, 0,	61	}, /* 810    	*/
-        {cLog        , false, Invert, 1, false, 1,	4	}, /* 811    	*/
-        {SubFunction , false, None  , 1, false, 0,	272	}, /* 812    	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 813 "y"	*/
-        {SubFunction , false, None  , 1, false, 0,	273	}, /* 814    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	0	}, /* 815    	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 816 "y"	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 817 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	274	}, /* 818    	*/
-        {SubFunction , false, None  , 1, false, 0,	275	}, /* 819    	*/
-        {SubFunction , false, None  , 1, false, 0,	276	}, /* 820    	*/
-        {cLog        , true , None  , 1, false, 1,	7	}, /* 821    	*/
-        {SubFunction , false, None  , 1, false, 0,	61	}, /* 822    	*/
-        {cLog        , false, Invert, 1, false, 1,	4	}, /* 823    	*/
-        {SubFunction , false, None  , 1, false, 0,	277	}, /* 824    	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 825 "y"	*/
-        {SubFunction , false, None  , 1, false, 0,	278	}, /* 826    	*/
-        {NamedHolder , false, None  , 1, false, 0,	2	}, /* 827 "z"	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 828 "y"	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 829 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	279	}, /* 830    	*/
-        {SubFunction , false, None  , 1, false, 0,	280	}, /* 831    	*/
-        {SubFunction , false, None  , 1, false, 0,	281	}, /* 832    	*/
-        {SubFunction , true , None  , 1, false, 0,	282	}, /* 833    	*/
-        {SubFunction , false, None  , 1, false, 0,	61	}, /* 834    	*/
-        {SubFunction , true , None  , 1, false, 0,	73	}, /* 835    	*/
-        {SubFunction , false, None  , 1, false, 0,	283	}, /* 836    	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 837 "y"	*/
-        {SubFunction , false, None  , 1, false, 0,	284	}, /* 838    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 839 "x"	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 840 "y"	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 841 "x"	*/
-        {NamedHolder , false, None  , 1, false, 0,	2	}, /* 842 "z"	*/
-        {SubFunction , false, None  , 1, false, 0,	285	}, /* 843    	*/
-        {SubFunction , false, None  , 1, false, 0,	286	}, /* 844    	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 845 "y"	*/
-        {NamedHolder , false, None  , 1, false, 0,	2	}, /* 846 "z"	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 847 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	287	}, /* 848    	*/
-        {SubFunction , false, None  , 1, false, 0,	288	}, /* 849    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 850 "x"	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 851 "y"	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 852 "x"	*/
-        {NamedHolder , false, None  , 1, false, 0,	2	}, /* 853 "z"	*/
-        {SubFunction , false, None  , 1, false, 0,	289	}, /* 854    	*/
-        {SubFunction , true , None  , 1, false, 0,	290	}, /* 855    	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 856 "y"	*/
-        {NamedHolder , true , None  , 1, false, 0,	2	}, /* 857 "z"	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 858 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	291	}, /* 859    	*/
-        {SubFunction , false, None  , 1, false, 0,	292	}, /* 860    	*/
-        {SubFunction , false, None  , 1, false, 0,	293	}, /* 861    	*/
-        {SubFunction , true , None  , 1, false, 0,	224	}, /* 862    	*/
-        {SubFunction , false, None  , 1, false, 0,	294	}, /* 863    	*/
-        {SubFunction , false, None  , 1, false, 0,	295	}, /* 864    	*/
-        {SubFunction , true , None  , 1, false, 0,	296	}, /* 865    	*/
-        {SubFunction , false, None  , 1, false, 0,	297	}, /* 866    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 867 "x"	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 868 "y"	*/
-        {NamedHolder , false, None  , 1, true , 0,	0	}, /* 869 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	298	}, /* 870    	*/
-        {NamedHolder , false, None  , 1, true , 0,	0	}, /* 871 "x"	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 872 "y"	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 873 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	299	}, /* 874    	*/
-        {SubFunction , false, None  , 1, false, 0,	300	}, /* 875    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 876 "x"	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 877 "y"	*/
-        {NamedHolder , false, None  , 1, true , 0,	0	}, /* 878 "x"	*/
-        {SubFunction , true , None  , 1, false, 0,	301	}, /* 879    	*/
-        {NamedHolder , false, None  , 1, true , 0,	0	}, /* 880 "x"	*/
-        {NamedHolder , true , None  , 1, false, 0,	1	}, /* 881 "y"	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 882 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	302	}, /* 883    	*/
-        {SubFunction , false, None  , 1, false, 0,	303	}, /* 884    	*/
-        {ImmedHolder , true , None  , 1, false, 0,	0	}, /* 885    	*/
-        {ImmedHolder , true , None  , 1, false, 0,	1	}, /* 886    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	0	}, /* 887    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	1	}, /* 888    	*/
-        {cMul        , true , None  , 1, false, 2,	887	}, /* 889    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	0	}, /* 890    	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 891 "y"	*/
-        {SubFunction , false, None  , 1, false, 0,	304	}, /* 892    	*/
-        {SubFunction , true , None  , 1, false, 0,	305	}, /* 893    	*/
-        {cLog        , false, None  , 1, false, 1,	5	}, /* 894    	*/
-        {NamedHolder , true , None  , 1, false, 0,	1	}, /* 895 "y"	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 896 "x"	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 897 "y"	*/
-        {SubFunction , false, None  , 1, false, 0,	306	}, /* 898    	*/
-        {SubFunction , true , None  , 1, false, 0,	307	}, /* 899    	*/
-        {SubFunction , false, None  , 1, false, 0,	61	}, /* 900    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 901 "x"	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 902 "y"	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 903 "x"	*/
-        {NamedHolder , false, None  , 1, false, 0,	2	}, /* 904 "z"	*/
-        {SubFunction , true , None  , 1, false, 0,	308	}, /* 905    	*/
-        {SubFunction , true , None  , 1, false, 0,	309	}, /* 906    	*/
-        {NamedHolder , true , None  , 1, false, 0,	1	}, /* 907 "y"	*/
-        {NamedHolder , true , None  , 1, false, 0,	2	}, /* 908 "z"	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 909 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	310	}, /* 910    	*/
-        {SubFunction , false, None  , 1, false, 0,	311	}, /* 911    	*/
-        {SubFunction , true , None  , 1, false, 0,	80	}, /* 912    	*/
-        {SubFunction , false, None  , 1, false, 0,	83	}, /* 913    	*/
-        {SubFunction , true , None  , 1, false, 0,	312	}, /* 914    	*/
-        {SubFunction , false, None  , 1, false, 0,	313	}, /* 915    	*/
-        {SubFunction , true , None  , 1, false, 0,	297	}, /* 916    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 917 "x"	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 918 "y"	*/
-        {NamedHolder , true , None  , 1, true , 0,	0	}, /* 919 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	314	}, /* 920    	*/
-        {NamedHolder , false, Negate, 1, true , 0,	0	}, /* 921 "x"	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 922 "y"	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 923 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	315	}, /* 924    	*/
-        {SubFunction , false, None  , 1, false, 0,	316	}, /* 925    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 926 "x"	*/
-        {NamedHolder , false, None  , 1, false, 0,	1	}, /* 927 "y"	*/
-        {NamedHolder , true , None  , 1, true , 0,	0	}, /* 928 "x"	*/
-        {SubFunction , true , None  , 1, false, 0,	317	}, /* 929    	*/
-        {NamedHolder , false, Negate, 1, true , 0,	0	}, /* 930 "x"	*/
-        {NamedHolder , true , None  , 1, false, 0,	1	}, /* 931 "y"	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 932 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	318	}, /* 933    	*/
-        {SubFunction , false, None  , 1, false, 0,	319	}, /* 934    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 935 "x"	*/
-        {NamedHolder , false, None  , 2, true , 0,	0	}, /* 936 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	320	}, /* 937    	*/
-        {NamedHolder , true , None  , 2, true , 0,	0	}, /* 938 "x"	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 939 "x"	*/
-        {NamedHolder , false, Negate, 2, true , 0,	0	}, /* 940 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	321	}, /* 941    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	0	}, /* 942    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	1	}, /* 943    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	0	}, /* 944    	*/
-        {ImmedHolder , false, None  , 1, false, 0,	1	}, /* 945    	*/
-        {cMod        , false, None  , 1, false, 2,	944	}, /* 946    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 947 "x"	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 948 "x"	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 949 "x"	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 950 "x"	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 951 "x"	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 952 "x"	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 953 "x"	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 954 "x"	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 955 "x"	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 956 "x"	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 957 "x"	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 958 "x"	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 959 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 960 "b"	*/
-        {SubFunction , false, None  , 1, false, 0,	322	}, /* 961    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 962 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 963 "b"	*/
-        {SubFunction , false, None  , 1, false, 0,	323	}, /* 964    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 965 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 966 "b"	*/
-        {SubFunction , false, None  , 1, false, 0,	324	}, /* 967    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 968 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 969 "b"	*/
-        {SubFunction , false, None  , 1, false, 0,	325	}, /* 970    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 971 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 972 "b"	*/
-        {SubFunction , false, None  , 1, false, 0,	326	}, /* 973    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 974 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 975 "b"	*/
-        {SubFunction , false, None  , 1, false, 0,	327	}, /* 976    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 977 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 978 "b"	*/
-        {SubFunction , false, None  , 1, false, 0,	328	}, /* 979    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 980 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 981 "b"	*/
-        {SubFunction , false, None  , 1, false, 0,	329	}, /* 982    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 983 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 984 "b"	*/
-        {SubFunction , false, None  , 1, false, 0,	330	}, /* 985    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 986 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 987 "b"	*/
-        {SubFunction , false, None  , 1, false, 0,	331	}, /* 988    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 989 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 990 "b"	*/
-        {SubFunction , false, None  , 1, false, 0,	332	}, /* 991    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 992 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 993 "b"	*/
-        {SubFunction , false, None  , 1, false, 0,	333	}, /* 994    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 995    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 996    	*/
-        {RestHolder  , false, None  , 1, false, 0,	2	}, /* 997    	*/
-        {RestHolder  , true , None  , 1, false, 0,	1	}, /* 998    	*/
-        {SubFunction , true , None  , 1, false, 0,	334	}, /* 999    	*/
-        {SubFunction , false, None  , 1, false, 0,	335	}, /* 1000    	*/
-        {SubFunction , false, None  , 1, false, 0,	336	}, /* 1001    	*/
-        {SubFunction , false, None  , 1, false, 0,	337	}, /* 1002    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 1003    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 1004    	*/
-        {SubFunction , false, None  , 1, false, 0,	338	}, /* 1005    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 1006    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 1007    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 1008 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 1009 "b"	*/
-        {SubFunction , true , None  , 1, false, 0,	339	}, /* 1010    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 1011 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 1012 "b"	*/
-        {SubFunction , false, None  , 1, false, 0,	340	}, /* 1013    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 1014 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 1015 "b"	*/
-        {SubFunction , true , None  , 1, false, 0,	341	}, /* 1016    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 1017 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 1018 "b"	*/
-        {SubFunction , false, None  , 1, false, 0,	342	}, /* 1019    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 1020 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 1021 "b"	*/
-        {SubFunction , true , None  , 1, false, 0,	343	}, /* 1022    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 1023 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 1024 "b"	*/
-        {SubFunction , false, None  , 1, false, 0,	344	}, /* 1025    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 1026 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 1027 "b"	*/
-        {SubFunction , true , None  , 1, false, 0,	345	}, /* 1028    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 1029 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 1030 "b"	*/
-        {SubFunction , false, None  , 1, false, 0,	346	}, /* 1031    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 1032 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 1033 "b"	*/
-        {SubFunction , true , None  , 1, false, 0,	347	}, /* 1034    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 1035 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 1036 "b"	*/
-        {SubFunction , false, None  , 1, false, 0,	348	}, /* 1037    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 1038 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 1039 "b"	*/
-        {SubFunction , true , None  , 1, false, 0,	349	}, /* 1040    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 1041 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 1042 "b"	*/
-        {SubFunction , false, None  , 1, false, 0,	350	}, /* 1043    	*/
-        {SubFunction , true , None  , 1, false, 0,	336	}, /* 1044    	*/
-        {SubFunction , true , None  , 1, false, 0,	351	}, /* 1045    	*/
-        {SubFunction , true , None  , 1, false, 0,	335	}, /* 1046    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 1047 "x"	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 1048 "x"	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 1049 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 1050 "b"	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 1051 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 1052 "b"	*/
-        {SubFunction , false, None  , 1, false, 0,	352	}, /* 1053    	*/
-        {SubFunction , false, None  , 1, false, 0,	353	}, /* 1054    	*/
-        {NamedHolder , true , None  , 1, false, 0,	0	}, /* 1055 "x"	*/
-        {NamedHolder , true , None  , 1, false, 0,	0	}, /* 1056 "x"	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 1057 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 1058 "b"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 1059 "b"	*/
-        {NamedHolder , false, None  , 1, false, 0,	5	}, /* 1060 "c"	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 1061 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	5	}, /* 1062 "c"	*/
-        {SubFunction , false, None  , 1, false, 0,	354	}, /* 1063    	*/
-        {SubFunction , false, None  , 1, false, 0,	355	}, /* 1064    	*/
-        {SubFunction , false, None  , 1, false, 0,	356	}, /* 1065    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 1066 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 1067 "b"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 1068 "b"	*/
-        {NamedHolder , false, None  , 1, false, 0,	5	}, /* 1069 "c"	*/
-        {SubFunction , false, None  , 1, false, 0,	357	}, /* 1070    	*/
-        {SubFunction , false, None  , 1, false, 0,	358	}, /* 1071    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 1072    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 1073    	*/
-        {RestHolder  , false, None  , 1, false, 0,	2	}, /* 1074    	*/
-        {RestHolder  , true , None  , 1, false, 0,	1	}, /* 1075    	*/
-        {SubFunction , true , None  , 1, false, 0,	359	}, /* 1076    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 1077    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 1078    	*/
-        {SubFunction , false, None  , 1, false, 0,	360	}, /* 1079    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 1080    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 1081    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 1082 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 1083 "b"	*/
-        {SubFunction , true , None  , 1, false, 0,	361	}, /* 1084    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 1085 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 1086 "b"	*/
-        {SubFunction , false, None  , 1, false, 0,	362	}, /* 1087    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 1088 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 1089 "b"	*/
-        {SubFunction , true , None  , 1, false, 0,	363	}, /* 1090    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 1091 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 1092 "b"	*/
-        {SubFunction , false, None  , 1, false, 0,	364	}, /* 1093    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 1094 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 1095 "b"	*/
-        {SubFunction , true , None  , 1, false, 0,	365	}, /* 1096    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 1097 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 1098 "b"	*/
-        {SubFunction , false, None  , 1, false, 0,	366	}, /* 1099    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 1100 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 1101 "b"	*/
-        {SubFunction , true , None  , 1, false, 0,	367	}, /* 1102    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 1103 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 1104 "b"	*/
-        {SubFunction , false, None  , 1, false, 0,	368	}, /* 1105    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 1106 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 1107 "b"	*/
-        {SubFunction , true , None  , 1, false, 0,	369	}, /* 1108    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 1109 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 1110 "b"	*/
-        {SubFunction , false, None  , 1, false, 0,	370	}, /* 1111    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 1112 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 1113 "b"	*/
-        {SubFunction , true , None  , 1, false, 0,	371	}, /* 1114    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 1115 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 1116 "b"	*/
-        {SubFunction , false, None  , 1, false, 0,	372	}, /* 1117    	*/
-        {SubFunction , true , None  , 1, false, 0,	337	}, /* 1118    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 1119    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 1120    	*/
-        {SubFunction , true , None  , 1, false, 0,	373	}, /* 1121    	*/
-        {RestHolder  , true , None  , 1, false, 0,	1	}, /* 1122    	*/
-        {RestHolder  , false, None  , 1, false, 0,	2	}, /* 1123    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 1124 "x"	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 1125 "x"	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 1126 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 1127 "b"	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 1128 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 1129 "b"	*/
-        {SubFunction , false, None  , 1, false, 0,	374	}, /* 1130    	*/
-        {SubFunction , false, None  , 1, false, 0,	375	}, /* 1131    	*/
-        {NamedHolder , true , None  , 1, false, 0,	0	}, /* 1132 "x"	*/
-        {NamedHolder , true , None  , 1, false, 0,	0	}, /* 1133 "x"	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 1134 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 1135 "b"	*/
-        {SubFunction , false, None  , 1, false, 0,	376	}, /* 1136    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 1137 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 1138 "b"	*/
-        {SubFunction , false, None  , 1, false, 0,	377	}, /* 1139    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 1140 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 1141 "b"	*/
-        {SubFunction , false, None  , 1, false, 0,	378	}, /* 1142    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 1143 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 1144 "b"	*/
-        {SubFunction , false, None  , 1, false, 0,	379	}, /* 1145    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 1146 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 1147 "b"	*/
-        {SubFunction , false, None  , 1, false, 0,	380	}, /* 1148    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 1149 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 1150 "b"	*/
-        {SubFunction , false, None  , 1, false, 0,	381	}, /* 1151    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 1152 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 1153 "b"	*/
-        {SubFunction , false, None  , 1, false, 0,	382	}, /* 1154    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 1155 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 1156 "b"	*/
-        {SubFunction , false, None  , 1, false, 0,	383	}, /* 1157    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 1158 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 1159 "b"	*/
-        {SubFunction , false, None  , 1, false, 0,	384	}, /* 1160    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 1161 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 1162 "b"	*/
-        {SubFunction , false, None  , 1, false, 0,	385	}, /* 1163    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 1164 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 1165 "b"	*/
-        {SubFunction , false, None  , 1, false, 0,	386	}, /* 1166    	*/
-        {NamedHolder , false, None  , 1, false, 0,	3	}, /* 1167 "a"	*/
-        {NamedHolder , false, None  , 1, false, 0,	4	}, /* 1168 "b"	*/
-        {SubFunction , false, None  , 1, false, 0,	387	}, /* 1169    	*/
-        {SubFunction , false, None  , 1, false, 0,	388	}, /* 1170    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 1171    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 1172    	*/
-        {SubFunction , false, None  , 1, false, 0,	389	}, /* 1173    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 1174    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 1175    	*/
-        {SubFunction , false, None  , 1, false, 0,	390	}, /* 1176    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 1177    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 1178    	*/
-        {SubFunction , false, None  , 1, false, 0,	391	}, /* 1179    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 1180    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 1181    	*/
-        {SubFunction , false, None  , 1, false, 0,	392	}, /* 1182    	*/
-        {NumConstant , false, None  , 1, false, 0,	4	}, /* 1183    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 1184 "x"	*/
-        {SubFunction , false, None  , 1, false, 0,	393	}, /* 1185    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 1186 "x"	*/
-        {NumConstant , false, None  , 1, false, 0,	8	}, /* 1187    	*/
-        {SubFunction , false, None  , 1, false, 0,	394	}, /* 1188    	*/
-        {NamedHolder , false, None  , 1, false, 0,	0	}, /* 1189 "x"	*/
-        {NumConstant , false, None  , 1, false, 0,	1	}, /* 1190    	*/
-        {SubFunction , false, None  , 1, false, 0,	395	}, /* 1191    	*/
-        {NumConstant , false, None  , 1, false, 0,	9	}, /* 1192    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 1193    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 1194    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 1195    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 1196    	*/
-        {SubFunction , false, None  , 1, false, 0,	396	}, /* 1197    	*/
-        {SubFunction , false, None  , 1, false, 0,	397	}, /* 1198    	*/
-        {NumConstant , false, None  , 1, false, 0,	10	}, /* 1199    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 1200    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 1201    	*/
-        {RestHolder  , false, None  , 1, false, 0,	1	}, /* 1202    	*/
-        {RestHolder  , true , None  , 1, false, 0,	2	}, /* 1203    	*/
-        {SubFunction , false, None  , 1, false, 0,	398	}, /* 1204    	*/
-        {SubFunction , false, None  , 1, false, 0,	399	}, /* 1205    	*/
-        {SubFunction , true , None  , 1, false, 0,	100	}, /* 1206    	*/
-        {SubFunction , false, None  , 1, false, 0,	400	}, /* 1207    	*/
-        {SubFunction , false, None  , 1, false, 0,	401	}, /* 1208    	*/
-        {SubFunction , false, None  , 1, false, 0,	402	}, /* 1209    	*/
-        {SubFunction , false, None  , 1, false, 0,	61	}, /* 1210    	*/
-        {NumConstant , false, None  , 1, false, 0,	11	}, /* 1211    	*/
-        {SubFunction , false, None  , 1, false, 0,	403	}, /* 1212    	*/
-        {SubFunction , false, None  , 1, false, 0,	61	}, /* 1213    	*/
-        {NumConstant , false, None  , 1, false, 0,	12	}, /* 1214    	*/
-        {SubFunction , false, None  , 1, false, 0,	404	}, /* 1215    	*/
-        {SubFunction , true , None  , 1, false, 0,	61	}, /* 1216    	*/
-        {NumConstant , false, None  , 1, false, 0,	13	}, /* 1217    	*/
-        {SubFunction , true , None  , 1, false, 0,	404	}, /* 1218    	*/
-        {SubFunction , true , None  , 1, false, 0,	60	}, /* 1219    	*/
-        {NumConstant , false, None  , 1, false, 0,	14	}, /* 1220    	*/
-        {SubFunction , true , None  , 1, false, 0,	405	}, /* 1221    	*/
-        {SubFunction , false, None  , 1, false, 0,	406	}, /* 1222    	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 0 "x"	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 1 "x"	*/
+        {NumConstant , false, None  , 1, false, 0,	0 }, /* 2    	*/
+        {SubFunction , false, None  , 1, false, 0,	0 }, /* 3    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 4    	*/
+        {SubFunction , false, None  , 1, false, 0,	1 }, /* 5    	*/
+        {NumConstant , false, None  , 1, false, 0,	2 }, /* 6    	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 7 "x"	*/
+        {SubFunction , false, None  , 1, false, 0,	2 }, /* 8    	*/
+        {SubFunction , false, None  , 1, false, 0,	3 }, /* 9    	*/
+        {SubFunction , false, None  , 1, false, 0,	4 }, /* 10    	*/
+        {NumConstant , false, None  , 1, false, 0,	3 }, /* 11    	*/
+        {SubFunction , false, None  , 1, false, 0,	5 }, /* 12    	*/
+        {SubFunction , false, None  , 1, false, 0,	0 }, /* 13    	*/
+        {NumConstant , false, None  , 1, false, 0,	4 }, /* 14    	*/
+        {SubFunction , false, None  , 1, false, 0,	6 }, /* 15    	*/
+        {NumConstant , false, None  , 1, false, 0,	2 }, /* 16    	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 17 "x"	*/
+        {SubFunction , false, None  , 1, false, 0,	7 }, /* 18    	*/
+        {SubFunction , false, None  , 1, false, 0,	8 }, /* 19    	*/
+        {SubFunction , false, None  , 1, false, 0,	9 }, /* 20    	*/
+        {NumConstant , false, None  , 1, false, 0,	3 }, /* 21    	*/
+        {SubFunction , false, None  , 1, false, 0,	10 }, /* 22    	*/
+        {NumConstant , false, None  , 1, false, 0,	4 }, /* 23    	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 24 "x"	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 25    	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 26 "x"	*/
+        {NumConstant , false, None  , 1, false, 0,	4 }, /* 27    	*/
+        {SubFunction , false, None  , 1, false, 0,	12 }, /* 28    	*/
+        {SubFunction , false, None  , 1, false, 0,	13 }, /* 29    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 30    	*/
+        {SubFunction , false, None  , 1, false, 0,	11 }, /* 31    	*/
+        {SubFunction , false, None  , 1, false, 0,	14 }, /* 32    	*/
+        {SubFunction , false, None  , 1, false, 0,	15 }, /* 33    	*/
+        {NumConstant , false, None  , 1, false, 0,	2 }, /* 34    	*/
+        {NumConstant , false, None  , 1, false, 0,	3 }, /* 35    	*/
+        {SubFunction , false, None  , 1, false, 0,	16 }, /* 36    	*/
+        {cMul        , false, None  , 1, false, 2,	34 }, /* 37    	*/
+        {SubFunction , false, None  , 1, false, 0,	17 }, /* 38    	*/
+        {NumConstant , false, None  , 1, false, 0,	5 }, /* 39    	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 40 "x"	*/
+        {NumConstant , false, None  , 1, false, 0,	6 }, /* 41    	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 42 "x"	*/
+        {NumConstant , false, None  , 1, false, 0,	4 }, /* 43    	*/
+        {SubFunction , false, None  , 1, false, 0,	19 }, /* 44    	*/
+        {NumConstant , false, None  , 1, false, 0,	2 }, /* 45    	*/
+        {SubFunction , false, None  , 1, false, 0,	18 }, /* 46    	*/
+        {SubFunction , false, None  , 1, false, 0,	20 }, /* 47    	*/
+        {SubFunction , false, None  , 1, false, 0,	21 }, /* 48    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 49    	*/
+        {SubFunction , false, None  , 1, false, 0,	19 }, /* 50    	*/
+        {NumConstant , false, None  , 1, false, 0,	2 }, /* 51    	*/
+        {SubFunction , false, None  , 1, false, 0,	18 }, /* 52    	*/
+        {SubFunction , false, None  , 1, false, 0,	22 }, /* 53    	*/
+        {SubFunction , false, None  , 1, false, 0,	23 }, /* 54    	*/
+        {SubFunction , false, None  , 1, false, 0,	25 }, /* 55    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 56    	*/
+        {SubFunction , false, None  , 1, false, 0,	24 }, /* 57    	*/
+        {SubFunction , false, None  , 1, false, 0,	26 }, /* 58    	*/
+        {SubFunction , false, None  , 1, false, 0,	27 }, /* 59    	*/
+        {SubFunction , false, None  , 1, false, 0,	19 }, /* 60    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 61    	*/
+        {SubFunction , false, None  , 1, false, 0,	19 }, /* 62    	*/
+        {NumConstant , false, None  , 1, false, 0,	4 }, /* 63    	*/
+        {SubFunction , false, None  , 1, false, 0,	29 }, /* 64    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 65    	*/
+        {SubFunction , false, None  , 1, false, 0,	28 }, /* 66    	*/
+        {SubFunction , false, None  , 1, false, 0,	30 }, /* 67    	*/
+        {SubFunction , false, None  , 1, false, 0,	31 }, /* 68    	*/
+        {SubFunction , false, None  , 1, false, 0,	32 }, /* 69    	*/
+        {SubFunction , false, None  , 1, false, 0,	33 }, /* 70    	*/
+        {NamedHolder , false, None  , 1, false, Sign_Negative,	0 }, /* 71 "x"	*/
+        {RestHolder  , false, None  , 1, false, 0,	1 }, /* 72    	*/
+        {SubFunction , false, None  , 1, false, 0,	34 }, /* 73    	*/
+        {SubFunction , false, None  , 1, false, 0,	35 }, /* 74    	*/
+        {RestHolder  , false, None  , 1, false, 0,	1 }, /* 75    	*/
+        {SubFunction , false, None  , 1, false, 0,	36 }, /* 76    	*/
+        {SubFunction , false, None  , 1, false, 0,	37 }, /* 77    	*/
+        {NumConstant , false, Negate, 1, false, 0,	7 }, /* 78    	*/
+        {RestHolder  , false, None  , 1, false, 0,	1 }, /* 79    	*/
+        {SubFunction , false, None  , 1, false, 0,	38 }, /* 80    	*/
+        {SubFunction , false, None  , 1, false, 0,	39 }, /* 81    	*/
+        {SubFunction , false, None  , 1, false, 0,	40 }, /* 82    	*/
+        {ImmedHolder , false, None  , 1, false, Sign_Negative,	0 }, /* 83    	*/
+        {RestHolder  , false, None  , 1, false, 0,	1 }, /* 84    	*/
+        {NumConstant , false, None  , 1, false, 0,	7 }, /* 85    	*/
+        {SubFunction , false, None  , 1, false, 0,	41 }, /* 86    	*/
+        {SubFunction , false, None  , 1, false, 0,	42 }, /* 87    	*/
+        {ImmedHolder , false, Negate, 1, false, 0,	0 }, /* 88    	*/
+        {RestHolder  , false, None  , 1, false, 0,	1 }, /* 89    	*/
+        {SubFunction , false, None  , 1, false, 0,	43 }, /* 90    	*/
+        {SubFunction , false, None  , 1, false, 0,	44 }, /* 91    	*/
+        {NamedHolder , false, None  , 1, false, 0,	1 }, /* 92 "y"	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 93 "x"	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 94 "x"	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 95 "x"	*/
+        {RestHolder  , false, None  , 1, false, 0,	1 }, /* 96    	*/
+        {NamedHolder , false, None  , 1, false, 0,	1 }, /* 97 "y"	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 98 "x"	*/
+        {SubFunction , false, None  , 1, false, 0,	45 }, /* 99    	*/
+        {NamedHolder , false, None  , 1, false, 0,	1 }, /* 100 "y"	*/
+        {NumConstant , false, None  , 1, false, 0,	8 }, /* 101    	*/
+        {SubFunction , false, None  , 1, false, 0,	39 }, /* 102    	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 103 "x"	*/
+        {SubFunction , false, None  , 1, false, 0,	46 }, /* 104    	*/
+        {SubFunction , false, None  , 1, false, 0,	47 }, /* 105    	*/
+        {NamedHolder , false, None  , 1, false, 0,	1 }, /* 106 "y"	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 107 "x"	*/
+        {SubFunction , false, None  , 1, false, 0,	48 }, /* 108    	*/
+        {NamedHolder , false, None  , 1, false, 0,	1 }, /* 109 "y"	*/
+        {NumConstant , false, None  , 1, false, 0,	4 }, /* 110    	*/
+        {SubFunction , false, None  , 1, false, 0,	49 }, /* 111    	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 112 "x"	*/
+        {SubFunction , false, None  , 1, false, 0,	50 }, /* 113    	*/
+        {SubFunction , false, None  , 1, false, 0,	51 }, /* 114    	*/
+        {NamedHolder , false, None  , 1, false, 0,	1 }, /* 115 "y"	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 116 "x"	*/
+        {SubFunction , false, None  , 1, false, 0,	52 }, /* 117    	*/
+        {NamedHolder , false, None  , 1, false, 0,	1 }, /* 118 "y"	*/
+        {NumConstant , false, None  , 1, false, 0,	8 }, /* 119    	*/
+        {SubFunction , false, None  , 1, false, 0,	53 }, /* 120    	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 121 "x"	*/
+        {SubFunction , false, None  , 1, false, 0,	54 }, /* 122    	*/
+        {SubFunction , false, None  , 1, false, 0,	55 }, /* 123    	*/
+        {NamedHolder , false, None  , 1, false, 0,	1 }, /* 124 "y"	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 125 "x"	*/
+        {SubFunction , false, None  , 1, false, 0,	56 }, /* 126    	*/
+        {NamedHolder , false, None  , 1, false, 0,	1 }, /* 127 "y"	*/
+        {NumConstant , false, None  , 1, false, 0,	4 }, /* 128    	*/
+        {SubFunction , false, None  , 1, false, 0,	57 }, /* 129    	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 130 "x"	*/
+        {SubFunction , false, None  , 1, false, 0,	58 }, /* 131    	*/
+        {SubFunction , false, None  , 1, false, 0,	59 }, /* 132    	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 133 "x"	*/
+        {RestHolder  , false, None  , 1, false, 0,	3 }, /* 134    	*/
+        {NamedHolder , false, None  , 1, false, 0,	1 }, /* 135 "y"	*/
+        {SubFunction , false, None  , 1, false, 0,	45 }, /* 136    	*/
+        {SubFunction , false, None  , 1, false, 0,	60 }, /* 137    	*/
+        {NamedHolder , false, None  , 1, false, 0,	1 }, /* 138 "y"	*/
+        {SubFunction , false, None  , 1, false, 0,	39 }, /* 139    	*/
+        {SubFunction , false, None  , 1, false, 0,	61 }, /* 140    	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 141 "x"	*/
+        {SubFunction , false, None  , 1, false, 0,	62 }, /* 142    	*/
+        {SubFunction , false, None  , 1, false, 0,	63 }, /* 143    	*/
+        {NamedHolder , false, None  , 1, false, 0,	1 }, /* 144 "y"	*/
+        {SubFunction , false, None  , 1, false, 0,	48 }, /* 145    	*/
+        {SubFunction , false, None  , 1, false, 0,	64 }, /* 146    	*/
+        {NamedHolder , false, None  , 1, false, 0,	1 }, /* 147 "y"	*/
+        {SubFunction , false, None  , 1, false, 0,	49 }, /* 148    	*/
+        {SubFunction , false, None  , 1, false, 0,	65 }, /* 149    	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 150 "x"	*/
+        {SubFunction , false, None  , 1, false, 0,	66 }, /* 151    	*/
+        {SubFunction , false, None  , 1, false, 0,	67 }, /* 152    	*/
+        {NamedHolder , false, None  , 1, false, 0,	1 }, /* 153 "y"	*/
+        {SubFunction , false, None  , 1, false, 0,	52 }, /* 154    	*/
+        {SubFunction , false, None  , 1, false, 0,	68 }, /* 155    	*/
+        {NamedHolder , false, None  , 1, false, 0,	1 }, /* 156 "y"	*/
+        {SubFunction , false, None  , 1, false, 0,	53 }, /* 157    	*/
+        {SubFunction , false, None  , 1, false, 0,	69 }, /* 158    	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 159 "x"	*/
+        {SubFunction , false, None  , 1, false, 0,	70 }, /* 160    	*/
+        {SubFunction , false, None  , 1, false, 0,	71 }, /* 161    	*/
+        {NamedHolder , false, None  , 1, false, 0,	1 }, /* 162 "y"	*/
+        {SubFunction , false, None  , 1, false, 0,	56 }, /* 163    	*/
+        {SubFunction , false, None  , 1, false, 0,	72 }, /* 164    	*/
+        {NamedHolder , false, None  , 1, false, 0,	1 }, /* 165 "y"	*/
+        {SubFunction , false, None  , 1, false, 0,	57 }, /* 166    	*/
+        {SubFunction , false, None  , 1, false, 0,	73 }, /* 167    	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 168 "x"	*/
+        {SubFunction , false, None  , 1, false, 0,	74 }, /* 169    	*/
+        {SubFunction , false, None  , 1, false, 0,	75 }, /* 170    	*/
+        {SubFunction , false, None  , 1, false, 0,	76 }, /* 171    	*/
+        {NamedHolder , false, None  , 1, false, 0,	1 }, /* 172 "y"	*/
+        {NamedHolder , false, None  , 1, false, 0,	2 }, /* 173 "z"	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 174 "x"	*/
+        {NamedHolder , false, None  , 1, false, 0,	2 }, /* 175 "z"	*/
+        {NamedHolder , false, None  , 1, false, 0,	1 }, /* 176 "y"	*/
+        {SubFunction , false, None  , 1, false, 0,	77 }, /* 177    	*/
+        {SubFunction , false, None  , 1, false, 0,	78 }, /* 178    	*/
+        {NamedHolder , false, None  , 1, false, 0,	1 }, /* 179 "y"	*/
+        {NamedHolder , false, None  , 1, false, 0,	2 }, /* 180 "z"	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 181 "x"	*/
+        {NamedHolder , false, None  , 1, false, 0,	1 }, /* 182 "y"	*/
+        {NamedHolder , false, None  , 1, false, 0,	2 }, /* 183 "z"	*/
+        {SubFunction , false, None  , 1, false, 0,	79 }, /* 184    	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 185 "x"	*/
+        {NamedHolder , false, None  , 1, false, Value_EvenInt,	1 }, /* 186 "y"	*/
+        {SubFunction , false, None  , 1, false, 0,	80 }, /* 187    	*/
+        {NamedHolder , false, None  , 1, false, 0,	1 }, /* 188 "y"	*/
+        {SubFunction , false, None  , 1, false, 0,	81 }, /* 189    	*/
+        {SubFunction , false, None  , 1, false, 0,	82 }, /* 190    	*/
+        {NamedHolder , false, None  , 1, false, Sign_Positive,	0 }, /* 191 "x"	*/
+        {NamedHolder , false, None  , 1, false, 0,	1 }, /* 192 "y"	*/
+        {SubFunction , false, None  , 1, false, 0,	83 }, /* 193    	*/
+        {NamedHolder , false, None  , 1, false, 0,	1 }, /* 194 "y"	*/
+        {SubFunction , false, None  , 1, false, 0,	84 }, /* 195    	*/
+        {SubFunction , false, None  , 1, false, 0,	85 }, /* 196    	*/
+        {ImmedHolder , false, None  , 1, false, 0,	0 }, /* 197    	*/
+        {RestHolder  , false, None  , 1, false, 0,	1 }, /* 198    	*/
+        {SubFunction , false, None  , 1, false, 0,	86 }, /* 199    	*/
+        {SubFunction , false, None  , 1, false, 0,	87 }, /* 200    	*/
+        {cLog2       , false, None  , 1, false, 1,	197 }, /* 201    	*/
+        {SubFunction , false, None  , 1, false, 0,	88 }, /* 202    	*/
+        {ImmedHolder , false, None  , 1, false, 0,	0 }, /* 203    	*/
+        {NamedHolder , false, None  , 1, false, 0,	1 }, /* 204 "y"	*/
+        {SubFunction , false, None  , 1, false, 0,	89 }, /* 205    	*/
+        {RestHolder  , false, None  , 1, false, 0,	1 }, /* 206    	*/
+        {SubFunction , false, None  , 1, false, 0,	90 }, /* 207    	*/
+        {SubFunction , false, None  , 1, false, 0,	87 }, /* 208    	*/
+        {cLog2       , false, Invert, 1, false, 1,	197 }, /* 209    	*/
+        {NamedHolder , false, None  , 1, false, 0,	1 }, /* 210 "y"	*/
+        {SubFunction , false, None  , 1, false, 0,	91 }, /* 211    	*/
+        {cLog2       , false, None  , 1, false, 1,	197 }, /* 212    	*/
+        {SubFunction , false, None  , 1, false, 0,	92 }, /* 213    	*/
+        {SubFunction , false, None  , 1, false, 0,	93 }, /* 214    	*/
+        {SubFunction , false, None  , 1, false, 0,	84 }, /* 215    	*/
+        {RestHolder  , false, None  , 1, false, 0,	1 }, /* 216    	*/
+        {NumConstant , false, None  , 1, false, 0,	0 }, /* 217    	*/
+        {SubFunction , false, None  , 1, false, 0,	94 }, /* 218    	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 219 "x"	*/
+        {SubFunction , false, None  , 1, false, 0,	49 }, /* 220    	*/
+        {ImmedHolder , false, None  , 1, false, 0,	0 }, /* 221    	*/
+        {SubFunction , false, None  , 1, false, 0,	84 }, /* 222    	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 223 "x"	*/
+        {cLog2       , false, None  , 1, false, 1,	197 }, /* 224    	*/
+        {ImmedHolder , false, None  , 1, false, 0,	1 }, /* 225    	*/
+        {RestHolder  , false, None  , 1, false, 0,	1 }, /* 226    	*/
+        {ImmedHolder , false, None  , 1, false, 0,	0 }, /* 227    	*/
+        {SubFunction , false, None  , 1, false, 0,	95 }, /* 228    	*/
+        {ImmedHolder , false, None  , 1, false, 0,	0 }, /* 229    	*/
+        {ImmedHolder , false, None  , 1, false, 0,	1 }, /* 230    	*/
+        {cPow        , false, None  , 1, false, 2,	229 }, /* 231    	*/
+        {SubFunction , false, None  , 1, false, 0,	49 }, /* 232    	*/
+        {cLog2       , false, Invert, 1, false, 1,	197 }, /* 233    	*/
+        {SubFunction , false, None  , 1, false, 0,	84 }, /* 234    	*/
+        {RestHolder  , false, None  , 1, false, 0,	1 }, /* 235    	*/
+        {ImmedHolder , false, None  , 1, false, 0,	0 }, /* 236    	*/
+        {SubFunction , false, None  , 1, false, 0,	96 }, /* 237    	*/
+        {SubFunction , false, None  , 1, false, 0,	84 }, /* 238    	*/
+        {ImmedHolder , false, None  , 1, false, 0,	0 }, /* 239    	*/
+        {ImmedHolder , false, None  , 1, false, 0,	1 }, /* 240    	*/
+        {SubFunction , false, None  , 1, false, 0,	97 }, /* 241    	*/
+        {NumConstant , false, None  , 1, false, 0,	0 }, /* 242    	*/
+        {ImmedHolder , false, None  , 1, false, 0,	0 }, /* 243    	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 244 "x"	*/
+        {cPow        , false, None  , 1, false, 2,	242 }, /* 245    	*/
+        {SubFunction , false, None  , 1, false, 0,	98 }, /* 246    	*/
+        {cLog2       , false, None  , 1, false, 1,	225 }, /* 247    	*/
+        {SubFunction , false, None  , 1, false, 0,	99 }, /* 248    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 249    	*/
+        {SubFunction , false, None  , 1, false, 0,	100 }, /* 250    	*/
+        {SubFunction , false, None  , 1, false, 0,	84 }, /* 251    	*/
+        {RestHolder  , false, None  , 1, false, 0,	1 }, /* 252    	*/
+        {NamedHolder , false, None  , 1, false, 0,	2 }, /* 253 "z"	*/
+        {SubFunction , false, None  , 1, false, 0,	101 }, /* 254    	*/
+        {SubFunction , false, None  , 1, false, 0,	35 }, /* 255    	*/
+        {NamedHolder , false, None  , 1, false, Value_EvenInt,	1 }, /* 256 "y"	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 257 "x"	*/
+        {NamedHolder , false, None  , 1, false, Value_OddInt,	1 }, /* 258 "y"	*/
+        {SubFunction , false, None  , 1, false, 0,	102 }, /* 259    	*/
+        {NamedHolder , false, None  , 1, false, 0,	2 }, /* 260 "z"	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 261 "x"	*/
+        {SubFunction , false, None  , 1, false, 0,	103 }, /* 262    	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 263 "x"	*/
+        {NamedHolder , false, None  , 1, false, Value_NonInteger,	1 }, /* 264 "y"	*/
+        {SubFunction , false, None  , 1, false, 0,	104 }, /* 265    	*/
+        {NamedHolder , false, None  , 1, false, 0,	2 }, /* 266 "z"	*/
+        {SubFunction , false, None  , 1, false, 0,	83 }, /* 267    	*/
+        {NamedHolder , false, None  , 1, false, 0,	2 }, /* 268 "z"	*/
+        {SubFunction , false, None  , 1, false, 0,	86 }, /* 269    	*/
+        {ImmedHolder , false, None  , 1, false, 0,	1 }, /* 270    	*/
+        {SubFunction , false, None  , 1, false, 0,	49 }, /* 271    	*/
+        {ImmedHolder , false, None  , 1, false, 0,	1 }, /* 272    	*/
+        {cPow        , false, None  , 1, false, 2,	229 }, /* 273    	*/
+        {SubFunction , false, None  , 1, false, 0,	105 }, /* 274    	*/
+        {SubFunction , false, None  , 1, false, 0,	106 }, /* 275    	*/
+        {NamedHolder , false, None  , 1, false, Sign_NoIdea,	0 }, /* 276 "x"	*/
+        {NamedHolder , false, None  , 1, false, 0,	1 }, /* 277 "y"	*/
+        {SubFunction , false, None  , 1, false, 8,	107 }, /* 278    	*/
+        {NamedHolder , false, None  , 1, false, 0,	2 }, /* 279 "z"	*/
+        {SubFunction , false, None  , 1, false, 0,	35 }, /* 280    	*/
+        {SubFunction , false, None  , 1, false, 0,	103 }, /* 281    	*/
+        {SubFunction , false, None  , 1, false, 0,	108 }, /* 282    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 283    	*/
+        {SubFunction , false, None  , 1, false, 0,	109 }, /* 284    	*/
+        {SubFunction , false, None  , 1, false, 0,	110 }, /* 285    	*/
+        {SubFunction , false, None  , 1, false, 0,	111 }, /* 286    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 287    	*/
+        {SubFunction , false, None  , 1, false, 0,	44 }, /* 288    	*/
+        {SubFunction , false, None  , 1, false, 0,	112 }, /* 289    	*/
+        {SubFunction , false, None  , 1, false, 0,	25 }, /* 290    	*/
+        {NumConstant , false, None  , 1, false, 0,	0 }, /* 291    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 292    	*/
+        {SubFunction , false, None  , 1, false, 0,	113 }, /* 293    	*/
+        {NumConstant , false, None  , 1, false, 0,	4 }, /* 294    	*/
+        {SubFunction , false, None  , 1, false, 0,	114 }, /* 295    	*/
+        {SubFunction , false, None  , 1, false, 0,	24 }, /* 296    	*/
+        {NumConstant , false, None  , 1, false, 0,	0 }, /* 297    	*/
+        {SubFunction , false, None  , 1, false, 0,	115 }, /* 298    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 299    	*/
+        {SubFunction , false, None  , 1, false, 0,	115 }, /* 300    	*/
+        {NumConstant , false, None  , 1, false, 0,	4 }, /* 301    	*/
+        {SubFunction , false, None  , 1, false, 0,	116 }, /* 302    	*/
+        {SubFunction , false, None  , 1, false, 0,	84 }, /* 303    	*/
+        {SubFunction , false, None  , 1, false, 0,	117 }, /* 304    	*/
+        {SubFunction , false, None  , 1, false, 0,	118 }, /* 305    	*/
+        {SubFunction , false, None  , 1, false, 0,	119 }, /* 306    	*/
+        {SubFunction , false, None  , 1, false, 0,	115 }, /* 307    	*/
+        {SubFunction , false, None  , 1, false, 0,	113 }, /* 308    	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 309 "x"	*/
+        {RestHolder  , false, None  , 1, false, 0,	5 }, /* 310    	*/
+        {SubFunction , false, None  , 1, false, 0,	64 }, /* 311    	*/
+        {SubFunction , false, None  , 1, false, 0,	120 }, /* 312    	*/
+        {SubFunction , false, None  , 1, false, 0,	65 }, /* 313    	*/
+        {SubFunction , false, None  , 1, false, 0,	121 }, /* 314    	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 315 "x"	*/
+        {SubFunction , false, None  , 1, false, 0,	122 }, /* 316    	*/
+        {SubFunction , false, None  , 1, false, 0,	123 }, /* 317    	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 318 "x"	*/
+        {ImmedHolder , false, None  , 1, false, 0,	0 }, /* 319    	*/
+        {SubFunction , false, None  , 1, false, 0,	124 }, /* 320    	*/
+        {RestHolder  , false, None  , 1, false, 0,	3 }, /* 321    	*/
+        {SubFunction , false, None  , 1, false, 0,	125 }, /* 322    	*/
+        {SubFunction , false, None  , 1, false, 0,	120 }, /* 323    	*/
+        {ImmedHolder , false, None  , 1, false, 0,	0 }, /* 324    	*/
+        {NumConstant , false, None  , 1, false, 0,	4 }, /* 325    	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 326 "x"	*/
+        {cMin        , false, None  , 1, false, 2,	324 }, /* 327    	*/
+        {ImmedHolder , false, None  , 1, false, 0,	0 }, /* 328    	*/
+        {cMin        , false, Negate, 1, false, 2,	324 }, /* 329    	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 330 "x"	*/
+        {SubFunction , false, None  , 1, false, 0,	127 }, /* 331    	*/
+        {RestHolder  , false, None  , 1, false, 0,	3 }, /* 332    	*/
+        {SubFunction , false, None  , 1, false, 0,	128 }, /* 333    	*/
+        {NumConstant , false, None  , 1, false, 0,	4 }, /* 334    	*/
+        {cMin        , false, Negate, 1, false, 2,	324 }, /* 335    	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 336 "x"	*/
+        {SubFunction , false, None  , 1, false, 0,	130 }, /* 337    	*/
+        {RestHolder  , false, None  , 1, false, 0,	5 }, /* 338    	*/
+        {SubFunction , false, None  , 1, false, 0,	131 }, /* 339    	*/
+        {SubFunction , false, None  , 1, false, 0,	129 }, /* 340    	*/
+        {SubFunction , false, None  , 1, false, 0,	132 }, /* 341    	*/
+        {SubFunction , false, None  , 1, false, 0,	126 }, /* 342    	*/
+        {SubFunction , false, None  , 1, false, 0,	133 }, /* 343    	*/
+        {SubFunction , false, None  , 1, false, 0,	134 }, /* 344    	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 345 "x"	*/
+        {ImmedHolder , false, None  , 1, false, 0,	1 }, /* 346    	*/
+        {SubFunction , false, None  , 1, false, 0,	135 }, /* 347    	*/
+        {RestHolder  , false, None  , 1, false, 0,	5 }, /* 348    	*/
+        {SubFunction , false, None  , 1, false, 0,	125 }, /* 349    	*/
+        {SubFunction , false, None  , 1, false, 0,	136 }, /* 350    	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 351 "x"	*/
+        {cMin        , false, None  , 1, false, 2,	229 }, /* 352    	*/
+        {ImmedHolder , false, None  , 1, false, 0,	0 }, /* 353    	*/
+        {cMin        , false, Negate, 1, false, 2,	229 }, /* 354    	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 355 "x"	*/
+        {SubFunction , false, None  , 1, false, 0,	138 }, /* 356    	*/
+        {RestHolder  , false, None  , 1, false, 0,	3 }, /* 357    	*/
+        {SubFunction , false, None  , 1, false, 0,	139 }, /* 358    	*/
+        {ImmedHolder , false, None  , 1, false, 0,	1 }, /* 359    	*/
+        {cMin        , false, Negate, 1, false, 2,	229 }, /* 360    	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 361 "x"	*/
+        {SubFunction , false, None  , 1, false, 0,	141 }, /* 362    	*/
+        {RestHolder  , false, None  , 1, false, 0,	5 }, /* 363    	*/
+        {SubFunction , false, None  , 1, false, 0,	142 }, /* 364    	*/
+        {SubFunction , false, None  , 1, false, 0,	140 }, /* 365    	*/
+        {SubFunction , false, None  , 1, false, 0,	143 }, /* 366    	*/
+        {SubFunction , false, None  , 1, false, 0,	137 }, /* 367    	*/
+        {SubFunction , false, None  , 1, false, 0,	144 }, /* 368    	*/
+        {SubFunction , false, None  , 1, false, 0,	145 }, /* 369    	*/
+        {SubFunction , false, None  , 1, false, 0,	25 }, /* 370    	*/
+        {SubFunction , false, None  , 1, false, 0,	146 }, /* 371    	*/
+        {SubFunction , false, None  , 1, false, 0,	24 }, /* 372    	*/
+        {SubFunction , false, None  , 1, false, 0,	148 }, /* 373    	*/
+        {SubFunction , false, None  , 1, false, 0,	147 }, /* 374    	*/
+        {SubFunction , false, None  , 1, false, 0,	149 }, /* 375    	*/
+        {SubFunction , false, None  , 1, false, 0,	150 }, /* 376    	*/
+        {SubFunction , false, None  , 1, false, 0,	151 }, /* 377    	*/
+        {SubFunction , false, None  , 1, false, 0,	24 }, /* 378    	*/
+        {SubFunction , false, None  , 1, false, 0,	148 }, /* 379    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 380    	*/
+        {SubFunction , false, None  , 1, false, 0,	147 }, /* 381    	*/
+        {SubFunction , false, None  , 1, false, 0,	152 }, /* 382    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 383    	*/
+        {NamedHolder , false, None  , 1, false, 0,	1 }, /* 384 "y"	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 385 "x"	*/
+        {SubFunction , false, None  , 1, false, 0,	153 }, /* 386    	*/
+        {SubFunction , false, None  , 1, false, 0,	154 }, /* 387    	*/
+        {SubFunction , false, None  , 1, false, 0,	155 }, /* 388    	*/
+        {SubFunction , false, None  , 1, false, 0,	24 }, /* 389    	*/
+        {SubFunction , false, None  , 1, false, 0,	146 }, /* 390    	*/
+        {SubFunction , false, None  , 1, false, 0,	25 }, /* 391    	*/
+        {SubFunction , false, None  , 1, false, 0,	148 }, /* 392    	*/
+        {SubFunction , false, None  , 1, false, 0,	156 }, /* 393    	*/
+        {SubFunction , false, None  , 1, false, 0,	157 }, /* 394    	*/
+        {SubFunction , false, None  , 1, false, 0,	158 }, /* 395    	*/
+        {SubFunction , false, None  , 1, false, 0,	25 }, /* 396    	*/
+        {SubFunction , false, None  , 1, false, 0,	148 }, /* 397    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 398    	*/
+        {SubFunction , false, None  , 1, false, 0,	156 }, /* 399    	*/
+        {SubFunction , false, None  , 1, false, 0,	159 }, /* 400    	*/
+        {SubFunction , false, None  , 1, false, 0,	160 }, /* 401    	*/
+        {ImmedHolder , false, None  , 1, false, Oneness_NotOne,	0 }, /* 402    	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 403 "x"	*/
+        {SubFunction , false, None  , 1, false, 0,	161 }, /* 404    	*/
+        {ImmedHolder , false, Negate, 1, false, 0,	0 }, /* 405    	*/
+        {ImmedHolder , false, None  , 1, false, 0,	0 }, /* 406    	*/
+        {cAbs        , false, Invert, 1, false, 1,	197 }, /* 407    	*/
+        {cMul        , false, None  , 1, false, 2,	406 }, /* 408    	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 409 "x"	*/
+        {cMul        , false, Negate, 1, false, 2,	406 }, /* 410    	*/
+        {SubFunction , false, None  , 1, false, 0,	162 }, /* 411    	*/
+        {cAbs        , false, None  , 1, false, 1,	197 }, /* 412    	*/
+        {SubFunction , false, None  , 1, false, 0,	163 }, /* 413    	*/
+        {SubFunction , false, None  , 1, false, 0,	164 }, /* 414    	*/
+        {SubFunction , false, None  , 1, false, 0,	25 }, /* 415    	*/
+        {SubFunction , false, None  , 1, false, 0,	146 }, /* 416    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 417    	*/
+        {SubFunction , false, None  , 1, false, 0,	165 }, /* 418    	*/
+        {SubFunction , false, None  , 1, false, 0,	149 }, /* 419    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 420    	*/
+        {SubFunction , false, None  , 1, false, 0,	155 }, /* 421    	*/
+        {SubFunction , false, None  , 1, false, 0,	166 }, /* 422    	*/
+        {SubFunction , false, None  , 1, false, 0,	165 }, /* 423    	*/
+        {SubFunction , false, None  , 1, false, 0,	152 }, /* 424    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 425    	*/
+        {SubFunction , false, None  , 1, false, 0,	151 }, /* 426    	*/
+        {SubFunction , false, None  , 1, false, 0,	167 }, /* 427    	*/
+        {SubFunction , false, None  , 1, false, 0,	24 }, /* 428    	*/
+        {SubFunction , false, None  , 1, false, 0,	146 }, /* 429    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 430    	*/
+        {SubFunction , false, None  , 1, false, 0,	168 }, /* 431    	*/
+        {SubFunction , false, None  , 1, false, 0,	159 }, /* 432    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 433    	*/
+        {SubFunction , false, None  , 1, false, 0,	158 }, /* 434    	*/
+        {SubFunction , false, None  , 1, false, 0,	169 }, /* 435    	*/
+        {ImmedHolder , false, Negate, 1, false, 0,	0 }, /* 436    	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 437 "x"	*/
+        {ImmedHolder , false, None  , 1, false, Oneness_NotOne,	0 }, /* 438    	*/
+        {SubFunction , false, None  , 1, false, 0,	170 }, /* 439    	*/
+        {NamedHolder , false, None  , 1, true , 0,	0 }, /* 440 "x"	*/
+        {SubFunction , false, None  , 1, false, 0,	48 }, /* 441    	*/
+        {NamedHolder , false, None  , 1, true , 0,	0 }, /* 442 "x"	*/
+        {SubFunction , false, None  , 1, false, 0,	49 }, /* 443    	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 444 "x"	*/
+        {SubFunction , false, None  , 1, false, 0,	171 }, /* 445    	*/
+        {SubFunction , false, None  , 1, false, 0,	172 }, /* 446    	*/
+        {NamedHolder , false, None  , 2, true , 0,	0 }, /* 447 "x"	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 448 "x"	*/
+        {NamedHolder , false, None  , 2, true , 0,	0 }, /* 449 "x"	*/
+        {SubFunction , false, None  , 1, false, 0,	173 }, /* 450    	*/
+        {NamedHolder , false, None  , 1, false, 0,	3 }, /* 451 "a"	*/
+        {NumConstant , false, None  , 1, false, 0,	0 }, /* 452    	*/
+        {NamedHolder , false, None  , 1, false, 0,	4 }, /* 453 "b"	*/
+        {NumConstant , false, None  , 1, false, 0,	0 }, /* 454    	*/
+        {NamedHolder , false, None  , 1, false, 0,	3 }, /* 455 "a"	*/
+        {NamedHolder , false, None  , 1, false, 0,	4 }, /* 456 "b"	*/
+        {RestHolder  , false, None  , 1, false, 0,	1 }, /* 457    	*/
+        {SubFunction , false, None  , 1, false, 0,	174 }, /* 458    	*/
+        {SubFunction , false, None  , 1, false, 0,	175 }, /* 459    	*/
+        {SubFunction , false, None  , 1, false, 0,	176 }, /* 460    	*/
+        {SubFunction , false, None  , 1, false, 0,	177 }, /* 461    	*/
+        {NumConstant , false, None  , 1, false, 0,	0 }, /* 462    	*/
+        {SubFunction , false, None  , 1, false, 0,	49 }, /* 463    	*/
+        {NumConstant , false, None  , 1, false, 0,	9 }, /* 464    	*/
+        {NamedHolder , false, None  , 1, false, 0,	3 }, /* 465 "a"	*/
+        {NamedHolder , false, None  , 1, false, 0,	4 }, /* 466 "b"	*/
+        {SubFunction , false, None  , 1, false, 0,	179 }, /* 467    	*/
+        {SubFunction , false, None  , 1, false, 0,	178 }, /* 468    	*/
+        {SubFunction , false, None  , 1, false, 0,	180 }, /* 469    	*/
+        {SubFunction , false, None  , 1, false, 0,	84 }, /* 470    	*/
+        {ImmedHolder , false, Invert, 1, false, 0,	0 }, /* 471    	*/
+        {NumConstant , false, None  , 1, false, 0,	4 }, /* 472    	*/
+        {SubFunction , false, None  , 1, false, 0,	181 }, /* 473    	*/
+        {ImmedHolder , false, None  , 1, false, 0,	0 }, /* 474    	*/
+        {SubFunction , false, None  , 1, false, 0,	182 }, /* 475    	*/
+        {SubFunction , false, None  , 1, false, 0,	183 }, /* 476    	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 477 "x"	*/
+        {RestHolder  , false, None  , 1, false, 0,	2 }, /* 478    	*/
+        {SubFunction , false, None  , 1, false, 0,	184 }, /* 479    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 480    	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 481 "x"	*/
+        {RestHolder  , false, None  , 1, false, 0,	1 }, /* 482    	*/
+        {SubFunction , false, None  , 1, false, 0,	185 }, /* 483    	*/
+        {SubFunction , false, None  , 1, false, 0,	186 }, /* 484    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 485    	*/
+        {RestHolder  , false, None  , 1, false, 0,	1 }, /* 486    	*/
+        {SubFunction , false, None  , 1, false, 0,	187 }, /* 487    	*/
+        {SubFunction , false, None  , 1, false, 0,	188 }, /* 488    	*/
+        {SubFunction , false, None  , 1, false, 0,	189 }, /* 489    	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 490 "x"	*/
+        {SubFunction , false, None  , 1, false, 0,	190 }, /* 491    	*/
+        {SubFunction , false, None  , 1, false, 0,	191 }, /* 492    	*/
+        {SubFunction , false, None  , 1, false, 0,	189 }, /* 493    	*/
+        {SubFunction , false, None  , 1, false, 0,	192 }, /* 494    	*/
+        {SubFunction , false, None  , 1, false, 0,	118 }, /* 495    	*/
+        {NamedHolder , false, None  , 1, false, 0,	2 }, /* 496 "z"	*/
+        {SubFunction , false, None  , 1, false, 0,	193 }, /* 497    	*/
+        {ImmedHolder , false, None  , 1, false, Oneness_NotOne,	0 }, /* 498    	*/
+        {RestHolder  , false, None  , 1, false, 0,	1 }, /* 499    	*/
+        {SubFunction , false, None  , 1, false, 0,	194 }, /* 500    	*/
+        {RestHolder  , false, None  , 1, false, 0,	3 }, /* 501    	*/
+        {SubFunction , false, None  , 1, false, 0,	195 }, /* 502    	*/
+        {ImmedHolder , false, None  , 1, false, 0,	1 }, /* 503    	*/
+        {cMul        , false, None  , 1, false, 2,	229 }, /* 504    	*/
+        {RestHolder  , false, None  , 1, false, 0,	1 }, /* 505    	*/
+        {ImmedHolder , false, None  , 1, false, 0,	1 }, /* 506    	*/
+        {SubFunction , false, None  , 1, false, 0,	61 }, /* 507    	*/
+        {SubFunction , false, None  , 1, false, 0,	196 }, /* 508    	*/
+        {SubFunction , false, None  , 1, false, 0,	197 }, /* 509    	*/
+        {SubFunction , false, None  , 1, false, 0,	198 }, /* 510    	*/
+        {SubFunction , false, None  , 1, false, 0,	199 }, /* 511    	*/
+        {ImmedHolder , false, None  , 1, false, 0,	1 }, /* 512    	*/
+        {ImmedHolder , false, None  , 1, false, 0,	1 }, /* 513    	*/
+        {SubFunction , false, None  , 1, false, 0,	39 }, /* 514    	*/
+        {cMul        , false, None  , 1, false, 2,	229 }, /* 515    	*/
+        {SubFunction , false, None  , 1, false, 0,	200 }, /* 516    	*/
+        {SubFunction , false, None  , 1, false, 0,	201 }, /* 517    	*/
+        {NamedHolder , false, None  , 1, true , 0,	0 }, /* 518 "x"	*/
+        {SubFunction , false, None  , 1, false, 0,	188 }, /* 519    	*/
+        {NamedHolder , false, None  , 1, true , 0,	0 }, /* 520 "x"	*/
+        {NamedHolder , false, None  , 1, false, 0,	1 }, /* 521 "y"	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 522 "x"	*/
+        {SubFunction , false, None  , 1, false, 0,	202 }, /* 523    	*/
+        {SubFunction , false, None  , 1, false, 0,	203 }, /* 524    	*/
+        {SubFunction , false, None  , 1, false, 0,	204 }, /* 525    	*/
+        {SubFunction , false, None  , 1, false, 0,	205 }, /* 526    	*/
+        {SubFunction , false, None  , 1, false, 0,	206 }, /* 527    	*/
+        {SubFunction , false, None  , 1, false, 0,	207 }, /* 528    	*/
+        {SubFunction , false, None  , 1, false, 0,	208 }, /* 529    	*/
+        {SubFunction , false, None  , 1, false, 0,	209 }, /* 530    	*/
+        {SubFunction , false, None  , 1, false, 0,	210 }, /* 531    	*/
+        {RestHolder  , false, None  , 1, false, 0,	1 }, /* 532    	*/
+        {RestHolder  , true , None  , 1, false, 0,	2 }, /* 533    	*/
+        {SubFunction , false, None  , 1, false, 0,	211 }, /* 534    	*/
+        {RestHolder  , true , None  , 1, false, 0,	1 }, /* 535    	*/
+        {RestHolder  , false, None  , 1, false, 0,	2 }, /* 536    	*/
+        {SubFunction , false, None  , 1, false, 0,	212 }, /* 537    	*/
+        {SubFunction , false, None  , 1, false, 0,	213 }, /* 538    	*/
+        {SubFunction , false, None  , 1, false, 0,	214 }, /* 539    	*/
+        {RestHolder  , false, None  , 1, false, 0,	2 }, /* 540    	*/
+        {RestHolder  , true , None  , 1, false, 0,	1 }, /* 541    	*/
+        {SubFunction , true , None  , 1, false, 0,	215 }, /* 542    	*/
+        {NamedHolder , true , None  , 1, false, 0,	0 }, /* 543 "x"	*/
+        {SubFunction , true , None  , 1, false, 0,	205 }, /* 544    	*/
+        {SubFunction , true , None  , 1, false, 0,	206 }, /* 545    	*/
+        {SubFunction , true , None  , 1, false, 0,	207 }, /* 546    	*/
+        {SubFunction , true , None  , 1, false, 0,	209 }, /* 547    	*/
+        {SubFunction , true , None  , 1, false, 0,	210 }, /* 548    	*/
+        {SubFunction , true , None  , 1, false, 0,	208 }, /* 549    	*/
+        {SubFunction , true , None  , 1, false, 0,	32 }, /* 550    	*/
+        {SubFunction , true , None  , 1, false, 0,	33 }, /* 551    	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 552 "x"	*/
+        {NamedHolder , true , None  , 1, false, 0,	0 }, /* 553 "x"	*/
+        {SubFunction , false, None  , 1, false, 0,	207 }, /* 554    	*/
+        {SubFunction , false, None  , 1, false, 0,	210 }, /* 555    	*/
+        {SubFunction , false, None  , 1, false, 0,	209 }, /* 556    	*/
+        {SubFunction , false, None  , 1, false, 0,	207 }, /* 557    	*/
+        {SubFunction , false, None  , 1, false, 0,	209 }, /* 558    	*/
+        {SubFunction , false, None  , 1, false, 0,	208 }, /* 559    	*/
+        {SubFunction , false, None  , 1, false, 0,	208 }, /* 560    	*/
+        {SubFunction , false, None  , 1, false, 0,	210 }, /* 561    	*/
+        {NamedHolder , true , None  , 1, false, 0,	0 }, /* 562 "x"	*/
+        {NamedHolder , true , None  , 1, false, 0,	0 }, /* 563 "x"	*/
+        {NamedHolder , false, None  , 1, false, 0,	4 }, /* 564 "b"	*/
+        {NamedHolder , false, None  , 1, false, 0,	5 }, /* 565 "c"	*/
+        {NamedHolder , false, None  , 1, false, 0,	3 }, /* 566 "a"	*/
+        {NamedHolder , false, None  , 1, false, 0,	5 }, /* 567 "c"	*/
+        {SubFunction , false, None  , 1, false, 0,	205 }, /* 568    	*/
+        {SubFunction , false, None  , 1, false, 0,	216 }, /* 569    	*/
+        {SubFunction , false, None  , 1, false, 0,	217 }, /* 570    	*/
+        {SubFunction , true , None  , 1, false, 0,	218 }, /* 571    	*/
+        {SubFunction , false, None  , 1, false, 0,	207 }, /* 572    	*/
+        {SubFunction , false, None  , 1, false, 0,	205 }, /* 573    	*/
+        {SubFunction , false, None  , 1, false, 0,	209 }, /* 574    	*/
+        {SubFunction , false, None  , 1, false, 0,	205 }, /* 575    	*/
+        {SubFunction , false, None  , 1, false, 0,	210 }, /* 576    	*/
+        {SubFunction , false, None  , 1, false, 0,	205 }, /* 577    	*/
+        {SubFunction , false, None  , 1, false, 0,	208 }, /* 578    	*/
+        {SubFunction , false, None  , 1, false, 0,	205 }, /* 579    	*/
+        {SubFunction , false, None  , 1, false, 0,	219 }, /* 580    	*/
+        {SubFunction , false, None  , 1, false, 0,	220 }, /* 581    	*/
+        {SubFunction , false, None  , 1, false, 0,	221 }, /* 582    	*/
+        {SubFunction , false, None  , 1, false, 0,	222 }, /* 583    	*/
+        {SubFunction , false, None  , 1, false, 0,	223 }, /* 584    	*/
+        {SubFunction , false, None  , 1, false, 0,	224 }, /* 585    	*/
+        {SubFunction , false, None  , 1, false, 0,	225 }, /* 586    	*/
+        {NumConstant , false, None  , 1, false, 0,	0 }, /* 587    	*/
+        {ImmedHolder , false, Negate, 1, false, 0,	0 }, /* 588    	*/
+        {cAdd        , false, None  , 1, false, 2,	587 }, /* 589    	*/
+        {SubFunction , false, None  , 1, false, 0,	227 }, /* 590    	*/
+        {SubFunction , false, None  , 1, false, 0,	228 }, /* 591    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 592    	*/
+        {SubFunction , false, None  , 1, false, 0,	226 }, /* 593    	*/
+        {SubFunction , false, None  , 1, false, 0,	229 }, /* 594    	*/
+        {SubFunction , false, None  , 1, false, 0,	230 }, /* 595    	*/
+        {ImmedHolder , false, None  , 1, false, 0,	0 }, /* 596    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 597    	*/
+        {cAdd        , false, None  , 1, false, 2,	596 }, /* 598    	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 599 "x"	*/
+        {SubFunction , false, None  , 1, false, 0,	231 }, /* 600    	*/
+        {NumConstant , false, None  , 1, false, 0,	0 }, /* 601    	*/
+        {NumConstant , false, None  , 1, false, 0,	10 }, /* 602    	*/
+        {SubFunction , false, None  , 1, false, 0,	232 }, /* 603    	*/
+        {cMul        , false, None  , 1, false, 2,	601 }, /* 604    	*/
+        {SubFunction , false, None  , 1, false, 0,	233 }, /* 605    	*/
+        {SubFunction , false, None  , 1, false, 0,	234 }, /* 606    	*/
+        {NumConstant , false, None  , 1, false, 0,	4 }, /* 607    	*/
+        {SubFunction , false, None  , 1, false, 0,	170 }, /* 608    	*/
+        {NumConstant , false, None  , 1, false, 0,	4 }, /* 609    	*/
+        {SubFunction , false, None  , 1, false, 0,	236 }, /* 610    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 611    	*/
+        {SubFunction , false, None  , 1, false, 0,	235 }, /* 612    	*/
+        {SubFunction , false, None  , 1, false, 0,	237 }, /* 613    	*/
+        {SubFunction , false, None  , 1, false, 0,	238 }, /* 614    	*/
+        {SubFunction , false, None  , 1, false, 0,	239 }, /* 615    	*/
+        {SubFunction , false, None  , 1, false, 0,	240 }, /* 616    	*/
+        {cMul        , false, None  , 1, false, 2,	601 }, /* 617    	*/
+        {SubFunction , false, None  , 1, false, 0,	241 }, /* 618    	*/
+        {SubFunction , false, None  , 1, false, 0,	242 }, /* 619    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 620    	*/
+        {SubFunction , false, None  , 1, false, 0,	243 }, /* 621    	*/
+        {SubFunction , false, None  , 1, false, 0,	244 }, /* 622    	*/
+        {SubFunction , false, None  , 1, false, 0,	245 }, /* 623    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 624    	*/
+        {SubFunction , false, None  , 1, false, 0,	246 }, /* 625    	*/
+        {SubFunction , false, None  , 1, false, 0,	247 }, /* 626    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 627    	*/
+        {SubFunction , false, None  , 1, false, 0,	248 }, /* 628    	*/
+        {SubFunction , false, None  , 1, false, 0,	249 }, /* 629    	*/
+        {SubFunction , false, None  , 1, false, 0,	250 }, /* 630    	*/
+        {NumConstant , false, None  , 1, false, 0,	2 }, /* 631    	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 632 "x"	*/
+        {SubFunction , false, None  , 1, false, 0,	251 }, /* 633    	*/
+        {NumConstant , false, None  , 1, false, 0,	11 }, /* 634    	*/
+        {SubFunction , false, None  , 1, false, 0,	242 }, /* 635    	*/
+        {SubFunction , false, None  , 1, false, 0,	252 }, /* 636    	*/
+        {SubFunction , false, None  , 1, false, 0,	253 }, /* 637    	*/
+        {NumConstant , false, None  , 1, false, 0,	2 }, /* 638    	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 639 "x"	*/
+        {SubFunction , false, None  , 1, false, 0,	254 }, /* 640    	*/
+        {NumConstant , false, None  , 1, false, 0,	11 }, /* 641    	*/
+        {SubFunction , false, None  , 1, false, 0,	224 }, /* 642    	*/
+        {SubFunction , false, None  , 1, false, 0,	255 }, /* 643    	*/
+        {SubFunction , false, None  , 1, false, 0,	256 }, /* 644    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 645    	*/
+        {cLog        , false, None  , 1, false, 1,	197 }, /* 646    	*/
+        {NumConstant , false, None  , 1, false, 0,	2 }, /* 647    	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 648 "x"	*/
+        {cMul        , false, None  , 1, false, 2,	646 }, /* 649    	*/
+        {SubFunction , false, None  , 1, false, 0,	257 }, /* 650    	*/
+        {ImmedHolder , false, None  , 1, false, 0,	0 }, /* 651    	*/
+        {NumConstant , false, None  , 1, false, 0,	2 }, /* 652    	*/
+        {cPow        , false, None  , 1, false, 2,	651 }, /* 653    	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 654 "x"	*/
+        {SubFunction , false, None  , 1, false, 0,	258 }, /* 655    	*/
+        {NumConstant , false, None  , 1, false, 0,	0 }, /* 656    	*/
+        {SubFunction , false, None  , 1, false, 0,	259 }, /* 657    	*/
+        {SubFunction , false, None  , 1, false, 0,	260 }, /* 658    	*/
+        {SubFunction , false, None  , 1, false, 0,	256 }, /* 659    	*/
+        {NumConstant , false, None  , 1, false, 0,	4 }, /* 660    	*/
+        {SubFunction , false, None  , 1, false, 0,	261 }, /* 661    	*/
+        {NumConstant , false, None  , 1, false, 0,	0 }, /* 662    	*/
+        {SubFunction , false, None  , 1, false, 0,	259 }, /* 663    	*/
+        {SubFunction , false, None  , 1, false, 0,	262 }, /* 664    	*/
+        {SubFunction , false, None  , 1, false, 0,	263 }, /* 665    	*/
+        {SubFunction , false, None  , 1, false, 0,	264 }, /* 666    	*/
+        {NumConstant , false, None  , 1, false, 0,	11 }, /* 667    	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 668 "x"	*/
+        {SubFunction , false, None  , 1, false, 0,	265 }, /* 669    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 670    	*/
+        {SubFunction , false, None  , 1, false, 0,	265 }, /* 671    	*/
+        {SubFunction , false, None  , 1, false, 0,	263 }, /* 672    	*/
+        {SubFunction , false, None  , 1, false, 0,	266 }, /* 673    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 674    	*/
+        {SubFunction , false, None  , 1, false, 0,	264 }, /* 675    	*/
+        {SubFunction , false, None  , 1, false, 0,	263 }, /* 676    	*/
+        {SubFunction , false, None  , 1, false, 0,	267 }, /* 677    	*/
+        {ImmedHolder , false, None  , 1, false, 0,	1 }, /* 678    	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 679 "x"	*/
+        {ImmedHolder , false, Invert, 1, false, 0,	1 }, /* 680    	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 681 "x"	*/
+        {SubFunction , false, None  , 1, false, 0,	268 }, /* 682    	*/
+        {SubFunction , false, None  , 1, false, 0,	269 }, /* 683    	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 684 "x"	*/
+        {cLog        , false, None  , 1, false, 1,	225 }, /* 685    	*/
+        {SubFunction , false, None  , 1, false, 0,	270 }, /* 686    	*/
+        {SubFunction , false, None  , 1, false, 0,	271 }, /* 687    	*/
+        {NumConstant , false, None  , 1, false, 0,	0 }, /* 688    	*/
+        {SubFunction , false, None  , 1, false, 0,	272 }, /* 689    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 690    	*/
+        {SubFunction , false, None  , 1, false, 0,	269 }, /* 691    	*/
+        {SubFunction , false, None  , 1, false, 0,	268 }, /* 692    	*/
+        {SubFunction , false, None  , 1, false, 0,	273 }, /* 693    	*/
+        {SubFunction , false, None  , 1, false, 0,	274 }, /* 694    	*/
+        {NumConstant , false, None  , 1, false, 0,	0 }, /* 695    	*/
+        {SubFunction , false, None  , 1, false, 0,	275 }, /* 696    	*/
+        {SubFunction , false, None  , 1, false, 0,	264 }, /* 697    	*/
+        {SubFunction , false, None  , 1, false, 0,	266 }, /* 698    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 699    	*/
+        {SubFunction , false, None  , 1, false, 0,	263 }, /* 700    	*/
+        {SubFunction , false, None  , 1, false, 0,	276 }, /* 701    	*/
+        {SubFunction , false, None  , 1, false, 0,	265 }, /* 702    	*/
+        {SubFunction , false, None  , 1, false, 0,	277 }, /* 703    	*/
+        {SubFunction , false, None  , 1, false, 0,	276 }, /* 704    	*/
+        {SubFunction , false, None  , 1, false, 0,	264 }, /* 705    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 706    	*/
+        {SubFunction , false, None  , 1, false, 0,	18 }, /* 707    	*/
+        {SubFunction , false, None  , 1, false, 0,	278 }, /* 708    	*/
+        {SubFunction , false, None  , 1, false, 0,	276 }, /* 709    	*/
+        {SubFunction , false, None  , 1, false, 0,	267 }, /* 710    	*/
+        {SubFunction , false, None  , 1, false, 0,	279 }, /* 711    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 712    	*/
+        {SubFunction , false, None  , 1, false, 0,	268 }, /* 713    	*/
+        {SubFunction , false, None  , 1, false, 0,	280 }, /* 714    	*/
+        {SubFunction , false, None  , 1, false, 0,	269 }, /* 715    	*/
+        {SubFunction , false, None  , 1, false, 0,	274 }, /* 716    	*/
+        {NumConstant , false, None  , 1, false, 0,	9 }, /* 717    	*/
+        {SubFunction , false, None  , 1, false, 0,	281 }, /* 718    	*/
+        {SubFunction , false, None  , 1, false, 0,	267 }, /* 719    	*/
+        {SubFunction , false, None  , 1, false, 0,	265 }, /* 720    	*/
+        {SubFunction , false, None  , 1, false, 0,	282 }, /* 721    	*/
+        {ImmedHolder , false, None  , 1, false, 0,	0 }, /* 722    	*/
+        {SubFunction , false, None  , 1, false, 0,	268 }, /* 723    	*/
+        {ImmedHolder , false, None  , 1, false, 0,	0 }, /* 724    	*/
+        {SubFunction , false, None  , 1, false, 0,	269 }, /* 725    	*/
+        {SubFunction , false, None  , 1, false, 0,	283 }, /* 726    	*/
+        {SubFunction , false, None  , 1, false, 0,	284 }, /* 727    	*/
+        {SubFunction , false, None  , 1, false, 0,	271 }, /* 728    	*/
+        {cMul        , false, None  , 1, false, 2,	242 }, /* 729    	*/
+        {SubFunction , false, None  , 1, false, 0,	285 }, /* 730    	*/
+        {ImmedHolder , false, Negate, 1, false, 0,	0 }, /* 731    	*/
+        {SubFunction , false, None  , 1, false, 0,	269 }, /* 732    	*/
+        {SubFunction , false, None  , 1, false, 0,	283 }, /* 733    	*/
+        {SubFunction , false, None  , 1, false, 0,	286 }, /* 734    	*/
+        {SubFunction , false, None  , 1, false, 0,	274 }, /* 735    	*/
+        {cMul        , false, None  , 1, false, 2,	242 }, /* 736    	*/
+        {SubFunction , false, None  , 1, false, 0,	287 }, /* 737    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 738    	*/
+        {SubFunction , false, None  , 1, false, 0,	288 }, /* 739    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 740    	*/
+        {SubFunction , false, None  , 1, false, 0,	289 }, /* 741    	*/
+        {SubFunction , false, None  , 1, false, 0,	290 }, /* 742    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 743    	*/
+        {SubFunction , false, None  , 1, false, 0,	291 }, /* 744    	*/
+        {SubFunction , false, None  , 1, false, 0,	292 }, /* 745    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 746    	*/
+        {SubFunction , false, None  , 1, false, 0,	293 }, /* 747    	*/
+        {SubFunction , false, None  , 1, false, 0,	294 }, /* 748    	*/
+        {SubFunction , false, None  , 1, false, 0,	24 }, /* 749    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 750    	*/
+        {SubFunction , false, None  , 1, false, 0,	295 }, /* 751    	*/
+        {SubFunction , false, None  , 1, false, 0,	25 }, /* 752    	*/
+        {SubFunction , false, None  , 1, false, 0,	296 }, /* 753    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 754    	*/
+        {SubFunction , false, None  , 1, false, 0,	297 }, /* 755    	*/
+        {SubFunction , false, None  , 1, false, 0,	298 }, /* 756    	*/
+        {SubFunction , false, None  , 1, false, 0,	263 }, /* 757    	*/
+        {SubFunction , false, None  , 1, false, 0,	299 }, /* 758    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 759    	*/
+        {SubFunction , false, None  , 1, false, 0,	300 }, /* 760    	*/
+        {SubFunction , false, None  , 1, false, 0,	297 }, /* 761    	*/
+        {SubFunction , false, None  , 1, false, 0,	24 }, /* 762    	*/
+        {SubFunction , false, None  , 1, false, 0,	300 }, /* 763    	*/
+        {SubFunction , false, None  , 1, false, 0,	264 }, /* 764    	*/
+        {SubFunction , false, None  , 1, false, 0,	301 }, /* 765    	*/
+        {ImmedHolder , false, None  , 1, false, 0,	1 }, /* 766    	*/
+        {SubFunction , false, None  , 1, false, 0,	302 }, /* 767    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 768    	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 769 "x"	*/
+        {ImmedHolder , false, Negate, 1, false, 0,	0 }, /* 770    	*/
+        {NumConstant , false, None  , 1, false, 0,	0 }, /* 771    	*/
+        {ImmedHolder , false, Negate, 1, false, 0,	1 }, /* 772    	*/
+        {SubFunction , false, None  , 1, false, 0,	304 }, /* 773    	*/
+        {cAdd        , false, None  , 1, false, 2,	771 }, /* 774    	*/
+        {SubFunction , false, None  , 1, false, 0,	303 }, /* 775    	*/
+        {SubFunction , false, None  , 1, false, 0,	305 }, /* 776    	*/
+        {SubFunction , false, None  , 1, false, 0,	306 }, /* 777    	*/
+        {ImmedHolder , false, None  , 1, false, 0,	1 }, /* 778    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 779    	*/
+        {SubFunction , false, None  , 1, false, 0,	307 }, /* 780    	*/
+        {NumConstant , false, None  , 1, false, 0,	0 }, /* 781    	*/
+        {cLog        , false, Invert, 1, false, 1,	88 }, /* 782    	*/
+        {SubFunction , false, None  , 1, false, 0,	308 }, /* 783    	*/
+        {cMul        , false, None  , 1, false, 2,	781 }, /* 784    	*/
+        {ImmedHolder , false, Negate, 1, false, 0,	0 }, /* 785    	*/
+        {SubFunction , false, None  , 1, false, 0,	309 }, /* 786    	*/
+        {SubFunction , false, None  , 1, false, 0,	310 }, /* 787    	*/
+        {SubFunction , false, None  , 1, false, 0,	311 }, /* 788    	*/
+        {SubFunction , false, None  , 1, false, 0,	312 }, /* 789    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 790    	*/
+        {SubFunction , false, None  , 1, false, 0,	288 }, /* 791    	*/
+        {SubFunction , false, None  , 1, false, 0,	313 }, /* 792    	*/
+        {SubFunction , false, None  , 1, false, 0,	314 }, /* 793    	*/
+        {SubFunction , false, None  , 1, false, 0,	315 }, /* 794    	*/
+        {SubFunction , false, None  , 1, false, 0,	263 }, /* 795    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 796    	*/
+        {SubFunction , false, None  , 1, false, 0,	264 }, /* 797    	*/
+        {SubFunction , false, None  , 1, false, 0,	316 }, /* 798    	*/
+        {SubFunction , false, None  , 1, false, 0,	317 }, /* 799    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 800    	*/
+        {SubFunction , false, None  , 1, false, 0,	289 }, /* 801    	*/
+        {SubFunction , false, None  , 1, false, 0,	318 }, /* 802    	*/
+        {SubFunction , false, None  , 1, false, 0,	319 }, /* 803    	*/
+        {SubFunction , false, None  , 1, false, 0,	296 }, /* 804    	*/
+        {SubFunction , false, None  , 1, false, 0,	25 }, /* 805    	*/
+        {SubFunction , false, None  , 1, false, 0,	296 }, /* 806    	*/
+        {SubFunction , false, None  , 1, false, 0,	295 }, /* 807    	*/
+        {NumConstant , false, None  , 1, false, 0,	7 }, /* 808    	*/
+        {SubFunction , false, None  , 1, false, 0,	225 }, /* 809    	*/
+        {SubFunction , false, None  , 1, false, 0,	320 }, /* 810    	*/
+        {SubFunction , false, None  , 1, false, 0,	322 }, /* 811    	*/
+        {SubFunction , false, None  , 1, false, 0,	321 }, /* 812    	*/
+        {SubFunction , false, None  , 1, false, 0,	323 }, /* 813    	*/
+        {SubFunction , false, None  , 1, false, 0,	299 }, /* 814    	*/
+        {SubFunction , false, None  , 1, false, 0,	263 }, /* 815    	*/
+        {SubFunction , false, None  , 1, false, 0,	299 }, /* 816    	*/
+        {SubFunction , false, None  , 1, false, 0,	298 }, /* 817    	*/
+        {NumConstant , false, None  , 1, false, 0,	12 }, /* 818    	*/
+        {NamedHolder , false, None  , 1, false, 0,	0 }, /* 819 "x"	*/
+        {SubFunction , false, None  , 1, false, 0,	324 }, /* 820    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 821    	*/
+        {SubFunction , false, None  , 1, false, 0,	324 }, /* 822    	*/
+        {NumConstant , false, None  , 1, false, 0,	4 }, /* 823    	*/
+        {SubFunction , false, None  , 1, false, 0,	326 }, /* 824    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 825    	*/
+        {SubFunction , false, None  , 1, false, 0,	325 }, /* 826    	*/
+        {SubFunction , false, None  , 1, false, 0,	327 }, /* 827    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 828    	*/
+        {SubFunction , false, None  , 1, false, 0,	299 }, /* 829    	*/
+        {SubFunction , false, None  , 1, false, 0,	325 }, /* 830    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 831    	*/
+        {SubFunction , false, None  , 1, false, 0,	326 }, /* 832    	*/
+        {SubFunction , false, None  , 1, false, 0,	328 }, /* 833    	*/
+        {SubFunction , false, None  , 1, false, 0,	329 }, /* 834    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 835    	*/
+        {SubFunction , false, None  , 1, false, 0,	330 }, /* 836    	*/
+        {SubFunction , false, None  , 1, false, 0,	332 }, /* 837    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 838    	*/
+        {SubFunction , false, None  , 1, false, 0,	331 }, /* 839    	*/
+        {SubFunction , false, None  , 1, false, 0,	333 }, /* 840    	*/
+        {SubFunction , false, None  , 1, false, 0,	331 }, /* 841    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 842    	*/
+        {SubFunction , false, None  , 1, false, 0,	332 }, /* 843    	*/
+        {SubFunction , false, None  , 1, false, 0,	334 }, /* 844    	*/
+        {SubFunction , false, None  , 1, false, 0,	25 }, /* 845    	*/
+        {ImmedHolder , false, None  , 1, false, Sign_Negative,	0 }, /* 846    	*/
+        {SubFunction , false, None  , 1, false, 0,	335 }, /* 847    	*/
+        {ImmedHolder , false, Negate, 1, false, 0,	0 }, /* 848    	*/
+        {SubFunction , false, None  , 1, false, 0,	24 }, /* 849    	*/
+        {ImmedHolder , false, None  , 1, false, Sign_Negative,	0 }, /* 850    	*/
+        {SubFunction , false, None  , 1, false, 0,	336 }, /* 851    	*/
+        {ImmedHolder , false, Negate, 1, false, 0,	0 }, /* 852    	*/
+        {SubFunction , false, None  , 1, false, 0,	296 }, /* 853    	*/
+        {ImmedHolder , false, None  , 1, false, Sign_Negative,	0 }, /* 854    	*/
+        {SubFunction , false, None  , 1, false, 0,	337 }, /* 855    	*/
+        {ImmedHolder , false, Negate, 1, false, 0,	0 }, /* 856    	*/
+        {NumConstant , false, None  , 1, false, 0,	13 }, /* 857    	*/
+        {RestHolder  , false, None  , 1, false, 0,	1 }, /* 858    	*/
+        {SubFunction , false, None  , 1, false, 0,	338 }, /* 859    	*/
+        {NumConstant , false, None  , 1, false, 0,	14 }, /* 860    	*/
+        {RestHolder  , false, None  , 1, false, 0,	1 }, /* 861    	*/
+        {SubFunction , false, None  , 1, false, 0,	339 }, /* 862    	*/
+        {SubFunction , false, None  , 1, false, 0,	340 }, /* 863    	*/
+        {NumConstant , false, None  , 1, false, 0,	15 }, /* 864    	*/
+        {SubFunction , false, None  , 1, false, 0,	341 }, /* 865    	*/
+        {SubFunction , false, None  , 1, false, 0,	340 }, /* 866    	*/
+        {NumConstant , false, None  , 1, false, 0,	10 }, /* 867    	*/
+        {SubFunction , false, None  , 1, false, 0,	84 }, /* 868    	*/
+        {NumConstant , false, None  , 1, false, 0,	16 }, /* 869    	*/
+        {SubFunction , false, None  , 1, false, 0,	84 }, /* 870    	*/
+        {NumConstant , false, None  , 1, false, 0,	3 }, /* 871    	*/
+        {SubFunction , false, None  , 1, false, 0,	340 }, /* 872    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 873    	*/
+        {SubFunction , false, None  , 1, false, 0,	342 }, /* 874    	*/
+        {NumConstant , false, None  , 1, false, 0,	3 }, /* 875    	*/
+        {SubFunction , false, None  , 1, false, 0,	84 }, /* 876    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 877    	*/
+        {SubFunction , false, None  , 1, false, 0,	343 }, /* 878    	*/
+        {SubFunction , false, None  , 1, false, 0,	342 }, /* 879    	*/
+        {NumConstant , false, None  , 1, false, 0,	17 }, /* 880    	*/
+        {SubFunction , false, None  , 1, false, 0,	341 }, /* 881    	*/
+        {NumConstant , false, None  , 1, false, 0,	1 }, /* 882    	*/
+        {SubFunction , false, None  , 1, false, 0,	344 }, /* 883    	*/
+        {SubFunction , false, None  , 1, false, 0,	343 }, /* 884    	*/
+        {NumConstant , false, None  , 1, false, 0,	10 }, /* 885    	*/
+        {SubFunction , false, None  , 1, false, 0,	343 }, /* 886    	*/
+        {NumConstant , false, None  , 1, false, 0,	18 }, /* 887    	*/
     };
 
     const MatchedParams mlist[] =
     {
         {PositionalParams, BalanceDontCare, 1, 0 }, /* 0 */
-        {PositionalParams, BalanceDontCare, 1, 1 }, /* 1 */
-        {PositionalParams, BalanceDontCare, 1, 2 }, /* 2 */
-        {PositionalParams, BalanceDontCare, 1, 3 }, /* 3 */
-        {PositionalParams, BalanceDontCare, 1, 4 }, /* 4 */
-        {PositionalParams, BalanceDontCare, 1, 6 }, /* 5 */
-        {PositionalParams, BalanceDontCare, 1, 7 }, /* 6 */
-        {PositionalParams, BalanceDontCare, 1, 8 }, /* 7 */
-        {PositionalParams, BalanceDontCare, 1, 9 }, /* 8 */
-        {PositionalParams, BalanceDontCare, 1, 10 }, /* 9 */
-        {PositionalParams, BalanceDontCare, 1, 11 }, /* 10 */
-        {PositionalParams, BalanceDontCare, 1, 12 }, /* 11 */
-        {PositionalParams, BalanceDontCare, 1, 13 }, /* 12 */
-        {PositionalParams, BalanceDontCare, 1, 14 }, /* 13 */
-        {PositionalParams, BalanceDontCare, 1, 5 }, /* 14 */
-        {PositionalParams, BalanceDontCare, 1, 15 }, /* 15 */
-        {PositionalParams, BalanceDontCare, 1, 16 }, /* 16 */
-        {PositionalParams, BalanceDontCare, 1, 17 }, /* 17 */
-        {PositionalParams, BalanceDontCare, 1, 18 }, /* 18 */
-        {PositionalParams, BalanceDontCare, 1, 19 }, /* 19 */
-        {PositionalParams, BalanceDontCare, 1, 20 }, /* 20 */
-        {AnyParams       , BalanceDontCare, 2, 23 }, /* 21 */
-        {PositionalParams, BalanceDontCare, 1, 25 }, /* 22 */
-        {PositionalParams, BalanceDontCare, 1, 26 }, /* 23 */
-        {PositionalParams, BalanceDontCare, 1, 27 }, /* 24 */
-        {PositionalParams, BalanceDontCare, 1, 28 }, /* 25 */
-        {PositionalParams, BalanceDontCare, 3, 29 }, /* 26 */
-        {PositionalParams, BalanceDontCare, 1, 32 }, /* 27 */
-        {PositionalParams, BalanceDontCare, 3, 33 }, /* 28 */
-        {PositionalParams, BalanceDontCare, 3, 36 }, /* 29 */
-        {AnyParams       , BalanceDontCare, 3, 39 }, /* 30 */
-        {PositionalParams, BalanceDontCare, 3, 42 }, /* 31 */
-        {PositionalParams, BalanceDontCare, 2, 45 }, /* 32 */
-        {PositionalParams, BalanceDontCare, 3, 47 }, /* 33 */
-        {PositionalParams, BalanceDontCare, 2, 50 }, /* 34 */
-        {PositionalParams, BalanceDontCare, 1, 52 }, /* 35 */
-        {AnyParams       , BalanceDontCare, 3, 53 }, /* 36 */
-        {PositionalParams, BalanceDontCare, 3, 56 }, /* 37 */
-        {PositionalParams, BalanceDontCare, 2, 40 }, /* 38 */
-        {PositionalParams, BalanceDontCare, 3, 59 }, /* 39 */
-        {PositionalParams, BalanceDontCare, 2, 62 }, /* 40 */
-        {PositionalParams, BalanceDontCare, 1, 64 }, /* 41 */
-        {AnyParams       , BalanceDontCare, 3, 65 }, /* 42 */
-        {PositionalParams, BalanceDontCare, 3, 68 }, /* 43 */
-        {PositionalParams, BalanceDontCare, 2, 71 }, /* 44 */
-        {PositionalParams, BalanceDontCare, 3, 73 }, /* 45 */
-        {PositionalParams, BalanceDontCare, 2, 76 }, /* 46 */
-        {PositionalParams, BalanceDontCare, 1, 78 }, /* 47 */
-        {AnyParams       , BalanceDontCare, 3, 79 }, /* 48 */
-        {PositionalParams, BalanceDontCare, 3, 82 }, /* 49 */
-        {PositionalParams, BalanceDontCare, 2, 85 }, /* 50 */
-        {PositionalParams, BalanceDontCare, 3, 87 }, /* 51 */
-        {PositionalParams, BalanceDontCare, 2, 90 }, /* 52 */
-        {PositionalParams, BalanceDontCare, 1, 92 }, /* 53 */
-        {AnyParams       , BalanceDontCare, 3, 93 }, /* 54 */
-        {AnyParams       , BalanceDontCare, 3, 96 }, /* 55 */
-        {PositionalParams, BalanceDontCare, 3, 99 }, /* 56 */
-        {PositionalParams, BalanceDontCare, 2, 102 }, /* 57 */
-        {PositionalParams, BalanceDontCare, 2, 97 }, /* 58 */
-        {PositionalParams, BalanceDontCare, 3, 104 }, /* 59 */
-        {PositionalParams, BalanceDontCare, 2, 107 }, /* 60 */
-        {PositionalParams, BalanceDontCare, 1, 109 }, /* 61 */
-        {AnyParams       , BalanceDontCare, 3, 110 }, /* 62 */
-        {AnyParams       , BalanceDontCare, 3, 113 }, /* 63 */
-        {PositionalParams, BalanceDontCare, 3, 116 }, /* 64 */
-        {PositionalParams, BalanceDontCare, 2, 119 }, /* 65 */
-        {PositionalParams, BalanceDontCare, 2, 121 }, /* 66 */
-        {PositionalParams, BalanceDontCare, 3, 123 }, /* 67 */
-        {PositionalParams, BalanceDontCare, 2, 126 }, /* 68 */
-        {PositionalParams, BalanceDontCare, 1, 128 }, /* 69 */
-        {AnyParams       , BalanceDontCare, 3, 129 }, /* 70 */
-        {AnyParams       , BalanceDontCare, 3, 132 }, /* 71 */
-        {PositionalParams, BalanceDontCare, 3, 135 }, /* 72 */
-        {PositionalParams, BalanceDontCare, 2, 138 }, /* 73 */
-        {PositionalParams, BalanceDontCare, 3, 140 }, /* 74 */
-        {PositionalParams, BalanceDontCare, 2, 143 }, /* 75 */
-        {PositionalParams, BalanceDontCare, 1, 145 }, /* 76 */
-        {AnyParams       , BalanceDontCare, 3, 146 }, /* 77 */
-        {AnyParams       , BalanceDontCare, 3, 149 }, /* 78 */
-        {PositionalParams, BalanceDontCare, 3, 152 }, /* 79 */
-        {PositionalParams, BalanceDontCare, 2, 155 }, /* 80 */
-        {PositionalParams, BalanceDontCare, 2, 157 }, /* 81 */
-        {PositionalParams, BalanceDontCare, 3, 159 }, /* 82 */
-        {PositionalParams, BalanceDontCare, 2, 162 }, /* 83 */
-        {PositionalParams, BalanceDontCare, 1, 164 }, /* 84 */
-        {AnyParams       , BalanceDontCare, 1, 18 }, /* 85 */
-        {PositionalParams, BalanceDontCare, 3, 165 }, /* 86 */
-        {PositionalParams, BalanceDontCare, 3, 168 }, /* 87 */
-        {PositionalParams, BalanceDontCare, 1, 171 }, /* 88 */
-        {PositionalParams, BalanceDontCare, 3, 172 }, /* 89 */
-        {PositionalParams, BalanceDontCare, 3, 175 }, /* 90 */
-        {PositionalParams, BalanceDontCare, 1, 178 }, /* 91 */
-        {PositionalParams, BalanceDontCare, 1, 179 }, /* 92 */
-        {PositionalParams, BalanceDontCare, 2, 180 }, /* 93 */
-        {PositionalParams, BalanceDontCare, 1, 182 }, /* 94 */
-        {PositionalParams, BalanceDontCare, 2, 183 }, /* 95 */
-        {PositionalParams, BalanceDontCare, 1, 185 }, /* 96 */
-        {PositionalParams, BalanceDontCare, 2, 186 }, /* 97 */
-        {AnyParams       , BalanceDontCare, 3, 188 }, /* 98 */
-        {PositionalParams, BalanceDontCare, 1, 191 }, /* 99 */
-        {PositionalParams, BalanceDontCare, 2, 192 }, /* 100 */
-        {PositionalParams, BalanceDontCare, 1, 194 }, /* 101 */
-        {PositionalParams, BalanceDontCare, 2, 195 }, /* 102 */
-        {PositionalParams, BalanceDontCare, 1, 197 }, /* 103 */
-        {AnyParams       , BalanceDontCare, 1, 54 }, /* 104 */
-        {AnyParams       , BalanceDontCare, 1, 198 }, /* 105 */
-        {PositionalParams, BalanceDontCare, 1, 54 }, /* 106 */
-        {AnyParams       , BalanceDontCare, 2, 199 }, /* 107 */
-        {PositionalParams, BalanceDontCare, 1, 203 }, /* 108 */
-        {AnyParams       , BalanceDontCare, 2, 204 }, /* 109 */
-        {AnyParams       , BalanceDontCare, 1, 40 }, /* 110 */
-        {AnyParams       , BalanceDontCare, 1, 206 }, /* 111 */
-        {AnyParams       , BalanceDontCare, 2, 207 }, /* 112 */
-        {PositionalParams, BalanceDontCare, 1, 211 }, /* 113 */
-        {AnyParams       , BalanceDontCare, 2, 212 }, /* 114 */
-        {PositionalParams, BalanceDontCare, 2, 214 }, /* 115 */
-        {PositionalParams, BalanceDontCare, 1, 29 }, /* 116 */
-        {PositionalParams, BalanceDontCare, 2, 216 }, /* 117 */
-        {PositionalParams, BalanceDontCare, 1, 33 }, /* 118 */
-        {PositionalParams, BalanceDontCare, 2, 218 }, /* 119 */
-        {AnyParams       , BalanceDontCare, 3, 220 }, /* 120 */
-        {PositionalParams, BalanceDontCare, 2, 223 }, /* 121 */
-        {PositionalParams, BalanceDontCare, 2, 225 }, /* 122 */
-        {PositionalParams, BalanceDontCare, 2, 227 }, /* 123 */
-        {PositionalParams, BalanceDontCare, 2, 229 }, /* 124 */
-        {PositionalParams, BalanceDontCare, 1, 233 }, /* 125 */
-        {AnyParams       , BalanceDontCare, 4, 234 }, /* 126 */
-        {PositionalParams, BalanceDontCare, 2, 238 }, /* 127 */
-        {PositionalParams, BalanceDontCare, 2, 240 }, /* 128 */
-        {PositionalParams, BalanceDontCare, 2, 242 }, /* 129 */
-        {AnyParams       , BalanceDontCare, 4, 244 }, /* 130 */
-        {PositionalParams, BalanceDontCare, 2, 248 }, /* 131 */
-        {PositionalParams, BalanceDontCare, 2, 250 }, /* 132 */
-        {PositionalParams, BalanceDontCare, 2, 252 }, /* 133 */
-        {PositionalParams, BalanceDontCare, 2, 254 }, /* 134 */
-        {PositionalParams, BalanceDontCare, 1, 256 }, /* 135 */
-        {PositionalParams, BalanceDontCare, 1, 257 }, /* 136 */
-        {PositionalParams, BalanceDontCare, 2, 258 }, /* 137 */
-        {PositionalParams, BalanceDontCare, 2, 260 }, /* 138 */
-        {AnyParams       , BalanceMoreNeg , 2, 54 }, /* 139 */
-        {PositionalParams, BalanceDontCare, 2, 262 }, /* 140 */
-        {PositionalParams, BalanceDontCare, 2, 264 }, /* 141 */
-        {PositionalParams, BalanceDontCare, 2, 266 }, /* 142 */
-        {PositionalParams, BalanceDontCare, 1, 268 }, /* 143 */
-        {PositionalParams, BalanceDontCare, 1, 269 }, /* 144 */
-        {PositionalParams, BalanceDontCare, 1, 270 }, /* 145 */
-        {AnyParams       , BalanceDontCare, 4, 271 }, /* 146 */
-        {PositionalParams, BalanceDontCare, 2, 275 }, /* 147 */
-        {PositionalParams, BalanceDontCare, 2, 277 }, /* 148 */
-        {PositionalParams, BalanceDontCare, 2, 279 }, /* 149 */
-        {PositionalParams, BalanceDontCare, 2, 281 }, /* 150 */
-        {PositionalParams, BalanceDontCare, 2, 283 }, /* 151 */
-        {PositionalParams, BalanceDontCare, 2, 285 }, /* 152 */
-        {PositionalParams, BalanceDontCare, 2, 287 }, /* 153 */
-        {PositionalParams, BalanceDontCare, 1, 289 }, /* 154 */
-        {PositionalParams, BalanceDontCare, 1, 290 }, /* 155 */
-        {PositionalParams, BalanceDontCare, 1, 291 }, /* 156 */
-        {PositionalParams, BalanceDontCare, 1, 292 }, /* 157 */
-        {PositionalParams, BalanceDontCare, 1, 293 }, /* 158 */
-        {AnyParams       , BalanceDontCare, 2, 296 }, /* 159 */
-        {PositionalParams, BalanceDontCare, 1, 298 }, /* 160 */
-        {PositionalParams, BalanceDontCare, 1, 299 }, /* 161 */
-        {PositionalParams, BalanceDontCare, 1, 300 }, /* 162 */
-        {PositionalParams, BalanceDontCare, 1, 301 }, /* 163 */
-        {PositionalParams, BalanceDontCare, 1, 302 }, /* 164 */
-        {PositionalParams, BalanceDontCare, 1, 303 }, /* 165 */
-        {PositionalParams, BalanceDontCare, 1, 304 }, /* 166 */
-        {PositionalParams, BalanceDontCare, 1, 305 }, /* 167 */
-        {PositionalParams, BalanceDontCare, 1, 306 }, /* 168 */
-        {PositionalParams, BalanceDontCare, 1, 307 }, /* 169 */
-        {PositionalParams, BalanceDontCare, 0, 0 }, /* 170 */
-        {PositionalParams, BalanceDontCare, 1, 48 }, /* 171 */
-        {AnyParams       , BalanceDontCare, 1, 48 }, /* 172 */
-        {AnyParams       , BalanceDontCare, 2, 308 }, /* 173 */
-        {AnyParams       , BalanceDontCare, 1, 310 }, /* 174 */
-        {PositionalParams, BalanceDontCare, 2, 311 }, /* 175 */
-        {AnyParams       , BalanceMoreNeg , 2, 313 }, /* 176 */
-        {AnyParams       , BalanceDontCare, 3, 315 }, /* 177 */
-        {AnyParams       , BalanceDontCare, 1, 318 }, /* 178 */
-        {PositionalParams, BalanceDontCare, 2, 319 }, /* 179 */
-        {PositionalParams, BalanceDontCare, 3, 321 }, /* 180 */
-        {PositionalParams, BalanceDontCare, 1, 324 }, /* 181 */
-        {AnyParams       , BalanceDontCare, 1, 325 }, /* 182 */
-        {PositionalParams, BalanceDontCare, 1, 326 }, /* 183 */
-        {AnyParams       , BalanceDontCare, 2, 327 }, /* 184 */
-        {AnyParams       , BalanceDontCare, 1, 329 }, /* 185 */
-        {PositionalParams, BalanceDontCare, 2, 330 }, /* 186 */
-        {AnyParams       , BalanceDontCare, 3, 332 }, /* 187 */
-        {AnyParams       , BalanceDontCare, 1, 335 }, /* 188 */
-        {PositionalParams, BalanceDontCare, 3, 336 }, /* 189 */
-        {PositionalParams, BalanceDontCare, 1, 339 }, /* 190 */
-        {AnyParams       , BalanceMoreNeg , 2, 340 }, /* 191 */
-        {AnyParams       , BalanceDontCare, 3, 342 }, /* 192 */
-        {AnyParams       , BalanceDontCare, 1, 345 }, /* 193 */
-        {PositionalParams, BalanceDontCare, 2, 346 }, /* 194 */
-        {PositionalParams, BalanceDontCare, 3, 348 }, /* 195 */
-        {PositionalParams, BalanceDontCare, 1, 351 }, /* 196 */
-        {PositionalParams, BalanceDontCare, 2, 352 }, /* 197 */
-        {AnyParams       , BalanceDontCare, 2, 354 }, /* 198 */
-        {PositionalParams, BalanceDontCare, 2, 356 }, /* 199 */
-        {PositionalParams, BalanceDontCare, 1, 358 }, /* 200 */
-        {PositionalParams, BalanceDontCare, 2, 359 }, /* 201 */
-        {AnyParams       , BalanceDontCare, 2, 361 }, /* 202 */
-        {PositionalParams, BalanceDontCare, 2, 363 }, /* 203 */
-        {PositionalParams, BalanceDontCare, 1, 365 }, /* 204 */
-        {AnyParams       , BalanceDontCare, 2, 366 }, /* 205 */
-        {PositionalParams, BalanceDontCare, 1, 370 }, /* 206 */
-        {AnyParams       , BalanceDontCare, 2, 18 }, /* 207 */
-        {PositionalParams, BalanceDontCare, 1, 31 }, /* 208 */
-        {AnyParams       , BalanceDontCare, 2, 371 }, /* 209 */
-        {PositionalParams, BalanceDontCare, 2, 373 }, /* 210 */
-        {PositionalParams, BalanceDontCare, 1, 375 }, /* 211 */
+        {PositionalParams, BalanceDontCare, 2, 1 }, /* 1 */
+        {PositionalParams, BalanceDontCare, 2, 3 }, /* 2 */
+        {PositionalParams, BalanceDontCare, 2, 5 }, /* 3 */
+        {PositionalParams, BalanceDontCare, 2, 7 }, /* 4 */
+        {PositionalParams, BalanceDontCare, 1, 9 }, /* 5 */
+        {PositionalParams, BalanceDontCare, 2, 10 }, /* 6 */
+        {PositionalParams, BalanceDontCare, 1, 12 }, /* 7 */
+        {PositionalParams, BalanceDontCare, 2, 13 }, /* 8 */
+        {PositionalParams, BalanceDontCare, 2, 15 }, /* 9 */
+        {PositionalParams, BalanceDontCare, 2, 17 }, /* 10 */
+        {PositionalParams, BalanceDontCare, 1, 19 }, /* 11 */
+        {PositionalParams, BalanceDontCare, 2, 20 }, /* 12 */
+        {PositionalParams, BalanceDontCare, 1, 22 }, /* 13 */
+        {PositionalParams, BalanceDontCare, 2, 23 }, /* 14 */
+        {PositionalParams, BalanceDontCare, 2, 25 }, /* 15 */
+        {PositionalParams, BalanceDontCare, 2, 27 }, /* 16 */
+        {PositionalParams, BalanceDontCare, 2, 29 }, /* 17 */
+        {PositionalParams, BalanceDontCare, 2, 31 }, /* 18 */
+        {PositionalParams, BalanceDontCare, 1, 33 }, /* 19 */
+        {PositionalParams, BalanceDontCare, 2, 36 }, /* 20 */
+        {PositionalParams, BalanceDontCare, 1, 38 }, /* 21 */
+        {PositionalParams, BalanceDontCare, 2, 39 }, /* 22 */
+        {PositionalParams, BalanceDontCare, 2, 41 }, /* 23 */
+        {PositionalParams, BalanceDontCare, 2, 43 }, /* 24 */
+        {PositionalParams, BalanceDontCare, 3, 45 }, /* 25 */
+        {PositionalParams, BalanceDontCare, 1, 48 }, /* 26 */
+        {PositionalParams, BalanceDontCare, 2, 49 }, /* 27 */
+        {PositionalParams, BalanceDontCare, 3, 51 }, /* 28 */
+        {PositionalParams, BalanceDontCare, 1, 54 }, /* 29 */
+        {PositionalParams, BalanceDontCare, 2, 55 }, /* 30 */
+        {PositionalParams, BalanceDontCare, 2, 57 }, /* 31 */
+        {PositionalParams, BalanceDontCare, 1, 59 }, /* 32 */
+        {PositionalParams, BalanceDontCare, 2, 60 }, /* 33 */
+        {PositionalParams, BalanceDontCare, 2, 62 }, /* 34 */
+        {PositionalParams, BalanceDontCare, 2, 64 }, /* 35 */
+        {PositionalParams, BalanceDontCare, 2, 66 }, /* 36 */
+        {PositionalParams, BalanceDontCare, 1, 68 }, /* 37 */
+        {PositionalParams, BalanceDontCare, 1, 69 }, /* 38 */
+        {PositionalParams, BalanceDontCare, 1, 70 }, /* 39 */
+        {AnyParams       , BalanceDontCare, 2, 71 }, /* 40 */
+        {PositionalParams, BalanceDontCare, 1, 73 }, /* 41 */
+        {PositionalParams, BalanceDontCare, 2, 74 }, /* 42 */
+        {PositionalParams, BalanceDontCare, 1, 76 }, /* 43 */
+        {PositionalParams, BalanceDontCare, 1, 77 }, /* 44 */
+        {AnyParams       , BalanceDontCare, 2, 78 }, /* 45 */
+        {PositionalParams, BalanceDontCare, 1, 80 }, /* 46 */
+        {PositionalParams, BalanceDontCare, 1, 72 }, /* 47 */
+        {PositionalParams, BalanceDontCare, 1, 81 }, /* 48 */
+        {PositionalParams, BalanceDontCare, 1, 82 }, /* 49 */
+        {AnyParams       , BalanceDontCare, 2, 83 }, /* 50 */
+        {SelectedParams  , BalanceDontCare, 2, 85 }, /* 51 */
+        {PositionalParams, BalanceDontCare, 1, 87 }, /* 52 */
+        {PositionalParams, BalanceDontCare, 2, 88 }, /* 53 */
+        {PositionalParams, BalanceDontCare, 1, 90 }, /* 54 */
+        {PositionalParams, BalanceDontCare, 1, 91 }, /* 55 */
+        {PositionalParams, BalanceDontCare, 1, 86 }, /* 56 */
+        {PositionalParams, BalanceDontCare, 3, 92 }, /* 57 */
+        {AnyParams       , BalanceDontCare, 2, 95 }, /* 58 */
+        {PositionalParams, BalanceDontCare, 3, 97 }, /* 59 */
+        {PositionalParams, BalanceDontCare, 3, 100 }, /* 60 */
+        {PositionalParams, BalanceDontCare, 2, 103 }, /* 61 */
+        {PositionalParams, BalanceDontCare, 1, 105 }, /* 62 */
+        {PositionalParams, BalanceDontCare, 3, 106 }, /* 63 */
+        {PositionalParams, BalanceDontCare, 3, 109 }, /* 64 */
+        {PositionalParams, BalanceDontCare, 2, 112 }, /* 65 */
+        {PositionalParams, BalanceDontCare, 1, 114 }, /* 66 */
+        {PositionalParams, BalanceDontCare, 3, 115 }, /* 67 */
+        {PositionalParams, BalanceDontCare, 3, 118 }, /* 68 */
+        {PositionalParams, BalanceDontCare, 2, 121 }, /* 69 */
+        {PositionalParams, BalanceDontCare, 1, 123 }, /* 70 */
+        {PositionalParams, BalanceDontCare, 3, 124 }, /* 71 */
+        {PositionalParams, BalanceDontCare, 3, 127 }, /* 72 */
+        {PositionalParams, BalanceDontCare, 2, 130 }, /* 73 */
+        {PositionalParams, BalanceDontCare, 1, 132 }, /* 74 */
+        {AnyParams       , BalanceDontCare, 2, 133 }, /* 75 */
+        {PositionalParams, BalanceDontCare, 3, 135 }, /* 76 */
+        {PositionalParams, BalanceDontCare, 1, 134 }, /* 77 */
+        {PositionalParams, BalanceDontCare, 3, 138 }, /* 78 */
+        {PositionalParams, BalanceDontCare, 2, 141 }, /* 79 */
+        {PositionalParams, BalanceDontCare, 1, 143 }, /* 80 */
+        {PositionalParams, BalanceDontCare, 3, 144 }, /* 81 */
+        {PositionalParams, BalanceDontCare, 3, 147 }, /* 82 */
+        {PositionalParams, BalanceDontCare, 2, 150 }, /* 83 */
+        {PositionalParams, BalanceDontCare, 1, 152 }, /* 84 */
+        {PositionalParams, BalanceDontCare, 3, 153 }, /* 85 */
+        {PositionalParams, BalanceDontCare, 3, 156 }, /* 86 */
+        {PositionalParams, BalanceDontCare, 2, 159 }, /* 87 */
+        {PositionalParams, BalanceDontCare, 1, 161 }, /* 88 */
+        {PositionalParams, BalanceDontCare, 3, 162 }, /* 89 */
+        {PositionalParams, BalanceDontCare, 3, 165 }, /* 90 */
+        {PositionalParams, BalanceDontCare, 2, 168 }, /* 91 */
+        {PositionalParams, BalanceDontCare, 1, 170 }, /* 92 */
+        {AnyParams       , BalanceDontCare, 1, 0 }, /* 93 */
+        {PositionalParams, BalanceDontCare, 3, 171 }, /* 94 */
+        {PositionalParams, BalanceDontCare, 3, 174 }, /* 95 */
+        {PositionalParams, BalanceDontCare, 1, 177 }, /* 96 */
+        {PositionalParams, BalanceDontCare, 3, 178 }, /* 97 */
+        {PositionalParams, BalanceDontCare, 3, 181 }, /* 98 */
+        {PositionalParams, BalanceDontCare, 1, 184 }, /* 99 */
+        {PositionalParams, BalanceDontCare, 2, 185 }, /* 100 */
+        {PositionalParams, BalanceDontCare, 1, 187 }, /* 101 */
+        {PositionalParams, BalanceDontCare, 1, 74 }, /* 102 */
+        {PositionalParams, BalanceDontCare, 2, 188 }, /* 103 */
+        {PositionalParams, BalanceDontCare, 1, 190 }, /* 104 */
+        {PositionalParams, BalanceDontCare, 2, 191 }, /* 105 */
+        {PositionalParams, BalanceDontCare, 1, 193 }, /* 106 */
+        {PositionalParams, BalanceDontCare, 2, 194 }, /* 107 */
+        {PositionalParams, BalanceDontCare, 1, 196 }, /* 108 */
+        {AnyParams       , BalanceDontCare, 2, 197 }, /* 109 */
+        {PositionalParams, BalanceDontCare, 1, 199 }, /* 110 */
+        {PositionalParams, BalanceDontCare, 1, 111 }, /* 111 */
+        {PositionalParams, BalanceDontCare, 2, 200 }, /* 112 */
+        {PositionalParams, BalanceDontCare, 1, 202 }, /* 113 */
+        {PositionalParams, BalanceDontCare, 2, 203 }, /* 114 */
+        {AnyParams       , BalanceDontCare, 2, 205 }, /* 115 */
+        {PositionalParams, BalanceDontCare, 1, 207 }, /* 116 */
+        {PositionalParams, BalanceDontCare, 2, 208 }, /* 117 */
+        {PositionalParams, BalanceDontCare, 2, 210 }, /* 118 */
+        {PositionalParams, BalanceDontCare, 2, 212 }, /* 119 */
+        {PositionalParams, BalanceDontCare, 1, 214 }, /* 120 */
+        {AnyParams       , BalanceDontCare, 2, 0 }, /* 121 */
+        {AnyParams       , BalanceDontCare, 2, 215 }, /* 122 */
+        {PositionalParams, BalanceDontCare, 2, 217 }, /* 123 */
+        {PositionalParams, BalanceDontCare, 2, 219 }, /* 124 */
+        {PositionalParams, BalanceDontCare, 2, 221 }, /* 125 */
+        {PositionalParams, BalanceDontCare, 2, 223 }, /* 126 */
+        {AnyParams       , BalanceDontCare, 2, 225 }, /* 127 */
+        {PositionalParams, BalanceDontCare, 2, 227 }, /* 128 */
+        {PositionalParams, BalanceDontCare, 2, 231 }, /* 129 */
+        {AnyParams       , BalanceDontCare, 3, 233 }, /* 130 */
+        {PositionalParams, BalanceDontCare, 2, 236 }, /* 131 */
+        {SelectedParams  , BalanceDontCare, 2, 238 }, /* 132 */
+        {PositionalParams, BalanceDontCare, 2, 240 }, /* 133 */
+        {PositionalParams, BalanceDontCare, 2, 244 }, /* 134 */
+        {PositionalParams, BalanceDontCare, 2, 246 }, /* 135 */
+        {PositionalParams, BalanceDontCare, 2, 26 }, /* 136 */
+        {PositionalParams, BalanceDontCare, 1, 173 }, /* 137 */
+        {PositionalParams, BalanceDontCare, 2, 248 }, /* 138 */
+        {AnyParams       , BalanceDontCare, 3, 250 }, /* 139 */
+        {PositionalParams, BalanceDontCare, 2, 253 }, /* 140 */
+        {PositionalParams, BalanceDontCare, 2, 255 }, /* 141 */
+        {PositionalParams, BalanceDontCare, 2, 181 }, /* 142 */
+        {PositionalParams, BalanceDontCare, 2, 257 }, /* 143 */
+        {PositionalParams, BalanceDontCare, 2, 259 }, /* 144 */
+        {PositionalParams, BalanceDontCare, 2, 172 }, /* 145 */
+        {PositionalParams, BalanceDontCare, 2, 261 }, /* 146 */
+        {PositionalParams, BalanceDontCare, 2, 263 }, /* 147 */
+        {PositionalParams, BalanceDontCare, 2, 265 }, /* 148 */
+        {PositionalParams, BalanceDontCare, 2, 267 }, /* 149 */
+        {PositionalParams, BalanceDontCare, 2, 269 }, /* 150 */
+        {PositionalParams, BalanceDontCare, 2, 271 }, /* 151 */
+        {PositionalParams, BalanceDontCare, 2, 273 }, /* 152 */
+        {PositionalParams, BalanceDontCare, 1, 275 }, /* 153 */
+        {PositionalParams, BalanceDontCare, 2, 276 }, /* 154 */
+        {PositionalParams, BalanceDontCare, 2, 278 }, /* 155 */
+        {PositionalParams, BalanceDontCare, 2, 280 }, /* 156 */
+        {PositionalParams, BalanceDontCare, 1, 282 }, /* 157 */
+        {PositionalParams, BalanceDontCare, 2, 283 }, /* 158 */
+        {PositionalParams, BalanceDontCare, 1, 285 }, /* 159 */
+        {PositionalParams, BalanceDontCare, 1, 286 }, /* 160 */
+        {PositionalParams, BalanceDontCare, 2, 287 }, /* 161 */
+        {PositionalParams, BalanceDontCare, 1, 289 }, /* 162 */
+        {PositionalParams, BalanceDontCare, 2, 290 }, /* 163 */
+        {SelectedParams  , BalanceDontCare, 2, 292 }, /* 164 */
+        {AnyParams       , BalanceDontCare, 2, 294 }, /* 165 */
+        {PositionalParams, BalanceDontCare, 2, 296 }, /* 166 */
+        {PositionalParams, BalanceDontCare, 1, 298 }, /* 167 */
+        {SelectedParams  , BalanceDontCare, 2, 299 }, /* 168 */
+        {AnyParams       , BalanceDontCare, 2, 301 }, /* 169 */
+        {PositionalParams, BalanceDontCare, 1, 293 }, /* 170 */
+        {PositionalParams, BalanceDontCare, 1, 92 }, /* 171 */
+        {AnyParams       , BalanceDontCare, 2, 303 }, /* 172 */
+        {PositionalParams, BalanceDontCare, 1, 305 }, /* 173 */
+        {PositionalParams, BalanceDontCare, 1, 306 }, /* 174 */
+        {AnyParams       , BalanceDontCare, 2, 307 }, /* 175 */
+        {PositionalParams, BalanceDontCare, 1, 14 }, /* 176 */
+        {AnyParams       , BalanceDontCare, 2, 309 }, /* 177 */
+        {AnyParams       , BalanceDontCare, 2, 311 }, /* 178 */
+        {PositionalParams, BalanceDontCare, 1, 310 }, /* 179 */
+        {PositionalParams, BalanceDontCare, 2, 313 }, /* 180 */
+        {PositionalParams, BalanceDontCare, 2, 315 }, /* 181 */
+        {PositionalParams, BalanceDontCare, 1, 317 }, /* 182 */
+        {PositionalParams, BalanceDontCare, 2, 318 }, /* 183 */
+        {AnyParams       , BalanceDontCare, 2, 320 }, /* 184 */
+        {AnyParams       , BalanceDontCare, 2, 322 }, /* 185 */
+        {PositionalParams, BalanceDontCare, 2, 326 }, /* 186 */
+        {PositionalParams, BalanceDontCare, 2, 328 }, /* 187 */
+        {PositionalParams, BalanceDontCare, 2, 330 }, /* 188 */
+        {PositionalParams, BalanceDontCare, 2, 332 }, /* 189 */
+        {PositionalParams, BalanceDontCare, 2, 334 }, /* 190 */
+        {PositionalParams, BalanceDontCare, 2, 336 }, /* 191 */
+        {PositionalParams, BalanceDontCare, 2, 338 }, /* 192 */
+        {PositionalParams, BalanceDontCare, 2, 340 }, /* 193 */
+        {PositionalParams, BalanceDontCare, 2, 342 }, /* 194 */
+        {PositionalParams, BalanceDontCare, 1, 344 }, /* 195 */
+        {PositionalParams, BalanceDontCare, 2, 345 }, /* 196 */
+        {AnyParams       , BalanceDontCare, 2, 347 }, /* 197 */
+        {AnyParams       , BalanceDontCare, 2, 349 }, /* 198 */
+        {PositionalParams, BalanceDontCare, 2, 351 }, /* 199 */
+        {PositionalParams, BalanceDontCare, 2, 353 }, /* 200 */
+        {PositionalParams, BalanceDontCare, 2, 355 }, /* 201 */
+        {PositionalParams, BalanceDontCare, 2, 357 }, /* 202 */
+        {PositionalParams, BalanceDontCare, 2, 359 }, /* 203 */
+        {PositionalParams, BalanceDontCare, 2, 361 }, /* 204 */
+        {PositionalParams, BalanceDontCare, 2, 363 }, /* 205 */
+        {PositionalParams, BalanceDontCare, 2, 365 }, /* 206 */
+        {PositionalParams, BalanceDontCare, 2, 367 }, /* 207 */
+        {PositionalParams, BalanceDontCare, 1, 369 }, /* 208 */
+        {SelectedParams  , BalanceDontCare, 2, 370 }, /* 209 */
+        {SelectedParams  , BalanceDontCare, 2, 372 }, /* 210 */
+        {AnyParams       , BalanceDontCare, 2, 374 }, /* 211 */
         {PositionalParams, BalanceDontCare, 1, 376 }, /* 212 */
-        {PositionalParams, BalanceDontCare, 2, 377 }, /* 213 */
-        {AnyParams       , BalanceDontCare, 2, 379 }, /* 214 */
-        {PositionalParams, BalanceDontCare, 1, 354 }, /* 215 */
-        {AnyParams       , BalanceDontCare, 4, 381 }, /* 216 */
-        {AnyParams       , BalanceDontCare, 4, 385 }, /* 217 */
-        {AnyParams       , BalanceDontCare, 2, 389 }, /* 218 */
-        {PositionalParams, BalanceDontCare, 2, 387 }, /* 219 */
-        {PositionalParams, BalanceDontCare, 2, 391 }, /* 220 */
-        {PositionalParams, BalanceDontCare, 3, 393 }, /* 221 */
-        {PositionalParams, BalanceDontCare, 1, 396 }, /* 222 */
-        {AnyParams       , BalanceDontCare, 4, 397 }, /* 223 */
-        {AnyParams       , BalanceDontCare, 4, 401 }, /* 224 */
-        {AnyParams       , BalanceDontCare, 2, 405 }, /* 225 */
-        {PositionalParams, BalanceDontCare, 2, 407 }, /* 226 */
-        {PositionalParams, BalanceDontCare, 3, 409 }, /* 227 */
-        {PositionalParams, BalanceDontCare, 1, 412 }, /* 228 */
-        {AnyParams       , BalanceDontCare, 3, 413 }, /* 229 */
-        {PositionalParams, BalanceDontCare, 2, 416 }, /* 230 */
-        {AnyParams       , BalanceDontCare, 3, 418 }, /* 231 */
-        {AnyParams       , BalanceDontCare, 2, 421 }, /* 232 */
-        {PositionalParams, BalanceDontCare, 2, 423 }, /* 233 */
-        {PositionalParams, BalanceDontCare, 2, 425 }, /* 234 */
-        {PositionalParams, BalanceDontCare, 2, 427 }, /* 235 */
-        {PositionalParams, BalanceDontCare, 2, 429 }, /* 236 */
-        {PositionalParams, BalanceDontCare, 2, 431 }, /* 237 */
-        {PositionalParams, BalanceDontCare, 3, 433 }, /* 238 */
-        {PositionalParams, BalanceDontCare, 2, 436 }, /* 239 */
-        {PositionalParams, BalanceDontCare, 2, 438 }, /* 240 */
-        {PositionalParams, BalanceDontCare, 2, 440 }, /* 241 */
-        {PositionalParams, BalanceDontCare, 3, 442 }, /* 242 */
-        {PositionalParams, BalanceDontCare, 2, 445 }, /* 243 */
-        {PositionalParams, BalanceDontCare, 2, 447 }, /* 244 */
-        {PositionalParams, BalanceDontCare, 1, 449 }, /* 245 */
-        {PositionalParams, BalanceDontCare, 2, 450 }, /* 246 */
-        {AnyParams       , BalanceDontCare, 3, 452 }, /* 247 */
-        {AnyParams       , BalanceDontCare, 3, 455 }, /* 248 */
-        {AnyParams       , BalanceDontCare, 2, 458 }, /* 249 */
-        {PositionalParams, BalanceDontCare, 2, 460 }, /* 250 */
-        {PositionalParams, BalanceDontCare, 2, 462 }, /* 251 */
-        {PositionalParams, BalanceDontCare, 2, 464 }, /* 252 */
-        {PositionalParams, BalanceDontCare, 2, 466 }, /* 253 */
-        {PositionalParams, BalanceDontCare, 2, 468 }, /* 254 */
-        {PositionalParams, BalanceDontCare, 3, 470 }, /* 255 */
-        {PositionalParams, BalanceDontCare, 2, 473 }, /* 256 */
-        {PositionalParams, BalanceDontCare, 2, 475 }, /* 257 */
-        {PositionalParams, BalanceDontCare, 2, 477 }, /* 258 */
-        {PositionalParams, BalanceDontCare, 3, 479 }, /* 259 */
-        {PositionalParams, BalanceDontCare, 2, 482 }, /* 260 */
-        {PositionalParams, BalanceDontCare, 2, 484 }, /* 261 */
-        {PositionalParams, BalanceDontCare, 1, 486 }, /* 262 */
-        {PositionalParams, BalanceDontCare, 2, 487 }, /* 263 */
-        {AnyParams       , BalanceDontCare, 3, 489 }, /* 264 */
-        {PositionalParams, BalanceDontCare, 2, 492 }, /* 265 */
-        {AnyParams       , BalanceDontCare, 3, 494 }, /* 266 */
-        {AnyParams       , BalanceDontCare, 2, 497 }, /* 267 */
-        {PositionalParams, BalanceDontCare, 2, 499 }, /* 268 */
-        {PositionalParams, BalanceDontCare, 2, 501 }, /* 269 */
-        {PositionalParams, BalanceDontCare, 2, 503 }, /* 270 */
-        {PositionalParams, BalanceDontCare, 2, 505 }, /* 271 */
-        {PositionalParams, BalanceDontCare, 2, 507 }, /* 272 */
-        {PositionalParams, BalanceDontCare, 3, 509 }, /* 273 */
-        {PositionalParams, BalanceDontCare, 2, 512 }, /* 274 */
-        {PositionalParams, BalanceDontCare, 2, 514 }, /* 275 */
-        {PositionalParams, BalanceDontCare, 2, 516 }, /* 276 */
-        {PositionalParams, BalanceDontCare, 3, 518 }, /* 277 */
-        {PositionalParams, BalanceDontCare, 2, 521 }, /* 278 */
-        {PositionalParams, BalanceDontCare, 2, 523 }, /* 279 */
-        {PositionalParams, BalanceDontCare, 1, 525 }, /* 280 */
-        {PositionalParams, BalanceDontCare, 2, 526 }, /* 281 */
-        {AnyParams       , BalanceDontCare, 3, 528 }, /* 282 */
-        {AnyParams       , BalanceDontCare, 3, 531 }, /* 283 */
-        {AnyParams       , BalanceDontCare, 2, 534 }, /* 284 */
-        {PositionalParams, BalanceDontCare, 2, 536 }, /* 285 */
-        {PositionalParams, BalanceDontCare, 2, 538 }, /* 286 */
-        {PositionalParams, BalanceDontCare, 2, 540 }, /* 287 */
-        {PositionalParams, BalanceDontCare, 2, 542 }, /* 288 */
-        {PositionalParams, BalanceDontCare, 2, 544 }, /* 289 */
-        {PositionalParams, BalanceDontCare, 3, 546 }, /* 290 */
-        {PositionalParams, BalanceDontCare, 2, 549 }, /* 291 */
-        {PositionalParams, BalanceDontCare, 2, 551 }, /* 292 */
-        {PositionalParams, BalanceDontCare, 2, 553 }, /* 293 */
-        {PositionalParams, BalanceDontCare, 3, 555 }, /* 294 */
-        {PositionalParams, BalanceDontCare, 2, 558 }, /* 295 */
-        {PositionalParams, BalanceDontCare, 2, 560 }, /* 296 */
-        {PositionalParams, BalanceDontCare, 1, 562 }, /* 297 */
-        {PositionalParams, BalanceDontCare, 2, 563 }, /* 298 */
-        {AnyParams       , BalanceDontCare, 3, 565 }, /* 299 */
-        {PositionalParams, BalanceDontCare, 2, 568 }, /* 300 */
-        {AnyParams       , BalanceDontCare, 3, 570 }, /* 301 */
-        {AnyParams       , BalanceDontCare, 2, 573 }, /* 302 */
-        {PositionalParams, BalanceDontCare, 2, 575 }, /* 303 */
-        {PositionalParams, BalanceDontCare, 2, 577 }, /* 304 */
-        {PositionalParams, BalanceDontCare, 2, 579 }, /* 305 */
-        {PositionalParams, BalanceDontCare, 2, 581 }, /* 306 */
-        {PositionalParams, BalanceDontCare, 2, 583 }, /* 307 */
-        {PositionalParams, BalanceDontCare, 3, 585 }, /* 308 */
-        {PositionalParams, BalanceDontCare, 2, 588 }, /* 309 */
-        {PositionalParams, BalanceDontCare, 2, 590 }, /* 310 */
-        {PositionalParams, BalanceDontCare, 2, 592 }, /* 311 */
-        {PositionalParams, BalanceDontCare, 3, 594 }, /* 312 */
-        {PositionalParams, BalanceDontCare, 2, 597 }, /* 313 */
-        {PositionalParams, BalanceDontCare, 2, 599 }, /* 314 */
-        {PositionalParams, BalanceDontCare, 1, 601 }, /* 315 */
-        {SelectedParams  , BalanceDontCare, 2, 602 }, /* 316 */
-        {SelectedParams  , BalanceDontCare, 2, 604 }, /* 317 */
-        {AnyParams       , BalanceDontCare, 2, 606 }, /* 318 */
-        {PositionalParams, BalanceDontCare, 2, 608 }, /* 319 */
-        {PositionalParams, BalanceDontCare, 1, 610 }, /* 320 */
-        {PositionalParams, BalanceDontCare, 1, 611 }, /* 321 */
-        {SelectedParams  , BalanceDontCare, 2, 612 }, /* 322 */
-        {PositionalParams, BalanceDontCare, 1, 36 }, /* 323 */
-        {SelectedParams  , BalanceDontCare, 2, 614 }, /* 324 */
-        {AnyParams       , BalanceDontCare, 2, 616 }, /* 325 */
-        {PositionalParams, BalanceDontCare, 2, 618 }, /* 326 */
-        {PositionalParams, BalanceDontCare, 1, 620 }, /* 327 */
-        {PositionalParams, BalanceDontCare, 1, 621 }, /* 328 */
-        {SelectedParams  , BalanceDontCare, 2, 622 }, /* 329 */
-        {SelectedParams  , BalanceDontCare, 2, 624 }, /* 330 */
-        {AnyParams       , BalanceDontCare, 2, 626 }, /* 331 */
-        {PositionalParams, BalanceDontCare, 2, 628 }, /* 332 */
-        {PositionalParams, BalanceDontCare, 1, 630 }, /* 333 */
-        {PositionalParams, BalanceDontCare, 1, 631 }, /* 334 */
-        {SelectedParams  , BalanceDontCare, 2, 632 }, /* 335 */
-        {SelectedParams  , BalanceDontCare, 2, 634 }, /* 336 */
-        {AnyParams       , BalanceDontCare, 2, 636 }, /* 337 */
-        {PositionalParams, BalanceDontCare, 2, 638 }, /* 338 */
-        {PositionalParams, BalanceDontCare, 1, 640 }, /* 339 */
-        {PositionalParams, BalanceDontCare, 1, 641 }, /* 340 */
-        {AnyParams       , BalanceDontCare, 3, 642 }, /* 341 */
-        {AnyParams       , BalanceDontCare, 2, 645 }, /* 342 */
-        {PositionalParams, BalanceDontCare, 2, 647 }, /* 343 */
-        {PositionalParams, BalanceDontCare, 2, 649 }, /* 344 */
-        {PositionalParams, BalanceDontCare, 2, 651 }, /* 345 */
-        {PositionalParams, BalanceDontCare, 1, 653 }, /* 346 */
-        {AnyParams       , BalanceDontCare, 3, 654 }, /* 347 */
-        {AnyParams       , BalanceDontCare, 2, 657 }, /* 348 */
-        {PositionalParams, BalanceDontCare, 2, 659 }, /* 349 */
-        {PositionalParams, BalanceDontCare, 2, 661 }, /* 350 */
-        {PositionalParams, BalanceDontCare, 2, 663 }, /* 351 */
-        {PositionalParams, BalanceDontCare, 1, 665 }, /* 352 */
-        {PositionalParams, BalanceDontCare, 1, 42 }, /* 353 */
-        {SelectedParams  , BalanceDontCare, 2, 666 }, /* 354 */
-        {SelectedParams  , BalanceDontCare, 2, 668 }, /* 355 */
-        {AnyParams       , BalanceDontCare, 2, 670 }, /* 356 */
-        {PositionalParams, BalanceDontCare, 2, 672 }, /* 357 */
-        {PositionalParams, BalanceDontCare, 1, 674 }, /* 358 */
-        {PositionalParams, BalanceDontCare, 1, 675 }, /* 359 */
-        {SelectedParams  , BalanceDontCare, 2, 676 }, /* 360 */
-        {SelectedParams  , BalanceDontCare, 2, 678 }, /* 361 */
-        {AnyParams       , BalanceDontCare, 2, 680 }, /* 362 */
-        {PositionalParams, BalanceDontCare, 2, 682 }, /* 363 */
-        {PositionalParams, BalanceDontCare, 1, 684 }, /* 364 */
-        {PositionalParams, BalanceDontCare, 1, 685 }, /* 365 */
-        {SelectedParams  , BalanceDontCare, 2, 686 }, /* 366 */
-        {AnyParams       , BalanceDontCare, 2, 688 }, /* 367 */
-        {PositionalParams, BalanceDontCare, 2, 690 }, /* 368 */
-        {PositionalParams, BalanceDontCare, 1, 692 }, /* 369 */
-        {PositionalParams, BalanceDontCare, 1, 693 }, /* 370 */
-        {AnyParams       , BalanceDontCare, 3, 694 }, /* 371 */
-        {AnyParams       , BalanceDontCare, 2, 697 }, /* 372 */
-        {PositionalParams, BalanceDontCare, 2, 699 }, /* 373 */
-        {PositionalParams, BalanceDontCare, 2, 701 }, /* 374 */
-        {PositionalParams, BalanceDontCare, 2, 703 }, /* 375 */
-        {PositionalParams, BalanceDontCare, 1, 705 }, /* 376 */
-        {AnyParams       , BalanceDontCare, 3, 706 }, /* 377 */
-        {AnyParams       , BalanceDontCare, 2, 709 }, /* 378 */
-        {PositionalParams, BalanceDontCare, 2, 711 }, /* 379 */
-        {PositionalParams, BalanceDontCare, 2, 713 }, /* 380 */
-        {PositionalParams, BalanceDontCare, 2, 715 }, /* 381 */
-        {PositionalParams, BalanceDontCare, 1, 717 }, /* 382 */
-        {AnyParams       , BalanceDontCare, 1, 718 }, /* 383 */
-        {PositionalParams, BalanceDontCare, 2, 719 }, /* 384 */
-        {PositionalParams, BalanceDontCare, 1, 721 }, /* 385 */
-        {AnyParams       , BalanceDontCare, 1, 722 }, /* 386 */
-        {PositionalParams, BalanceDontCare, 2, 723 }, /* 387 */
-        {PositionalParams, BalanceDontCare, 1, 725 }, /* 388 */
-        {PositionalParams, BalanceDontCare, 2, 726 }, /* 389 */
-        {PositionalParams, BalanceDontCare, 2, 728 }, /* 390 */
-        {AnyParams       , BalanceDontCare, 4, 730 }, /* 391 */
-        {AnyParams       , BalanceDontCare, 3, 734 }, /* 392 */
-        {PositionalParams, BalanceDontCare, 2, 737 }, /* 393 */
-        {PositionalParams, BalanceDontCare, 2, 739 }, /* 394 */
-        {PositionalParams, BalanceDontCare, 2, 741 }, /* 395 */
-        {PositionalParams, BalanceDontCare, 2, 743 }, /* 396 */
-        {PositionalParams, BalanceDontCare, 3, 745 }, /* 397 */
-        {PositionalParams, BalanceDontCare, 2, 748 }, /* 398 */
-        {AnyParams       , BalanceDontCare, 2, 752 }, /* 399 */
-        {PositionalParams, BalanceDontCare, 1, 754 }, /* 400 */
-        {PositionalParams, BalanceDontCare, 1, 755 }, /* 401 */
-        {PositionalParams, BalanceDontCare, 1, 756 }, /* 402 */
-        {AnyParams       , BalanceDontCare, 3, 757 }, /* 403 */
-        {PositionalParams, BalanceDontCare, 2, 760 }, /* 404 */
-        {PositionalParams, BalanceDontCare, 1, 762 }, /* 405 */
-        {PositionalParams, BalanceDontCare, 1, 763 }, /* 406 */
-        {AnyParams       , BalanceDontCare, 1, 33 }, /* 407 */
-        {AnyParams       , BalanceDontCare, 2, 764 }, /* 408 */
-        {AnyParams       , BalanceDontCare, 1, 766 }, /* 409 */
-        {PositionalParams, BalanceDontCare, 2, 767 }, /* 410 */
-        {PositionalParams, BalanceDontCare, 2, 769 }, /* 411 */
-        {AnyParams       , BalanceDontCare, 1, 771 }, /* 412 */
-        {PositionalParams, BalanceDontCare, 2, 772 }, /* 413 */
-        {PositionalParams, BalanceDontCare, 1, 774 }, /* 414 */
-        {AnyParams       , BalanceDontCare, 2, 775 }, /* 415 */
-        {AnyParams       , BalanceDontCare, 1, 777 }, /* 416 */
-        {AnyParams       , BalanceDontCare, 2, 778 }, /* 417 */
-        {PositionalParams, BalanceDontCare, 1, 782 }, /* 418 */
-        {AnyParams       , BalanceDontCare, 2, 783 }, /* 419 */
-        {PositionalParams, BalanceDontCare, 1, 787 }, /* 420 */
-        {PositionalParams, BalanceDontCare, 2, 788 }, /* 421 */
-        {PositionalParams, BalanceDontCare, 1, 790 }, /* 422 */
-        {AnyParams       , BalanceDontCare, 2, 791 }, /* 423 */
-        {PositionalParams, BalanceDontCare, 2, 793 }, /* 424 */
-        {PositionalParams, BalanceDontCare, 1, 795 }, /* 425 */
-        {AnyParams       , BalanceDontCare, 2, 796 }, /* 426 */
-        {PositionalParams, BalanceDontCare, 2, 798 }, /* 427 */
-        {PositionalParams, BalanceDontCare, 1, 800 }, /* 428 */
-        {AnyParams       , BalanceDontCare, 2, 801 }, /* 429 */
-        {PositionalParams, BalanceDontCare, 2, 803 }, /* 430 */
-        {AnyParams       , BalanceDontCare, 2, 805 }, /* 431 */
-        {PositionalParams, BalanceDontCare, 1, 807 }, /* 432 */
-        {AnyParams       , BalanceDontCare, 2, 808 }, /* 433 */
-        {PositionalParams, BalanceDontCare, 2, 810 }, /* 434 */
-        {PositionalParams, BalanceDontCare, 2, 812 }, /* 435 */
-        {PositionalParams, BalanceDontCare, 1, 814 }, /* 436 */
-        {PositionalParams, BalanceDontCare, 2, 815 }, /* 437 */
-        {AnyParams       , BalanceDontCare, 2, 817 }, /* 438 */
-        {PositionalParams, BalanceDontCare, 1, 819 }, /* 439 */
-        {AnyParams       , BalanceDontCare, 2, 820 }, /* 440 */
-        {PositionalParams, BalanceDontCare, 2, 822 }, /* 441 */
-        {PositionalParams, BalanceDontCare, 2, 824 }, /* 442 */
-        {PositionalParams, BalanceDontCare, 1, 826 }, /* 443 */
-        {PositionalParams, BalanceDontCare, 2, 827 }, /* 444 */
-        {AnyParams       , BalanceDontCare, 2, 829 }, /* 445 */
-        {PositionalParams, BalanceDontCare, 1, 831 }, /* 446 */
-        {PositionalParams, BalanceDontCare, 1, 167 }, /* 447 */
-        {AnyParams       , BalanceDontCare, 2, 832 }, /* 448 */
-        {PositionalParams, BalanceDontCare, 2, 834 }, /* 449 */
-        {PositionalParams, BalanceDontCare, 2, 836 }, /* 450 */
-        {PositionalParams, BalanceDontCare, 1, 838 }, /* 451 */
-        {PositionalParams, BalanceDontCare, 2, 839 }, /* 452 */
-        {PositionalParams, BalanceDontCare, 2, 841 }, /* 453 */
-        {AnyParams       , BalanceDontCare, 2, 843 }, /* 454 */
-        {PositionalParams, BalanceDontCare, 2, 845 }, /* 455 */
-        {PositionalParams, BalanceDontCare, 2, 847 }, /* 456 */
-        {PositionalParams, BalanceDontCare, 1, 849 }, /* 457 */
-        {PositionalParams, BalanceDontCare, 2, 850 }, /* 458 */
-        {PositionalParams, BalanceDontCare, 2, 852 }, /* 459 */
-        {AnyParams       , BalanceDontCare, 2, 854 }, /* 460 */
-        {PositionalParams, BalanceDontCare, 2, 856 }, /* 461 */
-        {PositionalParams, BalanceDontCare, 2, 858 }, /* 462 */
-        {PositionalParams, BalanceDontCare, 1, 860 }, /* 463 */
-        {AnyParams       , BalanceDontCare, 2, 861 }, /* 464 */
-        {PositionalParams, BalanceDontCare, 1, 863 }, /* 465 */
-        {AnyParams       , BalanceDontCare, 2, 864 }, /* 466 */
-        {PositionalParams, BalanceDontCare, 1, 866 }, /* 467 */
-        {PositionalParams, BalanceDontCare, 2, 867 }, /* 468 */
-        {AnyParams       , BalanceDontCare, 2, 869 }, /* 469 */
-        {PositionalParams, BalanceDontCare, 2, 871 }, /* 470 */
-        {PositionalParams, BalanceDontCare, 2, 873 }, /* 471 */
-        {PositionalParams, BalanceDontCare, 1, 875 }, /* 472 */
-        {PositionalParams, BalanceDontCare, 2, 876 }, /* 473 */
-        {AnyParams       , BalanceDontCare, 2, 878 }, /* 474 */
-        {PositionalParams, BalanceDontCare, 2, 880 }, /* 475 */
-        {PositionalParams, BalanceDontCare, 2, 882 }, /* 476 */
-        {PositionalParams, BalanceDontCare, 1, 884 }, /* 477 */
-        {AnyParams       , BalanceDontCare, 2, 885 }, /* 478 */
-        {PositionalParams, BalanceDontCare, 1, 889 }, /* 479 */
-        {PositionalParams, BalanceDontCare, 2, 890 }, /* 480 */
-        {PositionalParams, BalanceDontCare, 1, 892 }, /* 481 */
-        {AnyParams       , BalanceDontCare, 2, 893 }, /* 482 */
-        {PositionalParams, BalanceDontCare, 1, 895 }, /* 483 */
-        {PositionalParams, BalanceDontCare, 2, 896 }, /* 484 */
-        {PositionalParams, BalanceDontCare, 1, 898 }, /* 485 */
-        {AnyParams       , BalanceDontCare, 2, 899 }, /* 486 */
-        {PositionalParams, BalanceDontCare, 1, 619 }, /* 487 */
-        {PositionalParams, BalanceDontCare, 2, 901 }, /* 488 */
-        {PositionalParams, BalanceDontCare, 2, 903 }, /* 489 */
-        {AnyParams       , BalanceDontCare, 2, 905 }, /* 490 */
-        {PositionalParams, BalanceDontCare, 2, 907 }, /* 491 */
-        {PositionalParams, BalanceDontCare, 2, 909 }, /* 492 */
-        {PositionalParams, BalanceDontCare, 1, 911 }, /* 493 */
-        {AnyParams       , BalanceDontCare, 2, 912 }, /* 494 */
-        {AnyParams       , BalanceDontCare, 2, 914 }, /* 495 */
-        {PositionalParams, BalanceDontCare, 1, 916 }, /* 496 */
-        {PositionalParams, BalanceDontCare, 2, 917 }, /* 497 */
-        {AnyParams       , BalanceDontCare, 2, 919 }, /* 498 */
-        {PositionalParams, BalanceDontCare, 2, 921 }, /* 499 */
-        {PositionalParams, BalanceDontCare, 2, 923 }, /* 500 */
-        {PositionalParams, BalanceDontCare, 1, 925 }, /* 501 */
-        {PositionalParams, BalanceDontCare, 2, 926 }, /* 502 */
-        {AnyParams       , BalanceDontCare, 2, 928 }, /* 503 */
-        {PositionalParams, BalanceDontCare, 2, 930 }, /* 504 */
-        {PositionalParams, BalanceDontCare, 2, 932 }, /* 505 */
-        {PositionalParams, BalanceDontCare, 1, 934 }, /* 506 */
-        {AnyParams       , BalanceDontCare, 1, 720 }, /* 507 */
-        {PositionalParams, BalanceDontCare, 2, 935 }, /* 508 */
-        {PositionalParams, BalanceDontCare, 1, 937 }, /* 509 */
-        {AnyParams       , BalanceDontCare, 1, 938 }, /* 510 */
-        {PositionalParams, BalanceDontCare, 2, 939 }, /* 511 */
-        {PositionalParams, BalanceDontCare, 1, 941 }, /* 512 */
-        {PositionalParams, BalanceDontCare, 2, 942 }, /* 513 */
-        {PositionalParams, BalanceDontCare, 1, 946 }, /* 514 */
-        {PositionalParams, BalanceDontCare, 2, 947 }, /* 515 */
-        {PositionalParams, BalanceDontCare, 1, 60 }, /* 516 */
-        {PositionalParams, BalanceDontCare, 2, 949 }, /* 517 */
-        {PositionalParams, BalanceDontCare, 2, 951 }, /* 518 */
-        {PositionalParams, BalanceDontCare, 2, 953 }, /* 519 */
-        {PositionalParams, BalanceDontCare, 2, 955 }, /* 520 */
-        {PositionalParams, BalanceDontCare, 2, 957 }, /* 521 */
-        {PositionalParams, BalanceDontCare, 2, 959 }, /* 522 */
-        {PositionalParams, BalanceDontCare, 1, 961 }, /* 523 */
-        {PositionalParams, BalanceDontCare, 2, 962 }, /* 524 */
-        {PositionalParams, BalanceDontCare, 1, 964 }, /* 525 */
-        {PositionalParams, BalanceDontCare, 2, 965 }, /* 526 */
-        {PositionalParams, BalanceDontCare, 1, 967 }, /* 527 */
-        {PositionalParams, BalanceDontCare, 2, 968 }, /* 528 */
-        {PositionalParams, BalanceDontCare, 1, 970 }, /* 529 */
-        {PositionalParams, BalanceDontCare, 2, 971 }, /* 530 */
-        {PositionalParams, BalanceDontCare, 1, 973 }, /* 531 */
-        {PositionalParams, BalanceDontCare, 2, 974 }, /* 532 */
-        {PositionalParams, BalanceDontCare, 1, 976 }, /* 533 */
-        {PositionalParams, BalanceDontCare, 2, 977 }, /* 534 */
-        {PositionalParams, BalanceDontCare, 1, 979 }, /* 535 */
-        {PositionalParams, BalanceDontCare, 2, 980 }, /* 536 */
-        {PositionalParams, BalanceDontCare, 1, 982 }, /* 537 */
-        {PositionalParams, BalanceDontCare, 2, 983 }, /* 538 */
-        {PositionalParams, BalanceDontCare, 1, 985 }, /* 539 */
-        {PositionalParams, BalanceDontCare, 2, 986 }, /* 540 */
-        {PositionalParams, BalanceDontCare, 1, 988 }, /* 541 */
-        {PositionalParams, BalanceDontCare, 2, 989 }, /* 542 */
-        {PositionalParams, BalanceDontCare, 1, 991 }, /* 543 */
-        {PositionalParams, BalanceDontCare, 2, 992 }, /* 544 */
-        {PositionalParams, BalanceDontCare, 1, 994 }, /* 545 */
-        {AnyParams       , BalanceMoreNeg , 2, 995 }, /* 546 */
-        {PositionalParams, BalanceDontCare, 2, 997 }, /* 547 */
-        {PositionalParams, BalanceDontCare, 1, 999 }, /* 548 */
-        {PositionalParams, BalanceDontCare, 1, 1000 }, /* 549 */
-        {PositionalParams, BalanceDontCare, 1, 1001 }, /* 550 */
-        {AnyParams       , BalanceDontCare, 1, 1002 }, /* 551 */
-        {AnyParams       , BalanceDontCare, 2, 1003 }, /* 552 */
-        {AnyParams       , BalanceDontCare, 1, 1005 }, /* 553 */
-        {PositionalParams, BalanceDontCare, 2, 1006 }, /* 554 */
-        {AnyParams       , BalanceDontCare, 1, 1000 }, /* 555 */
-        {PositionalParams, BalanceDontCare, 2, 1008 }, /* 556 */
-        {AnyParams       , BalanceDontCare, 1, 1010 }, /* 557 */
-        {PositionalParams, BalanceDontCare, 2, 1011 }, /* 558 */
-        {PositionalParams, BalanceDontCare, 1, 1013 }, /* 559 */
-        {PositionalParams, BalanceDontCare, 2, 1014 }, /* 560 */
-        {AnyParams       , BalanceDontCare, 1, 1016 }, /* 561 */
-        {PositionalParams, BalanceDontCare, 2, 1017 }, /* 562 */
-        {PositionalParams, BalanceDontCare, 1, 1019 }, /* 563 */
-        {PositionalParams, BalanceDontCare, 2, 1020 }, /* 564 */
-        {AnyParams       , BalanceDontCare, 1, 1022 }, /* 565 */
-        {PositionalParams, BalanceDontCare, 2, 1023 }, /* 566 */
-        {PositionalParams, BalanceDontCare, 1, 1025 }, /* 567 */
-        {PositionalParams, BalanceDontCare, 2, 1026 }, /* 568 */
-        {AnyParams       , BalanceDontCare, 1, 1028 }, /* 569 */
-        {PositionalParams, BalanceDontCare, 2, 1029 }, /* 570 */
-        {PositionalParams, BalanceDontCare, 1, 1031 }, /* 571 */
-        {PositionalParams, BalanceDontCare, 2, 1032 }, /* 572 */
-        {AnyParams       , BalanceDontCare, 1, 1034 }, /* 573 */
-        {PositionalParams, BalanceDontCare, 2, 1035 }, /* 574 */
-        {PositionalParams, BalanceDontCare, 1, 1037 }, /* 575 */
-        {PositionalParams, BalanceDontCare, 2, 1038 }, /* 576 */
-        {AnyParams       , BalanceDontCare, 1, 1040 }, /* 577 */
-        {PositionalParams, BalanceDontCare, 2, 1041 }, /* 578 */
-        {PositionalParams, BalanceDontCare, 1, 1043 }, /* 579 */
-        {AnyParams       , BalanceDontCare, 1, 1044 }, /* 580 */
-        {AnyParams       , BalanceDontCare, 2, 54 }, /* 581 */
-        {AnyParams       , BalanceDontCare, 1, 1045 }, /* 582 */
-        {AnyParams       , BalanceDontCare, 1, 1046 }, /* 583 */
-        {AnyParams       , BalanceDontCare, 2, 1047 }, /* 584 */
-        {AnyParams       , BalanceDontCare, 2, 1049 }, /* 585 */
-        {AnyParams       , BalanceDontCare, 2, 1051 }, /* 586 */
-        {AnyParams       , BalanceDontCare, 2, 1053 }, /* 587 */
-        {AnyParams       , BalanceDontCare, 2, 1055 }, /* 588 */
-        {AnyParams       , BalanceDontCare, 2, 1057 }, /* 589 */
-        {AnyParams       , BalanceDontCare, 2, 1059 }, /* 590 */
-        {AnyParams       , BalanceDontCare, 2, 1061 }, /* 591 */
-        {AnyParams       , BalanceDontCare, 3, 1063 }, /* 592 */
-        {PositionalParams, BalanceDontCare, 2, 1066 }, /* 593 */
-        {PositionalParams, BalanceDontCare, 2, 1068 }, /* 594 */
-        {PositionalParams, BalanceDontCare, 2, 1070 }, /* 595 */
-        {AnyParams       , BalanceMoreNeg , 2, 1072 }, /* 596 */
-        {PositionalParams, BalanceDontCare, 2, 1074 }, /* 597 */
-        {PositionalParams, BalanceDontCare, 1, 1076 }, /* 598 */
-        {AnyParams       , BalanceDontCare, 1, 1001 }, /* 599 */
-        {AnyParams       , BalanceDontCare, 2, 1077 }, /* 600 */
-        {AnyParams       , BalanceDontCare, 1, 1079 }, /* 601 */
-        {PositionalParams, BalanceDontCare, 2, 1080 }, /* 602 */
-        {PositionalParams, BalanceDontCare, 2, 1082 }, /* 603 */
-        {AnyParams       , BalanceDontCare, 1, 1084 }, /* 604 */
-        {PositionalParams, BalanceDontCare, 2, 1085 }, /* 605 */
-        {PositionalParams, BalanceDontCare, 1, 1087 }, /* 606 */
-        {PositionalParams, BalanceDontCare, 2, 1088 }, /* 607 */
-        {AnyParams       , BalanceDontCare, 1, 1090 }, /* 608 */
-        {PositionalParams, BalanceDontCare, 2, 1091 }, /* 609 */
-        {PositionalParams, BalanceDontCare, 1, 1093 }, /* 610 */
-        {PositionalParams, BalanceDontCare, 2, 1094 }, /* 611 */
-        {AnyParams       , BalanceDontCare, 1, 1096 }, /* 612 */
-        {PositionalParams, BalanceDontCare, 2, 1097 }, /* 613 */
-        {PositionalParams, BalanceDontCare, 1, 1099 }, /* 614 */
-        {PositionalParams, BalanceDontCare, 2, 1100 }, /* 615 */
-        {AnyParams       , BalanceDontCare, 1, 1102 }, /* 616 */
-        {PositionalParams, BalanceDontCare, 2, 1103 }, /* 617 */
-        {PositionalParams, BalanceDontCare, 1, 1105 }, /* 618 */
-        {PositionalParams, BalanceDontCare, 2, 1106 }, /* 619 */
-        {AnyParams       , BalanceDontCare, 1, 1108 }, /* 620 */
-        {PositionalParams, BalanceDontCare, 2, 1109 }, /* 621 */
-        {PositionalParams, BalanceDontCare, 1, 1111 }, /* 622 */
-        {PositionalParams, BalanceDontCare, 2, 1112 }, /* 623 */
-        {AnyParams       , BalanceDontCare, 1, 1114 }, /* 624 */
-        {PositionalParams, BalanceDontCare, 2, 1115 }, /* 625 */
-        {PositionalParams, BalanceDontCare, 1, 1117 }, /* 626 */
-        {AnyParams       , BalanceDontCare, 1, 1118 }, /* 627 */
-        {AnyParams       , BalanceDontCare, 2, 1119 }, /* 628 */
-        {AnyParams       , BalanceDontCare, 1, 1121 }, /* 629 */
-        {PositionalParams, BalanceDontCare, 2, 1122 }, /* 630 */
-        {AnyParams       , BalanceDontCare, 2, 1124 }, /* 631 */
-        {AnyParams       , BalanceDontCare, 2, 1126 }, /* 632 */
-        {AnyParams       , BalanceDontCare, 2, 1128 }, /* 633 */
-        {AnyParams       , BalanceDontCare, 2, 1130 }, /* 634 */
-        {AnyParams       , BalanceDontCare, 2, 1132 }, /* 635 */
-        {PositionalParams, BalanceDontCare, 2, 1134 }, /* 636 */
-        {PositionalParams, BalanceDontCare, 1, 1136 }, /* 637 */
-        {PositionalParams, BalanceDontCare, 2, 1137 }, /* 638 */
-        {PositionalParams, BalanceDontCare, 1, 1139 }, /* 639 */
-        {PositionalParams, BalanceDontCare, 2, 1140 }, /* 640 */
-        {PositionalParams, BalanceDontCare, 1, 1142 }, /* 641 */
-        {PositionalParams, BalanceDontCare, 2, 1143 }, /* 642 */
-        {PositionalParams, BalanceDontCare, 1, 1145 }, /* 643 */
-        {PositionalParams, BalanceDontCare, 2, 1146 }, /* 644 */
-        {PositionalParams, BalanceDontCare, 1, 1148 }, /* 645 */
-        {PositionalParams, BalanceDontCare, 2, 1149 }, /* 646 */
-        {PositionalParams, BalanceDontCare, 1, 1151 }, /* 647 */
-        {PositionalParams, BalanceDontCare, 2, 1152 }, /* 648 */
-        {PositionalParams, BalanceDontCare, 1, 1154 }, /* 649 */
-        {PositionalParams, BalanceDontCare, 2, 1155 }, /* 650 */
-        {PositionalParams, BalanceDontCare, 1, 1157 }, /* 651 */
-        {PositionalParams, BalanceDontCare, 2, 1158 }, /* 652 */
-        {PositionalParams, BalanceDontCare, 1, 1160 }, /* 653 */
-        {PositionalParams, BalanceDontCare, 2, 1161 }, /* 654 */
-        {PositionalParams, BalanceDontCare, 1, 1163 }, /* 655 */
-        {PositionalParams, BalanceDontCare, 2, 1164 }, /* 656 */
-        {PositionalParams, BalanceDontCare, 1, 1166 }, /* 657 */
-        {PositionalParams, BalanceDontCare, 2, 1167 }, /* 658 */
-        {PositionalParams, BalanceDontCare, 1, 1169 }, /* 659 */
-        {PositionalParams, BalanceDontCare, 1, 1170 }, /* 660 */
-        {AnyParams       , BalanceDontCare, 2, 1171 }, /* 661 */
-        {PositionalParams, BalanceDontCare, 1, 1173 }, /* 662 */
-        {PositionalParams, BalanceDontCare, 2, 1174 }, /* 663 */
-        {PositionalParams, BalanceDontCare, 1, 1176 }, /* 664 */
-        {AnyParams       , BalanceDontCare, 2, 1177 }, /* 665 */
-        {PositionalParams, BalanceDontCare, 1, 1179 }, /* 666 */
-        {PositionalParams, BalanceDontCare, 2, 1180 }, /* 667 */
-        {PositionalParams, BalanceDontCare, 1, 1182 }, /* 668 */
-        {PositionalParams, BalanceDontCare, 2, 1183 }, /* 669 */
-        {PositionalParams, BalanceDontCare, 1, 1185 }, /* 670 */
-        {PositionalParams, BalanceDontCare, 2, 1186 }, /* 671 */
-        {PositionalParams, BalanceDontCare, 1, 1188 }, /* 672 */
-        {PositionalParams, BalanceDontCare, 2, 1189 }, /* 673 */
-        {PositionalParams, BalanceDontCare, 1, 1191 }, /* 674 */
-        {AnyParams       , BalanceDontCare, 3, 1192 }, /* 675 */
-        {PositionalParams, BalanceDontCare, 2, 1195 }, /* 676 */
-        {PositionalParams, BalanceDontCare, 1, 1197 }, /* 677 */
-        {PositionalParams, BalanceDontCare, 1, 1198 }, /* 678 */
-        {AnyParams       , BalanceDontCare, 3, 1199 }, /* 679 */
-        {PositionalParams, BalanceDontCare, 2, 1202 }, /* 680 */
-        {PositionalParams, BalanceDontCare, 1, 1204 }, /* 681 */
-        {PositionalParams, BalanceDontCare, 1, 1205 }, /* 682 */
-        {AnyParams       , BalanceDontCare, 1, 1206 }, /* 683 */
-        {PositionalParams, BalanceDontCare, 1, 1207 }, /* 684 */
-        {AnyParams       , BalanceDontCare, 1, 292 }, /* 685 */
-        {PositionalParams, BalanceDontCare, 1, 1208 }, /* 686 */
-        {AnyParams       , BalanceDontCare, 1, 305 }, /* 687 */
-        {PositionalParams, BalanceDontCare, 1, 1209 }, /* 688 */
-        {AnyParams       , BalanceDontCare, 2, 1210 }, /* 689 */
-        {PositionalParams, BalanceDontCare, 1, 1212 }, /* 690 */
-        {AnyParams       , BalanceDontCare, 2, 1213 }, /* 691 */
-        {PositionalParams, BalanceDontCare, 1, 1215 }, /* 692 */
-        {AnyParams       , BalanceDontCare, 2, 1216 }, /* 693 */
-        {PositionalParams, BalanceDontCare, 1, 1218 }, /* 694 */
-        {AnyParams       , BalanceDontCare, 2, 1219 }, /* 695 */
-        {PositionalParams, BalanceDontCare, 1, 1221 }, /* 696 */
-        {PositionalParams, BalanceDontCare, 1, 1222 }, /* 697 */
+        {PositionalParams, BalanceDontCare, 1, 377 }, /* 213 */
+        {SelectedParams  , BalanceDontCare, 3, 378 }, /* 214 */
+        {AnyParams       , BalanceDontCare, 2, 381 }, /* 215 */
+        {PositionalParams, BalanceDontCare, 2, 383 }, /* 216 */
+        {PositionalParams, BalanceDontCare, 2, 385 }, /* 217 */
+        {PositionalParams, BalanceDontCare, 1, 387 }, /* 218 */
+        {PositionalParams, BalanceDontCare, 1, 388 }, /* 219 */
+        {SelectedParams  , BalanceDontCare, 2, 389 }, /* 220 */
+        {SelectedParams  , BalanceDontCare, 2, 391 }, /* 221 */
+        {AnyParams       , BalanceDontCare, 2, 393 }, /* 222 */
+        {PositionalParams, BalanceDontCare, 1, 395 }, /* 223 */
+        {SelectedParams  , BalanceDontCare, 3, 396 }, /* 224 */
+        {AnyParams       , BalanceDontCare, 2, 399 }, /* 225 */
+        {PositionalParams, BalanceDontCare, 1, 401 }, /* 226 */
+        {SelectedParams  , BalanceDontCare, 2, 402 }, /* 227 */
+        {AnyParams       , BalanceDontCare, 2, 404 }, /* 228 */
+        {PositionalParams, BalanceDontCare, 2, 408 }, /* 229 */
+        {PositionalParams, BalanceDontCare, 2, 410 }, /* 230 */
+        {PositionalParams, BalanceDontCare, 2, 412 }, /* 231 */
+        {PositionalParams, BalanceDontCare, 1, 414 }, /* 232 */
+        {SelectedParams  , BalanceDontCare, 3, 415 }, /* 233 */
+        {AnyParams       , BalanceDontCare, 2, 418 }, /* 234 */
+        {PositionalParams, BalanceDontCare, 2, 420 }, /* 235 */
+        {PositionalParams, BalanceDontCare, 1, 422 }, /* 236 */
+        {AnyParams       , BalanceDontCare, 2, 423 }, /* 237 */
+        {PositionalParams, BalanceDontCare, 2, 425 }, /* 238 */
+        {PositionalParams, BalanceDontCare, 1, 427 }, /* 239 */
+        {SelectedParams  , BalanceDontCare, 3, 428 }, /* 240 */
+        {AnyParams       , BalanceDontCare, 2, 431 }, /* 241 */
+        {PositionalParams, BalanceDontCare, 2, 433 }, /* 242 */
+        {PositionalParams, BalanceDontCare, 1, 435 }, /* 243 */
+        {SelectedParams  , BalanceDontCare, 2, 436 }, /* 244 */
+        {AnyParams       , BalanceDontCare, 2, 438 }, /* 245 */
+        {AnyParams       , BalanceDontCare, 2, 440 }, /* 246 */
+        {PositionalParams, BalanceDontCare, 2, 442 }, /* 247 */
+        {PositionalParams, BalanceDontCare, 2, 444 }, /* 248 */
+        {PositionalParams, BalanceDontCare, 1, 446 }, /* 249 */
+        {AnyParams       , BalanceDontCare, 1, 447 }, /* 250 */
+        {PositionalParams, BalanceDontCare, 2, 448 }, /* 251 */
+        {PositionalParams, BalanceDontCare, 1, 450 }, /* 252 */
+        {PositionalParams, BalanceDontCare, 2, 451 }, /* 253 */
+        {PositionalParams, BalanceDontCare, 2, 453 }, /* 254 */
+        {AnyParams       , BalanceDontCare, 3, 455 }, /* 255 */
+        {AnyParams       , BalanceDontCare, 3, 458 }, /* 256 */
+        {PositionalParams, BalanceDontCare, 2, 455 }, /* 257 */
+        {PositionalParams, BalanceDontCare, 2, 461 }, /* 258 */
+        {PositionalParams, BalanceDontCare, 2, 463 }, /* 259 */
+        {PositionalParams, BalanceDontCare, 3, 465 }, /* 260 */
+        {PositionalParams, BalanceDontCare, 2, 468 }, /* 261 */
+        {SelectedParams  , BalanceDontCare, 2, 470 }, /* 262 */
+        {SelectedParams  , BalanceDontCare, 2, 472 }, /* 263 */
+        {SelectedParams  , BalanceDontCare, 2, 474 }, /* 264 */
+        {PositionalParams, BalanceDontCare, 2, 238 }, /* 265 */
+        {PositionalParams, BalanceDontCare, 1, 476 }, /* 266 */
+        {AnyParams       , BalanceDontCare, 2, 477 }, /* 267 */
+        {PositionalParams, BalanceDontCare, 2, 479 }, /* 268 */
+        {AnyParams       , BalanceDontCare, 3, 481 }, /* 269 */
+        {PositionalParams, BalanceDontCare, 1, 478 }, /* 270 */
+        {PositionalParams, BalanceDontCare, 2, 484 }, /* 271 */
+        {PositionalParams, BalanceDontCare, 2, 486 }, /* 272 */
+        {PositionalParams, BalanceDontCare, 2, 174 }, /* 273 */
+        {AnyParams       , BalanceDontCare, 2, 488 }, /* 274 */
+        {PositionalParams, BalanceDontCare, 2, 490 }, /* 275 */
+        {PositionalParams, BalanceDontCare, 1, 492 }, /* 276 */
+        {AnyParams       , BalanceDontCare, 2, 493 }, /* 277 */
+        {PositionalParams, BalanceDontCare, 2, 495 }, /* 278 */
+        {PositionalParams, BalanceDontCare, 1, 497 }, /* 279 */
+        {AnyParams       , BalanceDontCare, 2, 498 }, /* 280 */
+        {AnyParams       , BalanceDontCare, 2, 500 }, /* 281 */
+        {AnyParams       , BalanceDontCare, 2, 502 }, /* 282 */
+        {PositionalParams, BalanceDontCare, 2, 504 }, /* 283 */
+        {PositionalParams, BalanceDontCare, 2, 506 }, /* 284 */
+        {PositionalParams, BalanceDontCare, 2, 508 }, /* 285 */
+        {PositionalParams, BalanceDontCare, 1, 510 }, /* 286 */
+        {AnyParams       , BalanceDontCare, 2, 511 }, /* 287 */
+        {PositionalParams, BalanceDontCare, 2, 513 }, /* 288 */
+        {PositionalParams, BalanceDontCare, 2, 515 }, /* 289 */
+        {PositionalParams, BalanceDontCare, 1, 517 }, /* 290 */
+        {AnyParams       , BalanceDontCare, 2, 518 }, /* 291 */
+        {PositionalParams, BalanceDontCare, 2, 520 }, /* 292 */
+        {PositionalParams, BalanceDontCare, 2, 522 }, /* 293 */
+        {PositionalParams, BalanceDontCare, 1, 524 }, /* 294 */
+        {PositionalParams, BalanceDontCare, 1, 525 }, /* 295 */
+        {PositionalParams, BalanceDontCare, 2, 0 }, /* 296 */
+        {PositionalParams, BalanceDontCare, 1, 101 }, /* 297 */
+        {PositionalParams, BalanceDontCare, 1, 526 }, /* 298 */
+        {PositionalParams, BalanceDontCare, 1, 527 }, /* 299 */
+        {PositionalParams, BalanceDontCare, 1, 528 }, /* 300 */
+        {PositionalParams, BalanceDontCare, 1, 529 }, /* 301 */
+        {PositionalParams, BalanceDontCare, 1, 530 }, /* 302 */
+        {PositionalParams, BalanceDontCare, 1, 531 }, /* 303 */
+        {AnyParams       , BalanceMoreNeg , 2, 532 }, /* 304 */
+        {PositionalParams, BalanceDontCare, 1, 534 }, /* 305 */
+        {PositionalParams, BalanceDontCare, 2, 535 }, /* 306 */
+        {PositionalParams, BalanceDontCare, 1, 537 }, /* 307 */
+        {PositionalParams, BalanceDontCare, 1, 538 }, /* 308 */
+        {PositionalParams, BalanceDontCare, 1, 539 }, /* 309 */
+        {PositionalParams, BalanceDontCare, 2, 540 }, /* 310 */
+        {PositionalParams, BalanceDontCare, 1, 542 }, /* 311 */
+        {AnyParams       , BalanceDontCare, 1, 69 }, /* 312 */
+        {PositionalParams, BalanceDontCare, 1, 543 }, /* 313 */
+        {AnyParams       , BalanceDontCare, 1, 70 }, /* 314 */
+        {AnyParams       , BalanceDontCare, 1, 544 }, /* 315 */
+        {AnyParams       , BalanceDontCare, 1, 545 }, /* 316 */
+        {AnyParams       , BalanceDontCare, 1, 546 }, /* 317 */
+        {AnyParams       , BalanceDontCare, 1, 547 }, /* 318 */
+        {AnyParams       , BalanceDontCare, 1, 548 }, /* 319 */
+        {AnyParams       , BalanceDontCare, 1, 549 }, /* 320 */
+        {AnyParams       , BalanceDontCare, 1, 550 }, /* 321 */
+        {AnyParams       , BalanceDontCare, 1, 551 }, /* 322 */
+        {AnyParams       , BalanceDontCare, 2, 552 }, /* 323 */
+        {AnyParams       , BalanceDontCare, 2, 526 }, /* 324 */
+        {AnyParams       , BalanceDontCare, 2, 554 }, /* 325 */
+        {AnyParams       , BalanceDontCare, 2, 528 }, /* 326 */
+        {AnyParams       , BalanceDontCare, 2, 556 }, /* 327 */
+        {AnyParams       , BalanceDontCare, 2, 530 }, /* 328 */
+        {AnyParams       , BalanceDontCare, 2, 558 }, /* 329 */
+        {AnyParams       , BalanceDontCare, 2, 560 }, /* 330 */
+        {AnyParams       , BalanceDontCare, 2, 562 }, /* 331 */
+        {PositionalParams, BalanceDontCare, 2, 564 }, /* 332 */
+        {PositionalParams, BalanceDontCare, 2, 566 }, /* 333 */
+        {AnyParams       , BalanceDontCare, 3, 568 }, /* 334 */
+        {PositionalParams, BalanceDontCare, 2, 568 }, /* 335 */
+        {PositionalParams, BalanceDontCare, 1, 571 }, /* 336 */
+        {AnyParams       , BalanceDontCare, 2, 572 }, /* 337 */
+        {AnyParams       , BalanceDontCare, 2, 574 }, /* 338 */
+        {AnyParams       , BalanceDontCare, 2, 576 }, /* 339 */
+        {AnyParams       , BalanceDontCare, 2, 578 }, /* 340 */
+        {PositionalParams, BalanceDontCare, 1, 580 }, /* 341 */
+        {AnyParams       , BalanceDontCare, 2, 532 }, /* 342 */
+        {PositionalParams, BalanceDontCare, 1, 581 }, /* 343 */
+        {PositionalParams, BalanceDontCare, 2, 532 }, /* 344 */
+        {PositionalParams, BalanceDontCare, 1, 582 }, /* 345 */
+        {PositionalParams, BalanceDontCare, 1, 583 }, /* 346 */
+        {PositionalParams, BalanceDontCare, 1, 584 }, /* 347 */
+        {PositionalParams, BalanceDontCare, 2, 145 }, /* 348 */
+        {PositionalParams, BalanceDontCare, 2, 148 }, /* 349 */
+        {PositionalParams, BalanceDontCare, 1, 585 }, /* 350 */
+        {PositionalParams, BalanceDontCare, 1, 18 }, /* 351 */
+        {AnyParams       , BalanceDontCare, 2, 485 }, /* 352 */
+        {PositionalParams, BalanceDontCare, 1, 586 }, /* 353 */
+        {SelectedParams  , BalanceDontCare, 2, 243 }, /* 354 */
+        {SelectedParams  , BalanceDontCare, 2, 25 }, /* 355 */
+        {SelectedParams  , BalanceDontCare, 2, 589 }, /* 356 */
+        {PositionalParams, BalanceDontCare, 2, 591 }, /* 357 */
+        {SelectedParams  , BalanceDontCare, 2, 593 }, /* 358 */
+        {PositionalParams, BalanceDontCare, 1, 595 }, /* 359 */
+        {PositionalParams, BalanceDontCare, 2, 598 }, /* 360 */
+        {PositionalParams, BalanceDontCare, 1, 600 }, /* 361 */
+        {PositionalParams, BalanceDontCare, 2, 603 }, /* 362 */
+        {PositionalParams, BalanceDontCare, 1, 605 }, /* 363 */
+        {SelectedParams  , BalanceDontCare, 2, 606 }, /* 364 */
+        {SelectedParams  , BalanceDontCare, 2, 608 }, /* 365 */
+        {PositionalParams, BalanceDontCare, 2, 610 }, /* 366 */
+        {SelectedParams  , BalanceDontCare, 2, 612 }, /* 367 */
+        {PositionalParams, BalanceDontCare, 1, 614 }, /* 368 */
+        {PositionalParams, BalanceDontCare, 2, 243 }, /* 369 */
+        {PositionalParams, BalanceDontCare, 1, 615 }, /* 370 */
+        {PositionalParams, BalanceDontCare, 2, 616 }, /* 371 */
+        {PositionalParams, BalanceDontCare, 1, 618 }, /* 372 */
+        {PositionalParams, BalanceDontCare, 1, 619 }, /* 373 */
+        {PositionalParams, BalanceDontCare, 1, 8 }, /* 374 */
+        {PositionalParams, BalanceDontCare, 2, 620 }, /* 375 */
+        {PositionalParams, BalanceDontCare, 1, 622 }, /* 376 */
+        {PositionalParams, BalanceDontCare, 1, 623 }, /* 377 */
+        {PositionalParams, BalanceDontCare, 2, 624 }, /* 378 */
+        {PositionalParams, BalanceDontCare, 1, 626 }, /* 379 */
+        {PositionalParams, BalanceDontCare, 2, 627 }, /* 380 */
+        {PositionalParams, BalanceDontCare, 1, 629 }, /* 381 */
+        {SelectedParams  , BalanceDontCare, 2, 3 }, /* 382 */
+        {PositionalParams, BalanceDontCare, 2, 630 }, /* 383 */
+        {SelectedParams  , BalanceDontCare, 2, 632 }, /* 384 */
+        {PositionalParams, BalanceDontCare, 2, 634 }, /* 385 */
+        {PositionalParams, BalanceDontCare, 1, 636 }, /* 386 */
+        {SelectedParams  , BalanceDontCare, 2, 13 }, /* 387 */
+        {PositionalParams, BalanceDontCare, 2, 637 }, /* 388 */
+        {SelectedParams  , BalanceDontCare, 2, 639 }, /* 389 */
+        {PositionalParams, BalanceDontCare, 2, 641 }, /* 390 */
+        {PositionalParams, BalanceDontCare, 1, 643 }, /* 391 */
+        {SelectedParams  , BalanceDontCare, 2, 644 }, /* 392 */
+        {PositionalParams, BalanceDontCare, 2, 648 }, /* 393 */
+        {PositionalParams, BalanceDontCare, 1, 650 }, /* 394 */
+        {PositionalParams, BalanceDontCare, 2, 653 }, /* 395 */
+        {PositionalParams, BalanceDontCare, 3, 655 }, /* 396 */
+        {PositionalParams, BalanceDontCare, 1, 658 }, /* 397 */
+        {SelectedParams  , BalanceDontCare, 2, 659 }, /* 398 */
+        {PositionalParams, BalanceDontCare, 3, 661 }, /* 399 */
+        {PositionalParams, BalanceDontCare, 1, 664 }, /* 400 */
+        {AnyParams       , BalanceDontCare, 2, 665 }, /* 401 */
+        {PositionalParams, BalanceDontCare, 2, 667 }, /* 402 */
+        {PositionalParams, BalanceDontCare, 1, 669 }, /* 403 */
+        {SelectedParams  , BalanceDontCare, 2, 670 }, /* 404 */
+        {AnyParams       , BalanceDontCare, 2, 672 }, /* 405 */
+        {PositionalParams, BalanceDontCare, 1, 666 }, /* 406 */
+        {SelectedParams  , BalanceDontCare, 2, 674 }, /* 407 */
+        {AnyParams       , BalanceDontCare, 2, 676 }, /* 408 */
+        {PositionalParams, BalanceDontCare, 1, 46 }, /* 409 */
+        {PositionalParams, BalanceDontCare, 2, 678 }, /* 410 */
+        {PositionalParams, BalanceDontCare, 2, 680 }, /* 411 */
+        {AnyParams       , BalanceDontCare, 2, 682 }, /* 412 */
+        {PositionalParams, BalanceDontCare, 2, 684 }, /* 413 */
+        {PositionalParams, BalanceDontCare, 1, 686 }, /* 414 */
+        {PositionalParams, BalanceDontCare, 2, 687 }, /* 415 */
+        {PositionalParams, BalanceDontCare, 1, 689 }, /* 416 */
+        {SelectedParams  , BalanceDontCare, 2, 690 }, /* 417 */
+        {AnyParams       , BalanceDontCare, 2, 692 }, /* 418 */
+        {PositionalParams, BalanceDontCare, 2, 694 }, /* 419 */
+        {PositionalParams, BalanceDontCare, 1, 696 }, /* 420 */
+        {AnyParams       , BalanceDontCare, 2, 697 }, /* 421 */
+        {PositionalParams, BalanceDontCare, 1, 665 }, /* 422 */
+        {SelectedParams  , BalanceDontCare, 2, 699 }, /* 423 */
+        {AnyParams       , BalanceDontCare, 2, 701 }, /* 424 */
+        {PositionalParams, BalanceDontCare, 2, 674 }, /* 425 */
+        {PositionalParams, BalanceDontCare, 1, 703 }, /* 426 */
+        {AnyParams       , BalanceDontCare, 2, 704 }, /* 427 */
+        {PositionalParams, BalanceDontCare, 2, 706 }, /* 428 */
+        {PositionalParams, BalanceDontCare, 1, 708 }, /* 429 */
+        {AnyParams       , BalanceDontCare, 2, 709 }, /* 430 */
+        {PositionalParams, BalanceDontCare, 2, 670 }, /* 431 */
+        {PositionalParams, BalanceDontCare, 1, 711 }, /* 432 */
+        {SelectedParams  , BalanceDontCare, 2, 712 }, /* 433 */
+        {AnyParams       , BalanceDontCare, 2, 714 }, /* 434 */
+        {PositionalParams, BalanceDontCare, 2, 716 }, /* 435 */
+        {PositionalParams, BalanceDontCare, 1, 718 }, /* 436 */
+        {AnyParams       , BalanceDontCare, 2, 719 }, /* 437 */
+        {PositionalParams, BalanceDontCare, 2, 699 }, /* 438 */
+        {PositionalParams, BalanceDontCare, 1, 721 }, /* 439 */
+        {SelectedParams  , BalanceDontCare, 2, 722 }, /* 440 */
+        {SelectedParams  , BalanceDontCare, 2, 724 }, /* 441 */
+        {AnyParams       , BalanceDontCare, 2, 726 }, /* 442 */
+        {PositionalParams, BalanceDontCare, 2, 728 }, /* 443 */
+        {PositionalParams, BalanceDontCare, 1, 730 }, /* 444 */
+        {SelectedParams  , BalanceDontCare, 2, 731 }, /* 445 */
+        {AnyParams       , BalanceDontCare, 2, 733 }, /* 446 */
+        {PositionalParams, BalanceDontCare, 2, 735 }, /* 447 */
+        {PositionalParams, BalanceDontCare, 1, 737 }, /* 448 */
+        {AnyParams       , BalanceDontCare, 2, 738 }, /* 449 */
+        {AnyParams       , BalanceDontCare, 2, 740 }, /* 450 */
+        {PositionalParams, BalanceDontCare, 1, 742 }, /* 451 */
+        {AnyParams       , BalanceDontCare, 2, 743 }, /* 452 */
+        {PositionalParams, BalanceDontCare, 1, 745 }, /* 453 */
+        {AnyParams       , BalanceDontCare, 2, 746 }, /* 454 */
+        {PositionalParams, BalanceDontCare, 1, 748 }, /* 455 */
+        {PositionalParams, BalanceDontCare, 2, 749 }, /* 456 */
+        {AnyParams       , BalanceDontCare, 2, 751 }, /* 457 */
+        {PositionalParams, BalanceDontCare, 2, 753 }, /* 458 */
+        {PositionalParams, BalanceDontCare, 1, 755 }, /* 459 */
+        {PositionalParams, BalanceDontCare, 2, 705 }, /* 460 */
+        {AnyParams       , BalanceDontCare, 2, 756 }, /* 461 */
+        {PositionalParams, BalanceDontCare, 2, 758 }, /* 462 */
+        {PositionalParams, BalanceDontCare, 1, 760 }, /* 463 */
+        {AnyParams       , BalanceDontCare, 2, 761 }, /* 464 */
+        {PositionalParams, BalanceDontCare, 1, 55 }, /* 465 */
+        {AnyParams       , BalanceDontCare, 2, 763 }, /* 466 */
+        {SelectedParams  , BalanceDontCare, 2, 318 }, /* 467 */
+        {SelectedParams  , BalanceDontCare, 2, 765 }, /* 468 */
+        {PositionalParams, BalanceDontCare, 2, 767 }, /* 469 */
+        {SelectedParams  , BalanceDontCare, 2, 769 }, /* 470 */
+        {SelectedParams  , BalanceDontCare, 2, 773 }, /* 471 */
+        {AnyParams       , BalanceDontCare, 2, 775 }, /* 472 */
+        {PositionalParams, BalanceDontCare, 2, 436 }, /* 473 */
+        {PositionalParams, BalanceDontCare, 3, 777 }, /* 474 */
+        {PositionalParams, BalanceDontCare, 1, 780 }, /* 475 */
+        {PositionalParams, BalanceDontCare, 2, 783 }, /* 476 */
+        {PositionalParams, BalanceDontCare, 2, 785 }, /* 477 */
+        {PositionalParams, BalanceDontCare, 1, 787 }, /* 478 */
+        {AnyParams       , BalanceDontCare, 2, 57 }, /* 479 */
+        {PositionalParams, BalanceDontCare, 1, 753 }, /* 480 */
+        {AnyParams       , BalanceDontCare, 2, 88 }, /* 481 */
+        {PositionalParams, BalanceDontCare, 1, 788 }, /* 482 */
+        {PositionalParams, BalanceDontCare, 2, 789 }, /* 483 */
+        {AnyParams       , BalanceDontCare, 2, 791 }, /* 484 */
+        {PositionalParams, BalanceDontCare, 2, 197 }, /* 485 */
+        {PositionalParams, BalanceDontCare, 1, 793 }, /* 486 */
+        {PositionalParams, BalanceDontCare, 1, 794 }, /* 487 */
+        {PositionalParams, BalanceDontCare, 2, 795 }, /* 488 */
+        {AnyParams       , BalanceDontCare, 2, 797 }, /* 489 */
+        {PositionalParams, BalanceDontCare, 1, 758 }, /* 490 */
+        {PositionalParams, BalanceDontCare, 2, 799 }, /* 491 */
+        {AnyParams       , BalanceDontCare, 2, 801 }, /* 492 */
+        {PositionalParams, BalanceDontCare, 1, 803 }, /* 493 */
+        {AnyParams       , BalanceDontCare, 2, 804 }, /* 494 */
+        {PositionalParams, BalanceDontCare, 1, 57 }, /* 495 */
+        {AnyParams       , BalanceDontCare, 2, 806 }, /* 496 */
+        {PositionalParams, BalanceDontCare, 1, 58 }, /* 497 */
+        {SelectedParams  , BalanceDontCare, 2, 808 }, /* 498 */
+        {PositionalParams, BalanceDontCare, 1, 810 }, /* 499 */
+        {AnyParams       , BalanceDontCare, 1, 72 }, /* 500 */
+        {PositionalParams, BalanceDontCare, 1, 811 }, /* 501 */
+        {AnyParams       , BalanceDontCare, 2, 812 }, /* 502 */
+        {AnyParams       , BalanceDontCare, 2, 814 }, /* 503 */
+        {AnyParams       , BalanceDontCare, 2, 816 }, /* 504 */
+        {PositionalParams, BalanceDontCare, 1, 798 }, /* 505 */
+        {PositionalParams, BalanceDontCare, 2, 818 }, /* 506 */
+        {SelectedParams  , BalanceDontCare, 2, 820 }, /* 507 */
+        {SelectedParams  , BalanceDontCare, 2, 822 }, /* 508 */
+        {PositionalParams, BalanceDontCare, 2, 824 }, /* 509 */
+        {AnyParams       , BalanceDontCare, 2, 826 }, /* 510 */
+        {PositionalParams, BalanceDontCare, 2, 828 }, /* 511 */
+        {PositionalParams, BalanceDontCare, 2, 830 }, /* 512 */
+        {AnyParams       , BalanceDontCare, 2, 832 }, /* 513 */
+        {PositionalParams, BalanceDontCare, 2, 834 }, /* 514 */
+        {PositionalParams, BalanceDontCare, 1, 836 }, /* 515 */
+        {SelectedParams  , BalanceDontCare, 2, 60 }, /* 516 */
+        {SelectedParams  , BalanceDontCare, 2, 62 }, /* 517 */
+        {PositionalParams, BalanceDontCare, 2, 837 }, /* 518 */
+        {AnyParams       , BalanceDontCare, 2, 839 }, /* 519 */
+        {PositionalParams, BalanceDontCare, 2, 841 }, /* 520 */
+        {AnyParams       , BalanceDontCare, 2, 843 }, /* 521 */
+        {PositionalParams, BalanceDontCare, 2, 845 }, /* 522 */
+        {PositionalParams, BalanceDontCare, 2, 847 }, /* 523 */
+        {PositionalParams, BalanceDontCare, 2, 849 }, /* 524 */
+        {PositionalParams, BalanceDontCare, 2, 851 }, /* 525 */
+        {PositionalParams, BalanceDontCare, 2, 853 }, /* 526 */
+        {PositionalParams, BalanceDontCare, 2, 855 }, /* 527 */
+        {AnyParams       , BalanceDontCare, 2, 857 }, /* 528 */
+        {PositionalParams, BalanceDontCare, 1, 859 }, /* 529 */
+        {AnyParams       , BalanceDontCare, 2, 860 }, /* 530 */
+        {PositionalParams, BalanceDontCare, 1, 862 }, /* 531 */
+        {AnyParams       , BalanceDontCare, 2, 863 }, /* 532 */
+        {PositionalParams, BalanceDontCare, 1, 865 }, /* 533 */
+        {AnyParams       , BalanceDontCare, 2, 866 }, /* 534 */
+        {PositionalParams, BalanceDontCare, 1, 195 }, /* 535 */
+        {AnyParams       , BalanceDontCare, 2, 868 }, /* 536 */
+        {AnyParams       , BalanceDontCare, 2, 870 }, /* 537 */
+        {PositionalParams, BalanceDontCare, 1, 863 }, /* 538 */
+        {PositionalParams, BalanceDontCare, 2, 872 }, /* 539 */
+        {AnyParams       , BalanceDontCare, 2, 874 }, /* 540 */
+        {PositionalParams, BalanceDontCare, 2, 876 }, /* 541 */
+        {PositionalParams, BalanceDontCare, 1, 878 }, /* 542 */
+        {AnyParams       , BalanceDontCare, 2, 879 }, /* 543 */
+        {PositionalParams, BalanceDontCare, 2, 881 }, /* 544 */
+        {PositionalParams, BalanceDontCare, 1, 883 }, /* 545 */
+        {AnyParams       , BalanceDontCare, 2, 884 }, /* 546 */
+        {PositionalParams, BalanceDontCare, 1, 874 }, /* 547 */
+        {AnyParams       , BalanceDontCare, 2, 886 }, /* 548 */
     };
 
     const Function flist[] =
     {
-        {cNot        , 0 }, /* 0 */
-        {cNotNot     , 2 }, /* 1 */
-        {cAcos       , 16 }, /* 2 */
-        {cAdd        , 19 }, /* 3 */
-        {cAdd        , 21 }, /* 4 */
-        {cSin        , 18 }, /* 5 */
-        {cAdd        , 30 }, /* 6 */
-        {cAdd        , 32 }, /* 7 */
-        {cIf         , 33 }, /* 8 */
-        {cAdd        , 34 }, /* 9 */
-        {cMul        , 36 }, /* 10 */
-        {cMul        , 38 }, /* 11 */
-        {cIf         , 39 }, /* 12 */
-        {cMul        , 40 }, /* 13 */
-        {cAnd        , 42 }, /* 14 */
-        {cAnd        , 44 }, /* 15 */
-        {cIf         , 45 }, /* 16 */
-        {cAnd        , 46 }, /* 17 */
-        {cOr         , 48 }, /* 18 */
-        {cOr         , 50 }, /* 19 */
-        {cIf         , 51 }, /* 20 */
-        {cOr         , 52 }, /* 21 */
-        {cAdd        , 54 }, /* 22 */
-        {cAdd        , 55 }, /* 23 */
-        {cAdd        , 57 }, /* 24 */
-        {cAdd        , 58 }, /* 25 */
-        {cIf         , 59 }, /* 26 */
-        {cAdd        , 60 }, /* 27 */
-        {cMul        , 62 }, /* 28 */
-        {cMul        , 63 }, /* 29 */
-        {cMul        , 65 }, /* 30 */
-        {cMul        , 66 }, /* 31 */
-        {cIf         , 67 }, /* 32 */
-        {cMul        , 68 }, /* 33 */
-        {cAnd        , 70 }, /* 34 */
-        {cAnd        , 71 }, /* 35 */
-        {cAnd        , 73 }, /* 36 */
-        {cAnd        , 58 }, /* 37 */
-        {cIf         , 74 }, /* 38 */
-        {cAnd        , 75 }, /* 39 */
-        {cOr         , 77 }, /* 40 */
-        {cOr         , 78 }, /* 41 */
-        {cOr         , 80 }, /* 42 */
-        {cOr         , 81 }, /* 43 */
-        {cIf         , 82 }, /* 44 */
-        {cOr         , 83 }, /* 45 */
-        {cNot        , 85 }, /* 46 */
-        {cIf         , 87 }, /* 47 */
-        {cNotNot     , 85 }, /* 48 */
-        {cIf         , 90 }, /* 49 */
-        {cPow        , 93 }, /* 50 */
-        {cLog        , 16 }, /* 51 */
-        {cMul        , 95 }, /* 52 */
-        {cPow        , 97 }, /* 53 */
-        {cMul        , 98 }, /* 54 */
-        {cMul        , 100 }, /* 55 */
-        {cLog        , 101 }, /* 56 */
-        {cAdd        , 102 }, /* 57 */
-        {cMax        , 104 }, /* 58 */
-        {cMin        , 110 }, /* 59 */
-        {cLog        , 18 }, /* 60 */
-        {cLog        , 2 }, /* 61 */
-        {cMul        , 120 }, /* 62 */
-        {cMul        , 122 }, /* 63 */
-        {cMul        , 126 }, /* 64 */
-        {cMul        , 128 }, /* 65 */
-        {cMul        , 130 }, /* 66 */
-        {cMul        , 132 }, /* 67 */
-        {cMul        , 135 }, /* 68 */
-        {cAdd        , 139 }, /* 69 */
-        {cAdd        , 141 }, /* 70 */
-        {cPow        , 142 }, /* 71 */
-        {cMul        , 143 }, /* 72 */
-        {cLog        , 145 }, /* 73 */
-        {cMul        , 146 }, /* 74 */
-        {cMul        , 148 }, /* 75 */
-        {cPow        , 150 }, /* 76 */
-        {cMul        , 152 }, /* 77 */
-        {cAsin       , 18 }, /* 78 */
-        {cAdd        , 135 }, /* 79 */
-        {cSin        , 2 }, /* 80 */
-        {cAdd        , 157 }, /* 81 */
-        {cAdd        , 159 }, /* 82 */
-        {cCos        , 2 }, /* 83 */
-        {cAtan       , 0 }, /* 84 */
-        {cAdd        , 165 }, /* 85 */
-        {cTan        , 18 }, /* 86 */
-        {cAdd        , 167 }, /* 87 */
-        {cAdd        , 173 }, /* 88 */
-        {cAdd        , 176 }, /* 89 */
-        {cMul        , 177 }, /* 90 */
-        {cAdd        , 179 }, /* 91 */
-        {cMul        , 180 }, /* 92 */
-        {cAdd        , 184 }, /* 93 */
-        {cMul        , 187 }, /* 94 */
-        {cMul        , 189 }, /* 95 */
-        {cAdd        , 191 }, /* 96 */
-        {cMul        , 192 }, /* 97 */
-        {cAdd        , 194 }, /* 98 */
-        {cMul        , 195 }, /* 99 */
-        {cCos        , 18 }, /* 100 */
-        {cPow        , 197 }, /* 101 */
-        {cPow        , 199 }, /* 102 */
-        {cPow        , 201 }, /* 103 */
-        {cPow        , 203 }, /* 104 */
-        {cLog        , 208 }, /* 105 */
-        {cMul        , 210 }, /* 106 */
-        {cLog        , 211 }, /* 107 */
-        {cPow        , 213 }, /* 108 */
-        {cMul        , 216 }, /* 109 */
-        {cMul        , 217 }, /* 110 */
-        {cMul        , 58 }, /* 111 */
-        {cMul        , 219 }, /* 112 */
-        {cAdd        , 220 }, /* 113 */
-        {cMul        , 221 }, /* 114 */
-        {cMul        , 223 }, /* 115 */
-        {cMul        , 224 }, /* 116 */
-        {cAdd        , 226 }, /* 117 */
-        {cMul        , 227 }, /* 118 */
-        {cMul        , 229 }, /* 119 */
-        {cPow        , 230 }, /* 120 */
-        {cMul        , 231 }, /* 121 */
-        {cMin        , 233 }, /* 122 */
-        {cPow        , 234 }, /* 123 */
-        {cMin        , 235 }, /* 124 */
-        {cAdd        , 236 }, /* 125 */
-        {cPow        , 237 }, /* 126 */
-        {cMul        , 238 }, /* 127 */
-        {cMin        , 239 }, /* 128 */
-        {cAdd        , 240 }, /* 129 */
-        {cPow        , 241 }, /* 130 */
-        {cMul        , 242 }, /* 131 */
-        {cAdd        , 243 }, /* 132 */
-        {cMul        , 244 }, /* 133 */
-        {cPow        , 246 }, /* 134 */
-        {cMul        , 247 }, /* 135 */
-        {cMul        , 248 }, /* 136 */
-        {cMin        , 250 }, /* 137 */
-        {cPow        , 251 }, /* 138 */
-        {cMin        , 252 }, /* 139 */
-        {cAdd        , 253 }, /* 140 */
-        {cPow        , 254 }, /* 141 */
-        {cMul        , 255 }, /* 142 */
-        {cMin        , 256 }, /* 143 */
-        {cAdd        , 257 }, /* 144 */
-        {cPow        , 258 }, /* 145 */
-        {cMul        , 259 }, /* 146 */
-        {cAdd        , 260 }, /* 147 */
-        {cMul        , 261 }, /* 148 */
-        {cPow        , 263 }, /* 149 */
-        {cMul        , 264 }, /* 150 */
-        {cPow        , 265 }, /* 151 */
-        {cMul        , 266 }, /* 152 */
-        {cMin        , 268 }, /* 153 */
-        {cPow        , 269 }, /* 154 */
-        {cMin        , 270 }, /* 155 */
-        {cAdd        , 271 }, /* 156 */
-        {cPow        , 272 }, /* 157 */
-        {cMul        , 273 }, /* 158 */
-        {cMin        , 274 }, /* 159 */
-        {cAdd        , 275 }, /* 160 */
-        {cPow        , 276 }, /* 161 */
-        {cMul        , 277 }, /* 162 */
-        {cAdd        , 278 }, /* 163 */
-        {cMul        , 279 }, /* 164 */
-        {cPow        , 281 }, /* 165 */
-        {cMul        , 282 }, /* 166 */
-        {cMul        , 283 }, /* 167 */
-        {cMin        , 285 }, /* 168 */
-        {cPow        , 286 }, /* 169 */
-        {cMin        , 287 }, /* 170 */
-        {cAdd        , 288 }, /* 171 */
-        {cPow        , 289 }, /* 172 */
-        {cMul        , 290 }, /* 173 */
-        {cMin        , 291 }, /* 174 */
-        {cAdd        , 292 }, /* 175 */
-        {cPow        , 293 }, /* 176 */
-        {cMul        , 294 }, /* 177 */
-        {cAdd        , 295 }, /* 178 */
-        {cMul        , 296 }, /* 179 */
-        {cPow        , 298 }, /* 180 */
-        {cMul        , 299 }, /* 181 */
-        {cPow        , 300 }, /* 182 */
-        {cMul        , 301 }, /* 183 */
-        {cMin        , 303 }, /* 184 */
-        {cPow        , 304 }, /* 185 */
-        {cMin        , 305 }, /* 186 */
-        {cAdd        , 306 }, /* 187 */
-        {cPow        , 307 }, /* 188 */
-        {cMul        , 308 }, /* 189 */
-        {cMin        , 309 }, /* 190 */
-        {cAdd        , 310 }, /* 191 */
-        {cPow        , 311 }, /* 192 */
-        {cMul        , 312 }, /* 193 */
-        {cAdd        , 313 }, /* 194 */
-        {cMul        , 314 }, /* 195 */
-        {cCos        , 208 }, /* 196 */
-        {cMul        , 316 }, /* 197 */
-        {cSin        , 208 }, /* 198 */
-        {cMul        , 317 }, /* 199 */
-        {cAdd        , 319 }, /* 200 */
-        {cCos        , 320 }, /* 201 */
-        {cMul        , 322 }, /* 202 */
-        {cSin        , 323 }, /* 203 */
-        {cMul        , 324 }, /* 204 */
-        {cAdd        , 326 }, /* 205 */
-        {cCos        , 327 }, /* 206 */
-        {cCos        , 323 }, /* 207 */
-        {cMul        , 329 }, /* 208 */
-        {cMul        , 330 }, /* 209 */
-        {cAdd        , 332 }, /* 210 */
-        {cSin        , 333 }, /* 211 */
-        {cMul        , 335 }, /* 212 */
-        {cMul        , 336 }, /* 213 */
-        {cAdd        , 338 }, /* 214 */
-        {cSin        , 339 }, /* 215 */
-        {cMul        , 341 }, /* 216 */
-        {cMul        , 343 }, /* 217 */
-        {cAdd        , 344 }, /* 218 */
-        {cMul        , 345 }, /* 219 */
-        {cMul        , 347 }, /* 220 */
-        {cMul        , 349 }, /* 221 */
-        {cAdd        , 350 }, /* 222 */
-        {cMul        , 351 }, /* 223 */
-        {cCos        , 0 }, /* 224 */
-        {cCos        , 353 }, /* 225 */
-        {cMul        , 354 }, /* 226 */
+        {cPow        , 1 }, /* 0 */
+        {cAdd        , 2 }, /* 1 */
+        {cPow        , 3 }, /* 2 */
+        {cAdd        , 4 }, /* 3 */
+        {cLog2       , 5 }, /* 4 */
+        {cMul        , 6 }, /* 5 */
+        {cAdd        , 8 }, /* 6 */
+        {cPow        , 9 }, /* 7 */
+        {cAdd        , 10 }, /* 8 */
+        {cLog2       , 11 }, /* 9 */
+        {cMul        , 12 }, /* 10 */
+        {cAdd        , 14 }, /* 11 */
+        {cMul        , 15 }, /* 12 */
+        {cAdd        , 16 }, /* 13 */
+        {cPow        , 17 }, /* 14 */
+        {cMul        , 18 }, /* 15 */
+        {cLog2       , 19 }, /* 16 */
+        {cMul        , 20 }, /* 17 */
+        {cPow        , 22 }, /* 18 */
+        {cPow        , 23 }, /* 19 */
+        {cAdd        , 24 }, /* 20 */
+        {cMul        , 25 }, /* 21 */
+        {cAdd        , 27 }, /* 22 */
+        {cMul        , 28 }, /* 23 */
+        {cSin        , 0 }, /* 24 */
+        {cCos        , 0 }, /* 25 */
+        {cPow        , 30 }, /* 26 */
+        {cMul        , 31 }, /* 27 */
+        {cAdd        , 33 }, /* 28 */
+        {cAdd        , 34 }, /* 29 */
+        {cPow        , 35 }, /* 30 */
+        {cMul        , 36 }, /* 31 */
+        {cNot        , 0 }, /* 32 */
+        {cNotNot     , 0 }, /* 33 */
+        {cMul        , 40 }, /* 34 */
+        {cAbs        , 0 }, /* 35 */
+        {cMul        , 42 }, /* 36 */
+        {cAcos       , 0 }, /* 37 */
+        {cAdd        , 45 }, /* 38 */
+        {cAdd        , 47 }, /* 39 */
+        {cSin        , 48 }, /* 40 */
+        {cMul        , 50 }, /* 41 */
+        {cAdd        , 51 }, /* 42 */
+        {cMul        , 53 }, /* 43 */
+        {cSin        , 54 }, /* 44 */
+        {cAdd        , 58 }, /* 45 */
+        {cIf         , 60 }, /* 46 */
+        {cAdd        , 61 }, /* 47 */
+        {cMul        , 58 }, /* 48 */
+        {cMul        , 47 }, /* 49 */
+        {cIf         , 64 }, /* 50 */
+        {cMul        , 65 }, /* 51 */
+        {cAnd        , 58 }, /* 52 */
+        {cAnd        , 47 }, /* 53 */
+        {cIf         , 68 }, /* 54 */
+        {cAnd        , 69 }, /* 55 */
+        {cOr         , 58 }, /* 56 */
+        {cOr         , 47 }, /* 57 */
+        {cIf         , 72 }, /* 58 */
+        {cOr         , 73 }, /* 59 */
+        {cAdd        , 75 }, /* 60 */
+        {cAdd        , 77 }, /* 61 */
+        {cIf         , 78 }, /* 62 */
+        {cAdd        , 79 }, /* 63 */
+        {cMul        , 75 }, /* 64 */
+        {cMul        , 77 }, /* 65 */
+        {cIf         , 82 }, /* 66 */
+        {cMul        , 83 }, /* 67 */
+        {cAnd        , 75 }, /* 68 */
+        {cAnd        , 77 }, /* 69 */
+        {cIf         , 86 }, /* 70 */
+        {cAnd        , 87 }, /* 71 */
+        {cOr         , 75 }, /* 72 */
+        {cOr         , 77 }, /* 73 */
+        {cIf         , 90 }, /* 74 */
+        {cOr         , 91 }, /* 75 */
+        {cNot        , 93 }, /* 76 */
+        {cIf         , 95 }, /* 77 */
+        {cNotNot     , 93 }, /* 78 */
+        {cIf         , 98 }, /* 79 */
+        {cPow        , 100 }, /* 80 */
+        {cLog2       , 102 }, /* 81 */
+        {cMul        , 103 }, /* 82 */
+        {cPow        , 105 }, /* 83 */
+        {cLog2       , 0 }, /* 84 */
+        {cMul        , 107 }, /* 85 */
+        {cMul        , 109 }, /* 86 */
+        {cLog2       , 111 }, /* 87 */
+        {cAdd        , 112 }, /* 88 */
+        {cPow        , 114 }, /* 89 */
+        {cMul        , 115 }, /* 90 */
+        {cMul        , 117 }, /* 91 */
+        {cAdd        , 118 }, /* 92 */
+        {cMul        , 119 }, /* 93 */
+        {cMul        , 122 }, /* 94 */
+        {cMul        , 127 }, /* 95 */
+        {cMul        , 130 }, /* 96 */
+        {cAdd        , 132 }, /* 97 */
+        {cMul        , 134 }, /* 98 */
+        {cLog2       , 137 }, /* 99 */
+        {cPow        , 138 }, /* 100 */
+        {cMul        , 139 }, /* 101 */
+        {cPow        , 143 }, /* 102 */
+        {cMul        , 145 }, /* 103 */
+        {cPow        , 147 }, /* 104 */
+        {cPow        , 151 }, /* 105 */
+        {cMul        , 152 }, /* 106 */
+        {cPow        , 154 }, /* 107 */
+        {cAsin       , 0 }, /* 108 */
+        {cCos        , 48 }, /* 109 */
+        {cMul        , 158 }, /* 110 */
+        {cCos        , 54 }, /* 111 */
+        {cMul        , 161 }, /* 112 */
+        {cPow        , 163 }, /* 113 */
+        {cMul        , 164 }, /* 114 */
+        {cPow        , 166 }, /* 115 */
+        {cMul        , 168 }, /* 116 */
+        {cLog2       , 171 }, /* 117 */
+        {cMul        , 142 }, /* 118 */
+        {cLog2       , 173 }, /* 119 */
+        {cMul        , 177 }, /* 120 */
+        {cMul        , 179 }, /* 121 */
+        {cAdd        , 180 }, /* 122 */
+        {cMul        , 181 }, /* 123 */
+        {cPow        , 183 }, /* 124 */
+        {cMul        , 184 }, /* 125 */
+        {cPow        , 186 }, /* 126 */
+        {cAdd        , 187 }, /* 127 */
+        {cPow        , 188 }, /* 128 */
+        {cMul        , 189 }, /* 129 */
+        {cAdd        , 190 }, /* 130 */
+        {cPow        , 191 }, /* 131 */
+        {cMul        , 192 }, /* 132 */
+        {cAdd        , 193 }, /* 133 */
+        {cMul        , 194 }, /* 134 */
+        {cPow        , 196 }, /* 135 */
+        {cMul        , 197 }, /* 136 */
+        {cPow        , 199 }, /* 137 */
+        {cAdd        , 200 }, /* 138 */
+        {cPow        , 201 }, /* 139 */
+        {cMul        , 202 }, /* 140 */
+        {cAdd        , 203 }, /* 141 */
+        {cPow        , 204 }, /* 142 */
+        {cMul        , 205 }, /* 143 */
+        {cAdd        , 206 }, /* 144 */
+        {cMul        , 207 }, /* 145 */
+        {cCos        , 171 }, /* 146 */
+        {cMul        , 209 }, /* 147 */
+        {cSin        , 171 }, /* 148 */
+        {cMul        , 210 }, /* 149 */
+        {cAdd        , 142 }, /* 150 */
+        {cCos        , 212 }, /* 151 */
+        {cMul        , 214 }, /* 152 */
+        {cMul        , 216 }, /* 153 */
+        {cAdd        , 217 }, /* 154 */
+        {cCos        , 218 }, /* 155 */
+        {cMul        , 220 }, /* 156 */
+        {cMul        , 221 }, /* 157 */
+        {cSin        , 212 }, /* 158 */
+        {cMul        , 224 }, /* 159 */
+        {cSin        , 218 }, /* 160 */
+        {cMul        , 227 }, /* 161 */
+        {cMul        , 229 }, /* 162 */
+        {cAdd        , 230 }, /* 163 */
+        {cMul        , 231 }, /* 164 */
+        {cMul        , 233 }, /* 165 */
+        {cMul        , 235 }, /* 166 */
+        {cMul        , 238 }, /* 167 */
+        {cMul        , 240 }, /* 168 */
+        {cMul        , 242 }, /* 169 */
+        {cMul        , 244 }, /* 170 */
+        {cAdd        , 247 }, /* 171 */
+        {cMul        , 248 }, /* 172 */
+        {cMul        , 251 }, /* 173 */
+        {cPow        , 253 }, /* 174 */
+        {cPow        , 254 }, /* 175 */
+        {cMul        , 255 }, /* 176 */
+        {cAdd        , 257 }, /* 177 */
+        {cPow        , 258 }, /* 178 */
+        {cAdd        , 259 }, /* 179 */
+        {cMul        , 260 }, /* 180 */
+        {cMul        , 262 }, /* 181 */
+        {cAdd        , 263 }, /* 182 */
+        {cAdd        , 265 }, /* 183 */
+        {cMul        , 267 }, /* 184 */
+        {cPow        , 268 }, /* 185 */
+        {cMul        , 270 }, /* 186 */
+        {cPow        , 271 }, /* 187 */
+        {cPow        , 142 }, /* 188 */
+        {cPow        , 273 }, /* 189 */
+        {cAdd        , 145 }, /* 190 */
+        {cPow        , 275 }, /* 191 */
+        {cPow        , 145 }, /* 192 */
+        {cPow        , 278 }, /* 193 */
+        {cMul        , 280 }, /* 194 */
+        {cAdd        , 281 }, /* 195 */
+        {cMul        , 283 }, /* 196 */
+        {cMul        , 284 }, /* 197 */
+        {cAdd        , 285 }, /* 198 */
+        {cAdd        , 280 }, /* 199 */
+        {cMul        , 288 }, /* 200 */
+        {cAdd        , 289 }, /* 201 */
+        {cAdd        , 292 }, /* 202 */
+        {cPow        , 293 }, /* 203 */
+        {cPow        , 251 }, /* 204 */
+        {cEqual      , 257 }, /* 205 */
+        {cNEqual     , 257 }, /* 206 */
+        {cLess       , 257 }, /* 207 */
+        {cGreaterOrEq, 257 }, /* 208 */
+        {cLessOrEq   , 257 }, /* 209 */
+        {cGreater    , 257 }, /* 210 */
+        {cAnd        , 304 }, /* 211 */
+        {cOr         , 306 }, /* 212 */
+        {cOr         , 304 }, /* 213 */
+        {cAnd        , 306 }, /* 214 */
+        {cOr         , 310 }, /* 215 */
+        {cEqual      , 332 }, /* 216 */
+        {cEqual      , 333 }, /* 217 */
+        {cAnd        , 310 }, /* 218 */
+        {cNot        , 39 }, /* 219 */
+        {cAnd        , 342 }, /* 220 */
+        {cAnd        , 344 }, /* 221 */
+        {cOr         , 342 }, /* 222 */
+        {cOr         , 344 }, /* 223 */
+        {cAsinh      , 0 }, /* 224 */
+        {cMul        , 352 }, /* 225 */
+        {cAdd        , 354 }, /* 226 */
         {cMul        , 355 }, /* 227 */
-        {cAdd        , 357 }, /* 228 */
-        {cCos        , 358 }, /* 229 */
-        {cMul        , 360 }, /* 230 */
-        {cMul        , 361 }, /* 231 */
-        {cAdd        , 363 }, /* 232 */
-        {cCos        , 364 }, /* 233 */
-        {cMul        , 366 }, /* 234 */
-        {cAdd        , 368 }, /* 235 */
-        {cSin        , 369 }, /* 236 */
-        {cMul        , 371 }, /* 237 */
-        {cMul        , 373 }, /* 238 */
-        {cAdd        , 374 }, /* 239 */
-        {cMul        , 375 }, /* 240 */
-        {cMul        , 377 }, /* 241 */
-        {cMul        , 379 }, /* 242 */
-        {cAdd        , 380 }, /* 243 */
-        {cMul        , 381 }, /* 244 */
-        {cMul        , 384 }, /* 245 */
-        {cMul        , 387 }, /* 246 */
-        {cPow        , 389 }, /* 247 */
-        {cPow        , 390 }, /* 248 */
-        {cMul        , 391 }, /* 249 */
-        {cAdd        , 393 }, /* 250 */
-        {cPow        , 394 }, /* 251 */
-        {cMul        , 395 }, /* 252 */
-        {cAdd        , 396 }, /* 253 */
-        {cMul        , 397 }, /* 254 */
-        {cAdd        , 399 }, /* 255 */
-        {cTan        , 400 }, /* 256 */
-        {cMul        , 404 }, /* 257 */
-        {cAdd        , 405 }, /* 258 */
-        {cMul        , 408 }, /* 259 */
-        {cPow        , 411 }, /* 260 */
-        {cPow        , 413 }, /* 261 */
-        {cMul        , 415 }, /* 262 */
-        {cPow        , 421 }, /* 263 */
-        {cLog        , 422 }, /* 264 */
-        {cPow        , 424 }, /* 265 */
-        {cLog        , 425 }, /* 266 */
-        {cPow        , 427 }, /* 267 */
-        {cLog        , 428 }, /* 268 */
-        {cPow        , 430 }, /* 269 */
-        {cMul        , 431 }, /* 270 */
-        {cLog        , 432 }, /* 271 */
-        {cMul        , 434 }, /* 272 */
-        {cAdd        , 435 }, /* 273 */
-        {cPow        , 437 }, /* 274 */
-        {cMul        , 438 }, /* 275 */
-        {cLog        , 439 }, /* 276 */
-        {cMul        , 441 }, /* 277 */
-        {cAdd        , 442 }, /* 278 */
-        {cPow        , 444 }, /* 279 */
-        {cMul        , 445 }, /* 280 */
-        {cLog        , 446 }, /* 281 */
-        {cLog        , 447 }, /* 282 */
-        {cMul        , 449 }, /* 283 */
-        {cAdd        , 450 }, /* 284 */
-        {cPow        , 452 }, /* 285 */
-        {cPow        , 453 }, /* 286 */
-        {cAdd        , 455 }, /* 287 */
-        {cPow        , 456 }, /* 288 */
-        {cPow        , 458 }, /* 289 */
-        {cPow        , 459 }, /* 290 */
-        {cAdd        , 461 }, /* 291 */
-        {cPow        , 462 }, /* 292 */
-        {cSin        , 0 }, /* 293 */
-        {cTan        , 2 }, /* 294 */
-        {cSinh       , 2 }, /* 295 */
-        {cCosh       , 2 }, /* 296 */
-        {cTanh       , 2 }, /* 297 */
-        {cPow        , 468 }, /* 298 */
-        {cAdd        , 470 }, /* 299 */
-        {cPow        , 471 }, /* 300 */
-        {cPow        , 473 }, /* 301 */
-        {cAdd        , 475 }, /* 302 */
-        {cPow        , 476 }, /* 303 */
-        {cPow        , 480 }, /* 304 */
-        {cLog        , 481 }, /* 305 */
-        {cPow        , 484 }, /* 306 */
-        {cLog        , 485 }, /* 307 */
-        {cPow        , 488 }, /* 308 */
-        {cPow        , 489 }, /* 309 */
-        {cAdd        , 491 }, /* 310 */
-        {cPow        , 492 }, /* 311 */
-        {cSinh       , 18 }, /* 312 */
-        {cCosh       , 18 }, /* 313 */
-        {cPow        , 497 }, /* 314 */
-        {cAdd        , 499 }, /* 315 */
-        {cPow        , 500 }, /* 316 */
-        {cPow        , 502 }, /* 317 */
-        {cAdd        , 504 }, /* 318 */
-        {cPow        , 505 }, /* 319 */
-        {cPow        , 508 }, /* 320 */
-        {cPow        , 511 }, /* 321 */
-        {cEqual      , 522 }, /* 322 */
-        {cNEqual     , 524 }, /* 323 */
-        {cNEqual     , 526 }, /* 324 */
-        {cEqual      , 528 }, /* 325 */
-        {cLess       , 530 }, /* 326 */
-        {cGreaterOrEq, 532 }, /* 327 */
-        {cLessOrEq   , 534 }, /* 328 */
-        {cGreater    , 536 }, /* 329 */
-        {cGreater    , 538 }, /* 330 */
-        {cLessOrEq   , 540 }, /* 331 */
-        {cGreaterOrEq, 542 }, /* 332 */
-        {cLess       , 544 }, /* 333 */
-        {cOr         , 547 }, /* 334 */
-        {cNotNot     , 18 }, /* 335 */
-        {cNot        , 18 }, /* 336 */
-        {cNot        , 2 }, /* 337 */
-        {cAnd        , 552 }, /* 338 */
-        {cEqual      , 556 }, /* 339 */
-        {cNEqual     , 558 }, /* 340 */
-        {cNEqual     , 560 }, /* 341 */
-        {cEqual      , 562 }, /* 342 */
-        {cLess       , 564 }, /* 343 */
-        {cGreaterOrEq, 566 }, /* 344 */
-        {cLessOrEq   , 568 }, /* 345 */
-        {cGreater    , 570 }, /* 346 */
-        {cGreater    , 572 }, /* 347 */
-        {cLessOrEq   , 574 }, /* 348 */
-        {cGreaterOrEq, 576 }, /* 349 */
-        {cLess       , 578 }, /* 350 */
-        {cAnd        , 581 }, /* 351 */
-        {cEqual      , 585 }, /* 352 */
-        {cNEqual     , 586 }, /* 353 */
-        {cEqual      , 589 }, /* 354 */
-        {cEqual      , 590 }, /* 355 */
-        {cEqual      , 591 }, /* 356 */
-        {cEqual      , 593 }, /* 357 */
-        {cEqual      , 594 }, /* 358 */
-        {cAnd        , 597 }, /* 359 */
-        {cOr         , 600 }, /* 360 */
-        {cEqual      , 603 }, /* 361 */
-        {cNEqual     , 605 }, /* 362 */
-        {cNEqual     , 607 }, /* 363 */
-        {cEqual      , 609 }, /* 364 */
-        {cLess       , 611 }, /* 365 */
-        {cGreaterOrEq, 613 }, /* 366 */
-        {cLessOrEq   , 615 }, /* 367 */
-        {cGreater    , 617 }, /* 368 */
-        {cGreater    , 619 }, /* 369 */
-        {cLessOrEq   , 621 }, /* 370 */
-        {cGreaterOrEq, 623 }, /* 371 */
-        {cLess       , 625 }, /* 372 */
-        {cOr         , 628 }, /* 373 */
-        {cEqual      , 632 }, /* 374 */
-        {cNEqual     , 633 }, /* 375 */
-        {cEqual      , 636 }, /* 376 */
-        {cEqual      , 638 }, /* 377 */
-        {cNEqual     , 640 }, /* 378 */
-        {cNEqual     , 642 }, /* 379 */
-        {cLess       , 644 }, /* 380 */
-        {cLess       , 646 }, /* 381 */
-        {cLessOrEq   , 648 }, /* 382 */
-        {cLessOrEq   , 650 }, /* 383 */
-        {cGreater    , 652 }, /* 384 */
-        {cGreater    , 654 }, /* 385 */
-        {cGreaterOrEq, 656 }, /* 386 */
-        {cGreaterOrEq, 658 }, /* 387 */
-        {cNot        , 549 }, /* 388 */
-        {cAnd        , 661 }, /* 389 */
-        {cAnd        , 663 }, /* 390 */
-        {cOr         , 665 }, /* 391 */
-        {cOr         , 667 }, /* 392 */
-        {cExp        , 2 }, /* 393 */
-        {cRSqrt      , 2 }, /* 394 */
-        {cSqrt       , 18 }, /* 395 */
-        {cMul        , 676 }, /* 396 */
-        {cRad        , 677 }, /* 397 */
-        {cMul        , 680 }, /* 398 */
-        {cDeg        , 681 }, /* 399 */
-        {cSec        , 2 }, /* 400 */
-        {cCsc        , 2 }, /* 401 */
-        {cCot        , 18 }, /* 402 */
-        {cLog10      , 18 }, /* 403 */
-        {cLog2       , 18 }, /* 404 */
-        {cLog10      , 2 }, /* 405 */
-        {cNot        , 550 }, /* 406 */
+        {cAdd        , 356 }, /* 228 */
+        {cPow        , 357 }, /* 229 */
+        {cMul        , 358 }, /* 230 */
+        {cAdd        , 360 }, /* 231 */
+        {cAtanh      , 361 }, /* 232 */
+        {cMul        , 362 }, /* 233 */
+        {cMul        , 354 }, /* 234 */
+        {cAdd        , 364 }, /* 235 */
+        {cAdd        , 365 }, /* 236 */
+        {cPow        , 366 }, /* 237 */
+        {cMul        , 367 }, /* 238 */
+        {cMul        , 369 }, /* 239 */
+        {cAtanh      , 370 }, /* 240 */
+        {cMul        , 371 }, /* 241 */
+        {cAcosh      , 0 }, /* 242 */
+        {cSinh       , 111 }, /* 243 */
+        {cMul        , 375 }, /* 244 */
+        {cAtan       , 0 }, /* 245 */
+        {cTan        , 111 }, /* 246 */
+        {cMul        , 378 }, /* 247 */
+        {cTanh       , 111 }, /* 248 */
+        {cMul        , 380 }, /* 249 */
+        {cAdd        , 382 }, /* 250 */
+        {cPow        , 383 }, /* 251 */
+        {cPow        , 385 }, /* 252 */
+        {cAdd        , 387 }, /* 253 */
+        {cPow        , 388 }, /* 254 */
+        {cPow        , 390 }, /* 255 */
+        {cPow        , 369 }, /* 256 */
+        {cMul        , 393 }, /* 257 */
+        {cSinh       , 394 }, /* 258 */
+        {cPow        , 395 }, /* 259 */
+        {cMul        , 396 }, /* 260 */
+        {cCosh       , 394 }, /* 261 */
+        {cMul        , 399 }, /* 262 */
+        {cCosh       , 0 }, /* 263 */
+        {cSinh       , 0 }, /* 264 */
+        {cPow        , 402 }, /* 265 */
+        {cMul        , 404 }, /* 266 */
+        {cMul        , 407 }, /* 267 */
+        {cPow        , 410 }, /* 268 */
+        {cPow        , 411 }, /* 269 */
+        {cMul        , 413 }, /* 270 */
+        {cCosh       , 414 }, /* 271 */
+        {cMul        , 415 }, /* 272 */
+        {cMul        , 417 }, /* 273 */
+        {cSinh       , 414 }, /* 274 */
+        {cMul        , 419 }, /* 275 */
+        {cMul        , 423 }, /* 276 */
+        {cMul        , 425 }, /* 277 */
+        {cMul        , 428 }, /* 278 */
+        {cMul        , 431 }, /* 279 */
+        {cMul        , 433 }, /* 280 */
+        {cMul        , 435 }, /* 281 */
+        {cMul        , 438 }, /* 282 */
+        {cMul        , 440 }, /* 283 */
+        {cMul        , 441 }, /* 284 */
+        {cMul        , 443 }, /* 285 */
+        {cMul        , 445 }, /* 286 */
+        {cMul        , 447 }, /* 287 */
+        {cSin        , 110 }, /* 288 */
+        {cSinh       , 110 }, /* 289 */
+        {cSinh       , 54 }, /* 290 */
+        {cTan        , 110 }, /* 291 */
+        {cTan        , 54 }, /* 292 */
+        {cTanh       , 110 }, /* 293 */
+        {cTanh       , 54 }, /* 294 */
+        {cPow        , 456 }, /* 295 */
+        {cTan        , 0 }, /* 296 */
+        {cPow        , 458 }, /* 297 */
+        {cPow        , 460 }, /* 298 */
+        {cTanh       , 0 }, /* 299 */
+        {cPow        , 462 }, /* 300 */
+        {cMul        , 467 }, /* 301 */
+        {cAdd        , 468 }, /* 302 */
+        {cPow        , 469 }, /* 303 */
+        {cMul        , 470 }, /* 304 */
+        {cAdd        , 471 }, /* 305 */
+        {cMul        , 473 }, /* 306 */
+        {cAdd        , 474 }, /* 307 */
+        {cAtanh      , 475 }, /* 308 */
+        {cMul        , 476 }, /* 309 */
+        {cPow        , 477 }, /* 310 */
+        {cMul        , 481 }, /* 311 */
+        {cCos        , 482 }, /* 312 */
+        {cPow        , 483 }, /* 313 */
+        {cMul        , 485 }, /* 314 */
+        {cTan        , 486 }, /* 315 */
+        {cPow        , 488 }, /* 316 */
+        {cCosh       , 482 }, /* 317 */
+        {cPow        , 491 }, /* 318 */
+        {cTanh       , 486 }, /* 319 */
+        {cAdd        , 498 }, /* 320 */
+        {cTan        , 499 }, /* 321 */
+        {cMul        , 500 }, /* 322 */
+        {cTan        , 501 }, /* 323 */
+        {cPow        , 506 }, /* 324 */
+        {cAdd        , 507 }, /* 325 */
+        {cAdd        , 508 }, /* 326 */
+        {cPow        , 509 }, /* 327 */
+        {cPow        , 512 }, /* 328 */
+        {cMul        , 511 }, /* 329 */
+        {cPow        , 514 }, /* 330 */
+        {cAdd        , 516 }, /* 331 */
+        {cAdd        , 517 }, /* 332 */
+        {cPow        , 518 }, /* 333 */
+        {cPow        , 520 }, /* 334 */
+        {cSec        , 0 }, /* 335 */
+        {cCsc        , 0 }, /* 336 */
+        {cCot        , 0 }, /* 337 */
+        {cRad        , 111 }, /* 338 */
+        {cDeg        , 111 }, /* 339 */
+        {cLog        , 0 }, /* 340 */
+        {cLog10      , 0 }, /* 341 */
+        {cPow        , 539 }, /* 342 */
+        {cPow        , 541 }, /* 343 */
+        {cPow        , 544 }, /* 344 */
     };
 
     const Rule rlist[] =
     {
-        {1, ProduceNewTree,    3,	{ cNot        , 1 } }, /* 0 */
-        {1, ProduceNewTree,    5,	{ cAcos       , 4 } }, /* 1 */
-        {1, ProduceNewTree,    7,	{ cAcosh      , 6 } }, /* 2 */
-        {1, ProduceNewTree,    8,	{ cAsin       , 4 } }, /* 3 */
-        {1, ProduceNewTree,    9,	{ cAsinh      , 4 } }, /* 4 */
-        {1, ProduceNewTree,    11,	{ cAtan       , 10 } }, /* 5 */
-        {1, ProduceNewTree,    12,	{ cAtanh      , 6 } }, /* 6 */
-        {1, ProduceNewTree,    13,	{ cCeil       , 10 } }, /* 7 */
-        {1, ProduceNewTree,    15,	{ cCos        , 14 } }, /* 8 */
-        {1, ProduceNewTree,    18,	{ cCos        , 17 } }, /* 9 */
-        {1, ReplaceParams ,    18,	{ cCos        , 20 } }, /* 10 */
-        {1, ProduceNewTree,    23,	{ cCos        , 22 } }, /* 11 */
-        {1, ProduceNewTree,    24,	{ cCosh       , 6 } }, /* 12 */
-        {1, ProduceNewTree,    25,	{ cFloor      , 6 } }, /* 13 */
-        {3, ProduceNewTree,    27,	{ cIf         , 26 } }, /* 14 */
-        {3, ProduceNewTree,    0,	{ cIf         , 28 } }, /* 15 */
-        {3, ProduceNewTree,    18,	{ cIf         , 29 } }, /* 16 */
-        {3, ProduceNewTree,    35,	{ cIf         , 31 } }, /* 17 */
-        {3, ProduceNewTree,    41,	{ cIf         , 37 } }, /* 18 */
-        {3, ProduceNewTree,    47,	{ cIf         , 43 } }, /* 19 */
-        {3, ProduceNewTree,    53,	{ cIf         , 49 } }, /* 20 */
-        {3, ProduceNewTree,    61,	{ cIf         , 56 } }, /* 21 */
-        {3, ProduceNewTree,    69,	{ cIf         , 64 } }, /* 22 */
-        {3, ProduceNewTree,    76,	{ cIf         , 72 } }, /* 23 */
-        {3, ProduceNewTree,    84,	{ cIf         , 79 } }, /* 24 */
-        {3, ProduceNewTree,    88,	{ cIf         , 86 } }, /* 25 */
-        {3, ProduceNewTree,    91,	{ cIf         , 89 } }, /* 26 */
-        {1, ProduceNewTree,    92,	{ cLog        , 14 } }, /* 27 */
-        {1, ProduceNewTree,    96,	{ cLog        , 94 } }, /* 28 */
-        {1, ProduceNewTree,    103,	{ cLog        , 99 } }, /* 29 */
-        {1, ProduceNewTree,    18,	{ cMax        , 18 } }, /* 30 */
-        {1, ReplaceParams ,    106,	{ cMax        , 105 } }, /* 31 */
-        {2, ReplaceParams ,    108,	{ cMax        , 107 } }, /* 32 */
-        {2, ReplaceParams ,    0,	{ cMax        , 109 } }, /* 33 */
-        {1, ProduceNewTree,    0,	{ cMin        , 0 } }, /* 34 */
-        {1, ReplaceParams ,    106,	{ cMin        , 111 } }, /* 35 */
-        {2, ReplaceParams ,    113,	{ cMin        , 112 } }, /* 36 */
-        {2, ReplaceParams ,    0,	{ cMin        , 114 } }, /* 37 */
-        {2, ProduceNewTree,    116,	{ cPow        , 115 } }, /* 38 */
-        {2, ProduceNewTree,    118,	{ cPow        , 117 } }, /* 39 */
-        {2, ProduceNewTree,    2,	{ cPow        , 119 } }, /* 40 */
-        {2, ReplaceParams ,    123,	{ cPow        , 121 } }, /* 41 */
-        {2, ProduceNewTree,    125,	{ cPow        , 124 } }, /* 42 */
-        {2, ReplaceParams ,    129,	{ cPow        , 127 } }, /* 43 */
-        {2, ReplaceParams ,    133,	{ cPow        , 131 } }, /* 44 */
-        {2, ProduceNewTree,    136,	{ cPow        , 134 } }, /* 45 */
-        {2, ProduceNewTree,    118,	{ cPow        , 137 } }, /* 46 */
-        {2, ProduceNewTree,    2,	{ cPow        , 138 } }, /* 47 */
-        {2, ProduceNewTree,    144,	{ cPow        , 140 } }, /* 48 */
-        {2, ReplaceParams ,    149,	{ cPow        , 147 } }, /* 49 */
-        {2, ReplaceParams ,    153,	{ cPow        , 151 } }, /* 50 */
-        {1, ProduceNewTree,    154,	{ cSin        , 4 } }, /* 51 */
-        {1, ProduceNewTree,    2,	{ cSin        , 155 } }, /* 52 */
-        {1, ProduceNewTree,    158,	{ cSin        , 156 } }, /* 53 */
-        {1, ProduceNewTree,    161,	{ cSin        , 160 } }, /* 54 */
-        {1, ProduceNewTree,    162,	{ cSinh       , 14 } }, /* 55 */
-        {1, ProduceNewTree,    163,	{ cTan        , 14 } }, /* 56 */
-        {1, ProduceNewTree,    0,	{ cTan        , 164 } }, /* 57 */
-        {1, ProduceNewTree,    168,	{ cTan        , 166 } }, /* 58 */
-        {1, ProduceNewTree,    169,	{ cTanh       , 4 } }, /* 59 */
-        {0, ProduceNewTree,    171,	{ cAdd        , 170 } }, /* 60 */
-        {1, ProduceNewTree,    18,	{ cAdd        , 18 } }, /* 61 */
-        {1, ReplaceParams ,    170,	{ cAdd        , 172 } }, /* 62 */
-        {1, ReplaceParams ,    175,	{ cAdd        , 174 } }, /* 63 */
-        {1, ReplaceParams ,    181,	{ cAdd        , 178 } }, /* 64 */
-        {1, ReplaceParams ,    183,	{ cAdd        , 182 } }, /* 65 */
-        {1, ReplaceParams ,    186,	{ cAdd        , 185 } }, /* 66 */
-        {1, ReplaceParams ,    190,	{ cAdd        , 188 } }, /* 67 */
-        {1, ReplaceParams ,    196,	{ cAdd        , 193 } }, /* 68 */
-        {2, ReplaceParams ,    200,	{ cAdd        , 198 } }, /* 69 */
-        {2, ReplaceParams ,    204,	{ cAdd        , 202 } }, /* 70 */
-        {2, ReplaceParams ,    206,	{ cAdd        , 205 } }, /* 71 */
-        {2, ReplaceParams ,    170,	{ cAdd        , 207 } }, /* 72 */
-        {2, ReplaceParams ,    212,	{ cAdd        , 209 } }, /* 73 */
-        {2, ReplaceParams ,    215,	{ cAdd        , 214 } }, /* 74 */
-        {2, ReplaceParams ,    222,	{ cAdd        , 218 } }, /* 75 */
-        {2, ReplaceParams ,    228,	{ cAdd        , 225 } }, /* 76 */
-        {2, ReplaceParams ,    245,	{ cAdd        , 232 } }, /* 77 */
-        {2, ReplaceParams ,    262,	{ cAdd        , 249 } }, /* 78 */
-        {2, ReplaceParams ,    280,	{ cAdd        , 267 } }, /* 79 */
-        {2, ReplaceParams ,    297,	{ cAdd        , 284 } }, /* 80 */
-        {2, ReplaceParams ,    315,	{ cAdd        , 302 } }, /* 81 */
-        {2, ReplaceParams ,    321,	{ cAdd        , 318 } }, /* 82 */
-        {2, ReplaceParams ,    328,	{ cAdd        , 325 } }, /* 83 */
-        {2, ReplaceParams ,    334,	{ cAdd        , 331 } }, /* 84 */
-        {2, ReplaceParams ,    340,	{ cAdd        , 337 } }, /* 85 */
-        {2, ReplaceParams ,    346,	{ cAdd        , 342 } }, /* 86 */
-        {2, ReplaceParams ,    352,	{ cAdd        , 348 } }, /* 87 */
-        {2, ReplaceParams ,    359,	{ cAdd        , 356 } }, /* 88 */
-        {2, ReplaceParams ,    365,	{ cAdd        , 362 } }, /* 89 */
-        {2, ReplaceParams ,    370,	{ cAdd        , 367 } }, /* 90 */
-        {2, ReplaceParams ,    376,	{ cAdd        , 372 } }, /* 91 */
-        {2, ReplaceParams ,    382,	{ cAdd        , 378 } }, /* 92 */
-        {2, ReplaceParams ,    385,	{ cAdd        , 383 } }, /* 93 */
-        {2, ReplaceParams ,    388,	{ cAdd        , 386 } }, /* 94 */
-        {3, ReplaceParams ,    398,	{ cAdd        , 392 } }, /* 95 */
-        {0, ProduceNewTree,    215,	{ cMul        , 170 } }, /* 96 */
-        {1, ProduceNewTree,    2,	{ cMul        , 2 } }, /* 97 */
-        {1, ProduceNewTree,    402,	{ cMul        , 401 } }, /* 98 */
-        {1, ProduceNewTree,    406,	{ cMul        , 403 } }, /* 99 */
-        {1, ProduceNewTree,    171,	{ cMul        , 172 } }, /* 100 */
-        {1, ReplaceParams ,    170,	{ cMul        , 407 } }, /* 101 */
-        {1, ReplaceParams ,    410,	{ cMul        , 409 } }, /* 102 */
-        {1, ReplaceParams ,    414,	{ cMul        , 412 } }, /* 103 */
-        {1, ReplaceParams ,    141,	{ cMul        , 416 } }, /* 104 */
-        {2, ReplaceParams ,    418,	{ cMul        , 417 } }, /* 105 */
-        {2, ReplaceParams ,    420,	{ cMul        , 419 } }, /* 106 */
-        {2, ReplaceParams ,    170,	{ cMul        , 207 } }, /* 107 */
-        {2, ReplaceParams ,    323,	{ cMul        , 423 } }, /* 108 */
-        {2, ReplaceParams ,    208,	{ cMul        , 426 } }, /* 109 */
-        {2, ReplaceParams ,    323,	{ cMul        , 429 } }, /* 110 */
-        {2, ProduceNewTree,    436,	{ cMul        , 433 } }, /* 111 */
-        {2, ProduceNewTree,    443,	{ cMul        , 440 } }, /* 112 */
-        {2, ProduceNewTree,    451,	{ cMul        , 448 } }, /* 113 */
-        {2, ReplaceParams ,    457,	{ cMul        , 454 } }, /* 114 */
-        {2, ReplaceParams ,    463,	{ cMul        , 460 } }, /* 115 */
-        {2, ReplaceParams ,    465,	{ cMul        , 464 } }, /* 116 */
-        {2, ReplaceParams ,    467,	{ cMul        , 466 } }, /* 117 */
-        {2, ReplaceParams ,    472,	{ cMul        , 469 } }, /* 118 */
-        {2, ReplaceParams ,    477,	{ cMul        , 474 } }, /* 119 */
-        {2, ReplaceParams ,    479,	{ cMul        , 478 } }, /* 120 */
-        {2, ReplaceParams ,    483,	{ cMul        , 482 } }, /* 121 */
-        {2, ReplaceParams ,    487,	{ cMul        , 486 } }, /* 122 */
-        {2, ReplaceParams ,    493,	{ cMul        , 490 } }, /* 123 */
-        {2, ReplaceParams ,    167,	{ cMul        , 494 } }, /* 124 */
-        {2, ReplaceParams ,    496,	{ cMul        , 495 } }, /* 125 */
-        {2, ReplaceParams ,    501,	{ cMul        , 498 } }, /* 126 */
-        {2, ReplaceParams ,    506,	{ cMul        , 503 } }, /* 127 */
-        {2, ReplaceParams ,    509,	{ cMul        , 507 } }, /* 128 */
-        {2, ReplaceParams ,    512,	{ cMul        , 510 } }, /* 129 */
-        {2, ProduceNewTree,    514,	{ cMod        , 513 } }, /* 130 */
-        {2, ProduceNewTree,    516,	{ cEqual      , 515 } }, /* 131 */
-        {2, ProduceNewTree,    116,	{ cNEqual     , 517 } }, /* 132 */
-        {2, ProduceNewTree,    171,	{ cLess       , 518 } }, /* 133 */
-        {2, ProduceNewTree,    215,	{ cLessOrEq   , 519 } }, /* 134 */
-        {2, ProduceNewTree,    116,	{ cGreater    , 520 } }, /* 135 */
-        {2, ProduceNewTree,    118,	{ cGreaterOrEq, 521 } }, /* 136 */
-        {1, ProduceNewTree,    525,	{ cNot        , 523 } }, /* 137 */
-        {1, ProduceNewTree,    529,	{ cNot        , 527 } }, /* 138 */
-        {1, ProduceNewTree,    533,	{ cNot        , 531 } }, /* 139 */
-        {1, ProduceNewTree,    537,	{ cNot        , 535 } }, /* 140 */
-        {1, ProduceNewTree,    541,	{ cNot        , 539 } }, /* 141 */
-        {1, ProduceNewTree,    545,	{ cNot        , 543 } }, /* 142 */
-        {0, ProduceNewTree,    116,	{ cAnd        , 170 } }, /* 143 */
-        {0, ReplaceParams ,    548,	{ cAnd        , 546 } }, /* 144 */
-        {1, ProduceNewTree,    549,	{ cAnd        , 18 } }, /* 145 */
-        {1, ProduceNewTree,    550,	{ cAnd        , 19 } }, /* 146 */
-        {1, ReplaceParams ,    135,	{ cAnd        , 551 } }, /* 147 */
-        {1, ReplaceParams ,    554,	{ cAnd        , 553 } }, /* 148 */
-        {1, ReplaceParams ,    18,	{ cAnd        , 555 } }, /* 149 */
-        {1, ReplaceParams ,    559,	{ cAnd        , 557 } }, /* 150 */
-        {1, ReplaceParams ,    563,	{ cAnd        , 561 } }, /* 151 */
-        {1, ReplaceParams ,    567,	{ cAnd        , 565 } }, /* 152 */
-        {1, ReplaceParams ,    571,	{ cAnd        , 569 } }, /* 153 */
-        {1, ReplaceParams ,    575,	{ cAnd        , 573 } }, /* 154 */
-        {1, ReplaceParams ,    579,	{ cAnd        , 577 } }, /* 155 */
-        {1, ReplaceParams ,    2,	{ cAnd        , 580 } }, /* 156 */
-        {1, ReplaceParams ,    141,	{ cAnd        , 582 } }, /* 157 */
-        {1, ReplaceParams ,    19,	{ cAnd        , 583 } }, /* 158 */
-        {2, ReplaceParams ,    2,	{ cAnd        , 584 } }, /* 159 */
-        {2, ProduceNewTree,    171,	{ cAnd        , 207 } }, /* 160 */
-        {2, ProduceNewTree,    171,	{ cAnd        , 587 } }, /* 161 */
-        {2, ReplaceParams ,    19,	{ cAnd        , 588 } }, /* 162 */
-        {3, ReplaceParams ,    595,	{ cAnd        , 592 } }, /* 163 */
-        {0, ProduceNewTree,    118,	{ cOr         , 170 } }, /* 164 */
-        {0, ReplaceParams ,    598,	{ cOr         , 596 } }, /* 165 */
-        {1, ProduceNewTree,    549,	{ cOr         , 18 } }, /* 166 */
-        {1, ProduceNewTree,    550,	{ cOr         , 19 } }, /* 167 */
-        {1, ReplaceParams ,    19,	{ cOr         , 599 } }, /* 168 */
-        {1, ReplaceParams ,    602,	{ cOr         , 601 } }, /* 169 */
-        {1, ReplaceParams ,    18,	{ cOr         , 555 } }, /* 170 */
-        {1, ReplaceParams ,    606,	{ cOr         , 604 } }, /* 171 */
-        {1, ReplaceParams ,    610,	{ cOr         , 608 } }, /* 172 */
-        {1, ReplaceParams ,    614,	{ cOr         , 612 } }, /* 173 */
-        {1, ReplaceParams ,    618,	{ cOr         , 616 } }, /* 174 */
-        {1, ReplaceParams ,    622,	{ cOr         , 620 } }, /* 175 */
-        {1, ReplaceParams ,    626,	{ cOr         , 624 } }, /* 176 */
-        {1, ReplaceParams ,    18,	{ cOr         , 627 } }, /* 177 */
-        {1, ReplaceParams ,    630,	{ cOr         , 629 } }, /* 178 */
-        {1, ReplaceParams ,    19,	{ cOr         , 583 } }, /* 179 */
-        {2, ReplaceParams ,    18,	{ cOr         , 631 } }, /* 180 */
-        {2, ProduceNewTree,    118,	{ cOr         , 207 } }, /* 181 */
-        {2, ProduceNewTree,    118,	{ cOr         , 634 } }, /* 182 */
-        {2, ReplaceParams ,    19,	{ cOr         , 635 } }, /* 183 */
-        {1, ProduceNewTree,    639,	{ cNotNot     , 637 } }, /* 184 */
-        {1, ProduceNewTree,    643,	{ cNotNot     , 641 } }, /* 185 */
-        {1, ProduceNewTree,    647,	{ cNotNot     , 645 } }, /* 186 */
-        {1, ProduceNewTree,    651,	{ cNotNot     , 649 } }, /* 187 */
-        {1, ProduceNewTree,    655,	{ cNotNot     , 653 } }, /* 188 */
-        {1, ProduceNewTree,    659,	{ cNotNot     , 657 } }, /* 189 */
-        {1, ProduceNewTree,    660,	{ cNotNot     , 550 } }, /* 190 */
-        {1, ProduceNewTree,    664,	{ cNotNot     , 662 } }, /* 191 */
-        {1, ProduceNewTree,    668,	{ cNotNot     , 666 } }, /* 192 */
-        {1, ReplaceParams ,    18,	{ cNotNot     , 549 } }, /* 193 */
-        {2, ProduceNewTree,    670,	{ cPow        , 669 } }, /* 194 */
-        {2, ProduceNewTree,    672,	{ cPow        , 671 } }, /* 195 */
-        {2, ProduceNewTree,    674,	{ cPow        , 673 } }, /* 196 */
-        {1, ProduceNewTree,    678,	{ cMul        , 675 } }, /* 197 */
-        {1, ProduceNewTree,    682,	{ cMul        , 679 } }, /* 198 */
-        {1, ReplaceParams ,    684,	{ cMul        , 683 } }, /* 199 */
-        {1, ReplaceParams ,    686,	{ cMul        , 685 } }, /* 200 */
-        {1, ReplaceParams ,    688,	{ cMul        , 687 } }, /* 201 */
-        {2, ReplaceParams ,    690,	{ cMul        , 689 } }, /* 202 */
-        {2, ReplaceParams ,    692,	{ cMul        , 691 } }, /* 203 */
-        {2, ReplaceParams ,    694,	{ cMul        , 693 } }, /* 204 */
-        {2, ReplaceParams ,    696,	{ cMul        , 695 } }, /* 205 */
-        {1, ProduceNewTree,    697,	{ cNotNot     , 18 } }, /* 206 */
+        {1, ProduceNewTree,    7,	{ cAcosh      , 0 } }, /* 0 */
+        {1, ProduceNewTree,    13,	{ cAsinh      , 0 } }, /* 1 */
+        {1, ProduceNewTree,    21,	{ cAtanh      , 0 } }, /* 2 */
+        {1, ProduceNewTree,    26,	{ cCosh       , 0 } }, /* 3 */
+        {1, ProduceNewTree,    29,	{ cSinh       , 0 } }, /* 4 */
+        {1, ProduceNewTree,    32,	{ cTan        , 0 } }, /* 5 */
+        {1, ProduceNewTree,    37,	{ cTanh       , 0 } }, /* 6 */
+        {1, ProduceNewTree,    39,	{ cNot        , 38 } }, /* 7 */
+        {1, ProduceNewTree,    43,	{ cAbs        , 41 } }, /* 8 */
+        {1, ProduceNewTree,    0,	{ cCos        , 44 } }, /* 9 */
+        {1, ProduceNewTree,    49,	{ cCos        , 46 } }, /* 10 */
+        {1, ProduceNewTree,    55,	{ cCos        , 52 } }, /* 11 */
+        {1, ReplaceParams ,    54,	{ cCos        , 56 } }, /* 12 */
+        {3, ProduceNewTree,    0,	{ cIf         , 57 } }, /* 13 */
+        {3, ProduceNewTree,    62,	{ cIf         , 59 } }, /* 14 */
+        {3, ProduceNewTree,    66,	{ cIf         , 63 } }, /* 15 */
+        {3, ProduceNewTree,    70,	{ cIf         , 67 } }, /* 16 */
+        {3, ProduceNewTree,    74,	{ cIf         , 71 } }, /* 17 */
+        {3, ProduceNewTree,    80,	{ cIf         , 76 } }, /* 18 */
+        {3, ProduceNewTree,    84,	{ cIf         , 81 } }, /* 19 */
+        {3, ProduceNewTree,    88,	{ cIf         , 85 } }, /* 20 */
+        {3, ProduceNewTree,    92,	{ cIf         , 89 } }, /* 21 */
+        {3, ProduceNewTree,    96,	{ cIf         , 94 } }, /* 22 */
+        {3, ProduceNewTree,    99,	{ cIf         , 97 } }, /* 23 */
+        {1, ProduceNewTree,    104,	{ cLog2       , 101 } }, /* 24 */
+        {1, ProduceNewTree,    108,	{ cLog2       , 106 } }, /* 25 */
+        {1, ProduceNewTree,    113,	{ cLog2       , 110 } }, /* 26 */
+        {1, ProduceNewTree,    120,	{ cLog2       , 116 } }, /* 27 */
+        {2, ReplaceParams ,    0,	{ cMax        , 121 } }, /* 28 */
+        {2, ReplaceParams ,    0,	{ cMin        , 121 } }, /* 29 */
+        {2, ReplaceParams ,    124,	{ cPow        , 123 } }, /* 30 */
+        {2, ReplaceParams ,    126,	{ cPow        , 125 } }, /* 31 */
+        {2, ReplaceParams ,    129,	{ cPow        , 128 } }, /* 32 */
+        {2, ReplaceParams ,    124,	{ cPow        , 131 } }, /* 33 */
+        {2, ReplaceParams ,    135,	{ cPow        , 133 } }, /* 34 */
+        {2, ProduceNewTree,    0,	{ cPow        , 136 } }, /* 35 */
+        {2, ReplaceParams ,    124,	{ cPow        , 140 } }, /* 36 */
+        {2, ReplaceParams ,    142,	{ cPow        , 141 } }, /* 37 */
+        {2, ReplaceParams ,    146,	{ cPow        , 144 } }, /* 38 */
+        {2, ReplaceParams ,    146,	{ cPow        , 148 } }, /* 39 */
+        {2, ReplaceParams ,    146,	{ cPow        , 149 } }, /* 40 */
+        {2, ProduceNewTree,    153,	{ cPow        , 150 } }, /* 41 */
+        {2, ReplaceParams ,    156,	{ cPow        , 155 } }, /* 42 */
+        {1, ProduceNewTree,    0,	{ cSin        , 157 } }, /* 43 */
+        {1, ProduceNewTree,    159,	{ cSin        , 46 } }, /* 44 */
+        {1, ProduceNewTree,    160,	{ cSin        , 52 } }, /* 45 */
+        {1, ProduceNewTree,    162,	{ cSin        , 56 } }, /* 46 */
+        {2, ReplaceParams ,    167,	{ cAdd        , 165 } }, /* 47 */
+        {2, ReplaceParams ,    170,	{ cAdd        , 169 } }, /* 48 */
+        {2, ReplaceParams ,    174,	{ cAdd        , 172 } }, /* 49 */
+        {2, ReplaceParams ,    176,	{ cAdd        , 175 } }, /* 50 */
+        {2, ReplaceParams ,    182,	{ cAdd        , 178 } }, /* 51 */
+        {2, ReplaceParams ,    195,	{ cAdd        , 185 } }, /* 52 */
+        {2, ReplaceParams ,    208,	{ cAdd        , 198 } }, /* 53 */
+        {2, ReplaceParams ,    213,	{ cAdd        , 211 } }, /* 54 */
+        {2, ReplaceParams ,    219,	{ cAdd        , 215 } }, /* 55 */
+        {2, ReplaceParams ,    223,	{ cAdd        , 222 } }, /* 56 */
+        {2, ReplaceParams ,    226,	{ cAdd        , 225 } }, /* 57 */
+        {2, ReplaceParams ,    232,	{ cAdd        , 228 } }, /* 58 */
+        {2, ReplaceParams ,    236,	{ cAdd        , 234 } }, /* 59 */
+        {2, ReplaceParams ,    239,	{ cAdd        , 237 } }, /* 60 */
+        {2, ReplaceParams ,    243,	{ cAdd        , 241 } }, /* 61 */
+        {2, ReplaceParams ,    232,	{ cAdd        , 245 } }, /* 62 */
+        {2, ReplaceParams ,    249,	{ cAdd        , 246 } }, /* 63 */
+        {2, ReplaceParams ,    252,	{ cAdd        , 250 } }, /* 64 */
+        {3, ReplaceParams ,    261,	{ cAdd        , 256 } }, /* 65 */
+        {2, ProduceNewTree,    266,	{ cMul        , 264 } }, /* 66 */
+        {2, ReplaceParams ,    272,	{ cMul        , 269 } }, /* 67 */
+        {2, ReplaceParams ,    276,	{ cMul        , 274 } }, /* 68 */
+        {2, ReplaceParams ,    279,	{ cMul        , 277 } }, /* 69 */
+        {2, ReplaceParams ,    286,	{ cMul        , 282 } }, /* 70 */
+        {2, ReplaceParams ,    290,	{ cMul        , 287 } }, /* 71 */
+        {2, ReplaceParams ,    294,	{ cMul        , 291 } }, /* 72 */
+        {2, ReplaceParams ,    295,	{ cMul        , 250 } }, /* 73 */
+        {2, ProduceNewTree,    176,	{ cEqual      , 296 } }, /* 74 */
+        {2, ProduceNewTree,    297,	{ cNEqual     , 296 } }, /* 75 */
+        {2, ProduceNewTree,    297,	{ cLess       , 296 } }, /* 76 */
+        {2, ProduceNewTree,    176,	{ cLessOrEq   , 296 } }, /* 77 */
+        {2, ProduceNewTree,    297,	{ cGreater    , 296 } }, /* 78 */
+        {2, ProduceNewTree,    176,	{ cGreaterOrEq, 296 } }, /* 79 */
+        {1, ProduceNewTree,    299,	{ cNot        , 298 } }, /* 80 */
+        {1, ProduceNewTree,    298,	{ cNot        , 299 } }, /* 81 */
+        {1, ProduceNewTree,    301,	{ cNot        , 300 } }, /* 82 */
+        {1, ProduceNewTree,    303,	{ cNot        , 302 } }, /* 83 */
+        {1, ProduceNewTree,    302,	{ cNot        , 303 } }, /* 84 */
+        {1, ProduceNewTree,    300,	{ cNot        , 301 } }, /* 85 */
+        {1, ProduceNewTree,    307,	{ cNot        , 305 } }, /* 86 */
+        {1, ProduceNewTree,    309,	{ cNot        , 308 } }, /* 87 */
+        {0, ReplaceParams ,    311,	{ cAnd        , 304 } }, /* 88 */
+        {1, ReplaceParams ,    313,	{ cAnd        , 312 } }, /* 89 */
+        {1, ReplaceParams ,    0,	{ cAnd        , 314 } }, /* 90 */
+        {1, ReplaceParams ,    299,	{ cAnd        , 315 } }, /* 91 */
+        {1, ReplaceParams ,    298,	{ cAnd        , 316 } }, /* 92 */
+        {1, ReplaceParams ,    301,	{ cAnd        , 317 } }, /* 93 */
+        {1, ReplaceParams ,    303,	{ cAnd        , 318 } }, /* 94 */
+        {1, ReplaceParams ,    302,	{ cAnd        , 319 } }, /* 95 */
+        {1, ReplaceParams ,    300,	{ cAnd        , 320 } }, /* 96 */
+        {1, ReplaceParams ,    0,	{ cAnd        , 321 } }, /* 97 */
+        {1, ReplaceParams ,    313,	{ cAnd        , 322 } }, /* 98 */
+        {2, ReplaceParams ,    0,	{ cAnd        , 121 } }, /* 99 */
+        {2, ProduceNewTree,    297,	{ cAnd        , 323 } }, /* 100 */
+        {2, ProduceNewTree,    297,	{ cAnd        , 324 } }, /* 101 */
+        {2, ProduceNewTree,    297,	{ cAnd        , 325 } }, /* 102 */
+        {2, ProduceNewTree,    297,	{ cAnd        , 326 } }, /* 103 */
+        {2, ProduceNewTree,    300,	{ cAnd        , 327 } }, /* 104 */
+        {2, ProduceNewTree,    297,	{ cAnd        , 328 } }, /* 105 */
+        {2, ProduceNewTree,    298,	{ cAnd        , 329 } }, /* 106 */
+        {2, ProduceNewTree,    303,	{ cAnd        , 330 } }, /* 107 */
+        {2, ReplaceParams ,    313,	{ cAnd        , 331 } }, /* 108 */
+        {3, ReplaceParams ,    335,	{ cAnd        , 334 } }, /* 109 */
+        {0, ReplaceParams ,    336,	{ cOr         , 304 } }, /* 110 */
+        {1, ReplaceParams ,    313,	{ cOr         , 312 } }, /* 111 */
+        {1, ReplaceParams ,    0,	{ cOr         , 314 } }, /* 112 */
+        {1, ReplaceParams ,    299,	{ cOr         , 315 } }, /* 113 */
+        {1, ReplaceParams ,    298,	{ cOr         , 316 } }, /* 114 */
+        {1, ReplaceParams ,    301,	{ cOr         , 317 } }, /* 115 */
+        {1, ReplaceParams ,    303,	{ cOr         , 318 } }, /* 116 */
+        {1, ReplaceParams ,    302,	{ cOr         , 319 } }, /* 117 */
+        {1, ReplaceParams ,    300,	{ cOr         , 320 } }, /* 118 */
+        {1, ReplaceParams ,    0,	{ cOr         , 321 } }, /* 119 */
+        {1, ReplaceParams ,    313,	{ cOr         , 322 } }, /* 120 */
+        {2, ReplaceParams ,    0,	{ cOr         , 121 } }, /* 121 */
+        {2, ProduceNewTree,    176,	{ cOr         , 323 } }, /* 122 */
+        {2, ProduceNewTree,    176,	{ cOr         , 324 } }, /* 123 */
+        {2, ProduceNewTree,    302,	{ cOr         , 337 } }, /* 124 */
+        {2, ProduceNewTree,    299,	{ cOr         , 325 } }, /* 125 */
+        {2, ProduceNewTree,    176,	{ cOr         , 326 } }, /* 126 */
+        {2, ProduceNewTree,    302,	{ cOr         , 338 } }, /* 127 */
+        {2, ProduceNewTree,    176,	{ cOr         , 328 } }, /* 128 */
+        {2, ProduceNewTree,    301,	{ cOr         , 339 } }, /* 129 */
+        {2, ProduceNewTree,    301,	{ cOr         , 340 } }, /* 130 */
+        {2, ReplaceParams ,    313,	{ cOr         , 331 } }, /* 131 */
+        {1, ProduceNewTree,    298,	{ cNotNot     , 298 } }, /* 132 */
+        {1, ProduceNewTree,    299,	{ cNotNot     , 299 } }, /* 133 */
+        {1, ProduceNewTree,    300,	{ cNotNot     , 300 } }, /* 134 */
+        {1, ProduceNewTree,    302,	{ cNotNot     , 302 } }, /* 135 */
+        {1, ProduceNewTree,    303,	{ cNotNot     , 303 } }, /* 136 */
+        {1, ProduceNewTree,    301,	{ cNotNot     , 301 } }, /* 137 */
+        {1, ProduceNewTree,    341,	{ cNotNot     , 38 } }, /* 138 */
+        {1, ProduceNewTree,    345,	{ cNotNot     , 343 } }, /* 139 */
+        {1, ProduceNewTree,    347,	{ cNotNot     , 346 } }, /* 140 */
+        {1, ReplaceParams ,    0,	{ cNotNot     , 39 } }, /* 141 */
+        {2, ReplaceParams ,    349,	{ cAtan2      , 348 } }, /* 142 */
+        {1, ProduceNewTree,    351,	{ cCosh       , 350 } }, /* 143 */
+        {1, ReplaceParams ,    111,	{ cCosh       , 353 } }, /* 144 */
+        {3, ProduceNewTree,    0,	{ cIf         , 57 } }, /* 145 */
+        {3, ProduceNewTree,    62,	{ cIf         , 59 } }, /* 146 */
+        {3, ProduceNewTree,    66,	{ cIf         , 63 } }, /* 147 */
+        {3, ProduceNewTree,    70,	{ cIf         , 67 } }, /* 148 */
+        {3, ProduceNewTree,    74,	{ cIf         , 71 } }, /* 149 */
+        {3, ProduceNewTree,    80,	{ cIf         , 76 } }, /* 150 */
+        {3, ProduceNewTree,    84,	{ cIf         , 81 } }, /* 151 */
+        {3, ProduceNewTree,    88,	{ cIf         , 85 } }, /* 152 */
+        {3, ProduceNewTree,    92,	{ cIf         , 89 } }, /* 153 */
+        {3, ProduceNewTree,    96,	{ cIf         , 94 } }, /* 154 */
+        {3, ProduceNewTree,    99,	{ cIf         , 97 } }, /* 155 */
+        {1, ProduceNewTree,    104,	{ cLog2       , 101 } }, /* 156 */
+        {1, ProduceNewTree,    108,	{ cLog2       , 106 } }, /* 157 */
+        {1, ProduceNewTree,    113,	{ cLog2       , 110 } }, /* 158 */
+        {1, ProduceNewTree,    120,	{ cLog2       , 116 } }, /* 159 */
+        {1, ProduceNewTree,    363,	{ cLog2       , 359 } }, /* 160 */
+        {1, ProduceNewTree,    372,	{ cLog2       , 368 } }, /* 161 */
+        {2, ReplaceParams ,    0,	{ cMax        , 121 } }, /* 162 */
+        {2, ReplaceParams ,    0,	{ cMin        , 121 } }, /* 163 */
+        {2, ReplaceParams ,    124,	{ cPow        , 123 } }, /* 164 */
+        {2, ReplaceParams ,    126,	{ cPow        , 125 } }, /* 165 */
+        {2, ReplaceParams ,    129,	{ cPow        , 128 } }, /* 166 */
+        {2, ReplaceParams ,    124,	{ cPow        , 131 } }, /* 167 */
+        {2, ReplaceParams ,    135,	{ cPow        , 133 } }, /* 168 */
+        {2, ProduceNewTree,    0,	{ cPow        , 136 } }, /* 169 */
+        {2, ReplaceParams ,    124,	{ cPow        , 140 } }, /* 170 */
+        {2, ReplaceParams ,    142,	{ cPow        , 141 } }, /* 171 */
+        {2, ReplaceParams ,    146,	{ cPow        , 144 } }, /* 172 */
+        {2, ReplaceParams ,    146,	{ cPow        , 148 } }, /* 173 */
+        {2, ReplaceParams ,    146,	{ cPow        , 149 } }, /* 174 */
+        {2, ProduceNewTree,    153,	{ cPow        , 150 } }, /* 175 */
+        {2, ReplaceParams ,    156,	{ cPow        , 155 } }, /* 176 */
+        {1, ProduceNewTree,    374,	{ cSinh       , 373 } }, /* 177 */
+        {1, ProduceNewTree,    376,	{ cSinh       , 353 } }, /* 178 */
+        {1, ProduceNewTree,    0,	{ cTan        , 377 } }, /* 179 */
+        {1, ProduceNewTree,    379,	{ cTan        , 353 } }, /* 180 */
+        {1, ProduceNewTree,    381,	{ cTanh       , 353 } }, /* 181 */
+        {2, ProduceNewTree,    386,	{ cAdd        , 384 } }, /* 182 */
+        {2, ProduceNewTree,    391,	{ cAdd        , 389 } }, /* 183 */
+        {2, ReplaceParams ,    397,	{ cAdd        , 392 } }, /* 184 */
+        {2, ReplaceParams ,    400,	{ cAdd        , 398 } }, /* 185 */
+        {2, ReplaceParams ,    403,	{ cAdd        , 401 } }, /* 186 */
+        {2, ReplaceParams ,    406,	{ cAdd        , 405 } }, /* 187 */
+        {2, ReplaceParams ,    409,	{ cAdd        , 408 } }, /* 188 */
+        {2, ReplaceParams ,    174,	{ cAdd        , 172 } }, /* 189 */
+        {2, ReplaceParams ,    416,	{ cAdd        , 412 } }, /* 190 */
+        {2, ReplaceParams ,    420,	{ cAdd        , 418 } }, /* 191 */
+        {2, ReplaceParams ,    422,	{ cAdd        , 421 } }, /* 192 */
+        {2, ReplaceParams ,    426,	{ cAdd        , 424 } }, /* 193 */
+        {2, ReplaceParams ,    429,	{ cAdd        , 427 } }, /* 194 */
+        {2, ReplaceParams ,    432,	{ cAdd        , 430 } }, /* 195 */
+        {2, ReplaceParams ,    436,	{ cAdd        , 434 } }, /* 196 */
+        {2, ReplaceParams ,    439,	{ cAdd        , 437 } }, /* 197 */
+        {2, ReplaceParams ,    444,	{ cAdd        , 442 } }, /* 198 */
+        {2, ReplaceParams ,    448,	{ cAdd        , 446 } }, /* 199 */
+        {2, ReplaceParams ,    249,	{ cAdd        , 246 } }, /* 200 */
+        {2, ReplaceParams ,    252,	{ cAdd        , 250 } }, /* 201 */
+        {2, ProduceNewTree,    266,	{ cMul        , 264 } }, /* 202 */
+        {2, ReplaceParams ,    272,	{ cMul        , 269 } }, /* 203 */
+        {2, ReplaceParams ,    55,	{ cMul        , 449 } }, /* 204 */
+        {2, ReplaceParams ,    451,	{ cMul        , 450 } }, /* 205 */
+        {2, ReplaceParams ,    453,	{ cMul        , 452 } }, /* 206 */
+        {2, ReplaceParams ,    455,	{ cMul        , 454 } }, /* 207 */
+        {2, ReplaceParams ,    276,	{ cMul        , 274 } }, /* 208 */
+        {2, ReplaceParams ,    279,	{ cMul        , 277 } }, /* 209 */
+        {2, ReplaceParams ,    459,	{ cMul        , 457 } }, /* 210 */
+        {2, ReplaceParams ,    463,	{ cMul        , 461 } }, /* 211 */
+        {2, ReplaceParams ,    465,	{ cMul        , 464 } }, /* 212 */
+        {2, ReplaceParams ,    422,	{ cMul        , 466 } }, /* 213 */
+        {2, ReplaceParams ,    478,	{ cMul        , 472 } }, /* 214 */
+        {2, ReplaceParams ,    480,	{ cMul        , 479 } }, /* 215 */
+        {2, ReplaceParams ,    487,	{ cMul        , 484 } }, /* 216 */
+        {2, ReplaceParams ,    490,	{ cMul        , 489 } }, /* 217 */
+        {2, ReplaceParams ,    493,	{ cMul        , 492 } }, /* 218 */
+        {2, ReplaceParams ,    495,	{ cMul        , 494 } }, /* 219 */
+        {2, ReplaceParams ,    497,	{ cMul        , 496 } }, /* 220 */
+        {2, ReplaceParams ,    176,	{ cMul        , 502 } }, /* 221 */
+        {2, ReplaceParams ,    406,	{ cMul        , 503 } }, /* 222 */
+        {2, ReplaceParams ,    505,	{ cMul        , 504 } }, /* 223 */
+        {2, ReplaceParams ,    511,	{ cMul        , 510 } }, /* 224 */
+        {2, ReplaceParams ,    515,	{ cMul        , 513 } }, /* 225 */
+        {2, ReplaceParams ,    490,	{ cMul        , 519 } }, /* 226 */
+        {2, ReplaceParams ,    463,	{ cMul        , 521 } }, /* 227 */
+        {2, ReplaceParams ,    294,	{ cMul        , 291 } }, /* 228 */
+        {2, ReplaceParams ,    295,	{ cMul        , 250 } }, /* 229 */
+        {2, ProduceNewTree,    176,	{ cEqual      , 296 } }, /* 230 */
+        {2, ProduceNewTree,    297,	{ cNEqual     , 296 } }, /* 231 */
+        {2, ProduceNewTree,    297,	{ cLess       , 296 } }, /* 232 */
+        {2, ProduceNewTree,    176,	{ cLessOrEq   , 296 } }, /* 233 */
+        {2, ProduceNewTree,    297,	{ cGreater    , 296 } }, /* 234 */
+        {2, ProduceNewTree,    176,	{ cGreaterOrEq, 296 } }, /* 235 */
+        {1, ProduceNewTree,    299,	{ cNot        , 298 } }, /* 236 */
+        {1, ProduceNewTree,    298,	{ cNot        , 299 } }, /* 237 */
+        {1, ProduceNewTree,    301,	{ cNot        , 300 } }, /* 238 */
+        {1, ProduceNewTree,    303,	{ cNot        , 302 } }, /* 239 */
+        {1, ProduceNewTree,    302,	{ cNot        , 303 } }, /* 240 */
+        {1, ProduceNewTree,    300,	{ cNot        , 301 } }, /* 241 */
+        {1, ProduceNewTree,    307,	{ cNot        , 305 } }, /* 242 */
+        {1, ProduceNewTree,    309,	{ cNot        , 308 } }, /* 243 */
+        {0, ReplaceParams ,    311,	{ cAnd        , 304 } }, /* 244 */
+        {1, ReplaceParams ,    313,	{ cAnd        , 312 } }, /* 245 */
+        {1, ReplaceParams ,    0,	{ cAnd        , 314 } }, /* 246 */
+        {1, ReplaceParams ,    299,	{ cAnd        , 315 } }, /* 247 */
+        {1, ReplaceParams ,    298,	{ cAnd        , 316 } }, /* 248 */
+        {1, ReplaceParams ,    301,	{ cAnd        , 317 } }, /* 249 */
+        {1, ReplaceParams ,    303,	{ cAnd        , 318 } }, /* 250 */
+        {1, ReplaceParams ,    302,	{ cAnd        , 319 } }, /* 251 */
+        {1, ReplaceParams ,    300,	{ cAnd        , 320 } }, /* 252 */
+        {1, ReplaceParams ,    0,	{ cAnd        , 321 } }, /* 253 */
+        {1, ReplaceParams ,    313,	{ cAnd        , 322 } }, /* 254 */
+        {2, ReplaceParams ,    0,	{ cAnd        , 121 } }, /* 255 */
+        {2, ProduceNewTree,    297,	{ cAnd        , 323 } }, /* 256 */
+        {2, ProduceNewTree,    297,	{ cAnd        , 324 } }, /* 257 */
+        {2, ProduceNewTree,    297,	{ cAnd        , 325 } }, /* 258 */
+        {2, ProduceNewTree,    297,	{ cAnd        , 326 } }, /* 259 */
+        {2, ProduceNewTree,    300,	{ cAnd        , 327 } }, /* 260 */
+        {2, ProduceNewTree,    297,	{ cAnd        , 328 } }, /* 261 */
+        {2, ProduceNewTree,    298,	{ cAnd        , 329 } }, /* 262 */
+        {2, ProduceNewTree,    303,	{ cAnd        , 330 } }, /* 263 */
+        {2, ReplaceParams ,    313,	{ cAnd        , 331 } }, /* 264 */
+        {3, ReplaceParams ,    335,	{ cAnd        , 334 } }, /* 265 */
+        {0, ReplaceParams ,    336,	{ cOr         , 304 } }, /* 266 */
+        {1, ReplaceParams ,    313,	{ cOr         , 312 } }, /* 267 */
+        {1, ReplaceParams ,    0,	{ cOr         , 314 } }, /* 268 */
+        {1, ReplaceParams ,    299,	{ cOr         , 315 } }, /* 269 */
+        {1, ReplaceParams ,    298,	{ cOr         , 316 } }, /* 270 */
+        {1, ReplaceParams ,    301,	{ cOr         , 317 } }, /* 271 */
+        {1, ReplaceParams ,    303,	{ cOr         , 318 } }, /* 272 */
+        {1, ReplaceParams ,    302,	{ cOr         , 319 } }, /* 273 */
+        {1, ReplaceParams ,    300,	{ cOr         , 320 } }, /* 274 */
+        {1, ReplaceParams ,    0,	{ cOr         , 321 } }, /* 275 */
+        {1, ReplaceParams ,    313,	{ cOr         , 322 } }, /* 276 */
+        {2, ReplaceParams ,    0,	{ cOr         , 121 } }, /* 277 */
+        {2, ProduceNewTree,    176,	{ cOr         , 323 } }, /* 278 */
+        {2, ProduceNewTree,    176,	{ cOr         , 324 } }, /* 279 */
+        {2, ProduceNewTree,    302,	{ cOr         , 337 } }, /* 280 */
+        {2, ProduceNewTree,    299,	{ cOr         , 325 } }, /* 281 */
+        {2, ProduceNewTree,    176,	{ cOr         , 326 } }, /* 282 */
+        {2, ProduceNewTree,    302,	{ cOr         , 338 } }, /* 283 */
+        {2, ProduceNewTree,    176,	{ cOr         , 328 } }, /* 284 */
+        {2, ProduceNewTree,    301,	{ cOr         , 339 } }, /* 285 */
+        {2, ProduceNewTree,    301,	{ cOr         , 340 } }, /* 286 */
+        {2, ReplaceParams ,    313,	{ cOr         , 331 } }, /* 287 */
+        {1, ProduceNewTree,    298,	{ cNotNot     , 298 } }, /* 288 */
+        {1, ProduceNewTree,    299,	{ cNotNot     , 299 } }, /* 289 */
+        {1, ProduceNewTree,    300,	{ cNotNot     , 300 } }, /* 290 */
+        {1, ProduceNewTree,    302,	{ cNotNot     , 302 } }, /* 291 */
+        {1, ProduceNewTree,    303,	{ cNotNot     , 303 } }, /* 292 */
+        {1, ProduceNewTree,    301,	{ cNotNot     , 301 } }, /* 293 */
+        {1, ProduceNewTree,    341,	{ cNotNot     , 38 } }, /* 294 */
+        {1, ProduceNewTree,    345,	{ cNotNot     , 343 } }, /* 295 */
+        {1, ProduceNewTree,    347,	{ cNotNot     , 346 } }, /* 296 */
+        {1, ReplaceParams ,    0,	{ cNotNot     , 39 } }, /* 297 */
+        {2, ReplaceParams ,    523,	{ cPow        , 522 } }, /* 298 */
+        {2, ReplaceParams ,    525,	{ cPow        , 524 } }, /* 299 */
+        {2, ReplaceParams ,    527,	{ cPow        , 526 } }, /* 300 */
+        {1, ProduceNewTree,    529,	{ cMul        , 528 } }, /* 301 */
+        {1, ProduceNewTree,    531,	{ cMul        , 530 } }, /* 302 */
+        {2, ReplaceParams ,    533,	{ cMul        , 532 } }, /* 303 */
+        {2, ReplaceParams ,    535,	{ cMul        , 534 } }, /* 304 */
+        {2, ReplaceParams ,    533,	{ cMul        , 536 } }, /* 305 */
+        {2, ReplaceParams ,    538,	{ cMul        , 537 } }, /* 306 */
+        {2, ReplaceParams ,    542,	{ cMul        , 540 } }, /* 307 */
+        {2, ReplaceParams ,    545,	{ cMul        , 543 } }, /* 308 */
+        {2, ReplaceParams ,    547,	{ cMul        , 546 } }, /* 309 */
+        {2, ReplaceParams ,    545,	{ cMul        , 548 } }, /* 310 */
     };
 }
 
@@ -3346,9 +3698,10 @@ namespace FPoptimizer_Grammar
     {
         clist, plist, mlist, flist, rlist,
         {
-            {0, 1 }, /* 0 */
-            {1, 193 }, /* 1 */
-            {194, 13 }, /* 2 */
+            {0, 8 }, /* 0 */
+            {8, 134 }, /* 1 */
+            {142, 156 }, /* 2 */
+            {298, 13 }, /* 3 */
         }
     };
 }
@@ -3370,9 +3723,18 @@ using namespace FUNCTIONPARSERTYPES;
 
 //#define DEBUG_SUBSTITUTIONS
 
+#ifdef DEBUG_SUBSTITUTIONS
+#include <sstream>
+namespace FPoptimizer_Grammar
+{
+    void DumpTree(const FPoptimizer_CodeTree::CodeTree& tree, std::ostream& o = std::cout);
+    void DumpHashes(const FPoptimizer_CodeTree::CodeTree& tree);
+}
+#endif
+
 namespace
 {
-    /* Little birds tell me that std::equal_range() is practically worthless
+    /* I have heard that std::equal_range() is practically worthless
      * due to the insane limitation that the two parameters for Comp() must
      * be of the same type. Hence we must reinvent the wheel and implement
      * our own here. This is practically identical to the one from
@@ -3455,8 +3817,703 @@ namespace FPoptimizer_CodeTree
 {
     void CodeTree::ConstantFolding()
     {
+        using namespace std;
+
         // Insert here any hardcoded constant-folding optimizations
-        // that you want to be done at bytecode->codetree conversion time.
+        // that you want to be done whenever a new subtree is generated.
+        /* Not recursive. */
+
+        if(Opcode != cImmed)
+        {
+            MinMaxTree p = CalculateResultBoundaries();
+            if(p.has_min && p.has_max && p.min == p.max)
+            {
+                // Replace us with this immed
+                Params.clear();
+                Opcode = cImmed;
+                Value  = p.min;
+                return;
+            }
+        }
+
+        double const_value = 1.0;
+        size_t which_param = 0;
+
+        /* Sub-list assimilation prepass */
+        switch( (OPCODE) Opcode)
+        {
+            case cAdd:
+            case cMul:
+            case cMin:
+            case cMax:
+            case cAnd:
+            case cOr:
+            {
+                /* If the list contains another list of the same kind, assimilate it */
+                for(size_t a=Params.size(); a-- > 0; )
+                    if(Params[a].param->Opcode == Opcode
+                    && Params[a].sign == false)
+                    {
+                        // Assimilate its children and remove it
+                        CodeTreeP tree = Params[a].param;
+                        Params.erase(Params.begin()+a);
+                        for(size_t b=0; b<tree->Params.size(); ++b)
+                            AddParam(tree->Params[b]);
+                    }
+                break;
+            }
+            default: break;
+        }
+
+        /* Constant folding */
+        switch( (OPCODE) Opcode)
+        {
+            case cImmed:
+                break; // nothing to do
+            case cVar:
+                break; // nothing to do
+
+            ReplaceTreeWithOne:
+                const_value = 1.0;
+                goto ReplaceTreeWithConstValue;
+            ReplaceTreeWithZero:
+                const_value = 0.0;
+            ReplaceTreeWithConstValue:
+                /*std::cout << "Replacing "; FPoptimizer_Grammar::DumpTree(*this);
+                std::cout << " with " << const_value << "\n";*/
+                Params.clear();
+                Opcode = cImmed;
+                Value  = const_value;
+                break;
+            ReplaceTreeWithParam0:
+                which_param = 0;
+            ReplaceTreeWithParam:
+                /*std::cout << "Before replace: "; FPoptimizer_Grammar::DumpTree(*this);
+                std::cout << "\n";*/
+                Opcode = Params[which_param].param->Opcode;
+                Var    = Params[which_param].param->Var;
+                Value  = Params[which_param].param->Value;
+                Params.swap(Params[which_param].param->Params);
+                for(size_t a=0; a<Params.size(); ++a)
+                    Params[a].param->Parent = this;
+                /*std::cout << "After replace: "; FPoptimizer_Grammar::DumpTree(*this);
+                std::cout << "\n";*/
+                break;
+
+            case cAnd:
+            {
+                // If the and-list contains an expression that evaluates to approx. zero,
+                // the whole list evaluates to zero.
+                // If all expressions within the and-list evaluate to approx. nonzero,
+                // the whole list evaluates to one.
+                bool all_values_are_nonzero = true;
+                for(size_t a=0; a<Params.size(); ++a)
+                {
+                    MinMaxTree p = Params[a].param->CalculateResultBoundaries();
+                    if(p.has_min && p.has_max
+                    && p.min > -0.5 && p.max < 0.5) // -0.5 < x < 0.5 = zero
+                    {
+                        if(!Params[a].sign) goto ReplaceTreeWithZero;
+                        all_values_are_nonzero = false;
+                    }
+                    else if( (p.has_max && p.max <= -0.5)
+                          || (p.has_min && p.min >= 0.5)) // |x| >= 0.5  = nonzero
+                    {
+                        if(Params[a].sign) goto ReplaceTreeWithZero;
+                    }
+                    else
+                        all_values_are_nonzero = false;
+                }
+                if(all_values_are_nonzero) goto ReplaceTreeWithOne;
+                if(Params.size() == 1)
+                {
+                    // Replace self with the single operand
+                    Opcode = Params[0].sign ? cNot : cNotNot;
+                    Params[0].sign = false;
+                }
+                if(Params.empty()) goto ReplaceTreeWithZero;
+                break;
+            }
+            case cOr:
+            {
+                // If the or-list contains an expression that evaluates to approx. nonzero,
+                // the whole list evaluates to one.
+                // If all expressions within the and-list evaluate to approx. zero,
+                // the whole list evaluates to zero.
+                bool all_values_are_zero = true;
+                for(size_t a=0; a<Params.size(); ++a)
+                {
+                    MinMaxTree p = Params[a].param->CalculateResultBoundaries();
+                    if(p.has_min && p.has_max
+                    && p.min > -0.5 && p.max < 0.5) // -0.5 < x < 0.5 = zero
+                    {
+                        if(Params[a].sign) goto ReplaceTreeWithOne;
+                    }
+                    else if( (p.has_max && p.max <= -0.5)
+                          || (p.has_min && p.min >= 0.5)) // |x| >= 0.5  = nonzero
+                    {
+                        if(!Params[a].sign) goto ReplaceTreeWithOne;
+                        all_values_are_zero = false;
+                    }
+                    else
+                        all_values_are_zero = false;
+                }
+                if(all_values_are_zero) goto ReplaceTreeWithZero;
+                if(Params.size() == 1)
+                {
+                    // Replace self with the single operand
+                    Opcode = Params[0].sign ? cNot : cNotNot;
+                    Params[0].sign = false;
+                }
+                if(Params.empty()) goto ReplaceTreeWithOne;
+                break;
+            }
+            case cNot:
+            {
+                // If the sub-expression evaluates to approx. zero, yield one.
+                // If the sub-expression evaluates to approx. nonzero, yield zero.
+                MinMaxTree p = Params[0].param->CalculateResultBoundaries();
+                if(p.has_min && p.has_max
+                && p.min > -0.5 && p.max < 0.5) // -0.5 < x < 0.5 = zero
+                {
+                    goto ReplaceTreeWithOne;
+                }
+                else if( (p.has_max && p.max <= -0.5)
+                      || (p.has_min && p.min >= 0.5)) // |x| >= 0.5  = nonzero
+                    goto ReplaceTreeWithZero;
+                break;
+            }
+            case cNotNot:
+            {
+                // If the sub-expression evaluates to approx. zero, yield zero.
+                // If the sub-expression evaluates to approx. nonzero, yield one.
+                MinMaxTree p = Params[0].param->CalculateResultBoundaries();
+                if(p.has_min && p.has_max
+                && p.min > -0.5 && p.max < 0.5) // -0.5 < x < 0.5 = zero
+                {
+                    goto ReplaceTreeWithZero;
+                }
+                else if( (p.has_max && p.max <= -0.5)
+                      || (p.has_min && p.min >= 0.5)) // |x| >= 0.5  = nonzero
+                    goto ReplaceTreeWithOne;
+                break;
+            }
+            case cIf:
+            {
+                // If the sub-expression evaluates to approx. zero, yield param3.
+                // If the sub-expression evaluates to approx. nonzero, yield param2.
+                MinMaxTree p = Params[0].param->CalculateResultBoundaries();
+                if(p.has_min && p.has_max
+                && p.min > -0.5 && p.max < 0.5) // -0.5 < x < 0.5 = zero
+                {
+                    which_param = 2;
+                    goto ReplaceTreeWithParam;
+                }
+                else if( (p.has_max && p.max <= -0.5)
+                      || (p.has_min && p.min >= 0.5)) // |x| >= 0.5  = nonzero
+                {
+                    which_param = 1;
+                    goto ReplaceTreeWithParam;
+                }
+                break;
+            }
+            case cMul:
+            {
+            NowWeAreMulGroup: ;
+                // If one sub-expression evalutes to exact zero, yield zero.
+                double mul_immed_sum = 1.0;
+                size_t n_mul_immeds = 0; bool needs_resynth=false;
+                for(size_t a=0; a<Params.size(); ++a)
+                {
+                    if(!Params[a].param->IsImmed()) continue;
+                    // ^ Only check constant values
+                    if(FloatEqual(Params[a].param->GetImmed(), 0.0))
+                        goto ReplaceTreeWithZero;
+                    if(FloatEqual(Params[a].param->GetImmed(), 1.0)) needs_resynth = true;
+                    mul_immed_sum *= Params[a].param->GetImmed(); ++n_mul_immeds;
+                }
+                // Merge immeds.
+                if(n_mul_immeds > 1) needs_resynth = true;
+                if(needs_resynth)
+                {
+                    // delete immeds and add new ones
+                    //std::cout << "cMul: Will add new immed " << mul_immed_sum << "\n";
+                    for(size_t a=Params.size(); a-->0; )
+                        if(Params[a].param->IsImmed())
+                        {
+                            //std::cout << " - For that, deleting immed " << Params[a].param->GetImmed();
+                            //std::cout << "\n";
+                            Params.erase(Params.begin()+a);
+                        }
+                    if(!FloatEqual(mul_immed_sum, 1.0))
+                        AddParam( Param(new CodeTree(mul_immed_sum), false) );
+                }
+                if(Params.size() == 1)
+                {
+                    // Replace self with the single operand
+                    goto ReplaceTreeWithParam0;
+                }
+                if(Params.empty()) goto ReplaceTreeWithOne;
+                break;
+            }
+            case cAdd:
+            {
+                double immed_sum = 0.0;
+                size_t n_immeds = 0; bool needs_resynth=false;
+                for(size_t a=0; a<Params.size(); ++a)
+                {
+                    if(!Params[a].param->IsImmed()) continue;
+                    // ^ Only check constant values
+                    if(FloatEqual(Params[a].param->GetImmed(), 0.0)) needs_resynth = true;
+                    immed_sum += Params[a].param->GetImmed(); ++n_immeds;
+                }
+                // Merge immeds.
+                if(n_immeds > 1) needs_resynth = true;
+                if(needs_resynth)
+                {
+                    // delete immeds and add new ones
+                    //std::cout << "cAdd: Will add new immed " << immed_sum << "\n";
+                    //std::cout << "In: "; FPoptimizer_Grammar::DumpTree(*this);
+                    //std::cout << "\n";
+
+                    for(size_t a=Params.size(); a-->0; )
+                        if(Params[a].param->IsImmed())
+                        {
+                            //std::cout << " - For that, deleting immed " << Params[a].param->GetImmed();
+                            //std::cout << "\n";
+                            Params.erase(Params.begin()+a);
+                        }
+                    if(!FloatEqual(immed_sum, 0.0))
+                        AddParam( Param(new CodeTree(immed_sum), false) );
+                }
+                if(Params.size() == 1)
+                {
+                    // Replace self with the single operand
+                    goto ReplaceTreeWithParam0;
+                }
+                if(Params.empty()) goto ReplaceTreeWithZero;
+                break;
+            }
+            case cMin:
+            {
+                /* Goal: If there is any pair of two operands, where
+                 * their ranges form a disconnected set, i.e. as below:
+                 *     xxxxx
+                 *            yyyyyy
+                 * Then remove the larger one.
+                 *
+                 * Algorithm: 1. figure out the smallest maximum of all operands.
+                 *            2. eliminate all operands where their minimum is
+                 *               larger than the selected maximum.
+                 */
+                MinMaxTree smallest_maximum;
+                for(size_t a=0; a<Params.size(); ++a)
+                {
+                    MinMaxTree p = Params[a].param->CalculateResultBoundaries();
+                    if(p.has_max && (!smallest_maximum.has_max || p.max < smallest_maximum.max))
+                    {
+                        smallest_maximum.max = p.max;
+                        smallest_maximum.has_max = true;
+                }   }
+                if(smallest_maximum.has_max)
+                    for(size_t a=Params.size(); a-- > 0; )
+                    {
+                        MinMaxTree p = Params[a].param->CalculateResultBoundaries();
+                        if(p.has_min && p.min > smallest_maximum.max)
+                            Params.erase(Params.begin() + a);
+                    }
+                //fprintf(stderr, "Remains: %u\n", (unsigned)Params.size());
+                if(Params.size() == 1)
+                {
+                    // Replace self with the single operand
+                    goto ReplaceTreeWithParam0;
+                }
+                break;
+            }
+            case cMax:
+            {
+                /* Goal: If there is any pair of two operands, where
+                 * their ranges form a disconnected set, i.e. as below:
+                 *     xxxxx
+                 *            yyyyyy
+                 * Then remove the smaller one.
+                 *
+                 * Algorithm: 1. figure out the biggest minimum of all operands.
+                 *            2. eliminate all operands where their maximum is
+                 *               smaller than the selected minimum.
+                 */
+                MinMaxTree biggest_minimum;
+                for(size_t a=0; a<Params.size(); ++a)
+                {
+                    MinMaxTree p = Params[a].param->CalculateResultBoundaries();
+                    if(p.has_min && (!biggest_minimum.has_min || p.min > biggest_minimum.min))
+                    {
+                        biggest_minimum.min = p.min;
+                        biggest_minimum.has_min = true;
+                }   }
+                if(biggest_minimum.has_min)
+                {
+                    //fprintf(stderr, "Removing all where max < %g\n", biggest_minimum.min);
+                    for(size_t a=Params.size(); a-- > 0; )
+                    {
+                        MinMaxTree p = Params[a].param->CalculateResultBoundaries();
+                        if(p.has_max && p.max < biggest_minimum.min)
+                        {
+                            //fprintf(stderr, "Removing %g\n", p.max);
+                            Params.erase(Params.begin() + a);
+                        }
+                    }
+                }
+                //fprintf(stderr, "Remains: %u\n", (unsigned)Params.size());
+                if(Params.size() == 1)
+                {
+                    // Replace self with the single operand
+                    goto ReplaceTreeWithParam0;
+                }
+                break;
+            }
+
+            case cEqual:
+            {
+                /* If we know the two operands' ranges don't overlap, we get zero.
+                 * The opposite is more complex and is done in .dat code.
+                 */
+                MinMaxTree p0 = Params[0].param->CalculateResultBoundaries();
+                MinMaxTree p1 = Params[1].param->CalculateResultBoundaries();
+                if((p0.has_max && p1.has_min && p1.min > p0.max)
+                || (p1.has_max && p0.has_min && p0.min > p1.max))
+                    goto ReplaceTreeWithZero;
+                break;
+            }
+
+            case cNEqual:
+            {
+                /* If we know the two operands' ranges don't overlap, we get one.
+                 * The opposite is more complex and is done in .dat code.
+                 */
+                MinMaxTree p0 = Params[0].param->CalculateResultBoundaries();
+                MinMaxTree p1 = Params[1].param->CalculateResultBoundaries();
+                if((p0.has_max && p1.has_min && p1.min > p0.max)
+                || (p1.has_max && p0.has_min && p0.min > p1.max))
+                    goto ReplaceTreeWithOne;
+                break;
+            }
+
+            case cLess:
+            {
+                MinMaxTree p0 = Params[0].param->CalculateResultBoundaries();
+                MinMaxTree p1 = Params[1].param->CalculateResultBoundaries();
+                if(p0.has_max && p1.has_min && p0.max < p1.min)
+                    goto ReplaceTreeWithOne; // We know p0 < p1
+                if(p1.has_max && p0.has_min && p1.max <= p0.min)
+                    goto ReplaceTreeWithZero; // We know p1 >= p0
+                break;
+            }
+
+            case cLessOrEq:
+            {
+                MinMaxTree p0 = Params[0].param->CalculateResultBoundaries();
+                MinMaxTree p1 = Params[1].param->CalculateResultBoundaries();
+                if(p0.has_max && p1.has_min && p0.max <= p1.min)
+                    goto ReplaceTreeWithOne; // We know p0 <= p1
+                if(p1.has_max && p0.has_min && p1.max < p0.min)
+                    goto ReplaceTreeWithZero; // We know p1 > p0
+                break;
+            }
+
+            case cGreater:
+            {
+                // Note: Eq case not handled
+                MinMaxTree p0 = Params[0].param->CalculateResultBoundaries();
+                MinMaxTree p1 = Params[1].param->CalculateResultBoundaries();
+                if(p0.has_max && p1.has_min && p0.max <= p1.min)
+                    goto ReplaceTreeWithZero; // We know p0 <= p1
+                if(p1.has_max && p0.has_min && p1.max < p0.min)
+                    goto ReplaceTreeWithOne; // We know p1 > p0
+                break;
+            }
+
+            case cGreaterOrEq:
+            {
+                // Note: Eq case not handled
+                MinMaxTree p0 = Params[0].param->CalculateResultBoundaries();
+                MinMaxTree p1 = Params[1].param->CalculateResultBoundaries();
+                if(p0.has_max && p1.has_min && p0.max < p1.min)
+                    goto ReplaceTreeWithZero; // We know p0 < p1
+                if(p1.has_max && p0.has_min && p1.max <= p0.min)
+                    goto ReplaceTreeWithOne; // We know p1 >= p0
+                break;
+            }
+
+            case cAbs:
+            {
+                /* If we know the operand is always positive, cAbs is redundant.
+                 * If we know the operand is always negative, use actual negation.
+                 */
+                MinMaxTree p0 = Params[0].param->CalculateResultBoundaries();
+                if(p0.has_min && p0.min >= 0.0)
+                    goto ReplaceTreeWithParam0;
+                if(p0.has_max && p0.max <= NEGATIVE_MAXIMUM)
+                {
+                    /* abs(negative) = negative*-1 */
+                    Opcode = cMul;
+                    AddParam( Param(new CodeTree(-1.0), false) );
+                    /* The caller of ConstantFolding() will do Sort() and Rehash() next.
+                     * Thus, no need to do it here. */
+                    /* We were changed into a cMul group. Do cMul folding. */
+                    goto NowWeAreMulGroup;
+                }
+                /* If the operand is a cMul group, find elements
+                 * that are always positive and always negative,
+                 * and move them out, e.g. abs(p*n*x*y) = p*(-n)*abs(x*y)
+                 */
+                if(Params[0].param->Opcode == cMul)
+                {
+                    CodeTree& p = *Params[0].param;
+                    std::vector<Param> pos_set;
+                    std::vector<Param> neg_set;
+                    for(size_t a=0; a<p.Params.size(); ++a)
+                    {
+                        p0 = p.Params[a].param->CalculateResultBoundaries();
+                        if(p0.has_min && p0.min >= 0.0)
+                            { pos_set.push_back(p.Params[a]); }
+                        if(p0.has_max && p0.max <= NEGATIVE_MAXIMUM)
+                            { neg_set.push_back(p.Params[a]); }
+                    }
+                #ifdef DEBUG_SUBSTITUTIONS
+                    std::cout << "Abs: mul group has " << pos_set.size()
+                              << " pos, " << neg_set.size() << "neg\n";
+                #endif
+                    if(!pos_set.empty() || !neg_set.empty())
+                    {
+                #ifdef DEBUG_SUBSTITUTIONS
+                        std::cout << "AbsReplace-Before: ";
+                        FPoptimizer_Grammar::DumpTree(*this);
+                        std::cout << "\n" << std::flush;
+                        FPoptimizer_Grammar::DumpHashes(*this);
+                #endif
+                        for(size_t a=p.Params.size(); a-- > 0; )
+                        {
+                            p0 = p.Params[a].param->CalculateResultBoundaries();
+                            if((p0.has_min && p0.min >= 0.0)
+                            || (p0.has_max && p0.max <= NEGATIVE_MAXIMUM))
+                                p.Params.erase(p.Params.begin() + a);
+
+                            /* Here, p*n*x*y -> x*y.
+                             * p is saved in pos_set[]
+                             * n is saved in neg_set[]
+                             */
+                        }
+                        p.ConstantFolding();
+                        p.Sort();
+
+                        CodeTreeP subtree = new CodeTree;
+                        p.Parent = &*subtree;
+                        subtree->Opcode = cAbs;
+                        subtree->Params.swap(Params);
+                        subtree->ConstantFolding();
+                        subtree->Sort();
+                        subtree->Rehash(false); // hash it and its children.
+
+                        /* Now:
+                         * subtree = Abs(x*y)
+                         * this    = Abs()
+                         */
+
+                        Opcode = cMul;
+                        for(size_t a=0; a<pos_set.size(); ++a)
+                            AddParam(pos_set[a]);
+                        AddParam(Param(subtree, false));
+                        /* Now:
+                         * this    = p * Abs(x*y)
+                         */
+                        if(!neg_set.empty())
+                        {
+                            for(size_t a=0; a<neg_set.size(); ++a)
+                                AddParam(neg_set[a]);
+                            AddParam( Param(new CodeTree(-1.0), false) );
+                            /* Now:
+                             * this = p * n * -1 * Abs(x*y)
+                             */
+                        }
+                #ifdef DEBUG_SUBSTITUTIONS
+                        std::cout << "AbsReplace-After: ";
+                        FPoptimizer_Grammar::DumpTree(*this);
+                        std::cout << "\n" << std::flush;
+                        FPoptimizer_Grammar::DumpHashes(*this);
+                #endif
+                        /* We were changed into a cMul group. Do cMul folding. */
+                        goto NowWeAreMulGroup;
+                    }
+                }
+                break;
+            }
+
+            #define HANDLE_UNARY_CONST_FUNC(funcname) \
+                if(Params[0].param->IsImmed()) \
+                    { const_value = funcname(Params[0].param->GetImmed()); \
+                      goto ReplaceTreeWithConstValue; }
+
+            case cLog:   HANDLE_UNARY_CONST_FUNC(log); break;
+            case cAcosh: HANDLE_UNARY_CONST_FUNC(fp_acosh); break;
+            case cAsinh: HANDLE_UNARY_CONST_FUNC(fp_asinh); break;
+            case cAtanh: HANDLE_UNARY_CONST_FUNC(fp_atanh); break;
+            case cAcos: HANDLE_UNARY_CONST_FUNC(acos); break;
+            case cAsin: HANDLE_UNARY_CONST_FUNC(asin); break;
+            case cAtan: HANDLE_UNARY_CONST_FUNC(atan); break;
+            case cCosh: HANDLE_UNARY_CONST_FUNC(cosh); break;
+            case cSinh: HANDLE_UNARY_CONST_FUNC(sinh); break;
+            case cTanh: HANDLE_UNARY_CONST_FUNC(tanh); break;
+            case cSin: HANDLE_UNARY_CONST_FUNC(sin); break;
+            case cCos: HANDLE_UNARY_CONST_FUNC(cos); break;
+            case cTan: HANDLE_UNARY_CONST_FUNC(tan); break;
+            case cCeil: HANDLE_UNARY_CONST_FUNC(ceil); break;
+            case cFloor: HANDLE_UNARY_CONST_FUNC(floor); break;
+            case cInt:
+                if(Params[0].param->IsImmed())
+                    { const_value = floor(Params[0].param->GetImmed() + 0.5);
+                      goto ReplaceTreeWithConstValue; }
+                break;
+            case cLog2:
+                if(Params[0].param->IsImmed())
+                    { const_value = log(Params[0].param->GetImmed()) * CONSTANT_L2I;
+                      goto ReplaceTreeWithConstValue; }
+                break;
+
+            case cAtan2:
+            {
+                /* Range based optimizations for (y,x):
+                 * If y is +0 and x <= -0, +pi is returned
+                 * If y is -0 and x <= -0, -pi is returned (assumed never happening)
+                 * If y is +0 and x >= +0, +0 is returned
+                 * If y is -0 and x >= +0, -0 is returned  (assumed never happening)
+                 * If x is +-0 and y < 0, -pi/2 is returned
+                 * If x is +-0 and y > 0, +pi/2 is returned
+                 * Otherwise, perform constant folding when available
+                 * If we know x <> 0, convert into atan(y / x)
+                 *   TODO: Figure out whether the above step is wise
+                 *         It allows e.g. atan2(6*x, 3*y) -> atan(2*x/y)
+                 *         when we know y != 0
+                 */
+                MinMaxTree p0 = Params[0].param->CalculateResultBoundaries();
+                MinMaxTree p1 = Params[1].param->CalculateResultBoundaries();
+                if(p0.has_min && p0.has_max && p0.min == 0.0)
+                {
+                    if(p1.has_max && p1.max < 0)
+                        { const_value = CONSTANT_PI; goto ReplaceTreeWithConstValue; }
+                    if(p1.has_max && p1.max >= 0.0)
+                        { const_value = p0.min; goto ReplaceTreeWithConstValue; }
+                }
+                if(p1.has_min && p1.has_max && p1.min == 0.0)
+                {
+                    if(p0.has_max && p0.max < 0)
+                        { const_value = -CONSTANT_PIHALF; goto ReplaceTreeWithConstValue; }
+                    if(p0.has_min && p0.min > 0)
+                        { const_value =  CONSTANT_PIHALF; goto ReplaceTreeWithConstValue; }
+                }
+                if(Params[0].param->IsImmed()
+                && Params[1].param->IsImmed())
+                    { const_value = atan2(Params[0].param->GetImmed(),
+                                          Params[1].param->GetImmed());
+                      goto ReplaceTreeWithConstValue; }
+              #if 0
+                if((p1.has_min && p1.min > 0.0)
+                || (p1.has_max && p1.max < NEGATIVE_MAXIMUM))
+                {
+                    // Convert into a division
+                    CodeTreeP subtree = new CodeTree;
+                    Params[1].sign = true; /* FIXME: Not appropriate anymore */
+                    for(size_t a=0; a<Params.size(); ++a)
+                        Params[a].param->Parent = &*subtree;
+                    subtree->Opcode = cMul;
+                    subtree->Params.swap(Params); // subtree = y/x
+                    subtree->ConstantFolding();
+                    subtree->Sort();
+                    subtree->Rehash(false);
+                    Opcode = cAtan;
+                    AddParam(Param(subtree, false)); // we = atan(y/x)
+                }
+              #endif
+                break;
+            }
+
+            case cPow:
+            {
+                if(Params[0].param->IsImmed()
+                && Params[1].param->IsImmed())
+                    { const_value = pow(Params[0].param->GetImmed(),
+                                        Params[1].param->GetImmed());
+                      goto ReplaceTreeWithConstValue; }
+                if(Params[1].param->IsImmed()
+                && Params[1].param->GetImmed() == 1.0)
+                {
+                    // x^1 = x
+                    goto ReplaceTreeWithParam0;
+                }
+                if(Params[0].param->IsImmed()
+                && Params[0].param->GetImmed() == 1.0)
+                {
+                    // 1^x = 1
+                    goto ReplaceTreeWithOne;
+                }
+                break;
+            }
+
+            case cMod:
+            {
+                /* Can more be done than this? */
+                if(Params[0].param->IsImmed()
+                && Params[1].param->IsImmed())
+                    { const_value = fmod(Params[0].param->GetImmed(),
+                                         Params[1].param->GetImmed());
+                      goto ReplaceTreeWithConstValue; }
+                break;
+            }
+
+            /* The following opcodes are processed by GenerateFrom()
+             * within fpoptimizer_bytecode_to_codetree.cc and thus
+             * they will never occur in the calling context:
+             */
+            case cNeg: // converted into cAdd ~x
+            case cInv: // converted into cMul ~x
+            case cDiv: // converted into cMul ~x
+            case cRDiv: // similar to above
+            case cSub: // converted into cAdd ~x
+            case cRSub: // similar to above
+            case cRad: // converted into cMul x CONSTANT_RD
+            case cDeg: // converted into cMul x CONSTANT_DR
+            case cSqr: // converted into cMul x x
+            case cExp: // converted into cPow CONSTANT_E x
+            case cExp2: // converted into cPow 2.0 x
+            case cSqrt: // converted into cPow x 0.5
+            case cRSqrt: // converted into cPow x -0.5
+            case cCot: // converted into cMul ~(cTan x)
+            case cSec: // converted into cMul ~(cCos x)
+            case cCsc: // converted into cMul ~(cSin x)
+            case cLog10: // converted into cMul CONSTANT_L10I (cLog x)
+                break; /* Should never occur */
+
+            /* Opcodes that do not occur in the tree for other reasons */
+            case cDup:
+            case cFetch:
+            case cPopNMov:
+            case cNop:
+            case cJump:
+            case VarBegin:
+                break; /* Should never occur */
+            /* Opcodes that we can't do anything about */
+            case cPCall:
+            case cFCall:
+#         ifndef FP_DISABLE_EVAL
+            case cEval:
+#endif
+                break;
+        }
+        /*
+        if(Parent)
+            Parent->ConstantFolding();
+
+        */
     }
 }
 
@@ -3521,9 +4578,8 @@ namespace FPoptimizer_Grammar
     };
 
 #ifdef DEBUG_SUBSTITUTIONS
-    void DumpTree(const FPoptimizer_CodeTree::CodeTree& tree);
-    static const char ImmedHolderNames[2][2] = {"%","&"};
-    static const char NamedHolderNames[6][2] = {"x","y","z","a","b","c"};
+    static const char ImmedHolderNames[4][2]  = {"%","&"};
+    static const char NamedHolderNames[10][2] = {"x","y","z","a","b","c","d","e","f","g"};
 #endif
 
     /* Apply the grammar to a given CodeTree */
@@ -3533,19 +4589,13 @@ namespace FPoptimizer_Grammar
     {
         bool changed = false;
 
-#ifdef DEBUG_SUBSTITUTIONS
-        if(!recursion)
-        {
-            std::cout << "Input:  ";
-            DumpTree(tree);
-            std::cout << "\n" << std::flush;
-        }
-#else
         recursion=recursion;
-#endif
+
         if(tree.OptimizedUsing != this)
         {
             /* First optimize all children */
+            tree.ConstantFolding();
+
             for(size_t a=0; a<tree.Params.size(); ++a)
             {
                 if( ApplyTo( *tree.Params[a].param, true ) )
@@ -3558,10 +4608,24 @@ namespace FPoptimizer_Grammar
             typedef const Rule* ruleit;
 
             std::pair<ruleit, ruleit> range
-                = MyEqualRange(pack.rlist + index,
-                               pack.rlist + index + count,
+                = MyEqualRange(pack.rlist + this->index,
+                               pack.rlist + this->index + this->count,
                                tree,
                                OpcodeRuleCompare());
+
+#ifdef DEBUG_SUBSTITUTIONS
+            std::cout << "Input (Grammar #"
+                      << (this - pack.glist)
+                      << ", " << FP_GetOpcodeName(tree.Opcode)
+                      << "[" << tree.Params.size()
+                      << "], rules "
+                      << (range.first - pack.rlist)
+                      << ".."
+                      << (range.second - pack.rlist)
+                      << ": ";
+            DumpTree(tree);
+            std::cout << "\n" << std::flush;
+#endif
 
             while(range.first < range.second)
             {
@@ -3574,10 +4638,23 @@ namespace FPoptimizer_Grammar
                 ++range.first;
             }
 
+#ifdef DEBUG_SUBSTITUTIONS
+            std::cout << (changed ? "Changed." : "No changes.");
+            std::cout << "\n" << std::flush;
+#endif
+
             if(!changed)
             {
                 tree.OptimizedUsing = this;
             }
+        }
+        else
+        {
+#ifdef DEBUG_SUBSTITUTIONS
+            std::cout << "Already optimized:  ";
+            DumpTree(tree);
+            std::cout << "\n" << std::flush;
+#endif
         }
 
 #ifdef DEBUG_SUBSTITUTIONS
@@ -3654,6 +4731,7 @@ namespace FPoptimizer_Grammar
                         std::cout << "  ParmReplace: ";
                         DumpTree(tree);
                         std::cout << "\n" << std::flush;
+                        DumpHashes(tree);
     #endif
                         return true;
                     case ProduceNewTree:
@@ -3662,6 +4740,7 @@ namespace FPoptimizer_Grammar
                         std::cout << "  TreeReplace: ";
                         DumpTree(tree);
                         std::cout << "\n" << std::flush;
+                        DumpHashes(tree);
     #endif
                         return true;
                 }
@@ -4040,10 +5119,8 @@ namespace FPoptimizer_Grammar
                                     repeat_pos, tree.Params[repeat_pos].sign,
                                                 tree.Params[repeat_pos].param->Hash);*/
 
-                                if(tree.Params[repeat_pos].param->Hash
-                                == tree.Params[whichparam].param->Hash
-                                && tree.Params[repeat_pos].sign
-                                == tree.Params[whichparam].sign
+                                if(tree.Params[repeat_pos].IsIdenticalTo(
+                                   tree.Params[whichparam])
                                 && !used[repeat_pos])
                                 {
                                     ++HadRepeat;
@@ -4065,10 +5142,8 @@ namespace FPoptimizer_Grammar
                                 repeat_pos < n_tree_params && (HadRepeat < MinRepeat || AnyRepeat);
                                 ++repeat_pos)
                             {
-                                if(tree.Params[repeat_pos].param->Hash
-                                == tree.Params[whichparam].param->Hash
-                                && tree.Params[repeat_pos].sign
-                                == tree.Params[whichparam].sign
+                                if(tree.Params[repeat_pos].IsIdenticalTo(
+                                   tree.Params[whichparam])
                                 && !used[repeat_pos])
                                 {
                                     ++HadRepeat;
@@ -4193,7 +5268,10 @@ namespace FPoptimizer_Grammar
                                 for(size_t b=0; b<n_tree_params; ++b)
                                     if(tree.Params[b].sign == param.sign
                                     && !used[b]
-                                    && tree.Params[b].param->Hash == RefRestList[r])
+                                    && tree.Params[b].param->Hash == RefRestList[r]
+                                    && tree.Params[b].param->IsIdenticalTo(
+                                        * match.trees.find(RefRestList[r])->second )
+                                      )
                                     {
                                         used[b] = true;
                                         goto SatisfiedRestHolder;
@@ -4296,7 +5374,7 @@ namespace FPoptimizer_Grammar
         TransformationType transf,
         unsigned long match_index) const
     {
-        assert(opcode != RestHolder); // RestHolders are supposed to be handler by the caller
+        assert(opcode != RestHolder); // RestHolders are supposed to be handled by the caller
 
         switch(OpcodeType(opcode))
         {
@@ -4310,13 +5388,61 @@ namespace FPoptimizer_Grammar
                 if(transf == Negate) res2 = -res2;
                 if(transf == Invert) res2 = 1/res2;
                 if(transf == NotThe) res2 = res2 != 0;
-                if(res != res2) return NoMatch;
+                /*std::cout << std::flush;
+                fprintf(stderr, "Comparing %.20f and %.20f\n", res, res2);
+                fflush(stderr);*/
+                if(!FloatEqual(res, res2)) return NoMatch;
                 return FoundLastMatch; // Previously unknown NumConstant, good
             }
             case ImmedHolder:
             {
                 if(!tree.IsImmed()) return NoMatch;
                 double res = tree.GetImmed();
+
+                switch( ImmedConstraint_Value(count & ValueMask) )
+                {
+                    case ValueMask: break;
+                    case Value_AnyNum: break;
+                    case Value_EvenInt:
+                        if(!FloatEqual(res, (double)(long)(res))) return NoMatch;
+                        if( (long)(res) % 2 != 0) return NoMatch;
+                        break;
+                    case Value_OddInt:
+                        if(!FloatEqual(res, (double)(long)(res))) return NoMatch;
+                        if( (long)(res) % 2 == 0) return NoMatch;
+                        break;
+                    case Value_IsInteger:
+                        if(!FloatEqual(res, (double)(long)(res))) return NoMatch;
+                        break;
+                    case Value_NonInteger:
+                        if(FloatEqual(res, (double)(long)(res))) return NoMatch;
+                        break;
+                }
+                switch( ImmedConstraint_Sign(count & SignMask) )
+                {
+                    /*case SignMask: break;*/
+                    case Sign_AnySign: break;
+                    case Sign_Positive:
+                        if(res < 0.0)  return NoMatch;
+                        break;
+                    case Sign_Negative:
+                        if(res >= 0.0) return NoMatch;
+                        break;
+                    case Sign_NoIdea:
+                        return NoMatch;
+                }
+                switch( ImmedConstraint_Oneness(count & OnenessMask) )
+                {
+                    case OnenessMask: break;
+                    case Oneness_Any: break;
+                    case Oneness_One:
+                        if(!FloatEqual(fabs(res), 1.0)) return NoMatch;
+                        break;
+                    case Oneness_NotOne:
+                        if(FloatEqual(fabs(res), 1.0)) return NoMatch;
+                        break;
+                }
+
                 if(transformation == Negate) res = -res;
                 if(transformation == Invert) res = 1/res;
                 std::map<unsigned, double>::iterator
@@ -4327,7 +5453,10 @@ namespace FPoptimizer_Grammar
                     if(transf == Negate) res2 = -res2;
                     if(transf == Invert) res2 = 1/res2;
                     if(transf == NotThe) res2 = res2 != 0;
-                    return res == res2 ? FoundLastMatch : NoMatch;
+                    /*std::cout << std::flush;
+                    fprintf(stderr, "Comparing %.20f and %.20f\n", res, res2);
+                    fflush(stderr);*/
+                    return FloatEqual(res, res2) ? FoundLastMatch : NoMatch;
                 }
                 if(sign != (transf != None)) return NoMatch;
 
@@ -4342,10 +5471,54 @@ namespace FPoptimizer_Grammar
                 if(i != match.NamedMap.end() && i->first == index)
                 {
                     /*fprintf(stderr, "NamedHolder found: %16lX -- tested against %16lX\n", i->second.first, tree.Hash);*/
-                    return tree.Hash == i->second.first
-                           ? FoundLastMatch
-                           : NoMatch;
+                    if(tree.Hash == i->second.first
+                    && tree.IsIdenticalTo(* match.trees.find(i->second.first)->second)
+                      )
+                        return FoundLastMatch;
+                    else
+                        return NoMatch;
                 }
+
+                switch( ImmedConstraint_Value(count & ValueMask) )
+                {
+                    case ValueMask: break;
+                    case Value_AnyNum: break;
+                    case Value_EvenInt:
+                        if(!tree.IsAlwaysParity(false)) return NoMatch;
+                        break;
+                    case Value_OddInt:
+                        if(!tree.IsAlwaysParity(true)) return NoMatch;
+                        break;
+                    case Value_IsInteger:
+                        if(!tree.IsAlwaysInteger()) return NoMatch;
+                        break;
+                    case Value_NonInteger:
+                        if(tree.IsAlwaysInteger()) return NoMatch;
+                        break;
+                }
+                switch( ImmedConstraint_Sign(count & SignMask) )
+                {
+                    /*case SignMask: break;*/
+                    case Sign_AnySign: break;
+                    case Sign_Positive:
+                        if(!tree.IsAlwaysSigned(true)) return NoMatch;
+                        break;
+                    case Sign_Negative:
+                        if(!tree.IsAlwaysSigned(false)) return NoMatch;
+                        break;
+                    case Sign_NoIdea:
+                        if(tree.IsAlwaysSigned(false)) return NoMatch;
+                        if(tree.IsAlwaysSigned(true)) return NoMatch;
+                        break;
+                }
+                switch( ImmedConstraint_Oneness(count & OnenessMask) )
+                {
+                    case OnenessMask: break;
+                    case Oneness_Any: break;
+                    case Oneness_One:    return NoMatch;
+                    case Oneness_NotOne: return NoMatch;
+                }
+
                 match.NamedMap.insert(i, std::make_pair(index, std::make_pair(tree.Hash, 1)));
                 match.trees.insert(std::make_pair(tree.Hash, &tree));
                 return FoundLastMatch; // Previously unknown NamedHolder, good
@@ -4357,9 +5530,50 @@ namespace FPoptimizer_Grammar
             case SubFunction:
             {
                 if(sign != (transf != None)) return NoMatch;
+
+                switch( ImmedConstraint_Value(count & ValueMask) )
+                {
+                    case ValueMask: break;
+                    case Value_AnyNum: break;
+                    case Value_EvenInt:
+                        if(!tree.IsAlwaysParity(false)) return NoMatch;
+                        break;
+                    case Value_OddInt:
+                        if(!tree.IsAlwaysParity(true)) return NoMatch;
+                        break;
+                    case Value_IsInteger:
+                        if(!tree.IsAlwaysInteger()) return NoMatch;
+                        break;
+                    case Value_NonInteger:
+                        if(tree.IsAlwaysInteger()) return NoMatch;
+                        break;
+                }
+                switch( ImmedConstraint_Sign(count & SignMask) )
+                {
+                    /*case SignMask: break;*/
+                    case Sign_AnySign: break;
+                    case Sign_Positive:
+                        if(!tree.IsAlwaysSigned(true)) return NoMatch;
+                        break;
+                    case Sign_Negative:
+                        if(!tree.IsAlwaysSigned(false)) return NoMatch;
+                        break;
+                    case Sign_NoIdea:
+                        if(tree.IsAlwaysSigned(false)) return NoMatch;
+                        if(tree.IsAlwaysSigned(true)) return NoMatch;
+                        break;
+                }
+                switch( ImmedConstraint_Oneness(count & OnenessMask) )
+                {
+                    case OnenessMask: break;
+                    case Oneness_Any: break;
+                    case Oneness_One:    return NoMatch;
+                    case Oneness_NotOne: return NoMatch;
+                }
+
                 return pack.flist[index].Match(tree, match, match_index);
             }
-            default:
+            default: // means groupfunction. No ImmedConstraint
             {
                 if(!tree.IsImmed()) return NoMatch;
                 double res = tree.GetImmed();
@@ -4370,7 +5584,10 @@ namespace FPoptimizer_Grammar
                 if(transf == Negate) res2 = -res2;
                 if(transf == Invert) res2 = 1/res2;
                 if(transf == NotThe) res2 = res2 != 0;
-                return res == res2 ? FoundLastMatch : NoMatch;
+                /*std::cout << std::flush;
+                fprintf(stderr, "Comparing %.20f and %.20f\n", res, res2);
+                fflush(stderr);*/
+                return FloatEqual(res, res2) ? FoundLastMatch : NoMatch;
             }
         }
         return NoMatch;
@@ -4391,6 +5608,7 @@ namespace FPoptimizer_Grammar
                     i = match.ImmedMap.find(index);
                 if(i == match.ImmedMap.end()) return false; // impossible
                 result = i->second;
+                //fprintf(stderr, "immedholder: %.20f\n", result);
                 break;
             }
             case NamedHolder:
@@ -4399,6 +5617,7 @@ namespace FPoptimizer_Grammar
                     i = match.NamedMap.find(index);
                 if(i == match.NamedMap.end()) return false; // impossible
                 result = (double) i->second.second;
+                //fprintf(stderr, "namedholder: %.20f\n", result);
                 break;
             }
             case RestHolder:
@@ -4467,32 +5686,39 @@ namespace FPoptimizer_Grammar
                                 result = std::cosh(result); break;
                     case cTanh: if(!pack.plist[index].GetConst(match, result))return false;
                                  result = std::tanh(result); break;
-#ifndef FP_NO_ASINH
+
                     case cAsinh: if(!pack.plist[index].GetConst(match, result))return false;
-                                 result = asinh(result); break;
+                                 result = fp_asinh(result); break;
                     case cAcosh: if(!pack.plist[index].GetConst(match, result))return false;
-                                 result = acosh(result); break;
+                                 result = fp_acosh(result); break;
                     case cAtanh: if(!pack.plist[index].GetConst(match, result))return false;
-                                 result = atanh(result); break;
-#endif
+                                 result = fp_atanh(result); break;
+
                     case cCeil: if(!pack.plist[index].GetConst(match, result))return false;
                                 result = std::ceil(result); break;
                     case cFloor: if(!pack.plist[index].GetConst(match, result))return false;
                                  result = std::floor(result); break;
                     case cLog: if(!pack.plist[index].GetConst(match, result))return false;
                                result = std::log(result); break;
+                    case cExp: if(!pack.plist[index].GetConst(match, result))return false;
+                               result = std::exp(result); break;
+                    case cExp2: if(!pack.plist[index].GetConst(match, result))return false;
+                               result = std::pow(2.0, result); break;
                     case cLog2: if(!pack.plist[index].GetConst(match, result))return false;
                                 result = std::log(result) * CONSTANT_L2I;
                                 //result = std::log2(result);
                                 break;
                     case cLog10: if(!pack.plist[index].GetConst(match, result))return false;
                                  result = std::log10(result); break;
+                    case cAbs: if(!pack.plist[index].GetConst(match, result))return false;
+                               result = std::fabs(result); break;
                     case cPow:
                     {
                         if(!pack.plist[index+0].GetConst(match, result))return false;
                         double tmp;
                         if(!pack.plist[index+1].GetConst(match, tmp))return false;
                         result = std::pow(result, tmp);
+                        //fprintf(stderr, "pow result: %.20f\n", result);
                         break;
                     }
                     case cMod:
@@ -4504,6 +5730,8 @@ namespace FPoptimizer_Grammar
                         break;
                     }
                     default:
+                        fprintf(stderr, "Unknown macro opcode: %s\n",
+                            FP_GetOpcodeName(opcode).c_str());
                         return false;
                 }
             }
@@ -4530,6 +5758,7 @@ namespace FPoptimizer_Grammar
             {
                 FPoptimizer_CodeTree::CodeTree* subtree = new FPoptimizer_CodeTree::CodeTree;
                 param.SynthesizeTree(*subtree, matcher, match);
+                subtree->ConstantFolding();
                 subtree->Sort();
                 subtree->Recalculate_Hash_NoRecursion(); // rehash this, but not the children, nor the parent
                 FPoptimizer_CodeTree::CodeTree::Param p(subtree, param.sign) ;
@@ -4555,6 +5784,9 @@ namespace FPoptimizer_Grammar
             size_t num = match.param_numbers[a];
             tree.DelParam(num);
         }
+
+        tree.ConstantFolding();
+
         tree.Sort();
         tree.Rehash(true); // rehash this and its parents, but not its children
     }
@@ -4569,6 +5801,8 @@ namespace FPoptimizer_Grammar
         std::vector<FPoptimizer_CodeTree::CodeTree::Param> OldParams = tree.Params;
         tree.Params.clear();
         pack.plist[index].SynthesizeTree(tree, matcher, match);
+
+        tree.ConstantFolding();
 
         tree.Sort();
         tree.Rehash(true);  // rehash this and its parents, but not its children
@@ -4656,6 +5890,7 @@ namespace FPoptimizer_Grammar
             default:
                 tree.Opcode = cImmed;
                 GetConst(match, tree.Value); // note: return value is ignored
+                // FIXME: Should we check ImmedConstraints here?
                 break;
         }
     }
@@ -4669,11 +5904,12 @@ namespace FPoptimizer_Grammar
         if(p.transformation == Negate) std::cout << '-';
         if(p.transformation == Invert) std::cout << '/';
 
+        bool has_constraint = false;
         switch(SpecialOpcode(p.opcode))
         {
             case NumConstant: std::cout << GetPackConst(p.index); break;
-            case ImmedHolder: std::cout << ImmedHolderNames[p.index]; break;
-            case NamedHolder: std::cout << NamedHolderNames[p.index]; break;
+            case ImmedHolder: has_constraint = true; std::cout << ImmedHolderNames[p.index]; break;
+            case NamedHolder: has_constraint = true; std::cout << NamedHolderNames[p.index]; break;
             case RestHolder: std::cout << '<' << p.index << '>'; break;
             case SubFunction: DumpFunction(pack.flist[p.index]); break;
             default:
@@ -4691,6 +5927,32 @@ namespace FPoptimizer_Grammar
         }
         if(p.anyrepeat && p.minrepeat==1) std::cout << '*';
         if(p.anyrepeat && p.minrepeat==2) std::cout << '+';
+        if(has_constraint)
+        {
+            switch( ImmedConstraint_Value(p.count & ValueMask) )
+            {
+                case ValueMask: break;
+                case Value_AnyNum: break;
+                case Value_EvenInt:   std::cout << "@E"; break;
+                case Value_OddInt:    std::cout << "@O"; break;
+                case Value_IsInteger: std::cout << "@I"; break;
+                case Value_NonInteger:std::cout << "@F"; break;
+            }
+            switch( ImmedConstraint_Sign(p.count & SignMask) )
+            {
+                case SignMask: break;
+                case Sign_AnySign: break;
+                case Sign_Positive:   std::cout << "@P"; break;
+                case Sign_Negative:   std::cout << "@N"; break;
+            }
+            switch( ImmedConstraint_Oneness(p.count & OnenessMask) )
+            {
+                case OnenessMask: break;
+                case Oneness_Any: break;
+                case Oneness_One:     std::cout << "@1"; break;
+                case Oneness_NotOne:  std::cout << "@M"; break;
+            }
+        }
     }
 
     void DumpParams(const MatchedParams& mitem)
@@ -4726,42 +5988,6 @@ namespace FPoptimizer_Grammar
         DumpParams(pack.mlist[fitem.index]);
         std::cout << ')';
     }
-    void DumpTree(const FPoptimizer_CodeTree::CodeTree& tree)
-    {
-        //std::cout << "/*" << tree.Depth << "*/";
-        const char* sep2 = "";
-        //std::cout << '[' << std::hex << tree.Hash << ']' << std::dec;
-        switch(tree.Opcode)
-        {
-            case cImmed: std::cout << tree.Value; return;
-            case cVar:   std::cout << "Var" << tree.Var; return;
-            case cAdd: sep2 = " +"; break;
-            case cMul: sep2 = " *"; break;
-            case cAnd: sep2 = " &"; break;
-            case cOr: sep2 = " |"; break;
-            default:
-                std::cout << FP_GetOpcodeName(tree.Opcode);
-                if(tree.Opcode == cFCall || tree.Opcode == cPCall)
-                    std::cout << ':' << tree.Funcno;
-        }
-        std::cout << '(';
-        if(tree.Params.size() <= 1 && *sep2) std::cout << (sep2+1) << ' ';
-        for(size_t a=0; a<tree.Params.size(); ++a)
-        {
-            if(a > 0) std::cout << ' ';
-            if(tree.Params[a].sign) std::cout << '~';
-
-            DumpTree(*tree.Params[a].param);
-
-            if(tree.Params[a].param->Parent != &tree)
-            {
-                std::cout << "(?""?""?))";
-            }
-
-            if(a+1 < tree.Params.size()) std::cout << sep2;
-        }
-        std::cout << ')';
-    }
     void DumpMatch(const Function& input,
                    const FPoptimizer_CodeTree::CodeTree& tree,
                    const MatchedParams& replacement,
@@ -4781,6 +6007,7 @@ namespace FPoptimizer_Grammar
             "  Tree       : ";
         DumpTree(tree);
         std::cout << "\n";
+        if(DidMatch) DumpHashes(tree);
 
         for(std::map<unsigned, std::pair<fphash_t, size_t> >::const_iterator
             i = matchrec.NamedMap.begin(); i != matchrec.NamedMap.end(); ++i)
@@ -4812,6 +6039,75 @@ namespace FPoptimizer_Grammar
         }
         std::cout << std::flush;
     }
+    void DumpHashes(const FPoptimizer_CodeTree::CodeTree& tree,
+                    std::map<fphash_t, std::set<std::string> >& done)
+    {
+        for(size_t a=0; a<tree.Params.size(); ++a)
+            DumpHashes(*tree.Params[a].param, done);
+
+        std::stringstream buf;
+        DumpTree(tree, buf);
+        done[tree.Hash].insert(buf.str());
+    }
+    void DumpHashes(const FPoptimizer_CodeTree::CodeTree& tree)
+    {
+        std::map<fphash_t, std::set<std::string> > done;
+        DumpHashes(tree, done);
+
+        for(std::map<fphash_t, std::set<std::string> >::const_iterator
+            i = done.begin();
+            i != done.end();
+            ++i)
+        {
+            const std::set<std::string>& flist = i->second;
+            if(flist.size() != 1) std::cout << "ERROR - HASH COLLISION?\n";
+            for(std::set<std::string>::const_iterator
+                j = flist.begin();
+                j != flist.end();
+                ++j)
+            {
+                std::cout << '[' << std::hex << i->first << ']' << std::dec;
+                std::cout << ": " << *j << "\n";
+            }
+        }
+    }
+    void DumpTree(const FPoptimizer_CodeTree::CodeTree& tree, std::ostream& o)
+    {
+        //o << "/*" << tree.Depth << "*/";
+        const char* sep2 = "";
+        //o << '[' << std::hex << tree.Hash << ']' << std::dec;
+        switch(tree.Opcode)
+        {
+            case cImmed: o << tree.Value; return;
+            case cVar:   o << "Var" << tree.Var; return;
+            case cAdd: sep2 = " +"; break;
+            case cMul: sep2 = " *"; break;
+            case cAnd: sep2 = " &"; break;
+            case cOr: sep2 = " |"; break;
+            case cPow: sep2 = " ^"; break;
+            default:
+                o << FP_GetOpcodeName(tree.Opcode);
+                if(tree.Opcode == cFCall || tree.Opcode == cPCall)
+                    o << ':' << tree.Funcno;
+        }
+        o << '(';
+        if(tree.Params.size() <= 1 && *sep2) o << (sep2+1) << ' ';
+        for(size_t a=0; a<tree.Params.size(); ++a)
+        {
+            if(a > 0) o << ' ';
+            if(tree.Params[a].sign) o << '~';
+
+            DumpTree(*tree.Params[a].param, o);
+
+            if(tree.Params[a].param->Parent != &tree)
+            {
+                o << "(?parent?)";
+            }
+
+            if(a+1 < tree.Params.size()) o << sep2;
+        }
+        o << ')';
+    }
 #endif
 }
 
@@ -4841,14 +6137,21 @@ void FunctionParser::Optimize()
     FPoptimizer_CodeTree::CodeTreeP tree
         = CodeTree::GenerateFrom(data->ByteCode, data->Immed, *data);
 
-    while(FPoptimizer_Grammar::pack.glist[0].ApplyTo(*tree))
-        {}
+    while(FPoptimizer_Grammar::pack.glist[0].ApplyTo(*tree)) // entry
+        { //std::cout << "Rerunning 0\n";
+        }
 
-    while(FPoptimizer_Grammar::pack.glist[1].ApplyTo(*tree))
-        {}
+    while(FPoptimizer_Grammar::pack.glist[1].ApplyTo(*tree)) // intermediate
+        { //std::cout << "Rerunning 1\n";
+        }
 
-    while(FPoptimizer_Grammar::pack.glist[2].ApplyTo(*tree))
-        {}
+    while(FPoptimizer_Grammar::pack.glist[2].ApplyTo(*tree)) // final1
+        { //std::cout << "Rerunning 2\n";
+        }
+
+    while(FPoptimizer_Grammar::pack.glist[3].ApplyTo(*tree)) // final2
+        { //std::cout << "Rerunning 3\n";
+        }
 
     tree->Sort_Recursive();
 
@@ -4891,7 +6194,7 @@ static const unsigned MAX_POWI_BYTECODE_LENGTH = 15;
 #else
 static const unsigned MAX_POWI_BYTECODE_LENGTH = 999;
 #endif
-static const unsigned MAX_MULI_BYTECODE_LENGTH = 5;
+static const unsigned MAX_MULI_BYTECODE_LENGTH = 3;
 
 #define POWI_TABLE_SIZE 256
 #define POWI_WINDOW_SIZE 3
@@ -5206,23 +6509,28 @@ namespace
     typedef
         std::map<fphash_t,  std::pair<size_t, CodeTreeP> >
         TreeCountType;
+    typedef
+        std::multimap<fphash_t, CodeTreeP>
+        DoneTreesType;
 
     void FindTreeCounts(TreeCountType& TreeCounts, CodeTreeP tree)
     {
         TreeCountType::iterator i = TreeCounts.lower_bound(tree->Hash);
-        if(i == TreeCounts.end() || i->first != tree->Hash)
-            TreeCounts.insert(i, std::make_pair(tree->Hash, std::make_pair(size_t(1), tree)));
-        else
+        if(i != TreeCounts.end()
+        && tree->Hash == i->first
+        && tree->IsIdenticalTo( * i->second.second ) )
             i->second.first += 1;
+        else
+            TreeCounts.insert(i, std::make_pair(tree->Hash, std::make_pair(size_t(1), tree)));
 
         for(size_t a=0; a<tree->Params.size(); ++a)
             FindTreeCounts(TreeCounts, tree->Params[a].param);
     }
 
-    void RememberRecursivelyHashList(std::set<fphash_t>& hashlist,
-                                     CodeTreeP tree)
+    void RememberRecursivelyHashList(DoneTreesType& hashlist,
+                                     const CodeTreeP& tree)
     {
-        hashlist.insert(tree->Hash);
+        hashlist.insert( std::make_pair(tree->Hash, tree) );
         for(size_t a=0; a<tree->Params.size(); ++a)
             RememberRecursivelyHashList(hashlist, tree->Params[a].param);
     }
@@ -5306,6 +6614,61 @@ namespace
             ConvertPowi(*tree.Params[a].param);
     }
 #endif
+    void RecreateInversionsAndNegations(CodeTree& tree)
+    {
+        for(size_t a=0; a<tree.Params.size(); ++a)
+            RecreateInversionsAndNegations(*tree.Params[a].param);
+
+        bool changed = false;
+        switch(tree.Opcode) // Recreate inversions and negations
+        {
+            case cMul:
+            {
+                for(size_t a=0; a<tree.Params.size(); ++a)
+                    if(tree.Params[a].param->Opcode == cPow
+                    && tree.Params[a].param->Params[1].param->IsImmed()
+                    && tree.Params[a].param->Params[1].param->GetImmed() == -1)
+                    {
+                        tree.Params[a] = tree.Params[a].param->Params[0];
+                        tree.Params[a].param->Parent = &tree;
+                        tree.Params[a].sign = true;
+                        changed = true;
+                    }
+                break;
+            }
+            case cAdd:
+            {
+                for(size_t a=0; a<tree.Params.size(); ++a)
+                    if(tree.Params[a].param->Opcode == cMul)
+                    {
+                        // if the mul group has a -1 constant...
+                        bool subchanged = false;
+                        CodeTree& mulgroup = *tree.Params[a].param;
+                        for(size_t b=mulgroup.Params.size(); b-- > 0; )
+                            if(mulgroup.Params[b].param->IsImmed()
+                            && mulgroup.Params[b].param->GetImmed() == -1)
+                            {
+                                mulgroup.Params.erase(mulgroup.Params.begin()+b);
+                                tree.Params[a].sign = !tree.Params[a].sign;
+                                subchanged = true;
+                            }
+                        if(subchanged)
+                        {
+                            mulgroup.ConstantFolding();
+                            mulgroup.Sort();
+                            mulgroup.Recalculate_Hash_NoRecursion();
+                            changed = true;
+                        }
+                    }
+            }
+        }
+        if(changed)
+        {
+            // Don't run ConstantFolding here: It cannot handle negations in cMul/cAdd
+            tree.Sort();
+            tree.Rehash(true);
+        }
+    }
 }
 
 namespace FPoptimizer_CodeTree
@@ -5315,6 +6678,8 @@ namespace FPoptimizer_CodeTree
         std::vector<double>&   Immed,
         size_t& stacktop_max)
     {
+        RecreateInversionsAndNegations(*this);
+
         ByteCodeSynth synth;
     #if 0
         /* Convert integer powi sequences into trees
@@ -5329,7 +6694,7 @@ namespace FPoptimizer_CodeTree
         FindTreeCounts(TreeCounts, this);
 
         /* Synthesize some of the most common ones */
-        std::set<fphash_t> AlreadyDoneTrees;
+        DoneTreesType AlreadyDoneTrees;
     FindMore: ;
         size_t best_score = 0;
         TreeCountType::const_iterator synth_it;
@@ -5339,10 +6704,18 @@ namespace FPoptimizer_CodeTree
             ++i)
         {
             size_t score = i->second.first;
-            if(score < 2) continue; // It must always occur at least twice
-            if(i->second.second->Depth < 2) continue; // And it must not be a simple expression
-            if(AlreadyDoneTrees.find(i->first)
-            != AlreadyDoneTrees.end()) continue; // And it must not yet have been synthesized
+            // It must always occur at least twice
+            if(score < 2) continue;
+            // And it must not be a simple expression
+            if(i->second.second->Depth < 2) CandSkip: continue;
+            // And it must not yet have been synthesized
+            DoneTreesType::const_iterator j = AlreadyDoneTrees.lower_bound(i->first);
+            for(; j != AlreadyDoneTrees.end() && j->first == i->first; ++j)
+            {
+                if(j->second->IsIdenticalTo(*i->second.second))
+                    goto CandSkip;
+            }
+            // Is a candidate.
             score *= i->second.second->Depth;
             if(score > best_score)
                 { best_score = score; synth_it = i; }
@@ -5376,6 +6749,7 @@ namespace FPoptimizer_CodeTree
     {
         // If the synth can already locate our operand in the stack,
         // never mind synthesizing it again, just dup it.
+        /* FIXME: Possible hash collisions. */
         if(synth.FindAndDup(Hash))
         {
             return;
@@ -5552,7 +6926,30 @@ namespace FPoptimizer_CodeTree
                 const Param& p0 = Params[0];
                 const Param& p1 = Params[1];
 
-                if(!p1.param->IsLongIntegerImmed()
+                if(p1.param->IsImmed() && p1.param->GetImmed() == 0.5)
+                {
+                    p0.param->SynthesizeByteCode(synth);
+                    synth.AddOperation(cSqrt, 1);
+                }
+                else if(p1.param->IsImmed() && p1.param->GetImmed() == -0.5)
+                {
+                    p0.param->SynthesizeByteCode(synth);
+                    synth.AddOperation(cRSqrt, 1);
+                }
+                /*
+                else if(p0.param->IsImmed() && p0.param->GetImmed() == CONSTANT_E)
+                {
+                    p1.param->SynthesizeByteCode(synth);
+                    synth.AddOperation(cExp, 1);
+                }
+                else if(p0.param->IsImmed() && p0.param->GetImmed() == CONSTANT_EI)
+                {
+                    p1.param->SynthesizeByteCode(synth);
+                    synth.AddOperation(cNeg, 1);
+                    synth.AddOperation(cExp, 1);
+                }
+                */
+                else if(!p1.param->IsLongIntegerImmed()
                 || !AssembleSequence( /* Optimize integer exponents */
                         *p0.param, p1.param->GetLongIntegerImmed(),
                         MulSequence,
@@ -5560,9 +6957,93 @@ namespace FPoptimizer_CodeTree
                         MAX_POWI_BYTECODE_LENGTH)
                   )
                 {
-                    p0.param->SynthesizeByteCode(synth);
-                    p1.param->SynthesizeByteCode(synth);
-                    synth.AddOperation(Opcode, 2);
+                    if(p0.param->IsImmed() && p0.param->GetImmed() > 0.0)
+                    {
+                        // Convert into cExp or Exp2.
+                        //    x^y = exp(log(x) ^ y)
+                        //    Can only be done when x is positive, though.
+                        double mulvalue = std::log( p0.param->GetImmed() );
+
+                        if(p1.param->Opcode == cMul)
+                        {
+                            // Neat, we can delegate the multiplication to the child
+                            p1.param->AddParam( Param(new CodeTree(mulvalue), false) );
+                            p1.param->ConstantFolding();
+                            p1.param->Sort();
+                            p1.param->Recalculate_Hash_NoRecursion();
+                            mulvalue = 1.0;
+                        }
+
+                        // If the exponent needs multiplication, multiply it
+                        if(
+                      #ifdef FP_EPSILON
+                          fabs(mulvalue - (double)(long)mulvalue) <= FP_EPSILON
+                      #else
+                          mulvalue == (double)(long)mulvalue
+                      #endif
+                        && AssembleSequence(*p1.param, (long)mulvalue,
+                                            AddSequence, synth,
+                                            MAX_MULI_BYTECODE_LENGTH))
+                        {
+                            // Done with a dup/add sequence, cExp
+                            synth.AddOperation(cExp, 1);
+                        }
+                        /* - disabled cExp2 optimizations for now, because it
+                         *   turns out that glibc for at least x86_64 has a
+                         *   particularly stupid exp2() implementation that
+                         *   is _slower_ than exp() or even pow(2,x)
+                         *
+                        else if(
+                          #ifndef FP_SUPPORT_EXP2
+                           #ifdef FP_EPSILON
+                            fabs(mulvalue - CONSTANT_L2) <= FP_EPSILON
+                           #else
+                            mulvalue == CONSTANT_L2
+                           #endif
+                          #else
+                            true
+                          #endif
+                            )
+                        {
+                            // Do with cExp2; in all likelihood it's never slower than cExp.
+                            mulvalue *= CONSTANT_L2I;
+                            if(
+                          #ifdef FP_EPSILON
+                              fabs(mulvalue - (double)(long)mulvalue) <= FP_EPSILON
+                          #else
+                              mulvalue == (double)(long)mulvalue
+                          #endif
+                            && AssembleSequence(*p1.param, (long)mulvalue,
+                                                AddSequence, synth,
+                                                MAX_MULI_BYTECODE_LENGTH))
+                            {
+                                // Done with a dup/add sequence, cExp2
+                                synth.AddOperation(cExp2, 1);
+                            }
+                            else
+                            {
+                                // Do with cMul and cExp2
+                                p1.param->SynthesizeByteCode(synth);
+                                synth.PushImmed(mulvalue);
+                                synth.AddOperation(cMul, 2);
+                                synth.AddOperation(cExp2, 1);
+                            }
+                        }*/
+                        else
+                        {
+                            // Do with cMul and cExp
+                            p1.param->SynthesizeByteCode(synth);
+                            synth.PushImmed(mulvalue);
+                            synth.AddOperation(cMul, 2);
+                            synth.AddOperation(cExp, 1);
+                        }
+                    }
+                    else
+                    {
+                        p0.param->SynthesizeByteCode(synth);
+                        p1.param->SynthesizeByteCode(synth);
+                        synth.AddOperation(Opcode, 2); // Create a vanilla cPow.
+                    }
                 }
                 break;
             }
@@ -5659,7 +7140,7 @@ namespace
         size_t max_bytecode_grow_length)
     {
         CodeTree::ByteCodeSynth backup = synth;
-        const size_t bytecodesize_backup = synth.GetByteCodeSize();
+        size_t bytecodesize_backup = synth.GetByteCodeSize();
 
         if(count == 0)
         {
@@ -5668,6 +7149,7 @@ namespace
         else
         {
             tree.SynthesizeByteCode(synth);
+            bytecodesize_backup = synth.GetByteCodeSize(); // Ignore the size generated by subtree
 
             if(count < 0)
             {
@@ -5929,12 +7411,12 @@ namespace FPoptimizer_CodeTree
     public:
         CodeTreeParserData() : stack() { }
 
-        void Eat(unsigned nparams, OPCODE opcode)
+        void Eat(size_t nparams, OPCODE opcode)
         {
             CodeTreeP newnode = new CodeTree;
             newnode->Opcode = opcode;
             size_t stackhead = stack.size() - nparams;
-            for(unsigned a=0; a<nparams; ++a)
+            for(size_t a=0; a<nparams; ++a)
             {
                 CodeTree::Param param;
                 param.param = stack[stackhead + a];
@@ -5945,7 +7427,7 @@ namespace FPoptimizer_CodeTree
             stack.push_back(newnode);
         }
 
-        void EatFunc(unsigned params, OPCODE opcode, unsigned funcno)
+        void EatFunc(size_t params, OPCODE opcode, unsigned funcno)
         {
             Eat(params, opcode);
             stack.back()->Funcno = funcno;
@@ -5953,9 +7435,7 @@ namespace FPoptimizer_CodeTree
 
         void AddConst(double value)
         {
-            CodeTreeP newnode = new CodeTree;
-            newnode->Opcode = cImmed;
-            newnode->Value  = value;
+            CodeTreeP newnode = new CodeTree(value);
             stack.push_back(newnode);
         }
 
@@ -5965,11 +7445,6 @@ namespace FPoptimizer_CodeTree
             newnode->Opcode = cVar;
             newnode->Var    = varno;
             stack.push_back(newnode);
-        }
-
-        void SetLastOpParamSign(unsigned paramno)
-        {
-            stack.back()->Params[paramno].sign = true;
         }
 
         void SwapLastTwoInStack()
@@ -6073,12 +7548,12 @@ namespace FPoptimizer_CodeTree
                     }
                     // Unary operators requiring special attention
                     case cInv: // from fpoptimizer
-                        data.Eat(1, cMul); // Unary division is inverse multiplying
-                        data.SetLastOpParamSign(0);
+                        data.AddConst(-1);
+                        data.Eat(2, cPow); // 1/x is x^-1
                         break;
                     case cNeg:
-                        data.Eat(1, cAdd); // Unary minus is negative adding.
-                        data.SetLastOpParamSign(0);
+                        data.AddConst(-1);
+                        data.Eat(2, cMul); // -x is x*-1
                         break;
                     case cSqr: // from fpoptimizer
                         data.Dup();
@@ -6098,51 +7573,67 @@ namespace FPoptimizer_CodeTree
                         data.SwapLastTwoInStack();
                         data.Eat(2, cPow);
                         break;
+                    case cExp2: // from fpoptimizer
+                        data.AddConst(2.0);
+                        data.SwapLastTwoInStack();
+                        data.Eat(2, cPow);
+                        break;
                     case cSqrt:
                         data.AddConst(0.5);
                         data.Eat(2, cPow);
                         break;
                     case cCot:
                         data.Eat(1, cTan);
-                        data.Eat(1, cMul);
-                        data.SetLastOpParamSign(0);
+                        data.AddConst(-1);
+                        data.Eat(2, cPow);
                         break;
                     case cCsc:
                         data.Eat(1, cSin);
-                        data.Eat(1, cMul);
-                        data.SetLastOpParamSign(0);
+                        data.AddConst(-1);
+                        data.Eat(2, cPow);
                         break;
                     case cSec:
                         data.Eat(1, cCos);
-                        data.Eat(1, cMul);
-                        data.SetLastOpParamSign(0);
+                        data.AddConst(-1);
+                        data.Eat(2, cPow);
                         break;
                     case cLog10:
-                        data.Eat(1, cLog);
-                        data.AddConst(CONSTANT_L10I);
+                        data.Eat(1, cLog2);
+                        data.AddConst(CONSTANT_LB10I);
                         data.Eat(2, cMul);
                         break;
-                    case cLog2:
-                        data.Eat(1, cLog);
-                        data.AddConst(CONSTANT_L2I);
+                    //case cLog2:
+                    //    data.Eat(1, cLog);
+                    //    data.AddConst(CONSTANT_L2I);
+                    //    data.Eat(2, cMul);
+                    //    break;
+                    case cLog:
+                        data.Eat(1, cLog2);
+                        data.AddConst(CONSTANT_L2);
                         data.Eat(2, cMul);
                         break;
                     // Binary operators requiring special attention
                     case cSub:
+                        data.AddConst(-1);
+                        data.Eat(2, cMul); // -x is x*-1
                         data.Eat(2, cAdd); // Minus is negative adding
-                        data.SetLastOpParamSign(1);
                         break;
                     case cRSub: // from fpoptimizer
+                        data.SwapLastTwoInStack();
+                        data.AddConst(-1);
+                        data.Eat(2, cMul); // -x is x*-1
                         data.Eat(2, cAdd);
-                        data.SetLastOpParamSign(0); // negate param0 instead of param1
                         break;
                     case cDiv:
+                        data.AddConst(-1);
+                        data.Eat(2, cPow); // 1/x is x^-1
                         data.Eat(2, cMul); // Divide is inverse multiply
-                        data.SetLastOpParamSign(1);
                         break;
                     case cRDiv: // from fpoptimizer
-                        data.Eat(2, cMul);
-                        data.SetLastOpParamSign(0); // invert param0 instead of param1
+                        data.SwapLastTwoInStack();
+                        data.AddConst(-1);
+                        data.Eat(2, cPow); // 1/x is x^-1
+                        data.Eat(2, cMul); // Divide is inverse multiply
                         break;
                     case cRSqrt: // from fpoptimizer
                         data.AddConst(-0.5);
@@ -6177,7 +7668,7 @@ namespace FPoptimizer_CodeTree
 #ifndef FP_DISABLE_EVAL
                     case cEval:
                     {
-                        unsigned paramcount = fpdata.variableRefs.size();
+                        size_t paramcount = fpdata.variableRefs.size();
                         data.Eat(paramcount, OPCODE(opcode));
                         break;
                     }
