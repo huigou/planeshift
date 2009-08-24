@@ -248,10 +248,10 @@ class psDelayedMessageEvent : public psGameEvent
 {
 public:
     psDelayedMessageEvent(csTicks msecDelay, MsgEntry *me, EventManager *myparent)
-        : psGameEvent(0,msecDelay,"psDelayedMessageEvent")
+        : psGameEvent(0,msecDelay,"psDelayedMessageEvent"),
+          myMsg(me),
+          myParent(myparent)
     {
-        myMsg = me;
-        myParent = myparent;
     }
     virtual void Trigger()
     {

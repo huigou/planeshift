@@ -52,7 +52,15 @@
 
 //----------------------------------------------------------------------------
 
-psCollisionDetection::psCollisionDetection (iObjectRegistry* object_reg)
+psCollisionDetection::psCollisionDetection (iObjectRegistry* object_reg, const csVector3& body, const csVector3& legs,
+                                            const csVector3& _shift, iMeshWrapper* meshWrap) :
+  mesh(meshWrap),
+  colliderActor(),
+  useCD(true),
+  shift(_shift),
+  topSize(body),
+  bottomSize(legs),
+  shift(_shift)
 {
     cdsys = csQueryRegistry<iCollideSystem> (object_reg);
     if (!cdsys)
@@ -69,15 +77,19 @@ psCollisionDetection::psCollisionDetection (iObjectRegistry* object_reg)
     }
     colliderActor.SetEngine (engine);
 
-    mesh = 0;
+    if (!mesh)
+    {
+        return;
+    }
+
+    colliderActor.InitializeColliders (mesh, legs, body, shift);
+
+    return;
 }
 
 psCollisionDetection::~psCollisionDetection ()
 {
-
 }
-
-
 
 bool psCollisionDetection::AdjustForCollisions (csVector3& oldpos,
                                                    csVector3& newpos,
@@ -91,25 +103,6 @@ bool psCollisionDetection::AdjustForCollisions (csVector3& oldpos,
     }        
 
     return colliderActor.AdjustForCollisions (oldpos, newpos, vel, delta);
-}
-
-
-
-bool psCollisionDetection::Init (const csVector3& body, const csVector3& legs, const csVector3& _shift, iMeshWrapper* meshWrap)
-{
-    mesh = meshWrap;
-    
-    if (!mesh)
-    {
-        return false;
-    }
-
-    topSize = body;
-    bottomSize = legs;
-    psCollisionDetection::shift = _shift;
-    colliderActor.InitializeColliders (mesh, legs, body, shift);
-    useCD = true;
-    return true;
 }
 
 iCollider* psCollisionDetection::FindCollider (iObject* object)
@@ -136,5 +129,3 @@ void psCollisionDetection::UseCD (bool flag)
 { 
     useCD = flag; 
 }
-
-
