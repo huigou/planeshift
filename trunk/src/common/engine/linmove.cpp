@@ -60,7 +60,7 @@
 // collision detection variables
 #define MAXSECTORSOCCUPIED 20
 
-/// velocity = prevVelocity + ACCEL
+// velocity = prevVelocity + ACCEL
 #define ACCEL 0.5f
 
 #define LEGOFFSET 0
@@ -91,7 +91,7 @@
  */
 //#define LINMOVE_CD_FOLLOWSEG_DEBUG
 
-/**
+/*
  * Terminal velocity
  * ((120 miles/hour  / 3600 second/hour) * 5280 feet/mile)
  *     / 3.28 feet/meter = 53.65 m/s
@@ -100,112 +100,73 @@
 #define ABS_MAX_FREEFALL_VELOCITY 107.3f
 
 
-/**
+/*
  * This value is a default value to define the part of the mesh used a
  * body and leg in collision detection
  */
 #define BODY_LEG_FACTOR 0.6f
 
-/**
- * MAX_CD_INTERVAL is now the maximum amount of time that should pass in a
- * single step regardless of the current velocity.
- * Since acceleration is factored into the velocity each step, this
- * shouldn't be too large or you'll get unrealistic gravity
- * in some situations.
- */
-#define MAX_CD_INTERVAL 1
-
-/**
- * MIN_CD_INTERVAL is the minimum amount of time that can pass in a single
- * step through the collision detection and movement process.
- *
- * This is basically a protection against 0 time (you will never move) and
- * negative time (you will move the opposite direction until you hit an
- * obstruction.
- */
-#define MIN_CD_INTERVAL 0.01
 
 //----------------------------------------------------------------------------
 
 
-psLinearMovement::psLinearMovement (iObjectRegistry* object_reg, const csVector3& body, const csVector3& legs,
-	const csVector3& shift, iMeshWrapper* meshWrap) :
-object_reg(object_reg),
-mesh(meshWrap),
-colldet(NULL),
-angDelta(0.0f),
-speed(1.0f),
-angularVelocity(0),
-angleToReach(0.0f),
-angleToReachFlag(false),
-velBody(0),
-velWorld(0),
-xRot(0.0f),
-zRot(0.0f),
-path(NULL),
-path_time(0.0f),
-path_speed(0.0f),
-shift(shift),
-/* Initialize bouding box parameters to detect if they have been
- * loaded or not */
-topSize(body),
-bottomSize(legs),
-portalDisplaced(0.0f),
-lastDRUpdate(0),
-lastClientDRUpdate(0),
-lastClientSector(NULL),
-deltaLimit(0.0f),
-offset_err(0.0f),
-offset_rate(0.0f)
+psLinearMovement::psLinearMovement (iObjectRegistry* object_reg)
 {
-  vc = csQueryRegistry<iVirtualClock> (object_reg);
-  if (!vc)
-    return;
+    colldet = 0;
+    
+    this->object_reg = object_reg;
+    vc = csQueryRegistry<iVirtualClock> (object_reg);
+    if (!vc)
+    {
+        return;
+    }
 
-  engine = csQueryRegistry<iEngine> (object_reg);
-  if (!engine)
-    return;
+    engine = csQueryRegistry<iEngine> (object_reg);
+    if (!engine)
+    {
+        return;
+    }
 
-  ResetGravity ();
+    velBody = angularVelocity = velWorld = 0;
+    angleToReachFlag = false;
+    angDelta = 0.0f;
+    lastDRUpdate = 0;
+    lastClientSector = NULL;
+    lastClientDRUpdate = 0;
 
-  if (bottomSize.x * bottomSize.y > (0.8f * 1.4f + 0.1f))
-    hugGround = true;
+    xRot = 0.0f;
+    zRot = 0.0f;
+    hugGround = false;
 
-  intervalSize.x = MIN(topSize.x, bottomSize.x);
-  intervalSize.y = MIN(topSize.y, bottomSize.y);
-  intervalSize.z = MIN(topSize.z, bottomSize.z);
+    portalDisplaced = 0.0f;
+    
+    path = 0;
+    path_speed = 0.0f;
+    path_time  = 0.0f;
 
-  float maxX = MAX(body.x, legs.x)+shift.x;
-  float maxZ = MAX(body.z, legs.z)+shift.z;
+    offset_err = 0;
+    offset_rate = 0;
 
-  float bX2 = body.x / 2.0f;
-  float bZ2 = body.z / 2.0f;
-  float bYbottom = legs.y;
-  float bYtop = legs.y + body.y;
+    speed = 1.0f;
 
-  csBox3 top (csVector3 (-bX2, bYbottom, -bZ2) + shift,
-                csVector3 (bX2, bYtop, bZ2) + shift);
+    deltaLimit = 0.0f;
 
-  float lX2 = legs.x / 2.0f;
-  float lZ2 = legs.z / 2.0f;
 
-  csBox3 bot (csVector3 (-lX2, 0, -lZ2) + shift,
-                csVector3 (lX2, 0 + legs.y, lZ2) + shift);
+    ResetGravity ();
 
-  boundingBox.Set(csVector3(-maxX / 2.0f, 0, -maxZ / 2.0f) + shift,
-                  csVector3(maxX / 2.0f, bYtop, maxZ / 2.0f) + shift);
-
-  cdsys = csQueryRegistry<iCollideSystem> (object_reg);
-
-  colldet = new psCollisionDetection(object_reg, topSize, bottomSize, shift, mesh);
-
-  return;
+    /*
+    * Initialize bouding box parameters to detect if they have been
+    * loaded or not
+    */
+    topSize.Set (0, 0, 0);
 }
+
 
 psLinearMovement::~psLinearMovement ()
 {
     delete colldet;
 }
+
 
 static inline bool FindIntersection (const csCollisionPair& cd, csVector3 line[2])
 {
@@ -287,6 +248,27 @@ bool psLinearMovement::RotateV (float delta)
   //pcmesh->GetMesh ()->GetMovable ()->Transform (rotMat);
   return true;
 }
+
+
+/*
+ * MAX_CD_INTERVAL is now the maximum amount of time that should pass in a
+ * single step regardless of the current velocity.
+ * Since acceleration is factored into the velocity each step, this
+ * shouldn't be too large or you'll get unrealistic gravity
+ * in some situations.
+ */
+#define MAX_CD_INTERVAL 1
+
+/*
+ * MIN_CD_INTERVAL is the minimum amount of time that can pass in a single
+ * step through the collision detection and movement process.
+ *
+ * This is basically a protection against 0 time (you will never move) and
+ * negative time (you will move the opposite direction until you hit an
+ * obstruction.
+ */
+#define MIN_CD_INTERVAL 0.01
+
 
 int psLinearMovement::MoveSprite (float delta)
 {
@@ -692,6 +674,7 @@ void psLinearMovement::UpdateDRDelta (csTicks ticksdelta)
   // lastDRUpdate += ticksdelta;  The way this fn is used, it should not update this var
 }
 
+
 void psLinearMovement::UpdateDR (csTicks ticks)
 {
   if (lastDRUpdate) // first time through gives huge deltas without this
@@ -792,6 +775,50 @@ void psLinearMovement::GetCDDimensions (csVector3& body, csVector3& legs,
 }
 
 
+bool psLinearMovement::InitCD (const csVector3& body, const csVector3& legs,
+	const csVector3& shift, iMeshWrapper* meshWrap)
+{
+  mesh = meshWrap;
+  
+  topSize = body;
+  bottomSize = legs;
+
+  if (bottomSize.x * bottomSize.y > (0.8f * 1.4f + 0.1f))
+    hugGround = true;
+
+  intervalSize.x = MIN(topSize.x, bottomSize.x);
+  intervalSize.y = MIN(topSize.y, bottomSize.y);
+  intervalSize.z = MIN(topSize.z, bottomSize.z);
+    
+    float maxX = MAX(body.x, legs.x)+shift.x;
+    float maxZ = MAX(body.z, legs.z)+shift.z;
+    
+
+    float bX2 = body.x / 2.0f;
+    float bZ2 = body.z / 2.0f;
+    float bYbottom = legs.y;
+    float bYtop = legs.y + body.y;
+    
+    csBox3 top (csVector3 (-bX2, bYbottom, -bZ2) + shift,
+                csVector3 (bX2, bYtop, bZ2) + shift);
+    
+    float lX2 = legs.x / 2.0f;
+    float lZ2 = legs.z / 2.0f;
+    
+    csBox3 bot (csVector3 (-lX2, 0, -lZ2) + shift,
+                csVector3 (lX2, 0 + legs.y, lZ2) + shift);
+    
+    boundingBox.Set(csVector3(-maxX / 2.0f, 0, -maxZ / 2.0f) + shift,
+                    csVector3(maxX / 2.0f, bYtop, maxZ / 2.0f) + shift);
+
+  psLinearMovement::shift = shift;
+
+  cdsys = csQueryRegistry<iCollideSystem> (object_reg);
+
+  colldet = new psCollisionDetection(object_reg);
+  return colldet->Init (topSize, bottomSize, shift, mesh);
+}
+
 bool psLinearMovement::IsOnGround () const
 {
   if (colldet)
@@ -800,6 +827,12 @@ bool psLinearMovement::IsOnGround () const
   return true;
 }
 
+/**
+ * WARNING:  At present time this function does not work correctly!
+ * <p>
+ * The underlying function csEngine::GetNearbySectors () is not implemented.
+ * Instead it returns only your current sector.
+ */
 int psLinearMovement::FindSectors (const csVector3& pos, float radius,
 	iSector** sectors)
 {
@@ -832,6 +865,7 @@ void psLinearMovement::GetDRData (bool& on_ground, float& speed,
   worldVel = this->velWorld;
 }
 
+
 iSector* psLinearMovement::GetSector () const
 {
     if ( mesh->GetMovable()->GetSectors()->GetCount() > 0 )
@@ -855,6 +889,7 @@ void psLinearMovement::SetPathAction (int which, const char *action)
 //#define DRDBG(X) printf ("DR: [ %f ] : %s\n", delta, X);
 #define DRDBG(x)
 
+
 float psLinearMovement::GetYRotation () const
 {
   // user will get a warning and a nothing if theres no mesh
@@ -863,14 +898,12 @@ float psLinearMovement::GetYRotation () const
     ->GetTransform ().GetT2O ();
   return Matrix2YRot (transf);
 }
-
 const csVector3 psLinearMovement::GetPosition () const
 {
   // user will get a warning and a nothing if theres no mesh
   if (!mesh)  return csVector3 ();
   return mesh->GetMovable ()->GetPosition ();
 }
-
 const csVector3 psLinearMovement::GetFullPosition () const
 {
   // user will get a warning and a nothing if theres no mesh
@@ -1030,6 +1063,7 @@ void psLinearMovement::SetSoftDRData (bool on_ground, float speed,
   SetAngularVelocity (rot);
   lastDRUpdate = csGetTicks ();
 }
+
 
 void psLinearMovement::SetVelocity (const csVector3& vel)
 {

@@ -577,21 +577,23 @@ gemObject::gemObject(const char* name,
                      iSector* room,
                      const csVector3& pos,
                      float rotangle,
-                     int clientnum) :
-                     valid(true),
-                     proxlist(NULL),
-                     name(name),
-                     worldInstance(myInstance),
-                     is_alive(false),
-                     factname(factname),
-                     alwaysWatching(false),
-                     prox_distance_desired(DEF_PROX_DIST),
-                     prox_distance_current(DEF_PROX_DIST)
+                     int clientnum) : factname(factname)
 {
     if (!this->cel)
         this->cel = GEMSupervisor::GetSingletonPtr();
 
+    this->valid    = true;
+    this->name     = name;
+    this->worldInstance = myInstance;
+
+    proxlist = NULL;
+    is_alive = false;
+    alwaysWatching = false;
+
     eid = cel->CreateEntity(this);
+
+    prox_distance_desired=DEF_PROX_DIST;
+    prox_distance_current=DEF_PROX_DIST;
 
     InitMesh(name,pos,rotangle,room);
 
@@ -1070,12 +1072,12 @@ void gemObject::Dump()
 // gemActiveObject
 //--------------------------------------------------------------------------------------
 
-gemActiveObject::gemActiveObject(const char* name)
-                                : gemObject(name)
+gemActiveObject::gemActiveObject( const char* name )
+                                : gemObject( name )
 {
 }
 
-gemActiveObject::gemActiveObject(const char* name,
+gemActiveObject::gemActiveObject( const char* name,
                                      const char* factname,
                                      InstanceID myInstance,
                                      iSector* room,
@@ -1094,7 +1096,7 @@ gemActiveObject::gemActiveObject(const char* name,
 
 }
 
-void gemActiveObject::Broadcast(int clientnum, bool control)
+void gemActiveObject::Broadcast(int clientnum, bool control )
 {
     CPrintf(CON_DEBUG, "Active Object Broadcast" );
 }
@@ -1300,12 +1302,12 @@ gemItem::gemItem(csWeakRef<psItem> item,
                      float yrotangle,
                      float zrotangle,
                      int clientnum)
-                     : gemActiveObject(item->GetName(),factname,instance,room,pos,yrotangle,clientnum),
-                     itemdata(item),
-                     xRot(xrotangle),
-                     yRot(yrotangle),
-                     zRot(zrotangle)
+                     : gemActiveObject(item->GetName(),factname,instance,room,pos,yrotangle,clientnum)
 {
+    itemdata=item;
+    xRot=xrotangle;
+    yRot=yrotangle;
+    zRot=zrotangle;
     itemType.Format("Item(%s)",itemdata->GetItemType());
     itemdata->SetGemObject( this );
     cel->AddItemEntity(this);
@@ -1732,10 +1734,9 @@ gemActionLocation::gemActionLocation(psActionLocation *action, iSector *isec, in
                                                        isec,
                                                        action->position,
                                                        0.0f,
-                                                       clientnum),
-                                     action(action),
-                                     visible(true)
+                                                       clientnum)
 {
+    this->action = action;
     action->SetGemObject( this );
 
     // action locations use the AL ID as their EID for some reason
@@ -1746,6 +1747,10 @@ gemActionLocation::gemActionLocation(psActionLocation *action, iSector *isec, in
 
     this->prox_distance_desired = 0.0F;
     this->prox_distance_current = 0.0F;
+
+    visible = true;
+
+    SetName(name);
 
 
     csRef< iEngine > engine =  csQueryRegistry<iEngine> (psserver->GetObjectReg());
@@ -2786,9 +2791,15 @@ bool gemActor::LogLine(const char* szLine)
     return true; // The line was written to a file, so return true.
 }
 
+/**
+* Determines the right size and height for the collider for the sprite
+* and sets the actual position of the sprite.
+*/
 bool gemActor::InitLinMove (const csVector3& pos,
                             float angle, iSector* sector)
 {
+    pcmove = new psLinearMovement(psserver->GetObjectReg());
+
     // Check if we're using sizes from the db.
     csVector3 size;
     psRaceInfo *raceinfo = psChar->GetRaceInfo();
@@ -2838,7 +2849,7 @@ bool gemActor::InitLinMove (const csVector3& pos,
     bottom.x *= .7f;
     bottom.z *= .7f;
 
-    pcmove = new psLinearMovement(psserver->GetObjectReg(), top, bottom, offset, GetMeshWrapper());
+    pcmove->InitCD(top, bottom,offset, GetMeshWrapper());
     // Disable CD checking because server does not need it.
     pcmove->UseCD(false);
 
@@ -2859,6 +2870,7 @@ bool gemActor::SetupCharData()
 
     return true;  // right now this func never fail, but might later.
 }
+
 
 bool gemActor::InitCharData(Client* c)
 {
@@ -3830,9 +3842,16 @@ bool gemActor::SetMesh(const char* meshname)
 
 /* gemActor::ChatHistoryEntry function implementations */
 
+/// ChatHistoryEntry(const char*, time_t = 0)
+/// Info: Constructor. When no time is given, current time is used.
 gemActor::ChatHistoryEntry::ChatHistoryEntry(const char* szLine, time_t t)
 : _time(t?t:time(0)), _line(szLine) {}
 
+/// void GetLogLine(csString&) const
+/// Info: Prepends a string representation of the time to this chat line
+/// so it can be written to a log file. The resulting line is
+/// written to 'line' argument (reference).
+/// Note: this function also applies \n to the line end.
 void gemActor::ChatHistoryEntry::GetLogLine(csString& line) const
 {
     tm* gmtm = gmtime(&_time);
@@ -3856,9 +3875,9 @@ gemNPC::gemNPC( psCharacter *chardata,
 {
     npcdialog = NULL;
     superClientID = 0;
-    nextVeryShortRangeAvail = 0;
-    nextShortRangeAvail = 0;
-    nextLongRangeAvail = 0;
+    nextVeryShortRangeAvail = 0; /// When can npc respond to very short range prox trigger again
+    nextShortRangeAvail = 0;     /// When can npc respond to short range prox trigger again
+    nextLongRangeAvail = 0;      /// When can npc respond to long range prox trigger again
 
     //if( !GetEntity() )
     //{

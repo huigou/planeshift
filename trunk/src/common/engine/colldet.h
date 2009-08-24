@@ -57,9 +57,10 @@ class csColliderWrapper;
 class psCollisionDetection
 {
 public:
-  psCollisionDetection(iObjectRegistry* object_reg, , const csVector3& body, const csVector3& legs, 
-                       const csVector3& _shift, iMeshWrapper* meshWrap);
+  psCollisionDetection(iObjectRegistry* object_reg);
   virtual ~psCollisionDetection();
+
+  virtual bool Init (const csVector3& body, const csVector3& legs, const csVector3& shift, iMeshWrapper* mesh);
   
   virtual bool IsOnGround () const;
   virtual void SetOnGround (bool flag);
