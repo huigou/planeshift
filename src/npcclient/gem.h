@@ -70,7 +70,7 @@ private:
 class gemNPCObject : public CS::Utility::WeakReferenced
 {
 public:
-    gemNPCObject(psNPCClient* npcclient, EID id, csString name, int type);
+    gemNPCObject(psNPCClient* npcclient, EID id);
     virtual ~gemNPCObject();
     
     bool InitMesh(const char *factname,const char *filename,
@@ -170,7 +170,6 @@ public:
     
     virtual const char* GetObjectType(){ return "Item"; }
 
-    ///Here we check the flag to see if we can pick up this item
     virtual bool IsPickable();
 
 protected:

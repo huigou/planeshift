@@ -1160,26 +1160,25 @@ void psCelClient::AddInstanceObject(const char* name, csRef<InstanceObject> obje
 //-------------------------------------------------------------------------------
 
 
-GEMClientObject::GEMClientObject() :
-    flags(0),
-    entitylabel(NULL),
-    shadow(NULL),
-    hasShadow(true)
+GEMClientObject::GEMClientObject()
 {
+    entitylabel = NULL;
+    shadow = 0;
+    hasShadow = true;
+    flags = 0;
     charApp = new psCharAppearance(psengine->GetObjectRegistry());
 }
 
-GEMClientObject::GEMClientObject(psCelClient* cel, EID id) :
-    eid(id),
-    flags(0),
-    entitylabel(NULL),
-    shadow(NULL),
-    hasShadow(true)
+GEMClientObject::GEMClientObject(psCelClient* cel, EID id) : eid(id)
 {
     if (!this->cel)
         this->cel = cel;
 
+    eid = id;
     //entity = cel->GetPlLayer()->CreateEntity(id);
+    entitylabel = NULL;
+    shadow = 0;
+    hasShadow = true;
     charApp = new psCharAppearance(psengine->GetObjectRegistry());
 }
 
@@ -1780,11 +1779,13 @@ psLinearMovement * GEMClientActor::GetMovement()
 bool GEMClientActor::InitLinMove(const csVector3& pos, float angle, const char* sector,
                                 csVector3 top, csVector3 bottom, csVector3 offset )
 {
+    linmove = new psLinearMovement(psengine->GetObjectRegistry());
+
     top.x *= .7f;
     top.z *= .7f;
     bottom.x *= .7f;
     bottom.z *= .7f;
-    linmove = new psLinearMovement(psengine->GetObjectRegistry(), top, bottom,offset, pcmesh);
+    linmove->InitCD(top, bottom,offset, pcmesh);
     iSector * sectorObj = psengine->GetEngine()->FindSector(sector);
     if (sectorObj != NULL)
         linmove->SetPosition(pos,angle,sectorObj);
