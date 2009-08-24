@@ -35,6 +35,8 @@ typedef unsigned long long fphash_value_t;
 typedef uint_fast64_t fphash_value_t;
 #define FPHASH_CONST(x) x##ULL
 
+#endif
+
 namespace FUNCTIONPARSERTYPES
 {
 struct fphash_t
@@ -50,8 +52,6 @@ struct fphash_t
     bool operator<(const fphash_t& rhs) const
     { return hash1 != rhs.hash1 ? hash1 < rhs.hash1 : hash2 < rhs.hash2; }
 };
-
-#endif
 }
 #include <vector>
 #include <utility>
