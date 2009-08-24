@@ -1,4 +1,22 @@
-﻿*** 2009-08-23 by Stefano Angeleri
+﻿*** 2009-08-24 by Stefano Angeleri
+- Updated fparser from 3.1.5 to 3.2:
+    *  The FP_SUPPORT_ASINH and FP_NO_ASINH  precompiler constants have 
+       been replaced with a more generic FP_SUPPORT_TR1_MATH_FUNCS 
+       precompiler constant, which enables other similar functions as well. 
+       Consult the documentation on this subject for details.
+    * The "asinh", "acosh" and "atanh" functions are now always available 
+      in the function syntax regardless of whether FP_SUPPORT_TR1_MATH_FUNCS 
+      has been defined or not. (If it's not, then they will be calculated 
+      using equivalent formulas.)
+    * Significant refactoring of the optimizer code, and addition of 
+      numerous new optimization rules (related to the abs() function in
+      diverse situations, some exponentiation, logarithm and hyperbolic
+      trigonometry optimizations, and others).
+    * Fixed bug in the optimizer which caused functions like 
+      "sqrt(x*x)" and "(x*x)^0.25" to be optimized incorrectly 
+      (for negative values of x). 
+
+*** 2009-08-23 by Stefano Angeleri
 - Added public actions/narrate/actionmy support for npcs
 - Fixed some bugs with the item prereqop
 - Fixed a bug which made the search for name in the area commands only 
