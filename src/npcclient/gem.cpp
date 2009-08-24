@@ -55,10 +55,15 @@ psNpcMeshAttach::psNpcMeshAttach(gemNPCObject* objectToAttach) : scfImplementati
 
 //-------------------------------------------------------------------------------
 
-gemNPCObject::gemNPCObject(psNPCClient* npcclient, EID id)
-    :eid(id), visible(true), invincible(false), instance(DEFAULT_INSTANCE)
+gemNPCObject::gemNPCObject(psNPCClient* npcclient, EID id, csString name, int type) : 
+    npcclient(npcclient),
+    name(name),
+    eid(id),
+    type(type),
+    visible(true),
+    invincible(false),
+    instance(DEFAULT_INSTANCE)
 {
-    this->npcclient = npcclient;
     engine =  csQueryRegistry<iEngine> (npcclient->GetObjectReg());
 }    
 
@@ -260,15 +265,13 @@ iMeshWrapper *gemNPCObject::GetMeshWrapper()
 //-------------------------------------------------------------------------------
  
 
-gemNPCActor::gemNPCActor( psNPCClient* npcclient, psPersistActor& mesg) 
-    : gemNPCObject( npcclient, mesg.entityid ), npc(NULL)
+gemNPCActor::gemNPCActor( psNPCClient* npcclient, psPersistActor& mesg)
+    : gemNPCObject(npcclient, mesg.entityid, mesg.name, mesg.type),
+    playerID(mesg.playerID),
+    ownerEID(mesg.ownerEID),
+    race(mesg.race),
+    npc(NULL)
 {
-    name = mesg.name;
-    type = mesg.type;
-    playerID = mesg.playerID;
-    ownerEID = mesg.ownerEID;
-    race = mesg.race;
-
     SetVisible( ! (mesg.flags & psPersistActor::INVISIBLE)?  true : false );
     SetInvincible( (mesg.flags & psPersistActor::INVINCIBLE) ?  true : false );
     SetInstance( mesg.instance );
@@ -308,23 +311,21 @@ bool gemNPCActor::InitCharData( const char* textParts, const char* equipment )
 bool gemNPCActor::InitLinMove(const csVector3& pos, float angle, const char* sector,
                               csVector3 top, csVector3 bottom, csVector3 offset )
 {
-    pcmove =  new psLinearMovement(npcclient->GetObjectReg());
-
     csRef<iEngine> engine =  csQueryRegistry<iEngine> (npcclient->GetObjectReg());
 
-    pcmove->InitCD(top, bottom, offset, GetMeshWrapper()); 
+    pcmove = new psLinearMovement(npcclient->GetObjectReg(), top, bottom, offset, GetMeshWrapper());
     pcmove->SetPosition(pos,angle,engine->FindSector(sector));
     
     return true;  // right now this func never fail, but might later.
 }
 
+//-------------------------------------------------------------------------------
 
 gemNPCItem::gemNPCItem( psNPCClient* npcclient, psPersistItem& mesg) 
-    : gemNPCObject(npcclient, mesg.eid), flags(NONE)
+    : gemNPCObject(npcclient, mesg.eid, mesg.name, mesg.type),
+    flags(NONE)
 {        
-    name = mesg.name;
     Debug3(LOG_CELPERSIST, 0, "Item %s(%s) Received", mesg.name.GetData(), ShowID(mesg.eid));
-    type = mesg.type;
 
     if(!mesg.factname.GetData())
     {
@@ -335,8 +336,10 @@ gemNPCItem::gemNPCItem( psNPCClient* npcclient, psPersistItem& mesg)
     if (mesg.flags & psPersistItem::NOPICKUP) flags |= NOPICKUP;
 }
 
-//Here we check the flag to see if we can pick up this item
-bool gemNPCItem::IsPickable() { return !(flags & NOPICKUP); }
+bool gemNPCItem::IsPickable()
+{
+    return !(flags & NOPICKUP);
+}
 
 gemNPCItem::~gemNPCItem()
 {

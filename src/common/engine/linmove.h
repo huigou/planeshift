@@ -56,7 +56,7 @@ class csColliderWrapper;
 struct iPath;
 class psCollisionDetection;
 
-/* Max deviation before we need to send
+/** Max deviation before we need to send
    a new DR packet */
 #define PSLINEARMOVEMENT_DRDELTA 0.2
 
@@ -69,7 +69,8 @@ class psCollisionDetection;
 class psLinearMovement 
 {
 public:
-  psLinearMovement (iObjectRegistry* object_reg);
+  psLinearMovement (iObjectRegistry* object_reg, const csVector3& body, const csVector3& legs,
+	const csVector3& shift, iMeshWrapper* meshWrap));
   virtual ~psLinearMovement ();
 
   virtual void SetAngularVelocity (const csVector3& angle);
@@ -97,7 +98,6 @@ public:
   virtual const csVector3 GetAngularVelocity () const;
   virtual void GetAngularVelocity (csVector3& v) const;
   
-  virtual bool InitCD (const csVector3& body, const csVector3& legs, const csVector3& shift, iMeshWrapper* mesh);
   virtual void GetCDDimensions (csVector3& body, csVector3& legs, csVector3& shift);
   virtual void SetSpeed (float speedz);
 
@@ -136,7 +136,7 @@ public:
    */
   virtual csTicks TimeDiff (void);
     
-    virtual csTicks ClientTimeDiff() { return csGetTicks() - lastClientDRUpdate; }
+  virtual csTicks ClientTimeDiff() { return csGetTicks() - lastClientDRUpdate; }
 
   /// Return all necessary data for Dead Reckoning
   virtual void GetDRData (bool& on_ground, float& speed, csVector3& pos,
@@ -249,8 +249,12 @@ protected:
     */
     void HugGround(const csVector3& pos, iSector* sector);
 
-    
-  // Returns a list of sectors near a position.
+  /** @brief Returns a list of sectors near a position.
+  * WARNING:  At present time this function does not work correctly!
+  * <p>
+  * The underlying function csEngine::GetNearbySectors () is not implemented.
+  * Instead it returns only your current sector.
+  */
   int FindSectors (const csVector3& pos, float size, iSector** sectors);
 
   
@@ -300,7 +304,7 @@ protected:
 
   csVector3 bottomSize;
     
-    csBox3 boundingBox;
+  csBox3 boundingBox;
 
   /// The total change in displacement caused by space warping portals.
   csVector3 portalDisplaced;
@@ -309,10 +313,10 @@ protected:
   csVector3 intervalSize;
 
   csTicks lastDRUpdate;
-    csTicks lastClientDRUpdate;
-    csVector3 lastClientPosition;
-    float lastClientYrot;
-    iSector* lastClientSector;
+  csTicks lastClientDRUpdate;
+  csVector3 lastClientPosition;
+  float lastClientYrot;
+  iSector* lastClientSector;
   float deltaLimit;
 
   // Variables for 'Soft Update' of position
