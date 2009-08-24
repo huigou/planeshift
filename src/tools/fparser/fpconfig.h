@@ -1,5 +1,5 @@
 /***************************************************************************\
-|* Function Parser for C++ v3.1.5                                          *|
+|* Function Parser for C++ v3.2                                            *|
 |*-------------------------------------------------------------------------*|
 |* Copyright: Juha Nieminen                                                *|
 \***************************************************************************/
@@ -13,16 +13,19 @@
 // include "fparser.hh".
 
 /*
- Comment out the following line if your compiler supports the (non-standard)
- asinh, acosh and atanh functions and you want them to be supported. If
- you are not sure, just leave it (those function will then not be supported).
- Alternatively you can define the FP_SUPPORT_ASINH precompiler constant in
- your compiler settings.
+ Note that these do not change what FunctionParser supports, they only
+ change how the function is evaluated, potentially making it faster when
+ these functions are involved.
+ These will make the source code use asinh(), acosh(), atanh(), exp2()
+ and log2().
 */
-#ifndef FP_SUPPORT_ASINH
-#define FP_NO_ASINH
-#endif
+//#define FP_SUPPORT_TR1_MATH_FUNCS
 
+#ifdef FP_SUPPORT_TR1_MATH_FUNCS
+#define FP_SUPPORT_ASINH
+#define FP_SUPPORT_EXP2
+#define FP_SUPPORT_LOG2
+#endif
 
 /*
  Comment out the following line to enable the eval() function, which can

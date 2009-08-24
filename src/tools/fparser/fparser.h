@@ -1,5 +1,5 @@
 /***************************************************************************\
-|* Function Parser for C++ v3.1.5                                          *|
+|* Function Parser for C++ v3.2                                            *|
 |*-------------------------------------------------------------------------*|
 |* Copyright: Juha Nieminen                                                *|
 \***************************************************************************/
@@ -69,7 +69,7 @@ public:
 
 #ifdef FUNCTIONPARSER_SUPPORT_DEBUG_OUTPUT
     // For debugging purposes only:
-    void PrintByteCode(std::ostream& dest) const;
+    void PrintByteCode(std::ostream& dest, bool showExpression = true) const;
 #endif
 
 
