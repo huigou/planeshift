@@ -342,7 +342,6 @@ public:
     iSector* GetSector();
     const char *GetSectorName() { return GetSector() ? GetSector()->QueryObject()->GetName() : "(null)"; }
     int FindAnimIndex(const char *name);
-
     csArray<gemObject*> *GetObjectsInRange( float range );
     //@}
 
@@ -707,27 +706,23 @@ protected:
     // for details on current /report implementation
     // check PS#2789.
 
-    /// struct ChatHistoryEntry
     /// Info: Stores a chat history element.
     struct ChatHistoryEntry
     {
-        /// time_t _time
         /// Info: Time this line was said.
         time_t _time;
 
-        /// csString _line
         /// Info: Actual text. (Preformated depending on chat type)
         csString _line;
 
-        /// ChatHistoryEntry(const char*, time_t = 0)
         /// Info: Constructor. When no time is given, current time is used.
         ChatHistoryEntry(const char* szLine, time_t t = 0);
 
-        /// void GetLogLine(csString&) const
-        /// Info: Prepends a string representation of the time to this chat line
-        /// so it can be written to a log file. The resulting line is
-        /// written to 'line' argument (reference).
-        /// Note: this function also applies \n to the line end.
+        /** Prepends a string representation of the time to this chat line
+          * so it can be written to a log file. The resulting line is
+          * written to 'line' argument (reference).
+          * Note: this function also applies \n to the line end.
+          */
         void GetLogLine(csString& line) const;
     };
 
@@ -745,7 +740,10 @@ protected:
     /// Info: log file handle.
     csRef<iFile> logging_chat_file;
 
-
+    /**
+     * Determines the right size and height for the collider for the sprite
+     * and sets the actual position of the sprite.
+     */
     bool InitLinMove(const csVector3& pos,float angle, iSector* sector);
     bool InitCharData(Client* c);
 

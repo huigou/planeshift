@@ -127,7 +127,7 @@ public:
     virtual void Run(const MathEnvironment *env, gemActor *target, ActiveSpell *asp) = 0;
 };
 
-// A base class with a "value" attribute backed by a MathExpression.
+/// A base class with a "value" attribute backed by a MathExpression.
 class Applied1 : public AppliedOp
 {
 public:
@@ -144,10 +144,10 @@ public:
     }
 
 protected:
-    MathExpression *value; //< an embedded MathExpression
+    MathExpression *value; ///< an embedded MathExpression
 };
 
-// A base class with both "value" and a plain text "name" attribute.
+/// A base class with both "value" and a plain text "name" attribute.
 class Applied2 : public Applied1
 {
 public:
@@ -161,7 +161,7 @@ public:
     }
 
 protected:
-    csString name; //< plain text - name of something, like a skill or faction
+    csString name; ///< plain text - name of something, like a skill or faction
 };
 
 //----------------------------------------------------------------------------

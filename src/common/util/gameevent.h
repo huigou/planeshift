@@ -32,14 +32,14 @@ class EventManager;
  */
 class psGameEvent
 {
-    char type[32];          /// The type of this GameEvent, used for debugging
+    char type[32];          ///< The type of this GameEvent, used for debugging
 public:
     static EventManager *eventmanager;
     
-    csTicks triggerticks;   /// ticks value when event should be triggered.
-    int id;                 /// id value combined with ticks ensures uniqueness for tree
-    static int nextid;      /// id counter sequence
-    bool valid;             /// Set this to false if the trigger should not be fired.
+    csTicks triggerticks;   ///< ticks value when event should be triggered.
+    int id;                 ///< id value combined with ticks ensures uniqueness for tree
+    static int nextid;      ///< id counter sequence
+    bool valid;             ///< Set this to false if the trigger should not be fired.
 
     /**
      * Construct a new game event. Set ticks to 0 if the event should

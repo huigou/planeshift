@@ -147,8 +147,8 @@ protected:
     bool Parse(const char *expression);
 
     csSet<csString> requiredVars;
-    csSet<csString> requiredObjs; // a subset of requiredVars which are known to be objects; for type checking
-    csSet<csString> propertyRefs; // full names like Target:HP
+    csSet<csString> requiredObjs; ///< a subset of requiredVars which are known to be objects; for type checking
+    csSet<csString> propertyRefs; ///< full names like Target:HP
     FunctionParser fp;
 
     const char *name; // used for debugging
