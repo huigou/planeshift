@@ -904,6 +904,12 @@ void NetworkManager::DequeueDRData(NPC * npc )
 
 void NetworkManager::QueueDRData(gemNPCActor *entity, psLinearMovement *linmove, uint8_t counter)
 {
+    if(!entity) return; //TODO: This shouldn't happen but it happens so this is just a quick patch and
+                        //      the real problem should be fixed (entities being removed from the game
+                        //      world while moving will end up here with entity being null)
+                        //      DequeueDRData should be supposed to remove all queued data but the iterator
+                        //      in SendAllCommands still "catches them"
+
     if ( outbound->msg->current > ( outbound->msg->bytes->GetSize() - 100 ) )
     {
         CPrintf(CON_DEBUG, "Sent all commands [%d] due to possible Message overrun.\n", cmd_count );
