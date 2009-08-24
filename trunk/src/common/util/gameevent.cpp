@@ -27,8 +27,8 @@
 
 //psGameEvent static variables
 
-EventManager *psGameEvent::eventmanager = NULL; /// eventmanager to be used for FireEvents
-int psGameEvent::nextid;                        /// id counter sequence number
+EventManager *psGameEvent::eventmanager = NULL; ///< eventmanager to be used for FireEvents
+int psGameEvent::nextid;                        ///< id counter sequence number
 
 psGameEvent::psGameEvent(csTicks ticks,int offsetticks, const char* newType)
 {
