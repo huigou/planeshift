@@ -1,24 +1,31 @@
 <widget_description>
 
-<pawsNpcDialogWindow name="NPCDialogWindow" xmlbinding="dlgmenu"
-        visible="no" savepositions="yes" movable="yes" scalefont="no" keepaspect="no" configurable="yes" resizable="yes" resizetoscreen="yes" style="New Standard GUI">
+<widget name="NPCDialogWindow" factory="pawsNpcDialogWindow" xmlbinding="dlgmenu"
+        visible="no" savepositions="yes" movable="yes" scalefont="yes" keepaspect="no" configurable="yes" resizable="yes" style="New Standard GUI">
         
     <frame x="0" y="100" width="400" height="100" border="yes" />
-    <title resource="Scaling Title Bar" text="What will you say?" align="left" close_button="yes" />
+    <!--minframe width="165" height="100" /-->
+    <!--maxframe width="600" height="500" /-->
+    <title resource="Scaling Title Bar" text="Quest Responses" align="left" close_button="yes" />
 
-    <pawsListBox name="ResponseList" xmlbinding="options" >
-        <frame x="10" y="3" width="400" height="80" border="yes" />
-        <highlight resource="Hightlight" alpha="128" />
+    <widget name="ResponseList" factory="pawsListBox" xmlbinding="options" >
+        <frame x="10" y="3" width="380" height="80" border="yes" />
         <columns height="20" xmlbinding="row">
-            <column width="380" xmlbinding="text">
-                <pawsTextBox name="Name" scalefont="no" border="yes" />
+            <column width="350" xmlbinding="text">
+                <widget name="Name" factory="pawsTextBox" scalefont="yes"></widget>
             </column>
             <column width="0" xmlbinding="trig">
-                <pawsTextBox name="trigger" visible="no" />
+                <widget name="trigger" factory="pawsTextBox" visible="no"></widget>
             </column>
         </columns>
-    </pawsListBox>
+        <attachpoints>
+            <attach point="ATTACH_RIGHT" />
+            <attach point="ATTACH_TOP" />
+            <attach point="ATTACH_LEFT" />
+            <attach point="ATTACH_BOTTOM" />
+        </attachpoints>
+    </widget>
     
-</pawsNpcDialogWindow>
+</widget>
 
 </widget_description>

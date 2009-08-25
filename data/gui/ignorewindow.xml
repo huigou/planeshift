@@ -1,13 +1,10 @@
 <widget_description>
 
-  <widget name="IgnoreWindow" factory="pawsIgnoreWindow" 
-          visible="no" savepositions="yes" movable="yes" 
-          resizable="yes">
+  <widget name="IgnoreWindow" factory="pawsIgnoreWindow" visible="no" savepositions="yes" movable="yes" resizable="yes" style="New Standard GUI">
         
     <frame x="0" y="100" width="200" height="240" border="yes" />
     <minframe width="200" height="160" />
-    <title resource="Blue Title" text="Ignore List" align="left" close_button="yes"/>
-    <bgimage resource="Standard Background" />
+    <title resource="Scaling Title Bar" text="Ignore List" align="left" close_button="yes"/>
 
     
     <widget name="IgnoreList" factory="pawsListBox"  >
@@ -15,7 +12,6 @@
         <columns height="32">
             <column width="140" >            
                 <widget name="Name" factory="pawsTextBox">
-                    <font name="/planeshift/data/ttf/cupandtalon.ttf" size="14"/>
                 </widget>
             </column>                                               
         </columns>
@@ -30,7 +26,6 @@
     
     <widget name="remove" factory="pawsButton" toggle="no" id="2000" shadows="yes">
         <frame x="70" y="210" width="60" height="16" border="yes" />
-        <buttonup resource="Blue Title" />
         <label text="Remove" />
         <attachpoints>  
             <attach point="ATTACH_LEFT" />
@@ -40,8 +35,6 @@
     
     <widget name="add" factory="pawsButton" toggle="no" id="3000" shadows="yes">
         <frame x="140" y="210" width="50" height="16" border="yes" />
-        <buttonup resource="Blue Title" />
-        <buttondown resource="Blue Title" />
         <label text="Add" />
         <attachpoints>  
             <attach point="ATTACH_LEFT" />

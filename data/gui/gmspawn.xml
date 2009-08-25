@@ -1,10 +1,9 @@
 <widget_description>
-    <widget name="GMSpawnWindow" factory="pawsGMSpawnWindow" visible="no" savepositions="yes" movable="yes"
-        resizable="no" configurable="yes">
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="12" />
+    <widget name="GMSpawnWindow" factory="pawsGMSpawnWindow" visible="no" savepositions="yes" movable="yes" resizable="no" configurable="yes" style="New Standard GUI">
         <frame x="150" y="100" width="700" height="500" border="yes" />
-<bgimage resource="Blue Background" alpha="0" />
-        <title resource="Blue Title" text="GM Spawn interface" align="left" close_button="yes"/>
+        <title resource="Scaling Title Bar" text="GM Spawn interface" align="left" close_button="yes"/>
+
+
         <widget name="ItemView" factory="pawsObjectView">
             <frame x="300" y="10" width="200" height="200" border="yes" />
             <map file="/planeshift/world/podium" sector="room" />

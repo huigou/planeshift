@@ -1,10 +1,10 @@
 <widget_description>
 
-  <pawsQuestListWindow name="QuestNotebook" style="topwindow" visible="no"  savepositions="yes" movable="yes"  style="New Standard GUI">
+  <pawsQuestListWindow name="QuestNotebook" visible="no"  savepositions="yes" movable="yes"  style="New Standard GUI">
     <frame x="100" y="100" width="550" height="400" border="yes" />
     <title resource="Scaling Title Bar" text="Quest & Events Notebook" align="left" close_button="yes"/>
 
-    <pawsTextBox name="" style="New Standard Prompt">
+    <pawsTextBox name="" style="Header Font">
         <frame x="20" y="15" width="135" height="20" />
         <text string="List:" />
     </pawsTextBox>
@@ -28,11 +28,11 @@
         <frame x="0" y="30" width="250" height="220" border="yes" />
     
         <pawsButton name="UncompletedButton" id="1000">
-            <frame x="17" y="185" width="65" height="15" />
+            <frame x="17" y="185" width="80" height="15" />
             <label text="Uncompleted" />
         </pawsButton>
         <pawsButton name="CompletedButton" id="1001" >
-            <frame x="96" y="185"width="50" height="15" />
+            <frame x="130" y="185" width="70" height="15" />
             <label text="Completed" />
         </pawsButton>
 
@@ -41,7 +41,7 @@
             <frame x="16" y="10" width="186" height="161" />
             <columns height="20" headings="no" xmlbinding="q" >
               <column width="166" xmlbinding="desc" >
-                <pawsTextBox name="Name" style="label" />
+                <pawsTextBox name="Name" />
               </column>
               <column width="0" xmlbinding="id">
                 <pawsTextBox name="ID" visible="no" />
@@ -56,7 +56,7 @@
             <frame x="16" y="10" width="186" height="161" />
             <columns height="20" headings="no" xmlbinding="q" >
               <column width="166" xmlbinding="desc" >
-                <pawsTextBox name="Name" style="label" />
+                <pawsTextBox name="Name" />
               </column>
               <column width="0" xmlbinding="id">
                 <pawsTextBox name="ID" visible="no" />
@@ -73,11 +73,11 @@
         <frame x="0" y="30" width="250" height="220" border="yes" />
 
         <pawsButton name="UncompletedButton" id="1000">
-            <frame x="17" y="185" width="65" height="15"/>
+            <frame x="17" y="185" width="80" height="15" />
             <label text="Uncompleted" />
         </pawsButton>
         <pawsButton name="CompletedButton" id="1001" >
-            <frame x="96" y="185" width="50" height="15" />
+            <frame x="130" y="185" width="70" height="15" />
             <label text="Completed" />
         </pawsButton>
 
@@ -85,7 +85,7 @@
             <frame x="16" y="10" width="186" height="161" />
             <columns height="20" headings="no" xmlbinding="event" >
               <column width="166" xmlbinding="name" >
-                <pawsTextBox name="Name" style="label" />
+                <pawsTextBox name="Name" />
               </column>
               <column width="7" xmlbinding="role" >
                 <pawsTextBox name="Role" visible="yes" />
@@ -103,7 +103,7 @@
             <frame x="16" y="10" width="186" height="161" />
             <columns height="20" headings="no" xmlbinding="event" >
               <column width="166" xmlbinding="name" >
-                <pawsTextBox name="Name" style="label" />
+                <pawsTextBox name="Name" />
               </column>
               <column width="7" xmlbinding="role" >
                 <pawsTextBox name="Role" visible="yes" />
@@ -130,7 +130,7 @@
     </pawsButton>
 
 
-    <pawsTextBox name="" style="New Standard Prompt">
+    <pawsTextBox name="" style="Header Font">
         <frame x="255" y="20" width="135" height="20" />
         <text string="Description:" />
     </pawsTextBox>
@@ -138,7 +138,8 @@
         <frame x="245" y="45" width="280" height="168"/>
     </pawsMessageTextBox>
 
-    <pawsTextBox name="" style="New Standard Prompt">
+
+    <pawsTextBox name="" style="Header Font">
         <frame x="30" y="245" width="100" width="70" height="15" />
         <text string="Your notes:" />
     </pawsTextBox>

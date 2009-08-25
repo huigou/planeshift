@@ -1,7 +1,5 @@
 <widget_description>
-    <widget name="GmGUI" factory="pawsGmGUIWindow"
-            visible="no" savepositions="yes" movable="yes"
-            resizable="no" style="New Standard GUI">
+    <widget name="GmGUI" factory="pawsGmGUIWindow" visible="no" savepositions="yes" movable="yes" resizable="no" style="New Standard GUI">
         <frame x="0" y="0" width="630" height="425" border="yes"/>
         <title resource="Scaling Title Bar" text="Game Master Options" align="left" close_button="yes" />
 
@@ -13,21 +11,23 @@
                 <attach point="ATTACH_LEFT" />
                 <attach point="PROPORTIONAL_BOTTOM" />
             </attachpoints>
+
             <!-- Tabs, there are three tabs. -->
-            <widget name="Players Button" factory="pawsButton" style="tabbuttonskills" id="1000">
+            <widget name="Players Button" factory="pawsButton" id="1000">
                 <frame x="20" y="5" width="69" height="20" />
                 <label text="Players" />
             </widget>
-            <widget name="Action Button" factory="pawsButton" style="tabbuttonskills" id="1002">
+            <widget name="Action Button" factory="pawsButton" id="1002">
                 <frame x="89" y="5" width="69" height="20" />
                 <label text="Actions" />
             </widget>
-            <widget name="Attributes Button" factory="pawsButton" style="tabbuttonskills" id="1003" >
+            <widget name="Attributes Button" factory="pawsButton" id="1003" >
                 <frame x="158" y="5" width="69" height="20" />
                 <label text="Attributes" />
             </widget>
-			<!-- The Tab Panels -->
-				<!-- The Player Panel here -->
+
+		<!-- The Tab Panels -->
+		<!-- The Player Panel here -->
             <widget name="Player Controls" factory="pawsWidget" visible="no" id="1100">
                 <frame x="0" y="25" width="620" height="397" />
                 <attachpoints>
@@ -36,9 +36,10 @@
                     <attach point="ATTACH_LEFT" />
                     <attach point="PROPORTIONAL_BOTTOM" />
                 </attachpoints>
+
                 <widget name="PlayerList" factory="pawsListBox" id="1201" >
                     <frame x="20" y="10" width="458" height="350" />
-                    <highlight resource="Hightlight" alpha="128" />
+
                     <columns height="25" headings="yes">
                     <column width="110" >
                         <pawsTextBox name="First Name"/>

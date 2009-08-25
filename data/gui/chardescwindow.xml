@@ -1,17 +1,13 @@
 <widget_description>
  
-    <pawsCharDescription name="DescriptionEdit"
-            visible="yes" savepositions="no" movable="yes" keepaspect="no" 
-            resizable="yes" configurable="yes" style="New Standard GUI">
+    <pawsCharDescription name="DescriptionEdit" visible="yes" savepositions="no" movable="yes" keepaspect="no" resizable="yes" configurable="yes" style="New Standard GUI">
  
-        <frame x="100" y="100" width="320" height="270" border="yes" />
+        <frame x="100" y="100" width="320" height="270" border="no" />
         <minframe width="250" height="250" />
         <title resource="Scaling Title Bar" text="Modify description" align="left" close_button="yes" />
-        <!--   <bgimage resource="Modify Description BG" alpha="128" /> -->
  
         <pawsTextBox name="lbl">
-            <frame x="34" y="8" width="200" height="20" border="no" />
-            <font name="/planeshift/data/ttf/scurlock.ttf" r="255" g="255" b="255" size="14" scalefont="no"/>
+            <frame x="34" y="8" width="200" height="20" border="no" style="Main Header Font" />
             <text string="Character description:" />
             <attachpoints>
                 <attach point="PROPORTIONAL_RIGHT" />
@@ -20,22 +16,10 @@
                 <attach point="PROPORTIONAL_BOTTOM" />
             </attachpoints>
         </pawsTextBox>
-        
-        <pawsTextBox name="lblb">
-            <frame x="35" y="9" width="200" height="20" border="no" />
-            <font name="/planeshift/data/ttf/scurlock.ttf" r="0" g="0" b="0" size="14" scalefont="no"/>
-            <text string="Character description:" />
-            <attachpoints>
-                <attach point="PROPORTIONAL_RIGHT" />
-                <attach point="PROPORTIONAL_LEFT" />
-                <attach point="PROPORTIONAL_TOP" />
-                <attach point="PROPORTIONAL_BOTTOM" />
-            </attachpoints>
-        </pawsTextBox>
+
  
         <pawsMultilineEditTextBox name="Description">
             <frame x="25" y="30" width="270" height="185" border="no" />
-            <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" scalefont="no" />
             <attachpoints>
                 <attach point="PROPORTIONAL_RIGHT" />
                 <attach point="PROPORTIONAL_TOP" />
@@ -46,7 +30,6 @@
  
         <pawsButton name="OK" id="100">
             <frame x="5" y="238" width="70" height="30" />
-            <bgimage resource="Modify Save" />
             <attachpoints>
                 <attach point="PROPORTIONAL_RIGHT" />
                 <attach point="ATTACH_LEFT" />
@@ -58,7 +41,6 @@
         
         <pawsButton name="Cancel" id="101">
             <frame x="80" y="238" width="70" height="30" />
-            <bgimage resource="Modify Cancel" />
             <attachpoints>
                 <attach point="PROPORTIONAL_RIGHT" />
                 <attach point="PROPORTIONAL_LEFT" />
@@ -70,26 +52,24 @@
         
         <pawsButton name="Save" id="102">
             <frame x="170" y="238" width="70" height="30" />
-            <bgimage resource="Modify Save" />
             <attachpoints>
                 <attach point="PROPORTIONAL_RIGHT" />
                 <attach point="PROPORTIONAL_LEFT" />
                 <attach point="PROPORTIONAL_TOP" />
                 <attach point="ATTACH_BOTTOM" />
             </attachpoints>
-            <label text="Save" />
+            <label text="Apply" />
         </pawsButton>
         
         <pawsButton name="Load" id="103">
             <frame x="245" y="238" width="70" height="30" />
-            <bgimage resource="Modify Cancel" />
             <attachpoints>
                 <attach point="PROPORTIONAL_RIGHT" />
                 <attach point="PROPORTIONAL_LEFT" />
                 <attach point="PROPORTIONAL_TOP" />
                 <attach point="ATTACH_BOTTOM" />
             </attachpoints>
-            <label text="Load" />
+            <label text="Revert" />
         </pawsButton>
         
     </pawsCharDescription>

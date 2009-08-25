@@ -18,8 +18,8 @@
 
         <widget name="version" factory="pawsTextBox">
             <frame x="5" y="5" width="240" height="20" border="no"/>
-	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="12" resizetoscreen="yes" /> 
-            <bgimage resource="Standard Background" alpha="120" />
+	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="12" resizetoscreen="yes" />
+          <!--bgimage resource="Standard Background" alpha="120" /-->
             <text string="" vertAdjust="CENTRE" />
         </widget>
     
@@ -62,9 +62,9 @@
 
         <!-- Connecting -->
         <widget name="connecting" factory="pawsMultiLineTextBox" visible="yes">
-            <frame x="130" y="515" width="540" height="60" border="no"/>
+             <frame x="135" y="505" width="555" height="90" border="no"/>
 	    <font name="/planeshift/data/ttf/cupandtalon.ttf" size="16" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
-            <bgimage resource="Standard Background" alpha="120" />
+          <!--bgimage resource="Standard Background" alpha="120" /-->
             <text string="New User? Register at http://laanx.fragnetics.com/register" horizAdjust="CENTRE" vertAdjust="CENTRE" />
         </widget>
         
@@ -78,6 +78,8 @@
         <widget name="servers" factory="pawsListBox" id="10" >
             <frame x="550" y="278" width="180" height="102" />
             <scrollbar arrowup="Up Arrow" arrowdown="Down Arrow" arrowsize="8" width="15"  border="no"/>
+	    <highlight resource="Highlight" />
+	
             <columns height="19">
                 <column width="90">
                     <widget name="" factory="pawsTextBox" >

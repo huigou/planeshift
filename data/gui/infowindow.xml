@@ -1,277 +1,221 @@
 <widget_description>
 
 <widget name="InfoWindow" factory="pawsInfoWindow"
-    visible="yes" savepositions="yes" movable="yes" resizable="yes" configurable="yes" >
-    <frame x="0" y="50" width="180" height="90" border="no" />
-    <minframe width="222" height="111" />
-    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="4" />
-    <bgimage resource="Info Background" alpha="100" />
+    visible="yes" savepositions="yes" movable="yes" resizable="yes" configurable="yes" style="New Standard GUI" >
+    <frame x="0" y="50" width="180" height="160" border="no" />
+    <minframe width="180" height="160" />
+    <bgimage resource="Scaling Widget Background" />
 
 
 <!-- Personal Info (HP, Mana, Fatigue) -->
-
-<widget name="My HP" factory="pawsProgressBar" tooltip="Health">
-    <frame x="5" y="6" width="170" height="7" border="no" />
-        <color r="50" g="0" b="0" />
-        <fadecolor r="255" g="0" b="0" />
-    <subscriptions>
-        <subscribe data="fVitalValue0:Self" />
-    </subscriptions>
+<widget name="Bars" factory="pawsWidget">
+<frame x="5" y="110" width="170" height="48" />
     <attachpoints>
         <attach point="PROPORTIONAL_RIGHT" />
         <attach point="PROPORTIONAL_BOTTOM" />
         <attach point="PROPORTIONAL_TOP" />
         <attach point="ATTACH_LEFT" />
     </attachpoints>
+	
+	<widget name="My HP" factory="pawsProgressBar" tooltip="Health">
+	    <frame x="0" y="5" width="170" height="10" border="no" />
+	        <color r="150" g="20" b="20" />
+	        <fadecolor r="200" g="50" b="50" />
+	    <subscriptions>
+	        <subscribe data="fVitalValue0:Self" />
+	    </subscriptions>
 
-    <widget name="My HP Pct" factory="pawsTextBox" tooltip="Health">
-        <frame x="5" y="0" width="170" height="6" border="no"/>
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="5" />
-        <subscriptions format="percent">
-            <subscribe data="fVitalValue0:Self" />
-        </subscriptions>
-        <attachpoints>
-            <attach point="PROPORTIONAL_RIGHT" />
-            <attach point="PROPORTIONAL_BOTTOM" />
-            <attach point="ATTACH_TOP" />
-            <attach point="ATTACH_LEFT" />
-        </attachpoints>
-    </widget>
+	
+	<!--
+	    <widget name="My HP Pct" factory="pawsTextBox" tooltip="Health">
+	        <frame x="20" y="5" width="150" height="10" border="no"/>
+	        <subscriptions format="percent">
+	            <subscribe data="fVitalValue0:Self" />
+	        </subscriptions>
+	    </widget>
+	-->
+	</widget>
+	<widget name="My PysStamina" factory="pawsProgressBar" tooltip="Physical Stamina">
+	    <frame x="0" y="15" width="165" height="6" border="no" />
+	        <color r="100" g="50" b="50" />
+	        <fadecolor r="150" g="75" b="75" />
+	    <subscriptions>
+	        <subscribe data="fVitalValue2:Self" />
+	    </subscriptions>
+	
+	<!--
+	    <widget name="My PysStamina Pct" factory="pawsTextBox" tooltip="Physical Stamina">
+	        <frame x="20" y="0" width="169" height="6" border="no"/>
+	        <subscriptions format="percent">
+	            <subscribe data="fVitalValue2:Self" />
+	        </subscriptions>
+	    </widget>
+	-->
+	</widget>
+	
+	<widget name="My Mana" factory="pawsProgressBar" tooltip="Mana">
+	    <frame x="0" y="27" width="170" height="10" border="no" />
+	        <color r="20" g="20" b="160" />
+	        <fadecolor r="50" g="50" b="200" />
+	    <subscriptions>
+	        <subscribe data="fVitalValue1:Self" />
+	    </subscriptions>
+	<!--
+	    <widget name="My Mana Pct" factory="pawsTextBox" tooltip="Mana">
+	        <frame x="20" y="0" width="150" height="10" border="no"/>
+	        <subscriptions format="percent">
+	            <subscribe data="fVitalValue1:Self" />
+	        </subscriptions>
+	    </widget>
+	-->
+	</widget>
+
+	<widget name="My MenStamina" factory="pawsProgressBar" tooltip="Mental Stamina">
+	    <frame x="0" y="37" width="165" height="6" border="no" />
+	        <color r="50" g="50"  b="150" />
+	        <fadecolor r="75" g="75" b="200" />
+	    <subscriptions>
+	        <subscribe data="fVitalValue3:Self" />
+	    </subscriptions>
+	
+	<!--
+		<widget name="My MenStamina Pct" factory="pawsTextBox" tooltip="Mental Stamina">
+		        <frame x="20" y="0" width="169" height="6" border="no"/>
+		        <subscriptions format="percent">
+		            <subscribe data="fVitalValue3:Self" />
+		        </subscriptions>
+		</widget>
+	-->
+	</widget>
+
 </widget>
 
-<widget name="My PysStamina" factory="pawsProgressBar" tooltip="Physical Stamina">
-    <frame x="5" y="14" width="170" height="7" border="no" />
-        <color r="0" g="50" b="0" />
-        <fadecolor r="0" g="255" b="0" />
-    <subscriptions>
-        <subscribe data="fVitalValue2:Self" />
-    </subscriptions>
-    <attachpoints>
-        <attach point="PROPORTIONAL_RIGHT" />
-        <attach point="PROPORTIONAL_BOTTOM" />
-        <attach point="PROPORTIONAL_TOP" />
-        <attach point="ATTACH_LEFT" />
-    </attachpoints>
 
-    <widget name="My PysStamina Pct" factory="pawsTextBox" tooltip="Physical Stamina">
-        <frame x="5" y="0" width="169" height="6" border="no"/>
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="5" />
-        <subscriptions format="percent">
-            <subscribe data="fVitalValue2:Self" />
-        </subscriptions>
-        <attachpoints>
-            <attach point="PROPORTIONAL_RIGHT" />
-            <attach point="PROPORTIONAL_BOTTOM" />
-            <attach point="ATTACH_TOP" />
-            <attach point="ATTACH_LEFT" />
-        </attachpoints>
-    </widget>
-</widget>
-
-<widget name="My Mana" factory="pawsProgressBar" tooltip="Mana">
-    <frame x="5" y="22" width="170" height="7" border="no" />
-        <color r="0" g="0" b="50" />
-        <fadecolor r="120" g="0" b="190" />
-    <subscriptions>
-        <subscribe data="fVitalValue1:Self" />
-    </subscriptions>
-    <attachpoints>
-        <attach point="PROPORTIONAL_RIGHT" />
-        <attach point="PROPORTIONAL_BOTTOM" />
-        <attach point="PROPORTIONAL_TOP" />
-        <attach point="ATTACH_LEFT" />
-    </attachpoints>
-
-    <widget name="My Mana Pct" factory="pawsTextBox" tooltip="Mana">
-        <frame x="5" y="0" width="169" height="6" border="no"/>
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="5" />
-        <subscriptions format="percent">
-            <subscribe data="fVitalValue1:Self" />
-        </subscriptions>
-        <attachpoints>
-            <attach point="PROPORTIONAL_RIGHT" />
-            <attach point="PROPORTIONAL_BOTTOM" />
-            <attach point="ATTACH_TOP" />
-            <attach point="ATTACH_LEFT" />
-        </attachpoints>
-    </widget>
-</widget>
-
-<widget name="My MenStamina" factory="pawsProgressBar" tooltip="Mental Stamina">
-    <frame x="5" y="30" width="170" height="7" border="no" />
-        <color r="0" g="0"  b="0" />
-        <fadecolor r="120" g="130" b="140" />
-    <subscriptions>
-        <subscribe data="fVitalValue3:Self" />
-    </subscriptions>
-    <attachpoints>
-        <attach point="PROPORTIONAL_RIGHT" />
-        <attach point="PROPORTIONAL_BOTTOM" />
-        <attach point="PROPORTIONAL_TOP" />
-        <attach point="ATTACH_LEFT" />
-    </attachpoints>
-
-    <widget name="My MenStamina Pct" factory="pawsTextBox" tooltip="Mental Stamina">
-        <frame x="5" y="0" width="169" height="6" border="no"/>
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="5" />
-        <subscriptions format="percent">
-            <subscribe data="fVitalValue3:Self" />
-        </subscriptions>
-        <attachpoints>
-            <attach point="PROPORTIONAL_RIGHT" />
-            <attach point="PROPORTIONAL_BOTTOM" />
-            <attach point="ATTACH_TOP" />
-            <attach point="ATTACH_LEFT" />
-        </attachpoints>
-    </widget>
-</widget>
 
 
 <!-- Attack Stances -->
+<widget name="AttackButtons" factory="pawsWidget">
+<frame x="0" y="50" width="180" height="30" />
+    <attachpoints>
+        <attach point="PROPORTIONAL_RIGHT" />
+        <attach point="PROPORTIONAL_BOTTOM" />
+        <attach point="PROPORTIONAL_TOP" />
+        <attach point="PROPORTIONAL_LEFT" />
+    </attachpoints>
+	
+	
+	<widget name="BtnStance1" id="100" tooltip="Bloody" factory="pawsButton" visible="yes" sound="gui.toolbar" style="Simple Button">
+	    <frame x="150" y="" width="30" height="30" border="no" />
+	    <bgimage resource="ButtonAttackBloody" />
 
-<widget name="BtnStance1" id="100" tooltip="Bloody" factory="pawsButton" visible="yes" sound="gui.toolbar">
-    <frame x="15" y="37" width="25" height="25" border="no" />
-    <bgimage resource="ButtonAttackBloody" />
-    <attachpoints>
-        <attach point="PROPORTIONAL_RIGHT" />
-        <attach point="PROPORTIONAL_BOTTOM" />
-        <attach point="PROPORTIONAL_TOP" />
-        <attach point="PROPORTIONAL_LEFT" />
-    </attachpoints>
+	</widget>
+
+	<widget name="BtnStance2" id="200" tooltip="Aggressive" factory="pawsButton" visible="yes" sound="gui.toolbar" style="Simple Button">
+	    <frame x="120" y="0" width="30" height="30" border="no" />
+	    <bgimage resource="ButtonAttackAggressive" />
+	</widget>
+
+	<widget name="BtnStance3" id="300" tooltip="Normal" factory="pawsButton" visible="yes" sound="gui.toolbar" style="Simple Button">
+	    <frame x="90" y="0" width="30" height="30" border="no" />
+	    <bgimage resource="ButtonAttackNormal" />
+	</widget>
+
+	<widget name="BtnStance4" id="400" tooltip="Defensive" factory="pawsButton" visible="yes" sound="gui.toolbar" style="Simple Button">
+	    <frame x="60" y="0" width="30" height="30" border="no" />
+	    <bgimage resource="ButtonAttackDefensive" />
+	</widget>
+
+	<widget name="BtnStance5" id="500" tooltip="Full Defensive" factory="pawsButton" visible="yes" sound="gui.toolbar" style="Simple Button">
+	    <frame x="30" y="0" width="30" height="30" border="no" />
+	    <bgimage resource="ButtonAttackFullDef" />
+	</widget>
+
+	<widget name="BtnStance0" id="600" tooltip="Stop Attack" factory="pawsButton" visible="yes" sound="gui.toolbar" style="Simple Button">
+	    <frame x="0" y="0" width="30" height="30" border="no" />
+	    <bgimage resource="ButtonStopAttack" />
+	</widget>
+
 </widget>
-<widget name="BtnStance2" id="200" tooltip="Aggressive" factory="pawsButton" visible="yes" sound="gui.toolbar">
-    <frame x="40" y="37" width="25" height="25" border="no" />
-    <bgimage resource="ButtonAttackAggressive" />
-    <attachpoints>
-        <attach point="PROPORTIONAL_RIGHT" />
-        <attach point="PROPORTIONAL_BOTTOM" />
-        <attach point="PROPORTIONAL_TOP" />
-        <attach point="PROPORTIONAL_LEFT" />
-    </attachpoints>
-</widget>
-<widget name="BtnStance3" id="300" tooltip="Normal" factory="pawsButton" visible="yes" sound="gui.toolbar">
-    <frame x="65" y="37" width="25" height="25" border="no" />
-    <bgimage resource="ButtonAttackNormal" />
-    <attachpoints>
-        <attach point="PROPORTIONAL_RIGHT" />
-        <attach point="PROPORTIONAL_BOTTOM" />
-        <attach point="PROPORTIONAL_TOP" />
-        <attach point="PROPORTIONAL_LEFT" />
-    </attachpoints>
-</widget>
-<widget name="BtnStance4" id="400" tooltip="Defensive" factory="pawsButton" visible="yes" sound="gui.toolbar">
-    <frame x="90" y="37" width="25" height="25" border="no" />
-    <bgimage resource="ButtonAttackDefensive" />
-    <attachpoints>
-        <attach point="PROPORTIONAL_RIGHT" />
-        <attach point="PROPORTIONAL_BOTTOM" />
-        <attach point="PROPORTIONAL_TOP" />
-        <attach point="PROPORTIONAL_LEFT" />
-    </attachpoints>
-</widget>
-<widget name="BtnStance5" id="500" tooltip="Full Defensive" factory="pawsButton" visible="yes" sound="gui.toolbar">
-    <frame x="115" y="37" width="25" height="25" border="no" />
-    <bgimage resource="ButtonAttackFullDef" />
-    <attachpoints>
-        <attach point="PROPORTIONAL_RIGHT" />
-        <attach point="PROPORTIONAL_BOTTOM" />
-        <attach point="PROPORTIONAL_TOP" />
-        <attach point="PROPORTIONAL_LEFT" />
-    </attachpoints>
-</widget>
-<widget name="BtnStance0" id="600" tooltip="Stop Attack" factory="pawsButton" visible="yes" sound="gui.toolbar">
-    <frame x="140" y="37" width="25" height="25" border="no" />
-    <bgimage resource="ButtonStopAttack" />
-    <attachpoints>
-        <attach point="PROPORTIONAL_RIGHT" />
-        <attach point="PROPORTIONAL_BOTTOM" />
-        <attach point="PROPORTIONAL_TOP" />
-        <attach point="PROPORTIONAL_LEFT" />
-    </attachpoints>
-</widget>
+
+
+
+
 
 <!-- Spell Power -->
 
-<widget name="KFactor" factory="pawsScrollBar" direction="horizontal" tooltip="Spell Power">
-    <frame x="6" y="61" width="170" height="11" border="no" />
+<widget name="SpellPower" factory="pawsWidget">
+<frame x="10" y="85" width="160" height="20" />
     <attachpoints>
         <attach point="PROPORTIONAL_RIGHT" />
         <attach point="PROPORTIONAL_BOTTOM" />
         <attach point="PROPORTIONAL_TOP" />
-        <attach point="ATTACH_LEFT" />
+        <attach point="PROPORTIONAL_LEFT" />
     </attachpoints>
 
-    <widget name="KFactor Pct" factory="pawsTextBox">
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="6" />
-        <frame x="75" y="0" width="25" height="20" border="no"/>
-        <attachpoints>
-            <attach point="PROPORTIONAL_RIGHT" />
-            <attach point="PROPORTIONAL_BOTTOM" />
-            <attach point="PROPORTIONAL_TOP" />
-            <attach point="PROPORTIONAL_LEFT" />
-        </attachpoints>
-    </widget>
+	<widget name="KFactor" factory="pawsScrollBar" direction="horizontal" tooltip="Spell Power" style="Standard Scrollbar Horizontal">
+	    <frame x="0" y="0" width="160" height="20" border="no" />
+		    <attachpoints>
+		        <attach point="PROPORTIONAL_RIGHT" />
+		        <attach point="PROPORTIONAL_BOTTOM" />
+		        <attach point="ATTACH_TOP" />
+		        <attach point="ATTACH_LEFT" />
+		    </attachpoints>
+	</widget>
+	
+	<widget name="KFactor Pct" factory="pawsTextBox" selectable="0">
+	        <frame x="70" y="0" width="35" height="20" border="no"/>
+	</widget>
 </widget>
+
+
 
 
 <!-- Target Info -->
+<widget name="TargetInfo" factory="pawsWidget">
+<frame x="5" y="0" width="170" height="35" />
+    <attachpoints>
+        <attach point="ATTACH_RIGHT" />
+        <attach point="PROPORTIONAL_BOTTOM" />
+        <attach point="PROPORTIONAL_TOP" />
+        <attach point="PROPORTIONAL_LEFT" />
+    </attachpoints>
 
-<widget name="Target HP Pct" factory="pawsTextBox" tooltip="Selected Target">
-    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="5" />
-    <frame x="6" y="72" width="49" height="7" border="no"/>
-    <subscriptions format="percent">
-        <subscribe data="fVitalValue0:Target" />
-    </subscriptions>
-        <attachpoints>
-            <attach point="PROPORTIONAL_RIGHT" />
-            <attach point="PROPORTIONAL_BOTTOM" />
-            <attach point="PROPORTIONAL_TOP" />
-            <attach point="ATTACH_LEFT" />
-        </attachpoints>
+
+	<widget name="Targeted" factory="pawsTextBox" tooltip="Selected Target" style="Header Font">
+	    <frame x="0" y="0" width="170" height="20" border="no"/>
+	    <text horizAdjust="CENTRE" />
+	    <subscriptions>
+	        <subscribe data="sTargetName" />
+	    </subscriptions>
+	</widget>
+
+	<widget name="Target HP Pct" factory="pawsTextBox" tooltip="Target" visible="no">
+	    <frame x="20" y="20" width="150" height="10" border="no"/>
+	    <subscriptions format="percent">
+	        <subscribe data="fVitalValue0:Target" />
+	    </subscriptions>
+	</widget>
+
+	<widget name="Target HP" factory="pawsProgressBar" tooltip="Selected Target">
+	    <frame x="0" y="20" width="170" height="10" border="no" />
+	        <color r="150" g="20" b="20" />
+	        <fadecolor r="200" g="50" b="50" />
+	    <subscriptions>
+	        <subscribe data="fVitalValue0:Target" />
+	    </subscriptions>
+	</widget>
 </widget>
-<widget name="Targeted" factory="pawsTextBox" tooltip="Selected Target">
-    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="7" />
-    <frame x="35" y="70" width="131" height="12" border="no"/>
-    <subscriptions>
-        <subscribe data="sTargetName" />
-    </subscriptions>
-        <attachpoints>
-            <attach point="PROPORTIONAL_RIGHT" />
-            <attach point="PROPORTIONAL_BOTTOM" />
-            <attach point="PROPORTIONAL_TOP" />
-            <attach point="PROPORTIONAL_LEFT" />
-        </attachpoints>
-</widget>
-<widget name="Target HP" factory="pawsProgressBar" tooltip="Selected Target">
-    <frame x="6" y="73" width="170" height="6" border="no" />
-        <color     r="50" g="0" b="50" />
-        <fadecolor r="255" g="0" b="255" />
-    <subscriptions>
-        <subscribe data="fVitalValue0:Target" />
-    </subscriptions>
-        <attachpoints>
-            <attach point="PROPORTIONAL_RIGHT" />
-            <attach point="PROPORTIONAL_BOTTOM" />
-            <attach point="PROPORTIONAL_TOP" />
-            <attach point="ATTACH_LEFT" />
-        </attachpoints>
-</widget>
+
 
 
 <!-- Clock -->
 
 <widget name="Time" factory="pawsTextBox" tooltip="Time">
-    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="6" />
-    <frame x="65" y="80" width="100" height="10" border="no"/>
-    <subscriptions>
-        <subscribe data="TimeOfDayStr" />
-    </subscriptions>
-    <attachpoints>
-        <attach point="PROPORTIONAL_RIGHT" />
-        <attach point="ATTACH_BOTTOM" />
-        <attach point="PROPORTIONAL_TOP" />
-        <attach point="PROPORTIONAL_LEFT" />
-    </attachpoints>
+	<frame x="5" y="35" width="170" height="15" border="no"/>
+	    <text horizAdjust="CENTRE" />
+	<subscriptions>
+		<subscribe data="TimeOfDayStr" />
+	</subscriptions>
 </widget>
 
 
