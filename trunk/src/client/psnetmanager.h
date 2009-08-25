@@ -53,10 +53,6 @@ public:
     /** Disconnect from server */
     void Disconnect();
     
-    /** Send a disconnect message to the server.
-     */
-    void SendDisconnect(bool final = true);
-
     /** Sends an authentication message to the server */
     void Authenticate(const csString & name, const csString & pwd);
 

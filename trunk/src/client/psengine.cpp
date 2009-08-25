@@ -1216,14 +1216,13 @@ void psEngine::QuitClient()
         cfg->Save();
     }
 
-    Disconnect(true);
+    Disconnect();
 
     queue->GetEventOutlet()->Broadcast(event_quit);
 }
 
-void psEngine::Disconnect(bool final)
+void psEngine::Disconnect()
 {
-    netmanager->SendDisconnect(final);
     netmanager->Disconnect();
 }
 

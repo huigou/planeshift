@@ -76,7 +76,7 @@ void pawsQuitInfoBox::Show()
     pawsWidget::Show();
 
     //Abort connection NOW, this is final
-    psengine->Disconnect(true);
+    psengine->Disconnect();
 }
 
 void pawsQuitInfoBox::MoveToCenter()

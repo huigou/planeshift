@@ -507,15 +507,7 @@ void AuthenticationServer::HandleDisconnect(MsgEntry* me,Client *client)
     if(!client->AllowDisconnect())
         return;
 
-    if(mesg.msgReason == "!") // Not a final disconnect
-    {
-        psserver->RemovePlayer(me->clientnum,"!");
-    }
-    else
-    {
-        psserver->RemovePlayer(me->clientnum,"Your client has disconnected. If you are seeing this message a connection error has likely occurred.");
-    }
-    
+    psserver->RemovePlayer(me->clientnum, "Your client has disconnected. If you are seeing this message a connection error has likely occurred.");
 }
 
 void AuthenticationServer::SendDisconnect(Client* client, const char *reason)
