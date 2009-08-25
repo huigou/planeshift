@@ -531,6 +531,7 @@ public:
     virtual bool CheckLoadStatus();
 
     csString race;
+    csString mountFactname;
     csString helmGroup;
     csString BracerGroup;
     csString BeltGroup;

@@ -1882,7 +1882,7 @@ gemActor::gemActor( psCharacter *chardata,
                        float rotangle,
                        int clientnum) :
   gemObject(chardata->GetCharFullName(),factname,myInstance,room,pos,rotangle,clientnum),
-psChar(chardata), factions(NULL), controller(NULL), mount(NULL), DRcounter(0), forceDRcounter(0), lastDR(0), lastV(0), lastSentSuperclientPos(0, 0, 0),
+psChar(chardata), factions(NULL), mount(NULL), DRcounter(0), forceDRcounter(0), lastDR(0), lastV(0), lastSentSuperclientPos(0, 0, 0),
 lastSentSuperclientInstance(-1), activeReports(0), isFalling(false), invincible(false), visible(true), viewAllObjects(false),
 movementMode(0), isAllowedToMove(true), atRest(true), spellCasting(NULL), workEvent(NULL), pcmove(NULL),
 nevertired(false), infinitemana(false), instantcast(false), safefall(false), givekillexp(false), attackable(false)
@@ -2350,11 +2350,6 @@ void gemActor::DoDamage(gemActor * attacker, float damage, float damageRate, csT
                 GetClient()->AnnounceToDuelClients(attacker, "slain");
             }
 
-            if (GetRider())
-                EntityManager::GetSingleton().RemoveRideRelation(GetRider(), this);
-            else if(GetMount())
-                EntityManager::GetSingleton().RemoveRideRelation(this, GetMount());
-
             SetMode(PSCHARACTER_MODE_DEAD);
         }
 
@@ -2365,6 +2360,11 @@ void gemActor::DoDamage(gemActor * attacker, float damage, float damageRate, csT
         {
             psserver->combatmanager->StopAttack(attacker);
         }
+
+        // for now, if the actor is on a mount, he's dropped off it
+        if(GetMount())
+            EntityManager::GetSingleton().RemoveRideRelation(this);
+        
         MulticastDRUpdate();
     }
 
@@ -2577,6 +2577,7 @@ void gemActor::Send( int clientnum, bool control, bool to_superclient  )
                          guildName,
                          factname.Current(),
                          psChar->GetRaceInfo()->name,
+                         GetMount() ? GetMount()->GetRaceInfo()->mesh_name : "null",
                          psChar->GetRaceInfo()->gender,
                          helmGroup,
                          BracerGroup,
@@ -2618,7 +2619,6 @@ void gemActor::Send( int clientnum, bool control, bool to_superclient  )
         }
     }
 }
-
 
 void gemActor::Broadcast(int clientnum, bool control)
 {
@@ -3053,8 +3053,6 @@ void gemActor::SetGMDefaults()
 void gemActor::SetInstance(InstanceID worldInstance)
 {
     this->worldInstance = worldInstance;
-    if(GetRider())
-        GetRider()->SetInstance(worldInstance);
 }
 
 void gemActor::Teleport(const char *sectorName, const csVector3 & pos, float yrot, InstanceID instance)
@@ -3071,12 +3069,6 @@ void gemActor::Teleport(const char *sectorName, const csVector3 & pos, float yro
 
 void gemActor::Teleport(iSector *sector, const csVector3 & pos, float yrot, InstanceID instance)
 {
-    if(GetMount())
-    {
-        GetMount()->Teleport(sector, pos, yrot, instance);
-        return;
-    }
-
     SetInstance(instance);
     Teleport(sector, pos, yrot);
 }
@@ -3114,8 +3106,6 @@ void gemActor::SetPosition(const csVector3& pos,float angle, iSector* sector)
         psChar->SetLocationInWorld(worldInstance, sectorInfo, pos.x, pos.y, pos.z, angle );
         UpdateValidLocation(pos, angle, sector, worldInstance, true);
     }
-    if(GetRider())
-        GetRider()->SetPosition(pos, angle, sector);
 }
 
 //#define STAMINA_PROCESS_DEBUG
@@ -3315,8 +3305,6 @@ bool gemActor::SetDRData(psDRMessage& drmsg)
                 InterruptSpellCasting();
             }
         }
-        if(GetRider())
-            GetRider()->SetPosition(csVector3(drmsg.pos.x, drmsg.pos.y, drmsg.pos.z), drmsg.yrot, drmsg.sector);
     }
     return true;
 }
@@ -3386,11 +3374,7 @@ void gemActor::MulticastDRUpdate()
 
 void gemActor::ForcePositionUpdate()
 {
-    uint32_t clientnum;
-    if(GetRider())
-        clientnum = GetRider()->GetClientID();
-    else
-        clientnum = GetClientID();
+    uint32_t clientnum = GetClientID();
 
     psForcePositionMessage msg(clientnum, ++forceDRcounter, GetPosition(), GetAngle(), GetSector(),
                                CacheManager::GetSingleton().GetMsgStrings());
@@ -4332,8 +4316,6 @@ void gemNPC::GetBadText(size_t first,size_t last, csStringArray& saidArray, csSt
     }
 }
 
-
-
 void gemNPC::Send( int clientnum, bool control, bool to_superclient )
 {
     csString texparts;
@@ -4383,6 +4365,7 @@ void gemNPC::Send( int clientnum, bool control, bool to_superclient )
                          guildName,
                          factname.Current(),
                          psChar->GetRaceInfo()->name,
+                         GetMount() ? GetMount()->GetRaceInfo()->mesh_name : "null",
                          psChar->GetRaceInfo()->gender,
                          helmGroup,
                          BracerGroup,

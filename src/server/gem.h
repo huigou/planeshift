@@ -667,10 +667,7 @@ protected:
     PID pid; ///< Player ID (also known as character ID or PID)
     csRef<PlayerGroup> group;
 
-    //csArray<gemActor *> riders;
-    gemActor *controller;
-
-    gemActor *mount;
+    psCharacter *mount;
 
     csVector3 top, bottom, offset;
     csVector3 last_production_pos;
@@ -806,10 +803,8 @@ public:
     void SetTextureParts(const char *parts);
     void SetEquipment(const char *equip);
 
-    gemActor* GetMount() const { return mount; }
-    void SetMount(gemActor *newMount) { mount = newMount; }
-    gemActor* GetRider() const { return controller; }
-    void SetRider(gemActor *newRider) { controller = newRider; }
+    psCharacter* GetMount() const { return mount; }
+    void SetMount(psCharacter *newMount) { mount = newMount; }
 
     PSCHARACTER_MODE GetMode() { return player_mode; }
     const char* GetModeStr(); ///< Return a string name of the mode

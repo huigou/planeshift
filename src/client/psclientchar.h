@@ -123,13 +123,6 @@ protected:
     
     void HandleEffectStop(MsgEntry* me);
     
-    /** Handle a mounting message : find the mount object,
-     * and change its appearance by attaching the rider mesh on it.
-     * 
-     * @param me The message to handle
-     */
-    void HandleMounting(MsgEntry* me);
-    
     /// Handle a rejection of a character
     void HandleRejectCharMessage(MsgEntry* me);
 

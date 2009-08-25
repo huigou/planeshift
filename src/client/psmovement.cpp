@@ -986,13 +986,3 @@ void psMovementManager::ToggleRun()
         toggleRun = true;
     }
 }
-
-
-void psMovementManager::ToggleRide()
-{
-    if(run == FindCharMode("ride"))
-        run = FindCharMode("run");
-    else
-        run = FindCharMode("ride");
-    Start(run);
-}

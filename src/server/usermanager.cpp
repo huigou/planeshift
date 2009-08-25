@@ -702,11 +702,7 @@ void UserManager::HandleCharDescUpdate(MsgEntry *me,Client *client)
 
 void UserManager::HandleSit(psUserCmdMessage& msg, Client *client)
 {
-    gemActor *actor;
-    if(client->GetActor()->GetMount())
-        actor = client->GetActor()->GetMount();
-    else
-        actor = client->GetActor();
+    gemActor *actor = client->GetActor();
     
     if (actor->GetMode() == PSCHARACTER_MODE_PEACE 
     && actor->AtRest() && !actor->IsFalling())
@@ -759,11 +755,7 @@ void UserManager::HandleMarriage(psUserCmdMessage& msg, Client *client)
 
 void UserManager::HandleStand(psUserCmdMessage& msg, Client *client)
 {
-    gemActor *actor;
-    if(client->GetActor()->GetMount())
-        actor = client->GetActor()->GetMount();
-    else
-        actor = client->GetActor();
+    gemActor *actor = client->GetActor();
     
     actor->Stand();
 }
@@ -1425,9 +1417,6 @@ void UserManager::HandleUnstick(psUserCmdMessage& msg, Client *client)
     if (!actor)
         return;
 
-    if(actor->GetMount())
-        actor = actor->GetMount();
-
     StopAllCombat(client);
     LogStuck(client);
 
@@ -2044,7 +2033,7 @@ void UserManager::HandleMount(psUserCmdMessage& msg, Client *client)
         return;
     }
 
-    Client *targetClient = mount->GetClient();
+    /*Client *targetClient = mount->GetClient();
     if(targetClient)
     {
         csString question;
@@ -2055,7 +2044,7 @@ void UserManager::HandleMount(psUserCmdMessage& msg, Client *client)
             question);
         psserver->questionmanager->SendQuestion(invite);
         return;
-    }
+    }*/
     
     // If you are not the rider(passenger), you shouldn't be allowed to move
     // client->GetActor()->SetAllowedToMove(false);
@@ -2083,9 +2072,10 @@ void PendingMountInvite::HandleAnswer(const csString & answer)
 
 void UserManager::Mount(gemActor *rider, gemActor *mount)
 {
+    const char* mountName = mount->GetName();
     if(EntityManager::GetSingleton().AddRideRelation(rider, mount))
         psserver->SendSystemOK(rider->GetClientID(),
-                "You are mounting %s", mount->GetName());
+                "You are mounting %s", mountName);
     else
         psserver->SendSystemError(rider->GetClientID(),
                 "Could not mount %s", mount->GetName());
@@ -2104,7 +2094,7 @@ void UserManager::HandleUnmount(psUserCmdMessage& msg, Client *client)
         return;
     }
 
-    EntityManager::GetSingleton().RemoveRideRelation(client->GetActor(), client->GetActor()->GetMount());
+    EntityManager::GetSingleton().RemoveRideRelation(client->GetActor());
 
     return;
 }

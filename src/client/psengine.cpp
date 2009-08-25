@@ -1235,6 +1235,16 @@ const char* psEngine::GetMainPlayerName()
 
 // ----------------------------------------------------------------------------
 
+void psEngine::SetMainActor(GEMClientActor *mainActor)
+{
+    CS_ASSERT(mainActor);
+    GetCelClient()->SetMainActor(mainActor);
+    GetCharControl()->GetMovementManager()->SetActor(mainActor);
+    GetPSCamera()->InitializeView(mainActor);
+}
+
+// ----------------------------------------------------------------------------
+
 bool psEngine::UpdateWindowTitleInformations()
 {
     return CS_Setup->AddWindowInformations(GetMainPlayerName());

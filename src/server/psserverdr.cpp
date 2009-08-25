@@ -147,9 +147,7 @@ void psServerDR::HandleDeadReckoning(MsgEntry* me,Client *client)
         return;
     }
 
-    gemActor *actor = client->GetActor()->GetMount();
-    if(!actor)
-        actor = client->GetActor();
+    gemActor *actor = client->GetActor();
     
     if (actor == NULL)
     {

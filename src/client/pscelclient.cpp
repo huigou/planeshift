@@ -269,21 +269,6 @@ void psCelClient::HandleActor( MsgEntry* me )
         mesg.sector = psengine->GetEngine()->FindSector(mesg.sectorName);
     }
 
-    // We already have an entity with this id so we must have missed the remove object message
-    // so delete and remake it.
-    GEMClientObject* found = (GEMClientObject *) FindObject(mesg.entityid);
-    if (found)
-    {
-        if ( found == local_player )
-        {
-            HandleMainActor( mesg );
-            return;
-        }
-
-        Debug3(LOG_CELPERSIST, 0, "Found existing object <%s> with %s, removing.\n", found->GetName(), ShowID(mesg.entityid));
-        RemoveObject(found);
-    }
-
     if (ignore_others)
     {
         if (local_player != 0)
@@ -294,20 +279,32 @@ void psCelClient::HandleActor( MsgEntry* me )
         if (!mesg.control)
             return;
     }
-
+    
     GEMClientActor* actor = new GEMClientActor( this, mesg );
 
     // The first actor that is sent to the client is his own one.
-    if ( local_player == NULL && actor->control )
+    if ( actor->control || (GetMainPlayer() && mesg.entityid == GetMainPlayer()->GetEID()) )
     {
-        local_player = actor;
-        SetMainActor( local_player );
+        // cache the camera current view
+        int currentMode = psengine->GetPSCamera()->GetCameraMode();
+        psengine->SetMainActor(actor);
+        psengine->GetPSCamera()->SetCameraMode(currentMode);
+
 
         // This triggers the server to update our proxlist
         local_player->SendDRUpdate(PRIORITY_LOW,GetClientDR()->GetMsgStrings());
         
         //update the window title with the char name
         psengine->UpdateWindowTitleInformations();
+    }
+
+    // We already have an entity with this id so we must have missed the remove object message,
+    // or an update has been sent. delete the now outdated object
+    GEMClientObject* found = FindObject(mesg.entityid);
+    if( found)
+    {
+        Debug3(LOG_CELPERSIST, 0, "Found existing object <%s> with %s, removing.\n", found->GetName(), ShowID(mesg.entityid));
+        RemoveObject(found);
     }
 
     entities.Push(actor);
@@ -395,18 +392,23 @@ void psCelClient::HandleMainActor( psPersistActor& mesg )
 
         local_player->charApp->ApplyEquipment(local_player->equipment);
     }
+
+    if(mesg.mountFactname != local_player->mountFactname)
+    {
+        local_player->mountFactname = mesg.mountFactname;
+        local_player->CheckLoadStatus();
+    }
 }
 
 void psCelClient::HandleItem( MsgEntry* me )
 {
     psPersistItem mesg( me );
 
-    // We already have an entity with this id, updating the item
-    GEMClientObject *found = (GEMClientObject*) FindObject(mesg.eid);
-    GEMClientItem *foundItem = dynamic_cast<GEMClientItem*>(found);
+    // if we already have an entity with this id, update the item
+    GEMClientItem *foundItem = dynamic_cast<GEMClientItem*>(FindObject(mesg.eid));
     if(foundItem)
     {
-        Debug3(LOG_CELPERSIST, 0, "Found existing item<%s> object with %s, updating.\n", found->GetName(), ShowID(mesg.eid));
+        Debug3(LOG_CELPERSIST, 0, "Found existing item<%s> object with %s, updating.\n", foundItem->GetName(), ShowID(mesg.eid));
         foundItem->UpdateItem( mesg );
         return;
     }
@@ -687,7 +689,7 @@ void psCelClient::HandleNameChange( MsgEntry* me )
     object->ChangeName(msg.newObjName);
 
     // We don't have a label over our own char
-    if (psengine->GetCelClient()->GetMainPlayer() != object)
+    if (GetMainPlayer() != object)
         entityLabels->OnObjectArrived(object);
     else //we have to update the window title
         psengine->UpdateWindowTitleInformations();
@@ -722,7 +724,7 @@ void psCelClient::HandleGuildChange( MsgEntry* me )
         actor->SetGuildName(msg.newGuildName);
 
         // we don't have a label over our own char
-        if (psengine->GetCelClient()->GetMainPlayer() != actor)
+        if (GetMainPlayer() != actor)
             entityLabels->OnObjectArrived(actor);
     }
 }
@@ -1307,7 +1309,7 @@ void GEMClientObject::Move(const csVector3& pos,float rotangle,  const char* roo
     if (sector)
         GEMClientObject::SetPosition(pos, rotangle, sector);
     else
-        psengine->GetCelClient()->HandleUnresolvedPos(this, pos, rotangle, room);
+        cel->HandleUnresolvedPos(this, pos, rotangle, room);
 }
 
 bool GEMClientObject::InitMesh()
@@ -1391,6 +1393,7 @@ GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
     chatBubbleID = 0;
     name = mesg.name;
     race = mesg.race;
+    mountFactname = mesg.mountFactname;
     helmGroup = mesg.helmGroup;
     BracerGroup = mesg.BracerGroup;
     BeltGroup = mesg.BeltGroup;
@@ -1729,7 +1732,7 @@ void GEMClientActor::SetDRData(psDRMessage& drmsg)
     }
     else
     {
-        psengine->GetCelClient()->HandleUnresolvedPos(this, drmsg.pos, drmsg.yrot, drmsg.sectorName);
+        cel->HandleUnresolvedPos(this, drmsg.pos, drmsg.yrot, drmsg.sectorName);
     }
 
     // Update character mode and idle animation
@@ -2005,15 +2008,31 @@ bool GEMClientActor::CheckLoadStatus()
         return true;
     }
 
-    pcmesh = factory->CreateMeshWrapper();
-    pcmesh->GetFlags().Set(CS_ENTITY_NODECAL);
+    csRef<iMeshWrapper> mesh = factory->CreateMeshWrapper();
+    pcmesh = mesh;
+    charApp->SetMesh(mesh);
     psengine->GetEngine()->GetMeshes()->Add(pcmesh);
+
+    if(!mountFactname.Compare("null"))
+    {
+        csRef<iMeshFactoryWrapper> mountFactory = psengine->GetLoader()->LoadFactory(mountFactname);
+        if(!mountFactory.IsValid())
+        {
+            Error2("Couldn't find the mount's mesh factory, %s", mountFactname.GetData());
+            return false;
+        }
+        pcmesh = mountFactory->CreateMeshWrapper();
+        psengine->GetEngine()->GetMeshes()->Add(pcmesh);
+        charApp->ApplyRider(pcmesh);
+        csRef<iSpriteCal3DState> riderstate = scfQueryInterface<iSpriteCal3DState> (mesh->GetMeshObject());
+        riderstate->SetDefaultIdleAnim("ride");
+    }
+
+    pcmesh->GetFlags().Set(CS_ENTITY_NODECAL);
 
     csRef<iSpriteCal3DState> calstate = scfQueryInterface<iSpriteCal3DState> (pcmesh->GetMeshObject());
     if (calstate)
         calstate->SetUserData((void *)this);
-
-    charApp->SetMesh(pcmesh);
 
     cel->AttachObject(pcmesh->QueryObject(), this);
 
@@ -2184,9 +2203,11 @@ void GEMClientItem::PostLoad(bool nullmesh)
 }
 
 void GEMClientItem::UpdateItem( psPersistItem& mesg )
-{
+{    
     name = mesg.name;
     Debug3(LOG_CELPERSIST, 0, "Item %s(%s) Updated", mesg.name.GetData(), ShowID(mesg.eid));
+    type = mesg.type;
+    factName = mesg.factname;
 
     post_load = new PostLoadData();
     post_load->pos = mesg.pos;

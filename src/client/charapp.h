@@ -124,15 +124,10 @@ public:
     void ApplyEquipment(csString& equipment);
 
     /** Handle the visual aspect of mounting, by attaching the rider's mesh
-      * on the back of the actor
-      * @param riderID The character's ID to put on the back of the mount
+      * on the back of the mount
+      * @param mesh The mount's mesh
       */
-    void ApplyRider(GEMClientActor* rider);
-    
-    /** Remove the rider's mesh of the back of the actor
-      * @param riderID The character's ID to put on the back of the mount
-      */
-    void RemoveRider(GEMClientActor* rider);
+    void ApplyRider(csRef<iMeshWrapper> mesh);
     
     /** Equip an item onto the model.
       * @param slotname The socket we want to place the item.
@@ -231,15 +226,15 @@ private:
     void ProcessAttach(csRef<iMeshWrapper> meshWrap, csRef<iSpriteCal3DSocket> socket);
     void ProcessAttach(csRef<iMaterialWrapper> material, const char* materialName, const char* partName);
                
-    csRef<iMeshWrapper> baseMesh;                           ///< The mesh that is our base model.
+    csRef<iMeshWrapper> baseMesh;                       ///< The mesh that is our base model.
 
     csRef<iSpriteCal3DFactoryState>  stateFactory;      ///< The Cal3D factory object
     csRef<iSpriteCal3DState>    state;                  ///< The Cal3D sprite state
     
     csRef<iShaderVarStringSet>  stringSet;              ///< Used by shader variables.
-    csRef<iStringSet> strings;                          // Used by shader types.
+    csRef<iStringSet> strings;                          ///< Used by shader types.
 
-    // Character shader.
+    /// Character shader.
     iShader* charShader;
     
     /** @name Crystal space objects.
@@ -250,8 +245,8 @@ private:
     csRef<iGraphics3D>          g3d;
     csRef<iTextureManager>      txtmgr;
     csRef<iDocumentSystem>      xmlparser;
-    //@}
     csRef<iShaderManager>       shman;
+    //@}
         
     csString eyeMesh;                                   ///< Default eye mesh.
     csString hairMesh;                                  ///< Default hair mesh.

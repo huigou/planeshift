@@ -283,31 +283,41 @@ void psCharAppearance::SetSkinTone(csString& part, csString& material)
     }
 }
 
-void psCharAppearance::ApplyRider(GEMClientActor* rider)
-{    
-    csRef<iMeshWrapper> meshWrap = rider->pcmesh;
-
-    csRef<iSpriteCal3DSocket> socket = state->FindSocket("back");
+void psCharAppearance::ApplyRider(csRef<iMeshWrapper> mesh)
+{
+    csRef<iSpriteCal3DState> mountstate = scfQueryInterface<iSpriteCal3DState> (mesh->GetMeshObject());
+    
+    csRef<iSpriteCal3DSocket> socket = mountstate->FindSocket( "back" );
+    
     if ( !socket )
     {
-        Error1("\"back\" socket not found.");
+        Error1("Socket back not found.");
         return;
     }
-
-    ProcessAttach(meshWrap, socket);
-
-    rider->SetIdleAnimation("ride");
-}
-
-void psCharAppearance::RemoveRider(GEMClientActor* rider)
-{
-    csVector3 rpos = rider->GetPosition();
-    float rrot = rider->GetRotation();
     
-    Detach("back", false);
+    baseMesh->GetFlags().Set(CS_ENTITY_NODECAL);
+    const char* socketName = socket->GetName();
 
-    rider->pcmesh->GetMovable()->SetSector(baseMesh->GetMovable()->GetSectors()->Get(0));
-    rider->SetPosition(rpos, rrot, rider->GetSector());
+    // Given a socket name of "righthand", we're looking for a key in the form of "socket_righthand"
+    csString keyName = "socket_";
+    keyName += socketName;
+
+    // Variables for transform to be specified
+    float trans_x = 0, trans_y = 0.0, trans_z = 0, rot_x = -PI/2, rot_y = 0, rot_z = 0;
+    csRef<iObjectIterator> it = baseMesh->GetFactory()->QueryObject()->GetIterator();
+
+    while ( it->HasNext() )
+    {
+        csRef<iKeyValuePair> key ( scfQueryInterface<iKeyValuePair> (it->Next()));
+        if (key && keyName == key->GetKey())
+        {
+            sscanf(key->GetValue(),"%f,%f,%f,%f,%f,%f",&trans_x,&trans_y,&trans_z,&rot_x,&rot_y,&rot_z);
+        }
+    }
+
+    baseMesh->QuerySceneNode()->SetParent( mesh->QuerySceneNode ());
+    socket->SetMeshWrapper( baseMesh );
+    socket->SetTransform( csTransform(csZRotMatrix3(rot_z)*csYRotMatrix3(rot_y)*csXRotMatrix3(rot_x), csVector3(trans_x,trans_y,trans_z)) );
 }
 
 void psCharAppearance::ApplyEquipment(csString& equipment)

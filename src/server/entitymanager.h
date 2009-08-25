@@ -128,7 +128,7 @@ public:
     bool RemoveActor(gemObject *actor);
 
     bool AddRideRelation(gemActor *rider, gemActor *mount);
-    void RemoveRideRelation(gemActor *rider, gemActor *mount);
+    void RemoveRideRelation(gemActor *rider);
     
     void SetReady(bool flag);
     bool IsReady() { return ready; }

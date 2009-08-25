@@ -2634,52 +2634,6 @@ csString psEquipmentMessage::ToString(AccessPointers * /*access_ptrs*/)
 
 //--------------------------------------------------------------------------
 
-PSF_IMPLEMENT_MSG_FACTORY(psMountingMessage,MSGTYPE_MOUNTING);
-
-psMountingMessage::psMountingMessage( uint32_t clientNum,
-                                      EID mountid,
-                                      EID riderid,
-                                      bool mounting )
-{
-    msg.AttachNew(new MsgEntry( sizeof(uint32_t)*2 + sizeof(bool) +1));
-
-    msg->SetType(MSGTYPE_MOUNTING);
-    msg->clientnum  = clientNum;
-
-    msg->Add(mountid.Unbox());
-    msg->Add(riderid.Unbox());
-    msg->Add(mounting);
-
-    // Sets valid flag based on message overrun state
-    valid=!(msg->overrun);
-}
-
-psMountingMessage::psMountingMessage( MsgEntry* message )
-{
-    if ( !message )
-        return;
-
-    mount = message->GetUInt32();
-    rider = message->GetUInt32();
-    mounting = message->GetBool();
-
-    // Sets valid flag based on message overrun state
-    valid=!(message->overrun);
-}
-
-csString psMountingMessage::ToString(AccessPointers * /*access_ptrs*/)
-{
-    csString msgtext;
-
-    msgtext.AppendFmt(" Mount: %d",mount);
-    msgtext.AppendFmt(" Rider: %d",rider);
-    msgtext.AppendFmt(" Operation : %s", (mounting ? "mounting" : "dismounting"));
-
-    return msgtext;
-}
-
-//--------------------------------------------------------------------------
-
 PSF_IMPLEMENT_MSG_FACTORY(psGUIMerchantMessage,MSGTYPE_GUIMERCHANT);
 
 psGUIMerchantMessage::psGUIMerchantMessage( uint8_t command,
@@ -4679,6 +4633,7 @@ psPersistActor::psPersistActor( uint32_t clientNum,
                                 const char* guild,
                                 const char* factname,
                                 const char* race,
+                                const char* mountFactname,
                                 unsigned short int gender,
                                 const char* helmGroup,
                                 const char* bracerGroup,
@@ -4696,7 +4651,7 @@ psPersistActor::psPersistActor( uint32_t clientNum,
                                 EID ownerEID,
                                 uint32_t flags)
 {
-    msg.AttachNew(new MsgEntry( 5000 ));
+    msg.AttachNew(new MsgEntry( 6000 ));
 
     msg->SetType(MSGTYPE_PERSIST_ACTOR);
     msg->clientnum  = clientNum;
@@ -4719,6 +4674,7 @@ psPersistActor::psPersistActor( uint32_t clientNum,
 
     msg->Add( factname );
     msg->Add( race );
+    msg->Add( mountFactname );
     msg->Add ( gender );
     msg->Add( helmGroup );
     msg->Add(BracerGroup);
@@ -4758,6 +4714,7 @@ psPersistActor::psPersistActor( MsgEntry* me, csStringHashReversible* msgstrings
 
     factname    = csString ( me->GetStr() );
     race        = csString ( me->GetStr() );
+    mountFactname = csString ( me->GetStr() );
     gender      = me->GetInt16();
     helmGroup   = csString ( me->GetStr() );
     BracerGroup = csString(me->GetStr());
@@ -4798,6 +4755,7 @@ csString psPersistActor::ToString(AccessPointers * access_ptrs)
     msgtext.AppendFmt(" Guild: '%s'",guild.GetDataSafe());
     msgtext.AppendFmt(" Factname: '%s'",factname.GetDataSafe());
     msgtext.AppendFmt(" Race: '%s'",race.GetDataSafe());
+    msgtext.AppendFmt(" Mount Race: '%s'",mountFactname.GetDataSafe());
     msgtext.AppendFmt(" Top: (%.3f,%.3f,%.3f)",top.x,top.y,top.z);
     msgtext.AppendFmt(" Bottom: (%.3f,%.3f,%.3f)",bottom.x,bottom.y,bottom.z);
     msgtext.AppendFmt(" Offset: (%.3f,%.3f,%.3f)",offset.x,offset.y,offset.z);
