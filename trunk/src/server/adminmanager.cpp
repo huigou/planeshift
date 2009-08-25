@@ -4771,14 +4771,16 @@ void AdminManager::BroadcastDirtyPetitions(int clientNum, bool includeSelf)
     }
 }
 
-void AdminManager::ListPetitions(MsgEntry *me, psPetitionRequestMessage& msg,Client *client)
+bool AdminManager::GetPetitionsArray(csArray<psPetitionInfo> &petitions, Client *client, bool IsGMrequest)
 {
-    // Try and grab the result set from the database:
-    iResultSet *rs = GetPetitions(client->GetPID());
-    if (rs)
+    // Try and grab the result set from the database
+    // NOTE: As there are differences between the normal use and the gm use we manage them here
+    //       the result set will be different depending on this
+    iResultSet *rs = GetPetitions(IsGMrequest ? PETITION_GM : client->GetPID(), 
+                                  IsGMrequest ? client->GetPID() : PETITION_GM);
+            
+    if(rs)
     {
-        // Send list to client:
-        csArray<psPetitionInfo> petitions;
         psPetitionInfo info;
         for (unsigned int i=0; i<rs->Count(); i++)
         {
@@ -4788,23 +4790,44 @@ void AdminManager::ListPetitions(MsgEntry *me, psPetitionRequestMessage& msg,Cli
             info.status = (*rs)[i][2];
             info.created = csString((*rs)[i][3]).Slice(0, 16);
             info.assignedgm = (*rs)[i][4];
-            if (info.assignedgm.Length() == 0)
+            if (!IsGMrequest) //this is special handling for player petition requests
             {
-                info.assignedgm = "No GM Assigned";
+                if(info.assignedgm.Length() == 0)
+                {
+                    info.assignedgm = "No GM Assigned";
+                }
+                info.resolution = (*rs)[i][5];
+                if (info.resolution.Length() == 0)
+                {
+                    info.resolution = "No Resolution";
+                }
             }
-            info.resolution = (*rs)[i][5];
-            if (info.resolution.Length() == 0)
+            else //this is special handling for gm petitions requests
             {
-                info.resolution = "No Resolution";
+                info.player = (*rs)[i][5];
+                info.escalation = atoi((*rs)[i][6]);
+                info.online = (clients->Find(info.player) ? true : false);
+
             }
 
             // Append to the message:
             petitions.Push(info);
         }
+        rs->Release();
+        return true;
+    }
 
+    return false;
+}
+
+void AdminManager::ListPetitions(MsgEntry *me, psPetitionRequestMessage& msg,Client *client)
+{
+    csArray<psPetitionInfo> petitions;
+    // Try and grab the result set from the database
+    if(GetPetitionsArray(petitions, client))
+    {
         psPetitionMessage message(me->clientnum, &petitions, "List retrieved successfully.", true, PETITION_LIST);
         message.SendMessage();
-        rs->Release();
     }
     else
     {
@@ -4826,37 +4849,12 @@ void AdminManager::CancelPetition(MsgEntry *me, psPetitionRequestMessage& msg,Cl
         return;
     }
 
-    // Try and grab the result set from the database:
-    iResultSet *rs = GetPetitions(client->GetPID());
-    if (rs)
+    csArray<psPetitionInfo> petitions;
+    // Try and grab the result set from the database
+    if(GetPetitionsArray(petitions, client))
     {
-        // Send list to client:
-        csArray<psPetitionInfo> petitions;
-        psPetitionInfo info;
-        for (unsigned int i=0; i<rs->Count(); i++)
-        {
-            // Set info
-            info.id = atoi((*rs)[i][0]);
-            info.petition = (*rs)[i][1];
-            info.status = (*rs)[i][2];
-            info.created = (*rs)[i][3];
-            info.assignedgm = (*rs)[i][4];
-            if (info.assignedgm.Length() == 0)
-            {
-                info.assignedgm = "No GM Assigned";
-            }
-            if (info.resolution.Length() == 0)
-            {
-                info.resolution = "No Resolution";
-            }
-
-            // Append to the message:
-            petitions.Push(info);
-        }
-
         psPetitionMessage message(me->clientnum, &petitions, "Cancel was successful.", true, PETITION_CANCEL);
         message.SendMessage();
-        rs->Release();
     }
     else
     {
@@ -4890,34 +4888,14 @@ void AdminManager::GMListPetitions(MsgEntry *me, psPetitionRequestMessage& msg,C
         return;
     }
 
-    // Try and grab the result set from the database:
+    // Try and grab the result set from the database
 
     // Show the player all petitions.
-    iResultSet *rs = GetPetitions(PETITION_GM, client->GetPID());
-    if (rs)
+    csArray<psPetitionInfo> petitions;
+    if(GetPetitionsArray(petitions, client, true))
     {
-        // Send list to GM:
-        csArray<psPetitionInfo> petitions;
-        psPetitionInfo info;
-        for (unsigned int i=0; i<rs->Count(); i++)
-        {
-            // Set info
-            info.id = atoi((*rs)[i][0]);
-            info.petition = (*rs)[i][1];
-            info.status = (*rs)[i][2];
-            info.escalation = atoi((*rs)[i][3]);
-            info.created = csString((*rs)[i][4]).Slice(0, 16);
-            info.player = (*rs)[i][5];
-            info.assignedgm = (*rs)[i][6];
-            info.online = (clients->Find(info.player) ? true : false);
-
-            // Append to the message:
-            petitions.Push(info);
-        }
-
         psPetitionMessage message(me->clientnum, &petitions, "List retrieved successfully.", true, PETITION_LIST, true);
         message.SendMessage();
-        rs->Release();
     }
     else
     {
@@ -4987,32 +4965,13 @@ void AdminManager::GMHandlePetition(MsgEntry *me, psPetitionRequestMessage& msg,
         return;
     }
 
-    // Try and grab the result set from the database:
-    iResultSet *rs = GetPetitions(PETITION_GM, client->GetPID());
-    if (rs)
+    // Try and grab the result set from the database
+    csArray<psPetitionInfo> petitions;
+    if(GetPetitionsArray(petitions, client, true))
     {
-        // Send list to GM:
-        csArray<psPetitionInfo> petitions;
-        psPetitionInfo info;
-        for (unsigned int i=0; i<rs->Count(); i++)
-        {
-            // Set info
-            info.id = atoi((*rs)[i][0]);
-            info.petition = (*rs)[i][1];
-            info.status = (*rs)[i][2];
-            info.escalation = atoi((*rs)[i][3]);
-            info.created = csString((*rs)[i][4]).Slice(0, 16);
-            info.player = (*rs)[i][5];
-            info.assignedgm = (*rs)[i][6];
-            info.online = (clients->Find(info.player) ? true : false);
-
-            // Append to the message:
-            petitions.Push(info);
-        }
         // Tell GM operation was successful
         psPetitionMessage message(me->clientnum, &petitions, "Successful", true, type, true);
         message.SendMessage();
-        rs->Release();
     }
     else
     {
@@ -5123,7 +5082,7 @@ iResultSet *AdminManager::GetPetitions(PID playerID, PID gmID)
     // Check player ID, if ID is PETITION_GM (0xFFFFFFFF), get a complete list for the GM:
     if (playerID == PETITION_GM)
     {
-            rs = db->Select("SELECT pet.id,pet.petition,pet.status,pet.escalation_level,pet.created_date,pl.name, gm.name as gmname FROM petitions pet "
+            rs = db->Select("SELECT pet.id,pet.petition,pet.status,pet.created_date,gm.name as gmname,pl.name,pet.escalation_level FROM petitions pet "
                     "LEFT JOIN characters gm ON pet.assigned_gm=gm.id, characters pl WHERE pet.player!=%d AND (pet.status=\"Open\" OR pet.status=\"In Progress\") "
                     "AND pet.player=pl.id "
                     "ORDER BY pet.status ASC,pet.escalation_level DESC,pet.created_date ASC", gmID.Unbox());
@@ -5148,10 +5107,10 @@ iResultSet *AdminManager::GetPetitions(PID playerID, PID gmID)
 
 bool AdminManager::CancelPetition(PID playerID, int petitionID, bool isGMrequest)
 {
-    // If player ID is PETITION_GM, just cancel the petition (a GM is requesting the change)
-    if (playerID == PETITION_GM)
+    // If isGMrequest is true, just cancel the petition (a GM is requesting the change)
+    if (isGMrequest)
     {
-        int result = db->CommandPump("UPDATE petitions SET status='Cancelled' WHERE id=%d AND assigned_gm=%u)", petitionID,playerID.Unbox());
+        int result = db->CommandPump("UPDATE petitions SET status='Cancelled' WHERE id=%d AND assigned_gm=%u", petitionID,playerID.Unbox());
         return (result > 0);
     }
 

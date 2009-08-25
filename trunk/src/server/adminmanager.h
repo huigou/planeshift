@@ -279,6 +279,14 @@ protected:
     /// Handles broadcasting the petition list dirty signal
     void BroadcastDirtyPetitions(int clientNum, bool includeSelf=false);
 
+    /** @brief Gets the list of petitions and returns an array with the parsed data.
+     *  @param petitions an array with the data of the petition: It's empty if it wasn't possible to obtain results.
+     *  @param client The GM client which requested the informations.
+     *  @param IsGMrequest manages if the list should be formated for gm or players. True is for gm.
+     *  @return true if the query succeded, false if there were errors.
+     */
+    bool GetPetitionsArray(csArray<psPetitionInfo> &petitions, Client *client, bool IsGMrequest = false);
+
     /// Handles queries sent by the client to the server for information or actions
     void ListPetitions(MsgEntry* me, psPetitionRequestMessage& msg, Client *client);
     void CancelPetition(MsgEntry* me, psPetitionRequestMessage& msg, Client *client);
