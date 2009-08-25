@@ -1,4 +1,11 @@
-﻿*** 2009-08-24 by Stefano Angeleri
+﻿*** 2009-08-25 by Keith Fulton
+- Fixed scrollbar to look right in most cases.
+- Fixed auto-complete of /commands.
+- Improved error reporting for missing images and styles, to help people
+  fix custom GUI's.
+- Replaced old (broken) skin with new generic skin.
+
+*** 2009-08-24 by Stefano Angeleri
 - Updated fparser from 3.1.5 to 3.2:
     *  The FP_SUPPORT_ASINH and FP_NO_ASINH  precompiler constants have 
        been replaced with a more generic FP_SUPPORT_TR1_MATH_FUNCS 
