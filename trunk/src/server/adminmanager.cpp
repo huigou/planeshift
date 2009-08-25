@@ -6348,9 +6348,12 @@ void AdminManager::TransferItem(MsgEntry* me, psAdminCmdMessage& msg,
                     item->GetStackCount(), data.value);
             return;
         }
-
+        
         bool wasEquipped = item->IsEquipped();
-
+        
+        //we need to get this before the items are stacked in the destination inventory
+        int StackCount = item->GetStackCount();
+        
         // Now here we handle the target machine
         InventoryTransaction trgtTran(&targetchar->Inventory());
 
@@ -6364,7 +6367,7 @@ void AdminManager::TransferItem(MsgEntry* me, psAdminCmdMessage& msg,
 
         // Inform the GM doing the transfer
         psserver->SendSystemOK(me->clientnum,
-                "%u %s transferred from %s's %s to %s", item->GetStackCount(), item->GetName(),
+                "%u %s transferred from %s's %s to %s", StackCount, item->GetName(),
                 source->GetActor()->GetName(), wasEquipped ? "equipment"
                         : "inventory", target->GetActor()->GetName());
 
@@ -6372,7 +6375,7 @@ void AdminManager::TransferItem(MsgEntry* me, psAdminCmdMessage& msg,
         if (target->GetClientNum() != me->clientnum)
         {
             psserver->SendSystemOK(target->GetClientNum(),
-                    "You were given %u %s by GM %s.", item->GetStackCount(), item->GetName(),
+                    "You were given %u %s by GM %s.", StackCount, item->GetName(),
                     source->GetActor()->GetName());
         }
 
@@ -6380,7 +6383,7 @@ void AdminManager::TransferItem(MsgEntry* me, psAdminCmdMessage& msg,
         if (source->GetClientNum() != me->clientnum)
         {
             psserver->SendSystemResult(source->GetClientNum(),
-                    "%u %s was taken by GM %s.", item->GetStackCount(), item->GetName(),
+                    "%u %s was taken by GM %s.", StackCount, item->GetName(),
                     target->GetActor()->GetName());
         }
 
