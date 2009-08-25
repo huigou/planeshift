@@ -932,6 +932,8 @@ void UserManager::HandleEntranceMessage( MsgEntry* me, Client *client )
         if (secure) psserver->SendSystemInfo(client->GetClientNum(),"Unknown type in entrance action location");
         Error1("Unknown type in entrance action location");
     }
+    //untarget the entrance/exit
+    client->SetTargetObject(NULL,true);
 }
 
 void UserManager::HandleDie(psUserCmdMessage& msg, Client* client)
