@@ -157,8 +157,8 @@ public:
     bool InsertNew(PID leader_char_id);
     bool RemoveGuild();
 
-    psGuildLevel *Connect(psCharacter *player);        ///< Find existing and set actor
-    void Disconnect(psCharacter *player);        ///< Find actor, remove and check for delete if last one
+    void Connect(psCharacter *player);        ///< Find existing and set actor
+    void Disconnect(psCharacter *player);     ///< Find actor, remove and check for delete if last one
 
     psGuildMember *FindMember(const char *name);
     psGuildMember *FindMember(PID char_id);
