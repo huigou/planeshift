@@ -155,11 +155,6 @@ void psAuthenticationClient::ShowError()
 {
     psengine->GetCelClient()->SetPlayerReady(false);
 
-    if(rejectmsg == "!") // Don't show own generated not final disconnect
-    {
-        return;
-    }
-
     pawsLoginWindow* loginWdg = (pawsLoginWindow*)PawsManager::GetSingleton().FindWidget("LoginWindow");
 
     //If we have logged in

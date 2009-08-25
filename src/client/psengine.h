@@ -209,7 +209,7 @@ public:
     * Formally disconnects a client and allows time for an info box to be shown
     * @param final Set to true if this is the final quit.
     */
-    void Disconnect(bool final);
+    void Disconnect();
 
     /// Tell the engine to start the load proceedure.
     void StartLoad() { loadstate = LS_LOAD_SCREEN; }

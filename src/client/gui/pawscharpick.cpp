@@ -326,7 +326,7 @@ bool pawsCharacterPickerWindow::OnButtonPressed( int mouseButton, int keyModifer
 
 void pawsCharacterPickerWindow::ReturnToLoginWindow()
 {
-    psengine->Disconnect(false); // This isn't the final disconnect
+    psengine->Disconnect();
 
     psengine->GetCelClient()->GetClientDR()->ResetMsgStrings(); // Remove the message to prevent big CRASH in the client
 
