@@ -45,6 +45,7 @@ public:
 
     virtual ~pawsShortcutWindow();
 
+    virtual bool Setup(iDocumentNode *node);
     virtual bool PostSetup();
 
     bool OnMouseDown( int button, int modifiers, int x, int y );
@@ -123,7 +124,9 @@ protected:
     
     // The matrix of buttons of visible shortcuts
     csArray< csArray<pawsButton*> > matrix;
-    
+
+    csString buttonBackgroundImage;
+
     int edit;
 
     pawsScrollBar* scrollBar;

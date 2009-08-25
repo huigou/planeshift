@@ -123,7 +123,7 @@ bool pawsScrollBar::Setup( iDocumentNode* node )
     }
 
     attr = node->GetAttribute("tick");
-                    if (attr)
+    if (attr)
         tickValue = attr->GetValueAsFloat();
 
 	// up button settings

@@ -1853,7 +1853,7 @@ void pawsChatWindow::TabCompleteCommand(const char *cmd)
             count++;
             if(!list.IsEmpty())
                 list.Append(" ");
-            list.Append(*found);
+            list.Append(found);
             if (!last)
                 last = &found;
             size_t common = found.FindCommonLength(*last);

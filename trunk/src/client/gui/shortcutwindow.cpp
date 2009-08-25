@@ -154,7 +154,7 @@ void pawsShortcutWindow::RebuildMatrix()
             button = new pawsButton;
             button->SetSound("gui.shortcut");
             AddChild(button);
-            button->SetBackground("Scaling Button Up");
+            button->SetBackground(buttonBackgroundImage);
             matrix[i][k] = button;
         }
     }
@@ -186,7 +186,7 @@ void  pawsShortcutWindow::LayoutMatrix()
     }
 }
 
-void  pawsShortcutWindow::UpdateMatrix()
+void pawsShortcutWindow::UpdateMatrix()
 {
     pawsButton * button;
     size_t shortcutNum;
@@ -222,18 +222,29 @@ void  pawsShortcutWindow::UpdateMatrix()
     }        
 }
 
+bool pawsShortcutWindow::Setup(iDocumentNode *node)
+{
+    if (node->GetAttribute("buttonimage"))
+        buttonBackgroundImage = node->GetAttributeValue("buttonimage");
+    else
+        buttonBackgroundImage = "Scaling Button";
+    return true;
+}
+
 bool pawsShortcutWindow::PostSetup()
 {
     // Create the scroll bar
-    scrollBar = new pawsScrollBar;
-    AddChild( scrollBar );
-    scrollBar->SetHorizontal(false);
-    int attach = ATTACH_BOTTOM | ATTACH_RIGHT | ATTACH_TOP;
-    scrollBar->SetAttachFlags( attach );
-    scrollBar->SetRelativeFrame( defaultFrame.Width()-SCROLLBAR_SIZE, 0, SCROLLBAR_SIZE, defaultFrame.Height()-8);
-    scrollBar->PostSetup();
-    scrollBar->Resize();
-    scrollBar->SetTickValue( 1.0 );
+    //scrollBar = new pawsScrollBar;
+    //AddChild( scrollBar );
+    //scrollBar->SetHorizontal(false);
+    //int attach = ATTACH_BOTTOM | ATTACH_RIGHT | ATTACH_TOP;
+    //scrollBar->SetAttachFlags( attach );
+    //scrollBar->SetRelativeFrame( defaultFrame.Width()-SCROLLBAR_SIZE, 0, SCROLLBAR_SIZE, defaultFrame.Height()-8);
+    //scrollBar->PostSetup();
+    //scrollBar->Resize();
+
+    scrollBar = dynamic_cast<pawsScrollBar *>(FindWidget("scrollbar"));
+    //scrollBar->SetTickValue( 1.0 );
 
     RebuildMatrix();
 
