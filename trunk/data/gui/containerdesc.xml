@@ -1,89 +1,84 @@
 <widget_description>
 
-    <widget name="ContainerDescWindow" factory="pawsContainerDescWindow"
-            visible="no" movable="yes">
-        <frame x="100" y="100" width="310" height="280" border="yes"/>
-        <bgimage resource="Container Desc Background" />
-        <title resource="Blue Title" text="Examine" align="left" close_button="yes"/>
+    <widget name="ContainerDescWindow" factory="pawsContainerDescWindow" visible="no" movable="yes" style="New Standard GUI">
+        <frame x="100" y="100" width="300" height="365" border="yes"/>
+        <title resource="Scaling Title Bar" text="Container" align="left" close_button="yes"/>        
 
+
+        <widget name="View" factory="pawsButton" id="11">
+            <frame x="10" y="160" width="48" height="48" />
+            <bgimage resource="view" />
+        </widget>
+        
         <widget name="SmallInvButton" factory="pawsButton" tooltip="Open Inventory">
-            <frame x="16" y="92" width="32" height="32"/>
+            <frame x="10" y="210" width="48" height="48"/>
             <bgimage resource="InventoryBulk" alpha="0"/>
         </widget>
 
-        <widget name="View" factory="pawsButton" id="11">
-            <frame x="16" y="0" width="32" height="32" />
-            <bgimage resource="view" />
-        </widget>
-
-        <widget name="Combine" factory="pawsButton" id="13" tooltip="Combine items in container">
-            <frame x="48" y="92" width="32" height="32" />
-            <bgimage resource="ButtonCombine" />
-        </widget>
-
         <widget name="Inventory" factory="pawsButton" id="12" tooltip="Transfer to inventory">
-            <frame x="48" y="0" width="32" height="32" />
+            <frame x="10" y="260" width="48" height="48" />
             <bgimage resource="ExchangeAccept" />
         </widget>
 
-
-        <widget name="ItemImage" factory="pawsWidget"
-            visible="yes" >
-            <frame x="17" y="41" width="43.57" height="43.57" border="no"/>
+        <widget name="Combine" factory="pawsButton" id="13" tooltip="Combine items in container">
+            <frame x="10" y="310" width="48" height="48" />
+            <bgimage resource="ButtonCombine" />
         </widget>
 
+
+
+        <widget name="ItemImage" factory="pawsWidget" visible="yes" >
+            <frame x="10" y="35" width="48" height="48" border="no"/>
+        </widget>
         <widget name="ItemName" factory="pawsTextBox" >
-            <frame x="116" y="2" width="270" height="20"/>
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="225" g="225" b="255" size="10" />
+            <frame x="10" y="5" width="270" height="20"/>    
         </widget>
-
-
         <widget name="ItemDescription" factory="pawsMultiLineTextBox" >
-            <frame x="89" y="27" width="200" height="73" border="no"/>
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="225" g="255" b="225" size="10" />
+            <frame x="80" y="27" width="210" height="120" border="no"/>
         </widget>
+        
+
+
+
 
         <widget name="BulkList" factory="pawsListBox" selectable="0">
-            <frame x="26" y="145" width="275" height="133" border="no"/>
-            <columns height="43.57" headings="no" >
-                <column width="43.57" >
+            <frame x="90" y="160" width="192" height="192" border="no"/>
+            <scrollbar heightmod="-1" />
+            <columns height="48" headings="no" >
+                <column width="48" >
                     <widget name="Bulk0" factory="pawsSlot">
-                        <frame x="0" y="0" width="43.57" height="43.57" />
-                        <bgimage resource="ContainerBulk" alpha="0"/>
+                        <frame x="0" y="0" width="48" height="48" />
                     </widget>
                 </column>
-                <column width="43.57" >
+                <column width="48" >
                     <widget name="Bulk1" factory="pawsSlot">
-                        <frame x="0" y="0" width="43.57" height="43.57" />
-                        <bgimage resource="ContainerBulk" alpha="0"/>
+                        <frame x="0" y="0" width="48" height="48" />
                     </widget>
                 </column>
-                <column width="43.57" >
+                <column width="48" >
                     <widget name="Bulk2" factory="pawsSlot">
-                        <frame x="0" y="0" width="43.57" height="43.57" />
-                        <bgimage resource="ContainerBulk" alpha="0"/>
+                        <frame x="0" y="0" width="48" height="48" />
                     </widget>
                 </column>
-                <column width="43.57" >
+                <column width="48" >
                     <widget name="Bulk3" factory="pawsSlot">
-                        <frame x="0" y="0" width="43.57" height="43.57" />
-                        <bgimage resource="ContainerBulk" alpha="0"/>
+                        <frame x="0" y="0" width="48" height="48" />
                     </widget>
                 </column>
-                <column width="43.57" >
+                <!--
+		<column width="48" >
                     <widget name="Bulk4" factory="pawsSlot">
-                        <frame x="0" y="0" width="43.57" height="43.57" />
-                        <bgimage resource="ContainerBulk" alpha="0"/>
+                        <frame x="0" y="0" width="48" height="48" />
                     </widget>
                 </column>
-                <column width="43.57" >
+                <column width="48" >
                     <widget name="Bulk5" factory="pawsSlot">
                         <frame x="0" y="0" width="61" height="61" />
-                        <bgimage resource="ContainerBulk" alpha="0"/>
                     </widget>
                 </column>
+		-->
             </columns>
-        </widget>
+        </widget>                
     </widget>
 
 </widget_description>

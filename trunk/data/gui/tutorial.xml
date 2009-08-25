@@ -1,13 +1,12 @@
 <widget_description>
 
     <widget name="Tutorial" factory="pawsTutorialWindow" resizeable = "no" visible="no" movable="yes">
-        <frame x="300" y="150" width="400" height="300" border="yes"/>
-        <bgimage resource="ReadBook Background" />
-        <title resource="Blue Title" text="PlaneShift Tutorial" align="left" close_button="yes"/>
+        <frame x="300" y="150" width="400" height="300" border="yes" style="New Standard GUI" />
+        <bgimage resource="Book Background" />
+        <title resource="Scaling Title Bar" text="PlaneShift Tutorial" align="left" close_button="yes"/>
         
         <widget name="TutorialInstructions" factory="pawsMultiLineTextBox" >
             <frame x="30" y="60" width="340" height="230" border="no"/>
-	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="0" g="0" b="0" size="10" /> 
         </widget>
 
       <!--
@@ -24,7 +23,6 @@
 
       <widget name="Notify" factory="pawsButton" id="100" tooltip="Click to see Instructions">
         <frame x="0" y="0" width="45" height="60" />
-        <bgimage resource="ButtonTutorial" />
       </widget>
 
 

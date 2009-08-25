@@ -1,22 +1,31 @@
 <widget_description>
 
-    <widget name="ShortcutWindow" factory="pawsShortcutWindow" visible="yes" configurable="yes"
-            savepositions="yes" movable="yes" resizable="yes" keepaspect="no" style="New Standard GUI">
+    <widget name="ShortcutWindow" factory="pawsShortcutWindow" style="New Standard GUI" 
+            buttonimage="Scaling Button" 
+            visible="yes" configurable="yes"
+            savepositions="yes" movable="yes" resizable="yes" keepaspect="no" >
 	    
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="10" scalefont="no" />
         <frame x="526" y="545" width="280" height="55" border="no" />
-	  <minframe width="105" height="32" />
+        <minframe width="105" height="32" />
+	  
+	  <pawsScrollBar name="scrollbar" 
+			     style="Standard Scrollbar"
+			     direction="vertical"
+			     tick="1" 
+                       minValue="0" >
+	        <frame x="260" y="3" width="20" height="50" />
+        </pawsScrollBar>
     </widget>
 
     <widget name="ShortcutEdit" factory="pawsWidget" visible="no" savepositions="yes" movable="yes"
             resizable="yes" configurable="yes" keepaspect="no" style="New Standard GUI">
 
-		<frame x="30" y="30" width="330" height="220" border="yes" />
-		<title resource="Blue Title" text="Edit Shortcut..." align="left" close_button="yes" />
-		<!--bgimage resource="Options Background" alpha="128"/-->
+		<frame x="30" y="30" width="330" height="212" border="yes" />
+		<title resource="Scaling Title Bar" text="Edit Shortcut..." align="left" close_button="yes" />
 		<minframe width="300" height="200" />
 
-        <widget name="Infobox1" factory="pawsTextBox">
+
+        <widget name="Infobox1" factory="pawsTextBox" style="Header Font">
             <frame x="20" y="7" width="60" height="20" />
             <text string="Name:" />
 	    <attachpoints>
@@ -31,7 +40,7 @@
 		    <attach point="ATTACH_TOP" />
             </attachpoints>
         </widget>
-        <widget name="Infobox3" factory="pawsTextBox">
+        <widget name="Infobox3" factory="pawsTextBox" style="Header Font">
             <frame x="110" y="7" width="148" height="20" />
             <text string="Shortcut key:" horizAdjust="RIGHT" />
 	    <attachpoints>
@@ -56,7 +65,7 @@
 		    <attach point="ATTACH_TOP" />
             </attachpoints>
         </widget>
-        <widget name="Infobox2" factory="pawsTextBox">
+        <widget name="Infobox2" factory="pawsTextBox" style="Header Font">
             <frame x="20" y="66" width="200" height="20" />
             <text string="Enter the command(s):" />
 	    <attachpoints>

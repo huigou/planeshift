@@ -1,45 +1,47 @@
 <widget_description>
-<widget name="MerchantWindow" factory="pawsMerchantWindow"
-        visible="no" 
-        movable="yes">
+<widget name="MerchantWindow" factory="pawsMerchantWindow" visible="no" movable="yes" style="New Standard GUI">
 
-    <frame x="100" y="100" width="600" height="250" border="yes" />
-    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
-    <title resource="Blue Title" text="Merchant" align="left" close_button="yes"/>    
-    <bgimage resource="Merchant Background" alpha="0" />
+    <frame x="100" y="100" width="620" height="400" border="yes" />
+    <title resource="Scaling Title Bar" text="Merchant" align="left" close_button="yes"/>    
     
     <widget name="Transact" factory="pawsButton" id="100" tooltip="Exchange item">
-        <frame x="290" y="1" width="32" height="32" border="no" />
+        <frame x="560" y="10" width="48" height="48" border="no" />
         <bgimage resource="MerchantTrade" alpha="0" />
     </widget>
 
-	 <widget name="Transact" factory="pawsButton" id="110" tooltip="Exchange all items">
-	   <frame x="324" y="1" width="32" height="32" border="no" />
+	 <widget name="TransactAll" factory="pawsButton" id="110" tooltip="Exchange all items">
+	   <frame x="560" y="62" width="48" height="48" border="no" />
 	   <bgimage resource="MerchantTrade" alpha="0" />
 	</widget>
+	<widget name="AllLabel" factory="pawsTextBox">
+        	<frame x="560" y="110" width="48" height="20" />
+	        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="246" g="223" b="166" size="8" scalefont="no" />
+        	<text string="ALL" horizAdjust="CENTRE" />
+	</widget>
 
-	<widget name="Transact" factory="pawsButton" id="150" tooltip="View item">
-		<frame x="356" y="1" width="32" height="32" border="no" />
+
+	<widget name="View" factory="pawsButton" id="150" tooltip="View item">
+		<frame x="560" y="338" width="48" height="48" border="no" />
 		<bgimage resource="view" alpha="0" />
 	</widget>
 
-		<widget name="BuySell" factory="pawsRadioButtonGroup" >
-        <frame x="50" y="-1" width="150" height="30" border="no" />
+	<widget name="BuySell" factory="pawsRadioButtonGroup" >
+        <frame x="10" y="10" width="190" height="35" border="no" />
         
-        <widget name="Buy" factory="pawsRadioButton" id="1000">
-            <frame x="5" y="5" width="70" height="30" />
-            <text string="Buy" position="right"/>
-        </widget>
-        
-        <widget name="Sell" factory="pawsRadioButton" id="2000">
-            <frame x="75" y="5" width="70" height="30" />
-            <text string="Sell" position="right"/>
-        </widget>
-    </widget>
+	        <widget name="Buy" factory="pawsRadioButton" id="1000">
+	            <frame x="0" y="2" width="75" height="30" />
+	            <text string="Buy" position="right"/>
+	        </widget>
+	        
+	        <widget name="Sell" factory="pawsRadioButton" id="2000">
+	            <frame x="115" y="2" width="75" height="30" />
+	            <text string="Sell" position="right"/>
+	        </widget>
+	</widget>
 
     
     <widget name="Categories" factory="pawsListBox" id="10">
-        <frame x="32" y="37" width="174" height="148" border="no" />
+        <frame x="12" y="45" width="190" height="340" border="no" />
 
         <columns height="23">
             <column width="200" >            
@@ -50,15 +52,15 @@
 
 
     <widget name="Items" factory="pawsListBox" id="11">
-        <frame x="260" y="37" width="310" height="148" border="no" />
+        <frame x="220" y="45" width="330" height="340" border="no" />
         <columns height="32">
-            <column width="20" >            
+            <column width="30" >            
                 <widget name="#" factory="pawsTextBox"></widget>
             </column>       
             <column width="40" >            
                 <widget name="Item" factory="pawsWidget"></widget>
             </column>   
-         <column width="50" >
+         <column width="60" >
                 <widget name="Price" factory="pawsTextBox"></widget>
             </column>     
             <column width="195" >            
@@ -76,29 +78,31 @@
     </widget>
 
     <!-- Slots for the money -->
+    <!--
     <widget name="circles" factory="pawsSlot" tooltip="Circles">
-        <frame x="283" y="192" width="48" height="48"/>
+        <frame x="350" y="340" width="48" height="48"/>
         <bgimage resource="MoneyCircles" alpha="0"/>
     </widget>
 
     <widget name="octas" factory="pawsSlot" tooltip="Octas">
-        <frame x="356" y="192" width="48" height="48"/>
+        <frame x="400" y="340" width="48" height="48"/>
         <bgimage resource="MoneyOctas" alpha="0"/>
     </widget>
     
     <widget name="hexas" factory="pawsSlot" tooltip="Hexas">
-        <frame x="426" y="192" width="48" height="48"/>
+        <frame x="450" y="340" width="48" height="48"/>
         <bgimage resource="MoneyHexas" alpha="0"/>
     </widget>
     
     <widget name="trias" factory="pawsSlot" tooltip="Trias">
-        <frame x="499" y="192" width="48" height="48"/>
+        <frame x="500" y="340" width="48" height="48"/>
         <bgimage resource="MoneyTrias" alpha="0"/>
-    </widget>    
+    </widget>
+    -->    
     
     <widget name="TotalTrias" factory="pawsTextBox">
-        <frame x="40" y="195" width="90" height="30" />
-        <text string="0 Trias" />
+        <frame x="330" y="15" width="220" height="20" />
+        <text string="0 Trias" horizAdjust="RIGHT" />
     </widget>
 
 </widget>

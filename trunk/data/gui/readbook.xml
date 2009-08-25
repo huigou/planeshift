@@ -1,25 +1,26 @@
 <widget_description>
 
-    <widget name="BookReadingWindow" factory="pawsBookReadingWindow" 
-            visible="no" movable="yes">
-        <frame x="100" y="100" width="447" height="450" border="yes"/>
-        <bgimage resource="ReadBook Background" />
-        <title resource="Blue Title" text="Read Book" align="left" close_button="yes"/>
+    <widget name="BookReadingWindow" factory="pawsBookReadingWindow" visible="no" movable="yes" style="New Standard GUI">
+        <frame x="100" y="70" width="447" height="500" border="yes"/>
+        <bgimage resource="Book Background" />
+        <title resource="Scaling Title Bar" text="Read Book" align="left" close_button="yes"/>
         
  
         <widget name="ItemName" factory="pawsTextBox" >
-        <frame x="35" y="35" width="385" height="20"/>
-        <text horizAdjust="CENTRE" />
+	        <frame x="35" y="35" width="385" height="40"/>
+	        <font name="/planeshift/data/ttf/becker-m.ttf" r="0" g="0" b="0" size="15"/>
+        	<text horizAdjust="CENTRE" />
         </widget>
       
 
     <widget name="ItemDescription" factory="pawsMultiLineTextBox" >
-        <frame x="38" y="90" width="385" height="272" border="no"/>
+        <frame x="35" y="90" width="385" height="380" border="no"/>
         <font name="/planeshift/data/ttf/becker-m.ttf" r="0" g="0" b="0" size="12"/>
     </widget>
-	    <widget name="ItemDescriptionCraft" factory="pawsMultiLineTextBox" >
-        <frame x="38" y="90" width="385" height="272" border="no"/>
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="0" g="0" b="0" size="12"/>
+    
+    <widget name="ItemDescriptionCraft" factory="pawsMultiLineTextBox" >
+        <frame x="35" y="90" width="385" height="380" border="no"/>
+        <font name="/planeshift/data/ttf/becker-m.ttf" r="0" g="0" b="0" size="12"/>
     </widget>
 
     <widget name="WriteButton" factory="pawsButton" id="1001" tooltip="Write in this book">

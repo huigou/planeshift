@@ -1,74 +1,288 @@
 <widget_description>
-    <widget name="ChatWindow" factory="pawsChatWindow" visible="yes" savepositions="yes" movable="yes" resizable="yes" keepaspect="no" configurable="yes" style="New Standard GUI">
-        <frame x="360" y="300" width="330" height="122" border="no" />
-        <minframe width="280" height="110" />
-        <title resource="Nanaki Title Bar" text="Communication" align="left" close_button="yes"/>
+    <widget name="ChatWindow" factory="pawsChatWindow" visible="yes" savepositions="yes" movable="yes" resizable="yes" keepaspect="no" configurable="yes" style="New Standard GUI" scalefont="no">
         
-        <widget name="InputText" factory="pawsEditTextBox">
-            <frame x="6" y="100" width="315" height="20" border="yes" />
-            <attachpoints>
-                <attach point="ATTACH_RIGHT" />
-                <attach point="ATTACH_BOTTOM" />
+        <frame x="0" y="300" width="505" height="268" border="no" />
+        <minframe width="350" height="100" />
+        <maxframe width="1000" height="1000" />
+        <title resource="Scaling Title Bar" text="Communication" align="left" close_button="yes"/>
+        <bgimage resource="Scaling Widget Background" />
+        
+         <widget name="InputText" factory="pawsEditTextBox">
+            <frame x="50" y="243" width="445" height="25" border="no" />
+	    <attachpoints>
+                <attach point="PROPORTIONAL_RIGHT" />
+                <attach point="PROPORTIONAL_BOTTOM" />
                 <attach point="ATTACH_LEFT" />
             </attachpoints>
         </widget>
 
-            <!--childborders>
-                <colour r="0" g="0" b="0" />
-                <colour r="32" g="32" b="32" />
-                <colour r="180" g="180" b="180" />
-                <colour r="180" g="180" b="180" />
-                <colour r="220" g="220" b="220" />
-            </childborders-->
 
-	    <widget name="MainText" factory="pawsMessageTextBox" visible="yes" id="1100">
-	    <defaultstyle widget="pawsButton" style="New Standard Tab"/>
+
+        <widget name="Chat Tabs" factory="pawsTabWindow">
+            <frame x="0" y="0" width="500" height="268" border="no" />
+            <attachpoints>
+                <attach point="ATTACH_BOTTOM" />
+                <attach point="ATTACH_TOP" />
+                <attach point="ATTACH_LEFT" />
+                <attach point="ATTACH_RIGHT" />
+            </attachpoints>
+
+
+       <widget name="ButtonsBackground" factory="pawsWidget">
+                <frame x="0" y="0" width="50" height="268" border="no" />
+		<bgimage resource="Scaling Field Background" />
+     	        <attachpoints>
+        	        <attach point="ATTACH_TOP" />
+	                <attach point="ATTACH_BOTTOM" />
+        	        <attach point="ATTACH_LEFT" />
+	                <attach point="ATTACH_RIGHT" />
+        	</attachpoints>
+        </widget>
+
+    	
+    
+                <widget name="Main Button" factory="pawsButton" toggle="yes" id="1000" tooltip="Main" shadows="yes" style="Standard Tab">
+                    <frame x="0" y="0" width="50" height="25" border="no" />
+                    <label text="Main"/>
+	                <attachpoints>
+	                    <attach point="ATTACH_TOP" />
+	                    <attach point="ATTACH_LEFT" />
+	                </attachpoints>
+    
+                </widget>
+                <widget name="Chat Button" factory="pawsButton" toggle="yes" id="1008" tooltip="Chat" shadows="yes" style="Standard Tab">
+                    <label text="Chat"/>
+                    <frame x="0" y="25" width="50" height="25" border="no"/>
+	                <attachpoints>
+	                    <attach point="ATTACH_TOP" />
+	                    <attach point="ATTACH_LEFT" />
+	                </attachpoints>
+    
+                </widget>
+                <widget name="NPC Button" factory="pawsButton" toggle="yes" id="1002" tooltip="NPC" shadows="yes" style="Standard Tab">
+                    <frame x="0" y="50" width="50" height="25" border="no" />
+                    <label text="NPC"/>
+	                <attachpoints>
+	                    <attach point="ATTACH_TOP" />
+	                    <attach point="ATTACH_LEFT" />
+	                </attachpoints>
+    
+                </widget>
+                <widget name="Tell Button" factory="pawsButton" toggle="yes" id="1003" tooltip="Whisper" shadows="yes" style="Standard Tab">
+                    <frame x="0" y="75" width="50" height="25" border="no" />
+                    <label text="Whisper"/>
+	                <attachpoints>
+	                    <attach point="ATTACH_TOP" />
+	                    <attach point="ATTACH_LEFT" />
+	                </attachpoints>
+    
+                </widget>
+                <widget name="Guild Button" factory="pawsButton" toggle="yes" id="1004" tooltip="Guild" shadows="yes" style="Standard Tab">
+                    <frame x="0" y="100" width="50" height="25" border="no" />
+                    <label text="Guild"/>
+	                <attachpoints>
+	                    <attach point="ATTACH_TOP" />
+	                    <attach point="ATTACH_LEFT" />
+	                </attachpoints>
+    
+                </widget>
+                <widget name="Group Button" factory="pawsButton" toggle="yes" id="1005" tooltip="Group" shadows="yes" style="Standard Tab">
+                    <frame x="0" y="125" width="50" height="25" border="no" />
+                    <label text="Group"/>
+	                <attachpoints>
+	                    <attach point="ATTACH_TOP" />
+	                    <attach point="ATTACH_LEFT" />
+	                </attachpoints>
+      
+                </widget>
+                <widget name="Alliance Button" factory="pawsButton" toggle="yes" id="1009" tooltip="Group" shadows="yes" style="Standard Tab">
+                    <frame x="0" y="150" width="50" height="25" border="no" />
+                    <label text="Alliance"/>
+	                <attachpoints>
+	                    <attach point="ATTACH_TOP" />
+	                    <attach point="ATTACH_LEFT" />
+	                </attachpoints>
+      
+                </widget>
+                <widget name="Auction Button" factory="pawsButton" toggle="yes" id="1006" tooltip="Auction" shadows="yes" style="Standard Tab">
+                    <frame x="0" y="175" width="50" height="25" border="no" />
+                    <label text="Auction"/>
+	                <attachpoints>
+	                    <attach point="ATTACH_TOP" />
+	                    <attach point="ATTACH_LEFT" />
+	                </attachpoints>
+    
+                </widget>
+                <widget name="System Button" factory="pawsButton" toggle="yes" id="1001" tooltip="System" shadows="yes" style="Standard Tab">
+                    <label text="System"/>
+                    <frame x="0" y="200" width="50" height="25" border="no" />
+	                <attachpoints>
+	                    <attach point="ATTACH_TOP" />
+	                    <attach point="ATTACH_LEFT" />
+	                </attachpoints>
+    
+                </widget>
+                 <widget name="Help Button" factory="pawsButton" toggle="yes" id="1007" tooltip="Help" shadows="yes" style="Standard Tab">
+                    <label text="Help"/>
+                    <frame x="0" y="225" width="50" height="25" border="no" />
+    	                <attachpoints>
+	                    <attach point="ATTACH_TOP" />
+	                    <attach point="ATTACH_LEFT" />
+	                </attachpoints>
+
+               </widget>
+
+
+
+            <widget name="MainText" factory="pawsMessageTextBox" visible="no" id="1100">
+                <frame x="55" y="0" width="435" height="233" border="no" />
+                <attachpoints>
+                    <attach point="ATTACH_RIGHT" />
+                    <attach point="PROPORTIONAL_TOP" />
+                    <attach point="ATTACH_LEFT" />
+                    <attach point="PROPORTIONAL_BOTTOM" />
+                </attachpoints>
+		<subscriptions overwrite = "false">
+			<subscribe data="CHAT_PET_ACTION" />
+			<subscribe data="CHAT_SAY" />
+			<subscribe data="CHAT_SHOUT" />
+			<subscribe data="CHAT_SYSTEM_BASE" />
+			<subscribe data="CHAT_GM" />
+		</subscriptions>
+            </widget>
+            <widget name="SystemText" factory="pawsMessageTextBox" visible="no" id="1101">
+                <frame x="55" y="0" width="435" height="233" border="no" />
+                <attachpoints>
+                    <attach point="ATTACH_RIGHT" />
+                    <attach point="PROPORTIONAL_TOP" />
+                    <attach point="ATTACH_LEFT" />
+                    <attach point="PROPORTIONAL_BOTTOM" />
+                </attachpoints>
 		<subscriptions overwrite = "false">
 			<subscribe data="CHAT_SYSTEM" />
-			<subscribe data="CHAT_COMBAT" />
 			<subscribe data="CHAT_SERVER_INFO" />
-			<subscribe data="CHAT_SAY" />
-			<subscribe data="CHAT_TELL" />
-			<subscribe data="CHAT_GROUP" />
-			<subscribe data="CHAT_GUILD" />
-            <subscribe data="CHAT_ALLIANCE" />
-			<subscribe data="CHAT_AUCTION" />
-			<subscribe data="CHAT_SHOUT" />
-			<subscribe data="CHAT_TELLSELF" />
 			<subscribe data="CHAT_REPORT" />
-			<subscribe data="CHAT_ADVISOR" />
-			<subscribe data="CHAT_ADVICE" />
-			<subscribe data="CHAT_ADVICE_LIST" />
 			<subscribe data="CHAT_SERVER_TELL" />
-			<subscribe data="CHAT_GM" />
-			<subscribe data="CHAT_SERVER_INFO" />
-			<subscribe data="CHAT_NPC" />
-			<subscribe data="CHAT_NPCINTERNAL" />
 			<subscribe data="CHAT_SYSTEM_BASE" />
-			<subscribe data="CHAT_PET_ACTION" />
+		        <subscribe data="CHAT_COMBAT" />
+		</subscriptions>
+            </widget>
+            <widget name="NpcText" factory="pawsMessageTextBox" visible="no" id="1102">
+                <frame x="55" y="0" width="435" height="233" border="no" />
+                <attachpoints>
+                    <attach point="ATTACH_RIGHT" />
+                    <attach point="PROPORTIONAL_TOP" />
+                    <attach point="ATTACH_LEFT" />
+                    <attach point="PROPORTIONAL_BOTTOM" />
+                </attachpoints>
+		<subscriptions overwrite = "false">
 			<subscribe data="CHAT_NPC_ME" />
 			<subscribe data="CHAT_NPC_MY" />
 			<subscribe data="CHAT_NPC_NARRATE" />
-			<subscribe data="CHAT_CHANNEL1" />
-			<subscribe data="CHAT_CHANNEL2" />
-			<subscribe data="CHAT_CHANNEL3" />
-			<subscribe data="CHAT_CHANNEL4" />
-			<subscribe data="CHAT_CHANNEL5" />
-			<subscribe data="CHAT_CHANNEL6" />
-			<subscribe data="CHAT_CHANNEL7" />
-			<subscribe data="CHAT_CHANNEL8" />
-			<subscribe data="CHAT_CHANNEL9" />
-			<subscribe data="CHAT_CHANNEL10" />
+			<subscribe data="CHAT_NPC" />
+			<subscribe data="CHAT_NPCINTERNAL" />
 		</subscriptions>
-                <frame x="6" y="2" width="320" height="95" border="no" />
-
-            <attachpoints>
-                <attach point="ATTACH_RIGHT" />
-                <attach point="ATTACH_TOP" />
-                <attach point="ATTACH_LEFT" />
-                <attach point="ATTACH_BOTTOM" />
-            </attachpoints>
-	    
             </widget>
-    </widget>
+            <widget name="TellText" factory="pawsMessageTextBox" visible="no" id="1103">
+                <frame x="55" y="0" width="435" height="233" border="no" />
+                <attachpoints>
+                    <attach point="ATTACH_RIGHT" />
+                    <attach point="PROPORTIONAL_TOP" />
+                    <attach point="ATTACH_LEFT" />
+                    <attach point="PROPORTIONAL_BOTTOM" />
+                </attachpoints>
+		<subscriptions overwrite = "false">
+			<subscribe data="CHAT_TELL" />	
+			<subscribe data="CHAT_TELLSELF" />
+		</subscriptions>
+            </widget>
+            <widget name="GuildText" factory="pawsMessageTextBox" visible="no" id="1104">
+                <frame x="55" y="0" width="435" height="233" border="no" />
+                <attachpoints>
+                    <attach point="ATTACH_RIGHT" />
+                    <attach point="PROPORTIONAL_TOP" />
+                    <attach point="ATTACH_LEFT" />
+                    <attach point="PROPORTIONAL_BOTTOM" />
+                </attachpoints>
+ 		<subscriptions overwrite = "false">
+			<subscribe data="CHAT_GUILD" />
+		</subscriptions>
+           </widget>
+            <widget name="AllianceText" factory="pawsMessageTextBox" visible="no" id="1109">
+                <frame x="55" y="0" width="435" height="233" border="no" />
+                <attachpoints>
+                    <attach point="ATTACH_RIGHT" />
+                    <attach point="PROPORTIONAL_TOP" />
+                    <attach point="ATTACH_LEFT" />
+                    <attach point="PROPORTIONAL_BOTTOM" />
+                </attachpoints>
+ 		<subscriptions overwrite = "false">
+			<subscribe data="CHAT_ALLIANCE" />
+		</subscriptions>
+           </widget>
+            <widget name="GroupText" factory="pawsMessageTextBox" visible="no" id="1105">
+                <frame x="55" y="0" width="435" height="233" border="no" />
+                <attachpoints>
+                    <attach point="ATTACH_RIGHT" />
+                    <attach point="PROPORTIONAL_TOP" />
+                    <attach point="ATTACH_LEFT" />
+                    <attach point="PROPORTIONAL_BOTTOM" />
+                </attachpoints>
+		<subscriptions overwrite = "false">
+			<subscribe data="CHAT_GROUP" />	
+		</subscriptions>
+            </widget>
+            <widget name="AuctionText" factory="pawsMessageTextBox" visible="no" id="1106">
+                <frame x="55" y="0" width="435" height="233" border="no" />
+                <attachpoints>
+                    <attach point="ATTACH_RIGHT" />
+                    <attach point="PROPORTIONAL_TOP" />
+                    <attach point="ATTACH_LEFT" />
+                    <attach point="PROPORTIONAL_BOTTOM" />
+                </attachpoints>
+		<subscriptions overwrite = "false">
+			<subscribe data="CHAT_AUCTION" />
+		</subscriptions>
+            </widget>
+
+            <widget name="ChatText" factory="pawsMessageTextBox" visible="no" id="1108">
+                <frame x="55" y="0" width="435" height="233" border="no" />
+                <attachpoints>
+                    <attach point="ATTACH_RIGHT" />
+                    <attach point="PROPORTIONAL_TOP" />
+                    <attach point="ATTACH_LEFT" />
+                    <attach point="PROPORTIONAL_BOTTOM" />
+                </attachpoints>
+		<subscriptions overwrite = "false">
+	            <subscribe data="CHAT_CHANNEL1"/>
+	            <subscribe data="CHAT_CHANNEL2"/>
+	            <subscribe data="CHAT_CHANNEL3"/>
+	            <subscribe data="CHAT_CHANNEL4"/>
+	            <subscribe data="CHAT_CHANNEL5"/>
+	            <subscribe data="CHAT_CHANNEL6"/>
+	            <subscribe data="CHAT_CHANNEL7"/>
+	            <subscribe data="CHAT_CHANNEL8"/>
+	            <subscribe data="CHAT_CHANNEL9"/>
+	            <subscribe data="CHAT_CHANNEL10"/>
+		</subscriptions>
+            </widget>
+
+            <widget name="HelpText" factory="pawsMessageTextBox" visible="no" id="1107">
+                <frame x="55" y="0" width="435" height="233" border="no" />
+                <attachpoints>
+                    <attach point="ATTACH_RIGHT" />
+                    <attach point="PROPORTIONAL_TOP" />
+                    <attach point="ATTACH_LEFT" />
+                    <attach point="PROPORTIONAL_BOTTOM" />
+                </attachpoints>
+		<subscriptions overwrite = "false">
+			<subscribe data="CHAT_ADVISOR" />
+			<subscribe data="CHAT_ADVICE" />
+			<subscribe data="CHAT_ADVICE_LIST" />
+		</subscriptions>
+            </widget>
+        </widget> 
+
+   </widget>
+
 </widget_description>

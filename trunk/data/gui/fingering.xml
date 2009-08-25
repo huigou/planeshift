@@ -1,11 +1,8 @@
 <widget_description>
 
-<widget name="FingeringWindow" factory="pawsFingeringWindow" 
-        visible="no" savepositions="no" movable="yes" 
-        resizable="no" >
+<widget name="FingeringWindow" factory="pawsFingeringWindow" visible="no" savepositions="no" movable="yes" resizable="no" style="New Standard GUI">
         
     <frame x="300" y="200" width="450" height="100" border="yes" />
-    <bgimage resource="Standard Background" />
 
     <widget name="LabelTextBox" factory="pawsTextBox">
         <frame x="15" y="15" width="420" height="30" border="no" />
@@ -17,25 +14,16 @@
     
     <widget name="SetButton" factory="pawsButton" id="-30" toggle="no">
         <frame x="90" y="70" width="60" height="20" border="no"/>
-	<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
-        <buttonup resource="Blue Title"/>
-	<buttondown resource="Blue Title"/>
         <label text="Set"/>
     </widget>
 
     <widget name="NoneButton" factory="pawsButton" id="-20" toggle="no">
         <frame x="160" y="70" width="60" height="20" border="no"/>
-	<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
-        <buttonup resource="Blue Title"/>
-	<buttondown resource="Blue Title"/>
         <label text="None"/>
     </widget>
 
     <widget name="CancelButton" factory="pawsButton" id="-10" toggle="no">
         <frame x="230" y="70" width="60" height="20" border="no"/>
-	<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
-        <buttonup resource="Blue Title"/>
-	<buttondown resource="Blue Title"/>
         <label text="Cancel"/>
     </widget>
 

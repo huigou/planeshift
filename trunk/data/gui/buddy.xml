@@ -1,40 +1,51 @@
 <widget_description>
 
-<widget name="BuddyWindow" factory="pawsBuddyWindow" 
-        visible="no" savepositions="yes" movable="yes" keepaspect="no" configurable="yes" resizable="yes" style="New Standard GUI">
+<widget name="BuddyWindow" factory="pawsBuddyWindow" visible="no" savepositions="yes" movable="yes" keepaspect="no" configurable="yes" resizable="yes" style="New Standard GUI">
         
-    <frame x="0" y="100" width="170" height="290" border="yes" />
+    <frame x="0" y="100" width="170" height="300" border="yes" />
     <minframe width="165" height="230" />
-    <maxframe width="355" height="860" />
-    
-    <title resource="Scaling Title Bar" text="Buddy List" align="left" close_button="yes" />
-    
-    <widget name="BuddyList" factory="pawsListBox"  >
-        <frame x="12" y="12" width="145" height="240" border="no" />
-        <columns height="16">
-            <column width="250" >
-                <widget name="Name" factory="pawsTextBox" border="yes">
-                    <font name="/planeshift/data/ttf/LiberationMono-Regular.ttf" size="10" scalefont="no" />
-                </widget>
-            </column>
-        </columns>
-    </widget>
+    <maxframe width="200" height="860" />
+    <title resource="Scaling Title Bar" text="Friends" align="left" close_button="yes" />
 
-    <widget name="edit" factory="pawsButton" id="4000">
-        <frame x="10" y="263" width="35" height="20" border="no" />
-        <label text="Edit" />
-    </widget>
 
-    <widget name="add" factory="pawsButton" id="3000">
-        <frame x="65" y="263" width="30" height="20" border="no" />
-        <label text="Add" />
-    </widget>
+	    <widget name="BuddyList" factory="pawsListBox"  >
+	        <frame x="7" y="5" width="156" height="250" border="no" />
 
-    <widget name="remove" factory="pawsButton" id="2000">
-        <frame x="120" y="263" width="40" height="20" border="no" />
-        <label text="Remove" />
-    </widget>
-    
+		    <attachpoints>
+		        <attach point="PROPORTIONAL_TOP" />
+		        <attach point="PROPORTIONAL_LEFT" />
+		    </attachpoints>
+
+	        <columns height="16">
+	            <column width="250" >
+	                <widget name="Name" factory="pawsTextBox">
+		            <text align="CENTRE" />
+	                </widget>
+	            </column>
+	        </columns>
+
+	    </widget>
+	
+	<widget name="BuddyButtons" factory="pawsWidget">
+	<frame x="0" y="265" width="170" height="30" />
+
+
+	    <widget name="edit" factory="pawsButton" toggle="no" id="4000">
+	        <frame x="5" y="5" width="45" height="20" border="yes" />
+	        <label text="Edit" />
+	    </widget>
+	
+	    <widget name="add" factory="pawsButton" toggle="no" id="3000">
+	        <frame x="55" y="5" width="45" height="20" border="yes" />
+	    </widget>
+	
+	    <widget name="remove" factory="pawsButton" toggle="no" id="2000">
+	        <frame x="105" y="5" width="60" height="20" border="yes" />
+	        <label text="Remove" />
+	    </widget>
+	    
+	</widget>
+
 </widget>
 
 </widget_description>

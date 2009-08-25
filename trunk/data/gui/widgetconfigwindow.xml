@@ -1,22 +1,19 @@
 <widget_description>
 
-<widget name="Window Settings" factory="widgetconfigwindow" 
-        visible="yes" savepositions="yes" movable="yes" 
-        resizable="no" >
+<widget name="Window Settings" factory="widgetconfigwindow" visible="yes" savepositions="yes" movable="yes" resizable="no" style="New Standard GUI" >
 
     <frame x="200" y="200" width="300" height="135" border="yes" />
     <minframe width="300" height="135" />
-    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="12" />
-    <title resource="Blue Title" text="Window Settings" align="left" close_button="yes" />
-    <bgimage resource="Standard Background" alpha="50" />
+    <title resource="Scaling Title Bar" text="Window Settings" align="left" close_button="yes" />
+    <bgimage resource="Scaling Widget Background" alpha="50" />
 
     <!-- Min Alpha scrollbar -->
-    <widget name="MinAlphaScroll" factory="pawsScrollBar" direction="horizontal" >
+    <widget name="MinAlphaScroll" factory="pawsScrollBar" direction="horizontal" style="Standard Scrollbar Horizontal">
         <frame x="140" y="25" width="100" height="15" border="no" />
     </widget>
 
     <!-- Min Alpha progressbar-->
-    <widget name="MinAlphaProgressBar" factory="pawsProgressBar">
+    <widget name="MinAlphaProgressBar" factory="pawsProgressBar" style="Simple Progressbar">
         <frame x="155" y="30" width="65" height="7" border="no" />
         <color     r="0" g="50" b="0" />
         <fadecolor r="0" g="255" b="0" />
@@ -35,12 +32,12 @@
     </widget>
 
     <!-- Max Alpha scrollbar -->
-    <widget name="MaxAlphaScroll" factory="pawsScrollBar" direction="horizontal" >
+    <widget name="MaxAlphaScroll" factory="pawsScrollBar" direction="horizontal" style="Standard Scrollbar Horizontal">
         <frame x="140" y="7" width="100" height="15" border="no" />
     </widget>
 
     <!-- Max Alpha progressbar-->
-    <widget name="MaxAlphaProgressBar" factory="pawsProgressBar">
+    <widget name="MaxAlphaProgressBar" factory="pawsProgressBar" style="Simple Progressbar">
         <frame x="155" y="13" width="65" height="7" border="no"/>
         <color     r="0" g="0" b="50" />
         <fadecolor r="0" g="0" b="255" />
@@ -60,12 +57,12 @@
 
 
     <!-- FadeSpeed scrollbar -->
-    <widget name="FadeSpeedScroll" factory="pawsScrollBar" direction="horizontal" >
+    <widget name="FadeSpeedScroll" factory="pawsScrollBar" direction="horizontal" style="Standard Scrollbar Horizontal">
         <frame x="140" y="45" width="100" height="15" border="no" />
     </widget>
 
     <!-- FadeSpeed progressbar-->
-    <widget name="FadeSpeedProgressBar" factory="pawsProgressBar" >
+    <widget name="FadeSpeedProgressBar" factory="pawsProgressBar" style="Simple Progressbar">
         <frame x="155" y="50" width="65" height="7" border="no" />
         <color     r="50" g="0" b="0" />
         <fadecolor r="255" g="0" b="0" />
@@ -110,8 +107,6 @@
     <!-- OK button -->
     <widget name="OKButton" factory="pawsButton" toggle="no" shadows="yes">
         <frame x="10" y="110" width="80" height="20" border="yes" />
-        <buttonup resource="Blue Title"/>
-        <buttondown resource="Blue Title" />
         <label text="OK"/>
     </widget>
 
@@ -119,16 +114,12 @@
    <!-- Cancel button -->
     <widget name="CancelButton" factory="pawsButton" toggle="no" shadows="yes" >
         <frame x="110" y="110" width="80" height="20" border="yes" />
-        <buttonup resource="Blue Title" />
-        <buttondown resource="Blue Title" />
         <label text="Cancel"/>
    </widget>
    
    <!-- Apply to all button -->
     <widget name="ApplyAllButton" factory="pawsButton" toggle="no" shadows="yes" >
         <frame x="210" y="110" width="80" height="20" border="yes" />
-        <buttonup resource="Blue Title" />
-        <buttondown resource="Blue Title" />
         <label text="Apply to all"/>
     </widget>
 </widget>

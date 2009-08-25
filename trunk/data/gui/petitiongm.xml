@@ -1,15 +1,12 @@
 <widget_description>
 
-    <pawsPetitionGMWindow name="PetitionGMWindow"
-            visible="no" savepositions="yes" movable="yes"
-            resizable="yes" keepaspect="no" style="New Standard GUI">
+    <pawsPetitionGMWindow name="PetitionGMWindow" visible="no" savepositions="yes" movable="yes" resizable="yes" keepaspect="no" style="New Standard GUI">
 
         <frame x="0" y="100" width="600" height="350" border="yes" />
         <title resource="Scaling Title Bar" text="Manage Petitions" align="left" close_button="yes" />
 
         <widget name="PetitionList" factory="pawsListBox">
             <frame x="25" y="12" width="545" height="160" border="no"/>
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="12" scalefont="no" />
             <columns height="20" headings="yes">
                 <column width="25" >
                     <pawsTextBox name="Lvl" />
@@ -43,8 +40,7 @@
 
         </widget>
 
-        <pawsTextBox name="PetitionTextLabel" style="New Standard Prompt">
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="12" />
+        <pawsTextBox name="PetitionTextLabel" style="Header Font">
             <frame x="40" y="180" width="150" height="20" border="no"/>
             <text string="Petition text:" />
         </pawsTextBox>

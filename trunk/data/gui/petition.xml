@@ -12,28 +12,24 @@
         <columns height="20" headings="yes">
             <column width="110" >
                 <widget name="GM" factory="pawsTextBox">
-                    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
                 </widget>
             </column>                                               
             <column width="80" >
                 <widget name="Status" factory="pawsTextBox">
-                    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
                 </widget>
             </column>                                               
             <column width="125" >
                 <widget name="Created Date" factory="pawsTextBox">
-                    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
                 </widget>
             </column>                                               
             <column width="240" >
                 <widget name="Petition" factory="pawsTextBox">
-                    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="180" g="180" b="180" size="10" />
                 </widget>
             </column>                                               
         </columns>
     </widget>
 
-    <widget name="PetitionTextLabel" factory="pawsTextBox" style="New Standard Prompt" >
+    <widget name="PetitionTextLabel" factory="pawsTextBox" style="Header Font" >
         <frame x="20" y="190" width="150" height="20" border="no"/>
         <text string="Petition Text:" />
     </widget>
