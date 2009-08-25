@@ -187,7 +187,6 @@ psClientCharManager::~psClientCharManager()
         msghandler->Unsubscribe(this, MSGTYPE_EQUIPMENT);
         msghandler->Unsubscribe(this, MSGTYPE_EFFECT);
         msghandler->Unsubscribe(this, MSGTYPE_EFFECT_STOP);
-        msghandler->Unsubscribe(this, MSGTYPE_MOUNTING);
         msghandler->Unsubscribe(this, MSGTYPE_PLAYSOUND);
         msghandler->Unsubscribe(this, MSGTYPE_USERACTION);
         msghandler->Unsubscribe(this, MSGTYPE_GUITARGETUPDATE);
@@ -204,8 +203,6 @@ bool psClientCharManager::Initialize( MsgHandler* msgHandler,
     if ( !msghandler->Subscribe(this, MSGTYPE_CHARREJECT) )
         return false;
     if ( !msghandler->Subscribe(this, MSGTYPE_EQUIPMENT) )
-        return false;
-    if ( !msghandler->Subscribe(this, MSGTYPE_MOUNTING) )
         return false;
     if ( !msghandler->Subscribe(this, MSGTYPE_EFFECT) )
         return false;
@@ -276,11 +273,6 @@ void psClientCharManager::HandleMessage ( MsgEntry* me )
         case MSGTYPE_GUITARGETUPDATE:
         {
             HandleTargetUpdate(me);
-            return;
-        }
-        case MSGTYPE_MOUNTING:
-        {
-            HandleMounting(me);
             return;
         }
 
@@ -503,48 +495,6 @@ void psClientCharManager::HandleEquipment(MsgEntry* me)
         }
 
         object->charApp->Dequip(slotname,equip.mesh,equip.part,equip.partMesh,equip.texture);
-    }
-}
-
-void psClientCharManager::HandleMounting(MsgEntry*me)
-{
-    psMountingMessage msg(me);
-
-    GEMClientActor* mount = (GEMClientActor*)cel->FindObject(msg.mount);
-    if (!mount)
-    {
-        Error2("Couldn't find mount with EID: %u", msg.mount);
-        return;
-    }
-    
-    GEMClientActor* rider = (GEMClientActor*)cel->FindObject(msg.rider);
-    if (!rider)
-    {
-        Error2("Couldn't find rider with EID: %u", msg.rider);
-        return;
-    }
-
-    //Update the player
-    if(msg.mounting)
-        mount->charApp->ApplyRider(rider);
-    else
-    {
-        mount->charApp->RemoveRider(rider);
-        rider->GetMovement()->SetOnGround(false);
-    }
-
-    // Update our camera, if we are the one mounting
-    // Note : maybe this could be done in a better way?
-    if(rider == cel->GetMainPlayer() || mount == cel->GetMainPlayer())
-    {
-        GEMClientActor* main = msg.mounting ? mount : rider;
-        cel->SetMainActor(main);
-        psengine->GetCharControl()->GetMovementManager()->SetActor(main);
-        psengine->GetCharControl()->GetMovementManager()->ToggleRide();
-        int currentMode = psengine->GetPSCamera()->GetCameraMode();
-        psengine->GetPSCamera()->InitializeView(main);
-        psengine->GetPSCamera()->SetCameraMode(currentMode);
-        cel->SetPlayerReady(true);
     }
 }
 

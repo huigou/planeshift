@@ -290,6 +290,12 @@ public:
     
     /// Get the main character's name
     const char* GetMainPlayerName();
+
+    /** @brief Set the main actor for this client
+     * Different classes holds references to the main actor
+     * controlled by this client, this function sets them all.
+     */
+    void SetMainActor(GEMClientActor *mainActor);
     
     /// Update the window title with the current informations
     bool UpdateWindowTitleInformations();

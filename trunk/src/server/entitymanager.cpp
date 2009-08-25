@@ -615,10 +615,7 @@ bool EntityManager::DeletePlayer(Client * client)
     {
         // take the actor off his mount if he got one
         if(actor->GetMount())
-            RemoveRideRelation(actor, actor->GetMount());
-        // take the riders off thos mount if there are any
-        if(actor->GetRider())
-            RemoveRideRelation(actor->GetRider(), actor);
+            RemoveRideRelation(actor);
         
         // Check for buddy list members
         usermanager->NotifyBuddies(client, UserManager::LOGGED_OFF);
@@ -1119,51 +1116,28 @@ bool EntityManager::AddRideRelation(gemActor *rider, gemActor *mount)
         return false;
     }
 
-    if(rider->GetRider())
-    {
-        psserver->SendSystemError(rider->GetClientID(), "You are already the mount of %s.", rider->GetRider()->GetName());
-        return false;
-    }
+    psCharacter *mountChar = mount->GetCharacterData();
+    RemoveActor(mount);
+    CacheManager::GetSingleton().RemoveFromCache(CacheManager::GetSingleton().MakeCacheName("char",mountChar->GetPID().Unbox()));
+    rider->SetMount(mountChar);
 
-    if(mount->GetMount())
-    {
-        psserver->SendSystemError(rider->GetClientID(), "%s is on a mount.", mount->GetName());
-        return false;
-    }
-
-    if(mount->GetRider())
-    {
-        psserver->SendSystemError(rider->GetClientID(), "%s is already the mount of %s.", mount->GetName(), mount->GetRider()->GetName());
-        return false;
-    }
-    
-    rider->SetMount(mount);
-    mount->SetRider(rider);
-    
-    psMountingMessage mountmsg(rider->GetClientID(), mount->GetEID(), rider->GetEID(), true);
-    CS_ASSERT( mountmsg.valid );
-    
-    psserver->GetEventManager()->Multicast( mountmsg.msg, rider->GetMulticastClients(),
-            0, // Multicast to all without exception
-            PROX_LIST_ANY_RANGE );
+    rider->UpdateProxList(true);
 
     return true;
 }
 
-void EntityManager::RemoveRideRelation(gemActor *rider, gemActor *mount)
+void EntityManager::RemoveRideRelation(gemActor *rider)
 {
-    if(rider != mount->GetRider() || mount != rider->GetMount())
-        Error1("Invalid info in RemoveRideRelation");
+    csVector3 pos;
+    float yrot;
+    psSectorInfo *sectorinfo;
+    InstanceID instance;
 
+    rider->GetCharacterData()->GetLocationInWorld(instance, sectorinfo,pos.x,pos.y,pos.z,yrot);
+    rider->GetMount()->SetLocationInWorld(instance, sectorinfo,pos.x,pos.y,pos.z,yrot);
+    CreateNPC(rider->GetMount(), instance, pos, FindSector(sectorinfo->name), yrot);
     rider->SetMount(NULL);
-    mount->SetRider(NULL);
-    
-    psMountingMessage mountmsg(rider->GetClientID(), mount->GetEID(), rider->GetEID(), false);
-    CS_ASSERT( mountmsg.valid );
-    
-    psserver->GetEventManager()->Multicast( mountmsg.msg, rider->GetMulticastClients(),
-            0, // Multicast to all without exception
-            PROX_LIST_ANY_RANGE );
+    rider->UpdateProxList(true);
 }
 
 void EntityManager::SetReady(bool flag)

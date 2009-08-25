@@ -195,7 +195,6 @@ public:
     
     void ToggleAutoMove();
     void ToggleRun();
-    void ToggleRide();
 
     void SetSneaking(bool v) { sneaking = v; }
     bool Sneaking() { return sneaking; }
