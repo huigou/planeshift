@@ -46,6 +46,7 @@ private:
     int      defaultTransparentColourBlue;
 
     bool     tiled;
+    bool     debugImageErrors;
 
     /**
     * The actual image.

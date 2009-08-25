@@ -123,6 +123,7 @@ bool pawsImageDrawable::PreparePixmap()
 pawsImageDrawable::pawsImageDrawable(csRef<iDocumentNode> node)
                  : scfImplementationType (this)
 {
+    debugImageErrors = true;
     defaultTransparentColourBlue  = -1;
     defaultTransparentColourGreen = -1;
     defaultTransparentColourRed   = -1;
@@ -173,6 +174,8 @@ pawsImageDrawable::pawsImageDrawable(csRef<iDocumentNode> node)
 pawsImageDrawable::pawsImageDrawable(const char * file, const char * resource, bool tiled, const csRect & textureRect, int alpha, int transR, int transG, int transB)
                  : scfImplementationType (this)
 {
+    debugImageErrors = true;
+
     imageFileLocation = file;
     resourceName = resource;
     this->tiled = tiled;
@@ -187,6 +190,8 @@ pawsImageDrawable::pawsImageDrawable(const char * file, const char * resource, b
 pawsImageDrawable::pawsImageDrawable(const char * file, const char * resource)
                  : scfImplementationType (this)
 {
+    debugImageErrors = true;
+
     imageFileLocation = file;
     resourceName = file;
     this->tiled = false;
@@ -228,8 +233,11 @@ void pawsImageDrawable::Draw(int x, int y, int newWidth, int newHeight, int alph
     int h = textureRectangle.Height();
 
     if (!textureHandle)
+    {
+        if (debugImageErrors)
+            Error3("Image named >%s< (%s) was not loaded and could not be drawn.",resourceName.GetDataSafe(),imageFileLocation.GetDataSafe() );
         return;
-
+    }
     if (alpha < 0)
         alpha = defaultAlphaValue;
     if ( newWidth == 0 ) 
