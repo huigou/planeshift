@@ -386,8 +386,7 @@ void pawsCharParents::Randomize()
     pawsListBox* religionBox = (pawsListBox*)FindWidget("Religions");
 
     // randomize names
-	csString lastName;
-	createManager->GenerateName(NAMEGENERATOR_FAMILY_NAME, lastName,4,7);
+	csString lastName = createManager->GetName().Slice(createManager->GetName().Find(" ")+1);
 	
     // make uppper case
     csString upper( lastName );
