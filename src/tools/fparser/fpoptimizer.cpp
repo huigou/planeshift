@@ -32,6 +32,7 @@ typedef unsigned long long fphash_value_t;
 #else
 
 #include <stdint.h>
+#include <stdio.h>
 typedef uint_fast64_t fphash_value_t;
 #define FPHASH_CONST(x) x##ULL
 
