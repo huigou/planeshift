@@ -1033,14 +1033,14 @@ void EntityManager::HandleUserAction(MsgEntry* me, Client *client)
         return;
     }
 
+    client->SetTargetObject(object);  // have special tracking for this for fast processing of other messages
+
     if (!object)
     {
         // TODO: Evaluate if this output is needed. 
         Debug2(LOG_ANY, me->clientnum, "User action on none or unknown object (%s)!\n", ShowID(actionMsg.target));
         return;
     }
-
-    client->SetTargetObject(object);  // have special tracking for this for fast processing of other messages
 
     // Resolve default behaviour
     action = actionMsg.action;
