@@ -258,7 +258,7 @@ psGuildMember * psGuildInfo::FindLeader()
     return NULL;
 }
 
-psGuildLevel *psGuildInfo::Connect(psCharacter *player)
+void psGuildInfo::Connect(psCharacter *player)
 {
     for (size_t i=0; i<members.GetSize(); i++)
     {
@@ -268,7 +268,6 @@ psGuildLevel *psGuildInfo::Connect(psCharacter *player)
             members[i]->actor = player;
         }
     }
-    return NULL;
 }
 
 void psGuildInfo::Disconnect(psCharacter *player)
