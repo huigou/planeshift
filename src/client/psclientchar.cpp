@@ -406,11 +406,18 @@ void psClientCharManager::HandlePlaySound( MsgEntry* me )
 void psClientCharManager::HandleTargetUpdate( MsgEntry* me )
 {
     psGUITargetUpdateMessage targetMsg(me);
-    GEMClientObject* object = cel->FindObject( targetMsg.targetID );
-    if ( object )
-        SetTarget( object, "select", false);
-    else
-        Error1("Received TagetUpdateMessage with invalid target.");
+    if(targetMsg.targetID.IsValid()) //we have an eid
+    {    
+        GEMClientObject* object = cel->FindObject( targetMsg.targetID );
+        if ( object )
+            SetTarget( object, "select", false);
+        else
+            Error1("Received TagetUpdateMessage with invalid target.");
+    }
+    else //we have an invalid eid (0) so we untarget
+    {
+         SetTarget(NULL, "select", false);
+    }
 }
 
 void psClientCharManager::HandleEquipment(MsgEntry* me)
