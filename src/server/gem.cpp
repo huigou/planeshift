@@ -827,9 +827,8 @@ void gemObject::UpdateProxList( bool force )
 
         if (SeesObject(nearobj, range))
         {
-            //CPrintf(CON_SPAM, " and is seen.\n");
 #ifdef PSPROXDEBUG
-            log.AppendFmt("-%s (client %i) can see %s\n",GetName(),GetClientID(),nearobj->GetName());
+            log.AppendFmt(" and is seen.\n-%s (client %i) can see %s\n",GetName(),GetClientID(),nearobj->GetName());
 #endif
             if (proxlist->StartWatching(nearobj, range) || force)
             {
