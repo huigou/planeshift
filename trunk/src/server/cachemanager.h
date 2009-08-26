@@ -110,6 +110,14 @@ struct psMovement
 };
 #endif
 
+/// Per-race movement modifier
+struct psRaceMoveMod
+{
+    uint32_t id;
+    csString raceName;
+    float moveMod;
+};
+
 /**
  * This class allows CacheManager to yield a list of qualifying
  * values given a player's score at something.  The score could 
@@ -380,8 +388,11 @@ public:
 
     const csPDelArray<psCharMode>& GetCharModes() const { return char_modes; }
     const csPDelArray<psMovement>& GetMovements() const { return movements; }
+    const csPDelArray<psRaceMoveMod>& getRaceMoveMods() const { return race_move_mods; }
     const psCharMode* GetCharMode(size_t id) const { return char_modes[id]; }
     const psMovement* GetMovement(size_t id) const { return movements[id]; }
+    const psRaceMoveMod* GetRaceMoveMod(size_t id) const { return race_move_mods[id]; }
+    const psRaceMoveMod* GetRaceMoveMod(const char* raceName) const;
     uint8_t GetCharModeID(const char* name);
     uint8_t GetMovementID(const char* name);
     
@@ -514,6 +525,7 @@ protected:
     csPDelArray<ArmorVsWeapon> armor_vs_weapon;
     csPDelArray<psCharMode> char_modes;
     csPDelArray<psMovement> movements;
+    csPDelArray<psRaceMoveMod> race_move_mods;
     csPDelArray<psCharacterLimitation> limits;  ///< All the limitations based on scores for characters.
     psCommandManager* commandManager;
 };

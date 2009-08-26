@@ -635,6 +635,32 @@ bool CacheManager::PreloadMovement()
     }
 
     Notify2( LOG_STARTUP, "%lu Movement Types Loaded", types.Count() );
+
+    Result raceMods(db->Select("SELECT * FROM movement_race_mods"));
+    if ( !raceMods.IsValid() )
+    {
+        return true;
+    }
+
+    if ( !raceMods.Count() )
+    {
+        Notify1( LOG_STARTUP, "No race movement modifier to load." );
+        return true;
+    }
+
+    for (unsigned int i=0; i<raceMods.Count(); i++)
+    {
+        psRaceMoveMod* newRaceMoveMod = new psRaceMoveMod;
+
+        newRaceMoveMod->id = raceMods[i].GetUInt32("id");
+        newRaceMoveMod->raceName = raceMods[i]["name"];
+        newRaceMoveMod->moveMod = raceMods[i].GetFloat("move_mod");
+
+        race_move_mods.Put(newRaceMoveMod->id,newRaceMoveMod);
+    }
+
+    Notify2( LOG_STARTUP, "%lu Race Movement Modifiers Loaded", raceMods.Count() );
+
     return true;
 }
 
@@ -660,6 +686,18 @@ uint8_t CacheManager::GetMovementID(const char* name)
         }
     }
     return (uint8_t)-1;
+}
+
+const psRaceMoveMod* CacheManager::GetRaceMoveMod(const char* raceName) const
+{
+    for (size_t i=0; i<race_move_mods.GetSize(); i++)
+    {
+        if (race_move_mods[i]->raceName == raceName)
+        {
+            return race_move_mods[i];
+        }
+    }
+    return NULL;
 }
 
 bool CacheManager::PreloadArmorVsWeapon()

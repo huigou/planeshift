@@ -30,6 +30,15 @@ CREATE TABLE `movement_types` (
   PRIMARY KEY  (`id`)
 );
 
+# Per-race movement modifiers
+DROP TABLE IF EXISTS `movement_race_mods`;
+CREATE TABLE `movement_race_mods` (
+  `id` int(11) NOT NULL,
+  `name` varchar(100) NOT NULL default 'stonebm'     COMMENT 'name of the race',
+  `move_mod` float NOT NULL default '1.0'            COMMENT 'motion modifier' ,
+  PRIMARY KEY  (`id`)
+);
+
 # Relative to the character, +z is backwards, +x is left, and +y is up.
 # Both lists must be continuous starting at ID 0.
 
@@ -49,3 +58,7 @@ INSERT INTO `movement_types` VALUES (5, 'strafe left',  +2.0,  0.0,  0.0,  0.0, 
 INSERT INTO `movement_types` VALUES (6, 'strafe right', -2.0,  0.0,  0.0,  0.0,  0.0,  0.0);
 INSERT INTO `movement_types` VALUES (7, 'jump',          0.0, +3.0,  0.0,  0.0,  0.0,  0.0);
 
+# Race mods                              #    name          mod
+INSERT INTO `movement_race_mods` VALUES (0, 'StoneBreaker', 0.8);
+INSERT INTO `movement_race_mods` VALUES (1, 'Enkidukai',    1.2);
+INSERT INTO `movement_race_mods` VALUES (2, 'Drifter',      2.0);

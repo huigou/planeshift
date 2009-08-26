@@ -155,6 +155,7 @@ bool EntityManager::Initialize(iObjectRegistry* object_reg,
 
     LoadFamiliarAffinityAttributes();
     LoadFamiliarTypes();
+    CreateMovementInfoMsg();
 
     gameWorld = new psWorld();        
     gameWorld->Initialize( object_reg );
@@ -955,33 +956,32 @@ void EntityManager::HandleActor(MsgEntry* me, Client *client)
     chardata->SetLastLoginTime();
 }
 
-void EntityManager::SendMovementInfo(MsgEntry* me, Client *client)
+void EntityManager::CreateMovementInfoMsg()
 {
-    if (moveinfomsg == NULL)  // Construct once and reuse
+    const csPDelArray<psCharMode>& modes = CacheManager::GetSingletonPtr()->GetCharModes();
+    const csPDelArray<psMovement>& moves = CacheManager::GetSingletonPtr()->GetMovements();
+
+    moveinfomsg = new psMovementInfoMessage(modes.GetSize(), moves.GetSize());
+
+    for (size_t i=0; i<modes.GetSize(); i++)
     {
-        CacheManager* mgr = CacheManager::GetSingletonPtr();
-        const csPDelArray<psCharMode>& modes = mgr->GetCharModes();
-        const csPDelArray<psMovement>& moves = mgr->GetMovements();
-
-        moveinfomsg = new psMovementInfoMessage(modes.GetSize(), moves.GetSize());
-
-        for (size_t i=0; i<modes.GetSize(); i++)
-        {
-            const psCharMode* mode = modes[i];
-            moveinfomsg->AddMode(mode->id, mode->name, mode->move_mod, mode->rotate_mod, mode->idle_animation);
-        }
-    
-        for (size_t i=0; i<moves.GetSize(); i++)
-        {
-            const psMovement* move = moves[i];
-            moveinfomsg->AddMove(move->id, move->name, move->base_move, move->base_rotate);
-        }
-
-        moveinfomsg->msg->ClipToCurrentSize();
-
-        CS_ASSERT( moveinfomsg->valid );
+        const psCharMode* mode = modes[i];
+        moveinfomsg->AddMode(mode->id, mode->name, mode->move_mod, mode->rotate_mod, mode->idle_animation);
     }
 
+    for (size_t i=0; i<moves.GetSize(); i++)
+    {
+        const psMovement* move = moves[i];
+        moveinfomsg->AddMove(move->id, move->name, move->base_move, move->base_rotate);
+    }
+
+    moveinfomsg->msg->ClipToCurrentSize();
+
+    CS_ASSERT( moveinfomsg->valid );
+}
+
+void EntityManager::SendMovementInfo(MsgEntry* me, Client *client)
+{
     moveinfomsg->msg->clientnum = client->GetClientNum();
     moveinfomsg->SendMessage();
 
@@ -1005,7 +1005,7 @@ void EntityManager::HandleWorld( MsgEntry* me, Client *client )
     client->GetActor()->GetPosition(pos,yrot,isector);
   
     psPersistWorld mesg( me->clientnum, isector->QueryObject()->GetName() );
-    psserver->GetEventManager()->SendMessage( mesg.msg );    
+    mesg.SendMessage();
 
     // Send the world time and weather here too
     psserver->GetWeatherManager()->UpdateClient(client->GetClientNum());
@@ -1123,6 +1123,14 @@ bool EntityManager::AddRideRelation(gemActor *rider, gemActor *mount)
 
     rider->UpdateProxList(true);
 
+    const psRaceMoveMod *movMod = CacheManager::GetSingleton().GetRaceMoveMod(mountChar->GetRaceInfo()->GetRace());
+    if(movMod)
+    {
+        psMoveModMsg modMsg(rider->GetClientID(), psMoveModMsg::MULTIPLIER,
+                     csVector3(movMod->moveMod), movMod->moveMod);
+        modMsg.SendMessage();
+    }
+
     return true;
 }
 
@@ -1138,6 +1146,20 @@ void EntityManager::RemoveRideRelation(gemActor *rider)
     CreateNPC(rider->GetMount(), instance, pos, FindSector(sectorinfo->name), yrot);
     rider->SetMount(NULL);
     rider->UpdateProxList(true);
+
+    const psRaceMoveMod *movMod = CacheManager::GetSingleton().GetRaceMoveMod(rider->GetCharacterData()->GetRaceInfo()->GetRace());
+    if(movMod)
+    {
+        psMoveModMsg modMsg(rider->GetClientID(), psMoveModMsg::MULTIPLIER,
+                     csVector3(movMod->moveMod), movMod->moveMod);
+        modMsg.SendMessage();
+    }
+    else
+    {
+        psMoveModMsg modMsg(rider->GetClientID(), psMoveModMsg::NONE,
+                     csVector3(0.0f), 0.0f);
+        modMsg.SendMessage();
+    }
 }
 
 void EntityManager::SetReady(bool flag)
@@ -1149,4 +1171,3 @@ void EntityManager::SetReady(bool flag)
         usermanager->Ready();
     }
 }
-
