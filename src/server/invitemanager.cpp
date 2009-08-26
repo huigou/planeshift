@@ -107,8 +107,8 @@ void PendingInvite::HandleAnswer(const csString & answer)
 {
     if (answer == "yes")
     {
-        psserver->SendSystemInfo(clientnum, inviteeAcceptance, inviterName.GetData() );
-        psserver->SendSystemInfo(inviterClientNum, inviterAcceptance, inviteeName.GetData() );
+        psserver->SendSystemOK(clientnum, inviteeAcceptance, inviterName.GetData() );
+        psserver->SendSystemResult(inviterClientNum, inviterAcceptance, inviteeName.GetData() );
     }
     else
     {
