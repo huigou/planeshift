@@ -7337,7 +7337,10 @@ void AdminManager::Morph(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& dat
     }
 
     if(targetclient != client && !psserver->CheckAccess(client, "morph others"))
+    {
+        psserver->SendSystemError(me->clientnum,"You don't have permission to change mesh of %s!", targetclient->GetName());
         return;
+    }
 
     gemActor* target = targetclient->GetActor();
 
@@ -7348,6 +7351,11 @@ void AdminManager::Morph(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& dat
     }
     else
     {
+        if(!CacheManager::GetSingleton().GetRaceInfoByMeshName(data.mesh.GetData()))
+        {
+            psserver->SendSystemError(me->clientnum, "Unable to override mesh for %s to %s. Race not found.", targetclient->GetName(), data.mesh.GetData());
+            return;
+        }
         psserver->SendSystemInfo(me->clientnum, "Overriding mesh for %s to %s", targetclient->GetName(), data.mesh.GetData());
         target->GetOverridableMesh().Override(MORPH_FAKE_ACTIVESPELL, data.mesh);
     }
