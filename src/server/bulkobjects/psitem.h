@@ -972,22 +972,4 @@ private:
     csTicks lastSpawn;     ///< When we last spawned it, good for something perhaps? :)
 };
 
-class psItemSet
-{
-protected:
-    csArray<psItem*> set;
-    csArray<uint32> parents;
-
-public:
-    ~psItemSet();
-
-    /// Adds a psitem to this set.  The parentid must be specified since this function is used at load time.
-    void Add(psItem *item,uint32 parentid);
-//    bool ResolveAllParents();
-    void Release();
-    psItem* Get(size_t n);
-    size_t GetSize() { return set.GetSize(); }
-};
-
-
 #endif

@@ -586,27 +586,25 @@ void SpawnManager::RepopulateLive(psSectorInfo *sectorinfo)
 
 void SpawnManager::RepopulateItems(psSectorInfo *sectorinfo)
 {
-    int i,count,spawned;
-    psItemSet *loadeditems;
+    csArray<psItem*> items;
 
     // Load list from database
-    loadeditems=CacheManager::GetSingleton().LoadWorldItems(sectorinfo,count);
-    
-    if (loadeditems==NULL)
+    if (!CacheManager::GetSingleton().LoadWorldItems(sectorinfo, items))
     {
         Error1("Failed to load world items.");
         return;
     }
 
     // Now create entities and meshes, etc. for each one
-    spawned=0;
-    for (i=0;i<count;i++)
+    int spawned = 0;
+    for (size_t i = 0; i < items.GetSize(); i++)
     {
+        psItem *item = items[i];
+        CS_ASSERT(item);
         // load items not in containers
-        if (loadeditems->Get(i)!=NULL && loadeditems->Get(i)->GetContainerID()==0)
+        if (item->GetContainerID() == 0)
         {
             //if create item returns false, then no spawn occurs
-            psItem * item = loadeditems->Get(i);
             if (EntityManager::GetSingleton().CreateItem( item, (item->GetFlags() & PSITEM_FLAG_TRANSIENT) ? true : false))
             {
                 // printf("Created item %d: %s\n", item->GetUID(), item->GetName() );
@@ -616,13 +614,12 @@ void SpawnManager::RepopulateItems(psSectorInfo *sectorinfo)
             else
             {
                 printf("Creating item '%s' (%i) failed.\n", item->GetName(), item->GetUID());
-                delete item;
+                delete item; // note that the dead item is still in the array
             }
         }
         // load items in containers
-        else if (loadeditems->Get(i)->GetContainerID())
+        else if (item->GetContainerID())
         {
-            psItem *item = loadeditems->Get(i);
             gemItem *citem = EntityManager::GetSingleton().GetGEM()->FindItemEntity(item->GetContainerID());
             gemContainer *container = dynamic_cast<gemContainer*> (citem);
             if (container)
@@ -642,9 +639,6 @@ void SpawnManager::RepopulateItems(psSectorInfo *sectorinfo)
             }
         }
     }
-
-    loadeditems->Release();
-    delete loadeditems;
 
     Debug2(LOG_SPAWN,0,"Spawned %d items.\n",spawned);
 }

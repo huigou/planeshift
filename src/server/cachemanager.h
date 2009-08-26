@@ -348,7 +348,7 @@ public:
     /// If an item changes name (eg book title) keep cache up to date
     void CacheNameChange(csString oldName, csString newName);
 
-    psItemSet *LoadWorldItems(psSectorInfo *sector,int &loadeditems);
+    bool LoadWorldItems(psSectorInfo *sector, csArray<psItem*> & items);
 
     float GetArmorVSWeaponResistance(const char* armor_type, const char* weapon_type);
     float GetArmorVSWeaponResistance(psItemStats* armor, psItemStats* weapon);

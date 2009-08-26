@@ -46,7 +46,6 @@ class psCharacterList;
 class psSectorInfo;
 class psCharacter;
 class psItem;
-class psItemSet;
 class psItemStats;
 class gemActor;
 
