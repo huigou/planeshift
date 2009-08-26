@@ -1,6 +1,8 @@
 ﻿*** 2009-08-25 by Tristan Cragnolini
 - Refactored code to attach a mesh rather than an actor to another actor
 - Added a per-race movement modifier table, DB VER DUMP
+- Fix for PS#2535 - Duel messages, by making the message more visible
+  in case of a positive answer. patch by Tucos
 
 *** 2009-08-25 by Keith Fulton
 - Fixed scrollbar to look right in most cases.
