@@ -1123,11 +1123,11 @@ bool EntityManager::AddRideRelation(gemActor *rider, gemActor *mount)
 
     rider->UpdateProxList(true);
 
-    const psRaceMoveMod *movMod = CacheManager::GetSingleton().GetRaceMoveMod(mountChar->GetRaceInfo()->GetRace());
-    if(movMod)
+    float movMod = mountChar->GetRaceInfo()->GetSpeedModifier();
+    if(movMod != 1.0)
     {
         psMoveModMsg modMsg(rider->GetClientID(), psMoveModMsg::MULTIPLIER,
-                     csVector3(movMod->moveMod), movMod->moveMod);
+                     csVector3(movMod), movMod);
         modMsg.SendMessage();
     }
 
@@ -1147,11 +1147,11 @@ void EntityManager::RemoveRideRelation(gemActor *rider)
     rider->SetMount(NULL);
     rider->UpdateProxList(true);
 
-    const psRaceMoveMod *movMod = CacheManager::GetSingleton().GetRaceMoveMod(rider->GetCharacterData()->GetRaceInfo()->GetRace());
-    if(movMod)
+    float movMod = rider->GetCharacterData()->GetRaceInfo()->GetSpeedModifier();
+    if(movMod != 1.0)
     {
         psMoveModMsg modMsg(rider->GetClientID(), psMoveModMsg::MULTIPLIER,
-                     csVector3(movMod->moveMod), movMod->moveMod);
+                     csVector3(movMod), movMod);
         modMsg.SendMessage();
     }
     else

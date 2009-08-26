@@ -69,6 +69,7 @@ bool psRaceInfo::Load(iResultRow& row)
     BeltGroup = row["belt"];
     CloakGroup = row["cloak"];
     sex = row["sex"];
+    speedModifier = row.GetFloat("speed_modifier");
 
     gender = CacheManager::GetSingleton().ConvertGenderString(row["sex"]);
 
