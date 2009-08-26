@@ -1,4 +1,8 @@
-﻿*** 2009-08-25 by Keith Fulton
+﻿*** 2009-08-25 by Tristan Cragnolini
+- Refactored code to attach a mesh rather than an actor to another actor
+- Added a per-race movement modifier table, DB VER DUMP
+
+*** 2009-08-25 by Keith Fulton
 - Fixed scrollbar to look right in most cases.
 - Fixed auto-complete of /commands.
 - Improved error reporting for missing images and styles, to help people
