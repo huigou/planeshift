@@ -2234,33 +2234,6 @@ void  psItem::SetLocInParent(INVENTORY_SLOT_NUMBER location)
     loc_in_parent = (INVENTORY_SLOT_NUMBER)(location % 100); // only last 2 digits are actual slot location
 }
 
-
-psItemSet::~psItemSet()
-{
-  while (set.GetSize())
-    delete set.Pop();
-}
-
-void psItemSet::Add(psItem *item,uint32 parentid)
-{
-    set.Push(item);
-    parents.Push(parentid);
-}
-
-void psItemSet::Release()
-{
-    set.DeleteAll();    // Empty the set. This will not delete the items themselves.
-    parents.DeleteAll();
-}
-
-psItem *psItemSet::Get(size_t n)
-{
-    if (n < set.GetSize())
-        return set.Get(n);
-    else
-        return NULL;
-}
-
 void psItem::SetIsPickupable(bool v)
 {
     if (!v)

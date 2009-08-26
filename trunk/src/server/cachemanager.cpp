@@ -2521,11 +2521,8 @@ bool CacheManager::PreloadItemAnimList()
     return true;
 }
 
-psItemSet *CacheManager::LoadWorldItems(psSectorInfo *sector,int &loadeditems)
+bool CacheManager::LoadWorldItems(psSectorInfo *sector, csArray<psItem*> & items)
 {
-    loadeditems=0;
-
-
     /* We have 6 sets of items in game:
      * - items on the ground (loc_sector_id!=0)
      * - containers on the ground (loc_sector_id!=0)
@@ -2548,75 +2545,50 @@ psItemSet *CacheManager::LoadWorldItems(psSectorInfo *sector,int &loadeditems)
                                            " from item_instances "
                                            "where ifnull(loc_sector_id,0)!=0) order by parent_item_id"));
 
-    psItemSet *itemset = new psItemSet;
-
     // Load items
-    if ( result.IsValid() )
-    {
-        int i, count=result.Count();
-
-        for (i=0;i<count;i++)
-        {
-            psItem *item;
-            unsigned int stats_id=result[i].GetUInt32("item_stats_id_standard");
-            psItemStats *stats= GetBasicItemStatsByID(stats_id);
-
-            if (!stats)
-            {
-                Error3("Error in LoadWorldItems! Item instance %lu could not load base stats %lu. Check the item_stats_id_standard value for this item. Skipping.\n",
-                    result[i].GetUInt32("id"), result[i].GetUInt32("item_stats_id_standard"));
-                continue;
-            }
-
-            if (stats->GetIsGlyph())
-            {
-                item = new psGlyph();
-            }
-            else
-            {
-                item = new psItem();
-            }
-
-            if (!item->Load(result[i]))
-            {
-                Error2("Error in LoadWorldItems! Item instance %lu could not be loaded. Skipping.\n",result[i].GetUInt32("id"));
-                delete item;
-                continue;
-            }
-
-            // This item is in another item.  Update the parent item id list and then move on.
-            /*
-            if ( item->GetContainerID() && !item->GetLocInParent() )
-            {
-                // Field missing.  Needed for items in other items.
-                Error2("Item with id %s has parent item without location in parent.\n",result[i]["id"]);
-                delete item;
-                continue;
-            }
-            */
-
-            // printf("Loaded world item %d: %s\n", item->GetUID(), item->GetName() );
-
-            loadeditems++;
-            itemset->Add(item,0); // parentid not used anymore KWF
-        }
-    }
-    else
+    if (!result.IsValid())
     {
         Error3("Error loading world items.\nQuery: %s\nError: %s",db->GetLastQuery(), db->GetLastError() );
-        delete itemset;
-        return NULL;
+        return false;
     }
 
-    for (size_t i=0; i < itemset->GetSize(); i++)
+    for (int i = 0; i < result.Count(); i++)
     {
-        if (itemset->Get(i))
+        psItem *item;
+        unsigned int stats_id=result[i].GetUInt32("item_stats_id_standard");
+        psItemStats *stats= GetBasicItemStatsByID(stats_id);
+
+        if (!stats)
         {
-            itemset->Get(i)->SetLoaded();
+            Error3("Error in LoadWorldItems! Item instance %lu could not load base stats %lu. Check the item_stats_id_standard value for this item. Skipping.\n",
+                result[i].GetUInt32("id"), result[i].GetUInt32("item_stats_id_standard"));
+            continue;
         }
+
+        if (stats->GetIsGlyph())
+        {
+            item = new psGlyph();
+        }
+        else
+        {
+            item = new psItem();
+        }
+
+        if (!item->Load(result[i]))
+        {
+            Error2("Error in LoadWorldItems! Item instance %lu could not be loaded. Skipping.\n",result[i].GetUInt32("id"));
+            delete item;
+            continue;
+        }
+
+        items.Push(item);
     }
 
-    return itemset;
+    for (size_t i=0; i < items.GetSize(); i++)
+    {
+        items[i]->SetLoaded();
+    }
+    return true;
 }
 
 void CacheManager::AddItemStatsToHashTable(psItemStats* newitem)

@@ -216,7 +216,6 @@ bool psCharacterInventory::Load(PID use_id)
     Result items(db->Select("SELECT * FROM item_instances WHERE char_id_owner=%u AND location_in_parent!=-1", use_id.Unbox()));
     if ( items.IsValid() )
     {
-        // psItemSet* set = new psItemSet;
         for (size_t x = 0; x < items.Count(); x++ )
         {
             unsigned long i = (unsigned long)x;
