@@ -269,6 +269,21 @@ void psCelClient::HandleActor( MsgEntry* me )
         mesg.sector = psengine->GetEngine()->FindSector(mesg.sectorName);
     }
 
+    // We already have an entity with this id so we must have missed the remove object message
+    // so delete and remake it.
+    GEMClientObject* found = (GEMClientObject*) FindObject(mesg.entityid);
+    if (found)
+    {
+        if (found == local_player)
+        {
+            HandleMainActor( mesg );
+            return;
+        }
+
+        Debug3(LOG_CELPERSIST, 0, "Found existing object <%s> with %s, removing.\n", found->GetName(), ShowID(mesg.entityid));
+        RemoveObject(found);
+    }
+
     if (ignore_others)
     {
         if (local_player != 0)
@@ -290,21 +305,11 @@ void psCelClient::HandleActor( MsgEntry* me )
         psengine->SetMainActor(actor);
         psengine->GetPSCamera()->SetCameraMode(currentMode);
 
-
         // This triggers the server to update our proxlist
         local_player->SendDRUpdate(PRIORITY_LOW,GetClientDR()->GetMsgStrings());
         
         //update the window title with the char name
         psengine->UpdateWindowTitleInformations();
-    }
-
-    // We already have an entity with this id so we must have missed the remove object message,
-    // or an update has been sent. delete the now outdated object
-    GEMClientObject* found = FindObject(mesg.entityid);
-    if( found)
-    {
-        Debug3(LOG_CELPERSIST, 0, "Found existing object <%s> with %s, removing.\n", found->GetName(), ShowID(mesg.entityid));
-        RemoveObject(found);
     }
 
     entities.Push(actor);
