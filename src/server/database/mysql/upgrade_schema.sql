@@ -1278,6 +1278,11 @@ CREATE TABLE `movement_race_mods` (
 );
 UPDATE `server_options` SET `option_value`='1227' WHERE `option_name`='db_version';
 
+#1228 - Tristan Cragnolini - the speed modifier is now stored in race_info
+DROP TABLE movement_race_mods;
+ALTER TABLE `race_info` ADD COLUMN `speed_modifier` float NOT NULL default '1.0'   COMMENT "Used as a multiplier of the velocity" AFTER `race`;
+UPDATE `server_options` SET `option_value`='1228' WHERE `option_name`='db_version';
+
 
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.

@@ -45,6 +45,7 @@ CREATE TABLE `race_info` (
   `belt` VARCHAR(20) COMMENT 'Stores a belt group allowing to use the same belt mesh for more than one race, just like for the helm column' default '',
   `cloak` VARCHAR(20) COMMENT 'Stores a cloak group allowing to use the same cloak mesh for more than one race, just like for the helm column' default '',
   `race` int(5) unsigned NOT NULL,
+  `speed_modifier` float NOT NULL default '1.0'   COMMENT 'Used as a multiplier of the velocity',
   PRIMARY KEY  USING BTREE (`id`)
 );
 
@@ -53,45 +54,45 @@ CREATE TABLE `race_info` (
 --
 
 /*!40000 ALTER TABLE `race_info` DISABLE KEYS */;
-INSERT INTO `race_info` (`id`,`name`,`cstr_id_mesh`,`sex`,`size_x`,`size_y`,`size_z`,`cstr_id_base_texture`,`initial_cp`,`start_str`,`start_end`,`start_agi`,`start_int`,`start_will`,`start_cha`,`base_physical_regen_still`,`base_physical_regen_walk`,`base_mental_regen_still`,`base_mental_regen_walk`,`armor_id`,`helm`,`bracer`,`belt`,`cloak`,`race`) VALUES 
- (0,'StoneBreaker',125,'M',0.8,1.2,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',0),
- (1,'Enkidukai',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',1),
- (2,'Ynnwn',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',2),
- (3,'Ylian',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',3),
- (4,'Xacha',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',4),
- (5,'Nolthrir',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',5),
- (6,'Dermorian',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.2,0.8,10,10,0,'','','','',6),
- (7,'Hammerwielder',125,'M',0.8,1.2,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',7),
- (8,'Diaboli',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',8),
- (9,'Kran',125,'N',0.8,1.4,0.6,19,100,50,50,50,50,50,50,2.0,1.5,10,10,0,'','','','',9);
-INSERT INTO `race_info` (`id`,`name`,`cstr_id_mesh`,`sex`,`size_x`,`size_y`,`size_z`,`cstr_id_base_texture`,`initial_cp`,`start_str`,`start_end`,`start_agi`,`start_int`,`start_will`,`start_cha`,`base_physical_regen_still`,`base_physical_regen_walk`,`base_mental_regen_still`,`base_mental_regen_walk`,`armor_id`,`helm`,`bracer`,`belt`,`cloak`,`race`) VALUES 
- (10,'Lemur',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',10),
- (11,'Klyros',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'ylianm','','','',11),
- (12,'Enkidukai',125,'F',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',1),
- (13,'StoneBreaker',125,'F',0.8,1.2,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'ylianm','','','',0),
- (14,'Ynnwn',125,'F',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',2),
- (15,'Ylian',125,'F',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',3),
- (16,'Xacha',125,'F',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',4),
- (17,'Nolthrir',125,'F',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',5),
- (18,'Dermorian',125,'F',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.2,0.8,10,10,0,'','','','',6),
- (19,'Hammerwielder',125,'F',0.8,1.2,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',7);
-INSERT INTO `race_info` (`id`,`name`,`cstr_id_mesh`,`sex`,`size_x`,`size_y`,`size_z`,`cstr_id_base_texture`,`initial_cp`,`start_str`,`start_end`,`start_agi`,`start_int`,`start_will`,`start_cha`,`base_physical_regen_still`,`base_physical_regen_walk`,`base_mental_regen_still`,`base_mental_regen_walk`,`armor_id`,`helm`,`bracer`,`belt`,`cloak`,`race`) VALUES 
- (20,'Diaboli',125,'F',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',8),
- (21,'Lemur',125,'F',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',10),
- (22,'Klyros',125,'F',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',11),
- (23,'Rogue',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',12),
- (24,'Clacker',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',13),
- (25,'Rat',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',14),
- (26,'Grendol',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',15),
- (27,'Gobble',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',16),
- (28,'Consumer',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',17),
- (29,'Trepor',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',18);
-INSERT INTO `race_info` (`id`,`name`,`cstr_id_mesh`,`sex`,`size_x`,`size_y`,`size_z`,`cstr_id_base_texture`,`initial_cp`,`start_str`,`start_end`,`start_agi`,`start_int`,`start_will`,`start_cha`,`base_physical_regen_still`,`base_physical_regen_walk`,`base_mental_regen_still`,`base_mental_regen_walk`,`armor_id`,`helm`,`bracer`,`belt`,`cloak`,`race`) VALUES 
- (30,'Ulbernaut',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',19),
- (31,'Tefusang',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,2.0,1.5,10,10,0,'','','','',20),
- (32,'Drifter',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',21);
-INSERT INTO `race_info` (`id`,`name`,`cstr_id_mesh`,`sex`,`size_x`,`size_y`,`size_z`,`cstr_id_base_texture`,`initial_cp`,`start_str`,`start_end`,`start_agi`,`start_int`,`start_will`,`start_cha`,`base_physical_regen_still`,`base_physical_regen_walk`,`base_mental_regen_still`,`base_mental_regen_walk`,`armor_id`,`helm`,`bracer`,`belt`,`cloak`,`race`) VALUES 
- (9999,'Special',9999,'N',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',9999);
+INSERT INTO `race_info` (`id`,`name`,`cstr_id_mesh`,`sex`,`size_x`,`size_y`,`size_z`,`cstr_id_base_texture`,`initial_cp`,`start_str`,`start_end`,`start_agi`,`start_int`,`start_will`,`start_cha`,`base_physical_regen_still`,`base_physical_regen_walk`,`base_mental_regen_still`,`base_mental_regen_walk`,`armor_id`,`helm`,`bracer`,`belt`,`cloak`,`race`,`speed_modifier`) VALUES 
+ (0,'StoneBreaker',125,'M',0.8,1.2,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',0,1.0),
+ (1,'Enkidukai',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',1,1.0),
+ (2,'Ynnwn',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',2,1.0),
+ (3,'Ylian',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',3,1.0),
+ (4,'Xacha',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',4,1.0),
+ (5,'Nolthrir',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',5,1.0),
+ (6,'Dermorian',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.2,0.8,10,10,0,'','','','',6,1.0),
+ (7,'Hammerwielder',125,'M',0.8,1.2,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',7,1.0),
+ (8,'Diaboli',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',8,1.0),
+ (9,'Kran',125,'N',0.8,1.4,0.6,19,100,50,50,50,50,50,50,2.0,1.5,10,10,0,'','','','',9,1.0);
+INSERT INTO `race_info` (`id`,`name`,`cstr_id_mesh`,`sex`,`size_x`,`size_y`,`size_z`,`cstr_id_base_texture`,`initial_cp`,`start_str`,`start_end`,`start_agi`,`start_int`,`start_will`,`start_cha`,`base_physical_regen_still`,`base_physical_regen_walk`,`base_mental_regen_still`,`base_mental_regen_walk`,`armor_id`,`helm`,`bracer`,`belt`,`cloak`,`race`,`speed_modifier`) VALUES 
+ (10,'Lemur',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',10,1.0),
+ (11,'Klyros',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'ylianm','','','',11,1.0),
+ (12,'Enkidukai',125,'F',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',1,1.0),
+ (13,'StoneBreaker',125,'F',0.8,1.2,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'ylianm','','','',0,1.0),
+ (14,'Ynnwn',125,'F',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',2,1.0),
+ (15,'Ylian',125,'F',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',3,1.0),
+ (16,'Xacha',125,'F',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',4,1.0),
+ (17,'Nolthrir',125,'F',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',5,1.0),
+ (18,'Dermorian',125,'F',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.2,0.8,10,10,0,'','','','',6,1.0),
+ (19,'Hammerwielder',125,'F',0.8,1.2,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',7,1.0);
+INSERT INTO `race_info` (`id`,`name`,`cstr_id_mesh`,`sex`,`size_x`,`size_y`,`size_z`,`cstr_id_base_texture`,`initial_cp`,`start_str`,`start_end`,`start_agi`,`start_int`,`start_will`,`start_cha`,`base_physical_regen_still`,`base_physical_regen_walk`,`base_mental_regen_still`,`base_mental_regen_walk`,`armor_id`,`helm`,`bracer`,`belt`,`cloak`,`race`,`speed_modifier`) VALUES 
+ (20,'Diaboli',125,'F',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',8,1.0),
+ (21,'Lemur',125,'F',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',10,1.0),
+ (22,'Klyros',125,'F',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',11,1.0),
+ (23,'Rogue',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',12,1.0),
+ (24,'Clacker',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',13,1.0),
+ (25,'Rat',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',14,1.0),
+ (26,'Grendol',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',15,1.0),
+ (27,'Gobble',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',16,1.0),
+ (28,'Consumer',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',17,1.0),
+ (29,'Trepor',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',18,1.0);
+INSERT INTO `race_info` (`id`,`name`,`cstr_id_mesh`,`sex`,`size_x`,`size_y`,`size_z`,`cstr_id_base_texture`,`initial_cp`,`start_str`,`start_end`,`start_agi`,`start_int`,`start_will`,`start_cha`,`base_physical_regen_still`,`base_physical_regen_walk`,`base_mental_regen_still`,`base_mental_regen_walk`,`armor_id`,`helm`,`bracer`,`belt`,`cloak`,`race`,`speed_modifier`) VALUES 
+ (30,'Ulbernaut',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',19,1.0),
+ (31,'Tefusang',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,2.0,1.5,10,10,0,'','','','',20,1.0),
+ (32,'Drifter',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',21,2.0);
+INSERT INTO `race_info` (`id`,`name`,`cstr_id_mesh`,`sex`,`size_x`,`size_y`,`size_z`,`cstr_id_base_texture`,`initial_cp`,`start_str`,`start_end`,`start_agi`,`start_int`,`start_will`,`start_cha`,`base_physical_regen_still`,`base_physical_regen_walk`,`base_mental_regen_still`,`base_mental_regen_walk`,`armor_id`,`helm`,`bracer`,`belt`,`cloak`,`race`,`speed_modifier`) VALUES 
+ (9999,'Special',9999,'N',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',9999,1.0);
 /*!40000 ALTER TABLE `race_info` ENABLE KEYS */;
 
 

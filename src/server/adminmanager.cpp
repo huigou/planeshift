@@ -5994,7 +5994,7 @@ void AdminManager::SendSpawnItems (MsgEntry* me, Client *client)
     psGMSpawnItems msg(me);
 
     csArray<psItemStats*> items;
-    unsigned int size = 0;
+    size_t size = 0;
     if (!psserver->CheckAccess(client, "/item"))
     {
         return;
@@ -6026,7 +6026,7 @@ void AdminManager::SendSpawnItems (MsgEntry* me, Client *client)
             csString name(item->GetName());
             csString mesh(item->GetMeshName());
             csString icon(item->GetImageName());
-            size += (int)name.Length()+(int)mesh.Length()+(int)icon.Length()+3;
+            size += name.Length()+mesh.Length()+icon.Length()+3;
             items.Push(item);
         }
     }
