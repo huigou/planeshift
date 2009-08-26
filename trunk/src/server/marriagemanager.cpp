@@ -162,6 +162,8 @@ public:
         csString divorcedFirstName = divorcedCharData->GetCharName();
         csString divorcerFirstName = divorcerCharData->GetCharName();
 
+        HandleSpamPoints(answer == "yes");
+
         if ( answer == "no" )
         {
             // Inform proposer that divorce has been rejected
