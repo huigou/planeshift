@@ -1269,6 +1269,15 @@ ALTER TABLE `item_stats` ADD COLUMN `container_max_slots` INT(5) UNSIGNED NOT NU
 UPDATE item_stats set container_max_slots=16 where flags like "%CONTAINER%";
 UPDATE `server_options` SET `option_value`='1226' WHERE `option_name`='db_version';
 
+#1227 - Tristan Cragnolini - Added per-race movement modifiers table
+CREATE TABLE `movement_race_mods` (
+  `id` int(11) NOT NULL,
+  `name` varchar(100) NOT NULL default 'stonebm'     COMMENT 'name of the race',
+  `move_mod` float NOT NULL default '1.0'            COMMENT 'motion modifier' ,
+  PRIMARY KEY  (`id`)
+);
+UPDATE `server_options` SET `option_value`='1227' WHERE `option_name`='db_version';
+
 
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.

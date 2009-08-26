@@ -147,6 +147,8 @@ protected:
     
     bool SendActorList(Client *client);
 
+
+    void CreateMovementInfoMsg();
     void LoadFamiliarTypes();
     void LoadFamiliarAffinityAttributes();
     PID GetMasterFamiliarID(psCharacter *charData);
