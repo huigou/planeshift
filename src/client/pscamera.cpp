@@ -86,6 +86,7 @@ psCamera::psCamera()
     camData[CAMERA_FIRST_PERSON].springLength = 0.01f;
     camData[CAMERA_FIRST_PERSON].maxDistance = 1.0f;
     camData[CAMERA_FIRST_PERSON].minDistance = 1.0f;
+    camData[CAMERA_FIRST_PERSON].distance = camData[CAMERA_FIRST_PERSON].minDistance;
     camData[CAMERA_FIRST_PERSON].turnSpeed = 0.0f;
     camData[CAMERA_FIRST_PERSON].swingCoef = 0.0f;
     camData[CAMERA_FIRST_PERSON].defaultPitch = camData[CAMERA_FIRST_PERSON].pitch = 0.0f;
@@ -97,6 +98,7 @@ psCamera::psCamera()
     camData[CAMERA_THIRD_PERSON].springLength = 0.01f;
     camData[CAMERA_THIRD_PERSON].maxDistance = 15.0f;
     camData[CAMERA_THIRD_PERSON].minDistance = 1.0f;
+    camData[CAMERA_THIRD_PERSON].distance = camData[CAMERA_THIRD_PERSON].minDistance;
     camData[CAMERA_THIRD_PERSON].turnSpeed = 0.0f;
     camData[CAMERA_THIRD_PERSON].swingCoef = 0.0f;
     camData[CAMERA_THIRD_PERSON].defaultPitch = camData[CAMERA_THIRD_PERSON].pitch = 0.0f;
@@ -108,6 +110,7 @@ psCamera::psCamera()
     camData[CAMERA_M64_THIRD_PERSON].springLength = 0.01f;
     camData[CAMERA_M64_THIRD_PERSON].minDistance = 2.0f;
     camData[CAMERA_M64_THIRD_PERSON].maxDistance = 6.0f;
+    camData[CAMERA_M64_THIRD_PERSON].distance = camData[CAMERA_M64_THIRD_PERSON].minDistance;
     camData[CAMERA_M64_THIRD_PERSON].turnSpeed = 1.0f;
     camData[CAMERA_M64_THIRD_PERSON].swingCoef = 0.0f;
     camData[CAMERA_M64_THIRD_PERSON].defaultPitch = camData[CAMERA_M64_THIRD_PERSON].pitch = 0.0f;
@@ -119,6 +122,7 @@ psCamera::psCamera()
     camData[CAMERA_LARA_THIRD_PERSON].springLength = 0.01f;
     camData[CAMERA_LARA_THIRD_PERSON].minDistance = 2.0f;
     camData[CAMERA_LARA_THIRD_PERSON].maxDistance = 6.0f;
+    camData[CAMERA_LARA_THIRD_PERSON].distance = camData[CAMERA_LARA_THIRD_PERSON].minDistance;
     camData[CAMERA_LARA_THIRD_PERSON].turnSpeed = 1.0f;
     camData[CAMERA_LARA_THIRD_PERSON].swingCoef = 0.7f;
     camData[CAMERA_LARA_THIRD_PERSON].defaultPitch = camData[CAMERA_LARA_THIRD_PERSON].pitch = 0.0f;
@@ -130,6 +134,7 @@ psCamera::psCamera()
     camData[CAMERA_FREE].springLength = 0.01f;
     camData[CAMERA_FREE].minDistance = 2.0f;
     camData[CAMERA_FREE].maxDistance = 16.0f;
+    camData[CAMERA_FREE].distance = camData[CAMERA_FREE].minDistance;
     camData[CAMERA_FREE].turnSpeed = 0.0f;
     camData[CAMERA_FREE].swingCoef = 0.0f;
     camData[CAMERA_FREE].defaultPitch = camData[CAMERA_FREE].pitch = 0.0f;
@@ -141,6 +146,7 @@ psCamera::psCamera()
     camData[CAMERA_ACTUAL_DATA].springLength = 0.01f;
     camData[CAMERA_ACTUAL_DATA].minDistance = 0.0f;
     camData[CAMERA_ACTUAL_DATA].maxDistance = 0.0f;
+    camData[CAMERA_ACTUAL_DATA].distance = camData[CAMERA_ACTUAL_DATA].minDistance;
     camData[CAMERA_ACTUAL_DATA].turnSpeed = 0.0f;
     camData[CAMERA_ACTUAL_DATA].swingCoef = 0.0f;
     camData[CAMERA_ACTUAL_DATA].defaultPitch = camData[CAMERA_ACTUAL_DATA].pitch = 0.0f;
@@ -152,6 +158,7 @@ psCamera::psCamera()
     camData[CAMERA_LAST_ACTUAL].springLength = 0.01f;
     camData[CAMERA_LAST_ACTUAL].minDistance = 0.0f;
     camData[CAMERA_LAST_ACTUAL].maxDistance = 0.0f;
+    camData[CAMERA_LAST_ACTUAL].distance = camData[CAMERA_LAST_ACTUAL].minDistance;
     camData[CAMERA_LAST_ACTUAL].turnSpeed = 0.0f;
     camData[CAMERA_LAST_ACTUAL].swingCoef = 0.0f;
     camData[CAMERA_LAST_ACTUAL].defaultPitch = camData[CAMERA_LAST_ACTUAL].pitch = 0.0f;
@@ -163,6 +170,7 @@ psCamera::psCamera()
     camData[CAMERA_TRANSITION].springLength = 0.01f;
     camData[CAMERA_TRANSITION].minDistance = 1.0f;
     camData[CAMERA_TRANSITION].maxDistance = 16.0f;
+    camData[CAMERA_TRANSITION].distance = camData[CAMERA_TRANSITION].minDistance;
     camData[CAMERA_TRANSITION].turnSpeed = 0.0f;
     camData[CAMERA_TRANSITION].swingCoef = 0.0f;
     camData[CAMERA_TRANSITION].defaultPitch = camData[CAMERA_TRANSITION].pitch = 0.0f;
@@ -172,8 +180,9 @@ psCamera::psCamera()
     camData[CAMERA_NPCTALK].springCoef = 3.5f;
     camData[CAMERA_NPCTALK].InertialDampeningCoef = 0.25f;
     camData[CAMERA_NPCTALK].springLength = 0.01f;
-    camData[CAMERA_NPCTALK].maxDistance = 15.0f;
     camData[CAMERA_NPCTALK].minDistance = 0.50f;
+    camData[CAMERA_NPCTALK].maxDistance = 15.0f;
+    camData[CAMERA_NPCTALK].distance = camData[CAMERA_NPCTALK].minDistance;
     camData[CAMERA_NPCTALK].turnSpeed = 0.0f;
     camData[CAMERA_NPCTALK].swingCoef = 0.0f;
     camData[CAMERA_NPCTALK].defaultPitch = camData[CAMERA_NPCTALK].pitch = 0.0f;
@@ -185,6 +194,7 @@ psCamera::psCamera()
     camData[CAMERA_COLLISION].springLength = 0.01f;
     camData[CAMERA_COLLISION].minDistance = 2.0f;
     camData[CAMERA_COLLISION].maxDistance = 16.0f;
+    camData[CAMERA_COLLISION].distance = camData[CAMERA_COLLISION].minDistance;
     camData[CAMERA_COLLISION].turnSpeed = 0.0f;
     camData[CAMERA_COLLISION].swingCoef = 0.0f;
     camData[CAMERA_COLLISION].defaultPitch = camData[CAMERA_COLLISION].pitch = 0.0f;
@@ -196,6 +206,7 @@ psCamera::psCamera()
     camData[CAMERA_ERR].springLength = 0.01f;
     camData[CAMERA_ERR].minDistance = 0.0f;
     camData[CAMERA_ERR].maxDistance = 0.0f;
+    camData[CAMERA_ERR].distance = camData[CAMERA_ERR].minDistance;
     camData[CAMERA_ERR].turnSpeed = 0.0f;
     camData[CAMERA_ERR].swingCoef = 0.0f;
     camData[CAMERA_ERR].defaultPitch = camData[CAMERA_ERR].pitch = 0.0f;
