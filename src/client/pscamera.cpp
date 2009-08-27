@@ -370,7 +370,7 @@ void psCamera::SaveOptions()
 
 bool psCamera::InitializeView(GEMClientActor* entity)
 {
-    actor = entity;
+    SetActor(entity);
 
     lastCameraMode = CAMERA_ERR;
     SetCameraMode(CAMERA_FIRST_PERSON);
@@ -434,6 +434,11 @@ bool psCamera::InitializeView(GEMClientActor* entity)
     }
 
     return true;
+}
+
+void psCamera::SetActor(GEMClientActor* entity)
+{
+    actor = entity;
 }
 
 bool psCamera::LoadFromFile(bool useDefault, bool overrideCurrent)
