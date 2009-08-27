@@ -1240,7 +1240,7 @@ void psEngine::SetMainActor(GEMClientActor *mainActor)
     CS_ASSERT(mainActor);
     GetCelClient()->SetMainActor(mainActor);
     GetCharControl()->GetMovementManager()->SetActor(mainActor);
-    GetPSCamera()->InitializeView(mainActor);
+    GetPSCamera()->SetActor(mainActor);
 }
 
 // ----------------------------------------------------------------------------
