@@ -169,18 +169,15 @@ psCharacter *psCharacterLoader::LoadCharacterData(PID pid, bool forceReload)
         iCachedObject *obj = CacheManager::GetSingleton().RemoveFromCache(CacheManager::GetSingleton().MakeCacheName("char", pid.Unbox()));
         if (obj)
         {
-            if (!forceReload)
-            {
-                Debug2(LOG_CACHE, pid.Unbox(), "Returning char object %p from cache.\n", obj->RecoverObject());
+            Debug2(LOG_CACHE, pid.Unbox(), "Returning char object %p from cache.\n", obj->RecoverObject());
 
-                psCharacter *charData = (psCharacter *)obj->RecoverObject();
+            psCharacter *charData = (psCharacter *)obj->RecoverObject();
 
-                // Clear loot items
-                if (charData)
-                    charData->ClearLoot();
+            // Clear loot items
+            if (charData)
+                charData->ClearLoot();
 
-                return charData;
-            }
+            return charData;
         }
     }
 
