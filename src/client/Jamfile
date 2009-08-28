@@ -31,6 +31,8 @@ LinkWith psclient_static : planeshift_staticplugins gui psnet psengine psrpgrule
 # The plugins that we need
 #
 STATIC.PLUGINLIST =
+  animesh
+  animeshldr
   bindoc
   bruteblock
   csddsimg
@@ -80,6 +82,8 @@ STATIC.PLUGINLIST =
   shaderweaver
   simpleformer
   simpleformerldr
+  skeleton2
+  skeleton2ldr
   sndmanager
   sndsysloader
   sndsysnull

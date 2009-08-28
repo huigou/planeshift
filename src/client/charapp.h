@@ -26,6 +26,7 @@
 #include <csutil/list.h>
 #include <csgeom/vector3.h>
 #include <iengine/mesh.h>
+#include <imesh/animesh.h>
 #include <imesh/spritecal3d.h>
 
 //=============================================================================
@@ -230,6 +231,9 @@ private:
 
     csRef<iSpriteCal3DFactoryState>  stateFactory;      ///< The Cal3D factory object
     csRef<iSpriteCal3DState>    state;                  ///< The Cal3D sprite state
+
+    csRef<iAnimatedMeshFactory> animeshFactory; ///< The animesh object factory.
+    csRef<iAnimatedMesh> animeshObject; ///< The animesh object.
     
     csRef<iShaderVarStringSet>  stringSet;              ///< Used by shader variables.
     csRef<iStringSet> strings;                          ///< Used by shader types.
