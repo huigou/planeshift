@@ -83,6 +83,9 @@ void psCharAppearance::SetMesh(iMeshWrapper* mesh)
     state = scfQueryInterface<iSpriteCal3DState>(mesh->GetMeshObject());
     stateFactory = scfQueryInterface<iSpriteCal3DFactoryState>(mesh->GetMeshObject()->GetFactory());
 
+    animeshObject = scfQueryInterface<iAnimatedMesh>(mesh->GetMeshObject());
+    animeshFactory = scfQueryInterface<iAnimatedMeshFactory>(mesh->GetMeshObject()->GetFactory());
+
     baseMesh = mesh;
 }
 
@@ -111,13 +114,32 @@ void psCharAppearance::BeardMesh(csString& subMesh)
 
     if ( beardMesh.Length() == 0 )
     {
-        for ( int idx=0; idx < stateFactory->GetMeshCount(); idx++)
+        if(state && stateFactory)
         {
-            const char* meshName = stateFactory->GetMeshName(idx);
-
-            if ( strstr(meshName, "Beard") )
+            for ( int idx=0; idx < stateFactory->GetMeshCount(); idx++)
             {
-                state->DetachCoreMesh(meshName);
+                const char* meshName = stateFactory->GetMeshName(idx);
+
+                if ( strstr(meshName, "Beard") )
+                {
+                    state->DetachCoreMesh(meshName);
+                    beardAttached = false;
+                }
+            }
+        }
+        else if(animeshObject && animeshFactory)
+        {
+            for ( size_t idx=0; idx < animeshFactory->GetSubMeshCount(); idx++)
+            {
+                const char* meshName = animeshFactory->GetSubMesh(idx)->GetName();
+                if(meshName)
+                {
+                    if ( strstr(meshName, "Beard") )
+                    {
+                        animeshObject->GetSubMesh(idx)->SetRendering(false);
+                        beardAttached = false;
+                    }
+                }
             }
         }
         return;
@@ -125,26 +147,50 @@ void psCharAppearance::BeardMesh(csString& subMesh)
 
     csString newPartParsed = ParseStrings("Beard", beardMesh);
 
-    int newMeshAvailable = stateFactory->FindMeshName(newPartParsed);
-    if ( newMeshAvailable == -1 )
+    if(state && stateFactory)
     {
-        return;
-    }
-    else
-    {
-        for ( int idx=0; idx < stateFactory->GetMeshCount(); idx++)
+        int newMeshAvailable = stateFactory->FindMeshName(newPartParsed);
+        if ( newMeshAvailable == -1 )
         {
-            const char* meshName = stateFactory->GetMeshName(idx);
-
-            if ( strstr(meshName, "Beard") )
+            return;
+        }
+        else
+        {
+            for ( int idx=0; idx < stateFactory->GetMeshCount(); idx++)
             {
-                state->DetachCoreMesh(meshName);
+                const char* meshName = stateFactory->GetMeshName(idx);
+
+                if ( strstr(meshName, "Beard") )
+                {
+                    state->DetachCoreMesh(meshName);
+                }
+            }
+
+            state->AttachCoreMesh(newPartParsed);
+            beardAttached = true;
+            beardMesh = newPartParsed;
+        }
+    }
+    else if(animeshObject && animeshFactory)
+    {
+        for ( size_t idx=0; idx < animeshFactory->GetSubMeshCount(); idx++)
+        {
+            const char* meshName = animeshFactory->GetSubMesh(idx)->GetName();
+            if(meshName)
+            {
+                if (strstr(meshName, "Beard"))
+                {
+                    animeshObject->GetSubMesh(idx)->SetRendering(false);
+                }
+
+                if (!strcmp(meshName, newPartParsed))
+                {
+                    animeshObject->GetSubMesh(idx)->SetRendering(true);
+                    beardAttached = true;
+                    beardMesh = newPartParsed;
+                }
             }
         }
-
-        state->AttachCoreMesh(newPartParsed);
-        beardAttached = true;
-        beardMesh = newPartParsed;
     }
 
     if ( hairColorSet )
@@ -162,26 +208,50 @@ void psCharAppearance::HairMesh(csString& subMesh)
 
     csString newPartParsed = ParseStrings("Hair", hairMesh);
 
-    int newMeshAvailable = stateFactory->FindMeshName(newPartParsed);
-    if ( newMeshAvailable == -1 )
+    if(state && stateFactory)
     {
-        return;
-    }
-    else
-    {
-        for ( int idx=0; idx < stateFactory->GetMeshCount(); idx++)
+        int newMeshAvailable = stateFactory->FindMeshName(newPartParsed);
+        if ( newMeshAvailable == -1 )
         {
-            const char* meshName = stateFactory->GetMeshName(idx);
-
-            if ( strstr(meshName, "Hair") )
+            return;
+        }
+        else
+        {
+            for ( int idx=0; idx < stateFactory->GetMeshCount(); idx++)
             {
-                state->DetachCoreMesh(meshName);
+                const char* meshName = stateFactory->GetMeshName(idx);
+
+                if ( strstr(meshName, "Hair") )
+                {
+                    state->DetachCoreMesh(meshName);
+                }
+            }
+
+            state->AttachCoreMesh(newPartParsed);
+            hairAttached = true;
+            hairMesh = newPartParsed;
+        }
+    }
+    else if(animeshObject && animeshFactory)
+    {
+        for ( size_t idx=0; idx < animeshFactory->GetSubMeshCount(); idx++)
+        {
+            const char* meshName = animeshFactory->GetSubMesh(idx)->GetName();
+            if(meshName)
+            {
+                if (strstr(meshName, "Hair"))
+                {
+                    animeshObject->GetSubMesh(idx)->SetRendering(false);
+                }
+
+                if (!strcmp(meshName, newPartParsed))
+                {
+                    animeshObject->GetSubMesh(idx)->SetRendering(true);
+                    hairAttached = true;
+                    beardMesh = newPartParsed;
+                }
             }
         }
-
-        state->AttachCoreMesh(newPartParsed);
-        hairAttached = true;
-        hairMesh = newPartParsed;
     }
 
     if ( hairColorSet )
@@ -198,11 +268,36 @@ void psCharAppearance::HairColor(csVector3& color)
     else
     {
         hairShader = color;
-        iShaderVariableContext* context_hair = state->GetCoreMeshShaderVarContext(hairMesh);
-        iShaderVariableContext* context_beard = state->GetCoreMeshShaderVarContext(beardMesh);
+        iShaderVariableContext* context_hair;
+        iShaderVariableContext* context_beard;
+
+        if(state)
+        {
+            context_hair = state->GetCoreMeshShaderVarContext(hairMesh);
+            context_beard = state->GetCoreMeshShaderVarContext(beardMesh);
+        }
+        else if(animeshObject && animeshFactory)
+        {
+            for ( size_t idx=0; idx < animeshFactory->GetSubMeshCount(); idx++)
+            {
+                const char* meshName = animeshFactory->GetSubMesh(idx)->GetName();
+                if(meshName)
+                {
+                    if (!strcmp(meshName, hairMesh))
+                    {
+                        context_hair = animeshObject->GetSubMesh(idx)->GetShaderVariableContext(0);
+                    }
+
+                    if (!strcmp(meshName, beardMesh))
+                    {
+                        context_beard = animeshObject->GetSubMesh(idx)->GetShaderVariableContext(0);
+                    }
+                }
+            }
+        }
 
         if ( context_hair )
-        {
+        { 
             CS::ShaderVarStringID varName = stringSet->Request("color modulation");
             csShaderVariable* var = context_hair->GetVariableAdd(varName);
 
@@ -229,7 +324,21 @@ void psCharAppearance::HairColor(csVector3& color)
 void psCharAppearance::EyeColor(csVector3& color)
 {
     eyeShader = color;
-    iShaderVariableContext* context_eyes = state->GetCoreMeshShaderVarContext(eyeMesh);
+    iShaderVariableContext* context_eyes;
+    
+
+    if(state)
+    {
+        context_eyes = state->GetCoreMeshShaderVarContext(eyeMesh);
+    }
+    else if(animeshObject && animeshFactory)
+    {
+        size_t idx = animeshFactory->FindSubMesh(eyeMesh);
+        if(idx != (size_t)-1)
+        {
+            context_eyes = animeshObject->GetSubMesh(idx)->GetShaderVariableContext(0);
+        }
+    }
 
     if ( context_eyes )
     {
@@ -252,7 +361,18 @@ void psCharAppearance::ShowHair(bool show)
         if (hairAttached)
             return;
 
-        state->AttachCoreMesh(hairMesh);
+        if(state)
+        {
+            state->AttachCoreMesh(hairMesh);
+        }
+        else if(animeshObject && animeshFactory)
+        {
+            size_t idx = animeshFactory->FindSubMesh(hairMesh);
+            if(idx != (size_t)-1)
+            {
+                animeshObject->GetSubMesh(idx)->SetRendering(true);
+            }
+        }
 
         if (hairColorSet)
             HairColor(hairShader);
@@ -261,7 +381,19 @@ void psCharAppearance::ShowHair(bool show)
     }
     else
     {
-        state->DetachCoreMesh(hairMesh);
+        if(state)
+        {
+            state->DetachCoreMesh(hairMesh);
+        }
+        else if(animeshObject && animeshFactory)
+        {
+            size_t idx = animeshFactory->FindSubMesh(hairMesh);
+            if(idx != (size_t)-1)
+            {
+                animeshObject->GetSubMesh(idx)->SetRendering(false);
+            }
+        }
+
         hairAttached = false;
     }
 }

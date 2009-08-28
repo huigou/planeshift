@@ -74,7 +74,9 @@ psLight::~psLight()
 unsigned int psLight::AttachLight(const char* name, const csVector3& pos,
   	float radius, const csColor& colour, csRef<iMeshWrapper> mw)
 {
-    light = engine->CreateLight(name, pos, radius, colour, CS_LIGHT_DYNAMICTYPE_DYNAMIC);
+    csString lightName = name;
+    lightName.Append("_%u", genUniqueID);
+    light = engine->CreateLight(lightName, pos, radius, colour, CS_LIGHT_DYNAMICTYPE_DYNAMIC);
     light->SetAttenuationMode(CS_ATTN_INVERSE);
 
     movable = mw->GetMovable();
@@ -101,7 +103,7 @@ unsigned int psLight::AttachLight(const char* name, const csVector3& pos,
     }
 
     // Add to current sector.
-    sector->AddLight(light);
+    sector->GetLights()->Add(light);
 
     lastTime = vclock->GetCurrentTicks();
 
