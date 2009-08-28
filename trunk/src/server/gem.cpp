@@ -1915,6 +1915,11 @@ nevertired(false), infinitemana(false), instantcast(false), safefall(false), giv
         return;
     }
 
+    player_mode = PSCHARACTER_MODE_PEACE;
+    if (psChar->IsStatue())
+        player_mode = PSCHARACTER_MODE_STATUE;
+    combat_stance = CombatManager::GetStance("None");
+
     this->factname.SetActor(this);
 
     Debug6(LOG_NPC,0,"Successfully created actor %s at %1.2f,%1.2f,%1.2f in sector %s.\n",
@@ -1926,11 +1931,6 @@ nevertired(false), infinitemana(false), instantcast(false), safefall(false), giv
     UpdateValidLocation(pos, rotangle, GetSector(), myInstance, true);
 
     GetCharacterData()->SetStaminaRegenerationStill();
-
-    player_mode = PSCHARACTER_MODE_PEACE;
-    if (psChar->IsStatue())
-        player_mode = PSCHARACTER_MODE_STATUE;
-    combat_stance = CombatManager::GetStance("None");
 }
 
 gemActor::~gemActor()
