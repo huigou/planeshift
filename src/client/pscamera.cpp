@@ -80,6 +80,8 @@ psCamera::psCamera()
     // most of these are default values that will be overwritten
     firstPersonPositionOffset = csVector3(0, 1, 0);
     thirdPersonPositionOffset = csVector3(0, 1, 3);
+    pitchVelocity = 0.0f;
+    yawVelocity   = 0.0f;
 
     camData[CAMERA_FIRST_PERSON].springCoef = 10.0f;
     camData[CAMERA_FIRST_PERSON].InertialDampeningCoef = 0.1f;
