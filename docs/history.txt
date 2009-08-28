@@ -1,4 +1,22 @@
-﻿*** 2009-08-25 by Tristan Cragnolini
+﻿*** 2009-08-28 by Stefano Angeleri
+- Fixed a problem with caching which loaded over and then overwritten 
+  new data with old one for players
+- Fixed some unitialized variables in pscamera which blocked debug builds
+  with MSVC to run correctly patch by lanarel
+- Better error handling for /morph fixing PS#3112 - 
+  Morph commands need better error handling
+- Fixed some code which was moved around wrongly in the targeting code
+- Added support for server side untargeting and fixed PS#1088 - 
+  Execution of action locations should defocus them
+- Fixed PS#2323 - giveitem command doesn't say how many given 
+- Fixed PS#2387 - Randomizing parents may create unrelated family names 
+- Fixed a bug which didn't allow gm to cancel petitions
+- Fixed PS#798 - Deleting a petition confuses petition window
+- Merged the 4 copy & paste of the petition db parsing into a single function
+  in order to avoid future unsync between the copy and pasted code
+- Fixed a crash in npcclient when an npc is removed from the world while it's moving
+
+*** 2009-08-25 by Tristan Cragnolini
 - Refactored code to attach a mesh rather than an actor to another actor
 - Added a per-race movement modifier table, DB VER DUMP
 - Fix for PS#2535 - Duel messages, by making the message more visible
