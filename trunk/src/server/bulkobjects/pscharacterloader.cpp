@@ -163,23 +163,29 @@ psCharacter **psCharacterLoader::LoadAllNPCCharacterData(psSectorInfo *sector,in
 
 psCharacter *psCharacterLoader::LoadCharacterData(PID pid, bool forceReload)
 {
-    if (!forceReload)
-    {
+    //if (!forceReload)
+    //{
         // Check the generic cache first
         iCachedObject *obj = CacheManager::GetSingleton().RemoveFromCache(CacheManager::GetSingleton().MakeCacheName("char", pid.Unbox()));
         if (obj)
         {
-            Debug2(LOG_CACHE, pid.Unbox(), "Returning char object %p from cache.\n", obj->RecoverObject());
+            if (!forceReload)
+            {
+                Debug2(LOG_CACHE, pid.Unbox(), "Returning char object %p from cache.\n", obj->RecoverObject());
 
-            psCharacter *charData = (psCharacter *)obj->RecoverObject();
+                psCharacter *charData = (psCharacter *)obj->RecoverObject();
 
-            // Clear loot items
-            if (charData)
-                charData->ClearLoot();
+                // Clear loot items
+                if (charData)
+                    charData->ClearLoot();
 
-            return charData;
+                return charData;
+            }
+            else //this is needed because if the item is cached it needs to be destroyed (and so saved) before we load it again
+                delete (psCharacter *)obj->RecoverObject();
         }
-    }
+    //}   
+
 
     // Now load from the database if not found in cache
     csTicks start = csGetTicks();
