@@ -14,6 +14,8 @@
 #endif
 struct _static_use_CRYSTAL { _static_use_CRYSTAL (); };
 _static_use_CRYSTAL::_static_use_CRYSTAL () {}
+SCF_USE_STATIC_PLUGIN(animesh)
+SCF_USE_STATIC_PLUGIN(animeshldr)
 SCF_USE_STATIC_PLUGIN(bindoc)
 SCF_USE_STATIC_PLUGIN(bruteblock)
 SCF_USE_STATIC_PLUGIN(csddsimg)
@@ -63,6 +65,8 @@ SCF_USE_STATIC_PLUGIN(shadermgr)
 SCF_USE_STATIC_PLUGIN(shaderweaver)
 SCF_USE_STATIC_PLUGIN(simpleformer)
 SCF_USE_STATIC_PLUGIN(simpleformerldr)
+SCF_USE_STATIC_PLUGIN(skeleton2)
+SCF_USE_STATIC_PLUGIN(skeleton2ldr)
 SCF_USE_STATIC_PLUGIN(sndmanager)
 SCF_USE_STATIC_PLUGIN(sndsysloader)
 SCF_USE_STATIC_PLUGIN(sndsysnull)
