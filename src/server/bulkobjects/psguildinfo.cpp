@@ -266,6 +266,7 @@ void psGuildInfo::Connect(psCharacter *player)
         {
             player->SetGuild(this);
             members[i]->actor = player;
+            members[i]->last_login = player->GetLastLoginTime();
         }
     }
 }
@@ -279,7 +280,6 @@ void psGuildInfo::Disconnect(psCharacter *player)
         {
             player->SetGuild(NULL);
             members[i]->actor = NULL;
-            members[i]->last_login = player->GetLastLoginTime();
             break;
         }
     }
