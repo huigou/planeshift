@@ -3,11 +3,11 @@
 <head>
  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
  <link href="style.css" rel="stylesheet" type="text/css" title="normal" media=screen>
- <title>Function Parser for C++ v3.2    : Documentation</title>
+ <title>Function Parser for C++ v3.2.1  : Documentation</title>
 </head>
 
 <body>
-<h1>Function Parser for C++ v3.2    </h1>
+<h1>Function Parser for C++ v3.2.1  </h1>
 
 <p>Authors: Juha Nieminen
 (<a href="http://iki.fi/warp/">http://iki.fi/warp/</a>),
@@ -40,6 +40,27 @@ Joel Yliluoma
 
 <a name="whatsnew"></a>
 <h2>What's new</h2>
+
+<p>What's new in v3.2.1
+<ul>
+ <li>Fixed bugs in optimizer: Functions in the form <code>"log(-x)"</code>
+   and certain integral powers (eg. <code>"x^14"</code>) were optimized
+   incorrectly. (In the case of the integral powers, the error manifested
+   itself when <code>x==0</code>.)
+ <li>Fixed some incompatibilities which made the library not compile with
+   MSVC.
+ <li>Fixed major crash in <code>FunctionParser::Eval()</code> which happened
+   if it was called without <code>FunctionParser::Parse()</code> having been
+   called successfully (or at all). (Now it always returns 0.0 in such
+   situations.)
+ <li>Changed <code>FunctionParser::ErrorMsg()</code> to return an empty
+   string rather than a null pointer if the previous parsing was successful.
+   (Its return value was never intended to be used as a check for success
+   anyways. <code>FunctionParser::GetParseErrorType()</code> can be used for
+   this purpose, if necessary.) This is to avoid potential crashes in the
+   calling program if it assumes that this function always returns a valid
+   string.
+</ul>
 
 <p>What's new in v3.2
 <ul>
@@ -240,7 +261,7 @@ const char* ErrorMsg(void) const;
 </pre>
 
 <p>Returns an error message corresponding to the error in
-<code>Parse()</code>, or <code>0</code> if no such error occurred.
+<code>Parse()</code>, or an empty string if no such error occurred.
 
 <hr>
 <pre>
@@ -441,7 +462,7 @@ const char* ErrorMsg(void) const;
 
 <p>Returns a pointer to an error message string corresponding to the error
 caused by <code>Parse()</code> (you can use this to print the proper error
-message to the user). If no such error has occurred, returns <code>0</code>.
+message to the user). If no such error has occurred, returns an empty string.
 
 
 <hr>
@@ -503,6 +524,10 @@ along with their equivalent error message returned by the
 </tr><tr>
  <td><code>EXPECT_PARENTH_FUNC</code></td>
  <td>"Syntax error: Expecting ( after function"</td>
+</tr>
+</tr><tr>
+ <td><code>NO_FUNCTION_PARSED_YET</code></td>
+ <td>"(No function has been parsed yet)"</td>
 </tr>
 </table>
 
