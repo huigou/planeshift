@@ -1,5 +1,5 @@
 /***************************************************************************\
-|* Function Parser for C++ v3.2                                            *|
+|* Function Parser for C++ v3.2.1                                          *|
 |*-------------------------------------------------------------------------*|
 |* Copyright: Juha Nieminen                                                *|
 \***************************************************************************/
@@ -236,7 +236,7 @@ FunctionParser::Data::Data(const Data& rhs):
 //=========================================================================
 FunctionParser::FunctionParser():
     delimiterChar(0),
-    parseErrorType(FP_NO_ERROR), evalErrorType(0),
+    parseErrorType(NO_FUNCTION_PARSED_YET), evalErrorType(0),
     data(new Data),
     useDegreeConversion(false),
     evalRecursionLevel(0),
@@ -412,6 +412,7 @@ namespace
         "Illegal number of parameters to function", // 8
         "Syntax error: Premature end of string",    // 9
         "Syntax error: Expecting ( after function", // 10
+        "(No function has been parsed yet)",
         ""
     };
 }
@@ -420,8 +421,7 @@ namespace
 // --------------------------
 const char* FunctionParser::ErrorMsg() const
 {
-    if(parseErrorType != FP_NO_ERROR) return ParseErrorMessage[parseErrorType];
-    return 0;
+    return ParseErrorMessage[parseErrorType];
 }
 
 
@@ -1048,6 +1048,8 @@ const char* FunctionParser::CompileExpression(const char* function)
 //===========================================================================
 double FunctionParser::Eval(const double* Vars)
 {
+    if(parseErrorType != FP_NO_ERROR) return 0.0;
+
     const unsigned* const ByteCode = &(data->ByteCode[0]);
     const double* const Immed = data->Immed.empty() ? 0 : &(data->Immed[0]);
     const unsigned ByteCodeSize = unsigned(data->ByteCode.size());

@@ -1,12 +1,12 @@
 /***************************************************************************\
-|* Function Parser for C++ v3.2                                            *|
+|* Function Parser for C++ v3.2.1                                          *|
 |*-------------------------------------------------------------------------*|
 |* Copyright: Juha Nieminen                                                *|
 \***************************************************************************/
 
 // NOTE:
 // This file contains only internal types for the function parser library.
-// You don't need to include this file in your code. Include "fparser.hh"
+// You don't need to include this file in your code. Include "fparser.h"
 // only.
 
 #ifndef ONCE_FPARSER_TYPES_H_

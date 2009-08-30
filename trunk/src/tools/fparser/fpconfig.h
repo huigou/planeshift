@@ -1,5 +1,5 @@
 /***************************************************************************\
-|* Function Parser for C++ v3.2                                            *|
+|* Function Parser for C++ v3.2.1                                          *|
 |*-------------------------------------------------------------------------*|
 |* Copyright: Juha Nieminen                                                *|
 \***************************************************************************/
@@ -10,7 +10,7 @@
 // NOTE:
 // This file is for the internal use of the function parser only.
 // You don't need to include this file in your source files, just
-// include "fparser.hh".
+// include "fparser.h".
 
 /*
  Note that these do not change what FunctionParser supports, they only
