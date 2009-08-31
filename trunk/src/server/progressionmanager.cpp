@@ -467,6 +467,11 @@ void ProgressionManager::HandleSkill(MsgEntry *me, Client * client)
                                          "You cannot train this skill currently.");
                 return;
             }
+            
+            //crop skillamount to the real amount needed for training
+            Skill &SelectedSkill = character->Skills().Get((PSSKILL) info->id);
+            if(skillAmount > SelectedSkill.yCost-SelectedSkill.y)
+                skillAmount = SelectedSkill.yCost-SelectedSkill.y;
 
             character->UseProgressionPoints(skillAmount);
             character->SetMoney(character->Money()-(info->price * skillAmount));
