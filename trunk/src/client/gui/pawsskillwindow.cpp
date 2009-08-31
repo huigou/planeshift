@@ -648,6 +648,13 @@ void pawsSkillWindow::BuyMaxSkill()
 
     if (skillCache.getProgressionPoints() < possibleTraining)
         possibleTraining = skillCache.getProgressionPoints();
+        
+    //check for 0 pp
+    if(!possibleTraining)
+    {
+        PawsManager::GetSingleton().CreateWarningBox("You don't have PP to train.");
+        return;
+    }
 
     commandData.Format("<B NAME=\"%s\" AMOUNT=\"%d\"/>", EscpXML(selectedSkill).GetData(), possibleTraining);
     psGUISkillMessage msg(psGUISkillMessage::BUY_SKILL, commandData);
@@ -673,6 +680,14 @@ void pawsSkillWindow::BuySkill()
 
     if (skillCache.getProgressionPoints() < possibleTraining)
         possibleTraining = skillCache.getProgressionPoints();
+    
+    //check for 0 pp
+    if(!possibleTraining)
+    {
+        PawsManager::GetSingleton().CreateWarningBox("You don't have PP to train.");
+        return;
+    }
+
     pawsNumberPromptWindow::Create("Training amount", 0, 1, possibleTraining, this, "Training amount");
 }
 
