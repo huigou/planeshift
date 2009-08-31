@@ -1,7 +1,7 @@
 <widget_description>
 
 <widget name="SmallInventoryWindow" factory="pawsSmallInventoryWindow" 
-        visible="no" savepositions="no" movable="yes" 
+        visible="no" savepositions="yes" movable="yes" 
         resizable="no" configurable="yes" style="New Standard GUI">
 
     <frame x="100" y="400" width="530" height="170" border="yes" />
