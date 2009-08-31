@@ -155,7 +155,7 @@ bool psEffectObjSound::Render(const csVector3 &up)
                 return false;
             }
             sndSource3d= scfQueryInterface<SOUND_SOURCE3D_TYPE> (sndSource);
-            if (!sndSource.IsValid())
+            if (!sndSource3d.IsValid())
             {
                 csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Could not create %s effect obj sound 3D source.\n", name.GetData());
                 return false;
