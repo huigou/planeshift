@@ -260,7 +260,6 @@ psGuildMember * psGuildInfo::FindLeader()
 
 void psGuildInfo::Connect(psCharacter *player)
 {
-    printf("a\n");
     for (size_t i=0; i<members.GetSize(); i++)
     {
         if (members[i]->char_id == player->GetPID())
