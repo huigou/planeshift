@@ -404,7 +404,6 @@ void pawsGuildWindow::HandleMemberData( csString& openString )
     if (memberNode)
     {
         memberList->SelfPopulate(memberNode);
-        memberList->SetSortedColumn(0);
         memberList->SortRows();
     }
     else
