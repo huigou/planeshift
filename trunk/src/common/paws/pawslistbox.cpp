@@ -131,7 +131,7 @@ void pawsListBox::Clear()
 
 bool pawsListBox::Setup( iDocumentNode* node )
 {
-    csString sortBy, sortOrder;
+    csString sortOrder;
 
     csRef<iDocumentNode> columnsNode = node->GetNode( "columns" );
 
@@ -197,9 +197,7 @@ bool pawsListBox::Setup( iDocumentNode* node )
     if (usingTitleRow)
         CreateTitleRow();
 
-    sortBy = node->GetAttributeValue("sortBy");
-    if (sortBy.GetData() != NULL)
-        SetSortedColumn(atoi(sortBy.GetData()));
+    SetSortedColumn(node->GetAttributeValueAsInt("sortBy", 0));
 
     csString selectableAttr = node->GetAttributeValue("selectable");
     selectable = selectableAttr != "0";
