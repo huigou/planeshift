@@ -73,9 +73,13 @@ psCamera::psCamera()
     view = csPtr<iView> (new csView(psengine->GetEngine(), psengine->GetG3D()));
 
     actor = NULL;
+    race = NULL;
+    npcModeTarget = NULL;
 
     vc =  csQueryRegistry<iVirtualClock> (psengine->GetObjectRegistry());
     cdsys =  csQueryRegistry<iCollideSystem> (psengine->GetObjectRegistry ());
+
+    prevTicks = 0;
 
     // most of these are default values that will be overwritten
     firstPersonPositionOffset = csVector3(0, 1, 0);
@@ -83,17 +87,14 @@ psCamera::psCamera()
     pitchVelocity = 0.0f;
     yawVelocity   = 0.0f;
 
+    //cameradata fields are initialized to 0 in the constructor
+    //change values here that should be non-zero.
     camData[CAMERA_FIRST_PERSON].springCoef = 10.0f;
     camData[CAMERA_FIRST_PERSON].InertialDampeningCoef = 0.1f;
     camData[CAMERA_FIRST_PERSON].springLength = 0.01f;
     camData[CAMERA_FIRST_PERSON].maxDistance = 1.0f;
     camData[CAMERA_FIRST_PERSON].minDistance = 1.0f;
     camData[CAMERA_FIRST_PERSON].distance = camData[CAMERA_FIRST_PERSON].minDistance;
-    camData[CAMERA_FIRST_PERSON].turnSpeed = 0.0f;
-    camData[CAMERA_FIRST_PERSON].swingCoef = 0.0f;
-    camData[CAMERA_FIRST_PERSON].defaultPitch = camData[CAMERA_FIRST_PERSON].pitch = 0.0f;
-    camData[CAMERA_FIRST_PERSON].defaultRoll  = camData[CAMERA_FIRST_PERSON].roll  = 0.0f;
-    camData[CAMERA_FIRST_PERSON].defaultYaw   = camData[CAMERA_FIRST_PERSON].yaw   = 0.0f;
 
     camData[CAMERA_THIRD_PERSON].springCoef = 3.5f;
     camData[CAMERA_THIRD_PERSON].InertialDampeningCoef = 0.25f;
@@ -101,11 +102,6 @@ psCamera::psCamera()
     camData[CAMERA_THIRD_PERSON].maxDistance = 15.0f;
     camData[CAMERA_THIRD_PERSON].minDistance = 1.0f;
     camData[CAMERA_THIRD_PERSON].distance = camData[CAMERA_THIRD_PERSON].minDistance;
-    camData[CAMERA_THIRD_PERSON].turnSpeed = 0.0f;
-    camData[CAMERA_THIRD_PERSON].swingCoef = 0.0f;
-    camData[CAMERA_THIRD_PERSON].defaultPitch = camData[CAMERA_THIRD_PERSON].pitch = 0.0f;
-    camData[CAMERA_THIRD_PERSON].defaultRoll  = camData[CAMERA_THIRD_PERSON].roll  = 0.0f;
-    camData[CAMERA_THIRD_PERSON].defaultYaw   = camData[CAMERA_THIRD_PERSON].yaw   = 0.0f;
 
     camData[CAMERA_M64_THIRD_PERSON].springCoef = 3.5f;
     camData[CAMERA_M64_THIRD_PERSON].InertialDampeningCoef = 0.25f;
@@ -114,10 +110,6 @@ psCamera::psCamera()
     camData[CAMERA_M64_THIRD_PERSON].maxDistance = 6.0f;
     camData[CAMERA_M64_THIRD_PERSON].distance = camData[CAMERA_M64_THIRD_PERSON].minDistance;
     camData[CAMERA_M64_THIRD_PERSON].turnSpeed = 1.0f;
-    camData[CAMERA_M64_THIRD_PERSON].swingCoef = 0.0f;
-    camData[CAMERA_M64_THIRD_PERSON].defaultPitch = camData[CAMERA_M64_THIRD_PERSON].pitch = 0.0f;
-    camData[CAMERA_M64_THIRD_PERSON].defaultRoll  = camData[CAMERA_M64_THIRD_PERSON].roll  = 0.0f;
-    camData[CAMERA_M64_THIRD_PERSON].defaultYaw   = camData[CAMERA_M64_THIRD_PERSON].yaw   = 0.0f;
 
     camData[CAMERA_LARA_THIRD_PERSON].springCoef = 3.5f;
     camData[CAMERA_LARA_THIRD_PERSON].InertialDampeningCoef = 0.25f;
@@ -127,9 +119,6 @@ psCamera::psCamera()
     camData[CAMERA_LARA_THIRD_PERSON].distance = camData[CAMERA_LARA_THIRD_PERSON].minDistance;
     camData[CAMERA_LARA_THIRD_PERSON].turnSpeed = 1.0f;
     camData[CAMERA_LARA_THIRD_PERSON].swingCoef = 0.7f;
-    camData[CAMERA_LARA_THIRD_PERSON].defaultPitch = camData[CAMERA_LARA_THIRD_PERSON].pitch = 0.0f;
-    camData[CAMERA_LARA_THIRD_PERSON].defaultRoll  = camData[CAMERA_LARA_THIRD_PERSON].roll  = 0.0f;
-    camData[CAMERA_LARA_THIRD_PERSON].defaultYaw   = camData[CAMERA_LARA_THIRD_PERSON].yaw   = 0.0f;
 
     camData[CAMERA_FREE].springCoef = 3.5f;
     camData[CAMERA_FREE].InertialDampeningCoef = 0.25f;
@@ -137,35 +126,8 @@ psCamera::psCamera()
     camData[CAMERA_FREE].minDistance = 2.0f;
     camData[CAMERA_FREE].maxDistance = 16.0f;
     camData[CAMERA_FREE].distance = camData[CAMERA_FREE].minDistance;
-    camData[CAMERA_FREE].turnSpeed = 0.0f;
-    camData[CAMERA_FREE].swingCoef = 0.0f;
-    camData[CAMERA_FREE].defaultPitch = camData[CAMERA_FREE].pitch = 0.0f;
-    camData[CAMERA_FREE].defaultRoll  = camData[CAMERA_FREE].roll  = 0.0f;
-    camData[CAMERA_FREE].defaultYaw   = camData[CAMERA_FREE].yaw   = 0.0f;
 
-    camData[CAMERA_ACTUAL_DATA].springCoef = 0.0f;
-    camData[CAMERA_ACTUAL_DATA].InertialDampeningCoef = 0.0;
     camData[CAMERA_ACTUAL_DATA].springLength = 0.01f;
-    camData[CAMERA_ACTUAL_DATA].minDistance = 0.0f;
-    camData[CAMERA_ACTUAL_DATA].maxDistance = 0.0f;
-    camData[CAMERA_ACTUAL_DATA].distance = camData[CAMERA_ACTUAL_DATA].minDistance;
-    camData[CAMERA_ACTUAL_DATA].turnSpeed = 0.0f;
-    camData[CAMERA_ACTUAL_DATA].swingCoef = 0.0f;
-    camData[CAMERA_ACTUAL_DATA].defaultPitch = camData[CAMERA_ACTUAL_DATA].pitch = 0.0f;
-    camData[CAMERA_ACTUAL_DATA].defaultRoll  = camData[CAMERA_ACTUAL_DATA].roll  = 0.0f;
-    camData[CAMERA_ACTUAL_DATA].defaultYaw   = camData[CAMERA_ACTUAL_DATA].yaw   = 0.0f;
-
-    camData[CAMERA_LAST_ACTUAL].springCoef = 0.0f;
-    camData[CAMERA_LAST_ACTUAL].InertialDampeningCoef = 0.0;
-    camData[CAMERA_LAST_ACTUAL].springLength = 0.01f;
-    camData[CAMERA_LAST_ACTUAL].minDistance = 0.0f;
-    camData[CAMERA_LAST_ACTUAL].maxDistance = 0.0f;
-    camData[CAMERA_LAST_ACTUAL].distance = camData[CAMERA_LAST_ACTUAL].minDistance;
-    camData[CAMERA_LAST_ACTUAL].turnSpeed = 0.0f;
-    camData[CAMERA_LAST_ACTUAL].swingCoef = 0.0f;
-    camData[CAMERA_LAST_ACTUAL].defaultPitch = camData[CAMERA_LAST_ACTUAL].pitch = 0.0f;
-    camData[CAMERA_LAST_ACTUAL].defaultRoll  = camData[CAMERA_LAST_ACTUAL].roll  = 0.0f;
-    camData[CAMERA_LAST_ACTUAL].defaultYaw   = camData[CAMERA_LAST_ACTUAL].yaw   = 0.0f;
 
     camData[CAMERA_TRANSITION].springCoef = 3.5f;
     camData[CAMERA_TRANSITION].InertialDampeningCoef = 0.25f;
@@ -173,11 +135,6 @@ psCamera::psCamera()
     camData[CAMERA_TRANSITION].minDistance = 1.0f;
     camData[CAMERA_TRANSITION].maxDistance = 16.0f;
     camData[CAMERA_TRANSITION].distance = camData[CAMERA_TRANSITION].minDistance;
-    camData[CAMERA_TRANSITION].turnSpeed = 0.0f;
-    camData[CAMERA_TRANSITION].swingCoef = 0.0f;
-    camData[CAMERA_TRANSITION].defaultPitch = camData[CAMERA_TRANSITION].pitch = 0.0f;
-    camData[CAMERA_TRANSITION].defaultRoll  = camData[CAMERA_TRANSITION].roll  = 0.0f;
-    camData[CAMERA_TRANSITION].defaultYaw   = camData[CAMERA_TRANSITION].yaw   = 0.0f;
 
     camData[CAMERA_NPCTALK].springCoef = 3.5f;
     camData[CAMERA_NPCTALK].InertialDampeningCoef = 0.25f;
@@ -185,11 +142,6 @@ psCamera::psCamera()
     camData[CAMERA_NPCTALK].minDistance = 0.50f;
     camData[CAMERA_NPCTALK].maxDistance = 15.0f;
     camData[CAMERA_NPCTALK].distance = camData[CAMERA_NPCTALK].minDistance;
-    camData[CAMERA_NPCTALK].turnSpeed = 0.0f;
-    camData[CAMERA_NPCTALK].swingCoef = 0.0f;
-    camData[CAMERA_NPCTALK].defaultPitch = camData[CAMERA_NPCTALK].pitch = 0.0f;
-    camData[CAMERA_NPCTALK].defaultRoll  = camData[CAMERA_NPCTALK].roll  = 0.0f;
-    camData[CAMERA_NPCTALK].defaultYaw   = camData[CAMERA_NPCTALK].yaw   = 0.0f;
 
     camData[CAMERA_COLLISION].springCoef = 1.0f;
     camData[CAMERA_COLLISION].InertialDampeningCoef = 0.25f;
@@ -197,27 +149,14 @@ psCamera::psCamera()
     camData[CAMERA_COLLISION].minDistance = 2.0f;
     camData[CAMERA_COLLISION].maxDistance = 16.0f;
     camData[CAMERA_COLLISION].distance = camData[CAMERA_COLLISION].minDistance;
-    camData[CAMERA_COLLISION].turnSpeed = 0.0f;
-    camData[CAMERA_COLLISION].swingCoef = 0.0f;
-    camData[CAMERA_COLLISION].defaultPitch = camData[CAMERA_COLLISION].pitch = 0.0f;
-    camData[CAMERA_COLLISION].defaultRoll  = camData[CAMERA_COLLISION].roll  = 0.0f;
-    camData[CAMERA_COLLISION].defaultYaw   = camData[CAMERA_COLLISION].yaw   = 0.0f;
 
-    camData[CAMERA_ERR].springCoef = 0.0f;
-    camData[CAMERA_ERR].InertialDampeningCoef = 0.0;
     camData[CAMERA_ERR].springLength = 0.01f;
-    camData[CAMERA_ERR].minDistance = 0.0f;
-    camData[CAMERA_ERR].maxDistance = 0.0f;
-    camData[CAMERA_ERR].distance = camData[CAMERA_ERR].minDistance;
-    camData[CAMERA_ERR].turnSpeed = 0.0f;
-    camData[CAMERA_ERR].swingCoef = 0.0f;
-    camData[CAMERA_ERR].defaultPitch = camData[CAMERA_ERR].pitch = 0.0f;
-    camData[CAMERA_ERR].defaultRoll  = camData[CAMERA_ERR].roll  = 0.0f;
-    camData[CAMERA_ERR].defaultYaw   = camData[CAMERA_ERR].yaw   = 0.0f;
 
     currCameraMode = CAMERA_ERR;
+    lastCameraMode = CAMERA_ERR;
 
     transitionThresholdSquared = 1.0f;
+    inTransitionPhase = false;
     cameraHasBeenPositioned = false;
     hasCollision = false;
 
@@ -231,6 +170,10 @@ psCamera::psCamera()
 
     useCameraCD = false;
     useNPCCam = false;
+    npcModePosition = csVector3(0, 0, 0);
+    npcOldRot = 0.0f;
+    vel = 0.0f;
+
 
     lastActorSector = 0;
 
