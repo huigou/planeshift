@@ -804,6 +804,8 @@ void psCharacter::SetLastLoginTime(const char *last_login, bool save )
     }
 
     this->lastlogintime = timeStr;
+    
+    guildinfo->UpdateLastLogin(this);
 
     if ( save )
     {
