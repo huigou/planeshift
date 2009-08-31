@@ -765,6 +765,7 @@ enum {
     CHAT_NPC_ME,
     CHAT_NPC_MY,
     CHAT_NPC_NARRATE,
+    CHAT_AWAY,             ///< Autoaway tell message, should be handled as CHAT_TELL, except for warning
     CHAT_END
 };
 

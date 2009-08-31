@@ -93,7 +93,7 @@ void ChatManager::HandleChatMessage(MsgEntry *me, Client *client)
 
     const char *pType = msg.GetTypeText();
 
-    if (msg.iChatType != CHAT_TELL)
+    if (msg.iChatType != CHAT_TELL && msg.iChatType != CHAT_AWAY)
     {
         Debug4(LOG_CHAT, client->GetClientNum(),
                 "%s %s: %s\n", client->GetName(),
@@ -233,6 +233,12 @@ void ChatManager::HandleChatMessage(MsgEntry *me, Client *client)
                       resp->menu->ShowMenu(client, delay, targetnpc->GetPID());
               }
               break;
+          }
+          case CHAT_AWAY:
+          {
+              saveFlood = false; //do not check Away messages for flooding
+              msg.iChatType = CHAT_TELL; //do regard it as tell message from now on
+              //intentionally no break, so it falls through to CHAT_TELL
           }
           case CHAT_TELL:
           {

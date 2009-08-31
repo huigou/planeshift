@@ -101,7 +101,8 @@ const char *CHAT_TYPES[] = {
 		"CHAT_PET_ACTION",
 		"CHAT_NPC_ME",
 		"CHAT_NPC_MY",
-		"CHAT_NPC_NARRATE"
+		"CHAT_NPC_NARRATE",
+        "CHAT_AWAY"
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -1147,6 +1148,7 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
     switch( msg.iChatType )
     {
         case CHAT_TELL:
+        case CHAT_AWAY:
         case CHAT_SERVER_TELL:
         case CHAT_TELLSELF:
         case CHAT_GUILD:
@@ -1312,7 +1314,7 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
         }
 
         case CHAT_TELL:
-
+        case CHAT_AWAY:
             //Move list of lastreplies down to make room for new lastreply if necessary
             if (replyList[0] != msg.sPerson)
             {
@@ -1438,7 +1440,7 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
     // Add the player to our auto-complete list
     AddAutoCompleteName(msg.sPerson);
 
-    if (msg.iChatType != CHAT_TELL)
+    if (msg.iChatType != CHAT_TELL && msg.iChatType != CHAT_AWAY)
     {
         if ( noCasePlayerForename == noCasePerson || msg.iChatType == CHAT_TELLSELF)
         {
@@ -1475,10 +1477,12 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
         else if ( clientmsg.StartsWith("/my ") )
             clientmsg.Format("%s's %s",psengine->GetMainPlayerName(), ((const char *)awayText)+4);
 
-        autoResponse.Format("/tell %s [auto-reply] %s", (const char*)msg.sPerson, clientmsg.GetData());
-        const char* errorMessage = cmdsource->Publish(autoResponse.GetData());
-        if ( errorMessage )
-            ChatOutput( errorMessage );
+        if (settings.enableBadWordsFilterOutgoing)
+            BadWordsFilter(clientmsg);
+        
+        autoResponse.Format("[auto-reply] %s",clientmsg.GetData());
+        psChatMessage chat(0, 0, (const char*)msg.sPerson, 0, autoResponse.GetDataSafe(), CHAT_AWAY, false, 0);
+        msgqueue->SendMessage(chat.msg);  // Send away msg to server
     }
 }
 
@@ -2072,6 +2076,7 @@ csString pawsChatWindow::GetBracket(int type) //according to the type return the
     switch (type)
     {
         case CHAT_TELL:
+        case CHAT_AWAY:
         case CHAT_TELLSELF:
             return "[Tell] ";
         case CHAT_GUILD:

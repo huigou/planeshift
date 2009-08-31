@@ -510,6 +510,7 @@ const char *psChatMessage::GetTypeText()
     {
         case CHAT_SAY:        return "Say";
         case CHAT_TELL:       return "Tell";
+        case CHAT_AWAY:       return "Tell";
         case CHAT_NPC:        return "TellNPC";
         case CHAT_TELLSELF:   return "TellSelf";
         case CHAT_GROUP:      return "GroupMsg";
