@@ -260,13 +260,13 @@ psGuildMember * psGuildInfo::FindLeader()
 
 void psGuildInfo::Connect(psCharacter *player)
 {
+    printf("a\n");
     for (size_t i=0; i<members.GetSize(); i++)
     {
         if (members[i]->char_id == player->GetPID())
         {
             player->SetGuild(this);
             members[i]->actor = player;
-            members[i]->last_login = player->GetLastLoginTime();
         }
     }
 }
@@ -280,6 +280,19 @@ void psGuildInfo::Disconnect(psCharacter *player)
         {
             player->SetGuild(NULL);
             members[i]->actor = NULL;
+            break;
+        }
+    }
+}
+
+void psGuildInfo::UpdateLastLogin(psCharacter *player)
+{
+    //updates last login informations for this member
+    for (size_t i=0; i<members.GetSize(); i++)
+    {
+        if (members[i]->actor == player)
+        {
+            members[i]->last_login = player->GetLastLoginTime();
             break;
         }
     }

@@ -159,6 +159,7 @@ public:
 
     void Connect(psCharacter *player);        ///< Find existing and set actor
     void Disconnect(psCharacter *player);     ///< Find actor, remove and check for delete if last one
+    void UpdateLastLogin(psCharacter *player);///< Updates the last login informations for this player
 
     psGuildMember *FindMember(const char *name);
     psGuildMember *FindMember(PID char_id);
