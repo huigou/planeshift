@@ -896,12 +896,15 @@ bool EntityManager::CreateRoom(const char* name, const char* mapfile)
     
     if (first)
     {       
-        gameWorld->CreateMap( name, mapfile,psWorld::LOAD_NOW, false );        
+        if(!gameWorld->CreateMap( name, mapfile,psWorld::LOAD_NOW, false ))
+            return false;
+
         first = false;
     }
     else
     {        
-        gameWorld->NewRegion(mapfile,psWorld::LOAD_NOW, false);
+        if(!gameWorld->NewRegion(mapfile,psWorld::LOAD_NOW, false))
+            return false;
     }
     return true;
 }
@@ -915,15 +918,18 @@ void EntityManager::HandleAllRequest(MsgEntry* me, Client *client)
         csHash<gemObject*, EID>& gems = gem->GetAllGEMS();
         csHash<gemObject*, EID>::GlobalIterator i(gems.GetIterator());
         gemObject* obj;
+  
+  psserver->npcmanager->SendNPCList(client);
     
         while ( i.HasNext() )
         {
             obj = i.Next();       
             // Send to superclient given by clientnum
+            //csSleep(50);
             obj->Send( me->clientnum, false,  true );
         }
 
-        psserver->npcmanager->SendNPCList(client);
+        //psserver->npcmanager->SendNPCList(client);
     }
     else
     {
