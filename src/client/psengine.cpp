@@ -1278,7 +1278,6 @@ void psEngine::LoadGame()
     {
         paws->LoadWidget("loadwindow.xml");
         LoadPawsWidget("Active Magic window","activemagicwindow.xml" );
-        HideWindow("ActiveMagicWindow");
 
         pawsLoadWindow* window = dynamic_cast <pawsLoadWindow*> (paws->FindWidget("LoadWindow"));
         if (!window)
@@ -1471,7 +1470,6 @@ void psEngine::LoadGame()
         HideWindow("QuestRewardWindow");
         HideWindow("SpellCancelWindow");
         HideWindow("GMSpawnWindow");
-        HideWindow("SmallInventoryWindow");
         HideWindow("AddEditActionWindow");
         HideWindow("GmGUI");
         HideWindow("PetStatWindow");
