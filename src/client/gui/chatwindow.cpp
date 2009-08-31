@@ -2096,6 +2096,8 @@ csString pawsChatWindow::GetBracket(int type) //according to the type return the
         case CHAT_NPC_MY:
         case CHAT_NPC_NARRATE:
             return "[NPC] ";
+        case CHAT_CHANNEL:
+            return "[Channel] ";
     }
     return "";
 }
