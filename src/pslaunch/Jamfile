@@ -24,6 +24,7 @@ STATIC.PLUGINLIST =
   fontplex
   freefnt2
   gl3d
+  engine
   imgplex
   shadermgr
   vfs
