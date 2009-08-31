@@ -1048,6 +1048,9 @@ void psCelClient::OnMapsLoaded()
         else
            ++posIter;
     }
+    GEMClientActor* actor = GetMainPlayer();
+    if (actor)
+        actor->GetMovement()->SetOnGround(false);
 }
 
 void psCelClient::PruneEntities()
@@ -2005,6 +2008,7 @@ bool GEMClientActor::CheckLoadStatus()
     csRef<iMeshFactoryWrapper> factory = psengine->GetLoader()->LoadFactory(factName);
     if(!factory.IsValid())
     {
+        printf("status\n");
         return true;
     }
 
