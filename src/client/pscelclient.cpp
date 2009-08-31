@@ -2008,7 +2008,6 @@ bool GEMClientActor::CheckLoadStatus()
     csRef<iMeshFactoryWrapper> factory = psengine->GetLoader()->LoadFactory(factName);
     if(!factory.IsValid())
     {
-        printf("status\n");
         return true;
     }
 
