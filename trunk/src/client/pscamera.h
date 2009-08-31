@@ -489,6 +489,20 @@ private:
         float springLength;
 
         float swingCoef;
+
+        //initialize all here:
+        CameraData()
+        {
+            worldPos.Set(0.0f,0.0f,0.0f);
+            worldTar.Set(0.0f,0.0f,0.0f);
+            worldUp.Set(0.0f,0.0f,0.0f);
+            pitch = yaw = roll = 0;
+            defaultPitch = defaultYaw = defaultRoll = 0.0f;
+            distance = minDistance = maxDistance = 0.0f;
+            turnSpeed  = 0.0f;
+            springCoef = InertialDampeningCoef = springLength = 0.0f;
+            swingCoef=0.0f;
+        }
     };
 
     float CalcSpringCoef(float springyness, float scale) const;
