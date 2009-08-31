@@ -54,6 +54,8 @@ psLauncherGUI::psLauncherGUI(iObjectRegistry* _object_reg, InfoShare *_infoShare
     
     drawScreen = true;
     psLaunchGUI = this;
+    fileUtil = NULL;
+    downloader = NULL;
     paws = NULL;
     updateTold = false;
 }
@@ -111,13 +113,6 @@ bool psLauncherGUI::InitApp()
         printf("GetDriver2D failed to Init!\n");
         return false;
     }
-
-    csRef<iLoader> loader = csQueryRegistry<iLoader> (object_reg);
-    if (!loader)
-    {
-        printf("Loader failed to Init!\n");
-        return false;
-    }      
 
     // Initialise downloader.
     downloader = new Downloader(vfs);
