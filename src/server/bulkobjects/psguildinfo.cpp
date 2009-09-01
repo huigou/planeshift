@@ -332,6 +332,7 @@ bool psGuildInfo::AddNewMember(psCharacter *player, int level)
     members.Push(gm);
 
     Connect(player);
+    UpdateLastLogin(player);
 
     return true;
 }
