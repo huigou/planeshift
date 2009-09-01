@@ -131,7 +131,7 @@ void pawsListBox::Clear()
 
 bool pawsListBox::Setup( iDocumentNode* node )
 {
-    csString sortBy, sortOrder;
+    csString sortOrder;
 
     csRef<iDocumentNode> columnsNode = node->GetNode( "columns" );
 
@@ -197,11 +197,7 @@ bool pawsListBox::Setup( iDocumentNode* node )
     if (usingTitleRow)
         CreateTitleRow();
 
-    sortBy = node->GetAttributeValue("sortBy");
-    if (sortBy.GetData() != NULL)
-        SetSortedColumn(atoi(sortBy.GetData()));
-    else
-        SetSortedColumn(0);
+    SetSortedColumn(node->GetAttributeValueAsInt("sortBy"));
 
     csString selectableAttr = node->GetAttributeValue("selectable");
     selectable = selectableAttr != "0";
@@ -954,7 +950,7 @@ void pawsListBox::CreateSortingArrow(int colNum)
     pawsWidget * title = GetColumnTitle(colNum);
     if (title == NULL)
         return;
-
+        
     pawsWidget * arrow = new pawsWidget();
     title->AddChild(arrow);
     arrow->SetRelativeFrame(title->ScreenFrame().Width()-arrowSize, 0, arrowSize, arrowSize);
@@ -974,6 +970,20 @@ void pawsListBox::SetSortingArrow(int colNum, bool ascOrder)
             arrow->SetBackground(arrowUp);
         else
             arrow->SetBackground(arrowDown);
+    }
+}
+
+void pawsListBox::CheckSortingArrow(int colNum, bool ascOrder)
+{
+    pawsWidget * title = GetColumnTitle(colNum);
+    if (title == NULL)
+        return;
+
+    pawsWidget * arrow = title->FindWidget("SortingArrow");
+    if(arrow == NULL)
+    {
+        CreateSortingArrow(colNum);
+        SetSortingArrow(colNum, ascOrder);
     }
 }
 
@@ -1040,6 +1050,8 @@ void pawsListBox::SortRows()
     }
 
     delete [] sortedRows;
+
+    CheckSortingArrow(sortColNum, ascOrder); //check if the sorting arrow is there if not add it
 
     Select(GetSelectedRow()); //allows select to handle the new position and update gfx correctly
 

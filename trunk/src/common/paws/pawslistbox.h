@@ -307,6 +307,7 @@ protected:
 
     void CreateSortingArrow(int colNum);
     void SetSortingArrow(int colNum, bool ascOrder);
+    void CheckSortingArrow(int colNum, bool ascOrder);
     void DeleteSortingArrow(int colNum);
     
     pawsWidget * GetColumnTitle(int colNum);
