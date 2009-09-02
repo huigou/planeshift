@@ -202,7 +202,7 @@ void pawsInteractWindow::HandleMessage( MsgEntry* me )
 bool pawsInteractWindow::OnMouseDown(int button, int modifiers,int x,int y)
 {
     Hide();
-    PawsManager::GetSingleton().SetCurrentFocusedWidget( NULL );
+    //PawsManager::GetSingleton().SetCurrentFocusedWidget( NULL );
     return true;
 }
 
@@ -214,7 +214,7 @@ bool pawsInteractWindow::OnButtonPressed( int mouseButton, int keyModifier, paws
         case INTERACT_CLOSE:
         {
             Hide();
-            PawsManager::GetSingleton().SetCurrentFocusedWidget( NULL );
+            //PawsManager::GetSingleton().SetCurrentFocusedWidget( NULL );
             return true;
         }
 
@@ -232,7 +232,7 @@ bool pawsInteractWindow::OnButtonPressed( int mouseButton, int keyModifier, paws
             out.SendMessage();
            
             Hide();
-            PawsManager::GetSingleton().SetCurrentFocusedWidget( NULL );
+            //PawsManager::GetSingleton().SetCurrentFocusedWidget( NULL );
             return true;
         }
 
@@ -249,7 +249,7 @@ bool pawsInteractWindow::OnButtonPressed( int mouseButton, int keyModifier, paws
             out.SendMessage();
            
             Hide();
-            PawsManager::GetSingleton().SetCurrentFocusedWidget( NULL );
+            //PawsManager::GetSingleton().SetCurrentFocusedWidget( NULL );
             return true;
         }
 
@@ -257,7 +257,6 @@ bool pawsInteractWindow::OnButtonPressed( int mouseButton, int keyModifier, paws
         {
             psengine->GetCmdHandler()->Execute("/pickup");
             Hide();
-            PawsManager::GetSingleton().SetCurrentFocusedWidget( NULL );
             return true;
         }
 
@@ -265,42 +264,36 @@ bool pawsInteractWindow::OnButtonPressed( int mouseButton, int keyModifier, paws
         {
             psengine->GetCmdHandler()->Execute("/loot");
             Hide();
-            PawsManager::GetSingleton().SetCurrentFocusedWidget( NULL );
             return true;
         }
         case INTERACT_BUYSELL:
         {
             psengine->GetCmdHandler()->Execute("/buy");
             Hide();
-            PawsManager::GetSingleton().SetCurrentFocusedWidget( NULL );
             return true;
         }
         case INTERACT_GIVE:
         {
             psengine->GetCmdHandler()->Execute("/give");
             Hide();
-            PawsManager::GetSingleton().SetCurrentFocusedWidget( NULL );
             return true;
         }
         case INTERACT_COMBINE:
         {
             psengine->GetCmdHandler()->Execute("/combine");
             Hide();
-            PawsManager::GetSingleton().SetCurrentFocusedWidget( NULL );
             return true;
         }
         case INTERACT_CONSTRUCT:
         {
             psengine->GetCmdHandler()->Execute("/construct");
             Hide();
-            PawsManager::GetSingleton().SetCurrentFocusedWidget( NULL );
             return true;
         }
         case INTERACT_USE:
         {
             psengine->GetCmdHandler()->Execute("/use");
             Hide();
-            PawsManager::GetSingleton().SetCurrentFocusedWidget( NULL );
             return true;
         }
         case INTERACT_UNLOCK:
@@ -308,49 +301,42 @@ bool pawsInteractWindow::OnButtonPressed( int mouseButton, int keyModifier, paws
         {
             psengine->GetCmdHandler()->Execute("/picklock");
             Hide();
-            PawsManager::GetSingleton().SetCurrentFocusedWidget( NULL );
             return true;
         }
         case INTERACT_PLAYERDESC:
         {
             psengine->GetCmdHandler()->Execute("/targetinfo");
             Hide();
-            PawsManager::GetSingleton().SetCurrentFocusedWidget( NULL );
             return true;
         }
         case INTERACT_ATTACK:
         {
             psengine->GetCmdHandler()->Execute("/attack");
             Hide();
-            PawsManager::GetSingleton().SetCurrentFocusedWidget( NULL );
             return true;
         }
         case INTERACT_EXCHANGE:
         {
             psengine->GetCmdHandler()->Execute("/trade");
             Hide();
-            PawsManager::GetSingleton().SetCurrentFocusedWidget( NULL );
             return true;
         }
         case INTERACT_BANK:
         {
             psengine->GetCmdHandler()->Execute("/bank personal");
             Hide();
-            PawsManager::GetSingleton().SetCurrentFocusedWidget( NULL );
             return true;
         }
         case INTERACT_INTRODUCE:
         {
             psengine->GetCmdHandler()->Execute("/introduce");
             Hide();
-            PawsManager::GetSingleton().SetCurrentFocusedWidget( NULL );
             return true;
         }
         case INTERACT_TRAIN:
         {
             psengine->GetCmdHandler()->Execute("/train");
             Hide();
-            PawsManager::GetSingleton().SetCurrentFocusedWidget( NULL );
             return true;
         }
         case INTERACT_NPCTALK: //speak to NPCs
@@ -382,7 +368,6 @@ bool pawsInteractWindow::OnButtonPressed( int mouseButton, int keyModifier, paws
         {
             psengine->GetCmdHandler()->Execute("/pet dismiss");
             Hide();
-            PawsManager::GetSingleton().SetCurrentFocusedWidget( NULL );
             return true;
         }
         case INTERACT_MARRIAGE:
@@ -405,21 +390,18 @@ bool pawsInteractWindow::OnButtonPressed( int mouseButton, int keyModifier, paws
         {
             psengine->GetCmdHandler()->Execute("/game");
             Hide();
-            PawsManager::GetSingleton().SetCurrentFocusedWidget( NULL );
             return true;
         }
         case INTERACT_MOUNT:
         {
             psengine->GetCmdHandler()->Execute("/mount");
             Hide();
-            PawsManager::GetSingleton().SetCurrentFocusedWidget( NULL );
             return true;
         }
         case INTERACT_UNMOUNT:
         {
             psengine->GetCmdHandler()->Execute("/unmount");
             Hide();
-            PawsManager::GetSingleton().SetCurrentFocusedWidget( NULL );
             return true;
         }
     }
@@ -447,7 +429,7 @@ void pawsInteractWindow::Draw()
     // Autohide
     if(psengine->GetVirtualClock()->GetCurrentTicks() - openTick > 10000)
     {
-        PawsManager::GetSingleton().SetCurrentFocusedWidget( NULL );
+        //PawsManager::GetSingleton().SetCurrentFocusedWidget( NULL );
         Hide();
     }
 
