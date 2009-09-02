@@ -520,6 +520,13 @@ void psNPCDialog::SubstituteKeywords(Client * player, csString& resp) const
                 Error4("Failed to replace substring %s in %s with %s",word.GetData(),response.GetData(),timestr.GetData());
             }
         }
+        else if (word == "$npc")
+        {
+            if(response.ReplaceSubString(word,self->GetName()))
+            {
+                Error4("Failed to replace substring %s in %s with %s",word.GetData(),response.GetData(),player->GetName());
+            }
+        }
         where = response.FindSubString(dollarsign,where+1);
     }
     resp = response;
