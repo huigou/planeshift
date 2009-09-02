@@ -1447,9 +1447,9 @@ csTicks NpcResponse::ExecuteScript(gemActor *player, gemNPC* target)
         }
         else if(voiceNumber >= 0) //if it's >= 0. we have to run a voice, else -1 and -2 means we have nothing to do
         {
-            //substituites $npc with the npcname
+            //substituites $keywords
             csString voiceFile = this->GetVoiceFile(voiceNumber);
-            voiceFile.ReplaceAll("$npc", target->GetName());
+            target->GetNPCDialogPtr()->SubstituteKeywords(player->GetClient(),voiceFile);
 
             //executes the voice file
             psserver->GetChatManager()->SendMultipleAudioFileHashes(player->GetClient(), voiceFile);
