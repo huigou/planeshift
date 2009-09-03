@@ -124,13 +124,24 @@ public:
 
     /** @brief Loads a widget definition file.
      *
-     *  This loads a widget from XML and adds it to the main widget.
+     *  This loads a widget from the specified XML file and adds it to the main widget.
      *
      *  @param widgetFile The standard path of the widget to load.
      *  @see psLocalization::FindLocalizedFile()
      *  @return True if the widget was loaded properly.
      */
     bool LoadWidget( const char* widgetFile );
+
+    /** @brief Loads a widget definition from a string.
+     *
+     *  This loads a widget from an XML string and returns it to the caller.
+     *
+     *  @param widgetDefinition The xml, either from a file or constructed on the fly.
+     *  @see psLocalization::FindLocalizedFile()
+     *  @return True if the widget was loaded properly.
+     */
+    pawsWidget *LoadWidgetFromString( const char* widgetDefinition );
+
 
     /** @brief Loads a widget from given XML node.
      *  @return NULL on failure.

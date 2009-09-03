@@ -122,7 +122,7 @@ bool pawsConfigKeys::CreateTree()
     if (root != NULL)
         CreateTreeWidgets(root);
 
-
+    tree->SetScrollBars(false,true);
     return true;
 }
 
