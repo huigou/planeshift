@@ -48,12 +48,13 @@
 /////////////////////////////////////////////////////////////////////////////
 //  GUI BUTTON IDENTIFIERS
 /////////////////////////////////////////////////////////////////////////////
-#define CATEGORY_LIST 10
-#define ITEM_LIST     11
-#define DO_SALE       100
-#define EXCHANGE_ALL  110
-#define VIEW_ITEM     150
-#define BUY_RADIO_BUTTON 1000
+#define CATEGORY_LIST     10
+#define ITEM_LIST         11
+#define DO_SALE           100
+#define EXCHANGE_ALL      110
+#define EXCHANGE_SINGLE   120
+#define VIEW_ITEM         150
+#define BUY_RADIO_BUTTON  1000
 #define SELL_RADIO_BUTTON 2000
 /////////////////////////////////////////////////////////////////////////////
 
@@ -358,7 +359,7 @@ void pawsMerchantWindow::HandleItems( const char* data )
     } 
 }
 
-void pawsMerchantWindow::TradeSelectedItem(bool all)
+void pawsMerchantWindow::TradeSelectedItem(bool all, bool single)
 {
     pawsListBoxRow* row = itemsBox->GetSelectedRow();
     if ( row == NULL )
@@ -366,9 +367,9 @@ void pawsMerchantWindow::TradeSelectedItem(bool all)
         return;
 	}
     // If the merchant only has 1 item or if we want to trade all, no need to request the count from the user
-    if (atoi(GetColumnText(row, 0)) == 1 || all)
+    if (atoi(GetColumnText(row, 0)) == 1 || all || single)
     {
-        DoTrade(atoi(GetColumnText(row, 0)),GetColumnText(row, 5), GetColumnText(row, 4));
+        DoTrade(single ? 1 : atoi(GetColumnText(row, 0)),GetColumnText(row, 5), GetColumnText(row, 4));
         return;
     }
 
@@ -447,6 +448,11 @@ bool pawsMerchantWindow::OnButtonPressed( int mouseButton, int keyModifier, paws
         ////////////////////////////////////////////////////////////////
         // These two are for to do the transaction or cancel it
         ////////////////////////////////////////////////////////////////
+		case EXCHANGE_SINGLE:
+		{
+			TradeSelectedItem(false,true);
+			return true;
+		}
 		case EXCHANGE_ALL:
 		{
 			TradeSelectedItem(true);

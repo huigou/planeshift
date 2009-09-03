@@ -57,7 +57,15 @@ protected:
 
     void SetTradeMode( bool buy );
 
-    void TradeSelectedItem( bool all = false );
+    /** Handles the command of trading the item by interacting with the player. 
+     *  Checks if we buy a single or multiple item and asks in case of uncertainity the
+     *  amount of items to buy
+     *  @param all indicates that all the item in the current selected entry will be bought/sold
+     *  @param single indicates only one item in the current selected entry will be bought/sold, even
+     *                if more are available.
+     */
+
+    void TradeSelectedItem( bool all = false, bool single = false );
 
     int merchantID;
     int tradeCommand;
