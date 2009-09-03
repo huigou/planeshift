@@ -87,6 +87,7 @@ struct ChatSettings
     int auctionColor;
     int helpColor;
     bool joindefaultchannel;
+    bool defaultlastchat;
     bool looseFocusOnSend;
     bool logChannel[CHAT_NLOG];
     bool enableBadWordsFilterIncoming, enableBadWordsFilterOutgoing;

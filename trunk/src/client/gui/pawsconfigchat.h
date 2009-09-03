@@ -101,6 +101,7 @@ protected:
     pawsCheckBox* mainBrackets;
     pawsCheckBox* yourColorMix;
     pawsCheckBox* joinDefaultChannel;
+    pawsCheckBox* defaultlastchat;
 };
 
 
