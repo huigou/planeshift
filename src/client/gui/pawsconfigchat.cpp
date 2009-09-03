@@ -93,6 +93,7 @@ pawsConfigChat::pawsConfigChat()
     mainBrackets = NULL;
     yourColorMix = NULL;
     joinDefaultChannel = NULL;
+    defaultlastchat = NULL;
 }
 
 bool pawsConfigChat::Initialize()
@@ -165,6 +166,7 @@ bool pawsConfigChat::PostSetup()
     mainBrackets = (pawsCheckBox*)FindWidget("mainbrackets");
     yourColorMix = (pawsCheckBox*)FindWidget("yourcolormix");
     joinDefaultChannel = (pawsCheckBox*)FindWidget("joindefaultchannel");
+    defaultlastchat = (pawsCheckBox*)FindWidget("defaultlastchat");
                 
     return true;
 }
@@ -181,6 +183,7 @@ bool pawsConfigChat::LoadConfig()
     mainBrackets->SetState(settings.mainBrackets);
     yourColorMix->SetState(settings.yourColorMix);
     joinDefaultChannel->SetState(settings.joindefaultchannel);
+    defaultlastchat->SetState(settings.defaultlastchat);
 
     //gets the tabstyle from the chat settings
     switch (settings.selectTabStyle)
@@ -258,6 +261,7 @@ bool pawsConfigChat::SaveConfig()
     settings.mainBrackets = mainBrackets->GetState();
     settings.yourColorMix = yourColorMix->GetState();
     settings.joindefaultchannel = joinDefaultChannel->GetState();
+    settings.defaultlastchat = defaultlastchat->GetState();
 
     chatWindow->SetSettings(settings);
 

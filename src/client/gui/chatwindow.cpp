@@ -146,6 +146,7 @@ pawsChatWindow::pawsChatWindow()
     settings.mainBrackets = true;
     settings.yourColorMix = true;
     settings.joindefaultchannel = true;
+    settings.defaultlastchat = true;
 
 
     for (int i = 0; i < CHAT_NLOG; i++)
@@ -256,6 +257,8 @@ void pawsChatWindow::LoadChatSettings()
                 settings.yourColorMix = option->GetAttributeValueAsBool("value", true);
             else if (nodeName == "joindefaultchannel")
             	settings.joindefaultchannel = option->GetAttributeValueAsBool("value", true);
+            else if (nodeName == "defaultlastchat")
+            	settings.defaultlastchat = option->GetAttributeValueAsBool("value", true);
             else
             {
                 for (int i = 0; i < CHAT_NLOG; i++)
@@ -464,7 +467,8 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
             pPerson.Clear();
             words.GetTail(1, text);
             chattype = CHAT_NPC;
-            inputText->SetText(words[0] + " ");
+            if(settings.defaultlastchat)
+                inputText->SetText(words[0] + " ");
             DetermineChatTabAndSelect(CHAT_NPC);
         }
         else if (words[0] == "/report")
@@ -472,7 +476,8 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
             pPerson.Clear();
             words.GetTail(1,text);
             chattype = CHAT_REPORT;
-            inputText->SetText(words[0] + " ");
+            if(settings.defaultlastchat)
+                inputText->SetText(words[0] + " ");
             DetermineChatTabAndSelect(CHAT_REPORT);
         }
         else if (words[0] == "/guild" || words[0] == "/g")
@@ -480,7 +485,8 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
             pPerson.Clear();
             words.GetTail(1,text);
             chattype = CHAT_GUILD;
-            inputText->SetText(words[0] + " ");
+            if(settings.defaultlastchat)
+                inputText->SetText(words[0] + " ");
             DetermineChatTabAndSelect(CHAT_GUILD);
         }
         else if (words[0] == "/alliance" || words[0] == "/a")
@@ -488,7 +494,8 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
             pPerson.Clear();
             words.GetTail(1,text);
             chattype = CHAT_ALLIANCE;
-            inputText->SetText(words[0] + " ");
+            if(settings.defaultlastchat)
+                inputText->SetText(words[0] + " ");
             DetermineChatTabAndSelect(CHAT_ALLIANCE);
         }
         else if (words[0] == "/shout" || words[0] == "/sh")
@@ -573,7 +580,8 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
             pPerson.Clear();
             words.GetTail(1,text);
             chattype = CHAT_GROUP;
-            inputText->SetText(words[0] + " ");
+            if(settings.defaultlastchat)
+                inputText->SetText(words[0] + " ");
             DetermineChatTabAndSelect(CHAT_GROUP);
         }
         else if (words[0] == "/tell" || words[0] == "/t")
@@ -586,7 +594,8 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
             }
             words.GetTail(2,text);
             chattype = CHAT_TELL;
-            inputText->SetText(words[0] + " " + words[1] + " ");
+            if(settings.defaultlastchat)
+                inputText->SetText(words[0] + " " + words[1] + " ");
             DetermineChatTabAndSelect(CHAT_TELL);
         }
         else if (words[0] == "/auction")
@@ -594,7 +603,8 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
             pPerson.Clear();
             words.GetTail(1,text);
             chattype = CHAT_AUCTION;
-            inputText->SetText(words[0] + " ");
+            if(settings.defaultlastchat)
+                inputText->SetText(words[0] + " ");
             DetermineChatTabAndSelect(CHAT_AUCTION);
         }
         else if (words[0] == "/mypet")
@@ -602,7 +612,8 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
             pPerson.Clear();
             chattype = CHAT_PET_ACTION;
             words.GetTail(1,text);
-            inputText->SetText(words[0] + " ");
+            if(settings.defaultlastchat)
+                inputText->SetText(words[0] + " ");
             DetermineChatTabAndSelect(CHAT_PET_ACTION);
         }
         else if (words[0] == "/me" || words[0] == "/my")
@@ -840,7 +851,7 @@ void pawsChatWindow::SaveChatSettings()
     csRef<iDocumentNode> root,chatNode, colorNode, optionNode,looseNode,filtersNode,
                          badWordsNode,badWordsTextNode,cNode, logNode, selectTabStyleNode,
                          echoScreenInSystemNode, mainBracketsNode, yourColorMixNode, joindefaultchannelNode,
-                         mainTabNode, flashingNode, flashingOnCharNode, node;
+                         defaultlastchatNode, mainTabNode, flashingNode, flashingOnCharNode, node;
 
     root = doc->CreateRoot();
 
@@ -869,6 +880,10 @@ void pawsChatWindow::SaveChatSettings()
     joindefaultchannelNode = optionNode->CreateNodeBefore(CS_NODE_ELEMENT,0);
     joindefaultchannelNode->SetValue("joindefaultchannel");
     joindefaultchannelNode->SetAttributeAsInt("value",(int)settings.joindefaultchannel);
+    
+    defaultlastchatNode = optionNode->CreateNodeBefore(CS_NODE_ELEMENT,0);
+    defaultlastchatNode->SetValue("defaultlastchat");
+    defaultlastchatNode->SetAttributeAsInt("value",(int)settings.defaultlastchat);
 
     looseNode = optionNode->CreateNodeBefore(CS_NODE_ELEMENT,0);
     looseNode->SetValue("loose");

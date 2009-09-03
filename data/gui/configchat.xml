@@ -173,7 +173,11 @@
                 <frame x="255" y="220" width="160" height="20"/>
                 <text string="Lose focus on send" />
             </widget>
-
+            
+            <widget name="defaultlastchat" factory="pawsCheckBox">
+                <frame x="255" y="240" width="160" height="20"/>
+                <text string="Default last chat" />
+            </widget>
 
 </widget>
 
