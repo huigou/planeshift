@@ -4,7 +4,7 @@
     <frame x="100" y="100" width="620" height="400" border="yes" />
     <title resource="Scaling Title Bar" text="Merchant" align="left" close_button="yes"/>    
     
-    <widget name="Transact" factory="pawsButton" id="100" tooltip="Exchange item">
+    <widget name="Transact" factory="pawsButton" id="100" tooltip="Exchange items">
         <frame x="560" y="10" width="48" height="48" border="no" />
         <bgimage resource="MerchantTrade" alpha="0" />
     </widget>
@@ -13,6 +13,12 @@
 	   <frame x="560" y="62" width="48" height="48" border="no" />
 	   <bgimage resource="MerchantTrade" alpha="0" />
 	</widget>
+    
+	 <widget name="TransactSingle" factory="pawsButton" id="120" tooltip="Exchange one item">
+	   <frame x="560" y="114" width="48" height="48" border="no" />
+	   <bgimage resource="MerchantTrade" alpha="0" />
+	</widget>
+
 	<widget name="AllLabel" factory="pawsTextBox">
         	<frame x="560" y="110" width="48" height="20" />
 	        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="246" g="223" b="166" size="8" scalefont="no" />
