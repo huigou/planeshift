@@ -2011,6 +2011,9 @@ void pawsWidget::Resize( int deltaX, int deltaY, int flags )
 
 void pawsWidget::Resize()
 {
+    if (!parent)
+        return;
+
     if ( attachFlags & ATTACH_LEFT )
     {
         int width = screenFrame.Width();

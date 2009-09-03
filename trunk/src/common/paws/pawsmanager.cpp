@@ -663,10 +663,31 @@ csRef<iDocumentNode> PawsManager::ParseWidgetFile( const char* widgetFile )
     }
     else
     {
-           Error2("Bad XML document in %s", widgetFile);
+        Error2("Bad XML document in %s", widgetFile);
         return NULL;
     }
 
+}
+
+pawsWidget *PawsManager::LoadWidgetFromString(const char* widgetDefinition)
+{
+    csRef<iDocument> doc;
+    const char* error;
+
+    doc=xml->CreateDocument();
+    error=doc->Parse(widgetDefinition);
+    if ( error )
+    {
+        Error3("Parse error in %s: %s", widgetDefinition, error);
+        return NULL;
+    }
+    csRef<iDocumentNode> root,node;
+    root = doc->GetRoot();
+    node = root->GetNode("widget");
+    pawsWidget *widget = LoadWidget(node);
+    if (widget)
+        widget->PostSetup();
+    return widget;
 }
 
 bool PawsManager::LoadWidget( const char* widgetFile )
@@ -750,7 +771,7 @@ pawsWidget * PawsManager::LoadWidget(iDocumentNode *widgetNode )
 
     if ( factory.Length() == 0 )
     {
-        Error1("Could not read factory from XML file. Error in XML");
+        Error1("Could not read factory from XML node. Error in XML");
         return NULL;
     }
 

@@ -986,18 +986,25 @@ void pawsTree::SetScrollBars(bool horiz, bool vert)
 
     if (vert && !vertScrollBar)
     {
-        vertScrollBar = new pawsScrollBar;
-        if (vertScrollBar == NULL)
-        { 
-            Error1("Could not created pawsScrollBar");
-            return;
-        }
+        csString widgetStr;
+
+        widgetStr.Format("<widget factory=\"pawsScrollBar\" name=\"scrollbar\" style=\"Standard Scrollbar\" direction=\"vertical\" tick=\"20\" minValue=\"0\" ><frame x=\"%d\" y=\"%d\" width=\"20\" height=\"%d\" /></widget>",
+            defaultFrame.Width()-20,3,defaultFrame.Height() );
+
+        vertScrollBar = dynamic_cast<pawsScrollBar *>(PawsManager::GetSingleton().LoadWidgetFromString(widgetStr));
         AddChild(vertScrollBar);
-        vertScrollBar->SetRelativeFrame(defaultFrame.Width()-GetActualWidth(SCROLLBAR_WIDTH), 0,
-                                        GetActualWidth(SCROLLBAR_WIDTH), defaultFrame.Height());
-        vertScrollBar->PostSetup();
-        vertScrollBar->SetTickValue(20);
-        vertScrollBar->SetAttachFlags(ATTACH_TOP | ATTACH_BOTTOM | ATTACH_RIGHT );
+
+//        vertScrollBar = new pawsScrollBar;
+//        if (vertScrollBar == NULL)
+//        { 
+//            Error1("Could not created pawsScrollBar");
+//            return;
+//        }
+//        vertScrollBar->SetRelativeFrame(defaultFrame.Width()-GetActualWidth(SCROLLBAR_WIDTH), 0,
+//                                        GetActualWidth(SCROLLBAR_WIDTH), defaultFrame.Height());
+//        vertScrollBar->PostSetup();
+//        vertScrollBar->SetTickValue(20);
+//        vertScrollBar->SetAttachFlags(ATTACH_TOP | ATTACH_BOTTOM | ATTACH_RIGHT );
         vertScrollBar->Show();
     }
     if (!vert && (vertScrollBar != NULL))
