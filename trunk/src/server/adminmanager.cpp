@@ -5517,6 +5517,7 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         }
         npc->GetCharacterData()->SetFullName(data.newName, data.newLastName);
         fullName = npc->GetCharacterData()->GetCharFullName();
+        npc->SetName(fullName);
         actorId = npc->GetEID();
     }
 

@@ -1714,6 +1714,7 @@ void NPCManager::HandlePetCommand(MsgEntry * me,Client *client)
             prevFullName = chardata->GetCharFullName();
             chardata->SetFullName( firstName, lastName );
             fullName = chardata->GetCharFullName();
+            pet->SetName(fullName);
 
             psServer::CharacterLoader.SaveCharacterData( chardata, pet, true );
 
