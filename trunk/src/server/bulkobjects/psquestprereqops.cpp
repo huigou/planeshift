@@ -533,6 +533,8 @@ bool psQuestPrereqOpGuild::Check(psCharacter * character)
     }
     else
     {
+        if(character->GetGuild()->GetName() != GuildName) //first check the name, if any
+            return false;
         if(guildtype == "both") //no need to check for the case it's in a guild
             return true;
         if(character->GetGuild()->IsSecret()) //the guild is secret
@@ -547,7 +549,12 @@ csString psQuestPrereqOpGuild::GetScriptOp()
 {
     csString script;
 
-    script.Format("<guild type=\"%s\"/>", guildtype.GetData());
+    script.Format("<guild type=\"%s\"", guildtype.GetData());
+    if(GuildName.Length())
+    {
+        script.AppendFmt("name=\"%s\"", GuildName.GetData());
+    }
+    script += "/>";
 
     return script;
 }
@@ -555,7 +562,7 @@ csString psQuestPrereqOpGuild::GetScriptOp()
 csPtr<psQuestPrereqOp> psQuestPrereqOpGuild::Copy()
 {
     csRef<psQuestPrereqOpGuild> copy;
-    copy.AttachNew(new psQuestPrereqOpGuild(guildtype));
+    copy.AttachNew(new psQuestPrereqOpGuild(guildtype, GuildName));
     return csPtr<psQuestPrereqOp>(copy);
 }
 

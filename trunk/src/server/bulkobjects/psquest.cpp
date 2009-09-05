@@ -428,8 +428,10 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, csRef<psQuestP
             Error1("No type given for guild prerequisite operation");
             return false;
         }
+        
+        csString name = topNode->GetAttributeValue("name");
 
-        prerequisite.AttachNew(new psQuestPrereqOpGuild(type));
+        prerequisite.AttachNew(new psQuestPrereqOpGuild(type, name));
     }
     else if ( strcmp( topNode->GetValue(), "married" ) == 0 ) //wrap in <not></not> to reverse
     {
