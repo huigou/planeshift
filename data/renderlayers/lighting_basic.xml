@@ -5,10 +5,11 @@
 	  <nodraw />
 	</staticlights>
 	<layer>
-	      <defaultshader name="lighting_basic" file="/shader/lighting/lighting_basic.xml" />
+	        <defaultshader name="lighting_basic" file="/shader/lighting/lighting_basic.xml" />
+		<shadervar name="pass do_ambient" type="integer">1</shadervar>
 	        <!-- Draw layer, even if no lights are present -->
 		<ambient />
-		<maxlightpasses>0</maxlightpasses>
+		<maxlightpasses>1</maxlightpasses>
 		<shadertype>base</shadertype>
 		<shadertype>diffuse</shadertype>
 		<shadertype>ambient</shadertype>
