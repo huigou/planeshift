@@ -533,7 +533,8 @@ bool psQuestPrereqOpGuild::Check(psCharacter * character)
     }
     else
     {
-        if(character->GetGuild()->GetName() != GuildName) //first check the name, if any
+        //first check the name, if any
+        if(GuildName.Length() && character->GetGuild()->GetName() != GuildName)
             return false;
         if(guildtype == "both") //no need to check for the case it's in a guild
             return true;
