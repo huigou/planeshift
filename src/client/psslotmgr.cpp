@@ -300,10 +300,17 @@ void psSlotManager::Handle( pawsSlot* slot, bool grabOne, bool grabAll )
         psSlotMovementMsg msg( draggingSlot.containerID, draggingSlot.slotID,
                                slot->ContainerID(), slot->ID(),
                                draggingSlot.stackCount );
+        msg.SendMessage();
 
+        // Reset widgets/objects/status.
         PawsManager::GetSingleton().SetDragDropWidget( NULL );
-        msg.SendMessage();                               
         isDragging = false;
+        if(isPlacing)
+        {
+            psengine->GetSceneManipulator()->RemoveSelected();
+            isPlacing = false;
+            isRotating = false;
+        }
     }    
 }
 
