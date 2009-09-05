@@ -930,6 +930,7 @@ class psQuestPrereqOpGuild : public psQuestPrereqOp
 {
  protected:
     csString guildtype;
+    csString GuildName;
 
  public:
 
@@ -938,7 +939,7 @@ class psQuestPrereqOpGuild : public psQuestPrereqOp
      *
      * @param guildtype The type of guild the character must be
      */
-    psQuestPrereqOpGuild(const char *guildtype):guildtype(guildtype){};
+    psQuestPrereqOpGuild(const char *guildtype, const char *GuildName):guildtype(guildtype),GuildName(GuildName){};
 
     virtual ~psQuestPrereqOpGuild() {}
 
