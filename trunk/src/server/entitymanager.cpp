@@ -1089,7 +1089,7 @@ bool EntityManager::SendActorList(Client *client)
 
 bool EntityManager::RemoveActor(gemObject *actor)
 {
-    Error3("Remove actor %s (%u)",actor->GetName(), actor->GetEID().Unbox());
+    Debug3(LOG_CELPERSIST, actor->GetClientID(), "Remove actor %s (%u)",actor->GetName(), actor->GetEID().Unbox());
     
     // Do network commmand to remove entity from all clients
     psRemoveObject msg(0, actor->GetEID());
