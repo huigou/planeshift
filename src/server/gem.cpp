@@ -173,6 +173,8 @@ void GEMSupervisor::HandleMessage(MsgEntry *me,Client *client)
     {
         case MSGTYPE_STATS:
         {
+            if(!client->GetActor())
+             return;
             psCharacter* psChar = client->GetActor()->GetCharacterData();
 
             psStatsMessage msg(client->GetClientNum(),
@@ -300,7 +302,7 @@ gemObject *GEMSupervisor::FindObject(const csString& name)
                 return obj;
         }
     }
-    Error2("No object with the name of '%s' was found.", name.GetData());
+    Debug2(LOG_CELPERSIST, 0,"No object with the name of '%s' was found.", name.GetData());
     return NULL;
 }
 
