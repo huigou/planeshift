@@ -128,6 +128,10 @@ void psSlotManager::CancelDrag()
 
     draggingSlot.slot->PlaceItem(res, draggingSlot.meshFactName, oldStack);
     PawsManager::GetSingleton().SetDragDropWidget( NULL );
+
+    psengine->GetSceneManipulator()->RemoveSelected();
+    isPlacing = false;
+    isRotating = false;
 }
 
 void psSlotManager::OnNumberEntered(const char *name,int param,int count)
