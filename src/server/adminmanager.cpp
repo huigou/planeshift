@@ -7811,7 +7811,9 @@ void AdminManager::HandleCompleteQuest(MsgEntry* me,psAdminCmdMessage& msg, Admi
             for (size_t i = 0; i < quests.GetSize(); i++)
             {
                 QuestAssignment *currassignment = quests.Get(i);
-                psserver->SendSystemInfo(me->clientnum, "Quest name: %s. Status: %c", currassignment->GetQuest()->GetName(), currassignment->status);
+                csString QuestName = currassignment->GetQuest()->GetName();
+                if(!data.text.Length() || QuestName.StartsWith(data.text,true)) //check if we are searching a particular quest
+                    psserver->SendSystemInfo(me->clientnum, "Quest name: %s. Status: %c", QuestName.GetData(), currassignment->status);
             }
         }
         else //our target is offline access the db then...
@@ -7824,7 +7826,9 @@ void AdminManager::HandleCompleteQuest(MsgEntry* me,psAdminCmdMessage& msg, Admi
                 {
                     //get the quest data from the cache so we can print it's name without accessing the db again
                     psQuest* currQuest = CacheManager::GetSingleton().GetQuestByID(result[currResult].GetUInt32("quest_id"));
-                    psserver->SendSystemInfo(me->clientnum, "Quest name: %s. Status: %s", currQuest->GetName(), result[currResult]["status"]);
+                    csString QuestName = currQuest->GetName();
+                    if(!data.text.Length() || QuestName.StartsWith(data.text,true)) //check if we are searching a particular quest
+                        psserver->SendSystemInfo(me->clientnum, "Quest name: %s. Status: %s", QuestName.GetData(), result[currResult]["status"]);
                 }
             }
         }
