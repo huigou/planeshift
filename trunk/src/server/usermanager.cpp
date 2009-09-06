@@ -938,7 +938,7 @@ void UserManager::HandleDie(psUserCmdMessage& msg, Client* client)
 
 void UserManager::Who(psUserCmdMessage& msg, Client* client)
 {
-    csString message((size_t) 1024);
+    csString message((size_t) MAXSYSTEMMSGSIZE);
     csString headerMsg("Players Currently Online");
 
     if (!msg.filter.IsEmpty())
@@ -1008,7 +1008,7 @@ bool UserManager::WhoProcessClient(Client *curr, int guildId, csString* message,
     if (curr->IsSuperClient() || !curr->GetActor())
         return true;
 
-    csString temp((size_t) 1024);
+    csString temp((size_t) MAXSYSTEMMSGSIZE);
     csString playerName(curr->GetName());
     csString guildTitle;
     csString guildName;
