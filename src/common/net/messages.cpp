@@ -625,10 +625,10 @@ csString psChannelLeaveMessage::ToString(AccessPointers * /*access_ptrs*/)
 psSystemMessageSafe::psSystemMessageSafe(uint32_t clientnum, uint32_t msgtype,
                  const char *text)
 {
-    char str[1024];
+    char str[MAXSYSTEMMSGSIZE];
 
-    strncpy(str, text, 1023);
-    str[1023]=0x00;
+    strncpy(str, text, MAXSYSTEMMSGSIZE-1);
+    str[MAXSYSTEMMSGSIZE-1]=0x00;
 
     msg.AttachNew(new MsgEntry(strlen(str) + 1 + sizeof(uint32_t)));
 
@@ -648,7 +648,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psSystemMessage,MSGTYPE_SYSTEM);
 
 psSystemMessage::psSystemMessage(uint32_t clientnum, uint32_t msgtype, const char *fmt, ... )
 {
-    char str[1024];
+    char str[MAXSYSTEMMSGSIZE];
     va_list args;
 
     va_start(args, fmt);
@@ -657,8 +657,8 @@ psSystemMessage::psSystemMessage(uint32_t clientnum, uint32_t msgtype, const cha
      *  If this is not the case please report exactly which version of MSVC this has
      *  a problem on.
      */
-    vsnprintf(str,1023, fmt, args);
-    str[1023]=0x00;
+    vsnprintf(str,MAXSYSTEMMSGSIZE-1, fmt, args);
+    str[MAXSYSTEMMSGSIZE-1]=0x00;
     va_end(args);
 
     msg.AttachNew(new MsgEntry(strlen(str) + 1 + sizeof(uint32_t)));
@@ -675,10 +675,10 @@ psSystemMessage::psSystemMessage(uint32_t clientnum, uint32_t msgtype, const cha
 
 psSystemMessage::psSystemMessage(uint32_t clientnum, uint32_t msgtype, const char *fmt, va_list args )
 {
-    char str[1024];
+    char str[MAXSYSTEMMSGSIZE];
 
-    vsnprintf(str,1023, fmt, args);
-    str[1023]=0x00;
+    vsnprintf(str,MAXSYSTEMMSGSIZE-1, fmt, args);
+    str[MAXSYSTEMMSGSIZE-1]=0x00;
 
     msg.AttachNew(new MsgEntry(strlen(str) + 1 + sizeof(uint32_t)));
 
