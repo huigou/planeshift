@@ -133,18 +133,18 @@
 	        </subscriptions>                                
 	    </widget>
 	
-	    <widget name="leftfinger" factory="pawsSlot" tooltip="Right Finger">
+	    <widget name="leftfinger" factory="pawsSlot" tooltip="Left Finger">
 	        <frame x="200" y="216" width="48" height="48" />        
-	        <bgimage resource="InventoryRightFinger" alpha="0"/>
+	        <bgimage resource="InventoryLeftFinger" alpha="0"/>
 	        <ident container="-2" id="0" />
 	        <subscriptions>
 	            <subscribe data="sigClearSlot" />
 	            <subscribe data="invslot_4" />
 	        </subscriptions>     
 	    </widget>
-	    <widget name="rightfinger" factory="pawsSlot" tooltip="Left Finger">
+	    <widget name="rightfinger" factory="pawsSlot" tooltip="Right Finger">
 	        <frame x="0" y="216" width="48" height="48" />
-	        <bgimage resource="InventoryLeftFinger" alpha="0"/>
+	        <bgimage resource="InventoryRightFinger" alpha="0"/>
 	        <ident container="-2" id="1" />
 	        <subscriptions>
 	            <subscribe data="sigClearSlot" />
