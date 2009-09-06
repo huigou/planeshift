@@ -896,6 +896,9 @@ public:
 /**
  * Messages with system information sent to user.
  */
+
+#define MAXSYSTEMMSGSIZE 1024
+
 class psSystemMessage : public psMessageCracker
 {
 protected:

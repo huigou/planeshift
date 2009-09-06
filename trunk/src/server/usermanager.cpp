@@ -1045,7 +1045,7 @@ bool UserManager::WhoProcessClient(Client *curr, int guildId, csString* message,
     }
 
     /* if message + new text + 50 spare bytes for the footer exceed the maximum package size do not append */
-    if (temp.Length() + message->Length() + 50 > MAXPACKETSIZE)
+    if (temp.Length() + message->Length() + 50 > MAXSYSTEMMSGSIZE)
         return false;
     else
         message->Append('\n');
