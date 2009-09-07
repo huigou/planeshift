@@ -52,7 +52,7 @@ class gemNPC;
 class gemActor;
 
 
-#define CHAT_SAY_RANGE 10
+#define CHAT_SAY_RANGE 15
 
 struct CachedData
 {
