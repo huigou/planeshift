@@ -42,6 +42,13 @@ public:
         else
             return false;
     }
+
+void OnLostFocus()
+{    
+    OnMouseUp(0,0,0,0);
+    pawsWidget::OnLostFocus();
+}    
+
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -395,6 +402,7 @@ void pawsScrollBar::SetThumbLayout()
 
 bool pawsScrollBar::OnMouseDown( int button, int modifiers, int x, int y )
 {
+    printf("a\n");
     if (button == csmbWheelUp)
     {
         ScrollUp();
@@ -417,7 +425,7 @@ bool pawsScrollBar::OnMouseDown( int button, int modifiers, int x, int y )
         thumb->SetBackground(thumbMoving);
     }
     else
-    {
+    {printf("b\n");
         MoveThumbToMouse();
     }
     
