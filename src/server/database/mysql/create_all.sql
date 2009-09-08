@@ -12,7 +12,6 @@ source bans.sql;
 source character_relationships.sql;
 source characters.sql;
 source character_limitations.sql;
-source char_adv.sql;
 source char_creation.sql;
 source character_quests.sql;
 source char_skills.sql;
