@@ -63,36 +63,7 @@ struct Faction;
 /** "Normalizes" name of character i.e. makes the first letter uppercase and all the rest downcase */
 csString NormalizeCharacterName(const csString & name);
 
-
 ////////////////////////////////////////////////////////////////////////////////
-
-enum PSCHARACTER_GENDERRACE
-{
-    PSCHARACTER_GENRACE_FXACHA = 0,
-    PSCHARACTER_GENRACE_MXACHA = 1,
-    PSCHARACTER_GENRACE_FYLIAN = 2,
-    PSCHARACTER_GENRACE_MYLIAN = 3,
-    PSCHARACTER_GENRACE_FNOLTHRIR = 4,
-    PSCHARACTER_GENRACE_MNOLTHRIR = 5,
-    PSCHARACTER_GENRACE_FDERMORIAN = 6,
-    PSCHARACTER_GENRACE_MDERMORIAN = 7,
-    PSCHARACTER_GENRACE_FSTONEBREAKER = 8,
-    PSCHARACTER_GENRACE_MSTONEBREAKER = 9,
-    PSCHARACTER_GENRACE_FHAMMERWIELDER = 10,
-    PSCHARACTER_GENRACE_MHAMMERWIELDER = 11,
-    PSCHARACTER_GENRACE_FLEMUR = 12,
-    PSCHARACTER_GENRACE_MLEMUR = 13,
-    PSCHARACTER_GENRACE_FDIABOLI = 14,
-    PSCHARACTER_GENRACE_MDIABOLI = 15,
-    PSCHARACTER_GENRACE_FENKIDUKAI = 16,
-    PSCHARACTER_GENRACE_MENKIDUKAI = 17,
-    PSCHARACTER_GENRACE_FKLYROS = 18,
-    PSCHARACTER_GENRACE_MKLYROS = 19,
-    PSCHARACTER_GENRACE_FYNNWN = 20,
-    PSCHARACTER_GENRACE_MYNNWN = 21,
-    PSCHARACTER_GENRACE_NKRAN = 22, ///< Oddball race - Nuetral/No gender
-    PSCHARACTER_GENRACE_COUNT
-};
 
 enum PSCHARACTER_TYPE
 {
@@ -115,27 +86,6 @@ protected:
 public:
     CharacterAttribute(psCharacter *character) : self(character) { }
 };
-
-
-/**
- * Advantages/Disadvantages
- *
- *  A character either has or does not have an advantage/disadvantage.  Each advantage/disadvantage is numbered.
- *  A series of bitfields are created to store the actual values.
- *
-*/
-
-enum PSCHARACTER_ADVANTAGE
-{
-    PSCHARACTER_ADVANTAGE_6TH_SENSE = 0,
-    PSCHARACTER_ADVANTAGE_HEART_OF_VENGEANCE,
-    PSCHARACTER_DISADVANTAGE_BALDING,
-    PSCHARACTER_DISADVANTAGE_DROPPED_ON_HEAD_AS_CHILD,
-    // More to come
-    PSCHARACTER_ADVANTAGE_COUNT
-};
-
-#define PSCHARACTER_ADVANTAGE_32BIT_BITFIELDS (PSCHARACTER_ADVANTAGE_COUNT-1)/32+1
 
 // Remember to update the translation table in GetModeStr when adding modes.
 enum PSCHARACTER_MODE
@@ -648,8 +598,6 @@ public:
         InstanceID worldInstance;
     } location;
 
-    unsigned int advantage_bitfield[PSCHARACTER_ADVANTAGE_32BIT_BITFIELDS];
-
     psServerVitals* vitals;
 
     psTrait *traits[PSTRAIT_LOCATION_COUNT];
@@ -812,10 +760,6 @@ public:
      */
     bool CheckResponsePrerequisite(NpcResponse *resp);
     int NumberOfQuestsCompleted(csString category);
-
-    void AddAdvantage( PSCHARACTER_ADVANTAGE advantage);
-    void RemoveAdvantage( PSCHARACTER_ADVANTAGE advantage);
-    bool HasAdvantage ( PSCHARACTER_ADVANTAGE advantage);
 
     void CombatDrain(int);
 

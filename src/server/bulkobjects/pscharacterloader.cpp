@@ -428,17 +428,6 @@ bool psCharacterLoader::NewCharacterData(AccountID accountid, psCharacter *chard
         SaveCharacterSkill(chardata->GetPID(),i,skillZ,skillY,skillRank);
     }
 
-
-    // advantages
-    if (!ClearCharacterAdvantages(chardata->GetPID()))
-        Error3("Failed to clear advantages for character %s: %s.", ShowID(chardata->GetPID()), db->GetLastError());
-
-    for (i=0;i<PSCHARACTER_ADVANTAGE_COUNT;i++)
-    {
-        if (chardata->HasAdvantage((PSCHARACTER_ADVANTAGE)i))
-            SaveCharacterAdvantage(chardata->GetPID(),i);
-    }
-
     return true;
 }
 
@@ -540,27 +529,6 @@ bool psCharacterLoader::SaveCharacterSkill(PID pid, unsigned int skill_id,
 
     return true;
 }
-
-bool psCharacterLoader::ClearCharacterAdvantages(PID pid)
-{
-    unsigned long result=db->CommandPump("DELETE FROM character_advantages WHERE character_id='%u'", pid.Unbox());
-    if (result==QUERY_FAILED)
-        return false;
-
-    return true;
-}
-
-bool psCharacterLoader::SaveCharacterAdvantage(PID pid, unsigned int advantage_id)
-{
-    unsigned long result=db->CommandPump("INSERT INTO character_advantages (character_id,advantages_id) VALUES('%u','%u')",
-        pid.Unbox(), advantage_id);
-    if (result==QUERY_FAILED)
-        return false;
-
-    return true;
-
-}
-
 
 bool psCharacterLoader::DeleteCharacterData(PID pid, csString& error )
 {
@@ -836,16 +804,6 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
             unsigned int skillRank = chardata->Skills().GetSkillRank((PSSKILL) i).Base();
             UpdateCharacterSkill(chardata->GetPID(),i,skillZ,skillY,skillRank);
         }
-    }
-
-
-    // advantages
-    if (!ClearCharacterAdvantages(chardata->GetPID()))
-        Error3("Failed to clear advantages for character %s: %s.", ShowID(chardata->GetPID()), db->GetLastError());
-    for (i=0;i<PSCHARACTER_ADVANTAGE_COUNT;i++)
-    {
-        if (chardata->HasAdvantage((PSCHARACTER_ADVANTAGE)i))
-            SaveCharacterAdvantage(chardata->GetPID(),i);
     }
 
     if (!ClearCharacterSpell(chardata))
