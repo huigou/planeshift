@@ -378,7 +378,6 @@ private:
     csRef<iEventQueue>        queue;          ///< Event Queue
     csRef<iVirtualClock>      vc;             ///< Clock
     csRef<iDocumentSystem>    xmlparser;      ///< XML Parser
-    csRef<iCommandLineParser> cmdline;        ///< Command line parser
     csRef<iStringSet>         stringset;
     csRandomGen               random;
 

@@ -94,7 +94,7 @@
 
 psCelClient *GEMClientObject::cel = NULL;
 
-psCelClient::psCelClient() : ignore_others(false)
+psCelClient::psCelClient()
 {
     requeststatus = 0;
 
@@ -267,17 +267,6 @@ void psCelClient::HandleActor( MsgEntry* me )
 
         // Set the sector.
         mesg.sector = psengine->GetEngine()->FindSector(mesg.sectorName);
-    }
-
-    if (ignore_others)
-    {
-        if (local_player != 0)
-            return;
-
-        // From here on, we have no main character
-        // Ignore everything that isn't controllable
-        if (!mesg.control)
-            return;
     }
 
     GEMClientObject* found = FindObject(mesg.entityid);
@@ -882,10 +871,7 @@ void psCelClient::HandleMessage(MsgEntry *me)
 
         case MSGTYPE_PERSIST_ITEM:
         {
-            if (!ignore_others)
-            {
-                newItemQueue.Push(me);
-            }
+            newItemQueue.Push(me);
             break;
 
         }
