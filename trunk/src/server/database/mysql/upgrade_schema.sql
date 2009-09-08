@@ -1283,6 +1283,9 @@ DROP TABLE movement_race_mods;
 ALTER TABLE `race_info` ADD COLUMN `speed_modifier` float NOT NULL default '1.0'   COMMENT "Used as a multiplier of the velocity" AFTER `race`;
 UPDATE `server_options` SET `option_value`='1228' WHERE `option_name`='db_version';
 
+#1229 - Kenny Graunke - remove character_advantages relation table
+DROP TABLE character_advantages;
+UPDATE `server_options` SET `option_value`='1229' WHERE `option_name`='db_version';
 
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.

@@ -119,7 +119,6 @@ psCharacter::psCharacter() : inventory(this),
     BeltGroup.Clear();
     CloakGroup.Clear();
     help_event_flags = 0;
-    memset(advantage_bitfield,0,sizeof(advantage_bitfield));
     accountid = 0;
     pid = 0;
     familiar_id = 0;
@@ -432,19 +431,7 @@ bool psCharacter::Load(iResultRow& row)
                       csGetTicks() - start, ShowID(pid), __FILE__, __LINE__);
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
-    if (!LoadAdvantages(use_id))
-    {
-        Error2("Cannot load advantages for Character %s. Character loading failed.", ShowID(pid));
-        return false;
-    }
 
-    if(csGetTicks() - start > 500)
-    {
-        csString status;
-        status.Format("Warning: Spent %u time loading character %s %s:%d",
-                      csGetTicks() - start, ShowID(pid), __FILE__, __LINE__);
-        psserver->GetLogCSV()->Write(CSV_STATUS, status);
-    }
     // This data is loaded only if it's a player, not an NPC
     if ( !IsNPC() && !IsPet() )
     {
@@ -843,23 +830,6 @@ bool psCharacter::LoadSpells(PID use_id)
         return false;
 }
 
-bool psCharacter::LoadAdvantages(PID use_id)
-{
-    // Load advantages/disadvantages
-    Result adv(db->Select("SELECT * FROM character_advantages WHERE character_id=%u", use_id.Unbox()));
-    if (adv.IsValid())
-    {
-        unsigned int i;
-        for (i=0;i<adv.Count();i++)
-        {
-            AddAdvantage((PSCHARACTER_ADVANTAGE)(adv[i].GetInt("advantage_id")));
-        }
-       return true;
-    }
-    else
-        return false;
-}
-
 bool psCharacter::LoadSkills(PID use_id)
 {
     // Load skills
@@ -1032,47 +1002,6 @@ void psCharacter::UpdateRespawn(csVector3 pos, float yrot, psSectorInfo *sector,
             "<%s>.\nError returned was <%s>\n",db->GetLastQuery(),db->GetLastError());
     }
 }
-
-void psCharacter::AddAdvantage( PSCHARACTER_ADVANTAGE advantage)
-{
-    if (advantage<0 || advantage>=PSCHARACTER_ADVANTAGE_COUNT)
-        return;
-    // Get the index into the advantages array.  32 bits per entry.
-    int advantage_index=(int)advantage/32;
-    // Get the bit offset in the advantage entry, and use it to generate a single bit bitmask.
-    unsigned int advantage_bitmask=1 << ((unsigned int)advantage % 32);
-
-    // Set the bit
-    advantage_bitfield[advantage_index]|=advantage_bitmask;
-}
-
-void psCharacter::RemoveAdvantage( PSCHARACTER_ADVANTAGE advantage)
-{
-    if (advantage<0 || advantage>=PSCHARACTER_ADVANTAGE_COUNT)
-        return;
-    // Get the index into the advantages array.  32 bits per entry.
-    int advantage_index=(int)advantage/32;
-    // Get the bit offset in the advantage entry, and use it to generate an inverse bitmask.
-    unsigned int advantage_bitmask=~( 1 << ((unsigned int)advantage % 32));
-
-    // Clear the bit
-    advantage_bitfield[advantage_index]&=advantage_bitmask;
-}
-
-
-bool psCharacter::HasAdvantage ( PSCHARACTER_ADVANTAGE advantage)
-{
-    if (advantage<0 || advantage>=PSCHARACTER_ADVANTAGE_COUNT)
-        return false;
-    // Get the index into the advantages array.  32 bits per entry.
-    int advantage_index=(int)advantage/32;
-    // Get the bit offset in the advantage entry, and use it to generate a single bit bitmask.
-    unsigned int advantage_bitmask=1 << ((unsigned int)advantage % 32);
-
-    // This will return a value other than 0 if the bit is set.
-    return advantage_bitfield[advantage_index] & advantage_bitmask ? true : false;
-}
-
 
 unsigned int psCharacter::GetExperiencePoints() // W
 {
