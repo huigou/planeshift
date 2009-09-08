@@ -6,7 +6,7 @@
 	<title resource="Scaling Title Bar" text="Details" align="left" close_button="yes"/>
 
         <widget name="ShowDescr" factory="pawsButton" style="Standard Tab" id="999" >
-            <frame x="20" y="56" width="40" height="28"/>
+            <frame x="14" y="59" width="50" height="28"/>
             <label text="Desc" />
             <attachpoints>
                 <attach point="PROPORTIONAL_RIGHT" />
@@ -15,7 +15,7 @@
         </widget>
 
         <widget name="ShowDescrOOC" factory="pawsButton" style="Standard Tab" id="1006" >
-            <frame x="60" y="56" width="40" height="28"/>
+            <frame x="66" y="59" width="50" height="28"/>
             <label text="OOC" />
             <attachpoints>
                 <attach point="PROPORTIONAL_RIGHT" />
@@ -24,7 +24,7 @@
         </widget>
 
         <widget name="ShowCC" factory="pawsButton" style="Standard Tab" id="1007" >
-            <frame x="100" y="56" width="40" height="28"/>
+            <frame x="118" y="59" width="50" height="28"/>
             <label text="CC" />
             <attachpoints>
                 <attach point="PROPORTIONAL_RIGHT" />
