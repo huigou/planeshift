@@ -1603,6 +1603,7 @@ public:
         int val = (int) value->Evaluate(env);
         SkillRank & buffable = c->GetSkillRank(skill);
         buffable.SetBase(buffable.Base() + val);
+        c->SetSkillRank(skill,buffable.Base());
     }
 protected:
     PSSKILL skill;
