@@ -76,7 +76,6 @@ if (!myref)                                                  \
 #include "iclient/isoundmngr.h"
 
 #include <csver.h>
-#include <csutil/cmdline.h>
 #include <cstool/collider.h>
 #include <cstool/initapp.h>
 #include <csutil/event.h>
@@ -338,7 +337,6 @@ bool psEngine::Initialize (int level)
         PS_QUERY_PLUGIN (cfgmgr,  iConfigManager, "iConfigManager");
         PS_QUERY_PLUGIN (g3d,     iGraphics3D,    "iGraphics3D");
         PS_QUERY_PLUGIN (vc,      iVirtualClock,  "iVirtualClock");
-        PS_QUERY_PLUGIN (cmdline, iCommandLineParser, "iCommandLineParser");
 
         g2d = g3d->GetDriver2D();
 
@@ -663,11 +661,6 @@ bool psEngine::Initialize (int level)
         actionhandler = csPtr<ActionHandler> ( new ActionHandler ( netmanager->GetMsgHandler(), object_reg ) );
         zonehandler = csPtr<ZoneHandler> (new ZoneHandler(netmanager->GetMsgHandler(),object_reg,celclient));
         questionclient = new psQuestionClient(GetMsgHandler(), object_reg);
-
-        if (cmdline)
-        {
-            celclient->IgnoreOthers(cmdline->GetBoolOption("ignore_others"));
-        }
 
         zonehandler->SetLoadAllMaps(GetConfig()->GetBool("PlaneShift.Client.Loading.AllMaps",false));
         zonehandler->SetKeepMapsLoaded(GetConfig()->GetBool("PlaneShift.Client.Loading.KeepMaps",false));

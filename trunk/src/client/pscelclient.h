@@ -135,8 +135,6 @@ private:
     /// Load items that have effects attached to them into the effectItems array.
     void LoadEffectItems();
 
-    bool ignore_others;
-
     csRedBlackTreeMap<csString, csRef<InstanceObject> > instanceObjects;
 
     csRef<iMeshFactoryWrapper> nullfact;
@@ -200,10 +198,6 @@ public:
     bool IsUnresSector(iSector* sector) { return unresSector == sector;}
 
     int GetRequestStatus() { return requeststatus; }
-
-    void IgnoreOthers(bool state) { ignore_others = state; }
-
-    bool IsIgnoringOthers() { return ignore_others; }
 
     /// Add one new actor or item entity from the queue.
     void CheckEntityQueues();
