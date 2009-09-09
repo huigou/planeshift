@@ -82,9 +82,14 @@ void Trait::Load( iDocumentNode* node )
     location             = ConvertTraitLocationString(node->GetAttributeValue( "loc" ));
     csString shaderColours = node->GetAttributeValue("shader");
     if ( shaderColours.Length() > 0 )
+    {
         sscanf( shaderColours.GetData(), "%f,%f,%f", &shader.x, &shader.y, &shader.z );
+        shader.w = 1.0f;
+    }
     else
-        shader = csVector3(0,0,0);
+    {
+        shader = csVector4(0,0,0);
+    }
 
     material = psengine->FindCommonString(cstr_id_material);
     mesh = psengine->FindCommonString(cstr_id_mesh);

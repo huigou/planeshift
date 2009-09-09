@@ -92,14 +92,14 @@ public:
     void BeardMesh(csString& submesh);
     
     /** Set the colour of the hair.
-      * @param shader the R,G,B value of the shader to use on the hair.
+      * @param shader the R,G,B,A value of the shader to use on the hair.
       */
-    void HairColor(csVector3 &shader);
+    void HairColor(csVector4 &shader);
 
     /** Set the colour of the eyes.
-     * @param shader the R,G,B value of the shader to use on the eyes.
+     * @param shader the R,G,B,A value of the shader to use on the eyes.
      */
-    void EyeColor(csVector3 &shader);
+    void EyeColor(csVector4 &shader);
     
     /** Toggle the hair mesh on and off.
       * @param flag True if we want to show the hair. False if we want to hide it.
@@ -256,8 +256,8 @@ private:
     csString hairMesh;                                  ///< Default hair mesh.
     csString beardMesh;                                 ///< Beard mesh.
     
-    csVector3 eyeShader;                                ///< Default eye colour.
-    csVector3 hairShader;                               ///< Default hair colour.
+    csVector4 eyeShader;                                ///< Default eye colour.
+    csVector4 hairShader;                               ///< Default hair colour.
     
     bool hairAttached;                                  ///< Flag if hair is on/off                        
     bool beardAttached;                                 ///< Flag if beard is on/off.
