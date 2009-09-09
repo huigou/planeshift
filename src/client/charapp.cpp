@@ -259,7 +259,7 @@ void psCharAppearance::HairMesh(csString& subMesh)
 }
 
 
-void psCharAppearance::HairColor(csVector3& color)
+void psCharAppearance::HairColor(csVector4& color)
 {
     if ( hairMesh.Length() == 0 )
     {
@@ -321,7 +321,7 @@ void psCharAppearance::HairColor(csVector3& color)
     }
 }
 
-void psCharAppearance::EyeColor(csVector3& color)
+void psCharAppearance::EyeColor(csVector4& color)
 {
     eyeShader = color;
     iShaderVariableContext* context_eyes;
@@ -625,26 +625,54 @@ bool psCharAppearance::Dequip(csString& slotname,
 void psCharAppearance::DefaultMesh(const char* part)
 {
     const char * defaultPart = NULL;
-    /* First we detach every mesh that match the partPattern */
-    for (int idx=0; idx < stateFactory->GetMeshCount(); idx++)
+
+    if(stateFactory && state)
     {
-        const char * meshName = stateFactory->GetMeshName( idx );
-        if (strstr(meshName, part))
+        /* First we detach every mesh that match the partPattern */
+        for (int idx=0; idx < stateFactory->GetMeshCount(); idx++)
         {
-            state->DetachCoreMesh( meshName );
-            if (stateFactory->IsMeshDefault(idx))
+            const char * meshName = stateFactory->GetMeshName( idx );
+            if (strstr(meshName, part))
             {
-                defaultPart = meshName;
+                state->DetachCoreMesh( meshName );
+                if (stateFactory->IsMeshDefault(idx))
+                {
+                    defaultPart = meshName;
+                }
+            }
+        }
+
+        if (!defaultPart)
+        {
+            return;
+        }
+
+        state->AttachCoreMesh( defaultPart );
+    }
+    else if(animeshFactory && animeshObject)
+    {
+        if (!defaultPart)
+        {
+            return;
+        }
+
+        for ( size_t idx=0; idx < animeshFactory->GetSubMeshCount(); idx++)
+        {
+            const char* meshName = animeshFactory->GetSubMesh(idx)->GetName();
+            if(meshName)
+            {
+                if (strstr(meshName, part))
+                {
+                    animeshObject->GetSubMesh(idx)->SetRendering(false);
+                }
+
+                if (!strcmp(meshName, defaultPart))
+                {
+                    animeshObject->GetSubMesh(idx)->SetRendering(true);
+                }
             }
         }
     }
-
-    if (!defaultPart)
-    {
-        return;
-    }
-
-    state->AttachCoreMesh( defaultPart );
 }
 
 
@@ -689,22 +717,51 @@ bool psCharAppearance::ChangeMesh(const char* partPattern, const char* newPart)
 {
     csString newPartParsed = ParseStrings(partPattern, newPart);
 
-    // If the new mesh cannot be found then do nothing.
-    int newMeshAvailable = stateFactory->FindMeshName(newPartParsed);
-    if ( newMeshAvailable == -1 )
-        return false;
-
-    /* First we detach every mesh that match the partPattern */
-    for (int idx=0; idx < stateFactory->GetMeshCount(); idx++)
+    if(stateFactory && state)
     {
-        const char * meshName = stateFactory->GetMeshName( idx );
-        if (strstr(meshName,partPattern))
+        // If the new mesh cannot be found then do nothing.
+        int newMeshAvailable = stateFactory->FindMeshName(newPartParsed);
+        if ( newMeshAvailable == -1 )
+            return false;
+
+        /* First we detach every mesh that match the partPattern */
+        for (int idx=0; idx < stateFactory->GetMeshCount(); idx++)
         {
-            state->DetachCoreMesh( meshName );
+            const char * meshName = stateFactory->GetMeshName( idx );
+            if (strstr(meshName,partPattern))
+            {
+                state->DetachCoreMesh( meshName );
+            }
+        }
+
+        state->AttachCoreMesh( newPartParsed.GetData() );
+    }
+    else if(animeshFactory && animeshObject)
+    {
+        // If the new mesh cannot be found then do nothing.
+        size_t newMeshAvailable = animeshFactory->FindSubMesh(newPartParsed);
+        if ( newMeshAvailable == (size_t)-1 )
+            return false;
+
+        /* First we detach every mesh that match the partPattern */
+        for ( size_t idx=0; idx < animeshFactory->GetSubMeshCount(); idx++)
+        {
+            const char* meshName = animeshFactory->GetSubMesh(idx)->GetName();
+            if(meshName)
+            {
+                if (strstr(meshName, partPattern))
+                {
+                    animeshObject->GetSubMesh(idx)->SetRendering(false);
+                }
+
+                if (!strcmp(meshName, newPartParsed))
+                {
+                    animeshObject->GetSubMesh(idx)->SetRendering(true);
+                }
+            }
         }
     }
 
-    state->AttachCoreMesh( newPartParsed.GetData() );
     return true;
 }
 
