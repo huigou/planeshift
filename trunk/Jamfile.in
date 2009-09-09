@@ -50,8 +50,6 @@ Help distclean : "Remove built targets and configuration" ;
 # Specify the folder in which they are contained, and then the version of the project files to be generated.
 
 MsvcGenSubDir TOP mk msvc : common ;
-MsvcGenSubDir TOP mk msvc7 : 7 ;
-MsvcGenSubDir TOP mk msvc71 : 71 ;
 MsvcGenSubDir TOP mk msvc8 : 8 ;
 MsvcGenSubDir TOP mk msvc9 : 9 ;
 
