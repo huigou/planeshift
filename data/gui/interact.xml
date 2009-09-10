@@ -129,13 +129,21 @@
              <frame x="0" y="128" width="64" height="64" />
              <bgimage resource="ButtonBanking" />
         </widget>
-
-
+        
         <widget name="ButtonIntroduce" factory="pawsButton" id="2600" tooltip="Introduce yourself">
              <frame x="128" y="128" width="64" height="64" />
              <bgimage resource="ButtonIntroduce" />
         </widget>
-     
+
+        <widget name="ButtonMount" factory="pawsButton" id="2700" tooltip="Mount">
+             <frame x="0" y="128" width="64" height="64" />
+             <bgimage resource="ButtonMount" />
+        </widget>
+        <widget name="ButtonUnmount" factory="pawsButton" id="2800" tooltip="Unmount">
+             <frame x="0" y="128" width="64" height="64" />
+             <bgimage resource="ButtonUnmount" />
+        </widget>
+        
     </widget>
     
 </widget_description>
