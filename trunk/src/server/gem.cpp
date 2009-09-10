@@ -3585,6 +3585,9 @@ void gemActor::SendBehaviorMessage(const csString & msg_id, gemObject *actor)
             gemActor* activeActor = dynamic_cast<gemActor*>(actor);
             if (activeActor && activeActor->GetClientID() != 0)
             {
+                if(activeActor->GetMount() && this == actor)
+                    options |= psGUIInteractMessage::UNMOUNT;
+                
                 if ( (activeActor->GetMode() == PSCHARACTER_MODE_PEACE || activeActor->GetMode() == PSCHARACTER_MODE_SIT) && this != activeActor )
                     options |= psGUIInteractMessage::EXCHANGE;
 
