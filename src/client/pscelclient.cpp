@@ -2015,6 +2015,7 @@ bool GEMClientActor::CheckLoadStatus()
         charApp->ApplyRider(pcmesh);
         csRef<iSpriteCal3DState> riderstate = scfQueryInterface<iSpriteCal3DState> (mesh->GetMeshObject());
         riderstate->SetDefaultIdleAnim("ride");
+        riderstate->SetVelocity(0);
     }
 
     pcmesh->GetFlags().Set(CS_ENTITY_NODECAL);
