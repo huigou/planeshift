@@ -1306,6 +1306,7 @@ gemItem::gemItem(csWeakRef<psItem> item,
                      : gemActiveObject(item->GetName(),factname,instance,room,pos,yrotangle,clientnum)
 {
     itemdata=item;
+    matname=item->GetTextureName();
     xRot=xrotangle;
     yRot=yrotangle;
     zRot=zrotangle;
@@ -1339,6 +1340,7 @@ void gemItem::Broadcast(int clientnum, bool control )
                          -2,
                          name,
                          factname.Current(),
+                         matname,
                          GetSectorName(),
                          GetPosition(),
                          xRot,
@@ -1407,6 +1409,7 @@ void gemItem::Send( int clientnum, bool , bool to_superclient)
                          -2,
                          name,
                          factname.Current(),
+                         matname,
                          GetSectorName(),
                          GetPosition(),
                          xRot,

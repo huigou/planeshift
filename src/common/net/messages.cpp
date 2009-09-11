@@ -4796,6 +4796,7 @@ psPersistItem::psPersistItem( uint32_t clientNum,
                               int type,
                               const char* name,
                               const char* factname,
+                              const char* matname,
                               const char* sector,
                               csVector3 pos,
                               float xRot,
@@ -4812,6 +4813,7 @@ psPersistItem::psPersistItem( uint32_t clientNum,
     msg->Add( (uint32_t) type );
     msg->Add( name );
     msg->Add( factname );
+    msg->Add( matname );
     msg->Add( sector );
     msg->Add( pos );
     msg->Add( xRot );
@@ -4832,6 +4834,7 @@ psPersistItem::psPersistItem( MsgEntry* me )
     type        = me->GetUInt32();
     name        = csString ( me->GetStr() );
     factname    = csString ( me->GetStr() );
+    matname     = csString ( me->GetStr() );
     sector      = csString ( me->GetStr() );
     pos         = me->GetVector();
     xRot        = me->GetFloat();
