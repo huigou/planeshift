@@ -1,4 +1,7 @@
-﻿*** 2009-08-28 by Stefano Angeleri
+﻿*** 2009-09-11 by Steven Patrick
+- Fixed PS#2378 - setskill -1 does not return boosts
+
+*** 2009-08-28 by Stefano Angeleri
 - Fixed a problem with caching which loaded over and then overwritten 
   new data with old one for players
 - Fixed some unitialized variables in pscamera which blocked debug builds
