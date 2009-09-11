@@ -481,6 +481,7 @@ class gemItem : public gemActiveObject
 {
 protected:
     csWeakRef<psItem> itemdata;
+    csString matname;
     csString itemType;
     float xRot;
     float yRot;
