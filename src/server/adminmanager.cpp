@@ -6554,7 +6554,24 @@ void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
 
             if(data.value == -1)
             {
-                psserver->SendSystemInfo(me->clientnum, "Current '%s' of '%s' is %u", skill->name.GetDataSafe(), target->GetName(), old_value);
+                PSITEMSTATS_STAT stat = skillToStat(skill->id);
+                if (stat != PSITEMSTATS_STAT_NONE)
+                {
+                    //Handle stats differently to pickup buffs/debuffs
+                    int base = pchar->Stats()[stat].Base();
+                    int current = pchar->Stats()[stat].Current();
+                    if (base == current)
+                        psserver->SendSystemInfo(me->clientnum, "Current '%s' of '%s' is %u", skill->name.GetDataSafe(), target->GetName(), base);
+                    else
+                        psserver->SendSystemInfo(me->clientnum, "Current '%s' of '%s' is %u (%u)", skill->name.GetDataSafe(), target->GetName(), base, current);
+                } else {
+                    int base = pchar->Skills().GetSkillRank(skill->id).Base();
+                    int current = pchar->Skills().GetSkillRank(skill->id).Current();
+                    if (base == current)
+                        psserver->SendSystemInfo(me->clientnum, "Current '%s' of '%s' is %u", skill->name.GetDataSafe(), target->GetName(), base);
+                    else
+                        psserver->SendSystemInfo(me->clientnum, "Current '%s' of '%s' is %u (%u)", skill->name.GetDataSafe(), target->GetName(), base, current);
+                }
             }
             else
             {
@@ -6584,7 +6601,24 @@ void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
         unsigned int old_value = pchar->Skills().GetSkillRank(skill->id).Current();
         if (data.value == -1)
         {
-            psserver->SendSystemInfo(me->clientnum, "Current '%s' of '%s' is %u",skill->name.GetDataSafe(), target->GetName(), old_value);
+            PSITEMSTATS_STAT stat = skillToStat(skill->id);
+            if (stat != PSITEMSTATS_STAT_NONE)
+            {
+                //Handle stats differently to pickup buffs/debuffs
+                int base = pchar->Stats()[stat].Base();
+                int current = pchar->Stats()[stat].Current();
+                if (base == current)
+                    psserver->SendSystemInfo(me->clientnum, "Current '%s' of '%s' is %u", skill->name.GetDataSafe(), target->GetName(), base);
+                else
+                    psserver->SendSystemInfo(me->clientnum, "Current '%s' of '%s' is %u (%u)", skill->name.GetDataSafe(), target->GetName(), base, current);
+            } else {
+                int base = pchar->Skills().GetSkillRank(skill->id).Base();
+                int current = pchar->Skills().GetSkillRank(skill->id).Current();
+                if (base == current)
+                    psserver->SendSystemInfo(me->clientnum, "Current '%s' of '%s' is %u", skill->name.GetDataSafe(), target->GetName(), base);
+                else
+                    psserver->SendSystemInfo(me->clientnum, "Current '%s' of '%s' is %u (%u)", skill->name.GetDataSafe(), target->GetName(), base, current);
+            }
             return;
         }
         else if (skill->category == PSSKILLS_CATEGORY_STATS && (value < 0 || value > MAX_STAT))
