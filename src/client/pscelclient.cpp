@@ -2039,6 +2039,7 @@ GEMClientItem::GEMClientItem( psCelClient* cel, psPersistItem& mesg )
     Debug3(LOG_CELPERSIST, 0, "Item %s(%s) Received", mesg.name.GetData(), ShowID(mesg.eid));
     type = mesg.type;
     factName = mesg.factname;
+    matName = mesg.matname;
     solid = 0;
     post_load->pos = mesg.pos;
     post_load->xRot = mesg.xRot;
@@ -2070,7 +2071,7 @@ bool GEMClientItem::CheckLoadStatus()
     csRef<iMeshFactoryWrapper> factory;
 
     // Check if an instance of the mesh already exists.
-    instance = cel->FindInstanceObject(factName);
+    instance = cel->FindInstanceObject(factName+matName);
     if(!instance.IsValid())
     {
         bool failed = false;
@@ -2086,13 +2087,30 @@ bool GEMClientItem::CheckLoadStatus()
             return true;
         }
 
+        if(!matName.IsEmpty())
+        {
+            csRef<iMaterialWrapper> material = psengine->GetLoader()->LoadMaterial(matName, &failed);
+            if(!material.IsValid())
+            {
+                if(failed)
+                {
+                    Error2("Unable to load item with material %s!\n", matName.GetData());
+                    psengine->UnregisterDelayedLoader(this);
+                }
+
+                return true;
+            }
+
+            factory->GetMeshObjectFactory()->SetMaterialWrapper(material);
+        }
+
         // Create the mesh.
         instance = csPtr<InstanceObject>(new InstanceObject());
         instance->pcmesh = factory->CreateMeshWrapper();
         instance->pcmesh->GetFlags().Set(CS_ENTITY_NODECAL | CS_ENTITY_NOHITBEAM);
         psengine->GetEngine()->GetMeshes()->Add(instance->pcmesh);
         psengine->GetEngine()->PrecacheMesh(instance->pcmesh);
-        cel->AddInstanceObject(factName, instance);
+        cel->AddInstanceObject(factName+matName, instance);
 
         // Set appropriate shader.
         csRef<iShaderManager> shman = csQueryRegistry<iShaderManager>(psengine->GetObjectRegistry());

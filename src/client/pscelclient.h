@@ -632,6 +632,7 @@ private:
     };
 
     PostLoadData* post_load;
+    csString matName;
 };
 
 /** An action location on the client. */
