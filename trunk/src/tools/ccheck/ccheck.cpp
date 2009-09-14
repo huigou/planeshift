@@ -21,6 +21,7 @@
 
 #include <cstool/initapp.h>
 #include <csutil/cmdhelp.h>
+#include <csutil/documenthelper.h>
 #include <csutil/stringarray.h>
 
 #include <iutil/cmdline.h>
@@ -28,6 +29,7 @@
 #include <iutil/stringarray.h>
 
 #include "ccheck.h"
+#include "util/fileutil.h"
 
 CS_IMPLEMENT_APPLICATION
 
@@ -48,8 +50,11 @@ void CCheck::PrintHelp()
     printf("This application checks for duplicate meshfact and texture inclusions in art files.\n\n");
 
     printf("Options:\n");
-    printf("-path The vfs path to directory to search in. Defaults to /this/ccheck/\n\n");
-    printf("Usage: ccheck(.exe) -path /this/path/to/directory/\n");
+    printf("-in The vfs path to directory to search in. Defaults to /this/ccheck/\n\n");
+    printf("-check Whether to do a meshfact conflict check.");
+    printf("-process Whether to process art into a optimal format for bgloader.");
+    printf("-out The vfs path to the directory to output processed art files in. Defaults to /this/ccheckout/\n\n");
+    printf("Usage: ccheck(.exe) -path=/this/path/to/directory/\n");
 }
 
 void CCheck::Run()
@@ -63,13 +68,27 @@ void CCheck::Run()
         return;
     }
 
-    csString rootpath = cmdline->GetOption("path");
-    if(rootpath.IsEmpty())
+    bool checking = cmdline->GetBoolOption("check");
+    bool processing = cmdline->GetBoolOption("process");
+
+    csString inpath = cmdline->GetOption("in");
+    if(inpath.IsEmpty())
     {
-        rootpath = "/this/ccheck/";
+        inpath = "/this/ccheck/";
     }
 
-    csRef<iStringArray> files = vfs->FindFiles(rootpath);
+    outpath = cmdline->GetOption("out");
+    if(outpath.IsEmpty())
+    {
+        outpath = "/this/ccheckout/";
+    }
+
+    csRef<iDocument> doc = docsys->CreateDocument();
+    texmat = doc->CreateRoot();
+    texmat = texmat->CreateNodeBefore(CS_NODE_ELEMENT);
+    texmat->SetValue("library");
+
+    csRef<iStringArray> files = vfs->FindFiles(inpath);
     for(size_t i=0; i<files->GetSize(); i++)
     {
         csRef<iDataBuffer> filePath = vfs->GetRealPath(files->Get(i));
@@ -86,58 +105,79 @@ void CCheck::Run()
             {
                 csString zipfile = zipfiles->Get(j);
                 if(zipfile.GetAt(zipfile.Length()-1) != '/')
-                    ParseFile(zipfile, fileName);
+                    ParseFile(zipfile, fileName, processing);
+
+                if(processing)
+                {
+                    if(zipfile.Find("lightmaps") != size_t(-1) && zipfile.Find("cslib") == size_t(-1))
+                    {
+                        csRef<iStringArray> lightmaps = vfs->FindFiles(zipfile);
+                        for(size_t k=0; k<lightmaps->GetSize(); k++)
+                        {
+                            FileUtil futil(vfs);
+                            csString path = lightmaps->Get(k);
+                            futil.CopyFile(lightmaps->Get(k), outpath+"/materials/lightmaps/" + path.Slice(path.FindLast('/')), true, false);
+                        }
+                    }
+
+                    if(zipfile.Find("bindata") != size_t(-1))
+                    {
+                        csRef<iStringArray> bindata = vfs->FindFiles(zipfile);
+                        for(size_t k=0; k<bindata->GetSize(); k++)
+                        {
+                            FileUtil futil(vfs);
+                            csString path = bindata->Get(k);
+                            futil.CopyFile(bindata->Get(k), outpath+"/meshes/bindata/" + path.Slice(path.FindLast('/')), true, false);
+                        }
+                    }
+                }
             }
             vfs->Unmount("/ccheck/", filePath->GetData());
         }
         else
         {
-            ParseFile(filePath->GetData(), filePath->GetData());
+            ParseFile(filePath->GetData(), filePath->GetData(), processing);
         }
     }
 
-    PrintOutput("\nConflicted meshfacts:\n");
-
-    for(size_t i=0; i<meshfacts.GetSize(); i++)
+    if(checking)
     {
-        csArray<csString> conflicted = cmeshfacts.GetAll(meshfacts[i]);
-        for(size_t j=0; 1<conflicted.GetSize() && j<conflicted.GetSize(); j++)
-        {
-            if(j == 0)
-                PrintOutput("\nMeshFact '%s' conflicts in: ", meshfacts[i].GetData());
+        PrintOutput("\nConflicted meshfacts:\n");
 
-            PrintOutput("%s ", conflicted[j].GetData());
+        for(size_t i=0; i<meshfacts.GetSize(); i++)
+        {
+            csArray<csString> conflicted = cmeshfacts.GetAll(meshfacts[i]);
+            for(size_t j=0; 1<conflicted.GetSize() && j<conflicted.GetSize(); j++)
+            {
+                if(j == 0)
+                    PrintOutput("\nMeshFact '%s' conflicts in: ", meshfacts[i].GetData());
+
+                PrintOutput("%s ", conflicted[j].GetData());
+            }
         }
     }
 
-    PrintOutput("\n\nConflicted textures:\n");
-
-    for(size_t i=0; i<textures.GetSize(); i++)
-    {
-        csArray<csString> conflicted = ctextures.GetAll(textures[i]);
-        for(size_t j=0; 1<conflicted.GetSize() && j<conflicted.GetSize(); j++)
-        {
-            if(j == 0)
-                PrintOutput("\nTexture '%s' conflicts in: ", textures[i].GetData());
-
-            PrintOutput("%s ", conflicted[j].GetData());
-        }
-    }    
+    if(processing)
+        doc->Write(vfs, outpath+"/materials/materials.cslib");
 }
 
-void CCheck::ParseFile(const char* filePath, const char* fileName)
+void CCheck::ParseFile(const char* filePath, const char* fileName, bool processing)
 {
     csRef<iDataBuffer> buf = vfs->ReadFile(filePath);
-    csRef<iDocument> doc = docsys->CreateDocument();
+    if(!buf.IsValid())
+        return;
 
+    csRef<iDocument> doc = docsys->CreateDocument();
     doc->Parse(buf, true);
 
     if(!doc->GetRoot().IsValid())
     {
-        csString fp(filePath);
-        fp = fp.Slice(fp.FindLast('/')+1);
-        textures.PushSmart(fp);
-        ctextures.Put(fp, fileName);
+        if(processing && csString(filePath).Find(".dds") != (size_t)-1)
+        {
+            FileUtil futil(vfs);
+            futil.CopyFile(filePath, outpath+"/materials/"+csString(filePath).Slice(csString(filePath).FindLast('/')), true, false);
+        }
+
         return;
     }
 
@@ -152,12 +192,56 @@ void CCheck::ParseFile(const char* filePath, const char* fileName)
         return;
     }
 
+    if(processing)
+    {
+        if(root->GetNode("textures"))
+        {
+            csRef<iDocumentNode> newTextures = texmat->CreateNodeBefore(CS_NODE_ELEMENT);
+            newTextures->SetValue("textures");
+            csRef<iDocumentNodeIterator> itr = root->GetNode("textures")->GetNodes("texture");
+            while(itr->HasNext())
+            {
+                csRef<iDocumentNode> node = itr->Next();
+                if(textures.PushSmart(node->GetAttributeValue("name")) == textures.GetSize())
+                {
+                    csRef<iDocumentNode> newNode = newTextures->CreateNodeBefore(CS_NODE_ELEMENT);
+                    CS::DocSystem::CloneNode(node, newNode);
+                }
+            }
+        }
+
+        if(root->GetNode("materials"))
+        {
+            csRef<iDocumentNode> newMaterials = texmat->CreateNodeBefore(CS_NODE_ELEMENT);
+            newMaterials->SetValue("materials");
+            csRef<iDocumentNodeIterator> itr = root->GetNode("materials")->GetNodes("material");
+            while(itr->HasNext())
+            {
+                csRef<iDocumentNode> node = itr->Next();
+                if(materials.PushSmart(node->GetAttributeValue("name")) == materials.GetSize())
+                {
+                    csRef<iDocumentNode> newNode = newMaterials->CreateNodeBefore(CS_NODE_ELEMENT);
+                    CS::DocSystem::CloneNode(node, newNode);
+                }
+            }
+        }
+    }
+
     csRef<iDocumentNodeIterator> itr = root->GetNodes("meshfact");
     while(itr->HasNext())
     {
         csRef<iDocumentNode> node = itr->Next();
         meshfacts.PushSmart(node->GetAttributeValue("name"));
         cmeshfacts.Put(node->GetAttributeValue("name"), fileName);
+
+        if(processing)
+        {
+            csRef<iDocument> mdoc = docsys->CreateDocument();
+            csRef<iDocumentNode> newNode = mdoc->CreateRoot();
+            newNode = newNode->CreateNodeBefore(CS_NODE_ELEMENT);
+            CS::DocSystem::CloneNode(node, newNode);
+            mdoc->Write(vfs, outpath+"/meshes/"+node->GetAttributeValue("name"));
+        }
     }
 }
 
