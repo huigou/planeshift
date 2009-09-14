@@ -41,7 +41,7 @@ struct StartPosition : public csRefCount
  */
 struct iBgLoader : public virtual iBase
 {
-  SCF_INTERFACE(iBgLoader, 1, 3, 0);
+  SCF_INTERFACE(iBgLoader, 1, 4, 0);
 
  /**
   * Sets key settings and performs a shader parse.
@@ -126,7 +126,7 @@ struct iBgLoader : public virtual iBase
   * @param pos The world space position that you are checking.
   * @param colour Will contain the colour of the water that you are positioned in.
   */
-  virtual bool InWaterArea(const char* sector, csVector3* pos, csColor4** colour) const = 0;
+  virtual bool InWaterArea(const char* sector, csVector3* pos, csColor4** colour) = 0;
 
  /**
   * Returns an array of the available shaders for a given type.
@@ -139,6 +139,11 @@ struct iBgLoader : public virtual iBase
    * Returns an array of start positions in the world.
    */
   virtual csRefArray<StartPosition>* GetStartPositions() = 0;
+
+  /**
+   * Load a zone given by name.
+   */
+  virtual bool LoadZone(const char* name) = 0;
 };
 
 #endif // __IBGLOADER_H__

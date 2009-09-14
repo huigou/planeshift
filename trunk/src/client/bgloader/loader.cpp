@@ -145,6 +145,9 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
         // For the plugin and shader loads.
         csRefArray<iThreadReturn> rets;
 
+        // Zone for this file.
+        csRef<Zone> zone;
+
         // Restores any directory changes.
         csVfsDirectoryChanger dirchange(vfs);
 
@@ -169,10 +172,18 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
         }
 
         // Begin document parsing.
-        csRef<iDocumentNode> root = doc->GetRoot()->GetNode("library");
+        csRef<iDocumentNode> root = doc->GetRoot()->GetNode("world");
         if(!root.IsValid())
         {
-            root = doc->GetRoot()->GetNode("world");
+            root = doc->GetRoot()->GetNode("library");
+        }
+        else
+        {
+            csString zonen(path);
+            zonen = zonen.Slice(0, zonen.FindLast('/'));
+            zonen = zonen.Slice(zonen.FindLast('/')+1);
+            zone = csPtr<Zone>(new Zone());
+            zones.Put(stringSet.Request(zonen.GetData()), zone);
         }
 
         if(root.IsValid())
@@ -235,7 +246,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                     csRef<Texture> t = csPtr<Texture>(new Texture(node->GetAttributeValue("name"), vfsPath, node));
                     {
                         CS::Threading::ScopedWriteLock lock(tLock);
-                        textures.Put(t->name, t);
+                        textures.Put(stringSet.Request(t->name), t);
                     }
                 }
             }
@@ -251,7 +262,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                     csRef<Material> m = csPtr<Material>(new Material(node->GetAttributeValue("name")));
                     {
                         CS::Threading::ScopedWriteLock lock(mLock);
-                        materials.Put(m->name, m);
+                        materials.Put(stringSet.Request(m->name), m);
                     }
 
                     // Parse the texture for a material. Construct a shader variable for it.
@@ -265,7 +276,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                         csRef<Texture> texture;
                         {
                             CS::Threading::ScopedReadLock lock(tLock);
-                            texture = textures.Get(node->GetContentsValue(), csRef<Texture>());
+                            texture = textures.Get(stringSet.Request(node->GetContentsValue()), csRef<Texture>());
 
                             // Validation.
                             csString msg;
@@ -338,7 +349,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                             csRef<Texture> texture;
                             {
                                 CS::Threading::ScopedReadLock lock(tLock);
-                                texture = textures.Get(node->GetContentsValue(), csRef<Texture>());
+                                texture = textures.Get(stringSet.Request(node->GetContentsValue()), csRef<Texture>());
 
                                 // Validation.
                                 csString msg;
@@ -400,7 +411,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                     csRef<Material> material;
                     {
                         CS::Threading::ScopedReadLock lock(mLock);
-                        material = materials.Get(node->GetNode("params")->GetNode("material")->GetContentsValue(), csRef<Material>());
+                        material = materials.Get(stringSet.Request(node->GetNode("params")->GetNode("material")->GetContentsValue()), csRef<Material>());
 
                         // Validation.
                         csString msg;
@@ -421,7 +432,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                         csRef<Material> material;
                         {
                             CS::Threading::ScopedReadLock lock(mLock);
-                            material = materials.Get(node2->GetNode("material")->GetContentsValue(), csRef<Material>());
+                            material = materials.Get(stringSet.Request(node2->GetNode("material")->GetContentsValue()), csRef<Material>());
 
                             // Validation.
                             csString msg;
@@ -441,7 +452,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                     csRef<Material> material;
                     {
                         CS::Threading::ScopedReadLock lock(mLock);
-                        material = materials.Get(node2->GetAttributeValue("material"), csRef<Material>());
+                        material = materials.Get(stringSet.Request(node2->GetAttributeValue("material")), csRef<Material>());
 
                         // Validation.
                         csString msg;
@@ -460,7 +471,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                         csRef<Material> material;
                         {    
                             CS::Threading::ScopedReadLock lock(mLock);
-                            material = materials.Get(node->GetContentsValue(), csRef<Material>());
+                            material = materials.Get(stringSet.Request(node->GetContentsValue()), csRef<Material>());
 
                             // Validation.
                             csString msg;
@@ -487,7 +498,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                                 csRef<Material> material;
                                 {
                                     CS::Threading::ScopedReadLock lock(mLock);
-                                    material = materials.Get(node2->GetAttributeValue("material"), csRef<Material>());
+                                    material = materials.Get(stringSet.Request(node2->GetAttributeValue("material")), csRef<Material>());
 
                                     // Validation.
                                     csString msg;
@@ -503,7 +514,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                 }
 
                 CS::Threading::ScopedWriteLock lock(mfLock);
-                meshfacts.Put(mf->name, mf);
+                meshfacts.Put(stringSet.Request(mf->name), mf);
             }
 
             // Parse all sectors.
@@ -517,7 +528,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                 sectorName.Downcase();
                 {
                     CS::Threading::ScopedReadLock lock(sLock);
-                    s = sectortree.Get(sectorName, csRef<Sector>());
+                    s = sectorHash.Get(stringSet.Request(sectorName), csRef<Sector>());
                 }
 
                 // This sector may have already been created (referenced by a portal somewhere else).
@@ -527,7 +538,12 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                     s = csPtr<Sector>(new Sector(sectorName));
                     CS::Threading::ScopedWriteLock lock(sLock);
                     sectors.Push(s);
-                    sectortree.Put(sectorName, s);
+                    sectorHash.Put(stringSet.Request(sectorName), s);
+                }
+
+                if(zone.IsValid())
+                {
+                    zone->sectors.Push(s);
                 }
 
                 // Get culler properties.
@@ -624,7 +640,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                             csRef<Material> material;
                             {
                                 CS::Threading::ScopedReadLock lock(mLock);
-                                material = materials.Get(node3->GetNode("material")->GetContentsValue(), csRef<Material>());
+                                material = materials.Get(stringSet.Request(node3->GetNode("material")->GetContentsValue()), csRef<Material>());
 
                                 // Validation.
                                 csString msg;
@@ -645,7 +661,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                                 csRef<Texture> texture;
                                 {
                                     CS::Threading::ScopedReadLock lock(tLock);
-                                    texture = textures.Get(node3->GetContentsValue(), csRef<Texture>());
+                                    texture = textures.Get(stringSet.Request(node3->GetContentsValue()), csRef<Texture>());
 
                                     // Validation.
                                     csString msg;
@@ -664,7 +680,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                         csRef<MeshFact> meshfact;
                         {
                             CS::Threading::ScopedReadLock lock(mfLock);
-                            meshfact = meshfacts.Get(node2->GetContentsValue(), csRef<MeshFact>());
+                            meshfact = meshfacts.Get(stringSet.Request(node2->GetContentsValue()), csRef<MeshFact>());
 
                             // Validation.
                             csString msg;
@@ -743,7 +759,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                         csRef<Material> material;
                         {
                             CS::Threading::ScopedReadLock lock(mLock);
-                            material = materials.Get(node2->GetContentsValue(), csRef<Material>());
+                            material = materials.Get(stringSet.Request(node2->GetContentsValue()), csRef<Material>());
 
                             // Validation.
                             csString msg;
@@ -766,7 +782,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                             csRef<Material> material;
                             {
                                 CS::Threading::ScopedReadLock lock(mLock);
-                                material = materials.Get(node3->GetContentsValue(), csRef<Material>());
+                                material = materials.Get(stringSet.Request(node3->GetContentsValue()), csRef<Material>());
 
                                 // Validation.
                                 csString msg;
@@ -796,7 +812,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                                         csRef<Texture> texture;
                                         {
                                             CS::Threading::ScopedReadLock lock(tLock);
-                                            texture = textures.Get(node3->GetContentsValue(), csRef<Texture>());
+                                            texture = textures.Get(stringSet.Request(node3->GetContentsValue()), csRef<Texture>());
 
                                             // Validation.
                                             csString msg;
@@ -814,7 +830,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
 
                     s->meshes.Push(m);
                     CS::Threading::ScopedWriteLock lock(meshLock);
-                    meshes.Put(m->name, m);
+                    meshes.Put(stringSet.Request(m->name), m);
                 }
 
                 // Parse mesh generators (for foliage, rocks etc.)
@@ -843,7 +859,8 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
 
                         {
                             CS::Threading::ScopedReadLock lock(meshLock);
-                            mgen->object = meshes.Get(meshgen->GetNode("meshobj")->GetContentsValue(), csRef<MeshObj>());
+                            csStringID mID = stringSet.Request(meshgen->GetNode("meshobj")->GetContentsValue());
+                            mgen->object = meshes.Get(mID, csRef<MeshObj>());
                         }
 
                         csRef<iDocumentNodeIterator> geometries = meshgen->GetNodes("geometry");
@@ -855,7 +872,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                             {
                                 csString name(geometry->GetNode("factory")->GetAttributeValue("name"));
                                 CS::Threading::ScopedReadLock lock(mfLock);
-                                meshfact = meshfacts.Get(name, csRef<MeshFact>());
+                                meshfact = meshfacts.Get(stringSet.Request(name), csRef<MeshFact>());
 
                                 // Validation.
                                 csString msg;
@@ -873,7 +890,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                                 {
                                     csString name(matfactors->Next()->GetAttributeValue("material"));
                                     CS::Threading::ScopedReadLock lock(mLock);
-                                    material = materials.Get(name, csRef<Material>());
+                                    material = materials.Get(stringSet.Request(name), csRef<Material>());
 
                                     // Validation.
                                     csString msg;
@@ -942,7 +959,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                         targetSector.Downcase();
                         {
                             CS::Threading::ScopedReadLock lock(sLock);
-                            p->targetSector = sectortree.Get(targetSector, csRef<Sector>());
+                            p->targetSector = sectorHash.Get(stringSet.Request(targetSector), csRef<Sector>());
                         }
 
                         if(!p->targetSector.IsValid())
@@ -950,7 +967,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                             p->targetSector = csPtr<Sector>(new Sector(targetSector));
                             CS::Threading::ScopedWriteLock lock(sLock);
                             sectors.Push(p->targetSector);
-                            sectortree.Put(targetSector, p->targetSector);
+                            sectorHash.Put(stringSet.Request(targetSector), p->targetSector);
                         }
 
                         if(!p->ww_given)
@@ -1115,7 +1132,7 @@ void BgLoader::UpdatePosition(const csVector3& pos, const char* sectorName, bool
 
     if(!sector.IsValid())
     {
-        sector = sectortree.Get(csString(sectorName).Downcase(), csRef<Sector>());
+        sector = sectorHash.Get(stringSet.Request(csString(sectorName).Downcase()), csRef<Sector>());
     }
 
     if(sector.IsValid())
@@ -1130,7 +1147,7 @@ void BgLoader::UpdatePosition(const csVector3& pos, const char* sectorName, bool
         unloadBox.AddBoundingVertexSmart(pos.x-loadRange*1.5, pos.y-loadRange*1.5, pos.z-loadRange*1.5);
 
         // Check.
-        LoadSector(pos, loadBox, unloadBox, sector, 0);
+        LoadSector(pos, loadBox, unloadBox, sector, 0, false);
 
         if(force)
         {
@@ -1374,7 +1391,7 @@ void BgLoader::CleanTexture(Texture* texture)
 }
 
 void BgLoader::LoadSector(const csVector3& pos, const csBox3& loadBox, const csBox3& unloadBox,
-                        Sector* sector, uint depth)
+                        Sector* sector, uint depth, bool force)
 {
     sector->isLoading = true;
 
@@ -1417,7 +1434,7 @@ void BgLoader::LoadSector(const csVector3& pos, const csBox3& loadBox, const csB
                 wwUnloadBox.SetMax(2, wwUnloadBox.MaxZ()-transform.z);
             }
 
-            LoadSector(wwPos, wwLoadBox, wwUnloadBox, sector->activePortals[i]->targetSector, depth+1);
+            LoadSector(wwPos, wwLoadBox, wwUnloadBox, sector->activePortals[i]->targetSector, depth+1, false);
         }
     }
 
@@ -1426,7 +1443,7 @@ void BgLoader::LoadSector(const csVector3& pos, const csBox3& loadBox, const csB
     {
         if(!sector->meshes[i]->loading)
         {
-            if(sector->meshes[i]->InRange(pos, loadBox, loadRange))
+            if(force || sector->meshes[i]->InRange(pos, loadBox, loadRange))
             {
                 sector->meshes[i]->loading = true;
                 loadingMeshes.Push(sector->meshes[i]);
@@ -1449,7 +1466,7 @@ void BgLoader::LoadSector(const csVector3& pos, const csBox3& loadBox, const csB
     {
         if(!sector->meshgen[i]->loading)
         {
-            if(sector->meshgen[i]->InRange(loadBox))
+            if(force || sector->meshgen[i]->InRange(loadBox))
             {
                 sector->meshgen[i]->loading = true;
                 loadingMeshGen.Push(sector->meshgen[i]);
@@ -1466,10 +1483,10 @@ void BgLoader::LoadSector(const csVector3& pos, const csBox3& loadBox, const csB
     // Check all portals in this sector... and recurse into the sectors they lead to.
     for(size_t i=0; i<sector->portals.GetSize(); i++)
     {
-        if(sector->portals[i]->InRange(loadBox))
+        if(force || sector->portals[i]->InRange(loadBox))
         {
             bool recurse = true;
-            if(depth >= maxPortalDepth)
+            if(!force && depth >= maxPortalDepth)
             {
                 // If we've reached the recursion limit then check if the
                 // target sector is valid. If so then create a portal to it.
@@ -1483,7 +1500,22 @@ void BgLoader::LoadSector(const csVector3& pos, const csBox3& loadBox, const csB
                 }
             }
 
-            if(!sector->portals[i]->targetSector->isLoading && !sector->portals[i]->targetSector->checked && recurse)
+            if(force)
+            {
+                if(!sector->portals[i]->targetSector->object.IsValid())
+                {
+                    {
+                        csString msg;
+                        msg.AppendFmt("Attempting to load uninit sector %s!\n", sector->name.GetData());
+                        CS_ASSERT_MSG(msg.GetData(), sector->init);
+                        if(!sector->init) return;
+                    }
+                    sector->portals[i]->targetSector->object = engine->CreateSector(sector->portals[i]->targetSector->name);
+                    sector->portals[i]->targetSector->object->SetDynamicAmbientLight(sector->portals[i]->targetSector->ambient);
+                    sector->portals[i]->targetSector->object->SetVisibilityCullerPlugin(sector->portals[i]->targetSector->culler);
+                }
+            }
+            else if(!sector->portals[i]->targetSector->isLoading && !sector->portals[i]->targetSector->checked && recurse)
             {
                 csVector3 wwPos = pos;
                 csBox3 wwLoadBox = loadBox;
@@ -1505,7 +1537,7 @@ void BgLoader::LoadSector(const csVector3& pos, const csBox3& loadBox, const csB
                     wwUnloadBox.SetMax(1, wwUnloadBox.MaxY()-transform.y);
                     wwUnloadBox.SetMax(2, wwUnloadBox.MaxZ()-transform.z);
                 }
-                LoadSector(wwPos, wwLoadBox, wwUnloadBox, sector->portals[i]->targetSector, depth+1);
+                LoadSector(wwPos, wwLoadBox, wwUnloadBox, sector->portals[i]->targetSector, depth+1, false);
             }
 
             sector->portals[i]->mObject = engine->CreatePortal(sector->portals[i]->name, sector->object,
@@ -1515,6 +1547,11 @@ void BgLoader::LoadSector(const csVector3& pos, const csBox3& loadBox, const csB
             if(sector->portals[i]->warp)
             {
                 sector->portals[i]->pObject->SetWarp(sector->portals[i]->matrix, sector->portals[i]->wv, sector->portals[i]->ww);
+            }
+
+            if(sector->portals[i]->pfloat)
+            {
+                sector->portals[i]->pObject->GetFlags().SetBool(CS_PORTAL_FLOAT, true);
             }
 
             if(sector->portals[i]->clip)
@@ -1554,7 +1591,7 @@ void BgLoader::LoadSector(const csVector3& pos, const csBox3& loadBox, const csB
                     wwUnloadBox.SetMax(1, wwUnloadBox.MaxY()-transform.y);
                     wwUnloadBox.SetMax(2, wwUnloadBox.MaxZ()-transform.z);
                 }
-                LoadSector(wwPos, wwLoadBox, wwUnloadBox, sector->portals[i]->targetSector, depth+1);
+                LoadSector(wwPos, wwLoadBox, wwUnloadBox, sector->portals[i]->targetSector, depth+1, false);
             }
 
             engine->GetMeshes()->Remove(sector->portals[i]->mObject);
@@ -1568,7 +1605,7 @@ void BgLoader::LoadSector(const csVector3& pos, const csBox3& loadBox, const csB
     // Check all sector lights.
     for(size_t i=0; i<sector->lights.GetSize(); i++)
     {
-        if(sector->lights[i]->InRange(loadBox))
+        if(force || sector->lights[i]->InRange(loadBox))
         {
             sector->lights[i]->object = engine->CreateLight(sector->lights[i]->name, sector->lights[i]->pos,
                 sector->lights[i]->radius, sector->lights[i]->colour, sector->lights[i]->dynamic);
@@ -1849,7 +1886,7 @@ bool BgLoader::LoadTexture(Texture* texture)
 
 csPtr<iMeshFactoryWrapper> BgLoader::LoadFactory(const char* name, bool* failed)
 {
-    csRef<MeshFact> meshfact = meshfacts.Get(name, csRef<MeshFact>());
+    csRef<MeshFact> meshfact = meshfacts.Get(stringSet.Request(name), csRef<MeshFact>());
     {
         if(!failed)
         {
@@ -1888,7 +1925,7 @@ csPtr<iMeshFactoryWrapper> BgLoader::LoadFactory(const char* name, bool* failed)
 
 csPtr<iMaterialWrapper> BgLoader::LoadMaterial(const char* name, bool* failed)
 {
-    csRef<Material> material = materials.Get(name, csRef<Material>());
+    csRef<Material> material = materials.Get(stringSet.Request(name), csRef<Material>());
     {
         if(!failed)
         {
@@ -1912,13 +1949,13 @@ csPtr<iMaterialWrapper> BgLoader::LoadMaterial(const char* name, bool* failed)
     return csPtr<iMaterialWrapper>(0);
 }
 
-bool BgLoader::InWaterArea(const char* sector, csVector3* pos, csColor4** colour) const
+bool BgLoader::InWaterArea(const char* sector, csVector3* pos, csColor4** colour)
 {
     // Hack to work around the weird sector stuff we do.
     if(!strcmp("SectorWhereWeKeepEntitiesResidingInUnloadedMaps", sector))
         return false;
 
-    csRef<Sector> s = sectortree.Get(csString(sector).Downcase(), csRef<Sector>());
+    csRef<Sector> s = sectorHash.Get(stringSet.Request(csString(sector).Downcase()), csRef<Sector>());
     CS_ASSERT_MSG("Invalid sector passed to InWaterArea().", s.IsValid());
 
     for(size_t i=0; i<s->waterareas.GetSize(); ++i)
@@ -1933,10 +1970,50 @@ bool BgLoader::InWaterArea(const char* sector, csVector3* pos, csColor4** colour
     return false;
 }
 
+bool BgLoader::LoadZone(const char* name)
+{
+    csRef<Zone> zone = zones.Get(stringSet.Request(name), csRef<Zone>());
+    if(zone.IsValid())
+    {
+        if(zone->loading)
+        {
+            if(GetLoadingCount() == 0)
+            {
+                if(loadedZone)
+                {
+                    for(size_t i=0; i<loadedZone->sectors.GetSize(); ++i)
+                    {
+                        CleanSector(loadedZone->sectors[i]);
+                    }
+
+                    loadedZone = zone;
+
+                    return true;
+                }
+            }
+            else
+            {
+                ContinueLoading(true);
+            }
+        }
+        else
+        {
+            for(size_t i=0; i<zone->sectors.GetSize(); ++i)
+            {
+                LoadSector(csVector3(0.0f), csBox3(), csBox3(), zone->sectors[i], (uint)-1, true);
+            }
+
+            zone->loading = true;
+        }
+    }
+
+    return false;
+}
+
 iMeshWrapper* BgLoader::CreateAndSelectMesh(const char* factName, iCamera* camera, const csVector2& pos)
 {
     // Check that requested mesh is valid.
-    csRef<MeshFact> meshfact = meshfacts.Get(factName, csRef<MeshFact>());
+    csRef<MeshFact> meshfact = meshfacts.Get(stringSet.Request(factName), csRef<MeshFact>());
     if(!meshfact.IsValid())
         return 0;
 
