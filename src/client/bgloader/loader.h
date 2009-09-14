@@ -22,7 +22,6 @@
 
 #include <csgeom/poly3d.h>
 #include <csgfx/shadervar.h>
-#include <csutil/redblacktree.h>
 #include <csutil/scf_implementation.h>
 #include <csutil/hash.h>
 #include <csutil/threading/rwmutex.h>
@@ -143,7 +142,12 @@ public:
     * @param pos The world space position that you are checking.
     * @param colour Will contain the colour of the water that you are positioned in.
     */
-    bool InWaterArea(const char* sector, csVector3* pos, csColor4** colour) const;
+    bool InWaterArea(const char* sector, csVector3* pos, csColor4** colour);
+
+   /**
+    * Load a zone given by name.
+    */
+    bool LoadZone(const char* name);
 
    /**
     * Returns an array of the available shaders for a given type.
@@ -419,7 +423,8 @@ private:
     class Portal : public CS::Utility::FastRefCount<Portal>
     {
     public:
-        Portal(const char* name) : name(name), wv(0), ww_given(false), ww(0), transform(0), clip(false), zfill(false), warp(false)
+        Portal(const char* name) : name(name), wv(0), ww_given(false), ww(0),
+            transform(0), pfloat(false), clip(false), zfill(false), warp(false)
         {
         }
 
@@ -439,6 +444,7 @@ private:
         bool ww_given;
         csVector3 ww;
         csVector3 transform;
+        bool pfloat;
         bool clip;
         bool zfill;
         bool warp;
@@ -492,7 +498,7 @@ private:
 
     /* Internal loading methods. */
     void LoadSector(const csVector3& pos, const csBox3& loadBox, const csBox3& unloadBox,
-      Sector* sector, uint depth);
+      Sector* sector, uint depth, bool force);
     void FinishMeshLoad(MeshObj* mesh);
     bool LoadMeshGen(MeshGen* meshgen);
     bool LoadMesh(MeshObj* mesh);
@@ -531,13 +537,28 @@ private:
     // The last valid position.
     csVector3 lastPos;
 
-    // Stores world representation.
+    // Shader store.
     csHash<csString, csStringID> shadersByUsageType;
-    csRedBlackTreeMap<csString, csRef<Texture> > textures;
-    csRedBlackTreeMap<csString, csRef<Material> > materials;
-    csRedBlackTreeMap<csString, csRef<MeshFact> > meshfacts;
-    csRedBlackTreeMap<csString, csRef<MeshObj> > meshes;
-    csRedBlackTreeMap<csString, csRef<Sector> > sectortree;
+
+    // Stores world representation.
+    struct Zone : CS::Utility::FastRefCount<Zone>
+    {
+        bool loading;
+        csRefArray<Sector> sectors;
+
+        Zone() : loading(false) {}
+    };
+
+    csRef<Zone> loadedZone;
+
+    csStringSet stringSet;
+    csHash<csRef<Zone>, csStringID> zones;
+
+    csHash<csRef<Texture>, csStringID> textures;
+    csHash<csRef<Material>, csStringID> materials;
+    csHash<csRef<MeshFact>, csStringID> meshfacts;
+    csHash<csRef<MeshObj>, csStringID> meshes;
+    csHash<csRef<Sector>, csStringID> sectorHash;
     csRefArray<Sector> sectors;
     csRefArray<StartPosition> startPositions;
 
