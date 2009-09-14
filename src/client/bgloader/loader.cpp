@@ -936,6 +936,11 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                         }
 
                         // Other options.
+                        if(node2->GetNode("float"))
+                        {
+                            p->pfloat = true;
+                        }
+
                         if(node2->GetNode("clip"))
                         {
                             p->clip = true;
