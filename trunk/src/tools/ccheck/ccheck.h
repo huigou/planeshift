@@ -35,6 +35,7 @@ private:
     csRef<iDocumentSystem> docsys;
     csRef<iStringSet> strings;
 
+    csTinyDocumentSystem tinydoc;
     csString outpath;
 
     csArray<csString> textures;

@@ -23,6 +23,7 @@
 #include <csutil/cmdhelp.h>
 #include <csutil/documenthelper.h>
 #include <csutil/stringarray.h>
+#include <csutil/xmltiny.h>
 
 #include <iutil/cmdline.h>
 #include <iutil/document.h>
@@ -167,10 +168,11 @@ void CCheck::ParseFile(const char* filePath, const char* fileName, bool processi
     if(!buf.IsValid())
         return;
 
-    csRef<iDocument> doc = docsys->CreateDocument();
-    doc->Parse(buf, true);
+    csRef<iDocument> bdoc = docsys->CreateDocument();
+    bdoc->Parse(buf, true);
+    csRef<iDocumentNode> broot = bdoc->GetRoot();
 
-    if(!doc->GetRoot().IsValid())
+    if(!broot.IsValid())
     {
         if(processing && csString(filePath).Find(".dds") != (size_t)-1)
         {
@@ -181,7 +183,11 @@ void CCheck::ParseFile(const char* filePath, const char* fileName, bool processi
         return;
     }
 
-    csRef<iDocumentNode> root = doc->GetRoot()->GetNode("library");
+    csRef<iDocument> doc = tinydoc.CreateDocument();
+    csRef<iDocumentNode> root = doc->CreateRoot();
+    CS::DocSystem::CloneNode(broot, root);
+
+    root = doc->GetRoot()->GetNode("library");
     if(!root.IsValid())
     {
         root = doc->GetRoot()->GetNode("world");
@@ -208,6 +214,8 @@ void CCheck::ParseFile(const char* filePath, const char* fileName, bool processi
                     CS::DocSystem::CloneNode(node, newNode);
                 }
             }
+            
+            root->RemoveNode(root->GetNode("textures"));
         }
 
         if(root->GetNode("materials"))
@@ -224,6 +232,8 @@ void CCheck::ParseFile(const char* filePath, const char* fileName, bool processi
                     CS::DocSystem::CloneNode(node, newNode);
                 }
             }
+
+            root->RemoveNode(root->GetNode("materials"));
         }
     }
 
@@ -243,6 +253,9 @@ void CCheck::ParseFile(const char* filePath, const char* fileName, bool processi
             mdoc->Write(vfs, outpath+"/meshes/"+node->GetAttributeValue("name"));
         }
     }
+
+    root->RemoveNodes(root->GetNodes("meshfact"));
+    doc->Write(vfs, outpath+"/maps/"+csString(fileName).Slice(0, csString(fileName).FindLast('.')));
 }
 
 void CCheck::PrintOutput(const char* string, ...)
