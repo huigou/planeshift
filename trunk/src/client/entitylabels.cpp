@@ -345,7 +345,11 @@ void psEntityLabels::OnObjectArrived( GEMClientObject* object )
 
     if(MatchVisibility(object->GetObjectType(), LABEL_NEVER))
     	return;
-    
+
+    // The controlled character never shows a label.
+    if (object == celClient->GetMainPlayer())
+        return;
+
     if(object->GetEntityLabel())
     {
         RepaintObjectLabel( object );
@@ -440,7 +444,7 @@ inline void psEntityLabels::UpdateVisibility()
 {
     csVector3 here = celClient->GetMainPlayer()->Pos();
     const csPDelArray<GEMClientObject>& entities = celClient->GetEntities();
-    for (size_t i=1; i < entities.GetSize(); i++)  // Skip first entity, which is the main actor
+    for (size_t i=0; i < entities.GetSize(); i++)
     {
         GEMClientObject* object = entities.Get(i);
 
@@ -486,7 +490,7 @@ inline void psEntityLabels::UpdateMouseover()
         		return;
 
         // Show new
-        if (underMouse != NULL && underMouse != celClient->GetMainPlayer())
+        if (underMouse != NULL)
         {
             // Don't show other player names unless introduced.
             if (underMouse->GetObjectType() == GEM_ACTOR && !(underMouse->Flags() & psPersistActor::NAMEKNOWN))
@@ -547,6 +551,10 @@ void psEntityLabels::RemoveObject( GEMClientObject* object )
 
 inline void psEntityLabels::ShowLabelOfObject(GEMClientObject* object, bool show)
 {
+    // The controlled character never shows a label.
+    if (object == celClient->GetMainPlayer())
+        return;
+
     if (object->GetEntityLabel() == NULL)
     {
         CreateLabelOfObject(object);
@@ -562,21 +570,21 @@ inline void psEntityLabels::ShowLabelOfObject(GEMClientObject* object, bool show
 void psEntityLabels::RepaintAllLabels()
 {
     const csPDelArray<GEMClientObject>& entities = celClient->GetEntities();
-    for (size_t i=1; i < entities.GetSize(); i++)  // Skip first entity, which is the main actor
+    for (size_t i=0; i < entities.GetSize(); i++)
         RepaintObjectLabel( entities.Get(i) );
 }
 
 void psEntityLabels::HideAllLabels()
 {
     const csPDelArray<GEMClientObject>& entities = celClient->GetEntities();
-    for (size_t i=1; i < entities.GetSize(); i++)  // Skip first entity, which is the main actor
+    for (size_t i=0; i < entities.GetSize(); i++)
         ShowLabelOfObject( entities.Get(i), false );
 }
 
 void psEntityLabels::RefreshGuildLabels()
 {
     const csPDelArray<GEMClientObject>& entities = celClient->GetEntities();
-    for (size_t i=1; i < entities.GetSize(); i++)  // Skip first entity, which is the main actor
+    for (size_t i=0; i < entities.GetSize(); i++)
     {
         GEMClientActor* actor = dynamic_cast<GEMClientActor*>(entities.Get(i));
         if ( actor && csString(actor->GetGuildName()).Length() )

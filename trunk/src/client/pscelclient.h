@@ -196,6 +196,7 @@ public:
     void PruneEntities();
 
     bool IsUnresSector(iSector* sector) { return unresSector == sector;}
+    iSector* GetUnresSector() { return unresSector; }
 
     int GetRequestStatus() { return requeststatus; }
 
@@ -261,8 +262,6 @@ public:
     }
 
 protected:
-    friend class GEMClientActor;
-
     /** Finds given entity in list of unresolved entities */
     csList<UnresolvedPos*>::Iterator FindUnresolvedPos(GEMClientObject * entity);
 
@@ -285,6 +284,8 @@ protected:
     void HandleNameChange( MsgEntry* me );
     void HandleGuildChange( MsgEntry* me );
     void HandleGroupChange( MsgEntry* me );
+
+    void AddEntity(GEMClientObject* obj);
 
     /** Handles a stats message from the server.
       * This basically just publishes the data to PAWS so various widgets can be updated.
@@ -416,8 +417,6 @@ public:
      virtual void PostLoad(bool nullmesh) { }
 
 protected:
-    friend class psCelClient;
-
     static psCelClient *cel;
 
     csString name;
@@ -453,6 +452,14 @@ public:
 
     virtual GEMOBJECT_TYPE GetObjectType() { return GEM_ACTOR; }
 
+    /** When receiving a psPersistActor message for the actor we currently
+     *  control, some of our data (notably DRcounter) is probably newer
+     *  than that sent by the server.  This function copies such data from
+     *  our old actor into the replacement we just created.
+     *
+     * @param oldActor The actor to copy data from.
+     */
+    void CopyNewestData(GEMClientActor& oldActor);
 
     /** Get the last position of this object.
       *
@@ -508,7 +515,6 @@ public:
     unsigned GetChatBubbleID() const;
 
     csRef<iSpriteCal3DState> cal3dstate;
-    bool control;
 
     /**
      * This optimal routine tries to get the animation index given an
@@ -535,7 +541,6 @@ public:
     csVector3 lastSentVelocity,lastSentRotation;
     bool stationary,path_sent;
     csTicks lastDRUpdateTime;
-    bool ready;
     unsigned short gender;
 
     // Access functions for the group var
@@ -607,8 +612,6 @@ public:
 
     virtual GEMOBJECT_TYPE GetObjectType() { return GEM_ITEM; }
     
-    void UpdateItem( psPersistItem& mesg );
-
     /**
       * Delayed mesh loading.
       */

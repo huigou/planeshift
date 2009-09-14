@@ -153,8 +153,6 @@ const char* psAuthenticationClient::GetRejectMessage ()
 
 void psAuthenticationClient::ShowError()
 {
-    psengine->GetCelClient()->SetPlayerReady(false);
-
     pawsLoginWindow* loginWdg = (pawsLoginWindow*)PawsManager::GetSingleton().FindWidget("LoginWindow");
 
     //If we have logged in
