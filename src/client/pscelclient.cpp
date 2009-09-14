@@ -198,12 +198,18 @@ GEMClientObject* psCelClient::FindObject(EID id)
 
 void psCelClient::SetMainActor(GEMClientActor* actor)
 {
-    if (actor)
-    {
-        local_player = actor;
-        // ModeHandler has no good way to find out the entity
-        psengine->GetModeHandler()->SetEntity(actor);
-    }
+    CS_ASSERT(actor);
+
+    // If updating the player we currently control, some of our data is likely
+    // newer than the server's (notably DRcounter); we should keep ours.
+    if (local_player && local_player->GetEID() == actor->GetEID())
+        actor->CopyNewestData(*local_player);
+
+    local_player = actor;
+    psengine->GetCharControl()->GetMovementManager()->SetActor(actor);
+    psengine->GetPSCamera()->SetActor(actor);
+    psengine->GetModeHandler()->SetEntity(actor);
+    
 }
 
 void psCelClient::RequestServerWorld()
@@ -257,173 +263,64 @@ void psCelClient::HandleActor( MsgEntry* me )
         psengine->FatalError("Cannot load main actor. Error during loading.\n");
         return;
     }
-    psPersistActor mesg( me, GetClientDR()->GetMsgStrings(), psengine->GetEngine() );
+    psPersistActor msg(me, GetClientDR()->GetMsgStrings(), psengine->GetEngine());
 
-    // If this is the first actor to be sent...
-    if ( local_player == NULL )
+    GEMClientActor* actor = new GEMClientActor(this, msg);
+
+    // Extra steps for a controlled actor/the main player:
+    if (!local_player || local_player->GetEID() == msg.entityid)
     {
+        SetMainActor(actor);
+
         // Trigger a world load, as we now know where we are.
-        psengine->GetLoader()->UpdatePosition(mesg.pos, mesg.sectorName, true);
-
-        // Set the sector.
-        mesg.sector = psengine->GetEngine()->FindSector(mesg.sectorName);
-    }
-
-    GEMClientObject* found = FindObject(mesg.entityid);
-    
-    GEMClientActor* actor = new GEMClientActor( this, mesg );
-
-    // The first actor that is sent to the client is his own one.
-    if ( actor->control || (GetMainPlayer() && mesg.entityid == GetMainPlayer()->GetEID()) )
-    {
-        // cache the camera current view
-        psengine->SetMainActor(actor);
-        SetPlayerReady(true);
+        psengine->GetLoader()->UpdatePosition(msg.pos, msg.sectorName, true);
 
         // This triggers the server to update our proxlist
-        local_player->SendDRUpdate(PRIORITY_LOW,GetClientDR()->GetMsgStrings());
+        //local_player->SendDRUpdate(PRIORITY_LOW,GetClientDR()->GetMsgStrings());
         
         //update the window title with the char name
         psengine->UpdateWindowTitleInformations();
     }
 
-    // We already have an entity with this id so we must have missed the remove object message,
-    // or an update has been sent. delete the now outdated object
-    if( found)
-    {
-        Debug3(LOG_CELPERSIST, 0, "Found existing object <%s> with %s, removing.\n", found->GetName(), ShowID(mesg.entityid));
-        RemoveObject(found);
-    }
-
-    entities.Push(actor);
-    entities_hash.Put(actor->GetEID(), actor);
-}
-
-void psCelClient::HandleMainActor( psPersistActor& mesg )
-{
-
-    // Saved for when we reset
-    if ( local_player_defaultFactName.IsEmpty() )
-    {
-        local_player_defaultFactName = local_player->GetFactName();
-        local_player_defaultFact = local_player->GetMesh()->GetFactory();
-        local_player_defaultMesh = local_player->GetMesh()->GetMeshObject();
-    }
-
-    // Update equipment list
-    local_player->equipment = mesg.equipment;
-    local_player->type = mesg.type;
-
-    if (mesg.factname != local_player->GetFactName())
-    {
-        local_player->charApp->ClearEquipment();
-
-        csRef<iMeshFactoryWrapper> factory;
-        while(!factory.IsValid())
-        {
-            factory = psengine->GetLoader()->LoadFactory(mesg.factname);
-        }
-
-        // New or resetting?
-        if (local_player_defaultFactName != mesg.factname)
-        {
-            csRef<iMeshWrapper> meshwrap = psengine->GetEngine()->CreateMeshWrapper(factory, mesg.factname);
-            csRef<iMeshObject> mesh = meshwrap->GetMeshObject();
-
-            // Update
-            local_player->GetMesh()->SetMeshObject(mesh);
-            local_player->GetMesh()->SetFactory(factory);
-            local_player->charApp->SetMesh(local_player->GetMesh());
-
-            // Cal3d
-            csRef<iSpriteCal3DState> calstate = scfQueryInterface<iSpriteCal3DState> (local_player->GetMesh()->GetMeshObject());
-            if (calstate)
-            {
-                calstate->SetUserData((void*)local_player);
-                calstate->SetVelocity(0.0,&psengine->GetRandomGen());
-            }
-        }
-        else
-        {
-            // Reset
-            local_player->GetMesh()->SetMeshObject(local_player_defaultMesh);
-            local_player->GetMesh()->SetFactory(local_player_defaultFact);
-            local_player->charApp->SetMesh(local_player->GetMesh());
-        }
-
-        // Update factory
-        local_player->factName = mesg.factname;
-
-        // Update Bracer/Helm Group
-        if (mesg.helmGroup.Length() == 0)
-            local_player->helmGroup = local_player->GetMesh()->GetFactory()->QueryObject()->GetName();
-        else
-            local_player->helmGroup = mesg.helmGroup;
-        
-        if (mesg.BracerGroup.Length() == 0)
-            local_player->BracerGroup = local_player->GetMesh()->GetFactory()->QueryObject()->GetName();
-        else
-            local_player->BracerGroup = mesg.BracerGroup;
-
-        if (mesg.BeltGroup.Length() == 0)
-            local_player->BeltGroup = local_player->GetMesh()->GetFactory()->QueryObject()->GetName();
-        else
-            local_player->BeltGroup = mesg.BeltGroup;
-
-        if (mesg.CloakGroup.Length() == 0)
-            local_player->CloakGroup = local_player->GetMesh()->GetFactory()->QueryObject()->GetName();
-        else
-            local_player->CloakGroup = mesg.CloakGroup;
-
-        // Update cal3d
-        local_player->RefreshCal3d();
-
-        local_player->charApp->ApplyEquipment(local_player->equipment);
-    }
-
-    if(mesg.mountFactname != local_player->mountFactname)
-    {
-        local_player->mountFactname = mesg.mountFactname;
-        local_player->CheckLoadStatus();
-    }
+    AddEntity(actor);
 }
 
 void psCelClient::HandleItem( MsgEntry* me )
 {
-    psPersistItem mesg( me );
-
-    // if we already have an entity with this id, update the item
-    GEMClientItem *foundItem = dynamic_cast<GEMClientItem*>(FindObject(mesg.eid));
-    if(foundItem)
-    {
-        Debug3(LOG_CELPERSIST, 0, "Found existing item<%s> object with %s, updating.\n", foundItem->GetName(), ShowID(mesg.eid));
-        foundItem->UpdateItem( mesg );
-        return;
-    }
-
-    GEMClientItem* newItem = new GEMClientItem( this, mesg );
-
-    entities.Push(newItem);
-    entities_hash.Put(newItem->GetEID(), newItem);
+    psPersistItem msg(me);
+    GEMClientItem* item = new GEMClientItem(this, msg);
+    AddEntity(item);
 }
 
 void psCelClient::HandleActionLocation( MsgEntry* me )
 {
-    psPersistActionLocation mesg( me );
+    psPersistActionLocation msg(me);
+    GEMClientActionLocation* action = new GEMClientActionLocation(this, msg);
+    AddEntity(action);
+    actions.Push(action);
+}
 
-    // We already have an entity with this id so we must have missed the remove object message
-    // so delete and remake it.
-    GEMClientObject *found = (GEMClientObject*) FindObject(mesg.eid);
-    if ( found )
+void psCelClient::AddEntity(GEMClientObject* obj)
+{
+    CS_ASSERT(obj);
+
+    // If we already have an entity with this ID, remove it.  The server might
+    // have sent an updated version (say, with a different mesh); alternatively
+    // we may have simply missed the psRemoveObject message.
+    GEMClientObject* existing = (GEMClientObject*) FindObject(obj->GetEID());
+    if (existing)
     {
-        Debug3(LOG_CELPERSIST, 0, "Found existing location<%s> object with %s, removing.\n", found->GetName(), ShowID(mesg.eid));
-        RemoveObject( found );
-    }
+        // If we're removing the targeted entity, update the target to the new one:
+        GEMClientObject* target = psengine->GetCharManager()->GetTarget();
+        if (target == existing)
+            psengine->GetCharManager()->SetTarget(obj, "select", false);
 
-    GEMClientActionLocation * newAction = new GEMClientActionLocation( this, mesg );
-    entities.Push( newAction );
-    actions.Push( newAction );
-    entities_hash.Put (newAction->GetEID(), newAction);
+        Debug3(LOG_CELPERSIST, 0, "Found existing entity >%s< with %s - removing.\n", existing->GetName(), ShowID(existing->GetEID()));
+        RemoveObject(existing);
+
+    }
+    entities.Push(obj);
+    entities_hash.Put(obj->GetEID(), obj);
 }
 
 void psCelClient::HandleObjectRemoval( MsgEntry* me )
@@ -913,13 +810,6 @@ void psCelClient::HandleMessage(MsgEntry *me)
     }
 }
 
-
-void psCelClient::SetPlayerReady(bool flag)
-{
-    if (local_player)
-        local_player->ready = flag;
-}
-
 void psCelClient::OnRegionsDeleted(csArray<iCollection*>& regions)
 {
     size_t entNum;
@@ -1389,7 +1279,6 @@ GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
     type = mesg.type;
     masqueradeType = mesg.masqueradeType;
     guildName = mesg.guild;
-    control = mesg.control;
     flags   = mesg.flags;
     linmove = 0;
     groupID = mesg.groupID;
@@ -1463,7 +1352,7 @@ void GEMClientActor::PostLoad(bool nullmesh)
         RefreshCal3d();
         SetAnimationVelocity(post_load->vel);
         SetMode(serverMode, true);
-        if (!control && (flags & psPersistActor::NAMEKNOWN))
+        if (cel->GetMainPlayer() != this && (flags & psPersistActor::NAMEKNOWN))
             cel->GetEntityLabels()->OnObjectArrived(this);
         cel->GetShadowManager()->CreateShadow(this);
     }
@@ -1473,12 +1362,17 @@ void GEMClientActor::PostLoad(bool nullmesh)
 
     lastDRUpdateTime = 0;
 
-    ready = false;
-
     linmove->SetDeltaLimit(0.2f);
 
     delete post_load;
     post_load = NULL;
+}
+
+void GEMClientActor::CopyNewestData(GEMClientActor& oldActor)
+{
+    DRcounter = oldActor.DRcounter;
+    DRcounter_set = true;
+    SetPosition(oldActor.Pos(), oldActor.GetRotation(), oldActor.GetSector());
 }
 
 int GEMClientActor::GetAnimIndex (csStringHashReversible* msgstrings, csStringID animid)
@@ -1526,7 +1420,7 @@ void GEMClientActor::GetLastPosition (csVector3& pos, float& yrot, iSector*& sec
     if(linmove)
         linmove->GetLastPosition (pos,yrot,sector);
     else
-        sector = cel->unresSector;
+        sector = cel->GetUnresSector();
 }
 
 const csVector3 GEMClientActor::GetVelocity () const
@@ -1566,7 +1460,7 @@ iSector *GEMClientActor::GetSector() const
 {
     csVector3 pos;
     float yrot;
-    iSector* sector = cel->unresSector;
+    iSector* sector = cel->GetUnresSector();
     if(linmove)
         linmove->GetLastPosition (pos,yrot, sector);
     return sector;
@@ -1578,7 +1472,7 @@ bool GEMClientActor::NeedDRUpdate(unsigned char& priority)
     csVector3 angularVelocity = linmove->GetAngularVelocity();
 
     // Never send DR messages until client is "ready"
-    if (!ready )
+    if (!cel->GetMainPlayer())
         return false;
 
     if (linmove->IsPath() && !path_sent)
@@ -2207,27 +2101,6 @@ void GEMClientItem::PostLoad(bool nullmesh)
 
     delete post_load;
     post_load = NULL;
-}
-
-void GEMClientItem::UpdateItem( psPersistItem& mesg )
-{    
-    name = mesg.name;
-    Debug3(LOG_CELPERSIST, 0, "Item %s(%s) Updated", mesg.name.GetData(), ShowID(mesg.eid));
-    type = mesg.type;
-    factName = mesg.factname;
-
-    post_load = new PostLoadData();
-    post_load->pos = mesg.pos;
-    post_load->xRot = mesg.xRot;
-    post_load->yRot = mesg.yRot;
-    post_load->zRot = mesg.zRot;
-    post_load->sector = mesg.sector;
-    post_load->flags = mesg.flags;
-
-    if(pcmesh.IsValid())
-    {
-      PostLoad(false);
-    }
 }
 
 GEMClientActionLocation::GEMClientActionLocation( psCelClient* cel, psPersistActionLocation& mesg )

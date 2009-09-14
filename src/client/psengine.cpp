@@ -1228,16 +1228,6 @@ const char* psEngine::GetMainPlayerName()
 
 // ----------------------------------------------------------------------------
 
-void psEngine::SetMainActor(GEMClientActor *mainActor)
-{
-    CS_ASSERT(mainActor);
-    GetCelClient()->SetMainActor(mainActor);
-    GetCharControl()->GetMovementManager()->SetActor(mainActor);
-    GetPSCamera()->SetActor(mainActor);
-}
-
-// ----------------------------------------------------------------------------
-
 bool psEngine::UpdateWindowTitleInformations()
 {
     return CS_Setup->AddWindowInformations(GetMainPlayerName());
@@ -1487,8 +1477,6 @@ void psEngine::LoadGame()
             FatalError("One or more widgets failed to load\nPlease check your logs");
             return;
         }
-
-        celclient->SetPlayerReady(true);
 
         psClientStatusMessage statusmsg(true);
         statusmsg.SendMessage();
