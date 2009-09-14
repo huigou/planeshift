@@ -27,7 +27,7 @@ public:
 
 private:
     void PrintHelp();
-    void ParseFile(const char* filePath, const char* fileName);
+    void ParseFile(const char* filePath, const char* fileName, bool processing);
     void PrintOutput(const char* string, ...);
 
     csRef<iObjectRegistry> object_reg;
@@ -35,10 +35,15 @@ private:
     csRef<iDocumentSystem> docsys;
     csRef<iStringSet> strings;
 
+    csString outpath;
+
     csArray<csString> textures;
+    csArray<csString> materials;
     csArray<csString> meshfacts;
 
     csHash<csString, csString> ctextures;
     csHash<csString, csString> cmeshfacts;
     csRef<iFile> log;
+
+    csRef<iDocumentNode> texmat;
 };
