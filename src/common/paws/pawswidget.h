@@ -570,6 +570,11 @@ public:
     /** Draws all children marked visible.
      */
     virtual void DrawChildren();
+    
+    /** Draws the mask picture.
+     * @remark Uses focus status to apply appropriate fading. 
+     */
+    virtual void DrawMask();
 
     /** Test widget to see if it is resizable.
      * @return isResizable Flag to set a widget resizable.
