@@ -3086,7 +3086,7 @@ void gemActor::Teleport(iSector *sector, const csVector3 & pos, float yrot)
     if (GetClient())
         GetClient()->SetCheatMask(MOVE_CHEAT, true); // Tell paladin one of these is OK.
 
-    UpdateProxList(true);
+    UpdateProxList();
     MulticastDRUpdate();
     ForcePositionUpdate();
 }
