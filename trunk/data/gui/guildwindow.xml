@@ -433,13 +433,13 @@
                 </attachpoints>
             </widget>
 
-            <widget name="ReloadMOTD" factory="pawsButton" id="2001">
-                <frame x="40" y="210" width="90" height="19" />
+            <widget name="ReloadMOTD" factory="pawsButton" id="2001" style="Standard Button" >
+                <frame x="40" y="210" width="90" height="20" />
                 <label text="Refresh MOTD" />
             </widget>
 
-            <widget name="SaveMOTD" factory="pawsButton" id="2000">
-                <frame x="140" y="210" width="90" height="19" />
+            <widget name="SaveMOTD" factory="pawsButton" id="2000" style="Standard Button">
+                <frame x="140" y="210" width="90" height="20" />
                 <label text="Save MOTD" />
             </widget>
 
