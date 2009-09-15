@@ -213,8 +213,12 @@ void CCheck::ParseFile(const char* filePath, const char* fileName, bool processi
     {
         if(root->GetNode("textures"))
         {
-            csRef<iDocumentNode> newTextures = texmat->CreateNodeBefore(CS_NODE_ELEMENT);
-            newTextures->SetValue("textures");
+            csRef<iDocumentNode> newTextures = texmat->GetNode("textures");
+            if(!newTextures.IsValid())
+            {
+                newTextures = texmat->CreateNodeBefore(CS_NODE_ELEMENT);
+                newTextures->SetValue("textures");
+            }
             csRef<iDocumentNodeIterator> itr = root->GetNode("textures")->GetNodes("texture");
             while(itr->HasNext())
             {
@@ -231,8 +235,12 @@ void CCheck::ParseFile(const char* filePath, const char* fileName, bool processi
 
         if(root->GetNode("materials"))
         {
-            csRef<iDocumentNode> newMaterials = texmat->CreateNodeBefore(CS_NODE_ELEMENT);
-            newMaterials->SetValue("materials");
+            csRef<iDocumentNode> newMaterials = texmat->GetNode("materials");
+            if(!newMaterials.IsValid())
+            {
+                newMaterials = texmat->CreateNodeBefore(CS_NODE_ELEMENT);
+                newMaterials->SetValue("materials");
+            }
             csRef<iDocumentNodeIterator> itr = root->GetNode("materials")->GetNodes("material");
             while(itr->HasNext())
             {
