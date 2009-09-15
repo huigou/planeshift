@@ -1082,20 +1082,8 @@ void pawsWidget::DrawBackground()
     }
 }
 
-void pawsWidget::Draw()
+void pawsWidget::DrawMask()
 {
-    // Setup our clipping rect so we know where we can draw
-    ClipToParent(true);
-
-    // If we can't draw anywhere, then don't try.  Our children can't be drawn either.
-    if (clipRect.IsEmpty())
-        return;
-
-    DrawBackground();
-
-    ClipToParent(false);
-    DrawChildren();
-
     // Draw the masking image
     int drawAlpha = -1;
     if (fade && parent && parent->GetMaxAlpha() >= 0 && bgImage && maskImage)
@@ -1110,6 +1098,22 @@ void pawsWidget::Draw()
         graphics2D->SetClipRect( 0,0, graphics2D->GetWidth(), graphics2D->GetHeight());
         maskImage->Draw(screenFrame.xmin, screenFrame.ymin, screenFrame.Width(), screenFrame.Height(), drawAlpha);
     }
+}
+
+void pawsWidget::Draw()
+{
+    // Setup our clipping rect so we know where we can draw
+    ClipToParent(true);
+
+    // If we can't draw anywhere, then don't try.  Our children can't be drawn either.
+    if (clipRect.IsEmpty())
+        return;
+
+    DrawBackground();
+
+    ClipToParent(false);
+    DrawChildren();
+    DrawMask();
 
     if (titleBar)
         titleBar->Draw();
