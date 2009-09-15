@@ -1,7 +1,7 @@
 <widget_description>
 
 <widget name="InfoWindow" factory="pawsInfoWindow"
-    visible="yes" savepositions="yes" movable="yes" resizable="yes" configurable="yes" style="New Standard GUI" >
+    visible="yes" savepositions="yes" movable="yes" resizable="no" configurable="yes" style="New Standard GUI" >
     <frame x="0" y="50" width="180" height="160" border="no" />
     <minframe width="180" height="160" />
     <bgimage resource="Scaling Widget Background" />
