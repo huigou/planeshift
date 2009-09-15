@@ -91,7 +91,7 @@ pawsListBox::pawsListBox()
     sortColNum   = -1;
     ascOrder     = true;
 
-    highlightImage = "Blue Background";
+    highlightImage = "Highlight";
     highlightAlpha = 128;
 
     arrowSize       = 16;
