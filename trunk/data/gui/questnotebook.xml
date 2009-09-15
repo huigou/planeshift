@@ -82,7 +82,7 @@
         </pawsButton>
 
         <pawsListBox name="UncompletedEventList" xmlbinding="gmevents" id="1100">
-            <frame x="16" y="10" width="186" height="161" />
+            <frame x="16" y="10" width="205" height="161" />
             <columns height="20" headings="no" xmlbinding="event" >
               <column width="166" xmlbinding="name" >
                 <pawsTextBox name="Name" />
@@ -100,7 +100,7 @@
         </pawsListBox>
 
         <pawsListBox name="CompletedEventList" xmlbinding="gmevents" id="1101">
-            <frame x="16" y="10" width="186" height="161" />
+            <frame x="16" y="10" width="205" height="161" />
             <columns height="20" headings="no" xmlbinding="event" >
               <column width="166" xmlbinding="name" >
                 <pawsTextBox name="Name" />
