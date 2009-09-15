@@ -5,7 +5,7 @@
     <widget name="GuildWindow" factory="pawsGuildWindow" savepositions="yes" visible="no" movable="yes" resizable="no" configurable="yes" style="New Standard GUI">
 
         <frame x="100" y="200" width="630" height="385" border="yes"/>
-        <title resource="Blue Title" text="Guild" align="left" close_button="yes"/>
+        <title resource="Scaling Title Bar" text="Guild" align="left" close_button="yes"/>
 
 	    <!--
 		<childborders>
