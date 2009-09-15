@@ -38,17 +38,17 @@
         <frame x="20" y="210" width="562" height="84" border="yes" />
     </widget>
 
-    <widget name="Delete Button" factory="pawsButton" toggle="no" id="1" shadows="yes" >
+    <widget name="Delete Button" factory="pawsButton" toggle="no" id="1" shadows="yes" style="Standard Button" >
         <frame x="20" y="315" width="94" height="22" border="no" />
         <label text="Delete" />
     </widget>
     
-    <widget name="New Button" factory="pawsButton" toggle="no" id="2" shadows="yes" >
+    <widget name="New Button" factory="pawsButton" toggle="no" id="2" shadows="yes" style="Standard Button" >
         <frame x="140" y="315" width="94" height="22" border="no" />
         <label text="New" />
     </widget>
 
-    <widget name="Save Button" factory="pawsButton" toggle="no" id="3" shadows="yes" >
+    <widget name="Save Button" factory="pawsButton" toggle="no" id="3" shadows="yes" style="Standard Button" >
         <frame x="265" y="315" width="94" height="22" border="no" />
         <label text="Save" />
     </widget>
