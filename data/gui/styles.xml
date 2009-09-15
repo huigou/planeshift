@@ -294,7 +294,7 @@
         <defaultstyle widget="pawsSlot"          style="Standard Slot"/>
         <defaultstyle widget="pawsGlyphSlot"          style="Standard Slot"/>
         <defaultstyle widget="pawsProgressBar"          style="Scaling Progressbar"/>
-        <defaultstyle widget="pawsScrollBar"          style="Scaling Scrollbar"/>
+        <defaultstyle widget="pawsScrollBar"          style="Standard Scrollbar"/>
     </style>
 
     <style name="QuestionBox" inherit="New Standard GUI">
