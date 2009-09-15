@@ -630,20 +630,6 @@ void pawsGuildWindow::ExtractLevelInfo(csRef<iDocumentNode> levelNode)
     }
 }
 
-void pawsGuildWindow::SetTheRightBackground()
-{
-    if (currentPanel == permissionsPanel)
-        SetBackground("Guild Rights Background");
-    else if (currentPanel == membersPanel)
-        SetBackground("Guild Members Background");
-    else if (currentPanel == alliancesPanel)
-        SetBackground("Guild Alliances Background");
-    else if (currentPanel == settingsPanel)
-        //SetBackground("Guild Alliances Background");
-
-        SetBackground("Guild Main Background");
-}
-
 bool pawsGuildWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
 {
     guildMemberInfo * member;
@@ -706,7 +692,6 @@ bool pawsGuildWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
             currentTab = permissionsTab;
             currentPanel->Show();
             currentTab->SetState(true);
-            SetTheRightBackground();
             retVal = true;
             break;
         }
@@ -718,7 +703,6 @@ bool pawsGuildWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
             currentTab = membersTab;
             currentPanel->Show();
             currentTab->SetState(true);
-            SetTheRightBackground();
             retVal = true;
             break;
         }
@@ -730,7 +714,6 @@ bool pawsGuildWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
             currentTab = alliancesTab;
             currentPanel->Show();
             currentTab->SetState(true);
-            SetTheRightBackground();
             retVal = true;
             break;
         }
@@ -742,7 +725,6 @@ bool pawsGuildWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
             currentTab = settingsTab;
             currentPanel->Show();
             currentTab->SetState(true);
-            SetTheRightBackground();
             retVal = true;
             break;
         }
@@ -994,7 +976,6 @@ void pawsGuildWindow::Show()
     csString command;
     command.Format("/guildinfo %s",onlineOnly->GetState() ? "yes":"no");
     psengine->GetCmdHandler()->Execute(command);
-    SetTheRightBackground();
 }
 
 void pawsGuildWindow::OpenGuildLeaveConfirm()

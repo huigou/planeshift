@@ -103,9 +103,6 @@ private:
       */
     void SetAllianceWidgetVisibility(int mode);
 
-    /** Sets window background image depending on what tab is active */
-    void SetTheRightBackground();
-
     // Tab controls
     pawsWidget *permissionsPanel,*membersPanel,*alliancesPanel,*settingsPanel,*currentPanel;
     pawsButton *permissionsTab,*membersTab,*alliancesTab,*settingsTab,*currentTab;
