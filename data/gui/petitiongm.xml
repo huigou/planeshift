@@ -55,37 +55,37 @@
              </attachpoints>
         </pawsMessageTextBox>
 
-        <pawsButton name="Admin Petition" id="8" >
+        <pawsButton name="Admin Petition" id="8" style="Standard Button">
             <frame x="20" y="324" width="75" height="22" />
             <label text="Admin" />
         </pawsButton>
 
-        <pawsButton name="Assign Button" id="2" >
+        <pawsButton name="Assign Button" id="2" style="Standard Button">
             <frame x="100" y="324" width="75" height="22" />
             <label text="Claim" />
         </pawsButton>
 
-        <pawsButton name="Unassign Button" id="3" >
+        <pawsButton name="Unassign Button" id="3" style="Standard Button">
             <frame x="180" y="324" width="75" height="22" />
             <label text="Unclaim" />
         </pawsButton>
 
-        <pawsButton name="Escalate Button" id="4" >
+        <pawsButton name="Escalate Button" id="4" style="Standard Button">
             <frame x="260" y="324" width="75" height="22" />
             <label text="Escalate" />
         </pawsButton>
 
-        <pawsButton name="Descalate Button" id="5" >
+        <pawsButton name="Descalate Button" id="5" style="Standard Button">
             <frame x="340" y="324" width="75" height="22" />
             <label text="Descalate" />
         </pawsButton>
 
-        <pawsButton name="Close Button" id="6"  >
+        <pawsButton name="Close Button" id="6"  style="Standard Button">
             <frame x="420" y="324" width="75" height="22" />
             <label text="Close" />
         </pawsButton>
 
-        <pawsButton name="Cancel Button" id="7" >
+        <pawsButton name="Cancel Button" id="7" style="Standard Button">
             <frame x="500" y="324" width="75" height="22" />
             <label text="Delete" />
         </pawsButton>
