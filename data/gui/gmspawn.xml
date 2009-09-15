@@ -14,7 +14,7 @@
             <frame x="550" y="160" width="48" height="48" border="yes" />
         </widget>
 
-        <widget name="Rotate" factory="pawsButton" id ="2001">
+        <widget name="Rotate" factory="pawsButton" id ="2001" style="Standard Button">
             <frame x="550" y="100" width="70" height="20" border="no" />
             <bgimage resource="Blue Title" alpha="0" fade="no" />
             <label text="Rotate"/>
@@ -78,7 +78,7 @@
             <text string="Allow spawning item with missing mesh"/>
         </widget>
         
-        <widget name="Spawn" factory="pawsButton" id ="1000" visible="no">
+        <widget name="Spawn" factory="pawsButton" id ="1000" visible="no" style="Standard Button">
             <frame x="310" y="410" width="150" height="20" border="no" />
             <bgimage resource="Blue Title" alpha="0" fade="no" />
             <label text="Spawn item"/>
