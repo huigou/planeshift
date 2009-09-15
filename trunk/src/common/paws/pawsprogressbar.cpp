@@ -84,10 +84,11 @@ void pawsProgressBar::Draw()
       && parent->GetMaxAlpha() != parent->GetMinAlpha())
         alpha = (int)
         (255 - (parent->GetMinAlpha() + (parent->GetMaxAlpha()-parent->GetMinAlpha()) * parent->GetFadeVal() * 0.010));
+    pawsWidget::Draw();
     DrawProgressBar(screenFrame, PawsManager::GetSingleton().GetGraphics3D(), percent,
                     start_r, start_g, start_b,
                     diff_r,  diff_g,  diff_b, alpha);
-    pawsWidget::Draw();
+    //pawsWidget::Draw();
 }
 
 void pawsProgressBar::DrawProgressBar(
