@@ -87,20 +87,25 @@ bool pawsConfigCamera::CreateTree()
 {
     pawsTreeNode * root;
 
-    tree = new pawsTree();
+    /*tree = new pawsTree();
     tree->MoveTo(screenFrame.xmin, screenFrame.ymin);
     tree->SetSize(screenFrame.Width(), screenFrame.Height());
     tree->SetScrollBars(false, true);
     tree->SetTreeLayout(new pawsStdTreeLayout(tree, 5, 20));
     tree->SetTreeDecorator(new pawsStdTreeDecorator(tree, graphics2D, 0x0000ff, 0x00ffff, 13));
     AddChild(tree);
-
-    if ( ! tree->LoadFromFile("configcamera.xml"))
+    */
+    if (!LoadFromFile("configcamera.xml"))
         return false;
+        
+    tree = dynamic_cast<pawsTree *>(children[0]);
+    tree->SetRelativeFrameSize(parent->ScreenFrame().Width(), parent->ScreenFrame().Height());
 
     root = tree->GetRoot();
     if (root != NULL)
         CreateTreeWidgets(root);
+        
+    tree->SetScrollBars(false,true);
 
     return true;
 }
