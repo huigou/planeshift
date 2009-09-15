@@ -77,6 +77,7 @@
             <frame x="345" y="168" width="140" height="130" border="no" />
 	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="13" resizetoscreen="yes" />
             <scrollbar arrowup="Up Arrow" arrowdown="Down Arrow" arrowsize="8" width="15"  border="no"/>
+            <highlight resource="Highlight" />
             <columns height="20">
                 <column width="120" >
                     <widget name="" factory="pawsTextBox"></widget>
@@ -134,6 +135,7 @@
             <frame x="345" y="360" width="140" height="130" border="no" />
 	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="13" resizetoscreen="yes" />
             <scrollbar arrowup="Up Arrow" arrowdown="Down Arrow" arrowsize="8" width="15"  border="no"/>
+            <highlight resource="Highlight" />
             <columns height="20">
                 <column width="120" >
                     <widget name="" factory="pawsTextBox"></widget>
@@ -152,6 +154,7 @@
             <frame x="265" y="530" width="75" height="60" border="no" />
 	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="13" resizetoscreen="yes" />
             <scrollbar arrowup="Up Arrow" arrowdown="Down Arrow" arrowsize="8" width="15"  border="no"/>
+            <highlight resource="Highlight" />
             <columns height="20" headings="no">
                 <column width="115" >
                     <widget name="Religion" factory="pawsTextBox"></widget>
