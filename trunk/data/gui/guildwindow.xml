@@ -228,8 +228,8 @@
 
 
 
-            <widget name="OnlineOnly" factory="pawsCheckBox" id="1003" shadows="yes" >
-                <frame x="45" y="7" width="200" height="20" />
+            <widget name="OnlineOnly" factory="pawsCheckBox" id="1003" shadows="yes">
+                <frame x="31" y="7" width="200" height="20" />
                 <text string="Online only" position="right" />
             </widget>
 
@@ -241,16 +241,16 @@
             </widget>
 
 
-            <widget name="Invite" factory="pawsButton" id="305">
-                <frame x="460" y="7" width="70" height="19" />
+            <widget name="Invite" factory="pawsButton" id="305" style="Standard Button">
+                <frame x="440" y="7" width="70" height="19" />
                 <label text="Invite" />
 
             </widget>
 
 
 
-            <widget name="Leave" factory="pawsButton" id="306">
-                <frame x="540" y="7" width="70" height="19" />
+            <widget name="Leave" factory="pawsButton" id="306" style="Standard Button">
+                <frame x="515" y="7" width="70" height="19" />
                 <label text="Leave" />
             </widget>
 
@@ -294,32 +294,32 @@
                 <text string="Notify when members login/logout" position="right" />
             </widget>
 
-            <widget name="RemoveMember" factory="pawsButton" id="300">
+            <widget name="RemoveMember" factory="pawsButton" id="300" style="Standard Button">
                 <frame x="10" y="320" width="90" height="19" />
                 <label text="Remove" />
             </widget>
 
-            <widget name="EditLevel" factory="pawsButton" id="301">
+            <widget name="EditLevel" factory="pawsButton" id="301" style="Standard Button" >
                 <frame x="110" y="320" width="90" height="19" />
                 <label text="Edit level" />
             </widget>
 
-            <widget name="EditGuildPoints" factory="pawsButton" id="302">
+            <widget name="EditGuildPoints" factory="pawsButton" id="302" style="Standard Button">
                 <frame x="210" y="320" width="90" height="19" />
                 <label text="Edit points" />
             </widget>
 
-            <widget name="EditPublicNotes" factory="pawsButton" id="303">
+            <widget name="EditPublicNotes" factory="pawsButton" id="303" style="Standard Button">
                 <frame x="310" y="320" width="90" height="19" />
                 <label text="Public notes" />
             </widget>
 
-            <widget name="EditPrivateNotes" factory="pawsButton" id="304">
+            <widget name="EditPrivateNotes" factory="pawsButton" id="304" style="Standard Button">
                 <frame x="410" y="320" width="90" height="19" />
                 <label text="Private notes" />
             </widget>
 
-            <widget name="EditMaxGuildPoints" factory="pawsButton" id="311">
+            <widget name="EditMaxGuildPoints" factory="pawsButton" id="311" style="Standard Button">
                 <frame x="510" y="320" width="90" height="19" />
                 <label text="Edit Max GP" />
             </widget>
@@ -340,31 +340,31 @@
                 <text string="Alliance:" />
             </widget>
 
-            <widget name="AllianceName" factory="pawsTextBox">
+            <widget name="AllianceName" factory="pawsTextBox" >
                 <frame x="148" y="14" width="200" height="20"/>
             </widget>
 
 
-	    <widget name="Invite" factory="pawsButton" id="502">
+	    <widget name="Invite" factory="pawsButton" id="502" style="Standard Button">
                 <frame x="380" y="7" width="70" height="19" />
                 <label text="Invite" />
             </widget>
 
 
 
-            <widget name="Disband" factory="pawsButton" id="504">
+            <widget name="Disband" factory="pawsButton" id="504" style="Standard Button">
                 <frame x="460" y="7" width="70" height="19" />
                 <label text="Disband" />
             </widget>
 
 
-            <widget name="Leave" factory="pawsButton" id="503">
+            <widget name="Leave" factory="pawsButton" id="503" style="Standard Button">
                 <frame x="540" y="7" width="70" height="19" />
                 <label text="Leave" />
             </widget>
 
 
-            <widget name="CreateAlliance" factory="pawsButton" id="505">
+            <widget name="CreateAlliance" factory="pawsButton" id="505" style="Standard Button">
                 <frame x="520" y="7" width="100" height="19" />
                 <label text="Create alliance" />
             </widget>
@@ -395,12 +395,12 @@
 
 
 
-            <widget name="Remove" factory="pawsButton" id="500">
+            <widget name="Remove" factory="pawsButton" id="500" style="Standard Button">
                 <frame x="10" y="320" width="90" height="19" />
                <label text="Remove" />
             </widget>
 
-            <widget name="MakeLeader" factory="pawsButton" id="501">
+            <widget name="MakeLeader" factory="pawsButton" id="501" style="Standard Button">
                 <frame x="110" y="320" width="90" height="19" />
                 <label text="Make leader" />
             </widget>
@@ -456,7 +456,7 @@
                 <frame x="50" y="260" width="300" height="20"/>
             </widget>
 
-            <widget name="GuildNameButton" factory="pawsButton" id="1001">
+            <widget name="GuildNameButton" factory="pawsButton" id="1001" style="Standard Button">
                 <frame x="420" y="260" width="60" height="19"/>
                 <label text="Change"/>
             </widget>
@@ -474,7 +474,7 @@
                 <frame x="60" y="290" width="340" height="20"/>
             </widget>
 
-            <widget name="GuildWebPageButton" factory="pawsButton" id="1004">
+            <widget name="GuildWebPageButton" factory="pawsButton" id="1004" style="Standard Button">
                 <frame x="420" y="290" width="60" height="19"/>
                 <label text="Change"/>
             </widget>
