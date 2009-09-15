@@ -19,8 +19,8 @@
 
 
 
-        <widget name="Settings_Tab" factory="pawsButton" id="203" toggle="yes" shadows="yes" >
-            <frame x="5" y="5" width="80" height="20" />
+        <widget name="Settings_Tab" factory="pawsButton" id="203" toggle="yes" shadows="yes" style="Standard Tab" >
+            <frame x="5" y="5" width="80" height="25" />
 
 		<attachpoints>
 			<attach point="PROPORTIONAL_RIGHT" />
@@ -30,8 +30,8 @@
             <label text="Settings" />
         </widget>
 
-        <widget name="Members_Tab" factory="pawsButton" id="201" toggle="yes" shadows="yes" >
-            <frame x="93" y="5" width="80" height="20" />
+        <widget name="Members_Tab" factory="pawsButton" id="201" toggle="yes" shadows="yes" style="Standard Tab" >
+            <frame x="93" y="5" width="80" height="25" />
 
 		<attachpoints>
 			<attach point="PROPORTIONAL_RIGHT" />
@@ -41,8 +41,8 @@
             <label text="Members" />
         </widget>
 
-        <widget name="Permissions_Tab" factory="pawsButton" id="200" toggle="yes" shadows="yes" >
-            <frame x="179" y="5" width="80" height="20" />
+        <widget name="Permissions_Tab" factory="pawsButton" id="200" toggle="yes" shadows="yes" style="Standard Tab" >
+            <frame x="179" y="5" width="80" height="25" />
 
 		<attachpoints>
 			<attach point="PROPORTIONAL_RIGHT" />
@@ -52,8 +52,8 @@
             <label text="Permissions" />
         </widget>
 
-        <widget name="Alliances_Tab" factory="pawsButton" id="202" toggle="yes" shadows="yes" >
-            <frame x="266" y="5" width="80" height="20" />
+        <widget name="Alliances_Tab" factory="pawsButton" id="202" toggle="yes" shadows="yes" style="Standard Tab" >
+            <frame x="266" y="5" width="80" height="25" />
 
 		<attachpoints>
 			<attach point="PROPORTIONAL_RIGHT" />
@@ -257,7 +257,7 @@
 
 
             <widget name="MemberList" factory="pawsListBox" xmlbinding="memberlist" >
-                <frame x="31" y="28" width="549" height="229" border="no"/>
+                <frame x="31" y="35" width="549" height="229" border="no"/>
 
                 <columns height="25" headings="yes" xmlbinding="m" sortBy="0" sortOrder="asc">
 
@@ -417,7 +417,7 @@
 
 
             <widget name="label" factory="pawsTextBox">
-			<frame x="44" y="14" width="300" height="30" border="no"/>
+			<frame x="25" y="7" width="300" height="30" border="no"/>
 			<text string="Guild message of the day (A short message):" />
             </widget>
 
@@ -453,11 +453,11 @@
             </widget>
 
             <widget name="GuildName" factory="pawsTextBox">
-                <frame x="50" y="260" width="200" height="20"/>
+                <frame x="50" y="260" width="300" height="20"/>
             </widget>
 
             <widget name="GuildNameButton" factory="pawsButton" id="1001">
-                <frame x="220" y="260" width="60" height="19"/>
+                <frame x="420" y="260" width="60" height="19"/>
                 <label text="Change"/>
             </widget>
 
@@ -471,11 +471,11 @@
             </widget>
 
             <widget name="GuildWebPage" factory="pawsTextBox">
-                <frame x="60" y="290" width="140" height="20"/>
+                <frame x="60" y="290" width="340" height="20"/>
             </widget>
 
             <widget name="GuildWebPageButton" factory="pawsButton" id="1004">
-                <frame x="220" y="290" width="60" height="19"/>
+                <frame x="420" y="290" width="60" height="19"/>
                 <label text="Change"/>
             </widget>
 
@@ -484,7 +484,7 @@
             <!-- Guild Secret -->
 
             <widget name="GuildSecret" factory="pawsCheckBox" id="1002" shadows="yes" >
-                <frame x="350" y="260" width="120" height="20" />
+                <frame x="500" y="260" width="120" height="20" />
                 <text string="Secret guild" position="right" />
             </widget>
 
