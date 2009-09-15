@@ -250,7 +250,7 @@ pawsColorPromptWindow * pawsColorPromptWindow::Create(const csString & label,
     w->UseBorder();
 
 
-    w->SetBackground("Color Prompt Background");
+    w->SetBackground("Scaling Window Background");
     PawsManager::GetSingleton().SetCurrentFocusedWidget(w);
         w->BringToTop(w);
 
