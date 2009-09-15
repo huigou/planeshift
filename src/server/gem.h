@@ -651,7 +651,6 @@ struct DamageHistory
     csWeakRef<gemActor> attacker_ref;
     float damage;
     float damageRate;
-    int hp;
     unsigned int timestamp;
 };
 
@@ -945,8 +944,9 @@ public:
      */
     psGuildMember *GetGuildMembership() { return psChar->GetGuildMembership(); }
 
-    void DoDamage(gemActor *attacker, float damage, float damageRate = 0.0f, csTicks duration=0);
-    void AddAttackerHistory(gemActor * attacker, float damage, float damageRate = 0.0f, csTicks duration = 0 );
+    void DoDamage(gemActor* attacker, float damage);
+    void AddAttackerHistory(gemActor* attacker, float damage); // direct damage version
+    void AddAttackerHistory(gemActor* attacker, float hpRate, csTicks duration); // DoT version
     void RemoveAttackerHistory(gemActor * attacker);
     bool CanBeAttackedBy(gemActor *attacker, gemActor ** lastAttacker) const;
     void Kill(gemActor *attacker) { DoDamage(attacker, psChar->GetHP() ); }

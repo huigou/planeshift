@@ -35,7 +35,7 @@ INSERT INTO progression_events VALUES("cast Summon Missile",
        <let vars="Roll = rnd(100);">
          <if t="Roll &lt; 60">
            <then>
-             <hp aim="Target" value="-6*Power"/>
+             <hp attacker="Caster" aim="Target" value="-6*Power"/>
              <mstamina aim="Target" value="-8"/>
              <msg aim="Caster" text="You hit ${Target} with your magic arrow."/>
              <fx source="Caster" target="Target" type="unattached" name="arrow success"/>
@@ -81,7 +81,7 @@ INSERT INTO progression_events VALUES("cast Dispel",
      </script>');
 INSERT INTO progression_events VALUES("cast Gust of Wind",
     '<script>
-       <hp aim="Target" value="-10"/>
+       <hp attacker="Caster" aim="Target" value="-10"/>
        <msg aim="Caster" text="You hit ${Target} with a strong gust of wind."/>
      </script>');
 INSERT INTO progression_events VALUES("cast Flame Spire",
@@ -90,7 +90,7 @@ INSERT INTO progression_events VALUES("cast Flame Spire",
           <msg text="A spire of flames surrounds you." undo="The spire of flames flickers out."/>
           <on type="defense">
             <let vars="Dmg = 10+@{Power};">
-              <hp aim="Attacker" value="-Dmg"/>
+              <hp attacker="Defender" aim="Attacker" value="-Dmg"/>
               <msg aim="Defender" text="Your flame spire burns ${Attacker} for ${Dmg} damage!"/>
               <msg aim="Attacker" text="${Defender}&apos;s flame spire burns you for ${Dmg} damage!"/>
             </let>
@@ -115,7 +115,7 @@ INSERT INTO progression_events VALUES("cast Drain",
          </buff>
          <debuff aim="Target">
            <str value="-10"/>
-           <hp-rate value="-0.5"/>
+           <hp-rate attacker="Caster" value="-0.5"/>
            <msg text="${Caster} drains your life!" undo="${Caster} can no longer drain your life."/>
          </debuff>
        </apply-linked>
