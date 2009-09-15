@@ -455,7 +455,7 @@ NpcResponse *psNPCDialog::FindResponse(csString& trigger,const char *text)
         
         if (resp)
         {
-            Debug3(LOG_NPC, currentClient ? currentClient->GetClientNum() : 0,"Found response %d: %s",resp->id,resp->GetResponse());
+            Debug4(LOG_NPC, currentClient ? currentClient->GetClientNum() : 0,"Found response %d: %s (%s)",resp->id,resp->GetResponse(), resp->GetResponseScript().GetData());
             resp->triggerText = trigger;
             UpdateAntecedents(resp);
             break;
