@@ -989,7 +989,7 @@ void pawsTree::SetScrollBars(bool horiz, bool vert)
         csString widgetStr;
 
         widgetStr.Format("<widget factory=\"pawsScrollBar\" name=\"scrollbar\" style=\"Standard Scrollbar\" direction=\"vertical\" tick=\"20\" minValue=\"0\" ><frame x=\"%d\" y=\"%d\" width=\"20\" height=\"%d\" /></widget>",
-            defaultFrame.Width()-20,3,defaultFrame.Height() );
+            defaultFrame.Width()-20,0,defaultFrame.Height() );
 
         vertScrollBar = dynamic_cast<pawsScrollBar *>(PawsManager::GetSingleton().LoadWidgetFromString(widgetStr));
         AddChild(vertScrollBar);
