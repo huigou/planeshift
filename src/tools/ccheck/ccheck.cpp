@@ -107,6 +107,15 @@ void CCheck::Run()
                 csString zipfile = zipfiles->Get(j);
                 if(zipfile.GetAt(zipfile.Length()-1) != '/')
                     ParseFile(zipfile, fileName, processing);
+                else if(zipfile.Find("lightmaps") == size_t(-1) && zipfile.Find("bindata") == size_t(-1))
+                {
+                    csRef<iStringArray> files = vfs->FindFiles(zipfile);
+                    for(size_t k=0; k<files->GetSize(); ++k)
+                    {
+                        csString file = files->Get(k);
+                        ParseFile(file, file, processing);
+                    }
+                }
 
                 if(processing)
                 {
@@ -187,9 +196,11 @@ void CCheck::ParseFile(const char* filePath, const char* fileName, bool processi
     csRef<iDocumentNode> root = doc->CreateRoot();
     CS::DocSystem::CloneNode(broot, root);
 
+    bool library = true;
     root = doc->GetRoot()->GetNode("library");
     if(!root.IsValid())
     {
+        library = false;
         root = doc->GetRoot()->GetNode("world");
     }
 
@@ -254,8 +265,11 @@ void CCheck::ParseFile(const char* filePath, const char* fileName, bool processi
         }
     }
 
-    root->RemoveNodes(root->GetNodes("meshfact"));
-    doc->Write(vfs, outpath+"/maps/"+csString(fileName).Slice(0, csString(fileName).FindLast('.')));
+    if(processing && !library)
+    {
+        root->RemoveNodes(root->GetNodes("meshfact"));
+        doc->Write(vfs, outpath+"/maps/"+csString(fileName).Slice(0, csString(fileName).FindLast('.')));
+    }
 }
 
 void CCheck::PrintOutput(const char* string, ...)
