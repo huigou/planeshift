@@ -193,7 +193,8 @@ void pawsConfigMouse::CreateTreeWidgets(pawsTreeNode * subtreeRoot)
             button->SetNotify(this);
             button->SetParent( this );
             button->SetSize(30, 20);
-            button->SetUpImage("Blue Title");
+            button->SetUpImage("Standard Button");
+            button->SetDownImage("Standard Button Down");
             button->SetText("set");
             button->SetToggle(false);
             button->Show();
