@@ -55,7 +55,7 @@
         </widget>
 
         <widget name="option_password" factory="pawsCheckBox">
-            <frame x="300" y="398" width="250" height="60" />
+            <frame x="300" y="398" width="250" height="20" />
 	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="16"  resizetoscreen="yes" />
             <text string="Remember password"/>
         </widget>
