@@ -172,7 +172,12 @@
         </element>
 
         <!-- vitals -->
-        <element name="hp">       <ref name="imperative2"/> </element>
+        <element name="hp">
+          <ref name="imperative2"/>
+          <optional>
+            <attribute name="attacker"/>
+          </optional>
+        </element>
         <element name="mana">     <ref name="imperative2"/> </element>
         <element name="pstamina"> <ref name="imperative2"/> </element>
         <element name="mstamina"> <ref name="imperative2"/> </element>
@@ -200,7 +205,12 @@
     <oneOrMore>
       <choice>
         <!-- buffables -->
-        <element name="hp-rate">       <ref name="applied1"/> </element>
+        <element name="hp-rate">
+          <ref name="applied1"/>
+          <optional>
+            <attribute name="attacker"/>
+          </optional>
+        </element>
         <element name="mana-rate">     <ref name="applied1"/> </element>
         <element name="pstamina-rate"> <ref name="applied1"/> </element>
         <element name="mstamina-rate"> <ref name="applied1"/> </element>

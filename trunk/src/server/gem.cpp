@@ -2271,7 +2271,7 @@ void gemActor::InvokeDefenseScripts(gemActor *attacker, psItem *weapon)
     }
 }
 
-void gemActor::DoDamage(gemActor * attacker, float damage, float damageRate, csTicks duration)
+void gemActor::DoDamage(gemActor* attacker, float damage)
 {
     // Handle trivial "already dead" case
     if ( !IsAlive())
@@ -2285,18 +2285,15 @@ void gemActor::DoDamage(gemActor * attacker, float damage, float damageRate, csT
     if (damage > psChar->GetMaxHP().Current() * 0.3F)
         InterruptSpellCasting();
 
-    if (damageRate == 0)
-        if(GetCharacterData()->GetHP() - damage < 0)
-            damage = GetCharacterData()->GetHP();
+    if (GetCharacterData()->GetHP() - damage < 0)
+        damage = GetCharacterData()->GetHP();
 
 
     // Add dmg to history
-    AddAttackerHistory( attacker, damage, damageRate, duration );
+    AddAttackerHistory(attacker, damage);
 
     psChar->AdjustHitPoints(-damage);
     float hp = psChar->GetHP();
-    if (damageRate)
-        psChar->GetHPRate().SetBase(psChar->GetHPRate().Base()+damageRate); // TODO: I expect this is completely insane
 
     if (damage != 0.0)
     {
@@ -2377,32 +2374,35 @@ void gemActor::DoDamage(gemActor * attacker, float damage, float damageRate, csT
     SendGroupStats();
 }
 
-void gemActor::AddAttackerHistory(gemActor * attacker, float damage, float damageRate, csTicks duration )
+void gemActor::AddAttackerHistory(gemActor* attacker, float damage)
 {
-    if(attacker)
-    {
-        DamageHistory* dmg = new DamageHistory();
-        dmg->attacker_ref = attacker;
-        dmg->timestamp = csGetTicks();
-        dmg->hp = (int) GetCharacterData()->GetHP();
+    if (!attacker)
+        return;
 
-        if (damageRate < 0)
-        {
-            dmg->damageRate = damageRate;
-            dmg->damage = (-damageRate/1000) * duration;  // max theoretical dmg from DoT spell
+    DamageHistory* dmg = new DamageHistory();
+    dmg->attacker_ref = attacker;
+    dmg->timestamp = csGetTicks();
+    dmg->damageRate = 0;
+    dmg->damage = damage;
 
-            // Add it
-            dmgHistory.Push(dmg);
-        }
-        else if (damageRate == 0)
-        {
-            dmg->damageRate = damageRate;
-            dmg->damage = damage;
+    dmgHistory.Push(dmg);
+}
 
-            // Add it
-            dmgHistory.Push(dmg);
-        }
-    }
+void gemActor::AddAttackerHistory(gemActor* attacker, float hpRate, csTicks duration)
+{
+    // only record health drain, not health gain
+    if (!attacker || hpRate >= 0)
+        return;
+
+    DamageHistory* dmg = new DamageHistory();
+    dmg->attacker_ref = attacker;
+    dmg->timestamp = csGetTicks();
+    dmg->damageRate = -hpRate;
+    // Store the max theoretical DoT damage; AllocateKillDamage uses this
+    // information to recover the duration and compute the actual damage.
+    dmg->damage = (-hpRate/1000) * duration;
+
+    dmgHistory.Push(dmg);
 }
 
 void gemActor::RemoveAttackerHistory(gemActor * attacker)

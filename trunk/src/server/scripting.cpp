@@ -182,9 +182,7 @@ public:
     void Run(const MathEnvironment *env, gemActor *target, ActiveSpell *asp)
     {
         VitalBuffable *buffable = NULL;
-        if (vital == "hp-rate")
-            buffable = &target->GetCharacterData()->GetHPRate();
-        else if (vital == "mana-rate")
+        if (vital == "mana-rate")
             buffable = &target->GetCharacterData()->GetManaRate();
         else if (vital == "pstamina-rate")
             buffable = &target->GetCharacterData()->GetPStaminaRate();
@@ -208,6 +206,44 @@ public:
 
 protected:
     csString vital;
+};
+
+/**
+ * HPRateAOp - alter HP regeneration rate over time
+ *
+ * Unlike other vitals, <hp-rate> can specify an optional attacker who will
+ * be recorded in the target's damage history.
+ *
+ * <hp-rate attacker="Caster" value="-0.3"/>
+ * <hp-rate value="0.5"/>
+ */
+
+class HPRateAOp : public Applied1
+{
+public:
+    HPRateAOp() : Applied1() { }
+    virtual ~HPRateAOp() { }
+
+    bool Load(iDocumentNode *node)
+    {
+        attacker = node->GetAttributeValue("attacker");
+        return Applied1::Load(node);
+    }
+
+    void Run(const MathEnvironment *env, gemActor *target, ActiveSpell *asp)
+    {
+        float val = value->Evaluate(env);
+
+        VitalBuffable & buffable = target->GetCharacterData()->GetHPRate();
+        buffable.Buff(asp, val);
+        asp->Add(buffable, "<hp-rate value=\"%f\"/>", val);
+
+        gemActor *atk = GetActor(env, attacker); // may be NULL
+        target->AddAttackerHistory(atk, val, asp->Duration());
+    }
+
+protected:
+    csString attacker; //< optional MathScript var containing the attacker
 };
 
 //----------------------------------------------------------------------------
@@ -782,7 +818,11 @@ ApplicativeScript* ApplicativeScript::Create(iDocumentNode *top, SPELL_TYPE type
         AppliedOp *op = NULL;
 
         // buffables
-        if (elem == "hp-rate" || elem == "mana-rate" || elem == "pstamina-rate" || elem == "mstamina-rate" || elem == "hp-max" || elem == "mana-max" || elem == "pstamina-max" || elem == "mstamina-max")
+        if (elem == "hp-rate")
+        {
+            op = new HPRateAOp;
+        }
+        else if (elem == "mana-rate" || elem == "pstamina-rate" || elem == "mstamina-rate" || elem == "hp-max" || elem == "mana-max" || elem == "pstamina-max" || elem == "mstamina-max")
         {
             op = new VitalAOp;
         }
@@ -1482,9 +1522,9 @@ protected:
 //----------------------------------------------------------------------------
 
 /**
- * VitalOp - imperative vitals (HP, mana, stamina)
+ * VitalOp - imperative mana & stamina, but not HP
  *
- * <hp aim="Caster" value="-5"/>
+ * <mana aim="Caster" value="-5"/>
  */
 class VitalOp : public Imperative2 
 {
@@ -1502,9 +1542,7 @@ public:
     {
         psCharacter *c = GetCharacter(env, aim);
         float val = value->Evaluate(env);
-        if (vital == "hp")
-            c->AdjustHitPoints(val);
-        else if (vital == "mana")
+        if (vital == "mana")
             c->AdjustMana(val);
         else if (vital == "pstamina")
             c->AdjustStamina(val, true);
@@ -1516,6 +1554,43 @@ public:
 
 protected:
     csString vital;
+};
+
+/**
+ * HPOp - direct HP damage
+ *
+ * Unlike other vitals, <hp> can specify an optional attacker who will be
+ * recorded in the target's damage history.
+ *
+ * <hp attacker="Caster" aim="Target" value="-5*Power"/>
+ * <hp aim="Target" value="15"/>
+ */
+class HPOp : public Imperative2
+{
+public:
+    HPOp() : Imperative2() { }
+    virtual ~HPOp() { }
+
+    bool Load(iDocumentNode *node)
+    {
+        attacker = node->GetAttributeValue("attacker");
+        return Imperative2::Load(node);
+    }
+
+    void Run(const MathEnvironment *env)
+    {
+        gemActor *target = GetActor(env, aim);
+        gemActor *atk = GetActor(env, attacker); // may be NULL
+        float val = value->Evaluate(env);
+
+        if (val < 0)
+            target->DoDamage(atk, -val);
+        else
+            target->GetCharacterData()->AdjustHitPoints(val);
+    }
+
+protected:
+    csString attacker; //< optional MathScript var containing the attacker
 };
 
 //----------------------------------------------------------------------------
@@ -2191,7 +2266,11 @@ ProgressionScript* ProgressionScript::Create(const char *name, iDocumentNode *to
             printf("TODO: implement <%s> used in script >%s<\n", elem.GetData(), name);
             continue;
         }
-        else if (elem == "hp" || elem == "mana" || elem == "pstamina" || elem == "mstamina")
+        else if (elem == "hp")
+        {
+            op = new HPOp;
+        }
+        else if (elem == "mana" || elem == "pstamina" || elem == "mstamina")
         {
             op = new VitalOp;
         }
