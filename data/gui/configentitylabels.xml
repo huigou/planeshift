@@ -2,7 +2,7 @@
 
 <widget name="ConfigEntityLabels" factory="pawsConfigEntityLabels"
         visible="no" savepositions="no" movable="no" 
-        resizable="no">
+        resizable="no" style="New Standard GUI" >
 	<frame x="225" y="10" width="420" height="300" border="yes" style="New Standard GUI" />
 
     <widget name="visibilityCreatures" factory="pawsRadioButtonGroup">

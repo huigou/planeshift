@@ -2,7 +2,7 @@
 
 <widget name="ConfigDetails" factory="pawsConfigDetails"
         visible="no" savepositions="no" movable="no" 
-        resizable="no" >
+        resizable="no" style="New Standard GUI">
 
     <widget name="AdaptCheck" factory="pawsCheckBox">
         <frame x="100" y="10" width="190" height="20" />

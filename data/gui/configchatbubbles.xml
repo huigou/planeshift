@@ -2,7 +2,7 @@
 <widget_description>
 <widget name="ConfigChatBubblesTree" factory="pawsConfigChatBubbles"
         visible="no" savepositions="no" movable="no"
-        resizable="no" >
+        resizable="no" style="New Standard GUI" >
 	<frame x="225" y="10" width="400" height="300" border="no" />
 	<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="10" scalefont="no" />
             <widget name="allEnabled" factory="pawsCheckBox">
