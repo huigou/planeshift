@@ -64,8 +64,8 @@ bool pawsComboBox::Setup( iDocumentNode* node )
 	{
 		upButton = "Up Arrow";
 		downButton = "Down Arrow";
-		upButtonPressed = "Up Arrow Pressed";
-		downButtonPressed = "Down Arrow Pressed";
+		upButtonPressed = "Up Arrow";
+		downButtonPressed = "Down Arrow";
 	}
 	else
 	{
