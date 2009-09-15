@@ -250,8 +250,8 @@ pawsNumberPromptWindow * pawsNumberPromptWindow::Create(const csString & label,
     PawsManager::GetSingleton().GetMainWidget()->AddChild(w);
     w->PostSetup();
     w->UseBorder();
-    w->SetTitle( "Amount", "Blue Title", "center", "no" );
-    w->SetBackground("Number Prompt Background");
+    w->SetTitle( "Amount", "Scaling Title Bar", "center", "no" );
+    w->SetBackground("Scaling Window Background");
     PawsManager::GetSingleton().SetModalWidget(w);
     w->Initialize(label, number, minNumber, maxNumber, action,name,param);
     return w;
