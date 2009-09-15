@@ -204,8 +204,8 @@ void pawsConfigKeys::CreateTreeWidgets(pawsTreeNode * subtreeRoot)
         button->SetParent( this );
         button->SetNotify(this);
         button->SetRelativeFrameSize(30, 20);
-        button->SetUpImage("Blue Title");
-        button->SetDownImage("Blue Title");
+        button->SetUpImage("Standard Button");
+        button->SetDownImage("Standard Button Down");
         button->SetText("Set");
         button->SetToggle(false);
         button->Show();
