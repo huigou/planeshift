@@ -32,19 +32,38 @@
 	<frame x="0" y="265" width="170" height="30" border="yes" />
 
 
-	    <widget name="edit" factory="pawsButton" toggle="no" id="4000">
+	    <widget name="edit" factory="pawsButton" toggle="no" id="4000" style="Scaling Button">
 	        <frame x="5" y="5" width="45" height="20" border="yes" />
 	        <label text="Edit" />
+            <attachpoints>
+                <attach point="PROPORTIONAL_RIGHT" />
+                <attach point="ATTACH_LEFT" />
+                <attach point="PROPORTIONAL_TOP" />
+                <attach point="ATTACH_BOTTOM" />
+            </attachpoints>
 	    </widget>
 	
-	    <widget name="add" factory="pawsButton" toggle="no" id="3000">
+	    <widget name="add" factory="pawsButton" toggle="no" id="3000" style="Scaling Button">
 	        <frame x="55" y="5" width="45" height="20" border="yes" />
-
+            <label text="Add" />
+            <attachpoints>
+                <attach point="PROPORTIONAL_RIGHT" />
+                <attach point="PROPORTIONAL_LEFT" />
+                <attach point="PROPORTIONAL_TOP" />
+                <attach point="ATTACH_BOTTOM" />
+            </attachpoints>
 	    </widget>
 	
-	    <widget name="remove" factory="pawsButton" toggle="no" id="2000">
+	    <widget name="remove" factory="pawsButton" toggle="no" id="2000" style="Scaling Button">
 	        <frame x="105" y="5" width="60" height="20" border="yes" />
 	        <label text="Remove" />
+            
+            <attachpoints>
+                <attach point="ATTACH_RIGHT" />
+                <attach point="PROPORTIONAL_LEFT" />
+                <attach point="PROPORTIONAL_TOP" />
+                <attach point="ATTACH_BOTTOM" />
+            </attachpoints>
 	    </widget>
         
             <attachpoints>
