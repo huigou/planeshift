@@ -88,6 +88,7 @@ void pawsProgressBar::Draw()
     DrawProgressBar(screenFrame, PawsManager::GetSingleton().GetGraphics3D(), percent,
                     start_r, start_g, start_b,
                     diff_r,  diff_g,  diff_b, alpha);
+    DrawChildren();
     DrawMask();
 }
 
