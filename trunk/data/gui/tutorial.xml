@@ -24,6 +24,7 @@
 
       <widget name="Notify" factory="pawsButton" id="100" tooltip="Click to see Instructions">
         <frame x="0" y="0" width="45" height="60" />
+        <bgimage resource="ButtonTutorial" />
       </widget>
 
 
