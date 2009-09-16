@@ -19,11 +19,12 @@
         	<frame x="0" y="290" width="64" height="192"/>
 	        <bgimage resource="Decoration Vertical"/>
 	</widget>
-    -->
+    
     <widget name="InventoryDecoration03" factory="pawsWidget" selectable="no">
         <frame x="290" y="0" width="160" height="64"/>
         <bgimage resource="Decoration Horizontal"/>
-    </widget>
+    </widget> 
+    -->
 
 
     <widget name="BulkList" factory="pawsListBox" selectable="0">
