@@ -183,10 +183,19 @@ void CCheck::ParseFile(const char* filePath, const char* fileName, bool processi
 
     if(!broot.IsValid())
     {
-        if(processing && csString(filePath).Find(".dds") != (size_t)-1)
+        if(processing)
         {
-            FileUtil futil(vfs);
-            futil.CopyFile(filePath, outpath+"/materials/"+csString(filePath).Slice(csString(filePath).FindLast('/')), true, false);
+            if(csString(filePath).Find(".dds") != (size_t)-1 || csString(filePath).Find(".mng") != (size_t)-1)
+            {
+                FileUtil futil(vfs);
+                futil.CopyFile(filePath, outpath+"/materials/"+csString(filePath).Slice(csString(filePath).FindLast('/')), true, false);
+            }
+
+            if(csString(filePath).Find(".CSF") != (size_t)-1 || csString(filePath).Find(".CMF") != (size_t)-1 || csString(filePath).Find(".CAF") != (size_t)-1)
+            {
+                FileUtil futil(vfs);
+                futil.CopyFile(filePath, outpath+"/meshes/"+csString(filePath).Slice(csString(filePath).FindLast('/')), true, false);
+            }
         }
 
         return;
