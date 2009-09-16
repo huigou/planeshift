@@ -369,6 +369,15 @@ bool ExchangingCharacter::IsOfferingSane()
         if (item && itemInSlot->exchangeStackCount > item->GetStackCount())
             return false;
     }
+    
+    //make sure offered money isn't an invalid amount (eg < 0)
+    if(offeringMoney.Get(MONEY_CIRCLES) < 0 ||
+        offeringMoney.Get(MONEY_OCTAS)  < 0 ||
+        offeringMoney.Get(MONEY_HEXAS)  < 0 ||
+        offeringMoney.Get(MONEY_TRIAS)  < 0)
+    {
+        return false;
+    }
 
     //Make sure offered money is really available
     psMoney characterMoney = chrinv->owner->Money();
