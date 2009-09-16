@@ -1004,13 +1004,13 @@ void EntityManager::HandleWorld( MsgEntry* me, Client *client )
         return;
     }
 
-    // Client needs to know the starting sector of the player when the world loads
+    // Client needs to know the starting position of the player when the world loads.
     csVector3 pos;
     float     yrot;
     iSector *isector;
     client->GetActor()->GetPosition(pos,yrot,isector);
   
-    psPersistWorld mesg( me->clientnum, isector->QueryObject()->GetName() );
+    psPersistWorld mesg(me->clientnum, pos, isector->QueryObject()->GetName());
     mesg.SendMessage();
 
     // Send the world time and weather here too

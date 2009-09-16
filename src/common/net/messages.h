@@ -43,7 +43,7 @@ class psLinearMovement;
 
 // This holds the version number of the network code, remember to increase
 // this each time you do an update which breaks compatibility
-#define PS_NETVERSION   0x00A5
+#define PS_NETVERSION   0x00A6
 // Remember to bump the version in pscssetup.h, as well.
 
 
@@ -2958,7 +2958,7 @@ public:
 class psPersistWorld : public psMessageCracker
 {
 public:
-    psPersistWorld( uint32_t clientNum, const char* sectorName);
+    psPersistWorld( uint32_t clientNum, csVector3 pos, const char* sectorName);
     psPersistWorld( MsgEntry* me );
 
     PSF_DECLARE_MSG_FACTORY();
@@ -2972,7 +2972,7 @@ public:
     virtual csString ToString(AccessPointers * access_ptrs);
 
     csString sector;
-
+    csVector3 pos;
 };
 
 class psPersistActorRequest : public psMessageCracker

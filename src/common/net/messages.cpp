@@ -4581,18 +4581,22 @@ csString psRequestAllObjects::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psPersistWorld,MSGTYPE_PERSIST_WORLD);
 
-psPersistWorld::psPersistWorld( uint32_t clientNum, const char* sector )
+psPersistWorld::psPersistWorld( uint32_t clientNum, csVector3 pos, const char* sector )
 {
-    msg.AttachNew(new MsgEntry( strlen( sector ) + 1 ));
+    msg.AttachNew(new MsgEntry(sizeof(csVector3) + strlen(sector) + 1));
 
     msg->SetType(MSGTYPE_PERSIST_WORLD);
     msg->clientnum  = clientNum;
 
+    msg->Add( pos.x );
+    msg->Add( pos.y );
+    msg->Add( pos.z );
     msg->Add( sector );
 }
 
 psPersistWorld::psPersistWorld( MsgEntry* me )
 {
+    pos = csVector3(me->GetFloat(), me->GetFloat(), me->GetFloat());
     sector = csString(me->GetStr());
 }
 
@@ -4600,6 +4604,7 @@ csString psPersistWorld::ToString(AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
+    msgtext.AppendFmt("Position: (%f, %f, %f)\n", pos.x, pos.y, pos.z);
     msgtext.AppendFmt("Sector: '%s'", sector.GetDataSafe());
 
     return msgtext;
