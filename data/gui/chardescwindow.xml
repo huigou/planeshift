@@ -28,7 +28,7 @@
             </attachpoints>
         </pawsMultilineEditTextBox>  
  
-        <pawsButton name="OK" id="100">
+        <pawsButton name="OK" id="100" style="Standard Button">
             <frame x="5" y="238" width="70" height="30" />
             <attachpoints>
                 <attach point="PROPORTIONAL_RIGHT" />
@@ -39,7 +39,7 @@
             <label text="OK" />
         </pawsButton>
         
-        <pawsButton name="Cancel" id="101">
+        <pawsButton name="Cancel" id="101" style="Standard Button">
             <frame x="80" y="238" width="70" height="30" />
             <attachpoints>
                 <attach point="PROPORTIONAL_RIGHT" />
@@ -50,7 +50,7 @@
             <label text="Cancel" />
         </pawsButton>
         
-        <pawsButton name="Save" id="102">
+        <pawsButton name="Save" id="102" style="Standard Button">
             <frame x="170" y="238" width="70" height="30" />
             <attachpoints>
                 <attach point="PROPORTIONAL_RIGHT" />
@@ -58,10 +58,10 @@
                 <attach point="PROPORTIONAL_TOP" />
                 <attach point="ATTACH_BOTTOM" />
             </attachpoints>
-            <label text="Apply" />
+            <label text="Store" />
         </pawsButton>
         
-        <pawsButton name="Load" id="103">
+        <pawsButton name="Load" id="103" style="Standard Button">
             <frame x="245" y="238" width="70" height="30" />
             <attachpoints>
                 <attach point="PROPORTIONAL_RIGHT" />
@@ -69,7 +69,7 @@
                 <attach point="PROPORTIONAL_TOP" />
                 <attach point="ATTACH_BOTTOM" />
             </attachpoints>
-            <label text="Revert" />
+            <label text="Load" />
         </pawsButton>
         
     </pawsCharDescription>
