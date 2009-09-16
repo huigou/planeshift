@@ -145,9 +145,9 @@ public:
     bool InWaterArea(const char* sector, csVector3* pos, csColor4** colour);
 
    /**
-    * Load a zone given by name.
+    * Load zones given by name.
     */
-    bool LoadZone(const char* name);
+    void LoadZones(iStringArray* regions);
 
    /**
     * Returns an array of the available shaders for a given type.
@@ -218,18 +218,6 @@ private:
     class MeshObj;
     class Portal;
     class Light;
-
-    enum gfxFeatures
-    {
-        useLowestShaders = 0x1,
-        useLowShaders = 0x2,
-        useMediumShaders = 0x4,
-        useHighShaders = 0x8,
-        useHighestShaders = 0x10,
-        useShadows = 0x20,
-        useMeshGen = 0x40,
-        useAll = (useHighShaders | useShadows | useMeshGen)
-    };
 
     /********************************************************
      * Data structures representing components of the world.
@@ -549,7 +537,7 @@ private:
         Zone() : loading(false) {}
     };
 
-    csRef<Zone> loadedZone;
+    csRefArray<Zone> loadedZones;
 
     csStringSet stringSet;
     csHash<csRef<Zone>, csStringID> zones;
