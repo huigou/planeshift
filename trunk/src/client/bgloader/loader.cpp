@@ -36,6 +36,7 @@
 #include <ivideo/graph2d.h>
 #include <ivideo/material.h>
 
+#include "util/psconst.h"
 #include "loader.h"
 
 CS_IMPLEMENT_PLUGIN
@@ -176,6 +177,10 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
         if(!root.IsValid())
         {
             root = doc->GetRoot()->GetNode("library");
+            if(!root)
+            {
+                root = doc->GetRoot();
+            }
         }
         else
         {
@@ -399,11 +404,21 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
             }
 
             // Parse all mesh factories.
+            bool once = false;
             nodeItr = root->GetNodes("meshfact");
             while(nodeItr->HasNext())
             {
                 node = nodeItr->Next();
                 csRef<MeshFact> mf = csPtr<MeshFact>(new MeshFact(node->GetAttributeValue("name"), vfsPath, node));
+
+                if(root == doc->GetRoot() && !once && !nodeItr->HasNext())
+                {
+                    // Load this file when needed to save memory.
+                    mf->data.Invalidate();
+                }
+
+                // Mark that we've already loaded a meshfact in this file.
+                once = true;
 
                 // Parse mesh params to get the materials that we depend on.
                 if(node->GetNode("params")->GetNode("material"))
@@ -1788,7 +1803,15 @@ bool BgLoader::LoadMeshFact(MeshFact* meshfact)
 
     if(ready && !meshfact->status)
     {
-        meshfact->status = tloader->LoadNode(meshfact->path, meshfact->data);
+        if(meshfact->data)
+        {
+            meshfact->status = tloader->LoadNode(meshfact->path, meshfact->data);
+        }
+        else
+        {
+            meshfact->status = tloader->LoadMeshObjectFactory(meshfact->path, meshfact->path);
+        }
+
         return false;
     }
 
@@ -1922,7 +1945,7 @@ csPtr<iMeshFactoryWrapper> BgLoader::LoadFactory(const char* name, bool* failed)
             return csPtr<iMeshFactoryWrapper>(0);
         }
 
-        return scfQueryInterface<iMeshFactoryWrapper>(meshfact->status->GetResultRefPtr());
+        return scfQueryInterfaceSafe<iMeshFactoryWrapper>(meshfact->status->GetResultRefPtr());
     }
 
     return csPtr<iMeshFactoryWrapper>(0);
@@ -1975,44 +1998,52 @@ bool BgLoader::InWaterArea(const char* sector, csVector3* pos, csColor4** colour
     return false;
 }
 
-bool BgLoader::LoadZone(const char* name)
+void BgLoader::LoadZones(iStringArray* regions)
 {
-    csRef<Zone> zone = zones.Get(stringSet.Request(name), csRef<Zone>());
-    if(zone.IsValid())
+    csRefArray<Zone> newLoadedZones;
+    for(size_t i=0; i<regions->GetSize(); ++i)
     {
-        if(zone->loading)
+        csRef<Zone> zone = zones.Get(stringSet.Request(regions->Get(i)), csRef<Zone>());
+        if(zone.IsValid())
         {
-            if(GetLoadingCount() == 0)
-            {
-                if(loadedZone)
-                {
-                    for(size_t i=0; i<loadedZone->sectors.GetSize(); ++i)
-                    {
-                        CleanSector(loadedZone->sectors[i]);
-                    }
-
-                    loadedZone = zone;
-
-                    return true;
-                }
-            }
-            else
-            {
-                ContinueLoading(true);
-            }
-        }
-        else
-        {
+            newLoadedZones.Push(zone);
             for(size_t i=0; i<zone->sectors.GetSize(); ++i)
             {
                 LoadSector(csVector3(0.0f), csBox3(), csBox3(), zone->sectors[i], (uint)-1, true);
             }
-
-            zone->loading = true;
         }
     }
 
-    return false;
+    for(size_t i=0; i<loadedZones.GetSize(); ++i)
+    {
+        bool found = false;
+        for(size_t j=0; j<newLoadedZones.GetSize(); ++j)
+        {
+            if(loadedZones[i] == newLoadedZones[j])
+            {
+                found = true;
+                break;
+            }
+        }
+
+        if(!found)
+        {
+            for(size_t j=0; j<loadedZones[i]->sectors.GetSize(); ++j)
+            {
+                CleanSector(loadedZones[i]->sectors[j]);
+            }
+
+            loadedZones.DeleteIndex(i);
+            --i;
+        }
+    }
+
+    for(size_t i=0; i<newLoadedZones.GetSize(); ++i)
+    {
+        loadedZones.PushSmart(newLoadedZones[i]);
+    }
+
+    return;
 }
 
 iMeshWrapper* BgLoader::CreateAndSelectMesh(const char* factName, iCamera* camera, const csVector2& pos)

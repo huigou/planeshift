@@ -141,9 +141,9 @@ struct iBgLoader : public virtual iBase
   virtual csRefArray<StartPosition>* GetStartPositions() = 0;
 
   /**
-   * Load a zone given by name.
+   * Load zones given by name.
    */
-  virtual bool LoadZone(const char* name) = 0;
+  virtual void LoadZones(iStringArray* regions) = 0;
 };
 
 #endif // __IBGLOADER_H__

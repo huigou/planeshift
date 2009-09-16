@@ -174,4 +174,16 @@ MAKE_ID_TYPE(AccountID);   ///< Account IDs
   */
 typedef uint32_t ContainerID;
 
+enum gfxFeatures
+{
+    useLowestShaders = 0x1,
+    useLowShaders = 0x2,
+    useMediumShaders = 0x4,
+    useHighShaders = 0x8,
+    useHighestShaders = 0x10,
+    useShadows = 0x20,
+    useMeshGen = 0x40,
+    useAll = (useHighShaders | useShadows | useMeshGen)
+};
+
 #endif
