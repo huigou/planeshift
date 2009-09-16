@@ -283,6 +283,7 @@ bool pawsListBox::PostSetup()
         scrollBar->UseBorder();
     scrollBar->PostSetup();
     scrollBar->SetTickValue( 1.0 );
+    scrollBar->SetAlwaysOnTop(true);
     scrollBar->Hide();
     AddChild( scrollBar );
 

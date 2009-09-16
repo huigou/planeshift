@@ -14,20 +14,20 @@
         <frame x="385" y="290" width="64" height="192"/>
         <bgimage resource="Decoration Vertical"/>
     </widget>
-    <!--
+    
 	<widget name="InventoryDecoration02" factory="pawsWidget" selectable="no">
         	<frame x="0" y="290" width="64" height="192"/>
 	        <bgimage resource="Decoration Vertical"/>
 	</widget>
-    
+
     <widget name="InventoryDecoration03" factory="pawsWidget" selectable="no">
         <frame x="290" y="0" width="160" height="64"/>
         <bgimage resource="Decoration Horizontal"/>
     </widget> 
-    -->
 
 
-    <widget name="BulkList" factory="pawsListBox" selectable="0">
+
+    <widget name="BulkList" factory="pawsListBox" selectable="0" alwaysontop="yes">
         <frame x="10" y="325" width="400" height="145" border="no"/>
 
         <columns height="48" headings="no" >
@@ -100,7 +100,7 @@
     
 
 
-	<widget name="InventoryCharacter" factory="pawsWidget">
+	<widget name="InventoryCharacter" factory="pawsWidget" alwaysontop="true">
 	<frame x="20" y="15" width="250" height="285" />
         <bgimage resource="Scaling Widget Background"/>
 	
