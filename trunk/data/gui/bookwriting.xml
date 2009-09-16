@@ -18,17 +18,17 @@
         	<font name="/planeshift/data/ttf/becker-m.ttf" r="0" g="0" b="0" size="12"/>
         </widget>
 
-        <widget name="save" factory="pawsButton" id="103">
+        <widget name="save" factory="pawsButton" id="103" style="Standard Button">
         	<frame x="5" y="5" width="50" height="20" />
 		<label text="OK"/>
         </widget>
 
-        <widget name="load" factory="pawsButton" id="104">
+        <widget name="load" factory="pawsButton" id="104" style="Standard Button">
 	        <frame x="300" y="5" width="50" height="20" />
 		<label text="Load"/>
         </widget>
 
-        <widget name="cancel" factory="pawsButton" id="101">
+        <widget name="cancel" factory="pawsButton" id="101" style="Standard Button">
 	        <frame x="370" y="5" width="70" height="20" />
             <label text="Cancel"/>
         </widget>

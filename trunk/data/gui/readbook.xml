@@ -13,12 +13,12 @@
         </widget>
       
 
-    <widget name="ItemDescription" factory="pawsMultiLineTextBox" >
+    <widget name="ItemDescription" factory="pawsMultiLineTextBox" style="textinput">
         <frame x="35" y="90" width="385" height="380" border="no"/>
         <font name="/planeshift/data/ttf/becker-m.ttf" r="0" g="0" b="0" size="12"/>
     </widget>
     
-    <widget name="ItemDescriptionCraft" factory="pawsMultiLineTextBox" >
+    <widget name="ItemDescriptionCraft" factory="pawsMultiLineTextBox" style="textinput">
         <frame x="35" y="90" width="385" height="380" border="no"/>
         <font name="/planeshift/data/ttf/becker-m.ttf" r="0" g="0" b="0" size="12"/>
     </widget>
