@@ -20,7 +20,7 @@
 	    <bgimage resource="Scaling Field Background" />
         </widget>
         <widget name="Progress" factory="pawsProgressBar" style="Scaling Progressbar">
-            <frame x="10" y="570" height="20" width="700" border="yes" />
+            <frame x="25" y="570" height="20" width="750" />
             <fadecolor r="100" g="100" b="255" />
         </widget>
     </widget>
