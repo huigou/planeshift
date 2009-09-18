@@ -41,7 +41,7 @@ struct StartPosition : public csRefCount
  */
 struct iBgLoader : public virtual iBase
 {
-  SCF_INTERFACE(iBgLoader, 1, 4, 0);
+  SCF_INTERFACE(iBgLoader, 1, 4, 1);
 
  /**
   * Sets key settings and performs a shader parse.
@@ -143,7 +143,7 @@ struct iBgLoader : public virtual iBase
   /**
    * Load zones given by name.
    */
-  virtual void LoadZones(iStringArray* regions) = 0;
+  virtual bool LoadZones(iStringArray* regions, bool loadMeshes = true) = 0;
 };
 
 #endif // __IBGLOADER_H__
