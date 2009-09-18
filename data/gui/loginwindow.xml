@@ -17,7 +17,7 @@
         </form>
 
         <widget name="version" factory="pawsTextBox">
-            <frame x="5" y="5" width="240" height="20" border="no"/>
+            <frame x="5" y="5" width="250" height="20" border="no"/>
 	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="12" resizetoscreen="yes" />
           <!--bgimage resource="Standard Background" alpha="120" /-->
             <text string="" vertAdjust="CENTRE" />
