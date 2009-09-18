@@ -3066,7 +3066,7 @@ void gemActor::SetInstance(InstanceID worldInstance)
 void gemActor::Teleport(const char *sectorName, const csVector3 & pos, float yrot, InstanceID instance)
 {
     csRef<iEngine> engine = csQueryRegistry<iEngine>(psserver->GetObjectReg());
-    iSector *sector = engine->GetSectors()->FindByName(sectorName);
+    iSector *sector = engine->GetSectors()->FindByName(csString(sectorName).Downcase());
     if (!sector)
     {
         Bug2("Sector %s is not found!", sectorName);
