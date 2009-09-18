@@ -47,4 +47,6 @@ private:
     csRef<iFile> log;
 
     csRef<iDocumentNode> texmat;
+
+    uint duplicateNum;
 };
