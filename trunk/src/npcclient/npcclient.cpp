@@ -866,24 +866,7 @@ void psNPCClient::Tick()
 
 bool psNPCClient::LoadMap(const char* mapfile)
 {
-    static bool first = true;
-
-    if (first)
-    {
-        if (!world->CreateMap(mapfile, mapfile, psWorld::LOAD_NOW ))
-        {
-            return false;
-        }
-        first = false;
-    }
-    else
-    {        
-        if (!world->NewRegion(mapfile, psWorld::LOAD_NOW))
-        {
-            return false;
-        }
-    }
-    return true;
+    return world->NewRegion(mapfile);
 }
 
 LocationType *psNPCClient::FindRegion(const char *regname)

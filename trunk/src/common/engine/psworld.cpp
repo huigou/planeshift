@@ -23,6 +23,7 @@
 // Crystal Space Includes
 //=============================================================================
 #include <cstool/collider.h>
+#include <csutil/scfstringarray.h>
 #include <iengine/engine.h>
 #include <iengine/mesh.h>
 #include <iengine/movable.h>
@@ -33,6 +34,7 @@
 //=============================================================================
 // Project Includes
 //=============================================================================
+#include "iclient/ibgloader.h"
 #include "util/consoleout.h"
 #include "util/log.h"
 #include "util/strutil.h"
@@ -40,11 +42,11 @@
 //=============================================================================
 // Local Includes
 //=============================================================================
-#include "psregion.h"
 #include "psworld.h"
 
 psWorld::psWorld()
 {
+    regions.AttachNew(new scfStringArray());
 }
 
 psWorld::~psWorld()
@@ -56,45 +58,29 @@ bool psWorld::Initialize(iObjectRegistry* objectReg)
 {
     object_reg = objectReg;
     engine = csQueryRegistry<iEngine>(object_reg);
+    loader = csQueryRegistry<iBgLoader>(object_reg);
 
     return true;
 }
 
-bool psWorld::CreateMap( const char* name, const char* mapfile, bool load_now, bool loadMeshes)
-{    
-    if (!NewRegion(mapfile,load_now, loadMeshes))
+bool psWorld::NewRegion(const char *mapfile, bool loadMeshes)
+{
+    regions->Push(mapfile);
+    if(!loader->LoadZones(regions, loadMeshes))
         return false;
 
-    return true;
-}
-
-psRegion* psWorld::NewRegion(const char *mapfile,bool load, bool loadMeshes)
-{
-    for (unsigned i=0; i < regions.GetSize(); i++)
-    {
-        psRegion *rgn = regions[i];
-        if (!strcmp(rgn->GetName(),mapfile))
-            return rgn;
-    }
-
-    psRegion *newregion = new psRegion(object_reg, mapfile);
-    if (load && !newregion->Load(loadMeshes))
-    {
-        delete newregion;
-        return NULL;
-    }
     // This must be rebuilt when the sector list changes
     BuildWarpCache();
-    regions.Push(newregion);
-    return newregion;
+
+    return true;
 }
 
 void psWorld::GetAllRegionNames(csString& str)
 {
     str.Clear();
-    for (unsigned i=0; i < regions.GetSize(); i++)
+    for (unsigned i=0; i < regions->GetSize(); i++)
     {
-        str.Append( regions[i]->GetName() );
+        str.Append( regions->Get(i) );
         str.Append( "|" );
     }
 }

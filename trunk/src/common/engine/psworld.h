@@ -35,9 +35,9 @@
 // Local Includes
 //=============================================================================
 
+struct iBgLoader;
 struct iCollection;
 struct iEngine;
-class psRegion;
 
 /**
  * psWorld is in charge of managing all regions (zone map files)
@@ -47,9 +47,10 @@ class psRegion;
 class psWorld 
 {
 protected:
-    csPDelArray<psRegion> regions;
+    csRef<iStringArray> regions;
     iObjectRegistry *object_reg;
     csWeakRef<iEngine> engine;
+    csRef<iBgLoader> loader;
 
     class sectorTransformation
     {
@@ -103,15 +104,9 @@ public:
  
     /// Initialize psWorld
     bool Initialize(iObjectRegistry* object_reg);
-    bool CreateMap(const char* name, const char* mapFile, bool loadNow, bool loadMeshes = true); 
-    enum
-    {
-        DEFER_LOAD = 0,
-        LOAD_NOW   = 1
-    };
 
     /// Create a new psRegion entry and load it if specified
-    psRegion *NewRegion(const char *mapfile,bool load_now, bool loadMeshes = true);
+    bool NewRegion(const char *mapfile, bool loadMeshes = true);
 
     /// This makes a string out of all region names, separated by | chars.
     void GetAllRegionNames(csString& str);

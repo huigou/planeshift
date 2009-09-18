@@ -20,10 +20,13 @@
 #ifndef __IBGLOADER_H__
 #define __IBGLOADER_H__
 
+#include <csgeom/vector3.h>
+#include <csutil/csstring.h>
 #include <iutil/threadmanager.h>
 
 class csColor4;
-class csVector3;
+struct iMaterialWrapper;
+struct iMeshFactoryWrapper;
 struct iObjectRegistry;
 struct iThreadedLoader;
 

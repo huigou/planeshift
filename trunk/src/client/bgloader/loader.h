@@ -484,7 +484,7 @@ private:
 
     /* Internal loading methods. */
     void LoadSector(const csVector3& pos, const csBox3& loadBox, const csBox3& unloadBox,
-      Sector* sector, uint depth, bool force);
+      Sector* sector, uint depth, bool force, bool loadMeshes);
     void FinishMeshLoad(MeshObj* mesh);
     bool LoadMeshGen(MeshGen* meshgen);
     bool LoadMesh(MeshObj* mesh);

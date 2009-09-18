@@ -27,12 +27,14 @@
 #include <iutil/cfgmgr.h>
 #include <iutil/cmdline.h>
 #include <iutil/object.h>
+#include <iutil/stringarray.h>
 #include <ivaria/reporter.h>
 #include <ivaria/stdrep.h>
 
 //=============================================================================
 // Library Include
 //=============================================================================
+#include "iclient/ibgloader.h"
 #include "util/serverconsole.h"
 #include "util/mathscript.h"
 #include "util/psdatabase.h"
@@ -311,6 +313,26 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
 
 
     Debug1(LOG_STARTUP,0,"Started Database");
+
+    Debug1(LOG_STARTUP,0,"Filling loader cache");
+
+    csRef<iBgLoader> loader = csQueryRegistry<iBgLoader>(object_reg);
+    loader->PrecacheDataWait("/planeshift/materials/materials.cslib", false);
+
+    csRef<iStringArray> meshes = vfs->FindFiles("/planeshift/meshes/");
+    for(size_t j=0; j<meshes->GetSize(); ++j)
+    {
+        loader->PrecacheDataWait(meshes->Get(j), false);
+    }
+
+    csRef<iStringArray> maps = vfs->FindFiles("/planeshift/world/");
+
+    for(size_t j=0; j<maps->GetSize(); ++j)
+    {
+        loader->PrecacheDataWait(maps->Get(j), false);
+    }
+
+    Debug1(LOG_STARTUP,0,"Loader cache filled");
 
     cachemanager = new CacheManager();
 

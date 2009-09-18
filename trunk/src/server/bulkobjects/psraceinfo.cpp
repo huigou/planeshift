@@ -152,7 +152,7 @@ bool psRaceInfo::LoadBaseSpeeds(iObjectRegistry *object_reg)
     csRef<iDocument> doc = xml->CreateDocument();
 
     csString meshFileName;
-    meshFileName.Format("/planeshift/models/%s/%s.cal3d",mesh_name,mesh_name);
+    meshFileName.Format("/planeshift/meshes/%s", mesh_name);
     csRef<iDataBuffer> buf (vfs->ReadFile (meshFileName.GetData()));
     if (!buf || !buf->GetSize ())
     {
@@ -168,7 +168,7 @@ bool psRaceInfo::LoadBaseSpeeds(iObjectRegistry *object_reg)
         return false;
     }
 
-    csRef<iDocumentNode> cal3dlib = doc->GetRoot()->GetNode("library");
+    csRef<iDocumentNode> cal3dlib = doc->GetRoot();
     csRef<iDocumentNode> meshfact = cal3dlib->GetNode("meshfact");
     csRef<iDocumentNode> params = meshfact->GetNode("params");
 
