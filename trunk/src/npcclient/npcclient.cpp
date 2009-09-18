@@ -239,7 +239,7 @@ bool psNPCClient::Initialize(iObjectRegistry* object_reg,const char *_host, cons
 
     PFMaps = new psPFMaps(objreg);
 
-    Debug1(LOG_STARTUP,0,"Filling loader cache");
+    CPrintf(CON_CMDOUTPUT,"Filling loader cache");
 
     csRef<iBgLoader> loader = csQueryRegistry<iBgLoader>(object_reg);
     loader->PrecacheDataWait("/planeshift/materials/materials.cslib", false);
@@ -257,7 +257,7 @@ bool psNPCClient::Initialize(iObjectRegistry* object_reg,const char *_host, cons
         loader->PrecacheDataWait(maps->Get(j), false);
     }
 
-    Debug1(LOG_STARTUP,0,"Loader cache filled");
+    CPrintf(CON_CMDOUTPUT,"Loader cache filled");
     
     CPrintf(CON_DEBUG, "Connecting to Host: '%s' User: '%s' Password: '%s' Port %d...\n",
         (const char*) host, (const char*) user, (const char*) pass, port);

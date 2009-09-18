@@ -31,6 +31,7 @@
 //=============================================================================
 // Project Space Includes
 //=============================================================================
+#include "iclient/ibgloader.h"
 #include "util/log.h"
 #include "util/serverconsole.h"
 #include "util/eventmanager.h"
@@ -371,6 +372,13 @@ bool NetworkManager::ReceiveMapList(MsgEntry *msg)
             return false;
         }
     }
+
+    CPrintf(CON_CMDOUTPUT,"Finishing all map loads\n");
+
+    csRef<iBgLoader> loader = csQueryRegistry<iBgLoader>(npcclient->GetObjectReg());
+    while(loader->GetLoadingCount() != 0)
+        loader->ContinueLoading(true);
+
     return true;
 }
 
