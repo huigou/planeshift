@@ -1651,27 +1651,27 @@ void BgLoader::LoadSector(const csVector3& pos, const csBox3& loadBox, const csB
                 --sector->objectCount;
             }
         }
-    }
 
-    // Check whether this sector is empty and should be unloaed.
-    if(sector->objectCount == sector->alwaysLoadedCount && sector->object.IsValid())
-    {
-        // Unload all 'always loaded' meshes before destroying sector.
-        for(size_t i=0; i<sector->meshes.GetSize(); i++)
+        // Check whether this sector is empty and should be unloaed.
+        if(sector->objectCount == sector->alwaysLoadedCount && sector->object.IsValid())
         {
-            if(sector->meshes[i]->alwaysLoaded)
+            // Unload all 'always loaded' meshes before destroying sector.
+            for(size_t i=0; i<sector->meshes.GetSize(); i++)
             {
-                sector->meshes[i]->object->GetMovable()->ClearSectors();
-                sector->meshes[i]->object->GetMovable()->UpdateMove();
-                engine->GetMeshes()->Remove(sector->meshes[i]->object);
-                sector->meshes[i]->object.Invalidate();
-                --sector->objectCount;
+                if(sector->meshes[i]->alwaysLoaded)
+                {
+                    sector->meshes[i]->object->GetMovable()->ClearSectors();
+                    sector->meshes[i]->object->GetMovable()->UpdateMove();
+                    engine->GetMeshes()->Remove(sector->meshes[i]->object);
+                    sector->meshes[i]->object.Invalidate();
+                    --sector->objectCount;
+                }
             }
-        }
 
-        // Remove the sector from the engine.
-        engine->GetSectors()->Remove(sector->object);
-        sector->object.Invalidate();
+            // Remove the sector from the engine.
+            engine->GetSectors()->Remove(sector->object);
+            sector->object.Invalidate();
+        }
     }
 
     sector->checked = true;
