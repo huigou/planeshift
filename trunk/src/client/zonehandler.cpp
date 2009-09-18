@@ -183,7 +183,7 @@ void ZoneHandler::LoadZone(csVector3 pos, const char* sector)
         return;
     }
 
-    if(psengine->ThreadedWorldLoading())
+    if(psengine->BackgroundWorldLoading())
     {
         psengine->GetLoader()->UpdatePosition(pos, sectorToLoad, true);
     }
@@ -197,7 +197,7 @@ void ZoneHandler::LoadZone(csVector3 pos, const char* sector)
     }
 
     if(FindLoadWindow() && psengine->GetLoader()->GetLoadingCount() != 0 &&
-      (!psengine->ThreadedWorldLoading() || !psengine->HasLoadedMap()))
+      (!psengine->BackgroundWorldLoading() || !psengine->HasLoadedMap()))
     {
         loading = true;
 
