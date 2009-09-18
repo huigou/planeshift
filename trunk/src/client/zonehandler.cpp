@@ -170,7 +170,7 @@ void ZoneHandler::HandleMessage(MsgEntry* me)
 
 void ZoneHandler::LoadZone(csVector3 pos, const char* sector)
 {
-    if(loading)
+    if(loading || !strcmp(sector, "SectorWhereWeKeepEntitiesResidingInUnloadedMaps"))
         return;
 
     newPos = pos;
