@@ -80,6 +80,7 @@ protected:
 
     void MountEarly();
     void MountArt();
+    void MountMaps();
     void MountZip(const char *, const char *);
     void MountUserData();
 

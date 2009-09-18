@@ -353,10 +353,64 @@ void psCSSetup::MountEarly()
     MountUserData();
 }
 
+void psCSSetup::MountMaps()
+{
+    csRef<iConfigIterator> it = configManager->Enumerate("PlaneShift.Mount.zipmapdir");
+    if (!it)
+        return;
+
+    while ( it->HasNext() )
+    {
+        it->Next();
+
+        if (it->GetKey())
+        {
+            const char* dir = configManager->GetStr(it->GetKey(), "");
+            if (!strcmp (dir, "")) continue;
+            csRef<iDataBuffer> xpath = vfs->ExpandPath(dir);
+            csRef<iStringArray> files = vfs->FindFiles( **xpath );
+
+            if (!files) continue;
+            for (size_t i=0; i < files->GetSize(); i++)
+            {
+                const char* filename = files->Get(i);
+                if (strcmp (filename + strlen(filename) - 4, ".zip"))
+                    continue;
+
+                csString finaldir(filename);
+                // Get only filename
+                size_t term = finaldir.FindLast('/');
+                finaldir.DeleteAt(0,term);
+                finaldir.Insert(0,"/planeshift/world");
+                term = finaldir.FindLast('.');
+                finaldir.Truncate(term);
+
+                csRef<iDataBuffer> xrpath = vfs->GetRealPath(filename);
+                vfs->Mount(finaldir, **xrpath);
+            }
+        }
+    }
+
+    it = configManager->Enumerate("PlaneShift.Mount.zipmapdir");
+    if (!it) return;
+
+    while ( it->HasNext() )
+    {
+        it->Next();
+        if (!it->GetKey() || !strcmp(it->GetKey(), "")) continue;
+        const char* dir = configManager->GetStr(it->GetKey(), "");
+        if (!vfs->Mount(dir, "/planeshift/world/"))
+        {
+            printf("Couldn't mount user specified dir: %s.\n", dir);
+        }
+    }
+}
+
 void psCSSetup::MountArt()
 {
     MountZip("materials", "materials");
     MountZip("meshes", "meshes");
     MountZip("world", "world");
-    MountZip("podium", "world/podium");
+    
+    MountMaps();
 }
