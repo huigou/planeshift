@@ -1875,9 +1875,16 @@ const char* GEMClientActor::GetName(bool trueName)
 
 bool GEMClientActor::CheckLoadStatus()
 {
-    csRef<iMeshFactoryWrapper> factory = psengine->GetLoader()->LoadFactory(factName);
+    bool failed = false;
+    csRef<iMeshFactoryWrapper> factory = psengine->GetLoader()->LoadFactory(factName, &failed);
     if(!factory.IsValid())
     {
+        if(failed)
+        {
+            printf("Failed to load factory: '%s'\n", factName.GetData());
+            psengine->UnregisterDelayedLoader(this);
+            return false;
+        }
         return true;
     }
 
