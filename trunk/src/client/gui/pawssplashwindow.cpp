@@ -56,7 +56,7 @@ void pawsSplashWindow::Draw()
         ++level;
     else return;
    
-    if(level > 4)
+    if(level > 5)
     {
         PawsManager::GetSingleton().LoadWidget("loginwindow.xml");
         Hide();

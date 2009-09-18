@@ -31,6 +31,7 @@
 #include <iutil/event.h>
 #include <iutil/databuff.h>
 #include <iutil/cfgmgr.h>
+#include <ivideo/txtmgr.h>
 #include <csutil/event.h>
 #include <csutil/eventnames.h>
 #include <csutil/objreg.h>
@@ -92,7 +93,7 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 PawsManager::PawsManager(iObjectRegistry* object, const char* skin, const char* skinBase,
-                         const char* pawsConfigFile, uint _gfxFeatures)
+                         const char* pawsConfigFile, uint _gfxFeatures) : render2texture(false)
 {
     objectReg = object;
     pawsConfig = pawsConfigFile;
@@ -195,6 +196,12 @@ PawsManager::PawsManager(iObjectRegistry* object, const char* skin, const char* 
     timeOver = 0;
 
     gfxFeatures = _gfxFeatures;
+
+    // Init render texture.
+    csRef<iTextureManager> texman = graphics3D->GetTextureManager();
+    guiTexture = texman->CreateTexture(graphics3D->GetWidth(), graphics3D->GetHeight(),
+      csimg2D, "rgba8", 0x9);
+    guiTexture->SetAlphaType (csAlphaMode::alphaBinary);
 }
 
 PawsManager::~PawsManager()
@@ -608,11 +615,42 @@ bool PawsManager::HandleMouseMove( iEvent &ev )
     return false;
 }
 
-
-
 void PawsManager::Draw()
 {
-    mainWidget->DrawChildren();
+    // First draw the main gui.
+    if(!render2texture || true/* TODO: mainWidget->NeedsRender()*/)
+    {
+        if(render2texture)
+        {
+            graphics3D->SetRenderTarget(guiTexture);
+            graphics3D->BeginDraw(CSDRAW_2DGRAPHICS);
+        }
+
+        mainWidget->DrawChildren();
+
+        if(render2texture)
+        {
+            graphics3D->FinishDraw();
+            graphics3D->Print(0);
+        }
+    }
+
+    if(render2texture)
+    {
+        graphics3D->SetRenderTarget(0);
+        graphics3D->BeginDraw(CSDRAW_2DGRAPHICS);
+        graphics3D->DrawPixmap(guiTexture, 0, 0, graphics3D->GetWidth(), graphics3D->GetHeight(),
+            0, 0, graphics3D->GetWidth(), graphics3D->GetHeight());
+    }
+
+    // Draw all pawsobjectview next.
+    for(size_t i=0; i<objectViews.GetSize(); ++i)
+    {
+        if(objectViews[i]->IsVisible())
+            objectViews[i]->Draw();
+    }
+
+    // Now everything else.
     if ( modalWidget != NULL ) modalWidget->Draw();
 
     graphics2D->SetClipRect( 0,0, graphics2D->GetWidth(), graphics2D->GetHeight());
@@ -792,8 +830,13 @@ pawsWidget * PawsManager::LoadWidget(iDocumentNode *widgetNode )
     return widget;
 }
 
-
-
+bool PawsManager::LoadObjectViews()
+{
+    bool ret = true;
+    for(size_t i=0; i<objectViews.GetSize(); ++i)
+        ret &= ((pawsObjectView*)objectViews[i])->ContinueLoad();
+    return ret;
+}
 
 pawsWidget* PawsManager::CreateWidget( const char* factoryName )
 {
@@ -812,7 +855,6 @@ pawsWidget* PawsManager::CreateWidget( const char* factoryName )
     Error2("Could not locate Factory: %s", factoryName );
     return NULL;
 }
-
 
 void PawsManager::SetModalWidget( pawsWidget* widget )
 {

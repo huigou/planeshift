@@ -281,11 +281,12 @@ ZoneLoadInfo::ZoneLoadInfo(iDocumentNode *node)
 {
     csString trans;
 
-    inSector = csString(node->GetAttributeValue("sector")).Downcase();
+    inSector = node->GetAttributeValue("sector");
     loadImage = node->GetAttributeValue("loadimage");
     trans = node->GetAttributeValue("transitional");
     transitional = (trans=="yes");
     regions.AttachNew(new scfStringArray());
+    regions->Push("podium");
 
     csRef<iDocumentNodeIterator> regionIter = node->GetNodes("region");
     while (regionIter->HasNext())

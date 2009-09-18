@@ -46,9 +46,10 @@ pawsMainWidget::pawsMainWidget()
     if ( !LoadGUIKeys( "/this/data/guikeys.xml" ) )
         Error1("Failed to load GUI keys");
 
-    //guiCamera = NULL;
     clipRect = csRect(0,0, graphics2D->GetWidth(), graphics2D->GetHeight());
         alpha = -1;
+
+    needsRender = true;
 }
 
 pawsMainWidget::~pawsMainWidget()

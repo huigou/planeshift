@@ -73,7 +73,7 @@
     <widget name="PaperDollView" factory="pawsObjectView">
         <frame x="290" y="120" width="223" height="398" border="no"/>
         <mask resource="charborder"/>
-        <map file="/planeshift/world/podium" sector="room"/>
+        <map file="podium" sector="room"/>
         <distance value="4.5"/>
 	  <cameramod x="-0.025" y="1.4" z="0.0"/>
     </widget>

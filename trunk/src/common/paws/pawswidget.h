@@ -316,6 +316,15 @@ protected:
     /// Holds any extra data the widget may need.
     iWidgetData * extraData;
 
+    /// Whether we need to do a r2t update.
+    bool needsRender;
+
+    /**
+     * Whether to draw this widget (different from visible,
+     * used to decide if Draw() is called via parent-child tree).
+     */
+    bool parentDraw;
+
     /** 
      * Flag of whether OnUpdateData should overwrite the previous value or 
      * add to it. Used by Multi-line edit currently.  
@@ -368,7 +377,7 @@ public:
     /** Is the widget currently set visible?
      * @return bool
      */
-    bool IsVisible() { return visible; }
+    bool IsVisible() { return visible && (!parent || parent->IsVisible()); }
 
    /** Make the widget visible or hides it.
      * @param bool TRUE calls Show(), FALSE calls Hide().
@@ -575,6 +584,14 @@ public:
      * @remark Uses focus status to apply appropriate fading. 
      */
     virtual void DrawMask();
+
+    /**
+     * Whether to draw via the parent-child draw tree.
+     */
+    virtual bool ParentDraw() const
+    {
+        return parentDraw;
+    }
 
     /** Test widget to see if it is resizable.
      * @return isResizable Flag to set a widget resizable.
@@ -1318,6 +1335,23 @@ public:
     void RemoveTitle();
 
     const char *FindDefaultWidgetStyle(const char *factoryName);
+
+    /**
+     * Marks that we need to r2t.
+     */
+
+    void SetNeedsRender(bool needs)
+    {
+        if(parent)
+            parent->SetNeedsRender(needs);
+        else
+            needsRender = needs;
+    }
+
+    /**
+     * Whether we need to r2t.
+     */
+    bool NeedsRender() const { return needsRender; }
 
 protected:
 
