@@ -25,6 +25,7 @@
 #include <iutil/cfgmgr.h>
 #include <iutil/cmdline.h>
 #include <iutil/object.h>
+#include <iutil/stringarray.h>
 #include <csutil/csobject.h>
 #include <ivaria/reporter.h>
 #include <iutil/vfs.h>
@@ -39,6 +40,7 @@
 //=============================================================================
 // Project Includes
 //=============================================================================
+#include "iclient/ibgloader.h"
 #include "util/serverconsole.h"
 #include "util/psdatabase.h"
 #include "util/eventmanager.h"
@@ -236,6 +238,26 @@ bool psNPCClient::Initialize(iObjectRegistry* object_reg,const char *_host, cons
     cdsys =  csQueryRegistry<iCollideSystem> (objreg);
 
     PFMaps = new psPFMaps(objreg);
+
+    Debug1(LOG_STARTUP,0,"Filling loader cache");
+
+    csRef<iBgLoader> loader = csQueryRegistry<iBgLoader>(object_reg);
+    loader->PrecacheDataWait("/planeshift/materials/materials.cslib", false);
+
+    csRef<iStringArray> meshes = vfs->FindFiles("/planeshift/meshes/");
+    for(size_t j=0; j<meshes->GetSize(); ++j)
+    {
+        loader->PrecacheDataWait(meshes->Get(j), false);
+    }
+
+    csRef<iStringArray> maps = vfs->FindFiles("/planeshift/world/");
+
+    for(size_t j=0; j<maps->GetSize(); ++j)
+    {
+        loader->PrecacheDataWait(maps->Get(j), false);
+    }
+
+    Debug1(LOG_STARTUP,0,"Loader cache filled");
     
     CPrintf(CON_DEBUG, "Connecting to Host: '%s' User: '%s' Password: '%s' Port %d...\n",
         (const char*) host, (const char*) user, (const char*) pass, port);
