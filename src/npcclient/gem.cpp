@@ -146,7 +146,7 @@ bool gemNPCObject::InitMesh(    const char *factname,
         }
         else
         {
-            Error3("Could not use dummy CVS mesh with factname=%s", factname);        
+            Error2("Could not use dummy CVS mesh with factname=%s", factname);        
             return false;
         }
     }
