@@ -1390,6 +1390,8 @@ void UserManager::ReportPosition(psUserCmdMessage& msg,Client *client)
         // Report extra info to GMs (players will use skills to determine correct direction)
         if (extras)
         {
+            // Get the region this sector belongs to
+            csString region_name = (sector) ? sector->QueryObject()->GetObjectParent()->GetName() : "(null)";
             // If it's an actor, append their PID to the output.
             csString idtxt;
             if (object->GetActorPtr())
@@ -1397,8 +1399,8 @@ void UserManager::ReportPosition(psUserCmdMessage& msg,Client *client)
 
             int degrees = (int)(angle*180.0/PI);
             psserver->SendSystemInfo(client->GetClientNum(),
-                "%s current position is: %1.2f %1.2f %1.2f %d angle: %d, sector : %s%s%s",
-                name.GetData(), pos.x, pos.y, pos.z, instance, degrees,
+                "%s current position is region: %s %1.2f %1.2f %1.2f %d angle: %d, sector : %s%s%s",
+                name.GetData(), region_name.GetData(), pos.x, pos.y, pos.z, instance, degrees,
                 sector_name.GetData(), range.GetData(), idtxt.GetDataSafe());
         }
         else
