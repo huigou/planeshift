@@ -147,7 +147,7 @@ public:
    /**
     * Load zones given by name.
     */
-    void LoadZones(iStringArray* regions);
+    bool LoadZones(iStringArray* regions, bool loadMeshes = true);
 
    /**
     * Returns an array of the available shaders for a given type.

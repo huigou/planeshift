@@ -2008,7 +2008,7 @@ bool BgLoader::InWaterArea(const char* sector, csVector3* pos, csColor4** colour
     return false;
 }
 
-void BgLoader::LoadZones(iStringArray* regions)
+bool BgLoader::LoadZones(iStringArray* regions, bool loadMeshes)
 {
     csRefArray<Zone> newLoadedZones;
     for(size_t i=0; i<regions->GetSize(); ++i)
@@ -2017,6 +2017,10 @@ void BgLoader::LoadZones(iStringArray* regions)
         if(zone.IsValid())
         {
             newLoadedZones.Push(zone);
+        }
+        else
+        {
+            return false;
         }
     }
 
@@ -2066,7 +2070,7 @@ void BgLoader::LoadZones(iStringArray* regions)
         }
     }
 
-    return;
+    return true;
 }
 
 iMeshWrapper* BgLoader::CreateAndSelectMesh(const char* factName, iCamera* camera, const csVector2& pos)

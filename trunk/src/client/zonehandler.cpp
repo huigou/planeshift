@@ -189,7 +189,11 @@ void ZoneHandler::LoadZone(csVector3 pos, const char* sector)
     }
     else
     {
-        psengine->GetLoader()->LoadZones(zone->regions);
+        if(!psengine->GetLoader()->LoadZones(zone->regions))
+        {
+            Error2("Unable to load zone '%s'\n", zone->inSector.GetData());
+            return;
+        }
     }
 
     if(FindLoadWindow() && psengine->GetLoader()->GetLoadingCount() != 0 &&
