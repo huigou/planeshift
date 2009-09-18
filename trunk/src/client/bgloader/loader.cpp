@@ -583,7 +583,6 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
 
                 csRef<Sector> s;
                 csString sectorName = node->GetAttributeValue("name");
-                sectorName.Downcase();
                 {
                     CS::Threading::ScopedReadLock lock(sLock);
                     s = sectorHash.Get(stringSet.Request(sectorName), csRef<Sector>());
@@ -979,7 +978,6 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                         }
 
                         csString targetSector = node2->GetNode("sector")->GetContentsValue();
-                        targetSector.Downcase();
                         {
                             CS::Threading::ScopedReadLock lock(sLock);
                             p->targetSector = sectorHash.Get(stringSet.Request(targetSector), csRef<Sector>());
@@ -1156,7 +1154,7 @@ void BgLoader::UpdatePosition(const csVector3& pos, const char* sectorName, bool
 
     if(!sector.IsValid())
     {
-        sector = sectorHash.Get(stringSet.Request(csString(sectorName).Downcase()), csRef<Sector>());
+        sector = sectorHash.Get(stringSet.Request(sectorName), csRef<Sector>());
     }
 
     if(sector.IsValid())
@@ -1999,7 +1997,7 @@ bool BgLoader::InWaterArea(const char* sector, csVector3* pos, csColor4** colour
     if(!strcmp("SectorWhereWeKeepEntitiesResidingInUnloadedMaps", sector))
         return false;
 
-    csRef<Sector> s = sectorHash.Get(stringSet.Request(csString(sector).Downcase()), csRef<Sector>());
+    csRef<Sector> s = sectorHash.Get(stringSet.Request(sector), csRef<Sector>());
     CS_ASSERT_MSG("Invalid sector passed to InWaterArea().", s.IsValid());
 
     for(size_t i=0; i<s->waterareas.GetSize(); ++i)
