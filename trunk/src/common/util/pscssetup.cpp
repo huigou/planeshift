@@ -358,5 +358,5 @@ void psCSSetup::MountArt()
     MountZip("materials", "materials");
     MountZip("meshes", "meshes");
     MountZip("world", "world");
-    MountZip("podium", "world/podium")
+    MountZip("podium", "world/podium");
 }
