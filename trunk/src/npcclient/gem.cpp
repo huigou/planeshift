@@ -127,18 +127,18 @@ bool gemNPCObject::InitMesh(    const char *factname,
         fact_name.ReplaceAllSubString("$C", "stonebm");
         factname = fact_name;
 
-        psString file_name(filename);
-        file_name.ReplaceAllSubString("$H", "stonebm");
-        fact_name.ReplaceAllSubString("$B", "stonebm");
-        fact_name.ReplaceAllSubString("$E", "stonebm");
-        fact_name.ReplaceAllSubString("$C", "stonebm");
-        filename = file_name;
-
         bool failed = false;
         csRef<iBgLoader> loader = csQueryRegistry<iBgLoader> (npcclient->GetObjectReg());
         csRef<iMeshFactoryWrapper> meshFact = loader->LoadFactory(factname, &failed);
         while(!meshFact.IsValid() && !failed)
             meshFact = loader->LoadFactory(factname, &failed);
+
+        if(failed)
+        {
+            failed = false;
+            while(!meshFact.IsValid() && !failed)
+                meshFact = loader->LoadFactory("stonebm", &failed);
+        }
 
         if(meshFact.IsValid())
         {
@@ -146,14 +146,8 @@ bool gemNPCObject::InitMesh(    const char *factname,
         }
         else
         {
-            Error3("Could not set mesh with factname=%s and filename=%s. Trying dummy model", factname, filename);                
-            factname = "stonebm";
-            filename = "/planeshift/meshes/stonebm";
-            if (!pcmesh->SetMesh(factname, filename))
-            {
-                Error3("Could not use dummy CVS mesh with factname=%s and filename=%s", factname, filename);        
-                return false;
-            }
+            Error3("Could not use dummy CVS mesh with factname=%s", factname);        
+            return false;
         }
     }
 
