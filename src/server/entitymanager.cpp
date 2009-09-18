@@ -769,10 +769,7 @@ EID EntityManager::CreateNPC(PID npcID, bool updateProxList, bool alwaysWatching
 
 bool EntityManager::LoadMap (const char* mapname)
 {
-    if (!CreateRoom("world", mapname))
-        return false;
-
-    return true;
+    return gameWorld->NewRegion(mapname, false);
 }
 
 gemObject *EntityManager::MoveItemToWorld(psItem       *chrItem,
@@ -889,26 +886,6 @@ bool EntityManager::CreateActionLocation(psActionLocation *al, bool transient = 
     //Debug3(LOG_STARTUP ,0, "Action Location ID %u : Created successfully(EID: %u)!\n", instance->id,obj->GetEID());
     return true;
 }
-
-bool EntityManager::CreateRoom(const char* name, const char* mapfile)
-{
-    static bool first = true;
-    
-    if (first)
-    {       
-        if(!gameWorld->CreateMap( name, mapfile,psWorld::LOAD_NOW, false ))
-            return false;
-
-        first = false;
-    }
-    else
-    {        
-        if(!gameWorld->NewRegion(mapfile,psWorld::LOAD_NOW, false))
-            return false;
-    }
-    return true;
-}
-
 
 void EntityManager::HandleAllRequest(MsgEntry* me, Client *client)
 {

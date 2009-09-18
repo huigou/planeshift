@@ -50,6 +50,7 @@ LinkStaticPlugins psserver_static :
 ;
 
 LinkStaticPlugins psserver_static :
+  bgloader
   dbmysql
 ;
 

@@ -1171,7 +1171,7 @@ void BgLoader::UpdatePosition(const csVector3& pos, const char* sectorName, bool
         unloadBox.AddBoundingVertexSmart(pos.x-loadRange*1.5, pos.y-loadRange*1.5, pos.z-loadRange*1.5);
 
         // Check.
-        LoadSector(pos, loadBox, unloadBox, sector, 0, false);
+        LoadSector(pos, loadBox, unloadBox, sector, 0, false, true);
 
         if(force)
         {
@@ -1416,7 +1416,7 @@ void BgLoader::CleanTexture(Texture* texture)
 }
 
 void BgLoader::LoadSector(const csVector3& pos, const csBox3& loadBox, const csBox3& unloadBox,
-                        Sector* sector, uint depth, bool force)
+                        Sector* sector, uint depth, bool force, bool loadMeshes)
 {
     sector->isLoading = true;
 
@@ -1459,48 +1459,51 @@ void BgLoader::LoadSector(const csVector3& pos, const csBox3& loadBox, const csB
                 wwUnloadBox.SetMax(2, wwUnloadBox.MaxZ()-transform.z);
             }
 
-            LoadSector(wwPos, wwLoadBox, wwUnloadBox, sector->activePortals[i]->targetSector, depth+1, false);
+            LoadSector(wwPos, wwLoadBox, wwUnloadBox, sector->activePortals[i]->targetSector, depth+1, false, loadMeshes);
         }
     }
 
-    // Check all meshes in this sector.
-    for(size_t i=0; i<sector->meshes.GetSize(); i++)
+    if(loadMeshes)
     {
-        if(!sector->meshes[i]->loading)
+        // Check all meshes in this sector.
+        for(size_t i=0; i<sector->meshes.GetSize(); i++)
         {
-            if(force || sector->meshes[i]->InRange(pos, loadBox, loadRange))
+            if(!sector->meshes[i]->loading)
             {
-                sector->meshes[i]->loading = true;
-                loadingMeshes.Push(sector->meshes[i]);
-                ++sector->objectCount;
-            }
-            else if(sector->meshes[i]->OutOfRange(pos, unloadBox, loadRange))
-            {
-                sector->meshes[i]->object->GetMovable()->ClearSectors();
-                sector->meshes[i]->object->GetMovable()->UpdateMove();
-                engine->GetMeshes()->Remove(sector->meshes[i]->object);
-                sector->meshes[i]->object.Invalidate();
-                deleteQueue.Push(sector->meshes[i]);
-                --sector->objectCount;
+                if(force || sector->meshes[i]->InRange(pos, loadBox, loadRange))
+                {
+                    sector->meshes[i]->loading = true;
+                    loadingMeshes.Push(sector->meshes[i]);
+                    ++sector->objectCount;
+                }
+                else if(sector->meshes[i]->OutOfRange(pos, unloadBox, loadRange))
+                {
+                    sector->meshes[i]->object->GetMovable()->ClearSectors();
+                    sector->meshes[i]->object->GetMovable()->UpdateMove();
+                    engine->GetMeshes()->Remove(sector->meshes[i]->object);
+                    sector->meshes[i]->object.Invalidate();
+                    deleteQueue.Push(sector->meshes[i]);
+                    --sector->objectCount;
+                }
             }
         }
-    }
 
-    // Check all meshgen in this sector.
-    for(size_t i=0; i<sector->meshgen.GetSize(); i++)
-    {
-        if(!sector->meshgen[i]->loading)
+        // Check all meshgen in this sector.
+        for(size_t i=0; i<sector->meshgen.GetSize(); i++)
         {
-            if(force || sector->meshgen[i]->InRange(loadBox))
+            if(!sector->meshgen[i]->loading)
             {
-                sector->meshgen[i]->loading = true;
-                loadingMeshGen.Push(sector->meshgen[i]);
-                ++sector->objectCount;
-            }
-            else if(sector->meshgen[i]->OutOfRange(unloadBox))
-            {
-                CleanMeshGen(sector->meshgen[i]);
-                --sector->objectCount;
+                if(force || sector->meshgen[i]->InRange(loadBox))
+                {
+                    sector->meshgen[i]->loading = true;
+                    loadingMeshGen.Push(sector->meshgen[i]);
+                    ++sector->objectCount;
+                }
+                else if(sector->meshgen[i]->OutOfRange(unloadBox))
+                {
+                    CleanMeshGen(sector->meshgen[i]);
+                    --sector->objectCount;
+                }
             }
         }
     }
@@ -1562,7 +1565,7 @@ void BgLoader::LoadSector(const csVector3& pos, const csBox3& loadBox, const csB
                     wwUnloadBox.SetMax(1, wwUnloadBox.MaxY()-transform.y);
                     wwUnloadBox.SetMax(2, wwUnloadBox.MaxZ()-transform.z);
                 }
-                LoadSector(wwPos, wwLoadBox, wwUnloadBox, sector->portals[i]->targetSector, depth+1, false);
+                LoadSector(wwPos, wwLoadBox, wwUnloadBox, sector->portals[i]->targetSector, depth+1, false, loadMeshes);
             }
 
             sector->portals[i]->mObject = engine->CreatePortal(sector->portals[i]->name, sector->object,
@@ -1616,7 +1619,7 @@ void BgLoader::LoadSector(const csVector3& pos, const csBox3& loadBox, const csB
                     wwUnloadBox.SetMax(1, wwUnloadBox.MaxY()-transform.y);
                     wwUnloadBox.SetMax(2, wwUnloadBox.MaxZ()-transform.z);
                 }
-                LoadSector(wwPos, wwLoadBox, wwUnloadBox, sector->portals[i]->targetSector, depth+1, false);
+                LoadSector(wwPos, wwLoadBox, wwUnloadBox, sector->portals[i]->targetSector, depth+1, false, loadMeshes);
             }
 
             engine->GetMeshes()->Remove(sector->portals[i]->mObject);
@@ -1627,23 +1630,26 @@ void BgLoader::LoadSector(const csVector3& pos, const csBox3& loadBox, const csB
         }
     }
 
-    // Check all sector lights.
-    for(size_t i=0; i<sector->lights.GetSize(); i++)
+    if(loadMeshes)
     {
-        if(force || sector->lights[i]->InRange(loadBox))
+        // Check all sector lights.
+        for(size_t i=0; i<sector->lights.GetSize(); i++)
         {
-            sector->lights[i]->object = engine->CreateLight(sector->lights[i]->name, sector->lights[i]->pos,
-                sector->lights[i]->radius, sector->lights[i]->colour, sector->lights[i]->dynamic);
-            sector->lights[i]->object->SetAttenuationMode(sector->lights[i]->attenuation);
-            sector->lights[i]->object->SetType(sector->lights[i]->type);
-            sector->object->AddLight(sector->lights[i]->object);
-            ++sector->objectCount;
-        }
-        else if(sector->lights[i]->OutOfRange(unloadBox))
-        {
-            engine->RemoveLight(sector->lights[i]->object);
-            sector->lights[i]->object.Invalidate();
-            --sector->objectCount;
+            if(force || sector->lights[i]->InRange(loadBox))
+            {
+                sector->lights[i]->object = engine->CreateLight(sector->lights[i]->name, sector->lights[i]->pos,
+                    sector->lights[i]->radius, sector->lights[i]->colour, sector->lights[i]->dynamic);
+                sector->lights[i]->object->SetAttenuationMode(sector->lights[i]->attenuation);
+                sector->lights[i]->object->SetType(sector->lights[i]->type);
+                sector->object->AddLight(sector->lights[i]->object);
+                ++sector->objectCount;
+            }
+            else if(sector->lights[i]->OutOfRange(unloadBox))
+            {
+                engine->RemoveLight(sector->lights[i]->object);
+                sector->lights[i]->object.Invalidate();
+                --sector->objectCount;
+            }
         }
     }
 
@@ -2065,7 +2071,7 @@ bool BgLoader::LoadZones(iStringArray* regions, bool loadMeshes)
             loadedZones.Push(newLoadedZones[i]);
             for(size_t j=0; j<newLoadedZones[i]->sectors.GetSize(); ++j)
             {
-                LoadSector(csVector3(0.0f), csBox3(), csBox3(), newLoadedZones[i]->sectors[j], (uint)-1, true);
+                LoadSector(csVector3(0.0f), csBox3(), csBox3(), newLoadedZones[i]->sectors[j], (uint)-1, true, loadMeshes);
             }
         }
     }

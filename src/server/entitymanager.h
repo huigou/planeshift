@@ -142,8 +142,6 @@ public:
 protected:
     csHash<psAffinityAttribute *> affinityAttributeList;
     csHash<psFamiliarType*, PID> familiarTypeList;
-
-    bool CreateRoom (const char* name, const char* mapfile);
     
     bool SendActorList(Client *client);
 

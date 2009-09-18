@@ -90,6 +90,7 @@ LinkStaticPlugins psnpcclient_static :
 ;
 
 LinkStaticPlugins psnpcclient_static :
+  bgloader
   dbmysql
 ;
 
