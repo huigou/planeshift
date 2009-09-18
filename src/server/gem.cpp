@@ -4375,6 +4375,7 @@ void gemNPC::Send( int clientnum, bool control, bool to_superclient )
                          name,
                          guildName,
                          factname.Current(),
+                         matname,
                          psChar->GetRaceInfo()->name,
                          GetMount() ? GetMount()->GetRaceInfo()->mesh_name : "null",
                          psChar->GetRaceInfo()->gender,
