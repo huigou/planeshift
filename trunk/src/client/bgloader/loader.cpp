@@ -593,7 +593,6 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                 {
                     // But if not then create its representation.
                     s = csPtr<Sector>(new Sector(sectorName));
-                    s->parent = zone;
                     CS::Threading::ScopedWriteLock lock(sLock);
                     sectors.Push(s);
                     sectorHash.Put(stringSet.Request(sectorName), s);
@@ -601,6 +600,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
 
                 if(zone.IsValid())
                 {
+                    s->parent = zone;
                     zone->sectors.Push(s);
                 }
 
@@ -987,7 +987,6 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                         if(!p->targetSector.IsValid())
                         {
                             p->targetSector = csPtr<Sector>(new Sector(targetSector));
-                            p->targetSector->parent = zone;
                             CS::Threading::ScopedWriteLock lock(sLock);
                             sectors.Push(p->targetSector);
                             sectorHash.Put(stringSet.Request(targetSector), p->targetSector);
@@ -1545,6 +1544,7 @@ void BgLoader::LoadSector(const csVector3& pos, const csBox3& loadBox, const csB
                     sector->portals[i]->targetSector->object = engine->CreateSector(sector->portals[i]->targetSector->name);
                     sector->portals[i]->targetSector->object->SetDynamicAmbientLight(sector->portals[i]->targetSector->ambient);
                     sector->portals[i]->targetSector->object->SetVisibilityCullerPlugin(sector->portals[i]->targetSector->culler);
+                    sector->portals[i]->targetSector->object->QueryObject()->SetObjectParent(sector->portals[i]->targetSector->parent);
                 }
             }
             else if(!sector->portals[i]->targetSector->isLoading && !sector->portals[i]->targetSector->checked && recurse)
