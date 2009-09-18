@@ -218,6 +218,7 @@ private:
     class MeshObj;
     class Portal;
     class Light;
+    class Zone;
 
     /********************************************************
      * Data structures representing components of the world.
@@ -331,6 +332,7 @@ private:
         size_t objectCount;
         size_t alwaysLoadedCount;
         csRef<iSector> object;
+        csWeakRef<Zone> parent;
         csRefArray<MeshGen> meshgen;
         csRefArray<MeshObj> meshes;
         csRefArray<Portal> portals;
@@ -527,12 +529,16 @@ private:
     csHash<csString, csStringID> shadersByUsageType;
 
     // Stores world representation.
-    struct Zone : CS::Utility::FastRefCount<Zone>
+    class Zone : public csObject
     {
+    public:
         bool loading;
         csRefArray<Sector> sectors;
 
-        Zone() : loading(false) {}
+        Zone(const char* name) : loading(false)
+        {
+            SetName(name);
+        }
     };
 
     csRefArray<Zone> loadedZones;

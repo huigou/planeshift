@@ -35,6 +35,7 @@ struct iThreadedLoader;
  */
 struct StartPosition : public csRefCount
 {
+    csString zone;
     csString sector;
     csVector3 position;
 };

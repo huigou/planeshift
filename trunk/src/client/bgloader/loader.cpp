@@ -192,7 +192,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
         {
             csString zonen(path);
             zonen = zonen.Slice(zonen.FindLast('/')+1);
-            zone = csPtr<Zone>(new Zone());
+            zone = csPtr<Zone>(new Zone(zonen));
             zones.Put(stringSet.Request(zonen.GetData()), zone);
         }
 
@@ -593,6 +593,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                 {
                     // But if not then create its representation.
                     s = csPtr<Sector>(new Sector(sectorName));
+                    s->parent = zone;
                     CS::Threading::ScopedWriteLock lock(sLock);
                     sectors.Push(s);
                     sectorHash.Put(stringSet.Request(sectorName), s);
@@ -986,6 +987,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                         if(!p->targetSector.IsValid())
                         {
                             p->targetSector = csPtr<Sector>(new Sector(targetSector));
+                            p->targetSector->parent = zone;
                             CS::Threading::ScopedWriteLock lock(sLock);
                             sectors.Push(p->targetSector);
                             sectorHash.Put(stringSet.Request(targetSector), p->targetSector);
@@ -1066,6 +1068,9 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
             if(node.IsValid())
             {
                 csRef<StartPosition> startPos = csPtr<StartPosition>(new StartPosition());
+                csString zonen(path);
+                zonen = zonen.Slice(zonen.FindLast('/')+1);
+                startPos->zone = zonen;
                 startPos->sector = node->GetNode("sector")->GetContentsValue();
                 syntaxService->ParseVector(node->GetNode("position"), startPos->position);
                 startPositions.Push(startPos);
@@ -1429,6 +1434,7 @@ void BgLoader::LoadSector(const csVector3& pos, const csBox3& loadBox, const csB
         sector->object = engine->CreateSector(sector->name);
         sector->object->SetDynamicAmbientLight(sector->ambient);
         sector->object->SetVisibilityCullerPlugin(sector->culler);
+        sector->object->QueryObject()->SetObjectParent(sector->parent);
     }
 
     // Check other sectors linked to by active portals.
@@ -1667,6 +1673,7 @@ void BgLoader::LoadSector(const csVector3& pos, const csBox3& loadBox, const csB
             }
 
             // Remove the sector from the engine.
+            sector->object->QueryObject()->SetObjectParent(0);
             engine->GetSectors()->Remove(sector->object);
             sector->object.Invalidate();
         }

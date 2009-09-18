@@ -2700,14 +2700,13 @@ bool gemActor::AddChatReport(gemActor *reporter)
         int degrees = (int)(GetAngle() * 180.0f / PI);
 
         csString sectorName = sector ? sector->QueryObject()->GetName() : "(null)";
-        csString regionName = sector ? sector->QueryObject()->GetObjectParent()->GetName() : "(null)";
 
         // Start with general information
         cssBuffer = "================================================================\n";
         cssBuffer.AppendFmt("Starting to log player %s (%s).\n", GetName(), ShowID(pid));
         cssBuffer.AppendFmt("Player has %d security level.\n", securityLevel);
-        cssBuffer.AppendFmt("At region %s, position (%1.2f, %1.2f, %1.2f) angle: %d in sector: %s, instance: %d.\n",
-            regionName.GetData(), pos.x, pos.y, pos.z, degrees, sectorName.GetData(), worldInstance);
+        cssBuffer.AppendFmt("At position (%1.2f, %1.2f, %1.2f) angle: %d in sector: %s, instance: %d.\n",
+            pos.x, pos.y, pos.z, degrees, sectorName.GetData(), worldInstance);
         cssBuffer.AppendFmt("Total time connected is %1.1f hours.\n", (GetCharacterData()->GetTimeConnected() / 3600.0f) );
         cssBuffer.AppendFmt("================================================================\n");
         // Write existing chat history

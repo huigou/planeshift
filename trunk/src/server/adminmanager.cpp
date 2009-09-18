@@ -33,6 +33,7 @@
 //=============================================================================
 // Library Includes
 //=============================================================================
+#include "iclient/ibgloader.h"
 #include "util/psdatabase.h"
 #include "util/log.h"
 #include "util/serverconsole.h"
@@ -1623,7 +1624,7 @@ void AdminManager::GetSiblingChars(MsgEntry* me,psAdminCmdMessage& msg, AdminCmd
 void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& data,Client *client, gemObject* target)
 {
     EID entityId;
-    csString sectorName;
+    csString sectorName, regionName;
     InstanceID instance = DEFAULT_INSTANCE;
     float loc_x = 0.0f, loc_y = 0.0f, loc_z = 0.0f, loc_yrot = 0.0f;
     int degrees = 0;
@@ -1643,6 +1644,8 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
         instance = target->GetInstance();
 
         sectorName = (sector) ? sector->QueryObject()->GetName() : "(null)";
+        
+        regionName = (sector) ? sector->QueryObject()->GetObjectParent()->GetName() : "(null)";
     }
 
     if (target && target->GetALPtr()) // Action location
@@ -1656,9 +1659,10 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
         psActionLocation *action = item->GetAction();
 
         csString info;
-        info.Format("ActionLocation: %s is at position (%1.2f, %1.2f, %1.2f) "
+        info.Format("ActionLocation: %s is at region %s, position (%1.2f, %1.2f, %1.2f) "
                     "angle: %d in sector: %s, instance: %d with ",
                     item->GetName(),
+                    regionName.GetData(),
                     loc_x, loc_y, loc_z, degrees,
                     sectorName.GetData(),
                     instance);
@@ -1683,11 +1687,12 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
           if ( item->GetStackCount() > 1 )
               info.AppendFmt("(x%d) ", item->GetStackCount() );
 
-          info.AppendFmt("with item stats ID %u, item ID %u, and %s, is at position (%1.2f, %1.2f, %1.2f) "
+          info.AppendFmt("with item stats ID %u, item ID %u, and %s, is at region %s, position (%1.2f, %1.2f, %1.2f) "
                          "angle: %d in sector: %s, instance: %d",
                         item->GetBaseStats()->GetUID(),
                         item->GetUID(),
                         ShowID(entityId),
+                        regionName.GetData(),
                         loc_x, loc_y, loc_z, degrees,
                         sectorName.GetData(),
                         instance);
@@ -1785,11 +1790,12 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
         {
             name = target->GetName();
             psserver->SendSystemInfo(client->GetClientNum(),
-                "NPC: <%s, %s, %s> is at position (%1.2f, %1.2f, %1.2f) "
+                "NPC: <%s, %s, %s> is at region %s, position (%1.2f, %1.2f, %1.2f) "
                 "angle: %d in sector: %s, instance: %d, and has been active for %1.1f hours.",
                 name.GetData(),
                 ShowID(playerId),
                 ShowID(entityId),
+                regionName.GetData(),
                 loc_x,
                 loc_y,
                 loc_z,
@@ -1867,8 +1873,8 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
         else
             info.Append("is offline, ");
 
-        info.AppendFmt("at position (%1.2f, %1.2f, %1.2f) angle: %d in sector: %s, instance: %d, ",
-                loc_x, loc_y, loc_z, degrees, sectorName.GetData(), instance);
+        info.AppendFmt("at region %s, position (%1.2f, %1.2f, %1.2f) angle: %d in sector: %s, instance: %d, ",
+                regionName.GetData(), loc_x, loc_y, loc_z, degrees, sectorName.GetData(), instance);
 
         info.AppendFmt("total time connected is %1.1f hours", timeConnected );
 
@@ -3744,30 +3750,20 @@ bool AdminManager::GetTargetOfTeleport(Client *client, psAdminCmdMessage& msg, A
 bool AdminManager::GetStartOfMap(int clientnum, const csString & map, iSector * & targetSector, csVector3 & targetPoint)
 {
     iEngine* engine = EntityManager::GetSingleton().GetEngine();
+    csRef<iBgLoader> loader = csQueryRegistry<iBgLoader>(psserver->GetObjectReg());
 
-    if (map.IsEmpty())
+    csRefArray<StartPosition>* positions = loader->GetStartPositions();
+    for(size_t i=0; i<positions->GetSize(); ++i)
     {
-        psserver->SendSystemError(clientnum, "Map name not given");
-        return false;
+        if(positions->Get(i)->zone == map)
+        {
+            targetSector = engine->FindSector(positions->Get(i)->sector);
+            targetPoint = positions->Get(i)->position;
+            return true;
+        }
     }
 
-    iCollection* psRegion = engine->GetCollection(map.GetData());
-    if (psRegion == NULL)
-    {
-        psserver->SendSystemError(clientnum, "Map not found.");
-        return false;
-    }
-
-    iCameraPosition* loc = psRegion->FindCameraPosition("Camera01");
-    if (loc == NULL)
-    {
-        psserver->SendSystemError(clientnum, "Starting location not found in map.");
-        return false;
-    }
-
-    targetSector = engine->FindSector(loc->GetSector());
-    targetPoint  = loc->GetPosition();
-    return true;
+    return false;
 }
 
 void AdminManager::Slide(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemObject *target)
