@@ -318,7 +318,12 @@ void CCheck::ParseFile(const char* filePath, const char* fileName, bool processi
     {
         root->RemoveNodes(root->GetNodes("library"));
         root->RemoveNodes(root->GetNodes("meshfact"));
-        doc->Write(vfs, outpath+"/world/"+csString(fileName).Slice(0, csString(fileName).FindLast('.')));
+
+        csRef<iDocument> wdoc = docsys->CreateDocument();
+        csRef<iDocumentNode> root = doc->GetRoot();
+        csRef<iDocumentNode> newRoot = wdoc->CreateRoot();
+        CS::DocSystem::CloneNode(root, newRoot);
+        wdoc->Write(vfs, outpath+"/world/"+csString(fileName).Slice(0, csString(fileName).FindLast('.')));
     }
 }
 
