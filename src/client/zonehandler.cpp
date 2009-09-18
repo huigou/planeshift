@@ -281,7 +281,7 @@ ZoneLoadInfo::ZoneLoadInfo(iDocumentNode *node)
 {
     csString trans;
 
-    inSector = node->GetAttributeValue("sector");
+    inSector = csString(node->GetAttributeValue("sector")).Downcase();
     loadImage = node->GetAttributeValue("loadimage");
     trans = node->GetAttributeValue("transitional");
     transitional = (trans=="yes");
