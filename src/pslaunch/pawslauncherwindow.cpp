@@ -618,35 +618,35 @@ void pawsLauncherWindow::LoadSettings()
         keepMapsLoaded->SetState(configPSC.GetBool("Planeshift.Loading.KeepMaps"));
     }
 
-    pawsComboBox* threadedLoading = (pawsComboBox*)FindWidget("ThreadedLoading");
-    threadedLoading->Clear();
-    threadedLoading->NewOption("World");
-    threadedLoading->NewOption("Models");
-    threadedLoading->NewOption("Off");
+    pawsComboBox* backgroundLoading = (pawsComboBox*)FindWidget("BackgroundLoading");
+    backgroundLoading->Clear();
+    backgroundLoading->NewOption("World");
+    backgroundLoading->NewOption("Models");
+    backgroundLoading->NewOption("Off");
     if(configUser->KeyExists("ThreadManager.AlwaysRunNow") && configUser->GetBool("ThreadManager.AlwaysRunNow"))
     {
-        threadedLoading->Select("Off");
+        backgroundLoading->Select("Off");
     }
-    else if(configUser->KeyExists("PlaneShift.Loading.ThreadedWorldLoad"))
+    else if(configUser->KeyExists("PlaneShift.Loading.BackgroundWorldLoading"))
     {
-        if(configUser->GetBool("PlaneShift.Loading.ThreadedWorldLoad"))
+        if(configUser->GetBool("PlaneShift.Loading.BackgroundWorldLoading"))
         {
-            threadedLoading->Select("World");
+            backgroundLoading->Select("World");
         }
         else
         {
-            threadedLoading->Select("Models");
+            backgroundLoading->Select("Models");
         }
     }
     else
     {
-        if(configPSC.GetBool("PlaneShift.Loading.ThreadedWorldLoad"))
+        if(configPSC.GetBool("PlaneShift.Loading.BackgroundWorldLoading"))
         {
-            threadedLoading->Select("World");
+            backgroundLoading->Select("World");
         }
         else
         {
-            threadedLoading->Select("Models");
+            backgroundLoading->Select("Models");
         }
     }
 
@@ -872,7 +872,7 @@ void pawsLauncherWindow::SaveSettings()
 
     if(shaderSelection == "High" || shaderSelection == "Highest")
     {
-        configUser->SetBool("PlaneShift.Graphics.Shadows", enableShadows->GetState());
+        //configUser->SetBool("PlaneShift.Graphics.Shadows", enableShadows->GetState());
         if(enableShadows->GetState())
         {
             // Not working yet.
@@ -881,14 +881,12 @@ void pawsLauncherWindow::SaveSettings()
 
         if(enableBloom->GetState())
         {
-            // Not working yet.
-            //configUser->SetStr("RenderManager.Unshadowed.Effects", "/data/posteffects/bloom.xml");
-            //configUser->SetStr("RenderManager.ShadowPSSM.Effects", "/data/posteffects/bloom.xml");
+            configUser->SetStr("RenderManager.Unshadowed.Effects", "/data/posteffects/bloom.xml");
+            configUser->SetStr("RenderManager.ShadowPSSM.Effects", "/data/posteffects/bloom.xml");
         }
 
-        // Not working yet.
-        //configUser->SetBool("RenderManager.Unshadowed.HDR.Enabled", enableHDR->GetState());
-        //configUser->SetBool("RenderManager.ShadowPSSM.HDR.Enabled", enableHDR->GetState());
+        configUser->SetBool("RenderManager.Unshadowed.HDR.Enabled", enableHDR->GetState());
+        configUser->SetBool("RenderManager.ShadowPSSM.HDR.Enabled", enableHDR->GetState());
     }
     else if(shaderSelection == "Medium")
     {
@@ -911,20 +909,20 @@ void pawsLauncherWindow::SaveSettings()
     pawsCheckBox* keepMapsLoaded = (pawsCheckBox*)FindWidget("KeepMapsLoaded");
     configUser->SetBool("Planeshift.Loading.KeepMaps", keepMapsLoaded->GetState());
 
-    pawsComboBox* threadedLoading = (pawsComboBox*)FindWidget("ThreadedLoading");
-    if(threadedLoading->GetSelectedRowString() == "World")
+    pawsComboBox* backgroundLoading = (pawsComboBox*)FindWidget("BackgroundLoading");
+    if(backgroundLoading->GetSelectedRowString() == "World")
     {
-        configUser->SetBool("PlaneShift.Loading.ThreadedWorldLoad", true);
+        configUser->SetBool("PlaneShift.Loading.BackgroundWorldLoading", true);
         configUser->SetBool("ThreadManager.AlwaysRunNow", false);
     }
-    else if(threadedLoading->GetSelectedRowString() == "Models")
+    else if(backgroundLoading->GetSelectedRowString() == "Models")
     {
-        configUser->SetBool("PlaneShift.Loading.ThreadedWorldLoad", false);
+        configUser->SetBool("PlaneShift.Loading.BackgroundWorldLoading", false);
         configUser->SetBool("ThreadManager.AlwaysRunNow", false);
     }
-    else if(threadedLoading->GetSelectedRowString() == "Off")
+    else if(backgroundLoading->GetSelectedRowString() == "Off")
     {
-        configUser->SetBool("PlaneShift.Loading.ThreadedWorldLoad", false);
+        configUser->SetBool("PlaneShift.Loading.BackgroundWorldLoading", false);
         configUser->SetBool("ThreadManager.AlwaysRunNow", true);
     }
 

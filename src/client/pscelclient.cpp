@@ -684,7 +684,7 @@ void psCelClient::Update(bool loaded)
 {
     if(local_player)
     {
-        if(psengine->ThreadedWorldLoading())
+        if(psengine->BackgroundWorldLoading())
         {
             const char* sectorName = local_player->GetSector()->QueryObject()->GetName();
             if(!sectorName)

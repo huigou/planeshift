@@ -351,12 +351,12 @@
           <text string="Keep Maps Loaded:" position="left"/>
         </widget>
 
-        <widget name="ThreadedLoadingText" factory="pawsTextBox" id="13118">
+        <widget name="BackgroundLoadingText" factory="pawsTextBox" id="13118">
           <frame x="0" y="243" width="210" height="20"/>
-          <text string="Threaded Loading:"/>
+          <text string="Background Loading:"/>
         </widget>
 
-        <widget name="ThreadedLoading" factory="pawsComboBox" id="13119">
+        <widget name="BackgroundLoading" factory="pawsComboBox" id="13119">
           <frame x="120" y="240" width="70" height="20" border="no"/>
           <listbox rows="3" height="25" useScrollBar="false" />
         </widget>

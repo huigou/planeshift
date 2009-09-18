@@ -556,7 +556,7 @@ bool psEngine::Initialize (int level)
     }
     else if (level == 1)
     {
-        threadedWorldLoading = psengine->GetConfig()->GetBool("PlaneShift.Loading.ThreadedWorldLoad");
+        backgroundWorldLoading = psengine->GetConfig()->GetBool("PlaneShift.Loading.BackgroundWorldLoading");
         loader = csQueryRegistry<iBgLoader>(object_reg);
         scenemanipulator = scfQueryInterface<iSceneManipulate>(loader);
         csRef<iThreadManager> tm = csQueryRegistry<iThreadManager>(object_reg);

@@ -339,7 +339,7 @@ public:
     /// The graphics features that are enabled/disabled.
     uint GetGFXFeatures() { return gfxFeatures; }
 
-    bool ThreadedWorldLoading() { return threadedWorldLoading; }
+    bool BackgroundWorldLoading() { return backgroundWorldLoading; }
 
     void RegisterDelayedLoader(DelayedLoader* obj) { delayedLoaders.PushSmart(obj); }
     void UnregisterDelayedLoader(DelayedLoader* obj) { delayedLoaders.Delete(obj); }
@@ -457,7 +457,7 @@ private:
     /// Define if the sound is on or off from psclient.cfg.
     bool soundOn;
 
-    bool threadedWorldLoading;
+    bool backgroundWorldLoading;
 
     // Event ID cache
     csEventID event_frame;
