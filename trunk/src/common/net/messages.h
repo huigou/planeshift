@@ -43,7 +43,7 @@ class psLinearMovement;
 
 // This holds the version number of the network code, remember to increase
 // this each time you do an update which breaks compatibility
-#define PS_NETVERSION   0x00A6
+#define PS_NETVERSION   0x00A7
 // Remember to bump the version in pscssetup.h, as well.
 
 
@@ -3019,6 +3019,7 @@ public:
                     const char* name,
                     const char* guild,
                     const char* factname,
+                    const char* matname,
                     const char* race,
                     const char* mountFactname,
                     unsigned short int gender,
@@ -3061,6 +3062,7 @@ public:
     csString name;
     csString guild;
     csString factname;
+    csString matname;
     csString race;
     csString mountFactname;
     unsigned short int gender;

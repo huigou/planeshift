@@ -1274,6 +1274,7 @@ GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
     groupID = mesg.groupID;
     gender = mesg.gender;
     factName = mesg.factname;
+    matName = mesg.matname;
     ownerEID = mesg.ownerEID;
     lastSentVelocity = lastSentRotation = 0.0f;
     stationary = true;
@@ -1892,6 +1893,11 @@ bool GEMClientActor::CheckLoadStatus()
     pcmesh = mesh;
     charApp->SetMesh(mesh);
     psengine->GetEngine()->GetMeshes()->Add(pcmesh);
+
+    if(!matName.IsEmpty())
+    {
+        charApp->ChangeMaterial(factName, matName);
+    }
 
     if(!mountFactname.Compare("null"))
     {

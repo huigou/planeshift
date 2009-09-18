@@ -1892,6 +1892,8 @@ lastSentSuperclientInstance(-1), activeReports(0), isFalling(false), invincible(
 movementMode(0), isAllowedToMove(true), atRest(true), spellCasting(NULL), workEvent(NULL), pcmove(NULL),
 nevertired(false), infinitemana(false), instantcast(false), safefall(false), givekillexp(false), attackable(false)
 {
+    matname = chardata->GetRaceInfo()->base_texture_name;
+
     pid = chardata->GetPID();
 
     cel->AddActorEntity(this);
@@ -2581,6 +2583,7 @@ void gemActor::Send( int clientnum, bool control, bool to_superclient  )
                          name,
                          guildName,
                          factname.Current(),
+                         matname,
                          psChar->GetRaceInfo()->name,
                          GetMount() ? GetMount()->GetRaceInfo()->mesh_name : "null",
                          psChar->GetRaceInfo()->gender,
