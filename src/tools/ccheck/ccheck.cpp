@@ -239,7 +239,8 @@ void CCheck::ParseFile(const char* filePath, const char* fileName, bool processi
             while(itr->HasNext())
             {
                 csRef<iDocumentNode> node = itr->Next();
-                if(textures.PushSmart(node->GetAttributeValue("name")) == textures.GetSize())
+                size_t l = textures.PushSmart(node->GetAttributeValue("name"));
+                if(l == textures.GetSize()-1)
                 {
                     csRef<iDocumentNode> newNode = newTextures->CreateNodeBefore(CS_NODE_ELEMENT);
                     CS::DocSystem::CloneNode(node, newNode);
@@ -261,7 +262,8 @@ void CCheck::ParseFile(const char* filePath, const char* fileName, bool processi
             while(itr->HasNext())
             {
                 csRef<iDocumentNode> node = itr->Next();
-                if(materials.PushSmart(node->GetAttributeValue("name")) == materials.GetSize())
+                size_t l = materials.PushSmart(node->GetAttributeValue("name"));
+                if(l == materials.GetSize()-1)
                 {
                     csRef<iDocumentNode> newNode = newMaterials->CreateNodeBefore(CS_NODE_ELEMENT);
                     CS::DocSystem::CloneNode(node, newNode);
