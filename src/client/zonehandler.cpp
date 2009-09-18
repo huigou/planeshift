@@ -68,6 +68,8 @@
 #include "pscharcontrol.h"
 #include "globals.h"
 
+#define LOADING_SECTOR "SectorWhereWeKeepEntitiesResidingInUnloadedMaps"
+
 ZoneHandler::ZoneHandler(MsgHandler* mh,iObjectRegistry* obj_reg, psCelClient *cc)
 {
     msghandler     = mh;
@@ -170,7 +172,7 @@ void ZoneHandler::HandleMessage(MsgEntry* me)
 
 void ZoneHandler::LoadZone(csVector3 pos, const char* sector)
 {
-    if(loading || !strcmp(sector, "SectorWhereWeKeepEntitiesResidingInUnloadedMaps"))
+    if(loading || !strcmp(sector, LOADING_SECTOR))
         return;
 
     newPos = pos;
@@ -183,6 +185,10 @@ void ZoneHandler::LoadZone(csVector3 pos, const char* sector)
         return;
     }
 
+    // Move player to the loading sector.
+    MovePlayerTo(csVector3(0.0f), LOADING_SECTOR);
+
+    // Load the world.
     if(psengine->BackgroundWorldLoading())
     {
         psengine->GetLoader()->UpdatePosition(pos, sectorToLoad, true);
@@ -196,6 +202,7 @@ void ZoneHandler::LoadZone(csVector3 pos, const char* sector)
         }
     }
 
+    // Set load screen if required.
     if(FindLoadWindow() && psengine->GetLoader()->GetLoadingCount() != 0 &&
       (!psengine->BackgroundWorldLoading() || !psengine->HasLoadedMap()))
     {
@@ -220,10 +227,18 @@ void ZoneHandler::LoadZone(csVector3 pos, const char* sector)
 
         psengine->ForceRefresh();
     }
+    else
+    {
+        // Else we can immediately move to the new sector.
+        MovePlayerTo(newPos, sectorToLoad);
+    }
 }
 
 void ZoneHandler::MovePlayerTo(const csVector3 & newPos, const csString & newSector)
 {
+    if(!celclient->IsReady())
+        return;
+
     csVector3 pos;
     float yrot;
     iSector* sector;
