@@ -178,7 +178,7 @@ void CCheck::ParseFile(const char* filePath, const char* fileName, bool processi
 {
     if(processing)
     {
-        if(csString(filePath).Find(".dds") != (size_t)-1 || csString(filePath).Find(".mng") != (size_t)-1 || csString(filePath).Find("_alpha.png") != (size_t)-1)
+        if(csString(filePath).Find(".dds") != (size_t)-1 || csString(filePath).Find(".mng") != (size_t)-1 || csString(filePath).Find("_alpha.png") != (size_t)-1 || csString(filePath).Find("_icon.png") != (size_t)-1)
         {
             FileUtil futil(vfs);
             futil.CopyFile(filePath, outpath+"/materials/"+csString(filePath).Slice(csString(filePath).FindLast('/')), true, false);
