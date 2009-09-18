@@ -4638,6 +4638,7 @@ psPersistActor::psPersistActor( uint32_t clientNum,
                                 const char* name,
                                 const char* guild,
                                 const char* factname,
+                                const char* matname,
                                 const char* race,
                                 const char* mountFactname,
                                 unsigned short int gender,
@@ -4679,6 +4680,7 @@ psPersistActor::psPersistActor( uint32_t clientNum,
         msg->Add( guild );
 
     msg->Add( factname );
+    msg->Add( matname );
     msg->Add( race );
     msg->Add( mountFactname );
     msg->Add ( gender );
@@ -4719,6 +4721,7 @@ psPersistActor::psPersistActor( MsgEntry* me, csStringHashReversible* msgstrings
         guild.Clear();
 
     factname    = csString ( me->GetStr() );
+    matname     = csString ( me->GetStr() );
     race        = csString ( me->GetStr() );
     mountFactname = csString ( me->GetStr() );
     gender      = me->GetInt16();
@@ -4760,6 +4763,7 @@ csString psPersistActor::ToString(AccessPointers * access_ptrs)
     msgtext.AppendFmt(" Name: '%s'",name.GetDataSafe());
     msgtext.AppendFmt(" Guild: '%s'",guild.GetDataSafe());
     msgtext.AppendFmt(" Factname: '%s'",factname.GetDataSafe());
+    msgtext.AppendFmt(" Base Material: '%s'", matname.GetDataSafe());
     msgtext.AppendFmt(" Race: '%s'",race.GetDataSafe());
     msgtext.AppendFmt(" Mount Race: '%s'",mountFactname.GetDataSafe());
     msgtext.AppendFmt(" Top: (%.3f,%.3f,%.3f)",top.x,top.y,top.z);

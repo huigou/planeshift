@@ -427,6 +427,7 @@ protected:
     InstanceID worldInstance;                   ///< Only objects which match instances can see each other
     bool is_alive;                              ///< Flag indicating whether object is alive or not
     OverridableMesh factname;                   ///< Name of CS Mesh Factory used to create this object
+    csString matname;                           ///< Name of base material used by this object.
     EID eid;                                    ///< Entity ID (unique identifier for object)
     csRef<iMeshFactoryWrapper> nullfact;        ///< Null factory for our mesh instances.
     bool alwaysWatching;                           ///< True if this object always watches (proxlists) regardless of owner.
@@ -481,7 +482,6 @@ class gemItem : public gemActiveObject
 {
 protected:
     csWeakRef<psItem> itemdata;
-    csString matname;
     csString itemType;
     float xRot;
     float yRot;

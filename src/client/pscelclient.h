@@ -421,6 +421,7 @@ protected:
 
     csString name;
     csString factName;
+    csString matName;
     EID eid;
     int type;
 
@@ -635,7 +636,6 @@ private:
     };
 
     PostLoadData* post_load;
-    csString matName;
 };
 
 /** An action location on the client. */

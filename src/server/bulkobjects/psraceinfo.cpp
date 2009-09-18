@@ -121,13 +121,12 @@ bool psRaceInfo::Load(iResultRow& row)
     }
     mesh_name = meshname;
 
-    const char *textname=CacheManager::GetSingleton().FindCommonString(row.GetUInt32("cstr_id_base_texture"));
-    if (textname==NULL)
+    base_texture_name = CacheManager::GetSingleton().FindCommonString(row.GetUInt32("cstr_id_base_texture"));
+    if (base_texture_name==NULL)
     {
         Warning3(LOG_ANY,"Unresolvable texture id %lu in base_texture_id field of race info for race %s. Using NULL texture.",
                  row.GetUInt32("base_texture_id"),name.GetData() );
     }
-    base_texture_name = textname;
 
     // Load starting stats
     SetBaseAttribute(PSITEMSTATS_STAT_STRENGTH      ,row.GetUInt32("start_str"));

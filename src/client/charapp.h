@@ -161,6 +161,14 @@ public:
     bool CheckLoadStatus();
 
     void SetSneak(bool sneaking);
+
+    /** Change the material on a part of the model.
+    * @param part The part of the model we want to change the materail on ( ex Torso )
+    * @param material The name of the material to use.
+    *
+    * @return true if the material was changed.
+    */
+    bool ChangeMaterial(const char* part, const char* materialName);
     
 private:
     /** Parse a string from it's parts into a proper string.
@@ -179,14 +187,6 @@ private:
       * @return true if applied false if it could not be applied.
       */
     bool SetTrait(Trait * trait);
-
-    /** Change the material on a part of the model.
-      * @param part The part of the model we want to change the materail on ( ex Torso )
-      * @param material The name of the material to use.
-      *
-      * @return true if the materail was changed.
-      */
-    bool ChangeMaterial(const char* part, const char* materialName);
     
     /** Change a mesh on the model. 
       * @param partPattern The part to change (ex Torso )
