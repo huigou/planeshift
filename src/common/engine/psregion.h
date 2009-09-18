@@ -53,7 +53,7 @@ public:
     * Creates an entry representing a single region
     * but does not load it.
     */
-    psRegion(iObjectRegistry *obj_reg, const char *file, uint gfxFeatures = useAll);
+    psRegion(iObjectRegistry *obj_reg, const char *file);
 
     /**
     * Dtor unloads region if loaded
@@ -97,37 +97,13 @@ public:
     const char *GetName()
     { return regionName; }
 
-    /// Cleans the given file and removes all meshes, lights, etc. not needed on the server.
-    csRef<iDocumentNode> Clean(csRef<iDocumentNode> worldNode);
-
     /**
-    * Filters the world file to remove features which have been marked
-    * as disabled by the user (post proc effects for example).
-    */
-    csRef<iDocumentNode> Filter(csRef<iDocumentNode> worldNode, bool using3D);
-
-    // Feature defines.
-    enum gfxFeatures
-    {
-        useLowestShaders = 0x1,
-        useLowShaders = 0x2,
-        useMediumShaders = 0x4,
-        useHighShaders = 0x8,
-        useHighestShaders = 0x10,
-        useShadows = 0x20,
-        useMeshGen = 0x40,
-        useAll = (useHighShaders | useShadows | useMeshGen)
-    };
+     * Cleans the given file removing excess data.
+     * @param all Remove everything except basic object position data.
+     */
+    csRef<iDocumentNode> Clean(csRef<iDocumentNode> worldNode, bool all);
 
 private:
-   /**
-    * True if we need to filter the world file.
-    */
-    bool needToFilter;
-
-    // Graphics features we want to use.
-    uint gfxFeatures;
-
     iObjectRegistry* object_reg;
     iCollection* collection;
     csString regionName;

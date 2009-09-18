@@ -413,8 +413,12 @@ private:
     bool drawScreen;
 
     uint gfxFeatures;
-    csRefArray<iThreadReturn> modelPrecaches;
-    csRefArray<iThreadReturn> mapPrecaches;
+
+    // For splash progress.
+    csRefArray<iThreadReturn> precaches;
+    csRef<iStringArray> meshes;
+    csRef<iStringArray> maps;
+    uint lastLoadingCount;
 
 private:
 

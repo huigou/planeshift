@@ -44,7 +44,7 @@
 //=============================================================================
 #include "psregion.h"
 
-psRegion::psRegion(iObjectRegistry *obj_reg, const char *file, uint _gfxFeatures)
+psRegion::psRegion(iObjectRegistry *obj_reg, const char *file)
 {
     object_reg = obj_reg;
 
@@ -53,8 +53,6 @@ psRegion::psRegion(iObjectRegistry *obj_reg, const char *file, uint _gfxFeatures
     worldfile  = "world";
     regionName = file;
     loaded     = false;
-    gfxFeatures = _gfxFeatures;
-    needToFilter = gfxFeatures != useAll;
 
     engine = csQueryRegistry<iEngine> (object_reg);
     vfs = csQueryRegistry<iVFS>(object_reg);
@@ -103,16 +101,11 @@ bool psRegion::Load(bool loadMeshes)
 
     csRef<iDocumentNode> worldNode = doc->GetRoot()->GetNode("world");
 
-    if(!loadMeshes)
+    if(!using3D || !loadMeshes)
     {
-        // Clean the world file to remove all textures/meshes/models
+        // Clean the world file.
         Debug1(LOG_LOAD, 0,"Cleaning map file.");
-        worldNode = Clean(worldNode);
-    }
-    else if(needToFilter)
-    {
-        // Filter the world file to get the correct settings.
-        worldNode = Filter(worldNode, using3D);
+        worldNode = Clean(worldNode, !loadMeshes);
     }
 
     // Create a new region with the given name, or select it if already there
@@ -130,17 +123,6 @@ bool psRegion::Load(bool loadMeshes)
         Error3("LoadMap failed: %s, %s.",worlddir.GetData(),worldfile.GetData() );
         Error2("Region name was: %s", regionName.GetData());
         return false;
-    }
-
-    if(gfxFeatures & (useMediumShaders | useLowShaders | useLowestShaders))
-    {
-        for(int m=0; m<engine->GetMeshes()->GetCount(); ++m)
-        {
-            if(collection->IsParentOf(engine->GetMeshes()->Get(m)->QueryObject()))
-            {
-                engine->GetMeshes()->Get(m)->GetFlags().Set(CS_ENTITY_NOLIGHTING);
-            }
-        }
     }
 
     Debug2(LOG_LOAD, 0,"After LoadMapFile, %dms elapsed", csGetTicks()-start);
@@ -207,89 +189,80 @@ bool psRegion::Load(bool loadMeshes)
     return true;
 }
 
-csRef<iDocumentNode> psRegion::Clean(csRef<iDocumentNode> world)
+csRef<iDocumentNode> psRegion::Clean(csRef<iDocumentNode> world, bool all)
 {
     csRef<iDocument> doc = xml->CreateDocument();
     csRef<iDocumentNode> node = doc->CreateRoot();
 
     // Copy the world node
     csRef<iDocumentNode> cleanedWorld = node->CreateNodeBefore(CS_NODE_ELEMENT);
-
     cleanedWorld->SetValue("world");
 
-    // Copy the sector node
-    csRef<iDocumentNodeIterator> sectors = world->GetNodes("sector");
-    while ( sectors->HasNext() )
+    if(all)
     {
-        csRef<iDocumentNode> sector = sectors->Next();
-
-        csRef<iDocumentNode> cleanedSector = cleanedWorld->CreateNodeBefore(CS_NODE_ELEMENT);
-        cleanedSector->SetValue(sector->GetValue());
-
-        // Copy the sector attributes
-        csRef<iDocumentAttributeIterator> attrs = sector->GetAttributes();
-        while(attrs->HasNext())
+        // Copy the sector node
+        csRef<iDocumentNodeIterator> sectors = world->GetNodes("sector");
+        while ( sectors->HasNext() )
         {
-            csRef<iDocumentAttribute> attr = attrs->Next();
-            cleanedSector->SetAttribute(attr->GetName(), attr->GetValue());
+            csRef<iDocumentNode> sector = sectors->Next();
+
+            csRef<iDocumentNode> cleanedSector = cleanedWorld->CreateNodeBefore(CS_NODE_ELEMENT);
+            cleanedSector->SetValue(sector->GetValue());
+
+            // Copy the sector attributes
+            csRef<iDocumentAttributeIterator> attrs = sector->GetAttributes();
+            while(attrs->HasNext())
+            {
+                csRef<iDocumentAttribute> attr = attrs->Next();
+                cleanedSector->SetAttribute(attr->GetName(), attr->GetValue());
+            }
+
+            // Copy the portal
+            csRef<iDocumentNodeIterator> nodes = sector->GetNodes("portal");
+
+            while(nodes->HasNext())
+            {
+                csRef<iDocumentNode> portal = nodes->Next();
+                csRef<iDocumentNode> cleanedportal = cleanedSector->CreateNodeBefore(CS_NODE_ELEMENT);
+                CS::DocSystem::CloneNode(portal, cleanedportal);
+            }
+
+            // Copy the portals
+            csRef<iDocumentNodeIterator> portalsItr = sector->GetNodes("portals");
+
+            while(portalsItr->HasNext())
+            {
+                csRef<iDocumentNode> portals = portalsItr->Next();
+                csRef<iDocumentNode> cleanedportals = cleanedSector->CreateNodeBefore(CS_NODE_ELEMENT);
+                CS::DocSystem::CloneNode(portals, cleanedportals);
+            }
         }
 
-        // Copy the portal
-        csRef<iDocumentNodeIterator> nodes = sector->GetNodes("portal");
-
-        while(nodes->HasNext())
+        // Copy the start node
+        csRef<iDocumentNodeIterator> startLocations = world->GetNodes("start");
+        while (startLocations->HasNext())
         {
-            csRef<iDocumentNode> portal = nodes->Next();
-            csRef<iDocumentNode> cleanedportal = cleanedSector->CreateNodeBefore(CS_NODE_ELEMENT);
-            CS::DocSystem::CloneNode(portal, cleanedportal);
-        }
-
-        // Copy the portals
-        csRef<iDocumentNodeIterator> portalsItr = sector->GetNodes("portals");
-
-        while(portalsItr->HasNext())
-        {
-            csRef<iDocumentNode> portals = portalsItr->Next();
-            csRef<iDocumentNode> cleanedportals = cleanedSector->CreateNodeBefore(CS_NODE_ELEMENT);
-            CS::DocSystem::CloneNode(portals, cleanedportals);
+            csRef<iDocumentNode> start = startLocations->Next();
+            csRef<iDocumentNode> cleanedStart = cleanedWorld->CreateNodeBefore(CS_NODE_ELEMENT);
+            CS::DocSystem::CloneNode(start, cleanedStart);
         }
     }
-
-    // Copy the start node
-    csRef<iDocumentNodeIterator> startLocations = world->GetNodes("start");
-    while (startLocations->HasNext())
+    else
     {
-        csRef<iDocumentNode> start = startLocations->Next();
-        csRef<iDocumentNode> cleanedStart = cleanedWorld->CreateNodeBefore(CS_NODE_ELEMENT);
-        CS::DocSystem::CloneNode(start, cleanedStart);
-    }
-
-    return cleanedWorld;
-}
-
-csRef<iDocumentNode> psRegion::Filter(csRef<iDocumentNode> world, bool using3D)
-{
-    if(!using3D)
-    {
-        csRef<iDocument> doc = xml->CreateDocument();
-        csRef<iDocumentNode> node = doc->CreateRoot();    
-        csRef<iDocumentNode> newWorld = node->CreateNodeBefore(CS_NODE_ELEMENT);
-        newWorld->SetValue("world");
-
         if(world->GetNode("plugins"))
         {
-            csRef<iDocumentNode> plugins = newWorld->CreateNodeBefore(CS_NODE_ELEMENT);
+            csRef<iDocumentNode> plugins = cleanedWorld->CreateNodeBefore(CS_NODE_ELEMENT);
             CS::DocSystem::CloneNode(world->GetNode("plugins"), plugins);
         }
 
         csRef<iDocumentNodeIterator> libs = world->GetNodes("library");
         while (libs->HasNext())
         {
-            csRef<iDocumentNode> library = newWorld->CreateNodeBefore(CS_NODE_ELEMENT);
+            csRef<iDocumentNode> library = cleanedWorld->CreateNodeBefore(CS_NODE_ELEMENT);
             CS::DocSystem::CloneNode(libs->Next(), library);
         }        
 
-        csRef<iDocumentNode> materials = newWorld->CreateNodeBefore(CS_NODE_ELEMENT);
+        csRef<iDocumentNode> materials = cleanedWorld->CreateNodeBefore(CS_NODE_ELEMENT);
         materials->SetValue("materials");
         materials = materials->CreateNodeBefore(CS_NODE_ELEMENT);
         materials->SetValue("material");
@@ -298,7 +271,7 @@ csRef<iDocumentNode> psRegion::Filter(csRef<iDocumentNode> world, bool using3D)
         csRef<iDocumentNodeIterator> meshfacts = world->GetNodes("meshfact");
         while (meshfacts->HasNext())
         {
-            csRef<iDocumentNode> meshfact = newWorld->CreateNodeBefore(CS_NODE_ELEMENT);
+            csRef<iDocumentNode> meshfact = cleanedWorld->CreateNodeBefore(CS_NODE_ELEMENT);
             CS::DocSystem::CloneNode(meshfacts->Next(), meshfact);
 
             csRef<iDocumentNode> params = meshfact->GetNode("params");
@@ -356,7 +329,7 @@ csRef<iDocumentNode> psRegion::Filter(csRef<iDocumentNode> world, bool using3D)
         csRef<iDocumentNodeIterator> sectors = world->GetNodes("sector");
         while (sectors->HasNext())
         {
-            csRef<iDocumentNode> sector = newWorld->CreateNodeBefore(CS_NODE_ELEMENT);
+            csRef<iDocumentNode> sector = cleanedWorld->CreateNodeBefore(CS_NODE_ELEMENT);
             CS::DocSystem::CloneNode(sectors->Next(), sector);
 
             sector->RemoveNodes(sector->GetNodes("meshgen"));
@@ -430,29 +403,9 @@ csRef<iDocumentNode> psRegion::Filter(csRef<iDocumentNode> world, bool using3D)
                 }
             }
         }
-        world = newWorld;
-    }
-    else
-    {
-        if(!(gfxFeatures & useMeshGen))
-        {
-            csRef<iDocument> doc = xml->CreateDocument();
-            csRef<iDocumentNode> node = doc->CreateRoot();    
-            csRef<iDocumentNode> newWorld = node->CreateNodeBefore(CS_NODE_ELEMENT);
-            CS::DocSystem::CloneNode(world, newWorld);
-
-            csRef<iDocumentNodeIterator> sectors = newWorld->GetNodes("sector");
-            while(sectors->HasNext())
-            {
-                csRef<iDocumentNode> sector = sectors->Next();
-                csRef<iDocumentNodeIterator> meshgen = sector->GetNodes("meshgen");
-                sector->RemoveNodes(meshgen);
-            }
-            world = newWorld;
-        }
     }
 
-    return world;
+    return cleanedWorld;
 }
 
 void psRegion::Unload()

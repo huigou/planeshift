@@ -35,6 +35,7 @@
 #include <iengine/movable.h>
 #include <iengine/sector.h>
 #include <iengine/scenenode.h>
+#include <imesh/genmesh.h>
 #include <imesh/object.h>
 #include <imesh/objmodel.h>
 #include <imesh/spritecal3d.h>
@@ -100,9 +101,9 @@ psCelClient::psCelClient()
 
     clientdr        = NULL;
     zonehandler     = NULL;
+    gameWorld       = NULL;
     entityLabels    = NULL;
     shadowManager   = NULL;
-    gameWorld       = NULL;
     local_player    = NULL;
     unresSector     = NULL;
 }
@@ -222,8 +223,7 @@ void psCelClient::RequestServerWorld()
 
 bool psCelClient::IsReady()
 {
-    if ( local_player == NULL || local_player->linmove == NULL ||
-        (!psengine->ThreadedWorldLoading() && gameWorld == NULL))
+    if (local_player == NULL || local_player->linmove == NULL)
         return false;
     else
         return true;
@@ -231,18 +231,11 @@ bool psCelClient::IsReady()
 
 void psCelClient::HandleWorld( MsgEntry* me )
 {
-    if(!psengine->ThreadedWorldLoading())
-    {
-        psPersistWorld mesg( me );
-        gameWorld = new psWorld;
-        gameWorld->Initialize(object_reg, psengine->GetGFXFeatures());
+    psPersistWorld mesg(me);
+    zonehandler->LoadZone(mesg.pos, mesg.sector);
 
-        zonehandler->SetWorld(gameWorld);
-        zonehandler->LoadZone(mesg.sector);
-    }
-
-    // Tell the user that we are loading the world
-    psengine->AddLoadingWindowMsg("Loading world");
+    gameWorld = new psWorld();
+    gameWorld->Initialize(object_reg);
 
     requeststatus = 0;
     RequestActor();
@@ -271,9 +264,6 @@ void psCelClient::HandleActor( MsgEntry* me )
     if (!local_player || local_player->GetEID() == msg.entityid)
     {
         SetMainActor(actor);
-
-        // Trigger a world load, as we now know where we are.
-        psengine->GetLoader()->UpdatePosition(msg.pos, msg.sectorName, true);
 
         // This triggers the server to update our proxlist
         //local_player->SendDRUpdate(PRIORITY_LOW,GetClientDR()->GetMsgStrings());
@@ -1549,7 +1539,7 @@ void GEMClientActor::SendDRUpdate(unsigned char priority, csStringHashReversible
     linmove->GetDRData(on_ground, speed, pos, yrot, sector, vel, worldVel, ang_vel);
 
     ZoneHandler* zonehandler = cel->GetZoneHandler();
-    if (zonehandler && zonehandler->IsMapLoadNeeded())
+    if (zonehandler && zonehandler->IsLoading())
     {
         // disable movement to stop stamina drain while map is loading
         on_ground = true;
@@ -1996,7 +1986,7 @@ bool GEMClientItem::CheckLoadStatus()
             }
 
             factory->GetMeshObjectFactory()->SetMaterialWrapper(material);
-        }
+        }     
 
         // Create the mesh.
         instance = csPtr<InstanceObject>(new InstanceObject());
@@ -2012,42 +2002,57 @@ bool GEMClientItem::CheckLoadStatus()
             psengine->GetObjectRegistry(), "crystalspace.shared.stringset");
         csStringID shadertype = strings->Request("base");
 
-        iMaterial* material = factory->GetMeshObjectFactory()->GetMaterialWrapper()->GetMaterial();
-        iShader* shader = material->GetShader(shadertype);
-
-        csRef<iStringArray> shaders = psengine->GetLoader()->GetShaderName("default");
-        csRef<iStringArray> shadersa = psengine->GetLoader()->GetShaderName("default_alpha");
-        if(!shader || shaders->Contains(shader->QueryObject()->GetName()) != csArrayItemNotFound)
+        csRef<iGeneralFactoryState> gFact = scfQueryInterface<iGeneralFactoryState>(factory->GetMeshObjectFactory());
+        for(size_t i=0; (!gFact.IsValid() && i == 0) || (gFact.IsValid() && i<gFact->GetSubMeshCount()); ++i)
         {
-            csRef<iStringArray> shaderName = psengine->GetLoader()->GetShaderName("instance");
-            shader = shman->GetShader(shaderName->Get(0));
-        }
-        else if(shadersa->Contains(shader->QueryObject()->GetName()) != csArrayItemNotFound)
-        {
-            csRef<iStringArray> shaderName = psengine->GetLoader()->GetShaderName("instance_alpha");
-            shader = shman->GetShader(shaderName->Get(0));
-        }
-        else
-        {
-            Error3("Unhandled shader %s for mesh %s!\n", shader->QueryObject()->GetName(), factName.GetData());
-        }
+            iGeneralMeshSubMesh* submesh = gFact.IsValid() ? gFact->GetSubMesh(i) : 0;
+            iMaterial* material = submesh ? submesh->GetMaterial()->GetMaterial() :
+                factory->GetMeshObjectFactory()->GetMaterialWrapper()->GetMaterial();
 
-        // Construct a new material using the selected shaders.
-        csRef<iTextureWrapper> tex = psengine->GetEngine()->GetTextureList()->CreateTexture(material->GetTexture());
-        csRef<iMaterial> mat = psengine->GetEngine()->CreateBaseMaterial(tex);
+            iShader* shader = material->GetShader(shadertype);
 
-        mat->SetShader(shadertype, shader);
-        shadertype = strings->Request("diffuse");
-        mat->SetShader(shadertype, shader);
+            csRef<iStringArray> shaders = psengine->GetLoader()->GetShaderName("default");
+            csRef<iStringArray> shadersa = psengine->GetLoader()->GetShaderName("default_alpha");
+            if(!shader || shaders->Contains(shader->QueryObject()->GetName()) != csArrayItemNotFound)
+            {
+                csRef<iStringArray> shaderName = psengine->GetLoader()->GetShaderName("instance");
+                shader = shman->GetShader(shaderName->Get(0));
+            }
+            else if(shadersa->Contains(shader->QueryObject()->GetName()) != csArrayItemNotFound)
+            {
+                csRef<iStringArray> shaderName = psengine->GetLoader()->GetShaderName("instance_alpha");
+                shader = shman->GetShader(shaderName->Get(0));
+            }
+            else
+            {
+                Error3("Unhandled shader %s for mesh %s!\n", shader->QueryObject()->GetName(), factName.GetData());
+            }
 
-        // Copy all shadervars over.
-        for(size_t i=0; i<material->GetShaderVariables().GetSize(); ++i)
-        {
-            mat->AddVariable(material->GetShaderVariables().Get(i));
+            // Construct a new material using the selected shaders.
+            csRef<iTextureWrapper> tex = psengine->GetEngine()->GetTextureList()->CreateTexture(material->GetTexture());
+            csRef<iMaterial> mat = psengine->GetEngine()->CreateBaseMaterial(tex);
+
+            mat->SetShader(shadertype, shader);
+            shadertype = strings->Request("diffuse");
+            mat->SetShader(shadertype, shader);
+
+            // Copy all shadervars over.
+            for(size_t j=0; j<material->GetShaderVariables().GetSize(); ++j)
+            {
+                mat->AddVariable(material->GetShaderVariables().Get(j));
+            }
+
+            csRef<iMaterialWrapper> matwrap = psengine->GetEngine()->GetMaterialList()->CreateMaterial(mat, factName + "_instancemat");
+            csRef<iGeneralMeshState> state = scfQueryInterface<iGeneralMeshState>(instance->pcmesh->GetMeshObject());
+            if(state)
+            {
+                state->FindSubMesh(submesh->GetName())->SetMaterial(matwrap);
+            }
+            else
+            {
+                instance->pcmesh->GetMeshObject()->SetMaterialWrapper(matwrap);
+            }
         }
-
-        csRef<iMaterialWrapper> matwrap = psengine->GetEngine()->GetMaterialList()->CreateMaterial(mat, factName + "_instancemat");
-        instance->pcmesh->GetMeshObject()->SetMaterialWrapper(matwrap);
 
         // Set biggest bbox so that instances aren't wrongly culled.
         instance->bbox = factory->GetMeshObjectFactory()->GetObjectModel()->GetObjectBoundingBox();

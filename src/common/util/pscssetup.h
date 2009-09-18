@@ -80,10 +80,7 @@ protected:
 
     void MountEarly();
     void MountArt();
-    void MountThings(const char *, const char *);
-    void MountMaps();
-    void MountModels();
-    void MountModelsZip(const char* key, bool vfspath);
+    void MountZip(const char *, const char *);
     void MountUserData();
 
     int argc;

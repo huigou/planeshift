@@ -29,7 +29,7 @@
 
 pawsSplashWindow::pawsSplashWindow()
 {
-    firstDraw = true;     
+    level = 0;
 }
 
 pawsSplashWindow::~pawsSplashWindow()
@@ -45,17 +45,24 @@ bool pawsSplashWindow::PostSetup()
 void pawsSplashWindow::Draw()
 {
     pawsWidget::Draw();
-    if ( firstDraw )    
-    {        
-        firstDraw = false;
+
+    if(level == 0)
+    {
+        ++level;
         return;
     }
-    
-    psengine->Initialize(1);
-    PawsManager::GetSingleton().LoadWidget("loginwindow.xml");
-    Hide();
-    PawsManager::GetSingleton().GetMouse()->ChangeImage("Standard Mouse Pointer");
-    PawsManager::GetSingleton().GetMouse()->Hide(false);
-    delete this;
+
+    if(psengine->Initialize(level))
+        ++level;
+    else return;
+   
+    if(level > 4)
+    {
+        PawsManager::GetSingleton().LoadWidget("loginwindow.xml");
+        Hide();
+        PawsManager::GetSingleton().GetMouse()->ChangeImage("Standard Mouse Pointer");
+        PawsManager::GetSingleton().GetMouse()->Hide(false);
+        delete this;
+    }
 }
 

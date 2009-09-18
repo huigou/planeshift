@@ -64,7 +64,7 @@ public:
     * @param gfxFeatures Mask of available graphics features.
     * @param loadRange The maximum range within which the loader should check for objects.
     */
-    void Setup(uint gfxFeatures, float loadRange);
+    THREADED_CALLABLE_DECL2(BgLoader, Setup, csThreadReturn, uint, gfxFeatures, float, loadRange, THREADEDL, false, false);
 
    /**
     * Start loading a material into the engine. Returns 0 if the material is not yet loaded.
@@ -289,18 +289,20 @@ private:
     class MeshFact : public CS::Utility::FastRefCount<MeshFact>
     {
     public:
-        MeshFact(const char* name, const char* path, iDocumentNode* data) : name(name),
-          path(path), useCount(0), data(data)
+        MeshFact(const char* name, iDocumentNode* data) : name(name),
+          useCount(0), data(data)
         {
         }
 
         csString name;
+        csString filename;
         csString path;
         uint useCount;
         csRef<iThreadReturn> status;
         csRef<iDocumentNode> data;
         csRefArray<Material> materials;
         csArray<bool> checked;
+        csArray<csVector3> bboxvs;
     };
 
     class Sector : public CS::Utility::FastRefCount<Sector>
@@ -372,30 +374,26 @@ private:
     {
     public:
         MeshObj(const char* name, const char* path, iDocumentNode* data) : name(name), path(path), data(data),
-            loading(false), alwaysLoaded(false), hasBBox(false)
+            loading(false), alwaysLoaded(false)
         {
         }
 
         inline bool InRange(const csVector3& curpos, const csBox3& curBBox, float loadRange)
         {
-            return !object.IsValid() && (alwaysLoaded ||
-                (hasBBox ? curBBox.Overlap(bbox) : csVector3(pos - curpos).Norm() <= loadRange));
+            return !object.IsValid() && (alwaysLoaded || curBBox.Overlap(bbox));
         }
 
         inline bool OutOfRange(const csVector3& curpos, const csBox3& curBBox, float loadRange)
         {
-            return !alwaysLoaded && object.IsValid() &&
-                (hasBBox ? !curBBox.Overlap(bbox) : csVector3(pos - curpos).Norm() > loadRange*1.5);
+            return !alwaysLoaded && object.IsValid() && !curBBox.Overlap(bbox);
         }
 
         csString name;
         csString path;
         csRef<iDocumentNode> data;
-        csVector3 pos;
 
         bool loading;
         bool alwaysLoaded;
-        bool hasBBox;
         csBox3 bbox;
         csRef<iThreadReturn> status;
         csRef<iMeshWrapper> object;

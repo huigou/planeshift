@@ -273,16 +273,12 @@ char* psCSSetup::PS_GetFileName(char* path)
 }
 
 /**
- * Creates a mount point for the a thing zip file.
- * The thing zip file contains 3 seperate things
- * 1) The spr model file
- * 2) The texture for the model
- * 3) The icon image for the inventory screen.
+ * Creates a mount point for the a zip file.
  *
  * It is mounted into /planeshift/<mount_point> and the location to mount
  * is defined in the psclient.cfg/psserver.cfg file under PlaneShift.Mount.<thing>.
  */
-void psCSSetup::MountThings(const char *zip, const char *mount_point)
+void psCSSetup::MountZip(const char *zip, const char *mount_point)
 {
     csString cfg_mount;
     csString mount;
@@ -313,104 +309,6 @@ void psCSSetup::MountThings(const char *zip, const char *mount_point)
             if (!i2->GetKey() || !strcmp(i2->GetKey(), "")) continue;
             const char* zipfile = configManager->GetStr(i2->GetKey(), "");            
             vfs->Mount(mount, zipfile);
-        }
-    }
-}
-
-
-void psCSSetup::MountMaps()
-{
-    csRef<iConfigIterator> it = configManager->Enumerate("PlaneShift.Mount.zipmapdir");
-    if (!it) 
-        return;
-
-    while ( it->HasNext() )
-    {
-        it->Next();
-
-        if (it->GetKey())
-        {
-            const char* dir = configManager->GetStr(it->GetKey(), "");
-            if (!strcmp (dir, "")) continue;
-            csRef<iDataBuffer> xpath = vfs->ExpandPath(dir);
-            csRef<iStringArray> files = vfs->FindFiles( **xpath );
-
-            if (!files) continue;
-            for (size_t i=0; i < files->GetSize(); i++)
-            {
-                const char* filename = files->Get(i);
-                if (strcmp (filename + strlen(filename) - 4, ".zip"))
-                    continue;
-
-				csString finaldir(filename);
-				// Get only filename
-				size_t term = finaldir.FindLast('/');
-				finaldir.DeleteAt(0,term);
-				finaldir.Insert(0,"/planeshift/world");
-				term = finaldir.FindLast('.');
-				finaldir.Truncate(term);
-
-                // char* name = csStrNew(filename);
-                // char* onlyname = PS_GetFileName(name);
-                // onlyname[strlen(onlyname) - 4] = '\0';
-                // csString finaldir ("/planeshift/world/");
-                // finaldir += onlyname;
-
-                csRef<iDataBuffer> xrpath = vfs->GetRealPath(filename);
-                vfs->Mount(finaldir, **xrpath);
-            
-                // delete[] name;
-            }
-        }
-    } 
-
-    it = configManager->Enumerate("PlaneShift.Mount.zipmapdir");
-    if (!it) return;
-
-    while ( it->HasNext() )
-    {
-        it->Next();
-        if (!it->GetKey() || !strcmp(it->GetKey(), "")) continue;
-        const char* dir = configManager->GetStr(it->GetKey(), "");
-        if (!vfs->Mount(dir, "/planeshift/world/"))
-        {
-            printf("Couldn't mount user specified dir: %s.\n", dir);
-        }
-    }
-}
-
-
-void psCSSetup::MountModels ()
-{
-    // Check for the mount point using a VFS directory.
-    MountModelsZip("PlaneShift.Mount.modelzip",true);
-    MountModelsZip("PlaneShift.Mount.characterszip",true);
-    MountModelsZip("PlaneShift.Mount.npcszip",true);
-
-    // Check using the dev ( absolute real path ) directory.
-    MountModelsZip("PlaneShift.Dev.modelzip",false);
-    MountModelsZip("PlaneShift.Dev.characterszip",false);
-    MountModelsZip("PlaneShift.Dev.npcszip",false);
-}
-
-void psCSSetup::MountModelsZip(const char* key, bool vfspath)
-{
-    csRef<iConfigIterator> i = configManager->Enumerate(key);
-    while (i->Next())
-    {    
-        if (!i->GetKey() || !strcmp(i->GetKey(), ""))
-            continue;
-
-        const char* zipfile = configManager->GetStr(i->GetKey(), "");
-
-        if (vfspath)
-        {
-            csRef<iDataBuffer> xrpath = vfs->GetRealPath(zipfile);
-            vfs->Mount("/planeshift/models/", **xrpath);
-        }
-        else
-        {
-            vfs->Mount("/planeshift/models", zipfile);
         }
     }
 }
@@ -457,32 +355,8 @@ void psCSSetup::MountEarly()
 
 void psCSSetup::MountArt()
 {
-    MountMaps();
-    MountModels();
-
-    MountThings("itemzip",       "items");
-    MountThings("potionszip",    "potions");
-    MountThings("moneyzip",      "money");
-    MountThings("bookszip",      "books");
-    MountThings("weaponzip",     "weapons");
-    MountThings("shieldszip",    "shields");
-    MountThings("helmszip",      "helms");
-    MountThings("toolszip",      "tools");
-    MountThings("naturalreszip", "naturalres");
-    MountThings("foodzip",       "food");
-    MountThings("jewelryzip",    "jewelry");
-    MountThings("furniturezip",  "furniture");
-    MountThings("foliagezip",    "foliage");
-    MountThings("plantszip",     "plants");
-
-    // Create the mount points for glyphs
-    MountThings("azurezip",      "azure_way");
-    MountThings("bluezip",       "blue_way");
-    MountThings("brownzip",      "brown_way");
-    MountThings("crystalzip",    "crystal_way");
-    MountThings("darkzip",       "dark_way");
-    MountThings("redzip",        "red_way");
-
-    //spells icons
-    MountThings("spellszip",    "spells");
+    MountZip("materials", "materials");
+    MountZip("meshes", "meshes");
+    MountZip("world", "world");
+    MountZip("podium", "world/podium")
 }

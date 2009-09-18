@@ -41,8 +41,8 @@ class psRegion;
 
 /**
  * psWorld is in charge of managing all regions (zone map files)
- * and loading/unloading them as needed.  The main users
- * of this class are EntityManager and on the client, ZoneHandler.
+ * and loading/unloading them as needed.  The main user of this
+ * class is EntityManager.
  */
 class psWorld 
 {
@@ -102,7 +102,7 @@ public:
     ~psWorld();
  
     /// Initialize psWorld
-    bool Initialize(iObjectRegistry* object_reg, uint gfxFeatures = 0);
+    bool Initialize(iObjectRegistry* object_reg);
     bool CreateMap(const char* name, const char* mapFile, bool loadNow, bool loadMeshes = true); 
     enum
     {
@@ -115,44 +115,6 @@ public:
 
     /// This makes a string out of all region names, separated by | chars.
     void GetAllRegionNames(csString& str);
-
-    /**
-     * Mark all regions to be unloaded initially.  The ZoneHandler
-     * clears the list whenever a sector is crossed and verifies
-     * that all the right zones are loaded and unloaded.  The algorithm
-     * is:
-     *     1) Flag everything as unload
-     *     2) Flag the things that should be loaded or retained based
-     *        on the zone information ZoneHandler has.  If the region
-     *        exists, it is just flagged to be retained.  If it doesn't
-     *        exist yet, it is added to the list but not loaded yet.
-     *     3) When this loop is through, regions that were not touched
-     *        are still flagged to be unloaded per step 1.
-     *     4) ExecuteFlaggedRegions first unloads any entries flagged
-     *        as unloaded, deleting their entries, then loads any entries
-     *        flagged to be loaded which are not already in memory.
-     */
-    void FlagAllRegionsAsNotNeeded();
-    enum 
-    {
-        NOT_NEEDED = 0,
-        NEEDED = 1
-    };
-    /**
-     * Flag a region to be kept, or add a new entry to the list if not found.
-     * The new entry will not be loaded immediately, but only by ExecuteFlaggedRegions().
-     */
-    void FlagRegionAsNeeded(const char *map);
-
-    void GetNotNeededRegions(csArray<iCollection*> & regions);
-
-    /// Unload all regions to be unloaded, and load any regions to be kept but
-    /// which are not loaded already.
-    int ExecuteFlaggedRegions(bool transitional);
-
-    bool NeedsLoading(bool transitional);
-
-    bool IsAllLoaded();
 
     /// Changes pos according to the warp portal between adjacent sectors from and to.
     bool WarpSpace(const iSector* from, const iSector* to, csVector3& pos);
@@ -169,8 +131,6 @@ public:
     static float Matrix2YRot(const csMatrix3& mat);
 
     void DumpWarpCache();
-private:
-    uint gfxFeatures;
 };
 
 

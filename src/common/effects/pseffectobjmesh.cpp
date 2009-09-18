@@ -30,6 +30,8 @@
 #include <csutil/cscolor.h>
 #include <csutil/flags.h>
 
+#include "iclient/ibgloader.h"
+
 #include "effects/pseffectobjmesh.h"
 #include "effects/pseffectanchor.h"
 #include "effects/pseffect2drenderer.h"
@@ -172,21 +174,22 @@ psEffectObj *psEffectObjMesh::Clone() const
 }
 
 bool psEffectObjMesh::PostSetup(iLoaderContext * ldr_context)
-{
-    static unsigned int uniqueID = 0;
-    csString facName = "effect_mesh_fac_";
-    facName += uniqueID++;
-    
-    meshFact = ldr_context->FindMeshFactory(factName);
+{   
+    bool failed = false;
+    csRef<iBgLoader> loader = csQueryRegistry<iBgLoader>(psCSSetup::object_reg);
+    while(!meshFact && !failed)
+        meshFact = loader->LoadFactory(factName, &failed);
+
+    if(failed)
+    {
+        meshFact = ldr_context->FindMeshFactory(factName);
+    }
+
     if (!meshFact)
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Couldn't find mesh factory %s in effect %s\n", factName.GetData(), name.GetData());
         return false;
     }
-
-    // create the actual sprite3d data
-    iMeshObjectFactory* fact = meshFact->GetMeshObjectFactory();
-    csRef<iSprite3DFactoryState> facState =  scfQueryInterface<iSprite3DFactoryState> (fact);
 
     return true;
 }

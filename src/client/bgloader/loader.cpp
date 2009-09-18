@@ -78,7 +78,7 @@ bool BgLoader::Initialize(iObjectRegistry* object_reg)
     return true;
 }
 
-void BgLoader::Setup(uint gfxFeatures, float loadRange)
+THREADED_CALLABLE_IMPL2(BgLoader, Setup, uint gfxFeatures, float loadRange)
 {
     this->gfxFeatures = gfxFeatures;
     this->loadRange = loadRange;
@@ -118,6 +118,8 @@ void BgLoader::Setup(uint gfxFeatures, float loadRange)
             }
         }
     }
+
+    return true;
 }
 
 csPtr<iStringArray> BgLoader::GetShaderName(const char* usageType) const
@@ -156,6 +158,8 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
         csRef<iDocumentSystem> docsys = csQueryRegistry<iDocumentSystem>(object_reg);
         csRef<iDocument> doc = docsys->CreateDocument();
         csRef<iDataBuffer> data = vfs->ReadFile(path);
+        if(!data.IsValid())
+            return false;
 
         doc->Parse(data, true);
 
@@ -173,19 +177,20 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
         }
 
         // Begin document parsing.
+        bool realRoot = false;
         csRef<iDocumentNode> root = doc->GetRoot()->GetNode("world");
         if(!root.IsValid())
         {
             root = doc->GetRoot()->GetNode("library");
             if(!root)
             {
+                realRoot = true;
                 root = doc->GetRoot();
             }
         }
         else
         {
             csString zonen(path);
-            zonen = zonen.Slice(0, zonen.FindLast('/'));
             zonen = zonen.Slice(zonen.FindLast('/')+1);
             zone = csPtr<Zone>(new Zone());
             zones.Put(stringSet.Request(zonen.GetData()), zone);
@@ -409,16 +414,54 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
             while(nodeItr->HasNext())
             {
                 node = nodeItr->Next();
-                csRef<MeshFact> mf = csPtr<MeshFact>(new MeshFact(node->GetAttributeValue("name"), vfsPath, node));
+                csRef<MeshFact> mf = csPtr<MeshFact>(new MeshFact(node->GetAttributeValue("name"), node));
 
-                if(root == doc->GetRoot() && !once && !nodeItr->HasNext())
+                if(realRoot && !once && !nodeItr->HasNext())
                 {
                     // Load this file when needed to save memory.
                     mf->data.Invalidate();
+                    mf->filename = csString(path).Slice(csString(path).FindLast('/')+1);
+                    mf->path = vfsPath;
                 }
 
                 // Mark that we've already loaded a meshfact in this file.
                 once = true;
+
+                // Read bbox data.
+                csRef<iDocumentNode> cell = node->GetNode("params")->GetNode("cells");
+                if(cell.IsValid())
+                {
+                    cell = cell->GetNode("celldefault");
+                    if(cell.IsValid())
+                    {
+                        cell = cell->GetNode("size");
+                        mf->bboxvs.Push(csVector3(-1*cell->GetAttributeValueAsInt("x")/2,
+                            0, -1*cell->GetAttributeValueAsInt("z")/2));
+                        mf->bboxvs.Push(csVector3(cell->GetAttributeValueAsInt("x")/2,
+                            cell->GetAttributeValueAsInt("y"),
+                            cell->GetAttributeValueAsInt("z")/2));
+                    }
+                }
+                else
+                {
+                    csRef<iDocumentNodeIterator> keys = node->GetNodes("key");
+                    while(keys->HasNext())
+                    {
+                        csRef<iDocumentNode> bboxdata = keys->Next();
+                        if(csString("bbox").Compare(bboxdata->GetAttributeValue("name")))
+                        {
+                            csRef<iDocumentNodeIterator> vs = bboxdata->GetNodes("v");
+                            while(vs->HasNext())
+                            {
+                                bboxdata = vs->Next();
+                                csVector3 vtex;
+                                syntaxService->ParseVector(bboxdata, vtex);
+                                mf->bboxvs.Push(vtex);
+                            }
+                            break;
+                        }
+                    }
+                }
 
                 // Parse mesh params to get the materials that we depend on.
                 if(node->GetNode("params")->GetNode("material"))
@@ -626,21 +669,12 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                         m->alwaysLoaded = true;
                     }
 
-                    // Get world space position.
-                    csRef<iDocumentNode> move = node2->GetNode("move");
-                    if(move.IsValid())
-                    {
-                        move = move->GetNode("v");
-                        m->pos = csVector3(move->GetAttributeValueAsFloat("x"),
-                            move->GetAttributeValueAsFloat("y"), move->GetAttributeValueAsFloat("z"));
-                        move = move->GetParent();
-                    }
-
                     // Check for a params file and switch to use it to continue parsing.
                     if(node2->GetNode("paramsfile"))
                     {
                         csRef<iDocument> pdoc = docsys->CreateDocument();
                         csRef<iDataBuffer> pdata = vfs->ReadFile(node2->GetNode("paramsfile")->GetContentsValue());
+                        CS_ASSERT_MSG("Invalid params file.\n", pdata.IsValid());
                         pdoc->Parse(pdata, true);
                         node2 = pdoc->GetRoot();
                     }
@@ -705,60 +739,29 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                         }
 
                         // Calc bbox data.
-                        csRef<iDocumentNodeIterator> keys = meshfact->data->GetNodes("key");
-                        while(keys->HasNext())
+                        csRef<iDocumentNode> move = node2->GetNode("move");
+                        if(move.IsValid())
                         {
-                            csRef<iDocumentNode> bboxdata = keys->Next();
-                            if(csString("bbox").Compare(bboxdata->GetAttributeValue("name")))
+                            csVector3 pos;
+                            syntaxService->ParseVector(move->GetNode("v"), pos);
+
+                            csMatrix3 rot;
+                            if(move->GetNode("matrix"))
                             {
-                                csRef<iDocumentNode> position = move;
-                                if(position.IsValid())
-                                {
-                                    m->hasBBox = true;
-                                    csVector3 pos;
-                                    syntaxService->ParseVector(position->GetNode("v"), pos);
-
-                                    csMatrix3 rot;
-                                    if(position->GetNode("matrix"))
-                                    {
-                                        syntaxService->ParseMatrix(position->GetNode("matrix"), rot);
-                                    }
-
-                                    csRef<iDocumentNodeIterator> vs = bboxdata->GetNodes("v");
-                                    while(vs->HasNext())
-                                    {
-                                        bboxdata = vs->Next();
-                                        csVector3 bPos;
-                                        syntaxService->ParseVector(bboxdata, bPos);
-                                        if(position->GetNode("matrix"))
-                                        {
-                                            m->bbox.AddBoundingVertex(rot*csVector3(pos+bPos));
-                                        }
-                                        else
-                                        {
-                                            m->bbox.AddBoundingVertex(pos+bPos);
-                                        }
-                                    }
-                                }
-                                break;
+                                syntaxService->ParseMatrix(move->GetNode("matrix"), rot);
                             }
-                        }
 
-                        csRef<iDocumentNode> cell = meshfact->data->GetNode("params")->GetNode("cells");
-                        if(cell.IsValid())
-                        {
-                          cell = cell->GetNode("celldefault");
-                          if(cell.IsValid())
-                          {
-                            m->hasBBox = true;
-                            cell = cell->GetNode("size");
-                            m->bbox.AddBoundingVertex(m->pos.x-(cell->GetAttributeValueAsInt("x")/2),
-                              m->pos.y,
-                              m->pos.z-(cell->GetAttributeValueAsInt("z")/2));
-                            m->bbox.AddBoundingVertex(m->pos.x+(cell->GetAttributeValueAsInt("x")/2),
-                              m->pos.y+cell->GetAttributeValueAsInt("y"),
-                              m->pos.z+(cell->GetAttributeValueAsInt("z")/2));
-                          }
+                            for(size_t v=0; v<meshfact->bboxvs.GetSize(); ++v)
+                            {
+                                if(move->GetNode("matrix"))
+                                {
+                                    m->bbox.AddBoundingVertex(rot*csVector3(pos+meshfact->bboxvs[v]));
+                                }
+                                else
+                                {
+                                    m->bbox.AddBoundingVertex(pos+meshfact->bboxvs[v]);
+                                }
+                            }
                         }
 
                         m->meshfacts.Push(meshfact);
@@ -1106,6 +1109,7 @@ void BgLoader::ContinueLoading(bool waiting)
         // Finalise loaded meshes (expensive, so limited per update).
         if(!finalisableMeshes.IsEmpty())
         {
+            engine->SyncEngineListsNow(tloader);
             FinishMeshLoad(finalisableMeshes[0]);
             finalisableMeshes.DeleteIndexFast(0);
         }
@@ -1172,6 +1176,7 @@ void BgLoader::UpdatePosition(const csVector3& pos, const char* sectorName, bool
         if(force)
         {
             // Make sure we start the loading now.
+            engine->SyncEngineListsNow(tloader);
             for(size_t i=0; i<loadingMeshes.GetSize(); i++)
             {
                 if(LoadMesh(loadingMeshes[i]))
@@ -1669,29 +1674,34 @@ void BgLoader::LoadSector(const csVector3& pos, const csBox3& loadBox, const csB
 
 void BgLoader::FinishMeshLoad(MeshObj* mesh)
 {
-  mesh->object = scfQueryInterface<iMeshWrapper>(mesh->status->GetResultRefPtr());
-  mesh->status.Invalidate();
-  engine->SyncEngineListsNow(tloader);
+    if(!mesh->status->WasSuccessful())
+    {
+        printf("Mesh '%s' failed to load.\n", mesh->name.GetData());
+        return;
+    }
 
-  // Mark the mesh as being realtime lit depending on graphics setting.
-  if(gfxFeatures & (useMediumShaders | useLowShaders | useLowestShaders))
-  {
-      mesh->object->GetFlags().Set(CS_ENTITY_NOLIGHTING);
-  }
+    mesh->object = scfQueryInterface<iMeshWrapper>(mesh->status->GetResultRefPtr());
+    mesh->status.Invalidate();
 
-  // Set world position.
-  mesh->object->GetMovable()->SetSector(mesh->sector->object);
-  mesh->object->GetMovable()->UpdateMove();
+    // Mark the mesh as being realtime lit depending on graphics setting.
+    if(gfxFeatures & (useMediumShaders | useLowShaders | useLowestShaders))
+    {
+        mesh->object->GetFlags().Set(CS_ENTITY_NOLIGHTING);
+    }
 
-  // Init collision data. TODO: Load simpler CD meshes.
-  csColliderHelper::InitializeCollisionWrapper(cdsys, mesh->object);
+    // Set world position.
+    mesh->object->GetMovable()->SetSector(mesh->sector->object);
+    mesh->object->GetMovable()->UpdateMove();
 
-  // Get the correct path for loading heightmap data.
-  vfs->PushDir(mesh->path);
-  engine->PrecacheMesh(mesh->object);
-  vfs->PopDir();
+    // Init collision data. TODO: Load simpler CD meshes.
+    csColliderHelper::InitializeCollisionWrapper(cdsys, mesh->object);
 
-  mesh->loading = false;
+    // Get the correct path for loading heightmap data.
+    vfs->PushDir(mesh->path);
+    engine->PrecacheMesh(mesh->object);
+    vfs->PopDir();
+
+    mesh->loading = false;
 }
 
 bool BgLoader::LoadMeshGen(MeshGen* meshgen)
@@ -1809,7 +1819,7 @@ bool BgLoader::LoadMeshFact(MeshFact* meshfact)
         }
         else
         {
-            meshfact->status = tloader->LoadMeshObjectFactory(meshfact->path, meshfact->path);
+            meshfact->status = tloader->LoadMeshObjectFactory(meshfact->path, meshfact->filename);
         }
 
         return false;
@@ -2007,10 +2017,6 @@ void BgLoader::LoadZones(iStringArray* regions)
         if(zone.IsValid())
         {
             newLoadedZones.Push(zone);
-            for(size_t i=0; i<zone->sectors.GetSize(); ++i)
-            {
-                LoadSector(csVector3(0.0f), csBox3(), csBox3(), zone->sectors[i], (uint)-1, true);
-            }
         }
     }
 
@@ -2040,7 +2046,24 @@ void BgLoader::LoadZones(iStringArray* regions)
 
     for(size_t i=0; i<newLoadedZones.GetSize(); ++i)
     {
-        loadedZones.PushSmart(newLoadedZones[i]);
+        bool found = false;
+        for(size_t j=0; j<loadedZones.GetSize(); ++j)
+        {
+            if(newLoadedZones[i] == loadedZones[j])
+            {
+                found = true;
+                break;
+            }
+        }
+
+        if(!found)
+        {
+            loadedZones.Push(newLoadedZones[i]);
+            for(size_t j=0; j<newLoadedZones[i]->sectors.GetSize(); ++j)
+            {
+                LoadSector(csVector3(0.0f), csBox3(), csBox3(), newLoadedZones[i]->sectors[j], (uint)-1, true);
+            }
+        }
     }
 
     return;
