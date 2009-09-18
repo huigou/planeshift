@@ -37,6 +37,7 @@
 #include "pawswidget.h"
 
 class psCharAppearance;
+struct iBgLoader;
 
 /** This widget is used to view a mesh in it's own seperate world.
  */
@@ -74,6 +75,11 @@ public:
       * @return True if the map was loaded correctly. False otherwise.
       */
     bool LoadMap ( const char* map, const char* sector );
+
+    /**
+     * Continues an existing map load.
+     */
+    bool ContinueLoad();
     
     /** Creates a default map. Creates a simple room to place object.
       * 
@@ -129,11 +135,11 @@ private:
     int downTime;
     bool mouseControlled;
 
+    csRef<iBgLoader> loader;
     csRef<iSector> stage;
     csRef<iView>   view;
     csRef<iEngine> engine;
     csRef<iMeshWrapper> mesh;
-    csRef<iCollection> col;
     csRef<iSector> meshSector;
     csRef<iView>   meshView;
     psCharAppearance* charApp;

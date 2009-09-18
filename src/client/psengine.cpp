@@ -628,11 +628,6 @@ bool psEngine::Initialize (int level)
                 return false;
             }
         }
-
-
-        // This widget requires NetManager to exist so must be in this stage
-        if ( ! paws->LoadWidget("charpick.xml") )
-            return false;
     }
     else if(level == 2)
     {
@@ -716,8 +711,15 @@ bool psEngine::Initialize (int level)
             return false;
         }
 
+        if ( ! paws->LoadWidget("charpick.xml") )
+            return false;
+
         meshes.Invalidate();
         maps.Invalidate();
+    }
+    else if(level == 5)
+    {
+        return paws->LoadObjectViews();
     }
 
     return true;

@@ -20,6 +20,7 @@
 #include <psconfig.h>
 
 #include <csutil/documenthelper.h>
+#include <csutil/scfstringarray.h>
 #include <csutil/weakref.h>
 
 #include <iutil/object.h>
@@ -30,13 +31,14 @@
 #include <csutil/cscolor.h>
 #include "pawsobjectview.h"
 #include "pawsmanager.h"
-#include "engine/psworld.h"
+#include "iclient/ibgloader.h"
 #include "util/log.h"
 #include "util/psconst.h"
 
 pawsObjectView::pawsObjectView()
 {
-    engine =  csQueryRegistry<iEngine > ( PawsManager::GetSingleton().GetObjectRegistry());
+    loader = csQueryRegistry<iBgLoader>(PawsManager::GetSingleton().GetObjectRegistry());
+    engine = csQueryRegistry<iEngine>(PawsManager::GetSingleton().GetObjectRegistry());
     ID = 0;
 
     rotateTime = orgTime = 0;
@@ -50,16 +52,18 @@ pawsObjectView::pawsObjectView()
     mouseControlled = false;
     doRotate = true;
     mouseDownUnlock = false;
+
+    // Don't render via child tree.
+    parentDraw = false;
+
+    PawsManager::GetSingleton().AddObjectView(this);
 }   
 
 pawsObjectView::~pawsObjectView()
 {
-    Clear();
+    PawsManager::GetSingleton().RemoveObjectView(this);
 
-    if(col->GetRefCount() == 2)
-    {
-        engine->RemoveCollection(col);
-    }
+    Clear();
 }
 
 bool pawsObjectView::Setup(iDocumentNode* node )
@@ -99,39 +103,17 @@ bool pawsObjectView::Setup(iDocumentNode* node )
 bool pawsObjectView::LoadMap( const char* map, const char* sector )
 {
     csRef<iEngine> engine =  csQueryRegistry<iEngine > ( PawsManager::GetSingleton().GetObjectRegistry());
-    csRef<iThreadedLoader> loader =  csQueryRegistry<iThreadedLoader> ( PawsManager::GetSingleton().GetObjectRegistry());
-    csRef<iVFS> VFS =  csQueryRegistry<iVFS> ( PawsManager::GetSingleton().GetObjectRegistry());
 
-    col = engine->CreateCollection(sector);
     stage = engine->FindSector( sector );
 
-    if ( !stage )
+    if (!stage)
     {
-        csRef<iDocumentSystem> xml (
-            csQueryRegistry<iDocumentSystem> (PawsManager::GetSingleton().GetObjectRegistry()));
-
-        csRef<iDocument> doc = xml->CreateDocument();
-        csString filename = map;
-        filename.Append("/world");
-        csRef<iDataBuffer> buf (VFS->ReadFile (filename, false));
-        const char* error = doc->Parse(buf);
-        if(error)
-        {
-            printf("pawsObjectView world parse error: %s\n", error);
-        }
-
-        csRef<iDocumentNode> worldNode = doc->GetRoot()->GetNode("world");
-
-        // Now load the map into the selected region
-        csRef<iThreadReturn> itr = loader->LoadMapWait(map, worldNode, CS_LOADER_KEEP_WORLD, col);
-        if (!itr->WasSuccessful())
-            return false;
+        csRef<iStringArray> zone = csPtr<iStringArray>(new scfStringArray());
+        zone->Push(map);
+        loader->LoadZones(zone);
 
         stage = engine->FindSector( sector );
-        stage->PrecacheDraw();
-        CS_ASSERT( stage );
-        col->Add( stage->QueryObject() );
-        if ( !stage )
+        if (!stage)
              return false;
     }
 
@@ -161,6 +143,15 @@ bool pawsObjectView::LoadMap( const char* map, const char* sector )
     view->SetRectangle(screenFrame.xmin, screenFrame.ymin, screenFrame.Width(), screenFrame.Height());
 
     return true;
+}
+
+bool pawsObjectView::ContinueLoad()
+{
+    if(loader->GetLoadingCount() == 0)
+        return true;
+
+    loader->ContinueLoading(false);
+    return false;
 }
 
 void pawsObjectView::View( const char* factName, const char* fileName )
@@ -475,6 +466,5 @@ void pawsObjectView::Clear()
     if(mesh)
     {
       meshSector->GetMeshes()->Remove(mesh);
-      col->Remove(mesh->QueryObject());
     }
 }

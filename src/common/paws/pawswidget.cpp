@@ -69,6 +69,8 @@ pawsWidget::pawsWidget( )
     resizeToScreen = false;
     keepaspect = true;
     scaleFont = true;
+    needsRender = false;
+    parentDraw = true;
     id = -1;
     parent   = NULL;
     bgColour = -1;
@@ -1262,7 +1264,8 @@ void pawsWidget::DrawChildren()
 {
     for ( size_t x = children.GetSize(); x-- > 0; )
     {
-        if ( children[x]->IsVisible() && children[x] != titleBar )
+        if ( children[x]->IsVisible() && children[x]->ParentDraw() &&
+             children[x] != titleBar )
         {
             children[x]->Draw();
         }

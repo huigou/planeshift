@@ -109,7 +109,9 @@ public:
     /// Returns the texture manager.
     pawsTextureManager* GetTextureManager() { return textureManager; }
 
-    inline uint GetGFXFeatures() { return gfxFeatures; }
+    inline uint GetGFXFeatures() const { return gfxFeatures; }
+
+    void UseR2T(bool r2t) { render2texture = r2t; }
 
     /// Loads a skin and loades unregistered resources
     bool LoadSkinDefinition(const char* zip);
@@ -172,6 +174,20 @@ public:
      *  if the widget could not be found.
      */
     pawsWidget* CreateWidget( const char* factoryName );
+
+    /// Adds an object view to the array.
+    void AddObjectView(pawsWidget* widget)
+    {
+        objectViews.Push(widget);
+    }
+
+    bool LoadObjectViews();
+
+    /// Removes an object view from the array.
+    void RemoveObjectView(pawsWidget* widget)
+    {
+        objectViews.Delete(widget);
+    }
 
     /// Returns the widget that is focused.
     pawsWidget* GetCurrentFocusedWidget() { return currentFocusedWidget; }
@@ -491,6 +507,9 @@ protected:
     /// The main handler widget.
     pawsMainWidget* mainWidget;
 
+    /// Array of paws object view widgets;
+    csArray<pawsWidget*> objectViews;
+
     /// The texture manager.
     pawsTextureManager* textureManager;
 
@@ -511,6 +530,12 @@ protected:
 
     /// Flag for key down function.
     bool hadKeyDown;
+
+    /// Render texture for gui rendering.
+    csRef<iTextureHandle> guiTexture;
+
+    /// Whether to use r2t for the gui.
+    bool render2texture;
 
     /**
      * The widget that is drag'n'dropped across the screen by the mouse.
