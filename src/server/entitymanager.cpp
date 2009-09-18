@@ -207,7 +207,7 @@ void EntityManager::LoadFamiliarTypes()
 
 iSector* EntityManager::FindSector(const char * sectorname)
 {
-    return engine->GetSectors()->FindByName(sectorname);
+    return engine->GetSectors()->FindByName(csString(sectorname).Downcase());
 }
 
 gemNPC* EntityManager::CreateFamiliar (gemActor *owner)
