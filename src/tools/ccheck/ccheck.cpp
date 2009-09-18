@@ -34,7 +34,7 @@
 
 CS_IMPLEMENT_APPLICATION
 
-CCheck::CCheck(iObjectRegistry* object_reg) : object_reg(object_reg)
+CCheck::CCheck(iObjectRegistry* object_reg) : object_reg(object_reg), duplicateNum(0)
 {
     docsys = csQueryRegistry<iDocumentSystem>(object_reg);
     vfs = csQueryRegistry<iVFS>(object_reg);
@@ -137,7 +137,10 @@ void CCheck::Run()
                         {
                             FileUtil futil(vfs);
                             csString path = bindata->Get(k);
-                            futil.CopyFile(bindata->Get(k), outpath+"/meshes/bindata/" + path.Slice(path.FindLast('/')), true, false);
+                            if((path.GetAt(path.Length()-3) == '_' && path.GetAt(path.Length()-2) == 'l' && path.GetAt(path.Length()-1) == 'm') || path.Find("_c0") != size_t(-1))
+                                futil.CopyFile(bindata->Get(k), outpath+"/world/bindata/" + path.Slice(path.FindLast('/')), true, false);
+                            else
+                                futil.CopyFile(bindata->Get(k), outpath+"/meshes/bindata/" + path.Slice(path.FindLast('/')), true, false);
                         }
                     }
                 }
@@ -173,6 +176,27 @@ void CCheck::Run()
 
 void CCheck::ParseFile(const char* filePath, const char* fileName, bool processing)
 {
+    if(processing)
+    {
+        if(csString(filePath).Find(".dds") != (size_t)-1 || csString(filePath).Find(".mng") != (size_t)-1 || csString(filePath).Find("_alpha.png") != (size_t)-1)
+        {
+            FileUtil futil(vfs);
+            futil.CopyFile(filePath, outpath+"/materials/"+csString(filePath).Slice(csString(filePath).FindLast('/')), true, false);
+        }
+
+        if(csString(filePath).Find(".CSF") != (size_t)-1 || csString(filePath).Find(".CMF") != (size_t)-1 || csString(filePath).Find(".CAF") != (size_t)-1)
+        {
+            FileUtil futil(vfs);
+            futil.CopyFile(filePath, outpath+"/meshes/"+csString(filePath).Slice(csString(filePath).FindLast('/')), true, false);
+        }
+
+        if(csString(filePath).Find(".params") != (size_t)-1 || csString(filePath).Find("_heightmap.png") != (size_t)-1)
+        {
+            FileUtil futil(vfs);
+            futil.CopyFile(filePath, outpath+"/world/"+csString(filePath).Slice(csString(filePath).FindLast('/')), true, false);
+        }
+    }
+
     csRef<iDataBuffer> buf = vfs->ReadFile(filePath);
     if(!buf.IsValid())
         return;
@@ -182,24 +206,7 @@ void CCheck::ParseFile(const char* filePath, const char* fileName, bool processi
     csRef<iDocumentNode> broot = bdoc->GetRoot();
 
     if(!broot.IsValid())
-    {
-        if(processing)
-        {
-            if(csString(filePath).Find(".dds") != (size_t)-1 || csString(filePath).Find(".mng") != (size_t)-1)
-            {
-                FileUtil futil(vfs);
-                futil.CopyFile(filePath, outpath+"/materials/"+csString(filePath).Slice(csString(filePath).FindLast('/')), true, false);
-            }
-
-            if(csString(filePath).Find(".CSF") != (size_t)-1 || csString(filePath).Find(".CMF") != (size_t)-1 || csString(filePath).Find(".CAF") != (size_t)-1)
-            {
-                FileUtil futil(vfs);
-                futil.CopyFile(filePath, outpath+"/meshes/"+csString(filePath).Slice(csString(filePath).FindLast('/')), true, false);
-            }
-        }
-
         return;
-    }
 
     csRef<iDocument> doc = tinydoc.CreateDocument();
     csRef<iDocumentNode> root = doc->CreateRoot();
@@ -278,14 +285,40 @@ void CCheck::ParseFile(const char* filePath, const char* fileName, bool processi
             csRef<iDocumentNode> newNode = mdoc->CreateRoot();
             newNode = newNode->CreateNodeBefore(CS_NODE_ELEMENT);
             CS::DocSystem::CloneNode(node, newNode);
-            mdoc->Write(vfs, outpath+"/meshes/"+node->GetAttributeValue("name"));
+
+            csString filename = outpath+"/meshes/"+node->GetAttributeValue("name");
+
+            if(vfs->Exists(filename))
+            {
+                csRef<iDataBuffer> dbuf = vfs->ReadFile(outpath+"/meshes/"+node->GetAttributeValue("name"));
+                if(dbuf.IsValid())
+                {
+                    csRef<iDocument> ddoc = docsys->CreateDocument();
+                    ddoc->Parse(dbuf, true);
+                    csRef<iDocumentNode> droot = ddoc->GetRoot();
+                    if(droot.IsValid() && droot->GetNode("meshfact"))
+                    {
+                        if(!strcmp(droot->GetNode("meshfact")->GetAttributeValue("name"), node->GetAttributeValue("name")))
+                        {
+                            continue;
+                        }
+                    }
+                }
+
+                // Not guaranteed to produce correct results in-game - the render buffer data may be the same.
+                printf("Warning - case sensitive duplication with mesh %s\n", node->GetAttributeValue("name"));
+                filename.AppendFmt("_%u", ++duplicateNum);
+            }
+
+            mdoc->Write(vfs, filename);
         }
     }
 
     if(processing && !library)
     {
+        root->RemoveNodes(root->GetNodes("library"));
         root->RemoveNodes(root->GetNodes("meshfact"));
-        doc->Write(vfs, outpath+"/maps/"+csString(fileName).Slice(0, csString(fileName).FindLast('.')));
+        doc->Write(vfs, outpath+"/world/"+csString(fileName).Slice(0, csString(fileName).FindLast('.')));
     }
 }
 
