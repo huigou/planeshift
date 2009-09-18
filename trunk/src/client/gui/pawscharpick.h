@@ -14,7 +14,6 @@ class psCharAppearance;
 
 struct Model
 {
-    csString fileName;
     csString factName;
     csString race;
     csString traits;

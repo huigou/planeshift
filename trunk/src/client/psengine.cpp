@@ -111,7 +111,6 @@ if (!myref)                                                  \
 #include "util/pscssetup.h"
 #include "util/log.h"
 #include "util/strutil.h"
-#include "engine/psregion.h"
 #include "engine/psworld.h"
 #include "util/psutil.h"
 #include "util/consoleout.h"
@@ -388,39 +387,39 @@ bool psEngine::Initialize (int level)
         csString shader("Highest");
         if(shader.CompareNoCase(GetConfig()->GetStr("PlaneShift.Graphics.Shaders")))
         {
-            gfxFeatures |= psRegion::useHighestShaders;
+            gfxFeatures |= useHighestShaders;
         }
         shader = "High";
         if(shader.CompareNoCase(GetConfig()->GetStr("PlaneShift.Graphics.Shaders")))
         {
-            gfxFeatures |= psRegion::useHighShaders;
+            gfxFeatures |= useHighShaders;
         }
         shader = "Medium";
         if(shader.CompareNoCase(GetConfig()->GetStr("PlaneShift.Graphics.Shaders")))
         {
-            gfxFeatures |= psRegion::useMediumShaders;
+            gfxFeatures |= useMediumShaders;
         }
         shader = "Low";
         if(shader.CompareNoCase(GetConfig()->GetStr("PlaneShift.Graphics.Shaders")))
         {
-            gfxFeatures |= psRegion::useLowShaders;
+            gfxFeatures |= useLowShaders;
         }
         shader = "Lowest";
         if(shader.CompareNoCase(GetConfig()->GetStr("PlaneShift.Graphics.Shaders")))
         {
-            gfxFeatures |= psRegion::useLowestShaders;
+            gfxFeatures |= useLowestShaders;
         }
 
         // Check if we're using real time shadows.
         if(GetConfig()->GetBool("PlaneShift.Graphics.Shadows"))
         {
-            gfxFeatures |= psRegion::useShadows;
+            gfxFeatures |= useShadows;
         }
 
         // Check if we're using meshgen.
         if(GetConfig()->GetBool("PlaneShift.Graphics.EnableGrass", true))
         {
-            gfxFeatures |= psRegion::useMeshGen;
+            gfxFeatures |= useMeshGen;
         }
 
         //Check if sound is on or off in psclient.cfg
@@ -555,90 +554,24 @@ bool psEngine::Initialize (int level)
 
         return true;
     }
-    else if (level==1)
+    else if (level == 1)
     {
         threadedWorldLoading = psengine->GetConfig()->GetBool("PlaneShift.Loading.ThreadedWorldLoad");
         loader = csQueryRegistry<iBgLoader>(object_reg);
         scenemanipulator = scfQueryInterface<iSceneManipulate>(loader);
         csRef<iThreadManager> tm = csQueryRegistry<iThreadManager>(object_reg);
-        loader->Setup(gfxFeatures, 200);
 
-        // Fill the loader cache.
-        csRef<iStringArray> dirs = vfs->FindFiles("/planeshift/models/");
-        for(size_t i=0; i<dirs->GetSize(); ++i)
-        {
-            csRef<iStringArray> files = vfs->FindFiles(dirs->Get(i));
-            for(size_t j=0; j<files->GetSize(); ++j)
-            {
-                csString file = files->Get(j);
-                if(file.Find(".cal3d", file.Length()-7) != size_t(-1))
-                {
-                    if(tm->GetThreadCount() == 1)
-                    {
-                        loader->PrecacheDataWait(files->Get(j), false);
-                    }
-                    else
-                    {
-                        modelPrecaches.Push(loader->PrecacheData(files->Get(j), false));
-                    }
-                }
-            }
-        }
+        // Start to fill the loader cache.
+        precaches.Push(loader->Setup(gfxFeatures, 200));
+        precaches.Push(loader->PrecacheData("/planeshift/materials/materials.cslib", false));
+        lastLoadingCount = 2;
 
-        dirs = vfs->FindFiles("/planeshift/");
-        for(size_t i=0; i<dirs->GetSize(); ++i)
-        {
-            csRef<iStringArray> files = vfs->FindFiles(dirs->Get(i));
-            for(size_t j=0; j<files->GetSize(); ++j)
-            {
-                csString file = files->Get(j);
-                if(file.Find(".meshfact", file.Length()-10) != size_t(-1))
-                {
-                    if(tm->GetThreadCount() == 1)
-                    {
-                        loader->PrecacheDataWait(files->Get(j), false);
-                    }
-                    else
-                    {
-                        modelPrecaches.Push(loader->PrecacheData(files->Get(j), false));
-                    }
-                }
-            }
-        }
-
-        csRef<iStringArray> maps = vfs->FindFiles("/planeshift/world/");
-
-        // Do the _common maps first.
-        for(size_t i=0; i<maps->GetSize(); ++i)
-        {
-            csRef<iDataBuffer> tmp = vfs->GetRealPath(maps->Get(i));
-            if(csString(tmp->GetData()).Find("common") != (size_t)-1)
-            {
-                csString vpath(maps->Get(i));
-                vpath.Append("world");
-                if(tm->GetThreadCount() == 1)
-                {
-                    loader->PrecacheDataWait(vpath.GetData(), false);
-                }
-                else
-                {
-                    mapPrecaches.Push(loader->PrecacheData(vpath.GetData(), false));
-                }
-            }
-        }
-        tm->Wait(mapPrecaches);
-
-        // Now everything else.
-        for(size_t i=0; i<maps->GetSize(); ++i)
-        {
-            csRef<iDataBuffer> tmp = vfs->GetRealPath(maps->Get(i));
-            if(csString(tmp->GetData()).Find("common") == (size_t)-1)
-            {
-                csString vpath(maps->Get(i));
-                vpath.Append("world");
-                mapPrecaches.Push(loader->PrecacheData(vpath.GetData(), false));
-            }
-        }
+        // Set progress bar.
+        pawsProgressBar* progress = (pawsProgressBar*)paws->FindWidget("SplashProgress");
+        meshes = vfs->FindFiles("/planeshift/meshes/");
+        maps = vfs->FindFiles("/planeshift/world/");
+        progress->SetTotalValue(2+meshes->GetSize()+maps->GetSize());
+        progress->SetCurrentValue(0.0f);
 
         // Initialize Networking
         if (!netmanager)
@@ -661,9 +594,6 @@ bool psEngine::Initialize (int level)
         actionhandler = csPtr<ActionHandler> ( new ActionHandler ( netmanager->GetMsgHandler(), object_reg ) );
         zonehandler = csPtr<ZoneHandler> (new ZoneHandler(netmanager->GetMsgHandler(),object_reg,celclient));
         questionclient = new psQuestionClient(GetMsgHandler(), object_reg);
-
-        zonehandler->SetLoadAllMaps(GetConfig()->GetBool("PlaneShift.Client.Loading.AllMaps",false));
-        zonehandler->SetKeepMapsLoaded(GetConfig()->GetBool("PlaneShift.Client.Loading.KeepMaps",false));
 
         if (!celclient->Initialize(object_reg, GetMsgHandler(), zonehandler))
         {
@@ -703,6 +633,76 @@ bool psEngine::Initialize (int level)
         // This widget requires NetManager to exist so must be in this stage
         if ( ! paws->LoadWidget("charpick.xml") )
             return false;
+    }
+    else if(level == 2)
+    {
+        for(size_t i=0; i<precaches.GetSize(); ++i)
+        {
+            if(precaches[i]->IsFinished())
+            {
+                precaches.DeleteIndex(i);
+                --i;
+            }
+        }
+
+        pawsProgressBar* progress = (pawsProgressBar*)paws->FindWidget("SplashProgress");
+        progress->SetCurrentValue(progress->GetCurrentValue()+(lastLoadingCount-precaches.GetSize()));
+        lastLoadingCount = precaches.GetSize();
+
+        if(lastLoadingCount != 0)
+            return false;
+
+        // Continue to fill the loader cache.
+        for(size_t j=0; j<meshes->GetSize(); ++j)
+        {
+            precaches.Push(loader->PrecacheData(meshes->Get(j), false));
+        }
+
+        lastLoadingCount = meshes->GetSize();
+    }
+    else if(level == 3)
+    {
+        for(size_t i=0; i<precaches.GetSize(); ++i)
+        {
+            if(precaches[i]->IsFinished())
+            {
+                precaches.DeleteIndex(i);
+                --i;
+            }
+        }
+
+        pawsProgressBar* progress = (pawsProgressBar*)paws->FindWidget("SplashProgress");
+        progress->SetCurrentValue(progress->GetCurrentValue()+(lastLoadingCount-precaches.GetSize()));
+        lastLoadingCount = precaches.GetSize();
+
+        if(lastLoadingCount != 0)
+            return false;
+
+        // Continue to fill the loader cache.
+        for(size_t j=0; j<maps->GetSize(); ++j)
+        {
+            precaches.Push(loader->PrecacheData(maps->Get(j), false));
+        }
+
+        lastLoadingCount = maps->GetSize();
+    }
+    else if(level == 4)
+    {
+        for(size_t i=0; i<precaches.GetSize(); ++i)
+        {
+            if(precaches[i]->IsFinished())
+            {
+                precaches.DeleteIndex(i);
+                --i;
+            }
+        }
+
+        pawsProgressBar* progress = (pawsProgressBar*)paws->FindWidget("SplashProgress");
+        progress->SetCurrentValue(progress->GetCurrentValue()+(lastLoadingCount-precaches.GetSize()));
+        lastLoadingCount = precaches.GetSize();
+
+        if(lastLoadingCount != 0)
+            return false;
 
         // Load effects now, before we have actors
         if (!effectManager)
@@ -713,10 +713,11 @@ bool psEngine::Initialize (int level)
         if (!effectManager->LoadFromDirectory("/this/data/effects", true, camera->GetView()))
         {
             FatalError("Failed to load effects!");
-            return 1;
+            return false;
         }
 
-        tm->Wait(modelPrecaches);
+        meshes.Invalidate();
+        maps.Invalidate();
     }
 
     return true;
@@ -957,7 +958,7 @@ bool psEngine::Process3D(iEvent& ev)
     if (effectManager)
         effectManager->Update();
 
-    if (drawScreen)
+    if (drawScreen && loadstate == LS_DONE)
     {
         // FPS limits
         drawFrame = FrameLimit();
@@ -974,8 +975,8 @@ bool psEngine::Process3D(iEvent& ev)
     }
     else
     {
-        // Sleep for a bit but don't draw anything if minimized
-        FrameLimit();
+        // Sleep for a bit but don't draw anything if minimized or world not loaded.
+        drawFrame = FrameLimit();
         return true;
     }
 
@@ -1311,23 +1312,6 @@ void psEngine::LoadGame()
         if (!charController->IsReady())
             return;  // Wait for character modes
 
-        // Make sure all the maps have been precached.
-        bool precached = true;
-        for(size_t i=0; i<mapPrecaches.GetSize(); i++)
-        {
-            precached &= mapPrecaches[i]->IsFinished();
-        }
-
-        if(precached)
-        {
-            mapPrecaches.Empty();
-            vfs->SetSyncDir("/planeshift/maps/");
-        }
-        else
-        {
-            return;
-        }
-
         celclient->RequestServerWorld();
 
         loadtimeout = csGetTicks () + cfgmgr->GetInt("PlaneShift.Client.User.Persisttimeout", 60) * 1000;
@@ -1481,10 +1465,10 @@ void psEngine::LoadGame()
         psClientStatusMessage statusmsg(true);
         statusmsg.SendMessage();
 
-        //GetCmdHandler()->Execute("/who");
+        // Display a tip.
         GetCmdHandler()->Execute("/tip");
 
-        // load the mouse options if not loaded allready. The GetMouseBinds
+        // load the mouse options if not loaded already. The GetMouseBinds
         // function will load them if they are requested before this code
         // is executed.
         if (!mouseBinds)
@@ -1494,6 +1478,9 @@ void psEngine::LoadGame()
 
         // Set the focus to the main widget
         paws->SetCurrentFocusedWidget(GetMainWidget());
+
+        // Enable render2texture (disabled until fully working).
+        //paws->UseR2T(true);
 
         loadstate = LS_DONE;
         break;

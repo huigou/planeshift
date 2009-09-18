@@ -185,7 +185,7 @@ public:
         CelClient removes all GEMClientObjects that are in this region */
     void OnRegionsDeleted(csArray<iCollection *>& regions);
 
-    psWorld* GetWorld() { return gameWorld; }
+    psWorld* GetWorld() const { return gameWorld; }
 
     /** This is called when position of some entity could not be resolved (see the UnresolvedPos struct)
       * It adds this position to list of unresolved positions which we will attempt to resolve later

@@ -60,10 +60,9 @@ public:
     csString    loadImage;
     bool        transitional;
     
-    csPDelArray<csString> regions;
+    csRef<iStringArray> regions;
 
     ZoneLoadInfo(iDocumentNode *node);
-    ZoneLoadInfo(const char *sector, const char *image);
 
     bool operator==(ZoneLoadInfo& other) const
     {
@@ -89,9 +88,7 @@ public:
 
     void HandleMessage(MsgEntry* me);
 
-    void SetWorld(psWorld *psworld) { CS_ASSERT_MSG("World already set!", world == NULL); world = psworld; }
-
-    void LoadZone(const char* sector);
+    void LoadZone(csVector3 pos, const char* sector);
 
     /** Call this after drawing on screen finished.
         It checks if player just crossed boundary between sectors and loads/unloads needed maps */
@@ -100,27 +97,21 @@ public:
     /** Moves player to given location */
     void MovePlayerTo(const csVector3 & newPos, const csString & newSector);
 
-    void SetLoadAllMaps(bool v) { loadAllMaps = v; }
-    void SetKeepMapsLoaded(bool v) { keepMapsLoaded = v; }
-    
-    bool IsMapLoadNeeded(void) { return needsToLoadMaps; }
-    void SetMapLoadNeeded(bool needed);
-    
+    bool IsLoading() const { return loading; }
+   
 protected:
     csHash<ZoneLoadInfo *, const char*> zonelist;
     csArray<csString>       alllist;
     iObjectRegistry*        object_reg;
     csRef<MsgHandler>        msghandler;
     psCelClient             *celclient;
-    psWorld                 *world;
+
     bool valid;
     bool needsToLoadMaps;
     csString sectorToLoad;
     csVector3 newPos;
     bool haveNewPos;
     int rgnsLoaded;
-    bool loadAllMaps;
-    bool keepMapsLoaded;
     bool initialRefreshScreen;
     
     pawsLoadWindow* loadWindow;
@@ -128,8 +119,8 @@ protected:
     bool FindLoadWindow();
 
     bool LoadZoneInfo();
-    void FlagRegions(ZoneLoadInfo* zone);
     ZoneLoadInfo * FindZone(const char* sector);
+    bool loading;
 
     /** Tells "world" to (un)load flagged maps, then hides LoadingWindow */
     bool ExecuteFlaggedRegions(const csString & sector);

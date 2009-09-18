@@ -48,7 +48,7 @@ struct iBgLoader : public virtual iBase
   * @param gfxFeatures Mask of available graphics features.
   * @param loadRange The maximum range within which the loader should check for objects.
   */
-  virtual void Setup(uint gfxFeatures, float loadRange) = 0;
+  THREADED_INTERFACE2(Setup, uint gfxFeatures, float loadRange);
 
  /**
   * Start loading a material into the engine. Returns 0 if the material is not yet loaded.

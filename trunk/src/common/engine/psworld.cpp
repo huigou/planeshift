@@ -52,11 +52,10 @@ psWorld::~psWorld()
     transarray.Empty();
 }
 
-bool psWorld::Initialize(iObjectRegistry* objectReg, uint _gfxFeatures)
+bool psWorld::Initialize(iObjectRegistry* objectReg)
 {
     object_reg = objectReg;
     engine = csQueryRegistry<iEngine>(object_reg);
-    gfxFeatures = _gfxFeatures;
 
     return true;
 }
@@ -78,7 +77,7 @@ psRegion* psWorld::NewRegion(const char *mapfile,bool load, bool loadMeshes)
             return rgn;
     }
 
-    psRegion *newregion = new psRegion(object_reg, mapfile, gfxFeatures);
+    psRegion *newregion = new psRegion(object_reg, mapfile);
     if (load && !newregion->Load(loadMeshes))
     {
         delete newregion;
@@ -98,137 +97,6 @@ void psWorld::GetAllRegionNames(csString& str)
         str.Append( regions[i]->GetName() );
         str.Append( "|" );
     }
-}
-
-
-void psWorld::FlagAllRegionsAsNotNeeded()
-{
-    for (unsigned i=0; i < regions.GetSize(); i++)
-    {
-        psRegion *rgn = regions[i];
-        rgn->SetNeededFlag(psWorld::NOT_NEEDED);
-    }
-}
-
-void psWorld::FlagRegionAsNeeded(const char *map)
-{
-    // if on the list, just retain it with the flag
-    for (unsigned i=0; i < regions.GetSize(); i++)
-    {
-        psRegion *rgn = regions[i];
-        if (rgn->GetName() == map)
-        {
-            rgn->SetNeededFlag(psWorld::NEEDED);
-            return;
-        }
-    }
-    // if not on the list, make a new entry
-    psRegion *rgn = NewRegion(map,psWorld::DEFER_LOAD);
-    rgn->SetNeededFlag(psWorld::NEEDED);
-}
-
-void ConnectPortalToSector(iEngine * engine, const char * portalName, const char * sectorName)
-{
-    iMeshList * meshes = engine->GetMeshes();
-    iMeshWrapper * wrap = meshes->FindByName(portalName);
-    if (wrap)
-    {
-        iMeshObject *obj=wrap->GetMeshObject();
-        if (obj)
-        {
-            csRef<iPortalContainer> portalc =  scfQueryInterface<iPortalContainer> (obj);
-            if (portalc==NULL)
-                return;
-            for (int pn=0; pn < portalc->GetPortalCount(); pn++)
-            {
-                iPortal * portal = portalc->GetPortal(pn);
-                iSector * sector = engine->FindSector(sectorName);
-                if (sector)
-                {
-                    Error3("sector %s connected to portal %s", sectorName, portalName);
-                    portal->SetSector(sector);
-                }
-            }
-        }
-    }
-}
-
-int psWorld::ExecuteFlaggedRegions(bool transitional)
-{
-    // Load any regions on the list which are not already loaded.
-    for (uint i=0; i < regions.GetSize(); i++)
-    {
-        psRegion *rgn = regions[i];
-        if (!rgn->IsLoaded() )
-        {
-            if(!rgn->Load())
-            {
-                Error2("Loading region %s failed!", rgn->GetName());
-                return 1;
-            }
-            // 2 signifies that a region is loaded, and that we need to refresh the screen.
-            return 2;
-        }
-    }
-
-    // Delete and unload regions not flagged to be saved   
-
-    // Transitional means that we should allow whatever
-    // levels are already loaded to stay loaded, but still
-    // ensure that listed levels are loaded also.
-    if (!transitional)
-    {
-        for (size_t i=regions.GetSize(); i > 0; i--)
-        {
-            psRegion *rgn = regions[i-1];
-            if (!rgn->IsNeeded() )
-            {
-                Debug2(LOG_LOAD,0,"Region %s is being deleted.\n",rgn->GetName() );
-
-                regions.DeleteIndex(i-1);
-            }
-        }
-    }
-
-    return 0;
-}
-
-bool psWorld::NeedsLoading(bool transitional)
-{
-
-    // Transitional means that we should allow whatever
-    // levels are already loaded to stay loaded, but still
-    // ensure that listed levels are loaded also.
-    if (!transitional)
-        for (unsigned i=0; i < regions.GetSize(); i++)
-            if (!regions[i]->IsNeeded() )
-                return true;
-
-    for (unsigned i=0; i < regions.GetSize(); i++)
-        if (!regions[i]->IsLoaded() )
-            return true;
-    return false;
-}
-
-bool psWorld::IsAllLoaded()
-{
-    for (unsigned i=0; i < regions.GetSize(); i++)
-    {
-        psRegion *rgn = regions[i];
-        if (!rgn->IsLoaded() )
-        {
-            return false;            
-        }
-    }
-
-    return true;
-}
-
-void psWorld::GetNotNeededRegions(csArray<iCollection*> & regs)
-{
-    for (unsigned i=0; i < regions.GetSize(); i++)
-        if (!regions[i]->IsNeeded() )
-            regs.Push(regions[i]->GetCollection());
 }
 
 void psWorld::BuildWarpCache()

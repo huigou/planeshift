@@ -27,6 +27,7 @@ public:
     pawsProgressBar();
     ~pawsProgressBar();
     
+    float GetTotalValue() const { return totalValue; }
     void SetTotalValue( float newValue ) { totalValue = newValue; }
     void Completed() { complete = true; }
     void SetCurrentValue( float newValue );

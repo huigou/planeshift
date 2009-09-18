@@ -33,7 +33,7 @@ public:
     void Draw(); 
     
 private:
-    bool firstDraw;      
+    uint level;
 };
 
 CREATE_PAWS_FACTORY( pawsSplashWindow );

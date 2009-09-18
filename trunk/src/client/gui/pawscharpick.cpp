@@ -122,11 +122,7 @@ void pawsCharacterPickerWindow::HandleMessage( MsgEntry* me )
                 pawsWidget* radio = FindWidget(buff);
                 radio->Show();
                 
-                // Store the factory name and file name for the mesh
-                csString fileName;
-                fileName.Format("/planeshift/models/%s/%s.cal3d", factName.GetData(), factName.GetData());
-                
-                models[charactersFound].fileName = fileName;
+                // Store the character data.
                 models[charactersFound].factName = factName;
                 models[charactersFound].race = race;
                 models[charactersFound].traits = traits;
