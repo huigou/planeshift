@@ -6,7 +6,7 @@
 
         <widget name="ItemView" factory="pawsObjectView">
             <frame x="300" y="10" width="200" height="200" border="yes" />
-            <map file="/planeshift/world/podium" sector="room" />
+            <map file="podium" sector="room" />
             <distance value="3"/>
         </widget>
     
