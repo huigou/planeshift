@@ -1418,7 +1418,7 @@ void BgLoader::CleanTexture(Texture* texture)
 }
 
 void BgLoader::LoadSector(const csVector3& pos, const csBox3& loadBox, const csBox3& unloadBox,
-                        Sector* sector, uint depth, bool force, bool loadMeshes)
+                        Sector* sector, uint depth, bool force, bool loadMeshes, bool portalsOnly)
 {
     sector->isLoading = true;
 
@@ -1436,37 +1436,40 @@ void BgLoader::LoadSector(const csVector3& pos, const csBox3& loadBox, const csB
         sector->object->QueryObject()->SetObjectParent(sector->parent);
     }
 
-    // Check other sectors linked to by active portals.
-    for(size_t i=0; i<sector->activePortals.GetSize(); i++)
+    if(!force)
     {
-        if(!sector->activePortals[i]->targetSector->isLoading && !sector->activePortals[i]->targetSector->checked)
+        // Check other sectors linked to by active portals.
+        for(size_t i=0; i<sector->activePortals.GetSize(); i++)
         {
-            csVector3 wwPos = pos;
-            csBox3 wwLoadBox = loadBox;
-            csBox3 wwUnloadBox = unloadBox;
-            if(sector->activePortals[i]->warp)
+            if(!sector->activePortals[i]->targetSector->isLoading && !sector->activePortals[i]->targetSector->checked)
             {
-                csVector3& transform = sector->activePortals[i]->transform;
-                wwPos -= transform;
-                wwLoadBox.SetMin(0, wwLoadBox.MinX()-transform.x);
-                wwLoadBox.SetMin(1, wwLoadBox.MinY()-transform.y);
-                wwLoadBox.SetMin(2, wwLoadBox.MinZ()-transform.z);
-                wwLoadBox.SetMax(0, wwLoadBox.MaxX()-transform.x);
-                wwLoadBox.SetMax(1, wwLoadBox.MaxY()-transform.y);
-                wwLoadBox.SetMax(2, wwLoadBox.MaxZ()-transform.z);
-                wwUnloadBox.SetMin(0, wwUnloadBox.MinX()-transform.x);
-                wwUnloadBox.SetMin(1, wwUnloadBox.MinY()-transform.y);
-                wwUnloadBox.SetMin(2, wwUnloadBox.MinZ()-transform.z);
-                wwUnloadBox.SetMax(0, wwUnloadBox.MaxX()-transform.x);
-                wwUnloadBox.SetMax(1, wwUnloadBox.MaxY()-transform.y);
-                wwUnloadBox.SetMax(2, wwUnloadBox.MaxZ()-transform.z);
-            }
+                csVector3 wwPos = pos;
+                csBox3 wwLoadBox = loadBox;
+                csBox3 wwUnloadBox = unloadBox;
+                if(sector->activePortals[i]->warp)
+                {
+                    csVector3& transform = sector->activePortals[i]->transform;
+                    wwPos -= transform;
+                    wwLoadBox.SetMin(0, wwLoadBox.MinX()-transform.x);
+                    wwLoadBox.SetMin(1, wwLoadBox.MinY()-transform.y);
+                    wwLoadBox.SetMin(2, wwLoadBox.MinZ()-transform.z);
+                    wwLoadBox.SetMax(0, wwLoadBox.MaxX()-transform.x);
+                    wwLoadBox.SetMax(1, wwLoadBox.MaxY()-transform.y);
+                    wwLoadBox.SetMax(2, wwLoadBox.MaxZ()-transform.z);
+                    wwUnloadBox.SetMin(0, wwUnloadBox.MinX()-transform.x);
+                    wwUnloadBox.SetMin(1, wwUnloadBox.MinY()-transform.y);
+                    wwUnloadBox.SetMin(2, wwUnloadBox.MinZ()-transform.z);
+                    wwUnloadBox.SetMax(0, wwUnloadBox.MaxX()-transform.x);
+                    wwUnloadBox.SetMax(1, wwUnloadBox.MaxY()-transform.y);
+                    wwUnloadBox.SetMax(2, wwUnloadBox.MaxZ()-transform.z);
+                }
 
-            LoadSector(wwPos, wwLoadBox, wwUnloadBox, sector->activePortals[i]->targetSector, depth+1, false, loadMeshes);
+                LoadSector(wwPos, wwLoadBox, wwUnloadBox, sector->activePortals[i]->targetSector, depth+1, false, loadMeshes);
+            }
         }
     }
 
-    if(loadMeshes)
+    if(loadMeshes && !portalsOnly)
     {
         // Check all meshes in this sector.
         for(size_t i=0; i<sector->meshes.GetSize(); i++)
@@ -1533,6 +1536,14 @@ void BgLoader::LoadSector(const csVector3& pos, const csBox3& loadBox, const csB
 
             if(force)
             {
+                if(sector->portals[i]->mObject)
+                {
+                    engine->GetMeshes()->Remove(sector->portals[i]->mObject);
+                    sector->portals[i]->pObject = NULL;
+                    sector->portals[i]->mObject.Invalidate();
+                    sector->activePortals.Delete(sector->portals[i]);
+                }
+
                 if(!sector->portals[i]->targetSector->object.IsValid())
                 {
                     {
@@ -1634,7 +1645,7 @@ void BgLoader::LoadSector(const csVector3& pos, const csBox3& loadBox, const csB
         }
     }
 
-    if(loadMeshes)
+    if(loadMeshes && !portalsOnly)
     {
         // Check all sector lights.
         for(size_t i=0; i<sector->lights.GetSize(); i++)
@@ -2077,6 +2088,13 @@ bool BgLoader::LoadZones(iStringArray* regions, bool loadMeshes)
             for(size_t j=0; j<newLoadedZones[i]->sectors.GetSize(); ++j)
             {
                 LoadSector(csVector3(0.0f), csBox3(), csBox3(), newLoadedZones[i]->sectors[j], (uint)-1, true, loadMeshes);
+            }
+        }
+        else
+        {
+            for(size_t j=0; j<newLoadedZones[i]->sectors.GetSize(); ++j)
+            {
+                LoadSector(csVector3(0.0f), csBox3(), csBox3(), newLoadedZones[i]->sectors[j], (uint)-1, true, loadMeshes, true);
             }
         }
     }
