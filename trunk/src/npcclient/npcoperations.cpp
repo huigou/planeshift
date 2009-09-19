@@ -799,10 +799,11 @@ bool RotateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
             {
                 rot_angle = psGameObject::CalculateIncidentAngle(pos,rgn->locs[i]->pos);
                 if (min_angle > rot_angle)
-                    min_angle = rot_angle+.05;
+                    min_angle = rot_angle;
                 if (max_angle < rot_angle)
-                    max_angle = rot_angle-.05;  // The .05 is so it doesn't aim straight for the corner
+                    max_angle = rot_angle; 
             }
+
             if (max_angle-min_angle  > PI )
             {
                 float temp=max_angle;  
