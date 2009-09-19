@@ -110,7 +110,10 @@ bool pawsObjectView::LoadMap( const char* map, const char* sector )
     {
         csRef<iStringArray> zone = csPtr<iStringArray>(new scfStringArray());
         zone->Push(map);
-        loader->LoadZones(zone);
+        if(!loader->LoadZones(zone))
+        {
+            Error2("Failed to load zone '%s'\n", map);
+        }
 
         stage = engine->FindSector( sector );
         if (!stage)
