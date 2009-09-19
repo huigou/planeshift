@@ -590,7 +590,7 @@ public:
      */
     virtual bool ParentDraw() const
     {
-        return parentDraw;
+        return parentDraw || !PawsManager::GetSingleton().UsingR2T();
     }
 
     /** Test widget to see if it is resizable.

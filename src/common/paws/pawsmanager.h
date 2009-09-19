@@ -113,6 +113,8 @@ public:
 
     void UseR2T(bool r2t) { render2texture = r2t; }
 
+    bool UsingR2T() const { return render2texture; }
+
     /// Loads a skin and loades unregistered resources
     bool LoadSkinDefinition(const char* zip);
 

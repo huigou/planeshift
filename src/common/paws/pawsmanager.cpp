@@ -641,13 +641,13 @@ void PawsManager::Draw()
         graphics3D->BeginDraw(CSDRAW_2DGRAPHICS);
         graphics3D->DrawPixmap(guiTexture, 0, 0, graphics3D->GetWidth(), graphics3D->GetHeight(),
             0, 0, graphics3D->GetWidth(), graphics3D->GetHeight());
-    }
 
-    // Draw all pawsobjectview next.
-    for(size_t i=0; i<objectViews.GetSize(); ++i)
-    {
-        if(objectViews[i]->IsVisible())
-            objectViews[i]->Draw();
+        // Draw all pawsobjectview next.
+        for(size_t i=0; i<objectViews.GetSize(); ++i)
+        {
+            if(objectViews[i]->IsVisible())
+                objectViews[i]->Draw();
+        }
     }
 
     // Now everything else.
