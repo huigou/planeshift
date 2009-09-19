@@ -943,6 +943,7 @@ void PawsManager::CreateWarningBox( const char* message, pawsWidget* notify, boo
         }
     }
 
+    ok->Show();
     ok->SetText( message );
     ok->MoveTo( (graphics2D->GetWidth() - ok->GetActualWidth(512) ) / 2,
                 (graphics2D->GetHeight() - ok->GetActualHeight(256))/2 );
