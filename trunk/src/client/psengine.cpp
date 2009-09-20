@@ -249,6 +249,7 @@ psEngine::psEngine (iObjectRegistry *objectreg, psCSSetup *CSSetup)
 
     muteSoundsOnFocusLoss = false;
 
+    actorRequested = false
 
     xmlparser =  csQueryRegistry<iDocumentSystem> (object_reg);
     stringset = csQueryRegistryTagInterface<iStringSet> (object_reg, "crystalspace.shared.stringset");
@@ -1337,7 +1338,11 @@ void psEngine::LoadGame()
             return;
 
         // Request the actor.
-        celclient->RequestActor();
+        if(!actorRequested)
+        {
+            celclient->RequestActor();
+            actorRequested = true;
+        }
 
         if ( !celclient->IsReady() )
         {

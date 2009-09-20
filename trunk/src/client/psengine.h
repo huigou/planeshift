@@ -420,6 +420,9 @@ private:
     csRef<iStringArray> maps;
     uint lastLoadingCount;
 
+    // True if we've requested the main actor.
+    bool actorRequested;
+
 private:
 
     csString targetPetitioner;
