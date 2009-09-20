@@ -238,7 +238,6 @@ void psCelClient::HandleWorld( MsgEntry* me )
     gameWorld->Initialize(object_reg);
 
     requeststatus = 0;
-    RequestActor();
 }
 
 void psCelClient::RequestActor()
@@ -1999,7 +1998,7 @@ bool GEMClientItem::CheckLoadStatus()
             }
 
             factory->GetMeshObjectFactory()->SetMaterialWrapper(material);
-        }     
+        }
 
         // Create the mesh.
         instance = csPtr<InstanceObject>(new InstanceObject());

@@ -152,6 +152,7 @@ public:
 
     GEMClientObject* FindObject(EID eid);
 
+    void RequestActor();
     void SetMainActor(GEMClientActor* object);
     void SetPlayerReady(bool flag);
 
@@ -291,8 +292,6 @@ protected:
       * This basically just publishes the data to PAWS so various widgets can be updated.
       */
     void HandleStats( MsgEntry* me );
-
-    void RequestActor();
 
     GEMClientActor* local_player;
 
