@@ -249,7 +249,7 @@ psEngine::psEngine (iObjectRegistry *objectreg, psCSSetup *CSSetup)
 
     muteSoundsOnFocusLoss = false;
 
-    actorRequested = false
+    actorRequested = false;
 
     xmlparser =  csQueryRegistry<iDocumentSystem> (object_reg);
     stringset = csQueryRegistryTagInterface<iStringSet> (object_reg, "crystalspace.shared.stringset");
