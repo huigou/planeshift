@@ -380,12 +380,12 @@ private:
         {
         }
 
-        inline bool InRange(const csVector3& curpos, const csBox3& curBBox)
+        inline bool InRange(const csBox3& curBBox)
         {
             return !object.IsValid() && (alwaysLoaded || curBBox.Overlap(bbox));
         }
 
-        inline bool OutOfRange(const csVector3& curpos, const csBox3& curBBox)
+        inline bool OutOfRange(const csBox3& curBBox)
         {
             return !alwaysLoaded && object.IsValid() && !curBBox.Overlap(bbox);
         }
@@ -485,7 +485,7 @@ private:
     void CleanTexture(Texture* texture);
 
     /* Internal loading methods. */
-    void LoadSector(const csVector3& pos, const csBox3& loadBox, const csBox3& unloadBox,
+    void LoadSector(const csBox3& loadBox, const csBox3& unloadBox,
       Sector* sector, uint depth, bool force, bool loadMeshes, bool portalsOnly = false);
     void FinishMeshLoad(MeshObj* mesh);
     bool LoadMeshGen(MeshGen* meshgen);
