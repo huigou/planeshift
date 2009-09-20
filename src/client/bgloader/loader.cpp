@@ -414,14 +414,13 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
             while(nodeItr->HasNext())
             {
                 node = nodeItr->Next();
-                csRef<MeshFact> mf = csPtr<MeshFact>(new MeshFact(node->GetAttributeValue("name"), node));
+                csRef<MeshFact> mf = csPtr<MeshFact>(new MeshFact(node->GetAttributeValue("name"), vfsPath, node));
 
                 if(realRoot && !once && !nodeItr->HasNext())
                 {
                     // Load this file when needed to save memory.
                     mf->data.Invalidate();
                     mf->filename = csString(path).Slice(csString(path).FindLast('/')+1);
-                    mf->path = vfsPath;
                 }
 
                 // Mark that we've already loaded a meshfact in this file.
