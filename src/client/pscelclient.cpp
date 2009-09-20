@@ -2012,11 +2012,12 @@ bool GEMClientItem::CheckLoadStatus()
         csRef<iShaderManager> shman = csQueryRegistry<iShaderManager>(psengine->GetObjectRegistry());
         csRef<iStringSet> strings = csQueryRegistryTagInterface<iStringSet>(
             psengine->GetObjectRegistry(), "crystalspace.shared.stringset");
-        csStringID shadertype = strings->Request("base");
-
+        
         csRef<iGeneralFactoryState> gFact = scfQueryInterface<iGeneralFactoryState>(factory->GetMeshObjectFactory());
         for(size_t i=0; (!gFact.IsValid() && i == 0) || (gFact.IsValid() && i<gFact->GetSubMeshCount()); ++i)
         {
+            csStringID shadertype = strings->Request("base");
+
             iGeneralMeshSubMesh* submesh = gFact.IsValid() ? gFact->GetSubMesh(i) : 0;
             iMaterial* material = submesh ? submesh->GetMaterial()->GetMaterial() :
                 factory->GetMeshObjectFactory()->GetMaterialWrapper()->GetMaterial();
