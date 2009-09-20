@@ -380,12 +380,12 @@ private:
         {
         }
 
-        inline bool InRange(const csVector3& curpos, const csBox3& curBBox, float loadRange)
+        inline bool InRange(const csVector3& curpos, const csBox3& curBBox)
         {
             return !object.IsValid() && (alwaysLoaded || curBBox.Overlap(bbox));
         }
 
-        inline bool OutOfRange(const csVector3& curpos, const csBox3& curBBox, float loadRange)
+        inline bool OutOfRange(const csVector3& curpos, const csBox3& curBBox)
         {
             return !alwaysLoaded && object.IsValid() && !curBBox.Overlap(bbox);
         }

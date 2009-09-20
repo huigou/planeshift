@@ -739,7 +739,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                         }
 
                         // Calc bbox data.
-                        csRef<iDocumentNode> move = node2->GetNode("move");
+                        csRef<iDocumentNode> move = node2->GetParent()->GetParent()->GetNode("move");
                         if(move.IsValid())
                         {
                             csVector3 pos;
@@ -1476,13 +1476,13 @@ void BgLoader::LoadSector(const csVector3& pos, const csBox3& loadBox, const csB
         {
             if(!sector->meshes[i]->loading)
             {
-                if(force || sector->meshes[i]->InRange(pos, loadBox, loadRange))
+                if(force || sector->meshes[i]->InRange(pos, loadBox))
                 {
                     sector->meshes[i]->loading = true;
                     loadingMeshes.Push(sector->meshes[i]);
                     ++sector->objectCount;
                 }
-                else if(sector->meshes[i]->OutOfRange(pos, unloadBox, loadRange))
+                else if(sector->meshes[i]->OutOfRange(pos, unloadBox))
                 {
                     sector->meshes[i]->object->GetMovable()->ClearSectors();
                     sector->meshes[i]->object->GetMovable()->UpdateMove();
