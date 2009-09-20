@@ -185,10 +185,10 @@ bool ModeHandler::LoadLightingLevels()
 
     csRef<iDocumentSystem> xml = psengine->GetXMLParser ();
 
-    csRef<iDataBuffer> buf (vfs->ReadFile("/planeshift/art/world/lighting.xml"));
+    csRef<iDataBuffer> buf (vfs->ReadFile("/planeshift/world/lighting.xml"));
 
     if (!buf || !buf->GetSize()) {
-        printf("Cannot load /planeshift/art/world/lighting.xml");
+        printf("Cannot load /planeshift/world/lighting.xml");
         return false;
     }
 
@@ -197,7 +197,7 @@ bool ModeHandler::LoadLightingLevels()
     const char* error = doc->Parse( buf );
     if ( error )
     {
-        printf("Error loading lighting levels, art/world/lighting.xml: %s\n", error);
+        printf("Error loading lighting levels, /planeshift/world/lighting.xml: %s\n", error);
         return false;
     }
 
