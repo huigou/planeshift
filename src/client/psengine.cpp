@@ -1364,6 +1364,8 @@ void psEngine::LoadGame()
         GetMsgHandler()->SendMessage(statmsg.msg);
 
         AddLoadingWindowMsg( "Getting entities" );
+        celclient->GetMainPlayer()->SendDRUpdate(0, celclient->GetClientDR()->GetMsgStrings());
+
         AddLoadingWindowMsg( "Loading GUI" );
         ForceRefresh();
 
