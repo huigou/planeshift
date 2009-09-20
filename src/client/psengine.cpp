@@ -1332,6 +1332,13 @@ void psEngine::LoadGame()
 
     case LS_SETTING_CHARACTERS:
     {
+        // Wait for the map to be loaded
+        if (!HasLoadedMap())
+            return;
+
+        // Request the actor.
+        celclient->RequestActor();
+
         if ( !celclient->IsReady() )
         {
             if (celclient->GetRequestStatus() != 0 && csGetTicks() > loadtimeout)
@@ -1345,10 +1352,6 @@ void psEngine::LoadGame()
             // We don't have the main actor or world yet
             return;
         }
-
-        // Wait for the map to be loaded
-        if (!HasLoadedMap())
-            return;
 
         // Set controlled actor and map controls
         charController->GetMovementManager()->SetActor();
