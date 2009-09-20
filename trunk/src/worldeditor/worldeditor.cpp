@@ -47,7 +47,7 @@
 #define WEDIT_CONFIG_FILENAME "/this/worldeditor.cfg"
 
 WorldEditor::WorldEditor(int argc, char* argv[]) :
-paws(0), editMode(Select), rotX(0), rotY(0), moveCamera(true)
+editMode(Select), moveCamera(true), paws(NULL), rotX(0), rotY(0)
 {
     // Init CS.
     objectReg = csInitializer::CreateEnvironment(argc, argv);
