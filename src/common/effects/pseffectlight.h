@@ -56,11 +56,8 @@ private:
     uint stepsPerCycle;
     uint dimStrength;
 
-    csWeakRef<iMovable> movable;
-    csWeakRef<iSector> sector;
-
-    csWeakRef<iSector> podium;
-    bool is_podium;
+    // For podium doll lights.
+    csRef<iLight> plight;
 };
 
 #endif

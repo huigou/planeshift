@@ -32,78 +32,49 @@
 
 // used for generating a unique ID
 static unsigned int genUniqueID = 0;
-static bool podium_lit = false;
-static uint podium_count = 0;
-static csRef<iLight> plight;
 
 psLight::psLight(iObjectRegistry* object_reg)
 {
     vclock = csQueryRegistry<iVirtualClock>(object_reg);
     engine = csQueryRegistry<iEngine>(object_reg);
-    movable = NULL;
     dim = true;
     sequencenum = 0;
     stepsPerSecond = 60;
     stepsPerCycle = 60;
     dimStrength = 100;
-    is_podium = false;
 }
 
 psLight::~psLight()
 {
+    if(plight.IsValid())
+    {
+        // Remove from the podium sector.
+        csRef<iSector> podium = engine->GetSectors()->FindByName("room");
+        if(podium) podium->GetLights()->Remove(light);
+    }
+
     light->QuerySceneNode()->SetParent(0);
-    
-    if(podium_lit && is_podium && --podium_count == 0)
-    {
-        if(podium.IsValid())
-        {
-            podium->GetLights()->Remove(plight);
-        }
-
-        plight->QuerySceneNode()->SetParent(0);
-        plight.Invalidate();
-        podium_lit = false;
-    }
-
-    if(sector.IsValid())
-    {
-        sector->GetLights()->Remove(light);
-    }
 }
 
 unsigned int psLight::AttachLight(const char* name, const csVector3& pos,
   	float radius, const csColor& colour, csRef<iMeshWrapper> mw)
 {
+    baseColour = colour;
     csString lightName = name;
     lightName.Append("_%u", genUniqueID);
     light = engine->CreateLight(lightName, pos, radius, colour, CS_LIGHT_DYNAMICTYPE_DYNAMIC);
     light->SetAttenuationMode(CS_ATTN_INVERSE);
 
-    movable = mw->GetMovable();
-    baseColour = colour;
-    sector = movable->GetSectors()->Get(0);
-
+    // Attach to mesh.
     light->QuerySceneNode()->SetParent(mw->QuerySceneNode());
 
-    csString sname(sector->QueryObject()->GetName());
+    csString sname(mw->GetMovable()->GetSectors()->Get(0)->QueryObject()->GetName());
     if(sname.Find("room") == 0)
     {
-        // Add to the podium sector if not already there.
-        podium = engine->GetSectors()->FindByName("room");
-        if(!podium_lit)
-        {
-            plight = engine->CreateLight(name, pos, radius, colour, CS_LIGHT_DYNAMICTYPE_DYNAMIC);
-            plight->QuerySceneNode()->SetParent(mw->QuerySceneNode());
-            podium->AddLight(plight);
-            podium_lit = true;
-        }
-
-        is_podium = true;
-        ++podium_count;
+        // Add to the podium sector.
+        csRef<iSector> podium = engine->GetSectors()->FindByName("room");
+        if(podium) podium->GetLights()->Add(light);
     }
-
-    // Add to current sector.
-    sector->GetLights()->Add(light);
 
     lastTime = vclock->GetCurrentTicks();
 
@@ -112,71 +83,55 @@ unsigned int psLight::AttachLight(const char* name, const csVector3& pos,
 
 bool psLight::Update()
 {
-    if(movable.IsValid())
+    int advanceSteps = (vclock->GetCurrentTicks() - lastTime) / (1000.0f/stepsPerSecond);
+
+    if(0 < advanceSteps)
     {
-        iSectorList* sectors = movable->GetSectors();
-        if(sectors->GetCount() && sector != sectors->Get(0))
+        lastTime = vclock->GetCurrentTicks();
+
+        if(dim)
         {
-            if(sector)
+            if(sequencenum < stepsPerCycle/2)
             {
-                sector->GetLights()->Remove(light);
-            }
-            sector = sectors->Get(0);
-            sector->AddLight(light);
-        }
+                csColor n = light->GetColor();
 
-        int advanceSteps = (vclock->GetCurrentTicks() - lastTime) / (1000.0f/stepsPerSecond);
-
-        if(0 < advanceSteps)
-        {
-            lastTime = vclock->GetCurrentTicks();
-
-            if(dim)
-            {
-                if(sequencenum < stepsPerCycle/2)
+                for(int i=0; sequencenum < stepsPerCycle/2 && i<advanceSteps; ++i)
                 {
-                    csColor n = light->GetColor();
-
-                    for(int i=0; sequencenum < stepsPerCycle/2 && i<advanceSteps; ++i)
-                    {
-                        n.red -= baseColour.red/dimStrength;
-                        n.green -= baseColour.green/dimStrength;
-                        n.blue -= baseColour.blue/dimStrength;
-                        ++sequencenum;
-                    }
-
-                    light->SetColor(n);
+                    n.red -= baseColour.red/dimStrength;
+                    n.green -= baseColour.green/dimStrength;
+                    n.blue -= baseColour.blue/dimStrength;
+                    ++sequencenum;
                 }
-                else
-                {
-                    dim = false;
-                }
+
+                light->SetColor(n);
             }
             else
             {
-                if(sequencenum > 0)
-                {
-                    csColor n = light->GetColor();
-
-                    for(int i=0; sequencenum > 0 && i<advanceSteps; ++i)
-                    {
-                        n.red += baseColour.red/dimStrength;
-                        n.green += baseColour.green/dimStrength;
-                        n.blue += baseColour.blue/dimStrength;
-                        --sequencenum;
-                    }
-
-                    light->SetColor(n);
-                }
-                else
-                {
-                    dim = true;
-                }
+                dim = false;
             }
         }
+        else
+        {
+            if(sequencenum > 0)
+            {
+                csColor n = light->GetColor();
 
-        return true;
+                for(int i=0; sequencenum > 0 && i<advanceSteps; ++i)
+                {
+                    n.red += baseColour.red/dimStrength;
+                    n.green += baseColour.green/dimStrength;
+                    n.blue += baseColour.blue/dimStrength;
+                    --sequencenum;
+                }
+
+                light->SetColor(n);
+            }
+            else
+            {
+                dim = true;
+            }
+        }
     }
 
-    return false;
+    return true;
 }
