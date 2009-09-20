@@ -271,9 +271,11 @@ void Reaction::React(NPC *who, Perception *pcpt)
             {
                 highest = who->GetCurrentBehavior()->CurrentNeed();
             }
-            
-            affected[i]->ApplyNeedAbsolute( highest + 25);
-            affected[i]->SetCompletionDecay(-1);
+            if (who->GetCurrentBehavior() != affected[i])
+            {
+				affected[i]->ApplyNeedAbsolute(highest + 25);
+				affected[i]->SetCompletionDecay(-1);
+            }
             break;
         }
     }
