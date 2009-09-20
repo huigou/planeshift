@@ -290,8 +290,8 @@ private:
     class MeshFact : public CS::Utility::FastRefCount<MeshFact>
     {
     public:
-        MeshFact(const char* name, iDocumentNode* data) : name(name),
-          useCount(0), data(data)
+        MeshFact(const char* name, const char* path, iDocumentNode* data) : name(name),
+          path(path), useCount(0), data(data)
         {
         }
 
