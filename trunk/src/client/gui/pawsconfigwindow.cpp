@@ -139,7 +139,7 @@ bool pawsConfigWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWi
             }
         }
     }      
-    return false;
+    return true;
 }
 
 bool pawsConfigWindow::OnSelected(pawsWidget* widget)
