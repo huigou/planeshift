@@ -72,6 +72,11 @@ namespace FUNCTIONPARSERTYPES
  #define NEGATIVE_MAXIMUM (-1e-14)
 #endif
 
+// Workaround for legacy Apple headers:
+#ifdef __APPLE__
+#undef howmany
+#endif
+
 namespace FPoptimizer_Grammar
 {
     struct Grammar;
