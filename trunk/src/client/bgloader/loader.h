@@ -564,6 +564,7 @@ private:
     CS::Threading::ReadWriteMutex mfLock;
     CS::Threading::ReadWriteMutex meshLock;
     CS::Threading::ReadWriteMutex sLock;
+    CS::Threading::ReadWriteMutex zLock;
 
     // Resource string sets.
     csStringSet tStringSet;
