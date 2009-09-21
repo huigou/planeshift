@@ -57,7 +57,7 @@ private:
     uint dimStrength;
 
     // For podium doll lights.
-    csRef<iLight> plight;
+    csWeakRef<iSector> podium;
 };
 
 #endif

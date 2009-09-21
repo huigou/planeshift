@@ -46,11 +46,10 @@ psLight::psLight(iObjectRegistry* object_reg)
 
 psLight::~psLight()
 {
-    if(plight.IsValid())
+    if(podium.IsValid())
     {
         // Remove from the podium sector.
-        csRef<iSector> podium = engine->GetSectors()->FindByName("room");
-        if(podium) podium->GetLights()->Remove(light);
+        podium->GetLights()->Remove(light);
     }
 
     light->QuerySceneNode()->SetParent(0);
@@ -72,8 +71,8 @@ unsigned int psLight::AttachLight(const char* name, const csVector3& pos,
     if(sname.Find("room") == 0)
     {
         // Add to the podium sector.
-        csRef<iSector> podium = engine->GetSectors()->FindByName("room");
-        if(podium) podium->GetLights()->Add(light);
+        podium = engine->GetSectors()->FindByName("room");
+        if(podium.IsValid()) podium->GetLights()->Add(light);
     }
 
     lastTime = vclock->GetCurrentTicks();
