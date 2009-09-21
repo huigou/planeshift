@@ -198,6 +198,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
             csString zonen(path);
             zonen = zonen.Slice(zonen.FindLast('/')+1);
             zone = csPtr<Zone>(new Zone(zonen));
+            CS::Threading::ScopedWriteLock lock(zLock);
             zones.Put(zStringSet.Request(zonen.GetData()), zone);
         }
 
