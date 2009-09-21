@@ -542,8 +542,6 @@ private:
     };
 
     csRefArray<Zone> loadedZones;
-
-    csStringSet stringSet;
     csHash<csRef<Zone>, csStringID> zones;
 
     csHash<csRef<Texture>, csStringID> textures;
@@ -560,12 +558,20 @@ private:
     csRefArray<MeshObj> finalisableMeshes;
     csRefArray<MeshObj> deleteQueue;
 
-    // Locks on the RBTrees.
+    // Locks on the resource hashes.
     CS::Threading::ReadWriteMutex tLock;
     CS::Threading::ReadWriteMutex mLock;
     CS::Threading::ReadWriteMutex mfLock;
     CS::Threading::ReadWriteMutex meshLock;
     CS::Threading::ReadWriteMutex sLock;
+
+    // Resource string sets.
+    csStringSet tStringSet;
+    csStringSet mStringSet;
+    csStringSet mfStringSet;
+    csStringSet meshStringSet;
+    csStringSet sStringSet;
+    csStringSet zStringSet;
 
     // For world manipulation.
     csRef<iMeshWrapper> selectedMesh;

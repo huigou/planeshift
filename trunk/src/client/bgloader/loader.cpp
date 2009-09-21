@@ -198,7 +198,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
             csString zonen(path);
             zonen = zonen.Slice(zonen.FindLast('/')+1);
             zone = csPtr<Zone>(new Zone(zonen));
-            zones.Put(stringSet.Request(zonen.GetData()), zone);
+            zones.Put(zStringSet.Request(zonen.GetData()), zone);
         }
 
         if(root.IsValid())
@@ -261,7 +261,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                     csRef<Texture> t = csPtr<Texture>(new Texture(node->GetAttributeValue("name"), vfsPath, node));
                     {
                         CS::Threading::ScopedWriteLock lock(tLock);
-                        textures.Put(stringSet.Request(t->name), t);
+                        textures.Put(tStringSet.Request(t->name), t);
                     }
                 }
             }
@@ -277,7 +277,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                     csRef<Material> m = csPtr<Material>(new Material(node->GetAttributeValue("name")));
                     {
                         CS::Threading::ScopedWriteLock lock(mLock);
-                        materials.Put(stringSet.Request(m->name), m);
+                        materials.Put(mStringSet.Request(m->name), m);
                     }
 
                     // Parse the texture for a material. Construct a shader variable for it.
@@ -291,7 +291,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                         csRef<Texture> texture;
                         {
                             CS::Threading::ScopedReadLock lock(tLock);
-                            texture = textures.Get(stringSet.Request(node->GetContentsValue()), csRef<Texture>());
+                            texture = textures.Get(tStringSet.Request(node->GetContentsValue()), csRef<Texture>());
 
                             // Validation.
                             csString msg;
@@ -364,7 +364,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                             csRef<Texture> texture;
                             {
                                 CS::Threading::ScopedReadLock lock(tLock);
-                                texture = textures.Get(stringSet.Request(node->GetContentsValue()), csRef<Texture>());
+                                texture = textures.Get(tStringSet.Request(node->GetContentsValue()), csRef<Texture>());
 
                                 // Validation.
                                 csString msg;
@@ -473,7 +473,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                     csRef<Material> material;
                     {
                         CS::Threading::ScopedReadLock lock(mLock);
-                        material = materials.Get(stringSet.Request(node->GetNode("params")->GetNode("material")->GetContentsValue()), csRef<Material>());
+                        material = materials.Get(mStringSet.Request(node->GetNode("params")->GetNode("material")->GetContentsValue()), csRef<Material>());
 
                         // Validation.
                         csString msg;
@@ -494,7 +494,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                         csRef<Material> material;
                         {
                             CS::Threading::ScopedReadLock lock(mLock);
-                            material = materials.Get(stringSet.Request(node2->GetNode("material")->GetContentsValue()), csRef<Material>());
+                            material = materials.Get(mStringSet.Request(node2->GetNode("material")->GetContentsValue()), csRef<Material>());
 
                             // Validation.
                             csString msg;
@@ -514,7 +514,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                     csRef<Material> material;
                     {
                         CS::Threading::ScopedReadLock lock(mLock);
-                        material = materials.Get(stringSet.Request(node2->GetAttributeValue("material")), csRef<Material>());
+                        material = materials.Get(mStringSet.Request(node2->GetAttributeValue("material")), csRef<Material>());
 
                         // Validation.
                         csString msg;
@@ -533,7 +533,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                         csRef<Material> material;
                         {    
                             CS::Threading::ScopedReadLock lock(mLock);
-                            material = materials.Get(stringSet.Request(node->GetContentsValue()), csRef<Material>());
+                            material = materials.Get(mStringSet.Request(node->GetContentsValue()), csRef<Material>());
 
                             // Validation.
                             csString msg;
@@ -560,7 +560,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                                 csRef<Material> material;
                                 {
                                     CS::Threading::ScopedReadLock lock(mLock);
-                                    material = materials.Get(stringSet.Request(node2->GetAttributeValue("material")), csRef<Material>());
+                                    material = materials.Get(mStringSet.Request(node2->GetAttributeValue("material")), csRef<Material>());
 
                                     // Validation.
                                     csString msg;
@@ -576,7 +576,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                 }
 
                 CS::Threading::ScopedWriteLock lock(mfLock);
-                meshfacts.Put(stringSet.Request(mf->name), mf);
+                meshfacts.Put(mfStringSet.Request(mf->name), mf);
             }
 
             // Parse all sectors.
@@ -589,7 +589,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                 csString sectorName = node->GetAttributeValue("name");
                 {
                     CS::Threading::ScopedReadLock lock(sLock);
-                    s = sectorHash.Get(stringSet.Request(sectorName), csRef<Sector>());
+                    s = sectorHash.Get(sStringSet.Request(sectorName), csRef<Sector>());
                 }
 
                 // This sector may have already been created (referenced by a portal somewhere else).
@@ -599,7 +599,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                     s = csPtr<Sector>(new Sector(sectorName));
                     CS::Threading::ScopedWriteLock lock(sLock);
                     sectors.Push(s);
-                    sectorHash.Put(stringSet.Request(sectorName), s);
+                    sectorHash.Put(sStringSet.Request(sectorName), s);
                 }
 
                 if(zone.IsValid())
@@ -693,7 +693,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                             csRef<Material> material;
                             {
                                 CS::Threading::ScopedReadLock lock(mLock);
-                                material = materials.Get(stringSet.Request(node3->GetNode("material")->GetContentsValue()), csRef<Material>());
+                                material = materials.Get(mStringSet.Request(node3->GetNode("material")->GetContentsValue()), csRef<Material>());
 
                                 // Validation.
                                 csString msg;
@@ -714,7 +714,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                                 csRef<Texture> texture;
                                 {
                                     CS::Threading::ScopedReadLock lock(tLock);
-                                    texture = textures.Get(stringSet.Request(node3->GetContentsValue()), csRef<Texture>());
+                                    texture = textures.Get(tStringSet.Request(node3->GetContentsValue()), csRef<Texture>());
 
                                     // Validation.
                                     csString msg;
@@ -733,7 +733,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                         csRef<MeshFact> meshfact;
                         {
                             CS::Threading::ScopedReadLock lock(mfLock);
-                            meshfact = meshfacts.Get(stringSet.Request(node2->GetContentsValue()), csRef<MeshFact>());
+                            meshfact = meshfacts.Get(mfStringSet.Request(node2->GetContentsValue()), csRef<MeshFact>());
 
                             // Validation.
                             csString msg;
@@ -781,7 +781,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                         csRef<Material> material;
                         {
                             CS::Threading::ScopedReadLock lock(mLock);
-                            material = materials.Get(stringSet.Request(node2->GetContentsValue()), csRef<Material>());
+                            material = materials.Get(mStringSet.Request(node2->GetContentsValue()), csRef<Material>());
 
                             // Validation.
                             csString msg;
@@ -804,7 +804,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                             csRef<Material> material;
                             {
                                 CS::Threading::ScopedReadLock lock(mLock);
-                                material = materials.Get(stringSet.Request(node3->GetContentsValue()), csRef<Material>());
+                                material = materials.Get(mStringSet.Request(node3->GetContentsValue()), csRef<Material>());
 
                                 // Validation.
                                 csString msg;
@@ -834,7 +834,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                                         csRef<Texture> texture;
                                         {
                                             CS::Threading::ScopedReadLock lock(tLock);
-                                            texture = textures.Get(stringSet.Request(node3->GetContentsValue()), csRef<Texture>());
+                                            texture = textures.Get(tStringSet.Request(node3->GetContentsValue()), csRef<Texture>());
 
                                             // Validation.
                                             csString msg;
@@ -852,7 +852,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
 
                     s->meshes.Push(m);
                     CS::Threading::ScopedWriteLock lock(meshLock);
-                    meshes.Put(stringSet.Request(m->name), m);
+                    meshes.Put(meshStringSet.Request(m->name), m);
                 }
 
                 // Parse mesh generators (for foliage, rocks etc.)
@@ -881,7 +881,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
 
                         {
                             CS::Threading::ScopedReadLock lock(meshLock);
-                            csStringID mID = stringSet.Request(meshgen->GetNode("meshobj")->GetContentsValue());
+                            csStringID mID = meshStringSet.Request(meshgen->GetNode("meshobj")->GetContentsValue());
                             mgen->object = meshes.Get(mID, csRef<MeshObj>());
                         }
 
@@ -894,7 +894,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                             {
                                 csString name(geometry->GetNode("factory")->GetAttributeValue("name"));
                                 CS::Threading::ScopedReadLock lock(mfLock);
-                                meshfact = meshfacts.Get(stringSet.Request(name), csRef<MeshFact>());
+                                meshfact = meshfacts.Get(mfStringSet.Request(name), csRef<MeshFact>());
 
                                 // Validation.
                                 csString msg;
@@ -912,7 +912,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                                 {
                                     csString name(matfactors->Next()->GetAttributeValue("material"));
                                     CS::Threading::ScopedReadLock lock(mLock);
-                                    material = materials.Get(stringSet.Request(name), csRef<Material>());
+                                    material = materials.Get(mStringSet.Request(name), csRef<Material>());
 
                                     // Validation.
                                     csString msg;
@@ -985,7 +985,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                         csString targetSector = node2->GetNode("sector")->GetContentsValue();
                         {
                             CS::Threading::ScopedReadLock lock(sLock);
-                            p->targetSector = sectorHash.Get(stringSet.Request(targetSector), csRef<Sector>());
+                            p->targetSector = sectorHash.Get(sStringSet.Request(targetSector), csRef<Sector>());
                         }
 
                         if(!p->targetSector.IsValid())
@@ -993,7 +993,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                             p->targetSector = csPtr<Sector>(new Sector(targetSector));
                             CS::Threading::ScopedWriteLock lock(sLock);
                             sectors.Push(p->targetSector);
-                            sectorHash.Put(stringSet.Request(targetSector), p->targetSector);
+                            sectorHash.Put(sStringSet.Request(targetSector), p->targetSector);
                         }
 
                         if(!p->ww_given)
@@ -1162,7 +1162,7 @@ void BgLoader::UpdatePosition(const csVector3& pos, const char* sectorName, bool
 
     if(!sector.IsValid())
     {
-        sector = sectorHash.Get(stringSet.Request(sectorName), csRef<Sector>());
+        sector = sectorHash.Get(sStringSet.Request(sectorName), csRef<Sector>());
     }
 
     if(sector.IsValid())
@@ -1944,7 +1944,7 @@ bool BgLoader::LoadTexture(Texture* texture)
 
 csPtr<iMeshFactoryWrapper> BgLoader::LoadFactory(const char* name, bool* failed)
 {
-    csRef<MeshFact> meshfact = meshfacts.Get(stringSet.Request(name), csRef<MeshFact>());
+    csRef<MeshFact> meshfact = meshfacts.Get(mfStringSet.Request(name), csRef<MeshFact>());
     {
         if(!failed)
         {
@@ -1983,7 +1983,7 @@ csPtr<iMeshFactoryWrapper> BgLoader::LoadFactory(const char* name, bool* failed)
 
 csPtr<iMaterialWrapper> BgLoader::LoadMaterial(const char* name, bool* failed)
 {
-    csRef<Material> material = materials.Get(stringSet.Request(name), csRef<Material>());
+    csRef<Material> material = materials.Get(mStringSet.Request(name), csRef<Material>());
     {
         if(!failed)
         {
@@ -2013,7 +2013,7 @@ bool BgLoader::InWaterArea(const char* sector, csVector3* pos, csColor4** colour
     if(!strcmp("SectorWhereWeKeepEntitiesResidingInUnloadedMaps", sector))
         return false;
 
-    csRef<Sector> s = sectorHash.Get(stringSet.Request(sector), csRef<Sector>());
+    csRef<Sector> s = sectorHash.Get(sStringSet.Request(sector), csRef<Sector>());
     CS_ASSERT_MSG("Invalid sector passed to InWaterArea().", s.IsValid());
 
     for(size_t i=0; i<s->waterareas.GetSize(); ++i)
@@ -2033,7 +2033,7 @@ bool BgLoader::LoadZones(iStringArray* regions, bool loadMeshes)
     csRefArray<Zone> newLoadedZones;
     for(size_t i=0; i<regions->GetSize(); ++i)
     {
-        csRef<Zone> zone = zones.Get(stringSet.Request(regions->Get(i)), csRef<Zone>());
+        csRef<Zone> zone = zones.Get(zStringSet.Request(regions->Get(i)), csRef<Zone>());
         if(zone.IsValid())
         {
             newLoadedZones.Push(zone);
@@ -2103,7 +2103,7 @@ bool BgLoader::LoadZones(iStringArray* regions, bool loadMeshes)
 iMeshWrapper* BgLoader::CreateAndSelectMesh(const char* factName, iCamera* camera, const csVector2& pos)
 {
     // Check that requested mesh is valid.
-    csRef<MeshFact> meshfact = meshfacts.Get(stringSet.Request(factName), csRef<MeshFact>());
+    csRef<MeshFact> meshfact = meshfacts.Get(mfStringSet.Request(factName), csRef<MeshFact>());
     if(!meshfact.IsValid())
         return 0;
 
