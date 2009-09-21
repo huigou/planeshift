@@ -593,6 +593,7 @@ bool psCharAppearance::Dequip(csString& slotname,
 
     if ( mesh.Length() )
     {
+        ClearEquipment(slotname);
         Detach(slotname);
     }
 
@@ -1055,13 +1056,6 @@ void psCharAppearance::ClearEquipment(const char* slot)
         return;
     }
 
-    csArray<csString> deleteList = usedSlots;
-
-    for ( size_t z = 0; z < deleteList.GetSize(); z++ )
-    {
-        Detach(deleteList[z]);
-    }
-
     if(psengine->GetEffectManager())
     {
         csHash<int, csString>::GlobalIterator effectItr = effectids.GetIterator();
@@ -1074,9 +1068,15 @@ void psCharAppearance::ClearEquipment(const char* slot)
         csHash<int, csString>::GlobalIterator lightItr = lightids.GetIterator();
         while(lightItr.HasNext())
         {
-            psengine->GetEffectManager()->DeleteEffect(lightItr.Next());
+            psengine->GetEffectManager()->DetachLight(lightItr.Next());
         }
         lightids.Empty();
+    }
+
+    csArray<csString> deleteList = usedSlots;
+    for ( size_t z = 0; z < deleteList.GetSize(); z++ )
+    {
+        Detach(deleteList[z]);
     }
 }
 
