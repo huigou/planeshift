@@ -39,6 +39,11 @@
 #include "util/psconst.h"
 #include "loader.h"
 
+#ifndef CS_DEBUG
+#undef  CS_ASSERT_MSG
+#define CS_ASSERT_MSG(msg, x) if(!x) printf("%s\n", msg);
+#endif
+
 CS_IMPLEMENT_PLUGIN
 
 CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
