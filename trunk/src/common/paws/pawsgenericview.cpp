@@ -92,7 +92,7 @@ bool pawsGenericView::LoadMap( const char* map, const char* sector )
         csRef<iDocumentNode> worldNode = doc->GetRoot()->GetNode("world");
 
         // Now load the map into the selected region
-        csRef<iThreadReturn> itr = loader->LoadMapWait(map, worldNode, CS_LOADER_KEEP_WORLD, col);
+        csRef<iThreadReturn> itr = loader->LoadMapWait(map, worldNode, false, col);
         if (!itr->WasSuccessful())
             return false;
 

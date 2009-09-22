@@ -27,30 +27,7 @@
 #include <csutil/hash.h>
 #include "psstdint.h" //Added to fix msvc build
 
-#define CS_PRIORITY_USE_CAMERA    true
-
-#define CEL_CAMERA_USE_CD  true
-#define CEL_CAMERA_NO_CD   false
-
-#define CEL_MESHSELECT_CAMERA_SPACE  true
-#define CEL_MESHSELECT_WORLD_SPACE   false
-
-#define CS_TEXTURE_CREATE_MATERIAL true
-
-#define CS_MUTEX_RECURSIVE  true
-
 #define SOCKET_CLOSE_FORCED  true
-
-#define CS_FOLLOW_ONLY_PORTALS true
-
-#define CS_LIGHT_STATIC CS_LIGHT_DYNAMICTYPE_STATIC
-#define CS_LIGHT_PSEUDO CS_LIGHT_DYNAMICTYPE_PSEUDO
-
-#define CS_LOADER_CLEAR_WORLD true
-#define CS_LOADER_KEEP_WORLD  false
-
-#define CS_LOADER_ONLY_REGION    true
-#define CS_LOADER_ACROSS_REGIONS false
 
 #define DEF_PROX_DIST   100        ///< 100m is trial distance here
 #define DEF_UPDATE_DIST   5        ///<  30m is trial (default) delta to update
