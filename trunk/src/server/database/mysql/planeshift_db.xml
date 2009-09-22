@@ -4634,7 +4634,7 @@
 <OPTIONSELECT Value="0" />
 </OPTIONSELECTED>
 </COLUMN>
-<COLUMN ID="5943" ColName="penilty_pct" PrevColName="" Pos="9" idDatatype="7" DatatypeParams="(10,6)" Width="0" Prec="0" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="1.000000" Comments="">
+<COLUMN ID="5943" ColName="penalty_pct" PrevColName="" Pos="9" idDatatype="7" DatatypeParams="(10,6)" Width="0" Prec="0" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="1.000000" Comments="">
 <OPTIONSELECTED>
 <OPTIONSELECT Value="0" />
 </OPTIONSELECTED>
