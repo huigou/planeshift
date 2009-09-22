@@ -4815,7 +4815,7 @@ psPersistItem::psPersistItem( uint32_t clientNum,
 
     msg->Add(eid.Unbox());
     msg->Add( (uint32_t) type );
-    msg->Add( msgstrings->Request(name).GetHash() );
+    msg->Add( name );
     msg->Add( msgstrings->Request(factname).GetHash() );
     msg->Add( msgstrings->Request(matname).GetHash() );
     msg->Add( msgstrings->Request(sector).GetHash() );
@@ -4836,7 +4836,7 @@ psPersistItem::psPersistItem( MsgEntry* me, csStringHashReversible* msgstrings )
 {
     eid         = EID(me->GetUInt32());
     type        = me->GetUInt32();
-    name        = csString ( msgstrings->Request(csStringID(me->GetUInt32())) );
+    name        = csString ( me->GetStr() );
     factname    = csString ( msgstrings->Request(csStringID(me->GetUInt32())) );
     matname     = csString ( msgstrings->Request(csStringID(me->GetUInt32())) );
     sector      = csString ( msgstrings->Request(csStringID(me->GetUInt32())) );
