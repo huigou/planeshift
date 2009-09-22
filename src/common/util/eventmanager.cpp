@@ -201,9 +201,6 @@ void EventManager::TrackEventTimes(csTicks timeTaken,MsgEntry *msg)
 // game data.
 void EventManager::Run ()
 {
-    // Have we filled in all the entries in the array yet?
-    bool filled = false;
-
     csRef<MsgEntry> msg = 0;
 
     csTicks nextEvent = csGetTicks() + PROCESS_EVENT;
