@@ -24,7 +24,7 @@ CREATE TABLE `quests` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(40) NOT NULL DEFAULT '',
   `task` varchar(250) NOT NULL DEFAULT '',
-  `cstr_icon` varchar(200) DEFAULT '',
+  `cstr_icon` varchar(200) NOT NULL DEFAULT '',
   `flags` tinyint(3) unsigned DEFAULT '0',
   `master_quest_id` int(10) unsigned DEFAULT NULL,
   `minor_step_number` tinyint(3) unsigned DEFAULT '0',
