@@ -3909,8 +3909,8 @@ bool WorkManager::ApplySkills(float factor, psItem* transItem)
     }
 
     // Adjust the final quality with the transformation quality factor
-    currentQuality = currentQuality * trans->GetItemQualityPeniltyPercent();
-    if (secure) psserver->SendSystemInfo(clientNum,"Applying transformation penilty %f changes quality to %f.", trans->GetItemQualityPeniltyPercent(),currentQuality);
+    currentQuality = currentQuality * trans->GetItemQualityPenaltyPercent();
+    if (secure) psserver->SendSystemInfo(clientNum,"Applying transformation penalty %f changes quality to %f.", trans->GetItemQualityPenaltyPercent(),currentQuality);
 
     // Check for range
     if ( currentQuality > 999.99)

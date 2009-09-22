@@ -93,7 +93,7 @@ class psTradeTransformations
     int GetItemQty() const { return itemQty; }
     void SetItemQty(int newItemQty) { itemQty = newItemQty; }
 
-    float GetItemQualityPeniltyPercent() const { return peniltyPct; }
+    float GetItemQualityPenaltyPercent() const { return penaltyPct; }
 
     int GetTransPoints() const { return transPoints; }
 
@@ -110,7 +110,7 @@ class psTradeTransformations
     int resultQty;
     uint32 itemId;
     int itemQty;
-    float peniltyPct;
+    float penaltyPct;
     int transPoints;
 
 private:
