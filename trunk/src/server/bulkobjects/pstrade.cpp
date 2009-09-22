@@ -79,7 +79,7 @@ psTradeTransformations::psTradeTransformations()
     resultQty       = 0;
     itemId          = 0;
     itemQty         = 0;
-    peniltyPct      = 0.0;
+    penaltyPct      = 0.0;
     transPoints     = 0;
     transCached     = true;    
 }
@@ -94,7 +94,7 @@ psTradeTransformations::psTradeTransformations(uint32 rId, int rQty, uint32 iId,
     resultQty       = rQty;
     itemId          = iId;
     itemQty         = iQty;
-    peniltyPct      = 0.0;
+    penaltyPct      = 0.0;
     transPoints     = tPoints;
     transCached     = false;    
 }
@@ -113,7 +113,7 @@ bool psTradeTransformations::Load(iResultRow& row)
     itemId          = row.GetUInt32("item_id");
     itemQty         = row.GetInt("item_qty");
     transPoints     = row.GetInt("trans_points");
-    peniltyPct     = row.GetFloat("penilty_pct");
+    penaltyPct     = row.GetFloat("penalty_pct");
     return true;
 }
 
