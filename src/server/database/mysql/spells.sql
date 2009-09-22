@@ -20,7 +20,7 @@ CREATE TABLE spells (
   `aoe_radius` text,             /* (power, wayskill, relatedstat) -> meters  */
   `aoe_angle` text,              /* (power, wayskill, relatedstat) -> radians */
   `outcome` text NOT NULL,       /* (power, caster, target) -> side effects   */
-  `cstr_npc_spell_category` varchar(200) DEFAULT '',
+  `cstr_npc_spell_category` varchar(200) NOT NULL DEFAULT '',
   `npc_spell_power` float(10,3) DEFAULT '0.000',
   PRIMARY KEY (id),
   UNIQUE name (name)

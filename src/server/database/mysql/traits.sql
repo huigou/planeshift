@@ -46,9 +46,9 @@ CREATE TABLE traits (
   only_npc int(1),
   location varchar(30),
   name varchar(30),
-  `cstr_mesh` varchar(200) DEFAULT '',
-  `cstr_material` varchar(200) DEFAULT '',
-  `cstr_texture` varchar(200) DEFAULT '',
+  `cstr_mesh` varchar(200) NOT NULL DEFAULT '',
+  `cstr_material` varchar(200) NOT NULL DEFAULT '',
+  `cstr_texture` varchar(200) NOT NULL DEFAULT '',
   shader varchar(32),
   PRIMARY KEY (id),
   UNIQUE id (id)
