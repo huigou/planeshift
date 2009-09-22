@@ -3355,7 +3355,7 @@ psMsgStringsMessage::psMsgStringsMessage(MsgEntry *message)
         const char* string = buff+pos;
         pos += strlen(string)+1;
 
-        // csStringHashReversible::Register() cannot handle NULL pointers
+        // csStringSet::Register() cannot handle NULL pointers
         if (string[0] == '\0')
             msgstrings->Register("",id);
         else
@@ -3381,7 +3381,7 @@ csString psMsgStringsMessage::ToString(AccessPointers * /*access_ptrs*/)
 #ifdef FULL_DEBUG_DUMP
     uint32_t s = 1;
 
-    csStringHashReversible::GlobalIterator it = msgstrings->GetIterator();
+    csStringSet::GlobalIterator it = msgstrings->GetIterator();
     while (it.HasNext())
     {
         const char* string;
@@ -4217,13 +4217,20 @@ csString psPetSkillMessage::ToString(AccessPointers * /*access_ptrs*/)
 
 //--------------------------------------------------------------------------------
 
-PSF_IMPLEMENT_MSG_FACTORY2(psDRMessage,MSGTYPE_DEAD_RECKONING);
+PSF_IMPLEMENT_MSG_FACTORY3(psDRMessage,MSGTYPE_DEAD_RECKONING);
 
-void psDRMessage::CreateMsgEntry(uint32_t client, csStringHashReversible* msgstrings, iSector *sector, csString sectorName)
+void psDRMessage::CreateMsgEntry(uint32_t client, csStringSet* msgstrings, csStringHashReversible* msgstringshash,
+                                 iSector *sector, csString sectorName)
 {
     if(sector)
         sectorName = sector->QueryObject()->GetName();
-    csStringID sectorNameStrId = msgstrings ? msgstrings->Request(sectorName) : csInvalidStringID;
+
+    csStringID sectorNameStrId;
+    if(msgstrings)
+        sectorNameStrId = msgstrings ? msgstrings->Request(sectorName) : csInvalidStringID;
+    else if(msgstringshash)
+        sectorNameStrId = msgstrings ? msgstringshash->Request(sectorName) : csInvalidStringID;
+
     int sectorNameLen = (sectorNameStrId == csInvalidStringID) ? (int) strlen (sectorName) : 0;
 
     msg.AttachNew(new MsgEntry( sizeof(uint32)*12 + sizeof(uint8)*4 + (sectorNameLen?sectorNameLen+1:0) ));
@@ -4233,12 +4240,13 @@ void psDRMessage::CreateMsgEntry(uint32_t client, csStringHashReversible* msgstr
 }
 
 psDRMessage::psDRMessage(uint32_t client, EID mappedid, uint8_t counter,
-                         csStringHashReversible* msgstrings, psLinearMovement *linmove, uint8_t mode)
+                         csStringSet* msgstrings, csStringHashReversible* msgstringshash,
+                         psLinearMovement *linmove, uint8_t mode)
 {
     float speed;
     linmove->GetDRData(on_ground,speed,pos,yrot,sector,vel,worldVel,ang_vel);
 
-    CreateMsgEntry(client, msgstrings, sector, csString());
+    CreateMsgEntry(client, msgstrings, msgstringshash, sector, csString());
 
     WriteDRInfo(client, mappedid,
         on_ground, mode, counter, pos, yrot, sector, csString(),
@@ -4252,9 +4260,9 @@ psDRMessage::psDRMessage(uint32_t client, EID mappedid,
                          bool on_ground, uint8_t mode, uint8_t counter,
                          const csVector3& pos, float yrot,iSector *sector, csString sectorName,
                          const csVector3& vel, csVector3& worldVel, float ang_vel,
-                         csStringHashReversible* msgstrings)
+                         csStringSet* msgstrings, csStringHashReversible* msgstringshash)
 {
-    CreateMsgEntry(client, msgstrings, sector, sectorName);
+    CreateMsgEntry(client, msgstrings, msgstringshash, sector, sectorName);
 
     WriteDRInfo(client, mappedid,
          on_ground, mode, counter, pos, yrot, sector, sectorName,
@@ -4292,7 +4300,7 @@ void psDRMessage::WriteDRInfo(uint32_t client, EID mappedid,
                         bool on_ground, uint8_t mode, uint8_t counter,
                         const csVector3& pos, float yrot, iSector *sector,
                         csString sectorName, const csVector3& vel, csVector3& worldVel,
-                        float ang_vel, csStringHashReversible* msgstrings, bool donewriting)
+                        float ang_vel, csStringSet* msgstrings, bool donewriting)
 {
     if(sector)
         sectorName = sector->QueryObject()->GetName();
@@ -4340,17 +4348,17 @@ void psDRMessage::WriteDRInfo(uint32_t client, EID mappedid,
         msg->ClipToCurrentSize();
 }
 
-psDRMessage::psDRMessage( void *data, int size, csStringHashReversible* msgstrings, iEngine *engine)
+psDRMessage::psDRMessage( void *data, int size, csStringSet* msgstrings, csStringHashReversible* msgstringshash, iEngine *engine)
 {
     msg.AttachNew(new MsgEntry(size,PRIORITY_HIGH));
     memcpy(msg->bytes->payload,data,size);
-    ReadDRInfo(msg,msgstrings,engine);
+    ReadDRInfo(msg,msgstrings,msgstringshash,engine);
 }
 
-psDRMessage::psDRMessage(MsgEntry* me, csStringHashReversible* msgstrings, iEngine *engine)
+psDRMessage::psDRMessage(MsgEntry* me, csStringSet* msgstrings, csStringHashReversible* msgstringshash, iEngine *engine)
 {
     msg = NULL;
-    ReadDRInfo(me,msgstrings,engine);
+    ReadDRInfo(me,msgstrings,msgstringshash,engine);
 }
 
 void psDRMessage::operator=(psDRMessage& other)
@@ -4367,7 +4375,7 @@ void psDRMessage::operator=(psDRMessage& other)
 //    sectorName = other.sectorName;
 }
 
-void psDRMessage::ReadDRInfo(MsgEntry* me, csStringHashReversible* msgstrings, iEngine *engine)
+void psDRMessage::ReadDRInfo(MsgEntry* me, csStringSet* msgstrings, csStringHashReversible* msgstringshash, iEngine *engine)
 {
     entityid = me->GetUInt32();
     counter  = me->GetUInt8();
@@ -4403,7 +4411,10 @@ void psDRMessage::ReadDRInfo(MsgEntry* me, csStringHashReversible* msgstrings, i
     yrot *= TWO_PI/256;
 
     csStringID sectorNameStrId = (csStringID)me->GetUInt32();
-    sectorName = (sectorNameStrId != csInvalidStringID) ? msgstrings->Request(sectorNameStrId) : me->GetStr() ;
+    if(msgstrings)
+        sectorName = (sectorNameStrId != csInvalidStringID) ? msgstrings->Request(sectorNameStrId) : me->GetStr() ;
+    else if(msgstringshash)
+        sectorName = (sectorNameStrId != csInvalidStringID) ? msgstringshash->Request(sectorNameStrId) : me->GetStr() ;
     sector = (sectorName.Length()) ? engine->GetSectors()->FindByName(sectorName) : NULL ;
 }
 
@@ -4441,11 +4452,11 @@ csString psDRMessage::ToString(AccessPointers * /*access_ptrs*/)
 
 //--------------------------------------------------------------------------------
 
-PSF_IMPLEMENT_MSG_FACTORY2(psForcePositionMessage, MSGTYPE_FORCE_POSITION);
+PSF_IMPLEMENT_MSG_FACTORY3(psForcePositionMessage, MSGTYPE_FORCE_POSITION);
 
 psForcePositionMessage::psForcePositionMessage(uint32_t client, uint8_t sequenceNumber,
                          const csVector3 & pos, float yRot, iSector *sector,
-                         csStringHashReversible *msgstrings)
+                         csStringSet *msgstrings)
 {
     CS_ASSERT(sector);
     csString sectorName = sector->QueryObject()->GetName();
@@ -4467,13 +4478,16 @@ psForcePositionMessage::psForcePositionMessage(uint32_t client, uint8_t sequence
     valid=!(msg->overrun);
 }
 
-psForcePositionMessage::psForcePositionMessage(MsgEntry *me, csStringHashReversible *msgstrings, iEngine *engine)
+psForcePositionMessage::psForcePositionMessage(MsgEntry *me, csStringSet *msgstrings, csStringHashReversible* msgstringshash, iEngine *engine)
 {
     pos = me->GetVector();
     yrot = me->GetFloat();
 
     csStringID sectorNameStrId = (csStringID) me->GetUInt32();
-    sectorName = sectorNameStrId != csInvalidStringID ? msgstrings->Request(sectorNameStrId) : me->GetStr();
+    if(msgstrings)
+        sectorName = sectorNameStrId != csInvalidStringID ? msgstrings->Request(sectorNameStrId) : me->GetStr();
+    else if(msgstringshash)
+        sectorName = sectorNameStrId != csInvalidStringID ? msgstringshash->Request(sectorNameStrId) : me->GetStr();
     sector = !sectorName.IsEmpty() ? engine->GetSectors()->FindByName(sectorName) : NULL;
 
     valid = !(me->overrun);
@@ -4598,7 +4612,7 @@ csString psPersistActorRequest::ToString(AccessPointers * /*access_ptrs*/)
 
 //--------------------------------------------------------------------------
 
-PSF_IMPLEMENT_MSG_FACTORY2(psPersistActor,MSGTYPE_PERSIST_ACTOR);
+PSF_IMPLEMENT_MSG_FACTORY3(psPersistActor,MSGTYPE_PERSIST_ACTOR);
 
 psPersistActor::psPersistActor( uint32_t clientNum,
                                 int type,
@@ -4619,7 +4633,7 @@ psPersistActor::psPersistActor( uint32_t clientNum,
                                 const char* texParts,
                                 const char* equipmentParts,
                                 uint8_t counter,
-                                EID mappedid, csStringHashReversible* msgstrings, psLinearMovement *linmove,
+                                EID mappedid, csStringSet* msgstrings, psLinearMovement *linmove,
                                 uint8_t movementMode,
                                 uint8_t serverMode,
                                 PID playerID,
@@ -4677,9 +4691,9 @@ psPersistActor::psPersistActor( uint32_t clientNum,
     msg->ClipToCurrentSize();
 }
 
-psPersistActor::psPersistActor( MsgEntry* me, csStringHashReversible* msgstrings, iEngine *engine )
+psPersistActor::psPersistActor( MsgEntry* me, csStringSet* msgstrings, csStringHashReversible* msgstringshash, iEngine *engine )
 {
-    ReadDRInfo(me, msgstrings, engine);
+    ReadDRInfo(me, msgstrings, msgstringshash, engine);
 
     type        = me->GetUInt32();
     masqueradeType = me->GetUInt32();
@@ -7053,7 +7067,7 @@ csString GetMsgTypeName(int msgType)
     return psfMsgTypeName(msgType);
 }
 
-csString GetDecodedMessage(MsgEntry* me, csStringHashReversible* msgstrings, iEngine *engine, bool filterhex)
+csString GetDecodedMessage(MsgEntry* me, csStringSet* msgstrings, csStringHashReversible* msgstringshash, iEngine *engine, bool filterhex)
 {
     csString msgtext;
     MsgEntry msg(me); // Take a copy to make sure we dont destroy the message.
@@ -7073,6 +7087,7 @@ csString GetDecodedMessage(MsgEntry* me, csStringHashReversible* msgstrings, iEn
 
     psMessageCracker::AccessPointers access_pointers;
     access_pointers.msgstrings = msgstrings;
+    access_pointers.msgstringshash = msgstringshash;
     access_pointers.engine = engine;
 
     // First print the hex of the message if not filtered

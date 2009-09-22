@@ -89,7 +89,12 @@ bool psQuest::Load(iResultRow& row)
 
     parent_quest = CacheManager::GetSingleton().GetQuestByID( row.GetUInt32("master_quest_id") );
 
-    image = CacheManager::GetSingleton().FindCommonString( row.GetUInt32("cstr_id_icon") );
+    image = row["cstr_icon"];
+    if(!image)
+    {
+        Error2("Invalid 'cstr_icon' for quest '%s'\n", name.GetData());
+    }
+    CacheManager::GetSingleton().FindCommonStringID(image);
 
     // the value is expressed in seconds
     int lockout_time = row.GetInt("player_lockout_time");

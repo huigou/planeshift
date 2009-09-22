@@ -119,9 +119,13 @@ bool psSpell::Load(iResultRow& row)
     CS_ASSERT(castDuration && range && aoeRadius && aoeAngle && outcome);
 
     // Load NPC perception data
-    npcSpellCategoryID    = row.GetInt("cstr_npc_spell_category");
+    npcSpellCategory      = row["cstr_npc_spell_category"];
+    if(!npcSpellCategory)
+    {
+        Error2("Invalid 'cstr_npc_spell_category' for spell '%s'\n", name.GetData());
+    }
+    npcSpellCategoryID    = CacheManager::GetSingleton().FindCommonStringID(npcSpellCategory);
     npcSpellRelativePower = row.GetFloat("npc_spell_power");
-    npcSpellCategory      = CacheManager::GetSingleton().FindCommonString(npcSpellCategoryID);
 
     // Load glyph sequence/assembler info
     Result glyphs(db->Select("SELECT * from spell_glyphs WHERE spell_id=%d ORDER BY position ASC",id));

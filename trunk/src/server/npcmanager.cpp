@@ -686,7 +686,7 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                 }
 
                 psDRMessage drmsg(data,len,
-                                  CacheManager::GetSingleton().GetMsgStrings(),
+                                  CacheManager::GetSingleton().GetMsgStrings(), 0,
                                   EntityManager::GetSingleton().GetEngine());  // alternate method of cracking
 
                 // copy the DR data into an iDataBuffer

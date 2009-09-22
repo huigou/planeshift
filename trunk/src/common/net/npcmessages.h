@@ -275,10 +275,11 @@ public:
     void SetLength(int size,int client);
 
     /// Add a new entity's position to the data buffer
-    void Add(EID id, csVector3 & pos, iSector* & sector, InstanceID instance, csStringHashReversible* msgstrings);
+    void Add(EID id, csVector3 & pos, iSector* & sector, InstanceID instance, csStringSet* msgstrings);
 
     /// Get the next entity and position from the buffer
-    EID Get(csVector3 & pos, iSector* & sector, InstanceID & instance, csStringHashReversible* msgstrings, iEngine* engine);
+    EID Get(csVector3 & pos, iSector* & sector, InstanceID & instance, csStringSet* msgstrings,
+        csStringHashReversible* msgstringshash, iEngine* engine);
 };
 
 /**

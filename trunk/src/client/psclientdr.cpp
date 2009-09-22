@@ -205,7 +205,7 @@ void psClientDR::ResetMsgStrings()
 
 void psClientDR::HandleDeadReckon( MsgEntry* me )
 {
-    psDRMessage drmsg(me,msgstrings,psengine->GetEngine() );
+    psDRMessage drmsg(me,0,msgstrings,psengine->GetEngine() );
     GEMClientActor* gemActor = (GEMClientActor*)celclient->FindObject( drmsg.entityid );
      
     if (!gemActor)
@@ -239,7 +239,7 @@ void psClientDR::HandleDeadReckon( MsgEntry* me )
 
 void psClientDR::HandleForcePosition(MsgEntry *me)
 {
-    psForcePositionMessage msg(me, msgstrings, psengine->GetEngine());
+    psForcePositionMessage msg(me, 0, msgstrings, psengine->GetEngine());
     GEMClientActor *actor = celclient->GetMainPlayer();
 
     // Check if we crossed a sector boundary - if so, the player may have been
@@ -324,9 +324,9 @@ void psClientDR::HandleStrings( MsgEntry* me )
         bool request_strings = true;
 
         // Check for cached strings and compare with digest.
-        if(psengine->GetVFS()->Exists("/planeshift/userdata/cache/commonstrings.xml"))
+        if(psengine->GetVFS()->Exists("/planeshift/userdata/cache/commonstrings"))
         {
-            csRef<iDataBuffer> buf = psengine->GetVFS()->ReadFile("/planeshift/userdata/cache/commonstrings.xml");
+            csRef<iDataBuffer> buf = psengine->GetVFS()->ReadFile("/planeshift/userdata/cache/commonstrings");
             csRef<iDocumentSystem> docsys = csQueryRegistry<iDocumentSystem>(psengine->GetObjectRegistry());
             csRef<iDocument> doc = docsys->CreateDocument();
             doc->Parse(buf);
@@ -387,10 +387,10 @@ void psClientDR::HandleStrings( MsgEntry* me )
             root = root->GetParent();
         }
 
-        doc->Write(psengine->GetVFS(), "/planeshift/userdata/cache/commonstrings.xml");
+        doc->Write(psengine->GetVFS(), "/planeshift/userdata/cache/commonstrings");
     }
 
-    ((psNetManager*)psengine->GetNetManager())->GetConnection()->SetMsgStrings(msgstrings);
+    ((psNetManager*)psengine->GetNetManager())->GetConnection()->SetMsgStrings(0, msgstrings);
     ((psNetManager*)psengine->GetNetManager())->GetConnection()->SetEngine(psengine->GetEngine());
     gotStrings = true;
 
