@@ -270,10 +270,13 @@ void ModeHandler::SetEntity(GEMClientActor *ent)
 
 void ModeHandler::AddDownfallObject(WeatherObject* weatherobject)
 {
-    iSector* sector = psengine->GetCelClient()->GetMainPlayer()->GetSector();
-    if(weatherobject->GetSector() == sector)
+    if(psengine->GetCelClient()->GetMainPlayer())
     {
-        downfall = weatherobject; // Only need one object, safe to overwrite
+        iSector* sector = psengine->GetCelClient()->GetMainPlayer()->GetSector();
+        if(weatherobject->GetSector() == sector)
+        {
+            downfall = weatherobject; // Only need one object, safe to overwrite
+        }
     }
 }
 
