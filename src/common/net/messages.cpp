@@ -4641,7 +4641,7 @@ psPersistActor::psPersistActor( uint32_t clientNum,
                                 EID ownerEID,
                                 uint32_t flags)
 {
-    msg.AttachNew(new MsgEntry( 6000 ));
+    msg.AttachNew(new MsgEntry( MAX_MESSAGE_SIZE ));
 
     msg->SetType(MSGTYPE_PERSIST_ACTOR);
     msg->clientnum  = clientNum;
@@ -4662,10 +4662,10 @@ psPersistActor::psPersistActor( uint32_t clientNum,
     else
         msg->Add( guild );
 
-    msg->Add( factname );
-    msg->Add( matname );
-    msg->Add( race );
-    msg->Add( mountFactname );
+    msg->Add( msgstrings->Request(factname).GetHash() );
+    msg->Add( msgstrings->Request(matname).GetHash() );
+    msg->Add( msgstrings->Request(race).GetHash() );
+    msg->Add( msgstrings->Request(mountFactname).GetHash() );
     msg->Add ( gender );
     msg->Add( helmGroup );
     msg->Add(BracerGroup);
@@ -4703,10 +4703,21 @@ psPersistActor::psPersistActor( MsgEntry* me, csStringSet* msgstrings, csStringH
     if ( guild == " " )
         guild.Clear();
 
-    factname    = csString ( me->GetStr() );
-    matname     = csString ( me->GetStr() );
-    race        = csString ( me->GetStr() );
-    mountFactname = csString ( me->GetStr() );
+    if(msgstrings)
+    {
+        factname    = csString ( msgstrings->Request(csStringID(me->GetUInt32())) );
+        matname     = csString ( msgstrings->Request(csStringID(me->GetUInt32())) );
+        race        = csString ( msgstrings->Request(csStringID(me->GetUInt32())) );
+        mountFactname = csString ( msgstrings->Request(csStringID(me->GetUInt32())) );
+    }
+    else if(msgstringshash)
+    {
+        factname    = csString ( msgstringshash->Request(csStringID(me->GetUInt32())) );
+        matname     = csString ( msgstringshash->Request(csStringID(me->GetUInt32())) );
+        race        = csString ( msgstringshash->Request(csStringID(me->GetUInt32())) );
+        mountFactname = csString ( msgstringshash->Request(csStringID(me->GetUInt32())) );
+    }
+
     gender      = me->GetInt16();
     helmGroup   = csString ( me->GetStr() );
     BracerGroup = csString(me->GetStr());

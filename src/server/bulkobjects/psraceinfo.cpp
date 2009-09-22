@@ -62,6 +62,7 @@ bool psRaceInfo::Load(iResultRow& row)
 {
     uid  = row.GetUInt32("id");
     name = row["name"];
+    CacheManager::GetSingleton().AddCommmonStringID(name);
     initialCP = row.GetUInt32("initial_cp");
     race = row.GetUInt32("race");
     helmGroup = row["helm"];
