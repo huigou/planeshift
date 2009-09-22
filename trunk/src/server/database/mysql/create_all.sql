@@ -17,7 +17,6 @@ source character_quests.sql;
 source char_skills.sql;
 source char_traits.sql;
 source command_access.sql;
-source commonstrings.sql;
 source factions.sql;
 source familiar_types.sql;
 source gameboards.sql;
