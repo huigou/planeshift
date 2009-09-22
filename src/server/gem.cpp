@@ -1346,7 +1346,8 @@ void gemItem::Broadcast(int clientnum, bool control )
                          xRot,
                          yRot,
                          zRot,
-                         flags
+                         flags,
+                         CacheManager::GetSingleton().GetMsgStrings()
                          );
 
     mesg.Multicast(GetMulticastClients(),clientnum,PROX_LIST_ANY_RANGE);
@@ -1415,7 +1416,8 @@ void gemItem::Send( int clientnum, bool , bool to_superclient)
                          xRot,
                          yRot,
                          zRot,
-                         flags
+                         flags,
+                         CacheManager::GetSingleton().GetMsgStrings()
                          );
 
     if (clientnum)

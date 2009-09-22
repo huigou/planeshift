@@ -118,10 +118,10 @@ bool psRaceInfo::Load(iResultRow& row)
     {
         Error2("Invalid 'cstr_mesh' for race '%s'\n", name.GetData());
     }
-    CacheManager::GetSingleton().FindCommonStringID(mesh_name);
+    CacheManager::GetSingleton().AddCommmonStringID(mesh_name);
 
     base_texture_name = row["cstr_base_texture"];
-    CacheManager::GetSingleton().FindCommonStringID(base_texture_name);
+    CacheManager::GetSingleton().AddCommmonStringID(base_texture_name);
 
     // Load starting stats
     SetBaseAttribute(PSITEMSTATS_STAT_STRENGTH      ,row.GetUInt32("start_str"));

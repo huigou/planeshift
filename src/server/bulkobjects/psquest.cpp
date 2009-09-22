@@ -94,7 +94,7 @@ bool psQuest::Load(iResultRow& row)
     {
         Error2("Invalid 'cstr_icon' for quest '%s'\n", name.GetData());
     }
-    CacheManager::GetSingleton().FindCommonStringID(image);
+    CacheManager::GetSingleton().AddCommmonStringID(image);
 
     // the value is expressed in seconds
     int lockout_time = row.GetInt("player_lockout_time");

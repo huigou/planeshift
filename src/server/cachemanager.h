@@ -189,6 +189,10 @@ public:
     //@{
     const char *FindCommonString(unsigned int id);
     unsigned int FindCommonStringID(const char *name);
+    inline void AddCommmonStringID(const char* name)
+    {
+        FindCommonStringID(name);
+    }
 
     /** Returns the message strings hash table.
      *

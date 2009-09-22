@@ -285,7 +285,7 @@ void NetworkManager::HandleActor( MsgEntry* me )
 
 void NetworkManager::HandleItem( MsgEntry* me )
 {
-    psPersistItem mesg(me);
+    psPersistItem mesg(me, msgstrings);
 
     gemNPCObject * obj = npcclient->FindEntityID(mesg.eid);
 

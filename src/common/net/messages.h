@@ -454,6 +454,19 @@ int psfMsgType(const char * msgTypeName);
     PSF_IMPLEMENT_MSG_FACTORY_TYPENAME(Class,MsgType)             \
     PSF_IMPLEMENT_MSG_FACTORY_CREATE3(Class)
 
+#define PSF_IMPLEMENT_MSG_FACTORY_CREATE4(Class)                  \
+    psMessageCracker* Class::CreateMessage(MsgEntry * me,         \
+           psMessageCracker::AccessPointers * a_p)                \
+    {                                                             \
+        return (psMessageCracker*)new Class(me,                   \
+                                            a_p->msgstringshash); \
+    }
+
+#define PSF_IMPLEMENT_MSG_FACTORY4(Class,MsgType)                 \
+    PSF_IMPLEMENT_MSG_FACTORY_REGISTER(Class,MsgType)             \
+    PSF_IMPLEMENT_MSG_FACTORY_TYPENAME(Class,MsgType)             \
+    PSF_IMPLEMENT_MSG_FACTORY_CREATE4(Class)
+
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 
@@ -3138,10 +3151,11 @@ public:
                     float xRot,
                     float yRot,
                     float zRot,
-                    uint32_t flags
+                    uint32_t flags,
+                    csStringSet* msgstrings
                  );
 
-    psPersistItem( MsgEntry* me );
+    psPersistItem( MsgEntry* me, csStringHashReversible* msgstrings );
 
     PSF_DECLARE_MSG_FACTORY();
 

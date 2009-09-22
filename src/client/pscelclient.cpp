@@ -255,7 +255,7 @@ void psCelClient::HandleActor( MsgEntry* me )
         psengine->FatalError("Cannot load main actor. Error during loading.\n");
         return;
     }
-    psPersistActor msg(me, GetClientDR()->GetMsgStrings(), psengine->GetEngine());
+    psPersistActor msg(me, 0, GetClientDR()->GetMsgStrings(), psengine->GetEngine());
 
     GEMClientActor* actor = new GEMClientActor(this, msg);
 
@@ -276,7 +276,7 @@ void psCelClient::HandleActor( MsgEntry* me )
 
 void psCelClient::HandleItem( MsgEntry* me )
 {
-    psPersistItem msg(me);
+    psPersistItem msg(me, clientdr->GetMsgStrings());
     GEMClientItem* item = new GEMClientItem(this, msg);
     AddEntity(item);
 }
