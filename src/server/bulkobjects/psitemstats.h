@@ -429,7 +429,7 @@ private:
     csPDelArray<psItemAnimation> *anim_list;
 
     // These temporary fields point to strings used for the mesh, texture, part and image names respectively
-    const char *mesh_name;
+    csString mesh_name;
 
     /// Stores a texture change
     csString texture_name;
@@ -440,7 +440,7 @@ private:
     /// Stores the new mesh to be attached on a mesh change.
     csString partmesh_name;
 
-    const char *image_name;
+    csString image_name;
 
     /* mesh names, texture names, texture part names, and image names are currently stored as strings
      * on the server and passed over to the client in normal communication.  This is inefficient, and

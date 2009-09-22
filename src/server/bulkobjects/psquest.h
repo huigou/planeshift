@@ -117,7 +117,7 @@ class psQuest : public CS::Utility::WeakReferenced
     int id;
     csString name;
     csString task;
-    const char *image;
+    csString image;
     int flags;
     psQuest *parent_quest;
     int step_id;

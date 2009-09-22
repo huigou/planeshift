@@ -69,8 +69,8 @@ public:
 
     PSCHARACTER_GENDER gender;
     
-    const char *mesh_name;
-    const char *base_texture_name;
+    csString mesh_name;
+    csString base_texture_name;
     csVector3 size;
     int initialCP;
     int natural_armor_id;
