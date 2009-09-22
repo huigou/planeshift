@@ -46,17 +46,17 @@ CREATE TABLE traits (
   only_npc int(1),
   location varchar(30),
   name varchar(30),
-  cstr_id_mesh int(10) unsigned NOT NULL default '0',
-  cstr_id_material int(10) unsigned NOT NULL default '0',
-  cstr_id_texture int(10) unsigned NOT NULL default '0',
+  `cstr_mesh` varchar(200) DEFAULT '',
+  `cstr_material` varchar(200) DEFAULT '',
+  `cstr_texture` varchar(200) DEFAULT '',
   shader varchar(32),
   PRIMARY KEY (id),
   UNIQUE id (id)
 );
 
-INSERT INTO traits VALUES( 1, -1,  0, 0, "FACE", "Face 1", 180, 181, 182, "");
-INSERT INTO traits VALUES( 2, -1, 14, 0, "FACE", "Face 1", 180, 181, 182, "");
-INSERT INTO traits VALUES( 3, -1,  2, 0, "FACE", "Face 1", 180, 181, 182, "");
-INSERT INTO traits VALUES( 4, -1,  2, 0, "FACE", "Face 2", 180, 183, 184, "");
+INSERT INTO `traits` VALUES (1,-1,0,0,'FACE','Face 1','Head','$F_head','/planeshift/models/$F/$F_head.dds','');
+INSERT INTO `traits` VALUES (2,-1,14,0,'FACE','Face 1','Head','$F_head','/planeshift/models/$F/$F_head.dds','');
+INSERT INTO `traits` VALUES (3,-1,2,0,'FACE','Face 1','Head','$F_head','/planeshift/models/$F/$F_head.dds','');
+INSERT INTO `traits` VALUES (4,-1,2,0,'FACE','Face 2','Head','$F_head_2','/planeshift/models/$F/$F_head_2.dds','');
 
 

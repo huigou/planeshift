@@ -20,33 +20,33 @@
 
 DROP TABLE IF EXISTS `race_info`;
 CREATE TABLE `race_info` (
-  `id` int(10) NOT NULL default '0',
-  `name` varchar(35) NOT NULL default '',
-  `cstr_id_mesh` int(10) NOT NULL default '0',
-  `sex` char(1) NOT NULL default 'M',
-  `size_x` float unsigned default '0',
-  `size_y` float unsigned default '0',
-  `size_z` float unsigned default '0',
-  `cstr_id_base_texture` int(10) unsigned NOT NULL default '0',
-  `initial_cp` int(10) default '0',
-  `start_str` int(5) NOT NULL default '50',
-  `start_end` int(5) NOT NULL default '50',
-  `start_agi` int(5) NOT NULL default '50',
-  `start_int` int(5) NOT NULL default '50',
-  `start_will` int(5) NOT NULL default '50',
-  `start_cha` int(5) unsigned NOT NULL default '50',
-  `base_physical_regen_still` float NOT NULL default '0',
-  `base_physical_regen_walk` float NOT NULL default '0',
-  `base_mental_regen_still` float NOT NULL default '0',
-  `base_mental_regen_walk` float NOT NULL default '0',
-  `armor_id` int(10) unsigned default '0',
-  `helm` varchar(20) default '',
-  `bracer` VARCHAR(20) COMMENT 'Stores a bracer group allowing to use the same bracer mesh for more than one race, just like for the helm column' default '',
-  `belt` VARCHAR(20) COMMENT 'Stores a belt group allowing to use the same belt mesh for more than one race, just like for the helm column' default '',
-  `cloak` VARCHAR(20) COMMENT 'Stores a cloak group allowing to use the same cloak mesh for more than one race, just like for the helm column' default '',
+  `id` int(10) NOT NULL DEFAULT '0',
+  `name` varchar(35) NOT NULL DEFAULT '',
+  `cstr_mesh` varchar(200) DEFAULT '',
+  `sex` char(1) NOT NULL DEFAULT 'M',
+  `size_x` float unsigned DEFAULT '0',
+  `size_y` float unsigned DEFAULT '0',
+  `size_z` float unsigned DEFAULT '0',
+  `cstr_base_texture` varchar(200) DEFAULT '',
+  `initial_cp` int(10) DEFAULT '0',
+  `start_str` int(5) NOT NULL DEFAULT '50',
+  `start_end` int(5) NOT NULL DEFAULT '50',
+  `start_agi` int(5) NOT NULL DEFAULT '50',
+  `start_int` int(5) NOT NULL DEFAULT '50',
+  `start_will` int(5) NOT NULL DEFAULT '50',
+  `start_cha` int(5) unsigned NOT NULL DEFAULT '50',
+  `base_physical_regen_still` float NOT NULL DEFAULT '0',
+  `base_physical_regen_walk` float NOT NULL DEFAULT '0',
+  `base_mental_regen_still` float NOT NULL DEFAULT '0',
+  `base_mental_regen_walk` float NOT NULL DEFAULT '0',
+  `armor_id` int(10) unsigned DEFAULT '0',
+  `helm` varchar(20) DEFAULT '',
+  `bracer` varchar(20) DEFAULT '' COMMENT 'Stores a bracer group allowing to use the same bracer mesh for more than one race, just like for the helm column',
+  `belt` varchar(20) DEFAULT '' COMMENT 'Stores a belt group allowing to use the same belt mesh for more than one race, just like for the helm column',
+  `cloak` varchar(20) DEFAULT '' COMMENT 'Stores a cloak group allowing to use the same cloak mesh for more than one race, just like for the helm column',
   `race` int(5) unsigned NOT NULL,
-  `speed_modifier` float NOT NULL default '1.0'   COMMENT 'Used as a multiplier of the velocity',
-  PRIMARY KEY  USING BTREE (`id`)
+  `speed_modifier` float NOT NULL DEFAULT '1' COMMENT 'Used as a multiplier of the velocity',
+  PRIMARY KEY (`id`) USING BTREE
 );
 
 --
@@ -54,45 +54,40 @@ CREATE TABLE `race_info` (
 --
 
 /*!40000 ALTER TABLE `race_info` DISABLE KEYS */;
-INSERT INTO `race_info` (`id`,`name`,`cstr_id_mesh`,`sex`,`size_x`,`size_y`,`size_z`,`cstr_id_base_texture`,`initial_cp`,`start_str`,`start_end`,`start_agi`,`start_int`,`start_will`,`start_cha`,`base_physical_regen_still`,`base_physical_regen_walk`,`base_mental_regen_still`,`base_mental_regen_walk`,`armor_id`,`helm`,`bracer`,`belt`,`cloak`,`race`,`speed_modifier`) VALUES 
- (0,'StoneBreaker',125,'M',0.8,1.2,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',0,1.0),
- (1,'Enkidukai',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',1,1.0),
- (2,'Ynnwn',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',2,1.0),
- (3,'Ylian',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',3,1.0),
- (4,'Xacha',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',4,1.0),
- (5,'Nolthrir',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',5,1.0),
- (6,'Dermorian',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.2,0.8,10,10,0,'','','','',6,1.0),
- (7,'Hammerwielder',125,'M',0.8,1.2,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',7,1.0),
- (8,'Diaboli',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',8,1.0),
- (9,'Kran',125,'N',0.8,1.4,0.6,19,100,50,50,50,50,50,50,2.0,1.5,10,10,0,'','','','',9,1.0);
-INSERT INTO `race_info` (`id`,`name`,`cstr_id_mesh`,`sex`,`size_x`,`size_y`,`size_z`,`cstr_id_base_texture`,`initial_cp`,`start_str`,`start_end`,`start_agi`,`start_int`,`start_will`,`start_cha`,`base_physical_regen_still`,`base_physical_regen_walk`,`base_mental_regen_still`,`base_mental_regen_walk`,`armor_id`,`helm`,`bracer`,`belt`,`cloak`,`race`,`speed_modifier`) VALUES 
- (10,'Lemur',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',10,1.0),
- (11,'Klyros',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'ylianm','','','',11,1.0),
- (12,'Enkidukai',125,'F',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',1,1.0),
- (13,'StoneBreaker',125,'F',0.8,1.2,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'ylianm','','','',0,1.0),
- (14,'Ynnwn',125,'F',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',2,1.0),
- (15,'Ylian',125,'F',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',3,1.0),
- (16,'Xacha',125,'F',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',4,1.0),
- (17,'Nolthrir',125,'F',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',5,1.0),
- (18,'Dermorian',125,'F',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.2,0.8,10,10,0,'','','','',6,1.0),
- (19,'Hammerwielder',125,'F',0.8,1.2,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',7,1.0);
-INSERT INTO `race_info` (`id`,`name`,`cstr_id_mesh`,`sex`,`size_x`,`size_y`,`size_z`,`cstr_id_base_texture`,`initial_cp`,`start_str`,`start_end`,`start_agi`,`start_int`,`start_will`,`start_cha`,`base_physical_regen_still`,`base_physical_regen_walk`,`base_mental_regen_still`,`base_mental_regen_walk`,`armor_id`,`helm`,`bracer`,`belt`,`cloak`,`race`,`speed_modifier`) VALUES 
- (20,'Diaboli',125,'F',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',8,1.0),
- (21,'Lemur',125,'F',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',10,1.0),
- (22,'Klyros',125,'F',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',11,1.0),
- (23,'Rogue',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',12,1.0),
- (24,'Clacker',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',13,1.0),
- (25,'Rat',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',14,1.0),
- (26,'Grendol',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',15,1.0),
- (27,'Gobble',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',16,1.0),
- (28,'Consumer',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',17,1.0),
- (29,'Trepor',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',18,1.0);
-INSERT INTO `race_info` (`id`,`name`,`cstr_id_mesh`,`sex`,`size_x`,`size_y`,`size_z`,`cstr_id_base_texture`,`initial_cp`,`start_str`,`start_end`,`start_agi`,`start_int`,`start_will`,`start_cha`,`base_physical_regen_still`,`base_physical_regen_walk`,`base_mental_regen_still`,`base_mental_regen_walk`,`armor_id`,`helm`,`bracer`,`belt`,`cloak`,`race`,`speed_modifier`) VALUES 
- (30,'Ulbernaut',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',19,1.0),
- (31,'Tefusang',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,2.0,1.5,10,10,0,'','','','',20,1.0),
- (32,'Drifter',125,'M',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',21,2.0);
-INSERT INTO `race_info` (`id`,`name`,`cstr_id_mesh`,`sex`,`size_x`,`size_y`,`size_z`,`cstr_id_base_texture`,`initial_cp`,`start_str`,`start_end`,`start_agi`,`start_int`,`start_will`,`start_cha`,`base_physical_regen_still`,`base_physical_regen_walk`,`base_mental_regen_still`,`base_mental_regen_walk`,`armor_id`,`helm`,`bracer`,`belt`,`cloak`,`race`,`speed_modifier`) VALUES 
- (9999,'Special',9999,'N',0.8,1.4,0.6,19,100,50,50,50,50,50,50,1.5,1.0,10,10,0,'','','','',9999,1.0);
+INSERT INTO `race_info` VALUES (0,'StoneBreaker','stonebm','M',0.8,1.2,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,'','','','',0,1);
+INSERT INTO `race_info` VALUES (1,'Enkidukai','stonebm','M',0.8,1.4,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,'','','','',1,1);
+INSERT INTO `race_info` VALUES (2,'Ynnwn','stonebm','M',0.8,1.4,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,'','','','',2,1);
+INSERT INTO `race_info` VALUES (3,'Ylian','stonebm','M',0.8,1.4,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,'','','','',3,1);
+INSERT INTO `race_info` VALUES (4,'Xacha','stonebm','M',0.8,1.4,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,'','','','',4,1);
+INSERT INTO `race_info` VALUES (5,'Nolthrir','stonebm','M',0.8,1.4,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,'','','','',5,1);
+INSERT INTO `race_info` VALUES (6,'Dermorian','stonebm','M',0.8,1.4,0.6,'',100,50,50,50,50,50,50,1.2,0.8,10,10,0,'','','','',6,1);
+INSERT INTO `race_info` VALUES (7,'Hammerwielder','stonebm','M',0.8,1.2,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,'','','','',7,1);
+INSERT INTO `race_info` VALUES (8,'Diaboli','stonebm','M',0.8,1.4,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,'','','','',8,1);
+INSERT INTO `race_info` VALUES (9,'Kran','stonebm','N',0.8,1.4,0.6,'',100,50,50,50,50,50,50,2,1.5,10,10,0,'','','','',9,1);
+INSERT INTO `race_info` VALUES (10,'Lemur','stonebm','M',0.8,1.4,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,'','','','',10,1);
+INSERT INTO `race_info` VALUES (11,'Klyros','stonebm','M',0.8,1.4,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,'ylianm','','','',11,1);
+INSERT INTO `race_info` VALUES (12,'Enkidukai','stonebm','F',0.8,1.4,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,'','','','',1,1);
+INSERT INTO `race_info` VALUES (13,'StoneBreaker','stonebm','F',0.8,1.2,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,'ylianm','','','',0,1);
+INSERT INTO `race_info` VALUES (14,'Ynnwn','stonebm','F',0.8,1.4,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,'','','','',2,1);
+INSERT INTO `race_info` VALUES (15,'Ylian','stonebm','F',0.8,1.4,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,'','','','',3,1);
+INSERT INTO `race_info` VALUES (16,'Xacha','stonebm','F',0.8,1.4,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,'','','','',4,1);
+INSERT INTO `race_info` VALUES (17,'Nolthrir','stonebm','F',0.8,1.4,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,'','','','',5,1);
+INSERT INTO `race_info` VALUES (18,'Dermorian','stonebm','F',0.8,1.4,0.6,'',100,50,50,50,50,50,50,1.2,0.8,10,10,0,'','','','',6,1);
+INSERT INTO `race_info` VALUES (19,'Hammerwielder','stonebm','F',0.8,1.2,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,'','','','',7,1);
+INSERT INTO `race_info` VALUES (20,'Diaboli','stonebm','F',0.8,1.4,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,'','','','',8,1);
+INSERT INTO `race_info` VALUES (21,'Lemur','stonebm','F',0.8,1.4,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,'','','','',10,1);
+INSERT INTO `race_info` VALUES (22,'Klyros','stonebm','F',0.8,1.4,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,'','','','',11,1);
+INSERT INTO `race_info` VALUES (23,'Rogue','stonebm','M',0.8,1.4,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,'','','','',12,1);
+INSERT INTO `race_info` VALUES (24,'Clacker','stonebm','M',0.8,1.4,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,'','','','',13,1);
+INSERT INTO `race_info` VALUES (25,'Rat','stonebm','M',0.8,1.4,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,'','','','',14,1);
+INSERT INTO `race_info` VALUES (26,'Grendol','stonebm','M',0.8,1.4,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,'','','','',15,1);
+INSERT INTO `race_info` VALUES (27,'Gobble','stonebm','M',0.8,1.4,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,'','','','',16,1);
+INSERT INTO `race_info` VALUES (28,'Consumer','stonebm','M',0.8,1.4,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,'','','','',17,1);
+INSERT INTO `race_info` VALUES (29,'Trepor','stonebm','M',0.8,1.4,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,'','','','',18,1);
+INSERT INTO `race_info` VALUES (30,'Ulbernaut','stonebm','M',0.8,1.4,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,'','','','',19,1);
+INSERT INTO `race_info` VALUES (31,'Tefusang','stonebm','M',0.8,1.4,0.6,'',100,50,50,50,50,50,50,2,1.5,10,10,0,'','','','',20,1);
+INSERT INTO `race_info` VALUES (32,'Drifter','stonebm','M',0.8,1.4,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,'','','','',21,2);
+INSERT INTO `race_info` VALUES (9999,'Special','nullmesh','N',0.8,1.4,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,'','','','',9999,1);
 /*!40000 ALTER TABLE `race_info` ENABLE KEYS */;
 
 
