@@ -43,7 +43,7 @@ class psLinearMovement;
 
 // This holds the version number of the network code, remember to increase
 // this each time you do an update which breaks compatibility
-#define PS_NETVERSION   0x00A7
+#define PS_NETVERSION   0x00A8
 // Remember to bump the version in pscssetup.h, as well.
 
 
@@ -2340,7 +2340,14 @@ public:
     csStringHashReversible* msgstrings;
 
     /** Create psMessageBytes struct for outbound use */
-    psMsgStringsMessage(uint32_t clientnum, csStringHashReversible *strings);
+    psMsgStringsMessage();
+
+    /** Create psMessageBytes struct for outbound use */
+    psMsgStringsMessage(uint32_t clientnum, csMD5::Digest& digest);
+
+    /** Create psMessageBytes struct for outbound use */
+    psMsgStringsMessage(uint32_t clientnum, csMD5::Digest& digest, char* stringsdata,
+        unsigned long size, uint32_t num_strings);
 
     /** Crack incoming psMessageBytes struct for inbound use */
     psMsgStringsMessage(MsgEntry *message);
@@ -2354,6 +2361,9 @@ public:
      * @return Return a human readable string for the message.
      */
     virtual csString ToString(AccessPointers * access_ptrs);
+
+    csMD5::Digest* digest;
+    bool only_carrying_digest;
 
 private:
     uint32_t nstrings;

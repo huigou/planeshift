@@ -3242,81 +3242,51 @@ csString psGUITargetUpdateMessage::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psMsgStringsMessage,MSGTYPE_MSGSTRINGS);
 
-#define COMPRESSION_BUFFSIZE  MAX_MESSAGE_SIZE/2
-#define PACKING_BUFFSIZE  COMPRESSION_BUFFSIZE*3
-
-psMsgStringsMessage::psMsgStringsMessage(uint32_t clientnum, csStringHashReversible *strings)
+#define PACKING_BUFFSIZE  (MAX_MESSAGE_SIZE/2)*3
+psMsgStringsMessage::psMsgStringsMessage()
 {
-    msgstrings = 0;
-
-    msg.AttachNew(new MsgEntry(MAX_MESSAGE_SIZE));
-
-    char *buff1 = new char[PACKING_BUFFSIZE];      // Holds packed strings
-    char *buff2 = new char[COMPRESSION_BUFFSIZE];  // Holds compressed data
-    size_t length = 0;
-
+    msg.AttachNew(new MsgEntry(sizeof(uint32_t)));
     msg->SetType(MSGTYPE_MSGSTRINGS);
-    msg->clientnum      = clientnum;
+    msg->clientnum = 0;
+}
 
-    msg->Add((uint32_t)strings->GetSize());
+psMsgStringsMessage::psMsgStringsMessage(uint32_t clientnum, csMD5::Digest& digest)
+{
+    msg.AttachNew(new MsgEntry(2*sizeof(uint32_t) + sizeof(csMD5::Digest) + sizeof(bool)));
+    msg->SetType(MSGTYPE_MSGSTRINGS);
+    msg->clientnum = clientnum;
 
-    csStringHashReversible::GlobalIterator it = strings->GetIterator();
-    while (it.HasNext())
-    {
-        const char* string;
-        csStringID id = it.Next(string);
+    msg->Add(&digest, sizeof(csMD5::Digest));
+    msg->Add(true);
+}
 
-        // Pack ID
-        uint32 *p = (uint32*)(buff1+length);
-        *p = csLittleEndian::UInt32(id);
-        length += sizeof(uint32);
+psMsgStringsMessage::psMsgStringsMessage(uint32_t clientnum, csMD5::Digest& digest, char* stringsdata,
+                                         unsigned long size, uint32_t num_strings)
+{
+    msg.AttachNew(new MsgEntry(4*sizeof(uint32_t) + sizeof(csMD5::Digest) +
+        sizeof(bool) + sizeof(char) * size));
+    msg->SetType(MSGTYPE_MSGSTRINGS);
+    msg->clientnum = clientnum;
 
-        // Pack string
-        strcpy(buff1+length, string);
-        length += strlen(string)+1;
-    }
-
-    // Ready
-    z_stream z;
-    z.zalloc = NULL;
-    z.zfree = NULL;
-    z.opaque = NULL;
-    z.next_in = (z_Byte*)buff1;
-    z.avail_in = (uInt)length;
-    z.next_out = (z_Byte*)buff2;
-    z.avail_out = COMPRESSION_BUFFSIZE;
-
-    // Set
-    int err = deflateInit(&z,Z_BEST_COMPRESSION);
-    CS_ASSERT(err == Z_OK);
-
-    // Go
-    err = deflate(&z,Z_FINISH);
-    CS_ASSERT(err == Z_STREAM_END);
-    deflateEnd(&z);
-
-    // Write the data
-    msg->Add(buff2, z.total_out);
+    msg->Add(&digest, sizeof(csMD5::Digest));
+    msg->Add(false);
+    msg->Add(num_strings);
+    msg->Add(stringsdata, size);
 
     // Sets valid flag based on message overrun state
-    valid=!(msg->overrun);
-
-    if (valid)
-        msg->ClipToCurrentSize();
-/*
-    printf("%u -> %u\n%d(%f%%) saved\n",
-           length, z.total_out,
-           int(length)-int(z.total_out),
-           1.0f-(float(z.total_out)/float(length)));
-
-*/
-    delete[] buff1;
-    delete[] buff2;
+    valid = !(msg->overrun);
 }
 
 psMsgStringsMessage::psMsgStringsMessage(MsgEntry *message)
 {
     if (!message)
+        return;
+    
+    uint32_t length = 0;
+    digest = (csMD5::Digest*)message->GetBufferPointerUnsafe(length);
+
+    only_carrying_digest = message->GetBool();
+    if(only_carrying_digest)
         return;
 
     nstrings = message->GetUInt32();
@@ -3335,7 +3305,6 @@ psMsgStringsMessage::psMsgStringsMessage(MsgEntry *message)
     }
 
     // Read the data
-    uint32_t length = 0;
     const void* data = message->GetBufferPointerUnsafe(length);
 
     if (message->overrun)

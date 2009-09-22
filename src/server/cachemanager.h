@@ -195,6 +195,16 @@ public:
      * @return Returns a reference to the message strings hash table.
      */
     csStringHashReversible *GetMsgStrings() { return &msg_strings; }
+
+    /** Returns compressed message strings data.
+     *
+     * @data Pointer to the compressed data.
+     * @size Size of the compressed data in bytes.
+     * @num_strings The number of strings encoded.
+     * @digest The md5sum digest of the compressed data.
+     */
+    void GetCompressedMessageStrings(char*& data, unsigned long& size,
+        uint32_t& num_strings, csMD5::Digest& digest);
     //@}
 
     /** @name Guilds
@@ -478,7 +488,13 @@ protected:
      */
     csHash<CachedObject *, csString> generic_object_cache;
 
+    // Common strings data.
     csStringHashReversible msg_strings;
+    char* compressed_msg_strings;
+    unsigned long compressed_msg_strings_size;
+    uint32_t num_compressed_strings;
+    csMD5::Digest compressed_msg_strings_digest;
+
     csHash<psSectorInfo *> sectorinfo_by_id;   ///< Sector info list hashed by sector id
     csHash<psSectorInfo *> sectorinfo_by_name; ///< Sector info list hashed by sector name
     csPDelArray<psTrait > traitlist;

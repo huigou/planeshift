@@ -572,7 +572,7 @@ void NPCManager::HandleAuthentRequest(MsgEntry *me,Client *notused)
     client->GetIPAddress(addr);
     //TODO:    database->UpdateLoginDate(cid,addr);
 
-    psserver->GetAuthServer()->SendMsgStrings(me->clientnum);
+    psserver->GetAuthServer()->SendMsgStrings(me->clientnum, false);
 
     SendMapList(client);
     SendRaces(client);

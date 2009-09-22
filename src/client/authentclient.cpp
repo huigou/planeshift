@@ -44,6 +44,7 @@
 //=============================================================================
 #include "authentclient.h"
 #include "pscelclient.h"
+#include "psclientdr.h"
 #include "psengine.h"
 #include "pscharcontrol.h"
 #include "globals.h"
@@ -200,9 +201,13 @@ void psAuthenticationClient::HandleAuthApproved( MsgEntry* me )
                 
     psengine->SetNumChars( msg.msgNumOfChars );
     psengine->SetLoggedIn(true);
-    PawsManager::GetSingleton().FindWidget("CharPickerWindow")->Show();
-    delete PawsManager::GetSingleton().FindWidget("LoginWindow");
-    delete PawsManager::GetSingleton().FindWidget("CreditsWindow");
+
+    if(psengine->GetCelClient()->GetClientDR()->GotStrings())
+    {
+        PawsManager::GetSingleton().FindWidget("CharPickerWindow")->Show();
+        delete PawsManager::GetSingleton().FindWidget("LoginWindow");
+        delete PawsManager::GetSingleton().FindWidget("CreditsWindow");
+    }
 }
 
 
