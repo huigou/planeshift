@@ -436,7 +436,6 @@ bool psItemStats::ReadItemStats(iResultRow& row)
 {
     uid = row.GetUInt32("id");
     name = row["name"];
-    CacheManager::GetSingleton().AddCommmonStringID(name);
     stat_type = row["stat_type"];
     SetDescription(row["description"]);
 
