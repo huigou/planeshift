@@ -27,6 +27,7 @@
 #include <imesh/object.h>
 #include <imesh/spritecal3d.h>
 #include <iutil/object.h>
+#include <iutil/plugin.h>
 #include <ivaria/engseq.h>
 
 //=============================================================================
@@ -314,17 +315,97 @@ void psClientDR::HandleStatsUpdate( MsgEntry* me )
 
 void psClientDR::HandleStrings( MsgEntry* me )
 {
-    // receive message strings hash table
+    // Receive message strings.
     psMsgStringsMessage msg(me);
-    msgstrings = msg.msgstrings;
+
+    // Check for digest message.
+    if(msg.only_carrying_digest)
+    {
+        bool request_strings = true;
+
+        // Check for cached strings and compare with digest.
+        if(psengine->GetVFS()->Exists("/planeshift/userdata/cache/commonstrings.xml"))
+        {
+            csRef<iDataBuffer> buf = psengine->GetVFS()->ReadFile("/planeshift/userdata/cache/commonstrings.xml");
+            csRef<iDocumentSystem> docsys = csQueryRegistry<iDocumentSystem>(psengine->GetObjectRegistry());
+            csRef<iDocument> doc = docsys->CreateDocument();
+            doc->Parse(buf);
+
+            // Check that the cached strings are up to date.
+            csRef<iDocumentNode> root = doc->GetRoot();
+            if(msg.digest->HexString() == root->GetNode("md5sum")->GetContentsValue())
+            {
+                // They are, so let's load them.
+                request_strings = false;
+                msgstrings = new csStringHashReversible();
+                
+                csRef<iDocumentNodeIterator> strings = root->GetNodes("string");
+                while(strings->HasNext())
+                {
+                    csRef<iDocumentNode> string = strings->Next();
+                    msgstrings->Register(string->GetAttributeValue("string"), csStringID(string->GetAttributeValueAsInt("id")));
+                }
+            }
+        }
+
+        if(request_strings)
+        {
+            psMsgStringsMessage* request = new psMsgStringsMessage();
+            request->SendMessage();
+            return;
+        }
+    }
+    else
+    {
+        // Not a digest message, get strings.
+        msgstrings = msg.msgstrings;
+
+        // Write cache.
+        csRef<iDocumentSystem> docsys = csLoadPluginCheck<iDocumentSystem>(psengine->GetObjectRegistry(),
+            "crystalspace.documentsystem.binary");
+        csRef<iDocument> doc = docsys->CreateDocument();
+        csRef<iDocumentNode> root = doc->CreateRoot();
+
+        // Write md5sum.
+        root = root->CreateNodeBefore(CS_NODE_ELEMENT);
+        root->SetValue("md5sum");
+        root = root->CreateNodeBefore(CS_NODE_TEXT);
+        root->SetValue(msg.digest->HexString());
+
+        // Write strings.
+        root = doc->GetRoot();
+        csStringHashReversible::GlobalIterator it = msgstrings->GetIterator();
+        while (it.HasNext())
+        {
+            const char* string;
+            csStringID id = it.Next(string);
+
+            root = root->CreateNodeBefore(CS_NODE_ELEMENT);
+            root->SetValue("string");
+            root->SetAttributeAsInt("id", id.GetHash());
+            root->SetAttribute("string", string);
+            root = root->GetParent();
+        }
+
+        doc->Write(psengine->GetVFS(), "/planeshift/userdata/cache/commonstrings.xml");
+    }
+
     ((psNetManager*)psengine->GetNetManager())->GetConnection()->SetMsgStrings(msgstrings);
     ((psNetManager*)psengine->GetNetManager())->GetConnection()->SetEngine(psengine->GetEngine());
     gotStrings = true;
 
+    // Update status.
     pawsCharacterPickerWindow* charPick = (pawsCharacterPickerWindow*)PawsManager::GetSingleton().FindWidget("CharPickerWindow");
     if(charPick) // If it doesn't exist now, it will check the gotStrings flag on show. In other word no need to panic
     {
         charPick->ReceivedStrings();
+
+        if(psengine->IsLoggedIn())
+        {
+            PawsManager::GetSingleton().FindWidget("CharPickerWindow")->Show();
+            delete PawsManager::GetSingleton().FindWidget("LoginWindow");
+            delete PawsManager::GetSingleton().FindWidget("CreditsWindow");
+        }
     }    
 }
 

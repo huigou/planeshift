@@ -21,6 +21,7 @@
 //=============================================================================
 // Crystal Space Includes
 //=============================================================================
+#include <zlib.h>
 
 //=============================================================================
 // Project Space Includes
@@ -30,6 +31,8 @@
 #include "util/serverconsole.h"
 #include "util/eventmanager.h"
 #include "util/psdatabase.h"
+
+#include "net/message.h"
 
 #include "bulkobjects/psraceinfo.h"
 #include "bulkobjects/psguildinfo.h"
@@ -134,6 +137,10 @@ CacheManager::CacheManager()
     effectID = 0;
 
     commandManager = NULL;
+
+    compressed_msg_strings = 0;
+    compressed_msg_strings_size = 0;
+    num_compressed_strings = 0;
 }
 
 CacheManager::~CacheManager()
@@ -1559,6 +1566,66 @@ unsigned int CacheManager::FindCommonStringID(const char *name)
     return (id == csInvalidStringID) ? 0 : id.GetHash();
 }
 
+#define COMPRESSION_BUFFSIZE MAX_MESSAGE_SIZE/2
+#define PACKING_BUFFSIZE COMPRESSION_BUFFSIZE*3
+void CacheManager::GetCompressedMessageStrings(char*& data, unsigned long& size,
+                                               uint32_t& num_strings, csMD5::Digest& digest)
+{
+    if(compressed_msg_strings == NULL || num_compressed_strings != msg_strings.GetSize())
+    {
+        num_compressed_strings = msg_strings.GetSize();
+        delete[] compressed_msg_strings;
+        compressed_msg_strings = new char[COMPRESSION_BUFFSIZE]; // Holds compressed data.
+        compressed_msg_strings_size = 0;
+
+        char *temp = new char[PACKING_BUFFSIZE]; // Holds packed strings.
+
+        csStringHashReversible::GlobalIterator it = msg_strings.GetIterator();
+        while (it.HasNext())
+        {
+            const char* string;
+            csStringID id = it.Next(string);
+
+            // Pack ID
+            uint32 *p = (uint32*)(temp+compressed_msg_strings_size);
+            *p = csLittleEndian::UInt32(id);
+            compressed_msg_strings_size += sizeof(uint32);
+
+            // Pack string
+            strcpy(temp+compressed_msg_strings_size, string);
+            compressed_msg_strings_size += strlen(string)+1;
+        }
+
+        // Ready
+        z_stream z;
+        z.zalloc = NULL;
+        z.zfree = NULL;
+        z.opaque = NULL;
+        z.next_in = (Bytef*)temp;
+        z.avail_in = (uInt)compressed_msg_strings_size;
+        z.next_out = (Bytef*)compressed_msg_strings;
+        z.avail_out = COMPRESSION_BUFFSIZE;
+
+        // Set
+        int err = deflateInit(&z,Z_BEST_COMPRESSION);
+        CS_ASSERT(err == Z_OK);
+
+        // Go
+        err = deflate(&z,Z_FINISH);
+        CS_ASSERT(err == Z_STREAM_END);
+        deflateEnd(&z);
+
+        delete[] temp;
+
+        compressed_msg_strings_digest = csMD5::Encode(compressed_msg_strings, compressed_msg_strings_size);
+    }
+
+    data = compressed_msg_strings;
+    size = compressed_msg_strings_size;
+    num_strings = num_compressed_strings;
+    digest = compressed_msg_strings_digest;
+}
+
 psQuest *CacheManager::GetQuestByID(unsigned int id)
 {
     psQuest *quest = quests_by_id.Get(id, NULL);
@@ -2515,7 +2582,7 @@ bool CacheManager::LoadWorldItems(psSectorInfo *sector, csArray<psItem*> & items
         return false;
     }
 
-    for (int i = 0; i < result.Count(); i++)
+    for (unsigned long i = 0; i < result.Count(); i++)
     {
         psItem *item;
         unsigned int stats_id=result[i].GetUInt32("item_stats_id_standard");

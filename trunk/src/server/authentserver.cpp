@@ -80,10 +80,10 @@ AuthenticationServer::AuthenticationServer(ClientConnectionSet *pCCS,
     clients      = pCCS;
     usermanager  = usermgr;
     guildmanager = gm;
-    msgstringsmessage = NULL;
 
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<AuthenticationServer>(this,&AuthenticationServer::HandlePreAuthent),MSGTYPE_PREAUTHENTICATE,REQUIRE_ANY_CLIENT);
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<AuthenticationServer>(this,&AuthenticationServer::HandleAuthent),MSGTYPE_AUTHENTICATE,REQUIRE_ANY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<AuthenticationServer>(this,&AuthenticationServer::HandleStringsRequest),MSGTYPE_MSGSTRINGS,REQUIRE_ANY_CLIENT);
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<AuthenticationServer>(this,&AuthenticationServer::HandleDisconnect),MSGTYPE_DISCONNECT,REQUIRE_ANY_CLIENT);
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<AuthenticationServer>(this,&AuthenticationServer::HandleAuthCharacter),MSGTYPE_AUTHCHARACTER,REQUIRE_ANY_CLIENT);
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<AuthenticationServer>(this,&AuthenticationServer::HandleStatusUpdate),MSGTYPE_CLIENTSTATUS,REQUIRE_ANY_CLIENT);
@@ -95,12 +95,11 @@ AuthenticationServer::~AuthenticationServer()
     {
         psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_PREAUTHENTICATE);
         psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_AUTHENTICATE);
+        psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_MSGSTRINGS);
         psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_DISCONNECT);
         psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_AUTHCHARACTER);
         psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_CLIENTSTATUS);
     }
-    if (msgstringsmessage)
-        delete msgstringsmessage;
 }
 
 
@@ -470,7 +469,7 @@ void AuthenticationServer::HandleAuthent(MsgEntry *me, Client *notused)
     cam->msg->SendMessage();
     CacheManager::GetSingleton().AddToCache(cam, CacheManager::GetSingleton().MakeCacheName("auth",acctinfo->accountid), 10);
 
-    SendMsgStrings(me->clientnum); 
+    SendMsgStrings(me->clientnum, true); 
     
     client->SetSpamPoints(acctinfo->spamPoints);
     client->SetAdvisorPoints(acctinfo->advisorPoints);
@@ -535,18 +534,36 @@ void AuthenticationServer::SendDisconnect(Client* client, const char *reason)
     }
 }
 
-void AuthenticationServer::SendMsgStrings(int cnum)
+void AuthenticationServer::HandleStringsRequest(MsgEntry* me, Client *client)
 {
+    SendMsgStrings(me->clientnum, false);
+}
+
+void AuthenticationServer::SendMsgStrings(int cnum, bool send_digest)
+{
+    psMsgStringsMessage* msgstringsmessage;
+    char* data;
+    unsigned long size;
+    uint32_t num_strings;
+    csMD5::Digest digest;
+
+    // Get strings data.
+    CacheManager::GetSingleton().GetCompressedMessageStrings(data, size, num_strings, digest);
+
     // send message strings hash table to client
-    if (!msgstringsmessage)
-        msgstringsmessage = new psMsgStringsMessage(cnum, CacheManager::GetSingleton().GetMsgStrings());
+    if (send_digest)
+    {
+        msgstringsmessage = new psMsgStringsMessage(cnum, digest);
+    }
     else
-        msgstringsmessage->msg->clientnum = cnum;
+    {
+        msgstringsmessage = new psMsgStringsMessage(cnum, digest, data, size, num_strings);
+    }
+
     if (!msgstringsmessage->valid)
     {
         Bug1("Could not form a valid psMsgStringsMessage from Message Strings!\n");
         delete msgstringsmessage;
-        msgstringsmessage=NULL;
     }
     else
         msgstringsmessage->SendMessage();

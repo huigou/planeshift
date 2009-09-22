@@ -131,7 +131,7 @@ public:
     /** Util function to send string hash to client, because authentserver and
      *  npcmanager both send these.
      */
-    void SendMsgStrings(int cnum);
+    void SendMsgStrings(int cnum, bool send_digest);
 
     /** Updates the status of the client. Currently is used to set client to ready.
      */
@@ -150,9 +150,6 @@ protected:
     
     /// Is a manager for the guilds.
     GuildManager *guildmanager;
-
-    /// This holds a large message which is sent the same way to every client.
-    psMsgStringsMessage *msgstringsmessage;
 
     /// Manages banned users and IP ranges
     BanManager banmanager;
@@ -173,6 +170,11 @@ protected:
      * @see psAuthMessageApproved 
      */
     void HandleAuthent(MsgEntry *me, Client *notused);
+
+    /** Handles a request for messsage strings from a client.
+     */
+    void HandleStringsRequest(MsgEntry* me, Client *notused);
+
     /*  This just questsions a random number (clientnum) from server 
     *   It is used for authenticating*/
     void HandlePreAuthent(MsgEntry *me, Client *notused);
