@@ -1307,11 +1307,11 @@ ALTER TABLE `item_stats` MODIFY COLUMN `cstr_gfx_texture` VARCHAR(200) NOT NULL 
 ALTER TABLE `item_stats` CHANGE COLUMN `cstr_id_part` `cstr_part` VARCHAR(200) DEFAULT '';
 UPDATE `item_stats` set cstr_part=(select string from common_strings where id=cstr_part);
 UPDATE `item_stats` set cstr_part='' where cstr_part is null;
-ALTER TABLE `item_stats` MODIFY COLUMN `cstr_gfx_part` VARCHAR(200) NOT NULL DEFAULT '';
+ALTER TABLE `item_stats` MODIFY COLUMN `cstr_part` VARCHAR(200) NOT NULL DEFAULT '';
 ALTER TABLE `item_stats` CHANGE COLUMN `cstr_id_part_mesh` `cstr_part_mesh` VARCHAR(200) DEFAULT '';
 UPDATE `item_stats` set cstr_part_mesh=(select string from common_strings where id=cstr_part_mesh);
 UPDATE `item_stats` set cstr_part_mesh='' where cstr_part_mesh is null;
-ALTER TABLE `item_stats` MODIFY COLUMN `cstr_gfx_part_mesh` VARCHAR(200) NOT NULL DEFAULT '';
+ALTER TABLE `item_stats` MODIFY COLUMN `cstr_part_mesh` VARCHAR(200) NOT NULL DEFAULT '';
 ALTER TABLE `quests` CHANGE COLUMN `cstr_id_icon` `cstr_icon` VARCHAR(200) DEFAULT '';
 UPDATE `quests` set cstr_icon=(select string from common_strings where id=cstr_icon);
 UPDATE `quests` set cstr_icon='' where cstr_icon is null;
