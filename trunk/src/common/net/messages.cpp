@@ -4781,7 +4781,7 @@ void psPersistActor::SetInstance(InstanceID instance)
 
 //------------------------------------------------------------------------------
 
-PSF_IMPLEMENT_MSG_FACTORY(psPersistItem,MSGTYPE_PERSIST_ITEM);
+PSF_IMPLEMENT_MSG_FACTORY4(psPersistItem,MSGTYPE_PERSIST_ITEM);
 
 psPersistItem::psPersistItem( uint32_t clientNum,
                               EID eid,
@@ -4794,19 +4794,20 @@ psPersistItem::psPersistItem( uint32_t clientNum,
                               float xRot,
                               float yRot,
                               float zRot,
-                              uint32_t flags)
+                              uint32_t flags,
+                              csStringSet* msgstrings)
 {
-    msg.AttachNew(new MsgEntry( 5000 ));
+    msg.AttachNew(new MsgEntry( MAX_MESSAGE_SIZE ));
 
     msg->SetType(MSGTYPE_PERSIST_ITEM);
     msg->clientnum  = clientNum;
 
     msg->Add(eid.Unbox());
     msg->Add( (uint32_t) type );
-    msg->Add( name );
-    msg->Add( factname );
-    msg->Add( matname );
-    msg->Add( sector );
+    msg->Add( msgstrings->Request(name).GetHash() );
+    msg->Add( msgstrings->Request(factname).GetHash() );
+    msg->Add( msgstrings->Request(matname).GetHash() );
+    msg->Add( msgstrings->Request(sector).GetHash() );
     msg->Add( pos );
     msg->Add( xRot );
     msg->Add( yRot );
@@ -4820,14 +4821,14 @@ psPersistItem::psPersistItem( uint32_t clientNum,
 }
 
 
-psPersistItem::psPersistItem( MsgEntry* me )
+psPersistItem::psPersistItem( MsgEntry* me, csStringHashReversible* msgstrings )
 {
     eid         = EID(me->GetUInt32());
     type        = me->GetUInt32();
-    name        = csString ( me->GetStr() );
-    factname    = csString ( me->GetStr() );
-    matname     = csString ( me->GetStr() );
-    sector      = csString ( me->GetStr() );
+    name        = csString ( msgstrings->Request(csStringID(me->GetUInt32())) );
+    factname    = csString ( msgstrings->Request(csStringID(me->GetUInt32())) );
+    matname     = csString ( msgstrings->Request(csStringID(me->GetUInt32())) );
+    sector      = csString ( msgstrings->Request(csStringID(me->GetUInt32())) );
     pos         = me->GetVector();
     xRot        = me->GetFloat();
     yRot        = me->GetFloat();
@@ -4835,7 +4836,8 @@ psPersistItem::psPersistItem( MsgEntry* me )
     if (!me->IsEmpty())
     {
         flags   = me->GetUInt32();
-    } else
+    }
+    else
     {
         flags   = 0;
     }
