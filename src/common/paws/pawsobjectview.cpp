@@ -151,7 +151,10 @@ bool pawsObjectView::LoadMap( const char* map, const char* sector )
 bool pawsObjectView::ContinueLoad()
 {
     if(loader->GetLoadingCount() == 0)
+    {
+        stage->PrecacheDraw();
         return true;
+    }
 
     loader->ContinueLoading(false);
     return false;
