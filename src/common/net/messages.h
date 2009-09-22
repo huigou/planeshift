@@ -24,6 +24,7 @@
 #include <csutil/csstring.h>
 #include <csutil/array.h>
 #include <csutil/stringarray.h>
+#include <csutil/strset.h>
 #include <csutil/databuf.h>
 #include <csutil/csmd5.h>
 #include "util/psscf.h"
@@ -40,6 +41,7 @@
 struct iSpriteCal3DState;
 struct iEngine;
 class psLinearMovement;
+class csStringHashReversible;
 
 // This holds the version number of the network code, remember to increase
 // this each time you do an update which breaks compatibility
@@ -316,7 +318,8 @@ public:
      */
     struct AccessPointers
     {
-        csStringHashReversible* msgstrings;
+        csStringSet* msgstrings;
+        csStringHashReversible* msgstringshash;
         iEngine *engine;
     };
 
@@ -378,7 +381,7 @@ public:
 typedef psMessageCracker* (*psfMsgFactoryFunc)(MsgEntry* me,psMessageCracker::AccessPointers * access_ptrs);
 
 csString GetMsgTypeName(int msgType);
-csString GetDecodedMessage(MsgEntry* me, csStringHashReversible* msgstrings, iEngine *engine, bool filterhex);
+csString GetDecodedMessage(MsgEntry* me, csStringSet* msgstrings, csStringHashReversible* msgstringshash, iEngine *engine, bool filterhex);
 
 void psfRegisterMsgFactoryFunction(psfMsgFactoryFunc factoryfunc, int msgtype, const char* msgtypename);
 psMessageCracker* psfCreateMsg(int msgtype,
@@ -435,6 +438,21 @@ int psfMsgType(const char * msgTypeName);
     PSF_IMPLEMENT_MSG_FACTORY_REGISTER(Class,MsgType)             \
     PSF_IMPLEMENT_MSG_FACTORY_TYPENAME(Class,MsgType)             \
     PSF_IMPLEMENT_MSG_FACTORY_CREATE2(Class)
+
+#define PSF_IMPLEMENT_MSG_FACTORY_CREATE3(Class)                  \
+    psMessageCracker* Class::CreateMessage(MsgEntry * me,         \
+           psMessageCracker::AccessPointers * a_p)                \
+    {                                                             \
+        return (psMessageCracker*)new Class(me,                   \
+                                            a_p->msgstrings,      \
+                                            a_p->msgstringshash,  \
+                                            a_p->engine);         \
+    }
+
+#define PSF_IMPLEMENT_MSG_FACTORY3(Class,MsgType)                 \
+    PSF_IMPLEMENT_MSG_FACTORY_REGISTER(Class,MsgType)             \
+    PSF_IMPLEMENT_MSG_FACTORY_TYPENAME(Class,MsgType)             \
+    PSF_IMPLEMENT_MSG_FACTORY_CREATE3(Class)
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -2837,9 +2855,9 @@ protected:
                     bool on_ground, uint8_t mode, uint8_t counter,
                     const csVector3& pos, float yrot, iSector *sector,
                     csString sectorName, const csVector3& vel, csVector3& worldVel,
-                    float ang_vel, csStringHashReversible* msgstrings, bool donewriting=true);
-    void ReadDRInfo( MsgEntry* me, csStringHashReversible* msgstrings, iEngine *engine);
-    void CreateMsgEntry(uint32_t client, csStringHashReversible* msgstrings, iSector *sector, csString sectorName);
+                    float ang_vel, csStringSet* msgstrings, bool donewriting=true);
+    void ReadDRInfo( MsgEntry* me, csStringSet* msgstrings, csStringHashReversible* msgstringshash, iEngine *engine);
+    void CreateMsgEntry(uint32_t client, csStringSet* msgstrings, csStringHashReversible* msgstringshash, iSector *sector, csString sectorName);
 
     /// Flags indicating what components are packed in this message
     enum DRDataFlags
@@ -2875,14 +2893,15 @@ public:
 
     psDRMessage() { }
     psDRMessage(uint32_t client, EID mappedid, uint8_t counter,
-                csStringHashReversible* msgstrings, psLinearMovement *linmove, uint8_t mode=0);
+                csStringSet* msgstrings, csStringHashReversible* msgstringshash,
+                psLinearMovement *linmove, uint8_t mode=0);
     psDRMessage(uint32_t client, EID mappedid,
                 bool on_ground, uint8_t mode, uint8_t counter,
                 const csVector3& pos, float yrot, iSector *sector, csString sectorName,
                 const csVector3& vel, csVector3& worldVel, float ang_vel,
-                csStringHashReversible* msgstrings);
-    psDRMessage(void *data,int size, csStringHashReversible* msgstrings, iEngine *engine);
-    psDRMessage( MsgEntry* me, csStringHashReversible* msgstrings, iEngine *engine);
+                csStringSet* msgstrings, csStringHashReversible* msgstringshash);
+    psDRMessage(void *data,int size, csStringSet* msgstrings, csStringHashReversible* msgstringshash, iEngine *engine);
+    psDRMessage( MsgEntry* me, csStringSet* msgstrings, csStringHashReversible* msgstringshash, iEngine *engine);
 
     /// Returns true if this message is newer than the passed DR sequence value
     bool IsNewerThan(uint8_t oldCounter);
@@ -2913,8 +2932,8 @@ public:
     psForcePositionMessage() { }
     psForcePositionMessage(uint32_t client, uint8_t sequence,
                            const csVector3& pos, float yRot, iSector *sector,
-                           csStringHashReversible *msgstrings);
-    psForcePositionMessage(MsgEntry *me, csStringHashReversible *msgstrings, iEngine *engine);
+                           csStringSet *msgstrings);
+    psForcePositionMessage(MsgEntry *me, csStringSet *msgstrings, csStringHashReversible* msgstringshash, iEngine *engine);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -3041,13 +3060,13 @@ public:
                     const char* texParts,
                     const char* equipmentParts,
                     uint8_t counter,
-                    EID mappedid, csStringHashReversible* msgstrings, psLinearMovement *linmove,
+                    EID mappedid, csStringSet* msgstrings, psLinearMovement *linmove,
                     uint8_t movementMode,
                     uint8_t serverMode,
                     PID playerID = 0, uint32_t groupID = 0, EID ownerEID = 0,
                     uint32_t flags = NONE );
 
-    psPersistActor( MsgEntry* me, csStringHashReversible* msgstrings, iEngine *engine );
+    psPersistActor( MsgEntry* me, csStringSet* msgstrings, csStringHashReversible* msgstringshash, iEngine *engine );
 
     PSF_DECLARE_MSG_FACTORY();
 

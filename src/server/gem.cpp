@@ -3375,7 +3375,7 @@ void gemActor::MulticastDRUpdate()
     pcmove->GetDRData(on_ground,speed,pos,yrot,sector,vel,worldVel,ang_vel);
     psDRMessage drmsg(0, eid, on_ground, movementMode, DRcounter,
                       pos,yrot,sector, "", vel,worldVel,ang_vel,
-                      CacheManager::GetSingleton().GetMsgStrings() );
+                      CacheManager::GetSingleton().GetMsgStrings(), 0 );
     drmsg.Multicast(GetMulticastClients(),0,PROX_LIST_ANY_RANGE);
 }
 

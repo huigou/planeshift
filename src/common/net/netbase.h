@@ -30,6 +30,7 @@
 #include <csutil/weakref.h>
 #include <csutil/weakreferenced.h>
 #include <csutil/refcount.h>
+#include <csutil/strset.h>
 #include <csutil/array.h>
 #include "netprofile.h"
 
@@ -198,9 +199,12 @@ public:
     struct timeval timeout;
 
     /// Set the MsgString Hash
-    void SetMsgStrings(csStringHashReversible* msgstrings) { this->msgstrings = msgstrings; }
-    /// Get the MsgString Hash
-    csStringHashReversible* GetMsgStrings() { return msgstrings; }
+    void SetMsgStrings(csStringSet* msgstrings, csStringHashReversible* msgstringshash)
+    {
+        this->msgstrings = msgstrings;
+        this->msgstringshash = msgstringshash;
+    }
+
     /// Set the Engine
     void SetEngine(iEngine* engine) { this->engine = engine; }
     /// Get the Engine
@@ -578,8 +582,11 @@ private:
     /** network information layer */
     psNetInfos netInfos;
 
+    /** MsgString Set */
+    csStringSet* msgstrings;
+
     /** MsgString Hash */
-    csStringHashReversible * msgstrings;
+    csStringHashReversible* msgstringshash;
 
     /** Engine */
     iEngine * engine;

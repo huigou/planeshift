@@ -113,20 +113,15 @@ bool psRaceInfo::Load(iResultRow& row)
     baseRegen[PSRACEINFO_STAMINA_MENTAL_STILL]   = row.GetFloat("base_mental_regen_still");
     baseRegen[PSRACEINFO_STAMINA_MENTAL_WALK]    = row.GetFloat("base_mental_regen_walk");
 
-    const char *meshname=CacheManager::GetSingleton().FindCommonString(row.GetUInt32("cstr_id_mesh"));
-    if (meshname==NULL)
+    mesh_name = row["cstr_mesh"];
+    if(!mesh_name)
     {
-        Warning3(LOG_ANY,"Unresolvable mesh id %lu in mesh_id field of race info for race %s. Using NULL mesh.",
-                 row.GetUInt32("cstr_id_mesh"),name.GetData() );
+        Error2("Invalid 'cstr_mesh' for race '%s'\n", name.GetData());
     }
-    mesh_name = meshname;
+    CacheManager::GetSingleton().FindCommonStringID(mesh_name);
 
-    base_texture_name = CacheManager::GetSingleton().FindCommonString(row.GetUInt32("cstr_id_base_texture"));
-    if (base_texture_name==NULL)
-    {
-        Warning3(LOG_ANY,"Unresolvable texture id %lu in base_texture_id field of race info for race %s. Using NULL texture.",
-                 row.GetUInt32("base_texture_id"),name.GetData() );
-    }
+    base_texture_name = row["cstr_base_texture"];
+    CacheManager::GetSingleton().FindCommonStringID(base_texture_name);
 
     // Load starting stats
     SetBaseAttribute(PSITEMSTATS_STAT_STRENGTH      ,row.GetUInt32("start_str"));
@@ -152,7 +147,7 @@ bool psRaceInfo::LoadBaseSpeeds(iObjectRegistry *object_reg)
     csRef<iDocument> doc = xml->CreateDocument();
 
     csString meshFileName;
-    meshFileName.Format("/planeshift/meshes/%s", mesh_name);
+    meshFileName.Format("/planeshift/meshes/%s", mesh_name.GetData());
     csRef<iDataBuffer> buf (vfs->ReadFile (meshFileName.GetData()));
     if (!buf || !buf->GetSize ())
     {

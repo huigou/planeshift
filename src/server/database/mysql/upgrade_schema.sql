@@ -1287,6 +1287,36 @@ UPDATE `server_options` SET `option_value`='1228' WHERE `option_name`='db_versio
 DROP TABLE character_advantages;
 UPDATE `server_options` SET `option_value`='1229' WHERE `option_name`='db_version';
 
+#1230 - Mike Gist - Remove common_strings, update field names and types.
+ALTER TABLE `item_animations` CHANGE COLUMN `cstr_id_animation` `cstr_animation` VARCHAR(200) DEFAULT '';
+UPDATE `item_animations` set cstr_animation=(select string from common_strings where id=cstr_animation);
+ALTER TABLE `item_stats` CHANGE COLUMN `cstr_id_gfx_mesh` `cstr_gfx_mesh` VARCHAR(200) DEFAULT '';
+UPDATE `item_stats` set cstr_gfx_mesh=(select string from common_strings where id=cstr_gfx_mesh);
+ALTER TABLE `item_stats` CHANGE COLUMN `cstr_id_gfx_icon` `cstr_gfx_icon` VARCHAR(200) DEFAULT '';
+UPDATE `item_stats` set cstr_gfx_icon=(select string from common_strings where id=cstr_gfx_icon);
+ALTER TABLE `item_stats` CHANGE COLUMN `cstr_id_gfx_texture` `cstr_gfx_texture` VARCHAR(200) DEFAULT '';
+UPDATE `item_stats` set cstr_gfx_texture=(select string from common_strings where id=cstr_gfx_texture);
+ALTER TABLE `item_stats` CHANGE COLUMN `cstr_id_part` `cstr_part` VARCHAR(200) DEFAULT '';
+UPDATE `item_stats` set cstr_part=(select string from common_strings where id=cstr_part);
+ALTER TABLE `item_stats` CHANGE COLUMN `cstr_id_part_mesh` `cstr_part_mesh` VARCHAR(200) DEFAULT '';
+UPDATE `item_stats` set cstr_part_mesh=(select string from common_strings where id=cstr_part_mesh);
+ALTER TABLE `quests` CHANGE COLUMN `cstr_id_icon` `cstr_icon` VARCHAR(200) DEFAULT '';
+UPDATE `quests` set cstr_icon=(select string from common_strings where id=cstr_icon);
+ALTER TABLE `race_info` CHANGE COLUMN `cstr_id_mesh` `cstr_mesh` VARCHAR(200) DEFAULT '';
+UPDATE `race_info` set cstr_mesh=(select string from common_strings where id=cstr_mesh);
+ALTER TABLE `race_info` CHANGE COLUMN `cstr_id_base_texture` `cstr_base_texture` VARCHAR(200) DEFAULT '';
+UPDATE `race_info` set cstr_base_texture=(select string from common_strings where id=cstr_base_texture);
+ALTER TABLE `spells` MODIFY COLUMN `cstr_npc_spell_category` VARCHAR(200) DEFAULT '';
+UPDATE `spells` set cstr_npc_spell_category=(select string from common_strings where id=cstr_npc_spell_category);
+ALTER TABLE `traits` CHANGE COLUMN `cstr_id_mesh` `cstr_mesh` VARCHAR(200) DEFAULT '';
+UPDATE `traits` set cstr_mesh=(select string from common_strings where id=cstr_mesh);
+ALTER TABLE `traits` CHANGE COLUMN `cstr_id_material` `cstr_material` VARCHAR(200)  DEFAULT '';
+UPDATE `traits` set cstr_material=(select string from common_strings where id=cstr_material);
+ALTER TABLE `traits` CHANGE COLUMN `cstr_id_texture` `cstr_texture` VARCHAR(200) DEFAULT '';
+UPDATE `traits` set cstr_texture=(select string from common_strings where id=cstr_texture);
+DROP TABLE common_strings;
+UPDATE `server_options` SET `option_value`='1230' WHERE `option_name`='db_version';
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to

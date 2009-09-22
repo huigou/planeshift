@@ -488,60 +488,33 @@ bool psItemStats::ReadItemStats(iResultRow& row)
     }
 
     // Mesh, Texture, Part and Image strings
-    const char *meshname = CacheManager::GetSingleton().FindCommonString(row.GetUInt32("cstr_id_gfx_mesh"));
-    if (row.GetUInt32("cstr_id_gfx_mesh")!=0 && !meshname)
+    const char *meshname = row["cstr_gfx_mesh"];
+    if(!meshname)
     {
-        Error3("Error, no commonstring exists with number %lu (cstr_id_gfx_mesh) while loading item_stats.id %u.\n",row.GetUInt32("cstr_id_gfx_mesh"),uid);
-        return false;
+        Error2("Invalid 'cstr_gfx_mesh' for mesh '%s'\n", name.GetData());
     }
-    else
-    {
-        SetMeshName(meshname);
-    }
+    CacheManager::GetSingleton().FindCommonStringID(meshname);
+    SetMeshName(meshname);
 
-    const char *texturename = CacheManager::GetSingleton().FindCommonString(row.GetUInt32("cstr_id_gfx_texture"));
-    if (row.GetUInt32("cstr_id_gfx_texture")!=0 && !texturename)
-    {
-        Error3("Error, no commonstring exists with number %lu (cstr_id_gfx_texture) while loading item_stats.id %u.\n",row.GetUInt32("cstr_id_gfx_texture"),uid);
-        return false;
-    }
-    else
-    {
-        SetTextureName(texturename);
-    }
+    const char *texturename = row["cstr_gfx_texture"];
+    CacheManager::GetSingleton().FindCommonStringID(texturename);
+    SetTextureName(texturename);
 
-    const char *partname = CacheManager::GetSingleton().FindCommonString(row.GetUInt32("cstr_id_part"));
-    if (row.GetUInt32("cstr_id_part")!=0 && !texturename)
-    {
-        Error3("Error, no commonstring exists with number %lu (cstr_id_part) while loading item_stats.id %u.\n",row.GetUInt32("cstr_id_part"),uid);
-        return false;
-    }
-    else
-    {
-        SetPartName(partname);
-    }
+    const char *partname = row["cstr_part"];
+    CacheManager::GetSingleton().FindCommonStringID(partname);
+    SetPartName(partname);
 
-    const char *imagename = CacheManager::GetSingleton().FindCommonString(row.GetUInt32("cstr_id_gfx_icon"));
-    if (row.GetUInt32("cstr_id_gfx_icon")!=0 && !texturename)
+    const char *imagename = row["cstr_gfx_icon"];
+    if(!imagename)
     {
-        Error3("Error, no commonstring exists with number %lu (cstr_id_gfx_icon) while loading item_stats.id %u.\n",row.GetUInt32("cstr_id_gfx_icon"),uid);
-        return false;
+        Error2("Invalid 'cstr_gfx_icon' for mesh '%s'\n", name.GetData());
     }
-    else
-    {
-        SetImageName(imagename);
-    }
+    CacheManager::GetSingleton().FindCommonStringID(imagename);
+    SetImageName(imagename);
 
-    const char *partmeshname = CacheManager::GetSingleton().FindCommonString(row.GetUInt32("cstr_id_part_mesh"));
-    if (row.GetUInt32("cstr_id_part_mesh")!=0 && !texturename)
-    {
-        Error3("Error, no commonstring exists with number %lu (cstr_id_part_mesh) while loading item_stats.id %u.\n",row.GetUInt32("cstr_id_part_mesh"),uid);
-        return false;
-    }
-    else
-    {
-        SetPartMeshName(partmeshname);
-    }
+    const char *partmeshname = row["cstr_part_mesh"];
+    CacheManager::GetSingleton().FindCommonStringID(partmeshname);
+    SetPartMeshName(partmeshname);
 
     SetPrice(row.GetInt("base_sale_price"));
     int categoryId = row.GetInt("category_id");

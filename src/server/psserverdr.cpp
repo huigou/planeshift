@@ -140,7 +140,7 @@ void psServerDR::ResetPos(gemActor* actor)
 
 void psServerDR::HandleDeadReckoning(MsgEntry* me,Client *client)
 {
-    psDRMessage drmsg(me,CacheManager::GetSingleton().GetMsgStrings(),EntityManager::GetSingleton().GetEngine() );
+    psDRMessage drmsg(me,CacheManager::GetSingleton().GetMsgStrings(),0,EntityManager::GetSingleton().GetEngine() );
     if (!drmsg.valid)
     {
         Error2("Received unparsable psDRMessage from client %u.\n",me->clientnum);

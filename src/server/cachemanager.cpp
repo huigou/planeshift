@@ -150,10 +150,6 @@ CacheManager::~CacheManager()
 
 bool CacheManager::PreloadAll()
 {
-    maxCommonStrID = db->SelectSingleNumber("SELECT MAX(id) FROM common_strings");
-
-    if (!PreloadCommonStrings())
-        return false;
     if (!PreloadSectors())
         return false;
     if (!PreloadSkills())
@@ -460,8 +456,7 @@ bool CacheManager::PreloadSkills()
             skillinfo_NameHash.Put(csString(newskill->name).Upcase(), newskill);
             skillinfo_CategoryHash.Put((int)newskill->category, newskill);
             
-            maxCommonStrID++;
-            msg_strings.Register(newskill->name,(csStringID)maxCommonStrID);
+            msg_strings.Request(newskill->name);
         }
     }
     Notify2( LOG_STARTUP, "%lu Skills Loaded", result.Count() );
@@ -558,8 +553,7 @@ bool CacheManager::PreloadSectors()
         sectorinfo_by_id.Put(newsector->uid,newsector);
         sectorinfo_by_name.Put(csHashCompute(newsector->name),newsector);
 
-        maxCommonStrID++;
-        msg_strings.Register(newsector->name,(csStringID)maxCommonStrID);
+        msg_strings.Request(newsector->name);
     }
 
     Notify2( LOG_STARTUP, "%lu Sectors Loaded", result.Count() );
@@ -709,25 +703,6 @@ bool CacheManager::PreloadArmorVsWeapon()
 
 
     Notify2( LOG_STARTUP, "%lu Armor vs Weapon Loaded", result.Count() );
-    return true;
-}
-
-bool CacheManager::PreloadCommonStrings()
-{
-    unsigned int currentrow;
-    Result result(db->Select("select id,string from common_strings"));
-
-    if (!result.IsValid())
-    {
-        return false;
-    }
-
-    for (currentrow=0; currentrow<result.Count(); currentrow++)
-    {
-        msg_strings.Register(result[currentrow]["string"],(csStringID)result[currentrow].GetUInt32("id"));
-    }
-
-    Notify2( LOG_STARTUP, "%zu Common Strings Loaded", msg_strings.GetSize() );
     return true;
 }
 
@@ -1747,9 +1722,9 @@ bool CacheManager::PreloadTraits()
         newtrait->next_trait_uid    = result[currentrow].GetUInt32("next_trait");
         newtrait->raceID            = result[currentrow].GetUInt32("race_id");
         newtrait->name              = result[currentrow]["name"];
-        newtrait->cstr_id_mesh      = result[currentrow].GetUInt32("cstr_id_mesh");
-        newtrait->cstr_id_material  = result[currentrow].GetUInt32("cstr_id_material");
-        newtrait->cstr_id_texture   = result[currentrow].GetUInt32("cstr_id_texture");
+        newtrait->cstr_id_mesh      = FindCommonStringID(result[currentrow]["cstr_mesh"]);
+        newtrait->cstr_id_material  = FindCommonStringID(result[currentrow]["cstr_material"]);
+        newtrait->cstr_id_texture   = FindCommonStringID(result[currentrow]["cstr_texture"]);
         newtrait->onlyNPC           = result[currentrow].GetInt("only_npc") != 0;
         newtrait->shaderVar         = result[currentrow]["shader"];
 
@@ -1963,8 +1938,7 @@ psRaceInfo *CacheManager::GetRaceInfoByMeshName(const csString & meshname)
     for (i=0;i<raceinfolist.GetSize();i++)
     {
         currentri=raceinfolist.Get(i);
-        csString meshName(currentri->mesh_name);
-        if (currentri!=NULL && meshName==meshname)
+        if (currentri!=NULL && currentri->mesh_name==meshname)
         {
             return currentri;
         }
@@ -2539,8 +2513,12 @@ bool CacheManager::PreloadItemAnimList()
         }
         newitem            = new psItemAnimation;
         newitem->id        = id;
-        newitem->anim_name = FindCommonString( result[currentrow].GetInt("cstr_id_animation") );
-        newitem->anim_id   = csInvalidStringID;
+        newitem->anim_name = result[currentrow]["cstr_animation"];
+        if(!newitem->anim_name)
+        {
+            Error2("Invalid 'cstr_animation' for item anim '%u'\n", id);
+        }
+        newitem->anim_id   = FindCommonStringID(newitem->anim_name);
         newitem->flags     = result[currentrow].GetInt("type_flags");
         newitem->min_level_required = result[currentrow].GetInt("min_use_level");
 

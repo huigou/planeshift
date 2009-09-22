@@ -196,7 +196,7 @@ void NetworkManager::HandleMessage(MsgEntry *me)
             // receive message strings hash table
             psMsgStringsMessage msg(me);
             msgstrings = msg.msgstrings;
-            connection->SetMsgStrings(msgstrings);
+            connection->SetMsgStrings(0, msgstrings);
             connection->SetEngine(engine);
             break;
         }
@@ -238,7 +238,7 @@ void NetworkManager::HandleRaceList( MsgEntry* me)
 
 void NetworkManager::HandleActor( MsgEntry* me )
 {
-    psPersistActor mesg( me, GetMsgStrings(), engine );
+    psPersistActor mesg( me, 0, GetMsgStrings(), engine );
 
     gemNPCObject * obj = npcclient->FindEntityID(mesg.entityid);
 
@@ -411,7 +411,7 @@ void NetworkManager::HandlePositionUpdates(MsgEntry *msg)
         iSector* sector;
         InstanceID instance;
 
-        EID id = updates.Get(pos, sector, instance, npcclient->GetNetworkMgr()->GetMsgStrings(), engine);
+        EID id = updates.Get(pos, sector, instance, 0, npcclient->GetNetworkMgr()->GetMsgStrings(), engine);
         npcclient->SetEntityPos(id, pos, sector, instance);
     }
 }
@@ -924,7 +924,7 @@ void NetworkManager::QueueDRData(gemNPCActor *entity, psLinearMovement *linmove,
         SendAllCommands();
     }
    
-    psDRMessage drmsg(0,entity->GetEID(),counter,msgstrings,linmove);
+    psDRMessage drmsg(0,entity->GetEID(),counter,0,msgstrings,linmove);
 
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_DRDATA);
     outbound->msg->Add( drmsg.msg->bytes->payload,(uint32_t)drmsg.msg->bytes->GetTotalSize() );

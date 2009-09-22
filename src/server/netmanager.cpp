@@ -107,7 +107,7 @@ bool NetManager::Initialize(int client_firstmsg, int npcclient_firstmsg, int tim
     if (!clients.Initialize())
         return false;
 
-    SetMsgStrings(CacheManager::GetSingleton().GetMsgStrings());
+    SetMsgStrings(CacheManager::GetSingleton().GetMsgStrings(), 0);
 
     return true;
 }

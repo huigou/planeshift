@@ -1558,7 +1558,7 @@ void GEMClientActor::SendDRUpdate(unsigned char priority, csStringHashReversible
     // ++DRcounter is the sequencer of these messages so the server and other
     // clients do not use out of date messages when delivered out of order.
     psDRMessage drmsg(0, mappedid, on_ground, 0, ++DRcounter, pos, yrot, sector,
-        sector->QueryObject()->GetName(), vel, worldVel, ang_vel, msgstrings);
+        sector->QueryObject()->GetName(), vel, worldVel, ang_vel, 0, msgstrings);
     drmsg.msg->priority = priority;
 
     //if (hackflag)

@@ -804,7 +804,7 @@ void NetBase::LogMessages(char dir,MsgEntry* me)
 {
     if (DoLogDebug(LOG_MESSAGES) && !FilterLogMessage(me->bytes->type,dir))
         Debug3(LOG_MESSAGES,0,"%c: %s\n",dir,
-               GetDecodedMessage(me,msgstrings,engine,logmsgfiltersetting.filterhex).GetData());
+               GetDecodedMessage(me,msgstrings, msgstringshash,engine,logmsgfiltersetting.filterhex).GetData());
 }
 
 csString NetBase::LogMessageFilter(char *arg)

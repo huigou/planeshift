@@ -267,7 +267,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                 if (access_ptrs->msgstrings && access_ptrs->engine)
                 {
                     psDRMessage drmsg(data,len,
-                                      access_ptrs->msgstrings,
+                                      access_ptrs->msgstrings, access_ptrs->msgstringshash,
                                       access_ptrs->engine);  // alternate method of cracking 
 
                     msgtext.Append(drmsg.ToString(access_ptrs));
@@ -587,7 +587,11 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                 EID target = EID(msg->GetUInt32());
                 uint32_t strhash = msg->GetUInt32();
                 float    severity = msg->GetInt8() / 10;
-                csString type = access_ptrs->msgstrings->Request(strhash);
+                csString type;
+                if(access_ptrs->msgstrings)
+                    type = access_ptrs->msgstrings->Request(strhash);
+                else if(access_ptrs->msgstringshash)
+                    type = access_ptrs->msgstringshash->Request(strhash);
 
                 msgtext.AppendFmt("Caster: %u Target: %u Type: \"%s\"(%u) Severity: %f ", caster.Unbox(), target.Unbox(), type.GetData(), strhash, severity);
                 break;
@@ -732,7 +736,7 @@ void psAllEntityPosMessage::SetLength(int elems, int client)
     msg->Add((int16_t)elems);
 }
 
-void psAllEntityPosMessage::Add(EID id, csVector3& pos, iSector*& sector, InstanceID instance, csStringHashReversible* msgstrings)
+void psAllEntityPosMessage::Add(EID id, csVector3& pos, iSector*& sector, InstanceID instance, csStringSet* msgstrings)
 {
     msg->Add(id.Unbox());
     msg->Add(pos.x);
@@ -751,7 +755,8 @@ void psAllEntityPosMessage::Add(EID id, csVector3& pos, iSector*& sector, Instan
     msg->Add( (int32_t)instance );
 }
 
-EID psAllEntityPosMessage::Get(csVector3& pos, iSector*& sector, InstanceID& instance, csStringHashReversible* msgstrings, iEngine *engine)
+EID psAllEntityPosMessage::Get(csVector3& pos, iSector*& sector, InstanceID& instance, csStringSet* msgstrings,
+                               csStringHashReversible* msgstringshash, iEngine *engine)
 {
     EID eid(msg->GetUInt32());
     pos.x = msg->GetFloat();
@@ -763,7 +768,10 @@ EID psAllEntityPosMessage::Get(csVector3& pos, iSector*& sector, InstanceID& ins
     sectorNameStrId = msg->GetUInt32();
     if (sectorNameStrId != csStringID(uint32_t(csInvalidStringID)))
     {
-        sectorName = msgstrings->Request(sectorNameStrId);
+        if(msgstrings)
+            sectorName = msgstrings->Request(sectorNameStrId);
+        else if(msgstringshash)
+            sectorName = msgstringshash->Request(sectorNameStrId);
     }
     else
     {
@@ -792,7 +800,7 @@ csString psAllEntityPosMessage::ToString(AccessPointers * access_ptrs)
         iSector* sector;
         InstanceID instance;
         
-        EID eid = Get(pos, sector, instance, access_ptrs->msgstrings, access_ptrs->engine);
+        EID eid = Get(pos, sector, instance, access_ptrs->msgstrings, 0, access_ptrs->engine);
 
         msgtext.AppendFmt(" ID: %u Pos: %s Inst: %d", eid.Unbox(), toString(pos,sector).GetDataSafe(), instance);
     }

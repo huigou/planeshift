@@ -559,7 +559,7 @@ public:
         // Not enough space left!  Don't overwrite the buffer.
         if (current + sizeof(uint32_t) + length > bytes->GetSize())
         {
-            Bug5("MsgEntry::Add(const void *datastream,const uint32_t length) call for msgid=%u len=%u would overflow buffer of size %u! type = %u\n",
+            Bug5("MsgEntry::Add(const void *datastream,const uint32_t length) call for msgid=%u len=%u would overflow buffer of size %zu! type = %u\n",
                 msgid,length, bytes->GetSize(), bytes->type);
             overrun=true;
             return;

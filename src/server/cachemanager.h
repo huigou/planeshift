@@ -194,7 +194,7 @@ public:
      *
      * @return Returns a reference to the message strings hash table.
      */
-    csStringHashReversible *GetMsgStrings() { return &msg_strings; }
+    csStringSet *GetMsgStrings() { return &msg_strings; }
 
     /** Returns compressed message strings data.
      *
@@ -411,11 +411,9 @@ public:
 
 protected:
     uint32_t effectID;
-    uint32_t maxCommonStrID;                ///< The max common string id
     char CacheNameBuffer[15];
 
     bool PreloadSectors();
-    bool PreloadCommonStrings();
     bool PreloadRaceInfo();
     bool PreloadSkills();
     bool PreloadLimitations();
@@ -489,7 +487,7 @@ protected:
     csHash<CachedObject *, csString> generic_object_cache;
 
     // Common strings data.
-    csStringHashReversible msg_strings;
+    csStringSet msg_strings;
     char* compressed_msg_strings;
     unsigned long compressed_msg_strings_size;
     uint32_t num_compressed_strings;
