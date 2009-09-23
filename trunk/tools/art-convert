@@ -10,7 +10,7 @@ mysql_select_db("planeshift", $db) or die("Could not select database");
 $scripts = mysql_query("SELECT * from common_strings") or die("fatal error: couldn't select stuff: " . mysql_error() . "\n");
 while ($row = mysql_fetch_array($scripts))
 {
-    $s = mysql_real_escape_string(preg_replace('/planeshift/.*/', '/planeshift/materials/' $row['string']));
+    $s = mysql_real_escape_string(preg_replace('/planeshift/.*/', '/planeshift/materials/', $row['string']));
     echo "Updating " . $row['name'] . "...\n";
     mysql_query("UPDATE common_strings SET string = '$s' WHERE id=" . $row['id']) or die(mysql_error() . "\n");
 }
