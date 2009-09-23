@@ -274,7 +274,7 @@ void NetworkManager::HandleActor(MsgEntry *me)
 {
     psPersistActor mesg( me, 0, GetMsgStrings(), engine );
 
-    printf("Got persistActor message, size %d, id=%d, name=%s\n", me->GetSize(),mesg.playerID.Unbox(),mesg.name.GetDataSafe() );
+    printf("Got persistActor message, size %zu, id=%d, name=%s\n", me->GetSize(),mesg.playerID.Unbox(),mesg.name.GetDataSafe() );
 
     gemNPCObject * obj = npcclient->FindEntityID(mesg.entityid);
 
@@ -325,7 +325,7 @@ void NetworkManager::HandleItem( MsgEntry* me )
 
     gemNPCObject * obj = npcclient->FindEntityID(mesg.eid);
 
-    printf("Got persistItem message, size %d, eid=%d, name=%s\n", me->GetSize(),mesg.eid,mesg.name.GetDataSafe() );
+    printf("Got persistItem message, size %zu, eid=%d, name=%s\n", me->GetSize(),mesg.eid.Unbox(),mesg.name.GetDataSafe() );
 
     if (obj && obj->GetPID().IsValid())
     {
