@@ -74,6 +74,7 @@ protected:
     void PrepareCommandMessage();
     
     void HandleRaceList( MsgEntry* me );
+    void HandleAllEntities(MsgEntry *message);
     void HandleActor( MsgEntry* me );
     void HandleItem( MsgEntry* me );
     void HandleObjectRemoval( MsgEntry* me );

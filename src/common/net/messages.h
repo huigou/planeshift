@@ -45,14 +45,14 @@ class csStringHashReversible;
 
 // This holds the version number of the network code, remember to increase
 // this each time you do an update which breaks compatibility
-#define PS_NETVERSION   0x00A8
+#define PS_NETVERSION   0x00A9
 // Remember to bump the version in pscssetup.h, as well.
 
 
 // NPC Networking version is separate so we don't have to break compatibility
 // with clients to enhance the superclients.  Made it a large number to ensure
 // no inadvertent overlaps.
-#define PS_NPCNETVERSION 0x1013
+#define PS_NPCNETVERSION 0x1014
 
 enum Slot_Containers
 {
@@ -136,6 +136,7 @@ enum MSG_TYPES
     MSGTYPE_NPCOMMANDLIST,
     MSGTYPE_NPCREADY,
     MSGTYPE_ALLENTITYPOS,
+    MSGTYPE_PERSIST_ALL_ENTITIES,
     MSGTYPE_NEW_NPC,
     MSGTYPE_PETITION,
     MSGTYPE_MSGSTRINGS,
@@ -3041,6 +3042,46 @@ public:
 
 };
 
+
+class psPersistAllEntities : public psMessageCracker
+{
+public:
+    psPersistAllEntities(uint32_t client)
+    {
+        msg.AttachNew(new MsgEntry(60000));
+        msg->SetType(MSGTYPE_PERSIST_ALL_ENTITIES);
+        msg->clientnum  = client;
+    }
+
+    psPersistAllEntities( MsgEntry* me );
+
+    PSF_DECLARE_MSG_FACTORY();
+
+    /**
+     * @brief Converts the message into human readable string.
+     *
+     * @param access_ptrs A struct to a number of access pointers.
+     * @return Return a human readable string for the message.
+     */
+    virtual csString ToString(AccessPointers * access_ptrs);
+
+    /**
+     * @brief Appends the new entity message to the current pending message.
+     *
+     * @param newEnt Pointer to psPersistActor message to append.
+     * @return Returns true if adding was successful, false if the current msg is full and it fails.
+     */
+    bool AddEntityMessage(MsgEntry *newEnt);
+
+    /**
+     * @brief Creates a new entity persist message from the next slot in the inbound buffer.
+     *
+     * @return Returns a psPersistActor MsgEntry structure if one is still in the message, or NULL if this message is complete.
+     */
+    MsgEntry *GetEntityMessage();
+};
+
+
 class psPersistActor : public psDRMessage
 {
 public:
@@ -3090,11 +3131,6 @@ public:
      * @return Return a human readable string for the message.
      */
     virtual csString ToString(AccessPointers * access_ptrs);
-
-    /**
-     * Used to insert playerid into the message buffer after creation.
-     */
-    void SetPlayerID(PID playerID);
 
     /**
      * Used to insert instance into the message buffer after creation.

@@ -4612,6 +4612,52 @@ csString psPersistActorRequest::ToString(AccessPointers * /*access_ptrs*/)
 
 //--------------------------------------------------------------------------
 
+PSF_IMPLEMENT_MSG_FACTORY(psPersistAllEntities,MSGTYPE_PERSIST_ALL_ENTITIES);
+
+
+psPersistAllEntities::psPersistAllEntities( MsgEntry* me )
+{
+    msg = me;
+}
+
+csString psPersistAllEntities::ToString(AccessPointers * access_ptrs) 
+{
+    csString msgtext("PersistAllEntities");
+    return msgtext;
+}
+
+bool psPersistAllEntities::AddEntityMessage(MsgEntry *newEnt)
+{
+    size_t addSize = newEnt->GetSize();
+
+    if (msg->GetSize() > msg->current + addSize) // big enough for next msg
+    {
+        // we are copying the bytes out of one message into the buffer of another.  handle with care
+        msg->Add( newEnt->bytes,(uint32_t)newEnt->bytes->GetTotalSize() );
+        return true;
+    }
+    return false;
+}
+
+MsgEntry *psPersistAllEntities::GetEntityMessage()
+{
+    if (msg->overrun)
+        return NULL;
+
+    uint32_t len = 0;
+	void *data = msg->GetBufferPointerUnsafe(len);
+    
+    if (data)
+    {
+        MsgEntry *newEnt = new MsgEntry((psMessageBytes *)data);
+        return newEnt;  // Caller must delete this ptr itself
+    }
+    return NULL;
+}
+
+
+//--------------------------------------------------------------------------
+
 PSF_IMPLEMENT_MSG_FACTORY3(psPersistActor,MSGTYPE_PERSIST_ACTOR);
 
 psPersistActor::psPersistActor( uint32_t clientNum,
@@ -4776,12 +4822,6 @@ csString psPersistActor::ToString(AccessPointers * access_ptrs)
     if (flags & NPC) msgtext.AppendFmt(" NPC");
 
     return msgtext;
-}
-
-void psPersistActor::SetPlayerID(PID playerID)
-{
-    msg->Reset(posPlayerID);
-    msg->Add(playerID.Unbox());
 }
 
 void psPersistActor::SetInstance(InstanceID instance)

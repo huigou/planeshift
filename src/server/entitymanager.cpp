@@ -892,21 +892,39 @@ void EntityManager::HandleAllRequest(MsgEntry* me, Client *client)
     // This is not available to regular clients!
     if ( client->IsSuperClient() )
     {
+        // Now send every single entity in the world to him
+        psPersistAllEntities *allEntMsg = new psPersistAllEntities(me->clientnum);
+
         csHash<gemObject*, EID>& gems = gem->GetAllGEMS();
         csHash<gemObject*, EID>::GlobalIterator i(gems.GetIterator());
         gemObject* obj;
   
-  psserver->npcmanager->SendNPCList(client);
-    
+        int count=0;
         while ( i.HasNext() )
         {
-            obj = i.Next();       
-            // Send to superclient given by clientnum
-            //csSleep(50);
-            obj->Send( me->clientnum, false,  true );
+            count++;
+            obj = i.Next();
+            if (allEntMsg->msg->current > allEntMsg->msg->GetSize() - 1000)
+            {
+                // the current message is full of entities, so send it and make another one
+                allEntMsg->msg->ClipToCurrentSize();
+                printf("Sending %d entities in %d bytes.\n", count-1, allEntMsg->msg->GetSize() );
+                allEntMsg->SendMessage();
+                delete allEntMsg;
+                count = 1;
+                allEntMsg = new psPersistAllEntities(me->clientnum); // here is the new one to continue with
+            }
+            // The 0 in param 1 and the false in param 3 suppresses the immediate send to superclient, since we are appending now
+            obj->Send(0, false,  false, allEntMsg ); // this doesn't actually send but just appends to allEntMsg
         }
+        allEntMsg->msg->ClipToCurrentSize();
+        printf("Final send is %d entities in %d bytes.\n", count, allEntMsg->msg->GetSize() );
 
-        //psserver->npcmanager->SendNPCList(client);
+        allEntMsg->SendMessage(); // This handles the final message with whatever entities are left.
+
+        // Tell superclient which entities he is managing this time
+        psserver->npcmanager->SendNPCList(client);
+    
     }
     else
     {

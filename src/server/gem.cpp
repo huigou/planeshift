@@ -1397,15 +1397,14 @@ float gemItem::GetBaseAdvertiseRange()
     return itemdata->GetVisibleDistance();
 }
 
-void gemItem::Send( int clientnum, bool , bool to_superclient)
+void gemItem::Send( int clientnum, bool , bool to_superclients, psPersistAllEntities *allEntities)
 {
     int flags = 0;
     if (!IsPickable()) flags |= psPersistItem::NOPICKUP;
     if (IsUsingCD() ||
         GetItem()->GetSector()->GetIsColliding()) flags |= psPersistItem::COLLIDE;
 
-    psPersistItem mesg(
-                         clientnum,
+    psPersistItem mesg(  clientnum,
                          eid,
                          -2,
                          name,
@@ -1421,15 +1420,13 @@ void gemItem::Send( int clientnum, bool , bool to_superclient)
                          );
 
     if (clientnum)
-    {
         mesg.SendMessage();
-    }
 
-    if (to_superclient)
-    {
+    if (to_superclients)
         mesg.Multicast(psserver->GetNPCManager()->GetSuperClients(),0,PROX_LIST_ANY_RANGE);
-    }
 
+    if (allEntities)
+        allEntities->AddEntityMessage(mesg.msg);
 }
 
 //Here we check the flag to see if we can pick up this item
@@ -1818,7 +1815,7 @@ bool gemActionLocation::SeesObject(gemObject * object, float range)
 }
 
 
-void gemActionLocation::Send( int clientnum, bool , bool to_superclient )
+void gemActionLocation::Send( int clientnum, bool , bool to_superclients, psPersistAllEntities *allEntities )
 {
     psPersistActionLocation mesg(
                                     clientnum,
@@ -1830,13 +1827,13 @@ void gemActionLocation::Send( int clientnum, bool , bool to_superclient )
                                  );
 
 
-    if (clientnum && !to_superclient)
+    if (clientnum && !to_superclients)
     {
         mesg.SendMessage();
     }
 
     /* TODO: Include if superclient need action locations
-    if (to_superclient)
+    if (to_superclients)
     {
         if (clientnum == 0) // Send to all superclients
         {
@@ -1847,6 +1844,10 @@ void gemActionLocation::Send( int clientnum, bool , bool to_superclient )
             mesg.SendMessage();
         }
     }
+
+    if (allEntities)
+        allEntities->AddEntityMessage(mesg.msg);
+
     */
 }
 //-====================================================================================-
@@ -2535,7 +2536,7 @@ void gemActor::SendGroupStats()
     }
 }
 
-void gemActor::Send( int clientnum, bool control, bool to_superclient  )
+void gemActor::Send( int clientnum, bool control, bool to_superclients, psPersistAllEntities *allEntities  )
 {
     csRef<PlayerGroup> group = this->GetGroup();
     csString texparts;
@@ -2602,21 +2603,20 @@ void gemActor::Send( int clientnum, bool control, bool to_superclient  )
                          pcmove,
                          movementMode,
                          GetMode(),
-                         0, // playerID should not be distributed to clients
+                         (to_superclients || allEntities) ? pid.Unbox() : 0, // playerID should not be distributed to clients
                          groupID,
                          0, // ownerEID
                          flags
                          );
 
     // Only send to client
-    if (clientnum && !to_superclient)
+    if (clientnum && !to_superclients)
     {
         mesg.SendMessage();
     }
 
-    if (to_superclient)
+    if (to_superclients)
     {
-        mesg.SetPlayerID(pid); // Insert player id before sending to super client.
         mesg.SetInstance(GetInstance());
         if (clientnum == 0) // Send to all superclients
         {
@@ -2628,6 +2628,8 @@ void gemActor::Send( int clientnum, bool control, bool to_superclient  )
             mesg.SendMessage();
         }
     }
+    if (allEntities)
+        allEntities->AddEntityMessage(mesg.msg);
 }
 
 void gemActor::Broadcast(int clientnum, bool control)
@@ -4328,7 +4330,7 @@ void gemNPC::GetBadText(size_t first,size_t last, csStringArray& saidArray, csSt
     }
 }
 
-void gemNPC::Send( int clientnum, bool control, bool to_superclient )
+void gemNPC::Send( int clientnum, bool control, bool to_superclients, psPersistAllEntities *allEntities )
 {
     csString texparts;
     csString equipmentParts;
@@ -4393,20 +4395,19 @@ void gemNPC::Send( int clientnum, bool control, bool to_superclient )
                          pcmove,
                          movementMode,
                          GetMode(),
-                         0, // playerID should not be distributed to clients
+                         (to_superclients || allEntities) ? pid.Unbox() : 0, // playerID should not be distributed to clients
                          0, // groupID
                          ownerEID,
                          flags
                          );
 
-    if (clientnum && !to_superclient)
+    if (clientnum && !to_superclients)
     {
         mesg.SendMessage();
     }
 
-    if (to_superclient)
+    if (to_superclients)
     {
-        mesg.SetPlayerID(pid); // Insert player id before sending to super client.
         mesg.SetInstance(GetInstance());
         if (clientnum == 0) // Send to all superclients
         {
@@ -4418,6 +4419,8 @@ void gemNPC::Send( int clientnum, bool control, bool to_superclient )
             mesg.SendMessage();
         }
     }
+    if (allEntities)
+        allEntities->AddEntityMessage(mesg.msg);
 }
 
 void gemNPC::Broadcast(int clientnum, bool control)

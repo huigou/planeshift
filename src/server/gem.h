@@ -378,7 +378,7 @@ public:
      */
     //@{
     virtual void Broadcast(int clientnum, bool control);
-    virtual void Send( int clientnum, bool control, bool to_superclient) {}
+    virtual void Send( int clientnum, bool control, bool to_superclients, psPersistAllEntities *allEntities=NULL) {}
     virtual void SendGroupMessage(MsgEntry *me) { };
     //@}
 
@@ -461,7 +461,7 @@ public:
     virtual const char* GetObjectType() { return "Active object"; }
 
     virtual void Broadcast(int clientnum, bool control);
-    virtual void Send( int clientnum, bool control, bool to_superclient) { }
+    virtual void Send( int clientnum, bool control, bool to_superclients, psPersistAllEntities *allEntities=NULL) { }
 
     virtual void SendBehaviorMessage(const csString & str, gemObject *obj);
     virtual csString GetDefaultBehavior(const csString & dfltBehaviors);
@@ -509,7 +509,7 @@ public:
     virtual float GetBaseAdvertiseRange();
 
     virtual void Broadcast(int clientnum, bool control);
-    virtual void Send( int clientnum, bool control, bool super_clients);
+    virtual void Send( int clientnum, bool control, bool super_clients, psPersistAllEntities *allEntities=NULL);
 
     /** @brief Set position of item in world.
       *
@@ -636,7 +636,7 @@ public:
     virtual bool SeesObject(gemObject * object, float range);
 
     virtual void Broadcast(int clientnum, bool control);
-    virtual void Send( int clientnum, bool control, bool super_clients);
+    virtual void Send( int clientnum, bool control, bool super_clients, psPersistAllEntities *allEntities=NULL);
 
     virtual bool GetVisibility() { return visible; };
     virtual void SetVisibility(bool vis) { visible = vis; };
@@ -967,7 +967,7 @@ public:
     /**
      * @param control  Set to true when sent to the controling client.
      */
-    virtual void Send( int clientnum, bool control, bool to_superclient );
+    virtual void Send( int clientnum, bool control, bool to_superclients, psPersistAllEntities *allEntities=NULL);
     virtual void SendGroupMessage(MsgEntry *me);
 
     /// Used by chat manager to identify an npc you are near if you talk to one
@@ -1128,7 +1128,7 @@ public:
     void AddBadText(const char *playerSaid,const char *trigger);
     void GetBadText(size_t first,size_t last, csStringArray& saidArray, csStringArray& trigArray);
 
-    virtual void Send( int clientnum, bool control, bool to_superclient );
+    virtual void Send(int clientnum, bool control, bool to_superclients, psPersistAllEntities *allEntities=NULL);
     virtual void Broadcast(int clientnum, bool control );
 
     virtual void SendBehaviorMessage(const csString & str, gemObject *obj);
