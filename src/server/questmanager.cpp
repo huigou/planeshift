@@ -676,6 +676,9 @@ int QuestManager::ParseQuestScript(int quest_id, const char *script)
     {
         GetNextScriptLine(scr,block,start,line_number);
 
+        Debug2(LOG_QUESTS, 0, "Parsing line %s", block.GetData());
+    
+    
         // now we have the block to do something with
         if (!strncasecmp(block,"#",1)) // comment, skip it
           continue;
