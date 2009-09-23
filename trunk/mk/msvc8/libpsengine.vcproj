@@ -1711,9 +1711,6 @@
 				RelativePath="..\..\src\common\engine\linmove.cpp">
 			</File>
 			<File
-				RelativePath="..\..\src\common\engine\psregion.cpp">
-			</File>
-			<File
 				RelativePath="..\..\src\common\engine\psworld.cpp">
 			</File>
 			<File
@@ -1728,9 +1725,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\common\engine\linmove.h">
-			</File>
-			<File
-				RelativePath="..\..\src\common\engine\psregion.h">
 			</File>
 			<File
 				RelativePath="..\..\src\common\engine\psworld.h">
