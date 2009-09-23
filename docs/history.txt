@@ -1,4 +1,16 @@
-﻿*** 2009-09-11 by Steven Patrick
+﻿*** 2009-09-11 by Keith Fulton
+- Added a new message type called PersistAllEntities.  This is just a
+  packed bundle of psPersistActor messages, all inside one
+  message.  It is necessary because the server has a large number
+  of entities now, and so on startup it can send 1500-3000 tiny
+  messages to the npcclient all at once.  The net layer merges
+  these into packets as it can, but they are unbundled on the
+  other side into messages and they flood the msgqueues.  Sending
+  in a single bulk message is a similar result, but with fewer
+  enqueued objects to flood with.  Should be slightly more efficient
+  in bandwidth as well.
+
+*** 2009-09-11 by Steven Patrick
 - Fixed PS#2378 - setskill -1 does not return boosts
 
 *** 2009-08-28 by Stefano Angeleri
