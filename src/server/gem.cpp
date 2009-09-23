@@ -1247,7 +1247,7 @@ void gemActiveObject::SendBehaviorMessage(const csString & msg_id, gemObject *ac
 
             psserver->GetCharManager()->UpdateItemViews(clientnum);
 
-            if(item) GEMSupervisor::GetSingleton().RemoveItemEntity(dynamic_cast<gemItem*>(this));
+            if(dynamic_cast<gemItem*>(this)->GetItem()) GEMSupervisor::GetSingleton().RemoveItemEntity(dynamic_cast<gemItem*>(this));
             EntityManager::GetSingleton().RemoveActor(this);  // Destroy this
         }
         else
