@@ -100,6 +100,9 @@ bool pawsGlyphWindow::PostSetup()
 
     spellName = dynamic_cast <pawsTextBox*> (FindWidget("SpellName"));
     if ( !spellName ) return false;
+    
+    spellImage = dynamic_cast <pawsWidget*> (FindWidget("SpellImage"));
+    if ( !spellImage ) return false;
 
     ways.SetSize(GLYPH_WAYS);
 
@@ -217,7 +220,7 @@ void pawsGlyphWindow::HandleAssemble( MsgEntry* me )
     spellName->SetText(mesg.name);
     description->AddMessage( mesg.description );
     description->ResetScroll();
-    
+    spellImage->SetBackground(mesg.image);    
 }
 
 void pawsGlyphWindow::ClearSpell( void )
