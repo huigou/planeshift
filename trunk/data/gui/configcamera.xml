@@ -4,10 +4,7 @@
         visible="yes" savepositions="no" movable="yes"
         resizable="no" style="New Standard GUI">
 
-    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="10" scalefont="no" />
-
     <widget factory="pawsTree">
-      <decorator selR="0" selG="0" selB="255" lineR="0" lineG="255" lineB="255" colSpacing="13" />
       <layout rowSpacing="5" levelSpacing="20" />
       
         <widget factory="pawsSeqTreeNode">

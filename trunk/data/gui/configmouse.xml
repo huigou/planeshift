@@ -4,7 +4,6 @@
           visible="yes" savepositions="no" movable="no" resizable="no" style="New Standard GUI">
 
     <widget factory="pawsTree">
-      <decorator selR="0" selG="0" selB="255" lineR="0" lineG="255" lineB="255" colSpacing="13" />
       <layout rowSpacing="5" levelSpacing="20" />
 
 	<widget factory="pawsSeqTreeNode">
