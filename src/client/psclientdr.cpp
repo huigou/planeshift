@@ -350,8 +350,8 @@ void psClientDR::HandleStrings( MsgEntry* me )
 
         if(request_strings)
         {
-            psMsgStringsMessage* request = new psMsgStringsMessage();
-            request->SendMessage();
+            psMsgStringsMessage request;
+            request.SendMessage();
             return;
         }
     }

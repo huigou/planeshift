@@ -541,7 +541,6 @@ void AuthenticationServer::HandleStringsRequest(MsgEntry* me, Client *client)
 
 void AuthenticationServer::SendMsgStrings(int cnum, bool send_digest)
 {
-    psMsgStringsMessage* msgstringsmessage;
     char* data;
     unsigned long size;
     uint32_t num_strings;
@@ -553,20 +552,16 @@ void AuthenticationServer::SendMsgStrings(int cnum, bool send_digest)
     // send message strings hash table to client
     if (send_digest)
     {
-        msgstringsmessage = new psMsgStringsMessage(cnum, digest);
+        psMsgStringsMessage msg(cnum, digest);
+        CS_ASSERT(msg.valid);
+        msg.SendMessage();
     }
     else
     {
-        msgstringsmessage = new psMsgStringsMessage(cnum, digest, data, size, num_strings);
+        psMsgStringsMessage msg(cnum, digest, data, size, num_strings);
+        CS_ASSERT(msg.valid);
+        msg.SendMessage();
     }
-
-    if (!msgstringsmessage->valid)
-    {
-        Bug1("Could not form a valid psMsgStringsMessage from Message Strings!\n");
-        delete msgstringsmessage;
-    }
-    else
-        msgstringsmessage->SendMessage();
 }
 
 void AuthenticationServer::HandleStatusUpdate(MsgEntry* me, Client* client)
