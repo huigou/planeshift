@@ -13,44 +13,44 @@
     </widget>
 
     <widget name="Cast" factory="pawsButton" id="101" tooltip="Cast">
-        <frame x="430" y="25" width="48" height="48" />
+        <frame x="470" y="25" width="48" height="48" />
         <bgimage resource="Cast Magic" />
     </widget>
 
     <widget name="ActiveMagic" factory="pawsButton" id="102" tooltip="Active Spells">
-        <frame x="350" y="280" width="48" height="48" />
+        <frame x="395" y="280" width="48" height="48" />
         <bgimage resource="Defensive Magic" />
     </widget>
 
     <widget name="Description" factory="pawsMessageTextBox" style="Header Font">
-        <frame x="350" y="85" width="230" height="190" border="no" />
+        <frame x="395" y="85" width="230" height="190" border="no" />
     </widget>
     <widget name="SpellImage" factory="pawsWidget" >
-        <frame x="350" y="20" width="60" height="60" border="yes" />
+        <frame x="395" y="20" width="60" height="60" border="yes" />
     </widget>
 
 
     <widget name="SpellList" factory="pawsListBox">
-        <frame x="17" y="20" width="300" height="310" margin="5" border="no" />
+        <frame x="17" y="20" width="360" height="310" margin="5" border="no" />
         <columns height="32" headings="yes">
-            <column width="120" height="25" >
+            <column width="122" height="25" >
                 <widget name="Name" factory="pawsTextBox">
                 </widget>
             </column>
-            <column width="40" >
+            <column width="35" >
                 <widget name="Glyph" factory="pawsWidget">
                 </widget>
             </column>
-            <column width="2" >
+            <column width="35" >
                 <widget name="" factory="pawsWidget"></widget>
             </column>
-	    <column width="2" >
+            <column width="35" >
                 <widget name="" factory="pawsWidget"></widget>
             </column>
-            <column width="2" >
+            <column width="35" >
                 <widget name="" factory="pawsWidget"></widget>
             </column>
-            <column width="45" >
+            <column width="47" >
                 <widget name="Way" factory="pawsTextBox">
                 </widget>
             </column>
