@@ -97,12 +97,12 @@
         </attachpoints>
     </pawsWidget>
 
-    <pawsButton name="OKButton" id="-10" toggle="no">
+    <pawsButton name="OKButton" id="-10" toggle="no" style="Standard Button">
         <frame x="10" y="320" width="80" height="20" border="no"/>
         <label text="Save"/>
     </pawsButton>
     
-    <pawsButton name="ResetButton" id="-20" toggle="no">
+    <pawsButton name="ResetButton" id="-20" toggle="no" style="Standard Button">
         <frame x="100" y="320" width="80" height="20" border="no"/>
         <label text="Reset"/>
     </pawsButton>
