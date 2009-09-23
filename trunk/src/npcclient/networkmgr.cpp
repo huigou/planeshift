@@ -65,6 +65,7 @@ NetworkManager::NetworkManager(MsgHandler *mh,psNetConnection* conn, iEngine* en
     msghandler->Subscribe(this,MSGTYPE_CELPERSIST);
     msghandler->Subscribe(this,MSGTYPE_ALLENTITYPOS);
     msghandler->Subscribe(this,MSGTYPE_NPCOMMANDLIST);
+    msghandler->Subscribe(this,MSGTYPE_PERSIST_ALL_ENTITIES);
     msghandler->Subscribe(this,MSGTYPE_PERSIST_ACTOR);
     msghandler->Subscribe(this,MSGTYPE_PERSIST_ITEM);
     msghandler->Subscribe(this,MSGTYPE_REMOVE_OBJECT);
@@ -128,14 +129,14 @@ const char *NetworkManager::GetCommonString(uint32_t id)
     return msgstrings->Request(id);
 }
 
-void NetworkManager::HandleMessage(MsgEntry *me)
+void NetworkManager::HandleMessage(MsgEntry *message)
 {
-    switch ( me->GetType() )
+    switch ( message->GetType() )
     {
         case MSGTYPE_MAPLIST:
         {
             connected = true;
-            if (ReceiveMapList(me))
+            if (ReceiveMapList(message))
             {
                 RequestAllObjects();    
             }
@@ -148,12 +149,12 @@ void NetworkManager::HandleMessage(MsgEntry *me)
         }
         case MSGTYPE_NPCRACELIST:
         {
-            HandleRaceList( me );
+            HandleRaceList( message );
             break;
         }
         case MSGTYPE_NPCLIST:
         {
-            ReceiveNPCList(me);
+            ReceiveNPCList(message);
             ready = true;
             // Activates NPCs on server side
             psNPCReadyMessage mesg;
@@ -161,32 +162,37 @@ void NetworkManager::HandleMessage(MsgEntry *me)
             npcclient->LoadCompleted();
             break;
         }
+        case MSGTYPE_PERSIST_ALL_ENTITIES:
+        {
+            HandleAllEntities(message);
+            break;
+        }
         case MSGTYPE_PERSIST_ACTOR:
         {
-            HandleActor( me );
+            HandleActor( message );
             break;
         }        
         
         case MSGTYPE_PERSIST_ITEM:
         {
-            HandleItem( me );
+            HandleItem( message );
             break;
         }        
         
         case MSGTYPE_REMOVE_OBJECT:
         {
-            HandleObjectRemoval( me );
+            HandleObjectRemoval( message );
             break;
         }
 
         case MSGTYPE_ALLENTITYPOS:
         {
-            HandlePositionUpdates(me);
+            HandlePositionUpdates(message);
             break;
         }
         case MSGTYPE_NPCOMMANDLIST:
         {
-            HandlePerceptions(me);
+            HandlePerceptions(message);
             break;
         }
         case MSGTYPE_MSGSTRINGS:
@@ -194,7 +200,7 @@ void NetworkManager::HandleMessage(MsgEntry *me)
             csRef<iEngine> engine =  csQueryRegistry<iEngine> (npcclient->GetObjectReg());
 
             // receive message strings hash table
-            psMsgStringsMessage msg(me);
+            psMsgStringsMessage msg(message);
             msgstrings = msg.msgstrings;
             connection->SetMsgStrings(0, msgstrings);
             connection->SetEngine(engine);
@@ -202,22 +208,22 @@ void NetworkManager::HandleMessage(MsgEntry *me)
         }
         case MSGTYPE_DISCONNECT:
         {
-            HandleDisconnect(me);
+            HandleDisconnect(message);
             break;
         }
         case MSGTYPE_WEATHER:
         {
-            HandleTimeUpdate(me);
+            HandleTimeUpdate(message);
             break;
         }
         case MSGTYPE_NEW_NPC:
         {
-            HandleNewNpc(me);
+            HandleNewNpc(message);
             break;
         }
         case MSGTYPE_NPC_COMMAND:
         {
-            psServerCommandMessage msg(me);
+            psServerCommandMessage msg(message);
             // TODO: Do something more with this than printing it.
             CPrintf(CON_CMDOUTPUT, msg.command.GetData());
             break;
@@ -236,9 +242,39 @@ void NetworkManager::HandleRaceList( MsgEntry* me)
     }
 }
 
-void NetworkManager::HandleActor( MsgEntry* me )
+void NetworkManager::HandleAllEntities(MsgEntry *message)
+{
+    psPersistAllEntities allEntities(message);
+
+    printf("Got All Entities message.\n");
+    bool done=false;
+    int count=0;
+    while (!done)
+    {
+        count++;
+        MsgEntry *entity = allEntities.GetEntityMessage();
+        if (entity)
+        {
+            if (entity->GetType() == MSGTYPE_PERSIST_ACTOR)
+                HandleActor(entity);
+            else if (entity->GetType() == MSGTYPE_PERSIST_ITEM)
+                HandleItem(entity);
+            else
+                Error2("Unhandled type of entity (%d) in AllEntities message.",entity->GetType() );
+
+            delete entity;
+        }
+        else
+            done = true;
+    }
+    printf("End of All Entities message, with %d entities done.\n", count);
+}
+
+void NetworkManager::HandleActor(MsgEntry *me)
 {
     psPersistActor mesg( me, 0, GetMsgStrings(), engine );
+
+    printf("Got persistActor message, size %d, id=%d, name=%s\n", me->GetSize(),mesg.playerID.Unbox(),mesg.name.GetDataSafe() );
 
     gemNPCObject * obj = npcclient->FindEntityID(mesg.entityid);
 
@@ -288,6 +324,8 @@ void NetworkManager::HandleItem( MsgEntry* me )
     psPersistItem mesg(me, msgstrings);
 
     gemNPCObject * obj = npcclient->FindEntityID(mesg.eid);
+
+    printf("Got persistItem message, size %d, eid=%d, name=%s\n", me->GetSize(),mesg.eid,mesg.name.GetDataSafe() );
 
     if (obj && obj->GetPID().IsValid())
     {
