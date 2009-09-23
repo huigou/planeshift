@@ -2603,7 +2603,7 @@ void gemActor::Send( int clientnum, bool control, bool to_superclients, psPersis
                          pcmove,
                          movementMode,
                          GetMode(),
-                         (to_superclients || allEntities) ? pid.Unbox() : 0, // playerID should not be distributed to clients
+                         (to_superclients || allEntities) ? pid : 0, // playerID should not be distributed to clients
                          groupID,
                          0, // ownerEID
                          flags
@@ -4395,7 +4395,7 @@ void gemNPC::Send( int clientnum, bool control, bool to_superclients, psPersistA
                          pcmove,
                          movementMode,
                          GetMode(),
-                         (to_superclients || allEntities) ? pid.Unbox() : 0, // playerID should not be distributed to clients
+                         (to_superclients || allEntities) ? pid : 0, // playerID should not be distributed to clients
                          0, // groupID
                          ownerEID,
                          flags
