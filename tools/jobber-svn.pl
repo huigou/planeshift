@@ -98,7 +98,7 @@
 #     as noted above.
 #
 # $jobber_svn_flags [optional]
-#     Additional flags to pass to each of the `cvs' command invocations.  An
+#     Additional flags to pass to each of the `svn' command invocations.  An
 #     obvious example would be to set this variable to "-z9" to enable
 #     compression. No default.
 #
@@ -200,6 +200,9 @@
 #             Online browseable files are placed into
 #             $jobber_browseable_dir/$dir, and downloadable packages are placed
 #             into $jobber_package_dir/$dir.
+#         package-dir [optional]
+#             Directory name into which downloadable package files for this
+#             task are published. If omitted, "dir" is used.
 #         name [required]
 #             Base package name used when generating downloadable packages via
 #             @jobber_archivers (see below).  When published, the base package
@@ -246,6 +249,8 @@
 #         Archives with 'tar' and compresses with 'gzip'. Extension: .tgz
 #     $ARCHIVER_ZIP
 #         Archives and compresses with 'zip'. Extension: .zip
+#     $ARCHIVER_LZMA
+#         Archives with 'tar' and compresses with 'lzma'. Extension: .tar.lzma
 #
 #     Default: ($ARCHIVER_BZIP2, $ARCHIVER_GZIP, $ARCHIVER_ZIP)
 #
@@ -279,7 +284,7 @@ use warnings;
 $Getopt::Long::ignorecase = 0;
 
 my $PROG_NAME = 'jobber-svn.pl';
-my $PROG_VERSION = '35';
+my $PROG_VERSION = '40';
 my $AUTHOR_NAME = 'Eric Sunshine';
 my $AUTHOR_EMAIL = 'sunshine@sunshineco.com';
 my $COPYRIGHT = "Copyright (C) 2000-2005 by $AUTHOR_NAME <$AUTHOR_EMAIL>\nConverted for SVN support by Marten Svanfeldt";
@@ -296,6 +301,10 @@ my $ARCHIVER_ZIP = {
     'name'      => 'zip',
     'extension' => 'zip',
     'command'   => 'zip -q -r ~D ~S' };
+my $ARCHIVER_LZMA = {
+    'name'      => 'lzma',
+    'extension' => 'tar.lzma',
+    'command'   => 'tar --create --file=- ~S | lzma > ~D' };
 
 my $jobber_project_root = undef;
 my $jobber_svn_base_url = undef;
@@ -308,14 +317,15 @@ my $jobber_public_mode = undef;
 my $jobber_temp_dir = '/tmp';
 my @jobber_binary_override = ('(?i)\.(dsw|dsp)$');
 my @jobber_tasks = ();
-my @jobber_archivers = ($ARCHIVER_BZIP2, $ARCHIVER_GZIP, $ARCHIVER_ZIP);
+my @jobber_archivers = ($ARCHIVER_BZIP2, $ARCHIVER_GZIP, $ARCHIVER_ZIP, $ARCHIVER_LZMA);
 my %jobber_properties = ();
 
 # SVN binary name
-my $jobber_svn_command = getcwd . '/svnwrapper';
+my $jobber_svn_command = '/usr/bin/svn';
 
 my $CONFIG_FILE = undef;
 my $TESTING = undef;
+my $EXPORT = 1;
 my $CONV_DIR = undef;
 my $CAPTURED_OUTPUT = '';
 
@@ -323,6 +333,7 @@ my @SCRIPT_OPTIONS = (
     'set=s'     => \%jobber_properties,
     'config=s'  => \$CONFIG_FILE,
     'test!'     => \$TESTING,
+    'export!'   => \$EXPORT,
     'help'      => \&option_help,
     'version|V' => \&option_version,
     '<>'        => \&option_error
@@ -454,6 +465,14 @@ sub rename_file {
 }
 
 #------------------------------------------------------------------------------
+# Remove a directory.
+#------------------------------------------------------------------------------
+sub remove_dir {
+    my $dir = shift;
+    rmdir($dir) or expire("rmdir($dir)");
+}
+
+#------------------------------------------------------------------------------
 # Generate a temporary name in a directory.  Perl tmpnam() only works with
 # '/tmp', so must do this manually, instead.
 #------------------------------------------------------------------------------
@@ -491,7 +510,7 @@ sub run_command {
 #------------------------------------------------------------------------------
 # Perform a recursive scan of a directory and return a sorted list of all
 # files and directories contained therein, except for the ".svn" directory and
-# its control files.  Also ignores ".cvsignore" files.
+# its control files.  Also ignores ".cvsignore" files and ".svn" directories.
 #------------------------------------------------------------------------------
 sub scandir {
     my $dir = shift;
@@ -509,7 +528,7 @@ sub svn_remove {
     return unless @{$files};
     my $paths = prepare_pathnames(@{$files});
     print "Invoking SVN delete: ${\scalar(@{$files})} paths\n";
-    run_command("$jobber_svn_command $jobber_svn_flags delete $paths") unless $TESTING;
+    run_command("$jobber_svn_command delete $paths $jobber_svn_flags") unless $TESTING;
 }
 
 #------------------------------------------------------------------------------
@@ -542,7 +561,7 @@ sub svn_add {
     $flags = '' unless defined($flags);
     print "Invoking SVN add: ${\scalar(@{$files})} paths" .
 	($flags ? " [$flags]" : '') . "\n";
-    run_command("$jobber_svn_command $jobber_svn_flags add $flags $paths") unless $TESTING;
+    run_command("$jobber_svn_command add $flags $paths $jobber_svn_flags") unless $TESTING;
 }
 
 #------------------------------------------------------------------------------
@@ -584,7 +603,7 @@ sub svn_examine {
 #------------------------------------------------------------------------------
 sub svn_checkout {
     print "URL: $jobber_svn_base_url\n";
-    run_command("$jobber_svn_command co $jobber_svn_flags $jobber_svn_base_url");
+    run_command("$jobber_svn_command co $jobber_svn_base_url $jobber_svn_flags");
 }
 
 #------------------------------------------------------------------------------
@@ -595,11 +614,11 @@ sub svn_update {
     my $line = '-' x length($message);
     my $dirs = '';
     foreach my $task (@jobber_tasks) {
-	$dirs .= " @{$task->{'olddirs'}}" if exists $task->{'olddeirs'};
+	$dirs .= " @{$task->{'olddirs'}}" if exists $task->{'olddirs'};
     }
     if ($dirs) {
         print "$line\n$message\n";
-        my $changes = run_command("$jobber_svn_command $jobber_svn_flags status $dirs");
+        my $changes = run_command("$jobber_svn_command status $dirs $jobber_svn_flags");
 	print $changes ? $changes : "  No files modified\n", "$line\n";
     }
 }
@@ -617,7 +636,7 @@ sub svn_commit_dirs {
     print RESPFILE $message;
     close(RESPFILE);
 
-    run_command("$jobber_svn_command $jobber_svn_flags --username $jobber_svn_user commit -F $respFileName $dirsAsText")
+    run_command("$jobber_svn_command commit --username $jobber_svn_user -F $respFileName $dirsAsText $jobber_svn_flags")
 	unless $TESTING;
     unlink($respFileName);
 }
@@ -647,6 +666,13 @@ sub svn_commit {
 sub run_tasks {
     foreach my $task (@jobber_tasks) {
 	next unless exists($task->{'command'});
+	my $does_svn = exists($task->{'olddirs'});
+	my $does_export = exists($task->{'export'});
+	if ($does_export && !$EXPORT && !$does_svn)
+	{
+	      print "Skipping: $task->{'action'} $task->{'name'}.\n";
+	      next;
+	}
 	print "$task->{'action'} $task->{'name'}.\n";
 	run_command($task->{'command'});
     }
@@ -731,6 +757,11 @@ sub publish_browseable {
     foreach my $task (@jobber_tasks) {
 	next unless exists $task->{'export'}
 	    and (exists $task->{'olddirs'} or exists $task->{'newdirs'});
+	if (!$EXPORT)
+	{
+	    print "Skipped publishing $task->{'name'}.\n";
+	    next;
+	}
 	print "Publishing $task->{'name'}.\n";
 	next if $TESTING;
 	create_directory_deep($jobber_browseable_dir, $jobber_public_group)
@@ -750,6 +781,10 @@ sub publish_browseable {
 
 	print "  Installing.\n";
 	rename_file($dst, $old_dir) if -e $dst;
+	create_directory_deep($dst, $jobber_public_group);
+	# create_directory_deep also creates the directory which we want to
+	# move in, so delete that first
+	remove_dir($dst);
 	rename_file($new_dir, $dst);
 
 	print "  Cleaning.\n";
@@ -793,6 +828,11 @@ sub publish_packages {
     foreach my $task (@jobber_tasks) {
 	next unless exists $task->{'export'}
 	    and (exists $task->{'olddirs'} or exists $task->{'newdirs'});
+	if (!$EXPORT)
+	{
+	    print "Skipped Packaging $task->{'name'}.\n";
+	    next;
+	}
 	print "Packaging $task->{'name'}.\n";
 
 	my @srclist = exists $task->{'newdirs'} ? 
@@ -808,7 +848,8 @@ sub publish_packages {
 	}
 
 	my $base = $export->{'name'};
-	my $dst = "$jobber_package_dir/$export->{'dir'}";
+	my $dst = "$jobber_package_dir/" . ($export->{'package-dir'} ?
+	    $export->{'package-dir'} : $export->{'dir'});
 	create_directory_deep($dst, $jobber_public_group) unless $TESTING;
 	foreach my $archiver (@jobber_archivers) {
 	    publish_package($archiver, $appear, $dst, $base, '  ');
@@ -895,8 +936,6 @@ sub validate_config {
 	    last;
 	}
     }
-
-    # $jobber_cvs_sources = $jobber_project_root unless $jobber_svna_sources;
 }
 
 #------------------------------------------------------------------------------
@@ -970,6 +1009,9 @@ Options:
                  named jobber.cfg or .jobber.
     -t --test    Process all tasks but do not actually modify the SVN
                  repository or export any files.
+    --noexport
+		 Process all tasks and update the SVN repository but don't
+		 export any files.
     -h --help    Display this usage message.
     -V --version Display the version number of @{[basename($0)]}
 
