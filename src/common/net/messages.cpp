@@ -4580,7 +4580,7 @@ psPersistWorld::psPersistWorld( uint32_t clientNum, csVector3 pos, const char* s
 psPersistWorld::psPersistWorld( MsgEntry* me )
 {
     pos = csVector3(me->GetFloat(), me->GetFloat(), me->GetFloat());
-    sector = csString(me->GetStr());
+    sector = me->GetStr();
 }
 
 csString psPersistWorld::ToString(AccessPointers * /*access_ptrs*/)
@@ -4622,8 +4622,7 @@ psPersistAllEntities::psPersistAllEntities( MsgEntry* me )
 
 csString psPersistAllEntities::ToString(AccessPointers * access_ptrs) 
 {
-    csString msgtext("PersistAllEntities");
-    return msgtext;
+    return "PersistAllEntities";
 }
 
 bool psPersistAllEntities::AddEntityMessage(MsgEntry *newEnt)
@@ -4744,38 +4743,38 @@ psPersistActor::psPersistActor( MsgEntry* me, csStringSet* msgstrings, csStringH
     type        = me->GetUInt32();
     masqueradeType = me->GetUInt32();
     control     = me->GetBool();
-    name        = csString ( me->GetStr() );
-    guild       = csString ( me->GetStr() );
+    name        = me->GetStr();
+    guild       = me->GetStr();
     if ( guild == " " )
         guild.Clear();
 
     if(msgstrings)
     {
-        factname    = csString ( msgstrings->Request(csStringID(me->GetUInt32())) );
-        matname     = csString ( msgstrings->Request(csStringID(me->GetUInt32())) );
-        race        = csString ( msgstrings->Request(csStringID(me->GetUInt32())) );
-        mountFactname = csString ( msgstrings->Request(csStringID(me->GetUInt32())) );
+        factname      = msgstrings->Request(csStringID(me->GetUInt32()));
+        matname       = msgstrings->Request(csStringID(me->GetUInt32()));
+        race          = msgstrings->Request(csStringID(me->GetUInt32()));
+        mountFactname = msgstrings->Request(csStringID(me->GetUInt32()));
     }
     else if(msgstringshash)
     {
-        factname    = csString ( msgstringshash->Request(csStringID(me->GetUInt32())) );
-        matname     = csString ( msgstringshash->Request(csStringID(me->GetUInt32())) );
-        race        = csString ( msgstringshash->Request(csStringID(me->GetUInt32())) );
-        mountFactname = csString ( msgstringshash->Request(csStringID(me->GetUInt32())) );
+        factname      = msgstringshash->Request(csStringID(me->GetUInt32()));
+        matname       = msgstringshash->Request(csStringID(me->GetUInt32()));
+        race          = msgstringshash->Request(csStringID(me->GetUInt32()));
+        mountFactname = msgstringshash->Request(csStringID(me->GetUInt32()));
     }
 
     gender      = me->GetInt16();
-    helmGroup   = csString ( me->GetStr() );
-    BracerGroup = csString(me->GetStr());
-    BeltGroup   = csString(me->GetStr());
-    CloakGroup = csString(me->GetStr());
+    helmGroup   = me->GetStr();
+    BracerGroup = me->GetStr();
+    BeltGroup   = me->GetStr();
+    CloakGroup  = me->GetStr();
 
     top         = me->GetVector();
     bottom      = me->GetVector();
     offset      = me->GetVector();
 
-    texParts    = csString ( me->GetStr() );
-    equipment   = csString ( me->GetStr() );
+    texParts    = me->GetStr();
+    equipment   = me->GetStr();
 
     serverMode = me->GetUInt8();
     playerID   = PID(me->GetUInt32());
@@ -4876,10 +4875,10 @@ psPersistItem::psPersistItem( MsgEntry* me, csStringHashReversible* msgstrings )
 {
     eid         = EID(me->GetUInt32());
     type        = me->GetUInt32();
-    name        = csString ( me->GetStr() );
-    factname    = csString ( msgstrings->Request(csStringID(me->GetUInt32())) );
-    matname     = csString ( msgstrings->Request(csStringID(me->GetUInt32())) );
-    sector      = csString ( msgstrings->Request(csStringID(me->GetUInt32())) );
+    name        = me->GetStr();
+    factname    = msgstrings->Request(csStringID(me->GetUInt32()));
+    matname     = msgstrings->Request(csStringID(me->GetUInt32()));
+    sector      = msgstrings->Request(csStringID(me->GetUInt32()));
     pos         = me->GetVector();
     xRot        = me->GetFloat();
     yRot        = me->GetFloat();
