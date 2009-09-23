@@ -297,7 +297,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                             // Validation.
                             csString msg;
                             msg.Format("Invalid texture reference '%s' in material '%s'", node->GetContentsValue(), node->GetParent()->GetAttributeValue("name"));
-                            //CS_ASSERT_MSG(msg.GetData(), texture.IsValid());
+                            CS_ASSERT_MSG(msg.GetData(), texture.IsValid());
                         }
                         m->textures.Push(texture);
                         m->checked.Push(false);
@@ -370,7 +370,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                                 // Validation.
                                 csString msg;
                                 msg.Format("Invalid texture reference '%s' in shadervar", node->GetContentsValue());
-                                //CS_ASSERT_MSG(msg.GetData(), texture.IsValid());
+                                CS_ASSERT_MSG(msg.GetData(), texture.IsValid());
                             }
                             m->textures.Push(texture);
                             m->checked.Push(false);
@@ -479,7 +479,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                         // Validation.
                         csString msg;
                         msg.Format("Invalid material reference '%s' in meshfact '%s'", node->GetNode("params")->GetNode("material")->GetContentsValue(), node->GetAttributeValue("name"));
-                        //CS_ASSERT_MSG(msg.GetData(), material.IsValid());
+                        CS_ASSERT_MSG(msg.GetData(), material.IsValid());
                     }
 
                     mf->materials.Push(material);
@@ -500,7 +500,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                             // Validation.
                             csString msg;
                             msg.Format("Invalid material reference '%s' in meshfact '%s'", node2->GetNode("material")->GetContentsValue(), node->GetAttributeValue("name"));
-                            //CS_ASSERT_MSG(msg.GetData(), material.IsValid());
+                            CS_ASSERT_MSG(msg.GetData(), material.IsValid());
                         }
 
                         mf->materials.Push(material);
@@ -520,7 +520,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                         // Validation.
                         csString msg;
                         msg.Format("Invalid material reference '%s' in cal3d meshfact '%s'", node2->GetAttributeValue("material"), node->GetAttributeValue("name"));
-                        //CS_ASSERT_MSG(msg.GetData(), material.IsValid());
+                        CS_ASSERT_MSG(msg.GetData(), material.IsValid());
                     }
                     mf->materials.Push(material);
                     mf->checked.Push(false);
@@ -539,7 +539,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                             // Validation.
                             csString msg;
                             msg.Format("Invalid basematerial reference '%s' in terrain mesh", node->GetContentsValue());
-                            //CS_ASSERT_MSG(msg.GetData(), material.IsValid());
+                            CS_ASSERT_MSG(msg.GetData(), material.IsValid());
                         }
 
                         mf->materials.Push(material);
@@ -566,7 +566,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                                     // Validation.
                                     csString msg;
                                     msg.Format("Invalid alphamap reference '%s' in terrain mesh", node2->GetAttributeValue("material"));
-                                    //CS_ASSERT_MSG(msg.GetData(), material.IsValid());
+                                    CS_ASSERT_MSG(msg.GetData(), material.IsValid());
                                 }
 
                                 mf->materials.Push(material);
@@ -679,7 +679,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                     {
                         csRef<iDocument> pdoc = docsys->CreateDocument();
                         csRef<iDataBuffer> pdata = vfs->ReadFile(node2->GetNode("paramsfile")->GetContentsValue());
-                        //CS_ASSERT_MSG("Invalid params file.\n", pdata.IsValid());
+                        CS_ASSERT_MSG("Invalid params file.\n", pdata.IsValid());
                         pdoc->Parse(pdata, true);
                         node2 = pdoc->GetRoot();
                     }
@@ -699,7 +699,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                                 // Validation.
                                 csString msg;
                                 msg.Format("Invalid material reference '%s' in meshobj submesh", node3->GetNode("material")->GetContentsValue());
-                                //CS_ASSERT_MSG(msg.GetData(), material.IsValid());
+                                CS_ASSERT_MSG(msg.GetData(), material.IsValid());
                             }
 
                             m->materials.Push(material);
@@ -720,7 +720,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                                     // Validation.
                                     csString msg;
                                     msg.Format("Invalid texture reference '%s' in meshobj shadervar", node3->GetContentsValue());
-                                    //CS_ASSERT_MSG(msg.GetData(), texture.IsValid());
+                                    CS_ASSERT_MSG(msg.GetData(), texture.IsValid());
                                 }
 
                                 m->textures.Push(texture);
@@ -739,8 +739,8 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                             // Validation.
                             csString msg;
                             msg.Format("Invalid factory reference '%s' in meshobj '%s'", node2->GetContentsValue(),
-                                node2->GetParent()->GetParent()->GetAttributeValue("name"));
-                            //CS_ASSERT_MSG(msg.GetData(), meshfact.IsValid());
+                            node2->GetParent()->GetParent()->GetAttributeValue("name"));
+                            CS_ASSERT_MSG(msg.GetData(), meshfact.IsValid());
                         }
 
                         // Calc bbox data.
@@ -787,7 +787,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                             // Validation.
                             csString msg;
                             msg.Format("Invalid material reference '%s' in terrain object", node2->GetContentsValue());
-                            //CS_ASSERT_MSG(msg.GetData(), material.IsValid());
+                            CS_ASSERT_MSG(msg.GetData(), material.IsValid());
                         }
 
                         m->materials.Push(material);
@@ -810,7 +810,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                                 // Validation.
                                 csString msg;
                                 msg.Format("Invalid material reference '%s' in terrain materialpalette", node3->GetContentsValue());
-                                //CS_ASSERT_MSG(msg.GetData(), material.IsValid());
+                                CS_ASSERT_MSG(msg.GetData(), material.IsValid());
                             }
 
                             m->materials.Push(material);
@@ -840,7 +840,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                                             // Validation.
                                             csString msg;
                                             msg.Format("Invalid texture reference '%s' in terrain renderproperties shadervar", node3->GetContentsValue());
-                                            // CS_ASSERT_MSG(msg.GetData(), texture.IsValid());
+                                            CS_ASSERT_MSG(msg.GetData(), texture.IsValid());
                                         }
 
                                         m->textures.Push(texture);
@@ -900,7 +900,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                                 // Validation.
                                 csString msg;
                                 msg.Format("Invalid meshfact reference '%s' in meshgen '%s'", name.GetData(), mgen->name.GetData());
-                                //CS_ASSERT_MSG(msg.GetData(), meshfact.IsValid());
+                                CS_ASSERT_MSG(msg.GetData(), meshfact.IsValid());
                             }
 
                             mgen->meshfacts.Push(meshfact);   
@@ -918,7 +918,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                                     // Validation.
                                     csString msg;
                                     msg.Format("Invalid material reference '%s' in meshgen '%s'", name.GetData(), mgen->name.GetData());
-                                    //CS_ASSERT_MSG(msg.GetData(), material.IsValid());
+                                    CS_ASSERT_MSG(msg.GetData(), material.IsValid());
                                 }
 
                                 mgen->materials.Push(material);
@@ -1294,9 +1294,9 @@ void BgLoader::CleanSector(Sector* sector)
     {
         csString msg;
         msg.Format("Error cleaning sector. Sector still has %zu objects!", sector->objectCount);
-        //CS_ASSERT_MSG(msg.GetData(), false);
+        CS_ASSERT_MSG(msg.GetData(), false);
     }
-    //CS_ASSERT_MSG("Error cleaning sector. Sector is invalid!", sector->object.IsValid());
+    CS_ASSERT_MSG("Error cleaning sector. Sector is invalid!", sector->object.IsValid());
 
     engine->GetSectors()->Remove(sector->object);
     sector->object.Invalidate();
@@ -1432,7 +1432,7 @@ void BgLoader::LoadSector(const csBox3& loadBox, const csBox3& unloadBox,
         {
             csString msg;
             msg.AppendFmt("Attempting to load uninit sector %s!\n", sector->name.GetData());
-            //CS_ASSERT_MSG(msg.GetData(), sector->init);
+            CS_ASSERT_MSG(msg.GetData(), sector->init);
             if(!sector->init) return;
         }
         sector->object = engine->CreateSector(sector->name);
@@ -1552,7 +1552,7 @@ void BgLoader::LoadSector(const csBox3& loadBox, const csBox3& unloadBox,
                     {
                         csString msg;
                         msg.AppendFmt("Attempting to load uninit sector %s!\n", sector->name.GetData());
-                        //CS_ASSERT_MSG(msg.GetData(), sector->init);
+                        CS_ASSERT_MSG(msg.GetData(), sector->init);
                         if(!sector->init) return;
                     }
                     sector->portals[i]->targetSector->object = engine->CreateSector(sector->portals[i]->targetSector->name);
@@ -1952,7 +1952,7 @@ csPtr<iMeshFactoryWrapper> BgLoader::LoadFactory(const char* name, bool* failed)
             // Validation.
             csString msg;
             msg.Format("Invalid factory reference '%s'", name);
-            //CS_ASSERT_MSG(msg.GetData(), meshfact.IsValid());
+            CS_ASSERT_MSG(msg.GetData(), meshfact.IsValid());
         }
         else if(!meshfact.IsValid())
         {
@@ -1968,7 +1968,7 @@ csPtr<iMeshFactoryWrapper> BgLoader::LoadFactory(const char* name, bool* failed)
             // Check success.
             csString msg;
             msg.Format("Failed to load factory '%s'", name);
-            //CS_ASSERT_MSG(msg.GetData(), meshfact->status->WasSuccessful());
+            CS_ASSERT_MSG(msg.GetData(), meshfact->status->WasSuccessful());
         }
         else if(!meshfact->status->WasSuccessful())
         {
@@ -1991,7 +1991,7 @@ csPtr<iMaterialWrapper> BgLoader::LoadMaterial(const char* name, bool* failed)
           // Validation.
           csString msg;
           msg.Format("Invalid material reference '%s'", name);
-          //CS_ASSERT_MSG(msg.GetData(), material.IsValid());
+          CS_ASSERT_MSG(msg.GetData(), material.IsValid());
         }
         else if(!material.IsValid())
         {
@@ -2015,7 +2015,7 @@ bool BgLoader::InWaterArea(const char* sector, csVector3* pos, csColor4** colour
         return false;
 
     csRef<Sector> s = sectorHash.Get(sStringSet.Request(sector), csRef<Sector>());
-    //CS_ASSERT_MSG("Invalid sector passed to InWaterArea().", s.IsValid());
+    CS_ASSERT_MSG("Invalid sector passed to InWaterArea().", s.IsValid());
 
     for(size_t i=0; i<s->waterareas.GetSize(); ++i)
     {
