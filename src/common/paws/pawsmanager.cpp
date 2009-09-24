@@ -330,7 +330,7 @@ bool PawsManager::LoadSkinDefinition(const char* zip)
 
     if (!realPath.IsValid())
     {
-      Error2( "Could not mount skin %s.  GetRealPath() failed.",zip);
+      Error2( "Could not mount skin %s.  Bad virtual path.",zip);
       return false;
 
     }
@@ -344,7 +344,7 @@ bool PawsManager::LoadSkinDefinition(const char* zip)
     csRef<iDocument> xml = ParseFile(objectReg,TEMP_SKIN_MOUNT "/skin.xml");
     if(!xml)
     {
-        Error2( "Could not read skin info on %s!",zip);
+        Error2( "Could not read skin.xml on %s!",zip);
         return false;
     }
 
@@ -352,13 +352,13 @@ bool PawsManager::LoadSkinDefinition(const char* zip)
     csRef<iDocumentNode> root = xml->GetRoot();
     if (!root)
     {
-         Error2( "Could not read skin info on %s!",zip);
+         Error2( "skin.xml badly formed on %s!",zip);
          return false;
     }
     root = root->GetNode("xml");
     if(!root)
     {
-        Error2( "Could not read skin info on %s!",zip);
+        Error2( "Could not find xml node on %s!",zip);
         return false;
     }
     csRef<iDocumentNode> mount = root->GetNode("mount_path");
