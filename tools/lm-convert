@@ -16,7 +16,7 @@ while ($row = mysql_fetch_array($scripts))
          preg_replace('!<attack!', '<atk',
          preg_replace('!<defense!', '<def',
          preg_replace('!<hp!', '<hp-max',
-         preg_replace('!<([^ ]*)[^>]* (name="[^"]*" )? *(value="[-0-9\.]*")[^>]*/>!', '<$1 $2$3/>', $row['equip_script'])))))));
+         preg_replace('!<([^ ]*) (name="[^"]*" )?[^>]*(value="[-0-9\.]*")[^>]*/>!', '<$1 $2$3/>', $row['equip_script'])))))));
     echo "Updating " . $row['name'] . "...\n";
     mysql_query("UPDATE item_stats SET equip_script = '$s' WHERE id=" . $row['id']) or die(mysql_error() . "\n");
     mysql_query("DELETE FROM progression_events WHERE name = '" . mysql_real_escape_string($row['name']) . "'");
