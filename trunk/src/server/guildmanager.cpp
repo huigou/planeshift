@@ -1066,9 +1066,7 @@ void GuildManager::CheckMinimumRequirements(psGuildInfo *guild, gemActor *notify
     if (!guild->MeetsMinimumRequirements())
     {
         Warning4(LOG_ANY,
-           "***********************************************************\n"
-           "Guild %s has %zu members and will be deleted in %d minutes.\n"
-           "***********************************************************\n",
+           "Guild %s has %zu members and will be deleted in %d minutes.\n",
            guild->name.GetData(), guild->members.GetSize(), GUILD_KICK_GRACE);
 
         if (!notify) // If not auto-notifying the leader, find the leader if online
