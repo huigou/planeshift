@@ -21,6 +21,7 @@
 // Crystal Space Includes
 //=============================================================================
 #include <csutil/csmd5.h>
+#include <csver.h>
 
 //=============================================================================
 // Project Includes
@@ -187,7 +188,9 @@ void psAuthenticationClient::HandlePreAuth( MsgEntry* me )
     // md5("password:clientnum")
     csString hexstring = csMD5::Encode(passwordhashandclientnum).HexString();
     //TODO: convert this to use csstrings
-    psAuthenticationMessage request(0,username.GetData(), hexstring.GetData() );
+    // Get os and graphics card info
+    iGraphics2D *graphics2D = PawsManager::GetSingleton().GetGraphics3D()->GetDriver2D();
+    psAuthenticationMessage request(0,username.GetData(), hexstring.GetData(), graphics2D->GetHWRenderer(), CS_PLATFORM_NAME "-" CS_PROCESSOR_NAME "-" CS_COMPILER_NAME );
     
     request.SendMessage();                
 }

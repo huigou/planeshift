@@ -1346,6 +1346,11 @@ UPDATE `server_options` SET `option_value`='1230' WHERE `option_name`='db_versio
 #1230 - Stefano Angeler made penilty penalty
 ALTER TABLE `trade_transformations` CHANGE COLUMN `penilty_pct` `penalty_pct` FLOAT(10,6)  NOT NULL DEFAULT '1.000000';
 
+#1231 - Andrew Dai added os and graphics card info
+ALTER TABLE `accounts` ADD COLUMN `operating_system` VARCHAR(32) NULL default ''   COMMENT "The last operating system used with this account" AFTER `advisor_ban`;
+ALTER TABLE `accounts` ADD COLUMN `graphics_card` VARCHAR(32) NULL default ''   COMMENT "The last graphics card used with this account" AFTER `operating_system`;
+UPDATE `server_options` SET `option_value`='1231' WHERE `option_name`='db_version';
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to

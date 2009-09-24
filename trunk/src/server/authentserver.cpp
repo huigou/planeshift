@@ -418,6 +418,8 @@ void AuthenticationServer::HandleAuthent(MsgEntry *me, Client *notused)
         gmtm->tm_sec);
 
     acctinfo->lastlogintime = timeStr;
+    acctinfo->os = msg.os_;
+    acctinfo->gfxcard = msg.gfxcard_;
     CacheManager::GetSingleton().UpdateAccountInfo(acctinfo);
 
     iCachedObject *obj = CacheManager::GetSingleton().RemoveFromCache(CacheManager::GetSingleton().MakeCacheName("auth",acctinfo->accountid));

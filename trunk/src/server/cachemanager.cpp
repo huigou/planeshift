@@ -2814,7 +2814,9 @@ bool CacheManager::UpdateAccountInfo(psAccountInfo *ainfo)
     const char *fieldnames[]= {
         "last_login_ip",
         "security_level",
-        "last_login"
+        "last_login",
+        "operating_system",
+        "graphics_card"
     };
     char accountidstring[11];
     psStringArray fields;
@@ -2822,6 +2824,8 @@ bool CacheManager::UpdateAccountInfo(psAccountInfo *ainfo)
     fields.Push(ainfo->lastloginip);
     fields.FormatPush("%d",ainfo->securitylevel);
     fields.Push(ainfo->lastlogintime);
+    fields.Push(ainfo->os);
+    fields.Push(ainfo->gfxcard);
     snprintf(accountidstring,11,"%u",ainfo->accountid);
     accountidstring[10]=0x00;
 

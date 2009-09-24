@@ -45,7 +45,7 @@ class csStringHashReversible;
 
 // This holds the version number of the network code, remember to increase
 // this each time you do an update which breaks compatibility
-#define PS_NETVERSION   0x00A9
+#define PS_NETVERSION   0x00B0
 // Remember to bump the version in pscssetup.h, as well.
 
 
@@ -598,6 +598,7 @@ public:
     uint32_t  netversion;
     csString  sAddr;
     csString  sUser,sPassword;
+    csString  os_, gfxcard_;
 
     /**
      * This function creates a PS Message struct given a userid and
@@ -605,7 +606,7 @@ public:
      * creation when a user wants to log in.
      */
     psAuthenticationMessage(uint32_t clientnum,const char *userid,
-        const char *password, uint32_t version=PS_NETVERSION);
+        const char *password, const char *os, const char *gfxcard, uint32_t version=PS_NETVERSION);
 
     /**
      * This constructor receives a PS Message struct and cracks it apart
