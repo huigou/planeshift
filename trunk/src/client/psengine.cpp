@@ -561,6 +561,35 @@ bool psEngine::Initialize (int level)
         loader = csQueryRegistry<iBgLoader>(object_reg);
         scenemanipulator = scfQueryInterface<iSceneManipulate>(loader);
         csRef<iThreadManager> tm = csQueryRegistry<iThreadManager>(object_reg);
+        
+        // Check VFS mounts
+        csString test_path;
+        csRef<iDataBuffer> realPath;
+        
+        test_path = "/planeshift/materials/";
+        realPath = vfs->GetRealPath(test_path);
+
+        if (!realPath.IsValid())
+        {
+          Error2("Bad virtual path %s.", test_path.GetData());
+          PS_PAUSEEXIT(1);
+        }
+        test_path = "/planeshift/meshes/";
+		realPath = vfs->GetRealPath(test_path);
+
+		if (!realPath.IsValid())
+		{
+		  Error2("Bad virtual path %s.", test_path.GetData());
+		  PS_PAUSEEXIT(1);
+		}
+		test_path = "/planeshift/world/";
+		realPath = vfs->GetRealPath(test_path);
+
+		if (!realPath.IsValid())
+		{
+		  Error2("Bad virtual path %s.", test_path.GetData());
+		  PS_PAUSEEXIT(1);
+		}
 
         // Start to fill the loader cache.
         precaches.Push(loader->Setup(gfxFeatures, 200));
