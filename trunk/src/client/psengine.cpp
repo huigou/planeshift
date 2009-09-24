@@ -600,7 +600,7 @@ bool psEngine::Initialize (int level)
         {
             lasterror = "Couldn't init Cel Manager.";
             Error2("FATAL ERROR: %s",lasterror.GetData());
-            return false;
+            PS_PAUSEEXIT(1);
         }
 
 
@@ -608,7 +608,7 @@ bool psEngine::Initialize (int level)
         {
             lasterror = "ModeHandler failed init.";
             Error2("FATAL ERROR: %s",lasterror.GetData());
-            return false;
+            PS_PAUSEEXIT(1);
         }
 
         // Init the main widget

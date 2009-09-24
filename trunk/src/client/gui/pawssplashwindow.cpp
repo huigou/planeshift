@@ -56,7 +56,7 @@ void pawsSplashWindow::Draw()
     if(psengine->Initialize(level))
         ++level;
     else 
-        PS_PAUSEEXIT(1);
+        return;
    
     if(level > 5)
     {
