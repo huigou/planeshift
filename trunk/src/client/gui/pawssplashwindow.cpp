@@ -18,6 +18,7 @@
  */
 
 #include <psconfig.h>
+#include "util/pscssetup.h"
 #include <csutil/sysfunc.h>
 
 #include "pawssplashwindow.h"
@@ -54,7 +55,8 @@ void pawsSplashWindow::Draw()
 
     if(psengine->Initialize(level))
         ++level;
-    else return;
+    else 
+        PS_PAUSEEXIT(1);
    
     if(level > 5)
     {
