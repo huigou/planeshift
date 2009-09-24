@@ -72,6 +72,8 @@ public:
     csString os;
     /// String containing the graphics card the connecting machine is using
     csString gfxcard;
+    /// String containing the graphics driver version the connecting machine is using;
+    csString gfxversion;
     /// Level of spamming offenses for this account.
     int spamPoints;
     /// Number of questions answered on the help channel.

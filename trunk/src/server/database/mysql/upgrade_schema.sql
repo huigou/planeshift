@@ -1351,6 +1351,10 @@ ALTER TABLE `accounts` ADD COLUMN `operating_system` VARCHAR(32) NULL default ''
 ALTER TABLE `accounts` ADD COLUMN `graphics_card` VARCHAR(32) NULL default ''   COMMENT "The last graphics card used with this account" AFTER `operating_system`;
 UPDATE `server_options` SET `option_value`='1231' WHERE `option_name`='db_version';
 
+#1232 - Andrew Dai added graphics driver version
+ALTER TABLE `accounts` ADD COLUMN `graphics_version` VARCHAR(32) NULL default ''   COMMENT "The graphics card driver version used with this account" AFTER `graphics_card`;
+UPDATE `server_options` SET `option_value`='1232' WHERE `option_name`='db_version';
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to
