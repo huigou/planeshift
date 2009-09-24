@@ -1,4 +1,14 @@
-﻿*** 2009-09-11 by Keith Fulton
+﻿*** 2009-09-22 by Stefano Angeleri
+- fixed some compiling warnings
+- fixed PS#3195 - Inconsistent tree navigation menus 
+- added icon to glyph window
+- fixed buttons in the widget config window
+- fixes to the spell window
+- fixed a crash on item pickup
+- added a script to convert common strings from /planeshift/*/...dds 
+  to /planeshift/materials/...dds based on lm-converter
+
+*** 2009-09-23 by Keith Fulton
 - Added a new message type called PersistAllEntities.  This is just a
   packed bundle of psPersistActor messages, all inside one
   message.  It is necessary because the server has a large number
@@ -10,8 +20,85 @@
   enqueued objects to flood with.  Should be slightly more efficient
   in bandwidth as well.
 
+*** 2009-09-22 by Stefano Angeleri
+- fixed gm add/edit action location window
+- renamed penilty to penalty
+- fixed an exploit which allowed to exchange negative amount of money,
+  now this is checked and blocked server side.
+  
+*** 2009-09-18 by Stefano Angeleri
+- Fixed PS#3128 - Options menu unscrollable and incomplete. 
+- fixed style consistency in different config windows
+- fixed progress bar look & fell
+- Fixed almost all windows xml and improvements to their look
+- fixed PS#3121 - New GUI inventory window: scrollbar not working correctly 
+  but the thumb is invisible
+- fixed PS#3169 - [Regression] Tutorial icon invisible with new GUI 
+
+ 
+
 *** 2009-09-11 by Steven Patrick
 - Fixed PS#2378 - setskill -1 does not return boosts
+
+*** 2009-09-10 by Stefano Angeleri
+- committed a fix for PS#3098 - Wrong orientation of ring slots in inventory window patch by thom
+- fix for  PS#3156 - New elves skin desription window does not show whole buttons 
+  altough it could be still improved
+- fixed PS#1740 - Stopped repair on Platemail Armor prevents its transfer 
+- increased say range of 5 meters
+- fixed PS#2148 - Chat Window Spastic Scrolling 
+- improved detail window patch by f-rd
+- fixed tooltips
+- fixed unmount button visibility
+- fixed anim application to the socketed mesh (the player mesh)
+
+*** 2009-09-05 by Stefano Angeleri
+- Added an option to disable the auto addition of the last chat type 
+  /command in the send textbox. In some configurations it could be not desiderable.
+- added a buy single item button
+- committed a fix for PS#2321 - npc name changes not being reported correctly 
+  to clients  patch by peeg
+- committed a fix for PS#714 - better way to list /quest results 
+- added a guild name quest prereq op
+- fix for PS#3139: Tutorial window text unreadable due to same background 
+  and font color. patch by lanarel
+
+*** 2009-09-02 by Stefano Angeleri
+- Update last login also on guild join
+- merged $npc substitution used in voice file names to the substitutekeywords 
+  function and made use of it even to substitute parts of the voice filename so 
+  additional keywords can be used there (like $time, $playerrace or $sir)
+
+*** 2009-08-31 by Stefano Angeleri
+- Don't play sitting animation if the actor is already in a sit position when
+  it's received
+- Fixed guild last login informations
+- updated fparser to 3.2.1:
+    * Fixed bugs in optimizer: Functions in the form "log(-x)"  and certain integral powers 
+      (eg. "x^14") were optimized incorrectly. (In the case of the integral powers, the error 
+      manifested itself when x==0.)
+    * Fixed some incompatibilities which made the library not compile with MSVC.
+    * Fixed major crash in FunctionParser::Eval() which happened if it was called without 
+      FunctionParser::Parse() having been called successfully (or at all). (Now it always returns 
+      0.0 in such situations.)
+    * Changed FunctionParser::ErrorMsg() to return an empty string rather than a null pointer if 
+      the previous parsing was successful. (Its return value was never intended to be used as a 
+      check for success anyways. FunctionParser::GetParseErrorType() can be used for this purpose, 
+      if necessary.) This is to avoid potential crashes in the calling program if it assumes that 
+      this function always returns a valid string. 
+- Added some additional checks fixing PS#1606 - Wrong message when trying to 
+  train higher but pp are already 0 
+- fixed  PS#759 - Make Small Inventory Window visible at startup
+- check that the amount requested by the client for training isn't above what's 
+  actually needed to be trained fixes  PS#1614 - Clicking too much when training 
+  causes loss of PP/Tria 
+- Fixed PS#2641 - Server is ready when no map is loaded 
+- check sndsource3d in place of sndsource two times
+- set a default sorting in listboxes
+- Fixed PS#913 - /away auto-respond can be abused  patch by lanarel
+- fixed PS#2204 - Characters levitate / float / fly when loading a map change  patch by aiken
+- added missing brachet type for chat
+- fixes for unitialized variables patch by lanarel
 
 *** 2009-08-28 by Stefano Angeleri
 - Fixed a problem with caching which loaded over and then overwritten 
