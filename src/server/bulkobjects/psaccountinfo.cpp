@@ -54,6 +54,7 @@ bool psAccountInfo::Load(iResultRow& row)
     lastloginip = row["last_login_ip"];
     os = row["operating_system"];
     gfxcard = row["graphics_card"];
+    gfxversion = row["graphics_version"];
     
     spamPoints    = row.GetInt("spam_points");
     advisorPoints = row.GetInt("advisor_points");
