@@ -11,7 +11,7 @@ $scripts = mysql_query("SELECT * from common_strings") or die("fatal error: coul
 while ($row = mysql_fetch_array($scripts))
 {
     $s = mysql_real_escape_string(preg_replace('!/planeshift/.*/!', '/planeshift/materials/', $row['string']));
-    echo "Updating " . $row['name'] . "...\n";
+    echo "Updating " . $row['string'] . "...\n";
     mysql_query("UPDATE common_strings SET string = '$s' WHERE id=" . $row['id']) or die(mysql_error() . "\n");
 }
 
