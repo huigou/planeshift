@@ -361,8 +361,8 @@ AS_IF([test $with_cs != no],
 #----------------------------------------------------------------------------
 
 CS_CHECK_LIB_WITH([mysqlclient],
-	[AC_LANG_PROGRAM([[#include <my_alloc.h>]],
-		[USED_MEM check; check.left = 0;])], [/usr /usr/include/mysql|/usr/lib /usr/local/mysql /usr/include/mysql|/usr/lib/mysql /usr/local/include/mysql|/usr/local/lib/mysql /usr/lib /usr/local/mysql], [],
+	[AC_LANG_PROGRAM([[#include <mysql.h>]],
+		[MYSQL mysql; mysql_init(&mysql);])], [/usr /usr/include/mysql|/usr/lib /usr/local/mysql /usr/include/mysql|/usr/lib/mysql /usr/local/include/mysql|/usr/local/lib/mysql /usr/lib /usr/local/mysql], [],
 		[CS_EMIT_BUILD_RESULT([cs_cv_libmysqlclient], [LIBMYSQLCLIENT])], [], [], [], [], [])
 
 #----------------------------------------------------------------------------
