@@ -153,7 +153,7 @@ csString psPreAuthenticationMessage::ToString(AccessPointers * /*access_ptrs*/)
 PSF_IMPLEMENT_MSG_FACTORY(psAuthenticationMessage,MSGTYPE_AUTHENTICATE);
 
 psAuthenticationMessage::psAuthenticationMessage(uint32_t clientnum,
-    const char *userid,const char *password, uint32_t version)
+    const char *userid,const char *password, const char* os, const char* gfxcard, uint32_t version)
 {
 
     if (!userid || !password)
@@ -163,7 +163,7 @@ psAuthenticationMessage::psAuthenticationMessage(uint32_t clientnum,
     }
 
 
-    msg.AttachNew(new MsgEntry(strlen(userid)+1+strlen(password)+1+sizeof(uint32_t),PRIORITY_LOW));
+    msg.AttachNew(new MsgEntry(strlen(userid)+1+strlen(password)+1+strlen(os)+1+strlen(gfxcard)+1+sizeof(uint32_t),PRIORITY_LOW));
 
     msg->SetType(MSGTYPE_AUTHENTICATE);
     msg->clientnum      = clientnum;
@@ -171,6 +171,8 @@ psAuthenticationMessage::psAuthenticationMessage(uint32_t clientnum,
     msg->Add(version);
     msg->Add(userid);
     msg->Add(password);
+    msg->Add(os);
+    msg->Add(gfxcard);
 
     // Sets valid flag based on message overrun state
     valid=!(msg->overrun);
@@ -184,6 +186,8 @@ psAuthenticationMessage::psAuthenticationMessage(MsgEntry *message)
     netversion = message->GetUInt32();
     sUser = message->GetStr();
     sPassword = message->GetStr();
+    os_ = message->GetStr();
+    gfxcard_ = message->GetStr();
 
     // Sets valid flag based on message overrun state
     valid=!(message->overrun);

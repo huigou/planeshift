@@ -68,6 +68,10 @@ public:
     csString createddate;
     /// String value of the last ip a connection came in from
     csString lastloginip;
+    /// String containing the os the connecting machine is running
+    csString os;
+    /// String containing the graphics card the connecting machine is using
+    csString gfxcard;
     /// Level of spamming offenses for this account.
     int spamPoints;
     /// Number of questions answered on the help channel.
