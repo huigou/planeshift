@@ -136,6 +136,7 @@ PawsManager::PawsManager(iObjectRegistry* object, const char* skin, const char* 
     if(!LoadSkinDefinition(skin))
     {
         Error2("Failed to load skin %s!", skin);
+        exit(1);
     }
 
     // now load standard styles for anything else
