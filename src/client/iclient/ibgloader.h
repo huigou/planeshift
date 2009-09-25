@@ -45,7 +45,7 @@ struct StartPosition : public csRefCount
  */
 struct iBgLoader : public virtual iBase
 {
-  SCF_INTERFACE(iBgLoader, 1, 4, 1);
+  SCF_INTERFACE(iBgLoader, 1, 4, 2);
 
  /**
   * Sets key settings and performs a shader parse.
@@ -58,13 +58,13 @@ struct iBgLoader : public virtual iBase
   * Start loading a material into the engine. Returns 0 if the material is not yet loaded.
   * @param failed Pass a boolean to be able to manually handle a failed load.
   */
-  virtual csPtr<iMaterialWrapper> LoadMaterial(const char* name, bool* failed = NULL) = 0;
+  virtual csPtr<iMaterialWrapper> LoadMaterial(const char* name, bool* failed = NULL, bool wait = false) = 0;
 
  /**
   * Start loading a mesh factory into the engine. Returns 0 if the factory is not yet loaded.
   * @param failed Pass a boolean to be able to manually handle a failed load.
   */
-  virtual csPtr<iMeshFactoryWrapper> LoadFactory(const char* name, bool* failed = NULL) = 0;
+  virtual csPtr<iMeshFactoryWrapper> LoadFactory(const char* name, bool* failed = NULL, bool wait = false) = 0;
 
  /**
   * Pass a data file to be cached. This method will parse your data and add it to it's
