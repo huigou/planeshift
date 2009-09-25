@@ -58,9 +58,6 @@ public:
      *  @param Info The data to add inside the [] in the title bar.
      */
     bool AddWindowInformations(const char *Info);
-protected:  
-    //Unused part of initcs.inc, but included - better to than not to
-    bool InitCSWindow(const char *);
     
     /** Sets an icon for the main window using a file name.
      * 
@@ -75,6 +72,12 @@ protected:
      *  @return true if it was possible to ask cs to set the icon.
      */
     bool SetIcon(iImage* Image);
+
+protected:  
+    //Unused part of initcs.inc, but included - better to than not to
+    bool InitCSWindow(const char *);
+  
+    char * PS_GetFileName(char*);
 
     void MountUserData();
 
