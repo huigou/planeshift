@@ -1814,7 +1814,7 @@ bool BgLoader::LoadMesh(MeshObj* mesh)
     return (mesh->status && mesh->status->IsFinished());
 }
 
-bool BgLoader::LoadMeshFact(MeshFact* meshfact)
+bool BgLoader::LoadMeshFact(MeshFact* meshfact, bool wait)
 {
     if(meshfact->useCount != 0)
     {
@@ -1827,7 +1827,7 @@ bool BgLoader::LoadMeshFact(MeshFact* meshfact)
     {
         if(!meshfact->checked[i])
         {
-            meshfact->checked[i] = LoadMaterial(meshfact->materials[i]);
+            meshfact->checked[i] = LoadMaterial(meshfact->materials[i], wait);
             ready &= meshfact->checked[i];
         }
     }
@@ -1836,11 +1836,25 @@ bool BgLoader::LoadMeshFact(MeshFact* meshfact)
     {
         if(meshfact->data)
         {
-            meshfact->status = tloader->LoadNode(meshfact->path, meshfact->data);
+            if(wait)
+            {
+                meshfact->status = tloader->LoadNodeWait(meshfact->path, meshfact->data);
+            }
+            else
+            {
+                meshfact->status = tloader->LoadNode(meshfact->path, meshfact->data);
+            }
         }
         else
         {
-            meshfact->status = tloader->LoadMeshObjectFactory(meshfact->path, meshfact->filename);
+            if(wait)
+            {
+                meshfact->status = tloader->LoadMeshObjectFactoryWait(meshfact->path, meshfact->filename);
+            }
+            else
+            {
+                meshfact->status = tloader->LoadMeshObjectFactory(meshfact->path, meshfact->filename);
+            }
         }
 
         return false;
@@ -1855,7 +1869,7 @@ bool BgLoader::LoadMeshFact(MeshFact* meshfact)
     return false;
 }
 
-bool BgLoader::LoadMaterial(Material* material)
+bool BgLoader::LoadMaterial(Material* material, bool wait)
 {
     if(material->useCount != 0)
     {
@@ -1868,7 +1882,7 @@ bool BgLoader::LoadMaterial(Material* material)
     {
         if(!material->checked[i])
         {
-            material->checked[i] = LoadTexture(material->textures[i]);
+            material->checked[i] = LoadTexture(material->textures[i], wait);
             ready &= material->checked[i];
         }
     }
@@ -1920,7 +1934,7 @@ bool BgLoader::LoadMaterial(Material* material)
     return false;
 }
 
-bool BgLoader::LoadTexture(Texture* texture)
+bool BgLoader::LoadTexture(Texture* texture, bool wait)
 {
     if(texture->useCount != 0)
     {
@@ -1930,7 +1944,14 @@ bool BgLoader::LoadTexture(Texture* texture)
 
     if(!texture->status.IsValid())
     {
-        texture->status = tloader->LoadNode(texture->path, texture->data);
+        if(wait)
+        {
+            texture->status = tloader->LoadNodeWait(texture->path, texture->data);
+        }
+        else
+        {
+            texture->status = tloader->LoadNode(texture->path, texture->data);
+        }
         return false;
     }
 
@@ -1943,7 +1964,7 @@ bool BgLoader::LoadTexture(Texture* texture)
     return false;
 }
 
-csPtr<iMeshFactoryWrapper> BgLoader::LoadFactory(const char* name, bool* failed)
+csPtr<iMeshFactoryWrapper> BgLoader::LoadFactory(const char* name, bool* failed, bool wait)
 {
     csRef<MeshFact> meshfact = meshfacts.Get(mfStringSet.Request(name), csRef<MeshFact>());
     {
@@ -1961,7 +1982,7 @@ csPtr<iMeshFactoryWrapper> BgLoader::LoadFactory(const char* name, bool* failed)
         }
     }
 
-    if(LoadMeshFact(meshfact))
+    if(LoadMeshFact(meshfact, wait))
     {
         if(!failed)
         {
@@ -1982,7 +2003,7 @@ csPtr<iMeshFactoryWrapper> BgLoader::LoadFactory(const char* name, bool* failed)
     return csPtr<iMeshFactoryWrapper>(0);
 }
 
-csPtr<iMaterialWrapper> BgLoader::LoadMaterial(const char* name, bool* failed)
+csPtr<iMaterialWrapper> BgLoader::LoadMaterial(const char* name, bool* failed, bool wait)
 {
     csRef<Material> material = materials.Get(mStringSet.Request(name), csRef<Material>());
     {
@@ -2000,7 +2021,7 @@ csPtr<iMaterialWrapper> BgLoader::LoadMaterial(const char* name, bool* failed)
         }
     }
 
-    if(LoadMaterial(material))
+    if(LoadMaterial(material, wait))
     {
         return csPtr<iMaterialWrapper>(material->mat);
     }

@@ -177,8 +177,7 @@ bool psEffectObjMesh::PostSetup(iLoaderContext * ldr_context)
 {   
     bool failed = false;
     csRef<iBgLoader> loader = csQueryRegistry<iBgLoader>(psCSSetup::object_reg);
-    while(!meshFact && !failed)
-        meshFact = loader->LoadFactory(factName, &failed);
+    meshFact = loader->LoadFactory(factName, &failed, true);
 
     if(failed)
     {

@@ -70,13 +70,13 @@ public:
     * Start loading a material into the engine. Returns 0 if the material is not yet loaded.
     * @param failed Pass a boolean to be able to manually handle a failed load.
     */
-    csPtr<iMaterialWrapper> LoadMaterial(const char* name, bool* failed = NULL);
+    csPtr<iMaterialWrapper> LoadMaterial(const char* name, bool* failed = NULL, bool wait = false);
 
    /**
     * Start loading a mesh factory into the engine. Returns 0 if the factory is not yet loaded.
     * @param failed Pass a boolean to be able to manually handle a failed load.
     */
-    csPtr<iMeshFactoryWrapper> LoadFactory(const char* name, bool* failed = NULL);
+    csPtr<iMeshFactoryWrapper> LoadFactory(const char* name, bool* failed = NULL, bool wait = false);
 
    /**
     * Pass a data file to be cached. This method will parse your data and add it to it's
@@ -490,9 +490,9 @@ private:
     void FinishMeshLoad(MeshObj* mesh);
     bool LoadMeshGen(MeshGen* meshgen);
     bool LoadMesh(MeshObj* mesh);
-    bool LoadMeshFact(MeshFact* meshfact);
-    bool LoadMaterial(Material* material);
-    bool LoadTexture(Texture* texture);
+    bool LoadMeshFact(MeshFact* meshfact, bool wait = false);
+    bool LoadMaterial(Material* material, bool wait = false);
+    bool LoadTexture(Texture* texture, bool wait = false);
 
     // Pointers to other needed plugins.
     iObjectRegistry* object_reg;
