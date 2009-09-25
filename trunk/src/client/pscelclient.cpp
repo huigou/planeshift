@@ -1942,7 +1942,7 @@ GEMClientItem::GEMClientItem( psCelClient* cel, psPersistItem& mesg )
     post_load->yRot = mesg.yRot;
     post_load->zRot = mesg.zRot;
     post_load->sector = mesg.sector;
-    post_load->flags = mesg.flags;
+    flags = mesg.flags;
 
     if (!InitMesh())
     {
