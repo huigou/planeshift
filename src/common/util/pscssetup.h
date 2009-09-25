@@ -75,12 +75,7 @@ protected:
      *  @return true if it was possible to ask cs to set the icon.
      */
     bool SetIcon(iImage* Image);
-  
-    char * PS_GetFileName(char*);
 
-    void MountEarly();
-    void MountArt();
-    void MountZip(const char *, const char *);
     void MountUserData();
 
     int argc;

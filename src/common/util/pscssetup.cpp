@@ -170,8 +170,8 @@ iObjectRegistry* psCSSetup::InitCS(iReporterListener * customReporter)
     vfs  =  csQueryRegistry<iVFS> (object_reg);
     configManager =  csQueryRegistry<iConfigManager> (object_reg);
 
-    // Mount any directories required early - before trying to read our .cfg.
-    MountEarly();
+    // Mount user dir.
+    MountUserData();
   
     if (userConfigfile != NULL)
     {
@@ -255,62 +255,7 @@ iObjectRegistry* psCSSetup::InitCS(iReporterListener * customReporter)
         }
     }
 
-    MountArt();
-
     return object_reg;
-}
-
-char* psCSSetup::PS_GetFileName(char* path)
-{
-    size_t pos = strlen(path);
-    for ( ; pos>0; pos--)
-    {
-        if (path[pos] == '/')
-            break;
-    }
-    
-    return path+pos+1;
-}
-
-/**
- * Creates a mount point for the a zip file.
- *
- * It is mounted into /planeshift/<mount_point> and the location to mount
- * is defined in the psclient.cfg/psserver.cfg file under PlaneShift.Mount.<thing>.
- */
-void psCSSetup::MountZip(const char *zip, const char *mount_point)
-{
-    csString cfg_mount;
-    csString mount;
-    cfg_mount.Format("PlaneShift.Mount.%s", zip);
-    mount.Format("/planeshift/%s/", mount_point);
-    
-    csRef<iConfigIterator> i = configManager->Enumerate(cfg_mount);
-    if (i)
-    {
-        while (i->HasNext())
-        {
-            i->Next();
-            if (!i->GetKey() || !strcmp(i->GetKey(), "")) continue;
-            const char* zipfile = configManager->GetStr(i->GetKey(), "");
-            csRef<iDataBuffer> xrpath = vfs->GetRealPath(zipfile);
-            vfs->Mount(mount, **xrpath);
-        }
-    }
-    
-    // Check for development versions.
-    cfg_mount.Format("PlaneShift.Dev.%s", zip);
-    csRef<iConfigIterator> i2 = configManager->Enumerate(cfg_mount);
-    if (i2)
-    {
-        while (i2->HasNext())
-        {
-            i2->Next();
-            if (!i2->GetKey() || !strcmp(i2->GetKey(), "")) continue;
-            const char* zipfile = configManager->GetStr(i2->GetKey(), "");            
-            vfs->Mount(mount, zipfile);
-        }
-    }
 }
 
 void psCSSetup::MountUserData()
@@ -339,23 +284,4 @@ void psCSSetup::MountUserData()
         printf("Could not mount %s as /planeshift/userdata!\n", configPath.GetData());
         PS_PAUSEEXIT(1);
     }
-}
-
-void psCSSetup::MountEarly()
-{
-    if (!vfs->Mount("/planeshift/", "$^"))
-    {
-        printf("Could not mount /planeshift!");
-        PS_PAUSEEXIT(1);
-    }
-    
-    // We need /planeshift/userdata early, so we can read planeshift.cfg.
-    MountUserData();
-}
-
-void psCSSetup::MountArt()
-{
-    MountZip("materials", "materials");
-    MountZip("meshes", "meshes");
-    MountZip("world", "world");
 }
