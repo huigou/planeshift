@@ -631,7 +631,6 @@ private:
         float yRot;
         float zRot;
         csString sector;
-        uint32_t flags;
     };
 
     PostLoadData* post_load;
