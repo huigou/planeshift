@@ -1,4 +1,9 @@
-﻿*** 2009-09-22 by Stefano Angeleri
+﻿*** 2009-09-25 by Stefano Angeleri
+- additions to art-convert
+- made seticon public
+- made icon loading pass format flags
+
+*** 2009-09-22 by Stefano Angeleri
 - fixed some compiling warnings
 - fixed PS#3195 - Inconsistent tree navigation menus 
 - added icon to glyph window
