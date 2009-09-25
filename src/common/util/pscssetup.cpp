@@ -104,7 +104,7 @@ bool psCSSetup::SetIcon(const char* ImageFileLocation)
         return false;
     }
     csRef<iImageIO> imageLoader =  csQueryRegistry<iImageIO >(object_reg);
-    Image = imageLoader->Load(buf,CS_IMGFMT_ANY);
+    Image = imageLoader->Load(buf, CS_IMGFMT_TRUECOLOR | CS_IMGFMT_ALPHA);
     return SetIcon(Image);
 }
 
