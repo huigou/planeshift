@@ -2208,7 +2208,7 @@ void GuildManager::GuildYield(psGuildCmdMessage &msg, Client *client)
         return;
     }
 
-    gemActor *target = dynamic_cast<gemActor*>(client->GetTargetObject());
+    gemActor *target = client->GetTargetObject()->AsActor();
     if (!target)
         return;
 

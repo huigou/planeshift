@@ -109,42 +109,6 @@ protected:
 	gemVisitor() { }
 };
 
-// A visitor to find a gemItem or check if an object is a gemItem.
-class findItemVisitor : public gemVisitor
-{
-public:
-	findItemVisitor() : found(NULL) { }
-	void Visit(gemItem& item) { found = &item; }
-	
-	gemItem* Found() { return found; }
-protected:
-	gemItem* found;
-};
-
-// A visitor to find a gemItem or check if an object is a gemActor.
-class findActorVisitor : public gemVisitor
-{
-public:
-	findActorVisitor() : found(NULL) { }
-	void Visit(gemActor& actor) { found = &actor; }
-	
-	gemActor* Found() { return found; }
-protected:
-	gemActor* found;
-};
-
-// A visitor to find a gemItem or check if an object is a gemNPC.
-class findNPCVisitor : public gemVisitor
-{
-public:
-	findNPCVisitor() : found(NULL) { }
-	void Visit(gemNPC& npc) { found = &npc; }
-	
-	gemNPC* Found() { return found; }
-protected:
-	gemNPC* found;
-};
-
 //-----------------------------------------------------------------------------
 
 /** Helper class to attach a PlaneShift gem object to a particular mesh.
@@ -467,13 +431,16 @@ public:
 	
 	/// Used for the visitor pattern.
 	void Accept(gemVisitor& visitor) { visitor.Visit(*this); }
+	
+	virtual gemItem* AsItem() { return NULL; }
+	virtual gemActor* AsActor() { return NULL; }
+	virtual gemNPC* AsNPC() { return NULL; }
+	virtual gemContainer* AsContainer() { return NULL; }
+	virtual gemActionLocation* AsActionLocation() { return NULL; }
 
 protected:
     gemObject(const char* name, const char* factname,InstanceID myinstance,iSector* room,
         const csVector3& pos,float rotangle,int clientnum);
-
-    /// This ctor is only for use in making keys for the BinaryTree
-//    gemObject(const char *name);
     
     bool valid;                                 ///< Is object fully loaded
 //  csRef<gemObjectSafe> self_reference;        ///< Placeholder for ref 1 of saferef
@@ -611,6 +578,8 @@ public:
 
 	/// Used for the visitor pattern.
 	void Accept(gemVisitor& visitor) { visitor.Visit(*this); }
+	
+	virtual gemItem* AsItem() { return this; }
 };
 
 //-----------------------------------------------------------------------------
@@ -685,6 +654,8 @@ public:
     
 	/// Used for the visitor pattern.
 	void Accept(gemVisitor& visitor) { visitor.Visit(*this); }
+	
+	virtual gemContainer* AsContainer() { return this; }
 };
 
 //-----------------------------------------------------------------------------
@@ -714,6 +685,8 @@ public:
     
 	/// Used for the visitor pattern.
 	void Accept(gemVisitor& visitor) { visitor.Visit(*this); }
+	
+	virtual gemActionLocation* AsActionLocation() { return this; }
 };
 
 //-----------------------------------------------------------------------------
@@ -1132,6 +1105,8 @@ public:
     
 	/// Used for the visitor pattern.
 	void Accept(gemVisitor& visitor) { visitor.Visit(*this); }
+	
+	virtual gemActor* AsActor() { return this; }
 };
 
 //-----------------------------------------------------------------------------
@@ -1235,6 +1210,8 @@ public:
 	
 	/// Used for the visitor pattern.
 	void Accept(gemVisitor& visitor) { visitor.Visit(*this); }
+	
+	virtual gemNPC* AsNPC() { return this; }
 };
 
 //-----------------------------------------------------------------------------
@@ -1331,7 +1308,7 @@ public:
     {
         if (who.IsValid())
         {
-            gemActor *actor = dynamic_cast<gemActor*> ((gemObject *) who);
+            gemActor *actor = who->AsActor();
             actor->Resurrect();
         }
     }

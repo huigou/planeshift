@@ -452,7 +452,7 @@ bool Client::IsAllowedToAttack(gemObject * target, bool inform)
             break;
         case TARGET_FOE: /* Foe */
             {
-                gemActor *foe = dynamic_cast<gemActor*>(target);
+                gemActor *foe = target->AsActor();
                 CS_ASSERT( foe != NULL ); // Since this is a foe it should have a actor.
                 gemActor *attacker = GetActor();
 
@@ -493,7 +493,7 @@ int Client::GetTargetType(gemObject* target)
         return TARGET_NONE; /* No Target */
     }
 
-    if (dynamic_cast<gemActor*>(target) == NULL)
+    if (target->AsActor() == NULL)
     {
         return TARGET_ITEM; /* Item */
     }

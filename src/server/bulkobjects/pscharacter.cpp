@@ -1243,7 +1243,7 @@ void psCharacter::DropItem(psItem *&item, csVector3 suggestedPos, float yrot, bo
     evt.FireEvent();
 
     // If a container, move its contents as well...
-    gemContainer *cont = dynamic_cast<gemContainer*> (obj);
+    gemContainer *cont = obj->AsContainer();
     if (cont)
     {
         for (size_t i=0; i < Inventory().GetInventoryIndexCount(); i++)
@@ -2000,9 +2000,7 @@ void psCharacter::SetLocationInWorld(InstanceID instance, psSectorInfo *sectorin
 
     if (oldInstance != instance || (oldsector && oldsector != sectorinfo))
     {
-    	findNPCVisitor find_npc;
-    	actor->Accept(find_npc);
-        if ( !find_npc.Found() ) // NOT an NPC so it's ok to save location info
+        if ( !actor->AsNPC() ) // NOT an NPC so it's ok to save location info
             SaveLocationInWorld();
     }
 }

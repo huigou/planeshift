@@ -392,9 +392,9 @@ void NPCManager::HandleDamageEvent(MsgEntry *me,Client *client)
     psDamageEvent evt(me);
 
     // NPC's need to know they were hit using a Perception
-    if (evt.attacker!=NULL  &&  dynamic_cast<gemNPC*>(evt.target)) // if npc damaged
+    if (evt.attacker!=NULL  &&  evt.target->AsNPC()) // if npc damaged
     {
-        QueueDamagePerception(evt.attacker, dynamic_cast<gemNPC*>(evt.target), evt.damage);
+        QueueDamagePerception(evt.attacker, evt.target->AsNPC(), evt.damage);
     }
 }
 
@@ -693,7 +693,7 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                 csRef<iDataBuffer> databuf = csPtr<iDataBuffer> (new csDataBuffer (len));
                 memcpy(databuf->GetData(), data, len);
                 // find the entity and Set the DR data for it
-                gemNPC *actor = dynamic_cast<gemNPC*>(GEMSupervisor::GetSingleton().FindObject(drmsg.entityid));
+                gemNPC *actor = GEMSupervisor::GetSingleton().FindObject(drmsg.entityid)->AsNPC();
 
                 if (!actor)
                 {
@@ -744,7 +744,7 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                     break;
                 }
 
-                gemNPC *attacker = dynamic_cast<gemNPC *> (GEMSupervisor::GetSingleton().FindObject(attacker_id));
+                gemNPC *attacker = GEMSupervisor::GetSingleton().FindObject(attacker_id)->AsNPC();
                 if (attacker && attacker->IsAlive())
                 {
                     gemObject *target   = (gemObject *)GEMSupervisor::GetSingleton().FindObject(target_id);
@@ -773,7 +773,7 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                             psserver->combatmanager->StopAttack(attacker);
                         }
 
-                        if ( !target->GetClient() || !dynamic_cast<gemActor*>(target)->GetInvincibility() )
+                        if ( !target->GetClient() || !target->AsActor()->GetInvincibility() )
                         {
                             // NPCs only use 'Normal' stance for now.
                             psserver->combatmanager->AttackSomeone(attacker,target,CombatManager::GetStance("Normal"));
@@ -804,7 +804,7 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                     Debug2(LOG_SUPERCLIENT,me->clientnum,"Received incomplete CMD_SPAWN from NPC client %u.\n",me->clientnum);
                     break;
                 }
-                gemNPC *spawner = dynamic_cast<gemNPC *> (GEMSupervisor::GetSingleton().FindObject(spawner_id));
+                gemNPC *spawner = GEMSupervisor::GetSingleton().FindObject(spawner_id)->AsNPC();
 
                 if (spawner)
                 {
@@ -828,7 +828,7 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                     Debug2(LOG_SUPERCLIENT,me->clientnum,"Received incomplete CMD_TALK from NPC client %u.\n",me->clientnum);
                     break;
                 }
-                gemNPC *speaker = dynamic_cast<gemNPC *> (GEMSupervisor::GetSingleton().FindObject(speaker_id));
+                gemNPC *speaker = GEMSupervisor::GetSingleton().FindObject(speaker_id)->AsNPC();
                 csTicks timeDelay=0;
                 speaker->Say(text,NULL,false,timeDelay);
                 break;
@@ -845,7 +845,7 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                     Debug2(LOG_SUPERCLIENT,me->clientnum,"Received incomplete CMD_VISIBILITY from NPC client %u.\n",me->clientnum);
                     break;
                 }
-                gemNPC *entity = dynamic_cast<gemNPC *> (GEMSupervisor::GetSingleton().FindObject(entity_id));
+                gemNPC *entity = GEMSupervisor::GetSingleton().FindObject(entity_id)->AsNPC();
                 entity->SetVisibility(status);
                 break;
             }
@@ -863,7 +863,7 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                     break;
                 }
 
-                gemNPC *gEntity = dynamic_cast<gemNPC *> (GEMSupervisor::GetSingleton().FindObject(entity_id));
+                gemNPC *gEntity = GEMSupervisor::GetSingleton().FindObject(entity_id)->AsNPC();
                 psCharacter* chardata = NULL;
                 if (gEntity) chardata = gEntity->GetCharacterData();
                 if (!chardata)
@@ -872,7 +872,7 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                     break;
                 }
 
-                gemItem *gItem = dynamic_cast<gemItem *> (GEMSupervisor::GetSingleton().FindObject(item_id));
+                gemItem *gItem = GEMSupervisor::GetSingleton().FindObject(item_id)->AsItem();
                 psItem *item = NULL;
                 if (gItem) item = gItem->GetItemData();
                 if (!item)
@@ -918,7 +918,7 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                     break;
                 }
 
-                gemNPC *gEntity = dynamic_cast<gemNPC *> (GEMSupervisor::GetSingleton().FindObject(entity_id));
+                gemNPC *gEntity = GEMSupervisor::GetSingleton().FindObject(entity_id)->AsNPC();
                 psCharacter* chardata = NULL;
                 if (gEntity) chardata = gEntity->GetCharacterData();
                 if (!chardata)
@@ -991,7 +991,7 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                     break;
                 }
 
-                gemNPC *gEntity = dynamic_cast<gemNPC *> (GEMSupervisor::GetSingleton().FindObject(entity_id));
+                gemNPC *gEntity = GEMSupervisor::GetSingleton().FindObject(entity_id)->AsNPC();
                 psCharacter* chardata = NULL;
                 if (gEntity) chardata = gEntity->GetCharacterData();
                 if (!chardata)
@@ -1029,7 +1029,7 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                     break;
                 }
 
-                gemNPC *gEntity = dynamic_cast<gemNPC *> (GEMSupervisor::GetSingleton().FindObject(entity_id));
+                gemNPC *gEntity = GEMSupervisor::GetSingleton().FindObject(entity_id)->AsNPC();
                 psCharacter* chardata = NULL;
                 if (gEntity) chardata = gEntity->GetCharacterData();
                 if (!chardata)
@@ -1056,7 +1056,7 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                     break;
                 }
 
-                gemNPC *gEntity = dynamic_cast<gemNPC *> (GEMSupervisor::GetSingleton().FindObject(entity_id));
+                gemNPC *gEntity = GEMSupervisor::GetSingleton().FindObject(entity_id)->AsNPC();
                 psCharacter* chardata = NULL;
                 if (gEntity) chardata = gEntity->GetCharacterData();
                 if (!chardata)
@@ -1099,7 +1099,7 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                     break;
                 }
 
-                gemNPC *gEntity = dynamic_cast<gemNPC *> (GEMSupervisor::GetSingleton().FindObject(entity_id));
+                gemNPC *gEntity = GEMSupervisor::GetSingleton().FindObject(entity_id)->AsNPC();
                 psCharacter* chardata = NULL;
                 if (gEntity) chardata = gEntity->GetCharacterData();
                 if (!chardata)
@@ -1180,7 +1180,7 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                 EID entity_id = EID(list.msg->GetUInt32());
                 int impervious = list.msg->GetBool();
 
-                gemNPC *entity = dynamic_cast<gemNPC *> (GEMSupervisor::GetSingleton().FindObject(entity_id));
+                gemNPC *entity = GEMSupervisor::GetSingleton().FindObject(entity_id)->AsNPC();
 
                 psCharacter* chardata = NULL;
                 if (entity) chardata = entity->GetCharacterData();
@@ -1542,7 +1542,7 @@ void NPCManager::HandlePetCommand(MsgEntry * me,Client *client)
                 gemObject * trg = pet->GetTarget();
                 if ( trg != NULL )
                 {
-                    gemActor * targetActor = dynamic_cast<gemActor*>(trg);
+                    gemActor * targetActor = trg->AsActor();
                     /* We check if the owner can attack the other entity in order to not allow players
                      * to override permissions and at the same time allowing pet<->player, pet<->pet
                      * when in pvp. We allow gm to do anything they want (can attack everything including
@@ -1897,7 +1897,7 @@ void NPCManager::QueueEnemyPerception(psNPCCommandsMessage::PerceptionType type,
     cmd_count++;
     Debug5(LOG_NPC, player->GetEID().Unbox(), "Added perception: Entity %s within range of entity %s, type %d, faction %.0f.\n", ShowID(player->GetEID()), ShowID(npc->GetEID()), type, relative_faction);
 
-    gemNPC *myNPC = dynamic_cast<gemNPC *>(npc);
+    gemNPC *myNPC = npc->AsNPC();
     if (!myNPC)
         return;  // Illegal to not pass actual npc object to this function
 

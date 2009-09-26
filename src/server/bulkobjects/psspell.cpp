@@ -497,16 +497,12 @@ bool psSpell::AffectTarget(gemActor *caster, gemObject *target, float power) con
         if (!caster->GetClient()->IsAllowedToAttack(target,true))
             return false;
 
-        findActorVisitor find_actor;
-        target->Accept(find_actor);
-        gemActor *attackee = find_actor.Found();
+        gemActor *attackee = target->AsActor();
         if (attackee)
         {
             attackee->AddAttackerHistory(caster, 1.0); // ???: Arbitrary number, we don't have a return value from the script like we used to
 
-            findNPCVisitor find_npc;
-            target->Accept(find_npc);
-            gemNPC *targetNPC = find_npc.Found();
+            gemNPC *targetNPC = target->AsNPC();
             if (targetNPC)
                 psserver->GetNPCManager()->QueueAttackPerception(caster, targetNPC);
         }

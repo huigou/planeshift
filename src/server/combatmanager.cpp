@@ -359,7 +359,7 @@ void CombatManager::StopAttack(gemActor *attacker)
 void CombatManager::NotifyTarget(gemActor *attacker,gemObject *target)
 {
     // Queue Attack percetion to npc clients
-    gemNPC *targetnpc = dynamic_cast<gemNPC *>(target);
+    gemNPC *targetnpc = target->AsNPC();
     if (targetnpc)
         psserver->npcmanager->QueueAttackPerception(attacker,targetnpc);
 
@@ -512,8 +512,8 @@ void CombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_result
     ArmorVsWeapon = ArmorVsWeapon > 1.0F ? 1.0F : ArmorVsWeapon;
     ArmorVsWeapon = ArmorVsWeapon < 0.0F ? 0.0F : ArmorVsWeapon;
 
-    gemActor *gemAttacker = dynamic_cast<gemActor*> ((gemObject *) event->attacker);
-    gemActor *gemTarget   = dynamic_cast<gemActor*> ((gemObject *) event->target);
+    gemActor *gemAttacker = event->attacker->AsActor();
+    gemActor *gemTarget   = event->target->AsActor();
 
     switch (attack_result)
     {
@@ -678,7 +678,7 @@ void CombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_result
                 psserver->SendSystemError(event->AttackerCID, "You are out of ammo!");
 
                 if (event->attacker && event->attacker.IsValid())
-                    StopAttack(dynamic_cast<gemActor*>((gemObject *) event->attacker));  // if you run out of ammo, you exit attack mode
+                    StopAttack(event->attacker->AsActor());  // if you run out of ammo, you exit attack mode
             }
     }
 }
@@ -695,8 +695,8 @@ void CombatManager::HandleCombatEvent(psCombatGameEvent *event)
         return;
     }
 
-    gemActor *gemAttacker = dynamic_cast<gemActor*> ((gemObject *) event->attacker);
-    gemActor *gemTarget   = dynamic_cast<gemActor*> ((gemObject *) event->target);
+    gemActor *gemAttacker = event->attacker->AsActor();
+    gemActor *gemTarget   = event->target->AsActor();
 
     attacker_data=event->GetAttackerData();
     target_data=event->GetTargetData();
@@ -784,7 +784,7 @@ void CombatManager::HandleCombatEvent(psCombatGameEvent *event)
     else
     {
         // Check if the npc's target has changed (if it has, then assume another combat event has started.)
-        gemNPC* npcAttacker = dynamic_cast<gemNPC*>(gemAttacker);
+        gemNPC* npcAttacker = gemAttacker->AsNPC();
         if (npcAttacker && npcAttacker->GetTarget() != gemTarget)
         {
             psserver->SendSystemError(event->AttackerCID, "NPC's target changed.");
@@ -924,7 +924,7 @@ bool CombatManager::ValidDistance(gemObject *attacker,gemObject *target,psItem *
     if (Weapon==NULL)
         return false;
 
-    if(!dynamic_cast<gemNPC*>(attacker))
+    if(!attacker->AsNPC())
     {
         return attacker->IsNear(target,Weapon->GetRange()+(Weapon->GetRange()*0.1));
     }
@@ -939,7 +939,7 @@ bool CombatManager::ValidCombatAngle(gemObject *attacker,gemObject *target,psIte
     csVector3 attackPos, targetPos;
     iSector *attackSector, *targetSector;
 
-    if (dynamic_cast<gemNPC*>(attacker))
+    if (attacker->AsNPC())
         return true;  // We don't check this for npc's because they are too stupid
 
     attacker->GetPosition(attackPos, attackSector);

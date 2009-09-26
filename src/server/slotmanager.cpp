@@ -132,7 +132,7 @@ void SlotManager::MoveFromWorldContainer(psSlotMovementMsg& msg, Client *fromCli
     gemContainer *worldContainer=NULL;
 
     gemObject *obj = EntityManager::GetSingleton().GetGEM()->FindObject(EID(containerEntityID)); // CEL id assigned
-    worldContainer = dynamic_cast<gemContainer*>(obj);
+    worldContainer = obj->AsContainer();
     if (!worldContainer)
     {
         Error2("Couldn't find any CEL entity id %d.", containerEntityID);
@@ -199,7 +199,7 @@ void SlotManager::MoveFromWorldContainer(psSlotMovementMsg& msg, Client *fromCli
             worldContainer = NULL;
  
             gemObject *obj = EntityManager::GetSingleton().GetGEM()->FindObject(EID(containerEntityID)); // CEL id assigned
-            worldContainer = dynamic_cast<gemContainer*>(obj);
+            worldContainer = obj->AsContainer();
             if (!worldContainer)
             {
                 Error2("Couldn't find any CEL entity id %d.", containerEntityID);
@@ -441,7 +441,7 @@ void SlotManager::MoveFromInventory(psSlotMovementMsg& msg, Client *fromClient)
             worldContainer=NULL;
  
             gemObject *obj = EntityManager::GetSingleton().GetGEM()->FindObject(EID(containerEntityID)); // CEL id assigned
-            worldContainer = dynamic_cast<gemContainer*>(obj);
+            worldContainer = obj->AsContainer();
             if (!worldContainer)
             {
                 Error2("Couldn't find any CEL entity id %d.", containerEntityID);
@@ -819,9 +819,9 @@ psItem* SlotManager::FindItem(Client* client, int containerID, INVENTORY_SLOT_NU
         {
             gemObject* object = GEMSupervisor::GetSingleton().FindObject(EID(containerID));
             if (object && slotID == -1)
-                return dynamic_cast<gemItem*>(object)->GetItemData();
+                return object->AsItem()->GetItemData();
 
-            gemContainer *container = dynamic_cast<gemContainer*>(object);
+            gemContainer *container = object->AsContainer();
             if (container)
             {
                 return container->FindItemInSlot(slotID);

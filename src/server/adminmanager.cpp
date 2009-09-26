@@ -1195,9 +1195,7 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, Client *client)
 
     if (targetobject && !targetactor) // Get the actor, client, and name for a found object
     {
-    	findActorVisitor find_actor;
-    	targetobject->Accept(find_actor);
-        targetactor = find_actor.Found();
+        targetactor = targetobject->AsActor();
         targetclient = targetobject->GetClient();
         data.player = (targetclient)?targetclient->GetName():targetobject->GetName();
     }
@@ -1650,9 +1648,9 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
         regionName = (sector) ? sector->QueryObject()->GetObjectParent()->GetName() : "(null)";
     }
 
-    if (target && dynamic_cast<gemActionLocation*>(target)) // Action location
+    if (target && target->AsActionLocation()) // Action location
     {
-        gemActionLocation *item = dynamic_cast<gemActionLocation *>(target);
+        gemActionLocation *item = target->AsActionLocation();
         if (!item)
         {
             psserver->SendSystemError(client->GetClientNum(), "Error! Target is not a valid gemActionLocation object.");
@@ -1681,11 +1679,9 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
 
     if ( target )
     {
-    	findItemVisitor find_item;
-    	target->Accept(find_item);
-    	if (find_item.Found() && find_item.Found()->GetItemData()->GetBaseStats()) // Item
+    	if (target->AsItem() && target->AsItem()->GetItemData()->GetBaseStats()) // Item
     	{
-          psItem* item = find_item.Found()->GetItemData();
+          psItem* item = target->AsItem()->GetItemData();
 
           csString info;
           info.Format("Item: %s ", item->GetName() );
@@ -2543,8 +2539,8 @@ void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
         psserver->SendSystemOK(subject->GetClientID(), "Welcome to " + destName);
     }
 
-    if ( dynamic_cast<gemActor*>(subject) ) // Record old location of actor, for undo
-        ((gemActor*)subject)->SetPrevTeleportLocation(oldpos, oldyrot, oldsector, oldInstance);
+    if ( subject->AsActor() ) // Record old location of actor, for undo
+        subject->AsActor()->SetPrevTeleportLocation(oldpos, oldyrot, oldsector, oldInstance);
 
     // Send explanations
     if (subject->GetClientID() != client->GetClientNum())
@@ -3683,9 +3679,9 @@ bool AdminManager::GetTargetOfTeleport(Client *client, psAdminCmdMessage& msg, A
     // Teleport to last valid location (force unstick/teleport undo)
     else if (data.target == "last")
     {
-        if ( dynamic_cast<gemActor*>(subject) )
+        if ( subject->AsActor() )
         {
-            ((gemActor*)subject)->GetPrevTeleportLocation(targetPoint, yRot, targetSector, instance);
+            subject->AsActor()->GetPrevTeleportLocation(targetPoint, yRot, targetSector, instance);
         }
         else
         {
@@ -3695,9 +3691,9 @@ bool AdminManager::GetTargetOfTeleport(Client *client, psAdminCmdMessage& msg, A
     // Teleport to spawn point
     else if (data.target == "spawn")
     {
-        if ( dynamic_cast<gemActor*>(subject) )
+        if ( subject->AsActor() )
         {
-           ((gemActor*)subject)->GetSpawnPos(targetPoint, yRot, targetSector);
+           subject->AsActor()->GetSpawnPos(targetPoint, yRot, targetSector);
         }
         else
         {
@@ -3844,7 +3840,7 @@ void AdminManager::Slide(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& dat
         if ( !MoveObject(client,target,pos,yrot,sector,instance) )
             return;
 
-        if (dynamic_cast<gemActor*>(target) && client->GetActor() != dynamic_cast<gemActor*>(target))
+        if (target->AsActor() && client->GetActor() != target->AsActor())
             psserver->SendSystemInfo(me->clientnum, "Sliding %s...", target->GetName());
     }
     else
@@ -3862,7 +3858,7 @@ bool AdminManager::MoveObject(Client *client, gemObject *target, csVector3& pos,
         return false;
 
     gemItem* item = NULL;
-    if ( item = dynamic_cast<gemItem*>(target) ) // Item?
+    if ( item = target->AsItem() ) // Item?
     {
         // Check to see if this client has the admin level to move this particular item
         bool extras = CacheManager::GetSingleton().GetCommandManager()->Validate(client->GetSecurityLevel(), "move unpickupables/spawns", response);
@@ -3887,9 +3883,9 @@ bool AdminManager::MoveObject(Client *client, gemObject *target, csVector3& pos,
 
         item->UpdateProxList(true);
     }
-    else if ( dynamic_cast<gemActor*>(target) ) // Actor? (Player/NPC)
+    else if ( target->AsActor() ) // Actor? (Player/NPC)
     {
-        gemActor *actor = (gemActor*) target;
+        gemActor *actor = target->AsActor();
         actor->Teleport(sector, pos, yrot, instance);
     }
     else
@@ -3910,7 +3906,7 @@ void AdminManager::CreateNPC(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& 
     }
 
     PID masterNPCID;
-    gemNPC *masternpc = dynamic_cast<gemNPC*>(basis);
+    gemNPC *masternpc = basis->AsNPC();
     if (masternpc)
     {
         // Return the master npc's id for this npc. If this npc isn't from a master
@@ -4255,7 +4251,7 @@ void AdminManager::MakeUnlockable(MsgEntry *me, psAdminCmdMessage& msg, AdminCmd
     }
 
     // Check if target is action item
-    gemActionLocation* gemAction = dynamic_cast<gemActionLocation*>(target);
+    gemActionLocation* gemAction = target->AsActionLocation();
     if(gemAction) {
         psActionLocation *action = gemAction->GetAction();
 
@@ -4274,7 +4270,7 @@ void AdminManager::MakeUnlockable(MsgEntry *me, psAdminCmdMessage& msg, AdminCmd
     }
 
     // Get targeted item
-    psItem* item = dynamic_cast<gemItem*>(target)->GetItemData();
+    psItem* item = target->AsItem()->GetItemData();
     if ( !item )
     {
         Error1("Found gemItem but no psItem was attached!\n");
@@ -4305,7 +4301,7 @@ void AdminManager::MakeSecurity(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdDa
     }
 
     // Check if target is action item
-    gemActionLocation* gemAction = dynamic_cast<gemActionLocation*>(target);
+    gemActionLocation* gemAction = target->AsActionLocation();
     if(gemAction) {
         psActionLocation *action = gemAction->GetAction();
 
@@ -4324,7 +4320,7 @@ void AdminManager::MakeSecurity(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdDa
     }
 
     // Get targeted item
-    psItem* item = dynamic_cast<gemItem*>(target)->GetItemData();
+    psItem* item = target->AsItem()->GetItemData();
     if ( !item )
     {
         Error1("Found gemItem but no psItem was attached!\n");
@@ -4392,7 +4388,7 @@ void AdminManager::AddRemoveLock(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdD
     }
 
     // Check if target is action item
-    gemActionLocation* gemAction = dynamic_cast<gemActionLocation*>(target);
+    gemActionLocation* gemAction = target->AsActionLocation();
     if(gemAction) {
         psActionLocation *action = gemAction->GetAction();
 
@@ -4411,7 +4407,7 @@ void AdminManager::AddRemoveLock(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdD
     }
 
     // Get targeted item
-    psItem* item = dynamic_cast<gemItem*>(target)->GetItemData();
+    psItem* item = target->AsItem()->GetItemData();
     if ( !item )
     {
         Error1("Found gemItem but no psItem was attached!\n");
@@ -4450,7 +4446,7 @@ void AdminManager::ChangeLock(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData
     }
 
     // check for action location
-    gemActionLocation* gemAction = dynamic_cast<gemActionLocation*>(target);
+    gemActionLocation* gemAction = target->AsActionLocation();
     if(gemAction) {
         psActionLocation *action = gemAction->GetAction();
 
@@ -4470,7 +4466,7 @@ void AdminManager::ChangeLock(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData
     }
 
     // get the old item
-    psItem* oldLock = dynamic_cast<gemItem*>(target)->GetItemData();
+    psItem* oldLock = target->AsItem()->GetItemData();
     if ( !oldLock )
     {
         Error1("Found gemItem but no psItem was attached!\n");
@@ -4531,7 +4527,7 @@ void AdminManager::ChangeLock(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData
 
 void AdminManager::KillNPC (MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& data, gemObject* targetobject, Client *client )
 {
-    gemNPC *target = dynamic_cast<gemNPC*>(targetobject);
+    gemNPC *target = targetobject->AsNPC();
     if (target && target->GetClientID() == 0)
     {
         if (data.action != "reload")
@@ -7136,7 +7132,7 @@ void AdminManager::ModifyItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         return;
     }
 
-    gemItem* gemitem = dynamic_cast<gemItem*>(object);
+    gemItem* gemitem = object->AsItem();
     if (!gemitem)
     {
         psserver->SendSystemError(me->clientnum,"You can only use modify on items");
@@ -7213,7 +7209,7 @@ void AdminManager::ModifyItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     }
     else if (data.action == "move")
     {
-        gemItem* gItem = dynamic_cast<gemItem*>(object);
+        gemItem* gItem = object->AsItem();
         if (gItem)
         {
             InstanceID instance = object->GetInstance();
@@ -7626,7 +7622,7 @@ void AdminManager::HandleBadText(psAdminCmdMessage& msg, AdminCmdData& data, Cli
         psserver->SendSystemError(client->GetClientNum(), "You must select an npc first.");
         return;
     }
-    gemNPC *npc = dynamic_cast<gemNPC*>(targetobject);
+    gemNPC *npc = targetobject->AsNPC();
     if (!npc)
     {
         psserver->SendSystemError(client->GetClientNum(), "You must select an npc first.");
@@ -7875,7 +7871,7 @@ void AdminManager::ItemStackable(MsgEntry* me, AdminCmdData& data, Client *clien
         return;
     }
 
-    gemItem *gemitem = dynamic_cast<gemItem*>(object);
+    gemItem *gemitem = object->AsItem();
     if (!gemitem)
     {
         psserver->SendSystemError(client->GetClientNum(), "Not an item");
@@ -7925,7 +7921,7 @@ void AdminManager::HandleSetQuality(psAdminCmdMessage& msg, AdminCmdData& data, 
         return;
     }
 
-    gemItem *gemitem = dynamic_cast<gemItem*>(object);
+    gemItem *gemitem = object->AsItem();
     if (!gemitem)
     {
         psserver->SendSystemError(client->GetClientNum(), "Not an item");
@@ -8057,7 +8053,7 @@ void AdminManager::HandleSetItemName(psAdminCmdMessage& msg, AdminCmdData& data,
         return;
     }
 
-    gemItem *gemitem = dynamic_cast<gemItem*>(object);
+    gemItem *gemitem = object->AsItem();
     if (!gemitem)
     {
         psserver->SendSystemError(client->GetClientNum(), "Not an item");
