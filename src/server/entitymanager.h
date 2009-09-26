@@ -47,7 +47,7 @@ class psWorld;
 class psItem;
 class GEMSupervisor;
 class UserManager;
-class gemObject;
+class gemItem;
 class gemNPC;
 class gemActor;
 class psActionLocation;
@@ -112,8 +112,8 @@ public:
 
     bool CreateActionLocation(psActionLocation *instance, bool transient);
 
-    gemObject *CreateItem(psItem *& iteminstance, bool transient);
-    gemObject *MoveItemToWorld(psItem       *keyItem,
+    gemItem *CreateItem(psItem *& iteminstance, bool transient);
+    gemItem *MoveItemToWorld(psItem       *keyItem,
                                InstanceID  instance,
                                psSectorInfo *sectorinfo,
                                float         loc_x,

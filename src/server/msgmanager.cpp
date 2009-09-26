@@ -76,7 +76,7 @@ bool MessageManager::Verify(MsgEntry *pMsg,unsigned int flags,Client*& client)
     }
     if (flags & REQUIRE_TARGETACTOR)
     {
-        actor = (obj) ? obj->GetActorPtr() : NULL;
+        actor = (obj) ? dynamic_cast<gemActor*>(obj) : NULL;
         if (!actor)
         {
             psserver->SendSystemError(pMsg->clientnum, "You do not have a player or NPC selected.");
@@ -85,7 +85,7 @@ bool MessageManager::Verify(MsgEntry *pMsg,unsigned int flags,Client*& client)
     }
     if (flags & REQUIRE_TARGETNPC)
     {
-        npc = (obj) ? obj->GetNPCPtr() : NULL;
+        npc = (obj) ? dynamic_cast<gemNPC*>(obj) : NULL;
         if (!npc)
         {
             psserver->SendSystemError(pMsg->clientnum, "You do not have an NPC selected.");
@@ -230,7 +230,7 @@ csArray<csString> MessageManager::DecodeCommandArea(Client *client, csString tar
         }
         case 2: // Target items
         {
-            if (nearobj->GetItem())
+            if (dynamic_cast<gemItem*>(nearobj))
             {
                 newTarget.Format("eid:%u", nearobj->GetEID().Unbox());
                 break;
@@ -240,7 +240,7 @@ csArray<csString> MessageManager::DecodeCommandArea(Client *client, csString tar
         }
         case 3: // Target NPCs
         {
-            if (nearobj->GetNPCPtr())
+            if (dynamic_cast<gemNPC*>(nearobj))
             {
                 newTarget.Format("pid:%u", nearobj->GetPID().Unbox());
                 break;

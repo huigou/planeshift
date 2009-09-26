@@ -213,7 +213,7 @@ void ServerCharManager::ViewItem(Client* client, int containerID, INVENTORY_SLOT
                 }
 
                 // Get item pointer
-                item = action->GetRealItem()->GetItem();
+                item = action->GetRealItem()->GetItemData();
                 if ( !item )
                 {
                     CPrintf (CON_ERROR, "Invalid ItemID in Action Location Response.\n");
@@ -469,7 +469,7 @@ bool ServerCharManager::UpdateItemViews( int clientNum )
     
     if ( slotManager->worldContainer )
     {
-        psItem* item = slotManager->worldContainer->GetItem(); 
+        psItem* item = slotManager->worldContainer->GetItemData(); 
         if (item) item->SendContainerContents(client, slotManager->containerEntityID);
         slotManager->worldContainer = NULL;
         slotManager->containerEntityID = 0;

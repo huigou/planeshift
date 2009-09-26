@@ -291,7 +291,10 @@ void WorkManager::HandleLockPick(MsgEntry* me,Client *client)
     }
 
     // Get item
-    psItem* item = target->GetItem();
+    gemItem* gemitem = dynamic_cast<gemItem*>(target);
+    psItem* item = NULL;
+    if (gemitem)
+    	item = gemitem->GetItemData();
     if ( !item )
     {
         Error1("Found gemItem but no psItem was attached!\n");
@@ -1486,7 +1489,7 @@ void WorkManager::StartAutoWork(Client* client, gemContainer* container, psItem*
         }
 
         // Work item is container into which items were dropped
-        workItem = container->GetItem();
+        workItem = container->GetItemData();
         autoItem = droppedItem;
         uint32 autoID = autoItem->GetBaseStats()->GetUID();
 
@@ -1774,7 +1777,7 @@ bool WorkManager::ScriptItem(gemItem* gemItm)
     }
 
     // Check if the target is container
-    workItem = gemItm->GetItem();
+    workItem = gemItm->GetItemData();
     if ( workItem->GetIsContainer() )
     {
         // Combine anything can be combined in container
@@ -1783,8 +1786,8 @@ bool WorkManager::ScriptItem(gemItem* gemItm)
 
     // Find out if we can do a no work item transformation on targetted item
     workItem = NULL;
-    uint32 itemId = gemItm->GetItem()->GetBaseStats()->GetUID();
-    int itemCount = gemItm->GetItem()->GetStackCount();
+    uint32 itemId = gemItm->GetItemData()->GetBaseStats()->GetUID();
+    int itemCount = gemItm->GetItemData()->GetStackCount();
 
     // Verify there is a valid transformation for the item that was dropped
     unsigned int transMatch = AnyTransform( patternId, groupPatternId, itemId, itemCount );
@@ -1794,16 +1797,16 @@ bool WorkManager::ScriptItem(gemItem* gemItm)
         {
             // Set up event for auto transformation
             StartTransformationEvent(
-                TRANSFORMTYPE_TARGET, PSCHARACTER_SLOT_NONE, itemCount, gemItm->GetItem()->GetItemQuality(), gemItm->GetItem());
-            psserver->SendSystemOK(clientNum,"You start to transform %d %s.", itemCount, gemItm->GetItem()->GetName());
+                TRANSFORMTYPE_TARGET, PSCHARACTER_SLOT_NONE, itemCount, gemItm->GetItemData()->GetItemQuality(), gemItm->GetItemData());
+            psserver->SendSystemOK(clientNum,"You start to transform %d %s.", itemCount, gemItm->GetItemData()->GetName());
             return true;
         }
         case TRANSFORM_GARBAGE:
         {
             // Set up event for auto transformation
             StartTransformationEvent(
-                TRANSFORMTYPE_TARGET, PSCHARACTER_SLOT_NONE, itemCount, gemItm->GetItem()->GetItemQuality(), gemItm->GetItem());
-            psserver->SendSystemError(clientNum,"You are not sure what is going to happen to %d %s.", gemItm->GetItem()->GetStackCount(), gemItm->GetItem()->GetName());
+                TRANSFORMTYPE_TARGET, PSCHARACTER_SLOT_NONE, itemCount, gemItm->GetItemData()->GetItemQuality(), gemItm->GetItemData());
+            psserver->SendSystemError(clientNum,"You are not sure what is going to happen to %d %s.", gemItm->GetItemData()->GetStackCount(), gemItm->GetItemData()->GetName());
             return true;
         }
     }
@@ -2488,7 +2491,7 @@ bool WorkManager::ValidateTarget(Client* client)
     if (target)
     {
         // Make sure it's not character
-        if (target->GetActorPtr())
+        if (dynamic_cast<gemActor*>(target))
         {
             psserver->SendSystemInfo(clientNum,"Only items can be targeted for use.");
             return false;
@@ -2497,19 +2500,19 @@ bool WorkManager::ValidateTarget(Client* client)
         // Check range ignoring Y co-ordinate
         if (worker->RangeTo(target, true, true) > RANGE_TO_USE)
         {
-            psserver->SendSystemError(clientNum,"You are not in range to use %s.",target->GetItem()->GetName());
+            psserver->SendSystemError(clientNum,"You are not in range to use %s.",dynamic_cast<gemItem*>(target)->GetItemData()->GetName());
             return false;
         }
 
         // Only legit items
-        if (!target->GetItem())
+        if (!dynamic_cast<gemItem*>(target)->GetItemData())
         {
             psserver->SendSystemInfo(clientNum,"That item can not be used in this way.");
             return false;
         }
 
         // Otherwise assign item
-        workItem = target->GetItem();
+        workItem = dynamic_cast<gemItem*>(target)->GetItemData();
         return true;
     }
 

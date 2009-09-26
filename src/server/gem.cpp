@@ -112,6 +112,42 @@
 /// Lifetime of a chat history line, in ticks
 #define CHAT_HISTORY_LIFETIME 300000 // 5 minutes
 
+void gemVisitor::Visit(gemActiveObject& active_object)
+{
+	Visit(static_cast<gemObject&>(active_object));
+}
+
+void gemVisitor::Visit(gemItem& item)
+{
+	Visit(static_cast<gemActiveObject&>(item));
+}
+
+void gemVisitor::Visit(gemContainer& container)
+{
+	Visit(static_cast<gemItem&>(container));
+}
+
+void gemVisitor::Visit(gemActionLocation& action_location)
+{
+	Visit(static_cast<gemActiveObject&>(action_location));
+}
+
+void gemVisitor::Visit(gemActor& actor)
+{
+	Visit(static_cast<gemObject&>(actor));
+}
+
+void gemVisitor::Visit(gemNPC& npc)
+{
+	Visit(static_cast<gemActor&>(npc));
+}
+
+void gemVisitor::Visit(gemPet& pet)
+{
+	Visit(static_cast<gemNPC&>(pet));
+}
+
+
 //-----------------------------------------------------------------------------
 
 psGemServerMeshAttach::psGemServerMeshAttach(gemObject* objectToAttach) : scfImplementationType(this)
@@ -244,14 +280,14 @@ void GEMSupervisor::RemoveActorEntity(gemActor *actor)
 
 void GEMSupervisor::AddItemEntity(gemItem *item)
 {
-    items_by_uid.Put(item->GetItem()->GetUID(), item);
-    Debug3(LOG_CELPERSIST,0,"Item added to supervisor with %s and UID:%u.\n", ShowID(item->GetEID()), item->GetItem()->GetUID());
+    items_by_uid.Put(item->GetItemData()->GetUID(), item);
+    Debug3(LOG_CELPERSIST,0,"Item added to supervisor with %s and UID:%u.\n", ShowID(item->GetEID()), item->GetItemData()->GetUID());
 }
 
 void GEMSupervisor::RemoveItemEntity(gemItem *item)
 {
-    items_by_uid.Delete(item->GetItem()->GetUID(), item);
-    Debug3(LOG_CELPERSIST,0,"Item <%s, %u> removed from supervisor.\n", ShowID(item->GetEID()), item->GetItem()->GetUID());
+    items_by_uid.Delete(item->GetItemData()->GetUID(), item);
+    Debug3(LOG_CELPERSIST,0,"Item <%s, %u> removed from supervisor.\n", ShowID(item->GetEID()), item->GetItemData()->GetUID());
 }
 
 void GEMSupervisor::RemoveEntity(gemObject *which)
@@ -270,7 +306,7 @@ void GEMSupervisor::RemoveClientFromLootables(int cnum)
     while ( i.HasNext() )
     {
         gemObject* obj = i.Next();
-        gemNPC * npc = obj->GetNPCPtr();
+        gemNPC * npc = dynamic_cast<gemNPC*>(obj);
 
         if ( npc)
             npc->RemoveLootableClient(cnum);
@@ -295,7 +331,7 @@ gemObject *GEMSupervisor::FindObject(const csString& name)
         gemObject* obj = i.Next();
         if ( name.CompareNoCase(obj->GetName()) )
                 return obj;
-        else if ( obj->GetNPCPtr() ) //Allow search for first name only with NPCs
+        else if ( dynamic_cast<gemNPC*>(obj) ) //Allow search for first name only with NPCs
         {
             WordArray names (obj->GetName(), false);
             if(name.CompareNoCase(names[0]))
@@ -381,7 +417,7 @@ void GEMSupervisor::StopAllNPCs(AccountID superclientID)
         if (obj->GetSuperclientID() == superclientID && obj->IsAlive())
         {
             // CPrintf(CON_DEBUG, "  Deactivating %s...\n",obj->GetName() );
-            gemActor *actor = obj->GetActorPtr();
+            gemActor *actor = dynamic_cast<gemActor*>(obj);
             actor->pcmove->SetVelocity(csVector3(0,0,0));
             actor->pcmove->SetAngularVelocity(csVector3(0,0,0));
             actor->pcmove->SetOnGround(true);
@@ -434,7 +470,7 @@ void GEMSupervisor::GetPlayerObjects(PID playerID, csArray<gemObject*> &list )
     {
         gemObject* obj = iter.Next();
         gemItem* item = dynamic_cast<gemItem*>(obj);
-        if (item && item->GetItem()->GetOwningCharacterID() == playerID)
+        if (item && item->GetItemData()->GetOwningCharacterID() == playerID)
         {
             list.Push(item);
         }
@@ -561,17 +597,17 @@ csString GetDefaultBehavior(const csString & dfltBehaviors, int behaviorNum)
         return "";
 }
 
-gemObject::gemObject(const char *name) : factname("")
-{
-    this->valid    = true;
-    this->name     = name;
-    pcmesh=NULL;
-    worldInstance=0;
-    prox_distance_desired=DEF_PROX_DIST;
-    prox_distance_current=DEF_PROX_DIST;
-    eid = 0;
-    alwaysWatching = false;
-}
+//gemObject::gemObject(const char *name) : factname("")
+//{
+//    this->valid    = true;
+//    this->name     = name;
+//    pcmesh=NULL;
+//    worldInstance=0;
+//    prox_distance_desired=DEF_PROX_DIST;
+//    prox_distance_current=DEF_PROX_DIST;
+//    eid = 0;
+//    alwaysWatching = false;
+//}
 
 gemObject::gemObject(const char* name,
                      const char* factname,
@@ -617,41 +653,6 @@ gemObject::~gemObject()
     delete proxlist;
     proxlist = NULL;
     delete pcmesh;
-}
-
-
-gemItem* gemObject::GetItemPtr()
-{
-    return dynamic_cast<gemItem*>(this);
-}
-
-psItem* gemObject::GetItem()
-{
-    gemItem *itemPtr = GetItemPtr();
-    if(itemPtr)
-        return itemPtr->GetItemData();
-
-    return NULL;
-}
-
-gemActor* gemObject::GetActorPtr()
-{
-    return dynamic_cast<gemActor*>(this);
-}
-
-gemNPC* gemObject::GetNPCPtr()
-{
-    return dynamic_cast<gemNPC*>(this);
-}
-
-gemPet* gemObject::GetPetPtr()
-{
-    return dynamic_cast<gemPet*>(this);
-}
-
-gemActionLocation* gemObject::GetALPtr()
-{
-    return dynamic_cast<gemActionLocation*>(this);
 }
 
 const char* gemObject::GetName()
@@ -748,11 +749,6 @@ bool gemObject::IsNear(gemObject *obj, float radius)
 
 float gemObject::RangeTo(gemObject* obj, bool ignoreY, bool ignoreInstance)
 {
-    // Ugly hack : if an AL got (0,0,0) as a position, bypass the check
-    if((GetALPtr() && GetPosition() == csVector3(0,0,0)) ||
-        (obj->GetALPtr() && obj->GetPosition() == csVector3(0,0,0)))
-        return 0.0f;
-
     return proxlist->RangeTo(obj, ignoreY, ignoreInstance);
 }
 
@@ -1073,10 +1069,10 @@ void gemObject::Dump()
 // gemActiveObject
 //--------------------------------------------------------------------------------------
 
-gemActiveObject::gemActiveObject( const char* name )
-                                : gemObject( name )
-{
-}
+//gemActiveObject::gemActiveObject( const char* name )
+//                                : gemObject( name )
+//{
+//}
 
 gemActiveObject::gemActiveObject( const char* name,
                                      const char* factname,
@@ -1156,126 +1152,19 @@ void gemActiveObject::SendBehaviorMessage(const csString & msg_id, gemObject *ac
     }
     else if ( msg_id == "pickup")
     {
-        // Check if the char is dead
-        if (!actor->IsAlive())
-        {
-            psserver->SendSystemInfo(clientnum,"You can't pick up items when you're dead.");
-            return;
-        }
-        // Check if the item is pickupable
-        if (!IsPickable())
-        {
-            psserver->SendSystemInfo(clientnum,"You can't pick up %s.", GetName());
-            return;
-        }
-
-        // Check if the item is in range
-        if (!(RangeTo(actor) < RANGE_TO_SELECT))
-        {
-            if (!psserver->CheckAccess(actor->GetClient(), "pickup override", false))
-            {
-                psserver->SendSystemInfo(clientnum,"You're too far away to pick up %s.", GetName());
-                return;
-            }
-        }
-
-        psItem* item = GetItem();
-
-        // Check if item is guarded
-        if (!psserver->CheckAccess(actor->GetClient(), "pickup override", false))
-        {
-            PID guardCharacterID = item->GetGuardingCharacterID();
-            gemActor* guardActor = GEMSupervisor::GetSingleton().FindPlayerEntity(guardCharacterID);
-            if (guardCharacterID.IsValid() &&
-                guardCharacterID != actor->GetCharacterData()->GetPID() &&
-                guardActor &&
-                guardActor->RangeTo(item->GetGemObject()) < RANGE_TO_SELECT &&
-                (guardActor->GetInstance() == this->GetInstance()))
-            {
-                psserver->SendSystemInfo(clientnum,"You notice that the item is being guarded by %s",
-                    guardActor->GetCharacterData()->GetCharFullName());
-                return;
-            }
-        }
-
-        // Cache values from item, because item might be deleted by Add
-        csString qname = item->GetQuantityName();
-        gemContainer *container = dynamic_cast<gemContainer*> (this);
-
-        uint32 origUID = item->GetUID();
-        unsigned short origStackCount = item->GetStackCount();
-
-        gemActor* gActor = dynamic_cast<gemActor*>(actor);
-        psCharacter* chardata = NULL;
-        if (gActor) chardata = gActor->GetCharacterData();
-        if (chardata && chardata->Inventory().Add(item,false, true, PSCHARACTER_SLOT_NONE, container))
-        {
-            Client* client = actor->GetClient();
-            if (!client)
-            {
-                Debug2(LOG_ANY,clientnum,"User action from unknown client!  Clientnum:%d\n",clientnum);
-                return;
-            }
-            client->SetTargetObject(NULL);
-            // item is deleted if we pickup money
-            if(item)
-            {
-                item->ScheduleRespawn();
-                psPickupEvent evt(
-                           chardata->GetPID(),
-                           item->GetUID(),
-                           item->GetStackCount(),
-                           (int)item->GetCurrentStats()->GetQuality(),
-                           0
-                           );
-                evt.FireEvent();
-            }
-            else
-            {
-                psPickupEvent evt(
-                               chardata->GetPID(),
-                               origUID,
-                               origStackCount,
-                               0,
-                               0
-                               );
-                evt.FireEvent();
-            }
-
-            psSystemMessage newmsg(clientnum, MSG_INFO_BASE, "%s picked up %s", actor->GetName(), qname.GetData() );
-            newmsg.Multicast(actor->GetMulticastClients(),0,RANGE_TO_SELECT);
-
-            psserver->GetCharManager()->UpdateItemViews(clientnum);
-
-            if(dynamic_cast<gemItem*>(this)->GetItem()) GEMSupervisor::GetSingleton().RemoveItemEntity(dynamic_cast<gemItem*>(this));
-            EntityManager::GetSingleton().RemoveActor(this);  // Destroy this
-        }
-        else
-        {
-
-            /* TODO: Include support for partial pickup of stacks
-
-            // Check if part of a stack where picked up
-            if (item && count > item->GetStackCount())
-            {
-                count = count - item->GetStackCount();
-                qname = psItem::GetQuantityName(item->GetName(),count);
-
-                psSystemMessage newmsg(client, MSG_INFO, "%s picked up %s", actor->GetName(), qname.GetData() );
-                newmsg.Multicast(actor->GetMulticastClients(),0,RANGE_TO_SELECT);
-
-                psserver->GetCharManager()->UpdateItemViews(clientnum);
-
-                csString buf;
-                buf.Format("%s, %s, %s, \"%s\", %d, %d", actor->GetName(), "World", "Pickup", GetName(), 0, 0);
-                psserver->GetLogCSV()->Write(CSV_EXCHANGES, buf);
-
-            }
-            */
-
-            // Assume inventory is full so tell player about that to.
-            psserver->SendSystemInfo(clientnum, "You can't carry anymore %s",GetName());
-        }
+		// Check if the char is dead
+		 if (!actor->IsAlive())
+		 {
+			 psserver->SendSystemInfo(clientnum,"You can't pick up items when you're dead.");
+			 return;
+		 }
+		 // Check if the item is pickupable
+		 if (!IsPickable())
+		 {
+			 psserver->SendSystemInfo(clientnum,"You can't pick up %s.", GetName());
+			 return;
+		 }
+    	CS_ASSERT(false);
     }
 
     else if (msg_id == "use")
@@ -1402,7 +1291,7 @@ void gemItem::Send( int clientnum, bool , bool to_superclients, psPersistAllEnti
     int flags = 0;
     if (!IsPickable()) flags |= psPersistItem::NOPICKUP;
     if (IsUsingCD() ||
-        GetItem()->GetSector()->GetIsColliding()) flags |= psPersistItem::COLLIDE;
+        GetItemData()->GetSector()->GetIsColliding()) flags |= psPersistItem::COLLIDE;
 
     psPersistItem mesg(  clientnum,
                          eid,
@@ -1453,6 +1342,138 @@ bool gemItem::GetVisibility()
     return true;
 }
 
+void gemItem::SendBehaviorMessage(const csString & msg_id, gemObject *actor)
+{
+	unsigned int clientnum = actor->GetClientID();
+	if ( msg_id == "pickup")
+	{
+		// Check if the char is dead
+		 if (!actor->IsAlive())
+		 {
+			 psserver->SendSystemInfo(clientnum,"You can't pick up items when you're dead.");
+			 return;
+		 }
+		 // Check if the item is pickupable
+		 if (!IsPickable())
+		 {
+			 psserver->SendSystemInfo(clientnum,"You can't pick up %s.", GetName());
+			 return;
+		 }
+		
+		 // Check if the item is in range
+		 if (!(RangeTo(actor) < RANGE_TO_SELECT))
+		 {
+			 if (!psserver->CheckAccess(actor->GetClient(), "pickup override", false))
+			 {
+				 psserver->SendSystemInfo(clientnum,"You're too far away to pick up %s.", GetName());
+				 return;
+			 }
+		 }
+		
+		 psItem* item = GetItemData();
+		
+		 // Check if item is guarded
+		 if (!psserver->CheckAccess(actor->GetClient(), "pickup override", false))
+		 {
+			 PID guardCharacterID = item->GetGuardingCharacterID();
+			 gemActor* guardActor = GEMSupervisor::GetSingleton().FindPlayerEntity(guardCharacterID);
+			 if (guardCharacterID.IsValid() &&
+				 guardCharacterID != actor->GetCharacterData()->GetPID() &&
+				 guardActor &&
+				 guardActor->RangeTo(item->GetGemObject()) < RANGE_TO_SELECT &&
+				 (guardActor->GetInstance() == this->GetInstance()))
+			 {
+				 psserver->SendSystemInfo(clientnum,"You notice that the item is being guarded by %s",
+					 guardActor->GetCharacterData()->GetCharFullName());
+				 return;
+			 }
+		 }
+		
+		 // Cache values from item, because item might be deleted by Add
+		 csString qname = item->GetQuantityName();
+		 gemContainer *container = dynamic_cast<gemContainer*> (this);
+		
+		 uint32 origUID = item->GetUID();
+		 unsigned short origStackCount = item->GetStackCount();
+		
+		 gemActor* gActor = dynamic_cast<gemActor*>(actor);
+		 psCharacter* chardata = NULL;
+		 if (gActor) chardata = gActor->GetCharacterData();
+		 if (chardata && chardata->Inventory().Add(item,false, true, PSCHARACTER_SLOT_NONE, container))
+		 {
+			 Client* client = actor->GetClient();
+			 if (!client)
+			 {
+				 Debug2(LOG_ANY,clientnum,"User action from unknown client!  Clientnum:%d\n",clientnum);
+				 return;
+			 }
+			 client->SetTargetObject(NULL);
+			 // item is deleted if we pickup money
+			 if(item)
+			 {
+				 item->ScheduleRespawn();
+				 psPickupEvent evt(
+							chardata->GetPID(),
+							item->GetUID(),
+							item->GetStackCount(),
+							(int)item->GetCurrentStats()->GetQuality(),
+							0
+							);
+				 evt.FireEvent();
+			 }
+			 else
+			 {
+				 psPickupEvent evt(
+								chardata->GetPID(),
+								origUID,
+								origStackCount,
+								0,
+								0
+								);
+				 evt.FireEvent();
+			 }
+		
+			 psSystemMessage newmsg(clientnum, MSG_INFO_BASE, "%s picked up %s", actor->GetName(), qname.GetData() );
+			 newmsg.Multicast(actor->GetMulticastClients(),0,RANGE_TO_SELECT);
+		
+			 psserver->GetCharManager()->UpdateItemViews(clientnum);
+		
+			 if(GetItemData()) GEMSupervisor::GetSingleton().RemoveItemEntity(this);
+			 EntityManager::GetSingleton().RemoveActor(this);  // Destroy this
+		 }
+		 else
+		 {
+		
+			 /* TODO: Include support for partial pickup of stacks
+		
+			 // Check if part of a stack where picked up
+			 if (item && count > item->GetStackCount())
+			 {
+				 count = count - item->GetStackCount();
+				 qname = psItem::GetQuantityName(item->GetName(),count);
+		
+				 psSystemMessage newmsg(client, MSG_INFO, "%s picked up %s", actor->GetName(), qname.GetData() );
+				 newmsg.Multicast(actor->GetMulticastClients(),0,RANGE_TO_SELECT);
+		
+				 psserver->GetCharManager()->UpdateItemViews(clientnum);
+		
+				 csString buf;
+				 buf.Format("%s, %s, %s, \"%s\", %d, %d", actor->GetName(), "World", "Pickup", GetName(), 0, 0);
+				 psserver->GetLogCSV()->Write(CSV_EXCHANGES, buf);
+		
+			 }
+			 */
+		
+			 // Assume inventory is full so tell player about that to.
+			 psserver->SendSystemInfo(clientnum, "You can't carry anymore %s",GetName());
+		 }
+	}
+	else
+	{
+		gemActiveObject::SendBehaviorMessage(msg_id, actor);
+	}
+}
+
 //--------------------------------------------------------------------------------------
 // gemContainer
 //--------------------------------------------------------------------------------------
@@ -1478,7 +1499,7 @@ bool gemContainer::CanAdd(unsigned short amountToAdd, psItem *item, int slot)
     if(slot >= SlotCount())
         return false;
 
-    PID guard = GetItem()->GetGuardingCharacterID();
+    PID guard = GetItemData()->GetGuardingCharacterID();
     gemActor* guardingActor = GEMSupervisor::GetSingleton().FindPlayerEntity(guard);
 
     // Test if container is guarded by someone else who is near
@@ -1526,7 +1547,7 @@ bool gemContainer::CanTake(Client *client, psItem* item)
     if (item->GetIsNpcOwned() || item->GetIsNoPickup())
         return false;
 
-    psItem *containeritem = GetItem();
+    psItem *containeritem = GetItemData();
     CS_ASSERT(containeritem);
 
     // Check for npc-owned or locked container
@@ -1600,11 +1621,11 @@ bool gemContainer::AddToContainer(psItem *item, Client *fromClient, int slot, bo
         item->SetGuardingCharacterID(item->GetOwningCharacterID());
     }
 
-    if (!GetItem()->GetIsNoPickup() && item->GetOwningCharacterID().IsValid())
-        GetItem()->SetGuardingCharacterID(item->GetOwningCharacterID());
+    if (!GetItemData()->GetIsNoPickup() && item->GetOwningCharacterID().IsValid())
+        GetItemData()->SetGuardingCharacterID(item->GetOwningCharacterID());
 
     item->SetOwningCharacter(NULL);
-    item->SetContainerID(GetItem()->GetUID());
+    item->SetContainerID(GetItemData()->GetUID());
     item->SetLocInParent((INVENTORY_SLOT_NUMBER)(slot));
     item->Save(false);
     itemlist.PushSmart(item);
@@ -1813,7 +1834,14 @@ bool gemActionLocation::SeesObject(gemObject * object, float range)
         return false;
     }
 }
-
+float gemActionLocation::RangeTo(gemObject *obj, bool ignoreY, bool ignoreInstance)
+{
+	// Ugly hack : if an AL got (0,0,0) as a position, bypass the check
+	if(GetPosition() == csVector3(0,0,0) ||
+		(dynamic_cast<gemActionLocation*>(obj) && obj->GetPosition() == csVector3(0,0,0)))
+		return 0.0f;
+	return gemObject::RangeTo(obj, ignoreY, ignoreInstance);
+}
 
 void gemActionLocation::Send( int clientnum, bool , bool to_superclients, psPersistAllEntities *allEntities )
 {
@@ -2522,17 +2550,6 @@ void gemActor::SendGroupStats()
     if (InGroup() || GetClientID())
     {
         psChar->SendStatDRMessage(GetClientID(), eid, 0, InGroup() ? GetGroup() : NULL);
-    }
-
-    gemNPC* npc = GetNPCPtr();
-    if (npc && npc->GetCharacterData()->IsPet())
-    {
-        // Get Client ID of Owner
-        gemObject *owner = npc->GetOwner();
-        if (owner && owner->GetClientID())
-        {
-            psChar->SendStatDRMessage(owner->GetClientID(), eid, 0);
-        }
     }
 }
 
@@ -4067,7 +4084,7 @@ csString gemNPC::GetDefaultBehavior(const csString & dfltBehaviors)
 
 void gemNPC::SendBehaviorMessage(const csString & msg_id, gemObject *obj)
 {
-    gemActor *actor = obj->GetActorPtr();
+    gemActor *actor = dynamic_cast<gemActor*>(obj);
     CS_ASSERT(actor);
     unsigned int client = actor->GetClientID();
     if ( msg_id == "select" )
@@ -4439,4 +4456,18 @@ void gemNPC::Broadcast(int clientnum, bool control)
             Send(destSuper[i].client, control, true);
     }
 
+}
+
+void gemNPC::SendGroupStats()
+{
+	gemActor::SendGroupStats();
+    if (GetCharacterData()->IsPet())
+    {
+        // Get Client ID of Owner
+        gemObject *owner = GetOwner();
+        if (owner && owner->GetClientID())
+        {
+            psChar->SendStatDRMessage(owner->GetClientID(), eid, 0);
+        }
+    }
 }
