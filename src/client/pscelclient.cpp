@@ -2082,6 +2082,7 @@ bool GEMClientItem::CheckLoadStatus()
     factory = psengine->GetEngine()->CreateMeshFactory("crystalspace.mesh.object.null", factName + "_nullmesh");
     csRef<iNullFactoryState> nullstate = scfQueryInterface<iNullFactoryState> (factory->GetMeshObjectFactory());
     nullstate->SetBoundingBox(instance->bbox);
+    nullstate->SetCollisionMeshData(instance->pcmesh->GetFactory()->GetMeshObjectFactory()->GetObjectModel());
 
     pcmesh = factory->CreateMeshWrapper();
     pcmesh->GetFlags().Set(CS_ENTITY_NODECAL);
