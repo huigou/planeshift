@@ -194,7 +194,7 @@ void MiniGameManager::HandleStartGameRequest(Client *client)
 
     // Verify the target
     gemObject *target = client->GetTargetObject();
-    if (!target || (target->GetALPtr() == NULL))
+    if (!target || (dynamic_cast<gemActionLocation*>(target)))
     {
         psserver->SendSystemError(clientID, "You don't have a game board targeted!");
         return;

@@ -72,6 +72,7 @@ class gemActor;
 class gemNPC;
 class gemPet;
 class gemActionLocation;
+class gemActiveObject;
 class ClientConnectionSet;
 class PublishVector;
 class psLinearMovement;
@@ -82,6 +83,67 @@ class gemMesh;
 
 #define UNSTICK_TIME 15000
 
+/** The Visitor pattern which allows clients to discover the type of gemObject at
+ *  runtime. It does this without any need for dynamic_cast or RTTI.
+ *  
+ *  The default implementations must be updated to reflect the type hierarchy.
+ *  Though new subtypes of gemObject do not need to be added here unless they are
+ *  needed in a Visitor.
+ */
+class gemVisitor
+{
+public:
+	virtual ~gemVisitor() { };
+	
+	virtual void Visit(gemObject& object) { }
+	virtual void Visit(gemActiveObject& active_object);
+	virtual void Visit(gemItem& item);
+	virtual void Visit(gemContainer& container);
+	virtual void Visit(gemActionLocation& action_location);
+	virtual void Visit(gemActor& actor);
+	virtual void Visit(gemNPC& npc);
+	virtual void Visit(gemPet& pet);
+
+protected:
+	/// This class must not be instantiated.
+	gemVisitor() { }
+};
+
+// A visitor to find a gemItem or check if an object is a gemItem.
+class findItemVisitor : public gemVisitor
+{
+public:
+	findItemVisitor() : found(NULL) { }
+	void Visit(gemItem& item) { found = &item; }
+	
+	gemItem* Found() { return found; }
+protected:
+	gemItem* found;
+};
+
+// A visitor to find a gemItem or check if an object is a gemActor.
+class findActorVisitor : public gemVisitor
+{
+public:
+	findActorVisitor() : found(NULL) { }
+	void Visit(gemActor& actor) { found = &actor; }
+	
+	gemActor* Found() { return found; }
+protected:
+	gemActor* found;
+};
+
+// A visitor to find a gemItem or check if an object is a gemNPC.
+class findNPCVisitor : public gemVisitor
+{
+public:
+	findNPCVisitor() : found(NULL) { }
+	void Visit(gemNPC& npc) { found = &npc; }
+	
+	gemNPC* Found() { return found; }
+protected:
+	gemNPC* found;
+};
 
 //-----------------------------------------------------------------------------
 
@@ -279,12 +341,6 @@ class gemObject : public iDeleteNotificationObject, public CS::Utility::WeakRefe
 {
 
 public:
-    gemObject(const char* name, const char* factname,InstanceID myinstance,iSector* room,
-        const csVector3& pos,float rotangle,int clientnum);
-
-    /// This ctor is only for use in making keys for the BinaryTree
-    gemObject(const char *name);
-
     virtual ~gemObject();
 
     EID GetEID() { return eid; }
@@ -307,13 +363,6 @@ public:
 
     virtual const char* GetObjectType() { return "Object"; }
 
-    gemItem* GetItemPtr();
-    gemActor* GetActorPtr();
-    gemNPC* GetNPCPtr();
-    gemPet* GetPetPtr();
-    gemActionLocation* GetALPtr();
-
-    psItem* GetItem();
     virtual psCharacter *GetCharacterData() { return NULL; }
 
     virtual Client* GetClient() const { return NULL; }
@@ -360,7 +409,7 @@ public:
     bool AlwaysWatching() { return alwaysWatching; }
     //@}
 
-    float RangeTo(gemObject *obj, bool ignoreY = false, bool ignoreInstance = false);
+    virtual float RangeTo(gemObject *obj, bool ignoreY = false, bool ignoreInstance = false);
 
     virtual bool IsUpdateReq (csVector3 const &pos,csVector3 const &oldPos);
 
@@ -415,8 +464,17 @@ public:
      */
 	virtual bool HasKillStealProtection() { return false; }
     //@}
+	
+	/// Used for the visitor pattern.
+	void Accept(gemVisitor& visitor) { visitor.Visit(*this); }
 
 protected:
+    gemObject(const char* name, const char* factname,InstanceID myinstance,iSector* room,
+        const csVector3& pos,float rotangle,int clientnum);
+
+    /// This ctor is only for use in making keys for the BinaryTree
+//    gemObject(const char *name);
+    
     bool valid;                                 ///< Is object fully loaded
 //  csRef<gemObjectSafe> self_reference;        ///< Placeholder for ref 1 of saferef
 
@@ -449,7 +507,7 @@ protected:
 class gemActiveObject : public gemObject
 {
 public:
-    gemActiveObject( const char *name );
+//    gemActiveObject( const char *name );
     gemActiveObject( const char* name,
                     const char* factname,
                     InstanceID myInstance,
@@ -474,6 +532,9 @@ public:
     virtual bool IsConstructible() { return false; }
     virtual bool IsSecutityLocked() { return false; }
     virtual bool IsContainer() { return false; }
+    
+	/// Used for the visitor pattern.
+	void Accept(gemVisitor& visitor) { visitor.Visit(*this); }
 };
 
 //-----------------------------------------------------------------------------
@@ -545,6 +606,11 @@ public:
 
     virtual bool GetCanTransform();
     virtual bool GetVisibility();
+    
+    virtual void SendBehaviorMessage(const csString & str, gemObject *obj);
+
+	/// Used for the visitor pattern.
+	void Accept(gemVisitor& visitor) { visitor.Visit(*this); }
 };
 
 //-----------------------------------------------------------------------------
@@ -616,6 +682,9 @@ public:
         psItem *RemoveCurrent(Client *fromClient);
         void UseContainerItem(gemContainer *containerItem);
     };
+    
+	/// Used for the visitor pattern.
+	void Accept(gemVisitor& visitor) { visitor.Visit(*this); }
 };
 
 //-----------------------------------------------------------------------------
@@ -640,6 +709,11 @@ public:
 
     virtual bool GetVisibility() { return visible; };
     virtual void SetVisibility(bool vis) { visible = vis; };
+    
+    virtual float RangeTo(gemObject *obj, bool ignoreY = false, bool ignoreInstance = false);
+    
+	/// Used for the visitor pattern.
+	void Accept(gemVisitor& visitor) { visitor.Visit(*this); }
 };
 
 //-----------------------------------------------------------------------------
@@ -1055,6 +1129,9 @@ public:
 
     bool GetFiniteInventory() { return GetCharacterData()->Inventory().GetDoRestrictions(); }
     void SetFiniteInventory(bool v) { GetCharacterData()->Inventory().SetDoRestrictions(v); }
+    
+	/// Used for the visitor pattern.
+	void Accept(gemVisitor& visitor) { visitor.Visit(*this); }
 };
 
 //-----------------------------------------------------------------------------
@@ -1153,6 +1230,11 @@ public:
      * @return A boolean indicating if this gemNPC must have killsteal protection.
      */
 	virtual bool HasKillStealProtection() { return !GetCharacterData()->IsPet(); }
+	
+	virtual void SendGroupStats();
+	
+	/// Used for the visitor pattern.
+	void Accept(gemVisitor& visitor) { visitor.Visit(*this); }
 };
 
 //-----------------------------------------------------------------------------
@@ -1173,6 +1255,9 @@ public:
     void SetPersistanceLevel( const char *level )   { this->persistanceLevel = level; };
     const char* SetPersistanceLevel( void )         { return persistanceLevel.GetData(); };
     bool IsFamiliar( void )                         { return this->persistanceLevel.CompareNoCase( "Permanent" ); };
+    
+	/// Used for the visitor pattern.
+	void Accept(gemVisitor& visitor) { visitor.Visit(*this); }
 
 private:
     csString persistanceLevel;

@@ -392,9 +392,9 @@ void NPCManager::HandleDamageEvent(MsgEntry *me,Client *client)
     psDamageEvent evt(me);
 
     // NPC's need to know they were hit using a Perception
-    if (evt.attacker!=NULL  &&  evt.target->GetNPCPtr()) // if npc damaged
+    if (evt.attacker!=NULL  &&  dynamic_cast<gemNPC*>(evt.target)) // if npc damaged
     {
-        QueueDamagePerception(evt.attacker, evt.target->GetNPCPtr(), evt.damage);
+        QueueDamagePerception(evt.attacker, dynamic_cast<gemNPC*>(evt.target), evt.damage);
     }
 }
 
@@ -773,7 +773,7 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                             psserver->combatmanager->StopAttack(attacker);
                         }
 
-                        if ( !target->GetClient() || !target->GetActorPtr()->GetInvincibility() )
+                        if ( !target->GetClient() || !dynamic_cast<gemActor*>(target)->GetInvincibility() )
                         {
                             // NPCs only use 'Normal' stance for now.
                             psserver->combatmanager->AttackSomeone(attacker,target,CombatManager::GetStance("Normal"));
@@ -874,7 +874,7 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
 
                 gemItem *gItem = dynamic_cast<gemItem *> (GEMSupervisor::GetSingleton().FindObject(item_id));
                 psItem *item = NULL;
-                if (gItem) item = gItem->GetItem();
+                if (gItem) item = gItem->GetItemData();
                 if (!item)
                 {
                     Debug1(LOG_SUPERCLIENT,0,"Couldn't find item data.\n");
@@ -1542,7 +1542,7 @@ void NPCManager::HandlePetCommand(MsgEntry * me,Client *client)
                 gemObject * trg = pet->GetTarget();
                 if ( trg != NULL )
                 {
-                    gemActor * targetActor = trg->GetActorPtr();
+                    gemActor * targetActor = dynamic_cast<gemActor*>(trg);
                     /* We check if the owner can attack the other entity in order to not allow players
                      * to override permissions and at the same time allowing pet<->player, pet<->pet
                      * when in pvp. We allow gm to do anything they want (can attack everything including

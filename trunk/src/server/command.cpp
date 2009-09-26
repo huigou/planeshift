@@ -1552,7 +1552,7 @@ int com_print(char *line)
     {
         obj->Dump();
 
-        gemNPC * npc = obj->GetNPCPtr();
+        gemNPC * npc = dynamic_cast<gemNPC*>(obj);
         if (npc)
         {
             CPrintf(CON_CMDOUTPUT ,"--------- NPC Information -------\n");
@@ -1643,9 +1643,9 @@ int com_factions(char *)
     {
         obj = itr.Next();
 
-        if (obj && obj->GetActorPtr())
+        if (obj && dynamic_cast<gemActor*>(obj))
         {
-            gemActor * actor = obj->GetActorPtr();
+            gemActor * actor = dynamic_cast<gemActor*>(obj);
             if (actor)
                 actors.Push(actor);
         }

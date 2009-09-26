@@ -1400,7 +1400,7 @@ void ExchangeManager::StartExchange( Client* client, bool withPlayer )
     // if the command was "/give":
     if (!withPlayer)
     {
-        if ( !target->GetNPCPtr() )
+        if ( !dynamic_cast<gemNPC*>(target))
         {
             psserver->SendSystemError(client->GetClientNum(), "You can give items to NPC only");
             return;
@@ -1422,7 +1422,7 @@ void ExchangeManager::StartExchange( Client* client, bool withPlayer )
     // if the command was "/trade":
     else
     {
-        if ( target->GetNPCPtr() )
+        if ( dynamic_cast<gemNPC*>(target) )
         {
             psserver->SendSystemError(client->GetClientNum(), "You can trade with other players only.");
             return;

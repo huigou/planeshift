@@ -848,7 +848,7 @@ void UserManager::HandleEntranceMessage( MsgEntry* me, Client *client )
         }
 
         // get real item
-        psItem* item = realItem->GetItem();
+        psItem* item = realItem->GetItemData();
         if ( !item )
         {
             if (secure) psserver->SendSystemInfo(client->GetClientNum(),"Invalid ItemID in Action Location Response.\n");
@@ -1394,7 +1394,7 @@ void UserManager::ReportPosition(psUserCmdMessage& msg,Client *client)
             csString region_name = (sector) ? sector->QueryObject()->GetObjectParent()->GetName() : "(null)";
             // If it's an actor, append their PID to the output.
             csString idtxt;
-            if (object->GetActorPtr())
+            if (dynamic_cast<gemActor*>(object))
                 idtxt.Format(", %s", ShowID(object->GetPID()));
 
             int degrees = (int)(angle*180.0/PI);
@@ -1494,7 +1494,7 @@ void UserManager::Attack(Stance stance, Client *client)
         psserver->SendSystemError(client->GetClientNum(),"You do not have a target selected.");
         return;
     }
-    if (target->GetItem() || target->GetALPtr())
+    if (dynamic_cast<gemItem*>(target) || dynamic_cast<gemActionLocation*>(target))
     {
         psserver->SendSystemError(client->GetClientNum(),"You cannot attack %s.", (const char*)target->GetName() );
         return;
@@ -1635,10 +1635,10 @@ void UserManager::Loot(Client *client)
         return;
     }
 
-    gemNPC *npc = target->GetNPCPtr();
+    gemNPC *npc = dynamic_cast<gemNPC*>(target);
     if(!npc)
     {
-        gemActor *actor = target->GetActorPtr();
+        gemActor *actor = dynamic_cast<gemActor*>(target);
         if(actor && actor->GetClient())
         {
             if (clientnum == actor->GetClient()->GetClientNum())
@@ -1855,7 +1855,7 @@ void UserManager::HandleTraining(psUserCmdMessage& msg, Client *client)
 
     // Check target is a Trainer
     gemObject *target = client->GetTargetObject();
-    if (!target || !target->GetActorPtr())
+    if (!target || !dynamic_cast<gemActor*>(target))
     {
         psserver->SendSystemInfo(client->GetClientNum(),
             "No target selected for training!");
@@ -1900,7 +1900,7 @@ void UserManager::HandleBanking(psUserCmdMessage& msg, Client *client)
 {
     // Check if target is a banker.
     gemObject *target = client->GetTargetObject();
-    if (!target || !target->GetActorPtr() || !target->GetActorPtr()->GetCharacterData()->IsBanker())
+    if (!target || !dynamic_cast<gemActor*>(target) || !dynamic_cast<gemActor*>(target)->GetCharacterData()->IsBanker())
     {
         psserver->SendSystemError(client->GetClientNum(), "Your target must be a banker!");
         return;
@@ -1977,7 +1977,7 @@ void UserManager::Pickup(Client *client, csString target)
             object = gem->FindObject(eID);
             if (object)
             {
-                if(object->GetItem())
+                if(dynamic_cast<gemItem*>(object))
                     object->SendBehaviorMessage("pickup", client->GetActor() );
                 else
                     psserver->SendSystemError(client->GetClientNum(),
@@ -2011,7 +2011,7 @@ void UserManager::HandleMount(psUserCmdMessage& msg, Client *client)
     mount = gem->FindObject(targetEID);
 
     // can only mount mounts
-    if (!mount || !mount->GetActorPtr() || client->GetActor() == mount
+    if (!mount || !dynamic_cast<gemActor*>(mount) || client->GetActor() == mount
     || !mount->GetCharacterData()->IsMount()) //remove that last test to allow for player mounting
     {
         psserver->SendSystemError(client->GetClientNum(),
@@ -2049,7 +2049,7 @@ void UserManager::HandleMount(psUserCmdMessage& msg, Client *client)
     // If you are not the rider(passenger), you shouldn't be allowed to move
     // client->GetActor()->SetAllowedToMove(false);
 
-    Mount(client->GetActor(), mount->GetActorPtr());
+    Mount(client->GetActor(), dynamic_cast<gemActor*>(mount));
 
     return;
 }
@@ -2133,13 +2133,15 @@ void UserManager::Guard(Client *client, gemObject *object, csString action)
     else                           //The player didn't provide anything so toggle the option
         toggle = true;
 
+    gemItem* gemitem;
     psItem* guardItem;
     
     if(object)
-        guardItem = object->GetItem();
+        gemitem = dynamic_cast<gemItem*>(object);
     
-    if (guardItem)
+    if (gemitem)
     {
+    	guardItem = gemitem->GetItemData();
         if(onoff || (toggle && guardItem->GetGuardingCharacterID() == 0))
         {
             // TODO : Add that check in the security table
@@ -2201,10 +2203,10 @@ void UserManager::Rotate(Client *client, gemObject* target, csString action)
     {
         // rotate an item only if the client is guarding it,
         // or has the right to rotate all items
-        if (!(rotItem->GetItem()->GetGuardingCharacterID() == client->GetPID()) &&
+        if (!(rotItem->GetItemData()->GetGuardingCharacterID() == client->GetPID()) &&
             !psserver->CheckAccess(client, "rotate all"))
         {
-            psserver->SendSystemInfo(client->GetClientNum(), "You can't rotate %s", rotItem->GetItem()->GetName());
+            psserver->SendSystemInfo(client->GetClientNum(), "You can't rotate %s", rotItem->GetItemData()->GetName());
             return;
         }
         
@@ -2260,7 +2262,7 @@ void UserManager::Rotate(Client *client, gemObject* target, csString action)
         zrot = zrot/180*PI;
         rotItem->SetRotation(xrot, yrot, zrot);
         rotItem->UpdateProxList(true);
-        psserver->SendSystemInfo(client->GetClientNum(), "You have rotated %s", rotItem->GetItem()->GetName());
+        psserver->SendSystemInfo(client->GetClientNum(), "You have rotated %s", rotItem->GetItemData()->GetName());
     }
     else
     {

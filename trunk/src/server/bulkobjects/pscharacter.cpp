@@ -1222,7 +1222,7 @@ void psCharacter::DropItem(psItem *&item, csVector3 suggestedPos, float yrot, bo
     if(guarded) //if we want to guard the item assign the guarding pid
         item->SetGuardingCharacterID(pid);
 
-    gemObject* obj = EntityManager::GetSingleton().MoveItemToWorld(item,
+    gemItem* obj = EntityManager::GetSingleton().MoveItemToWorld(item,
                              location.worldInstance, location.loc_sector,
                              suggestedPos.x, suggestedPos.y, suggestedPos.z,
                              yrot, this, transient);
@@ -1230,7 +1230,7 @@ void psCharacter::DropItem(psItem *&item, csVector3 suggestedPos, float yrot, bo
     if (obj)
     {
         // Assign new object to replace the original object
-        item = obj->GetItem();
+        item = obj->GetItemData();
     }
 
     psMoney money;
@@ -1249,7 +1249,7 @@ void psCharacter::DropItem(psItem *&item, csVector3 suggestedPos, float yrot, bo
         for (size_t i=0; i < Inventory().GetInventoryIndexCount(); i++)
         {
             psItem *item = Inventory().GetInventoryIndexItem(i);
-            if (item->GetContainerID() == cont->GetItem()->GetUID())
+            if (item->GetContainerID() == cont->GetItemData()->GetUID())
             {
                 // This item is in the dropped container
                 size_t slot = item->GetLocInParent() - PSCHARACTER_SLOT_BULK1;
@@ -2000,7 +2000,9 @@ void psCharacter::SetLocationInWorld(InstanceID instance, psSectorInfo *sectorin
 
     if (oldInstance != instance || (oldsector && oldsector != sectorinfo))
     {
-        if ( dynamic_cast<gemNPC*>(actor) == NULL ) // NOT an NPC so it's ok to save location info
+    	findNPCVisitor find_npc;
+    	actor->Accept(find_npc);
+        if ( !find_npc.Found() ) // NOT an NPC so it's ok to save location info
             SaveLocationInWorld();
     }
 }

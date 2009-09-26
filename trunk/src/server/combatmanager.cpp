@@ -924,7 +924,7 @@ bool CombatManager::ValidDistance(gemObject *attacker,gemObject *target,psItem *
     if (Weapon==NULL)
         return false;
 
-    if(!attacker->GetNPCPtr())
+    if(!dynamic_cast<gemNPC*>(attacker))
     {
         return attacker->IsNear(target,Weapon->GetRange()+(Weapon->GetRange()*0.1));
     }
@@ -939,7 +939,7 @@ bool CombatManager::ValidCombatAngle(gemObject *attacker,gemObject *target,psIte
     csVector3 attackPos, targetPos;
     iSector *attackSector, *targetSector;
 
-    if (attacker->GetNPCPtr())
+    if (dynamic_cast<gemNPC*>(attacker))
         return true;  // We don't check this for npc's because they are too stupid
 
     attacker->GetPosition(attackPos, attackSector);

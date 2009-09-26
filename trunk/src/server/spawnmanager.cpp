@@ -454,9 +454,10 @@ void SpawnManager::LoadHuntLocations(psSectorInfo *sectorinfo)
                         
     		for (size_t i = 0; i < nearbyItemsCount; ++i)
     		{
-                psItem *item = nearlist[i]->GetItem();
-                if (item)
+                gemItem* gemitem = dynamic_cast<gemItem*>(nearlist[i]);
+                if (gemitem)
                 {
+                	psItem* item = gemitem->GetItemData();
                     if (name == item->GetName()) // Correct item?
                     {
                         psScheduledItem* schedule = new psScheduledItem(id,itemid,pos,spawnsector,0,interval,max_rnd,range);

@@ -68,7 +68,7 @@ void IntroductionManager::HandleIntroduction(MsgEntry *me, Client *client)
         if (dest[i].dist < CHAT_SAY_RANGE && client->GetClientNum() != (uint32_t) dest[i].client)
         {
             gemObject *obj = (gemObject*) dest[i].object;
-            gemActor *destActor = obj->GetActorPtr();
+            gemActor *destActor = dynamic_cast<gemActor*>(obj);
             if (destActor && destActor->GetCharacterData()->Introduce(client->GetCharacterData()))
             {
                 client->GetActor()->Send(dest[i].client, false, false);

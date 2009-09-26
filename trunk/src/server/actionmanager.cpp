@@ -752,7 +752,7 @@ void ActionManager::HandleScriptOperation( psActionLocation* action, Client *cli
         MathEnvironment env;
         env.Define("Actor", client->GetActor());
         if (realItem)
-            env.Define("Item", realItem->GetItem());
+            env.Define("Item", realItem->GetItemData());
         script->Run(&env);
     }
 }
