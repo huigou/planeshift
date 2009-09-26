@@ -92,9 +92,7 @@ public:
         gemObject *obj = GEMSupervisor::GetSingleton().FindObject(item_to_remove);
         if (obj)
         {
-        	findItemVisitor find_item;
-        	obj->Accept(find_item);
-            gemItem* gemitem = find_item.Found();
+            gemItem* gemitem = obj->AsItem();
             if (gemitem)
             {
             	psItem* item = gemitem->GetItemData();
@@ -2481,7 +2479,7 @@ bool psItem::SetSketch(const csString& newSketchData)
 
 void psItem::FillContainerMsg(Client* client, psViewItemDescription& outgoing)
 {
-    gemContainer *container = dynamic_cast<gemContainer*> (gItem);
+    gemContainer *container = gItem->AsContainer();
 
     if (!container)
     {

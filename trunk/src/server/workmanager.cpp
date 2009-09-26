@@ -264,7 +264,7 @@ void WorkManager::HandleLockPick(MsgEntry* me,Client *client)
     gemObject* target = client->GetTargetObject();
 
     // Check if target is action item
-    gemActionLocation* gemAction = dynamic_cast<gemActionLocation*>(target);
+    gemActionLocation* gemAction = target->AsActionLocation();
     if(gemAction) {
         psActionLocation *action = gemAction->GetAction();
 
@@ -291,7 +291,7 @@ void WorkManager::HandleLockPick(MsgEntry* me,Client *client)
     }
 
     // Get item
-    gemItem* gemitem = dynamic_cast<gemItem*>(target);
+    gemItem* gemitem = target->AsItem();
     psItem* item = NULL;
     if (gemitem)
     	item = gemitem->GetItemData();
@@ -1097,7 +1097,7 @@ void WorkManager::StartUseWork(Client* client)
     if ( workItem && workItem->GetIsContainer() ) // Check if the target is a container
     {
         // cast a gem container to iterate through
-        gemContainer *container = dynamic_cast<gemContainer*> (workItem->GetGemObject());
+        gemContainer *container = workItem->GetGemObject()->AsContainer();
         if (!container)
         {
             Error1("Could not instantiate gemContainer");
@@ -1623,14 +1623,14 @@ bool WorkManager::StartScriptWork(Client* client, gemObject *target, csString pa
     }
 
     // Check if target is action location
-    gemActionLocation* gemAction = dynamic_cast<gemActionLocation*>(target);
+    gemActionLocation* gemAction = target->AsActionLocation();
     if(gemAction)
     {
         return ScriptAction(gemAction);
     }
 
     // Check if target is item
-    gemItem* gemItm = dynamic_cast<gemItem*>(target);
+    gemItem* gemItm = target->AsItem();
     if(gemItm)
     {
         return ScriptItem(gemItm);
@@ -1839,7 +1839,7 @@ bool WorkManager::ScriptAction(gemActionLocation* gemAction)
 bool WorkManager::IsContainerCombinable(uint32 &resultId, int &resultQty)
 {
     // cast a gem container to iterate thru
-    gemContainer *container = dynamic_cast<gemContainer*> (workItem->GetGemObject());
+    gemContainer *container = workItem->GetGemObject()->AsContainer();
     if (!container)
     {
         Error1("Could not instantiate gemContainer");
@@ -2475,7 +2475,7 @@ bool WorkManager::ValidateTarget(Client* client)
     // Check if player has something targeted
     gemObject* target = client->GetTargetObject();
 
-    gemActionLocation* gemAction = dynamic_cast<gemActionLocation*>(target);
+    gemActionLocation* gemAction = target->AsActionLocation();
     if(gemAction) {
         psActionLocation *action = gemAction->GetAction();
 
@@ -2491,7 +2491,7 @@ bool WorkManager::ValidateTarget(Client* client)
     if (target)
     {
         // Make sure it's not character
-        if (dynamic_cast<gemActor*>(target))
+        if (target->AsActor())
         {
             psserver->SendSystemInfo(clientNum,"Only items can be targeted for use.");
             return false;
@@ -2500,19 +2500,19 @@ bool WorkManager::ValidateTarget(Client* client)
         // Check range ignoring Y co-ordinate
         if (worker->RangeTo(target, true, true) > RANGE_TO_USE)
         {
-            psserver->SendSystemError(clientNum,"You are not in range to use %s.",dynamic_cast<gemItem*>(target)->GetItemData()->GetName());
+            psserver->SendSystemError(clientNum,"You are not in range to use %s.",target->AsItem()->GetItemData()->GetName());
             return false;
         }
 
         // Only legit items
-        if (!dynamic_cast<gemItem*>(target)->GetItemData())
+        if (!target->AsItem()->GetItemData())
         {
             psserver->SendSystemInfo(clientNum,"That item can not be used in this way.");
             return false;
         }
 
         // Otherwise assign item
-        workItem = dynamic_cast<gemItem*>(target)->GetItemData();
+        workItem = target->AsItem()->GetItemData();
         return true;
     }
 
@@ -2756,7 +2756,7 @@ psItem* WorkManager::CombineContainedItem(uint32 newId, int newQty, float itemQu
 #endif
 
     // cast a gem container to iterate thru
-    gemContainer *container = dynamic_cast<gemContainer*> (containerItem->GetGemObject());
+    gemContainer *container = containerItem->GetGemObject()->AsContainer();
     if (!container)
     {
         Error1("Could not instantiate gemContainer");
@@ -2858,7 +2858,7 @@ psItem* WorkManager::TransformContainedItem(psItem* oldItem, uint32 newId, int n
     CPrintf(CON_DEBUG, "deleting item from container...\n");
 #endif
 
-    gemContainer *container = dynamic_cast<gemContainer*> (workItem->GetGemObject());
+    gemContainer *container = workItem->GetGemObject()->AsContainer();
     if (!container)
     {
         Error1("Could not instantiate gemContainer");

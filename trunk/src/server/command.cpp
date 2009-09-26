@@ -1552,7 +1552,7 @@ int com_print(char *line)
     {
         obj->Dump();
 
-        gemNPC * npc = dynamic_cast<gemNPC*>(obj);
+        gemNPC * npc = obj->AsNPC();
         if (npc)
         {
             CPrintf(CON_CMDOUTPUT ,"--------- NPC Information -------\n");
@@ -1614,7 +1614,7 @@ int com_charlist(char *)
     while ( i.HasNext() )
     {
         obj = i.Next();
-        gemActor* actor = dynamic_cast<gemActor*>(obj);
+        gemActor* actor = obj->AsActor();
         if (actor)
         {
             CPrintf(CON_CMDOUTPUT ,"%9u %5u %9u %-10s %-20s\n",
@@ -1643,9 +1643,9 @@ int com_factions(char *)
     {
         obj = itr.Next();
 
-        if (obj && dynamic_cast<gemActor*>(obj))
+        if (obj && obj->AsActor())
         {
-            gemActor * actor = dynamic_cast<gemActor*>(obj);
+            gemActor * actor = obj->AsActor();
             if (actor)
                 actors.Push(actor);
         }
@@ -1817,7 +1817,7 @@ int com_adjuststat(char *line)
         {
             gemObject* obj = i.Next();
 
-            actor = dynamic_cast<gemActor*>(obj);
+            actor = obj->AsActor();
             if (
                 actor &&
                 actor->GetCharacterData() &&

@@ -627,7 +627,7 @@ bool EntityManager::DeletePlayer(Client * client)
         // Any objects wanting to know when the actor is 'gone' are callback'd here.
         actor->Disconnect();
 
-        if (!dynamic_cast<gemNPC*> (actor))  // NPC cast null means a human player
+        if (!actor->AsNPC())  // NPC cast null means a human player
         {
             // Save current character state in the database
             psServer::CharacterLoader.SaveCharacterData(actor->GetCharacterData(),actor);
@@ -822,7 +822,7 @@ gemItem *EntityManager::CreateItem( psItem *& iteminstance, bool transient )
         if (!nearobj)
             continue;
 
-        gemItem* gemitem = dynamic_cast<gemItem*>(nearobj);
+        gemItem* gemitem = nearobj->AsItem();
         if ( gemitem )
         {
         	psItem* nearitem = gemitem->GetItemData();

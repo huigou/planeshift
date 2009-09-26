@@ -306,7 +306,7 @@ void GEMSupervisor::RemoveClientFromLootables(int cnum)
     while ( i.HasNext() )
     {
         gemObject* obj = i.Next();
-        gemNPC * npc = dynamic_cast<gemNPC*>(obj);
+        gemNPC * npc = obj->AsNPC();
 
         if ( npc)
             npc->RemoveLootableClient(cnum);
@@ -331,7 +331,7 @@ gemObject *GEMSupervisor::FindObject(const csString& name)
         gemObject* obj = i.Next();
         if ( name.CompareNoCase(obj->GetName()) )
                 return obj;
-        else if ( dynamic_cast<gemNPC*>(obj) ) //Allow search for first name only with NPCs
+        else if ( obj->AsNPC() ) //Allow search for first name only with NPCs
         {
             WordArray names (obj->GetName(), false);
             if(name.CompareNoCase(names[0]))
@@ -349,7 +349,7 @@ gemActor *GEMSupervisor::FindPlayerEntity(PID player_id)
 
 gemNPC *GEMSupervisor::FindNPCEntity(PID npc_id)
 {
-    return dynamic_cast<gemNPC*>(actors_by_pid.Get(npc_id, NULL));
+    return actors_by_pid.Get(npc_id, NULL)->AsNPC();
 }
 
 gemItem *GEMSupervisor::FindItemEntity(uint32 item_id)
@@ -417,7 +417,7 @@ void GEMSupervisor::StopAllNPCs(AccountID superclientID)
         if (obj->GetSuperclientID() == superclientID && obj->IsAlive())
         {
             // CPrintf(CON_DEBUG, "  Deactivating %s...\n",obj->GetName() );
-            gemActor *actor = dynamic_cast<gemActor*>(obj);
+            gemActor *actor = obj->AsActor();
             actor->pcmove->SetVelocity(csVector3(0,0,0));
             actor->pcmove->SetAngularVelocity(csVector3(0,0,0));
             actor->pcmove->SetOnGround(true);
@@ -457,7 +457,7 @@ void GEMSupervisor::UpdateAllStats()
     while (iter.HasNext())
     {
         gemObject *obj = iter.Next();
-        gemActor *actor = dynamic_cast<gemActor *>(obj);
+        gemActor *actor = obj->AsActor();
         if (actor)
             actor->UpdateStats();
     }
@@ -469,7 +469,7 @@ void GEMSupervisor::GetPlayerObjects(PID playerID, csArray<gemObject*> &list )
     while (iter.HasNext())
     {
         gemObject* obj = iter.Next();
-        gemItem* item = dynamic_cast<gemItem*>(obj);
+        gemItem* item = obj->AsItem();
         if (item && item->GetItemData()->GetOwningCharacterID() == playerID)
         {
             list.Push(item);
@@ -490,7 +490,7 @@ void GEMSupervisor::GetAllEntityPos(psAllEntityPosMessage& update)
         gemObject *obj = iter.Next();
         if (obj->GetPID().IsValid())
         {
-            gemActor *actor = dynamic_cast<gemActor *>(obj);
+            gemActor *actor = obj->AsActor();
             if (actor)
             {
                 csVector3 pos,pos2;
@@ -1391,12 +1391,12 @@ void gemItem::SendBehaviorMessage(const csString & msg_id, gemObject *actor)
 		
 		 // Cache values from item, because item might be deleted by Add
 		 csString qname = item->GetQuantityName();
-		 gemContainer *container = dynamic_cast<gemContainer*> (this);
+		 gemContainer *container = AsContainer();
 		
 		 uint32 origUID = item->GetUID();
 		 unsigned short origStackCount = item->GetStackCount();
 		
-		 gemActor* gActor = dynamic_cast<gemActor*>(actor);
+		 gemActor* gActor = actor->AsActor();
 		 psCharacter* chardata = NULL;
 		 if (gActor) chardata = gActor->GetCharacterData();
 		 if (chardata && chardata->Inventory().Add(item,false, true, PSCHARACTER_SLOT_NONE, container))
@@ -1838,7 +1838,7 @@ float gemActionLocation::RangeTo(gemObject *obj, bool ignoreY, bool ignoreInstan
 {
 	// Ugly hack : if an AL got (0,0,0) as a position, bypass the check
 	if(GetPosition() == csVector3(0,0,0) ||
-		(dynamic_cast<gemActionLocation*>(obj) && obj->GetPosition() == csVector3(0,0,0)))
+		(obj->AsActionLocation() && obj->GetPosition() == csVector3(0,0,0)))
 		return 0.0f;
 	return gemObject::RangeTo(obj, ignoreY, ignoreInstance);
 }
@@ -2479,7 +2479,7 @@ bool gemActor::CanBeAttackedBy(gemActor *attacker, gemActor ** lastAttacker) con
         if (!lasthit->attacker_ref.IsValid())
             continue;  // ignore disconnects
 
-        *lastAttacker = dynamic_cast<gemActor*>((gemObject*) lasthit->attacker_ref);
+        *lastAttacker = lasthit->attacker_ref->AsActor();
         if (*lastAttacker == NULL)
             continue;  // shouldn't happen
 
@@ -3608,7 +3608,7 @@ void gemActor::SendBehaviorMessage(const csString & msg_id, gemObject *actor)
             options |= psGUIInteractMessage::PLAYERDESC;
 
             // Get the actor who is targetting. The target is *this.
-            gemActor* activeActor = dynamic_cast<gemActor*>(actor);
+            gemActor* activeActor = actor->AsActor();
             if (activeActor && activeActor->GetClientID() != 0)
             {
                 if(activeActor->GetMount() && this == actor)
@@ -4084,7 +4084,7 @@ csString gemNPC::GetDefaultBehavior(const csString & dfltBehaviors)
 
 void gemNPC::SendBehaviorMessage(const csString & msg_id, gemObject *obj)
 {
-    gemActor *actor = dynamic_cast<gemActor*>(obj);
+    gemActor *actor = obj->AsActor();
     CS_ASSERT(actor);
     unsigned int client = actor->GetClientID();
     if ( msg_id == "select" )

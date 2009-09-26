@@ -224,7 +224,7 @@ void ChatManager::HandleChatMessage(MsgEntry *me, Client *client)
               saveFlood = false;
 
               gemObject *target = client->GetTargetObject();
-              gemNPC *targetnpc = dynamic_cast<gemNPC*>(target);
+              gemNPC *targetnpc = target->AsNPC();
               NpcResponse *resp = CheckNPCResponse(msg,client,targetnpc);
               if (resp)
               {
