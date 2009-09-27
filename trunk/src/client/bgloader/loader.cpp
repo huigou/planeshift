@@ -369,7 +369,8 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
 
                                 // Validation.
                                 csString msg;
-                                msg.Format("Invalid texture reference '%s' in shadervar", node->GetContentsValue());
+                                msg.Format("Invalid texture reference '%s' in shadervar in material '%s'.",
+                                  node->GetContentsValue(), m->name.GetData());
                                 CS_ASSERT_MSG(msg.GetData(), texture.IsValid());
                             }
                             m->textures.Push(texture);
