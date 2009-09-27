@@ -191,7 +191,7 @@ void pawsSpellBookWindow::OnListAction( pawsListBox* widget, int status )
 
         selectedSpell.Replace( spellName->GetText() );
         spellDescription->AddMessage(descriptions_Hash.Get(spellName->GetText(), "Unknown"));
-        spellDescription->ResetScroll();        
+        spellDescription->ResetScroll();
         spellImage->SetBackground(images_Hash.Get(spellName->GetText(), ""));
     }
 }

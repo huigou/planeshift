@@ -220,7 +220,7 @@ void pawsGlyphWindow::HandleAssemble( MsgEntry* me )
     spellName->SetText(mesg.name);
     description->AddMessage( mesg.description );
     description->ResetScroll();
-    spellImage->SetBackground(mesg.image);    
+    spellImage->SetBackground(mesg.image);
 }
 
 void pawsGlyphWindow::ClearSpell( void )
@@ -228,6 +228,7 @@ void pawsGlyphWindow::ClearSpell( void )
     description->Clear();
     
     spellName->SetText( "" );
+    spellImage->SetBackground("");
     description->ResetScroll();
 }
 

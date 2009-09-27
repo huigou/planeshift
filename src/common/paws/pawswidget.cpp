@@ -925,6 +925,11 @@ void pawsWidget::UseBorder( const char* style )
 
 void pawsWidget::SetBackground( const char* image )
 {
+    if(strcmp(image,"") == 0)
+    {
+        bgImage = NULL;
+        return;
+    }
     bgImage = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(image);
 
     if (!bgImage)

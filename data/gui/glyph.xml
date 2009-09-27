@@ -25,7 +25,6 @@
 
     <widget name="SpellImage" factory="pawsWidget" id="1004">
         <frame x="10" y="10" width="60" height="60" border="yes" />
-        <bgimage resource="Scaling Slot" />
     </widget>
 
 
