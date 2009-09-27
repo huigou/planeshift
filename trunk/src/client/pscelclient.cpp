@@ -1261,6 +1261,7 @@ GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
     name = mesg.name;
     race = mesg.race;
     mountFactname = mesg.mountFactname;
+    MounterAnim = mesg.MounterAnim;
     helmGroup = mesg.helmGroup;
     BracerGroup = mesg.BracerGroup;
     BeltGroup = mesg.BeltGroup;
@@ -1916,7 +1917,7 @@ bool GEMClientActor::CheckLoadStatus()
         psengine->GetEngine()->GetMeshes()->Add(pcmesh);
         charApp->ApplyRider(pcmesh);
         csRef<iSpriteCal3DState> riderstate = scfQueryInterface<iSpriteCal3DState> (mesh->GetMeshObject());
-        riderstate->SetAnimCycle("ride",100);
+        riderstate->SetAnimCycle(MounterAnim,100);
     }
 
     pcmesh->GetFlags().Set(CS_ENTITY_NODECAL);

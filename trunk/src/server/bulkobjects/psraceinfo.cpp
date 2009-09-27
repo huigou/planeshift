@@ -69,6 +69,8 @@ bool psRaceInfo::Load(iResultRow& row)
     BracerGroup = row["bracer"];
     BeltGroup = row["belt"];
     CloakGroup = row["cloak"];
+    MounterAnim = row["cstr_mounter_animation"];
+    CacheManager::GetSingleton().AddCommmonStringID(MounterAnim);
     sex = row["sex"];
     speedModifier = row.GetFloat("speed_modifier");
 

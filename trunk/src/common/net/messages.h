@@ -45,7 +45,7 @@ class csStringHashReversible;
 
 // This holds the version number of the network code, remember to increase
 // this each time you do an update which breaks compatibility
-#define PS_NETVERSION   0x00B1
+#define PS_NETVERSION   0x00B2
 // Remember to bump the version in pscssetup.h, as well.
 
 
@@ -3089,11 +3089,11 @@ public:
     enum Flags
     {
         NONE            = 0,
-        INVISIBLE       = 1 << 0, // Used to inform super client. Clients will not get this
-                                  // since actor is removed when invisible.
-        INVINCIBLE      = 1 << 1, // Used to inform super client.
-        NPC             = 1 << 2, // Set for NPCs
-        NAMEKNOWN       = 1 << 3  // Used to tell the client if he knows this actor
+        INVISIBLE       = 1 << 0, ///< Used to inform super client. Clients will not get this
+                                  ///< since actor is removed when invisible.
+        INVINCIBLE      = 1 << 1, ///< Used to inform super client.
+        NPC             = 1 << 2, ///< Set for NPCs
+        NAMEKNOWN       = 1 << 3  ///< Used to tell the client if he knows this actor
     };
 
     psPersistActor( uint32_t clientnum,
@@ -3106,6 +3106,7 @@ public:
                     const char* matname,
                     const char* race,
                     const char* mountFactname,
+                    const char* MounterAnim,
                     unsigned short int gender,
                     const char* helmGroup,
                     const char* BracerGroup,
@@ -3144,11 +3145,12 @@ public:
     csString matname;
     csString race;
     csString mountFactname;
+    csString MounterAnim;               ///< The anim to be used by the mounter.
     unsigned short int gender;
-    csString helmGroup;                 // Used for helm groupings.
-    csString BracerGroup;               // Used for bracers groupings.
-    csString BeltGroup;                 // Used for belt groupings.
-    csString CloakGroup;               // Used for cloak groupings.
+    csString helmGroup;                 ///< Used for helm groupings.
+    csString BracerGroup;               ///< Used for bracers groupings.
+    csString BeltGroup;                 ///< Used for belt groupings.
+    csString CloakGroup;                ///< Used for cloak groupings.
     csVector3 top, bottom, offset;
     csString texParts;
     csString equipment;
@@ -3162,8 +3164,8 @@ public:
     uint32_t flags;
     InstanceID instance;
 
-    int posPlayerID; // Remember the position the playerID in the generated message
-    int posInstance; // Remember the position of the instance field in the generated message
+    int posPlayerID; ///< Remember the position the playerID in the generated message
+    int posInstance; ///< Remember the position of the instance field in the generated message
 };
 
 
