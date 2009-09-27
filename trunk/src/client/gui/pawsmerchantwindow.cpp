@@ -67,7 +67,7 @@ csString GetColumnText(pawsListBoxRow* row, int colNum)
 
     colAsWidget = row->GetColumn(colNum);
     if (colAsWidget == NULL) return "";
-    colAsTextBox = dynamic_cast <pawsTextBox*> (colAsWidget);
+    colAsTextBox = colAsWidget->AsTextBox();
     if (colAsTextBox == NULL) return "";
     
     return colAsTextBox->GetText();
@@ -81,7 +81,7 @@ void SetColumnText(pawsListBoxRow* row, int colNum, const csString & text)
 
     colAsWidget = row->GetColumn(colNum);
     if (colAsWidget == NULL) return;
-    colAsTextBox = dynamic_cast <pawsTextBox*> (colAsWidget);
+    colAsTextBox = colAsWidget->AsTextBox();
     if (colAsTextBox == NULL) return;
     
     colAsTextBox->SetText(text);

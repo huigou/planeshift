@@ -215,7 +215,7 @@ csString pawsComboBox::GetSelectedRowString()
     pawsListBoxRow* row = listChoice->GetSelectedRow();
     if (row == NULL) return "";
     
-    pawsTextBox* thing = dynamic_cast <pawsTextBox*> (row->GetColumn(0));
+    pawsTextBox* thing = row->GetColumn(0)->AsTextBox();
     if (thing == NULL) return "";
     
     return thing->GetText();
@@ -281,7 +281,7 @@ pawsListBoxRow* pawsComboBox::Select(const char * text)
     for (unsigned int i = 0; i < listChoice->GetRowCount(); i++ )
     {
         row = listChoice->GetRow(i);
-        pawsTextBox* thing = dynamic_cast <pawsTextBox*> (row->GetColumn(0));
+        pawsTextBox* thing = row->GetColumn(0)->AsTextBox();
         if ( thing )
         {
             if ( !csStrCaseCmp(thing->GetText(), text) )

@@ -102,15 +102,15 @@ bool pawsPetStatWindow::PostSetup()
     pysStaminaBar = dynamic_cast <pawsProgressBar*> (FindWidget("PysStaminaBar"));
     menStaminaBar = dynamic_cast <pawsProgressBar*> (FindWidget("MenStaminaBar"));
         
-    hpCurrent = dynamic_cast <pawsTextBox*> (FindWidget("HPCurrent"));
-    manaCurrent = dynamic_cast <pawsTextBox*> (FindWidget("ManaCurrent"));
-    pysStaminaCurrent = dynamic_cast <pawsTextBox*> (FindWidget("PysStaminaCurrent"));
-    menStaminaCurrent = dynamic_cast <pawsTextBox*> (FindWidget("MenStaminaCurrent"));
+    hpCurrent = FindWidget("HPCurrent")->AsTextBox();
+    manaCurrent = FindWidget("ManaCurrent")->AsTextBox();
+    pysStaminaCurrent = FindWidget("PysStaminaCurrent")->AsTextBox();
+    menStaminaCurrent = FindWidget("MenStaminaCurrent")->AsTextBox();
     
-    hpTotal = dynamic_cast <pawsTextBox*> (FindWidget("HPTotal"));
-    manaTotal = dynamic_cast <pawsTextBox*> (FindWidget("ManaTotal"));
-    pysStaminaTotal = dynamic_cast <pawsTextBox*> (FindWidget("PysStaminaTotal"));
-    menStaminaTotal = dynamic_cast <pawsTextBox*> (FindWidget("MenStaminaTotal"));
+    hpTotal = FindWidget("HPTotal")->AsTextBox();
+    manaTotal = FindWidget("ManaTotal")->AsTextBox();
+    pysStaminaTotal = FindWidget("PysStaminaTotal")->AsTextBox();
+    menStaminaTotal = FindWidget("MenStaminaTotal")->AsTextBox();
 
     if ( !statsSkillList || !statsSkillDescription || !combatSkillList 
          ||!combatSkillDescription || !magicSkillList || !magicSkillDescription 
@@ -278,12 +278,12 @@ void pawsPetStatWindow::HandleSkillList( csString& skillString )
             {
                 pawsListBoxRow* row = statsSkillList->NewRow();
                 
-                pawsTextBox* name = dynamic_cast <pawsTextBox*> (row->GetColumn(0));
+                pawsTextBox* name = row->GetColumn(0)->AsTextBox();
                 if (name == NULL) return;
                 csString skillName = skill->GetAttributeValue("NAME");
                 name->SetText( skillName );
 
-                pawsTextBox* rank = dynamic_cast <pawsTextBox*> (row->GetColumn(1));
+                pawsTextBox* rank = row->GetColumn(1)->AsTextBox();
                 if (rank == NULL) return;
                 rank->SetText( skill->GetAttributeValue("R") );
 
@@ -305,12 +305,12 @@ void pawsPetStatWindow::HandleSkillList( csString& skillString )
             {        
                 pawsListBoxRow* row = combatSkillList->NewRow();
        
-                pawsTextBox* name = dynamic_cast <pawsTextBox*> (row->GetColumn(0));
+                pawsTextBox* name = row->GetColumn(0)->AsTextBox();
                 if (name == NULL) return;
                 csString skillName = skill->GetAttributeValue("NAME");
                 name->SetText( skillName );
 
-                pawsTextBox* rank = dynamic_cast <pawsTextBox*> (row->GetColumn(1));
+                pawsTextBox* rank = row->GetColumn(1)->AsTextBox();
                 if (rank == NULL) return;
                 rank->SetText( skill->GetAttributeValue("R") );
 
@@ -332,12 +332,12 @@ void pawsPetStatWindow::HandleSkillList( csString& skillString )
             {
                 pawsListBoxRow* row = magicSkillList->NewRow();
        
-                pawsTextBox* name = dynamic_cast <pawsTextBox*> (row->GetColumn(0));
+                pawsTextBox* name = row->GetColumn(0)->AsTextBox();
                 if (name == NULL) return;
                 csString skillName = skill->GetAttributeValue("NAME");
                 name->SetText( skillName );
 
-                pawsTextBox* rank = dynamic_cast <pawsTextBox*> (row->GetColumn(1));
+                pawsTextBox* rank = row->GetColumn(1)->AsTextBox();
                 if (rank == NULL) return;
                 rank->SetText( skill->GetAttributeValue("R") );
 
@@ -386,12 +386,12 @@ void pawsPetStatWindow::HandleSkillList( csString& skillString )
             {
                 pawsListBoxRow* row = variousSkillList->NewRow();
        
-                pawsTextBox* name = dynamic_cast <pawsTextBox*> (row->GetColumn(0));
+                pawsTextBox* name = row->GetColumn(0)->AsTextBox();
                 if (name == NULL) return;
                 csString skillName = skill->GetAttributeValue("NAME");
                 name->SetText( skillName );
 
-                pawsTextBox* rank = dynamic_cast <pawsTextBox*> (row->GetColumn(1));
+                pawsTextBox* rank = row->GetColumn(1)->AsTextBox();
                 if (rank == NULL) return;
                 rank->SetText( skill->GetAttributeValue("R") );
 

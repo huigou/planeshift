@@ -67,6 +67,11 @@ void pawsMouse::SetPosition( int x, int y )
 void pawsMouse::ChangeImage( const char* imageName )
 {
     cursorImage = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(imageName);
+    if (!cursorImage.IsValid())
+    {
+    	printf("Fatal error: Can't find cursor '%s'!", imageName);
+    	exit(1);
+    }
     SetOSMouse(cursorImage);
 }
 

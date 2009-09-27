@@ -100,8 +100,8 @@ bool pawsExchangeWindow::PostSetup()
     receivingMoneyWidget->SetContainer( CONTAINER_RECEIVING_MONEY );
     receivingMoneyWidget->Drag( false );
 
-    totalTriasOffered = dynamic_cast <pawsTextBox*>(FindWidget("TotalTriasOffer"));
-    totalTriasReceived= dynamic_cast <pawsTextBox*>(FindWidget("TotalTriasRec"));
+    totalTriasOffered = FindWidget("TotalTriasOffer")->AsTextBox();
+    totalTriasReceived= FindWidget("TotalTriasRec")->AsTextBox();
     
     if(!totalTriasOffered || !totalTriasReceived)
         return false;
@@ -184,7 +184,7 @@ void pawsExchangeWindow::StartExchange( csString& player, bool withPlayer )
     Clear();            
     Show();
             
-    pawsTextBox* textBox = dynamic_cast <pawsTextBox*> (FindWidget("other_player"));
+    pawsTextBox* textBox = FindWidget("other_player")->AsTextBox();
     if (textBox != NULL)
         textBox->SetText( text );
 

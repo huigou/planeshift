@@ -1471,7 +1471,7 @@ pawsSimpleTreeNode::pawsSimpleTreeNode()
 {
     textBox = NULL;
     image = NULL;
-    SetWidget(new pawsWidget());
+    SetWidget(new pawsEmpty());
 }
 
 pawsSimpleTreeNode::~pawsSimpleTreeNode()
@@ -1503,7 +1503,7 @@ void pawsSimpleTreeNode::Set(int mode, bool checked, const csString & imageName,
     }
     if (mode & showImage)
     {
-        image = new pawsWidget();
+        image = new pawsEmpty();
         image->SetSize(20, 20);
         image->SetBackground(imageName);
         image->MoveTo(lastX+1, screenFrame.ymin);
