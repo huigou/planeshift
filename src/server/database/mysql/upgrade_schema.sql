@@ -1348,7 +1348,7 @@ ALTER TABLE `trade_transformations` CHANGE COLUMN `penilty_pct` `penalty_pct` FL
 
 #1231 - Andrew Dai added os and graphics card info
 ALTER TABLE `accounts` ADD COLUMN `operating_system` VARCHAR(32) NULL default ''   COMMENT "The last operating system used with this account" AFTER `advisor_ban`;
-ALTER TABLE `accounts` ADD COLUMN `graphics_card` VARCHAR(32) NULL default ''   COMMENT "The last graphics card used with this account" AFTER `operating_system`;
+ALTER TABLE `accounts` ADD COLUMN `graphics_card` VARCHAR(64) NULL default ''   COMMENT "The last graphics card used with this account" AFTER `operating_system`;
 UPDATE `server_options` SET `option_value`='1231' WHERE `option_name`='db_version';
 
 #1232 - Andrew Dai added graphics driver version
