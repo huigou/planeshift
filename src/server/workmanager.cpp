@@ -1616,7 +1616,7 @@ bool WorkManager::StartScriptWork(Client* client, gemObject *target, csString pa
     }
 
     // Check for actor target
-    gemActor* gemAct = dynamic_cast <gemActor*> (target);
+    gemActor* gemAct = target->AsActor();
     if(gemAct)
     {
         return ScriptActor(gemAct);

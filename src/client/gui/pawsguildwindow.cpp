@@ -98,8 +98,8 @@ int textBoxSortFunc_Level(pawsWidget * widgetA, pawsWidget * widgetB)
     pawsTextBox * textBoxB;
 
 
-    textBoxA = dynamic_cast <pawsTextBox*> (widgetA);
-    textBoxB = dynamic_cast <pawsTextBox*> (widgetB);
+    textBoxA = widgetA->AsTextBox();
+    textBoxB = widgetB->AsTextBox();
     assert(textBoxA && textBoxB);
     const char* textA = textBoxA->GetText();
     if (textA == NULL)
@@ -129,8 +129,8 @@ int textBoxSortFunc_number(pawsWidget * widgetA, pawsWidget * widgetB)
     const char  * textA,    * textB;
     int numA, numB;
 
-    textBoxA = dynamic_cast <pawsTextBox*> (widgetA);
-    textBoxB = dynamic_cast <pawsTextBox*> (widgetB);
+    textBoxA = widgetA->AsTextBox();
+    textBoxB = widgetB->AsTextBox();
     assert(textBoxA && textBoxB);
     textA = textBoxA->GetText();
     if (textA == NULL)
@@ -206,13 +206,13 @@ bool pawsGuildWindow::PostSetup()
     currentTab->SetState(true);
 
     // Info setup
-    guildName = dynamic_cast<pawsTextBox*>(FindWidget("GuildName"));
-    allianceName = dynamic_cast<pawsTextBox*>(FindWidget("AllianceName"));
+    guildName = FindWidget("GuildName")->AsTextBox();
+    allianceName = FindWidget("AllianceName")->AsTextBox();
     guildSecret = dynamic_cast<pawsCheckBox*>(FindWidget("GuildSecret"));
-    guildWebPage = dynamic_cast<pawsTextBox*>(FindWidget("GuildWebPage"));
+    guildWebPage = FindWidget("GuildWebPage")->AsTextBox();
     levelList = dynamic_cast<pawsListBox*>(FindWidget("LevelList"));
     motdEdit = dynamic_cast<pawsMultilineEditTextBox*>(FindWidget("motd"));
-    memberCount = dynamic_cast<pawsTextBox*>(FindWidget("MemberCount"));
+    memberCount = FindWidget("MemberCount")->AsTextBox();
     if (!guildName || !allianceName || !guildSecret || !levelList || !guildWebPage || !memberCount)
         return false;
 
@@ -1013,7 +1013,7 @@ int pawsGuildWindow::FindMemberInListBox(const csString & name)
     for (size_t i=0; i < memberList->GetRowCount(); i++)
     {
         row = memberList->GetRow(i);
-        nameTextBox = dynamic_cast <pawsTextBox*> (row->GetColumn(0));
+        nameTextBox = row->GetColumn(0)->AsTextBox();
         if (nameTextBox != NULL)
         {
             nameInList = nameTextBox->GetText();

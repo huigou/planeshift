@@ -138,8 +138,8 @@ void pawsConfigKeys::SetKeyLabels(pawsTreeNode * subtreeRoot)
         rootAsSeq = dynamic_cast<pawsSeqTreeNode*> (subtreeRoot);
         if (rootAsSeq != NULL)
         {
-            label = dynamic_cast<pawsTextBox*> (rootAsSeq->GetSeqWidget(0));
-            keyLabel = dynamic_cast<pawsTextBox*> (rootAsSeq->GetSeqWidget(1));
+            label = rootAsSeq->GetSeqWidget(0)->AsTextBox();
+            keyLabel = rootAsSeq->GetSeqWidget(1)->AsTextBox();
             CS_ASSERT(label && keyLabel);
         
             psCharController* manager = psengine->GetCharControl();
@@ -240,7 +240,7 @@ void pawsConfigKeys::UpdateNicks(pawsTreeNode * subtreeRoot)
     rootAsSeq = dynamic_cast<pawsSeqTreeNode*> (subtreeRoot);
     if (rootAsSeq != NULL   &&   rootAsSeq != tree->GetRoot())
     {
-        label = dynamic_cast<pawsTextBox*> (rootAsSeq->GetSeqWidget(0));
+        label = rootAsSeq->GetSeqWidget(0)->AsTextBox();
         CS_ASSERT(label);
         
         psCharController* manager = psengine->GetCharControl();
@@ -311,7 +311,7 @@ void pawsConfigKeys::SetTriggerTextOfCommand(const csString & command, const csS
 {
     pawsSeqTreeNode* buttonNode = dynamic_cast <pawsSeqTreeNode*> (tree->FindNodeByName(command));
     CS_ASSERT(buttonNode);
-    pawsTextBox* textBox = dynamic_cast <pawsTextBox*> (buttonNode->GetSeqWidget(1));
+    pawsTextBox* textBox = buttonNode->GetSeqWidget(1)->AsTextBox();
     CS_ASSERT(textBox);
     textBox->SetText(trigger);
 }

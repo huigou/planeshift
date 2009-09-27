@@ -105,6 +105,7 @@ class pawsMenuAction;
 class WidgetConfigWindow;
 class pawsScript;
 class pawsTitle;
+class pawsTextBox;
 
 /** The main base widget that all other widgets should inherit from.
  */
@@ -115,6 +116,9 @@ public:
     class iWidgetData {};
 
 protected:
+    // Prevent this from being instantiated.
+    pawsWidget();
+    
     /// factory name
     csString factory;
 
@@ -341,8 +345,6 @@ protected:
     bool ReadDefaultWidgetStyles(iDocumentNode *node);
 
 public:
-
-    pawsWidget();
 
     virtual ~pawsWidget();
 
@@ -1388,10 +1390,20 @@ public:
     virtual void SetProperty(const char * ptr, double value);
 
     csArray<csString> publishList;
+    
+    // Type casting for most common cases.
+    virtual pawsTextBox* AsTextBox() { return NULL; }
 };
+
 
 //----------------------------------------------------------------------------
 
+// Empty widget that is used for minimal controls.
+class pawsEmpty : public pawsWidget
+{
+public:
+	pawsEmpty() { }
+};
 
 
 class pawsWidgetFactory
@@ -1422,7 +1434,7 @@ public:
 
     pawsWidget* Create()
     {
-        return new pawsWidget( );
+        return new pawsEmpty( );
     }
 };
 

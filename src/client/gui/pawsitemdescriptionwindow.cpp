@@ -55,13 +55,13 @@ bool pawsItemDescriptionWindow::PostSetup()
 
     // Store some of our children for easy access later on.
     
-    name = dynamic_cast<pawsTextBox*> (FindWidget("ItemName"));
+    name = FindWidget("ItemName")->AsTextBox();
     if ( !name ) return false;
 
     description = dynamic_cast<pawsMultiLineTextBox*> (FindWidget("ItemDescription"));
     if ( !description ) return false;
 
-    pic = dynamic_cast<pawsWidget*> (FindWidget("ItemImage"));
+    pic = FindWidget("ItemImage");
     if ( !pic ) return false;
 
     return true;

@@ -1335,7 +1335,7 @@ void NPCManager::HandlePetCommand(MsgEntry * me,Client *client)
         size_t numPets = owner->GetNumPets();
         for( size_t i = 0; i < numPets; i++ )
         {
-            pet = dynamic_cast <gemNPC*>( owner->GetPet( i ) );
+            pet = owner->GetPet( i )->AsNPC();
             if ( pet && msg.target.CompareNoCase( pet->GetCharacterData()->GetCharName() ) )
             {
                 if (i)
@@ -1365,7 +1365,7 @@ void NPCManager::HandlePetCommand(MsgEntry * me,Client *client)
         }
         else
         {
-            pet = dynamic_cast <gemNPC*>(owner->GetFamiliar());
+            pet = owner->GetFamiliar()->AsNPC();
         }
     }
 

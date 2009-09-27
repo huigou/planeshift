@@ -49,14 +49,14 @@ void pawsNpcDialogWindow::OnListAction( pawsListBox* widget, int status )
 {
     if (status == LISTBOX_HIGHLIGHTED)
     {
-		pawsTextBox *fld = dynamic_cast<pawsTextBox *>(widget->GetSelectedRow()->FindWidgetXMLBinding("text"));
+		pawsTextBox *fld = widget->GetSelectedRow()->FindWidgetXMLBinding("text")->AsTextBox();
 		printf( "Pressed: %s\n",fld->GetText() );
     }
 	else if (status == LISTBOX_SELECTED)
 	{
-		pawsTextBox *fld  = dynamic_cast<pawsTextBox *>(widget->GetSelectedRow()->FindWidgetXMLBinding("text"));
+		pawsTextBox *fld  = widget->GetSelectedRow()->FindWidgetXMLBinding("text")->AsTextBox();
 		printf("Player chose '%s'.\n", fld->GetText() );
-		pawsTextBox *trig = dynamic_cast<pawsTextBox *>(widget->GetSelectedRow()->FindWidgetXMLBinding("trig"));
+		pawsTextBox *trig = widget->GetSelectedRow()->FindWidgetXMLBinding("trig")->AsTextBox();
 		printf("Player says '%s'.\n", trig->GetText() );
 
         csString trigger(trig->GetText());

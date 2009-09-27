@@ -48,7 +48,7 @@ bool pawsConfigEntityInteraction::PostSetup()
     for (size_t i=0; i < entTypes->types.GetSize(); i++)
     {
         psEntityType * type = entTypes->types[i];
-        pawsTextBox * txt = dynamic_cast <pawsTextBox*> (FindWidget(type->id+"_label"));
+        pawsTextBox * txt = FindWidget(type->id+"_label")->AsTextBox();
         if (txt == NULL)
             return false;
         txt->SetText(type->label+":");
