@@ -1898,7 +1898,7 @@ bool GEMClientActor::CheckLoadStatus()
         charApp->ChangeMaterial(factName, matName);
     }
 
-    if(!mountFactname.Compare("null"))
+    if(!mountFactname.IsEmpty() && !mountFactname.Compare("null"))
     {
         csRef<iMeshFactoryWrapper> mountFactory = psengine->GetLoader()->LoadFactory(mountFactname, &failed);
         if(!mountFactory.IsValid())
