@@ -156,7 +156,7 @@ void pawsSlot::PlaceItem( const char* imageName, const char* meshFactName, int c
     image = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(imageName);
 
     if (drawStackCount)
-        stackCountLabel->Show();
+        stackCountLabel->ShowBehind();
        
     stackCount = count;
     StackCount( count );
@@ -230,11 +230,11 @@ void pawsSlot::SetPurifyStatus(int status)
             purifySign->Hide();
             break;
         case 1:
-            purifySign->Show();
+            purifySign->ShowBehind();
             purifySign->SetBackground("GlyphSlotPurifying");	
             break;
         case 2:
-            purifySign->Show();
+            purifySign->ShowBehind();
             purifySign->SetBackground("GlyphSlotPurified");
 			break;
     }
@@ -245,7 +245,7 @@ void pawsSlot::DrawStackCount(bool value)
     drawStackCount = value;
 
     if (value)
-        stackCountLabel->Show();
+        stackCountLabel->ShowBehind();
     else
         stackCountLabel->Hide();
 }
