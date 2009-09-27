@@ -47,6 +47,7 @@
   <item orig="Enable Shadows" trans="" />
   <item orig="Escalation Level:" trans="" />
   <item orig="Notify when members login/logout" trans="" />
+  <item orig="P. stamina" trans="" />
   <item orig="Talk to someone privately." trans="Parla a qualcuno privatamente." />
   <item orig="Magic Skills List:" trans="" />
   <item orig="House:" trans="" />
@@ -82,6 +83,7 @@
   <item orig="Account User Name:" trans="Nome utente Account:" />
   <item orig="You currently have no petitions." trans="Al momento non hai petizioni." />
   <item orig="Attributes" trans="" />
+  <item orig="M. Stamina" trans="" />
   <item orig="You will now ignore %s." trans="Da ora ignorerai %s." />
   <item orig="Study" trans="" />
   <item orig="Private notes" trans="" />
@@ -158,6 +160,7 @@ Vuoi veramente lasciare Yliakum?" />
   <item orig="Upload!" trans="Carica!" />
   <item orig="Deposit" trans="Deposita" />
   <item orig="? Weight" trans="? Peso" />
+  <item orig="M. stamina" trans="" />
   <item orig="Enable auction" trans="" />
   <item orig="No Target" trans="Nessuno obiettivo" />
   <item orig="Tria" trans="" />
@@ -196,6 +199,7 @@ Vuoi veramente lasciare Yliakum?" />
   <item orig="Capacity:" trans="Capacità" />
   <item orig="Debuffs" trans="" />
   <item orig="Alliance text color" trans="" />
+  <item orig="Store" trans="" />
   <item orig="You have ignored the following players:" trans="Hai ignorato i seguenti giocatori:" />
   <item orig="Enable group" trans="" />
   <item orig="Items:" trans="" />
@@ -216,9 +220,10 @@ chiamato " />
   <item orig="General" trans="Generale" />
   <item orig="Password:" trans="" />
   <item orig="Life" trans="Vita" />
+  <item orig="female " trans="" />
+  <item orig="ALL" trans="" />
   <item orig="Currently, there are no petitions." trans="Al momento non ci sono petizioni." />
   <item orig="Set" trans="" />
-  <item orig="female " trans="" />
   <item orig="View al.Chat" trans="" />
   <item orig="Actions Volume" trans="Volume Azioni" />
   <item orig="NPC_my outline colour" trans="" />
@@ -287,6 +292,7 @@ chiamato " />
   <item orig="No Fall Damage" trans="" />
   <item orig="Communication" trans="Comunicazioni" />
   <item orig="Cannot connect to server" trans="Impossibile connettersi al server" />
+  <item orig="Health" trans="" />
   <item orig="Your text color" trans="" />
   <item orig="1" trans="" />
   <item orig="Invisible" trans="Invisibile" />
@@ -339,6 +345,7 @@ chiamato " />
   <item orig="Birth" trans="Nascita" />
   <item orig="Say text colour" trans="" />
   <item orig="Enable NPC_me" trans="" />
+  <item orig="Add a comment about this event if you wish" trans="" />
   <item orig="Keys" trans="Tasti" />
   <item orig="Faction description:" trans="" />
   <item orig="Perform an action see by people in your vicinity." trans="Esegui un azione visibile dalle persone nelle tue vicinanze." />
@@ -367,6 +374,7 @@ chiamato " />
   <item orig="Account Password:" trans="Password Account:" />
   <item orig="Items" trans="Oggetti" />
   <item orig="Factions" trans="Fazioni" />
+  <item orig="PPs:" trans="" />
   <item orig="Weight:" trans="Peso" />
   <item orig="Petition submitted:" trans="Petitione inoltrata:" />
   <item orig="Men Stam." trans="" />
@@ -407,6 +415,7 @@ chiamato " />
   <item orig="Lockpicking" trans="" />
   <item orig="models" trans="Modelli" />
   <item orig="Siblings" trans="" />
+  <item orig="Receive:" trans="" />
   <item orig="Camera" trans="" />
   <item orig="Remember password" trans="Ricorda password" />
   <item orig="Third Person Follow" trans="" />
@@ -419,6 +428,7 @@ chiamato " />
   <item orig="Stat" trans="" />
   <item orig="Min. Transparency:" trans="" />
   <item orig="Enabled" trans="" />
+  <item orig="Whisper" trans="" />
   <item orig="%s tells you: %s" trans="%s ti dice: %s" />
   <item orig="D:" trans="" />
   <item orig="Jobs Skill description:" trans="" />
@@ -458,6 +468,7 @@ To disable this feature delete everything in the window by using the Modify Desc
   <item orig="New Character" trans="Nuovo Personaggio" />
   <item orig="Magic Skill description:" trans="" />
   <item orig="npcinternal Alignment" trans="" />
+  <item orig="Tria:" trans="" />
   <item orig="M:" trans="" />
   <item orig="Infinite Mana" trans="Mana infinita" />
   <item orig="Status:" trans="Stato:" />
@@ -501,6 +512,7 @@ To disable this feature delete everything in the window by using the Modify Desc
   <item orig="My shadow colour" trans="" />
   <item orig="There are " trans="" />
   <item orig="Alliance Chat" trans="" />
+  <item orig="Give:" trans="" />
   <item orig="Name:" trans="Nome:" />
   <item orig="Discard" trans="" />
   <item orig="Y:" trans="S:" />
@@ -543,6 +555,7 @@ To disable this feature delete everything in the window by using the Modify Desc
   <item orig="Log the chat messages" trans="" />
   <item orig="Filter outgoing bad words" trans="" />
   <item orig="My outline colour" trans="" />
+  <item orig="P. Stamina" trans="" />
   <item orig="Realm" trans="Reame" />
   <item orig="cancelled." trans="cancellata." />
   <item orig="closed." trans="chiusa." />
@@ -576,4 +589,5 @@ To disable this feature delete everything in the window by using the Modify Desc
   <item orig="Ambient Volume" trans="Volume Ambiente" />
   <item orig="Hair Colour" trans="Colore Capelli" />
   <item orig="Edit Permissions" trans="" />
+  <item orig="Select a vote (1-10)" trans="" />
 </StringTable>
