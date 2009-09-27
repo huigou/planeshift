@@ -908,7 +908,7 @@ void EntityManager::HandleAllRequest(MsgEntry* me, Client *client)
             {
                 // the current message is full of entities, so send it and make another one
                 allEntMsg->msg->ClipToCurrentSize();
-                printf("Sending %d entities in %d bytes.\n", count-1, allEntMsg->msg->GetSize() );
+                printf("Sending %d entities in %zu bytes.\n", count-1, allEntMsg->msg->GetSize() );
                 allEntMsg->SendMessage();
                 delete allEntMsg;
                 count = 1;
@@ -918,7 +918,7 @@ void EntityManager::HandleAllRequest(MsgEntry* me, Client *client)
             obj->Send(0, false,  false, allEntMsg ); // this doesn't actually send but just appends to allEntMsg
         }
         allEntMsg->msg->ClipToCurrentSize();
-        printf("Final send is %d entities in %d bytes.\n", count, allEntMsg->msg->GetSize() );
+        printf("Final send is %d entities in %zu bytes.\n", count, allEntMsg->msg->GetSize() );
 
         allEntMsg->SendMessage(); // This handles the final message with whatever entities are left.
 
@@ -1148,17 +1148,11 @@ void EntityManager::RemoveRideRelation(gemActor *rider)
     rider->SetMount(NULL);
     rider->UpdateProxList(true);
 
-    float movMod = rider->GetCharacterData()->GetRaceInfo()->GetSpeedModifier();
+    float movMod = 1/(rider->GetCharacterData()->GetRaceInfo()->GetSpeedModifier());
     if(movMod != 1.0)
     {
         psMoveModMsg modMsg(rider->GetClientID(), psMoveModMsg::MULTIPLIER,
                      csVector3(movMod), movMod);
-        modMsg.SendMessage();
-    }
-    else
-    {
-        psMoveModMsg modMsg(rider->GetClientID(), psMoveModMsg::NONE,
-                     csVector3(0.0f), 0.0f);
         modMsg.SendMessage();
     }
 }
