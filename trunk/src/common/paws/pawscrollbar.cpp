@@ -43,11 +43,11 @@ public:
             return false;
     }
 
-void OnLostFocus()
-{    
-    OnMouseUp(0,0,0,0);
-    pawsWidget::OnLostFocus();
-}    
+    void OnLostFocus()
+    {    
+        OnMouseUp(0,0,0,0);
+        pawsWidget::OnLostFocus();
+    }    
 
 };
 
