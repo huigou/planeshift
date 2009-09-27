@@ -1900,12 +1900,18 @@ bool GEMClientActor::CheckLoadStatus()
 
     if(!mountFactname.Compare("null"))
     {
-        csRef<iMeshFactoryWrapper> mountFactory = psengine->GetLoader()->LoadFactory(mountFactname);
+        csRef<iMeshFactoryWrapper> mountFactory = psengine->GetLoader()->LoadFactory(mountFactname, &failed);
         if(!mountFactory.IsValid())
         {
-            Error2("Couldn't find the mount's mesh factory, %s", mountFactname.GetData());
-            return false;
+            if(failed)
+            {
+                Error2("Couldn't find the mesh factory: '%s' for mount.", mountFactname.GetData());
+                psengine->UnregisterDelayedLoader(this);
+                return false;
+            }
+            return true;
         }
+
         pcmesh = mountFactory->CreateMeshWrapper();
         psengine->GetEngine()->GetMeshes()->Add(pcmesh);
         charApp->ApplyRider(pcmesh);
