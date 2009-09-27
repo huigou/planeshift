@@ -1355,6 +1355,9 @@ UPDATE `server_options` SET `option_value`='1231' WHERE `option_name`='db_versio
 ALTER TABLE `accounts` ADD COLUMN `graphics_version` VARCHAR(32) NULL default ''   COMMENT "The graphics card driver version used with this account" AFTER `graphics_card`;
 UPDATE `server_options` SET `option_value`='1232' WHERE `option_name`='db_version';
 
+#1232 - Stefano Angeleri this is better as text than a blob
+ALTER TABLE `factions` MODIFY COLUMN `faction_character` TEXT  NOT NULL;
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to
