@@ -1,0 +1,446 @@
+<Author text="Jman" />
+<StringTable>
+  <item orig="750" trans="750" />
+  <item orig="System text color" trans="Côr de Texto de Sistema" />
+  <item orig="Put an item up for sale or offer to buy something." trans="Pôr um item è venda ou oferecer para comprar algo." />
+  <item orig="Stats" trans="Statisticas" />
+  <item orig="Admin text color" trans="Côr de Texto de Administrador" />
+  <item orig="Allow spawning item with missing mesh" trans="Permitir criação de item sem mesh" />
+  <item orig="Desc" trans="Descrição" />
+  <item orig="!!!WARNING!!!" trans="!!!AVISO!!!" />
+  <item orig="Others' attacks (Successful ones)" trans="Ataques de terceiros (com sucesso)" />
+  <item orig="Own attacks that missed the target" trans="Ataques próprios que falharam o alvo" />
+  <item orig="Graphics" trans="Gráficos" />
+  <item orig="Loading GUI" trans="Carregando GUI" />
+  <item orig="Can I join you ?" trans="Posso-me juntar a ti?" />
+  <item orig="server" trans="servidor" />
+  <item orig="CHILDHOOD" trans="INFÂNCIA" />
+  <item orig="LIFE EVENTS" trans="ACONTECIMENTOS DA VIDA" />
+  <item orig="SL" trans="" />
+  <item orig="Buy" trans="Comprar" />
+  <item orig="Guild message of the day (A short message):" trans="Mensagem do dia para a guilda (Mensagem curta):" />
+  <item orig="Modifiers" trans="Modificadores" />
+  <item orig="Actions sounds" trans="Sons de acções" />
+  <item orig="Randomize" trans="Aleatorizar" />
+  <item orig="Create alliance" trans="Criar aliança" />
+  <item orig="Third Person Lara" trans="Terceira Pessoa estilo Lara" />
+  <item orig="Disband" trans="Destroçar" />
+  <item orig="Edit" trans="Editar" />
+  <item orig="System" trans="Sistema" />
+  <item orig="Load" trans="Carregar" />
+  <item orig="Buffs" trans="Benções" />
+  <item orig="Stack Count" trans="Contagem da pilha" />
+  <item orig="Talk to people in your sector." trans="Fale com gente na sua àrea." />
+  <item orig="Factions:" trans="Facções:" />
+  <item orig="Paths" trans="Caminhos" />
+  <item orig="Active" trans="Activo" />
+  <item orig="Creatures:" trans="Criaturas:" />
+  <item orig="View" trans="Ver" />
+  <item orig="PATHS" trans="CAMINHOS" />
+  <item orig="Shadows" trans="Sombras" />
+  <item orig="Unclaim" trans="Abandonar" />
+  <item orig="Server:" trans="Servidor:" />
+  <item orig="Enable Shadows" trans="Activar sombras" />
+  <item orig="Exit PlaneShift" trans="Sair de PlaneShift" />
+  <item orig="Escalation Level:" trans="" />
+  <item orig="Notify when members login/logout" trans="Notificar quando membros fizerem login/logout" />
+  <item orig="Talk to someone privately." trans="Falar em privado." />
+  <item orig="Magic Skills List:" trans="Lista de aptidões mágicas" />
+  <item orig="House:" trans="Casa:" />
+  <item orig="Withdraw" trans="Retirar" />
+  <item orig="%s from %s: %s" trans="%s de %s: %s" />
+  <item orig="%s from %s: %s" trans="%s de %s: %s" />
+  <item orig="Instant Cast" trans="Mágica Instantânea" />
+  <item orig="H:" trans="H:" />
+  <item orig="Amount available to withdraw" trans="Quantia disponivel para retirar" />
+  <item orig="Adaptive distance" trans="Distância adaptativa" />
+  <item orig="Ban" trans="Banir" />
+  <item orig="Third Person M64" trans="Terceira Pessoa estilo M64" />
+  <item orig="Interface Volume" trans="volume do interface" />
+  <item orig="Edit points" trans="Editar pontos" />
+  <item orig="Points" trans="Pontos" />
+  <item orig="Coins to exchange:" trans="Moedas a trocar:" />
+  <item orig="PvP" trans="" />
+  <item orig="landscape" trans="paisagem" />
+  <item orig="Type:" trans="Tipo:" />
+  <item orig="Time: " trans="Hora:" />
+  <item orig="Exchange coins" trans="Trocar moedas" />
+  <item orig="Log the system messages" trans="Gravar mensagens de sistema em ficheiro" />
+  <item orig="Hostility" trans="Hostilidade" />
+  <item orig="Account User Name:" trans="Nome de usuário:" />
+  <item orig="Auction" trans="Leiloar" />
+  <item orig="You currently have no petitions." trans="Currentemente não tem petições" />
+  <item orig="Attributes" trans="Atributos" />
+  <item orig="You will now ignore %s." trans="A partir de agora irá ignorar %s" />
+  <item orig="Study" trans="Estudar" />
+  <item orig="Private notes" trans="Anotações privadas" />
+  <item orig="Change name" trans="Mudar nome" />
+  <item orig="Getting Characters" trans="Buscando personagens" />
+  <item orig="Unknown command" trans="Comando desconhecido" />
+  <item orig="Others' attacks that missed the target" trans="Ataque de terceiro que falhou o alvo" />
+  <item orig="Min. FPS:" trans="Min. FPS:" />
+  <item orig="Main" trans="Principal" />
+  <item orig="Change" trans="Mudar" />
+  <item orig="Descalate" trans="De-escalar" />
+  <item orig="Mother Name:" trans="Nome da Mãe" />
+  <item orig="Privil." trans="Prevel." />
+  <item orig="Skin Colour" trans="Côr da Pele" />
+  <item orig="Master:" trans="Amo:" />
+  <item orig="Details" trans="Detalhes" />
+  <item orig="Collision Detection" trans="Detecção de Colisão" />
+  <item orig="Max. FPS:" trans="Max. FPS:" />
+  <item orig="Prev" trans="Prév." />
+  <item orig="Requesting connection" trans="Requesitando conecção" />
+  <item orig="Prv notes" trans="Anotações Priv." />
+  <item orig="Reload Cache" trans="Recarregar cache" />
+  <item orig="Amount available to deposit" trans="quantia disponivel para depositar" />
+  <item orig="Movements" trans="Movimentos" />
+  <item orig="Mesh:" trans="Mesh:" />
+  <item orig="Resolution" trans="Resolução" />
+  <item orig="Gender:" trans="Género" />
+  <item orig="Refresh MOTD" trans="Refrescar mensagem do dia" />
+  <item orig="Login" trans="login" />
+  <item orig="Z:" trans="Z:" />
+  <item orig="Spell Description:" trans="descrição do feitiço" />
+  <item orig="Petition Info" trans="Informação da petição" />
+  <item orig="%s has invited you to join a group. Click Yes to accept or No to reject." trans="%s convidou-o a juntar ao grupo. Clique Sim para aceitar Não para rejeitar." />
+  <item orig="You must select a petition from the list in order to cancel it." trans="deve seleccionar uma petição da lista para a poder cancelar." />
+  <item orig="Alliance" trans="Aliança" />
+  <item orig="Full Mesh" trans="Mesh Completo" />
+  <item orig="I am leaving" trans="Estou a nivelar" />
+  <item orig="List:" trans="lista:" />
+  <item orig="LOGIN" trans="LOGIN" />
+  <item orig="Remove" trans="Remover" />
+  <item orig="Action:" trans="Acção" />
+  <item orig="Never tired" trans="Nunca cansado" />
+  <item orig="Do you really wish to leave Yliakum?" trans="deseja realmente abandonar Yliakum?" />
+  <item orig="Count" trans="Contar" />
+  <item orig="Enter the command(s):" trans="insira os comandos" />
+  <item orig="Month:" trans="Mês" />
+  <item orig="Chat" trans="Conversar" />
+  <item orig="Father Name:" trans="Nome do Pai" />
+  <item orig="Rank" trans="" />
+  <item orig="Spawn item" trans="" />
+  <item orig="o&clock" trans="" />
+  <item orig="Own combat stance changes" trans="" />
+  <item orig="Experience" trans="" />
+  <item orig="Upload!" trans="" />
+  <item orig="Deposit" trans="" />
+  <item orig="? Weight" trans="" />
+  <item orig="No Target" trans="" />
+  <item orig="Tria" trans="" />
+  <item orig="Group text color" trans="" />
+  <item orig="New" trans="" />
+  <item orig="Mute sounds on focus loss" trans="" />
+  <item orig="Add Linked" trans="" />
+  <item orig="keyboard" trans="" />
+  <item orig="Activity:" trans="" />
+  <item orig="You have been assigned to the selected petition." trans="" />
+  <item orig="Combat" trans="" />
+  <item orig="Path" trans="" />
+  <item orig="Kill Player" trans="" />
+  <item orig="%s says: %s" trans="" />
+  <item orig="Get Reward" trans="" />
+  <item orig="Magic" trans="" />
+  <item orig="Own attacks that fail to penetrate the armor" trans="" />
+  <item orig="Credits" trans="" />
+  <item orig="details" trans="" />
+  <item orig="HP" trans="" />
+  <item orig="%s shouts: %s" trans="" />
+  <item orig="No server running at the moment" trans="" />
+  <item orig="You have entered edit mode." trans="" />
+  <item orig="CHARACTER CREATION" trans="" />
+  <item orig="Glyphs" trans="" />
+  <item orig="Alliance:" trans="" />
+  <item orig="Various Skill description:" trans="" />
+  <item orig="Edit level" trans="" />
+  <item orig="Leave" trans="" />
+  <item orig="Capacity:" trans="" />
+  <item orig="Debuffs" trans="" />
+  <item orig="You have ignored the following players:" trans="" />
+  <item orig="Items:" trans="" />
+  <item orig="Others' attacks that fail to penetrate the armor" trans="" />
+  <item orig="Admin" trans="" />
+  <item orig="mouse" trans="" />
+  <item orig="Various Skills List:" trans="" />
+  <item orig="Stats description:" trans="" />
+  <item orig="Lets go !" trans="" />
+  <item orig="Account:" trans="" />
+  <item orig="%s %s" trans="" />
+  <item orig="Trias" trans="" />
+  <item orig="General" trans="" />
+  <item orig="Life" trans="" />
+  <item orig="Password:" trans="" />
+  <item orig="Currently, there are no petitions." trans="" />
+  <item orig="Set" trans="" />
+  <item orig="Actions Volume" trans="" />
+  <item orig="Quest Testing" trans="" />
+  <item orig="Year:" trans="" />
+  <item orig="Save" trans="" />
+  <item orig="Promote" trans="" />
+  <item orig="Combat Skills" trans="" />
+  <item orig="Polygon:" trans="" />
+  <item orig="Talk to everyone in your guild privately." trans="" />
+  <item orig="Others' attacks that are dodged" trans="" />
+  <item orig="Combat music" trans="" />
+  <item orig="Own attacks (Successful ones)" trans="" />
+  <item orig="The selected petition was cancelled." trans="" />
+  <item orig="Welcome back" trans="" />
+  <item orig="You are ignoring all replies from that person." trans="" />
+  <item orig="Description:" trans="" />
+  <item orig="Chat text color" trans="" />
+  <item orig="Cancel" trans="" />
+  <item orig="None" trans="" />
+  <item orig="Trade" trans="" />
+  <item orig="Game Control" trans="" />
+  <item orig="Mainchat brackets" trans="" />
+  <item orig="Progression Points" trans="" />
+  <item orig="Faction" trans="" />
+  <item orig="You have ignored no-one." trans="" />
+  <item orig="NPC text color" trans="" />
+  <item orig="%s tells group: %s" trans="" />
+  <item orig="Quick" trans="" />
+  <item orig="Public notes" trans="" />
+  <item orig="Confirmation" trans="" />
+  <item orig="Master Volume" trans="" />
+  <item orig="Withdraw and Deposit" trans="" />
+  <item orig="Labels" trans="" />
+  <item orig="Upload" trans="" />
+  <item orig="Exchange" trans="" />
+  <item orig="Combat Skills List:" trans="" />
+  <item orig="tweaks" trans="" />
+  <item orig="Confirmation upon PvP duel:" trans="" />
+  <item orig="Petition text:" trans="" />
+  <item orig="Secret guild" trans="" />
+  <item orig="List Attributes" trans="" />
+  <item orig="Claim" trans="" />
+  <item orig="Radius:" trans="" />
+  <item orig="0" trans="" />
+  <item orig="disabled" trans="" />
+  <item orig="Tells" trans="" />
+  <item orig="Manage petitions to help users." trans="" />
+  <item orig="No Fall Damage" trans="" />
+  <item orig="Communication" trans="" />
+  <item orig="Cannot connect to server" trans="" />
+  <item orig="Your text color" trans="" />
+  <item orig="1" trans="" />
+  <item orig="Invisible" trans="" />
+  <item orig="CHARACTER SELECT" trans="" />
+  <item orig="Pickupable" trans="" />
+  <item orig="Detail information:" trans="" />
+  <item orig="You will no longer ignore %s." trans="" />
+  <item orig="Others' combat stance changes" trans="" />
+  <item orig="Ambiguous command: " trans="" />
+  <item orig="The selected petition was %s" trans="" />
+  <item orig="Loading game" trans="" />
+  <item orig="Use Collision Detection" trans="" />
+  <item orig="Invite" trans="" />
+  <item orig="Sector:" trans="" />
+  <item orig="Mix yourtext color" trans="" />
+  <item orig="Permissions" trans="" />
+  <item orig="X:" trans="" />
+  <item orig="5" trans="" />
+  <item orig="Make leader" trans="" />
+  <item orig="Money" trans="" />
+  <item orig="Guild" trans="" />
+  <item orig="0 Trias" trans="" />
+  <item orig="Parents" trans="" />
+  <item orig="Jobs" trans="" />
+  <item orig="Chat - Bubbles" trans="" />
+  <item orig="Welcome to PlaneShift!" trans="" />
+  <item orig="Delete" trans="" />
+  <item orig="Entities" trans="" />
+  <item orig="Auction text color" trans="" />
+  <item orig="Hello" trans="" />
+  <item orig="You're offered" trans="" />
+  <item orig="Hi" trans="" />
+  <item orig="Own attacks that are dodged" trans="" />
+  <item orig="Done" trans="" />
+  <item orig="Birth" trans="" />
+  <item orig="Keys" trans="" />
+  <item orig="Faction description:" trans="" />
+  <item orig="Perform an action see by people in your vicinity." trans="" />
+  <item orig="Reload" trans="" />
+  <item orig="Players" trans="" />
+  <item orig="Phys Stam." trans="" />
+  <item orig="Stats:" trans="" />
+  <item orig="NPC" trans="" />
+  <item orig="Music Volume" trans="" />
+  <item orig="Defend me !" trans="" />
+  <item orig="Spell List:" trans="" />
+  <item orig="FPS cap:" trans="" />
+  <item orig="Tell text color" trans="" />
+  <item orig="CP: 0" trans="" />
+  <item orig="BIRTH" trans="" />
+  <item orig="Unmute Player" trans="" />
+  <item orig="Online only" trans="" />
+  <item orig="Pub notes" trans="" />
+  <item orig="Edit Master" trans="" />
+  <item orig="Amount to deposit" trans="" />
+  <item orig="Join Game" trans="" />
+  <item orig="Locked" trans="" />
+  <item orig="Account Password:" trans="" />
+  <item orig="Items" trans="" />
+  <item orig="Factions" trans="" />
+  <item orig="Weight:" trans="" />
+  <item orig="Petition submitted:" trans="" />
+  <item orig="Men Stam." trans="" />
+  <item orig="Requesting World" trans="" />
+  <item orig="Group" trans="" />
+  <item orig="Help text color" trans="" />
+  <item orig="Face" trans="" />
+  <item orig="OK" trans="" />
+  <item orig="First Person" trans="" />
+  <item orig="Selection" trans="" />
+  <item orig="?" trans="" />
+  <item orig="Trigger:" trans="" />
+  <item orig="Refresh List" trans="" />
+  <item orig="Character Name" trans="" />
+  <item orig="Kick Player" trans="" />
+  <item orig="Filter incoming bad words" trans="" />
+  <item orig="Skill" trans="" />
+  <item orig="The selected petition has been escalated." trans="" />
+  <item orig="Your notes:" trans="" />
+  <item orig="Rotate" trans="" />
+  <item orig="Birth Event:" trans="" />
+  <item orig="Character description:" trans="" />
+  <item orig="No" trans="" />
+  <item orig="Combat messages regarding me" trans="" />
+  <item orig="Player name:" trans="" />
+  <item orig="Mouse" trans="" />
+  <item orig="Position:" trans="" />
+  <item orig="Help" trans="" />
+  <item orig="View chat" trans="" />
+  <item orig="Min. distance:" trans="" />
+  <item orig="Quit" trans="" />
+  <item orig="Lockpicking" trans="" />
+  <item orig="models" trans="" />
+  <item orig="Siblings" trans="" />
+  <item orig="Camera" trans="" />
+  <item orig="Remember password" trans="" />
+  <item orig="Third Person Follow" trans="" />
+  <item orig="Character Name:" trans="" />
+  <item orig="Day:" trans="" />
+  <item orig="Clear" trans="" />
+  <item orig="Next" trans="" />
+  <item orig="Stat" trans="" />
+  <item orig="%s tells you: %s" trans="" />
+  <item orig="D:" trans="" />
+  <item orig="Jobs Skill description:" trans="" />
+  <item orig="Mana" trans="" />
+  <item orig="Yes" trans="" />
+  <item orig="Reset" trans="" />
+  <item orig="Interface sounds" trans="" />
+  <item orig="Talk to your group privately." trans="" />
+  <item orig="Own attacks that are blocked" trans="" />
+  <item orig="Religion:" trans="" />
+  <item orig="You can not ignore yourself." trans="" />
+  <item orig="Members" trans="" />
+  <item orig="List all of the petitions you have submitted." trans="" />
+  <item orig="Settings" trans="" />
+  <item orig="You must select a petition from the list in order to assign yourself." trans="" />
+  <item orig="Count:" trans="" />
+  <item orig="Back" trans="" />
+  <item orig="graphics" trans="" />
+  <item orig="You tell %s: %s" trans="" />
+  <item orig="Add New" trans="" />
+  <item orig="Infinite Inventory" trans="" />
+  <item orig="Lose focus on send" trans="" />
+  <item orig="Hair Style" trans="" />
+  <item orig="New Character" trans="" />
+  <item orig="Magic Skill description:" trans="" />
+  <item orig="M:" trans="" />
+  <item orig="Infinite Mana" trans="" />
+  <item orig="Status:" trans="" />
+  <item orig="Teleport To Player" trans="" />
+  <item orig="Add" trans="" />
+  <item orig="PARENTS" trans="" />
+  <item orig="Petition Text:" trans="" />
+  <item orig="Invincible" trans="" />
+  <item orig="You're offering" trans="" />
+  <item orig="Jobs Skills List:" trans="" />
+  <item orig="Magic Skills" trans="" />
+  <item orig="Combat messages regarding others" trans="" />
+  <item orig="Actions" trans="" />
+  <item orig="Chat - Filters" trans="" />
+  <item orig="Amount to withdraw" trans="" />
+  <item orig="Others' attacks that are blocked" trans="" />
+  <item orig="Talk to the people in your immediate vicinity." trans="" />
+  <item orig="Player name color" trans="" />
+  <item orig="Random name" trans="" />
+  <item orig="Couldn't resolve server hostname." trans="" />
+  <item orig="Escalate" trans="" />
+  <item orig="30" trans="" />
+  <item orig="Various Skills" trans="" />
+  <item orig="Events" trans="" />
+  <item orig="Trias:" trans="" />
+  <item orig="Auto Tab selection:" trans="" />
+  <item orig="Chat - Tabs" trans="" />
+  <item orig="Makes the server log what target player is saying." trans="" />
+  <item orig="New Account" trans="" />
+  <item orig="Beard Style" trans="" />
+  <item orig="Mute Player" trans="" />
+  <item orig="Shortcut key:" trans="" />
+  <item orig="Controls" trans="" />
+  <item orig="Name:" trans="" />
+  <item orig="Discard" trans="" />
+  <item orig="Y:" trans="" />
+  <item orig="Servers:" trans="" />
+  <item orig="Join" trans="" />
+  <item orig="Assigned GM:" trans="" />
+  <item orig="Lockable" trans="" />
+  <item orig="Distance:" trans="" />
+  <item orig="Echo screen text" trans="" />
+  <item orig="Loading world" trans="" />
+  <item orig="New User? Register at http://laanx.fragnetics.com/register" trans="" />
+  <item orig="Quests" trans="" />
+  <item orig="Please wait for verification from server" trans="" />
+  <item orig="o'clock" trans="" />
+  <item orig="You must select a petition from the list in order to close it." trans="" />
+  <item orig="Name" trans="" />
+  <item orig="Getting entities" trans="" />
+  <item orig="You must select a petition from the list in order to escalate it." trans="" />
+  <item orig="Custom" trans="" />
+  <item orig="Sound" trans="" />
+  <item orig="Background music" trans="" />
+  <item orig="Uncompleted" trans="" />
+  <item orig="Petitons are waiting." trans="" />
+  <item orig="Completed" trans="" />
+  <item orig="none" trans="" />
+  <item orig="Alternates" trans="" />
+  <item orig="Save MOTD" trans="" />
+  <item orig="network" trans="" />
+  <item orig="Interface" trans="" />
+  <item orig="Loop background music" trans="" />
+  <item orig="Shout text color" trans="" />
+  <item orig="Log the chat messages" trans="" />
+  <item orig="Filter outgoing bad words" trans="" />
+  <item orig="Realm" trans="" />
+  <item orig="cancelled." trans="" />
+  <item orig="closed." trans="" />
+  <item orig="Waiting on server data.." trans="" />
+  <item orig="View all" trans="" />
+  <item orig="Unknown Chat Type: %d" trans="" />
+  <item orig="/ 100" trans="" />
+  <item orig="Free Rotation" trans="" />
+  <item orig="Actual FPS may vary." trans="" />
+  <item orig="You must select a petition from the list in order to view it." trans="" />
+  <item orig="Spells" trans="" />
+  <item orig="Shortcuts" trans="" />
+  <item orig="Guild text color" trans="" />
+  <item orig="Random" trans="" />
+  <item orig="Job:" trans="" />
+  <item orig="Ok" trans="" />
+  <item orig="Sell" trans="" />
+  <item orig="Way" trans="" />
+  <item orig="controls" trans="" />
+  <item orig="Close" trans="" />
+  <item orig="Website:" trans="" />
+  <item orig="Various" trans="" />
+  <item orig="Combat Skill description:" trans="" />
+  <item orig="Ambient sounds" trans="" />
+  <item orig="Greetings" trans="" />
+  <item orig="Select a reward:" trans="" />
+  <item orig="Ambient Volume" trans="" />
+  <item orig="Hair Colour" trans="" />
+</StringTable>
