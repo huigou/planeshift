@@ -4675,6 +4675,7 @@ psPersistActor::psPersistActor( uint32_t clientNum,
                                 const char* matname,
                                 const char* race,
                                 const char* mountFactname,
+                                const char* MounterAnim,
                                 unsigned short int gender,
                                 const char* helmGroup,
                                 const char* bracerGroup,
@@ -4717,6 +4718,7 @@ psPersistActor::psPersistActor( uint32_t clientNum,
     msg->Add( msgstrings->Request(matname).GetHash() );
     msg->Add( msgstrings->Request(race).GetHash() );
     msg->Add( msgstrings->Request(mountFactname).GetHash() );
+    msg->Add( msgstrings->Request(MounterAnim).GetHash() );
     msg->Add ( gender );
     msg->Add( helmGroup );
     msg->Add(BracerGroup);
@@ -4760,6 +4762,7 @@ psPersistActor::psPersistActor( MsgEntry* me, csStringSet* msgstrings, csStringH
         matname       = msgstrings->Request(csStringID(me->GetUInt32()));
         race          = msgstrings->Request(csStringID(me->GetUInt32()));
         mountFactname = msgstrings->Request(csStringID(me->GetUInt32()));
+        MounterAnim   = msgstrings->Request(csStringID(me->GetUInt32()));
     }
     else if(msgstringshash)
     {
@@ -4767,6 +4770,7 @@ psPersistActor::psPersistActor( MsgEntry* me, csStringSet* msgstrings, csStringH
         matname       = msgstringshash->Request(csStringID(me->GetUInt32()));
         race          = msgstringshash->Request(csStringID(me->GetUInt32()));
         mountFactname = msgstringshash->Request(csStringID(me->GetUInt32()));
+        MounterAnim   = msgstringshash->Request(csStringID(me->GetUInt32()));
     }
 
     gender      = me->GetInt16();
@@ -4811,6 +4815,7 @@ csString psPersistActor::ToString(AccessPointers * access_ptrs)
     msgtext.AppendFmt(" Base Material: '%s'", matname.GetDataSafe());
     msgtext.AppendFmt(" Race: '%s'",race.GetDataSafe());
     msgtext.AppendFmt(" Mount Race: '%s'",mountFactname.GetDataSafe());
+    msgtext.AppendFmt(" Mounter Anim: '%s'",MounterAnim.GetDataSafe());
     msgtext.AppendFmt(" Top: (%.3f,%.3f,%.3f)",top.x,top.y,top.z);
     msgtext.AppendFmt(" Bottom: (%.3f,%.3f,%.3f)",bottom.x,bottom.y,bottom.z);
     msgtext.AppendFmt(" Offset: (%.3f,%.3f,%.3f)",offset.x,offset.y,offset.z);

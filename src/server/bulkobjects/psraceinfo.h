@@ -83,6 +83,8 @@ public:
     csString BracerGroup;       ///< The name of the bracer group race is in.
     csString BeltGroup;         ///< The name of the belt group race is in.
     csString CloakGroup;        ///< The name of the cloak group race is in.
+    
+    csString MounterAnim;       ///< The name of the anim the mounter will use when mounting this race.
 
     float speedModifier;
     
@@ -113,6 +115,8 @@ public:
     const char *GetBracerGroup() { return BracerGroup.GetDataSafe(); }
     const char *GetBeltGroup()   { return BeltGroup.GetDataSafe(); }
     const char *GetCloakGroup()  { return CloakGroup.GetDataSafe(); }
+    
+    const char *GetMounterAnim()  { return MounterAnim.GetDataSafe(); }
 
     float GetSpeedModifier()     { return speedModifier; }
     

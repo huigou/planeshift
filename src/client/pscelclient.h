@@ -532,6 +532,7 @@ public:
 
     csString race;
     csString mountFactname;
+    csString MounterAnim;
     csString helmGroup;
     csString BracerGroup;
     csString BeltGroup;
