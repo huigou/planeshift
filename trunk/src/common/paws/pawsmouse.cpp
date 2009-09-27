@@ -74,6 +74,11 @@ void pawsMouse::ChangeImage(csRef<iPawsImage> drawable)
 {
     cursorImage = drawable;
     SetOSMouse(cursorImage);
+    if (!cursorImage.IsValid())	 
+   {	 
+	   printf("Fatal error: Can't find cursor '%s'!", imageName);	 
+	   exit(1);	 
+   }
 }
 
 void pawsMouse::SetOSMouse(csRef<iPawsImage> drawable)
