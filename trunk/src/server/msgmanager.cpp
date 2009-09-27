@@ -76,7 +76,7 @@ bool MessageManager::Verify(MsgEntry *pMsg,unsigned int flags,Client*& client)
     }
     if (flags & REQUIRE_TARGETACTOR)
     {
-        actor = (obj) ? obj->AsActor() : NULL;
+        actor = (obj) ? obj->GetActorPtr() : NULL;
         if (!actor)
         {
             psserver->SendSystemError(pMsg->clientnum, "You do not have a player or NPC selected.");
@@ -85,7 +85,7 @@ bool MessageManager::Verify(MsgEntry *pMsg,unsigned int flags,Client*& client)
     }
     if (flags & REQUIRE_TARGETNPC)
     {
-        npc = (obj) ? obj->AsNPC() : NULL;
+        npc = (obj) ? obj->GetNPCPtr() : NULL;
         if (!npc)
         {
             psserver->SendSystemError(pMsg->clientnum, "You do not have an NPC selected.");
@@ -230,7 +230,7 @@ csArray<csString> MessageManager::DecodeCommandArea(Client *client, csString tar
         }
         case 2: // Target items
         {
-            if (nearobj->AsItem())
+            if (nearobj->GetItem())
             {
                 newTarget.Format("eid:%u", nearobj->GetEID().Unbox());
                 break;
@@ -240,7 +240,7 @@ csArray<csString> MessageManager::DecodeCommandArea(Client *client, csString tar
         }
         case 3: // Target NPCs
         {
-            if (nearobj->AsNPC())
+            if (nearobj->GetNPCPtr())
             {
                 newTarget.Format("pid:%u", nearobj->GetPID().Unbox());
                 break;

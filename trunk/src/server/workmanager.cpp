@@ -264,7 +264,7 @@ void WorkManager::HandleLockPick(MsgEntry* me,Client *client)
     gemObject* target = client->GetTargetObject();
 
     // Check if target is action item
-    gemActionLocation* gemAction = target->AsActionLocation();
+    gemActionLocation* gemAction = dynamic_cast<gemActionLocation*>(target);
     if(gemAction) {
         psActionLocation *action = gemAction->GetAction();
 
@@ -291,10 +291,7 @@ void WorkManager::HandleLockPick(MsgEntry* me,Client *client)
     }
 
     // Get item
-    gemItem* gemitem = target->AsItem();
-    psItem* item = NULL;
-    if (gemitem)
-    	item = gemitem->GetItemData();
+    psItem* item = target->GetItem();
     if ( !item )
     {
         Error1("Found gemItem but no psItem was attached!\n");
@@ -1097,7 +1094,7 @@ void WorkManager::StartUseWork(Client* client)
     if ( workItem && workItem->GetIsContainer() ) // Check if the target is a container
     {
         // cast a gem container to iterate through
-        gemContainer *container = workItem->GetGemObject()->AsContainer();
+        gemContainer *container = dynamic_cast<gemContainer*> (workItem->GetGemObject());
         if (!container)
         {
             Error1("Could not instantiate gemContainer");
@@ -1489,7 +1486,7 @@ void WorkManager::StartAutoWork(Client* client, gemContainer* container, psItem*
         }
 
         // Work item is container into which items were dropped
-        workItem = container->GetItemData();
+        workItem = container->GetItem();
         autoItem = droppedItem;
         uint32 autoID = autoItem->GetBaseStats()->GetUID();
 
@@ -1616,21 +1613,21 @@ bool WorkManager::StartScriptWork(Client* client, gemObject *target, csString pa
     }
 
     // Check for actor target
-    gemActor* gemAct = target->AsActor();
+    gemActor* gemAct = dynamic_cast <gemActor*> (target);
     if(gemAct)
     {
         return ScriptActor(gemAct);
     }
 
     // Check if target is action location
-    gemActionLocation* gemAction = target->AsActionLocation();
+    gemActionLocation* gemAction = dynamic_cast<gemActionLocation*>(target);
     if(gemAction)
     {
         return ScriptAction(gemAction);
     }
 
     // Check if target is item
-    gemItem* gemItm = target->AsItem();
+    gemItem* gemItm = dynamic_cast<gemItem*>(target);
     if(gemItm)
     {
         return ScriptItem(gemItm);
@@ -1777,7 +1774,7 @@ bool WorkManager::ScriptItem(gemItem* gemItm)
     }
 
     // Check if the target is container
-    workItem = gemItm->GetItemData();
+    workItem = gemItm->GetItem();
     if ( workItem->GetIsContainer() )
     {
         // Combine anything can be combined in container
@@ -1786,8 +1783,8 @@ bool WorkManager::ScriptItem(gemItem* gemItm)
 
     // Find out if we can do a no work item transformation on targetted item
     workItem = NULL;
-    uint32 itemId = gemItm->GetItemData()->GetBaseStats()->GetUID();
-    int itemCount = gemItm->GetItemData()->GetStackCount();
+    uint32 itemId = gemItm->GetItem()->GetBaseStats()->GetUID();
+    int itemCount = gemItm->GetItem()->GetStackCount();
 
     // Verify there is a valid transformation for the item that was dropped
     unsigned int transMatch = AnyTransform( patternId, groupPatternId, itemId, itemCount );
@@ -1797,16 +1794,16 @@ bool WorkManager::ScriptItem(gemItem* gemItm)
         {
             // Set up event for auto transformation
             StartTransformationEvent(
-                TRANSFORMTYPE_TARGET, PSCHARACTER_SLOT_NONE, itemCount, gemItm->GetItemData()->GetItemQuality(), gemItm->GetItemData());
-            psserver->SendSystemOK(clientNum,"You start to transform %d %s.", itemCount, gemItm->GetItemData()->GetName());
+                TRANSFORMTYPE_TARGET, PSCHARACTER_SLOT_NONE, itemCount, gemItm->GetItem()->GetItemQuality(), gemItm->GetItem());
+            psserver->SendSystemOK(clientNum,"You start to transform %d %s.", itemCount, gemItm->GetItem()->GetName());
             return true;
         }
         case TRANSFORM_GARBAGE:
         {
             // Set up event for auto transformation
             StartTransformationEvent(
-                TRANSFORMTYPE_TARGET, PSCHARACTER_SLOT_NONE, itemCount, gemItm->GetItemData()->GetItemQuality(), gemItm->GetItemData());
-            psserver->SendSystemError(clientNum,"You are not sure what is going to happen to %d %s.", gemItm->GetItemData()->GetStackCount(), gemItm->GetItemData()->GetName());
+                TRANSFORMTYPE_TARGET, PSCHARACTER_SLOT_NONE, itemCount, gemItm->GetItem()->GetItemQuality(), gemItm->GetItem());
+            psserver->SendSystemError(clientNum,"You are not sure what is going to happen to %d %s.", gemItm->GetItem()->GetStackCount(), gemItm->GetItem()->GetName());
             return true;
         }
     }
@@ -1839,7 +1836,7 @@ bool WorkManager::ScriptAction(gemActionLocation* gemAction)
 bool WorkManager::IsContainerCombinable(uint32 &resultId, int &resultQty)
 {
     // cast a gem container to iterate thru
-    gemContainer *container = workItem->GetGemObject()->AsContainer();
+    gemContainer *container = dynamic_cast<gemContainer*> (workItem->GetGemObject());
     if (!container)
     {
         Error1("Could not instantiate gemContainer");
@@ -2475,7 +2472,7 @@ bool WorkManager::ValidateTarget(Client* client)
     // Check if player has something targeted
     gemObject* target = client->GetTargetObject();
 
-    gemActionLocation* gemAction = target->AsActionLocation();
+    gemActionLocation* gemAction = dynamic_cast<gemActionLocation*>(target);
     if(gemAction) {
         psActionLocation *action = gemAction->GetAction();
 
@@ -2491,7 +2488,7 @@ bool WorkManager::ValidateTarget(Client* client)
     if (target)
     {
         // Make sure it's not character
-        if (target->AsActor())
+        if (target->GetActorPtr())
         {
             psserver->SendSystemInfo(clientNum,"Only items can be targeted for use.");
             return false;
@@ -2500,19 +2497,19 @@ bool WorkManager::ValidateTarget(Client* client)
         // Check range ignoring Y co-ordinate
         if (worker->RangeTo(target, true, true) > RANGE_TO_USE)
         {
-            psserver->SendSystemError(clientNum,"You are not in range to use %s.",target->AsItem()->GetItemData()->GetName());
+            psserver->SendSystemError(clientNum,"You are not in range to use %s.",target->GetItem()->GetName());
             return false;
         }
 
         // Only legit items
-        if (!target->AsItem()->GetItemData())
+        if (!target->GetItem())
         {
             psserver->SendSystemInfo(clientNum,"That item can not be used in this way.");
             return false;
         }
 
         // Otherwise assign item
-        workItem = target->AsItem()->GetItemData();
+        workItem = target->GetItem();
         return true;
     }
 
@@ -2756,7 +2753,7 @@ psItem* WorkManager::CombineContainedItem(uint32 newId, int newQty, float itemQu
 #endif
 
     // cast a gem container to iterate thru
-    gemContainer *container = containerItem->GetGemObject()->AsContainer();
+    gemContainer *container = dynamic_cast<gemContainer*> (containerItem->GetGemObject());
     if (!container)
     {
         Error1("Could not instantiate gemContainer");
@@ -2858,7 +2855,7 @@ psItem* WorkManager::TransformContainedItem(psItem* oldItem, uint32 newId, int n
     CPrintf(CON_DEBUG, "deleting item from container...\n");
 #endif
 
-    gemContainer *container = workItem->GetGemObject()->AsContainer();
+    gemContainer *container = dynamic_cast<gemContainer*> (workItem->GetGemObject());
     if (!container)
     {
         Error1("Could not instantiate gemContainer");

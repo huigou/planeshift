@@ -702,7 +702,7 @@ void PawsEditorApp::OpenWidget(const csString & text)
                 // This is a widget so read it's factory to create it.
                 if ( strcmp( node->GetValue(), "widget" ) == 0 )
                 {
-                    currentWidget = paws->LoadWidget( node );
+                    currentWidget = dynamic_cast<pawsWidget *> ( paws->LoadWidget( node ) ) ;
                     if ( !currentWidget ) 
                     {
                          csString err = "Warning: Loading '" + csString( text ) + "' failed!";

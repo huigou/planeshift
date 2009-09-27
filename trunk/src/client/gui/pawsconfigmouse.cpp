@@ -263,7 +263,7 @@ void pawsConfigMouse::SetActionLabels(pawsTreeNode * subtreeRoot)
     {
         if (!strcmp(subtreeRoot->GetAttr("type"), "action"))
         {
-            actionLabel = rootAsSeq->GetSeqWidget(1)->AsTextBox();
+            actionLabel = dynamic_cast<pawsTextBox*> (rootAsSeq->GetSeqWidget(1));
             assert(actionLabel);
             if (binds.GetBind(subtreeRoot->GetName(), boundAction))
                 actionLabel->SetText(boundAction);
@@ -322,7 +322,7 @@ bool pawsConfigMouse::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
 
     if (!strcmp(buttonNode->GetAttr("type"), "action"))
     {
-        textBox = buttonNode->GetSeqWidget(1)->AsTextBox();
+        textBox = dynamic_cast <pawsTextBox*> (buttonNode->GetSeqWidget(1));
         assert(textBox);
 
         binds.Bind(editedAction, mouseButton, keyModifier);

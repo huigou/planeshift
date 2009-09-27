@@ -454,10 +454,9 @@ void SpawnManager::LoadHuntLocations(psSectorInfo *sectorinfo)
                         
     		for (size_t i = 0; i < nearbyItemsCount; ++i)
     		{
-                gemItem* gemitem = nearlist[i]->AsItem();
-                if (gemitem)
+                psItem *item = nearlist[i]->GetItem();
+                if (item)
                 {
-                	psItem* item = gemitem->GetItemData();
                     if (name == item->GetName()) // Correct item?
                     {
                         psScheduledItem* schedule = new psScheduledItem(id,itemid,pos,spawnsector,0,interval,max_rnd,range);
@@ -622,7 +621,7 @@ void SpawnManager::RepopulateItems(psSectorInfo *sectorinfo)
         else if (item->GetContainerID())
         {
             gemItem *citem = EntityManager::GetSingleton().GetGEM()->FindItemEntity(item->GetContainerID());
-            gemContainer *container = citem->AsContainer();
+            gemContainer *container = dynamic_cast<gemContainer*> (citem);
             if (container)
             {
                 if (!container->AddToContainer(item,NULL,item->GetLocInParent()))
@@ -714,7 +713,7 @@ void SpawnManager::KillNPC(gemObject *obj, gemActor* killer)
         if (!grp)
         {
             // Check if the killer is owned (pet/familiar)
-            gemActor * owner = killer->GetOwner()->AsActor();
+            gemActor * owner = dynamic_cast<gemActor*>(killer->GetOwner());
             if (owner)
             {
                 // Is the owner part of a group? The group code below will add the

@@ -74,12 +74,12 @@ bool pawsLoginWindow::PostSetup()
     {
         pawsListBoxRow* row = listBox->NewRow();
         
-        pawsTextBox* name = row->GetColumn(0)->AsTextBox();
+        pawsTextBox* name = dynamic_cast <pawsTextBox*> (row->GetColumn(0));
         if (name == NULL)
             return false;
         name->SetText( servers[x]->GetName() );
         
-        pawsTextBox* ip = row->GetColumn(1)->AsTextBox();
+        pawsTextBox* ip = dynamic_cast <pawsTextBox*> (row->GetColumn(1));
         if (ip == NULL)
             return false;
         ip->SetText( servers[x]->GetAddress() );
@@ -125,7 +125,7 @@ bool pawsLoginWindow::PostSetup()
         checkBox->SetState(remember);
 
     // Set the version label
-    pawsTextBox* version = FindWidget("version")->AsTextBox();
+    pawsTextBox* version = dynamic_cast <pawsTextBox*> (FindWidget("version"));
     if (version == NULL)
         return false;
     version->SetText(APPNAME);

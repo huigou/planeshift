@@ -2441,7 +2441,7 @@ bool DoAdminCommandResponseOp::Run(gemNPC *who, gemActor *target,NpcResponse *ow
     csString format;
     format.Format("\"%s\"", target->GetCharacterData()->GetCharFullName());
     modifiedCommandString.ReplaceAll("targetchar", format);
-    format.Format("\"%s\"", who->GetCharacterData()->GetCharFullName());
+    format.Format("\"%s\"", who->GetNPCPtr()->GetCharacterData()->GetCharFullName());
     modifiedCommandString.ReplaceAll("sourcenpc", format);
     psAdminCmdMessage msg(modifiedCommandString, 0);
     msg.msg->current=0;

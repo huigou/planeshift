@@ -300,7 +300,7 @@ bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, paw
         textBox = dynamic_cast <pawsMultilineEditTextBox*> (subWidget->FindWidget("CommandBox"));
 
     if (!shortcutText)
-        shortcutText = subWidget->FindWidget("ShortcutText")->AsTextBox();
+        shortcutText = dynamic_cast <pawsTextBox*> (subWidget->FindWidget("ShortcutText"));
 
 
     // These should not be NULL

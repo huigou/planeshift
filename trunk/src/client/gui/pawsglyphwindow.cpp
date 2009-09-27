@@ -98,7 +98,7 @@ bool pawsGlyphWindow::PostSetup()
     description = dynamic_cast <pawsMessageTextBox*> (FindWidget("SpellDescription"));
     if ( !description ) return false;
 
-    spellName = FindWidget("SpellName")->AsTextBox();
+    spellName = dynamic_cast <pawsTextBox*> (FindWidget("SpellName"));
     if ( !spellName ) return false;
     
     spellImage = dynamic_cast <pawsWidget*> (FindWidget("SpellImage"));

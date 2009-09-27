@@ -177,7 +177,7 @@ void ChatManager::HandleChatMessage(MsgEntry *me, Client *client)
               size_t numPets = client->GetNumPets();
               for (size_t i = 0; i < numPets; i++)
               {
-                  if ((pet = client->GetPet(i)->AsNPC())
+                  if ((pet = dynamic_cast <gemNPC*>(client->GetPet(i)))
                       && msg.sText.StartsWith(pet->GetCharacterData()->GetCharName(), true))
                   {
                       size_t n = strlen(pet->GetCharacterData()->GetCharName());
@@ -198,7 +198,7 @@ void ChatManager::HandleChatMessage(MsgEntry *me, Client *client)
               }
               // If no particular pet was specified, assume the default familiar...
               if (!pet)
-                  pet = client->GetFamiliar()->AsNPC();
+                  pet = dynamic_cast <gemNPC*>(client->GetFamiliar());
 
               // Send the message or an appropriate error...
               if (!pet)
@@ -224,7 +224,7 @@ void ChatManager::HandleChatMessage(MsgEntry *me, Client *client)
               saveFlood = false;
 
               gemObject *target = client->GetTargetObject();
-              gemNPC *targetnpc = target->AsNPC();
+              gemNPC *targetnpc = dynamic_cast<gemNPC*>(target);
               NpcResponse *resp = CheckNPCResponse(msg,client,targetnpc);
               if (resp)
               {

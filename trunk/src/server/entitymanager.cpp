@@ -627,7 +627,7 @@ bool EntityManager::DeletePlayer(Client * client)
         // Any objects wanting to know when the actor is 'gone' are callback'd here.
         actor->Disconnect();
 
-        if (!actor->AsNPC())  // NPC cast null means a human player
+        if (!dynamic_cast<gemNPC*> (actor))  // NPC cast null means a human player
         {
             // Save current character state in the database
             psServer::CharacterLoader.SaveCharacterData(actor->GetCharacterData(),actor);
@@ -772,7 +772,7 @@ bool EntityManager::LoadMap (const char* mapname)
     return gameWorld->NewRegion(mapname, false);
 }
 
-gemItem *EntityManager::MoveItemToWorld(psItem       *chrItem,
+gemObject *EntityManager::MoveItemToWorld(psItem       *chrItem,
                                           InstanceID   instance,
                                           psSectorInfo *sectorinfo,
                                           float         loc_x,
@@ -785,7 +785,7 @@ gemItem *EntityManager::MoveItemToWorld(psItem       *chrItem,
     chrItem->SetLocationInWorld(instance,sectorinfo,loc_x,loc_y,loc_z,loc_yrot);
     chrItem->UpdateInventoryStatus(NULL,0,PSCHARACTER_SLOT_NONE);
 
-    gemItem *obj = CreateItem(chrItem,true);
+    gemObject *obj = CreateItem(chrItem,true);
     if (!obj)
     {
         return NULL;
@@ -795,7 +795,7 @@ gemItem *EntityManager::MoveItemToWorld(psItem       *chrItem,
 }
 
 
-gemItem *EntityManager::CreateItem( psItem *& iteminstance, bool transient )
+gemObject *EntityManager::CreateItem( psItem *& iteminstance, bool transient )
 {
     psSectorInfo *sectorinfo;
     csVector3 newpos;
@@ -822,17 +822,13 @@ gemItem *EntityManager::CreateItem( psItem *& iteminstance, bool transient )
         if (!nearobj)
             continue;
 
-        gemItem* gemitem = nearobj->AsItem();
-        if ( gemitem )
+        psItem *nearitem = nearobj->GetItem();
+        if ( nearitem && nearitem->CheckStackableWith(iteminstance, false) )
         {
-        	psItem* nearitem = gemitem->GetItemData();
-        	if ( nearitem->CheckStackableWith(iteminstance, false))
-        	{
-				// Put new item(s) into old stack
-				nearitem->CombineStack(iteminstance);
-				nearitem->Save(false);
-				return nearitem->GetGemObject(); // Done
-        	}
+            // Put new item(s) into old stack
+            nearitem->CombineStack(iteminstance);
+            nearitem->Save(false);
+            return nearitem->GetGemObject(); // Done
         }
     }
 

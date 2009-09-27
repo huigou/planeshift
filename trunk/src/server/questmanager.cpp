@@ -1139,7 +1139,7 @@ bool QuestManager::AddTrigger(csString& current_npc,const char *trigger,int prio
 {
     // Now that this npc has a trigger associated, we need to make sure it has a KA for itself.
     // These have been added manually in the past, but we will do it here automatically now.
-    gemNPC *npc = psserver->entitymanager->GetGEM()->FindObject(current_npc)->AsNPC();
+    gemNPC *npc = dynamic_cast<gemNPC *>(psserver->entitymanager->GetGEM()->FindObject(current_npc));
     if (npc) // specific KA named here
     {
         // First check for no dialog at all on this npc, and create it if needed
