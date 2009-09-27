@@ -222,7 +222,7 @@ void pawsMenuItem::EnableImage(bool enable)
  
     if (enable && (image == NULL))
     {
-        image = new pawsEmpty();
+        image = new pawsWidget();
         image->SetRelativeFrameSize(BUTTON_SIZE, BUTTON_SIZE);
         image->Show();
         AddChild(image);

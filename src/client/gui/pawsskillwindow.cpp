@@ -126,11 +126,11 @@ bool pawsSkillWindow::PostSetup()
     menStaminaBar = dynamic_cast <pawsProgressBar*> (FindWidget("MenStaminaBar"));
     experienceBar = dynamic_cast <pawsProgressBar*> (FindWidget("ExperienceBar"));
 
-    hpFrac = FindWidget("HPFrac")->AsTextBox();
-    manaFrac = FindWidget("ManaFrac")->AsTextBox();
-    pysStaminaFrac = FindWidget("PysStaminaFrac")->AsTextBox();
-    menStaminaFrac = FindWidget("MenStaminaFrac")->AsTextBox();
-    experiencePerc = FindWidget("ExperiencePerc")->AsTextBox();
+    hpFrac = dynamic_cast <pawsTextBox*> (FindWidget("HPFrac"));
+    manaFrac = dynamic_cast <pawsTextBox*> (FindWidget("ManaFrac"));
+    pysStaminaFrac = dynamic_cast <pawsTextBox*> (FindWidget("PysStaminaFrac"));
+    menStaminaFrac = dynamic_cast <pawsTextBox*> (FindWidget("MenStaminaFrac"));
+    experiencePerc = dynamic_cast <pawsTextBox*> (FindWidget("ExperiencePerc"));
 
     if ( !hpBar || !manaBar || !pysStaminaBar || !menStaminaBar || !experienceBar
          || !hpFrac || !manaFrac || !pysStaminaFrac || !menStaminaFrac || !experiencePerc )
@@ -214,7 +214,7 @@ void pawsSkillWindow::HandleFactionMsg(MsgEntry* me)
             factions.Push(fact);
 
             pawsListBoxRow* row = factionList->NewRow();
-            pawsTextBox* name = row->GetColumn(0)->AsTextBox();
+            pawsTextBox* name = dynamic_cast <pawsTextBox*> (row->GetColumn(0));
             if (name == NULL)
             {
                 return;
@@ -222,7 +222,7 @@ void pawsSkillWindow::HandleFactionMsg(MsgEntry* me)
 
             name->SetText( fact->name );
 
-            pawsTextBox* rank = row->GetColumn(1)->AsTextBox();
+            pawsTextBox* rank = dynamic_cast <pawsTextBox*> (row->GetColumn(1));
             if (rank == NULL)
             {
                 return;
@@ -258,7 +258,7 @@ void pawsSkillWindow::HandleFactionMsg(MsgEntry* me)
                 pawsListBoxRow* row = factionList->GetRow(idx);
                 if (row)
                 {
-                    pawsTextBox* rank = row->GetColumn(1)->AsTextBox();
+                    pawsTextBox* rank = dynamic_cast <pawsTextBox*> (row->GetColumn(1));
                     if (rank == NULL)
                     {
                         return;
@@ -279,7 +279,7 @@ void pawsSkillWindow::HandleFactionMsg(MsgEntry* me)
                 pawsListBoxRow* row = factionList->NewRow();
 
                 // Set the name of the faction
-                pawsTextBox* name = row->GetColumn(0)->AsTextBox();
+                pawsTextBox* name = dynamic_cast <pawsTextBox*> (row->GetColumn(0));
                 if (name == NULL)
                 {
                     return;
@@ -287,7 +287,7 @@ void pawsSkillWindow::HandleFactionMsg(MsgEntry* me)
                 name->SetText( fact->name );
 
                 // Set the value of the faction.
-                pawsTextBox* rank = row->GetColumn(1)->AsTextBox();
+                pawsTextBox* rank = dynamic_cast <pawsTextBox*> (row->GetColumn(1));
                 if (rank == NULL)
                 {
                     return;
@@ -849,7 +849,7 @@ void pawsSkillWindow::HandleSkillCategory(pawsListBox* tabNameSkillList,
 
     pawsListBoxRow* row = tabNameSkillList->NewRow();
 
-    pawsTextBox* name = row->GetColumn(0)->AsTextBox();
+    pawsTextBox* name = dynamic_cast <pawsTextBox*> (row->GetColumn(0));
     if (name == NULL)
     {
         return;
@@ -857,7 +857,7 @@ void pawsSkillWindow::HandleSkillCategory(pawsListBox* tabNameSkillList,
 
     name->SetText( skillName );
 
-    pawsTextBox* rank = row->GetColumn(1)->AsTextBox();
+    pawsTextBox* rank = dynamic_cast <pawsTextBox*> (row->GetColumn(1));
     if (rank == NULL)
     {
         return;

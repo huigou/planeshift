@@ -60,18 +60,18 @@ bool pawsSketchWindow::PostSetup()
 {
     psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_VIEW_SKETCH);
     //setup an easy way to access our widgets
-    FeatherTool = FindWidget("FeatherTool");
-    TextTool = FindWidget("TextTool");
-    LineTool = FindWidget("LineTool");
-    BezierTool = FindWidget("BezierTool");
-    PlusTool = FindWidget("PlusTool");
-    LeftArrowTool = FindWidget("LeftArrowTool");
-    RightArrowTool = FindWidget("RightArrowTool");
-    DeleteTool = FindWidget("DeleteTool");
-    NameTool = FindWidget("NameTool");
-    SaveButton = FindWidget("SaveButton");
-    LoadButton = FindWidget("LoadButton");
-    ColorTool = FindWidget("ColorTool");
+    FeatherTool = dynamic_cast<pawsWidget*> (FindWidget("FeatherTool"));
+    TextTool = dynamic_cast<pawsWidget*> (FindWidget("TextTool"));
+    LineTool = dynamic_cast<pawsWidget*> (FindWidget("LineTool"));
+    BezierTool = dynamic_cast<pawsWidget*> (FindWidget("BezierTool"));
+    PlusTool = dynamic_cast<pawsWidget*> (FindWidget("PlusTool"));
+    LeftArrowTool = dynamic_cast<pawsWidget*> (FindWidget("LeftArrowTool"));
+    RightArrowTool = dynamic_cast<pawsWidget*> (FindWidget("RightArrowTool"));
+    DeleteTool = dynamic_cast<pawsWidget*> (FindWidget("DeleteTool"));
+    NameTool = dynamic_cast<pawsWidget*> (FindWidget("NameTool"));
+    SaveButton = dynamic_cast<pawsWidget*> (FindWidget("SaveButton"));
+    LoadButton = dynamic_cast<pawsWidget*> (FindWidget("LoadButton"));
+    ColorTool = dynamic_cast<pawsWidget*> (FindWidget("ColorTool"));
     return true;
 }
 

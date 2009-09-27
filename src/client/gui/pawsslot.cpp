@@ -35,7 +35,7 @@ pawsSlot::pawsSlot()
 
     SetRelativeFrame( 0,0, GetActualWidth(48), GetActualHeight(48) );
 
-    purifySign = new pawsEmpty();
+    purifySign = new pawsWidget();
     AddChild(purifySign);
     purifySign->SetRelativeFrame(GetActualWidth(5), GetActualHeight(5), GetActualWidth(37), GetActualHeight(37));
     purifySign->Hide();

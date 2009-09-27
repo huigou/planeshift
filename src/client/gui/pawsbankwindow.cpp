@@ -72,28 +72,28 @@ bool pawsBankWindow::PostSetup()
     if(!adminWindow)
         return false;
 
-    circlesCanWithdraw = FindWidget("CirclesCanWithdraw")->AsTextBox();
+    circlesCanWithdraw = dynamic_cast <pawsTextBox*> (FindWidget("CirclesCanWithdraw"));
     if(!circlesCanWithdraw)
         return false;
-    octasCanWithdraw = FindWidget("OctasCanWithdraw")->AsTextBox();
+    octasCanWithdraw = dynamic_cast <pawsTextBox*> (FindWidget("OctasCanWithdraw"));
     if(!octasCanWithdraw)
         return false;
-    hexasCanWithdraw = FindWidget("HexasCanWithdraw")->AsTextBox();
+    hexasCanWithdraw = dynamic_cast <pawsTextBox*> (FindWidget("HexasCanWithdraw"));
     if(!hexasCanWithdraw)
         return false;
-    triasCanWithdraw = FindWidget("TriasCanWithdraw")->AsTextBox();
+    triasCanWithdraw = dynamic_cast <pawsTextBox*> (FindWidget("TriasCanWithdraw"));
     if(!triasCanWithdraw)
         return false;
-    circlesCanDeposit = FindWidget("CirclesCanDeposit")->AsTextBox();
+    circlesCanDeposit = dynamic_cast <pawsTextBox*> (FindWidget("CirclesCanDeposit"));
     if(!circlesCanDeposit)
         return false;
-    octasCanDeposit = FindWidget("OctasCanDeposit")->AsTextBox();
+    octasCanDeposit = dynamic_cast <pawsTextBox*> (FindWidget("OctasCanDeposit"));
     if(!octasCanDeposit)
         return false;
-    hexasCanDeposit = FindWidget("HexasCanDeposit")->AsTextBox();
+    hexasCanDeposit = dynamic_cast <pawsTextBox*> (FindWidget("HexasCanDeposit"));
     if(!hexasCanDeposit)
         return false;
-    triasCanDeposit = FindWidget("TriasCanDeposit")->AsTextBox();
+    triasCanDeposit = dynamic_cast <pawsTextBox*> (FindWidget("TriasCanDeposit"));
     if(!triasCanDeposit)
         return false;
     circlesToWithdraw = dynamic_cast <pawsEditTextBox*> (FindWidget("CirclesToWithdraw"));
@@ -128,16 +128,16 @@ bool pawsBankWindow::PostSetup()
     if(!triasToDeposit)
         return false;
     triasToDeposit->SetText("0");
-    circlesCanExchange = FindWidget("CirclesCanExchange")->AsTextBox();
+    circlesCanExchange = dynamic_cast <pawsTextBox*> (FindWidget("CirclesCanExchange"));
     if(!circlesCanExchange)
         return false;
-    octasCanExchange = FindWidget("OctasCanExchange")->AsTextBox();
+    octasCanExchange = dynamic_cast <pawsTextBox*> (FindWidget("OctasCanExchange"));
     if(!octasCanExchange)
         return false;
-    hexasCanExchange = FindWidget("HexasCanExchange")->AsTextBox();
+    hexasCanExchange = dynamic_cast <pawsTextBox*> (FindWidget("HexasCanExchange"));
     if(!hexasCanExchange)
         return false;
-    triasCanExchange = FindWidget("TriasCanExchange")->AsTextBox();
+    triasCanExchange = dynamic_cast <pawsTextBox*> (FindWidget("TriasCanExchange"));
     if(!triasCanExchange)
         return false;
     coinsToExchange = dynamic_cast <pawsEditTextBox*> (FindWidget("CoinsToExchange"));
@@ -150,7 +150,7 @@ bool pawsBankWindow::PostSetup()
     hexas = (pawsRadioButton*)(FindWidget("Hexas"));
     trias = (pawsRadioButton*)(FindWidget("Trias"));
 
-    feeInfo = FindWidget("MoneyExchangeInfo")->AsTextBox();
+    feeInfo = dynamic_cast <pawsTextBox*> (FindWidget("MoneyExchangeInfo"));
     if(!feeInfo)
         return false;
 

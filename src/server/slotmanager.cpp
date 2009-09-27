@@ -132,13 +132,13 @@ void SlotManager::MoveFromWorldContainer(psSlotMovementMsg& msg, Client *fromCli
     gemContainer *worldContainer=NULL;
 
     gemObject *obj = EntityManager::GetSingleton().GetGEM()->FindObject(EID(containerEntityID)); // CEL id assigned
-    worldContainer = obj->AsContainer();
+    worldContainer = dynamic_cast<gemContainer*>(obj);
     if (!worldContainer)
     {
         Error2("Couldn't find any CEL entity id %d.", containerEntityID);
         return;
     }
-    parentItem = worldContainer->GetItemData();
+    parentItem = worldContainer->GetItem();
     if (!parentItem)
     {
         Error2("No parent container item found for worldContainer %d.", containerEntityID);
@@ -169,7 +169,7 @@ void SlotManager::MoveFromWorldContainer(psSlotMovementMsg& msg, Client *fromCli
     if (fromClient->GetActor()->RangeTo(worldContainer, true, true) > RANGE_TO_USE)
     {
         psserver->SendSystemError(fromClient->GetClientNum(),
-            "You are not in range to use %s.",worldContainer->GetItemData()->GetName());
+            "You are not in range to use %s.",worldContainer->GetItem()->GetName());
         return;
     }
 
@@ -199,14 +199,14 @@ void SlotManager::MoveFromWorldContainer(psSlotMovementMsg& msg, Client *fromCli
             worldContainer = NULL;
  
             gemObject *obj = EntityManager::GetSingleton().GetGEM()->FindObject(EID(containerEntityID)); // CEL id assigned
-            worldContainer = obj->AsContainer();
+            worldContainer = dynamic_cast<gemContainer*>(obj);
             if (!worldContainer)
             {
                 Error2("Couldn't find any CEL entity id %d.", containerEntityID);
                 return;
             }
 
-            parentItem = worldContainer->GetItemData();
+            parentItem = worldContainer->GetItem();
 
             if (!parentItem)
             {
@@ -441,13 +441,13 @@ void SlotManager::MoveFromInventory(psSlotMovementMsg& msg, Client *fromClient)
             worldContainer=NULL;
  
             gemObject *obj = EntityManager::GetSingleton().GetGEM()->FindObject(EID(containerEntityID)); // CEL id assigned
-            worldContainer = obj->AsContainer();
+            worldContainer = dynamic_cast<gemContainer*>(obj);
             if (!worldContainer)
             {
                 Error2("Couldn't find any CEL entity id %d.", containerEntityID);
                 return;
             }
-            parentItem = worldContainer->GetItemData();
+            parentItem = worldContainer->GetItem();
             if (!parentItem)
             {
                 Error2("No parent container item found for worldContainer %d.", containerEntityID);
@@ -466,7 +466,7 @@ void SlotManager::MoveFromInventory(psSlotMovementMsg& msg, Client *fromClient)
             if (fromClient->GetActor()->RangeTo(worldContainer, true, true) > RANGE_TO_USE)
             {
                 psserver->SendSystemError(fromClient->GetClientNum(),
-                    "You are not in range to use %s.",worldContainer->GetItemData()->GetName());
+                    "You are not in range to use %s.",worldContainer->GetItem()->GetName());
                 return;
             }
             // don't allow players to put an item from in locked container
@@ -819,9 +819,9 @@ psItem* SlotManager::FindItem(Client* client, int containerID, INVENTORY_SLOT_NU
         {
             gemObject* object = GEMSupervisor::GetSingleton().FindObject(EID(containerID));
             if (object && slotID == -1)
-                return object->AsItem()->GetItemData();
+                return object->GetItem();
 
-            gemContainer *container = object->AsContainer();
+            gemContainer *container = dynamic_cast<gemContainer*>(object);
             if (container)
             {
                 return container->FindItemInSlot(slotID);

@@ -49,7 +49,7 @@ bool pawsBookReadingWindow::PostSetup()
     if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_CRAFT_INFO)) return false;
 
     // Store some of our children for easy access later on.
-    name = FindWidget("ItemName")->AsTextBox();
+    name = dynamic_cast<pawsTextBox*> (FindWidget("ItemName"));
     if ( !name ) return false;
 
     description = dynamic_cast<pawsMultiLineTextBox*> (FindWidget("ItemDescription"));
@@ -58,10 +58,10 @@ bool pawsBookReadingWindow::PostSetup()
     descriptionCraft = dynamic_cast<pawsMultiLineTextBox*> (FindWidget("ItemDescriptionCraft"));
     //if ( !descriptionCraft ) return false;
     
-    writeButton = FindWidget("WriteButton");
+    writeButton = dynamic_cast<pawsWidget*> (FindWidget("WriteButton"));
     //if ( !writeButton ) return false;
 	
-	saveButton= FindWidget("SaveButton");
+	saveButton= dynamic_cast<pawsWidget*> (FindWidget("SaveButton"));
     //if ( !saveButton ) return false;
 	return true;
 }

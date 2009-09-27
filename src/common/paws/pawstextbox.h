@@ -78,8 +78,6 @@ public:
     virtual int GetFontColour();
 
     virtual void OnUpdateData(const char *dataname,PAWSData& data);
-    
-    virtual pawsTextBox* AsTextBox() { return this; }
 
 protected:
 

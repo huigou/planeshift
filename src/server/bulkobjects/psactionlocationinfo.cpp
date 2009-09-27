@@ -342,12 +342,9 @@ gemItem *psActionLocation::GetRealItem()
     InstanceID InstanceID = GetInstanceID();
     if (InstanceID==INSTANCE_ALL) 
     {
-    	gemItem* gemitem = NULL;
-    	// This code should never work. gemActionLocation is unrelated to gemItem.
-    	CS_ASSERT(false);
-        if (gemitem = dynamic_cast<gemItem*>(GetGemObject()))
+        if (GetGemObject()->GetItem())
         {
-            InstanceID = (int)gemitem->GetItemData()->GetUID();
+            InstanceID = (int)GetGemObject()->GetItem()->GetUID();
         }
     }
     // id 0 is not valid

@@ -92,10 +92,9 @@ public:
         gemObject *obj = GEMSupervisor::GetSingleton().FindObject(item_to_remove);
         if (obj)
         {
-            gemItem* gemitem = obj->AsItem();
-            if (gemitem)
+            psItem *item = obj->GetItem();
+            if (item)
             {
-            	psItem* item = gemitem->GetItemData();
                 // Is the item being guarded?
                 InstanceID instance = obj->GetInstance();
 
@@ -2218,7 +2217,7 @@ csString psItem::GetOpenableLockNames()
             }
 
             // get real item
-            psItem* item = lockItem->GetItemData();
+            psItem* item = lockItem->GetItem();
             if ( !item )
             {
                 Error2("Invalid ItemID from gemItem for instance ID %u.\n", idNum);
@@ -2479,7 +2478,7 @@ bool psItem::SetSketch(const csString& newSketchData)
 
 void psItem::FillContainerMsg(Client* client, psViewItemDescription& outgoing)
 {
-    gemContainer *container = gItem->AsContainer();
+    gemContainer *container = dynamic_cast<gemContainer*> (gItem);
 
     if (!container)
     {

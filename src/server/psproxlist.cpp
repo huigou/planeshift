@@ -339,8 +339,8 @@ void ProximityList::UpdatePublishDestRange(PublishDestination *pd, gemObject *my
 
         for(size_t i=0; i<pcpts.GetSize(); ++i)
         {
-            gemActor *actorself   = myself->AsActor();
-            gemActor *actorobject = object->AsActor();
+            gemActor *actorself   = dynamic_cast<gemActor *>(myself);
+            gemActor *actorobject = dynamic_cast<gemActor *>(object);
 
             if (actorself && actorobject)
             {

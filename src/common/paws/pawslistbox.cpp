@@ -562,7 +562,7 @@ void pawsListBox::SetScrollBarMaxValue()
         int rowWidth=0;
         for(size_t z = 0; z < rows[i]->GetTotalColumns();z++)
         {
-            pawsTextBox* wdg = rows[i]->GetColumn(z)->AsTextBox();
+            pawsTextBox* wdg = dynamic_cast <pawsTextBox*>(rows[i]->GetColumn(z));
             if(!wdg)
                 continue;
 
@@ -952,7 +952,7 @@ void pawsListBox::CreateSortingArrow(int colNum)
     if (title == NULL)
         return;
         
-    pawsWidget * arrow = new pawsEmpty();
+    pawsWidget * arrow = new pawsWidget();
     title->AddChild(arrow);
     arrow->SetRelativeFrame(title->ScreenFrame().Width()-arrowSize, 0, arrowSize, arrowSize);
     arrow->SetName("SortingArrow");
@@ -1301,7 +1301,7 @@ pawsTextBox * pawsListBox::GetTextCell(int rowNum, int colNum)
     if (cell == NULL)
         return NULL;
 
-    return cell->AsTextBox();
+    return dynamic_cast <pawsTextBox*> (cell);
 }
 
 csString pawsListBox::GetTextCellValue(int rowNum, int colNum)
@@ -1329,8 +1329,8 @@ int textBoxSortFunc(pawsWidget * widgetA, pawsWidget * widgetB)
     pawsTextBox * textBoxA, * textBoxB;
     const char  * textA,    * textB;
 
-    textBoxA = widgetA->AsTextBox();
-    textBoxB = widgetB->AsTextBox();
+    textBoxA = dynamic_cast <pawsTextBox*> (widgetA);
+    textBoxB = dynamic_cast <pawsTextBox*> (widgetB);
     assert(textBoxA && textBoxB);
     textA = textBoxA->GetText();
     if (textA == NULL)

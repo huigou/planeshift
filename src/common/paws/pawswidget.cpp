@@ -709,6 +709,9 @@ bool pawsWidget::Load( iDocumentNode* node )
         return false;
     }
 
+    //if (name=="ChatWindow")
+    //    printf("Chat found.");
+
     if ( ! LoadChildren(node) )
         return false;
 

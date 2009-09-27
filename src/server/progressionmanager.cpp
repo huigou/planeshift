@@ -202,7 +202,7 @@ void ProgressionManager::AllocateKillDamage(gemActor *deadActor, int exp)
         // New player, add to list
         if (!found)
         {
-            attackers.Push(history->attacker_ref->AsActor()); // This is ok because it is ONLY used in this function
+            attackers.Push(dynamic_cast<gemActor*>((gemObject *) history->attacker_ref)); // This is ok because it is ONLY used in this function
         }
     }
     int lastHistory = i;

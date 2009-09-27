@@ -452,7 +452,7 @@ bool Client::IsAllowedToAttack(gemObject * target, bool inform)
             break;
         case TARGET_FOE: /* Foe */
             {
-                gemActor *foe = target->AsActor();
+                gemActor *foe = target->GetActorPtr();
                 CS_ASSERT( foe != NULL ); // Since this is a foe it should have a actor.
                 gemActor *attacker = GetActor();
 
@@ -493,7 +493,7 @@ int Client::GetTargetType(gemObject* target)
         return TARGET_NONE; /* No Target */
     }
 
-    if (target->AsActor() == NULL)
+    if (target->GetActorPtr() == NULL)
     {
         return TARGET_ITEM; /* Item */
     }
@@ -558,7 +558,7 @@ int Client::GetTargetType(gemObject* target)
     {
         const DamageHistory *dh = GetActor()->GetDamageHistory((int)i);
         // If the target has ever hit you, you can attack them back.  Logging out clears this.
-        if (dh->attacker_ref.IsValid() && dh->attacker_ref == target)
+        if (dh->attacker_ref.IsValid() && dh->attacker_ref->GetActorPtr() == target)
             return TARGET_FOE;
     }
 

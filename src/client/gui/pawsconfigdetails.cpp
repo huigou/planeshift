@@ -102,7 +102,7 @@ bool pawsConfigDetails::OnScroll( int scrollDirection, pawsScrollBar* widget )
     scrollName = widget->GetName();
     valueName = scrollName.Slice(0, scrollName.Length()-6);
     valueName += "Value";
-    value = FindWidget(valueName)->AsTextBox();
+    value = dynamic_cast<pawsTextBox*> (FindWidget(valueName));
     if (value)
     {
         csString num;
@@ -140,7 +140,7 @@ bool pawsConfigDetails::OnButtonPressed( int button, int keyModifier, pawsWidget
 
 void pawsConfigDetails::SetScrollValue(const csString & name, int val)
 {
-    pawsTextBox* value = FindWidget(name+"Value")->AsTextBox();
+    pawsTextBox* value = dynamic_cast<pawsTextBox*> (FindWidget(name+"Value"));
     if (!value) return;
     pawsScrollBar* scroll = dynamic_cast<pawsScrollBar*> (FindWidget(name+"Scroll"));
     if (!scroll) return;
@@ -171,7 +171,7 @@ bool pawsConfigDetails::LoadConfig()
 
 int pawsConfigDetails::GetValue(const csString & name)
 {
-    pawsTextBox* value = FindWidget(name)->AsTextBox();
+    pawsTextBox* value = dynamic_cast<pawsTextBox*> (FindWidget(name));
     if (!value) return 0;
 
     if (value->GetText() == NULL)
