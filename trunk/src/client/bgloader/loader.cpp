@@ -1843,6 +1843,7 @@ bool BgLoader::LoadMeshFact(MeshFact* meshfact, bool wait)
             else
             {
                 meshfact->status = tloader->LoadNode(meshfact->path, meshfact->data);
+                return false;
             }
         }
         else
@@ -1854,10 +1855,9 @@ bool BgLoader::LoadMeshFact(MeshFact* meshfact, bool wait)
             else
             {
                 meshfact->status = tloader->LoadMeshObjectFactory(meshfact->path, meshfact->filename);
+                return false;
             }
         }
-
-        return false;
     }
 
     if(meshfact->status && meshfact->status->IsFinished())
@@ -1951,8 +1951,8 @@ bool BgLoader::LoadTexture(Texture* texture, bool wait)
         else
         {
             texture->status = tloader->LoadNode(texture->path, texture->data);
+            return false;
         }
-        return false;
     }
 
     if(texture->status->IsFinished())
