@@ -70,6 +70,7 @@ protected:
     
     csString language;
     csString filename;
+    csString authors;
     bool dirty;
     psStringTableHash stringTbl;
     iObjectRegistry* object_reg;

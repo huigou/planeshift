@@ -57,7 +57,7 @@ void psLocalization::Initialize(iObjectRegistry* _object_reg)
 void psLocalization::SetLanguage(const csString & _lang)
 {
     csRef<iDocument> doc;
-    csRef<iDocumentNode> root, tblRoot, item;
+    csRef<iDocumentNode> root, tblRoot, authorRoot, item;
     csRef<iDocumentNodeIterator> itemIter;
     psStringTableItem * itemData;
 
@@ -88,6 +88,12 @@ void psLocalization::SetLanguage(const csString & _lang)
         Error2("String table file %s has no root", filename.GetData());
         return;
     }
+    
+    authorRoot = root->GetNode("Author");
+    if (authorRoot != NULL)
+        authors = authorRoot->GetAttributeValue("text");
+    else
+        authors = "";
 
     tblRoot = root->GetNode("StringTable");
     if (tblRoot == NULL)
@@ -209,6 +215,9 @@ void psLocalization::WriteStringTable()
     psStringTableItem * item;
     psStringTableHash::GlobalIterator iter = stringTbl.GetIterator();
 
+    csString AuthorString = "<Author text=\"" + EscpXML(authors.GetDataSafe()) + "\" />\n";
+    
+    file->Write(AuthorString, AuthorString.Length());
     file->Write("<StringTable>\n", strlen("<stringtable>\n") );
 
     int i=0;
@@ -217,7 +226,7 @@ void psLocalization::WriteStringTable()
         i++;
         item = (psStringTableItem*)iter.Next();
         csString line;
-        line.Format("  <item orig=\"%s\" trans=\"%s\" />\n", item->original.GetDataSafe(), item->translated.GetDataSafe() );
+        line.Format("  <item orig=\"%s\" trans=\"%s\" />\n", EscpXML(item->original).GetDataSafe(), EscpXML(item->translated).GetDataSafe() );
         file->Write(line, line.Length() );
     }
 
