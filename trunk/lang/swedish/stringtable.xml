@@ -1,0 +1,446 @@
+<Author text="Kyeldon, Danielfre, Peko" />
+<StringTable>
+ <item orig="750" trans="750" />
+ <item orig="System text color" trans="" />
+ <item orig="Put an item up for sale or offer to buy something." trans="Lägg upp et objekt för försäljning eller köp någonting" />
+ <item orig="Stats" trans="" />
+ <item orig="Admin text color" trans="" />
+ <item orig="Allow spawning item with missing mesh" trans="" />
+ <item orig="Desc" trans="" />
+ <item orig="!!!WARNING!!!" trans="!!!VARNING!!!" />
+ <item orig="Others' attacks (Successful ones)" trans="Andra attacker (Framgångsrika)" />
+ <item orig="Own attacks that missed the target" trans="Egna attacker som missade målet" />
+ <item orig="Graphics" trans="Grafik" />
+ <item orig="Loading GUI" trans="Laddar gränssnitt" />
+ <item orig="Can I join you ?" trans="" />
+ <item orig="server" trans="server" />
+ <item orig="CHILDHOOD" trans="BARNDOM" />
+ <item orig="LIFE EVENTS" trans="HÄNDELSER I LIVET" />
+ <item orig="SL" trans="" />
+ <item orig="Buy" trans="Köpa" />
+ <item orig="Guild message of the day (A short message):" trans="Dagens guild-meddelande (ett kort meddelande)" />
+ <item orig="Modifiers" trans="" />
+ <item orig="Actions sounds" trans="" />
+ <item orig="Randomize" trans="" />
+ <item orig="Create alliance" trans="Skapa allians" />
+ <item orig="Third Person Lara" trans="Tredje Person Lara" />
+ <item orig="Disband" trans="Upplösa" />
+ <item orig="Edit" trans="Ändra" />
+ <item orig="System" trans="System" />
+ <item orig="Load" trans="Ladda" />
+ <item orig="Buffs" trans="" />
+ <item orig="Stack Count" trans="" />
+ <item orig="Talk to people in your sector." trans="Prata med folk i din sektor" />
+ <item orig="Factions:" trans="Faktioner" />
+ <item orig="Paths" trans="Stigar" />
+ <item orig="Active" trans="Aktiv" />
+ <item orig="Creatures:" trans="Varelser" />
+ <item orig="View" trans="Synvinkel" />
+ <item orig="PATHS" trans="" />
+ <item orig="Shadows" trans="Skuggor" />
+ <item orig="Unclaim" trans="" />
+ <item orig="Server:" trans="Server:" />
+ <item orig="Enable Shadows" trans="Sätt på skuggor" />
+ <item orig="Exit PlaneShift" trans="Lämna Planeshift" />
+ <item orig="Escalation Level:" trans="" />
+ <item orig="Notify when members login/logout" trans="" />
+ <item orig="Talk to someone privately." trans="Tala privat med någon" />
+ <item orig="Magic Skills List:" trans="Magifärdighetslista" />
+ <item orig="House:" trans="Hus:" />
+ <item orig="Withdraw" trans="" />
+ <item orig="%s from %s: %s" trans="" />
+ <item orig="%s from %s: %s" trans="" />
+ <item orig="Instant Cast" trans="" />
+ <item orig="H:" trans="" />
+ <item orig="Amount available to withdraw" trans="Belopp tillgängligt för uttag" />
+ <item orig="Adaptive distance" trans="" />
+ <item orig="Ban" trans="Banna" />
+ <item orig="Third Person M64" trans="Tredje Person M64" />
+ <item orig="Interface Volume" trans="Gränssnittsvolym" />
+ <item orig="Edit points" trans="" />
+ <item orig="Points" trans="Poäng" />
+ <item orig="Coins to exchange:" trans="Mynt att växla" />
+ <item orig="PvP" trans="PvP" />
+ <item orig="landscape" trans="landskap" />
+ <item orig="Type:" trans="Typ:" />
+ <item orig="Time: " trans="Tid:" />
+ <item orig="Exchange coins" trans="" />
+ <item orig="Log the system messages" trans="" />
+ <item orig="Hostility" trans="Aggresivitet" />
+ <item orig="Account User Name:" trans="Kontoanvändarnamn" />
+ <item orig="Auction" trans="Auktion" />
+ <item orig="You currently have no petitions." trans="" />
+ <item orig="Attributes" trans="Attribut" />
+ <item orig="You will now ignore %s." trans="Du kommer nu att ignorera %s" />
+ <item orig="Study" trans="Undersök" />
+ <item orig="Private notes" trans="Privata anteckningar" />
+ <item orig="Change name" trans="Ändra namn" />
+ <item orig="Getting Characters" trans="Hämtar Karaktärer" />
+ <item orig="Unknown command" trans="Okänt Kommando" />
+ <item orig="Others' attacks that missed the target" trans="Andras attacker som missade målet" />
+ <item orig="Min. FPS:" trans="Min. FPS" />
+ <item orig="Main" trans="" />
+ <item orig="Change" trans="Ändra" />
+ <item orig="Descalate" trans="" />
+ <item orig="Mother Name:" trans="Moderns Namn:" />
+ <item orig="Privil." trans="" />
+ <item orig="Skin Colour" trans="Hudfärg" />
+ <item orig="Master:" trans="Mästare" />
+ <item orig="Details" trans="Detaljer" />
+ <item orig="Collision Detection" trans="Kollisionsdetektion" />
+ <item orig="Max. FPS:" trans="Max. FPS" />
+ <item orig="Prev" trans="" />
+ <item orig="Requesting connection" trans="Begär uppkoppling" />
+ <item orig="Prv notes" trans="Tidigare anteckningar" />
+ <item orig="Reload Cache" trans="" />
+ <item orig="Amount available to deposit" trans="Belopp tillgängligt att sätta in" />
+ <item orig="Movements" trans="Rörelser" />
+ <item orig="Mesh:" trans="" />
+ <item orig="Resolution" trans="Upplösning" />
+ <item orig="Gender:" trans="Kön:" />
+ <item orig="Refresh MOTD" trans="" />
+ <item orig="Login" trans="Logga in" />
+ <item orig="Z:" trans="Z:" />
+ <item orig="Spell Description:" trans="Besvärjelsebeskrivning" />
+ <item orig="Petition Info" trans="" />
+ <item orig="%s has invited you to join a group. Click Yes to accept or No to reject." trans="% har bjudit in dig till en grupp. Klicka Ja för att acceptera eller Nej för att neka." />
+ <item orig="You must select a petition from the list in order to cancel it." trans="" />
+ <item orig="Alliance" trans="Allians" />
+ <item orig="Full Mesh" trans="" />
+ <item orig="I am leaving" trans="" />
+ <item orig="List:" trans="Lista" />
+ <item orig="LOGIN" trans="" />
+ <item orig="Remove" trans="Ta bort" />
+ <item orig="Action:" trans="" />
+ <item orig="Never tired" trans="" />
+ <item orig="Do you really wish to leave Yliakum?" trans="Vill du verkligen lämna Yliakum?" />
+ <item orig="Count" trans="" />
+ <item orig="Enter the command(s):" trans="" />
+ <item orig="Month:" trans="Månad:" />
+ <item orig="Chat" trans="Chat" />
+ <item orig="Father Name:" trans="Faderns namn:" />
+ <item orig="Rank" trans="Rang" />
+ <item orig="Spawn item" trans="" />
+ <item orig="o&clock" trans="o&klocka" />
+ <item orig="Own combat stance changes" trans="" />
+ <item orig="Experience" trans="Erfarenhet" />
+ <item orig="Upload!" trans="Ladda upp!" />
+ <item orig="Deposit" trans="" />
+ <item orig="? Weight" trans="? Vikt" />
+ <item orig="No Target" trans="Inget mål" />
+ <item orig="Tria" trans="" />
+ <item orig="Group text color" trans="" />
+ <item orig="New" trans="Ny" />
+ <item orig="Mute sounds on focus loss" trans="" />
+ <item orig="Add Linked" trans="" />
+ <item orig="keyboard" trans="tangentbord" />
+ <item orig="Activity:" trans="Aktivitet" />
+ <item orig="You have been assigned to the selected petition." trans="" />
+ <item orig="Combat" trans="Strid" />
+ <item orig="Path" trans="Stig" />
+ <item orig="Kill Player" trans="Döda spelare" />
+ <item orig="%s says: %s" trans="" />
+ <item orig="Get Reward" trans="Få belöning" />
+ <item orig="Magic" trans="Magi" />
+ <item orig="Own attacks that fail to penetrate the armor" trans="" />
+ <item orig="Credits" trans="" />
+ <item orig="details" trans="detaljer" />
+ <item orig="HP" trans="HP" />
+ <item orig="%s shouts: %s" trans="%s skriker %s" />
+ <item orig="No server running at the moment" trans="" />
+ <item orig="You have entered edit mode." trans="" />
+ <item orig="CHARACTER CREATION" trans="" />
+ <item orig="Glyphs" trans="" />
+ <item orig="Alliance:" trans="Allians" />
+ <item orig="Various Skill description:" trans="" />
+ <item orig="Edit level" trans="" />
+ <item orig="Leave" trans="Lämna" />
+ <item orig="Capacity:" trans="Kapacitet" />
+ <item orig="Debuffs" trans="" />
+ <item orig="You have ignored the following players:" trans="Du har ignorerat följande spelare" />
+ <item orig="Items:" trans="Objekt" />
+ <item orig="Others' attacks that fail to penetrate the armor" trans="" />
+ <item orig="Admin" trans="Admin" />
+ <item orig="mouse" trans="mus" />
+ <item orig="Various Skills List:" trans="" />
+ <item orig="Stats description:" trans="" />
+ <item orig="Lets go !" trans="" />
+ <item orig="Account:" trans="Konto" />
+ <item orig="%s %s" trans="%s %s" />
+ <item orig="Trias" trans="" />
+ <item orig="General" trans="" />
+ <item orig="Life" trans="Liv" />
+ <item orig="Password:" trans="Lösenord" />
+ <item orig="Currently, there are no petitions." trans="" />
+ <item orig="Set" trans="" />
+ <item orig="Actions Volume" trans="" />
+ <item orig="Quest Testing" trans="" />
+ <item orig="Year:" trans="År" />
+ <item orig="Save" trans="Spara" />
+ <item orig="Promote" trans="" />
+ <item orig="Combat Skills" trans="Stridsfärdigheter" />
+ <item orig="Polygon:" trans="Polygon" />
+ <item orig="Talk to everyone in your guild privately." trans="" />
+ <item orig="Others' attacks that are dodged" trans="" />
+ <item orig="Combat music" trans="" />
+ <item orig="Own attacks (Successful ones)" trans="Egna attacker (Framgångsrika)" />
+ <item orig="The selected petition was cancelled." trans="" />
+ <item orig="Welcome back" trans="Välkommen tillbaka" />
+ <item orig="You are ignoring all replies from that person." trans="" />
+ <item orig="Description:" trans="Beskrivning" />
+ <item orig="Chat text color" trans="" />
+ <item orig="Cancel" trans="" />
+ <item orig="None" trans="Ingen" />
+ <item orig="Trade" trans="" />
+ <item orig="Game Control" trans="" />
+ <item orig="Mainchat brackets" trans="" />
+ <item orig="Progression Points" trans="" />
+ <item orig="Faction" trans="Faktion" />
+ <item orig="You have ignored no-one." trans="" />
+ <item orig="NPC text color" trans="" />
+ <item orig="%s tells group: %s" trans="" />
+ <item orig="Quick" trans="" />
+ <item orig="Public notes" trans="" />
+ <item orig="Confirmation" trans="" />
+ <item orig="Master Volume" trans="Master Volym" />
+ <item orig="Withdraw and Deposit" trans="Insättningar och Uttag" />
+ <item orig="Labels" trans="" />
+ <item orig="Upload" trans="" />
+ <item orig="Exchange" trans="" />
+ <item orig="Combat Skills List:" trans="Stridsfärdighetslista" />
+ <item orig="tweaks" trans="" />
+ <item orig="Confirmation upon PvP duel:" trans="" />
+ <item orig="Petition text:" trans="" />
+ <item orig="Secret guild" trans="" />
+ <item orig="List Attributes" trans="" />
+ <item orig="Claim" trans="" />
+ <item orig="Radius:" trans="Radie" />
+ <item orig="0" trans="0" />
+ <item orig="disabled" trans="" />
+ <item orig="Tells" trans="Säger" />
+ <item orig="Manage petitions to help users." trans="" />
+ <item orig="No Fall Damage" trans="" />
+ <item orig="Communication" trans="" />
+ <item orig="Cannot connect to server" trans="Kan inte koppla upp mot server" />
+ <item orig="Your text color" trans="" />
+ <item orig="1" trans="1" />
+ <item orig="Invisible" trans="Osynlig" />
+ <item orig="CHARACTER SELECT" trans="" />
+ <item orig="Pickupable" trans="" />
+ <item orig="Detail information:" trans="" />
+ <item orig="You will no longer ignore %s." trans="" />
+ <item orig="Others' combat stance changes" trans="" />
+ <item orig="Ambiguous command: " trans="" />
+ <item orig="The selected petition was %s" trans="" />
+ <item orig="Loading game" trans="Laddar Spel" />
+ <item orig="Use Collision Detection" trans="Använd Kollisionsdetektion" />
+ <item orig="Invite" trans="Bjud In" />
+ <item orig="Sector:" trans="Sektor" />
+ <item orig="Mix yourtext color" trans="" />
+ <item orig="Permissions" trans="" />
+ <item orig="X:" trans="x" />
+ <item orig="5" trans="5" />
+ <item orig="Make leader" trans="" />
+ <item orig="Money" trans="Pengar" />
+ <item orig="Guild" trans="" />
+ <item orig="0 Trias" trans="0 Trias" />
+ <item orig="Parents" trans="Föräldrar" />
+ <item orig="Jobs" trans="Jobb" />
+ <item orig="Chat - Bubbles" trans="" />
+ <item orig="Welcome to PlaneShift!" trans="Välkommen till PlaneShift" />
+ <item orig="Delete" trans="" />
+ <item orig="Entities" trans="" />
+ <item orig="Auction text color" trans="" />
+ <item orig="Hello" trans="Hej" />
+ <item orig="You're offered" trans="Du erbjuds" />
+ <item orig="Hi" trans="Hej" />
+ <item orig="Own attacks that are dodged" trans="" />
+ <item orig="Done" trans="Färdig" />
+ <item orig="Birth" trans="Födsel" />
+ <item orig="Keys" trans="Tangenter" />
+ <item orig="Faction description:" trans="Faktionsbeskrivning" />
+ <item orig="Perform an action see by people in your vicinity." trans="" />
+ <item orig="Reload" trans="" />
+ <item orig="Players" trans="Spelare" />
+ <item orig="Phys Stam." trans="" />
+ <item orig="Stats:" trans="" />
+ <item orig="NPC" trans="" />
+ <item orig="Music Volume" trans="Musikvolym" />
+ <item orig="Defend me !" trans="Skydda mig !" />
+ <item orig="Spell List:" trans="Besvärjelselista" />
+ <item orig="FPS cap:" trans="" />
+ <item orig="Tell text color" trans="" />
+ <item orig="CP: 0" trans="" />
+ <item orig="BIRTH" trans="FÖDSEL" />
+ <item orig="Unmute Player" trans="" />
+ <item orig="Online only" trans="Online enbart" />
+ <item orig="Pub notes" trans="" />
+ <item orig="Edit Master" trans="" />
+ <item orig="Amount to deposit" trans="Belopp att sätta in" />
+ <item orig="Join Game" trans="" />
+ <item orig="Locked" trans="Låst" />
+ <item orig="Account Password:" trans="Kontolösenord" />
+ <item orig="Items" trans="Föremål" />
+ <item orig="Factions" trans="Faktion" />
+ <item orig="Weight:" trans=""Vikt />
+ <item orig="Petition submitted:" trans="" />
+ <item orig="Men Stam." trans="" />
+ <item orig="Requesting World" trans="" />
+ <item orig="Group" trans="Grupper" />
+ <item orig="Help text color" trans="" />
+ <item orig="Face" trans="Ansikte" />
+ <item orig="OK" trans="OK" />
+ <item orig="First Person" trans="Första Person" />
+ <item orig="Selection" trans="" />
+ <item orig="?" trans="?" />
+ <item orig="Trigger:" trans="" />
+ <item orig="Refresh List" trans="" />
+ <item orig="Character Name" trans="" />
+ <item orig="Kick Player" trans="" />
+ <item orig="Filter incoming bad words" trans="" />
+ <item orig="Skill" trans="Färdigheter" />
+ <item orig="The selected petition has been escalated." trans="" />
+ <item orig="Your notes:" trans="" />
+ <item orig="Rotate" trans="Rotera" />
+ <item orig="Birth Event:" trans="Birth Events" />
+ <item orig="Character description:" trans="" />
+ <item orig="No" trans="Nej" />
+ <item orig="Combat messages regarding me" trans="" />
+ <item orig="Player name:" trans="" />
+ <item orig="Mouse" trans="Mus" />
+ <item orig="Position:" trans="Position" />
+ <item orig="Help" trans="Hjälp" />
+ <item orig="View chat" trans="" />
+ <item orig="Min. distance:" trans="" />
+ <item orig="Quit" trans="Sluta" />
+ <item orig="Lockpicking" trans="" />
+ <item orig="models" trans="modeller" />
+ <item orig="Siblings" trans="Syskon" />
+ <item orig="Camera" trans="Kamera" />
+ <item orig="Remember password" trans="Kom ihåg lösenord" />
+ <item orig="Third Person Follow" trans="" />
+ <item orig="Character Name:" trans="" />
+ <item orig="Day:" trans="Dag" />
+ <item orig="Clear" trans="" />
+ <item orig="Next" trans="Nästa" />
+ <item orig="Stat" trans="" />
+ <item orig="%s tells you: %s" trans="" />
+ <item orig="D:" trans="" />
+ <item orig="Jobs Skill description:" trans="" />
+ <item orig="Mana" trans="Mana" />
+ <item orig="Yes" trans="Ja" />
+ <item orig="Reset" trans="" />
+ <item orig="Interface sounds" trans="" />
+ <item orig="Talk to your group privately." trans="" />
+ <item orig="Own attacks that are blocked" trans="" />
+ <item orig="Religion:" trans="Religion" />
+ <item orig="You can not ignore yourself." trans="Du kan inte ignorera dig själv" />
+ <item orig="Members" trans="Medlemmar" />
+ <item orig="List all of the petitions you have submitted." trans="" />
+ <item orig="Settings" trans="Inställningar" />
+ <item orig="You must select a petition from the list in order to assign yourself." trans="" />
+ <item orig="Count:" trans="" />
+ <item orig="Back" trans="" />
+ <item orig="graphics" trans="grafik" />
+ <item orig="You tell %s: %s" trans="Du säger till %s: %s" />
+ <item orig="Add New" trans="Lägg Till Ny" />
+ <item orig="Infinite Inventory" trans="" />
+ <item orig="Lose focus on send" trans="" />
+ <item orig="Hair Style" trans="Hårstil" />
+ <item orig="New Character" trans="Ny Karaktär" />
+ <item orig="Magic Skill description:" trans="Magifärdighetsbeskrivning" />
+ <item orig="M:" trans="" />
+ <item orig="Infinite Mana" trans="Oändlig Mana" />
+ <item orig="Status:" trans="Status" />
+ <item orig="Teleport To Player" trans="Teleportera Till Spelare" />
+ <item orig="Add" trans="Lägg Till" />
+ <item orig="PARENTS" trans="FÖRÄLDRARr" />
+ <item orig="Petition Text:" trans="" />
+ <item orig="Invincible" trans="Odödlig" />
+ <item orig="You're offering" trans="Du erbjuder" />
+ <item orig="Jobs Skills List:" trans="" />
+ <item orig="Magic Skills" trans="Magifärdigheter" />
+ <item orig="Combat messages regarding others" trans="" />
+ <item orig="Actions" trans="Handlingar" />
+ <item orig="Chat - Filters" trans="Chatt - Filter" />
+ <item orig="Amount to withdraw" trans="Belopp att ta ut" />
+ <item orig="Others' attacks that are blocked" trans="Andras attacker som är blockerade" />
+ <item orig="Talk to the people in your immediate vicinity." trans="Tala med personer i din omedelbara närhet" />
+ <item orig="Player name color" trans="" />
+ <item orig="Random name" trans="Slumpmässigt namn" />
+ <item orig="Couldn't resolve server hostname." trans="" />
+ <item orig="Escalate" trans="Eskalera" />
+ <item orig="30" trans="30" />
+ <item orig="Various Skills" trans="" />
+ <item orig="Events" trans="Händelser" />
+ <item orig="Trias:" trans="Trias" />
+ <item orig="Auto Tab selection:" trans="" />
+ <item orig="Chat - Tabs" trans="" />
+ <item orig="Makes the server log what target player is saying." trans="" />
+ <item orig="New Account" trans="Nytt Konto" />
+ <item orig="Beard Style" trans="Skäggstil" />
+ <item orig="Mute Player" trans="" />
+ <item orig="Shortcut key:" trans="" />
+ <item orig="Controls" trans="Kontroller" />
+ <item orig="Name:" trans="Namn" />
+ <item orig="Discard" trans="" />
+ <item orig="Y:" trans="Y:" />
+ <item orig="Servers:" trans="Servrar" />
+ <item orig="Join" trans="" />
+ <item orig="Assigned GM:" trans="" />
+ <item orig="Lockable" trans="Låsbar" />
+ <item orig="Distance:" trans="Distans" />
+ <item orig="Echo screen text" trans="" />
+ <item orig="Loading world" trans="Laddar värld" />
+ <item orig="New User? Register at http://laanx.fragnetics.com/register" trans="Ny Användare? Registrera på http://laanx.fragnetics.com/register" />
+ <item orig="Quests" trans="" />
+ <item orig="Please wait for verification from server" trans="Var god vänta på Serververifikation" />
+ <item orig="o'clock" trans="" />
+ <item orig="You must select a petition from the list in order to close it." trans="" />
+ <item orig="Name" trans="Namn" />
+ <item orig="Getting entities" trans="" />
+ <item orig="You must select a petition from the list in order to escalate it." trans="" />
+ <item orig="Custom" trans="" />
+ <item orig="Sound" trans="Ljud" />
+ <item orig="Background music" trans="Bakgrundsmusik" />
+ <item orig="Uncompleted" trans="" />
+ <item orig="Petitons are waiting." trans="" />
+ <item orig="Completed" trans="" />
+ <item orig="none" trans="" />
+ <item orig="Alternates" trans="" />
+ <item orig="Save MOTD" trans="" />
+ <item orig="network" trans="nätverk" />
+ <item orig="Interface" trans="Gränssnitt" />
+ <item orig="Loop background music" trans="Loopa bakgrundsmusik" />
+ <item orig="Shout text color" trans="" />
+ <item orig="Log the chat messages" trans="" />
+ <item orig="Filter outgoing bad words" trans="" />
+ <item orig="Realm" trans="" />
+ <item orig="cancelled." trans="" />
+ <item orig="closed." trans="" />
+ <item orig="Waiting on server data.." trans="Väntar på severerdata.." />
+ <item orig="View all" trans="Se alla" />
+ <item orig="Unknown Chat Type: %d" trans="" />
+ <item orig="/ 100" trans="/ 100" />
+ <item orig="Free Rotation" trans="Fri Rotation" />
+ <item orig="Actual FPS may vary." trans="Faktisk FPS kan variera" />
+ <item orig="You must select a petition from the list in order to view it." trans="" />
+ <item orig="Spells" trans="Besvärjelser" />
+ <item orig="Shortcuts" trans="" />
+ <item orig="Guild text color" trans="" />
+ <item orig="Random" trans="" />
+ <item orig="Job:" trans="Jobb:" />
+ <item orig="Ok" trans="Ok" />
+ <item orig="Sell" trans="Sälj" />
+ <item orig="Way" trans="" />
+ <item orig="controls" trans="kontroller" />
+ <item orig="Close" trans="Stäng" />
+ <item orig="Website:" trans="Hemsida" />
+ <item orig="Various" trans="" />
+ <item orig="Combat Skill description:" trans="Stridsfärdighetsbeskrivning" />
+ <item orig="Ambient sounds" trans="" />
+ <item orig="Greetings" trans="Hälsningar" />
+ <item orig="Select a reward:" trans="Välj en belöning" />
+ <item orig="Ambient Volume" trans="" />
+ <item orig="Hair Colour" trans="Hårfärg" />
+</StringTable>
