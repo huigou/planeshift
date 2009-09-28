@@ -261,8 +261,8 @@ pawsListBoxRow* pawsComboBox::Select(int optionNum)
     
     if (!closed)
     {
-        arrow->SetUpImage("New Down Arrow");
-        arrow->SetDownImage("New Down Arrow");
+        arrow->SetUpImage("Down Arrow");
+        arrow->SetDownImage("Down Arrow");
         SetSize( oldWidth, oldHeight );
         if (fliptotop)
         {
