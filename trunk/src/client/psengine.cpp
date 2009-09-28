@@ -257,7 +257,6 @@ psEngine::psEngine (iObjectRegistry *objectreg, psCSSetup *CSSetup)
 
     chatBubbles = 0;
     options = 0;
-    gfxFeatures = 0;
 }
 
 // ----------------------------------------------------------------------------
@@ -384,45 +383,6 @@ bool psEngine::Initialize (int level)
             return false;
         }
 
-        // Check the level of shader use.
-        csString shader("Highest");
-        if(shader.CompareNoCase(GetConfig()->GetStr("PlaneShift.Graphics.Shaders")))
-        {
-            gfxFeatures |= useHighestShaders;
-        }
-        shader = "High";
-        if(shader.CompareNoCase(GetConfig()->GetStr("PlaneShift.Graphics.Shaders")))
-        {
-            gfxFeatures |= useHighShaders;
-        }
-        shader = "Medium";
-        if(shader.CompareNoCase(GetConfig()->GetStr("PlaneShift.Graphics.Shaders")))
-        {
-            gfxFeatures |= useMediumShaders;
-        }
-        shader = "Low";
-        if(shader.CompareNoCase(GetConfig()->GetStr("PlaneShift.Graphics.Shaders")))
-        {
-            gfxFeatures |= useLowShaders;
-        }
-        shader = "Lowest";
-        if(shader.CompareNoCase(GetConfig()->GetStr("PlaneShift.Graphics.Shaders")))
-        {
-            gfxFeatures |= useLowestShaders;
-        }
-
-        // Check if we're using real time shadows.
-        if(GetConfig()->GetBool("PlaneShift.Graphics.Shadows"))
-        {
-            gfxFeatures |= useShadows;
-        }
-
-        // Check if we're using meshgen.
-        if(GetConfig()->GetBool("PlaneShift.Graphics.EnableGrass", true))
-        {
-            gfxFeatures |= useMeshGen;
-        }
-
         //Check if sound is on or off in psclient.cfg
         csString soundPlugin;
 
@@ -466,7 +426,7 @@ bool psEngine::Initialize (int level)
 
         // Create the PAWS window manager
         csString skinPathBase = cfgmgr->GetStr("PlaneShift.GUI.Skin.Base","/planeshift/art/skins/base/client_base.zip");
-        paws = new PawsManager( object_reg, skinPath, skinPathBase, "/planeshift/userdata/planeshift.cfg", gfxFeatures );
+        paws = new PawsManager(object_reg, skinPath, skinPathBase, "/planeshift/userdata/planeshift.cfg");
 
         options = new psOptions("/planeshift/userdata/options.cfg", vfs);
 
@@ -560,8 +520,7 @@ bool psEngine::Initialize (int level)
         backgroundWorldLoading = psengine->GetConfig()->GetBool("PlaneShift.Loading.BackgroundWorldLoading");
         loader = csQueryRegistry<iBgLoader>(object_reg);
         scenemanipulator = scfQueryInterface<iSceneManipulate>(loader);
-        csRef<iThreadManager> tm = csQueryRegistry<iThreadManager>(object_reg);
-        
+
         // Check VFS mounts
         csString test_path;
         csRef<iDataBuffer> realPath;
@@ -575,26 +534,25 @@ bool psEngine::Initialize (int level)
           PS_PAUSEEXIT(1);
         }
         test_path = "/planeshift/meshes/";
-		realPath = vfs->GetRealPath(test_path);
+        realPath = vfs->GetRealPath(test_path);
 
-		if (!realPath.IsValid())
-		{
-		  Error2("Bad virtual path %s.", test_path.GetData());
-		  PS_PAUSEEXIT(1);
-		}
-		test_path = "/planeshift/world/";
-		realPath = vfs->GetRealPath(test_path);
+        if (!realPath.IsValid())
+        {
+          Error2("Bad virtual path %s.", test_path.GetData());
+          PS_PAUSEEXIT(1);
+        }
+        test_path = "/planeshift/world/";
+        realPath = vfs->GetRealPath(test_path);
 
-		if (!realPath.IsValid())
-		{
-		  Error2("Bad virtual path %s.", test_path.GetData());
-		  PS_PAUSEEXIT(1);
-		}
+        if (!realPath.IsValid())
+        {
+          Error2("Bad virtual path %s.", test_path.GetData());
+          PS_PAUSEEXIT(1);
+        }
 
         // Start to fill the loader cache.
-        precaches.Push(loader->Setup(gfxFeatures, 200));
         precaches.Push(loader->PrecacheData("/planeshift/materials/materials.cslib", false));
-        lastLoadingCount = 2;
+        lastLoadingCount = 1;
 
         // Set progress bar.
         pawsProgressBar* progress = (pawsProgressBar*)paws->FindWidget("SplashProgress");

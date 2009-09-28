@@ -336,9 +336,7 @@ public:
     /// get the inventory cache
     psInventoryCache* GetInventoryCache(void) { return inventoryCache; }
 
-    /// The graphics features that are enabled/disabled.
-    uint GetGFXFeatures() { return gfxFeatures; }
-
+    /// Whether or not we're background loading.
     bool BackgroundWorldLoading() { return backgroundWorldLoading; }
 
     void RegisterDelayedLoader(DelayedLoader* obj) { delayedLoaders.PushSmart(obj); }
@@ -411,8 +409,6 @@ private:
 
     /// Used to stop rendering when the window is minimized
     bool drawScreen;
-
-    uint gfxFeatures;
 
     // For splash progress.
     csRefArray<iThreadReturn> precaches;

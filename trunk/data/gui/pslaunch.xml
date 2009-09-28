@@ -339,25 +339,19 @@
           <text string="Enable VBO:" position="left"/>
         </widget>
 
-        <widget name="LoadAllMaps" factory="pawsCheckBox" id="13116">
+        <widget name="LoaderCache" factory="pawsCheckBox" id="13116">
           <frame x="0" y="203" width="130" height="15"/>
           <checkbox on="radioon" off="radiooff" size="12"/>
-          <text string="Load All Maps:" position="left"/>
-        </widget>
-	
-        <widget name="KeepMapsLoaded" factory="pawsCheckBox" id="13117">
-          <frame x="0" y="223" width="130" height="15"/>
-          <checkbox on="radioon" off="radiooff" size="12"/>
-          <text string="Keep Maps Loaded:" position="left"/>
+          <text string="Loader Cache:" position="left"/>
         </widget>
 
-        <widget name="BackgroundLoadingText" factory="pawsTextBox" id="13118">
-          <frame x="0" y="243" width="210" height="20"/>
+        <widget name="BackgroundLoadingText" factory="pawsTextBox" id="13117">
+          <frame x="0" y="223" width="210" height="20"/>
           <text string="Background Loading:"/>
         </widget>
 
-        <widget name="BackgroundLoading" factory="pawsComboBox" id="13119">
-          <frame x="120" y="240" width="70" height="20" border="no"/>
+        <widget name="BackgroundLoading" factory="pawsComboBox" id="13118">
+          <frame x="120" y="220" width="70" height="20" border="no"/>
           <listbox rows="3" height="25" useScrollBar="false" />
         </widget>
       </widget>

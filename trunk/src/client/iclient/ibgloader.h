@@ -45,14 +45,7 @@ struct StartPosition : public csRefCount
  */
 struct iBgLoader : public virtual iBase
 {
-  SCF_INTERFACE(iBgLoader, 1, 4, 2);
-
- /**
-  * Sets key settings and performs a shader parse.
-  * @param gfxFeatures Mask of available graphics features.
-  * @param loadRange The maximum range within which the loader should check for objects.
-  */
-  THREADED_INTERFACE2(Setup, uint gfxFeatures, float loadRange);
+  SCF_INTERFACE(iBgLoader, 1, 5, 0);
 
  /**
   * Start loading a material into the engine. Returns 0 if the material is not yet loaded.
