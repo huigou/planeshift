@@ -558,7 +558,8 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
 
                         // Validation.
                         csString msg;
-                        msg.Format("Invalid material reference '%s' in cal3d meshfact '%s'", node2->GetAttributeValue("material"), node->GetAttributeValue("name"));
+                        msg.Format("Invalid material reference '%s' in cal3d meshfact '%s' mesh '%s'",
+                          node2->GetAttributeValue("material"), node->GetAttributeValue("name"), node2->GetAttributeValue("name"));
                         CS_ASSERT_MSG(msg.GetData(), material.IsValid());
                     }
                     mf->materials.Push(material);
