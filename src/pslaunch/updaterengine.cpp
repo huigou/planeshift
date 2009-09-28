@@ -717,12 +717,12 @@ void UpdaterEngine::GeneralUpdate()
             // Download update zip.
             if(pass == 1 && !genericPlatform)
             {
-                PrintOutput("\n");
+                /*PrintOutput("\n");*/
                 PrintOutput("Downloading platform specific update file..\n\n");
             }
             else
             {
-                PrintOutput("\n");
+                /*PrintOutput("\n");*/
                 PrintOutput("Downloading generic update file..\n\n");
             }
 
