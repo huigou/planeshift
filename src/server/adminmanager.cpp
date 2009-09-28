@@ -1756,6 +1756,7 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
     bool banned = false;
     time_t banTimeLeft;
     int daysLeft = 0, hoursLeft = 0, minsLeft = 0;
+    csString BanReason;
     bool advisorBanned = false;
     int cheatCount = 0;
 
@@ -1846,6 +1847,7 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
         time_t now = time(0);
         if(ban->end > now)
         {
+            BanReason = ban->reason;
             banTimeLeft = ban->end - now;
             banned = true;
 
@@ -1882,7 +1884,7 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
 
         if(banned)
         {
-            info.AppendFmt(" The player's account is banned! Time left: %d days, %d hours, %d minutes.", daysLeft, hoursLeft, minsLeft);
+            info.AppendFmt(" The player's account is banned for %s! Time left: %d days, %d hours, %d minutes.", BanReason.GetDataSafe(), daysLeft, hoursLeft, minsLeft);
         }
 
         if (advisorBanned)
