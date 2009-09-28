@@ -93,7 +93,7 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 PawsManager::PawsManager(iObjectRegistry* object, const char* skin, const char* skinBase,
-                         const char* pawsConfigFile, uint _gfxFeatures) : render2texture(false)
+                         const char* pawsConfigFile) : render2texture(false)
 {
     objectReg = object;
     pawsConfig = pawsConfigFile;
@@ -195,8 +195,6 @@ PawsManager::PawsManager(iObjectRegistry* object, const char* skin, const char* 
 
     soundStatus = false;
     timeOver = 0;
-
-    gfxFeatures = _gfxFeatures;
 
     // Init render texture.
     csRef<iTextureManager> texman = graphics3D->GetTextureManager();

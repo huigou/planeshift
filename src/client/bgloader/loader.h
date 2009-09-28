@@ -60,13 +60,6 @@ public:
     bool Initialize(iObjectRegistry* _object_reg);
 
    /**
-    * Sets key settings and performs a shader parse.
-    * @param gfxFeatures Mask of available graphics features.
-    * @param loadRange The maximum range within which the loader should check for objects.
-    */
-    THREADED_CALLABLE_DECL2(BgLoader, Setup, csThreadReturn, uint, gfxFeatures, float, loadRange, THREADEDL, false, false);
-
-   /**
     * Start loading a material into the engine. Returns 0 if the material is not yet loaded.
     * @param failed Pass a boolean to be able to manually handle a failed load.
     */
@@ -219,6 +212,19 @@ private:
     class Portal;
     class Light;
     class Zone;
+
+    // The various gfx feature options we have.
+    enum gfxFeatures
+    {
+      useLowestShaders = 0x1,
+      useLowShaders = 0x2,
+      useMediumShaders = 0x4,
+      useHighShaders = 0x8,
+      useHighestShaders = 0x10,
+      useShadows = 0x20,
+      useMeshGen = 0x40,
+      useAll = (useHighestShaders | useShadows | useMeshGen)
+    };
 
     /********************************************************
      * Data structures representing components of the world.
@@ -511,7 +517,10 @@ private:
     float loadRange;
 
     // Currently enabled graphics features.
-    uint gfxFeatures;
+    uint enabledGfxFeatures;
+
+    // Whether or not we're caching.
+    bool cache;
 
     // Whether the current position is valid.
     bool validPosition;

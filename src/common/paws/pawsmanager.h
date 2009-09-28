@@ -78,7 +78,7 @@ class PawsManager : public Singleton<PawsManager>
 public:
 
     PawsManager(iObjectRegistry* objectReg, const char* skin, const char* skinBase = NULL,
-                const char* pawsConfigFile = "/planeshift/userdata/planeshift.cfg", uint _gfxFeatures = useAll);
+                const char* pawsConfigFile = "/planeshift/userdata/planeshift.cfg");
 
     virtual ~PawsManager();
 
@@ -108,8 +108,6 @@ public:
 
     /// Returns the texture manager.
     pawsTextureManager* GetTextureManager() { return textureManager; }
-
-    inline uint GetGFXFeatures() const { return gfxFeatures; }
 
     void UseR2T(bool r2t) { render2texture = r2t; }
 
@@ -548,22 +546,6 @@ protected:
 
     /// The font resizing factor for all widgets
     float fontFactor;
-
-    // Feature defines.
-    enum gfxFeatures
-    {
-        useLowestShaders = 0x1,
-        useLowShaders = 0x2,
-        useMediumShaders = 0x4,
-        useHighShaders = 0x8,
-        useHighestShaders = 0x10,
-        useShadows = 0x20,
-        useMeshGen = 0x40,
-        useAll = (useHighShaders | useShadows | useMeshGen)
-    };
-
-    /// Graphics features we want to use.
-    uint gfxFeatures;
 
 
     /*                      Sound Member Variables

@@ -51,8 +51,8 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
 SCF_IMPLEMENT_FACTORY(BgLoader)
 
 BgLoader::BgLoader(iBase *p)
-  : scfImplementationType (this, p), validPosition(false),
-    resetHitbeam(true)
+  : scfImplementationType (this, p), loadRange(200), enabledGfxFeatures(0),
+  validPosition(false), resetHitbeam(true)
 {
 }
 
@@ -80,16 +80,51 @@ bool BgLoader::Initialize(iObjectRegistry* object_reg)
 
     engine->SetClearZBuf(true);
 
-    return true;
-}
+    csRef<iConfigManager> config = csQueryRegistry<iConfigManager> (object_reg);
+    
+    // Check whether we're caching files for performance.    
+    cache = config->GetBool("PlaneShift.Loading.Cache", true);
 
-THREADED_CALLABLE_IMPL2(BgLoader, Setup, uint gfxFeatures, float loadRange)
-{
-    this->gfxFeatures = gfxFeatures;
-    this->loadRange = loadRange;
+    // Check the level of shader use.
+    csString shader("Highest");
+    if(shader.CompareNoCase(config->GetStr("PlaneShift.Graphics.Shaders")))
+    {
+      enabledGfxFeatures |= useHighestShaders;
+    }
+    shader = "High";
+    if(shader.CompareNoCase(config->GetStr("PlaneShift.Graphics.Shaders")))
+    {
+      enabledGfxFeatures |= useHighShaders;
+    }
+    shader = "Medium";
+    if(shader.CompareNoCase(config->GetStr("PlaneShift.Graphics.Shaders")))
+    {
+      enabledGfxFeatures |= useMediumShaders;
+    }
+    shader = "Low";
+    if(shader.CompareNoCase(config->GetStr("PlaneShift.Graphics.Shaders")))
+    {
+      enabledGfxFeatures |= useLowShaders;
+    }
+    shader = "Lowest";
+    if(shader.CompareNoCase(config->GetStr("PlaneShift.Graphics.Shaders")))
+    {
+      enabledGfxFeatures |= useLowestShaders;
+    }
+
+    // Check if we're using real time shadows.
+    if(config->GetBool("PlaneShift.Graphics.Shadows"))
+    {
+      enabledGfxFeatures |= useShadows;
+    }
+
+    // Check if we're using meshgen.
+    if(config->GetBool("PlaneShift.Graphics.EnableGrass", true))
+    {
+      enabledGfxFeatures |= useMeshGen;
+    }
 
     // Parse basic set of shaders.
-    csRef<iConfigManager> config = csQueryRegistry<iConfigManager> (object_reg);
     csString shaderList = config->GetStr("PlaneShift.Loading.ShaderList", "/shader/shaderlist.xml");
     if(vfs->Exists(shaderList))
     {
@@ -327,7 +362,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                         if(csString("texture").Compare(node->GetAttributeValue("type")))
                         {
                             // Ignore some shader variables if the functionality they bring is not enabled.
-                            if(gfxFeatures & (useHighShaders | useMediumShaders | useLowShaders | useLowestShaders))
+                            if(enabledGfxFeatures & (useHighShaders | useMediumShaders | useLowShaders | useLowestShaders))
                             {
                                 if(!strcmp(node->GetAttributeValue("name"), "tex height") ||
                                    !strcmp(node->GetAttributeValue("name"), "tex ambient occlusion"))
@@ -335,7 +370,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                                     continue;
                                 }
 
-                                if(gfxFeatures & (useMediumShaders | useLowShaders | useLowestShaders))
+                                if(enabledGfxFeatures & (useMediumShaders | useLowShaders | useLowestShaders))
                                 {
                                     if(!strcmp(node->GetAttributeValue("name"), "tex specular"))
                                     {
@@ -343,7 +378,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                                     }
                                 }
 
-                                if(gfxFeatures & (useLowShaders | useLowestShaders))
+                                if(enabledGfxFeatures & (useLowShaders | useLowestShaders))
                                 {
                                     if(!strcmp(node->GetAttributeValue("name"), "tex normal") ||
                                        !strcmp(node->GetAttributeValue("name"), "tex normal compressed"))
@@ -423,15 +458,18 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                 node = nodeItr->Next();
                 csRef<MeshFact> mf = csPtr<MeshFact>(new MeshFact(node->GetAttributeValue("name"), vfsPath, node));
 
-                if(realRoot && !once && !nodeItr->HasNext())
+                if(!cache)
                 {
+                  if(realRoot && !once && !nodeItr->HasNext())
+                  {
                     // Load this file when needed to save memory.
                     mf->data.Invalidate();
                     mf->filename = csString(path).Slice(csString(path).FindLast('/')+1);
-                }
+                  }
 
-                // Mark that we've already loaded a meshfact in this file.
-                once = true;
+                  // Mark that we've already loaded a meshfact in this file.
+                  once = true;
+                }
 
                 // Read bbox data.
                 csRef<iDocumentNode> cell = node->GetNode("params")->GetNode("cells");
@@ -858,7 +896,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                 }
 
                 // Parse mesh generators (for foliage, rocks etc.)
-                if(gfxFeatures & useMeshGen)
+                if(enabledGfxFeatures & useMeshGen)
                 {
                     nodeItr2 = node->GetNodes("meshgen");
                     while(nodeItr2->HasNext())
@@ -1706,7 +1744,7 @@ void BgLoader::FinishMeshLoad(MeshObj* mesh)
     mesh->status.Invalidate();
 
     // Mark the mesh as being realtime lit depending on graphics setting.
-    if(gfxFeatures & (useMediumShaders | useLowShaders | useLowestShaders))
+    if(enabledGfxFeatures & (useMediumShaders | useLowShaders | useLowestShaders))
     {
         mesh->object->GetFlags().Set(CS_ENTITY_NOLIGHTING);
     }
@@ -1715,7 +1753,7 @@ void BgLoader::FinishMeshLoad(MeshObj* mesh)
     mesh->object->GetMovable()->SetSector(mesh->sector->object);
     mesh->object->GetMovable()->UpdateMove();
 
-    // Init collision data. TODO: Load simpler CD meshes.
+    // Init collision data.
     csColliderHelper::InitializeCollisionWrapper(cdsys, mesh->object);
 
     // Get the correct path for loading heightmap data.

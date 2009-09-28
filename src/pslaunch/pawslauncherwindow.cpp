@@ -598,24 +598,14 @@ void pawsLauncherWindow::LoadSettings()
         VBO->SetState(configPSC.GetBool("Video.OpenGL.UseExtension.GL_ARB_vertex_buffer_object"));
     }
 
-    pawsCheckBox* loadAllMaps = (pawsCheckBox*)FindWidget("LoadAllMaps");
-    if(configUser->KeyExists("Planeshift.Loading.AllMaps"))
+    pawsCheckBox* loaderCache = (pawsCheckBox*)FindWidget("LoaderCache");
+    if(configUser->KeyExists("Planeshift.Loading.Cache"))
     {
-        loadAllMaps->SetState(configUser->GetBool("Planeshift.Loading.AllMaps"));
+        loaderCache->SetState(configUser->GetBool("Planeshift.Loading.Cache"));
     }
     else
     {
-        loadAllMaps->SetState(configPSC.GetBool("Planeshift.Loading.AllMaps"));
-    }
-
-    pawsCheckBox* keepMapsLoaded = (pawsCheckBox*)FindWidget("KeepMapsLoaded");
-    if(configUser->KeyExists("Planeshift.Loading.KeepMaps"))
-    {
-        keepMapsLoaded->SetState(configUser->GetBool("Planeshift.Loading.KeepMaps"));
-    }
-    else
-    {
-        keepMapsLoaded->SetState(configPSC.GetBool("Planeshift.Loading.KeepMaps"));
+        loaderCache->SetState(configPSC.GetBool("Planeshift.Loading.Cache"));
     }
 
     pawsComboBox* backgroundLoading = (pawsComboBox*)FindWidget("BackgroundLoading");
@@ -903,11 +893,8 @@ void pawsLauncherWindow::SaveSettings()
         configUser->SetStr("Video.ShaderManager.Tags.per_pixel_lighting.Presence", "forbidden");
     }
 
-    pawsCheckBox* loadAllMaps = (pawsCheckBox*)FindWidget("LoadAllMaps");
-    configUser->SetBool("Planeshift.Loading.AllMaps", loadAllMaps->GetState());
-
-    pawsCheckBox* keepMapsLoaded = (pawsCheckBox*)FindWidget("KeepMapsLoaded");
-    configUser->SetBool("Planeshift.Loading.KeepMaps", keepMapsLoaded->GetState());
+    pawsCheckBox* loaderCache = (pawsCheckBox*)FindWidget("LoaderCache");
+    configUser->SetBool("Planeshift.Loading.Cache", loaderCache->GetState());
 
     pawsComboBox* backgroundLoading = (pawsComboBox*)FindWidget("BackgroundLoading");
     if(backgroundLoading->GetSelectedRowString() == "World")
