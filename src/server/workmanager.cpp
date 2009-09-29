@@ -1911,7 +1911,7 @@ bool WorkManager::ValidateCombination(csArray<psItem*> itemArray, uint32 &result
                 {
                     resultId = current->resultItem;
                     resultQty = current->resultQuantity;
-                    if (secure) psserver->SendSystemInfo(clientNum,"Found mathcing combination.");
+                    if (secure) psserver->SendSystemInfo(clientNum,"Found matching combination.");
                     return true;
                 }
             }
@@ -1930,7 +1930,7 @@ bool WorkManager::ValidateCombination(csArray<psItem*> itemArray, uint32 &result
                 {
                     resultId = current->resultItem;
                     resultQty = current->resultQuantity;
-                    if (secure) psserver->SendSystemInfo(clientNum,"Found mathcing group combination.");
+                    if (secure) psserver->SendSystemInfo(clientNum,"Found matching group combination.");
                     return true;
                 }
             }
