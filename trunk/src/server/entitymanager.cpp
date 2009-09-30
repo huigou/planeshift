@@ -908,7 +908,7 @@ void EntityManager::HandleAllRequest(MsgEntry* me, Client *client)
             {
                 // the current message is full of entities, so send it and make another one
                 allEntMsg->msg->ClipToCurrentSize();
-                printf("Sending %d entities in %zu bytes.\n", count-1, allEntMsg->msg->GetSize() );
+                printf("Sending %d entities in %lu bytes.\n", count-1, allEntMsg->msg->GetSize() );
                 allEntMsg->SendMessage();
                 delete allEntMsg;
                 count = 1;
@@ -918,7 +918,7 @@ void EntityManager::HandleAllRequest(MsgEntry* me, Client *client)
             obj->Send(0, false,  false, allEntMsg ); // this doesn't actually send but just appends to allEntMsg
         }
         allEntMsg->msg->ClipToCurrentSize();
-        printf("Final send is %d entities in %zu bytes.\n", count, allEntMsg->msg->GetSize() );
+        printf("Final send is %d entities in %lu bytes.\n", count, allEntMsg->msg->GetSize() );
 
         allEntMsg->SendMessage(); // This handles the final message with whatever entities are left.
 
