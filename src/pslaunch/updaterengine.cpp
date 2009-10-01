@@ -672,6 +672,9 @@ void UpdaterEngine::GeneralUpdate()
     bool genericPlatform = !strcmp(config->GetCurrentConfig()->GetPlatform(),
         config->GetCurrentConfig()->GetGeneric());
 
+    // True if we're going to check the integrity of the game after update.
+    bool repairAfterUpdate = false;
+
     // Main loop.
     while(CheckGeneral())
     {
@@ -864,31 +867,12 @@ void UpdaterEngine::GeneralUpdate()
                     if(!PatchFile(oldFP->GetData(), diffFP->GetData(), newFP->GetData()))
                     {
                         PrintOutput("Failed!\n");
-                        PrintOutput("Attempting to download full version of %s: ", newFilePath.GetData());
 
-                        // Get the 'backup' mirror, should always be the first in the list.
-                        csString baseurl = config->GetNewConfig()->GetMirror(0)->GetBaseURL();
-                        baseurl.Append("backup/");
-
-                        // Try path from base URL.
-                        csString url = baseurl;
-                        if(!downloader->DownloadFile(url.Append(newFilePath.GetData()), newFilePath.GetData(), true, true))
+                        if(!repairAfterUpdate)
                         {
-                            // Maybe it's in a platform specific subdirectory. Try that next.
-                            url = baseurl;
-                            url.AppendFmt("%s/", config->GetNewConfig()->GetPlatform());
-                            if(!downloader->DownloadFile(url.Append(newFilePath.GetData()), newFilePath.GetData(), true, true))
-                            {
-                                PrintOutput("\nUnable to update file: %s. Reverting file!\n", newFilePath.GetData());
-                                fileUtil->CopyFile("/this/" + oldFilePath, "/this/" + newFilePath, true, false);
-                                PrintOutput("Please re-run the update.\n");
-                                return;
-                            }
-                            else
-                                PrintOutput("Done!\n");
+                            PrintOutput("Scheduling a repair at the end of the update!\n");
+                            repairAfterUpdate = true;
                         }
-                        else
-                            PrintOutput("Done!\n");
                     }
                     else
                     {
@@ -952,6 +936,11 @@ void UpdaterEngine::GeneralUpdate()
         newNode->SetAttribute("name", newCv->GetName());
         updaterinfo->Write(vfs, UPDATERINFO_CURRENT_FILENAME);
         oldCvs.PushSmart(newCv);
+     }
+
+     if(repairAfterUpdate)
+     {
+         CheckIntegrity();
      }
 }
 
@@ -1095,146 +1084,7 @@ void UpdaterEngine::CheckIntegrity()
 
         if(!failed)
         {
-            csRefArray<iDocumentNode> failed;
-#ifdef CS_PLATFORM_UNIX
-            csHash<bool, csRef<iDocumentNode> > failedExec;
-#endif
-            csRef<iDocumentNodeIterator> md5nodes = md5sums->GetNodes("md5sum");
-            while(md5nodes->HasNext())
-            {
-                CHECK_QUIT
-                csRef<iDocumentNode> node = md5nodes->Next();
-
-                csString platform = node->GetAttributeValue("platform");
-
-                if(!config->UpdatePlatform() && !platform.Compare("all"))
-                    continue;
-
-                csString path = node->GetAttributeValue("path");
-                csString md5sum = node->GetAttributeValue("md5sum");
-
-                csRef<iDataBuffer> buffer = vfs->ReadFile("/this/" + path);
-                if(!buffer)
-                {
-                    // File is genuinely missing.
-                    if(platform.Compare(config->GetCurrentConfig()->GetPlatform()) ||
-                       platform.Compare("cfg") || platform.Compare("all"))
-                    {
-                        failed.Push(node);
-#ifdef CS_PLATFORM_UNIX
-                        failedExec.Put(node, node->GetAttributeValueAsBool("exec"));
-#endif
-                    }
-                    continue;
-                }
-
-                csMD5::Digest md5 = csMD5::Encode(buffer->GetData(), buffer->GetSize());
-                csString md5s = md5.HexString();
-
-                if((platform.Compare(config->GetCurrentConfig()->GetPlatform()) ||
-                    platform.Compare("cfg") || platform.Compare("all")) && !md5s.Compare(md5sum))
-                {
-                    failed.Push(node);
-                }
-            }
-
-            size_t failedSize = failed.GetSize();
-            if(failedSize == 0)
-            {
-                PrintOutput("\nAll files passed the check!\n");
-            }
-            else
-            {
-                PrintOutput("\nThe following files failed the check:\n\n");
-                for(size_t i=0; i<failedSize; i++)
-                {
-                    PrintOutput("%s\n", failed.Get(i)->GetAttributeValue("path"));
-                }
-
-                char c = ' ';
-                PrintOutput("\nDo you wish to download the correct copies of these files? (y/n)\n");
-                if(!hasGUI)
-                {
-                    while(c != 'y' && c != 'n')
-                    {
-                        c = getchar();
-                    }
-                }
-                else
-                {
-                    infoShare->SetUpdateNeeded(true);
-                    while(infoShare->GetUpdateNeeded())
-                    {
-                        CHECK_QUIT
-                        csSleep(100);
-                    }
-                    c = infoShare->GetPerformUpdate() ? 'y' : 'n';
-                    infoShare->SetPerformUpdate(false);
-                    infoShare->Sync();
-                }
-                
-                if(c == 'n')
-                {
-                    if(vfs->Exists("/this/updaterinfo.xml.bak"))
-                    {
-                        fileUtil->RemoveFile("/this/updaterinfo.xml", true);
-                        fileUtil->MoveFile("/this/updaterinfo.xml.bak", "/this/updaterinfo.xml", true, false);
-                    }
-                }
-                else if(c == 'y')
-                {
-                    for(size_t i=0; i<failedSize; i++)
-                    {
-                        CHECK_QUIT
-                        PrintOutput("\nDownloading file: %s\n", failed.Get(i)->GetAttributeValue("path"));
-
-                        csString downloadpath("/this/");
-                        downloadpath.Append(failed.Get(i)->GetAttributeValue("path"));
-
-                        // Save permissions.
-                        csRef<iDataBuffer> rp = vfs->GetRealPath(downloadpath);
-                        csRef<FileStat> fs = fileUtil->StatFile(rp->GetData());
-                        fileUtil->MoveFile(downloadpath, downloadpath + ".bak", true, false, true);
-
-                        // Make parent dir if needed.
-                        csString parent = downloadpath;
-                        fileUtil->MakeDirectory(parent.Truncate(parent.FindLast('/')));
-
-                        // Download file.
-                        if(!downloader->DownloadFile(baseurl + failed.Get(i)->GetAttributeValue("path"),
-                                                     failed.Get(i)->GetAttributeValue("path"), true, true))
-                        {
-                            // Maybe it's in a platform specific subdirectory. Try that next.
-                           csString url = baseurl + config->GetCurrentConfig()->GetPlatform() + "/";
-                           if(!downloader->DownloadFile(url + failed.Get(i)->GetAttributeValue("path"),
-                                                        failed.Get(i)->GetAttributeValue("path"), true, true))
-                           {
-                               // Restore file.
-                               fileUtil->RemoveFile(downloadpath, true);
-                               fileUtil->MoveFile(downloadpath + ".bak", downloadpath, true, false, true);
-                               PrintOutput(" Failed!\n");
-                               continue;
-                           }
-                        }
-#ifdef CS_PLATFORM_UNIX
-                        // Restore permissions.
-                        if(fs.IsValid())
-                        {
-                            bool failedEx = failedExec.Get(failed.Get(i), false);
-                            if(failedEx)
-                            {
-                                fs->mode = fs->mode | S_IXUSR | S_IXGRP;
-                            }
-                            fileUtil->SetPermissions(rp->GetData(), fs);
-                        }
-#endif
-                        fileUtil->RemoveFile(downloadpath + ".bak", true);
-                        PrintOutput(" Success!\n");
-                    }
-                    fileUtil->RemoveFile("/this/updaterinfo.xml.bak", true);
-                    PrintOutput("\nDone!\n");
-                }
-            }
+            CheckMD5s(md5sums, baseurl);
         }
     }
 
@@ -1243,6 +1093,181 @@ void UpdaterEngine::CheckIntegrity()
     fileUtil->RemoveFile("integrity.zip", true);
 
     return;
+}
+
+void UpdaterEngine::CheckMD5s(iDocumentNode* md5sums, csString& baseurl, bool accepted)
+{
+    csRefArray<iDocumentNode> failed;
+    csArray<bool> updateinside;
+#ifdef CS_PLATFORM_UNIX
+    csHash<bool, csRef<iDocumentNode> > failedExec;
+#endif
+    csRef<iDocumentNodeIterator> md5nodes = md5sums->GetNodes("md5sum");
+    while(md5nodes->HasNext())
+    {
+        CHECK_QUIT
+        csRef<iDocumentNode> node = md5nodes->Next();
+
+        csString platform = node->GetAttributeValue("platform");
+
+        if(!config->UpdatePlatform() && !platform.Compare("all"))
+            continue;
+
+        csString path = node->GetAttributeValue("path");
+        csString md5sum = node->GetAttributeValue("md5sum");
+
+        csRef<iDataBuffer> buffer = vfs->ReadFile("/this/" + path);
+        if(!buffer)
+        {
+            // File is genuinely missing.
+            if(platform.Compare(config->GetCurrentConfig()->GetPlatform()) ||
+                platform.Compare("cfg") || platform.Compare("all"))
+            {
+                updateinside.Push(false);
+                failed.Push(node);
+#ifdef CS_PLATFORM_UNIX
+                failedExec.Put(node, node->GetAttributeValueAsBool("exec"));
+#endif
+            }
+            continue;
+        }
+
+        csMD5::Digest md5 = csMD5::Encode(buffer->GetData(), buffer->GetSize());
+        csString md5s = md5.HexString();
+
+        if((platform.Compare(config->GetCurrentConfig()->GetPlatform()) ||
+            platform.Compare("cfg") || platform.Compare("all")) && !md5s.Compare(md5sum))
+        {
+            failed.Push(node);
+            updateinside.Push(config->RepairingInZip() && node->GetAttributeValueAsBool("checkonly"));
+        }
+    }
+
+    size_t failedSize = failed.GetSize();
+    if(failedSize == 0)
+    {
+        PrintOutput("\nAll files passed the check!\n");
+    }
+    else
+    {
+        PrintOutput("\nThe following files failed the check:\n\n");
+        for(size_t i=0; i<failedSize; i++)
+        {
+            PrintOutput("%s\n", failed.Get(i)->GetAttributeValue("path"));
+        }
+
+        char c = ' ';
+        PrintOutput("\nDo you wish to download the correct copies of these files? (y/n)\n");
+        if(!accepted)
+        {
+            if(!hasGUI)
+            {
+                while(c != 'y' && c != 'n')
+                {
+                    c = getchar();
+                }
+            }
+            else
+            {
+                infoShare->SetUpdateNeeded(true);
+                while(infoShare->GetUpdateNeeded())
+                {
+                    CHECK_QUIT
+                        csSleep(100);
+                }
+                c = infoShare->GetPerformUpdate() ? 'y' : 'n';
+                infoShare->SetPerformUpdate(false);
+                infoShare->Sync();
+            }
+        }
+
+        if(c == 'n')
+        {
+            if(vfs->Exists("/this/updaterinfo.xml.bak"))
+            {
+                fileUtil->RemoveFile("/this/updaterinfo.xml", true);
+                fileUtil->MoveFile("/this/updaterinfo.xml.bak", "/this/updaterinfo.xml", true, false);
+            }
+        }
+        else if(accepted || c == 'y')
+        {
+            for(size_t i=0; i<failedSize; i++)
+            {
+                CHECK_QUIT
+
+                if(updateinside.Get(i))
+                {
+                    csRef<iDocumentNode> zipmd5sums;
+                    csRef<iDocumentNodeIterator> zips = md5sums->GetNodes("zip");
+                    while(zips->HasNext())
+                    {
+                        zipmd5sums = zips->Next();
+                        if(!strcmp(failed.Get(i)->GetAttributeValue("path"), zipmd5sums->GetAttributeValue("path")))
+                        {
+                            csString realPath = zipmd5sums->GetAttributeValue("path");
+                            csRef<iDataBuffer> rpdb = vfs->GetRealPath("/this/" + realPath);
+                            realPath = rpdb->GetData();
+                            csString path = zipmd5sums->GetAttributeValue("path");
+                            path = path.Truncate(path.Length()-4);
+                            vfs->Mount("/this/" + path, realPath);
+                            CheckMD5s(zipmd5sums, baseurl, true);
+                            vfs->Unmount("/this/" + path, realPath);
+                            break;
+                        }
+                    }
+
+                    continue;
+                }
+
+                PrintOutput("\nDownloading file: %s\n", failed.Get(i)->GetAttributeValue("path"));
+
+                csString downloadpath("/this/");
+                downloadpath.Append(failed.Get(i)->GetAttributeValue("path"));
+
+                // Save permissions.
+                csRef<iDataBuffer> rp = vfs->GetRealPath(downloadpath);
+                csRef<FileStat> fs = fileUtil->StatFile(rp->GetData());
+                fileUtil->MoveFile(downloadpath, downloadpath + ".bak", true, false, true);
+
+                // Make parent dir if needed.
+                csString parent = downloadpath;
+                fileUtil->MakeDirectory(parent.Truncate(parent.FindLast('/')));
+
+                // Download file.
+                if(!downloader->DownloadFile(baseurl + failed.Get(i)->GetAttributeValue("path"),
+                    failed.Get(i)->GetAttributeValue("path"), true, true))
+                {
+                    // Maybe it's in a platform specific subdirectory. Try that next.
+                    csString url = baseurl + config->GetCurrentConfig()->GetPlatform() + "/";
+                    if(!downloader->DownloadFile(url + failed.Get(i)->GetAttributeValue("path"),
+                        failed.Get(i)->GetAttributeValue("path"), true, true))
+                    {
+                        // Restore file.
+                        fileUtil->RemoveFile(downloadpath, true);
+                        fileUtil->MoveFile(downloadpath + ".bak", downloadpath, true, false, true);
+                        PrintOutput(" Failed!\n");
+                        continue;
+                    }
+                }
+#ifdef CS_PLATFORM_UNIX
+                // Restore permissions.
+                if(fs.IsValid())
+                {
+                    bool failedEx = failedExec.Get(failed.Get(i), false);
+                    if(failedEx)
+                    {
+                        fs->mode = fs->mode | S_IXUSR | S_IXGRP;
+                    }
+                    fileUtil->SetPermissions(rp->GetData(), fs);
+                }
+#endif
+                fileUtil->RemoveFile(downloadpath + ".bak", true);
+                PrintOutput(" Success!\n");
+            }
+            fileUtil->RemoveFile("/this/updaterinfo.xml.bak", true);
+            PrintOutput("\nDone!\n");
+        }
+    }
 }
 
 bool UpdaterEngine::SwitchMirror()
