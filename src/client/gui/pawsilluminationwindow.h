@@ -20,6 +20,7 @@
 #ifndef PAWS_SKETCH_WINDOW_HEADER
 #define PAWS_SKETCH_WINDOW_HEADER
 
+#include "net/cmdbase.h"
 #include "paws/pawswidget.h"
 #include "paws/pawscolorpromptwindow.h"
 #include "paws/pawsstringpromptwindow.h"

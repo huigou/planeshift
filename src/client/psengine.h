@@ -19,18 +19,18 @@
 #ifndef __ENGINE_H__
 #define __ENGINE_H__
 
-#include <csutil/sysfunc.h>
 #include <csutil/csstring.h>
+#include <csutil/randomgen.h>
+#include <csutil/refarr.h>
+#include <csutil/sysfunc.h>
 #include <csutil/leakguard.h>
 #include <csutil/eventhandlers.h>
 #include <csutil/weakrefarr.h>
+#include <csutil/weakreferenced.h>
 #include <ivaria/profile.h>
+#include <ivideo/graph3d.h>
 #include <iutil/eventh.h>
 
-#include "paws/pawsmanager.h"
-#include "paws/psmousebinds.h"
-#include "psclientchar.h"
-#include "psinventorycache.h"
 #include "psnetmanager.h"
 
 #include "util/slots.h"
@@ -39,19 +39,20 @@ class psCelClient;
 class ClientMsgHandler;
 class psClientCharManager;
 struct iBgLoader;
-struct iCommandLineParser;
 struct iConfigManager;
 struct iDialogManager;
+struct iDocumentSystem;
 struct iEngine;
 struct iEvent;
 struct iEventQueue;
-struct iMeshFactoryWrapper;
-struct iThreadedLoader;
+struct iGraphics2D;
+struct iGraphics3D;
 struct iSceneManipulate;
 struct iSoundManager;
+struct iTextureManager;
+struct iThreadReturn;
 struct iVFS;
 struct iVirtualClock;
-struct iWorld;
 class ModeHandler;
 class ActionHandler;
 class ZoneHandler;
@@ -64,16 +65,15 @@ class psMainWidget;
 class psQuestionClient;
 class psOptions;
 class psCSSetup;
+class psMouseBinds;
+class psInventoryCache;
+class PawsManager;
 
 // Networking classes
-class psNetConnection;
 class ClientMsgHandler;
-class psAuthenticationClient;
 class psNetManager;
 class psSlotManager;
 
-class GEMClientObject;
-class GEMClientActor;
 class GUIHandler;
 
 struct DelayedLoader : public CS::Utility::WeakReferenced
@@ -141,7 +141,7 @@ public:
     void UpdatePerFrame();
 
     /// Wait to finish drawing the current frame.
-    inline void FinishFrame()
+    void FinishFrame()
     {
         g3d->FinishDraw();
         g3d->Print(NULL);

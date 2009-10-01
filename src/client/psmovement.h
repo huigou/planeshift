@@ -26,7 +26,7 @@
 #include "net/cmdbase.h"
 
 class psControlManager;
-
+struct psPoint;
 
 /** An entity's translational and angular velocity.
  *

@@ -46,10 +46,7 @@
 #include "clientvitals.h"
 #include "psnetmanager.h"
 #include "globals.h"
-
-
-
-#define LINMOVE_IGNORECHEATS false
+#include "psclientchar.h"
 
 ////////////////////////////////////////////////////////////////////////////
 //  PAWS INCLUDES

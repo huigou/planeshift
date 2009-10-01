@@ -32,6 +32,7 @@
 
 // CLIENT INCLUDES
 #include "pscelclient.h"
+#include "psclientchar.h"
 
 // PAWS INCLUDES
 #include "pawsinteractwindow.h"

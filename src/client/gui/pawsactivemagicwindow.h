@@ -26,6 +26,7 @@ class pawsListBox;
 class pawsMessageTextBox;
 class pawsProgressBar;
 
+#include "net/cmdbase.h"
 #include "net/subscriber.h"
 #include "gui/pawscontrolwindow.h"
 /** This handles all the details about how the spell cancel works.

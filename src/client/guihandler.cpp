@@ -37,8 +37,10 @@
 //=============================================================================
 // Local Includes
 //=============================================================================
+#include "paws/pawsmanager.h"
 #include "guihandler.h"
 #include "globals.h"
+#include "psinventorycache.h"
 
 
 GUIHandler::GUIHandler() 

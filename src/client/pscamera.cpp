@@ -65,6 +65,7 @@
 #include "pscharcontrol.h"
 #include "globals.h"
 #include "shadowmanager.h"
+#include "psclientchar.h"
 
 
 psCamera::psCamera()

@@ -57,6 +57,7 @@
 #include "modehandler.h"
 #include "pscharcontrol.h"
 #include "globals.h"
+#include "psclientchar.h"
 
 
 psUserCommands::psUserCommands(ClientMsgHandler* mh,CmdHandler *ch,iObjectRegistry* obj)

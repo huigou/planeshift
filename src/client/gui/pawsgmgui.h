@@ -28,6 +28,7 @@
 #include "paws/pawsstringpromptwindow.h"
 #include "net/cmdbase.h"
 #include "chatwindow.h"
+#include "psclientchar.h"
 
 class pawsGmGUIWindow : public pawsWidget, public psCmdBase, public iOnStringEnteredAction
 {

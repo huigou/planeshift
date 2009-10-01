@@ -17,6 +17,7 @@
  */
 
 #include <psconfig.h>
+#include "paws/pawsmanager.h"
 #include "net/messages.h"
 #include "psinventorycache.h"
 #include "globals.h"

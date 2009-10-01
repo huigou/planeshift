@@ -47,6 +47,7 @@
 //=============================================================================
 #include "shortcutwindow.h"
 #include "pscelclient.h"
+#include "psclientchar.h"
 
 #define COMMAND_FILE         "/planeshift/userdata/options/shortcutcommands.xml"
 #define DEFAULT_COMMAND_FILE "/planeshift/data/options/shortcutcommands_def.xml"

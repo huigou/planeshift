@@ -20,6 +20,7 @@
 #define PAWS_CRAFT_WINDOW_HEADER
 
 #include "paws/pawswidget.h"
+#include "net/cmdbase.h"
 
 class pawsSimpleTree;
 class pawsMultiLineTextBox;
