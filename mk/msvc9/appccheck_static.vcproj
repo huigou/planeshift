@@ -2,8 +2,8 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="apppsclient"
-	ProjectGUID="{FEAFE33B-F1B6-42F9-55F1-7E6413431BF1}"
+	Name="appccheck_static"
+	ProjectGUID="{07598068-D985-C700-BCF3-803F12892154}"
 	SccProjectName=""
 	SccLocalPath="">
 	<Platforms>
@@ -13,8 +13,8 @@
 	<Configurations>
             		<Configuration
 			Name="Release (with static libs)|Win32"
-			OutputDirectory="..\..\out\release9\build\apppsclient\"
-			IntermediateDirectory="..\..\out\release9\build\apppsclient\"
+			OutputDirectory="..\..\out\release9\build\appccheck_static\"
+			IntermediateDirectory="..\..\out\release9\build\appccheck_static\"
 			ConfigurationType="1"
 			CharacterSet="2"
 			WholeProgramOptimization="1"
@@ -27,14 +27,14 @@
 				EnableFunctionLevelLinking="TRUE"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="FALSE"
-				ProgramDataBaseFileName="..\..\out\release9\build\apppsclient\Win32\psclient.pdb"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;WIN32"
+				ProgramDataBaseFileName="..\..\out\release9\build\appccheck_static\Win32\ccheck_static.pdb"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;WIN32"
 				OptimizeForProcessor="1"
-				AdditionalOptions="-I\home\xordan\dev\cal3d\include "
+				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\release9\build\apppsclient\apppsclient.pch"
-				AssemblerListingLocation="..\..\out\release9\build\apppsclient\"
-				ObjectFile="..\..\out\release9\build\apppsclient\"
+				PrecompiledHeaderFile="..\..\out\release9\build\appccheck_static\appccheck_static.pch"
+				AssemblerListingLocation="..\..\out\release9\build\appccheck_static\"
+				ObjectFile="..\..\out\release9\build\appccheck_static\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -51,11 +51,11 @@
 				EnableCOMDATFolding="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD"
-				OutputFile="..\..\psclient.exe"
-				ProgramDatabaseFile="..\..\out\release9\build\apppsclient\Win32\psclient.pdb"
-				SubSystem="2"
-				AdditionalOptions="-L\home\xordan\dev\cal3d\lib -lcal3d "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib cal3d-vc9.lib"
+				OutputFile="..\..\ccheck_static.exe"
+				ProgramDatabaseFile="..\..\out\release9\build\appccheck_static\Win32\ccheck_static.pdb"
+				SubSystem="1"
+				AdditionalOptions="libcrystalspace_staticplugins.lib libcrystalspace.lib zlib.lib "
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -64,11 +64,11 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\release9\build\apppsclient\apppsclient.tlb"/>
+				TypeLibraryName="..\..\out\release9\build\appccheck_static\appccheck_static.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\release9\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release9\bin\&#x0D;&#x0A;"
@@ -79,8 +79,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;PROJECTGEN_VERSION=9"
+				AdditionalIncludeDirectories=".;..\..\src\tools\ccheck;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -89,8 +89,8 @@
 		</Configuration>
       		<Configuration
 			Name="Release (with DLLs)|Win32"
-			OutputDirectory="..\..\out\release9\build\apppsclient\"
-			IntermediateDirectory="..\..\out\release9\build\apppsclient\"
+			OutputDirectory="..\..\out\release9\build\appccheck_static\"
+			IntermediateDirectory="..\..\out\release9\build\appccheck_static\"
 			ConfigurationType="1"
 			CharacterSet="2"
 			WholeProgramOptimization="1"
@@ -103,14 +103,14 @@
 				EnableFunctionLevelLinking="TRUE"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="FALSE"
-				ProgramDataBaseFileName="..\..\out\release9\build\apppsclient\Win32\psclient.pdb"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;WIN32;CS_BUILD_SHARED_LIBS"
+				ProgramDataBaseFileName="..\..\out\release9\build\appccheck_static\Win32\ccheck_static.pdb"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
-				AdditionalOptions="-I\home\xordan\dev\cal3d\include "
+				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\release9\build\apppsclient\apppsclient.pch"
-				AssemblerListingLocation="..\..\out\release9\build\apppsclient\"
-				ObjectFile="..\..\out\release9\build\apppsclient\"
+				PrecompiledHeaderFile="..\..\out\release9\build\appccheck_static\appccheck_static.pch"
+				AssemblerListingLocation="..\..\out\release9\build\appccheck_static\"
+				ObjectFile="..\..\out\release9\build\appccheck_static\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -127,11 +127,11 @@
 				EnableCOMDATFolding="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD"
-				OutputFile="..\..\psclient.exe"
-				ProgramDatabaseFile="..\..\out\release9\build\apppsclient\Win32\psclient.pdb"
-				SubSystem="2"
-				AdditionalOptions="-L\home\xordan\dev\cal3d\lib -lcal3d "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib cal3d-vc9.lib"
+				OutputFile="..\..\ccheck_static.exe"
+				ProgramDatabaseFile="..\..\out\release9\build\appccheck_static\Win32\ccheck_static.pdb"
+				SubSystem="1"
+				AdditionalOptions="libcrystalspace_staticplugins.lib libcrystalspace.lib zlib.lib "
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -140,11 +140,11 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\release9\build\apppsclient\apppsclient.tlb"/>
+				TypeLibraryName="..\..\out\release9\build\appccheck_static\appccheck_static.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\release9\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release9\bin\&#x0D;&#x0A;"
@@ -155,8 +155,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;PROJECTGEN_VERSION=9"
+				AdditionalIncludeDirectories=".;..\..\src\tools\ccheck;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -165,8 +165,8 @@
 		</Configuration>
                 		<Configuration
 			Name="Debug (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug9\build\apppsclient\"
-			IntermediateDirectory="..\..\out\debug9\build\apppsclient\"
+			OutputDirectory="..\..\out\debug9\build\appccheck_static\"
+			IntermediateDirectory="..\..\out\debug9\build\appccheck_static\"
 			ConfigurationType="1"
 			CharacterSet="2"
 			UseOfMFC="0"
@@ -178,14 +178,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug9\build\apppsclient\Win32\psclient.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;WIN32"
+				ProgramDataBaseFileName="..\..\out\debug9\build\appccheck_static\Win32\ccheck_static.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;WIN32"
 				OptimizeForProcessor="1"
-				AdditionalOptions="-I\home\xordan\dev\cal3d\include "
+				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug9\build\apppsclient\apppsclient.pch"
-				AssemblerListingLocation="..\..\out\debug9\build\apppsclient\"
-				ObjectFile="..\..\out\debug9\build\apppsclient\"
+				PrecompiledHeaderFile="..\..\out\debug9\build\appccheck_static\appccheck_static.pch"
+				AssemblerListingLocation="..\..\out\debug9\build\appccheck_static\"
+				ObjectFile="..\..\out\debug9\build\appccheck_static\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -200,11 +200,11 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psclient.exe"
-				ProgramDatabaseFile="..\..\out\debug9\build\apppsclient\Win32\psclient.pdb"
+				OutputFile="..\..\ccheck_static.exe"
+				ProgramDatabaseFile="..\..\out\debug9\build\appccheck_static\Win32\ccheck_static.pdb"
 				SubSystem="1"
-				AdditionalOptions="-L\home\xordan\dev\cal3d\lib -lcal3d "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc9_d.lib"
+				AdditionalOptions="libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -213,11 +213,11 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug9\build\apppsclient\apppsclient.tlb"/>
+				TypeLibraryName="..\..\out\debug9\build\appccheck_static\appccheck_static.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug9\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug9\bin\&#x0D;&#x0A;"
@@ -228,8 +228,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;PROJECTGEN_VERSION=9"
+				AdditionalIncludeDirectories=".;..\..\src\tools\ccheck;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -238,8 +238,8 @@
 		</Configuration>
       		<Configuration
 			Name="Debug (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug9\build\apppsclient\"
-			IntermediateDirectory="..\..\out\debug9\build\apppsclient\"
+			OutputDirectory="..\..\out\debug9\build\appccheck_static\"
+			IntermediateDirectory="..\..\out\debug9\build\appccheck_static\"
 			ConfigurationType="1"
 			CharacterSet="2"
 			UseOfMFC="0"
@@ -251,14 +251,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug9\build\apppsclient\Win32\psclient.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;WIN32;CS_BUILD_SHARED_LIBS"
+				ProgramDataBaseFileName="..\..\out\debug9\build\appccheck_static\Win32\ccheck_static.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
-				AdditionalOptions="-I\home\xordan\dev\cal3d\include "
+				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug9\build\apppsclient\apppsclient.pch"
-				AssemblerListingLocation="..\..\out\debug9\build\apppsclient\"
-				ObjectFile="..\..\out\debug9\build\apppsclient\"
+				PrecompiledHeaderFile="..\..\out\debug9\build\appccheck_static\appccheck_static.pch"
+				AssemblerListingLocation="..\..\out\debug9\build\appccheck_static\"
+				ObjectFile="..\..\out\debug9\build\appccheck_static\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -273,11 +273,11 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psclient.exe"
-				ProgramDatabaseFile="..\..\out\debug9\build\apppsclient\Win32\psclient.pdb"
+				OutputFile="..\..\ccheck_static.exe"
+				ProgramDatabaseFile="..\..\out\debug9\build\appccheck_static\Win32\ccheck_static.pdb"
 				SubSystem="1"
-				AdditionalOptions="-L\home\xordan\dev\cal3d\lib -lcal3d "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc9_d.lib"
+				AdditionalOptions="libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -286,11 +286,11 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug9\build\apppsclient\apppsclient.tlb"/>
+				TypeLibraryName="..\..\out\debug9\build\appccheck_static\appccheck_static.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug9\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug9\bin\&#x0D;&#x0A;"
@@ -301,8 +301,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;PROJECTGEN_VERSION=9"
+				AdditionalIncludeDirectories=".;..\..\src\tools\ccheck;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -311,8 +311,8 @@
 		</Configuration>
                 		<Configuration
 			Name="MemoryTracker (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug9\build\apppsclient\"
-			IntermediateDirectory="..\..\out\debug9\build\apppsclient\"
+			OutputDirectory="..\..\out\debug9\build\appccheck_static\"
+			IntermediateDirectory="..\..\out\debug9\build\appccheck_static\"
 			ConfigurationType="1"
 			CharacterSet="2"
 			UseOfMFC="0"
@@ -324,14 +324,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug9\build\apppsclient\Win32\psclient.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WINDOWS;WIN32"
+				ProgramDataBaseFileName="..\..\out\debug9\build\appccheck_static\Win32\ccheck_static.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_CONSOLE;WIN32"
 				OptimizeForProcessor="1"
-				AdditionalOptions="-I\home\xordan\dev\cal3d\include "
+				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug9\build\apppsclient\apppsclient.pch"
-				AssemblerListingLocation="..\..\out\debug9\build\apppsclient\"
-				ObjectFile="..\..\out\debug9\build\apppsclient\"
+				PrecompiledHeaderFile="..\..\out\debug9\build\appccheck_static\appccheck_static.pch"
+				AssemblerListingLocation="..\..\out\debug9\build\appccheck_static\"
+				ObjectFile="..\..\out\debug9\build\appccheck_static\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -346,11 +346,11 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psclient.exe"
-				ProgramDatabaseFile="..\..\out\debug9\build\apppsclient\Win32\psclient.pdb"
+				OutputFile="..\..\ccheck_static.exe"
+				ProgramDatabaseFile="..\..\out\debug9\build\appccheck_static\Win32\ccheck_static.pdb"
 				SubSystem="1"
-				AdditionalOptions="-L\home\xordan\dev\cal3d\lib -lcal3d "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc9_d.lib"
+				AdditionalOptions="libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -359,11 +359,11 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WINDOWS"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_CONSOLE"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug9\build\apppsclient\apppsclient.tlb"/>
+				TypeLibraryName="..\..\out\debug9\build\appccheck_static\appccheck_static.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug9\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug9\bin\&#x0D;&#x0A;"
@@ -374,8 +374,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WINDOWS;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_CONSOLE;PROJECTGEN_VERSION=9"
+				AdditionalIncludeDirectories=".;..\..\src\tools\ccheck;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -384,8 +384,8 @@
 		</Configuration>
       		<Configuration
 			Name="MemoryTracker (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug9\build\apppsclient\"
-			IntermediateDirectory="..\..\out\debug9\build\apppsclient\"
+			OutputDirectory="..\..\out\debug9\build\appccheck_static\"
+			IntermediateDirectory="..\..\out\debug9\build\appccheck_static\"
 			ConfigurationType="1"
 			CharacterSet="2"
 			UseOfMFC="0"
@@ -397,14 +397,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug9\build\apppsclient\Win32\psclient.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WINDOWS;WIN32;CS_BUILD_SHARED_LIBS"
+				ProgramDataBaseFileName="..\..\out\debug9\build\appccheck_static\Win32\ccheck_static.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_CONSOLE;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
-				AdditionalOptions="-I\home\xordan\dev\cal3d\include "
+				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug9\build\apppsclient\apppsclient.pch"
-				AssemblerListingLocation="..\..\out\debug9\build\apppsclient\"
-				ObjectFile="..\..\out\debug9\build\apppsclient\"
+				PrecompiledHeaderFile="..\..\out\debug9\build\appccheck_static\appccheck_static.pch"
+				AssemblerListingLocation="..\..\out\debug9\build\appccheck_static\"
+				ObjectFile="..\..\out\debug9\build\appccheck_static\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -419,11 +419,11 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psclient.exe"
-				ProgramDatabaseFile="..\..\out\debug9\build\apppsclient\Win32\psclient.pdb"
+				OutputFile="..\..\ccheck_static.exe"
+				ProgramDatabaseFile="..\..\out\debug9\build\appccheck_static\Win32\ccheck_static.pdb"
 				SubSystem="1"
-				AdditionalOptions="-L\home\xordan\dev\cal3d\lib -lcal3d "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc9_d.lib"
+				AdditionalOptions="libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -432,11 +432,11 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WINDOWS"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_CONSOLE"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug9\build\apppsclient\apppsclient.tlb"/>
+				TypeLibraryName="..\..\out\debug9\build\appccheck_static\appccheck_static.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug9\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug9\bin\&#x0D;&#x0A;"
@@ -447,8 +447,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WINDOWS;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_CONSOLE;PROJECTGEN_VERSION=9"
+				AdditionalIncludeDirectories=".;..\..\src\tools\ccheck;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -457,8 +457,8 @@
 		</Configuration>
                 		<Configuration
 			Name="RefTracker (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug9\build\apppsclient\"
-			IntermediateDirectory="..\..\out\debug9\build\apppsclient\"
+			OutputDirectory="..\..\out\debug9\build\appccheck_static\"
+			IntermediateDirectory="..\..\out\debug9\build\appccheck_static\"
 			ConfigurationType="1"
 			CharacterSet="2"
 			UseOfMFC="0"
@@ -470,14 +470,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug9\build\apppsclient\Win32\psclient.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WINDOWS;WIN32"
+				ProgramDataBaseFileName="..\..\out\debug9\build\appccheck_static\Win32\ccheck_static.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_CONSOLE;WIN32"
 				OptimizeForProcessor="1"
-				AdditionalOptions="-I\home\xordan\dev\cal3d\include "
+				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug9\build\apppsclient\apppsclient.pch"
-				AssemblerListingLocation="..\..\out\debug9\build\apppsclient\"
-				ObjectFile="..\..\out\debug9\build\apppsclient\"
+				PrecompiledHeaderFile="..\..\out\debug9\build\appccheck_static\appccheck_static.pch"
+				AssemblerListingLocation="..\..\out\debug9\build\appccheck_static\"
+				ObjectFile="..\..\out\debug9\build\appccheck_static\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -492,11 +492,11 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psclient.exe"
-				ProgramDatabaseFile="..\..\out\debug9\build\apppsclient\Win32\psclient.pdb"
+				OutputFile="..\..\ccheck_static.exe"
+				ProgramDatabaseFile="..\..\out\debug9\build\appccheck_static\Win32\ccheck_static.pdb"
 				SubSystem="1"
-				AdditionalOptions="-L\home\xordan\dev\cal3d\lib -lcal3d "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc9_d.lib"
+				AdditionalOptions="libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -505,11 +505,11 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WINDOWS"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_CONSOLE"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug9\build\apppsclient\apppsclient.tlb"/>
+				TypeLibraryName="..\..\out\debug9\build\appccheck_static\appccheck_static.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug9\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug9\bin\&#x0D;&#x0A;"
@@ -520,8 +520,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WINDOWS;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_CONSOLE;PROJECTGEN_VERSION=9"
+				AdditionalIncludeDirectories=".;..\..\src\tools\ccheck;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -530,8 +530,8 @@
 		</Configuration>
       		<Configuration
 			Name="RefTracker (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug9\build\apppsclient\"
-			IntermediateDirectory="..\..\out\debug9\build\apppsclient\"
+			OutputDirectory="..\..\out\debug9\build\appccheck_static\"
+			IntermediateDirectory="..\..\out\debug9\build\appccheck_static\"
 			ConfigurationType="1"
 			CharacterSet="2"
 			UseOfMFC="0"
@@ -543,14 +543,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug9\build\apppsclient\Win32\psclient.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WINDOWS;WIN32;CS_BUILD_SHARED_LIBS"
+				ProgramDataBaseFileName="..\..\out\debug9\build\appccheck_static\Win32\ccheck_static.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_CONSOLE;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
-				AdditionalOptions="-I\home\xordan\dev\cal3d\include "
+				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug9\build\apppsclient\apppsclient.pch"
-				AssemblerListingLocation="..\..\out\debug9\build\apppsclient\"
-				ObjectFile="..\..\out\debug9\build\apppsclient\"
+				PrecompiledHeaderFile="..\..\out\debug9\build\appccheck_static\appccheck_static.pch"
+				AssemblerListingLocation="..\..\out\debug9\build\appccheck_static\"
+				ObjectFile="..\..\out\debug9\build\appccheck_static\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -565,11 +565,11 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psclient.exe"
-				ProgramDatabaseFile="..\..\out\debug9\build\apppsclient\Win32\psclient.pdb"
+				OutputFile="..\..\ccheck_static.exe"
+				ProgramDatabaseFile="..\..\out\debug9\build\appccheck_static\Win32\ccheck_static.pdb"
 				SubSystem="1"
-				AdditionalOptions="-L\home\xordan\dev\cal3d\lib -lcal3d "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc9_d.lib"
+				AdditionalOptions="libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -578,11 +578,11 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WINDOWS"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_CONSOLE"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug9\build\apppsclient\apppsclient.tlb"/>
+				TypeLibraryName="..\..\out\debug9\build\appccheck_static\appccheck_static.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug9\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug9\bin\&#x0D;&#x0A;"
@@ -593,8 +593,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WINDOWS;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_CONSOLE;PROJECTGEN_VERSION=9"
+				AdditionalIncludeDirectories=".;..\..\src\tools\ccheck;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -603,8 +603,8 @@
 		</Configuration>
                 		<Configuration
 			Name="ThreadChecker (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug9\build\apppsclient\"
-			IntermediateDirectory="..\..\out\debug9\build\apppsclient\"
+			OutputDirectory="..\..\out\debug9\build\appccheck_static\"
+			IntermediateDirectory="..\..\out\debug9\build\appccheck_static\"
 			ConfigurationType="1"
 			CharacterSet="2"
 			UseOfMFC="0"
@@ -616,14 +616,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug9\build\apppsclient\Win32\psclient.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_WINDOWS;WIN32"
+				ProgramDataBaseFileName="..\..\out\debug9\build\appccheck_static\Win32\ccheck_static.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_CONSOLE;WIN32"
 				OptimizeForProcessor="1"
-				AdditionalOptions="-I\home\xordan\dev\cal3d\include "
+				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug9\build\apppsclient\apppsclient.pch"
-				AssemblerListingLocation="..\..\out\debug9\build\apppsclient\"
-				ObjectFile="..\..\out\debug9\build\apppsclient\"
+				PrecompiledHeaderFile="..\..\out\debug9\build\appccheck_static\appccheck_static.pch"
+				AssemblerListingLocation="..\..\out\debug9\build\appccheck_static\"
+				ObjectFile="..\..\out\debug9\build\appccheck_static\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -638,11 +638,11 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psclient.exe"
-				ProgramDatabaseFile="..\..\out\debug9\build\apppsclient\Win32\psclient.pdb"
+				OutputFile="..\..\ccheck_static.exe"
+				ProgramDatabaseFile="..\..\out\debug9\build\appccheck_static\Win32\ccheck_static.pdb"
 				SubSystem="1"
-				AdditionalOptions="-L\home\xordan\dev\cal3d\lib -lcal3d "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc9_d.lib"
+				AdditionalOptions="libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -651,11 +651,11 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_WINDOWS"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_CONSOLE"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug9\build\apppsclient\apppsclient.tlb"/>
+				TypeLibraryName="..\..\out\debug9\build\appccheck_static\appccheck_static.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug9\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug9\bin\&#x0D;&#x0A;"
@@ -666,8 +666,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_WINDOWS;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_CONSOLE;PROJECTGEN_VERSION=9"
+				AdditionalIncludeDirectories=".;..\..\src\tools\ccheck;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -676,8 +676,8 @@
 		</Configuration>
       		<Configuration
 			Name="ThreadChecker (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug9\build\apppsclient\"
-			IntermediateDirectory="..\..\out\debug9\build\apppsclient\"
+			OutputDirectory="..\..\out\debug9\build\appccheck_static\"
+			IntermediateDirectory="..\..\out\debug9\build\appccheck_static\"
 			ConfigurationType="1"
 			CharacterSet="2"
 			UseOfMFC="0"
@@ -689,14 +689,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug9\build\apppsclient\Win32\psclient.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_WINDOWS;WIN32;CS_BUILD_SHARED_LIBS"
+				ProgramDataBaseFileName="..\..\out\debug9\build\appccheck_static\Win32\ccheck_static.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_CONSOLE;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
-				AdditionalOptions="-I\home\xordan\dev\cal3d\include "
+				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug9\build\apppsclient\apppsclient.pch"
-				AssemblerListingLocation="..\..\out\debug9\build\apppsclient\"
-				ObjectFile="..\..\out\debug9\build\apppsclient\"
+				PrecompiledHeaderFile="..\..\out\debug9\build\appccheck_static\appccheck_static.pch"
+				AssemblerListingLocation="..\..\out\debug9\build\appccheck_static\"
+				ObjectFile="..\..\out\debug9\build\appccheck_static\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -711,11 +711,11 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psclient.exe"
-				ProgramDatabaseFile="..\..\out\debug9\build\apppsclient\Win32\psclient.pdb"
+				OutputFile="..\..\ccheck_static.exe"
+				ProgramDatabaseFile="..\..\out\debug9\build\appccheck_static\Win32\ccheck_static.pdb"
 				SubSystem="1"
-				AdditionalOptions="-L\home\xordan\dev\cal3d\lib -lcal3d "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc9_d.lib"
+				AdditionalOptions="libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -724,11 +724,11 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_WINDOWS"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_CONSOLE"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug9\build\apppsclient\apppsclient.tlb"/>
+				TypeLibraryName="..\..\out\debug9\build\appccheck_static\appccheck_static.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug9\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug9\bin\&#x0D;&#x0A;"
@@ -739,8 +739,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_WINDOWS;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_CONSOLE;PROJECTGEN_VERSION=9"
+				AdditionalIncludeDirectories=".;..\..\src\tools\ccheck;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -749,8 +749,8 @@
 		</Configuration>
                 		<Configuration
 			Name="DebugPSReleaseCSCEL (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug9\build\apppsclient\"
-			IntermediateDirectory="..\..\out\debug9\build\apppsclient\"
+			OutputDirectory="..\..\out\debug9\build\appccheck_static\"
+			IntermediateDirectory="..\..\out\debug9\build\appccheck_static\"
 			ConfigurationType="1"
 			CharacterSet="2"
 			UseOfMFC="0"
@@ -762,14 +762,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug9\build\apppsclient\Win32\psclient.pdb"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;WIN32"
+				ProgramDataBaseFileName="..\..\out\debug9\build\appccheck_static\Win32\ccheck_static.pdb"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;WIN32"
 				OptimizeForProcessor="1"
-				AdditionalOptions="-I\home\xordan\dev\cal3d\include "
+				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug9\build\apppsclient\apppsclient.pch"
-				AssemblerListingLocation="..\..\out\debug9\build\apppsclient\"
-				ObjectFile="..\..\out\debug9\build\apppsclient\"
+				PrecompiledHeaderFile="..\..\out\debug9\build\appccheck_static\appccheck_static.pch"
+				AssemblerListingLocation="..\..\out\debug9\build\appccheck_static\"
+				ObjectFile="..\..\out\debug9\build\appccheck_static\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -784,11 +784,11 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psclient.exe"
-				ProgramDatabaseFile="..\..\out\debug9\build\apppsclient\Win32\psclient.pdb"
+				OutputFile="..\..\ccheck_static.exe"
+				ProgramDatabaseFile="..\..\out\debug9\build\appccheck_static\Win32\ccheck_static.pdb"
 				SubSystem="1"
-				AdditionalOptions="-L\home\xordan\dev\cal3d\lib -lcal3d "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib cal3d-vc9.lib"
+				AdditionalOptions="libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -797,11 +797,11 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug9\build\apppsclient\apppsclient.tlb"/>
+				TypeLibraryName="..\..\out\debug9\build\appccheck_static\appccheck_static.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug9\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug9\bin\&#x0D;&#x0A;"
@@ -812,8 +812,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;PROJECTGEN_VERSION=9"
+				AdditionalIncludeDirectories=".;..\..\src\tools\ccheck;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -822,8 +822,8 @@
 		</Configuration>
       		<Configuration
 			Name="DebugPSReleaseCSCEL (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug9\build\apppsclient\"
-			IntermediateDirectory="..\..\out\debug9\build\apppsclient\"
+			OutputDirectory="..\..\out\debug9\build\appccheck_static\"
+			IntermediateDirectory="..\..\out\debug9\build\appccheck_static\"
 			ConfigurationType="1"
 			CharacterSet="2"
 			UseOfMFC="0"
@@ -835,14 +835,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug9\build\apppsclient\Win32\psclient.pdb"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;WIN32;CS_BUILD_SHARED_LIBS"
+				ProgramDataBaseFileName="..\..\out\debug9\build\appccheck_static\Win32\ccheck_static.pdb"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
-				AdditionalOptions="-I\home\xordan\dev\cal3d\include "
+				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug9\build\apppsclient\apppsclient.pch"
-				AssemblerListingLocation="..\..\out\debug9\build\apppsclient\"
-				ObjectFile="..\..\out\debug9\build\apppsclient\"
+				PrecompiledHeaderFile="..\..\out\debug9\build\appccheck_static\appccheck_static.pch"
+				AssemblerListingLocation="..\..\out\debug9\build\appccheck_static\"
+				ObjectFile="..\..\out\debug9\build\appccheck_static\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -857,11 +857,11 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psclient.exe"
-				ProgramDatabaseFile="..\..\out\debug9\build\apppsclient\Win32\psclient.pdb"
+				OutputFile="..\..\ccheck_static.exe"
+				ProgramDatabaseFile="..\..\out\debug9\build\appccheck_static\Win32\ccheck_static.pdb"
 				SubSystem="1"
-				AdditionalOptions="-L\home\xordan\dev\cal3d\lib -lcal3d "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib cal3d-vc9.lib"
+				AdditionalOptions="libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -870,11 +870,11 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug9\build\apppsclient\apppsclient.tlb"/>
+				TypeLibraryName="..\..\out\debug9\build\appccheck_static\appccheck_static.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug9\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug9\bin\&#x0D;&#x0A;"
@@ -885,8 +885,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;PROJECTGEN_VERSION=9"
+				AdditionalIncludeDirectories=".;..\..\src\tools\ccheck;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -895,8 +895,8 @@
 		</Configuration>
                         		<Configuration
 			Name="Release (with static libs)|x64"
-			OutputDirectory="..\..\out\release9-x64\build\apppsclient\"
-			IntermediateDirectory="..\..\out\release9-x64\build\apppsclient\"
+			OutputDirectory="..\..\out\release9-x64\build\appccheck_static\"
+			IntermediateDirectory="..\..\out\release9-x64\build\appccheck_static\"
 			ConfigurationType="1"
 			CharacterSet="2"
 			WholeProgramOptimization="1"
@@ -909,14 +909,14 @@
 				EnableFunctionLevelLinking="TRUE"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="FALSE"
-				ProgramDataBaseFileName="..\..\out\release9-x64\build\apppsclient\x64\psclient.pdb"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;WIN32"
+				ProgramDataBaseFileName="..\..\out\release9-x64\build\appccheck_static\x64\ccheck_static.pdb"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;WIN32"
 				OptimizeForProcessor="1"
-				AdditionalOptions="-I\home\xordan\dev\cal3d\include "
+				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\release9-x64\build\apppsclient\apppsclient.pch"
-				AssemblerListingLocation="..\..\out\release9-x64\build\apppsclient\"
-				ObjectFile="..\..\out\release9-x64\build\apppsclient\"
+				PrecompiledHeaderFile="..\..\out\release9-x64\build\appccheck_static\appccheck_static.pch"
+				AssemblerListingLocation="..\..\out\release9-x64\build\appccheck_static\"
+				ObjectFile="..\..\out\release9-x64\build\appccheck_static\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -933,11 +933,11 @@
 				EnableCOMDATFolding="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD"
-				OutputFile="..\..\psclient.exe"
-				ProgramDatabaseFile="..\..\out\release9-x64\build\apppsclient\x64\psclient.pdb"
-				SubSystem="2"
-				AdditionalOptions="-L\home\xordan\dev\cal3d\lib -lcal3d "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib cal3d-vc9.lib"
+				OutputFile="..\..\ccheck_static.exe"
+				ProgramDatabaseFile="..\..\out\release9-x64\build\appccheck_static\x64\ccheck_static.pdb"
+				SubSystem="1"
+				AdditionalOptions="libcrystalspace_staticplugins.lib libcrystalspace.lib zlib.lib "
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
@@ -946,11 +946,11 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\release9-x64\build\apppsclient\apppsclient.tlb"/>
+				TypeLibraryName="..\..\out\release9-x64\build\appccheck_static\appccheck_static.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\release9-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release9-x64\bin\&#x0D;&#x0A;"
@@ -961,8 +961,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;PROJECTGEN_VERSION=9"
+				AdditionalIncludeDirectories=".;..\..\src\tools\ccheck;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -971,8 +971,8 @@
 		</Configuration>
       		<Configuration
 			Name="Release (with DLLs)|x64"
-			OutputDirectory="..\..\out\release9-x64\build\apppsclient\"
-			IntermediateDirectory="..\..\out\release9-x64\build\apppsclient\"
+			OutputDirectory="..\..\out\release9-x64\build\appccheck_static\"
+			IntermediateDirectory="..\..\out\release9-x64\build\appccheck_static\"
 			ConfigurationType="1"
 			CharacterSet="2"
 			WholeProgramOptimization="1"
@@ -985,14 +985,14 @@
 				EnableFunctionLevelLinking="TRUE"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="FALSE"
-				ProgramDataBaseFileName="..\..\out\release9-x64\build\apppsclient\x64\psclient.pdb"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;WIN32;CS_BUILD_SHARED_LIBS"
+				ProgramDataBaseFileName="..\..\out\release9-x64\build\appccheck_static\x64\ccheck_static.pdb"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
-				AdditionalOptions="-I\home\xordan\dev\cal3d\include "
+				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\release9-x64\build\apppsclient\apppsclient.pch"
-				AssemblerListingLocation="..\..\out\release9-x64\build\apppsclient\"
-				ObjectFile="..\..\out\release9-x64\build\apppsclient\"
+				PrecompiledHeaderFile="..\..\out\release9-x64\build\appccheck_static\appccheck_static.pch"
+				AssemblerListingLocation="..\..\out\release9-x64\build\appccheck_static\"
+				ObjectFile="..\..\out\release9-x64\build\appccheck_static\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1009,11 +1009,11 @@
 				EnableCOMDATFolding="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD"
-				OutputFile="..\..\psclient.exe"
-				ProgramDatabaseFile="..\..\out\release9-x64\build\apppsclient\x64\psclient.pdb"
-				SubSystem="2"
-				AdditionalOptions="-L\home\xordan\dev\cal3d\lib -lcal3d "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib cal3d-vc9.lib"
+				OutputFile="..\..\ccheck_static.exe"
+				ProgramDatabaseFile="..\..\out\release9-x64\build\appccheck_static\x64\ccheck_static.pdb"
+				SubSystem="1"
+				AdditionalOptions="libcrystalspace_staticplugins.lib libcrystalspace.lib zlib.lib "
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
@@ -1022,11 +1022,11 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\release9-x64\build\apppsclient\apppsclient.tlb"/>
+				TypeLibraryName="..\..\out\release9-x64\build\appccheck_static\appccheck_static.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\release9-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release9-x64\bin\&#x0D;&#x0A;"
@@ -1037,8 +1037,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;PROJECTGEN_VERSION=9"
+				AdditionalIncludeDirectories=".;..\..\src\tools\ccheck;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1047,8 +1047,8 @@
 		</Configuration>
                 		<Configuration
 			Name="Debug (with static libs)|x64"
-			OutputDirectory="..\..\out\debug9-x64\build\apppsclient\"
-			IntermediateDirectory="..\..\out\debug9-x64\build\apppsclient\"
+			OutputDirectory="..\..\out\debug9-x64\build\appccheck_static\"
+			IntermediateDirectory="..\..\out\debug9-x64\build\appccheck_static\"
 			ConfigurationType="1"
 			CharacterSet="2"
 			UseOfMFC="0"
@@ -1060,14 +1060,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug9-x64\build\apppsclient\x64\psclient.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;WIN32"
+				ProgramDataBaseFileName="..\..\out\debug9-x64\build\appccheck_static\x64\ccheck_static.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;WIN32"
 				OptimizeForProcessor="1"
-				AdditionalOptions="-I\home\xordan\dev\cal3d\include "
+				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug9-x64\build\apppsclient\apppsclient.pch"
-				AssemblerListingLocation="..\..\out\debug9-x64\build\apppsclient\"
-				ObjectFile="..\..\out\debug9-x64\build\apppsclient\"
+				PrecompiledHeaderFile="..\..\out\debug9-x64\build\appccheck_static\appccheck_static.pch"
+				AssemblerListingLocation="..\..\out\debug9-x64\build\appccheck_static\"
+				ObjectFile="..\..\out\debug9-x64\build\appccheck_static\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1082,11 +1082,11 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psclient.exe"
-				ProgramDatabaseFile="..\..\out\debug9-x64\build\apppsclient\x64\psclient.pdb"
+				OutputFile="..\..\ccheck_static.exe"
+				ProgramDatabaseFile="..\..\out\debug9-x64\build\appccheck_static\x64\ccheck_static.pdb"
 				SubSystem="1"
-				AdditionalOptions="-L\home\xordan\dev\cal3d\lib -lcal3d "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc9_d.lib"
+				AdditionalOptions="libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
@@ -1095,11 +1095,11 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug9-x64\build\apppsclient\apppsclient.tlb"/>
+				TypeLibraryName="..\..\out\debug9-x64\build\appccheck_static\appccheck_static.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug9-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug9-x64\bin\&#x0D;&#x0A;"
@@ -1110,8 +1110,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;PROJECTGEN_VERSION=9"
+				AdditionalIncludeDirectories=".;..\..\src\tools\ccheck;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1120,8 +1120,8 @@
 		</Configuration>
       		<Configuration
 			Name="Debug (with DLLs)|x64"
-			OutputDirectory="..\..\out\debug9-x64\build\apppsclient\"
-			IntermediateDirectory="..\..\out\debug9-x64\build\apppsclient\"
+			OutputDirectory="..\..\out\debug9-x64\build\appccheck_static\"
+			IntermediateDirectory="..\..\out\debug9-x64\build\appccheck_static\"
 			ConfigurationType="1"
 			CharacterSet="2"
 			UseOfMFC="0"
@@ -1133,14 +1133,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug9-x64\build\apppsclient\x64\psclient.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;WIN32;CS_BUILD_SHARED_LIBS"
+				ProgramDataBaseFileName="..\..\out\debug9-x64\build\appccheck_static\x64\ccheck_static.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
-				AdditionalOptions="-I\home\xordan\dev\cal3d\include "
+				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug9-x64\build\apppsclient\apppsclient.pch"
-				AssemblerListingLocation="..\..\out\debug9-x64\build\apppsclient\"
-				ObjectFile="..\..\out\debug9-x64\build\apppsclient\"
+				PrecompiledHeaderFile="..\..\out\debug9-x64\build\appccheck_static\appccheck_static.pch"
+				AssemblerListingLocation="..\..\out\debug9-x64\build\appccheck_static\"
+				ObjectFile="..\..\out\debug9-x64\build\appccheck_static\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1155,11 +1155,11 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psclient.exe"
-				ProgramDatabaseFile="..\..\out\debug9-x64\build\apppsclient\x64\psclient.pdb"
+				OutputFile="..\..\ccheck_static.exe"
+				ProgramDatabaseFile="..\..\out\debug9-x64\build\appccheck_static\x64\ccheck_static.pdb"
 				SubSystem="1"
-				AdditionalOptions="-L\home\xordan\dev\cal3d\lib -lcal3d "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc9_d.lib"
+				AdditionalOptions="libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
@@ -1168,11 +1168,11 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug9-x64\build\apppsclient\apppsclient.tlb"/>
+				TypeLibraryName="..\..\out\debug9-x64\build\appccheck_static\appccheck_static.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug9-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug9-x64\bin\&#x0D;&#x0A;"
@@ -1183,8 +1183,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;PROJECTGEN_VERSION=9"
+				AdditionalIncludeDirectories=".;..\..\src\tools\ccheck;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1193,8 +1193,8 @@
 		</Configuration>
                 		<Configuration
 			Name="MemoryTracker (with static libs)|x64"
-			OutputDirectory="..\..\out\debug9-x64\build\apppsclient\"
-			IntermediateDirectory="..\..\out\debug9-x64\build\apppsclient\"
+			OutputDirectory="..\..\out\debug9-x64\build\appccheck_static\"
+			IntermediateDirectory="..\..\out\debug9-x64\build\appccheck_static\"
 			ConfigurationType="1"
 			CharacterSet="2"
 			UseOfMFC="0"
@@ -1206,14 +1206,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug9-x64\build\apppsclient\x64\psclient.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WINDOWS;WIN32"
+				ProgramDataBaseFileName="..\..\out\debug9-x64\build\appccheck_static\x64\ccheck_static.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_CONSOLE;WIN32"
 				OptimizeForProcessor="1"
-				AdditionalOptions="-I\home\xordan\dev\cal3d\include "
+				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug9-x64\build\apppsclient\apppsclient.pch"
-				AssemblerListingLocation="..\..\out\debug9-x64\build\apppsclient\"
-				ObjectFile="..\..\out\debug9-x64\build\apppsclient\"
+				PrecompiledHeaderFile="..\..\out\debug9-x64\build\appccheck_static\appccheck_static.pch"
+				AssemblerListingLocation="..\..\out\debug9-x64\build\appccheck_static\"
+				ObjectFile="..\..\out\debug9-x64\build\appccheck_static\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1228,11 +1228,11 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psclient.exe"
-				ProgramDatabaseFile="..\..\out\debug9-x64\build\apppsclient\x64\psclient.pdb"
+				OutputFile="..\..\ccheck_static.exe"
+				ProgramDatabaseFile="..\..\out\debug9-x64\build\appccheck_static\x64\ccheck_static.pdb"
 				SubSystem="1"
-				AdditionalOptions="-L\home\xordan\dev\cal3d\lib -lcal3d "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc9_d.lib"
+				AdditionalOptions="libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
@@ -1241,11 +1241,11 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WINDOWS"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_CONSOLE"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug9-x64\build\apppsclient\apppsclient.tlb"/>
+				TypeLibraryName="..\..\out\debug9-x64\build\appccheck_static\appccheck_static.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug9-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug9-x64\bin\&#x0D;&#x0A;"
@@ -1256,8 +1256,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WINDOWS;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_CONSOLE;PROJECTGEN_VERSION=9"
+				AdditionalIncludeDirectories=".;..\..\src\tools\ccheck;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1266,8 +1266,8 @@
 		</Configuration>
       		<Configuration
 			Name="MemoryTracker (with DLLs)|x64"
-			OutputDirectory="..\..\out\debug9-x64\build\apppsclient\"
-			IntermediateDirectory="..\..\out\debug9-x64\build\apppsclient\"
+			OutputDirectory="..\..\out\debug9-x64\build\appccheck_static\"
+			IntermediateDirectory="..\..\out\debug9-x64\build\appccheck_static\"
 			ConfigurationType="1"
 			CharacterSet="2"
 			UseOfMFC="0"
@@ -1279,14 +1279,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug9-x64\build\apppsclient\x64\psclient.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WINDOWS;WIN32;CS_BUILD_SHARED_LIBS"
+				ProgramDataBaseFileName="..\..\out\debug9-x64\build\appccheck_static\x64\ccheck_static.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_CONSOLE;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
-				AdditionalOptions="-I\home\xordan\dev\cal3d\include "
+				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug9-x64\build\apppsclient\apppsclient.pch"
-				AssemblerListingLocation="..\..\out\debug9-x64\build\apppsclient\"
-				ObjectFile="..\..\out\debug9-x64\build\apppsclient\"
+				PrecompiledHeaderFile="..\..\out\debug9-x64\build\appccheck_static\appccheck_static.pch"
+				AssemblerListingLocation="..\..\out\debug9-x64\build\appccheck_static\"
+				ObjectFile="..\..\out\debug9-x64\build\appccheck_static\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1301,11 +1301,11 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psclient.exe"
-				ProgramDatabaseFile="..\..\out\debug9-x64\build\apppsclient\x64\psclient.pdb"
+				OutputFile="..\..\ccheck_static.exe"
+				ProgramDatabaseFile="..\..\out\debug9-x64\build\appccheck_static\x64\ccheck_static.pdb"
 				SubSystem="1"
-				AdditionalOptions="-L\home\xordan\dev\cal3d\lib -lcal3d "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc9_d.lib"
+				AdditionalOptions="libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
@@ -1314,11 +1314,11 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WINDOWS"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_CONSOLE"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug9-x64\build\apppsclient\apppsclient.tlb"/>
+				TypeLibraryName="..\..\out\debug9-x64\build\appccheck_static\appccheck_static.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug9-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug9-x64\bin\&#x0D;&#x0A;"
@@ -1329,8 +1329,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WINDOWS;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_CONSOLE;PROJECTGEN_VERSION=9"
+				AdditionalIncludeDirectories=".;..\..\src\tools\ccheck;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1339,8 +1339,8 @@
 		</Configuration>
                 		<Configuration
 			Name="RefTracker (with static libs)|x64"
-			OutputDirectory="..\..\out\debug9-x64\build\apppsclient\"
-			IntermediateDirectory="..\..\out\debug9-x64\build\apppsclient\"
+			OutputDirectory="..\..\out\debug9-x64\build\appccheck_static\"
+			IntermediateDirectory="..\..\out\debug9-x64\build\appccheck_static\"
 			ConfigurationType="1"
 			CharacterSet="2"
 			UseOfMFC="0"
@@ -1352,14 +1352,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug9-x64\build\apppsclient\x64\psclient.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WINDOWS;WIN32"
+				ProgramDataBaseFileName="..\..\out\debug9-x64\build\appccheck_static\x64\ccheck_static.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_CONSOLE;WIN32"
 				OptimizeForProcessor="1"
-				AdditionalOptions="-I\home\xordan\dev\cal3d\include "
+				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug9-x64\build\apppsclient\apppsclient.pch"
-				AssemblerListingLocation="..\..\out\debug9-x64\build\apppsclient\"
-				ObjectFile="..\..\out\debug9-x64\build\apppsclient\"
+				PrecompiledHeaderFile="..\..\out\debug9-x64\build\appccheck_static\appccheck_static.pch"
+				AssemblerListingLocation="..\..\out\debug9-x64\build\appccheck_static\"
+				ObjectFile="..\..\out\debug9-x64\build\appccheck_static\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1374,11 +1374,11 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psclient.exe"
-				ProgramDatabaseFile="..\..\out\debug9-x64\build\apppsclient\x64\psclient.pdb"
+				OutputFile="..\..\ccheck_static.exe"
+				ProgramDatabaseFile="..\..\out\debug9-x64\build\appccheck_static\x64\ccheck_static.pdb"
 				SubSystem="1"
-				AdditionalOptions="-L\home\xordan\dev\cal3d\lib -lcal3d "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc9_d.lib"
+				AdditionalOptions="libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
@@ -1387,11 +1387,11 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WINDOWS"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_CONSOLE"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug9-x64\build\apppsclient\apppsclient.tlb"/>
+				TypeLibraryName="..\..\out\debug9-x64\build\appccheck_static\appccheck_static.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug9-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug9-x64\bin\&#x0D;&#x0A;"
@@ -1402,8 +1402,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WINDOWS;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_CONSOLE;PROJECTGEN_VERSION=9"
+				AdditionalIncludeDirectories=".;..\..\src\tools\ccheck;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1412,8 +1412,8 @@
 		</Configuration>
       		<Configuration
 			Name="RefTracker (with DLLs)|x64"
-			OutputDirectory="..\..\out\debug9-x64\build\apppsclient\"
-			IntermediateDirectory="..\..\out\debug9-x64\build\apppsclient\"
+			OutputDirectory="..\..\out\debug9-x64\build\appccheck_static\"
+			IntermediateDirectory="..\..\out\debug9-x64\build\appccheck_static\"
 			ConfigurationType="1"
 			CharacterSet="2"
 			UseOfMFC="0"
@@ -1425,14 +1425,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug9-x64\build\apppsclient\x64\psclient.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WINDOWS;WIN32;CS_BUILD_SHARED_LIBS"
+				ProgramDataBaseFileName="..\..\out\debug9-x64\build\appccheck_static\x64\ccheck_static.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_CONSOLE;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
-				AdditionalOptions="-I\home\xordan\dev\cal3d\include "
+				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug9-x64\build\apppsclient\apppsclient.pch"
-				AssemblerListingLocation="..\..\out\debug9-x64\build\apppsclient\"
-				ObjectFile="..\..\out\debug9-x64\build\apppsclient\"
+				PrecompiledHeaderFile="..\..\out\debug9-x64\build\appccheck_static\appccheck_static.pch"
+				AssemblerListingLocation="..\..\out\debug9-x64\build\appccheck_static\"
+				ObjectFile="..\..\out\debug9-x64\build\appccheck_static\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1447,11 +1447,11 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psclient.exe"
-				ProgramDatabaseFile="..\..\out\debug9-x64\build\apppsclient\x64\psclient.pdb"
+				OutputFile="..\..\ccheck_static.exe"
+				ProgramDatabaseFile="..\..\out\debug9-x64\build\appccheck_static\x64\ccheck_static.pdb"
 				SubSystem="1"
-				AdditionalOptions="-L\home\xordan\dev\cal3d\lib -lcal3d "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc9_d.lib"
+				AdditionalOptions="libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
@@ -1460,11 +1460,11 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WINDOWS"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_CONSOLE"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug9-x64\build\apppsclient\apppsclient.tlb"/>
+				TypeLibraryName="..\..\out\debug9-x64\build\appccheck_static\appccheck_static.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug9-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug9-x64\bin\&#x0D;&#x0A;"
@@ -1475,8 +1475,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WINDOWS;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_CONSOLE;PROJECTGEN_VERSION=9"
+				AdditionalIncludeDirectories=".;..\..\src\tools\ccheck;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1485,8 +1485,8 @@
 		</Configuration>
                 		<Configuration
 			Name="ThreadChecker (with static libs)|x64"
-			OutputDirectory="..\..\out\debug9-x64\build\apppsclient\"
-			IntermediateDirectory="..\..\out\debug9-x64\build\apppsclient\"
+			OutputDirectory="..\..\out\debug9-x64\build\appccheck_static\"
+			IntermediateDirectory="..\..\out\debug9-x64\build\appccheck_static\"
 			ConfigurationType="1"
 			CharacterSet="2"
 			UseOfMFC="0"
@@ -1498,14 +1498,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug9-x64\build\apppsclient\x64\psclient.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_WINDOWS;WIN32"
+				ProgramDataBaseFileName="..\..\out\debug9-x64\build\appccheck_static\x64\ccheck_static.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_CONSOLE;WIN32"
 				OptimizeForProcessor="1"
-				AdditionalOptions="-I\home\xordan\dev\cal3d\include "
+				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug9-x64\build\apppsclient\apppsclient.pch"
-				AssemblerListingLocation="..\..\out\debug9-x64\build\apppsclient\"
-				ObjectFile="..\..\out\debug9-x64\build\apppsclient\"
+				PrecompiledHeaderFile="..\..\out\debug9-x64\build\appccheck_static\appccheck_static.pch"
+				AssemblerListingLocation="..\..\out\debug9-x64\build\appccheck_static\"
+				ObjectFile="..\..\out\debug9-x64\build\appccheck_static\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1520,11 +1520,11 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psclient.exe"
-				ProgramDatabaseFile="..\..\out\debug9-x64\build\apppsclient\x64\psclient.pdb"
+				OutputFile="..\..\ccheck_static.exe"
+				ProgramDatabaseFile="..\..\out\debug9-x64\build\appccheck_static\x64\ccheck_static.pdb"
 				SubSystem="1"
-				AdditionalOptions="-L\home\xordan\dev\cal3d\lib -lcal3d "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc9_d.lib"
+				AdditionalOptions="libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
@@ -1533,11 +1533,11 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_WINDOWS"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_CONSOLE"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug9-x64\build\apppsclient\apppsclient.tlb"/>
+				TypeLibraryName="..\..\out\debug9-x64\build\appccheck_static\appccheck_static.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug9-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug9-x64\bin\&#x0D;&#x0A;"
@@ -1548,8 +1548,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_WINDOWS;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_CONSOLE;PROJECTGEN_VERSION=9"
+				AdditionalIncludeDirectories=".;..\..\src\tools\ccheck;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1558,8 +1558,8 @@
 		</Configuration>
       		<Configuration
 			Name="ThreadChecker (with DLLs)|x64"
-			OutputDirectory="..\..\out\debug9-x64\build\apppsclient\"
-			IntermediateDirectory="..\..\out\debug9-x64\build\apppsclient\"
+			OutputDirectory="..\..\out\debug9-x64\build\appccheck_static\"
+			IntermediateDirectory="..\..\out\debug9-x64\build\appccheck_static\"
 			ConfigurationType="1"
 			CharacterSet="2"
 			UseOfMFC="0"
@@ -1571,14 +1571,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug9-x64\build\apppsclient\x64\psclient.pdb"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_WINDOWS;WIN32;CS_BUILD_SHARED_LIBS"
+				ProgramDataBaseFileName="..\..\out\debug9-x64\build\appccheck_static\x64\ccheck_static.pdb"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_CONSOLE;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
-				AdditionalOptions="-I\home\xordan\dev\cal3d\include "
+				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug9-x64\build\apppsclient\apppsclient.pch"
-				AssemblerListingLocation="..\..\out\debug9-x64\build\apppsclient\"
-				ObjectFile="..\..\out\debug9-x64\build\apppsclient\"
+				PrecompiledHeaderFile="..\..\out\debug9-x64\build\appccheck_static\appccheck_static.pch"
+				AssemblerListingLocation="..\..\out\debug9-x64\build\appccheck_static\"
+				ObjectFile="..\..\out\debug9-x64\build\appccheck_static\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1593,11 +1593,11 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psclient.exe"
-				ProgramDatabaseFile="..\..\out\debug9-x64\build\apppsclient\x64\psclient.pdb"
+				OutputFile="..\..\ccheck_static.exe"
+				ProgramDatabaseFile="..\..\out\debug9-x64\build\appccheck_static\x64\ccheck_static.pdb"
 				SubSystem="1"
-				AdditionalOptions="-L\home\xordan\dev\cal3d\lib -lcal3d "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc9_d.lib"
+				AdditionalOptions="libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
@@ -1606,11 +1606,11 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_WINDOWS"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_CONSOLE"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug9-x64\build\apppsclient\apppsclient.tlb"/>
+				TypeLibraryName="..\..\out\debug9-x64\build\appccheck_static\appccheck_static.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug9-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug9-x64\bin\&#x0D;&#x0A;"
@@ -1621,8 +1621,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_WINDOWS;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_CONSOLE;PROJECTGEN_VERSION=9"
+				AdditionalIncludeDirectories=".;..\..\src\tools\ccheck;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1631,8 +1631,8 @@
 		</Configuration>
                 		<Configuration
 			Name="DebugPSReleaseCSCEL (with static libs)|x64"
-			OutputDirectory="..\..\out\debug9-x64\build\apppsclient\"
-			IntermediateDirectory="..\..\out\debug9-x64\build\apppsclient\"
+			OutputDirectory="..\..\out\debug9-x64\build\appccheck_static\"
+			IntermediateDirectory="..\..\out\debug9-x64\build\appccheck_static\"
 			ConfigurationType="1"
 			CharacterSet="2"
 			UseOfMFC="0"
@@ -1644,14 +1644,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug9-x64\build\apppsclient\x64\psclient.pdb"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;WIN32"
+				ProgramDataBaseFileName="..\..\out\debug9-x64\build\appccheck_static\x64\ccheck_static.pdb"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;WIN32"
 				OptimizeForProcessor="1"
-				AdditionalOptions="-I\home\xordan\dev\cal3d\include "
+				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug9-x64\build\apppsclient\apppsclient.pch"
-				AssemblerListingLocation="..\..\out\debug9-x64\build\apppsclient\"
-				ObjectFile="..\..\out\debug9-x64\build\apppsclient\"
+				PrecompiledHeaderFile="..\..\out\debug9-x64\build\appccheck_static\appccheck_static.pch"
+				AssemblerListingLocation="..\..\out\debug9-x64\build\appccheck_static\"
+				ObjectFile="..\..\out\debug9-x64\build\appccheck_static\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1666,11 +1666,11 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psclient.exe"
-				ProgramDatabaseFile="..\..\out\debug9-x64\build\apppsclient\x64\psclient.pdb"
+				OutputFile="..\..\ccheck_static.exe"
+				ProgramDatabaseFile="..\..\out\debug9-x64\build\appccheck_static\x64\ccheck_static.pdb"
 				SubSystem="1"
-				AdditionalOptions="-L\home\xordan\dev\cal3d\lib -lcal3d "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib cal3d-vc9.lib"
+				AdditionalOptions="libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
@@ -1679,11 +1679,11 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug9-x64\build\apppsclient\apppsclient.tlb"/>
+				TypeLibraryName="..\..\out\debug9-x64\build\appccheck_static\appccheck_static.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug9-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug9-x64\bin\&#x0D;&#x0A;"
@@ -1694,8 +1694,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;PROJECTGEN_VERSION=9"
+				AdditionalIncludeDirectories=".;..\..\src\tools\ccheck;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1704,8 +1704,8 @@
 		</Configuration>
       		<Configuration
 			Name="DebugPSReleaseCSCEL (with DLLs)|x64"
-			OutputDirectory="..\..\out\debug9-x64\build\apppsclient\"
-			IntermediateDirectory="..\..\out\debug9-x64\build\apppsclient\"
+			OutputDirectory="..\..\out\debug9-x64\build\appccheck_static\"
+			IntermediateDirectory="..\..\out\debug9-x64\build\appccheck_static\"
 			ConfigurationType="1"
 			CharacterSet="2"
 			UseOfMFC="0"
@@ -1717,14 +1717,14 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug9-x64\build\apppsclient\x64\psclient.pdb"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;WIN32;CS_BUILD_SHARED_LIBS"
+				ProgramDataBaseFileName="..\..\out\debug9-x64\build\appccheck_static\x64\ccheck_static.pdb"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="1"
-				AdditionalOptions="-I\home\xordan\dev\cal3d\include "
+				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
-				PrecompiledHeaderFile="..\..\out\debug9-x64\build\apppsclient\apppsclient.pch"
-				AssemblerListingLocation="..\..\out\debug9-x64\build\apppsclient\"
-				ObjectFile="..\..\out\debug9-x64\build\apppsclient\"
+				PrecompiledHeaderFile="..\..\out\debug9-x64\build\appccheck_static\appccheck_static.pch"
+				AssemblerListingLocation="..\..\out\debug9-x64\build\appccheck_static\"
+				ObjectFile="..\..\out\debug9-x64\build\appccheck_static\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1739,11 +1739,11 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
-				OutputFile="..\..\psclient.exe"
-				ProgramDatabaseFile="..\..\out\debug9-x64\build\apppsclient\x64\psclient.pdb"
+				OutputFile="..\..\ccheck_static.exe"
+				ProgramDatabaseFile="..\..\out\debug9-x64\build\appccheck_static\x64\ccheck_static.pdb"
 				SubSystem="1"
-				AdditionalOptions="-L\home\xordan\dev\cal3d\lib -lcal3d "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib cal3d-vc9.lib"
+				AdditionalOptions="libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release9\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release9\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
@@ -1752,11 +1752,11 @@
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug9-x64\build\apppsclient\apppsclient.tlb"/>
+				TypeLibraryName="..\..\out\debug9-x64\build\appccheck_static\appccheck_static.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug9-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug9-x64\bin\&#x0D;&#x0A;"
@@ -1767,8 +1767,8 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;PROJECTGEN_VERSION=9"
+				AdditionalIncludeDirectories=".;..\..\src\tools\ccheck;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1781,207 +1781,27 @@
 			Name="Source Files"
 			Filter="">
 			<File
-				RelativePath="..\..\src\client\actionhandler.cpp">
+				RelativePath="..\..\mk\msvc\appccheck_static_static_glue_app_CRYSTAL.cpp">
 			</File>
 			<File
-				RelativePath="..\..\src\client\authentclient.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\client\charapp.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\client\chatbubbles.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\client\clientvitals.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\client\cmdadmin.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\client\cmdgroups.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\client\cmdguilds.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\client\cmdusers.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\client\cmdutil.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\client\entitylabels.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\client\guihandler.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\client\meshattach.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\client\modehandler.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\client\pscal3dcallback.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\client\pscamera.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\client\pscelclient.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\client\pscharcontrol.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\client\psclientchar.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\client\psclientdr.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\client\psengine.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\client\psinventorycache.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\client\psmovement.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\client\psnetmanager.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\client\psoptions.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\client\psslotmgr.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\client\questionclient.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\client\shadowmanager.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\client\weather.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\client\win32\mdump.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\client\zonehandler.cpp">
+				RelativePath="..\..\src\tools\ccheck\ccheck.cpp">
 			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="">
 			<File
-				RelativePath="..\..\src\client\actionhandler.h">
-			</File>
-			<File
-				RelativePath="..\..\src\client\authentclient.h">
-			</File>
-			<File
-				RelativePath="..\..\src\client\charapp.h">
-			</File>
-			<File
-				RelativePath="..\..\src\client\chatbubbles.h">
-			</File>
-			<File
-				RelativePath="..\..\src\client\clientvitals.h">
-			</File>
-			<File
-				RelativePath="..\..\src\client\cmdadmin.h">
-			</File>
-			<File
-				RelativePath="..\..\src\client\cmdgroups.h">
-			</File>
-			<File
-				RelativePath="..\..\src\client\cmdguilds.h">
-			</File>
-			<File
-				RelativePath="..\..\src\client\cmdusers.h">
-			</File>
-			<File
-				RelativePath="..\..\src\client\cmdutil.h">
-			</File>
-			<File
-				RelativePath="..\..\src\client\entitylabels.h">
-			</File>
-			<File
-				RelativePath="..\..\src\client\globals.h">
-			</File>
-			<File
-				RelativePath="..\..\src\client\guihandler.h">
-			</File>
-			<File
-				RelativePath="..\..\src\client\meshattach.h">
-			</File>
-			<File
-				RelativePath="..\..\src\client\modehandler.h">
-			</File>
-			<File
-				RelativePath="..\..\src\client\pscal3dcallback.h">
-			</File>
-			<File
-				RelativePath="..\..\src\client\pscamera.h">
-			</File>
-			<File
-				RelativePath="..\..\src\client\pscelclient.h">
-			</File>
-			<File
-				RelativePath="..\..\src\client\pscharcontrol.h">
-			</File>
-			<File
-				RelativePath="..\..\src\client\psclientchar.h">
-			</File>
-			<File
-				RelativePath="..\..\src\client\psclientdr.h">
-			</File>
-			<File
-				RelativePath="..\..\src\client\psengine.h">
-			</File>
-			<File
-				RelativePath="..\..\src\client\psinventorycache.h">
-			</File>
-			<File
-				RelativePath="..\..\src\client\psmovement.h">
-			</File>
-			<File
-				RelativePath="..\..\src\client\psnetmanager.h">
-			</File>
-			<File
-				RelativePath="..\..\src\client\psoptions.h">
-			</File>
-			<File
-				RelativePath="..\..\src\client\psslotmgr.h">
-			</File>
-			<File
-				RelativePath="..\..\src\client\questionclient.h">
-			</File>
-			<File
-				RelativePath="..\..\src\client\shadowmanager.h">
-			</File>
-			<File
-				RelativePath="..\..\src\client\weather.h">
-			</File>
-			<File
-				RelativePath="..\..\src\client\win32\mdump.h">
-			</File>
-			<File
-				RelativePath="..\..\src\client\zonehandler.h">
+				RelativePath="..\..\src\tools\ccheck\ccheck.h">
 			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
 			Filter="">
 			<File
-				RelativePath="..\..\mk\msvc\apppsclient.manifest">
+				RelativePath="..\..\mk\msvc\appccheck_static.manifest">
 			</File>
 			<File
-				RelativePath="..\..\mk\msvc\apppsclient.rc">
+				RelativePath="..\..\mk\msvc\appccheck_static.rc">
 			</File>
 		</Filter>
 	</Files>
