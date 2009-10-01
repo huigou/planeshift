@@ -76,6 +76,7 @@ UpdaterConfig::UpdaterConfig(csStringArray& args, iObjectRegistry* _object_reg, 
     configFile = new csConfigFile(CONFIG_FILENAME, vfs);
     cleanUpdate = configFile->GetBool("Update.Clean", true);
     updatePlatform = configFile->GetBool("Update.Platform", true);
+    repairInZip = configFile->GetBool("Update.RepairInZip");
     proxy.host = configFile->GetStr("Updater.Proxy.Host", "");
     proxy.port = configFile->GetInt("Updater.Proxy.Port", 0);
 

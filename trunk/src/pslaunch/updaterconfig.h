@@ -181,6 +181,9 @@ public:
     /* Returns true if we want the updater to update platform specific files. */
     bool UpdatePlatform() const { return updatePlatform; }
 
+    /* Returns true if we want to do in-zip repairs. */
+    bool RepairingInZip() const { return repairInZip; }
+
     /* Returns the configfile for the app */
     csRef<iConfigFile> GetConfigFile() const { return configFile; }
 
@@ -204,6 +207,9 @@ private:
 
     /* True if we're being asked to switch the updater mirror. */
     bool switchMirror;
+
+    /* True if we want to do in-zip repairs. */
+    bool repairInZip;
 
     /* Address of new mirror. */
     csString newMirror;
