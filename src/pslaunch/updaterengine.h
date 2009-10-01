@@ -209,7 +209,7 @@ public:
     bool CheckGeneral();
 
     /* Check the integrity of the install */
-    void CheckIntegrity();
+    void CheckIntegrity(bool automatic = false);
 
     /* Switch updater mirror. */
     bool SwitchMirror();

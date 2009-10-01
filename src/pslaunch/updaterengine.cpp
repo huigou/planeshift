@@ -868,7 +868,7 @@ void UpdaterEngine::GeneralUpdate()
                     {
                         PrintOutput("Failed!\n");
 
-                        if(!repairAfterUpdate)
+                        if(!repairAfterUpdate && config->RepairFailed())
                         {
                             PrintOutput("Scheduling a repair at the end of the update!\n");
                             repairAfterUpdate = true;
@@ -940,13 +940,20 @@ void UpdaterEngine::GeneralUpdate()
 
      if(repairAfterUpdate)
      {
-         CheckIntegrity();
+         CheckIntegrity(true);
      }
 }
 
-void UpdaterEngine::CheckIntegrity()
+void UpdaterEngine::CheckIntegrity(bool automatic)
 {
-    PrintOutput("Beginning integrity check!\n");
+    if(automatic)
+    {
+        PrintOutput("Fixing files which failed to update...\n");
+    }
+    else
+    {
+        PrintOutput("Beginning integrity check!\n");
+    }
 
     // Load current config data.
     csRef<iDocumentNode> confignode;
@@ -1084,7 +1091,7 @@ void UpdaterEngine::CheckIntegrity()
 
         if(!failed)
         {
-            CheckMD5s(md5sums, baseurl);
+            CheckMD5s(md5sums, baseurl, automatic);
         }
     }
 
@@ -1265,7 +1272,10 @@ void UpdaterEngine::CheckMD5s(iDocumentNode* md5sums, csString& baseurl, bool ac
                     fileUtil->SetPermissions(rp->GetData(), fs);
                 }
 #endif
-                fileUtil->RemoveFile(downloadpath + ".bak", true);
+                if(!config->KeepingRepaired())
+                {
+                    fileUtil->RemoveFile(downloadpath + ".bak", true);
+                }
                 PrintOutput(" Success!\n");
             }
             fileUtil->RemoveFile("/this/updaterinfo.xml.bak", true);

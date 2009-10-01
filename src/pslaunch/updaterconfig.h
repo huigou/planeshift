@@ -184,6 +184,12 @@ public:
     /* Returns true if we want to do in-zip repairs. */
     bool RepairingInZip() const { return repairInZip; }
 
+    /* Returns true if we want a repair to keep the old file (*.bak). */
+    bool KeepingRepaired() const { return keepRepaired; }
+
+    /* Returns true if we want to perform a repair when files fail after an update. */
+    bool RepairFailed() const { return repairFailed; }
+
     /* Returns the configfile for the app */
     csRef<iConfigFile> GetConfigFile() const { return configFile; }
 
@@ -210,6 +216,12 @@ private:
 
     /* True if we want to do in-zip repairs. */
     bool repairInZip;
+
+    /* True if we want a repair to keep the old file (*.bak). */
+    bool keepRepaired;
+
+    /* True if we want to perform a repair when files fail after an update. */
+    bool repairFailed;
 
     /* Address of new mirror. */
     csString newMirror;
