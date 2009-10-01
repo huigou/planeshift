@@ -26,6 +26,7 @@
 #include <iutil/document.h>
 #include <csutil/refarr.h>
 #include <imesh/spritecal3d.h>
+#include <csgeom/vector4.h>
 
 //=============================================================================
 // Project Includes

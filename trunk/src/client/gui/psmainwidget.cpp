@@ -57,6 +57,7 @@
 #include "pscharcontrol.h"
 #include "actionhandler.h"
 #include "pawsgameboard.h"
+#include "psclientchar.h"
 
 
 #define DEFAULT_CONFIG_FILE_NAME "/planeshift/data/options/entityinter_def.xml"

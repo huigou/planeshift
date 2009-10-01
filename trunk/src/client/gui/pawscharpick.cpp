@@ -40,6 +40,7 @@
 #include "psnetmanager.h"
 #include "pscelclient.h"
 #include "psclientdr.h"
+#include "psclientchar.h"
 
 #define CHARACTER_BUTTON_0 0
 #define CHARACTER_BUTTON_1 1

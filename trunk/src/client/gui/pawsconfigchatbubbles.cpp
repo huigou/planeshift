@@ -31,6 +31,7 @@
 //CLIENT INCLUDES
 #include "../globals.h"
 #include "chatbubbles.h"
+#include "net/messages.h"
 
 // Used to set default config files if the userdata ones are not found.
 #define SAVE_USER     true

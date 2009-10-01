@@ -31,6 +31,7 @@ class psCreationManager;
 class pawsRadioButtonGroup;
 class pawsObjectView;
 class psCharAppearance;
+class RaceDefinition;
 //////////////////////////////////////////////////////////////////////////////
 
 // general name validity funcs

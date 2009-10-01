@@ -61,6 +61,8 @@ if (!myref)                                                  \
 
 //////////////////////////////////////////////////////////////////////////////
 
+#include "psengine.h"
+
 // CS files
 #include <imap/services.h>
 #include <iutil/cfgmgr.h>
@@ -81,7 +83,6 @@ if (!myref)                                                  \
 #include <csutil/event.h>
 
 #include "globals.h"
-#include "psengine.h"
 #include "pscharcontrol.h"
 #include "pscamera.h"
 #include "psslotmgr.h"

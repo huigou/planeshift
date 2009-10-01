@@ -22,6 +22,7 @@
  * the details involved about a player.
  */
 #include <psconfig.h>
+#include "psclientchar.h"
 //=============================================================================
 // Crystal Space Includes
 //=============================================================================
@@ -62,7 +63,6 @@
 //=============================================================================
 // Local Includes
 //=============================================================================
-#include "psclientchar.h"
 #include "pscharcontrol.h"
 #include "pscelclient.h"
 #include "charapp.h"

@@ -27,6 +27,8 @@
 
 class pawsTextBox;
 class pawsMultiLineTextBox;
+class GEMClientObject;
+
 /** A simple info window that displays the position and sector of player.
  */
 class pawsDetailWindow : public pawsWidget, public psClientNetSubscriber

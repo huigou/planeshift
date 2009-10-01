@@ -15,27 +15,28 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- */
- 
- #ifndef PAWSWRITINGWINDOW_H
- #define PAWSWRITINGWINDOW_H
- 
- #include "paws/pawswidget.h"
- #include "paws/pawstextbox.h"
- #include "paws/pawsstringpromptwindow.h"
+*/
 
- #define MAX_TITLE_LEN 50
- #define MAX_CONTENT_LEN 65450
+#ifndef PAWSWRITINGWINDOW_H
+#define PAWSWRITINGWINDOW_H
 
- class pawsEditTextBox;
- /**
- lalalala
- */
- 
- class pawsWritingWindow: public pawsWidget, public psClientNetSubscriber, public iOnStringEnteredAction
- /* la? */
- {
- /* la. */
+#include "net/cmdbase.h"
+#include "paws/pawswidget.h"
+#include "paws/pawstextbox.h"
+#include "paws/pawsstringpromptwindow.h"
+
+#define MAX_TITLE_LEN 50
+#define MAX_CONTENT_LEN 65450
+
+class pawsEditTextBox;
+/**
+lalalala
+*/
+
+class pawsWritingWindow: public pawsWidget, public psClientNetSubscriber, public iOnStringEnteredAction
+/* la? */
+{
+/* la. */
 public:
     //not only load from XML but also dynamically activate widgety things based on 
     //the inks & pens that the server sends us

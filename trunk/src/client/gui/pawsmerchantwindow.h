@@ -22,6 +22,7 @@
 
 #include <csutil/csstring.h>
 
+#include "net/cmdbase.h"
 #include "paws/pawswidget.h"
 #include "paws/pawslistbox.h"
 #include "paws/pawsnumberpromptwindow.h"
