@@ -295,12 +295,6 @@ protected:
 
     GEMClientActor* local_player;
 
-    /// Handle a change in the main actor
-    void HandleMainActor( psPersistActor& mesg );
-    csRef<iMeshObject>          local_player_defaultMesh;
-    csRef<iMeshFactoryWrapper>  local_player_defaultFact;
-    csString                    local_player_defaultFactName;
-
     csList<UnresolvedPos*> unresPos;   ///< list of entities with unresolved location
     iSector * unresSector;             ///< sector where we keep these entities
 };
