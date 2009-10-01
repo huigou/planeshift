@@ -1146,20 +1146,24 @@ void UpdaterEngine::CheckMD5s(iDocumentNode* md5sums, csString& baseurl, bool ac
     size_t failedSize = failed.GetSize();
     if(failedSize == 0)
     {
-        PrintOutput("\nAll files passed the check!\n");
+        if(!accepted)
+        {
+            PrintOutput("\nAll files passed the check!\n");
+        }
     }
     else
     {
-        PrintOutput("\nThe following files failed the check:\n\n");
-        for(size_t i=0; i<failedSize; i++)
-        {
-            PrintOutput("%s\n", failed.Get(i)->GetAttributeValue("path"));
-        }
-
         char c = ' ';
-        PrintOutput("\nDo you wish to download the correct copies of these files? (y/n)\n");
         if(!accepted)
         {
+            PrintOutput("\nThe following files failed the check:\n\n");
+            for(size_t i=0; i<failedSize; i++)
+            {
+                PrintOutput("%s\n", failed.Get(i)->GetAttributeValue("path"));
+            }
+
+            PrintOutput("\nDo you wish to download the correct copies of these files? (y/n)\n");
+
             if(!hasGUI)
             {
                 while(c != 'y' && c != 'n')
