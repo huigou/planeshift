@@ -227,21 +227,21 @@ bool pawsLoginWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
 
             if ( strlen(login->GetText()) == 0)
             {
-                psSystemMessage error(0,MSG_ERROR,"Please enter your account name.");
+                psSystemMessage error(0,MSG_ERROR,PawsManager::GetSingleton().Translate("Please enter your account name."));
                 error.FireEvent();
                 return true;
             }
 
             if ( strlen(passwd->GetText()) == 0)
             {
-                psSystemMessage error(0,MSG_ERROR,"Please enter your password.");
+                psSystemMessage error(0,MSG_ERROR,PawsManager::GetSingleton().Translate("Please enter your password."));
                 error.FireEvent();
                 return true;
             }
             
             if (serverIP.Length() == 0)
             {
-                psSystemMessage error(0,MSG_ERROR,"Please select a server.");
+                psSystemMessage error(0,MSG_ERROR,PawsManager::GetSingleton().Translate("Please select a server."));
                 error.FireEvent();
                 return true;
             }
@@ -251,7 +251,7 @@ bool pawsLoginWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
 				case psServerPinger::INIT:
 				case psServerPinger::FAILED:
 				{
-					psSystemMessage error(0,MSG_ERROR,"The server isn't available!");
+					psSystemMessage error(0,MSG_ERROR,PawsManager::GetSingleton().Translate("The server isn't available!"));
 					error.FireEvent();
 					return true;
 				}
@@ -263,13 +263,13 @@ bool pawsLoginWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
 					return true;
 				case psServerPinger::LOCKED:
 				{
-					psSystemMessage error(0,MSG_ERROR,"The server is locked!");
+					psSystemMessage error(0,MSG_ERROR,PawsManager::GetSingleton().Translate"The server is locked!"));
 					error.FireEvent();
 					return true;
 				}
 				case psServerPinger::WAIT:
 				{
-					psSystemMessage error(0,MSG_ERROR,"The server isn't ready!");
+					psSystemMessage error(0,MSG_ERROR,PawsManager::GetSingleton().Translate"The server isn't ready!"));
 					error.FireEvent();
 					return true;
 				}
@@ -311,7 +311,7 @@ void pawsLoginWindow::ConnectToServer()
     // Set the time out to connect to server
     timeout = csGetTicks() + cfg->GetInt("PlaneShift.Client.User.Connecttimeout", 60) * 1000;
     
-    connectingLabel->SetText("Connecting to server... Please wait");
+    connectingLabel->SetText(PawsManager::GetSingleton().Translate"Connecting to server... Please wait"));
 
     // to make sure the "Connecting" label is visible:    
     PawsManager::GetSingleton().GetGraphics3D()->BeginDraw (CSDRAW_2DGRAPHICS);
@@ -322,7 +322,7 @@ void pawsLoginWindow::ConnectToServer()
       
     if ( !psengine->GetNetManager()->Connect( serverIP, serverPort ) )
     {    
-        psSystemMessage error(0,MSG_ERROR,"Cannot connect to server!");
+        psSystemMessage error(0,MSG_ERROR,PawsManager::GetSingleton().Translate("Cannot connect to server!"));
         error.FireEvent();
 
         psengine->GetNetManager()->Disconnect();
@@ -356,7 +356,7 @@ void pawsLoginWindow::ConnectToServer()
 void pawsLoginWindow::ConnectionFailed()
 {
     connecting = false;
-    connectingLabel->SetText("New User? Register at http://laanx.fragnetics.com/register");    
+    connectingLabel->SetText(servers[listBox->GetSelectedRowNum()]->GetDescription());  
 }
 
 void pawsLoginWindow::SaveLoginInformation()
@@ -490,7 +490,7 @@ void pawsLoginWindow::Draw()
     {
         psengine->GetNetManager()->Disconnect();
         ConnectionFailed();
-        PawsManager::GetSingleton().CreateWarningBox("The server is not running or is not reachable.  Please check the website or forums for more info.");
+        PawsManager::GetSingleton().CreateWarningBox(PawsManager::GetSingleton().Translate("The server is not running or is not reachable.  Please check the website or forums for more info."));
     }
 
     csString pingStr;

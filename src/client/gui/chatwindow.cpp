@@ -756,7 +756,7 @@ void pawsChatWindow::ReplayMessages()
 			*currentPos = '\0';
 	}
 	// Assume CHAT_SAY and place all in one chat type to ensure they end up in the same window
-	PawsManager::GetSingleton().Publish(CHAT_TYPES[CHAT_SAY], "Replaying previous chat...", settings.systemColor );
+	PawsManager::GetSingleton().Publish(CHAT_TYPES[CHAT_SAY], PawsManager::GetSingleton().Translate("Replaying previous chat..."), settings.systemColor );
 	while(!line.IsEmpty())
 		PawsManager::GetSingleton().Publish(CHAT_TYPES[CHAT_SAY], line.Pop(), settings.chatColor );
 }
