@@ -42,8 +42,9 @@ public:
         
         editBox = new pawsEditTextBox();
         AddChild(editBox);
-        editBox->SetColour(graphics2D->FindRGB(0,0,0));
+        editBox->SetColour(graphics2D->FindRGB(255,255,255));
         editBox->SetRelativeFrame(20, 1, 70, 20);
+        editBox->SetBackground("Scaling Field Background");
         
         scrollBar = new pawsScrollBar();
         scrollBar->SetHorizontal(true);        
