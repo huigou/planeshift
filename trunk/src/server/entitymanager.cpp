@@ -1125,10 +1125,10 @@ bool EntityManager::AddRideRelation(gemActor *rider, gemActor *mount)
     rider->UpdateProxList(true);
 
     float movMod = mountChar->GetRaceInfo()->GetSpeedModifier();
-    if(movMod != 1.0)
+    if( movMod != rider->GetCharacterData()->GetRaceInfo()->GetSpeedModifier())
     {
         psMoveModMsg modMsg(rider->GetClientID(), psMoveModMsg::MULTIPLIER,
-                     csVector3(movMod), movMod);
+                            csVector3(movMod), movMod);
         modMsg.SendMessage();
     }
 
@@ -1142,17 +1142,17 @@ void EntityManager::RemoveRideRelation(gemActor *rider)
     psSectorInfo *sectorinfo;
     InstanceID instance;
 
+    float movMod = rider->GetMount()->GetRaceInfo()->GetSpeedModifier();
+
     rider->GetCharacterData()->GetLocationInWorld(instance, sectorinfo,pos.x,pos.y,pos.z,yrot);
     rider->GetMount()->SetLocationInWorld(instance, sectorinfo,pos.x,pos.y,pos.z,yrot);
-    CreateNPC(rider->GetMount(), instance, pos, FindSector(sectorinfo->name), yrot);
+    CreateNPC(rider->GetMount());
     rider->SetMount(NULL);
-    rider->UpdateProxList(true);
 
-    float movMod = 1/(rider->GetCharacterData()->GetRaceInfo()->GetSpeedModifier());
-    if(movMod != 1.0)
+    if( movMod != rider->GetCharacterData()->GetRaceInfo()->GetSpeedModifier())
     {
-        psMoveModMsg modMsg(rider->GetClientID(), psMoveModMsg::MULTIPLIER,
-                     csVector3(movMod), movMod);
+        psMoveModMsg modMsg(rider->GetClientID(), psMoveModMsg::NONE,
+                            csVector3(0), 0);
         modMsg.SendMessage();
     }
 }
