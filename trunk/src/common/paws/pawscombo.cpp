@@ -37,6 +37,11 @@ pawsComboBox::pawsComboBox()
     
     rows = 0;
     rowHeight = 0;
+    
+    upButton = "Up Arrow";
+    downButton = "Down Arrow";
+    upButtonPressed = "Up Arrow Highlight";
+    downButtonPressed = "Down Arrow Highlight";
 }
 
 pawsComboBox::~pawsComboBox()
