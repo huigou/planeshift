@@ -263,13 +263,13 @@ bool pawsLoginWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
 					return true;
 				case psServerPinger::LOCKED:
 				{
-					psSystemMessage error(0,MSG_ERROR,PawsManager::GetSingleton().Translate"The server is locked!"));
+					psSystemMessage error(0,MSG_ERROR,PawsManager::GetSingleton().Translate("The server is locked!"));
 					error.FireEvent();
 					return true;
 				}
 				case psServerPinger::WAIT:
 				{
-					psSystemMessage error(0,MSG_ERROR,PawsManager::GetSingleton().Translate"The server isn't ready!"));
+					psSystemMessage error(0,MSG_ERROR,PawsManager::GetSingleton().Translate("The server isn't ready!"));
 					error.FireEvent();
 					return true;
 				}
@@ -311,7 +311,7 @@ void pawsLoginWindow::ConnectToServer()
     // Set the time out to connect to server
     timeout = csGetTicks() + cfg->GetInt("PlaneShift.Client.User.Connecttimeout", 60) * 1000;
     
-    connectingLabel->SetText(PawsManager::GetSingleton().Translate"Connecting to server... Please wait"));
+    connectingLabel->SetText(PawsManager::GetSingleton().Translate("Connecting to server... Please wait"));
 
     // to make sure the "Connecting" label is visible:    
     PawsManager::GetSingleton().GetGraphics3D()->BeginDraw (CSDRAW_2DGRAPHICS);
