@@ -58,6 +58,10 @@ public:
     
     void SetNumRows(int numRows)  { rows      = numRows; }
     void SetRowHeight(int height) { rowHeight = height;  }
+    void SetUpButtonImage(const char* name) { upButton = name; }
+    void SetUpDownButtonImage(const char* name) { downButton = name; }
+    void SetUpButtonPressedImage(const char* name) { upButtonPressed = name; }
+    void SetUpDownButtonPressedImage(const char* name) { downButtonPressed = name; }
     pawsListBoxRow* NewOption();
     pawsListBoxRow* NewOption(const csString & text);
     
