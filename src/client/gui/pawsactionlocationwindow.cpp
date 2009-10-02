@@ -23,6 +23,7 @@
 
 // CLIENT INCLUDES
 #include "../globals.h"
+#include "psclientchar.h"
 
 // PAWS INCLUDES
 #include "pawsactionlocationwindow.h"
