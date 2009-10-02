@@ -2072,13 +2072,13 @@ void PendingMountInvite::HandleAnswer(const csString & answer)
 
 void UserManager::Mount(gemActor *rider, gemActor *mount)
 {
-    const char* mountName = mount->GetName();
+    csString mountName = mount->GetName();
     if(EntityManager::GetSingleton().AddRideRelation(rider, mount))
         psserver->SendSystemOK(rider->GetClientID(),
-                "You are mounting %s", mountName);
+                "You are mounting %s", mountName.GetDataSafe());
     else
         psserver->SendSystemError(rider->GetClientID(),
-                "Could not mount %s", mount->GetName());
+                "Could not mount %s", mountName.GetDataSafe());
 
     return;
 }
