@@ -25,15 +25,16 @@
 //=============================================================================
 #include <iutil/document.h>
 #include <csutil/parray.h>
+#include <csutil/csstring.h>
 
 //=============================================================================
 // Project Includes
 //=============================================================================
-#include "util/mathscript.h"
-#include "bulkobjects/activespell.h"
+#include "util/psconst.h"
 
-class gemObject;
-class psItem;
+class MathEnvironment;
+class MathExpression;
+class ActiveSpell;
 
 // Events that can trigger scripts, i.e. <on type="attack">
 enum SCRIPT_TRIGGER

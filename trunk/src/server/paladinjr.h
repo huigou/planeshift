@@ -21,7 +21,6 @@
 #define __PALADIN_H__
 //#define PALADIN_DEBUG
 
-#include "entitymanager.h"
 #include <iutil/cfgmgr.h>
 
 #ifdef PALADIN_DEBUG

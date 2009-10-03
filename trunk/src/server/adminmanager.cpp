@@ -69,6 +69,7 @@
 #include "cachemanager.h"
 #include "chatmanager.h"
 #include "clients.h"
+#include "commandmanager.h"
 #include "creationmanager.h"
 #include "entitymanager.h"
 #include "gem.h"

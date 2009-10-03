@@ -32,6 +32,8 @@
 #include "util/eventmanager.h"
 #include "util/minigame.h"
 #include "util/psxmlparser.h"
+#include "util/psdatabase.h"
+#include "util/mathscript.h"
 
 #include "bulkobjects/psactionlocationinfo.h"
 
@@ -47,6 +49,7 @@
 #include "gem.h"
 #include "globals.h"
 #include "progressionmanager.h"
+#include "scripting.h"
 
 using namespace psMiniGame;
 

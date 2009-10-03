@@ -21,6 +21,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 #include <psconfig.h>
+#include "chatwindow.h"
+#include "globals.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -63,7 +65,6 @@
 // Local Includes
 //=============================================================================
 #include "pscelclient.h"
-#include "chatwindow.h"
 
 const char *logWidgetName[CHAT_NLOG] = {
     "logAllChat",

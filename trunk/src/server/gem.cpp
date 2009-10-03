@@ -102,6 +102,7 @@
 #include "adminmanager.h"
 #include "commandmanager.h"
 #include "combatmanager.h"
+#include "scripting.h"
 
 // #define PSPROXDEBUG
 

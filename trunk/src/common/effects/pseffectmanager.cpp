@@ -33,7 +33,8 @@
 #include "pseffectlight.h"
 #include "pseffectobj.h"
 
-#include "pscelclient.h"
+// Bad, should not reference src/client!
+#include "../client/pscelclient.h"
 #include "util/log.h"
 #include "util/pscssetup.h"
 

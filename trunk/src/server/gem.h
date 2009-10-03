@@ -24,6 +24,7 @@
 // Crystal Space Includes
 //=============================================================================
 #include <iengine/mesh.h>
+#include <iengine/sector.h>
 #include <iutil/vfs.h>
 #include <csutil/csobject.h>
 #include <csutil/csstring.h>

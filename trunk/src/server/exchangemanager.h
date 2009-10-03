@@ -28,8 +28,6 @@
 //=============================================================================
 // Project Includes
 //=============================================================================
-#include "net/messages.h"           // Exchange Messages definitions
-
 #include "bulkobjects/pscharinventory.h"
 
 //=============================================================================
@@ -41,6 +39,7 @@ class ClientConnectionSet;
 class psSpawnManager;
 class psServer;
 class Exchange;
+class ExchangeManager;
 class psNPCDialog;
 class psDatabase;
 

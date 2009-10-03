@@ -30,25 +30,18 @@
 // Library Includes
 //=============================================================================
 #include "util/gameevent.h"
-#include "bulkobjects/pscharacter.h"
 
 //=============================================================================
 // Server includes
 //=============================================================================
 #include "msgmanager.h"   // Subscriber class
-#include "events.h"
-#include "gem.h"
 
 //=============================================================================
 // Forward Declarations
 //=============================================================================
 
-class psSpellCastGameEvent;
-class psGlyphGameEvent;
 class ClientConnectionSet;
-class EntityManager;
 class psSpell;
-class psGlyph;
 
 /** Manager class that handles loading/searching/casting spells. 
   * This class also manages a number of psSpell Events.  

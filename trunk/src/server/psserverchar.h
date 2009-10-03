@@ -28,8 +28,6 @@
 //=============================================================================
 // Project Includes
 //=============================================================================
-#include "net/messages.h"
-
 #include "util/slots.h"
 
 //=============================================================================
@@ -38,18 +36,16 @@
 #include "msgmanager.h"
 
 class MsgEntry;
-class psServer;
 class Client;
-class psMerchantInfo;
 class psItem;
-class psActionLocation;
 class SlotManager;
 class gemActor;
 class gemObject;
 class psCharacter;
 
-struct CraftTransInfo;
 struct psItemCategory;
+class psGUIMerchantMessage;
+class psMerchantInfo;
 
 
 /// Manages character details over the net.

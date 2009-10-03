@@ -19,7 +19,6 @@
 #ifndef __SPAWNMANAGER_H__
 #define __SPAWNMANAGER_H__
 
-class EntityManager;
 class gemObject;
 class psCharacter;
 class psDatabase;
@@ -28,7 +27,6 @@ class psSectorInfo;
 
 #include <csgeom/vector3.h>
 #include <csutil/hash.h>
-#include "util/location.h"
 #include "util/gameevent.h"
 #include "msgmanager.h"
 
@@ -278,8 +276,6 @@ private:
     void AddModifier( LootModifier *oper1, LootModifier *oper2 );
     void ApplyModifier(psItemStats *loot, LootModifier *mod);
 };
-
-class PendingLootPrompt;
 
 /**
  *  This class is periodically called by the engine to ensure that

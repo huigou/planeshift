@@ -31,16 +31,13 @@
 //=============================================================================
 #include "net/netbase.h"
 #include "util/psconst.h"
-#include "util/waypoint.h"
 
 //=============================================================================
 // Local Includes
 //=============================================================================
 
 
-class ClientConnectionSet;
 class psCharacter;
-class psItem;
 class gemObject;
 class gemActor;
 class gemNPC;

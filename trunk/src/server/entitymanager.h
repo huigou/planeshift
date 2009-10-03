@@ -34,14 +34,12 @@
 // Local Includes
 //=============================================================================
 #include "msgmanager.h"
-#include "commandmanager.h"
 
 struct iSector;
 struct iEngine;
 
 class ClientConnectionSet;
 class psServerDR;
-class psServer;
 class psDatabase;
 class psWorld;
 class psItem;

@@ -29,7 +29,6 @@
 //=============================================================================
 // Project Includes
 //=============================================================================
-#include "util/stringarray.h"
 #include "util/psconst.h"
 #include "util/scriptvar.h"
 #include "util/gameevent.h"
@@ -44,14 +43,13 @@
 //=============================================================================
 // Local Includes
 //=============================================================================
-#include "client.h"
 #include "psskills.h"
 #include "psitemstats.h"
 #include "deleteobjcallback.h"
 #include "psactionlocationinfo.h"
 
-
-class psString;
+class Client;
+class gemActor;
 
 // Note: The following 2 options require a clean rebuild when changed.
 

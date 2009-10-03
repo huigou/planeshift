@@ -33,6 +33,7 @@
 #include "net/messages.h"
 #include "util/eventmanager.h"
 #include "util/psxmlparser.h"
+#include "util/mathscript.h"
 #include "bulkobjects/pscharacterloader.h"
 #include "bulkobjects/psspell.h"
 #include "bulkobjects/psglyph.h"
@@ -49,6 +50,7 @@
 #include "cachemanager.h"
 #include "progressionmanager.h"
 #include "commandmanager.h"
+#include "scripting.h"
 
 class psPurifyEvent : public psGameEvent
 {

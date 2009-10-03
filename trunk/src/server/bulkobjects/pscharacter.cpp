@@ -28,25 +28,25 @@
 //=============================================================================
 // Project Includes
 //=============================================================================
-#include "../psserver.h"
-#include "../entitymanager.h"
-#include "../cachemanager.h"
-#include "../clients.h"
-#include "../psserverchar.h"
-#include "../exchangemanager.h"
-#include "../spellmanager.h"
-#include "../workmanager.h"
-#include "../marriagemanager.h"
-#include "../npcmanager.h"
-#include "../playergroup.h"
-#include "../events.h"
-#include "../progressionmanager.h"
-#include "../chatmanager.h"
-#include "../commandmanager.h"
-#include "../gmeventmanager.h"
-#include "../progressionmanager.h"
-#include "../client.h"
 #include "../globals.h"
+#include "psserver.h"
+#include "entitymanager.h"
+#include "cachemanager.h"
+#include "clients.h"
+#include "psserverchar.h"
+#include "exchangemanager.h"
+#include "spellmanager.h"
+#include "workmanager.h"
+#include "marriagemanager.h"
+#include "npcmanager.h"
+#include "playergroup.h"
+#include "events.h"
+#include "progressionmanager.h"
+#include "chatmanager.h"
+#include "commandmanager.h"
+#include "gmeventmanager.h"
+#include "progressionmanager.h"
+#include "client.h"
 
 
 #include "util/psdatabase.h"
@@ -73,6 +73,7 @@
 #include "pssectorinfo.h"
 #include "pstrait.h"
 #include "adminmanager.h"
+#include "scripting.h"
 
 
 // The sizes and scripts need balancing.  For now, maxSize is disabled.

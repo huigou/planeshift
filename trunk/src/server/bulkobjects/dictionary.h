@@ -35,8 +35,6 @@
 
 #include "../tools/wordnet/wn.h"
 
-#include "../server/iserver/idal.h"      // Database Abstraction Layer Interface
-
 //=============================================================================
 // Local Includes
 //=============================================================================

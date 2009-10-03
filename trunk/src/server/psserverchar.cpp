@@ -76,6 +76,7 @@
 #include "economymanager.h"
 #include "weathermanager.h"
 #include "globals.h"
+#include "events.h"
 
 ///This expresses in seconds how many days the char hasn't logon. 60 days, at the moment.
 #define MAX_DAYS_NO_LOGON 5184000 
