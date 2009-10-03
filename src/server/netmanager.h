@@ -29,7 +29,6 @@
 // Project Includes
 //=============================================================================
 #include "net/netbase.h"
-#include "net/subscriber.h"   // Subscriber class
 
 //=============================================================================
 // Local Includes

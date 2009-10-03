@@ -18,6 +18,7 @@
  */
 
 #include <psconfig.h>
+#include "scripting.h"
 #include "globals.h"
 
 //=============================================================================
@@ -40,7 +41,6 @@
 //=============================================================================
 // Application Includes
 //=============================================================================
-#include "scripting.h"
 #include "actionmanager.h"
 #include "adminmanager.h"
 #include "cachemanager.h"

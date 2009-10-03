@@ -49,6 +49,8 @@
 #include "cachemanager.h"
 #include "iserver/idal.h"
 #include "tutorialmanager.h"
+#include "util/mathscript.h"
+#include "scripting.h"
 
 
 // The number of characters per email account

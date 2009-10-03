@@ -38,11 +38,9 @@
 // Application Includes
 //=============================================================================
 #include "msgmanager.h"                 // Subscriber class
-#include "scripting.h"
 
-class psServer;
-class psGUISkillMessage;
 class psCharacter;
+class ProgressionScript;
 
 class ProgressionManager : public MessageManager
 {

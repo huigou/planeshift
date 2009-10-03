@@ -34,11 +34,13 @@
 // Project Includes
 //=============================================================================
 #include "util/gameevent.h"
+#include "util/mathscript.h"
 
 //=============================================================================
 // Local Includes
 //=============================================================================
 #include "msgmanager.h"             // Parent class
+#include "scripting.h"
 
 
 class psDatabase;

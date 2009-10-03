@@ -49,6 +49,7 @@
 #include "entitymanager.h"
 #include "globals.h"
 #include "adminmanager.h"
+#include "scripting.h"
 
 
 

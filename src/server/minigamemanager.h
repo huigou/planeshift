@@ -28,7 +28,6 @@
 //=============================================================================
 // Project Includes
 //=============================================================================
-#include "net/messages.h"           // Message definitions
 #include "bulkobjects/psminigameboard.h"
 
 //=============================================================================
@@ -41,6 +40,7 @@ class Client;
 class MiniGameManager;
 class gemActionLocation;
 class gemObject;
+class psMGUpdateMessage;
 
 enum MinigameStyle
 {

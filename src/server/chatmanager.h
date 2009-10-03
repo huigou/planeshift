@@ -34,8 +34,6 @@
 //=============================================================================
 #include "util/gameevent.h"
 
-#include "net/messages.h"            // Chat Message definitions
-
 //=============================================================================
 // Local Space Includes
 //=============================================================================
@@ -50,6 +48,7 @@ class psGuildInfo;
 class psGuildAlliance;
 class gemNPC;
 class gemActor;
+class psChatMessage;
 
 
 #define CHAT_SAY_RANGE 15

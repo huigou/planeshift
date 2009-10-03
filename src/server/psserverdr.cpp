@@ -59,8 +59,7 @@
 #include "paladinjr.h"
 #include "psproxlist.h"
 #include "globals.h"
-
-
+#include "scripting.h"
 
 psServerDR::psServerDR()
 {

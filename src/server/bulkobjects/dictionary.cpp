@@ -72,6 +72,7 @@ extern "C" {
 #include "psitemstats.h"
 #include "psguildinfo.h"
 #include "adminmanager.h"
+#include "scripting.h"
 
 csRef<NPCDialogDict> dict;
 

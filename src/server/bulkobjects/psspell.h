@@ -28,22 +28,22 @@
 //=============================================================================
 // Project Includes
 //=============================================================================
-#include "../iserver/idal.h"
-#include "util/mathscript.h"
+#include "iserver/idal.h"
+#include "util/scriptvar.h"
+#include "util/gameevent.h"
 
 //=============================================================================
 // Local Includes
 //=============================================================================
 #include "psskills.h"
+#include "psitemstats.h"
+#include "deleteobjcallback.h"
 
-class csVector3;
-class SpellManager;
 class Client;
 class gemObject;
 class gemActor;
-class psGlyph;
-class psSpellCastGameEvent;
 class ProgressionScript;
+class MathExpression;
 
 struct psWay
 {

@@ -17,6 +17,7 @@
  *
  */
 #include <psconfig.h>
+#include "psitemstats.h"
 //=============================================================================
 // Crystal Space Includes
 //=============================================================================
@@ -31,15 +32,14 @@
 #include "util/psstring.h"
 #include "util/serverconsole.h"
 
-#include "../psserver.h"
-#include "../cachemanager.h"
-#include "../scripting.h"
+#include "psserver.h"
+#include "cachemanager.h"
+#include "scripting.h"
 #include "../globals.h"
 
 //=============================================================================
 // Local Includes
 //=============================================================================
-#include "psitemstats.h"
 #include "psglyph.h"
 #include "psitem.h"
 #include "psmerchantinfo.h"

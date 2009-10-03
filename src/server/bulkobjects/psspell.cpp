@@ -18,6 +18,7 @@
  */
 #include <psconfig.h>
 
+#include "psspell.h"
 //=============================================================================
 // Crystal Space Includes
 //=============================================================================
@@ -30,19 +31,19 @@
 #include "util/mathscript.h"
 #include "util/psdatabase.h"
 
-#include "../psserver.h"
-#include "../gem.h"
-#include "../client.h"
-#include "../cachemanager.h"
-#include "../commandmanager.h"
-#include "../progressionmanager.h"
-#include "../npcmanager.h"
+#include "psserver.h"
+#include "gem.h"
+#include "client.h"
+#include "cachemanager.h"
+#include "commandmanager.h"
+#include "progressionmanager.h"
+#include "npcmanager.h"
 #include "../globals.h"
+#include "scripting.h"
 
 //=============================================================================
 // Local Includes
 //=============================================================================
-#include "psspell.h"
 #include "psglyph.h"
 #include "psguildinfo.h"
 

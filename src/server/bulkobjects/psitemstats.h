@@ -31,6 +31,7 @@
 #include "util/poolallocator.h"
 #include "util/slots.h"
 #include "util/psxmlparser.h"
+#include "util/psconst.h"
 
 #include "rpgrules/psmoney.h"
 
