@@ -36,7 +36,6 @@
 //=============================================================================
 // Local Includes
 //=============================================================================
-#include "psengine.h"
 
 //these are special cases used to manage /me /my configurations in chat bubbles
 #define CHATBUBBLE_ME -2

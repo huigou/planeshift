@@ -28,8 +28,6 @@
 //=============================================================================
 #include "net/cmdbase.h"
 
-#include "engine/psworld.h"
-
 //=============================================================================
 // Local Includes
 //=============================================================================
@@ -38,8 +36,6 @@
 // Forward Declarations
 //-----------------------------------------------------------------------------
 class MsgHandler;
-class psWorld;
-class PawsManager;
 class psCelClient;
 class pawsLoadWindow;
 class pawsProgressBar;

@@ -28,12 +28,11 @@
 //=============================================================================
 #include "net/cmdbase.h"
 
-#include "util/strutil.h"
-
 //=============================================================================
 // Local Includes
 //=============================================================================
 
+class WordArray;
 
 /** Class to handle general player commands. */
 class psUtilityCommands : public psCmdBase
