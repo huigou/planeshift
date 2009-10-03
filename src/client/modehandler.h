@@ -31,17 +31,14 @@
 // Project Includes
 //=============================================================================
 #include "net/cmdbase.h"
-#include "net/messages.h"
 
 //=============================================================================
 // Local Includes
 //=============================================================================
 
-struct iEngineSequenceManager;
 struct iEngine;
 struct iBase;
 struct iSoundManager;
-struct iSoundSource;
 struct iLoaderContext;
 struct LightingList;
 struct LightingSetting;
