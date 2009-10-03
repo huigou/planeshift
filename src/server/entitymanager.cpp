@@ -639,14 +639,14 @@ bool EntityManager::DeletePlayer(Client * client)
             // Send OwnerActionLogoff Perception
 
             //familiar->Disconnect();
-            Debug3(LOG_NET,client->GetClientNum(),"EntityManager Removing actor %s from client %s.\n",familiar->GetName(),client->GetName() );
+            Debug3(LOG_NET,client->GetClientNum(),"EntityManager Removing actor %s from client %s.",familiar->GetName(),client->GetName() );
             psServer::CharacterLoader.SaveCharacterData(familiar->GetCharacterData(),familiar);
             client->SetFamiliar( NULL );
             RemoveActor( familiar );
         }
 
         // This removes the actor from the world data
-        Debug3(LOG_NET,client->GetClientNum(),"EntityManager Removing actor %s from client %s.\n",actor->GetName(),client->GetName() );
+        Debug3(LOG_NET,client->GetClientNum(),"EntityManager Removing actor %s from client %s.",actor->GetName(),client->GetName() );
         gem->RemoveClientFromLootables(client->GetClientNum());
         client->SetActor(NULL); // Prevent anyone from getting to a deleted actor through the client
         RemoveActor(actor);
@@ -748,7 +748,7 @@ EID EntityManager::CreateNPC(psCharacter *chardata, InstanceID instance, csVecto
 //        CPrintf(CON_NOTIFY,"------> Entity Manager Setting Imperv\n");
         psserver->npcmanager->ControlNPC( actor );
     }
-    Debug3(LOG_NPC, 0, "Created NPC actor: <%s>[%s] in world\n", actor->GetName(), ShowID(actor->GetEID()));
+    Debug3(LOG_NPC, 0, "Created NPC actor: <%s>[%s] in world", actor->GetName(), ShowID(actor->GetEID()));
 
     return actor->GetEID();
 }
@@ -883,7 +883,7 @@ bool EntityManager::CreateActionLocation(psActionLocation *al, bool transient = 
     // Add action location to all Super Clients
     psserver->npcmanager->AddEntity(obj);
 
-    //Debug3(LOG_STARTUP ,0, "Action Location ID %u : Created successfully(EID: %u)!\n", instance->id,obj->GetEID());
+    //Debug3(LOG_STARTUP ,0, "Action Location ID %u : Created successfully(EID: %u)!", instance->id,obj->GetEID());
     return true;
 }
 
@@ -908,7 +908,7 @@ void EntityManager::HandleAllRequest(MsgEntry* me, Client *client)
             {
                 // the current message is full of entities, so send it and make another one
                 allEntMsg->msg->ClipToCurrentSize();
-                Debug3(LOG_NET, client->GetClientNum(), "Sending %d entities in %zu bytes.\n", count-1, allEntMsg->msg->GetSize() );
+                Debug3(LOG_NET, client->GetClientNum(), "Sending %d entities in %zu bytes.", count-1, allEntMsg->msg->GetSize() );
                 allEntMsg->SendMessage();
                 delete allEntMsg;
                 count = 1;
@@ -918,7 +918,7 @@ void EntityManager::HandleAllRequest(MsgEntry* me, Client *client)
             obj->Send(0, false,  false, allEntMsg ); // this doesn't actually send but just appends to allEntMsg
         }
         allEntMsg->msg->ClipToCurrentSize();
-        Debug3(LOG_NET, client->GetClientNum(), "Final send is %d entities in %zu bytes.\n", count, allEntMsg->msg->GetSize() );
+        Debug3(LOG_NET, client->GetClientNum(), "Final send is %d entities in %zu bytes.", count, allEntMsg->msg->GetSize() );
 
         allEntMsg->SendMessage(); // This handles the final message with whatever entities are left.
 
@@ -1019,7 +1019,7 @@ void EntityManager::HandleUserAction(MsgEntry* me, Client *client)
 
     if (!actionMsg.valid)
     {
-        Debug2(LOG_NET,me->clientnum,"Received unparsable psUserActionMessage from client id %u.\n",me->clientnum);
+        Debug2(LOG_NET,me->clientnum,"Received unparsable psUserActionMessage from client id %u.",me->clientnum);
         return;
     }
 
@@ -1027,7 +1027,7 @@ void EntityManager::HandleUserAction(MsgEntry* me, Client *client)
 
     if (actionMsg.target.IsValid() && !object)
     {
-        Debug2(LOG_ANY, me->clientnum, "User action on unknown entity (%s)!\n", ShowID(actionMsg.target));
+        Debug2(LOG_ANY, me->clientnum, "User action on unknown entity (%s)!", ShowID(actionMsg.target));
         return;
     }
 
@@ -1036,7 +1036,7 @@ void EntityManager::HandleUserAction(MsgEntry* me, Client *client)
     if (!object)
     {
         // TODO: Evaluate if this output is needed. 
-        Debug2(LOG_ANY, me->clientnum, "User action on none or unknown object (%s)!\n", ShowID(actionMsg.target));
+        Debug2(LOG_ANY, me->clientnum, "User action on none or unknown object (%s)!", ShowID(actionMsg.target));
         return;
     }
 
@@ -1057,7 +1057,7 @@ void EntityManager::HandleUserAction(MsgEntry* me, Client *client)
             object->SendTargetStatDR(client);
     }
 
-    Debug4(LOG_USER,client->GetClientNum(), "User Action: %s %s %s\n",client->GetName(),
+    Debug4(LOG_USER,client->GetClientNum(), "User Action: %s %s %s",client->GetName(),
         (const char *)action,
         (object)?object->GetName():"None")
 
