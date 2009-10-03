@@ -274,14 +274,14 @@ void NetworkManager::HandleActor(MsgEntry *me)
 {
     psPersistActor mesg( me, 0, GetMsgStrings(), engine );
 
-    Debug4(LOG_NET, 0, "Got persistActor message, size %zu, id=%d, name=%s\n", me->GetSize(),mesg.playerID.Unbox(),mesg.name.GetDataSafe() );
+    Debug4(LOG_NET, 0, "Got persistActor message, size %zu, id=%d, name=%s", me->GetSize(),mesg.playerID.Unbox(),mesg.name.GetDataSafe() );
 
     gemNPCObject * obj = npcclient->FindEntityID(mesg.entityid);
 
     if(obj && obj->GetPID() == mesg.playerID)
     {
         // We already know this entity so just update the entity.
-        CPrintf(CON_ERROR, "Already know about gemNPCActor: %s (%s), %s.\n", mesg.name.GetData(), obj->GetName(), ShowID(mesg.entityid));
+        CPrintf(CON_ERROR, "Already know about gemNPCActor: %s (%s), %s.", mesg.name.GetData(), obj->GetName(), ShowID(mesg.entityid));
 
         obj->Move(mesg.pos, mesg.yrot, mesg.sectorName, mesg.instance );
         obj->SetVisible( (mesg.flags & psPersistActor::INVISIBLE) ? false : true );
