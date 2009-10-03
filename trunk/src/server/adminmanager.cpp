@@ -7324,13 +7324,13 @@ void AdminManager::Morph(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& dat
         static csString list;
         if (list.IsEmpty())  // Construct list once
         {
-            // Get array of mounted model directories
+            /*// Get array of mounted model directories
             const char* modelsPath = "/planeshift/models/";
             size_t modelsPathLength = strlen(modelsPath);
             csRef<iVFS> vfs = csQueryRegistry<iVFS> (psserver->GetObjectReg());
-            csRef<iStringArray> dirPaths = vfs->FindFiles(modelsPath);
+            csRef<iStringArray> dirPaths = vfs->FindFiles(modelsPath);*/
             csStringArray dirNames;
-            for (size_t i=0; i < dirPaths->GetSize(); i++)
+            /*for (size_t i=0; i < dirPaths->GetSize(); i++)
             {
                 csString path = dirPaths->Get(i);
                 csString name = path.Slice( modelsPathLength, path.Length()-modelsPathLength-1 );
@@ -7341,7 +7341,14 @@ void AdminManager::Morph(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& dat
                     else
                         Error2("Model dir %s lacks a valid cal3d file!", name.GetData() );
                 }
-            }
+            }*/
+            
+            //construct a list coming from the race info list, will probably kill duplicates coming
+            //from races with same mesh name but different texture for now
+            //but till we have an idea on how to allow the user to select them let's leave like this to
+            //have at least a basic listing
+            for(int i = 0; i < CacheManager::GetSingleton().GetRaceInfoCount(); i++)
+                dirNames.PushSmart(CacheManager::GetSingleton().GetRaceInfoByIndex(i)->GetMeshName());
 
             // Make alphabetized list
             dirNames.Sort();
