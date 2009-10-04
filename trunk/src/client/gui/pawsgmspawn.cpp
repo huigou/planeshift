@@ -53,7 +53,7 @@ pawsGMSpawnWindow::pawsGMSpawnWindow()
     cbNPCOwned = NULL;
     lockSkill = NULL;
     lockStr = NULL;
-}                 
+}
 
 pawsGMSpawnWindow::~pawsGMSpawnWindow()
 {
@@ -65,7 +65,7 @@ bool pawsGMSpawnWindow::PostSetup()
     psengine->GetMsgHandler()->Subscribe( this, MSGTYPE_GMSPAWNITEMS );
     psengine->GetMsgHandler()->Subscribe( this, MSGTYPE_GMSPAWNTYPES );
     loaded = true;
-                
+
     itemName = (pawsTextBox*)FindWidget("ItemName");
     itemCount= (pawsEditTextBox*)FindWidget("Count");
     itemQuality = (pawsEditTextBox*)FindWidget("Quality");
@@ -93,8 +93,8 @@ bool pawsGMSpawnWindow::PostSetup()
         Error1("Could not create widget pawsSimpleTree");
         return false;
     }
-    
-    AddChild(itemTree);    
+
+    AddChild(itemTree);
     itemTree->SetDefaultColor( graphics2D->FindRGB( 0,255,0 ) );
     itemTree->SetRelativeFrame(0,0,GetActualWidth(250),GetActualHeight(500));
     itemTree->SetNotify(this);
@@ -111,7 +111,7 @@ bool pawsGMSpawnWindow::PostSetup()
         child->CollapseAll();
         child = child->GetNextSibling();
     }
-    
+
     itemTree->SetNotify(this);
 
     return true;
@@ -119,7 +119,7 @@ bool pawsGMSpawnWindow::PostSetup()
 
 void pawsGMSpawnWindow::HandleMessage(MsgEntry* me)
 {
-    if(me->GetType() == MSGTYPE_GMSPAWNITEMS) 
+    if(me->GetType() == MSGTYPE_GMSPAWNITEMS)
     {
         psGMSpawnItems msg(me);
         for(size_t i = 0;i < msg.items.GetSize(); i++)
@@ -135,7 +135,7 @@ void pawsGMSpawnWindow::HandleMessage(MsgEntry* me)
         }
 
     }
-    else if(me->GetType() == MSGTYPE_GMSPAWNTYPES) 
+    else if(me->GetType() == MSGTYPE_GMSPAWNTYPES)
     {
         Show();
         psGMSpawnTypes msg(me);
@@ -168,7 +168,7 @@ bool pawsGMSpawnWindow::OnSelected(pawsWidget* widget)
         {
             objView->Clear();
         }
-        else 
+        else
         {
             psString fact_name(item.mesh);
             fact_name.ReplaceAllSubString("$H", "stonebm");
@@ -189,7 +189,7 @@ bool pawsGMSpawnWindow::OnSelected(pawsWidget* widget)
                 objView->View(factory);
             }
         }
-        
+
         // set stuff
         itemName->SetText(item.name);
         itemCount->SetText("1");
@@ -208,7 +208,7 @@ bool pawsGMSpawnWindow::OnSelected(pawsWidget* widget)
         cbPickupable->SetState(true);
         cbCollidable->SetState(false);
         cbUnpickable->SetState(false);
-        cbTransient->SetState(true);  
+        cbTransient->SetState(true);
         cbSettingItem->SetState(false);
         cbNPCOwned->SetState(false);
         lockSkill->SetText("Lockpicking");
@@ -222,7 +222,7 @@ bool pawsGMSpawnWindow::OnSelected(pawsWidget* widget)
         cbPickupable->Show();
         cbCollidable->Show();
         cbUnpickable->Show();
-        cbTransient->Show();  
+        cbTransient->Show();
         cbSettingItem->Show();
         cbNPCOwned->Show();
         lockStr->Hide();
@@ -230,7 +230,7 @@ bool pawsGMSpawnWindow::OnSelected(pawsWidget* widget)
         imagename->Show();
         meshname->Show();
         factname->Show();
-        
+
         //No devs can't use those flags. It's pointless hacking here as the server double checks
         if(psengine->GetCelClient()->GetMainPlayer()->GetType() < 30)
         {
@@ -321,7 +321,7 @@ bool pawsGMSpawnWindow::OnButtonPressed(int button,int keyModifier,pawsWidget* w
                 objView->Rotate(10,0.05f);
             else
                 objView->Rotate(-1,0);
-            
+
             toggle = !toggle;
         }
     }

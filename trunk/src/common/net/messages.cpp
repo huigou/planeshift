@@ -3287,7 +3287,7 @@ psMsgStringsMessage::psMsgStringsMessage(MsgEntry *message)
 {
     if (!message)
         return;
-    
+
     uint32_t length = 0;
     digest = (csMD5::Digest*)message->GetBufferPointerUnsafe(length);
 
@@ -4626,7 +4626,7 @@ psPersistAllEntities::psPersistAllEntities( MsgEntry* me )
     msg = me;
 }
 
-csString psPersistAllEntities::ToString(AccessPointers * access_ptrs) 
+csString psPersistAllEntities::ToString(AccessPointers * access_ptrs)
 {
     return "PersistAllEntities";
 }
@@ -4650,8 +4650,8 @@ MsgEntry *psPersistAllEntities::GetEntityMessage()
         return NULL;
 
     uint32_t len = 0;
-	void *data = msg->GetBufferPointerUnsafe(len);
-    
+    void *data = msg->GetBufferPointerUnsafe(len);
+
     if (data)
     {
         MsgEntry *newEnt = new MsgEntry((psMessageBytes *)data);
