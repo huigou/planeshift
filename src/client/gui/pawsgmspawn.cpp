@@ -33,18 +33,24 @@
 #include "paws/pawstree.h"
 #include "paws/pawscheckbox.h"
 #include "pawsgmspawn.h"
+#include "pscelclient.h"
 
 pawsGMSpawnWindow::pawsGMSpawnWindow()
 {
     itemTree = NULL;
     itemName = NULL;
     itemCount = NULL;
+    itemQuality = NULL;
     objView = NULL;
     cbForce = NULL;
     cbLockable = NULL;
     cbLocked = NULL;
     cbPickupable = NULL;
     cbCollidable = NULL;
+    cbUnpickable = NULL;
+    cbTransient = NULL;
+    cbSettingItem = NULL;
+    cbNPCOwned = NULL;
     lockSkill = NULL;
     lockStr = NULL;
 }                 
@@ -62,6 +68,7 @@ bool pawsGMSpawnWindow::PostSetup()
                 
     itemName = (pawsTextBox*)FindWidget("ItemName");
     itemCount= (pawsEditTextBox*)FindWidget("Count");
+    itemQuality = (pawsEditTextBox*)FindWidget("Quality");
     objView  = (pawsObjectView*)FindWidget("ItemView");
     itemImage = FindWidget("ItemImage");
     cbForce  = (pawsCheckBox*)FindWidget("Force");
@@ -69,6 +76,10 @@ bool pawsGMSpawnWindow::PostSetup()
     cbLocked = (pawsCheckBox*)FindWidget("Locked");
     cbPickupable = (pawsCheckBox*)FindWidget("Pickupable");
     cbCollidable = (pawsCheckBox*)FindWidget("Collidable");
+    cbUnpickable = (pawsCheckBox*)FindWidget("Unpickable");
+    cbTransient = (pawsCheckBox*)FindWidget("Transient");
+    cbSettingItem = (pawsCheckBox*)FindWidget("Settingitem");
+    cbNPCOwned = (pawsCheckBox*)FindWidget("Npcowned");
     lockSkill = (pawsEditTextBox*)FindWidget("LockSkill");
     lockStr = (pawsEditTextBox*)FindWidget("LockStr");
     factname = (pawsTextBox*)FindWidget("meshfactname");
@@ -183,6 +194,8 @@ bool pawsGMSpawnWindow::OnSelected(pawsWidget* widget)
         itemName->SetText(item.name);
         itemCount->SetText("1");
         itemCount->Show();
+        itemQuality->SetText("0");
+        itemQuality->Show();
         itemImage->Show();
         itemImage->SetBackground(item.icon);
         if (itemImage->GetBackground() != item.icon) // if setting the background failed...hide it
@@ -194,6 +207,10 @@ bool pawsGMSpawnWindow::OnSelected(pawsWidget* widget)
         cbLocked->SetState(false);
         cbPickupable->SetState(true);
         cbCollidable->SetState(false);
+        cbUnpickable->SetState(false);
+        cbTransient->SetState(true);  
+        cbSettingItem->SetState(false);
+        cbNPCOwned->SetState(false);
         lockSkill->SetText("Lockpicking");
         lockStr->SetText("5");
         imagename->SetText(item.icon);
@@ -204,11 +221,22 @@ bool pawsGMSpawnWindow::OnSelected(pawsWidget* widget)
         cbLocked->Show();
         cbPickupable->Show();
         cbCollidable->Show();
+        cbUnpickable->Show();
+        cbTransient->Show();  
+        cbSettingItem->Show();
+        cbNPCOwned->Show();
         lockStr->Hide();
         lockSkill->Hide();
         imagename->Show();
         meshname->Show();
         factname->Show();
+        
+        //No devs can't use those flags. It's pointless hacking here as the server double checks
+        if(psengine->GetCelClient()->GetMainPlayer()->GetType() < 30)
+        {
+            cbSettingItem->Hide();
+            cbNPCOwned->Hide();
+        }
 
         currentItem = item.name;
         return true;
@@ -271,9 +299,14 @@ bool pawsGMSpawnWindow::OnButtonPressed(int button,int keyModifier,pawsWidget* w
             lockSkill->GetText(),
             atoi(lockStr->GetText()),
             cbPickupable->GetState(),
-            cbCollidable->GetState()
-            );
-        
+            cbCollidable->GetState(),
+            cbUnpickable->GetState(),
+            cbTransient->GetState(),
+            cbSettingItem->GetState(),
+            cbNPCOwned->GetState(),
+            false,
+            atof(itemQuality->GetText()));
+
         // Send spawn message
         psengine->GetMsgHandler()->SendMessage(msg.msg);
     }

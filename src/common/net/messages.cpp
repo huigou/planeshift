@@ -6382,21 +6382,29 @@ psGMSpawnItem::psGMSpawnItem(const char* item,
                              int lstr,
                              bool pickupable,
                              bool collidable,
+                             bool Unpickable,
+                             bool Transient,
+                             bool SettingItem,
+                             bool NPCOwned,
                              bool random,
                              float quality
                              )
 {
     msg.AttachNew(new MsgEntry(
-                        strlen(item) +1 // item
+                        strlen(item) +1    // item
                         + sizeof(uint32_t) // count
-                        + sizeof(bool) // locked
-                        + sizeof(bool) // lockable
+                        + sizeof(bool)     // locked
+                        + sizeof(bool)     // lockable
                         + strlen(lskill)+1 // lskill
-                        + sizeof(int32_t) // lstr
-                        + sizeof(bool) // pickupable
-                        + sizeof(bool) // collidable
-                        + sizeof(bool) // random
-                        + sizeof(float) // quality
+                        + sizeof(int32_t)  // lstr
+                        + sizeof(bool)     // pickupable
+                        + sizeof(bool)     // collidable
+                        + sizeof(bool)     // pickable
+                        + sizeof(bool)     // transient
+                        + sizeof(bool)     // settingitem
+                        + sizeof(bool)     // npc owned
+                        + sizeof(bool)     // random
+                        + sizeof(float)    // quality
                       ));
 
     msg->SetType(MSGTYPE_GMSPAWNITEM);
@@ -6409,8 +6417,12 @@ psGMSpawnItem::psGMSpawnItem(const char* item,
     msg->Add( (int32_t)lstr );
     msg->Add( pickupable );
     msg->Add( collidable );
+    msg->Add( Unpickable );
+    msg->Add( Transient );
+    msg->Add( SettingItem );
+    msg->Add( NPCOwned );
     msg->Add(random);
-                  msg->Add(quality);
+    msg->Add(quality);
 }
 
 psGMSpawnItem::psGMSpawnItem(MsgEntry *me)
@@ -6423,6 +6435,10 @@ psGMSpawnItem::psGMSpawnItem(MsgEntry *me)
     lstr = me->GetInt32();
     pickupable = me->GetBool();
     collidable = me->GetBool();
+    Unpickable = me->GetBool();
+    Transient = me->GetBool();
+    SettingItem = me->GetBool();
+    NPCOwned = me->GetBool();
     random = me->GetBool();
     quality = me->GetFloat();
 }
@@ -6431,7 +6447,7 @@ csString psGMSpawnItem::ToString(AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
-    msgtext.AppendFmt("Item: '%s' Count: %d Lockable: %s, Is %s, Skill: '%s' Str: %d Pickupable: %s Collidable: %s Random: %s Quality %f",
+    msgtext.AppendFmt("Item: '%s' Count: %d Lockable: %s, Is %s, Skill: '%s' Str: %d Pickupable: %s Collidable: %s Random: %s Unpickable: %s SettingItem: %s NPC Owned: %s Transient: %s Quality %f",
         item.GetDataSafe(),
         count,
         (lockable ? "True" : "False"),
@@ -6441,6 +6457,10 @@ csString psGMSpawnItem::ToString(AccessPointers * /*access_ptrs*/)
         (pickupable ? "True" : "False"),
         (collidable ? "True" : "False"),
         (random ? "True" : "False"),
+        (Unpickable ? "True" : "False"),
+        (SettingItem ? "True" : "False"),
+        (NPCOwned ? "True" : "False"),
+        (Transient ? "True" : "False"),
         quality);
 
     return msgtext;

@@ -4000,15 +4000,20 @@ void AdminManager::CreateItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
                       0,
                       true,
                       true,
+                      false,
+                      true,
+                      false,
+                      false,
                       data.random != 0,
                       data.value
                       );
 
-    // Copy these items into the correct fields
+    // Copy these items into the correct fields. TODO: Why these?
     spawnMsg.item = data.item;
     spawnMsg.count = stackCount;
     spawnMsg.lockable = spawnMsg.locked = spawnMsg.collidable = false;
     spawnMsg.pickupable = true;
+    spawnMsg.Transient = true;
     spawnMsg.lskill = "";
     spawnMsg.lstr = 0;
     spawnMsg.random = data.random != 0;
@@ -6113,11 +6118,20 @@ void AdminManager::SpawnItemInv( MsgEntry* me, psGMSpawnItem& msg, Client *clien
     item->SetIsLocked(msg.locked);
     item->SetIsPickupable(msg.pickupable);
     item->SetIsCD(msg.collidable);
+    item->SetIsUnpickable(msg.Unpickable);
+    item->SetIsTransient(msg.Transient);
+    
+    //These are setting only flags. When modify gets valid permission update also here accordly
+    if(CacheManager::GetSingleton().GetCommandManager()->Validate(client->GetSecurityLevel(), "/modify"))
+    {
+        item->SetIsSettingItem(msg.SettingItem);
+        item->SetIsNpcOwned(msg.NPCOwned);
+    }
 
     if (msg.quality > 0)
     {
         item->SetItemQuality(msg.quality);
-        // Setting craftet quality as well if quality given by user
+        // Setting craft quality as well if quality given by user
         item->SetMaxItemQuality(msg.quality);
     }
     else

@@ -4554,9 +4554,13 @@ public:
         const char* lskill,
         int lstr,
         bool pickupable,
-    bool collidable,
-    bool random = false,
-    float quality = 0.0f);
+        bool collidable,
+        bool Unpickable,
+        bool Transient,
+        bool SettingItem,
+        bool NPCOwned,
+        bool random = false,
+        float quality = 0.0f);
 
     psGMSpawnItem( MsgEntry* me );
 
@@ -4572,7 +4576,7 @@ public:
 
     csString item;
     unsigned int count;
-    bool lockable,locked,pickupable,collidable;
+    bool lockable,locked,pickupable,collidable,Unpickable,SettingItem,NPCOwned,Transient;
 
     csString lskill;
     int lstr;
