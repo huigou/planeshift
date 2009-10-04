@@ -34,7 +34,7 @@ public:
     pawsGMSpawnWindow();
     virtual ~pawsGMSpawnWindow();
 
-    bool PostSetup(); 
+    bool PostSetup();
     void Show();
     void HandleMessage(MsgEntry* me);
     bool OnSelected(pawsWidget* widget);

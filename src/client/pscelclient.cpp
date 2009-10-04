@@ -210,7 +210,7 @@ void psCelClient::SetMainActor(GEMClientActor* actor)
     psengine->GetCharControl()->GetMovementManager()->SetActor(actor);
     psengine->GetPSCamera()->SetActor(actor);
     psengine->GetModeHandler()->SetEntity(actor);
-    
+
 }
 
 void psCelClient::RequestServerWorld()
@@ -266,7 +266,7 @@ void psCelClient::HandleActor( MsgEntry* me )
 
         // This triggers the server to update our proxlist
         //local_player->SendDRUpdate(PRIORITY_LOW,GetClientDR()->GetMsgStrings());
-        
+
         //update the window title with the char name
         psengine->UpdateWindowTitleInformations();
     }
@@ -1080,7 +1080,7 @@ bool GEMClientObject::SetPosition(const csVector3 & pos, float rot, iSector * se
         // Rotation
         csMatrix3 matrix = (csMatrix3) csYRotMatrix3 (rot);
         pcmesh->GetMovable()->GetTransform().SetO2T (matrix);
-        
+
         pcmesh->GetMovable ()->UpdateMove ();
 
         if(instance.IsValid())
@@ -1110,10 +1110,10 @@ void GEMClientObject::Rotate(float xRot, float yRot, float zRot)
     csMatrix3 ymatrix = (csMatrix3) csYRotMatrix3 (yRot);
 
     csMatrix3 zmatrix = (csMatrix3) csZRotMatrix3 (zRot);
-    
-    // multiply the matrices for the three axis together, then we apply it to the mesh 
+
+    // multiply the matrices for the three axis together, then we apply it to the mesh
     pcmesh->GetMovable ()->GetTransform().SetO2T (xmatrix*ymatrix*zmatrix);
-    
+
     pcmesh->GetMovable ()->UpdateMove ();
 
     // Set instancing transform.
@@ -1224,7 +1224,7 @@ bool GEMClientObject::InitMesh()
     factoryName.ReplaceAllSubString("$H", BeltReplacement);
     factoryName.ReplaceAllSubString("$B", CloakReplacement);
     factName = factoryName;
-    
+
     if(matName.Length() && matName.Find("$F") != (size_t) -1)
         matName.Empty();
 
@@ -1301,10 +1301,10 @@ GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
 
     if (helmGroup.Length() == 0)
         helmGroup = factName;
-        
+
     if (BracerGroup.Length() == 0)
         BracerGroup = factName;
-        
+
     if (BeltGroup.Length() == 0)
         BeltGroup = factName;
 
@@ -1805,7 +1805,7 @@ void GEMClientActor::SetMode(uint8_t mode, bool newactor)
                 cal3dstate->SetAnimAction("sit", 0.0f, 1.0f);
             SetIdleAnimation("sit idle");
             break;
-        
+
         case psModeMessage::STATUE: //used to make statue like character which don't move
             cal3dstate->ClearAllAnims();
             cal3dstate->SetAnimAction("statue",0.0f,1.0f);
@@ -2022,7 +2022,7 @@ bool GEMClientItem::CheckLoadStatus()
         csRef<iShaderManager> shman = csQueryRegistry<iShaderManager>(psengine->GetObjectRegistry());
         csRef<iStringSet> strings = csQueryRegistryTagInterface<iStringSet>(
             psengine->GetObjectRegistry(), "crystalspace.shared.stringset");
-        
+
         csRef<iGeneralFactoryState> gFact = scfQueryInterface<iGeneralFactoryState>(factory->GetMeshObjectFactory());
         for(size_t i=0; (!gFact.IsValid() && i == 0) || (gFact.IsValid() && i<gFact->GetSubMeshCount()); ++i)
         {
@@ -2083,7 +2083,7 @@ bool GEMClientItem::CheckLoadStatus()
             -CS_BOUNDINGBOX_MAXVALUE, -CS_BOUNDINGBOX_MAXVALUE, CS_BOUNDINGBOX_MAXVALUE, CS_BOUNDINGBOX_MAXVALUE,
             CS_BOUNDINGBOX_MAXVALUE));
     }
- 
+
     csVector3 Pos = csVector3(0.0f);
     csMatrix3 Rot = csMatrix3();
     position = instance->pcmesh->AddInstance(Pos, Rot);
@@ -2115,7 +2115,7 @@ bool GEMClientItem::CheckLoadStatus()
 void GEMClientItem::PostLoad(bool nullmesh)
 {
     Move(post_load->pos, post_load->yRot, post_load->sector);
-    
+
     Rotate(post_load->xRot, post_load->yRot, post_load->zRot);
 
     if (flags & psPersistItem::COLLIDE)
