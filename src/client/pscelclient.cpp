@@ -1224,6 +1224,9 @@ bool GEMClientObject::InitMesh()
     factoryName.ReplaceAllSubString("$H", BeltReplacement);
     factoryName.ReplaceAllSubString("$B", CloakReplacement);
     factName = factoryName;
+    
+    if(matName.Length() && matName.Find("$F") != (size_t) -1)
+        matName.Empty();
 
     // Set up callback.
     psengine->RegisterDelayedLoader(this);
