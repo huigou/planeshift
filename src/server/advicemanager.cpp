@@ -796,6 +796,9 @@ void AdviceManager::HandleAdviceResponse( Client *advisor, csString sAdvisee, cs
 
 void AdviceManager::AddAdvisor(Client *client)
 {
+    if (!client)
+        return;
+
     uint32_t id = client->GetClientNum();
 
     // make sure we didn't do an "/advisor on" twice...
@@ -821,8 +824,7 @@ void AdviceManager::AddAdvisor(Client *client)
 
     advisors.Push(advisor);
 
-    if ( client )
-        client->SetAdvisor( true );
+    client->SetAdvisor( true );
     //Send message to advisor that he/she is an advisor
     psserver->SendSystemInfo(id,"Your request to become an advisor has been granted.");
     //psserver->SendSystemInfo(id, "You currently have %d advisor points.",  client->GetAdvisorPoints() );
