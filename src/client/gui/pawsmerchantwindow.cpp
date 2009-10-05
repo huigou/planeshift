@@ -167,7 +167,7 @@ void pawsMerchantWindow::HandleMoney( const char* moneyData )
         return;
     }
     csRef<iDocumentNode> merchant = doc->GetRoot();
-    if(!doc)
+    if(!merchant)
     {
         Error2("No XML Root in %s", moneyData);
         return;
