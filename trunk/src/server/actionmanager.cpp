@@ -243,7 +243,7 @@ void ActionManager::LoadXML( csRef<iDocumentNode> topNode )
     }
 
     csRef<iDocumentNode> posNode = topNode->GetNode( "position" );
-    if ( topNode )
+    if ( posNode )
     {
         float posx=0.0f, posy=0.0f, posz=0.0f;
 
