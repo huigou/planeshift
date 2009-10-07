@@ -195,6 +195,12 @@ void CCheck::ParseFile(const char* filePath, const char* fileName, bool processi
             FileUtil futil(vfs);
             futil.CopyFile(filePath, outpath+"/world/"+csString(filePath).Slice(csString(filePath).FindLast('/')), true, false);
         }
+
+        if(csString(filePath).Find("sound.xml") != (size_t)-1)
+        {
+            FileUtil futil(vfs);
+            futil.CopyFile(filePath, outpath+"/world/sound/"+csString(fileName).Slice(0, csString(fileName).FindLast('.'))+".xml", true, false);
+        }
     }
 
     csRef<iDataBuffer> buf = vfs->ReadFile(filePath);

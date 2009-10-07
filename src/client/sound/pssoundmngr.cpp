@@ -992,7 +992,7 @@ bool psMapSoundSystem::Initialize()
     if (!vfs)
         return false;
 
-    csRef<iDataBuffer> xpath = vfs->ExpandPath("/planeshift/world/");
+    csRef<iDataBuffer> xpath = vfs->ExpandPath("/planeshift/world/sound/");
     const char* dir = **xpath;
     csRef<iStringArray> files = vfs->FindFiles(dir);
     if (!files)
@@ -1000,12 +1000,7 @@ bool psMapSoundSystem::Initialize()
 
     for (size_t i=0; i < files->GetSize(); i++)
     {
-        // Skip server's "cleaned" files and cd files, to suppress warnings
-        if ( strstr(files->Get(i),"_cleaned") || strstr(files->Get(i), "cd_"))
-            continue;
-
         csString name( files->Get(i) );
-        name.Append("sound.xml");
         csRef<iDocument> doc;
         csRef<iDocumentNode> root, mapNode;
 
