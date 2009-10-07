@@ -896,6 +896,24 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                     meshes.Put(meshStringSet.Request(m->name), m);
                 }
 
+                // Get all trimeshes in this sector.
+                nodeItr2 = node->GetNodes("trimesh");
+                while(nodeItr2->HasNext())
+                {
+                    csRef<iDocumentNode> node2 = nodeItr2->Next();
+                    csRef<MeshObj> m = csPtr<MeshObj>(new MeshObj(node2->GetAttributeValue("name"), vfsPath, node2));
+                    m->sector = s;
+
+                    // Always load trimesh... for now. TODO: Calculate bbox.
+                    ++s->alwaysLoadedCount;
+                    m->alwaysLoaded = true;
+
+                    // Push to sector.
+                    s->meshes.Push(m);
+                    CS::Threading::ScopedWriteLock lock(meshLock);
+                    meshes.Put(meshStringSet.Request(m->name), m);
+                }
+
                 // Parse mesh generators (for foliage, rocks etc.)
                 if(enabledGfxFeatures & useMeshGen)
                 {
