@@ -556,7 +556,8 @@ void psTriggerHandler::HandleZoom(const psControl* trigger, bool value)
     }
     else
     {
-        if (psengine->GetPSCamera()->GetMinDistance() == psengine->GetPSCamera()->GetDistance())
+        if (psengine->GetPSCamera()->GetMinDistance() == psengine->GetPSCamera()->GetDistance() &&
+            psengine->GetPSCamera()->GetCameraMode() == psengine->GetPSCamera()->CAMERA_FIRST_PERSON)
         {
             psengine->GetPSCamera()->SetCameraMode(psengine->GetPSCamera()->GetLastCameraMode());
         }
