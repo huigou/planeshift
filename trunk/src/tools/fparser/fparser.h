@@ -1,5 +1,5 @@
 /***************************************************************************\
-|* Function Parser for C++ v3.2.1                                          *|
+|* Function Parser for C++ v3.3                                            *|
 |*-------------------------------------------------------------------------*|
 |* Copyright: Juha Nieminen                                                *|
 \***************************************************************************/
@@ -56,6 +56,18 @@ public:
     void Optimize();
 
 
+    int ParseAndDeduceVariables(const std::string& function,
+                                int* amountOfVariablesFound = 0,
+                                bool useDegrees = false);
+    int ParseAndDeduceVariables(const std::string& function,
+                                std::string& resultVarString,
+                                int* amountOfVariablesFound = 0,
+                                bool useDegrees = false);
+    int ParseAndDeduceVariables(const std::string& function,
+                                std::vector<std::string>& resultVars,
+                                bool useDegrees = false);
+
+
     FunctionParser();
     ~FunctionParser();
 
@@ -105,8 +117,13 @@ private:
     int ParseFunction(const char*, bool);
     const char* SetErrorType(ParseErrorType, const char*);
 
+    void AddFunctionOpcode_CheckDegreesConversion(unsigned);
     void AddFunctionOpcode(unsigned);
+    inline void AddMultiplicationByConst(double value);
+    template<typename Operation>
+    inline void AddBinaryOperationByConst();
     inline void incStackPtr();
+    bool CompilePowi(int);
 
     const char* CompileIf(const char*);
     const char* CompileFunctionParams(const char*, unsigned);

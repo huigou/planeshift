@@ -3,11 +3,11 @@
 <head>
  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
  <link href="style.css" rel="stylesheet" type="text/css" title="normal" media=screen>
- <title>Function Parser for C++ v3.2.1  : Documentation</title>
+ <title>Function Parser for C++ v3.3    : Documentation</title>
 </head>
 
 <body>
-<h1>Function Parser for C++ v3.2.1  </h1>
+<h1>Function Parser for C++ v3.3    </h1>
 
 <p>Authors: Juha Nieminen
 (<a href="http://iki.fi/warp/">http://iki.fi/warp/</a>),
@@ -41,46 +41,22 @@ Joel Yliluoma
 <a name="whatsnew"></a>
 <h2>What's new</h2>
 
-<p>What's new in v3.2.1
+<p>What's new in v3.3
 <ul>
- <li>Fixed bugs in optimizer: Functions in the form <code>"log(-x)"</code>
-   and certain integral powers (eg. <code>"x^14"</code>) were optimized
-   incorrectly. (In the case of the integral powers, the error manifested
-   itself when <code>x==0</code>.)
- <li>Fixed some incompatibilities which made the library not compile with
-   MSVC.
- <li>Fixed major crash in <code>FunctionParser::Eval()</code> which happened
-   if it was called without <code>FunctionParser::Parse()</code> having been
-   called successfully (or at all). (Now it always returns 0.0 in such
-   situations.)
- <li>Changed <code>FunctionParser::ErrorMsg()</code> to return an empty
-   string rather than a null pointer if the previous parsing was successful.
-   (Its return value was never intended to be used as a check for success
-   anyways. <code>FunctionParser::GetParseErrorType()</code> can be used for
-   this purpose, if necessary.) This is to avoid potential crashes in the
-   calling program if it assumes that this function always returns a valid
-   string.
-</ul>
-
-<p>What's new in v3.2
-<ul>
- <li>The <code>FP_SUPPORT_ASINH</code> and <code>FP_NO_ASINH</code>
-   precompiler constants have been replaced with a more generic
-   <code>FP_SUPPORT_TR1_MATH_FUNCS</code> precompiler constant, which
-   enables other similar functions as well. Consult the documentation
-   on this subject for details.
- <li>The "<code>asinh</code>", "<code>acosh</code>" and "<code>atanh</code>"
-   functions are now <em>always</em> available in the function syntax
-   regardless of whether <code>FP_SUPPORT_TR1_MATH_FUNCS</code> has been
-   defined or not. (If it's not, then they will be calculated using
-   equivalent formulas.)
- <li>Significant refactoring of the optimizer code, and addition of numerous
-   new optimization rules (related to the <code>abs()</code> function in
-   diverse situations, some exponentiation, logarithm and hyperbolic
-   trigonometry optimizations, and others).
- <li>Fixed bug in the optimizer which caused functions like
-   <code>"sqrt(x*x)"</code> and <code>"(x*x)^0.25"</code> to be optimized
-   incorrectly (for negative values of <code>x</code>).
+ <li>The <code>Parse()</code> method now performs more exhaustive constant
+   folding (calculating constant expressions at parse time) than before.
+   Also integral powers (eg. like <code>"x^4"</code>) are now more optimized
+   at parse time, resulting in faster evaluation even without a call to the
+   <code>Optimize()</code> method (although the latter will sometimes still
+   result in an even better result). The speed impact of this on the
+   <code>Parse()</code> method has been kept minimal.
+ <li>More refactoring of the optimizer, making the <code>Optimize()</code>
+   method significantly faster than in the previous version. Also new and
+   more exhaustive rules have been added, resulting in better results in
+   certain cases (eg. when using basic operators in very complex functions).
+ <li>Added utility member functions to parse a function so that the variables
+   in the function are deduced automatically. The found variables are returned
+   to the caller if requested.
 </ul>
 
 
@@ -236,10 +212,10 @@ constant/function adding methods will cause a deep-copy.
 <h3>Short descriptions of FunctionParser methods</h3>
 
 <pre>
-int Parse(const std::string& Function, const std::string& Vars,
+int Parse(const std::string&amp; Function, const std::string&amp; Vars,
           bool useDegrees = false);
 
-int Parse(const char* Function, const std::string& Vars,
+int Parse(const char* Function, const std::string&amp; Vars,
           bool useDegrees = false);
 </pre>
 
@@ -295,7 +271,7 @@ void Optimize();
 
 <hr>
 <pre>
-bool AddConstant(const std::string& name, double value);
+bool AddConstant(const std::string&amp; name, double value);
 </pre>
 
 <p>Add a constant to the parser. Returns <code>false</code> if the name of
@@ -303,7 +279,7 @@ the constant is invalid, else <code>true</code>.
 
 <hr>
 <pre>
-bool AddUnit(const std::string& name, double value);
+bool AddUnit(const std::string&amp; name, double value);
 </pre>
 
 <p>Add a new unit to the parser. Returns <code>false</code> if the name of
@@ -311,7 +287,7 @@ the unit is invalid, else <code>true</code>.
 
 <hr>
 <pre>
-bool AddFunction(const std::string& name,
+bool AddFunction(const std::string&amp; name,
                  double (*functionPtr)(const double*),
                  unsigned paramsAmount);
 </pre>
@@ -322,7 +298,7 @@ Returns <code>false</code> if the name of the function is invalid, else
 
 <hr>
 <pre>
-bool AddFunction(const std::string& name, FunctionParser&);
+bool AddFunction(const std::string&amp; name, FunctionParser&amp;);
 </pre>
 
 <p>Add a user-defined function to the parser (as a <code>FunctionParser</code>
@@ -331,12 +307,29 @@ else <code>true</code>.
 
 <hr>
 <pre>
-bool RemoveIdentifier(const std::string& name);
+bool RemoveIdentifier(const std::string&amp; name);
 </pre>
 
 <p>Removes the constant, unit or user-defined function with the specified
 name from the parser.
 
+<hr>
+<pre>
+int ParseAndDeduceVariables(const std::string&amp; function,
+                            int* amountOfVariablesFound = 0,
+                            bool useDegrees = false);
+int ParseAndDeduceVariables(const std::string&amp; function,
+                            std::string&amp; resultVarString,
+                            int* amountOfVariablesFound = 0,
+                            bool useDegrees = false);
+int ParseAndDeduceVariables(const std::string&amp; function,
+                            std::vector&lt;std::string&gt;&amp; resultVars,
+                            bool useDegrees = false);
+</pre>
+
+<p>Like <code>Parse()</code>, but the variables in the function are deduced
+automatically. The amount of found variables and the variable names themselves
+are returned by the different versions of the function.
 
 <!-- -------------------------------------------------------------------- -->
 <a name="longdesc"></a>
@@ -344,10 +337,10 @@ name from the parser.
 
 <hr>
 <pre>
-int Parse(const std::string& Function, const std::string& Vars,
+int Parse(const std::string&amp; Function, const std::string&amp; Vars,
           bool useDegrees = false);
 
-int Parse(const char* Function, const std::string& Vars,
+int Parse(const char* Function, const std::string&amp; Vars,
           bool useDegrees = false);
 </pre>
 
@@ -621,7 +614,7 @@ call to <code>Optimize()</code> to see the difference.)
 
 <hr>
 <pre>
-bool AddConstant(const std::string& name, double value);
+bool AddConstant(const std::string&amp; name, double value);
 </pre>
 
 <p>This method can be used to add constants to the parser. Syntactically
@@ -655,7 +648,7 @@ to the call <code>parser.Parse("x*3.1415926535897932", "x");</code>
 
 <hr>
 <pre>
-bool AddUnit(const std::string& name, double value);
+bool AddUnit(const std::string&amp; name, double value);
 </pre>
 
 <p>In some applications it is desirable to have units of measurement.
@@ -698,7 +691,7 @@ be at least one whitespace between the element and the unit (eg.
 
 <hr>
 <pre>
-bool AddFunction(const std::string& name,
+bool AddFunction(const std::string&amp; name,
                  double (*functionPtr)(const double*),
                  unsigned paramsAmount);
 </pre>
@@ -761,7 +754,7 @@ problematic case.)
 
 <hr>
 <pre>
-bool AddFunction(const std::string& name, FunctionParser&);
+bool AddFunction(const std::string&amp; name, FunctionParser&amp;);
 </pre>
 
 <p>This method is almost identical to the previous <code>AddFunction()</code>,
@@ -808,7 +801,7 @@ eg. chain user-given functions. For example, ask the user for a function F1,
 
 <hr>
 <pre>
-bool RemoveIdentifier(const std::string& name);
+bool RemoveIdentifier(const std::string&amp; name);
 </pre>
 
 <p>If a constant, unit or user-defined function with the specified name
@@ -819,6 +812,45 @@ exists in the parser, it will be removed and the return value will be
 <p>(Note: If you want to remove <em>everything</em> from an existing
 FunctionParser instance, simply assign a fresh instance to it, ie. like
 "<code>parser&nbsp;=&nbsp;FunctionParser();</code>")
+
+<hr>
+<pre>
+int ParseAndDeduceVariables(const std::string&amp; function,
+                            int* amountOfVariablesFound = 0,
+                            bool useDegrees = false);
+int ParseAndDeduceVariables(const std::string&amp; function,
+                            std::string&amp; resultVarString,
+                            int* amountOfVariablesFound = 0,
+                            bool useDegrees = false);
+int ParseAndDeduceVariables(const std::string&amp; function,
+                            std::vector&lt;std::string&gt;&amp; resultVars,
+                            bool useDegrees = false);
+</pre>
+
+<p>These functions work in the same way as the <code>Parse()</code> function,
+but the variables in the input function string are deduced automatically. The
+parameters are:
+
+<ul>
+ <li><code>function</code>: The input function string, as with
+   <code>Parse()</code>.
+ <li><code>amountOfVariablesFound</code>: If non-null, the amount of found
+   variables will be assigned here.
+ <li><code>resultVarString</code>: The found variables will be written to
+   this string, in the same format as accepted by the <code>Parse()</code>
+   function. The variable names will be sorted using the <code>&lt</code>
+   operator of <code>std::string</code>.
+ <li><code>resultVars</code>: The found variables will be written to this
+   vector, each element being one variable name. They will be sorted using
+   the <code>&lt</code> operator of <code>std::string</code>. (The amount
+   of found variables can be retrieved, rather obviously, with the
+   <code>size()</code> method of the vector.)
+ <li><code>useDegrees</code>: As with <code>Parse()</code>.
+</ul>
+
+<p>As with <code>Parse()</code>, the return value will be <code>-1</code> if
+the parsing succeeded, else an index to the location of the error. None of
+the specified return values will be modified in case of error.
 
 
 <!-- -------------------------------------------------------------------- -->
