@@ -13,7 +13,7 @@
 			     direction="vertical"
 			     tick="1" 
                        minValue="0" >
-	        <frame x="260" y="3" width="20" height="50" />
+	        <frame x="260" y="3" width="20" height="45" />
         </pawsScrollBar>
     </widget>
 
