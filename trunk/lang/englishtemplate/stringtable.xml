@@ -1,4 +1,4 @@
-<Author text="Atomic Blue" />
+<Author text="" />
 <StringTable>
   <item orig="750" trans="" />
   <item orig="System text color" trans="" />
@@ -16,6 +16,7 @@
   <item orig="Can I join you ?" trans="" />
   <item orig="server" trans="" />
   <item orig="CHILDHOOD" trans="" />
+  <item orig="Unpickable" trans="" />
   <item orig="LIFE EVENTS" trans="" />
   <item orig="SL" trans="" />
   <item orig="Buy" trans="" />
@@ -31,8 +32,8 @@
   <item orig="Load" trans="" />
   <item orig="Buffs" trans="" />
   <item orig="Stack Count" trans="" />
-  <item orig="Talk to people in your sector." trans="" />
   <item orig=" unanswered petitions." trans="" />
+  <item orig="Talk to people in your sector." trans="" />
   <item orig="Factions:" trans="" />
   <item orig="Paths" trans="" />
   <item orig="Tellself outline colour" trans="" />
@@ -105,6 +106,7 @@
   <item orig="Privil." trans="" />
   <item orig="NPC_my Alignment" trans="" />
   <item orig="Skin Colour" trans="" />
+  <item orig="The server isn&apos;t available!" trans="" />
   <item orig="Master:" trans="" />
   <item orig="NPC_me text colour" trans="" />
   <item orig="Details" trans="" />
@@ -190,6 +192,7 @@ Vuoi veramente lasciare Yliakum?" />
   <item orig="HP" trans="" />
   <item orig="You have entered edit mode." trans="" />
   <item orig="%s shouts: %s" trans="" />
+  <item orig="Quality:" trans="" />
   <item orig="No server running at the moment" trans="" />
   <item orig="CHARACTER CREATION" trans="" />
   <item orig="Glyphs" trans="" />
@@ -210,7 +213,8 @@ Vuoi veramente lasciare Yliakum?" />
   <item orig="Auction outline colour" trans="" />
   <item orig="Admin" trans="" />
   <item orig=" in front
-of you named " trans="" />
+of you named " trans=" davanti a te
+chiamato " />
   <item orig="mouse" trans="" />
   <item orig="Various Skills List:" trans="" />
   <item orig="Stats description:" trans="" />
@@ -308,6 +312,7 @@ of you named " trans="" />
   <item orig="Group shadow colour" trans="" />
   <item orig="Ambiguous command: " trans="" />
   <item orig="The selected petition was %s" trans="" />
+  <item orig="Setting Item" trans="" />
   <item orig="Loading game" trans="" />
   <item orig="Use Collision Detection" trans="" />
   <item orig="Invite" trans="" />
@@ -363,6 +368,7 @@ of you named " trans="" />
   <item orig="CP: 0" trans="" />
   <item orig="BIRTH" trans="" />
   <item orig="All. Chat" trans="" />
+  <item orig="NPC Owned" trans="" />
   <item orig="Unmute Player" trans="" />
   <item orig="Online only" trans="" />
   <item orig="Pub notes" trans="" />
@@ -397,6 +403,7 @@ of you named " trans="" />
   <item orig="Filter incoming bad words" trans="" />
   <item orig="Skill" trans="" />
   <item orig="alliance shadow colour" trans="" />
+  <item orig="Transient" trans="" />
   <item orig="The selected petition has been escalated." trans="" />
   <item orig="Your notes:" trans="" />
   <item orig="Rotate" trans="" />
@@ -439,7 +446,9 @@ of you named " trans="" />
   <item orig="Interface sounds" trans="" />
   <item orig="Here you can place any OOC information except to advertise companies, products, or services from the real world.
 
-To disable this feature delete everything in the window by using the Modify Description button." trans="" />
+To disable this feature delete everything in the window by using the Modify Description button." trans="Qua puoi mettere qualunque informazione OOC eccetto publicità di compagnie, prodotti o servizi del mondo reale.
+  
+Per disabilitare questa funzione cancella tutto in questa finestra usando il bottone Modifica Descizione." />
   <item orig="Tell outline colour" trans="" />
   <item orig="Evaluate" trans="" />
   <item orig="Talk to your group privately." trans="" />
@@ -485,6 +494,7 @@ To disable this feature delete everything in the window by using the Modify Desc
   <item orig="Jobs Skills List:" trans="" />
   <item orig="Magic Skills" trans="" />
   <item orig="Combat messages regarding others" trans="" />
+  <item orig="Replaying previous chat..." trans="" />
   <item orig="Actions" trans="" />
   <item orig="Chat - Filters" trans="" />
   <item orig="Amount to withdraw" trans="" />
@@ -501,6 +511,7 @@ To disable this feature delete everything in the window by using the Modify Desc
   <item orig="Trias:" trans="" />
   <item orig="Auto Tab selection:" trans="" />
   <item orig="Short Phrase Char Count" trans="" />
+  <item orig="Connecting to server... Please wait" trans="" />
   <item orig="Chat - Tabs" trans="" />
   <item orig="Makes the server log what target player is saying." trans="" />
   <item orig="New Account" trans="" />
