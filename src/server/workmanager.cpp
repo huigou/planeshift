@@ -2060,17 +2060,26 @@ bool WorkManager::MatchCombinations(csArray<psItem*> itemArray, CombinationConst
 //   We check the more specific transforms for matches first
 unsigned int WorkManager::AnyTransform(uint32 singlePatternId, uint32 groupPatternId, uint32 targetId, int targetQty)
 {
+    unsigned int singleMatch = TRANSFORM_GARBAGE;
+    unsigned int groupMatch  = TRANSFORM_GARBAGE;
+    
     // First check for specific single transform match
-    if (secure) psserver->SendSystemInfo(clientNum,"Checking single transforms for pattern id %u, target id %u, and target qty %u.", singlePatternId,targetId,targetQty );
-    unsigned int singleMatch = IsTransformable( singlePatternId, targetId, targetQty );
-    if (singleMatch == TRANSFORM_MATCH)
-        return TRANSFORM_MATCH;
+    if(singlePatternId != 0)
+    {
+        if (secure) psserver->SendSystemInfo(clientNum,"Checking single transforms for pattern id %u, target id %u, and target qty %u.", singlePatternId,targetId,targetQty );
+        singleMatch =  IsTransformable( singlePatternId, targetId, targetQty );
+        if (singleMatch == TRANSFORM_MATCH)
+            return TRANSFORM_MATCH;
+    }
 
     // Then check for a group transform match
-    if (secure) psserver->SendSystemInfo(clientNum,"Checking group transforms for pattern id %u, target id %u, and target qty %u.",groupPatternId, targetId, targetQty);
-    unsigned int groupMatch = IsTransformable( groupPatternId, targetId, targetQty );
-    if (groupMatch == TRANSFORM_MATCH)
-        return TRANSFORM_MATCH;
+    if(groupPatternId != 0)
+    {
+        if (secure) psserver->SendSystemInfo(clientNum,"Checking group transforms for pattern id %u, target id %u, and target qty %u.",groupPatternId, targetId, targetQty);
+        groupMatch = IsTransformable( groupPatternId, targetId, targetQty );
+        if (groupMatch == TRANSFORM_MATCH)
+            return TRANSFORM_MATCH;
+    }
 
     // Check for patternless transforms
     if (secure) psserver->SendSystemInfo(clientNum,"Checking patternless transforms for pattern id %u, target id %u, and target qty %u.", 0, targetId, targetQty );
@@ -2090,9 +2099,23 @@ unsigned int WorkManager::AnyTransform(uint32 singlePatternId, uint32 groupPatte
         return TRANSFORM_GARBAGE;
 
     // Then check for a group any item transform match
-    if (secure) psserver->SendSystemInfo(clientNum,"Checking group any item transforms for pattern id %u, target id %u, and target qty %u.", groupPatternId, 0, targetQty);
-    unsigned int groupGarbMatch = IsTransformable( groupPatternId, 0, targetQty );
-    if (groupGarbMatch == TRANSFORM_MATCH)
+    if(groupPatternId != 0)
+    {
+        if (secure) psserver->SendSystemInfo(clientNum,"Checking group any item transforms for pattern id %u, target id %u, and target qty %u.", groupPatternId, 0, targetQty);
+        unsigned int groupGarbMatch = IsTransformable( groupPatternId, 0, targetQty );
+        if (groupGarbMatch == TRANSFORM_MATCH)
+            return TRANSFORM_GARBAGE;
+    }
+
+    // Check patternless for transforms of any ingredients
+    if (secure) psserver->SendSystemInfo(clientNum,"Checking for pattern-less any ingredient transforms for target id %u.", singlePatternId, groupPatternId, targetId );
+    if (IsIngredient( 0, 0, targetId ))
+        return TRANSFORM_MATCH;
+        
+    // Check for patternless specific single any item transform match
+    if (secure) psserver->SendSystemInfo(clientNum,"Checking pattern-less single any item transforms for target qty %u.",singlePatternId, 0, targetQty);
+    singleGarbMatch = IsTransformable( 0, 0, targetQty );
+    if (singleGarbMatch == TRANSFORM_MATCH)
         return TRANSFORM_GARBAGE;
 
     // If no other non-garbage/unknown failures then check for pattern-less any item transforms
