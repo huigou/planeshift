@@ -16,6 +16,7 @@
   <item orig="Can I join you ?" trans="Posso unirmi a te?" />
   <item orig="server" trans="Server" />
   <item orig="CHILDHOOD" trans="" />
+  <item orig="Unpickable" trans="" />
   <item orig="LIFE EVENTS" trans="" />
   <item orig="SL" trans="" />
   <item orig="Buy" trans="Compra" />
@@ -31,8 +32,8 @@
   <item orig="Load" trans="Carica" />
   <item orig="Buffs" trans="" />
   <item orig="Stack Count" trans="" />
-  <item orig="Talk to people in your sector." trans="Parla alle persone nel tuo settore." />
   <item orig=" unanswered petitions." trans="" />
+  <item orig="Talk to people in your sector." trans="Parla alle persone nel tuo settore." />
   <item orig="Factions:" trans="Fazioni:" />
   <item orig="Paths" trans="Vie" />
   <item orig="Tellself outline colour" trans="" />
@@ -105,6 +106,7 @@
   <item orig="Privil." trans="" />
   <item orig="NPC_my Alignment" trans="" />
   <item orig="Skin Colour" trans="Colore Pelle" />
+  <item orig="The server isn&apos;t available!" trans="" />
   <item orig="Master:" trans="" />
   <item orig="NPC_me text colour" trans="" />
   <item orig="Details" trans="Dettagli" />
@@ -190,6 +192,7 @@ Vuoi veramente lasciare Yliakum?" />
   <item orig="HP" trans="" />
   <item orig="You have entered edit mode." trans="" />
   <item orig="%s shouts: %s" trans="%s urla: %s" />
+  <item orig="Quality:" trans="" />
   <item orig="No server running at the moment" trans="Non ci sono server attivi in questo momento" />
   <item orig="CHARACTER CREATION" trans="CREAZIONE PERSONAGGIO" />
   <item orig="Glyphs" trans="Glyph" />
@@ -309,6 +312,7 @@ chiamato " />
   <item orig="Group shadow colour" trans="" />
   <item orig="Ambiguous command: " trans="Comando Ambiguo: " />
   <item orig="The selected petition was %s" trans="La petizione selezionata era %s" />
+  <item orig="Setting Item" trans="" />
   <item orig="Loading game" trans="Caricamento Gioco" />
   <item orig="Use Collision Detection" trans="" />
   <item orig="Invite" trans="Invita" />
@@ -364,6 +368,7 @@ chiamato " />
   <item orig="CP: 0" trans="" />
   <item orig="BIRTH" trans="NASCITA" />
   <item orig="All. Chat" trans="" />
+  <item orig="NPC Owned" trans="" />
   <item orig="Unmute Player" trans="" />
   <item orig="Online only" trans="Solo online" />
   <item orig="Pub notes" trans="Note publ" />
@@ -398,6 +403,7 @@ chiamato " />
   <item orig="Filter incoming bad words" trans="" />
   <item orig="Skill" trans="" />
   <item orig="alliance shadow colour" trans="" />
+  <item orig="Transient" trans="" />
   <item orig="The selected petition has been escalated." trans="" />
   <item orig="Your notes:" trans="Tue note:" />
   <item orig="Rotate" trans="Ruota" />
@@ -488,6 +494,7 @@ Per disabilitare questa funzione cancella tutto in questa finestra usando il bot
   <item orig="Jobs Skills List:" trans="" />
   <item orig="Magic Skills" trans="" />
   <item orig="Combat messages regarding others" trans="" />
+  <item orig="Replaying previous chat..." trans="" />
   <item orig="Actions" trans="" />
   <item orig="Chat - Filters" trans="Chat - Filtri" />
   <item orig="Amount to withdraw" trans="" />
@@ -504,6 +511,7 @@ Per disabilitare questa funzione cancella tutto in questa finestra usando il bot
   <item orig="Trias:" trans="" />
   <item orig="Auto Tab selection:" trans="" />
   <item orig="Short Phrase Char Count" trans="" />
+  <item orig="Connecting to server... Please wait" trans="" />
   <item orig="Chat - Tabs" trans="Chat - Linguette" />
   <item orig="Makes the server log what target player is saying." trans="Fa loggare al server ciò che il giocare selezionato sta dicendo." />
   <item orig="New Account" trans="Nuovo Account" />
