@@ -783,34 +783,37 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                             CS_ASSERT_MSG(msg.GetData(), meshfact.IsValid());
                         }
 
-                        // Calc bbox data.
-                        csRef<iDocumentNode> move = node2->GetParent()->GetParent()->GetNode("move");
-                        if(move.IsValid())
+                        if(meshfact.IsValid())
                         {
-                            csVector3 pos;
-                            syntaxService->ParseVector(move->GetNode("v"), pos);
-
-                            csMatrix3 rot;
-                            if(move->GetNode("matrix"))
+                            // Calc bbox data.
+                            csRef<iDocumentNode> move = node2->GetParent()->GetParent()->GetNode("move");
+                            if(move.IsValid())
                             {
-                                syntaxService->ParseMatrix(move->GetNode("matrix"), rot);
-                            }
+                                csVector3 pos;
+                                syntaxService->ParseVector(move->GetNode("v"), pos);
 
-                            for(size_t v=0; v<meshfact->bboxvs.GetSize(); ++v)
-                            {
+                                csMatrix3 rot;
                                 if(move->GetNode("matrix"))
                                 {
-                                    m->bbox.AddBoundingVertex(rot*csVector3(pos+meshfact->bboxvs[v]));
+                                    syntaxService->ParseMatrix(move->GetNode("matrix"), rot);
                                 }
-                                else
+
+                                for(size_t v=0; v<meshfact->bboxvs.GetSize(); ++v)
                                 {
-                                    m->bbox.AddBoundingVertex(pos+meshfact->bboxvs[v]);
+                                    if(move->GetNode("matrix"))
+                                    {
+                                        m->bbox.AddBoundingVertex(rot*csVector3(pos+meshfact->bboxvs[v]));
+                                    }
+                                    else
+                                    {
+                                        m->bbox.AddBoundingVertex(pos+meshfact->bboxvs[v]);
+                                    }
                                 }
                             }
-                        }
 
-                        m->meshfacts.Push(meshfact);
-                        m->mftchecked.Push(false);
+                            m->meshfacts.Push(meshfact);
+                            m->mftchecked.Push(false);
+                        }
                     }
                     node2 = node2->GetParent();
 
