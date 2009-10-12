@@ -1,6 +1,6 @@
 #line 1 "fpoptimizer/fpoptimizer_header.txt"
 /***************************************************************************\
-|* Function Parser for C++ v3.3                                            *|
+|* Function Parser for C++ v3.3.1                                          *|
 |*-------------------------------------------------------------------------*|
 |* Function optimizer                                                      *|
 |*-------------------------------------------------------------------------*|
@@ -243,7 +243,7 @@ namespace FPoptimizer_CodeTree
         inline double GetImmed() const;
         inline unsigned GetVar() const;
         inline unsigned GetFuncNo() const;
-        inline bool IsDefined() const { return &*data; }
+        inline bool IsDefined() const { return (&*data) != 0; }
 
         inline bool    IsImmed() const { return GetOpcode() == FUNCTIONPARSERTYPES::cImmed; }
         inline bool      IsVar() const { return GetOpcode() == FUNCTIONPARSERTYPES::cVar; }
@@ -1017,8 +1017,8 @@ namespace FPoptimizer_ByteCode
         {
             if(StackTop > 0)
             {
-                StackHash[StackTop-1].first = true;
-                StackHash[StackTop-1].second = hash;
+                (StackHash[StackTop-1]).first = true;
+                (StackHash[StackTop-1]).second = hash;
             }
         }
 
@@ -1066,7 +1066,7 @@ namespace FPoptimizer_ByteCode
         {
             for(size_t a=StackTop; a-->0; )
             {
-                if(StackHash[a].first && StackHash[a].second.IsIdenticalTo(hash))
+                if((StackHash[a]).first && StackHash[a].second.IsIdenticalTo(hash))
                 {
                     DoDup(a);
                     return true;
@@ -2096,6 +2096,8 @@ namespace FPoptimizer_CodeTree
 // line removed
 using namespace FPoptimizer_Grammar;
 using namespace FUNCTIONPARSERTYPES;
+
+#include <cctype>
 
 namespace FPoptimizer_Grammar
 {
@@ -4967,7 +4969,7 @@ namespace
 {
     long ParsePowiSequence(const std::vector<unsigned>& ByteCode, size_t& IP)
     {
-        long result = 1.0;
+        long result = 1;
         while(IP < ByteCode.size() && ByteCode[IP] == cSqr)
         {
             result *= 2;
@@ -4993,7 +4995,7 @@ namespace
     }
     long ParseMuliSequence(const std::vector<unsigned>& ByteCode, size_t& IP)
     {
-        long result = 1.0;
+        long result = 1;
         if(IP < ByteCode.size() && ByteCode[IP] == cDup)
         {
             size_t dup_pos = IP;
@@ -5491,6 +5493,11 @@ using namespace FPoptimizer_CodeTree;
 
 #define FP_MUL_COMBINE_EXPONENTS
 
+#ifdef _MSC_VER
+#include <float.h>
+#define isinf(x) (!_finite(x))
+#endif
+
 namespace
 {
     struct ComparisonSet /* For optimizing And, Or */
@@ -5684,15 +5691,23 @@ namespace
     };
     struct Select1st
     {
-        template<typename T>
-        inline bool operator() (const T& a, const T& b) const
+        template<typename T1, typename T2>
+        inline bool operator() (const std::pair<T1,T2>& a,
+                                const std::pair<T1,T2>& b) const
         {
             return a.first < b.first;
         }
-        template<typename T, typename T2>
-        inline bool operator() (const T& a, const T2& b) const
+
+        template<typename T1, typename T2>
+        inline bool operator() (const std::pair<T1,T2>& a, T1 b) const
         {
             return a.first < b;
+        }
+
+        template<typename T1, typename T2>
+        inline bool operator() (T1 a, const std::pair<T1,T2>& b) const
+        {
+            return a < b.first;
         }
     };
 
@@ -5763,11 +5778,11 @@ namespace
              */
             for(size_t a=0; a<data.size(); ++a)
             {
-                double exp_a = data[a].first;
+                double exp_a = (data[a]).first;
                 if(FloatEqual(exp_a, 1.0)) continue;
                 for(size_t b=a+1; b<data.size(); ++b)
                 {
-                    double exp_b = data[b].first;
+                    double exp_b = (data[b]).first;
                     double exp_diff = exp_b - exp_a;
                     if(exp_diff >= fabs(exp_a)) break;
                     if(IsIntegerConst(exp_diff * 16.0)
@@ -6061,7 +6076,7 @@ namespace FPoptimizer_CodeTree
             /* Then handle constant exponents */
             for(size_t a=0; a<by_float_exponent.data.size(); ++a)
             {
-                double exponent = by_float_exponent.data[a].first;
+                double exponent = (by_float_exponent.data[a]).first;
                 if(FloatEqual(exponent, 1.0))
                 {
                     AddParamsMove(by_float_exponent.data[a].second);
@@ -6154,7 +6169,7 @@ namespace FPoptimizer_CodeTree
                                 i != occurance_pos.end() && i->first == p_hash;
                                 ++i)
                             {
-                                if(occurance_counts[i->second].first.IsIdenticalTo(p))
+                                if((occurance_counts[i->second]).first.IsIdenticalTo(p))
                                 {
                                     occurance_counts[i->second].second += 1;
                                     found_dup = true;
@@ -6175,9 +6190,9 @@ namespace FPoptimizer_CodeTree
                             occurance_counts[p].second = 0;
                         else
                         {
-                            occurance_counts[p].second *= occurance_counts[p].first.GetDepth();
+                            occurance_counts[p].second *= (occurance_counts[p]).first.GetDepth();
                             if(occurance_counts[p].second > max)
-                                { group_by = occurance_counts[p].first; max = occurance_counts[p].second; }
+                                { group_by = (occurance_counts[p]).first; max = occurance_counts[p].second; }
                         } }
                     // Collect the items for adding in the group (a+b)
                     CodeTree group_add;
