@@ -2181,7 +2181,7 @@ namespace FPoptimizer_Grammar
                     else
                     {
                         std::string opcode = FP_GetOpcodeName(param.data.subfunc_opcode).substr(1);
-                        for(size_t a=0; a<opcode.size(); ++a) opcode[a] = (char) std::toupper(opcode[a]);
+						for(size_t a=0; a<opcode.size(); ++a) opcode[a] = (char) toupper(opcode[a]);
                         o << opcode << "( ";
                         DumpParams(param.data.param_list, param.data.param_count, o);
                         o << " )";
