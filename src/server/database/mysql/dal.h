@@ -82,7 +82,12 @@ public:
      *  @param from The string that we want to escape.
      */
     void Escape(csString& to, const char *from);
-    
+ 
+    iResultSet *Select(const char *sql);
+    int SelectSingleNumber(const char *sql);
+    unsigned long Command(const char *sql);
+    unsigned long CommandPump(const char *sql);
+
     iResultSet *Select(const char *sql,...);
     int SelectSingleNumber(const char *sql, ...);
     unsigned long Command(const char *sql,...);
