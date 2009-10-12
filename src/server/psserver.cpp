@@ -1225,9 +1225,9 @@ void psServer::QuitServer(int time, Client *client) //-1 for stop, 0 for now > 0
             uint seconds = planned_shutdown%60; //get the seconds to the event when the minutes are subtracted
             csString quitInfo = "The server is already shutting down in ";
             if(minutes) //if we don't have minutes (so they are zero) skip them
-                quitInfo += minutes; quitInfo += "minutes ";
+                quitInfo += minutes; quitInfo += " minutes ";
             if(seconds) //if we don't have seconds (so they are zero) skip them
-                quitInfo += seconds; quitInfo += "seconds";
+                quitInfo += seconds; quitInfo += " seconds";
             CPrintf(CON_CMDOUTPUT, "%s\n", quitInfo.GetDataSafe()); //send the message to the server console
             if(client)
                 SendSystemInfo(client->GetClientNum(),quitInfo.GetDataSafe());
