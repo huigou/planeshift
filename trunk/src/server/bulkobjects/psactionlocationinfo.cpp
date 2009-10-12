@@ -423,9 +423,9 @@ unsigned int psActionLocation::Insert( const char *table, const char **fieldname
             command.Append("NULL");
         }
     }
-    command.Append(")");
+    command.Append(")");	
 
-    if (db->Command(command)!=1)
+    if (db->Command("%s", command)!=1)
         return 0;
 
     return db->GetLastInsertID();
@@ -469,7 +469,7 @@ bool psActionLocation::UpdateByKey( const char *table, const char *idname, const
     command.Append(escape);
     command.Append("'");
 
-    if (db->Command(command)==QUERY_FAILED)
+    if (db->Command("%s", command)==QUERY_FAILED)
     {
         return false;
     }
@@ -492,7 +492,7 @@ bool psActionLocation::DeleteByKey( const char *table, const char *idname, const
     command.Append(escape);
     command.Append("'");
 
-    if (db->Command(command)==QUERY_FAILED)
+    if (db->Command("%s", command)==QUERY_FAILED)
     {
         return false;
     }
