@@ -128,6 +128,28 @@ void psMysqlConnection::Escape(csString& to, const char *from)
     delete[] buff;
 }
 
+//TODO: SPLIT the fmt functions in order to reduce server load
+
+unsigned long psMysqlConnection::CommandPump(const char *sql)
+{
+	return CommandPump("%s", sql);
+}
+
+unsigned long psMysqlConnection::Command(const char *sql)
+{
+	return Command("%s", sql);
+}
+
+iResultSet *psMysqlConnection::Select(const char *sql)
+{
+	return Select("%s", sql);
+}
+
+int psMysqlConnection::SelectSingleNumber(const char *sql)
+{
+	return SelectSingleNumber("%s", sql);
+}
+
 unsigned long psMysqlConnection::CommandPump(const char *sql,...)
 {
 #ifdef USE_DELAY_QUERY
@@ -313,7 +335,7 @@ uint64 psMysqlConnection::GenericInsertWithID(const char *table,const char **fie
     }
     command.Append(")");
 
-    if (Command("%s",command)!=1)
+    if (Command(command)!=1)
         return 0;
 
     return GetLastInsertID();
@@ -346,7 +368,7 @@ bool psMysqlConnection::GenericUpdateWithID(const char *table,const char *idfiel
 
     //printf("%s\n",command.GetData());
 
-    if (CommandPump("%s",command)==QUERY_FAILED)
+    if (CommandPump(command)==QUERY_FAILED)
     {
         return false;
     }
@@ -394,7 +416,7 @@ bool psMysqlConnection::GenericUpdateWithID(const char *table,const char *idfiel
 
     //printf("%s\n",command.GetData());
 
-    if (CommandPump("%s",command)==QUERY_FAILED)
+    if (CommandPump(command)==QUERY_FAILED)
     {
         return false;
     }
