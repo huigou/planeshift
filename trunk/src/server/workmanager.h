@@ -451,7 +451,7 @@ protected:
     bool ValidateSkills(psTradeTransformations* transCandidate, psTradeProcesses* processCandidate);
     bool ValidateNotOverSkilled(psTradeTransformations* transCandidate, psTradeProcesses* processCandidate);
     bool ValidateConstraints(psTradeTransformations* transCandidate, psTradeProcesses* processCandidate);
-    int CalculateEventDuration(int pointQty);
+    int CalculateEventDuration(psTradeTransformations* trans, int itemQty);
     bool CheckStamina(psCharacter * owner) const;
 
     void Initialize();
