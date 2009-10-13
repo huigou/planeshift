@@ -2304,7 +2304,7 @@ void WorkManager::StartTransformationEvent(int transType, INVENTORY_SLOT_NUMBER 
 
     if(trans)
     {
-        delay = CalculateEventDuration( trans->GetTransPoints() );
+        delay = CalculateEventDuration( trans, resultQty );
     }
     else
     {
@@ -2755,11 +2755,14 @@ bool WorkManager::ValidateConstraints(psTradeTransformations* transCandidate, ps
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Calculate how long it will take to complete event
 //  based on the transformation's point quanity
-int WorkManager::CalculateEventDuration(int pointQty)
+int WorkManager::CalculateEventDuration(psTradeTransformations* trans, int itemQty)
 {
     // Translate the points into seconds
     // ToDo: For now the point quantity is the duration
-    return pointQty;
+    // TODO: CONVERT TO MATHSCRIPT
+    if(trans->GetItemQty() == 0 && trans->GetItemId() != 0)
+        return trans->GetTransPoints() +  trans->GetTransPoints() * (itemQty - 1) * 0.1;
+    return trans->GetTransPoints();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3516,6 +3519,7 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
     uint32 result = 0;
     int resultQty = 0;
     int itemQty = 0;
+    int QtyMultiplier = 1;
 
     if(trans)
     {
@@ -3579,6 +3583,7 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
     {
         resultQty = workEvent->GetResultQuantity();
         itemQty = resultQty;
+        QtyMultiplier = resultQty;
     }
 
     // Handle all the different transformation types
@@ -3693,6 +3698,7 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
             MathEnvironment env;
             env.Define("StartQuality", startQuality);
             env.Define("CurrentQuality", currentQuality);
+            env.Define("QtyMultiplier", QtyMultiplier);
             env.Define("Character", owner);
             calc_transform_exp->Evaluate(&env);
             experiencePoints = env.Lookup("Exp")->GetValue();
