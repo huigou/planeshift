@@ -2760,7 +2760,7 @@ int WorkManager::CalculateEventDuration(psTradeTransformations* trans, int itemQ
     // Translate the points into seconds
     // ToDo: For now the point quantity is the duration
     // TODO: CONVERT TO MATHSCRIPT
-    if(trans->GetItemQty() == 0 && trans->GetItemId() != 0)
+    if(trans->GetItemQty() == 0 && trans->GetItemId() != 0 && trans->GetResultId() != 0)
         return trans->GetTransPoints() +  trans->GetTransPoints() * (itemQty - 1) * 0.1;
     return trans->GetTransPoints();
 }
@@ -3568,7 +3568,7 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
     float startQuality = transItem->GetItemQuality();
     if ( process )
     {
-        if ( !ApplySkills(workEvent->GetKFactor(), workEvent->GetTranformationItem()) && process->GetGarbageId() != 0 )
+        if ( !ApplySkills(workEvent->GetKFactor(), workEvent->GetTranformationItem(), itemQty == 0) && process->GetGarbageId() != 0 )
         {
             result = process->GetGarbageId();
             resultQty = process->GetGarbageQty();
@@ -3788,7 +3788,7 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
 }
 
 // Apply skills if any to quality and practice points
-bool WorkManager::ApplySkills(float factor, psItem* transItem)
+bool WorkManager::ApplySkills(float factor, psItem* transItem, bool amountModifier)
 {
     // just return for processless transforms
     if (!process)
@@ -3855,6 +3855,7 @@ bool WorkManager::ApplySkills(float factor, psItem* transItem)
         {
             // Get some practice in
             int priPoints = process->GetPrimaryPracticePts();
+            if(amountModifier) priPoints *= (1+(transItem->GetStackCount()-1)*0.1);
             owner->GetCharacterData()->CalculateAddExperience((PSSKILL)priSkill, priPoints);
             if (secure) psserver->SendSystemInfo(clientNum,"Giving practice points %d to skill %d.",priPoints, priSkill);
         }
@@ -3911,6 +3912,7 @@ bool WorkManager::ApplySkills(float factor, psItem* transItem)
             {
                 // Get some practice in
                 int secPoints = process->GetSecondaryPracticePts();
+                if(amountModifier) secPoints *= (1+(transItem->GetStackCount()-1)*0.1);
                 owner->GetCharacterData()->CalculateAddExperience((PSSKILL)secSkill, secPoints);
                 if (secure) psserver->SendSystemInfo(clientNum,"Giving practice points %d to skill %d.",secPoints, secSkill);
             }

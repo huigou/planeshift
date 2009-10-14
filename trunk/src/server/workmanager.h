@@ -455,7 +455,7 @@ protected:
     bool CheckStamina(psCharacter * owner) const;
 
     void Initialize();
-    bool ApplySkills(float factor, psItem* transItem);
+    bool ApplySkills(float factor, psItem* transItem, bool amountModifier);
 
     /**
       * This function handles commands like "/repair" using
