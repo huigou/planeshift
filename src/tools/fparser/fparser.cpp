@@ -1,5 +1,5 @@
 /***************************************************************************\
-|* Function Parser for C++ v3.3.1                                          *|
+|* Function Parser for C++ v3.3.2                                          *|
 |*-------------------------------------------------------------------------*|
 |* Copyright: Juha Nieminen                                                *|
 \***************************************************************************/
@@ -604,7 +604,7 @@ namespace
 {
     struct MulOp
     {
-        enum { opcode = cMul, opposite = cDiv, combined = cMul };
+        enum { opcode = cMul, opposite = cDiv, combined = cMul, defval=1 };
         static inline void action(double& target, double value)
         { target *= value; }
         static inline void combine_action(double& target, double value)
@@ -612,10 +612,11 @@ namespace
         static inline bool valid_rvalue(double) { return true; }
         static inline bool valid_opposite_rvalue(double v) { return v != 0.0; }
         static inline bool is_redundant(double v) { return v==1.0; }
+        static inline bool opposite_is_preferred() { return false; }
     };
     struct DivOp
     {
-        enum { opcode = cDiv, opposite = cMul, combined = cMul };
+        enum { opcode = cDiv, opposite = cMul, combined = cMul, defval=1 };
         static inline void action(double& target, double value)
         { target /= value; }
         static inline void combine_action(double& target, double value)
@@ -623,10 +624,11 @@ namespace
         static inline bool valid_rvalue(double v) { return v != 0.0; }
         static inline bool valid_opposite_rvalue(double) { return true; }
         static inline bool is_redundant(double v) { return v==1.0; }
+        static inline bool opposite_is_preferred() { return true; }
     };
     struct AddOp
     {
-        enum { opcode = cAdd, opposite = cSub, combined = cAdd };
+        enum { opcode = cAdd, opposite = cSub, combined = cAdd, defval=0 };
         static inline void action(double& target, double value)
         { target += value; }
         static inline void combine_action(double& target, double value)
@@ -634,10 +636,11 @@ namespace
         static inline bool valid_rvalue(double) { return true; }
         static inline bool valid_opposite_rvalue(double) { return true; }
         static inline bool is_redundant(double v) { return v==0.0; }
+        static inline bool opposite_is_preferred() { return false; }
     };
     struct SubOp
     {
-        enum { opcode = cSub, opposite = cAdd, combined = cAdd };
+        enum { opcode = cSub, opposite = cAdd, combined = cAdd, defval=0 };
         static inline void action(double& target, double value)
         { target -= value; }
         static inline void combine_action(double& target, double value)
@@ -645,10 +648,11 @@ namespace
         static inline bool valid_rvalue(double) { return true; }
         static inline bool valid_opposite_rvalue(double) { return true; }
         static inline bool is_redundant(double v) { return v==0.0; }
+        static inline bool opposite_is_preferred() { return true; }
     };
     struct ModOp
     {
-        enum { opcode = cMod, opposite = cMod, combined = cMod };
+        enum { opcode = cMod, opposite = cMod, combined = cMod, defval=1 };
         static inline void action(double& target, double value)
         { target = fmod(target, value); }
         static inline void combine_action(double& target, double value)
@@ -656,6 +660,7 @@ namespace
         static inline bool valid_rvalue(double v) { return v != 0.0; }
         static inline bool valid_opposite_rvalue(double v) { return v != 0.0; }
         static inline bool is_redundant(double) { return false; }
+        static inline bool opposite_is_preferred() { return false; }
     };
 
     bool IsEligibleIntPowiExponent(int int_exponent)
@@ -756,6 +761,30 @@ inline void FunctionParser::AddFunctionOpcode(unsigned opcode)
               data->Immed.back() = DegreesToRadians(data->Immed.back());
               return;
           case cPow:
+          {
+              unsigned before_immed_opcode = data->ByteCode[data->ByteCode.size()-2];
+              if(before_immed_opcode == cExp
+              || before_immed_opcode == cExp2
+              || before_immed_opcode == cPow)
+              {
+                  /* Change  ... Exp immed (Pow)
+                   *      to ... immed mul Exp
+                   * Similarly with Exp, Exp2 and Pow
+                   *
+                   * This helps change exp(x*3)^5 into exp(x*15)
+                   */
+                  data->ByteCode.pop_back();
+                  data->ByteCode.back() = cImmed;
+                  AddBinaryOperationByConst<MulOp> ();
+                  data->ByteCode.push_back(before_immed_opcode);
+                  return;
+              }
+              /*if(before_immed_opcode == cImmed)
+              {
+                  data->Immed[data->Immed.size()-2] = pow(data->Immed[data->Immed.size()-2, data->Immed.back());
+                  data->Immed.pop_back();
+                  return;
+              }*/
               // if the exponent is a special constant value
               if(data->Immed.back() == 0.5)
               {
@@ -828,6 +857,7 @@ inline void FunctionParser::AddFunctionOpcode(unsigned opcode)
                       opcode = cExp;
                   }
               }
+          } // pow
         }
     }
     switch(opcode)
@@ -862,6 +892,31 @@ inline void FunctionParser::AddFunctionOpcode(unsigned opcode)
                 case cAcos: case cCosh:
                     return;
             }
+    }
+    switch(opcode)
+    {
+        case cExp:
+            /* Change "immed Add Exp" to "Exp exp(immed) Mul" */
+            if(data->ByteCode.back() == cAdd
+            && data->ByteCode[data->ByteCode.size()-2] == cImmed)
+            {
+                data->ByteCode[data->ByteCode.size()-2] = cExp;
+                data->ByteCode.back() = cImmed;
+                data->Immed.back() = exp(data->Immed.back());
+                opcode = cMul;
+            }
+            break;
+        case cExp2:
+            /* Change "immed Add Exp2" to "Exp2 exp2(immed) Mul" */
+            if(data->ByteCode.back() == cAdd
+            && data->ByteCode[data->ByteCode.size()-2] == cImmed)
+            {
+                data->ByteCode[data->ByteCode.size()-2] = cExp2;
+                data->ByteCode.back() = cImmed;
+                data->Immed.back() = pow(2.0, data->Immed.back());
+                opcode = cMul;
+            }
+            break;
     }
     data->ByteCode.push_back(opcode);
 }
@@ -980,10 +1035,12 @@ inline void FunctionParser::AddBinaryOperationByConst()
     // that is, data->ByteCode[data->ByteCode.size()-1]
     if(!Operation::valid_rvalue(data->Immed.back()))
     {
+        /* If the function has something like x/0, don't try optimizing it. */
         data->ByteCode.push_back( unsigned(Operation::opcode) );
     }
     else if(Operation::is_redundant(data->Immed.back()))
     {
+        /* If the function has x*1 or x/1, just keep x. */
         data->Immed.pop_back();
         data->ByteCode.pop_back();
     }
@@ -1036,8 +1093,23 @@ inline void FunctionParser::AddBinaryOperationByConst()
             // bytecode top:  ...
         }
     }
+    else if(Operation::opposite_is_preferred())
+    {
+        double p = (double) Operation::defval;
+        Operation::combine_action(p, data->Immed.back());
+        data->Immed.back() = p;
+        data->ByteCode.push_back(unsigned(Operation::opposite));
+    }
     else
     {
+        /* Possibilities:
+         *  Change "Exp immed Mul" into "log(immed) Add Exp"
+         *         "Exp2 immed Mul" into "log2(immed) Add Exp2"
+         * Or the opposite:
+         *         "immed Add Exp" to "Exp exp(immed) Mul"
+         * this is now actually done in AddFunctionOpcode(),
+         * because it allows optimizing exp(y+1)*2 into exp(y)*5.437.
+         */
         data->ByteCode.push_back(unsigned(Operation::opcode));
     }
 }
@@ -2138,6 +2210,140 @@ namespace
         }
         return "?";
     }
+
+    typedef std::vector<double> FactorStack;
+
+    const struct PowiMuliType
+    {
+        unsigned opcode_square;
+        unsigned opcode_cumulate;
+        unsigned opcode_invert;
+        unsigned opcode_half;
+        unsigned opcode_invhalf;
+    } iseq_powi = {cSqr,cMul,cInv,cSqrt,cRSqrt},
+      iseq_muli = {~unsigned(0), cAdd,cNeg, ~unsigned(0),~unsigned(0) };
+
+    double ParsePowiMuli(
+        const PowiMuliType& opcodes,
+        const std::vector<unsigned>& ByteCode, unsigned& IP,
+        unsigned limit,
+        size_t factor_stack_base,
+        FactorStack& stack)
+    {
+        double result = 1.0;
+        while(IP < limit)
+        {
+            if(ByteCode[IP] == opcodes.opcode_square)
+            {
+                if(!IsIntegerConst(result)) break;
+                result *= 2;
+                ++IP;
+                continue;
+            }
+            if(ByteCode[IP] == opcodes.opcode_invert)
+            {
+                if(result < 0) break;
+                result = -result;
+                ++IP;
+                continue;
+            }
+            if(ByteCode[IP] == opcodes.opcode_half)
+            {
+                if(IsIntegerConst(result) && result > 0 &&
+                   ((long)result) % 2 == 0)
+                    break;
+                if(IsIntegerConst(result * 0.5)) break;
+                result *= 0.5;
+                ++IP;
+                continue;
+            }
+            if(ByteCode[IP] == opcodes.opcode_invhalf)
+            {
+                if(IsIntegerConst(result) && result > 0 &&
+                   ((long)result) % 2 == 0)
+                    break;
+                if(IsIntegerConst(result * -0.5)) break;
+                result *= -0.5;
+                ++IP;
+                continue;
+            }
+
+            unsigned dup_fetch_pos = IP;
+            double lhs = 1.0;
+
+    #ifdef FP_SUPPORT_OPTIMIZER
+            if(ByteCode[IP] == cFetch)
+            {
+                unsigned index = ByteCode[++IP];
+                if(index < factor_stack_base
+                || size_t(index-factor_stack_base) >= stack.size())
+                {
+                    // It wasn't a powi-fetch after all
+                    IP = dup_fetch_pos;
+                    break;
+                }
+                lhs = stack[index - factor_stack_base];
+                // Note: ^This assumes that cFetch of recentmost
+                //        is always converted into cDup.
+                goto dup_or_fetch;
+            }
+    #endif
+            if(ByteCode[IP] == cDup)
+            {
+                lhs = result;
+                goto dup_or_fetch;
+
+            dup_or_fetch:
+                stack.push_back(result);
+                ++IP;
+                double subexponent = ParsePowiMuli
+                    (opcodes,
+                     ByteCode, IP, limit,
+                     factor_stack_base, stack);
+                if(IP >= limit || ByteCode[IP] != opcodes.opcode_cumulate)
+                {
+                    // It wasn't a powi-dup after all
+                    IP = dup_fetch_pos;
+                    break;
+                }
+                ++IP; // skip opcode_cumulate
+                stack.pop_back();
+                result += lhs*subexponent;
+                continue;
+            }
+            break;
+        }
+        return result;
+    }
+
+    double ParsePowiSequence(const std::vector<unsigned>& ByteCode,
+                             unsigned& IP, unsigned limit,
+                             size_t factor_stack_base)
+    {
+        FactorStack stack;
+        stack.push_back(1.0);
+        return ParsePowiMuli(iseq_powi, ByteCode, IP, limit,
+                             factor_stack_base, stack);
+    }
+
+    double ParseMuliSequence(const std::vector<unsigned>& ByteCode,
+                             unsigned& IP, unsigned limit,
+                             size_t factor_stack_base)
+    {
+        FactorStack stack;
+        stack.push_back(1.0);
+        return ParsePowiMuli(iseq_muli, ByteCode, IP, limit,
+                             factor_stack_base, stack);
+    }
+
+    struct IfInfo
+    {
+        std::pair<int,std::string> condition;
+        std::pair<int,std::string> thenbranch;
+        unsigned endif_location;
+
+        IfInfo() : condition(), thenbranch(), endif_location() { }
+    };
 }
 
 void FunctionParser::PrintByteCode(std::ostream& dest,
@@ -2152,28 +2358,125 @@ void FunctionParser::PrintByteCode(std::ostream& dest,
     const std::vector<double>& Immed = data->Immed;
 
     std::vector<std::pair<int,std::string> > stack;
-    std::vector<unsigned> if_stack;
+    std::vector<IfInfo> if_stack;
 
     for(unsigned IP = 0, DP = 0; IP <= ByteCode.size(); ++IP)
     {
+    after_powi_or_muli:;
         std::string n;
         bool out_params = false;
         unsigned params = 2, produces = 1, opcode = 0;
 
-        if(showExpression && !if_stack.empty() && if_stack.back() == IP)
+        if(showExpression && !if_stack.empty() &&
+           if_stack.back().endif_location == IP)
         {
             printHex(output, IP);
-            output << ": (end)";
+            output << ": (phi)";
+            stack.resize(stack.size()+2);
+            std::swap(stack[stack.size()-3], stack[stack.size()-1]);
+            std::swap(if_stack.back().condition,  stack[stack.size()-3]);
+            std::swap(if_stack.back().thenbranch, stack[stack.size()-2]);
             opcode = cIf;
             params = 3;
             --IP;
-            if_stack.resize(if_stack.size()-1); // pop_back
+            if_stack.pop_back();
         }
         else
         {
             if(IP >= ByteCode.size()) break;
             opcode = ByteCode[IP];
 
+            if(showExpression && (
+                opcode == cSqr || opcode == cDup
+             || opcode == cInv
+             || opcode == cSqrt || opcode == cRSqrt
+    #ifdef FP_SUPPORT_OPTIMIZER
+             || opcode == cFetch
+    #endif
+            ))
+            {
+                unsigned changed_ip = IP;
+                double exponent =
+                    ParsePowiSequence(ByteCode, changed_ip,
+                                      if_stack.empty()
+                                      ? (unsigned)ByteCode.size()
+                                      : if_stack.back().endif_location,
+                                      stack.size()-1);
+                std::ostringstream operation;
+                int prio = 0;
+                if(exponent == 1.0)
+                {
+                    if(opcode != cDup) goto not_powi_or_muli;
+                    double factor =
+                        ParseMuliSequence(ByteCode, changed_ip,
+                                          if_stack.empty()
+                                          ? (unsigned)ByteCode.size()
+                                          : if_stack.back().endif_location,
+                                          stack.size()-1);
+                    if(factor == 1.0 || factor == -1.0) goto not_powi_or_muli;
+                    operation << '*' << factor;
+                    prio = 3;
+                }
+                else
+                {
+                    prio = 2;
+                    operation << '^' << exponent;
+                }
+
+                unsigned explanation_before = changed_ip-2;
+                const char* explanation_prefix = "_";
+                for(const unsigned first_ip = IP; IP < changed_ip; ++IP)
+                {
+                    printHex(output, IP);
+                    output << ": ";
+
+                    const char* sep = "|";
+                    if(first_ip+1 == changed_ip)
+                    { sep = "="; explanation_prefix = " "; }
+                    else if(IP   == first_ip) sep = "\\";
+                    else if(IP+1 == changed_ip) sep = "/";
+                    else explanation_prefix = "=";
+
+                    switch(ByteCode[IP])
+                    {
+                        case cInv: output << "inv"; break;
+                        case cNeg: output << "neg"; break;
+                        case cDup: output << "dup"; break;
+                        case cSqr: output << "sqr"; break;
+                        case cMul: output << "mul"; break;
+                        case cAdd: output << "add"; break;
+                        case cSqrt: output << "sqrt"; break;
+                        case cRSqrt: output << "rsqrt"; break;
+    #ifdef FP_SUPPORT_OPTIMIZER
+                        case cFetch:
+                        {
+                            unsigned index = ByteCode[++IP];
+                            output << "cFetch(" << index << ")";
+                            break;
+                        }
+    #endif
+                        default: break;
+                    }
+                    padLine(outputBuffer, 20);
+                    output << sep;
+                    if(IP >= explanation_before)
+                    {
+                        explanation_before = (unsigned)ByteCode.size();
+                        output << explanation_prefix
+                               << '[' << (stack.size()-1) << ']';
+                        std::string& last = stack.back().second;
+                        if(stack.back().first >= prio)
+                            last = "(" + last + ")";
+                        last += operation.str();
+                        output << last;
+                        stack.back().first = prio;
+                    }
+                    dest << outputBuffer.str() << std::endl;
+                    outputBuffer.str("");
+                }
+                goto after_powi_or_muli;
+            }
+        not_powi_or_muli:;
             printHex(output, IP);
             output << ": ";
 
@@ -2187,6 +2490,11 @@ void FunctionParser::PrintByteCode(std::ostream& dest,
                   params = 1;
                   produces = 0;
                   IP += 2;
+
+                  if_stack.resize(if_stack.size() + 1);
+                  std::swap( if_stack.back().condition, stack.back() );
+                  if_stack.back().endif_location = (unsigned) ByteCode.size();
+                  stack.pop_back();
                   break;
               }
 
@@ -2194,8 +2502,9 @@ void FunctionParser::PrintByteCode(std::ostream& dest,
               {
                   unsigned label = ByteCode[IP+1]+1;
 
-                  if(showExpression)
-                      if_stack.push_back(label);
+                  std::swap(if_stack.back().thenbranch, stack.back());
+                  if_stack.back().endif_location = label;
+                  stack.pop_back();
 
                   output << "jump ";
                   printHex(output, label);
@@ -2407,8 +2716,14 @@ void FunctionParser::PrintByteCode(std::ostream& dest,
             }
             //padLine(outputBuffer, 20);
             output << "= ";
-            output << '[' << (stack.size()-1) << ']';
-            output << stack.back().second;
+            if((opcode == cIf && params != 3) ||
+               opcode == cJump || opcode == cNop)
+                output << "(void)";
+            else if(stack.empty())
+                output << "[?] ?";
+            else
+                output << '[' << (stack.size()-1) << ']'
+                       << stack.back().second;
         }
 
         if(showExpression)

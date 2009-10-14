@@ -3,11 +3,11 @@
 <head>
  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
  <link href="style.css" rel="stylesheet" type="text/css" title="normal" media=screen>
- <title>Function Parser for C++ v3.3.1  : Documentation</title>
+ <title>Function Parser for C++ v3.3.2  : Documentation</title>
 </head>
 
 <body>
-<h1>Function Parser for C++ v3.3.1  </h1>
+<h1>Function Parser for C++ v3.3.2  </h1>
 
 <p>Authors: Juha Nieminen
 (<a href="http://iki.fi/warp/">http://iki.fi/warp/</a>),
@@ -40,6 +40,14 @@ Joel Yliluoma
 
 <a name="whatsnew"></a>
 <h2>What's new</h2>
+
+<p>What's new in v3.3.2
+<ul>
+ <li>Fixed an incompatibility with MS Visual Studio which caused the optimizer
+   to enter an infinite loop with some input functions (VS interprets bitfields
+   slightly differently from gcc). Also minor additions and fine-tuning of the
+   optimizer.
+</ul>
 
 <p>What's new in v3.3.1
 <ul>
