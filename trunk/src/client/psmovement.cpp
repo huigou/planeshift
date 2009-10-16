@@ -108,6 +108,8 @@ psMovementManager::psMovementManager(iEventNameRegistry* eventname_reg, psContro
     run = NULL;
     walk = NULL;
 
+    kbdRotate = 0;
+
     linearMove = NULL;
 }
 
@@ -360,6 +362,11 @@ void psMovementManager::SetupMovements(psMovementInfoMessage& movemsg)
     backward = FindMovement("backward");
     run = FindCharMode("run");
     walk = FindCharMode("normal");
+
+    const psMovement* kbdrotL = FindMovement("rotate left");
+    const psMovement* kbdrotR = FindMovement("rotate right");
+    if (kbdrotL && kbdrotR)
+        kbdRotate = (1 << kbdrotL->id) | (1 << kbdrotR->id);
 
     actormode = defaultmode = walk;
 
@@ -656,21 +663,18 @@ void psMovementManager::UpdateMouseLook()
 		}
 	}
 
-	if ( fabs(lastDeltaX) > 150 || fabs(lastDeltaY) > 150 )
-	{ // Higher values shouldn't slow down too fast
-		lastDeltaX *= 0.9f;
-		lastDeltaY *= 0.9f;
-	}
-	else if ( fabs(lastDeltaX) > 5 || fabs(lastDeltaY) > 5 )
-	{
-		lastDeltaX *= 0.6f;
-		lastDeltaY *= 0.6f;
-	}
-	else
-	{ // very slow turning. Set to 0 for more precise control. The actual mouse events will cause the turning.
-		lastDeltaX = 0;
-		lastDeltaY = 0;
-	}
+    iGraphics2D* g2d = psengine->GetG2D();
+
+    if(activeMoves & kbdRotate)
+    {
+        lastDeltaX = 0;
+        lastDeltaY = 0;
+        g2d->SetMousePosition(g2d->GetWidth() / 2 , g2d->GetHeight() / 2);
+        return;
+    }
+
+    lastDeltaX *= lastDeltaX / g2d->GetWidth() + 0.5f;
+    lastDeltaY *= lastDeltaY / g2d->GetHeight() + 0.5f;
 
     float deltaPitch = lastDeltaY * (sensY/25000.0f) * (invertedMouse ? 1.0f : -1.0f);
     float deltaYaw;
@@ -711,6 +715,14 @@ void psMovementManager::MouseLook(iEvent& ev)
     int centerY = g2d->GetHeight() / 2;
     float deltaX = float(mouseX - centerX);
     float deltaY = float(mouseY - centerY);
+
+    if (activeMoves & kbdRotate)
+    {
+        lastDeltaX = 0;
+        lastDeltaY = 0;
+        g2d->SetMousePosition(centerX, centerY);
+        return;
+    }
 
 	if ( deltaX == 0 && deltaY == 0)
 	{// No actual event but caused by reseting the mouse position
