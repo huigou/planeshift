@@ -132,6 +132,7 @@ protected:
     const psCharMode* run;
     const psCharMode* walk;
 
+    uint kbdRotate;
     
     psLinearMovement* linearMove;
     
