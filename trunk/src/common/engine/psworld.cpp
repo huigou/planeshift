@@ -67,7 +67,11 @@ bool psWorld::NewRegion(const char *mapfile, bool loadMeshes)
 {
     regions->Push(mapfile);
     if(!loader->LoadZones(regions, loadMeshes))
+    {
+	// Oh no, failed so don't try again!
+	regions->Pop();
         return false;
+    }
 
     // This must be rebuilt when the sector list changes
     BuildWarpCache();
