@@ -90,7 +90,7 @@ bool pawsConfigEntityLabels::CreateTree()
     tree->SetTreeDecorator(new pawsStdTreeDecorator(tree, graphics2D, 0x0000ff, 0x00ffff, 13));
     AddChild(tree);
 
-    if ( !tree->LoadFromFile("data/gui/configentitylabels.xml") )
+    if ( !tree->LoadFromFile("configentitylabels.xml") )
         return false;
 
     CreatureRBG = dynamic_cast<pawsRadioButtonGroup*>(FindWidget("CreaturesRG"));

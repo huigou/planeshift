@@ -2,7 +2,7 @@
 
 <widget name="ConfigKeysTree" factory="pawsSeqTreeNode"
     visible="yes" savepositions="no" movable="no" resizable="no" >
-    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="10" scalefont="no" />
+    <!--<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="10" scalefont="no" /> -->
 	<frame x="0" y="10" width="420" height="300" border="yes" style="New Standard GUI" />
 
     <!-- subtree for visibility selection-->
@@ -100,18 +100,12 @@
                         <frame x="0" y="0" width="250" height="15" border="no" />
                         <text string="Default"/>
                     </widget>
-                    <widget factory="pawsButton" name="DefDefColorBtn" id="10">
+                    <widget factory="pawsButton" name="DefDefColorBtn" id="10" style="Scaling Button">
                         <frame x="240" y="0" width="60" height="20"/>
-                        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
-                        <buttonup resource="Blue Title"/>
-                        <buttondown resource="Blue Title"/>
                         <label text="Default" />
                     </widget>
-                    <widget factory="pawsButton" name="DefColorBtn" id="0">
+                    <widget factory="pawsButton" name="DefColorBtn" id="0" style="Scaling Button">
                         <frame x="305" y="0" width="30" height="20"/>
-                        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
-                        <buttonup resource="Blue Title"/>
-                        <buttondown resource="Blue Title"/>
                         <label text="Set" />
                     </widget>
                 </nodewidget>
@@ -123,18 +117,12 @@
                         <frame x="0" y="0" width="250" height="15" border="no" />
                         <text string="Players"/>
                     </widget>
-                    <widget factory="pawsButton" name="DefPlayerColorBtn" id="11">
+                    <widget factory="pawsButton" name="DefPlayerColorBtn" id="11" style="Scaling Button">
                         <frame x="240" y="0" width="60" height="20"/>
-                        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
-                        <buttonup resource="Blue Title"/>
-                        <buttondown resource="Blue Title"/>
                         <label text="Default" />
                     </widget>
-                    <widget factory="pawsButton" name="PlayerColorBtn" id="1">
+                    <widget factory="pawsButton" name="PlayerColorBtn" id="1" style="Scaling Button" >
                         <frame x="305" y="0" width="30" height="20"/>
-                        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
-                        <buttonup resource="Blue Title"/>
-                        <buttondown resource="Blue Title"/>
                         <label text="Set" />
                     </widget>
                 </nodewidget>
@@ -146,18 +134,12 @@
                         <frame x="0" y="0" width="250" height="15" border="no" />
                         <text string="NPC"/>
                     </widget>
-                    <widget factory="pawsButton" name="DefNPCColorBtn" id="12">
+                    <widget factory="pawsButton" name="DefNPCColorBtn" id="12" style="Scaling Button">
                         <frame x="240" y="0" width="60" height="20"/>
-                        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
-                        <buttonup resource="Blue Title"/>
-                        <buttondown resource="Blue Title"/>
                         <label text="Default" />
                     </widget>
-                    <widget factory="pawsButton" name="NPCColorBtn" id="2">
+                    <widget factory="pawsButton" name="NPCColorBtn" id="2" style="Scaling Button">
                         <frame x="305" y="0" width="30" height="20"/>
-                        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
-                        <buttonup resource="Blue Title"/>
-                        <buttondown resource="Blue Title"/>
                         <label text="Set" />
                     </widget>
                 </nodewidget>
@@ -169,18 +151,12 @@
                         <frame x="0" y="0" width="250" height="15" border="no" />
                         <text string="Dead body"/>
                     </widget>
-                    <widget factory="pawsButton" name="DefDeadColorBtn" id="13">
+                    <widget factory="pawsButton" name="DefDeadColorBtn" id="13" style="Scaling Button">
                         <frame x="240" y="0" width="60" height="20"/>
-                        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
-                        <buttonup resource="Blue Title"/>
-                        <buttondown resource="Blue Title"/>
                         <label text="Default" />
                     </widget>
-                    <widget factory="pawsButton" name="DeadColorBtn" id="3">
+                    <widget factory="pawsButton" name="DeadColorBtn" id="3" style="Scaling Button">
                         <frame x="305" y="0" width="30" height="20"/>
-                        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
-                        <buttonup resource="Blue Title"/>
-                        <buttondown resource="Blue Title"/>
                         <label text="Set" />
                     </widget>
                 </nodewidget>
@@ -192,18 +168,12 @@
                         <frame x="0" y="0" width="250" height="15" border="no" />
                         <text string="Testers"/>
                     </widget>
-                    <widget factory="pawsButton" name="DefTestColorBtn" id="14">
+                    <widget factory="pawsButton" name="DefTestColorBtn" id="14" style="Scaling Button">
                         <frame x="240" y="0" width="60" height="20"/>
-                        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
-                        <buttonup resource="Blue Title"/>
-                        <buttondown resource="Blue Title"/>
                         <label text="Default" />
                     </widget>
-                    <widget factory="pawsButton" name="TestColorBtn" id="4">
+                    <widget factory="pawsButton" name="TestColorBtn" id="4" style="Scaling Button">
                         <frame x="305" y="0" width="30" height="20"/>
-                        <font name="/planeshift/data/ttf/LiberatinSans-Regular.ttf" r="255" g="255" b="255" size="10" />
-                        <buttonup resource="Blue Title"/>
-                        <buttondown resource="Blue Title"/>
                         <label text="Set" />
                     </widget>
                 </nodewidget>
@@ -215,18 +185,12 @@
                         <frame x="0" y="0" width="250" height="15" border="no" />
                         <text string="GM 1"/>
                     </widget>
-                    <widget factory="pawsButton" name="DefGM1ColorBtn" id="15">
+                    <widget factory="pawsButton" name="DefGM1ColorBtn" id="15" style="Scaling Button">
                         <frame x="240" y="0" width="60" height="20"/>
-                        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
-                        <buttonup resource="Blue Title"/>
-                        <buttondown resource="Blue Title"/>
                         <label text="Default" />
                     </widget>
-                    <widget factory="pawsButton" name="GM1ColorBtn" id="5">
+                    <widget factory="pawsButton" name="GM1ColorBtn" id="5" style="Scaling Button">
                         <frame x="305" y="0" width="30" height="20"/>
-                        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
-                        <buttonup resource="Blue Title"/>
-                        <buttondown resource="Blue Title"/>
                         <label text="Set" />
                     </widget>
                 </nodewidget>
@@ -238,18 +202,12 @@
                         <frame x="0" y="0" width="250" height="15" border="no" />
                         <text string="GM 2-5"/>
                     </widget>
-                    <widget factory="pawsButton" name="DefGM25ColorBtn" id="16">
+                    <widget factory="pawsButton" name="DefGM25ColorBtn" id="16" style="Scaling Button">
                         <frame x="240" y="0" width="60" height="20"/>
-                        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
-                        <buttonup resource="Blue Title"/>
-                        <buttondown resource="Blue Title"/>
                         <label text="Default" />
                     </widget>
-                    <widget factory="pawsButton" name="GM25ColorBtn" id="6">
+                    <widget factory="pawsButton" name="GM25ColorBtn" id="6" style="Scaling Button">
                         <frame x="305" y="0" width="30" height="20"/>
-                        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
-                        <buttonup resource="Blue Title"/>
-                        <buttondown resource="Blue Title"/>
                         <label text="Set" />
                     </widget>
                 </nodewidget>
@@ -261,18 +219,12 @@
                         <frame x="0" y="0" width="250" height="15" border="no" />
                         <text string="Developers"/>
                     </widget>
-                    <widget factory="pawsButton" name="DefDevColorBtn" id="17">
+                    <widget factory="pawsButton" name="DefDevColorBtn" id="17" style="Scaling Button">
                         <frame x="240" y="0" width="60" height="20"/>
-                        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
-                        <buttonup resource="Blue Title"/>
-                        <buttondown resource="Blue Title"/>
                         <label text="Default" />
                     </widget>
-                    <widget factory="pawsButton" name="DevColorBtn" id="7">
+                    <widget factory="pawsButton" name="DevColorBtn" id="7" style="Scaling Button">
                         <frame x="305" y="0" width="30" height="20"/>
-                        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
-                        <buttonup resource="Blue Title"/>
-                        <buttondown resource="Blue Title"/>
                         <label text="Set" />
                     </widget>
                 </nodewidget>
@@ -284,18 +236,12 @@
                         <frame x="0" y="0" width="250" height="15" border="no" />
                         <text string="Grouped with you"/>
                     </widget>
-                    <widget factory="pawsButton" name="DefGrpColorBtn" id="18">
+                    <widget factory="pawsButton" name="DefGrpColorBtn" id="18" style="Scaling Button">
                         <frame x="240" y="0" width="60" height="20"/>
-                        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
-                        <buttonup resource="Blue Title"/>
-                        <buttondown resource="Blue Title"/>
                         <label text="Default" />
                     </widget>
-                    <widget factory="pawsButton" name="GrpColorBtn" id="8">
+                    <widget factory="pawsButton" name="GrpColorBtn" id="8" style="Scaling Button">
                         <frame x="305" y="0" width="30" height="20"/>
-                        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
-                        <buttonup resource="Blue Title"/>
-                        <buttondown resource="Blue Title"/>
                         <label text="Set" />
                     </widget>
                 </nodewidget>
@@ -307,18 +253,12 @@
                         <frame x="0" y="0" width="250" height="15" border="no" />
                         <text string="Grouped with you and the same guild"/>
                     </widget>
-                    <widget factory="pawsButton" name="DefGldColorBtn" id="19">
+                    <widget factory="pawsButton" name="DefGldColorBtn" id="19" style="Scaling Button">
                         <frame x="240" y="0" width="60" height="20"/>
-                        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
-                        <buttonup resource="Blue Title"/>
-                        <buttondown resource="Blue Title"/>
                         <label text="Default" />
                     </widget>
-                    <widget factory="pawsButton" name="GldColorBtn" id="9">
+                    <widget factory="pawsButton" name="GldColorBtn" id="9" style="Scaling Button">
                         <frame x="305" y="0" width="30" height="20"/>
-                        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10" />
-                        <buttonup resource="Blue Title"/>
-                        <buttondown resource="Blue Title"/>
                         <label text="Set" />
                     </widget>
                 </nodewidget>
