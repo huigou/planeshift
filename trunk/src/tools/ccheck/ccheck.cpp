@@ -192,8 +192,13 @@ void CCheck::ParseFile(const char* filePath, const char* fileName, bool processi
 
         if(csString(filePath).Find(".params") != (size_t)-1 || csString(filePath).Find("_heightmap.png") != (size_t)-1)
         {
+            csString paramsPath = outpath+"/world/"+csString(filePath).Slice(csString(filePath).FindLast('/'));
+            if(vfs->Exists(paramsPath))
+            {
+                printf("Warning: file %s from map %s already exists", filePath, fileName);
+            }
             FileUtil futil(vfs);
-            futil.CopyFile(filePath, outpath+"/world/"+csString(filePath).Slice(csString(filePath).FindLast('/')), true, false);
+            futil.CopyFile(filePath, paramsPath, true, false);
         }
 
         if(csString(filePath).Find("sound.xml") != (size_t)-1)
