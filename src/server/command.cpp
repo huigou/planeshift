@@ -500,7 +500,7 @@ int com_loadmap(char *mapname)
 
     if (!psserver->LoadMap(mapname))
     {
-        CPrintf (CON_CMDOUTPUT ,"Couldn't load map!\n");
+        CPrintf (CON_CMDOUTPUT ,"Couldn't load map %s!\n", mapname);
         return 0;
     }
 
