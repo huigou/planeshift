@@ -86,8 +86,8 @@ bool pawsConfigEntityLabels::CreateTree()
     tree->MoveTo(screenFrame.xmin, screenFrame.ymin);
     tree->SetSize(screenFrame.Width(), screenFrame.Height());
     tree->SetScrollBars(false, true);
-    tree->SetTreeLayout(new pawsStdTreeLayout(tree, 5, 20));
-    tree->SetTreeDecorator(new pawsStdTreeDecorator(tree, graphics2D, 0x0000ff, 0x00ffff, 13));
+    //tree->SetTreeLayout(new pawsStdTreeLayout(tree, 5, 20));
+    //tree->SetTreeDecorator(new pawsStdTreeDecorator(tree, graphics2D, 0xffffffff, 0xffffff, 13));
     AddChild(tree);
 
     if ( !tree->LoadFromFile("configentitylabels.xml") )
