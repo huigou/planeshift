@@ -23,7 +23,14 @@
 #include "pawsbutton.h"
 
 class pawsTextBox;
-
+///position of radio button
+enum psRadioPos
+    {
+        POS_LEFT,
+        POS_RIGHT,
+        POS_ABOVE,
+        POS_UNDERNEATH
+    };
 /** A combination widget that has a radio button and a text label.
     This should ALWAYS be a child of the pawsRadioButtonGroup in order 
     to control his brothers properly ( ie have only 1 in group active at 
@@ -40,6 +47,25 @@ class pawsTextBox;
     </widget>
     
     Current supported positions are left/right.
+
+    To create Radio button group do this:
+    
+    <widget name="RBG" factory="pawsRadioButtonGroup">
+        <!-- global radio buttons properties -->
+        <radio on="radioon" off="radiooff" size="25"> 
+        <radionode>
+            <!-- radio button 1 -->
+
+            <frame x="75" y="5" width="70" height="30" />        
+            <text string="Sell" position="right"/>
+
+            <!-- self button properties. overrride global. -->
+            <radio on="radioon1" off="radiooff1" size="20"> 
+        </radionode>
+        <radionode>
+            <!-- radio button 2 -->
+        </radionode>
+    </widget>
     
     By default it uses the radioon/radiooff named images and automatically 
     assumes that their size is 16x16.  
@@ -54,6 +80,8 @@ public:
     void SetState( bool state );
     bool GetState();
     bool OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget );
+
+    pawsRadioButton* Create(const char * txt, psRadioPos pos , bool state = true);
        
     pawsTextBox* GetTextBox() { return text; } 
 
@@ -87,8 +115,9 @@ public:
     bool Setup( iDocumentNode* node );
 
     bool OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* widget );
-    bool SetActive( const char* widgetName );
-    csString GetActive();
+    bool SetActive( const char* widgetName );///sets active button by widget name or noone active if name is wrong
+    csString GetActive();                    ///gets name of active button or ""
+    int GetActiveID();                       ///gets ID of active button or -1
     void TurnAllOff();
 
     csString GetRadioOnImage(){return radioOn;};
@@ -97,8 +126,8 @@ public:
 
 private:
 
-    csString radioOff;
-    csString radioOn;
+    csString radioOff;          ///"off" image resource name
+    csString radioOn;           ///"on" image resource name
     int      size;
 };
 CREATE_PAWS_FACTORY( pawsRadioButtonGroup );

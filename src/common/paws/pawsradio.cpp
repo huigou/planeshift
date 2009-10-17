@@ -28,7 +28,7 @@ pawsRadioButton::pawsRadioButton()
 {
     down=false;
     radioOff ="radiooff";
-    radioOn  ="radioon ";
+    radioOn  ="radioon";
     size = 16;
 }
 
@@ -40,7 +40,86 @@ void pawsRadioButton::SetState( bool state )
 pawsRadioButton::~pawsRadioButton()
 {
 }
+pawsRadioButton* pawsRadioButton::Create(const char * txt, psRadioPos pos , bool state)
+{
+    pawsRadioButtonGroup* rbg = dynamic_cast<pawsRadioButtonGroup*>(parent);
 
+    // if this radio button is part of a radio group
+    if (rbg!=NULL)
+    {
+        // get the way the off and up radio buttons should look from there
+        radioOff = rbg->GetRadioOffImage();
+        radioOn  = rbg->GetRadioOnImage();
+        size     = rbg->GetRadioSize();
+    }
+    radioOff ="radiooff";
+    radioOn  ="radioon";
+    size = 16;
+    
+    ///////////////////////////////////////////////////////////////////////
+    // Create the radio button
+    ///////////////////////////////////////////////////////////////////////
+    radioButton = new pawsButton;
+    AddChild( radioButton );
+
+    csRect buttonRect;
+    csRect textRect;
+    
+    if ( pos == POS_LEFT )    
+    {
+        buttonRect = csRect(  defaultFrame.Width()-size, 4, 
+                              defaultFrame.Width(), size+4 );
+                              
+        textRect   = csRect(  0, 4, defaultFrame.Width() - size, defaultFrame.Height() );
+    }
+    
+    if ( pos == POS_RIGHT )    
+    {
+        buttonRect = csRect(  4, 4, 
+                              size+4, size+4 );
+                              
+        textRect   = csRect(  size+6, 4, defaultFrame.Width()-size, defaultFrame.Height() );
+    }
+    
+    if ( pos == POS_UNDERNEATH )
+    {
+        buttonRect = csRect( defaultFrame.Width() / 2 - size /2, 4, defaultFrame.Width()/2 + size/2, 4+size );
+        textRect = csRect( 0,size+6, defaultFrame.Width() , defaultFrame.Height()-(size+6) );
+    }
+                
+    if ( pos == POS_ABOVE )
+    {
+        buttonRect = csRect( defaultFrame.Width() / 2 - size /2, 22, defaultFrame.Width()/2 + size/2, size+22 );
+        textRect = csRect( 0,4, defaultFrame.Width() , size+4 );
+    }
+
+    radioButton->SetRelativeFrame( buttonRect.xmin, buttonRect.ymin, 
+                                   buttonRect.Width(), buttonRect.Height() );
+    radioButton->SetUpImage( radioOff );
+    radioButton->SetDownImage( radioOn );
+    radioButton->SetState( false );
+    radioButton->SetToggle(true);
+    radioButton->PostSetup();
+    radioButton->SetID( id );
+     
+    
+    ///////////////////////////////////////////////////////////////////////
+    // Create the textbox that has the current selected choice
+    ///////////////////////////////////////////////////////////////////////    
+    
+    text = new pawsTextBox;
+    AddChild( text );
+
+    // Puts the button at the edge of the text box widget
+    text->SetRelativeFrame( textRect.xmin, textRect.ymin,
+                            textRect.Width(), textRect.Height() );
+    text->PostSetup();
+    
+    text->SetText(txt);
+    text->SetID( id );
+    
+    return this;
+}
 bool pawsRadioButton::Setup( iDocumentNode* node )
 {
     csRef<iDocumentNode> textNode = node->GetNode( "text" );        
@@ -63,7 +142,7 @@ bool pawsRadioButton::Setup( iDocumentNode* node )
         radioOn  = rbg->GetRadioOnImage();
         size     = rbg->GetRadioSize();
     }
-
+    //override group settings
     csRef<iDocumentNode> radioNode = node->GetNode( "radio" );
 
     if ( radioNode )
@@ -187,23 +266,27 @@ pawsRadioButtonGroup::~pawsRadioButtonGroup()
 
 bool pawsRadioButtonGroup::SetActive( const char* widgetName )
 {
-    pawsWidget* widget = FindWidget( widgetName );
-    if (widget==NULL)
-        return false;
-
-    for ( size_t x=0; x<children.GetSize(); x++ )
+    size_t x;
+    pawsRadioButton* radButton;
+    bool okFlag = false;
+    for ( x=0; x<children.GetSize(); x++ )
     {
         csString factory = csString(children[x]->GetType());
         if ( factory == "pawsRadioButton" )
+            radButton = (pawsRadioButton*)children[x];
+        if (strcmp(children[x]->GetName(), widgetName))
         {
-            pawsRadioButton* radButton = (pawsRadioButton*)children[x];
-
-            if ( radButton == widget )
-                radButton->SetState( true );
-            else
-                radButton->SetState( false );
+            radButton->SetState(false);
+            continue;
+        }
+        else
+        {
+            okFlag = true;
+            radButton->SetState(true);
         }
     }
+    if (!okFlag)
+        return false;
     return true;
 }
 
@@ -261,10 +344,27 @@ csString pawsRadioButtonGroup::GetActive()
     return "";
 }
 
+int pawsRadioButtonGroup::GetActiveID()
+{
+    for ( size_t x=0; x<children.GetSize(); x++ )
+    {
+        csString factory = csString(children[x]->GetType());
+        if ( factory == "pawsRadioButton" )
+        {
+            pawsRadioButton* radButton = (pawsRadioButton*)children[x];
+            if (radButton->GetState())
+                return radButton->GetID();
+        }
+    }
+    return -1;
+}
 
 bool pawsRadioButtonGroup::Setup( iDocumentNode* node )
 {
     csRef<iDocumentNode> radioNode = node->GetNode( "radio" );
+    csRef<iDocumentNode> widgetNode;                                        //for compatibility with obsolete RBG-widget concept
+    csRef<iDocumentNodeIterator> radioNodes = node->GetNodes( "radionode" );
+    csRef<iDocumentNodeIterator> widgetNodes = node->GetNodes("widget");      //for compatibility with obsolete RBG-widget concept
 
     if ( radioNode )
     {
@@ -281,6 +381,38 @@ bool pawsRadioButtonGroup::Setup( iDocumentNode* node )
         attr = radioNode->GetAttribute("size");
         if (attr)
             size     = attr->GetValueAsInt();
+    }
+
+    pawsWidget* radioWidget;
+    pawsWidget* widgetNodeWidget;
+    while (radioNodes->HasNext())
+    {
+        radioNode = radioNodes->Next();
+        radioWidget = PawsManager::GetSingleton().CreateWidget("pawsRadioButton");
+        AddChild(radioWidget);
+        if (!radioWidget->Load(radioNode))
+        {
+            delete radioNode;
+            return false;
+        }
+    }
+    csRef<iDocumentAttribute> factoryAttr;
+    csString factory;
+    while (widgetNodes->HasNext())
+    {
+        widgetNode = widgetNodes->Next();
+        factoryAttr = widgetNode->GetAttribute("factory");
+        if (factoryAttr)
+            factory = factoryAttr->GetValue();
+        if (factory != "pawsRadioButton")       //ignore other widgets
+            continue;
+        widgetNodeWidget = PawsManager::GetSingleton().CreateWidget("pawsRadioButton");
+        AddChild(widgetNodeWidget);
+        if (!widgetNodeWidget->Load(widgetNode))
+        {
+            delete widgetNode;
+            return false;
+        }
     }
     
     return true;               

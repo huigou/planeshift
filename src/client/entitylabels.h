@@ -41,10 +41,25 @@ struct iEvent;
 /** psEntityLabelVisib defines possible visibility modes of labels */
 enum psEntityLabelVisib 
      { 
-        LABEL_ALWAYS,             // labels of all entities are visible
+        LABEL_ALWAYS = 0,             // labels of all entities are visible
         LABEL_ONMOUSE,            // only label of the entity under mouse is visible
         LABEL_NEVER               // no labels are visible
      };
+///psRntityLabelType defines types of entities that have own color
+enum psEntityLabelType
+    {
+        ENTITY_DEFAULT=0,         //default or unmovable entities
+        ENTITY_PLAYER,          //players
+        ENTITY_NPC,             //NPCs
+        ENTITY_DEAD,            //dead bodies
+        ENTITY_GM1,             //GM 1
+        ENTITY_GM25,            //GM 2-5
+        ENTITY_TESTER,          //testers
+        ENTITY_DEV,             //developers
+        ENTITY_GROUP,           //grouped-with-you chars
+        ENTITY_GUILD,            //grouped-with-you-and-the-same-guild chars
+        ENTITY_TYPES_AMOUNT     //amount of entity types
+    };
 
 /**
  * class psEntityLabels serves for creation and management of 2D sprites hanging above cel-entities 
@@ -74,12 +89,12 @@ public:
     /**
      * Sets options for label behaviour:
      */
-    void Configure(psEntityLabelVisib visCreatures, psEntityLabelVisib visItems, bool showGuild);
+    void Configure(psEntityLabelVisib visCreatures, psEntityLabelVisib visItems, bool showGuild, int* colors);
     
     /**
      * Gets options for label behaviour:
      */
-    void GetConfiguration(psEntityLabelVisib & visCreatures, psEntityLabelVisib & visItems, bool & showGuild);
+    void GetConfiguration(psEntityLabelVisib & visCreatures, psEntityLabelVisib & visItems, bool & showGuild, int* colors);
     
     /**
      * Reads options for label behaviour from file:
@@ -160,6 +175,9 @@ protected:
     psEntityLabelVisib visCreatures;
     psEntityLabelVisib visItems;
     bool showGuild;                    // should the label contain name of character's guild ?
+
+    ///Entity labels colors
+    int entityColors[ENTITY_TYPES_AMOUNT];
 
     /**
      * Entity that is under mouse cursor (or NULL)

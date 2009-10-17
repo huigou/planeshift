@@ -29,6 +29,44 @@
 
 
 #define TREE_MOUSE_SCROLL_AMOUNT 20
+/**
+    How to create tree by xml:
+    root widget must be pawsTreeNode
+    it can have childs as pawsTreeNode, pawsWidgetTreeNode and pawsSeqTreeNode.
+    pawsTreeNode is a simple node that can have it's own childs, but don't contain any widgets
+    pawsWidgetTreeNode is a tree node that contains one widget and child nodes
+    pawsSeqTreeNode is a tree node with sequence of widgets, placed in sequence. it also can have child nodes.
+    Widgets in pawsWidgetTreeNode and pawsSeqTreeNode must be placed beetween <nodewidget>..</nodewidget>
+    example for tree creation:
+
+    <widget name="treeRoot" factory="pawsTreeNode" <!-- some attrs -->>
+    <!-- setup environment -->
+        <widget name="firstNode" factory="pawsTreeNode">
+            <widget name="seqNode1" factory="pawsSeqTreNode">
+                <nodewidget>
+                    <widget name="someWidget1" factroy="paws***">
+                    </widget>
+                    <widget name="someWidget2" factroy="paws***">
+                    </widget>
+                    <!-- some oter widgets -->
+                </nodewidget>
+                <!-- node children -->
+            </widget>
+            <widget name="seqNode2" factory="pawsSeqTreNode">
+                    <widget name="someWidget3" factroy="paws***">
+                    </widget>
+            </widget>
+        </widget>
+        <widget name="secondNode">
+            <widget name="widTreeNode" factory="pawsWidgetTreeNode">
+                <nodewidget>
+                    <!-- some widget -->
+                </nodewidget>
+                <!-- node children -->
+            </widget>
+        </widget>
+    </widget>
+*/
 
 class pawsTreeNode;
 
@@ -510,6 +548,7 @@ protected:
 CREATE_PAWS_FACTORY(pawsTree)
 CREATE_PAWS_FACTORY(pawsSimpleTree)
 CREATE_PAWS_FACTORY(pawsSimpleTreeNode)
+CREATE_PAWS_FACTORY(pawsTreeNode)
 CREATE_PAWS_FACTORY(pawsSeqTreeNode)
 CREATE_PAWS_FACTORY(pawsWidgetTreeNode)
 

@@ -132,21 +132,21 @@
             <widget name="selecttabstyle" factory="pawsRadioButtonGroup">
                 <frame x="255" y="30" width="150" height="120" />
                 <widget factory="pawsTextBox" name="">
-                <frame x="10" y="0" width="180" height="20" border="no" />
-                <text string="Auto Tab selection:"/>
+                    <frame x="10" y="0" width="180" height="20" border="no" />
+                    <text string="Auto Tab selection:"/>
                 </widget>
-                <widget name="none" factory="pawsRadioButton" id="0" >
-                <frame x="10" y="20" width="180" height="20" />
-                <text string="Don't autoselect" position="right" />
-                </widget>
-                <widget name="fitting" factory="pawsRadioButton" id="1" >
-                <frame x="10" y="50" width="180" height="20" />
-                <text string="Select fitting Tab" position="right" />
-                </widget>
-                <widget name="alltext" factory="pawsRadioButton" id="2" >
-                <frame x="10" y="80" width="180" height="20" />
-                <text string="Select Main Tab" position="right" />
-                </widget>
+                <radionode name="none" id="0" >
+                    <frame x="10" y="20" width="180" height="20" />
+                    <text string="Don't autoselect" position="right" />
+                </radionode>
+                <radionode name="fitting" id="1" >
+                    <frame x="10" y="50" width="180" height="20" />
+                    <text string="Select fitting Tab" position="right" />
+                </radionode>
+                <radionode name="alltext" id="2" >
+                    <frame x="10" y="80" width="180" height="20" />
+                    <text string="Select Main Tab" position="right" />
+                </radionode>
             </widget>
 
             <widget name="joindefaultchannel" factory="pawsCheckBox">
