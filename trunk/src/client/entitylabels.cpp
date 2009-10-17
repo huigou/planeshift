@@ -68,6 +68,18 @@ psEntityLabels::psEntityLabels()
     showGuild = true;
     
     underMouse = NULL;
+    
+    //set default values for entity label colors
+    entityColors[ENTITY_DEFAULT] = 0xff0000;
+    entityColors[ENTITY_PLAYER] = 0x00ff00;
+    entityColors[ENTITY_DEV] = 0xff8080;
+    entityColors[ENTITY_TESTER] = 0x338ca7;
+    entityColors[ENTITY_DEAD] = 0xff0000;
+    entityColors[ENTITY_GM1] = 0x008000;
+    entityColors[ENTITY_GM25] = 0xffff80;
+    entityColors[ENTITY_NPC] = 0x00ffff;
+    entityColors[ENTITY_GROUP] = 0x0080ff;
+    entityColors[ENTITY_GUILD] = 0xf6dfa6;
 }
 
 psEntityLabels::~psEntityLabels()
@@ -104,7 +116,7 @@ bool psEntityLabels::Initialize(iObjectRegistry * object_reg, psCelClient * _cel
     return true;
 }
 
-void psEntityLabels::Configure(psEntityLabelVisib _visCreatures, psEntityLabelVisib _visItems, bool _showGuild)
+void psEntityLabels::Configure(psEntityLabelVisib _visCreatures, psEntityLabelVisib _visItems, bool _showGuild, int* colors)
 {
     // Hide all on changed visibility to refresh what we're showing
     if (visCreatures != _visCreatures || visItems != _visItems)
@@ -119,13 +131,46 @@ void psEntityLabels::Configure(psEntityLabelVisib _visCreatures, psEntityLabelVi
     // Refresh guild labels if our display option has changed
     if (refreshGuilds)
         RefreshGuildLabels();
+
+    ///WARNING: memory for colors MUST be alocated and have size >= ENTITY_TYPES_AMOUNT*sizeof(int)!
+    if (colors == NULL)
+    {
+        Error1("can't configure colors");
+        return;
+    }
+    entityColors[ENTITY_DEFAULT] = colors[ENTITY_DEFAULT];
+    entityColors[ENTITY_PLAYER] = colors[ENTITY_PLAYER];
+    entityColors[ENTITY_DEV] = colors[ENTITY_DEV];
+    entityColors[ENTITY_TESTER] = colors[ENTITY_TESTER];
+    entityColors[ENTITY_DEAD] = colors[ENTITY_DEAD];
+    entityColors[ENTITY_GM1] = colors[ENTITY_GM1];
+    entityColors[ENTITY_GM25] = colors[ENTITY_GM25];
+    entityColors[ENTITY_NPC] = colors[ENTITY_NPC];
+    entityColors[ENTITY_GROUP] = colors[ENTITY_GROUP];
+    entityColors[ENTITY_GUILD] = colors[ENTITY_GUILD];
 }
 
-void psEntityLabels::GetConfiguration(psEntityLabelVisib & _visCreatures, psEntityLabelVisib & _visItems, bool & _showGuild)
+void psEntityLabels::GetConfiguration(psEntityLabelVisib & _visCreatures, psEntityLabelVisib & _visItems, bool & _showGuild, int* colors)
 {
     _visCreatures = visCreatures;
     _visItems = visItems;
     _showGuild = showGuild;
+    ///WARNING: memory for colors MUST be alocated and have size >= ENTITY_TYPES_AMOUNT*sizeof(int)!
+    if (colors == NULL)
+    {
+        Error1("can't get colors");
+        return;
+    }
+    colors[ENTITY_DEFAULT] = entityColors[ENTITY_DEFAULT];
+    colors[ENTITY_PLAYER] = entityColors[ENTITY_PLAYER];
+    colors[ENTITY_DEV] = entityColors[ENTITY_DEV];
+    colors[ENTITY_TESTER] = entityColors[ENTITY_TESTER];
+    colors[ENTITY_DEAD] = entityColors[ENTITY_DEAD];
+    colors[ENTITY_GM1] = entityColors[ENTITY_GM1];
+    colors[ENTITY_GM25] = entityColors[ENTITY_GM25];
+    colors[ENTITY_NPC] = entityColors[ENTITY_NPC];
+    colors[ENTITY_GROUP] = entityColors[ENTITY_GROUP];
+    colors[ENTITY_GUILD] = entityColors[ENTITY_GUILD];
 }
 
 bool psEntityLabels::HandleEvent(iEvent & ev)
@@ -158,7 +203,7 @@ void psEntityLabels::SetObjectText(GEMClientObject* object)
         return;
     }
 
-    int colour = 0xff0000;  // Default color, on inanimate objects
+    int colour = entityColors[ENTITY_DEFAULT];  // Default color, on inanimate objects
     if ( object->IsAlive() )
     {
         int type = object->GetMasqueradeType();
@@ -168,33 +213,33 @@ void psEntityLabels::SetObjectText(GEMClientObject* object)
         switch ( type )    
         {
             case 0: // player
-                colour = 0x00ff00;
+                colour = entityColors[ENTITY_PLAYER];
                 break;
 
             case -1: // NPC
-                colour = 0x00ffff;
+                colour = entityColors[ENTITY_NPC];
                 break;
             case -3: // DEAD
-                colour = 0xff0000;
+                colour = entityColors[ENTITY_DEAD];
                 break;
 
             default:
             case 10: // Tester or unknown group
-                colour = 0x338CA7;
+                colour = entityColors[ENTITY_TESTER];
                 break;
             case 21: // GM1
-                colour = 0x008000;
+                colour = entityColors[ENTITY_GM1];
                 break;            
 
             case 22:
             case 23:
             case 24:
             case 25: // GM2-5
-                colour = 0xffff80;
+                colour = entityColors[ENTITY_GM25];
                 break;
 
             case 26: // dev char
-                colour = 0xff8080;
+                colour = entityColors[ENTITY_DEV];
                 break;
         }                    
     }
@@ -206,7 +251,7 @@ void psEntityLabels::SetObjectText(GEMClientObject* object)
     bool grouped = false;
     if (actor && actor->IsGroupedWith(celClient->GetMainPlayer()))
     {
-      colour = 0x0080ff;
+      colour = entityColors[ENTITY_GROUP];
       grouped = true;
     }
 
@@ -238,7 +283,7 @@ void psEntityLabels::SetObjectText(GEMClientObject* object)
         {
             // If same guild, indicate with color, unless grouped or invisible
             if (guild == guild2 && !invisible && !grouped)
-                colour = 0xf6dfa6;
+                colour = entityColors[ENTITY_GUILD];
 
             guildRow.text = "<" + guild + ">";
             guildRow.align = ETA_CENTER;
@@ -436,6 +481,56 @@ bool psEntityLabels::LoadFromFile()
         else if (option == "never")
             visItems = LABEL_NEVER;
     }    
+    optionNode = entityLabelsNode->GetNode("playerColor");
+    if (optionNode != NULL)
+    {
+        entityColors[ENTITY_PLAYER] = optionNode->GetAttributeValueAsInt("value");
+    }
+    optionNode = entityLabelsNode->GetNode("NPCColor");
+    if (optionNode != NULL)
+    {
+        entityColors[ENTITY_NPC] = optionNode->GetAttributeValueAsInt("value");
+    }
+    optionNode = entityLabelsNode->GetNode("deadColor");
+    if (optionNode != NULL)
+    {
+        entityColors[ENTITY_DEAD] = optionNode->GetAttributeValueAsInt("value");
+    }
+    optionNode = entityLabelsNode->GetNode("devColor");
+    if (optionNode != NULL)
+    {
+        entityColors[ENTITY_DEV] = optionNode->GetAttributeValueAsInt("value");
+    }
+    optionNode = entityLabelsNode->GetNode("testerColor");
+    if (optionNode != NULL)
+    {
+        entityColors[ENTITY_TESTER] = optionNode->GetAttributeValueAsInt("value");
+    }
+    optionNode = entityLabelsNode->GetNode("gm1Color");
+    if (optionNode != NULL)
+    {
+        entityColors[ENTITY_GM1] = optionNode->GetAttributeValueAsInt("value");
+    }
+    optionNode = entityLabelsNode->GetNode("gm25Color");
+    if (optionNode != NULL)
+    {
+        entityColors[ENTITY_GM25] = optionNode->GetAttributeValueAsInt("value");
+    }
+    optionNode = entityLabelsNode->GetNode("guildColor");
+    if (optionNode != NULL)
+    {
+        entityColors[ENTITY_GUILD] = optionNode->GetAttributeValueAsInt("value");
+    }
+    optionNode = entityLabelsNode->GetNode("groupColor");
+    if (optionNode != NULL)
+    {
+        entityColors[ENTITY_GROUP] = optionNode->GetAttributeValueAsInt("value");
+    }
+    optionNode = entityLabelsNode->GetNode("defaultColor");
+    if (optionNode != NULL)
+    {
+        entityColors[ENTITY_DEFAULT] = optionNode->GetAttributeValueAsInt("value");
+    }
 
     return true;
 }
@@ -514,7 +609,7 @@ inline void psEntityLabels::UpdateMouseover()
 bool psEntityLabels::SaveToFile()
 {
     csString xml;
-    csString visCreaturesStr, visItemsStr, showGuildStr;
+    csString visCreaturesStr, visItemsStr, showGuildStr, colorStr;
 
     switch (visCreatures)
     {
@@ -536,6 +631,26 @@ bool psEntityLabels::SaveToFile()
     xml += "    <Visibility value=\"" + visCreaturesStr + "\"/>\n";
     xml += "    <VisibilityItems value=\"" + visItemsStr + "\"/>\n";
     xml += "    <ShowGuild value=\"" + showGuildStr + "\"/>\n";
+    colorStr = (entityColors[ENTITY_PLAYER]);
+    xml += "    <playerColor value=\"" + colorStr + "\"/>\n";
+    colorStr = (entityColors[ENTITY_NPC]);
+    xml += "    <NPCColor value=\"" + colorStr + "\"/>\n";
+    colorStr = (entityColors[ENTITY_DEAD]);
+    xml += "    <deadColor value=\"" + colorStr + "\"/>\n";
+    colorStr = (entityColors[ENTITY_DEV]);
+    xml += "    <devColor value=\"" + colorStr + "\"/>\n";
+    colorStr = (entityColors[ENTITY_TESTER]);
+    xml += "    <testerColor value=\"" + colorStr + "\"/>\n";
+    colorStr = (entityColors[ENTITY_GM1]);
+    xml += "    <gm1Color value=\"" +colorStr + "\"/>\n";
+    colorStr = (entityColors[ENTITY_GM25]);
+    xml += "    <gm25Color value=\"" + colorStr + "\"/>\n";
+    colorStr = (entityColors[ENTITY_GUILD]);
+    xml += "    <guildColor value=\"" + colorStr + "\"/>\n";
+    colorStr = (entityColors[ENTITY_GROUP]);
+    xml += "    <groupColor value=\"" + colorStr + "\"/>\n";
+    colorStr = (entityColors[ENTITY_DEFAULT]);
+    xml += "    <defaultColor value=\"" + colorStr + "\"/>\n";
     xml += "</EntityLabels>\n";
     
     return vfs->WriteFile(CONFIG_FILE_NAME, xml.GetData(), xml.Length());

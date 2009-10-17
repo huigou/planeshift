@@ -1359,6 +1359,36 @@ pawsWidget * pawsSeqTreeNode::GetSeqWidget(int index)
     
 bool pawsSeqTreeNode::Load(iDocumentNode *node)
 {
+    csRef<iDocumentNodeIterator> nodeWidgetChildren;
+    csRef<iDocumentNode> nodewidgetNode, widgetNode;
+    csString factory;
+    pawsWidget * newWidget;
+    
+    name = node->GetAttributeValue("name");
+
+    nodewidgetNode = node->GetNode("nodewidget");
+    if (nodewidgetNode != NULL)
+    {
+        nodeWidgetChildren = nodewidgetNode->GetNodes("widget");
+        
+        while (nodeWidgetChildren->HasNext())
+        {
+            //TODO: attributes for widgets like reserved width
+            widgetNode = nodeWidgetChildren->Next();
+
+            factory = widgetNode->GetAttributeValue("factory");
+            newWidget = PawsManager::GetSingleton().CreateWidget(factory);
+            if (newWidget == NULL)
+                return false;
+            if ( ! newWidget->Load(widgetNode))
+            {
+                delete newWidget;
+                return false;
+            }
+            //TODO: AddSeqWidget(pawsWidget*, int) if necessary
+            AddSeqWidget(newWidget);
+        }
+    }
     return pawsTreeNode::Load(node);
 }
 

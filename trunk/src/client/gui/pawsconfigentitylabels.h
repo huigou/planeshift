@@ -26,29 +26,49 @@
 // PAWS INCLUDES
 #include "paws/pawswidget.h"
 #include "pawsconfigwindow.h"
+#include "paws/pawscolorpromptwindow.h"
 
+class pawsTree;
+class pawsCheckBox;
 class pawsRadioButtonGroup;
-
 /**
  * class pawsConfigEntityLabels is options screen for configuration of entity labels (see client/entitylabels.h)
  */
-class pawsConfigEntityLabels : public pawsConfigSectionWindow
+class pawsConfigEntityLabels : public pawsConfigSectionWindow, public iOnColorEnteredAction
 {
 public:
-    //from pawsWidget:
-    virtual bool PostSetup();
+    virtual ~pawsConfigEntityLabels();
+    ///from pawsWidget:
     virtual bool OnChange(pawsWidget * widget);
+    virtual bool OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget );
     
-    // from pawsConfigSectionWindow:
+    /// from pawsConfigSectionWindow:
     virtual bool Initialize();
     virtual bool LoadConfig();
     virtual bool SaveConfig();
     virtual void SetDefault();
-    
-protected:
-    psEntityLabels * entityLabels;
 
-    pawsRadioButtonGroup *visCreaturesRadioGroup, *visItemsRadioGroup, *contentRadioGroup;
+    ///from iOnColorEnteredAction (set color to param-identified label)
+    virtual void OnColorEntered(const char *name,int param,int color);
+protected:
+
+    /** Creates the tree that makes the whole GUI.
+      * @return success
+      */
+    bool CreateTree();
+    /** Adds widgets to all nodes in subtree with root 'subtreeRoot'.
+      * -- color label and button that opens colorPicker    
+      */
+    pawsTree *              tree;               /// the tree that makes whole window GUI
+    pawsColorPromptWindow * colorPicker;        /// pointer to colorPicker window
+    pawsCheckBox*           visGuildCheck;      /// check box to select visibility of guild
+    pawsRadioButtonGroup*   ItemRBG;            /// Radio button group for set items labels visibility
+    pawsRadioButtonGroup*   CreatureRBG;        /// Radio button group for set creatures labels visibility
+
+
+    int             labelColors[ENTITY_TYPES_AMOUNT];                           /// array of entity labels colors
+    int             defLabelColors[ENTITY_TYPES_AMOUNT];  ///array of default entity labels colors
+    psEntityLabels * entityLabels;                         /// entity labels properties
 };
 
 

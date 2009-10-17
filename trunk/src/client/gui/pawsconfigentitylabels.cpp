@@ -32,14 +32,43 @@
 // PAWS INCLUDES
 #include "pawsconfigentitylabels.h"
 #include "paws/pawsmanager.h"
+#include "paws/pawscombo.h"
+#include "paws/pawscheckbox.h"
 #include "paws/pawsradio.h"
-
-
 bool pawsConfigEntityLabels::Initialize()
 {
-    if ( ! LoadFromFile("configentitylabels.xml"))
+    SetName("ConfigEntityLabels");
+
+    tree = NULL;
+    colorPicker = NULL;
+
+    defLabelColors[ENTITY_DEFAULT] = 0xff0000;
+    defLabelColors[ENTITY_PLAYER] = 0x00ff00;
+    defLabelColors[ENTITY_DEV] = 0xff8080;
+    defLabelColors[ENTITY_TESTER] = 0x338ca7;
+    defLabelColors[ENTITY_DEAD] = 0xff0000;
+    defLabelColors[ENTITY_GM1] = 0x008000;
+    defLabelColors[ENTITY_GM25] = 0xffff80;
+    defLabelColors[ENTITY_NPC] = 0x00ffff;
+    defLabelColors[ENTITY_GROUP] = 0x0080ff;
+    defLabelColors[ENTITY_GUILD] = 0xf6dfa6;
+
+    labelColors[ENTITY_DEFAULT] = defLabelColors[ENTITY_DEFAULT];
+    labelColors[ENTITY_PLAYER] = defLabelColors[ENTITY_PLAYER];
+    labelColors[ENTITY_DEV] = defLabelColors[ENTITY_DEV];
+    labelColors[ENTITY_TESTER] = defLabelColors[ENTITY_TESTER];
+    labelColors[ENTITY_DEAD] = defLabelColors[ENTITY_DEAD];
+    labelColors[ENTITY_GM1] = defLabelColors[ENTITY_GM1];
+    labelColors[ENTITY_GM25] = defLabelColors[ENTITY_GM25];
+    labelColors[ENTITY_NPC] = defLabelColors[ENTITY_NPC];
+    labelColors[ENTITY_GROUP] = defLabelColors[ENTITY_GROUP];
+    labelColors[ENTITY_GUILD] = defLabelColors[ENTITY_GUILD];
+
+    if ( !CreateTree() )
         return false;
-       
+
+    UseBorder("line");
+
     csRef<psCelClient> celclient = psengine->GetCelClient();
     assert(celclient);
     
@@ -47,63 +76,93 @@ bool pawsConfigEntityLabels::Initialize()
     assert(entityLabels);
     return true;
 }
-
-bool pawsConfigEntityLabels::PostSetup()
+pawsConfigEntityLabels::~pawsConfigEntityLabels()
 {
-    visCreaturesRadioGroup = dynamic_cast<pawsRadioButtonGroup*> (FindWidget("visibilityCreatures"));
-    if (visCreaturesRadioGroup == NULL)
+}
+bool pawsConfigEntityLabels::CreateTree()
+{
+    CS_ASSERT(tree == NULL);
+    tree = new pawsTree();
+    tree->MoveTo(screenFrame.xmin, screenFrame.ymin);
+    tree->SetSize(screenFrame.Width(), screenFrame.Height());
+    tree->SetScrollBars(false, true);
+    tree->SetTreeLayout(new pawsStdTreeLayout(tree, 5, 20));
+    tree->SetTreeDecorator(new pawsStdTreeDecorator(tree, graphics2D, 0x0000ff, 0x00ffff, 13));
+    AddChild(tree);
+
+    if ( !tree->LoadFromFile("data/gui/configentitylabels.xml") )
         return false;
-    
-    visItemsRadioGroup = dynamic_cast<pawsRadioButtonGroup*> (FindWidget("visibilityItems"));
-    if(visItemsRadioGroup == NULL)
-    	return false;
-    
-    contentRadioGroup = dynamic_cast<pawsRadioButtonGroup*> (FindWidget("content"));
-    if (contentRadioGroup == NULL)
+
+    CreatureRBG = dynamic_cast<pawsRadioButtonGroup*>(FindWidget("CreaturesRG"));
+    if (CreatureRBG == NULL)
         return false;
-    
+    ItemRBG = dynamic_cast<pawsRadioButtonGroup*>(FindWidget("ItemsRG"));
+    if (ItemRBG == NULL)
+        return false;
+    visGuildCheck = dynamic_cast<pawsCheckBox*>(FindWidget("visGuild"));
+    if (visGuildCheck == NULL)
+        return false;
+
     return true;
 }
 
+bool pawsConfigEntityLabels::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+{
+    int     widID = widget->GetID();      //widget identificator
+    
+    if ((widID >= ENTITY_TYPES_AMOUNT)&&(widID < 100))
+    {
+        labelColors[widID-ENTITY_TYPES_AMOUNT] = defLabelColors[widID-ENTITY_TYPES_AMOUNT];
+        dirty = true;
+    }
+    else
+        if ((widID < ENTITY_TYPES_AMOUNT))
+            colorPicker = colorPicker->Create("Choose color",labelColors[widID],0,0xff,this,"colorPick",widID);
+    return true;
+}
+void pawsConfigEntityLabels::OnColorEntered(const char *name,int param,int color)
+{
+    if (color != labelColors[param])    //param store button ID
+    {
+        labelColors[param] = color;
+        dirty = true;
+    }
+}
 bool pawsConfigEntityLabels::LoadConfig()
 {
     psEntityLabelVisib visCreatures;
     psEntityLabelVisib visItems;
     bool showGuild;
 
-    entityLabels->GetConfiguration(visCreatures, visItems, showGuild);
+    entityLabels->GetConfiguration(visCreatures, visItems, showGuild, labelColors);
     
     switch (visCreatures)
     {
         case LABEL_ALWAYS:
-            visCreaturesRadioGroup->SetActive("always");
+            CreatureRBG->SetActive("always");
             break;
         case LABEL_ONMOUSE:
-        	visCreaturesRadioGroup->SetActive("mouse");
+            CreatureRBG->SetActive("mouse");
             break;
-        case LABEL_NEVER:
-        	visCreaturesRadioGroup->SetActive("never");
-            break;
+        default:
+            CreatureRBG->SetActive("never");
     }
-
     switch (visItems)
     {
         case LABEL_ALWAYS:
-            visItemsRadioGroup->SetActive("always");
+            ItemRBG->SetActive("always");
             break;
         case LABEL_ONMOUSE:
-        	visItemsRadioGroup->SetActive("mouse");
+            ItemRBG->SetActive("mouse");
             break;
-        case LABEL_NEVER:
-        	visItemsRadioGroup->SetActive("never");
-            break;
+        default:
+            ItemRBG->SetActive("never");
     }
-    
     if (showGuild)
-        contentRadioGroup->SetActive("guild");
+        visGuildCheck->SetState(true);
     else
-        contentRadioGroup->SetActive("name");
-        
+        visGuildCheck->SetState(false);
+
     dirty = false;
     return true;
 }
@@ -115,29 +174,12 @@ bool pawsConfigEntityLabels::SaveConfig()
     bool showGuild;
     csString activeVisib;
 
-    activeVisib = visCreaturesRadioGroup->GetActive();
-    if (activeVisib == "always")
-        visCreatures = LABEL_ALWAYS;
-    else if (activeVisib == "mouse")
-        visCreatures = LABEL_ONMOUSE;
-    else // if (activeVisib == "never")
-        visCreatures = LABEL_NEVER;
+    visCreatures = psEntityLabelVisib(CreatureRBG->GetActiveID()-100);
+    visItems = psEntityLabelVisib(ItemRBG->GetActiveID()-103);
 
-    activeVisib = visItemsRadioGroup->GetActive();
-    if (activeVisib == "always")
-        visItems = LABEL_ALWAYS;
-    else if (activeVisib == "mouse")
-        visItems = LABEL_ONMOUSE;
-    else // if (activeVisib == "never")
-        visItems = LABEL_NEVER;
+    showGuild = !visGuildCheck->GetState();
     
-    if (contentRadioGroup->GetActive() == "guild")
-        showGuild = true;
-    else
-        showGuild = false;
-
-
-    entityLabels->Configure(visCreatures, visItems, showGuild);
+    entityLabels->Configure(visCreatures, visItems, showGuild, labelColors);
     entityLabels->SaveToFile();
     dirty = false;
     return true;
@@ -145,15 +187,33 @@ bool pawsConfigEntityLabels::SaveConfig()
 
 void pawsConfigEntityLabels::SetDefault()
 {
-    visCreaturesRadioGroup->SetActive("mouse");
-    visItemsRadioGroup->SetActive("mouse");
-    contentRadioGroup->SetActive("guild");
+    if (!CreatureRBG->SetActive("mouse"))
+    {
+        Error1("No widget with such name");
+        return;
+    }
+    if (!ItemRBG->SetActive("mouse"))
+    {
+        Error1("No widget with such name");
+        return;
+    }
+    visGuildCheck->SetState(true);
+    labelColors[ENTITY_DEFAULT] = defLabelColors[ENTITY_DEFAULT];
+    labelColors[ENTITY_PLAYER] = defLabelColors[ENTITY_PLAYER];
+    labelColors[ENTITY_DEV] = defLabelColors[ENTITY_DEV];
+    labelColors[ENTITY_TESTER] = defLabelColors[ENTITY_TESTER];
+    labelColors[ENTITY_DEAD] = defLabelColors[ENTITY_DEAD];
+    labelColors[ENTITY_GM1] = defLabelColors[ENTITY_GM1];
+    labelColors[ENTITY_GM25] = defLabelColors[ENTITY_GM25];
+    labelColors[ENTITY_NPC] = defLabelColors[ENTITY_NPC];
+    labelColors[ENTITY_GROUP] = defLabelColors[ENTITY_GROUP];
+    labelColors[ENTITY_GUILD] = defLabelColors[ENTITY_GUILD];
     dirty = true;
 }
 
 bool pawsConfigEntityLabels::OnChange(pawsWidget * widget)
 {
-    if ((widget == visCreaturesRadioGroup) || (widget == visItemsRadioGroup) || (widget == contentRadioGroup))
+    if ((widget == CreatureRBG) || (widget == ItemRBG) || (widget == visGuildCheck))
         dirty = true;
 
     return true;
