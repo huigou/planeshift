@@ -1791,6 +1791,7 @@ bool WanderOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
     {
         npc->Printf(5, "WanderOp - Reached waypoint %s next waypoint is %s.",
                     active_wp->GetName(), next_wp->GetName() );
+        psGameObject::SetPosition(npc->GetActor(),dest,dest_sector); //update position anyway
     }
     else
     {
