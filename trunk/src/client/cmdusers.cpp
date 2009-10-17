@@ -86,6 +86,7 @@ psUserCommands::psUserCommands(ClientMsgHandler* mh,CmdHandler *ch,iObjectRegist
     cmdsource->Subscribe("/emote",         this);
     cmdsource->Subscribe("/equip",         this);
     cmdsource->Subscribe("/fish",          this);
+    cmdsource->Subscribe("/harvest",       this);
     cmdsource->Subscribe("/game",          this);
     cmdsource->Subscribe("/give",          this);
     cmdsource->Subscribe("/guard",         this);
@@ -155,6 +156,7 @@ psUserCommands::~psUserCommands()
     cmdsource->Unsubscribe("/emote",                 this);
     cmdsource->Unsubscribe("/equip",                 this);
     cmdsource->Unsubscribe("/fish",                  this);
+    cmdsource->Unsubscribe("/harvest",               this);
     cmdsource->Unsubscribe("/game",                  this);
     cmdsource->Unsubscribe("/give",                  this);
     cmdsource->Unsubscribe("/guard",                 this);
@@ -568,6 +570,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
              words[0] == "/construct" ||
              words[0] == "/dig" ||
              words[0] == "/fish" ||
+             words[0] == "/harvest" ||
              words[0] == "/repair" )
     {
         psWorkCmdMessage work(cmd);
