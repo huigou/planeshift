@@ -1,4 +1,78 @@
-﻿*** 2009-09-25 by Stefano Angeleri
+﻿*** 2009-10-17 by Stefano Angeleri
+- Added management of 0 amount transforms allowing to give more time to
+  do those transforms and at the same time give additional experience out
+  of them
+- updated fparser to 3.3.2:
+   * Fixed an incompatibility with MS Visual Studio which caused the 
+     optimizer to enter an infinite loop with some input functions (VS 
+     interprets bitfields slightly differently from gcc). Also minor 
+     additions and fine-tuning of the optimizer. 
+- committed a fix for PS#2473 - Mouse look prevents from turning  patch by Entur
+- forced set position on waypoint reaching on wanderoperation in npcclient:
+  allows to workaround slightly bugs in sector changing when npc follow a
+  predetermined path in a wander operation
+- Added /harvest command
+- fixed  PS#2516 - Cannot change color for object labels  patch by kreopt
+- Style inprovements in labelentities config
+
+*** 2009-10-12 by Stefano Angeleri
+- changed transformations matching to avoid doing useless matching (double
+  check of patternless in case no book was in mind) and additional matching
+  checking patterns
+- updated fparser to 3.3
+    *  The Parse() method now performs more exhaustive constant folding 
+       (calculating constant expressions at parse time) than before. Also 
+       integral powers (eg. like "x^4") are now more optimized at parse time, 
+       resulting in faster evaluation even without a call to the Optimize() 
+       method (although the latter will sometimes still result in an even 
+       better result). The speed impact of this on the Parse() method has 
+       been kept minimal.
+    * More refactoring of the optimizer, making the Optimize() method 
+      significantly faster than in the previous version. Also new and more 
+      exhaustive rules have been added, resulting in better results in certain 
+      cases (eg. when using basic operators in very complex functions).
+    * Added utility member functions to parse a function so that the 
+      variables in the function are deduced automatically. The found 
+      variables are returned to the caller if requested. 
+- committed fix to PS#3193 - Can't resize shortcutwindow.  patch by thomphoenix
+- committed a fix for  PS#569 - Annoying camera mode behaviour when camera 
+  auto-switches to First Person when zooming in. patch by Entur
+- fixed some problems with msvc with fparser
+- Fixed some things being parsed as fmt placeholder even if inputed by players
+  (eg %s in books which caused server crash if used)
+- updated fparser to 3.3.1
+  * Fixed some incompatibilities with MS Visual Studio introduced with 
+    the refactored optimizer. 
+
+
+
+*** 2009-10-05 by Stefano Angeleri
+- fixes to the pawscombo in order to show the arrow to open them
+- improved some standard windows (number input)
+- made additional things translateable
+- fixed display of name of some entities
+- now distance from locks doesn't check the connected lock in case an
+  al is used
+- improved race info to not oblige access to supposed to be private members
+  to obtain some informations
+- Added quality, unpickable, settingitem and npcowned to /item gui
+- fixed invisible items if they had $F in the texture name
+
+*** 2009-09-29 by Stefano Angeleri
+- Added support to define the anim of an attached actor to another one
+  NETBUMP, DBBUMP
+- setting background to "" now removes the background
+- fixes to the glyph window
+- added ban reason to output of info in case a char is in a banned account
+
+*** 2009-09-27 by Stefano Angeleri
+- Fixed focus issues with pawsslot
+- Additions to translations
+- Added an author field in translation files
+- Changed faction scripts to be in text fields in place of blobs
+- Added spanish, portuguese, catalan, swedish, russian, romanian translations
+
+*** 2009-09-25 by Stefano Angeleri
 - additions to art-convert
 - made seticon public
 - made icon loading pass format flags
