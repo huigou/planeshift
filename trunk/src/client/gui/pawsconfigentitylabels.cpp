@@ -181,6 +181,7 @@ bool pawsConfigEntityLabels::SaveConfig()
     
     entityLabels->Configure(visCreatures, visItems, showGuild, labelColors);
     entityLabels->SaveToFile();
+    entityLabels->RepaintAllLabels();
     dirty = false;
     return true;
 }

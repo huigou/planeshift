@@ -98,7 +98,7 @@
                 <nodewidget>
                     <widget factory="pawsTextBox" name="DefaultColorLabel">
                         <frame x="0" y="0" width="250" height="15" border="no" />
-                        <text string="Default"/>
+                        <text string="Items"/>
                     </widget>
                     <widget factory="pawsButton" name="DefDefColorBtn" id="10" style="Scaling Button">
                         <frame x="240" y="0" width="60" height="20"/>
