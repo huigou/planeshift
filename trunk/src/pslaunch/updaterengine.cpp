@@ -1311,16 +1311,13 @@ bool UpdaterEngine::SwitchMirror()
     downloader->SetProxy(config->GetProxy().host.GetData(), config->GetProxy().port);
 
     // Download new xml file.
-    if(!downloader->DownloadFile(config->GetNewMirrorAddress(), xmlPath, true, true, 3, true))
+    csString xmlAddress;
+    xmlAddress.Format("%s/updaterinfo.xml", config->GetNewMirrorAddress());
+    if(!downloader->DownloadFile(xmlAddress, xmlPath, true, true, 3, true))
     {
-        csString xmlAddress;
-        xmlAddress.Format("%s/updaterinfo.xml", config->GetNewMirrorAddress());
-        if(!downloader->DownloadFile(xmlAddress, xmlPath, true, true, 3, true))
-        {
-            printf("Failed to download updaterinfo from new mirror.\n");
-            fileUtil->MoveFile(xmlBakPath, xmlPath, true, false, true);
-            return false;
-        }
+        printf("Failed to download updaterinfo from new mirror.\n");
+        fileUtil->MoveFile(xmlBakPath, xmlPath, true, false, true);
+        return false;
     }
 
     fileUtil->RemoveFile(xmlBakPath, true);
