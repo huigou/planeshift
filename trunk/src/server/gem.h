@@ -355,7 +355,7 @@ public:
     bool AlwaysWatching() { return alwaysWatching; }
     //@}
 
-    float RangeTo(gemObject *obj, bool ignoreY = false, bool ignoreInstance = false);
+    virtual float RangeTo(gemObject *obj, bool ignoreY = false, bool ignoreInstance = false);
 
     virtual bool IsUpdateReq (csVector3 const &pos,csVector3 const &oldPos);
 
@@ -542,6 +542,8 @@ public:
 
     virtual bool GetCanTransform();
     virtual bool GetVisibility();
+
+    virtual void SendBehaviorMessage(const csString & str, gemObject *obj);
 };
 
 //-----------------------------------------------------------------------------
@@ -637,6 +639,8 @@ public:
 
     virtual bool GetVisibility() { return visible; };
     virtual void SetVisibility(bool vis) { visible = vis; };
+
+    virtual float RangeTo(gemObject *obj, bool ignoreY = false, bool ignoreInstance = false);
 };
 
 //-----------------------------------------------------------------------------
@@ -1150,6 +1154,8 @@ public:
      * @return A boolean indicating if this gemNPC must have killsteal protection.
      */
 	virtual bool HasKillStealProtection() { return !GetCharacterData()->IsPet(); }
+
+    virtual void SendGroupStats();
 };
 
 //-----------------------------------------------------------------------------
