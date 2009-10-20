@@ -772,7 +772,7 @@ bool EntityManager::LoadMap (const char* mapname)
     return gameWorld->NewRegion(mapname, false);
 }
 
-gemObject *EntityManager::MoveItemToWorld(psItem       *chrItem,
+gemItem *EntityManager::MoveItemToWorld(psItem       *chrItem,
                                           InstanceID   instance,
                                           psSectorInfo *sectorinfo,
                                           float         loc_x,
@@ -785,7 +785,7 @@ gemObject *EntityManager::MoveItemToWorld(psItem       *chrItem,
     chrItem->SetLocationInWorld(instance,sectorinfo,loc_x,loc_y,loc_z,loc_yrot);
     chrItem->UpdateInventoryStatus(NULL,0,PSCHARACTER_SLOT_NONE);
 
-    gemObject *obj = CreateItem(chrItem,true);
+    gemItem *obj = CreateItem(chrItem,true);
     if (!obj)
     {
         return NULL;
@@ -795,7 +795,7 @@ gemObject *EntityManager::MoveItemToWorld(psItem       *chrItem,
 }
 
 
-gemObject *EntityManager::CreateItem( psItem *& iteminstance, bool transient )
+gemItem* EntityManager::CreateItem(psItem *& iteminstance, bool transient)
 {
     psSectorInfo *sectorinfo;
     csVector3 newpos;
