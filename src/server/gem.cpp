@@ -562,18 +562,6 @@ csString GetDefaultBehavior(const csString & dfltBehaviors, int behaviorNum)
         return "";
 }
 
-gemObject::gemObject(const char *name) : factname("")
-{
-    this->valid    = true;
-    this->name     = name;
-    pcmesh=NULL;
-    worldInstance=0;
-    prox_distance_desired=DEF_PROX_DIST;
-    prox_distance_current=DEF_PROX_DIST;
-    eid = 0;
-    alwaysWatching = false;
-}
-
 gemObject::gemObject(const char* name,
                      const char* factname,
                      InstanceID myInstance,
@@ -1073,11 +1061,6 @@ void gemObject::Dump()
 //--------------------------------------------------------------------------------------
 // gemActiveObject
 //--------------------------------------------------------------------------------------
-
-gemActiveObject::gemActiveObject( const char* name )
-                                : gemObject( name )
-{
-}
 
 gemActiveObject::gemActiveObject( const char* name,
                                      const char* factname,

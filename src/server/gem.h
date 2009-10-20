@@ -280,12 +280,6 @@ class gemObject : public iDeleteNotificationObject, public CS::Utility::WeakRefe
 {
 
 public:
-    gemObject(const char* name, const char* factname,InstanceID myinstance,iSector* room,
-        const csVector3& pos,float rotangle,int clientnum);
-
-    /// This ctor is only for use in making keys for the BinaryTree
-    gemObject(const char *name);
-
     virtual ~gemObject();
 
     EID GetEID() { return eid; }
@@ -418,6 +412,9 @@ public:
     //@}
 
 protected:
+    gemObject(const char* name, const char* factname, InstanceID myinstance, iSector* room,
+              const csVector3& pos, float rotangle, int clientnum);
+
     bool valid;                                 ///< Is object fully loaded
 //  csRef<gemObjectSafe> self_reference;        ///< Placeholder for ref 1 of saferef
 
@@ -450,7 +447,6 @@ protected:
 class gemActiveObject : public gemObject
 {
 public:
-    gemActiveObject( const char *name );
     gemActiveObject( const char* name,
                     const char* factname,
                     InstanceID myInstance,
