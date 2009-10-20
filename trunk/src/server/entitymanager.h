@@ -45,7 +45,7 @@ class psWorld;
 class psItem;
 class GEMSupervisor;
 class UserManager;
-class gemObject;
+class gemItem;
 class gemNPC;
 class gemActor;
 class psActionLocation;
@@ -110,16 +110,16 @@ public:
 
     bool CreateActionLocation(psActionLocation *instance, bool transient);
 
-    gemObject *CreateItem(psItem *& iteminstance, bool transient);
-    gemObject *MoveItemToWorld(psItem       *keyItem,
-                               InstanceID  instance,
-                               psSectorInfo *sectorinfo,
-                               float         loc_x,
-                               float         loc_y,
-                               float         loc_z,
-                               float         loc_yrot,
-                               psCharacter  *owner,
-                               bool          transient);
+    gemItem* CreateItem(psItem*& iteminstance, bool transient);
+    gemItem* MoveItemToWorld(psItem*       keyItem,
+                             InstanceID  instance,
+                             psSectorInfo* sectorinfo,
+                             float         loc_x,
+                             float         loc_y,
+                             float         loc_z,
+                             float         loc_yrot,
+                             psCharacter*  owner,
+                             bool          transient);
 
     virtual void HandleMessage(MsgEntry* me,Client *client) {};
 
