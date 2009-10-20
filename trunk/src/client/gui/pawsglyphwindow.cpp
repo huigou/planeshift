@@ -101,7 +101,7 @@ bool pawsGlyphWindow::PostSetup()
     spellName = dynamic_cast <pawsTextBox*> (FindWidget("SpellName"));
     if ( !spellName ) return false;
     
-    spellImage = dynamic_cast <pawsWidget*> (FindWidget("SpellImage"));
+    spellImage = FindWidget("SpellImage");
     if ( !spellImage ) return false;
 
     ways.SetSize(GLYPH_WAYS);

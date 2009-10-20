@@ -62,13 +62,13 @@ bool pawsBankWindow::PostSetup()
     if(!Admin)
         return false;
 
-    moneyWindow = dynamic_cast <pawsWidget*> (FindWidget("MoneyWindow"));
+    moneyWindow = FindWidget("MoneyWindow");
     if(!moneyWindow)
         return false;
-    itemWindow = dynamic_cast <pawsWidget*> (FindWidget("ItemWindow"));
+    itemWindow = FindWidget("ItemWindow");
     if(!itemWindow)
         return false;
-    adminWindow = dynamic_cast <pawsWidget*> (FindWidget("AdminWindow"));
+    adminWindow = FindWidget("AdminWindow");
     if(!adminWindow)
         return false;
 

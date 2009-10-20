@@ -61,7 +61,7 @@ bool pawsItemDescriptionWindow::PostSetup()
     description = dynamic_cast<pawsMultiLineTextBox*> (FindWidget("ItemDescription"));
     if ( !description ) return false;
 
-    pic = dynamic_cast<pawsWidget*> (FindWidget("ItemImage"));
+    pic = FindWidget("ItemImage");
     if ( !pic ) return false;
 
     return true;
