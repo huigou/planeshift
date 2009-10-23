@@ -4022,6 +4022,8 @@ void gemNPC::ShowPopupMenu(Client *client)
             resp = dict->FindResponse(last_response);
             if(resp) //TODO: this happens needs some investigation on the reason
                 menu.Add(resp->menu);
+            else
+                Error4("BUG: resp was null! last_response %d in %s (%c)", last_response, quests[i]->GetQuest()->GetName(), quests[i]->status);
         }
         else
         {
