@@ -116,13 +116,13 @@ public:
       * @param traits The XML formated string that has a list of the traits
       *               to apply.
       */    
-    void ApplyTraits(csString& traits);
+    void ApplyTraits(const csString& traits);
     
     /** Apply a set of equipment based on a XML string.
       * @param traits The XML formated string that has a list of the equipment
       *               to apply.
       */    
-    void ApplyEquipment(csString& equipment);
+    void ApplyEquipment(const csString& equipment);
 
     /** Handle the visual aspect of mounting, by attaching the rider's mesh
       * on the back of the mount

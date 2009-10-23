@@ -452,7 +452,7 @@ void psCharAppearance::ApplyRider(csRef<iMeshWrapper> mesh)
     socket->SetTransform( csTransform(csZRotMatrix3(rot_z)*csYRotMatrix3(rot_y)*csXRotMatrix3(rot_x), csVector3(trans_x,trans_y,trans_z)) );
 }
 
-void psCharAppearance::ApplyEquipment(csString& equipment)
+void psCharAppearance::ApplyEquipment(const csString& equipment)
 {
     if ( equipment.Length() == 0 )
     {
@@ -896,7 +896,7 @@ bool psCharAppearance::CheckLoadStatus()
     }
 }
 
-void psCharAppearance::ApplyTraits(csString& traitString)
+void psCharAppearance::ApplyTraits(const csString& traitString)
 {
     if ( traitString.Length() == 0 )
     {

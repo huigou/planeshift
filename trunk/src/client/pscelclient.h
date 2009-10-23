@@ -341,7 +341,7 @@ public:
 	void Rotate(float xRot, float yRot, float zRot);
 
     /** Set position of entity */
-    virtual bool SetPosition(const csVector3 & pos, float rot, iSector * sector);
+    virtual void SetPosition(const csVector3& pos, float rot, iSector* sector);
 
     /** Get position of entity */
     virtual csVector3 GetPosition();
@@ -467,7 +467,7 @@ public:
       */
     const csVector3 GetVelocity () const;
 
-    virtual bool SetPosition(const csVector3 & pos, float rot, iSector * sector);
+    virtual void SetPosition(const csVector3& pos, float rot, iSector* sector);
 
     void SetAlive( bool aliveFlag, bool newactor );
     virtual bool IsAlive() { return alive; }
@@ -568,7 +568,7 @@ protected:
     bool InitLinMove(const csVector3& pos,float angle, const char* sector,
                      csVector3 top, csVector3 bottom, csVector3 offset);
 
-    bool InitCharData(const char* textures, const char* equipment);
+    void InitCharData(const char* textures, const char* equipment);
 
     bool alive;
 
