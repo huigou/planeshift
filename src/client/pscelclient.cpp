@@ -1064,7 +1064,7 @@ int GEMClientObject::GetMasqueradeType(void)
     return type;
 }
 
-bool GEMClientObject::SetPosition(const csVector3 & pos, float rot, iSector * sector)
+void GEMClientObject::SetPosition(const csVector3 & pos, float rot, iSector * sector)
 {
     if(pcmesh.IsValid())
     {
@@ -1093,9 +1093,6 @@ bool GEMClientObject::SetPosition(const csVector3 & pos, float rot, iSector * se
             position->SetValue(pcmesh->GetMovable()->GetTransform());
         }
     }
-
-    return true;
-
 }
 
 void GEMClientObject::Rotate(float xRot, float yRot, float zRot)
@@ -1628,25 +1625,19 @@ void GEMClientActor::StopMoving(bool worldVel)
 
 }
 
-bool GEMClientActor::SetPosition(const csVector3 & pos, float rot, iSector * sector)
+void GEMClientActor::SetPosition(const csVector3 & pos, float rot, iSector * sector)
 {
     if (linmove)
         linmove->SetPosition(pos, rot, sector);
-    return true;
 }
 
-bool GEMClientActor::InitCharData( const char* traits, const char* equipment )
+void GEMClientActor::InitCharData(const char* traits, const char* equipment)
 {
-
     this->traits = traits;
     this->equipment = equipment;
 
-    csString trt(traits);
-    csString equip(equipment);
-
-    charApp->ApplyTraits(trt);
-    charApp->ApplyEquipment(equip);
-    return true;
+    charApp->ApplyTraits(this->traits);
+    charApp->ApplyEquipment(this->equipment);
 }
 
 psLinearMovement * GEMClientActor::GetMovement()
