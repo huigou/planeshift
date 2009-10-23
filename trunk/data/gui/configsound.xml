@@ -35,7 +35,7 @@
         <text string="Master Volume"/>
     </widget>
 
-    <widget name="generalVol" factory="pawsScrollBar" direction="horizontal" >
+    <widget name="generalVol" factory="pawsScrollBar" direction="horizontal" style="Standard Scrollbar Horizontal">
         <frame x="150" y="140" width="100" height="15" border="no" />
     </widget>
 
@@ -44,7 +44,7 @@
         <text string="Music Volume"/>
     </widget>
 
-    <widget name="musicVol" factory="pawsScrollBar" direction="horizontal" >
+    <widget name="musicVol" factory="pawsScrollBar" direction="horizontal" style="Standard Scrollbar Horizontal" >
         <frame x="150" y="170" width="100" height="15" border="no" />
     </widget>
 
@@ -53,7 +53,7 @@
         <text string="Ambient Volume"/>
     </widget>
 
-    <widget name="ambientVol" factory="pawsScrollBar" direction="horizontal" >
+    <widget name="ambientVol" factory="pawsScrollBar" direction="horizontal" style="Standard Scrollbar Horizontal">
         <frame x="150" y="195" width="100" height="15" border="no" />
     </widget>
 
@@ -71,7 +71,7 @@
         <text string="Interface Volume"/>
     </widget>
 
-    <widget name="guiVol" factory="pawsScrollBar" direction="horizontal" >
+    <widget name="guiVol" factory="pawsScrollBar" direction="horizontal" style="Standard Scrollbar Horizontal">
       <frame x="150" y="245" width="100" height="15" border="no" />
     </widget>
 
@@ -80,7 +80,7 @@
       <text string="Voices Volume"/>
     </widget>
 
-    <widget name="voicesVol" factory="pawsScrollBar" direction="horizontal" >
+    <widget name="voicesVol" factory="pawsScrollBar" direction="horizontal" style="Standard Scrollbar Horizontal">
       <frame x="150" y="270" width="100" height="15" border="no" />
     </widget>
 
