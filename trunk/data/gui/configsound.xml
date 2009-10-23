@@ -36,7 +36,7 @@
     </widget>
 
     <widget name="generalVol" factory="pawsScrollBar" direction="horizontal" style="Standard Scrollbar Horizontal">
-        <frame x="150" y="140" width="100" height="15" border="no" />
+        <frame x="150" y="140" width="100" height="20" border="no" />
     </widget>
 
     <widget name="" factory="pawsTextBox">
@@ -45,7 +45,7 @@
     </widget>
 
     <widget name="musicVol" factory="pawsScrollBar" direction="horizontal" style="Standard Scrollbar Horizontal" >
-        <frame x="150" y="170" width="100" height="15" border="no" />
+        <frame x="150" y="170" width="100" height="20" border="no" />
     </widget>
 
     <widget name="" factory="pawsTextBox">
@@ -62,8 +62,8 @@
         <text string="Actions Volume"/>
     </widget>
 
-    <widget name="actionsVol" factory="pawsScrollBar" direction="horizontal" >
-        <frame x="150" y="220" width="100" height="15" border="no" />
+    <widget name="actionsVol" factory="pawsScrollBar" direction="horizontal" style="Standard Scrollbar Horizontal">
+        <frame x="150" y="220" width="100" height="20" border="no" />
     </widget>
 
     <widget name="" factory="pawsTextBox">
@@ -72,7 +72,7 @@
     </widget>
 
     <widget name="guiVol" factory="pawsScrollBar" direction="horizontal" style="Standard Scrollbar Horizontal">
-      <frame x="150" y="245" width="100" height="15" border="no" />
+      <frame x="150" y="245" width="100" height="20" border="no" />
     </widget>
 
     <widget name="" factory="pawsTextBox">
@@ -81,7 +81,7 @@
     </widget>
 
     <widget name="voicesVol" factory="pawsScrollBar" direction="horizontal" style="Standard Scrollbar Horizontal">
-      <frame x="150" y="270" width="100" height="15" border="no" />
+      <frame x="150" y="270" width="100" height="20" border="no" />
     </widget>
 
     <widget name="combatMusic" factory="pawsCheckBox">
