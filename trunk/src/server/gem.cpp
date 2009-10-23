@@ -4020,7 +4020,8 @@ void gemNPC::ShowPopupMenu(Client *client)
         if (last_response != -1) // within a quest step
         {
             resp = dict->FindResponse(last_response);
-            menu.Add(resp->menu);
+            if(resp) //TODO: this happens needs some investigation on the reason
+                menu.Add(resp->menu);
         }
         else
         {
