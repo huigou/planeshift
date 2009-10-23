@@ -1213,8 +1213,8 @@ bool GEMClientObject::InitMesh()
     }
     factName.ReplaceAll("$H", HelmReplacement);
     factName.ReplaceAll("$B", BracerReplacement);
-    factName.ReplaceAll("$H", BeltReplacement);
-    factName.ReplaceAll("$B", CloakReplacement);
+    factName.ReplaceAll("$E", BeltReplacement);
+    factName.ReplaceAll("$C", CloakReplacement);
 
     if(matName.Length() && matName.Find("$F") != (size_t) -1)
         matName.Empty();
