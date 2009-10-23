@@ -234,7 +234,7 @@ bool pawsInventoryWindow::SetupDoll()
             spstate->SetVelocity(0.0,&psengine->GetRandomGen());
         }
 
-        charApp->Clone(actor->charApp);
+        charApp->Clone(actor->CharAppearance());
         charApp->SetMesh(widget->GetObject());
 
         charApp->ApplyTraits(actor->traits);

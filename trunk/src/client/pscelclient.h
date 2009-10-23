@@ -386,8 +386,6 @@ public:
       */
     int Flags() { return flags; }
 
-     psCharAppearance* charApp;
-
      /** Get the mesh that this object has.
       * @return The iMeshWrapper or 0 if no mesh.
       */
@@ -493,6 +491,8 @@ public:
     void SetDRData(psDRMessage& drmsg);
     void StopMoving(bool worldVel = false);
 
+    psCharAppearance* CharAppearance() { return charApp; }
+
     psLinearMovement * linmove;
 
     /// The Vital of the player with regards to his health/mana/fatigue/etc.
@@ -554,6 +554,7 @@ public:
     virtual void Update();
 
 protected:
+    psCharAppearance* charApp;
 
     unsigned int chatBubbleID;
     unsigned int groupID;

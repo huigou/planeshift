@@ -294,8 +294,8 @@ void psClientCharManager::ChangeTrait( MsgEntry* me )
     psTraitChangeMessage mesg(me);
     EID objectID = mesg.target;
 
-    GEMClientObject* object = (GEMClientObject *)psengine->GetCelClient()->FindObject(objectID);
-    if (!object)
+    GEMClientActor *actor = dynamic_cast<GEMClientActor*>(psengine->GetCelClient()->FindObject(objectID));
+    if (!actor)
     {
         Error2("Got trait change for %s, but couldn't find it!", ShowID(objectID));
         return;
@@ -303,7 +303,7 @@ void psClientCharManager::ChangeTrait( MsgEntry* me )
 
     // Update main object
     //psengine->BuildAppearance( object->pcmesh->GetMesh(), mesg.string );
-    object->charApp->ApplyTraits(mesg.string);
+    actor->CharAppearance()->ApplyTraits(mesg.string);
 
     // Update any doll views registered for changes
     csArray<iPAWSSubscriber*> dolls = PawsManager::GetSingleton().ListSubscribers("sigActorUpdate");
@@ -321,7 +321,7 @@ void psClientCharManager::ChangeTrait( MsgEntry* me )
         {
             iMeshWrapper* dollObject = doll->GetObject();
             psCharAppearance p(psengine->GetObjectRegistry());
-            p.Clone(object->charApp);
+            p.Clone(actor->CharAppearance());
             p.SetMesh(dollObject);
             p.ApplyTraits(mesg.string);
 
@@ -443,7 +443,7 @@ void psClientCharManager::HandleEquipment(MsgEntry* me)
     if (equip.type == psEquipmentMessage::EQUIP)
     {
         // Update the actor
-        object->charApp->Equip(slotname,equip.mesh,equip.part,equip.partMesh,equip.texture);
+        object->CharAppearance()->Equip(slotname,equip.mesh,equip.part,equip.partMesh,equip.texture);
 
         // Update any doll views registered for changes
         csArray<iPAWSSubscriber*> dolls = PawsManager::GetSingleton().ListSubscribers("sigActorUpdate");
@@ -464,7 +464,7 @@ void psClientCharManager::HandleEquipment(MsgEntry* me)
                     continue;
                 }
                 psCharAppearance* p = doll->GetCharApp();
-                p->Clone(object->charApp);
+                p->Clone(object->CharAppearance());
                 p->SetMesh(dollObject);
                 p->Equip(slotname,equip.mesh,equip.part,equip.partMesh,equip.texture);
             }
@@ -494,12 +494,12 @@ void psClientCharManager::HandleEquipment(MsgEntry* me)
 
                 psCharAppearance* p = doll->GetCharApp();
                 p->SetMesh(dollObject);
-                p->Clone(object->charApp);
+                p->Clone(object->CharAppearance());
                 p->Dequip(slotname,equip.mesh,equip.part,equip.partMesh,equip.texture);
             }
         }
 
-        object->charApp->Dequip(slotname,equip.mesh,equip.part,equip.partMesh,equip.texture);
+        object->CharAppearance()->Dequip(slotname,equip.mesh,equip.part,equip.partMesh,equip.texture);
     }
 }
 

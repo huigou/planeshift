@@ -1035,7 +1035,6 @@ GEMClientObject::GEMClientObject()
     shadow = 0;
     hasShadow = true;
     flags = 0;
-    charApp = new psCharAppearance(psengine->GetObjectRegistry());
 }
 
 GEMClientObject::GEMClientObject(psCelClient* cel, EID id) : eid(id)
@@ -1048,7 +1047,6 @@ GEMClientObject::GEMClientObject(psCelClient* cel, EID id) : eid(id)
     entitylabel = NULL;
     shadow = 0;
     hasShadow = true;
-    charApp = new psCharAppearance(psengine->GetObjectRegistry());
 }
 
 GEMClientObject::~GEMClientObject()
@@ -1059,8 +1057,6 @@ GEMClientObject::~GEMClientObject()
         cel->UnattachObject(pcmesh->QueryObject(), this);
         psengine->GetEngine()->RemoveObject (pcmesh);
     }
-
-    delete charApp;
 }
 
 int GEMClientObject::GetMasqueradeType(void)
@@ -1299,6 +1295,8 @@ GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
     post_load->ang_vel = mesg.ang_vel;
     post_load->texParts = mesg.texParts;
 
+    charApp = new psCharAppearance(psengine->GetObjectRegistry());
+
     if (helmGroup.Length() == 0)
         helmGroup = factName;
 
@@ -1328,6 +1326,7 @@ GEMClientActor::~GEMClientActor()
 {
     delete vitalManager;
     delete linmove;
+    delete charApp;
 }
 
 void GEMClientActor::PostLoad(bool nullmesh)
