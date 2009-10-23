@@ -1211,12 +1211,10 @@ bool GEMClientObject::InitMesh()
         BeltReplacement = cel->GetMainPlayer()->BeltGroup;
         CloakReplacement = cel->GetMainPlayer()->CloakGroup;
     }
-    psString factoryName(factName);
-    factoryName.ReplaceAllSubString("$H", HelmReplacement);
-    factoryName.ReplaceAllSubString("$B", BracerReplacement);
-    factoryName.ReplaceAllSubString("$H", BeltReplacement);
-    factoryName.ReplaceAllSubString("$B", CloakReplacement);
-    factName = factoryName;
+    factName.ReplaceAll("$H", HelmReplacement);
+    factName.ReplaceAll("$B", BracerReplacement);
+    factName.ReplaceAll("$H", BeltReplacement);
+    factName.ReplaceAll("$B", CloakReplacement);
 
     if(matName.Length() && matName.Find("$F") != (size_t) -1)
         matName.Empty();
