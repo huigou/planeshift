@@ -14,17 +14,22 @@
 	   <bgimage resource="MerchantTrade" alpha="0" />
 	</widget>
     
+	<widget name="AllLabel" factory="pawsTextBox">
+        	<frame x="560" y="100" width="48" height="20" />
+	        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="246" g="223" b="166" size="8" scalefont="no" />
+        	<text string="ALL" horizAdjust="CENTRE" />
+	</widget>
+    
 	 <widget name="TransactSingle" factory="pawsButton" id="120" tooltip="Exchange one item">
 	   <frame x="560" y="114" width="48" height="48" border="no" />
 	   <bgimage resource="MerchantTrade" alpha="0" />
 	</widget>
-
-	<widget name="AllLabel" factory="pawsTextBox">
-        	<frame x="560" y="110" width="48" height="20" />
+    
+	<widget name="SingleLabel" factory="pawsTextBox">
+        	<frame x="560" y="150" width="48" height="20" />
 	        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="246" g="223" b="166" size="8" scalefont="no" />
-        	<text string="ALL" horizAdjust="CENTRE" />
+        	<text string="SINGLE" horizAdjust="CENTRE" />
 	</widget>
-
 
 	<widget name="View" factory="pawsButton" id="150" tooltip="View item">
 		<frame x="560" y="338" width="48" height="48" border="no" />
