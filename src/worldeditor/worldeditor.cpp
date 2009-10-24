@@ -163,7 +163,7 @@ bool WorldEditor::Init()
         return false;
     }
 
-    loader->Setup(0x10, 1000);
+    loader->SetLoadRange(1000);
     sceneManipulator = scfQueryInterface<iSceneManipulate>(loader);
 
     if(!csInitializer::OpenApplication(objectReg))
