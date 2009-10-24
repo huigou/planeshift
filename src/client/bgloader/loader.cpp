@@ -778,8 +778,8 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
 
                             // Validation.
                             csString msg;
-                            msg.Format("Invalid factory reference '%s' in meshobj '%s'", node2->GetContentsValue(),
-                            node2->GetParent()->GetParent()->GetAttributeValue("name"));
+                            msg.Format("Invalid factory reference '%s' in meshobj '%s' in sector '%s'", node2->GetContentsValue(),
+                            node2->GetParent()->GetParent()->GetAttributeValue("name"), s->name.GetData());
                             CS_ASSERT_MSG(msg.GetData(), meshfact.IsValid());
                         }
 
