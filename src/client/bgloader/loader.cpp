@@ -738,7 +738,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
 
                                 // Validation.
                                 csString msg;
-                                msg.Format("Invalid material reference '%s' in meshobj submesh", node3->GetNode("material")->GetContentsValue());
+                                msg.Format("Invalid material reference '%s' in meshobj '%s' submesh in sector '%s'", node3->GetNode("material")->GetContentsValue(), m->name.GetData(), s->name.GetData());
                                 CS_ASSERT_MSG(msg.GetData(), material.IsValid());
                             }
 
@@ -829,7 +829,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
 
                             // Validation.
                             csString msg;
-                            msg.Format("Invalid material reference '%s' in terrain object", node2->GetContentsValue());
+                            msg.Format("Invalid material reference '%s' in terrain '%s' object in sector '%s'", node2->GetContentsValue(), m->name.GetData(), s->name.GetData());
                             CS_ASSERT_MSG(msg.GetData(), material.IsValid());
                         }
 
