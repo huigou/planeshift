@@ -1152,7 +1152,11 @@ bool pawsMultiLineTextBox::Setup( iDocumentNode* node )
     return true;
 }
 
-         
+void pawsMultiLineTextBox::Resize()
+{
+    pawsWidget::Resize();
+    SetText( text );
+}
 
 void pawsMultiLineTextBox::OrganizeText( const char* newText )
 {       

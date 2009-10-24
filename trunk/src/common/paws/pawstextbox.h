@@ -318,6 +318,7 @@ public:
       
     void SetText( const char* text );
     const char* GetText(){return text;}
+    void Resize();
     bool OnScroll( int direction, pawsScrollBar* widget );
     virtual bool OnMouseDown( int button, int modifiers, int x, int y );
     
