@@ -415,6 +415,19 @@ void pawsListBox::AddRow( pawsListBoxRow* row )
     row->SetBackground("Standard Background");
 }
 
+void pawsListBox::Resize()
+{
+    pawsWidget::Resize();
+    if ( scrollBar )
+    {
+        scrollBar->Resize(); //TODO: why i need to call this manually?
+        if(autoUpdateScroll)
+            SetScrollBarMaxValue();
+
+        scrollBar->SetCurrentValue( (float)topRow );
+    }
+    CalculateDrawPositions();
+}
 
 pawsListBoxRow* pawsListBox::NewRow( size_t position )
 {
