@@ -471,7 +471,7 @@
             </widget>
 
             <widget name="GuildWebPage" factory="pawsTextBox">
-                <frame x="60" y="290" width="340" height="20"/>
+                <frame x="65" y="290" width="340" height="20"/>
             </widget>
 
             <widget name="GuildWebPageButton" factory="pawsButton" id="1004" style="Standard Button">
