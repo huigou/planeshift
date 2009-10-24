@@ -1301,9 +1301,11 @@ void pawsMultiLineTextBox::SetText( const char* newText )
             scrollBar = new pawsScrollBar();
             scrollBar->SetParent( this );
             scrollBar->SetRelativeFrame( defaultFrame.Width() - 40, 6, 24, defaultFrame.Height() - 12 ); 
+            scrollBar->SetAttachFlags(ATTACH_TOP | ATTACH_BOTTOM | ATTACH_RIGHT);
             scrollBar->PostSetup();
             scrollBar->SetTickValue( 1.0 );
-            AddChild( scrollBar );            
+            AddChild( scrollBar );
+            pawsWidget::Resize();
         }
         
         scrollBar->Show();
