@@ -59,15 +59,16 @@ protected:
                   * minFPSscroll,
                   * maxFPSscroll,
                   * capFPSscroll;
-    pawsTextBox * distValue,
-                * minDistValue,
-                * minFPSvalue,
-                * maxFPSvalue,
-                * capFPSvalue;
+    pawsEditTextBox * distvalue,
+                    * minDistvalue,
+                    * minFPSvalue,
+                    * maxFPSvalue,
+                    * capFPSvalue;
 
     int GetValue(const csString & name);
     void ConstraintScrollBars();
     void SetScrollValue(const csString & name, int val);
+    bool OnChange(pawsWidget* widget);
     void SetModeVisibility();
 };
 
