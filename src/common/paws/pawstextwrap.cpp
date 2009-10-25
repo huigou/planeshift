@@ -220,6 +220,7 @@ bool pawsMultilineEditTextBox::OnKeyDown( int code, int key, int modifiers )
 void pawsMultilineEditTextBox::OnResize()
 {
     canDrawLines = (screenFrame.Height() / lineHeight); 
+    LayoutText();
     UpdateScrollBar();
 }
 
