@@ -7063,7 +7063,7 @@ void AdminManager::Rain(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data
     }
 
     // Stop raining
-    if (data.interval == -3 || (data.interval == 0 && data.rainDrops == 0 && data.fade == 0 ))
+    if (data.interval == -3 || (data.interval == 0 && data.rainDrops == 0))
     {
         if( !sectorinfo->is_raining) //If it is not raining already then you don't stop anything.
         {
@@ -7077,7 +7077,7 @@ void AdminManager::Rain(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data
             // queue the event
             psserver->GetWeatherManager()->QueueNextEvent(0, psWeatherMessage::RAIN,
                                                       0, 0,
-                                                      0, data.sector, sectorinfo);
+                                                      data.fade, data.sector, sectorinfo);
          }
     }
     else
@@ -7113,7 +7113,7 @@ void AdminManager::Snow(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data
     }
 
     // Stop snowing
-    if (data.interval == -3 || (data.interval == 0 && data.fade == 0 && data.rainDrops == 0 ))
+    if (data.interval == -3 || (data.interval == 0 && data.fade == 0))
     {
         if( !sectorinfo->is_snowing) //If it is not snowing already then you don't stop anything.
         {
@@ -7127,7 +7127,7 @@ void AdminManager::Snow(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data
             // queue the event
             psserver->GetWeatherManager()->QueueNextEvent(0, psWeatherMessage::SNOW,
                                                       0, 0,
-                                                      0, data.sector, sectorinfo);
+                                                      data.fade, data.sector, sectorinfo);
          }
     }
     else
