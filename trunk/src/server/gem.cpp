@@ -737,6 +737,10 @@ bool gemObject::IsNear(gemObject *obj, float radius)
 
 float gemObject::RangeTo(gemObject* obj, bool ignoreY, bool ignoreInstance)
 {
+    // Ugly hack : if an AL got (0,0,0) as a position, bypass the check
+    if ((GetALPtr() && GetPosition() == csVector3(0,0,0)) || (obj->GetALPtr() && obj->GetPosition() == csVector3(0,0,0)))
+        return 0.0f;
+
     return proxlist->RangeTo(obj, ignoreY, ignoreInstance);
 }
 
@@ -1816,13 +1820,6 @@ bool gemActionLocation::SeesObject(gemObject * object, float range)
     {
         return false;
     }
-}
-float gemActionLocation::RangeTo(gemObject *obj, bool ignoreY, bool ignoreInstance)
-{
-    // Ugly hack : if an AL got (0,0,0) as a position, bypass the check
-    if (GetPosition() == csVector3(0,0,0) || (obj->GetALPtr() && obj->GetPosition() == csVector3(0,0,0)))
-        return 0.0f;
-    return gemObject::RangeTo(obj, ignoreY, ignoreInstance);
 }
 
 void gemActionLocation::Send( int clientnum, bool , bool to_superclients, psPersistAllEntities *allEntities )
