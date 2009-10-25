@@ -92,17 +92,38 @@ void pawsConfigDetails::ConstraintScrollBars()
         maxFPSscroll->SetCurrentValue(minFPSscroll->GetCurrentValue());
 }
 
+bool pawsConfigDetails::OnChange(pawsWidget* widget)
+{
+    pawsScrollBar* scrollBarWidget;
+    pawsEditTextBox* textBoxWidget = dynamic_cast<pawsEditTextBox*> (widget);
+    if(!textBoxWidget)
+        return false;
+    csString textName = textBoxWidget->GetName();
+    csString scrollName;
+
+    scrollName = textName.Slice(0, textName.Length()-5);
+    scrollName += "Scroll";
+    
+    scrollBarWidget = dynamic_cast<pawsScrollBar*> (FindWidget(scrollName));
+    if (scrollBarWidget)
+    {
+        //NOTE: the check for outofbounds is done by the scroolbar widget so no need to precheck here
+        scrollBarWidget->SetCurrentValue(atoi(textBoxWidget->GetText()));
+    }
+    return true;
+}
+
 bool pawsConfigDetails::OnScroll( int scrollDirection, pawsScrollBar* widget )
 {
     csString valueName, scrollName;
-    pawsTextBox * value;
+    pawsEditTextBox * value;
 
     ConstraintScrollBars();
 
     scrollName = widget->GetName();
     valueName = scrollName.Slice(0, scrollName.Length()-6);
     valueName += "Value";
-    value = dynamic_cast<pawsTextBox*> (FindWidget(valueName));
+    value = dynamic_cast<pawsEditTextBox*> (FindWidget(valueName));
     if (value)
     {
         csString num;
@@ -140,7 +161,7 @@ bool pawsConfigDetails::OnButtonPressed( int button, int keyModifier, pawsWidget
 
 void pawsConfigDetails::SetScrollValue(const csString & name, int val)
 {
-    pawsTextBox* value = dynamic_cast<pawsTextBox*> (FindWidget(name+"Value"));
+    pawsEditTextBox* value = dynamic_cast<pawsEditTextBox*> (FindWidget(name+"Value"));
     if (!value) return;
     pawsScrollBar* scroll = dynamic_cast<pawsScrollBar*> (FindWidget(name+"Scroll"));
     if (!scroll) return;
@@ -171,7 +192,7 @@ bool pawsConfigDetails::LoadConfig()
 
 int pawsConfigDetails::GetValue(const csString & name)
 {
-    pawsTextBox* value = dynamic_cast<pawsTextBox*> (FindWidget(name));
+    pawsEditTextBox* value = dynamic_cast<pawsEditTextBox*> (FindWidget(name));
     if (!value) return 0;
 
     if (value->GetText() == NULL)
