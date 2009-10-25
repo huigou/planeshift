@@ -192,7 +192,7 @@ void ServerCharManager::ViewItem(Client* client, int containerID, INVENTORY_SLOT
         }
         else
         {
-            gemObject* gemAction = action->GetGemObject();
+            gemActionLocation* gemAction = action->GetGemObject();
             // Check range ignoring Y co-ordinate
             csWeakRef<gemObject> gem = client->GetActor();
             if (gem.IsValid() && gem->RangeTo(gemAction, true, true) > RANGE_TO_SELECT)
