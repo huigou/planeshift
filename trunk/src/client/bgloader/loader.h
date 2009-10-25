@@ -211,6 +211,7 @@ private:
     class MeshObj;
     class Portal;
     class Light;
+    class Sequence;
     class Zone;
 
     // The various gfx feature options we have.
@@ -344,6 +345,7 @@ private:
         csRefArray<Portal> portals;
         csRefArray<Portal> activePortals;
         csRefArray<Light> lights;
+        csRefArray<Sequence> sequences;
         csArray<WaterArea*> waterareas;
     };
 
@@ -412,6 +414,7 @@ private:
         csRefArray<MeshFact> meshfacts;
         csArray<bool> mftchecked;
         Sector* sector;
+        csRefArray<Sequence> sequences;
     };
 
     class Portal : public CS::Utility::FastRefCount<Portal>
@@ -476,6 +479,36 @@ private:
         csLightAttenuationMode attenuation;
         csLightType type;
         csBox3 bbox;
+        csRefArray<Sequence> sequences;
+    };
+
+    class Trigger : public CS::Utility::FastRefCount<Trigger>
+    {
+    public:
+        Trigger(const char* name, iDocumentNode* data) : name(name), loaded(false),
+            data(data)
+        {
+        }
+
+        csString name;
+        bool loaded;
+        csRef<iDocumentNode> data;
+        csRef<iThreadReturn> status;
+    };
+
+    class Sequence : public CS::Utility::FastRefCount<Sequence>
+    {
+    public:
+        Sequence(const char* name, iDocumentNode* data) : name(name), loaded(false),
+            data(data)
+        {
+        }
+
+        csString name;
+        bool loaded;
+        csRef<iDocumentNode> data;
+        csRefArray<Trigger> triggers;
+        csRef<iThreadReturn> status;
     };
 
     /***********************************************************************/

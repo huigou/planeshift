@@ -171,6 +171,9 @@ protected:
     csString                sound_name;
     csTicks                 sound_when;
 
+    // Lighting variable.
+    csRef<iSharedVariable> lightningreset;
+
     // Weather intepolation stuff
     csTicks                 last_weather_update;
     csTicks                 weather_update_time;

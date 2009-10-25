@@ -191,6 +191,10 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
         // Zone for this file.
         csRef<Zone> zone;
 
+        // Lights and sequences in this file (for sequences and triggers).
+        csHash<Light*, csStringID> lights;
+        csHash<Sequence*, csStringID> sequences;
+
         // Restores any directory changes.
         csVfsDirectoryChanger dirchange(vfs);
 
@@ -1073,6 +1077,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                 {
                     node = nodeItr2->Next();
                     csRef<Light> l = csPtr<Light>(new Light(node->GetAttributeValue("name")));
+                    lights.Put(sStringSet.Request(l->name), l);
 
                     if(node->GetNode("attenuation"))
                     {
@@ -1139,6 +1144,64 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                 startPos->sector = node->GetNode("sector")->GetContentsValue();
                 syntaxService->ParseVector(node->GetNode("position"), startPos->position);
                 startPositions.Push(startPos);
+            }
+
+            node = root->GetNode("sequences");
+            if(node.IsValid())
+            {
+                nodeItr = node->GetNodes("sequence");
+                while(nodeItr->HasNext())
+                {
+                    node = nodeItr->Next();
+                    csRef<Sequence> seq = csPtr<Sequence>(new Sequence(node->GetAttributeValue("name"), node));
+                    sequences.Put(sStringSet.Request(seq->name), seq);
+
+                    bool loaded = false;
+                    csRef<iDocumentNodeIterator> nodes = node->GetNodes("setambient");
+                    if(nodes->HasNext())
+                    {
+                        csRef<iDocumentNode> type = nodes->Next();
+                        csRef<Sector> sec = sectorHash.Get(sStringSet.Request(type->GetAttributeValue("sector")), csRef<Sector>());
+                        sec->sequences.Push(seq);
+                        loaded = true;
+                    }
+
+                    nodes = node->GetNodes("fadelight");
+                    if(nodes->HasNext())
+                    {
+                        csRef<iDocumentNode> type = nodes->Next();
+                        csRef<Light> l = lights.Get(sStringSet.Request(type->GetAttributeValue("light")), csRef<Light>());
+                        l->sequences.Push(seq);
+                        loaded = true;
+                    }
+
+                    nodes = node->GetNodes("rotate");
+                    if(nodes->HasNext())
+                    {
+                        csRef<iDocumentNode> type = nodes->Next();
+                        csRef<MeshObj> l = meshes.Get(meshStringSet.Request(type->GetAttributeValue("mesh")), csRef<MeshObj>());
+                        l->sequences.Push(seq);
+                        loaded = true;
+                    }
+
+                    CS_ASSERT_MSG("Unknown sequence type!", loaded);
+                }
+            }
+
+            node = root->GetNode("triggers");
+            if(node.IsValid())
+            {
+                nodeItr = node->GetNodes("trigger");
+                while(nodeItr->HasNext())
+                {
+                    node = nodeItr->Next();
+                    const char* seqname = node->GetNode("fire")->GetAttributeValue("sequence");
+                    csRef<Sequence> sequence = sequences.Get(sStringSet.Request(seqname), csRef<Sequence>());
+                    CS_ASSERT_MSG("Unknown sequence in trigger!", sequence.IsValid());
+
+                    csRef<Trigger> trigger = csPtr<Trigger>(new Trigger(node->GetAttributeValue("name"), node));
+                    sequence->triggers.Push(trigger);
+                }
             }
         }
 
@@ -1716,8 +1779,18 @@ void BgLoader::LoadSector(const csBox3& loadBox, const csBox3& unloadBox,
                     sector->lights[i]->radius, sector->lights[i]->colour, sector->lights[i]->dynamic);
                 sector->lights[i]->object->SetAttenuationMode(sector->lights[i]->attenuation);
                 sector->lights[i]->object->SetType(sector->lights[i]->type);
-                sector->object->AddLight(sector->lights[i]->object);
+                sector->object->GetLights()->Add(sector->lights[i]->object);
                 ++sector->objectCount;
+
+                // Load all light sequences.
+                for(size_t j=0; j<sector->lights[i]->sequences.GetSize(); ++j)
+                {
+                    tloader->LoadNodeWait(vfs->GetCwd(), sector->lights[i]->sequences[j]->data);
+                    for(size_t k=0; j<sector->lights[i]->sequences[j]->triggers.GetSize(); ++k)
+                    {
+                        tloader->LoadNode(vfs->GetCwd(), sector->lights[i]->sequences[j]->triggers[k]->data);
+                    }
+                }
             }
             else if(sector->lights[i]->OutOfRange(unloadBox))
             {
@@ -1727,7 +1800,13 @@ void BgLoader::LoadSector(const csBox3& loadBox, const csBox3& unloadBox,
             }
         }
 
-        // Check whether this sector is empty and should be unloaed.
+        // Load all sector sequences.
+        for(size_t i=0; i<sector->sequences.GetSize(); i++)
+        {
+            tloader->LoadNode(vfs->GetCwd(), sector->sequences[i]->data);
+        }
+
+        // Check whether this sector is empty and should be unloaded.
         if(sector->objectCount == sector->alwaysLoadedCount && sector->object.IsValid())
         {
             // Unload all 'always loaded' meshes before destroying sector.
@@ -1867,12 +1946,85 @@ bool BgLoader::LoadMesh(MeshObj* mesh)
         }
     }
 
-    if(ready && !mesh->status)
+    if(ready)
     {
-        mesh->status = tloader->LoadNode(mesh->path, mesh->data);
+        if(!mesh->status)
+            mesh->status = tloader->LoadNode(mesh->path, mesh->data);
+
+        ready = mesh->status->IsFinished();
     }
 
-    return (mesh->status && mesh->status->IsFinished());
+    // Load sequences.
+    if(ready)
+    {
+        for(size_t i=0; i<mesh->sequences.GetSize(); ++i)
+        {
+            if(mesh->sequences[i]->loaded)
+                continue;
+
+            if(!mesh->sequences[i]->status)
+            {
+                mesh->sequences[i]->status = tloader->LoadNode(mesh->path, mesh->sequences[i]->data);
+                ready = false;
+            }
+            else
+            {
+                if(ready && mesh->sequences[i]->status->IsFinished())
+                {
+                    if(!mesh->sequences[i]->status->WasSuccessful())
+                    {
+                        csString msg;
+                        msg.Format("Sequence '%s' in mesh '%s' failed to load.\n", mesh->sequences[i]->name.GetData(), mesh->name.GetData());
+                        CS_ASSERT_MSG(msg.GetData(), false);
+                    }
+                    
+                    mesh->sequences[i]->loaded = true;
+                    mesh->sequences[i]->status.Invalidate();
+                }
+                else
+                    ready = false;
+            }
+        }
+    }
+
+    // Load triggers
+    if(ready)
+    {
+        for(size_t i=0; i<mesh->sequences.GetSize(); ++i)
+        {
+            for(size_t j=0; j<mesh->sequences[i]->triggers.GetSize(); ++j)
+            {
+                if(mesh->sequences[i]->triggers[j]->loaded)
+                	continue;
+
+                if(!mesh->sequences[i]->triggers[j]->status)
+                {
+                    mesh->sequences[i]->triggers[j]->status = tloader->LoadNode(mesh->path, mesh->sequences[i]->triggers[j]->data);
+                    ready = false;
+                }
+                else
+                {
+                    if(ready && mesh->sequences[i]->triggers[j]->status->IsFinished())
+                    {
+                        if(!mesh->sequences[i]->triggers[j]->status->WasSuccessful())
+                        {
+                            csString msg;
+                            msg.Format("Trigger '%s' in mesh '%s' failed to load.\n",
+                                mesh->sequences[i]->triggers[j]->name.GetData(), mesh->name.GetData());
+                            CS_ASSERT_MSG(msg.GetData(), false);
+                        }
+
+                        mesh->sequences[i]->triggers[j]->loaded = true;
+                        mesh->sequences[i]->triggers[j]->status.Invalidate();
+                    }
+                    else
+                        ready = false;
+                }
+            }
+        }
+    }
+
+    return ready;
 }
 
 bool BgLoader::LoadMeshFact(MeshFact* meshfact, bool wait)

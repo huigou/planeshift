@@ -130,6 +130,10 @@ ModeHandler::ModeHandler(iSoundManager *sm,
 
     last_weather_update = csGetTicks();
     weather_update_time = 100;
+
+    lightningreset = engine->GetVariableList()->New();
+    lightningreset->SetName("lightning reset");
+    lightningreset->SetColor(csColor(0.0f));
 }
 
 ModeHandler::~ModeHandler()
@@ -928,12 +932,7 @@ void ModeHandler::ProcessLighting(psWeatherMessage::NetWeatherInfo& info)
     iSector *sector = engine->FindSector(info.sector);
     if (sector)
     {
-        csColor bg = sector->GetDynamicAmbientLight();
-        iSharedVariable *var = engine->GetVariableList()->FindByName("lightning reset");
-        if (var)
-        {
-            var->SetColor(bg);
-        }
+        lightningreset->SetColor(sector->GetDynamicAmbientLight());
     }
 
     // Run the lightning sequence.
