@@ -355,7 +355,7 @@ public:
     bool AlwaysWatching() { return alwaysWatching; }
     //@}
 
-    virtual float RangeTo(gemObject *obj, bool ignoreY = false, bool ignoreInstance = false);
+    float RangeTo(gemObject *obj, bool ignoreY = false, bool ignoreInstance = false);
 
     virtual bool IsUpdateReq (csVector3 const &pos,csVector3 const &oldPos);
 
@@ -639,8 +639,6 @@ public:
 
     virtual bool GetVisibility() { return visible; };
     virtual void SetVisibility(bool vis) { visible = vis; };
-
-    virtual float RangeTo(gemObject *obj, bool ignoreY = false, bool ignoreInstance = false);
 };
 
 //-----------------------------------------------------------------------------
