@@ -259,6 +259,8 @@ public:
      *  and the widget will be notified
      */
     bool OnKeyDown(int keyCode, int keyChar, int modifiers);
+    
+    void Resize();
 
     /** Sets the widget that will be notified when a row is selected.
      *  When nothing is set the OnListAction messages will be sent
