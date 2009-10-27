@@ -52,8 +52,9 @@ void CCheck::PrintHelp()
 
     printf("Options:\n");
     printf("-in The vfs path to directory to search in. Defaults to /this/ccheck/\n\n");
-    printf("-check Whether to do a meshfact conflict check.");
-    printf("-process Whether to process art into a optimal format for bgloader.");
+    printf("-check Whether to do a meshfact conflict check.\n\n");
+    printf("-process Whether to process art into a optimal format for bgloader.\n\n");
+    printf("-strip Whether to strip data not needed for collision.\n\n");
     printf("-out The vfs path to the directory to output processed art files in. Defaults to /this/ccheckout/\n\n");
     printf("Usage: ccheck(.exe) -path=/this/path/to/directory/\n");
 }
@@ -83,6 +84,8 @@ void CCheck::Run()
     {
         outpath = "/this/ccheckout/";
     }
+
+    strip = cmdline->GetBoolOption("strip");
 
     csRef<iDocument> doc = docsys->CreateDocument();
     texmat = doc->CreateRoot();
@@ -178,7 +181,7 @@ void CCheck::ParseFile(const char* filePath, const char* fileName, bool processi
 {
     if(processing)
     {
-        if(csString(filePath).Find(".dds") != (size_t)-1 || csString(filePath).Find(".mng") != (size_t)-1 || csString(filePath).Find("_alpha.png") != (size_t)-1 || csString(filePath).Find("_icon.png") != (size_t)-1)
+        if(!strip && (csString(filePath).Find(".dds") != (size_t)-1 || csString(filePath).Find(".mng") != (size_t)-1 || csString(filePath).Find("_alpha.png") != (size_t)-1 || csString(filePath).Find("_icon.png") != (size_t)-1))
         {
             FileUtil futil(vfs);
             futil.CopyFile(filePath, outpath+"/materials/"+csString(filePath).Slice(csString(filePath).FindLast('/')), true, false);
@@ -240,21 +243,24 @@ void CCheck::ParseFile(const char* filePath, const char* fileName, bool processi
     {
         if(root->GetNode("textures"))
         {
-            csRef<iDocumentNode> newTextures = texmat->GetNode("textures");
-            if(!newTextures.IsValid())
+            if(!strip)
             {
-                newTextures = texmat->CreateNodeBefore(CS_NODE_ELEMENT);
-                newTextures->SetValue("textures");
-            }
-            csRef<iDocumentNodeIterator> itr = root->GetNode("textures")->GetNodes("texture");
-            while(itr->HasNext())
-            {
-                csRef<iDocumentNode> node = itr->Next();
-                size_t l = textures.PushSmart(node->GetAttributeValue("name"));
-                if(l == textures.GetSize()-1)
+                csRef<iDocumentNode> newTextures = texmat->GetNode("textures");
+                if(!newTextures.IsValid())
                 {
-                    csRef<iDocumentNode> newNode = newTextures->CreateNodeBefore(CS_NODE_ELEMENT);
-                    CS::DocSystem::CloneNode(node, newNode);
+                    newTextures = texmat->CreateNodeBefore(CS_NODE_ELEMENT);
+                    newTextures->SetValue("textures");
+                }
+                csRef<iDocumentNodeIterator> itr = root->GetNode("textures")->GetNodes("texture");
+                while(itr->HasNext())
+                {
+                    csRef<iDocumentNode> node = itr->Next();
+                    size_t l = textures.PushSmart(node->GetAttributeValue("name"));
+                    if(l == textures.GetSize()-1)
+                    {
+                        csRef<iDocumentNode> newNode = newTextures->CreateNodeBefore(CS_NODE_ELEMENT);
+                        CS::DocSystem::CloneNode(node, newNode);
+                    }
                 }
             }
             
@@ -277,7 +283,14 @@ void CCheck::ParseFile(const char* filePath, const char* fileName, bool processi
                 if(l == materials.GetSize()-1)
                 {
                     csRef<iDocumentNode> newNode = newMaterials->CreateNodeBefore(CS_NODE_ELEMENT);
-                    CS::DocSystem::CloneNode(node, newNode);
+                    if(strip)
+                    {
+                        newNode->SetAttribute("name", node->GetAttributeValue("name"));
+                    }
+                    else
+                    {
+                        CS::DocSystem::CloneNode(node, newNode);
+                    }
                 }
             }
 
