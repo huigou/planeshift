@@ -1786,7 +1786,7 @@ void BgLoader::LoadSector(const csBox3& loadBox, const csBox3& unloadBox,
                 for(size_t j=0; j<sector->lights[i]->sequences.GetSize(); ++j)
                 {
                     tloader->LoadNodeWait(vfs->GetCwd(), sector->lights[i]->sequences[j]->data);
-                    for(size_t k=0; j<sector->lights[i]->sequences[j]->triggers.GetSize(); ++k)
+                    for(size_t k=0; k<sector->lights[i]->sequences[j]->triggers.GetSize(); ++k)
                     {
                         tloader->LoadNode(vfs->GetCwd(), sector->lights[i]->sequences[j]->triggers[k]->data);
                     }
