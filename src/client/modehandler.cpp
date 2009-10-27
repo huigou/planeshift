@@ -134,6 +134,7 @@ ModeHandler::ModeHandler(iSoundManager *sm,
     lightningreset = engine->GetVariableList()->New();
     lightningreset->SetName("lightning reset");
     lightningreset->SetColor(csColor(0.0f));
+    engine->GetVariableList()->Add(lightningreset);
 }
 
 ModeHandler::~ModeHandler()
