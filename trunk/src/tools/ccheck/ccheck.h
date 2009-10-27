@@ -37,6 +37,7 @@ private:
 
     csTinyDocumentSystem tinydoc;
     csString outpath;
+    bool strip;
 
     csArray<csString> textures;
     csArray<csString> materials;
