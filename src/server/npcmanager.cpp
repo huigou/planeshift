@@ -97,23 +97,19 @@ public:
     PID petID; ///< Character ID of the pet
     bool isActive;
     gemActor *owner;
-    NPCManager *manager;
     double elapsedTime; ///< create time
     csString curDate;
     csString curTime;
 
     PetOwnerSession()
     {
-        manager = NULL;
         owner = NULL;
         elapsedTime = 0.0f;
         isActive = false;
     };
 
-    PetOwnerSession( NPCManager *mgr, gemActor *owner, psCharacter* pet)
+    PetOwnerSession(gemActor* owner, psCharacter* pet)
     {
-        manager = mgr;
-
         if ( owner )
         {
             this->ownerID = owner->GetCharacterData()->GetPID();
@@ -2040,7 +2036,7 @@ PetOwnerSession *NPCManager::CreatePetOwnerSession( gemActor *owner, psCharacter
 {
     if ( owner && petData )
     {
-        PetOwnerSession *session = new PetOwnerSession( this, owner, petData );
+        PetOwnerSession* session = new PetOwnerSession(owner, petData);
         if ( session )
         {
             OwnerPetList.Put( session->petID, session );
