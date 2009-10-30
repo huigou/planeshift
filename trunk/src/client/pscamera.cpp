@@ -253,7 +253,7 @@ const char * psCamera::HandleCommand(const char *cmd)
             npcOldRot = npcrot;
             // decide to turn clockwise or counterclockwise (angle < 180 degrees)
             vel = ((angle-npcrot) < PI) ? 3.0f : -3.0f;
-            target->GetMovement()->SetAngularVelocity(-vel, csVector3(0.0f, angle, 0.0f));
+            target->Movement().SetAngularVelocity(-vel, csVector3(0.0f, angle, 0.0f));
         }
 
         npcModeTarget = target;
@@ -1434,7 +1434,7 @@ void psCamera::DoCameraIdealCalcs(const csTicks elapsedTicks, const csVector3& a
             // Check that we still have the same npc targeted, and that we did not move
             if (npcModeTarget != clientChar->GetTarget() || npcModePosition != actor->GetMesh()->GetMovable()->GetFullPosition())
             {
-                npcModeTarget->GetMovement()->SetAngularVelocity(vel, csVector3(0.0f, npcOldRot, 0.0f));
+                npcModeTarget->Movement().SetAngularVelocity(vel, csVector3(0.0f, npcOldRot, 0.0f));
                 SetCameraMode(lastCameraMode);
                 break;
             }

@@ -36,6 +36,7 @@
 //=============================================================================
 
 #include "net/cmdbase.h"
+#include "engine/linmove.h"
 
 //=============================================================================
 // Local Includes
@@ -64,8 +65,6 @@ class GEMClientItem;
 class GEMClientActionLocation;
 class psEffect;
 class psSolid;
-
-class psLinearMovement;
 
 /** This is information about an entity with unresolved position (=sector not found)
   * This happens when some entity is located in map that is not currently loaded.
@@ -320,11 +319,11 @@ public:
 
     virtual GEMOBJECT_TYPE GetObjectType() { return GEM_OBJECT; }
 
-    /** Setup the mesh for this object.
-    *
-    *   @return true if the mesh was set correctly, false if mesh failed to be set or created.
-    */
-    bool InitMesh();
+    /** Performs helm group substitutions. */
+    void SubstituteRacialMeshFact();
+
+    /** Start loading the mesh. */
+    void LoadMesh();
 
     /** Set the position of mesh 
      * @param pos the coordinates of the mesh
@@ -493,7 +492,7 @@ public:
 
     psCharAppearance* CharAppearance() { return charApp; }
 
-    psLinearMovement * linmove;
+    psLinearMovement linmove;
 
     /// The Vital of the player with regards to his health/mana/fatigue/etc.
     psClientVitals *vitalManager;
@@ -549,7 +548,7 @@ public:
 
     /** Get the movment system this object is using.
       */
-    psLinearMovement * GetMovement();
+    psLinearMovement& Movement();
 
     virtual void Update();
 
@@ -563,9 +562,9 @@ protected:
     uint8_t  DRcounter;  ///< increments in loop to prevent out of order packet overwrites of better data
     bool DRcounter_set;
 
-    virtual void PostLoad(bool nullmesh);
+    virtual void SwitchToRealMesh(iMeshWrapper* mesh);
 
-    bool InitLinMove(const csVector3& pos,float angle, const char* sector,
+    void InitLinMove(const csVector3& pos,float angle, const char* sector,
                      csVector3 top, csVector3 bottom, csVector3 offset);
 
     void InitCharData(const char* textures, const char* equipment);
@@ -581,18 +580,10 @@ protected:
     /// Post load data.
     struct PostLoadData
     {
-        csVector3 pos;
-        float yrot;
-        csString sectorName;
-        iSector* sector;
         csVector3 top;
         csVector3 bottom;
         csVector3 offset;
-        bool on_ground;
         csVector3 vel;
-        csVector3 angularVelocity;
-        csVector3 worldVel;
-        float ang_vel;
         csString texParts;
     };
 
@@ -614,7 +605,7 @@ public:
      virtual bool CheckLoadStatus();
 
 protected:
-    virtual void PostLoad(bool nullmesh);
+    virtual void PostLoad();
 
     psSolid* solid;
 

@@ -1347,7 +1347,7 @@ void psEngine::LoadGame()
         }
 
         // Set controlled actor and map controls
-        charController->GetMovementManager()->SetActor();
+        charController->GetMovementManager()->SetActor(NULL);
 
         // Init camera with controlled actor
         camera->InitializeView( celclient->GetMainPlayer() );
