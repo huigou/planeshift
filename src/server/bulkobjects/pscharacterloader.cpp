@@ -57,7 +57,9 @@
 #include "gmeventmanager.h"
 #include "psguildinfo.h"
 #include "pstrait.h"
-
+#include "client.h"
+#include "psserverchar.h"
+#include "marriagemanager.h"
 
 psCharacterLoader::psCharacterLoader()
 {
@@ -571,6 +573,20 @@ bool psCharacterLoader::DeleteCharacterData(PID pid, csString& error )
     // Now delete this character and all refrences to him from DB
 
     // Note: Need to delete the pets using this function as well.
+
+    query.Format("SELECT character_id FROM character_relationships WHERE related_id=%u and relationship_type='spouse'",pid.Unbox());
+    result = db->Select(query);
+    if ( !result.IsValid() )
+    {
+        error = "Invalid DB entry!";
+        return false;
+    }
+    if (result.Count())
+    {
+        Client* divorcedClient = psserver->GetConnections()->FindPlayer(result[0].GetUInt32("character_id"));
+        if (divorcedClient != NULL)          //in other case it's not necessary to remove this data because it removes from DB
+            psserver->marriageManager->DeleteMarriageInfo(  divorcedClient->GetCharacterData() );
+    }
 
     query.Format("DELETE FROM character_relationships WHERE character_id=%u OR related_id=%u", pid.Unbox(), pid.Unbox());
     db->CommandPump( query );
