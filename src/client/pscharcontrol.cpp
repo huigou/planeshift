@@ -644,7 +644,7 @@ void psTriggerHandler::HandleCenterCamera(const psControl* trigger, bool value)
         iSector*    sector;
 
         psCamera* cam = psengine->GetPSCamera();
-        movement->GetLinearMovement()->GetLastPosition(pos, rotY, sector);
+        movement->ControlledActor()->Movement().GetLastPosition(pos, rotY, sector);
 
         cam->SetPosition(pos + csVector3(sinf(rotY)*cam->GetMaxDistance(),0,cosf(rotY)*cam->GetMaxDistance()));
         cam->SetYaw(rotY);

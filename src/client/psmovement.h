@@ -134,9 +134,6 @@ protected:
 
     uint kbdRotate;
     
-    psLinearMovement* linearMove;
-    
-    
 public:
     psMovementManager(iEventNameRegistry* eventname_reg, psControlManager* controls);
     ~psMovementManager();
@@ -144,7 +141,8 @@ public:
     void HandleMessage(MsgEntry* me);
     bool HandleEvent(iEvent& event);
 
-    void SetActor(GEMClientActor* actor=NULL);
+    void SetActor(GEMClientActor* actor);
+    GEMClientActor* ControlledActor() { return actor; }
 
     // Functions to find movement and mode info
     const char* GetModeIdleAnim(size_t id) const { return modes[id]->idle_anim; }
@@ -199,9 +197,6 @@ public:
 
     void SetSneaking(bool v) { sneaking = v; }
     bool Sneaking() { return sneaking; }
-    
-    psLinearMovement* GetLinearMovement() { return linearMove; }
-
 };
 
 #endif

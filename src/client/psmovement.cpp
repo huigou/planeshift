@@ -109,8 +109,6 @@ psMovementManager::psMovementManager(iEventNameRegistry* eventname_reg, psContro
     walk = NULL;
 
     kbdRotate = 0;
-
-    linearMove = NULL;
 }
 
 psMovementManager::~psMovementManager()
@@ -125,8 +123,6 @@ void psMovementManager::SetActor(GEMClientActor* a)
 {
     actor = a ? a : psengine->GetCelClient()->GetMainPlayer() ;
     CS_ASSERT(actor);
-    linearMove = actor->GetMovement();
-    CS_ASSERT(linearMove);
     SetupControls();
 }
 
@@ -150,16 +146,15 @@ void psMovementManager::LockMoves(bool v)
 {
     locked = v;
 
-    if (!linearMove)
-	{
+    if (!actor)
         return;
-	}
+
     if (v)
     {
         StopAllMovement();
     }
     else
-        linearMove->ResetGravity();
+        actor->Movement().ResetGravity();
 }
 
 void psMovementManager::HandleMessage(MsgEntry* me)
@@ -198,13 +193,13 @@ void psMovementManager::HandleMessage(MsgEntry* me)
 
 bool psMovementManager::HandleEvent( iEvent &event )
 {
-    if ( !ready || !actor || !linearMove )  // Not fully loaded yet
+    if (!ready || !actor)  // Not fully loaded yet
         return false;
 
     if (event.Name == event_frame)
     {
         // If we we've returned to the ground, update allowed velocity
-        if (!onGround && linearMove->IsOnGround())
+        if (!onGround && actor->Movement().IsOnGround())
             UpdateVelocity();
 
 		// UpdateMouseLook will take care of "recent mouse-look turning" based on "bool mouseLook"
@@ -494,8 +489,8 @@ void psMovementManager::StopAllMovement()
         SetActorMode(run);
 
     // Halt actor
-    linearMove->SetVelocity(0);
-    linearMove->SetAngularVelocity(0);
+    actor->Movement().SetVelocity(0);
+    actor->Movement().SetAngularVelocity(0);
     actor->SetAnimationVelocity(0);
 
     // Remove run-to effect
@@ -533,7 +528,7 @@ void psMovementManager::StopControlledMovement()
 void psMovementManager::UpdateVelocity()
 {
     /// While the client is locked out the server will also reject any attempts to move.
-    if (locked || !linearMove || !actor)
+    if (locked || !actor)
         return;
 
     // Start with the total of all applied movements
@@ -546,7 +541,7 @@ void psMovementManager::UpdateVelocity()
      *  Some control is required to prevent collision detection issues,
      *  and to give the limited ability to turn or glide mid-flight.
      */
-    onGround = linearMove->IsOnGround();
+    onGround = actor->Movement().IsOnGround();
     if (onGround)  // Normal
     {
         // Apply mode's modifier
@@ -559,14 +554,14 @@ void psMovementManager::UpdateVelocity()
         #endif
 
         // Set vertical
-        linearMove->ClearWorldVelocity();
-        linearMove->AddVelocity( csVector3(0,vel.move.y,0) );
+        actor->Movement().ClearWorldVelocity();
+        actor->Movement().AddVelocity( csVector3(0,vel.move.y,0) );
 
         // Set horizontal
-        linearMove->SetVelocity( csVector3(vel.move.x,0,vel.move.z) );
+        actor->Movement().SetVelocity( csVector3(vel.move.x,0,vel.move.z) );
     
         // Set rotation
-        linearMove->SetAngularVelocity( vel.rotate );
+        actor->Movement().SetAngularVelocity( vel.rotate );
 
         // Update animating speed
         actor->SetAnimationVelocity( vel.move );
@@ -584,10 +579,10 @@ void psMovementManager::UpdateVelocity()
 
         // Add to existing velocity
 		if (vel.move.y <= 0 && (vel.move.x != 0 || vel.move.z != 0))
-			linearMove->SetVelocity( csVector3(vel.move.x,0,vel.move.z) );
+			actor->Movement().SetVelocity(csVector3(vel.move.x,0,vel.move.z));
 
         // Set rotation
-        linearMove->SetAngularVelocity( vel.rotate );
+        actor->Movement().SetAngularVelocity( vel.rotate );
     }
 }
 
@@ -611,10 +606,8 @@ void psMovementManager::MouseLookCanAct(bool v){
 
 void psMovementManager::MouseLook(bool v)
 {
-	if (!ready || !actor || !linearMove )
-	{
+	if (!ready || !actor)
 		return;
-	}
 
     if(mouseLookCanAct || !v)
     {
@@ -627,7 +620,7 @@ void psMovementManager::MouseLook(bool v)
 			if ( !mouseLook )
 			{
 				csVector3 vec(0,0,0);
-				linearMove->SetAngularVelocity(vec);
+				actor->Movement().SetAngularVelocity(vec);
 			}
 		}
 	}
@@ -637,10 +630,8 @@ void psMovementManager::MouseLook(bool v)
 
 void psMovementManager::UpdateMouseLook()
 {
-	if (!ready || !actor || !linearMove )
-	{
+	if (!ready || !actor)
 		return;
-	}
 
 	psCamera* camera = psengine->GetPSCamera();
 
@@ -657,7 +648,7 @@ void psMovementManager::UpdateMouseLook()
 			if ( camera->RotateCameraWithPlayer() )
 			{
 				csVector3 vec(0,0,0);
-				linearMove->SetAngularVelocity(vec);
+				actor->Movement().SetAngularVelocity(vec);
 			}
 			return;
 		}
@@ -688,7 +679,7 @@ void psMovementManager::UpdateMouseLook()
 
             if (spin > 5) spin = 5.0f;
             if (spin < -5) spin = -5.0f; 
-            linearMove->SetAngularVelocity( csVector3(0,spin,0) );
+            actor->Movement().SetAngularVelocity(csVector3(0, spin, 0));
         }
     }
     else
@@ -702,10 +693,9 @@ void psMovementManager::UpdateMouseLook()
 
 void psMovementManager::MouseLook(iEvent& ev)
 {
-	if (!ready || !actor || !linearMove )
-	{
+	if (!ready || !actor)
 		return;
-	}
+
     psCamera* camera = psengine->GetPSCamera();
     iGraphics2D* g2d = psengine->GetG2D();
 
@@ -749,7 +739,7 @@ void psMovementManager::MouseLook(iEvent& ev)
             if (spin < -5) spin = -5.0f; 
             //if (spin > 20) spin = 20.0f; // removing that hack which enables "turning with lightspeed"
             //if (spin < -20) spin = -20.0f;
-            linearMove->SetAngularVelocity( csVector3(0,spin,0) );
+            actor->Movement().SetAngularVelocity(csVector3(0, spin, 0));
         }
     }
     else
@@ -776,10 +766,9 @@ void psMovementManager::MouseZoom(iEvent& ev)
 
 void psMovementManager::SetRunToPos(psPoint& mouse)
 {
-	if (!ready || !actor || !linearMove )
-	{
+	if (!ready || !actor)
 		return;
-	}
+
     csVector3 tmp, tmpDiff;
     iMeshWrapper *mesh = psengine->GetPSCamera()->Get3DPointFrom2D(mouse.x, mouse.y, &tmp, &tmpDiff);
     if (mesh)
@@ -788,7 +777,7 @@ void psMovementManager::SetRunToPos(psPoint& mouse)
         psengine->GetEffectManager()->DeleteEffect(runToMarkerID);
         runToMarkerID = 0;
 
-        iSector* sector = linearMove->GetSector();
+        iSector* sector = actor->Movement().GetSector();
         csRef<iMeshWrapper> actormesh = actor->GetMesh();
         runToMarkerID = psengine->GetEffectManager()->RenderEffect("marker", sector, tmp, actormesh);
         runToDiff = tmpDiff;
@@ -810,16 +799,15 @@ void psMovementManager::CancelRunTo()
 
 void psMovementManager::UpdateRunTo()
 {
-	if (!ready || !actor || !linearMove )
-	{
+	if (!ready || !actor)
 		return;
-	}
+
     if (runToMarkerID != 0 && !locked)
     {
         csVector3 currPos;
         float yRot;
         iSector* sector;
-        linearMove->GetLastPosition(currPos, yRot, sector);
+        actor->Movement().GetLastPosition(currPos, yRot, sector);
         csVector3 diff = runToDiff - currPos;
 
         // only move the char if we are not stuck
@@ -840,7 +828,7 @@ void psMovementManager::UpdateRunTo()
 
                 // Calculate the start and end poses
                 start= currPos;
-                linearMove->GetCDDimensions(box,legs,dummy);
+                actor->Movement().GetCDDimensions(box, legs, dummy);
                 
                 // We can walk over some stuff
                 start += csVector3(0,0.6f,0);
@@ -955,7 +943,7 @@ void psMovementManager::UpdateRunTo()
             }
 
             // Turn towards target
-            linearMove->SetAngularVelocity( csVector3(0,targetYRot,0) );
+            actor->Movement().SetAngularVelocity(csVector3(0, targetYRot, 0));
         }
         else
         {
