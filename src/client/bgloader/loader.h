@@ -311,6 +311,7 @@ private:
         csRefArray<Material> materials;
         csArray<bool> checked;
         csArray<csVector3> bboxvs;
+        csStringArray submeshes;
     };
 
     class Sector : public CS::Utility::FastRefCount<Sector>
