@@ -1618,13 +1618,13 @@ void BgLoader::LoadSector(const csBox3& loadBox, const csBox3& unloadBox,
         {
             if(!sector->meshes[i]->loading)
             {
-                if(force || sector->meshes[i]->InRange(loadBox))
+                if(sector->meshes[i]->InRange(loadBox, force))
                 {
                     sector->meshes[i]->loading = true;
                     loadingMeshes.Push(sector->meshes[i]);
                     ++sector->objectCount;
                 }
-                else if(sector->meshes[i]->OutOfRange(unloadBox))
+                else if(!force && sector->meshes[i]->OutOfRange(unloadBox))
                 {
                     sector->meshes[i]->object->GetMovable()->ClearSectors();
                     sector->meshes[i]->object->GetMovable()->UpdateMove();
@@ -1641,13 +1641,13 @@ void BgLoader::LoadSector(const csBox3& loadBox, const csBox3& unloadBox,
         {
             if(!sector->meshgen[i]->loading)
             {
-                if(force || sector->meshgen[i]->InRange(loadBox))
+                if(sector->meshgen[i]->InRange(loadBox, force))
                 {
                     sector->meshgen[i]->loading = true;
                     loadingMeshGen.Push(sector->meshgen[i]);
                     ++sector->objectCount;
                 }
-                else if(sector->meshgen[i]->OutOfRange(unloadBox))
+                else if(!force && sector->meshgen[i]->OutOfRange(unloadBox))
                 {
                     CleanMeshGen(sector->meshgen[i]);
                     --sector->objectCount;
@@ -1659,7 +1659,7 @@ void BgLoader::LoadSector(const csBox3& loadBox, const csBox3& unloadBox,
     // Check all portals in this sector... and recurse into the sectors they lead to.
     for(size_t i=0; i<sector->portals.GetSize(); i++)
     {
-        if(force || sector->portals[i]->InRange(loadBox))
+        if(sector->portals[i]->InRange(loadBox, force))
         {
             bool recurse = true;
             if(!force && depth >= maxPortalDepth)
@@ -1750,7 +1750,7 @@ void BgLoader::LoadSector(const csBox3& loadBox, const csBox3& unloadBox,
             sector->activePortals.Push(sector->portals[i]);
             ++sector->objectCount;
         }
-        else if(sector->portals[i]->OutOfRange(unloadBox))
+        else if(!force && sector->portals[i]->OutOfRange(unloadBox))
         {
             if(!sector->portals[i]->targetSector->isLoading)
             {
@@ -1788,7 +1788,7 @@ void BgLoader::LoadSector(const csBox3& loadBox, const csBox3& unloadBox,
         // Check all sector lights.
         for(size_t i=0; i<sector->lights.GetSize(); i++)
         {
-            if(force || sector->lights[i]->InRange(loadBox))
+            if(sector->lights[i]->InRange(loadBox, force))
             {
                 sector->lights[i]->object = engine->CreateLight(sector->lights[i]->name, sector->lights[i]->pos,
                     sector->lights[i]->radius, sector->lights[i]->colour, sector->lights[i]->dynamic);
@@ -1807,7 +1807,7 @@ void BgLoader::LoadSector(const csBox3& loadBox, const csBox3& unloadBox,
                     }
                 }
             }
-            else if(sector->lights[i]->OutOfRange(unloadBox))
+            else if(!force && sector->lights[i]->OutOfRange(unloadBox))
             {
                 engine->RemoveLight(sector->lights[i]->object);
                 sector->lights[i]->object.Invalidate();

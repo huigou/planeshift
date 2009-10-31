@@ -358,9 +358,9 @@ private:
         {
         }
 
-        inline bool InRange(const csBox3& curBBox)
+        inline bool InRange(const csBox3& curBBox, bool force)
         {
-            return !status.IsValid() && curBBox.Overlap(bbox);
+            return !status.IsValid() && (force || curBBox.Overlap(bbox));
         }
 
         inline bool OutOfRange(const csBox3& curBBox)
@@ -389,9 +389,9 @@ private:
         {
         }
 
-        inline bool InRange(const csBox3& curBBox)
+        inline bool InRange(const csBox3& curBBox, bool force)
         {
-            return !object.IsValid() && (alwaysLoaded || curBBox.Overlap(bbox));
+            return !object.IsValid() && (force || alwaysLoaded || curBBox.Overlap(bbox));
         }
 
         inline bool OutOfRange(const csBox3& curBBox)
@@ -426,9 +426,9 @@ private:
         {
         }
 
-        inline bool InRange(const csBox3& curBBox)
+        inline bool InRange(const csBox3& curBBox, bool force)
         {
-            return !mObject.IsValid() && curBBox.Overlap(bbox);
+            return !mObject.IsValid() && (force || curBBox.Overlap(bbox));
         }
 
         inline bool OutOfRange(const csBox3& curBBox)
@@ -461,9 +461,9 @@ private:
         {
         }
 
-        inline bool InRange(const csBox3& curBBox)
+        inline bool InRange(const csBox3& curBBox, bool force)
         {
-            return !object.IsValid() && curBBox.Overlap(bbox);
+            return !object.IsValid() && (force || curBBox.Overlap(bbox));
         }
 
         inline bool OutOfRange(const csBox3& curBBox)
