@@ -384,12 +384,15 @@ xd3_decode_output_halfinst (xd3_stream *stream, xd3_hinst *inst)
 	usize_t i;
 	const uint8_t *src;
 	uint8_t *dst;
+	int overlap;
 
 	/* See if it copies from the VCD_TARGET/VCD_SOURCE window or
 	 * the target window.  Out-of-bounds checks for the addresses
 	 * and sizes are performed in xd3_decode_parse_halfinst. */
 	if (inst->addr < stream->dec_cpylen)
 	  {
+	    overlap = 0;
+
 	    if (stream->dec_win_ind & VCD_TARGET)
 	      {
 		/* For VCD_TARGET we know the entire range is
@@ -444,9 +447,15 @@ xd3_decode_output_halfinst (xd3_stream *stream, xd3_hinst *inst)
 		if ((source->onblk != blksize) &&
 		    (blkoff + take > source->onblk))
 		  {
+		    IF_DEBUG1(DP(RINT "[srcfile] short at blkno %"Q"u onblk "
+				 "%u blksize %u blkoff %u take %u\n",
+				 block,
+				 source->onblk,
+				 blksize,
+				 blkoff,
+				 take));
 		    stream->msg = "source file too short";
 		    return XD3_INVALID_INPUT;
-
 		  }
 
 		XD3_ASSERT (blkoff != blksize);
@@ -475,16 +484,29 @@ xd3_decode_output_halfinst (xd3_stream *stream, xd3_hinst *inst)
 	    src = stream->dec_tgtaddrbase + inst->addr;
 	    inst->type = XD3_NOOP;
 	    inst->size = 0;
+
+	    /* TODO: This can be more specific, it's whether 
+	     *   (inst->addr - srclen) + inst->size > input_pos
+	     * ?
+	     */
+	    overlap = 1;
 	  }
 
  	dst = stream->next_out + stream->avail_out;
 
 	stream->avail_out += take;
 
-	/* Can't just memcpy here due to possible overlap. */
-	for (i = take; i != 0; i -= 1)
+	if (overlap)
 	  {
-	    *dst++ = *src++;
+	    /* Can't just memcpy here due to possible overlap. */
+	    for (i = take; i != 0; i -= 1)
+	      {
+		*dst++ = *src++;
+	      }
+	  }
+	else
+	  {
+	    memcpy (dst, src, take);
 	  }
 
 	take = inst->size;
@@ -666,7 +688,7 @@ xd3_decode_emit (xd3_stream *stream)
 
   if (stream->avail_out != stream->dec_tgtlen)
     {
-      IF_DEBUG1 (DP(RINT "AVAIL_OUT(%d) != DEC_TGTLEN(%d)\n",
+      IF_DEBUG2 (DP(RINT "AVAIL_OUT(%d) != DEC_TGTLEN(%d)\n",
 		    stream->avail_out, stream->dec_tgtlen));
       stream->msg = "wrong window length";
       return XD3_INVALID_INPUT;
@@ -913,7 +935,7 @@ xd3_decode_input (xd3_stream *stream)
 
 	stream->dec_state = DEC_CPYLEN;
 
-	IF_DEBUG1 (DP(RINT "--------- TARGET WINDOW %"Q"u -----------\n",
+	IF_DEBUG2 (DP(RINT "--------- TARGET WINDOW %"Q"u -----------\n",
 		      stream->current_window));
       }
 
@@ -1068,6 +1090,16 @@ xd3_decode_input (xd3_stream *stream)
 	  xd3_blksize_div(stream->dec_cpyoff, src,
 			  &src->cpyoff_blocks,
 			  &src->cpyoff_blkoff);
+	  
+	  IF_DEBUG2(DP(RINT
+		       "decode cpyoff %"Q"u "
+		       "cpyblkno %"Q"u "
+		       "cpyblkoff %u "
+		       "blksize %u\n",
+		       stream->dec_cpyoff,
+		       src->cpyoff_blocks,
+		       src->cpyoff_blkoff,
+		       src->blksize));
 	}
 
       /* xd3_decode_emit returns XD3_OUTPUT on every success. */
