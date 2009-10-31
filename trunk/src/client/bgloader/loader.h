@@ -560,7 +560,7 @@ private:
     bool validPosition;
 
     // Limit on how many portals deep we load.
-    static const int maxPortalDepth = 3;
+    static const uint maxPortalDepth = 3;
 
     // The last valid sector.
     csRef<Sector> lastSector;
