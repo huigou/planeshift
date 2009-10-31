@@ -132,6 +132,9 @@ typedef ULONGLONG      uint64_t;
  * 64bit platform because we allocate large arrays of these values. */
 #if XD3_USE_LARGEFILE64
 #define __USE_FILE_OFFSET64 1 /* GLIBC: for 64bit fileops, ... ? */
+#define _LARGEFILE_SOURCE
+#define _FILE_OFFSET_BITS 64
+
 typedef uint64_t xoff_t;
 #define SIZEOF_XOFF_T 8
 #define SIZEOF_USIZE_T 4
@@ -341,9 +344,8 @@ typedef enum {
   XD3_INTERNAL   = -17710, /* internal error */
   XD3_INVALID    = -17711, /* invalid config */
   XD3_INVALID_INPUT = -17712, /* invalid input/decoder error */
-  XD3_NOSECOND  = -17713, /* when secondary compression finds no
-			     improvement. */
-
+  XD3_NOSECOND    = -17713, /* when secondary compression finds no
+			       improvement. */
 } xd3_rvalues;
 
 /* special values in config->flags */
@@ -717,7 +719,6 @@ struct _xd3_config
 struct _xd3_source
 {
   /* you set */
-  xoff_t              size;          /* size of this source */
   usize_t             blksize;       /* block size */
   const char         *name;          /* its name, for debug/print
 					purposes */
@@ -727,8 +728,8 @@ struct _xd3_source
   xoff_t              curblkno;      /* current block number: client
 					sets after getblk request */
   usize_t             onblk;         /* number of bytes on current
-					block: client sets, xd3
-					verifies */
+					block: client sets,  must be >= 0
+				        and <= blksize */
   const uint8_t      *curblk;        /* current block array: client
 					sets after getblk request */
 
@@ -736,9 +737,6 @@ struct _xd3_source
   usize_t             srclen;        /* length of this source window */
   xoff_t              srcbase;       /* offset of this source window
 					in the source itself */
-  xoff_t              blocks;        /* the total number of blocks in
-					this source */
-  usize_t             onlastblk;     /* cached size info, avoid __udivdi3 */
   int                 shiftby;       /* for power-of-two blocksizes */
   int                 maskby;        /* for power-of-two blocksizes */  
   xoff_t              cpyoff_blocks; /* offset of dec_cpyoff in blocks */
@@ -746,6 +744,11 @@ struct _xd3_source
 					blocks, remainder */
   xoff_t              getblkno;      /* request block number: xd3 sets
 					current getblk request */
+
+  xoff_t              max_blkno;
+  xoff_t              frontier_blkno;
+  usize_t             onlastblk;
+  int                 eof_known;
 };
 
 /* The primary xd3_stream object, used for encoding and decoding.  You
@@ -1024,14 +1027,13 @@ int     xd3_decode_memory (const uint8_t *input,
 			   usize_t        avail_output,
 			   int            flags);
 
-/* This function encodes an in-memory input.  Everything else about
- * the xd3_stream is configurable.  The output array must be large
- * enough to hold the output or else ENOSPC is returned.  The source
- * (if any) should be set using xd3_set_source() with a single-block
- * xd3_source.  This calls the underlying non-blocking interface,
- * xd3_encode_input(), handling the necessary input/output states.
- * This method be considered a reference for any application using
- * xd3_encode_input() directly.
+/* This function encodes an in-memory input.  The output array must be
+ * large enough to hold the output or else ENOSPC is returned.  The
+ * source (if any) should be set using xd3_set_source() with a
+ * single-block xd3_source.  This calls the underlying non-blocking
+ * interface, xd3_encode_input(), handling the necessary input/output
+ * states.  This method be considered a reference for any application
+ * using xd3_encode_input() directly.
  *
  *   xd3_stream stream;
  *   xd3_config config;
@@ -1160,6 +1162,23 @@ void    xd3_free_stream   (xd3_stream    *stream);
  */
 int     xd3_set_source    (xd3_stream    *stream,
 			   xd3_source    *source);
+
+/* If the source size is known, call this instead of xd3_set_source(). 
+ * to avoid having stream->getblk called (and/or to avoid XD3_GETSRCBLK).
+ *
+ * Follow these steps:
+  xd3_source source;
+  memset(&source, 0, sizeof(source));
+  source.blksize  = size;
+  source.onblk    = size;
+  source.curblk   = buf;
+  source.curblkno = 0;
+  int ret = xd3_set_source_and_size(&stream, &source, size);
+  ...
+ */
+int     xd3_set_source_and_size (xd3_stream    *stream,
+				 xd3_source    *source,
+				 xoff_t         source_size);
 
 /* This should be called before the first call to xd3_encode_input()
  * to include application-specific data in the VCDIFF header. */
@@ -1291,35 +1310,6 @@ void xd3_blksize_div (const xoff_t offset,
   *blkoff = source->maskby ?
     (offset & source->maskby) :
     (offset - *blkno * source->blksize);
-}
-
-/* This function tells the number of bytes expected to be set in
- * source->onblk after a getblk request.  This is for convenience of
- * handling a partial last block.  Note that this is a relatively
- * expensive function for 64-bit binaries on platforms w/o native
- * 64-bit integers, so source->onlastblk is set to this value.
- * TODO: force source->blksize to a power of two? */
-static inline
-usize_t xd3_bytes_on_srcblk (xd3_source *source, xoff_t blkno)
-{
-  xoff_t s_1_div;
-  usize_t s_1_rem;
-  XD3_ASSERT (blkno < source->blocks);
-
-  if (blkno != source->blocks - 1)
-    {
-      return source->blksize;
-    }
-  xd3_blksize_div(source->size - 1, source, &s_1_div, &s_1_rem);
-  return s_1_rem + 1;
-}
-
-static inline
-usize_t xd3_bytes_on_srcblk_fast (xd3_source *source, xoff_t blkno)
-{
-  return (blkno == source->blocks - 1 ?
-	  source->onlastblk :
-	  source->blksize);
 }
 
 #endif /* _XDELTA3_H_ */

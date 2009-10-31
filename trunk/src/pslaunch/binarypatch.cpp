@@ -37,7 +37,6 @@ extern "C"
 int PatchFileHelper(FILE* srcFile, FILE* patchFile, FILE* outFile, unsigned int bufferSize)
 {
     int r, res;
-    struct stat statBuffer;
     xd3_stream stream;
     xd3_config config;
     xd3_source source;
@@ -58,10 +57,6 @@ int PatchFileHelper(FILE* srcFile, FILE* patchFile, FILE* outFile, unsigned int 
 
     if (srcFile)
     {
-        r = fstat(fileno(srcFile), &statBuffer);
-        if (r)
-            return r;
-        source.size = statBuffer.st_size;
         source.blksize = bufferSize;
         source.curblk = (const uint8_t*)malloc(source.blksize);
 
