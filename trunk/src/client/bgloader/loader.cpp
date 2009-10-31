@@ -548,6 +548,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
 
                         mf->materials.Push(material);
                         mf->checked.Push(false);
+                        mf->submeshes.Push(node2->GetAttributeValue("name"));
                     }
                 }
 
@@ -817,6 +818,20 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
 
                             m->meshfacts.Push(meshfact);
                             m->mftchecked.Push(false);
+
+                            // Validation.
+                            nodeItr3 = node2->GetParent()->GetNodes("submesh");
+                            while(nodeItr3->HasNext())
+                            {
+                                csRef<iDocumentNode> submesh = nodeItr3->Next();
+                                if(meshfact->submeshes.Find(submesh->GetAttributeValue("name")) == csArrayItemNotFound)
+                                {
+                                    csString msg;
+                                    msg.Format("Invalid submesh reference '%s' in meshobj '%s' in sector '%s'", submesh->GetAttributeValue("name"),
+                                        m->name.GetData(), s->name.GetData());
+                                    CS_ASSERT_MSG(msg.GetData(), false);
+                                }
+                            }
                         }
                     }
                     node2 = node2->GetParent();
