@@ -1621,7 +1621,7 @@ void GEMClientActor::InitLinMove(const csVector3& pos, float angle, const char* 
     bottom.x *= .7f;
     bottom.z *= .7f;
     linmove.InitCD(top, bottom,offset, pcmesh);
-    linmove.SetDeltaLimit(0.2);
+    linmove.SetDeltaLimit(0.2f);
     iSector * sectorObj = psengine->GetEngine()->FindSector(sector);
     if (sectorObj != NULL)
         linmove.SetPosition(pos,angle,sectorObj);
