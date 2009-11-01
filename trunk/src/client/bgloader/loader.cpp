@@ -33,6 +33,7 @@
 #include <iutil/object.h>
 #include <iutil/plugin.h>
 #include <ivaria/collider.h>
+#include <ivaria/engseq.h>
 #include <ivideo/graph2d.h>
 #include <ivideo/material.h>
 
@@ -65,6 +66,7 @@ bool BgLoader::Initialize(iObjectRegistry* object_reg)
     this->object_reg = object_reg;
 
     engine = csQueryRegistry<iEngine> (object_reg);
+    engseq = csQueryRegistry<iEngineSequenceManager> (object_reg);
     g2d = csQueryRegistry<iGraphics2D> (object_reg);
     tloader = csQueryRegistry<iThreadedLoader> (object_reg);
     tman = csQueryRegistry<iThreadManager> (object_reg);
@@ -1427,6 +1429,37 @@ void BgLoader::CleanSector(Sector* sector)
             sector->lights[i]->object.Invalidate();
             --sector->objectCount;
         }
+
+        for(size_t j=0; j<sector->lights[i]->sequences.GetSize(); ++j)
+        {
+            if(sector->lights[i]->sequences[j]->status.IsValid())
+            {
+                for(size_t k=0; k<sector->lights[i]->sequences[j]->triggers.GetSize(); ++k)
+                {
+                    if(sector->lights[i]->sequences[j]->triggers[k]->status.IsValid())
+                    {
+                        csRef<iSequenceTrigger> st = scfQueryInterface<iSequenceTrigger>(sector->lights[i]->sequences[j]->triggers[k]->status->GetResultRefPtr());
+                        engseq->RemoveTrigger(st);
+                        sector->lights[i]->sequences[j]->triggers[k]->status.Invalidate();
+                    }
+                }
+
+                csRef<iSequenceWrapper> sw = scfQueryInterface<iSequenceWrapper>(sector->lights[i]->sequences[j]->status->GetResultRefPtr());
+                engseq->RemoveSequence(sw);
+                sector->lights[i]->sequences[j]->status.Invalidate();
+            }
+        }
+    }
+
+    // Remove sequences.
+    for(size_t i=0; i<sector->sequences.GetSize(); ++i)
+    {
+        if(sector->sequences[i]->status.IsValid())
+        {
+            csRef<iSequenceWrapper> sw = scfQueryInterface<iSequenceWrapper>(sector->sequences[i]->status->GetResultRefPtr());
+            engseq->RemoveSequence(sw);
+            sector->sequences[i]->status.Invalidate();
+        }
     }
 
     if(sector->objectCount != 0)
@@ -1437,12 +1470,34 @@ void BgLoader::CleanSector(Sector* sector)
     }
     CS_ASSERT_MSG("Error cleaning sector. Sector is invalid!", sector->object.IsValid());
 
+    // Remove the sector from the engine.
+    sector->object->QueryObject()->SetObjectParent(0);
     engine->GetSectors()->Remove(sector->object);
     sector->object.Invalidate();
 }
 
 void BgLoader::CleanMesh(MeshObj* mesh)
 {
+    for(size_t i=0; i<mesh->sequences.GetSize(); ++i)
+    {
+        if(mesh->sequences[i]->status.IsValid())
+        {
+            for(size_t j=0; j<mesh->sequences[i]->triggers.GetSize(); ++j)
+            {
+                if(mesh->sequences[i]->triggers[j]->status.IsValid())
+                {
+                    csRef<iSequenceTrigger> st = scfQueryInterface<iSequenceTrigger>(mesh->sequences[i]->triggers[j]->status->GetResultRefPtr());
+                    engseq->RemoveTrigger(st);
+                    mesh->sequences[i]->triggers[j]->status.Invalidate();
+                }
+            }
+
+            csRef<iSequenceWrapper> sw = scfQueryInterface<iSequenceWrapper>(mesh->sequences[i]->status->GetResultRefPtr());
+            engseq->RemoveSequence(sw);
+            mesh->sequences[i]->status.Invalidate();
+        }
+    }
+
     for(size_t i=0; i<mesh->meshfacts.GetSize(); ++i)
     {
         CleanMeshFact(mesh->meshfacts[i]);
@@ -1800,10 +1855,12 @@ void BgLoader::LoadSector(const csBox3& loadBox, const csBox3& unloadBox,
                 // Load all light sequences.
                 for(size_t j=0; j<sector->lights[i]->sequences.GetSize(); ++j)
                 {
-                    tloader->LoadNodeWait(vfs->GetCwd(), sector->lights[i]->sequences[j]->data);
+                    sector->lights[i]->sequences[j]->status = tloader->LoadNodeWait(vfs->GetCwd(),
+                        sector->lights[i]->sequences[j]->data);
                     for(size_t k=0; k<sector->lights[i]->sequences[j]->triggers.GetSize(); ++k)
                     {
-                        tloader->LoadNode(vfs->GetCwd(), sector->lights[i]->sequences[j]->triggers[k]->data);
+                        sector->lights[i]->sequences[j]->triggers[k]->status = tloader->LoadNode(vfs->GetCwd(),
+                            sector->lights[i]->sequences[j]->triggers[k]->data);
                     }
                 }
             }
@@ -1812,13 +1869,37 @@ void BgLoader::LoadSector(const csBox3& loadBox, const csBox3& unloadBox,
                 engine->RemoveLight(sector->lights[i]->object);
                 sector->lights[i]->object.Invalidate();
                 --sector->objectCount;
+
+                for(size_t j=0; j<sector->lights[i]->sequences.GetSize(); ++j)
+                {
+                    if(sector->lights[i]->sequences[j]->status.IsValid())
+                    {
+                        for(size_t k=0; k<sector->lights[i]->sequences[j]->triggers.GetSize(); ++k)
+                        {
+                            if(sector->lights[i]->sequences[j]->triggers[k]->status.IsValid())
+                            {
+                                csRef<iSequenceTrigger> st = scfQueryInterface<iSequenceTrigger>(sector->lights[i]->sequences[j]->triggers[k]->status->GetResultRefPtr());
+                                engseq->RemoveTrigger(st);
+                                sector->lights[i]->sequences[j]->triggers[k]->status.Invalidate();
+                            }
+                        }
+
+                        csRef<iSequenceWrapper> sw = scfQueryInterface<iSequenceWrapper>(sector->lights[i]->sequences[j]->status->GetResultRefPtr());
+                        engseq->RemoveSequence(sw);
+                        sector->lights[i]->sequences[j]->status.Invalidate();
+                    }
+                }
             }
         }
 
         // Load all sector sequences.
         for(size_t i=0; i<sector->sequences.GetSize(); i++)
         {
-            tloader->LoadNode(vfs->GetCwd(), sector->sequences[i]->data);
+            if(!sector->sequences[i]->status.IsValid())
+            {
+                sector->sequences[i]->status = tloader->LoadNode(vfs->GetCwd(),
+                    sector->sequences[i]->data);
+            }
         }
 
         // Check whether this sector is empty and should be unloaded.
@@ -1834,6 +1915,17 @@ void BgLoader::LoadSector(const csBox3& loadBox, const csBox3& unloadBox,
                     engine->GetMeshes()->Remove(sector->meshes[i]->object);
                     sector->meshes[i]->object.Invalidate();
                     --sector->objectCount;
+                }
+            }
+
+            // Remove sequences.
+            for(size_t i=0; i<sector->sequences.GetSize(); i++)
+            {
+                if(sector->sequences[i]->status.IsValid())
+                {
+                    csRef<iSequenceWrapper> sw = scfQueryInterface<iSequenceWrapper>(sector->sequences[i]->status->GetResultRefPtr());
+                    engseq->RemoveSequence(sw);
+                    sector->sequences[i]->status.Invalidate();
                 }
             }
 
@@ -1994,7 +2086,6 @@ bool BgLoader::LoadMesh(MeshObj* mesh)
                     }
                     
                     mesh->sequences[i]->loaded = true;
-                    mesh->sequences[i]->status.Invalidate();
                 }
                 else
                     ready = false;
@@ -2030,7 +2121,6 @@ bool BgLoader::LoadMesh(MeshObj* mesh)
                         }
 
                         mesh->sequences[i]->triggers[j]->loaded = true;
-                        mesh->sequences[i]->triggers[j]->status.Invalidate();
                     }
                     else
                         ready = false;
