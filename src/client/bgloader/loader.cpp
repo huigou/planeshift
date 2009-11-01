@@ -1762,9 +1762,9 @@ void BgLoader::LoadSector(const csBox3& loadBox, const csBox3& unloadBox,
                 {
                     {
                         csString msg;
-                        msg.AppendFmt("Attempting to load uninit sector %s!\n", sector->name.GetData());
-                        CS_ASSERT_MSG(msg.GetData(), sector->init);
-                        if(!sector->init) return;
+                        msg.AppendFmt("Attempting to load uninit sector %s!\n", sector->portals[i]->targetSector->name.GetData());
+                        CS_ASSERT_MSG(msg.GetData(), sector->portals[i]->targetSector->init);
+                        if(!sector->portals[i]->targetSector->init) return;
                     }
                     sector->portals[i]->targetSector->object = engine->CreateSector(sector->portals[i]->targetSector->name);
                     sector->portals[i]->targetSector->object->SetDynamicAmbientLight(sector->portals[i]->targetSector->ambient);
