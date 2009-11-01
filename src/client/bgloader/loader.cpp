@@ -52,7 +52,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
 SCF_IMPLEMENT_FACTORY(BgLoader)
 
 BgLoader::BgLoader(iBase *p)
-  : scfImplementationType (this, p), loadRange(200), enabledGfxFeatures(0),
+  : scfImplementationType (this, p), loadRange(1100), enabledGfxFeatures(0),
   validPosition(false), resetHitbeam(true)
 {
 }
