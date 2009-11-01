@@ -1230,12 +1230,10 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
 }
 
 void BgLoader::ContinueLoading(bool waiting)
-{
-    bool finishLoading = true;
-    
+{  
     // Limit even while waiting - we want some frames.
     size_t count = 0;
-    while(finishLoading && count < 20)
+    while(count < 20)
     {
         // Delete from delete queue (fairly expensive, so limited per update).
         if(!deleteQueue.IsEmpty())
@@ -1273,7 +1271,7 @@ void BgLoader::ContinueLoading(bool waiting)
 
         ++count;
         if(!waiting || GetLoadingCount() == 0)
-            finishLoading = false;
+            break;
     }
 }
 
@@ -1399,14 +1397,14 @@ void BgLoader::CleanSector(Sector* sector)
             engine->GetMeshes()->Remove(sector->meshes[i]->object);
             sector->meshes[i]->object.Invalidate();
             CleanMesh(sector->meshes[i]);
-            --sector->objectCount;
+            --(sector->objectCount);
         }
     }
 
     for(size_t i=0; i<sector->meshgen.GetSize(); i++)
     {
         CleanMeshGen(sector->meshgen[i]);
-        --sector->objectCount;
+        --(sector->objectCount);
     }
 
     for(size_t i=0; i<sector->portals.GetSize(); i++)
@@ -1417,7 +1415,7 @@ void BgLoader::CleanSector(Sector* sector)
             sector->portals[i]->pObject = NULL;
             sector->portals[i]->mObject.Invalidate();
             sector->activePortals.Delete(sector->portals[i]);
-            --sector->objectCount;
+            --(sector->objectCount);
         }
     }
 
@@ -1427,7 +1425,7 @@ void BgLoader::CleanSector(Sector* sector)
         {
             engine->RemoveLight(sector->lights[i]->object);
             sector->lights[i]->object.Invalidate();
-            --sector->objectCount;
+            --(sector->objectCount);
         }
 
         for(size_t j=0; j<sector->lights[i]->sequences.GetSize(); ++j)
@@ -1459,7 +1457,7 @@ void BgLoader::CleanSector(Sector* sector)
         engine->GetMeshes()->Remove(sector->alwaysLoaded[i]->object);
         sector->alwaysLoaded[i]->object.Invalidate();
         CleanMesh(sector->alwaysLoaded[i]);
-        --sector->objectCount;
+        --(sector->objectCount);
     }
 
     // Remove sequences.
@@ -1648,16 +1646,13 @@ void BgLoader::LoadSector(const csBox3& loadBox, const csBox3& unloadBox,
         // Load all meshes which should always be loaded in this sector.
         for(size_t i=0; i<sector->alwaysLoaded.GetSize(); i++)
         {
-            if(!sector->alwaysLoaded[i]->object.IsValid())
-            {
-                sector->alwaysLoaded[i]->loading = true;
-                loadingMeshes.Push(sector->alwaysLoaded[i]);
-                ++sector->objectCount;
-            }
+            sector->alwaysLoaded[i]->loading = true;
+            loadingMeshes.Push(sector->alwaysLoaded[i]);
+            ++(sector->objectCount);
         }
     }
 
-    if(!force)
+    if(!force && depth < maxPortalDepth)
     {
         // Check other sectors linked to by active portals.
         for(size_t i=0; i<sector->activePortals.GetSize(); i++)
@@ -1683,10 +1678,7 @@ void BgLoader::LoadSector(const csBox3& loadBox, const csBox3& unloadBox,
                     wwUnloadBox.SetMax(2, wwUnloadBox.MaxZ()-transform.z);
                 }
 
-                if(depth > maxPortalDepth)
-                    CleanSector(sector->activePortals[i]->targetSector);
-                else
-                    LoadSector(wwLoadBox, wwUnloadBox, sector->activePortals[i]->targetSector, depth+1, false, loadMeshes);
+                LoadSector(wwLoadBox, wwUnloadBox, sector->activePortals[i]->targetSector, depth+1, false, loadMeshes);
             }
         }
     }
@@ -1702,7 +1694,7 @@ void BgLoader::LoadSector(const csBox3& loadBox, const csBox3& unloadBox,
                 {
                     sector->meshes[i]->loading = true;
                     loadingMeshes.Push(sector->meshes[i]);
-                    ++sector->objectCount;
+                    ++(sector->objectCount);
                 }
                 else if(!force && sector->meshes[i]->OutOfRange(unloadBox))
                 {
@@ -1711,7 +1703,7 @@ void BgLoader::LoadSector(const csBox3& loadBox, const csBox3& unloadBox,
                     engine->GetMeshes()->Remove(sector->meshes[i]->object);
                     sector->meshes[i]->object.Invalidate();
                     deleteQueue.Push(sector->meshes[i]);
-                    --sector->objectCount;
+                    --(sector->objectCount);
                 }
             }
         }
@@ -1725,12 +1717,12 @@ void BgLoader::LoadSector(const csBox3& loadBox, const csBox3& unloadBox,
                 {
                     sector->meshgen[i]->loading = true;
                     loadingMeshGen.Push(sector->meshgen[i]);
-                    ++sector->objectCount;
+                    ++(sector->objectCount);
                 }
                 else if(!force && sector->meshgen[i]->OutOfRange(unloadBox))
                 {
                     CleanMeshGen(sector->meshgen[i]);
-                    --sector->objectCount;
+                    --(sector->objectCount);
                 }
             }
         }
@@ -1782,12 +1774,9 @@ void BgLoader::LoadSector(const csBox3& loadBox, const csBox3& unloadBox,
                     // Load all meshes which should always be loaded in this sector.
                     for(size_t i=0; i<sector->portals[i]->targetSector->alwaysLoaded.GetSize(); i++)
                     {
-                        if(!sector->portals[i]->targetSector->alwaysLoaded[i]->object.IsValid())
-                        {
-                            sector->portals[i]->targetSector->alwaysLoaded[i]->loading = true;
-                            loadingMeshes.Push(sector->portals[i]->targetSector->alwaysLoaded[i]);
-                            ++sector->portals[i]->targetSector->objectCount;
-                        }
+                        sector->portals[i]->targetSector->alwaysLoaded[i]->loading = true;
+                        loadingMeshes.Push(sector->portals[i]->targetSector->alwaysLoaded[i]);
+                        ++(sector->portals[i]->targetSector->objectCount);
                     }
                 }
             }
@@ -1839,7 +1828,7 @@ void BgLoader::LoadSector(const csBox3& loadBox, const csBox3& unloadBox,
             }
 
             sector->activePortals.Push(sector->portals[i]);
-            ++sector->objectCount;
+            ++(sector->objectCount);
         }
         else if(!force && sector->portals[i]->OutOfRange(unloadBox))
         {
@@ -1870,7 +1859,7 @@ void BgLoader::LoadSector(const csBox3& loadBox, const csBox3& unloadBox,
             sector->portals[i]->pObject = NULL;
             sector->portals[i]->mObject.Invalidate();
             sector->activePortals.Delete(sector->portals[i]);
-            --sector->objectCount;
+            --(sector->objectCount);
         }
     }
 
@@ -1948,7 +1937,8 @@ void BgLoader::LoadSector(const csBox3& loadBox, const csBox3& unloadBox,
                 sector->alwaysLoaded[i]->object->GetMovable()->UpdateMove();
                 engine->GetMeshes()->Remove(sector->alwaysLoaded[i]->object);
                 sector->alwaysLoaded[i]->object.Invalidate();
-                --sector->objectCount;
+                deleteQueue.Push(sector->meshes[i]);
+                --(sector->objectCount);
             }
 
             // Remove sequences.
