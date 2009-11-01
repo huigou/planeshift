@@ -1772,10 +1772,10 @@ void BgLoader::LoadSector(const csBox3& loadBox, const csBox3& unloadBox,
                     sector->portals[i]->targetSector->object->QueryObject()->SetObjectParent(sector->portals[i]->targetSector->parent);
 
                     // Load all meshes which should always be loaded in this sector.
-                    for(size_t i=0; i<sector->portals[i]->targetSector->alwaysLoaded.GetSize(); i++)
+                    for(size_t j=0; j<sector->portals[i]->targetSector->alwaysLoaded.GetSize(); j++)
                     {
-                        sector->portals[i]->targetSector->alwaysLoaded[i]->loading = true;
-                        loadingMeshes.Push(sector->portals[i]->targetSector->alwaysLoaded[i]);
+                        sector->portals[i]->targetSector->alwaysLoaded[j]->loading = true;
+                        loadingMeshes.Push(sector->portals[i]->targetSector->alwaysLoaded[j]);
                         ++(sector->portals[i]->targetSector->objectCount);
                     }
                 }
