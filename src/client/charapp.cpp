@@ -776,7 +776,7 @@ bool psCharAppearance::Attach(const char* socketName, const char* meshFactName)
     csRef<iSpriteCal3DSocket> socket = state->FindSocket( socketName );
     if ( !socket )
     {
-        Error2("Socket %s not found.", socketName);
+        Notify2(LOG_CHARACTER, "Socket %s not found.", socketName);
         return false;
     }
 
