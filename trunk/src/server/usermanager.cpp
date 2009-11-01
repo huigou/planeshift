@@ -714,7 +714,7 @@ void UserManager::HandleSit(psUserCmdMessage& msg, Client *client)
 
 void UserManager::HandleAdminCommand(psUserCmdMessage& msg, Client *client)
 {
-    psserver->GetAdminManager()->Admin(client->GetClientNum(), client);
+    psserver->GetAdminManager()->Admin(client->GetClientNum(), client, msg.level);
 }
 
 void UserManager::HandleQuestsCommand(psUserCmdMessage& msg, Client *client)

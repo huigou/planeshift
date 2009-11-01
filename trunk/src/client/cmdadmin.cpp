@@ -105,6 +105,10 @@ void psAdminCommands::HandleMessage(MsgEntry *me)
 			iDocumentSystem* xml = psengine->GetXMLParser ();
 			csRef<iDocument> doc = xml->CreateDocument();
 			const char* error = doc->Parse(msg.cmd);
+			bool subscribe = true;
+			csRef<iDocumentNode> subscribeNode = doc->GetRoot()->GetNode("subscribe");
+			if(subscribeNode.IsValid())
+				subscribe = subscribeNode->GetAttributeValueAsBool("value");
 
 			if ( error )
 			{
@@ -121,7 +125,8 @@ void psAdminCommands::HandleMessage(MsgEntry *me)
 					csString cmdString = commandNode->GetAttributeValue("name");
 					commands.Append( cmdString );
 					commands.Append( "  " );
-					cmdsource->Subscribe( cmdString, this );
+					if(subscribe)
+						cmdsource->Subscribe( cmdString, this );
 				}
 	            
 				if ( chat )
@@ -129,8 +134,9 @@ void psAdminCommands::HandleMessage(MsgEntry *me)
 					psSystemMessage commandMsg( 0, MSG_INFO, commands.GetData() );
 					msgqueue->Publish( commandMsg.msg );
 
-					// Update the auto-complete list
-					chat->RefreshCommandList();
+					// Update the auto-complete list if there were subscritions
+					if(subscribe)
+						chat->RefreshCommandList();
 				}
 			}
 			break;

@@ -87,10 +87,11 @@ public:
 
     /** This is called when a player does /admin.
       * This builds up the list of commands that are available to the player
-      * at their current GM rank.  If commands need to be placed in different
-      * GM levels then this function needs to be updated for that.
+      * at their current GM rank. This commands allows player to check the commands
+      * of a different gm level (or not gm) provided they have some sort of security
+      * level ( > 0 ) in that case the commands won't be subscribed in the client.
       */
-    void Admin(int clientnum, Client *client);
+    void Admin(int clientnum, Client *client, int requestedLevel = -1);
 
     /** This sets the player as a Role Play Master and hooks them into the
       * admin commands they should have for their level.

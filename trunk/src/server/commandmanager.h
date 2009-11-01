@@ -76,7 +76,7 @@ public:
     bool GroupExists( int securityLevel );
     bool Validate( int securityLevel, const char* command );
     bool Validate( int securityLevel, const char* command, csString& error );
-    void BuildXML( int securityLevel, csString& dest );
+    void BuildXML( int securityLevel, csString& dest, bool subscribe = true);
 
 private:
     
