@@ -166,6 +166,9 @@ void CmdHandler::Execute(const char *script, bool breakSemiColon)
 
 void CmdHandler::GetSubscribedCommands(csRedBlackTree<psString>& tree)
 {
+	//we empty the list first
+	tree.DeleteAll();
+
     for ( size_t x = 0; x < subscribers.GetSize(); x++ )
     {
         tree.Insert(subscribers[x]->cmd);        
