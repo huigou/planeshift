@@ -1333,7 +1333,6 @@ psUserCmdMessage::psUserCmdMessage(const char *cmd)
 psUserCmdMessage::psUserCmdMessage(MsgEntry *message)
 {
     valid = true;
-    level = 0;
 
     WordArray words(message->GetStr());
 
@@ -1355,6 +1354,13 @@ psUserCmdMessage::psUserCmdMessage(MsgEntry *message)
         player = words.GetTail(1);
         return;
     }
+    if ( command == "/admin" )
+    {
+		if(words.GetCount() > 1)
+			level = words.GetInt(1);
+		else
+			level = -1;
+	}
     if ( command == "/spawn" ||
          command == "/unstick" ||
          command == "/die" ||
@@ -1369,7 +1375,6 @@ psUserCmdMessage::psUserCmdMessage(MsgEntry *message)
          command == "/motd" ||
          command == "/challenge" ||
          command == "/yield" ||
-         command == "/admin" ||
          command == "/npcmenu" ||
          command == "/sit" ||
          command == "/stand" ||

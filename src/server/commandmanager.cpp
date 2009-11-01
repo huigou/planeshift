@@ -171,12 +171,14 @@ bool psCommandManager::Validate( int securityLevel, const char* command, csStrin
     }
 }
 
-void psCommandManager::BuildXML( int securityLevel, csString& dest )
+void psCommandManager::BuildXML( int securityLevel, csString& dest, bool subscribe )
 {
     CommandGroup* grp = commandGroups.Get( securityLevel, NULL );
     if ( !grp )
         return;
         
+    dest.AppendFmt( "<subscribe value='%s' />", subscribe ? "true":"false" );
+
     for ( size_t z = 0; z < grp->commands.GetSize(); z++ )
     {
         csString cmd( grp->commands[z].GetData() );

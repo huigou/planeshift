@@ -4554,7 +4554,7 @@ void AdminManager::KillNPC (MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& 
 }
 
 
-void AdminManager::Admin(int clientnum, Client *client)
+void AdminManager::Admin(int clientnum, Client *client, int requestedLevel)
 {
     // Set client security level in case security level have
     // changed in database.
@@ -4563,8 +4563,14 @@ void AdminManager::Admin(int clientnum, Client *client)
 
     // for now consider all levels > 30 as level 30.
     if (type>30) type=30;
+    
+    if(type > 0 && requestedLevel >= 0)
+		type = requestedLevel;
 
-    CacheManager::GetSingleton().GetCommandManager()->BuildXML( type, commandList );
+    CacheManager::GetSingleton().GetCommandManager()->BuildXML( type, commandList, requestedLevel == -1 );
+	//NOTE: with only a check for requestedLevel == -1 players can actually make this function add the nonsubscrition flag
+	//      but as it brings no real benefits to the player there is no need to check for it. They will just get the commands
+	//      of their level and they won't be subscripted in their client
 
     psAdminCmdMessage admin(commandList.GetDataSafe(), clientnum);
     admin.SendMessage();
