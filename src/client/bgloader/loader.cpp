@@ -1917,13 +1917,16 @@ void BgLoader::LoadSector(const csBox3& loadBox, const csBox3& unloadBox,
             }
         }
 
-        // Load all sector sequences.
-        for(size_t i=0; i<sector->sequences.GetSize(); i++)
+        if(loadMeshes && !portalsOnly)
         {
-            if(!sector->sequences[i]->status.IsValid())
+            // Load all sector sequences.
+            for(size_t i=0; i<sector->sequences.GetSize(); i++)
             {
-                sector->sequences[i]->status = tloader->LoadNode(vfs->GetCwd(),
-                    sector->sequences[i]->data);
+                if(!sector->sequences[i]->status.IsValid())
+                {
+                    sector->sequences[i]->status = tloader->LoadNode(vfs->GetCwd(),
+                        sector->sequences[i]->data);
+                }
             }
         }
 
