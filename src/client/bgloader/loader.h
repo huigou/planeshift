@@ -40,6 +40,7 @@
 #include <iclient/iscenemanipulate.h>
 
 struct iCollideSystem;
+struct iEngineSequenceManager;
 struct iSyntaxService;
 
 CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
@@ -537,6 +538,7 @@ private:
     // Pointers to other needed plugins.
     iObjectRegistry* object_reg;
     csRef<iEngine> engine;
+    csRef<iEngineSequenceManager> engseq;
     csRef<iGraphics2D> g2d;
     csRef<iTextureManager> txtmgr;
     csRef<iThreadedLoader> tloader;
