@@ -319,7 +319,7 @@ private:
     {
     public:
         Sector(const char* name) : name(name), init(false), isLoading(false), checked(false),
-          objectCount(0), alwaysLoadedCount(0)
+          objectCount(0)
         {
             ambient = csColor(0.0f);
         }
@@ -339,10 +339,10 @@ private:
         csString culler;
         csColor ambient;
         size_t objectCount;
-        size_t alwaysLoadedCount;
         csRef<iSector> object;
         csWeakRef<Zone> parent;
         csRefArray<MeshGen> meshgen;
+        csRefArray<MeshObj> alwaysLoaded;
         csRefArray<MeshObj> meshes;
         csRefArray<Portal> portals;
         csRefArray<Portal> activePortals;
@@ -386,18 +386,18 @@ private:
     {
     public:
         MeshObj(const char* name, const char* path, iDocumentNode* data) : name(name), path(path), data(data),
-            loading(false), alwaysLoaded(false)
+            loading(false)
         {
         }
 
         inline bool InRange(const csBox3& curBBox, bool force)
         {
-            return !object.IsValid() && (force || alwaysLoaded || curBBox.Overlap(bbox));
+            return !object.IsValid() && (force || curBBox.Overlap(bbox));
         }
 
         inline bool OutOfRange(const csBox3& curBBox)
         {
-            return !alwaysLoaded && object.IsValid() && !curBBox.Overlap(bbox);
+            return object.IsValid() && !curBBox.Overlap(bbox);
         }
 
         csString name;
@@ -405,7 +405,6 @@ private:
         csRef<iDocumentNode> data;
 
         bool loading;
-        bool alwaysLoaded;
         csBox3 bbox;
         csRef<iThreadReturn> status;
         csRef<iMeshWrapper> object;

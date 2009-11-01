@@ -714,13 +714,6 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                     csRef<MeshObj> m = csPtr<MeshObj>(new MeshObj(node2->GetAttributeValue("name"), vfsPath, node2));
                     m->sector = s;
 
-                    // alwaysloaded ignores range checks. If the sector is loaded then so is this mesh.
-                    if(node2->GetAttributeValueAsBool("alwaysloaded"))
-                    {
-                        ++s->alwaysLoadedCount;
-                        m->alwaysLoaded = true;
-                    }
-
                     // Get the position data for later.
                     csRef<iDocumentNode> position = node2->GetNode("move");
 
@@ -917,7 +910,15 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                         }
                     }
 
-                    s->meshes.Push(m);
+                    // alwaysloaded ignores range checks. If the sector is loaded then so is this mesh.
+                    if(node2->GetAttributeValueAsBool("alwaysloaded"))
+                    {
+                        s->alwaysLoaded.Push(m);
+                    }
+                    else
+                    {
+                        s->meshes.Push(m);
+                    }
                     CS::Threading::ScopedWriteLock lock(meshLock);
                     meshes.Put(meshStringSet.Request(m->name), m);
                 }
@@ -931,11 +932,8 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                     m->sector = s;
 
                     // Always load trimesh... for now. TODO: Calculate bbox.
-                    ++s->alwaysLoadedCount;
-                    m->alwaysLoaded = true;
-
                     // Push to sector.
-                    s->meshes.Push(m);
+                    s->alwaysLoaded.Push(m);
                     CS::Threading::ScopedWriteLock lock(meshLock);
                     meshes.Put(meshStringSet.Request(m->name), m);
                 }
@@ -1453,6 +1451,17 @@ void BgLoader::CleanSector(Sector* sector)
         }
     }
 
+    // Unload all 'always loaded' meshes before destroying sector.
+    for(size_t i=0; i<sector->alwaysLoaded.GetSize(); i++)
+    {
+        sector->alwaysLoaded[i]->object->GetMovable()->ClearSectors();
+        sector->alwaysLoaded[i]->object->GetMovable()->UpdateMove();
+        engine->GetMeshes()->Remove(sector->alwaysLoaded[i]->object);
+        sector->alwaysLoaded[i]->object.Invalidate();
+        CleanMesh(sector->alwaysLoaded[i]);
+        --sector->objectCount;
+    }
+
     // Remove sequences.
     for(size_t i=0; i<sector->sequences.GetSize(); ++i)
     {
@@ -1635,6 +1644,17 @@ void BgLoader::LoadSector(const csBox3& loadBox, const csBox3& unloadBox,
         sector->object->SetDynamicAmbientLight(sector->ambient);
         sector->object->SetVisibilityCullerPlugin(sector->culler);
         sector->object->QueryObject()->SetObjectParent(sector->parent);
+
+        // Load all meshes which should always be loaded in this sector.
+        for(size_t i=0; i<sector->alwaysLoaded.GetSize(); i++)
+        {
+            if(!sector->alwaysLoaded[i]->object.IsValid())
+            {
+                sector->alwaysLoaded[i]->loading = true;
+                loadingMeshes.Push(sector->alwaysLoaded[i]);
+                ++sector->objectCount;
+            }
+        }
     }
 
     if(!force)
@@ -1663,7 +1683,10 @@ void BgLoader::LoadSector(const csBox3& loadBox, const csBox3& unloadBox,
                     wwUnloadBox.SetMax(2, wwUnloadBox.MaxZ()-transform.z);
                 }
 
-                LoadSector(wwLoadBox, wwUnloadBox, sector->activePortals[i]->targetSector, depth+1, false, loadMeshes);
+                if(depth > maxPortalDepth)
+                    CleanSector(sector->activePortals[i]->targetSector);
+                else
+                    LoadSector(wwLoadBox, wwUnloadBox, sector->activePortals[i]->targetSector, depth+1, false, loadMeshes);
             }
         }
     }
@@ -1755,6 +1778,17 @@ void BgLoader::LoadSector(const csBox3& loadBox, const csBox3& unloadBox,
                     sector->portals[i]->targetSector->object->SetDynamicAmbientLight(sector->portals[i]->targetSector->ambient);
                     sector->portals[i]->targetSector->object->SetVisibilityCullerPlugin(sector->portals[i]->targetSector->culler);
                     sector->portals[i]->targetSector->object->QueryObject()->SetObjectParent(sector->portals[i]->targetSector->parent);
+
+                    // Load all meshes which should always be loaded in this sector.
+                    for(size_t i=0; i<sector->portals[i]->targetSector->alwaysLoaded.GetSize(); i++)
+                    {
+                        if(!sector->portals[i]->targetSector->alwaysLoaded[i]->object.IsValid())
+                        {
+                            sector->portals[i]->targetSector->alwaysLoaded[i]->loading = true;
+                            loadingMeshes.Push(sector->portals[i]->targetSector->alwaysLoaded[i]);
+                            ++sector->portals[i]->targetSector->objectCount;
+                        }
+                    }
                 }
             }
             else if(!sector->portals[i]->targetSector->isLoading && !sector->portals[i]->targetSector->checked && recurse)
@@ -1905,19 +1939,16 @@ void BgLoader::LoadSector(const csBox3& loadBox, const csBox3& unloadBox,
         }
 
         // Check whether this sector is empty and should be unloaded.
-        if(sector->objectCount == sector->alwaysLoadedCount && sector->object.IsValid())
+        if(sector->objectCount == sector->alwaysLoaded.GetSize() && sector->object.IsValid())
         {
             // Unload all 'always loaded' meshes before destroying sector.
-            for(size_t i=0; i<sector->meshes.GetSize(); i++)
+            for(size_t i=0; i<sector->alwaysLoaded.GetSize(); i++)
             {
-                if(sector->meshes[i]->alwaysLoaded)
-                {
-                    sector->meshes[i]->object->GetMovable()->ClearSectors();
-                    sector->meshes[i]->object->GetMovable()->UpdateMove();
-                    engine->GetMeshes()->Remove(sector->meshes[i]->object);
-                    sector->meshes[i]->object.Invalidate();
-                    --sector->objectCount;
-                }
+                sector->alwaysLoaded[i]->object->GetMovable()->ClearSectors();
+                sector->alwaysLoaded[i]->object->GetMovable()->UpdateMove();
+                engine->GetMeshes()->Remove(sector->alwaysLoaded[i]->object);
+                sector->alwaysLoaded[i]->object.Invalidate();
+                --sector->objectCount;
             }
 
             // Remove sequences.
