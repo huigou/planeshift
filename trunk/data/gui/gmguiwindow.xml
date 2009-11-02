@@ -188,7 +188,6 @@
                 </attachpoints>
                 <widget name="ActionList" factory="pawsListBox" id="1265" >
                     <frame x="20" y="10" width="580" height="330" />
-                     <highlight resource="Hightlight" alpha="128" />
                     <columns height="24" headings="yes">
                         <column width="20" >
                             <pawsTextBox name="Id"/>
