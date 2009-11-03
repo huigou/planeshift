@@ -89,7 +89,7 @@ pawsQuestListWindow::pawsQuestListWindow()
     filename = "/planeshift/userdata/questnotes_";
     filename.Append(psengine->GetMainPlayerName());
     filename.Append(".xml");
-    filename.ReplaceAllSubString(" ", "_");
+    filename.ReplaceAll(" ", "_");
 
     // Load the quest notes file (if it doesn't exist, it will be made on first save)
     if ( vfs->Exists(filename) )

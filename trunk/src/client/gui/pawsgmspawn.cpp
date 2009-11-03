@@ -170,11 +170,11 @@ bool pawsGMSpawnWindow::OnSelected(pawsWidget* widget)
         }
         else
         {
-            psString fact_name(item.mesh);
-            fact_name.ReplaceAllSubString("$H", "stonebm");
-            fact_name.ReplaceAllSubString("$B", "stonebm");
-            fact_name.ReplaceAllSubString("$E", "stonebm");
-            fact_name.ReplaceAllSubString("$C", "stonebm");
+            csString fact_name(item.mesh);
+            fact_name.ReplaceAll("$H", "stonebm");
+            fact_name.ReplaceAll("$B", "stonebm");
+            fact_name.ReplaceAll("$E", "stonebm");
+            fact_name.ReplaceAll("$C", "stonebm");
             item.mesh = fact_name;
             factName = item.mesh;
 

@@ -188,7 +188,7 @@ protected:
 
     csRef<iVFS> vfs;
     csRef<iDocumentSystem> xml;
-    psString filename;
+    csString filename;
 };
 
 /** The pawsLootWindow factory

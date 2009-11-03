@@ -44,9 +44,6 @@ public:
     bool FindNumber(unsigned int & pos, unsigned int & end) const;
     bool FindString(const char *border, unsigned int & pos, unsigned int & end) const;
 
-    /** Escapes special xml characters.*/
-    const char* EscapeXML();
-
     enum
     {
         NO_PUNCT=0,
@@ -58,7 +55,6 @@ public:
     void GetLine(size_t start,csString& line) const;
 
     bool ReplaceSubString(const char* what, const char* with);
-    int ReplaceAllSubString(const char* what, const char* with, bool wholeWord=false);
 
     bool operator==(const psString& other) const
     { return strcmp(GetData(),other.GetData())==0; }

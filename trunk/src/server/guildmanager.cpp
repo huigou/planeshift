@@ -910,7 +910,7 @@ void GuildManager::SendMemberData(Client *client,bool onlineOnly)
     int clientnum = client->GetClientNum();
 
     csString online, lastOnline;
-    psString sectorName;
+    csString sectorName;
     psSectorInfo * sector = NULL;
     psString open;
 
@@ -958,7 +958,7 @@ void GuildManager::SendMemberData(Client *client,bool onlineOnly)
             escpxml = EscpXML(member->guildlevel->title);
             open.AppendFmt("<level text=\"%s\"/>",escpxml.GetData());
             open.AppendFmt("<online text=\"%s\"/>",online.GetData());
-            open.AppendFmt("<sector text=\"%s\"/>",sectorName.EscapeXML());
+            open.AppendFmt("<sector text=\"%s\"/>", EscpXML(sectorName).GetData());
             open.AppendFmt("<lastonline text=\"%s\"/>",lastOnline.GetData());
             open.AppendFmt("<points text=\"%d\"/>",member->guild_points);
             open.Append("</m>");
