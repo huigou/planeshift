@@ -29,7 +29,6 @@
 // CLIENT INCLUDES
 #include "iclient/isoundmngr.h"
 #include "../globals.h"
-//#include "util/psstring.h"
 
 // PAWS INCLUDES
 #include "pawsconfigsound.h"
@@ -162,7 +161,7 @@ bool pawsConfigSound::LoadConfig()
 
 bool pawsConfigSound::SaveConfig()
 {
-    psString xml;
+    csString xml;
     xml = "<sound>\n";
     xml.AppendFmt("<ambient on=\"%s\" />\n",
                      ambient->GetState() ? "yes" : "no");

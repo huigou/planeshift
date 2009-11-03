@@ -2204,7 +2204,7 @@ void NPCManager::HandlePetSkill(MsgEntry * me,Client *client)
 
 void NPCManager::SendPetSkillList(Client * client, bool forceOpen, PSSKILL focus )
 {
-    psString buff;
+    csString buff;
     psCharacter * character = client->GetFamiliar()->GetCharacterData();
     psCharacter * trainer = character->GetTrainer();
     psTrainerInfo * trainerInfo = NULL;

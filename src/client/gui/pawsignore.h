@@ -25,8 +25,6 @@
 #include "paws/pawsstringpromptwindow.h"
 #include "net/cmdhandler.h"
 
-#include "util/stringarray.h"
-
 class pawsListBox;
 
 /** A player's ignore list window.
@@ -53,7 +51,7 @@ public:
 private:
 
     /// Current list of people that should be ignored.
-    psStringArray   ignoredNames;
+    csStringArray   ignoredNames;
 
     pawsListBox*    ignoreList;
 

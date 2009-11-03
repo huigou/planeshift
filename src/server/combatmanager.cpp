@@ -905,7 +905,7 @@ void CombatManager::DebugOutput(psCombatGameEvent *event, const MathEnvironment 
 
     psItem* item = event->GetAttackerData()->Inventory().GetEffectiveWeaponInSlot(event->GetWeaponSlot() );
 
-    psString debug;
+    csString debug;
     debug.Append( "-----Debug Combat Summary--------\n");
     debug.AppendFmt( "%s attacks %s with slot %d , weapon %s, quality %1.2f, basedmg %1.2f/%1.2f/%1.2f\n",
       event->attacker->GetName(),event->target->GetName(), event->GetWeaponSlot(),item->GetName(),item->GetItemQuality(),

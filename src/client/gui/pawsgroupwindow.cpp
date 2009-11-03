@@ -235,8 +235,8 @@ void pawsGroupWindow::OnStringEntered(const char *name,int param,const char *val
     {
         if (!strcmp(name,"NewInvitee"))
         {
-            psString cmd;
-            cmd.AppendFmt("/invite %s", value);
+            csString cmd;
+            cmd.Format("/invite %s", value);
             psengine->GetCmdHandler()->Execute(cmd);
         }
     }

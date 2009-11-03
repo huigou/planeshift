@@ -491,7 +491,7 @@ float ProximityList::RangeTo( gemObject* object, bool ignoreY, bool ignoreInstan
 void ProximityList::DebugDumpContents(csString& out)
 {
     size_t x;
-    psString temp;
+    csString temp;
 
     temp.AppendFmt("I represent client %d\n",clientnum);
     temp.AppendFmt("I am publishing updates to:\n");
