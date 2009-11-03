@@ -139,8 +139,8 @@ void BankManager::TaxAccount(T guildOrChar, MoneyEvent monEvt, int index)
             // Mark payment as late and alter to run once a day for a week.
             monEvt.latePayment = true;
             monEvt.interval = 1;
-            psString sql;
-            sql.AppendFmt("update money_events set latePayment=%u, inter=%u where id=%u", 1, 1, monEvt.id);
+            csString sql;
+            sql.Format("UPDATE money_events SET latePayment=%u, inter=%u WHERE id=%u", 1, 1, monEvt.id);
             if (db->Command(sql) != 1)
                 Error3 ("Couldn't mark payment as 'late' in database.\nCommand was <%s>.\nError returned was <%s>\n",db->GetLastQuery(),db->GetLastError());
 
@@ -158,16 +158,16 @@ void BankManager::TaxAccount(T guildOrChar, MoneyEvent monEvt, int index)
 
                 // Remove money event from money_events.
                 monEvts.DeleteIndex(index);
-                psString sql;
-                sql.AppendFmt("delete from money_events where id=%u", monEvt.id);
+                csString sql;
+                sql.Format("DELETE FROM money_events WHERE id=%u", monEvt.id);
                 if (db->Command(sql) != 1)
                     Error3 ("Couldn't remove money event from database.\nCommand was <%s>.\nError returned was <%s>\n",db->GetLastQuery(),db->GetLastError());
             }
             else
             {
                 // Update db with lateBy.
-                psString sql;
-                sql.AppendFmt("update money_events set lateBy=%u where id=%u", monEvt.lateBy, monEvt.id);
+                csString sql;
+                sql.Format("UPDATE money_events SET lateBy=%u WHERE id=%u", monEvt.lateBy, monEvt.id);
                 if (db->Command(sql) != 1)
                     Error3 ("Couldn't update 'lateBy' in database.\nCommand was <%s>.\nError returned was <%s>\n",db->GetLastQuery(),db->GetLastError());
             }
@@ -180,8 +180,8 @@ void BankManager::TaxAccount(T guildOrChar, MoneyEvent monEvt, int index)
     {
         // Unmark
         monEvt.latePayment = false;
-        psString sql;
-        sql.AppendFmt("update money_events set latePayment=%u, lateBy=%u where id=%u", 0, 0, monEvt.id);
+        csString sql;
+        sql.Format("UPDATE money_events SET latePayment=%u, lateBy=%u WHERE id=%u", 0, 0, monEvt.id);
         if (db->Command(sql) != 1)
             Error3 ("Couldn't unmark payment as 'late' in database.\nCommand was <%s>.\nError returned was <%s>\n",db->GetLastQuery(),db->GetLastError());
 
@@ -275,8 +275,8 @@ void BankManager::ProcessTax()
                 if(!g)
                 {
                     monEvts.DeleteIndexFast(i);
-                    psString sql;
-                    sql.AppendFmt("delete from money_events where id=%u", temp.id);
+                    csString sql;
+                    sql.Format("DELETE FROM money_events WHERE id=%u", temp.id);
                     if (db->Command(sql) != 1)
                         Error3 ("Couldn't remove money event from database.\nCommand was <%s>.\nError returned was <%s>\n",db->GetLastQuery(),db->GetLastError());
                     return;
@@ -290,8 +290,8 @@ void BankManager::ProcessTax()
                 if(!character)
                 {
                     monEvts.DeleteIndexFast(i);
-                    psString sql;
-                    sql.AppendFmt("delete from money_events where id=%u", temp.id);
+                    csString sql;
+                    sql.Format("DELETE FROM money_events WHERE id=%u", temp.id);
                     if (db->Command(sql) != 1)
                         Error3 ("Couldn't remove money event from database.\nCommand was <%s>.\nError returned was <%s>\n",db->GetLastQuery(),db->GetLastError());
                     return;
@@ -322,8 +322,8 @@ void BankManager::ProcessTax()
                 // Set'n'Save
                 monEvts.Get(i).nextEvent = nextEventDate;
                 monEvts.Get(i).interval = 7;
-                psString sql;
-                sql.AppendFmt("update money_events set nextEvent=%u, inter=%u where id=%u", nextEventDate, 7, temp.id);
+                csString sql;
+                sql.AppendFmt("UPDATE money_events SET nextEvent=%u, inter=%u WHERE id=%u", nextEventDate, 7, temp.id);
                 if (db->Command(sql) != 1)
                     Error3 ("Couldn't save next event date to database.\nCommand was <%s>.\nError returned was <%s>\n",db->GetLastQuery(),db->GetLastError());
             }

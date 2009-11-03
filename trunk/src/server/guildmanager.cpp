@@ -30,7 +30,6 @@
 // Project Includes
 //=============================================================================
 #include "util/serverconsole.h"
-#include "util/psstring.h"
 #include "util/psxmlparser.h"
 #include "util/eventmanager.h"
 #include "util/psdatabase.h"        // Database
@@ -842,7 +841,7 @@ const char * DeNULL(const char * str)
 void GuildManager::SendGuildData(Client *client)
 {
     int clientnum = client->GetClientNum();
-    psString open;
+    csString open;
 
     psGuildInfo * guild = client->GetCharacterData()->GetGuild();
     if (guild == NULL)
@@ -850,11 +849,11 @@ void GuildManager::SendGuildData(Client *client)
 
     csString escpxml_guild = EscpXML(guild->GetName());
     csString escpxml_webpage = EscpXML(guild->web_page);
-    open.AppendFmt("<guild name=\"%s\" secret=\"%s\" web_page=\"%s\" max_points=\"%d\"/>",
-                      escpxml_guild.GetData(),
-                      guild->IsSecret()?"yes":"no",
-                      escpxml_webpage.GetData(),
-                      guild->GetMaxMemberPoints());
+    open.Format("<guild name=\"%s\" secret=\"%s\" web_page=\"%s\" max_points=\"%d\"/>",
+                escpxml_guild.GetData(),
+                guild->IsSecret() ? "yes" : "no",
+                escpxml_webpage.GetData(),
+                guild->GetMaxMemberPoints());
 
     psGUIGuildMessage cmd(clientnum,psGUIGuildMessage::GUILD_DATA,open);
     cmd.SendMessage();
@@ -868,7 +867,7 @@ const char * BoolToText(bool b)
 void GuildManager::SendLevelData(Client *client)
 {
     int clientnum = client->GetClientNum();
-    psString open;
+    csString open;
 
     psGuildInfo * guild = client->GetCharacterData()->GetGuild();
     if (guild == NULL)
@@ -912,7 +911,7 @@ void GuildManager::SendMemberData(Client *client,bool onlineOnly)
     csString online, lastOnline;
     csString sectorName;
     psSectorInfo * sector = NULL;
-    psString open;
+    csString open;
 
     psGuildInfo * guild = client->GetCharacterData()->GetGuild();
     if (guild == NULL)
@@ -996,7 +995,7 @@ void GuildManager::SendMemberData(Client *client,bool onlineOnly)
 
 csString GuildManager::MakeAllianceMemberXML(psGuildInfo * member, bool allianceLeader)
 {
-    psString xml;
+    csString xml;
     csString name, isLeader, leaderName, online;
     psGuildMember * leader;
 
@@ -1030,7 +1029,7 @@ void GuildManager::SendAllianceData(Client *client)
 {
     int clientnum = client->GetClientNum();
     psGuildAlliance * alliance;
-    psString xml;
+    csString xml;
     int memberNum;
 
 

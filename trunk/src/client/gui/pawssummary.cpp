@@ -219,7 +219,7 @@ bool pawsSummaryWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsW
         }
         case UPLOAD_BUTTON:
         {           
-            psString cpwarning = "Are you sure you want to upload?  ";
+            csString cpwarning = "Are you sure you want to upload?  ";
             // Also show CP left if more than zero
             if ( createManager->GetCurrentCP() > 0 )
             {

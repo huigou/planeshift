@@ -144,8 +144,8 @@ protected:
     pawsListBox* uncompletedQuestList;
 
     /// XML strings for quests
-    psString completedQuests;
-    psString uncompletedQuests;
+    csString completedQuests;
+    csString uncompletedQuests;
 
     /// flag to indicate to populate new quest xml string
     bool populateQuestLists;
@@ -163,8 +163,8 @@ protected:
     pawsListBox* uncompletedEventList;
 
     /// XML strings for gm events
-    psString completedEvents;
-    psString uncompletedEvents;
+    csString completedEvents;
+    csString uncompletedEvents;
 
     /// flag to indicate to populate new quest xml string
     bool populateGMEventLists;

@@ -798,7 +798,7 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
     MathVar *varTotal = env.Lookup("Total");
     float total = varTotal->GetValue();
 
-    psString debug;
+    csString debug;
     debug.AppendFmt( "Probability:     %1.3f\n",workEvent->nr->probability);
     debug.AppendFmt( "Skill Factor:    %1.3f\n",f1);
     debug.AppendFmt( "Quality Factor:  %1.3f\n",f2);
