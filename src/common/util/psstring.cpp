@@ -174,22 +174,6 @@ void psString::GetSubString(psString& str, size_t from, size_t to) const
     str.Append ( ((const char*) *this) + from, len);
 }
 
-void GetSubString(csStringBase& src, csStringBase& str, size_t from, size_t to)
-{
-    str.Clear();
-
-    if ( from > src.Length() || from > to )
-        return;
-
-    size_t len = to-from;
-    str.Append ( src.GetData() + from, len);
-}
-
-
-
-
-
-
 void psString::GetWord(size_t pos, psString &buff, bool wantPunct) const
 {
     size_t start = pos;
@@ -239,24 +223,6 @@ void psString::GetLine(size_t start,csString& line) const
     SubString(line,start,end-start);
 }
 
-int psString::ReplaceAllSubString( const char* what, const char* with, bool wholeWord )
-{
-    int where = FindSubString(what,0,XML_CASE_INSENSITIVE,wholeWord);
-    size_t len = strlen(what);
-    int count = 0;
-
-    while ( where > -1 )
-    {
-        int pos = where;    
-        DeleteAt( where, len );
-        Insert( pos, with );        
-        where = FindSubString( what, where+(int)strlen(with) );
-        ++count;
-    }
-    
-    return count;
-}
-
 bool psString::ReplaceSubString(const char* what, const char* with)
 {
     int at;
@@ -288,17 +254,6 @@ size_t psString::FindCommonLength(const psString& other) const
             return i;
     }
     return i;
-}
-
-
-const char* psString::EscapeXML()
-{
-    ReplaceAllSubString("\"", "&quot;", true);
-    ReplaceAllSubString("'", "&apos;", true);
-    ReplaceAllSubString("<", "&lt;", true);
-    ReplaceAllSubString(">", "&gt;", true);
-    ReplaceAllSubString("&", "&amp;", true);
-    return GetDataSafe();
 }
 
 //---------------------------------------------------------------------------

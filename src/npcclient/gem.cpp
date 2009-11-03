@@ -120,11 +120,11 @@ bool gemNPCObject::InitMesh(    const char *factname,
     else
     {
         // Replace helm group token with the default race.
-        psString fact_name(factname);
-        fact_name.ReplaceAllSubString("$H", "stonebm");
-        fact_name.ReplaceAllSubString("$B", "stonebm");
-        fact_name.ReplaceAllSubString("$E", "stonebm");
-        fact_name.ReplaceAllSubString("$C", "stonebm");
+        csString fact_name(factname);
+        fact_name.ReplaceAll("$H", "stonebm");
+        fact_name.ReplaceAll("$B", "stonebm");
+        fact_name.ReplaceAll("$E", "stonebm");
+        fact_name.ReplaceAll("$C", "stonebm");
         factname = fact_name;
 
         bool failed = false;

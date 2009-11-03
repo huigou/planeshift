@@ -258,7 +258,7 @@ void pawsTextBox::SetText( const char* newText )
 {
     // Make sure any \r characters are replaced by printable \n ones.
     psString str(newText);
-    str.ReplaceAllSubString("\r", "\n");
+    str.ReplaceAll("\r", "\n");
 
     text.Replace(str.GetData());
 

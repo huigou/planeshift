@@ -92,12 +92,12 @@ void psCharAppearance::SetMesh(iMeshWrapper* mesh)
 
 csString psCharAppearance::ParseStrings(const char* part, const char* str) const
 {
-    psString result(str);
+    csString result(str);
 
     const char* factname = baseMesh->GetFactory()->QueryObject()->GetName();
 
-    result.ReplaceAllSubString("$F", factname);
-    result.ReplaceAllSubString("$P", part);
+    result.ReplaceAll("$F", factname);
+    result.ReplaceAll("$P", part);
 
     return result;
 }
