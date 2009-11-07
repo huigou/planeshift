@@ -1245,6 +1245,16 @@ bool  psItemStats::GetUnique()
     return ((stat_type=="U")?true:false);
 }
 
+void psItemStats::SetRandom()
+{
+    stat_type="R";
+}
+
+bool  psItemStats::GetRandom()
+{
+    return ((stat_type=="R")?true:false);
+}
+
 void psItemStats::SetPrice(int trias)
 {
     price = psMoney(trias);
