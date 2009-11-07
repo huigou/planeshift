@@ -1543,7 +1543,7 @@ unsigned int CacheManager::FindCommonStringID(const char *name)
     return (id == csInvalidStringID) ? 0 : id.GetHash();
 }
 
-#define COMPRESSION_BUFFSIZE MAX_MESSAGE_SIZE-10000
+#define COMPRESSION_BUFFSIZE MAX_MESSAGE_SIZE/2
 #define PACKING_BUFFSIZE COMPRESSION_BUFFSIZE*3
 void CacheManager::GetCompressedMessageStrings(char*& data, unsigned long& size,
                                                uint32_t& num_strings, csMD5::Digest& digest)

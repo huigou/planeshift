@@ -3033,7 +3033,7 @@ double psCharacter::CalcFunction(const char * functionName, const double * param
             return 0.0;
 
         Client* owner = EntityManager::GetSingleton().GetClients()->FindPlayer(params[0]);
-        if(owner->GetTargetType(GetActor()) & TARGET_FOE)
+        if(owner->GetTargetType(GetActor()) == TARGET_FOE)
         {
             return 1.0;
         }
