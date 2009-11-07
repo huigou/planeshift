@@ -548,6 +548,8 @@ public:
     const csString GetDownCaseName();
     void SetUnique();
     bool GetUnique();
+    void SetRandom();
+    bool GetRandom();
     void SetName(const char *v);
     void SaveName(void);
 

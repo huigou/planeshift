@@ -1639,6 +1639,8 @@ psItemStats* LootRandomizer::RandomizeItem( psItemStats* itemstats, float maxcos
         // Apply All Changes
         ApplyModifier(newStats, &totalMods);
 
+        // Set the 'R' stat type
+        newStats->SetRandom();
         // Save Changes and return
         newStats->Save();
     }
