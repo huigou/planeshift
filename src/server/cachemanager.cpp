@@ -1543,7 +1543,7 @@ unsigned int CacheManager::FindCommonStringID(const char *name)
     return (id == csInvalidStringID) ? 0 : id.GetHash();
 }
 
-#define COMPRESSION_BUFFSIZE MAX_MESSAGE_SIZE/2
+#define COMPRESSION_BUFFSIZE MAX_MESSAGE_SIZE-10000
 #define PACKING_BUFFSIZE COMPRESSION_BUFFSIZE*3
 void CacheManager::GetCompressedMessageStrings(char*& data, unsigned long& size,
                                                uint32_t& num_strings, csMD5::Digest& digest)
@@ -2382,8 +2382,6 @@ void CacheManager::PreloadFactionCharacterEvents(const char* script, Faction* fa
 
         //get the value of the faction which will trigger the text
         int value = atoi(factionCharacterEvents.Slice(0,cutpos).GetDataSafe());
-        if(value == 0) //script error or finished parsing bail out
-            break;
 
         //take out the string we need
         csString entry_text = factionCharacterEvents.Slice(cutpos+1, cutpos2-cutpos-1);
@@ -2392,9 +2390,9 @@ void CacheManager::PreloadFactionCharacterEvents(const char* script, Faction* fa
         FactionLifeEvent factionevt;
         factionevt.event_description = entry_text;
         factionevt.value = abs(value); //we want a positive value for checking later
-        if(value > 0) //check what cshash should get the parsed data
+        if(value >= 0) //check what cshash should get the parsed data
             faction->PositiveFactionEvents.PushSmart(factionevt); //this was a positive value
-        else
+        if(value <= 0)
             faction->NegativeFactionEvents.PushSmart(factionevt); //this was a negative value
 
         //prepare for the next line
