@@ -344,6 +344,7 @@ int main(int argc, char* argv[])
 {
     // Select between GUI and console mode.
     bool console = false;
+    bool help = false;
     for(int i=0; i<argc; i++)
     {
         csString s(argv[i]);
@@ -353,9 +354,52 @@ int main(int argc, char* argv[])
         {
             console = true;
         }
+        else if(s.CompareNoCase("--help") || s.CompareNoCase("-help"))
+        {
+            help = true;
+        }
     }
 
-    if(console)
+    if(help)
+    {
+        // Create new string array to make sure --help is there.
+        char** argvs = new char*[argc+1];
+        for(int i=0; i<argc; i++)
+        {
+            argvs[i] = argv[i];
+        }
+        argvs[argc] = const_cast<char*>("--help");
+
+        // Set up CS
+        psUpdater* updater = new psUpdater(argc+1, argvs);
+
+        // Convert args to an array of csString.
+        csStringArray args;
+        for(int i=0; i<argc+1; i++)
+        {
+            args.Push(argvs[i]);
+        }
+
+        // Initialize updater engine.
+        UpdaterEngine* engine = new UpdaterEngine(args, updater->GetObjectRegistry(), "pslaunch");
+
+        printf("PlaneShift Updater Version %1.2f for %s.\n"
+               "Launcher and updater for Planeshift\n\n"
+               "pslaunch [--help] [--console] [--repair] [--switch]\n\n"
+               "--help      Displays this help dialog\n"
+               "--console   Run updater without the GUI\n"
+               "--switch    Switch active updater mirror\n"
+               "--repair    Check for any problems and prompt to repair them\n", 
+               UPDATER_VERSION, engine->GetConfig()->GetCurrentConfig()->GetPlatform());
+
+        // Terminate updater!
+        delete argvs;
+        delete engine;
+        delete updater;
+        engine = NULL;
+        updater = NULL;
+    }
+    else if(console)
     {
         // Create new string array to make sure --console is there.
         char** argvs = new char*[argc+1];
