@@ -31,27 +31,29 @@
   <item orig="System" trans="" />
   <item orig="Load" trans="" />
   <item orig="Buffs" trans="" />
+  <item orig="Creatures" trans="" />
   <item orig="Stack Count" trans="" />
   <item orig=" unanswered petitions." trans="" />
   <item orig="Talk to people in your sector." trans="" />
   <item orig="Factions:" trans="" />
   <item orig="Paths" trans="" />
+  <item orig="Default" trans="" />
   <item orig="Tellself outline colour" trans="" />
   <item orig="male " trans="" />
-  <item orig="alliance text colour" trans="" />
   <item orig="Active" trans="" />
+  <item orig="alliance text colour" trans="" />
   <item orig="Creatures:" trans="" />
   <item orig="View" trans="" />
   <item orig="PATHS" trans="" />
   <item orig="Shadows" trans="" />
   <item orig="Unclaim" trans="" />
   <item orig="Server:" trans="" />
-  <item orig="Enable Shadows" trans="" />
   <item orig="Exit PlaneShift" trans="" />
+  <item orig="Enable Shadows" trans="" />
   <item orig="Escalation Level:" trans="" />
   <item orig="Notify when members login/logout" trans="" />
-  <item orig="Talk to someone privately." trans="" />
   <item orig="P. stamina" trans="" />
+  <item orig="Talk to someone privately." trans="" />
   <item orig="Magic Skills List:" trans="" />
   <item orig="House:" trans="" />
   <item orig="System Base" trans="" />
@@ -60,6 +62,7 @@
   <item orig="%s from %s: %s" trans="" />
   <item orig="Instant Cast" trans="" />
   <item orig="H:" trans="" />
+  <item orig="Testers" trans="" />
   <item orig="Amount available to withdraw" trans="" />
   <item orig="Adaptive distance" trans="" />
   <item orig="Ban" trans="" />
@@ -82,8 +85,8 @@
   <item orig="Free Movement" trans="" />
   <item orig="Hostility" trans="" />
   <item orig="npcinternal outline colour" trans="" />
-  <item orig="Account User Name:" trans="" />
   <item orig="Auction" trans="" />
+  <item orig="Account User Name:" trans="" />
   <item orig="You currently have no petitions." trans="" />
   <item orig="Attributes" trans="" />
   <item orig="M. Stamina" trans="" />
@@ -103,10 +106,10 @@
   <item orig="Change" trans="" />
   <item orig="Descalate" trans="" />
   <item orig="Mother Name:" trans="" />
+  <item orig="The server isn&apos;t available!" trans="" />
   <item orig="Privil." trans="" />
   <item orig="NPC_my Alignment" trans="" />
   <item orig="Skin Colour" trans="" />
-  <item orig="The server isn&apos;t available!" trans="" />
   <item orig="Master:" trans="" />
   <item orig="NPC_me text colour" trans="" />
   <item orig="Details" trans="" />
@@ -123,8 +126,8 @@
   <item orig="Movements" trans="" />
   <item orig="Mesh:" trans="" />
   <item orig="Resolution" trans="" />
-  <item orig="Gender:" trans="" />
   <item orig="Refresh MOTD" trans="" />
+  <item orig="Gender:" trans="" />
   <item orig="Login" trans="" />
   <item orig="Z:" trans="" />
   <item orig="Spell Description:" trans="" />
@@ -136,8 +139,8 @@
   <item orig="NPC_my text colour" trans="" />
   <item orig="Full Mesh" trans="" />
   <item orig="NPC_narrate shadow colour" trans="" />
-  <item orig="alliance outline colour" trans="" />
   <item orig="I am leaving" trans="" />
+  <item orig="alliance outline colour" trans="" />
   <item orig="List:" trans="" />
   <item orig="LOGIN" trans="" />
   <item orig="Remove" trans="" />
@@ -148,11 +151,12 @@ Do you really wish to leave Yliakum?" trans="
 Vuoi veramente lasciare Yliakum?" />
   <item orig="Count" trans="" />
   <item orig="Enter the command(s):" trans="" />
-  <item orig="Month:" trans="" />
   <item orig="Chat" trans="" />
+  <item orig="Month:" trans="" />
   <item orig="NPC_me outline colour" trans="" />
   <item orig="Mute on focus loss" trans="" />
   <item orig="Father Name:" trans="" />
+  <item orig="GM 1" trans="" />
   <item orig="Rank" trans="" />
   <item orig="Spawn item" trans="" />
   <item orig="Enable guild" trans="" />
@@ -179,14 +183,15 @@ Vuoi veramente lasciare Yliakum?" />
   <item orig="Say Alignment" trans="" />
   <item orig="Combat" trans="" />
   <item orig="Say outline colour" trans="" />
+  <item orig="Default last chat" trans="" />
   <item orig="Path" trans="" />
   <item orig="Kill Player" trans="" />
   <item orig="%s says: %s" trans="" />
   <item orig="Are you sure you want to upload your character?" trans="" />
   <item orig="Enable Chat Bubbles" trans="" />
-  <item orig="Get Reward" trans="" />
-  <item orig="Magic" trans="" />
   <item orig="Own attacks that fail to penetrate the armor" trans="" />
+  <item orig="Magic" trans="" />
+  <item orig="Get Reward" trans="" />
   <item orig="Credits" trans="" />
   <item orig="details" trans="" />
   <item orig="HP" trans="" />
@@ -195,8 +200,8 @@ Vuoi veramente lasciare Yliakum?" />
   <item orig="Quality:" trans="" />
   <item orig="No server running at the moment" trans="" />
   <item orig="CHARACTER CREATION" trans="" />
-  <item orig="Glyphs" trans="" />
   <item orig="Alliance:" trans="" />
+  <item orig="Glyphs" trans="" />
   <item orig="Various Skill description:" trans="" />
   <item orig="100%" trans="" />
   <item orig="Edit level" trans="" />
@@ -223,12 +228,13 @@ chiamato " />
   <item orig="%s %s" trans="" />
   <item orig="Trias" trans="" />
   <item orig="General" trans="" />
-  <item orig="Life" trans="" />
   <item orig="Password:" trans="" />
+  <item orig="Life" trans="" />
   <item orig="female " trans="" />
   <item orig="ALL" trans="" />
   <item orig="Currently, there are no petitions." trans="" />
   <item orig="Set" trans="" />
+  <item orig="Grouped with you and the same guild" trans="" />
   <item orig="View al.Chat" trans="" />
   <item orig="Actions Volume" trans="" />
   <item orig="NPC_my outline colour" trans="" />
@@ -238,6 +244,7 @@ chiamato " />
   <item orig="Save" trans="" />
   <item orig="Promote" trans="" />
   <item orig="Combat Skills" trans="" />
+  <item orig="The server isn&apos;t ready!" trans="" />
   <item orig="Enable NPC_narrate" trans="" />
   <item orig="Apply to all" trans="" />
   <item orig="Polygon:" trans="" />
@@ -249,13 +256,13 @@ chiamato " />
   <item orig="The selected petition was cancelled." trans="" />
   <item orig="Welcome back" trans="" />
   <item orig="You are ignoring all replies from that person." trans="" />
-  <item orig="NPC shadow colour" trans="" />
   <item orig="Description:" trans="" />
+  <item orig="NPC shadow colour" trans="" />
   <item orig="Chat text color" trans="" />
   <item orig="Cancel" trans="" />
   <item orig="None" trans="" />
-  <item orig="Mix Action colours" trans="" />
   <item orig="Trade" trans="" />
+  <item orig="Mix Action colours" trans="" />
   <item orig="Game Control" trans="" />
   <item orig="Edit Max GP" trans="" />
   <item orig="Mainchat brackets" trans="" />
@@ -278,14 +285,16 @@ chiamato " />
   <item orig="Exchange" trans="" />
   <item orig="Combat Skills List:" trans="" />
   <item orig="tweaks" trans="" />
-  <item orig="Tellself text colour" trans="" />
   <item orig="Confirmation upon PvP duel:" trans="" />
-  <item orig="Voices" trans="" />
+  <item orig="Tellself text colour" trans="" />
   <item orig="Petition text:" trans="" />
+  <item orig="Voices" trans="" />
   <item orig="Secret guild" trans="" />
+  <item orig="SINGLE" trans="" />
   <item orig="Auction shadow colour" trans="" />
-  <item orig="OOC" trans="" />
   <item orig="List Attributes" trans="" />
+  <item orig="OOC" trans="" />
+  <item orig="Dead body" trans="" />
   <item orig="Claim" trans="" />
   <item orig="Radius:" trans="" />
   <item orig="CC" trans="" />
@@ -304,8 +313,8 @@ chiamato " />
   <item orig="CHARACTER SELECT" trans="" />
   <item orig="Pickupable" trans="" />
   <item orig="Detail information:" trans="" />
-  <item orig="Shout shadow colour" trans="" />
   <item orig="You will no longer ignore %s." trans="" />
+  <item orig="Shout shadow colour" trans="" />
   <item orig="Others&apos; combat stance changes" trans="" />
   <item orig="Guild outline colour" trans="" />
   <item orig="NPC outline colour" trans="" />
@@ -314,8 +323,8 @@ chiamato " />
   <item orig="The selected petition was %s" trans="" />
   <item orig="Setting Item" trans="" />
   <item orig="Loading game" trans="" />
-  <item orig="Use Collision Detection" trans="" />
   <item orig="Invite" trans="" />
+  <item orig="Use Collision Detection" trans="" />
   <item orig="Loading..." trans="" />
   <item orig="Sector:" trans="" />
   <item orig="Mix yourtext color" trans="" />
@@ -326,6 +335,7 @@ chiamato " />
   <item orig="NPC Alignment" trans="" />
   <item orig="NPC_narrate Alignment" trans="" />
   <item orig=" unaswered petitions." trans="" />
+  <item orig="Colors" trans="" />
   <item orig="5" trans="" />
   <item orig="Make leader" trans="" />
   <item orig="Money" trans="" />
@@ -396,6 +406,7 @@ chiamato " />
   <item orig="?" trans="" />
   <item orig="Fade Speed:" trans="" />
   <item orig="My Alignment" trans="" />
+  <item orig="Labels visibility" trans="" />
   <item orig="Trigger:" trans="" />
   <item orig="Refresh List" trans="" />
   <item orig="Character Name" trans="" />
@@ -461,6 +472,7 @@ Per disabilitare questa funzione cancella tutto in questa finestra usando il bot
   <item orig="You can not ignore yourself." trans="" />
   <item orig="Members" trans="" />
   <item orig="Shout text colour" trans="" />
+  <item orig="GM 2-5" trans="" />
   <item orig="List all of the petitions you have submitted." trans="" />
   <item orig="Settings" trans="" />
   <item orig="You must select a petition from the list in order to assign yourself." trans="" />
@@ -495,6 +507,7 @@ Per disabilitare questa funzione cancella tutto in questa finestra usando il bot
   <item orig="Magic Skills" trans="" />
   <item orig="Combat messages regarding others" trans="" />
   <item orig="Replaying previous chat..." trans="" />
+  <item orig="Developers" trans="" />
   <item orig="Actions" trans="" />
   <item orig="Chat - Filters" trans="" />
   <item orig="Amount to withdraw" trans="" />
@@ -502,6 +515,7 @@ Per disabilitare questa funzione cancella tutto in questa finestra usando il bot
   <item orig="Talk to the people in your immediate vicinity." trans="" />
   <item orig="Player name color" trans="" />
   <item orig="Tellself Alignment" trans="" />
+  <item orig="Grouped with you" trans="" />
   <item orig="Random name" trans="" />
   <item orig="Couldn&apos;t resolve server hostname." trans="" />
   <item orig="Escalate" trans="" />
@@ -525,6 +539,7 @@ Per disabilitare questa funzione cancella tutto in questa finestra usando il bot
   <item orig="There are " trans="" />
   <item orig="Alliance Chat" trans="" />
   <item orig="Give:" trans="" />
+  <item orig="Show guild " trans="" />
   <item orig="Name:" trans="" />
   <item orig="Discard" trans="" />
   <item orig="Y:" trans="" />
