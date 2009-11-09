@@ -25,7 +25,7 @@
 
 iObjectRegistry* psUpdater::object_reg = NULL;
 
-psUpdater::psUpdater(int argc, char* argv[])
+psUpdater::psUpdater(int argc, const char* argv[])
 {
     object_reg = csInitializer::CreateEnvironment (argc, argv);
     if(!object_reg)

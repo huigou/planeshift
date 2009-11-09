@@ -363,12 +363,12 @@ int main(int argc, char* argv[])
     if(help)
     {
         // Create new string array to make sure --help is there.
-        char** argvs = new char*[argc+1];
+        const char** argvs = new const char*[argc+1];
         for(int i=0; i<argc; i++)
         {
             argvs[i] = argv[i];
         }
-        argvs[argc] = const_cast<char*>("--help");
+        argvs[argc] = "--help";
 
         // Set up CS
         psUpdater* updater = new psUpdater(argc+1, argvs);
@@ -402,12 +402,12 @@ int main(int argc, char* argv[])
     else if(console)
     {
         // Create new string array to make sure --console is there.
-        char** argvs = new char*[argc+1];
+        const char** argvs = new const char*[argc+1];
         for(int i=0; i<argc; i++)
         {
             argvs[i] = argv[i];
         }
-        argvs[argc] = const_cast<char*>("--console");
+        argvs[argc] = "--console";
 
         // Set up CS
         psUpdater* updater = new psUpdater(argc+1, argvs);
