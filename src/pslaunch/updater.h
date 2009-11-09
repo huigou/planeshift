@@ -30,7 +30,7 @@ struct iObjectRegistry;
 class psUpdater
 {
 public:
-    psUpdater(int argc, char* argv[]);
+    psUpdater(int argc, const char* argv[]);
     ~psUpdater();
     iObjectRegistry* GetObjectRegistry() const { return object_reg; }
     void RunUpdate(UpdaterEngine* engine) const;
