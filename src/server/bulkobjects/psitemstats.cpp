@@ -1252,7 +1252,7 @@ void psItemStats::SetRandom()
 
 bool  psItemStats::GetRandom()
 {
-    return ((stat_type=="R")?true:false);
+    return (stat_type=="R");
 }
 
 void psItemStats::SetPrice(int trias)
