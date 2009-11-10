@@ -1330,7 +1330,6 @@ void GEMClientActor::SwitchToRealMesh(iMeshWrapper* mesh)
 
     csRef<iMeshWrapper> oldMesh = pcmesh;
     pcmesh = mesh;
-    charApp->SetMesh(mesh);
     psengine->GetEngine()->GetMeshes()->Add(pcmesh);
 
     linmove.InitCD(post_load->top, post_load->bottom, post_load->offset, pcmesh);
@@ -1848,6 +1847,12 @@ bool GEMClientActor::CheckLoadStatus()
     }
 
     csRef<iMeshWrapper> mesh = factory->CreateMeshWrapper();
+    charApp->SetMesh(mesh);
+
+    if(!matName.IsEmpty())
+    {
+        charApp->ChangeMaterial(factName, matName);
+    }
 
     if (!mountFactname.IsEmpty() && !mountFactname.Compare("null"))
     {
@@ -1872,12 +1877,6 @@ bool GEMClientActor::CheckLoadStatus()
     else
     {
         SwitchToRealMesh(mesh);
-    }
-
-
-    if(!matName.IsEmpty())
-    {
-        charApp->ChangeMaterial(factName, matName);
     }
 
     pcmesh->GetFlags().Set(CS_ENTITY_NODECAL);
