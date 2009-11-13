@@ -262,21 +262,29 @@ public:
         tm* tm_old = localtime(&old);
 
         int year;
+        //if the data is invalid ignore checking it and start from scratch
+        bool ignoreOldDate = (curDate.IsEmpty() || curTime.IsEmpty()); 
 
-        if(!curDate.IsEmpty() && !curTime.IsEmpty())
+        if(!ignoreOldDate)
         {
-            sscanf(curDate, "%d-%d-%d", &year, &tm_old->tm_mon, &tm_old->tm_mday);
-            year = year - 1900;
-            tm_old->tm_year = year;
-
-            sscanf(curTime, "%d:%d:%d", &tm_old->tm_hour, &tm_old->tm_min, &tm_old->tm_sec);
-            old = mktime(tm_old);
+            int result =  sscanf(curDate, "%d-%d-%d", &year, &tm_old->tm_mon, &tm_old->tm_mday);
+            int result2 = sscanf(curTime, "%d:%d:%d", &tm_old->tm_hour, &tm_old->tm_min, &tm_old->tm_sec);
+            if(result != 3 || result2 != 3)
+            {
+                ignoreOldDate = true;
+            }
+            else
+            {            
+                year = year - 1900;
+                tm_old->tm_year = year;            
+                old = mktime(tm_old);
+            }
         }
         time_t curr;
         time(&curr);
         tm* tm_curr = localtime(&curr);
 
-        if (curDate.IsEmpty() || curTime.IsEmpty() || difftime(curr, old) >= 240*60)
+        if (ignoreOldDate || difftime(curr, old) >= 240*60)
         {
             year = tm_curr->tm_year+1900;
             curDate.Format("%d-%d-%d", year, tm_curr->tm_mon, tm_curr->tm_mday);
