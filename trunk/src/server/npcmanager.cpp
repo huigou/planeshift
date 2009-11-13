@@ -253,6 +253,8 @@ public:
     /// used to verify the session should still be valid
     bool CheckSession()
     {
+        //TODO: this needs some checking and improvement (or rewriting), 
+        //      all those string scanfs doesn't seem very safe
         double maxTime = GetMaxPetTime();
 
         time_t old;
@@ -260,19 +262,21 @@ public:
         tm* tm_old = localtime(&old);
 
         int year;
-        sscanf(curDate, "%d-%d-%d", &year, &tm_old->tm_mon, &tm_old->tm_mday);
-        year = year - 1900;
-        tm_old->tm_year = year;
 
-        sscanf(curTime, "%d:%d:%d", &tm_old->tm_hour, &tm_old->tm_min, &tm_old->tm_sec);
-        old = mktime(tm_old);
+        if(!curDate.IsEmpty() && !curTime.IsEmpty())
+        {
+            sscanf(curDate, "%d-%d-%d", &year, &tm_old->tm_mon, &tm_old->tm_mday);
+            year = year - 1900;
+            tm_old->tm_year = year;
 
+            sscanf(curTime, "%d:%d:%d", &tm_old->tm_hour, &tm_old->tm_min, &tm_old->tm_sec);
+            old = mktime(tm_old);
+        }
         time_t curr;
         time(&curr);
         tm* tm_curr = localtime(&curr);
 
-        int secsdiff = difftime(curr, old);
-        if (secsdiff >= 240*60)
+        if (curDate.IsEmpty() || curTime.IsEmpty() || difftime(curr, old) >= 240*60)
         {
             year = tm_curr->tm_year+1900;
             curDate.Format("%d-%d-%d", year, tm_curr->tm_mon, tm_curr->tm_mday);
