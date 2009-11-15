@@ -18,13 +18,13 @@
   Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 -->
 <shader compiler="shaderweaver" name="lighting_character" lights="3">
-  <alias name="ambient" file="/shader/snippets/lighting/ambient-simple.xml" />
-  <alias name="apply_alpha" file="/shader/snippets/surface/alpha-nochange.xml" />
-  <alias name="lighting" file="/shader/snippets/lighting/lighting-ppl.xml" />
-  <alias name="surface" file="/shader/snippets/surface/surface-overlay.xml" />
-  <alias name="specular" file="/shader/snippets/surface/specular-default.xml" />
-  <alias name="staticspecular" file="/shader/snippets/lighting/staticspec-null.xml" />
-  <alias name="parallax" file="/shader/snippets/surface/parallax-none.xml" />
+  <alias name="ambient" file="/shader-snippets/lighting/ambient-simple.xml" />
+  <alias name="apply_alpha" file="/shader-snippets/surface/alpha-nochange.xml" />
+  <alias name="lighting" file="/shader-snippets/lighting/lighting-ppl.xml" />
+  <alias name="surface" file="/shader-snippets/surface/surface-overlay.xml" />
+  <alias name="specular" file="/shader-snippets/surface/specular-default.xml" />
+  <alias name="staticspecular" file="/shader-snippets/lighting/staticspec-null.xml" />
+  <alias name="parallax" file="/shader-snippets/surface/parallax-none.xml" />
   
   <technique priority="300" minlights="3">
     <tag>per_pixel_lighting</tag>
@@ -53,7 +53,7 @@
 
       <!-- The meat of the shader is actually in a snippet. to be shared more
 	   easily across all techniques -->
-      <snippet id="shared" file="/shader/snippets/lighting/lighting_default-shared.xml" />
+      <snippet id="shared" file="/shader-snippets/lighting/lighting_default-shared.xml" />
       
       <parameter id="lightOffset" type="int">0</parameter>
       <parameter id="maxLights" type="int">3</parameter>
@@ -84,7 +84,7 @@
       
       <combiner plugin="crystalspace.graphics3d.shader.combiner.glcg" />
       
-      <snippet id="shared" file="/shader/snippets/lighting/lighting_default-shared.xml" />
+      <snippet id="shared" file="/shader-snippets/lighting/lighting_default-shared.xml" />
       
       <parameter id="lightOffset" type="int">0</parameter>
       <parameter id="maxLights" type="int">2</parameter>
@@ -102,8 +102,8 @@
       
       <combiner plugin="crystalspace.graphics3d.shader.combiner.glcg" />
       
-      <alias name="ambient" file="/shader/snippets/lighting/ambient-null.xml" />
-      <snippet id="shared" file="/shader/snippets/lighting/lighting_default-shared.xml" />
+      <alias name="ambient" file="/shader-snippets/lighting/ambient-null.xml" />
+      <snippet id="shared" file="/shader-snippets/lighting/lighting_default-shared.xml" />
       
       <parameter id="lightOffset" type="int">2</parameter>
       <parameter id="maxLights" type="int">1</parameter>
@@ -134,7 +134,7 @@
       
       <combiner plugin="crystalspace.graphics3d.shader.combiner.glcg" />
       
-      <snippet id="shared" file="/shader/snippets/lighting/lighting_default-shared.xml" />
+      <snippet id="shared" file="/shader-snippets/lighting/lighting_default-shared.xml" />
       
       <parameter id="lightOffset" type="int">0</parameter>
       <parameter id="maxLights" type="int">1</parameter>
@@ -152,8 +152,8 @@
       
       <combiner plugin="crystalspace.graphics3d.shader.combiner.glcg" />
       
-      <alias name="ambient" file="/shader/snippets/lighting/ambient-null.xml" />
-      <snippet id="shared" file="/shader/snippets/lighting/lighting_default-shared.xml" />
+      <alias name="ambient" file="/shader-snippets/lighting/ambient-null.xml" />
+      <snippet id="shared" file="/shader-snippets/lighting/lighting_default-shared.xml" />
       
       <parameter id="lightOffset" type="int">1</parameter>
       <parameter id="maxLights" type="int">1</parameter>
@@ -171,8 +171,8 @@
       
       <combiner plugin="crystalspace.graphics3d.shader.combiner.glcg" />
       
-      <alias name="ambient" file="/shader/snippets/lighting/ambient-null.xml" />
-      <snippet id="shared" file="/shader/snippets/lighting/lighting_default-shared.xml" />
+      <alias name="ambient" file="/shader-snippets/lighting/ambient-null.xml" />
+      <snippet id="shared" file="/shader-snippets/lighting/lighting_default-shared.xml" />
       
       <parameter id="lightOffset" type="int">2</parameter>
       <parameter id="maxLights" type="int">1</parameter>
@@ -203,7 +203,7 @@
       
       <!-- The meat of the shader is actually in a snippet. to be shared more
 	   easily across all techniques -->
-      <snippet id="shared" file="/shader/snippets/lighting/lighting_default-shared.xml" />
+      <snippet id="shared" file="/shader-snippets/lighting/lighting_default-shared.xml" />
       
       <parameter id="lightOffset" type="int">0</parameter>
       <parameter id="maxLights" type="int">0</parameter>
