@@ -101,16 +101,12 @@ const char* Config::GetPlatform() const
     {
         return GetGeneric();
     }
-#if defined(CS_PLATFORM_WIN32)
+#if defined(CS_PLATFORM_WIN32) && CS_PROCESSOR_SIZE == 32
     return "win32";
+#elif defined(CS_PLATFORM_WIN32) && CS_PROCESSOR_SIZE == 64
+    return "win64";
 #elif defined(CS_PLATFORM_MACOSX)
-    long version;
-    Gestalt(gestaltSystemVersion, &version);
-    if(version >= 0x1040)
-    {
-        return "macosx";
-    }
-    return "macosx1039";
+    return "macosx";
 #elif defined(CS_PLATFORM_UNIX) && CS_PROCESSOR_SIZE == 64
     return "linux64";
 #elif defined(CS_PLATFORM_UNIX) && CS_PROCESSOR_SIZE == 32
