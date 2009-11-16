@@ -1805,6 +1805,9 @@
 			Name="Source Files"
 			Filter="">
 			<File
+				RelativePath="..\..\mk\msvc\plugin_impl.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\server\database\mysql\dal.cpp">
 			</File>
 		</Filter>
