@@ -183,6 +183,13 @@ rule MsvcIncDirs1 { }
 rule MsvcCFlags { MsvcCFlags1 $(1) : $(2) : $(3) ; }
 rule MsvcCFlags1 { }
 
+## MsvcLibDirs target : libdirs [ : mode ]
+##   Invoke this rule to define an MSVC-specific additional library directories.
+##   'mode' should be "release" or "debug". If 'mode' is omitted, then 
+##   'directories' is used for release and debug.
+rule MsvcLibDirs { _MsvcLibDirs $(1) : $(2) : $(3) ; }
+rule _MsvcLibDirs { }
+
 ## MsvcLFlags target [ : lflags [ : mode ]]
 ##   Invoke this rule to set additional MSVC-specific linker flags for
 ##   'target'.  'mode' should be "release" or "debug". If 'mode' is omitted,
@@ -818,6 +825,10 @@ rule MsvcProject
       MsvcAddFileToProject $(respfile) : $(fileinproj) : $(respdir) ;
     }
   }
+  for i in $($(rawname)_EXTRASOURCES)
+  {
+    ResponseFile $(respfile) : "file|$(i)" : notfile : $(respdir) ;
+  }
 
   # Add resource file.
   if [ IsElem $(type) : dll plugin appgui appcon library_shared ]
@@ -1216,6 +1227,18 @@ rule Plugin
 
   $(<)_TYPE = plugin ;
   
+  local outdir = [ Property msvcgen : outdir$(MSVC_VERSION) ] ;
+  local outdircommon = [ Property msvcgen : outdircommon ] ;
+  if "$(outdircommon)" = ""
+  {
+    outdircommon = $(outdir) ;
+  }
+  local plugin_impl_file = plugin_impl.cpp ;
+  MakeLocate $(plugin_impl_file) : $(outdircommon) ;
+  WritePluginImplement $(plugin_impl_file) ;
+  Depends msvcgen : $(plugin_impl_file) ;
+  $(<)_EXTRASOURCES = $(plugin_impl_file:R=$(outdircommon))
+  
   local metafile ;
   metafile = [ FAppendSuffix $(<) : $(SUFMETA) ] ;
   SEARCH on $(metafile) = $(SEARCH_SOURCE) ;
@@ -1253,7 +1276,10 @@ rule Library
   }
   $(<)_TYPE = $(type) ;
   MsvcProject $(<) : $(type) : $(<:S=.lib) : $(>) ;
-  CompileGroups $(<) : all libs ;
+  if ! [ IsElem independent : $(options) ]
+  {
+    CompileGroups $(<) : all libs ;
+  }
 }
 
 rule DLL
