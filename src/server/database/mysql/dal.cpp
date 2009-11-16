@@ -25,15 +25,7 @@
 
 #include "dal.h"
 
-/**
- *
- * Standard SCF stuff to make plugin work
- *
- */
-
-CS_IMPLEMENT_PLUGIN
-
-// more SCF definitions
+// SCF definitions
 
 SCF_IMPLEMENT_FACTORY(psMysqlConnection)
 

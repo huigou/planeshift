@@ -45,8 +45,6 @@
 #define CS_ASSERT_MSG(msg, x) if(!x) printf("%s\n", msg);
 #endif
 
-CS_IMPLEMENT_PLUGIN
-
 CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
 {
 SCF_IMPLEMENT_FACTORY(BgLoader)
