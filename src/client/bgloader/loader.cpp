@@ -1754,6 +1754,7 @@ void BgLoader::LoadSector(const csBox3& loadBox, const csBox3& unloadBox,
                     sector->portals[i]->pObject = NULL;
                     sector->portals[i]->mObject.Invalidate();
                     sector->activePortals.Delete(sector->portals[i]);
+                    --(sector->objectCount);
                 }
 
                 if(!sector->portals[i]->targetSector->object.IsValid())
