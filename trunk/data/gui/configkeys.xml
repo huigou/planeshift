@@ -23,7 +23,7 @@
             <widget factory="pawsSeqTreeNode" name="Strafe right"/>
             <widget factory="pawsSeqTreeNode" name="Brightness up"/>
             <widget factory="pawsSeqTreeNode" name="Brightness down"/>
-            <widget factory="pawsSeqTreeNode" name="Brightness Reset" />
+            <widget factory="pawsSeqTreeNode" name="Brightness reset" />
             <widget factory="pawsWidgetTreeNode" name="Alternates" collapsed="yes">
                 <nodewidget>
                     <widget factory="pawsTextBox" name="Alternates label">
