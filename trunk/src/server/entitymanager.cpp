@@ -1148,6 +1148,8 @@ void EntityManager::RemoveRideRelation(gemActor *rider)
     rider->GetMount()->SetLocationInWorld(instance, sectorinfo,pos.x,pos.y,pos.z,yrot);
     CreateNPC(rider->GetMount());
     rider->SetMount(NULL);
+    
+    rider->UpdateProxList( true );
 
     if( movMod != rider->GetCharacterData()->GetRaceInfo()->GetSpeedModifier())
     {
