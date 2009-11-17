@@ -1169,13 +1169,17 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                 {
                     node = nodeItr->Next();
                     csRef<Sequence> seq = csPtr<Sequence>(new Sequence(node->GetAttributeValue("name"), node));
-                    sequences.Put(sStringSet.Request(seq->name), seq);
+                    {
+                      CS::Threading::ScopedWriteLock lock(sLock);
+                      sequences.Put(sStringSet.Request(seq->name), seq);
+                    }
 
                     bool loaded = false;
                     csRef<iDocumentNodeIterator> nodes = node->GetNodes("setambient");
                     if(nodes->HasNext())
                     {
                         csRef<iDocumentNode> type = nodes->Next();
+                        CS::Threading::ScopedWriteLock lock(sLock);
                         csRef<Sector> sec = sectorHash.Get(sStringSet.Request(type->GetAttributeValue("sector")), csRef<Sector>());
                         sec->sequences.Push(seq);
                         loaded = true;
@@ -1185,6 +1189,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                     if(nodes->HasNext())
                     {
                         csRef<iDocumentNode> type = nodes->Next();
+                        CS::Threading::ScopedWriteLock lock(sLock);
                         csRef<Light> l = lights.Get(sStringSet.Request(type->GetAttributeValue("light")), csRef<Light>());
                         l->sequences.Push(seq);
                         loaded = true;
@@ -1194,6 +1199,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                     if(nodes->HasNext())
                     {
                         csRef<iDocumentNode> type = nodes->Next();
+                        CS::Threading::ScopedWriteLock lock(meshLock);
                         csRef<MeshObj> l = meshes.Get(meshStringSet.Request(type->GetAttributeValue("mesh")), csRef<MeshObj>());
                         l->sequences.Push(seq);
                         loaded = true;
@@ -1211,6 +1217,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                 {
                     node = nodeItr->Next();
                     const char* seqname = node->GetNode("fire")->GetAttributeValue("sequence");
+                    CS::Threading::ScopedWriteLock lock(sLock);
                     csRef<Sequence> sequence = sequences.Get(sStringSet.Request(seqname), csRef<Sequence>());
                     CS_ASSERT_MSG("Unknown sequence in trigger!", sequence.IsValid());
 
