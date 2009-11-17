@@ -1345,6 +1345,9 @@ void GEMClientActor::SwitchToRealMesh(iMeshWrapper* mesh)
 
     delete post_load;
     post_load = NULL;
+
+    if(oldMesh.IsValid())
+      psengine->GetEngine()->GetMeshes()->Remove(oldMesh);
 }
 
 void GEMClientActor::CopyNewestData(GEMClientActor& oldActor)
