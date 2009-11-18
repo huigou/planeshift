@@ -1029,7 +1029,8 @@ GEMClientObject::GEMClientObject()
 {
     entitylabel = NULL;
     shadow = 0;
-    hasShadow = true;
+    hasLabel = false;
+    hasShadow = false;
     flags = 0;
 }
 
@@ -1039,10 +1040,10 @@ GEMClientObject::GEMClientObject(psCelClient* cel, EID id) : eid(id)
         this->cel = cel;
 
     eid = id;
-    //entity = cel->GetPlLayer()->CreateEntity(id);
     entitylabel = NULL;
     shadow = 0;
-    hasShadow = true;
+    hasLabel = false;
+    hasShadow = false;
 }
 
 GEMClientObject::~GEMClientObject()
@@ -1357,8 +1358,12 @@ void GEMClientActor::SwitchToRealMesh(iMeshWrapper* mesh)
     SetAnimationVelocity(post_load->vel);
     SetMode(serverMode, true);
     if (cel->GetMainPlayer() != this && (flags & psPersistActor::NAMEKNOWN))
+    {
         cel->GetEntityLabels()->OnObjectArrived(this);
+        hasLabel = true;
+    }
     cel->GetShadowManager()->CreateShadow(this);
+    hasShadow = true;
 
     delete post_load;
     post_load = NULL;
@@ -2093,7 +2098,9 @@ void GEMClientItem::PostLoad()
     }
 
     cel->GetEntityLabels()->OnObjectArrived(this);
+    hasLabel = true;
     cel->GetShadowManager()->CreateShadow(this);
+    hasShadow = true;
 
     delete post_load;
     post_load = NULL;

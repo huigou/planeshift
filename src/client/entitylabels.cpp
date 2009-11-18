@@ -542,6 +542,8 @@ inline void psEntityLabels::UpdateVisibility()
     for (size_t i=0; i < entities.GetSize(); i++)
     {
         GEMClientObject* object = entities.Get(i);
+        if (!object->HasLabel())
+            continue;
 
         csRef<iMeshWrapper> mesh = object->GetMesh();
         if (!mesh)
