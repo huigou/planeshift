@@ -871,12 +871,12 @@ void pawsLauncherWindow::SaveSettings()
 
         if(enableBloom->GetState())
         {
-            configUser->SetStr("RenderManager.Unshadowed.Effects", "/data/posteffects/bloom.xml");
-            configUser->SetStr("RenderManager.ShadowPSSM.Effects", "/data/posteffects/bloom.xml");
+//             configUser->SetStr("RenderManager.Unshadowed.Effects", "/data/posteffects/bloom.xml");
+//             configUser->SetStr("RenderManager.ShadowPSSM.Effects", "/data/posteffects/bloom.xml");
         }
 
-        configUser->SetBool("RenderManager.Unshadowed.HDR.Enabled", enableHDR->GetState());
-        configUser->SetBool("RenderManager.ShadowPSSM.HDR.Enabled", enableHDR->GetState());
+//         configUser->SetBool("RenderManager.Unshadowed.HDR.Enabled", enableHDR->GetState());
+//         configUser->SetBool("RenderManager.ShadowPSSM.HDR.Enabled", enableHDR->GetState());
     }
     else if(shaderSelection == "Medium")
     {
