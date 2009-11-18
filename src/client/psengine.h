@@ -197,6 +197,7 @@ public:
     psCamera*              GetPSCamera()       { return camera; }
     psNetManager*          GetNetManager()     { return netmanager; }
     psCSSetup*             GetCSSetup()        { return CS_Setup; }
+    ZoneHandler*           GetZoneHandler()    { return zonehandler; }
 
     /// Access the player's petitioner target
     void SetTargetPetitioner(const char * pet) { targetPetitioner = pet; }
