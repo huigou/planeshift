@@ -394,7 +394,9 @@ public:
 
      float RangeTo(GEMClientObject * obj, bool ignoreY);
 
-     bool HasShadow() { return hasShadow; }
+     bool HasShadow() const { return hasShadow; }
+
+     bool HasLabel() const { return hasLabel; }
 
      /**
       * Delayed mesh loading.
@@ -418,6 +420,7 @@ protected:
     int flags;                      ///< Various flags on the entity.
     psEffect* entitylabel;
     psEffect * shadow;
+    bool hasLabel;
     bool hasShadow;
 
     csRef<InstanceObject> instance;
