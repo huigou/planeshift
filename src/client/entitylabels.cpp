@@ -670,7 +670,7 @@ inline void psEntityLabels::ShowLabelOfObject(GEMClientObject* object, bool show
     if (object == celClient->GetMainPlayer())
         return;
 
-    if (object->GetEntityLabel() == NULL)
+    if (object->GetEntityLabel() == NULL && show)
     {
         CreateLabelOfObject(object);
     }

@@ -1258,10 +1258,14 @@ GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
     alive = true;
     vitalManager = new psClientVitals;
     equipment = mesg.equipment;
+    post_load->pos = mesg.pos;
+    post_load->yrot = mesg.yrot;
+    post_load->sector_name = mesg.sectorName;
     post_load->top = mesg.top;
     post_load->bottom = mesg.bottom;
     post_load->offset = mesg.offset;
-    post_load->vel = mesg.vel;
+    post_load->vel =
+      mesg.vel;
     post_load->texParts = mesg.texParts;
 
     charApp = new psCharAppearance(psengine->GetObjectRegistry());
@@ -1296,8 +1300,8 @@ GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
         nullstate->SetBoundingBox(bbox);
     }
 
-    pcmesh = psengine->GetEngine()->CreateMeshWrapper(nullmesh, name);
-    //cel->AttachObject(pcmesh->QueryObject(), this);
+    pcmesh = nullmesh->CreateMeshWrapper();
+    pcmesh->QueryObject()->SetName(name);
 
     InitLinMove(mesg.pos, mesg.yrot, mesg.sectorName, mesg.top, mesg.bottom, mesg.offset);
     if (mesg.sector != NULL)
@@ -1321,16 +1325,29 @@ GEMClientActor::~GEMClientActor()
 
 void GEMClientActor::SwitchToRealMesh(iMeshWrapper* mesh)
 {
-    // Switch over to the new mesh.  Since collision detection info and position are
-    // stored in the mesh, we need to reinitialize these.
     csVector3 pos;
     float yrot;
     iSector* sector;
-    linmove.GetLastPosition(pos, yrot, sector);
 
-    csRef<iMeshWrapper> oldMesh = pcmesh;
+    // If we don't have post load data, use last known position.
+    if (!post_load)
+    {
+      linmove.GetLastPosition(pos, yrot, sector);
+    }
+    else
+    {
+      pos = post_load->pos;
+      yrot = post_load->yrot;
+      sector = psengine->GetEngine()->FindSector(post_load->sector_name);
+    }
+
+    pcmesh->GetMovable()->ClearSectors();
+
+    if (cel->GetMainPlayer() != this && (flags & psPersistActor::NAMEKNOWN))
+      cel->GetEntityLabels()->RemoveObject(this);
+    cel->GetShadowManager()->RemoveShadow(this);
+
     pcmesh = mesh;
-    psengine->GetEngine()->GetMeshes()->Add(pcmesh);
 
     linmove.InitCD(post_load->top, post_load->bottom, post_load->offset, pcmesh);
     SetPosition(pos, yrot, sector);
@@ -1345,9 +1362,6 @@ void GEMClientActor::SwitchToRealMesh(iMeshWrapper* mesh)
 
     delete post_load;
     post_load = NULL;
-
-    if(oldMesh.IsValid())
-      psengine->GetEngine()->GetMeshes()->Remove(oldMesh);
 }
 
 void GEMClientActor::CopyNewestData(GEMClientActor& oldActor)
