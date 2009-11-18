@@ -1065,6 +1065,30 @@ void GEMClientObject::SetPosition(const csVector3 & pos, float rot, iSector * se
 {
     if(pcmesh.IsValid())
     {
+        if(instance.IsValid())
+        {
+            // Update the sector and position of real mesh.
+            if(pcmesh->GetMovable()->GetSectors()->GetCount() > 0)
+            {
+                iSector* old = pcmesh->GetMovable()->GetSectors()->Get(0);
+                if(old != sector)
+                {
+                    // Remove the old sector.
+                    instance->pcmesh->GetMovable()->GetSectors()->Remove(old);
+
+                    // Add the new sector.
+                    instance->pcmesh->GetMovable()->GetSectors()->Add(sector);
+                }
+            }
+            else
+            {
+                instance->pcmesh->GetMovable()->GetSectors()->Add(sector);
+            }
+
+            instance->pcmesh->GetMovable()->SetPosition(0.0f);
+            instance->pcmesh->GetMovable()->UpdateMove();
+        }
+
         if (sector)
             pcmesh->GetMovable ()->SetSector (sector);
 
@@ -1078,14 +1102,6 @@ void GEMClientObject::SetPosition(const csVector3 & pos, float rot, iSector * se
 
         if(instance.IsValid())
         {
-            // Update the sector and position of real mesh.
-            if (sector)
-            {
-                instance->pcmesh->GetMovable()->SetSector (sector);
-                instance->pcmesh->GetMovable()->SetPosition(0.0f);
-                instance->pcmesh->GetMovable()->UpdateMove();
-            }
-
             // Set instancing transform.
             position->SetValue(pcmesh->GetMovable()->GetTransform());
         }
@@ -1856,6 +1872,9 @@ bool GEMClientActor::CheckLoadStatus()
         return true;
     }
 
+    if (psengine->GetZoneHandler()->IsLoading())
+      return true;
+
     csRef<iMeshWrapper> mesh = factory->CreateMeshWrapper();
     charApp->SetMesh(mesh);
 
@@ -1974,7 +1993,6 @@ bool GEMClientItem::CheckLoadStatus()
         instance = csPtr<InstanceObject>(new InstanceObject());
         instance->pcmesh = factory->CreateMeshWrapper();
         instance->pcmesh->GetFlags().Set(CS_ENTITY_NODECAL | CS_ENTITY_NOHITBEAM);
-        psengine->GetEngine()->GetMeshes()->Add(instance->pcmesh);
         psengine->GetEngine()->PrecacheMesh(instance->pcmesh);
         cel->AddInstanceObject(factName+matName, instance);
 
@@ -2058,7 +2076,6 @@ bool GEMClientItem::CheckLoadStatus()
     pcmesh->GetFlags().Set(CS_ENTITY_NODECAL);
     csRef<iNullMeshState> nullmeshstate = scfQueryInterface<iNullMeshState> (pcmesh->GetMeshObject());
     nullmeshstate->SetHitBeamMeshObject(instance->pcmesh->GetMeshObject());
-    psengine->GetEngine()->GetMeshes()->Add(pcmesh);
 
     cel->AttachObject(pcmesh->QueryObject(), this);
 
