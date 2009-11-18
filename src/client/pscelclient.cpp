@@ -1265,8 +1265,7 @@ GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
     post_load->top = mesg.top;
     post_load->bottom = mesg.bottom;
     post_load->offset = mesg.offset;
-    post_load->vel =
-      mesg.vel;
+    post_load->vel = mesg.vel;
     post_load->texParts = mesg.texParts;
 
     charApp = new psCharAppearance(psengine->GetObjectRegistry());
@@ -1326,32 +1325,21 @@ GEMClientActor::~GEMClientActor()
 
 void GEMClientActor::SwitchToRealMesh(iMeshWrapper* mesh)
 {
-    csVector3 pos;
-    float yrot;
-    iSector* sector;
-
-    // If we don't have post load data, use last known position.
-    if (!post_load)
-    {
-      linmove.GetLastPosition(pos, yrot, sector);
-    }
-    else
-    {
-      pos = post_load->pos;
-      yrot = post_load->yrot;
-      sector = psengine->GetEngine()->FindSector(post_load->sector_name);
-    }
-
+    // Clean up old mesh.
     pcmesh->GetMovable()->ClearSectors();
 
-    if (cel->GetMainPlayer() != this && (flags & psPersistActor::NAMEKNOWN))
-      cel->GetEntityLabels()->RemoveObject(this);
-    cel->GetShadowManager()->RemoveShadow(this);
-
+    // Switch to real mesh.
     pcmesh = mesh;
 
+    // Init CD.
     linmove.InitCD(post_load->top, post_load->bottom, post_load->offset, pcmesh);
-    SetPosition(pos, yrot, sector);
+
+    // Find a valid sector to move to.
+    iSector* sector = psengine->GetEngine()->FindSector(post_load->sector_name);
+    if(!sector)
+        cel->HandleUnresolvedPos(this, post_load->pos, post_load->yrot, post_load->sector_name);
+    else
+        SetPosition(post_load->pos, post_load->yrot, sector);
 
     InitCharData(post_load->texParts, equipment);
     RefreshCal3d();
