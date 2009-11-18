@@ -580,6 +580,9 @@ protected:
     /// Post load data.
     struct PostLoadData
     {
+        csVector3 pos;
+        float yrot;
+        csString sector_name;
         csVector3 top;
         csVector3 bottom;
         csVector3 offset;

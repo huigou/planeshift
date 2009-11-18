@@ -815,6 +815,9 @@ bool psLinearMovement::InitCD (const csVector3& body, const csVector3& legs,
 
   cdsys = csQueryRegistry<iCollideSystem> (object_reg);
 
+  if (colldet)
+    delete colldet;
+
   colldet = new psCollisionDetection(object_reg);
   return colldet->Init (topSize, bottomSize, shift, mesh);
 }
