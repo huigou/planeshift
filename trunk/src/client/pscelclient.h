@@ -567,9 +567,6 @@ protected:
 
     virtual void SwitchToRealMesh(iMeshWrapper* mesh);
 
-    void InitLinMove(const csVector3& pos,float angle, const char* sector,
-                     csVector3 top, csVector3 bottom, csVector3 offset);
-
     void InitCharData(const char* textures, const char* equipment);
 
     bool alive;
@@ -586,6 +583,7 @@ protected:
         csVector3 pos;
         float yrot;
         csString sector_name;
+        iSector* sector;
         csVector3 top;
         csVector3 bottom;
         csVector3 offset;

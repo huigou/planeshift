@@ -1278,6 +1278,7 @@ GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
     post_load->pos = mesg.pos;
     post_load->yrot = mesg.yrot;
     post_load->sector_name = mesg.sectorName;
+    post_load->sector = mesg.sector;
     post_load->top = mesg.top;
     post_load->bottom = mesg.bottom;
     post_load->offset = mesg.offset;
@@ -1319,7 +1320,9 @@ GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
     pcmesh = nullmesh->CreateMeshWrapper();
     pcmesh->QueryObject()->SetName(name);
 
-    InitLinMove(mesg.pos, mesg.yrot, mesg.sectorName, mesg.top, mesg.bottom, mesg.offset);
+    linmove.InitCD(mesg.top, mesg.bottom, mesg.offset, pcmesh);
+    linmove.SetDeltaLimit(0.2f);
+
     if (mesg.sector != NULL)
         linmove.SetDRData(mesg.on_ground, 1.0f, mesg.pos, mesg.yrot, mesg.sector, mesg.vel, mesg.worldVel, mesg.ang_vel);
     else
@@ -1350,13 +1353,8 @@ void GEMClientActor::SwitchToRealMesh(iMeshWrapper* mesh)
     // Init CD.
     linmove.InitCD(post_load->top, post_load->bottom, post_load->offset, pcmesh);
 
-    // Find a valid sector to move to.
-    iSector* sector = psengine->GetEngine()->FindSector(post_load->sector_name);
-    if(!sector)
-        cel->HandleUnresolvedPos(this, post_load->pos, post_load->yrot, post_load->sector_name);
-    else
-        SetPosition(post_load->pos, post_load->yrot, sector);
-
+    // Set position and other data.
+    SetPosition(post_load->pos, post_load->yrot, post_load->sector);
     InitCharData(post_load->texParts, equipment);
     RefreshCal3d();
     SetAnimationVelocity(post_load->vel);
@@ -1638,22 +1636,6 @@ psLinearMovement& GEMClientActor::Movement()
     return linmove;
 }
 
-void GEMClientActor::InitLinMove(const csVector3& pos, float angle, const char* sector,
-                                csVector3 top, csVector3 bottom, csVector3 offset )
-{
-    top.x *= .7f;
-    top.z *= .7f;
-    bottom.x *= .7f;
-    bottom.z *= .7f;
-    linmove.InitCD(top, bottom,offset, pcmesh);
-    linmove.SetDeltaLimit(0.2f);
-    iSector * sectorObj = psengine->GetEngine()->FindSector(sector);
-    if (sectorObj != NULL)
-        linmove.SetPosition(pos,angle,sectorObj);
-    else
-        psengine->GetCelClient()->HandleUnresolvedPos(this, pos, angle, sector);
-}
-
 bool GEMClientActor::IsGroupedWith(GEMClientActor* actor)
 {
     if(actor && actor->GetGroupID() == groupID && groupID != 0)
@@ -1872,15 +1854,18 @@ bool GEMClientActor::CheckLoadStatus()
         return true;
     }
 
-    if (psengine->GetZoneHandler()->IsLoading())
-      return true;
-
     csRef<iMeshWrapper> mesh = factory->CreateMeshWrapper();
     charApp->SetMesh(mesh);
 
     if(!matName.IsEmpty())
     {
         charApp->ChangeMaterial(factName, matName);
+    }
+
+    if (psengine->GetZoneHandler()->IsLoading() || !post_load->sector)
+    {
+        post_load->sector = psengine->GetEngine()->GetSectors()->FindByName(post_load->sector_name);
+        return true;
     }
 
     if (!mountFactname.IsEmpty() && !mountFactname.Compare("null"))
