@@ -275,7 +275,7 @@ void psServerDR::HandleDeadReckoning(MsgEntry* me,Client *client)
         // should probably load this on startup.
         static ProgressionScript *death_penalty = NULL;
         if (!death_penalty)
-            psserver->GetProgressionManager()->FindScript("death_penalty");
+            death_penalty = psserver->GetProgressionManager()->FindScript("death_penalty");
 
         if (death_penalty)
         {
