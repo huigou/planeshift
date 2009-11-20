@@ -925,7 +925,7 @@ void pawsWidget::UseBorder( const char* style )
 
 void pawsWidget::SetBackground( const char* image )
 {
-    if(strcmp(image,"") == 0)
+    if(!image || (strcmp(image,"") == 0))
     {
         bgImage = NULL;
         return;
