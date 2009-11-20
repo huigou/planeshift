@@ -268,10 +268,14 @@ void psServerDR::HandleDeadReckoning(MsgEntry* me,Client *client)
 
     paladin->CheckCollDetection(client, actor);
 
-    // Swap lines for easy Death Penalty testing.            
+    // Swap lines for easy   Penalty testing.            
     //if (strcmp(drmsg.sector->QueryObject()->GetName(), "NPCroom1") == 0)
     if (strcmp(drmsg.sector->QueryObject()->GetName(), "DRexit") == 0)
     {
+        actor->pcmove->SetOnGround(false);
+        actor->MoveToSpawnPos();
+        actor->StopMoving(true);
+        
         // should probably load this on startup.
         static ProgressionScript *death_penalty = NULL;
         if (!death_penalty)
@@ -283,10 +287,6 @@ void psServerDR::HandleDeadReckoning(MsgEntry* me,Client *client)
             env.Define("Actor", actor);
             death_penalty->Run(&env);
         }
-
-        actor->pcmove->SetOnGround(false);
-        actor->MoveToSpawnPos();
-        actor->StopMoving(true);
     }
 }
 
