@@ -754,7 +754,7 @@ bool psCamera::Draw()
 
     // assume the normal camera movement is good, and move the camera
     view->GetCamera()->SetSector(actorSector);
-    view->GetCamera()->GetTransform().SetOrigin(actorPos + csVector3(0,1,0));
+    view->GetCamera()->GetTransform().SetOrigin(actorPos);
     view->GetCamera()->OnlyPortals(true);
     view->GetCamera()->GetTransform().LookAt(GetTarget(CAMERA_ACTUAL_DATA) - GetPosition(CAMERA_ACTUAL_DATA), GetUp(CAMERA_ACTUAL_DATA));
     view->GetCamera()->MoveWorld(GetPosition(CAMERA_ACTUAL_DATA) - view->GetCamera()->GetTransform().GetOrigin());
