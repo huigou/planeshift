@@ -198,7 +198,7 @@ bool pawsGMSpawnWindow::OnSelected(pawsWidget* widget)
         itemQuality->Show();
         itemImage->Show();
         itemImage->SetBackground(item.icon);
-        if (itemImage->GetBackground() != item.icon) // if setting the background failed...hide it
+        if (!item.icon || (itemImage->GetBackground() != item.icon)) // if setting the background failed...hide it
             itemImage->Hide();
         itemName->SetText(item.name);
         pawsWidget* spawnBtn = FindWidget("Spawn");
