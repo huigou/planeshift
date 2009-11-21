@@ -3092,6 +3092,7 @@ void gemActor::Teleport(iSector *sector, const csVector3 & pos, float yrot)
     UpdateProxList();
     MulticastDRUpdate();
     ForcePositionUpdate();
+    BroadcastTargetStatDR(EntityManager::GetSingleton().GetClients()); //we need to update the stats too
 }
 
 void gemActor::SetPosition(const csVector3& pos,float angle, iSector* sector)
