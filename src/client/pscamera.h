@@ -665,7 +665,7 @@ private:
     /// Have the settings been loaded from file and the camera mode been initialized?
     bool cameraInitialized;
 
-    iSector * lastCameraSector;
+    csWeakRef<iSector> lastTargetSector;
 
     GEMClientActor* actor;
 
