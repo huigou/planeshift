@@ -178,7 +178,7 @@ psCamera::psCamera()
     vel = 0.0f;
 
 
-    lastActorSector = 0;
+    lastCameraSector = 0;
 
     cameraInitialized = false;
 
@@ -712,6 +712,15 @@ bool psCamera::Draw()
                                                    cosf(actorYRot)*firstPersonPositionOffset.z);
     }
 
+    // Do a hitbeam between Position and Target to find the correct sector and coordinates.
+    csVector3 oldEye = actorEye;
+    csVector3 diff = actorEye - actorPos;
+    bool mirrored = view->GetCamera()->IsMirrored();
+    view->GetCamera()->OnlyPortals(true);
+    view->GetCamera()->GetTransform().SetOrigin(actorPos);
+    iSector* hitSector = actorSector->FollowSegment(view->GetCamera()->GetTransform(),
+        actorEye, mirrored, view->GetCamera()->GetOnlyPortals());
+    actorPos = actorEye - diff;
 
     // calculate ideal camera data (won't affect the actual camera data yet)
     DoCameraIdealCalcs(elapsedTicks, actorPos, actorEye, actorYRot);
@@ -726,6 +735,12 @@ bool psCamera::Draw()
     // transition phase calculations
     DoCameraTransition();
 
+    // Hack around elastic issues on sector change.
+    if (hitSector != lastCameraSector)
+    {
+        isElastic = false;
+    }
+
     // this makes the deltaIdeal data true to it's delta wording by subtracting the current ideal data
     if (isElastic)
     {
@@ -735,7 +750,7 @@ bool psCamera::Draw()
     }
 
     // interpolate between ideal and actual camera data
-    DoElasticPhysics(isElastic, elapsedTicks, deltaIdeal, actorSector);
+    DoElasticPhysics(isElastic, elapsedTicks, deltaIdeal, hitSector);
 
     EnsureActorVisibility();
 
@@ -743,19 +758,9 @@ bool psCamera::Draw()
     if (!psengine->GetG3D()->BeginDraw( psengine->GetEngine()->GetBeginDrawFlags() | CSDRAW_3DGRAPHICS))
         return false;
 
-    // if the actor changed sectors, then ensure that the position is correct (in case it's a warping portal)
-    if (actorSector != lastActorSector && lastActorSector != 0)
-    {
-        // calculate the new actual data using relative error from last frame
-        SetPosition(GetPosition() + GetPosition(CAMERA_ERR), CAMERA_ACTUAL_DATA);
-        SetTarget(GetTarget() + GetTarget(CAMERA_ERR), CAMERA_ACTUAL_DATA);
-        SetUp(GetUp() + GetUp(CAMERA_ERR), CAMERA_ACTUAL_DATA);
-    }
-
     // assume the normal camera movement is good, and move the camera
-    view->GetCamera()->SetSector(actorSector);
-    view->GetCamera()->GetTransform().SetOrigin(actorPos);
-    view->GetCamera()->OnlyPortals(true);
+    view->GetCamera()->SetSector(hitSector);
+    view->GetCamera()->GetTransform().SetOrigin(GetTarget());
     view->GetCamera()->GetTransform().LookAt(GetTarget(CAMERA_ACTUAL_DATA) - GetPosition(CAMERA_ACTUAL_DATA), GetUp(CAMERA_ACTUAL_DATA));
     view->GetCamera()->MoveWorld(GetPosition(CAMERA_ACTUAL_DATA) - view->GetCamera()->GetTransform().GetOrigin());
 
@@ -766,7 +771,7 @@ bool psCamera::Draw()
     SetTarget(GetTarget(CAMERA_ACTUAL_DATA) - GetTarget(), CAMERA_ERR);
     SetUp(GetUp(CAMERA_ACTUAL_DATA) - GetUp(), CAMERA_ERR);
 
-    lastActorSector = actorSector;
+    lastCameraSector = hitSector;
 
     // not needed at this point
     //CloneCameraModeData(CAMERA_ACTUAL_DATA, CAMERA_LAST_ACTUAL);
