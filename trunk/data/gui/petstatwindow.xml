@@ -7,25 +7,25 @@
     
     <!-- Feeling stats (HP, Mana, Stamina) -->
     <widget name="HPLbl" factory="pawsTextBox" style="Header Font">
-        <frame x="70" y="30" width="120" height="20" border="no" />
-        <text string="HP" />
+        <frame x="10" y="30" width="120" height="20" border="no" />
+        <text string="Health" />
     </widget>
     <widget name="ManaLbl" factory="pawsTextBox" style="Header Font">
-        <frame x="56" y="50" width="120" height="20" border="no" />
+        <frame x="10" y="50" width="120" height="20" border="no" />
         <text string="Mana" />
     </widget>
     <widget name="PysStaminaLbl" factory="pawsTextBox" style="Header Font">
-        <frame x="25" y="70" width="120" height="20" border="no" />
+        <frame x="10" y="70" width="120" height="20" border="no" />
         <text string="P. Stamina" />
     </widget>
     <widget name="MenStaminaLbl" factory="pawsTextBox" style="Header Font">
-        <frame x="28" y="90" width="120" height="20" border="no" />
+        <frame x="10" y="90" width="120" height="20" border="no" />
         <text string="M. Stamina" />
     </widget>
 
     <!-- Feeling stats Perc -->
     <widget name="HPCurrent" factory="pawsTextBox" >
-        <frame x="185" y="30" width="43" height="20" border="no" />
+        <frame x="205" y="30" width="43" height="20" border="no" />
         <text string="0" />
         <subscriptions format="percent" />        
     </widget>
@@ -35,7 +35,7 @@
     </widget>
     
     <widget name="ManaCurrent" factory="pawsTextBox" >
-        <frame x="185" y="50" width="43" height="20" border="no" />
+        <frame x="205" y="50" width="43" height="20" border="no" />
         <text string="0" />
         <subscriptions format="percent" />        
     </widget>
@@ -45,7 +45,7 @@
     </widget>
     
     <widget name="PysStaminaCurrent" factory="pawsTextBox" >
-        <frame x="185" y="70" width="43" height="20" border="no" />
+        <frame x="205" y="70" width="43" height="20" border="no" />
         <text string="0" />
         <subscriptions format="percent" />        
     </widget>
@@ -55,7 +55,7 @@
     </widget>
 
     <widget name="MenStaminaCurrent" factory="pawsTextBox">
-        <frame x="185" y="90" width="43" height="20" border="no"/>
+        <frame x="205" y="90" width="43" height="20" border="no"/>
         <text string="0" />
         <subscriptions format="percent" />        
     </widget>
@@ -66,25 +66,25 @@
 
     <!-- Feeling Stats Bars -->
       <widget name="HPBar" factory="pawsProgressBar">
-        <frame x="90" y="33" width="90" height="6" border="no" />
+        <frame x="100" y="33" width="90" height="6" border="no" />
 	<bgimage resource="Progressbar Background" />	
         <color r="150" g="20" b="20" />
         <fadecolor r="200" g="50" b="50" />
     </widget>
     <widget name="ManaBar" factory="pawsProgressBar">
-        <frame x="90" y="53" width="90" height="6" border="no" />
+        <frame x="100" y="53" width="90" height="6" border="no" />
 	<bgimage resource="Progressbar Background" />	
         <color r="20" g="20" b="160" />
         <fadecolor r="50" g="50" b="200" />
     </widget>
     <widget name="PysStaminaBar" factory="pawsProgressBar">
-        <frame x="90" y="73" width="90" height="6" border="no" />
+        <frame x="100" y="73" width="90" height="6" border="no" />
 	<bgimage resource="Progressbar Background" />	
         <color r="100" g="50" b="50" />
         <fadecolor r="150" g="75" b="75" />
     </widget>
     <widget name="MenStaminaBar" factory="pawsProgressBar">
-        <frame x="90" y="93" width="90" height="6" border="no" />
+        <frame x="100" y="93" width="90" height="6" border="no" />
 	<bgimage resource="Progressbar Background" />	
         <color r="50" g="50"  b="150" />
         <fadecolor r="75" g="75" b="200" />
@@ -126,7 +126,7 @@
             </attachpoints>
             <!-- Tabs -->
             <widget name="Stats Button" factory="pawsButton" style="Standard Tab" id="1000" shadows="yes">
-                <frame x="15" y="3" width="55"/>
+                <frame x="15" y="3" width="55" height="20"/>
                 <label text="Stats" />
                 <attachpoints>
                     <attach point="PROPORTIONAL_RIGHT" />
@@ -134,7 +134,7 @@
                 </attachpoints>
             </widget>
             <widget name="Combat Button" factory="pawsButton" style="Standard Tab" id="1001" >
-	        <frame x="80" y="3" width="80"/>
+	        <frame x="80" y="3" width="80" height="20"/>
                 <label text="Combat Skills" />
                 <attachpoints>
                     <attach point="PROPORTIONAL_RIGHT" />
@@ -142,7 +142,7 @@
                 </attachpoints>
             </widget>
             <widget name="Magic Button" factory="pawsButton" style="Standard Tab" id="1002">
-	        <frame x="170" y="3" width="75"/>
+	        <frame x="170" y="3" width="75" height="20"/>
                 <label text="Magic Skills" />
                 <attachpoints>
                     <attach point="PROPORTIONAL_RIGHT" />
@@ -150,7 +150,7 @@
                 </attachpoints>
             </widget>
             <widget name="Various Button" factory="pawsButton" style="Standard Tab" id="1004" >
-	        <frame x="260" y="3" width="80"/>
+	        <frame x="260" y="3" width="80" height="20"/>
                 <label text="Various Skills" />
                 <attachpoints>
                     <attach point="ATTACH_RIGHT" />
@@ -158,7 +158,7 @@
                 </attachpoints>
             </widget>            
             <widget name="Spells Button" factory="pawsButton" style="Standard Tab" id="1003" >
-	        <frame x="350" y="3" width="50"/>
+	        <frame x="350" y="3" width="50" height="20"/>
                 <label text="Spells" />
                 <attachpoints>
                     <attach point="ATTACH_RIGHT" />
@@ -168,7 +168,7 @@
 
         
             <widget name="Stats" factory="pawsWidget"  visible="no" id="1100">
-                <frame x="0" y="30" width="415" height="215" />
+                <frame x="0" y="22" width="415" height="225" />
                 <attachpoints>
                     <attach point="ATTACH_RIGHT" />
                     <attach point="PROPORTIONAL_TOP" />
@@ -215,7 +215,7 @@
             
             
             <widget name="Combat Skills Panel" factory="pawsWidget" visible="no" id="1101">
-                <frame x="0" y="30" width="415" height="215" />
+                <frame x="0" y="22" width="415" height="225" />
                 <attachpoints>
                     <attach point="ATTACH_RIGHT" />
                     <attach point="PROPORTIONAL_TOP" />
@@ -262,7 +262,7 @@
         
 
             <widget name="Magic Skills Panel" factory="pawsWidget"  visible="no" id="1102">
-                <frame x="0" y="30" width="415" height="215" />
+                <frame x="0" y="22" width="415" height="225" />
                 <attachpoints>
                     <attach point="ATTACH_RIGHT" />
                     <attach point="PROPORTIONAL_TOP" />
@@ -307,7 +307,7 @@
             </widget>
         
             <widget name="Various Skills Panel" factory="pawsWidget"  visible="no" id="1104">
-                <frame x="0" y="30" width="415" height="215" />
+                <frame x="0" y="22" width="415" height="225" />
                 <attachpoints>
                     <attach point="ATTACH_RIGHT" />
                     <attach point="PROPORTIONAL_TOP" />
@@ -351,7 +351,7 @@
             </widget>
 
             <widget name="Spell Book Panel" factory="pawsWidget"  visible="no" id="1103">
-                <frame x="0" y="30" width="415" height="215" />
+                <frame x="0" y="22" width="415" height="225" />
                 <attachpoints>
                     <attach point="ATTACH_RIGHT" />
                     <attach point="PROPORTIONAL_TOP" />
