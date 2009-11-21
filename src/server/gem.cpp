@@ -4118,7 +4118,9 @@ void gemNPC::SendBehaviorMessage(const csString & msg_id, gemObject *obj)
                 // Mine? for now bypass
                 if (true) //(psChar->GetOwnerID() == actor->GetCharacterData()->GetPID())
                 {
-                    options |= psGUIInteractMessage::VIEWSTATS;
+                    //bypass viewstat for now as mounts aren't owned
+                    //options |= psGUIInteractMessage::VIEWSTATS; 
+                    options |= psGUIInteractMessage::PLAYERDESC;
                     if(actor->GetMount())
                         options |= psGUIInteractMessage::UNMOUNT;
                     else
