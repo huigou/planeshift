@@ -689,15 +689,15 @@ void ModeHandler::RemoveWeather()
 {
     if (downfall)
     {
-        downfall->StopFollow();
-        downfall->Destroy();
+        //downfall->StopFollow();
+        //downfall->Destroy();
         delete downfall;
         downfall = NULL;
     }
 
     if (fog)
     {
-        fog->Destroy();
+        //fog->Destroy();
         delete fog;
         fog = NULL;
     }
@@ -1565,12 +1565,12 @@ bool ModeHandler::CreateWeather(WeatherInfo* ri, csTicks delta)
         }
     }
 
-
     // Check if fog need update
     if (fog)
     {
         fog->Update(delta);
     }
+
     // Check for removal of fog
     if (fog && ri->fog_condition == WEATHER_CLEAR)
     {
