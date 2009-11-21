@@ -33,6 +33,7 @@
 #include <ivideo/graph3d.h>
 #include <csutil/flags.h>
 #include <iengine/mesh.h>
+#include <iengine/portal.h>
 #include <csutil/xmltiny.h>
 #include <imesh/object.h>
 #include <imesh/spritecal3d.h>
@@ -176,9 +177,6 @@ psCamera::psCamera()
     npcModePosition = csVector3(0, 0, 0);
     npcOldRot = 0.0f;
     vel = 0.0f;
-
-
-    lastCameraSector = 0;
 
     cameraInitialized = false;
 
@@ -712,15 +710,54 @@ bool psCamera::Draw()
                                                    cosf(actorYRot)*firstPersonPositionOffset.z);
     }
 
-    // Do a hitbeam between Position and Target to find the correct sector and coordinates.
-    csVector3 oldEye = actorEye;
-    csVector3 diff = actorEye - actorPos;
-    bool mirrored = view->GetCamera()->IsMirrored();
+    // Save and set camera data.
+    iSector* targetSector;
+    csVector3 oldTarget = actorEye;
     view->GetCamera()->OnlyPortals(true);
+    bool mirrored = view->GetCamera()->IsMirrored();
+    csVector3 oldOrigin = view->GetCamera()->GetTransform().GetOrigin();
+
+    // Do a hitbeam between Position and Target to find the correct sector and coordinates.
     view->GetCamera()->GetTransform().SetOrigin(actorPos);
-    iSector* hitSector = actorSector->FollowSegment(view->GetCamera()->GetTransform(),
-        actorEye, mirrored, view->GetCamera()->GetOnlyPortals());
-    actorPos = actorEye - diff;
+    {
+        csVector3 diff = actorEye - actorPos;
+        targetSector = actorSector->FollowSegment(view->GetCamera()->GetTransform(),
+            actorEye, mirrored, view->GetCamera()->GetOnlyPortals());
+        actorPos = actorEye - diff;
+    }
+
+    // Correct previous frame camera data for warping portals.
+    if (lastTargetSector.IsValid() && targetSector != lastTargetSector)
+    {
+        // Do a hitbeam between the old and new sectors to get the conversion.
+        iPortal* transversed_portals[2];
+        iMeshWrapper* portal_meshes[2];
+        int firstIndex = 0, lastIndex = 1;
+        view->GetCamera()->GetTransform().SetOrigin(GetTarget(CAMERA_ACTUAL_DATA));
+        {
+            lastTargetSector->FollowSegment(view->GetCamera()->GetTransform(),
+                oldTarget, mirrored, view->GetCamera()->GetOnlyPortals(), transversed_portals,
+                portal_meshes, firstIndex, &lastIndex);
+        }
+        view->GetCamera()->GetTransform().SetOrigin(oldOrigin);
+
+        if (lastIndex != -1)
+        {
+            for (int p = firstIndex; p <= lastIndex; ++p)
+            {
+                iPortal *po = transversed_portals[p];
+                iMeshWrapper *pmw = portal_meshes[p];
+                if (po->GetFlags ().Check (CS_PORTAL_WARP))
+                {
+                    csReversibleTransform warp_wor;
+                    po->ObjectToWorld (pmw->GetMovable ()->GetTransform (), warp_wor);
+                    po->WarpSpace (warp_wor, view->GetCamera()->GetTransform(), mirrored);
+                    SetPosition(po->Warp (warp_wor, GetPosition(CAMERA_ACTUAL_DATA)), CAMERA_ACTUAL_DATA);
+                    SetTarget(po->Warp (warp_wor, GetTarget(CAMERA_ACTUAL_DATA)), CAMERA_ACTUAL_DATA);
+                }
+            }
+        }
+    }
 
     // calculate ideal camera data (won't affect the actual camera data yet)
     DoCameraIdealCalcs(elapsedTicks, actorPos, actorEye, actorYRot);
@@ -735,12 +772,6 @@ bool psCamera::Draw()
     // transition phase calculations
     DoCameraTransition();
 
-    // Hack around elastic issues on sector change.
-    if (hitSector != lastCameraSector)
-    {
-        isElastic = false;
-    }
-
     // this makes the deltaIdeal data true to it's delta wording by subtracting the current ideal data
     if (isElastic)
     {
@@ -750,7 +781,7 @@ bool psCamera::Draw()
     }
 
     // interpolate between ideal and actual camera data
-    DoElasticPhysics(isElastic, elapsedTicks, deltaIdeal, hitSector);
+    DoElasticPhysics(isElastic, elapsedTicks, deltaIdeal, targetSector);
 
     EnsureActorVisibility();
 
@@ -759,11 +790,12 @@ bool psCamera::Draw()
         return false;
 
     // assume the normal camera movement is good, and move the camera
-    view->GetCamera()->SetSector(hitSector);
+    view->GetCamera()->SetSector(targetSector);
     view->GetCamera()->GetTransform().SetOrigin(GetTarget());
     view->GetCamera()->GetTransform().LookAt(GetTarget(CAMERA_ACTUAL_DATA) - GetPosition(CAMERA_ACTUAL_DATA), GetUp(CAMERA_ACTUAL_DATA));
     view->GetCamera()->MoveWorld(GetPosition(CAMERA_ACTUAL_DATA) - view->GetCamera()->GetTransform().GetOrigin());
 
+    // Draw the world.
     view->Draw();
 
     // calculate the error of the camera
@@ -771,10 +803,7 @@ bool psCamera::Draw()
     SetTarget(GetTarget(CAMERA_ACTUAL_DATA) - GetTarget(), CAMERA_ERR);
     SetUp(GetUp(CAMERA_ACTUAL_DATA) - GetUp(), CAMERA_ERR);
 
-    lastCameraSector = hitSector;
-
-    // not needed at this point
-    //CloneCameraModeData(CAMERA_ACTUAL_DATA, CAMERA_LAST_ACTUAL);
+    lastTargetSector = targetSector;
     return true;
 }
 
@@ -1527,12 +1556,12 @@ void psCamera::DoElasticPhysics(bool isElastic, const csTicks elapsedTicks, cons
         csVector3 newPseudoPos = CalcCollisionPos(GetTarget(), GetPosition(), sector);
 
         float cameraSpringCoef, cameraInertialDampeningCoef, cameraSpringLength;
-    if (hasCollision)
-    {
+        if (hasCollision)
+        {
             cameraSpringCoef = GetSpringCoef(CAMERA_COLLISION);
             cameraInertialDampeningCoef = GetDampeningCoef(CAMERA_COLLISION);
             cameraSpringLength = GetSpringLength(CAMERA_COLLISION);
-    }
+        }
         else if (!inTransitionPhase)
         {
             cameraSpringCoef = GetSpringCoef();
@@ -1549,18 +1578,18 @@ void psCamera::DoElasticPhysics(bool isElastic, const csTicks elapsedTicks, cons
         csVector3 velIdealPos, velIdealTar, velIdealUp, newPos, newTar, newUp;
 
         newPos = CalcElasticPos(GetPosition(CAMERA_ACTUAL_DATA), newPseudoPos, deltaIdeal.worldPos,
-                                (float)elapsedTicks/1000.0f, cameraSpringCoef,
-                                cameraInertialDampeningCoef, cameraSpringLength);
+            (float)elapsedTicks/1000.0f, cameraSpringCoef,
+            cameraInertialDampeningCoef, cameraSpringLength);
         SetPosition(newPos, CAMERA_ACTUAL_DATA);
 
         newTar = CalcElasticPos(GetTarget(CAMERA_ACTUAL_DATA), GetTarget(), deltaIdeal.worldTar,
-                                (float)elapsedTicks/1000.0f, cameraSpringCoef,
-                                cameraInertialDampeningCoef, cameraSpringLength);
+            (float)elapsedTicks/1000.0f, cameraSpringCoef,
+            cameraInertialDampeningCoef, cameraSpringLength);
         SetTarget(newTar, CAMERA_ACTUAL_DATA);
 
         newUp = CalcElasticPos(GetUp(CAMERA_ACTUAL_DATA), GetUp(), deltaIdeal.worldUp,
-                               (float)elapsedTicks/1000.0f, cameraSpringCoef,
-                               cameraInertialDampeningCoef, cameraSpringLength);
+            (float)elapsedTicks/1000.0f, cameraSpringCoef,
+            cameraInertialDampeningCoef, cameraSpringLength);
         SetUp(newUp, CAMERA_ACTUAL_DATA);
     }
     else
