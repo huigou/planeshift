@@ -656,7 +656,7 @@ void psTriggerHandler::HandleCenterCamera(const psControl* trigger, bool value)
 
 void psTriggerHandler::HandleMovementAction(const psControl* trigger, bool value)
 {
-    if (trigger->name == "Sit")
+    if (trigger->name == "Sit" && psengine->GetCelClient()->GetMainPlayer())
     {
         if (psengine->GetCelClient()->GetMainPlayer()->GetMode() == psModeMessage::SIT ||
             psengine->GetCelClient()->GetMainPlayer()->GetMode() == psModeMessage::OVERWEIGHT)
