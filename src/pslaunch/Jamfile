@@ -37,9 +37,7 @@ if $(TARGET.OS) != "WIN32"
 {
     if $(TARGET.OS) != "MACOS_X"
     {
-        if $(X11.AVAILABLE) = "yes" { STATIC.PLUGINLIST += xwin ; }
-        if $(XFREE86VM.AVAILABLE) = "yes" { STATIC.PLUGINLIST += xext86vm ; }
-        STATIC.OPTIONALPLUGINLIST += glx2d ;
+        STATIC.OPTIONALPLUGINLIST += xwin xext86vm glx2d ;
     }
 }
 if $(TARGET.OS) = "WIN32" { STATIC.PLUGINLIST += glwin32 ; }
