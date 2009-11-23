@@ -230,7 +230,7 @@ void ChatManager::HandleChatMessage(MsgEntry *me, Client *client)
               {
                   csTicks delay = resp->ExecuteScript(client->GetActor(), targetnpc);
                   if (delay != SIZET_NOT_FOUND && resp->menu )
-                      resp->menu->ShowMenu(client, delay, targetnpc->GetPID());
+                      resp->menu->ShowMenu(client, delay, targetnpc);
               }
               break;
           }
