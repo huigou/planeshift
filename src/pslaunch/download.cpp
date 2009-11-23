@@ -158,8 +158,10 @@ bool Downloader::DownloadFile(const char *file, const char *dest, bool URL, bool
                 {
                     if (result == nsSocket::E_INVALID_HOST)
                         error.Format("Couldn't connect to mirror %s\n", url.GetData());
+		    else if (result == nsHTTPConn::E_OPEN_FILE)
+			error.Format("Couldn't open file %s for writing\n", destpath.GetData());
                     else
-                        error.Format("Error while downloading file: %s\n", url.GetData());
+                        error.Format("Error %d while downloading file: %s\n", result, url.GetData());
                 }
             }
             else
