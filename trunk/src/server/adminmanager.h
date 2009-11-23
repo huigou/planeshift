@@ -126,6 +126,7 @@ protected:
         csString gmeventName, gmeventDesc;
         csString zombie, requestor;
         csString type,name; ///< Used by: /location
+        csString sourceplayer;
 
         int value, interval, random;
         int rainDrops, density, fade;

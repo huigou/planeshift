@@ -666,9 +666,20 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         player = words[1];
         skill = words[2];
         if (words.GetCount() >= 4)
-            value = words.GetInt(3);
+        {
+            if (skill == "copy")
+            {
+                sourceplayer = words[3];
+            }
+            else
+            {
+                value = words.GetInt(3);
+            }
+        }
         else
+        {
             value = -2;
+        }
         return true;
     }
     else if (command == "/set")
@@ -6518,9 +6529,57 @@ void AdminManager::ThawClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
 
 void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client* client, gemActor *target)
 {
-    if (data.skill.IsEmpty() || data.value == -2)
+    Client* sourceclient = NULL;
+    gemActor* source = NULL;
+    gemObject* sourceobject = NULL;
+    psCharacter * schar = NULL;
+
+    // Try to find the source of skills if we're doing a copy
+    if (data.skill == "copy")
     {
-        psserver->SendSystemError(me->clientnum, "Syntax: /setskill [target] [skill|'all'] [value|-1]");
+        // First try and find the source client by name
+        if (data.sourceplayer == "me")
+        {
+            sourceclient = client;
+        }
+        else
+        {
+            sourceclient = FindPlayerClient(data.sourceplayer);
+        }
+
+        if (sourceclient)
+        {
+            source = sourceclient->GetActor();
+        }
+        // If a search by name didn't work, try and search by pid or eid
+        else
+        {
+            sourceobject = FindObjectByString(data.sourceplayer,client->GetActor());
+            if (sourceobject)
+            {
+                source = sourceobject->GetActorPtr();
+            }
+        }
+
+        if (source == NULL)
+        {
+            psserver->SendSystemError(me->clientnum, "Invalid skill source");
+            return;
+        }
+        else
+        {
+            schar = source->GetCharacterData();
+            if (!schar)
+            {
+                psserver->SendSystemError(me->clientnum, "No source character data!");
+                return;
+            }
+        }
+    }
+    // Not a copy, just proceed as normal
+    else if (data.skill.IsEmpty() || data.value == -2)
+    {
+        psserver->SendSystemError(me->clientnum, "Syntax: /setskill [target] [skill|'all'] [value|-1] | [target] copy [source]");
         return;
     }
 
@@ -6601,6 +6660,26 @@ void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
         {
             // Inform the other player.
             psserver->SendSystemOK(target->GetClientID(), "All your skills were set to %d by a GM", data.value);
+        }
+    }
+    else if (data.skill == "copy")
+    {
+        for (int i=0; i<PSSKILL_COUNT; i++)
+        {
+            psSkillInfo * skill = CacheManager::GetSingleton().GetSkillByID(i);
+            if (skill == NULL) continue;
+
+            unsigned int old_value = pchar->Skills().GetSkillRank(skill->id).Current();
+            unsigned int new_value = schar->Skills().GetSkillRank(skill->id).Current();
+
+            pchar->SetSkillRank(skill->id, new_value);
+            psserver->SendSystemInfo(me->clientnum, "Changed '%s' of '%s' from %u to %u", skill->name.GetDataSafe(), target->GetName(), old_value, new_value);
+
+            if (target->GetClient() &&  target->GetClient() != client)
+            {
+                // Inform the other player.
+                psserver->SendSystemOK(target->GetClientID(), "Your '%s' level was set to %d by a GM", data.skill.GetDataSafe(), new_value);
+            }
         }
     }
     else
