@@ -91,6 +91,7 @@ protected:
     bool hidden, crosshair;
 
     bool useOS;
+    bool basicCursor;
 
     int transparentR;
     int transparentG;

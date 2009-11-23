@@ -27,6 +27,7 @@
 #include <igraphic/imageio.h>
 #include <iutil/vfs.h>
 #include <csutil/databuf.h>
+#include <csutil/cfgmgr.h>
 
 #include "pawsmouse.h"
 #include "pawsmanager.h"
@@ -49,6 +50,9 @@ pawsMouse::pawsMouse()
     crosshair = false;
     crosshairImage = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage("Crosshair Mouse Pointer");
     useOS = false;
+    csRef<iConfigManager> cfg =  csQueryRegistry<iConfigManager> (PawsManager::GetSingleton().GetObjectRegistry());
+    basicCursor = cfg->GetBool("PlaneShift.GUI.BasicCursor");
+    
 }
 
 pawsMouse::~pawsMouse()
@@ -66,6 +70,12 @@ void pawsMouse::SetPosition( int x, int y )
 
 void pawsMouse::ChangeImage( const char* imageName )
 {
+    if(basicCursor)
+    {
+        graphics3D->GetDriver2D()->SetMouseCursor(csmcArrow);
+        useOS = true;
+        return;
+    }
     cursorImage = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(imageName);
     if (!cursorImage.IsValid())
     {
@@ -77,6 +87,12 @@ void pawsMouse::ChangeImage( const char* imageName )
 
 void pawsMouse::ChangeImage(csRef<iPawsImage> drawable)
 {
+    if(basicCursor)
+    {
+        graphics3D->GetDriver2D()->SetMouseCursor(csmcArrow);
+        useOS = true;
+        return;
+    }
     cursorImage = drawable;
     SetOSMouse(cursorImage);
 }
@@ -122,14 +138,19 @@ void pawsMouse::Draw()
 void pawsMouse::Hide(bool h)
 {
     hidden = h;
-#ifdef CS_PLATFORM_WIN32
-    if (h)
-        graphics3D->GetDriver2D()->SetMouseCursor (csmcNone);
-    else
-        if (useOS)
+    if(useOS)
+    {
+        if (h)
+            graphics3D->GetDriver2D()->SetMouseCursor (csmcNone);
+        else
         {
-            csRGBcolor color(transparentR, transparentG, transparentB);
-            graphics3D->GetDriver2D()->SetMouseCursor (image, &color);
+            if(basicCursor)
+                graphics3D->GetDriver2D()->SetMouseCursor(csmcArrow);
+            else
+            {
+                csRGBcolor color(transparentR, transparentG, transparentB);
+                graphics3D->GetDriver2D()->SetMouseCursor (image, &color);
+            }
         }
-#endif
+    }
 }
