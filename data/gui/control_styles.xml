@@ -1,6 +1,6 @@
 <style1>
     <!-- The whole toolbar, add border="yes" in the control.xml if you want to see a border -->
-    <bar width="130" height="480" min_w="30" min_h="60"  always_resize="no"  />
+    <bar width="130" height="480" min_w="30" min_h="60"  always_resize="yes"  />
     <buttons width="64" height="64" hide_width="16" hide_height="16" />
 
     <!-- Here you align your buttons, using X and Y cords NOTE: 1 = 1px in 800x600 -->
@@ -49,7 +49,7 @@
 </style2>
 
 <style3>
-    <bar width="960" height="70" min_w="360" min_h="30"  always_resize="no"  />
+    <bar width="960" height="70" min_w="360" min_h="30"  always_resize="yes"  />
     <buttons width="64" height="64" hide_width="16" hide_height="16" />
     <!-- Standard values -->
     <button name="ShowButtonUp"     x="0" y="0" />
@@ -71,7 +71,7 @@
 </style3>
 
 <style4>
-    <bar width="960" height="70" min_w="360" min_h="20"   always_resize="no" />
+    <bar width="960" height="70" min_w="360" min_h="20"   always_resize="yes" />
     <buttons width="64" height="64" hide_width="16" hide_height="16" />
     <!-- Standard values -->
     <button name="ShowButtonUp"     x="0" y="0" />
