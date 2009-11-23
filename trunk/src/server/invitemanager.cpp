@@ -129,6 +129,10 @@ bool PendingInvite::CheckForSpam(Client *inviter, psQuestionMessage::questionTyp
     csTicks now = csGetTicks();
     csTicks then = inviter->GetLastInviteTime();
 
+    // If the inviter has a security level then don't count it as spam
+    if (inviter->GetSecurityLevel() > 0)
+        return false;
+
     if (then && now > then + INVITESPAMBANTIME[inviter->GetSpamPoints()]*60*1000)
     {
         // If the player hasn't invited anyone in a while, expire a spamPoint
