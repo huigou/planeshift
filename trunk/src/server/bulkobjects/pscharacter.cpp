@@ -1520,10 +1520,13 @@ void psCharacter::CombatDrain(int slot)
         script = psserver->GetMathScriptEngine()->FindScript("StaminaCombat");
     if (!script)
         return;
+    psItem *weapon = inventory.GetEffectiveWeaponInSlot((INVENTORY_SLOT_NUMBER) slot);
+    if(weapon)//shouldn't happen
+        return;
 
     MathEnvironment env;
     env.Define("Actor", this);
-    env.Define("Weapon", inventory.GetItem(NULL, (INVENTORY_SLOT_NUMBER) slot));
+    env.Define("Weapon", weapon);
 
     script->Evaluate(&env);
 
@@ -1786,8 +1789,10 @@ void psCharacter::TagEquipmentObject(INVENTORY_SLOT_NUMBER slot,int eventId)
     // Reset next attack time
     Weapon=Inventory().GetEffectiveWeaponInSlot(slot);
 
-    if (Weapon!=NULL)
-        inventory.GetEquipmentObject(slot).eventId = eventId;
+    if (!Weapon) //no need to continue
+        return;
+    
+    inventory.GetEquipmentObject(slot).eventId = eventId;
 
     //drain stamina on player attacks
     if(actor->GetClientID() && !actor->nevertired)
@@ -3033,7 +3038,7 @@ double psCharacter::CalcFunction(const char * functionName, const double * param
             return 0.0;
 
         Client* owner = EntityManager::GetSingleton().GetClients()->FindPlayer(params[0]);
-        if(owner->GetTargetType(GetActor()) == TARGET_FOE)
+        if(owner->GetTargetType(GetActor()) & TARGET_FOE)
         {
             return 1.0;
         }
