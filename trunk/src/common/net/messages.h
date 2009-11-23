@@ -5355,9 +5355,7 @@ public:
         uint32_t flags;
     };
 
-    void AddResponse( uint32_t id, const csString& menuText, const csString& triggerText,
-                      const csString& playerName, const csString& playerRace, const csString& honorific,
-                                      const csString& possessive, uint32_t flags = 0x00 );
+    void AddResponse( uint32_t id, const csString& menuText, const csString& triggerText, uint32_t flags = 0x00 );
 
     csArray<DialogResponse> responses;
 };

@@ -499,7 +499,15 @@ void psNPCDialog::SubstituteKeywords(Client * player, csString& resp) const
             {
                 Error4("Failed to replace substring %s in %s with %s",word.GetData(),response.GetData(),player->GetName());
             }
-        }        
+        }
+        else if (word == "$his")
+        {
+            csString his(player->GetCharacterData()->GetRaceInfo()->GetPossessive());
+            if (!response.ReplaceSubString(word,his))
+            {
+                Error4("Failed to replace substring %s in %s with %s",word.GetData(),response.GetData(),player->GetName());
+            }
+        }
         else if (word == "$time") //changes a $time variable with a sentence like night morning afternoon or evening
         {
             csString timestr; //used to store the string which will be replaced in the text

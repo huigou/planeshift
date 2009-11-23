@@ -2482,7 +2482,7 @@ void NpcDialogMenu::Add(NpcDialogMenu *add)
 	//printf("Added %lu triggers to menu.\n", (unsigned long) add->triggers.GetSize());
 }
 
-void NpcDialogMenu::ShowMenu(Client *client,csTicks delay, PID npcPID)
+void NpcDialogMenu::ShowMenu(Client *client,csTicks delay, gemNPC *npc)
 {
 	if( client == NULL )
 		return;
@@ -2525,7 +2525,7 @@ void NpcDialogMenu::ShowMenu(Client *client,csTicks delay, PID npcPID)
         
         //check availability (as per lockout). Note as gm we show quest even if in lockout as > gm get 
         //an error message in system even if they can't get it because testermode is off
-        if(!IsGm && !IsTesting && !client->GetCharacterData()->CheckQuestAvailable(triggers[i].quest, npcPID))
+        if(!IsGm && !IsTesting && !client->GetCharacterData()->CheckQuestAvailable(triggers[i].quest, npc->GetPID()))
             continue;
 
         // Check to see about inserting a quest heading
@@ -2534,16 +2534,17 @@ void NpcDialogMenu::ShowMenu(Client *client,csTicks delay, PID npcPID)
             currentQuest = triggers[i].quest ? triggers[i].quest->GetName() : "(Unknown)";
             csString temp = "h:", temptrig = "heading";
             temp += currentQuest;
-            menu.AddResponse((uint32_t) i, temp, temptrig,
-                             "", "", "", "" );
+            menu.AddResponse((uint32_t) i, temp, temptrig);
         }
-		count++;    
+        
+
+        csString menuText = triggers[i].menuText;
+        npc->GetNPCDialogPtr()->SubstituteKeywords(client,menuText);
+        
 		menu.AddResponse((uint32_t) i, 
-                          triggers[i].menuText,
-		                  triggers[i].trigger, 
-						  client->GetName(), client->GetCharacterData()->GetRaceInfo()->GetRace(),
-						  client->GetCharacterData()->GetRaceInfo()->GetHonorific(),
-						  client->GetCharacterData()->GetRaceInfo()->GetPossessive() );
+                          menuText,
+		                  triggers[i].trigger);
+        count++;
 	}
 
 	if (count)
