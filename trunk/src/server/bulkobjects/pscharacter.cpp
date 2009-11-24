@@ -2006,7 +2006,7 @@ void psCharacter::SetLocationInWorld(InstanceID instance, psSectorInfo *sectorin
 
     if (oldInstance != instance || (oldsector && oldsector != sectorinfo))
     {
-        if ( dynamic_cast<gemNPC*>(actor) == NULL ) // NOT an NPC so it's ok to save location info
+        if ( GetCharType() == PSCHARACTER_TYPE_PLAYER ) // NOT an NPC so it's ok to save location info
             SaveLocationInWorld();
     }
 }
