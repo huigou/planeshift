@@ -179,13 +179,6 @@ bool psCelClient::Initialize(iObjectRegistry* object_reg,
 
     unresSector = psengine->GetEngine()->CreateSector("SectorWhereWeKeepEntitiesResidingInUnloadedMaps");
 
-    // Init nullmesh factory.
-    nullfact = psengine->GetEngine()->CreateMeshFactory("crystalspace.mesh.object.null", "nullmesh");
-    csRef<iNullFactoryState> nullstate = scfQueryInterface<iNullFactoryState> (nullfact->GetMeshObjectFactory());
-    csBox3 bbox;
-    bbox.AddBoundingVertex(csVector3(0.0f));
-    nullstate->SetBoundingBox(bbox);
-
     LoadEffectItems();
 
     return true;
