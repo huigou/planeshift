@@ -54,7 +54,7 @@
     <camsetting name="StartingPitch" value="-1" />
 </FreeRotation>
 <DistanceClipping>
-    <camsetting name="Adaptive" value="off" />
+    <camsetting name="Adaptive" value="on" />
     <camsetting name="Dist" value="200" />
     <camsetting name="MinFPS" value="20" />
     <camsetting name="MaxFPS" value="30" />
