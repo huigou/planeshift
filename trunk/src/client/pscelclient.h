@@ -253,14 +253,6 @@ public:
      */
     void AddInstanceObject(const char* name, csRef<InstanceObject> object);
 
-    /**
-     * Returns the nullmesh factory.
-     */
-    iMeshFactoryWrapper* GetNullFact() const
-    {
-        return nullfact;
-    }
-
 protected:
     /** Finds given entity in list of unresolved entities */
     csList<UnresolvedPos*>::Iterator FindUnresolvedPos(GEMClientObject * entity);
