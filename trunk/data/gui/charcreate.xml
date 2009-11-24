@@ -50,39 +50,39 @@
                 <text string="Ylian" position="right"/>
             </widget>
             
-            <widget name="race4" factory="pawsRadioButton" id="4">
-                <frame x="48" y="72" width="175" height="24"/>
-                <text string="Xacha" position="right"/>
-            </widget>
-            
-            <widget name="race10" factory="pawsRadioButton" id="10">
-                <frame x="33" y="96" width="175" height="24"/>
-                <text string="Lemur" position="right"/>
-            </widget>
-            
-            <widget name="race5" factory="pawsRadioButton" id="5">
-                <frame x="24" y="120" width="175" height="24"/>
-                <text string="Nolthrir" position="right"/>
-            </widget>
-            
             <widget name="race6" factory="pawsRadioButton" id="6">
-                <frame x="17" y="144" width="175" height="24"/>
+                <frame x="48" y="72" width="175" height="24"/>
                 <text string="Dermorian" position="right"/>
             </widget>
-           
+            
             <widget name="race0" factory="pawsRadioButton" id="0">
-                <frame x="14" y="168" width="175" height="24"/>
+                <frame x="33" y="96" width="175" height="24"/>
                 <text string="Stonebreaker" position="right"/>
             </widget>
-                    
-            <widget name="race7" factory="pawsRadioButton" id="7">
-                <frame x="14" y="192" width="175" height="24"/>
-                <text string="Hammerwielder" position="right"/>
+            
+            <widget name="race1" factory="pawsRadioButton" id="1">
+                <frame x="24" y="120" width="175" height="24"/>
+                <text string="Enkidukai" position="right"/>
+            </widget>
+            
+            <widget name="race11" factory="pawsRadioButton" id="11">
+                <frame x="17" y="144" width="175" height="24"/>
+                <text string="Klyros" position="right"/>
+            </widget>
+           
+            <widget name="race9" factory="pawsRadioButton" id="9">
+                <frame x="14" y="168" width="175" height="24"/>
+                <text string="Kran" position="right"/>
             </widget>
                     
-            <widget name="race1" factory="pawsRadioButton" id="1">
+            <widget name="race2" factory="pawsRadioButton" id="2">
+                <frame x="14" y="192" width="175" height="24"/>
+                <text string="Ynnwn" position="right"/>
+            </widget>
+                    
+            <widget name="race5" factory="pawsRadioButton" id="5">
                 <frame x="17" y="216" width="175" height="24"/>
-                <text string="Enkidukai" position="right"/>
+                <text string="Nolthrir" position="right"/>
             </widget>
              
             <widget name="race8" factory="pawsRadioButton" id="8">
@@ -90,19 +90,19 @@
                 <text string="Diaboli" position="right"/>
             </widget>
             
-            <widget name="race2" factory="pawsRadioButton" id="2">
+            <widget name="race7" factory="pawsRadioButton" id="7">
                 <frame x="33" y="264" width="175" height="24"/>
-                <text string="Ynnwn" position="right"/>
+                <text string="Hammerwielder" position="right"/>
             </widget>
             
-            <widget name="race11" factory="pawsRadioButton" id="11">
+            <widget name="race4" factory="pawsRadioButton" id="4">
                 <frame x="48" y="288" width="175" height="24"/>
-                <text string="Klyros" position="right"/>
+                <text string="Xacha" position="right"/>
             </widget>
             
-            <widget name="race9" factory="pawsRadioButton" id="9">
+            <widget name="race10" factory="pawsRadioButton" id="10">
                 <frame x="66" y="312" width="175" height="24"/>
-                <text string="Kran" position="right"/>
+                <text string="Lemur" position="right"/>
             </widget>
             
         </widget>
