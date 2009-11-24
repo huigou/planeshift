@@ -1724,9 +1724,7 @@ void GEMClientActor::SetAnimationVelocity(const csVector3& velocity)
 
 void GEMClientActor::SetMode(uint8_t mode, bool newactor)
 {
-    // HACK!
-    if (!cal3dstate)
-	    return;
+    CS_ASSERT(cal3dstate);
     if ((serverMode == psModeMessage::OVERWEIGHT || serverMode == psModeMessage::DEFEATED) && serverMode != mode)
         cal3dstate->SetAnimAction("stand up", 0.0f, 1.0f);
 
