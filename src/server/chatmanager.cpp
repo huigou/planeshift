@@ -135,7 +135,7 @@ void ChatManager::HandleChatMessage(MsgEntry *me, Client *client)
           }
           case CHAT_CHANNEL:
           {
-              csArray<uint16_t> subscribed = channelSubscriptions.GetAll(client->GetClientNum());
+              csArray<uint32_t> subscribed = channelSubscriptions.GetAll(client->GetClientNum());
               bool found = false;
               for(size_t i = 0; i < subscribed.GetSize(); i++)
               {
@@ -359,7 +359,7 @@ void ChatManager::HandleChannelJoinMessage(MsgEntry *me, Client *client)
     }
     else
     {
-        csArray<uint16_t> subscribed = channelSubscriptions.GetAll(client->GetClientNum());
+        csArray<uint32_t> subscribed = channelSubscriptions.GetAll(client->GetClientNum());
         bool found = false;
         for(size_t i = 0; i < subscribed.GetSize(); i++)
         {
@@ -398,7 +398,7 @@ void ChatManager::HandleChannelLeaveMessage(MsgEntry *me, Client *client)
 
 void ChatManager::RemoveAllChannels(Client *client)
 {
-    csHash<uint16_t, uint32_t>::Iterator iter(channelSubscriptions.GetIterator(client->GetClientNum()));
+    csHash<uint32_t, uint32_t>::Iterator iter(channelSubscriptions.GetIterator(client->GetClientNum()));
 
     while(iter.HasNext())
         channelSubscribers.Delete(iter.Next(), client->GetClientNum());
@@ -596,7 +596,7 @@ void ChatManager::SendTell(psChatMessage& msg, const char* who,Client *client,Cl
     target->GetActor()->LogChatMessage(who, msg);
 }
 
-#define MAX_NPC_DIALOG_DIST 5
+#define MAX_NPC_DIALOG_DIST 10
 
 NpcResponse *ChatManager::CheckNPCEvent(Client *client,csString& triggerText,gemNPC * &target)
 {
