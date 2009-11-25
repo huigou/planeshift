@@ -105,7 +105,7 @@ public:
     pawsConfigWindow();
 
     // from pawsWidget:
-    virtual bool OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget );
+    virtual bool OnButtonReleased( int mouseButton, int keyModifier, pawsWidget* widget );
     virtual bool OnSelected( pawsWidget* widget);
     virtual bool PostSetup();
 

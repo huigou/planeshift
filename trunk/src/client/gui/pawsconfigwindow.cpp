@@ -95,7 +95,7 @@ void pawsConfigWindow::SetNotify(pawsWidget * _notify)
 }
 
  
-bool pawsConfigWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsConfigWindow::OnButtonReleased( int mouseButton, int keyModifier, pawsWidget* widget )
 {
     
     if (widget == okButton)
