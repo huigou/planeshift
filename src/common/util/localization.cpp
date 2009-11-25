@@ -158,6 +158,15 @@ const csString& psLocalization::Translate(const csString & orig)
             return orig;
     }
 
+    // orig not found, so store it
+    printf("Added '%s' to stringtable.\n", orig.GetDataSafe() );
+
+    item = new psStringTableItem;
+    item->original    =  orig;
+    item->translated  =  "";
+    stringTbl.Put(item->original.GetData(), item);
+    dirty = true;
+
     return orig;
 }
 
