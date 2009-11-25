@@ -196,7 +196,7 @@ bool pawsChatWindow::PostSetup()
     }
     ReplayMessages();
     if(settings.joindefaultchannel)
-    	JoinChannel("Gossip");
+    	JoinChannel("gossip");
     return true;
 }
 
