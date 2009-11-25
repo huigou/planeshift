@@ -148,7 +148,6 @@
 			<subscribe data="CHAT_SHOUT" />
 			<subscribe data="CHAT_SYSTEM_BASE" />
 			<subscribe data="CHAT_GM" />
-			<subscribe data="CHAT_SYSTEM" />
 			<subscribe data="CHAT_SERVER_INFO" />
 		</subscriptions>
             </widget>
