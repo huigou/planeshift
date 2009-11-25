@@ -236,7 +236,7 @@ bool PaladinJr::SpeedCheck(Client* client, gemActor* actor, psDRMessage& currUpd
     vel = actor->pcmove->GetVelocity();
     float reported_distance = sqrtf(vel.x * vel.x + vel.z * vel.z)*timedelta/1000;
 
-    printf("Player went %1.3fm in %u ticks when %1.3fm was allowed.\n",dist, timedelta, reported_distance);
+    Debug4(LOG_CHEAT, client->GetClientNum(),"Player went %1.3fm in %u ticks when %1.3fm was allowed.\n",dist, timedelta, reported_distance);
 
     float max_noncheat_distance = maxSpeed*timedelta/1000;
     float lag_distance          = maxSpeed*client->accumulatedLag/1000;
@@ -255,7 +255,7 @@ bool PaladinJr::SpeedCheck(Client* client, gemActor* actor, psDRMessage& currUpd
 
         if (fabs(dist-reported_distance) < dist * 0.05F) // negligible error just due to lag jitter
         {
-            printf("Ignoring lag jitter.\n");
+            Debug1(LOG_CHEAT, client->GetClientNum(),"Ignoring lag jitter.");
             return true;
         }
 
@@ -274,11 +274,11 @@ bool PaladinJr::SpeedCheck(Client* client, gemActor* actor, psDRMessage& currUpd
                client->accumulatedLag-= (csTicks)((dist-reported_distance) * 1000.0f/maxSpeed);
         }
        
-        printf("Accumulated lag: %u\n",client->accumulatedLag);
+        Debug2(LOG_CHEAT, client->GetClientNum(),"Accumulated lag: %u\n",client->accumulatedLag);
     }
     else
     {
-        printf("Went %1.2f in %u ticks when %1.2f was expected plus %1.2f allowed lag distance (%1.2f)\n", dist, timedelta, max_noncheat_distance, lag_distance, max_noncheat_distance+lag_distance);
+        Debug6(LOG_CHEAT, client->GetClientNum(),"Went %1.2f in %u ticks when %1.2f was expected plus %1.2f allowed lag distance (%1.2f)\n", dist, timedelta, max_noncheat_distance, lag_distance, max_noncheat_distance+lag_distance);
         //printf("Z Vel is %1.2f\n", currUpdate.vel.z);
         //printf("MaxSpeed is %1.2f\n", maxSpeed);
 
