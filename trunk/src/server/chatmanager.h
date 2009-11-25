@@ -117,7 +117,7 @@ protected:
     // Chat channel state
     // uint32_t here to allow hashing
     // csHashReversible is not used because it does not allow a many to many mapping
-    csHash<uint16_t, uint32_t> channelSubscriptions;
+    csHash<uint32_t, uint32_t> channelSubscriptions;
     csHash<uint32_t, uint32_t> channelSubscribers;
 
     // case-insensitive
