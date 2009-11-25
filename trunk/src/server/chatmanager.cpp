@@ -67,8 +67,8 @@ ChatManager::ChatManager() : nextChannelID(2)
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ChatManager>(this,&ChatManager::HandleCacheMessage),MSGTYPE_CACHEFILE,REQUIRE_READY_CLIENT);
 
     // Default channel
-    channelIDs.PutUnique("Gossip", 1);
-    channelNames.PutUnique(1, "Gossip");
+    channelIDs.PutUnique("gossip", 1);
+    channelNames.PutUnique(1, "gossip");
 }
 
 ChatManager::~ChatManager()
@@ -338,10 +338,11 @@ void ChatManager::HandleChannelJoinMessage(MsgEntry *me, Client *client)
     csString nocaseName = msg.channel;
     nocaseName.Downcase();
     // Search is case-insensitive
-    uint16_t channelID = channelIDs.Get(nocaseName, 0);
+    uint32_t channelID = channelIDs.Get(nocaseName, 0);
     if(channelID == 0)
     {
-        uint16_t start = channelID = nextChannelID++;
+        printf("a\n");
+        uint32_t start = channelID = nextChannelID++;
         while(!channelSubscribers.GetAll(channelID).IsEmpty() && nextChannelID != start - 1)
         {
             channelID = nextChannelID++;
