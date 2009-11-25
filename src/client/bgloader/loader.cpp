@@ -1092,7 +1092,10 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                 {
                     node = nodeItr2->Next();
                     csRef<Light> l = csPtr<Light>(new Light(node->GetAttributeValue("name")));
-                    lights.Put(sStringSet.Request(l->name), l);
+                    {
+                        CS::Threading::ScopedWriteLock lock(sLock);
+                        lights.Put(sStringSet.Request(l->name), l);
+                    }
 
                     if(node->GetNode("attenuation"))
                     {
