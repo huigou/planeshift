@@ -51,7 +51,7 @@
     
                 </widget>
                 <widget name="Chat Button" factory="pawsButton" toggle="yes" id="1008" tooltip="Chat" shadows="yes" style="Standard Tab">
-                    <label text="Chat"/>
+                    <label text="Channels"/>
                     <frame x="0" y="25" width="50" height="25" border="no"/>
 	                <attachpoints>
 	                    <attach point="ATTACH_TOP" />
@@ -143,12 +143,7 @@
                     <attach point="PROPORTIONAL_BOTTOM" />
                 </attachpoints>
 		<subscriptions overwrite = "false">
-			<subscribe data="CHAT_PET_ACTION" />
-			<subscribe data="CHAT_SAY" />
-			<subscribe data="CHAT_SHOUT" />
-			<subscribe data="CHAT_SYSTEM_BASE" />
-			<subscribe data="CHAT_GM" />
-			<subscribe data="CHAT_SERVER_INFO" />
+			<subscribe data="subMainText" />
 		</subscriptions>
             </widget>
             <widget name="SystemText" factory="pawsMessageTextBox" visible="no" id="1101">
@@ -160,12 +155,7 @@
                     <attach point="PROPORTIONAL_BOTTOM" />
                 </attachpoints>
 		<subscriptions overwrite = "false">
-			<subscribe data="CHAT_SYSTEM" />
-			<subscribe data="CHAT_SERVER_INFO" />
-			<subscribe data="CHAT_REPORT" />
-			<subscribe data="CHAT_SERVER_TELL" />
-			<subscribe data="CHAT_SYSTEM_BASE" />
-		        <subscribe data="CHAT_COMBAT" />
+			<subscribe data="subSystemText" />
 		</subscriptions>
             </widget>
             <widget name="NpcText" factory="pawsMessageTextBox" visible="no" id="1102">
@@ -177,11 +167,7 @@
                     <attach point="PROPORTIONAL_BOTTOM" />
                 </attachpoints>
 		<subscriptions overwrite = "false">
-			<subscribe data="CHAT_NPC_ME" />
-			<subscribe data="CHAT_NPC_MY" />
-			<subscribe data="CHAT_NPC_NARRATE" />
-			<subscribe data="CHAT_NPC" />
-			<subscribe data="CHAT_NPCINTERNAL" />
+			<subscribe data="subNPCText" />
 		</subscriptions>
             </widget>
             <widget name="TellText" factory="pawsMessageTextBox" visible="no" id="1103">
@@ -193,8 +179,7 @@
                     <attach point="PROPORTIONAL_BOTTOM" />
                 </attachpoints>
 		<subscriptions overwrite = "false">
-			<subscribe data="CHAT_TELL" />	
-			<subscribe data="CHAT_TELLSELF" />
+			<subscribe data="subTellText" />	
 		</subscriptions>
             </widget>
             <widget name="GuildText" factory="pawsMessageTextBox" visible="no" id="1104">
@@ -206,7 +191,7 @@
                     <attach point="PROPORTIONAL_BOTTOM" />
                 </attachpoints>
  		<subscriptions overwrite = "false">
-			<subscribe data="CHAT_GUILD" />
+			<subscribe data="subGuildText" />
 		</subscriptions>
            </widget>
             <widget name="AllianceText" factory="pawsMessageTextBox" visible="no" id="1109">
@@ -218,7 +203,7 @@
                     <attach point="PROPORTIONAL_BOTTOM" />
                 </attachpoints>
  		<subscriptions overwrite = "false">
-			<subscribe data="CHAT_ALLIANCE" />
+			<subscribe data="subAllianceText" />
 		</subscriptions>
            </widget>
             <widget name="GroupText" factory="pawsMessageTextBox" visible="no" id="1105">
@@ -230,7 +215,7 @@
                     <attach point="PROPORTIONAL_BOTTOM" />
                 </attachpoints>
 		<subscriptions overwrite = "false">
-			<subscribe data="CHAT_GROUP" />	
+			<subscribe data="subGroupText" />	
 		</subscriptions>
             </widget>
             <widget name="AuctionText" factory="pawsMessageTextBox" visible="no" id="1106">
@@ -242,11 +227,11 @@
                     <attach point="PROPORTIONAL_BOTTOM" />
                 </attachpoints>
 		<subscriptions overwrite = "false">
-			<subscribe data="CHAT_AUCTION" />
+			<subscribe data="subAuctionsText" />
 		</subscriptions>
             </widget>
 
-            <widget name="ChatText" factory="pawsMessageTextBox" visible="no" id="1108">
+            <widget name="ChannelsText" factory="pawsMessageTextBox" visible="no" id="1108">
                 <frame x="55" y="0" width="435" height="233" border="no" />
                 <attachpoints>
                     <attach point="ATTACH_RIGHT" />
@@ -255,16 +240,7 @@
                     <attach point="PROPORTIONAL_BOTTOM" />
                 </attachpoints>
 		<subscriptions overwrite = "false">
-	            <subscribe data="CHAT_CHANNEL1"/>
-	            <subscribe data="CHAT_CHANNEL2"/>
-	            <subscribe data="CHAT_CHANNEL3"/>
-	            <subscribe data="CHAT_CHANNEL4"/>
-	            <subscribe data="CHAT_CHANNEL5"/>
-	            <subscribe data="CHAT_CHANNEL6"/>
-	            <subscribe data="CHAT_CHANNEL7"/>
-	            <subscribe data="CHAT_CHANNEL8"/>
-	            <subscribe data="CHAT_CHANNEL9"/>
-	            <subscribe data="CHAT_CHANNEL10"/>
+	            <subscribe data="subChannelsText"/>
 		</subscriptions>
             </widget>
 
@@ -277,9 +253,7 @@
                     <attach point="PROPORTIONAL_BOTTOM" />
                 </attachpoints>
 		<subscriptions overwrite = "false">
-			<subscribe data="CHAT_ADVISOR" />
-			<subscribe data="CHAT_ADVICE" />
-			<subscribe data="CHAT_ADVICE_LIST" />
+			<subscribe data="subHelpText" />
 		</subscriptions>
             </widget>
         </widget> 

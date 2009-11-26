@@ -8,6 +8,65 @@
         <logAllChat value="1" />
         <logSystemChat value="0" />
     </chatoptions>
+    <bindings>
+	<listener name="subMainText">
+            <chat type="CHAT_PET_ACTION" />
+            <chat type="CHAT_SAY" />
+            <chat type="CHAT_SHOUT" />
+            <chat type="CHAT_SYSTEM_BASE" />
+            <chat type="CHAT_GM" />
+            <chat type="CHAT_SERVER_INFO" />
+            <chat type="CHAT_SYSTEM" />
+        </listener>
+	<listener name="subSystemText">
+            <chat type="CHAT_SYSTEM" />
+            <chat type="CHAT_SERVER_INFO" />
+            <chat type="CHAT_REPORT" />
+            <chat type="CHAT_SERVER_TELL" />
+            <chat type="CHAT_COMBAT" />
+            <chat type="CHAT_SYSTEM_BASE" />
+        </listener>
+	<listener name="subNPCText">
+            <chat type="CHAT_NPC_ME" />
+            <chat type="CHAT_NPC_MY" />
+            <chat type="CHAT_NPC_NARRATE" />
+            <chat type="CHAT_NPC" />
+            <chat type="CHAT_NPCINTERNAL" />
+        </listener>
+	<listener name="subTellText">
+            <chat type="CHAT_TELL" />
+            <chat type="CHAT_TELLSELF" />
+        </listener>
+	<listener name="subGuildText">
+            <chat type="CHAT_GUILD" />
+        </listener>
+	<listener name="subAllianceText">
+            <chat type="CHAT_ALLIANCE" />
+        </listener>
+	<listener name="subGroupText">
+            <chat type="CHAT_GROUP" />
+        </listener>
+	<listener name="subAuctionsText">
+            <chat type="CHAT_AUCTION" />
+        </listener>
+	<listener name="subChannelsText">
+            <chat type="CHAT_CHANNEL1" />
+            <chat type="CHAT_CHANNEL2" />
+            <chat type="CHAT_CHANNEL3" />
+            <chat type="CHAT_CHANNEL4" />
+            <chat type="CHAT_CHANNEL5" />
+            <chat type="CHAT_CHANNEL6" />
+            <chat type="CHAT_CHANNEL7" />
+            <chat type="CHAT_CHANNEL8" />
+            <chat type="CHAT_CHANNEL9" />
+            <chat type="CHAT_CHANNEL10" />
+        </listener>
+	<listener name="subHelpText">
+            <chat type="CHAT_ADVISOR" />
+            <chat type="CHAT_ADVICE" />
+            <chat type="CHAT_ADVICE_LIST" />
+        </listener>
+    </bindings>
     <maintabincludes>
         <npc value="no" />
         <tell value="no" />
