@@ -71,6 +71,7 @@ LinkStaticPlugins psnpcclient_static :
   reporter
   sequence
   shadermgr
+  shaderweaver
   sndmanager
   simpleformer
   simpleformerldr
