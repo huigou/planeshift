@@ -97,6 +97,8 @@ struct ChatSettings
                        //Example: if you send a tell the color of your text will be (yourColor+tellColor)/2
     csArray<csString> badWords;
     csArray<csString> goodWords;
+    // chat type to subscription name binding
+    csHash<csString, csString> bindings;
     int selectTabStyle;
     int vicinityFilters; // Flags int
     int meFilters; // Flags int

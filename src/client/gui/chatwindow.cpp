@@ -206,7 +206,7 @@ void pawsChatWindow::LoadChatSettings()
 
     // XML parsing time!
     csRef<iDocument> doc;
-    csRef<iDocumentNode> root,chatNode, colorNode, optionNode, filtersNode, msgFiltersNode,
+    csRef<iDocumentNode> root,chatNode, colorNode, optionNode, bindingsNode, filtersNode, msgFiltersNode,
                          mainTabNode, flashingNode, flashingOnCharNode;
     csString option;
 
@@ -225,13 +225,13 @@ void pawsChatWindow::LoadChatSettings()
     root = doc->GetRoot();
     if (root == NULL)
     {
-        Error1("chat.xml has no XML root");
+        Error2("%s has no XML root", fileName.GetData());
         return;
     }
     chatNode = root->GetNode("chat");
     if (chatNode == NULL)
     {
-        Error1("chat.xml has no <chat> tag");
+        Error2("%s has no <chat> tag", fileName.GetData());
         return;
     }
 
@@ -268,9 +268,31 @@ void pawsChatWindow::LoadChatSettings()
             }
         }
     }
+    bindingsNode = chatNode->GetNode("bindings");
+    if (bindingsNode != NULL)
+    {
+    	csRef<iDocumentNodeIterator> bindingsIter = bindingsNode->GetNodes("listener");
+    	while(bindingsIter->HasNext())
+    	{
+    		csRef<iDocumentNode> binding = bindingsIter->Next();
+    		csString listenerName(binding->GetAttributeValue("name"));
+    		csRef<iDocumentNodeIterator> bindingTypesIter = binding->GetNodes("chat");
+    		csArray<iPAWSSubscriber*> subscribers = PawsManager::GetSingleton().ListSubscribers(listenerName);
+    		while(bindingTypesIter->HasNext())
+    		{
+    			csRef<iDocumentNode> bindingType = bindingTypesIter->Next();
+    			csString typeName(bindingType->GetAttributeValue("type"));
 
-
-
+				for(size_t i = 0; i < subscribers.GetSize(); i++)
+				{
+					PawsManager::GetSingleton().Subscribe(typeName, subscribers[i]);
+				}
+				// For loading/saving
+    			settings.bindings.Put(typeName, listenerName);
+    		}
+    	}
+    }
+    
     // Load colors
     colorNode = chatNode->GetNode("chatcolors");
     if (colorNode != NULL)
@@ -2126,7 +2148,7 @@ void pawsChatWindow::ChatOutput(const char* data, int colour, int type, bool fla
     {
         BadWordsFilter(s);
     }
-    csString pubName = CHAT_TYPES[type];
+	csString pubName = CHAT_TYPES[type];
     if(type == CHAT_CHANNEL)
     	pubName += hotkeyChannel;
     PawsManager::GetSingleton().Publish(pubName, s, colour );
