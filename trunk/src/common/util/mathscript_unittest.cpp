@@ -291,6 +291,20 @@ TEST(MathScriptTest, InterpolateTest)
     EXPECT_STREQ("${} 1337.00 ${}", msg.GetData());
 }
 
+/*
+TEST(MathScriptTest, NameMemoryTest)
+{
+    csString name("Good");
+    MathScript *script = MathScript::Create(name, "Skill = Sword;");
+    ASSERT_NE(script, NULL);
+
+    name = "BAD";
+
+    MathEnvironment env;
+    script->Evaluate(&env);
+    // MathExpression's assert should say "Good" here, not "BAD"
+}
+*/
 
 void randomgentest(int limit)
 {

@@ -251,7 +251,7 @@ MathScript* MathScript::Create(const char *name, const csString & script)
             line.Collapse();
             if (!line.IsEmpty())
             {
-                MathStatement *st = MathStatement::Create(line, name);
+                MathStatement *st = MathStatement::Create(line, s->name);
                 if (!st)
                 {
                     delete s;
