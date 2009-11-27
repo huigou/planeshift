@@ -136,42 +136,15 @@ WorkManager::WorkManager()
     calc_transform_exp   = psserver->GetMathScriptEngine()->FindScript("Calculate Trasformation Experience");
     calc_lockpick_time  = psserver->GetMathScriptEngine()->FindScript("Lockpicking Time");
 
-    if (!calc_repair_rank)
-    {
-        Error1("Could not find mathscript 'Calculate Repair Rank'");
-    }
-    if (!calc_repair_time)
-    {
-        Error1("Could not find mathscript 'Calculate Repair Time'");
-    }
-    if (!calc_repair_result)
-    {
-        Error1("Could not find mathscript 'Calculate Repair Result'");
-    }
-    if (!calc_repair_quality)
-    {
-        Error1("Could not find mathscript 'Calculate Repair Quality'");
-    }
-    if (!calc_repair_exp)
-    {
-        Error1("Could not find mathscript 'Calculate Repair Experience'");
-    }
-    if (!calc_mining_chance)
-    {
-        Error1("Could not find mathscript 'Calculate Mining Odds'");
-    }
-    if (!calc_mining_exp)
-    {
-        Error1("Could not find mathscript 'Calculate Mining Experience'");
-    }
-    if (!calc_transform_exp)
-    {
-        Error1("Could not find mathscript 'Calculate Trasformation Experience'");
-    }
-    if (!calc_lockpick_time)
-    {
-        Error1("Could not find mathscript 'Lockpicking Time'");
-    }
+    CS_ASSERT_MSG("Could not load mathscript 'Calculate Repair Rank'", calc_repair_rank);
+    CS_ASSERT_MSG("Could not load mathscript 'Calculate Repair Time'", calc_repair_time);
+    CS_ASSERT_MSG("Could not load mathscript 'Calculate Repair Result'", calc_repair_result);
+    CS_ASSERT_MSG("Could not load mathscript 'Calculate Repair Quality'", calc_repair_quality);
+    CS_ASSERT_MSG("Could not load mathscript 'Calculate Repair Experience'", calc_repair_exp);
+    CS_ASSERT_MSG("Could not load mathscript 'Calculate Mining Odds'", calc_mining_chance);
+    CS_ASSERT_MSG("Could not load mathscript 'Calculate Mining Experience'", calc_mining_exp);
+    CS_ASSERT_MSG("Could not load mathscript 'Calculate Trasformation Experience'", calc_transform_exp);
+    CS_ASSERT_MSG("Could not load mathscript 'Lockpicking Time'", calc_lockpick_time);
 
     Initialize();
 };
