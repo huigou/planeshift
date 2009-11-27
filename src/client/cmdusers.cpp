@@ -310,16 +310,16 @@ const char *psUserCommands::HandleCommand(const char *cmd)
     {
         if ( words.GetCount() < 2 )
             return "Usage: /equip  [stack count] [item name]";
-        int quanity = atoi(words[1]);
+        int quantity = atoi(words[1]);
         csString itemName;
-        if (quanity == 0)
+        if (quantity == 0)
         {
-            quanity = 1;
+            quantity = 1;
             itemName = words.GetTail(1);
         }
         else itemName = words.GetTail(2);
         pawsInventoryWindow* window = (pawsInventoryWindow*)PawsManager::GetSingleton().FindWidget("InventoryWindow");
-        window->Equip( itemName, quanity );
+        window->Equip( itemName, quantity );
     }
 
     else if ( words[0] == "/dequip" )
