@@ -297,7 +297,7 @@ void pawsSlot::OnUpdateData(const char *dataname,PAWSData& value)
         data.GetWordNumber(2,count);
         data.GetWordNumber(3,status);
         data.GetWordNumber(4,mesh);
-        data.GetSubString( name, icon.Length()+count.Length()+status.Length()+mesh.Length()+3, data.Length());
+        data.GetSubString( name, icon.Length()+count.Length()+status.Length()+mesh.Length()+4, data.Length());
 
         PlaceItem( icon, mesh, atoi(  count.GetData() ) );        
         SetToolTip( name );
