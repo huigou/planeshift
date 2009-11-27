@@ -129,8 +129,7 @@ bool gemNPCObject::InitMesh(    const char *factname,
 
         bool failed = false;
         csRef<iBgLoader> loader = csQueryRegistry<iBgLoader> (npcclient->GetObjectReg());
-        csRef<iMeshFactoryWrapper> meshFact = loader->LoadFactory(factname, &failed);
-        meshFact = loader->LoadFactory(factname, &failed, true);
+        csRef<iMeshFactoryWrapper> meshFact = loader->LoadFactory(factname, &failed, true);
 
         if(failed)
         {
