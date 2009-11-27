@@ -1795,7 +1795,7 @@ psMoney psItem::GetSellPrice()
     if (!script)
     {
         Error1("Cannot find mathscript: Calc Item Sell Price");
-        int sellPrice = (int)(current_stats->GetPrice().GetTotal() * 0.8);
+        int sellPrice = (int)(GetPrice().GetTotal() * 0.8);
         if (sellPrice == 0)
         {
             sellPrice = 1;
