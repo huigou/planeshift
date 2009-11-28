@@ -36,6 +36,8 @@
 #include <cstool/fogmath.h>
 #include <iutil/vfs.h>
 #include <iutil/plugin.h>
+#include <iutil/stringarray.h>
+#include <ivideo/material.h>
 
 #include "iclient/ibgloader.h"
 #include "iclient/isoundmngr.h"
@@ -211,9 +213,20 @@ bool RainWeatherObject::CreateMesh()
 {
     if(!mfw)
     {
+        // Get the shader.
+        csRef<iShaderManager> shman = csQueryRegistry<iShaderManager>(psengine->GetObjectRegistry());
+        csRef<iStringSet> strings = csQueryRegistryTagInterface<iStringSet>(
+            psengine->GetObjectRegistry(), "crystalspace.shared.stringset");
+        csStringID shadertype = strings->Request("base");
+        csRef<iStringArray> shaderName = psengine->GetLoader()->GetShaderName("particles");
+        csRef<iShader> shader = shman->GetShader(shaderName->Get(0));
+
         // Create new rain
         iTextureWrapper* t = psengine->GetEngine()->CreateTexture("raindrop", "/this/art/effects/raindrop.dds", 0, 0);
         mat = psengine->GetEngine()->CreateMaterial("raindrop", t);
+        mat->GetMaterial()->SetShader(shadertype, shader);
+        shadertype = strings->Request("diffuse");
+        mat->GetMaterial()->SetShader(shadertype, shader);
         mfw = psengine->GetEngine ()->CreateMeshFactory ("crystalspace.mesh.object.particles", "rain");
         if (!mfw)
         {
@@ -362,9 +375,20 @@ bool SnowWeatherObject::CreateMesh()
 {
     if(!mfw)
     {
+        // Get the shader.
+        csRef<iShaderManager> shman = csQueryRegistry<iShaderManager>(psengine->GetObjectRegistry());
+        csRef<iStringSet> strings = csQueryRegistryTagInterface<iStringSet>(
+            psengine->GetObjectRegistry(), "crystalspace.shared.stringset");
+        csStringID shadertype = strings->Request("base");
+        csRef<iStringArray> shaderName = psengine->GetLoader()->GetShaderName("particles");
+        csRef<iShader> shader = shman->GetShader(shaderName->Get(0));
+
         // Create new snow
         iTextureWrapper* t = psengine->GetEngine()->CreateTexture("snowflake", "/this/art/effects/snow.dds", 0, 0);
         mat = psengine->GetEngine()->CreateMaterial("snowflake", t);
+        mat->GetMaterial()->SetShader(shadertype, shader);
+        shadertype = strings->Request("diffuse");
+        mat->GetMaterial()->SetShader(shadertype, shader);
         mfw = psengine->GetEngine ()->CreateMeshFactory ("crystalspace.mesh.object.particles", "snow");
         if (!mfw)
         {
