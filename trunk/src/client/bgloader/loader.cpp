@@ -1240,9 +1240,13 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
 void BgLoader::ContinueLoading(bool waiting)
 {  
     // Limit even while waiting - we want some frames.
+    size_t i = 0;
     size_t count = 0;
-    while(count < 20)
+    while(count < 10)
     {
+        // True if at least one mesh finished load.
+        bool finished = false;
+
         // Delete from delete queue (fairly expensive, so limited per update).
         if(!deleteQueue.IsEmpty())
         {
@@ -1250,11 +1254,16 @@ void BgLoader::ContinueLoading(bool waiting)
             deleteQueue.DeleteIndexFast(0);
         }
 
+        // Check if we need to reset i
+        if (i == loadingMeshes.GetSize())
+            i = 0;
+
         // Check already loading meshes.
-        for(size_t i=0; i<(loadingMeshes.GetSize() < 10 ? loadingMeshes.GetSize() : 10); ++i)
+        for(; i<(loadingMeshes.GetSize() < 20 ? loadingMeshes.GetSize() : 20); ++i)
         {
             if(LoadMesh(loadingMeshes[i]))
             {
+                finished = true;
                 finalisableMeshes.Push(loadingMeshes[i]);
                 loadingMeshes.DeleteIndex(i);
             }
@@ -1263,17 +1272,19 @@ void BgLoader::ContinueLoading(bool waiting)
         // Finalise loaded meshes (expensive, so limited per update).
         if(!finalisableMeshes.IsEmpty())
         {
-            engine->SyncEngineListsNow(tloader);
+            if(finished)
+                engine->SyncEngineListsNow(tloader);
+
             FinishMeshLoad(finalisableMeshes[0]);
             finalisableMeshes.DeleteIndexFast(0);
         }
 
         // Load meshgens.
-        for(size_t i=0; i<loadingMeshGen.GetSize(); ++i)
+        for(size_t j=0; j<loadingMeshGen.GetSize(); ++j)
         {
-            if(LoadMeshGen(loadingMeshGen[i]))
+            if(LoadMeshGen(loadingMeshGen[j]))
             {
-                loadingMeshGen.DeleteIndex(i);
+                loadingMeshGen.DeleteIndex(j);
             }
         }
 

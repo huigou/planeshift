@@ -1047,24 +1047,19 @@ inline bool psEngine::FrameLimit()
     // Find the time taken since we left this function
     elapsedTime = csGetTicks() - elapsed;
 
-    static pawsWidget* loading = NULL;
-    if(!loading)
-        loading = paws->FindWidget("LoadWindow", false);
-
-    // Loading competes with drawing in THIS thread so we can't sleep
-    if(loading && loading->IsVisible())
+    // If we're loading then do special handling.
+    if(zonehandler.IsValid() && zonehandler->IsLoading())
     {
-        sleeptime = 1000;
-
-        // Here we sacrifice drawing time for loading time
-        if(elapsedTime < sleeptime)
-            return false;
-        else
+        // Do 30 frame updates a second at most.
+        if(elapsedTime < 33)
         {
-            elapsedTime = csGetTicks();
-            return true;
+            // If we're not due to update then sleep.
+            csSleep(33 - elapsedTime);
         }
 
+        // Now it's time to draw another frame.
+        elapsed = csGetTicks();
+        return true;
     }
 
     // Define sleeptimes
