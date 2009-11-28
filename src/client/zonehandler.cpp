@@ -287,8 +287,6 @@ void ZoneHandler::OnDrawingFinished()
             psengine->GetLoader()->ContinueLoading(true);
             loadProgressBar->SetCurrentValue(loadProgressBar->GetTotalValue() - psengine->GetLoader()->GetLoadingCount());
         }
-
-        psengine->ForceRefresh();
     }
 }
 

@@ -415,7 +415,7 @@ private:
     csRefArray<iThreadReturn> precaches;
     csRef<iStringArray> meshes;
     csRef<iStringArray> maps;
-    uint lastLoadingCount;
+    size_t lastLoadingCount;
 
     // True if we've requested the main actor.
     bool actorRequested;

@@ -112,7 +112,7 @@ public:
    /**
     * Returns the number of objects currently loading.
     */
-    size_t GetLoadingCount() { return loadingMeshes.GetSize() + finalisableMeshes.GetSize() + deleteQueue.GetSize(); }
+    size_t GetLoadingCount() { return loadingMeshes.GetSize()*2 + finalisableMeshes.GetSize() + deleteQueue.GetSize(); }
 
    /**
     * Returns a pointer to the object registry.
