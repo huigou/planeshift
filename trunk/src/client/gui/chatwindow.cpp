@@ -205,38 +205,63 @@ void pawsChatWindow::LoadChatSettings()
     // Get some default colours here and other options.
 
     // XML parsing time!
-    csRef<iDocument> doc;
-    csRef<iDocumentNode> root,chatNode, colorNode, optionNode, bindingsNode, filtersNode, msgFiltersNode,
+    csRef<iDocument> doc, defaultDoc;
+    csRef<iDocumentNode> root,defaultRoot, defaultChatNode, chatNode, colorNode, optionNode, bindingsNode, filtersNode, msgFiltersNode,
                          mainTabNode, flashingNode, flashingOnCharNode;
     csString option;
 
-    csString fileName = CONFIG_CHAT_FILE_NAME;
-    if (!psengine->GetVFS()->Exists(fileName))
+    bool chatOptionsExist = false;
+    if (psengine->GetVFS()->Exists(CONFIG_CHAT_FILE_NAME))
     {
-        fileName = CONFIG_CHAT_FILE_NAME_DEF;
+        chatOptionsExist = true;
+    }
+    defaultDoc = doc = ParseFile(psengine->GetObjectRegistry(), CONFIG_CHAT_FILE_NAME_DEF);
+
+    if (defaultDoc == NULL)
+    {
+        Error2("Failed to parse file %s", CONFIG_CHAT_FILE_NAME_DEF);
+        return;
+    }
+    defaultRoot = root = defaultDoc->GetRoot();
+    if (defaultRoot == NULL)
+    {
+        Error2("%s has no XML root", CONFIG_CHAT_FILE_NAME_DEF);
+        return;
+    }
+    defaultChatNode = chatNode = defaultRoot->GetNode("chat");
+    if (defaultChatNode == NULL)
+    {
+        Error2("%s has no <chat> tag", CONFIG_CHAT_FILE_NAME_DEF);
+        return;
+    }
+    
+    if(chatOptionsExist)
+    {
+    	doc = ParseFile(psengine->GetObjectRegistry(), CONFIG_CHAT_FILE_NAME);
+        if (doc == NULL)
+        {
+            Error2("Failed to parse file %s", CONFIG_CHAT_FILE_NAME);
+            return;
+        }
+        root = doc->GetRoot();
+        if (root == NULL)
+        {
+            Error2("%s has no XML root", CONFIG_CHAT_FILE_NAME);
+            return;
+        }
+        chatNode = root->GetNode("chat");
+        if (chatNode == NULL)
+        {
+            Error2("%s has no <chat> tag", CONFIG_CHAT_FILE_NAME);
+            return;
+        }
     }
 
-    doc = ParseFile(psengine->GetObjectRegistry(), fileName);
-    if (doc == NULL)
-    {
-        Error2("Failed to parse file %s", fileName.GetData());
-        return;
-    }
-    root = doc->GetRoot();
-    if (root == NULL)
-    {
-        Error2("%s has no XML root", fileName.GetData());
-        return;
-    }
-    chatNode = root->GetNode("chat");
-    if (chatNode == NULL)
-    {
-        Error2("%s has no <chat> tag", fileName.GetData());
-        return;
-    }
 
     // Load options such as loose after sending
     optionNode = chatNode->GetNode("chatoptions");
+    if(!optionNode)
+    	optionNode = defaultChatNode->GetNode("chatoptions");
     if (optionNode != NULL)
     {
         csRef<iDocumentNodeIterator> oNodes = optionNode->GetNodes();
@@ -269,16 +294,27 @@ void pawsChatWindow::LoadChatSettings()
         }
     }
     bindingsNode = chatNode->GetNode("bindings");
+    if(!bindingsNode)
+    	bindingsNode = defaultChatNode->GetNode("bindings");
     if (bindingsNode != NULL)
     {
     	settings.bindings.DeleteAll();
+    	settings.subNames.DeleteAll();
     	csRef<iDocumentNodeIterator> bindingsIter = bindingsNode->GetNodes("listener");
     	while(bindingsIter->HasNext())
     	{
     		csRef<iDocumentNode> binding = bindingsIter->Next();
     		csString listenerName(binding->GetAttributeValue("name"));
-    		csRef<iDocumentNodeIterator> bindingTypesIter = binding->GetNodes("chat");
+    		settings.subNames.Push(listenerName);
+    		csRef<iDocumentNodeIterator> bindingTypesIter = binding->GetNodes("chat_message");
     		csArray<iPAWSSubscriber*> subscribers = PawsManager::GetSingleton().ListSubscribers(listenerName);
+    		
+    		// Clear existing subscriptions
+    		for(size_t i = 0; i < subscribers.GetSize(); i++)
+			{
+    			PawsManager::GetSingleton().UnSubscribe(subscribers[i]);
+    			PawsManager::GetSingleton().Subscribe(listenerName, subscribers[i]);
+			}
     		while(bindingTypesIter->HasNext())
     		{
     			csRef<iDocumentNode> bindingType = bindingTypesIter->Next();
@@ -296,6 +332,8 @@ void pawsChatWindow::LoadChatSettings()
     
     // Load colors
     colorNode = chatNode->GetNode("chatcolors");
+    if(!colorNode)
+    	colorNode = defaultChatNode->GetNode("chatcolors");
     if (colorNode != NULL)
     {
         csRef<iDocumentNodeIterator> cNodes = colorNode->GetNodes();
@@ -330,6 +368,8 @@ void pawsChatWindow::LoadChatSettings()
 
     // Load filters
     filtersNode = chatNode->GetNode("filters");
+    if(!filtersNode)
+    	filtersNode = defaultChatNode->GetNode("filters");
     settings.meFilters = 0;
     settings.vicinityFilters = 0;
 
@@ -382,6 +422,8 @@ void pawsChatWindow::LoadChatSettings()
 
     // Load message filters
     msgFiltersNode = chatNode->GetNode("msgfilters");
+    if(!msgFiltersNode)
+    	msgFiltersNode = defaultChatNode->GetNode("msgfilters");
     if (msgFiltersNode != NULL)
     {
         csRef<iDocumentNodeIterator> fNodes = msgFiltersNode->GetNodes();
@@ -923,22 +965,22 @@ void pawsChatWindow::SaveChatSettings()
     csRef<iDocumentNode> bindingsNode = chatNode->CreateNodeBefore(CS_NODE_ELEMENT, 0);
     bindingsNode->SetValue("bindings");
     
-    csString currentListener;
     csRef<iDocumentNode> listenerNode;
-    csHash<csString, csString>::GlobalIterator bindingsIt = settings.bindings.GetIterator();
-    while(bindingsIt.HasNext())
+
+    for(size_t i = 0; i < settings.subNames.GetSize(); i++)
     {
-    	const csTuple2<csString, csString> binding = bindingsIt.NextTuple();
-    	if(binding.second != currentListener)
-    	{
-    		currentListener = binding.second;
-    		listenerNode = bindingsNode->CreateNodeBefore(CS_NODE_ELEMENT, 0);
-    		listenerNode->SetValue("listener");
-    		listenerNode->SetAttribute("name", binding.second);
-    	}
-    	csRef<iDocumentNode> chatTabType = listenerNode->CreateNodeBefore(CS_NODE_ELEMENT, 0);
-    	chatTabType->SetValue("chat");
-    	chatTabType->SetAttribute("type", binding.first);
+		csHash<csString, csString>::Iterator bindingsIt = settings.bindings.GetIterator(settings.subNames[i]);
+		listenerNode = bindingsNode->CreateNodeBefore(CS_NODE_ELEMENT, 0);
+		listenerNode->SetValue("listener");
+		listenerNode->SetAttribute("name", settings.subNames[i]);
+		while(bindingsIt.HasNext())
+		{
+			csString type = bindingsIt.Next();
+
+			csRef<iDocumentNode> chatTabType = listenerNode->CreateNodeBefore(CS_NODE_ELEMENT, 0);
+			chatTabType->SetValue("chat_message");
+			chatTabType->SetAttribute("type", type);
+		}
     }
 
     filtersNode = chatNode->CreateNodeBefore(CS_NODE_ELEMENT,0);

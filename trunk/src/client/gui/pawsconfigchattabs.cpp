@@ -111,7 +111,7 @@ bool pawsConfigChatTabs::LoadConfig()
 
 bool pawsConfigChatTabs::SaveConfig()
 {
-    ChatSettings settings = chatWindow->GetSettings();
+    ChatSettings& settings = chatWindow->GetSettings();
     
     settings.bindings.Delete("subMainText", "CHAT_SYSTEM_BASE");
     settings.bindings.Delete("subMainText", "CHAT_NPC");
@@ -169,6 +169,9 @@ bool pawsConfigChatTabs::SaveConfig()
 
     // Save to file
     chatWindow->SaveChatSettings();
+    
+    // Apply settings
+    chatWindow->LoadChatSettings();
 
     return true;
 }
