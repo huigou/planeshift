@@ -176,7 +176,7 @@ bool pawsConfigChat::LoadConfig()
     // Need to reload settings
     chatWindow->LoadChatSettings();
 
-    ChatSettings settings = chatWindow->GetSettings();
+    ChatSettings &settings = chatWindow->GetSettings();
 
     loose->SetState(settings.looseFocusOnSend);
     echoScreenInSystem->SetState(settings.echoScreenInSystem);
@@ -233,7 +233,7 @@ bool pawsConfigChat::SaveConfig()
 {
     int i;
     
-    ChatSettings settings = chatWindow->GetSettings();
+    ChatSettings &settings = chatWindow->GetSettings();
     SET_CHAT_VALUE(admin);
     SET_CHAT_VALUE(system);
     SET_CHAT_VALUE(player);

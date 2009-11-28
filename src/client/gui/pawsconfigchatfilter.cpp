@@ -65,7 +65,7 @@ bool pawsConfigChatFilter::LoadConfig()
 
     chatWindow->LoadChatSettings();
 
-    ChatSettings settings = chatWindow->GetSettings();
+    ChatSettings& settings = chatWindow->GetSettings();
     // Set all filters
     for(int i=0;i < COMBAT_TOTAL_AMOUNT;i++)
     {
@@ -109,7 +109,7 @@ bool pawsConfigChatFilter::SaveConfig()
     pawsChatWindow* chatWindow = (pawsChatWindow*)PawsManager::GetSingleton().FindWidget("ChatWindow");
     // Since this is a critical widget, we shouldn't have got this far if it isn't loaded
 
-    ChatSettings settings = chatWindow->GetSettings();
+    ChatSettings& settings = chatWindow->GetSettings();
     settings.meFilters = 0;
     settings.vicinityFilters = 0;
 

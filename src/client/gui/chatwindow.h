@@ -99,6 +99,7 @@ struct ChatSettings
     csArray<csString> goodWords;
     // chat type to subscription name binding
     csHash<csString, csString> bindings;
+    csArray<csString> subNames;
     int selectTabStyle;
     int vicinityFilters; // Flags int
     int meFilters; // Flags int
