@@ -293,7 +293,15 @@ void NetManager::CheckResendPkts()
         */
         if (!outqueue->Add(pkt))
         {
-            Error2("Queue full. Could not add packet with clientnum %d.\n", pkt->clientnum);
+            psNetPacket* packet = pkt->packet;
+            unsigned int type = 0;
+
+            if (packet->offset == 0) 
+            {
+                psMessageBytes* msg = (psMessageBytes*) packet->data;
+                type = msg->type;
+            }
+            Error3("Queue full. Could not add packet with clientnum %d type %u.\n", pkt->clientnum, type);
             continue;
         }
 
@@ -720,7 +728,7 @@ void NetManager::CheckLinkDead()
         }
         else if (pClient->GetConnection()->lastRecvPacketTime+timeout < currenttime)
         {
-            if (pClient->GetConnection()->heartbeat < 10)
+            if (pClient->GetConnection()->heartbeat < 10 && pClient->GetConnection()->lastRecvPacketTime+timeout * 10 > currenttime)
             {
                 psHeartBeatMsg ping(pClient->GetClientNum());
                 Broadcast(ping.msg, NetBase::BC_FINALPACKET);
