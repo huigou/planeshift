@@ -294,14 +294,14 @@ void NetManager::CheckResendPkts()
         if (!outqueue->Add(pkt))
         {
             psNetPacket* packet = pkt->packet;
-            unsigned int type = 0;
+            int type = 0;
 
             if (packet->offset == 0) 
             {
                 psMessageBytes* msg = (psMessageBytes*) packet->data;
                 type = msg->type;
             }
-            Error3("Queue full. Could not add packet with clientnum %d type %u.\n", pkt->clientnum, type);
+            Error3("Queue full. Could not add packet with clientnum %d type %s.\n", pkt->clientnum, type == 0 ? "Unknown" : (const char *)  GetMsgTypeName(type));
             continue;
         }
 
