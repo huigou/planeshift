@@ -2111,7 +2111,8 @@ void pawsChatWindow::Clear()
 		for(size_t i = 0; i < subscribers.GetSize(); i++)
 		{
 			pawsMessageTextBox* textbox = dynamic_cast<pawsMessageTextBox*>(subscribers[i]);
-			textbox->Clear();
+			if(textbox)
+				textbox->Clear();
 		}
 	}
 }
@@ -2215,6 +2216,27 @@ void pawsChatWindow::ChatOutput(const char* data, int colour, int type, bool fla
     if(type == CHAT_CHANNEL)
     	pubName += hotkeyChannel;
     PawsManager::GetSingleton().Publish(pubName, s, colour );
+    
+    // Flash if all are not visible
+    bool needFlash = true;
+    pawsMessageTextBox* textbox = NULL;
+	csArray<iPAWSSubscriber*> subscribers = PawsManager::GetSingleton().ListSubscribers(pubName);
+	for(size_t i = 0; i < subscribers.GetSize(); i++)
+	{
+		textbox = dynamic_cast<pawsMessageTextBox*>(subscribers[i]);
+		if(textbox && textbox->IsVisible())
+		{
+			needFlash = false;
+			break;
+		}
+	}
+	
+	if(needFlash)
+	{
+		pawsTabWindow* tabwindow = dynamic_cast<pawsTabWindow*>(textbox->GetParent());
+		if(tabwindow)
+			tabwindow->FlashButtonFor(textbox);
+	}
 }
 
 void pawsChatWindow::AddAutoCompleteName(const char *cname)

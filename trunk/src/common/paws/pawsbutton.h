@@ -28,6 +28,7 @@
 /* Types of flash buttons, used in chat window */
 enum FLASH_STATE {
     FLASH_REGULAR = 0,
+    FLASH_HIGHLIGHT,
     FLASH_SPECIAL
 };
 
@@ -83,6 +84,7 @@ public:
 		else 
 		{
 			flash = 0; 
+			ClearBackgroundColor();
 		}
 		flashtype = type; 
 	}

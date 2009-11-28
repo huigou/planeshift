@@ -246,28 +246,38 @@ void pawsButton::Draw()
     }
     else // Flash the button if it's not depressed.
     {
-        if (flash <= 10 )
-        {
-            flash++;
-            switch (flashtype)
-            {
-            case FLASH_REGULAR:
-                if ( pressedImage )
-                    pressedImage->Draw( screenFrame );
-                break;
-            case FLASH_SPECIAL:
-                if ( specialFlashImage ) 
-                    specialFlashImage->Draw( screenFrame );
-                break;
-            }
-        }
-        else
-        {
-            if (flash == 30)
-                flash = 1;
-            else flash++;
-            if ( releasedImage ) releasedImage->Draw( screenFrame, drawAlpha );
-        }
+    	if (flashtype == FLASH_HIGHLIGHT)
+    	{
+    		SetBackgroundColor(64,64,64);
+    	}
+    	else
+    	{
+			if (flash <= 10 )
+			{
+				flash++;
+				switch (flashtype)
+				{
+				case FLASH_REGULAR:
+					if ( pressedImage )
+						pressedImage->Draw( screenFrame );
+					break;
+				case FLASH_SPECIAL:
+					if ( specialFlashImage ) 
+						specialFlashImage->Draw( screenFrame );
+					break;
+				default:
+					// Unexpected flash
+					Error1("Unknown flash type!");
+				}
+			}
+			else
+			{
+				if (flash == 30)
+					flash = 1;
+				else flash++;
+				if ( releasedImage ) releasedImage->Draw( screenFrame, drawAlpha );
+			}
+    	}
     }
     if (!(buttonLabel.IsEmpty()))
     {
@@ -434,7 +444,10 @@ void pawsButton::SetState(bool isDown, bool publish)
     down = isDown;    
 
     if ( flash && down )
+    {
         flash = 0;
+        ClearBackgroundColor();
+    }
 
     if (!toggle)
         return;
