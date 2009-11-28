@@ -1285,6 +1285,8 @@ public:
      * @param Blue
      */
     void SetBackgroundColor(int r,int g, int b);
+    
+    void ClearBackgroundColor() { bgColour = -1; }
 
     /** Changes filename to the name provided.
      */

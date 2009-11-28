@@ -39,12 +39,14 @@ public:
 
     pawsWidget* GetActiveTab() { return activeTab; }
     
-    bool OnChange(pawsWidget * widget)
+    bool FlashButtonFor(pawsWidget * widget)
     {
         if(!widget->IsVisible())
         {
         	pawsButton* button = dynamic_cast<pawsButton*>(FindWidget(widget->GetID() - 100));
-        	button->Flash(true);
+        	if(!button)
+        		return false;
+        	button->Flash(true, FLASH_HIGHLIGHT);
         	return true;
         }
         return false;
