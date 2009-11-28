@@ -21,6 +21,7 @@
 #include "gameevent.h"
 #include "util/consoleout.h"
 
+#include "net/messages.h"
 #include "eventmanager.h"
 
 // Number of recent events to use when calculating moving average
@@ -180,7 +181,7 @@ void EventManager::TrackEventTimes(csTicks timeTaken,MsgEntry *msg)
 	// Done this way to prevent a division operator
 	if(filled && timeTaken > 500 && (timeTaken * EVENT_AVERAGETIME_COUNT > 2 * eventtimesTotal || eventtimesTotal > EVENT_AVERAGETIME_COUNT * 1000))
 	{
-		status.Format("Message type %u has taken %u time to process, average time of events is %u", msg->GetType(), timeTaken, eventtimesTotal / EVENT_AVERAGETIME_COUNT);
+		status.Format("Message type %s has taken %u time to process, average time of events is %u", (const char *) GetMsgTypeName(msg->GetType()), timeTaken, eventtimesTotal / EVENT_AVERAGETIME_COUNT);
 		CPrintf(CON_WARNING, "%s\n", status.GetData());
 		if(LogCSV::GetSingletonPtr())
 			LogCSV::GetSingleton().Write(CSV_STATUS, status);
