@@ -10,61 +10,61 @@
     </chatoptions>
     <bindings>
 	<listener name="subMainText">
-            <chat type="CHAT_PET_ACTION" />
-            <chat type="CHAT_SAY" />
-            <chat type="CHAT_SHOUT" />
-            <chat type="CHAT_SYSTEM_BASE" />
-            <chat type="CHAT_GM" />
-            <chat type="CHAT_SERVER_INFO" />
-            <chat type="CHAT_SYSTEM" />
+            <chat_message type="CHAT_PET_ACTION" />
+            <chat_message type="CHAT_SAY" />
+            <chat_message type="CHAT_SHOUT" />
+            <chat_message type="CHAT_SYSTEM_BASE" />
+            <chat_message type="CHAT_GM" />
+            <chat_message type="CHAT_SERVER_INFO" />
+            <chat_message type="CHAT_SYSTEM" />
         </listener>
 	<listener name="subSystemText">
-            <chat type="CHAT_SYSTEM" />
-            <chat type="CHAT_SERVER_INFO" />
-            <chat type="CHAT_REPORT" />
-            <chat type="CHAT_SERVER_TELL" />
-            <chat type="CHAT_COMBAT" />
-            <chat type="CHAT_SYSTEM_BASE" />
+            <chat_message type="CHAT_SYSTEM" />
+            <chat_message type="CHAT_SERVER_INFO" />
+            <chat_message type="CHAT_REPORT" />
+            <chat_message type="CHAT_SERVER_TELL" />
+            <chat_message type="CHAT_COMBAT" />
+            <chat_message type="CHAT_SYSTEM_BASE" />
         </listener>
 	<listener name="subNPCText">
-            <chat type="CHAT_NPC_ME" />
-            <chat type="CHAT_NPC_MY" />
-            <chat type="CHAT_NPC_NARRATE" />
-            <chat type="CHAT_NPC" />
-            <chat type="CHAT_NPCINTERNAL" />
+            <chat_message type="CHAT_NPC_ME" />
+            <chat_message type="CHAT_NPC_MY" />
+            <chat_message type="CHAT_NPC_NARRATE" />
+            <chat_message type="CHAT_NPC" />
+            <chat_message type="CHAT_NPCINTERNAL" />
         </listener>
 	<listener name="subTellText">
-            <chat type="CHAT_TELL" />
-            <chat type="CHAT_TELLSELF" />
+            <chat_message type="CHAT_TELL" />
+            <chat_message type="CHAT_TELLSELF" />
         </listener>
 	<listener name="subGuildText">
-            <chat type="CHAT_GUILD" />
+            <chat_message type="CHAT_GUILD" />
         </listener>
 	<listener name="subAllianceText">
-            <chat type="CHAT_ALLIANCE" />
+            <chat_message type="CHAT_ALLIANCE" />
         </listener>
 	<listener name="subGroupText">
-            <chat type="CHAT_GROUP" />
+            <chat_message type="CHAT_GROUP" />
         </listener>
 	<listener name="subAuctionsText">
-            <chat type="CHAT_AUCTION" />
+            <chat_message type="CHAT_AUCTION" />
         </listener>
 	<listener name="subChannelsText">
-            <chat type="CHAT_CHANNEL1" />
-            <chat type="CHAT_CHANNEL2" />
-            <chat type="CHAT_CHANNEL3" />
-            <chat type="CHAT_CHANNEL4" />
-            <chat type="CHAT_CHANNEL5" />
-            <chat type="CHAT_CHANNEL6" />
-            <chat type="CHAT_CHANNEL7" />
-            <chat type="CHAT_CHANNEL8" />
-            <chat type="CHAT_CHANNEL9" />
-            <chat type="CHAT_CHANNEL10" />
+            <chat_message type="CHAT_CHANNEL1" />
+            <chat_message type="CHAT_CHANNEL2" />
+            <chat_message type="CHAT_CHANNEL3" />
+            <chat_message type="CHAT_CHANNEL4" />
+            <chat_message type="CHAT_CHANNEL5" />
+            <chat_message type="CHAT_CHANNEL6" />
+            <chat_message type="CHAT_CHANNEL7" />
+            <chat_message type="CHAT_CHANNEL8" />
+            <chat_message type="CHAT_CHANNEL9" />
+            <chat_message type="CHAT_CHANNEL10" />
         </listener>
 	<listener name="subHelpText">
-            <chat type="CHAT_ADVISOR" />
-            <chat type="CHAT_ADVICE" />
-            <chat type="CHAT_ADVICE_LIST" />
+            <chat_message type="CHAT_ADVISOR" />
+            <chat_message type="CHAT_ADVICE" />
+            <chat_message type="CHAT_ADVICE_LIST" />
         </listener>
     </bindings>
     <maintabincludes>
