@@ -271,6 +271,7 @@ void pawsChatWindow::LoadChatSettings()
     bindingsNode = chatNode->GetNode("bindings");
     if (bindingsNode != NULL)
     {
+    	settings.bindings.DeleteAll();
     	csRef<iDocumentNodeIterator> bindingsIter = bindingsNode->GetNodes("listener");
     	while(bindingsIter->HasNext())
     	{
@@ -288,7 +289,7 @@ void pawsChatWindow::LoadChatSettings()
 					PawsManager::GetSingleton().Subscribe(typeName, subscribers[i]);
 				}
 				// For loading/saving
-    			settings.bindings.Put(typeName, listenerName);
+    			settings.bindings.Put(listenerName, typeName);
     		}
     	}
     }
@@ -919,6 +920,26 @@ void pawsChatWindow::SaveChatSettings()
         logNode->SetAttributeAsInt("value",(int)settings.logChannel[i]);
     }
 
+    csRef<iDocumentNode> bindingsNode = chatNode->CreateNodeBefore(CS_NODE_ELEMENT, 0);
+    bindingsNode->SetValue("bindings");
+    
+    csString currentListener;
+    csRef<iDocumentNode> listenerNode;
+    csHash<csString, csString>::GlobalIterator bindingsIt = settings.bindings.GetIterator();
+    while(bindingsIt.HasNext())
+    {
+    	const csTuple2<csString, csString> binding = bindingsIt.NextTuple();
+    	if(binding.second != currentListener)
+    	{
+    		currentListener = binding.second;
+    		listenerNode = bindingsNode->CreateNodeBefore(CS_NODE_ELEMENT, 0);
+    		listenerNode->SetValue("listener");
+    		listenerNode->SetAttribute("name", binding.second);
+    	}
+    	csRef<iDocumentNode> chatTabType = listenerNode->CreateNodeBefore(CS_NODE_ELEMENT, 0);
+    	chatTabType->SetValue("chat");
+    	chatTabType->SetAttribute("type", binding.first);
+    }
 
     filtersNode = chatNode->CreateNodeBefore(CS_NODE_ELEMENT,0);
     filtersNode->SetValue("filters");
