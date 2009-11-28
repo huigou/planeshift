@@ -544,25 +544,22 @@ void pawsMessageTextBox::AddMessage( const char* data, int msgColour )
         int colour = msgColour;
         int size = 0;
 
-        size_t pos = messageText.Find("<f ");
-        if(pos != (size_t)-1)
+        // 1 is a control character which should be filtered out of user text input.
+        // Format is 5 bytes.
+        // 1st byte is 1 which is the control character
+        // 2nd is R value
+        // 3rd is G value
+        // 4th is B value
+        // 5th is text size
+        // A value of 1 means that property should not be set.
+        size_t pos = messageText.FindFirst(1);
+        if(pos != (size_t)-1 && pos + 5 < messageText.Length())
         {
-            csString fontData = messageText.Slice(pos, messageText.FindFirst('>')+1);
-            csRef<iDocumentSystem> xml;
-            xml.AttachNew(new csTinyDocumentSystem);    
-            csRef<iDocument> doc = xml->CreateDocument();
-            doc->Parse(fontData);
-
-            if(msgColour == -1)
-            {
-                int r = doc->GetRoot()->GetNode("f")->GetAttributeValueAsInt("r");
-                int g = doc->GetRoot()->GetNode("f")->GetAttributeValueAsInt("g");
-                int b = doc->GetRoot()->GetNode("f")->GetAttributeValueAsInt("b");
-                colour = graphics2D->FindRGB(r, g, b);
-            }
-
-            size = doc->GetRoot()->GetNode("f")->GetAttributeValueAsInt("s");
-            messageText = messageText.Slice(messageText.Find(">", pos)+1);
+        	if(messageText[pos + 1] != 1 || messageText[pos + 2] != 1 || messageText[pos + 3] != 1)
+        		colour = graphics2D->FindRGB(messageText[pos + 1], messageText[pos + 2], messageText[pos + 3]);
+        	if(messageText[pos + 4] != 1)
+        		size = messageText[pos + 4];
+            messageText = messageText.DeleteAt(pos, 5);
         } 
         else if(msgColour == -1)
         {
