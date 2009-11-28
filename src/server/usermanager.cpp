@@ -1998,7 +1998,14 @@ void UserManager::Pickup(Client *client, csString target)
 void UserManager::HandleMount(psUserCmdMessage& msg, Client *client)
 {
     // Add some check to see if the player is allowed to mount
-    
+	
+	if (client->GetActor()->GetMode() == PSCHARACTER_MODE_OVERWEIGHT)
+    {
+	    psserver->SendSystemError(client->GetClientNum(),	
+		             "You cannot mount when you are overweight.");
+	    return;
+    }
+
     gemObject* mount;
     GEMSupervisor *gem = GEMSupervisor::GetSingletonPtr();
     
