@@ -233,6 +233,7 @@ void NetManager::CheckResendPkts()
     Connection* currentConnection = NULL;
 
     csTicks currenttime = csGetTicks();
+    unsigned int resentCount = 0;
 
     while(it.HasNext())
     {
@@ -262,7 +263,7 @@ void NetManager::CheckResendPkts()
         	if (pkt->timestamp + MIN(PKTMAXRTO, connection->RTO * connection->backoff) >= currenttime)
         		continue;
         }
-        
+        resentCount++;
         if (connection != currentConnection)
         {
         	// Perform exponential backoff once for each connection since pkts are ordered
@@ -325,15 +326,15 @@ void NetManager::CheckResendPkts()
 		currentConnection->backoffStart = currenttime;
 		currentConnection->backoff *= 2;
 	}
-    if(pkts.GetSize() > 0)
+    if(resentCount > 0)
     {
-        resends[resendIndex] = pkts.GetSize();
+        resends[resendIndex] = resentCount;
         resendIndex = (resendIndex + 1) % RESENDAVGCOUNT;
 
         csTicks timeTaken = csGetTicks() - currenttime;
-        if(pkts.GetSize() > 300 || resendIndex == 1 || timeTaken > 50)
+        if(resentCount > 300 || resendIndex == 1 || timeTaken > 50)
         {
-            unsigned int peakResend = 0;
+        	unsigned int peakResend = 0;
             float resendAvg = 0.0f;
             // Calculate averages data here
             for(int i = 0; i < RESENDAVGCOUNT; i++)
@@ -345,7 +346,7 @@ void NetManager::CheckResendPkts()
             csString status;
             if(timeTaken > 50 || pkts.GetSize() > 300)
             {
-                status.Format("Resending high priority packets has taken %u time to process, for %u packets.", timeTaken, (unsigned int) pkts.GetSize());
+                status.Format("Resending high priority packets has taken %u time to process, for %u packets.", timeTaken, resentCount);
                 CPrintf(CON_WARNING, "%s\n", (const char *) status.GetData());
             }
             status.AppendFmt("Resending non-acked packet statistics: %g average resends, peak of %u resent packets", resendAvg, peakResend);
