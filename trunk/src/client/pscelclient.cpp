@@ -1723,6 +1723,8 @@ void GEMClientActor::SetAnimationVelocity(const csVector3& velocity)
     // Taking larger of the 2 axis; cal3d axis are the opposite of CEL's
     bool useZ = ABS(velocity.z) > ABS(velocity.x);
     float cal3dvel = useZ ? velocity.z : velocity.x;
+    if(cal3dvel == 0.0)
+    	cal3dvel = velocity.y;
     cal3dstate->SetVelocity(-cal3dvel, &psengine->GetRandomGen());
 
     if((velocity.x != 0 || velocity.z != 0) && velocity.Norm() < 2)

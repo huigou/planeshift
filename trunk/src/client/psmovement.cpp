@@ -199,7 +199,8 @@ bool psMovementManager::HandleEvent( iEvent &event )
     if (event.Name == event_frame)
     {
         // If we we've returned to the ground, update allowed velocity
-        if (!onGround && actor->Movement().IsOnGround())
+        if ((!onGround && actor->Movement().IsOnGround()) ||
+        		(onGround && !actor->Movement().IsOnGround()))
             UpdateVelocity();
 
 		// UpdateMouseLook will take care of "recent mouse-look turning" based on "bool mouseLook"
