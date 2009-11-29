@@ -1515,7 +1515,11 @@ bool pawsWidget::OnMouseDown( int button, int modifiers, int x, int y )
 
     if ( !PawsManager::GetSingleton().GetDragDropWidget() )
     {
+#ifdef CS_PLATFORM_MACOSX
         if (button == csmbLeft && !(modifiers & CSMASK_CTRL))
+#else
+        if (button == csmbLeft)
+#endif
         {
             if ( isResizable && showResize )
             {
@@ -1536,7 +1540,11 @@ bool pawsWidget::OnMouseDown( int button, int modifiers, int x, int y )
                 return true;
             }
         }
+#ifdef CS_PLATFORM_MACOSX
         else if ((button == csmbRight) || (button == csmbLeft && modifiers == CSMASK_CTRL))
+#else
+        else if ((button == csmbRight)
+#endif
         {
             if (!contextMenu && !contextMenuFile.IsEmpty())
             {
