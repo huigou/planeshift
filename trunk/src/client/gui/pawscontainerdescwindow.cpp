@@ -48,6 +48,7 @@
 #define VIEW_BUTTON 11
 #define INVENTORY_BUTTON 12
 #define COMBINE_BUTTON 13
+#define UNCOMBINE_BUTTON 14
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -264,7 +265,7 @@ bool pawsContainerDescWindow::OnButtonPressed( int mouseButton, int keyModifier,
 
         return true;
     }
-    else if ( widget->GetID() == COMBINE_BUTTON )
+    else if ( widget->GetID() == COMBINE_BUTTON || widget->GetID() == UNCOMBINE_BUTTON )
     {
         GEMClientObject* oldtarget = psengine->GetCharManager()->GetTarget();
         EID oldID;
@@ -276,11 +277,15 @@ bool pawsContainerDescWindow::OnButtonPressed( int mouseButton, int keyModifier,
         psUserActionMessage setnewtarget(0, containerID, "select");
         setnewtarget.SendMessage();
         //printf("combining\n");
-        psengine->GetCmdHandler()->Execute("/combine");
+        if(widget->GetID() == COMBINE_BUTTON)
+            psengine->GetCmdHandler()->Execute("/combine");
+        else
+            psengine->GetCmdHandler()->Execute("/uncombine");
         //printf("selecting oldID %d\n", oldID);
         psUserActionMessage setoldtarget(0, oldID, "select");
         setoldtarget.SendMessage();
     }
+
     return true;
 }
 
