@@ -84,7 +84,8 @@ public:
 		else 
 		{
 			flash = 0; 
-			ClearBackgroundColor();
+			if (flashtype == FLASH_HIGHLIGHT)
+				SetColour(-1);
 		}
 		flashtype = type; 
 	}
