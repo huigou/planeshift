@@ -1100,7 +1100,6 @@ void pawsChatWindow::HandleSystemMessage(MsgEntry *me)
     {
         const char* start = msg.msgline.GetDataSafe();
 
-        char* currentLine = new char[msg.msgline.Length()+1];
         csString header;//Used for storing the header in case of MSG_WHO
 
         //Handles messages containing the /who content
@@ -1148,6 +1147,8 @@ void pawsChatWindow::HandleSystemMessage(MsgEntry *me)
             start= header.GetData();//We copy to start, so it can be displayed like everything else in the chat.
 
         }
+        char* currentLine = new char[MAX(msg.msgline.Length()+1, header.Length() + 1)];
+
         const char* workingString = start;
         while(workingString)
         {
