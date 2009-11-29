@@ -386,7 +386,13 @@ bool psMouseBinds::CheckBind(const csString& action, int button, int modifiers)
 {
     csMouseEventData event;
     if (GetBind(action, event))
+    {
+#ifdef CS_PLATFORM_MACOSX
+    	if(event.Button == csmbRight && event.Modifiers == 0 && (button == csmbLeft && modifiers == CSMASK_CTRL ))
+    		return true;
+#endif
         return ((uint)button == event.Button && (uint)modifiers == event.Modifiers);
+    }
             
     return false;
 }
