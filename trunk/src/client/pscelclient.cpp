@@ -1964,9 +1964,10 @@ bool GEMClientItem::CheckLoadStatus()
             return true;
         }
 
+        csRef<iMaterialWrapper> material;
         if(!matName.IsEmpty())
         {
-            csRef<iMaterialWrapper> material = psengine->GetLoader()->LoadMaterial(matName, &failed);
+            material = psengine->GetLoader()->LoadMaterial(matName, &failed);
             if(!material.IsValid())
             {
                 if(failed)
@@ -1977,8 +1978,6 @@ bool GEMClientItem::CheckLoadStatus()
 
                 return true;
             }
-
-            factory->GetMeshObjectFactory()->SetMaterialWrapper(material);
         }
 
         // Create the mesh.
@@ -1987,6 +1986,11 @@ bool GEMClientItem::CheckLoadStatus()
         instance->pcmesh->GetFlags().Set(CS_ENTITY_NODECAL | CS_ENTITY_NOHITBEAM);
         psengine->GetEngine()->PrecacheMesh(instance->pcmesh);
         cel->AddInstanceObject(factName+matName, instance);
+
+        if(material.IsValid())
+        {
+            instance->pcmesh->GetMeshObject()->SetMaterialWrapper(material);
+        }
 
         // Set appropriate shader.
         csRef<iShaderManager> shman = csQueryRegistry<iShaderManager>(psengine->GetObjectRegistry());
