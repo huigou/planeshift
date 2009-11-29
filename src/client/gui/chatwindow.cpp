@@ -1588,7 +1588,10 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
     // Remove colour codes for log
     size_t colourStart = buff.FindFirst(1);
     while(colourStart != (size_t) -1 && colourStart + 4 < buff.Length())
+    {
     	buff.DeleteAt(colourStart, 5);
+    	colourStart = buff.FindFirst(1);
+    }
 
     LogMessage(CHAT_LOG_ALL, buff.GetDataSafe(), msg.iChatType);
 
