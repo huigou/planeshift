@@ -588,15 +588,7 @@ void pawsMessageTextBox::AddMessage( const char* data, int msgColour )
 
     	while(textStart < messageText.Length())
     	{
-			// 1 is a control character which should be filtered out of user text input.
-			// The code is 5 bytes.
-			// 1st byte is 1 which is the control character
-			// 2nd is R value / 2
-			// 3rd is G value / 2
-			// 4th is B value / 2
-			// 5th is text size
-			// A value of 1 in all colours or in text size means that field should not be set.
-			size_t pos = messageText.FindFirst(1, textStart);
+			size_t pos = messageText.FindFirst(ESCAPECODE, textStart);
 			if(pos == (size_t) - 1)
 				textEnd = messageText.Length();
 			else
@@ -621,17 +613,20 @@ void pawsMessageTextBox::AddMessage( const char* data, int msgColour )
 			}
 			textStart = textEnd;
 			
-			if(pos != (size_t)-1 && pos + 4 < messageText.Length())
+			if(pos != (size_t)-1 && pos + LENGTHCODE <= messageText.Length())
 			{
-				if(messageText[pos + 1] != 1 || messageText[pos + 2] != 1 || messageText[pos + 3] != 1)
-					colour = graphics2D->FindRGB((unsigned char)messageText[pos + 1] * 2, (unsigned char)messageText[pos + 2] * 2, (unsigned char)messageText[pos + 3] * 2);
-				else
+				int r, g, b;
+				if (!psColours::ParseColour(messageText.GetData() + pos, r, g, b, size))
+				{
+					// Not a colour code so skip
+					textStart++;
+					continue;
+				}
+				if(r == 0 && g == 0 && b == 0)
 					colour = msgColour;
-				if(messageText[pos + 4] != 1)
-					size = messageText[pos + 4];
 				else
-					size = 0;
-				messageText.DeleteAt(pos, 5);
+					colour = graphics2D->FindRGB(r, g, b);
+				messageText.DeleteAt(pos, LENGTHCODE);
 			}
     	}  
         messages.Push(msg);  

@@ -23,6 +23,72 @@
 #include <cstypes.h>
 #include <csutil/csstring.h>
 
+// Colour support. Only supported by pawsMessageTextBox for now.
+// 1 is a control character which should be filtered out of user text input.
+// The code is a fixed-size of 8 bytes.
+// byte 1 is 033 which is the control character
+// 2-3 are the R value in hex
+// 4-5 are the G value in hex
+// 6-7 are the B value in hex
+// 8 is the text size in decimal
+
+// Shortcut color/size codes
+// Safe for use with tolower, toupper, UTF-8
+#define REDCODE "\033ff00000" 
+#define GREENCODE "\03300ff000"
+#define BLUECODE "\0330000ff0" 
+#define WHITECODE "\033ffffff0"
+#define DEFAULTCODE "\0330000000" 
+#define ESCAPECODE '\033'
+#define LENGTHCODE 8
+
+class psColours
+{
+public:
+	static bool ParseColour(const char* str, int& r, int& g, int& b, int& size)
+	{
+		if(strlen(str) < LENGTHCODE || str[0] != '\033')
+			return false;
+		str++;
+		r = DecodeHex(str, 2);
+		if(r == -1)
+			return false;
+		str += 2;
+		g = DecodeHex(str, 2);
+		if(g == -1)
+			return false;
+		str += 2;
+		b = DecodeHex(str, 2);
+		if(b == -1)
+			return false;
+		str += 2;
+		size = DecodeHex(str, 1);
+		if(size == -1)
+			return false;
+		str++;
+		return true;
+	}
+	
+	// Decode a hex string, can accept both uppercase and lowercase.
+	// -1 indicates an error occurred.
+	static int DecodeHex(const char* str, int len)
+	{
+		int count = 0;
+		for(int i = 0; i < len; i++)
+		{
+			if(str[i] >= 'a' && str[i] <= 'f')
+				count += (str[i] - 'a') + 10;
+			else if(str[i] >= '0' && str[i] <= '9')
+				count += (str[i] - '0');
+			else if(str[i] >= 'A' && str[i] <= 'F')
+				count += (str[i] - 'A') + 10;
+			else return -1;
+			count *= 16;
+		}
+		return count;
+	}
+};
+
 /** Get the time of day in GMT.
   * @param string The string to place the time of day.
   */

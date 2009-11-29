@@ -1139,7 +1139,7 @@ void pawsChatWindow::HandleSystemMessage(MsgEntry *me)
                 if(spacePos == (size_t) -1)
                 	spacePos = playerLines[i].Length();
                 playerLines[i].Insert(0, WHITECODE);
-                playerLines[i].Insert(spacePos + 5, DEFAULTCODE);
+                playerLines[i].Insert(spacePos + LENGTHCODE, DEFAULTCODE);
                 header.Append(playerLines[i]);
             }
             header.Append('\n');
@@ -1300,7 +1300,7 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
     if(charNamePos != (size_t) -1)
     {
     	msg.sText.Insert(charNamePos, REDCODE);
-    	msg.sText.Insert(charNamePos + 5 + noCasePlayerForename.Length(), DEFAULTCODE);
+    	msg.sText.Insert(charNamePos + LENGTHCODE + noCasePlayerForename.Length(), DEFAULTCODE);
     }
     
     csString noCaseMsg = msg.sText;
@@ -1592,11 +1592,11 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
     }
     
     // Remove colour codes for log
-    size_t colourStart = buff.FindFirst(1);
-    while(colourStart != (size_t) -1 && colourStart + 4 < buff.Length())
+    size_t colourStart = buff.FindFirst(ESCAPECODE);
+    while(colourStart != (size_t) -1 && colourStart + LENGTHCODE <= buff.Length())
     {
-    	buff.DeleteAt(colourStart, 5);
-    	colourStart = buff.FindFirst(1);
+    	buff.DeleteAt(colourStart, LENGTHCODE);
+    	colourStart = buff.FindFirst(ESCAPECODE);
     }
 
     LogMessage(CHAT_LOG_ALL, buff.GetDataSafe(), msg.iChatType);
