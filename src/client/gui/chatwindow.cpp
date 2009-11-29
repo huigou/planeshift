@@ -1136,6 +1136,11 @@ void pawsChatWindow::HandleSystemMessage(MsgEntry *me)
             for (size_t i=0; i< playerLines.GetSize();i++)//Now we copy the sorted names in the header msg.
             {
                 header.Append('\n');
+                size_t spacePos = playerLines[i].FindFirst(' ');
+                if(spacePos == (size_t) -1)
+                	spacePos = playerLines[i].Length();
+                playerLines[i].Insert(0, WHITECODE);
+                playerLines[i].Insert(spacePos + 5, DEFAULTCODE);
                 header.Append(playerLines[i]);
             }
             header.Append('\n');

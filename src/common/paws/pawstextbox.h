@@ -43,6 +43,7 @@ struct iVirtualClock;
 #define REDCODE "\x01\x7f\x01\x01\x01" 
 #define GREENCODE "\x01\x01\x7f\x01\x01"
 #define BLUECODE "\x01\x01\x01\x7f\x01" 
+#define WHITECODE "\x01\x7f\x7f\x7f\x01"
 #define DEFAULTCODE "\x01\x01\x01\x01\x01" 
 		
 /** A basic text box widget.

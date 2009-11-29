@@ -248,7 +248,7 @@ void pawsButton::Draw()
     {
     	if (flashtype == FLASH_HIGHLIGHT)
     	{
-    		SetBackgroundColor(64,64,64);
+    		SetColour(graphics2D->FindRGB(255,0,0));
     	}
     	else
     	{
@@ -446,7 +446,8 @@ void pawsButton::SetState(bool isDown, bool publish)
     if ( flash && down )
     {
         flash = 0;
-        ClearBackgroundColor();
+        if (flashtype == FLASH_HIGHLIGHT)
+        	SetColour(-1);
     }
 
     if (!toggle)
