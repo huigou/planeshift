@@ -1543,7 +1543,7 @@ bool pawsWidget::OnMouseDown( int button, int modifiers, int x, int y )
 #ifdef CS_PLATFORM_MACOSX
         else if ((button == csmbRight) || (button == csmbLeft && modifiers == CSMASK_CTRL))
 #else
-        else if ((button == csmbRight)
+        else if ((button == csmbRight))
 #endif
         {
             if (!contextMenu && !contextMenuFile.IsEmpty())
