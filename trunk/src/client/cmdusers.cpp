@@ -78,6 +78,7 @@ psUserCommands::psUserCommands(ClientMsgHandler* mh,CmdHandler *ch,iObjectRegist
     cmdsource->Subscribe("/challenge",     this);
     cmdsource->Subscribe("/clear",         this);
     cmdsource->Subscribe("/combine",       this);
+    cmdsource->Subscribe("/uncombine",     this);
     cmdsource->Subscribe("/construct",     this);
     cmdsource->Subscribe("/dequip",        this);
     cmdsource->Subscribe("/die",           this);
@@ -148,6 +149,7 @@ psUserCommands::~psUserCommands()
     cmdsource->Unsubscribe("/challenge",             this);
     cmdsource->Unsubscribe("/clear",                 this);
     cmdsource->Unsubscribe("/combine",               this);
+    cmdsource->Unsubscribe("/uncombine",             this);
     cmdsource->Unsubscribe("/construct",             this);
     cmdsource->Unsubscribe("/dequip",                this);
     cmdsource->Unsubscribe("/die",                   this);
