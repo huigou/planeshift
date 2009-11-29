@@ -393,9 +393,20 @@ void pawsMessageTextBox::Resize()
     CalcLineHeight();
 
     adjusted.Empty();    
+
     for ( size_t x = 0; x < messages.GetSize(); x++ )    
     {        
-        SplitMessage( messages[x]->text, messages[x]->colour, messages[x]->size ); 
+        MessageLine* dummy = NULL;
+        int dummyX = -1;
+    	if(messages[x]->segments.IsEmpty())
+    		SplitMessage( messages[x]->text, messages[x]->colour, messages[x]->size, dummy, dummyX ); 
+    	else
+    	{
+    		MessageLine* msgLine = NULL;
+    		int offsetX = 0;
+    		for(size_t i = 0; i < messages[x]->segments.GetSize(); i++)
+    			SplitMessage( messages[x]->segments[i].text, messages[x]->segments[i].colour, messages[x]->segments[i].size, msgLine, offsetX);
+    	}
     } 
 }
 
@@ -447,27 +458,44 @@ void pawsMessageTextBox::Draw()
     {
         if ( x < adjusted.GetSize() )
         {
-            //int oldSize = GetFont()->GetSize();
-            if(adjusted[x]->size)
-            {
-                //ChangeFontSize(adjusted[x]->size);
-            }
-            // Draw shadow
-		    graphics2D->Write(  GetFont(),
-							    screenFrame.xmin + 1,
-							    screenFrame.ymin + yPos*lineHeight + 1,
-							    0,
-							    -1,
-							    (const char*)adjusted[x]->text );
-		    // Draw actual text
-            graphics2D->Write(  GetFont(),
-                                screenFrame.xmin,
-                                screenFrame.ymin + yPos*lineHeight,
-                                adjusted[x]->colour,
-                                -1,
-                                (const char*)adjusted[x]->text );
+        	if(adjusted[x]->segments.IsEmpty())
+        	{
+				// Draw shadow
+				graphics2D->Write(  GetFont(),
+									screenFrame.xmin + 1,
+									screenFrame.ymin + yPos*lineHeight + 1,
+									0,
+									-1,
+									(const char*)adjusted[x]->text );
+				// Draw actual text
+				graphics2D->Write(  GetFont(),
+									screenFrame.xmin,
+									screenFrame.ymin + yPos*lineHeight,
+									adjusted[x]->colour,
+									-1,
+									(const char*)adjusted[x]->text );
+        	}
+        	else
+        	{
+        		for(size_t i = 0; i < adjusted[x]->segments.GetSize(); i++)
+        		{
+					// Draw shadow
+					graphics2D->Write(  GetFont(),
+										screenFrame.xmin + adjusted[x]->segments[i].x + 1,
+										screenFrame.ymin + yPos*lineHeight + 1,
+										0,
+										-1,
+										(const char*)adjusted[x]->segments[i].text );
+					// Draw actual text
+					graphics2D->Write(  GetFont(),
+										screenFrame.xmin + adjusted[x]->segments[i].x,
+										screenFrame.ymin + yPos*lineHeight,
+										adjusted[x]->segments[i].colour,
+										-1,
+										(const char*)adjusted[x]->segments[i].text );
+        		}
+        	}
            
-            //ChangeFontSize(oldSize);
             yPos++;                                                                            
         }
     }
@@ -544,36 +572,69 @@ void pawsMessageTextBox::AddMessage( const char* data, int msgColour )
         int colour = msgColour;
         int size = 0;
 
-        // 1 is a control character which should be filtered out of user text input.
-        // Format is 5 bytes.
-        // 1st byte is 1 which is the control character
-        // 2nd is R value
-        // 3rd is G value
-        // 4th is B value
-        // 5th is text size
-        // A value of 1 means that property should not be set.
-        size_t pos = messageText.FindFirst(1);
-        if(pos != (size_t)-1 && pos + 5 < messageText.Length())
-        {
-        	if(messageText[pos + 1] != 1 || messageText[pos + 2] != 1 || messageText[pos + 3] != 1)
-        		colour = graphics2D->FindRGB(messageText[pos + 1], messageText[pos + 2], messageText[pos + 3]);
-        	if(messageText[pos + 4] != 1)
-        		size = messageText[pos + 4];
-            messageText = messageText.DeleteAt(pos, 5);
-        } 
-        else if(msgColour == -1)
+        if(msgColour == -1)
         {
             colour = GetFontColour();
         }
-
-        msg->size = size;
-        msg->colour = colour;
+        
+    	size_t textStart = 0;
+    	size_t textEnd = messageText.Length();
+    	int x = 0;
+    	MessageLine* msgLine = NULL;
+        msg->size = 0;
+        msg->colour = msgColour;
         msg->text = messageText;
-        messages.Push(msg);    
 
 
-        SplitMessage( messageText, colour, size );            
-
+    	while(textStart < messageText.Length())
+    	{
+			// 1 is a control character which should be filtered out of user text input.
+			// The code is 5 bytes.
+			// 1st byte is 1 which is the control character
+			// 2nd is R value / 2
+			// 3rd is G value / 2
+			// 4th is B value / 2
+			// 5th is text size
+			// A value of 1 in all colours or in text size means that field should not be set.
+			size_t pos = messageText.FindFirst(1, textStart);
+			if(pos == (size_t) - 1)
+				textEnd = messageText.Length();
+			else
+				textEnd = pos;
+			
+			if(textStart == 0 && pos == (size_t) - 1)
+			{
+				int dummyX = -1;
+				SplitMessage( messageText, colour, size, msgLine, dummyX);
+				break;
+			}
+			else if(textEnd > textStart)
+			{
+				csString subText = messageText.Slice(textStart, textEnd - textStart);
+				SplitMessage( subText, colour, size, msgLine, x);   
+				
+				MessageSegment newSegment;
+				newSegment.text = subText;
+				newSegment.colour = colour;
+				newSegment.size = size;
+				msg->segments.Push(newSegment);
+			}
+			textStart = textEnd;
+			
+			if(pos != (size_t)-1 && pos + 4 < messageText.Length())
+			{
+				if(messageText[pos + 1] != 1 || messageText[pos + 2] != 1 || messageText[pos + 3] != 1)
+					colour = graphics2D->FindRGB((unsigned char)messageText[pos + 1] * 2, (unsigned char)messageText[pos + 2] * 2, (unsigned char)messageText[pos + 3] * 2);
+				else
+					colour = msgColour;
+				if(messageText[pos + 4] != 1)
+					size = messageText[pos + 4];
+				else
+					size = 0;
+				messageText.DeleteAt(pos, 5);
+			}
+    	}  
+        messages.Push(msg);  
         if (scrollBar)
         {
             if ( adjusted.GetSize() > maxLines )
@@ -648,14 +709,16 @@ void pawsMessageTextBox::FullScroll()
 
 }
 
-void pawsMessageTextBox::SplitMessage( const char* newText, int colour, int size )
+void pawsMessageTextBox::SplitMessage( const char* newText, int colour, int size, MessageLine*& msgLine, int& x)
 {
     if(!newText)
       return;
 
     if(strlen(newText) == 0)
     {
-        MessageLine* msgLine = new MessageLine;
+    	if(x > 0)
+    		return;
+        msgLine = new MessageLine;
         msgLine->size = size;
         msgLine->text = newText;
         msgLine->colour = colour;
@@ -663,37 +726,48 @@ void pawsMessageTextBox::SplitMessage( const char* newText, int colour, int size
     }
     else if (newText[0] != '\0')
     {    
-        int maxWidth;
-        int maxHeight;
-    
-        //int oldSize = GetFont()->GetSize();
-        if(size)
-        {
-            //ChangeFontSize(size);
-        }
-        GetFont()->GetMaxSize( maxWidth, maxHeight );
         
         char* dummy = new char[strlen( newText ) + 1];
         char* head = dummy;
     
         strcpy( dummy, newText );
-    
-        int offSet = 40;
-            
+
         while ( dummy )
         {
-            /// See how many characters can be drawn on a single line.                
+        	int offSet = 20;
+        	int width = -1;
+        	int height = -1;
+            /// See how many characters can be drawn on a single line.             
+        	if (x != -1)
+        	{
+        		GetFont()->GetDimensions(dummy, width, height);
+        		offSet += x;
+        	}
             int canDrawLength =  GetFont()->GetLength( dummy, screenFrame.Width()-offSet );
             CS_ASSERT_MSG("iFont->GetLength returned 0.  Infinite loop detected.", canDrawLength != 0);
 
             /// If it can fit the entire string then return.
             if ( canDrawLength == (int)strlen( dummy ) )
             {
-                MessageLine* msgLine = new MessageLine;
-                msgLine->size = size;
-                msgLine->text = dummy;
-                msgLine->colour = colour;
-                adjusted.Push( msgLine );
+            	if(!msgLine)
+            	{
+            		msgLine = new MessageLine;
+                    msgLine->size = size;
+                    msgLine->text = dummy;
+                    msgLine->colour = colour;
+            		adjusted.Push( msgLine );
+            	}
+            	if(x != -1)
+            	{
+            		MessageSegment seg;
+            		seg.size = size;
+            		seg.text = dummy;
+            		seg.colour = colour;
+            		seg.x = x;
+            		msgLine->text.Clear();
+            		msgLine->segments.Push(seg);
+            		x += width;
+            	}
                 break;
             }
             // We have to push in a new line to the lines bit.
@@ -715,11 +789,26 @@ void pawsMessageTextBox::SplitMessage( const char* newText, int colour, int size
                 csString test;
                 test.Append( dummy, index );
                 dummy+=index;        
-                MessageLine* msgLine = new MessageLine;
-                msgLine->size = size;
-                msgLine->text = test;
-                msgLine->colour = colour;
-                adjusted.Push( msgLine );            
+            	if(!msgLine)
+            	{
+            		msgLine = new MessageLine;
+                    msgLine->size = size;
+                    msgLine->text = test;
+                    msgLine->colour = colour;
+                    adjusted.Push( msgLine );   
+            	}
+            	if(x != -1)
+            	{
+            		MessageSegment seg;
+            		seg.size = size;
+            		seg.text = test;
+            		seg.colour = colour;
+            		seg.x = x;
+            		msgLine->segments.Push(seg);
+            		x = 0;
+            	}
+                // Next time use a new line!
+                msgLine = NULL;
             }
         }
         

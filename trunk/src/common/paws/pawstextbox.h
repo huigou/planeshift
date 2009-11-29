@@ -29,6 +29,22 @@ struct iVirtualClock;
 #include <csutil/parray.h>
 #include <ivideo/fontserv.h>
 
+// 1 is a control character which should be filtered out of user text input.
+// The code is 5 bytes.
+// 1st byte is 1 which is the control character
+// 2nd is R value / 2
+// 3rd is G value / 2
+// 4th is B value / 2
+// 5th is text size
+// A value of 1 in all colours or in text size means that field should not be set.
+
+// Shortcut 5-byte color/size codes
+// Divide the rgb value / 2 (to prevent conflicts with UTF8)
+#define REDCODE "\x01\x7f\x01\x01\x01" 
+#define GREENCODE "\x01\x01\x7f\x01\x01"
+#define BLUECODE "\x01\x01\x01\x7f\x01" 
+#define DEFAULTCODE "\x01\x01\x01\x01\x01" 
+		
 /** A basic text box widget.
  */
 class pawsTextBox : public pawsWidget
@@ -131,11 +147,21 @@ CREATE_PAWS_FACTORY( pawsTextBox );
 class pawsMessageTextBox : public pawsWidget
 {
 public:
+	struct MessageSegment
+	{
+		int x;
+		csString text;
+		int colour;
+		int size;
+		
+		MessageSegment() : x(0), text(""), colour(0), size(0) { }
+	};
     struct MessageLine
     {
         csString text;
         int colour;
         int size;
+        csArray<MessageSegment> segments;
 
         MessageLine()
         {
@@ -184,6 +210,7 @@ public:
     void FullScroll();
 
     virtual void OnUpdateData(const char *dataname,PAWSData& data);
+    
 
 protected:
     /// Renders an entire message and returns the total lines it took.
@@ -194,7 +221,7 @@ protected:
     
     //void AdjustMessages();
     
-    void SplitMessage( const char* newText, int colour, int size );
+    void SplitMessage( const char* newText, int colour, int size, MessageLine*& msgLine, int& offsetX );
 
     /// Calculates value of the lineHeight attribute
     void CalcLineHeight();
