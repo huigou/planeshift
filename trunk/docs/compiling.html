@@ -697,7 +697,7 @@ http://developer.download.nvidia.com/cg/Cg_2.2/Cg-2.2_October2009_x86_64.tgz
     </div>
 </div>
 <div class="MacOSX" >
-To build on OSX you need to Install Xcode which you can get from <a href="https://connect.apple.com/">here.</a> This guide also recomends you to install fink. You can get fink from <a href="http://fink.sourceforge.net/">here.</a>
+To build on OSX you need to Install Xcode which you can get from <a href="https://connect.apple.com/">here.</a> This guide also recomends you to install fink. You can get fink from <a href="http://fink.sourceforge.net/">here.</a> If you wish to make universal builds, you need to install darwinports instead.
 Note: Do not use darwinports if you are using fink. It can cause conflicts if
 they both have the same package installed. <br />
 Open a terminal window and set the required environment variables for fink by
@@ -1403,7 +1403,7 @@ $HOME/development/planeshift$ ./psclient.app/Contents/MacOS/psclient -cfgset=Pla
         <h3>Crystal Space (CS)</h3>
         <p>Switch to the Crystal Space source dir using 'cd /c/development/cs'.
         Configure to debug mode and jam. (if you wish to build in optimized mode, just run
-        configure without any arguments)</p>
+        configure without --enable-debug). On Mac OS X, there is an issue with ptmalloc crashing on exit so append the flag --disable-ptmalloc</p>
         <div class="commandBox">
             <div class="User">./configure --without-java --without-perl --without-python --without-3ds --enable-shared=no</div>
             <div class="Developer">./configure --enable-debug --without-java --without-perl --without-python --without-3ds --enable-shared=no</div>
