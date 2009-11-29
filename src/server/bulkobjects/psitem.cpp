@@ -2007,6 +2007,10 @@ double psItem::GetProperty(const char *ptr)
     {
         return base_stats->GetCategory()->repairSkillId;
     }
+    else if (!strcasecmp(ptr,"RepairDifficultyPct"))
+    {
+        return base_stats->GetCategory()->repairDifficultyPct;
+    }
     else if (!strcasecmp(ptr,"SalePrice"))
     {
         return base_stats->GetPrice().GetTotal();

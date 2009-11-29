@@ -2293,12 +2293,13 @@ bool CacheManager::PreloadItemCategories()
 
             category->id                   = categories[i].GetInt("category_id");
             category->name                 = categories[i]["name"];
-            category->repairToolStatId  = categories[i].GetInt("item_stat_id_repair_tool");
-            const char *flag = categories[i]["is_repair_tool_consumed"];
-            category->repairToolConsumed = (flag && flag[0]=='Y');
-            category->repairSkillId      = categories[i].GetInt("skill_id_repair");
-            category->identifySkillId    = categories[i].GetInt("identify_skill_id");
-            category->identifyMinSkill   = categories[i].GetInt("identify_min_skill");
+            category->repairToolStatId     = categories[i].GetInt("item_stat_id_repair_tool");
+            const char *flag               = categories[i]["is_repair_tool_consumed"];
+            category->repairToolConsumed   = (flag && flag[0]=='Y');
+            category->repairSkillId        = categories[i].GetInt("skill_id_repair");
+            category->repairDifficultyPct  = categories[i].GetInt("repair_difficulty_pct");
+            category->identifySkillId      = categories[i].GetInt("identify_skill_id");
+            category->identifyMinSkill     = categories[i].GetInt("identify_min_skill");
 
             itemCategoryList.Push(category);
          }

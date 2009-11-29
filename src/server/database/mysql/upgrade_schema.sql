@@ -1361,7 +1361,10 @@ ALTER TABLE `factions` MODIFY COLUMN `faction_character` TEXT  NOT NULL;
 #1233 - Stefano Angeleri added the anim to be used by the mounter when mounting something
 ALTER TABLE `race_info` ADD COLUMN `cstr_mounter_animation` VARCHAR(200)  NOT NULL default '' COMMENT 'Defines the animation the mounter of this race will use when mounting it' AFTER `cloak`;
 ALTER TABLE `race_info` MODIFY COLUMN `bracer` VARCHAR(20)  DEFAULT '' COMMENT 'Stores a bracer group allowing to use the same bracer mesh for more than one race, just like for the helm column';
+ALTER TABLE `item_categories` ADD COLUMN `repair_difficulty_pct` INT(3) UNSIGNED NOT NULL DEFAULT 100 COMMENT 'Difficulty amount when repairing this item category (passed to the repair scripts)' AFTER `skill_id_repair`;
 UPDATE `server_options` SET `option_value`='1233' WHERE `option_name`='db_version';
+
+
 
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
