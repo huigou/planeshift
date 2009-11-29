@@ -41,6 +41,7 @@ struct psItemCategory
     unsigned int repairToolStatId;   ///< Item_stats id of item required to do a repair on this category.
     bool         repairToolConsumed; ///< Flag to tell us whether the repair tool is consumed in the repair or not.  (Kit or Tool)
     int          repairSkillId;      ///< ID of skill which is used to calculate result of repair
+    int          repairDifficultyPct;///< Difficulty level to repair this category of items
     int          identifySkillId;    ///< ID of skill checked when item is examined by player
     int          identifyMinSkill;   ///< Minimum skill level to allow player to identify details of examined item 
 };
