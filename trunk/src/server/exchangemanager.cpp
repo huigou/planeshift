@@ -1565,15 +1565,15 @@ void ExchangeManager::HandleAutoGive(MsgEntry *me,Client *client)
             {
                 // Now verify that the player has exactly the right count of these items, and not more of them in another slot
                 psItem *invItem = client->GetCharacterData()->Inventory().GetInventoryIndexItem(foundIndex);
-                if (invItem->GetStackCount() > itemCount || client->GetCharacterData()->Inventory().FindItemStatIndex(itemstat,foundIndex+1) != SIZET_NOT_FOUND)
+                if (invItem->GetStackCount() < itemCount || invItem->GetStackCount() > itemCount || client->GetCharacterData()->Inventory().FindItemStatIndex(itemstat,foundIndex+1) != SIZET_NOT_FOUND)
                 {
                     psserver->SendSystemError(client->GetClientNum(), "You must give the items manually because you have too many %s.",itemName.GetData() );
                     HandleExchangeEnd(NULL,client);
                     break;
                 }
                 // Finally add the item to the exchange
-                client->GetCharacterData()->Inventory().SetExchangeOfferSlot(NULL, invItem->GetLocInParent(), exchangeSlot, itemCount);
-                exchange->AddItem(client,invItem->GetLocInParent(),itemCount,exchangeSlot);
+                client->GetCharacterData()->Inventory().SetExchangeOfferSlot(NULL, invItem->GetLocInParent(true), exchangeSlot, itemCount);
+                exchange->AddItem(client,invItem->GetLocInParent(true),itemCount,exchangeSlot);
                 exchangeSlot++;
             }
             else
