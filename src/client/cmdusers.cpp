@@ -567,6 +567,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
 
     else if (words[0] == "/use" ||
              words[0] == "/combine" ||
+             words[0] == "/uncombine" ||
              words[0] == "/construct" ||
              words[0] == "/dig" ||
              words[0] == "/fish" ||
