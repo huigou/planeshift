@@ -1285,6 +1285,18 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
     // Use lowercase strings
     csString noCasePerson = msg.sPerson;
     noCasePerson.Downcase();
+
+    bool hasCharName = noCasePerson.Find(noCasePlayerForename) != (size_t)-1;
+
+    csString noCaseText = msg.sText;
+    noCaseText.Downcase();
+    size_t charNamePos = noCaseText.Find(noCasePlayerForename);
+    if(charNamePos != (size_t) -1)
+    {
+    	msg.sText.Insert(charNamePos, REDCODE);
+    	msg.sText.Insert(charNamePos + 5 + noCasePlayerForename.Length(), DEFAULTCODE);
+    }
+    
     csString noCaseMsg = msg.sText;
     noCaseMsg.Downcase();
 
@@ -1301,21 +1313,21 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
             else if ( msg.sText.StartsWith("/my ") )
                 buff.Format("%s's %s", (const char *)msg.sPerson, ((const char *)msg.sText)+4);
             else
-                buff.Format(PawsManager::GetSingleton().Translate("%s says: %s"),
-                            (const char *)msg.sPerson, (const char *)msg.sText);
+                buff.Format("%s %s: %s", (const char *)msg.sPerson, (const char *)PawsManager::GetSingleton().Translate("says"),
+                             (const char *)msg.sText);
             colour = settings.groupColor;
             break;
         }
         case CHAT_SHOUT:
         {
-			buff.Format(PawsManager::GetSingleton().Translate("%s shouts: %s"),
-					(const char *)msg.sPerson, (const char *)msg.sText);
+			buff.Format("%s %s: %s", (const char *)msg.sPerson, (const char *)PawsManager::GetSingleton().Translate("shouts"),
+					(const char *)msg.sText);
             colour = settings.shoutColor;
             break;
         }
         case CHAT_GM:
         {
-            buff.Format(PawsManager::GetSingleton().Translate("%s"), (const char *)msg.sText);
+            buff.Format("%s", (const char *)msg.sText);
             colour = settings.gmColor;
             break;
         }
@@ -1328,8 +1340,8 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
             else if ( msg.sText.StartsWith("/my ") )
                 buff.Format("%s's %s", (const char *)msg.sPerson, ((const char *)msg.sText)+4);
             else
-                buff.Format(PawsManager::GetSingleton().Translate("%s says: %s"),
-                            (const char *)msg.sPerson,(const char *)msg.sText);
+                buff.Format("%s %s: %s", (const char *)msg.sPerson, (const char *)PawsManager::GetSingleton().Translate("says:"),
+                            (const char *)msg.sText);
             colour = settings.guildColor;
             break;
         }
@@ -1342,8 +1354,8 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
             else if ( msg.sText.StartsWith("/my ") )
                 buff.Format("%s's %s", (const char *)msg.sPerson, ((const char *)msg.sText)+4);
             else
-                buff.Format(PawsManager::GetSingleton().Translate("%s says: %s"),
-                            (const char *)msg.sPerson,(const char *)msg.sText);
+                buff.Format("%s %s: %s", (const char *)msg.sPerson, (const char *)PawsManager::GetSingleton().Translate("says"),
+                            (const char *)msg.sText);
             colour = settings.allianceColor;
             break;
         }
@@ -1355,8 +1367,8 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
             else if ( msg.sText.StartsWith("/my ") )
                 buff.Format("%s's %s", (const char *)msg.sPerson, ((const char *)msg.sText)+4);
             else
-                buff.Format(PawsManager::GetSingleton().Translate("%s auctions: %s"),
-                        (const char *)msg.sPerson, (const char *)msg.sText);
+                buff.Format("%s %s: %s", (const char *)msg.sPerson, (const char *)PawsManager::GetSingleton().Translate("auctions"),
+                        (const char *)msg.sText);
             colour = settings.auctionColor;
             break;
         }
@@ -1368,8 +1380,14 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
             else if ( msg.sText.StartsWith("/my ") )
                 buff.Format("%s's %s", (const char *)msg.sPerson, ((const char *)msg.sText)+4);
             else
-                buff.Format(PawsManager::GetSingleton().Translate("%s says: %s"),
-                        (const char *)msg.sPerson, (const char *)msg.sText);
+            {
+            	if(hasCharName)
+            		buff.Format(REDCODE "%s" DEFAULTCODE " %s: %s", (const char *)msg.sPerson, (const char *) PawsManager::GetSingleton().Translate("says"),
+            		                        (const char *)msg.sText);
+            	else
+            		buff.Format(GREENCODE "%s" DEFAULTCODE " %s: %s", (const char *)msg.sPerson, (const char *) PawsManager::GetSingleton().Translate("says"),
+                        (const char *)msg.sText);
+            }
             colour = settings.chatColor;
             break;
         }
@@ -1377,8 +1395,8 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
         case CHAT_NPCINTERNAL:
         case CHAT_NPC: 
         {
-            buff.Format(PawsManager::GetSingleton().Translate("%s says: %s"),
-                        (const char *)msg.sPerson, (const char *)msg.sText);
+            buff.Format(BLUECODE "%s" DEFAULTCODE " %s: %s",
+                        (const char *)msg.sPerson, (const char *) PawsManager::GetSingleton().Translate("says"), (const char *)msg.sText);
             colour = settings.npcColor;
             break;
         }
@@ -1441,8 +1459,8 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
             else if ( msg.sText.StartsWith("/my ") )
                 buff.Format("%s's %s", (const char *)msg.sPerson, ((const char *)msg.sText)+4);
             else
-                buff.Format(PawsManager::GetSingleton().Translate("%s tells you: %s"),
-                            (const char *)msg.sPerson, (const char *)msg.sText);
+                buff.Format("%s %s: %s", (const char *)msg.sPerson, (const char *)PawsManager::GetSingleton().Translate("tells you"),
+                            (const char *)msg.sText);
 
             colour = settings.tellColor;
             break;
@@ -1462,7 +1480,7 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
                             ((const char *)msg.sText)+4);
             }
             else
-                buff.Format(PawsManager::GetSingleton().Translate("You tell %s: %s"),
+                buff.Format("%s %s: %s", (const char *)PawsManager::GetSingleton().Translate("You tell"),
                             (const char *)msg.sPerson, (const char *)msg.sText);
 
             if (IgnoredList->IsIgnored(msg.sPerson))
@@ -1560,13 +1578,17 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
         }
     }
 
-    WordArray playerName(psengine->GetMainPlayerName());
-    bool hasCharName = msg.sText.Downcase().Find(playerName[0].Downcase().GetData()) != (size_t)-1;
+
 
     if (!buff.IsEmpty())
     {
         ChatOutput(buff.GetData(), colour, msg.iChatType, flashEnabled, hasCharName, channelID);
     }
+    
+    // Remove colour codes for log
+    size_t colourStart = buff.FindFirst(1);
+    while(colourStart != (size_t) -1 && colourStart + 4 < buff.Length())
+    	buff.DeleteAt(colourStart, 5);
 
     LogMessage(CHAT_LOG_ALL, buff.GetDataSafe(), msg.iChatType);
 
