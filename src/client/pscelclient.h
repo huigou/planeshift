@@ -91,6 +91,7 @@ struct InstanceObject : public CS::Utility::FastRefCount<InstanceObject>
 {
     csRef<iMeshWrapper> pcmesh;
     csBox3 bbox;
+    csWeakRefArray<iSector> sectors;
 };
 
 /**

@@ -1066,13 +1066,29 @@ void GEMClientObject::SetPosition(const csVector3 & pos, float rot, iSector * se
                 iSector* old = pcmesh->GetMovable()->GetSectors()->Get(0);
                 if(old != sector)
                 {
-                    // Is this right?
-                    instance->pcmesh->GetMovable()->SetSector(sector);
+                    // Remove the old sector.
+                    if (instance->sectors.Delete(old) && instance->sectors.Find(old) == csArrayItemNotFound)
+                    {
+                        instance->pcmesh->GetMovable()->GetSectors()->Remove(old);
+                    }
+
+                    // Add the new sector.
+                    if (instance->sectors.Find(sector) == csArrayItemNotFound)
+                    {
+                        instance->pcmesh->GetMovable()->GetSectors()->Add(sector);
+                    }
+                    
+                    instance->sectors.Push(sector);
                 }
             }
             else
             {
-                instance->pcmesh->GetMovable()->SetSector(sector);
+                if (instance->pcmesh->GetMovable()->GetSectors()->Find(sector) == csArrayItemNotFound)
+                {
+                    instance->pcmesh->GetMovable()->GetSectors()->Add(sector);
+                }
+
+                instance->sectors.Push(sector);
             }
 
             instance->pcmesh->GetMovable()->SetPosition(0.0f);
