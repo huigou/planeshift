@@ -58,5 +58,5 @@
     <camsetting name="Dist" value="200" />
     <camsetting name="MinFPS" value="20" />
     <camsetting name="MaxFPS" value="30" />
-    <camsetting name="MinDist" value="30" />
+    <camsetting name="MinDist" value="100" />
 </DistanceClipping>
