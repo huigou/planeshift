@@ -343,7 +343,7 @@ double MathScriptEngine::Power(const double *parms)
 
 double MathScriptEngine::Warn(const double *args)
 {
-    Warning1(LOG_SCRIPT, GetString(args[0]));
+    Warning2(LOG_SCRIPT, "%s", GetString(args[0]).GetData());
     return args[1];
 }
 
