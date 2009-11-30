@@ -1,7 +1,7 @@
 /***************************************************************************\
-|* Function Parser for C++ v3.3.2                                          *|
+|* Function Parser for C++ v4.0                                            *|
 |*-------------------------------------------------------------------------*|
-|* Copyright: Juha Nieminen                                                *|
+|* Copyright: Juha Nieminen, Joel Yliluoma                                 *|
 \***************************************************************************/
 
 #ifndef ONCE_FPARSER_H_
@@ -14,9 +14,16 @@
 #include <iostream>
 #endif
 
+#ifdef _MSC_VER
+// Visual Studio's warning about missing definitions for the explicit
+// FunctionParserBase instantiations is irrelevant here.
+#pragma warning(disable : 4661)
+#endif
+
 namespace FPoptimizer_CodeTree { class CodeTree; }
 
-class FunctionParser
+template<typename Value_t>
+class FunctionParserBase
 {
 public:
     enum ParseErrorType
@@ -27,6 +34,8 @@ public:
         NO_FUNCTION_PARSED_YET,
         FP_NO_ERROR
     };
+
+    typedef Value_t value_type;
 
 
     int Parse(const char* Function, const std::string& Vars,
@@ -39,17 +48,17 @@ public:
     const char* ErrorMsg() const;
     inline ParseErrorType GetParseErrorType() const { return parseErrorType; }
 
-    double Eval(const double* Vars);
+    Value_t Eval(const Value_t* Vars);
     inline int EvalError() const { return evalErrorType; }
 
-    bool AddConstant(const std::string& name, double value);
-    bool AddUnit(const std::string& name, double value);
+    bool AddConstant(const std::string& name, Value_t value);
+    bool AddUnit(const std::string& name, Value_t value);
 
-    typedef double (*FunctionPtr)(const double*);
+    typedef Value_t (*FunctionPtr)(const Value_t*);
 
     bool AddFunction(const std::string& name,
                      FunctionPtr, unsigned paramsAmount);
-    bool AddFunction(const std::string& name, FunctionParser&);
+    bool AddFunction(const std::string& name, FunctionParserBase&);
 
     bool RemoveIdentifier(const std::string& name);
 
@@ -68,13 +77,13 @@ public:
                                 bool useDegrees = false);
 
 
-    FunctionParser();
-    ~FunctionParser();
+    FunctionParserBase();
+    ~FunctionParserBase();
 
     // Copy constructor and assignment operator (implemented using the
     // copy-on-write technique for efficiency):
-    FunctionParser(const FunctionParser&);
-    FunctionParser& operator=(const FunctionParser&);
+    FunctionParserBase(const FunctionParserBase&);
+    FunctionParserBase& operator=(const FunctionParserBase&);
 
 
     void ForceDeepCopy();
@@ -111,19 +120,17 @@ private:
 // Private methods:
 // ---------------
     void CopyOnWrite();
-    bool CheckRecursiveLinking(const FunctionParser*) const;
+    bool CheckRecursiveLinking(const FunctionParserBase*) const;
     bool NameExists(const char*, unsigned);
     bool ParseVariables(const std::string&);
     int ParseFunction(const char*, bool);
     const char* SetErrorType(ParseErrorType, const char*);
 
-    void AddFunctionOpcode_CheckDegreesConversion(unsigned);
     void AddFunctionOpcode(unsigned);
-    inline void AddMultiplicationByConst(double value);
-    template<typename Operation>
-    inline void AddBinaryOperationByConst();
-    inline void incStackPtr();
-    bool CompilePowi(int);
+    void AddImmedOpcode(Value_t v);
+    void incStackPtr();
+    void CompilePowi(int);
+    bool TryCompilePowi(Value_t);
 
     const char* CompileIf(const char*);
     const char* CompileFunctionParams(const char*, unsigned);
@@ -137,5 +144,10 @@ private:
     const char* CompileAnd(const char*);
     const char* CompileExpression(const char*);
 };
+
+class FunctionParser: public FunctionParserBase<double> {};
+class FunctionParser_f: public FunctionParserBase<float> {};
+class FunctionParser_ld: public FunctionParserBase<long double> {};
+class FunctionParser_li: public FunctionParserBase<long> {};
 
 #endif

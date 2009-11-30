@@ -1,5 +1,5 @@
 /***************************************************************************\
-|* Function Parser for C++ v3.3.2                                          *|
+|* Function Parser for C++ v4.0                                            *|
 |*-------------------------------------------------------------------------*|
 |* Copyright: Juha Nieminen                                                *|
 \***************************************************************************/
@@ -7,10 +7,33 @@
 // Configuration file
 // ------------------
 
-// NOTE:
-// This file is for the internal use of the function parser only.
-// You don't need to include this file in your source files, just
-// include "fparser.h".
+/* NOTE:
+   This file is for the internal use of the function parser only.
+   You don't need to include this file in your source files, just
+   include "fparser.h".
+*/
+
+
+/* Uncomment any of these lines or define them in your compiler settings
+   to enable the correspondent version of the parser. (These are disabled
+   by default because they rely on C99 functions, and non-standard libraries
+   in the case pf MPFR and GMP, and they make compiling needlessly slower
+   and the resulting binary needlessly larger if they are not used in the
+   program.)
+*/
+//#define FP_SUPPORT_FLOAT_TYPE
+//#define FP_SUPPORT_LONG_DOUBLE_TYPE
+//#define FP_SUPPORT_LONG_INT_TYPE
+//#define FP_SUPPORT_MPFR_FLOAT_TYPE
+//#define FP_SUPPORT_GMP_INT_TYPE
+
+/* Uncomment this line of define it in your compiler settings if you want
+   to disable compiling the basic double version of the library, in case
+   one of the above types is used but not the double type. (If the double
+   type is not used, then disabling it makes compiling faster and the
+   resulting binary smaller.)
+ */
+//#define FP_DISABLE_DOUBLE_TYPE
 
 /*
  Note that these do not change what FunctionParser supports, they only
@@ -25,6 +48,7 @@
 #define FP_SUPPORT_ASINH
 #define FP_SUPPORT_EXP2
 #define FP_SUPPORT_LOG2
+#define FP_SUPPORT_CBRT
 #endif
 
 /*
@@ -48,6 +72,22 @@
 */
 #define FP_EVAL_MAX_REC_LEVEL 1000
 
+
+/*
+ Whether to use shortcut evaluation for the & and | operators:
+*/
+#ifndef FP_DISABLE_SHORTCUT_LOGICAL_EVALUATION
+#define FP_ENABLE_SHORTCUT_LOGICAL_EVALUATION
+#endif
+
+/*
+ Whether to enable optimizations that may ignore side effects
+ of if() calls, such as changing if(x,!y,0) into x&!y.
+ This is basically the polar opposite of "shortcut logical evaluation".
+ Disabled by default, because it makes eval() rather unsafe.
+*/
+#ifdef FP_ENABLE_IGNORE_IF_SIDEEFFECTS
+#endif
 
 /*
  Comment out the following lines out if you are not going to use the
@@ -85,3 +125,13 @@
  (Consult the documentation for details.)
  */
 //#define FP_NO_EVALUATION_CHECKS
+
+
+
+// Temporary settings while double is the only supported type by the optimizer
+#ifdef FP_DISABLE_DOUBLE_TYPE
+#ifndef FP_NO_SUPPORT_OPTIMIZER
+#define FP_NO_SUPPORT_OPTIMIZER
+#endif
+#undef FP_SUPPORT_OPTIMIZER
+#endif
