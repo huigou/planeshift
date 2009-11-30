@@ -37,12 +37,9 @@
 #define RESENDCHECK 200
 /// Redisplay network server stats every 60 seconds
 #define STATDISPLAYCHECK 60000
-/// timeout when the server is considered linkdead, now longer in DEBUG to allow more steptracing of one side or other
-#ifndef DEBUG
+/// timeout when the server is considered linkdead
 #define LINKDEAD_TIMEOUT    5000
-#else
-#define LINKDEAD_TIMEOUT    60000
-#endif
+
 #define LINKDEAD_ATTEMPTS   6    ///< 6 attempts with 5sec timeout gives 30secs
 
 psNetConnection::psNetConnection(int queueLength)
@@ -242,7 +239,6 @@ void psNetConnection::CheckLinkDead (csTicks currenttime)
             psHeartBeatMsg heart((uint32_t)0);
             SendMessage(heart.msg);  // This should cause an ack to update the timestamp
         }
-#ifndef CS_DEBUG
         else
         {
             // Simulate message to self to inform user of quitting.
@@ -260,7 +256,6 @@ void psNetConnection::CheckLinkDead (csTicks currenttime)
                                      "Please check http://laanx.fragnetics.com/ or forums for more info.");
             HandleCompletedMessage(msgb.msg, server, &server->addr,NULL);
         }
-#endif
     }
     else
     {
