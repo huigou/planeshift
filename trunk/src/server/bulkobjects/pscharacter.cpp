@@ -3237,6 +3237,8 @@ void psCharacter::SetSkillRank(PSSKILL which, unsigned int rank)
         rank = 0;
 
     skills.SetSkillRank(which, rank);
+    skills.SetSkillKnowledge(which,0);
+    skills.SetSkillTraining(which,0);
 
     if (which == PSSKILL_AGI)
         attributes[PSITEMSTATS_STAT_AGILITY].SetBase(rank);
@@ -3780,7 +3782,6 @@ void SkillSet::SetSkillRank( PSSKILL which, unsigned int rank, bool recalculates
         rank = MAX_STAT;
 
     skills[which].rank.SetBase(rank);
-    skills[which].y = skills[which].z = 0; // PS#2906 - setskill should reset training values
     skills[which].CalculateCosts(self);
     skills[which].dirtyFlag = true;
 
