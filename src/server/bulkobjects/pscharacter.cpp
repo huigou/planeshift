@@ -3110,13 +3110,16 @@ void psCharacter::Train( PSSKILL skill, int yIncrease )
     else
     {
         skills.Train( skill, yIncrease ); // Normal training
-        psServer::CharacterLoader.UpdateCharacterSkill(
+        if(!psServer::CharacterLoader.UpdateCharacterSkill(
                 pid,
                 skill,
                 skills.GetSkillPractice((PSSKILL)skill),
                 skills.GetSkillKnowledge((PSSKILL)skill),
                 skills.GetSkillRank((PSSKILL)skill).Base()
-                );
+                ))
+        {
+             Error2("Couldn't save skills for character %u!\n", pid.Unbox());
+        }
     }
 }
 
