@@ -521,9 +521,10 @@ private:
      *   @param pseudoTarget the first end of the line segment to test
      *   @param pseudoPosition the second end of the line segment to test
      *   @param sector the sector to start from (should be the sector where pseudoTarget resides)
+     *                 this will be set to the sector where the line segment ends
      *   @return the new world position where it first collides without the world
      */
-    csVector3 CalcCollisionPos(const csVector3& pseudoTarget, const csVector3& pseudoPosition, iSector* sector);
+    csVector3 CalcCollisionPos(const csVector3& pseudoTarget, const csVector3& pseudoPosition, iSector*& sector);
 
     /** decides when the camera isn't in transition mode and handles taking it out of transition mode
      */
