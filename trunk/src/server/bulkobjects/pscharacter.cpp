@@ -3238,7 +3238,7 @@ void psCharacter::SetSkillRank(PSSKILL which, unsigned int rank)
 
     skills.SetSkillRank(which, rank);
     skills.SetSkillKnowledge(which,0);
-    skills.SetSkillTraining(which,0);
+    skills.SetSkillPractice(which,0);
 
     if (which == PSSKILL_AGI)
         attributes[PSITEMSTATS_STAT_AGILITY].SetBase(rank);
