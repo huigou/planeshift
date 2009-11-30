@@ -1,7 +1,7 @@
 /***************************************************************************\
-|* Function Parser for C++ v3.3.2                                          *|
+|* Function Parser for C++ v4.0                                            *|
 |*-------------------------------------------------------------------------*|
-|* Copyright: Juha Nieminen                                                *|
+|* Copyright: Juha Nieminen, Joel Yliluoma                                 *|
 \***************************************************************************/
 
 // NOTE:
@@ -13,24 +13,32 @@
 #define ONCE_FPARSER_TYPES_H_
 
 #include "fpconfig.h"
-#include <cmath>
+#include <cstring>
+
+#ifdef ONCE_FPARSER_H_
+# include <map>
+#endif
 
 namespace FUNCTIONPARSERTYPES
 {
-// The functions must be in alphabetical order:
     enum OPCODE
     {
+// The order of opcodes in the function list must
+// match that which is in the Functions[] array.
         cAbs,
         cAcos, cAcosh,
         cAsin, cAsinh,
         cAtan, cAtan2, cAtanh,
-        cCeil,
+        cCbrt, cCeil,
         cCos, cCosh, cCot, cCsc,
         cEval,
         cExp, cExp2, cFloor, cIf, cInt, cLog, cLog10, cLog2, cMax, cMin,
         cPow, cSec, cSin, cSinh, cSqrt, cTan, cTanh,
+        cTrunc,
 
 // These do not need any ordering:
+// Except that if you change the order of eq,neq,lt,le,gt,gt, you
+// must also change the order in ConstantFolding_ComparisonOperations().
         cImmed, cJump,
         cNeg, cAdd, cSub, cMul, cDiv, cMod,
         cEqual, cNEqual, cLess, cLessOrEq, cGreater, cGreaterOrEq,
@@ -40,7 +48,6 @@ namespace FUNCTIONPARSERTYPES
         cDeg, cRad,
 
         cFCall, cPCall,
-        cRPow,
 
 #ifdef FP_SUPPORT_OPTIMIZER
         cVar,   /* Denotes a variable in CodeTree (not used by bytecode) */
@@ -48,7 +55,13 @@ namespace FUNCTIONPARSERTYPES
                    (next value is index) */
         cPopNMov, /* cPopNMov(x,y) moves [y] to [x] and deletes anything
                      above [x] */
+        cLog2by, /* log2by(x,y) = log2(x) * y */
 #endif
+        cAbsAnd,    /* As cAnd,       but assume both operands are absolute values */
+        cAbsOr,     /* As cOr,        but assume both operands are absolute values */
+        cAbsNot,    /* As cAbsNot,    but assume the operand is an absolute value */
+        cAbsNotNot, /* As cAbsNotNot, but assume the operand is an absolute value */
+        cAbsIf,     /* As cAbsIf,     but assume the 1st operand is an absolute value */
 
         cDup,   /* Duplicates the last value in the stack:
                    Pop A, Push A, Push A */
@@ -65,68 +78,98 @@ namespace FUNCTIONPARSERTYPES
 #ifdef ONCE_FPARSER_H_
     struct FuncDefinition
     {
-        const char* name;
-        unsigned nameLength;
-        OPCODE   opcode;
-        unsigned params;
-        bool enabled;
-
-        // This is basically strcmp(), but taking 'nameLength' as string
-        // length (not ending '\0'):
-        bool operator<(const FuncDefinition& rhs) const
+        enum FunctionFlags
         {
-            for(unsigned i = 0; i < nameLength; ++i)
-            {
-                if(i == rhs.nameLength) return false;
-                const char c1 = name[i], c2 = rhs.name[i];
-                if(c1 < c2) return true;
-                if(c2 < c1) return false;
-            }
-            return nameLength < rhs.nameLength;
-        }
+            Enabled  = 0x01,
+            AngleIn  = 0x02,
+            AngleOut = 0x04,
+            OkForInt = 0x08
+        };
+
+#ifdef FUNCTIONPARSER_SUPPORT_DEBUG_OUTPUT
+        const char name[8];
+#else
+        struct name { } name;
+#endif
+        unsigned params : 8;
+        unsigned flags  : 8;
+
+        inline bool enabled() const { return flags != 0; }
+        inline bool okForInt() const { return (flags & OkForInt) != 0; }
     };
 
 #ifndef FP_DISABLE_EVAL
-#define FP_EVAL_FUNCTION_ENABLED true
+# define FP_EVAL_FUNCTION_ENABLED \
+    FuncDefinition::Enabled | FuncDefinition::OkForInt
 #else
-#define FP_EVAL_FUNCTION_ENABLED false
+# define FP_EVAL_FUNCTION_ENABLED 0
 #endif
-
-// This list must be in alphabetical order:
+#ifdef FUNCTIONPARSER_SUPPORT_DEBUG_OUTPUT
+# define FP_FNAME(n) n
+#else
+# define FP_FNAME(n) {}
+#endif
+// This list must be in the same order as that in OPCODE enum,
+// because the opcode value is used to index this array, and
+// the pointer to array element is used for generating the opcode.
     const FuncDefinition Functions[]=
     {
-        { "abs", 3, cAbs, 1, true },
-        { "acos", 4, cAcos, 1, true },
-        { "acosh", 5, cAcosh, 1, true },
-        { "asin", 4, cAsin, 1, true },
-        { "asinh", 5, cAsinh, 1, true },
-        { "atan", 4, cAtan, 1, true },
-        { "atan2", 5, cAtan2, 2, true },
-        { "atanh", 5, cAtanh, 1, true },
-        { "ceil", 4, cCeil, 1, true },
-        { "cos", 3, cCos, 1, true },
-        { "cosh", 4, cCosh, 1, true },
-        { "cot", 3, cCot, 1, true },
-        { "csc", 3, cCsc, 1, true },
-        { "eval", 4, cEval, 0, FP_EVAL_FUNCTION_ENABLED },
-        { "exp", 3, cExp, 1, true },
-        { "exp2", 4, cExp2, 1, true },
-        { "floor", 5, cFloor, 1, true },
-        { "if", 2, cIf, 0, true },
-        { "int", 3, cInt, 1, true },
-        { "log", 3, cLog, 1, true },
-        { "log10", 5, cLog10, 1, true },
-        { "log2", 4, cLog2, 1, true },
-        { "max", 3, cMax, 2, true },
-        { "min", 3, cMin, 2, true },
-        { "pow", 3, cPow, 2, true },
-        { "sec", 3, cSec, 1, true },
-        { "sin", 3, cSin, 1, true },
-        { "sinh", 4, cSinh, 1, true },
-        { "sqrt", 4, cSqrt, 1, true },
-        { "tan", 3, cTan, 1, true },
-        { "tanh", 4, cTanh, 1, true }
+        /*cAbs  */ { FP_FNAME("abs"),   1,
+                     FuncDefinition::Enabled | FuncDefinition::OkForInt },
+        /*cAcos */ { FP_FNAME("acos"),  1,
+                     FuncDefinition::Enabled | FuncDefinition::AngleOut },
+        /*cAcosh*/ { FP_FNAME("acosh"), 1,
+                     FuncDefinition::Enabled | FuncDefinition::AngleOut },
+        /*cAsin */ { FP_FNAME("asin"),  1,
+                     FuncDefinition::Enabled | FuncDefinition::AngleOut },
+        /*cAsinh*/ { FP_FNAME("asinh"), 1,
+                     FuncDefinition::Enabled | FuncDefinition::AngleOut },
+        /*cAtan */ { FP_FNAME("atan"),  1,
+                     FuncDefinition::Enabled | FuncDefinition::AngleOut },
+        /*cAtan2*/ { FP_FNAME("atan2"), 2,
+                     FuncDefinition::Enabled | FuncDefinition::AngleOut },
+        /*cAtanh*/ { FP_FNAME("atanh"), 1, FuncDefinition::Enabled },
+        /*cCbrt */ { FP_FNAME("cbrt"),  1, FuncDefinition::Enabled },
+        /*cCeil */ { FP_FNAME("ceil"),  1, FuncDefinition::Enabled },
+        /*cCos  */ { FP_FNAME("cos"),   1,
+                     FuncDefinition::Enabled | FuncDefinition::AngleIn },
+        /*cCosh */ { FP_FNAME("cosh"),  1,
+                     FuncDefinition::Enabled | FuncDefinition::AngleIn },
+        /*cCot  */ { FP_FNAME("cot"),   1,
+                     FuncDefinition::Enabled | FuncDefinition::AngleIn },
+        /*cCsc  */ { FP_FNAME("csc"),   1,
+                     FuncDefinition::Enabled | FuncDefinition::AngleIn },
+        /*cEval */ { FP_FNAME("eval"),  0, FP_EVAL_FUNCTION_ENABLED },
+        /*cExp  */ { FP_FNAME("exp"),   1, FuncDefinition::Enabled },
+        /*cExp2 */ { FP_FNAME("exp2"),  1, FuncDefinition::Enabled },
+        /*cFloor*/ { FP_FNAME("floor"), 1, FuncDefinition::Enabled },
+        /*cIf   */ { FP_FNAME("if"),    0,
+                     FuncDefinition::Enabled | FuncDefinition::OkForInt },
+        /*cInt  */ { FP_FNAME("int"),   1, FuncDefinition::Enabled },
+        /*cLog  */ { FP_FNAME("log"),   1, FuncDefinition::Enabled },
+        /*cLog10*/ { FP_FNAME("log10"), 1, FuncDefinition::Enabled },
+        /*cLog2 */ { FP_FNAME("log2"),  1, FuncDefinition::Enabled },
+        /*cMax  */ { FP_FNAME("max"),   2,
+                     FuncDefinition::Enabled | FuncDefinition::OkForInt },
+        /*cMin  */ { FP_FNAME("min"),   2,
+                     FuncDefinition::Enabled | FuncDefinition::OkForInt },
+        /*cPow  */ { FP_FNAME("pow"),   2, FuncDefinition::Enabled },
+        /*cSec  */ { FP_FNAME("sec"),   1,
+                     FuncDefinition::Enabled | FuncDefinition::AngleIn },
+        /*cSin  */ { FP_FNAME("sin"),   1,
+                     FuncDefinition::Enabled | FuncDefinition::AngleIn },
+        /*cSinh */ { FP_FNAME("sinh"),  1,
+                     FuncDefinition::Enabled | FuncDefinition::AngleIn },
+        /*cSqrt */ { FP_FNAME("sqrt"),  1,
+                     FuncDefinition::Enabled },
+        /*cTan  */ { FP_FNAME("tan"),   1,
+                     FuncDefinition::Enabled | FuncDefinition::AngleIn },
+        /*cTanh */ { FP_FNAME("tanh"),  1,
+                     FuncDefinition::Enabled | FuncDefinition::AngleIn },
+        /*cTrunc*/ { FP_FNAME("trunc"), 1,
+                     FuncDefinition::Enabled }
     };
+#undef FP_FNAME
 
     struct NamePtr
     {
@@ -135,6 +178,11 @@ namespace FUNCTIONPARSERTYPES
 
         NamePtr(const char* n, unsigned l): name(n), nameLength(l) {}
 
+        inline bool operator==(const NamePtr& rhs) const
+        {
+            return nameLength == rhs.nameLength
+                && std::memcmp(name, rhs.name, nameLength) == 0;
+        }
         inline bool operator<(const NamePtr& rhs) const
         {
             for(unsigned i = 0; i < nameLength; ++i)
@@ -148,101 +196,51 @@ namespace FUNCTIONPARSERTYPES
         }
     };
 
+    template<typename Value_t>
     struct NameData
     {
-        enum DataType { CONSTANT, UNIT, FUNC_PTR, PARSER_PTR };
-
+        enum DataType { CONSTANT, UNIT, FUNC_PTR, PARSER_PTR, VARIABLE };
         DataType type;
-        std::string name;
+        unsigned index;
+        Value_t value;
 
-        union
-        {
-            unsigned index;
-            double value;
-        };
+        NameData(DataType t, unsigned v) : type(t), index(v), value() { }
+        NameData(DataType t, Value_t v) : type(t), index(), value(v) { }
+        NameData() { }
+    };
 
-        NameData(DataType t, const std::string& n): type(t), name(n) {}
-
-        inline bool operator<(const NameData& rhs) const
-        {
-            return name < rhs.name;
-        }
+    template<typename Value_t>
+    class namePtrsType: public
+    std::map<
+        FUNCTIONPARSERTYPES::NamePtr,
+        FUNCTIONPARSERTYPES::NameData<Value_t>
+    >
+    {
     };
 
     const unsigned FUNC_AMOUNT = sizeof(Functions)/sizeof(Functions[0]);
-
-    // -1 = (lhs < rhs); 0 = (lhs == rhs); 1 = (lhs > rhs)
-    inline int compare(const FuncDefinition& lhs, const NamePtr& rhs)
-    {
-        for(unsigned i = 0; i < lhs.nameLength; ++i)
-        {
-            if(i == rhs.nameLength) return 1;
-            const char c1 = lhs.name[i], c2 = rhs.name[i];
-            if(c1 < c2) return -1;
-            if(c2 < c1) return 1;
-        }
-        return lhs.nameLength < rhs.nameLength ? -1 : 0;
-    }
-
-    inline const FuncDefinition* findFunction(const NamePtr& functionName)
-    {
-        const FuncDefinition* first = Functions;
-        const FuncDefinition* last = Functions + FUNC_AMOUNT;
-
-        while(first < last)
-        {
-            const FuncDefinition* middle = first+(last-first)/2;
-            const int comp = compare(*middle, functionName);
-            if(comp == 0) return middle;
-            if(comp < 0) first = middle+1;
-            else last = middle;
-        }
-        return 0;
-    }
-
-#ifndef FP_SUPPORT_ASINH
-    inline double fp_asinh(double x) { return log(x + sqrt(x*x + 1)); }
-    inline double fp_acosh(double x) { return log(x + sqrt(x*x - 1)); }
-    inline double fp_atanh(double x) { return log( (1+x) / (1-x) ) * 0.5; }
-#else
-    inline double fp_asinh(double x) { return asinh(x); }
-    inline double fp_acosh(double x) { return acosh(x); }
-    inline double fp_atanh(double x) { return atanh(x); }
-#endif // FP_SUPPORT_ASINH
-
-#ifdef FP_EPSILON
-    inline bool FloatEqual(double a, double b)
-    { return fabs(a - b) <= FP_EPSILON; }
-#else
-    inline bool FloatEqual(double a, double b)
-    { return a == b; }
-#endif // FP_EPSILON
-
-    inline bool IsIntegerConst(double a)
-    { return FloatEqual(a, (double)(long)a); }
-
 #endif // ONCE_FPARSER_H_
 }
 
 #ifdef ONCE_FPARSER_H_
-#include <map>
-#include <set>
 #include <vector>
 
-struct FunctionParser::Data
+template<typename Value_t>
+struct FunctionParserBase<Value_t>::Data
 {
     unsigned referenceCounter;
 
+    unsigned numVariables;
     std::string variablesString;
-    std::map<FUNCTIONPARSERTYPES::NamePtr, unsigned> variableRefs;
-
-    std::set<FUNCTIONPARSERTYPES::NameData> nameData;
-    std::map<FUNCTIONPARSERTYPES::NamePtr,
-             const FUNCTIONPARSERTYPES::NameData*> namePtrs;
+    FUNCTIONPARSERTYPES::namePtrsType<Value_t> namePtrs;
 
     struct FuncPtrData
     {
-        union { FunctionPtr funcPtr; FunctionParser* parserPtr; };
+        union
+        {
+            FunctionPtr funcPtr;
+            FunctionParserBase<Value_t>* parserPtr;
+        };
         unsigned params;
     };
 
@@ -250,22 +248,17 @@ struct FunctionParser::Data
     std::vector<FuncPtrData> FuncParsers;
 
     std::vector<unsigned> ByteCode;
-    std::vector<double> Immed;
-    std::vector<double> Stack;
+    std::vector<Value_t> Immed;
+    std::vector<Value_t> Stack;
     unsigned StackSize;
 
-    Data(): referenceCounter(1),
-            variablesString(),
-            variableRefs(),
-            nameData(),
-            namePtrs(),
-            FuncPtrs(),
-            FuncParsers(),
-            ByteCode(),
-            Immed(), Stack(), StackSize(0) {}
+    Data();
     Data(const Data&);
     Data& operator=(const Data&); // not implemented on purpose
+    ~Data();
 };
 #endif
+
+#include "fpaux.h"
 
 #endif
