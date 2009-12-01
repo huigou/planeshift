@@ -355,7 +355,7 @@ void DrawBumpFrame( iGraphics2D * graphics2D, pawsWidget * widget, csRect frame,
 
 void pawsBorder::SetTitle(const char *t, bool shadow)
 {
-    title = t;
+    title = PawsManager::GetSingleton().Translate(t);
     shadowFont = shadow;
 }
 
