@@ -1715,7 +1715,7 @@ bool WanderOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         return true; // Nothing more to do for this op.
     }
 
-    // Turn of CD and hug the ground
+    // Turn off CD and hug the ground
     npc->GetLinMove()->UseCD(false);
     npc->GetLinMove()->SetOnGround(true); // Wander is ALWAYS on_ground.  This ensures correct animation on the client.
     npc->GetLinMove()->SetHugGround(true);
@@ -1730,9 +1730,15 @@ bool WanderOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 
 void WanderOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
 {
+	csVector3 pos;
+	float rot;
+	iSector* sector;
+    npc->GetLinMove()->ExtrapolatePosition(timedelta);
+    npc->GetLinMove()->GetLastPosition(pos,rot,sector);
+    
     if (!anchor->Extrapolate(npcclient->GetWorld(),npcclient->GetEngine(),
                              timedelta*GetVelocity(npc),
-                             direction,npc->GetMovable()))
+                             direction, npc->GetMovable()))
     {
         // At end of path
         npc->Printf(5, "We are done...");
@@ -1750,8 +1756,8 @@ void WanderOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
         csVector3 pos; float rot; iSector *sec;
         psGameObject::GetPosition(npc->GetActor(),pos,rot,sec);
 
-        npc->Printf(10, "Wander Loc is %s Rot: %1.2f Vel: %.2f Dist: %.2f Index: %d Fraction %.2f",
-                    toString(pos).GetDataSafe(),
+        npc->Printf(10, "Wander Loc is %s %s, Rot: %1.2f Vel: %.2f Dist: %.2f Index: %d Fraction %.2f",
+                    toString(pos).GetDataSafe(), sec->QueryObject()->GetName(),
                     rot,
                     GetVelocity(npc),
                     anchor->GetDistance(),
@@ -1791,7 +1797,6 @@ bool WanderOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
     {
         npc->Printf(5, "WanderOp - Reached waypoint %s next waypoint is %s.",
                     active_wp->GetName(), next_wp->GetName() );
-        psGameObject::SetPosition(npc->GetActor(),dest,dest_sector); //update position anyway
     }
     else
     {
@@ -3008,10 +3013,10 @@ bool MovePathOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 
 void MovePathOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
 {
-
+	npc->GetLinMove()->ExtrapolatePosition(timedelta);
     if (!anchor->Extrapolate(npcclient->GetWorld(),npcclient->GetEngine(),
                              timedelta*GetVelocity(npc),
-                             direction,npc->GetMovable()))
+                             direction, npc->GetMovable()))
     {
         // At end of path
         npc->Printf(5, "We are done..");
