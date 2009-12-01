@@ -735,23 +735,36 @@ bool psCamera::Draw()
 
 		csSet<csPtrKey<iMeshWrapper> > portals = lastTargetSector->GetPortalMeshes();
 		csSet<csPtrKey<iMeshWrapper> >::GlobalIterator portalIter = portals.GetIterator();
+		iPortal* closestPortal = NULL;
+		iMeshWrapper* closestMesh = NULL;
+		float minPortalDist = 1e9;
 		while(portalIter.HasNext())
 		{
 			iMeshWrapper *pmw = portalIter.Next();
+			float dist = (pmw->GetMovable()->GetFullPosition() - oldTarget).SquaredNorm();
+			if(dist > minPortalDist)
+				continue;
+			
+			minPortalDist = dist;
+			closestMesh = pmw;
 			int portalCount = pmw->GetPortalContainer()->GetPortalCount();
 			for(int portalIndex = 0; portalIndex < portalCount; portalIndex++)
 			{
 				iPortal *po = pmw->GetPortalContainer()->GetPortal(portalIndex);
-				// TODO: Also do a distance check here to be certain this is the correct portal.
 				if (po->GetSector() == targetSector && po->GetFlags ().Check (CS_PORTAL_WARP))
 				{
-					csReversibleTransform warp_wor;
-					po->ObjectToWorld (pmw->GetMovable ()->GetTransform (), warp_wor);
-					po->WarpSpace (warp_wor, view->GetCamera()->GetTransform(), mirrored);
-					SetPosition(po->Warp (warp_wor, GetPosition(CAMERA_ACTUAL_DATA)), CAMERA_ACTUAL_DATA);
-					SetTarget(po->Warp (warp_wor, GetTarget(CAMERA_ACTUAL_DATA)), CAMERA_ACTUAL_DATA);
+					closestPortal = po;
 				}
 			}
+		}
+		// Apply the warp from the closest portal
+		if(closestPortal)
+		{
+			csReversibleTransform warp_wor;
+			closestPortal->ObjectToWorld (closestMesh->GetMovable ()->GetTransform (), warp_wor);
+			closestPortal->WarpSpace (warp_wor, view->GetCamera()->GetTransform(), mirrored);
+			SetPosition(closestPortal->Warp (warp_wor, GetPosition(CAMERA_ACTUAL_DATA)), CAMERA_ACTUAL_DATA);
+			SetTarget(closestPortal->Warp (warp_wor, GetTarget(CAMERA_ACTUAL_DATA)), CAMERA_ACTUAL_DATA);
 		}
     }
 
