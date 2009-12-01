@@ -2262,7 +2262,7 @@ void pawsChatWindow::ChatOutput(const char* data, int colour, int type, bool fla
 		}
 	}
 	
-	if(needFlash)
+	if(needFlash && textbox)
 	{
 		pawsTabWindow* tabwindow = dynamic_cast<pawsTabWindow*>(textbox->GetParent());
 		if(tabwindow)
