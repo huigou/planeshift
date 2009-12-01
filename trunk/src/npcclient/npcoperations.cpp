@@ -2629,6 +2629,7 @@ void MeleeOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
 {
     // Check hate list to make sure we are still attacking the right person
     gemNPCActor *ent = npc->GetMostHated(melee_range, attack_invisible, attack_invincible);
+    
     if (!ent)
     {
         npc->Printf(8, "No Melee target in range (%2.2f), going to chase!", melee_range);
@@ -2674,6 +2675,18 @@ void MeleeOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
             npc->Printf(5, "Melee stop attack");
         }
         npcclient->GetNetworkMgr()->QueueAttackCommand(npc->GetActor(), ent);
+    }
+    if(attacked_ent)
+    {
+    	float rot;
+		iSector *sector;
+		csVector3 pos;
+		psGameObject::GetPosition(attacked_ent,pos,rot,sector);
+
+		// Make sure we still face the target
+		csVector3 forward;
+			
+		TurnTo(npc, pos, sector, forward);
     }
 }
 
