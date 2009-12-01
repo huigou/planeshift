@@ -745,20 +745,20 @@ bool psCamera::Draw()
 			if(dist > minPortalDist)
 				continue;
 			
-			minPortalDist = dist;
-			closestMesh = pmw;
 			int portalCount = pmw->GetPortalContainer()->GetPortalCount();
 			for(int portalIndex = 0; portalIndex < portalCount; portalIndex++)
 			{
 				iPortal *po = pmw->GetPortalContainer()->GetPortal(portalIndex);
-				if (po->GetSector() == targetSector && po->GetFlags ().Check (CS_PORTAL_WARP))
-				{
+				if(po->GetSector() == targetSector)
+				{			
+					minPortalDist = dist;
+					closestMesh = pmw;
 					closestPortal = po;
 				}
 			}
 		}
 		// Apply the warp from the closest portal
-		if(closestPortal)
+		if(closestPortal && closestPortal->GetFlags ().Check (CS_PORTAL_WARP))
 		{
 			csReversibleTransform warp_wor;
 			closestPortal->ObjectToWorld (closestMesh->GetMovable ()->GetTransform (), warp_wor);
