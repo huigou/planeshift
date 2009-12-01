@@ -173,7 +173,6 @@ psServer::~psServer()
     delete usermanager;
     delete exchangemanager;
     delete netmanager;
-    delete database;
     delete marriageManager;
     delete spawnmanager;
     delete adminmanager;
@@ -188,6 +187,7 @@ psServer::~psServer()
     delete minigamemanager;
     delete cachemanager;
     delete questmanager;
+    delete database;
     delete logcsv;
     delete rng;
     delete gmeventManager;
