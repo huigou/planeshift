@@ -1956,6 +1956,8 @@ bool ChaseOperation::Load(iDocumentNode *node)
     {
         offset = node->GetAttributeValueAsFloat("offset");
     }
+    else
+    	offset = 0.5f;
 
     LoadVelocity(node);
     LoadCheckMoveOk(node);
@@ -2189,13 +2191,12 @@ void ChaseOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
 
     float close = GetVelocity(npc)*timedelta; // Add 10 % to the distance moved in one tick.
     
-    if (Calc2DDistance(localDest, myPos) <= close)
+    if (Calc2DDistance(localDest, myPos) <= 0.5f)
     {
-        myPos.x = localDest.x;
-        myPos.z = localDest.z;
         npc->GetLinMove()->SetPosition(myPos,myRot,mySector);
+        npc->Printf(5,"Set position %g %g %g, sector %s\n", myPos.x, myPos.y, myPos.z, mySector->QueryObject()->GetName());
         
-        if (Calc2DDistance(myPos,targetPos) <= close)
+        if (Calc2DDistance(myPos,targetPos) <= 0.5f)
         {
             npc->Printf(5, "We are done..");
             npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior() );
@@ -2213,9 +2214,12 @@ void ChaseOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
     {
         TurnTo(npc, localDest, mySector, forward);
     }
+    // Limit time extrapolation so we arrive near the correct place.
+    if(Calc2DDistance(localDest, myPos) <= close)
+    	timedelta = Calc2DDistance(localDest, myPos) / GetVelocity(npc);
 
-    npc->Printf(8, "advance: pos=(%f.2,%f.2,%f.2) rot=%.2f localDest=(%f.2,%f.2,%f.2) dist=%f", 
-                myPos.x,myPos.y,myPos.z, myRot,
+    npc->Printf(8, "advance: pos=(%f.2,%f.2,%f.2) rot=%.2f %s localDest=(%f.2,%f.2,%f.2) dist=%f", 
+                myPos.x,myPos.y,myPos.z, myRot, mySector->QueryObject()->GetName(),
                 localDest.x,localDest.y,localDest.z,
                 Calc2DDistance(localDest, myPos));
 
