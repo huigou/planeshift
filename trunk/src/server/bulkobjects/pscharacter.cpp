@@ -1090,7 +1090,7 @@ unsigned int psCharacter::CalculateAddExperience(PSSKILL skill, unsigned int pra
                 "Giving %d experience and %d practicepoints to skill %d with modifier %f.\n"
                 "zcost for the skill is %d for this level and %d for the next level\n"
                 "ycost for the skill is %d for this level and %d for the next level\n",
-                experiencePoints, practicePoints, modifier, 
+                experiencePoints, practicePoints, skill, modifier, 
                 skills.Get(skill).zCost, skills.Get(skill).zCostNext,
                 skills.Get(skill).yCost, skills.Get(skill).yCostNext);       
         }
