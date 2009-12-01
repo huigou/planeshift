@@ -1083,7 +1083,18 @@ unsigned int psCharacter::CalculateAddExperience(PSSKILL skill, unsigned int pra
         env.Define("Modifier", modifier);
         expSkillCalc->Evaluate(&env);
         unsigned int experiencePoints = env.Lookup("Exp")->GetValue();
-
+        
+        if(GetActor()->GetClient()->GetSecurityLevel() >= GM_DEVELOPER)
+        {
+                psserver->SendSystemInfo(GetActor()->GetClientID(), 
+                "Giving %d experience and %d practicepoints to skill %d with modifier %f.\n"
+                "zcost for the skill is %d for this level and %d for the next level\n"
+                "ycost for the skill is %d for this level and %d for the next level\n",
+                experiencePoints, practicePoints, modifier, 
+                skills.Get(skill).zCost, skills.Get(skill).zCostNext,
+                skills.Get(skill).yCost, skills.Get(skill).yCostNext);       
+        }
+        
         AddExperiencePointsNotify(experiencePoints);
 
         if (CacheManager::GetSingleton().GetSkillByID((PSSKILL)skill)) //check if skill is valid
