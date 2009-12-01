@@ -686,10 +686,15 @@ bool psPathAnchor::Extrapolate(psWorld * world, iEngine *engine, float delta, ps
     GetInterpolatedPosition (pos);
     GetInterpolatedUp (up);
     GetInterpolatedForward (look);
-
-    movable->GetTransform().SetOrigin (pos);
+    
+    // Update Y for paths that go uphill/downhill.
+    csVector3 last_pos = movable->GetTransform().GetOrigin ();
+    last_pos.y = pos.y;
+    movable->GetTransform().SetOrigin(last_pos);
+    
+    // Set rotation.
     movable->GetTransform().LookAt(
-    	look.Unit (), up.Unit ());
+        	look.Unit (), up.Unit ());
     movable->UpdateMove ();
 
     return true;
