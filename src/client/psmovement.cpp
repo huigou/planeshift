@@ -569,9 +569,6 @@ void psMovementManager::UpdateVelocity()
     }
     else  // Airborne
     {
-        // restriction
-        vel *= psVelocity(0.2f,0.5f);
-
         #ifdef MOVE_DEBUG
             printf("Adding velocity (%.2f,%.2f,%.2f),(%.2f,%.2f,%.2f)\n",
                     vel.move.x,vel.move.y,vel.move.z,
