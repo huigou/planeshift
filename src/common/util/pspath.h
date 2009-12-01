@@ -221,6 +221,7 @@ private:
     csArray<float> dz;
 };
 
+// Warning: This is BROKEN and does not work across sectors.
 class psPathAnchor
 {
 public:
@@ -240,7 +241,8 @@ public:
     virtual void GetInterpolatedForward (csVector3& forward);
 
     /// Extrapolate the movable delta distance along the path
-    virtual bool Extrapolate(psWorld * world, iEngine *engine, float delta, psPath::Direction direction, iMovable * movable);
+    /// Warning: Use ExtrapolatePosition with CD off.
+    virtual bool Extrapolate(psWorld * world, iEngine *engine, float delta, psPath::Direction direction, iMovable* movable);
 
 
     /// Get the current distance this anchor has moved along the path
