@@ -652,7 +652,10 @@ void pawsSkillWindow::BuyMaxSkill()
     //check for 0 pp
     if(!possibleTraining)
     {
-        PawsManager::GetSingleton().CreateWarningBox("You don't have PP to train.");
+        if(!skillCache.getProgressionPoints())
+            PawsManager::GetSingleton().CreateWarningBox("You don't have PP to train.");
+        else
+            PawsManager::GetSingleton().CreateWarningBox("You can't train this skill anymore.");
         return;
     }
 
@@ -684,7 +687,10 @@ void pawsSkillWindow::BuySkill()
     //check for 0 pp
     if(!possibleTraining)
     {
-        PawsManager::GetSingleton().CreateWarningBox("You don't have PP to train.");
+        if(!skillCache.getProgressionPoints())
+            PawsManager::GetSingleton().CreateWarningBox("You don't have PP to train.");
+        else
+            PawsManager::GetSingleton().CreateWarningBox("You can't train this skill anymore.");
         return;
     }
 
