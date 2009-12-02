@@ -444,7 +444,7 @@ bool psPath::Load(iDataConnection * db, iEngine *engine)
     }
     if (limit == 0)
     {
-        Error2("Could not assamble path %d",id);
+        Error2("Could not assemble path %d",id);
         return false;
     }
     
