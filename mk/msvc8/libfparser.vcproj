@@ -1718,6 +1718,15 @@
 				RelativePath="..\..\src\tools\fparser\fparser.h">
 			</File>
 			<File
+				RelativePath="..\..\src\tools\fparser\fparser_gmpint.h">
+			</File>
+			<File
+				RelativePath="..\..\src\tools\fparser\fparser_mpfr.h">
+			</File>
+			<File
+				RelativePath="..\..\src\tools\fparser\fpaux.h">
+			</File>
+			<File
 				RelativePath="..\..\src\tools\fparser\fpconfig.h">
 			</File>
 			<File

@@ -1735,9 +1735,6 @@
 				RelativePath="..\..\src\common\util\namegenerator.cpp">
 			</File>
 			<File
-				RelativePath="..\..\src\common\util\prb.cpp">
-			</File>
-			<File
 				RelativePath="..\..\src\common\util\pscache.cpp">
 			</File>
 			<File
@@ -1842,9 +1839,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\common\util\poolallocator.h">
-			</File>
-			<File
-				RelativePath="..\..\src\common\util\prb.h">
 			</File>
 			<File
 				RelativePath="..\..\src\common\util\pscache.h">
