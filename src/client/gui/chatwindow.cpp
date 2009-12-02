@@ -1346,7 +1346,7 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
             else if ( msg.sText.StartsWith("/my ") )
                 buff.Format("%s's %s", (const char *)msg.sPerson, ((const char *)msg.sText)+4);
             else
-                buff.Format("%s %s: %s", (const char *)msg.sPerson, (const char *)PawsManager::GetSingleton().Translate("says:"),
+                buff.Format("%s %s: %s", (const char *)msg.sPerson, (const char *)PawsManager::GetSingleton().Translate("says"),
                             (const char *)msg.sText);
             colour = settings.guildColor;
             break;
