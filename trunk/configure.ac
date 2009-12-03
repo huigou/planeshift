@@ -38,13 +38,14 @@ AH_TOP([
 ])
 
 #----------------------------------------------------------------------------
-# Check for applications
+# Check for common stuff
 #----------------------------------------------------------------------------
 CS_PROG_CC
 CS_PROG_CXX
 CS_PROG_LINK
 CS_CHECK_COMMON_TOOLS_LINK
 CS_CHECK_COMMON_TOOLS_BASIC
+CS_CHECK_COMMON_TOOLS_RELAYTOOL([${CRYSTAL}/bin])
 
 #----------------------------------------------------------------------------
 # Determine system type
