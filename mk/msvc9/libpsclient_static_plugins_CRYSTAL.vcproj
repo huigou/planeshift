@@ -1746,6 +1746,9 @@
 			<File
 				RelativePath="..\..\mk\msvc\apppsclient_static_staticuse_CRYSTAL.cpp">
 			</File>
+			<File
+				RelativePath="..\..\mk\msvc\OPENAL.fake_stub.c">
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
