@@ -45,7 +45,6 @@ CS_PROG_CXX
 CS_PROG_LINK
 CS_CHECK_COMMON_TOOLS_LINK
 CS_CHECK_COMMON_TOOLS_BASIC
-CS_CHECK_COMMON_TOOLS_RELAYTOOL([${CRYSTAL}/bin])
 
 #----------------------------------------------------------------------------
 # Determine system type
@@ -356,6 +355,8 @@ AS_IF([test $with_cs != no],
 *** Also, be sure that you have either installed Crystal Space or set the
 *** CRYSTAL environment variable properly.
 ])], [crystalspace])])
+
+CS_CHECK_COMMON_TOOLS_RELAYTOOL([$CRYSTAL_TOOLS_PREFIX/bin])
 
 #----------------------------------------------------------------------------
 # Check for MySQL
