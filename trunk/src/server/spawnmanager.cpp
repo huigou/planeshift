@@ -1143,7 +1143,7 @@ void SpawnRule::DetermineSpawnLoc(psCharacter *ch, csVector3& pos, float& angle,
         csHash<SpawnRange*>::GlobalIterator rangeit2(ranges.GetIterator());
         while(rangeit2.HasNext())
         {
-        	range = rangeit.Next();
+        	range = rangeit2.Next();
             cumul += range->GetArea();
             if (cumul >= aimed)
             {
