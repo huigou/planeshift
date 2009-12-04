@@ -2081,7 +2081,7 @@ void UserManager::Mount(gemActor *rider, gemActor *mount)
     csString mountName = mount->GetName();
     if(EntityManager::GetSingleton().AddRideRelation(rider, mount))
         psserver->SendSystemOK(rider->GetClientID(),
-                "You are mounting %s", mountName.GetDataSafe());
+                "You are riding %s", mountName.GetDataSafe());
     else
         psserver->SendSystemError(rider->GetClientID(),
                 "Could not mount %s", mountName.GetDataSafe());
