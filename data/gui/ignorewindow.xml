@@ -24,8 +24,8 @@
         </attachpoints>        
     </widget>        
     
-    <widget name="remove" factory="pawsButton" toggle="no" id="2000" shadows="yes">
-        <frame x="70" y="210" width="60" height="16" border="yes" />
+    <widget name="remove" factory="pawsButton" toggle="no" id="2000" shadows="yes" style="Standard Button">
+        <frame x="70" y="210" width="60" height="20" border="yes" />
         <label text="Remove" />
         <attachpoints>  
             <attach point="ATTACH_LEFT" />
@@ -33,8 +33,8 @@
         </attachpoints>
     </widget>            
     
-    <widget name="add" factory="pawsButton" toggle="no" id="3000" shadows="yes">
-        <frame x="140" y="210" width="50" height="16" border="yes" />
+    <widget name="add" factory="pawsButton" toggle="no" id="3000" shadows="yes" style="Standard Button">
+        <frame x="140" y="210" width="50" height="20" border="yes" />
         <label text="Add" />
         <attachpoints>  
             <attach point="ATTACH_LEFT" />
