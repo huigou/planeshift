@@ -2676,17 +2676,30 @@ void MeleeOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
         }
         npcclient->GetNetworkMgr()->QueueAttackCommand(npc->GetActor(), ent);
     }
+    
+    // Make sure our rotation is still correct
     if(attacked_ent)
     {
-    	float rot;
+    	float rot, npc_rot, new_npc_rot;
 		iSector *sector;
 		csVector3 pos;
+		
+		// Get current rot
+		psGameObject::GetPosition(npc->GetActor(),pos,npc_rot,sector);
+		
+		// Get target pos
 		psGameObject::GetPosition(attacked_ent,pos,rot,sector);
 
 		// Make sure we still face the target
 		csVector3 forward;
 			
 		TurnTo(npc, pos, sector, forward);
+		// Check new rot
+		psGameObject::GetPosition(npc->GetActor(),pos,new_npc_rot,sector);
+		
+		// If different broadcast the new rot
+		if (npc_rot != new_npc_rot)
+			npcclient->GetNetworkMgr()->QueueDRData(npc);
     }
 }
 
