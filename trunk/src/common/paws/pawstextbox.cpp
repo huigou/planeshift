@@ -36,6 +36,7 @@
 
 #define BORDER_SIZE            2 // For pawsFadingTextBox
 
+
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -363,7 +364,35 @@ void pawsMessageTextBox::CalcLineHeight()
 
 bool pawsMessageTextBox::Setup( iDocumentNode* node )
 {
-    return Setup();
+    csRef<iDocumentNode> scrollBarNode = node->GetNode( "pawsScrollBar" );
+    if ( scrollBarNode )
+    {
+        CalcLineHeight();
+
+        // Create the optional scroll bar here as well but hidden.
+        scrollBar = new pawsScrollBar;
+        scrollBar->Setup( scrollBarNode );
+        scrollBar->SetParent( this );
+
+        csRef<iDocumentAttribute> widthAttribute = scrollBarNode->GetAttribute("width");
+        int scrollBarWidth = 24;
+        if( widthAttribute ){
+            scrollBarWidth = widthAttribute->GetValueAsInt();
+        }
+
+        scrollBar->SetRelativeFrame( defaultFrame.Width() - scrollBarWidth, 6, scrollBarWidth, defaultFrame.Height() - 12 ); 
+        
+        int attach = ATTACH_TOP | ATTACH_BOTTOM | ATTACH_RIGHT;
+        scrollBar->SetAttachFlags( attach );
+        scrollBar->PostSetup();
+        AddChild( scrollBar );
+        OnResize();
+        return true;    
+    } 
+    else 
+    {
+        return Setup();
+    }
 }
 
 bool pawsMessageTextBox::Setup()

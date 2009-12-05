@@ -58,6 +58,7 @@ pawsMultilineEditTextBox::pawsMultilineEditTextBox()
     cursorLine = 0;
     topLine=0;
     vScrollBar = NULL;
+    vScrollBarWidth = VSCROLLBAR_WIDTH;
     
     clock =  csQueryRegistry<iVirtualClock > ( PawsManager::GetSingleton().GetObjectRegistry());
 
@@ -257,8 +258,8 @@ void pawsMultilineEditTextBox::SetupScrollBar()
     {
         vScrollBar = new pawsScrollBar;
         vScrollBar->SetParent( this );
-        vScrollBar->SetRelativeFrame( screenFrame.Width() - VSCROLLBAR_WIDTH,
-                                      0, VSCROLLBAR_WIDTH, screenFrame.Height() - 12 );
+        vScrollBar->SetRelativeFrame( screenFrame.Width() - vScrollBarWidth,
+                                      0, vScrollBarWidth, screenFrame.Height() - 12 );
         vScrollBar->SetAttachFlags(ATTACH_TOP | ATTACH_BOTTOM | ATTACH_RIGHT);
         vScrollBar->PostSetup();
         vScrollBar->SetTickValue( 1.0 );
@@ -376,7 +377,7 @@ void pawsMultilineEditTextBox::PushLineInfo(size_t lineLength, size_t lineBreak,
 void pawsMultilineEditTextBox::LayoutText()
 {
     csRef<iFont> font = GetFont();
-    int screenWidth = screenFrame.Width()-VSCROLLBAR_WIDTH;
+    int screenWidth = screenFrame.Width()-vScrollBarWidth;
     int width = 0;
     int height = 0;
     csString tempString;
@@ -542,17 +543,27 @@ bool pawsMultilineEditTextBox::SelfPopulate( iDocumentNode *node)
 }
 
 bool pawsMultilineEditTextBox::Setup( iDocumentNode* node )
-{    
-    csRef<iDocumentNode> textNode = node->GetNode( "text" );        
-    
-    if ( textNode )
+{   
+    csRef<iDocumentNode> settingNode = node->GetNode( "pawsScrollBar" );
+    if( settingNode )
+    {
+        csRef<iDocumentAttribute> widthAttribute = settingNode->GetAttribute( "width" );
+        if( widthAttribute ){
+            vScrollBarWidth = widthAttribute->GetValueAsInt();
+        }
+    }
+
+    settingNode = node->GetNode( "text" );        
+
+    if ( settingNode )
     {        
-        csRef<iDocumentAttribute> textAttribute = textNode->GetAttribute("string");
+        csRef<iDocumentAttribute> textAttribute = settingNode->GetAttribute( "string" );
         if ( textAttribute )
         {            
             SetText( textAttribute->GetValue() );
         }
-    } else SetText("");             
+    } else SetText("");
+
     return true;
 }
 
