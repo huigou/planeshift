@@ -6334,6 +6334,8 @@ using namespace FPoptimizer_CodeTree;
 #ifdef _MSC_VER
 #include <float.h>
 #define isinf(x) (!_finite(x))
+#else
+#define isinf(x) (std::isinf(x))
 #endif
 
 namespace
@@ -7766,7 +7768,7 @@ namespace FPoptimizer_CodeTree
                     //if(imm >= 0.0)
                     {
                         double new_base_immed = fp_pow(base_immed, imm);
-                        if(std::isinf(new_base_immed) || new_base_immed == 0.0)
+                        if(isinf(new_base_immed) || new_base_immed == 0.0)
                         {
                             // It produced an infinity. Do not change.
                             break;
@@ -7812,7 +7814,7 @@ namespace FPoptimizer_CodeTree
                     //if(imm >= 0.0)
                     {
                         double new_factor_immed = fp_pow(imm, exponent_immed);
-                        if(std::isinf(new_factor_immed) || new_factor_immed == 0.0)
+                        if(isinf(new_factor_immed) || new_factor_immed == 0.0)
                         {
                             // It produced an infinity. Do not change.
                             break;
