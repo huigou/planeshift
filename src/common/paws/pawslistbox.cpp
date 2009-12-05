@@ -553,6 +553,68 @@ bool pawsListBox::Select( pawsListBoxRow* row, bool notify)
     return true;
 }
 
+bool pawsListBox::SelectByIndex(int index, bool notify)
+{
+    if (!selectable)
+        return false;
+
+    selected = -1;
+    if (rows.GetSize() <= index)
+        return false;
+    // If no row assume no selection is wanted.
+    if ( index == -1 )
+    {
+        for ( size_t x = 0; x < rows.GetSize(); x++ )
+        {
+            rows[x]->SetBackground("Standard Background");
+            rows[x]->SetBackgroundAlpha(255);
+        }
+        return true;
+    }
+
+    for ( int x = 0; x < (int)rows.GetSize(); x++ )
+    {
+        if ( x == index )
+        {
+            selected = x;
+            rows[x]->SetBackground(highlightImage);
+            rows[x]->SetBackgroundAlpha(highlightAlpha);
+        }
+        else
+        {
+            rows[x]->SetBackground("Standard Background");
+            rows[x]->SetBackgroundAlpha(255);
+        }
+    }
+
+    if ( selected == -1 )
+        return false;
+
+
+    // Adjust the topRow of drawing if the selected row is not visible
+    // -1 because of title row.
+    int offset = 0;
+    if ( usingTitleRow )
+        offset = 1;
+    int numberOfRows = screenFrame.Height() / columnDef[0].height - offset;
+
+    if (selected<topRow)
+        topRow=selected;
+    else if (selected>=topRow+numberOfRows)
+        topRow=(selected-numberOfRows)+1;
+
+    CalculateDrawPositions();
+
+    if ( scrollBar )
+    {
+       scrollBar->SetCurrentValue( (float)topRow );
+    }
+
+    if (notify)
+        SendOnListAction(LISTBOX_HIGHLIGHTED);
+
+    return true;
+}
 void pawsListBox::SetScrollBarMaxValue()
 {
     int horiz = 0;
