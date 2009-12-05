@@ -357,11 +357,15 @@ void pawsMerchantWindow::HandleItems( const char* data )
         if (widget != NULL)
             widget->SetBackground( item->GetAttributeValue("IMG") );
     } 
+    if (itemsBox->GetRowCount() <= selectedItem)
+        selectedItem=itemsBox->GetRowCount()-1;
+    itemsBox->SelectByIndex(selectedItem);
 }
 
 void pawsMerchantWindow::TradeSelectedItem(bool all, bool single)
 {
     pawsListBoxRow* row = itemsBox->GetSelectedRow();
+    selectedItem = itemsBox->GetSelection();
     if ( row == NULL )
 	{
         return;
@@ -369,8 +373,8 @@ void pawsMerchantWindow::TradeSelectedItem(bool all, bool single)
     // If the merchant only has 1 item or if we want to trade all, no need to request the count from the user
     if (atoi(GetColumnText(row, 0)) == 1 || all || single)
     {
-        DoTrade(single ? 1 : atoi(GetColumnText(row, 0)),GetColumnText(row, 5), GetColumnText(row, 4));
-        return;
+            DoTrade(single?1:atoi(GetColumnText(row, 0)),GetColumnText(row, 5), GetColumnText(row, 4));
+            return;
     }
 
     currentItem = GetColumnText(row,5);

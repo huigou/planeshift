@@ -70,6 +70,7 @@ protected:
 
     int merchantID;
     int tradeCommand;
+    int selectedItem;   /// index of item, selected in the itemsBox
 
     pawsListBox* categoryBox;
     pawsListBox* itemsBox;
