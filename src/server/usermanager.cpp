@@ -1489,22 +1489,6 @@ void UserManager::Attack(Stance stance, Client *client)
     }
 
     gemObject *target = client->GetTargetObject();
-    if ( ! target )
-    {
-        psserver->SendSystemError(client->GetClientNum(),"You do not have a target selected.");
-        return;
-    }
-    if (target->GetItem() || target->GetALPtr())
-    {
-        psserver->SendSystemError(client->GetClientNum(),"You cannot attack %s.", (const char*)target->GetName() );
-        return;
-    }
-    if (!target->IsAlive())
-    {
-        psserver->SendSystemError(client->GetClientNum(),"%s is already dead.", (const char*)target->GetName() );
-        return;
-    }
-
     if (client->IsAllowedToAttack(target))
     {
         psserver->combatmanager->AttackSomeone(client->GetActor(), target, stance );
