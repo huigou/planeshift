@@ -52,6 +52,8 @@ bool pawsConfigChatTabs::PostSetup()
         return false;
     if ((inpc = FindCheckbox("inpc")) == NULL)
         return false;
+    if ((ichat = FindCheckbox("ichat")) == NULL)
+        return false;
     if ((itells = FindCheckbox("itells")) == NULL)
         return false;
     if ((iguild = FindCheckbox("iguild")) == NULL)
@@ -74,6 +76,7 @@ bool pawsConfigChatTabs::LoadConfig()
     ChatSettings settings = chatWindow->GetSettings();
     
     isysbase->SetState(false);
+    ichat->SetState(false);
 	inpc->SetState(false);
 	itells->SetState(false);
 	iguild->SetState(false);
@@ -87,6 +90,8 @@ bool pawsConfigChatTabs::LoadConfig()
     {
     	if(allMainBindings[i] == "CHAT_SYSTEM_BASE")
     		isysbase->SetState(true);
+       	if(allMainBindings[i] == "CHAT_CHANNEL1")
+    		ichat->SetState(true);
     	if(allMainBindings[i] == "CHAT_NPC")
     		inpc->SetState(true);
     	if(allMainBindings[i] == "CHAT_TELL")
@@ -114,6 +119,16 @@ bool pawsConfigChatTabs::SaveConfig()
     ChatSettings& settings = chatWindow->GetSettings();
     
     settings.bindings.Delete("subMainText", "CHAT_SYSTEM_BASE");
+    settings.bindings.Delete("subMainText", "CHAT_CHANNEL1");
+    settings.bindings.Delete("subMainText", "CHAT_CHANNEL2");
+    settings.bindings.Delete("subMainText", "CHAT_CHANNEL3");
+    settings.bindings.Delete("subMainText", "CHAT_CHANNEL4");
+    settings.bindings.Delete("subMainText", "CHAT_CHANNEL5");
+    settings.bindings.Delete("subMainText", "CHAT_CHANNEL6");
+    settings.bindings.Delete("subMainText", "CHAT_CHANNEL7");
+    settings.bindings.Delete("subMainText", "CHAT_CHANNEL8");
+    settings.bindings.Delete("subMainText", "CHAT_CHANNEL9");
+    settings.bindings.Delete("subMainText", "CHAT_CHANNEL10");
     settings.bindings.Delete("subMainText", "CHAT_NPC");
 	settings.bindings.Delete("subMainText", "CHAT_NPC_ME");
 	settings.bindings.Delete("subMainText", "CHAT_NPC_MY");
@@ -130,6 +145,19 @@ bool pawsConfigChatTabs::SaveConfig()
     if(isysbase->GetState())
     {
     	settings.bindings.Put("subMainText", "CHAT_SYSTEM_BASE");
+    }
+    if(ichat->GetState())
+    {
+        settings.bindings.Put("subMainText", "CHAT_CHANNEL1");
+        settings.bindings.Put("subMainText", "CHAT_CHANNEL2");
+        settings.bindings.Put("subMainText", "CHAT_CHANNEL3");
+        settings.bindings.Put("subMainText", "CHAT_CHANNEL4");
+        settings.bindings.Put("subMainText", "CHAT_CHANNEL5");
+        settings.bindings.Put("subMainText", "CHAT_CHANNEL6");
+        settings.bindings.Put("subMainText", "CHAT_CHANNEL7");
+        settings.bindings.Put("subMainText", "CHAT_CHANNEL8");
+        settings.bindings.Put("subMainText", "CHAT_CHANNEL9");
+        settings.bindings.Put("subMainText", "CHAT_CHANNEL10");
     }
     if(inpc->GetState())
 	{
