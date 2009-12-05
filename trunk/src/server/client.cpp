@@ -416,69 +416,45 @@ bool Client::IsGM() const
 
 bool Client::IsAllowedToAttack(gemObject * target, bool inform)
 {
-    csString tmp;
-    const char *sMsg = NULL;
+    csString msg;
 
-    if ( target == NULL )
+    int type = GetTargetType(target);
+    if (type == TARGET_NONE)
+        msg = "You must select a target to attack.";
+    else if (type & TARGET_ITEM)
+        msg = "You can't attack an inanimate object.";
+    else if (type & TARGET_DEAD)
+        msg = "%s is already dead.";
+    else if (type & TARGET_FOE)
     {
-        sMsg = "The target selected is no more valid.";
+        gemActor* foe = target->GetActorPtr();
+        gemActor* attacker = GetActor();
+        CS_ASSERT(foe != NULL); // Since this is a foe it should have a actor.
+
+        gemActor* lastAttacker = NULL;
+        if (target->HasKillStealProtection() && !foe->CanBeAttackedBy(attacker, &lastAttacker))
+        {
+            if (lastAttacker)
+            {
+                msg.Format("You must be grouped with %s to attack %s.",
+                           lastAttacker->GetName(), foe->GetName());
+            }
+            else
+            {
+                msg = "You are not allowed to attack right now.";
+            }
+        }
+    }
+    else if (type & TARGET_FRIEND)
+        msg = "You cannot attack %s.";
+    else if (type & TARGET_SELF)
+        msg = "You cannot attack yourself.";
+
+    if (!msg.IsEmpty())
+    {
         if (inform)
         {
-            psserver->SendSystemError(clientnum, sMsg );
-        }
-
-        return false;
-    }
-
-    // Am I a GM?
-    if (IsGM())
-    {
-        return true; /* Everything is attackable */
-    }
-
-    switch ( this->GetTargetType( target ) )
-    {
-        case TARGET_NONE:
-            sMsg = "You must select a target to attack.";
-            break;
-        case TARGET_ITEM:
-            sMsg = "You can't attack an inanimate object.";
-            break;
-        case TARGET_SELF:
-            sMsg = "You cannot attack yourself.";
-            break;
-        case TARGET_FRIEND:
-            sMsg = "You cannot attack %s.";
-            break;
-        case TARGET_FOE: /* Foe */
-            {
-                gemActor *foe = target->GetActorPtr();
-                CS_ASSERT( foe != NULL ); // Since this is a foe it should have a actor.
-                gemActor *attacker = GetActor();
-
-                gemActor *lastAttacker=NULL;
-                if (target->HasKillStealProtection() && !foe->CanBeAttackedBy(attacker,&lastAttacker))
-                {
-                    if (lastAttacker)
-                    {
-                        tmp.Format("You must be grouped with %s to attack %s.",
-                                   lastAttacker->GetName(), foe->GetName());
-                    }
-                    else
-                    {
-                        tmp.Format("You are not allowed to attack right now.");
-                    }
-                    sMsg = tmp.GetData();
-                }
-            }
-            break;
-    }
-
-    if ( sMsg != NULL )
-    {
-        if(inform)
-        {
-            psserver->SendSystemError(clientnum, sMsg, target->GetName() );
+            psserver->SendSystemError(clientnum, msg, target->GetName());
         }
 
         return false;
@@ -501,6 +477,13 @@ int Client::GetTargetType(gemObject* target)
     if (!target->IsAlive())
     {
         return TARGET_DEAD;
+    }
+
+    if (IsGM())
+    {
+        // GMs can interpret targets as either friends or foe...even self.
+        // This allows them to attack or cast spells on anyone.
+        return TARGET_SELF | TARGET_FRIEND | TARGET_FOE;
     }
 
     if (GetActor() == target)
