@@ -1,10 +1,10 @@
 <widget_description>
     <widget factory="pawsMoney">
-    <frame x="0" y="0" width="100" height="24" />
+    <frame x="0" y="0" width="50" height="100" />
 
 	    <widget name="Circles" factory="pawsSlot" tooltip="250 Tria" >
-            <frame x="0" y="0" width="24" height="24" />
-		<bgimage resource="InventoryBulk" />
+            <frame x="0" y="0" width="50" height="24" />
+		 <bgimage resource="InventoryBulk" /> 
 		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="250" g="250" b="250" size="10" />    
             <attachpoints>
               <attach point="ATTACH_TOP" /> 
@@ -14,10 +14,11 @@
             </attachpoints>
         </widget>
 	<widget name="Octas" factory="pawsSlot" tooltip="50 Tria" >
-            <frame x="24" y="0" width="24" height="24" />
+            <frame y="24" x="0" width="50" height="24" />
 		<bgimage resource="InventoryBulk" />
 	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="250" g="250" b="250" size="10" />
             <attachpoints>
+
               <attach point="ATTACH_TOP" /> 
               <attach point="PROPORTIONAL_LEFT" /> 
               <attach point="ATTACH_RIGHT" /> 
@@ -25,10 +26,11 @@
             </attachpoints>
         </widget>
 	<widget name="Hexas" factory="pawsSlot" tooltip="10 Tria" >
-            <frame x="48" y="0" width="24" height="24" />
+            <frame y="48" x="0" width="50" height="24" />
 		<bgimage resource="InventoryBulk" />
 		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="250" g="250" b="250" size="10" />
             <attachpoints>
+
               <attach point="PROPORTIONAL_TOP" /> 
               <attach point="ATTACH_LEFT" /> 
               <attach point="PROPORTIONAL_RIGHT" /> 
@@ -36,14 +38,15 @@
             </attachpoints>
         </widget>
 	<widget name="Trias" factory="pawsSlot" tooltip="1 Tria">
-            <frame x="72" y="0" width="24" height="24" />
+            <frame y="72" x="0" width="50" height="24" />
 		<bgimage resource="InventoryBulk" />
 		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="250" g="250" b="250" size="10" />
             <attachpoints>
+
               <attach point="PROPORTIONAL_TOP" /> 
               <attach point="PROPORTIONAL_LEFT" /> 
               <attach point="ATTACH_RIGHT" /> 
-              <attach point="ATTACH_BOTTOM" /> 
+              <attach point="ATTACH_BOTTOM" />
             </attachpoints>
         </widget>
     </widget>
