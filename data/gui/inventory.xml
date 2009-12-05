@@ -6,7 +6,7 @@
     <title resource="Scaling Title Bar" text="Inventory" align="left" close_button="yes"/>    
 
     <widget name="View" factory="pawsButton" id="1005" tooltip="View Item">
-        <frame x="320" y="270" width="32" height="32"/>
+        <frame x="305" y="270" width="32" height="32"/>
         <bgimage resource="view"/>
     </widget>
 
@@ -254,10 +254,10 @@
 
     
 	<widget name="NumericalData" factory="pawsWidget">
-	<frame x="280" y="65" width="150" height="185" />
+	<frame x="280" y="65" width="150" height="200" />
 	
 	    <widget name="TotalTrias" factory="pawsTextBox">
-	        <frame x="5" y="120" width="90" height="20" />
+	        <frame x="5" y="80" width="90" height="20" />
 	        <text string="0" horizAdjust="RIGHT" />
 	        <subscriptions>
 	            <subscribe data="sigInvMoneyTotal" />
@@ -265,7 +265,7 @@
 	    </widget>
 	
 	    <widget name="Money" factory="pawsMoney" border="no" spacing="0">
-	        <frame x="50" y="140" width="0" height="0" />
+	        <frame x="25" y="100" width="50" height="100" />
 	        <subscriptions>
 	            <subscribe data="sigInvMoney" />
 	        </subscriptions> 
@@ -273,7 +273,7 @@
 	
 	    
 	    <widget name="TotalWeight" factory="pawsTextBox">
-	        <frame x="5" y="25" width="90" height="20" />
+	        <frame x="15" y="20" width="90" height="20" />
 	        <text string="0" horizAdjust="RIGHT" />
 	        <subscriptions>
 	            <subscribe data="sigInvWeightTotal" />
@@ -281,7 +281,7 @@
 	    </widget>
 	    
 	    <widget name="TotalCapacity" factory="pawsTextBox">
-	        <frame x="65" y="65" width="60" height="20"/>
+	        <frame x="65" y="60" width="60" height="20"/>
 	        <text string="0" horizAdjust="RIGHT" />
 	        <subscriptions>
 	            <subscribe data="fmaxcapacity" />
@@ -289,7 +289,7 @@
 	    </widget>
 	    
 	        <widget name="CurrCapacity" factory="pawsTextBox">
-	        <frame x="5" y="65" width="60" height="20"/>
+	        <frame x="5" y="60" width="60" height="20"/>
 	        <text string="0" horizAdjust="RIGHT" />
 	        <subscriptions>
 	            <subscribe data="fcurrcap" />
@@ -298,17 +298,17 @@
 	        
 	            
 	    <widget name="TotalTriasLabel" factory="pawsTextBox" style="Header Font">
-	        <frame x="25" y="100" width="50" height="20" />
+	        <frame x="25" y="80" width="50" height="20" />
 	        <text string="Tria:" />
 	    </widget>
 	
 	    <widget name="TotalWeightLabel" factory="pawsTextBox" style="Header Font">
-	        <frame x="25" y="5" width="50" height="20" />
+	        <frame x="25" y="0" width="50" height="20" />
 	        <text string="Weight:" />
 	    </widget>
 	    
 	    <widget name="TotalCapLabel" factory="pawsTextBox" style="Header Font">
-	        <frame x="25" y="45" width="70" height="20" />
+	        <frame x="25" y="40" width="70" height="20" />
 	        <text string="Capacity:" />
 	    </widget>
 	    

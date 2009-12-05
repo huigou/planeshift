@@ -34,7 +34,7 @@
 
 
 #define MONEY_FILE_NAME  "money.xml"
-#define SLOT_SIZE        48
+#define SLOT_SIZE       48
 
 csRef<iDocumentNode> FindFirstWidget(iDocument * doc);
 
@@ -120,6 +120,7 @@ bool pawsMoney::PostSetup()
     circles  =  dynamic_cast <pawsSlot*> (FindWidget("Circles"));
     if (circles == NULL)
         return false;
+
     circles->SetEmptyOnZeroCount(false);
     circles->PlaceItem("MoneyCircles", "");
     circles->SetSlotID( MONEY_CIRCLES );
