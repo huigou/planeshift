@@ -142,6 +142,7 @@
                     <attach point="ATTACH_LEFT" />
                     <attach point="PROPORTIONAL_BOTTOM" />
                 </attachpoints>
+				<pawsScrollBar width="15" tick="0.1" maxValue="1.0" />
 		<subscriptions overwrite = "false">
 			<subscribe data="subMainText" />
 		</subscriptions>
@@ -157,6 +158,7 @@
 		<subscriptions overwrite = "false">
 			<subscribe data="subSystemText" />
 		</subscriptions>
+			<pawsScrollBar width="15" tick="0.1" maxValue="1.0" />
             </widget>
             <widget name="NpcText" factory="pawsMessageTextBox" visible="no" id="1102">
                 <frame x="55" y="0" width="435" height="233" border="no" />
@@ -169,6 +171,7 @@
 		<subscriptions overwrite = "false">
 			<subscribe data="subNPCText" />
 		</subscriptions>
+			<pawsScrollBar width="15" tick="0.1" maxValue="1.0" />
             </widget>
             <widget name="TellText" factory="pawsMessageTextBox" visible="no" id="1103">
                 <frame x="55" y="0" width="435" height="233" border="no" />
@@ -181,6 +184,7 @@
 		<subscriptions overwrite = "false">
 			<subscribe data="subTellText" />	
 		</subscriptions>
+			<pawsScrollBar width="15" tick="0.1" maxValue="1.0" />
             </widget>
             <widget name="GuildText" factory="pawsMessageTextBox" visible="no" id="1104">
                 <frame x="55" y="0" width="435" height="233" border="no" />
@@ -193,6 +197,7 @@
  		<subscriptions overwrite = "false">
 			<subscribe data="subGuildText" />
 		</subscriptions>
+			<pawsScrollBar width="15" tick="0.1" maxValue="1.0" />
            </widget>
             <widget name="AllianceText" factory="pawsMessageTextBox" visible="no" id="1109">
                 <frame x="55" y="0" width="435" height="233" border="no" />
@@ -205,6 +210,7 @@
  		<subscriptions overwrite = "false">
 			<subscribe data="subAllianceText" />
 		</subscriptions>
+			<pawsScrollBar width="15" tick="0.1" maxValue="1.0" />
            </widget>
             <widget name="GroupText" factory="pawsMessageTextBox" visible="no" id="1105">
                 <frame x="55" y="0" width="435" height="233" border="no" />
@@ -217,6 +223,7 @@
 		<subscriptions overwrite = "false">
 			<subscribe data="subGroupText" />	
 		</subscriptions>
+			<pawsScrollBar width="15" tick="0.1" maxValue="1.0" />
             </widget>
             <widget name="AuctionText" factory="pawsMessageTextBox" visible="no" id="1106">
                 <frame x="55" y="0" width="435" height="233" border="no" />
@@ -229,6 +236,7 @@
 		<subscriptions overwrite = "false">
 			<subscribe data="subAuctionsText" />
 		</subscriptions>
+			<pawsScrollBar width="15" tick="0.1" maxValue="1.0" />
             </widget>
 
             <widget name="ChannelsText" factory="pawsMessageTextBox" visible="no" id="1108">
@@ -242,6 +250,7 @@
 		<subscriptions overwrite = "false">
 	            <subscribe data="subChannelsText"/>
 		</subscriptions>
+			<pawsScrollBar width="15" tick="0.1" maxValue="1.0" />
             </widget>
 
             <widget name="HelpText" factory="pawsMessageTextBox" visible="no" id="1107">
@@ -255,6 +264,7 @@
 		<subscriptions overwrite = "false">
 			<subscribe data="subHelpText" />
 		</subscriptions>
+			<pawsScrollBar width="15" tick="0.1" maxValue="1.0" />
             </widget>
         </widget> 
 

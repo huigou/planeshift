@@ -446,6 +446,9 @@ protected:
     csString text;
     csPDelArray<MessageLine> lineInfo;
     int lineHeight;
+
+    // Width of the vertical scroll bar
+    int vScrollBarWidth;
     size_t canDrawLines;
     
     size_t topLine;
