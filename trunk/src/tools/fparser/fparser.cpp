@@ -1,5 +1,5 @@
 /***************************************************************************\
-|* Function Parser for C++ v4.0                                            *|
+|* Function Parser for C++ v4.0.1                                          *|
 |*-------------------------------------------------------------------------*|
 |* Copyright: Juha Nieminen, Joel Yliluoma                                 *|
 \***************************************************************************/
@@ -316,7 +316,9 @@ FunctionParserBase<Value_t>::Data::Data(const Data& rhs):
     Stack(),
     StackSize(rhs.StackSize)
 {
+#ifndef FP_USE_THREAD_SAFE_EVAL
     Stack.resize(rhs.Stack.size());
+#endif
 
     for(typename namePtrsType<Value_t>::const_iterator i =
             rhs.namePtrs.begin();
@@ -577,6 +579,7 @@ namespace
         "Illegal number of parameters to function", // 8
         "Syntax error: Premature end of string",    // 9
         "Syntax error: Expecting ( after function", // 10
+        "Syntax error: Unknown identifier",         // 11
         "(No function has been parsed yet)",
         ""
     };
@@ -1074,6 +1077,11 @@ inline bool FunctionParserBase<Value_t>::TryCompilePowi(Value_t original_immed)
                 abs_int_exponent = -abs_int_exponent;
 
             data->Immed.pop_back(); data->ByteCode.pop_back();
+            --StackPtr;
+            // ^Though the above is accounted for by the procedure
+            // that generates cPow, we need it for correct cFetch
+            // indexes in CompilePowi().
+
             while(sqrt_count > 0)
             {
                 int opcode = cSqrt;
@@ -1087,6 +1095,7 @@ inline bool FunctionParserBase<Value_t>::TryCompilePowi(Value_t original_immed)
             }
             CompilePowi(abs_int_exponent);
             if(int_exponent < 0) data->ByteCode.push_back(cInv);
+            ++StackPtr; // Needed because cPow adding will assume this.
             return true;
         }
         if(sqrt_count >= 4) break;
@@ -1102,9 +1111,12 @@ inline bool FunctionParserBase<Value_t>::TryCompilePowi(Value_t original_immed)
     {
         data->Immed.pop_back();
         data->ByteCode.pop_back();
+        //--StackPtr; - accounted for by the procedure that generates cPow
         AddFunctionOpcode(cLog);
         AddImmedOpcode(original_immed);
+        //incStackPtr(); - this and the next are redundant because...
         AddFunctionOpcode(cMul);
+        //--StackPtr;    - ...because the cImmed was popped earlier.
         AddFunctionOpcode(cExp);
         return true;
     }
@@ -1214,8 +1226,17 @@ const char* FunctionParserBase<Value_t>::CompileFunctionParams
 
     if(requiredParams > 0)
     {
-        function = CompileExpression(function+1);
-        if(!function) return 0;
+        const char* function_end = CompileExpression(function+1);
+        if(!function_end)
+        {
+            // If an error occurred, verify whether it was caused by ()
+            ++function;
+            SkipSpace(function);
+            if(*function == ')') return SetErrorType(ILL_PARAMS_AMOUNT, function);
+            // Not caused by (), use the error message given by CompileExpression()
+            return 0;
+        }
+        function = function_end;
 
         for(unsigned i = 1; i < requiredParams; ++i)
         {
@@ -1286,7 +1307,9 @@ const char* FunctionParserBase<Value_t>::CompileElement(const char* function)
        * valid identifiers. Include them here to reduce
        * the number of jumps in the compiled program.
        */
-      case '*': case '+': case ',': case '-': case '/':
+      case '*': case ',': case '-': case '/':
+          return SetErrorType(SYNTAX_ERROR, function);
+      case '+': // Unary + not supported
           return SetErrorType(SYNTAX_ERROR, function);
     }
 
@@ -1384,6 +1407,10 @@ const char* FunctionParserBase<Value_t>::CompileElement(const char* function)
                   return function;
             }
         }
+        else /* nameIter == namePtrs.end() */
+        {
+            return SetErrorType(UNKNOWN_IDENTIFIER, function);
+        }
     }
 
     return SetErrorType(SYNTAX_ERROR, function);
@@ -1451,7 +1478,7 @@ FunctionParserBase<Value_t>::CompilePow(const char* function)
         // add opcode
         AddFunctionOpcode(op);
 
-        --StackPtr;
+        if(op == cPow) --StackPtr;
     }
     return function;
 }
@@ -1515,7 +1542,7 @@ FunctionParserBase<Value_t>::CompileMult(const char* function)
         if(op)
         {
             AddFunctionOpcode(op);
-            --StackPtr;
+            if(op != cInv) --StackPtr;
         }
         switch(*function)
         {
@@ -1535,6 +1562,7 @@ FunctionParserBase<Value_t>::CompileMult(const char* function)
             op = (op == cDiv ? cInv : 0);
             data->Immed.pop_back();
             data->ByteCode.pop_back();
+            --StackPtr;
         }
     }
     return function;
@@ -1554,7 +1582,7 @@ FunctionParserBase<Value_t>::CompileAddition(const char* function)
         if(op)
         {
             AddFunctionOpcode(op);
-            --StackPtr;
+            if(op != cNeg) --StackPtr;
         }
         switch(*function)
         {
@@ -1572,6 +1600,7 @@ FunctionParserBase<Value_t>::CompileAddition(const char* function)
             op = (op == cSub ? cNeg : 0);
             data->Immed.pop_back();
             data->ByteCode.pop_back();
+            --StackPtr;
         }
     }
     return function;
@@ -2817,6 +2846,8 @@ void FunctionParserBase<Value_t>::PrintByteCode(std::ostream& dest,
                   case cSqr: prio = 2; suff = "^2";
                       break;
                   case cNeg: buf << "(-("; suff = "))";
+                      break;
+                  case cNot: buf << "(!("; suff = "))";
                       break;
                   default: buf << n << '('; suff = ")";
                 }

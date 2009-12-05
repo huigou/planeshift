@@ -1,6 +1,6 @@
 #line 1 "fpoptimizer/fpoptimizer_header.txt"
 /***************************************************************************\
-|* Function Parser for C++ v4.0                                            *|
+|* Function Parser for C++ v4.0.1                                          *|
 |*-------------------------------------------------------------------------*|
 |* Function optimizer                                                      *|
 |*-------------------------------------------------------------------------*|
@@ -196,6 +196,13 @@ namespace FPoptimizer_CodeTree
             const std::vector<unsigned>& byteCode,
             const std::vector<double>& immed,
             const FunctionParser::Data& data,
+            bool keep_powi = false);
+
+        void GenerateFrom(
+            const std::vector<unsigned>& byteCode,
+            const std::vector<double>& immed,
+            const FunctionParser::Data& data,
+            const std::vector<CodeTree>& var_trees,
             bool keep_powi = false);
 
         void SynthesizeByteCode(
@@ -4150,8 +4157,10 @@ namespace FPoptimizer_Optimize
             if(range.first != range.second)
             {
                 std::cout << "Input (" << FP_GetOpcodeName(tree.GetOpcode())
-                          << "[" << tree.GetParamCount()
+                          << ")[" << tree.GetParamCount()
                           << "]";
+                if(from_logical_context)
+                    std::cout << "(Logical)";
 
                 unsigned first=~unsigned(0), prev=~unsigned(0);
                 const char* sep = ", rules ";
@@ -4437,10 +4446,10 @@ namespace
                 {
                     const ParamSpec_SubFunction& param = *(const ParamSpec_SubFunction*) parampair.second;
                     if(param.data.match_type == GroupFunction)
-                        NeedList.Immeds += 1;
+                        ++NeedList.Immeds;
                     else
                     {
-                        NeedList.SubTrees += 1;
+                        ++NeedList.SubTrees;
                         assert( param.data.subfunc_opcode < VarBegin );
                         NeedList.SubTreesDetail.inc(param.data.subfunc_opcode);
                     }
@@ -4449,7 +4458,7 @@ namespace
                 }
                 case NumConstant:
                 case ParamHolder:
-                    NeedList.Others += 1;
+                    ++NeedList.Others;
                     ++NeedList.minimum_need;
                     break;
             }
@@ -4535,7 +4544,7 @@ namespace FPoptimizer_Optimize
 
         size_t nparams = tree.GetParamCount();
 
-        if(nparams < NeedList.minimum_need)
+        if(nparams < size_t(NeedList.minimum_need))
         {
             // Impossible to satisfy
             return false;
@@ -4548,23 +4557,23 @@ namespace FPoptimizer_Optimize
             switch(opcode)
             {
                 case cImmed:
-                    if(NeedList.Immeds > 0) NeedList.Immeds -= 1;
-                    else NeedList.Others -= 1;
+                    if(NeedList.Immeds > 0) --NeedList.Immeds;
+                    else --NeedList.Others;
                     break;
                 case cVar:
                 case cFCall:
                 case cPCall:
-                    NeedList.Others -= 1;
+                    --NeedList.Others;
                     break;
                 default:
                     assert( opcode < VarBegin );
                     if(NeedList.SubTrees > 0
                     && NeedList.SubTreesDetail.get(opcode) > 0)
                     {
-                        NeedList.SubTrees -= 1;
+                        --NeedList.SubTrees;
                         NeedList.SubTreesDetail.dec(opcode);
                     }
-                    else NeedList.Others -= 1;
+                    else --NeedList.Others;
             }
         }
 
@@ -5724,9 +5733,9 @@ namespace
         {
             CodeTree newnode;
             newnode.SetOpcode(opcode);
-            size_t stackhead = stack.size() - nparams;
-            for(size_t a=0; a<nparams; ++a)
-                newnode.AddParamMove( stack[stackhead + a] );
+            
+            std::vector<CodeTree> params = Pop(nparams);
+            newnode.SetParamsMove(params);
 
             if(!keep_powi)
             switch(opcode)
@@ -5843,17 +5852,15 @@ namespace
             DumpTree(newnode);
             std::cout <<std::endl;
         #endif
-            stack.resize(stackhead+1);
-            stack.back().swap(newnode);
+            stack.push_back(newnode);
         }
 
         void EatFunc(size_t nparams, OPCODE opcode, unsigned funcno)
         {
             CodeTree newnode;
             newnode.SetFuncOpcode(opcode, funcno);
-            size_t stackhead = stack.size() - nparams;
-            for(size_t a=0; a<nparams; ++a)
-                newnode.AddParamMove( stack[stackhead + a] );
+            std::vector<CodeTree> params = Pop(nparams);
+            newnode.SetParamsMove(params);
             newnode.Rehash(false);
         #ifdef DEBUG_SUBSTITUTIONS
             std::cout << "POP " << nparams << ", PUSH ";
@@ -5861,8 +5868,7 @@ namespace
             std::cout << std::endl;
         #endif
             FindClone(newnode);
-            stack.resize(stackhead+1);
-            stack.back().swap(newnode);
+            stack.push_back(newnode);
         }
 
         void AddConst(double value)
@@ -5918,11 +5924,25 @@ namespace
             stack.resize(stack.size()-1);
             return result;
         }
+        std::vector<CodeTree> Pop(unsigned n_pop)
+        {
+            std::vector<CodeTree> result(n_pop);
+            for(unsigned n=0; n<n_pop; ++n)
+                result[n].swap(stack[stack.size()-n_pop+n]);
+            stack.resize(stack.size()-n_pop);
+            return result;
+        }
 
         size_t GetStackTop() const { return stack.size(); }
     private:
-        void FindClone(CodeTree& tree, bool recurse = true)
+        void FindClone(CodeTree& /*tree*/, bool /*recurse*/ = true)
         {
+            // Disabled: Causes problems in optimization when
+            // the same subtree is included in logical and non-logical
+            // contexts: optimizations applied to the logical one will
+            // mess up the non-logical one.
+            return;
+            /*
             std::multimap<fphash_t, CodeTree>::const_iterator
                 i = clones.lower_bound(tree.GetHash());
             for(; i != clones.end() && i->first == tree.GetHash(); ++i)
@@ -5934,6 +5954,7 @@ namespace
                 for(size_t a=0; a<tree.GetParamCount(); ++a)
                     FindClone(tree.GetParam(a));
             clones.insert(std::make_pair(tree.GetHash(), tree));
+            */
         }
     private:
         std::vector<CodeTree> stack;
@@ -5960,6 +5981,22 @@ namespace FPoptimizer_CodeTree
         const std::vector<unsigned>& ByteCode,
         const std::vector<double>& Immed,
         const FunctionParser::Data& fpdata,
+        bool keep_powi)
+    {
+        std::vector<CodeTree> var_trees;
+        var_trees.reserve(fpdata.numVariables);
+        for(unsigned n=0; n<fpdata.numVariables; ++n)
+        {
+            var_trees.push_back( CodeTree(n+VarBegin, CodeTree::VarTag()) );
+        }
+        GenerateFrom(ByteCode,Immed,fpdata,var_trees,keep_powi);
+    }
+
+    void CodeTree::GenerateFrom(
+        const std::vector<unsigned>& ByteCode,
+        const std::vector<double>& Immed,
+        const FunctionParser::Data& fpdata,
+        const std::vector<CodeTree>& var_trees,
         bool keep_powi)
     {
         CodeTreeParserData sim(keep_powi);
@@ -6022,7 +6059,7 @@ namespace FPoptimizer_CodeTree
             }
             if(OPCODE(opcode) >= VarBegin)
             {
-                sim.AddVar(opcode);
+                sim.Push(var_trees[opcode-VarBegin]);
             }
             else
             {
@@ -6067,8 +6104,17 @@ namespace FPoptimizer_CodeTree
                     {
                         unsigned funcno = ByteCode[++IP];
                         assert(funcno < fpdata.FuncParsers.size());
+                        const FunctionParserBase<double>& p =
+                            *fpdata.FuncParsers[funcno].parserPtr;
                         unsigned params = fpdata.FuncParsers[funcno].params;
-                        sim.EatFunc(params, OPCODE(opcode), funcno);
+                        
+                        /* Inline the procedure call */
+                        /* Works because cPCalls can never recurse */
+                        std::vector<CodeTree> paramlist = sim.Pop(params);
+                        CodeTree pcall_tree;
+                        pcall_tree.GenerateFrom(p.data->ByteCode, p.data->Immed, *p.data,
+                                                paramlist);
+                        sim.Push(pcall_tree);
                         break;
                     }
                     // Unary operators requiring special attention
@@ -8665,9 +8711,13 @@ namespace FPoptimizer_CodeTree
             case cImmed:
                 return MinMaxTree(GetImmed(), GetImmed()); // a definite value.
             case cAnd:
+            case cAbsAnd:
             case cOr:
+            case cAbsOr:
             case cNot:
+            case cAbsNot:
             case cNotNot:
+            case cAbsNotNot:
             case cEqual:
             case cNEqual:
             case cLess:
@@ -8894,6 +8944,7 @@ namespace FPoptimizer_CodeTree
             }
 
             case cIf:
+            case cAbsIf:
             {
                 // No guess which branch is chosen. Produce a spanning min & max.
                 MinMaxTree res1 = GetParam(1).CalculateResultBoundaries();
@@ -9383,11 +9434,6 @@ namespace FPoptimizer_CodeTree
              * within fpoptimizer_bytecode_to_codetree.cpp and thus
              * they will never occur in the calling context:
              */
-            case cAbsNot:
-            case cAbsNotNot:
-            case cAbsOr:
-            case cAbsAnd:
-            case cAbsIf:
                 break; /* Should never occur */
 
             /* Opcodes that do not occur in the tree for other reasons */
@@ -9403,8 +9449,11 @@ namespace FPoptimizer_CodeTree
 
             /* Opcodes that are completely unpredictable */
             case cVar:
+                break; // Cannot deduce
             case cPCall:
+                break;
             case cFCall:
+                break; // Cannot deduce
             case cEval:
                 break; // Cannot deduce
         }
@@ -10528,6 +10577,8 @@ using namespace FPoptimizer_CodeTree;
 template<>
 void FunctionParserBase<double>::Optimize()
 {
+    typedef double Value_t;
+
     CopyOnWrite();
 
     //PrintByteCode(std::cout);
@@ -10538,7 +10589,7 @@ void FunctionParserBase<double>::Optimize()
     FPoptimizer_Optimize::ApplyGrammars(tree);
 
     std::vector<unsigned> byteCode;
-    std::vector<double> immed;
+    std::vector<Value_t> immed;
     size_t stacktop_max = 0;
     tree.SynthesizeByteCode(byteCode, immed, stacktop_max);
 

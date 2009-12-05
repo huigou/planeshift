@@ -3,11 +3,11 @@
 <head>
  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
  <link href="style.css" rel="stylesheet" type="text/css" title="normal" media=screen>
- <title>Function Parser for C++ v4.0    : Documentation</title>
+ <title>Function Parser for C++ v4.0.1  : Documentation</title>
 </head>
 
 <body>
-<h1>Function Parser for C++ v4.0    </h1>
+<h1>Function Parser for C++ v4.0.1  </h1>
 
 <p>Authors: Juha Nieminen
 (<a href="http://iki.fi/warp/">http://iki.fi/warp/</a>),
@@ -48,6 +48,7 @@ Joel Yliluoma
    <ul>
       <li><a href="#identifiers">Identifier names</a>
       <li><a href="#functionsyntax">The function string syntax</a>
+      <li><a href="#whitespace">Whitespace</a>
    </ul>
  <li>Miscellaneous
    <ul>
@@ -62,6 +63,13 @@ Joel Yliluoma
 
 <a name="whatsnew"></a>
 <h2>What's new</h2>
+
+<p>What's new in v4.0.1
+<ul>
+  <li>Minor bugfixes and documentation corrections.
+  <li>Some new optimizer rules (among others, calls to other FunctionParser
+    instances are now inlined, eliminating the call altogether).
+</ul>
 
 <p>What's new in v4.0
 <ul>
@@ -135,7 +143,7 @@ project for the compilation to work).
 
 <p>If you are going to use the MPFR or the GMP versions of the library,
 you also need to include <code>mpfr/MpfrFloat.cc</code> or
-<code>mpfr/GmpInt.cc</code> files in your project correspondingly.
+<code>mpfr/GmpInt.cc</code> files in your project, respectively.
 
 <p>Simple usage example:
 
@@ -188,8 +196,8 @@ you also need to include <code>mpfr/MpfrFloat.cc</code> or
     <p>The <code>FP_SUPPORT_FLOAT_TYPE</code> preprocessor macro needs to be
       defined for this class to be enabled.
     <p>Note that this version of the class uses C99 standard math functions
-      not yet available in all C++ compilers. Also the <code>ld</code> and
-      <code>li</code> versions of the class described below use such functions.
+      not yet available in all C++ compilers. Also the <code>ld</code> version
+      of the class described below use such functions.
   </dd>
 
   <dt><p><code>FunctionParser_ld</code></dt>
@@ -206,9 +214,9 @@ you also need to include <code>mpfr/MpfrFloat.cc</code> or
       to be defined for this class to be enabled.
     <p>Note that this version of the class uses a reduced function syntax
       with support only for functions which are feasible to be used with
-      integral types (namely <code>abs()</code>, <code>if()</code>,
-      <code>min()</code> and <code>max()</code>, besides basic artihmetic
-      operators, except for the power operator).
+      integral types (namely <code>abs()</code>, <code>eval()</code>,
+      <code>if()</code>, <code>min()</code> and <code>max()</code>, besides
+      basic arithmetic operators, except for the power operator).
   </dd>
 
   <dt><p><code>FunctionParser_mpfr</code></dt>
@@ -216,7 +224,7 @@ you also need to include <code>mpfr/MpfrFloat.cc</code> or
     <p>This parser uses <code>MpfrFloat</code> as its numerical type.
     <p>The <code>FP_SUPPORT_MPFR_FLOAT_TYPE</code> preprocessor macro needs
       to be defined for this class to be enabled.
-    <p>Note that to use this version of the library,
+    <p>Note that to use this version of the parser,
       <code>"fparser_mpfr.hh"</code> needs to be included.
     <p><code>MpfrFloat</code> is an auxiliary class which uses the MPFR
       library for multiple-precision floating point numbers. The class
@@ -234,7 +242,7 @@ you also need to include <code>mpfr/MpfrFloat.cc</code> or
     <p>This parser uses <code>GmpInt</code> as its numerical type.
     <p>The <code>FP_SUPPORT_GMP_INT_TYPE</code> preprocessor macro needs
       to be defined for this class to be enabled.
-    <p>Note that to use this version of the library,
+    <p>Note that to use this version of the parser,
       <code>"fparser_gmpint.hh"</code> needs to be included.
     <p><code>GmpInt</code> is an auxiliary class which uses the GMP
       library for arbitrary-precision integer numbers. The class
@@ -678,7 +686,9 @@ along with their equivalent error message returned by the
 </tr><tr>
  <td><code>EXPECT_PARENTH_FUNC</code></td>
  <td>"Syntax error: Expecting ( after function"</td>
-</tr>
+</tr><tr>
+ <td><code>UNKNOWN_IDENTIFIER</code></td>
+ <td>"Syntax error: Unknown identifier"</td>
 </tr><tr>
  <td><code>NO_FUNCTION_PARSED_YET</code></td>
  <td>"(No function has been parsed yet)"</td>
@@ -1008,11 +1018,11 @@ parameters are:
    variables will be assigned here.
  <li><code>resultVarString</code>: The found variables will be written to
    this string, in the same format as accepted by the <code>Parse()</code>
-   function. The variable names will be sorted using the <code>&lt</code>
+   function. The variable names will be sorted using the <code>&lt;</code>
    operator of <code>std::string</code>.
  <li><code>resultVars</code>: The found variables will be written to this
    vector, each element being one variable name. They will be sorted using
-   the <code>&lt</code> operator of <code>std::string</code>. (The amount
+   the <code>&lt;</code> operator of <code>std::string</code>. (The amount
    of found variables can be retrieved, rather obviously, with the
    <code>size()</code> method of the vector.)
  <li><code>useDegrees</code>: As with <code>Parse()</code>.
@@ -1034,8 +1044,9 @@ the specified return values will be modified in case of error.
   described in the next subsections.
 
 <p>The name of an identifier can use any alphanumeric characters, the
-  underscore character and any UTF8-encoded unicode character. The first
-  character of the name cannot be a numeric digit, though.
+  underscore character and any UTF8-encoded unicode character, excluding
+  those denoting whitespace.
+  The first character of the name cannot be a numeric digit, though.
 
 <p>All functions, variables, constants and units must use unique names.
   It's not possible to add two different identifiers with the same name.
@@ -1077,11 +1088,19 @@ or functions using the following operators in this order of precedence:
  </tr><tr>
   <td><code>A&amp;B</code></td>
   <td>result is 1 if <code>int(A)</code> and <code>int(B)</code> differ from
-      0, else 0</td>
+      0, else 0.<br>
+      Note: Regardless of the values, both operands are always
+      evaluated. However, if the expression is optimized, it may
+      be changed such that only one of the operands is evaluated,
+      according to standard shortcut logical operation semantics.</td>
  </tr><tr>
   <td><code>A|B</code></td>
   <td>result is 1 if <code>int(A)</code> or <code>int(B)</code> differ from 0,
-      else 0</td>
+      else 0.<br>
+      Note: Regardless of the values, both operands are always
+      evaluated. However, if the expression is optimized, it may
+      be changed such that only one of the operands is evaluated,
+      according to standard shortcut logical operation semantics.</td>
  </tr>
 </table>
 
@@ -1137,7 +1156,7 @@ Without epsilon this comparison probably returns the wrong value.
   <td>Cube root of A. Returns the value whose cube is A.</td>
 </tr><tr>
   <td><code>ceil(A)</code></td>
-  <td>Ceiling of A. Returns the smallest integer greater than A.
+  <td>Ceiling of A. Returns the smallest integer not smaller than A.
       Rounds up to the next higher integer. E.g. -2.9, -2.5 and -2.1 are
     rounded to -2.0, and 2.9, 2.5 and 2.1 are rounded to 3.0.</td>
 </tr><tr>
@@ -1166,7 +1185,7 @@ Without epsilon this comparison probably returns the wrong value.
       non-repeating value approximately equal to 2.71828182846.</td>
 </tr><tr>
   <td><code>floor(A)</code></td>
-  <td>Floor of A. Returns the largest integer less than A. Rounds
+  <td>Floor of A. Returns the largest integer not greater than A. Rounds
       down to the next lower integer.
       E.g. -2.9, -2.5 and -2.1 are rounded to -3.0,
       and 2.9, 2.5 and 2.1 are rounded to 2.0.</td>
@@ -1253,6 +1272,43 @@ never reach that level but still take enormous amounts of time to evaluate.
 This can sometimes be undesirable because it is prone to exploitation,
 which is why <code>eval()</code> is disabled by default. It can be enabled
 in the <code>fpconfig.hh</code> file.
+
+
+<!-- -------------------------------------------------------------------- -->
+<a name="whitespace"></a>
+<h3>Whitespace</h3>
+
+<p>Arbitrary amounts of whitespace can optionally be included between
+  elements in the function string.
+  The following unicode characters are interpreted as whitespace:
+<table>
+ <tr>
+  <th>Character number</th>
+  <th>Character name</th>
+  <th>UTF-8 byte sequence</th>
+ </tr>
+ <tr><td>U+0009</td><td>HORIZONTAL TABULATION    </td><td>09</td></tr>
+ <tr><td>U+000A</td><td>LINE FEED                </td><td>0A</td></tr>
+ <tr><td>U+000B</td><td>VERTICAL TABULATION      </td><td>0B</td></tr>
+ <tr><td>U+000D</td><td>CARRIAGE RETURN          </td><td>0D</td></tr>
+ <tr><td>U+0020</td><td>SPACE                    </td><td>20</td></tr>
+ <tr><td>U+00A0</td><td>NO-BREAK SPACE           </td><td>C2 A0</td></tr>
+ <tr><td>U+2000</td><td>EN QUAD                  </td><td>E2 80 80</td></tr>
+ <tr><td>U+2001</td><td>EM QUAD                  </td><td>E2 80 81</td></tr>
+ <tr><td>U+2002</td><td>EN SPACE                 </td><td>E2 80 82</td></tr>
+ <tr><td>U+2003</td><td>EM SPACE                 </td><td>E2 80 83</td></tr>
+ <tr><td>U+2004</td><td>THREE-PER-EM SPACE       </td><td>E2 80 84</td></tr>
+ <tr><td>U+2005</td><td>FOUR-PER-EM SPACE        </td><td>E2 80 85</td></tr>
+ <tr><td>U+2006</td><td>SIX-PER-EM SPACE         </td><td>E2 80 86</td></tr>
+ <tr><td>U+2007</td><td>FIGURE SPACE             </td><td>E2 80 87</td></tr>
+ <tr><td>U+2008</td><td>PUNCTUATION SPACE        </td><td>E2 80 88</td></tr>
+ <tr><td>U+2009</td><td>THIN SPACE               </td><td>E2 80 89</td></tr>
+ <tr><td>U+200A</td><td>HAIR SPACE               </td><td>E2 80 8A</td></tr>
+ <tr><td>U+200B</td><td>ZERO WIDTH SPACE         </td><td>E2 80 8B</td></tr>
+ <tr><td>U+202F</td><td>NARROW NO-BREAK SPACE    </td><td>E2 80 AF</td></tr>
+ <tr><td>U+205F</td><td>MEDIUM MATHEMATICAL SPACE</td><td>E2 81 9F</td></tr>
+ <tr><td>U+3000</td><td>IDEOGRAPHIC SPACE        </td><td>E3 80 80</td></tr>
+</table>
 
 
 <!-- -------------------------------------------------------------------- -->

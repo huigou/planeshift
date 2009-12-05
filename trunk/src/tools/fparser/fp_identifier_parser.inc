@@ -1,6 +1,15 @@
         unsigned nameLength = 0;
+        const unsigned maximumNameLength = 0x80000000U-8;
+        /*
+        Due to the manner the identifier lengths are returned from
+        the readOpcode() function, the maximum supported length for
+        identifiers is 0x7FFFFFFF bytes. We minus 8 here to add some
+        buffer, because of the multibyteness of UTF-8.
+        Function names are limited to 0xFFFF bytes instead, but because
+        function names that long just are not defined, the point is moot.
+        */
         const unsigned char* const uptr = (const unsigned char*) input;
-        while(true)
+        while(nameLength < maximumNameLength)
         {
             unsigned char byte = uptr[nameLength+0];
             /* Handle the common case of A-Za-z first */
