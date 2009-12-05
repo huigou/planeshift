@@ -1,5 +1,5 @@
 /***************************************************************************\
-|* Function Parser for C++ v4.0                                            *|
+|* Function Parser for C++ v4.0.1                                          *|
 |*-------------------------------------------------------------------------*|
 |* Copyright: Juha Nieminen, Joel Yliluoma                                 *|
 \***************************************************************************/
@@ -31,6 +31,7 @@ public:
         SYNTAX_ERROR=0, MISM_PARENTH, MISSING_PARENTH, EMPTY_PARENTH,
         EXPECT_OPERATOR, OUT_OF_MEMORY, UNEXPECTED_ERROR, INVALID_VARS,
         ILL_PARAMS_AMOUNT, PREMATURE_EOS, EXPECT_PARENTH_FUNC,
+        UNKNOWN_IDENTIFIER,
         NO_FUNCTION_PARSED_YET,
         FP_NO_ERROR
     };
