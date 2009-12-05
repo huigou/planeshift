@@ -14,36 +14,40 @@
         <frame x="20" y="60" width="120" height="20" />
         <text string="System Base" />
     </widget>
-    <widget name="inpc" factory="pawsCheckBox">
+	<widget name="ichat" factory="pawsCheckBox">
         <frame x="20" y="80" width="120" height="20" />
+        <text string="Chat" />
+    </widget>
+    <widget name="inpc" factory="pawsCheckBox">
+        <frame x="20" y="100" width="120" height="20" />
         <text string="NPC" />
     </widget>
     <widget name="itells" factory="pawsCheckBox">
-        <frame x="20" y="100" width="120" height="20" />
-        <text string="Tells" />
+        <frame x="20" y="120" width="120" height="20" />
+        <text string="Whisper" />
     </widget>
     <widget name="iguild" factory="pawsCheckBox">
-        <frame x="20" y="120" width="120" height="20" />
+        <frame x="20" y="140" width="120" height="20" />
         <text string="Guild" />
     </widget>
     <widget name="ialliance" factory="pawsCheckBox">
-        <frame x="20" y="140" width="120" height="20" />
+        <frame x="20" y="160" width="120" height="20" />
         <text string="Alliance" />
     </widget>
     <widget name="igroup" factory="pawsCheckBox">
-        <frame x="20" y="160" width="120" height="20" />
+        <frame x="20" y="180" width="120" height="20" />
         <text string="Group" />
     </widget>
     <widget name="iauction" factory="pawsCheckBox">
-        <frame x="20" y="180" width="120" height="20" />
+        <frame x="20" y="200" width="120" height="20" />
         <text string="Auction" />
     </widget>
     <widget name="isys" factory="pawsCheckBox">
-        <frame x="20" y="200" width="120" height="20" />
+        <frame x="20" y="220" width="120" height="20" />
         <text string="System" />
     </widget>
     <widget name="ihelp" factory="pawsCheckBox">
-        <frame x="20" y="220" width="120" height="20" />
+        <frame x="20" y="240" width="120" height="20" />
         <text string="Help" />
     </widget>
 
