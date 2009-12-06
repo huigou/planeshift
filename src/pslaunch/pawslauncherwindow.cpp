@@ -385,10 +385,17 @@ void pawsLauncherWindow::LoadSettings()
     pawsCheckBox* enableSound = (pawsCheckBox*)FindWidget("EnableSound");
     enableSound->SetState(configUser->KeyExists("System.PlugIns.iSndSysRenderer") &&
         strcmp(configUser->GetStr("System.PlugIns.iSndSysRenderer"), "crystalspace.sndsys.renderer.null"));
+    bool openALAvailable;
+    {
+      // Try to load OpenAL plugin to see if it's supported
+      csRef<iSndSysRenderer> oal = csLoadPlugin<iSndSysRenderer> (
+	PawsManager::GetSingleton().GetObjectRegistry(), "crystalspace.sndsys.renderer.openal", false);
+      openALAvailable = oal.IsValid();
+    }
 
     pawsComboBox* soundRenderer = (pawsComboBox*)FindWidget("SoundRenderer");
     soundRenderer->Clear();
-    soundRenderer->NewOption("OpenAL");
+    if (openALAvailable) soundRenderer->NewOption("OpenAL");
     soundRenderer->NewOption("Software");
 
     if(enableSound->GetState())
@@ -400,7 +407,7 @@ void pawsLauncherWindow::LoadSettings()
         setting = configPSC.GetStr("System.PlugIns.iSndSysRenderer");
     }
 
-    if(setting.Compare("crystalspace.sndsys.renderer.openal"))
+    if(openALAvailable && setting.Compare("crystalspace.sndsys.renderer.openal"))
     {
         soundRenderer->Select("OpenAL");
     }
