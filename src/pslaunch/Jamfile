@@ -27,6 +27,7 @@ STATIC.PLUGINLIST =
   engine
   imgplex
   shadermgr
+  sndsysopenal
   vfs
   ;
   
