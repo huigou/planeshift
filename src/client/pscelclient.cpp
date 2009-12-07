@@ -399,19 +399,23 @@ void psCelClient::HandleItemEffect( const char* factName, csRef<iMeshWrapper> mw
             return;
         }
 
-        for(size_t i=0; i<ie->lights.GetSize(); i++)
+        csString shaderLevel = psengine->GetConfig()->GetStr("PlaneShift.Graphics.Shaders");
+        if(shaderLevel == "Highest" || shaderLevel == "High")
         {
-            Light* l = ie->lights.Get(i);
-            unsigned int id = psengine->GetEffectManager()->AttachLight(factName, l->lightoffset,
-                l->radius, l->colour, mw);
+            for(size_t i=0; i<ie->lights.GetSize(); i++)
+            {
+                Light* l = ie->lights.Get(i);
+                unsigned int id = psengine->GetEffectManager()->AttachLight(factName, l->lightoffset,
+                    l->radius, l->colour, mw);
 
-            if(!id)
-            {
-              printf("Failed to create light on item %s!\n", factName);
-            }
-            else if(slot && lightids)
-            {
-                lightids->PutUnique(slot, id);
+                if(!id)
+                {
+                    printf("Failed to create light on item %s!\n", factName);
+                }
+                else if(slot && lightids)
+                {
+                    lightids->PutUnique(slot, id);
+                }
             }
         }
 
