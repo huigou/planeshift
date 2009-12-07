@@ -189,7 +189,7 @@ public:
     //@{
     const char *FindCommonString(unsigned int id);
     unsigned int FindCommonStringID(const char *name);
-    inline void AddCommmonStringID(const char* name)
+    inline void AddCommonStringID(const char* name)
     {
         FindCommonStringID(name);
     }

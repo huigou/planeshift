@@ -493,15 +493,15 @@ bool psItemStats::ReadItemStats(iResultRow& row)
     {
         Error2("Invalid 'cstr_gfx_mesh' for mesh '%s'\n", name.GetData());
     }
-    CacheManager::GetSingleton().AddCommmonStringID(meshname);
+    CacheManager::GetSingleton().AddCommonStringID(meshname);
     SetMeshName(meshname);
 
     const char *texturename = row["cstr_gfx_texture"];
-    CacheManager::GetSingleton().AddCommmonStringID(texturename);
+    CacheManager::GetSingleton().AddCommonStringID(texturename);
     SetTextureName(texturename);
 
     const char *partname = row["cstr_part"];
-    CacheManager::GetSingleton().AddCommmonStringID(partname);
+    CacheManager::GetSingleton().AddCommonStringID(partname);
     SetPartName(partname);
 
     const char *imagename = row["cstr_gfx_icon"];
@@ -509,11 +509,11 @@ bool psItemStats::ReadItemStats(iResultRow& row)
     {
         Error2("Invalid 'cstr_gfx_icon' for mesh '%s'\n", name.GetData());
     }
-    CacheManager::GetSingleton().AddCommmonStringID(imagename);
+    CacheManager::GetSingleton().AddCommonStringID(imagename);
     SetImageName(imagename);
 
     const char *partmeshname = row["cstr_part_mesh"];
-    CacheManager::GetSingleton().AddCommmonStringID(partmeshname);
+    CacheManager::GetSingleton().AddCommonStringID(partmeshname);
     SetPartMeshName(partmeshname);
 
     SetPrice(row.GetInt("base_sale_price"));

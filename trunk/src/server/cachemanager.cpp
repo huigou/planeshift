@@ -142,7 +142,7 @@ CacheManager::CacheManager()
     compressed_msg_strings = 0;
     compressed_msg_strings_size = 0;
     num_compressed_strings = 0;
-    AddCommmonStringID("");
+    AddCommonStringID("");
 }
 
 CacheManager::~CacheManager()
