@@ -62,7 +62,7 @@ bool psRaceInfo::Load(iResultRow& row)
 {
     uid  = row.GetUInt32("id");
     name = row["name"];
-    CacheManager::GetSingleton().AddCommmonStringID(name);
+    CacheManager::GetSingleton().AddCommonStringID(name);
     initialCP = row.GetUInt32("initial_cp");
     race = row.GetUInt32("race");
     helmGroup = row["helm"];
@@ -70,7 +70,7 @@ bool psRaceInfo::Load(iResultRow& row)
     BeltGroup = row["belt"];
     CloakGroup = row["cloak"];
     MounterAnim = row["cstr_mounter_animation"];
-    CacheManager::GetSingleton().AddCommmonStringID(MounterAnim);
+    CacheManager::GetSingleton().AddCommonStringID(MounterAnim);
     sex = row["sex"];
     speedModifier = row.GetFloat("speed_modifier");
 
@@ -121,10 +121,10 @@ bool psRaceInfo::Load(iResultRow& row)
     {
         Error2("Invalid 'cstr_mesh' for race '%s'\n", name.GetData());
     }
-    CacheManager::GetSingleton().AddCommmonStringID(mesh_name);
+    CacheManager::GetSingleton().AddCommonStringID(mesh_name);
 
     base_texture_name = row["cstr_base_texture"];
-    CacheManager::GetSingleton().AddCommmonStringID(base_texture_name);
+    CacheManager::GetSingleton().AddCommonStringID(base_texture_name);
 
     // Load starting stats
     SetBaseAttribute(PSITEMSTATS_STAT_STRENGTH      ,row.GetUInt32("start_str"));
