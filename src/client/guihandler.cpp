@@ -90,7 +90,7 @@ void GUIHandler::HandleInventory(MsgEntry* me)
         inventoryCache->SetInventoryItem(incoming.items[z].slot,
                                          incoming.items[z].container,
                                          incoming.items[z].name.GetData(),
-                                         incoming.items[z].meshName.GetData(),
+                                         psengine->FindCommonString(incoming.items[z].cstrMeshID),
                                          incoming.items[z].weight,
                                          incoming.items[z].size,
                                          incoming.items[z].stackcount,
