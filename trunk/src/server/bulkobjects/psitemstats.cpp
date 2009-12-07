@@ -784,7 +784,7 @@ bool psItemStats::Save()
     update->AddField("dmg_blunt", weaponStats.damages[PSITEMSTATS_DAMAGETYPE_BLUNT] );
     update->AddField("dmg_pierce", weaponStats.damages[PSITEMSTATS_DAMAGETYPE_PIERCE] );
 
-    update->AddField("cstr_id_gfx_mesh", CacheManager::GetSingleton().FindCommonStringID( this->mesh_name ) );    //Mesh
+    update->AddField("cstr_gfx_mesh", mesh_name); //Mesh
 
     // stat requirements
     update->AddField("requirement_1_name", reqs[0].name);
