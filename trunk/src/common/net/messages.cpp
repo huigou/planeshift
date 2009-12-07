@@ -2178,7 +2178,7 @@ psGUIInventoryMessage::psGUIInventoryMessage(MsgEntry *message)
             {
                 ItemDescription item;
                 item.name          = message->GetStr();
-                item.meshName      = message->GetStr();
+                item.cstrMeshID    = message->GetUInt32();
                 item.container     = message->GetUInt32();
                 item.slot          = message->GetUInt32();
                 item.stackcount    = message->GetUInt32();
@@ -2233,7 +2233,7 @@ psGUIInventoryMessage::psGUIInventoryMessage(uint32_t clientnum,
 }
 
 void psGUIInventoryMessage::AddItem( const char* name,
-                                     const char* meshName,
+                                     int cstrMeshID,
                                      int containerID,
                                      int slotID,
                                      int stackcount,
@@ -2243,7 +2243,7 @@ void psGUIInventoryMessage::AddItem( const char* name,
                                      int purifyStatus )
 {
     msg->Add(name);
-    msg->Add(meshName);
+    msg->Add((uint32_t)cstrMeshID);
     msg->Add((uint32_t)containerID);
     msg->Add((uint32_t)slotID);
 
