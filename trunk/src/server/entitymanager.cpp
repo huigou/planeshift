@@ -813,6 +813,9 @@ gemItem* EntityManager::CreateItem(psItem *& iteminstance, bool transient)
     if (isec==NULL)
         return NULL;
 
+    /* Apparently merchants like to arrange similar items on tables without
+     * them auto-stacking and thus averaging qualities.  Similarly, people
+     * like to arrange food on tables, etc.  Disabling at the request of Bovek.
     // Try to stack this first
     csArray<gemObject*> nearlist = gem->FindNearbyEntities( isec, newpos, RANGE_TO_STACK );
     size_t count = nearlist.GetSize();
@@ -831,6 +834,7 @@ gemItem* EntityManager::CreateItem(psItem *& iteminstance, bool transient)
             return nearitem->GetGemObject(); // Done
         }
     }
+    */
 
     // Cannot stack, so make a new one
     // Get the mesh for this object
