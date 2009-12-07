@@ -2495,6 +2495,7 @@ void psItem::FillContainerMsg(Client* client, psViewItemDescription& outgoing)
             if (parent_item_InstanceID == uid)
             {
                 outgoing.AddContents(child->GetName(), child->GetImageName(),
+                        CacheManager::GetSingleton().FindCommonStringID(child->GetMeshName()),
                         child->GetPurifyStatus(), slot++,
                         child->GetStackCount());
             }
@@ -2514,6 +2515,7 @@ void psItem::FillContainerMsg(Client* client, psViewItemDescription& outgoing)
 
         int stackCount = container->CanTake(client,child) ? child->GetStackCount() : -1;
         outgoing.AddContents(child->GetName(), child->GetImageName(),
+                CacheManager::GetSingleton().FindCommonStringID(child->GetMeshName()),
                 child->GetPurifyStatus(), child->GetLocInParent(), stackCount);
     }
 }

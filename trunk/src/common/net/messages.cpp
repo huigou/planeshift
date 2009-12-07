@@ -5407,11 +5407,12 @@ psViewItemDescription::psViewItemDescription(uint32_t to, const char *itemName, 
     }
 }
 
-void psViewItemDescription::AddContents( const char *name, const char *icon, int purifyStatus, int slot, int stack )
+void psViewItemDescription::AddContents(const char *name, const char *icon, int cstrMeshID, int purifyStatus, int slot, int stack)
 {
     ContainerContents item;
     item.name = name;
     item.icon = icon;
+    item.cstrMeshID = cstrMeshID;
     item.purifyStatus = purifyStatus;
     item.slotID = slot;
     item.stackCount = stack;
@@ -5419,7 +5420,7 @@ void psViewItemDescription::AddContents( const char *name, const char *icon, int
     contents.Push( item );
     int namesize = name?(int)strlen(name):0;
     int iconsize = icon?(int)strlen(icon):0;
-    msgSize += (int)(namesize + iconsize + 3 + sizeof(int)*3);
+    msgSize += (int)(namesize + iconsize + 3 + sizeof(int)*4);
 }
 
 void psViewItemDescription::ConstructMsg()
@@ -5440,6 +5441,7 @@ void psViewItemDescription::ConstructMsg()
     {
         msg->Add( contents[n].name );
         msg->Add( contents[n].icon );
+        msg->Add((uint32_t) contents[n].cstrMeshID);
         msg->Add( contents[n].purifyStatus );
         msg->Add( (uint32_t)contents[n].slotID );
         msg->Add( (uint32_t)contents[n].stackCount );
@@ -5482,6 +5484,7 @@ psViewItemDescription::psViewItemDescription( MsgEntry* me )
                 ContainerContents item;
                 item.name = me->GetStr();
                 item.icon = me->GetStr();
+                item.cstrMeshID = me->GetUInt32();
                 item.purifyStatus = me->GetUInt32();
                 item.slotID = me->GetUInt32();
                 item.stackCount = me->GetUInt32();

@@ -45,7 +45,7 @@ class csStringHashReversible;
 
 // This holds the version number of the network code, remember to increase
 // this each time you do an update which breaks compatibility
-#define PS_NETVERSION   0x00B3
+#define PS_NETVERSION   0x00B4
 // Remember to bump the version in pscssetup.h, as well.
 
 
@@ -3956,7 +3956,7 @@ public:
     int to;
 
     /// Add a item to this message ( assumes the base item is a container )
-    void AddContents( const char *name, const char *icon, int purifyStatus, int slot, int stack );
+    void AddContents(const char *name, const char *icon, int cstrMeshID, int purifyStatus, int slot, int stack);
 
     /// Build the message ( assumes base item is a container ).
     void ConstructMsg();
@@ -3965,6 +3965,7 @@ public:
     {
         csString name;
         csString icon;
+        int cstrMeshID;
         int slotID;
         int stackCount;
         int purifyStatus;
