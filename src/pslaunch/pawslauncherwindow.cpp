@@ -238,7 +238,7 @@ bool pawsLauncherWindow::OnButtonPressed(int mouseButton, int keyModifier, pawsW
     {
         notify->Hide();
     }
-    else if(13100 < widget->GetID() && widget->GetID() < 13200)
+    else if(1200 < widget->GetID() && widget->GetID() < 13200)
     {
         pawsComboBox* graphicsPreset = (pawsComboBox*)FindWidget("GraphicsPreset");
         graphicsPreset->Select("Custom");
