@@ -107,7 +107,7 @@ void pawsSpellBookWindow::HandleSpells( MsgEntry* me )
     descriptions_Hash.Empty();
     images_Hash.Empty();
 
-    psSpellBookMessage mesg(me, psengine->GetCelClient()->GetClientDR()->GetMsgStrings());
+    psSpellBookMessage mesg(me, psengine->GetMsgStrings());
     for ( size_t x = 0; x < mesg.spells.GetSize(); x++ )
     {       
         pawsListBoxRow* row = spellList->NewRow();

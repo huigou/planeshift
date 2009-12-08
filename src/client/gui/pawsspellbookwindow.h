@@ -28,8 +28,7 @@ class pawsMessageTextBox;
 
 #include "net/cmdbase.h"
 #include "gui/pawscontrolwindow.h"
-#include "pscelclient.h"
-#include "psclientdr.h"
+
 
 /** This handles all the details about how the spell book works.
  */
