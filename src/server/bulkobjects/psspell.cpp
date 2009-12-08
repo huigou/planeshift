@@ -416,7 +416,7 @@ void psSpell::Affect(gemActor *caster, gemObject *target, float range, float kFa
     {
         if (target && caster->RangeTo(target) <= range)
         {
-            if (AffectTarget(caster, target, power))
+            if (AffectTarget(caster, target, target, power))
             {
                 caster->GetCharacterData()->Skills().AddSkillPractice(way->skill, 1);
             }
@@ -474,7 +474,7 @@ void psSpell::Affect(gemActor *caster, gemObject *target, float range, float kFa
                     continue;
             }
 
-            if (AffectTarget(caster, nearby[i], power))
+            if (AffectTarget(caster, target, nearby[i], power))
                 affectedCount++;
         }
 
@@ -494,7 +494,7 @@ void psSpell::Affect(gemActor *caster, gemObject *target, float range, float kFa
     caster->SetSpellCasting(NULL);
 }
 
-bool psSpell::AffectTarget(gemActor *caster, gemObject *target, float power) const
+bool psSpell::AffectTarget(gemActor* caster, gemObject* origTarget, gemObject* target, float power) const
 {
     if (offensive)
     {
@@ -516,6 +516,7 @@ bool psSpell::AffectTarget(gemActor *caster, gemObject *target, float power) con
     MathEnvironment env;
     env.Define("Caster", caster);
     env.Define("Target", target);
+    env.Define("OrigTarget", origTarget); // the epicentre of an AOE attack/original cast target
     env.Define("Power",  power);
 
     outcome->Run(&env);
