@@ -90,8 +90,7 @@ bool psSpell::Load(iResultRow& row)
     way = CacheManager::GetSingleton().GetWayByID(row.GetInt("way_id"));
 
     image         = row["image_name"];
-    //TODO: enable in future
-    //CacheManager::GetSingleton().AddCommonStringID(image);
+    CacheManager::GetSingleton().AddCommonStringID(image);
 
     description   = row["spell_description"];
     castingEffect = row["casting_effect"];
