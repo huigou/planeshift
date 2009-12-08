@@ -2494,8 +2494,7 @@ void psItem::FillContainerMsg(Client* client, psViewItemDescription& outgoing)
             psItem *child = client->GetCharacterData()->Inventory().GetInventoryIndexItem(i);
             if (parent_item_InstanceID == uid)
             {
-                outgoing.AddContents(child->GetName(), child->GetImageName(),
-                        CacheManager::GetSingleton().FindCommonStringID(child->GetMeshName()),
+                outgoing.AddContents(child->GetName(), child->GetMeshName(), child->GetImageName(),
                         child->GetPurifyStatus(), slot++,
                         child->GetStackCount());
             }
@@ -2514,8 +2513,7 @@ void psItem::FillContainerMsg(Client* client, psViewItemDescription& outgoing)
         }
 
         int stackCount = container->CanTake(client,child) ? child->GetStackCount() : -1;
-        outgoing.AddContents(child->GetName(), child->GetImageName(),
-                CacheManager::GetSingleton().FindCommonStringID(child->GetMeshName()),
+        outgoing.AddContents(child->GetName(), child->GetMeshName(), child->GetImageName(),
                 child->GetPurifyStatus(), child->GetLocInParent(), stackCount);
     }
 }
@@ -2729,7 +2727,7 @@ bool psItem::SendContainerContents(Client *client, int containerID)
 
     FillContainerMsg( client, outgoing);
 
-    outgoing.ConstructMsg();
+    outgoing.ConstructMsg(CacheManager::GetSingleton().GetMsgStrings());
     outgoing.SendMessage();
 
     return true;
@@ -3006,7 +3004,7 @@ bool psItem::SendActionContents(Client *client, psActionLocation *action)
     if ( isContainer )
     {
         FillContainerMsg( client, outgoing );
-        outgoing.ConstructMsg();
+        outgoing.ConstructMsg(CacheManager::GetSingleton().GetMsgStrings());
     }
 
     outgoing.SendMessage();

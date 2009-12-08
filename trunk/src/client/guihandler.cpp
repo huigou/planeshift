@@ -41,6 +41,8 @@
 #include "guihandler.h"
 #include "globals.h"
 #include "psinventorycache.h"
+#include "pscelclient.h"
+#include "psclientdr.h"
 
 
 GUIHandler::GUIHandler() 
@@ -65,7 +67,7 @@ void GUIHandler::HandleMessage(MsgEntry* me)
 
 void GUIHandler::HandleInventory(MsgEntry* me)
 {
-    psGUIInventoryMessage incoming(me);
+    psGUIInventoryMessage incoming(me, psengine->GetCelClient()->GetClientDR()->GetMsgStrings());
 
 	// drop inventory list, if its version is older than the current.
 	// this may happen due to UDP latency.
@@ -90,7 +92,7 @@ void GUIHandler::HandleInventory(MsgEntry* me)
         inventoryCache->SetInventoryItem(incoming.items[z].slot,
                                          incoming.items[z].container,
                                          incoming.items[z].name.GetData(),
-                                         psengine->FindCommonString(incoming.items[z].cstrMeshID),
+                                         incoming.items[z].meshName.GetData(),
                                          incoming.items[z].weight,
                                          incoming.items[z].size,
                                          incoming.items[z].stackcount,

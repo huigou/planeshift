@@ -128,7 +128,7 @@ bool ServerCharManager::Initialize()
 
 void ServerCharManager::ViewItem(MsgEntry *me, Client *client)
 {
-    psViewItemDescription mesg(me);
+    psViewItemDescription mesg(me, NULL);
     ViewItem(client, mesg.containerID, (INVENTORY_SLOT_NUMBER) mesg.slotID);
 }
 
@@ -341,7 +341,7 @@ void ServerCharManager::HandleFaction(MsgEntry* me,Client *client)
 //---------------------------------------------------------------------------
 void ServerCharManager::HandleInventoryMessage(MsgEntry* me,Client *client)
 {
-    psGUIInventoryMessage incoming(me);
+    psGUIInventoryMessage incoming(me, NULL);
     int     fromClientNumber    = me->clientnum;
 
     switch ( incoming.command )
@@ -423,14 +423,15 @@ bool ServerCharManager::SendInventory( int clientNum, bool sendUpdatesOnly)
         
         Notify5(LOG_EXCHANGES, "  Inv item %s, slot %d, weight %1.1f, stack count %u\n",item->GetName(), slot, item->GetWeight(), item->GetStackCount() );
         outgoing->AddItem(item->GetName(),
-                          CacheManager::GetSingleton().FindCommonStringID(item->GetMeshName()),
+                          item->GetMeshName(),
                           invType,
                           slot,
                           (exchanging && invitem->exchangeOfferSlot != PSCHARACTER_SLOT_NONE) ? item->GetStackCount() - invitem->exchangeStackCount : item->GetStackCount(),
                           item->GetWeight(),
                           item->GetTotalStackSize(),
                           item->GetImageName(),
-                          item->GetPurifyStatus());
+                          item->GetPurifyStatus(),
+                          CacheManager::GetSingleton().GetMsgStrings());
     }
 
     

@@ -35,6 +35,9 @@
 #include "net/clientmsghandler.h"
 #include "util/log.h"
 
+#include "pscelclient.h"
+#include "psclientdr.h"
+
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -70,7 +73,7 @@ bool pawsItemDescriptionWindow::PostSetup()
 void pawsItemDescriptionWindow::HandleMessage( MsgEntry* me )
 {   
     Show();
-    psViewItemDescription mesg( me );
+    psViewItemDescription mesg( me, psengine->GetCelClient()->GetClientDR()->GetMsgStrings());
     description->SetText( mesg.itemDescription );
     csString nameStr;
     nameStr = mesg.itemName;

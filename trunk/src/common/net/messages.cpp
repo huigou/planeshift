@@ -2141,7 +2141,7 @@ csString psWeatherMessage::ToString(AccessPointers * /*access_ptrs*/)
 
 //---------------------------------------------------------------------------
 
-PSF_IMPLEMENT_MSG_FACTORY(psGUIInventoryMessage,MSGTYPE_GUIINVENTORY);
+PSF_IMPLEMENT_MSG_FACTORY4(psGUIInventoryMessage,MSGTYPE_GUIINVENTORY);
 
 psGUIInventoryMessage::psGUIInventoryMessage(uint8_t command, uint32_t size )
 {
@@ -2157,7 +2157,7 @@ psGUIInventoryMessage::psGUIInventoryMessage(uint8_t command, uint32_t size )
 }
 
 
-psGUIInventoryMessage::psGUIInventoryMessage(MsgEntry *message)
+psGUIInventoryMessage::psGUIInventoryMessage(MsgEntry *message, csStringHashReversible* msgstringshash)
 {
     if (!message)
         return;
@@ -2178,7 +2178,7 @@ psGUIInventoryMessage::psGUIInventoryMessage(MsgEntry *message)
             {
                 ItemDescription item;
                 item.name          = message->GetStr();
-                item.cstrMeshID    = message->GetUInt32();
+                item.meshName      = msgstringshash->Request(csStringID(message->GetUInt32()));
                 item.container     = message->GetUInt32();
                 item.slot          = message->GetUInt32();
                 item.stackcount    = message->GetUInt32();
@@ -2233,17 +2233,18 @@ psGUIInventoryMessage::psGUIInventoryMessage(uint32_t clientnum,
 }
 
 void psGUIInventoryMessage::AddItem( const char* name,
-                                     int cstrMeshID,
+                                     const char* meshName,
                                      int containerID,
                                      int slotID,
                                      int stackcount,
                                      float weight,
                                      uint32 size,
                                      const char* icon,
-                                     int purifyStatus )
+                                     int purifyStatus, 
+                                     csStringSet* msgstrings )
 {
     msg->Add(name);
-    msg->Add((uint32_t)cstrMeshID);
+    msg->Add(msgstrings->Request(meshName).GetHash());
     msg->Add((uint32_t)containerID);
     msg->Add((uint32_t)slotID);
 
@@ -2802,7 +2803,7 @@ psSpellBookMessage::psSpellBookMessage( uint32_t client )
     size = 0;
 }
 
-psSpellBookMessage::psSpellBookMessage( MsgEntry* me, csStringHashReversible* msgstrings )
+psSpellBookMessage::psSpellBookMessage( MsgEntry* me, csStringHashReversible* msgstringshash )
 {
     size_t length = me->GetUInt32();
 
@@ -2817,7 +2818,7 @@ psSpellBookMessage::psSpellBookMessage( MsgEntry* me, csStringHashReversible* ms
         ns.glyphs[1] = me->GetStr();
         ns.glyphs[2] = me->GetStr();
         ns.glyphs[3] = me->GetStr();
-        ns.image = msgstrings->Request(csStringID(me->GetUInt32()));
+        ns.image = msgstringshash->Request(csStringID(me->GetUInt32()));
         spells.Push( ns );
     }
 
@@ -5364,7 +5365,7 @@ csString psViewActionLocationMessage::ToString(AccessPointers * /*access_ptrs*/)
 
 //------------------------------------------------------------------------------
 
-PSF_IMPLEMENT_MSG_FACTORY(psViewItemDescription,MSGTYPE_VIEW_ITEM);
+PSF_IMPLEMENT_MSG_FACTORY4(psViewItemDescription,MSGTYPE_VIEW_ITEM);
 
 psViewItemDescription::psViewItemDescription(int containerID, int slotID)
 {
@@ -5407,12 +5408,12 @@ psViewItemDescription::psViewItemDescription(uint32_t to, const char *itemName, 
     }
 }
 
-void psViewItemDescription::AddContents(const char *name, const char *icon, int cstrMeshID, int purifyStatus, int slot, int stack)
+void psViewItemDescription::AddContents(const char *name, const char *meshName, const char *icon, int purifyStatus, int slot, int stack)
 {
     ContainerContents item;
     item.name = name;
     item.icon = icon;
-    item.cstrMeshID = cstrMeshID;
+    item.meshName = meshName;
     item.purifyStatus = purifyStatus;
     item.slotID = slot;
     item.stackCount = stack;
@@ -5423,7 +5424,7 @@ void psViewItemDescription::AddContents(const char *name, const char *icon, int 
     msgSize += (int)(namesize + iconsize + 3 + sizeof(int)*4);
 }
 
-void psViewItemDescription::ConstructMsg()
+void psViewItemDescription::ConstructMsg(csStringSet* msgstrings)
 {
     msg.AttachNew(new MsgEntry( msgSize ));
     msg->SetType(MSGTYPE_VIEW_CONTAINER);
@@ -5441,14 +5442,14 @@ void psViewItemDescription::ConstructMsg()
     {
         msg->Add( contents[n].name );
         msg->Add( contents[n].icon );
-        msg->Add((uint32_t) contents[n].cstrMeshID);
+        msg->Add( msgstrings->Request(contents[n].meshName).GetHash() );
         msg->Add( contents[n].purifyStatus );
         msg->Add( (uint32_t)contents[n].slotID );
         msg->Add( (uint32_t)contents[n].stackCount );
     }
 }
 
-psViewItemDescription::psViewItemDescription( MsgEntry* me )
+psViewItemDescription::psViewItemDescription( MsgEntry* me, csStringHashReversible* msgstringshash )
 {
     format = me->GetUInt8();
 
@@ -5484,7 +5485,7 @@ psViewItemDescription::psViewItemDescription( MsgEntry* me )
                 ContainerContents item;
                 item.name = me->GetStr();
                 item.icon = me->GetStr();
-                item.cstrMeshID = me->GetUInt32();
+                item.meshName = msgstringshash->Request(csStringID(me->GetUInt32()));;
                 item.purifyStatus = me->GetUInt32();
                 item.slotID = me->GetUInt32();
                 item.stackCount = me->GetUInt32();
