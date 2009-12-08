@@ -2826,7 +2826,7 @@ psSpellBookMessage::psSpellBookMessage( MsgEntry* me, csStringHashReversible* ms
 void psSpellBookMessage::AddSpell(const csString& name, const csString& description, const csString& way, int realm, const csString& glyph0, const csString& glyph1, const csString& glyph2, const csString& glyph3, const csString& image)
 {
     size+=(uint32_t)(name.Length() + description.Length() + way.Length()+ sizeof(int)+ 8 +
-    glyph0.Length()+glyph1.Length()+glyph2.Length()+glyph3.Length() + image.Length());
+    glyph0.Length()+glyph1.Length()+glyph2.Length()+glyph3.Length() + sizeof(uint32_t));
 
     psSpellBookMessage::NetworkSpell ns;
     ns.name = name;
