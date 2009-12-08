@@ -432,7 +432,7 @@ void psSpell::Affect(gemActor *caster, gemObject *target, float range, float kFa
         float yrot; // in radians
         iSector *sector;
 
-        caster->GetPosition(pos, yrot, sector);
+        target->GetPosition(pos, yrot, sector);
 
         if (angle <= 0 || angle > 360)
             angle = 360;
