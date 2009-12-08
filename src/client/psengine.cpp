@@ -1118,26 +1118,28 @@ void psEngine::UnmuteAllSounds(void)
 
 const char* psEngine::FindCommonString(unsigned int cstr_id)
 {
-   if (!celclient)
+    csStringHashReversible* strings = GetMsgStrings();
+    if (!strings)
         return "";
 
-   psClientDR * clientDR = celclient->GetClientDR();
-   if (!clientDR)
-        return "";
-
-   return clientDR->GetMsgStrings()->Request(cstr_id);
+    return strings->Request(cstr_id);
 }
 
 csStringID psEngine::FindCommonStringId(const char *str)
 {
-    if (!celclient)
+    csStringHashReversible* strings = GetMsgStrings();
+    if (!strings)
         return csInvalidStringID;
 
-    psClientDR * clientDR = celclient->GetClientDR();
-    if (!clientDR)
-        return csInvalidStringID;
+    return strings->Request(str);
+}
 
-    return clientDR->GetMsgStrings()->Request(str);
+csStringHashReversible* psEngine::GetMsgStrings()
+{
+    if (!celclient || !celclient->GetClientDR())
+        return NULL;
+
+    return celclient->GetClientDR()->GetMsgStrings();
 }
 
 // ----------------------------------------------------------------------------

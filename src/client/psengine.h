@@ -20,6 +20,7 @@
 #define __ENGINE_H__
 
 #include <csutil/csstring.h>
+#include <csutil/strhashr.h>
 #include <csutil/randomgen.h>
 #include <csutil/refarr.h>
 #include <csutil/sysfunc.h>
@@ -330,6 +331,8 @@ public:
     */
     csStringID FindCommonStringId(const char *str);
 
+    /// Get the message strings/common string table
+    csStringHashReversible* GetMsgStrings();
 
     ///Get the status of the sound plugin, if available or not.
     bool GetSoundStatus() {return soundOn;}
