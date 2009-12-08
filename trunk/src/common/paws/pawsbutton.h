@@ -85,7 +85,7 @@ public:
 		{
 			flash = 0; 
 			if (flashtype == FLASH_HIGHLIGHT)
-				SetColour(-1);
+				SetColour(originalFontColour);
 		}
 		flashtype = type; 
 	}
@@ -139,6 +139,9 @@ protected:
 	int upTextOffsetY;
 	int downTextOffsetX;
 	int downTextOffsetY;
+    
+    ///Used when restoring from highlight state
+    int originalFontColour;
 
     /// Whether or not to change image on mouse enter/exit.
     bool changeOnMouseOver;

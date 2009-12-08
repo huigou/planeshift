@@ -44,6 +44,7 @@ pawsButton::pawsButton()
     flashtype = FLASH_REGULAR;
     keybinding = 0;
     changeOnMouseOver = false;
+    originalFontColour = -1;
 }
 
 
@@ -139,6 +140,8 @@ bool pawsButton::Setup( iDocumentNode* node )
         buttonLabel = PawsManager::GetSingleton().Translate(buttonLabelNode->GetAttributeValue("text"));
     }
 
+    originalFontColour = GetFontColour();
+    
     return true;
 }
 
@@ -449,7 +452,7 @@ void pawsButton::SetState(bool isDown, bool publish)
     {
         flash = 0;
         if (flashtype == FLASH_HIGHLIGHT)
-        	SetColour(-1);
+        	SetColour(originalFontColour);
     }
 
     if (!toggle)
