@@ -41,8 +41,6 @@
 #include "guihandler.h"
 #include "globals.h"
 #include "psinventorycache.h"
-#include "pscelclient.h"
-#include "psclientdr.h"
 
 
 GUIHandler::GUIHandler() 
@@ -67,7 +65,7 @@ void GUIHandler::HandleMessage(MsgEntry* me)
 
 void GUIHandler::HandleInventory(MsgEntry* me)
 {
-    psGUIInventoryMessage incoming(me, psengine->GetCelClient()->GetClientDR()->GetMsgStrings());
+    psGUIInventoryMessage incoming(me, psengine->GetMsgStrings());
 
 	// drop inventory list, if its version is older than the current.
 	// this may happen due to UDP latency.

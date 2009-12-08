@@ -43,11 +43,6 @@
 
 #include "globals.h"
 
-#include "pscelclient.h"
-#include "psclientdr.h"
-
-
-
 // BUTTONS AND SLOTS
 #define VIEW_BUTTON 11
 #define INVENTORY_BUTTON 12
@@ -125,7 +120,7 @@ void pawsContainerDescWindow::HandleUpdateItem( MsgEntry* me )
 void pawsContainerDescWindow::HandleViewItem( MsgEntry* me )
 {
     Show();
-    psViewItemDescription mesg( me, psengine->GetCelClient()->GetClientDR()->GetMsgStrings() );
+    psViewItemDescription mesg(me, psengine->GetMsgStrings());
 
     description->SetText( mesg.itemDescription );
     name->SetText( mesg.itemName );
