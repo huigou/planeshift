@@ -88,7 +88,10 @@ bool psSpell::Load(iResultRow& row)
     name = row["name"];
 
     way = CacheManager::GetSingleton().GetWayByID(row.GetInt("way_id"));
+
     image         = row["image_name"];
+    CacheManager::GetSingleton().AddCommonStringID(image);
+
     description   = row["spell_description"];
     castingEffect = row["casting_effect"];
     realm         = row.GetInt("realm");
@@ -341,7 +344,7 @@ void psSpell::Cast(Client *client, float kFactor) const
 
     // Check for the right kind of target
     const int targetType = client->GetTargetType(target);
-    if (!(targetTypes & targetType))
+    if (!(targetTypes & targetType) && !client->IsGM())
     {
         csString allowedTypes;
         client->GetTargetTypeName(targetTypes, allowedTypes);
