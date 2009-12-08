@@ -1642,7 +1642,7 @@ public:
      * This is a switch statement that fills in particular data members
      * depending on the command that is given.
      */
-    psGUIInventoryMessage(MsgEntry *message);
+    psGUIInventoryMessage(MsgEntry *message, csStringHashReversible* msgstringshash);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -1657,14 +1657,15 @@ public:
 
     /// Add an item to the output message buffer
     void AddItem(   const char* name,
-                    int cstrMeshID,
+                    const char* meshName,
                     int containerID,
                     int slot,
                     int stackcount,
                     float weight,
                     uint32 size,
                     const char* icon,
-                    int purifyStatus );
+                    int purifyStatus,
+                    csStringSet* msgstrings );
 
     /// Add a newly emptied slot to output message buffer.
     void AddEmptySlot( int containerID, int slotID );
@@ -1678,7 +1679,7 @@ public:
     struct ItemDescription
     {
         csString name;
-        int cstrMeshID;
+        csString meshName;
         int slot;
         float weight;
         uint32 size;
@@ -2067,7 +2068,7 @@ public:
 
     psSpellBookMessage();
     psSpellBookMessage( uint32_t client );
-    psSpellBookMessage( MsgEntry* me, csStringHashReversible* msgstrings );
+    psSpellBookMessage( MsgEntry* me, csStringHashReversible* msgstringshash );
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -3913,7 +3914,7 @@ public:
       * This will look at the packet and figure out if it is a single item or a container.
       * If it is a container it will populate it's internal array of data.
       */
-    psViewItemDescription( MsgEntry* me );
+    psViewItemDescription( MsgEntry* me, csStringHashReversible* msgstringshash);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -3956,16 +3957,16 @@ public:
     int to;
 
     /// Add a item to this message ( assumes the base item is a container )
-    void AddContents(const char *name, const char *icon, int cstrMeshID, int purifyStatus, int slot, int stack);
+    void AddContents(const char *name, const char* meshName, const char *icon, int purifyStatus, int slot, int stack);
 
     /// Build the message ( assumes base item is a container ).
-    void ConstructMsg();
+    void ConstructMsg(csStringSet* msgstrings);
 
     struct ContainerContents
     {
         csString name;
         csString icon;
-        int cstrMeshID;
+        csString meshName;
         int slotID;
         int stackCount;
         int purifyStatus;
