@@ -73,6 +73,9 @@
 #include "eeditfpstoolbox.h"
 #include "eeditshortcutstoolbox.h"
 
+#include "iclient/ibgloader.h"
+#include <csutil/scfstringarray.h>
+
 const char * EEditApp::CONFIG_FILENAME = "/this/eedit.cfg";
 const char * EEditApp::APP_NAME        = "planeshift.eedit.application";
 const char * EEditApp::WINDOW_CAPTION  = "PlaneShift Effect Editor";
@@ -199,6 +202,32 @@ bool EEditApp::Init()
     iNativeWindow *nw = g3d->GetDriver2D()->GetNativeWindow();
     if (nw)
         nw->SetTitle(WINDOW_CAPTION);
+
+	// loads materials, meshes and maps
+    csRef<iBgLoader> loader = csQueryRegistry<iBgLoader>(object_reg);
+
+	loader->PrecacheDataWait("/planeshift/materials/materials.cslib", false);
+
+    csRef<iStringArray> meshes = vfs->FindFiles("/planeshift/meshes/");
+    for(size_t j=0; j<meshes->GetSize(); ++j)
+    {
+        loader->PrecacheDataWait(meshes->Get(j), false);
+    }
+
+    csRef<iStringArray> maps = vfs->FindFiles("/planeshift/world/");
+
+    for(size_t j=0; j<maps->GetSize(); ++j)
+    {
+        loader->PrecacheDataWait(maps->Get(j), false);
+    }
+    //CPrintf(CON_CMDOUTPUT,"Loader cache filled");
+
+	csRef<iStringArray> regions;
+	regions.AttachNew(new scfStringArray());
+	regions->Push("npcroom1");
+
+	loader->LoadZones(regions, true);
+
 
     // paws initialization
     paws = new PawsManager(object_reg, "/this/art/eedit.zip", NULL, "/this/eedit.cfg");
