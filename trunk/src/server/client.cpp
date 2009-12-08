@@ -454,7 +454,7 @@ bool Client::IsAllowedToAttack(gemObject * target, bool inform)
     {
         if (inform)
         {
-            psserver->SendSystemError(clientnum, msg, target->GetName());
+            psserver->SendSystemError(clientnum, msg, target? target->GetName(): "");
         }
 
         return false;
