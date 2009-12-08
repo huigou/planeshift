@@ -249,6 +249,8 @@ void pawsButton::Draw()
     	if (flashtype == FLASH_HIGHLIGHT)
     	{
     		SetColour(graphics2D->FindRGB(255,0,0));
+            if (releasedImage) 
+                pressedImage->Draw(screenFrame, drawAlpha);
     	}
     	else
     	{
