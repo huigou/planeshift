@@ -1364,7 +1364,9 @@ ALTER TABLE `race_info` MODIFY COLUMN `bracer` VARCHAR(20)  DEFAULT '' COMMENT '
 ALTER TABLE `item_categories` ADD COLUMN `repair_difficulty_pct` INT(3) UNSIGNED NOT NULL DEFAULT 100 COMMENT 'Difficulty amount when repairing this item category (passed to the repair scripts)' AFTER `skill_id_repair`;
 UPDATE `server_options` SET `option_value`='1233' WHERE `option_name`='db_version';
 
-
+#1234 - Kenneth Graunke removed exclude_target from spells (scripts can now check via <if t="Target = OrigTarget">)
+ALTER TABLE `spells` DROP COLUMN `exclude_target`;
+UPDATE `server_options` SET `option_value`='1234' WHERE `option_name`='db_version';
 
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.

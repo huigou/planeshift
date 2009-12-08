@@ -98,7 +98,6 @@ bool psSpell::Load(iResultRow& row)
     maxPower      = row.GetInt("max_power");
     offensive     = row.GetInt("offensive")!=0;
     targetTypes   = row.GetInt("target_type");
-    excludeTarget = row.GetInt("exclude_target")!=0;
 
     // if spell is defensive then you must be able to cast it on friends, otherwise the entry is wrong.
     csString errorMsg;
@@ -445,9 +444,6 @@ void psSpell::Affect(gemActor *caster, gemObject *target, float range, float kFa
         csArray<gemObject*> nearby = GEMSupervisor::GetSingleton().FindNearbyEntities(sector, pos, radius);
         for (size_t i = 0; i < nearby.GetSize(); i++)
         {
-            if (excludeTarget && target == nearby[i])
-                continue;
-
             if (!(targetTypes & caster->GetClient()->GetTargetType(nearby[i])))
                 continue;
 

@@ -130,9 +130,6 @@ protected:
     /// Bit field if valid target types for this spell
     int targetTypes;
 
-    /// Whether or not to exclude the target when AOE Radius > 0.
-    bool excludeTarget;
-
     /// Math for various properties.
     /// Casting duration: (Power, WaySkill, RelatedStat) -> Seconds
     MathExpression *castDuration;
