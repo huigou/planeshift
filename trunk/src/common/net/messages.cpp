@@ -2786,7 +2786,7 @@ csString psSpellCancelMessage::ToString(AccessPointers * /*access_ptrs*/)
 
 //--------------------------------------------------------------------------
 
-PSF_IMPLEMENT_MSG_FACTORY(psSpellBookMessage,MSGTYPE_SPELL_BOOK);
+PSF_IMPLEMENT_MSG_FACTORY4(psSpellBookMessage,MSGTYPE_SPELL_BOOK);
 
 psSpellBookMessage::psSpellBookMessage()
 {
@@ -2802,7 +2802,7 @@ psSpellBookMessage::psSpellBookMessage( uint32_t client )
     size = 0;
 }
 
-psSpellBookMessage::psSpellBookMessage( MsgEntry* me )
+psSpellBookMessage::psSpellBookMessage( MsgEntry* me, csStringHashReversible* msgstrings )
 {
     size_t length = me->GetUInt32();
 
@@ -2817,7 +2817,7 @@ psSpellBookMessage::psSpellBookMessage( MsgEntry* me )
         ns.glyphs[1] = me->GetStr();
         ns.glyphs[2] = me->GetStr();
         ns.glyphs[3] = me->GetStr();
-        ns.image = me->GetStr();
+        ns.image = msgstrings->Request(csStringID(me->GetUInt32()));
         spells.Push( ns );
     }
 
@@ -2842,7 +2842,7 @@ void psSpellBookMessage::AddSpell(const csString& name, const csString& descript
     spells.Push( ns );
 }
 
-void psSpellBookMessage::Construct()
+void psSpellBookMessage::Construct(csStringSet* msgstrings)
 {
     msg.AttachNew(new MsgEntry( size + sizeof(int) ));
     msg->SetType(MSGTYPE_SPELL_BOOK);
@@ -2859,7 +2859,7 @@ void psSpellBookMessage::Construct()
         msg->Add( spells[x].glyphs[1] );
         msg->Add( spells[x].glyphs[2] );
         msg->Add( spells[x].glyphs[3] );
-        msg->Add(spells[x].image);
+        msg->Add(msgstrings->Request(spells[x].image).GetHash());
     }
 }
 
