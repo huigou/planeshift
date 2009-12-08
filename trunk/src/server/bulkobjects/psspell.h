@@ -113,7 +113,7 @@ class psSpell : public iScriptableVar
     const char* ToString() { return name.GetDataSafe(); }
 
 protected:
-    bool AffectTarget(gemActor *caster, gemObject *target, float power) const;
+    bool AffectTarget(gemActor* caster, gemObject* origTarget, gemObject* target, float power) const;
 
     int id;
     csString name;

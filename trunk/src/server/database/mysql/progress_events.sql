@@ -120,8 +120,21 @@ INSERT INTO progression_events VALUES("cast Drain",
          </debuff>
        </apply-linked>
      </script>');
-
-
+INSERT INTO progression_events VALUES("cast Chain Lightning",
+    '<script>
+       <if t="Target = OrigTarget">
+         <then>
+           <fx source="Caster" target="Target" name="summon_missile" type="unattached"/>
+           <hp aim="Target" value="-10"/>
+           <msg aim="Target" text="${Caster} fries you with chain lightning!"/>
+         </then>
+         <else>
+           <fx source="OrigTarget" target="Target" name="flame_burst" type="unattached"/>
+           <hp aim="Target" value="-5"/>
+           <msg aim="Target" text="${Caster} shoots chain lightning at ${OrigTarget}, which arcs and hits you!"/>
+         </else>
+       </if>
+     </script>');
 
 # Char creation events - god
 INSERT INTO progression_events VALUES ('charcreate_2','<script><skill aim="Actor" name="Crystal Way" value="2"/><int  aim="Actor" value="3"/><animal-affinity aim="Actor" name="daylight" value="2"/></script>');
