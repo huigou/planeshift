@@ -271,7 +271,7 @@ void SpellManager::SendSpellBook(MsgEntry *notused, Client * client)
                       glyphImages[2], glyphImages[3], spells[i]->GetImage());
     }
 
-    mesg.Construct();
+    mesg.Construct(CacheManager::GetSingleton().GetMsgStrings());
     mesg.SendMessage();
 }
 
