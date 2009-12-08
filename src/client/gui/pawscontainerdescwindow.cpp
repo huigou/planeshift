@@ -191,9 +191,10 @@ void pawsContainerDescWindow::HandleViewItem( MsgEntry* me )
             csString sigData, data;
             sigData.Format("invslot_%u", mesg.containerID * 100 + mesg.contents[i].slotID + 16);
 
-            data.Format( "%s %d %d %s", mesg.contents[i].icon.GetData(),
+            data.Format( "%s %d %d %s %s", mesg.contents[i].icon.GetData(),
                 mesg.contents[i].stackCount,
                 mesg.contents[i].purifyStatus,
+                mesg.contents[i].meshName.GetData(),
                 mesg.contents[i].name.GetData() );
 
             printf("Publishing slot data %s -> %s\n", sigData.GetData(), data.GetData() );
