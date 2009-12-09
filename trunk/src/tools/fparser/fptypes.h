@@ -1,5 +1,5 @@
 /***************************************************************************\
-|* Function Parser for C++ v4.0.1                                          *|
+|* Function Parser for C++ v4.0.2                                          *|
 |*-------------------------------------------------------------------------*|
 |* Copyright: Juha Nieminen, Joel Yliluoma                                 *|
 \***************************************************************************/
@@ -37,7 +37,7 @@ namespace FUNCTIONPARSERTYPES
         cTrunc,
 
 // These do not need any ordering:
-// Except that if you change the order of eq,neq,lt,le,gt,gt, you
+// Except that if you change the order of {eq,neq,lt,le,gt,ge}, you
 // must also change the order in ConstantFolding_ComparisonOperations().
         cImmed, cJump,
         cNeg, cAdd, cSub, cMul, cDiv, cMod,
@@ -45,16 +45,16 @@ namespace FUNCTIONPARSERTYPES
         cNot, cAnd, cOr,
         cNotNot, /* Protects the double-not sequence from optimizations */
 
-        cDeg, cRad,
+        cDeg, cRad, /* Multiplication and division by 180 / pi */
 
         cFCall, cPCall,
 
 #ifdef FP_SUPPORT_OPTIMIZER
-        cVar,   /* Denotes a variable in CodeTree (not used by bytecode) */
         cFetch, /* Same as Dup, except with absolute index
-                   (next value is index) */
+                 * (next value is index) */
         cPopNMov, /* cPopNMov(x,y) moves [y] to [x] and deletes anything
-                     above [x] */
+                   * above [x]. Used for disposing of temporaries.
+                   */
         cLog2by, /* log2by(x,y) = log2(x) * y */
 #endif
         cAbsAnd,    /* As cAnd,       but assume both operands are absolute values */
@@ -63,13 +63,12 @@ namespace FUNCTIONPARSERTYPES
         cAbsNotNot, /* As cAbsNotNot, but assume the operand is an absolute value */
         cAbsIf,     /* As cAbsIf,     but assume the 1st operand is an absolute value */
 
-        cDup,   /* Duplicates the last value in the stack:
-                   Pop A, Push A, Push A */
+        cDup,   /* Duplicates the last value in the stack: Push [Stacktop] */
         cInv,   /* Inverts the last value in the stack (x = 1/x) */
         cSqr,   /* squares the last operand in the stack, no push/pop */
         cRDiv,  /* reverse division (not x/y, but y/x) */
         cRSub,  /* reverse subtraction (not x-y, but y-x) */
-        cRSqrt, /* inverse square-root) */
+        cRSqrt, /* inverse square-root (1/sqrt(x)) */
 
         cNop,
         VarBegin
@@ -249,7 +248,11 @@ struct FunctionParserBase<Value_t>::Data
 
     std::vector<unsigned> ByteCode;
     std::vector<Value_t> Immed;
+#ifndef FP_USE_THREAD_SAFE_EVAL
     std::vector<Value_t> Stack;
+    // Note: When Stack exists,
+    //       Stack.size() and StackSize are mutually redundant.
+#endif
     unsigned StackSize;
 
     Data();

@@ -1,5 +1,5 @@
 /***************************************************************************\
-|* Function Parser for C++ v4.0.1                                          *|
+|* Function Parser for C++ v4.0.2                                          *|
 |*-------------------------------------------------------------------------*|
 |* Copyright: Juha Nieminen, Joel Yliluoma                                 *|
 \***************************************************************************/
@@ -144,6 +144,9 @@ private:
     const char* CompileComparison(const char*);
     const char* CompileAnd(const char*);
     const char* CompileExpression(const char*);
+    inline const char* CompileFunction(const char*, unsigned);
+    inline const char* CompileParenthesis(const char*);
+    inline const char* CompileLiteral(const char*);
 };
 
 class FunctionParser: public FunctionParserBase<double> {};

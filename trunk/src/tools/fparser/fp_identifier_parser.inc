@@ -9,7 +9,8 @@
         function names that long just are not defined, the point is moot.
         */
         const unsigned char* const uptr = (const unsigned char*) input;
-        while(nameLength < maximumNameLength)
+        typedef signed char schar;
+        while(likely(nameLength < maximumNameLength))
         {
             unsigned char byte = uptr[nameLength+0];
             /* Handle the common case of A-Za-z first */
@@ -45,7 +46,7 @@
                         if(byte == 0xC2 && uptr[nameLength+1]==0xA0) break; // skip nbsp
                         // C2-DF - next common case when >= 0x40
                         // Valid sequence: C2-DF 80-BF
-                        if((unsigned char)(uptr[nameLength+1] - 0x80) > (0xBF-0x80)) break;
+                        if(schar(uptr[nameLength+1]) > schar(0xBF)) break;
                         nameLength += 2;
                         continue;
                     }
@@ -59,18 +60,21 @@
                         if(byte == 0xED) break; // ED is invalid
                         // Valid sequence: E1-EC 80-BF 80-BF
                         //            And: EE-EF 80-BF 80-BF
-                        if(byte == 0xE2 && uptr[nameLength+1] == 0x80
-                        && ((uptr[nameLength+2] >= 0x80
-                          && uptr[nameLength+2] <= 0x8B)
-                         || (uptr[nameLength+2] == 0xAF))) break; // break on various space characters
-                        if(byte == 0xE2 && uptr[nameLength+1] == 0x81
-                        && uptr[nameLength+2] == 0x9F) break; // this too
+                        if(byte == 0xE2)
+                        {
+                            // break on various space characters
+                            if(uptr[nameLength+1] == 0x80
+                            && (schar(uptr[nameLength+2]) <= schar(0x8B)
+                            || (uptr[nameLength+2] == 0xAF))) break;
+                            if(uptr[nameLength+1] == 0x81
+                            && uptr[nameLength+2] == 0x9F) break;
+                        } else
                         if(byte == 0xE3 && uptr[nameLength+1] == 0x80
                         && uptr[nameLength+2] == 0x80) break; // this too
 
-                        if((unsigned char)(uptr[nameLength+1] - 0x80) > (0xBF-0x80)) break;
+                        if(schar(uptr[nameLength+1]) > schar(0xBF)) break;
                     }
-                    if((unsigned char)(uptr[nameLength+2] - 0x80) > (0xBF-0x80)) break;
+                    if(schar(uptr[nameLength+2]) > schar(0xBF)) break;
                     nameLength += 3;
                     continue;
                 }
@@ -85,17 +89,17 @@
                     if(byte == 0xF4) // F4
                     {
                         // Valid sequence: F4 80-8F
-                        if((unsigned char)(uptr[nameLength+1] - 0x80) > (0x8F-0x80)) break;
+                        if(schar(uptr[nameLength+1]) > schar(0x8F)) break;
                     }
                     else
                     {
                         // F1-F3
                         // Valid sequence: F1-F3 80-BF 80-BF 80-BF
-                        if((unsigned char)(uptr[nameLength+1] - 0x80) > (0xBF-0x80)) break;
+                        if(schar(uptr[nameLength+1]) > schar(0xBF)) break;
                     }
                 }
-                if((unsigned char)(uptr[nameLength+2] - 0x80) > (0xBF-0x80)) break;
-                if((unsigned char)(uptr[nameLength+3] - 0x80) > (0xBF-0x80)) break;
+                if(schar(uptr[nameLength+2]) > schar(0xBF)) break;
+                if(schar(uptr[nameLength+3]) > schar(0xBF)) break;
                 nameLength += 4;
                 continue;
             }
