@@ -1,5 +1,5 @@
 /***************************************************************************\
-|* Function Parser for C++ v4.0.1                                          *|
+|* Function Parser for C++ v4.0.2                                          *|
 |*-------------------------------------------------------------------------*|
 |* Copyright: Juha Nieminen, Joel Yliluoma                                 *|
 \***************************************************************************/
@@ -318,9 +318,9 @@ namespace FUNCTIONPARSERTYPES
 
 #ifndef FP_SUPPORT_ASINH
     inline long double fp_asinh(long double x)
-    { return logl(x + sqrt(x*x + 1.0L)); }
+    { return logl(x + sqrtl(x*x + 1.0L)); }
     inline long double fp_acosh(long double x)
-    { return logl(x + sqrt(x*x - 1.0L)); }
+    { return logl(x + sqrtl(x*x - 1.0L)); }
     inline long double fp_atanh(long double x)
     { return logl((1.0L+x) / (1.0L-x)) * 0.5L; }
 #else
@@ -378,7 +378,7 @@ namespace FUNCTIONPARSERTYPES
     inline long fp_pow(long, long) { return 0; }
     inline long fp_sin(long) { return 0; }
     inline long fp_sinh(long) { return 0; }
-    inline long fp_sqrt(long) { return 0; }
+    inline long fp_sqrt(long) { return 1; }
     inline long fp_tan(long) { return 0; }
     inline long fp_tanh(long) { return 0; }
     inline long fp_asinh(long) { return 0; }
