@@ -284,4 +284,12 @@ void psCSSetup::MountUserData()
         printf("Could not mount %s as /planeshift/userdata!\n", configPath.GetData());
         PS_PAUSEEXIT(1);
     }
+
+    vfs->Unmount("/shadercache/user", NULL);
+
+    if (!vfs->Mount("/shadercache/user", configPath + "$/shadercache"))
+    {
+        printf("Could not mount %s as /shadercache/user!\n", configPath.GetData() );
+        PS_PAUSEEXIT(1);
+    }
 }
