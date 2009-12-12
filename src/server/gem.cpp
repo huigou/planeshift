@@ -730,9 +730,9 @@ void gemObject::Move(const csVector3& pos,float rotangle, iSector* room)
     pcmesh->MoveMesh(room, rotangle, pos);
 }
 
-bool gemObject::IsNear(gemObject *obj, float radius)
+bool gemObject::IsNear(gemObject *obj, float radius, bool ignoreY)
 {
-    return RangeTo(obj) < radius;
+    return RangeTo(obj, ignoreY) < radius;
 }
 
 float gemObject::RangeTo(gemObject* obj, bool ignoreY, bool ignoreInstance)
