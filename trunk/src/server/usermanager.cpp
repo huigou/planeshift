@@ -1982,7 +1982,6 @@ void UserManager::Pickup(Client *client, csString target)
 void UserManager::HandleMount(psUserCmdMessage& msg, Client *client)
 {
     // Add some check to see if the player is allowed to mount
-
     if (client->GetActor()->GetMode() == PSCHARACTER_MODE_OVERWEIGHT)
     {
         psserver->SendSystemError(client->GetClientNum(), "You cannot mount while carrying too much.");
@@ -2002,14 +2001,14 @@ void UserManager::HandleMount(psUserCmdMessage& msg, Client *client)
 
     // can only mount mounts
     if (!mount || !mount->GetActorPtr() || client->GetActor() == mount
-    || !mount->GetCharacterData()->IsMount()) //remove that last test to allow for player mounting
+    || (!mount->GetCharacterData()->IsMount() && (!client->IsGM() && !mount->GetCharacterData()->IsNPC()))) //remove that last test to allow for player mounting
     {
         psserver->SendSystemError(client->GetClientNum(),
                 "Can't mount %s", mount->GetName());
         return;
     }
 
-    if(!client->GetActor()->IsNear(mount, RANGE_TO_USE))
+    if(!client->GetActor()->IsNear(mount, RANGE_TO_USE, true))
     {
         psserver->SendSystemError(client->GetClientNum(),
                 "You are too far away from the mount");

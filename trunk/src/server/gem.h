@@ -329,7 +329,7 @@ public:
     csString GetMesh() { return factname.Current(); }
     OverridableMesh & GetOverridableMesh() { return factname; }
     void Move(const csVector3& pos,float rotangle,iSector* room);
-    bool IsNear(gemObject *obj,float radius);
+    bool IsNear(gemObject *obj,float radius, bool ignoreY = false);
     const csVector3 & GetPosition();
     void GetPosition(csVector3& pos, float& yrot,iSector*& sector);
     void GetPosition(csVector3& pos, iSector*& sector);
