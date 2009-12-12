@@ -493,9 +493,9 @@ void NetManager::Run ()
         // Check to resend packages that have not been ACK'd yet
         if (currentticks - lastresendcheck > RESENDCHECK)
         {
-            lastresendcheck = currentticks;
             CheckResendPkts();
             CheckFragmentTimeouts();
+            lastresendcheck = currentticks;
         }
 
         // Display Network statistics
