@@ -1729,7 +1729,15 @@ bool CacheManager::PreloadTraits()
         newtrait->cstr_id_texture   = FindCommonStringID(result[currentrow]["cstr_texture"]);
         newtrait->onlyNPC           = result[currentrow].GetInt("only_npc") != 0;
         newtrait->shaderVar         = result[currentrow]["shader"];
-
+printf("trait %d %d %d %s %s %s %s %d %s\n", result[currentrow].GetUInt32("id"),
+result[currentrow].GetUInt32("next_trait"),
+result[currentrow].GetUInt32("race_id"),
+result[currentrow]["name"],
+result[currentrow]["cstr_mesh"],
+result[currentrow]["cstr_material"],
+result[currentrow]["cstr_texture"],
+result[currentrow].GetInt("only_npc"),
+result[currentrow]["shader"]);
         psRaceInfo * raceInfo = GetRaceInfoByID(newtrait->raceID);
         if (raceInfo == NULL)
         {
@@ -2650,7 +2658,7 @@ bool CacheManager::PreloadItemStatsDatabase()
 psItemStats* CacheManager::CopyItemStats(uint32 id, csString newName)
 {
     // NOTE: This -must- match the schema of item_stats, except for UNIQUE KEY 'name' which is handled below.
-    const char *fields = "stat_type, weight, visible_distance, size, container_max_size, valid_slots, flags, decay_rate, item_skill_id_1, item_skill_id_2, item_skill_id_3, item_bonus_1_attr, item_bonus_2_attr, item_bonus_3_attr, item_bonus_1_max, item_bonus_2_max, item_bonus_3_max, dmg_slash, dmg_blunt, dmg_pierce, weapon_speed, weapon_penetration, weapon_block_targeted, weapon_block_untargeted, weapon_counterblock, armor_hardness, cstr_id_gfx_mesh, cstr_id_gfx_icon, cstr_id_gfx_texture, cstr_id_part, cstr_id_part_mesh, armorvsweapon_type, category_id, base_sale_price, item_type, requirement_1_name, requirement_1_value, requirement_2_name, requirement_2_value, requirement_3_name, requirement_3_value, item_type_id_ammo, spell_id_on_hit, spell_on_hit_prob, spell_id_feature, spell_feature_charges, spell_feature_timing, item_anim_id, description, sound, item_max_quality, equip_script, consume_script, creative_definition, max_charges, weapon_range";
+    const char *fields = "stat_type, weight, visible_distance, size, container_max_size, valid_slots, flags, decay_rate, item_skill_id_1, item_skill_id_2, item_skill_id_3, item_bonus_1_attr, item_bonus_2_attr, item_bonus_3_attr, item_bonus_1_max, item_bonus_2_max, item_bonus_3_max, dmg_slash, dmg_blunt, dmg_pierce, weapon_speed, weapon_penetration, weapon_block_targeted, weapon_block_untargeted, weapon_counterblock, armor_hardness, cstr_gfx_mesh, cstr_id_gfx_icon, cstr_id_gfx_texture, cstr_id_part, cstr_id_part_mesh, armorvsweapon_type, category_id, base_sale_price, item_type, requirement_1_name, requirement_1_value, requirement_2_name, requirement_2_value, requirement_3_name, requirement_3_value, item_type_id_ammo, spell_id_on_hit, spell_on_hit_prob, spell_id_feature, spell_feature_charges, spell_feature_timing, item_anim_id, description, sound, item_max_quality, equip_script, consume_script, creative_definition, max_charges, weapon_range";
 
     if (db->Command("INSERT INTO item_stats (%s) SELECT %s FROM item_stats WHERE id = %u", fields, fields, id) == QUERY_FAILED)
     {
