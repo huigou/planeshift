@@ -53,7 +53,7 @@ bool MessageManager::Verify(MsgEntry *pMsg,unsigned int flags,Client*& client)
     client = psserver->GetConnections()->FindAny(pMsg->clientnum);
     if (!client)
     {
-        Warning2(LOG_NET, "MessageManager got unknown client %d!", pMsg->clientnum);
+        Warning3(LOG_NET, "MessageManager got unknown client %d with message %d!", pMsg->clientnum, pMsg->GetType());
         return false;
     }
     
