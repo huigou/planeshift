@@ -155,7 +155,7 @@ void pawsDetailWindow::UpdateTabsVisibility(bool Skills, bool CharCreation, bool
         if(button) button->Hide();
     }
     
-    if(!lasttab->IsVisible())
+    if(!lastTab->IsVisible())
     {
         pawsButton* button = (pawsButton*)FindWidget( "ShowDescr" );
         lastTab = button;
