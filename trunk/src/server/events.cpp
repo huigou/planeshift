@@ -44,6 +44,7 @@
 #include "netmanager.h"
 #include "economymanager.h"
 #include "globals.h"
+#include "gem.h"
 
 PSF_IMPLEMENT_MSG_FACTORY(psDamageEvent,MSGTYPE_DAMAGE_EVENT);
 
@@ -160,7 +161,7 @@ psZPointsGainedEvent::psZPointsGainedEvent( gemActor* actor, const char *name, i
                        strlen(name)+1, PRIORITY_LOW));
                        
     msg->SetType(MSGTYPE_ZPOINT_EVENT);                   
-    msg->clientnum = 0;
+    msg->clientnum = actor->GetClientID();
     msg->Add( name );
     msg->AddPointer( (uintptr_t) actor );
     msg->Add( (uint32_t)gained );
