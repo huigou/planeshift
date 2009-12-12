@@ -115,8 +115,8 @@ void pawsDetailWindow::UpdateTabsVisibility(bool Skills, bool CharCreation, bool
     button = (pawsButton*)FindWidget( "ShowDescrOOC" );
     if(button)
     {   //show this only if there is an OOC description or the player can edit it
-        if(OOCDescription) { button->Show(); }
-        else               { button->Hide(); if(lasttab == button) 
+        if(OOCDescription) button->Show();
+        else               button->Hide();
     }
     button = (pawsButton*)FindWidget( "ShowCC" );
     if(button)
