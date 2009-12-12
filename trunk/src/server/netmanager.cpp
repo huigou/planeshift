@@ -49,8 +49,8 @@
 
 // Check every 3 seconds for linkdead clients
 #define LINKCHECK    3000
-// Check for resending every 200 ms
-#define RESENDCHECK    200
+// Check for resending every 1000 ms
+#define RESENDCHECK    1000
 // Redisplay network server stats every 60 seconds
 #define STATDISPLAYCHECK 60000
 
@@ -301,6 +301,7 @@ void NetManager::CheckResendPkts()
                 psMessageBytes* msg = (psMessageBytes*) packet->data;
                 type = msg->type;
             }
+            
             Error3("Queue full. Could not add packet with clientnum %d type %s.\n", pkt->clientnum, type == 0 ? "Unknown" : (const char *)  GetMsgTypeName(type));
             continue;
         }
