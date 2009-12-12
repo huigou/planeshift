@@ -76,6 +76,9 @@ void PaladinJr::Initialize(EntityManager* celbase)
 
 bool PaladinJr::ValidateMovement(Client* client, gemActor* actor, psDRMessage& currUpdate)
 {
+    if (!enabled)
+        return true;
+
     // Don't check GMs/Devs
     //if(client->GetSecurityLevel())
     //    return;
@@ -83,9 +86,6 @@ bool PaladinJr::ValidateMovement(Client* client, gemActor* actor, psDRMessage& c
     // Speed check always enabled
     if (!SpeedCheck(client, actor, currUpdate))
         return false;  // DON'T USE THIS CLIENT POINTER AGAIN
-
-    if (!enabled)
-        return true;
 
     checkClient = false;
 
