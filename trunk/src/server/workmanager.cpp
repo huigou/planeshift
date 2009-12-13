@@ -239,15 +239,9 @@ void WorkManager::HandleLockPick(MsgEntry* me,Client *client)
 
     // Check if target is action item
     gemActionLocation* gemAction = dynamic_cast<gemActionLocation*>(target);
-    if(gemAction) {
-        psActionLocation *action = gemAction->GetAction();
-
-        // Check if the actionlocation is linked to real item
-        InstanceID InstanceID = action->GetInstanceID();
-        if( InstanceID!= INSTANCE_ALL )
-        {
-            target = GEMSupervisor::GetSingleton().FindItemEntity( InstanceID );
-        }
+    if(gemAction) 
+    {
+        target = gemAction->GetAction()->GetRealItem();
         IsActionLocation = true;
     }
 
@@ -1734,6 +1728,9 @@ bool WorkManager::ScriptActor(gemActor* gemAct)
 // Do item script work
 bool WorkManager::ScriptItem(gemItem* gemItm)
 {
+    //TODO: check if it's really needed
+    if(!gemItm) return false;
+
     // Check range ignoring Y co-ordinate
     if (worker->RangeTo(gemItm, true) > RANGE_TO_USE)
     {
@@ -1782,15 +1779,8 @@ bool WorkManager::ScriptItem(gemItem* gemItm)
 // Do action location script work
 bool WorkManager::ScriptAction(gemActionLocation* gemAction)
 {
-    psActionLocation *action = gemAction->GetAction();
-
     // check if the actionlocation is linked to real item
-    InstanceID InstanceID = action->GetInstanceID();
-    if (InstanceID==INSTANCE_ALL)
-    {
-        InstanceID = action->GetGemObject()->GetEID().Unbox(); // FIXME: Need to understand & comment on ID interaction here.
-    }
-    gemItem* target = GEMSupervisor::GetSingleton().FindItemEntity( InstanceID );
+    gemItem* target = gemAction->GetAction()->GetRealItem();
 
     // Cast to item and call craft item
     return ScriptItem(target);
@@ -2464,17 +2454,7 @@ bool WorkManager::ValidateTarget(Client* client)
     gemObject* target = client->GetTargetObject();
 
     gemActionLocation* gemAction = dynamic_cast<gemActionLocation*>(target);
-    if(gemAction) {
-        psActionLocation *action = gemAction->GetAction();
-
-      // check if the actionlocation is linked to real item
-      InstanceID InstanceID = action->GetInstanceID();
-      if (InstanceID==INSTANCE_ALL)
-      {
-          InstanceID = action->GetGemObject()->GetEID().Unbox(); // FIXME: Understand & comment on ID magic here.
-      }
-      target = GEMSupervisor::GetSingleton().FindItemEntity( InstanceID );
-    }
+    if(gemAction) target = gemAction->GetAction()->GetRealItem();
 
     if (target)
     {
