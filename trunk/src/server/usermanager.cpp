@@ -2001,7 +2001,7 @@ void UserManager::HandleMount(psUserCmdMessage& msg, Client *client)
 
     // can only mount mounts
     if (!mount || !mount->GetActorPtr() || client->GetActor() == mount
-    || (!mount->GetCharacterData()->IsMount() && (!client->IsGM() && !mount->GetCharacterData()->IsNPC()))) //remove that last test to allow for player mounting
+    || (!mount->GetCharacterData()->IsMount() && (!client->IsGM() || !mount->GetCharacterData()->IsNPC()))) //remove that last test to allow for player mounting
     {
         psserver->SendSystemError(client->GetClientNum(),
                 "Can't mount %s", mount->GetName());
