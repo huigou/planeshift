@@ -1,5 +1,6 @@
 SubDir TOP src pslaunch ;
 
+ApplicationIcon win32 : pslaunch : [ ConcatDirs $(TOP) support icons icon1.ico ] ;
 Application pslaunch :
 	[ Wildcard *.cpp *.h ]
 ;
@@ -12,6 +13,7 @@ if $(HAVE_STATIC_PLUGINS) = "yes"
 {
 
 SubVariant static ;
+ApplicationIcon win32 : pslaunch_static : [ ConcatDirs $(TOP) support icons icon1.ico ] ;
 Application pslaunch_static : [ Wildcard *.cpp *.h ] ;
 CFlags pslaunch_static : [ FDefines CS_STATIC_LINKED ] ;
 LFlags pslaunch_static : -lcrystalspace_staticplugins-$(CRYSTAL.VERSION) ;
