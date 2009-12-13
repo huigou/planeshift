@@ -1883,6 +1883,8 @@ void pawsChatWindow::SendChatLine(csString& textToSend)
                 textToSend.Insert(0, "/help ");
             else if (chatType == "NpcText")
                 textToSend.Insert(0, "/tellnpc ");
+            else if (chatType == "ChannelsText")
+                textToSend.Insert(0, "/1 ");
             else
                 textToSend.Insert(0, "/say ");
 
