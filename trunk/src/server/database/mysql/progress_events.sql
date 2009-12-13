@@ -191,8 +191,6 @@ INSERT INTO progression_events VALUES('death_penalty',
          <msg text="You fell the curse of the death realm upon you." undo="You feel the curse of death lift."/>
        </apply>
      </script>');
-INSERT INTO progression_events VALUES('CraftTest','<script><msg aim="Actor" text="craft tag not implemented...what is it?"/></script>');
-INSERT INTO progression_events VALUES('CraftTest2','<script><msg aim="Actor" text="craft tag not implemented...what is it?"/></script>');
 
 INSERT INTO progression_events VALUES('PATH_Street Warrior',
     '<script>
