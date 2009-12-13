@@ -1,6 +1,5 @@
 <Author text="Kyeldon, Grigori" />
-<StringTable>
- <item orig="750" trans="" />
+<item orig="750" trans="" />
  <item orig="System text color" trans="Цвет текста системы" />
  <item orig="Put an item up for sale or offer to buy something." trans="Перетащите предмет вверх для продажи или предложите купить что-нибудь" />
  <item orig="Stats" trans="Характеристики" />
@@ -61,7 +60,7 @@
  <item orig="Points" trans="Очки" />
  <item orig="Coins to exchange:" trans="Монеты на обмен:" />
  <item orig="PvP" trans="Игрок против Игрока" />
- <item orig="landscape" trans="ланшафт" />
+ <item orig="landscape" trans="ландшафт" />
  <item orig="Type:" trans="Тип:" />
  <item orig="Time: " trans="Время" />
  <item orig="Exchange coins" trans="Разменять монеты" />
@@ -81,7 +80,7 @@
  <item orig="Min. FPS:" trans="Мин. FPS" />
  <item orig="Main" trans="Главная" />
  <item orig="Change" trans="Изменить" />
- <item orig="Descalate" trans="" />
+ <item orig="Descalate" trans="Уменьшить" />
  <item orig="Mother Name:" trans="Имя матери:" />
  <item orig="Privil." trans="Привил." />
  <item orig="Skin Colour" trans="Цвет кожи" />
@@ -98,7 +97,7 @@
  <item orig="Mesh:" trans="Полигоны: " />
  <item orig="Resolution" trans="Разрешение" />
  <item orig="Gender:" trans="Пол:" />
- <item orig="Refresh MOTD" trans="" />
+ <item orig="Refresh MOTD" trans="Обновить сообщение дня" />
  <item orig="Login" trans="Логин" />
  <item orig="Z:" trans="Z:" />
  <item orig="Spell Description:" trans="Описание заклинания" />
@@ -118,10 +117,10 @@
  <item orig="Enter the command(s):" trans="Введите команду/команды" />
  <item orig="Month:" trans="Месяц:" />
  <item orig="Chat" trans="Чат" />
- <item orig="Father Name:" trans="Имя Отца" />
+ <item orig="Father Name:" trans="Имя отца" />
  <item orig="Rank" trans="Ранг" />
  <item orig="Spawn item" trans="Появление объекта" />
- <item orig="o&clock" trans="" />
+ <item orig="o&clock" trans="часов" />
  <item orig="Own combat stance changes" trans="Свобя боевая стойка" />
  <item orig="Experience" trans="Опыт" />
  <item orig="Upload!" trans="Аплоад." />
@@ -132,7 +131,7 @@
  <item orig="Group text color" trans="Цвет текста Группы" />
  <item orig="New" trans="Новый" />
  <item orig="Mute sounds on focus loss" trans="Заглушить звуки при потере цели" />
- <item orig="Add Linked" trans="Add Linked" />
+ <item orig="Add Linked" trans="Добавить Связанный" />
  <item orig="keyboard" trans="клавиатура" />
  <item orig="Activity:" trans="Активность" />
  <item orig="You have been assigned to the selected petition." trans="Вас закрепили за выбранной петицией" />
@@ -143,7 +142,7 @@
  <item orig="Get Reward" trans="Получить награду" />
  <item orig="Magic" trans="Магия" />
  <item orig="Own attacks that fail to penetrate the armor" trans="Свои атаки, которые не могут пробить броню" />
- <item orig="Credits" trans="Кредиты" />
+ <item orig="Credits" trans="Авторы" />
  <item orig="details" trans="Детали" />
  <item orig="HP" trans="ХП" />
  <item orig="%s shouts: %s" trans="%s кричит: %s" />
@@ -179,7 +178,7 @@
  <item orig="Save" trans="Сохранить" />
  <item orig="Promote" trans="Повысить" />
  <item orig="Combat Skills" trans="Боевые Навыки" />
- <item orig="Polygon:" trans="Polygon:" />
+ <item orig="Polygon:" trans="Полигон:" />
  <item orig="Talk to everyone in your guild privately." trans="Поговорить с каждым в твоей гильдии лично" />
  <item orig="Others' attacks that are dodged" trans="Чужие атаки, от которых отклонились" />
  <item orig="Combat music" trans="Музыка Битвы" />
@@ -195,7 +194,7 @@
  <item orig="Game Control" trans="Контроль Игры" />
  <item orig="Mainchat brackets" trans="Скобки основного чата" />
  <item orig="Progression Points" trans="Очки Прогресса" />
- <item orig="Faction" trans="Фракции" />
+ <item orig="Faction" trans="Фракция" />
  <item orig="You have ignored no-one." trans="Вы никого не проигнорировали" />
  <item orig="NPC text color" trans="Цвет текста NPC" />
  <item orig="%s tells group: %s" trans="%s говорит группе: %s" />
@@ -228,10 +227,10 @@
  <item orig="CHARACTER SELECT" trans="ВЫБОР ПЕРСОНАЖА" />
  <item orig="Pickupable" trans="Поднимаемо" />
  <item orig="Detail information:" trans="Детальная информация" />
- <item orig="You will no longer ignore %s." trans="Вы больне не будете игнорировать %s." />
+ <item orig="You will no longer ignore %s." trans="Вы больше не будете игнорировать %s." />
  <item orig="Others' combat stance changes" trans="Чужие изменения боевых стоек" />
- <item orig="Ambiguous command: " trans="Ambiguous command:" />
- <item orig="The selected petition was %s" trans="The selected petition was %s" />
+ <item orig="Ambiguous command: " trans="Неясная команда:" />
+ <item orig="The selected petition was %s" trans="Выбранная петиция была %s" />
  <item orig="Loading game" trans="Загрузка игры" />
  <item orig="Use Collision Detection" trans="Использовать обнаружение столкновений" />
  <item orig="Invite" trans="Пригласить" />
@@ -248,12 +247,12 @@
  <item orig="Jobs" trans="Работы" />
  <item orig="Chat - Bubbles" trans="Чат - Пузыри" />
  <item orig="Welcome to PlaneShift!" trans="Добро пожаловать в PlaneShift" />
- <item orig="Delete" trans="Delete" />
- <item orig="Entities" trans="Entities" />
+ <item orig="Delete" trans="Удалить" />
+ <item orig="Entities" trans="Субъекты" />
  <item orig="Auction text color" trans="Цвет текста торга" />
- <item orig="Hello" trans="Hello" />
+ <item orig="Hello" trans="Привет" />
  <item orig="You're offered" trans="Вы предложили" />
- <item orig="Hi" trans="Hi" />
+ <item orig="Hi" trans="Хай" />
  <item orig="Own attacks that are dodged" trans="Собственные атаки, от которых уклонились" />
  <item orig="Done" trans="Сделано" />
  <item orig="Birth" trans="Рождение" />
@@ -275,172 +274,171 @@
  <item orig="Unmute Player" trans="Разглушить Игрока" />
  <item orig="Online only" trans="Только он-лайн" />
  <item orig="Pub notes" trans="Пуб записи" />
- <item orig="Edit Master" trans="" />
- <item orig="Amount to deposit" trans="" />
- <item orig="Join Game" trans="" />
- <item orig="Locked" trans="" />
- <item orig="Account Password:" trans="" />
- <item orig="Items" trans="" />
- <item orig="Factions" trans="" />
- <item orig="Weight:" trans="" />
- <item orig="Petition submitted:" trans="" />
- <item orig="Men Stam." trans="" />
- <item orig="Requesting World" trans="" />
- <item orig="Group" trans="" />
- <item orig="Help text color" trans="" />
- <item orig="Face" trans="" />
- <item orig="OK" trans="" />
- <item orig="First Person" trans="" />
- <item orig="Selection" trans="" />
- <item orig="?" trans="" />
- <item orig="Trigger:" trans="" />
- <item orig="Refresh List" trans="" />
- <item orig="Character Name" trans="" />
- <item orig="Kick Player" trans="" />
- <item orig="Filter incoming bad words" trans="" />
- <item orig="Skill" trans="" />
+ <item orig="Edit Master" trans="Мастер редактирования" />
+ <item orig="Amount to deposit" trans="Количество для добавления" />
+ <item orig="Join Game" trans="Присоединиться к Игре" />
+ <item orig="Locked" trans="Заперто" />
+ <item orig="Account Password:" trans="Пароль к цчетной записи" />
+ <item orig="Items" trans="Предметы" />
+ <item orig="Factions" trans="Фракции" />
+ <item orig="Weight:" trans="Вес:" />
+ <item orig="Petition submitted:" trans="Поданная петиция:" />
+ <item orig="Men Stam." trans="Запас умств. сил" />
+ <item orig="Requesting World" trans="Заправшивается Мир" />
+ <item orig="Group" trans="Группа" />
+ <item orig="Help text color" trans="Цвет текста помощи" />
+ <item orig="Face" trans="Лицо" />
+ <item orig="OK" trans="OK" />
+ <item orig="First Person" trans="Первое лицо" />
+ <item orig="Selection" trans="Выбор" />
+ <item orig="?" trans="?" />
+ <item orig="Trigger:" trans="Триггеры" />
+ <item orig="Refresh List" trans="Обновить лист" />
+ <item orig="Character Name" trans="Имя Персонажа" />
+ <item orig="Kick Player" trans="Кикнуть игрока" />
+ <item orig="Filter incoming bad words" trans="Фильтровать входящую брань" />
+ <item orig="Skill" trans="Навык" />
  <item orig="The selected petition has been escalated." trans="" />
- <item orig="Your notes:" trans="" />
- <item orig="Rotate" trans="" />
- <item orig="Birth Event:" trans="" />
- <item orig="Character description:" trans="" />
- <item orig="No" trans="" />
- <item orig="Combat messages regarding me" trans="" />
- <item orig="Player name:" trans="" />
- <item orig="Mouse" trans="" />
- <item orig="Position:" trans="" />
- <item orig="Help" trans="" />
- <item orig="View chat" trans="" />
- <item orig="Min. distance:" trans="" />
- <item orig="Quit" trans="" />
- <item orig="Lockpicking" trans="" />
- <item orig="models" trans="" />
- <item orig="Siblings" trans="" />
- <item orig="Camera" trans="" />
- <item orig="Remember password" trans="" />
- <item orig="Third Person Follow" trans="" />
- <item orig="Character Name:" trans="" />
- <item orig="Day:" trans="" />
- <item orig="Clear" trans="" />
- <item orig="Next" trans="" />
- <item orig="Stat" trans="" />
- <item orig="%s tells you: %s" trans="" />
- <item orig="D:" trans="" />
- <item orig="Jobs Skill description:" trans="" />
- <item orig="Mana" trans="" />
- <item orig="Yes" trans="" />
- <item orig="Reset" trans="" />
- <item orig="Interface sounds" trans="" />
- <item orig="Talk to your group privately." trans="" />
- <item orig="Own attacks that are blocked" trans="" />
- <item orig="Religion:" trans="" />
- <item orig="You can not ignore yourself." trans="" />
- <item orig="Members" trans="" />
- <item orig="List all of the petitions you have submitted." trans="" />
- <item orig="Settings" trans="" />
- <item orig="You must select a petition from the list in order to assign yourself." trans="" />
- <item orig="Count:" trans="" />
- <item orig="Back" trans="" />
- <item orig="graphics" trans="" />
- <item orig="You tell %s: %s" trans="" />
- <item orig="Add New" trans="" />
- <item orig="Infinite Inventory" trans="" />
- <item orig="Lose focus on send" trans="" />
- <item orig="Hair Style" trans="" />
- <item orig="New Character" trans="" />
- <item orig="Magic Skill description:" trans="" />
- <item orig="M:" trans="" />
- <item orig="Infinite Mana" trans="" />
- <item orig="Status:" trans="" />
- <item orig="Teleport To Player" trans="" />
- <item orig="Add" trans="" />
- <item orig="PARENTS" trans="" />
- <item orig="Petition Text:" trans="" />
- <item orig="Invincible" trans="" />
- <item orig="You're offering" trans="" />
- <item orig="Jobs Skills List:" trans="" />
- <item orig="Magic Skills" trans="" />
- <item orig="Combat messages regarding others" trans="" />
- <item orig="Actions" trans="" />
- <item orig="Chat - Filters" trans="" />
- <item orig="Amount to withdraw" trans="" />
- <item orig="Others' attacks that are blocked" trans="" />
+ <item orig="Your notes:" trans="Ваши записи" />
+ <item orig="Rotate" trans="Вращать" />
+ <item orig="Birth Event:" trans="Событие при родах" />
+ <item orig="Character description:" trans="Описание персонажа" />
+ <item orig="No" trans="Нет" />
+ <item orig="Combat messages regarding me" trans="Боевые сообщения касаемо меня" />
+ <item orig="Player name:" trans="Имя игрока:" />
+ <item orig="Mouse" trans="Мышка" />
+ <item orig="Position:" trans="Позиция:" />
+ <item orig="Help" trans="Помощь" />
+ <item orig="View chat" trans="Смотреть чат" />
+ <item orig="Min. distance:" trans="Мин. дистанция" />
+ <item orig="Quit" trans="Выход" />
+ <item orig="Lockpicking" trans="Взлом замков" />
+ <item orig="models" trans="модели" />
+ <item orig="Siblings" trans="Братья и сестры" />
+ <item orig="Camera" trans="Камера" />
+ <item orig="Remember password" trans="Помнить пароль" />
+ <item orig="Third Person Follow" trans="Следование от третьего лица" />
+ <item orig="Character Name:" trans="Имя персонажа" />
+ <item orig="Day:" trans="День: " />
+ <item orig="Clear" trans="Очистить" />
+ <item orig="Next" trans="Далее" />
+ <item orig="Stat" trans="Характеристики" />
+ <item orig="%s tells you: %s" trans="%s говорит Вам: %s" />
+ <item orig="D:" trans="D:" />
+ <item orig="Jobs Skill description:" trans="Описание навыка работы" />
+ <item orig="Mana" trans="Мана" />
+ <item orig="Yes" trans="Да" />
+ <item orig="Reset" trans="сброс" />
+ <item orig="Interface sounds" trans="Звуки интерфейса" />
+ <item orig="Talk to your group privately." trans="Говорить своей группе приватно" />
+ <item orig="Own attacks that are blocked" trans="Свои блокированные атаки" />
+ <item orig="Religion:" trans="Религия:" />
+ <item orig="You can not ignore yourself." trans="Себя игнорировать нельзя." />
+ <item orig="Members" trans="Члены" />
+ <item orig="List all of the petitions you have submitted." trans="Список всех петиций, которые Вы подали" />
+ <item orig="Settings" trans="Настройки" />
+ <item orig="You must select a petition from the list in order to assign yourself." trans="Вы должны выбрать петицию из списка, чтобы назначить ее себе." />
+ <item orig="Count:" trans="Счет:" />
+ <item orig="Back" trans="Назад" />
+ <item orig="graphics" trans="графика" />
+ <item orig="You tell %s: %s" trans="Вы говорите %s: %s" />
+ <item orig="Add New" trans="Добавить новый" />
+ <item orig="Infinite Inventory" trans="Бесконечный инвентарий" />
+ <item orig="Lose focus on send" trans="Потерять фокус при посылке" />
+ <item orig="Hair Style" trans="Стиль Волос" />
+ <item orig="New Character" trans="Новый Персонаж" />
+ <item orig="Magic Skill description:" trans="Описание Навыка Магии" />
+ <item orig="M:" trans="M:" />
+ <item orig="Infinite Mana" trans="Бесконечная Мана" />
+ <item orig="Status:" trans="Статус:" />
+ <item orig="Teleport To Player" trans="Телепорт к Игроку" />
+ <item orig="Add" trans="Добавить" />
+ <item orig="PARENTS" trans="РОДИТЕЛИ" />
+ <item orig="Petition Text:" trans="Текст петиции" />
+ <item orig="Invincible" trans="Неузвимость" />
+ <item orig="You're offering" trans="Вы предлагаете" />
+ <item orig="Jobs Skills List:" trans="Список Навыков работы" />
+ <item orig="Magic Skills" trans="Магические Навыки" />
+ <item orig="Combat messages regarding others" trans="Боевые сообщение касаемо других" />
+ <item orig="Actions" trans="Действия" />
+ <item orig="Chat - Filters" trans="Чат - Фильтры" />
+ <item orig="Amount to withdraw" trans="Количество для снятия" />
+ <item orig="Others' attacks that are blocked" trans="Заблокированные атаки других" />
  <item orig="Talk to the people in your immediate vicinity." trans="" />
- <item orig="Player name color" trans="" />
- <item orig="Random name" trans="" />
+ <item orig="Player name color" trans="Цвет имени игрока" />
+ <item orig="Random name" trans="Случайное имя" />
  <item orig="Couldn't resolve server hostname." trans="" />
- <item orig="Escalate" trans="" />
- <item orig="30" trans="" />
- <item orig="Various Skills" trans="" />
- <item orig="Events" trans="" />
- <item orig="Trias:" trans="" />
- <item orig="Auto Tab selection:" trans="" />
- <item orig="Chat - Tabs" trans="" />
+ <item orig="Escalate" trans="Обострить" />
+ <item orig="30" trans="30" />
+ <item orig="Various Skills" trans="Различные Навыки" />
+ <item orig="Events" trans="События" />
+ <item orig="Trias:" trans="Trias:" />
+ <item orig="Auto Tab selection:" trans="Авто выбор Вкладок" />
+ <item orig="Chat - Tabs" trans="Чат - Вкладки" />
  <item orig="Makes the server log what target player is saying." trans="" />
- <item orig="New Account" trans="" />
- <item orig="Beard Style" trans="" />
- <item orig="Mute Player" trans="" />
- <item orig="Shortcut key:" trans="" />
- <item orig="Controls" trans="" />
- <item orig="Name:" trans="" />
- <item orig="Discard" trans="" />
- <item orig="Y:" trans="" />
- <item orig="Servers:" trans="" />
- <item orig="Join" trans="" />
- <item orig="Assigned GM:" trans="" />
- <item orig="Lockable" trans="" />
- <item orig="Distance:" trans="" />
- <item orig="Echo screen text" trans="" />
- <item orig="Loading world" trans="" />
- <item orig="New User? Register at http://laanx.fragnetics.com/register" trans="" />
- <item orig="Quests" trans="" />
- <item orig="Please wait for verification from server" trans="" />
- <item orig="o'clock" trans="" />
- <item orig="You must select a petition from the list in order to close it." trans="" />
- <item orig="Name" trans="" />
- <item orig="Getting entities" trans="" />
- <item orig="You must select a petition from the list in order to escalate it." trans="" />
- <item orig="Custom" trans="" />
- <item orig="Sound" trans="" />
- <item orig="Background music" trans="" />
- <item orig="Uncompleted" trans="" />
- <item orig="Petitons are waiting." trans="" />
- <item orig="Completed" trans="" />
- <item orig="none" trans="" />
- <item orig="Alternates" trans="" />
- <item orig="Save MOTD" trans="" />
- <item orig="network" trans="" />
- <item orig="Interface" trans="" />
- <item orig="Loop background music" trans="" />
- <item orig="Shout text color" trans="" />
- <item orig="Log the chat messages" trans="" />
- <item orig="Filter outgoing bad words" trans="" />
- <item orig="Realm" trans="" />
- <item orig="cancelled." trans="" />
- <item orig="closed." trans="" />
- <item orig="Waiting on server data.." trans="" />
- <item orig="View all" trans="" />
- <item orig="Unknown Chat Type: %d" trans="" />
- <item orig="/ 100" trans="" />
- <item orig="Free Rotation" trans="" />
- <item orig="Actual FPS may vary." trans="" />
- <item orig="You must select a petition from the list in order to view it." trans="" />
- <item orig="Spells" trans="" />
- <item orig="Shortcuts" trans="" />
- <item orig="Guild text color" trans="" />
- <item orig="Random" trans="" />
- <item orig="Job:" trans="" />
- <item orig="Ok" trans="" />
- <item orig="Sell" trans="" />
- <item orig="Way" trans="" />
- <item orig="controls" trans="" />
- <item orig="Close" trans="" />
- <item orig="Website:" trans="" />
- <item orig="Various" trans="" />
- <item orig="Combat Skill description:" trans="" />
- <item orig="Ambient sounds" trans="" />
- <item orig="Greetings" trans="" />
- <item orig="Select a reward:" trans="" />
- <item orig="Ambient Volume" trans="" />
- <item orig="Hair Colour" trans="" />
-</StringTable>
+ <item orig="New Account" trans="Новая учетная запись" />
+ <item orig="Beard Style" trans="Стиль бороды" />
+ <item orig="Mute Player" trans="Заключить Игрока" />
+ <item orig="Shortcut key:" trans="Кнопка ярлыка" />
+ <item orig="Controls" trans="Контроль" />
+ <item orig="Name:" trans="Имя:" />
+ <item orig="Discard" trans="Отменить" />
+ <item orig="Y:" trans="Y:" />
+ <item orig="Servers:" trans="Сервера:" />
+ <item orig="Join" trans="Присоединиться" />
+ <item orig="Assigned GM:" trans="Назначенный ГМ" />
+ <item orig="Lockable" trans="Запераемые" />
+ <item orig="Distance:" trans="Дистанция:" />
+ <item orig="Echo screen text" trans="Текст экрана эха." />
+ <item orig="Loading world" trans="Загрузка мира" />
+ <item orig="New User? Register at http://laanx.fragnetics.com/register" trans="Новый Пользователь? Зарегистрируйтесь на http://laanx.fragnetics.com/register" />
+ <item orig="Quests" trans="Задания" />
+ <item orig="Please wait for verification from server" trans="Пожалуйста, подождите верификации от сервера" />
+ <item orig="o'clock" trans="часов" />
+ <item orig="You must select a petition from the list in order to close it." trans="Вы должны выбрать петицию из списка, чтобы закрыть ее" />
+ <item orig="Name" trans="Имя" />
+ <item orig="Getting entities" trans="Получение субъектов" />
+ <item orig="You must select a petition from the list in order to escalate it." trans="Вы должны выбрать петицию из списка, чтобы обострить ее" />
+ <item orig="Custom" trans="Произвольный" />
+ <item orig="Sound" trans="Звук" />
+ <item orig="Background music" trans="Фоновая музыка" />
+ <item orig="Uncompleted" trans="Незавершено" />
+ <item orig="Petitons are waiting." trans="Ожидающие петиции" />
+ <item orig="Completed" trans="Завершено" />
+ <item orig="none" trans="нет" />
+ <item orig="Alternates" trans="Альтернативы" />
+ <item orig="Save MOTD" trans="Сохранить Сообщение Дня" />
+ <item orig="network" trans="сеть" />
+ <item orig="Interface" trans="Интерфейс" />
+ <item orig="Loop background music" trans="Заглушить фоновую музыку" />
+ <item orig="Shout text color" trans="Цвет текста выкрививаний" />
+ <item orig="Log the chat messages" trans="Лог сообщений чата" />
+ <item orig="Filter outgoing bad words" trans="Фильтровать исходящую брань" />
+ <item orig="Realm" trans="Царство" />
+ <item orig="cancelled." trans="отменено." />
+ <item orig="closed." trans="закрыто." />
+ <item orig="Waiting on server data.." trans="Ожидание данных сервера" />
+ <item orig="View all" trans="Смотреть все" />
+ <item orig="Unknown Chat Type: %d" trans="Неизвестный Тип Чата: %d" />
+ <item orig="/ 100" trans="/ 100" />
+ <item orig="Free Rotation" trans="Свободное вращение" />
+ <item orig="Actual FPS may vary." trans="Фактические FPS могут варьироваться" />
+ <item orig="You must select a petition from the list in order to view it." trans="Вы должны выбрать петицию из списка, чтобы посмотреть ее" />
+ <item orig="Spells" trans="Заклинания" />
+ <item orig="Shortcuts" trans="Ярлыки" />
+ <item orig="Guild text color" trans="Цвет текста Гильдии" />
+ <item orig="Random" trans="Случайно" />
+ <item orig="Job:" trans="Работа:" />
+ <item orig="Ok" trans="Ok" />
+ <item orig="Sell" trans="Продать" />
+ <item orig="Way" trans="Путь" />
+ <item orig="controls" trans="управление" />
+ <item orig="Close" trans="Закрыть" />
+ <item orig="Website:" trans="Вебсайт:" />
+ <item orig="Various" trans="Разное:" />
+ <item orig="Combat Skill description:" trans="Описание боевого навыка" />
+ <item orig="Ambient sounds" trans="Окружающие звуки" />
+ <item orig="Greetings" trans="Приветствия" />
+ <item orig="Select a reward:" trans="Выберите награду" />
+ <item orig="Ambient Volume" trans="Громкость окружения" />
+ <item orig="Hair Colour" trans="Цвет Волос" />
