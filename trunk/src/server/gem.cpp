@@ -3881,6 +3881,8 @@ gemNPC::gemNPC( psCharacter *chardata,
     //}
 
     pcmove->SetOnGround(true);
+    
+    combat_stance = CombatManager::GetStance("Normal");
 
     if (chardata->GetOwnerID().IsValid())
     {
