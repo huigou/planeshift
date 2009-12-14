@@ -1385,6 +1385,7 @@ void GEMClientActor::CopyNewestData(GEMClientActor& oldActor)
 {
     DRcounter = oldActor.DRcounter;
     DRcounter_set = true;
+    vitalManager->SetVitals(*oldActor.GetVitalMgr());
     SetPosition(oldActor.Pos(), oldActor.GetRotation(), oldActor.GetSector());
 }
 
@@ -1823,6 +1824,7 @@ void GEMClientActor::SetAlive( bool newvalue, bool newactor )
 
 void GEMClientActor::SetIdleAnimation(const char* anim)
 {
+    if(!cal3dstate) return;
     cal3dstate->SetDefaultIdleAnim(anim);
     if (lastSentVelocity.IsZero())
         cal3dstate->SetVelocity(0);
@@ -1869,6 +1871,7 @@ bool GEMClientActor::CheckLoadStatus()
 
     csRef<iMeshWrapper> mesh = factory->CreateMeshWrapper();
     charApp->SetMesh(mesh);
+    printf("%s\n",mesh->QueryObject()->GetName());
 
     if(!matName.IsEmpty())
     {
@@ -1896,14 +1899,17 @@ bool GEMClientActor::CheckLoadStatus()
         }
 
         csRef<iMeshWrapper> mountMesh = mountFactory->CreateMeshWrapper();
+        printf("->%s\n",mountMesh->QueryObject()->GetName());
         SwitchToRealMesh(mountMesh);
         charApp->ApplyRider(pcmesh);
+        printf("->%s\n",pcmesh->QueryObject()->GetName());
         csRef<iSpriteCal3DState> riderstate = scfQueryInterface<iSpriteCal3DState> (mesh->GetMeshObject());
         riderstate->SetAnimCycle(MounterAnim,100);
     }
     else
     {
         SwitchToRealMesh(mesh);
+        printf("-->%s\n",pcmesh->QueryObject()->GetName());
     }
 
     pcmesh->GetFlags().Set(CS_ENTITY_NODECAL);
