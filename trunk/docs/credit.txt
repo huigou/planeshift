@@ -1,4 +1,4 @@
-@PlaneShift Team at Steel Blue 0.4.03 Release (released December-2008)
+@PlaneShift Team at Arcane Chrysalis 0.5.0 Release (released December 2009)
 
 &Project Leader, Director
 
@@ -7,116 +7,103 @@ Luca "Talad" Pancallo, for building a great team to make a dream come true.
 
 &The pillars
 
-Andrew "Acraig" Craig, for client gui foundation, char creation screens, equipment, inventory, overall coordination ...
+Michael "Xordan" Gist, for a new updater system and game launcher, a background loader, graphical enhancements, many performance improvements and more...
 
-Brian Lee "Xillix" Bonfonti, Settings department leader, for quests, npcs dialogues, books, prospect management, hard work and lots of passion.
+Stefano "weltall" Angeleri, for massive amounts of bug hunting and bug fixing, feature request implementation, lot of testing and the loan of his personal server for testing.
+
+Brian Lee Bonfonti, Settings department leader, for quests, npcs dialogues, books, prospect management, leader of the Great Bug Extermination Drive, plus hard work and lots of passion.
 
 
 &Client and Server engine
 
-Andrew "Acraig" Craig, client side department leader.
+Andrew "Acraig" Craig, for client gui foundation, char creation screens, equipment, inventory, overall coordination ...
 
-Keith "Vengeance" Fulton, for lights, animation management, char customization, client/server connections, ...
+Keith "Vengeance" Fulton, for a great deal of PAWS work, the redesigned GUI, NPC voicing,  rewriting the quest system, providing support for audio npc responses and more ...
 
-Arianna "AryHann" Benigno, for marriage system, weather, past running of the testing team and many bug fixes.
+Michael "Xordan" Gist, for a new updater system and game launcher, a background loader, graphical enhancements, many performance improvements and more...
+
+Stefano "weltall" Angeleri, for massive amounts of bug hunting and bug fixing, feature request implementation, and the loan of his personal server for testing.
+
+Andrew "Khaki" Dai, for client/server synchronization, anti-cheat modules, improved collision detection and MacOSX Build!
+
+Kenny "Kayden" Graunke, for bug fixing, code clean up, inventory, containers and magic system enhancements.
 
 Dave "Acissej" Bentham, for maps/book uniqueness, spells, active magic window, events commands.
 
-Michael "Borrillis" Cummings, for Pets system, char creation affinity.
-
-Andrew "Khaki" Dai, for client/server synchronization, anti-cheat modules, improved collision detection.
-
-Michael "Xordan" Gist, for a new updater, banking system, many bug fixes and optimisations, and cross-platform maintenance.
-
-Kenny "Kayden" Graunke, for bug fixing, code clean up, inventory, containers and non mortal duels.
-
-Sasha "Kemedes" Levin, for commands improvements, char deletion and lot of bug fixing.
+Steven "Aresilek" Patrick, for refactors, bug fixes and patch reviewing.
 
 Anders "Magodra" Reggestad, for magic system implementation, NPC AI, tribes and a lot more.
 
-Andrew "aarobber" Robberts, for camera movement, particles, shadows, chat bubbles.
-
-Roland "Ragnarin" Schulz, for improving the char labels and endless other fixes.
-
 Thomas "TomT" Towey, for weapon and armor craft systems, server maintenance and many bug fixes.
 
-Enar "Bereror" VÃ¤ikene, for minigames and bug fixing.
-
 Trond "Trymm" Varslot, for MacOSX support.
-
-Steven "Aresilek" Patrick, for refactors, bug fixes and patch reviewing.
-
-Andreas "Paldorin" Heinchen, for fixing many serious memory leaks and other code bugs.
-
-Stefano "weltall" Angeleri, for lots of bug fixing and code refactoring.
 
 
 &Settings
 
-Brian Lee "Xillix" Bonfonti, Setting department leader, for quests, npcs dialogues, books.
+Brian Lee Bonfonti, Setting department leader, for quests, npcs dialogues, books.
 
-Desmond "Jeraphon", for quests, npc dialogues, kas and books.
+Sherry "Rizin" Heidkamp, for translating all quest into the new system, NPCs, oversight of and proposals for the tutorial, internal document management, testing, and more ... 
 
-Sherry "Rizin" Heidkamp, for quests, books, NPCs, oversight of and proposals for the tutorial, internal document management, and exceptional editing.
-
-Steve "Darkmoon" Scott, for maps, npcs dialogues, quests and knowledge areas.
-
-Stacy "Venae Rell" Davis, for uncompromising editing, written and artistic contributions, and superior prospect management.
+Steve "Darkmoon" Scott, for maps, npcs dialogues, quests and knowledge areas, and recovery of older but useful ideas & documents.
 
 Fred "Steuben" Prentice, for npc paths, and engine liason duties.
 
-Frank "Eriroley" Barton, for WebConsole utilities and special projects, quests, and editing.
+Ruaan "Valrion" Rautenbach, for quest writing, "menuizing" quests, testing, and content review.
 
-Melissa "Ellille" Barton for cooking and baking development, and her aid in furthering settings and making the world make sense.
+Shon "Phanto" Bester, for quest writing, "menuizing" quests and content review.
 
-Angela "Oomi" Miller, for quests, books, KAs, and organization of in-progress quests.
+Jay "Hanix" Glenn, for quest writing, testing, tutorial rewrites, and content review.
 
+John "Hoki" Langham-Service, for quest writing, testing, tutorial rewrites, and content review.
+
+Angela "Oomi" Miller, for "menuizing" quests, NPC voicing, and work on re-establishing the PR department
 
 
 &2D Art
 
 Rob "Ulf" Walker, for gugrontid level, lot of good textures and his motivation.
 
-Kelvin "Gluonite" Mason for gugrontid textures, derghir tools, houses and textures, items.
+Christof "Kinea" Hagedorn, for players and monsters textures.
 
-Elina "Karyuu" Eganova, for player and monsters skins, icons, new web site, armor skins and more.
+Thomas "Suimse" Montreau for fantastic concept art and the new splash screen
 
-Jan "Ghrynn" Horak, for new character skeleton and new animations for player races.
+Matthew "Botanic" Lagoe for work on improved/missing items, etc.
 
-Alexei "Inca" Popov, for great architectural sketches on player races and other concept art.
-
-Ethan "Gentar" Scheu, for bronze doors texturing, and armor textures.
+Elina "Karyuu" Eganova, for player and monsters skins, icons, new monsters.
 
 
 &3D Art
 
 Ville "Cherppow" Rantapuska, for many item models, stone and elves client skins, deathrealm expansion and more.
 
-Rob "Ulf" Walker, for gugrontid level, lot of good textures and his motivation.
+Jean "Clovenhoof" Nygård, for monsters models and textures.
 
-Stacy "Venae Rell" Davis, for blackflame and xiosia altars and other textures.
+Clint "Clint" Dramnitzke, for plate armor meshes, and many items.
+
+Rob "Ulf" Walker, for gugrontid level, lot of good textures and his motivation.
 
 Elina "Karyuu" Eganova, for Tlo-ke, Kikiri and female Dermf models, Klyros male and Dermorian female animations.
 
+Stacy "Venae Rell" Davis, for blackflame area and putting the foundations of the new Death realm area
+
 Trond "Trymm" Varslot, improvement to characters animations, velnishi and kikiri animations.
 
-Creath "Artician" Carter, for his impressive hard work and focus on critical assets like arena, ojaveda, roads.
-
-Ben "Djaggernaut" Chavigner, for carkarass and consumer monster, plus amazing additions to death realm.
-
-Erik "Erik" Bakker, for Trepor model, Klyros model, sewers level, player animations.
+Kieve "Kieve" Svetnikov for documentation, process improvement and multiple modelling projects
 
 
 &Game Masters
 
-Anselm "Kerol" Kiefner, GM Team Leader, oversight of and proposals for the tutorial, and settings contributor.
+Anselm "Kerol" Kiefner, for his hard work and dedication while GM Team Leader
+
+The GM Team: Dajoji, Dohmo, Ingles, Kander, Katu, Mektar, Marathal, Rhumdor, Roberra, Sirxris, Smekel, Taulus, Tazen, Venalan, Vonor, Xopal, Zeetra, and Zordian for holding events, answering petitions, testing and more ...
 
 
 &Rules
 
-Michael "Xordan" Gist, for balancing progression system and new stamina rules.
+Chris "Bovek" Langsenkamp, for reworking crafting and a lot of basic scripting and progression formulas.
 
-Scott "Starg" Gibson, for adding new crafting, repairing old crafting, and many other small fixes.
+G. "Ravna" Hofstee, for rewriting part of the new webconsole and keeping it up to date.
 
 
 &Music and sounds
@@ -136,31 +123,30 @@ Jochen "Peeg" Woidich, for fixing and closing many bugs and providing support wi
 
 Steven "Vornne" Schwartfeger, for fixing and closing many bugs, and investigating many issues.
 
-Michele "Caarrie" Davis, for fixing and closing many bugs, as well as providing support on the forums and in many other places.
-
-"Mrokii", for helping to test many mac issues and other bugs.
+S. "Mrokii" Huebner, for helping to test many mac issues and other bugs.
 
 Mario "LigH" RohkrÃ¤mer, for reporting and testing many art bugs, and work on bug prevention.
 
-"f-rd", for testing many bugs and making even weird ones reproducible.
+Frédéric "f-rd" Delcorso, for testing many bugs and making even weird ones reproducible.
 
-Thom "ThomPhoenix" Hurks, for testing and finding many bugs.
+Thom "ThomPhoenix" Hurks, for bug hunting, bug fixing, and changelogs.
 
-Stefano "weltall" Angeleri, for contributing very many patches for bugs both reported and unknown.
-
+Nick "Loyni" Prassas, for deciphering many vague bugs and keeping the bug tracker tidy.
 
 @Special Thanks to
 
 Frank "res" Richter, for lots of great work on CS and supporting our project directly.
 
-Marc Haseinko, for providing a 99.9% reliable testing environment.
+Marc Haseinko, for providing a 99.9% reliable internal server.
 
 
 @Very Special Thanks to
 
 Jorrit Tyberghein, for his great 3D engine (Crystal Space), for the continuous and passionate support to our team, quaternions and other e=mc2 things.
 
-Fragnetics Team (www.fragnetics.com) for providing the necessary hardware and bandwidth.
+Frank "res" Richter, from Crystal Space team, for continuous support on lighting, performances and stability.
+
+Fragnetics Team (www.fragnetics.com) and ezpcusa (www.ezpcusa.com) for providing the necessary hardware and bandwidth.
 
 
 All the former developers for their work and contributions to PlaneShift.
