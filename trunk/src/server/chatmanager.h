@@ -125,7 +125,7 @@ protected:
     // case-sensitive
     csHash<csString, uint32_t> channelNames;
 
-    uint16_t nextChannelID;
+    uint32_t nextChannelID;
 };
 
 
