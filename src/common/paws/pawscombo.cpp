@@ -139,10 +139,8 @@ bool pawsComboBox::PostSetup()
     listChoice->UseBorder("line");
     listChoice->SetAlwaysOnTop(true);
     listChoice->SetName("ComboListBox");
-    
     csString widgetDef("<widget name=\"Text\" factory=\"pawsTextBox\" ></widget>");
     listChoice->SetTotalColumns( 1 );
-
     if(useScrollBar)
     {
         ok = ok && listChoice->PostSetup();
@@ -153,22 +151,17 @@ bool pawsComboBox::PostSetup()
         listChoice->SetColumnDef( 0, defaultFrame.Width()-10, rowHeight, widgetDef );
     }
 
+    listChoice->SetSortingFunc(0, &textBoxSortFunc);
     return ok;
 }
 
 pawsListBoxRow* pawsComboBox::NewOption(const csString & text)
 {
     pawsListBoxRow * row;
-        
-    row = NewOption();
-    if (row)
-    {
-        pawsTextBox * cell=(pawsTextBox*)row->GetColumn(0);
-        if (cell != NULL)
-            cell->SetText(text);
-    }
-
-    return row;        
+    csList<csString> rowEntry;
+    rowEntry.PushBack(text);
+    row = listChoice->NewTextBoxRow(rowEntry);
+    return row;    
 }
 
 bool pawsComboBox::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )

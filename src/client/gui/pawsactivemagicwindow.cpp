@@ -60,6 +60,7 @@ bool pawsActiveMagicWindow::PostSetup()
 void pawsActiveMagicWindow::HandleMessage( MsgEntry* me )
 {
     psGUIActiveMagicMessage incoming(me);
+    csList<csString> rowEntry;
 
     if (!IsVisible() && psengine->loadstate == psEngine::LS_DONE)
         Show();
@@ -69,12 +70,8 @@ void pawsActiveMagicWindow::HandleMessage( MsgEntry* me )
     {
         case psGUIActiveMagicMessage::Add:
         {
-            pawsListBoxRow *row = list->NewRow();
-           
-            pawsTextBox *name = dynamic_cast<pawsTextBox*>(row->GetColumn(0));
-            if (!name)
-                return;
-            name->SetText(incoming.name);
+            rowEntry.PushBack(incoming.name);
+            pawsListBoxRow *row = list->NewTextBoxRow(rowEntry);
 
             break;
         }
