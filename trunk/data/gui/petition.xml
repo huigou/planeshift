@@ -7,7 +7,7 @@
     <frame x="0" y="100" width="600" height="350" border="yes" />
     <title resource="Scaling Title Bar" text="Manage Petitions" align="left" close_button="yes"/>
     
-    <widget name="PetitionList" factory="pawsListBox">    
+    <widget name="PetitionList" factory="pawsListBox" sortBy="-1">    
         <frame x="20" y="20" width="562" height="150" border="no"/>
         <columns height="20" headings="yes">
             <column width="110" >

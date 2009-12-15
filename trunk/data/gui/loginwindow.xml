@@ -75,7 +75,7 @@
             <text string="Servers:" vertAdjust="CENTRE" />    
         </widget>
            
-        <widget name="servers" factory="pawsListBox" id="10" >
+        <widget name="servers" factory="pawsListBox" id="10" sortBy="-1">
             <frame x="550" y="278" width="180" height="102" />
             <scrollbar arrowup="Up Arrow" arrowdown="Down Arrow" arrowsize="8" width="15"  border="no"/>
 	    <highlight resource="Highlight" />
