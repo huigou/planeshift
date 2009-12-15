@@ -20,7 +20,7 @@ CREATE TABLE `tips` (
 
 INSERT INTO `tips` VALUES (1,'By default, press M to change the camera view');
 INSERT INTO `tips` VALUES (3,'This game will always be free');
-INSERT INTO `tips` VALUES (4,'This is PlaneShift Crystal Blue, Welcome!');
+INSERT INTO `tips` VALUES (4,'This is PlaneShift Arcane Chrysalis, Welcome!');
 INSERT INTO `tips` VALUES (5,'By default, press R to /tell');
 INSERT INTO `tips` VALUES (6,'Press the big fat O to open the options screen');
 INSERT INTO `tips` VALUES (1001,'Welcome to the world of Yliakum, a huge underground cave with many strange and wonderful sights.  Use your arrow keys to walk around and explore.');
