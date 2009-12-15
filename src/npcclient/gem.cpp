@@ -244,7 +244,7 @@ gemNPCItem::gemNPCItem( psNPCClient* npcclient, psPersistItem& mesg)
 
     if(!mesg.factname.GetData())
     {
-        Error2("Item %s has bad data! Check cstr_id_gfx_mesh for this item!\n", mesg.name.GetData());
+        Error2("Item %s has bad data! Check cstr_gfx_mesh for this item!\n", mesg.name.GetData());
     }
 
     InitMesh(  mesg.factname.GetDataSafe(), "", mesg.pos, mesg.yRot, mesg.sector );
