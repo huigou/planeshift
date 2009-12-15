@@ -77,6 +77,14 @@ public:
         lastDRUpdate = 0;
     }
     ~psVitalManager() {}
+    
+    void SetVitals(const psVitalManager & newVitalMgr)
+    {
+        for(int i = 0; i < VITAL_COUNT; i++)
+        {
+            vitals[i] = newVitalMgr.vitals[i];
+        }
+    }
 
     /// Reset to the "original" vitals (for use when killing NPCs).
     void ResetVitals()
