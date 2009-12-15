@@ -29,11 +29,11 @@
 
         <widget name="Life Event" factory="pawsSelectorBox" >
             <frame x="160" y="127" width="466" height="210" border="no" />
-            <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="12" resizetoscreen="yes" />
             <available width="210" rowheight="24" />
             <selected width="210" rowheight="24" />
             <addbutton x="220" y="85" />
             <removebutton x="220" y="123" />
+            <highlight resource="Highlight" />
         </widget>
 
         <widget name="EventDesc" factory="pawsMultiLineTextBox">
