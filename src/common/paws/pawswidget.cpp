@@ -388,8 +388,8 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
     atr = node->GetAttribute( "tooltip" );
     if (atr)
     {
-        toolTip = atr->GetValue();
-        defaultToolTip =toolTip;
+        toolTip = PawsManager::GetSingleton().Translate(atr->GetValue());
+        defaultToolTip = toolTip;
     }
 
     bool inheritFont = true;
