@@ -33,7 +33,7 @@
   <item orig="Buffs" trans="" />
   <item orig="Creatures" trans="" />
   <item orig="Stack Count" trans="" />
-  <item orig="Examine" trans="" />
+  <item orig="Examine" trans="Esamina" />
   <item orig=" unanswered petitions." trans=" petizioni non risposte." />
   <item orig="Talk to people in your sector." trans="Parla alle persone nel tuo settore." />
   <item orig="Factions:" trans="Fazioni:" />
@@ -44,7 +44,7 @@
   <item orig="alliance text colour" trans="colore testo alleanza" />
   <item orig="Active" trans="Attivo" />
   <item orig="Creatures:" trans="Creature:" />
-  <item orig="says" trans="" />
+  <item orig="says" trans="dice" />
   <item orig="View" trans="Vedi" />
   <item orig="PATHS" trans="VIE" />
   <item orig="Shadows" trans="Ombre" />
@@ -89,14 +89,14 @@
   <item orig="Free Movement" trans="Movimento libero" />
   <item orig="Hostility" trans="Ostilita&apos;" />
   <item orig="npcinternal outline colour" trans="" />
-  <item orig="Merchant" trans="" />
+  <item orig="Merchant" trans="Mercante" />
   <item orig="Account User Name:" trans="Nome utente Account:" />
   <item orig="Auction" trans="" />
   <item orig="You currently have no petitions." trans="Al momento non hai petizioni." />
   <item orig="auctions" trans="" />
   <item orig="Attributes" trans="Attributi" />
   <item orig="M. Stamina" trans="Stamina M." />
-  <item orig="The server is locked!" trans="" />
+  <item orig="The server is locked!" trans="Il server è bloccato!" />
   <item orig="Quest &amp; Events Notebook" trans="" />
   <item orig="You will now ignore %s." trans="Da ora ignorerai %s." />
   <item orig="Study" trans="Studia" />
@@ -260,7 +260,7 @@ chiamato " />
   <item orig="The server isn&apos;t ready!" trans="" />
   <item orig="Enable NPC_narrate" trans="" />
   <item orig="Apply to all" trans="Applica a tutti" />
-  <item orig="Friends" trans="" />
+  <item orig="Friends" trans="Amici" />
   <item orig="Polygon:" trans="Poligono:" />
   <item orig="Talk to everyone in your guild privately." trans="Parla a chiunque nella tua gilda privatamente." />
   <item orig="shouts" trans="" />
@@ -282,7 +282,7 @@ chiamato " />
   <item orig="Game Control" trans="" />
   <item orig="Edit Max GP" trans="Cambia GP Massimi" />
   <item orig="Mainchat brackets" trans="" />
-  <item orig="Inventory" trans="" />
+  <item orig="Inventory" trans="Inventario" />
   <item orig="Progression Points" trans="Punti di Progresso" />
   <item orig="Enable npcinternal" trans="" />
   <item orig="Faction" trans="Fazione" />
@@ -292,7 +292,7 @@ chiamato " />
   <item orig="Quick" trans="Veloce" />
   <item orig="Public notes" trans="Note publiche" />
   <item orig="Confirmation" trans="Conferma" />
-  <item orig="Channels" trans="" />
+  <item orig="Channels" trans="Canali" />
   <item orig="Master Volume" trans="Volume Principale" />
   <item orig="Withdraw and Deposit" trans="Preleva e Deposita" />
   <item orig="Group outline colour" trans="" />
@@ -310,6 +310,7 @@ chiamato " />
   <item orig="Petition text:" trans="Testo petizione:" />
   <item orig="Voices" trans="Voci" />
   <item orig="Secret guild" trans="Gilda segreta" />
+  <item orig="Do you really want to reset options to default values?" trans="" />
   <item orig="Auction shadow colour" trans="" />
   <item orig="OOC" trans="" />
   <item orig="List Attributes" trans="Elenca attributi" />
@@ -345,10 +346,10 @@ chiamato " />
   <item orig="Use Collision Detection" trans="Usa Rilevamento Collisioni" />
   <item orig="Invite" trans="Invita" />
   <item orig="Loading..." trans="Caricamento..." />
-  <item orig="New petition from " trans="" />
+  <item orig="New petition from " trans="Nuova petizione da " />
   <item orig="Sector:" trans="Settore:" />
   <item orig="Mix yourtext color" trans="" />
-  <item orig="Max. Transparency:" trans="" />
+  <item orig="Max. Transparency:" trans="Transparenza Max.:" />
   <item orig="Permissions" trans="Permessi" />
   <item orig="X:" trans="" />
   <item orig="Shout outline colour" trans="" />
@@ -519,7 +520,7 @@ Per disabilitare questa funzione cancella tutto in questa finestra usando il bot
   <item orig="Magic Skill description:" trans="" />
   <item orig="npcinternal Alignment" trans="" />
   <item orig="Tria:" trans="" />
-  <item orig="Options" trans="" />
+  <item orig="Options" trans="Opzioni" />
   <item orig="M:" trans="" />
   <item orig="Infinite Mana" trans="Mana infinita" />
   <item orig="Status:" trans="Stato:" />
@@ -540,10 +541,11 @@ Per disabilitare questa funzione cancella tutto in questa finestra usando il bot
   <item orig="Quest Responses" trans="" />
   <item orig="Actions" trans="" />
   <item orig="Chat - Filters" trans="Chat - Filtri" />
-  <item orig="Amount to withdraw" trans="Ammonto da prendere" />
+  <item orig="Amount to withdraw" trans="Ammonto da ritirare" />
   <item orig="Others&apos; attacks that are blocked" trans="Attacchi di altri che vengono bloccati" />
   <item orig="Container" trans="" />
   <item orig="Banking" trans="" />
+  <item orig="Please enter your password." trans="" />
   <item orig="Talk to the people in your immediate vicinity." trans="Parla alle persone nelle tue immediate vicinanze." />
   <item orig="Player name color" trans="Colore nome giocatore" />
   <item orig="Tellself Alignment" trans="" />
@@ -631,10 +633,10 @@ Per disabilitare questa funzione cancella tutto in questa finestra usando il bot
   <item orig="Actual FPS may vary." trans="Gli FPS effettivi potrebbero variare" />
   <item orig="Enable me" trans="" />
   <item orig="Tellself shadow colour" trans="" />
-  <item orig="Game Master Options" trans="" />
+  <item orig="Game Master Options" trans="Opzioni Game Master" />
   <item orig="Loot" trans="" />
   <item orig="You must select a petition from the list in order to view it." trans="Devi selezionare una petizione dalla lista per poterla vedere" />
-  <item orig="Spells" trans="" />
+  <item orig="Spells" trans="Magie" />
   <item orig="Shortcuts" trans="" />
   <item orig="Guild text color" trans="Colore testo gilda" />
   <item orig="Random" trans="Casuale" />
@@ -650,7 +652,7 @@ Per disabilitare questa funzione cancella tutto in questa finestra usando il bot
   <item orig="Ambient sounds" trans="Suoni ambientali" />
   <item orig="Please re-login" trans="" />
   <item orig="Fading:" trans="" />
-  <item orig="says:" trans="" />
+  <item orig="says:" trans="dice:" />
   <item orig="Greetings" trans="Saluti" />
   <item orig="Select a reward:" trans="Seleziona una ricompensa:" />
   <item orig="Ambient Volume" trans="Volume Ambiente" />
