@@ -196,6 +196,7 @@ void pawsSkillWindow::HandleFactionMsg(MsgEntry* me)
 {
     psFactionMessage factMsg(me);
     csString ratingStr;
+    csList<csString> rowEntry;
 
     if ( factMsg.cmd == psFactionMessage::MSG_FULL_LIST )
     {
@@ -213,23 +214,10 @@ void pawsSkillWindow::HandleFactionMsg(MsgEntry* me)
             fact->rating = factMsg.factionInfo[z]->rating;
             factions.Push(fact);
 
-            pawsListBoxRow* row = factionList->NewRow();
-            pawsTextBox* name = dynamic_cast <pawsTextBox*> (row->GetColumn(0));
-            if (name == NULL)
-            {
-                return;
-            }
-
-            name->SetText( fact->name );
-
-            pawsTextBox* rank = dynamic_cast <pawsTextBox*> (row->GetColumn(1));
-            if (rank == NULL)
-            {
-                return;
-            }
-
+            rowEntry.PushBack(fact->name);
             ratingStr.Format("%d", fact->rating);
-            rank->SetText(ratingStr);
+            rowEntry.PushBack(ratingStr);
+            pawsListBoxRow* row = factionList->NewTextBoxRow(rowEntry);
         }
     }
     else if (factRequest)   // ignore MSG_UPDATE if weve not had full list first
@@ -276,25 +264,10 @@ void pawsSkillWindow::HandleFactionMsg(MsgEntry* me)
                 fact->rating = factMsg.factionInfo[z]->rating;
                 factions.Push(fact);
 
-                pawsListBoxRow* row = factionList->NewRow();
-
-                // Set the name of the faction
-                pawsTextBox* name = dynamic_cast <pawsTextBox*> (row->GetColumn(0));
-                if (name == NULL)
-                {
-                    return;
-                }
-                name->SetText( fact->name );
-
-                // Set the value of the faction.
-                pawsTextBox* rank = dynamic_cast <pawsTextBox*> (row->GetColumn(1));
-                if (rank == NULL)
-                {
-                    return;
-                }
-
+                rowEntry.PushBack(fact->name);
                 ratingStr.Format("%d", fact->rating);
-                rank->SetText(ratingStr);
+                rowEntry.PushBack(ratingStr);
+                pawsListBoxRow* row = factionList->NewTextBoxRow(rowEntry);
             }
         }
     }
@@ -798,8 +771,8 @@ void pawsSkillWindow::OnListAction( pawsListBox* widget, int status )
 
 void pawsSkillWindow::Draw()
 {
-    static psClientVitals* vitals = NULL;
-    if ( !vitals && psengine->GetCelClient() && psengine->GetCelClient()->GetMainPlayer() )
+    psClientVitals* vitals = NULL;
+    if (psengine->GetCelClient() && psengine->GetCelClient()->GetMainPlayer() )
     {
         vitals = psengine->GetCelClient()->GetMainPlayer()->GetVitalMgr();
     }
@@ -897,6 +870,9 @@ void pawsSkillWindow::HandleSkillCategory(pawsListBox* tabNameSkillList,
         statsSkillList->Select(row);
         foundSelected = true;
     }
+
+    tabNameSkillList->SetSortedColumn(0);
+    tabNameSkillList->SortRows();
 
     if (train) //If we are training, flash the tab button
     {

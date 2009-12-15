@@ -88,7 +88,7 @@ pawsListBox::pawsListBox()
 
     usingTitleRow = true;
 
-    sortColNum   = -1;
+    sortColNum   = 0;
     ascOrder     = true;
 
     highlightImage = "Highlight";
@@ -198,7 +198,7 @@ bool pawsListBox::Setup( iDocumentNode* node )
         CreateTitleRow();
 
     SetSortedColumn(node->GetAttributeValueAsInt("sortBy"));
-
+    SetSortingFunc(sortColNum, &textBoxSortFunc);
     csString selectableAttr = node->GetAttributeValue("selectable");
     selectable = selectableAttr != "0";
 
@@ -429,7 +429,7 @@ void pawsListBox::Resize()
     CalculateDrawPositions();
 }
 
-pawsListBoxRow* pawsListBox::NewRow( size_t position )
+pawsListBoxRow* pawsListBox::NewRow(size_t position )
 {
     pawsListBoxRow* newRow = new pawsListBoxRow();
 
@@ -478,10 +478,64 @@ pawsListBoxRow* pawsListBox::NewRow( size_t position )
     CalculateDrawPositions();
     newRow->SetBackground("Standard Background");
     newRow->SetBackgroundAlpha(255);
-
+    
     return newRow;
 }
+pawsListBoxRow* pawsListBox::NewTextBoxRow( csList<csString> &rowEntry,size_t position )
+{
+    pawsListBoxRow* newRow = new pawsListBoxRow();
 
+    newRow->SetParent( this );
+	// Here we automatically resize the row to be the width of the parent listbox, so the row can reference that when adding columns
+    newRow->SetRelativeFrame( 0 ,(totalRows+1)*GetActualHeight(columnHeight), parent->GetActualWidth(), GetActualHeight(columnHeight));//GetActualHeight(columnHeight) );
+
+    for ( int x = 0; x < totalColumns; x++ )
+    {
+        newRow->AddColumn( x, columnDef );
+        ((pawsTextBox*)newRow->GetColumn(x))->SetText(rowEntry.Front());
+        rowEntry.PopFront();
+    }
+
+
+    if ( position != (size_t)-1 )
+    {
+        children.Insert( position, newRow );
+        rows.Insert( position, newRow );
+    }
+    else
+    {
+        AddChild( newRow );
+        rows.Push( newRow );
+    }
+
+    totalRows++;
+
+    if (autoID)
+    {
+        for ( int x = 0; x < totalColumns; x++ )
+        {
+            pawsWidget * widget = newRow->GetColumn( x );
+            widget->SetID(id+totalRows*totalColumns+x);
+        }
+    }
+
+
+
+    if ( scrollBar )
+    {
+        if(autoUpdateScroll)
+            SetScrollBarMaxValue();
+
+        scrollBar->SetCurrentValue( (float)topRow );
+    }
+
+    CalculateDrawPositions();
+    newRow->SetBackground("Standard Background");
+    newRow->SetBackgroundAlpha(255);
+    
+    SortRows();
+    return newRow;
+}
 
 void pawsListBox::SendOnListAction(int status)
 {
@@ -980,7 +1034,7 @@ int pawsListBox::GetSortedColumn()
 
 void pawsListBox::SetSortedColumn(int colNum)
 {
-    if (colNum < 0  ||  colNum >= totalColumns)
+    if (colNum < -1  ||  colNum >= totalColumns)
         return;
 
     if (columnDef[colNum].sortFunc == NULL)

@@ -195,7 +195,9 @@ public:
     pawsListBoxRow* GetRow( size_t x );
 
     /// Creates a new row ( default at the end ) and returns a pointer to it.
-    pawsListBoxRow* NewRow( size_t position = (size_t)-1 );
+    pawsListBoxRow* NewRow( size_t position = (size_t)-1 );           
+    /// Creates a new row ( default at the end ) filled by values from rowEntry and returns a pointer to it.
+    pawsListBoxRow* NewTextBoxRow( csList<csString> &rowEntry,size_t position = (size_t)-1 );
 
     void Clear();
 
