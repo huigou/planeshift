@@ -353,7 +353,7 @@ void ChatManager::HandleChannelJoinMessage(MsgEntry *me, Client *client)
             psserver->SendSystemError(client->GetClientNum(), "Server channel limit reached!");
             return;
         }
-        // Channel creation is case-sensitive
+
         channelIDs.PutUnique(nocaseChannelName, channelID);
         channelNames.PutUnique(channelID, nocaseChannelName);
     }
