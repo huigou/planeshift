@@ -335,13 +335,12 @@ void ChatManager::HandleChannelJoinMessage(MsgEntry *me, Client *client)
     if(msg.channel.Length() > 30)
         return;
 
-    csString nocaseName = msg.channel;
-    nocaseName.Downcase();
+    csString nocaseChannelName = msg.channel;
+    nocaseChannelName.Downcase();
     // Search is case-insensitive
-    uint32_t channelID = channelIDs.Get(nocaseName, 0);
+    uint32_t channelID = channelIDs.Get(nocaseChannelName, 0);
     if(channelID == 0)
     {
-        printf("a\n");
         uint32_t start = channelID = nextChannelID++;
         while(!channelSubscribers.GetAll(channelID).IsEmpty() && nextChannelID != start - 1)
         {
@@ -355,8 +354,8 @@ void ChatManager::HandleChannelJoinMessage(MsgEntry *me, Client *client)
             return;
         }
         // Channel creation is case-sensitive
-        channelIDs.PutUnique(msg.channel, channelID);
-        channelNames.PutUnique(channelID, msg.channel);
+        channelIDs.PutUnique(nocaseChannelName, channelID);
+        channelNames.PutUnique(channelID, nocaseChannelName);
     }
     else
     {
