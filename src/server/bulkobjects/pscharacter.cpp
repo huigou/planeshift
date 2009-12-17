@@ -3012,8 +3012,6 @@ double psCharacter::CalcFunction(const char * functionName, const double * param
     }
     else if (!strcasecmp(functionName, "GetSkillValue"))
     {
-        // Deprecated in favor of SkillRank, which takes a string literal.
-        Warning2(LOG_CHARACTER, "MathScript: Character:GetSkillValue(%d) is deprecated.", (int) params[0]);
         PSSKILL skill = (PSSKILL)(int)params[0];
 
         double value = skills.GetSkillRank(skill).Current();
