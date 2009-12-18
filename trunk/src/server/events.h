@@ -284,7 +284,8 @@ public:
     enum Type
     {
         UNKNOWN=0,
-        QUEST_ASSIGN
+        QUEST_ASSIGN,
+        SPAWN_MOVE
     };
 
     Type eventType;

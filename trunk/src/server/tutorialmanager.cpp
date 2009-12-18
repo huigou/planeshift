@@ -224,6 +224,16 @@ void TutorialManager::HandleGeneric(MsgEntry *me,Client *client)
                 }
                 break;
             }
+            case psGenericEvent::SPAWN_MOVE:
+            {
+                psCharacter *ch = client->GetCharacterData();
+                if (ch->NeedsHelpEvent(SPAWN_MOVE))
+                {
+                    SendTutorialMessage(SPAWN_MOVE,client,tutorialMsg[SPAWN_MOVE]);
+                    ch->CompleteHelpEvent(SPAWN_MOVE);
+                }
+                break;
+            }
             default:
                 // printf("Unknown generic event received in Tutorial Manager.\n");
                 break;
