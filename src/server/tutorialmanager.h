@@ -52,9 +52,10 @@ public:
         DAMAGE_SELF   = 5, // You just got attacked and hit by a monster.  Your percent of health (hit points) is shown in the red bar in your info window.
         DAMAGE_FALL   = 6, // You just fell too far and hurt yourself.  Don't take too much damage or you can die just from falling.
         DEATH_SELF    = 7, // You have just died.  In a few seconds, you will be transported to the Death Realm and you will have to escape it to come back to Yliakum.
-        // ENEMY_SELECT  = 8, // Now that you have a monster selected, you can attack it by pressing 'A' and watching it die.
-        // ENEMY_DEATH   = 9, // When you kill a monster, it is often carrying things you can use.  Right-click and select the Hand to loot the monster.
-        // LOOT_COMPLETE = 10 // Now that you picked up your loot, check your inventory by pressing 'I' and see that you have those items now.
+        SPAWN_MOVE    = 8, // gives various informations about the server like general rules for rp
+        // ENEMY_SELECT  = 9, // Now that you have a monster selected, you can attack it by pressing 'A' and watching it die.
+        // ENEMY_DEATH   = 10, // When you kill a monster, it is often carrying things you can use.  Right-click and select the Hand to loot the monster.
+        // LOOT_COMPLETE = 11 // Now that you picked up your loot, check your inventory by pressing 'I' and see that you have those items now.
         TUTOREVENTTYPE_COUNT,
     };
 
