@@ -226,11 +226,12 @@ bool NetManager::HandleUnknownClient (LPSOCKADDR_IN addr, MsgEntry* me)
 }
 
 void NetManager::CheckResendPkts()
-{
+{	
+	// NOTE: Globaliterators on csHash do not retrieve keys contiguously.
     csHash<csRef<psNetPacketEntry>, PacketKey>::GlobalIterator it (awaitingack.GetIterator());
     csRef<psNetPacketEntry> pkt;
     csArray<csRef<psNetPacketEntry> > pkts;
-    Connection* currentConnection = NULL;
+    csArray<Connection*> resentConnections;
 
     csTicks currenttime = csGetTicks();
     unsigned int resentCount = 0;
@@ -262,22 +263,10 @@ void NetManager::CheckResendPkts()
         	// Check the connection packet timeout
         	if (pkt->timestamp + MIN(PKTMAXRTO, connection->RTO * connection->backoff) >= currenttime)
         		continue;
+        	if (resentConnections.Find(connection) == csArrayItemnotFound)
+        		resentConnections.Push(connection);
         }
         resentCount++;
-        if (connection != currentConnection)
-        {
-        	// Perform exponential backoff once for each connection since pkts are ordered
-        	// by clientnum
-        	
-        	// Now backoff previous connection for the next time we need to resend those packets
-        	if (currentConnection && (currentConnection->backoff == 1 || currentConnection->backoffStart + MIN(PKTMAXRTO, currentConnection->RTO * currentConnection->backoff) <= currenttime))
-        	{
-        		currentConnection->backoffStart = currenttime;
-        		currentConnection->backoff *= 2;
-        		currentConnection = connection;
-        	}
-        	currentConnection = connection;
-        }
         
         pkt->timestamp = currenttime;   // update stamp on packet
         pkt->retransmitted = true;
@@ -328,12 +317,18 @@ void NetManager::CheckResendPkts()
         }
 
     }
-    // Backoff last connection
-	if (currentConnection && (currentConnection->backoff == 1 || currentConnection->backoffStart + MIN(PKTMAXRTO, currentConnection->RTO * currentConnection->backoff) <= currenttime))
-	{
-		currentConnection->backoffStart = currenttime;
-		currentConnection->backoff *= 2;
-	}
+    for(int i = 0; i < resentConnections.GetSize(); i++)
+    {
+		// Perform exponential backoff once for each connection since pkts are ordered
+		// by clientnum
+		
+		// Now backoff previous connection for the next time we need to resend those packets
+		if (resentConnections[i] && (resentConnections[i]->backoff == 1 || resentConnections[i]->backoffStart + MIN(PKTMAXRTO, resentConnections[i]->RTO * resentConnections[i]->backoff) <= currenttime))
+		{
+			resentConnections[i]->backoffStart = currenttime;
+			resentConnections[i]->backoff *= 2;
+		}
+    }
     if(resentCount > 0)
     {
         resends[resendIndex] = resentCount;
@@ -354,7 +349,7 @@ void NetManager::CheckResendPkts()
             csString status;
             if(timeTaken > 50 || pkts.GetSize() > 300)
             {
-                status.Format("Resending high priority packets has taken %u time to process, for %u packets.", timeTaken, resentCount);
+                status.Format("Resending high priority packets has taken %u time to process, for %u packets on %u unique connections. ", timeTaken, resentCount, resentConnections.GetSize());
                 CPrintf(CON_WARNING, "%s\n", (const char *) status.GetData());
             }
             status.AppendFmt("Resending non-acked packet statistics: %g average resends, peak of %u resent packets", resendAvg, peakResend);
