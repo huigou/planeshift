@@ -317,7 +317,7 @@ void NetManager::CheckResendPkts()
         }
 
     }
-    for(int i = 0; i < resentConnections.GetSize(); i++)
+    for(size_t i = 0; i < resentConnections.GetSize(); i++)
     {
 		// Perform exponential backoff once for each connection since pkts are ordered
 		// by clientnum
