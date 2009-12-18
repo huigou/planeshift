@@ -263,7 +263,7 @@ void NetManager::CheckResendPkts()
         	// Check the connection packet timeout
         	if (pkt->timestamp + MIN(PKTMAXRTO, connection->RTO * connection->backoff) >= currenttime)
         		continue;
-        	if (resentConnections.Find(connection) == csArrayItemnotFound)
+        	if (resentConnections.Find(connection) == csArrayItemNotFound)
         		resentConnections.Push(connection);
         }
         resentCount++;
@@ -349,7 +349,7 @@ void NetManager::CheckResendPkts()
             csString status;
             if(timeTaken > 50 || pkts.GetSize() > 300)
             {
-                status.Format("Resending high priority packets has taken %u time to process, for %u packets on %u unique connections. ", timeTaken, resentCount, resentConnections.GetSize());
+                status.Format("Resending high priority packets has taken %u time to process, for %u packets on %zu unique connections. ", timeTaken, resentCount, resentConnections.GetSize());
                 CPrintf(CON_WARNING, "%s\n", (const char *) status.GetData());
             }
             status.AppendFmt("Resending non-acked packet statistics: %g average resends, peak of %u resent packets", resendAvg, peakResend);
@@ -480,8 +480,8 @@ void NetManager::Run ()
         // Check for link dead clients.
         if (currentticks - lastlinkcheck > LINKCHECK)
         {
-            lastlinkcheck = currentticks;
             CheckLinkDead();
+            lastlinkcheck = csGetTicks();
         }
 
         // Check to resend packages that have not been ACK'd yet
@@ -489,7 +489,7 @@ void NetManager::Run ()
         {
             CheckResendPkts();
             CheckFragmentTimeouts();
-            lastresendcheck = currentticks;
+            lastresendcheck = csGetTicks();
         }
 
         // Display Network statistics
