@@ -38,3 +38,4 @@ FILEFLAGS 0x0
 #if !defined(PROJECTGEN_VERSION) || (PROJECTGEN_VERSION < 8)
 1 24 "apppslaunch_static.manifest"
 #endif
+1 ICON "../../support/icons/icon1.ico"
