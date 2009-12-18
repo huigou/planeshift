@@ -283,7 +283,32 @@ int com_dbprofile(char *)
     return 0;
 }
 
-/* print out server status */
+int com_queue(char *player)
+{
+    int playernum = atoi(player);
+    if (playernum<=0)
+    {
+        CPrintf (CON_CMDOUTPUT ,"Please Specify the number of the client!\n");
+        CPrintf (CON_CMDOUTPUT ,"  (you can use 'status' to see a list of clients and their"
+            "numbers.)\n");
+        return 0;
+    }
+
+    uint32_t cnum = (uint32_t) playernum;
+    Client* client = psserver->GetNetManager()->GetConnections()->Find(cnum);
+    if (!client)
+    {
+        CPrintf (CON_CMDOUTPUT ,COL_RED "Client with number %u not found!\n" COL_NORMAL,
+            cnum);
+        return 0;
+    }
+
+    CPrintf (CON_CMDOUTPUT, "OutQueue size for client %d is %d\n", playernum, client->outqueue->Count());
+    return 0;
+
+}
+
+/** print out server status */
 int com_status(char *)
 {
     bool ready = psserver->IsReady();
@@ -2299,6 +2324,7 @@ const COMMAND commands[] = {
     { "exec",      true, com_exec,      "Executes a script file" },
     { "help",      true, com_help,      "Show help information" },
     { "kick",      true, com_kick,      "Kick player from the server"},
+    { "queue",     true, com_queue,      "Get the size of a player queue"},
     { "loadmap",   true, com_loadmap,   "Loads a map into the server"},
     { "lock",      false, com_lock,      "Tells server to stop accepting connections"},
     { "maplist",   true, com_maplist,   "List all mounted maps"},
