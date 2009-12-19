@@ -1326,6 +1326,11 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
         }
         case CHAT_SHOUT:
         {
+            if ( msg.sText.StartsWith("/me ") )
+                buff.Format("%s %s", (const char *)msg.sPerson, ((const char *)msg.sText)+4);
+            else if ( msg.sText.StartsWith("/my ") )
+                buff.Format("%s's %s", (const char *)msg.sPerson, ((const char *)msg.sText)+4);
+            else
 			buff.Format("%s %s: %s", (const char *)msg.sPerson, (const char *)PawsManager::GetSingleton().Translate("shouts"),
 					(const char *)msg.sText);
             colour = settings.shoutColor;
@@ -1687,10 +1692,10 @@ bool pawsChatWindow::OnMouseDown( int button, int modifiers, int x , int y )
 
     PawsManager::GetSingleton().SetCurrentFocusedWidget( inputText );
 
-    for (size_t z = 0; z < children.GetSize(); z++ )
-    {
+    //for (size_t z = 0; z < children.GetSize(); z++ )
+    //{
         //children[z]->Show();
-    }
+    //}
 
     return true;
 }
@@ -1711,10 +1716,10 @@ void pawsChatWindow::OnLostFocus()
 {
     hasFocus = false;
 
-    for (size_t x = 0; x < children.GetSize(); x++ )
-    {
+    //for (size_t x = 0; x < children.GetSize(); x++ )
+    //{
         //children[x]->Hide();
-    }
+    //}
 
     //chatText->Show();
     //chatText->GetBorder()->Hide();
