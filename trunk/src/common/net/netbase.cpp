@@ -432,10 +432,11 @@ bool NetBase::CheckDoublePackets(Connection* connection, csRef<psNetPacketEntry>
 
 void NetBase::CheckResendPkts()
 {
+	// NOTE: Globaliterators on csHash do not retrieve keys contiguously.
     csHash<csRef<psNetPacketEntry> , PacketKey>::GlobalIterator it(awaitingack.GetIterator());
     csRef<psNetPacketEntry> pkt;
     csArray<csRef<psNetPacketEntry> > pkts;
-    Connection *currentConnection = NULL;
+    csArray<Connection*> resentConnections;
 
     csTicks currenttime = csGetTicks();
     unsigned int resentCount = 0;
@@ -458,20 +459,10 @@ void NetBase::CheckResendPkts()
         	// Check the connection packet timeout
         	if (pkt->timestamp + MIN(PKTMAXRTO, connection->RTO * connection->backoff) >= currenttime)
         		continue;
+        	if (resentConnections.Find(connection) == csArrayItemNotFound)
+        	    resentConnections.Push(connection);
         }
         resentCount++;
-        if (connection != currentConnection)
-        {
-        	// Perform exponential backoff once for each connection since pkts are ordered
-        	// by clientnum
-        	// Now backoff previous connection for the next time we need to resend those packets
-        	if (currentConnection && (currentConnection->backoff == 1 || currentConnection->backoffStart + MIN(PKTMAXRTO, currentConnection->RTO * currentConnection->backoff) <= currenttime))
-        	{
-        		currentConnection->backoffStart = currenttime;
-        		currentConnection->backoff *= 2;
-        		currentConnection = connection;
-        	}
-        }
         
         pkt->timestamp = currenttime;   // update stamp on packet
         pkt->retransmitted = true;
@@ -490,12 +481,19 @@ void NetBase::CheckResendPkts()
             }
         }
     }
-    // Backoff last connection
-	if (currentConnection && (currentConnection->backoff == 1 || currentConnection->backoffStart + MIN(PKTMAXRTO, currentConnection->RTO * currentConnection->backoff) <= currenttime))
-	{
-		currentConnection->backoffStart = currenttime;
-		currentConnection->backoff *= 2;
-	}
+    for(size_t i = 0; i < resentConnections.GetSize(); i++)
+    {
+		// Perform exponential backoff once for each connection since pkts are ordered
+		// by clientnum
+		
+		// Now backoff previous connection for the next time we need to resend those packets
+		if (resentConnections[i]->backoff == 1 || resentConnections[i]->backoffStart + MIN(PKTMAXRTO, resentConnections[i]->RTO * resentConnections[i]->backoff) <= currenttime)
+		{
+			resentConnections[i]->backoffStart = currenttime;
+			resentConnections[i]->backoff *= 2;
+		}
+    }
+
     if(resentCount > 0)
     {
         resends[resendIndex] = resentCount;
