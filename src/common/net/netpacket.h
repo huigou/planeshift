@@ -169,6 +169,9 @@ public:
     
     /** has this packet been retransmitted */
     bool retransmitted;
+    
+    /** timeout */
+    csTicks RTO;
 
     /** The Packet like it is returned from reading UDP socket / will be
      * written to socket

@@ -32,6 +32,7 @@ psNetPacketEntry::psNetPacketEntry (psNetPacket* packet, uint32_t cnum,
     packet->pktsize = sz - sizeof(psNetPacket);
     timestamp = csGetTicks();
     retransmitted = false;
+    RTO = 0;
 }
 
 /** construct a new PacketEntry for a single or partial message */
@@ -50,6 +51,7 @@ psNetPacketEntry::psNetPacketEntry (uint8_t pri, uint32_t cnum,
     packet->msgsize = totalsize;
     timestamp = csGetTicks();
     retransmitted = false;
+    RTO = 0;
     if (msg && sz && sz != PKTSIZE_ACK)
         memcpy(packet->data, ((char *)msg) + off, sz);
 }
@@ -68,6 +70,7 @@ psNetPacketEntry::psNetPacketEntry (uint8_t pri, uint32_t cnum,
     packet->msgsize = totalsize;
     timestamp = csGetTicks();
     retransmitted = false;
+    RTO = 0;
     if (bytes && sz && sz != PKTSIZE_ACK)
     memcpy(packet->data, bytes, sz);
 }
