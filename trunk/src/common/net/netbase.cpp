@@ -336,9 +336,6 @@ bool NetBase::HandleAck(csRef<psNetPacketEntry> pkt, Connection* connection,
             if (!ack->retransmitted && connection)
             {
                 csTicks elapsed = csGetTicks() - ack->timestamp;
-                
-                // Finally received non-retransmitted ack, go back to normal retransmit
-                connection->backoff = 1;
       
                 if (connection->estRTT > 0)
                 {
@@ -444,7 +441,8 @@ void NetBase::CheckResendPkts()
     while(it.HasNext())
     {
         pkt = it.Next();
-        if (pkt->timestamp + PKTMINRTO < currenttime)
+        // Check the connection packet timeout
+        if (pkt->timestamp + MIN(PKTMAXRTO, pkt->RTO) < currenttime)
             pkts.Push(pkt);
     }
     for (size_t i = 0; i < pkts.GetSize(); i++)
@@ -456,11 +454,15 @@ void NetBase::CheckResendPkts()
         Connection* connection = GetConnByNum(pkt->clientnum);
         if (connection)
         {
-        	// Check the connection packet timeout
-        	if (pkt->timestamp + MIN(PKTMAXRTO, connection->RTO * connection->backoff) >= currenttime)
-        		continue;
         	if (resentConnections.Find(connection) == csArrayItemNotFound)
         	    resentConnections.Push(connection);
+        	// This indicates a bug in the netcode.
+        	if (pkt->RTO == 0)
+        	{
+        		Error1("Unexpected 0 packet RTO.");
+				abort();
+        	}
+        	pkt->RTO *= 2;
         }
         resentCount++;
         
@@ -480,18 +482,6 @@ void NetBase::CheckResendPkts()
 #endif
             }
         }
-    }
-    for(size_t i = 0; i < resentConnections.GetSize(); i++)
-    {
-		// Perform exponential backoff once for each connection since pkts are ordered
-		// by clientnum
-		
-		// Now backoff previous connection for the next time we need to resend those packets
-		if (resentConnections[i]->backoff == 1 || resentConnections[i]->backoffStart + MIN(PKTMAXRTO, resentConnections[i]->RTO * resentConnections[i]->backoff) <= currenttime)
-		{
-			resentConnections[i]->backoffStart = currenttime;
-			resentConnections[i]->backoff *= 2;
-		}
     }
 
     if(resentCount > 0)
@@ -585,7 +575,13 @@ bool NetBase::SendSinglePacket(csRef<psNetPacketEntry> pkt)
         Debug3(LOG_NET,0,"Sent HIGH pkt id %d to client %d.\n", 
             pkt->packet->pktid, pkt->clientnum);
 #endif
-        awaitingack.Put(PacketKey(pkt->clientnum, pkt->packet->pktid), pkt);
+        Connection* connection = GetConnByNum(pkt->clientnum);
+        if(connection)
+        {
+        	// Set timeout for resending.
+        	pkt->RTO = connection->RTO;
+        	awaitingack.Put(PacketKey(pkt->clientnum, pkt->packet->pktid), pkt);
+        }
     }
 
     return true;
@@ -1336,8 +1332,6 @@ NetBase::Connection::Connection(uint32_t num): sequence(1), packethistoryhash(MA
     valid=false;
     heartbeat=0;
     lastRecvPacketTime = csGetTicks();
-    backoff = 1;
-    backoffStart = 0;
     
     // Round trip time estimates
     estRTT = 0;

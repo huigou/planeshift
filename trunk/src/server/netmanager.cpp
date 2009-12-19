@@ -239,7 +239,8 @@ void NetManager::CheckResendPkts()
     while(it.HasNext())
     {
         pkt = it.Next();
-        if (pkt->timestamp + PKTMINRTO < currenttime)
+        // Check the connection packet timeout
+        if (pkt->timestamp + MIN(PKTMAXRTO, pkt->RTO) < currenttime)
             pkts.Push(pkt);
     }
     for (size_t i = 0; i < pkts.GetSize(); i++)
@@ -260,11 +261,15 @@ void NetManager::CheckResendPkts()
         Connection* connection = GetConnByNum(pkt->clientnum);
         if (connection)
         {
-        	// Check the connection packet timeout
-        	if (pkt->timestamp + MIN(PKTMAXRTO, connection->RTO * connection->backoff) >= currenttime)
-        		continue;
         	if (resentConnections.Find(connection) == csArrayItemNotFound)
         		resentConnections.Push(connection);
+        	// This indicates a bug in the netcode.
+        	if (pkt->RTO == 0)
+        	{
+        		Error1("Unexpected 0 packet RTO.");
+				abort();
+        	}
+        	pkt->RTO *= 2;
         }
         resentCount++;
         
@@ -290,7 +295,7 @@ void NetManager::CheckResendPkts()
                 psMessageBytes* msg = (psMessageBytes*) packet->data;
                 type = msg->type;
             }
-            Error3("Queue full. Could not add packet with clientnum %d type %s.\n", pkt->clientnum, type == 0 ? "Unknown" : (const char *)  GetMsgTypeName(type));
+            Error3("Queue full. Could not add packet with clientnum %d type %s.\n", pkt->clientnum, type == 0 ? "Fragment" : (const char *)  GetMsgTypeName(type));
             continue;
         }
 
@@ -317,18 +322,6 @@ void NetManager::CheckResendPkts()
         }
 
     }
-    for(size_t i = 0; i < resentConnections.GetSize(); i++)
-    {
-		// Perform exponential backoff once for each connection since pkts are ordered
-		// by clientnum
-		
-		// Now backoff previous connection for the next time we need to resend those packets
-		if ((resentConnections[i]->backoff == 1 || resentConnections[i]->backoffStart + MIN(PKTMAXRTO, resentConnections[i]->RTO * resentConnections[i]->backoff) <= currenttime))
-		{
-			resentConnections[i]->backoffStart = currenttime;
-			resentConnections[i]->backoff *= 2;
-		}
-    }
     if(resentCount > 0)
     {
         resends[resendIndex] = resentCount;
@@ -349,7 +342,7 @@ void NetManager::CheckResendPkts()
             csString status;
             if(timeTaken > 50 || pkts.GetSize() > 300)
             {
-                status.Format("Resending high priority packets has taken %u time to process, for %u packets on %zu unique connections (Sample clientnum %u/RTO %u/backoff %d. ", timeTaken, resentCount, resentConnections.GetSize(), resentConnections[0]->clientnum, resentConnections[0]->RTO, resentConnections[0]->backoff);
+                status.Format("Resending high priority packets has taken %u time to process, for %u packets on %zu unique connections (Sample clientnum %u/RTO %u. ", timeTaken, resentCount, resentConnections.GetSize(), resentConnections[0]->clientnum, resentConnections[0]->RTO);
                 CPrintf(CON_WARNING, "%s\n", (const char *) status.GetData());
             }
             status.AppendFmt("Resending non-acked packet statistics: %g average resends, peak of %u resent packets", resendAvg, peakResend);
