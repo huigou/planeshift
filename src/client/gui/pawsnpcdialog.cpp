@@ -150,6 +150,13 @@ void pawsNpcDialogWindow::AdjustForPromptWindow()
 
 void pawsNpcDialogWindow::OnStringEntered(const char *name,int param,const char *value)
 {
+    //The user cancelled the operation. So show again the last window and do nothing else.
+    if(value == NULL) 
+    { 
+        Show(); 
+        return; 
+    }
+
 	printf("Got name=%s, value=%s\n", name, value);
 
 	csString cmd;
