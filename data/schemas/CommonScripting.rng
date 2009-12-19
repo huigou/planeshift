@@ -101,6 +101,9 @@
 
         <element name="create-familiar">
           <attribute name="aim"/>
+          <optional>
+            <attribute name="masterID"/>
+          </optional>
         </element>
 
         <element name="destroy">

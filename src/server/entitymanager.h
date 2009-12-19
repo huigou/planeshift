@@ -104,7 +104,7 @@ public:
     EID CreateNPC(psCharacter *chardata, bool updateProxList = true, bool alwaysWatching = false);
     EID CreateNPC(psCharacter *chardata, InstanceID instance, csVector3 pos, iSector* sector, float yrot, bool updateProxList = true, bool alwaysWatching = false);
 
-    gemNPC *CreateFamiliar(gemActor *owner);
+    gemNPC *CreateFamiliar(gemActor *owner, PID masterPID);
     gemNPC *CreatePet( Client* client, int familiarid );
     gemNPC *CloneNPC( psCharacter *chardata );
 

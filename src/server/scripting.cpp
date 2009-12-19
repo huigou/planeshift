@@ -2144,6 +2144,12 @@ class CreateFamiliarOp : public Imperative1
 public:
     virtual ~CreateFamiliarOp() { }
 
+    bool Load(iDocumentNode *node)
+    {
+        masterPID = node->GetAttributeValueAsInt("masterID");
+        return Imperative1::Load(node);
+    }        
+
     void Run(const MathEnvironment *env)
     {
         gemActor *actor = GetActor(env, aim);
@@ -2153,18 +2159,21 @@ public:
             return;
         }
 
-        if (actor->GetCharacterData()->GetFamiliarID() != 0)
+        /*if (actor->GetCharacterData()->GetFamiliarID() != 0)
         {
             psserver->SendSystemInfo(actor->GetClientID(), "You already have a familiar, please take care of it.");
             return;
-        }
+        }*/
 
-        gemNPC *familiar = EntityManager::GetSingleton().CreateFamiliar(actor);
+        gemNPC *familiar = EntityManager::GetSingleton().CreateFamiliar(actor, masterPID);
         if (!familiar)
         {
             Error2("Failed to create familiar for %s.\n", actor->GetName());
         }
     }
+    
+    private:
+    PID masterPID;
 };
 
 //============================================================================

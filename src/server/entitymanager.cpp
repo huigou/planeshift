@@ -210,7 +210,7 @@ iSector* EntityManager::FindSector(const char * sectorname)
     return engine->GetSectors()->FindByName(sectorname);
 }
 
-gemNPC* EntityManager::CreateFamiliar (gemActor *owner)
+gemNPC* EntityManager::CreateFamiliar (gemActor *owner, PID masterPID)
 {
     psCharacter *chardata = owner->GetCharacterData();
 
@@ -227,7 +227,7 @@ gemNPC* EntityManager::CreateFamiliar (gemActor *owner)
         return NULL;
     }
     
-    masterFamiliarID = GetMasterFamiliarID( chardata );
+    masterFamiliarID = masterPID == 0? GetMasterFamiliarID( chardata ) : masterPID;
 
     // Change Familiar's Name
     const char *charname = chardata->GetCharName();
