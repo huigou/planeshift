@@ -1219,6 +1219,24 @@ void pawsChatWindow::HandleSystemMessage(MsgEntry *me)
     return;
 }
 
+void pawsChatWindow::FormatMessage(csString &sText, csString &sPerson, csString prependingText, csString &buff, bool &hasCharName)
+{
+    if ( sText.StartsWith("/me ") )
+        buff.Format("%s %s", (const char *)sPerson, ((const char *)sText)+4);
+    else if ( sText.StartsWith("/my ") )
+        buff.Format("%s's %s", (const char *)sPerson, ((const char *)sText)+4);
+    else
+    {
+        if(hasCharName)
+            buff.Format(REDCODE "%s" DEFAULTCODE " %s: %s", (const char *)sPerson, (const char *) PawsManager::GetSingleton().Translate(prependingText),
+                                    (const char *)sText);
+        else
+            buff.Format(GREENCODE "%s" DEFAULTCODE " %s: %s", (const char *)sPerson, (const char *) PawsManager::GetSingleton().Translate(prependingText),
+                (const char *)sText);
+    }
+}
+    
+
 void pawsChatWindow::HandleMessage(MsgEntry *me)
 {
     bool sendAway = false;
@@ -1313,26 +1331,13 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
     {
         case CHAT_GROUP:
         {
-            // allows /group <person> /me sits down for a private action
-            if ( msg.sText.StartsWith("/me ") )
-                buff.Format("%s %s", (const char *)msg.sPerson, ((const char *)msg.sText)+4);
-            else if ( msg.sText.StartsWith("/my ") )
-                buff.Format("%s's %s", (const char *)msg.sPerson, ((const char *)msg.sText)+4);
-            else
-                buff.Format("%s %s: %s", (const char *)msg.sPerson, (const char *)PawsManager::GetSingleton().Translate("says"),
-                             (const char *)msg.sText);
+            FormatMessage(msg.sText, msg.sPerson, "says", buff, hasCharName);
             colour = settings.groupColor;
             break;
         }
         case CHAT_SHOUT:
         {
-            if ( msg.sText.StartsWith("/me ") )
-                buff.Format("%s %s", (const char *)msg.sPerson, ((const char *)msg.sText)+4);
-            else if ( msg.sText.StartsWith("/my ") )
-                buff.Format("%s's %s", (const char *)msg.sPerson, ((const char *)msg.sText)+4);
-            else
-			buff.Format("%s %s: %s", (const char *)msg.sPerson, (const char *)PawsManager::GetSingleton().Translate("shouts"),
-					(const char *)msg.sText);
+            FormatMessage(msg.sText, msg.sPerson, "shouts", buff, hasCharName);
             colour = settings.shoutColor;
             break;
         }
@@ -1345,60 +1350,28 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
 
         case CHAT_GUILD:
         {
-            // allows /guild <person> /me sits down for a private action
-            if ( msg.sText.StartsWith("/me ") )
-                buff.Format("%s %s", (const char *)msg.sPerson, ((const char *)msg.sText)+4);
-            else if ( msg.sText.StartsWith("/my ") )
-                buff.Format("%s's %s", (const char *)msg.sPerson, ((const char *)msg.sText)+4);
-            else
-                buff.Format("%s %s: %s", (const char *)msg.sPerson, (const char *)PawsManager::GetSingleton().Translate("says"),
-                            (const char *)msg.sText);
+            FormatMessage(msg.sText, msg.sPerson, "says", buff, hasCharName);
             colour = settings.guildColor;
             break;
         }
         
         case CHAT_ALLIANCE:
         {
-            // allows /alliance <person> /me sits down for a private action
-            if ( msg.sText.StartsWith("/me ") )
-                buff.Format("%s %s", (const char *)msg.sPerson, ((const char *)msg.sText)+4);
-            else if ( msg.sText.StartsWith("/my ") )
-                buff.Format("%s's %s", (const char *)msg.sPerson, ((const char *)msg.sText)+4);
-            else
-                buff.Format("%s %s: %s", (const char *)msg.sPerson, (const char *)PawsManager::GetSingleton().Translate("says"),
-                            (const char *)msg.sText);
+            FormatMessage(msg.sText, msg.sPerson, "says", buff, hasCharName);
             colour = settings.allianceColor;
             break;
         }
 
         case CHAT_AUCTION:
         {
-            if ( msg.sText.StartsWith("/me ") )
-                buff.Format("%s %s", (const char *)msg.sPerson, ((const char *)msg.sText)+4);
-            else if ( msg.sText.StartsWith("/my ") )
-                buff.Format("%s's %s", (const char *)msg.sPerson, ((const char *)msg.sText)+4);
-            else
-                buff.Format("%s %s: %s", (const char *)msg.sPerson, (const char *)PawsManager::GetSingleton().Translate("auctions"),
-                        (const char *)msg.sText);
+            FormatMessage(msg.sText, msg.sPerson, "auctions", buff, hasCharName);
             colour = settings.auctionColor;
             break;
         }
 
         case CHAT_SAY:
         {
-            if ( msg.sText.StartsWith("/me ") )
-                buff.Format("%s %s", (const char *)msg.sPerson, ((const char *)msg.sText)+4);
-            else if ( msg.sText.StartsWith("/my ") )
-                buff.Format("%s's %s", (const char *)msg.sPerson, ((const char *)msg.sText)+4);
-            else
-            {
-            	if(hasCharName)
-            		buff.Format(REDCODE "%s" DEFAULTCODE " %s: %s", (const char *)msg.sPerson, (const char *) PawsManager::GetSingleton().Translate("says"),
-            		                        (const char *)msg.sText);
-            	else
-            		buff.Format(GREENCODE "%s" DEFAULTCODE " %s: %s", (const char *)msg.sPerson, (const char *) PawsManager::GetSingleton().Translate("says"),
-                        (const char *)msg.sText);
-            }
+            FormatMessage(msg.sText,msg.sPerson, "says", buff, hasCharName);
             colour = settings.chatColor;
             break;
         }
@@ -1465,13 +1438,7 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
         case CHAT_SERVER_TELL:
 
             // allows /tell <person> /me sits down for a private action
-            if ( msg.sText.StartsWith("/me ") )
-                buff.Format("%s %s", (const char *)msg.sPerson, ((const char *)msg.sText)+4);
-            else if ( msg.sText.StartsWith("/my ") )
-                buff.Format("%s's %s", (const char *)msg.sPerson, ((const char *)msg.sText)+4);
-            else
-                buff.Format("%s %s: %s", (const char *)msg.sPerson, (const char *)PawsManager::GetSingleton().Translate("tells you"),
-                            (const char *)msg.sText);
+            FormatMessage(msg.sText, msg.sPerson, "tells you", buff, hasCharName);
 
             colour = settings.tellColor;
             break;
@@ -1554,8 +1521,8 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
         	if(channelID == csArrayItemNotFound)
         		return;
         	channelID++;
-        	buff.Format("[%zu: %s] %s: %s", channelID, channelIDs.GetKey(msg.channelID, "").GetData(),
-						(const char *)msg.sPerson, (const char *)msg.sText);
+            FormatMessage(msg.sText, msg.sPerson, "", buff, hasCharName);
+            buff.Insert(0, csString().Format("[%zu: %s] ", channelID, channelIDs.GetKey(msg.channelID, "").GetData()));
 			colour = settings.channelColor;
 			break;
         }
@@ -1588,8 +1555,6 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
             colour = settings.playerColor;
         }
     }
-
-
 
     if (!buff.IsEmpty())
     {
