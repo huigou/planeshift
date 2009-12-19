@@ -188,6 +188,16 @@ protected:
 
     void HandleSystemMessage( MsgEntry* message );
 
+    /** Takes as input a message and formats it with colours, /me and /my support.
+     *  
+     *  @param sText: The message main text.
+     *  @param sPerson: The message sender.
+     *  @param prependingText: the text which will be prepended before the message. This will get translated.
+     *  @param buff: where the formatted message will be stored.
+     *  @param hasCharName: Tells if the player character name is inside the message.
+     */
+    void FormatMessage(csString &sText, csString &sPerson, csString prependingText, csString &buff, bool &hasCharName);
+    
     /// Sends the contents of the input text to the server.
     void SendChatLine(csString& inputText);
 
