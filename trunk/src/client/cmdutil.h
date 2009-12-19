@@ -68,7 +68,7 @@ private:
     //void HandleDumpMovements();
     
     /// Handles the /screenshot command
-    void HandleScreenShot(bool compress);
+    void HandleScreenShot(bool compress, bool bigScreenShot, int width, int height);
     
     /// Handles the /confirm command
     void HandleConfirm( WordArray& array, csString& error );
