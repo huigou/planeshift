@@ -59,8 +59,8 @@ bool WidgetConfigWindow::OnScroll( int direction, pawsScrollBar* widget )
         // get current minimum alpha value from scrollbar
         float value = scrollBarMinAlpha->GetCurrentValue();
 
-        // this minimum value must be less than the maximum alpha value 
-        if (value<scrollBarMaxAlpha->GetCurrentValue())
+        // this minimum value must be less or equal to the maximum alpha value 
+        if (value<=scrollBarMaxAlpha->GetCurrentValue())
         {
             // update the progress bar
             progressBarMinAlpha->SetCurrentValue(value);
@@ -78,7 +78,7 @@ bool WidgetConfigWindow::OnScroll( int direction, pawsScrollBar* widget )
         else
         {
             // undo scrollbar action
-            scrollBarMinAlpha->SetCurrentValue(currentMinAlpha, false);
+            scrollBarMinAlpha->SetCurrentValue(scrollBarMaxAlpha->GetCurrentValue());
         }
     }
     else if (widget == scrollBarMaxAlpha)
@@ -87,7 +87,7 @@ bool WidgetConfigWindow::OnScroll( int direction, pawsScrollBar* widget )
         float value = scrollBarMaxAlpha->GetCurrentValue();
 
         // max alpha must not be less than min alpha
-        if (value>scrollBarMinAlpha->GetCurrentValue())
+        if (value>=scrollBarMinAlpha->GetCurrentValue())
         {
             progressBarMaxAlpha->SetCurrentValue(value);
             // If we are fading, then show possible max alpha.
@@ -98,9 +98,10 @@ bool WidgetConfigWindow::OnScroll( int direction, pawsScrollBar* widget )
             textMaxAlphaPct->SetText(pct);
 
             currentMaxAlpha = value;
-        } else    
+        } 
+        else    
         {
-            scrollBarMaxAlpha->SetCurrentValue(currentMaxAlpha, false);
+            scrollBarMaxAlpha->SetCurrentValue(scrollBarMinAlpha->GetCurrentValue());
         }
     }
     else if (widget == scrollBarFadeSpeed)
