@@ -67,12 +67,13 @@ csString NormalizeCharacterName(const csString & name);
 
 enum PSCHARACTER_TYPE
 {
-    PSCHARACTER_TYPE_PLAYER = 0,
-    PSCHARACTER_TYPE_NPC    = 1,
-    PSCHARACTER_TYPE_PET    = 2,
-    PSCHARACTER_TYPE_MOUNT  = 3,
-    PSCHARACTER_TYPE_COUNT  = 4,
-    PSCHARACTER_TYPE_UNKNOWN = ~0
+    PSCHARACTER_TYPE_PLAYER    = 0,
+    PSCHARACTER_TYPE_NPC       = 1,
+    PSCHARACTER_TYPE_PET       = 2,
+    PSCHARACTER_TYPE_MOUNT     = 3,
+    PSCHARACTER_TYPE_MOUNTPET  = 4,
+    PSCHARACTER_TYPE_COUNT     = 5,
+    PSCHARACTER_TYPE_UNKNOWN   = ~0
 } ;
 
 #define PSCHARACTER_BULK_COUNT INVENTORY_BULK_COUNT
@@ -611,7 +612,7 @@ public:
 
     csString animal_affinity;
     PID owner_id;
-    PID familiar_id;
+    csArray<PID> familiars_id;
     Buffable<int> canSummonFamiliar;
 
 public:
@@ -882,12 +883,12 @@ public:
     bool IsNPC() { return characterType == PSCHARACTER_TYPE_NPC; };
 
     /// Used to determine if this NPC is a pet
-    bool IsPet() { return characterType == PSCHARACTER_TYPE_PET; };
+    bool IsPet() { return (characterType == PSCHARACTER_TYPE_PET || characterType == PSCHARACTER_TYPE_MOUNTPET); };
     /// Used to determine if this NPC is a mount
-    bool IsMount() { return characterType == PSCHARACTER_TYPE_MOUNT; };
-    PID  GetFamiliarID() { return familiar_id; };
+    bool IsMount() { return (characterType == PSCHARACTER_TYPE_MOUNT || characterType == PSCHARACTER_TYPE_MOUNTPET); };
+    PID  GetFamiliarID(int id) { return familiars_id.GetSize() > id ? familiars_id.Get(id) : 0; };
     void SetFamiliarID(PID v);
-    bool CanSummonFamiliar() { return GetFamiliarID() != 0 && canSummonFamiliar.Current() > 0; }
+    bool CanSummonFamiliar(int id) { return GetFamiliarID(id) != 0 && canSummonFamiliar.Current() > 0; }
     Buffable<int> & GetCanSummonFamiliar() { return canSummonFamiliar; }
     const char *GetAnimalAffinity() { return animal_affinity.GetDataSafe(); };
     void SetAnimialAffinity( const char* v ) { animal_affinity = v; };

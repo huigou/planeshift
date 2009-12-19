@@ -2007,6 +2007,13 @@ void UserManager::HandleMount(psUserCmdMessage& msg, Client *client)
                 "Can't mount %s", mount->GetName());
         return;
     }
+    
+    if(mount->GetCharacterData()->IsPet() && client->GetPID() != mount->GetCharacterData()->GetOwnerID())
+    {
+        psserver->SendSystemError(client->GetClientNum(),
+                "You can't mount %s. It's not yours.", mount->GetName());
+        return;
+    }
 
     if(!client->GetActor()->IsNear(mount, RANGE_TO_USE, true))
     {

@@ -80,7 +80,7 @@
 #define ENABLE_MAX_CAPACITY 0
 
 
-const char *psCharacter::characterTypeName[] = { "player", "npc", "pet", "mount" };
+const char *psCharacter::characterTypeName[] = { "player", "npc", "pet", "mount", "mountpet" };
 
 MathScript *psCharacter::maxRealmScript    = NULL;
 MathScript *psCharacter::staminaCalc       = NULL;
@@ -122,7 +122,6 @@ psCharacter::psCharacter() : inventory(this),
     help_event_flags = 0;
     accountid = 0;
     pid = 0;
-    familiar_id = 0;
     owner_id = 0;
 
     override_max_hp = 0.0f;
@@ -698,7 +697,6 @@ bool psCharacter::LoadMarriageInfo( Result& result)
 
 bool psCharacter::LoadFamiliar( Result& pet, Result& owner )
 {
-    familiar_id = 0;
     owner_id = 0;
 
     if ( !pet.IsValid() )
@@ -719,9 +717,8 @@ bool psCharacter::LoadFamiliar( Result& pet, Result& owner )
 
         if ( strcmp( pet[x][ "relationship_type" ], "familiar" ) == 0 )
         {
-            familiar_id = pet[x].GetInt( "related_id" );
+            familiars_id.Push(pet[x].GetInt( "related_id" ));
             Notify2( LOG_MARRIAGE, "Successfully loaded familair for %s", name.GetData() );
-            break;
         }
     }
 
@@ -952,15 +949,14 @@ void psCharacter::SetRaceInfo(psRaceInfo *rinfo)
 
 void psCharacter::SetFamiliarID(PID v)
 {
-    csString sql;
+    familiars_id.Push(v);
 
-    familiar_id = v;
-    sql.Format("INSERT INTO character_relationships VALUES (%u, %d, 'familiar', '')", pid.Unbox(), familiar_id.Unbox());
+    csString sql;
+    sql.Format("INSERT INTO character_relationships VALUES (%u, %d, 'familiar', '')", pid.Unbox(), v.Unbox());
     if( !db->Command( sql ) )
     {
         Error3("Couldn't execute SQL %s!, %s's pet relationship is not saved.", sql.GetData(), ShowID(pid));
     }
-
 };
 
 void psCharacter::LoadActiveSpells()

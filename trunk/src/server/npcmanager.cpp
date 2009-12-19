@@ -1327,7 +1327,7 @@ void NPCManager::HandlePetCommand(MsgEntry * me,Client *client)
         return;
     }
 
-    PID familiarID = owner->GetCharacterData()->familiar_id;
+    PID familiarID = owner->GetCharacterData()->GetFamiliarID(strtoul(msg.target.GetDataSafe(),NULL,0));
 
     if ( !msg.valid )
     {
@@ -1338,7 +1338,7 @@ void NPCManager::HandlePetCommand(MsgEntry * me,Client *client)
     WordArray words( msg.options );
 
     // Operator did give a name, lets see if we find the named pet
-    if ( msg.target.Length() != 0 )
+    if ( msg.target.Length() != 0 && familiarID == 0 )
     {
         size_t numPets = owner->GetNumPets();
         for( size_t i = 0; i < numPets; i++ )
@@ -1440,7 +1440,7 @@ void NPCManager::HandlePetCommand(MsgEntry * me,Client *client)
         }
         else
         {
-            if (owner->GetCharacterData()->familiar_id.IsValid())
+            if (familiarID.IsValid())
             {
                 psserver->SendSystemInfo(me->clientnum, "Your pet has already returned to the netherworld.");
             }
@@ -1456,15 +1456,15 @@ void NPCManager::HandlePetCommand(MsgEntry * me,Client *client)
     case psPETCommandMessage::CMD_SUMMON :
 
         // Attach to Familiar
-        familiarID = owner->GetCharacterData()->familiar_id;
+        //familiarID = familiarID;
 
-        if ( owner->GetFamiliar() )
+        if ( owner->GetFamiliar() || (owner->GetActor()->GetMount() && owner->GetActor()->GetMount()->GetOwnerID() == owner->GetPID()))
         {
             psserver->SendSystemInfo(me->clientnum, "Your familiar has already been summoned.");
             return;
         }
 
-        if (!owner->GetCharacterData()->CanSummonFamiliar())
+        if (!owner->GetCharacterData()->CanSummonFamiliar(strtoul(msg.target.GetDataSafe(),NULL,0)))
         {
             psserver->SendSystemInfo(me->clientnum, "You need to equip the item your familiar is bound to.");
             return;
