@@ -429,7 +429,7 @@ void psClientCharManager::HandleEquipment(MsgEntry* me)
         return;
     }
     
-    Error2("Got equipment for actor %d", playerID);
+    Debug2(LOG_CELPERSIST,0,"Got equipment for actor %d", playerID);
 
 
     csString slotname(psengine->slotName.GetName(equip.slot));
