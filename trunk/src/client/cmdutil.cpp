@@ -29,6 +29,7 @@
 #include <iutil/cfgmgr.h>
 #include <iutil/objreg.h>
 #include <igraphic/imageio.h>
+#include <cstool/uberscreenshot.h>
 
 //=============================================================================
 // Project Includes
@@ -131,8 +132,23 @@ const char *psUtilityCommands::HandleCommand(const char *cmd)
 
         // Optionally choose not to compress
         bool compress = words.FindStr("lossless",1) == SIZET_NOT_FOUND;
+        
+        size_t bigPos = words.FindStr("big",1);
+        
+        bool bigScreenShot = bigPos != SIZET_NOT_FOUND;
+        int width = 0;
+        int height = 0;
+        
+        if(bigScreenShot) //check if the user put arguments: must be next to the command: big width height
+        {
+            if(words.GetCount() > bigPos+1) //first we have to check if we are under bonduaries
+                width = words.GetInt(bigPos+1); //then we get the value as a number, we will get zero if there isn't a number
+            if(words.GetCount() > bigPos+2)
+                height = words.GetInt(bigPos+2);
+        }
+            
 
-        HandleScreenShot(compress);
+        HandleScreenShot(compress, bigScreenShot, width, height);
 
         // Wait for frame (which we might have drawn just above) to finish.
         psengine->GetG3D()->FinishDraw();
@@ -200,7 +216,7 @@ csString psUtilityCommands::SaveCamera()
     //Loop until free fileslot
     while(!freeSlot)
     {
-        filename = "/this/reports/graphicbug";
+        filename = "/planeshift/userdata/reports/graphicbug";
         filename.Append(reportNum);
         filename.Append(".cam");
 
@@ -356,7 +372,7 @@ void psUtilityCommands::HandleConfirm( WordArray& words, csString& error )
     PawsManager::GetSingleton().SetModalWidget( confirm );
 }
 
-void psUtilityCommands::HandleScreenShot(bool compress)
+void psUtilityCommands::HandleScreenShot(bool compress, bool bigScreenShot, int width, int height)
 {
     // This is needed for some players who exploit the movement of "laggieness"
     // The following line was commented out check PS#1260 for details.
@@ -382,7 +398,20 @@ void psUtilityCommands::HandleScreenShot(bool compress)
 
     // Make the screenshot
     csRef<iImageIO> imageio = csQueryRegistry<iImageIO> (psengine->GetObjectRegistry());
-    csRef<iImage> image = psengine->GetG2D()->ScreenShot();
+    csRef<iImage> image; //used to store the acquired screenshot before writing to file
+    if(bigScreenShot) //we are doing an uberscreenshot (size > window size)
+    {
+        //some defaults in case the user didn't input them
+        if(width == 0) width = 2048;
+        if(height == 0) height = 1536;
+        CS::UberScreenshotMaker shotMaker (width, height, psengine->GetPSCamera()->GetView()->GetCamera(), 
+                                           psengine->GetEngine(), psengine->GetG3D());
+        image = shotMaker.Shoot(); //make an "uberscreenshot"
+    }
+    else
+    {
+        image = psengine->GetG2D()->ScreenShot();
+    }
     csRef<iDataBuffer> buffer = imageio->Save(image,mime);
 
     // Save the screenshot
