@@ -290,7 +290,7 @@ void NetManager::CheckResendPkts()
                 psMessageBytes* msg = (psMessageBytes*) packet->data;
                 type = msg->type;
             }
-            //Error3("Queue full. Could not add packet with clientnum %d type %s.\n", pkt->clientnum, type == 0 ? "Unknown" : (const char *)  GetMsgTypeName(type));
+            Error3("Queue full. Could not add packet with clientnum %d type %s.\n", pkt->clientnum, type == 0 ? "Unknown" : (const char *)  GetMsgTypeName(type));
             continue;
         }
 
@@ -323,7 +323,7 @@ void NetManager::CheckResendPkts()
 		// by clientnum
 		
 		// Now backoff previous connection for the next time we need to resend those packets
-		if (resentConnections[i] && (resentConnections[i]->backoff == 1 || resentConnections[i]->backoffStart + MIN(PKTMAXRTO, resentConnections[i]->RTO * resentConnections[i]->backoff) <= currenttime))
+		if ((resentConnections[i]->backoff == 1 || resentConnections[i]->backoffStart + MIN(PKTMAXRTO, resentConnections[i]->RTO * resentConnections[i]->backoff) <= currenttime))
 		{
 			resentConnections[i]->backoffStart = currenttime;
 			resentConnections[i]->backoff *= 2;
@@ -349,7 +349,7 @@ void NetManager::CheckResendPkts()
             csString status;
             if(timeTaken > 50 || pkts.GetSize() > 300)
             {
-                status.Format("Resending high priority packets has taken %u time to process, for %u packets on %zu unique connections. ", timeTaken, resentCount, resentConnections.GetSize());
+                status.Format("Resending high priority packets has taken %u time to process, for %u packets on %zu unique connections (Sample clientnum %u/RTO %u/backoff %d. ", timeTaken, resentCount, resentConnections.GetSize(), resentConnections[0]->clientnum, resentConnections[0]->RTO, resentConnections[0]->backoff);
                 CPrintf(CON_WARNING, "%s\n", (const char *) status.GetData());
             }
             status.AppendFmt("Resending non-acked packet statistics: %g average resends, peak of %u resent packets", resendAvg, peakResend);
