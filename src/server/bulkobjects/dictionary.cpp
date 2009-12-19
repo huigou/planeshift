@@ -2540,10 +2540,12 @@ void NpcDialogMenu::ShowMenu(Client *client,csTicks delay, gemNPC *npc)
 
         csString menuText = triggers[i].menuText;
         npc->GetNPCDialogPtr()->SubstituteKeywords(client,menuText);
+        //only add the trigger if it isn't a question
+        csString trigger = (menuText.Find("?=") == SIZET_NOT_FOUND) ? triggers[i].trigger : "(question)";
         
 		menu.AddResponse((uint32_t) i, 
                           menuText,
-		                  triggers[i].trigger);
+		                  trigger);
         count++;
 	}
 
