@@ -21,9 +21,6 @@
             <widget factory="pawsSeqTreeNode" name="Rotate right"/>
             <widget factory="pawsSeqTreeNode" name="Strafe left"/>
             <widget factory="pawsSeqTreeNode" name="Strafe right"/>
-            <widget factory="pawsSeqTreeNode" name="Brightness up"/>
-            <widget factory="pawsSeqTreeNode" name="Brightness down"/>
-            <widget factory="pawsSeqTreeNode" name="Brightness Reset" />
             <widget factory="pawsWidgetTreeNode" name="Alternates" collapsed="yes">
                 <nodewidget>
                     <widget factory="pawsTextBox" name="Alternates label">
@@ -99,6 +96,9 @@
             <widget factory="pawsSeqTreeNode" name="Buddy"/>
             <widget factory="pawsSeqTreeNode" name="Buy"/>
             <widget factory="pawsSeqTreeNode" name="Quit"/>
+            <widget factory="pawsSeqTreeNode" name="Brightness up"/>
+            <widget factory="pawsSeqTreeNode" name="Brightness down"/>
+            <widget factory="pawsSeqTreeNode" name="Brightness Reset" />
         </widget>
         <widget factory="pawsWidgetTreeNode" name="Shortcuts" >
             <nodewidget>
