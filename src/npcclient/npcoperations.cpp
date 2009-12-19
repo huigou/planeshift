@@ -2694,6 +2694,10 @@ void MeleeOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
 		csVector3 forward;
 			
 		TurnTo(npc, pos, sector, forward);
+		// Needed because TurnTo automatically starts moving.
+	    csVector3 velvector(0,0,  0 );
+	    npc->GetLinMove()->SetVelocity(velvector);
+	    npc->GetLinMove()->SetAngularVelocity( 0 );
 		// Check new rot
 		psGameObject::GetPosition(npc->GetActor(),pos,new_npc_rot,sector);
 		
