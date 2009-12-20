@@ -886,7 +886,7 @@ public:
     bool IsPet() { return (characterType == PSCHARACTER_TYPE_PET || characterType == PSCHARACTER_TYPE_MOUNTPET); };
     /// Used to determine if this NPC is a mount
     bool IsMount() { return (characterType == PSCHARACTER_TYPE_MOUNT || characterType == PSCHARACTER_TYPE_MOUNTPET); };
-    PID  GetFamiliarID(int id) { return familiars_id.GetSize() > id ? familiars_id.Get(id) : 0; };
+    PID  GetFamiliarID(size_t id) { return familiars_id.GetSize() > id ? familiars_id.Get(id) : 0; };
     void SetFamiliarID(PID v);
     bool CanSummonFamiliar(int id) { return GetFamiliarID(id) != 0 && canSummonFamiliar.Current() > 0; }
     Buffable<int> & GetCanSummonFamiliar() { return canSummonFamiliar; }
