@@ -355,7 +355,6 @@ void ServerCharManager::HandleInventoryMessage(MsgEntry* me,Client *client)
             if(LogCSV::GetSingletonPtr())
                 LogCSV::GetSingleton().Write(CSV_STATUS, status);
             
-            for (size_t i=1; i < chardata->Inventory().GetInventoryIndexCount(); i++)
             SendInventory(fromClientNumber, (static_cast<psGUIInventoryMessage::commands>(incoming.command)==psGUIInventoryMessage::UPDATE_REQUEST));
             break;
         }
