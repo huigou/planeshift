@@ -1871,7 +1871,6 @@ bool GEMClientActor::CheckLoadStatus()
 
     csRef<iMeshWrapper> mesh = factory->CreateMeshWrapper();
     charApp->SetMesh(mesh);
-    printf("%s\n",mesh->QueryObject()->GetName());
 
     if(!matName.IsEmpty())
     {
@@ -1899,17 +1898,14 @@ bool GEMClientActor::CheckLoadStatus()
         }
 
         csRef<iMeshWrapper> mountMesh = mountFactory->CreateMeshWrapper();
-        printf("->%s\n",mountMesh->QueryObject()->GetName());
         SwitchToRealMesh(mountMesh);
         charApp->ApplyRider(pcmesh);
-        printf("->%s\n",pcmesh->QueryObject()->GetName());
         csRef<iSpriteCal3DState> riderstate = scfQueryInterface<iSpriteCal3DState> (mesh->GetMeshObject());
         riderstate->SetAnimCycle(MounterAnim,100);
     }
     else
     {
         SwitchToRealMesh(mesh);
-        printf("-->%s\n",pcmesh->QueryObject()->GetName());
     }
 
     pcmesh->GetFlags().Set(CS_ENTITY_NODECAL);
