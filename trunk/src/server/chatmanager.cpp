@@ -150,7 +150,7 @@ void ChatManager::HandleChatMessage(MsgEntry *me, Client *client)
 
               // channel 1 is public
               if(msg.channelID == 1)
-                  CPrintf (CON_WARNING, "Gossip: %s\n", msg.sText.GetData());
+                  CPrintf (CON_WARNING, "Gossip %s: %s\n", client->GetName(), msg.sText.GetData());
 
               psChatMessage newMsg(client->GetClientNum(), client->GetActor()->GetEID(), client->GetName(), 0, msg.sText, msg.iChatType, msg.translate, msg.channelID);
 
