@@ -120,7 +120,7 @@ void SlotManager::HandleSlotMovement(MsgEntry* me, Client *fromClient)
     // TODO: move inside above functions based on to and from containers
     //  ie. this is not needed for world container to world container moves
     //  also it updates glyphs as well
-    if(worldContainerID == 0 || otherContainerID < 100)
+    if(worldContainerID == 0 || otherContainerID <= 100)
         psserver->GetCharManager()->UpdateItemViews(fromClient->GetClientNum());  
 
     return;
