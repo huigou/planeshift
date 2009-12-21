@@ -1244,8 +1244,8 @@ csPtr<MsgEntry> NetBase::CheckCompleteMessage(uint32_t client, uint32_t id)
      */
     if (!invalidated && offset != totallength)
     {
-        Error2("Discarding MALICIOUS message.  Gaps in fragments attempt to capture data from uninitialized memory.  Missing packet with offset %u. (but total length of remaining fragments equals total message length).\n",
-                            offset);
+        Error3("Discarding MALICIOUS message.  Gaps in fragments attempt to capture data from uninitialized memory.  Missing packet with offset %u total length %u. (but total length of remaining fragments equals total message length).\n",
+                            offset, totallength);
         invalidated=true;
     }
 
