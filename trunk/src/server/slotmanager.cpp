@@ -120,8 +120,19 @@ void SlotManager::HandleSlotMovement(MsgEntry* me, Client *fromClient)
     // TODO: move inside above functions based on to and from containers
     //  ie. this is not needed for world container to world container moves
     //  also it updates glyphs as well
-    if(worldContainerID == 0 || otherContainerID <= 100)
-        psserver->GetCharManager()->UpdateItemViews(fromClient->GetClientNum());  
+    if(!(mesg.fromContainer == mesg.toContainer && mesg.fromSlot == mesg.toSlot && mesg.posWorld.IsZero()))
+    {
+		if(worldContainerID == 0 || otherContainerID <= 100)
+			psserver->GetCharManager()->UpdateItemViews(fromClient->GetClientNum());  
+    }
+    else
+    {
+        csString status;
+        status.Format("Received nop slot movement message. Client %u Container %d Slot %d", fromClient->GetClientNum(), mesg.fromContainer, mesg.fromSlot);
+
+        if(LogCSV::GetSingletonPtr())
+            LogCSV::GetSingleton().Write(CSV_STATUS, status);
+    }
 
     return;
 }
