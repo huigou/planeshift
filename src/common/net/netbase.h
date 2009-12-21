@@ -37,7 +37,7 @@
 #define NUM_BROADCAST        0xffffffff
 #define MAXQUEUESIZE        20000
 #define MAXCLIENTQUEUESIZE  5000
-#define MAXPACKETHISTORY    503  // Should be a prime to improve performance of hash
+#define MAXPACKETHISTORY    1009 // Should be a prime to improve performance of hash
                                  // This must be set carefully and ideally should be at least the size
                                  // of the input queue
 #define NETAVGCOUNT 400
