@@ -808,7 +808,7 @@ int BankManager::CalculateAccountLevel(psCharacter *pschar, bool guild)
     script->Evaluate(&env);
     MathVar* accountLevel = env.Lookup("AccountLevel");
 
-    return (int)accountLevel->GetValue();
+    return accountLevel->GetRoundValue();
 }
 
 float BankManager::CalculateFee(psCharacter* pschar, bool guild)

@@ -473,7 +473,7 @@ int EntityManager::CalculateFamiliarAffinity( psCharacter * chardata, size_t typ
         env.Define("AttackType", attacktype);
         msAffinity->Evaluate(&env);
         MathVar *affinity = env.Lookup("Affinity");
-        affinityValue = (int) affinity->GetValue();
+        affinityValue = affinity->GetRoundValue();
     }
 
     return affinityValue;

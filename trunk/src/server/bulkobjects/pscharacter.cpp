@@ -1078,7 +1078,7 @@ unsigned int psCharacter::CalculateAddExperience(PSSKILL skill, unsigned int pra
         env.Define("PracticePoints", practicePoints);
         env.Define("Modifier", modifier);
         expSkillCalc->Evaluate(&env);
-        unsigned int experiencePoints = env.Lookup("Exp")->GetValue();
+        unsigned int experiencePoints = env.Lookup("Exp")->GetRoundValue();
         
         if(GetActor()->GetClient()->GetSecurityLevel() >= GM_DEVELOPER)
         {
@@ -1163,7 +1163,7 @@ int psCharacter::GetMaxAllowedRealm( PSSKILL skill )
         Error1("Failed to evaluate MathScript >MaxRealm<.");
         return 0;
     }
-    return (int) maxRealm->GetValue();
+    return maxRealm->GetRoundValue();
 }
 
 bool psCharacter::CheckMagicKnowledge( PSSKILL skill, int realm )
@@ -3169,15 +3169,15 @@ void Skill::CalculateCosts(psCharacter* user)
     }
 
     // Get the output
-    yCost = (int)yCostVar->GetValue();
-    zCost = (int)zCostVar->GetValue();
+    yCost = yCostVar->GetRoundValue();
+    zCost = zCostVar->GetRoundValue();
 
     //calculate the next level costs. Used by the CalculateAddExperience.
     env.Define("SkillRank",      rank.Base()+1);
     script->Evaluate(&env);
 
-    yCostNext = (int)yCostVar->GetValue();
-    zCostNext = (int)zCostVar->GetValue();
+    yCostNext = yCostVar->GetRoundValue();
+    zCostNext = zCostVar->GetRoundValue();
 
 /*
     // Make sure the y values is clamped to the cost.  Otherwise Practice may always
