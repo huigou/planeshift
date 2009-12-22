@@ -102,6 +102,33 @@ public:
         }
         return true;
     }
+    
+    // Peeks at the next message from the queue but does not remove it.
+    csPtr<queuetype> Peek()
+	{
+        CS::Threading::RecursiveMutexScopedLock lock(mutex);
+
+        csRef<queuetype> ptr;
+        
+        unsigned int qpointer = qstart;
+        
+        // if this is a weakref queue we should skip over null entries
+        while(!ptr.IsValid())
+        {
+            // check if queue is empty
+            if (qpointer == qend)
+            {
+                return 0;
+            }
+
+            // removes Message from queue
+            ptr = qbuffer[qpointer];
+            
+            qpointer = (qpointer + 1) % qsize;
+        }
+
+        return csPtr<queuetype>(ptr);
+	}
 
     /**
     * This gets the next message from the queue, it is then removed from
@@ -180,6 +207,12 @@ public:
             return qend + qsize - qstart;
         else
             return qend - qstart;
+    }
+    
+    bool IsFull()
+    {
+    	CS::Threading::RecursiveMutexScopedLock lock(mutex);
+    	return ((qend + 1) % qsize == qstart);
     }
 protected:
 
