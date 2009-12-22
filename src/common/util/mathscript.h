@@ -68,6 +68,11 @@ public:
 
     MathType Type() { return type; }
 
+    int GetRoundValue()
+    {
+        return round(GetValue());
+    }
+
     double GetValue()
     {
         if (type == VARTYPE_OBJ)

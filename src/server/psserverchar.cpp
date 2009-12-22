@@ -1217,7 +1217,7 @@ int ServerCharManager::CalculateMerchantPrice(psItem *item, Client *client, bool
     }
 
     MathVar *result = env.Lookup("Result");
-    return (int) result->GetValue();
+    return result->GetRoundValue();
 }
 
 bool ServerCharManager::SendPlayerItems( Client *client, psItemCategory* category)

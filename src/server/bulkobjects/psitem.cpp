@@ -1784,7 +1784,7 @@ psMoney psItem::GetPrice()
         Error1("Failed to evaluate MathScript >Calc Item Price<.");
         return current_stats->GetPrice();
     }
-    return psMoney(int(finalPrice->GetValue()));
+    return psMoney(finalPrice->GetRoundValue());
 }
 
 psMoney psItem::GetSellPrice()
@@ -1815,7 +1815,7 @@ psMoney psItem::GetSellPrice()
         Error1("Failed to evaluate MathScript >Calc Item Price<.");
         return current_stats->GetPrice();
     }
-    return psMoney(int(finalPrice->GetValue()));
+    return psMoney(finalPrice->GetRoundValue());
 }
 
 psItemCategory * psItem::GetCategory()
@@ -2890,8 +2890,8 @@ void psItem::SendSketchDefinition(Client *client)
     MathVar *score = env.Lookup("IconScore");
     MathVar *count = env.Lookup("PrimCount");
     CS_ASSERT(score && count);
-    int playerScore = (int)score->GetValue();
-    int primCount   = (int)count->GetValue();
+    int playerScore = score->GetRoundValue();
+    int primCount   = count->GetRoundValue();
 
     // Build the limit string for the client
     csString xml("<limits>");

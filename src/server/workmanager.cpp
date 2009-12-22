@@ -335,7 +335,7 @@ void WorkManager::HandleRepair(Client *client, psWorkCmdMessage &msg)
         MathEnvironment env;
         env.Define("Object", repairTarget);
         calc_repair_rank->Evaluate(&env);
-        rankneeded = env.Lookup("Result")->GetValue();
+        rankneeded = env.Lookup("Result")->GetRoundValue();
     }
 
     int skillid = repairTarget->GetBaseStats()->GetCategory()->repairSkillId;
@@ -467,7 +467,7 @@ void WorkManager::HandleRepairEvent(psWorkGameEvent* workEvent)
         env.Define("Worker", workEvent->client->GetCharacterData());
         env.Define("RepairAmount", workEvent->repairAmount);
         calc_repair_exp->Evaluate(&env);
-        practicePoints   = env.Lookup("ResultPractice")->GetValue();
+        practicePoints   = env.Lookup("ResultPractice")->GetRoundValue();
         modifier = env.Lookup("ResultModifier")->GetValue();
     }
 
@@ -868,11 +868,11 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
         env.Define("Worker", workEvent->client->GetCharacterData());
         env.Define("Probability", workEvent->nr->probability); // Probability of successful mining
         calc_mining_exp->Evaluate(&env);
-        practicePoints   = env.Lookup("ResultPractice")->GetValue();
+        practicePoints   = env.Lookup("ResultPractice")->GetRoundValue();
         modifier = env.Lookup("ResultModifier")->GetValue();
         MathVar *varResult = env.Lookup("Exp"); //optional variable
         if(varResult)
-            experiencePoints = varResult->GetValue();
+            experiencePoints = varResult->GetRoundValue();
         else
             experiencePoints = 0;
     }
@@ -3390,7 +3390,7 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
             env.Define("QtyMultiplier", QtyMultiplier);
             env.Define("Character", owner);
             calc_transform_exp->Evaluate(&env);
-            experiencePoints = env.Lookup("Exp")->GetValue();
+            experiencePoints = env.Lookup("Exp")->GetRoundValue();
         }
 
         owner->GetCharacterData()->AddExperiencePointsNotify(experiencePoints);
@@ -3871,7 +3871,7 @@ void WorkManager::StartLockpick(Client* client,psItem* item)
     psWorkGameEvent *ev = new psWorkGameEvent(
         this,
         client->GetActor(),
-        (int) time->GetValue(),
+        time->GetRoundValue(),
         LOCKPICKING,
         emptyV,
         0,
