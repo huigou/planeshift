@@ -28,7 +28,6 @@
 
 #define SECONDS_BEFORE_SPARING_DEFEATED 30
 
-class MathScriptVar;
 class psCombatGameEvent;
 
 enum COMBATMANAGER_ATTACKTYPE

@@ -35,7 +35,6 @@ class psCelClient;
 class MsgEntry;
 class gemActor;
 class MathScript;
-class MathScriptVar;
 class PaladinJr;
 
 class psServerDR : public MessageManager
