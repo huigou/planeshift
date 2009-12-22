@@ -85,6 +85,7 @@ LinkStaticPlugins psnpcclient_static :
   vfs
   xmlread
   xmlshader
+  xmltiny
 
 : 
 : CRYSTAL
