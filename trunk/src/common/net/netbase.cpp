@@ -679,6 +679,7 @@ bool NetBase::SendOut()
             sent_anything = true;
         }
         // If the window is full so there are still packets left, ensure we re-check the queue later.
+        sentCount -= q->Count();
         if(q->Count() > 0)
         	readd.Push(q);
     }

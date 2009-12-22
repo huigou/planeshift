@@ -212,6 +212,12 @@ void psNetConnection::Run ()
 
             laststatdisplay = currentticks;
 
+            csString status;
+            status.Format("Currently using %1.2fKbps out, %1.2fkbps in. Packets: %ld out, %ld in", kbpsout, kbpsin, totalcountout-lasttotalcountout,totalcountin-lasttotalcountin);
+ 
+            if(LogCSV::GetSingletonPtr())
+                LogCSV::GetSingleton().Write(CSV_STATUS, status);
+            
             if (pslog::disp_flag[LOG_LOAD])
             {
                 printf("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");

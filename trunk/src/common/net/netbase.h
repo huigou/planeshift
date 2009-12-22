@@ -543,9 +543,9 @@ protected:
     bool ready;
 
     /** total bytes transferred by this object */
-    int totaltransferin, totaltransferout;
+    long totaltransferin, totaltransferout;
     /** total packages transferred by this object */
-    int totalcountin, totalcountout;
+    long totalcountin, totalcountout;
 
     /** Moving averages */
     typedef struct {
