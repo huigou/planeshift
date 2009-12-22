@@ -232,6 +232,9 @@ void NetManager::CheckResendPkts()
     csRef<psNetPacketEntry> pkt;
     csArray<csRef<psNetPacketEntry> > pkts;
     csArray<Connection*> resentConnections;
+    
+    // Connections that should be avoided because we know they are full
+    csArray<Connection*> fullConnections;
 
     csTicks currenttime = csGetTicks();
     unsigned int resentCount = 0;
@@ -263,6 +266,8 @@ void NetManager::CheckResendPkts()
         {
         	if (resentConnections.Find(connection) == csArrayItemNotFound)
         		resentConnections.Push(connection);
+        	if (fullConnections.Find(connection) != csArrayItemNotFound)
+        		continue;
         	// This indicates a bug in the netcode.
         	if (pkt->RTO == 0)
         	{
@@ -296,6 +301,7 @@ void NetManager::CheckResendPkts()
                 type = msg->type;
             }
             Error4("Queue full. Could not add packet with clientnum %d type %s ID %d.\n", pkt->clientnum, type == 0 ? "Fragment" : (const char *)  GetMsgTypeName(type), pkt->packet->pktid);
+            fullConnections.Push(connection);
             continue;
         }
 
@@ -320,6 +326,8 @@ void NetManager::CheckResendPkts()
             Debug2(LOG_NET,"No packet in ack queue :%d\n", pkt->packet->pktid);
 #endif
         }
+        else if(connection)
+            connection->RemoveFromWindow(pkt->packet->GetPacketSize());
 
     }
     if(resentCount > 0)

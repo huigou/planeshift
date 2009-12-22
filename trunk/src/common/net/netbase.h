@@ -43,6 +43,8 @@
 #define NETAVGCOUNT 400
 #define RESENDAVGCOUNT 200
 
+const unsigned int WINDOW_MAX_SIZE = 65536; // The size of the maximum reliable window in bytes.
+
 // The number of times the SendTo function will retry on a EAGAIN or EWOULDBLOCK
 #define SENDTO_MAX_RETRIES   200
 // The whole seconds that the SendTo function will block each cycle waiting for the write state to change on the socket
@@ -636,6 +638,9 @@ public:
     float devRTT;
     /** timeout */
     csTicks RTO;
+    
+    // Reliable transmission window size
+    uint32_t window;
 
     /** keeps track of received packets to drop doubled packets */
     uint32_t packethistoryid[MAXPACKETHISTORY];
@@ -648,6 +653,13 @@ public:
     { return valid; }
 
     uint32_t GetNextPacketID() {return sequence++;}
+    
+    // Check if the reliable transmission window is full
+    bool IsWindowFull() {return window > WINDOW_MAX_SIZE; }
+    // Add to window when reliable data is in transit
+    void AddToWindow(uint32_t bytes) {window += bytes; }
+    // Remove from transmission window when an ack is received
+    void RemoveFromWindow(uint32_t bytes) { if(bytes > window) abort(); window -= bytes;}
 };
 
 class NetPacketQueueRefCount : public NetPacketQueue, public csSyncRefCount, public CS::Utility::WeakReferenced
