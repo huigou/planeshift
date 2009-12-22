@@ -43,6 +43,8 @@
 /// This #define determines how far away people will get detailed combat events.
 #define MAX_COMBAT_EVENT_RANGE 30
 
+// #define COMBAT_DEBUG
+
 /**
  * When a player or NPC attacks someone, the first combat is queued.  When
  * that event is processed, if appropriate at the end, the next combat event
@@ -284,7 +286,9 @@ void CombatManager::AttackSomeone(gemActor *attacker,gemObject *target,Stance st
                 {
                     Debug3(LOG_COMBAT,attacker->GetClientID(),"%s tried attacking with %s but can't use it.",
                            attacker->GetName(),weapon->GetName());
+#ifdef COMBAT_DEBUG
                     psserver->SendSystemError(attacker_character->GetActor()->GetClientID(), response);
+#endif
                 } 
             }
         }
@@ -691,7 +695,9 @@ void CombatManager::HandleCombatEvent(psCombatGameEvent *event)
 
     if (!event->GetAttacker() || !event->GetTarget()) // disconnected and deleted
     {
+#ifdef COMBAT_DEBUG
         psserver->SendSystemError(event->AttackerCID, "Combat stopped as one participant logged of.");
+#endif
         return;
     }
 
@@ -704,28 +710,36 @@ void CombatManager::HandleCombatEvent(psCombatGameEvent *event)
     // If the attacker is no longer in attack mode abort.
     if (gemAttacker->GetMode() != PSCHARACTER_MODE_COMBAT)
     {
+#ifdef COMBAT_DEBUG
         psserver->SendSystemError(event->AttackerCID,
                 "Combat stopped as you left combat mode.");
+#endif
         return;
     }
 
     // If target is dead, abort.
     if (!gemTarget->IsAlive() )
     {
+#ifdef COMBAT_DEBUG
         psserver->SendSystemResult(event->AttackerCID, "Combat stopped as one participant logged of.");
+#endif
         return;
     }
 
     // If the slot is no longer attackable, abort
     if (!attacker_data->Inventory().CanItemAttack(event->GetWeaponSlot()))
     {
+#ifdef COMBAT_DEBUG
         psserver->SendSystemError(event->AttackerCID, "Combat stopped as you have no longer an attackable item equipped.");
+#endif
         return;
     }
     
     if (attacker_data->Inventory().GetEquipmentObject(event->GetWeaponSlot()).eventId != event->id)
     {
+#ifdef COMBAT_DEBUG
         psserver->SendSystemError(event->AttackerCID, "Ignored combat event as newer is in.");
+#endif
         return;
     }
    
@@ -744,7 +758,9 @@ void CombatManager::HandleCombatEvent(psCombatGameEvent *event)
     if (event->WeaponID != weapon->GetUID())
     {
         Debug2(LOG_COMBAT, gemAttacker->GetClientID(),"%s has changed weapons mid battle", gemAttacker->GetName() );
+#ifdef COMBAT_DEBUG
         psserver->SendSystemError(event->AttackerCID, "Weapon changed. Skipping");
+#endif
         skipThisRound = true;
     }
 
@@ -777,7 +793,9 @@ void CombatManager::HandleCombatEvent(psCombatGameEvent *event)
         // If the target has changed, abort (assume another combat event has started since we are still in attack mode)
         if (gemTarget != attacker_client->GetTargetObject())
         {
+#ifdef COMBAT_DEBUG
             psserver->SendSystemError(event->AttackerCID, "Target changed.");
+#endif
             return;
         }
     }
@@ -787,7 +805,9 @@ void CombatManager::HandleCombatEvent(psCombatGameEvent *event)
         gemNPC* npcAttacker = dynamic_cast<gemNPC*>(gemAttacker);
         if (npcAttacker && npcAttacker->GetTarget() != gemTarget)
         {
+#ifdef COMBAT_DEBUG
             psserver->SendSystemError(event->AttackerCID, "NPC's target changed.");
+#endif
             return;
         }
     }
@@ -889,7 +909,9 @@ void CombatManager::HandleCombatEvent(psCombatGameEvent *event)
     }
     else
     {
+#ifdef COMBAT_DEBUG
         psserver->SendSystemError(event->AttackerCID, "Item %s is not a auto attack item.",attacker_data->Inventory().GetEffectiveWeaponInSlot(event->GetWeaponSlot())->GetName());
+#endif
     }
 //    else
 //        CPrintf(CON_DEBUG, "Slot %d for %s not an auto-attack slot.\n",event->GetWeaponSlot(), event->attacker->GetName() );
@@ -1057,21 +1079,6 @@ psCombatGameEvent::psCombatGameEvent(CombatManager *mgr,
 
 psCombatGameEvent::~psCombatGameEvent()
 {
-//    if (!valid)
-//        return;
-
-/***
-    if ( target && target->IsValid() )
-    {        
-        target->Unregister(this);
-        target = NULL;
-    }        
-    if ( attacker && attacker->IsValid() )
-    {
-        attacker->Unregister(this);
-        target = NULL;
-    }
- ***/
 }
 
 bool psCombatGameEvent::CheckTrigger()
