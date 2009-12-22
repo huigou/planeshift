@@ -1,6 +1,6 @@
 #line 1 "fpoptimizer/fpoptimizer_header.txt"
 /***************************************************************************\
-|* Function Parser for C++ v4.0.2                                          *|
+|* Function Parser for C++ v4.0.3                                          *|
 |*-------------------------------------------------------------------------*|
 |* Function optimizer                                                      *|
 |*-------------------------------------------------------------------------*|
@@ -283,7 +283,7 @@ namespace FPoptimizer_CodeTree
         bool ConstantFolding_AddLogicItems();
         bool ConstantFolding_IfOperations();
         bool ConstantFolding_PowOperations();
-        void ConstantFolding_ComparisonOperations();
+        bool ConstantFolding_ComparisonOperations();
         template<typename CondType>
         bool ConstantFolding_LogicCommon(CondType cond_type, bool is_logical);
         bool ConstantFolding_MulGrouping();
@@ -1930,19 +1930,19 @@ namespace FPoptimizer_CodeTree
                 std::sort(Params.begin(), Params.end(), ParamComparer());
                 break;
             case cLess:
-                //if(ParamComparer() (Params[1], Params[0]))
-                //    { std::swap(Params[0], Params[1]); Opcode = cGreater; }
+                if(ParamComparer() (Params[1], Params[0]))
+                    { std::swap(Params[0], Params[1]); Opcode = cGreater; }
                 break;
             case cLessOrEq:
-                //if(ParamComparer() (Params[1], Params[0]))
-                //    { std::swap(Params[0], Params[1]); Opcode = cGreaterOrEq; }
+                if(ParamComparer() (Params[1], Params[0]))
+                    { std::swap(Params[0], Params[1]); Opcode = cGreaterOrEq; }
                 break;
             case cGreater:
-                //if(ParamComparer() (Params[1], Params[0]))
+                if(ParamComparer() (Params[1], Params[0]))
                     { std::swap(Params[0], Params[1]); Opcode = cLess; }
                 break;
             case cGreaterOrEq:
-                //if(ParamComparer() (Params[1], Params[0]))
+                if(ParamComparer() (Params[1], Params[0]))
                     { std::swap(Params[0], Params[1]); Opcode = cLessOrEq; }
                 break;
             default:
@@ -3094,7 +3094,7 @@ namespace
 }
 namespace FPoptimizer_Grammar
 {
-    const Rule grammar_rules[215] =
+    const Rule grammar_rules[241] =
     {
         /* 0:	@L (cAbs [x])
          *	->	x
@@ -3609,136 +3609,214 @@ namespace FPoptimizer_Grammar
         /* 170:	(cLess [(cAbs [x]) %])
          *	->	(cNot [(cMul {x 0.5 /%})])
          */		 {ProduceNewTree, false, 1,P1(S(378))              , {2,P2(S(0),P(1))           , cLess       ,PositionalParams,0}},
-        /* 171:	(cLess [(cAdd % <1>) &])
+        /* 171:	(cLess [(cMul %@P <1>) &])
+         *	:	(cMul  <1>) MUL( & /% )
+         */		 {ReplaceParams , false, 2,P2(S(331),S(363))       , {2,P2(S(336),P(9))         , cLess       ,PositionalParams,0}},
+        /* 172:	(cLess [(cMul %@N <1>) &])
+         *	:	MUL( & /% ) (cMul  <1>)
+         */		 {ReplaceParams , false, 2,P2(S(363),S(331))       , {2,P2(S(335),P(9))         , cLess       ,PositionalParams,0}},
+        /* 173:	(cLess [(cAdd % <1>) &])
          *	:	(cAdd  <1>) ADD( & -% )
          */		 {ReplaceParams , false, 2,P2(S(242),S(260))       , {2,P2(S(248),P(9))         , cLess       ,PositionalParams,0}},
-        /* 172:	(cLess [(cMul % <1>) &])
-         *	:	(cMul  <1>) MUL( & /% )
-         */		 {ReplaceParams , false, 2,P2(S(331),S(363))       , {2,P2(S(339),P(9))         , cLess       ,PositionalParams,0}},
-        /* 173:	(cLess [(cPow [x %]) &])
+        /* 174:	(cLess [(cPow [x %]) &])
          *	:	(cPow [(cPow [x %]) /%]) POW( & /% )
          */		 {ReplaceParams , false, 2,P2(S(126),S(156))       , {2,P2(S(77),P(9))          , cLess       ,PositionalParams,0}},
-        /* 174:	(cLess [(cAdd % <1>) (cAdd & <2>)])
+        /* 175:	(cLess [(cAdd % <1>) (cAdd & <2>)])
          *	:	(cAdd  <1>) (cAdd & -% <2>)
          */		 {ReplaceParams , false, 2,P2(S(242),S(254))       , {2,P2(S(248),S(250))       , cLess       ,PositionalParams,0}},
-        /* 175:	(cLess [(cAdd x <1>)@D4 (cAdd x <2>)@D4])
+        /* 176:	(cLess [(cAdd x <1>)@D4 (cAdd x <2>)@D4])
          *	:	(cAdd  <1>) (cAdd  <2>)
          */		 {ReplaceParams , false, 2,P2(S(242),S(243))       , {2,P2(S(251),S(252))       , cLess       ,PositionalParams,0}},
-        /* 176:	(cLess [(cMul % <1>) (cMul & <2>)])
+        /* 177:	(cLess [(cMul %@P <1>) (cMul & <2>)])
          *	:	(cMul  <1>) (cMul & /% <2>)
-         */		 {ReplaceParams , false, 2,P2(S(331),S(342))       , {2,P2(S(339),S(340))       , cLess       ,PositionalParams,0}},
-        /* 177:	(cLess [(cPow [%@P x]) &@P])
+         */		 {ReplaceParams , false, 2,P2(S(331),S(342))       , {2,P2(S(336),S(340))       , cLess       ,PositionalParams,0}},
+        /* 178:	(cLess [(cMul %@N <1>) (cMul & <2>)])
+         *	:	(cMul & /% <2>) (cMul  <1>)
+         */		 {ReplaceParams , false, 2,P2(S(342),S(331))       , {2,P2(S(335),S(340))       , cLess       ,PositionalParams,0}},
+        /* 179:	(cLess [(cPow [%@P x]) &@P])
          *	:	x MUL( LOG( & ) /LOG( % ) )
          */		 {ReplaceParams , false, 2,P2(P(14),S(364))        , {2,P2(S(81),P(13))         , cLess       ,PositionalParams,0}},
-        /* 178:	(cLess [(cPow [x %@P]) (cPow [y &@P])])
+        /* 180:	(cLess [(cPow [x %@P]) (cPow [y &@P])])
          *	:	(cPow [(cPow [x %]) /MIN( % & )]) (cPow [(cPow [y &]) /MIN( % & )])
          */		 {ReplaceParams , false, 2,P2(S(127),S(128))       , {2,P2(S(78),S(79))         , cLess       ,PositionalParams,0}},
-        /* 179:	(cLess [(cPow [% x])@D1 (cPow [% y])@D1])
+        /* 181:	(cLess [(cPow [% x])@D1 (cPow [% y])@D1])
          *	:	x y
          */		 {ReplaceParams , false, 2,P2(P(14),P(21))         , {2,P2(S(75),S(76))         , cLess       ,PositionalParams,0}},
-        /* 180:	(cLessOrEq [0.5 x])
-         *	->	(cAbsNotNot [x])
-         */		 {ProduceNewTree, false, 1,P1(S(410))              , {2,P2(N(8),P(14))          , cLessOrEq   ,PositionalParams,0}},
-        /* 181:	(cLessOrEq [% (cAbs [x])])
+        /* 182:	(cLessOrEq [% (cAbs [x])])
          *	->	(cNotNot [(cMul {x 0.5 /%})])
          */		 {ProduceNewTree, false, 1,P1(S(403))              , {2,P2(P(1),S(0))           , cLessOrEq   ,PositionalParams,0}},
-        /* 182:	(cLessOrEq [(cAdd % <1>) &])
+        /* 183:	(cLessOrEq [(cMul %@P <1>) &])
+         *	:	(cMul  <1>) MUL( & /% )
+         */		 {ReplaceParams , false, 2,P2(S(331),S(363))       , {2,P2(S(336),P(9))         , cLessOrEq   ,PositionalParams,0}},
+        /* 184:	(cLessOrEq [(cMul %@N <1>) &])
+         *	:	MUL( & /% ) (cMul  <1>)
+         */		 {ReplaceParams , false, 2,P2(S(363),S(331))       , {2,P2(S(335),P(9))         , cLessOrEq   ,PositionalParams,0}},
+        /* 185:	(cLessOrEq [(cAdd % <1>) &])
          *	:	(cAdd  <1>) ADD( & -% )
          */		 {ReplaceParams , false, 2,P2(S(242),S(260))       , {2,P2(S(248),P(9))         , cLessOrEq   ,PositionalParams,0}},
-        /* 183:	(cLessOrEq [(cMul % <1>) &])
-         *	:	(cMul  <1>) MUL( & /% )
-         */		 {ReplaceParams , false, 2,P2(S(331),S(363))       , {2,P2(S(339),P(9))         , cLessOrEq   ,PositionalParams,0}},
-        /* 184:	(cLessOrEq [(cPow [x %]) &])
+        /* 186:	(cLessOrEq [(cPow [x %]) &])
          *	:	(cPow [(cPow [x %]) /%]) POW( & /% )
          */		 {ReplaceParams , false, 2,P2(S(126),S(156))       , {2,P2(S(77),P(9))          , cLessOrEq   ,PositionalParams,0}},
-        /* 185:	(cLessOrEq [(cAdd % <1>) (cAdd & <2>)])
+        /* 187:	(cLessOrEq [(cAdd % <1>) (cAdd & <2>)])
          *	:	(cAdd  <1>) (cAdd & -% <2>)
          */		 {ReplaceParams , false, 2,P2(S(242),S(254))       , {2,P2(S(248),S(250))       , cLessOrEq   ,PositionalParams,0}},
-        /* 186:	(cLessOrEq [(cAdd x <1>)@D4 (cAdd x <2>)@D4])
+        /* 188:	(cLessOrEq [(cAdd x <1>)@D4 (cAdd x <2>)@D4])
          *	:	(cAdd  <1>) (cAdd  <2>)
          */		 {ReplaceParams , false, 2,P2(S(242),S(243))       , {2,P2(S(251),S(252))       , cLessOrEq   ,PositionalParams,0}},
-        /* 187:	(cLessOrEq [(cMul % <1>) (cMul & <2>)])
+        /* 189:	(cLessOrEq [(cMul %@P <1>) (cMul & <2>)])
          *	:	(cMul  <1>) (cMul & /% <2>)
-         */		 {ReplaceParams , false, 2,P2(S(331),S(342))       , {2,P2(S(339),S(340))       , cLessOrEq   ,PositionalParams,0}},
-        /* 188:	(cLessOrEq [(cPow [%@P x]) &@P])
+         */		 {ReplaceParams , false, 2,P2(S(331),S(342))       , {2,P2(S(336),S(340))       , cLessOrEq   ,PositionalParams,0}},
+        /* 190:	(cLessOrEq [(cMul %@N <1>) (cMul & <2>)])
+         *	:	(cMul & /% <2>) (cMul  <1>)
+         */		 {ReplaceParams , false, 2,P2(S(342),S(331))       , {2,P2(S(335),S(340))       , cLessOrEq   ,PositionalParams,0}},
+        /* 191:	(cLessOrEq [(cPow [%@P x]) &@P])
          *	:	x MUL( LOG( & ) /LOG( % ) )
          */		 {ReplaceParams , false, 2,P2(P(14),S(364))        , {2,P2(S(81),P(13))         , cLessOrEq   ,PositionalParams,0}},
-        /* 189:	(cLessOrEq [(cPow [x %@P]) (cPow [y &@P])])
+        /* 192:	(cLessOrEq [(cPow [x %@P]) (cPow [y &@P])])
          *	:	(cPow [(cPow [x %]) /MIN( % & )]) (cPow [(cPow [y &]) /MIN( % & )])
          */		 {ReplaceParams , false, 2,P2(S(127),S(128))       , {2,P2(S(78),S(79))         , cLessOrEq   ,PositionalParams,0}},
-        /* 190:	(cLessOrEq [(cPow [% x])@D1 (cPow [% y])@D1])
+        /* 193:	(cLessOrEq [(cPow [% x])@D1 (cPow [% y])@D1])
          *	:	x y
          */		 {ReplaceParams , false, 2,P2(P(14),P(21))         , {2,P2(S(75),S(76))         , cLessOrEq   ,PositionalParams,0}},
-        /* 191:	(cNot [x@P])
+        /* 194:	(cGreater [(cMul %@P <1>) &])
+         *	:	(cMul  <1>) MUL( & /% )
+         */		 {ReplaceParams , false, 2,P2(S(331),S(363))       , {2,P2(S(336),P(9))         , cGreater    ,PositionalParams,0}},
+        /* 195:	(cGreater [(cMul %@N <1>) &])
+         *	:	MUL( & /% ) (cMul  <1>)
+         */		 {ReplaceParams , false, 2,P2(S(363),S(331))       , {2,P2(S(335),P(9))         , cGreater    ,PositionalParams,0}},
+        /* 196:	(cGreater [(cAdd % <1>) &])
+         *	:	(cAdd  <1>) ADD( & -% )
+         */		 {ReplaceParams , false, 2,P2(S(242),S(260))       , {2,P2(S(248),P(9))         , cGreater    ,PositionalParams,0}},
+        /* 197:	(cGreater [(cPow [x %]) &])
+         *	:	(cPow [(cPow [x %]) /%]) POW( & /% )
+         */		 {ReplaceParams , false, 2,P2(S(126),S(156))       , {2,P2(S(77),P(9))          , cGreater    ,PositionalParams,0}},
+        /* 198:	(cGreater [(cAdd % <1>) (cAdd & <2>)])
+         *	:	(cAdd  <1>) (cAdd & -% <2>)
+         */		 {ReplaceParams , false, 2,P2(S(242),S(254))       , {2,P2(S(248),S(250))       , cGreater    ,PositionalParams,0}},
+        /* 199:	(cGreater [(cAdd x <1>)@D4 (cAdd x <2>)@D4])
+         *	:	(cAdd  <1>) (cAdd  <2>)
+         */		 {ReplaceParams , false, 2,P2(S(242),S(243))       , {2,P2(S(251),S(252))       , cGreater    ,PositionalParams,0}},
+        /* 200:	(cGreater [(cMul %@P <1>) (cMul & <2>)])
+         *	:	(cMul  <1>) (cMul & /% <2>)
+         */		 {ReplaceParams , false, 2,P2(S(331),S(342))       , {2,P2(S(336),S(340))       , cGreater    ,PositionalParams,0}},
+        /* 201:	(cGreater [(cMul %@N <1>) (cMul & <2>)])
+         *	:	(cMul & /% <2>) (cMul  <1>)
+         */		 {ReplaceParams , false, 2,P2(S(342),S(331))       , {2,P2(S(335),S(340))       , cGreater    ,PositionalParams,0}},
+        /* 202:	(cGreater [(cPow [%@P x]) &@P])
+         *	:	x MUL( LOG( & ) /LOG( % ) )
+         */		 {ReplaceParams , false, 2,P2(P(14),S(364))        , {2,P2(S(81),P(13))         , cGreater    ,PositionalParams,0}},
+        /* 203:	(cGreater [(cPow [x %@P]) (cPow [y &@P])])
+         *	:	(cPow [(cPow [x %]) /MIN( % & )]) (cPow [(cPow [y &]) /MIN( % & )])
+         */		 {ReplaceParams , false, 2,P2(S(127),S(128))       , {2,P2(S(78),S(79))         , cGreater    ,PositionalParams,0}},
+        /* 204:	(cGreater [(cPow [% x])@D1 (cPow [% y])@D1])
+         *	:	x y
+         */		 {ReplaceParams , false, 2,P2(P(14),P(21))         , {2,P2(S(75),S(76))         , cGreater    ,PositionalParams,0}},
+        /* 205:	(cGreaterOrEq [x 0.5])
+         *	->	(cAbsNotNot [x])
+         */		 {ProduceNewTree, false, 1,P1(S(410))              , {2,P2(P(14),N(8))          , cGreaterOrEq,PositionalParams,0}},
+        /* 206:	(cGreaterOrEq [(cMul %@P <1>) &])
+         *	:	(cMul  <1>) MUL( & /% )
+         */		 {ReplaceParams , false, 2,P2(S(331),S(363))       , {2,P2(S(336),P(9))         , cGreaterOrEq,PositionalParams,0}},
+        /* 207:	(cGreaterOrEq [(cMul %@N <1>) &])
+         *	:	MUL( & /% ) (cMul  <1>)
+         */		 {ReplaceParams , false, 2,P2(S(363),S(331))       , {2,P2(S(335),P(9))         , cGreaterOrEq,PositionalParams,0}},
+        /* 208:	(cGreaterOrEq [(cAdd % <1>) &])
+         *	:	(cAdd  <1>) ADD( & -% )
+         */		 {ReplaceParams , false, 2,P2(S(242),S(260))       , {2,P2(S(248),P(9))         , cGreaterOrEq,PositionalParams,0}},
+        /* 209:	(cGreaterOrEq [(cPow [x %]) &])
+         *	:	(cPow [(cPow [x %]) /%]) POW( & /% )
+         */		 {ReplaceParams , false, 2,P2(S(126),S(156))       , {2,P2(S(77),P(9))          , cGreaterOrEq,PositionalParams,0}},
+        /* 210:	(cGreaterOrEq [(cAdd % <1>) (cAdd & <2>)])
+         *	:	(cAdd  <1>) (cAdd & -% <2>)
+         */		 {ReplaceParams , false, 2,P2(S(242),S(254))       , {2,P2(S(248),S(250))       , cGreaterOrEq,PositionalParams,0}},
+        /* 211:	(cGreaterOrEq [(cAdd x <1>)@D4 (cAdd x <2>)@D4])
+         *	:	(cAdd  <1>) (cAdd  <2>)
+         */		 {ReplaceParams , false, 2,P2(S(242),S(243))       , {2,P2(S(251),S(252))       , cGreaterOrEq,PositionalParams,0}},
+        /* 212:	(cGreaterOrEq [(cMul %@P <1>) (cMul & <2>)])
+         *	:	(cMul  <1>) (cMul & /% <2>)
+         */		 {ReplaceParams , false, 2,P2(S(331),S(342))       , {2,P2(S(336),S(340))       , cGreaterOrEq,PositionalParams,0}},
+        /* 213:	(cGreaterOrEq [(cMul %@N <1>) (cMul & <2>)])
+         *	:	(cMul & /% <2>) (cMul  <1>)
+         */		 {ReplaceParams , false, 2,P2(S(342),S(331))       , {2,P2(S(335),S(340))       , cGreaterOrEq,PositionalParams,0}},
+        /* 214:	(cGreaterOrEq [(cPow [%@P x]) &@P])
+         *	:	x MUL( LOG( & ) /LOG( % ) )
+         */		 {ReplaceParams , false, 2,P2(P(14),S(364))        , {2,P2(S(81),P(13))         , cGreaterOrEq,PositionalParams,0}},
+        /* 215:	(cGreaterOrEq [(cPow [x %@P]) (cPow [y &@P])])
+         *	:	(cPow [(cPow [x %]) /MIN( % & )]) (cPow [(cPow [y &]) /MIN( % & )])
+         */		 {ReplaceParams , false, 2,P2(S(127),S(128))       , {2,P2(S(78),S(79))         , cGreaterOrEq,PositionalParams,0}},
+        /* 216:	(cGreaterOrEq [(cPow [% x])@D1 (cPow [% y])@D1])
+         *	:	x y
+         */		 {ReplaceParams , false, 2,P2(P(14),P(21))         , {2,P2(S(75),S(76))         , cGreaterOrEq,PositionalParams,0}},
+        /* 217:	(cNot [x@P])
          *	->	(cAbsNot [x])
          */		 {ProduceNewTree, false, 1,P1(S(409))              , {1,P1(P(17))               , cNot        ,PositionalParams,0}},
-        /* 192:	(cAnd x@L <1>)
+        /* 218:	(cAnd x@L <1>)
          *	->	(cNotNot [(cMul {x (cAnd  <1>)})])
          */		 {ProduceNewTree, false, 1,P1(S(404))              , {1,P1(P(19))               , cAnd        ,AnyParams       ,1}},
-        /* 193:	(cAnd x@P y@P <1>)
+        /* 219:	(cAnd x@P y@P <1>)
          *	->	(cAbsAnd {x y (cAnd  <1>)})
          */		 {ProduceNewTree, false, 1,P1(S(407))              , {2,P2(P(17),P(27))         , cAnd        ,AnyParams       ,1}},
-        /* 194:	(cAnd x y)
+        /* 220:	(cAnd x y)
          *	->	(cIf [x (cNotNot [y]) 0])
          */		 {ProduceNewTree, false, 1,P1(S(45))               , {2,P2(P(14),P(21))         , cAnd        ,AnyParams       ,0}},
-        /* 195:	(cAnd (cIf [x y z])@D4 (cIf [x a b])@D4)
+        /* 221:	(cAnd (cIf [x y z])@D4 (cIf [x a b])@D4)
          *	:	(cIf [x (cAnd {y a}) (cAnd {z b})])
          */		 {ReplaceParams , false, 1,P1(S(43))               , {2,P2(S(32),S(36))         , cAnd        ,AnyParams       ,0}},
-        /* 196:	(cAnd (cNot [x]) (cNot [y]))
+        /* 222:	(cAnd (cNot [x]) (cNot [y]))
          *	:	(cNot [(cOr {x y})])
          */		 {ReplaceParams , false, 1,P1(S(382))              , {2,P2(S(375),S(376))       , cAnd        ,AnyParams       ,0}},
-        /* 197:	(cAnd (cNot [z]) (cIf [x (cNot [y]) %@L]))
+        /* 223:	(cAnd (cNot [z]) (cIf [x (cNot [y]) %@L]))
          *	:	(cNot [(cOr {z (cIf [x y (cNot [%])])})])
          */		 {ReplaceParams , false, 1,P1(S(383))              , {2,P2(S(377),S(38))        , cAnd        ,AnyParams       ,0}},
-        /* 198:	(cAnd (cNot [z]) (cIf [x %@L (cNot [y])]))
+        /* 224:	(cAnd (cNot [z]) (cIf [x %@L (cNot [y])]))
          *	:	(cNot [(cOr {z (cIf [x (cNot [%]) y])})])
          */		 {ReplaceParams , false, 1,P1(S(384))              , {2,P2(S(377),S(34))        , cAnd        ,AnyParams       ,0}},
-        /* 199:	(cAnd (cEqual [x y])@D12 (cEqual [y z])@D24 (cEqual [x z])@D20)
+        /* 225:	(cAnd (cEqual [x y])@D12 (cEqual [y z])@D24 (cEqual [x z])@D20)
          *	:	(cEqual [x y]) (cEqual [y z])
          */		 {ReplaceParams , false, 2,P2(S(366),S(369))       , {3,P3(S(365),S(368),S(367)), cAnd        ,AnyParams       ,0}},
-        /* 200:	(cOr x@P y@P <1>)
+        /* 226:	(cOr x@P y@P <1>)
          *	->	(cAbsOr {x y (cOr  <1>)})
          */		 {ProduceNewTree, false, 1,P1(S(408))              , {2,P2(P(17),P(27))         , cOr         ,AnyParams       ,1}},
-        /* 201:	(cOr x y)
+        /* 227:	(cOr x y)
          *	->	(cIf [x 1 (cNotNot [y])])
          */		 {ProduceNewTree, false, 1,P1(S(31))               , {2,P2(P(14),P(21))         , cOr         ,AnyParams       ,0}},
-        /* 202:	(cOr x@L y@L)
+        /* 228:	(cOr x@L y@L)
          *	:	(cNotNot [(cAdd {x y})])
          */		 {ReplaceParams , false, 1,P1(S(401))              , {2,P2(P(19),P(22))         , cOr         ,AnyParams       ,0}},
-        /* 203:	(cOr (cIf [x y z])@D4 (cIf [x a b])@D4)
+        /* 229:	(cOr (cIf [x y z])@D4 (cIf [x a b])@D4)
          *	:	(cIf [x (cOr {y a}) (cOr {z b})])
          */		 {ReplaceParams , false, 1,P1(S(44))               , {2,P2(S(32),S(36))         , cOr         ,AnyParams       ,0}},
-        /* 204:	(cOr (cNot [x]) (cNot [y]))
+        /* 230:	(cOr (cNot [x]) (cNot [y]))
          *	:	(cNot [(cAnd {x y})])
          */		 {ReplaceParams , false, 1,P1(S(379))              , {2,P2(S(375),S(376))       , cOr         ,AnyParams       ,0}},
-        /* 205:	(cOr (cNot [z]) (cIf [x (cNot [y]) %@L]))
+        /* 231:	(cOr (cNot [z]) (cIf [x (cNot [y]) %@L]))
          *	:	(cNot [(cAnd {z (cIf [x y (cNot [%])])})])
          */		 {ReplaceParams , false, 1,P1(S(380))              , {2,P2(S(377),S(38))        , cOr         ,AnyParams       ,0}},
-        /* 206:	(cOr (cNot [z]) (cIf [x %@L (cNot [y])]))
+        /* 232:	(cOr (cNot [z]) (cIf [x %@L (cNot [y])]))
          *	:	(cNot [(cAnd {z (cIf [x (cNot [%]) y])})])
          */		 {ReplaceParams , false, 1,P1(S(381))              , {2,P2(S(377),S(34))        , cOr         ,AnyParams       ,0}},
-        /* 207:	(cOr x@L (cAdd  <1>)@P)
+        /* 233:	(cOr x@L (cAdd  <1>)@P)
          *	:	(cNotNot [(cAdd x <1>)])
          */		 {ReplaceParams , false, 1,P1(S(402))              , {2,P2(P(19),S(244))        , cOr         ,AnyParams       ,0}},
-        /* 208:	(cNotNot [x@P])
+        /* 234:	(cNotNot [x@P])
          *	->	(cAbsNotNot [x])
          */		 {ProduceNewTree, false, 1,P1(S(410))              , {1,P1(P(17))               , cNotNot     ,PositionalParams,0}},
-        /* 209:	@L (cNotNot [x])
+        /* 235:	@L (cNotNot [x])
          *	->	x
          */		 {ProduceNewTree, true , 1,P1(P(14))               , {1,P1(P(14))               , cNotNot     ,PositionalParams,0}},
-        /* 210:	(cAbsAnd x y)
+        /* 236:	(cAbsAnd x y)
          *	->	(cAbsIf [x (cAbsNotNot [y]) 0])
          */		 {ProduceNewTree, false, 1,P1(S(416))              , {2,P2(P(14),P(21))         , cAbsAnd     ,AnyParams       ,0}},
-        /* 211:	(cAbsOr x y)
+        /* 237:	(cAbsOr x y)
          *	->	(cAbsIf [x 1 (cAbsNotNot [y])])
          */		 {ProduceNewTree, false, 1,P1(S(413))              , {2,P2(P(14),P(21))         , cAbsOr      ,AnyParams       ,0}},
-        /* 212:	@L (cAbsNotNot [x])
+        /* 238:	@L (cAbsNotNot [x])
          *	->	x
          */		 {ProduceNewTree, true , 1,P1(P(14))               , {1,P1(P(14))               , cAbsNotNot  ,PositionalParams,0}},
-        /* 213:	(cAbsIf [(cNotNot [x]) y z])
+        /* 239:	(cAbsIf [(cNotNot [x]) y z])
          *	->	(cIf [x y z])
          */		 {ProduceNewTree, false, 1,P1(S(33))               , {3,P3(S(399),P(21),P(28))  , cAbsIf      ,PositionalParams,0}},
-        /* 214:	(cAbsIf [(cLessOrEq [x y]) z a])
+        /* 240:	(cAbsIf [(cLessOrEq [x y]) z a])
          *	:	(cLess [y x]) a z
          */		 {ReplaceParams , false, 3,P3(S(371),P(31),P(28))  , {3,P3(S(373),P(28),P(31))  , cAbsIf      ,PositionalParams,0}},
     };
@@ -3756,8 +3834,8 @@ namespace FPoptimizer_Grammar
         grammar_optimize_abslogical_type grammar_optimize_abslogical =
         {
             12,
-            { 19,29,30,169,180,191,193,200,208,212,
-              213,214
+            { 19,29,30,169,205,217,219,226,234,238,
+              239,240
     }   };  }
     struct grammar_optimize_ignore_if_sideeffects_type
     {
@@ -3771,8 +3849,8 @@ namespace FPoptimizer_Grammar
             34,
             { 0,18,20,21,22,23,24,25,26,27,
               28,37,39,75,109,110,111,112,147,148,
-              149,159,170,181,195,196,197,198,199,203,
-              204,205,206,209
+              149,159,170,182,221,222,223,224,225,229,
+              230,231,232,235
     }   };  }
     struct grammar_optimize_nonshortcut_logical_evaluation_type
     {
@@ -3785,9 +3863,9 @@ namespace FPoptimizer_Grammar
         {
             31,
             { 0,25,26,27,28,37,39,75,109,110,
-              111,112,147,148,149,159,170,181,192,195,
-              196,197,198,199,202,203,204,205,206,207,
-              209
+              111,112,147,148,149,159,170,182,218,221,
+              222,223,224,225,228,229,230,231,232,233,
+              235
     }   };  }
     struct grammar_optimize_round1_type
     {
@@ -3807,8 +3885,8 @@ namespace FPoptimizer_Grammar
               78,79,80,81,82,83,84,85,86,87,
               88,104,108,109,110,111,112,113,114,115,
               116,117,118,119,144,145,147,148,149,159,
-              170,181,195,196,197,198,199,203,204,205,
-              206,209
+              170,182,221,222,223,224,225,229,230,231,
+              232,235
     }   };  }
     struct grammar_optimize_round2_type
     {
@@ -3827,25 +3905,28 @@ namespace FPoptimizer_Grammar
               92,93,94,95,96,97,98,99,100,101,
               102,103,108,109,110,111,112,113,116,117,
               118,120,144,145,146,147,148,149,159,170,
-              181,195,196,197,198,199,203,204,205,206,
-              209
+              182,221,222,223,224,225,229,230,231,232,
+              235
     }   };  }
     struct grammar_optimize_round3_type
     {
         unsigned c;
-        unsigned char l[59];
+        unsigned char l[85];
     };
     extern "C"
     {
         grammar_optimize_round3_type grammar_optimize_round3 =
         {
-            59,
+            85,
             { 66,67,68,69,121,122,123,124,125,126,
               127,128,129,130,131,132,133,134,135,136,
               137,138,139,150,151,152,153,154,155,156,
               157,158,160,161,162,163,164,165,166,167,
               168,171,172,173,174,175,176,177,178,179,
-              182,183,184,185,186,187,188,189,190
+              180,181,183,184,185,186,187,188,189,190,
+              191,192,193,194,195,196,197,198,199,200,
+              201,202,203,204,206,207,208,209,210,211,
+              212,213,214,215,216
     }   };  }
     struct grammar_optimize_round4_type
     {
@@ -3870,9 +3951,9 @@ namespace FPoptimizer_Grammar
         {
             33,
             { 0,25,26,27,28,37,39,75,105,109,
-              110,111,112,147,148,149,159,170,181,194,
-              195,196,197,198,199,201,203,204,205,206,
-              209,210,211
+              110,111,112,147,148,149,159,170,182,220,
+              221,222,223,224,225,227,229,230,231,232,
+              235,236,237
     }   };  }
 }
 #undef P1
@@ -6770,10 +6851,31 @@ namespace
 
     struct RangeComparisonData
     {
-        enum Decision { MakeFalse=0, MakeTrue=1, MakeNEqual=2, MakeEqual=3, Unchanged=4 };
-
+        enum Decision
+        {
+            MakeFalse=0,
+            MakeTrue=1,
+            MakeNEqual=2,
+            MakeEqual=3,
+            MakeNotNotP0=4,
+            MakeNotNotP1=5,
+            MakeNotP0=6,
+            MakeNotP1=7,
+            Unchanged=8
+        };
+        enum WhatDoWhenCase
+        {
+            Never =0,
+            Eq0   =1, // val==0
+            Eq1   =2, // val==1
+            Gt0Le1=3, // val>0 && val<=1
+            Ge0Lt1=4  // val>=0 && val<1
+        };
         Decision if_identical; // What to do when operands are identical
         Decision if_always[4]; // What to do if Always <, <=, >, >=
+        struct { Decision what : 4; WhatDoWhenCase when : 4; }
+            p0_logical_a, p1_logical_a,
+            p0_logical_b, p1_logical_b;
 
         Decision Analyze(const CodeTree& a, const CodeTree& b) const
         {
@@ -6784,19 +6886,47 @@ namespace
             MinMaxTree p1 = b.CalculateResultBoundaries();
             if(p0.has_max && p1.has_min)
             {
-                if(p0.max <  p1.min)// && if_always[0] != Unchanged)
+                if(p0.max <  p1.min && if_always[0] != Unchanged)
                     return if_always[0]; // p0 < p1
-                if(p0.max <= p1.min)// && if_always[1] != Unchanged)
+                if(p0.max <= p1.min && if_always[1] != Unchanged)
                     return if_always[1]; // p0 <= p1
             }
             if(p0.has_min && p1.has_max)
             {
-                if(p0.min >  p1.max)// && if_always[2] != Unchanged)
+                if(p0.min >  p1.max && if_always[2] != Unchanged)
                     return if_always[2]; // p0 > p1
-                if(p0.min >= p1.max)// && if_always[3] != Unchanged)
+                if(p0.min >= p1.max && if_always[3] != Unchanged)
                     return if_always[3]; // p0 >= p1
             }
+
+            if(a.IsLogicalValue())
+            {
+                if(p0_logical_a.what != Unchanged)
+                    if(TestCase(p0_logical_a.when, p1)) return p0_logical_a.what;
+                if(p0_logical_b.what != Unchanged)
+                    if(TestCase(p0_logical_b.when, p1)) return p0_logical_b.what;
+            }
+            if(b.IsLogicalValue())
+            {
+                if(p1_logical_a.what != Unchanged)
+                    if(TestCase(p1_logical_a.when, p0)) return p1_logical_a.what;
+                if(p1_logical_b.what != Unchanged)
+                    if(TestCase(p1_logical_b.when, p0)) return p1_logical_b.what;
+            }
             return Unchanged;
+        }
+        static bool TestCase(WhatDoWhenCase when, const MinMaxTree& p)
+        {
+            if(!p.has_min || !p.has_max) return false;
+            switch(when)
+            {
+                case Eq0: return p.min==0.0 && p.max==p.min;
+                case Eq1: return p.min==1.0 && p.max==p.max;
+                case Gt0Le1: return p.min>0 && p.max<=1;
+                case Ge0Lt1: return p.min>=0 && p.max<1;
+                default:;
+            }
+            return false;
         }
     };
 
@@ -7859,7 +7989,7 @@ namespace FPoptimizer_CodeTree
         return false; // No changes that require a rerun
     }
 
-    void CodeTree::ConstantFolding_ComparisonOperations()
+    bool CodeTree::ConstantFolding_ComparisonOperations()
     {
         static const RangeComparisonData Data[6] =
         {
@@ -7870,7 +8000,13 @@ namespace FPoptimizer_CodeTree
               {RangeComparisonData::MakeFalse,  // If Always p0 < p1: always false
                RangeComparisonData::Unchanged,
                RangeComparisonData::MakeFalse,  // If Always p0 > p1: always false
-               RangeComparisonData::Unchanged}
+               RangeComparisonData::Unchanged},
+             // NotNot(p0) if p1==1    NotNot(p1) if p0==1
+             //    Not(p0) if p1==0       Not(p1) if p0==0
+              {RangeComparisonData::MakeNotNotP0, RangeComparisonData::Eq1},
+              {RangeComparisonData::MakeNotNotP1, RangeComparisonData::Eq1},
+              {RangeComparisonData::MakeNotP0, RangeComparisonData::Eq0},
+              {RangeComparisonData::MakeNotP1, RangeComparisonData::Eq0}
             },
             // cNEqual:
             // Case:      p0 != p1  Antonym: p0 == p1
@@ -7879,7 +8015,13 @@ namespace FPoptimizer_CodeTree
               {RangeComparisonData::MakeTrue,  // If Always p0 < p1: always true
                RangeComparisonData::Unchanged,
                RangeComparisonData::MakeTrue,  // If Always p0 > p1: always true
-               RangeComparisonData::Unchanged}
+               RangeComparisonData::Unchanged},
+             // NotNot(p0) if p1==0    NotNot(p1) if p0==0
+             //    Not(p0) if p1==1       Not(p1) if p0==1
+              {RangeComparisonData::MakeNotNotP0, RangeComparisonData::Eq0},
+              {RangeComparisonData::MakeNotNotP1, RangeComparisonData::Eq0},
+              {RangeComparisonData::MakeNotP0, RangeComparisonData::Eq1},
+              {RangeComparisonData::MakeNotP1, RangeComparisonData::Eq1}
             },
             // cLess:
             // Case:      p0 < p1   Antonym: p0 >= p1
@@ -7887,26 +8029,41 @@ namespace FPoptimizer_CodeTree
             { RangeComparisonData::MakeFalse,  // If identical: always false
               {RangeComparisonData::MakeTrue,  // If Always p0  < p1: always true
                RangeComparisonData::MakeNEqual,
-               RangeComparisonData::Unchanged,
-               RangeComparisonData::MakeFalse} // If Always p0 >= p1: always false
+               RangeComparisonData::MakeFalse, // If Always p0 > p1: always false
+               RangeComparisonData::MakeFalse},// If Always p0 >= p1: always false
+             // Not(p0)   if p1>0 & p1<=1    --   NotNot(p1) if p0>=0 & p0<1
+              {RangeComparisonData::MakeNotP0,    RangeComparisonData::Gt0Le1},
+              {RangeComparisonData::MakeNotNotP1, RangeComparisonData::Ge0Lt1},
+              {RangeComparisonData::Unchanged, RangeComparisonData::Never},
+              {RangeComparisonData::Unchanged, RangeComparisonData::Never}
             },
             // cLessOrEq:
             // Case:      p0 <= p1  Antonym: p0 > p1
             // Synonym:   p1 >= p0  Antonym: p1 < p0
             { RangeComparisonData::MakeTrue,   // If identical: always true
-              {RangeComparisonData::Unchanged,
+              {RangeComparisonData::Unchanged, // If Always p0  < p1: ?
                RangeComparisonData::MakeTrue,  // If Always p0 <= p1: always true
                RangeComparisonData::MakeFalse, // If Always p0  > p1: always false
-               RangeComparisonData::MakeEqual} // If Never  p0  < p1:  use cEqual
+               RangeComparisonData::MakeEqual},// If Never  p0  < p1:  use cEqual
+             // Not(p0)    if p1>=0 & p1<1   --   NotNot(p1) if p0>0 & p0<=1
+              {RangeComparisonData::MakeNotP0,    RangeComparisonData::Ge0Lt1},
+              {RangeComparisonData::MakeNotNotP1, RangeComparisonData::Gt0Le1},
+              {RangeComparisonData::Unchanged, RangeComparisonData::Never},
+              {RangeComparisonData::Unchanged, RangeComparisonData::Never}
             },
             // cGreater:
             // Case:      p0 >  p1  Antonym: p0 <= p1
             // Synonym:   p1 <  p0  Antonym: p1 >= p0
             { RangeComparisonData::MakeFalse,  // If identical: always false
-              {RangeComparisonData::Unchanged,
+              {RangeComparisonData::MakeFalse, // If Always p0  < p1: always false
                RangeComparisonData::MakeFalse, // If Always p0 <= p1: always false
                RangeComparisonData::MakeTrue,  // If Always p0  > p1: always true
-               RangeComparisonData::MakeNEqual}
+               RangeComparisonData::MakeNEqual},
+             // NotNot(p0) if p1>=0 & p1<1   --   Not(p1)   if p0>0 & p0<=1
+              {RangeComparisonData::MakeNotNotP0, RangeComparisonData::Ge0Lt1},
+              {RangeComparisonData::MakeNotP1,    RangeComparisonData::Gt0Le1},
+              {RangeComparisonData::Unchanged, RangeComparisonData::Never},
+              {RangeComparisonData::Unchanged, RangeComparisonData::Never}
             },
             // cGreaterOrEq:
             // Case:      p0 >= p1  Antonym: p0 < p1
@@ -7914,20 +8071,30 @@ namespace FPoptimizer_CodeTree
             { RangeComparisonData::MakeTrue,   // If identical: always true
               {RangeComparisonData::MakeFalse, // If Always p0  < p1: always false
                RangeComparisonData::MakeEqual, // If Always p0 >= p1: always true
-               RangeComparisonData::Unchanged,
-               RangeComparisonData::MakeTrue}  // If Never  p0  > p1:  use cEqual
+               RangeComparisonData::Unchanged, // If always p0  > p1: ?
+               RangeComparisonData::MakeTrue}, // If Never  p0  > p1:  use cEqual
+             // NotNot(p0) if p1>0 & p1<=1   --   Not(p1)    if p0>=0 & p0<1
+              {RangeComparisonData::MakeNotNotP0, RangeComparisonData::Gt0Le1},
+              {RangeComparisonData::MakeNotP1,    RangeComparisonData::Ge0Lt1},
+              {RangeComparisonData::Unchanged, RangeComparisonData::Never},
+              {RangeComparisonData::Unchanged, RangeComparisonData::Never}
             }
         };
         switch(Data[GetOpcode()-cEqual].Analyze(GetParam(0), GetParam(1)))
         {
             case RangeComparisonData::MakeFalse:
-                data = new CodeTreeData(0.0); break;
+                data = new CodeTreeData(0.0); return true;
             case RangeComparisonData::MakeTrue:
-                data = new CodeTreeData(1.0); break;
-            case RangeComparisonData::MakeEqual:  SetOpcode(cEqual); break;
-            case RangeComparisonData::MakeNEqual: SetOpcode(cNEqual); break;
+                data = new CodeTreeData(1.0); return true;
+            case RangeComparisonData::MakeEqual:  SetOpcode(cEqual); return true;
+            case RangeComparisonData::MakeNEqual: SetOpcode(cNEqual); return true;
+            case RangeComparisonData::MakeNotNotP0: SetOpcode(cNotNot); DelParam(1); return true;
+            case RangeComparisonData::MakeNotNotP1: SetOpcode(cNotNot); DelParam(0); return true;
+            case RangeComparisonData::MakeNotP0: SetOpcode(cNot); DelParam(1); return true;
+            case RangeComparisonData::MakeNotP1: SetOpcode(cNot); DelParam(0); return true;
             case RangeComparisonData::Unchanged:;
         }
+        return false;
     }
 
     bool CodeTree::ConstantFolding_Assimilate()
@@ -8395,7 +8562,68 @@ namespace FPoptimizer_CodeTree
             case cGreater:
             case cLessOrEq:
             case cGreaterOrEq:
-                ConstantFolding_ComparisonOperations();
+                if(ConstantFolding_ComparisonOperations()) goto redo;
+                // Any reversible functions:
+                //   sin(x)  -> ASIN: Not doable, x can be cyclic
+                //   asin(x) -> SIN: doable.
+                //                   Invalid combinations are caught by
+                //                   range-estimation. Threshold is at |pi/2|.
+                //   acos(x) -> COS: doable.
+                //                   Invalid combinations are caught by
+                //                   range-estimation. Note that though
+                //                   the range is contiguous, it is direction-flipped.
+                //    log(x) -> EXP: no problem
+                //   exp2, exp10: Converted to cPow, done by grammar.
+                //   atan(x) -> TAN: doable.
+                //                   Invalid combinations are caught by
+                //                   range-estimation. Threshold is at |pi/2|.
+                //   sinh(x) -> ASINH: no problem
+                //   tanh(x) -> ATANH: no problem, but atanh is limited to -1..1
+                //                     Invalid combinations are caught by
+                //                     range-estimation, but the exact value
+                //                     of 1.0 still needs checking, because
+                //                     it involves infinity.
+                if(GetParam(1).IsImmed())
+                    switch(GetParam(0).GetOpcode())
+                    {
+                        case cAsin:
+                            SetParam(0, GetParam(0).GetParam(0));
+                            SetParam(1, CodeTree(fp_sin(GetParam(1).GetImmed())));
+                            goto redo;
+                        case cAcos:
+                            // -1..+1 --> pi..0 (polarity-flipping)
+                            SetParam(0, GetParam(0).GetParam(0));
+                            SetParam(1, CodeTree(fp_cos(GetParam(1).GetImmed())));
+                            SetOpcode( GetOpcode()==cLess ? cGreater
+                                     : GetOpcode()==cLessOrEq ? cGreaterOrEq
+                                     : GetOpcode()==cGreater ? cLess
+                                     : GetOpcode()==cGreaterOrEq ? cLessOrEq
+                                     : GetOpcode() );
+                            goto redo;
+                        case cAtan:
+                            SetParam(0, GetParam(0).GetParam(0));
+                            SetParam(1, CodeTree(fp_tan(GetParam(1).GetImmed())));
+                            goto redo;
+                        case cLog:
+                            // Different logarithms have a constant-multiplication,
+                            // which is no problem.
+                            SetParam(0, GetParam(0).GetParam(0));
+                            SetParam(1, CodeTree(fp_exp(GetParam(1).GetImmed())));
+                            goto redo;
+                        case cSinh:
+                            SetParam(0, GetParam(0).GetParam(0));
+                            SetParam(1, CodeTree(fp_asinh(GetParam(1).GetImmed())));
+                            goto redo;
+                        case cTanh:
+                            if(fabs(GetParam(1).GetImmed()) < 1.0)
+                            {
+                                SetParam(0, GetParam(0).GetParam(0));
+                                SetParam(1, CodeTree(fp_atanh(GetParam(1).GetImmed())));
+                                goto redo;
+                            }
+                            break;
+                        default: break;
+                    }
                 break;
 
             case cAbs:
@@ -8974,11 +9202,11 @@ namespace FPoptimizer_CodeTree
                 if(m.has_max) m.max = sinh(m.max);
                 return m;
             }
-            case cTanh: /* defined for all values -inf <= x <= inf */
+            case cTanh: /* defined for all values -inf <= x <= inf, results within -1..1 */
             {
                 MinMaxTree m = GetParam(0).CalculateResultBoundaries();
-                if(m.has_min) m.min = tanh(m.min); // No boundaries
-                if(m.has_max) m.max = tanh(m.max);
+                if(m.has_min) m.min = tanh(m.min); else { m.has_min = true; m.min =-1.0; }
+                if(m.has_max) m.max = tanh(m.max); else { m.has_max = true; m.max = 1.0; }
                 return m;
             }
             case cCosh: /* defined for all values -inf <= x <= inf, results within 1..inf */
@@ -9001,7 +9229,7 @@ namespace FPoptimizer_CodeTree
                     else // min, no max
                     {
                         if(m.min >= 0.0) // 0..inf -> 1..inf
-                            { m.has_max = true; m.max = cosh(m.min); m.min = 1.0; }
+                            { m.has_max = false; m.min = cosh(m.min); }
                         else
                             { m.has_max = false; m.min = 1.0; } // Anything between 1..inf
                     }
