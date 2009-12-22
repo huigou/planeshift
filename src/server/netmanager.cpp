@@ -350,7 +350,7 @@ void NetManager::CheckResendPkts()
             csString status;
             if(timeTaken > 50 || pkts.GetSize() > 300)
             {
-                status.Format("Resending high priority packets has taken %u time to process, for %u packets on %zu unique connections (Sample clientnum %u/RTO %u. ", timeTaken, resentCount, resentConnections.GetSize(), resentConnections[0]->clientnum, resentConnections[0]->RTO);
+                status.Format("Resending high priority packets has taken %u time to process, for %u packets on %zu unique connections %zu full connections (Sample clientnum %u/RTO %u. ", timeTaken, resentCount, resentConnections.GetSize(),fullConnections.GetSize(), resentConnections[0]->clientnum, resentConnections[0]->RTO);
                 CPrintf(CON_WARNING, "%s\n", (const char *) status.GetData());
             }
             status.AppendFmt("Resending non-acked packet statistics: %g average resends, peak of %u resent packets", resendAvg, peakResend);
