@@ -339,7 +339,7 @@ bool NetBase::HandleAck(csRef<psNetPacketEntry> pkt, Connection* connection,
       
                 if (connection->estRTT > 0)
                 {
-                	int diff = elapsed - connection->estRTT;
+                	int diff = (int) (elapsed - connection->estRTT);
 					connection->estRTT += (int) (0.125 * diff);
 					if(diff < 0)
 						diff = -diff;
@@ -352,7 +352,7 @@ bool NetBase::HandleAck(csRef<psNetPacketEntry> pkt, Connection* connection,
                 	connection->devRTT = elapsed / 2;
                 }
                 // Update the packet timeout
-				connection->RTO = connection->estRTT + 4 * connection->devRTT;
+				connection->RTO = (int) (connection->estRTT + 4 * connection->devRTT);
 				if (connection->RTO > PKTMAXRTO)
 					connection->RTO = PKTMAXRTO;
 				else if(connection->RTO < PKTMINRTO)
