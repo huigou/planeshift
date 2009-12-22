@@ -1,5 +1,5 @@
 /***************************************************************************\
-|* Function Parser for C++ v4.0.2                                          *|
+|* Function Parser for C++ v4.0.3                                          *|
 |*-------------------------------------------------------------------------*|
 |* Copyright: Juha Nieminen, Joel Yliluoma                                 *|
 \***************************************************************************/
@@ -97,6 +97,24 @@ namespace
         return true;
     }
 
+    template<typename Value_t>
+    std::string findName(const namePtrsType<Value_t>& nameMap,
+                         unsigned index,
+                         typename NameData<Value_t>::DataType type)
+    {
+        for(typename namePtrsType<Value_t>::const_iterator
+                iter = nameMap.begin();
+            iter != nameMap.end();
+            ++iter)
+        {
+            if(iter->second.type != type) continue;
+            if(iter->second.index == index)
+                return std::string(iter->first.name,
+                                   iter->first.name + iter->first.nameLength);
+        }
+        return "?";
+    }
+
     unsigned readOpcodeForFloatType(const char* input)
     {
     /*
@@ -121,27 +139,33 @@ namespace
         return value;
     }
 
+    template<typename value_t>
+    struct IsIntType
+    {
+        enum { result = false };
+    };
+#ifdef FP_SUPPORT_LONG_INT_TYPE
+    template<>
+    struct IsIntType<long>
+    {
+        enum { result = true };
+    };
+#endif
+#ifdef FP_SUPPORT_GMP_INT_TYPE
+    template<>
+    struct IsIntType<GmpInt>
+    {
+        enum { result = true };
+    };
+#endif
+
     template<typename Value_t>
     inline unsigned readOpcode(const char* input)
     {
-        return readOpcodeForFloatType(input);
+        return IsIntType<Value_t>::result
+                ? readOpcodeForIntType(input)
+                : readOpcodeForFloatType(input);
     }
-
-#ifdef FP_SUPPORT_LONG_INT_TYPE
-    template<>
-    inline unsigned readOpcode<long>(const char* input)
-    {
-        return readOpcodeForIntType(input);
-    }
-#endif
-
-#ifdef FP_SUPPORT_GMP_INT_TYPE
-    template<>
-    inline unsigned readOpcode<GmpInt>(const char* input)
-    {
-        return readOpcodeForIntType(input);
-    }
-#endif
 
     template<typename Value_t>
     bool containsOnlyValidNameChars(const std::string& name)
@@ -151,26 +175,20 @@ namespace
     }
 
     template<typename Value_t>
-    inline bool truthValue(Value_t d) { return fp_abs(d) >= Value_t(0.5); }
-
-    template<>
-    inline bool truthValue<long>(long l) { return l != 0; }
-
-#ifdef FP_SUPPORT_GMP_INT_TYPE
-    template<>
-    inline bool truthValue<GmpInt>(GmpInt l) { return l != 0; }
-#endif
+    inline bool truthValue(Value_t d)
+    {
+        return IsIntType<Value_t>::result
+                ? d != 0
+                : fp_abs(d) >= Value_t(0.5);
+    }
 
     template<typename Value_t>
-    inline bool truthValue_abs(Value_t abs_d) { return abs_d >= Value_t(0.5); }
-
-    template<>
-    inline bool truthValue_abs<long>(long l) { return l > 0; }
-
-#ifdef FP_SUPPORT_GMP_INT_TYPE
-    template<>
-    inline bool truthValue_abs<GmpInt>(GmpInt l) { return l > 0; }
-#endif
+    inline bool truthValue_abs(Value_t abs_d)
+    {
+        return IsIntType<Value_t>::result
+                ? abs_d > 0
+                : abs_d >= Value_t(0.5);
+    }
 
     template<typename Value_t>
     inline Value_t Min(Value_t d1, Value_t d2) { return d1<d2 ? d1 : d2; }
@@ -953,6 +971,31 @@ namespace
         return false;
     }
 
+    bool IsComparisonOpcode(unsigned op)
+    {
+        switch(op)
+        {
+          case cEqual: case cNEqual:
+          case cLess: case cLessOrEq:
+          case cGreater: case cGreaterOrEq:
+              return true;
+          default: break;
+        }
+        return false;
+    }
+
+    unsigned OppositeComparisonOpcode(unsigned op)
+    {
+        switch(op)
+        {
+            case cLess: return cGreater;
+            case cGreater: return cLess;
+            case cLessOrEq: return cGreaterOrEq;
+            case cGreaterOrEq: return cLessOrEq;
+        }
+        return op;
+    }
+
     bool IsNeverNegativeValueOpcode(unsigned op)
     {
         switch(op)
@@ -988,6 +1031,68 @@ namespace
               return true;
           default: break;
         }
+        return false;
+    }
+
+    bool IsUnaryOpcode(unsigned op)
+    {
+        switch(op)
+        {
+          case cInv: case cNeg:
+          case cNot: case cAbsNot:
+          case cNotNot: case cAbsNotNot:
+          case cSqr: case cRSqrt:
+          case cDeg: case cRad:
+            return true;
+        }
+        return (op < FUNC_AMOUNT && Functions[op].params == 1);
+    }
+
+    bool IsBinaryOpcode(unsigned op)
+    {
+        switch(op)
+        {
+          case cAdd: case cSub: case cRSub:
+          case cMul: case cDiv: case cRDiv:
+          case cMod:
+          case cEqual: case cNEqual: case cLess:
+          case cLessOrEq: case cGreater: case cGreaterOrEq:
+          case cAnd: case cAbsAnd:
+          case cOr: case cAbsOr:
+            return true;
+        }
+        return (op < FUNC_AMOUNT && Functions[op].params == 2);
+    }
+
+    bool HasInvalidRangesOpcode(unsigned op)
+    {
+#ifndef FP_NO_EVALUATION_CHECKS
+        // Returns true, if the given opcode has a range of
+        // input values that gives an error.
+        switch(op)
+        {
+            case cAcos: // allowed range: |x| <= 1
+            case cAsin: // allowed range: |x| <= 1
+            case cAcosh: // allowed range: x >= 1
+            case cAtanh: // allowed range: |x| < 1
+            //case cCot: // note: no range, just separate values
+            //case cCsc: // note: no range, just separate values
+            case cLog: // allowed range: x > 0
+            case cLog2: // allowed range: x > 0
+            case cLog10: // allowed range: x > 0
+        #ifdef FP_SUPPORT_OPTIMIZER
+            case cLog2by: // allowed range: x > 0
+        #endif
+            //case cPow: // note: no range, just separate values
+            //case cSec: // note: no range, just separate values
+            case cSqrt: // allowed range: x >= 0
+            case cRSqrt: // allowed range: x > 0
+            //case cDiv: // note: no range, just separate values
+            //case cRDiv: // note: no range, just separate values
+            //case cInv: // note: no range, just separate values
+                return true;
+        }
+#endif
         return false;
     }
 
@@ -1099,6 +1204,9 @@ inline bool FunctionParserBase<Value_t>::TryCompilePowi(Value_t original_immed)
     }
     return false;
 }
+
+//#include "fpoptimizer/fpoptimizer_opcodename.h"
+// ^ needed only if FP_TRACE_BYTECODE_OPTIMIZATION() is used
 
 template<typename Value_t>
 inline void FunctionParserBase<Value_t>::AddFunctionOpcode(unsigned opcode)
@@ -1277,7 +1385,10 @@ const char* FunctionParserBase<Value_t>::CompileElement(const char* function)
     switch(nameData->type)
     {
       case NameData<Value_t>::VARIABLE: // is variable
-          data->ByteCode.push_back(nameData->index);
+          if(unlikely(!data->ByteCode.empty() && data->ByteCode.back() == nameData->index))
+              data->ByteCode.push_back(cDup);
+          else
+              data->ByteCode.push_back(nameData->index);
           incStackPtr();
           return endPtr;
 
@@ -1831,7 +1942,12 @@ Value_t FunctionParserBase<Value_t>::Eval(const Value_t* Vars)
 #           endif
               Stack[SP] = fp_acos(Stack[SP]); break;
 
-          case cAcosh: Stack[SP] = fp_acosh(Stack[SP]); break;
+          case cAcosh:
+#           ifndef FP_NO_EVALUATION_CHECKS
+              if(Stack[SP] < Value_t(1))
+              { evalErrorType=4; return Value_t(0); }
+#           endif
+              Stack[SP] = fp_acosh(Stack[SP]); break;
 
           case  cAsin:
 #           ifndef FP_NO_EVALUATION_CHECKS
@@ -1847,7 +1963,12 @@ Value_t FunctionParserBase<Value_t>::Eval(const Value_t* Vars)
           case cAtan2: Stack[SP-1] = fp_atan2(Stack[SP-1], Stack[SP]);
                        --SP; break;
 
-          case cAtanh: Stack[SP] = fp_atanh(Stack[SP]); break;
+          case cAtanh:
+#           ifndef FP_NO_EVALUATION_CHECKS
+              if(Stack[SP] <= Value_t(-1) || Stack[SP] >= Value_t(1))
+              { evalErrorType=4; return Value_t(0); }
+#           endif
+              Stack[SP] = fp_atanh(Stack[SP]); break;
 
           case  cCbrt: Stack[SP] = fp_cbrt(Stack[SP]); break;
 
@@ -2021,8 +2142,13 @@ Value_t FunctionParserBase<Value_t>::Eval(const Value_t* Vars)
           case   cMul: Stack[SP-1] *= Stack[SP]; --SP; break;
 
           case   cDiv:
+#           ifndef FP_NO_EVALUATION_CHECKS
               if(Stack[SP] == Value_t(0))
               { evalErrorType=1; return Value_t(0); }
+#           else
+              if(IsIntType<Value_t>::result && Stack[SP] == Value_t(0))
+              { evalErrorType=1; return Value_t(0); }
+#           endif
               Stack[SP-1] /= Stack[SP]; --SP; break;
 
           case   cMod:
@@ -2160,6 +2286,9 @@ Value_t FunctionParserBase<Value_t>::Eval(const Value_t* Vars)
 #           ifndef FP_NO_EVALUATION_CHECKS
               if(Stack[SP] == Value_t(0))
               { evalErrorType=1; return Value_t(0); }
+#           else
+              if(IsIntType<Value_t>::result && Stack[SP] == Value_t(0))
+              { evalErrorType=1; return Value_t(0); }
 #           endif
               Stack[SP] = Value_t(1)/Stack[SP];
               break;
@@ -2171,6 +2300,9 @@ Value_t FunctionParserBase<Value_t>::Eval(const Value_t* Vars)
           case   cRDiv:
 #           ifndef FP_NO_EVALUATION_CHECKS
               if(Stack[SP-1] == Value_t(0))
+              { evalErrorType=1; return Value_t(0); }
+#           else
+              if(IsIntType<Value_t>::result && Stack[SP-1] == Value_t(0))
               { evalErrorType=1; return Value_t(0); }
 #           endif
               Stack[SP-1] = Stack[SP] / Stack[SP-1]; --SP; break;
@@ -2315,24 +2447,6 @@ namespace
         {
             dest << ' ';
         }
-    }
-
-    template<typename Value_t>
-    std::string findName(const namePtrsType<Value_t>& nameMap,
-                         unsigned index,
-                         typename NameData<Value_t>::DataType type)
-    {
-        for(typename namePtrsType<Value_t>::const_iterator
-                iter = nameMap.begin();
-            iter != nameMap.end();
-            ++iter)
-        {
-            if(iter->second.type != type) continue;
-            if(iter->second.index == index)
-                return std::string(iter->first.name,
-                                   iter->first.name + iter->first.nameLength);
-        }
-        return "?";
     }
 
     const struct PowiMuliType

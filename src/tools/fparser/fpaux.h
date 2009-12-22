@@ -1,5 +1,5 @@
 /***************************************************************************\
-|* Function Parser for C++ v4.0.2                                          *|
+|* Function Parser for C++ v4.0.3                                          *|
 |*-------------------------------------------------------------------------*|
 |* Copyright: Juha Nieminen, Joel Yliluoma                                 *|
 \***************************************************************************/
@@ -48,7 +48,7 @@ namespace FUNCTIONPARSERTYPES
     inline ValueT fp_powi(ValueT x, unsigned long y)
     {
         // Requirements: y is non-negative integer.
-        ValueT result(1.0);
+        ValueT result(1);
         while(y != 0)
         {
             if(y & 1) { result *= x; y -= 1; }
@@ -60,27 +60,27 @@ namespace FUNCTIONPARSERTYPES
     template<typename ValueT>
     ValueT fp_pow(const ValueT& x, const ValueT& y)
     {
-        if(x == 1.0) return ValueT(1.0);
+        if(x == ValueT(1)) return ValueT(1);
         // y is now zero or positive
         if(IsIntegerConst(y))
         {
             // Use fast binary exponentiation algorithm
             // See http://en.wikipedia.org/wiki/Exponentiation_by_squaring
-            if(y >= 0.0)
-                return fp_powi(x,                (long)y);
+            if(y >= ValueT(0))
+                return fp_powi(x,              (long)y);
             else
-                return ValueT(1.0) / fp_powi(x, -(long)y);
+                return ValueT(1) / fp_powi(x, -(long)y);
         }
-        if(y >= 0.0)
+        if(y >= ValueT(0))
         {
             // y is now positive. Calculate using exp(log(x)*y).
             // See http://en.wikipedia.org/wiki/Exponentiation#Real_powers
-            if(x > 0.0) return fp_pow_with_exp_log(x, y);
-            if(x == 0.0) return ValueT(0.0);
+            if(x > ValueT(0)) return fp_pow_with_exp_log(x, y);
+            if(x == ValueT(0)) return ValueT(0);
             // At this point, y > 0.0 and x is known to be < 0.0,
             // because positive and zero cases are already handled.
             //
-            if(!IsIntegerConst(y*16.0))
+            if(!IsIntegerConst(y*ValueT(16)))
                 return -fp_pow_with_exp_log(-x, y);
             // ^This is not technically correct, but it allows
             // functions such as cbrt(x^5), that is, x^(5/3),
@@ -110,11 +110,11 @@ namespace FUNCTIONPARSERTYPES
         else
         {
             // y is negative. Utilize the x^y = 1/(x^-y) identity.
-            if(x > 0.0) return fp_pow_with_exp_log(ValueT(1.0) / x, -y);
-            if(x < 0.0)
+            if(x > ValueT(0)) return fp_pow_with_exp_log(ValueT(1) / x, -y);
+            if(x < ValueT(0))
             {
-                if(!IsIntegerConst(y*-16.0))
-                    return -fp_pow_with_exp_log(ValueT(-1.0) / x, -y);
+                if(!IsIntegerConst(y*ValueT(-16)))
+                    return -fp_pow_with_exp_log(ValueT(-1) / x, -y);
                 // ^ See comment above.
             }
             // Remaining case: 0.0 ^ negative number
@@ -424,8 +424,8 @@ namespace FUNCTIONPARSERTYPES
     inline MpfrFloat fp_atanh(const MpfrFloat& x) { return MpfrFloat::atanh(x); }
     inline MpfrFloat fp_trunc(const MpfrFloat& x) { return MpfrFloat::trunc(x); }
 
-    inline MpfrFloat fp_pow(const MpfrFloat& x, MpfrFloat& y) { return MpfrFloat::pow(x, y); }
-    inline MpfrFloat fp_pow_base(const MpfrFloat& x, MpfrFloat& y) { return MpfrFloat::pow(x, y); }
+    inline MpfrFloat fp_pow(const MpfrFloat& x, const MpfrFloat& y) { return MpfrFloat::pow(x, y); }
+    inline MpfrFloat fp_pow_base(const MpfrFloat& x, const MpfrFloat& y) { return MpfrFloat::pow(x, y); }
 
     inline MpfrFloat fp_log2(const MpfrFloat& x) { return MpfrFloat::log2(x); }
     inline MpfrFloat fp_exp2(const MpfrFloat& x) { return MpfrFloat::exp2(x); }
