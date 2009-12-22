@@ -167,7 +167,7 @@ protected:
 class Exchange : public iDeleteObjectCallback
 {
 public:
-    Exchange( Client* starter, csRef<ExchangeManager> manager);
+    Exchange( Client* starter, bool automaticExchange, csRef<ExchangeManager> manager);
     virtual ~Exchange();
 
     /** One of the clients has ended this exchange. This will close the exchange
@@ -245,8 +245,10 @@ protected:
     Client* starterClient;
     uint32_t player;
 
-    bool exchangeEnded;    //exchange ended and should be deleted
-    bool exchangeSuccess; //exchange was successful and items should not be returned to owners
+    bool exchangeEnded;    ///< exchange ended and should be deleted
+    bool exchangeSuccess; ///< exchange was successful and items should not be returned to owners
+    
+    bool automaticExchange; ///< the exchange is done entirely server side don't open windows on the client. This is used only with NPC!
 
     ExchangeManager* exchangeMgr;
 };
@@ -307,7 +309,7 @@ private:
 class PlayerToNPCExchange : public Exchange
 {
 public:
-    PlayerToNPCExchange(Client* starter, gemObject* target, csRef<ExchangeManager> manager);
+    PlayerToNPCExchange(Client* starter, gemObject* target, bool automaticExchange, csRef<ExchangeManager> manager);
     virtual ~PlayerToNPCExchange();
     gemObject * GetTargetGEM();
     bool CheckExchange(uint32_t clientNum, bool checkRange=false);
@@ -340,7 +342,7 @@ public:
     ExchangeManager(ClientConnectionSet *pCCS);
     virtual ~ExchangeManager();
 
-    void StartExchange( Client* client, bool withPlayer );
+    void StartExchange( Client* client, bool withPlayer, bool automaticExchange = false );
 
     virtual void HandleMessage(MsgEntry *pMsg,Client *client);
     void HandleExchangeRequest(MsgEntry *me,Client *client);

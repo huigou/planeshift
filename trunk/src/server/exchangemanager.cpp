@@ -657,7 +657,7 @@ bool ExchangingCharacter::GetExchangedItems(csString& text)
  * Common base for different kinds of exchanges
  */
 
-Exchange::Exchange(Client* starter, csRef<ExchangeManager> manager)
+Exchange::Exchange(Client* starter, bool automaticExchange, csRef<ExchangeManager> manager)
         : starterChar( starter->GetClientNum(), starter->GetCharacterData()->Inventory() )
 {
     id = next_id++;
@@ -666,6 +666,7 @@ Exchange::Exchange(Client* starter, csRef<ExchangeManager> manager)
     exchangeMgr = manager;
     starterClient = starter;
     this->player = starter->GetClientNum();
+    this->automaticExchange = automaticExchange;
 
     starter->GetActor()->RegisterCallback( this );
     starter->GetCharacterData()->Inventory().BeginExchange();
@@ -699,6 +700,8 @@ bool Exchange::AddItem(Client* fromClient, INVENTORY_SLOT_NUMBER fromSlot, int s
 
 void Exchange::SendAddItemMessage(Client* fromClient, int slot, psCharacterInventory::psCharacterInventoryItem* invItem)
 {
+    if(automaticExchange) return;
+
     psItem* item = invItem->GetItem();
 
     psExchangeAddItemMsg msg(fromClient->GetClientNum(), item->GetName(),
@@ -710,6 +713,8 @@ void Exchange::SendAddItemMessage(Client* fromClient, int slot, psCharacterInven
 
 void Exchange::SendRemoveItemMessage(Client* fromClient, int slot)
 {
+    if(automaticExchange) return; //this is improbable to happen
+
     psExchangeRemoveItemMsg msg(fromClient->GetClientNum(), CONTAINER_EXCHANGE_OFFERING, slot, 0);
     psserver->GetEventManager()->SendMessage(msg.msg);
 }
@@ -791,7 +796,7 @@ bool Exchange::RemoveItem(Client* fromClient, int fromSlot, int count)
 void Exchange::SendEnd(int clientNum)
 {
     // printf("In Exchange::SendEnd(%d)\n",clientNum);
-
+    if(automaticExchange) return;
     psExchangeEndMsg msg(clientNum);
     psserver->GetEventManager()->SendMessage(msg.msg);
 }
@@ -809,7 +814,7 @@ int Exchange::next_id = 1;
 //------------------------------------------------------------------------------
 
 PlayerToPlayerExchange::PlayerToPlayerExchange(Client* player, Client* target, csRef<ExchangeManager> manager)
-                       :Exchange(player, manager), targetChar(target->GetClientNum(),target->GetCharacterData()->Inventory() )
+                       :Exchange(player, false, manager), targetChar(target->GetClientNum(),target->GetCharacterData()->Inventory() )
 {
     targetClient = target;
     this->target = target->GetClientNum();
@@ -1159,14 +1164,17 @@ psItem* PlayerToPlayerExchange::GetTargetOffer(int slot)
 *
 ***********************************************************************************/
 
-PlayerToNPCExchange::PlayerToNPCExchange(Client* player, gemObject* target, csRef<ExchangeManager> manager)
-                    : Exchange(player, manager)
+PlayerToNPCExchange::PlayerToNPCExchange(Client* player, gemObject* target, bool automaticExchange, csRef<ExchangeManager> manager)
+                    : Exchange(player, automaticExchange, manager)
 {
     this->target = target;
 
     csString targetName( target->GetName() );
-    psExchangeRequestMsg one( starterClient->GetClientNum(), targetName, false );
-    psserver->GetEventManager()->SendMessage( one.msg );
+    if(!automaticExchange)
+    {   
+        psExchangeRequestMsg one( starterClient->GetClientNum(), targetName, false );
+        psserver->GetEventManager()->SendMessage( one.msg );
+    }
 
     target->RegisterCallback( this );
 
@@ -1350,7 +1358,7 @@ ExchangeManager::~ExchangeManager()
         psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_EXCHANGE_AUTOGIVE);
     }
 }
-void ExchangeManager::StartExchange( Client* client, bool withPlayer )
+void ExchangeManager::StartExchange( Client* client, bool withPlayer, bool automaticExchange )
 {
     // Make sure we are in a peaceful mode before trading
     if ( client->GetActor()->GetMode() != PSCHARACTER_MODE_PEACE && client->GetActor()->GetMode() != PSCHARACTER_MODE_SIT && client->GetActor()->GetMode() != PSCHARACTER_MODE_OVERWEIGHT )
@@ -1414,7 +1422,7 @@ void ExchangeManager::StartExchange( Client* client, bool withPlayer )
             return;
         }
 
-        Exchange* exchange = new PlayerToNPCExchange(client, target, this);
+        Exchange* exchange = new PlayerToNPCExchange(client, target, automaticExchange, this);
         client->SetExchangeID( exchange->GetID() );
         exchanges.Push (exchange);
     }
@@ -1535,7 +1543,7 @@ void ExchangeManager::HandleAutoGive(MsgEntry *me,Client *client)
     }
 
     // Create a temporary exchange to actually do all the gift giving
-    StartExchange(client, false);
+    StartExchange(client, false, true);
 
     // Check to make sure it worked
     Exchange* exchange = GetExchange( client->GetExchangeID() );
