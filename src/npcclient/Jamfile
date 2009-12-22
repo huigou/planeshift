@@ -55,6 +55,7 @@ LinkStaticPlugins psnpcclient_static :
   frustvis
   genmesh
   gl3d
+  glshader_cg
   glshader_fixed
   gmeshanim
   gmeshldr
