@@ -320,7 +320,7 @@ int com_status(char *)
         hasBeenReady ? "loaded and running." : "not loaded.");
     CPrintf (CON_CMDOUTPUT ,"Connection Count : " COL_CYAN "%d\n" COL_NORMAL,
         psserver->GetNetManager()->GetConnections()->Count());
-    CPrintf (CON_CMDOUTPUT ,COL_GREEN "%-5s %-7s %-25s %14s %10s %9s\n" COL_NORMAL,"EID","PID","Name","CNum","Ready","Time con.");
+    CPrintf (CON_CMDOUTPUT ,COL_GREEN "%-5s %-7s %-25s %14s %10s %9s %s %s\n" COL_NORMAL,"EID","PID","Name","CNum","Ready","Time con.", "RTT", "Window filled");
 
     ClientConnectionSet* clients = psserver->GetNetManager()->GetConnections();
     if (psserver->GetNetManager()->GetConnections()->Count() == 0)
@@ -333,12 +333,13 @@ int com_status(char *)
     while(i.HasNext())
     {
         Client *client = i.Next();
-        CPrintf (CON_CMDOUTPUT ,"%5d %7d %-25s %14d %10s",
-            client->GetActor() ? client->GetActor()->GetEID().Unbox() : 0,
-            client->GetPID().Unbox(),
-            client->GetName(),
-            client->GetClientNum(),
-            (const char*) PS_GetClientStatus(client));
+        csString clientStatus;
+        clientStatus.Format("%5d %7d %-25s %14d %10s",
+                client->GetActor() ? client->GetActor()->GetEID().Unbox() : 0,
+                client->GetPID().Unbox(),
+                client->GetName(),
+                client->GetClientNum(),
+                (const char*) PS_GetClientStatus(client));
         if (client->GetCharacterData())
         {
             psCharacter * character = client->GetCharacterData();
@@ -348,9 +349,16 @@ int com_status(char *)
             time = time/60;
             min = time%60;
             hour = time/60;
-            CPrintf(CON_CMDOUTPUT ," %3u:%02u:%02u",hour,min,sec);
+            clientStatus.AppendFmt(" %3u:%02u:%02u",hour,min,sec);
+            
         }
-        CPrintf (CON_CMDOUTPUT ,"\n");
+        if(client->GetConnection())
+        {
+        	clientStatus.AppendFmt(" %u %u", client->GetConnection()->RTO,
+                    client->GetConnection()->window);
+        }
+        clientStatus.Append('\n');
+        CPrintf (CON_CMDOUTPUT ,clientStatus.GetData());
     }
 
     return 0;
