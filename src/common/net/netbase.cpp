@@ -369,6 +369,8 @@ bool NetBase::HandleAck(csRef<psNetPacketEntry> pkt, Connection* connection,
                 Debug2(LOG_NET,0,"No packet in ack queue :%d\n", ack->packet->pktid);
 #endif
             }
+            else if(connection)
+            	connection->RemoveFromWindow(ack->packet->GetPacketSize());
         }
         else // if not found, it is probably a resent ACK which is redundant so do nothing
         {
@@ -481,6 +483,8 @@ void NetBase::CheckResendPkts()
                 Debug2(LOG_NET,0,"No packet in ack queue :%d\n", pkt->packet->pktid);
 #endif
             }
+            else if(connection)
+            	connection->RemoveFromWindow(pkt->packet->GetPacketSize());
         }
     }
 
@@ -522,21 +526,32 @@ bool NetBase::SendMergedPackets(NetPacketQueue *q)
     csRef<psNetPacketEntry> queueget;
     csRef<psNetPacketEntry> candidate, final;
 
-    queueget = q->Get(); // csRef required for q->Get()
-
+    queueget = q->Peek(); // csRef required for q->Get()
     // If there's not at least one packet in the queue, we're done.
-    if (!queueget)
-        return false;
+    if(!queueget)
+    	return false;
+    Connection* connection = GetConnByNum(queueget->clientnum);
+//    if(connection) printf("Window size: %d\n", connection->window);
+    
+    // Always send something if queue is full, otherwise only send if window is not full.
+    // This prevents some deadlock issues.
+    if(connection && connection->IsWindowFull() && !q->IsFull())
+    	return false;
+    
+    queueget = q->Get();
     
     final = queueget;  // This was packet 0 in the pending queue
 
 	// Try to merge additional packets into a single send.
 	while ((queueget=q->Get()))  // This is now looping through packets 1-N
 	{
+//		if(connection) printf("Window size2: %d\n", connection->window);
 		candidate = queueget;
 		if (candidate->packet->GetSequence() != 0) // sequenced packet is following a non-sequenced packet
 		{
 			SendSinglePacket(candidate); // Go ahead and send the sequenced one, but keep building the merged one.
+			if(connection && connection->IsWindowFull())
+				break;
 			continue;
 		}
 		if(!final->Append(candidate))
@@ -549,6 +564,8 @@ bool NetBase::SendMergedPackets(NetPacketQueue *q)
 			// Start the process again with the packet that wouldn't fit
 			final = candidate;
 		}
+		if(connection && connection->IsWindowFull())
+			break;
 	}
 
 	// There is always data in final here
@@ -578,6 +595,8 @@ bool NetBase::SendSinglePacket(csRef<psNetPacketEntry> pkt)
         Connection* connection = GetConnByNum(pkt->clientnum);
         if(connection)
         {
+        	// Add to window
+        	connection->AddToWindow(pkt->packet->GetPacketSize());
         	// Set timeout for resending.
         	pkt->RTO = connection->RTO;
         	awaitingack.Put(PacketKey(pkt->clientnum, pkt->packet->pktid), pkt);
@@ -651,6 +670,7 @@ bool NetBase::SendOut()
     unsigned int senderCount = senders.Count();
     unsigned int sentCount = 0;
     csRef<NetPacketQueueRefCount> q; 
+    csArray<csRef<NetPacketQueueRefCount> > readd;
     while (q = senders.Get())
     {
         sentCount += q->Count();
@@ -658,8 +678,12 @@ bool NetBase::SendOut()
         {
             sent_anything = true;
         }
+        // If the window is full so there are still packets left, ensure we re-check the queue later.
+        if(q->Count() > 0)
+        	readd.Push(q);
     }
-    
+    for(int i = 0; i < readd.GetSize(); i++)
+    	senders.Add(readd[i]);
     // Statistics updating
     csTicks timeTaken = csGetTicks() - begin;
     sendStats[avgIndex].senders = senderCount;
@@ -1332,6 +1356,7 @@ NetBase::Connection::Connection(uint32_t num): sequence(1), packethistoryhash(MA
     valid=false;
     heartbeat=0;
     lastRecvPacketTime = csGetTicks();
+    window = 0;
     
     // Round trip time estimates
     estRTT = 0;
