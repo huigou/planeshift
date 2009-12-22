@@ -682,7 +682,7 @@ bool NetBase::SendOut()
         if(q->Count() > 0)
         	readd.Push(q);
     }
-    for(int i = 0; i < readd.GetSize(); i++)
+    for(size_t i = 0; i < readd.GetSize(); i++)
     	senders.Add(readd[i]);
     // Statistics updating
     csTicks timeTaken = csGetTicks() - begin;
