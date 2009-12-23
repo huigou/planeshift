@@ -617,12 +617,17 @@ bool EntityManager::DeletePlayer(Client * client)
         // take the actor off his mount if he got one
         if(actor->GetMount())
             RemoveRideRelation(actor);
+            
+        //As we show the logged in status only when the client gets ready we check if it 
+        //was ready before doing this
+        if(client->IsReady())
+        {
+            // Check for buddy list members
+            usermanager->NotifyBuddies(client, UserManager::LOGGED_OFF);
         
-        // Check for buddy list members
-        usermanager->NotifyBuddies(client, UserManager::LOGGED_OFF);
-        
-        // Check for Guild members to notify
-        usermanager->NotifyGuildBuddies(client, UserManager::LOGGED_OFF);
+            // Check for Guild members to notify
+            usermanager->NotifyGuildBuddies(client, UserManager::LOGGED_OFF);
+        }
 
         // Any objects wanting to know when the actor is 'gone' are callback'd here.
         actor->Disconnect();
