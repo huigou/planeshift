@@ -231,7 +231,7 @@ bool psNPCClient::Initialize(iObjectRegistry* object_reg,const char *_host, cons
 
     if (!LoadLocations())
     {
-        CPrintf(CON_ERROR, "Couldn't load the sc_locations table\n");
+        CPrintf(CON_ERROR, "Couldn't load the sc_location_type table\n");
         exit(1);
     }    
 
