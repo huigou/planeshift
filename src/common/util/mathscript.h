@@ -70,7 +70,7 @@ public:
 
     int GetRoundValue()
     {
-        return round(GetValue());
+        return int(round(GetValue()));
     }
 
     double GetValue()
