@@ -56,8 +56,6 @@ private:
     void Draw();
     void HandleGroup( csString& string );
     void HandleMembers( csString& string );
-
-    GEMClientActor* player;
     
     pawsChatWindow* chatWindow;
 };

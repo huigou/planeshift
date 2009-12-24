@@ -52,7 +52,6 @@
 pawsGroupWindow::pawsGroupWindow()
 {
     memberList = 0;
-    player = NULL;
 }
 
 pawsGroupWindow::~pawsGroupWindow()
@@ -219,8 +218,7 @@ void pawsGroupWindow::SetStats( GEMClientActor* actor )
 
 void pawsGroupWindow::Draw()
 {
-    if (!player)
-        player = psengine->GetCelClient()->GetMainPlayer();
+    GEMClientActor* player = psengine->GetCelClient()->GetMainPlayer();
 
     player->GetVitalMgr()->Predict( csGetTicks(),"Self" );
 
