@@ -416,7 +416,7 @@ bool ServerCharManager::SendInventory( int clientNum, bool sendUpdatesOnly)
 										 chardata->Inventory().GetInventoryVersion(), msgsize);
     
     csString status;
-    status.Format("Sending GUI Inventory message size %u to clientnum %u", msgsize, toClientNumber);
+    status.Format("Sending GUI Inventory message size %zu to clientnum %u", msgsize, toClientNumber);
 
     if(LogCSV::GetSingletonPtr())
         LogCSV::GetSingleton().Write(CSV_STATUS, status);
