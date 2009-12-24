@@ -1152,8 +1152,8 @@ int pawsListBox::sort_cmp(const void * void_rowA, const void * void_rowB)
 void pawsListBox::SortRows()
 {
     pawsListBoxRow ** sortedRows;
-    pawsListBoxRow * selectedrow; //stores the currently selected row before sorting
-                                  //in order to be able to retrieve the correct position
+    pawsListBoxRow * selectedrow = NULL; //stores the currently selected row before sorting
+                                         //in order to be able to retrieve the correct position
     size_t i;
 
     if (sortColNum == -1)
@@ -1165,7 +1165,8 @@ void pawsListBox::SortRows()
     for ( i=0; i < rows.GetSize(); i++)
         sortedRows[i] = rows[i];
 
-    selectedrow = sortedRows[selected]; //saves the corrispondence to the selected row
+    if(selected != -1)
+        selectedrow = sortedRows[selected]; //saves the corrispondence to the selected row
 
     sort_sortFunc    = columnDef[sortColNum].sortFunc;
     sort_sortColNum  = sortColNum;
