@@ -2350,9 +2350,10 @@ void gemActor::DoDamage(gemActor* attacker, float damage)
             psserver->GetEventManager()->Push(evt);
             SetMode(PSCHARACTER_MODE_DEFEATED);
 
-            // Cancel any active spells as if the player had died...stops DoT
-            // from actually killing the player.
-            CancelActiveSpellsForDeath();
+            // Cancel any active spells which are marked as doing HP damage.
+            // This prevents DoT from killing the player.  We leave the rest
+            // since there may be long standing debuffs like the DR curse.
+            CancelActiveSpellsWhichDamage();
 
             psserver->SendSystemError(GetClientID(), "You've been defeated by %s!", attacker->GetName());
             GetClient()->AnnounceToDuelClients(attacker, "defeated");
@@ -3794,6 +3795,17 @@ void gemActor::CancelActiveSpellsForDeath()
     {
         ActiveSpell *asp = activeSpells[i];
         if (asp->CancelOnDeath() && asp->Cancel())
+            delete asp;
+    }
+}
+
+void gemActor::CancelActiveSpellsWhichDamage()
+{
+    // Cancel any spells marked to expire on death.
+    for (size_t i = activeSpells.GetSize() - 1; i != (size_t) -1; i--)
+    {
+        ActiveSpell *asp = activeSpells[i];
+        if (asp->DamagesHP() && asp->Cancel())
             delete asp;
     }
 }

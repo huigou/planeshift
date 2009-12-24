@@ -1039,6 +1039,7 @@ public:
     int ActiveSpellCount(const csString & name);
     csArray<ActiveSpell*> & GetActiveSpells() { return activeSpells; }
     void CancelActiveSpellsForDeath();
+    void CancelActiveSpellsWhichDamage();
 
     /** These flags are for GM/debug abilities */
     bool nevertired;        ///< infinite stamina

@@ -237,6 +237,8 @@ public:
         VitalBuffable & buffable = target->GetCharacterData()->GetHPRate();
         buffable.Buff(asp, val);
         asp->Add(buffable, "<hp-rate value=\"%f\"/>", val);
+        if (val < 0)
+            asp->MarkAsDamagingHP();
 
         gemActor *atk = GetActor(env, attacker); // may be NULL
         target->AddAttackerHistory(atk, val, asp->Duration());
