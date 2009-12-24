@@ -49,6 +49,7 @@ public:
         combo->SetNumRows(6);
         combo->SetRowHeight(20);
         combo->PostSetup();
+        combo->SetSorted(false);
         return true;
     }
 

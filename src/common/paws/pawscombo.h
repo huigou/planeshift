@@ -21,6 +21,7 @@
 #define PAWS_COMBO_BOX_HEADER
 
 #include "pawswidget.h"
+#include "pawslistbox.h"
 
 class pawsButton;
 class pawsTextBox;
@@ -62,6 +63,9 @@ public:
     void SetUpDownButtonImage(const char* name) { downButton = name; }
     void SetUpButtonPressedImage(const char* name) { upButtonPressed = name; }
     void SetUpDownButtonPressedImage(const char* name) { downButtonPressed = name; }
+    
+    ///sets if the list has to be sorted. NOTE: call before adding entries but after postsetup()!!
+    void SetSorted(bool sorting) { listChoice->SetSortedColumn(sorting? 0 : -1); }
     pawsListBoxRow* NewOption();
     pawsListBoxRow* NewOption(const csString & text);
     
