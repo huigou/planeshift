@@ -412,6 +412,20 @@ void ChatManager::SendNotice(psChatMessage& msg)
     //SendSay(NULL, msg, "Server");
 }
 
+void ChatManager::SendServerChannelMessage(psChatMessage& msg, uint32_t channelID)
+{
+    csArray<uint32_t> subscribers = channelSubscribers.GetAll(channelID);
+    csArray<PublishDestination> destArray;
+    for (size_t i = 0; i < subscribers.GetSize(); i++)
+    {
+        destArray.Push(PublishDestination(subscribers[i], NULL, 0, 0));
+        Client *target = psserver->GetConnections()->Find(subscribers[i]);
+        if (target && target->IsReady())
+            target->GetActor()->LogChatMessage("Server Admin", msg);
+    }
+
+    msg.Multicast(destArray, 0, PROX_LIST_ANY_RANGE );
+}
 
 void ChatManager::SendShout(Client *c, psChatMessage& msg)
 {

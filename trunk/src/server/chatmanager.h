@@ -81,6 +81,7 @@ public:
     void HandleChannelLeaveMessage(MsgEntry *me, Client *client);
 
     void SendNotice(psChatMessage& msg);
+    void SendServerChannelMessage(psChatMessage& msg, uint32_t channelID);
 
     NpcResponse *CheckNPCEvent(Client *client,csString& trigger,gemNPC * &target);
 

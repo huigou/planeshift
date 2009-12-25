@@ -65,6 +65,7 @@
 #include "util/dbprofile.h"
 #include "economymanager.h"
 #include "questmanager.h"
+#include "chatmanager.h"
 #include "engine/psworld.h"
 #include "bulkobjects/dictionary.h"
 #include "bulkobjects/psnpcdialog.h"
@@ -372,6 +373,16 @@ int com_say(char* text)
     psSystemMessage newmsg(0, MSG_INFO_SERVER, outtext);
     psserver->GetEventManager()->Broadcast(newmsg.msg);
     CPrintf(CON_CMDOUTPUT, "%s\n", (const char*) outtext);
+
+    return 0;
+}
+
+int com_sayGossip(char* text)
+{
+    psChatMessage newMsg(0, 0, "Server Admin", 0, text, CHAT_CHANNEL, false, 1);
+    psserver->GetChatManager()->SendServerChannelMessage(newMsg, 1);
+
+    CPrintf(CON_CMDOUTPUT, "%s\n", text);
 
     return 0;
 }
@@ -2379,6 +2390,7 @@ const COMMAND commands[] = {
     //{ "progress",  true, com_progress,  "progress <player>,<event/script>" },
     { "questreward", true, com_questreward, "Preforms the same action as when a player gets a quest reward" },
     { "say",       true, com_say,       "Tell something to all players connected"},
+    { "gossipsay", true, com_sayGossip, "Tell something to all players in the main public channel"},
     { "showinv",   true, com_showinv,   "Show items in a player's inventory" },
     { "showinvf",  true, com_showinvf,  "Show items in a player's inventory (more item information)" },
 
