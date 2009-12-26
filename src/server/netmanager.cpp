@@ -313,10 +313,7 @@ void NetManager::CheckResendPkts()
         */
 
         if (!senders.Add (outqueue))
-        {
             Error1("Senderlist Full!");
-            continue;
-        }
 
         //printf("pkt=%p, pkt->packet=%p\n",pkt,pkt->packet);
         // take out of awaiting ack pool.
@@ -329,7 +326,6 @@ void NetManager::CheckResendPkts()
         }
         else if(connection)
             connection->RemoveFromWindow(pkt->packet->GetPacketSize());
-
     }
     if(resentCount > 0)
     {
