@@ -1253,10 +1253,11 @@ void NPCManager::UpdateWorldPositions()
     {
         GEMSupervisor::GetSingleton().UpdateAllDR();
 
-        psAllEntityPosMessage msg;
-        GEMSupervisor::GetSingleton().GetAllEntityPos(msg);
+        csArray<psAllEntityPosMessage> msgs;
+        GEMSupervisor::GetSingleton().GetAllEntityPos(msgs);
 
-        msg.Multicast(superclients,-1,PROX_LIST_ANY_RANGE);
+        for(size_t i = 0; i < msgs.GetSize(); i++)
+            msgs.Get(i).Multicast(superclients,-1,PROX_LIST_ANY_RANGE);
     }
 }
 

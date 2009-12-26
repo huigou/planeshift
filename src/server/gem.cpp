@@ -443,46 +443,57 @@ void GEMSupervisor::GetPlayerObjects(PID playerID, csArray<gemObject*> &list )
 }
 
 
-void GEMSupervisor::GetAllEntityPos(psAllEntityPosMessage& update)
+void GEMSupervisor::GetAllEntityPos(csArray<psAllEntityPosMessage>& update)
 {
     csHash<gemObject*, EID>::GlobalIterator iter(entities_by_eid.GetIterator());
-
-    update.SetLength(count_players,0);  // Theoretical max of how many
-
-    int count_actual = 0;
-    while (iter.HasNext())
+    
+    //this is used to do the various messages in an array to be sent after to the npcclient
+    for(int position = 0; position < count_players; position += ALLENTITYPOS_MAX_AMOUNT)
     {
-        gemObject *obj = iter.Next();
-        if (obj->GetPID().IsValid())
+        psAllEntityPosMessage msg;
+        if(count_players < ALLENTITYPOS_MAX_AMOUNT) //if it's less than the max we just need one
+            msg.SetLength(count_players,0);  // Theoretical max of how many
+        else
+            msg.SetLength(ALLENTITYPOS_MAX_AMOUNT,0);
+
+        int count_actual = 0;
+        while (iter.HasNext())
         {
-            gemActor *actor = dynamic_cast<gemActor *>(obj);
-            if (actor)
+            gemObject *obj = iter.Next();
+            if (obj->GetPID().IsValid())
             {
-                csVector3 pos,pos2;
-                float yrot;
-                InstanceID instance,oldInstance;
-                iSector *sector;
-                obj->GetPosition(pos,yrot,sector);
-                instance = obj->GetInstance();
-                obj->GetLastSuperclientPos(pos2,oldInstance);
-
-                float dist2 = (pos.x - pos2.x) * (pos.x - pos2.x) +
-                    (pos.y - pos2.y) * (pos.y - pos2.y) +
-                    (pos.z - pos2.z) * (pos.z - pos2.z);
-
-                if (dist2 > .04 || instance != oldInstance)
+                gemActor *actor = dynamic_cast<gemActor *>(obj);
+                if (actor)
                 {
-                    count_actual++;
-                    update.Add(obj->GetEID(), pos, sector, obj->GetInstance(),
-                               CacheManager::GetSingleton().GetMsgStrings());
-                    obj->SetLastSuperclientPos(pos,instance);
+                    csVector3 pos,pos2;
+                    float yrot;
+                    InstanceID instance,oldInstance;
+                    iSector *sector;
+                    obj->GetPosition(pos,yrot,sector);
+                    instance = obj->GetInstance();
+                    obj->GetLastSuperclientPos(pos2,oldInstance);
+
+                    float dist2 = (pos.x - pos2.x) * (pos.x - pos2.x) +
+                        (pos.y - pos2.y) * (pos.y - pos2.y) +
+                        (pos.z - pos2.z) * (pos.z - pos2.z);
+
+                    if (dist2 > .04 || instance != oldInstance)
+                    {
+                        count_actual++;
+                        msg.Add(obj->GetEID(), pos, sector, obj->GetInstance(),
+                                   CacheManager::GetSingleton().GetMsgStrings());
+                        obj->SetLastSuperclientPos(pos,instance);
+                    }
                 }
             }
+            if(count_actual == ALLENTITYPOS_MAX_AMOUNT) //we reached message limit so we break out of here
+                break;
         }
+        msg.msg->ClipToCurrentSize();  // Actual Data size
+        msg.msg->Reset();
+        msg.msg->Add((int16_t)count_actual);  // Now correct the first value, which is the count of following entities
+        update.Push(msg);
     }
-    update.msg->ClipToCurrentSize();  // Actual Data size
-    update.msg->Reset();
-    update.msg->Add((int16_t)count_actual);  // Now correct the first value, which is the count of following entities
 }
 
 void GEMSupervisor::AttachObject( iObject* object, gemObject* gobject )
