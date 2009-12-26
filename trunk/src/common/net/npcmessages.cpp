@@ -729,7 +729,7 @@ psAllEntityPosMessage::psAllEntityPosMessage(MsgEntry *message)
 
 void psAllEntityPosMessage::SetLength(int elems, int client)
 {
-    msg.AttachNew(new MsgEntry(2 + elems * (4 * sizeof(float) + sizeof(uint32_t) + 100*sizeof(char)) ));
+    msg.AttachNew(new MsgEntry(2 + elems * ALLENTITYPOS_SIZE_PER_ENTITY));
     msg->SetType(MSGTYPE_ALLENTITYPOS);
     msg->clientnum      = client;
 

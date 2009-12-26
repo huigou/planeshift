@@ -184,7 +184,7 @@ public:
     void UpdateAllDR();
     void UpdateAllStats();
 
-    void GetAllEntityPos(psAllEntityPosMessage& msg);
+    void GetAllEntityPos(csArray<psAllEntityPosMessage>& msgs);
     int  CountManagedNPCs(AccountID superclientID);
     void FillNPCList(MsgEntry *msg, AccountID superclientID);
     void ActivateNPCs(AccountID superclientID);

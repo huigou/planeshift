@@ -29,6 +29,7 @@
 struct iSector;
 
 
+
 /**
 * The message sent from superclient to server on login.
 */
@@ -243,6 +244,11 @@ public:
      */
     virtual csString ToString(AccessPointers * access_ptrs);
 };
+
+
+//helpers for message splitting
+#define ALLENTITYPOS_SIZE_PER_ENTITY (4 * sizeof(float) + sizeof(uint32_t) + 100*sizeof(char))
+#define ALLENTITYPOS_MAX_AMOUNT  (MAX_MESSAGE_SIZE-2)/ALLENTITYPOS_SIZE_PER_ENTITY
 
 /**
 * The message sent from server to superclient every 2.5 seconds.
