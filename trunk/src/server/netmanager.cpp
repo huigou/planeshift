@@ -381,9 +381,6 @@ NetManager::Connection *NetManager::GetConnByNum (uint32_t clientnum)
     if (!client)
         return NULL;
 
-    // Debug check to see if we have a concurrency problem
-    CS_ASSERT(clients.FindAny(clientnum) != NULL);
-
     return client->GetConnection();
 }
 
