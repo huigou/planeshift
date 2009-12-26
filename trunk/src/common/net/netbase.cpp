@@ -51,7 +51,8 @@ int NetBase::socklibrefcount=0;
 
 // warning: this messes your logs with much data
 //#define PACKETDEBUG
-
+// Percentage of packets to be simulated as lost. Set to between 0 and 1 to activate.
+const float TEST_PACKETLOSS = 0.0f;
 
 NetBase::NetBase(int outqueuesize)
 : senders(outqueuesize)
@@ -241,6 +242,20 @@ bool NetBase::CheckIn()
     csRef<psNetPacketEntry> pkt;
     pkt.AttachNew(new psNetPacketEntry( bufpacket, 
             connection ? connection->clientnum : 0, packetlen));
+    
+    if(randomgen->Get() < TEST_PACKETLOSS)
+    {
+		psNetPacket* packet = pkt->packet;
+		int type = 0;
+	
+		if (packet->offset == 0) 
+		{
+			psMessageBytes* msg = (psMessageBytes*) packet->data;
+			type = msg->type;
+		}
+		Error3("Packet simulated lost. Type %s ID %d.\n", type == 0 ? "Fragment" : (const char *)  GetMsgTypeName(type), pkt->packet->pktid);
+		return true;
+    }
 
     // ACK packets can get eaten by HandleAck
     if (HandleAck(pkt, connection, &addr))
@@ -465,6 +480,7 @@ void NetBase::CheckResendPkts()
 				abort();
         	}
         	pkt->RTO *= 2;
+        	connection->resends++;
         }
         resentCount++;
         
@@ -597,6 +613,7 @@ bool NetBase::SendSinglePacket(csRef<psNetPacketEntry> pkt)
         {
         	// Add to window
         	connection->AddToWindow(pkt->packet->GetPacketSize());
+        	connection->sends++;
         	// Set timeout for resending.
         	pkt->RTO = connection->RTO;
         	awaitingack.Put(PacketKey(pkt->clientnum, pkt->packet->pktid), pkt);
@@ -1361,8 +1378,9 @@ NetBase::Connection::Connection(uint32_t num): sequence(1), packethistoryhash(MA
     
     // Round trip time estimates
     estRTT = 0;
-
     devRTT = 0;
+    sends = 0;
+    resends = 0;
 
     RTO = PKTINITRTO;
 

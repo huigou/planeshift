@@ -638,6 +638,10 @@ public:
     float devRTT;
     /** timeout */
     csTicks RTO;
+    /** Number of reliable sends */
+    uint32_t sends;
+    /** Number of resends */
+    uint32_t resends;
     
     // Reliable transmission window size
     uint32_t window;
