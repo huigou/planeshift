@@ -321,7 +321,7 @@ int com_status(char *)
         hasBeenReady ? "loaded and running." : "not loaded.");
     CPrintf (CON_CMDOUTPUT ,"Connection Count : " COL_CYAN "%d\n" COL_NORMAL,
         psserver->GetNetManager()->GetConnections()->Count());
-    CPrintf (CON_CMDOUTPUT ,COL_GREEN "%-5s %-7s %-25s %14s %10s %9s %s %s\n" COL_NORMAL,"EID","PID","Name","CNum","Ready","Time con.", "RTT", "Window filled");
+    CPrintf (CON_CMDOUTPUT ,COL_GREEN "%-5s %-7s %-25s %14s %10s %9s %s %s %s %s\n" COL_NORMAL,"EID","PID","Name","CNum","Ready","Time con.", "RTT", "Window filled", "Est. packet loss", "Packets sent");
 
     ClientConnectionSet* clients = psserver->GetNetManager()->GetConnections();
     if (psserver->GetNetManager()->GetConnections()->Count() == 0)
@@ -355,8 +355,8 @@ int com_status(char *)
         }
         if(client->GetConnection())
         {
-        	clientStatus.AppendFmt(" %u %u", client->GetConnection()->RTO,
-                    client->GetConnection()->window);
+        	clientStatus.AppendFmt(" %u %u %g %u", client->GetConnection()->RTO,
+                    client->GetConnection()->window, client->GetConnection()->sends > 0 ?  100.0 * client->GetConnection()->resends/client->GetConnection()->sends : 0.0, client->GetConnection()->sends);
         }
         clientStatus.Append('\n');
         CPrintf (CON_CMDOUTPUT ,clientStatus.GetData());

@@ -275,6 +275,7 @@ void NetManager::CheckResendPkts()
 				abort();
         	}
         	pkt->RTO *= 2;
+        	connection->resends++;
         }
         resentCount++;
         
@@ -336,7 +337,7 @@ void NetManager::CheckResendPkts()
         resendIndex = (resendIndex + 1) % RESENDAVGCOUNT;
 
         csTicks timeTaken = csGetTicks() - currenttime;
-        if(resentCount > 300 || resendIndex == 1 || timeTaken > 50)
+        if(resendIndex == 1 || timeTaken > 50)
         {
         	unsigned int peakResend = 0;
             float resendAvg = 0.0f;
