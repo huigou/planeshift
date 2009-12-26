@@ -1800,12 +1800,21 @@ void NPCManager::PrepareMessage()
     cmd_count = 0;
 }
 
+
+
+void NPCManager::CheckSendPerceptionQueue(size_t expectedAddSize)
+{
+    if(outbound->msg->GetSize()+expectedAddSize >= MAX_MESSAGE_SIZE)
+        SendAllCommands(false); //as this happens before an npctick we don't create a new one
+}
+
 /**
  * Talking sends the speaker, the target of the speech, and
  * the worst faction score between the two to the superclient.
  */
 void NPCManager::QueueTalkPerception(gemActor *speaker,gemNPC *target)
 {
+    CheckSendPerceptionQueue(sizeof(int8_t)+sizeof(int16_t)+sizeof(uint32_t)*2);
     float faction = target->GetRelativeFaction(speaker);
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::PCPT_TALK);
     outbound->msg->Add(speaker->GetEID().Unbox());
@@ -1830,9 +1839,11 @@ void NPCManager::QueueAttackPerception(gemActor *attacker,gemNPC *target)
 {
     if (attacker->InGroup())
     {
+        csRef<PlayerGroup> g = attacker->GetGroup();
+        CheckSendPerceptionQueue(sizeof(int8_t)+sizeof(uint32_t)+sizeof(int8_t)+
+                                 (sizeof(uint32_t)+sizeof(int8_t))*g->GetMemberCount());
         outbound->msg->Add( (int8_t) psNPCCommandsMessage::PCPT_GROUPATTACK);
         outbound->msg->Add(target->GetEID().Unbox());
-        csRef<PlayerGroup> g = attacker->GetGroup();
         outbound->msg->Add( (int8_t) g->GetMemberCount() );
         for (int i=0; i<(int)g->GetMemberCount(); i++)
         {
@@ -1847,6 +1858,7 @@ void NPCManager::QueueAttackPerception(gemActor *attacker,gemNPC *target)
     }
     else // lone gunman
     {
+        CheckSendPerceptionQueue(sizeof(int8_t)+sizeof(uint32_t)*2);
         outbound->msg->Add( (int8_t) psNPCCommandsMessage::PCPT_ATTACK);
         outbound->msg->Add(target->GetEID().Unbox());
         outbound->msg->Add(attacker->GetEID().Unbox());
@@ -1863,6 +1875,7 @@ void NPCManager::QueueAttackPerception(gemActor *attacker,gemNPC *target)
  */
 void NPCManager::QueueDamagePerception(gemActor *attacker,gemNPC *target,float dmg)
 {
+    CheckSendPerceptionQueue(sizeof(int8_t)+sizeof(uint32_t)*2+sizeof(float));
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::PCPT_DMG);
     outbound->msg->Add(attacker->GetEID().Unbox());
     outbound->msg->Add(target->GetEID().Unbox());
@@ -1876,6 +1889,7 @@ void NPCManager::QueueDamagePerception(gemActor *attacker,gemNPC *target,float d
 
 void NPCManager::QueueDeathPerception(gemObject *who)
 {
+    CheckSendPerceptionQueue(sizeof(int8_t)+sizeof(uint32_t));
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::PCPT_DEATH);
     outbound->msg->Add(who->GetEID().Unbox());
     cmd_count++;
@@ -1885,6 +1899,7 @@ void NPCManager::QueueDeathPerception(gemObject *who)
 void NPCManager::QueueSpellPerception(gemActor *caster, gemObject *target,const char *spell_cat_name,
                                       uint32_t spell_category, float severity)
 {
+    CheckSendPerceptionQueue(sizeof(int8_t)+sizeof(uint32_t)*2+sizeof(uint32_t)+sizeof(int8_t));
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::PCPT_SPELL);
     outbound->msg->Add(caster->GetEID().Unbox());
     outbound->msg->Add(target->GetEID().Unbox());
@@ -1898,6 +1913,7 @@ void NPCManager::QueueEnemyPerception(psNPCCommandsMessage::PerceptionType type,
                                       gemActor *npc, gemActor *player,
                                       float relative_faction)
 {
+    CheckSendPerceptionQueue(sizeof(int8_t)+sizeof(uint32_t)*2+sizeof(float));
     outbound->msg->Add( (int8_t) type);
     outbound->msg->Add(npc->GetEID().Unbox());   // Only entity IDs are passed to npcclient
     outbound->msg->Add(player->GetEID().Unbox());
@@ -1918,6 +1934,7 @@ void NPCManager::QueueEnemyPerception(psNPCCommandsMessage::PerceptionType type,
  */
 void NPCManager::QueueOwnerCmdPerception(gemActor *owner, gemNPC *pet, psPETCommandMessage::PetCommand_t command)
 {
+    CheckSendPerceptionQueue(sizeof(int8_t)+sizeof(uint32_t)+sizeof(uint32_t)*3);
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::PCPT_OWNER_CMD );
     outbound->msg->Add( (uint32_t) command );
     outbound->msg->Add(owner->GetEID().Unbox());
@@ -1931,6 +1948,8 @@ void NPCManager::QueueOwnerCmdPerception(gemActor *owner, gemNPC *pet, psPETComm
 
 void NPCManager::QueueInventoryPerception(gemActor *owner, psItem * itemdata, bool inserted)
 {
+    CheckSendPerceptionQueue(sizeof(int8_t)+sizeof(uint32_t)+strlen(itemdata->GetName())+1+
+                             sizeof(bool)+sizeof(int16_t));
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::PCPT_INVENTORY );
     outbound->msg->Add(owner->GetEID().Unbox());
     outbound->msg->Add( (char*) itemdata->GetName() );
@@ -1948,6 +1967,7 @@ void NPCManager::QueueInventoryPerception(gemActor *owner, psItem * itemdata, bo
 
 void NPCManager::QueueFlagPerception(gemActor *owner)
 {
+    CheckSendPerceptionQueue(sizeof(int8_t)+sizeof(uint32_t)+sizeof(uint32_t));
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::PCPT_FLAG );
     outbound->msg->Add(owner->GetEID().Unbox());
 
@@ -1967,6 +1987,7 @@ void NPCManager::QueueFlagPerception(gemActor *owner)
 
 void NPCManager::QueueNPCCmdPerception(gemActor *owner, const csString& cmd)
 {
+    CheckSendPerceptionQueue(sizeof(int8_t)+sizeof(uint32_t)+cmd.Length()+1);
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::PCPT_NPCCMD );
     outbound->msg->Add(owner->GetEID().Unbox());
     outbound->msg->Add( cmd );
@@ -1981,6 +2002,8 @@ void NPCManager::QueueNPCCmdPerception(gemActor *owner, const csString& cmd)
 
 void NPCManager::QueueTransferPerception(gemActor *owner, psItem * itemdata, csString target)
 {
+    CheckSendPerceptionQueue(sizeof(int8_t)+sizeof(uint32_t)+strlen(itemdata->GetName())+1+
+                             sizeof(int8_t)+target.Length()+1);
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::PCPT_TRANSFER );
     outbound->msg->Add(owner->GetEID().Unbox());
     outbound->msg->Add( (char*) itemdata->GetName() );
@@ -1995,7 +2018,7 @@ void NPCManager::QueueTransferPerception(gemActor *owner, psItem * itemdata, csS
            target.GetDataSafe() );
 }
 
-void NPCManager::SendAllCommands()
+void NPCManager::SendAllCommands(bool createNewTick)
 {
     if (cmd_count)
     {
@@ -2016,9 +2039,12 @@ void NPCManager::SendAllCommands()
         outbound=NULL;
         PrepareMessage();
     }
-
-    psNPCManagerTick *tick = new psNPCManagerTick(NPC_TICK_INTERVAL,this);
-    eventmanager->Push(tick);
+    
+    if(createNewTick)
+    {
+        psNPCManagerTick *tick = new psNPCManagerTick(NPC_TICK_INTERVAL,this);
+        eventmanager->Push(tick);
+    }
 }
 
 void NPCManager::NewNPCNotify(PID player_id, PID master_id, PID owner_id)

@@ -115,7 +115,7 @@ public:
     void QueueTransferPerception(gemActor *owner, psItem * itemdata, csString target);
 
     /// Send all queued commands and perceptions to active superclients and reset the queues.
-    void SendAllCommands();
+    void SendAllCommands(bool createNewTick = true);
 
     /// Get the vector of active superclients, used in Multicast().
     csArray<PublishDestination>& GetSuperClients() { return superclients; }
@@ -175,6 +175,15 @@ protected:
 
     /// Create an empty command list message, waiting for items to be queued in it.
     void PrepareMessage();
+    
+    /** Check if the perception queue is going to overflow with the next perception.
+     *  If the queue is going to overflow it will automatically send the commands and clean up to allow
+     *  new messages to be queued. Pet time updates and world position updates are still left to the npc
+     *  ticks.
+     *  @param expectedAddSize: The size this percention is expecting to add, remember to update this in any
+     *                          perception being expanded
+     */
+    void CheckSendPerceptionQueue(size_t expectedAddSize);
 
     /// List of active superclients.
     csArray<PublishDestination> superclients;
