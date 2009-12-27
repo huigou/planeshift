@@ -48,6 +48,9 @@ csString MathVar::ToString() const
         return obj->ToString();
     if (type == VARTYPE_STR)
         return MathScriptEngine::GetString(value);
+
+    if (trunc(value) == value) // avoid .00 for whole numbers
+        return csString().Format("%.0f", value);
     return csString().Format("%.2f", value);
 }
 
