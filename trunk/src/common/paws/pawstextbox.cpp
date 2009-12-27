@@ -614,6 +614,11 @@ void pawsMessageTextBox::AddMessage( const char* data, int msgColour )
         msg->colour = msgColour;
         msg->text = messageText;
 
+        // Empty line is a special case here
+        if(messageText.Length() == 0)
+        {
+        	SplitMessage(messageText, colour, size, msgLine, x);
+        }
 
     	while(textStart < messageText.Length())
     	{
