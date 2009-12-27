@@ -843,7 +843,12 @@ void pawsWidget::ShowBehind()
 
     pawsWidget * focused = PawsManager::GetSingleton().GetCurrentFocusedWidget();
     if ( focused )
-        focused->Show();
+    {
+        if(focused->IsVisible())
+            BringToTop(focused);
+        else
+            focused->Show();
+    }
 }
 
 void pawsWidget::Show()
