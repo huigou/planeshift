@@ -126,12 +126,19 @@ void psServerDR::HandleFallDamage(gemActor *actor,int clientnum, const csVector3
 void psServerDR::ResetPos(gemActor* actor)
 {
     psserver->SendSystemInfo(actor->GetClient()->GetClientNum(), "Received out of bounds positional data, resetting your position.");
+
     iSector* targetSector;
     csVector3 targetPoint;
     csString targetSectorName;
     float yRot = 0;
     actor->GetPosition(targetPoint, yRot, targetSector);
     targetSectorName = targetSector->QueryObject()->GetObjectParent()->GetName();
+    
+    csString status;
+    status.Format("Received out of bounds position for %s. Resetting to sector %s.", actor->GetName(), (const char *) targetSectorName);
+    if(LogCSV::GetSingletonPtr())
+        LogCSV::GetSingleton().Write(CSV_STATUS, status);
+    
     psserver->GetAdminManager()->GetStartOfMap(actor->GetClient()->GetClientNum(), targetSectorName, targetSector, targetPoint);
     actor->pcmove->SetOnGround(false);
     actor->Teleport(targetSector, targetPoint, 0);
