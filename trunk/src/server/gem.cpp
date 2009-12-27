@@ -2055,7 +2055,7 @@ bool gemActor::MoveToSpawnPos()
         return false;
 
     pcmove->SetOnGround(false);
-    Teleport(startingSector, startingPos, startingYrot);
+    Teleport(startingSector, startingPos, startingYrot, DEFAULT_INSTANCE);
     
     psGenericEvent evt(GetClientID(), psGenericEvent::SPAWN_MOVE);
     evt.FireEvent();
