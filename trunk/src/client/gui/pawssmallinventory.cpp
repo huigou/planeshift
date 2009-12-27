@@ -39,10 +39,13 @@ pawsSmallInventoryWindow::pawsSmallInventoryWindow()
 
 void pawsSmallInventoryWindow::Show()
 {
-    pawsWidget::Show();
-    // Ask the server to send us the inventory
-    psGUIInventoryMessage request;
-    request.SendMessage();
+    if(!IsVisible())//ask to get the inventory only if the window was previously invisible.
+    {
+        // Ask the server to send us the inventory
+        psGUIInventoryMessage request;
+        request.SendMessage();
+    }
+        pawsWidget::Show();
 }
 
 bool pawsSmallInventoryWindow::PostSetup()

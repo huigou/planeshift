@@ -83,11 +83,13 @@ pawsInventoryWindow::~pawsInventoryWindow()
 
 void pawsInventoryWindow::Show()
 {
+    if(!IsVisible())//ask to get the inventory only if the window was previously invisible.
+    {
+        // Ask the server to send us the inventory
+        if ( !inventoryCache->GetInventory())
+            inventoryCache->SetCacheStatus(psCache::INVALID);
+    }
     pawsControlledWindow::Show();
-
-    // Ask the server to send us the inventory
-    if ( !inventoryCache->GetInventory())
-        inventoryCache->SetCacheStatus(psCache::INVALID);
 }
 
 bool pawsInventoryWindow::SetupSlot( const char* slotName )
