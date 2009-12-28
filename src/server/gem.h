@@ -776,7 +776,13 @@ protected:
     psSpellCastGameEvent *spellCasting; ///< Hold a pointer to the game event
                                         ///< for the spell currently cast.
     psWorkGameEvent *workEvent;
-
+    
+    /// Needed to force the effect of a psForcePositionMessage since
+    /// sectors are tied to instances and force position messages may be lost on crash, loading
+    /// failure, etc.
+    /// This ensures that a DR message containing the new sector is received at least once.
+    iSector* forcedSector;
+    
     bool CanSwitchMode(PSCHARACTER_MODE from, PSCHARACTER_MODE to);
 
 public:
