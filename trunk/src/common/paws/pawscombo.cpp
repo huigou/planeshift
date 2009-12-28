@@ -62,6 +62,7 @@ bool pawsComboBox::Setup( iDocumentNode* node )
     text      = listNode->GetAttributeValue("text");
     listalpha = listNode->GetAttributeValueAsInt("alpha");
     fliptotop = listNode->GetAttributeValueAsBool("fliptotop");
+    sorted    = listNode->GetAttributeValueAsBool("sorted");
     useScrollBar = listNode->GetAttributeValueAsBool("useScrollBar", true);
     
 	listNode = node->GetNode("button");
@@ -152,7 +153,16 @@ bool pawsComboBox::PostSetup()
     }
 
     listChoice->SetSortingFunc(0, &textBoxSortFunc);
+    if(!sorted)
+        listChoice->SetSortedColumn(-1);
     return ok;
+}
+
+void pawsComboBox::SetSorted(bool sorting)
+{
+    sorted = sorting; 
+    if(listChoice) 
+        listChoice->SetSortedColumn(sorting? 0 : -1); 
 }
 
 pawsListBoxRow* pawsComboBox::NewOption(const csString & text)

@@ -64,8 +64,8 @@ public:
     void SetUpButtonPressedImage(const char* name) { upButtonPressed = name; }
     void SetUpDownButtonPressedImage(const char* name) { downButtonPressed = name; }
     
-    ///sets if the list has to be sorted. NOTE: call before adding entries but after postsetup()!!
-    void SetSorted(bool sorting) { listChoice->SetSortedColumn(sorting? 0 : -1); }
+    ///sets if the list has to be sorted. NOTE: call before adding entries.
+    void SetSorted(bool sorting);
     pawsListBoxRow* NewOption();
     pawsListBoxRow* NewOption(const csString & text);
     
@@ -97,6 +97,7 @@ private:
     int rows;
     int rowHeight;
     int listalpha;
+    bool sorted;
     
     csString text, upButton, upButtonPressed, downButton, downButtonPressed;
 };
