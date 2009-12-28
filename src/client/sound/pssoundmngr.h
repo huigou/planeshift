@@ -586,7 +586,6 @@ private:
     csArray<psSoundObject*> unAssignedEmitters;
     csArray<ps3DFactorySound*> unAssignedEmitterFactories;
 
-int frame;
     int weather;
     bool music;
     bool sounds;
@@ -634,7 +633,7 @@ public:
     psSectorSoundManager* GetPendingSoundSector(const char* name);
     psSectorSoundManager* GetOrCreateSector(const char* name); // Creates a pending sector if it's not found
     int TriggerStringToInt(const char* str);
-    size_t GetRandomNumber(size_t max) { randomGen.Get(max); }
+    size_t GetRandomNumber(size_t max) { return randomGen.Get(max); }
 
 
 private:
