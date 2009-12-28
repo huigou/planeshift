@@ -7447,7 +7447,7 @@ void AdminManager::Morph(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& dat
             //from races with same mesh name but different texture for now
             //but till we have an idea on how to allow the user to select them let's leave like this to
             //have at least a basic listing
-            for(int i = 0; i < CacheManager::GetSingleton().GetRaceInfoCount(); i++)
+            for(size_t i = 0; i < CacheManager::GetSingleton().GetRaceInfoCount(); i++)
                 dirNames.PushSmart(CacheManager::GetSingleton().GetRaceInfoByIndex(i)->GetMeshName());
 
             // Make alphabetized list
