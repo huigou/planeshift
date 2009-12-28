@@ -17,7 +17,7 @@
         <widget name="CP" factory="pawsTextBox">
             <frame x="695" y="133" width="70" height="30" border="no" />
 	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="15" resizetoscreen="yes" />
-            <text string="CP: 0" horizAdjust="CENTRE" />
+            <text string="" horizAdjust="CENTRE" />
         </widget> 
      
         <!-- Randomize button -->   
