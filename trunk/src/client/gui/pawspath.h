@@ -21,6 +21,7 @@
  
 #include "paws/pawswidget.h"
 #include "psclientchar.h"
+#include "pawscharcreatemain.h"
  
 class pawsPathWindow : public pawsWidget
 {
@@ -34,6 +35,7 @@ private:
     int chosenPath;
 
     psCreationManager* createManager;
+    pawsCreationMain* charCreateMain;
     void SetPath(int i);
     void ClearPath(void);
 };

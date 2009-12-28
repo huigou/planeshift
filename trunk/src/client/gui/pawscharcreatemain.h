@@ -20,6 +20,7 @@
 #define PAWS_CHARACTER_CREATION_MAIN
 
 #include "paws/pawswidget.h"
+#include "paws/pawstextbox.h"
 #include "psengine.h"
 
 //////////////////////////////////////////////////////////////////////////////

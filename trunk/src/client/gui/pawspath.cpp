@@ -38,6 +38,7 @@
 pawsPathWindow::pawsPathWindow()
 {
     createManager = psengine->GetCharManager()->GetCreation();
+    charCreateMain = (pawsCreationMain*) PawsManager::GetSingleton().FindWidget("CharCreateMain");
 }
 
 pawsPathWindow::~pawsPathWindow()
@@ -74,7 +75,7 @@ bool pawsPathWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidg
         {
             ClearPath();
             Hide();
-            PawsManager::GetSingleton().FindWidget( "CharCreateMain" )->Show();
+            charCreateMain->Show();
             return true;
         }      
         case UPLOAD_BUTTON:
@@ -113,7 +114,7 @@ void pawsPathWindow::SetPath(int i)
 {
     chosenPath = i;
 
-    createManager->ClearChoices();
+    charCreateMain->ResetAllWindows();
     PathDefinition* path = createManager->GetPath(i);
     createManager->SetPath( path->name );
     pawsMultiLineTextBox* label = (pawsMultiLineTextBox*) FindWidget("label_description");
