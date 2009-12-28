@@ -274,21 +274,21 @@ TEST(MathScriptTest, InterpolateTest)
     csString msg("Xordan hits you for ${Elite} damage...");
     MathEnvironment env;
     env.Define("Elite", 1337);
-    env.Define("E", 31337);
+    env.Define("E", 3.1337);
     env.InterpolateString(msg);
-    EXPECT_STREQ("Xordan hits you for 1337.00 damage...", msg.GetData());
+    EXPECT_STREQ("Xordan hits you for 1337 damage...", msg.GetData());
 
     msg = "${E} times, because he's just that ${Elite}";
     env.InterpolateString(msg);
-    EXPECT_STREQ("31337.00 times, because he's just that 1337.00", msg.GetData());
+    EXPECT_STREQ("3.13 times, because he's just that 1337", msg.GetData());
 
     msg = "${Elite}";
     env.InterpolateString(msg);
-    EXPECT_STREQ("1337.00", msg.GetData());
+    EXPECT_STREQ("1337", msg.GetData());
 
     msg = "${} ${Elite} ${}";
     env.InterpolateString(msg);
-    EXPECT_STREQ("${} 1337.00 ${}", msg.GetData());
+    EXPECT_STREQ("${} 1337 ${}", msg.GetData());
 }
 
 /*
