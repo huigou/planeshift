@@ -82,13 +82,14 @@ bool pawsPathWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidg
         {
             if (chosenPath == NO_CHOSEN_PATH)
             {
-                psSystemMessage error(0,MSG_ERROR,"Please select a path");
+                psSystemMessage error(0,MSG_ERROR,
+                                      PawsManager::GetSingleton().Translate("Please select a path"));
                 error.FireEvent();
             }
             else
             {
-                PawsManager::GetSingleton().CreateYesNoBox( 
-                    "Are you sure you want to upload your character?",
+                PawsManager::GetSingleton().CreateYesNoBox(
+                    PawsManager::GetSingleton().Translate("Are you sure you want to upload your character?"),
                     this );
             }
             return true;

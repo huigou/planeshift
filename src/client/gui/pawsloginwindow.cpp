@@ -508,27 +508,27 @@ void pawsLoginWindow::Draw()
             pingStr.Clear();
             break;
         case psServerPinger::FAILED:
-            pingStr = "Failed";
+            pingStr = PawsManager::GetSingleton().Translate("Failed");
             break;
         case psServerPinger::FULL:
-            pingStr = "Full";
+            pingStr = PawsManager::GetSingleton().Translate("Full");
             break;
         case psServerPinger::READY:
             if (loss == 100)
-                pingStr = "Failed";
+                pingStr = PawsManager::GetSingleton().Translate("Failed");
             else if (loss)
                 pingStr.Format("%d %d%%",ping,loss);
             else
                 pingStr.Format("%d",ping);
             break;
         case psServerPinger::LOCKED:
-            pingStr = "Locked";
+            pingStr = PawsManager::GetSingleton().Translate("Locked");
             break;
         case psServerPinger::WAIT:
-            pingStr = "Wait";
+            pingStr = PawsManager::GetSingleton().Translate("Wait");
             break;
         default:
-            pingStr = "Error";
+            pingStr = PawsManager::GetSingleton().Translate("Error");
             break;
         }
 
