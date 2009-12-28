@@ -242,7 +242,7 @@ bool pawsCharParents::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
 				mLastName = mName.Slice(mName.FindFirst(' ') + 1, mName.Length());
 			else
             {
-                psSystemMessage error(0,MSG_ERROR,"Please enter a full name for mother");
+                psSystemMessage error(0,MSG_ERROR,PawsManager::GetSingleton().Translate("Please enter a full name for mother"));
                 error.FireEvent();
                 return true;
             }
@@ -253,7 +253,7 @@ bool pawsCharParents::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
 				fLastName = fName.Slice(fName.FindFirst(' ') + 1, fName.Length());
 			else
             {
-                psSystemMessage error(0,MSG_ERROR,"Please enter a full name for father");
+                psSystemMessage error(0,MSG_ERROR,PawsManager::GetSingleton().Translate("Please enter a full name for father"));
                 error.FireEvent();
                 return true;
             }
@@ -261,7 +261,7 @@ bool pawsCharParents::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
             if (fFirstName.Length() < 3 || fLastName.Length() < 3 || !FilterName(fFirstName) || !FilterName(fLastName) ||
 				mFirstName.Length() < 3 || mLastName.Length() < 3 || !FilterName(mFirstName) || !FilterName(mLastName))
             {
-                psSystemMessage error(0,MSG_ERROR,"Please enter valid names for both parents");
+                psSystemMessage error(0,MSG_ERROR,PawsManager::GetSingleton().Translate("Please enter valid names for both parents"));
                 error.FireEvent();
                 return true;
             }
@@ -269,7 +269,7 @@ bool pawsCharParents::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
             if (!CheckNameForRepeatingLetters(fFirstName) || !CheckNameForRepeatingLetters(fLastName) ||
 				!CheckNameForRepeatingLetters(mFirstName) || !CheckNameForRepeatingLetters(mLastName))
             {
-                psSystemMessage error(0,MSG_ERROR,"No more than 2 letters in a row allowed for parents' names");
+                psSystemMessage error(0,MSG_ERROR,PawsManager::GetSingleton().Translate("No more than 2 letters in a row allowed for parents' names"));
                 error.FireEvent();
                 return true;
             }
@@ -284,7 +284,7 @@ bool pawsCharParents::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
             // check other parental data
             if (lastFatherChoice == -1 || lastMotherChoice == -1 )
             {
-                psSystemMessage error(0,MSG_ERROR,"Please choose parents' jobs");
+                psSystemMessage error(0,MSG_ERROR,PawsManager::GetSingleton().Translate("Please choose parents' jobs"));
                 error.FireEvent();
                 return true;
             }
@@ -293,7 +293,7 @@ bool pawsCharParents::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
             pawsListBox* religionBox = (pawsListBox*)FindWidget("Religions");
             if (!religionBox->GetSelectedRow())
             {
-                psSystemMessage error(0,MSG_ERROR,"Please choose a religion");
+                psSystemMessage error(0,MSG_ERROR,PawsManager::GetSingleton().Translate("Please choose a religion"));
                 error.FireEvent();
                 return true;
             }
@@ -344,7 +344,7 @@ void pawsCharParents::PopulateFields()
                 row->SetID( createManager->parentData[x].id );
                 pawsTextBox* name = (pawsTextBox*)row->GetColumn(0);
                 name->SetText( createManager->parentData[x].name  );              
-                name->FormatToolTip("CP Cost: %d\n", createManager->parentData[x].cpCost );                  
+                name->FormatToolTip("%s %d\n", PawsManager::GetSingleton().Translate("CP Cost:").GetData(), createManager->parentData[x].cpCost );                  
                 break;
             }
             
@@ -354,7 +354,7 @@ void pawsCharParents::PopulateFields()
                 row->SetID( createManager->parentData[x].id );
                 pawsTextBox* name = (pawsTextBox*)row->GetColumn(0);
                 name->SetText( createManager->parentData[x].name  );                     
-                name->FormatToolTip("CP Cost: %d\n", createManager->parentData[x].cpCost );                  
+                name->FormatToolTip("%s %d\n", PawsManager::GetSingleton().Translate("CP Cost:").GetData(), createManager->parentData[x].cpCost );                  
                 break;
             }
             case RELIGION:
@@ -364,7 +364,7 @@ void pawsCharParents::PopulateFields()
                 row->SetID( createManager->parentData[x].id );
                 box->SetID( createManager->parentData[x].id );
                 box->SetText( createManager->parentData[x].name );
-                box->FormatToolTip("CP Cost: %d\n", createManager->parentData[x].cpCost );                  
+                box->FormatToolTip("%s %d\n", PawsManager::GetSingleton().Translate("CP Cost:").GetData(), createManager->parentData[x].cpCost );                  
                 religionCount++;  
                 break;                           
             }
