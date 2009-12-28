@@ -31,6 +31,10 @@
 //#error "MathScript doesn't work on platforms where double-precision floating points are smaller than pointers.
 //#endif
 
+#ifdef _MSC_VER
+double round(double value);
+#endif
+
 enum MathType
 {
     VARTYPE_VALUE,

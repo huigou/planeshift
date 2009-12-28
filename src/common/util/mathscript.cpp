@@ -48,6 +48,14 @@ double round(double value)
 {
     return floor(value + 0.5);
 }
+
+double trunc(double value)
+{
+    if(value < 0)
+        return ceil(value);
+    else
+        return floor(value);
+}
 #endif
 
 csString MathVar::ToString() const
