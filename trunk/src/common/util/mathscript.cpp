@@ -48,14 +48,6 @@ double round(double value)
 {
     return (value >= 0) ? floor(value + 0.5) : ceil(value - 0.5);
 }
-
-double trunc(double value)
-{
-    if(value < 0)
-        return ceil(value);
-    else
-        return floor(value);
-}
 #endif
 
 csString MathVar::ToString() const
@@ -65,7 +57,7 @@ csString MathVar::ToString() const
     if (type == VARTYPE_STR)
         return MathScriptEngine::GetString(value);
 
-    if (trunc(value) == value) // avoid .00 for whole numbers
+    if (double(int(value)) == value) // avoid .00 for whole numbers
         return csString().Format("%.0f", value);
     return csString().Format("%.2f", value);
 }
