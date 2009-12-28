@@ -83,15 +83,16 @@ bool pawsConfigEntityLabels::CreateTree()
 {
     CS_ASSERT(tree == NULL);
     tree = new pawsTree();
-    tree->MoveTo(screenFrame.xmin, screenFrame.ymin);
-    tree->SetSize(screenFrame.Width(), screenFrame.Height());
-    tree->SetScrollBars(false, true);
-    //tree->SetTreeLayout(new pawsStdTreeLayout(tree, 5, 20));
-    //tree->SetTreeDecorator(new pawsStdTreeDecorator(tree, graphics2D, 0xffffffff, 0xffffff, 13));
-    AddChild(tree);
 
     if ( !tree->LoadFromFile("configentitylabels.xml") )
         return false;
+
+    tree->MoveTo(screenFrame.xmin, screenFrame.ymin);
+    tree->SetSize(screenFrame.Width(), screenFrame.Height());
+    tree->SetScrollBars(false, true);
+    tree->SetTreeLayout(new pawsStdTreeLayout(tree, 5, 20));
+    //tree->SetTreeDecorator(new pawsStdTreeDecorator(tree, graphics2D, 0xffffffff, 0xffffff, 13));
+    AddChild(tree);
 
     CreatureRBG = dynamic_cast<pawsRadioButtonGroup*>(FindWidget("CreaturesRG"));
     if (CreatureRBG == NULL)
