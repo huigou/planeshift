@@ -1668,6 +1668,7 @@ void psSectorSoundManager::SetBGSong(psSoundObject* song)
 
 void psSectorSoundManager::Enter( psSectorSoundManager* leaveFrom, int timeOfDay, int weather, csVector3& position )
 {
+    csArray<psSoundObject*> bestTimeWeatherSong;
     csArray<psSoundObject*> bestTimeSong;
     csArray<psSoundObject*> bestWeatherSong;
     csArray<psSoundObject*> noReferenceSong;
@@ -1681,20 +1682,28 @@ void psSectorSoundManager::Enter( psSectorSoundManager* leaveFrom, int timeOfDay
         {
             //search for time restrained songs
             if (songs[z]->MatchTime(timeOfDay))
-                bestTimeSong.Push(songs[z]);
+            {
+                //is this also weather matching?
+                if(songs[z]->MatchWeather(weather))
+                    bestTimeWeatherSong.Push(songs[z]);
+                else
+                    bestTimeSong.Push(songs[z]);
+            }
             //search for weather restrained songs
-            if (songs[z]->MatchWeather(weather))
+            else if (songs[z]->MatchWeather(weather))
                 bestWeatherSong.Push(songs[z]);
             //search for no restrain songs
-            if (songs[z]->HasNoTime() && songs[z]->HasNoWeather())
+            else if (songs[z]->HasNoTime() && songs[z]->HasNoWeather())
                 noReferenceSong.Push(songs[z]);
         }
 
-        if (bestTimeSong.GetSize())
+        if (bestTimeWeatherSong.GetSize())
+            SetBGSong(bestTimeWeatherSong[mapsoundsystem->GetRandomNumber(bestTimeWeatherSong.GetSize())]);
+        else if (bestTimeSong.GetSize())
             SetBGSong(bestTimeSong[mapsoundsystem->GetRandomNumber(bestTimeSong.GetSize())]);
-        else if ( bestWeatherSong.GetSize() )
+        else if (bestWeatherSong.GetSize())
             SetBGSong(bestWeatherSong[mapsoundsystem->GetRandomNumber(bestWeatherSong.GetSize())]);
-        else if ( noReferenceSong.GetSize() )
+        else if (noReferenceSong.GetSize())
             SetBGSong(noReferenceSong[mapsoundsystem->GetRandomNumber(noReferenceSong.GetSize())]);
         else if (songs.GetSize() > 0)//All failed get a random song. Do we actually have a song?
                 SetBGSong(songs[mapsoundsystem->GetRandomNumber(songs.GetSize())]);
@@ -1927,10 +1936,7 @@ void psSoundObject::Start3DSound( csVector3& playerPos )
 
 bool psSoundObject::Triggered()
 {
-    if(connectedWith != 0)
-        return true;
-
-    return false;
+    return connectedWith != 0;
 }
 
 void psSoundObject::Notify(int event)
