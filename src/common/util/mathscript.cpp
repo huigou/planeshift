@@ -57,7 +57,7 @@ csString MathVar::ToString() const
     if (type == VARTYPE_STR)
         return MathScriptEngine::GetString(value);
 
-    if (double(int(value)) == value) // avoid .00 for whole numbers
+    if (fabs(int(value) - value) < EPSILON) // avoid .00 for whole numbers
         return csString().Format("%.0f", value);
     return csString().Format("%.2f", value);
 }
