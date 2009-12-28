@@ -45,7 +45,7 @@
             <text string="Month:" horizAdjust="CENTRE" />
         </widget>
 
-        <widget name="month" factory="pawsComboBox" id="5">
+        <widget name="month" factory="pawsComboBox" id="5" sorted="false">
             <frame x="355" y="116" width="91" height="35" border="no"/>
             <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="13" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
             <listbox rows="6" height="25" text="Month" alpha="100"/>
