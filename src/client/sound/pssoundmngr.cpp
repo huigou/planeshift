@@ -1680,41 +1680,24 @@ void psSectorSoundManager::Enter( psSectorSoundManager* leaveFrom, int timeOfDay
         for ( z = 0; z < songs.GetSize(); z++ )
         {
             //search for time restrained songs
-            if ( songs[z]->MatchTime( timeOfDay ) )
-            {
+            if (songs[z]->MatchTime(timeOfDay))
                 bestTimeSong.Push(songs[z]);
-            }
             //search for weather restrained songs
-            if ( songs[z]->MatchWeather( weather ) )
-            {
+            if (songs[z]->MatchWeather(weather))
                 bestWeatherSong.Push(songs[z]);
-            }
             //search for no restrain songs
-            if ( songs[z]->HasNoTime() && songs[z]->HasNoWeather())
-            {
+            if (songs[z]->HasNoTime() && songs[z]->HasNoWeather())
                 noReferenceSong.Push(songs[z]);
-            }
         }
 
-        if ( bestTimeSong.GetSize() )
-        {
+        if (bestTimeSong.GetSize())
             SetBGSong(bestTimeSong[mapsoundsystem->GetRandomNumber(bestTimeSong.GetSize())]);
-        }
         else if ( bestWeatherSong.GetSize() )
-        {
             SetBGSong(bestWeatherSong[mapsoundsystem->GetRandomNumber(bestWeatherSong.GetSize())]);
-        }
         else if ( noReferenceSong.GetSize() )
-        {
             SetBGSong(noReferenceSong[mapsoundsystem->GetRandomNumber(noReferenceSong.GetSize())]);
-        }
-        else //all failed get a random song
-        {            
-            if ( songs.GetSize() > 0 ) //do we actually have a song?
-            {
+        else if (songs.GetSize() > 0)//All failed get a random song. Do we actually have a song?
                 SetBGSong(songs[mapsoundsystem->GetRandomNumber(songs.GetSize())]);
-            }
-        }
     }
 
     if ( sounds )
@@ -2162,7 +2145,7 @@ bool psSndStreamHandle::Start(iSndSysRenderer* renderer, bool loop, size_t loopS
         return false;
 
     soundStream->SetLoopState(loop);
-    //soundStream->SetLoopBonduaries(loopStart, loopEnd);
+    soundStream->SetLoopBoundaries(loopStart, loopEnd);
     SetVolume(0.0f);
     return true;
 }
