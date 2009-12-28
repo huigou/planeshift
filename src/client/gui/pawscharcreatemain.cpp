@@ -944,8 +944,6 @@ bool pawsCreationMain::OnButtonPressed( int mouseButton, int keyModifier, pawsWi
             {
                 newWindow = "Paths";               
             }                
-                
-            ResetAllWindows();
 
             psNameCheckMessage msg(name->GetText());
             msg.SendMessage();
