@@ -231,7 +231,7 @@ void pawsCreationMain::ChangeSkinColour( int currentChoice )
 {    
     if ( race->location[PSTRAIT_LOCATION_SKIN_TONE][currentGender].GetSize() == 0 )
     {
-        skinColourLabel->SetText("Skin Colour");
+        skinColourLabel->SetText(PawsManager::GetSingleton().Translate("Skin Colour"));
         return;
     }
 
@@ -262,7 +262,7 @@ void pawsCreationMain::ChangeHairColour( int newHair )
         activeHairColour = newHair;
     }
     else
-        hairColourLabel->SetText( "Hair Colour" );
+        hairColourLabel->SetText(PawsManager::GetSingleton().Translate("Hair Colour"));
 }
 
 
@@ -278,7 +278,7 @@ void pawsCreationMain::SetHairStyle( int newStyle )
         hairStyleLabel->SetText( trait->name );                       
     }
     else
-        hairStyleLabel->SetText( "Hair Style" );
+        hairStyleLabel->SetText(PawsManager::GetSingleton().Translate("Hair Style"));
 }
 
 void pawsCreationMain::ChangeHairStyle( int newChoice, int oldChoice )
@@ -300,12 +300,12 @@ void pawsCreationMain::ChangeBeardStyle( int newStyle )
         beardStyleLabel->SetText( trait->name );                       
     }
     else
-        beardStyleLabel->SetText( "Beard Style" );
+        beardStyleLabel->SetText(PawsManager::GetSingleton().Translate("Beard Style"));
 
 
     if ( race->location[PSTRAIT_LOCATION_BEARD_STYLE][currentGender].GetSize() == 0 )
     {
-        beardStyleLabel->SetText("Beard Style");
+        beardStyleLabel->SetText(PawsManager::GetSingleton().Translate("Beard Style"));
         return;
     }
                   
@@ -376,7 +376,7 @@ void pawsCreationMain::ChangeFace( int newFace )
         faceLabel->SetText( trait->name );                                       
     }
     else
-        faceLabel->SetText("Face");
+        faceLabel->SetText(PawsManager::GetSingleton().Translate("Face"));
 
 }
 
@@ -730,7 +730,8 @@ bool pawsCreationMain::OnButtonPressed( int mouseButton, int keyModifier, pawsWi
             !createManager->IsAvailable(widget->GetID(),2)
             )
         {
-            PawsManager::GetSingleton().CreateWarningBox( "This race isn't implemented yet, sorry" );
+            PawsManager::GetSingleton().CreateWarningBox(PawsManager::GetSingleton().Translate(
+                                                         "This race isn't implemented yet, sorry"));
             pawsRadioButtonGroup* raceBox = (pawsRadioButtonGroup*)FindWidget("RaceBox");
             
             if ( lastRaceID != -1 )
@@ -842,7 +843,7 @@ bool pawsCreationMain::OnButtonPressed( int mouseButton, int keyModifier, pawsWi
             help += "The name should follow the rules here:\n";
             help += "http://www.planeshift.it/naming.html \n";
             help += "If your name is inappropriate, a Game Master (GM) will change it.";
-            PawsManager::GetSingleton().CreateWarningBox(help);
+            PawsManager::GetSingleton().CreateWarningBox(PawsManager::GetSingleton().Translate(help));
             return true;
         }
         case NEXT_BUTTON:
@@ -851,7 +852,7 @@ bool pawsCreationMain::OnButtonPressed( int mouseButton, int keyModifier, pawsWi
             // Check to see if a race was selected.
             if ( race == 0 )
             {
-                psSystemMessage error(0,MSG_ERROR,"Please select a race");
+                psSystemMessage error(0,MSG_ERROR,PawsManager::GetSingleton().Translate("Please select a race"));
                 error.FireEvent();
                 return true;
             }
@@ -861,7 +862,7 @@ bool pawsCreationMain::OnButtonPressed( int mouseButton, int keyModifier, pawsWi
             // Check to see a name was entered.
             if ( name->GetText() == 0 )
             {
-                psSystemMessage error(0,MSG_ERROR,"Please enter a full name");
+                psSystemMessage error(0,MSG_ERROR,PawsManager::GetSingleton().Translate("Please enter a full name"));
                 error.FireEvent();
                 return true;
             }
@@ -870,7 +871,8 @@ bool pawsCreationMain::OnButtonPressed( int mouseButton, int keyModifier, pawsWi
 
             if ( !CheckNameForRepeatingLetters(selectedName) )
             {
-                psSystemMessage error(0,MSG_ERROR,"No more than 2 letters in a row allowed");
+                psSystemMessage error(0,MSG_ERROR,PawsManager::GetSingleton().Translate(
+                                      "No more than 2 letters in a row allowed"));
                 error.FireEvent();
                 return true;
             }
@@ -882,7 +884,8 @@ bool pawsCreationMain::OnButtonPressed( int mouseButton, int keyModifier, pawsWi
                 lastname = selectedName.Slice(selectedName.FindFirst(' ') +1,selectedName.Length());
             else
             {
-                psSystemMessage error(0,MSG_ERROR,"Please enter a full name");
+                psSystemMessage error(0,MSG_ERROR,PawsManager::GetSingleton().Translate(
+                                      "Please enter a full name"));
                 error.FireEvent();
                 return true;
             }
@@ -890,7 +893,8 @@ bool pawsCreationMain::OnButtonPressed( int mouseButton, int keyModifier, pawsWi
             // Check the firstname
             if ( firstname.Length() < 3 || !FilterName(firstname) )
             {
-                psSystemMessage error(0,MSG_ERROR,"First name is invalid");
+                psSystemMessage error(0,MSG_ERROR,PawsManager::GetSingleton().Translate(
+                                      "First name is invalid"));
                 error.FireEvent();
                 return true;
             }
@@ -898,7 +902,8 @@ bool pawsCreationMain::OnButtonPressed( int mouseButton, int keyModifier, pawsWi
             // Check the lastname
             if ( lastname.Length() < 3 || !FilterName(lastname) )
             {
-                psSystemMessage error(0,MSG_ERROR,"Last name is invalid");
+                psSystemMessage error(0,MSG_ERROR,PawsManager::GetSingleton().Translate(
+                                      "Last name is invalid"));
                 error.FireEvent();
                 return true;
             }
@@ -920,8 +925,8 @@ bool pawsCreationMain::OnButtonPressed( int mouseButton, int keyModifier, pawsWi
                 policy += "It must be unique and not similar to that of any real person or thing. ";
                 policy += "Names in violation of this policy (www.planeshift.it/naming.html) will ";
                 policy += "be changed by authorized people in-game.  ";
-                policy += "The game forums can be found at:  forums.hydlaa.com";
-                PawsManager::GetSingleton().CreateWarningBox(policy);
+                policy += "The game forums can be found at:  http://www.hydlaa.com/smf/";
+                PawsManager::GetSingleton().CreateWarningBox(PawsManager::GetSingleton().Translate(policy));
             
                 nameWarning = 1;
                 return true;                
@@ -1040,7 +1045,8 @@ bool pawsCreationMain::CheckLoadStatus()
             charApp->SetMesh(mesh);
             if (!mesh)
             {
-                PawsManager::GetSingleton().CreateWarningBox("Couldn't find mesh! Please run the updater");
+                PawsManager::GetSingleton().CreateWarningBox(PawsManager::GetSingleton().Translate(
+                                                             "Couldn't find mesh! Please run the updater"));
                 return true;
             }
 
