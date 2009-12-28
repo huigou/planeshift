@@ -6,60 +6,60 @@
   <item orig="Stats" trans="Stato" />
   <item orig="Admin text color" trans="Colore testo Admin" />
   <item orig="Allow spawning item with missing mesh" trans="Permetti di creare oggetti senza modello" />
+  <item orig="Skill to unlock / lock" trans="" />
   <item orig="Desc" trans="" />
   <item orig="!!!WARNING!!!" trans="!!!ATTENZIONE!!!" />
   <item orig="Others&apos; attacks (Successful ones)" trans="" />
-  <item orig="Skill to unlock / lock" trans="" />
   <item orig="Own attacks that missed the target" trans="" />
   <item orig="Graphics" trans="Grafica" />
   <item orig="Loading GUI" trans="Caricamento GUI" />
   <item orig="Tell shadow colour" trans="Colore ombra Tell" />
+  <item orig="Hexas available to withdraw." trans="" />
   <item orig="Can I join you ?" trans="Posso unirmi a te?" />
   <item orig="server" trans="Server" />
   <item orig="CHILDHOOD" trans="INFANZIA" />
   <item orig="Unpickable" trans="" />
   <item orig="LIFE EVENTS" trans="EVENTI VITA" />
-  <item orig="Hexas available to withdraw." trans="" />
   <item orig="SL" trans="" />
+  <item orig="Guild info" trans="" />
   <item orig="Buy" trans="Compra" />
   <item orig="Guild message of the day (A short message):" trans="Messaggio del giorno della gilda:" />
   <item orig="Modifiers" trans="Modificatori" />
   <item orig="Actions sounds" trans="Suoni Azioni" />
+  <item orig="Combine items in container" trans="" />
   <item orig="Randomize" trans="Randomizza" />
   <item orig="Create alliance" trans="Crea alleanza" />
   <item orig="Third Person Lara" trans="Terza Persona Lara" />
-  <item orig="Guild info" trans="" />
-  <item orig="Combine items in container" trans="" />
   <item orig="Disband" trans="Sciogli" />
   <item orig="Edit" trans="Edita" />
   <item orig="System" trans="Sistema" />
   <item orig="Load" trans="Carica" />
   <item orig="Buffs" trans="" />
   <item orig="Creatures" trans="" />
-  <item orig="Stack Count" trans="" />
   <item orig="Dismiss" trans="" />
+  <item orig="Stack Count" trans="" />
   <item orig="Examine" trans="Esamina" />
+  <item orig="Torso" trans="" />
   <item orig=" unanswered petitions." trans=" petizioni non risposte." />
   <item orig="Talk to people in your sector." trans="Parla alle persone nel tuo settore." />
-  <item orig="Torso" trans="" />
+  <item orig="Right Finger" trans="" />
   <item orig="Factions:" trans="Fazioni:" />
   <item orig="Paths" trans="Vie" />
-  <item orig="Right Finger" trans="" />
+  <item orig="Money depositing and withdrawal" trans="" />
   <item orig="Default" trans="" />
   <item orig="Tellself outline colour" trans="" />
   <item orig="male " trans="maschio di " />
-  <item orig="Money depositing and withdrawal" trans="" />
   <item orig="Active" trans="Attivo" />
   <item orig="alliance text colour" trans="colore testo alleanza" />
+  <item orig="Description" trans="Descrizione" />
   <item orig="Creatures:" trans="Creature:" />
   <item orig="says" trans="dice" />
+  <item orig="Chose Color (c)" trans="Seleziona Colore (c)" />
   <item orig="View" trans="Vedi" />
   <item orig="PATHS" trans="VIE" />
   <item orig="Shadows" trans="Ombre" />
-  <item orig="Unclaim" trans="Deassegna" />
-  <item orig="Description" trans="Descrizione" />
-  <item orig="Chose Color (c)" trans="Seleziona Colore (c)" />
   <item orig="Previous Icon (PgUp)" trans="Icona Precedente (pgUp)" />
+  <item orig="Unclaim" trans="Deassegna" />
   <item orig="Server:" trans="Server:" />
   <item orig="Exit PlaneShift" trans="Esci da PlaneShift" />
   <item orig="Enable Shadows" trans="Abilita Ombre" />
@@ -71,13 +71,15 @@
   <item orig="Quest" trans="" />
   <item orig="House:" trans="Casa:" />
   <item orig="System Base" trans="Sistema Base" />
+  <item orig="10 Tria" trans="" />
   <item orig="Withdraw" trans="Preleva" />
   <item orig="%s from %s: %s" trans="%s da %s: %s" />
   <item orig="%s from %s: %s" trans="%s da %s: %s" />
   <item orig="Instant Cast" trans="" />
   <item orig="H:" trans="" />
-  <item orig="10 Tria" trans="" />
   <item orig="Marry" trans="" />
+  <item orig="View Item" trans="" />
+  <item orig="Please enter a full name" trans="" />
   <item orig="Testers" trans="" />
   <item orig="Amount available to withdraw" trans="Quantitativo prelevabile" />
   <item orig="Adaptive distance" trans="Distanza Adattativa" />
@@ -86,7 +88,6 @@
   <item orig="NPC text colour" trans="Colore testo NPC" />
   <item orig="Third Person M64" trans="Terza Persona M64" />
   <item orig="Interface Volume" trans="Volume Interfaccia" />
-  <item orig="View Item" trans="" />
   <item orig="Combine" trans="Combina" />
   <item orig="Edit points" trans="Cambia punti" />
   <item orig="Points" trans="Punti" />
@@ -103,31 +104,34 @@
   <item orig="Log the system messages" trans="Salva i messaggi di sistema" />
   <item orig="Free Movement" trans="Movimento libero" />
   <item orig="Hostility" trans="Ostilita&apos;" />
+  <item orig="Please choose parents&apos; jobs" trans="" />
+  <item orig="CP Cost:" trans="" />
   <item orig="npcinternal outline colour" trans="" />
   <item orig="Merchant" trans="Mercante" />
   <item orig="Auction" trans="" />
   <item orig="Account User Name:" trans="Nome utente Account:" />
-  <item orig="You currently have no petitions." trans="Al momento non hai petizioni." />
-  <item orig="Open Inventory" trans="" />
   <item orig="set invisible" trans="" />
+  <item orig="You currently have no petitions." trans="Al momento non hai petizioni." />
   <item orig="Edit Mode (F2)" trans="" />
+  <item orig="Open Inventory" trans="" />
   <item orig="auctions" trans="" />
+  <item orig="The number of octas that you may exchange." trans="" />
   <item orig="Attributes" trans="Attributi" />
   <item orig="M. Stamina" trans="Stamina M." />
   <item orig="The server is locked!" trans="Il server è bloccato!" />
-  <item orig="Quest &amp; Events Notebook" trans="" />
   <item orig="Mount" trans="" />
-  <item orig="The number of octas that you may exchange." trans="" />
+  <item orig="Are you sure you want to upload?  You have 2 CP left." trans="" />
+  <item orig="Quest &amp; Events Notebook" trans="" />
   <item orig="You will now ignore %s." trans="Da ora ignorerai %s." />
   <item orig="Study" trans="Studia" />
   <item orig="Private notes" trans="Note private" />
+  <item orig="Pick up" trans="" />
   <item orig="Tell Alignment" trans="Allineamento Tell" />
   <item orig="Enable NPC" trans="Abilita NPC" />
   <item orig="Change name" trans="Cambia nome" />
   <item orig="Getting Characters" trans="Caricamento Personaggi" />
-  <item orig="Pick up" trans="" />
-  <item orig="Introduce yourself" trans="" />
   <item orig="set invincible" trans="" />
+  <item orig="Introduce yourself" trans="" />
   <item orig="Main tab" trans="" />
   <item orig="Unknown command" trans="Comando sconosciuto" />
   <item orig="Others&apos; attacks that missed the target" trans="Attacchi altrui che hanno mancato l&apos;obbiettivo" />
@@ -137,16 +141,16 @@
   <item orig="Main" trans="" />
   <item orig="Change" trans="Cambia" />
   <item orig="Descalate" trans="" />
+  <item orig="Buy Skill Level" trans="" />
   <item orig="Mother Name:" trans="Nome Madre:" />
   <item orig="The server isn&apos;t available!" trans="Il server non è disponibile!" />
   <item orig="Privil." trans="" />
   <item orig="NPC_my Alignment" trans="Allineamento NPC_my" />
   <item orig="Skin Colour" trans="Colore Pelle" />
-  <item orig="Buy Skill Level" trans="" />
   <item orig="Master:" trans="" />
+  <item orig="View Stats" trans="" />
   <item orig="NPC_me text colour" trans="Colore testo NPC_me" />
   <item orig="Details" trans="Dettagli" />
-  <item orig="View Stats" trans="" />
   <item orig="Collision Detection" trans="Rilevamento collisioni" />
   <item orig="Max. FPS:" trans="" />
   <item orig="Prev" trans="Prec" />
@@ -159,10 +163,10 @@
   <item orig="Auction text colour" trans="" />
   <item orig="Movements" trans="Movimenti" />
   <item orig="Mesh:" trans="" />
+  <item orig="Right Hand" trans="" />
   <item orig="Resolution" trans="Risoluzione" />
   <item orig="Refresh MOTD" trans="Aggiorna MOTD" />
   <item orig="Gender:" trans="Sesso:" />
-  <item orig="Right Hand" trans="" />
   <item orig="Login" trans="" />
   <item orig="Z:" trans="" />
   <item orig="Spell Description:" trans="Descrizione magia:" />
@@ -170,90 +174,92 @@
   <item orig="%s has invited you to join a group. Click Yes to accept or No to reject." trans="%s ti ha invitato ad aggregarti a un gruppo. Clicca Sì per accettare e No per rifiutare." />
   <item orig="You must select a petition from the list in order to cancel it." trans="Devi selezionare una petizione della lista per poterla cancellare." />
   <item orig="Alliance" trans="Alleanza" />
+  <item orig="Are you sure you want to upload?  " trans="" />
   <item orig="Dynamic Follow" trans="Inseguimento Dinamico" />
   <item orig="NPC_my text colour" trans="Colore testo NPC_my" />
   <item orig="Full Mesh" trans="Modello completo" />
   <item orig="NPC_narrate shadow colour" trans="" />
   <item orig="I am leaving" trans="Sto andando via" />
   <item orig="alliance outline colour" trans="" />
-  <item orig="Train" trans="" />
   <item orig="Circles available to deposit." trans="" />
+  <item orig="Train" trans="" />
+  <item orig="Exchange items" trans="" />
   <item orig="List:" trans="Lista:" />
   <item orig="LOGIN" trans="" />
+  <item orig="Unlock" trans="" />
   <item orig="Remove" trans="Rimuovi" />
   <item orig="Action:" trans="" />
   <item orig="Never tired" trans="Instancabile" />
   <item orig="
 Do you really wish to leave Yliakum?" trans="
 Vuoi veramente lasciare Yliakum?" />
-  <item orig="Unlock" trans="" />
-  <item orig="Exchange items" trans="" />
   <item orig="Count" trans="Conto" />
   <item orig="Enter the command(s):" trans="Inserire i comandi:" />
   <item orig="Chat" trans="" />
   <item orig="Month:" trans="Mese:" />
   <item orig="NPC_me outline colour" trans="" />
   <item orig="Mute on focus loss" trans="" />
-  <item orig="Father Name:" trans="Nome Padre:" />
   <item orig="Aggressive" trans="" />
   <item orig="Add Bezier Curve (b)" trans="" />
+  <item orig="Father Name:" trans="Nome Padre:" />
   <item orig="The number of coins you wish to exchange." trans="" />
   <item orig="GM 1" trans="" />
   <item orig="Rank" trans="Rango" />
   <item orig="Spawn item" trans="Crea oggetto" />
   <item orig="Enable guild" trans="Abilita gilda" />
   <item orig="o&amp;clock" trans="in punto" />
-  <item orig="Give Kill Experience" trans="" />
   <item orig="Group stats" trans="" />
   <item orig="Construct" trans="" />
+  <item orig="Give Kill Experience" trans="" />
   <item orig="Own combat stance changes" trans="" />
   <item orig="You see a " trans="Vedi un " />
   <item orig="Experience" trans="Esperienza" />
+  <item orig="Buy Skill" trans="" />
   <item orig="Upload!" trans="Carica!" />
   <item orig="Deposit" trans="Deposita" />
   <item orig="? Weight" trans="? Peso" />
-  <item orig="Buy Skill" trans="" />
+  <item orig="Create Line (\)" trans="" />
   <item orig="M. stamina" trans="Stamina M." />
   <item orig="Enable auction" trans="" />
   <item orig="No Target" trans="Nessuno obiettivo" />
   <item orig="Tria" trans="" />
   <item orig="Group text color" trans="Colore testo Gruppo" />
+  <item orig="1 Tria" trans="" />
   <item orig="No Petitions." trans="Nessuna petizione." />
+  <item orig="The number of trias that you may exchange." trans="" />
+  <item orig="Filter" trans="" />
   <item orig="New" trans="Nuovo" />
   <item orig="Mute sounds on focus loss" trans="" />
-  <item orig="1 Tria" trans="" />
-  <item orig="Filter" trans="" />
-  <item orig="Create Line (\)" trans="" />
-  <item orig="The number of trias that you may exchange." trans="" />
+  <item orig="Exchange all items" trans="" />
   <item orig="Add Linked" trans="Aggiungi collegato" />
   <item orig="keyboard" trans="Tastiera" />
-  <item orig="Activity:" trans="Attività:" />
-  <item orig="Exchange all items" trans="" />
   <item orig="Research Magic" trans="" />
   <item orig="The number of trias you wish to withdraw." trans="" />
+  <item orig="Activity:" trans="Attività:" />
   <item orig="You have been assigned to the selected petition." trans="Sei stato assegnato alla petizione selezionata." />
   <item orig="Say Alignment" trans="" />
+  <item orig="set viewall" trans="" />
   <item orig="Combat" trans="Combattimento" />
   <item orig="Say outline colour" trans="" />
   <item orig="Default last chat" trans="" />
   <item orig="Path" trans="Via" />
-  <item orig="set viewall" trans="" />
   <item orig="Kill Player" trans="Uccidi giocatore" />
   <item orig="%s says: %s" trans="%s dice: %s" />
   <item orig="Are you sure you want to upload your character?" trans="Sei sicuro di voler caricare il tuo personaggio?" />
   <item orig="Enable Chat Bubbles" trans="" />
+  <item orig="Transfer to inventory" trans="" />
   <item orig="Own attacks that fail to penetrate the armor" trans="" />
   <item orig="Magic" trans="Magia" />
   <item orig="Get Reward" trans="Ottieni ricompensa" />
-  <item orig="Transfer to inventory" trans="" />
+  <item orig="You have " trans="" />
   <item orig="Credits" trans="Crediti" />
   <item orig="details" trans="Dettagli" />
   <item orig="HP" trans="" />
+  <item orig="Physical Stamina" trans="" />
   <item orig="You have entered edit mode." trans="" />
   <item orig="%s shouts: %s" trans="%s urla: %s" />
   <item orig="Quality:" trans="Qualità:" />
   <item orig="No server running at the moment" trans="Non ci sono server attivi in questo momento" />
-  <item orig="Physical Stamina" trans="" />
   <item orig=" " trans="" />
   <item orig="CHARACTER CREATION" trans="CREAZIONE PERSONAGGIO" />
   <item orig="Alliance:" trans="Alleanza:" />
@@ -261,21 +267,22 @@ Vuoi veramente lasciare Yliakum?" />
   <item orig="Various Skill description:" trans="" />
   <item orig="Buddy list" trans="" />
   <item orig="100%" trans="" />
+  <item orig="Strength on the lock" trans="" />
   <item orig="Edit level" trans="Cambia livello" />
   <item orig="Leave" trans="Abbandona" />
+  <item orig="Play/Solve" trans="" />
   <item orig="Capacity:" trans="Capacità" />
   <item orig="Debuffs" trans="" />
   <item orig="Alliance text color" trans="Colore testo Alleanza" />
-  <item orig="Play/Solve" trans="" />
-  <item orig="Strength on the lock" trans="" />
+  <item orig="Study Item" trans="" />
   <item orig="Store" trans="" />
   <item orig="You have ignored the following players:" trans="Hai ignorato i seguenti giocatori:" />
   <item orig="Enable group" trans="Abilita gruppo" />
   <item orig="Items:" trans="Oggetti:" />
   <item orig="Max Line Length" trans="Lunghezza massima linea" />
   <item orig="Others&apos; attacks that fail to penetrate the armor" trans="" />
-  <item orig="Study Item" trans="" />
   <item orig="Auction outline colour" trans="" />
+  <item orig="Spell book" trans="" />
   <item orig="Admin" trans="" />
   <item orig=" in front
 of you named " trans=" davanti a te
@@ -283,7 +290,6 @@ chiamato " />
   <item orig="mouse" trans="" />
   <item orig="Various Skills List:" trans="" />
   <item orig="Stats description:" trans="" />
-  <item orig="Spell book" trans="" />
   <item orig="Lets go !" trans="Andiamo!" />
   <item orig="Account:" trans="" />
   <item orig="%s %s" trans="%s %s" />
@@ -291,6 +297,7 @@ chiamato " />
   <item orig="General" trans="Generale" />
   <item orig="tells you" trans="" />
   <item orig="Ambiguous name:" trans="" />
+  <item orig="Load (l)" trans="" />
   <item orig="Password:" trans="" />
   <item orig="Life" trans="Vita" />
   <item orig="female " trans="femmina di " />
@@ -298,7 +305,6 @@ chiamato " />
   <item orig="Currently, there are no petitions." trans="Al momento non ci sono petizioni." />
   <item orig="Set" trans="" />
   <item orig="Grouped with you and the same guild" trans="" />
-  <item orig="Load (l)" trans="" />
   <item orig="View al.Chat" trans="" />
   <item orig="Actions Volume" trans="Volume Azioni" />
   <item orig="NPC_my outline colour" trans="" />
@@ -315,6 +321,7 @@ chiamato " />
   <item orig="Apply to all" trans="Applica a tutti" />
   <item orig="Give" trans="" />
   <item orig="Name (n)" trans="" />
+  <item orig=" CP left." trans="" />
   <item orig="Friends" trans="Amici" />
   <item orig="Polygon:" trans="Poligono:" />
   <item orig="Talk to everyone in your guild privately." trans="Parla a chiunque nella tua gilda privatamente." />
@@ -403,12 +410,15 @@ chiamato " />
   <item orig="Detail information:" trans="" />
   <item orig="Shout shadow colour" trans="" />
   <item orig="You will no longer ignore %s." trans="Ora non ignorerai più %s." />
+  <item orig="Please select a path" trans="" />
+  <item orig="Verification complete" trans="" />
   <item orig="Others&apos; combat stance changes" trans="" />
   <item orig="Guild outline colour" trans="" />
   <item orig="NPC outline colour" trans="" />
   <item orig="Group shadow colour" trans="" />
   <item orig="Ambiguous command: " trans="Comando Ambiguo: " />
   <item orig="The selected petition was %s" trans="La petizione selezionata era %s" />
+  <item orig="Please choose your birth month" trans="" />
   <item orig="Setting Item" trans="Oggetto Setting" />
   <item orig="Loading game" trans="Caricamento Gioco" />
   <item orig="Use Collision Detection" trans="Usa Rilevamento Collisioni" />
@@ -462,6 +472,7 @@ chiamato " />
   <item orig="Target" trans="" />
   <item orig="Mind" trans="" />
   <item orig="Purify" trans="" />
+  <item orig="Please choose a religion" trans="" />
   <item orig="Own attacks that are dodged" trans="Propri attacchi che vengono scansati" />
   <item orig="Done" trans="Conferma" />
   <item orig="Birth" trans="Nascita" />
@@ -470,6 +481,7 @@ chiamato " />
   <item orig="Add a comment about this event if you wish" trans="Aggiungi un commento su questo evento" />
   <item orig="Options Window" trans="" />
   <item orig="The number of hexas you wish to deposit." trans="" />
+  <item orig="Please choose your birthday" trans="" />
   <item orig="Keys" trans="Tasti" />
   <item orig="Faction description:" trans="Descrizione fazione:" />
   <item orig="Perform an action see by people in your vicinity." trans="Esegui un azione visibile dalle persone nelle tue vicinanze." />
@@ -500,6 +512,8 @@ chiamato " />
   <item orig="Arms" trans="" />
   <item orig="Accept trade" trans="" />
   <item orig="Name of the pic" trans="" />
+  <item orig="Please enter a full name for mother" trans="" />
+  <item orig="Please wait for verification...." trans="" />
   <item orig="Locked" trans="Bloccato" />
   <item orig="Account Password:" trans="Password Account:" />
   <item orig="Items" trans="Oggetti" />
@@ -535,6 +549,8 @@ chiamato " />
   <item orig="You tell" trans="" />
   <item orig="Bloody" trans="" />
   <item orig="Octas available to withdraw." trans="" />
+  <item orig="Are you sure you want to upload?  You have 16 CP left." trans="" />
+  <item orig="Please select a race" trans="" />
   <item orig="The selected petition has been escalated." trans="" />
   <item orig="Your notes:" trans="Tue note:" />
   <item orig="Rotate" trans="Ruota" />
@@ -560,6 +576,11 @@ chiamato " />
   <item orig="Receive:" trans="Ricevi:" />
   <item orig="Read Book" trans="" />
   <item orig="Administrative banking" trans="" />
+  <item orig="Before clicking next again, please make sure that your character name is not offensive and would be appropriate for a medieval setting. It must be unique and not similar to that of any real person or thing. Names in violation of this policy (www.planeshift.it/naming.html) will be changed by authorized people in-game.  The game forums can be found at:  http://www.hydlaa.com/smf/" trans="" />
+  <item orig="A full name is required, the first &amp; last name separated with a space. You can use any alphabetic (A-Z) in your name, but no numbers. Each name must be between 3 and 27 letters.
+The name should follow the rules here:
+http://www.planeshift.it/naming.html 
+If your name is inappropriate, a Game Master (GM) will change it." trans="" />
   <item orig="Camera" trans="" />
   <item orig="Remember password" trans="Ricorda password" />
   <item orig="Third Person Follow" trans="Terza persona inseguimento" />
@@ -579,6 +600,7 @@ chiamato " />
   <item orig="Exchange one item" trans="" />
   <item orig="set nevertired" trans="" />
   <item orig="Item storage" trans="" />
+  <item orig="Please choose life event(s)" trans="" />
   <item orig="%s tells you: %s" trans="%s ti dice: %s" />
   <item orig="D:" trans="" />
   <item orig="Jobs Skill description:" trans="" />
@@ -728,6 +750,7 @@ Per disabilitare questa funzione cancella tutto in questa finestra usando il bot
   <item orig="Scale Font:" trans="" />
   <item orig="Write in this book" trans="" />
   <item orig="Research" trans="" />
+  <item orig="Please choose your sibling count" trans="" />
   <item orig="o&apos;clock" trans="in punto" />
   <item orig="You must select a petition from the list in order to close it." trans="Devi selezionare una petizione dalla lista in modo da poterla chiudere." />
   <item orig="Name" trans="Nome" />
@@ -756,6 +779,7 @@ Per disabilitare questa funzione cancella tutto in questa finestra usando il bot
   <item orig="My outline colour" trans="" />
   <item orig="P. Stamina" trans="Stamina F.:" />
   <item orig="Left Finger" trans="" />
+  <item orig="Failed" trans="" />
   <item orig="Realm" trans="Reame" />
   <item orig="cancelled." trans="cancellata." />
   <item orig="closed." trans="chiusa." />
@@ -777,6 +801,7 @@ Per disabilitare questa funzione cancella tutto in questa finestra usando il bot
   <item orig="Guild text color" trans="Colore testo gilda" />
   <item orig="Random" trans="Casuale" />
   <item orig="Job:" trans="" />
+  <item orig="Requirements" trans="" />
   <item orig="Ok" trans="" />
   <item orig="Sell" trans="Vendi" />
   <item orig="Way" trans="Via" />
