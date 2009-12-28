@@ -178,7 +178,7 @@ bool pawsConfigEntityLabels::SaveConfig()
     visCreatures = psEntityLabelVisib(CreatureRBG->GetActiveID()-100);
     visItems = psEntityLabelVisib(ItemRBG->GetActiveID()-103);
 
-    showGuild = !visGuildCheck->GetState();
+    showGuild = visGuildCheck->GetState();
     
     entityLabels->Configure(visCreatures, visItems, showGuild, labelColors);
     entityLabels->SaveToFile();
