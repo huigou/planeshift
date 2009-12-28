@@ -353,7 +353,7 @@ protected:
 public:
     psSndStreamHandle(csRef<iSndSysStream> s) : soundStream(s) {}
 
-    bool Start(iSndSysRenderer* renderer, bool loop);
+    bool Start(iSndSysRenderer* renderer, bool loop, size_t loopStart, size_t loopEnd);
     void Stop(iSndSysRenderer* renderer);
 
     void SetVolume(float volume);
@@ -376,7 +376,8 @@ public:
     psSoundObject(csRef<iSndSysStream> soundData,
                   psMapSoundSystem* mapSystem,
                   float maxVol, float minVol, int fadeDelay = 0,
-                  int timeOfDay = 0, int timeOfDayRange = 0, int weatherCondition = 0, bool looping = true,
+                  int timeOfDay = 0, int timeOfDayRange = 0, int weatherCondition = 0, size_t loopStart = 0,
+                  size_t loopEnd = 0, bool looping = true,
                   psSectorSoundManager* sector = NULL,
                   int connectWith = 0);
 
@@ -426,8 +427,12 @@ public:
     void StartSound();
     void Stop() { stream.SetVolume(0.0f); isPlaying = false; }
 
+    bool HasNoTime() { return (timeOfDay == -1); }
     bool MatchTime( int time );
+    bool HasNoWeather() { return (weatherCondition == -1); }
     bool MatchWeather( int weather ) { return weatherCondition == weather; }
+    
+    
 
     float Volume() { return currentVolume * ambientVolume;}
     void SetVolume(float vol);
@@ -471,26 +476,29 @@ protected:
     float currentVolume;
     float ambientVolume;
 
-    csTicks startTime;          // Use to track start of fade.
+    csTicks startTime;          ///< Use to track start of fade.
     bool fadeComplete;
 
     Fade_Direction fadeDir;
-    csTicks fadeDelay;          // Time this sound should complete it's fade.
+    csTicks fadeDelay;          ///< Time this sound should complete it's fade.
     int timeOfDay;
     int timeOfDayRange;         ///< The range from timeOfDay.
     int weatherCondition;
     psSectorSoundManager* connectedSector;
     psMapSoundSystem*     mapSystem;
 
-    int connectedWith; // What we are connected with (SoundEvent)
+    int connectedWith; ///< What we are connected with (SoundEvent)
 
-    bool threeDee;              // Track if this is a 3D sound object
+    bool threeDee;              ///< Track if this is a 3D sound object
     csVector3 position;
     float rangeToStart;
     float minRange;
-    float rangeConstant;        // Used to calculate 3D sound volume.
+    float rangeConstant;        ///< Used to calculate 3D sound volume.
 
-    bool loop;
+
+    bool loop;              ///< indicates if this soundobject loops
+    size_t loopStart;       ///< indicates the start of the loop sequence
+    size_t loopEnd;         ///< indicates the end of the loop sequence
 };
 
 //-----------------------------------------------------------------------------
@@ -519,7 +527,12 @@ public:
      * @param newTime The new time of day.
      */
     void ChangeTime( int newTime );
-
+    
+    /** Sets a new Background Song.
+     * 
+     * @param song: the song to set as background song for this sector
+     */
+    void SetBGSong(psSoundObject* song);
     void Enter( psSectorSoundManager* enterFrom, int timeOfDay, int weather, csVector3& position );
 
     void StartBackground();
@@ -614,6 +627,7 @@ public:
     psSectorSoundManager* GetPendingSoundSector(const char* name);
     psSectorSoundManager* GetOrCreateSector(const char* name); // Creates a pending sector if it's not found
     int TriggerStringToInt(const char* str);
+    size_t GetRandomNumber(size_t max) { randomGen.Get(max); }
 
 
 private:
@@ -621,6 +635,7 @@ private:
     csArray<psSoundObject *> active_songs;
     csArray<psSoundObject *> active_ambient;
     csArray<psSoundObject *> active_emitters;
+    csRandomGen randomGen;
 
 };
 

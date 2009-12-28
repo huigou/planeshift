@@ -1046,6 +1046,8 @@ bool psMapSoundSystem::Initialize()
                     int weather   = ambientNode->GetAttributeValueAsInt("WEATHER");
                     csString trigS= ambientNode->GetAttributeValue("TRIGGER");
                     csString sec  = ambientNode->GetAttributeValue("TRIG_SECTOR");
+                    size_t loopStart = ambientNode->GetAttributeValueAsInt("LOOPSTART");
+                    size_t loopEnd   = ambientNode->GetAttributeValueAsInt("LOOPEND");
 
                     int trigger = TriggerStringToInt(trigS);
                     psSectorSoundManager* trigSector = manager;
@@ -1075,6 +1077,8 @@ bool psMapSoundSystem::Initialize()
                                                             timeOfDay,
                                                             timeOfDayRange,
                                                             weather,
+                                                            loopStart,
+                                                            loopEnd,
                                                             true,
                                                             trigSector,
                                                             trigger);
@@ -1147,6 +1151,8 @@ bool psMapSoundSystem::Initialize()
                     int timeOfDay = background->GetAttributeValueAsInt("TIME");
                     int timeOfDayRange = background->GetAttributeValueAsInt("TIME_RANGE");
                     int weather   = background->GetAttributeValueAsInt("WEATHER");
+                    size_t loopStart = background->GetAttributeValueAsInt("LOOPSTART");
+                    size_t loopEnd   = background->GetAttributeValueAsInt("LOOPEND");
 
                     csRef<SOUND_DATA_TYPE> snddata = sndmngr->GetSoundResource( resource );
                     if (!snddata)
@@ -1168,7 +1174,7 @@ bool psMapSoundSystem::Initialize()
                                                             fadeDelay,
                                                             timeOfDay,
                                                             timeOfDayRange,
-                                                            weather,
+                                                            weather, loopStart,loopEnd,
                                                             sndmngr->LoopBGM());
                     obj->SetResource( resource );
                     manager->NewBackground( obj );
@@ -1627,36 +1633,44 @@ void psSectorSoundManager::Fade( Fade_Direction dir )
 
 void psSectorSoundManager::ChangeTime( int timeOfDay )
 {
-    psSoundObject* bestTimeSong = NULL;
-    size_t z;
+    csArray<psSoundObject*> bestTimeSong;
     if ( music )
     {
-        for ( z = 0; z < songs.GetSize(); z++ )
+        for (size_t z = 0; z < songs.GetSize(); z++ )
         {
             if ( songs[z]->MatchTime( timeOfDay ) )
-                bestTimeSong = songs[z];
+                bestTimeSong.Push(songs[z]);
         }
     }
 
-
-    if ( bestTimeSong )
+    if ( bestTimeSong.GetSize() )
     {
-        Debug2( LOG_SOUND, 0, "Song now playing is: %s", bestTimeSong->GetName().GetData() );
-        if (!mapsoundsystem->FindSameActiveSong( bestTimeSong ))
-        {
-            mainBG->StartFade( FADE_DOWN );
-            mapsoundsystem->RegisterActiveSong(bestTimeSong);
-            bestTimeSong->StartFade( FADE_UP );
-            mainBG = bestTimeSong;
-        }
+        SetBGSong(bestTimeSong[mapsoundsystem->GetRandomNumber(bestTimeSong.GetSize())]);
     }
 
 }
 
+void psSectorSoundManager::SetBGSong(psSoundObject* song)
+{
+    Debug2( LOG_SOUND, 0, "Song now playing is: %s", song->GetName().GetData() );
+    if (!mapsoundsystem->FindSameActiveSong( song ))
+    {
+        mapsoundsystem->RegisterActiveSong(song);
+        if(mapsoundsystem->sndmngr->LoopBGM())
+            song->SetLooping(true);
+        else
+            song->SetLooping(false);
+
+        song->StartFade( FADE_UP );
+        mainBG = song;
+    }
+}
+
 void psSectorSoundManager::Enter( psSectorSoundManager* leaveFrom, int timeOfDay, int weather, csVector3& position )
 {
-    psSoundObject* bestTimeSong = NULL;
-    psSoundObject* bestWeatherSong = NULL;
+    csArray<psSoundObject*> bestTimeSong;
+    csArray<psSoundObject*> bestWeatherSong;
+    csArray<psSoundObject*> noReferenceSong;
     this->weather = weather;
 
     size_t z;
@@ -1665,50 +1679,40 @@ void psSectorSoundManager::Enter( psSectorSoundManager* leaveFrom, int timeOfDay
     {
         for ( z = 0; z < songs.GetSize(); z++ )
         {
+            //search for time restrained songs
             if ( songs[z]->MatchTime( timeOfDay ) )
             {
-                bestTimeSong = songs[z];
+                bestTimeSong.Push(songs[z]);
             }
-
+            //search for weather restrained songs
             if ( songs[z]->MatchWeather( weather ) )
             {
-                bestWeatherSong = songs[z];
+                bestWeatherSong.Push(songs[z]);
+            }
+            //search for no restrain songs
+            if ( songs[z]->HasNoTime() && songs[z]->HasNoWeather())
+            {
+                noReferenceSong.Push(songs[z]);
             }
         }
 
-        if ( bestTimeSong )
+        if ( bestTimeSong.GetSize() )
         {
-            if (!mapsoundsystem->FindSameActiveSong( bestTimeSong ))
-            {
-                mapsoundsystem->RegisterActiveSong(bestTimeSong);
-                bestTimeSong->StartFade( FADE_UP );
-                mainBG = bestTimeSong;
-            }
+            SetBGSong(bestTimeSong[mapsoundsystem->GetRandomNumber(bestTimeSong.GetSize())]);
         }
-        else if ( bestWeatherSong )
+        else if ( bestWeatherSong.GetSize() )
         {
-            if (!mapsoundsystem->FindSameActiveSong( bestWeatherSong ))
-            {
-                mapsoundsystem->RegisterActiveSong(bestWeatherSong);
-                bestWeatherSong->StartFade( FADE_UP );
-                mainBG = bestWeatherSong;
-            }
+            SetBGSong(bestWeatherSong[mapsoundsystem->GetRandomNumber(bestWeatherSong.GetSize())]);
         }
-        else
+        else if ( noReferenceSong.GetSize() )
         {
-            if ( songs.GetSize() > 0 )
+            SetBGSong(noReferenceSong[mapsoundsystem->GetRandomNumber(noReferenceSong.GetSize())]);
+        }
+        else //all failed get a random song
+        {            
+            if ( songs.GetSize() > 0 ) //do we actually have a song?
             {
-                if (!mapsoundsystem->FindSameActiveSong( songs[0] ))
-                {
-                    mapsoundsystem->RegisterActiveSong(songs[0]);
-                    if(mapsoundsystem->sndmngr->LoopBGM())
-                        songs[0]->SetLooping(true);
-                    else
-                        songs[0]->SetLooping(false);
-
-                    songs[0]->StartFade( FADE_UP );
-                    mainBG = songs[0];
-                }
+                SetBGSong(songs[mapsoundsystem->GetRandomNumber(songs.GetSize())]);
             }
         }
     }
@@ -1833,7 +1837,8 @@ bool psSectorSoundManager::CheckAmbient( psSoundObject* ambientSnd )
 psSoundObject::psSoundObject(csRef<iSndSysStream> strm,
                              psMapSoundSystem* mapSys,
                              float maxVol, float minVol,
-                             int fadeTime, int timeOfDay, int timeOfDayRange, int weather, bool looping,
+                             int fadeTime, int timeOfDay, int timeOfDayRange, int weather, size_t loopStart,
+                             size_t loopEnd, bool looping,
                              psSectorSoundManager* sector,int connectWith
                              ) : stream(strm)
 {
@@ -1845,6 +1850,8 @@ psSoundObject::psSoundObject(csRef<iSndSysStream> strm,
     this->timeOfDay = timeOfDay;
     this->timeOfDayRange = timeOfDayRange;
     this->weatherCondition = weather;
+    this->loopStart = loopStart;
+    this->loopEnd = loopEnd;
     currentVolume = 0.0f;
     ambientVolume = 1.0f;
     connectedSector = sector;
@@ -1912,7 +1919,7 @@ void psSoundObject::SetVolume(float vol)
 
 void psSoundObject::StartSound()
 {
-    if ( !stream.Start(mapSystem->sndmngr->soundSystem,loop) )
+    if ( !stream.Start(mapSystem->sndmngr->soundSystem,loop,loopStart,loopEnd) )
         return;
 
     if (threeDee)
@@ -2030,7 +2037,7 @@ void psSoundObject::StartFade( Fade_Direction dir )
         if(!isPlaying)
         {
             isPlaying = true;
-            stream.Start(mapSystem->sndmngr->soundSystem,loop);
+            stream.Start(mapSystem->sndmngr->soundSystem,loop,loopStart,loopEnd);
             stream.SetVolume(currentVolume);
         }
         return;
@@ -2076,9 +2083,10 @@ void psSoundObject::SetRange( float maxRange, float minRange )
     rangeConstant = ( (maxVol-minVol)/(rangeToStart-minRange));
 }
 
-
 bool psSoundObject::MatchTime( int time )
 {
+
+    if(timeOfDay == -1) return false;
 
     int timeEnd = timeOfDay + timeOfDayRange;
 
@@ -2144,7 +2152,7 @@ void psSoundObject::Update()
 }
 
 
-bool psSndStreamHandle::Start(iSndSysRenderer* renderer, bool loop)
+bool psSndStreamHandle::Start(iSndSysRenderer* renderer, bool loop, size_t loopStart, size_t loopEnd)
 {
     if (!soundSource)
         soundSource = renderer->CreateSource(soundStream);
@@ -2154,6 +2162,7 @@ bool psSndStreamHandle::Start(iSndSysRenderer* renderer, bool loop)
         return false;
 
     soundStream->SetLoopState(loop);
+    //soundStream->SetLoopBonduaries(loopStart, loopEnd);
     SetVolume(0.0f);
     return true;
 }
