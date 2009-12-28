@@ -42,6 +42,14 @@
 #include "util/mathscript.h"
 #include "util/consoleout.h"
 
+//support for limited compilers
+#ifdef _MSC_VER
+double round(double value)
+{
+    return floor(value + 0.5);
+}
+#endif
+
 csString MathVar::ToString() const
 {
     if (type == VARTYPE_OBJ)
