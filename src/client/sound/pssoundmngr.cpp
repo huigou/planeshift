@@ -1644,10 +1644,7 @@ void psSectorSoundManager::ChangeTime( int timeOfDay )
     }
 
     if ( bestTimeSong.GetSize() )
-    {
         SetBGSong(bestTimeSong[mapsoundsystem->GetRandomNumber(bestTimeSong.GetSize())]);
-    }
-
 }
 
 void psSectorSoundManager::SetBGSong(psSoundObject* song)

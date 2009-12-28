@@ -361,6 +361,9 @@ public:
     csRef<SOUND_SOURCE3D_TYPE> GetSource3D();
 
     bool IsValid() { return soundSource.IsValid(); }
+    
+    size_t GetPlayPos() { return soundStream->GetPosition(); }
+    size_t SetPlayPos(size_t position) { soundStream->SetPosition(position); }
 };
 
 //-----------------------------------------------------------------------------
@@ -459,6 +462,9 @@ public:
 
     /** Set the value of loop **/
     void SetLooping(bool looping) {loop = looping;}
+    
+    size_t GetPlayPos() { return stream.GetPlayPos(); }
+    size_t SetPlayPos(size_t position) { stream.SetPlayPos(position); }
 
 protected:
 
