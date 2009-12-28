@@ -135,7 +135,7 @@ bool pawsLifeEventWindow::OnButtonPressed( int mouseButton, int keyModifier, paw
         {
             if (createManager->GetNumberOfLifeChoices() == 0)
             {
-                psSystemMessage error(0,MSG_ERROR,"Please choose life event(s)");
+                psSystemMessage error(0,MSG_ERROR,PawsManager::GetSingleton().Translate("Please choose life event(s)"));
                 error.FireEvent();
                 return true;
             }
@@ -175,7 +175,7 @@ void pawsLifeEventWindow::PopulateFields()
             pawsTextBox* text = (pawsTextBox*)row->GetColumn(0);
             text->SetText( createManager->lifeEventData[x].name );
             row->SetID( createManager->lifeEventData[x].id );
-            text->FormatToolTip("CP Cost: %d\n", createManager->lifeEventData[x].cpCost );
+            text->FormatToolTip("%s %d\n", PawsManager::GetSingleton().Translate("CP Cost:").GetData(), createManager->lifeEventData[x].cpCost );
         }
     }
     UpdateCP();

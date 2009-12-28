@@ -135,7 +135,7 @@ void pawsSummaryWindow::Show()
     pawsWidget::Show();
     redoVerification = true;        
     requestSent = false;
-    serverStatus->SetText( "Please wait for verification....");
+    serverStatus->SetText(PawsManager::GetSingleton().Translate("Please wait for verification...."));
 }
 
 void pawsSummaryWindow::Draw()
@@ -146,7 +146,7 @@ void pawsSummaryWindow::Draw()
     {
         if (  createManager->GetCurrentCP() < 0 ) 
         {
-            PawsManager::GetSingleton().CreateWarningBox( "You cannot have a negative CP value." ); 
+            PawsManager::GetSingleton().CreateWarningBox(PawsManager::GetSingleton().Translate("You cannot have a negative CP value.")); 
             PawsManager::GetSingleton().FindWidget("LifeEvents")->Show();            
             PawsManager::GetSingleton().FindWidget("Summary")->Hide();
             return;
@@ -189,7 +189,7 @@ void pawsSummaryWindow::SetVerify( csArray<psCharVerificationMesg::Attribute> st
         }
     }
      
-    serverStatus->SetText( "Verification complete");     
+    serverStatus->SetText(PawsManager::GetSingleton().Translate("Verification complete"));     
 }
 
 bool pawsSummaryWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
@@ -219,13 +219,13 @@ bool pawsSummaryWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsW
         }
         case UPLOAD_BUTTON:
         {           
-            csString cpwarning = "Are you sure you want to upload?  ";
+            csString cpwarning = PawsManager::GetSingleton().Translate("Are you sure you want to upload?  ");
             // Also show CP left if more than zero
             if ( createManager->GetCurrentCP() > 0 )
             {
-                cpwarning += "You have ";
+                cpwarning += PawsManager::GetSingleton().Translate("You have ");
                 cpwarning += createManager->GetCurrentCP();
-                cpwarning += " CP left.";
+                cpwarning += PawsManager::GetSingleton().Translate(" CP left.");
             }
             PawsManager::GetSingleton().CreateYesNoBox( cpwarning, this );
             return true;
