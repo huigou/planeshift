@@ -1875,6 +1875,7 @@ psSoundObject::psSoundObject(psSoundObject* other, csRef<iSndSysStream> strm) : 
     this->connectedWith    = other->connectedWith;
     this->threeDee         = other->threeDee;
     this->loop             = other->loop;
+    this->loopEnd          = other->loopEnd;
 
     this->resourceName = other->resourceName;
 
