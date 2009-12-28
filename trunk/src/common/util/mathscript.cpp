@@ -46,7 +46,7 @@
 #ifdef _MSC_VER
 double round(double value)
 {
-    return floor(value + 0.5);
+    return (value >= 0) ? floor(value + 0.5) : ceil(value - 0.5);
 }
 
 double trunc(double value)
