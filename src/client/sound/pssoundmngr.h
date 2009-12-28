@@ -586,6 +586,7 @@ private:
     csArray<psSoundObject*> unAssignedEmitters;
     csArray<ps3DFactorySound*> unAssignedEmitterFactories;
 
+int frame;
     int weather;
     bool music;
     bool sounds;
