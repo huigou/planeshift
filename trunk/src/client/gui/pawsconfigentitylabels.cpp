@@ -111,7 +111,7 @@ bool pawsConfigEntityLabels::OnButtonPressed( int mouseButton, int keyModifier, 
 {
     int     widID = widget->GetID();      //widget identificator
     
-    if ((widID >= ENTITY_TYPES_AMOUNT)&&(widID < 100))
+    if ((widID >= ENTITY_TYPES_AMOUNT)&&(widID <= 100))
     {
         labelColors[widID-ENTITY_TYPES_AMOUNT] = defLabelColors[widID-ENTITY_TYPES_AMOUNT];
         dirty = true;
@@ -159,10 +159,7 @@ bool pawsConfigEntityLabels::LoadConfig()
         default:
             ItemRBG->SetActive("never");
     }
-    if (showGuild)
-        visGuildCheck->SetState(true);
-    else
-        visGuildCheck->SetState(false);
+    visGuildCheck->SetState(showGuild);
 
     dirty = false;
     return true;
@@ -179,7 +176,7 @@ bool pawsConfigEntityLabels::SaveConfig()
     visItems = psEntityLabelVisib(ItemRBG->GetActiveID()-103);
 
     showGuild = visGuildCheck->GetState();
-    
+
     entityLabels->Configure(visCreatures, visItems, showGuild, labelColors);
     entityLabels->SaveToFile();
     entityLabels->RepaintAllLabels();
