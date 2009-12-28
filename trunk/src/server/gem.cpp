@@ -1913,6 +1913,7 @@ lastSentSuperclientInstance(-1), activeReports(0), isFalling(false), invincible(
 movementMode(0), isAllowedToMove(true), atRest(true), spellCasting(NULL), workEvent(NULL), pcmove(NULL),
 nevertired(false), infinitemana(false), instantcast(false), safefall(false), givekillexp(false), attackable(false)
 {
+	forcedSector = NULL;
     matname = chardata->GetRaceInfo()->base_texture_name;
 
     pid = chardata->GetPID();
@@ -3301,17 +3302,20 @@ void gemActor::ApplyStaminaCalculations(const csVector3& v, float times)
 
 bool gemActor::SetDRData(psDRMessage& drmsg)
 {
-    if (drmsg.IsNewerThan(DRcounter))
+    if (!drmsg.IsNewerThan(DRcounter))
     {
-        pcmove->SetDRData(drmsg.on_ground,1.0f,drmsg.pos,drmsg.yrot,drmsg.sector,drmsg.vel,drmsg.worldVel,drmsg.ang_vel);
-        DRcounter = drmsg.counter;
+    	return false; // don't do the rest of this if this msg is out of date
     }
+    // If this DR came from a client which has not accepted the force position message at least once then we must
+    // ignore it as it must be out of date
+    if (drmsg.sector != forcedSector)
+    	return false;
     else
-    {
-        //printf("Entity %d [%s] has DRcounter of %d, received DRcounter of %d. Ignoring it.\n",
-        //       this->GetEntity()->GetID(), this->name.GetData(), DRcounter, drmsg.counter);
-        return false;  // don't do the rest of this if this msg is out of date
-    }
+    	forcedSector = NULL;  // Reset the forced sector after we received the correct sector at least once.
+    
+	pcmove->SetDRData(drmsg.on_ground,1.0f,drmsg.pos,drmsg.yrot,drmsg.sector,drmsg.vel,drmsg.worldVel,drmsg.ang_vel);
+	DRcounter = drmsg.counter;
+
 
     // Apply stamina only on PCs
     if (GetClientID())
@@ -3400,6 +3404,7 @@ void gemActor::MulticastDRUpdate()
 void gemActor::ForcePositionUpdate()
 {
     uint32_t clientnum = GetClientID();
+    forcedSector = GetSector();
 
     psForcePositionMessage msg(clientnum, ++forceDRcounter, GetPosition(), GetAngle(), GetSector(),
                                CacheManager::GetSingleton().GetMsgStrings());
