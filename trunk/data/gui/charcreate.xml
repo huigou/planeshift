@@ -34,7 +34,7 @@
         <!-- CP box -->
         <widget name="cppoints" factory="pawsTextBox">
              <frame x="510" y="110" width="90" height="30" border="no" />
-             <text string="CP: 0" horizAdjust="CENTRE"/>
+             <text string="" horizAdjust="CENTRE"/>
         </widget>
         
                  
