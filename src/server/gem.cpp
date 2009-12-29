@@ -3308,11 +3308,13 @@ bool gemActor::SetDRData(psDRMessage& drmsg)
     }
     // If this DR came from a client which has not accepted the force position message at least once then we must
     // ignore it as it must be out of date
-    if (drmsg.sector != forcedSector)
-    	return false;
-    else
-    	forcedSector = NULL;  // Reset the forced sector after we received the correct sector at least once.
-    
+    if(forcedSector)
+    {
+		if (drmsg.sector != forcedSector)
+			return false;
+		else
+			forcedSector = NULL;  // Reset the forced sector after we received the correct sector at least once.
+    }
 	pcmove->SetDRData(drmsg.on_ground,1.0f,drmsg.pos,drmsg.yrot,drmsg.sector,drmsg.vel,drmsg.worldVel,drmsg.ang_vel);
 	DRcounter = drmsg.counter;
 
