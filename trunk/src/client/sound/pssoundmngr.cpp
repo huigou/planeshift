@@ -2150,7 +2150,7 @@ bool psSndStreamHandle::Start(iSndSysRenderer* renderer, bool loop, size_t loopS
         return false;
 
     soundStream->SetLoopState(loop);
-    //soundStream->SetLoopBoundaries(loopStart, loopEnd);
+    soundStream->SetLoopBoundaries(loopStart, loopEnd);
     SetVolume(0.0f);
     return true;
 }
