@@ -1,0 +1,83 @@
+#! /usr/bin/php
+<?php
+// Converts common strings entries to the format required by the new loader.  Do this before nuking
+// the common strings table - that way everything gets the updated entry.
+
+function dump_sql($tableArray, $tableName)
+{
+    $outputQuery = "INSERT INTO $tableName VALUES (";
+    foreach($tableArray as $value)
+    {
+        $tmp = mysql_real_escape_string($value);
+        $outputQuery .= "'$tmp',";
+    }
+    return substr($outputQuery,0,strlen($outputQuery)-1) . ");";
+}
+
+// Change your database settings here:
+$db = mysql_connect("localhost", "planeshift", "planeshift") or die ("Unable to connect!"); // host, user, pass
+mysql_select_db("planeshift", $db) or die("Could not select database");
+
+//mysql_query("ALTER TABLE common_strings DROP key string");
+
+$accountID = 0;
+
+if($argc < 2)
+{
+    die("You need to specify an account id or username (usually the email)\n");
+}
+
+if(!is_numeric($argv[1]))
+{
+    //search by username
+    $accountID_query = mysql_query("SELECT id FROM accounts WHERE username = '$argv[1]'") 
+                                   or die ("Query error:" . mysql_error() . "\n");
+
+    if(mysql_num_rows($accountID_query) == 0)
+        die("Account ".$argv[1]." not Found!\n");
+        
+    $accountID = mysql_result($accountID_query, 0, "id");
+}
+else
+{
+    $accountID = $argv[1];
+}
+$account_query = mysql_query("SELECT * FROM accounts WHERE id = '$accountID'") or die ("Query error:" . mysql_error() . "\n");
+
+if(mysql_num_rows($account_query) == 0)
+    die("Account ".$argv[1]." not Found!\n");
+
+$accountData = mysql_fetch_row($account_query);
+echo "\n---------------- CUT HERE -----------------------\n\n";
+
+$accountQueryOutput = dump_sql($accountData, "accounts") . "\n\n";
+
+echo $accountQueryOutput;
+    
+$charactersRows = mysql_query("SELECT * FROM characters WHERE account_id = '$accountID'") or die("Query error:" . mysql_error() . "\n");
+
+if(mysql_num_rows($charactersRows) == 0)
+    die("Account ".$argv[1]." has no characters!\n");
+    
+while($characterRow = mysql_fetch_row($charactersRows))
+{
+    $charactersQueryOutput = dump_sql($characterRow, "characters") . "\n\n";
+    echo $charactersQueryOutput;
+    
+}
+
+    //else
+
+//$scripts = mysql_query("SELECT * from common_strings") or die("fatal error: couldn't select stuff: " . mysql_error() . "\n");
+//while ($row = mysql_fetch_array($scripts))
+//{
+    //$s = mysql_real_escape_string(preg_replace('!^/planeshift/[^/]*/!', '/planeshift/materials/',
+      //                            preg_replace('!^/planeshift/models/\$F/(\$F.*).dds!', '$1', $row['string'])));
+    //if ($s != $row['string'])
+   // {
+     //   echo $row['string'] . " ===> $s\n";
+        //mysql_query("UPDATE common_strings SET string = '$s' WHERE id=" . $row['id']) or die(mysql_error() . "\n");
+    //}*/
+//}
+
+?>
