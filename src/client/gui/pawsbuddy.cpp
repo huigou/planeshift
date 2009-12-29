@@ -75,9 +75,9 @@ void pawsBuddyWindow::OnListAction( pawsListBox* widget, int status )
         if (currentBuddy.IsEmpty())
             return;
 
-        csString title("Tell ");
+        csString title(PawsManager::GetSingleton().Translate("Tell"));
         csString name = GetRealName(currentBuddy);
-        title.Append(name);
+        title.Append(" " + name);
         pawsStringPromptWindow::Create(title, csString(""),
                                        false, 220, 20, this, name);
     }
@@ -164,9 +164,9 @@ bool pawsBuddyWindow::OnButtonReleased( int mouseButton, int keyModifier, pawsWi
             if ( currentBuddy.Length() == 0 )
                 return true;
 
-            csString title("Tell ");
+            csString title(PawsManager::GetSingleton().Translate("Tell"));
             csString name = GetRealName(currentBuddy);
-            title.Append(name);
+            title.Append(" " + name);
             pawsStringPromptWindow::Create(title, csString(""),
                                            false, 220, 20, this, name);
             return true;
@@ -177,14 +177,14 @@ bool pawsBuddyWindow::OnButtonReleased( int mouseButton, int keyModifier, pawsWi
             if ( currentBuddy.Length() == 0 )
                 return true;
 
-            pawsStringPromptWindow::Create("Remove", GetRealName(currentBuddy),
-                                           false, 220, 20, this, "RemoveBuddy" );            
+            pawsStringPromptWindow::Create(PawsManager::GetSingleton().Translate("Remove"), 
+                                            GetRealName(currentBuddy), false, 220, 20, this, "RemoveBuddy" );            
             return true;
         }
         
         case ADD:
         {
-            pawsStringPromptWindow::Create("Add", csString(""),
+            pawsStringPromptWindow::Create(PawsManager::GetSingleton().Translate("Add"), csString(""),
                                            false, 220, 20, this, "AddBuddy");            
             return true;
         }
@@ -198,7 +198,8 @@ bool pawsBuddyWindow::OnButtonReleased( int mouseButton, int keyModifier, pawsWi
             {
                 // Already editing.
                 // Since we store only one name that is being edited, we cannot edit any other names.
-                psSystemMessage err(0, MSG_ERROR, "You are already renaming a buddy.");
+                psSystemMessage err(0, MSG_ERROR, 
+                                   PawsManager::GetSingleton().Translate("You are already renaming a buddy."));
                 err.FireEvent();
                 return true;
             }
@@ -208,8 +209,8 @@ bool pawsBuddyWindow::OnButtonReleased( int mouseButton, int keyModifier, pawsWi
             // buddy while it is edited.
             editBuddy = GetRealName(currentBuddy);
 
-            pawsStringPromptWindow::Create("Rename " + editBuddy, currentBuddy,
-                                           false, 220, 20, this, "EditBuddy");
+            pawsStringPromptWindow::Create(PawsManager::GetSingleton().Translate("Rename") + " " + editBuddy, 
+                                           currentBuddy, false, 220, 20, this, "EditBuddy");
             return true;
         }
     }
@@ -230,7 +231,9 @@ void pawsBuddyWindow::OnStringEntered(const char *name,int param,const char *val
         // Is the new buddy name unique?
         if (!IsUniqueAlias(value))
         {
-            psSystemMessage err(0, MSG_ERROR, "Buddy with the name '%s' already exists.", value);
+            psSystemMessage err(0, MSG_ERROR, " '%s' %s", 
+                                PawsManager::GetSingleton().Translate("Buddy with the name").GetData(),value,
+                                PawsManager::GetSingleton().Translate("already exists.").GetData());
             err.FireEvent();
             return;
         }
@@ -264,8 +267,10 @@ void pawsBuddyWindow::OnStringEntered(const char *name,int param,const char *val
         if (editBuddy.IsEmpty())
         {
             psSystemMessage err(0, MSG_ERROR,
-                                "Buddy with the new name '%s' cannot be found. Perhaps it was removed.",
-                                value);
+                                "%s '%s' %s",
+                                PawsManager::GetSingleton().Translate("Buddy with the new name").GetData(),
+                                value,
+                                PawsManager::GetSingleton().Translate("cannot be found. Perhaps it was removed.").GetData());
             err.FireEvent();
             return;
         }
@@ -380,8 +385,9 @@ void pawsBuddyWindow::ChangeAlias(const csString & name, const csString &oldAlia
     if (!IsUniqueAlias(newAlias))
     {
         psSystemMessage err(0, MSG_ERROR,
-                            "Buddy with the name '%s' already exists.",
-                            newAlias.GetDataSafe());
+                            "%s '%s' %s",
+                            PawsManager::GetSingleton().Translate("Buddy with the name").GetData(), newAlias.GetDataSafe(),
+                            PawsManager::GetSingleton().Translate("already exists.").GetData());
         err.FireEvent();
         return;
     }
@@ -408,8 +414,10 @@ void pawsBuddyWindow::ChangeAlias(const csString & name, const csString &oldAlia
     {
         // Old alias not found, perhaps the buddy was removed from the list
         psSystemMessage err(0, MSG_ERROR,
-                            "Buddy with the name '%s' cannot be found. Perhaps it was removed.",
-                            name.GetDataSafe());
+                            "%s '%s' %s",
+                            PawsManager::GetSingleton().Translate("Buddy with the name").GetData(),
+                            name.GetDataSafe(), 
+                            PawsManager::GetSingleton().Translate("cannot be found. Perhaps it was removed.").GetData());
         err.FireEvent();
 
         return;

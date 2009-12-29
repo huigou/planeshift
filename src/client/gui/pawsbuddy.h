@@ -28,6 +28,11 @@
 
 class pawsListBox;
 
+
+/** Prefix for the files which contain the aliases for the buddies.
+ *  The format is aliases_charname.xml and it's used to substituite the
+ *  names in the buddy list with user choices.
+ */
 #define ALIASES_FILE_PREFIX       "/planeshift/userdata/aliases_"
 
 
@@ -40,6 +45,10 @@ public:
     pawsBuddyWindow();
 
     bool PostSetup();
+    
+    /** Handles the messages this widget has subscribed to.
+     *  @param me: msgentry containing the message
+     */
     void HandleMessage( MsgEntry* me );
 
     bool OnButtonReleased( int mouseButton, int keyModifier, pawsWidget* widget );
@@ -51,34 +60,58 @@ public:
     virtual void OnResize();
 
 private:
+    ///pointer to the listbox widget used for the buddy list
     pawsListBox* buddyList;  
 
     /// Name of the currently selected buddy (NB! alias, not the real name)
     csString currentBuddy;
+    
+    /// Pointer to the chat window widget, used to subscribe the names in there
     pawsChatWindow* chatWindow;
 
     /// Real name of the buddy that is being edited
     csString editBuddy;
 
+    /// List of the buddies who are online. Used to populate the buddy list.
     csStringArray onlineBuddies;
+    /// List of the buddies who are offline. Used to populate the buddy list.
     csStringArray offlineBuddies;
 
     /// Alias/name table
     csHash<csString, csString> aliases;
 
-    /// Returns the alias for the name or the name itself if there is no alias for it.
+    /** Returns the alias for the name or the name itself if there is no alias for it.
+     *  
+     *  @param name The name which will be searched for an alias.
+     *  @return The same name if it wasn't found else the alias of it.
+     */
     csString GetAlias(const csString & name) const;
 
-    /// Reverse (slow) search for the real name.
+    /** Reverse (slow) search for the real name.
+     * 
+     *  @param alias The alias of which we are searching the original name.
+     *  @return the real name if found else the provided alias.
+     */
     csString GetRealName(const csString & alias) const;
 
-    /// Loads aliases from the xml file.
+    /** Loads aliases from the xml file.
+     *  
+     * @param charName The name of the current player's character.
+     */
     void LoadAliases(const csString & charName);
 
-    /// Saves aliases to the xml file.
+    /** Saves aliases to the xml file.
+     * 
+     *  @param charName The name of the current player's character.
+     */
     void SaveAliases(const csString & charName) const;
 
-    /// Changes the alias for the given name.
+    /** Changes the alias for the given name.
+     *  
+     *  @param name The name of the buddy.
+     *  @param oldAlias The previous alias of the buddy.
+     *  @param newAliad The new alias of the buddy.
+     */
     void ChangeAlias(const csString & name, const csString & oldAlias, const csString & newAlias);
 
     /**
@@ -91,7 +124,9 @@ private:
 
     /**
      * Verifies that the alias is unique
-     * @return True if the alias is unique
+     * 
+     * @param alias: The alias to be verified for uniqueness.
+     * @return True if the alias is unique.
      */
     bool IsUniqueAlias(const csString & alias) const;
 
