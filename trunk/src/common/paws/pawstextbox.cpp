@@ -738,64 +738,64 @@ void pawsMessageTextBox::FullScroll()
 
 }
 
-void pawsMessageTextBox::SplitMessage( const char* newText, int colour, int size, MessageLine*& msgLine, int& x)
+void pawsMessageTextBox::SplitMessage( const char* newText, int colour, int size, MessageLine*& msgLine, int& startPosition)
 {
     if(!newText)
       return;
 
     if(strlen(newText) == 0)
     {
-    	if(x > 0)
-    		return;
-        msgLine = new MessageLine;
-        msgLine->size = size;
-        msgLine->text = newText;
-        msgLine->colour = colour;
-        adjusted.Push( msgLine );
+    	if(startPosition > 0)
+		{
+	   		return;
+		}
+		msgLine = new MessageLine;
+		msgLine->size = size;
+		msgLine->text = newText;
+		msgLine->colour = colour;
+		adjusted.Push( msgLine );
     }
     else if (newText[0] != '\0')
-    {    
-        
-        char* dummy = new char[strlen( newText ) + 1];
-        char* head = dummy;
-    
-        strcpy( dummy, newText );
+    {
+		csString stringBuffer;
+		stringBuffer.Append(newText);
 
-        while ( dummy )
+        while ( !stringBuffer.IsEmpty() )
         {
-        	int offSet = 20;
+        	static const int INITOFFSET = 20;
+        	int offSet = INITOFFSET;
         	int width = -1;
         	int height = -1;
             /// See how many characters can be drawn on a single line.             
-        	if (x != -1)
+        	if (startPosition != -1)
         	{
-        		GetFont()->GetDimensions(dummy, width, height);
-        		offSet += x;
+        		GetFont()->GetDimensions(stringBuffer.GetData(), width, height);
+        		offSet += startPosition;
         	}
-            int canDrawLength =  GetFont()->GetLength( dummy, screenFrame.Width()-offSet );
+            int canDrawLength =  GetFont()->GetLength( stringBuffer.GetData(), screenFrame.Width()-offSet );
             CS_ASSERT_MSG("iFont->GetLength returned 0.  Infinite loop detected.", canDrawLength != 0);
 
             /// If it can fit the entire string then return.
-            if ( canDrawLength == (int)strlen( dummy ) )
+            if ( canDrawLength == stringBuffer.Length() )
             {
             	if(!msgLine)
             	{
             		msgLine = new MessageLine;
                     msgLine->size = size;
-                    msgLine->text = dummy;
+                    msgLine->text = stringBuffer;
                     msgLine->colour = colour;
             		adjusted.Push( msgLine );
             	}
-            	if(x != -1)
+            	if(startPosition != -1)
             	{
             		MessageSegment seg;
             		seg.size = size;
-            		seg.text = dummy;
+            		seg.text = stringBuffer;
             		seg.colour = colour;
-            		seg.x = x;
+            		seg.x = startPosition;
             		msgLine->text.Clear();
             		msgLine->segments.Push(seg);
-            		x += width;
+            		startPosition += width;
             	}
                 break;
             }
@@ -805,44 +805,62 @@ void pawsMessageTextBox::SplitMessage( const char* newText, int colour, int size
                 // Find out the nearest white space to break the line. 
                 int index = canDrawLength;
                 
-                while ( index > 0 && dummy[index] != ' ' )
+                while ( index > 0 && stringBuffer.GetAt(index) != ' ' )
                 {
                     index--;
                 }   
                 if (index == 0)
                 {
-                    index = canDrawLength;
+					int firstSpace = stringBuffer.FindFirst(' ');
+					int widthNeeded = 0;
+					int heightDoNotCare = 0;
+					csString firstWord;
+					if( firstSpace <= 0 )
+					{
+						firstWord.Append(stringBuffer);
+					}
+					else
+					{
+						firstWord.Append( stringBuffer, firstSpace);
+					}
+
+					GetFont()->GetDimensions (firstWord.GetData(), widthNeeded, heightDoNotCare);
+					if(widthNeeded <= screenFrame.Width()-INITOFFSET)
+					{
+						index = 0;
+					}
+					else
+					{
+	                    index = canDrawLength;
+					}
                 }                    
-            
                 // Index now points to the whitespace line so we can break it here.
-                csString test;
-                test.Append( dummy, index );
-                dummy+=index;        
+                csString processedString;
+                processedString.Append( stringBuffer, index );
+                stringBuffer.DeleteAt(0,index);
             	if(!msgLine)
             	{
             		msgLine = new MessageLine;
                     msgLine->size = size;
-                    msgLine->text = test;
+                    msgLine->text = processedString;
                     msgLine->colour = colour;
                     adjusted.Push( msgLine );   
             	}
-            	if(x != -1)
+            	if(startPosition != -1)
             	{
             		MessageSegment seg;
             		seg.size = size;
-            		seg.text = test;
+            		seg.text = processedString;
             		seg.colour = colour;
-            		seg.x = x;
+            		seg.x = startPosition;
             		msgLine->segments.Push(seg);
-            		x = 0;
+            		startPosition = 0;
             	}
                 // Next time use a new line!
                 msgLine = NULL;
             }
         }
         
-        //ChangeFontSize(oldSize);
-        delete [] head;        
     }        
 }
 
