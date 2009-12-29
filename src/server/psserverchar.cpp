@@ -350,12 +350,27 @@ void ServerCharManager::HandleInventoryMessage(MsgEntry* me,Client *client)
         case psGUIInventoryMessage::UPDATE_REQUEST:
         {
             csString status;
-            status.Format("Handled Inventory message request clientnum %u", fromClientNumber);
+            status.Format("Handled inventory message request clientnum %u", fromClientNumber);
 
             if(LogCSV::GetSingletonPtr())
                 LogCSV::GetSingleton().Write(CSV_STATUS, status);
             
-            SendInventory(fromClientNumber, (static_cast<psGUIInventoryMessage::commands>(incoming.command)==psGUIInventoryMessage::UPDATE_REQUEST));
+            // FIXME: Ugly hack here as a temporary workaround for client-side issue that causes the server
+            // to be flooded with inventory requests. Remove after all clients have been updated
+            // to stop flooding.
+            csTicks currentTime = csGetTicks();
+            // Send an inventory message maximum once per 250 ticks (0.25 seconds).
+            if(!client->lastInventorySend || client->lastInventorySend + 250 < currentTime)
+            {    
+            	client->lastInventorySend = currentTime;
+            	SendInventory(fromClientNumber, (static_cast<psGUIInventoryMessage::commands>(incoming.command)==psGUIInventoryMessage::UPDATE_REQUEST));
+            }
+            else
+            {
+            	status.Format("Ignored inventory request message.");
+                if(LogCSV::GetSingletonPtr())
+                    LogCSV::GetSingleton().Write(CSV_STATUS, status);
+            }
             break;
         }
     }
