@@ -35,11 +35,11 @@ function dump_sql_rows($query, $tableName, $dumpFirstColumn = TRUE)
 function getAccountIDFromName($username)
 {
     //search by username
-    $accountID_query = mysql_query("SELECT id FROM accounts WHERE username = '$argv[1]'") 
+    $accountID_query = mysql_query("SELECT id FROM accounts WHERE username = '$username'") 
                                    or die ("Query error:" . mysql_error() . "\n");
 
     if(mysql_num_rows($accountID_query) == 0)
-        die("Account ".$argv[1]." not Found!\n");
+        die("Account ".$username." not Found!\n");
         
     return mysql_result($accountID_query, 0, "id");
 }
