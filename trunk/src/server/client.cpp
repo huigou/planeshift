@@ -69,6 +69,8 @@ Client::Client ()
     detectedCheatCount = 0;
 
     nextFloodHistoryIndex = 0;
+    
+    lastInventorySend = 0;
 
     isAdvisor           = false;
     isFrozen            = false;

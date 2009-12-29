@@ -365,6 +365,12 @@ public:
 	/// Get the channel to use for an ordered message
 	OrderedMessageChannel * GetOrderedMessageChannel(msgtype mtype);
 	
+    // FIXME: Ugly hack here as a temporary workaround for client-side issue that causes the server
+	// to be flooded with inventory requests. Remove after all clients have been updated
+	// to stop flooding.
+    csTicks lastInventorySend;
+
+	
 protected:
 
     /**
@@ -426,7 +432,7 @@ protected:
     bool lastInviteResult;
     bool hasBeenWarned;
     bool hasBeenPenalized;
-
+   
     // Path edit global vars for client
     csString waypointPathName;
     int waypointPathIndex;
