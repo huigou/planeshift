@@ -430,9 +430,43 @@ public:
     void StartSound();
     void Stop() { stream.SetVolume(0.0f); isPlaying = false; }
 
+    /** Checks if this object doesn't have a special time defined.
+     *  This is used to determine if the object doesn't have a special
+     *  time of the day which would be more appropriate for it's playback.
+     *  To define an element of this type just set TIME in the sound xml
+     *  file to -1
+     * 
+     *  @note This is a special case and can be also obtained with the MatchTime method.
+     *  @return TRUE if the element doesn't have a specific time declared.
+     */
     bool HasNoTime() { return (timeOfDay == -1); }
+    
+    /** Checks if the object has a special time declared and checks if the
+     *  time corresponds to the requested one.
+     * 
+     *  @param time The current time from 0 to 24
+     *  @return TRUE if the object has a time defined and matches the provided one
+     */
     bool MatchTime( int time );
+    
+    /** Checks if the object doesn't have a weather condition defined.
+     *  This is used to determine if the object doesn't have a special time
+     *  of the daty which would be more appropriate for it's playback.
+     *  To define an element of this type just set WEATHER in the sound xml
+     *  file to -1
+     * 
+     *  @note This is a special case and can be also obtained with the MatchWeather method.
+     *  @return TRUE if the element doesn't have a specific time declared.
+     */
     bool HasNoWeather() { return (weatherCondition == -1); }
+    
+    /** Checks if the object has a special weather condition declared and checks
+     *  if it corresponds with the provided weather condition.
+     *  
+     *  @see #WeatherConditions
+     *  @param weather The current weather as defined in the #WeatherCondition enumeration.
+     *  @return TRUE if the object has a weather defined and matches the provided weather condition.
+     */
     bool MatchWeather( int weather ) { return weatherCondition == weather; }
     
     
@@ -633,6 +667,11 @@ public:
     psSectorSoundManager* GetPendingSoundSector(const char* name);
     psSectorSoundManager* GetOrCreateSector(const char* name); // Creates a pending sector if it's not found
     int TriggerStringToInt(const char* str);
+
+    /** Gets a random number from 0 to the value passed to the function.
+     *  @param max The maximum value which could be returned.
+     *  @return a random value from 0 to the value of max.
+     */
     size_t GetRandomNumber(size_t max) { return randomGen.Get(max); }
 
 
