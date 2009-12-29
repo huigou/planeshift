@@ -58,7 +58,7 @@ enum SoundEvent
     SOUND_EVENT_WEATHER = 1
 };
 
-/*  Notes on class structure:
+/**  Notes on class structure:
  *
  *  psSoundManager is the top level interface from PlaneShift.
  *  psMapSoundSystem handles only sounds dealing with maps and sectors.  It contains a list of active Songs, Ambients and Emitters
@@ -119,8 +119,8 @@ public:
     virtual csRef<iSndSysSource> StartGUISound(const char* name,bool loop = iSoundManager::NO_LOOP);
     virtual csRef<iSndSysSource> StartVoiceSound(const char* name,bool loop = iSoundManager::NO_LOOP);
 
-    // This one should not be used. I'm leaving it in only because... I'm using it inside the class :-).
-    // And you can insist on controlling volume.
+    /// This one should not be used. I'm leaving it in only because... I'm using it inside the class :-).
+    /// And you can insist on controlling volume.
     virtual csRef<iSndSysSource> StartSound(const char* name,float volume,bool loop = iSoundManager::NO_LOOP);
 
     /** Change the current song to use as the background
@@ -185,7 +185,7 @@ public:
     void Update( csVector3 pos );
 
 
-    /** Update the listner.  This is to update the sound renderer to indicate
+    /** Update the listener.  This is to update the sound renderer to indicate
       * that the player ( ie the listener ) has changed positions. This in turn
       * will adjust the volume of any 3D sounds that are playing.
       *
@@ -207,25 +207,25 @@ public:
     void UpdateWeather(int weather);
 
 
-	/* This is the iSndSysRendererCallback interface */
-	void StreamAddNotification(iSndSysStream *pStream);
-	void StreamRemoveNotification(iSndSysStream *pStream);
-	void SourceAddNotification(iSndSysSource *pSource);
-	void SourceRemoveNotification(iSndSysSource *pSource);
+    /* This is the iSndSysRendererCallback interface */
+    void StreamAddNotification(iSndSysStream *pStream);
+    void StreamRemoveNotification(iSndSysStream *pStream);
+    void SourceAddNotification(iSndSysSource *pSource);
+    void SourceRemoveNotification(iSndSysSource *pSource);
 
 
 
 private:
 
     csRef<iConfigManager>   cfgmgr;
-	/// This array holds the currently playing voice file, plus any in queue, in order.
-	csStringArray voicingQueue;
+    /// This array holds the currently playing voice file, plus any in queue, in order.
+    csStringArray voicingQueue;
 
-	/// This reference holds the current source, so the callback can know when to play the next voice
-	/// while other sounds are playing.
-	csRef<iSndSysSource> currentVoiceSource;
-    
-	bool soundEnabled;
+    /// This reference holds the current source, so the callback can know when to play the next voice
+    /// while other sounds are playing.
+    csRef<iSndSysSource> currentVoiceSource;
+
+    bool soundEnabled;
     bool musicEnabled;
     bool ambientEnabled;
     bool actionsEnabled;
@@ -240,7 +240,7 @@ private:
     float guiVolume;
     float voicesVolume;
 
-    bool musicCombat; //This is used for determining if the character is fighting (true), or not (false).
+    bool musicCombat; ///< This is used for determining if the character is fighting (true), or not (false).
 
     const char* overSongName;
 
@@ -293,7 +293,7 @@ private:
     // Current sound managers for sectors.
     psSectorSoundManager* currentSoundSector;
     psSectorSoundManager* lastSoundSector;
-    psSectorSoundManager* lastlastSoundSector;//This is just for safety.
+    psSectorSoundManager* lastlastSoundSector; ///< This is just for safety.
 
     psSoundObject* backgroundSong;
 
@@ -312,15 +312,16 @@ private:
     /// The current volume of the BG song fading in.
     float fadeInVolume;
 
-    // Current meshes already registered as emitters.
+    /// Current meshes already registered as emitters.
     csSet<iMeshWrapper*>  registered;
 
+    /// Pointer to the mapSoundSystem used to reference it.
     psMapSoundSystem* mapSoundSystem;
 
     /// Set to true once the "permanent" settings of the listener have been set
     bool ListenerInitialized;
 
-    // path to the soundlib xml file
+    /// path to the soundlib xml file
     csString soundLib;
 };
 
@@ -361,7 +362,7 @@ public:
     csRef<SOUND_SOURCE3D_TYPE> GetSource3D();
 
     bool IsValid() { return soundSource.IsValid(); }
-    
+
     size_t GetPlayPos() { return soundStream->GetPosition(); }
     size_t SetPlayPos(size_t position) { soundStream->SetPosition(position); }
 };
@@ -435,41 +436,41 @@ public:
      *  time of the day which would be more appropriate for it's playback.
      *  To define an element of this type just set TIME in the sound xml
      *  file to -1
-     * 
+     *
      *  @note This is a special case and can be also obtained with the MatchTime method.
      *  @return TRUE if the element doesn't have a specific time declared.
      */
     bool HasNoTime() { return (timeOfDay == -1); }
-    
+
     /** Checks if the object has a special time declared and checks if the
      *  time corresponds to the requested one.
-     * 
+     *
      *  @param time The current time from 0 to 24
      *  @return TRUE if the object has a time defined and matches the provided one
      */
     bool MatchTime( int time );
-    
+
     /** Checks if the object doesn't have a weather condition defined.
      *  This is used to determine if the object doesn't have a special time
      *  of the daty which would be more appropriate for it's playback.
      *  To define an element of this type just set WEATHER in the sound xml
      *  file to -1
-     * 
+     *
      *  @note This is a special case and can be also obtained with the MatchWeather method.
      *  @return TRUE if the element doesn't have a specific time declared.
      */
     bool HasNoWeather() { return (weatherCondition == -1); }
-    
+
     /** Checks if the object has a special weather condition declared and checks
      *  if it corresponds with the provided weather condition.
-     *  
+     *
      *  @see #WeatherConditions
      *  @param weather The current weather as defined in the #WeatherCondition enumeration.
      *  @return TRUE if the object has a weather defined and matches the provided weather condition.
      */
     bool MatchWeather( int weather ) { return weatherCondition == weather; }
-    
-    
+
+
 
     float Volume() { return currentVolume * ambientVolume;}
     void SetVolume(float vol);
@@ -496,7 +497,7 @@ public:
 
     /** Set the value of loop **/
     void SetLooping(bool looping) {loop = looping;}
-    
+
     size_t GetPlayPos() { return stream.GetPlayPos(); }
     size_t SetPlayPos(size_t position) { stream.SetPlayPos(position); }
 
@@ -567,9 +568,9 @@ public:
      * @param newTime The new time of day.
      */
     void ChangeTime( int newTime );
-    
+
     /** Sets a new Background Song.
-     * 
+     *
      * @param song: the song to set as background song for this sector
      */
     void SetBGSong(psSoundObject* song);
@@ -610,7 +611,7 @@ private:
     csPDelArray<psSoundObject> ambient;
     csPDelArray<psSoundObject> emitters;
 
-    csArray<psSoundObject*>    weatherNotify; // Objects to call when we get weather event
+    csArray<psSoundObject*>    weatherNotify; ///< Objects to call when we get weather event
 
     psSoundObject* mainBG;
 
