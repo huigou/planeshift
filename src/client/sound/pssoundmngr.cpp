@@ -142,32 +142,32 @@ bool psSoundManager::Initialize(iObjectRegistry* objectReg)
 
 void psSoundManager::StreamAddNotification(iSndSysStream *pStream)
 {
-//	printf("StreamAdd Notification\n");
+//  printf("StreamAdd Notification\n");
 }
 void psSoundManager::StreamRemoveNotification(iSndSysStream *pStream)
 {
-//	printf("StreamRemove Notification\n");
+//  printf("StreamRemove Notification\n");
 }
 
 void psSoundManager::SourceAddNotification(iSndSysSource *pSource)
 {
-//	printf("SourceAdd Notification\n");
+//  printf("SourceAdd Notification\n");
 }
 
 void psSoundManager::SourceRemoveNotification(iSndSysSource *pSource)
 {
-//	printf("SourceRemove Notification\n");
-	if (currentVoiceSource && currentVoiceSource == pSource)
-	{
-//		printf("Voice file ended.  Checking for another.\n");
-		voicingQueue.DeleteIndex(0);
+//  printf("SourceRemove Notification\n");
+    if (currentVoiceSource && currentVoiceSource == pSource)
+    {
+//      printf("Voice file ended.  Checking for another.\n");
+        voicingQueue.DeleteIndex(0);
 
-		if (voicingQueue.GetSize() > 0)
-		{
-//			printf("Playing next voice file.\n");
-			currentVoiceSource = StartSound(voicingQueue.Get(0),voicesVolume,false);
-		}
-	}
+        if (voicingQueue.GetSize() > 0)
+        {
+//          printf("Playing next voice file.\n");
+            currentVoiceSource = StartSound(voicingQueue.Get(0),voicesVolume,false);
+        }
+    }
 }
 
 
@@ -259,11 +259,11 @@ bool psSoundManager::Setup()
         return false;
     }
 
-	if (!soundSystem->RegisterCallback(this))
-	{
-		Error1("Couldn't register iSndSysRenderer callback");
-		return false;
-	}
+    if (!soundSystem->RegisterCallback(this))
+    {
+        Error1("Couldn't register iSndSysRenderer callback");
+        return false;
+    }
 
     return true;
 }
@@ -295,19 +295,19 @@ csRef<iSndSysSource> psSoundManager::StartGUISound(const char* name,bool loop)
 csRef<iSndSysSource> psSoundManager::StartVoiceSound(const char* name,bool loop)
 {
     if (!voicesEnabled)
-		return NULL;
-	
-	voicingQueue.Push(name);
+        return NULL;
 
-	if (voicingQueue.GetSize() == 1) // this is the only voice file
-	{
-	    currentVoiceSource = StartSound(name,voicesVolume,loop);
-		return currentVoiceSource;
-	}
-	else
-	{
-		return NULL;
-	}
+    voicingQueue.Push(name);
+
+    if (voicingQueue.GetSize() == 1) // this is the only voice file
+    {
+        currentVoiceSource = StartSound(name,voicesVolume,loop);
+        return currentVoiceSource;
+    }
+    else
+    {
+        return NULL;
+    }
 }
 
 csRef<iSndSysSource> psSoundManager::StartActionsSound(const char* name,bool loop)
@@ -892,31 +892,31 @@ psMapSoundSystem::psMapSoundSystem( psSoundManager* mngr, iObjectRegistry* objec
 
 psMapSoundSystem::~psMapSoundSystem()
 {
-	csHash<psSectorSoundManager*, csString>::GlobalIterator iter(sectors.GetIterator());
+    csHash<psSectorSoundManager*, csString>::GlobalIterator iter(sectors.GetIterator());
 
     while(iter.HasNext())
     {
-    	psSectorSoundManager* sect = iter.Next();
-    	delete sect;
+        psSectorSoundManager* sect = iter.Next();
+        delete sect;
     }
 }
 
 
 void psMapSoundSystem::EnableMusic( bool enable )
 {
-	csHash<psSectorSoundManager*, csString>::GlobalIterator iter(sectors.GetIterator());
+    csHash<psSectorSoundManager*, csString>::GlobalIterator iter(sectors.GetIterator());
 
     while(iter.HasNext())
     {
-    	psSectorSoundManager* sect = iter.Next();
-    	sect->Music( enable );
+        psSectorSoundManager* sect = iter.Next();
+        sect->Music( enable );
     }
 }
 
 
 void psMapSoundSystem::EnableSounds( bool enable )
 {
-	csHash<psSectorSoundManager*, csString>::GlobalIterator iter(sectors.GetIterator());
+    csHash<psSectorSoundManager*, csString>::GlobalIterator iter(sectors.GetIterator());
     Fade_Direction dir;
 
     if  ( enable )
@@ -926,7 +926,7 @@ void psMapSoundSystem::EnableSounds( bool enable )
 
     while(iter.HasNext())
     {
-    	psSectorSoundManager* sect = iter.Next();
+        psSectorSoundManager* sect = iter.Next();
         sect->Sounds( enable );
     }
 }
