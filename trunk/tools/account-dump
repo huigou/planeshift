@@ -7,16 +7,26 @@ mysql_select_db("planeshift", $db) or die("Could not select database");
 
 /* helper functions */
 
+/** Executes an sql statement and returns it's return.
+ *  
+ *  @param query Sql query to execute
+ *  @return the result of the executed sql query
+ */
+function execute_sql($query)
+{
+    return mysql_query($query) or die("Query error:" . mysql_error() . "\n");
+}
+
 /**
  * Dumps the sql of a row taking all entries.
  * It works generically with all the possible rows.
  *
- * @params tableArray An array containing the table row to parse.
- * @params tableName The name of the table containing this array, used
+ * @param tableArray An array containing the table row to parse.
+ * @param tableName The name of the table containing this array, used
  *                   for preparing the string.
- * @params dumpFirstColumn If False will substituite the first column value with 0.
+ * @param dumpFirstColumn If False will substituite the first column value with 0.
  *                         Usually used for id auto increment use with mysql.
- * @returns a string with a single insert statement
+ * @return a string with a single insert statement
  */
 function dump_sql($tableArray, $tableName, $dumpFirstColumn = TRUE)
 {
@@ -48,7 +58,7 @@ function dump_sql($tableArray, $tableName, $dumpFirstColumn = TRUE)
 function dump_sql_rows($query, $tableName, $dumpFirstColumn = TRUE)
 {
     $queryOutput = "";
-    $queryRows = mysql_query($query) or die("Query error:" . mysql_error() . "\n");
+    $queryRows = execute_sql($query);
     while($queryRow = mysql_fetch_row($queryRows))
     {
         $queryOutput .= dump_sql($queryRow, $tableName, $dumpFirstColumn) . "\n";
@@ -65,8 +75,7 @@ function dump_sql_rows($query, $tableName, $dumpFirstColumn = TRUE)
 function getAccountIDFromName($username)
 {
     //search by username
-    $accountID_query = mysql_query("SELECT id FROM accounts WHERE username = '$username'")
-                                   or die ("Query error:" . mysql_error() . "\n");
+    $accountID_query = execute_sql("SELECT id FROM accounts WHERE username = '$username'");
 
     if(mysql_num_rows($accountID_query) == 0)
         die("Account ".$username." not Found!\n");
@@ -94,7 +103,7 @@ else
 
 
 //dump the account statement
-$account_query = mysql_query("SELECT * FROM accounts WHERE id = '$accountID'") or die ("Query error:" . mysql_error() . "\n");
+$account_query = execute_sql("SELECT * FROM accounts WHERE id = '$accountID'"));
 
 if(mysql_num_rows($account_query) == 0)
     die("Account ".$argv[1]." not Found!\n");
@@ -107,7 +116,7 @@ $accountQueryOutput = dump_sql($accountData, "accounts") . "\n\n";
 echo $accountQueryOutput;
 
 //dump the characters
-$charactersRows = mysql_query("SELECT * FROM characters WHERE account_id = '$accountID'") or die("Query error:" . mysql_error() . "\n");
+$charactersRows = execute_sql("SELECT * FROM characters WHERE account_id = '$accountID'");
 
 if(mysql_num_rows($charactersRows) == 0)
     die("Account ".$argv[1]." has no characters!\n");
