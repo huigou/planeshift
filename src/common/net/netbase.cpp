@@ -243,7 +243,7 @@ bool NetBase::CheckIn()
     pkt.AttachNew(new psNetPacketEntry( bufpacket, 
             connection ? connection->clientnum : 0, packetlen));
     
-    if(randomgen->Get() < TEST_PACKETLOSS)
+    if(TEST_PACKETLOSS > 0.0 && randomgen->Get() < TEST_PACKETLOSS)
     {
 		psNetPacket* packet = pkt->packet;
 		int type = 0;
