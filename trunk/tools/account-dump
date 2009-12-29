@@ -76,8 +76,12 @@ while($characterRow = mysql_fetch_row($charactersRows))
     printf(dump_sql_rows("SELECT * FROM character_quests where player_id = '$characterID'", "character_quests"));
     //dump character skills
     printf(dump_sql_rows("SELECT * FROM character_skills where character_id = '$characterID'", "character_skills"));
-
-    
+    //dump character traits
+    printf(dump_sql_rows("SELECT * FROM character_traits where character_id = '$characterID'", "character_traits"));
+    //dump player spells
+    printf(dump_sql_rows("SELECT * FROM player_spells where player_id = '$characterID'", "player_spells"));
+    //dump items
+    printf(dump_sql_rows("SELECT * FROM item_instances where char_id_owner = '$characterID'", "item_instances"));
 }
 
 ?>
