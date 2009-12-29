@@ -205,7 +205,7 @@ protected:
     
     //void AdjustMessages();
     
-    void SplitMessage( const char* newText, int colour, int size, MessageLine*& msgLine, int& offsetX );
+    void SplitMessage( const char* newText, int colour, int size, MessageLine*& msgLine, int& startPosition );
 
     /// Calculates value of the lineHeight attribute
     void CalcLineHeight();
