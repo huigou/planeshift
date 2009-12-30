@@ -738,130 +738,111 @@ void pawsMessageTextBox::FullScroll()
 
 }
 
-void pawsMessageTextBox::SplitMessage( const char* newText, int colour, int size, MessageLine*& msgLine, int& startPosition)
+void pawsMessageTextBox::SplitMessage(const char* newText, int colour,
+        int size, MessageLine*& msgLine, int& startPosition)
 {
-    if(!newText)
-      return;
+    csString stringBuffer = newText;
 
-    if(strlen(newText) == 0)
+    if (stringBuffer.IsEmpty())
     {
-    	if(startPosition > 0)
-		{
-	   		return;
-		}
-		msgLine = new MessageLine;
-		msgLine->size = size;
-		msgLine->text = newText;
-		msgLine->colour = colour;
-		adjusted.Push( msgLine );
+        return;
     }
-    else if (newText[0] != '\0')
+
+    static const int INITOFFSET = 20;
+    while (!stringBuffer.IsEmpty())
     {
-		csString stringBuffer;
-		stringBuffer.Append(newText);
-
-        while ( !stringBuffer.IsEmpty() )
+        int offSet = INITOFFSET;
+        int width = -1;
+        int height = -1;
+        /// See how many characters can be drawn on a single line.
+        if (startPosition != -1)
         {
-        	static const int INITOFFSET = 20;
-        	int offSet = INITOFFSET;
-        	int width = -1;
-        	int height = -1;
-            /// See how many characters can be drawn on a single line.             
-        	if (startPosition != -1)
-        	{
-        		GetFont()->GetDimensions(stringBuffer.GetData(), width, height);
-        		offSet += startPosition;
-        	}
-            int canDrawLength =  GetFont()->GetLength( stringBuffer.GetData(), screenFrame.Width()-offSet );
-            CS_ASSERT_MSG("iFont->GetLength returned 0.  Infinite loop detected.", canDrawLength != 0);
+            GetFont()->GetDimensions(stringBuffer.GetData(), width, height);
+            offSet += startPosition;
+        }
+        int canDrawLength = GetFont()->GetLength(stringBuffer.GetData(),
+                screenFrame.Width() - offSet);
 
-            /// If it can fit the entire string then return.
-            if ( canDrawLength == stringBuffer.Length() )
+        /// If it can fit the entire string then return.
+        if (canDrawLength == stringBuffer.Length())
+        {
+            if (!msgLine)
             {
-            	if(!msgLine)
-            	{
-            		msgLine = new MessageLine;
-                    msgLine->size = size;
-                    msgLine->text = stringBuffer;
-                    msgLine->colour = colour;
-            		adjusted.Push( msgLine );
-            	}
-            	if(startPosition != -1)
-            	{
-            		MessageSegment seg;
-            		seg.size = size;
-            		seg.text = stringBuffer;
-            		seg.colour = colour;
-            		seg.x = startPosition;
-            		msgLine->text.Clear();
-            		msgLine->segments.Push(seg);
-            		startPosition += width;
-            	}
-                break;
+                msgLine = new MessageLine;
+                msgLine->size = size;
+                msgLine->text = stringBuffer;
+                msgLine->colour = colour;
+                adjusted.Push(msgLine);
             }
-            // We have to push in a new line to the lines bit.
+
+            if (startPosition != -1)
+            {
+                MessageSegment seg;
+                seg.size = size;
+                seg.text = stringBuffer;
+                seg.colour = colour;
+                seg.x = startPosition;
+                msgLine->text.Clear();
+                msgLine->segments.Push(seg);
+                startPosition += width;
+            }
+            break;
+        }
+        else // We have to push in a new line to the lines bit.
+        {
+            // Find out the nearest white space to break the line.
+            int breakPoint = stringBuffer.FindLast(' ', canDrawLength - 1);
+            int spaceAfterBreak = stringBuffer.FindFirst(' ', breakPoint + 1);
+            csString wordAfterBreak;
+            int wordLength = spaceAfterBreak - breakPoint;
+            width = 0;
+            height = 0;
+
+            if (spaceAfterBreak == -1)
+            {
+                stringBuffer.SubString(wordAfterBreak, breakPoint + 1);
+            }
             else
             {
-                // Find out the nearest white space to break the line. 
-                int index = canDrawLength;
-                
-                while ( index > 0 && stringBuffer.GetAt(index) != ' ' )
-                {
-                    index--;
-                }   
-                if (index == 0)
-                {
-					int firstSpace = stringBuffer.FindFirst(' ');
-					int widthNeeded = 0;
-					int heightDoNotCare = 0;
-					csString firstWord;
-					if( firstSpace <= 0 )
-					{
-						firstWord.Append(stringBuffer);
-					}
-					else
-					{
-						firstWord.Append( stringBuffer, firstSpace);
-					}
-
-					GetFont()->GetDimensions (firstWord.GetData(), widthNeeded, heightDoNotCare);
-					if(widthNeeded <= screenFrame.Width()-INITOFFSET)
-					{
-						index = 0;
-					}
-					else
-					{
-	                    index = canDrawLength;
-					}
-                }                    
-                // Index now points to the whitespace line so we can break it here.
-                csString processedString;
-                processedString.Append( stringBuffer, index );
-                stringBuffer.DeleteAt(0,index);
-            	if(!msgLine)
-            	{
-            		msgLine = new MessageLine;
-                    msgLine->size = size;
-                    msgLine->text = processedString;
-                    msgLine->colour = colour;
-                    adjusted.Push( msgLine );   
-            	}
-            	if(startPosition != -1)
-            	{
-            		MessageSegment seg;
-            		seg.size = size;
-            		seg.text = processedString;
-            		seg.colour = colour;
-            		seg.x = startPosition;
-            		msgLine->segments.Push(seg);
-            		startPosition = 0;
-            	}
-                // Next time use a new line!
-                msgLine = NULL;
+                stringBuffer.SubString(wordAfterBreak, breakPoint + 1,
+                        wordLength);
             }
+
+            GetFont()->GetDimensions(wordAfterBreak.GetData(), width, height);
+
+            csString processedString;
+            if (width <= screenFrame.Width() - INITOFFSET)
+            {
+                processedString.Append(stringBuffer, breakPoint + 1);
+                stringBuffer.DeleteAt(0, breakPoint + 1);
+            }
+            else
+            {
+                processedString.Append(stringBuffer, canDrawLength);
+                stringBuffer.DeleteAt(0, canDrawLength);
+            }
+            if (!msgLine)
+            {
+                msgLine = new MessageLine;
+                msgLine->size = size;
+                msgLine->text = processedString;
+                msgLine->colour = colour;
+                adjusted.Push(msgLine);
+            }
+            if (startPosition != -1)
+            {
+                MessageSegment seg;
+                seg.size = size;
+                seg.text = processedString;
+                seg.colour = colour;
+                seg.x = startPosition;
+                msgLine->segments.Push(seg);
+                startPosition = 0;
+            }
+            // Next time use a new line!
+            msgLine = NULL;
         }
-        
-    }        
+    }
 }
 
 bool pawsMessageTextBox::OnScroll( int direction, pawsScrollBar* widget )
