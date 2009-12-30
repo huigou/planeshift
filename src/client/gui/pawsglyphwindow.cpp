@@ -73,11 +73,13 @@ pawsGlyphWindow::~pawsGlyphWindow()
 
 void pawsGlyphWindow::Show()
 {
+    if(!IsVisible())
+    {
+        // Ask the server to send us the glyphs
+        psRequestGlyphsMessage msg;
+        msg.SendMessage();
+    }
     pawsWidget::Show();
-
-    // Ask the server to send us the glyphs
-    psRequestGlyphsMessage msg;
-    msg.SendMessage();
 }
 
 void pawsGlyphWindow::Hide()
