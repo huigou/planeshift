@@ -1575,7 +1575,15 @@ void ExchangeManager::HandleAutoGive(MsgEntry *me,Client *client)
                 psItem *invItem = client->GetCharacterData()->Inventory().GetInventoryIndexItem(foundIndex);
                 if (invItem->GetStackCount() < itemCount || invItem->GetStackCount() > itemCount || client->GetCharacterData()->Inventory().FindItemStatIndex(itemstat,foundIndex+1) != SIZET_NOT_FOUND)
                 {
-                    psserver->SendSystemError(client->GetClientNum(), "You must give the items manually because you have too many %s.",itemName.GetData() );
+					// Distinguish the cases from each other in order to send out the correct error message
+					if (invItem->GetStackCount() < itemCount)
+					{
+						psserver->SendSystemError(client->GetClientNum(), "You have too few %s.  Come back when you have the correct amount.", itemName.GetData());
+					}
+					else
+					{
+						psserver->SendSystemError(client->GetClientNum(), "You must give the items manually because you have too many %s.", itemName.GetData());
+					}
                     HandleExchangeEnd(NULL,client);
                     break;
                 }
