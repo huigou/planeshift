@@ -84,11 +84,10 @@ void Trait::Load( iDocumentNode* node )
     if ( shaderColours.Length() > 0 )
     {
         sscanf( shaderColours.GetData(), "%f,%f,%f", &shader.x, &shader.y, &shader.z );
-        shader.w = 1.0f;
     }
     else
     {
-        shader = csVector4(0,0,0);
+        shader = csVector3(0.0f);
     }
 
     material = psengine->FindCommonString(cstr_id_material);

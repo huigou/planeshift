@@ -259,7 +259,7 @@ void psCharAppearance::HairMesh(csString& subMesh)
 }
 
 
-void psCharAppearance::HairColor(csVector4& color)
+void psCharAppearance::HairColor(csVector3& color)
 {
     if ( hairMesh.Length() == 0 )
     {
@@ -321,7 +321,7 @@ void psCharAppearance::HairColor(csVector4& color)
     }
 }
 
-void psCharAppearance::EyeColor(csVector4& color)
+void psCharAppearance::EyeColor(csVector3& color)
 {
     eyeShader = color;
     iShaderVariableContext* context_eyes;

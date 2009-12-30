@@ -72,7 +72,7 @@ struct Trait
     csString mesh;
     csString material;
     csString subMesh;
-    csVector4 shader;   ///< The shader colour set for this trait. 
+    csVector3 shader;   ///< The shader colour set for this trait. 
 };
 
 
