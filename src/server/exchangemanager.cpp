@@ -1401,7 +1401,7 @@ void ExchangeManager::StartExchange( Client* client, bool withPlayer, bool autom
     }
     if ( client->GetCharacterData()->GetTradingStatus() != psCharacter::NOT_TRADING )
     {
-        psserver->SendSystemError(client->GetClientNum(), "You are busy with the merchant", target->GetName());
+        psserver->SendSystemError(client->GetClientNum(), "You are busy with a merchant", target->GetName());
         return;
     }
 
@@ -1410,7 +1410,7 @@ void ExchangeManager::StartExchange( Client* client, bool withPlayer, bool autom
     {
         if ( !target->GetNPCPtr() )
         {
-            psserver->SendSystemError(client->GetClientNum(), "You can give items to NPC only");
+            psserver->SendSystemError(client->GetClientNum(), "You can give items to NPCs only");
             return;
         }
 
@@ -1451,7 +1451,7 @@ void ExchangeManager::StartExchange( Client* client, bool withPlayer, bool autom
 
         if(targetClient->IsFrozen())
         {
-            psserver->SendSystemInfo(client->GetClientNum(), "% was frozen by a GM and cannot trade", target->GetName());
+            psserver->SendSystemInfo(client->GetClientNum(), "%s was frozen by a GM and cannot trade", target->GetName());
             return;
         }
 
