@@ -2126,10 +2126,7 @@ void pawsChatWindow::Clear()
             {
                 csString channelPubName = CHAT_TYPES[chattype];
                 channelPubName += hotkeyChannel;
-                csArray<iPAWSSubscriber*> chatSubscribers = PawsManager::GetSingleton().ListSubscribers(channelPubName);
-                //csarray lacks methods like pushall pushallsmart
-                for(size_t i = 0; i < chatSubscribers.GetSize(); i++)
-                    subscribers.PushSmart(chatSubscribers.Get(i));
+                subscribers.PushSmartAll(PawsManager::GetSingleton().ListSubscribers(channelPubName));
             }
                 
         }
