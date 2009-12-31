@@ -81,7 +81,7 @@
 #include "usermanager.h"
 
 #define RANGE_TO_CHALLENGE 50
-
+#define GM_LEVEL 20
 
 class psUserStatRegeneration : public psGameEvent
 {
@@ -1159,9 +1159,21 @@ void UserManager::BuddyList(Client *client,int clientnum,bool filter)
 
 
     psBuddyListMsg mesg( clientnum, totalBuddies );
-    for ( int i = 0; i < totalBuddies; i++ )
+    // GM+ see all buddies
+    if(client->GetSecurityLevel() >= GM_LEVEL)
     {
-        mesg.AddBuddy( i, chardata->buddyList[i].name, (clients->Find(chardata->buddyList[i].name)? true : false) );
+        for ( int i = 0; i < totalBuddies; i++ )
+        {
+            mesg.AddBuddy( i, chardata->buddyList[i].name, (clients->Find(chardata->buddyList[i].name)? true : false) );
+        }
+    }
+    else // Others only see none GM+
+    {
+        for ( int i = 0; i < totalBuddies; i++ )
+        {
+            Client *buddy = clients->Find(chardata->buddyList[i].name);
+            mesg.AddBuddy( i, chardata->buddyList[i].name, (buddy&&(buddy->GetSecurityLevel() < GM_LEVEL) ? true : false) );
+        }
     }
 
     mesg.Build();
@@ -1189,6 +1201,9 @@ void UserManager::NotifyBuddies(Client * client, bool logged_in)
 
         if (buddy)  // is buddy online at the moment?  if so let him know buddy just logged on
         {
+            if (client->GetSecurityLevel() >= GM_LEVEL && buddy->GetSecurityLevel() < GM_LEVEL) // Don't tell none GM+ that a GM+ came online
+                continue;
+
             psBuddyStatus status( buddy->GetClientNum(),  name , logged_in );
             status.SendMessage();
 
