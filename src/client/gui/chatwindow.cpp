@@ -2118,6 +2118,22 @@ void pawsChatWindow::Clear()
 	for(int chattype = 0; chattype < CHAT_END; chattype++)
 	{
 		csArray<iPAWSSubscriber*> subscribers = PawsManager::GetSingleton().ListSubscribers(CHAT_TYPES[chattype]);
+
+        //if we are dealing with the chatchanneltype we need to add all the sub types
+        if(chattype == CHAT_CHANNEL)
+        {
+            for(int hotkeyChannel = 1; hotkeyChannel <= 10; hotkeyChannel++)
+            {
+                csString channelPubName = CHAT_TYPES[chattype];
+                channelPubName += hotkeyChannel;
+                csArray<iPAWSSubscriber*> chatSubscribers = PawsManager::GetSingleton().ListSubscribers(channelPubName);
+                //csarray lacks methods like pushall pushallsmart
+                for(size_t i = 0; i < chatSubscribers.GetSize(); i++)
+                    subscribers.PushSmart(chatSubscribers.Get(i));
+            }
+                
+        }
+
 		for(size_t i = 0; i < subscribers.GetSize(); i++)
 		{
 			pawsMessageTextBox* textbox = dynamic_cast<pawsMessageTextBox*>(subscribers[i]);
