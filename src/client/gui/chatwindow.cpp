@@ -732,6 +732,13 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
                 words.GetTail(0,text);
                 DetermineChatTabAndSelect(CHAT_AUCTION);
             }
+            else if (chatType == "ChannelsText")
+            {
+                words.GetTail(0,text);
+                chattype = CHAT_CHANNEL;
+                hotkeyChannel = 1;
+                DetermineChatTabAndSelect(CHAT_CHANNEL);
+            }
             else // when in doubt, use the normal way
             {
                 chattype = CHAT_SAY;
