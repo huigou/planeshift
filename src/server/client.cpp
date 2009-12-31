@@ -71,6 +71,7 @@ Client::Client ()
     nextFloodHistoryIndex = 0;
     
     lastInventorySend = 0;
+    lastGlyphSend = 0;
 
     isAdvisor           = false;
     isFrozen            = false;

@@ -77,6 +77,11 @@ public:
       * @param client  The client that will be sent it's current glyphs.
       */
     void SendGlyphs(MsgEntry *notused, Client * client);
+    
+    /** Handles a glyph request from a client.
+     * 
+     */
+    void HandleGlyphRequest(MsgEntry *notused, Client * client);
 
 protected:    
     /** Save a spell to the database for when a player has researched it.
