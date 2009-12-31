@@ -2126,7 +2126,7 @@ void pawsChatWindow::Clear()
             {
                 csString channelPubName = CHAT_TYPES[chattype];
                 channelPubName += hotkeyChannel;
-                subscribers.PushSmartAll(PawsManager::GetSingleton().ListSubscribers(channelPubName));
+                subscribers.MergeSmart(PawsManager::GetSingleton().ListSubscribers(channelPubName));
             }
                 
         }
