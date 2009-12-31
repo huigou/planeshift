@@ -78,7 +78,7 @@ SpellManager::SpellManager(ClientConnectionSet *ccs,
     clients      = ccs;
     this->object_reg = object_reg;
 
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<SpellManager>(this,&SpellManager::SendGlyphs),MSGTYPE_GLYPH_REQUEST,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);  
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<SpellManager>(this,&SpellManager::HandleGlyphRequest),MSGTYPE_GLYPH_REQUEST,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);  
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<SpellManager>(this,&SpellManager::HandleAssembler),MSGTYPE_GLYPH_ASSEMBLE,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);  
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<SpellManager>(this,&SpellManager::Cast),MSGTYPE_SPELL_CAST,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);  
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<SpellManager>(this,&SpellManager::StartPurifying),MSGTYPE_PURIFY_GLYPH,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);  
@@ -273,6 +273,27 @@ void SpellManager::SendSpellBook(MsgEntry *notused, Client * client)
 
     mesg.Construct(CacheManager::GetSingleton().GetMsgStrings());
     mesg.SendMessage();
+}
+
+void SpellManager::HandleGlyphRequest(MsgEntry *notused, Client * client)
+{
+    // FIXME: Ugly hack here as a temporary workaround for client-side issue that causes the server
+    // to be flooded with glyph requests. Remove after all clients have been updated
+    // to stop flooding.
+    csTicks currentTime = csGetTicks();
+    // Send a glyph message maximum once per 250 ticks (0.25 seconds).
+    if(!client->lastGlyphSend || client->lastGlyphSend + 250 < currentTime)
+    {    
+    	client->lastGlyphSend = currentTime;
+    	SendGlyphs(notused, client);
+    }
+    else
+    {
+    	csString status;
+    	status.Format("Ignored glyph request message from %u.", client->GetClientNum());
+        if(LogCSV::GetSingletonPtr())
+            LogCSV::GetSingleton().Write(CSV_STATUS, status);
+    }
 }
 
 void SpellManager::SendGlyphs(MsgEntry *notused, Client * client)

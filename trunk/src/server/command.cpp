@@ -355,7 +355,7 @@ int com_status(char *)
         }
         if(client->GetConnection())
         {
-        	clientStatus.AppendFmt(" %u %u %g %u", client->GetConnection()->RTO,
+        	clientStatus.AppendFmt(" %4u %4u %4.2f %4u", client->GetConnection()->RTO,
                     client->GetConnection()->window, client->GetConnection()->sends > 0 ?  100.0 * client->GetConnection()->resends/client->GetConnection()->sends : 0.0, client->GetConnection()->sends);
         }
         clientStatus.Append('\n');

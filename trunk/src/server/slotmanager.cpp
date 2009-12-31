@@ -122,12 +122,7 @@ void SlotManager::HandleSlotMovement(MsgEntry* me, Client *fromClient)
     //  also it updates glyphs as well
     if(!(mesg.fromContainer == mesg.toContainer && mesg.fromSlot == mesg.toSlot && mesg.posWorld.IsZero()))
     {
-        csString status;
-        status.Format("Received slot movement message. Client %u Container %d to %d Slot %d to %d stack %d pos %g %g %g", fromClient->GetClientNum(), mesg.fromContainer, mesg.toContainer, mesg.fromSlot, mesg.toSlot, mesg.stackCount, mesg.posWorld.x, mesg.posWorld.y, mesg.posWorld.z);
-
-        if(LogCSV::GetSingletonPtr())
-            LogCSV::GetSingleton().Write(CSV_STATUS, status);
-		if(worldContainerID == 0 || otherContainerID <= 100)
+    	if(worldContainerID == 0 || otherContainerID <= 100)
 			psserver->GetCharManager()->UpdateItemViews(fromClient->GetClientNum());  
     }
     else

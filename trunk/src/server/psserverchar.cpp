@@ -367,7 +367,7 @@ void ServerCharManager::HandleInventoryMessage(MsgEntry* me,Client *client)
             }
             else
             {
-            	status.Format("Ignored inventory request message.");
+            	status.Format("Ignored inventory request message from %u.", client->GetClientNum());
                 if(LogCSV::GetSingletonPtr())
                     LogCSV::GetSingleton().Write(CSV_STATUS, status);
             }

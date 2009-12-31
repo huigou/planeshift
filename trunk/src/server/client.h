@@ -366,9 +366,10 @@ public:
 	OrderedMessageChannel * GetOrderedMessageChannel(msgtype mtype);
 	
     // FIXME: Ugly hack here as a temporary workaround for client-side issue that causes the server
-	// to be flooded with inventory requests. Remove after all clients have been updated
+	// to be flooded with inventory/glyph requests. Remove after all clients have been updated
 	// to stop flooding.
     csTicks lastInventorySend;
+    csTicks lastGlyphSend;
 
 	
 protected:
