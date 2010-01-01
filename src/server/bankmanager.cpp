@@ -629,7 +629,7 @@ void BankManager::SendBankWindow(Client* client, bool guild, bool forceOpen)
     // Check if the player has the permission to use the bank account of his guild.
     if(guild && !pschar->GetGuildMembership()->HasRights(RIGHTS_USE_BANK))
     {
-        psserver->SendSystemError(client->GetClientNum(), "You cannot access your guild bank account without being the leader of your guild!");
+        psserver->SendSystemError(client->GetClientNum(), "You cannot access your guild bank account without having the permission to use the account of your guild!");
         return;
     }
 
@@ -706,9 +706,9 @@ void BankManager::HandleBanking( MsgEntry *me, Client *client )
     }
 
     // Check if the player has the permission to use the bank account of his guild.
-    if(msg.guild && client->GetCharacterData()->GetGuildMembership()->HasRights(RIGHTS_USE_BANK))
+    if(msg.guild && !client->GetCharacterData()->GetGuildMembership()->HasRights(RIGHTS_USE_BANK))
     {
-        psserver->SendSystemError(client->GetClientNum(), "You cannot access your guild bank account without being the leader of your guild!");
+        psserver->SendSystemError(client->GetClientNum(), "You cannot access your guild bank account without having the permission to use the account of your guild!");
         return;
     }
 
