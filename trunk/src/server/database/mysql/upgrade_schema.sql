@@ -1385,6 +1385,11 @@ INSERT INTO command_group_assignment VALUES( "/buddyhide", 21 );
 INSERT INTO command_group_assignment VALUES( "/buddyhide", 10 );
 
 
+#1235 - Talad - changed wc_statistics table
+ALTER TABLE `wc_statistics` ADD COLUMN `param1` TEXT AFTER `query`;
+ALTER TABLE `wc_statistics` DROP COLUMN `query`;
+
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to
