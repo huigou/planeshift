@@ -1376,13 +1376,6 @@ INSERT INTO command_group_assignment VALUES( "default buddylisthide", 23 );
 INSERT INTO command_group_assignment VALUES( "default buddylisthide", 22 );
 INSERT INTO command_group_assignment VALUES( "default buddylisthide", 21 );
 INSERT INTO command_group_assignment VALUES( "default buddylisthide", 10 );
-INSERT INTO command_group_assignment VALUES( "/buddyhide", 30 );
-INSERT INTO command_group_assignment VALUES( "/buddyhide", 25 );
-INSERT INTO command_group_assignment VALUES( "/buddyhide", 24 );
-INSERT INTO command_group_assignment VALUES( "/buddyhide", 23 );
-INSERT INTO command_group_assignment VALUES( "/buddyhide", 22 );
-INSERT INTO command_group_assignment VALUES( "/buddyhide", 21 );
-INSERT INTO command_group_assignment VALUES( "/buddyhide", 10 );
 
 
 #1235 - Talad - changed wc_statistics table
