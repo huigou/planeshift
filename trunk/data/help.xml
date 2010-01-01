@@ -524,6 +524,9 @@ Bans a player from advising until /unbanadvisor is used.</topic>
         <topic name="/banname">/banname name
 
 Bans a name from use in character creation</topic>
+        <topic name="/buddyhide">/buddyhide on|off
+
+Changes whether you are visible on player buddylists.</topic>
         <topic name="/changeguildleader">/changeguildleader [new leader] [guildname]
 
 Change the guilds leader.</topic>
