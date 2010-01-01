@@ -81,7 +81,7 @@
 #include "usermanager.h"
 
 #define RANGE_TO_CHALLENGE 50
-#define GM_LEVEL 20
+#define GM_LEVEL 1
 
 class psUserStatRegeneration : public psGameEvent
 {
@@ -1167,12 +1167,12 @@ void UserManager::BuddyList(Client *client,int clientnum,bool filter)
             mesg.AddBuddy( i, chardata->buddyList[i].name, (clients->Find(chardata->buddyList[i].name)? true : false) );
         }
     }
-    else // Others only see none GM+
+    else // Others only see none hiding GM+
     {
         for ( int i = 0; i < totalBuddies; i++ )
         {
             Client *buddy = clients->Find(chardata->buddyList[i].name);
-            mesg.AddBuddy( i, chardata->buddyList[i].name, (buddy&&(buddy->GetSecurityLevel() < GM_LEVEL) ? true : false) );
+            mesg.AddBuddy( i, chardata->buddyList[i].name, (buddy&&(!buddy->GetBuddyListHide()) ? true : false) );
         }
     }
 
@@ -1201,7 +1201,35 @@ void UserManager::NotifyBuddies(Client * client, bool logged_in)
 
         if (buddy)  // is buddy online at the moment?  if so let him know buddy just logged on
         {
-            if (client->GetSecurityLevel() >= GM_LEVEL && buddy->GetSecurityLevel() < GM_LEVEL) // Don't tell none GM+ that a GM+ came online
+            if (client->GetBuddyListHide() && buddy->GetSecurityLevel() < GM_LEVEL) // Don't tell none GM+ that a GM+ came online
+                continue;
+
+            psBuddyStatus status( buddy->GetClientNum(),  name , logged_in );
+            status.SendMessage();
+
+            if (logged_in)
+            {
+                psserver->SendSystemInfo(buddy->GetClientNum(),"%s just joined PlaneShift",name.GetData());
+            }
+            else
+            {
+                psserver->SendSystemInfo(buddy->GetClientNum(),"%s has left PlaneShift",name.GetData());
+            }
+        }
+    }
+}
+
+void UserManager::NotifyPlayerBuddies(Client * client, bool logged_in)
+{
+    csString name (client->GetActor()->GetFirstName());
+
+    for (size_t i=0; i< client->GetCharacterData()->buddyOfList.GetSize(); i++)
+    {
+        Client *buddy = clients->FindPlayer( client->GetCharacterData()->buddyOfList[i] );  // name of player buddy
+
+        if (buddy)  // is buddy online at the moment?  if so let him know buddy just logged on
+        {
+            if (buddy->GetSecurityLevel() >= GM_LEVEL) // Don't tell GM+ as they already know
                 continue;
 
             psBuddyStatus status( buddy->GetClientNum(),  name , logged_in );

@@ -1106,6 +1106,11 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         }
         return true;
     }
+    else if (command == "/buddyhide")
+    {
+        setting = words[1];
+        return true;
+    }
 	else if (command == "/rndmsgtest")
 	{
 		text = words[1];
@@ -1516,6 +1521,10 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, Client *client)
     else if (data.command == "/serverquit")
     {
         HandleServerQuit(me, msg, data, client);
+    }
+    else if (data.command == "/buddyhide")
+    {
+        BuddyListHide(me, msg, data, client);
     }
 }
 
@@ -8377,6 +8386,37 @@ void AdminManager::HandleServerQuit(MsgEntry* me, psAdminCmdMessage& msg, AdminC
     }
 
     psserver->QuitServer(data.value, client);
+}
+
+void AdminManager::BuddyListHide(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client )
+{
+    bool onoff = false;
+    bool toggle = false;
+    bool already = false;
+
+    if (data.setting == "on")
+        onoff = true;
+    else if (data.setting == "off")
+        onoff = false;
+    else
+        toggle = true;
+
+    if (toggle)
+    {
+        client->SetBuddyListHide(!client->GetBuddyListHide());
+        onoff = client->GetBuddyListHide();
+    }
+    else if (client->GetBuddyListHide() == onoff)
+        already = true;
+    else
+        client->SetBuddyListHide(onoff);
+
+    if (!already)
+        psserver->usermanager->NotifyPlayerBuddies(client, !onoff);
+
+    psserver->SendSystemInfo(me->clientnum, "Players %s %s see you on their buddy lists.",
+                                            (already)?"already":"now",
+                                            (onoff)?"can't":"can" );
 }
 
 void AdminManager::RandomMessageTest(Client *client,bool sequential)
