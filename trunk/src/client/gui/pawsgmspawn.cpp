@@ -170,14 +170,8 @@ bool pawsGMSpawnWindow::OnSelected(pawsWidget* widget)
         }
         else
         {
-            csString fact_name(item.mesh);
-            fact_name.ReplaceAll("$H", "stonebm");
-            fact_name.ReplaceAll("$B", "stonebm");
-            fact_name.ReplaceAll("$E", "stonebm");
-            fact_name.ReplaceAll("$C", "stonebm");
-            item.mesh = fact_name;
             factName = item.mesh;
-
+            psengine->GetCelClient()->replaceRacialGroup(factName);
             csRef<iMeshFactoryWrapper> factory = psengine->GetLoader()->LoadFactory(factName);
             if(!factory)
             {
