@@ -371,6 +371,9 @@ public:
     csTicks lastInventorySend;
     csTicks lastGlyphSend;
 
+    /// Change whether hiding from buddylists
+    void SetBuddyListHide(bool hide) { isBuddyListHiding = hide; }
+    bool GetBuddyListHide() { return isBuddyListHiding; }
 	
 protected:
 
@@ -455,6 +458,9 @@ private:
 
     /// This flag set to true after a teleport, to keep Paladin from reporting a cheat
     int cheatMask;
+
+    /// This flag makes them hide from player (not GM/Dev) buddylists
+    bool isBuddyListHiding;
 };
 
 #endif

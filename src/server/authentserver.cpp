@@ -486,6 +486,9 @@ void AuthenticationServer::HandleAuthent(MsgEntry *me, Client *notused)
     if (CacheManager::GetSingletonPtr()->GetCommandManager()->Validate(client->GetSecurityLevel(), "default advisor"))
         psserver->GetAdviceManager()->AddAdvisor(client);
 
+    if (CacheManager::GetSingletonPtr()->GetCommandManager()->Validate(client->GetSecurityLevel(), "default buddylisthide"))
+        client->SetBuddyListHide(true);
+
     psserver->GetWeatherManager()->SendClientGameTime(me->clientnum);
 
     if(csGetTicks() - start > 500)

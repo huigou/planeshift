@@ -65,6 +65,15 @@ public:
      */
     void NotifyBuddies(Client * client, bool loggedon);
 
+    /** @brief Send a notification to all player (non GM/Dev) clients on a person buddy list that they have logged on/off.
+     *
+     *  This does a database hit.
+     *
+     *  @param client The client that has logged in/out.
+     *  @param loggedon True if the player has logged on. False if logged off.
+     */
+    void NotifyPlayerBuddies(Client * client, bool loggedon);
+
     /** @brief Send a notification to all clients on a person guild if they log on/off.
      *
      *  @param client The client that has logged in/out.

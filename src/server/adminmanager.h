@@ -243,6 +243,9 @@ protected:
     /// Set the label color for char
     void SetLabelColor(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client, gemActor * subject);
 
+    /// Hide from player buddylists
+    void BuddyListHide(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client);
+
     /// Divorce char1 and char2, if they're married.
     void Divorce(MsgEntry* me, AdminCmdData& data);
 

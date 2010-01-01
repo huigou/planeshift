@@ -1368,6 +1368,23 @@ UPDATE `server_options` SET `option_value`='1233' WHERE `option_name`='db_versio
 ALTER TABLE `spells` DROP COLUMN `exclude_target`;
 UPDATE `server_options` SET `option_value`='1234' WHERE `option_name`='db_version';
 
+#1234 - Steven Patrick added hiding from buddy lists for gms/devs
+INSERT INTO command_group_assignment VALUES( "default buddylisthide", 30 );
+INSERT INTO command_group_assignment VALUES( "default buddylisthide", 25 );
+INSERT INTO command_group_assignment VALUES( "default buddylisthide", 24 );
+INSERT INTO command_group_assignment VALUES( "default buddylisthide", 23 );
+INSERT INTO command_group_assignment VALUES( "default buddylisthide", 22 );
+INSERT INTO command_group_assignment VALUES( "default buddylisthide", 21 );
+INSERT INTO command_group_assignment VALUES( "default buddylisthide", 10 );
+INSERT INTO command_group_assignment VALUES( "/buddyhide", 30 );
+INSERT INTO command_group_assignment VALUES( "/buddyhide", 25 );
+INSERT INTO command_group_assignment VALUES( "/buddyhide", 24 );
+INSERT INTO command_group_assignment VALUES( "/buddyhide", 23 );
+INSERT INTO command_group_assignment VALUES( "/buddyhide", 22 );
+INSERT INTO command_group_assignment VALUES( "/buddyhide", 21 );
+INSERT INTO command_group_assignment VALUES( "/buddyhide", 10 );
+
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to

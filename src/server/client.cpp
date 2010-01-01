@@ -79,6 +79,7 @@ Client::Client ()
     hasBeenWarned       = false;
     hasBeenPenalized    = false;
     valid               = false;
+    isBuddyListHiding   = false;
 
     // pets[0] is a special case for the players familiar.
     pets.Insert(0, PID(0));
