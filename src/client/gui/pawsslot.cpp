@@ -150,7 +150,9 @@ void pawsSlot::StackCount( int newCount )
 void pawsSlot::PlaceItem( const char* imageName, const char* meshFactName, int count )
 {
     meshfactName = meshFactName;
-
+    
+    psengine->GetCelClient()->replaceRacialGroup(meshfactName);
+    
     empty = false;
 
     image = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(imageName);

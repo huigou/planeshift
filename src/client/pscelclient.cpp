@@ -198,10 +198,10 @@ void psCelClient::SetMainActor(GEMClientActor* actor)
     if (local_player && local_player->GetEID() == actor->GetEID())
         actor->CopyNewestData(*local_player);
 
-    local_player = actor;
     psengine->GetCharControl()->GetMovementManager()->SetActor(actor);
     psengine->GetPSCamera()->SetActor(actor);
     psengine->GetModeHandler()->SetEntity(actor);
+    local_player = actor;
 
 }
 
@@ -1017,6 +1017,28 @@ csPtr<InstanceObject> psCelClient::FindInstanceObject(const char* name) const
 void psCelClient::AddInstanceObject(const char* name, csRef<InstanceObject> object)
 {
     instanceObjects.Put(name, object);
+}
+
+void psCelClient::replaceRacialGroup(csString &string)
+{
+    //avoids useless elaborations
+    if(!string.Length()) return;
+    //safe defaults
+    csString HelmReplacement("stonebm");
+    csString BracerReplacement("stonebm");
+    csString BeltReplacement("stonebm");
+    csString CloakReplacement("stonebm");
+    if (GetMainPlayer())
+    {
+        HelmReplacement = GetMainPlayer()->helmGroup;
+        BracerReplacement = GetMainPlayer()->BracerGroup;
+        BeltReplacement = GetMainPlayer()->BeltGroup;
+        CloakReplacement = GetMainPlayer()->CloakGroup;
+    }
+    string.ReplaceAll("$H", HelmReplacement);
+    string.ReplaceAll("$B", BracerReplacement);
+    string.ReplaceAll("$E", BeltReplacement);
+    string.ReplaceAll("$C", CloakReplacement);
 }
 
 //-------------------------------------------------------------------------------
