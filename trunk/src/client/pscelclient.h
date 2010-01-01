@@ -253,6 +253,12 @@ public:
      * Add an instance object to the tree.
      */
     void AddInstanceObject(const char* name, csRef<InstanceObject> object);
+    
+    /** Substituites in a string the group identifiers like $H $B etc depending on the race of the player.
+     * 
+     *  @param string The string where do to the replacements
+     */ 
+    void replaceRacialGroup(csString &string);
 
 protected:
     /** Finds given entity in list of unresolved entities */
