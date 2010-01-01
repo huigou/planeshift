@@ -1229,7 +1229,7 @@ void pawsChatWindow::HandleSystemMessage(MsgEntry *me)
 void pawsChatWindow::FormatMessage(csString &sText, csString &sPerson, csString prependingText, csString &buff, bool &hasCharName)
 {
     if ( sText.StartsWith("/me ") )
-        buff.Format("%s %s", (const char *)sPerson, ((const char *)sText)+4);
+        buff.Format(REDCODE "%s" DEFAULTCODE " %s", (const char *)sPerson, ((const char *)sText)+4);
     else if ( sText.StartsWith("/my ") )
         buff.Format("%s's %s", (const char *)sPerson, ((const char *)sText)+4);
     else
