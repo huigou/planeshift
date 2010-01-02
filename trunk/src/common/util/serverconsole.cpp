@@ -335,9 +335,7 @@ void ServerConsole::MainLoop()
 #else
 void ServerConsole::MainLoop()
 {
-    running=RUNNING;
-
-    while (running == RUNNING)
+    while (!stop)
     {
         char *s;
         char cmdprompt[80];
@@ -357,7 +355,7 @@ void ServerConsole::MainLoop()
 #ifdef USE_HISTORY
             add_history(s);
 #endif
-            execute_line(s);
+            execute_line(s,NULL);
         }
 
         free(line);
@@ -393,7 +391,7 @@ char *command_generator (const char *text, int state)
     }
 
     /* Return the next name which partially matches from the command list. */
-    while ( (name = commands[list_index].name) != 0)
+    while ((name = (char*)commands[list_index].name) != 0)
     {
         list_index++;
 
