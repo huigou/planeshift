@@ -1977,6 +1977,8 @@ void AdminManager::SendGMAttribs(Client* client)
         gmSettings |= (1 << 9);
     if (client->GetActor()->attackable)
         gmSettings |= (1 << 10);
+    if (client->GetBuddyListHide())
+        gmSettings |= (1 << 11);
 
     psGMGuiMessage gmMsg(client->GetClientNum(), gmSettings);
     gmMsg.SendMessage();
