@@ -108,6 +108,61 @@ pawsWidget::pawsWidget( )
         scriptEvents[a] = 0;
 }
 
+pawsWidget::pawsWidget(const pawsWidget &origin)
+{
+    graphics2D = PawsManager::GetSingleton().GetGraphics2D();
+
+    screenFrame = csRect(origin.screenFrame);
+    clipRect = csRect(origin.clipRect);
+    saveWidgetPositions = origin.saveWidgetPositions;
+
+    visible  = origin.visible;
+    movable  = origin.movable;
+    alwaysOnTop = origin.alwaysOnTop;
+    isResizable = origin.isResizable;
+    showResize = origin.showResize;
+    resizeToScreen = origin.resizeToScreen;
+    keepaspect = origin.keepaspect;
+    scaleFont = origin.scaleFont;
+    needsRender = origin.needsRender;
+    parentDraw = origin.parentDraw;
+    id = origin.id;
+    parent   = NULL;
+    bgColour = origin.bgColour;
+    border   = NULL;
+    name = origin.name;
+    attachFlags = origin.attachFlags;
+    fadeVal = origin.fadeVal;
+    fadeSpeed = origin.fadeSpeed;
+    fade = origin.fade;
+    alphaMin = origin.alphaMin;
+    alpha = origin.alpha;
+    hasFocus = origin.hasFocus;
+    hasMouseFocus = origin.hasMouseFocus;
+    configurable = origin.configurable;
+    fontStyle = origin.fontStyle;
+    min_height = origin.min_height;
+    min_width = origin.min_width;
+    max_height = origin.max_height;
+    max_width = origin.max_width;
+    hasBorderColours = origin.hasBorderColours;
+    contextMenu = NULL;
+    xmlbinding.Clear();
+    ignore = origin.ignore;
+    onEnter = NULL;
+    margin = origin.margin;
+    close_widget = origin.close_widget;
+    extraData = origin.extraData;
+    defaultFontColour = origin.defaultFontColour;
+    defaultFontSize = origin.defaultFontSize;
+    fontSize = origin.fontSize;
+    titleBar = origin.titleBar;
+
+    size_t a;
+    for (a=0; a<PW_SCRIPT_EVENT_COUNT; ++a)
+        scriptEvents[a] = origin.scriptEvents[a];
+}
+
 pawsWidget::~pawsWidget()
 {
     // Check to see if the widget position should be save.
