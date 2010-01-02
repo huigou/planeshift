@@ -524,9 +524,6 @@ Bans a player from advising until /unbanadvisor is used.</topic>
         <topic name="/banname">/banname name
 
 Bans a name from use in character creation</topic>
-        <topic name="/buddyhide">/buddyhide on|off
-
-Changes whether you are visible on player buddylists.</topic>
         <topic name="/changeguildleader">/changeguildleader [new leader] [guildname]
 
 Change the guilds leader.</topic>
@@ -783,9 +780,10 @@ Reloads the currently targeted item from the database.</topic>
 <topic name="/runscript">/runscript [script_name] [me/target/eid/pid/area/name]
 
 Runs a progression script on the target.</topic>
-        <topic name="/set">/set target attribute on|off
+        <topic name="/set">/set target attribute [on|off]
 
 Many of these attribute are enabled by default for GMs.
+If you do not specify on or off the current mode will be toggled.
 You can also do "/set me list" to view your current attributes.
 
 Available attributes are:
@@ -797,7 +795,8 @@ Available attributes are:
 - infiniteinventory
 - questtester (bypass quest lockouts and prerequisites).
 - instantcast (bypasses spell casting time)
-- givekillexp (awards experience when a GM is killed, as in an event)</topic>
+- givekillexp (awards experience when a GM is killed, as in an event)
+- buddyhide (hides you from player (not GM/Dev) buddy lists)</topic>
 <topic name="/setlabelcolor">/setlabelcolor [target] [npc|player|tester|gm|gm1|dead|alive|normal]
 
 Set the color of the label of target to the given value. The normal setting will again display the targets normal label color.</topic>  
