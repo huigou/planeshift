@@ -366,6 +366,15 @@
                     <text string="disabled" />
                 </widget>
 
+		<widget name="buddyhide" factory="pawsTextBox" visible="no" tooltip="set buddyhide">
+                    <frame x="30" y="308" width="160" height="20" border="no" />
+                    <text string="Buddy List Hide" />
+                </widget>
+                <widget name="toggleBuddyHide" factory="pawsCheckBox" id="1269" visible="no">
+                    <frame x="200" y ="308" width="100" height="20" border="no"/>
+                    <text string="disabled" />
+                </widget>
+
             </widget>
         </widget>
     </widget>

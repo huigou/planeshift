@@ -84,6 +84,7 @@ pawsGmGUIWindow::pawsGmGUIWindow()
     isInstantCast = false;
     isGiveKillExp = false;
     isAttackable = false;
+    isBuddyHide = false;
 }
 
 pawsGmGUIWindow::~pawsGmGUIWindow()
@@ -141,6 +142,7 @@ bool pawsGmGUIWindow::PostSetup()
     cbInstantCast = (pawsCheckBox*)FindWidget("toggleInstantCast");
     cbGiveKillExp = (pawsCheckBox*)FindWidget("toggleGiveKillExp");
     cbAttackable = (pawsCheckBox*)FindWidget("toggleAttackable");
+    cbBuddyHide = (pawsCheckBox*)FindWidget("toggleBuddyHide");
 
     return true;
 }
@@ -230,6 +232,11 @@ void pawsGmGUIWindow::HandleMessage ( MsgEntry* me )
             isAttackable = ( gmSets & (1 << 10) ? true : false);
             cbAttackable->SetState(isAttackable);
             cbAttackable->SetText( isAttackable ? "enabled" : "disabled" );
+
+            // Buddy Hide flag (Hides from player buddy lists)
+            isBuddyHide = ( gmSets & (1 << 11) ? true : false);
+            cbBuddyHide->SetState(isBuddyHide);
+            cbBuddyHide->SetText( isBuddyHide ? "enabled" : "disabled" );
         }
         }
         break;
@@ -411,15 +418,21 @@ bool pawsGmGUIWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
         confirm = false;
         break;
     }
-    case 1267:// instantcast
+    case 1267:// givekillexp
     {
         cmd.Format("/set me givekillexp"); // Toggle
         confirm = false;
         break;
     }
-    case 1268:// instantcast
+    case 1268:// attackable
     {
         cmd.Format("/set me attackable"); // Toggle
+        confirm = false;
+        break;
+    }
+    case 1269:// buddyhide
+    {
+        cmd.Format("/set me buddyhide"); // Toggle
         confirm = false;
         break;
     }
@@ -614,6 +627,8 @@ void pawsGmGUIWindow::SetSecurity()
     HideWidget("toggleGiveKillExp");
     HideWidget("attackable");
     HideWidget("toggleAttackable");
+    HideWidget("buddyhide");
+    HideWidget("toggleBuddyHide");
 
     // int to hold the access level
     int level = psengine->GetCelClient()->GetMainPlayer()->GetType();
@@ -683,6 +698,8 @@ void pawsGmGUIWindow::SetSecurity()
         ShowWidget("toggleGiveKillExp");
         ShowWidget("attackable");
         ShowWidget("toggleAttackable");
+        ShowWidget("buddyhide");
+        ShowWidget("toggleBuddyHide");
     case 0:
         break;
     }
