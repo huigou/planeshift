@@ -2038,7 +2038,7 @@ int com_liststats(char *line)
     return 0;
 }
 
-/*
+
 int com_progress(char * line)
 {
     if (!line)
@@ -2111,23 +2111,28 @@ int com_progress(char * line)
 
     if (actor!=NULL)
     {
-        float result;
-        // Check if this is a script
-        if (event[0] == '<')
+        // Find script
+        ProgressionScript *script = psserver->GetProgressionManager()->FindScript(event);
+        if (!script)
         {
-            result = psserver->GetProgressionManager()->ProcessScript(event,actor,actor);
+            CPrintf(CON_CMDOUTPUT, "Progression script \"%s\" not found.", event);
+            return 0;
         }
-        else
-        {
-            result = psserver->GetProgressionManager()->ProcessEvent(event,actor,actor);
-        }
-        CPrintf(CON_CMDOUTPUT ,"Result = %.3f\n",result);
+
+        // We don't know what the script expects the actor to be called, so define...basically everything.
+        MathEnvironment env;
+        env.Define("Actor",  actor);
+        env.Define("Caster", actor);
+        env.Define("NPC",    actor);
+        env.Define("Target", actor);
+        script->Run(&env);
+        CPrintf(CON_CMDOUTPUT, "Script Executed\n");
         return 0;
     }
 
     return 0;
 }
-*/
+
 
 /** Kills a player right away
  */
@@ -2387,7 +2392,7 @@ const COMMAND commands[] = {
     { "dict",      true, com_dict,      "Dump the NPC dictionary"},
     { "kill",      true, com_kill,      "kill <playerID> Kills a player" },
     { "killnpc",   true, com_killnpc,   "killnpc <eid> Kills a npc" },
-    //{ "progress",  true, com_progress,  "progress <player>,<event/script>" },
+    { "progress",  true, com_progress,  "progress <player>,<event/script>" },
     { "questreward", true, com_questreward, "Preforms the same action as when a player gets a quest reward" },
     { "say",       true, com_say,       "Tell something to all players connected"},
     { "gossipsay", true, com_sayGossip, "Tell something to all players in the main public channel"},
