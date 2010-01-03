@@ -2728,11 +2728,13 @@ bool gemActor::AddChatReport(gemActor *reporter)
         cssBuffer.AppendFmt("Total time connected is %1.1f hours.\n", (GetCharacterData()->GetTimeConnected() / 3600.0f) );
         cssBuffer.AppendFmt("================================================================\n");
         // Write existing chat history
-        for (size_t i=0; i<chatHistory.GetSize(); i++)
+        size_t length = chatHistory.GetSize();
+        for (size_t i=0; i<length; i++)
         {
             chatHistory[i].GetLogLine(cssTempLine);
             cssBuffer += cssTempLine;
         }
+        chatHistory.DeleteRange(0, length); //we don't want to relog again these.
     }
 
     // Add /report line
