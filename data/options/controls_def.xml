@@ -2,12 +2,12 @@
     <controls>
         <bind action="Forward" key="w" />
         <bind action="Backward" key="s" />
-        <bind action="Rotate left" key="a" />
-        <bind action="Rotate right" key="d" />
-        <bind action="Strafe left" key="q" />
-        <bind action="Strafe right" key="e" />
-        <bind action="Brightness up" key="F12" />
-        <bind action="Brightness down" key="F11" />
+        <bind action="Rotate left" key="" />
+        <bind action="Rotate right" key="" />
+        <bind action="Strafe left" key="a" />
+        <bind action="Strafe right" key="d" />
+        <bind action="Brightness up" key="Home" />
+        <bind action="Brightness down" key="End" />
         <bind action="Brightness Reset" key="F10" />
         <bind action="Forward (sec)" key="Up" />
         <bind action="Backward (sec)" key="Down" />
@@ -15,11 +15,11 @@
         <bind action="Rotate right (sec)" key="Right" />
         <bind action="Strafe left (sec)" key="" />
         <bind action="Strafe right (sec)" key="" />
-        <bind action="Run" key="LShift" />
-        <bind action="ToggleRun" key="Ctrl" />
+        <bind action="Run" key="Shift" />
         <bind action="AutoMove" key="r" />
         <bind action="MouseMove" key="" />
-        <bind action="Sneak" key="RShift" />
+        <bind action="Sneak" key="\" />
+        <bind action="ToggleRun" key="Ctrl" />
         <bind action="Jump" key="Space" />
         <bind action="Sit" key="z" />
         <bind action="Look up" key="PgUp" />
@@ -36,6 +36,7 @@
         <bind action="Communications" key="" />
         <bind action="Help" key="F1" />
         <bind action="Inventory" key="i" />
+        <bind action="Bag" key="" />
         <bind action="Options" key="o" />
         <bind action="Quit" key="Alt+q" />
         <bind action="Spell book" key="c" />
