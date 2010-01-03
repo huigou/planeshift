@@ -1380,7 +1380,10 @@ INSERT INTO command_group_assignment VALUES( "default buddylisthide", 10 );
 
 #1235 - Talad - changed wc_statistics table
 ALTER TABLE `wc_statistics` ADD COLUMN `param1` TEXT AFTER `query`;
+ALTER TABLE `wc_statistics` MODIFY COLUMN `param1` INT(10) UNSIGNED DEFAULT NULL;
 ALTER TABLE `wc_statistics` DROP COLUMN `query`;
+ALTER TABLE `wc_statistics` MODIFY COLUMN `result` INT(10) UNSIGNED DEFAULT NULL;
+
 
 
 # Insert your upgrade before this line. Remember when you set a new db_version
