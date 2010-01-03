@@ -835,8 +835,31 @@ bool psCharController::LoadKeys(const char* filename)
     csRef<iDocumentNode> node = root->GetNode("controls");
     if (node == NULL)
     {
-        Error1("No <controls> tag in XML");
-        return false;
+        //check for os specific nodes if a global controls one wasn't found
+        csRef<iDocumentNodeIterator> osNodes = root->GetNodes("os");
+        while (osNodes->HasNext())
+        {
+            //gets the next element of the iterator
+            csRef<iDocumentNode> osNode = osNodes->Next();
+            //assigns the attribute name to a variable for easy access later
+            csString osName = osNode->GetAttributeValue("name");
+            if(osName == CS_PLATFORM_NAME) //compares the name with the platform we are in
+            {
+                //We found the right platform so we get the nested controls in there
+                //and bail out
+                node = osNode->GetNode("controls");
+                break;
+            }
+            //we found a generic platform control scheme we assign this for now if nothing better comes
+            else if(osName == "DEFAULT")
+                node = osNode->GetNode("controls");
+        }
+
+        if(node == NULL) //nothing to do we still didn't find it so we bail out as erroring
+        {
+            Error1("No <controls> or <os> tag in XML");
+            return false;
+        }
     }
     
     iEventNameRegistry* nr = psengine->GetEventNameRegistry();
