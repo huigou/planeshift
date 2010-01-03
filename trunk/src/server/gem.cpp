@@ -2775,6 +2775,7 @@ bool gemActor::LogChatMessage(const char *who, const psChatMessage &msg)
     {
         case CHAT_SHOUT: cssLine.Format("%s shouts: %s", who, msg.sText.GetData()); break;
         case CHAT_SAY: cssLine.Format("%s says: %s", who, msg.sText.GetData()); break;
+        case CHAT_CHANNEL: cssLine.Format("Channel %d> %s: %s", msg.channelID, who, msg.sText.GetData()); break;
         case CHAT_TELL: cssLine.Format("%s tells %s: %s", who, msg.sPerson.GetData(), msg.sText.GetData()); break;
         case CHAT_GUILD: cssLine.Format("GuildChat from %s: %s", who, msg.sText.GetData()); break;
         case CHAT_ALLIANCE: cssLine.Format("AllianceChat from %s: %s", who, msg.sText.GetData()); break;
