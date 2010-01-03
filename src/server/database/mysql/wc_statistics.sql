@@ -8,7 +8,7 @@ CREATE TABLE `wc_statistics` (
   `groupid` tinyint(3) NOT NULL,
   `periodname` varchar(50) NOT NULL,
   `result` INT(10) UNSIGNED DEFAULT NULL,
-  `param1` INT(10) UNSIGNED DEFAULT NULL;,
+  `param1` INT(10) UNSIGNED DEFAULT NULL,
   UNIQUE KEY `id` (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
