@@ -343,6 +343,7 @@ protected:
 public:
 
     pawsWidget();
+    pawsWidget(const pawsWidget &origin);
 
     virtual ~pawsWidget();
 
