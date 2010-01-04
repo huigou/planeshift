@@ -741,14 +741,13 @@ void pawsMessageTextBox::FullScroll()
 void pawsMessageTextBox::SplitMessage(const char* newText, int colour,
         int size, MessageLine*& msgLine, int& startPosition)
 {
-    csString stringBuffer = newText;
+    csString stringBuffer(newText);
 
     if (stringBuffer.IsEmpty())
     {
         return;
     }
 
-    static const int INITOFFSET = 20;
     while (!stringBuffer.IsEmpty())
     {
         int offSet = INITOFFSET;
@@ -768,81 +767,84 @@ void pawsMessageTextBox::SplitMessage(const char* newText, int colour,
         {
             if (!msgLine)
             {
-                msgLine = new MessageLine;
-                msgLine->size = size;
-                msgLine->text = stringBuffer;
-                msgLine->colour = colour;
-                adjusted.Push(msgLine);
+                WriteMessageLine(msgLine,stringBuffer,colour);
             }
-
             if (startPosition != -1)
             {
-                MessageSegment seg;
-                seg.size = size;
-                seg.text = stringBuffer;
-                seg.colour = colour;
-                seg.x = startPosition;
-                msgLine->text.Clear();
-                msgLine->segments.Push(seg);
+                WriteMessageSegment(msgLine,stringBuffer,colour,startPosition);
                 startPosition += width;
             }
             break;
         }
-        else // We have to push in a new line to the lines bit.
+        else
         {
-            // Find out the nearest white space to break the line.
-            int breakPoint = stringBuffer.FindLast(' ', canDrawLength - 1);
-            int spaceAfterBreak = stringBuffer.FindFirst(' ', breakPoint + 1);
-            csString wordAfterBreak;
-            int wordLength = spaceAfterBreak - breakPoint;
-            width = 0;
-            height = 0;
-
-            if (spaceAfterBreak == -1)
-            {
-                stringBuffer.SubString(wordAfterBreak, breakPoint + 1);
-            }
-            else
-            {
-                stringBuffer.SubString(wordAfterBreak, breakPoint + 1,
-                        wordLength);
-            }
-
-            GetFont()->GetDimensions(wordAfterBreak.GetData(), width, height);
-
-            csString processedString;
-            if (width <= screenFrame.Width() - INITOFFSET)
-            {
-                processedString.Append(stringBuffer, breakPoint + 1);
-                stringBuffer.DeleteAt(0, breakPoint + 1);
-            }
-            else
-            {
-                processedString.Append(stringBuffer, canDrawLength);
-                stringBuffer.DeleteAt(0, canDrawLength);
-            }
+            csString processedString = FindStringThatFits(stringBuffer, canDrawLength);            
+            stringBuffer.DeleteAt(0, processedString.Length());
+            
             if (!msgLine)
             {
-                msgLine = new MessageLine;
-                msgLine->size = size;
-                msgLine->text = processedString;
-                msgLine->colour = colour;
-                adjusted.Push(msgLine);
+                WriteMessageLine(msgLine,processedString,colour);
             }
             if (startPosition != -1)
             {
-                MessageSegment seg;
-                seg.size = size;
-                seg.text = processedString;
-                seg.colour = colour;
-                seg.x = startPosition;
-                msgLine->segments.Push(seg);
+                WriteMessageSegment(msgLine,processedString,colour,startPosition);
                 startPosition = 0;
             }
             // Next time use a new line!
             msgLine = NULL;
         }
     }
+}
+
+void pawsMessageTextBox::WriteMessageLine(MessageLine*& msgLine, csString text, int colour)
+{
+    msgLine = new MessageLine;
+    msgLine->size = text.Length();
+    msgLine->text = text;
+    msgLine->colour = colour;
+    adjusted.Push(msgLine);
+}
+
+void pawsMessageTextBox::WriteMessageSegment(MessageLine*& msgLine, csString text, int colour, int startPosition)
+{
+    MessageSegment seg;
+    seg.size = text.Length();
+    seg.text = text;
+    seg.colour = colour;
+    seg.x = startPosition;
+    msgLine->segments.Push(seg);
+}
+
+csString pawsMessageTextBox::FindStringThatFits(csString stringBuffer, int canDrawLength)
+{
+    int breakPoint = stringBuffer.FindLast(' ', canDrawLength - 1);
+    int spaceAfterBreak = stringBuffer.FindFirst(' ', breakPoint + 1);
+    int wordLength = spaceAfterBreak - breakPoint;
+    csString wordAfterBreak;
+
+    if (spaceAfterBreak == -1)
+    {
+        stringBuffer.SubString(wordAfterBreak, breakPoint + 1);
+    }
+    else
+    {
+        stringBuffer.SubString(wordAfterBreak, breakPoint + 1, wordLength);
+    }
+
+    int width = 0;
+    int height = 0;
+    GetFont()->GetDimensions(wordAfterBreak.GetData(), width, height);
+
+    csString processedString;
+    if (width <= screenFrame.Width() - INITOFFSET)
+    {
+        processedString.Append(stringBuffer, breakPoint + 1);
+    }
+    else
+    {
+        processedString.Append(stringBuffer, canDrawLength);
+    }
+    return processedString;
 }
 
 bool pawsMessageTextBox::OnScroll( int direction, pawsScrollBar* widget )
