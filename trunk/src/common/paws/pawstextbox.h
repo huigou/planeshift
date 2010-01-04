@@ -218,7 +218,12 @@ protected:
     int topLine;
 
     pawsScrollBar* scrollBar;
-        
+    
+private:
+    static const int INITOFFSET = 20;
+    void WriteMessageLine(MessageLine*& msgLine, csString text, int colour);
+    void WriteMessageSegment(MessageLine*& msgLine, csString text, int colour, int startPosition);
+    csString FindStringThatFits(csString stringBuffer, int canDrawLength);
 };
 
 CREATE_PAWS_FACTORY( pawsMessageTextBox );
