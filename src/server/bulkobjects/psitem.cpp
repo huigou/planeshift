@@ -1776,6 +1776,7 @@ psMoney psItem::GetPrice()
     env.Define("Price", current_stats->GetPrice().GetTotal());
     env.Define("Quality", GetItemQuality());
     env.Define("MaxQuality", GetMaxItemQuality());
+    env.Define("BaseQuality", current_stats->GetQuality());
     script->Evaluate(&env);
 
     MathVar *finalPrice = env.Lookup("FinalPrice");
@@ -1807,6 +1808,7 @@ psMoney psItem::GetSellPrice()
     env.Define("Price", GetPrice().GetTotal());
     env.Define("Quality", GetItemQuality());
     env.Define("MaxQuality", GetMaxItemQuality());
+    env.Define("BaseQuality", current_stats->GetQuality());
     script->Evaluate(&env);
 
     MathVar *finalPrice = env.Lookup("FinalPrice");
