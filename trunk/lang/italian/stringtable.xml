@@ -10,6 +10,7 @@
   <item orig="Desc" trans="" />
   <item orig="!!!WARNING!!!" trans="!!!ATTENZIONE!!!" />
   <item orig="Others&apos; attacks (Successful ones)" trans="" />
+  <item orig="Buddy List Hide" trans="" />
   <item orig="Own attacks that missed the target" trans="" />
   <item orig="Graphics" trans="Grafica" />
   <item orig="Loading GUI" trans="Caricamento GUI" />
@@ -57,6 +58,7 @@
   <item orig="Chose Color (c)" trans="Seleziona Colore (c)" />
   <item orig="View" trans="Vedi" />
   <item orig="PATHS" trans="VIE" />
+  <item orig="Wait" trans="" />
   <item orig="Shadows" trans="Ombre" />
   <item orig="Previous Icon (PgUp)" trans="Icona Precedente (pgUp)" />
   <item orig="Unclaim" trans="Deassegna" />
@@ -569,6 +571,7 @@ chiamato " />
   <item orig="Help" trans="Aiuto" />
   <item orig="View chat" trans="Vedi chat" />
   <item orig="Min. distance:" trans="Distanza min.:" />
+  <item orig="set buddyhide" trans="" />
   <item orig="Quit" trans="Esci" />
   <item orig="Lockpicking" trans="" />
   <item orig="models" trans="Modelli" />
