@@ -152,21 +152,21 @@ bool pawsCharBirth::OnButtonPressed( int mouseButton, int keyModifier, pawsWidge
         {
             if (months->GetSelectedRowNum() == -1)
             {
-                psSystemMessage error(0,MSG_ERROR,"Please choose your birth month");
+                psSystemMessage error(0,MSG_ERROR,PawsManager::GetSingleton().Translate("Please choose your birth month"));
                 error.FireEvent();
                 return true;
             }
 
             if (days->GetSelectedRowNum() == -1)
             {
-                psSystemMessage error(0,MSG_ERROR,"Please choose your birthday");
+                psSystemMessage error(0,MSG_ERROR,PawsManager::GetSingleton().Translate("Please choose your birthday"));
                 error.FireEvent();
                 return true;
             }
 
             if (lastSiblingsChoice == -1)
             {
-                psSystemMessage error(0,MSG_ERROR,"Please choose your sibling count");
+                psSystemMessage error(0,MSG_ERROR,PawsManager::GetSingleton().Translate("Please choose your sibling count"));
                 error.FireEvent();
                 return true;
             }
