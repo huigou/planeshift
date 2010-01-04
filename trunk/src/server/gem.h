@@ -1153,7 +1153,7 @@ public:
 
     /** Returns if the npc has killsteal protection.
 	 *  
-	 * Rules about killsteal protection should be implmented here. 
+	 * Rules about killsteal protection should be implemented here. 
 	 * Generic NPCs have killsteal protection, pet don't have it.
      *
      * @return A boolean indicating if this gemNPC must have killsteal protection.
