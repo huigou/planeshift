@@ -393,10 +393,6 @@ void psSpell::Affect(gemActor *caster, gemObject *target, float range, float kFa
 
         // Only drain 10% of mana.
         caster->DrainMana(-(ManaCost(caster->GetCharacterData(), kFactor)/10), false);
-
-        // Spell casting complete, we are now in PEACE mode again.
-        caster->SetMode(PSCHARACTER_MODE_PEACE);
-        caster->SetSpellCasting(NULL);
         return;
     }
 
@@ -484,10 +480,6 @@ void psSpell::Affect(gemActor *caster, gemObject *target, float range, float kFa
             psserver->SendSystemInfo(caster->GetClientID(), "%s has no effect.", name.GetData());
         }
     }
-
-    // Spell casting complete, we are now in PEACE mode again.
-    caster->SetMode(PSCHARACTER_MODE_PEACE);
-    caster->SetSpellCasting(NULL);
 }
 
 bool psSpell::AffectTarget(gemActor* caster, gemObject* origTarget, gemObject* target, float power) const
@@ -625,7 +617,9 @@ void psSpellCastGameEvent::Trigger()
     // Make sure caster is alive...there might be UDP jitter problems (PS#2728).
     if (caster->IsAlive())
         spell->Affect(caster->GetActor(), target, max_range, kFactor, powerLevel);
-    else
-        caster->GetActor()->SetSpellCasting(NULL);
+
+    // Spell casting complete, we are now in PEACE mode again.
+    caster->GetActor()->SetMode(PSCHARACTER_MODE_PEACE);
+    caster->GetActor()->SetSpellCasting(NULL);
 }
 
