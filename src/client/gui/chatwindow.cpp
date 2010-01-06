@@ -1241,18 +1241,17 @@ void pawsChatWindow::HandleSystemMessage(MsgEntry *me)
 
 void pawsChatWindow::FormatMessage(csString &sText, csString &sPerson, csString prependingText, csString &buff, bool &hasCharName)
 {
+    //checks how we should colour the name of the person
+    //red if it's the player green if it's other players
+    csString nameColouringCode = hasCharName ? REDCODE : GREENCODE;
     if ( sText.StartsWith("/me ") )
-        buff.Format(REDCODE "%s" DEFAULTCODE " %s", (const char *)sPerson, ((const char *)sText)+4);
+        buff.Format("%s%s" DEFAULTCODE " %s", (const char *) nameColouringCode, (const char *)sPerson, ((const char *)sText)+4);
     else if ( sText.StartsWith("/my ") )
-        buff.Format("%s's %s", (const char *)sPerson, ((const char *)sText)+4);
+        buff.Format("%s%s's %s", (const char *) nameColouringCode, (const char *)sPerson, ((const char *)sText)+4);
     else
     {
-        if(hasCharName)
-            buff.Format(REDCODE "%s" DEFAULTCODE " %s: %s", (const char *)sPerson, (const char *) PawsManager::GetSingleton().Translate(prependingText),
-                                    (const char *)sText);
-        else
-            buff.Format(GREENCODE "%s" DEFAULTCODE " %s: %s", (const char *)sPerson, (const char *) PawsManager::GetSingleton().Translate(prependingText),
-                (const char *)sText);
+            buff.Format("%s%s" DEFAULTCODE " %s: %s", (const char *) nameColouringCode,(const char *)sPerson, 
+                        (const char *) PawsManager::GetSingleton().Translate(prependingText), (const char *)sText);
     }
 }
     
