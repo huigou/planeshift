@@ -784,7 +784,27 @@ void ChatManager::SendAudioFile(Client *client, const char *voiceFileHash)
     Error2("Client requested file hash that does not exist. (%s)", voiceFileHash);
 }
 
-
+csString ChatManager::channelsToString()
+{
+    csString string;
+    for(uint32_t i = 1; i <= channelNames.GetSize(); i++)
+    {
+        csArray<uint32_t> subscribers = channelSubscribers.GetAll(i);
+        string += channelNames.Get(i, "");
+        string += " : ";
+        for (size_t i = 0; i < subscribers.GetSize(); i++)
+        {
+            Client *target = psserver->GetConnections()->Find(subscribers[i]);
+            if (target && target->IsReady())
+            {
+                string += target->GetActor()->GetName();
+                string += " ";
+            }
+        }
+        string += "\n";
+    }
+    return string;
+}
 
 
 
@@ -820,4 +840,6 @@ CPrintf(CON_DEBUG, "EndOfChatLoggingEvent on unknown client!");
     }
     client->GetActor()->RemoveChatReport();
 }
+
+
 

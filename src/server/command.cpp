@@ -2289,6 +2289,13 @@ int com_allocations(char* str)
     return 0;
 }
 
+int com_lschannel(char*)
+{
+    CPrintf(CON_CMDOUTPUT, "%s", psserver->GetChatManager()->channelsToString().GetDataSafe());
+
+    return 0;
+}
+
 int com_randomloot( char* loot )
 {
     if (strlen(loot) == 0)
@@ -2408,6 +2415,7 @@ const COMMAND commands[] = {
     { "motd",      true, com_motd,      "motd <msg> Sets the MOTD" },
     { "print",     true, com_print,     "Displays debug data about a specified entity" },
     { "rain",      true, com_rain,      "Forces it to start or stop raining in a sector"},
+    { "lschannel", true, com_lschannel, "Lists all the channels in the server"},
     { "randomloot",false,com_randomloot,"Generates random loot"},
     { 0, 0, 0, 0 }
 };

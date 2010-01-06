@@ -93,6 +93,8 @@ public:
 
     /// Starts the process of sending the specified list of files to the client
     void SendMultipleAudioFileHashes(Client *client, const char *voiceFile);
+    
+    csString channelsToString();
 
 protected:
     csPDelArray<CachedData> audioFileCache;
