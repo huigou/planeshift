@@ -7,6 +7,7 @@
         <loose value="0" />
         <logAllChat value="1" />
         <logSystemChat value="0" />
+        <defaultlastchat value="0" />
         <chatWidget value="chat_basic.xml" />
     </chatoptions>
     <bindings>
