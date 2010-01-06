@@ -42,7 +42,7 @@ public:
 
 private:
 
-    pawsCheckBox *isysbase, *ichat, *inpc, *itells, *iguild, *igroup, *iauction, *isys, *ihelp;
+    pawsCheckBox *isysbase, *ichat, *inpc, *itells, *iguild, *igroup, *iauction, *isys, *ihelp, *basicchat;
     /// Finds the checkbox widget by name and returns the widget or NULL if not found.
     pawsCheckBox *FindCheckbox(const char *name);
 

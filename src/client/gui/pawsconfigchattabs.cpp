@@ -66,6 +66,8 @@ bool pawsConfigChatTabs::PostSetup()
         return false;
     if ((ihelp = FindCheckbox("ihelp")) == NULL)
         return false;
+    if ((basicchat = FindCheckbox("basicchat")) == NULL)
+        return false;
     return true;
 }
 
@@ -84,6 +86,7 @@ bool pawsConfigChatTabs::LoadConfig()
 	iauction->SetState(false);
 	isys->SetState(false);
 	ihelp->SetState(false);
+    basicchat->SetState(settings.chatWidget == "chat_basic.xml");
 
     csArray<csString> allMainBindings = settings.bindings.GetAll("subMainText");
     for(size_t i = 0; i < allMainBindings.GetSize(); i++)
@@ -193,7 +196,8 @@ bool pawsConfigChatTabs::SaveConfig()
 		settings.bindings.Put("subMainText", "CHAT_ADVICE");
 	}
 
-    chatWindow->SetSettings(settings);
+    //could be made more generic (scan the dir?)
+    settings.chatWidget = basicchat->GetState() ? "chat_basic.xml" : "chat.xml";
 
     // Save to file
     chatWindow->SaveChatSettings();
