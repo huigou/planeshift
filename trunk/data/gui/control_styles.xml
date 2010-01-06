@@ -95,3 +95,26 @@
     <button name="OptionsButton"       x="832" y="0" />
     <button name="QuitButton"     x="896" y="0" />
 </style4>
+
+<style5>
+    <bar width="960" height="70" min_w="360" min_h="30"  always_resize="yes"  />
+    <buttons width="64" height="64" hide_width="16" hide_height="16" />
+    <!-- Standard values -->
+    <button name="ShowButtonUp"     x="0" y="0" />
+    <button name="ShowButtonDown"   x="0" y="0" />
+    <button name="ChatButton"       x="64" y="1" />
+    <button name="SkillsButton"    x="128" y="1" />
+    <button name="InventoryButton"       x="192" y="1" />
+    <button name="QuestButton"   x="256" y="1" />
+    <button name="SpellBookButton"      x="320" y="1" />
+    <button name="InfoButton"  x="384" y="1" />
+    <button name="OptionsButton"       x="448" y="1" />
+    <button name="HelpButton"  x="512" y="1" />
+    <button name="QuitButton"     x="576" y="1" />
+
+	<button name="GuildButton"      x="-500" y="-500" />
+	<button name="PetitionButton"   x="-500" y="-500" />
+    <button name="BuddyButton"      x="-500" y="-500" />
+    <button name="GroupButton"      x="-500" y="-500" />
+    <button name="ShortcutButton"   x="-500" y="-500" />
+</style5>
