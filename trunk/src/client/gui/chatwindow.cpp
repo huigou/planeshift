@@ -148,6 +148,7 @@ pawsChatWindow::pawsChatWindow()
     settings.yourColorMix = true;
     settings.joindefaultchannel = true;
     settings.defaultlastchat = true;
+    settings.chatWidget = "chat.xml";
 
 
     for (int i = 0; i < CHAT_NLOG; i++)
@@ -285,6 +286,13 @@ void pawsChatWindow::LoadChatSettings()
             	settings.joindefaultchannel = option->GetAttributeValueAsBool("value", true);
             else if (nodeName == "defaultlastchat")
             	settings.defaultlastchat = option->GetAttributeValueAsBool("value", true);
+            else if (nodeName == "chatWidget")
+            {	
+                settings.chatWidget = option->GetAttributeValue("value");
+                if(!settings.chatWidget.Length()) //if none are defined put a default one
+                    settings.chatWidget = "chat.xml";    
+                    printf("hello  %s\n", settings.chatWidget.GetData());                
+            }   
             else
             {
                 for (int i = 0; i < CHAT_NLOG; i++)
@@ -924,7 +932,7 @@ void pawsChatWindow::SaveChatSettings()
     csRef<iDocumentNode> root,chatNode, colorNode, optionNode,looseNode,filtersNode,
                          badWordsNode,badWordsTextNode,cNode, logNode, selectTabStyleNode,
                          echoScreenInSystemNode, mainBracketsNode, yourColorMixNode, joindefaultchannelNode,
-                         defaultlastchatNode, mainTabNode, flashingNode, flashingOnCharNode, node;
+                         defaultlastchatNode, chatWidgetNode, mainTabNode, flashingNode, flashingOnCharNode, node;
 
     root = doc->CreateRoot();
 
@@ -957,6 +965,11 @@ void pawsChatWindow::SaveChatSettings()
     defaultlastchatNode = optionNode->CreateNodeBefore(CS_NODE_ELEMENT,0);
     defaultlastchatNode->SetValue("defaultlastchat");
     defaultlastchatNode->SetAttributeAsInt("value",(int)settings.defaultlastchat);
+    
+    chatWidgetNode = optionNode->CreateNodeBefore(CS_NODE_ELEMENT,0);
+    chatWidgetNode->SetValue("chatWidget");
+    chatWidgetNode->SetAttribute("value",settings.chatWidget.GetData());
+    printf("%s\n", settings.chatWidget.GetData());
 
     looseNode = optionNode->CreateNodeBefore(CS_NODE_ELEMENT,0);
     looseNode->SetValue("loose");

@@ -95,6 +95,7 @@ struct ChatSettings
     bool mainBrackets; //If it's true brackets like [guild] [tell] will be put in main tab.
     bool yourColorMix; //If it's true the yourColor will be mixed with the Color of the destination 
                        //Example: if you send a tell the color of your text will be (yourColor+tellColor)/2
+    csString chatWidget; ///< contains the widget to load, default being chat.xml. It's used during engine init and for changing settings.
     csArray<csString> badWords;
     csArray<csString> goodWords;
     // chat type to subscription name binding

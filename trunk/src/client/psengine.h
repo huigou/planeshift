@@ -347,9 +347,13 @@ public:
     void UnregisterDelayedLoader(DelayedLoader* obj) { delayedLoaders.Delete(obj); }
 
 private:
-    // Load the log report settings from the config file.
+    /// Load the log report settings from the config file.
     void LoadLogSettings();
 
+    /** Load the chat widget which we will use from the chat options file.
+     *  @return A string containing the filename of the widget to load.
+     */
+    csString GetChatWindowWidget();
     /// queries all needed plugins
     bool QueryPlugins();
 
