@@ -379,19 +379,10 @@ void ModeHandler::SetModeSounds(uint8_t mode)
     switch (mode)
     {
         case psModeMessage::PEACE:
-            soundmanager->StopOverrideBG();
-            soundmanager->ChangeMusicMode(false);
-            //const char *sectorname = celclient->GetMainPlayer()->GetSector()->QueryObject()->GetName();
-            //SetSectorMusic(sectorname);
-            soundmanager->FadeSectorSounds( FADE_UP );
+            soundmanager->SetCombatMusicMode(false);
             break;
         case psModeMessage::COMBAT:
-            if (soundmanager->PlayingCombatMusic())
-            {
-                soundmanager->OverrideBGSong("combat",iSoundManager::LOOP_SOUND);
-                soundmanager->FadeSectorSounds( FADE_DOWN );
-                soundmanager->ChangeMusicMode(true);
-            }
+            soundmanager->SetCombatMusicMode(true);
             break;
         case psModeMessage::DEAD:
             if (soundmanager->PlayingMusic())

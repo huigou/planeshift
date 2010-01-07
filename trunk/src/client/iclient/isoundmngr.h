@@ -162,8 +162,15 @@ struct iSoundManager : public virtual iBase
     /// This returns if we are playing npc voice sounds as a setting or not
     virtual bool PlayingVoices() = 0;
 
-    /// This returns if the music is the one of a fight or not
-    virtual void ChangeMusicMode(bool combat) = 0;
+    /** Change the mode if the player is fighting 
+     *  @param combat TRUE if we have to set combat music, otherwise FALSE
+     */
+    virtual void SetCombatMusicMode(bool combat) = 0;
+    
+    /** Get the mode if the player is fighting 
+     *  @return TRUE if we have combat music, otherwise FALSE
+     */
+    virtual bool GetCombatMusicMode() = 0;
 
     ///This returns the song name that is overriding
     virtual const char* GetSongName() = 0;

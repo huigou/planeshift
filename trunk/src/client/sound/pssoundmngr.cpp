@@ -177,6 +177,23 @@ void psSoundManager::ChangeTimeOfDay( int newTime )
         currentSoundSector->ChangeTime( newTime );
 }
 
+void psSoundManager::SetCombatMusicMode(bool combat)
+{
+    if(combat == false) //combat is being disengaged
+    {
+        //restore normal background song
+        musicCombat = false;
+        if(currentSoundSector)
+            currentSoundSector->ChangeCombatStatus(false);
+    }
+    else if(PlayingCombatMusic())
+    {
+        musicCombat = true;
+        if(currentSoundSector)
+            currentSoundSector->ChangeCombatStatus(true);
+    }
+}
+
 void psSoundManager::StartMapSoundSystem()
 {
     mapSoundSystem->Initialize();
@@ -531,10 +548,9 @@ void psSoundManager::ToggleMusic(bool toggle)
         if ( currentSoundSector )
             currentSoundSector->StartBackground();
 
-        if (musicCombat)
+        if (musicCombat && currentSoundSector)
         {
-            OverrideBGSong("combat",iSoundManager::LOOP_SOUND, 2.0);
-            FadeSectorSounds( FADE_DOWN );
+            currentSoundSector->ChangeCombatStatus(true);
         }
       // if ( lastSoundSector ) lastSoundSector->StartBackground();
     // Disable Music
@@ -851,6 +867,9 @@ void psSoundManager::EnterSector( const char* sector, int timeOfDay, int weather
     lastlastSoundSector = lastSoundSector;
     lastSoundSector = currentSoundSector;
     currentSoundSector = mapSoundSystem->GetSoundSectorByName(sector);
+    
+    if(!currentSoundSector) //warn a bit all sectors must be defined in the xml
+        Error2("Sector %s not found in soundsectors!!! Add it in the proper xml!\n", sector);
 
     // Transfer sound settings
     if ( currentSoundSector )
@@ -1145,6 +1164,7 @@ bool psMapSoundSystem::Initialize()
                 {
                     csRef<iDocumentNode> background = backgroundIter->Next();
                     csString resource = background->GetAttributeValue("RESOURCE");
+                    csString type = background->GetAttributeValue("TYPE");
                     float minVol =  background->GetAttributeValueAsFloat("MINVOL");
                     float maxVol =  background->GetAttributeValueAsFloat("MAXVOL");
                     int fadeDelay = background->GetAttributeValueAsInt("FADEDELAY");
@@ -1177,11 +1197,51 @@ bool psMapSoundSystem::Initialize()
                                                             weather, loopStart,loopEnd,
                                                             sndmngr->LoopBGM());
                     obj->SetResource( resource );
-                    manager->NewBackground( obj );
+                    //if this is a combat song add as such else default as normal background song.
+                    if(type == "COMBAT") 
+                        manager->NewCombatBackground( obj );
+                    else
+                        manager->NewBackground( obj );
                 }
+                
+                //HACK: for now we always add the "combat" resource to all sectors
+                csString resource = "combat";
+                float minVol =  0.0f;
+                float maxVol =  1.0f;
+                int fadeDelay = 2;
+                int timeOfDay = -1;
+                int timeOfDayRange = 0;
+                int weather   = -1;
+                size_t loopStart = 0; //need to find the proper position and fix the song
+                size_t loopEnd   = 0;
+                csRef<SOUND_DATA_TYPE> snddata = sndmngr->GetSoundResource( resource );
+                if (!snddata)
+                {
+                    Error2("Failed to load Sound: %s", resource.GetData());
+                    continue;
+                }
+
+                csRef<SOUND_STREAM_TYPE> sndstream = sndmngr->soundSystem->CreateStream(snddata, CS_SND3D_DISABLE);
+                if ( !sndstream )
+                {
+                    Error2("Failed to create Sound Stream: %s", resource.GetData());
+                    continue;
+                }
+                psSoundObject* obj = new psSoundObject (sndstream, this,
+                                                            maxVol, minVol,
+                                                            fadeDelay,
+                                                            timeOfDay,
+                                                            timeOfDayRange,
+                                                            weather, loopStart,loopEnd,
+                                                            sndmngr->LoopBGM());
+                    
+                manager->NewCombatBackground( obj );
+                    
+                //END HACK
             }
         }
     }
+    
 
     // Remove pending ones
     pendingSectors.DeleteAll();
@@ -1396,6 +1456,9 @@ psSectorSoundManager::psSectorSoundManager( csString& sectorName, iEngine* engin
     music = true;
     this->engine = engine;
     mainBG = NULL;
+    mainCombatBG = NULL;
+    currentBG = NULL;
+    
     mapsoundsystem = mapSS;
     weather = 1;
 }
@@ -1411,6 +1474,14 @@ psSectorSoundManager::~psSectorSoundManager()
       mapsoundsystem->RemoveActiveSong(songs[i]);
       songs[i]->Stop();
     }
+    
+    l = combatSongs.GetSize();
+    for (i=0;i<l;i++)
+    {
+      mapsoundsystem->RemoveActiveSong(combatSongs[i]);
+      combatSongs[i]->Stop();
+    }
+
 
     l = ambient.GetSize();
     for (i=0;i<l;i++)
@@ -1430,6 +1501,11 @@ psSectorSoundManager::~psSectorSoundManager()
 void psSectorSoundManager::NewBackground( psSoundObject* song )
 {
     songs.Push( song );
+}
+
+void psSectorSoundManager::NewCombatBackground( psSoundObject* song )
+{
+    combatSongs.Push( song );
 }
 
 void psSectorSoundManager::NewAmbient( psSoundObject* sound )
@@ -1525,28 +1601,9 @@ void psSectorSoundManager::StartBackground()
 {
     music = true;
 
-    if ( mainBG )
-    {
-        mapsoundsystem->RegisterActiveSong(mainBG);
-        if(mapsoundsystem->sndmngr->LoopBGM())
-            mainBG->SetLooping(true);
-        else
-            mainBG->SetLooping(false);
-        mainBG->StartFade( FADE_UP );
-    }
-    else
-    {
-        if ( songs.GetSize() > 0 )
-        {
-            mapsoundsystem->RegisterActiveSong(songs[0]);
-            if(mapsoundsystem->sndmngr->LoopBGM())
-                songs[0]->SetLooping(true);
-            else
-                songs[0]->SetLooping(false);
-            songs[0]->StartFade( FADE_UP );
-            mainBG = songs[0];
-        }
-    }
+    SearchAndSetBackgroundSong(false, false, mapsoundsystem->sndmngr->GetCombatMusicMode());
+    SearchAndSetCombatSong(false, false, mapsoundsystem->sndmngr->GetCombatMusicMode());
+    StartBG();
 }
 
 
@@ -1558,6 +1615,11 @@ void psSectorSoundManager::StopBackground()
     {
         mapsoundsystem->RemoveActiveSong(songs[z]);
         songs[z]->Stop();
+    }
+    for ( size_t z = 0; z < combatSongs.GetSize(); z++ )
+    {
+        mapsoundsystem->RemoveActiveSong(combatSongs[z]);
+        combatSongs[z]->Stop();
     }
 }
 
@@ -1602,13 +1664,13 @@ void psSectorSoundManager::StopSounds()
 
 void psSectorSoundManager::Fade( Fade_Direction dir )
 {
-    if ( mainBG && HasMusic())//We should check that the sector can play music.
+    if ( currentBG && HasMusic())//We should check that the sector can play music.
     {
         if (dir == FADE_UP)
         {
-            mapsoundsystem->RegisterActiveSong(mainBG);
+            mapsoundsystem->RegisterActiveSong(currentBG);
         }
-        mainBG->StartFade( dir );
+        currentBG->StartFade( dir );
     }
 
     size_t z;
@@ -1631,79 +1693,140 @@ void psSectorSoundManager::Fade( Fade_Direction dir )
     }
 }
 
+void psSectorSoundManager::ChangeCombatStatus(bool combatStatus)
+{
+    if(music)
+    {
+        if(combatStatus)
+            SearchAndSetCombatSong(false,false,false);
+        StartBG();
+    }    
+}
+
 void psSectorSoundManager::ChangeTime( int timeOfDay )
 {
-    csArray<psSoundObject*> bestTimeSong;
-    if ( music )
+    this->timeOfDay = timeOfDay;
+    if (music)
     {
-        for (size_t z = 0; z < songs.GetSize(); z++ )
-        {
-            if ( songs[z]->MatchTime( timeOfDay ) )
-                bestTimeSong.Push(songs[z]);
-        }
+        SearchAndSetBackgroundSong(true,false,mapsoundsystem->sndmngr->GetCombatMusicMode());
+        StartBG();
     }
-
-    if ( bestTimeSong.GetSize() )
-        SetBGSong(bestTimeSong[mapsoundsystem->GetRandomNumber(bestTimeSong.GetSize())]);
 }
 
-void psSectorSoundManager::SetBGSong(psSoundObject* song)
+void psSectorSoundManager::SetBGSong(psSoundObject* song, bool exitingFromCombat)
 {
-    Debug2( LOG_SOUND, 0, "Song now playing is: %s", song->GetName().GetData() );
-    if (!mapsoundsystem->FindSameActiveSong( song ))
+    if(song == NULL) return;
+    //we don't enable it again in case
+    if (!mapsoundsystem->FindSameActiveSong(song))
     {
-        mapsoundsystem->RegisterActiveSong(song);
-        if(mapsoundsystem->sndmngr->LoopBGM())
-            song->SetLooping(true);
-        else
-            song->SetLooping(false);
-
-        song->StartFade( FADE_UP );
-        mainBG = song;
+        if(exitingFromCombat)
+            song->SetPlayPos(song->GetLoopStartPos());
     }
+    mainBG = song;
+    
 }
 
-void psSectorSoundManager::Enter( psSectorSoundManager* leaveFrom, int timeOfDay, int weather, csVector3& position )
+void psSectorSoundManager::SetCombatBGSong(psSoundObject* song, bool combatTransition)
+{
+    if(song == NULL) return;
+    if (!mapsoundsystem->FindSameActiveSong(song))
+    {
+        if(combatTransition) //if the combat music is a transition because we have changed sector set it to
+            song->SetPlayPos(song->GetLoopStartPos());
+        else //< setposition is broken in cs
+            song->SetPlayPos(0);
+    }
+        
+    mainCombatBG = song;
+}
+
+void psSectorSoundManager::SearchAndSetCombatSong(bool timeChange, bool weatherChange, bool combatStatus)
+{
+    SetCombatBGSong(SearchBackgroundSong(combatSongs, timeChange, weatherChange), combatStatus);
+}
+
+psSoundObject* psSectorSoundManager::SearchBackgroundSong(csPDelArray<psSoundObject> &songList, bool timeChange, bool weatherChange)
 {
     csArray<psSoundObject*> bestTimeWeatherSong;
     csArray<psSoundObject*> bestTimeSong;
     csArray<psSoundObject*> bestWeatherSong;
     csArray<psSoundObject*> noReferenceSong;
-    this->weather = weather;
 
+    for (size_t z = 0; z < songList.GetSize(); z++ )
+    {
+        //search for time restrained songs
+        if (songList[z]->MatchTime(timeOfDay))
+        {
+            //is this also weather matching?
+            if(songList[z]->MatchWeather(weather))
+            bestTimeWeatherSong.Push(songList[z]);
+            else
+                bestTimeSong.Push(songList[z]);
+        }
+        //search for weather restrained songs
+        else if (!timeChange && songList[z]->MatchWeather(weather))
+            bestWeatherSong.Push(songList[z]);
+        //search for no restrain songs
+        else if (!timeChange && !weatherChange && songList[z]->HasNoTime() && songList[z]->HasNoWeather())
+            noReferenceSong.Push(songList[z]);
+    }
+
+    if (bestTimeWeatherSong.GetSize())
+        return bestTimeWeatherSong[mapsoundsystem->GetRandomNumber(bestTimeWeatherSong.GetSize())];
+    else if (bestTimeSong.GetSize())
+        return bestTimeSong[mapsoundsystem->GetRandomNumber(bestTimeSong.GetSize())];
+    else if (bestWeatherSong.GetSize())
+        return bestWeatherSong[mapsoundsystem->GetRandomNumber(bestWeatherSong.GetSize())];
+    else if (noReferenceSong.GetSize())
+        return noReferenceSong[mapsoundsystem->GetRandomNumber(noReferenceSong.GetSize())];
+    else if (!timeChange && !weatherChange && songList.GetSize())//All failed get a random song. Do we actually have a song?
+            return songList[mapsoundsystem->GetRandomNumber(songList.GetSize())];
+    return NULL;
+}
+
+void psSectorSoundManager::SearchAndSetBackgroundSong(bool timeChange, bool weatherChange, bool combatStatus)
+{
+    SetBGSong(SearchBackgroundSong(songs, timeChange, weatherChange), combatStatus);
+}
+
+void psSectorSoundManager::StartBG()
+{
+    psSoundObject* song  = mainBG;
+    if(mapsoundsystem->sndmngr->GetCombatMusicMode() && mainCombatBG) //we apply the combat music
+        song = mainCombatBG;
+
+    if (!song) //the song isn't available ignore everything
+        return;
+
+    Debug2( LOG_SOUND, 0, "Song now playing is: %s", song->GetName().GetData() );
+    if (!mapsoundsystem->FindSameActiveSong( song ))
+    {
+        if(currentBG)
+            currentBG->StartFade(FADE_DOWN);
+        mapsoundsystem->RegisterActiveSong(song);
+    }
+    if(mapsoundsystem->sndmngr->LoopBGM())
+        song->SetLooping(true);
+    else
+        song->SetLooping(false);
+
+    song->StartFade( FADE_UP );
+    
+    currentBG = song;
+}
+
+void psSectorSoundManager::Enter( psSectorSoundManager* leaveFrom, int timeOfDay, int weather, csVector3& position )
+{
+    this->weather = weather;
+    this->timeOfDay = timeOfDay;
+    
     size_t z;
 
     if ( music )
     {
-        for ( z = 0; z < songs.GetSize(); z++ )
-        {
-            //search for time restrained songs
-            if (songs[z]->MatchTime(timeOfDay))
-            {
-                //is this also weather matching?
-                if(songs[z]->MatchWeather(weather))
-                    bestTimeWeatherSong.Push(songs[z]);
-                else
-                    bestTimeSong.Push(songs[z]);
-            }
-            //search for weather restrained songs
-            else if (songs[z]->MatchWeather(weather))
-                bestWeatherSong.Push(songs[z]);
-            //search for no restrain songs
-            else if (songs[z]->HasNoTime() && songs[z]->HasNoWeather())
-                noReferenceSong.Push(songs[z]);
-        }
-
-        if (bestTimeWeatherSong.GetSize())
-            SetBGSong(bestTimeWeatherSong[mapsoundsystem->GetRandomNumber(bestTimeWeatherSong.GetSize())]);
-        else if (bestTimeSong.GetSize())
-            SetBGSong(bestTimeSong[mapsoundsystem->GetRandomNumber(bestTimeSong.GetSize())]);
-        else if (bestWeatherSong.GetSize())
-            SetBGSong(bestWeatherSong[mapsoundsystem->GetRandomNumber(bestWeatherSong.GetSize())]);
-        else if (noReferenceSong.GetSize())
-            SetBGSong(noReferenceSong[mapsoundsystem->GetRandomNumber(noReferenceSong.GetSize())]);
-        else if (songs.GetSize() > 0)//All failed get a random song. Do we actually have a song?
-                SetBGSong(songs[mapsoundsystem->GetRandomNumber(songs.GetSize())]);
+        SearchAndSetBackgroundSong(false, false, mapsoundsystem->sndmngr->GetCombatMusicMode());
+        SearchAndSetCombatSong(false, false, mapsoundsystem->sndmngr->GetCombatMusicMode());
+        StartBG();
     }
 
     if ( sounds )
@@ -1806,6 +1929,12 @@ bool psSectorSoundManager::CheckSong( psSoundObject* bgSound )
     {
         //if ( songs[z]->IsPlaying() && songs[z]->Same( bgSound ) )
         if ( songs[z]->Same( bgSound ) )
+            return false;
+    }
+    
+    for ( size_t z = 0; z < combatSongs.GetSize(); z++ )
+    {
+        if ( combatSongs[z]->Same( bgSound ) )
             return false;
     }
     return true;
@@ -1912,7 +2041,7 @@ void psSoundObject::StartSound()
 {
     if ( !stream.Start(mapSystem->sndmngr->soundSystem,loop,loopStart,loopEnd) )
         return;
-
+    stream.UnPause();
     if (threeDee)
     {
         soundSource3D = stream.GetSource3D();
@@ -1988,8 +2117,7 @@ void psSoundObject::Update( csVector3& playerPos )
 
     if ( isPlaying && range > rangeToStart )
     {
-        stream.SetVolume(0.0f);
-        isPlaying = false;
+        Stop();
     }
     else if ( !isPlaying && range < rangeToStart )
     {
@@ -2013,8 +2141,7 @@ void psSoundObject::StartFade( Fade_Direction dir )
         Debug1( LOG_SOUND, 0, "Fading complete" );
         if (isPlaying)
         {
-            isPlaying = false;
-            stream.SetVolume(0.0f);
+            Stop();
         }
         return;
     }
@@ -2027,6 +2154,7 @@ void psSoundObject::StartFade( Fade_Direction dir )
             isPlaying = true;
             stream.Start(mapSystem->sndmngr->soundSystem,loop,loopStart,loopEnd);
             stream.SetVolume(currentVolume);
+            stream.UnPause();
         }
         return;
     }
@@ -2052,6 +2180,7 @@ void psSoundObject::StartFade( Fade_Direction dir )
         isPlaying = true;
         Debug2( LOG_SOUND, 0, "Sound Playing at: %f vol", currentVolume );
         stream.SetVolume( currentVolume*ambientVolume );
+        stream.UnPause();
       }
       else
       {
@@ -2130,12 +2259,12 @@ void psSoundObject::Update()
 
     if ( currentVolume <= minVol && fadeDir == FADE_DOWN )
     {
-        isPlaying = false;
-        stream.SetVolume(0.0f);
+        Stop();
     }
     else
     {
         stream.SetVolume(currentVolume * ambientVolume);
+        stream.UnPause();
     }
 }
 
