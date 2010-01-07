@@ -156,8 +156,15 @@ public:
     /** Update the sound system with the new time of day */
     virtual void ChangeTimeOfDay( int newTime );
 
-    /** Change the mode if the player is fighting */
-    virtual void ChangeMusicMode(bool combat) {musicCombat = combat;}
+    /** Change the mode if the player is fighting 
+     *  @param combat TRUE if we have to set combat music, otherwise FALSE
+     */
+    virtual void SetCombatMusicMode(bool combat);
+    
+    /** Get the mode if the player is fighting 
+     *  @return TRUE if we have combat music, otherwise FALSE
+     */
+    virtual bool GetCombatMusicMode() { return musicCombat; }
 
     /**Return name of the background music that is overriding */
     virtual const char* GetSongName() {return overSongName;}
@@ -364,7 +371,9 @@ public:
     bool IsValid() { return soundSource.IsValid(); }
 
     size_t GetPlayPos() { return soundStream->GetPosition(); }
-    size_t SetPlayPos(size_t position) { soundStream->SetPosition(position); }
+    void SetPlayPos(size_t position) { soundStream->SetPosition(position); }
+    void Pause() { soundStream->Pause(); }
+    void UnPause() { soundStream->Unpause();  }
 };
 
 //-----------------------------------------------------------------------------
@@ -429,7 +438,7 @@ public:
       */
     void Start3DSound( csVector3 &position );
     void StartSound();
-    void Stop() { stream.SetVolume(0.0f); isPlaying = false; }
+    void Stop() { stream.SetVolume(0.0f); isPlaying = false; stream.Pause(); }
 
     /** Checks if this object doesn't have a special time defined.
      *  This is used to determine if the object doesn't have a special
@@ -498,8 +507,9 @@ public:
     /** Set the value of loop **/
     void SetLooping(bool looping) {loop = looping;}
 
+    size_t GetLoopStartPos() { return loopStart; }
     size_t GetPlayPos() { return stream.GetPlayPos(); }
-    size_t SetPlayPos(size_t position) { stream.SetPlayPos(position); }
+    void SetPlayPos(size_t position) { stream.SetPlayPos(position); }
 
 protected:
 
@@ -557,6 +567,11 @@ public:
     bool HasSounds(){return sounds;}
 
     void NewBackground( psSoundObject* song );
+    
+    /** Adds a combat background song to this sector.
+     *  @param song The song to add to this sector.
+     */
+    void NewCombatBackground( psSoundObject* song );
     void NewAmbient( psSoundObject* sound );
     void New3DSound( psSoundObject* sound );
     void New3DMeshSound( psSoundObject* sound );
@@ -568,12 +583,26 @@ public:
      * @param newTime The new time of day.
      */
     void ChangeTime( int newTime );
+    
+    void ChangeCombatStatus(bool combatStatus);
 
     /** Sets a new Background Song.
      *
      * @param song: the song to set as background song for this sector
      */
-    void SetBGSong(psSoundObject* song);
+    void SetBGSong(psSoundObject* song, bool exitingFromCombat = false);
+    
+    
+    void SetCombatBGSong(psSoundObject* song, bool combatTransition);
+    
+    void StartBG();
+    
+    void SearchAndSetCombatSong(bool timeChange, bool weatherChange, bool combatStatus);
+    
+    void SearchAndSetBackgroundSong(bool timeChange, bool weatherChange, bool combatStatus);
+    
+    psSoundObject* SearchBackgroundSong(csPDelArray<psSoundObject> &songList, bool timeChange, bool weatherChange);
+    
     void Enter( psSectorSoundManager* enterFrom, int timeOfDay, int weather, csVector3& position );
 
     void StartBackground();
@@ -607,13 +636,16 @@ private:
     csString sector;
     psMapSoundSystem *mapsoundsystem;
 
-    csPDelArray<psSoundObject> songs;
-    csPDelArray<psSoundObject> ambient;
-    csPDelArray<psSoundObject> emitters;
+    csPDelArray<psSoundObject> songs;       ///< stores all the background songs of this sector
+    csPDelArray<psSoundObject> combatSongs; ///< stores all the combat songs of this sector
+    csPDelArray<psSoundObject> ambient;     ///< stores all the ambient sounds/music of this sector
+    csPDelArray<psSoundObject> emitters;    ///< Stores all the emitters of this sector
 
     csArray<psSoundObject*>    weatherNotify; ///< Objects to call when we get weather event
 
     psSoundObject* mainBG;
+    psSoundObject* mainCombatBG;
+    psSoundObject* currentBG;
 
     // These are 3d sound emitters that are attached to a mesh but have not yet
     // had their positions set.  When the map is loaded it will get their positions
@@ -622,6 +654,7 @@ private:
     csArray<ps3DFactorySound*> unAssignedEmitterFactories;
 
     int weather;
+    int timeOfDay;
     bool music;
     bool sounds;
 };
