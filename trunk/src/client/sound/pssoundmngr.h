@@ -156,13 +156,15 @@ public:
     /** Update the sound system with the new time of day */
     virtual void ChangeTimeOfDay( int newTime );
 
-    /** Change the mode if the player is fighting 
-     *  @param combat TRUE if we have to set combat music, otherwise FALSE
+    /** Change the mode if the player is fighting.
+     * 
+     *  @param combat TRUE if we have to set combat music, otherwise FALSE.
      */
     virtual void SetCombatMusicMode(bool combat);
     
-    /** Get the mode if the player is fighting 
-     *  @return TRUE if we have combat music, otherwise FALSE
+    /** Get the mode if the player is fighting.
+     * 
+     *  @return TRUE if we have combat music, otherwise FALSE.
      */
     virtual bool GetCombatMusicMode() { return musicCombat; }
 
@@ -507,8 +509,21 @@ public:
     /** Set the value of loop **/
     void SetLooping(bool looping) {loop = looping;}
 
+    /** Gets the position where the loop will start in the current sound object.
+     * 
+     *  @return The frame where the song will loop to.
+     */
     size_t GetLoopStartPos() { return loopStart; }
+    
+    /** Gets the current playing position of this sound object in frames.
+     * 
+     *  @return The frame where the song is currently at.
+     */
     size_t GetPlayPos() { return stream.GetPlayPos(); }
+    /** Sets the current playing position of this sound object in frames.
+     * 
+     *  @param position The frame where the song has to seek to.
+     */
     void SetPlayPos(size_t position) { stream.SetPlayPos(position); }
 
 protected:
@@ -584,23 +599,63 @@ public:
      */
     void ChangeTime( int newTime );
     
+    /** Prepares the sector to start combat music when switching from normal to combat mode.
+     *  
+     *  @param combatStatus Says if we are entering or exiting combat.
+     */
     void ChangeCombatStatus(bool combatStatus);
 
     /** Sets a new Background Song.
      *
-     * @param song: the song to set as background song for this sector
+     * @param song The song to set as background song for this sector
+     * @param exitingFromCombat Says if we are currently in combat and we are going to exit after this call,
+     *                          The engine in this case will set the position of the song to the loop start
+     *                          if any, so it doesn't play the intro part of the song.
+     *                          This happens when changing sectors while in combat.
      */
     void SetBGSong(psSoundObject* song, bool exitingFromCombat = false);
     
-    
+    /** Sets a new Combat Background Song.
+     *
+     * @param song: the song to set as combat background song for this sector
+     * @param exitingFromCombat Says if we are currently in combat and we are going to change song,
+     *                          The engine in this case will set the position of the song to the loop start
+     *                          if any, so it doesn't play the intro part of the song.
+     *                          This happens when changing sectors while in combat.
+     */
     void SetCombatBGSong(psSoundObject* song, bool combatTransition);
     
+    /** Starts the background song in this sector. 
+     *  It will select by itself if it has to start the combat or normal background songs.
+     *  @note before calling this you must first set the background songs with setCombatBGSong and SetBGSong.
+     */
     void StartBG();
     
+    /** Searches a random combat song (with restrains like time and weather) and sets it for use.
+     * 
+     *  @param timeChange TRUE if we are calling this because the time has changed.
+     *  @param weatherChange TRUE if we are calling this because the time has changed.
+     *  @param combatStatus TRUE if we are currently in combat.
+     */
     void SearchAndSetCombatSong(bool timeChange, bool weatherChange, bool combatStatus);
+
     
+    /** Searches a random background song (with restrains like time and weather) and sets it for use.
+     * 
+     *  @param timeChange TRUE if we are calling this because the time has changed.
+     *  @param weatherChange TRUE if we are calling this because the time has changed.
+     *  @param combatStatus TRUE if we are currently in combat.
+     */
     void SearchAndSetBackgroundSong(bool timeChange, bool weatherChange, bool combatStatus);
     
+    
+    /** Generic function which gets a songlist and checks for songs which have time,weather and no restrains.
+     *  Then randomly gets one of those selected ones, giving precedence in this way: 1) time+weather compare
+     *  2) time compare 3) weather compare 4) no restriction songs 5) all songs in the sector
+     * 
+     *  @param timeChange TRUE if we are calling this because the time has changed.
+     *  @param weatherChange TRUE if we are calling this because the time has changed.
+     */
     psSoundObject* SearchBackgroundSong(csPDelArray<psSoundObject> &songList, bool timeChange, bool weatherChange);
     
     void Enter( psSectorSoundManager* enterFrom, int timeOfDay, int weather, csVector3& position );
@@ -643,9 +698,9 @@ private:
 
     csArray<psSoundObject*>    weatherNotify; ///< Objects to call when we get weather event
 
-    psSoundObject* mainBG;
-    psSoundObject* mainCombatBG;
-    psSoundObject* currentBG;
+    psSoundObject* mainBG;            ///< The main background song we have chosen
+    psSoundObject* mainCombatBG;      ///< The main combat background song we have chosen
+    psSoundObject* currentBG;         ///< The currently playing background song
 
     // These are 3d sound emitters that are attached to a mesh but have not yet
     // had their positions set.  When the map is loaded it will get their positions
@@ -653,8 +708,8 @@ private:
     csArray<psSoundObject*> unAssignedEmitters;
     csArray<ps3DFactorySound*> unAssignedEmitterFactories;
 
-    int weather;
-    int timeOfDay;
+    int weather;   ///< Keeps a reference to the weather type in this sector
+    int timeOfDay; ///< Keeps a reference to the time which is currently
     bool music;
     bool sounds;
 };
