@@ -21,8 +21,11 @@
     var csWinLibsVersionStab = "1.3_004"; // cs win32 libs version.
     var csWinLibsVersion = "1.9_002"; // cs win32 libs version.
     //Update date and author, to be changed everytime and updates occurred
-    var UpdateDate = "7 December 2009"; //Date when the update occurred
-    var UpdateAuthor = "Kayden"; //Author of the update
+    var UpdateDate = "$LastChangedDate$"; //Date when the update occurred
+    UpdateDate = UpdateDate.substring("$LastChangedDate".length, UpdateDate.length - 1)
+    var UpdateAuthor = "$Author$"; //Author of the update
+    UpdateAuthor = UpdateAuthor.substring("$Author".length, UpdateAuthor.length - 1)
+
 -->
 </script>
 
