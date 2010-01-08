@@ -46,6 +46,7 @@
 #include <csutil/floatrand.h>
 #include <iutil/stringarray.h>
 #include <csutil/databuf.h>
+#include <csutil/scfstringarray.h>
 
 #include "paws/pawsmanager.h"
 #include "paws/pawsmainwidget.h"
@@ -57,6 +58,7 @@
 
 #include "effects/pseffectmanager.h"
 #include "effects/pseffect.h"
+#include "sound/pssoundmngr.h"
 
 #include "pscal3dcallback.h"
 
@@ -74,7 +76,7 @@
 #include "eeditshortcutstoolbox.h"
 
 #include "iclient/ibgloader.h"
-#include <csutil/scfstringarray.h>
+#include "iclient/isoundmngr.h"
 
 const char * EEditApp::CONFIG_FILENAME = "/this/eedit.cfg";
 const char * EEditApp::APP_NAME        = "planeshift.eedit.application";
@@ -115,6 +117,8 @@ EEditApp::EEditApp(iObjectRegistry * obj_reg, EEditReporter * _reporter)
 
 EEditApp::~EEditApp()
 {
+    object_reg->Unregister ((iSoundManager*)soundmanager, "iSoundManager");
+
     delete rand;
 
     if (event_handler && queue)
@@ -230,6 +234,21 @@ bool EEditApp::Init()
     while (loader->GetLoadingCount() != 0)
     {
         loader->ContinueLoading(true);
+    }
+
+    // Set up sound
+    {
+        psSoundManager* pssound = new psSoundManager(0);
+        pssound->Initialize(object_reg);
+
+        soundmanager.AttachNew(pssound);
+        object_reg->Register ((iSoundManager*) soundmanager, "iSoundManager");
+
+        if (!pssound->Setup())
+        {
+            SevereError("Cannot initialize SoundManager!");
+            return false;
+        }
     }
 
     // paws initialization
@@ -855,7 +874,7 @@ bool EEditApp::AppendEffectPathList(const csString & effectFile, const csString 
         Error2("Could not find file: %s", effectFile.GetData());
         return false;
     }
-    xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
+    xml = csQueryRegistry<iDocumentSystem>(object_reg);
     assert(xml);
     doc = xml->CreateDocument();
     assert(doc);
