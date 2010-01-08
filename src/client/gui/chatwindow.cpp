@@ -1247,7 +1247,7 @@ void pawsChatWindow::FormatMessage(csString &sText, csString &sPerson, csString 
     if ( sText.StartsWith("/me ") )
         buff.Format("%s%s" DEFAULTCODE " %s", (const char *) nameColouringCode, (const char *)sPerson, ((const char *)sText)+4);
     else if ( sText.StartsWith("/my ") )
-        buff.Format("%s%s's %s", (const char *) nameColouringCode, (const char *)sPerson, ((const char *)sText)+4);
+        buff.Format("%s%s's" DEFAULTCODE " %s", (const char *) nameColouringCode, (const char *)sPerson, ((const char *)sText)+4);
     else
     {
             buff.Format("%s%s" DEFAULTCODE " %s: %s", (const char *) nameColouringCode,(const char *)sPerson, 
