@@ -371,12 +371,12 @@ bool pawsMessageTextBox::Setup( iDocumentNode* node )
 
         // Create the optional scroll bar here as well but hidden.
         scrollBar = new pawsScrollBar;
-        scrollBar->Setup( scrollBarNode );
+        //scrollBar->Setup( scrollBarNode );
         scrollBar->SetParent( this );
 
         csRef<iDocumentAttribute> widthAttribute = scrollBarNode->GetAttribute("width");
-        int scrollBarWidth = 24;
-        if( widthAttribute ){
+        int scrollBarWidth = 25;
+        if(widthAttribute){
             scrollBarWidth = widthAttribute->GetValueAsInt();
         }
 
