@@ -203,10 +203,10 @@ bool EEditApp::Init()
     if (nw)
         nw->SetTitle(WINDOW_CAPTION);
 
-	// loads materials, meshes and maps
+    // loads materials, meshes and maps
     csRef<iBgLoader> loader = csQueryRegistry<iBgLoader>(object_reg);
 
-	loader->PrecacheDataWait("/planeshift/materials/materials.cslib", false);
+    loader->PrecacheDataWait("/planeshift/materials/materials.cslib", false);
 
     csRef<iStringArray> meshes = vfs->FindFiles("/planeshift/meshes/");
     for(size_t j=0; j<meshes->GetSize(); ++j)
@@ -222,12 +222,15 @@ bool EEditApp::Init()
     }
     //CPrintf(CON_CMDOUTPUT,"Loader cache filled");
 
-	csRef<iStringArray> regions;
-	regions.AttachNew(new scfStringArray());
-	regions->Push("npcroom1");
+    csRef<iStringArray> regions;
+    regions.AttachNew(new scfStringArray());
+    regions->Push("npcroom1");
 
-	loader->LoadZones(regions, true);
-
+    loader->LoadZones(regions, true);
+    while (loader->GetLoadingCount() != 0)
+    {
+        loader->ContinueLoading(true);
+    }
 
     // paws initialization
     paws = new PawsManager(object_reg, "/this/art/eedit.zip", NULL, "/this/eedit.cfg");
