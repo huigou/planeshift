@@ -82,7 +82,7 @@
                 <attach point="ATTACH_BOTTOM" />
                 <attach point="ATTACH_TOP" />
             </attachpoints>
-			<pawsScrollBar width="15" />
+			<!--<pawsScrollBar width="15" />-->
         </widget>
         <widget name="DoneButton" factory="pawsButton" toggle="no" id="1100" notify="ShortcutWindow">
             <frame x="20" y="180" width="50" height="24" />

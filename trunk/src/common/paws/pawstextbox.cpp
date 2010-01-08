@@ -371,6 +371,7 @@ bool pawsMessageTextBox::Setup( iDocumentNode* node )
 
         // Create the optional scroll bar here as well but hidden.
         scrollBar = new pawsScrollBar;
+        //TODO: FIGURE OUT WHY THIS FUNCTION DOESN'T SETUP SCROLLBARS CORRECTLY!
         //scrollBar->Setup( scrollBarNode );
         scrollBar->SetParent( this );
 
