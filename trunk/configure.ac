@@ -279,9 +279,9 @@ AC_DEFUN([CS_CHECK_OPTIMIZE_FLAGS],
 	[C++], [COMPILER.CFLAGS.optimize], [+],
 	[cs_optimize_flags="$cs_optimize_flags $cs_cv_prog_cxx_optimize"])
 
-    CS_EMIT_BUILD_FLAGS([if -fomit-frame-pointer is accepted],
+    CS_EMIT_BUILD_FLAGS([if -fno-omit-frame-pointer is accepted],
 	[cs_cv_prog_cxx_omit_frame_pointer],
-	[CS_CREATE_TUPLE([-fomit-frame-pointer])],
+	[CS_CREATE_TUPLE([-fno-omit-frame-pointer])],
 	[C++], [COMPILER.CFLAGS.optimize], [+],
 	[cs_optimize_flags="$cs_optimize_flags \
 	    $cs_cv_prog_cxx_omit_frame_pointer"])
