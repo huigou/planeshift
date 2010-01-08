@@ -6,7 +6,7 @@ Application eedit :
 
 CompileGroups eedit : tools ;
 ExternalLibs eedit : CRYSTAL CAL3D ;
-LinkWith eedit : paws psutil effects fparser ;
+LinkWith eedit : pssound paws psutil effects fparser ;
 
 if $(HAVE_STATIC_PLUGINS) = "yes"
 {
@@ -20,7 +20,7 @@ if $(HAVE_STATIC_PLUGINS) = "yes"
   CompileGroups eedit_static : tools ;
   ExternalLibs eedit_static : CRYSTAL ;
   MsvcDefine eedit_static : CS_STATIC_LINKED ;
-  LinkWith eedit_static : paws psutil effects fparser ;
+  LinkWith eedit_static : pssound paws psutil effects fparser ;
 
 STATIC.PLUGINLIST =
   bindoc

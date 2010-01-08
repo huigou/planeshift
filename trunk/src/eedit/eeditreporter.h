@@ -48,7 +48,7 @@ public:
 
 private:
 
-    EEditErrorToolbox * errorToolbox;
+    csWeakRef<EEditErrorToolbox> errorToolbox;
     iObjectRegistry* object_reg;
 };
 

@@ -41,6 +41,7 @@ struct iGraphics2D;
 struct iView;
 struct iVirtualClock;
 struct iMeshWrapper;
+struct iSoundManager;
 class csRandomFloatGen;
 
 class PawsManager;
@@ -352,6 +353,7 @@ private:
     csRef<iGraphics2D>      g2d;
     csRef<iVirtualClock>    vc;
     csRef<iLoader>          loader;
+    csRef<iSoundManager>    soundmanager;
 
     // PAWS
     PawsManager    * paws;
