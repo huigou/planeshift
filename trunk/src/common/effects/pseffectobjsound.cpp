@@ -51,7 +51,7 @@ psEffectObjSound::psEffectObjSound(iView *parentView, psEffect2DRenderer * rende
 
 psEffectObjSound::~psEffectObjSound()
 {
-  if (soundmanager->GetSoundSystem())
+  if (soundmanager.IsValid() && soundmanager->GetSoundSystem())
   {
     if (sndSource.IsValid())
     {
