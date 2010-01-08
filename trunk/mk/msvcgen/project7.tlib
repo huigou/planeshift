@@ -72,7 +72,7 @@ END -%]
 [% interpolate('compiler') -%]
 				PreprocessorDefinitions="
 [%- d = ['WIN32']; composedefs(d.merge(mutator.defines)) %]"
-				OptimizeForProcessor="2"
+				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions="[% flags(compose('cflags', [], ' ')) | html %] [% flags(compose('cflags7', [], ' ')) | html %]"
 				AdditionalIncludeDirectories="[% composedirs('incdirs', ['.']) %]"
