@@ -72,7 +72,8 @@ END -%]
 [% interpolate('compiler') -%]
 				PreprocessorDefinitions="
 [%- d = ['WIN32']; composedefs(d.merge(mutator.defines)) %]"
-				OptimizeForProcessor="1"
+				OptimizeForProcessor="2"
+				OmitFramePointers="FALSE"
 				AdditionalOptions="[% flags(compose('cflags', [], ' ')) | html %] [% flags(compose('cflags7', [], ' ')) | html %]"
 				AdditionalIncludeDirectories="[% composedirs('incdirs', ['.']) %]"
 				PrecompiledHeaderFile="[% workbuild([my.doc.project.0, '.pch']) %]"
