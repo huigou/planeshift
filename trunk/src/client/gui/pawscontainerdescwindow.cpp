@@ -107,7 +107,7 @@ void pawsContainerDescWindow::HandleUpdateItem( MsgEntry* me )
     sigData.Format("invslot_%d", mesg.containerID.Unbox() * 100 + mesg.slotID + 16);
     if (!mesg.clearSlot)
     {
-        data.Format("%s %d %d %s", mesg.icon.GetData(), mesg.stackCount, 0, mesg.name.GetData());
+        data.Format("%s %d %d %s %s", mesg.icon.GetData(), mesg.stackCount, 0, mesg.meshName.GetData(), mesg.name.GetData());
     }
 
     printf("Got item update for %s: %s\n", sigData.GetDataSafe(), data.GetDataSafe() );

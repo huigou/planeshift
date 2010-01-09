@@ -2450,6 +2450,7 @@ void psItem::UpdateView(Client *fromClient, EID eid, bool clear)
                           clear,
                           GetName(),
                           GetImageName(),
+                          GetMeshName(),
                           GetStackCount(),
                           guardian ? guardian->GetEID() : 0);
 
