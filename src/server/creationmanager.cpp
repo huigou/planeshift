@@ -811,9 +811,9 @@ void CharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
     else
     {
         // Try tutorial level first.
-        x = -232.00f;
+        x = -222.50f;
         y = 21.31f;
-        z = 31.50f;
+        z = 31.90f;
         yrot = 4.0f;
     }
     
