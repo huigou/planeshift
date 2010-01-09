@@ -198,6 +198,10 @@ bool pawsChatWindow::PostSetup()
     ReplayMessages();
     if(settings.joindefaultchannel)
     	JoinChannel("gossip");
+    PawsManager::GetSingleton().Publish(CHAT_TYPES[CHAT_ADVISOR], "This channel is the HELP channel. "
+        "Please type in your question and other fellow players or GMs may answer. "
+        "If you don't get an answer, you can check also the HELP button in the top toolbar, "
+        "the one with the questionmark.", settings.helpColor);
     return true;
 }
 
