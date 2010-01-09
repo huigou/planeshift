@@ -56,7 +56,7 @@
 		    <attach point="ATTACH_TOP" />
             </attachpoints>
         </widget>
-        <widget name="SetKeyButton" factory="pawsButton" toggle="no" id="1102" notify="ShortcutWindow">
+        <widget name="SetKeyButton" factory="pawsButton" toggle="no" id="1102" notify="ShortcutWindow" style="Standard Button">
             <frame x="260" y="28" width="50" height="24" />
             <notify name="ShortcutWindow" />
             <label text="Set" />
@@ -82,9 +82,9 @@
                 <attach point="ATTACH_BOTTOM" />
                 <attach point="ATTACH_TOP" />
             </attachpoints>
-			<!--<pawsScrollBar width="15" />-->
+			<pawsScrollBar width="15" />
         </widget>
-        <widget name="DoneButton" factory="pawsButton" toggle="no" id="1100" notify="ShortcutWindow">
+        <widget name="DoneButton" factory="pawsButton" toggle="no" id="1100" notify="ShortcutWindow" style="Standard Button">
             <frame x="20" y="180" width="50" height="24" />
             <notify name="ShortcutWindow" />
             <label text="Done" />
@@ -93,7 +93,7 @@
                 <attach point="ATTACH_BOTTOM" />
             </attachpoints>
         </widget>
-        <widget name="ClearButton" factory="pawsButton" toggle="no" id="1103" notify="ShortcutWindow">
+        <widget name="ClearButton" factory="pawsButton" toggle="no" id="1103" notify="ShortcutWindow" style="Standard Button">
             <frame x="80" y="180" width="50" height="24" />
             <label text="Clear" />
             <attachpoints>
@@ -101,7 +101,7 @@
                 <attach point="ATTACH_BOTTOM" />
             </attachpoints>
         </widget>
-        <widget name="CancelButton" factory="pawsButton" toggle="no" id="1101" notify="ShortcutWindow">
+        <widget name="CancelButton" factory="pawsButton" toggle="no" id="1101" notify="ShortcutWindow" style="Standard Button">
             <frame x="140" y="180" width="60" height="24" />
             <label text="Cancel" />
             <attachpoints>
