@@ -375,6 +375,19 @@ CS_CHECK_LIB_WITH([gtest],
 	[AC_LANG_PROGRAM([[#include <gtest/gtest.h>]],
 		[int dummyargc = 1; char* dummyargv = "gtest"; testing::InitGoogleTest(&dummyargc, &dummyargv);])], [], [C++],
 		[CS_EMIT_BUILD_RESULT([cs_cv_libgtest], [GTEST])], [], [], [], [], [])
+		
+#----------------------------------------------------------------------------
+# Check for Google Breakpad
+#----------------------------------------------------------------------------
+
+CS_CHECK_LIB_WITH([breakpad],
+	[AC_LANG_PROGRAM([[#ifdef CS_PLATFORM_MACOSX
+#include "client/mac/handler/exception_handler.h"
+#else
+#include "client/linux/handler/exception_handler.h"
+#endif]],
+		[google_breakpad::ExceptionHandler test_handler("/tmp/",	NULL, NULL,	NULL, true);])], [src/tools/google-breakpad/src src/tools/google-breakpad/src|src/tools/breakpad-libs], [C++],
+		[CS_EMIT_BUILD_RESULT([cs_cv_libbreakpad], [BREAKPAD])], [], [], [], [], [])
 
 
 #------------------------------------------------------------------------------
