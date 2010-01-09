@@ -257,7 +257,7 @@
 	<frame x="280" y="65" width="150" height="200" />
 	
 	    <widget name="TotalTrias" factory="pawsTextBox">
-	        <frame x="5" y="80" width="90" height="20" />
+	        <frame x="60" y="80" width="90" height="20" />
 	        <text string="0" horizAdjust="RIGHT" />
 	        <subscriptions>
 	            <subscribe data="sigInvMoneyTotal" />
