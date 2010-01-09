@@ -811,10 +811,10 @@ void CharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
     else
     {
         // Try tutorial level first.
-        x = -222.50f;
-        y = 21.31f;
-        z = 31.90f;
-        yrot = 4.0f;
+        x = -225.37f;
+        y = 21.32f;
+        z = 26.79f;
+        yrot = -2.04f;
     }
     
     bool sectorFound = true;
