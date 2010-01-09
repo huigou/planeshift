@@ -5535,9 +5535,10 @@ csString psViewItemDescription::ToString(AccessPointers * /*access_ptrs*/)
 PSF_IMPLEMENT_MSG_FACTORY(psViewItemUpdate,MSGTYPE_UPDATE_ITEM);
 
 psViewItemUpdate::psViewItemUpdate(uint32_t to, EID containerID, uint32_t slotID, bool clearSlot,
-                                   const char *itemName, const char *icon, uint32_t stackCount, EID ownerID)
+                                   const char *itemName, const char *icon, const char* meshName,
+                                   uint32_t stackCount, EID ownerID)
 {
-    msg.AttachNew(new MsgEntry( sizeof(containerID)+1 + sizeof(slotID) + sizeof(clearSlot) + strlen(itemName)+1 + strlen(icon)+1 + sizeof(stackCount) + sizeof(uint32_t) ));
+    msg.AttachNew(new MsgEntry( sizeof(containerID)+1 + sizeof(slotID) + sizeof(clearSlot) + strlen(itemName)+1 + strlen(icon)+1 + strlen(meshName)+1 + sizeof(stackCount) + sizeof(uint32_t) ));
     msg->SetType(MSGTYPE_UPDATE_ITEM);
     msg->clientnum = to;
     msg->Add(containerID.Unbox());
@@ -5547,6 +5548,7 @@ psViewItemUpdate::psViewItemUpdate(uint32_t to, EID containerID, uint32_t slotID
     msg->Add(icon);
     msg->Add(stackCount);
     msg->Add(ownerID.Unbox());
+    msg->Add(meshName);
 }
 
 //void psViewItemUpdate::ConstructMsg()
@@ -5571,18 +5573,20 @@ psViewItemUpdate::psViewItemUpdate( MsgEntry* me )
     icon = me->GetStr();
     stackCount = me->GetUInt32();
     ownerID = EID(me->GetUInt32());
+    meshName = me->GetStr();
 }
 
 csString psViewItemUpdate::ToString(AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
-    msgtext.AppendFmt("Container ID: %d Slot ID: %d Clear Slot? %s Name: '%s' Icon: '%s' Stack Count: %d",
+    msgtext.AppendFmt("Container ID: %d Slot ID: %d Clear Slot? %s Name: '%s' Icon: '%s' meshName: '%s' Stack Count: %d",
             containerID.Unbox(),
             slotID,
             (clearSlot?"True":"False"),
             name.GetDataSafe(),
             icon.GetDataSafe(),
+            meshName.GetDataSafe(),
             stackCount);
 
     return msgtext;

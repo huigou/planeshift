@@ -3999,7 +3999,7 @@ public:
       * @param stackCount The number of items in the stack.
       * @param ownerEID The GEM entity ID of the owner
       */
-    psViewItemUpdate(uint32_t to, EID containerID, uint32_t slotID, bool clearSlot, const char *itemName, const char *icon, uint32_t stackCount, EID ownerID);
+    psViewItemUpdate(uint32_t to, EID containerID, uint32_t slotID, bool clearSlot, const char *itemName, const char *icon, const char *meshName, uint32_t stackCount, EID ownerID);
 
     /// Crack out the details from the message.
     psViewItemUpdate( MsgEntry* me );
@@ -4029,6 +4029,7 @@ public:
     /// Item info
     csString name;
     csString icon;
+    csString meshName;
     int slotID;
     int stackCount;
     EID ownerID;
