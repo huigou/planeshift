@@ -67,7 +67,6 @@
     
                 </widget>
     
-                </widget>
                  <widget name="Help Button" factory="pawsButton" toggle="yes" id="1007" tooltip="Help" shadows="yes" style="Standard Tab">
                     <label text="Help"/>
                     <frame x="0" y="75" width="50" height="25" border="no" />
