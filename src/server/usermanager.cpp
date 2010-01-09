@@ -1442,8 +1442,8 @@ void UserManager::ReportPosition(psUserCmdMessage& msg,Client *client)
 
             int degrees = (int)(angle*180.0/PI);
             psserver->SendSystemInfo(client->GetClientNum(),
-                "%s current position is region: %s %1.2f %1.2f %1.2f %d angle: %d, sector : %s%s%s",
-                name.GetData(), region_name.GetData(), pos.x, pos.y, pos.z, instance, degrees,
+                "%s current position is region: %s %1.2f %1.2f %1.2f %d angle: %d (%f), sector : %s%s%s",
+                name.GetData(), region_name.GetData(), pos.x, pos.y, pos.z, instance, degrees, angle,
                 sector_name.GetData(), range.GetData(), idtxt.GetDataSafe());
         }
         else
