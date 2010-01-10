@@ -2797,20 +2797,22 @@ bool gemActor::LogLine(const char* szLine)
 {
     // Add to chat history
     ChatHistoryEntry cheNew(szLine);
-    chatHistory.Push(cheNew);
 
-    // Maintain history
-    time_t check = time(0) - CHAT_HISTORY_LIFETIME;
-    // We delete lines older than current time + CHAT_HISTORY_LIFETIME
-    // if the history size is not lowest than the minimum
-    while ( (chatHistory.GetSize()>CHAT_HISTORY_MINIMUM_SIZE) &&
-        chatHistory.Get(0)._time < check)
+    if (!IsLoggingChat()) // Check if we're logging. If not, store the message in the history and bail out.
     {
-        chatHistory.DeleteIndex(0);
-    }
+        chatHistory.Push(cheNew);
 
-    if (!IsLoggingChat()) // Check if we're logging. If not, there is nothing else to do here.
+        // Maintain history
+        time_t check = time(0) - CHAT_HISTORY_LIFETIME;
+        // We delete lines older than current time + CHAT_HISTORY_LIFETIME
+        // if the history size is not lowest than the minimum
+        while ( (chatHistory.GetSize()>CHAT_HISTORY_MINIMUM_SIZE) &&
+            chatHistory.Get(0)._time < check)
+        {
+            chatHistory.DeleteIndex(0);
+        }
         return false;
+    }
 
     csString cssLine("");
     cheNew.GetLogLine(cssLine); // Get a log-writtable line
