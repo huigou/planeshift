@@ -2,8 +2,8 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="grpclient_static_psminimalstatic"
-	ProjectGUID="{4F62B098-A121-08B9-41FB-C48097BCD6A5}"
+	Name="libbreakpad"
+	ProjectGUID="{7BD0DB32-E0AD-E520-81A6-F53D07433A63}"
 	SccProjectName=""
 	SccLocalPath="">
 	<Platforms>
@@ -13,8 +13,8 @@
 	<Configurations>
             		<Configuration
 			Name="Release (with static libs)|Win32"
-			OutputDirectory="..\..\out\release8\build\grpclient_static_psminimalstatic\"
-			IntermediateDirectory="..\..\out\release8\build\grpclient_static_psminimalstatic\"
+			OutputDirectory="..\..\out\release8\build\libbreakpad\"
+			IntermediateDirectory="..\..\out\release8\build\libbreakpad\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -25,14 +25,15 @@
 				EnableFunctionLevelLinking="TRUE"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="FALSE"
+				ProgramDataBaseFileName="..\..\out\release8\build\libbreakpad\Win32\breakpad.pdb"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32"
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\release8\build\grpclient_static_psminimalstatic\grpclient_static_psminimalstatic.pch"
-				AssemblerListingLocation="..\..\out\release8\build\grpclient_static_psminimalstatic\"
-				ObjectFile="..\..\out\release8\build\grpclient_static_psminimalstatic\"
+				PrecompiledHeaderFile="..\..\out\release8\build\libbreakpad\libbreakpad.pch"
+				AssemblerListingLocation="..\..\out\release8\build\libbreakpad\"
+				ObjectFile="..\..\out\release8\build\libbreakpad\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -56,7 +57,7 @@
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\release8\libs\grpclient_static_psminimalstatic.lib"
+				OutputFile="..\..\out\release8\libs\libbreakpad.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -64,7 +65,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\release8\build\grpclient_static_psminimalstatic\grpclient_static_psminimalstatic.tlb"/>
+				TypeLibraryName="..\..\out\release8\build\libbreakpad\libbreakpad.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\release8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release8\bin\&#x0D;&#x0A;"
@@ -76,7 +77,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\.;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\tools\breakpad;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -85,8 +86,8 @@
 		</Configuration>
       		<Configuration
 			Name="Release (with DLLs)|Win32"
-			OutputDirectory="..\..\out\release8\build\grpclient_static_psminimalstatic\"
-			IntermediateDirectory="..\..\out\release8\build\grpclient_static_psminimalstatic\"
+			OutputDirectory="..\..\out\release8\build\libbreakpad\"
+			IntermediateDirectory="..\..\out\release8\build\libbreakpad\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -97,14 +98,15 @@
 				EnableFunctionLevelLinking="TRUE"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="FALSE"
+				ProgramDataBaseFileName="..\..\out\release8\build\libbreakpad\Win32\breakpad.pdb"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\release8\build\grpclient_static_psminimalstatic\grpclient_static_psminimalstatic.pch"
-				AssemblerListingLocation="..\..\out\release8\build\grpclient_static_psminimalstatic\"
-				ObjectFile="..\..\out\release8\build\grpclient_static_psminimalstatic\"
+				PrecompiledHeaderFile="..\..\out\release8\build\libbreakpad\libbreakpad.pch"
+				AssemblerListingLocation="..\..\out\release8\build\libbreakpad\"
+				ObjectFile="..\..\out\release8\build\libbreakpad\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -128,7 +130,7 @@
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\release8\libs\grpclient_static_psminimalstatic.lib"
+				OutputFile="..\..\out\release8\libs\libbreakpad.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -136,7 +138,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\release8\build\grpclient_static_psminimalstatic\grpclient_static_psminimalstatic.tlb"/>
+				TypeLibraryName="..\..\out\release8\build\libbreakpad\libbreakpad.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\release8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release8\bin\&#x0D;&#x0A;"
@@ -148,7 +150,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\.;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\tools\breakpad;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -157,8 +159,8 @@
 		</Configuration>
                 		<Configuration
 			Name="Debug (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug8\build\grpclient_static_psminimalstatic\"
-			IntermediateDirectory="..\..\out\debug8\build\grpclient_static_psminimalstatic\"
+			OutputDirectory="..\..\out\debug8\build\libbreakpad\"
+			IntermediateDirectory="..\..\out\debug8\build\libbreakpad\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -169,14 +171,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
+				ProgramDataBaseFileName="..\..\out\debug8\build\libbreakpad\Win32\breakpad.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32"
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug8\build\grpclient_static_psminimalstatic\grpclient_static_psminimalstatic.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\grpclient_static_psminimalstatic\"
-				ObjectFile="..\..\out\debug8\build\grpclient_static_psminimalstatic\"
+				PrecompiledHeaderFile="..\..\out\debug8\build\libbreakpad\libbreakpad.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\libbreakpad\"
+				ObjectFile="..\..\out\debug8\build\libbreakpad\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -198,7 +201,7 @@
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug8\libs\grpclient_static_psminimalstatic.lib"
+				OutputFile="..\..\out\debug8\libs\libbreakpad_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -206,7 +209,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\grpclient_static_psminimalstatic\grpclient_static_psminimalstatic.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\libbreakpad\libbreakpad.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
@@ -218,7 +221,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\.;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\tools\breakpad;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -227,8 +230,8 @@
 		</Configuration>
       		<Configuration
 			Name="Debug (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug8\build\grpclient_static_psminimalstatic\"
-			IntermediateDirectory="..\..\out\debug8\build\grpclient_static_psminimalstatic\"
+			OutputDirectory="..\..\out\debug8\build\libbreakpad\"
+			IntermediateDirectory="..\..\out\debug8\build\libbreakpad\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -239,14 +242,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
+				ProgramDataBaseFileName="..\..\out\debug8\build\libbreakpad\Win32\breakpad.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug8\build\grpclient_static_psminimalstatic\grpclient_static_psminimalstatic.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\grpclient_static_psminimalstatic\"
-				ObjectFile="..\..\out\debug8\build\grpclient_static_psminimalstatic\"
+				PrecompiledHeaderFile="..\..\out\debug8\build\libbreakpad\libbreakpad.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\libbreakpad\"
+				ObjectFile="..\..\out\debug8\build\libbreakpad\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -268,7 +272,7 @@
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug8\libs\grpclient_static_psminimalstatic.lib"
+				OutputFile="..\..\out\debug8\libs\libbreakpad_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -276,7 +280,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\grpclient_static_psminimalstatic\grpclient_static_psminimalstatic.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\libbreakpad\libbreakpad.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
@@ -288,7 +292,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\.;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\tools\breakpad;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -297,8 +301,8 @@
 		</Configuration>
                 		<Configuration
 			Name="MemoryTracker (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug8\build\grpclient_static_psminimalstatic\"
-			IntermediateDirectory="..\..\out\debug8\build\grpclient_static_psminimalstatic\"
+			OutputDirectory="..\..\out\debug8\build\libbreakpad\"
+			IntermediateDirectory="..\..\out\debug8\build\libbreakpad\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -309,14 +313,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
+				ProgramDataBaseFileName="..\..\out\debug8\build\libbreakpad\Win32\breakpad.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;WIN32"
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug8\build\grpclient_static_psminimalstatic\grpclient_static_psminimalstatic.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\grpclient_static_psminimalstatic\"
-				ObjectFile="..\..\out\debug8\build\grpclient_static_psminimalstatic\"
+				PrecompiledHeaderFile="..\..\out\debug8\build\libbreakpad\libbreakpad.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\libbreakpad\"
+				ObjectFile="..\..\out\debug8\build\libbreakpad\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -338,7 +343,7 @@
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug8\libs\grpclient_static_psminimalstatic.lib"
+				OutputFile="..\..\out\debug8\libs\libbreakpad_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -346,7 +351,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\grpclient_static_psminimalstatic\grpclient_static_psminimalstatic.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\libbreakpad\libbreakpad.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
@@ -358,7 +363,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\.;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\tools\breakpad;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -367,8 +372,8 @@
 		</Configuration>
       		<Configuration
 			Name="MemoryTracker (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug8\build\grpclient_static_psminimalstatic\"
-			IntermediateDirectory="..\..\out\debug8\build\grpclient_static_psminimalstatic\"
+			OutputDirectory="..\..\out\debug8\build\libbreakpad\"
+			IntermediateDirectory="..\..\out\debug8\build\libbreakpad\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -379,14 +384,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
+				ProgramDataBaseFileName="..\..\out\debug8\build\libbreakpad\Win32\breakpad.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug8\build\grpclient_static_psminimalstatic\grpclient_static_psminimalstatic.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\grpclient_static_psminimalstatic\"
-				ObjectFile="..\..\out\debug8\build\grpclient_static_psminimalstatic\"
+				PrecompiledHeaderFile="..\..\out\debug8\build\libbreakpad\libbreakpad.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\libbreakpad\"
+				ObjectFile="..\..\out\debug8\build\libbreakpad\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -408,7 +414,7 @@
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug8\libs\grpclient_static_psminimalstatic.lib"
+				OutputFile="..\..\out\debug8\libs\libbreakpad_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -416,7 +422,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\grpclient_static_psminimalstatic\grpclient_static_psminimalstatic.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\libbreakpad\libbreakpad.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
@@ -428,7 +434,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\.;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\tools\breakpad;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -437,8 +443,8 @@
 		</Configuration>
                 		<Configuration
 			Name="RefTracker (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug8\build\grpclient_static_psminimalstatic\"
-			IntermediateDirectory="..\..\out\debug8\build\grpclient_static_psminimalstatic\"
+			OutputDirectory="..\..\out\debug8\build\libbreakpad\"
+			IntermediateDirectory="..\..\out\debug8\build\libbreakpad\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -449,14 +455,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
+				ProgramDataBaseFileName="..\..\out\debug8\build\libbreakpad\Win32\breakpad.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;WIN32"
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug8\build\grpclient_static_psminimalstatic\grpclient_static_psminimalstatic.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\grpclient_static_psminimalstatic\"
-				ObjectFile="..\..\out\debug8\build\grpclient_static_psminimalstatic\"
+				PrecompiledHeaderFile="..\..\out\debug8\build\libbreakpad\libbreakpad.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\libbreakpad\"
+				ObjectFile="..\..\out\debug8\build\libbreakpad\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -478,7 +485,7 @@
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug8\libs\grpclient_static_psminimalstatic.lib"
+				OutputFile="..\..\out\debug8\libs\libbreakpad_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -486,7 +493,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\grpclient_static_psminimalstatic\grpclient_static_psminimalstatic.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\libbreakpad\libbreakpad.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
@@ -498,7 +505,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\.;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\tools\breakpad;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -507,8 +514,8 @@
 		</Configuration>
       		<Configuration
 			Name="RefTracker (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug8\build\grpclient_static_psminimalstatic\"
-			IntermediateDirectory="..\..\out\debug8\build\grpclient_static_psminimalstatic\"
+			OutputDirectory="..\..\out\debug8\build\libbreakpad\"
+			IntermediateDirectory="..\..\out\debug8\build\libbreakpad\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -519,14 +526,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
+				ProgramDataBaseFileName="..\..\out\debug8\build\libbreakpad\Win32\breakpad.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug8\build\grpclient_static_psminimalstatic\grpclient_static_psminimalstatic.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\grpclient_static_psminimalstatic\"
-				ObjectFile="..\..\out\debug8\build\grpclient_static_psminimalstatic\"
+				PrecompiledHeaderFile="..\..\out\debug8\build\libbreakpad\libbreakpad.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\libbreakpad\"
+				ObjectFile="..\..\out\debug8\build\libbreakpad\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -548,7 +556,7 @@
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug8\libs\grpclient_static_psminimalstatic.lib"
+				OutputFile="..\..\out\debug8\libs\libbreakpad_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -556,7 +564,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\grpclient_static_psminimalstatic\grpclient_static_psminimalstatic.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\libbreakpad\libbreakpad.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
@@ -568,7 +576,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\.;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\tools\breakpad;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -577,8 +585,8 @@
 		</Configuration>
                 		<Configuration
 			Name="ThreadChecker (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug8\build\grpclient_static_psminimalstatic\"
-			IntermediateDirectory="..\..\out\debug8\build\grpclient_static_psminimalstatic\"
+			OutputDirectory="..\..\out\debug8\build\libbreakpad\"
+			IntermediateDirectory="..\..\out\debug8\build\libbreakpad\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -589,14 +597,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
+				ProgramDataBaseFileName="..\..\out\debug8\build\libbreakpad\Win32\breakpad.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;WIN32"
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug8\build\grpclient_static_psminimalstatic\grpclient_static_psminimalstatic.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\grpclient_static_psminimalstatic\"
-				ObjectFile="..\..\out\debug8\build\grpclient_static_psminimalstatic\"
+				PrecompiledHeaderFile="..\..\out\debug8\build\libbreakpad\libbreakpad.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\libbreakpad\"
+				ObjectFile="..\..\out\debug8\build\libbreakpad\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -618,7 +627,7 @@
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug8\libs\grpclient_static_psminimalstatic.lib"
+				OutputFile="..\..\out\debug8\libs\libbreakpad_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -626,7 +635,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\grpclient_static_psminimalstatic\grpclient_static_psminimalstatic.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\libbreakpad\libbreakpad.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
@@ -638,7 +647,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\.;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\tools\breakpad;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -647,8 +656,8 @@
 		</Configuration>
       		<Configuration
 			Name="ThreadChecker (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug8\build\grpclient_static_psminimalstatic\"
-			IntermediateDirectory="..\..\out\debug8\build\grpclient_static_psminimalstatic\"
+			OutputDirectory="..\..\out\debug8\build\libbreakpad\"
+			IntermediateDirectory="..\..\out\debug8\build\libbreakpad\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -659,14 +668,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
+				ProgramDataBaseFileName="..\..\out\debug8\build\libbreakpad\Win32\breakpad.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug8\build\grpclient_static_psminimalstatic\grpclient_static_psminimalstatic.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\grpclient_static_psminimalstatic\"
-				ObjectFile="..\..\out\debug8\build\grpclient_static_psminimalstatic\"
+				PrecompiledHeaderFile="..\..\out\debug8\build\libbreakpad\libbreakpad.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\libbreakpad\"
+				ObjectFile="..\..\out\debug8\build\libbreakpad\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -688,7 +698,7 @@
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug8\libs\grpclient_static_psminimalstatic.lib"
+				OutputFile="..\..\out\debug8\libs\libbreakpad_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -696,7 +706,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\grpclient_static_psminimalstatic\grpclient_static_psminimalstatic.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\libbreakpad\libbreakpad.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
@@ -708,7 +718,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\.;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\tools\breakpad;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -717,8 +727,8 @@
 		</Configuration>
                 		<Configuration
 			Name="DebugPSReleaseCSCEL (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug8\build\grpclient_static_psminimalstatic\"
-			IntermediateDirectory="..\..\out\debug8\build\grpclient_static_psminimalstatic\"
+			OutputDirectory="..\..\out\debug8\build\libbreakpad\"
+			IntermediateDirectory="..\..\out\debug8\build\libbreakpad\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -729,14 +739,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
+				ProgramDataBaseFileName="..\..\out\debug8\build\libbreakpad\Win32\breakpad.pdb"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32"
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug8\build\grpclient_static_psminimalstatic\grpclient_static_psminimalstatic.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\grpclient_static_psminimalstatic\"
-				ObjectFile="..\..\out\debug8\build\grpclient_static_psminimalstatic\"
+				PrecompiledHeaderFile="..\..\out\debug8\build\libbreakpad\libbreakpad.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\libbreakpad\"
+				ObjectFile="..\..\out\debug8\build\libbreakpad\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -758,7 +769,7 @@
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug8\libs\grpclient_static_psminimalstatic.lib"
+				OutputFile="..\..\out\debug8\libs\libbreakpad_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -766,7 +777,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\grpclient_static_psminimalstatic\grpclient_static_psminimalstatic.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\libbreakpad\libbreakpad.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
@@ -778,7 +789,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\.;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\tools\breakpad;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -787,8 +798,8 @@
 		</Configuration>
       		<Configuration
 			Name="DebugPSReleaseCSCEL (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug8\build\grpclient_static_psminimalstatic\"
-			IntermediateDirectory="..\..\out\debug8\build\grpclient_static_psminimalstatic\"
+			OutputDirectory="..\..\out\debug8\build\libbreakpad\"
+			IntermediateDirectory="..\..\out\debug8\build\libbreakpad\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -799,14 +810,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
+				ProgramDataBaseFileName="..\..\out\debug8\build\libbreakpad\Win32\breakpad.pdb"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug8\build\grpclient_static_psminimalstatic\grpclient_static_psminimalstatic.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\grpclient_static_psminimalstatic\"
-				ObjectFile="..\..\out\debug8\build\grpclient_static_psminimalstatic\"
+				PrecompiledHeaderFile="..\..\out\debug8\build\libbreakpad\libbreakpad.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\libbreakpad\"
+				ObjectFile="..\..\out\debug8\build\libbreakpad\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -828,7 +840,7 @@
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug8\libs\grpclient_static_psminimalstatic.lib"
+				OutputFile="..\..\out\debug8\libs\libbreakpad_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -836,7 +848,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\grpclient_static_psminimalstatic\grpclient_static_psminimalstatic.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\libbreakpad\libbreakpad.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
@@ -848,7 +860,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\.;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\tools\breakpad;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -857,8 +869,8 @@
 		</Configuration>
                         		<Configuration
 			Name="Release (with static libs)|x64"
-			OutputDirectory="..\..\out\release8-x64\build\grpclient_static_psminimalstatic\"
-			IntermediateDirectory="..\..\out\release8-x64\build\grpclient_static_psminimalstatic\"
+			OutputDirectory="..\..\out\release8-x64\build\libbreakpad\"
+			IntermediateDirectory="..\..\out\release8-x64\build\libbreakpad\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -869,14 +881,15 @@
 				EnableFunctionLevelLinking="TRUE"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="FALSE"
+				ProgramDataBaseFileName="..\..\out\release8-x64\build\libbreakpad\x64\breakpad.pdb"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32"
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\release8-x64\build\grpclient_static_psminimalstatic\grpclient_static_psminimalstatic.pch"
-				AssemblerListingLocation="..\..\out\release8-x64\build\grpclient_static_psminimalstatic\"
-				ObjectFile="..\..\out\release8-x64\build\grpclient_static_psminimalstatic\"
+				PrecompiledHeaderFile="..\..\out\release8-x64\build\libbreakpad\libbreakpad.pch"
+				AssemblerListingLocation="..\..\out\release8-x64\build\libbreakpad\"
+				ObjectFile="..\..\out\release8-x64\build\libbreakpad\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -900,7 +913,7 @@
 				TargetMachine="17"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\release8-x64\libs\grpclient_static_psminimalstatic.lib"
+				OutputFile="..\..\out\release8-x64\libs\libbreakpad.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -908,7 +921,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\release8-x64\build\grpclient_static_psminimalstatic\grpclient_static_psminimalstatic.tlb"/>
+				TypeLibraryName="..\..\out\release8-x64\build\libbreakpad\libbreakpad.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\release8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release8-x64\bin\&#x0D;&#x0A;"
@@ -920,7 +933,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\.;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\tools\breakpad;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -929,8 +942,8 @@
 		</Configuration>
       		<Configuration
 			Name="Release (with DLLs)|x64"
-			OutputDirectory="..\..\out\release8-x64\build\grpclient_static_psminimalstatic\"
-			IntermediateDirectory="..\..\out\release8-x64\build\grpclient_static_psminimalstatic\"
+			OutputDirectory="..\..\out\release8-x64\build\libbreakpad\"
+			IntermediateDirectory="..\..\out\release8-x64\build\libbreakpad\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -941,14 +954,15 @@
 				EnableFunctionLevelLinking="TRUE"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="FALSE"
+				ProgramDataBaseFileName="..\..\out\release8-x64\build\libbreakpad\x64\breakpad.pdb"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\release8-x64\build\grpclient_static_psminimalstatic\grpclient_static_psminimalstatic.pch"
-				AssemblerListingLocation="..\..\out\release8-x64\build\grpclient_static_psminimalstatic\"
-				ObjectFile="..\..\out\release8-x64\build\grpclient_static_psminimalstatic\"
+				PrecompiledHeaderFile="..\..\out\release8-x64\build\libbreakpad\libbreakpad.pch"
+				AssemblerListingLocation="..\..\out\release8-x64\build\libbreakpad\"
+				ObjectFile="..\..\out\release8-x64\build\libbreakpad\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -972,7 +986,7 @@
 				TargetMachine="17"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\release8-x64\libs\grpclient_static_psminimalstatic.lib"
+				OutputFile="..\..\out\release8-x64\libs\libbreakpad.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -980,7 +994,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\release8-x64\build\grpclient_static_psminimalstatic\grpclient_static_psminimalstatic.tlb"/>
+				TypeLibraryName="..\..\out\release8-x64\build\libbreakpad\libbreakpad.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\release8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release8-x64\bin\&#x0D;&#x0A;"
@@ -992,7 +1006,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\.;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\tools\breakpad;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1001,8 +1015,8 @@
 		</Configuration>
                 		<Configuration
 			Name="Debug (with static libs)|x64"
-			OutputDirectory="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\"
-			IntermediateDirectory="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\"
+			OutputDirectory="..\..\out\debug8-x64\build\libbreakpad\"
+			IntermediateDirectory="..\..\out\debug8-x64\build\libbreakpad\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -1013,14 +1027,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
+				ProgramDataBaseFileName="..\..\out\debug8-x64\build\libbreakpad\x64\breakpad.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32"
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\grpclient_static_psminimalstatic.pch"
-				AssemblerListingLocation="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\"
-				ObjectFile="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\"
+				PrecompiledHeaderFile="..\..\out\debug8-x64\build\libbreakpad\libbreakpad.pch"
+				AssemblerListingLocation="..\..\out\debug8-x64\build\libbreakpad\"
+				ObjectFile="..\..\out\debug8-x64\build\libbreakpad\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1042,7 +1057,7 @@
 				TargetMachine="17"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug8-x64\libs\grpclient_static_psminimalstatic.lib"
+				OutputFile="..\..\out\debug8-x64\libs\libbreakpad_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -1050,7 +1065,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\grpclient_static_psminimalstatic.tlb"/>
+				TypeLibraryName="..\..\out\debug8-x64\build\libbreakpad\libbreakpad.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8-x64\bin\&#x0D;&#x0A;"
@@ -1062,7 +1077,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\.;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\tools\breakpad;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1071,8 +1086,8 @@
 		</Configuration>
       		<Configuration
 			Name="Debug (with DLLs)|x64"
-			OutputDirectory="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\"
-			IntermediateDirectory="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\"
+			OutputDirectory="..\..\out\debug8-x64\build\libbreakpad\"
+			IntermediateDirectory="..\..\out\debug8-x64\build\libbreakpad\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -1083,14 +1098,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
+				ProgramDataBaseFileName="..\..\out\debug8-x64\build\libbreakpad\x64\breakpad.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\grpclient_static_psminimalstatic.pch"
-				AssemblerListingLocation="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\"
-				ObjectFile="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\"
+				PrecompiledHeaderFile="..\..\out\debug8-x64\build\libbreakpad\libbreakpad.pch"
+				AssemblerListingLocation="..\..\out\debug8-x64\build\libbreakpad\"
+				ObjectFile="..\..\out\debug8-x64\build\libbreakpad\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1112,7 +1128,7 @@
 				TargetMachine="17"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug8-x64\libs\grpclient_static_psminimalstatic.lib"
+				OutputFile="..\..\out\debug8-x64\libs\libbreakpad_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -1120,7 +1136,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\grpclient_static_psminimalstatic.tlb"/>
+				TypeLibraryName="..\..\out\debug8-x64\build\libbreakpad\libbreakpad.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8-x64\bin\&#x0D;&#x0A;"
@@ -1132,7 +1148,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\.;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\tools\breakpad;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1141,8 +1157,8 @@
 		</Configuration>
                 		<Configuration
 			Name="MemoryTracker (with static libs)|x64"
-			OutputDirectory="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\"
-			IntermediateDirectory="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\"
+			OutputDirectory="..\..\out\debug8-x64\build\libbreakpad\"
+			IntermediateDirectory="..\..\out\debug8-x64\build\libbreakpad\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -1153,14 +1169,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
+				ProgramDataBaseFileName="..\..\out\debug8-x64\build\libbreakpad\x64\breakpad.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;WIN32"
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\grpclient_static_psminimalstatic.pch"
-				AssemblerListingLocation="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\"
-				ObjectFile="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\"
+				PrecompiledHeaderFile="..\..\out\debug8-x64\build\libbreakpad\libbreakpad.pch"
+				AssemblerListingLocation="..\..\out\debug8-x64\build\libbreakpad\"
+				ObjectFile="..\..\out\debug8-x64\build\libbreakpad\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1182,7 +1199,7 @@
 				TargetMachine="17"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug8-x64\libs\grpclient_static_psminimalstatic.lib"
+				OutputFile="..\..\out\debug8-x64\libs\libbreakpad_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -1190,7 +1207,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\grpclient_static_psminimalstatic.tlb"/>
+				TypeLibraryName="..\..\out\debug8-x64\build\libbreakpad\libbreakpad.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8-x64\bin\&#x0D;&#x0A;"
@@ -1202,7 +1219,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\.;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\tools\breakpad;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1211,8 +1228,8 @@
 		</Configuration>
       		<Configuration
 			Name="MemoryTracker (with DLLs)|x64"
-			OutputDirectory="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\"
-			IntermediateDirectory="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\"
+			OutputDirectory="..\..\out\debug8-x64\build\libbreakpad\"
+			IntermediateDirectory="..\..\out\debug8-x64\build\libbreakpad\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -1223,14 +1240,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
+				ProgramDataBaseFileName="..\..\out\debug8-x64\build\libbreakpad\x64\breakpad.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\grpclient_static_psminimalstatic.pch"
-				AssemblerListingLocation="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\"
-				ObjectFile="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\"
+				PrecompiledHeaderFile="..\..\out\debug8-x64\build\libbreakpad\libbreakpad.pch"
+				AssemblerListingLocation="..\..\out\debug8-x64\build\libbreakpad\"
+				ObjectFile="..\..\out\debug8-x64\build\libbreakpad\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1252,7 +1270,7 @@
 				TargetMachine="17"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug8-x64\libs\grpclient_static_psminimalstatic.lib"
+				OutputFile="..\..\out\debug8-x64\libs\libbreakpad_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -1260,7 +1278,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\grpclient_static_psminimalstatic.tlb"/>
+				TypeLibraryName="..\..\out\debug8-x64\build\libbreakpad\libbreakpad.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8-x64\bin\&#x0D;&#x0A;"
@@ -1272,7 +1290,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\.;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\tools\breakpad;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1281,8 +1299,8 @@
 		</Configuration>
                 		<Configuration
 			Name="RefTracker (with static libs)|x64"
-			OutputDirectory="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\"
-			IntermediateDirectory="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\"
+			OutputDirectory="..\..\out\debug8-x64\build\libbreakpad\"
+			IntermediateDirectory="..\..\out\debug8-x64\build\libbreakpad\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -1293,14 +1311,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
+				ProgramDataBaseFileName="..\..\out\debug8-x64\build\libbreakpad\x64\breakpad.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;WIN32"
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\grpclient_static_psminimalstatic.pch"
-				AssemblerListingLocation="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\"
-				ObjectFile="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\"
+				PrecompiledHeaderFile="..\..\out\debug8-x64\build\libbreakpad\libbreakpad.pch"
+				AssemblerListingLocation="..\..\out\debug8-x64\build\libbreakpad\"
+				ObjectFile="..\..\out\debug8-x64\build\libbreakpad\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1322,7 +1341,7 @@
 				TargetMachine="17"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug8-x64\libs\grpclient_static_psminimalstatic.lib"
+				OutputFile="..\..\out\debug8-x64\libs\libbreakpad_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -1330,7 +1349,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\grpclient_static_psminimalstatic.tlb"/>
+				TypeLibraryName="..\..\out\debug8-x64\build\libbreakpad\libbreakpad.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8-x64\bin\&#x0D;&#x0A;"
@@ -1342,7 +1361,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\.;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\tools\breakpad;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1351,8 +1370,8 @@
 		</Configuration>
       		<Configuration
 			Name="RefTracker (with DLLs)|x64"
-			OutputDirectory="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\"
-			IntermediateDirectory="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\"
+			OutputDirectory="..\..\out\debug8-x64\build\libbreakpad\"
+			IntermediateDirectory="..\..\out\debug8-x64\build\libbreakpad\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -1363,14 +1382,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
+				ProgramDataBaseFileName="..\..\out\debug8-x64\build\libbreakpad\x64\breakpad.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\grpclient_static_psminimalstatic.pch"
-				AssemblerListingLocation="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\"
-				ObjectFile="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\"
+				PrecompiledHeaderFile="..\..\out\debug8-x64\build\libbreakpad\libbreakpad.pch"
+				AssemblerListingLocation="..\..\out\debug8-x64\build\libbreakpad\"
+				ObjectFile="..\..\out\debug8-x64\build\libbreakpad\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1392,7 +1412,7 @@
 				TargetMachine="17"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug8-x64\libs\grpclient_static_psminimalstatic.lib"
+				OutputFile="..\..\out\debug8-x64\libs\libbreakpad_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -1400,7 +1420,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\grpclient_static_psminimalstatic.tlb"/>
+				TypeLibraryName="..\..\out\debug8-x64\build\libbreakpad\libbreakpad.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8-x64\bin\&#x0D;&#x0A;"
@@ -1412,7 +1432,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\.;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\tools\breakpad;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1421,8 +1441,8 @@
 		</Configuration>
                 		<Configuration
 			Name="ThreadChecker (with static libs)|x64"
-			OutputDirectory="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\"
-			IntermediateDirectory="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\"
+			OutputDirectory="..\..\out\debug8-x64\build\libbreakpad\"
+			IntermediateDirectory="..\..\out\debug8-x64\build\libbreakpad\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -1433,14 +1453,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
+				ProgramDataBaseFileName="..\..\out\debug8-x64\build\libbreakpad\x64\breakpad.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;WIN32"
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\grpclient_static_psminimalstatic.pch"
-				AssemblerListingLocation="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\"
-				ObjectFile="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\"
+				PrecompiledHeaderFile="..\..\out\debug8-x64\build\libbreakpad\libbreakpad.pch"
+				AssemblerListingLocation="..\..\out\debug8-x64\build\libbreakpad\"
+				ObjectFile="..\..\out\debug8-x64\build\libbreakpad\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1462,7 +1483,7 @@
 				TargetMachine="17"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug8-x64\libs\grpclient_static_psminimalstatic.lib"
+				OutputFile="..\..\out\debug8-x64\libs\libbreakpad_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -1470,7 +1491,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\grpclient_static_psminimalstatic.tlb"/>
+				TypeLibraryName="..\..\out\debug8-x64\build\libbreakpad\libbreakpad.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8-x64\bin\&#x0D;&#x0A;"
@@ -1482,7 +1503,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\.;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\tools\breakpad;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1491,8 +1512,8 @@
 		</Configuration>
       		<Configuration
 			Name="ThreadChecker (with DLLs)|x64"
-			OutputDirectory="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\"
-			IntermediateDirectory="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\"
+			OutputDirectory="..\..\out\debug8-x64\build\libbreakpad\"
+			IntermediateDirectory="..\..\out\debug8-x64\build\libbreakpad\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -1503,14 +1524,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
+				ProgramDataBaseFileName="..\..\out\debug8-x64\build\libbreakpad\x64\breakpad.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\grpclient_static_psminimalstatic.pch"
-				AssemblerListingLocation="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\"
-				ObjectFile="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\"
+				PrecompiledHeaderFile="..\..\out\debug8-x64\build\libbreakpad\libbreakpad.pch"
+				AssemblerListingLocation="..\..\out\debug8-x64\build\libbreakpad\"
+				ObjectFile="..\..\out\debug8-x64\build\libbreakpad\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1532,7 +1554,7 @@
 				TargetMachine="17"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug8-x64\libs\grpclient_static_psminimalstatic.lib"
+				OutputFile="..\..\out\debug8-x64\libs\libbreakpad_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -1540,7 +1562,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\grpclient_static_psminimalstatic.tlb"/>
+				TypeLibraryName="..\..\out\debug8-x64\build\libbreakpad\libbreakpad.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8-x64\bin\&#x0D;&#x0A;"
@@ -1552,7 +1574,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\.;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\tools\breakpad;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1561,8 +1583,8 @@
 		</Configuration>
                 		<Configuration
 			Name="DebugPSReleaseCSCEL (with static libs)|x64"
-			OutputDirectory="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\"
-			IntermediateDirectory="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\"
+			OutputDirectory="..\..\out\debug8-x64\build\libbreakpad\"
+			IntermediateDirectory="..\..\out\debug8-x64\build\libbreakpad\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -1573,14 +1595,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
+				ProgramDataBaseFileName="..\..\out\debug8-x64\build\libbreakpad\x64\breakpad.pdb"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32"
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\grpclient_static_psminimalstatic.pch"
-				AssemblerListingLocation="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\"
-				ObjectFile="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\"
+				PrecompiledHeaderFile="..\..\out\debug8-x64\build\libbreakpad\libbreakpad.pch"
+				AssemblerListingLocation="..\..\out\debug8-x64\build\libbreakpad\"
+				ObjectFile="..\..\out\debug8-x64\build\libbreakpad\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1602,7 +1625,7 @@
 				TargetMachine="17"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug8-x64\libs\grpclient_static_psminimalstatic.lib"
+				OutputFile="..\..\out\debug8-x64\libs\libbreakpad_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -1610,7 +1633,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\grpclient_static_psminimalstatic.tlb"/>
+				TypeLibraryName="..\..\out\debug8-x64\build\libbreakpad\libbreakpad.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8-x64\bin\&#x0D;&#x0A;"
@@ -1622,7 +1645,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\.;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\tools\breakpad;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1631,8 +1654,8 @@
 		</Configuration>
       		<Configuration
 			Name="DebugPSReleaseCSCEL (with DLLs)|x64"
-			OutputDirectory="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\"
-			IntermediateDirectory="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\"
+			OutputDirectory="..\..\out\debug8-x64\build\libbreakpad\"
+			IntermediateDirectory="..\..\out\debug8-x64\build\libbreakpad\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -1643,14 +1666,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
+				ProgramDataBaseFileName="..\..\out\debug8-x64\build\libbreakpad\x64\breakpad.pdb"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
-				PrecompiledHeaderFile="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\grpclient_static_psminimalstatic.pch"
-				AssemblerListingLocation="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\"
-				ObjectFile="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\"
+				PrecompiledHeaderFile="..\..\out\debug8-x64\build\libbreakpad\libbreakpad.pch"
+				AssemblerListingLocation="..\..\out\debug8-x64\build\libbreakpad\"
+				ObjectFile="..\..\out\debug8-x64\build\libbreakpad\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1672,7 +1696,7 @@
 				TargetMachine="17"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug8-x64\libs\grpclient_static_psminimalstatic.lib"
+				OutputFile="..\..\out\debug8-x64\libs\libbreakpad_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -1680,7 +1704,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8-x64\build\grpclient_static_psminimalstatic\grpclient_static_psminimalstatic.tlb"/>
+				TypeLibraryName="..\..\out\debug8-x64\build\libbreakpad\libbreakpad.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8-x64\bin\&#x0D;&#x0A;"
@@ -1692,7 +1716,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\.;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\tools\breakpad;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>

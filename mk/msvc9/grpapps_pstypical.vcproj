@@ -29,7 +29,7 @@
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				PrecompiledHeaderFile="..\..\out\release9\build\grpapps_pstypical\grpapps_pstypical.pch"
 				AssemblerListingLocation="..\..\out\release9\build\grpapps_pstypical\"
 				ObjectFile="..\..\out\release9\build\grpapps_pstypical\"
@@ -76,7 +76,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\common\rpgrules\test;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\common\rpgrules\test;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -101,7 +101,7 @@
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				PrecompiledHeaderFile="..\..\out\release9\build\grpapps_pstypical\grpapps_pstypical.pch"
 				AssemblerListingLocation="..\..\out\release9\build\grpapps_pstypical\"
 				ObjectFile="..\..\out\release9\build\grpapps_pstypical\"
@@ -148,7 +148,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\common\rpgrules\test;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\common\rpgrules\test;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -173,7 +173,7 @@
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				PrecompiledHeaderFile="..\..\out\debug9\build\grpapps_pstypical\grpapps_pstypical.pch"
 				AssemblerListingLocation="..\..\out\debug9\build\grpapps_pstypical\"
 				ObjectFile="..\..\out\debug9\build\grpapps_pstypical\"
@@ -218,7 +218,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\common\rpgrules\test;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\common\rpgrules\test;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -243,7 +243,7 @@
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				PrecompiledHeaderFile="..\..\out\debug9\build\grpapps_pstypical\grpapps_pstypical.pch"
 				AssemblerListingLocation="..\..\out\debug9\build\grpapps_pstypical\"
 				ObjectFile="..\..\out\debug9\build\grpapps_pstypical\"
@@ -288,7 +288,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\common\rpgrules\test;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\common\rpgrules\test;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -313,7 +313,7 @@
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				PrecompiledHeaderFile="..\..\out\debug9\build\grpapps_pstypical\grpapps_pstypical.pch"
 				AssemblerListingLocation="..\..\out\debug9\build\grpapps_pstypical\"
 				ObjectFile="..\..\out\debug9\build\grpapps_pstypical\"
@@ -358,7 +358,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\common\rpgrules\test;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\common\rpgrules\test;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -383,7 +383,7 @@
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				PrecompiledHeaderFile="..\..\out\debug9\build\grpapps_pstypical\grpapps_pstypical.pch"
 				AssemblerListingLocation="..\..\out\debug9\build\grpapps_pstypical\"
 				ObjectFile="..\..\out\debug9\build\grpapps_pstypical\"
@@ -428,7 +428,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\common\rpgrules\test;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\common\rpgrules\test;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -453,7 +453,7 @@
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				PrecompiledHeaderFile="..\..\out\debug9\build\grpapps_pstypical\grpapps_pstypical.pch"
 				AssemblerListingLocation="..\..\out\debug9\build\grpapps_pstypical\"
 				ObjectFile="..\..\out\debug9\build\grpapps_pstypical\"
@@ -498,7 +498,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\common\rpgrules\test;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\common\rpgrules\test;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -523,7 +523,7 @@
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				PrecompiledHeaderFile="..\..\out\debug9\build\grpapps_pstypical\grpapps_pstypical.pch"
 				AssemblerListingLocation="..\..\out\debug9\build\grpapps_pstypical\"
 				ObjectFile="..\..\out\debug9\build\grpapps_pstypical\"
@@ -568,7 +568,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\common\rpgrules\test;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\common\rpgrules\test;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -593,7 +593,7 @@
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				PrecompiledHeaderFile="..\..\out\debug9\build\grpapps_pstypical\grpapps_pstypical.pch"
 				AssemblerListingLocation="..\..\out\debug9\build\grpapps_pstypical\"
 				ObjectFile="..\..\out\debug9\build\grpapps_pstypical\"
@@ -638,7 +638,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\common\rpgrules\test;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\common\rpgrules\test;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -663,7 +663,7 @@
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				PrecompiledHeaderFile="..\..\out\debug9\build\grpapps_pstypical\grpapps_pstypical.pch"
 				AssemblerListingLocation="..\..\out\debug9\build\grpapps_pstypical\"
 				ObjectFile="..\..\out\debug9\build\grpapps_pstypical\"
@@ -708,7 +708,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\common\rpgrules\test;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\common\rpgrules\test;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -733,7 +733,7 @@
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				PrecompiledHeaderFile="..\..\out\debug9\build\grpapps_pstypical\grpapps_pstypical.pch"
 				AssemblerListingLocation="..\..\out\debug9\build\grpapps_pstypical\"
 				ObjectFile="..\..\out\debug9\build\grpapps_pstypical\"
@@ -778,7 +778,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\common\rpgrules\test;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\common\rpgrules\test;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -803,7 +803,7 @@
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				PrecompiledHeaderFile="..\..\out\debug9\build\grpapps_pstypical\grpapps_pstypical.pch"
 				AssemblerListingLocation="..\..\out\debug9\build\grpapps_pstypical\"
 				ObjectFile="..\..\out\debug9\build\grpapps_pstypical\"
@@ -848,7 +848,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\common\rpgrules\test;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\common\rpgrules\test;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -873,7 +873,7 @@
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				PrecompiledHeaderFile="..\..\out\release9-x64\build\grpapps_pstypical\grpapps_pstypical.pch"
 				AssemblerListingLocation="..\..\out\release9-x64\build\grpapps_pstypical\"
 				ObjectFile="..\..\out\release9-x64\build\grpapps_pstypical\"
@@ -920,7 +920,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\common\rpgrules\test;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\common\rpgrules\test;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -945,7 +945,7 @@
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				PrecompiledHeaderFile="..\..\out\release9-x64\build\grpapps_pstypical\grpapps_pstypical.pch"
 				AssemblerListingLocation="..\..\out\release9-x64\build\grpapps_pstypical\"
 				ObjectFile="..\..\out\release9-x64\build\grpapps_pstypical\"
@@ -992,7 +992,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\common\rpgrules\test;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\common\rpgrules\test;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1017,7 +1017,7 @@
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				PrecompiledHeaderFile="..\..\out\debug9-x64\build\grpapps_pstypical\grpapps_pstypical.pch"
 				AssemblerListingLocation="..\..\out\debug9-x64\build\grpapps_pstypical\"
 				ObjectFile="..\..\out\debug9-x64\build\grpapps_pstypical\"
@@ -1062,7 +1062,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\common\rpgrules\test;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\common\rpgrules\test;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1087,7 +1087,7 @@
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				PrecompiledHeaderFile="..\..\out\debug9-x64\build\grpapps_pstypical\grpapps_pstypical.pch"
 				AssemblerListingLocation="..\..\out\debug9-x64\build\grpapps_pstypical\"
 				ObjectFile="..\..\out\debug9-x64\build\grpapps_pstypical\"
@@ -1132,7 +1132,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\common\rpgrules\test;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\common\rpgrules\test;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1157,7 +1157,7 @@
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				PrecompiledHeaderFile="..\..\out\debug9-x64\build\grpapps_pstypical\grpapps_pstypical.pch"
 				AssemblerListingLocation="..\..\out\debug9-x64\build\grpapps_pstypical\"
 				ObjectFile="..\..\out\debug9-x64\build\grpapps_pstypical\"
@@ -1202,7 +1202,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\common\rpgrules\test;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\common\rpgrules\test;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1227,7 +1227,7 @@
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				PrecompiledHeaderFile="..\..\out\debug9-x64\build\grpapps_pstypical\grpapps_pstypical.pch"
 				AssemblerListingLocation="..\..\out\debug9-x64\build\grpapps_pstypical\"
 				ObjectFile="..\..\out\debug9-x64\build\grpapps_pstypical\"
@@ -1272,7 +1272,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\common\rpgrules\test;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\common\rpgrules\test;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1297,7 +1297,7 @@
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				PrecompiledHeaderFile="..\..\out\debug9-x64\build\grpapps_pstypical\grpapps_pstypical.pch"
 				AssemblerListingLocation="..\..\out\debug9-x64\build\grpapps_pstypical\"
 				ObjectFile="..\..\out\debug9-x64\build\grpapps_pstypical\"
@@ -1342,7 +1342,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\common\rpgrules\test;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\common\rpgrules\test;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1367,7 +1367,7 @@
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				PrecompiledHeaderFile="..\..\out\debug9-x64\build\grpapps_pstypical\grpapps_pstypical.pch"
 				AssemblerListingLocation="..\..\out\debug9-x64\build\grpapps_pstypical\"
 				ObjectFile="..\..\out\debug9-x64\build\grpapps_pstypical\"
@@ -1412,7 +1412,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\common\rpgrules\test;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\common\rpgrules\test;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1437,7 +1437,7 @@
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				PrecompiledHeaderFile="..\..\out\debug9-x64\build\grpapps_pstypical\grpapps_pstypical.pch"
 				AssemblerListingLocation="..\..\out\debug9-x64\build\grpapps_pstypical\"
 				ObjectFile="..\..\out\debug9-x64\build\grpapps_pstypical\"
@@ -1482,7 +1482,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\common\rpgrules\test;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\common\rpgrules\test;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1507,7 +1507,7 @@
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				PrecompiledHeaderFile="..\..\out\debug9-x64\build\grpapps_pstypical\grpapps_pstypical.pch"
 				AssemblerListingLocation="..\..\out\debug9-x64\build\grpapps_pstypical\"
 				ObjectFile="..\..\out\debug9-x64\build\grpapps_pstypical\"
@@ -1552,7 +1552,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\common\rpgrules\test;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\common\rpgrules\test;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1577,7 +1577,7 @@
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				PrecompiledHeaderFile="..\..\out\debug9-x64\build\grpapps_pstypical\grpapps_pstypical.pch"
 				AssemblerListingLocation="..\..\out\debug9-x64\build\grpapps_pstypical\"
 				ObjectFile="..\..\out\debug9-x64\build\grpapps_pstypical\"
@@ -1622,7 +1622,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\common\rpgrules\test;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\common\rpgrules\test;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1647,7 +1647,7 @@
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				PrecompiledHeaderFile="..\..\out\debug9-x64\build\grpapps_pstypical\grpapps_pstypical.pch"
 				AssemblerListingLocation="..\..\out\debug9-x64\build\grpapps_pstypical\"
 				ObjectFile="..\..\out\debug9-x64\build\grpapps_pstypical\"
@@ -1692,7 +1692,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\common\rpgrules\test;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\include\msvc"
+				AdditionalIncludeDirectories=".;..\..\src\common\rpgrules\test;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\include\msvc"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
