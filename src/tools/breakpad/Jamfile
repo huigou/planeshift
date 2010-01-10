@@ -8,6 +8,7 @@ if $(TARGET.OS) = "WIN32"
    [ Wildcard client windows handler : *.cc ]
    [ Wildcard client windows sender : *.cc ]
   ;
+  MsvcDefine breakpad : UNICODE _UNICODE ;
 }
 
 if $(TARGET.OS) = "MACOS_X"
