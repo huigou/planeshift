@@ -334,40 +334,6 @@ bool psEngine::Initialize (int level)
 
         g2d->AllowResize(false);
 
-        // Check for configuration values for crash dump action and mode
-        #ifdef USE_WIN32_MINIDUMP
-            PS_CRASHACTION_TYPE crashaction=PSCrashActionPrompt;
-            csString CrashActionStr(cfgmgr->GetStr("PlaneShift.Crash.Action","prompt"));
-            if (CrashActionStr.CompareNoCase("off"))
-                crashaction=PSCrashActionOff;
-            if (CrashActionStr.CompareNoCase("prompt"))
-                crashaction=PSCrashActionPrompt;
-            if (CrashActionStr.CompareNoCase("always"))
-                crashaction=PSCrashActionAlways;
-
-            minidumper.SetCrashAction(crashaction);
-
-            PS_MINIDUMP_TYPE dumptype=PSMiniDumpNormal;
-            csString DumpTypeStr(cfgmgr->GetStr("PlaneShift.Crash.DumpType","normal"));
-            if (DumpTypeStr.CompareNoCase("normal")) // The normal stack and back information with no data
-                dumptype=PSMiniDumpNormal;
-            if (DumpTypeStr.CompareNoCase("detailed")) // This includes data segments associated with modules - global variables and static members
-                dumptype=PSMiniDumpWithDataSegs;
-            if (DumpTypeStr.CompareNoCase("full")) // This is the entire process memory, this dump will be huge, but will include heap data as well
-                dumptype=PSMiniDumpWithFullMemory;
-            if (DumpTypeStr.CompareNoCase("NThandles")) // NT/2k/xp only, include system handle information in addition to normal
-                dumptype=PSMiniDumpWithHandleData;
-            if (DumpTypeStr.CompareNoCase("filter")) // This can trim down the dump even more than normal
-                dumptype=PSMiniDumpFilterMemory;
-            if (DumpTypeStr.CompareNoCase("scan")) // This may be able to help make stack corruption crashes somewhat readable
-                dumptype=PSMiniDumpScanMemory;
-
-            minidumper.SetDumpType(dumptype);
-
-            // Report the current type
-            csReport (object_reg, CS_REPORTER_SEVERITY_NOTIFY, PSAPP, minidumper.GetDumpTypeString() );
-        #endif // #ifdef USE_WIN32_MINIDUMP
-
         // Grab graphics info now in case we crash
         hwRenderer = g2d->GetHWRenderer();
         hwVersion = g2d->GetHWGLVersion();
@@ -1182,11 +1148,6 @@ void psEngine::QuitClient()
     alreadyQuitting = true;
 
     loadstate = LS_NONE;
-
-    #if defined(USE_WIN32_MINIDUMP) && !defined(CS_DEBUG)
-        // If we're in release mode, there's no sense in bothering with exit crashes...
-        minidumper.SetCrashAction(PSCrashActionIgnore);
-    #endif
 
     csRef<iConfigManager> cfg( csQueryRegistry<iConfigManager> (object_reg) );
     if (cfg)
