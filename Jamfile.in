@@ -122,14 +122,21 @@ MsvcGenConfig LIBMYSQLCLIENT.LIBDIRS.DEBUG ;
 # Cal3D
 
 MsvcGenConfig CAL3D.AVAILABLE : yes ;
-MsvcGenConfig CAL3D.LIBS.7 : "cal3d-vc7.lib" ;
-MsvcGenConfig CAL3D.LIBS.DEBUG.7 : "cal3d-vc7_d.lib" ;
-MsvcGenConfig CAL3D.LIBS.71 : "cal3d-vc71.lib" ;
-MsvcGenConfig CAL3D.LIBS.DEBUG.71 : "cal3d-vc71_d.lib" ;
 MsvcGenConfig CAL3D.LIBS.8 : "cal3d-vc8.lib" ;
 MsvcGenConfig CAL3D.LIBS.DEBUG.8 : "cal3d-vc8_d.lib" ;
 MsvcGenConfig CAL3D.LIBS.9 : "cal3d-vc9.lib" ;
 MsvcGenConfig CAL3D.LIBS.DEBUG.9 : "cal3d-vc9_d.lib" ;
+
+# Breakpad
+MsvcGenConfig BREAKPAD.AVAILABLE : yes ;
+MsvcGenConfig BREAKPAD.DEFINES ;
+MsvcGenConfig BREAKPAD.CFLAGS ;
+MsvcGenConfig BREAKPAD.LFLAGS ;
+MsvcGenConfig BREAKPAD.LIBS : "wininet.lib exception_handler.lib crash_report_sender.lib" ;
+MsvcGenConfig BREAKPAD.LIBS.DEBUG ;
+MsvcGenConfig BREAKPAD.INCDIRS : $(TOP)/src/tools/breakpad-libs/;
+MsvcGenConfig BREAKPAD.LIBDIRS : $(TOP)/src/tools/breakpad-libs/;
+MsvcGenConfig BREAKPAD.LIBDIRS.DEBUG ;
 
 ####################################################################
 
