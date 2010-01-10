@@ -12,7 +12,7 @@ ApplicationIcon win32 : psclient : [ ConcatDirs $(TOP) support icons icon1.ico ]
 Application psclient : [ Wildcard *.cpp *.h ] $(extrafiles) ;
 ExternalLibs psclient : CRYSTAL CAL3D BREAKPAD ;
 CompileGroups psclient : client ;
-LinkWith psclient : gui psnet psengine psrpgrules pssound psutil paws effects fparser ;
+LinkWith psclient : breakpad gui psnet psengine psrpgrules pssound psutil paws effects fparser ;
 
 if $(HAVE_STATIC_PLUGINS) = "yes"
 {
@@ -23,7 +23,7 @@ Application psclient_static : [ Wildcard *.cpp *.h ] $(extrafiles) : independent
 CFlags psclient_static : [ FDefines CS_STATIC_LINKED ] $(CAL3D.CFLAGS) ;
 LFlags psclient_static : -lcrystalspace_staticplugins-$(CRYSTAL.VERSION) -lcal3d ;
 MsvcDefine psclient_static : CS_STATIC_LINKED ;
-LinkWith psclient_static : planeshift_staticplugins gui psnet psengine psrpgrules pssound psutil paws effects fparser ;
+LinkWith psclient_static : planeshift_staticplugins breakpad gui psnet psengine psrpgrules pssound psutil paws effects fparser ;
 
 #
 # The plugins that we need

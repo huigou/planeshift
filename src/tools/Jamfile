@@ -1,5 +1,6 @@
 SubDir TOP src tools ;
 
+SubInclude TOP src tools breakpad ;
 SubInclude TOP src tools ccheck ;
 SubInclude TOP src tools fparser ;
 SubInclude TOP src tools libxpnet ;

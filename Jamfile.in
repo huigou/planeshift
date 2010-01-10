@@ -11,6 +11,7 @@ IncludeDir src client ;
 IncludeDir src server ;
 IncludeDir src common ;
 IncludeDir src tools wordnet ;
+IncludeDir src tools breakpad ;
 IncludeDir $(BUILDTOP) : : literal transient ;
 
 
@@ -126,17 +127,6 @@ MsvcGenConfig CAL3D.LIBS.8 : "cal3d-vc8.lib" ;
 MsvcGenConfig CAL3D.LIBS.DEBUG.8 : "cal3d-vc8_d.lib" ;
 MsvcGenConfig CAL3D.LIBS.9 : "cal3d-vc9.lib" ;
 MsvcGenConfig CAL3D.LIBS.DEBUG.9 : "cal3d-vc9_d.lib" ;
-
-# Breakpad
-MsvcGenConfig BREAKPAD.AVAILABLE : yes ;
-MsvcGenConfig BREAKPAD.DEFINES ;
-MsvcGenConfig BREAKPAD.CFLAGS ;
-MsvcGenConfig BREAKPAD.LFLAGS ;
-MsvcGenConfig BREAKPAD.LIBS : "wininet.lib exception_handler.lib crash_report_sender.lib" ;
-MsvcGenConfig BREAKPAD.LIBS.DEBUG ;
-MsvcGenConfig BREAKPAD.INCDIRS : [ ConcatDirs .. .. src tools breakpad ] ;
-MsvcGenConfig BREAKPAD.LIBDIRS : [ ConcatDirs .. .. src tools breakpad ] ;
-MsvcGenConfig BREAKPAD.LIBDIRS.DEBUG ;
 
 ####################################################################
 
