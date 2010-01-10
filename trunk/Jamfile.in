@@ -12,6 +12,7 @@ IncludeDir src server ;
 IncludeDir src common ;
 IncludeDir src tools wordnet ;
 IncludeDir src tools breakpad ;
+IncludeDir src tools breakpad third_party linux include ;
 IncludeDir $(BUILDTOP) : : literal transient ;
 
 
