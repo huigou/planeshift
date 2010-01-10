@@ -18,10 +18,6 @@ if $(HAVE_STATIC_PLUGINS) = "yes"
 {
 
 SubVariant static ;
-if [ Property build : projgen ] = msvc
-{
- extrafiles += [ Wildcard win32 : *.cpp *.h ] ;
-}
 ApplicationIcon win32 : psclient_static : [ ConcatDirs $(TOP) support icons icon1.ico ] ;
 Application psclient_static : [ Wildcard *.cpp *.h ] $(extrafiles) : independent noinstall nohelp ;
 CFlags psclient_static : [ FDefines CS_STATIC_LINKED ] $(CAL3D.CFLAGS) ;
