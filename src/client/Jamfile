@@ -126,7 +126,7 @@ LinkStaticPlugins psclient_static :
   bgloader 
 ;
 
-ExternalLibs psclient_static : CRYSTAL CAL3D BREAKPAD;
+ExternalLibs psclient_static : CRYSTAL CAL3D BREAKPAD ;
 CompileGroups psclient_static : client_static ;
 
 SubVariant ;
