@@ -96,6 +96,12 @@ public:
 				);
 		crash_sender = new CrashReportSender(L"");
 	}
+	~BreakPadWrapper() {
+		delete crash_handler;
+		crash_handler = NULL;
+		delete crash_sender;
+		crash_sender = NULL;
+	}
 	
 #ifdef WIN32
 	static CrashReportSender* crash_sender;
