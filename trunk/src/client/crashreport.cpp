@@ -34,16 +34,33 @@
 #include "psengine.h"
 #include "pscelclient.h"
 
-const wchar_t* crash_post_url = L"http://planeshift.ezpcusa.com/crash_reporting/upload.py";
-
-// Only support breakpad for win32 for now.
 #ifdef WIN32
+// Only support breakpad for win32 for now.
 #define USE_BREAKPAD
+typedef wchar_t PS_CHAR;
+#define PS_PATH_MAX 4096 // Real limit is 32k but that won't fit on the stack.
+#define PS_PATH_SEP L"\\"
+#define PS_STRNCAT wcsncat
+#define PS_STRCAT wcscat
+#define PS_STRLEN wcslen
+const PS_CHAR* crash_post_url = L"http://planeshift.ezpcusa.com/crash_reporting/upload.py";
+#define DUMP_EXTENSION L".dmp"
+#else
+typedef char PS_CHAR
+#define PS_PATH_MAX PATH_MAX
+#define PS_PATH_SEP "/"
+#define PS_STRNCAT strncat
+#define PS_STRCAT strcat
+#define PS_STRLEN strlen
+const PS_CHAR* crash_post_url = "http://planeshift.ezpcusa.com/crash_reporting/upload.py";
+#define DUMP_EXTENSION ".dmp"
 #endif
 
+using namespace google_breakpad;
+
 #ifdef USE_BREAKPAD
-bool UploadDump(const wchar_t* dump_path,
-                     const wchar_t* minidump_id,
+bool UploadDump(const PS_CHAR* dump_path,
+                     const PS_CHAR* minidump_id,
                      void* context,
                      EXCEPTION_POINTERS* exinfo,
                      MDRawAssertionInfo* assertion,
@@ -54,66 +71,79 @@ class BreakPadWrapper
 {
 public:
 	BreakPadWrapper() {
-		wchar_t* tempPath;
+		PS_CHAR* tempPath;
 #ifdef WIN32
 		int pathLen = GetTempPathW(0, NULL);
-		tempPath = new wchar_t[pathLen];
+		tempPath = new PS_CHAR[pathLen];
 		GetTempPathW(pathLen, tempPath);
 #else
 		tempPath = "/tmp/";
 #endif
 		
-		crash_handler = new google_breakpad::ExceptionHandler(tempPath,
+		crash_handler = new ExceptionHandler(tempPath,
 				NULL,
 				UploadDump,
 				NULL,
 #ifdef WIN32
-				google_breakpad::ExceptionHandler::HANDLER_ALL
+				ExceptionHandler::HANDLER_ALL
 #else
 				true
 #endif
 				);
-		crash_sender = new google_breakpad::CrashReportSender(L"");
+		crash_sender = new CrashReportSender(L"");
 	}
 	
 #ifdef WIN32
-	static google_breakpad::CrashReportSender* crash_sender;
+	static CrashReportSender* crash_sender;
 #endif
 private:
-	static google_breakpad::ExceptionHandler* crash_handler;
+	static ExceptionHandler* crash_handler;
 
 };
 
-google_breakpad::ExceptionHandler* BreakPadWrapper::crash_handler = NULL;
-google_breakpad::CrashReportSender* BreakPadWrapper::crash_sender = NULL;
+ExceptionHandler* BreakPadWrapper::crash_handler = NULL;
+CrashReportSender* BreakPadWrapper::crash_sender = NULL;
 
-bool UploadDump(const wchar_t* dump_path,
-                     const wchar_t* minidump_id,
+bool UploadDump(const PS_CHAR* dump_path,
+                     const PS_CHAR* minidump_id,
                      void* context,
                      EXCEPTION_POINTERS* exinfo,
                      MDRawAssertionInfo* assertion,
                      bool succeeded) 
 {
+	PS_CHAR path_file[PS_PATH_MAX];
+	PS_CHAR* p_path_end = path_file + PS_PATH_MAX;
+	PS_CHAR* p_path = path_file;
+
+	PS_STRNCAT(path_file, dump_path, PS_PATH_MAX);
+	p_path += PS_STRLEN(path_file);
+	PS_STRCAT(path_file, PS_PATH_SEP);
+	p_path += PS_STRLEN(PS_PATH_SEP);
+	PS_STRNCAT(path_file, minidump_id, p_path_end - p_path);
+	p_path += PS_STRLEN(minidump_id);
+	PS_STRNCAT(path_file, DUMP_EXTENSION, p_path_end - p_path);
+
+
 #ifdef WIN32
     char crashMsg[512];
     sprintf(crashMsg, "Something unexpected happened in PlaneShift!\nA crash report containing only information strictly necessary to resolve this crash in the future will automatically be sent to the developers.");
     ::MessageBoxA( NULL, crashMsg, "PlaneShift", MB_OK + MB_ICONERROR );
 #endif
-	std::map<std::wstring, std::wstring> parameters;
+
     // Add the date of compiled file to check version
     struct __stat64 buf;
     int result;
-    wchar_t paramBuffer[512];
+    PS_CHAR paramBuffer[512];
 
 #ifdef WIN32
+	std::map<std::wstring, std::wstring> parameters;
     /* Get data associated with "psclient.exe": */
     result = _stat64( "psclient.exe", &buf );
     if(result == 0)
     {
-        wchar_t* time = _wctime64(&buf.st_mtime);
+        PS_CHAR* time = _wctime64(&buf.st_mtime);
         parameters[L"exe_time"] = time;
     }
-#endif
     
     if(
         psengine && 
@@ -135,22 +165,45 @@ bool UploadDump(const wchar_t* dump_path,
     parameters[L"renderer"] = paramBuffer;
     mbstowcs(paramBuffer, hwVersion, 511);
     parameters[L"hw_version"] = paramBuffer;
+#endif
 
 	std::wstring report_code;
-	printf("Attempting to upload crash report.");
+	printf("Attempting to upload crash report.\n");
+
+	ReportResult reportResult = RESULT_FAILED;
 #ifdef WIN32
-	BreakPadWrapper::crash_sender->SendCrashReport(crash_post_url,
+	reportResult = BreakPadWrapper::crash_sender->SendCrashReport(crash_post_url,
 			parameters,
-			dump_path,
+			path_file,
 			&report_code);
 #endif
-	if(report_code.empty())
+	if(reportResult == RESULT_SUCCEEDED && !report_code.empty())
 	{
 		printf("Upload successful.");
+#ifdef WIN32
+		if(!report_code.empty())
+			::MessageBoxW( NULL, report_code.c_str(), L"Report upload response", MB_OK );
+		if(succeeded)
+			::MessageBoxA( NULL, "Report uploaded successfully. Thanks for your help.", "PlaneShift", MB_OK );
+#endif
 		return succeeded;
 	}
-	else
+	else if(reportResult == RESULT_FAILED)
+	{
+		printf("Report upload failed: Could not reach server.");
+#ifdef WIN32
+		::MessageBoxA( NULL, "Report upload failed: Could not reach server.", "PlaneShift", MB_OK + MB_ICONERROR );
+#endif
 		return false;
+	}
+	else
+	{
+		printf("Report upload failed: Unknown reason.");
+#ifdef WIN32
+		::MessageBoxA( NULL, "Report upload failed: Unknown reason.", "PlaneShift", MB_OK + MB_ICONERROR );
+#endif
+		return false;
+	}
 }
 
 // At global scope to ensure we hook in as early as possible.
