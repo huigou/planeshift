@@ -56,6 +56,10 @@ const PS_CHAR* crash_post_url = "http://planeshift.ezpcusa.com/crash_reporting/u
 #define DUMP_EXTENSION ".dmp"
 #endif
 
+#ifdef CS_DEBUG
+#undef USE_BREAKPAD
+#endif
+
 using namespace google_breakpad;
 
 #ifdef USE_BREAKPAD
