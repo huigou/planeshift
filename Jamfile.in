@@ -128,6 +128,17 @@ MsvcGenConfig CAL3D.LIBS.DEBUG.8 : "cal3d-vc8_d.lib" ;
 MsvcGenConfig CAL3D.LIBS.9 : "cal3d-vc9.lib" ;
 MsvcGenConfig CAL3D.LIBS.DEBUG.9 : "cal3d-vc9_d.lib" ;
 
+# Breakpad
+MsvcGenConfig BREAKPAD.AVAILABLE : yes ;
+MsvcGenConfig BREAKPAD.DEFINES ;
+MsvcGenConfig BREAKPAD.CFLAGS ;
+MsvcGenConfig BREAKPAD.LFLAGS ;
+MsvcGenConfig BREAKPAD.LIBS : "wininet.lib" ;
+MsvcGenConfig BREAKPAD.LIBS.DEBUG ;
+MsvcGenConfig BREAKPAD.INCDIRS ;
+MsvcGenConfig BREAKPAD.LIBDIRS ;
+MsvcGenConfig BREAKPAD.LIBDIRS.DEBUG ;
+
 ####################################################################
 
 # Msvcgen setup _must_ occur before compile group registration!

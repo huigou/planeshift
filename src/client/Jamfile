@@ -3,13 +3,8 @@ SubInclude TOP src client sound ;
 SubInclude TOP src client gui ;
 SubInclude TOP src client bgloader ;
 
-local extrafiles ;
-if [ Property build : projgen ] = msvc
-{
- extrafiles += [ Wildcard win32 : *.cpp *.h ] ;
-}
 ApplicationIcon win32 : psclient : [ ConcatDirs $(TOP) support icons icon1.ico ] ;
-Application psclient : [ Wildcard *.cpp *.h ] $(extrafiles) ;
+Application psclient : [ Wildcard *.cpp *.h ] ;
 ExternalLibs psclient : CRYSTAL CAL3D BREAKPAD ;
 CompileGroups psclient : client ;
 LinkWith psclient : breakpad gui psnet psengine psrpgrules pssound psutil paws effects fparser ;

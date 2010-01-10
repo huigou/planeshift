@@ -4,6 +4,7 @@ if [ Property build : projgen ] = msvc
 {
 Library breakpad :
      [ Wildcard common windows : *.cc *.h ]
+     [ Wildcard client windows crash_generation : *.cc ]
      [ Wildcard client windows handler : *.cc ]
      [ Wildcard client windows sender : *.cc ]
 ;
