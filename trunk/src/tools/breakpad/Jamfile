@@ -1,0 +1,10 @@
+SubDir TOP src tools breakpad ;
+
+if [ Property build : projgen ] = msvc
+{
+Library breakpad :
+     [ Wildcard common windows *.cc *.h ]
+     [ Wildcard client windows handler *.cc ]
+     [ Wildcard client windows sender *.cc ]
+;
+}
