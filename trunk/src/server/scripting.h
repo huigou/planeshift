@@ -1,5 +1,5 @@
 /*
- * scripting.h - by Kenny Graunke <kenny@whitecape.org>
+ * scripting.h - by Kenneth Graunke <kenneth@whitecape.org>
  *
  * Copyright (C) 2009 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
@@ -65,14 +65,14 @@ class ProgressionScript
 {
 public:
     ~ProgressionScript();
-    static ProgressionScript* Create(const char *name, const char *script);
-    static ProgressionScript* Create(const char *name, iDocumentNode *top);
+    static ProgressionScript* Create(const char* name, const char* script);
+    static ProgressionScript* Create(const char* name, iDocumentNode* top);
 
-    const csString & Name() { return name; }
-    void Run(const MathEnvironment *env);
+    const csString& Name() { return name; }
+    void Run(const MathEnvironment* env);
 
 protected:
-    ProgressionScript(const char *name) : name(name) { }
+    ProgressionScript(const char* name) : name(name) { }
     csString name;
     csArray<ImperativeOp*> ops;
 };
@@ -83,18 +83,18 @@ class ApplicativeScript
 {
 public:
     ~ApplicativeScript();
-    static ApplicativeScript* Create(const char *script);
-    static ApplicativeScript* Create(iDocumentNode *top);
-    static ApplicativeScript* Create(iDocumentNode *top, SPELL_TYPE type, const char *name, const char *duration);
+    static ApplicativeScript* Create(const char* script);
+    static ApplicativeScript* Create(iDocumentNode* top);
+    static ApplicativeScript* Create(iDocumentNode* top, SPELL_TYPE type, const char* name, const char* duration);
 
-    ActiveSpell* Apply(const MathEnvironment *env, bool registerCancelEvent = true);
+    ActiveSpell* Apply(const MathEnvironment* env, bool registerCancelEvent = true);
 protected:
     ApplicativeScript();
 
     SPELL_TYPE type;            //< spell type...buff, debuff, etc.
     csString aim;               //< name of the MathScript var to aim at
     csString name;              //< the name of the spell
-    MathExpression *duration;   //< an embedded MathExpression
+    MathExpression* duration;   //< an embedded MathExpression
     csPDelArray<AppliedOp> ops; //< all the sub-operations
 };
 
@@ -104,8 +104,8 @@ protected:
 class Target
 {
 public:
-    Target(psItem * item)   : type(TARGET_PSITEM),    item(item) { }
-    Target(gemObject * obj) : type(TARGET_GEMOBJECT), obj(obj)   { }
+    Target(psItem*  item)   : type(TARGET_PSITEM),    item(item) { }
+    Target(gemObject*  obj) : type(TARGET_GEMOBJECT), obj(obj)   { }
     //Target(Location loc) : loc(loc), type(TARGET_LOCATION) { }
 
 protected:
@@ -119,8 +119,8 @@ protected:
 
     union
     {
-        psItem    *item;
-        gemObject *obj;
+        psItem   * item;
+        gemObject* obj;
         //Location loc;
     };
 };

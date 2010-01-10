@@ -1,5 +1,5 @@
 /*
- * scripting.cpp - by Kenny Graunke <kenny@whitecape.org>
+ * scripting.cpp - by Kenneth Graunke <kenneth@whitecape.org>
  *
  * Copyright (C) 2009 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
@@ -55,38 +55,38 @@
 // Convenience Functions
 //============================================================================
 
-gemObject *GetObject(const MathEnvironment *env, const csString & varName)
+gemObject* GetObject(const MathEnvironment* env, const csString& varName)
 {
-    MathVar *var = env->Lookup(varName);
+    MathVar* var = env->Lookup(varName);
     if (!var)
         return NULL;
 
-    gemObject *obj = dynamic_cast<gemObject*>(var->GetObject()); // cast from iScriptableVar
+    gemObject* obj = dynamic_cast<gemObject*>(var->GetObject()); // cast from iScriptableVar
     return obj;
 }
 
-gemActor *GetActor(const MathEnvironment *env, const csString & varName)
+gemActor* GetActor(const MathEnvironment* env, const csString& varName)
 {
-    MathVar *var = env->Lookup(varName);
+    MathVar* var = env->Lookup(varName);
     if (!var)
         return NULL;
 
-    gemActor *actor = dynamic_cast<gemActor*>(var->GetObject()); // cast from iScriptableVar
+    gemActor* actor = dynamic_cast<gemActor*>(var->GetObject()); // cast from iScriptableVar
     return actor;
 }
 
-psCharacter *GetCharacter(const MathEnvironment *env, const csString & varName)
+psCharacter* GetCharacter(const MathEnvironment* env, const csString& varName)
 {
-    MathVar *var = env->Lookup(varName);
+    MathVar* var = env->Lookup(varName);
     if (!var)
         return NULL;
 
     // Try a direct cast...
-    psCharacter *c = dynamic_cast<psCharacter*>(var->GetObject()); // cast from iScriptableVar
+    psCharacter* c = dynamic_cast<psCharacter*>(var->GetObject()); // cast from iScriptableVar
     if (!c)
     {
         // Maybe it's an actor - if so, we can extract it...
-        gemActor *a = dynamic_cast<gemActor*>(var->GetObject());
+        gemActor* a = dynamic_cast<gemActor*>(var->GetObject());
         if (a)
             c = a->GetCharacterData();
     }
@@ -100,7 +100,7 @@ psCharacter *GetCharacter(const MathEnvironment *env, const csString & varName)
 class psCancelSpellEvent : public psGameEvent
 {
 public:
-    psCancelSpellEvent(csTicks duration, ActiveSpell *asp) : psGameEvent(0, duration, "psCancelSpellEvent"), asp(asp) { }
+    psCancelSpellEvent(csTicks duration, ActiveSpell* asp) : psGameEvent(0, duration, "psCancelSpellEvent"), asp(asp) { }
 
     void Trigger()
     {
@@ -123,8 +123,8 @@ class AppliedOp
 {
 public:
     virtual ~AppliedOp() { }
-    virtual bool Load(iDocumentNode *node) = 0;
-    virtual void Run(const MathEnvironment *env, gemActor *target, ActiveSpell *asp) = 0;
+    virtual bool Load(iDocumentNode* node) = 0;
+    virtual void Run(const MathEnvironment* env, gemActor* target, ActiveSpell* asp) = 0;
 };
 
 /// A base class with a "value" attribute backed by a MathExpression.
@@ -137,14 +137,14 @@ public:
         delete value;
     }
 
-    bool Load(iDocumentNode *node)
+    bool Load(iDocumentNode* node)
     {
         value = MathExpression::Create(node->GetAttributeValue("value"));
         return value != NULL;
     }
 
 protected:
-    MathExpression *value; ///< an embedded MathExpression
+    MathExpression* value; ///< an embedded MathExpression
 };
 
 /// A base class with both "value" and a plain text "name" attribute.
@@ -154,7 +154,7 @@ public:
     Applied2() : Applied1() { }
     virtual ~Applied2() { }
 
-    bool Load(iDocumentNode *node)
+    bool Load(iDocumentNode* node)
     {
         name = node->GetAttributeValue("name");
         return Applied1::Load(node);
@@ -173,15 +173,15 @@ public:
     VitalAOp() : Applied1() { }
     virtual ~VitalAOp() { }
 
-    bool Load(iDocumentNode *node)
+    bool Load(iDocumentNode* node)
     {
         vital = node->GetValue();
         return Applied1::Load(node);
     }
 
-    void Run(const MathEnvironment *env, gemActor *target, ActiveSpell *asp)
+    void Run(const MathEnvironment* env, gemActor* target, ActiveSpell* asp)
     {
-        VitalBuffable *buffable = NULL;
+        VitalBuffable* buffable = NULL;
         if (vital == "mana-rate")
             buffable = &target->GetCharacterData()->GetManaRate();
         else if (vital == "pstamina-rate")
@@ -224,23 +224,23 @@ public:
     HPRateAOp() : Applied1() { }
     virtual ~HPRateAOp() { }
 
-    bool Load(iDocumentNode *node)
+    bool Load(iDocumentNode* node)
     {
         attacker = node->GetAttributeValue("attacker");
         return Applied1::Load(node);
     }
 
-    void Run(const MathEnvironment *env, gemActor *target, ActiveSpell *asp)
+    void Run(const MathEnvironment* env, gemActor* target, ActiveSpell* asp)
     {
         float val = value->Evaluate(env);
 
-        VitalBuffable & buffable = target->GetCharacterData()->GetHPRate();
+        VitalBuffable& buffable = target->GetCharacterData()->GetHPRate();
         buffable.Buff(asp, val);
         asp->Add(buffable, "<hp-rate value=\"%f\"/>", val);
         if (val < 0)
             asp->MarkAsDamagingHP();
 
-        gemActor *atk = GetActor(env, attacker); // may be NULL
+        gemActor* atk = GetActor(env, attacker); // may be NULL
         target->AddAttackerHistory(atk, val, asp->Duration());
     }
 
@@ -257,7 +257,7 @@ public:
     StatsAOp() : Applied1() { }
     virtual ~StatsAOp() { }
 
-    bool Load(iDocumentNode *node)
+    bool Load(iDocumentNode* node)
     {
         csString type(node->GetValue());
         if (type == "agi")
@@ -281,13 +281,13 @@ public:
         return Applied1::Load(node);
     }
 
-    void Run(const MathEnvironment *env, gemActor *target, ActiveSpell *asp)
+    void Run(const MathEnvironment* env, gemActor* target, ActiveSpell* asp)
     {
         int val = (int) value->Evaluate(env);
-        CharStat & buffable = target->GetCharacterData()->Stats()[stat];
+        CharStat& buffable = target->GetCharacterData()->Stats()[stat];
         buffable.Buff(asp, val);
 
-        const char *strs[] = {"str", "agi", "end", "int", "wil", "cha"};
+        const char* strs[] = {"str", "agi", "end", "int", "wil", "cha"};
         asp->Add(buffable, "<%s value=\"%d\"/>", strs[stat], val);
     }
 
@@ -304,9 +304,9 @@ public:
     SkillAOp() : Applied2() { }
     virtual ~SkillAOp() { }
 
-    bool Load(iDocumentNode *node)
+    bool Load(iDocumentNode* node)
     {
-        psSkillInfo *info = CacheManager::GetSingleton().GetSkillByName(node->GetAttributeValue("name"));
+        psSkillInfo* info = CacheManager::GetSingleton().GetSkillByName(node->GetAttributeValue("name"));
         if (!info)
         {
             Error2("Found <skill name=\"%s\">, but no such skill exists.", node->GetAttributeValue("name"));
@@ -316,10 +316,10 @@ public:
         return Applied1::Load(node);
     }
 
-    void Run(const MathEnvironment *env, gemActor *target, ActiveSpell *asp)
+    void Run(const MathEnvironment* env, gemActor* target, ActiveSpell* asp)
     {
         int val = (int) value->Evaluate(env);
-        SkillRank & buffable = target->GetCharacterData()->GetSkillRank(skill);
+        SkillRank& buffable = target->GetCharacterData()->GetSkillRank(skill);
         buffable.Buff(asp, val);
 
         asp->Add(buffable, "<skill name=\"%s\" value=\"%d\"/>", name.GetData(), val);
@@ -338,15 +338,15 @@ public:
     CombatModAOp() : Applied1() { }
     virtual ~CombatModAOp() { }
 
-    bool Load(iDocumentNode *node)
+    bool Load(iDocumentNode* node)
     {
         type = node->GetValue();
         return Applied1::Load(node);
     }
 
-    void Run(const MathEnvironment *env, gemActor *target, ActiveSpell *asp)
+    void Run(const MathEnvironment* env, gemActor* target, ActiveSpell* asp)
     {
-        Multiplier *mod = NULL;
+        Multiplier* mod = NULL;
         if (type == "atk")
             mod = &target->GetCharacterData()->AttackModifier();
         else if (type == "def")
@@ -371,13 +371,13 @@ public:
     MeshAOp() : AppliedOp() { }
     virtual ~MeshAOp() { }
 
-    bool Load(iDocumentNode *node)
+    bool Load(iDocumentNode* node)
     {
         value = node->GetAttributeValue("value");
         return !value.IsEmpty();
     }
 
-    void Run(const MathEnvironment *env, gemActor *target, ActiveSpell *asp)
+    void Run(const MathEnvironment* env, gemActor* target, ActiveSpell* asp)
     {
         target->GetOverridableMesh().Override(asp, value);
         asp->Add(target->GetOverridableMesh(), "<mesh value=\"%s\"/>", value.GetData());
@@ -394,11 +394,11 @@ class CanSummonFamiliarAOp : public AppliedOp
 public:
     virtual ~CanSummonFamiliarAOp() { }
 
-    bool Load(iDocumentNode *node) { return true; }
+    bool Load(iDocumentNode* node) { return true; }
 
-    void Run(const MathEnvironment *env, gemActor *target, ActiveSpell *asp)
+    void Run(const MathEnvironment* env, gemActor* target, ActiveSpell* asp)
     {
-        Buffable<int> & b = target->GetCharacterData()->GetCanSummonFamiliar();
+        Buffable<int>& b = target->GetCharacterData()->GetCanSummonFamiliar();
         b.Buff(asp, 1);
         asp->Add(b, "<can-summon-familiar/>");
     }
@@ -410,7 +410,7 @@ public:
 class MsgCancel : public iCancelAction
 {
 public:
-    MsgCancel(int clientnum, const csString & undo) : clientnum(clientnum), undo(undo) { }
+    MsgCancel(int clientnum, const csString& undo) : clientnum(clientnum), undo(undo) { }
     virtual ~MsgCancel() { }
 
     void Cancel()
@@ -431,7 +431,7 @@ public:
     MsgAOp() : AppliedOp() { }
     virtual ~MsgAOp() { }
 
-    bool Load(iDocumentNode *node)
+    bool Load(iDocumentNode* node)
     {
         text = node->GetAttributeValue("text");
         undo = node->GetAttributeValue("undo");
@@ -439,7 +439,7 @@ public:
         return true;
     }
 
-    void Run(const MathEnvironment *env, gemActor *target, ActiveSpell *asp)
+    void Run(const MathEnvironment* env, gemActor* target, ActiveSpell* asp)
     {
         if (target && target->GetClientID())
         {
@@ -466,7 +466,7 @@ public:
             csString finalUndo(undo);
             env->InterpolateString(finalUndo);
 
-            MsgCancel *cancel = new MsgCancel(target->GetClientID(), finalUndo);
+            MsgCancel* cancel = new MsgCancel(target->GetClientID(), finalUndo);
             asp->Add(cancel, "<msg text=\"%s\" undo=\"%s\"/>", finalText.GetData(), finalUndo.GetData());
         }
     }
@@ -482,7 +482,7 @@ protected:
 class FxCancel : public iCancelAction
 {
 public:
-    FxCancel(gemObject *target, uint32_t uid) : target(target), msg(uid) { }
+    FxCancel(gemObject* target, uint32_t uid) : target(target), msg(uid) { }
     virtual ~FxCancel() { }
 
     virtual void Cancel()
@@ -492,7 +492,7 @@ public:
         msg.Multicast(target->GetMulticastClients(), 0, PROX_LIST_ANY_RANGE);
     }
 private:
-    gemObject *target;
+    gemObject* target;
     psStopEffectMessage msg;
 };
 
@@ -522,7 +522,7 @@ public:
     FxAOp() : AppliedOp() { }
     virtual ~FxAOp() { }
 
-    bool Load(iDocumentNode *node)
+    bool Load(iDocumentNode* node)
     {
         name   = node->GetAttributeValue("name");
         source = node->GetAttributeValue("source");
@@ -535,15 +535,15 @@ public:
         return !name.IsEmpty();
     }
 
-    void Run(const MathEnvironment *env, gemActor *target, ActiveSpell *asp)
+    void Run(const MathEnvironment* env, gemActor* target, ActiveSpell* asp)
     {
-        gemObject *anchor = NULL;
+        gemObject* anchor = NULL;
         // Convert from the source to an offset.
         if (!source.IsEmpty())
         {
             anchor = GetObject(env, source);
 
-            iSector *sector;
+            iSector* sector;
             csVector3 sourcePos;
             csVector3 targetPos;
             anchor->GetPosition(sourcePos, sector);
@@ -594,7 +594,7 @@ protected:
 class OnCancel : public iCancelAction
 {
 public:
-    OnCancel(gemActor *actor, SCRIPT_TRIGGER type, ProgressionScript *script) : actor(actor), script(script), type(type) { }
+    OnCancel(gemActor* actor, SCRIPT_TRIGGER type, ProgressionScript* script) : actor(actor), script(script), type(type) { }
     virtual ~OnCancel() { }
 
     void Cancel()
@@ -616,7 +616,7 @@ public:
     }
 protected:
     csWeakRef<gemActor> actor;
-    ProgressionScript *script;
+    ProgressionScript* script;
     SCRIPT_TRIGGER type;
 };
 
@@ -628,7 +628,7 @@ public:
     OnAOp() : AppliedOp() { }
     virtual ~OnAOp() { }
 
-    bool Load(iDocumentNode *node)
+    bool Load(iDocumentNode* node)
     {
         csString typ(node->GetAttributeValue("type"));
         if (typ == "attack")
@@ -647,14 +647,14 @@ public:
         return true;
     }
 
-    void Run(const MathEnvironment *env, gemActor *target, ActiveSpell *asp)
+    void Run(const MathEnvironment* env, gemActor* target, ActiveSpell* asp)
     {
         // Substitute any @{...} expressions.
         if (!Quasiquote(self, env))
             return;
 
         // Now, parse and load the script (but don't run it)...
-        ProgressionScript *body = ProgressionScript::Create("<on> body", self);
+        ProgressionScript* body = ProgressionScript::Create("<on> body", self);
         CS_ASSERT_MSG("<on> body failed to load", body);
 
         // Register the triggering event
@@ -669,14 +669,14 @@ public:
                 // TODO.
                 break;
         };
-        OnCancel *cancel = new OnCancel(target, type, body);
+        OnCancel* cancel = new OnCancel(target, type, body);
         csString xml = GetNodeXML(self); // this doesn't give <hp/> style attributes...should fix
                                          // or find another way to do it, nobody else uses this
         asp->Add(cancel, "%s", xml.GetData());
     }
 
 protected:
-    bool Quasiquote(iDocumentNode *top, const MathEnvironment *env)
+    bool Quasiquote(iDocumentNode* top, const MathEnvironment* env)
     {
         // 1. Handle quasiquoted expressions in attributes
         csRef<iDocumentAttributeIterator> it = top->GetAttributes();
@@ -701,7 +701,7 @@ protected:
                     return false;
                 }
                 text.SubString(varName, pos+2, end-(pos+2));
-                MathVar *var = env->Lookup(varName);
+                MathVar* var = env->Lookup(varName);
                 if (!var)
                 {
                     Error2("Error: Quasiquote @{%s} not found in environment.", varName.GetData());
@@ -745,11 +745,11 @@ ApplicativeScript::~ApplicativeScript()
     }
 }
 
-ApplicativeScript* ApplicativeScript::Create(const char *script)
+ApplicativeScript* ApplicativeScript::Create(const char* script)
 {
     csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
     csRef<iDocument> doc = xml->CreateDocument();
-    const char *error = doc->Parse(script);
+    const char* error = doc->Parse(script);
     if (error)
     {
         Error2("Couldn't parse XML for applicative script: %s", script);
@@ -770,7 +770,7 @@ ApplicativeScript* ApplicativeScript::Create(const char *script)
     return Create(top);
 }
 
-ApplicativeScript* ApplicativeScript::Create(iDocumentNode *top)
+ApplicativeScript* ApplicativeScript::Create(iDocumentNode* top)
 {
     if (!top->GetAttributeValue("name"))
         return NULL;
@@ -787,10 +787,10 @@ ApplicativeScript* ApplicativeScript::Create(iDocumentNode *top)
     return Create(top, type, top->GetAttributeValue("name"), top->GetAttributeValue("duration"));
 }
 
-ApplicativeScript* ApplicativeScript::Create(iDocumentNode *top, SPELL_TYPE type, const char *name, const char *duration)
+ApplicativeScript* ApplicativeScript::Create(iDocumentNode* top, SPELL_TYPE type, const char* name, const char* duration)
 {
     CS_ASSERT(name);
-    ApplicativeScript *script = new ApplicativeScript;
+    ApplicativeScript* script = new ApplicativeScript;
     if (!script)
         return NULL;
 
@@ -817,7 +817,7 @@ ApplicativeScript* ApplicativeScript::Create(iDocumentNode *top, SPELL_TYPE type
 
         csString elem = node->GetValue();
 
-        AppliedOp *op = NULL;
+        AppliedOp* op = NULL;
 
         // buffables
         if (elem == "hp-rate")
@@ -895,19 +895,19 @@ ApplicativeScript* ApplicativeScript::Create(iDocumentNode *top, SPELL_TYPE type
     return script;
 }
 
-ActiveSpell* ApplicativeScript::Apply(const MathEnvironment *env, bool registerCancelEvent)
+ActiveSpell* ApplicativeScript::Apply(const MathEnvironment* env, bool registerCancelEvent)
 {
     // TODO: Handle non-actor targets...
-    gemActor *target = GetActor(env, aim);
+    gemActor* target = GetActor(env, aim);
     CS_ASSERT(target);
 
     csTicks dticks = duration ? (csTicks) duration->Evaluate(env) : 0;
-    ActiveSpell *asp = new ActiveSpell(name, type, dticks);
+    ActiveSpell* asp = new ActiveSpell(name, type, dticks);
 
     csPDelArray<AppliedOp>::Iterator it = ops.GetIterator();
     while (it.HasNext())
     {
-        AppliedOp *op = it.Next();
+        AppliedOp* op = it.Next();
         op->Run(env, target, asp);
     }
 
@@ -915,7 +915,7 @@ ActiveSpell* ApplicativeScript::Apply(const MathEnvironment *env, bool registerC
 
     if (duration && registerCancelEvent)
     {
-        psCancelSpellEvent *evt = new psCancelSpellEvent(dticks, asp);
+        psCancelSpellEvent* evt = new psCancelSpellEvent(dticks, asp);
         psserver->GetEventManager()->Push(evt);
     }
 
@@ -931,8 +931,8 @@ public:
     ImperativeOp() { }
     virtual ~ImperativeOp() { }
 
-    virtual bool Load(iDocumentNode *node) = 0;
-    virtual void Run(const MathEnvironment *env) = 0;
+    virtual bool Load(iDocumentNode* node) = 0;
+    virtual void Run(const MathEnvironment* env) = 0;
 };
 
 //----------------------------------------------------------------------------
@@ -955,19 +955,19 @@ public:
         aps = NULL;
     }
 
-    bool Load(iDocumentNode *top)
+    bool Load(iDocumentNode* top)
     {
         aps = ApplicativeScript::Create(top);
         return aps != NULL;
     }
 
-    virtual void Run(const MathEnvironment *env)
+    virtual void Run(const MathEnvironment* env)
     {
         aps->Apply(env, true);
     }
 
 protected:
-    ApplicativeScript *aps;
+    ApplicativeScript* aps;
 };
 
 //----------------------------------------------------------------------------
@@ -985,7 +985,7 @@ public:
         debuff = NULL;
     }
 
-    bool Load(iDocumentNode *top)
+    bool Load(iDocumentNode* top)
     {
         csString name(top->GetAttributeValue("name"));
         if (name.IsEmpty())
@@ -1002,18 +1002,18 @@ public:
         return buff && debuff;
     }
 
-    virtual void Run(const MathEnvironment *env)
+    virtual void Run(const MathEnvironment* env)
     {
-        ActiveSpell *buffAsp   =   buff->Apply(env, true);  // only bother with one cancel event;
-        ActiveSpell *debuffAsp = debuff->Apply(env, false); // the link ensures both will get cancelled
+        ActiveSpell* buffAsp   =   buff->Apply(env, true);  // only bother with one cancel event;
+        ActiveSpell* debuffAsp = debuff->Apply(env, false); // the link ensures both will get cancelled
 
         // Link the two ActiveSpells...
         buffAsp->Link(debuffAsp);
         debuffAsp->Link(buffAsp);
     }
 protected:
-    ApplicativeScript *buff;   //< The buff (beneficiary) script
-    ApplicativeScript *debuff; //< The debuff (victim) script
+    ApplicativeScript* buff;   //< The buff (beneficiary) script
+    ApplicativeScript* debuff; //< The debuff (victim) script
 };
 
 //----------------------------------------------------------------------------
@@ -1037,14 +1037,14 @@ public:
             delete body;
     }
 
-    bool Load(iDocumentNode *node)
+    bool Load(iDocumentNode* node)
     {
         bindings = MathScript::Create("<let> bindings", node->GetAttributeValue("vars"));
         body = ProgressionScript::Create("<let> body", node);
         return (bindings && body);
     }
 
-    virtual void Run(const MathEnvironment *outer)
+    virtual void Run(const MathEnvironment* outer)
     {
         MathEnvironment inner(outer);
         bindings->Evaluate(&inner);
@@ -1052,8 +1052,8 @@ public:
     }
 
 protected:
-    MathScript *bindings; /// an embedded MathScript containing new bindings
-    ProgressionScript *body;
+    MathScript* bindings; /// an embedded MathScript containing new bindings
+    ProgressionScript* body;
 };
 
 //----------------------------------------------------------------------------
@@ -1082,7 +1082,7 @@ public:
             delete condition;
     }
 
-    bool Load(iDocumentNode *node)
+    bool Load(iDocumentNode* node)
     {
         condition = MathExpression::Create(node->GetAttributeValue("t"));
         csRef<iDocumentNode> thenNode = node->GetNode("then");
@@ -1102,7 +1102,7 @@ public:
         return (condition && thenBranch && (elseBranch || !elseNode));
     }
 
-    virtual void Run(const MathEnvironment *env)
+    virtual void Run(const MathEnvironment* env)
     {
         if (condition->Evaluate(env) != 0.0)
             thenBranch->Run(env);
@@ -1111,9 +1111,9 @@ public:
     }
 
 protected:
-    ProgressionScript *thenBranch;
-    ProgressionScript *elseBranch;
-    MathExpression *condition; /// an embedded MathExpression - should result in a boolean
+    ProgressionScript* thenBranch;
+    ProgressionScript* elseBranch;
+    MathExpression* condition; /// an embedded MathExpression - should result in a boolean
 };
 
 //----------------------------------------------------------------------------
@@ -1128,7 +1128,7 @@ class MsgOp : public ImperativeOp
 public:
     virtual ~MsgOp() { }
 
-    bool Load(iDocumentNode *node)
+    bool Load(iDocumentNode* node)
     {
         aim = node->GetAttributeValue("aim");
         text = node->GetAttributeValue("text");
@@ -1136,9 +1136,9 @@ public:
         return true;
     }
 
-    virtual void Run(const MathEnvironment *env)
+    virtual void Run(const MathEnvironment* env)
     {
-        gemActor *actor = GetActor(env, aim);
+        gemActor* actor = GetActor(env, aim);
 
         if (actor && actor->GetClientID())
         {
@@ -1190,7 +1190,7 @@ class CancelOp : public ImperativeOp
 public:
     virtual ~CancelOp() { }
 
-    bool Load(iDocumentNode *cancel)
+    bool Load(iDocumentNode* cancel)
     {
         aim = cancel->GetAttributeValue("aim");
 
@@ -1235,16 +1235,16 @@ public:
         return true;
     }
 
-    virtual void Run(const MathEnvironment *env)
+    virtual void Run(const MathEnvironment* env)
     {
-        gemActor *actor = GetActor(env, aim);
+        gemActor* actor = GetActor(env, aim);
         CS_ASSERT(actor);
 
         // Find which potentially cancellable spells are actually active
         csArray<ActiveSpell*> asps;
         for (size_t i = 0; i < spells.GetSize(); i++)
         {
-            ActiveSpell *asp = actor->FindActiveSpell(spells[i].name, spells[i].type);
+            ActiveSpell* asp = actor->FindActiveSpell(spells[i].name, spells[i].type);
             if (asp)
                 asps.Push(asp);
         }
@@ -1262,7 +1262,7 @@ public:
             }
             case RANDOM:
             {
-                ActiveSpell *asp = asps[psserver->GetRandom(asps.GetSize())];
+                ActiveSpell* asp = asps[psserver->GetRandom(asps.GetSize())];
                 if (asp->Cancel())
                     delete asp;
                 break;
@@ -1298,7 +1298,7 @@ class FxOp : public ImperativeOp
 public:
     virtual ~FxOp() { }
 
-    bool Load(iDocumentNode *top)
+    bool Load(iDocumentNode* top)
     {
         // type defaults to attached
         csString typ(top->GetAttributeValue("type"));
@@ -1311,10 +1311,10 @@ public:
         return !name.IsEmpty() && !targetVar.IsEmpty();
     }
 
-    virtual void Run(const MathEnvironment *env)
+    virtual void Run(const MathEnvironment* env)
     {
-        gemObject *target = GetObject(env, targetVar);
-        gemObject *source = target;
+        gemObject* target = GetObject(env, targetVar);
+        gemObject* source = target;
         if (!sourceVar.IsEmpty())
             source = GetObject(env, sourceVar);
 
@@ -1333,10 +1333,10 @@ public:
             // Put the effect in front of the target, where we'd drop stuff
             csVector3 pos;
             float yrot;
-            iSector *sector;
+            iSector* sector;
             target->GetPosition(pos, yrot, sector);
-            pos.x -= DROP_DISTANCE * sinf(yrot);
-            pos.z -= DROP_DISTANCE * cosf(yrot);
+            pos.x -= DROP_DISTANCE*  sinf(yrot);
+            pos.z -= DROP_DISTANCE*  cosf(yrot);
 
             // Send effect message
             psEffectMessage fx(0, name, pos, 0, 0, 0);
@@ -1363,7 +1363,7 @@ class Imperative1 : public ImperativeOp
 public:
     virtual ~Imperative1() { }
 
-    bool Load(iDocumentNode *node)
+    bool Load(iDocumentNode* node)
     {
         aim = node->GetAttributeValue("aim");
         return !aim.IsEmpty();
@@ -1383,14 +1383,14 @@ public:
         delete value;
     }
 
-    bool Load(iDocumentNode *node)
+    bool Load(iDocumentNode* node)
     {
         value = MathExpression::Create(node->GetAttributeValue("value"));
         return value && Imperative1::Load(node);
     }
 
 protected:
-    MathExpression *value; //< an embedded MathExpression
+    MathExpression* value; //< an embedded MathExpression
 };
 
 // A base class supporting aim, value, and name.
@@ -1400,7 +1400,7 @@ public:
     Imperative3() : Imperative2() { }
     virtual ~Imperative3() { }
 
-    bool Load(iDocumentNode *node)
+    bool Load(iDocumentNode* node)
     {
         name = node->GetAttributeValue("name");
         return Imperative2::Load(node);
@@ -1418,9 +1418,9 @@ public:
     DestroyOp() : Imperative1() { }
     virtual ~DestroyOp() { }
 
-    void Run(const MathEnvironment *env)
+    void Run(const MathEnvironment* env)
     {
-        gemObject *obj = GetObject(env, aim);
+        gemObject* obj = GetObject(env, aim);
         EventManager::GetSingleton().Push(new psEntityEvent(psEntityEvent::DESTROY, obj));
     }
 };
@@ -1433,7 +1433,7 @@ public:
     TeleportOp() : Imperative1() { }
     virtual ~TeleportOp() { }
 
-    bool Load(iDocumentNode *node)
+    bool Load(iDocumentNode* node)
     {
         if (!Imperative1::Load(node))
             return false;
@@ -1471,9 +1471,9 @@ public:
         return true;
     }
 
-    void Run(const MathEnvironment *env)
+    void Run(const MathEnvironment* env)
     {
-        gemActor *actor = GetActor(env, aim);
+        gemActor* actor = GetActor(env, aim);
         CS_ASSERT(actor);
 
         if (type == NAMED)
@@ -1483,7 +1483,7 @@ public:
         }
         else
         {
-            iSector *sector;
+            iSector* sector;
             csVector3 destPos;
 
             if (type & XYZ)
@@ -1534,15 +1534,15 @@ public:
     VitalOp() : Imperative2() { }
     virtual ~VitalOp() { }
 
-    bool Load(iDocumentNode *node)
+    bool Load(iDocumentNode* node)
     {
         vital = node->GetValue();
         return Imperative2::Load(node);
     }
 
-    void Run(const MathEnvironment *env)
+    void Run(const MathEnvironment* env)
     {
-        psCharacter *c = GetCharacter(env, aim);
+        psCharacter* c = GetCharacter(env, aim);
         float val = value->Evaluate(env);
         if (vital == "mana")
             c->AdjustMana(val);
@@ -1573,16 +1573,16 @@ public:
     HPOp() : Imperative2() { }
     virtual ~HPOp() { }
 
-    bool Load(iDocumentNode *node)
+    bool Load(iDocumentNode* node)
     {
         attacker = node->GetAttributeValue("attacker");
         return Imperative2::Load(node);
     }
 
-    void Run(const MathEnvironment *env)
+    void Run(const MathEnvironment* env)
     {
-        gemActor *target = GetActor(env, aim);
-        gemActor *atk = GetActor(env, attacker); // may be NULL
+        gemActor* target = GetActor(env, aim);
+        gemActor* atk = GetActor(env, attacker); // may be NULL
         float val = value->Evaluate(env);
 
         if (val < 0)
@@ -1611,7 +1611,7 @@ public:
     StatsOp() : Imperative2() { }
     virtual ~StatsOp() { }
 
-    bool Load(iDocumentNode *node)
+    bool Load(iDocumentNode* node)
     {
         csString type(node->GetValue());
         if (type == "agi")
@@ -1635,11 +1635,11 @@ public:
         return Imperative2::Load(node);
     }
 
-    void Run(const MathEnvironment *env)
+    void Run(const MathEnvironment* env)
     {
-        psCharacter *c = GetCharacter(env, aim);
+        psCharacter* c = GetCharacter(env, aim);
         int val = (int) value->Evaluate(env);
-        CharStat & buffable = c->Stats()[stat];
+        CharStat& buffable = c->Stats()[stat];
         buffable.SetBase(buffable.Base() + val);
     }
 
@@ -1662,9 +1662,9 @@ public:
     SkillOp() : Imperative3() { }
     virtual ~SkillOp() { }
 
-    bool Load(iDocumentNode *node)
+    bool Load(iDocumentNode* node)
     {
-        psSkillInfo *info = CacheManager::GetSingleton().GetSkillByName(node->GetAttributeValue("name"));
+        psSkillInfo* info = CacheManager::GetSingleton().GetSkillByName(node->GetAttributeValue("name"));
         if (!info)
         {
             Error2("Found <skill aim=\"...\" name=\"%s\">, but no such skill exists.", node->GetAttributeValue("name"));
@@ -1674,11 +1674,11 @@ public:
         return Imperative3::Load(node);
     }
 
-    void Run(const MathEnvironment *env)
+    void Run(const MathEnvironment* env)
     {
-        psCharacter *c = GetCharacter(env, aim);
+        psCharacter* c = GetCharacter(env, aim);
         int val = (int) value->Evaluate(env);
-        SkillRank & buffable = c->GetSkillRank(skill);
+        SkillRank& buffable = c->GetSkillRank(skill);
         buffable.SetBase(buffable.Base() + val);
         c->SetSkillRank(skill,buffable.Base());
     }
@@ -1700,13 +1700,12 @@ public:
     virtual ~ExpOp() { }
 
     // AllocateKillDamage blah.
-    void Run(const MathEnvironment *env)
+    void Run(const MathEnvironment* env)
     {
-        psCharacter *c = GetCharacter(env, aim);
+        psCharacter* c = GetCharacter(env, aim);
         float exp = value->Evaluate(env);
         c->AddExperiencePoints(exp);
     }
-protected:
 };
 
 //----------------------------------------------------------------------------
@@ -1725,7 +1724,7 @@ public:
     AnimalAffinityOp() : Imperative3() { }
     virtual ~AnimalAffinityOp() { }
 
-    bool Load(iDocumentNode *node)
+    bool Load(iDocumentNode* node)
     {
         if (!Imperative3::Load(node))
             return false;
@@ -1735,9 +1734,9 @@ public:
         return true;
     }
 
-    void Run(const MathEnvironment *env)
+    void Run(const MathEnvironment* env)
     {
-        psCharacter *chr = GetCharacter(env, aim);
+        psCharacter* chr = GetCharacter(env, aim);
 
         // Parse the string into an XML document.
         //     <category attribute="Type|Lifecycle|AttackTool|AttackType|..." name="" value="" />
@@ -1747,7 +1746,7 @@ public:
         csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
         CS_ASSERT(xml != NULL);
         csRef<iDocument> xmlDoc = xml->CreateDocument();
-        const char *error = xmlDoc->Parse(chr->GetAnimalAffinity());
+        const char* error = xmlDoc->Parse(chr->GetAnimalAffinity());
 
         csRef<iDocumentNode> node;
         bool found = false;
@@ -1821,20 +1820,20 @@ class ActionOp : public Imperative1
 public:
     virtual ~ActionOp() { }
 
-    bool Load(iDocumentNode *node)
+    bool Load(iDocumentNode* node)
     {
         sector = node->GetAttributeValue("sector");
         keyStat = node->GetAttributeValue("stat");
         return Imperative1::Load(node);
     }
 
-    void Run(const MathEnvironment *env)
+    void Run(const MathEnvironment* env)
     {
         // Get character data
-        psCharacter *c = GetCharacter(env, aim);
+        psCharacter* c = GetCharacter(env, aim);
 
         // Returns the next inactive entrance action location
-        psActionLocation *actionLocation = psserver->GetActionManager()->FindAvailableEntrances(sector);
+        psActionLocation* actionLocation = psserver->GetActionManager()->FindAvailableEntrances(sector);
         if (!actionLocation)
         {
             Error2("Error: <action/> - no available action location entrances found for %s.\n", sector.GetData());
@@ -1854,7 +1853,7 @@ public:
         }
 
         // Get the ItemStats based on the name provided.
-        psItemStats *itemstats=CacheManager::GetSingleton().GetBasicItemStatsByName(keyStat.GetData());
+        psItemStats* itemstats=CacheManager::GetSingleton().GetBasicItemStatsByName(keyStat.GetData());
         if (!itemstats)
         {
             Error2("Error: <action stat=\"%s\"/> specified, but no corresponding psItemStats found.\n", keyStat.GetData());
@@ -1862,7 +1861,7 @@ public:
         }
 
         // Make 1 master key item
-        psItem *masterkeyItem = itemstats->InstantiateBasicItem();
+        psItem* masterkeyItem = itemstats->InstantiateBasicItem();
         CS_ASSERT(masterkeyItem);
 
         // Assign the lock and load it
@@ -1877,7 +1876,7 @@ public:
         c->Inventory().AddOrDrop(masterkeyItem, false);
 
         // Make 10 regular key items
-        psItem *keyItem = itemstats->InstantiateBasicItem();
+        psItem* keyItem = itemstats->InstantiateBasicItem();
         CS_ASSERT(keyItem);
 
         // Assign the lock and load it
@@ -1925,7 +1924,7 @@ public:
     KeyOp() : Imperative1() { }
     virtual ~KeyOp() { }
 
-    bool Load(iDocumentNode *node)
+    bool Load(iDocumentNode* node)
     {
         csString funct(node->GetAttributeValue("funct"));
         if (funct == "make")
@@ -1954,24 +1953,24 @@ public:
         return Imperative1::Load(node);
     }
 
-    void Run(const MathEnvironment *env)
+    void Run(const MathEnvironment* env)
     {
         // Get character data
-        psCharacter *c = GetCharacter(env, aim);
+        psCharacter* c = GetCharacter(env, aim);
 
         switch (function)
         {
             case MAKE:
             {
                 // Get the ItemStats based on the name provided.
-                psItemStats *itemstats = CacheManager::GetSingleton().GetBasicItemStatsByName(keyStat.GetData());
+                psItemStats* itemstats = CacheManager::GetSingleton().GetBasicItemStatsByName(keyStat.GetData());
                 if (!itemstats)
                 {
                     Error2("Error: <key funct=\"make\" stat=\"%s\"/> specified, but no corresponding psItemStats found.\n", keyStat.GetData());
                     return;
                 }
 
-                psItem *keyItem = itemstats->InstantiateBasicItem();
+                psItem* keyItem = itemstats->InstantiateBasicItem();
                 CS_ASSERT(keyItem);
 
                 // Assign the lock, make it a master key and load it
@@ -1997,7 +1996,7 @@ public:
             case MODIFY:
             {
                 // Get key item from bulk and assign the lock
-                psItem *keyItem = c->Inventory().FindItemID(keyID);
+                psItem* keyItem = c->Inventory().FindItemID(keyID);
                 if (keyItem)
                 {
                     keyItem->AddOpenableLock(lockID);
@@ -2040,7 +2039,7 @@ class ItemOp : public Imperative1
 public:
     virtual ~ItemOp() { }
 
-    bool Load(iDocumentNode *node)
+    bool Load(iDocumentNode* node)
     {
         name = node->GetAttributeValue("name");
         stackCount = node->GetAttributeValueAsInt("count");
@@ -2056,13 +2055,13 @@ public:
         return !name.IsEmpty() && stackCount > 0 && Imperative1::Load(node);
     }
 
-    void Run(const MathEnvironment *env)
+    void Run(const MathEnvironment* env)
     {
-        psCharacter *c = GetCharacter(env, aim);
+        psCharacter* c = GetCharacter(env, aim);
 
         if (placeOnGround)
         {
-            psItem *iteminstance = CreateItem(true);
+            psItem* iteminstance = CreateItem(true);
             if (!iteminstance)
                 return;
 
@@ -2088,7 +2087,7 @@ public:
         }
         else
         {
-            psItem *iteminstance = CreateItem(false);
+            psItem* iteminstance = CreateItem(false);
             if (!iteminstance)
                 return;
 
@@ -2096,17 +2095,17 @@ public:
         }
     }
 
-    psItem *CreateItem(bool transient)
+    psItem* CreateItem(bool transient)
     {
         // Get the ItemStats based on the name provided.
-        psItemStats *itemstats = CacheManager::GetSingleton().GetBasicItemStatsByName(name.GetData());
+        psItemStats* itemstats = CacheManager::GetSingleton().GetBasicItemStatsByName(name.GetData());
         if (!itemstats)
         {
             Error2("Error: <item name=\"%s\"/> specified, but no corresponding psItemStats exists.\n", name.GetData());
             return NULL;
         }
 
-        psItem *item = itemstats->InstantiateBasicItem(transient);
+        psItem* item = itemstats->InstantiateBasicItem(transient);
         if (!item)
             return NULL;
 
@@ -2146,15 +2145,15 @@ class CreateFamiliarOp : public Imperative1
 public:
     virtual ~CreateFamiliarOp() { }
 
-    bool Load(iDocumentNode *node)
+    bool Load(iDocumentNode* node)
     {
         masterPID = node->GetAttributeValueAsInt("masterID");
         return Imperative1::Load(node);
     }        
 
-    void Run(const MathEnvironment *env)
+    void Run(const MathEnvironment* env)
     {
-        gemActor *actor = GetActor(env, aim);
+        gemActor* actor = GetActor(env, aim);
         if (!actor->GetClientID())
         {
             Error2("Error: <createfamiliar/> needs a valid client for actor '%s'.\n", actor->GetName());
@@ -2167,7 +2166,7 @@ public:
             return;
         }*/
 
-        gemNPC *familiar = EntityManager::GetSingleton().CreateFamiliar(actor, masterPID);
+        gemNPC* familiar = EntityManager::GetSingleton().CreateFamiliar(actor, masterPID);
         if (!familiar)
         {
             Error2("Failed to create familiar for %s.\n", actor->GetName());
@@ -2189,11 +2188,11 @@ ProgressionScript::~ProgressionScript()
     }
 }
 
-ProgressionScript* ProgressionScript::Create(const char *name, const char *script)
+ProgressionScript* ProgressionScript::Create(const char* name, const char* script)
 {
     csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
     csRef<iDocument> doc = xml->CreateDocument();
-    const char *error = doc->Parse(script);
+    const char* error = doc->Parse(script);
     if (error)
     {
         Error2("Couldn't parse XML for progression script >%s<.", name);
@@ -2214,13 +2213,13 @@ ProgressionScript* ProgressionScript::Create(const char *name, const char *scrip
     return Create(name, top);
 }
 
-ProgressionScript* ProgressionScript::Create(const char *name, iDocumentNode *top)
+ProgressionScript* ProgressionScript::Create(const char* name, iDocumentNode* top)
 {
     // Note that this doesn't check that top is a particular kind of node;
     // it might be a top-level <script>, or a nested <if>, <let>, or <on>...
     csRef<iDocumentNodeIterator> it = top->GetNodes();
 
-    ProgressionScript *script = new ProgressionScript(name);
+    ProgressionScript* script = new ProgressionScript(name);
     while (it->HasNext())
     {
         csRef<iDocumentNode> node = it->Next();
@@ -2230,7 +2229,7 @@ ProgressionScript* ProgressionScript::Create(const char *name, iDocumentNode *to
 
         csString elem = node->GetValue();
 
-        ImperativeOp *op = NULL;
+        ImperativeOp* op = NULL;
 
         if (elem == "let")
         {
@@ -2337,12 +2336,12 @@ ProgressionScript* ProgressionScript::Create(const char *name, iDocumentNode *to
     return script;
 }
 
-void ProgressionScript::Run(const MathEnvironment *env)
+void ProgressionScript::Run(const MathEnvironment* env)
 {
     csArray<ImperativeOp*>::Iterator it = ops.GetIterator();
     while (it.HasNext())
     {
-        ImperativeOp *op = it.Next();
+        ImperativeOp* op = it.Next();
         op->Run(env);
     }
 }

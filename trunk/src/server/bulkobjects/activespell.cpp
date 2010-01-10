@@ -1,5 +1,5 @@
 /*
- * activespell.cpp by Kenny Graunke <kenny@whitecape.org>
+ * activespell.cpp by Kenneth Graunke <kenneth@whitecape.org>
  *
  * Copyright (C) 2009 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
@@ -36,7 +36,7 @@
 class LinkedSpellCancel : public iCancelAction
 {
 public:
-    LinkedSpellCancel(ActiveSpell *linked) : linked(linked) { }
+    LinkedSpellCancel(ActiveSpell* linked) : linked(linked) { }
     virtual ~LinkedSpellCancel() { }
 
     void Cancel()
@@ -53,7 +53,7 @@ protected:
 
 //----------------------------------------------------------------------------
 
-void ActiveSpell::Add(iSpellModifier & mod, const char *fmt, ...)
+void ActiveSpell::Add(iSpellModifier& mod, const char* fmt, ...)
 {
     CS_ASSERT(registrationTime == 0);
 
@@ -67,7 +67,7 @@ void ActiveSpell::Add(iSpellModifier & mod, const char *fmt, ...)
     va_end(args);
 }
 
-void ActiveSpell::Add(iCancelAction *action, const char *fmt, ...)
+void ActiveSpell::Add(iCancelAction* action, const char* fmt, ...)
 {
     CS_ASSERT(registrationTime == 0);
 
@@ -81,7 +81,7 @@ void ActiveSpell::Add(iCancelAction *action, const char *fmt, ...)
     va_end(args);
 }
 
-void ActiveSpell::Register(gemActor *tgt)
+void ActiveSpell::Register(gemActor* tgt)
 {
     registrationTime = csGetTicks();
 
@@ -89,7 +89,7 @@ void ActiveSpell::Register(gemActor *tgt)
     target->AddActiveSpell(this);
 }
 
-void ActiveSpell::Link(ActiveSpell *other)
+void ActiveSpell::Link(ActiveSpell* other)
 {
     actions.Push(new LinkedSpellCancel(other));
 
