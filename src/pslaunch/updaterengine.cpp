@@ -110,6 +110,7 @@ void UpdaterEngine::PrintOutput(const char *string, ...)
 void UpdaterEngine::Run()
 {
   CheckForUpdates();
+  infoShare->SetUpdateChecked(true);
 
   while(!infoShare->GetExitGUI())
   {

@@ -60,6 +60,9 @@ private:
     /* Set to true to perform an integrity check. */
     volatile bool checkIntegrity;
 
+    /* Set to true once we have checked for an update. */
+    volatile bool updateChecked;
+
     /* Safety. */
     CS::Threading::Mutex mutex;
 
@@ -78,6 +81,7 @@ public:
         updateNeeded = false;
         updateAdminNeeded = false;
         checkIntegrity = false;
+        updateChecked = false;
         cancelUpdater = false;
         synching = false;
         mutex.Initialize();
@@ -89,6 +93,7 @@ public:
     inline void SetPerformUpdate(bool v) { performUpdate = v; }
     inline void SetCheckIntegrity(bool v) { checkIntegrity = v; }
     inline void SetCancelUpdater(bool v) { cancelUpdater = v; }
+    inline void SetUpdateChecked(bool v) { updateChecked = v; }
     inline void Sync()
     {
         CS::Threading::MutexScopedLock lock(mutex);
@@ -110,6 +115,7 @@ public:
     inline bool GetPerformUpdate() { return performUpdate; }
     inline bool GetCheckIntegrity() { return checkIntegrity; }
     inline bool GetCancelUpdater() { return cancelUpdater; }
+    inline bool GetUpdateChecked() { return updateChecked; }
 
     inline void EmptyConsole()
     {
