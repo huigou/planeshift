@@ -43,16 +43,16 @@ typedef wchar_t PS_CHAR;
 #define PS_STRNCAT wcsncat
 #define PS_STRCAT wcscat
 #define PS_STRLEN wcslen
-const PS_CHAR* crash_post_url = L"http://planeshift.ezpcusa.com/crash_reporting/upload.py";
+const PS_CHAR* crash_post_url = L"http://planeshift.ezpcusa.com/crash_reporting/submit";
 #define DUMP_EXTENSION L".dmp"
 #else
-typedef char PS_CHAR
+typedef char PS_CHAR;
 #define PS_PATH_MAX PATH_MAX
 #define PS_PATH_SEP "/"
 #define PS_STRNCAT strncat
 #define PS_STRCAT strcat
 #define PS_STRLEN strlen
-const PS_CHAR* crash_post_url = "http://planeshift.ezpcusa.com/crash_reporting/upload.py";
+const PS_CHAR* crash_post_url = "http://planeshift.ezpcusa.com/crash_reporting/submit";
 #define DUMP_EXTENSION ".dmp"
 #endif
 
@@ -60,9 +60,9 @@ const PS_CHAR* crash_post_url = "http://planeshift.ezpcusa.com/crash_reporting/u
 #undef USE_BREAKPAD
 #endif
 
+#ifdef USE_BREAKPAD
 using namespace google_breakpad;
 
-#ifdef USE_BREAKPAD
 bool UploadDump(const PS_CHAR* dump_path,
                      const PS_CHAR* minidump_id,
                      void* context,
@@ -213,3 +213,4 @@ bool UploadDump(const PS_CHAR* dump_path,
 // At global scope to ensure we hook in as early as possible.
 BreakPadWrapper wrapper;
 #endif // USE_BREAKPAD
+
