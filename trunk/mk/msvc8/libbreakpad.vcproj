@@ -1729,6 +1729,9 @@
 			Name="Source Files"
 			Filter="">
 			<File
+				RelativePath="..\..\src\tools\breakpad\client\windows\crash_generation\crash_generation_client.cc">
+			</File>
+			<File
 				RelativePath="..\..\src\tools\breakpad\client\windows\handler\exception_handler.cc">
 			</File>
 			<File

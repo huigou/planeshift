@@ -56,7 +56,7 @@
 				ProgramDatabaseFile="..\..\out\release8\build\apppsclient\Win32\psclient.pdb"
 				SubSystem="2"
 				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib cal3d-vc8.lib"
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib cal3d-vc8.lib wininet.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -133,7 +133,7 @@
 				ProgramDatabaseFile="..\..\out\release8\build\apppsclient\Win32\psclient.pdb"
 				SubSystem="2"
 				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib cal3d-vc8.lib"
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib cal3d-vc8.lib wininet.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -207,7 +207,7 @@
 				ProgramDatabaseFile="..\..\out\debug8\build\apppsclient\Win32\psclient.pdb"
 				SubSystem="1"
 				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc8_d.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc8_d.lib wininet.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -281,7 +281,7 @@
 				ProgramDatabaseFile="..\..\out\debug8\build\apppsclient\Win32\psclient.pdb"
 				SubSystem="1"
 				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc8_d.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc8_d.lib wininet.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -355,7 +355,7 @@
 				ProgramDatabaseFile="..\..\out\debug8\build\apppsclient\Win32\psclient.pdb"
 				SubSystem="1"
 				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc8_d.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc8_d.lib wininet.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -429,7 +429,7 @@
 				ProgramDatabaseFile="..\..\out\debug8\build\apppsclient\Win32\psclient.pdb"
 				SubSystem="1"
 				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc8_d.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc8_d.lib wininet.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -503,7 +503,7 @@
 				ProgramDatabaseFile="..\..\out\debug8\build\apppsclient\Win32\psclient.pdb"
 				SubSystem="1"
 				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc8_d.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc8_d.lib wininet.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -577,7 +577,7 @@
 				ProgramDatabaseFile="..\..\out\debug8\build\apppsclient\Win32\psclient.pdb"
 				SubSystem="1"
 				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc8_d.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc8_d.lib wininet.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -651,7 +651,7 @@
 				ProgramDatabaseFile="..\..\out\debug8\build\apppsclient\Win32\psclient.pdb"
 				SubSystem="1"
 				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc8_d.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc8_d.lib wininet.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -725,7 +725,7 @@
 				ProgramDatabaseFile="..\..\out\debug8\build\apppsclient\Win32\psclient.pdb"
 				SubSystem="1"
 				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc8_d.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc8_d.lib wininet.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -799,7 +799,7 @@
 				ProgramDatabaseFile="..\..\out\debug8\build\apppsclient\Win32\psclient.pdb"
 				SubSystem="1"
 				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib cal3d-vc8.lib"
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib cal3d-vc8.lib wininet.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -873,7 +873,7 @@
 				ProgramDatabaseFile="..\..\out\debug8\build\apppsclient\Win32\psclient.pdb"
 				SubSystem="1"
 				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib cal3d-vc8.lib"
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib cal3d-vc8.lib wininet.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="1"/>
@@ -950,7 +950,7 @@
 				ProgramDatabaseFile="..\..\out\release8-x64\build\apppsclient\x64\psclient.pdb"
 				SubSystem="2"
 				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib cal3d-vc8.lib"
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib cal3d-vc8.lib wininet.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
@@ -1027,7 +1027,7 @@
 				ProgramDatabaseFile="..\..\out\release8-x64\build\apppsclient\x64\psclient.pdb"
 				SubSystem="2"
 				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib cal3d-vc8.lib"
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib cal3d-vc8.lib wininet.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
@@ -1101,7 +1101,7 @@
 				ProgramDatabaseFile="..\..\out\debug8-x64\build\apppsclient\x64\psclient.pdb"
 				SubSystem="1"
 				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc8_d.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc8_d.lib wininet.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
@@ -1175,7 +1175,7 @@
 				ProgramDatabaseFile="..\..\out\debug8-x64\build\apppsclient\x64\psclient.pdb"
 				SubSystem="1"
 				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc8_d.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc8_d.lib wininet.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
@@ -1249,7 +1249,7 @@
 				ProgramDatabaseFile="..\..\out\debug8-x64\build\apppsclient\x64\psclient.pdb"
 				SubSystem="1"
 				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc8_d.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc8_d.lib wininet.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
@@ -1323,7 +1323,7 @@
 				ProgramDatabaseFile="..\..\out\debug8-x64\build\apppsclient\x64\psclient.pdb"
 				SubSystem="1"
 				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc8_d.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc8_d.lib wininet.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
@@ -1397,7 +1397,7 @@
 				ProgramDatabaseFile="..\..\out\debug8-x64\build\apppsclient\x64\psclient.pdb"
 				SubSystem="1"
 				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc8_d.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc8_d.lib wininet.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
@@ -1471,7 +1471,7 @@
 				ProgramDatabaseFile="..\..\out\debug8-x64\build\apppsclient\x64\psclient.pdb"
 				SubSystem="1"
 				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc8_d.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc8_d.lib wininet.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
@@ -1545,7 +1545,7 @@
 				ProgramDatabaseFile="..\..\out\debug8-x64\build\apppsclient\x64\psclient.pdb"
 				SubSystem="1"
 				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc8_d.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc8_d.lib wininet.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
@@ -1619,7 +1619,7 @@
 				ProgramDatabaseFile="..\..\out\debug8-x64\build\apppsclient\x64\psclient.pdb"
 				SubSystem="1"
 				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc8_d.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc8_d.lib wininet.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\debug8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
@@ -1693,7 +1693,7 @@
 				ProgramDatabaseFile="..\..\out\debug8-x64\build\apppsclient\x64\psclient.pdb"
 				SubSystem="1"
 				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib cal3d-vc8.lib"
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib cal3d-vc8.lib wininet.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
@@ -1767,7 +1767,7 @@
 				ProgramDatabaseFile="..\..\out\debug8-x64\build\apppsclient\x64\psclient.pdb"
 				SubSystem="1"
 				AdditionalOptions=" "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib cal3d-vc8.lib"
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib cal3d-vc8.lib wininet.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release8\libs;..\..\..\CS\libs\csutil\win32;$(CRYSTAL)\out\release8\libs;$(CRYSTAL)\libs;$(CRYSTAL)\libs\csutil\win32\libs"
 				TargetMachine="17"/>
@@ -1895,9 +1895,6 @@
 				RelativePath="..\..\src\client\weather.cpp">
 			</File>
 			<File
-				RelativePath="..\..\src\client\win32\mdump.cpp">
-			</File>
-			<File
 				RelativePath="..\..\src\client\zonehandler.cpp">
 			</File>
 		</Filter>
@@ -1993,9 +1990,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\client\weather.h">
-			</File>
-			<File
-				RelativePath="..\..\src\client\win32\mdump.h">
 			</File>
 			<File
 				RelativePath="..\..\src\client\zonehandler.h">
