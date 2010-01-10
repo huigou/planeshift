@@ -106,6 +106,8 @@ public:
 
     void CancelUpdater() { infoShare->SetCancelUpdater(true); }
 
+    bool UpdateChecked() { return infoShare->GetUpdateChecked(); }
+
     // Run.
     void Run();
 };

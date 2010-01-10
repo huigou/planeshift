@@ -105,8 +105,12 @@ bool pawsLauncherWindow::OnButtonPressed(int mouseButton, int keyModifier, pawsW
     }
     else if(ID == PLAY_BUTTON)
     {
-        psLaunchGUI->ExecClient(true);
-        psLaunchGUI->Quit();
+        // TODO: Grey out the Play button instead of doing nothing.
+        if(psLaunchGUI->UpdateChecked())
+        {
+            psLaunchGUI->ExecClient(true);
+            psLaunchGUI->Quit();
+        }
     }
     else if(ID == SETTINGS_BUTTON)
     {
