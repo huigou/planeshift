@@ -10,7 +10,7 @@ if [ Property build : projgen ] = msvc
 }
 ApplicationIcon win32 : psclient : [ ConcatDirs $(TOP) support icons icon1.ico ] ;
 Application psclient : [ Wildcard *.cpp *.h ] $(extrafiles) ;
-ExternalLibs psclient : CRYSTAL CAL3D ;
+ExternalLibs psclient : CRYSTAL CAL3D BREAKPAD ;
 CompileGroups psclient : client ;
 LinkWith psclient : gui psnet psengine psrpgrules pssound psutil paws effects fparser ;
 
@@ -126,7 +126,7 @@ LinkStaticPlugins psclient_static :
   bgloader 
 ;
 
-ExternalLibs psclient_static : CRYSTAL CAL3D;
+ExternalLibs psclient_static : CRYSTAL CAL3D BREAKPAD;
 CompileGroups psclient_static : client_static ;
 
 SubVariant ;
