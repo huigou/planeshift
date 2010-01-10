@@ -2734,7 +2734,7 @@ bool gemActor::AddChatReport(gemActor *reporter)
             chatHistory[i].GetLogLine(cssTempLine);
             cssBuffer += cssTempLine;
         }
-        chatHistory.DeleteRange(0, length); //we don't want to relog again these.
+        chatHistory.DeleteRange(0, length-1); //we don't want to relog again these.
     }
 
     // Add /report line
