@@ -134,8 +134,8 @@ MsvcGenConfig BREAKPAD.CFLAGS ;
 MsvcGenConfig BREAKPAD.LFLAGS ;
 MsvcGenConfig BREAKPAD.LIBS : "wininet.lib exception_handler.lib crash_report_sender.lib" ;
 MsvcGenConfig BREAKPAD.LIBS.DEBUG ;
-MsvcGenConfig BREAKPAD.INCDIRS : [ ConcatDirs .. .. src tools breakpad-libs ] ;
-MsvcGenConfig BREAKPAD.LIBDIRS : [ ConcatDirs .. .. src tools breakpad-libs ] ;
+MsvcGenConfig BREAKPAD.INCDIRS : [ ConcatDirs .. .. src tools breakpad ] ;
+MsvcGenConfig BREAKPAD.LIBDIRS : [ ConcatDirs .. .. src tools breakpad ] ;
 MsvcGenConfig BREAKPAD.LIBDIRS.DEBUG ;
 
 ####################################################################
