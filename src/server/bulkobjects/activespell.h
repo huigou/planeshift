@@ -1,5 +1,5 @@
 /*
- * activespell.h by Kenny Graunke <kenny@whitecape.org>
+ * activespell.h by Kenneth Graunke <kenneth@whitecape.org>
  *
  * Copyright (C) 2009 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
@@ -61,15 +61,15 @@ public:
 class ActiveSpell : public CS::Utility::WeakReferenced
 {
 public:
-    ActiveSpell(const csString & name, SPELL_TYPE type, csTicks duration) : name(name), type(type), duration(duration), cancelOnDeath(true), damagesHP(false), target(NULL), registrationTime(0) { }
+    ActiveSpell(const csString& name, SPELL_TYPE type, csTicks duration) : name(name), type(type), duration(duration), cancelOnDeath(true), damagesHP(false), target(NULL), registrationTime(0) { }
     ~ActiveSpell() { }
 
     // These are only used by progression scripts, for loading/initializing it.
-    void Add(iSpellModifier & mod, const char *fmt, ...);
-    void Add(iCancelAction *action, const char *fmt, ...);
+    void Add(iSpellModifier& mod, const char* fmt, ...);
+    void Add(iCancelAction* action, const char* fmt, ...);
 
-    void Register(gemActor *target);
-    void Link(ActiveSpell *other);
+    void Register(gemActor* target);
+    void Link(ActiveSpell* other);
 
     void SetCancelOnDeath(bool x) { cancelOnDeath = x; }
     bool CancelOnDeath() { return cancelOnDeath; }
@@ -77,8 +77,8 @@ public:
     void MarkAsDamagingHP() { damagesHP = true; }
     bool DamagesHP() { return damagesHP; }
 
-    const csString & Name() const { return name; }
-    SPELL_TYPE       Type() const { return type; }
+    const csString& Name() const { return name; }
+    SPELL_TYPE      Type() const { return type; }
     csTicks Duration() const { return duration; }
 
     // If Cancel() returns true, you're responsible for freeing the ActiveSpell's memory.
@@ -97,7 +97,7 @@ protected:
     bool cancelOnDeath;       //< Whether or not this spell should be cancelled on death
     bool damagesHP;           //< Whether or not this spell damages HP (for cancel on duel defeat)
 
-    gemActor *target;         //< Who this spell is registered with
+    gemActor* target;         //< Who this spell is registered with
     csTicks registrationTime; //< Timestamp when the spell was registered, for comparison with csGetTicks().
 
     csArray<iSpellModifier*> modifiers; //< The iSpellModifiers this ActiveSpell altered, for cancelling.

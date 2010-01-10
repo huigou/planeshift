@@ -1,5 +1,5 @@
 /*
- * buffable.h by Kenny Graunke <kenny@whitecape.org>
+ * buffable.h by Kenneth Graunke <kenneth@whitecape.org>
  *
  * Copyright (C) 2008 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
@@ -38,7 +38,7 @@ class iSpellModifier
 {
 public:
     virtual ~iSpellModifier() { }
-    virtual void Cancel(const ActiveSpell *owner) = 0;
+    virtual void Cancel(const ActiveSpell* owner) = 0;
 };
 
 //-----------------------------------------------------------------------------
@@ -102,7 +102,7 @@ public:
             OnChange();
     }
 
-    void Override(const ActiveSpell *owner, T x)
+    void Override(const ActiveSpell* owner, T x)
     {
         const T & old = Current();
 
@@ -112,7 +112,7 @@ public:
             OnChange();
     }
 
-    virtual void Cancel(const ActiveSpell *owner)
+    virtual void Cancel(const ActiveSpell* owner)
     {
         const T & old = Current();
 
@@ -168,7 +168,7 @@ public:
         OnChange();
     }
 
-    void Buff(const ActiveSpell *owner, T x)
+    void Buff(const ActiveSpell* owner, T x)
     {
         cached += x;
         buffs.Push(csTuple2<const ActiveSpell*,T>(owner, x));
@@ -176,7 +176,7 @@ public:
         OnChange();
     }
 
-    virtual void Cancel(const ActiveSpell *owner)
+    virtual void Cancel(const ActiveSpell* owner)
     {
         bool changed = false;
 
@@ -222,13 +222,13 @@ public:
 
     float Value() { return cached; }
 
-    void Buff(const ActiveSpell *owner, float x)
+    void Buff(const ActiveSpell* owner, float x)
     {
         cached *= x;
         buffs.PushBack(csTuple2<const ActiveSpell*, float>(owner, x));
     }
 
-    virtual void Cancel(const ActiveSpell *owner)
+    virtual void Cancel(const ActiveSpell* owner)
     {
         // Recompute the cache...avoid rounding errors.
         cached = 1;
