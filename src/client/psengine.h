@@ -77,6 +77,9 @@ class psSlotManager;
 
 class GUIHandler;
 
+extern csString hwRenderer;
+extern csString hwVersion;
+
 struct DelayedLoader : public CS::Utility::WeakReferenced
 {
     virtual bool CheckLoadStatus() = 0;
