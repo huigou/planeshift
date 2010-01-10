@@ -18,6 +18,8 @@
  */
 // Code for wrapping around Google Breakpad.
 
+#include <psconfig.h>
+
 #ifdef WIN32
 #include "client/windows/handler/exception_handler.h"
 #include "client/windows/sender/crash_report_sender.h"
@@ -29,7 +31,6 @@
 
 #include <map>
 #include <string>
-#include <psconfig.h>
 #include "globals.h"
 #include "psengine.h"
 #include "pscelclient.h"
