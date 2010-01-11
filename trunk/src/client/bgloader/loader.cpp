@@ -401,7 +401,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                                 csString msg;
                                 msg.Format("Invalid texture reference '%s' in shadervar in material '%s'.",
                                   node->GetContentsValue(), m->name.GetData());
-                                CS_ASSERT_MSG(msg.GetData(), texture.IsValid());
+                                //CS_ASSERT_MSG(msg.GetData(), texture.IsValid());
                             }
                             m->textures.Push(texture);
                             m->checked.Push(false);
@@ -793,7 +793,7 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                                     csString msg;
                                     msg.Format("Invalid submesh reference '%s' in meshobj '%s' in sector '%s'", submesh->GetAttributeValue("name"),
                                         m->name.GetData(), s->name.GetData());
-                                    CS_ASSERT_MSG(msg.GetData(), false);
+                                    //CS_ASSERT_MSG(msg.GetData(), false);
                                 }
                             }
                         }
