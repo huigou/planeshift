@@ -1054,7 +1054,7 @@ void UpdaterEngine::CheckIntegrity(bool automatic)
     }
 
     // Initialise downloader.
-    PrintOutput("\n\nDownloading integrity data.");
+    PrintOutput("Downloading integrity data:\n");
     downloader = new Downloader(vfs, config);
 
     // Set proxy
@@ -1106,7 +1106,7 @@ void UpdaterEngine::CheckIntegrity(bool automatic)
 
 void UpdaterEngine::CheckMD5s(iDocumentNode* md5sums, csString& baseurl, bool accepted)
 {
-    PrintOutput("\n\nChecking file integrity:");
+    PrintOutput("Checking file integrity:\n\n");
     csRefArray<iDocumentNode> failed;
     csArray<bool> updateinside;
 #ifdef CS_PLATFORM_UNIX
@@ -1159,7 +1159,7 @@ void UpdaterEngine::CheckMD5s(iDocumentNode* md5sums, csString& baseurl, bool ac
     {
         if(!accepted)
         {
-            PrintOutput("\nAll files passed the check!\n");
+            PrintOutput("All files passed the check!\n");
         }
     }
     else
@@ -1167,10 +1167,10 @@ void UpdaterEngine::CheckMD5s(iDocumentNode* md5sums, csString& baseurl, bool ac
         char c = ' ';
         if(!accepted)
         {
-            PrintOutput("\nThe following files failed the check:\n");
+            PrintOutput("The following files failed the check:\n");
             for(size_t i=0; i<failedSize; i++)
             {
-                PrintOutput("\n%s", failed.Get(i)->GetAttributeValue("path"));
+                PrintOutput("%s\n", failed.Get(i)->GetAttributeValue("path"));
             }
 
             PrintOutput("\nDo you wish to download the correct copies of these files? (y/n)\n");

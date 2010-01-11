@@ -746,6 +746,7 @@ void pawsMessageTextBox::SplitMessage(const char* newText, int colour,
 
     if (stringBuffer.IsEmpty())
     {
+        WriteMessageLine(msgLine, "", colour);
         return;
     }
 
