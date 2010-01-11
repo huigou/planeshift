@@ -1,7 +1,6 @@
 SubDir TOP src client ;
 SubInclude TOP src client sound ;
 SubInclude TOP src client gui ;
-SubInclude TOP src client bgloader ;
 
 ApplicationIcon win32 : psclient : [ ConcatDirs $(TOP) support icons icon1.ico ] ;
 Application psclient : [ Wildcard *.cpp *.h ] ;

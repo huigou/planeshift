@@ -1,4 +1,4 @@
-SubDir TOP src client bgloader ;
+SubDir TOP src common bgloader ;
 
 Description bgloader : "Background Loader" ;
 
