@@ -118,6 +118,7 @@ public:
     psCharAppearance* GetCharApp() { return charApp; }
 
 private:
+    bool cameraLocked;
     bool doRotate;
     bool mouseDownUnlock;   ///< Checks to see if a mouse down will break camera lock.
     csVector3 cameraPosition;
