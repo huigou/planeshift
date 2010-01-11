@@ -258,8 +258,11 @@ psEngine::psEngine (iObjectRegistry *objectreg, psCSSetup *CSSetup)
 
     chatBubbles = 0;
     options = 0;
+
+#if !defined(CS_DEBUG) && defined(CS_PLATFORM_MACOSX)
     delete macReporter;
     macReporter = NULL;
+#endif
 }
 
 // ----------------------------------------------------------------------------
