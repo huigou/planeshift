@@ -984,9 +984,9 @@ void EEditApp::Update()
     iCamera *c = editWindow->GetView()->GetCamera();
     
     if (GetCamFlag(CAM_FORWARD))
-        c->Move(CS_VEC_FORWARD * 2.0f * elapsedSeconds);
+        c->Move(CS_VEC_FORWARD * 6.0f * elapsedSeconds);
     if (GetCamFlag(CAM_BACK))
-        c->Move(CS_VEC_BACKWARD * 2.0f * elapsedSeconds);
+        c->Move(CS_VEC_BACKWARD * 6.0f * elapsedSeconds);
 
     if (GetCamFlag(CAM_UP))
         camPitch += 1.0f * elapsedSeconds;
