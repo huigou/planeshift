@@ -20,13 +20,17 @@
 
 #include <psconfig.h>
 
+// Only support breakpad for win32 for now.
+#if defined(WIN32) && !defined(CS_DEBUG)
+#define USE_BREAKPAD
+#endif
+
+#ifdef USE_BREAKPAD
 #ifdef WIN32
 #include "client/windows/handler/exception_handler.h"
 #include "client/windows/sender/crash_report_sender.h"
-#elif defined(CS_PLATFORM_MACOSX)
-// TODO
-#else
-// TODO
+#elif !defined(CS_PLATFORM_MACOSX) // Mac uses a separate lib
+// TODO: *nix crash reporting here
 #endif
 
 #include <map>
@@ -36,8 +40,6 @@
 #include "pscelclient.h"
 
 #ifdef WIN32
-// Only support breakpad for win32 for now.
-#define USE_BREAKPAD
 typedef wchar_t PS_CHAR;
 #define PS_PATH_MAX 4096 // Real limit is 32k but that won't fit on the stack.
 #define PS_PATH_SEP L"\\"
@@ -57,11 +59,6 @@ const PS_CHAR* crash_post_url = "http://planeshift.ezpcusa.com/crash_reporting/s
 #define DUMP_EXTENSION ".dmp"
 #endif
 
-#ifdef CS_DEBUG
-#undef USE_BREAKPAD
-#endif
-
-#ifdef USE_BREAKPAD
 using namespace google_breakpad;
 
 bool UploadDump(const PS_CHAR* dump_path,
@@ -176,6 +173,8 @@ bool UploadDump(const PS_CHAR* dump_path,
     parameters[L"renderer"] = paramBuffer;
     mbstowcs(paramBuffer, hwVersion, 511);
     parameters[L"hw_version"] = paramBuffer;
+    parameters[L"ProductName"] = L"PlaneShift";
+    parameters[L"Version"] = L"0.5";
 #endif
 
 	std::wstring report_code;
