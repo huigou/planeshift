@@ -195,6 +195,14 @@ if (!myref)                                                  \
 csString hwRenderer;
 csString hwVersion;
 
+#if !defined(CS_DEBUG) && defined(CS_PLATFORM_MACOSX)
+// Set up the mac crash reporter in release builds. This needs to be done here
+// since the mac reporter is in a different library.
+#include "macosx/maccrashreport.h"
+
+MacCrashReport* macReporter = NULL;
+#endif
+
 // ----------------------------------------------------------------------------
 
 CS_IMPLEMENT_APPLICATION
@@ -250,6 +258,8 @@ psEngine::psEngine (iObjectRegistry *objectreg, psCSSetup *CSSetup)
 
     chatBubbles = 0;
     options = 0;
+    delete macReporter;
+    macReporter = NULL;
 }
 
 // ----------------------------------------------------------------------------
@@ -338,6 +348,10 @@ bool psEngine::Initialize (int level)
         hwRenderer = g2d->GetHWRenderer();
         hwVersion = g2d->GetHWGLVersion();
 
+#if !defined(CS_DEBUG) && defined(CS_PLATFORM_MACOSX)
+        // Set up the mac crash reporter now we know the graphics information.
+        macReporter = new MacCrashReport(hwRenderer, hwVersion);
+#endif
 
         // Initialize and tweak the Texture Manager
         txtmgr = g3d->GetTextureManager ();
