@@ -859,6 +859,9 @@ csPtr<psTemplateRes> psSoundManager::psSndSourceMngr::LoadResource
 
 void psSoundManager::EnterSector( const char* sector, int timeOfDay, int weather, csVector3& position )
 {
+    if((csString)sector == "SectorWhereWeKeepEntitiesResidingInUnloadedMaps")
+        return;
+
     if ( currentSectorName == sector )
         return;
     else
