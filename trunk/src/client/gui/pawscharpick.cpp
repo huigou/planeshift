@@ -499,13 +499,11 @@ void pawsCharacterPickerWindow::SelectCharacter(int character, pawsWidget* widge
     if ( widget->GetID() >= charactersFound  )
     {            
         SetupCharacterCreationScreens();
-        view->Hide();
     }
     else
     {
         // Show the model for the selected character.
         loaded = false;
-        view->Show();
         CheckLoadStatus();
     }
 }
