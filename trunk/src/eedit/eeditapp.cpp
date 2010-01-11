@@ -69,6 +69,8 @@
 #include "eeditpositiontoolbox.h"
 #include "eedittargettoolbox.h"
 #include "eeditloadeffecttoolbox.h"
+#include "eeditpartlisttoolbox.h"
+#include "eeditpartedittoolbox.h"
 #include "eeditediteffecttoolbox.h"
 #include "eeditloadmaptoolbox.h"
 #include "eediterrortoolbox.h"
@@ -305,6 +307,7 @@ bool EEditApp::Init()
     SetDefaultActorPositions();
 
     RefreshEffectList();
+    ((EEditParticleListToolbox *)toolboxManager->GetToolbox(EEditToolbox::T_PARTICLES))->FillList(engine);
 
     controlManager = new eControlManager(object_reg);
     if (!controlManager->LoadKeyMap(KEY_DEFS_FILENAME))
@@ -488,6 +491,26 @@ bool EEditApp::RenderCurrentEffect()
     return RenderEffect(currEffectName);
 }
 
+void EEditApp::CreateParticleSystem(const csString & name)
+{
+    iMeshFactoryWrapper* fact = engine->FindMeshFactory (name);
+    if (fact)
+    {
+        if (particleSystem)
+	{
+	    engine->RemoveObject(particleSystem);
+	    particleSystem = 0;
+	    ((EEditParticleEditToolbox *)toolboxManager->GetToolbox(EEditToolbox::T_PARTICLES_EDIT))->FillList(0);
+	}
+	csVector3 pos = editWindow->GetView()->GetCamera()->GetTransform().GetOrigin();
+        particleSystem = engine->CreateMeshWrapper (fact, name, 
+                  editWindow->GetView()->GetCamera()->GetSector(), pos);
+	iMeshFactoryWrapper* fact = particleSystem->GetFactory ();
+	csRef<iParticleSystemFactory> partsysfact = scfQueryInterface<iParticleSystemFactory> (fact);
+        ((EEditParticleEditToolbox *)toolboxManager->GetToolbox(EEditToolbox::T_PARTICLES_EDIT))->FillList(partsysfact);
+    }
+}
+
 bool EEditApp::ReloadCurrentEffect()
 {
     effectLoaded = true;
@@ -669,6 +692,14 @@ csString EEditApp::GetCurrEffectName()
     return currEffectName;
 }
 
+csString EEditApp::GetCurrParticleSystemName()
+{
+    if (particleSystem)
+	return particleSystem->QueryObject ()->GetName ();
+    else
+	return "";
+}
+
 bool EEditApp::SetDefaultActorPositions()
 {
     iCamera * cam = editWindow->GetView()->GetCamera();
@@ -801,6 +832,11 @@ void EEditApp::ExecuteCommand(const char * cmd)
         ToggleToolbox(EEditToolbox::T_RENDER);
     else if (strcmp(cmd, "LoadEffectToolbox.ToggleVisibility") == 0)
         ToggleToolbox(EEditToolbox::T_LOAD_EFFECT);
+    else if (strcmp(cmd, "LoadPartListToolbox.ToggleVisibility") == 0)
+    {
+        ToggleToolbox(EEditToolbox::T_PARTICLES);
+        ToggleToolbox(EEditToolbox::T_PARTICLES_EDIT);
+    }
     else if (strcmp(cmd, "EditEffectToolbox.ToggleVisibility") == 0)
         ToggleToolbox(EEditToolbox::T_EDIT_EFFECT);
     else if (strcmp(cmd, "LoadMapToolbox.ToggleVisibility") == 0)
@@ -927,6 +963,7 @@ void EEditApp::CreateShortcuts()
     shortcuts->AddShortcut("RenderToolbox.ToggleVisibility");
     shortcuts->AddShortcut("LoadEffectToolbox.ToggleVisibility");
     shortcuts->AddShortcut("EditEffectToolbox.ToggleVisibility");
+    shortcuts->AddShortcut("LoadPartListToolbox.ToggleVisibility");
     shortcuts->AddShortcut("LoadMapToolbox.ToggleVisibility");
     shortcuts->AddShortcut("ErrorPrompt.ToggleVisibility");
     shortcuts->AddShortcut("FPSToolbox.ToggleVisibility");
