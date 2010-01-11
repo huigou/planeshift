@@ -7,6 +7,6 @@ Plugin bgloader
 ;
 
 ExternalLibs bgloader : CRYSTAL ;
-CompileGroups bgloader : client ;
+CompileGroups bgloader : client server ;
 
 StaticPluginLibrary planeshift_staticplugins ;
