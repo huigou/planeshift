@@ -41,6 +41,7 @@ pawsObjectView::pawsObjectView()
     engine = csQueryRegistry<iEngine>(PawsManager::GetSingleton().GetObjectRegistry());
     ID = 0;
 
+    cameraLocked = false;
     rotateTime = orgTime = 0;
     rotateRadians = orgRadians = 0;
     camRotate = 0.0f;
@@ -239,6 +240,7 @@ void pawsObjectView::Draw()
 
 void pawsObjectView::LockCamera( csVector3 where, csVector3 at, bool mouseBreak )
 {
+    cameraLocked = true;
     oldPosition = cameraPosition;
     oldLookAt = lookingAt; 
     mouseDownUnlock = mouseBreak;
@@ -250,10 +252,14 @@ void pawsObjectView::LockCamera( csVector3 where, csVector3 at, bool mouseBreak 
 
 void pawsObjectView::UnlockCamera()
 {
-    cameraPosition = oldPosition;
-    lookingAt = oldLookAt;
-    
-    doRotate = true;
+    if(cameraLocked)
+    {
+        cameraPosition = oldPosition;
+        lookingAt = oldLookAt;
+
+        doRotate = true;
+        cameraLocked = false;
+    }
 }
 
 void pawsObjectView::DrawNoRotate()
@@ -287,7 +293,7 @@ void pawsObjectView::DrawNoRotate()
                                                        1-(float)(screenFrame.ymin+(screenFrame.Height() >> 1))/graphics2D->GetHeight());
        
     view->GetCamera()->GetTransform().SetOrigin(cameraPosition);
-    view->GetCamera()->GetTransform().LookAt(lookingAt, csVector3(0, 1, 0));
+    view->GetCamera()->GetTransform().LookAt(lookingAt-cameraPosition, csVector3(0, 1, 0));
 
     view->Draw();
 
@@ -302,7 +308,7 @@ void pawsObjectView::DrawNoRotate()
         1-(float)(screenFrame.ymin+(screenFrame.Height() >> 1))/graphics2D->GetHeight());
 
     meshView->GetCamera()->GetTransform().SetOrigin(cameraPosition);
-    meshView->GetCamera()->GetTransform().LookAt(lookingAt, csVector3(0, 1, 0));
+    meshView->GetCamera()->GetTransform().LookAt(lookingAt-cameraPosition, csVector3(0, 1, 0));
     meshView->Draw();
 
     PawsManager::GetSingleton().GetGraphics3D()->BeginDraw( CSDRAW_2DGRAPHICS );
@@ -385,12 +391,26 @@ void pawsObjectView::DrawRotate()
                                                        1-(float)(screenFrame.ymin+(screenFrame.Height() >> 1))/graphics2D->GetHeight());
 
     csVector3 camera;
-    camera.x = objectPos.x + sin((double)camRotate)*((-distance)-1);
-    camera.y = 1;
-    camera.z = objectPos.z + cos((double)camRotate)*((-distance)-1);
+    if(cameraLocked)
+    {
+        float lDistance = (cameraPosition - lookingAt).Norm();
 
-    view->GetCamera()->GetTransform().SetOrigin(camera);
-    view->GetCamera()->GetTransform().LookAt(objectPos - camera + cameraMod, csVector3(0, 1, 0));
+        camera.x = cameraPosition.x - sinf(camRotate) * lDistance;
+        camera.y = cameraPosition.y;
+        camera.z = cameraPosition.z + (1 + cosf(camRotate - PI)) * lDistance;
+
+        view->GetCamera()->GetTransform().SetOrigin(camera);
+        view->GetCamera()->GetTransform().LookAt(lookingAt - camera, csVector3(0, 1, 0));
+    }
+    else
+    {
+        camera.x = objectPos.x + sinf(camRotate)*((-distance)-1);
+        camera.y = 1;
+        camera.z = objectPos.z + cosf(camRotate)*((-distance)-1);
+
+        view->GetCamera()->GetTransform().SetOrigin(camera);
+        view->GetCamera()->GetTransform().LookAt(objectPos - camera + cameraMod, csVector3(0, 1, 0));
+    }
 
     view->Draw();
 
@@ -405,8 +425,17 @@ void pawsObjectView::DrawRotate()
     meshView->GetPerspectiveCamera()->SetPerspectiveCenter((float)(screenFrame.xmin+(screenFrame.Width() >> 1))/graphics2D->GetWidth(),
         1-(float)(screenFrame.ymin+(screenFrame.Height() >> 1))/graphics2D->GetHeight());
 
-    meshView->GetCamera()->GetTransform().SetOrigin(camera);
-    meshView->GetCamera()->GetTransform().LookAt(objectPos - camera + cameraMod, csVector3(0, 1, 0));
+    if(cameraLocked)
+    {
+        meshView->GetCamera()->GetTransform().SetOrigin(camera);
+        meshView->GetCamera()->GetTransform().LookAt(lookingAt - camera, csVector3(0, 1, 0));
+    }
+    else
+    {
+        meshView->GetCamera()->GetTransform().SetOrigin(camera);
+        meshView->GetCamera()->GetTransform().LookAt(objectPos - camera + cameraMod, csVector3(0, 1, 0));
+    }
+
     meshView->Draw();
 
     PawsManager::GetSingleton().GetGraphics3D()->BeginDraw( CSDRAW_2DGRAPHICS );
@@ -419,8 +448,9 @@ bool pawsObjectView::OnMouseDown(int button,int mod, int x, int y)
 {
     if(!mouseControlled)
         return false;
-    if ( !doRotate && mouseDownUnlock )
-        UnlockCamera();
+
+    if(mouseDownUnlock)
+        doRotate = true;
         
     spinMouse = true;
     downPos.Set(x,y);

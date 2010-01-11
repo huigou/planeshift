@@ -252,7 +252,8 @@ void pawsCreationMain::ChangeHairColour( int newHair )
     {
         Trait* trait = race->location[PSTRAIT_LOCATION_HAIR_COLOR][currentGender][newHair]; 
         
-        csVector3 at(0,0,0);       
+        csVector3 at(0, race->zoomLocations[PSTRAIT_LOCATION_FACE].y, 0); 
+        view->UnlockCamera();
         view->LockCamera(race->zoomLocations[PSTRAIT_LOCATION_FACE], at, true);                                  
         
         charApp->HairColor(trait->shader);
@@ -273,7 +274,8 @@ void pawsCreationMain::SetHairStyle( int newStyle )
     {
         Trait* trait = race->location[PSTRAIT_LOCATION_HAIR_STYLE][currentGender][newStyle];
         charApp->HairMesh(trait->mesh);
-        csVector3 at(0,0,0);       
+        csVector3 at(0, race->zoomLocations[PSTRAIT_LOCATION_FACE].y, 0);
+        view->UnlockCamera();
         view->LockCamera(race->zoomLocations[PSTRAIT_LOCATION_FACE], at, true);                                         
         hairStyleLabel->SetText( trait->name );                       
     }
@@ -295,7 +297,8 @@ void pawsCreationMain::ChangeBeardStyle( int newStyle )
     {
         Trait* trait = race->location[PSTRAIT_LOCATION_BEARD_STYLE][currentGender][newStyle];
         charApp->BeardMesh(trait->mesh);
-        csVector3 at(0,0,0);       
+        csVector3 at(0, race->zoomLocations[PSTRAIT_LOCATION_FACE].y, 0); 
+        view->UnlockCamera();
         view->LockCamera(race->zoomLocations[PSTRAIT_LOCATION_FACE], at, true);                                         
         beardStyleLabel->SetText( trait->name );                       
     }
@@ -368,8 +371,10 @@ void pawsCreationMain::ChangeFace( int newFace )
 {
     if ( newFace < (int)race->location[PSTRAIT_LOCATION_FACE][currentGender].GetSize() )
     {
+        csVector3 at(0, race->zoomLocations[PSTRAIT_LOCATION_FACE].y, 0);
         Trait* trait = race->location[PSTRAIT_LOCATION_FACE][currentGender][newFace];
-        view->LockCamera(race->zoomLocations[PSTRAIT_LOCATION_FACE], csVector3(0, 0, 0));
+        view->UnlockCamera();
+        view->LockCamera(race->zoomLocations[PSTRAIT_LOCATION_FACE], at, true);
                       
         charApp->FaceTexture(trait->material);
         
@@ -953,7 +958,6 @@ bool pawsCreationMain::OnButtonPressed( int mouseButton, int keyModifier, pawsWi
             psNameCheckMessage msg(name->GetText());
             msg.SendMessage();
         }
-                             
     }    
     
     return false;
