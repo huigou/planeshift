@@ -154,6 +154,10 @@ public:
      */
     bool CancelEffect();
 
+    /** Create a particle system mesh.
+     */
+    void CreateParticleSystem(const csString & name);
+
     /** Toggles the visibility of the given toolbox
      *   @param toolbox the ID of the toolbox to toggle
      *   @return true if the toolbox is visible, false if it's invisible or not found
@@ -253,6 +257,11 @@ public:
      *   @return the name of the current effect
      */
     csString GetCurrEffectName();
+
+    /** Gets the name current particle system.
+     *   @return the name of the particle system
+     */
+    csString GetCurrParticleSystemName();
 
     /** Gets the ID of the current effect.
      *   @return the ID of the current effect.
@@ -374,7 +383,10 @@ private:
     csRef<psEffectManager> effectManager;
     unsigned int currEffectID;
     bool effectLoaded;
-    
+
+    /// The current particle mesh that we are editing.
+    csRef<iMeshWrapper> particleSystem;
+
     /// the mesh that the effect's position will be anchored to
     csRef<iMeshWrapper> pos_anchor;
     

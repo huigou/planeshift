@@ -29,6 +29,8 @@
 #include "eeditcameratoolbox.h"
 #include "eeditrendertoolbox.h"
 #include "eeditloadeffecttoolbox.h"
+#include "eeditpartlisttoolbox.h"
+#include "eeditpartedittoolbox.h"
 #include "eeditediteffecttoolbox.h"
 #include "eeditloadmaptoolbox.h"
 #include "eediterrortoolbox.h"
@@ -42,6 +44,8 @@ bool RegisterToolboxFactories()
     factory = new EEditTargetToolboxFactory();
     factory = new EEditCameraToolboxFactory();
     factory = new EEditRenderToolboxFactory();
+    factory = new EEditParticleListToolboxFactory();
+    factory = new EEditParticleEditToolboxFactory();
     factory = new EEditLoadEffectToolboxFactory();
     factory = new EEditEditEffectToolboxFactory();
     factory = new EEditLoadMapToolboxFactory();
@@ -56,27 +60,31 @@ EEditToolboxManager::EEditToolboxManager()
     for (int a=0; a<EEditToolbox::T_COUNT; ++a)
         toolboxes[a] = 0;
 
-    widgetFiles[EEditToolbox::T_POSITION]    = "data/eedit/position.xml";
-    widgetFiles[EEditToolbox::T_TARGET]      = "data/eedit/target.xml";
-    widgetFiles[EEditToolbox::T_CAMERA]      = "data/eedit/camera.xml";
-    widgetFiles[EEditToolbox::T_RENDER]      = "data/eedit/render.xml";
-    widgetFiles[EEditToolbox::T_LOAD_EFFECT] = "data/eedit/loadeffect.xml";
-    widgetFiles[EEditToolbox::T_EDIT_EFFECT] = "data/eedit/editeffect.xml";
-    widgetFiles[EEditToolbox::T_LOAD_MAP]    = "data/eedit/loadmap.xml";
-    widgetFiles[EEditToolbox::T_ERROR]       = "data/eedit/error.xml";
-    widgetFiles[EEditToolbox::T_FPS]         = "data/eedit/fps.xml";
-    widgetFiles[EEditToolbox::T_SHORTCUTS]   = "data/eedit/shortcuts.xml";
+    widgetFiles[EEditToolbox::T_POSITION]       = "data/eedit/position.xml";
+    widgetFiles[EEditToolbox::T_TARGET]         = "data/eedit/target.xml";
+    widgetFiles[EEditToolbox::T_CAMERA]         = "data/eedit/camera.xml";
+    widgetFiles[EEditToolbox::T_RENDER]         = "data/eedit/render.xml";
+    widgetFiles[EEditToolbox::T_LOAD_EFFECT]    = "data/eedit/loadeffect.xml";
+    widgetFiles[EEditToolbox::T_EDIT_EFFECT]    = "data/eedit/editeffect.xml";
+    widgetFiles[EEditToolbox::T_LOAD_MAP]       = "data/eedit/loadmap.xml";
+    widgetFiles[EEditToolbox::T_ERROR]          = "data/eedit/error.xml";
+    widgetFiles[EEditToolbox::T_FPS]            = "data/eedit/fps.xml";
+    widgetFiles[EEditToolbox::T_SHORTCUTS]      = "data/eedit/shortcuts.xml";
+    widgetFiles[EEditToolbox::T_PARTICLES]      = "data/eedit/partlist.xml";
+    widgetFiles[EEditToolbox::T_PARTICLES_EDIT] = "data/eedit/partedit.xml";
     
-    widgetNames[EEditToolbox::T_POSITION]    = "PositionToolbox";
-    widgetNames[EEditToolbox::T_TARGET]      = "TargetToolbox";
-    widgetNames[EEditToolbox::T_CAMERA]      = "CameraToolbox";
-    widgetNames[EEditToolbox::T_RENDER]      = "RenderToolbox";
-    widgetNames[EEditToolbox::T_LOAD_EFFECT] = "LoadEffectToolbox";
-    widgetNames[EEditToolbox::T_EDIT_EFFECT] = "EditEffectToolbox";
-    widgetNames[EEditToolbox::T_LOAD_MAP]    = "LoadMapToolbox";
-    widgetNames[EEditToolbox::T_ERROR]       = "ErrorToolbox";
-    widgetNames[EEditToolbox::T_FPS]         = "FPSToolbox";
-    widgetNames[EEditToolbox::T_SHORTCUTS]   = "ShortcutsToolbox";
+    widgetNames[EEditToolbox::T_POSITION]       = "PositionToolbox";
+    widgetNames[EEditToolbox::T_TARGET]         = "TargetToolbox";
+    widgetNames[EEditToolbox::T_CAMERA]         = "CameraToolbox";
+    widgetNames[EEditToolbox::T_RENDER]         = "RenderToolbox";
+    widgetNames[EEditToolbox::T_LOAD_EFFECT]    = "LoadEffectToolbox";
+    widgetNames[EEditToolbox::T_EDIT_EFFECT]    = "EditEffectToolbox";
+    widgetNames[EEditToolbox::T_LOAD_MAP]       = "LoadMapToolbox";
+    widgetNames[EEditToolbox::T_ERROR]          = "ErrorToolbox";
+    widgetNames[EEditToolbox::T_FPS]            = "FPSToolbox";
+    widgetNames[EEditToolbox::T_SHORTCUTS]      = "ShortcutsToolbox";
+    widgetNames[EEditToolbox::T_PARTICLES]      = "PartListToolbox";
+    widgetNames[EEditToolbox::T_PARTICLES_EDIT] = "PartEditToolbox";
 }
 
 EEditToolboxManager::~EEditToolboxManager()

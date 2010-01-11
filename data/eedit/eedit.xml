@@ -59,10 +59,17 @@
         <buttondown resource="ButtonDown" />
         <label text="Hide Effect Tree"/>
     </widget>
+    <widget name="ShowParticles" factory="pawsButton" id="111">
+        <frame x="755" y="738" width="120" height="30" border="no" />
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10"  sr="0" sg="0" sb="0" shadow="yes" />   
+        <buttonup resource="ButtonUp"/>
+        <buttondown resource="ButtonDown" />
+        <label text="Hide Particles"/>
+    </widget>
 
 
     <widget name="Exit" factory="pawsButton" id="0">
-        <frame x="800" y="738" width="80" height="30" border="no" />
+        <frame x="925" y="738" width="80" height="30" border="no" />
         <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="10"  sr="0" sg="0" sb="0" shadow="yes" />   
         <buttonup resource="ButtonUp"/>
         <buttondown resource="ButtonDown" />
