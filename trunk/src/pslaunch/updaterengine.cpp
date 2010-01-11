@@ -953,7 +953,7 @@ void UpdaterEngine::CheckIntegrity(bool automatic)
     }
     else
     {
-        PrintOutput("Beginning integrity check!\n");
+        PrintOutput("Beginning integrity check!\n\n");
     }
 
     // Load current config data.
@@ -1054,6 +1054,7 @@ void UpdaterEngine::CheckIntegrity(bool automatic)
     }
 
     // Initialise downloader.
+    PrintOutput("\n\nDownloading integrity data.");
     downloader = new Downloader(vfs, config);
 
     // Set proxy
@@ -1105,6 +1106,7 @@ void UpdaterEngine::CheckIntegrity(bool automatic)
 
 void UpdaterEngine::CheckMD5s(iDocumentNode* md5sums, csString& baseurl, bool accepted)
 {
+    PrintOutput("\n\nChecking file integrity:");
     csRefArray<iDocumentNode> failed;
     csArray<bool> updateinside;
 #ifdef CS_PLATFORM_UNIX
@@ -1144,7 +1146,8 @@ void UpdaterEngine::CheckMD5s(iDocumentNode* md5sums, csString& baseurl, bool ac
         csString md5s = md5.HexString();
 
         if((platform.Compare(config->GetCurrentConfig()->GetPlatform()) ||
-            platform.Compare("cfg") || platform.Compare("all")) && !md5s.Compare(md5sum))
+            platform.Compare("cfg") || platform.Compare("all")) && !md5s.Compare(md5sum) &&
+            path != (appName + ".exe"))
         {
             failed.Push(node);
             updateinside.Push(config->RepairingInZip() && node->GetAttributeValueAsBool("checkonly"));
@@ -1164,10 +1167,10 @@ void UpdaterEngine::CheckMD5s(iDocumentNode* md5sums, csString& baseurl, bool ac
         char c = ' ';
         if(!accepted)
         {
-            PrintOutput("\nThe following files failed the check:\n\n");
+            PrintOutput("\nThe following files failed the check:\n");
             for(size_t i=0; i<failedSize; i++)
             {
-                PrintOutput("%s\n", failed.Get(i)->GetAttributeValue("path"));
+                PrintOutput("\n%s", failed.Get(i)->GetAttributeValue("path"));
             }
 
             PrintOutput("\nDo you wish to download the correct copies of these files? (y/n)\n");
