@@ -1832,6 +1832,12 @@
 				RelativePath="..\..\src\eedit\eeditloadmaptoolbox.cpp">
 			</File>
 			<File
+				RelativePath="..\..\src\eedit\eeditpartedittoolbox.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\eedit\eeditpartlisttoolbox.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\eedit\eeditpositiontoolbox.cpp">
 			</File>
 			<File
@@ -1918,6 +1924,12 @@
 			</File>
 			<File
 				RelativePath="..\..\src\eedit\eeditloadmaptoolbox.h">
+			</File>
+			<File
+				RelativePath="..\..\src\eedit\eeditpartedittoolbox.h">
+			</File>
+			<File
+				RelativePath="..\..\src\eedit\eeditpartlisttoolbox.h">
 			</File>
 			<File
 				RelativePath="..\..\src\eedit\eeditpositiontoolbox.h">

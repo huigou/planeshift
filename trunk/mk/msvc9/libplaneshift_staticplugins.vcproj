@@ -77,7 +77,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				AdditionalIncludeDirectories=".;..\..\src\common\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -150,7 +150,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				AdditionalIncludeDirectories=".;..\..\src\common\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -221,7 +221,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				AdditionalIncludeDirectories=".;..\..\src\common\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -292,7 +292,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				AdditionalIncludeDirectories=".;..\..\src\common\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -363,7 +363,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				AdditionalIncludeDirectories=".;..\..\src\common\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -434,7 +434,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				AdditionalIncludeDirectories=".;..\..\src\common\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -505,7 +505,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				AdditionalIncludeDirectories=".;..\..\src\common\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -576,7 +576,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				AdditionalIncludeDirectories=".;..\..\src\common\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -647,7 +647,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				AdditionalIncludeDirectories=".;..\..\src\common\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -718,7 +718,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				AdditionalIncludeDirectories=".;..\..\src\common\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -789,7 +789,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				AdditionalIncludeDirectories=".;..\..\src\common\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -860,7 +860,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				AdditionalIncludeDirectories=".;..\..\src\common\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -933,7 +933,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				AdditionalIncludeDirectories=".;..\..\src\common\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1006,7 +1006,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				AdditionalIncludeDirectories=".;..\..\src\common\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1077,7 +1077,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				AdditionalIncludeDirectories=".;..\..\src\common\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1148,7 +1148,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				AdditionalIncludeDirectories=".;..\..\src\common\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1219,7 +1219,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				AdditionalIncludeDirectories=".;..\..\src\common\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1290,7 +1290,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				AdditionalIncludeDirectories=".;..\..\src\common\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1361,7 +1361,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				AdditionalIncludeDirectories=".;..\..\src\common\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1432,7 +1432,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				AdditionalIncludeDirectories=".;..\..\src\common\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1503,7 +1503,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				AdditionalIncludeDirectories=".;..\..\src\common\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1574,7 +1574,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				AdditionalIncludeDirectories=".;..\..\src\common\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1645,7 +1645,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				AdditionalIncludeDirectories=".;..\..\src\common\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1716,7 +1716,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
+				AdditionalIncludeDirectories=".;..\..\src\common\bgloader;..\..;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\include\msvc;..\..\..\CS\include;$(CRYSTAL)\include;$(CRYSTAL)\include\csutil;$(CRYSTAL)\include\csutil\win32"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1732,23 +1732,14 @@
 				RelativePath="..\..\mk\msvc\libbgloader_staticreg.cpp">
 			</File>
 			<File
-				RelativePath="..\..\mk\msvc\libdbmysql_staticreg.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\client\bgloader\loader.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\database\mysql\dal.cpp">
+				RelativePath="..\..\src\common\bgloader\loader.cpp">
 			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="">
 			<File
-				RelativePath="..\..\src\client\bgloader\loader.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\database\mysql\dal.h">
+				RelativePath="..\..\src\common\bgloader\loader.h">
 			</File>
 		</Filter>
 	</Files>
