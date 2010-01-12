@@ -56,6 +56,7 @@ public:
     
     virtual bool Setup( iDocumentNode* node );
     virtual bool ManualSetup( csString& value, float Min, float Max, float Inc, csString& pos );
+    virtual void SetRange (float Min, float Max, float Inc);
 
     virtual void SetValue(float value);
     virtual float GetValue();
