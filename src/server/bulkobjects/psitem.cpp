@@ -182,6 +182,7 @@ psItem::psItem() : transformationEvent(NULL), gItem(NULL), pendingsave(false), l
     lockStrength = 0;
     lockpickSkill = PSSKILL_NONE;
     schedule = NULL;
+    equipActiveSpell = NULL;
 }
 
 psItem::~psItem()
