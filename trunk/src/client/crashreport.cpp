@@ -127,7 +127,7 @@ public:
 		parameters[L"RendererVersion"].reserve(256);
 		parameters[L"CrashTime"] = L"";
 		parameters[L"CrashTime"].reserve(32);
-		swprintf(paramBuffer, "%I64u", start_time);
+		swprintf(paramBuffer, L"%I64u", start_time);
 		parameters[L"StartupTime"] = paramBuffer;
 		parameters[L"ProductName"] = L"PlaneShift";
 		parameters[L"Version"] = L"0.5.00";
@@ -221,17 +221,17 @@ bool UploadDump(const PS_CHAR* dump_path,
 	
 
 #ifdef WIN32
-    mbstowcs(paramBuffer, hwRenderer, 511);
+    mbstowcs(paramBuffer, psEngine::hwRenderer, 511);
     wrapper.parameters[L"Renderer"] = paramBuffer;
-    mbstowcs(paramBuffer, hwVersion, 511);
+    mbstowcs(paramBuffer, psEngine::hwVersion, 511);
     wrapper.parameters[L"RendererVersion"] = paramBuffer;
-    swprintf(paramBuffer, "%I64u", crash_time);
+    swprintf(paramBuffer, L"%I64u", crash_time);
     wrapper.parameters[L"CrashTime"] = paramBuffer;
 	mbstowcs(paramBuffer, psEngine::playerName, 511);
 	wrapper.parameters[L"PlayerName"] = paramBuffer;
 #else
-    wrapper.parameters["Renderer"] = hwRenderer;
-    wrapper.parameters["RendererVersion"] = hwVersion;
+    wrapper.parameters["Renderer"] = psEngine::hwRenderer;
+    wrapper.parameters["RendererVersion"] = psEngine::hwVersion;
     sprintf(paramBuffer, "%lu", crash_time);
     wrapper.parameters["CrashTime"] = paramBuffer;
 	wrapper.parameters["PlayerName"] = psEngine::playerName;
