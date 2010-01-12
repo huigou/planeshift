@@ -35,15 +35,17 @@ static BreakpadRef InitBreakpad(const char* hwRenderer, const char* hwVersion) {
   NSMutableDictionary *mutableDict = [[plist mutableCopy] autorelease];
   NSDictionary *extraDict = [NSDictionary dictionaryWithObjectsAndKeys:
                    [NSString stringWithCString:hwRenderer], 
-                   @"renderer",
+                   @"Renderer",
                    [NSString stringWithCString:hwVersion], 
-                   @"hw_version",
+                   @"RendererVersion",
                    [NSString stringWithCString:CS_COMPILER_NAME],
-                   @"compiler",
+                   @"Compiler",
                    [NSString stringWithCString:CS_PROCESSOR_NAME],
-                   @"processor",
+                   @"Processor",
                    [NSString stringWithCString:CS_PLATFORM_NAME],
-                   @"platform",
+                   @"Platform",
+                   [NSString __DATE__ " " __TIME__],
+                   @"BuildDate",
                    nil];
   [mutableDict setObject: extraDict forKey: @"BreakpadServerParameters"];
   if (plist) {
