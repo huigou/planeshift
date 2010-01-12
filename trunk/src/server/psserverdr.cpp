@@ -142,6 +142,7 @@ void psServerDR::ResetPos(gemActor* actor)
     psserver->GetAdminManager()->GetStartOfMap(actor->GetClient()->GetClientNum(), targetSectorName, targetSector, targetPoint);
     actor->pcmove->SetOnGround(false);
     actor->Teleport(targetSector, targetPoint, 0);
+    actor->FallEnded(targetPoint, targetSector);
 }
 
 void psServerDR::HandleDeadReckoning(MsgEntry* me,Client *client)
