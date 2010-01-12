@@ -92,17 +92,13 @@ MsvcGenConfig CRYSTAL.INCDIRS :
   [ ConcatDirs "$(hash)(CRYSTAL)" include csutil ]
   [ ConcatDirs "$(hash)(CRYSTAL)" include csutil win32 ] ;
 MsvcGenConfig CRYSTAL.LIBDIRS :
-  [ ConcatDirs .. .. .. CS out release$(MSVC_VERSION) libs ]
-  [ ConcatDirs .. .. .. CS libs csutil win32 ]
-  [ ConcatDirs "$(hash)(CRYSTAL)" out release$(MSVC_VERSION) libs ]
-  [ ConcatDirs "$(hash)(CRYSTAL)" libs ]
-  [ ConcatDirs "$(hash)(CRYSTAL)" libs csutil win32 libs ] ;
+  [ ConcatDirs "$(hash)(CRYSTAL)" out release$(MSVC_VERSION) libs ] : : x86 ;
+MsvcGenConfig CRYSTAL.LIBDIRS :
+  [ ConcatDirs "$(hash)(CRYSTAL)" out release$(MSVC_VERSION)-x64 libs ] : : x64 ;
 MsvcGenConfig CRYSTAL.LIBDIRS.DEBUG :
-  [ ConcatDirs .. .. .. CS out debug$(MSVC_VERSION) libs ]
-  [ ConcatDirs .. .. .. CS libs csutil win32 ]
-  [ ConcatDirs "$(hash)(CRYSTAL)" out debug$(MSVC_VERSION) libs ]
-  [ ConcatDirs "$(hash)(CRYSTAL)" libs ]
-  [ ConcatDirs "$(hash)(CRYSTAL)" libs csutil win32 libs ] ;
+  [ ConcatDirs "$(hash)(CRYSTAL)" out debug$(MSVC_VERSION) libs ] : : x86 ;
+MsvcGenConfig CRYSTAL.LIBDIRS.DEBUG :
+  [ ConcatDirs "$(hash)(CRYSTAL)" out debug$(MSVC_VERSION)-x64 libs ] : : x64 ;
 MsvcGenConfig CRYSTAL.STATICDEPS : $(TOP)/mk/jam/crystalspace_staticplugins_msvc.jam ;
 
 # Generate project files for static targets.
