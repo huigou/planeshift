@@ -156,6 +156,12 @@ bool pawsSpinBox::ManualSetup( csString& value, float Min, float Max, float Inc,
     return true;     
 }
 
+void pawsSpinBox::SetRange (float Min, float Max, float Inc)
+{
+    min = Min;
+    max = Max;
+    inc = Inc;
+}
 
 bool pawsSpinBox::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
 {
