@@ -181,12 +181,19 @@ CrashReportSender* BreakPadWrapper::crash_sender = NULL;
 BreakPadWrapper wrapper;
 
 // This function should not modify the heap!
+#ifdef WIN32
 bool UploadDump(const PS_CHAR* dump_path,
                      const PS_CHAR* minidump_id,
                      void* context,
                      EXCEPTION_POINTERS* exinfo,
                      MDRawAssertionInfo* assertion,
                      bool succeeded) 
+#else
+bool UploadDump(const PS_CHAR* dump_path,
+                     const PS_CHAR* minidump_id,
+                     void* context,
+                     bool succeeded) 
+#endif
 {
 	PS_CHAR path_file[PS_PATH_MAX];
 	PS_CHAR* p_path_end = path_file + PS_PATH_MAX;
