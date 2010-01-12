@@ -29,8 +29,9 @@
 #ifdef WIN32
 #include "client/windows/handler/exception_handler.h"
 #include "client/windows/sender/crash_report_sender.h"
-#elif !defined(CS_PLATFORM_MACOSX) // Mac uses a separate lib
-// TODO: *nix crash reporting here
+#elif !defined(CS_PLATFORM_MACOSX) && defined(CS_PLATFORM_UNIX) // Mac uses a separate lib
+#include "client/linux/handler/exception_handler.h"
+#include "common/linux/libcurl_wrapper.h"
 #endif
 
 #include <map>
@@ -92,7 +93,61 @@ public:
 				true
 #endif
 				);
+#ifdef WIN32
 		crash_sender = new CrashReportSender(L"");
+#else
+		http_layer = new LibcurlWrapper();
+#endif
+		// Set up parameters
+	    /* Get data associated with "psclient.exe": */
+#ifdef WIN32
+	    result = _stat64( "psclient.exe", &buf );
+#else
+	    result = stat64( "psclient", &buf );
+#endif
+	    if(result == 0)
+	    {
+	        PS_CHAR* time;
+#ifdef WIN32
+	        time = _wctime64(&buf.st_mtime);
+	        parameters[L"exe_time"] = time;
+#else
+	        time = ctime64(&buf.st_mtime);
+	        parameters["exe_time"] = time;
+#endif
+	    }
+	    // Reserve space for player name, gfx card info etc because we can't use the heap
+	    // when handling the crash.
+#ifdef WIN32
+		parameters[L"player_name"] = "";
+		parameters[L"player_name"].reserve(256);
+		mbstowcs(paramBuffer, CS_PLATFORM_NAME, 511);
+		parameters[L"platform"] = paramBuffer;
+		mbstowcs(paramBuffer, CS_PROCESSOR_NAME, 511);
+		parameters[L"processor"] = paramBuffer;
+		mbstowcs(paramBuffer, CS_COMPILER_NAME, 511);
+		parameters[L"compiler"] = paramBuffer;
+		parameters[L"renderer"] = "";
+		parameters[L"renderer"].reserve(256);
+		parameters[L"hw_version"] = "";
+		parameters[L"hw_version"].reserve(256);
+		parameters[L"ProductName"] = L"PlaneShift";
+		parameters[L"Version"] = L"0.5";
+#else
+		parameters["player_name"] = "";
+		parameters["player_name"].reserve(256);
+		parameters["platform"] = CS_PLATFORM_NAME;
+		parameters["processor"] = CS_PROCESSOR_NAME;
+		parameters["compiler"] = CS_COMPILER_NAME;
+		parameters["renderer"] = "";
+		parameters["renderer"].reserve(256);
+		parameters["hw_version"] = "";
+		parameters["hw_version"].reserve(256);
+		parameters["ProductName"] = "PlaneShift";
+		parameters["Version"] = "0.5";
+#endif
+		report_code.reserve(512);
+
 	}
 	~BreakPadWrapper() {
 		delete crash_handler;
@@ -103,7 +158,17 @@ public:
 	
 #ifdef WIN32
 	static CrashReportSender* crash_sender;
+#else
+	static LibcurlWrapper* http_layer;
 #endif
+#ifdef WIN32
+	std::map<std::wstring, std::wstring> parameters;
+	std::wstring report_code;
+#else
+	std::map<std::string, std::string> parameters;
+	std::string report_code;
+#endif // WIN32
+	
 private:
 	static ExceptionHandler* crash_handler;
 
@@ -112,6 +177,10 @@ private:
 ExceptionHandler* BreakPadWrapper::crash_handler = NULL;
 CrashReportSender* BreakPadWrapper::crash_sender = NULL;
 
+// At global scope to ensure we hook in as early as possible.
+BreakPadWrapper wrapper;
+
+// This function should not modify the heap!
 bool UploadDump(const PS_CHAR* dump_path,
                      const PS_CHAR* minidump_id,
                      void* context,
@@ -142,17 +211,7 @@ bool UploadDump(const PS_CHAR* dump_path,
     struct __stat64 buf;
     int result;
     PS_CHAR paramBuffer[512];
-
-#ifdef WIN32
-	std::map<std::wstring, std::wstring> parameters;
-    /* Get data associated with "psclient.exe": */
-    result = _stat64( "psclient.exe", &buf );
-    if(result == 0)
-    {
-        PS_CHAR* time = _wctime64(&buf.st_mtime);
-        parameters[L"exe_time"] = time;
-    }
-    
+	
     if(
         psengine && 
         psengine->GetCelClient() && 
@@ -160,33 +219,49 @@ bool UploadDump(const PS_CHAR* dump_path,
         psengine->GetCelClient()->GetMainPlayer()->GetName()
         )
     {
+#ifdef WIN32
     	mbstowcs(paramBuffer, psengine->GetCelClient()->GetMainPlayer()->GetName(), 511);
-    	parameters[L"player_name"] = paramBuffer;
+    	wrapper.parameters[L"player_name"] = paramBuffer;
+#else
+    	wrapper.parameters["player_name"] = paramBuffer;
+#endif
     }
-    mbstowcs(paramBuffer, CS_PLATFORM_NAME, 511);
-    parameters[L"platform"] = paramBuffer;
-    mbstowcs(paramBuffer, CS_PROCESSOR_NAME, 511);
-    parameters[L"processor"] = paramBuffer;
-    mbstowcs(paramBuffer, CS_COMPILER_NAME, 511);
-    parameters[L"compiler"] = paramBuffer;
+#ifdef WIN32
     mbstowcs(paramBuffer, hwRenderer, 511);
-    parameters[L"renderer"] = paramBuffer;
+    wrapper.parameters[L"renderer"] = paramBuffer;
     mbstowcs(paramBuffer, hwVersion, 511);
-    parameters[L"hw_version"] = paramBuffer;
-    parameters[L"ProductName"] = L"PlaneShift";
-    parameters[L"Version"] = L"0.5";
+    wrapper.parameters[L"hw_version"] = paramBuffer;
+#else
+    wrapper.parameters["renderer"] = hwRenderer;
+    wrapper.parameters["hw_version"] = hwVersion;
 #endif
 
-	std::wstring report_code;
+	
 	printf("Attempting to upload crash report.\n");
 
 	ReportResult reportResult = RESULT_FAILED;
+	
 #ifdef WIN32
 	reportResult = BreakPadWrapper::crash_sender->SendCrashReport(crash_post_url,
-			parameters,
+			wrapper.parameters,
 			path_file,
 			&report_code);
+#elif defined(CS_PLATFORM_UNIX)
+	// Don't use GoogleCrashdumpUploader as it doesn't allow custom parameters.
+	if (!wrapper.http_layer->AddFile(path_file,
+								"upload_file_minidump")) {
+		bool result = http_layer_->SendRequest(crash_post_url,
+										  wrapper.parameters,
+										  &report_code);
+		if (result)
+			reportResult = RESULT_SUCCEEDED;
+		else
+			reportResult = RESULT_FAILED;
+	}
+	else
+		reportResult = RESULT_FAILED;
 #endif
+	
 	if(reportResult == RESULT_SUCCEEDED && !report_code.empty())
 	{
 		printf("Upload successful.");
@@ -216,7 +291,6 @@ bool UploadDump(const PS_CHAR* dump_path,
 	}
 }
 
-// At global scope to ensure we hook in as early as possible.
-BreakPadWrapper wrapper;
+
 #endif // USE_BREAKPAD
 
