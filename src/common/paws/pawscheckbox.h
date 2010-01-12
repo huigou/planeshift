@@ -158,6 +158,9 @@ public:
     */
     virtual double CalcFunction(const char * functionName, const double * params);
 
+    /** @@@ Hack: please someone tell me how to do this better? */
+    pawsButton* GetButton() { return checkBox; }
+
 private:
     pawsButton* checkBox;
     pawsTextBox* text;
