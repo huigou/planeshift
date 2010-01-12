@@ -68,6 +68,9 @@ public:
     void SetSorted(bool sorting);
     pawsListBoxRow* NewOption();
     pawsListBoxRow* NewOption(const csString & text);
+
+    /** @@@ Hack: please someone tell me how to do this better? */
+    pawsListBox* GetChoiceList() { return listChoice; }
     
     /** Returns index of selected option (-1 if none is selected */
     int GetSelectedRowNum();
