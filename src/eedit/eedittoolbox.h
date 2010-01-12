@@ -39,7 +39,6 @@ public:
         T_FPS,
         T_SHORTCUTS,
 	T_PARTICLES,
-	T_PARTICLES_EDIT,
 
         T_COUNT
     };

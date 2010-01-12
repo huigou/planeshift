@@ -70,7 +70,6 @@
 #include "eedittargettoolbox.h"
 #include "eeditloadeffecttoolbox.h"
 #include "eeditpartlisttoolbox.h"
-#include "eeditpartedittoolbox.h"
 #include "eeditediteffecttoolbox.h"
 #include "eeditloadmaptoolbox.h"
 #include "eediterrortoolbox.h"
@@ -500,14 +499,10 @@ void EEditApp::CreateParticleSystem(const csString & name)
 	{
 	    engine->RemoveObject(particleSystem);
 	    particleSystem = 0;
-	    ((EEditParticleEditToolbox *)toolboxManager->GetToolbox(EEditToolbox::T_PARTICLES_EDIT))->FillList(0);
 	}
 	csVector3 pos = editWindow->GetView()->GetCamera()->GetTransform().GetOrigin();
         particleSystem = engine->CreateMeshWrapper (fact, name, 
                   editWindow->GetView()->GetCamera()->GetSector(), pos);
-	iMeshFactoryWrapper* fact = particleSystem->GetFactory ();
-	csRef<iParticleSystemFactory> partsysfact = scfQueryInterface<iParticleSystemFactory> (fact);
-        ((EEditParticleEditToolbox *)toolboxManager->GetToolbox(EEditToolbox::T_PARTICLES_EDIT))->FillList(partsysfact);
     }
 }
 
@@ -833,10 +828,7 @@ void EEditApp::ExecuteCommand(const char * cmd)
     else if (strcmp(cmd, "LoadEffectToolbox.ToggleVisibility") == 0)
         ToggleToolbox(EEditToolbox::T_LOAD_EFFECT);
     else if (strcmp(cmd, "LoadPartListToolbox.ToggleVisibility") == 0)
-    {
         ToggleToolbox(EEditToolbox::T_PARTICLES);
-        ToggleToolbox(EEditToolbox::T_PARTICLES_EDIT);
-    }
     else if (strcmp(cmd, "EditEffectToolbox.ToggleVisibility") == 0)
         ToggleToolbox(EEditToolbox::T_EDIT_EFFECT);
     else if (strcmp(cmd, "LoadMapToolbox.ToggleVisibility") == 0)

@@ -22,10 +22,27 @@
 
 #include "eedittoolbox.h"
 #include "paws/pawswidget.h"
+#include "paws/pawsspinbox.h"
+#include "paws/pawscombo.h"
+#include "paws/pawscheckbox.h"
 
 class pawsButton;
 class pawsListBox;
 struct iEngine;
+struct iParticleEmitter;
+struct iParticleEffector;
+
+struct ParameterData
+{
+  csString type;
+  csString text;
+  csStringArray choices;
+  float spinbox_min, spinbox_max, spinbox_step;
+  ParameterData (csString type, float spinbox_min = 0, float spinbox_max = 1, float spinbox_step = .1) : 
+    type (type), spinbox_min (spinbox_min), spinbox_max (spinbox_max), spinbox_step (spinbox_step)
+  { }
+};
+
 
 /** This allows you to open/edit particle systems.
  */
@@ -38,11 +55,20 @@ public:
     /** Fills the particles list with the names of all particle systems in the engine.
      */
     void FillList(iEngine* engine);
+    void FillEditList(const csString& partName);
+    void FillParmList(iParticleEmitter* emit);
+    void FillParmList(iParticleEffector* eff);
 
-    /** Selects the given effect and highlights it in the list.
-     *   @param effectName the name of the effect to select.
-     */
-    //void SelectEffect(const csString & effectName);
+    void ChangeParticleValue(iParticleEmitter* emit, const csString& name, bool value);
+    void ChangeParticleValue(iParticleEffector* eff, const csString& name, bool value);
+    void ChangeParticleValue(iParticleEmitter* emit, const csString& name, const csString& value);
+    void ChangeParticleValue(iParticleEffector* eff, const csString& name, const csString& value);
+    void ChangeParticleValue(iParticleEmitter* emit, const csString& name, float value);
+    void ChangeParticleValue(iParticleEffector* eff, const csString& name, float value);
+    void ChangeParticleValue(iParticleEmitter* emit, const csString& name, float value1, float value2);
+    void ChangeParticleValue(iParticleEffector* eff, const csString& name, float value1, float value2);
+    void ChangeParticleValue(iParticleEmitter* emit, const csString& name, const csVector3& v);
+    void ChangeParticleValue(iParticleEffector* eff, const csString& name, const csVector3& v);
 
     // inheritted from EEditToolbox
     virtual void Update(unsigned int elapsed);
@@ -52,16 +78,34 @@ public:
     // inheritted from pawsWidget
     virtual bool PostSetup(); 
     virtual bool OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* widget);
+    virtual bool OnButtonReleased( int button, int keyModifier, pawsWidget* widget);
     virtual void OnListAction(pawsListBox* selected, int status);
+    virtual bool OnChange(pawsWidget* widget);
     
 private:
     // used by pawsListBox to sort the listbox
     static int SortTextBox(pawsWidget * widgetA, pawsWidget * widgetB);
 
+    void HideValues ();
+    void ClearParmList ();
+    void UpdateParticleValue();
+    void SaveParticleSystem (const csString& name);
+
+    csArray<ParameterData> parameterData;
+    csArray<iParticleEmitter*> emitters;
+    csArray<iParticleEffector*> effectors;
     csRef<iEngine> engine;
-    pawsListBox * partList;
-    pawsButton  * openPartButton;
-    pawsButton  * refreshButton;
+    pawsListBox  * partList;
+    pawsListBox  * editList;
+    pawsListBox  * parmList;
+    pawsButton   * openPartButton;
+    pawsButton   * refreshButton;
+    pawsButton   * saveButton;
+    pawsSpinBox  * valueNumSpinBox;
+    pawsSpinBox  * value2NumSpinBox;
+    pawsSpinBox  * value3NumSpinBox;
+    pawsComboBox * valueChoices;
+    pawsCheckBox * valueBool;
 };
 
 CREATE_PAWS_FACTORY(EEditParticleListToolbox);
