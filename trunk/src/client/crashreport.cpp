@@ -245,14 +245,14 @@ bool UploadDump(const PS_CHAR* dump_path,
 	reportResult = BreakPadWrapper::crash_sender->SendCrashReport(crash_post_url,
 			wrapper.parameters,
 			path_file,
-			&report_code);
+			&wrapper.report_code);
 #elif defined(CS_PLATFORM_UNIX)
 	// Don't use GoogleCrashdumpUploader as it doesn't allow custom parameters.
 	if (!wrapper.http_layer->AddFile(path_file,
 								"upload_file_minidump")) {
-		bool result = http_layer_->SendRequest(crash_post_url,
+		bool result = wrapper.http_layer_->SendRequest(crash_post_url,
 										  wrapper.parameters,
-										  &report_code);
+										  &wrapper.report_code);
 		if (result)
 			reportResult = RESULT_SUCCEEDED;
 		else
@@ -262,12 +262,12 @@ bool UploadDump(const PS_CHAR* dump_path,
 		reportResult = RESULT_FAILED;
 #endif
 	
-	if(reportResult == RESULT_SUCCEEDED && !report_code.empty())
+	if(reportResult == RESULT_SUCCEEDED && !wrapper.report_code.empty())
 	{
 		printf("Upload successful.");
 #ifdef WIN32
-		if(!report_code.empty())
-			::MessageBoxW( NULL, report_code.c_str(), L"Report upload response", MB_OK );
+		if(!wrapper.report_code.empty())
+			::MessageBoxW( NULL, wrapper.report_code.c_str(), L"Report upload response", MB_OK );
 		if(succeeded)
 			::MessageBoxA( NULL, "Report uploaded successfully. Thanks for your help.", "PlaneShift", MB_OK );
 #endif
