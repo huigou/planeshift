@@ -77,9 +77,6 @@ class psSlotManager;
 
 class GUIHandler;
 
-extern csString hwRenderer;
-extern csString hwVersion;
-
 struct DelayedLoader : public CS::Utility::WeakReferenced
 {
     virtual bool CheckLoadStatus() = 0;
@@ -348,6 +345,10 @@ public:
 
     void RegisterDelayedLoader(DelayedLoader* obj) { delayedLoaders.PushSmart(obj); }
     void UnregisterDelayedLoader(DelayedLoader* obj) { delayedLoaders.Delete(obj); }
+    
+    static csString hwRenderer;
+    static csString hwVersion;
+    static csString playerName;
 
 private:
     /// Load the log report settings from the config file.

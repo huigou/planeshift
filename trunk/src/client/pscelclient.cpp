@@ -201,6 +201,8 @@ void psCelClient::SetMainActor(GEMClientActor* actor)
     psengine->GetCharControl()->GetMovementManager()->SetActor(actor);
     psengine->GetPSCamera()->SetActor(actor);
     psengine->GetModeHandler()->SetEntity(actor);
+    // Used for debugging
+    psEngine::playerName = actor->GetName();
     local_player = actor;
 
 }

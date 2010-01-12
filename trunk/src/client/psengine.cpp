@@ -192,8 +192,10 @@ if (!myref)                                                  \
 #include "gui/pawsconfigshadows.h"
 #include "gui/pawsnpcdialog.h"
 
-csString hwRenderer;
-csString hwVersion;
+// Needed for debugging
+csString psEngine::hwRenderer;
+csString psEngine::hwVersion;
+csString psEngine::playerName;
 
 #if !defined(CS_DEBUG) && defined(CS_PLATFORM_MACOSX)
 // Set up the mac crash reporter in release builds. This needs to be done here

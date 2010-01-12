@@ -38,7 +38,6 @@
 #include <string>
 #include "globals.h"
 #include "psengine.h"
-#include "pscelclient.h"
 
 #ifdef WIN32
 typedef wchar_t PS_CHAR;
@@ -99,52 +98,55 @@ public:
 		http_layer = new LibcurlWrapper();
 #endif
 		// Set up parameters
-	    /* Get data associated with "psclient.exe": */
+
+		PS_CHAR paramBuffer[512];
+
 #ifdef WIN32
-	    result = _stat64( "psclient.exe", &buf );
+		mbstowcs(paramBuffer, __DATE__ " " __TIME__, 511);
+		parameters[L"BuildDate"] = paramBuffer;
 #else
-	    result = stat64( "psclient", &buf );
+		parameters["BuildDate"] = __DATE__ " " __TIME__;
 #endif
-	    if(result == 0)
-	    {
-	        PS_CHAR* time;
-#ifdef WIN32
-	        time = _wctime64(&buf.st_mtime);
-	        parameters[L"exe_time"] = time;
-#else
-	        time = ctime64(&buf.st_mtime);
-	        parameters["exe_time"] = time;
-#endif
-	    }
+	    
+	    // Set process starttime parameter
+	    time_t start_time = time(NULL);
 	    // Reserve space for player name, gfx card info etc because we can't use the heap
 	    // when handling the crash.
 #ifdef WIN32
-		parameters[L"player_name"] = "";
-		parameters[L"player_name"].reserve(256);
+		parameters[L"PlayerName"] = L"";
+		parameters[L"PlayerName"].reserve(256);
 		mbstowcs(paramBuffer, CS_PLATFORM_NAME, 511);
-		parameters[L"platform"] = paramBuffer;
+		parameters[L"Platform"] = paramBuffer;
 		mbstowcs(paramBuffer, CS_PROCESSOR_NAME, 511);
-		parameters[L"processor"] = paramBuffer;
+		parameters[L"Processor"] = paramBuffer;
 		mbstowcs(paramBuffer, CS_COMPILER_NAME, 511);
-		parameters[L"compiler"] = paramBuffer;
-		parameters[L"renderer"] = "";
-		parameters[L"renderer"].reserve(256);
-		parameters[L"hw_version"] = "";
-		parameters[L"hw_version"].reserve(256);
+		parameters[L"Compiler"] = paramBuffer;
+		parameters[L"Renderer"] = L"";
+		parameters[L"Renderer"].reserve(256);
+		parameters[L"RendererVersion"] = L"";
+		parameters[L"RendererVersion"].reserve(256);
+		parameters[L"CrashTime"] = L"";
+		parameters[L"CrashTime"].reserve(32);
+		swprintf(paramBuffer, "%I64u", start_time);
+		parameters[L"StartupTime"] = paramBuffer;
 		parameters[L"ProductName"] = L"PlaneShift";
-		parameters[L"Version"] = L"0.5";
+		parameters[L"Version"] = L"0.5.00";
 #else
-		parameters["player_name"] = "";
-		parameters["player_name"].reserve(256);
-		parameters["platform"] = CS_PLATFORM_NAME;
-		parameters["processor"] = CS_PROCESSOR_NAME;
-		parameters["compiler"] = CS_COMPILER_NAME;
-		parameters["renderer"] = "";
-		parameters["renderer"].reserve(256);
-		parameters["hw_version"] = "";
-		parameters["hw_version"].reserve(256);
+		parameters["PlayerName"] = "";
+		parameters["PlayerName"].reserve(256);
+		parameters["Platform"] = CS_PLATFORM_NAME;
+		parameters["Processor"] = CS_PROCESSOR_NAME;
+		parameters["Compiler"] = CS_COMPILER_NAME;
+		parameters["Renderer"] = "";
+		parameters["Renderer"].reserve(256);
+		parameters["RendererVersion"] = "";
+		parameters["RendererVersion"].reserve(256);
+		parameters["CrashTime"] = "";
+		parameters["CrashTime"].reserve(32);
+		sprintf(paramBuffer, "%lu", start_time)
+		parameters["StartupTime"] = paramBuffer;
 		parameters["ProductName"] = "PlaneShift";
-		parameters["Version"] = "0.5";
+		parameters["Version"] = "0.5.00";
 #endif
 		report_code.reserve(512);
 
@@ -161,6 +163,7 @@ public:
 #else
 	static LibcurlWrapper* http_layer;
 #endif
+	
 #ifdef WIN32
 	std::map<std::wstring, std::wstring> parameters;
 	std::wstring report_code;
@@ -195,6 +198,7 @@ bool UploadDump(const PS_CHAR* dump_path,
                      bool succeeded) 
 #endif
 {
+	time_t crash_time = time(NULL);
 	PS_CHAR path_file[PS_PATH_MAX];
 	PS_CHAR* p_path_end = path_file + PS_PATH_MAX;
 	PS_CHAR* p_path = path_file;
@@ -207,43 +211,33 @@ bool UploadDump(const PS_CHAR* dump_path,
 	p_path += PS_STRLEN(minidump_id);
 	PS_STRNCAT(path_file, DUMP_EXTENSION, p_path_end - p_path);
 
-
 #ifdef WIN32
     char crashMsg[512];
-    sprintf(crashMsg, "Something unexpected happened in PlaneShift!\nA crash report containing only information strictly necessary to resolve this crash in the future will automatically be sent to the developers.");
-    ::MessageBoxA( NULL, crashMsg, "PlaneShift", MB_OK + MB_ICONERROR );
+    sprintf(crashMsg, "A report containing only information strictly necessary to identify this problem can be sent to the PlaneShift developers.\nFor concerns about privacy, please see http://watson.microsoft.com/dw/1033/dcp.asp. Please consult the PlaneShift forums for more details.\nClick Yes if you would like to help to identify this problem.");
+    if(::MessageBoxA( NULL, crashMsg, "PlaneShift has quit unexpectedly!", MB_YESNO + MB_ICONERROR ) == IDNO)
+    	return false;
 #endif
 
-    // Add the date of compiled file to check version
-    struct __stat64 buf;
-    int result;
     PS_CHAR paramBuffer[512];
 	
-    if(
-        psengine && 
-        psengine->GetCelClient() && 
-        psengine->GetCelClient()->GetMainPlayer() && 
-        psengine->GetCelClient()->GetMainPlayer()->GetName()
-        )
-    {
-#ifdef WIN32
-    	mbstowcs(paramBuffer, psengine->GetCelClient()->GetMainPlayer()->GetName(), 511);
-    	wrapper.parameters[L"player_name"] = paramBuffer;
-#else
-    	wrapper.parameters["player_name"] = paramBuffer;
-#endif
-    }
+
 #ifdef WIN32
     mbstowcs(paramBuffer, hwRenderer, 511);
-    wrapper.parameters[L"renderer"] = paramBuffer;
+    wrapper.parameters[L"Renderer"] = paramBuffer;
     mbstowcs(paramBuffer, hwVersion, 511);
-    wrapper.parameters[L"hw_version"] = paramBuffer;
+    wrapper.parameters[L"RendererVersion"] = paramBuffer;
+    swprintf(paramBuffer, "%I64u", crash_time);
+    wrapper.parameters[L"CrashTime"] = paramBuffer;
+	mbstowcs(paramBuffer, psEngine::playerName, 511);
+	wrapper.parameters[L"PlayerName"] = paramBuffer;
 #else
-    wrapper.parameters["renderer"] = hwRenderer;
-    wrapper.parameters["hw_version"] = hwVersion;
+    wrapper.parameters["Renderer"] = hwRenderer;
+    wrapper.parameters["RendererVersion"] = hwVersion;
+    sprintf(paramBuffer, "%lu", crash_time);
+    wrapper.parameters["CrashTime"] = paramBuffer;
+	wrapper.parameters["PlayerName"] = psEngine::playerName;
 #endif
 
-	
 	printf("Attempting to upload crash report.\n");
 
 	ReportResult reportResult = RESULT_FAILED;
