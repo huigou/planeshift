@@ -213,9 +213,8 @@ bool UploadDump(const PS_CHAR* dump_path,
 
 #ifdef WIN32
     char crashMsg[512];
-    sprintf(crashMsg, "A report containing only information strictly necessary to identify this problem can be sent to the PlaneShift developers.\nFor concerns about privacy, please see http://watson.microsoft.com/dw/1033/dcp.asp. Please consult the PlaneShift forums for more details.\nClick Yes if you would like to help to identify this problem.");
-    if(::MessageBoxA( NULL, crashMsg, "PlaneShift has quit unexpectedly!", MB_YESNO + MB_ICONERROR ) == IDNO)
-    	return false;
+    sprintf(crashMsg, "A report containing only information strictly necessary to identify this problem will be sent to the PlaneShift developers.\nFor concerns about privacy, please see http://watson.microsoft.com/dw/1033/dcp.asp. Please consult the PlaneShift forums for more details.");
+    ::MessageBoxA( NULL, crashMsg, "PlaneShift has quit unexpectedly!", MB_OK + MB_ICONERROR );
 #endif
 
     PS_CHAR paramBuffer[512];
