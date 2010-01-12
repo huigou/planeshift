@@ -162,11 +162,13 @@ bool pawsSpinBox::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget*
     if (mouseButton == 4)
     {
         SetValue(GetValue() + inc);
+	parent->OnChange(this);
         return true;
     }
     else if (mouseButton == 5)
     {
         SetValue(GetValue() - inc);
+	parent->OnChange(this);
         return true;
     }
     
@@ -219,6 +221,7 @@ void pawsSpinBox::Spin()
         val = max;
 
     SetValue(val);
+    parent->OnChange(this);
 }
 
 
