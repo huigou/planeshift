@@ -30,7 +30,6 @@
 #include "eeditrendertoolbox.h"
 #include "eeditloadeffecttoolbox.h"
 #include "eeditpartlisttoolbox.h"
-#include "eeditpartedittoolbox.h"
 #include "eeditediteffecttoolbox.h"
 #include "eeditloadmaptoolbox.h"
 #include "eediterrortoolbox.h"
@@ -45,7 +44,6 @@ bool RegisterToolboxFactories()
     factory = new EEditCameraToolboxFactory();
     factory = new EEditRenderToolboxFactory();
     factory = new EEditParticleListToolboxFactory();
-    factory = new EEditParticleEditToolboxFactory();
     factory = new EEditLoadEffectToolboxFactory();
     factory = new EEditEditEffectToolboxFactory();
     factory = new EEditLoadMapToolboxFactory();
@@ -71,7 +69,6 @@ EEditToolboxManager::EEditToolboxManager()
     widgetFiles[EEditToolbox::T_FPS]            = "data/eedit/fps.xml";
     widgetFiles[EEditToolbox::T_SHORTCUTS]      = "data/eedit/shortcuts.xml";
     widgetFiles[EEditToolbox::T_PARTICLES]      = "data/eedit/partlist.xml";
-    widgetFiles[EEditToolbox::T_PARTICLES_EDIT] = "data/eedit/partedit.xml";
     
     widgetNames[EEditToolbox::T_POSITION]       = "PositionToolbox";
     widgetNames[EEditToolbox::T_TARGET]         = "TargetToolbox";
@@ -84,7 +81,6 @@ EEditToolboxManager::EEditToolboxManager()
     widgetNames[EEditToolbox::T_FPS]            = "FPSToolbox";
     widgetNames[EEditToolbox::T_SHORTCUTS]      = "ShortcutsToolbox";
     widgetNames[EEditToolbox::T_PARTICLES]      = "PartListToolbox";
-    widgetNames[EEditToolbox::T_PARTICLES_EDIT] = "PartEditToolbox";
 }
 
 EEditToolboxManager::~EEditToolboxManager()
