@@ -500,7 +500,8 @@ void EEditApp::CreateParticleSystem(const csString & name)
 	    engine->RemoveObject(particleSystem);
 	    particleSystem = 0;
 	}
-	csVector3 pos = editWindow->GetView()->GetCamera()->GetTransform().GetOrigin();
+	csOrthoTransform& trans = editWindow->GetView()->GetCamera()->GetTransform();
+	csVector3 pos = trans.This2Other (csVector3 (0, 0, 2));
         particleSystem = engine->CreateMeshWrapper (fact, name, 
                   editWindow->GetView()->GetCamera()->GetSector(), pos);
     }
