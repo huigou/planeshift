@@ -25,6 +25,7 @@
 #include "paws/pawsspinbox.h"
 #include "paws/pawscombo.h"
 #include "paws/pawscheckbox.h"
+#include "paws/pawscrollbar.h"
 
 class pawsButton;
 class pawsListBox;
@@ -59,6 +60,8 @@ public:
     void FillParmList(iParticleEmitter* emit);
     void FillParmList(iParticleEffector* eff);
 
+    void ChangeParticleValue(iParticleEmitter* emit, const csString& name, float ttl, float r, float g, float b, float a);
+    void ChangeParticleValue(iParticleEffector* eff, const csString& name, float ttl, float r, float g, float b, float a);
     void ChangeParticleValue(iParticleEmitter* emit, const csString& name, bool value);
     void ChangeParticleValue(iParticleEffector* eff, const csString& name, bool value);
     void ChangeParticleValue(iParticleEmitter* emit, const csString& name, const csString& value);
@@ -81,6 +84,7 @@ public:
     virtual bool OnButtonReleased( int button, int keyModifier, pawsWidget* widget);
     virtual void OnListAction(pawsListBox* selected, int status);
     virtual bool OnChange(pawsWidget* widget);
+    virtual bool OnScroll(int dir, pawsScrollBar* widget);
     
 private:
     // used by pawsListBox to sort the listbox
@@ -106,6 +110,10 @@ private:
     pawsSpinBox  * value3NumSpinBox;
     pawsComboBox * valueChoices;
     pawsCheckBox * valueBool;
+    pawsScrollBar* valueScroll1;
+    pawsScrollBar* valueScroll2;
+    pawsScrollBar* valueScroll3;
+    pawsScrollBar* valueScroll4;
 };
 
 CREATE_PAWS_FACTORY(EEditParticleListToolbox);

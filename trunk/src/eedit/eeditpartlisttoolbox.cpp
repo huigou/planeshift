@@ -151,7 +151,7 @@ static pawsListBoxRow* NewChoicesRow (size_t& a, pawsListBox* box, const char* n
     if (!row)
 	return 0;
     col1->SetText (name);
-    col2->SetText ("[]");
+    col2->SetText ("*");
     col3->SetText (currentChoice);
     return row;
 }
@@ -166,6 +166,36 @@ static pawsListBoxRow* NewBoolRow (size_t& a, pawsListBox* box, const char* name
     col2->SetText ("B");
     col3->SetText (v ? "true" : "false");
     return row;
+}
+
+static pawsListBoxRow* NewLCRow (size_t& a, pawsListBox* box, const char* name,
+	float endTTL, const csColor4& color)
+{
+    pawsTextBox* col1, * col2, * col3;
+    pawsListBoxRow* row = NewRow (a, box, &col1, &col2, &col3);
+    if (!row)
+	return 0;
+    col1->SetText (name);
+    col2->SetText ("LC");
+    csString valueString;
+    valueString.Format("%g (%g , %g , %g , %g)\n", endTTL, color.red, color.green, color.blue, color.alpha);
+    col3->SetText (valueString);
+    return row;
+}
+
+void EEditParticleListToolbox::ChangeParticleValue(iParticleEffector* eff, const csString& name,
+	float ttl, float r, float g, float b, float a)
+{
+    if (name.StartsWith("LinCol:"))
+    {
+    	csRef<iParticleBuiltinEffectorLinColor> lc = scfQueryInterface<iParticleBuiltinEffectorLinColor> (eff);
+    	if (lc)
+	{
+	    size_t i;
+	    csScanStr(name, "LinCol: %d", &i);
+	    lc->SetColor(i,csColor4(r,g,b,a));
+	}
+    }
 }
 
 void EEditParticleListToolbox::ChangeParticleValue(iParticleEffector* eff, const csString& name, bool value)
@@ -214,6 +244,10 @@ void EEditParticleListToolbox::HideValues ()
     value3NumSpinBox->Hide();
     valueChoices->Hide();
     valueBool->Hide();
+    valueScroll1->Hide();
+    valueScroll2->Hide();
+    valueScroll3->Hide();
+    valueScroll4->Hide();
 }
 
 void EEditParticleListToolbox::ClearParmList ()
@@ -239,6 +273,27 @@ void EEditParticleListToolbox::FillParmList(iParticleEffector* eff)
     	if (!NewVector3Row (a, parmList, "RandomAcc", force->GetRandomAcceleration())) return;
     	parameterData.Push(ParameterData("V3", -1000, 1000, .1));
     }
+
+    csRef<iParticleBuiltinEffectorLinColor> lc = scfQueryInterface<iParticleBuiltinEffectorLinColor> (eff);
+    if (lc)
+    {
+	for (size_t i = 0 ; i < lc->GetColorCount() ; i++)
+	{
+	    csString value;
+	    csColor4 color;
+	    float endTTL;
+	    lc->GetColor(i,color,endTTL);
+	    csString name = "LinCol:";
+	    name += i;
+	    if (!NewLCRow (a, parmList, name, endTTL, color)) return;
+    	    parameterData.Push(ParameterData("LC", 0, 1));
+	}
+    }
+}
+
+void EEditParticleListToolbox::ChangeParticleValue(iParticleEmitter* emit, const csString& name,
+	float ttl, float r, float g, float b, float a)
+{
 }
 
 void EEditParticleListToolbox::ChangeParticleValue(iParticleEmitter* emit, const csString& name, bool v)
@@ -383,7 +438,7 @@ void EEditParticleListToolbox::FillParmList(iParticleEmitter* emit)
 	    default: p = "?";
 	}
 	if (!NewChoicesRow (a, parmList, "PartPlace", p)) return;
-	ParameterData pd = ParameterData("[]");
+	ParameterData pd = ParameterData("*");
 	pd.choices.Push ("center");
 	pd.choices.Push ("volume");
 	pd.choices.Push ("surface");
@@ -626,6 +681,10 @@ bool EEditParticleListToolbox::PostSetup()
     value3NumSpinBox = (pawsSpinBox *)FindWidget("value3_num");         CS_ASSERT(value3NumSpinBox);
     valueChoices = (pawsComboBox *)FindWidget("value_choices");         CS_ASSERT(valueChoices);
     valueBool = (pawsCheckBox *)FindWidget("value_bool");               CS_ASSERT(valueBool);
+    valueScroll1 = (pawsScrollBar *)FindWidget("value_scroll1");        CS_ASSERT(valueScroll1);
+    valueScroll2 = (pawsScrollBar *)FindWidget("value_scroll2");        CS_ASSERT(valueScroll2);
+    valueScroll3 = (pawsScrollBar *)FindWidget("value_scroll3");        CS_ASSERT(valueScroll3);
+    valueScroll4 = (pawsScrollBar *)FindWidget("value_scroll4");        CS_ASSERT(valueScroll4);
 
     HideValues();
 
@@ -691,7 +750,7 @@ void EEditParticleListToolbox::UpdateParticleValue()
 	valueString.Format ("%g , %g , %g", value1, value2, value3);
 	colValue->SetText (valueString);
     }
-    else if (type == "[]")
+    else if (type == "*")
     {
 	csString value = valueChoices->GetSelectedRowString();
         num = editList->GetSelectedRowNum();
@@ -700,6 +759,23 @@ void EEditParticleListToolbox::UpdateParticleValue()
 	else
 	    ChangeParticleValue (emitters[num], name, value);
 	colValue->SetText (value);
+    }
+    else if (type == "LC")
+    {
+	float value = valueNumSpinBox->GetValue();
+	float r = valueScroll1->GetCurrentValue();
+	float g = valueScroll2->GetCurrentValue();
+	float b = valueScroll3->GetCurrentValue();
+	float a = valueScroll4->GetCurrentValue();
+
+        num = editList->GetSelectedRowNum();
+	if (num >= emitters.GetSize())
+	    ChangeParticleValue (effectors[num-emitters.GetSize()], name, value, r, g, b, a);
+	else
+	    ChangeParticleValue (emitters[num], name, value, r, g, b, a);
+	csString valueString;
+	valueString.Format("%g (%g , %g , %g , %g)\n", value, r, g, b, a);
+	colValue->SetText (valueString);
     }
 }
 
@@ -746,6 +822,14 @@ bool EEditParticleListToolbox::OnChange(pawsWidget* widget)
 	return true;
     }
     return false;
+}
+
+bool EEditParticleListToolbox::OnScroll(int dir, pawsScrollBar* widget)
+{
+    if (widget == valueScroll1 || widget == valueScroll2 || widget == valueScroll3 || widget == valueScroll4)
+    {
+	UpdateParticleValue();
+    }
 }
 
 void EEditParticleListToolbox::OnListAction(pawsListBox* selected, int status)
@@ -817,14 +901,39 @@ void EEditParticleListToolbox::OnListAction(pawsListBox* selected, int status)
 	    value2NumSpinBox->SetValue (f2);
 	    value3NumSpinBox->SetValue (f3);
 	}
-	else if (type == "[]")
+	else if (type == "*")
 	{
 	    ParameterData& pd = parameterData[num];
 	    valueChoices->Clear();
 	    for (size_t i = 0 ; i < pd.choices.GetSize() ; i++)
-	      valueChoices->NewOption(pd.choices[i]);
+	        valueChoices->NewOption(pd.choices[i]);
 	    valueChoices->Show();
 	    valueChoices->Select(value);
+	}
+	else if (type == "LC")
+	{
+	    float f, r, g, b, a;
+	    csScanStr(value, "%f (%f , %f , %f, %f)", &f, &r, &g, &b, &a);
+	    valueNumSpinBox->SetRange(0, 1, .1);
+	    valueScroll1->SetMinValue(0);
+	    valueScroll1->SetMaxValue(1);
+	    valueScroll2->SetMinValue(0);
+	    valueScroll2->SetMaxValue(1);
+	    valueScroll3->SetMinValue(0);
+	    valueScroll3->SetMaxValue(1);
+	    valueScroll4->SetMinValue(0);
+	    valueScroll4->SetMaxValue(1);
+	    valueNumSpinBox->SetValue (f);
+	    valueScroll1->SetCurrentValue(r);
+	    valueScroll2->SetCurrentValue(g);
+	    valueScroll3->SetCurrentValue(b);
+	    valueScroll4->SetCurrentValue(a);
+
+	    //@@@ TTL can't be edited right now: valueNumSpinBox->Show();
+	    valueScroll1->Show();
+	    valueScroll2->Show();
+	    valueScroll3->Show();
+	    valueScroll4->Show();
 	}
     }
 }
