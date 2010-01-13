@@ -237,7 +237,6 @@ void psClientDR::HandleDeadReckon( MsgEntry* me )
 void psClientDR::HandleForcePosition(MsgEntry *me)
 {
     psForcePositionMessage msg(me, 0, msgstrings, psengine->GetEngine());
-    GEMClientActor *actor = celclient->GetMainPlayer();
 
     // Check if we crossed a sector boundary - if so, the player may have been
     // moved to an unloaded map.  We must tell ZoneHandler to 1) load the
@@ -251,7 +250,11 @@ void psClientDR::HandleForcePosition(MsgEntry *me)
     else
     {
         CS_ASSERT(msg.sector);
-        actor->SetPosition(msg.pos, msg.yrot, msg.sector);
+
+        if(!celclient->IsReady())
+            return;
+
+        celclient->GetMainPlayer()->SetPosition(msg.pos, msg.yrot, msg.sector);
     }
 }
 
