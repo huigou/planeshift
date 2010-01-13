@@ -4,13 +4,14 @@
     <music on="yes" />
     <gui on="yes" />
     <voices on="yes" />
-    <volume value="100" />
-    <musicvolume value="100" />
-    <ambientvolume value="100" />
-    <actionsvolume value="100" />
-    <guivolume value="100" />
-    <voicesvolume value="100" />
+    <volume value="50" />
+    <musicvolume value="40" />
+    <ambientvolume value="30" />
+    <actionsvolume value="40" />
+    <guivolume value="50" />
+    <voicesvolume value="40" />
     <muteonfocusloss on="yes" />
-    <loopbgm on="no" />
+    <loopbgm on="yes" />
     <combatmusic on="yes" />
 </sound>
+
