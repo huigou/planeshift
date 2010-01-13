@@ -566,17 +566,22 @@ void pawsMessageTextBox::AddMessage( const char* data, int msgColour )
             cutMessages.Push(message);
             break;
         }
+
         if(last == 0)
         {
             cutMessages.Push(message.Slice(1, pos));
             break;   
         }
-        if(last != message.Length()-1)
+
+        if(last == message.Length()-1)
         {
-            cutMessages.Push(message.Slice(last+1, pos));
             cutMessages.Push("");
         }
-        cutMessages.Push("");
+        else
+        {
+            cutMessages.Push(message.Slice(last+1, pos));
+        }
+
         message.Truncate(last);
         pos = last;
     }

@@ -76,9 +76,11 @@ void pawsLauncherWindow::UpdateNews()
 {
     pawsMessageTextBox* serverNews = (pawsMessageTextBox*)FindWidget("ServerNews");
     psLaunchGUI->GetDownloader()->DownloadFile(configFile->GetStr("Launcher.News.URL", "http://www.xordan.com/servernews"),
-      "servernews", true, false);
+      "/planeshift/userdata/servernews", true, true, 3, true);
     
-    ifstream newsFile("servernews", ifstream::in);
+    csRef<iDataBuffer> newsPath = psLaunchGUI->GetVFS()->GetRealPath("/planeshift/userdata/servernews");
+
+    ifstream newsFile(newsPath->GetData(), ifstream::in);
     csString buffer;
     while(newsFile.good())
     {
@@ -87,7 +89,10 @@ void pawsLauncherWindow::UpdateNews()
     buffer.Truncate(buffer.Length()-1);
     serverNews->AddMessage(buffer.GetDataSafe());
     newsFile.close();
-    psLaunchGUI->GetFileUtil()->RemoveFile("servernews");
+    psLaunchGUI->GetFileUtil()->RemoveFile("/planeshift/userdata/servernews", true);
+
+    // Scroll to top.
+    serverNews->ResetScroll();
 }
 
 pawsButton* pawsLauncherWindow::FindButton(WidgetID id)
