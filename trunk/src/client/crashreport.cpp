@@ -130,7 +130,7 @@ public:
 		swprintf(paramBuffer, L"%I64u", start_time);
 		parameters[L"StartupTime"] = paramBuffer;
 		parameters[L"ProductName"] = L"PlaneShift";
-		parameters[L"Version"] = L"0.5.00";
+		parameters[L"Version"] = L"0.5.1";
 #else
 		parameters["PlayerName"] = "";
 		parameters["PlayerName"].reserve(256);
@@ -146,7 +146,7 @@ public:
 		sprintf(paramBuffer, "%lu", start_time)
 		parameters["StartupTime"] = paramBuffer;
 		parameters["ProductName"] = "PlaneShift";
-		parameters["Version"] = "0.5.00";
+		parameters["Version"] = "0.5.1";
 #endif
 		report_code.reserve(512);
 
