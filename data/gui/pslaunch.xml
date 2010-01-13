@@ -22,7 +22,7 @@
         <bgimage resource="News Window" alpha="255" fading="false"/>
         <frame x="60" y="50" width="300" height="470" />
         <widget name="ServerNews" factory="pawsMessageTextBox" id="1111">
-          <frame x="20" y="40" width="280" height="220" />
+          <frame x="20" y="40" width="280" height="330" />
         </widget>
       </widget>
 
