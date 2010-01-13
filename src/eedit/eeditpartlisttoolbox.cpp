@@ -829,7 +829,9 @@ bool EEditParticleListToolbox::OnScroll(int dir, pawsScrollBar* widget)
     if (widget == valueScroll1 || widget == valueScroll2 || widget == valueScroll3 || widget == valueScroll4)
     {
 	UpdateParticleValue();
+	return true;
     }
+    return false;
 }
 
 void EEditParticleListToolbox::OnListAction(pawsListBox* selected, int status)
