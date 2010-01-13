@@ -560,7 +560,13 @@ void pawsMessageTextBox::AddMessage( const char* data, int msgColour )
 
     while(pos > 0)
     {
-        size_t last = message.FindLast("\n");
+        size_t last = message.FindLast("\r");
+        if(last == message.Length()-1)
+        {
+            message.Truncate(last);
+        }
+            
+        last = message.FindLast("\n");
         if(last == (size_t)-1)
         {
             cutMessages.Push(message);
