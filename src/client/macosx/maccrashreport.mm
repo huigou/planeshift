@@ -44,7 +44,7 @@ static BreakpadRef InitBreakpad(const char* hwRenderer, const char* hwVersion) {
                    @"Processor",
                    [NSString stringWithCString:CS_PLATFORM_NAME],
                    @"Platform",
-                   [NSString __DATE__ " " __TIME__],
+                   [NSString stringWithCString:__DATE__ " " __TIME__],
                    @"BuildDate",
                    nil];
   [mutableDict setObject: extraDict forKey: @"BreakpadServerParameters"];
