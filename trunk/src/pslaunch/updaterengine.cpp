@@ -195,13 +195,19 @@ void UpdaterEngine::CheckForUpdates()
                 csSleep(100);
             }
 
-            // If we're going to self-update, close the GUI.
-            infoShare->SetExitGUI(true);
             infoShare->Sync();
         }
 
         // Begin the self update process.
         SelfUpdate(false);
+
+        if(hasGUI)
+        {
+            // If we're going to self-update, close the GUI.
+            infoShare->SetExitGUI(true);
+            infoShare->Sync();
+        }
+
         return;
     }
 
@@ -214,7 +220,8 @@ void UpdaterEngine::CheckForUpdates()
 
         // Check if we have write permissions.
 #ifdef _WIN32
-        if(!IsUserAnAdmin())
+        // TODO: Improve this.
+        if(!IsUserAnAdmin() && !log.IsValid())
 #else
         if(!log.IsValid())
 #endif
@@ -447,16 +454,17 @@ bool UpdaterEngine::SelfUpdate(int selfUpdating)
             PrintOutput("Copying new files!\n");
 
             // Construct executable names.
-            csString tempName = appName;
-            appName.AppendFmt(".exe");
-            tempName.AppendFmt("2.exe");
+            csString realName = appName;
+            csString dupeName = appName;
+            realName.Append(".exe");
+            dupeName.Append("2.exe");
 
             // Delete the old updater file and copy the new in place.
-            while(!fileUtil->RemoveFile("/this/" + appName))
+            while(!fileUtil->RemoveFile("/this/" + realName))
             {
                 csSleep(50);
             }
-            fileUtil->CopyFile("/this/" + tempName, "/this/" + appName, true, true);
+            fileUtil->CopyFile("/this/" + dupeName, "/this/" + realName, true, true);
 
             // Copy any art and data.
             if(hasGUI)
@@ -471,23 +479,23 @@ bool UpdaterEngine::SelfUpdate(int selfUpdating)
 
               csString artPath = "/art/";
               artPath.AppendFmt("%s.zip", appName.GetData());
-              fileUtil->CopyFile("/zip" + artPath, artPath, true, false, true);
+              fileUtil->CopyFile("/zip" + artPath, "/this/" + artPath, true, false, true);
 
               csString dataPath = "/data/gui/";
               dataPath.AppendFmt("%s.xml", appName.GetData());
-              fileUtil->CopyFile("/zip" + dataPath, dataPath, true, false, true);
+              fileUtil->CopyFile("/zip" + dataPath, "/this/" + dataPath, true, false, true);
 
               vfs->Unmount("/zip", realZipPath->GetData());
             }
 
             // Create a new process of the updater.
-            CreateProcess(appName.GetData(), "selfUpdateSecond", 0, 0, false, CREATE_DEFAULT_ERROR_MODE, 0, 0, &siStartupInfo, &piProcessInfo);
+            CreateProcess(realName.GetData(), "selfUpdateSecond", 0, 0, false, CREATE_DEFAULT_ERROR_MODE, 0, 0, &siStartupInfo, &piProcessInfo);
             return true;
         }
     case 2: // We're now running the new updater in the correct location.
         {
             // Clean up left over files.
-            PrintOutput("\nCleaning up!\n");
+            PrintOutput("\nCleaning up!\n\n");
 
             // Construct zip name.
             csString zip = appName;
@@ -570,7 +578,7 @@ bool UpdaterEngine::SelfUpdate(int selfUpdating)
     case 2: // We're now running the new updater in the correct location.
         {
             // Clean up left over files.
-            PrintOutput("\nCleaning up!\n");
+            PrintOutput("\nCleaning up!\n\n");
 
             // Construct zip name.
             csString zip = appName;
