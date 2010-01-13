@@ -1083,8 +1083,9 @@ void psCharAppearance::ClearEquipment(const char* slot)
 
 bool psCharAppearance::Detach(const char* socketName, bool removeItem )
 {
-    if (!socketName)
+    if (!socketName || !state.IsValid())
     {
+        CS_ASSERT(state.IsValid());
         return false;
     }
 
