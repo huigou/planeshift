@@ -769,9 +769,11 @@ bool psCharAppearance::ChangeMesh(const char* partPattern, const char* newPart)
 
 bool psCharAppearance::Attach(const char* socketName, const char* meshFactName)
 {
-    if (!socketName || !meshFactName)
+    if (!socketName || !meshFactName || !state.IsValid)
+    {
+        CS_ASSERT(state.IsValid());
         return false;
-
+    }
 
     csRef<iSpriteCal3DSocket> socket = state->FindSocket( socketName );
     if ( !socket )
