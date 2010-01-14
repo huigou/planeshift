@@ -769,7 +769,7 @@ bool psCharAppearance::ChangeMesh(const char* partPattern, const char* newPart)
 
 bool psCharAppearance::Attach(const char* socketName, const char* meshFactName)
 {
-    if (!socketName || !meshFactName || !state.IsValid)
+    if (!socketName || !meshFactName || !state.IsValid())
     {
         CS_ASSERT(state.IsValid());
         return false;
