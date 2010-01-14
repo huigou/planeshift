@@ -85,6 +85,8 @@ void pawsTabWindow::SetTab(int id)
 {
     pawsButton* buttonWidget = ( pawsButton* ) FindWidget(id);
     pawsWidget* newWidget = FindWidget(id+100);
+    if (!buttonWidget || !newWidget)
+        return;
     lastButton->SetState(false);
     activeTab->Hide();
     newWidget->Show();
