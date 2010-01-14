@@ -61,12 +61,19 @@ const PS_CHAR* crash_post_url = "http://planeshift.ezpcusa.com/crash_reporting/s
 
 using namespace google_breakpad;
 
+#ifdef WIN32
 bool UploadDump(const PS_CHAR* dump_path,
                      const PS_CHAR* minidump_id,
                      void* context,
                      EXCEPTION_POINTERS* exinfo,
                      MDRawAssertionInfo* assertion,
                      bool succeeded);
+#else
+bool UploadDump(const PS_CHAR* dump_path,
+                     const PS_CHAR* minidump_id,
+                     void* context,
+                     bool succeeded);
+#endif
 
 // Initialise the crash dumper.
 class BreakPadWrapper
@@ -239,30 +246,31 @@ bool UploadDump(const PS_CHAR* dump_path,
 
 	printf("Attempting to upload crash report.\n");
 
-	ReportResult reportResult = RESULT_FAILED;
 	
+	bool result = false;
 #ifdef WIN32
-	reportResult = BreakPadWrapper::crash_sender->SendCrashReport(crash_post_url,
+	ReportResult reportResult = BreakPadWrapper::crash_sender->SendCrashReport(crash_post_url,
 			wrapper.parameters,
 			path_file,
 			&wrapper.report_code);
+	if(reportResult == RESULT_SUCCEEDED)
+		result = true;
 #elif defined(CS_PLATFORM_UNIX)
 	// Don't use GoogleCrashdumpUploader as it doesn't allow custom parameters.
-	if (!wrapper.http_layer->AddFile(path_file,
-								"upload_file_minidump")) {
-		bool result = wrapper.http_layer_->SendRequest(crash_post_url,
+	if (wrapper.http_layer->AddFile(path_file, "upload_file_minidump")) {
+		result = wrapper.http_layer_->SendRequest(crash_post_url,
 										  wrapper.parameters,
 										  &wrapper.report_code);
-		if (result)
-			reportResult = RESULT_SUCCEEDED;
-		else
-			reportResult = RESULT_FAILED;
 	}
-	else
-		reportResult = RESULT_FAILED;
+	else 
+	{
+		printf("Could not add minidump file.");
+		return false;
+	}
+
 #endif
 	
-	if(reportResult == RESULT_SUCCEEDED && !wrapper.report_code.empty())
+	if(result && !wrapper.report_code.empty())
 	{
 		printf("Upload successful.");
 #ifdef WIN32
@@ -273,15 +281,23 @@ bool UploadDump(const PS_CHAR* dump_path,
 #endif
 		return succeeded;
 	}
-	else if(reportResult == RESULT_FAILED)
+	else if(!result)
 	{
-		printf("Report upload failed: Could not reach server.");
+		printf("Report upload failed. ");
 #ifdef WIN32
-		::MessageBoxA( NULL, "Report upload failed: Could not reach server.", "PlaneShift", MB_OK + MB_ICONERROR );
+		if (reportResult == RESULT_FAILED) {
+			printf("Could not reach server.");
+			::MessageBoxA( NULL, "Report upload failed: Could not reach server.", "PlaneShift", MB_OK + MB_ICONERROR );
+		}
+		else
+		{
+			printf("Unknown reason.");
+			::MessageBoxA( NULL, "Report upload failed: Unknown reason.", "PlaneShift", MB_OK + MB_ICONERROR );
+		}
 #endif
 		return false;
 	}
-	else
+	else // result is true but report code is empty.
 	{
 		printf("Report upload failed: Unknown reason.");
 #ifdef WIN32
@@ -289,6 +305,7 @@ bool UploadDump(const PS_CHAR* dump_path,
 #endif
 		return false;
 	}
+	return false;
 }
 
 
