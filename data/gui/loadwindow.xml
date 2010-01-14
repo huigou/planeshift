@@ -16,7 +16,7 @@
             <frame x="30" y="350" width="295" height="100" border="no" />
         </widget>
         <widget name="tip" factory="pawsMultiLineTextBox" >
-            <frame x="460" y="470" width="310" height="80" border="no" />
+            <frame x="460" y="450" width="310" height="100" border="no" />
 	    <bgimage resource="Scaling Field Background" />
         </widget>
         <widget name="Progress" factory="pawsProgressBar" style="Scaling Progressbar">
