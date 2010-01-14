@@ -27,11 +27,14 @@
 #include "paws/pawscheckbox.h"
 #include "paws/pawscrollbar.h"
 
+#include <imesh/particles.h>
+
 class pawsButton;
 class pawsListBox;
 struct iEngine;
 struct iParticleEmitter;
 struct iParticleEffector;
+struct ParticleParameterRow;
 
 struct ParameterData
 {
@@ -60,19 +63,6 @@ public:
     void FillParmList(iParticleEmitter* emit);
     void FillParmList(iParticleEffector* eff);
 
-    void ChangeParticleValue(iParticleEmitter* emit, const csString& name, float ttl, float r, float g, float b, float a);
-    void ChangeParticleValue(iParticleEffector* eff, const csString& name, float ttl, float r, float g, float b, float a);
-    void ChangeParticleValue(iParticleEmitter* emit, const csString& name, bool value);
-    void ChangeParticleValue(iParticleEffector* eff, const csString& name, bool value);
-    void ChangeParticleValue(iParticleEmitter* emit, const csString& name, const csString& value);
-    void ChangeParticleValue(iParticleEffector* eff, const csString& name, const csString& value);
-    void ChangeParticleValue(iParticleEmitter* emit, const csString& name, float value);
-    void ChangeParticleValue(iParticleEffector* eff, const csString& name, float value);
-    void ChangeParticleValue(iParticleEmitter* emit, const csString& name, float value1, float value2);
-    void ChangeParticleValue(iParticleEffector* eff, const csString& name, float value1, float value2);
-    void ChangeParticleValue(iParticleEmitter* emit, const csString& name, const csVector3& v);
-    void ChangeParticleValue(iParticleEffector* eff, const csString& name, const csVector3& v);
-
     // inheritted from EEditToolbox
     virtual void Update(unsigned int elapsed);
     virtual size_t GetType() const;
@@ -95,10 +85,13 @@ private:
     void UpdateParticleValue();
     void SaveParticleSystem (const csString& name);
 
-    csArray<ParameterData> parameterData;
     csArray<iParticleEmitter*> emitters;
     csArray<iParticleEffector*> effectors;
     csRef<iEngine> engine;
+
+public:
+    csPDelArray<ParticleParameterRow> parameterRows;
+
     pawsListBox  * partList;
     pawsListBox  * editList;
     pawsListBox  * parmList;
@@ -110,6 +103,10 @@ private:
     pawsSpinBox  * value3NumSpinBox;
     pawsComboBox * valueChoices;
     pawsCheckBox * valueBool;
+    pawsCheckBox * valueBool2;
+    pawsCheckBox * valueBool3;
+    pawsCheckBox * valueBool4;
+    pawsCheckBox * valueBool5;
     pawsScrollBar* valueScroll1;
     pawsScrollBar* valueScroll2;
     pawsScrollBar* valueScroll3;
