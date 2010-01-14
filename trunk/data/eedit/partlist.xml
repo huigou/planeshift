@@ -67,6 +67,38 @@
         <bgimage resource="Shaded" alpha="75" />
     </widget>
 
+    <widget name="value_bool2" factory="pawsCheckBox">
+        <frame x="415" y="35" width="140" height="25" border="yes" />
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"  sr="0" sg="0" sb="0" shadow="yes" />
+	<checkbox off="RadioOff" on="RadioOn" />
+	<text string="..." />
+        <bgimage resource="Shaded" alpha="75" />
+    </widget>
+
+    <widget name="value_bool3" factory="pawsCheckBox">
+        <frame x="415" y="65" width="140" height="25" border="yes" />
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"  sr="0" sg="0" sb="0" shadow="yes" />
+	<checkbox off="RadioOff" on="RadioOn" />
+	<text string="..." />
+        <bgimage resource="Shaded" alpha="75" />
+    </widget>
+
+    <widget name="value_bool4" factory="pawsCheckBox">
+        <frame x="415" y="95" width="140" height="25" border="yes" />
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"  sr="0" sg="0" sb="0" shadow="yes" />
+	<checkbox off="RadioOff" on="RadioOn" />
+	<text string="..." />
+        <bgimage resource="Shaded" alpha="75" />
+    </widget>
+
+    <widget name="value_bool5" factory="pawsCheckBox">
+        <frame x="415" y="125" width="140" height="25" border="yes" />
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"  sr="0" sg="0" sb="0" shadow="yes" />
+	<checkbox off="RadioOff" on="RadioOn" />
+	<text string="..." />
+        <bgimage resource="Shaded" alpha="75" />
+    </widget>
+
     <widget name="value_choices" factory="pawsComboBox">
         <frame x="415" y="5" width="140" height="25" border="yes" />
         <bgimage resource="Shaded" alpha="100" />
