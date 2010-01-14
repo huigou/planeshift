@@ -20,8 +20,8 @@
 
 #include <psconfig.h>
 
-// Only support breakpad for win32 for now.
-#if defined(WIN32) && !defined(CS_DEBUG)
+// Mac uses a different breakpad library. Disabled in Debug.
+#if !defined(CS_DEBUG) && !defined(CS_PLATFORM_MACOSX)
 #define USE_BREAKPAD
 #endif
 
