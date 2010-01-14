@@ -41,23 +41,43 @@
 
 #ifdef WIN32
 typedef wchar_t PS_CHAR;
+typedef std::wstring BpString;
 #define PS_PATH_MAX 4096 // Real limit is 32k but that won't fit on the stack.
 #define PS_PATH_SEP L"\\"
 #define PS_STRNCAT wcsncat
 #define PS_STRCAT wcscat
 #define PS_STRLEN wcslen
-const PS_CHAR* crash_post_url = L"http://planeshift.ezpcusa.com/crash_reporting/submit";
-#define DUMP_EXTENSION L".dmp"
+/// Helper macro for string literals
+#define STR(s)		CS_STRING_TO_WIDE(s)
 #else
 typedef char PS_CHAR;
+typedef std::string BpString;
 #define PS_PATH_MAX PATH_MAX
 #define PS_PATH_SEP "/"
 #define PS_STRNCAT strncat
 #define PS_STRCAT strcat
 #define PS_STRLEN strlen
-const PS_CHAR* crash_post_url = "http://planeshift.ezpcusa.com/crash_reporting/submit";
-#define DUMP_EXTENSION ".dmp"
+/// Helper macro for string literals
+#define STR(s)		s
 #endif
+
+static const PS_CHAR* crash_post_url[] = STR("http://planeshift.ezpcusa.com/crash_reporting/submit");
+#define DUMP_EXTENSION STR(".dmp")
+
+#define QUOTE_(X)   #X
+#define QUOTE(X)    QUOTE_(X)
+
+/// Set a dump parameter to a plain old char string (takes care of conversion)
+static void SetParameter (BpString& param, const char* value)
+{
+#ifdef WIN32
+  PS_CHAR paramBuffer[512];
+  mbstowcs (paramBuffer, value, (sizeof(paramBuffer)/sizeof(PS_CHAR))-1);
+  param = paramBuffer;
+#else
+  param = value;
+#endif
+}
 
 using namespace google_breakpad;
 
@@ -80,13 +100,12 @@ class BreakPadWrapper
 {
 public:
 	BreakPadWrapper() {
-		const PS_CHAR* tempPath;
 #ifdef WIN32
 		int pathLen = GetTempPathW(0, NULL);
-		tempPath = new PS_CHAR[pathLen];
+		CS_ALLOC_STACK_ARRAY(PS_CHAR, tempPath, pathLen);
 		GetTempPathW(pathLen, tempPath);
 #else
-		tempPath = "/tmp/";
+		static const PS_CHAR tempPath[] = "/tmp/";
 #endif
 		
 		crash_handler = new ExceptionHandler(tempPath,
@@ -106,55 +125,33 @@ public:
 #endif
 		// Set up parameters
 
-		PS_CHAR paramBuffer[512];
-
-#ifdef WIN32
-		mbstowcs(paramBuffer, __DATE__ " " __TIME__, 511);
-		parameters[L"BuildDate"] = paramBuffer;
-#else
-		parameters["BuildDate"] = __DATE__ " " __TIME__;
-#endif
+		parameters[STR("BuildDate")] = STR(__DATE__) STR(" ") STR(__TIME__);
 	    
 	    // Set process starttime parameter
 	    time_t start_time = time(NULL);
 	    // Reserve space for player name, gfx card info etc because we can't use the heap
 	    // when handling the crash.
+		parameters[STR("PlayerName")] = STR("");
+		parameters[STR("PlayerName")].reserve(256);
+		parameters[STR("Platform")] = STR(CS_PLATFORM_NAME);
+		parameters[STR("Processor")] =
+                STR(CS_PROCESSOR_NAME) STR("(") STR(QUOTE(CS_PROCESSOR_SIZE)) STR(")");
+		parameters[STR("Compiler")] = STR(CS_COMPILER_NAME);
+		parameters[STR("Renderer")] = STR("");
+		parameters[STR("Renderer")].reserve(256);
+		parameters[STR("RendererVersion")] = STR("");
+		parameters[STR("RendererVersion")].reserve(256);
+		parameters[STR("CrashTime")] = STR("");
+		parameters[STR("CrashTime")].reserve(32);
+		PS_CHAR timeBuffer[512];
 #ifdef WIN32
-		parameters[L"PlayerName"] = L"";
-		parameters[L"PlayerName"].reserve(256);
-		mbstowcs(paramBuffer, CS_PLATFORM_NAME, 511);
-		parameters[L"Platform"] = paramBuffer;
-		mbstowcs(paramBuffer, CS_PROCESSOR_NAME, 511);
-		parameters[L"Processor"] = paramBuffer;
-		mbstowcs(paramBuffer, CS_COMPILER_NAME, 511);
-		parameters[L"Compiler"] = paramBuffer;
-		parameters[L"Renderer"] = L"";
-		parameters[L"Renderer"].reserve(256);
-		parameters[L"RendererVersion"] = L"";
-		parameters[L"RendererVersion"].reserve(256);
-		parameters[L"CrashTime"] = L"";
-		parameters[L"CrashTime"].reserve(32);
-		swprintf(paramBuffer, L"%I64u", start_time);
-		parameters[L"StartupTime"] = paramBuffer;
-		parameters[L"ProductName"] = L"PlaneShift";
-		parameters[L"Version"] = L"0.5.1";
+		swprintf(timeBuffer, L"%I64u", start_time);
 #else
-		parameters["PlayerName"] = "";
-		parameters["PlayerName"].reserve(256);
-		parameters["Platform"] = CS_PLATFORM_NAME;
-		parameters["Processor"] = CS_PROCESSOR_NAME;
-		parameters["Compiler"] = CS_COMPILER_NAME;
-		parameters["Renderer"] = "";
-		parameters["Renderer"].reserve(256);
-		parameters["RendererVersion"] = "";
-		parameters["RendererVersion"].reserve(256);
-		parameters["CrashTime"] = "";
-		parameters["CrashTime"].reserve(32);
-		sprintf(paramBuffer, "%lu", start_time);
-		parameters["StartupTime"] = paramBuffer;
-		parameters["ProductName"] = "PlaneShift";
-		parameters["Version"] = "0.5.1";
+		sprintf(timeBuffer, "%lu", start_time);
 #endif
+		parameters[STR("StartupTime")] = timeBuffer;
+		parameters[STR("ProductName")] = STR("PlaneShift");
+		parameters[STR("Version")] = STR("0.5.1");
 		report_code.reserve(512);
 
 	}
@@ -175,14 +172,8 @@ public:
 #else
 	static LibcurlWrapper* http_layer;
 #endif
-	
-#ifdef WIN32
-	std::map<std::wstring, std::wstring> parameters;
-	std::wstring report_code;
-#else
-	std::map<std::string, std::string> parameters;
-	std::string report_code;
-#endif // WIN32
+	std::map<BpString, BpString> parameters;
+	BpString report_code;	
 	
 private:
 	static ExceptionHandler* crash_handler;
@@ -214,18 +205,18 @@ bool UploadDump(const PS_CHAR* dump_path,
                      bool succeeded) 
 #endif
 {
-	time_t crash_time = time(NULL);
-	PS_CHAR path_file[PS_PATH_MAX];
-	PS_CHAR* p_path_end = path_file + PS_PATH_MAX;
-	PS_CHAR* p_path = path_file;
-
-	PS_STRNCAT(path_file, dump_path, PS_PATH_MAX);
-	p_path += PS_STRLEN(path_file);
-	PS_STRCAT(path_file, PS_PATH_SEP);
-	p_path += PS_STRLEN(PS_PATH_SEP);
-	PS_STRNCAT(path_file, minidump_id, p_path_end - p_path);
-	p_path += PS_STRLEN(minidump_id);
-	PS_STRNCAT(path_file, DUMP_EXTENSION, p_path_end - p_path);
+    time_t crash_time = time(NULL);
+    PS_CHAR path_file[PS_PATH_MAX + 1];
+    PS_CHAR* p_path_end = path_file + PS_PATH_MAX;
+    PS_CHAR* p_path = path_file;
+    
+    PS_STRNCAT(path_file, dump_path, PS_PATH_MAX);
+    p_path += PS_STRLEN(path_file);
+    PS_STRCAT(path_file, PS_PATH_SEP);
+    p_path += PS_STRLEN(PS_PATH_SEP);
+    PS_STRNCAT(path_file, minidump_id, p_path_end - p_path);
+    p_path += PS_STRLEN(minidump_id);
+    PS_STRNCAT(path_file, DUMP_EXTENSION, p_path_end - p_path);
 
 #ifdef WIN32
     char crashMsg[512];
@@ -233,88 +224,80 @@ bool UploadDump(const PS_CHAR* dump_path,
     ::MessageBoxA( NULL, crashMsg, "PlaneShift has quit unexpectedly!", MB_OK + MB_ICONERROR );
 #endif
 
-    PS_CHAR paramBuffer[512];
-	
 
+    SetParameter (wrapper.parameters[STR("Renderer")], psEngine::hwRenderer);
+    SetParameter (wrapper.parameters[STR("RendererVersion")], psEngine::hwVersion);
+    SetParameter (wrapper.parameters[STR("PlayerName")], psEngine::playerName);
+    PS_CHAR timeBuffer[512];
 #ifdef WIN32
-    mbstowcs(paramBuffer, psEngine::hwRenderer, 511);
-    wrapper.parameters[L"Renderer"] = paramBuffer;
-    mbstowcs(paramBuffer, psEngine::hwVersion, 511);
-    wrapper.parameters[L"RendererVersion"] = paramBuffer;
-    swprintf(paramBuffer, L"%I64u", crash_time);
-    wrapper.parameters[L"CrashTime"] = paramBuffer;
-	mbstowcs(paramBuffer, psEngine::playerName, 511);
-	wrapper.parameters[L"PlayerName"] = paramBuffer;
+    swprintf(timeBuffer, L"%I64u", crash_time);
 #else
-    wrapper.parameters["Renderer"] = psEngine::hwRenderer;
-    wrapper.parameters["RendererVersion"] = psEngine::hwVersion;
-    sprintf(paramBuffer, "%lu", crash_time);
-    wrapper.parameters["CrashTime"] = paramBuffer;
-	wrapper.parameters["PlayerName"] = psEngine::playerName;
+    sprintf(timeBuffer, "%lu", crash_time);
 #endif
+    wrapper.parameters[STR("CrashTime")] = timeBuffer;
 
-	printf("Attempting to upload crash report.\n");
+    printf("Attempting to upload crash report.\n");
 
-	
-	bool result = false;
+
+    bool result = false;
 #ifdef WIN32
-	ReportResult reportResult = BreakPadWrapper::crash_sender->SendCrashReport(crash_post_url,
-			wrapper.parameters,
-			path_file,
-			&wrapper.report_code);
-	if(reportResult == RESULT_SUCCEEDED)
-		result = true;
+    ReportResult reportResult = BreakPadWrapper::crash_sender->SendCrashReport(crash_post_url,
+		    wrapper.parameters,
+		    path_file,
+		    &wrapper.report_code);
+    if(reportResult == RESULT_SUCCEEDED)
+	    result = true;
 #elif defined(CS_PLATFORM_UNIX)
-	// Don't use GoogleCrashdumpUploader as it doesn't allow custom parameters.
-	if (wrapper.http_layer->AddFile(path_file, "upload_file_minidump")) {
-		result = wrapper.http_layer->SendRequest(crash_post_url,
-										  wrapper.parameters,
-										  &wrapper.report_code);
-	}
-	else 
-	{
-		printf("Could not add minidump file.");
-		return false;
-	}
+    // Don't use GoogleCrashdumpUploader as it doesn't allow custom parameters.
+    if (wrapper.http_layer->AddFile(path_file, "upload_file_minidump")) {
+	    result = wrapper.http_layer->SendRequest(crash_post_url,
+			    wrapper.parameters,
+			    &wrapper.report_code);
+    }
+    else 
+    {
+	    printf("Could not add minidump file.");
+	    return false;
+    }
 
 #endif
-	
-	if(result && !wrapper.report_code.empty())
-	{
-		printf("Upload successful.");
+
+    if(result && !wrapper.report_code.empty())
+    {
+	    printf("Upload successful.");
 #ifdef WIN32
-		if(!wrapper.report_code.empty())
-			::MessageBoxW( NULL, wrapper.report_code.c_str(), L"Report upload response", MB_OK );
-		if(succeeded)
-			::MessageBoxA( NULL, "Report uploaded successfully. Thanks for your help.", "PlaneShift", MB_OK );
+	    if(!wrapper.report_code.empty())
+		    ::MessageBoxW( NULL, wrapper.report_code.c_str(), L"Report upload response", MB_OK );
+	    if(succeeded)
+		    ::MessageBoxA( NULL, "Report uploaded successfully. Thanks for your help.", "PlaneShift", MB_OK );
 #endif
-		return succeeded;
-	}
-	else if(!result)
-	{
-		printf("Report upload failed. ");
+	    return succeeded;
+    }
+    else if(!result)
+    {
+	    printf("Report upload failed. ");
 #ifdef WIN32
-		if (reportResult == RESULT_FAILED) {
-			printf("Could not reach server.");
-			::MessageBoxA( NULL, "Report upload failed: Could not reach server.", "PlaneShift", MB_OK + MB_ICONERROR );
-		}
-		else
-		{
-			printf("Unknown reason.");
-			::MessageBoxA( NULL, "Report upload failed: Unknown reason.", "PlaneShift", MB_OK + MB_ICONERROR );
-		}
+	    if (reportResult == RESULT_FAILED) {
+		    printf("Could not reach server.");
+		    ::MessageBoxA( NULL, "Report upload failed: Could not reach server.", "PlaneShift", MB_OK + MB_ICONERROR );
+	    }
+	    else
+	    {
+		    printf("Unknown reason.");
+		    ::MessageBoxA( NULL, "Report upload failed: Unknown reason.", "PlaneShift", MB_OK + MB_ICONERROR );
+	    }
 #endif
-		return false;
-	}
-	else // result is true but report code is empty.
-	{
-		printf("Report upload failed: Unknown reason.");
+	    return false;
+    }
+    else // result is true but report code is empty.
+    {
+	    printf("Report upload failed: Unknown reason.");
 #ifdef WIN32
-		::MessageBoxA( NULL, "Report upload failed: Unknown reason.", "PlaneShift", MB_OK + MB_ICONERROR );
+	    ::MessageBoxA( NULL, "Report upload failed: Unknown reason.", "PlaneShift", MB_OK + MB_ICONERROR );
 #endif
-		return false;
-	}
-	return false;
+	    return false;
+    }
+    return false;
 }
 
 
