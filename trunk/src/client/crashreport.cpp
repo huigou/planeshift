@@ -80,7 +80,7 @@ class BreakPadWrapper
 {
 public:
 	BreakPadWrapper() {
-		PS_CHAR* tempPath;
+		const PS_CHAR* tempPath;
 #ifdef WIN32
 		int pathLen = GetTempPathW(0, NULL);
 		tempPath = new PS_CHAR[pathLen];
@@ -150,7 +150,7 @@ public:
 		parameters["RendererVersion"].reserve(256);
 		parameters["CrashTime"] = "";
 		parameters["CrashTime"].reserve(32);
-		sprintf(paramBuffer, "%lu", start_time)
+		sprintf(paramBuffer, "%lu", start_time);
 		parameters["StartupTime"] = paramBuffer;
 		parameters["ProductName"] = "PlaneShift";
 		parameters["Version"] = "0.5.1";
@@ -161,8 +161,13 @@ public:
 	~BreakPadWrapper() {
 		delete crash_handler;
 		crash_handler = NULL;
+#ifdef WIN32
 		delete crash_sender;
 		crash_sender = NULL;
+#else
+		delete http_layer;
+		http_layer = NULL;
+#endif
 	}
 	
 #ifdef WIN32
@@ -185,7 +190,11 @@ private:
 };
 
 ExceptionHandler* BreakPadWrapper::crash_handler = NULL;
+#ifdef WIN32
 CrashReportSender* BreakPadWrapper::crash_sender = NULL;
+#else
+LibcurlWrapper* BreakPadWrapper::http_layer = NULL;
+#endif
 
 // At global scope to ensure we hook in as early as possible.
 BreakPadWrapper wrapper;
@@ -258,7 +267,7 @@ bool UploadDump(const PS_CHAR* dump_path,
 #elif defined(CS_PLATFORM_UNIX)
 	// Don't use GoogleCrashdumpUploader as it doesn't allow custom parameters.
 	if (wrapper.http_layer->AddFile(path_file, "upload_file_minidump")) {
-		result = wrapper.http_layer_->SendRequest(crash_post_url,
+		result = wrapper.http_layer->SendRequest(crash_post_url,
 										  wrapper.parameters,
 										  &wrapper.report_code);
 	}
