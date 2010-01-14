@@ -61,7 +61,7 @@ typedef std::string BpString;
 #define STR(s)		s
 #endif
 
-static const PS_CHAR* crash_post_url[] = STR("http://planeshift.ezpcusa.com/crash_reporting/submit");
+static const PS_CHAR crash_post_url[] = STR("http://planeshift.ezpcusa.com/crash_reporting/submit");
 #define DUMP_EXTENSION STR(".dmp")
 
 #define QUOTE_(X)   #X
