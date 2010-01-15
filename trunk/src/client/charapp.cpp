@@ -822,7 +822,7 @@ void psCharAppearance::ProcessAttach(csRef<iMeshWrapper> meshWrap, csRef<iSprite
 {
     if(!socket.IsValid())
         return;
-    CS_ASSERT(!socket.IsValid());
+    CS_ASSERT(socket.IsValid());
     
     meshWrap->GetFlags().Set(CS_ENTITY_NODECAL);
     const char* socketName = socket->GetName();
