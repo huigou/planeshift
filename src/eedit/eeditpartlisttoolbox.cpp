@@ -430,7 +430,7 @@ public:
 	csColor4 color;
 	float ttl;
 	lin->GetColor(index,color,ttl);
-	valueString.Format("%g (%g , %g , %g , %g)\n", ttl, color.red, color.green, color.blue, color.alpha);
+	valueString.Format("%g (%g , %g , %g , %g)", ttl, color.red, color.green, color.blue, color.alpha);
     	return valueString;
     }
 
@@ -513,7 +513,12 @@ protected:
     csRef<iParticleBuiltinEmitterBase> emitBase;
 public:
     PPPartPlacement (iParticleBuiltinEmitterBase* emitBase)
-	: ParticleParameterChoicesRow ("PartPlace"), emitBase(emitBase) { }
+	: ParticleParameterChoicesRow ("PartPlace"), emitBase(emitBase)
+    {
+	AddChoice("center");
+	AddChoice("volume");
+	AddChoice("surface");
+    }
     virtual csString GetCurrentChoice()
     {
 	csParticleBuiltinEmitterPlacement place = emitBase->GetParticlePlacement();
@@ -532,6 +537,115 @@ public:
 	if (str == "volume") p = CS_PARTICLE_BUILTIN_VOLUME;
 	if (str == "surface") p = CS_PARTICLE_BUILTIN_SURFACE;
 	emitBase->SetParticlePlacement (p);
+    }
+};
+
+class PPVFType : public ParticleParameterChoicesRow
+{
+protected:
+    csRef<iParticleBuiltinEffectorVelocityField> vfield;
+
+public:
+    PPVFType (iParticleBuiltinEffectorVelocityField* vfield)
+	: ParticleParameterChoicesRow ("VFType"), vfield(vfield)
+    {
+	AddChoice("spiral");
+	AddChoice("radialpoint");
+    }
+    virtual csString GetCurrentChoice()
+    {
+	csParticleBuiltinEffectorVFType place = vfield->GetType();
+	switch (place)
+	{
+	    case CS_PARTICLE_BUILTIN_SPIRAL: return "spiral";
+	    case CS_PARTICLE_BUILTIN_RADIALPOINT: return "radialpoint";
+	    default: return "?";
+	}
+    }
+    virtual void SetCurrentChoice(const csString& str)
+    {
+	csParticleBuiltinEffectorVFType p = CS_PARTICLE_BUILTIN_SPIRAL;
+	if (str == "spiral") p = CS_PARTICLE_BUILTIN_SPIRAL;
+	if (str == "radialpoint") p = CS_PARTICLE_BUILTIN_RADIALPOINT;
+	vfield->SetType(p);
+    }
+};
+
+class PPVFieldFPar : public ParticleParameterRow
+{
+private:
+    csRef<iParticleBuiltinEffectorVelocityField> vfield;
+    size_t index;
+
+public:
+    PPVFieldFPar(iParticleBuiltinEffectorVelocityField* vfield, size_t index)
+	: ParticleParameterRow("FPar "), vfield(vfield), index(index)
+    {
+	name += index;
+    }
+
+    virtual csString GetRowType() { return "F"; }
+    virtual csString GetRowDescription()
+    {
+    	csString valueString;
+	valueString.Format("%g", vfield->GetFParameter(index));
+    	return valueString;
+    }
+
+    virtual void UpdateParticleValue(EEditParticleListToolbox* tb)
+    {
+	float value = tb->valueNumSpinBox->GetValue();
+	vfield->SetFParameter(index, value);
+    }
+    virtual void FillParticleEditor(EEditParticleListToolbox* tb)
+    {
+	tb->valueNumSpinBox->SetRange(-100000, 1000000, .1);
+	tb->valueNumSpinBox->Show();
+	tb->valueNumSpinBox->SetValue (vfield->GetFParameter(index));
+    }
+};
+
+class PPVFieldVPar : public ParticleParameterRow
+{
+private:
+    csRef<iParticleBuiltinEffectorVelocityField> vfield;
+    size_t index;
+
+public:
+    PPVFieldVPar(iParticleBuiltinEffectorVelocityField* vfield, size_t index)
+	: ParticleParameterRow("VPar "), vfield(vfield), index(index)
+    {
+	name += index;
+    }
+
+    virtual csString GetRowType() { return "V3"; }
+    virtual csString GetRowDescription()
+    {
+    	csString valueString;
+	csVector3 v = vfield->GetVParameter(index);
+	valueString.Format("%g , %g , %g", v.x, v.y, v.z);
+    	return valueString;
+    }
+
+    virtual void UpdateParticleValue(EEditParticleListToolbox* tb)
+    {
+	float x = tb->valueNumSpinBox->GetValue();
+	float y = tb->value2NumSpinBox->GetValue();
+	float z = tb->value3NumSpinBox->GetValue();
+	vfield->SetVParameter(index, csVector3(x,y,z));
+    }
+    virtual void FillParticleEditor(EEditParticleListToolbox* tb)
+    {
+	csVector3 v = vfield->GetVParameter(index);
+	tb->valueNumSpinBox->SetRange(-100000, 1000000, .1);
+	tb->valueNumSpinBox->Show();
+	tb->valueNumSpinBox->SetValue (v.x);
+	tb->value2NumSpinBox->SetRange(-100000, 1000000, .1);
+	tb->value2NumSpinBox->Show();
+	tb->value2NumSpinBox->SetValue (v.y);
+	tb->value3NumSpinBox->SetRange(-100000, 1000000, .1);
+	tb->value3NumSpinBox->Show();
+	tb->value3NumSpinBox->SetValue (v.z);
     }
 };
 
@@ -615,6 +729,7 @@ public:
 	if (col)  mask |= CS_PARTICLE_MASK_COLOR;
 	if (size) mask |= CS_PARTICLE_MASK_PARTICLESIZE;
 	lin->SetMask(mask);
+	tb->RefreshParmList();
     }
     virtual void FillParticleEditor(EEditParticleListToolbox* tb)
     {
@@ -637,10 +752,253 @@ public:
     }
 };
 
+class ParticleParameterLinParRow : public ParticleParameterRow
+{
+protected:
+    csRef<iParticleBuiltinEffectorLinear> lin;
+    size_t index;
+
+public:
+    ParticleParameterLinParRow(const char* name, iParticleBuiltinEffectorLinear* lin, size_t index)
+	: ParticleParameterRow(name), lin(lin), index(index)
+    {
+	name += index;
+    }
+};
+
+class PPLinParMass : public ParticleParameterLinParRow
+{
+public:
+    PPLinParMass(iParticleBuiltinEffectorLinear* lin, size_t index)
+	: ParticleParameterLinParRow("Mass ", lin, index) { }
+
+    virtual csString GetRowType() { return "F"; }
+    virtual csString GetRowDescription()
+    {
+    	csString valueString;
+	csParticleParameterSet par;
+	float ttl;
+	lin->GetParameterSet(index, par, ttl);
+	valueString.Format("%g (%g)", ttl, par.mass);
+    	return valueString;
+    }
+
+    virtual void UpdateParticleValue(EEditParticleListToolbox* tb)
+    {
+	float value = tb->valueNumSpinBox->GetValue();
+	csParticleParameterSet par;
+	float ttl;
+	lin->GetParameterSet(index, par, ttl);
+	par.mass = value;
+	lin->SetParameterSet(index, par);
+    }
+    virtual void FillParticleEditor(EEditParticleListToolbox* tb)
+    {
+	tb->valueNumSpinBox->SetRange(0, 1000000, .1);
+	tb->valueNumSpinBox->Show();
+	float ttl;
+	csParticleParameterSet par;
+	lin->GetParameterSet(index, par, ttl);
+	tb->valueNumSpinBox->SetValue (par.mass);
+    }
+};
+
+class PPLinParLinVel : public ParticleParameterLinParRow
+{
+public:
+    PPLinParLinVel(iParticleBuiltinEffectorLinear* lin, size_t index)
+	: ParticleParameterLinParRow("LinVel ", lin, index) { }
+
+    virtual csString GetRowType() { return "V3"; }
+    virtual csString GetRowDescription()
+    {
+    	csString valueString;
+	csParticleParameterSet par;
+	float ttl;
+	lin->GetParameterSet(index, par, ttl);
+	valueString.Format("%g (%g , %g , %g)", ttl, par.linearVelocity.x, par.linearVelocity.y, par.linearVelocity.z);
+    	return valueString;
+    }
+
+    virtual void UpdateParticleValue(EEditParticleListToolbox* tb)
+    {
+	float x = tb->valueNumSpinBox->GetValue();
+	float y = tb->value2NumSpinBox->GetValue();
+	float z = tb->value3NumSpinBox->GetValue();
+	csParticleParameterSet par;
+	float ttl;
+	lin->GetParameterSet(index, par, ttl);
+	par.linearVelocity.Set(x,y,z);
+	lin->SetParameterSet(index, par);
+    }
+    virtual void FillParticleEditor(EEditParticleListToolbox* tb)
+    {
+	tb->valueNumSpinBox->SetRange(-100000, 1000000, .1);
+	tb->valueNumSpinBox->Show();
+	tb->value2NumSpinBox->SetRange(-100000, 1000000, .1);
+	tb->value2NumSpinBox->Show();
+	tb->value3NumSpinBox->SetRange(-100000, 1000000, .1);
+	tb->value3NumSpinBox->Show();
+	float ttl;
+	csParticleParameterSet par;
+	lin->GetParameterSet(index, par, ttl);
+	tb->valueNumSpinBox->SetValue (par.linearVelocity.x);
+	tb->value2NumSpinBox->SetValue (par.linearVelocity.y);
+	tb->value3NumSpinBox->SetValue (par.linearVelocity.z);
+    }
+};
+
+class PPLinParAngVel : public ParticleParameterLinParRow
+{
+public:
+    PPLinParAngVel(iParticleBuiltinEffectorLinear* lin, size_t index)
+	: ParticleParameterLinParRow("AngVel ", lin, index) { }
+
+    virtual csString GetRowType() { return "V3"; }
+    virtual csString GetRowDescription()
+    {
+    	csString valueString;
+	csParticleParameterSet par;
+	float ttl;
+	lin->GetParameterSet(index, par, ttl);
+	valueString.Format("%g (%g , %g , %g)", ttl, par.angularVelocity.x, par.angularVelocity.y, par.angularVelocity.z);
+    	return valueString;
+    }
+
+    virtual void UpdateParticleValue(EEditParticleListToolbox* tb)
+    {
+	float x = tb->valueNumSpinBox->GetValue();
+	float y = tb->value2NumSpinBox->GetValue();
+	float z = tb->value3NumSpinBox->GetValue();
+	csParticleParameterSet par;
+	float ttl;
+	lin->GetParameterSet(index, par, ttl);
+	par.angularVelocity.Set(x,y,z);
+	lin->SetParameterSet(index, par);
+    }
+    virtual void FillParticleEditor(EEditParticleListToolbox* tb)
+    {
+	tb->valueNumSpinBox->SetRange(-100000, 1000000, .1);
+	tb->valueNumSpinBox->Show();
+	tb->value2NumSpinBox->SetRange(-100000, 1000000, .1);
+	tb->value2NumSpinBox->Show();
+	tb->value3NumSpinBox->SetRange(-100000, 1000000, .1);
+	tb->value3NumSpinBox->Show();
+	float ttl;
+	csParticleParameterSet par;
+	lin->GetParameterSet(index, par, ttl);
+	tb->valueNumSpinBox->SetValue (par.angularVelocity.x);
+	tb->value2NumSpinBox->SetValue (par.angularVelocity.y);
+	tb->value3NumSpinBox->SetValue (par.angularVelocity.z);
+    }
+};
+
+class PPLinParColor : public ParticleParameterLinParRow
+{
+public:
+    PPLinParColor(iParticleBuiltinEffectorLinear* lin, size_t index)
+	: ParticleParameterLinParRow("Color ", lin, index) { }
+
+    virtual csString GetRowType() { return "CO"; }
+    virtual csString GetRowDescription()
+    {
+    	csString valueString;
+	csParticleParameterSet par;
+	float ttl;
+	lin->GetParameterSet(index, par, ttl);
+	valueString.Format("%g (%g , %g , %g , %g)", ttl, par.color.red, par.color.green, par.color.blue, par.color.alpha);
+    	return valueString;
+    }
+
+    virtual void UpdateParticleValue(EEditParticleListToolbox* tb)
+    {
+	//float value = tb->valueNumSpinBox->GetValue(); @@@ TTL not yet supported.
+	float r = tb->valueScroll1->GetCurrentValue();
+	float g = tb->valueScroll2->GetCurrentValue();
+	float b = tb->valueScroll3->GetCurrentValue();
+	float a = tb->valueScroll4->GetCurrentValue();
+	csParticleParameterSet par;
+	float ttl;
+	lin->GetParameterSet(index, par, ttl);
+	par.color.Set(r,g,b,a);
+	lin->SetParameterSet(index, par);
+    }
+    virtual void FillParticleEditor(EEditParticleListToolbox* tb)
+    {
+	tb->valueNumSpinBox->SetRange(0, 1, .1);
+	tb->valueScroll1->SetMinValue(0);
+	tb->valueScroll1->SetMaxValue(1);
+	tb->valueScroll2->SetMinValue(0);
+	tb->valueScroll2->SetMaxValue(1);
+	tb->valueScroll3->SetMinValue(0);
+	tb->valueScroll3->SetMaxValue(1);
+	tb->valueScroll4->SetMinValue(0);
+	tb->valueScroll4->SetMaxValue(1);
+
+	float ttl;
+	csParticleParameterSet par;
+	lin->GetParameterSet(index, par, ttl);
+	tb->valueNumSpinBox->SetValue (ttl);
+
+	tb->valueScroll1->SetCurrentValue(par.color.red);
+	tb->valueScroll2->SetCurrentValue(par.color.green);
+	tb->valueScroll3->SetCurrentValue(par.color.blue);
+	tb->valueScroll4->SetCurrentValue(par.color.alpha);
+
+	//@@@ TTL can't be edited right now: tb->valueNumSpinBox->Show();
+	tb->valueScroll1->Show();
+	tb->valueScroll2->Show();
+	tb->valueScroll3->Show();
+	tb->valueScroll4->Show();
+    }
+};
+
+class PPLinParPartSize : public ParticleParameterLinParRow
+{
+public:
+    PPLinParPartSize(iParticleBuiltinEffectorLinear* lin, size_t index)
+	: ParticleParameterLinParRow("Size ", lin, index) { }
+
+    virtual csString GetRowType() { return "V3"; }
+    virtual csString GetRowDescription()
+    {
+    	csString valueString;
+	csParticleParameterSet par;
+	float ttl;
+	lin->GetParameterSet(index, par, ttl);
+	valueString.Format("%g (%g , %g)", ttl, par.particleSize.x, par.particleSize.y);
+    	return valueString;
+    }
+
+    virtual void UpdateParticleValue(EEditParticleListToolbox* tb)
+    {
+	float x = tb->valueNumSpinBox->GetValue();
+	float y = tb->value2NumSpinBox->GetValue();
+	csParticleParameterSet par;
+	float ttl;
+	lin->GetParameterSet(index, par, ttl);
+	par.particleSize.Set(x,y);
+	lin->SetParameterSet(index, par);
+    }
+    virtual void FillParticleEditor(EEditParticleListToolbox* tb)
+    {
+	tb->valueNumSpinBox->SetRange(-100000, 1000000, .1);
+	tb->valueNumSpinBox->Show();
+	tb->value2NumSpinBox->SetRange(-100000, 1000000, .1);
+	tb->value2NumSpinBox->Show();
+	float ttl;
+	csParticleParameterSet par;
+	lin->GetParameterSet(index, par, ttl);
+	tb->valueNumSpinBox->SetValue (par.particleSize.x);
+	tb->value2NumSpinBox->SetValue (par.particleSize.y);
+    }
+};
+
 //---------------------------------------------------------------------------------------
 
 EEditParticleListToolbox::EEditParticleListToolbox() : scfImplementationType(this)
 {
+    updatingParticleValue = 0;
 }
 
 EEditParticleListToolbox::~EEditParticleListToolbox()
@@ -704,26 +1062,6 @@ static pawsListBoxRow* NewRow (size_t& a, pawsListBox* box, pawsTextBox** col1, 
     return row;
 }
 
-#if 0
-static pawsListBoxRow* NewParMaskRow (size_t& a, pawsListBox* box, const char* name, csParticleParameterMask mask)
-{
-    pawsTextBox* col1, * col2, * col3;
-    pawsListBoxRow* row = NewRow (a, box, &col1, &col2, &col3);
-    if (!row)
-	return 0;
-    col1->SetText (name);
-    col2->SetText ("MA");
-    csString valueString;
-    if (mask & CS_PARTICLE_MASK_MASS) valueString += "mass ";
-    if (mask & CS_PARTICLE_MASK_LINEARVELOCITY) valueString += "lin ";
-    if (mask & CS_PARTICLE_MASK_ANGULARVELOCITY) valueString += "ang ";
-    if (mask & CS_PARTICLE_MASK_COLOR) valueString += "col ";
-    if (mask & CS_PARTICLE_MASK_PARTICLESIZE) valueString += "size ";
-    col3->SetText (valueString);
-    return row;
-}
-#endif
-
 static pawsListBoxRow* NewParameterRow (size_t& a, pawsListBox* box, EEditParticleListToolbox* tb,
 	ParticleParameterRow* prow)
 {
@@ -763,6 +1101,15 @@ void EEditParticleListToolbox::ClearParmList ()
     parameterRows.DeleteAll ();
 }
 
+void EEditParticleListToolbox::RefreshParmList()
+{
+    size_t num = editList->GetSelectedRowNum();
+    if (num >= emitters.GetSize())
+	FillParmList (effectors[num-emitters.GetSize()]);
+    else
+	FillParmList (emitters[num]);
+}
+
 void EEditParticleListToolbox::FillParmList(iParticleEffector* eff)
 {
     ClearParmList();
@@ -787,6 +1134,31 @@ void EEditParticleListToolbox::FillParmList(iParticleEffector* eff)
     if (lin)
     {
 	if (!NewParameterRow (a, parmList, this, new PPLinMask(lin))) return;
+	int mask = lin->GetMask();
+	if (mask & CS_PARTICLE_MASK_MASS)
+	    for (size_t i = 0 ; i < lin->GetParameterSetCount() ; i++)
+	    	if (!NewParameterRow (a, parmList, this, new PPLinParMass(lin,i))) return;
+	if (mask & CS_PARTICLE_MASK_LINEARVELOCITY)
+	    for (size_t i = 0 ; i < lin->GetParameterSetCount() ; i++)
+	    	if (!NewParameterRow (a, parmList, this, new PPLinParLinVel(lin,i))) return;
+	if (mask & CS_PARTICLE_MASK_ANGULARVELOCITY)
+	    for (size_t i = 0 ; i < lin->GetParameterSetCount() ; i++)
+	    	if (!NewParameterRow (a, parmList, this, new PPLinParAngVel(lin,i))) return;
+	if (mask & CS_PARTICLE_MASK_COLOR)
+	    for (size_t i = 0 ; i < lin->GetParameterSetCount() ; i++)
+	    	if (!NewParameterRow (a, parmList, this, new PPLinParColor(lin,i))) return;
+	if (mask & CS_PARTICLE_MASK_PARTICLESIZE)
+	    for (size_t i = 0 ; i < lin->GetParameterSetCount() ; i++)
+	    	if (!NewParameterRow (a, parmList, this, new PPLinParPartSize(lin,i))) return;
+    }
+    csRef<iParticleBuiltinEffectorVelocityField> vfield = scfQueryInterface<iParticleBuiltinEffectorVelocityField> (eff);
+    if (vfield)
+    {
+	if (!NewParameterRow (a, parmList, this, new PPVFType(vfield))) return;
+	for (size_t i = 0 ; i < vfield->GetFParameterCount() ; i++)
+	    if (!NewParameterRow (a, parmList, this, new PPVFieldFPar(vfield,i))) return;
+	for (size_t i = 0 ; i < vfield->GetVParameterCount() ; i++)
+	    if (!NewParameterRow (a, parmList, this, new PPVFieldVPar(vfield,i))) return;
     }
 }
 
@@ -806,11 +1178,7 @@ void EEditParticleListToolbox::FillParmList(iParticleEmitter* emit)
     if (emitBase)
     {
 	if (!NewParameterRow (a, parmList, this, new PPEmitPos(emitBase))) return;
-	PPPartPlacement* place = new PPPartPlacement(emitBase);
-	place->AddChoice("center");
-	place->AddChoice("volume");
-	place->AddChoice("surface");
-	if (!NewParameterRow (a, parmList, this, place)) return;
+	if (!NewParameterRow (a, parmList, this, new PPPartPlacement(emitBase))) return;
 	if (!NewParameterRow (a, parmList, this, new PPUniformVelocity(emitBase))) return;
 	if (!NewParameterRow (a, parmList, this, new PPEmitLinVel(emitBase))) return;
 	if (!NewParameterRow (a, parmList, this, new PPEmitAngVel(emitBase))) return;
@@ -843,8 +1211,11 @@ void EEditParticleListToolbox::FillParmList(iParticleEmitter* emit)
 
 }
 
-void EEditParticleListToolbox::FillEditList(const csString& partName)
+void EEditParticleListToolbox::RefreshEditList()
 {
+    csString partName = editApp->GetCurrParticleSystemName();
+    if (partName.IsEmpty()) return;
+
     editList->Clear();
     editList->Select (0);
     ClearParmList();
@@ -993,14 +1364,12 @@ void EEditParticleListToolbox::FillList(iEngine* engine)
         csString partName = fact->QueryObject()->GetName();
         col->SetText(partName);
         if (editApp->GetCurrParticleSystemName() == partName)
-	{
             partList->Select(row);
-	    FillEditList(partName);
-	}
     }
     partList->SetSortingFunc(0, SortTextBox);
     partList->SetSortedColumn(0);
     partList->SortRows();
+    RefreshEditList();
 }
 
 void EEditParticleListToolbox::SaveParticleSystem (const csString& name)
@@ -1051,16 +1420,25 @@ bool EEditParticleListToolbox::PostSetup()
 
 void EEditParticleListToolbox::UpdateParticleValue()
 {
+    if (updatingParticleValue) return;
+    updatingParticleValue++;
     size_t num = parmList->GetSelectedRowNum();
     ParticleParameterRow* prow = parameterRows[num];
     prow->UpdateParticleValue(this);
+
+    // Select and fetch the prow again because UpdateParticleValue() may
+    // have forced a refresh of the parameter list.
     pawsListBoxRow * row = parmList->GetRow(num);
+    parmList->Select(row);
+    prow = parameterRows[num];
     pawsTextBox* colValue = (pawsTextBox *)row->GetColumn(2);
     colValue->SetText(prow->GetRowDescription());
+    updatingParticleValue--;
 }
 
 bool EEditParticleListToolbox::OnButtonReleased(int mouseButton, int keyModifier, pawsWidget* widget)
 {
+    if (updatingParticleValue) return false;
     if (widget == valueBool->GetButton()
 	    || widget == valueBool2->GetButton()
 	    || widget == valueBool3->GetButton()
@@ -1080,7 +1458,7 @@ bool EEditParticleListToolbox::OnButtonPressed(int mouseButton, int keyModifier,
     {
         csString name = partList->GetTextCellValue(partList->GetSelectedRowNum(), 0);
         editApp->CreateParticleSystem (name);
-	FillEditList (name);
+	RefreshEditList();
         return true;
     }
     else if (widget == refreshButton)
@@ -1123,11 +1501,7 @@ void EEditParticleListToolbox::OnListAction(pawsListBox* selected, int status)
 {
     if (selected == editList)
     {
-        size_t num = editList->GetSelectedRowNum();
-	if (num >= emitters.GetSize())
-	    FillParmList (effectors[num-emitters.GetSize()]);
-	else
-	    FillParmList (emitters[num]);
+	RefreshParmList();
     }
     else if (selected == valueChoices->GetChoiceList())
     {

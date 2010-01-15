@@ -59,9 +59,10 @@ public:
     /** Fills the particles list with the names of all particle systems in the engine.
      */
     void FillList(iEngine* engine);
-    void FillEditList(const csString& partName);
+    void RefreshEditList();
     void FillParmList(iParticleEmitter* emit);
     void FillParmList(iParticleEffector* eff);
+    void RefreshParmList();
 
     // inheritted from EEditToolbox
     virtual void Update(unsigned int elapsed);
@@ -88,6 +89,8 @@ private:
     csArray<iParticleEmitter*> emitters;
     csArray<iParticleEffector*> effectors;
     csRef<iEngine> engine;
+
+    int updatingParticleValue;
 
 public:
     csPDelArray<ParticleParameterRow> parameterRows;
