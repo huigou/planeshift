@@ -302,6 +302,116 @@ public:
     }
 };
 
+class ParticleParameterBoxVector3Row : public ParticleParameterVector3Row
+{
+protected:
+    csRef<iParticleBuiltinEmitterBox> box;
+public:
+    ParticleParameterBoxVector3Row (const char* name, iParticleBuiltinEmitterBox* box)
+	: ParticleParameterVector3Row (name, -100000, 100000, .1), box(box) { }
+};
+
+class PPBoxDir1 : public ParticleParameterBoxVector3Row
+{
+public:
+    PPBoxDir1 (iParticleBuiltinEmitterBox* box)
+	: ParticleParameterBoxVector3Row ("Dir1", box) { }
+    virtual csVector3 GetVector()
+    {
+	const csOBB& obb = box->GetBox();
+	return obb.GetMatrix().Row1();
+    }
+    virtual void SetVector(const csVector3& v)
+    {
+	const csOBB& obb = box->GetBox();
+	csOBB newObb (obb);
+	newObb.GetMatrix().m11 = v.x;
+	newObb.GetMatrix().m12 = v.y;
+	newObb.GetMatrix().m13 = v.z;
+	box->SetBox (newObb);
+    }
+};
+
+class PPBoxDir2 : public ParticleParameterBoxVector3Row
+{
+public:
+    PPBoxDir2 (iParticleBuiltinEmitterBox* box)
+	: ParticleParameterBoxVector3Row ("Dir2", box) { }
+    virtual csVector3 GetVector()
+    {
+	const csOBB& obb = box->GetBox();
+	return obb.GetMatrix().Row2();
+    }
+    virtual void SetVector(const csVector3& v)
+    {
+	const csOBB& obb = box->GetBox();
+	csOBB newObb (obb);
+	newObb.GetMatrix().m21 = v.x;
+	newObb.GetMatrix().m22 = v.y;
+	newObb.GetMatrix().m23 = v.z;
+	box->SetBox (newObb);
+    }
+};
+
+class PPBoxDir3 : public ParticleParameterBoxVector3Row
+{
+public:
+    PPBoxDir3 (iParticleBuiltinEmitterBox* box)
+	: ParticleParameterBoxVector3Row ("Dir3", box) { }
+    virtual csVector3 GetVector()
+    {
+	const csOBB& obb = box->GetBox();
+	return obb.GetMatrix().Row3();
+    }
+    virtual void SetVector(const csVector3& v)
+    {
+	const csOBB& obb = box->GetBox();
+	csOBB newObb (obb);
+	newObb.GetMatrix().m31 = v.x;
+	newObb.GetMatrix().m32 = v.y;
+	newObb.GetMatrix().m33 = v.z;
+	box->SetBox (newObb);
+    }
+};
+
+class PPBoxTopLeft : public ParticleParameterBoxVector3Row
+{
+public:
+    PPBoxTopLeft (iParticleBuiltinEmitterBox* box)
+	: ParticleParameterBoxVector3Row ("TopLeft", box) { }
+    virtual csVector3 GetVector()
+    {
+	const csOBB& obb = box->GetBox();
+	return obb.Min();
+    }
+    virtual void SetVector(const csVector3& v)
+    {
+	const csOBB& obb = box->GetBox();
+	csOBB newObb (obb);
+	newObb.Set (v, obb.Max());
+	box->SetBox (newObb);
+    }
+};
+
+class PPBoxBotRight : public ParticleParameterBoxVector3Row
+{
+public:
+    PPBoxBotRight (iParticleBuiltinEmitterBox* box)
+	: ParticleParameterBoxVector3Row ("BotRight", box) { }
+    virtual csVector3 GetVector()
+    {
+	const csOBB& obb = box->GetBox();
+	return obb.Max();
+    }
+    virtual void SetVector(const csVector3& v)
+    {
+	const csOBB& obb = box->GetBox();
+	csOBB newObb (obb);
+	newObb.Set (obb.Min(), v);
+	box->SetBox (newObb);
+    }
+};
+
 class PPAcceleration : public ParticleParameterVector3Row
 {
 protected:
@@ -1200,6 +1310,11 @@ void EEditParticleListToolbox::FillParmList(iParticleEmitter* emit)
     csRef<iParticleBuiltinEmitterBox> box = scfQueryInterface<iParticleBuiltinEmitterBox> (emit);
     if (box)
     {
+	if (!NewParameterRow (a, parmList, this, new PPBoxDir1(box))) return;
+	if (!NewParameterRow (a, parmList, this, new PPBoxDir2(box))) return;
+	if (!NewParameterRow (a, parmList, this, new PPBoxDir3(box))) return;
+	if (!NewParameterRow (a, parmList, this, new PPBoxTopLeft(box))) return;
+	if (!NewParameterRow (a, parmList, this, new PPBoxBotRight(box))) return;
     }
 
     csRef<iParticleBuiltinEmitterCylinder> cylinder = scfQueryInterface<iParticleBuiltinEmitterCylinder> (emit);
