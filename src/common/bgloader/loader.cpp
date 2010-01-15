@@ -401,7 +401,8 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                                 csString msg;
                                 msg.Format("Invalid texture reference '%s' in shadervar in material '%s'.",
                                   node->GetContentsValue(), m->name.GetData());
-                                //CS_ASSERT_MSG(msg.GetData(), texture.IsValid());
+				if(!texture.IsValid())
+				  printf("Bgloader error: %s\n", msg.GetData());
                             }
                             m->textures.Push(texture);
                             m->checked.Push(false);
@@ -491,7 +492,8 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                         // Validation.
                         csString msg;
                         msg.Format("Invalid material reference '%s' in meshfact '%s'", node->GetNode("params")->GetNode("material")->GetContentsValue(), node->GetAttributeValue("name"));
-                        CS_ASSERT_MSG(msg.GetData(), material.IsValid());
+			if(!material.IsValid())
+                          printf("Bgloader error: %s\n", msg.GetData());
                     }
 
                     mf->materials.Push(material);
@@ -512,7 +514,8 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                             // Validation.
                             csString msg;
                             msg.Format("Invalid material reference '%s' in meshfact '%s'", node2->GetNode("material")->GetContentsValue(), node->GetAttributeValue("name"));
-                            CS_ASSERT_MSG(msg.GetData(), material.IsValid());
+			    if(!material.IsValid())
+                              printf("Bgloader error: %s\n", msg.GetData());
                         }
 
                         mf->materials.Push(material);
@@ -709,7 +712,8 @@ THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive
                                 // Validation.
                                 csString msg;
                                 msg.Format("Invalid material reference '%s' in meshobj '%s' submesh in sector '%s'", node3->GetNode("material")->GetContentsValue(), m->name.GetData(), s->name.GetData());
-                                CS_ASSERT_MSG(msg.GetData(), material.IsValid());
+				if(!material.IsValid())
+                                  printf("Bgloader error: %s\n", msg.GetData());
                             }
 
                             m->materials.Push(material);
