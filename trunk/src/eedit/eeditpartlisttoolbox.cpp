@@ -49,7 +49,6 @@ public:
     virtual ~ParticleParameterRow() { }
 
     virtual csString GetRowName() { return name; }
-    virtual csString GetRowType() = 0;
     virtual csString GetRowDescription() = 0;
 
     virtual void UpdateParticleValue(EEditParticleListToolbox* tb) = 0;
@@ -68,7 +67,6 @@ public:
     virtual float GetValue() = 0;
     virtual void SetValue(float v) = 0;
 
-    virtual csString GetRowType() { return "F"; }
     virtual csString GetRowDescription()
     {
     	csString valueString;
@@ -169,7 +167,6 @@ public:
     virtual float GetMaxValue() = 0;
     virtual void SetMaxValue(float v) = 0;
 
-    virtual csString GetRowType() { return "MM"; }
     virtual csString GetRowDescription()
     {
     	csString valueString;
@@ -271,7 +268,6 @@ public:
     virtual csVector3 GetVector() = 0;
     virtual void SetVector(const csVector3& v) = 0;
 
-    virtual csString GetRowType() { return "V3"; }
     virtual csString GetRowDescription()
     {
     	csString valueString;
@@ -520,6 +516,33 @@ public:
     virtual void SetVector(const csVector3& v) { cylinder->SetExtent(v); }
 };
 
+#if 0
+class PPLinColCount : public ParticleParameterRow
+{
+private:
+    csRef<iParticleBuiltinEffectorLinColor> lin;
+
+public:
+    PPLinColCount(iParticleBuiltinEffectorLinColor* lin)
+	: ParticleParameterRow("LinCol: #"), lin(lin) { }
+
+    virtual csString GetRowDescription()
+    {
+    	csString valueString;
+	valueString.Format("0");
+    	return valueString;
+    }
+
+    virtual void UpdateParticleValue(EEditParticleListToolbox* tb)
+    {
+	//float value = tb->valueNumSpinBox->GetValue(); @@@ TTL not yet supported.
+    }
+    virtual void FillParticleEditor(EEditParticleListToolbox* tb)
+    {
+    }
+};
+#endif
+
 class PPLinCol : public ParticleParameterRow
 {
 private:
@@ -533,7 +556,6 @@ public:
 	name += index;
     }
 
-    virtual csString GetRowType() { return "LC"; }
     virtual csString GetRowDescription()
     {
     	csString valueString;
@@ -596,7 +618,6 @@ public:
     virtual csString GetCurrentChoice() = 0;
     virtual void SetCurrentChoice(const csString& str) = 0;
 
-    virtual csString GetRowType() { return "*"; }
     virtual csString GetRowDescription()
     {
     	return GetCurrentChoice();
@@ -694,7 +715,6 @@ public:
 	name += index;
     }
 
-    virtual csString GetRowType() { return "F"; }
     virtual csString GetRowDescription()
     {
     	csString valueString;
@@ -728,7 +748,6 @@ public:
 	name += index;
     }
 
-    virtual csString GetRowType() { return "V3"; }
     virtual csString GetRowDescription()
     {
     	csString valueString;
@@ -770,7 +789,6 @@ public:
     virtual bool GetValue() = 0;
     virtual void SetValue(bool v) = 0;
 
-    virtual csString GetRowType() { return "B"; }
     virtual csString GetRowDescription()
     {
 	if (GetValue())
@@ -813,7 +831,6 @@ public:
     {
     }
 
-    virtual csString GetRowType() { return "MA"; }
     virtual csString GetRowDescription()
     {
     	csString valueString;
@@ -882,7 +899,6 @@ public:
     PPLinParMass(iParticleBuiltinEffectorLinear* lin, size_t index)
 	: ParticleParameterLinParRow("Mass ", lin, index) { }
 
-    virtual csString GetRowType() { return "F"; }
     virtual csString GetRowDescription()
     {
     	csString valueString;
@@ -919,7 +935,6 @@ public:
     PPLinParLinVel(iParticleBuiltinEffectorLinear* lin, size_t index)
 	: ParticleParameterLinParRow("LinVel ", lin, index) { }
 
-    virtual csString GetRowType() { return "V3"; }
     virtual csString GetRowDescription()
     {
     	csString valueString;
@@ -964,7 +979,6 @@ public:
     PPLinParAngVel(iParticleBuiltinEffectorLinear* lin, size_t index)
 	: ParticleParameterLinParRow("AngVel ", lin, index) { }
 
-    virtual csString GetRowType() { return "V3"; }
     virtual csString GetRowDescription()
     {
     	csString valueString;
@@ -1009,7 +1023,6 @@ public:
     PPLinParColor(iParticleBuiltinEffectorLinear* lin, size_t index)
 	: ParticleParameterLinParRow("Color ", lin, index) { }
 
-    virtual csString GetRowType() { return "CO"; }
     virtual csString GetRowDescription()
     {
     	csString valueString;
@@ -1069,7 +1082,6 @@ public:
     PPLinParPartSize(iParticleBuiltinEffectorLinear* lin, size_t index)
 	: ParticleParameterLinParRow("Size ", lin, index) { }
 
-    virtual csString GetRowType() { return "V3"; }
     virtual csString GetRowDescription()
     {
     	csString valueString;
@@ -1175,13 +1187,12 @@ static pawsListBoxRow* NewRow (size_t& a, pawsListBox* box, pawsTextBox** col1, 
 static pawsListBoxRow* NewParameterRow (size_t& a, pawsListBox* box, EEditParticleListToolbox* tb,
 	ParticleParameterRow* prow)
 {
-    pawsTextBox* col1, * col2, * col3;
-    pawsListBoxRow* row = NewRow (a, box, &col1, &col2, &col3);
+    pawsTextBox* col1, * col2;
+    pawsListBoxRow* row = NewRow (a, box, &col1, &col2);
     if (!row)
 	return 0;
     col1->SetText (prow->GetRowName());
-    col2->SetText (prow->GetRowType());
-    col3->SetText (prow->GetRowDescription());
+    col2->SetText (prow->GetRowDescription());
     tb->parameterRows.Push(prow);
     return row;
 }
@@ -1546,7 +1557,7 @@ void EEditParticleListToolbox::UpdateParticleValue()
     pawsListBoxRow * row = parmList->GetRow(num);
     parmList->Select(row);
     prow = parameterRows[num];
-    pawsTextBox* colValue = (pawsTextBox *)row->GetColumn(2);
+    pawsTextBox* colValue = (pawsTextBox *)row->GetColumn(1);
     colValue->SetText(prow->GetRowDescription());
     updatingParticleValue--;
 }

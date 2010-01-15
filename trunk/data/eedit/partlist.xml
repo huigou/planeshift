@@ -48,11 +48,7 @@
                 <widget name="Name" factory="pawsTextBox">
                 </widget>
             </column>                                               
-            <column width="25">            
-                <widget name="Type" factory="pawsTextBox">
-                </widget>
-            </column>                                               
-            <column width="75">            
+            <column width="110">            
                 <widget name="Value" factory="pawsTextBox">
                 </widget>
             </column>                                               
