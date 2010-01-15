@@ -771,9 +771,9 @@ bool psCharAppearance::Attach(const char* socketName, const char* meshFactName)
 {
     if (!socketName || !meshFactName || !state.IsValid())
     {
-        CS_ASSERT(state.IsValid());
         return false;
     }
+    CS_ASSERT(state.IsValid());
 
     csRef<iSpriteCal3DSocket> socket = state->FindSocket( socketName );
     if ( !socket )
@@ -820,9 +820,9 @@ void psCharAppearance::ProcessAttach(csRef<iMeshFactoryWrapper> factory, const c
 
 void psCharAppearance::ProcessAttach(csRef<iMeshWrapper> meshWrap, csRef<iSpriteCal3DSocket> socket)
 {
-    CS_ASSERT(!socket.IsValid());
     if(!socket.IsValid())
         return;
+    CS_ASSERT(!socket.IsValid());
     
     meshWrap->GetFlags().Set(CS_ENTITY_NODECAL);
     const char* socketName = socket->GetName();
@@ -1091,9 +1091,9 @@ bool psCharAppearance::Detach(const char* socketName, bool removeItem )
 {
     if (!socketName || !state.IsValid())
     {
-        CS_ASSERT(state.IsValid());
         return false;
     }
+    CS_ASSERT(state.IsValid());
 
 
     csRef<iSpriteCal3DSocket> socket = state->FindSocket( socketName );
