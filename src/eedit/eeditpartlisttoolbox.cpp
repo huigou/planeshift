@@ -590,10 +590,10 @@ public:
 	tb->valueScroll4->SetMinValue(0);
 	tb->valueScroll4->SetMaxValue(1);
 	tb->valueNumSpinBox->SetValue (ttl);
-	tb->valueScroll1->SetCurrentValue(color.red);
-	tb->valueScroll2->SetCurrentValue(color.green);
-	tb->valueScroll3->SetCurrentValue(color.blue);
-	tb->valueScroll4->SetCurrentValue(color.alpha);
+	tb->valueScroll1->SetCurrentValue(color.red, false, false);
+	tb->valueScroll2->SetCurrentValue(color.green, false, false);
+	tb->valueScroll3->SetCurrentValue(color.blue, false, false);
+	tb->valueScroll4->SetCurrentValue(color.alpha, false, false);
 
 	//@@@ TTL can't be edited right now: tb->valueNumSpinBox->Show();
 	tb->valueScroll1->Show();
@@ -1063,10 +1063,10 @@ public:
 	lin->GetParameterSet(index, par, ttl);
 	tb->valueNumSpinBox->SetValue (ttl);
 
-	tb->valueScroll1->SetCurrentValue(par.color.red);
-	tb->valueScroll2->SetCurrentValue(par.color.green);
-	tb->valueScroll3->SetCurrentValue(par.color.blue);
-	tb->valueScroll4->SetCurrentValue(par.color.alpha);
+	tb->valueScroll1->SetCurrentValue(par.color.red, false, false);
+	tb->valueScroll2->SetCurrentValue(par.color.green, false, false);
+	tb->valueScroll3->SetCurrentValue(par.color.blue, false, false);
+	tb->valueScroll4->SetCurrentValue(par.color.alpha, false, false);
 
 	//@@@ TTL can't be edited right now: tb->valueNumSpinBox->Show();
 	tb->valueScroll1->Show();
@@ -1224,11 +1224,13 @@ void EEditParticleListToolbox::ClearParmList ()
 
 void EEditParticleListToolbox::RefreshParmList()
 {
+    updatingParticleValue++;
     size_t num = editList->GetSelectedRowNum();
     if (num >= emitters.GetSize())
 	FillParmList (effectors[num-emitters.GetSize()]);
     else
 	FillParmList (emitters[num]);
+    updatingParticleValue--;
 }
 
 void EEditParticleListToolbox::FillParmList(iParticleEffector* eff)
@@ -1604,7 +1606,6 @@ bool EEditParticleListToolbox::OnButtonPressed(int mouseButton, int keyModifier,
 
 bool EEditParticleListToolbox::OnChange(pawsWidget* widget)
 {
-    printf ("OnChange\n"); fflush (stdout);
     if (widget == valueNumSpinBox || widget == value2NumSpinBox || widget == value3NumSpinBox)
     {
 	UpdateParticleValue();
@@ -1639,7 +1640,9 @@ void EEditParticleListToolbox::OnListAction(pawsListBox* selected, int status)
 
         size_t num = parmList->GetSelectedRowNum();
 	ParticleParameterRow* prow = parameterRows[num];
+	updatingParticleValue++;
 	prow->FillParticleEditor(this);
+	updatingParticleValue--;
     }
 }
 
