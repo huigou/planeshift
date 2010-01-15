@@ -820,6 +820,10 @@ void psCharAppearance::ProcessAttach(csRef<iMeshFactoryWrapper> factory, const c
 
 void psCharAppearance::ProcessAttach(csRef<iMeshWrapper> meshWrap, csRef<iSpriteCal3DSocket> socket)
 {
+    CS_ASSERT(!socket.IsValid());
+    if(!socket.IsValid())
+        return;
+    
     meshWrap->GetFlags().Set(CS_ENTITY_NODECAL);
     const char* socketName = socket->GetName();
 
