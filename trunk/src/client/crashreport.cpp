@@ -157,7 +157,7 @@ public:
 #endif
 		parameters[STR("StartupTime")] = timeBuffer;
 		parameters[STR("ProductName")] = STR("PlaneShift");
-		parameters[STR("Version")] = STR("0.5.1");
+		parameters[STR("Version")] = STR("0.5.1.1");
 		report_code.reserve(512);
 
 	}

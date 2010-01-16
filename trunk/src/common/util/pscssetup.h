@@ -24,7 +24,7 @@
 #define CSSETUP_HEADER
 
 #ifndef APPNAME
-#define APPNAME "PlaneShift Arcane Chrysalis (0.5.1)"
+#define APPNAME "PlaneShift Arcane Chrysalis (0.5.1.1)"
 #endif
 
 #ifdef CS_COMPILER_GCC
