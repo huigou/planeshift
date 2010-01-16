@@ -27,6 +27,7 @@
 
 #ifdef USE_BREAKPAD
 #ifdef WIN32
+#include "resource.h"
 #include "client/windows/handler/exception_handler.h"
 #include "client/windows/sender/crash_report_sender.h"
 #elif !defined(CS_PLATFORM_MACOSX) && defined(CS_PLATFORM_UNIX) // Mac uses a separate lib
@@ -95,6 +96,8 @@ bool UploadDump(const PS_CHAR* dump_path,
                      bool succeeded);
 #endif
 
+char szComments[1500];
+
 // Initialise the crash dumper.
 class BreakPadWrapper
 {
@@ -104,6 +107,7 @@ public:
 		int pathLen = GetTempPathW(0, NULL);
 		CS_ALLOC_STACK_ARRAY(PS_CHAR, tempPath, pathLen);
 		GetTempPathW(pathLen, tempPath);
+		szComments[0] = '\0';
 #else
 		static const PS_CHAR tempPath[] = "/tmp/";
 #endif
@@ -143,7 +147,9 @@ public:
 		parameters[STR("RendererVersion")].reserve(256);
 		parameters[STR("CrashTime")] = STR("");
 		parameters[STR("CrashTime")].reserve(32);
-		PS_CHAR timeBuffer[512];
+		parameters[STR("Comments")] = STR("");
+		parameters[STR("Comments")].reserve(1500);
+		PS_CHAR timeBuffer[128];
 #ifdef WIN32
 		swprintf(timeBuffer, L"%I64u", start_time);
 #else
@@ -190,6 +196,28 @@ LibcurlWrapper* BreakPadWrapper::http_layer = NULL;
 // At global scope to ensure we hook in as early as possible.
 BreakPadWrapper wrapper;
 
+#ifdef WIN32
+BOOL CALLBACK CrashReportProc(HWND hwndDlg, 
+                             UINT message, 
+                             WPARAM wParam, 
+                             LPARAM lParam) 
+{ 
+    switch (message) 
+    { 
+        case WM_COMMAND: 
+            switch (LOWORD(wParam)) 
+            { 
+                case IDOK: 
+                    GetDlgItemTextA(hwndDlg, IDC_COMMENTS, szComments, 1500); 
+ 
+                    EndDialog(hwndDlg, wParam); 
+                    return TRUE; 
+            } 
+    } 
+    return FALSE; 
+} 
+#endif
+
 // This function should not modify the heap!
 #ifdef WIN32
 bool UploadDump(const PS_CHAR* dump_path,
@@ -207,6 +235,7 @@ bool UploadDump(const PS_CHAR* dump_path,
 {
     time_t crash_time = time(NULL);
     PS_CHAR path_file[PS_PATH_MAX + 1];
+	path_file[0] = '\0';
     PS_CHAR* p_path_end = path_file + PS_PATH_MAX;
     PS_CHAR* p_path = path_file;
     
@@ -219,16 +248,22 @@ bool UploadDump(const PS_CHAR* dump_path,
     PS_STRNCAT(path_file, DUMP_EXTENSION, p_path_end - p_path);
 
 #ifdef WIN32
-    char crashMsg[512];
-    sprintf(crashMsg, "A report containing only information strictly necessary to identify this problem will be sent to the PlaneShift developers.\nFor concerns about privacy, please see http://watson.microsoft.com/dw/1033/dcp.asp. Please consult the PlaneShift forums for more details.");
-    ::MessageBoxA( NULL, crashMsg, "PlaneShift has quit unexpectedly!", MB_OK + MB_ICONERROR );
+
+	INT_PTR dialogResult = DialogBox(GetModuleHandle(0), 
+              MAKEINTRESOURCE(IDD_CRASH), 
+			  psEngine::hwnd, 
+              (DLGPROC)CrashReportProc);
+	if(dialogResult == 0 || dialogResult == -1)
+		::MessageBoxA( NULL, "A report containing only information strictly necessary to identify this problem will be sent to the PlaneShift developers.\nFor concerns about privacy, please see http://watson.microsoft.com/dw/1033/dcp.asp. Please consult the PlaneShift forums for more details.", "PlaneShift has quit unexpectedly!", MB_OK + MB_ICONERROR );
 #endif
 
 
     SetParameter (wrapper.parameters[STR("Renderer")], psEngine::hwRenderer);
     SetParameter (wrapper.parameters[STR("RendererVersion")], psEngine::hwVersion);
     SetParameter (wrapper.parameters[STR("PlayerName")], psEngine::playerName);
-    PS_CHAR timeBuffer[512];
+	SetParameter (wrapper.parameters[STR("Comments")], szComments);
+	printf("User Comments: %s\n",szComments);
+    PS_CHAR timeBuffer[128];
 #ifdef WIN32
     swprintf(timeBuffer, L"%I64u", crash_time);
 #else

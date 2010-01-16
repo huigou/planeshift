@@ -349,6 +349,9 @@ public:
     static csString hwRenderer;
     static csString hwVersion;
     static csString playerName;
+#ifdef WIN32
+	static HWND hwnd;
+#endif
 
 private:
     /// Load the log report settings from the config file.
