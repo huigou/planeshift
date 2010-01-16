@@ -658,9 +658,8 @@ const csString & psEffect::GetName() const
 
 psEffectObjTextable * psEffect::GetMainTextObj() const
 {
-    // AAR_TODO: fix this bullshit
-    if (mainTextObj == (size_t)(-1))
-	    return 0;
+    if (effectObjs.GetSize() <= mainTextObj)
+        return 0;
 
     return dynamic_cast<psEffectObjTextable *>(effectObjs[mainTextObj]);
 }
