@@ -53,6 +53,15 @@
 #include "util/consoleout.h"
 #include "pscssetup.h"
 
+#ifndef PATH_DELIMITER
+#ifdef CS_PLATFORM_WIN32
+#define PATH_DELIMITER      ";"
+#endif
+#ifdef CS_PLATFORM_UNIX
+#define PATH_DELIMITER      ":"
+#endif
+#endif
+
 iObjectRegistry* psCSSetup::object_reg = NULL;
 
 psCSSetup::psCSSetup(int _argc, char** _argv, 
@@ -122,42 +131,6 @@ iObjectRegistry* psCSSetup::InitCS(iReporterListener * customReporter)
 { 
     if (!object_reg)
         PS_PAUSEEXIT(1);
-
-    //Adding path for CEL plugins
-    char * celpath = getenv("CEL");
-    if (celpath)
-    {
-        char newpath[1024];
-        strncpy(newpath, celpath, 1000);
-        strcat(newpath, "/");
-    iSCF::SCF->ScanPluginsPath(newpath);
-//        strcat(newpath, "lib/");
-//        csAddLibraryPath(newpath);
-    }
-    else
-    {
-    celpath = getenv("PATH");
-    if (celpath)
-    {
-        char newpath[1024];
-        strcpy(newpath,celpath); //non-read only copy
-        char *tok = strtok(newpath,";");
-        while (tok)
-        {
-        if (strstr(tok,"cel"))
-        {
-            char path[1024];
-            strcpy(path,tok);
-            strcat(path,"/");
-            iSCF::SCF->ScanPluginsPath(path);
-        }
-        tok = strtok(NULL,";");
-        }
-    }
-//        csReport(object_reg, CS_REPORTER_SEVERITY_WARNING, 
-//               "psclient", "no CEL environment variable set!");
-//        return 0;
-    }
 
     if ( !csInitializer::SetupConfigManager(object_reg, engineConfigfile))
     {
