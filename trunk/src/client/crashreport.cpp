@@ -301,10 +301,7 @@ bool UploadDump(const PS_CHAR* dump_path,
     {
 	    printf("Upload successful.");
 #ifdef WIN32
-	    if(!wrapper.report_code.empty())
-		    ::MessageBoxW( NULL, wrapper.report_code.c_str(), L"Report upload response", MB_OK );
-	    if(succeeded)
-		    ::MessageBoxA( NULL, "Report uploaded successfully. Thanks for your help.", "PlaneShift", MB_OK );
+	    ::MessageBoxW( NULL, wrapper.report_code.c_str(), L"Report upload successful. Thanks.", MB_OK );
 #endif
 	    return succeeded;
     }
