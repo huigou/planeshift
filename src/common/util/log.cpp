@@ -165,7 +165,8 @@ void LogMessage (const char* file, int line, const char* function,
         //        csReportV (logger, severity, msgid, msg, arg);
         //        va_end(arg);
         CPrintf(con,msgid.GetDataSafe());
-        CPrintf(con,description.GetDataSafe());
+	// For safety, print to %s:
+        CPrintf(con,"%s",description.GetDataSafe());
 
         /* ERR and BUG will be loged to errorLog by the CPrintf
         // Log errors to a file so they can be emailed to devs daily.
