@@ -195,7 +195,12 @@ csBox3 RainWeatherObject::CreateDefaultBBox()
 void RainWeatherObject::Destroy()
 {
     WeatherObject::Destroy();
-    psengine->GetModeHandler()->RemoveDownfallObject(this);
+
+    ModeHandler* mh = psengine->GetModeHandler();
+    if(mh)
+    {
+        mh->RemoveDownfallObject(this);
+    }
 }
 
 
@@ -360,7 +365,12 @@ csBox3 SnowWeatherObject::CreateDefaultBBox()
 void SnowWeatherObject::Destroy()
 {
     WeatherObject::Destroy();
-    psengine->GetModeHandler()->RemoveDownfallObject(this);
+    
+    ModeHandler* mh = psengine->GetModeHandler();
+    if(mh)
+    {
+        mh->RemoveDownfallObject(this);
+    }
 }
 
 void SnowWeatherObject::MoveTo(WeatherInfo* wi,iSector* sect)
