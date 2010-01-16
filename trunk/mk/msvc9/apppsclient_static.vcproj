@@ -1992,6 +1992,9 @@
 				RelativePath="..\..\src\client\questionclient.h">
 			</File>
 			<File
+				RelativePath="..\..\src\client\resource.h">
+			</File>
+			<File
 				RelativePath="..\..\src\client\shadowmanager.h">
 			</File>
 			<File

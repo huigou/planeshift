@@ -2,7 +2,7 @@
 <!-- This file is generated automatically. -->
 <assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
 <assemblyIdentity
-    version="0.5.1.0"
+    version="0.5.1.1"
     processorArchitecture="X86"
     name="PlaneShift.worldeditor"
     type="win32"
