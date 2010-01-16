@@ -7,6 +7,7 @@ Application psclient : [ Wildcard *.cpp *.h ] ;
 ExternalLibs psclient : CRYSTAL CAL3D BREAKPAD ;
 CompileGroups psclient : client ;
 LinkWith psclient : breakpad gui psnet psengine psrpgrules pssound psutil paws effects fparser ;
+Win32Resource psclient : [ crashdialog.rc ] ;
 
 if $(HAVE_STATIC_PLUGINS) = "yes"
 {
@@ -18,6 +19,7 @@ CFlags psclient_static : [ FDefines CS_STATIC_LINKED ] $(CAL3D.CFLAGS) ;
 LFlags psclient_static : -lcrystalspace_staticplugins-$(CRYSTAL.VERSION) -lcal3d ;
 MsvcDefine psclient_static : CS_STATIC_LINKED ;
 LinkWith psclient_static : planeshift_staticplugins breakpad gui psnet psengine psrpgrules pssound psutil paws effects fparser ;
+Win32Resource psclient_static : [ crashdialog.rc ] ;
 
 #
 # The plugins that we need
