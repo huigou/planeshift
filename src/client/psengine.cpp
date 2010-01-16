@@ -197,6 +197,11 @@ csString psEngine::hwRenderer = "";
 csString psEngine::hwVersion = "";
 csString psEngine::playerName = "";
 
+#ifdef WIN32
+#include "csutil/win32/win32.h"
+HWND psEngine::hwnd = 0;
+#endif
+
 #if !defined(CS_DEBUG) && defined(CS_PLATFORM_MACOSX)
 // Set up the mac crash reporter in release builds. This needs to be done here
 // since the mac reporter is in a different library.
@@ -352,6 +357,11 @@ bool psEngine::Initialize (int level)
         // Grab graphics info now in case we crash
         hwRenderer = g2d->GetHWRenderer();
         hwVersion = g2d->GetHWGLVersion();
+#ifdef WIN32
+		csRef<iWin32Canvas> canvas = scfQueryInterface<iWin32Canvas> (g2d);
+		// This does not seem to give the correct window handle.
+		//hwnd = canvas->GetWindowHandle();
+#endif
 
 #if !defined(CS_DEBUG) && defined(CS_PLATFORM_MACOSX)
         // Set up the mac crash reporter now we know the graphics information.
@@ -393,7 +403,6 @@ bool psEngine::Initialize (int level)
         csString skinPath;
         skinPath += cfgmgr->GetStr("PlaneShift.GUI.Skin.Dir", "/planeshift/art/skins/");
         skinPath += cfgmgr->GetStr("PlaneShift.GUI.Skin.Selected", "default.zip");
-
         // This could be a file or a dir
         csString slash(CS_PATH_SEPARATOR);
         if(vfs->Exists(skinPath + slash))
