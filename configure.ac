@@ -11,7 +11,7 @@ AC_PREREQ([2.56])
 #----------------------------------------------------------------------------
 # Initialize autoconf
 #----------------------------------------------------------------------------
-AC_INIT([PlaneShift], [0.5.1], [http://www.hydlaaplaza.com/flyspray/])
+AC_INIT([PlaneShift], [0.5.1.1], [http://www.hydlaaplaza.com/flyspray/])
 CS_PACKAGEINFO([PlaneShift a 3d MMORPG],
 	[Copyright (C)2001-2008 Atomic Blue],
 	[http://www.planeshift.it/])
