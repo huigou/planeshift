@@ -53,15 +53,6 @@
 #include "util/consoleout.h"
 #include "pscssetup.h"
 
-#ifndef PATH_DELIMITER
-#ifdef CS_PLATFORM_WIN32
-#define PATH_DELIMITER      ";"
-#endif
-#ifdef CS_PLATFORM_UNIX
-#define PATH_DELIMITER      ":"
-#endif
-#endif
-
 iObjectRegistry* psCSSetup::object_reg = NULL;
 
 psCSSetup::psCSSetup(int _argc, char** _argv, 
