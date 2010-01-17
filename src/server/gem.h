@@ -1011,7 +1011,16 @@ public:
 
     /// Moves player to his spawn position
     bool MoveToSpawnPos();
-    bool GetSpawnPos(csVector3& pos, float& yrot, iSector*& sector);
+    /** Gets the player spawn position according to his race.
+     * 
+     *  @todo Implement the support for player specific spawn pos, not only race specific.
+     *  @param pos A csVector where to store the player position.
+     *  @param yrot A float where to store the rotation of the player.
+     *  @param sector An iSector where to store the sector of the position the player.
+     *  @param useRange A boolean which says if we have to apply random range calculation in the positions.
+     *  @return FALSE If the race or the destination sector of the player can't be found.
+     */
+    bool GetSpawnPos(csVector3& pos, float& yrot, iSector*& sector, bool useRange = false);
 
     /// Restores actor to his last valid position
     bool MoveToValidPos(bool force = false);

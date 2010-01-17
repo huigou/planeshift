@@ -2052,7 +2052,8 @@ bool gemActor::MoveToSpawnPos()
     float startingYrot;
     iSector* startingSector;
 
-    if (!GetSpawnPos(startingPos,startingYrot,startingSector))
+    //Get the spawn position for this actor, taking in account the range.
+    if (!GetSpawnPos(startingPos,startingYrot,startingSector, true))
         return false;
 
     pcmove->SetOnGround(false);
@@ -2064,16 +2065,17 @@ bool gemActor::MoveToSpawnPos()
     return true;
 }
 
-bool gemActor::GetSpawnPos(csVector3& pos, float& yrot, iSector*& sector)
+bool gemActor::GetSpawnPos(csVector3& pos, float& yrot, iSector*& sector, bool useRange)
 {
-    float x, y, z;
+    float x, y, z, range;
     const char* sectorname;
 
     psRaceInfo *raceinfo = psChar->GetRaceInfo();
     if (!raceinfo)
         return false;
 
-    raceinfo->GetStartingLocation(x,y,z,yrot,sectorname);
+
+    raceinfo->GetStartingLocation(x,y,z,yrot,range,sectorname);
 
     if(!sectorname)
     {
@@ -2081,9 +2083,15 @@ bool gemActor::GetSpawnPos(csVector3& pos, float& yrot, iSector*& sector)
         y = -4;
         z = -144;
         yrot = 3.85f;
+        range = 0;
         sectorname = "hydlaa_plaza";
     }
-
+    //change the x and y according to the range if requested, used only for teleport by the engine vs by a gm
+    if(useRange && range > 0)
+    {
+        x = psserver->GetRandomRange(x, range);
+        z = psserver->GetRandomRange(z, range);
+    }
     pos = csVector3(x, y, z);
 
     sector = EntityManager::GetSingleton().FindSector(sectorname);

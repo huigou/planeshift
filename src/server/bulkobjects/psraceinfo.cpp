@@ -87,10 +87,13 @@ bool psRaceInfo::Load(iResultRow& row)
     for (unsigned int i = 0 ; i < rs->Count() ; i++)
     {
         psRaceStartingLocation startingLoc;
+        //prepare x,y,z and rotation of the spawn point
         startingLoc.x = (*rs)[i].GetFloat("x");
         startingLoc.y = (*rs)[i].GetFloat("y");
         startingLoc.z = (*rs)[i].GetFloat("z");
         startingLoc.yrot = (*rs)[i].GetFloat("yrot");
+        //set a range used to select a random point within it from the x and z
+        startingLoc.range = (*rs)[i].GetFloat("range");
 
         psSectorInfo *secinfo=CacheManager::GetSingleton().GetSectorInfoByID((*rs)[i].GetUInt32("sector_id"));
         if (secinfo==NULL)
@@ -212,13 +215,14 @@ void psRaceInfo::SetBaseAttribute(PSITEMSTATS_STAT attrib, float val)
     attributes[attrib]=(unsigned short)(val*10.0f);
 }
 
-void psRaceInfo::GetStartingLocation(float& x,float& y, float& z,float& rot,const char*& sectorname)
+void psRaceInfo::GetStartingLocation(float& x,float& y, float& z,float& rot,float &range,const char*& sectorname)
 {
     psRaceStartingLocation selectedLoc = startingLocations[psserver->GetRandom((uint32)startingLocations.GetSize())];
     x = selectedLoc.x;
     y = selectedLoc.y;
     z = selectedLoc.z;
     rot = selectedLoc.yrot;
+    range = selectedLoc.range;
     sectorname = selectedLoc.sector_name;
 };
 

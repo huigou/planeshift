@@ -2316,8 +2316,8 @@ psItem* psScheduledItem::CreateItem() // Spawns the item
         if (item)
         {
             // Create the item
-            float xpos = GetPosition().x - range + psserver->GetRandom() * range * 2; // Random position within range
-            float zpos = GetPosition().z - range + psserver->GetRandom() * range * 2;
+            float xpos = psserver->GetRandomRange(GetPosition().x, range); // Random position within range
+            float zpos = psserver->GetRandomRange(GetPosition().z, range);
             item->SetLocationInWorld(worldInstance,GetSector(),xpos, GetPosition().y, zpos, 0);
             if ( !EntityManager::GetSingleton().CreateItem(item,false) )
             {
