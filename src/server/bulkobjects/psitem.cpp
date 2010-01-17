@@ -1268,7 +1268,7 @@ void psItem::CancelEquipScript()
     }
 }
 
-bool psItem::CheckStackableWith(const psItem *otheritem, bool precise) const
+bool psItem::CheckStackableWith(const psItem *otheritem, bool precise, bool checkStackCount) const
 {
     int i;
 
@@ -1301,7 +1301,7 @@ bool psItem::CheckStackableWith(const psItem *otheritem, bool precise) const
     if (!GetIsStackable() || !otheritem->GetIsStackable())
         return false;
 
-    if (otheritem->GetStackCount() > MAX_STACK_COUNT - stack_count)
+    if (checkStackCount && otheritem->GetStackCount() > MAX_STACK_COUNT - stack_count)
         return false;
 
     if (strcmp(GetName(), otheritem->GetName()) || strcmp(GetDescription(), otheritem->GetDescription()))

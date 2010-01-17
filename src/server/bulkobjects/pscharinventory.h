@@ -204,6 +204,13 @@ public:
     bool Add(psItem *& item, bool test = false, bool stack = true, 
              INVENTORY_SLOT_NUMBER slot = PSCHARACTER_SLOT_NONE, gemContainer* container = NULL);
 
+    /** Attempt to stack an item on an existing one if Add failed.
+      * @param item The item we want to place into the slot.
+      * @param added number of items that have been taken off the stack
+      * @return The item if the item could be placed partially in the slot. else NULL.
+      */
+    psItem * AddStacked(psItem *& item, int & added);
+
     /// Add an item to the inventory, or drop if inventory is full.
     bool AddOrDrop(psItem *&item, bool stack = true);
 
@@ -442,12 +449,12 @@ private:
     /** Returns the array index of the item that matches the specified 
      *  ones, so they can be combined.
      */
-    size_t FindCompatibleStackedItem(psItem *item);
+    size_t FindCompatibleStackedItem(psItem *item, bool checkStackCount = true);
 
     /** Returns an array of array indices for items that match the specified 
      *  ones, so they can be combined.
      */
-    csArray<size_t> FindCompatibleStackedItems(psItem *item);
+    csArray<size_t> FindCompatibleStackedItems(psItem *item, bool checkStackCount = true);
 
     /// Allocate either a psItem or a psGlyph
     psItem *GetItemFactory(psItemStats *stats);
