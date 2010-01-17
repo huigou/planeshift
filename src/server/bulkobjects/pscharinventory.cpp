@@ -596,8 +596,8 @@ psItem * psCharacterInventory::AddStacked(psItem *& item, int & added)
         
         if (tocheck->GetContainerID())
         {
-            size_t size = GetContainedSize(FindItemID(tocheck->GetContainerID())) - FindItemID(tocheck->GetContainerID())->GetContainerMaxSize();
-            if(size/item->GetItemSize() > fits)
+            size_t size = FindItemID(tocheck->GetContainerID())->GetContainerMaxSize() - GetContainedSize(FindItemID(tocheck->GetContainerID()));
+            if(size/item->GetItemSize() < fits)
                 fits = size/item->GetItemSize();
         }
         

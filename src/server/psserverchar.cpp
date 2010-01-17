@@ -872,7 +872,7 @@ void ServerCharManager::HandleMerchantBuy(psGUIMerchantMessage& msg, Client *cli
 
             if (stackable) // if it's stackable, try to add in on existing stacks, first
             {
-                for (psItem * newstack; newstack = character->Inventory().AddStacked(currentitem, partcount); )
+                for (psItem * newstack; (newstack = character->Inventory().AddStacked(currentitem, partcount)); )
                 {
                     newcount += partcount;
 
