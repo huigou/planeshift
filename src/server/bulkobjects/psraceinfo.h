@@ -97,7 +97,7 @@ public:
 
     csArray<psRaceStartingLocation> startingLocations;
 
-    void GetStartingLocation(float& x,float& y, float& z,float& rot,const char*& sectorname);
+    void GetStartingLocation(float& x,float& y, float& z,float& rot,float &range,const char*& sectorname);
     void GetSize(csVector3& size)
     {
         size = this->size;
