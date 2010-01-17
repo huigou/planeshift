@@ -358,9 +358,16 @@ bool psEngine::Initialize (int level)
         hwRenderer = g2d->GetHWRenderer();
         hwVersion = g2d->GetHWGLVersion();
 #ifdef WIN32
-		csRef<iWin32Canvas> canvas = scfQueryInterface<iWin32Canvas> (g2d);
-		// This does not seem to give the correct window handle.
-		//hwnd = canvas->GetWindowHandle();
+	// Check for Windows software OpenGL renderer.
+	if(hwRenderer == "GDI Generic")
+	{
+		printf("PlaneShift requires hardware acceleration (OpenGL). Make sure your video card drivers are up-to-date.");
+		::MessageBoxA( NULL, "PlaneShift requires hardware acceleration (OpenGL). Make sure your video card drivers are up-to-date.", "Graphics drivers or card too old!", MB_OK + MB_ICONERROR );
+		exit(1);
+	}
+	csRef<iWin32Canvas> canvas = scfQueryInterface<iWin32Canvas> (g2d);
+	// This does not seem to give the correct window handle.
+	//hwnd = canvas->GetWindowHandle();
 #endif
 
 #if !defined(CS_DEBUG) && defined(CS_PLATFORM_MACOSX)
