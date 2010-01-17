@@ -592,11 +592,11 @@ psItem * psCharacterInventory::AddStacked(psItem *& item, int & added)
     for (size_t i = 0; i < itemIndices.GetSize() && max < item->GetStackCount(); i++)
     {
         psItem * tocheck = inventory[itemIndices[i]].item;
-        int fits = MAX_STACK_COUNT - tocheck->GetStackCount();
+        size_t fits = MAX_STACK_COUNT - tocheck->GetStackCount();
         
         if (tocheck->GetContainerID())
         {
-            int size = GetContainedSize(FindItemID(tocheck->GetContainerID())) - FindItemID(tocheck->GetContainerID())->GetContainerMaxSize();
+            size_t size = GetContainedSize(FindItemID(tocheck->GetContainerID())) - FindItemID(tocheck->GetContainerID())->GetContainerMaxSize();
             if(size/item->GetItemSize() > fits)
                 fits = size/item->GetItemSize();
         }
