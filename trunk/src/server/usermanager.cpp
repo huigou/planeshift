@@ -513,10 +513,10 @@ void UserManager::SendCharacterDescription(Client * client, gemActor *actor, boo
         if (!charData->impervious_to_attack && actor->GetMode() != PSCHARACTER_MODE_DEAD && !isSelf)
         {
             // Begin by gathering stats. We will get overall strength for physical and magical and also a comparison.
-            int myPhysical = client->GetCharacterData()->GetCharLevel(true);
-            int myMagical = client->GetCharacterData()->GetCharLevel(false);
-            int theirPhysical = charData->GetCharLevel(true);
-            int theirMagical = charData->GetCharLevel(false);
+            int myPhysicalStat = client->GetCharacterData()->GetCharLevel(true);
+            int myMagicalStat = client->GetCharacterData()->GetCharLevel(false);
+            int theirPhysicalStat = charData->GetCharLevel(true);
+            int theirMagicalStat = charData->GetCharLevel(false);
 
             /* TODO (needs extra work to determine direction of inaccuracy)
             // Intellect is weighed against charisma.
@@ -528,30 +528,35 @@ void UserManager::SendCharacterDescription(Client * client, gemActor *actor, boo
             overallModifier = (overallModifier < 0) ? 0 : overallModifier;*/
 
             // We also take skill into consideration.
-            int physicalDifference = 0;
-            int physicalModifier = 0;
-            int magicalDifference = 0;
-            int magicalModifier = 0;
+            int theirBestPhysical = 0;
+            int myBestPhysical = 0;
+            int theirBestMagical = 0;
+            int myBestMagical = 0;
 
             for(int i=0; i<PSSKILL_COUNT; ++i)
             {
-                int* difference = 0;
-                int* modifier = 0;
+                int* theirBest = NULL;
+                int* myBest = NULL;
                 Skill& mySkill = client->GetCharacterData()->Skills().Get((PSSKILL)i);
 
                 if(mySkill.info->category == PSSKILLS_CATEGORY_COMBAT)
                 {
-                    difference = &physicalDifference;
-                    modifier = &physicalModifier;
+                    theirBest = &theirBestPhysical;
+                    myBest = &myBestPhysical;
                 }
                 else if(mySkill.info->category == PSSKILLS_CATEGORY_MAGIC)
                 {
-                    difference = &magicalDifference;
-                    modifier = &magicalModifier;
+                    theirBest = &theirBestMagical;
+                    myBest = &myBestMagical;
                 }
                 else
                 {
                     continue;
+                }
+
+                if (*myBest < mySkill.rank.Current())
+                {
+                    *myBest = mySkill.rank.Current();
                 }
 
                 int mod = 0;
@@ -567,24 +572,23 @@ void UserManager::SendCharacterDescription(Client * client, gemActor *actor, boo
                     mod = theirSkill.rank.Current();
                 }
 
-                if(*modifier < mod)
+                if(*theirBest < mod)
                 {
-                    *difference = theirSkill.rank.Current() - mySkill.rank.Current();
-                    *modifier = mod;
+                    *theirBest = mod;
                 }
             }
 
             // We calculate two 'levels', one physical and one magical.
-            int physicalLevel = (theirPhysical + physicalModifier * 2) / 100;
+            int physicalLevel = (theirPhysicalStat + theirBestPhysical * 2) / 100;
             physicalLevel = (physicalLevel > 7) ? 7 : physicalLevel;
-            int magicalLevel = (theirMagical + magicalModifier * 2) / 100;
+            int magicalLevel = (theirMagicalStat + theirBestMagical * 2) / 100;
             magicalLevel = (magicalLevel > 7) ? 7 : magicalLevel;
 
             // And also a comparative difference for each.
-            int physicalDiff = physicalDifference;
+            int physicalDiff = theirBestPhysical - myBestPhysical;
             if(abs(physicalDiff) < 5)
             {
-                physicalDiff = myPhysical - theirPhysical;
+                physicalDiff = myPhysicalStat - theirPhysicalStat;
                 physicalDiff /= 10;
             }
             else
@@ -595,10 +599,10 @@ void UserManager::SendCharacterDescription(Client * client, gemActor *actor, boo
             physicalDiff = (physicalDiff < -4) ? -4 : physicalDiff;
             physicalDiff = (physicalDiff > 4) ? 4 : physicalDiff;
 
-            int magicalDiff = magicalDifference;
+            int magicalDiff = theirBestMagical - myBestMagical;
             if(abs(magicalDiff) < 5)
             {
-                magicalDiff = myMagical - theirMagical;
+                magicalDiff = myMagicalStat - theirMagicalStat;
                 magicalDiff /= 10;
             }
             else
