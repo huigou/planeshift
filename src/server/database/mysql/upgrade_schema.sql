@@ -1384,6 +1384,9 @@ ALTER TABLE `wc_statistics` MODIFY COLUMN `param1` INT(10) UNSIGNED DEFAULT NULL
 ALTER TABLE `wc_statistics` DROP COLUMN `query`;
 ALTER TABLE `wc_statistics` MODIFY COLUMN `result` INT(10) UNSIGNED DEFAULT NULL;
 
+#1235 - Stefano Angeleri Added a range column in race spawn
+ALTER TABLE `race_spawns` ADD COLUMN `range` FLOAT UNSIGNED NOT NULL DEFAULT 0 AFTER `yrot`;
+ALTER TABLE `race_spawns` DROP PRIMARY KEY, ADD PRIMARY KEY  USING BTREE(`raceid`, `x`, `y`, `z`, `yrot`, `range`, `sector_id`);
 
 
 # Insert your upgrade before this line. Remember when you set a new db_version
