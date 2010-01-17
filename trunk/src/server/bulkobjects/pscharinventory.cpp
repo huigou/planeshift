@@ -494,11 +494,11 @@ size_t psCharacterInventory::FindSlotIndex(psItem *container,INVENTORY_SLOT_NUMB
     return SIZET_NOT_FOUND;
 }
 
-size_t psCharacterInventory::FindCompatibleStackedItem(psItem *item)
+size_t psCharacterInventory::FindCompatibleStackedItem(psItem *item, bool checkStackCount)
 {
     for (size_t i=1; i<inventory.GetSize(); i++)
     {
-        if (inventory[i].item->CheckStackableWith(item, true))
+        if (inventory[i].item->CheckStackableWith(item, true, checkStackCount))
         {
             return i;
         }
@@ -506,12 +506,12 @@ size_t psCharacterInventory::FindCompatibleStackedItem(psItem *item)
     return SIZET_NOT_FOUND;
 }
 
-csArray<size_t> psCharacterInventory::FindCompatibleStackedItems(psItem *item)
+csArray<size_t> psCharacterInventory::FindCompatibleStackedItems(psItem *item, bool checkStackCount)
 {
     csArray<size_t> compatibleItems;
     for (size_t i=1; i<inventory.GetSize(); i++)
     {
-        if (inventory[i].item->CheckStackableWith(item, true))
+        if (inventory[i].item->CheckStackableWith(item, true, checkStackCount))
         {
             compatibleItems.Push(i);
         }
@@ -580,6 +580,56 @@ bool psCharacterInventory::AddOrDrop(psItem *&item, bool stack)
     }
 }
 
+psItem * psCharacterInventory::AddStacked(psItem *& item, int & added)
+{
+    if (!item->GetIsStackable())
+        return NULL;
+
+    csArray<size_t> itemIndices(FindCompatibleStackedItems(item, false));
+    size_t max = 0;
+
+    // find the maximum amount we can stack in a single try
+    for (size_t i = 0; i < itemIndices.GetSize() && max < item->GetStackCount(); i++)
+    {
+        psItem * tocheck = inventory[itemIndices[i]].item;
+        int fits = MAX_STACK_COUNT - tocheck->GetStackCount();
+        
+        if (tocheck->GetContainerID())
+        {
+            int size = GetContainedSize(FindItemID(tocheck->GetContainerID())) - FindItemID(tocheck->GetContainerID())->GetContainerMaxSize();
+            if(size/item->GetItemSize() > fits)
+                fits = size/item->GetItemSize();
+        }
+        
+        if (fits > max)
+            max = fits;
+    }
+
+    if(max > item->GetStackCount())
+        max = item->GetStackCount();
+
+    if(max && max < item->GetStackCount())
+    {
+        psItem * newstack = item->SplitStack(max);
+        newstack->SetOwningCharacter(item->GetOwningCharacter());
+        newstack->ForceSaveIfNew();
+    
+        if(Add(newstack, false, true))
+        {
+            added = max;
+            return newstack;
+        }
+        else // this really should never happen, but just in case
+        {
+            item->SetStackCount(item->GetStackCount() + newstack->GetStackCount());
+            CacheManager::GetSingleton().RemoveInstance(newstack);
+        }
+    }
+
+    added = 0;
+    return NULL;
+}
+
 bool psCharacterInventory::Add(psItem *&item, bool test, bool stack, INVENTORY_SLOT_NUMBER slot, gemContainer* container)
 {
     if (slot%100<ANY_EMPTY_BULK_SLOT || slot%100>=PSCHARACTER_SLOT_BULK_END)
@@ -640,8 +690,6 @@ bool psCharacterInventory::Add(psItem *&item, bool test, bool stack, INVENTORY_S
             }
         }
     }
-
-    itemIndex = SIZET_NOT_FOUND; // We need to reset this in case a stack was found, but the container it was in was full
 
     // Next check the main bulk slots
     if (itemIndex == SIZET_NOT_FOUND && slot < 0)

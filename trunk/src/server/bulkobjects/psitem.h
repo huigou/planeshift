@@ -804,7 +804,7 @@ public:
     void RunEquipScript(gemActor *actor);
     void CancelEquipScript();
 
-    bool CheckStackableWith(const psItem *otheritem, bool precise) const;
+    bool CheckStackableWith(const psItem *otheritem, bool precise, bool checkStackCount = true) const;
 
     const char *GetSound();
 

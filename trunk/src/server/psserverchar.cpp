@@ -24,6 +24,7 @@
 #include <iutil/databuff.h>
 #include <iutil/object.h>
 #include <csutil/csstring.h>
+#include <csutil/list.h>
 
 //=============================================================================
 // Project Includes
@@ -770,93 +771,164 @@ void ServerCharManager::HandleMerchantBuy(psGUIMerchantMessage& msg, Client *cli
             if (count <= 0) return;
         }
 
+        csList<psItem *> newitem;
+        bool error = false;
         // if item is to be personalised, then duplicate the item_stats and personalise
         // by given it a unique name for the purchaser.
-        psItem* newitem;
         if (item->GetBuyPersonalise())
         {
-            // only 1 personalised thing can be bought at a time
-            if (count != 1)
+            for (int i = 0; i < count; i++)
             {
-                psserver->SendSystemError(client->GetClientNum(),"You can only purchase 1 Personalised thing at a time!");
-                return;
-            }
+                // copy 'item' item_stats to create unique item...
+                // personalised name is "<item> of <purchaser>"
+                // If "<item> of <purchaser>" already exists, add " (<number>)" (being the row count+1 of item_stats)
+                // if item is 'public', then name is "<item> (<number>)"
+                psItem * newpersonaliseditem;
+                PSITEMSTATS_CREATORSTATUS creatorStatus;
+                item->GetBaseStats()->GetCreator(creatorStatus);
+                csString itemName(item->GetName());
+                if (creatorStatus != PSITEMSTATS_CREATOR_PUBLIC)
+                    itemName.AppendFmt(" of %s", client->GetName());
 
-            // copy 'item' item_stats to create unique item...
-            // personalised name is "<item> of <purchaser>"
-            // If "<item> of <purchaser>" already exists, add " (<number>)" (being the row count+1 of item_stats)
-            // if item is 'public', then name is "<item> (<number>)"
-            csString personalisedName(item->GetName());
-            PSITEMSTATS_CREATORSTATUS creatorStatus;
-            item->GetBaseStats()->GetCreator(creatorStatus);
-            if (creatorStatus == PSITEMSTATS_CREATOR_PUBLIC)
-            {
-                personalisedName.AppendFmt(" (%zu)", CacheManager::GetSingleton().ItemStatsSize()+1);
-            }
-            else
-            {
-                personalisedName.AppendFmt(" of %s", client->GetName());
-                if (CacheManager::GetSingleton().BasicItemStatsByNameExist(personalisedName) > 0)
-                    personalisedName.AppendFmt(" (%zu)", CacheManager::GetSingleton().ItemStatsSize()+1);
-            }
+                csString personalisedName(itemName);
 
-            psItemStats* newCreation = CacheManager::GetSingleton().CopyItemStats(item->GetBaseStats()->GetUID(),
+                for(int i = 1; CacheManager::GetSingleton().BasicItemStatsByNameExist(personalisedName) > 0; i++)
+                {
+                    personalisedName = itemName;
+                    personalisedName.AppendFmt(" (%zu)", CacheManager::GetSingleton().ItemStatsSize()+i);
+                }
+
+                psItemStats * newCreation = CacheManager::GetSingleton().CopyItemStats(item->GetBaseStats()->GetUID(),
                                                                                   personalisedName);
 
-            if (!newCreation)
-               return;
+                if (!newCreation)
+                {
+                    error = true;
+                    break;
+                }
 
-            newCreation->SetUnique();
+                newCreation->SetUnique();
 
-            newCreation->Save();
+                newCreation->Save();
 
-            // instantiate it
-            newitem = newCreation->InstantiateBasicItem();
-            if (newitem)
-               newitem->SetLoaded();
+                // instantiate it
+                newpersonaliseditem = newCreation->InstantiateBasicItem();
+
+                if (!newpersonaliseditem)
+                {
+                    error = true;
+                    break;
+                }
+
+                newpersonaliseditem->SetLoaded();
+                newitem.PushBack(newpersonaliseditem);
+            }
         }
         else // normal purchase
         {
-            newitem = item->Copy(count);
+            int maxcount = MAX_STACK_COUNT;
+            if (item->GetIsContainer())
+                maxcount = 1;
+
+            // split it into several stacks if it doesn't fit into a single one
+            for (int i = 0; i < count/maxcount && !error; i++)
+                if(!*newitem.PushBack(item->Copy(maxcount)))
+                    error = true;
+
+            if(error || (count % maxcount && !*newitem.PushBack(item->Copy(count % maxcount))))
+                error = true;
         }
 
-        if (newitem == NULL)
+        if (error)
         {
             Error2("Error: failed to create item %s.", itemName.GetData());
             psserver->SendSystemError(client->GetClientNum(), "Error: failed to create item %s.", itemName.GetData());
+
+            // destroy the created items
+            for (csList<psItem *>::Iterator newitemitr(newitem); newitemitr.HasNext(); )
+            {
+                psItem * currentitem = newitemitr.Next();
+                if (!currentitem)
+                    continue;
+
+                CacheManager::GetSingleton().RemoveInstance(currentitem);
+            }
+
             return;
         }
+
+        csList<psBuyEvent> buyevents;
+        psMoney cost;
+        int newcount = 0; // count what we really got
+
+        for (csList<psItem *>::Iterator newitemitr(newitem); newitemitr.HasNext(); )
+        {
+            psItem *& currentitem = newitemitr.Next();
+            if (!currentitem)
+                continue;
+
+            bool stackable = currentitem->GetIsStackable();
+            int partcount = 1;
+
+            if (stackable) // if it's stackable, try to add in on existing stacks, first
+            {
+                for (psItem * newstack; newstack = character->Inventory().AddStacked(currentitem, partcount); )
+                {
+                    newcount += partcount;
+
+                    psMoney partcost((price * partcount).Normalized());
+                    cost += partcost;
+
+                    psBuyEvent evt(
+                        character->GetPID(),
+                        merchant->GetPID(),
+                        newstack->GetUID(),
+                        partcount,
+                        (int)newstack->GetCurrentStats()->GetQuality(),
+                        partcost.GetTotal()
+                        );
+                    buyevents.PushBack(evt);
+                }
+                
+                partcount = currentitem->GetStackCount();
+            }
+            
+            if (character->Inventory().Add(currentitem, false, stackable))
+            {
+                newcount += partcount;
+                psMoney partcost((price * partcount).Normalized());
+                cost += partcost;
+
+                psBuyEvent evt(
+                    character->GetPID(),
+                    merchant->GetPID(),
+                    currentitem->GetUID(),
+                    partcount,
+                    (int)currentitem->GetCurrentStats()->GetQuality(),
+                    partcost.GetTotal()
+                    );
+                buyevents.PushBack(evt);
+            }
+            else
+            {
+                CacheManager::GetSingleton().RemoveInstance(currentitem);
+            }
+        }
+
+        if (newcount != count) // not enough empty or stackable slots
+            psserver->SendSystemError(client->GetClientNum(),"You're carrying too many items [%d/%d]", newcount, count);
+
+        if (!newcount)
+            return;
+
         // If we managed to buy some items, we pay some money
+        character->SetMoney(money - cost);
 
-        bool stackable = newitem->GetBaseStats()->GetIsStackable();
+        psserver->SendSystemOK( client->GetClientNum(), "You bought %d %s for %s a total of %d Trias.",
+            newcount, itemName.GetData(), cost.ToUserString().GetDataSafe(),cost.GetTotal());
 
-        if (character->Inventory().Add(newitem, false, stackable))
-        {
-            psMoney cost;
-            cost = (price * count).Normalized();
-
-            character->SetMoney(money - cost);
-
-            psserver->SendSystemOK( client->GetClientNum(), "You bought %d %s for %s a total of %d Trias.",
-                count, itemName.GetData(), cost.ToUserString().GetDataSafe(),cost.GetTotal());
-
-            psBuyEvent evt(
-                character->GetPID(),
-                merchant->GetPID(),
-                item->GetUID(),
-                count,
-                (int)item->GetCurrentStats()->GetQuality(),
-                cost.GetTotal()
-                );
-            evt.FireEvent();
-        }
-        else
-        {
-            // No empty or stackable slot in bulk or any container
-            psserver->SendSystemError(client->GetClientNum(),"You're carrying too many items");
-            CacheManager::GetSingleton().RemoveInstance(newitem);
-            return;
-        }
+        for (csList<psBuyEvent>::Iterator buyeventsitr(buyevents); buyeventsitr.HasNext(); )
+            buyeventsitr.Next().FireEvent();
 
         // Update client views
         SendPlayerMoney( client );
