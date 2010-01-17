@@ -238,7 +238,7 @@ float psSpell::ChanceOfResearchSuccess(psCharacter *researcher)
 
 bool psSpell::MatchGlyphs(const csArray<psItemStats*> & assembler)
 {
-    if (assembler.GetSize() != glyphList.GetSize())
+    if (assembler.GetSize() != glyphList.GetSize() || glyphList.IsEmpty())
         return false;
 
     for (size_t i = 0; i < glyphList.GetSize(); i++)
