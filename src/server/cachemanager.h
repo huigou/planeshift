@@ -178,6 +178,7 @@ public:
      */
     //@{
     psSkillInfo *GetSkillByID(unsigned int id);
+    size_t GetSkillAmount();
     psSkillInfo *GetSkillByName(const char *name);
     
     ///Get all skills belonging to a specific category

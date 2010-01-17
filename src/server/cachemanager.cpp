@@ -1653,6 +1653,11 @@ psSkillInfo *CacheManager::GetSkillByID(unsigned int id)
     return skillinfo_IDHash.Get((int)id, NULL);
 }
 
+size_t CacheManager::GetSkillAmount()
+{
+    return skillinfo_IDHash.GetSize();
+}
+
 psSkillInfo *CacheManager::GetSkillByName(const char *name)
 {
     return skillinfo_NameHash.Get(csString(name).Upcase(), NULL);
