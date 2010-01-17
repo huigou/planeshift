@@ -792,7 +792,8 @@ void CharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
     chardata->SetHitPoints(50.0);
     chardata->GetMaxHP().SetBase(0.0);
 
-    float x,y,z,yrot;
+    //range is unused here
+    float x,y,z,yrot,range;
     const char *sectorname;
     InstanceID newinstance = DEFAULT_INSTANCE;
     sectorname = "tutorial";
@@ -801,7 +802,7 @@ void CharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
 
     if (!sectorinfo || PlayerHasFinishedTutorial(acctID, sectorinfo->uid))
     {
-        raceinfo->GetStartingLocation(x,y,z,yrot,sectorname);
+        raceinfo->GetStartingLocation(x,y,z,yrot,range,sectorname);
         sectorinfo = CacheManager::GetSingleton().GetSectorInfoByName(sectorname);
         
         //As we aren't going in the tutorial disable the tutorial help messages disable them
