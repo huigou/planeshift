@@ -833,7 +833,7 @@ bool psCharacter::LoadSkills(PID use_id)
     // Load skills
     Result skillResult(db->Select("SELECT * FROM character_skills WHERE character_id=%u", use_id.Unbox()));
 
-    for ( int z = 0; z < PSSKILL_COUNT; z++ )
+    for ( int z = 0; z < CacheManager::GetSingleton()->GetSkillAmount(); z++ )
     {
         skills.SetSkillInfo( (PSSKILL)z, CacheManager::GetSingleton().GetSkillByID((PSSKILL)z), false );
     }
