@@ -320,6 +320,16 @@ bool psSkillCache::isModified()
     return false;
 }
 
+void psSkillCache::setRemoved(bool removed)
+{
+    removed = removed;
+}
+
+bool psSkillCache::hasRemoved()
+{
+    return removed;
+}
+
 void psSkillCache::setProgressionPoints(unsigned int points)
 {
     if (points != progressionPoints)
@@ -430,6 +440,7 @@ bool psSkillCache::deleteItem(psSkillCacheItem *item)
         {
             skillCache.Delete(p);
             delete item;
+            removed = true;
             return true;
         }
     }

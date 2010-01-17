@@ -100,7 +100,7 @@ protected:
     void BuySkill();
     void BuyMaxSkill();
 
-    void HandleSkillList(psSkillCache *skills, int selectedNameId = -1, int *rowIdx = NULL);
+    void HandleSkillList(psSkillCache *skills, int selectedNameId = -1, int *rowIdx = NULL, bool flush = true);
     void HandleSkillDescription( csString& description );
 
     void SelectSkill(int skill, int cat);
@@ -115,7 +115,7 @@ protected:
 
     /** This handles the skill list for each category */
     void HandleSkillCategory(pawsListBox* tabNameSkillList, const char* indWidget,
-                             const char* tabName, psSkillCacheItem* skillInfo, int &idx);
+                             const char* tabName, psSkillCacheItem* skillInfo, int &idx, bool flush);
 
     pawsListBox *statsSkillList, *combatSkillList, *magicSkillList, *jobsSkillList, *variousSkillList;
     pawsListBox *factionList;

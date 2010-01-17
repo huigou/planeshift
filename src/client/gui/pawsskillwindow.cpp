@@ -299,10 +299,11 @@ void pawsSkillWindow::HandleMessage( MsgEntry* me )
                     skillString = incoming.commandData;
                     skillCache.apply(&incoming.skillCache);
 
+                    bool flush = train != incoming.trainingWindow;
                     train=incoming.trainingWindow;
 
                     int selectedRowIdx = -1;
-                    HandleSkillList(&skillCache, incoming.focusSkill, &selectedRowIdx);
+                    HandleSkillList(&skillCache, incoming.focusSkill, &selectedRowIdx, true);
 
                     SelectSkill(selectedRowIdx, incoming.skillCat);
 
@@ -418,29 +419,40 @@ void pawsSkillWindow::SelectSkill(int skill, int cat)
     }
 }
 
-void pawsSkillWindow::HandleSkillList(psSkillCache *skills, int selectedNameId, int *rowIdx)
+void pawsSkillWindow::HandleSkillList(psSkillCache *skills, int selectedNameId, int *rowIdx, bool flush)
 {
-    combatSkillList->Clear();//Clear everything each time we filter out.
-    statsSkillList->Clear();
-    magicSkillList->Clear();
-    jobsSkillList->Clear();
-    variousSkillList->Clear();
-    selectedSkill.Clear();
+    if (!flush && !skills->isModified())
+        return;
 
-    // Clear descriptions
-    statsSkillDescription->SetText("");
-    combatSkillDescription->SetText("");
-    magicSkillDescription->SetText("");
-    jobsSkillDescription->SetText("");
-    variousSkillDescription->SetText("");
+    if (skills->hasRemoved())
+        flush = true;
 
-    unsortedSkills.DeleteAll();
+    if (flush)
+    {
+        selectedSkill.Clear();
+
+        // Clear descriptions
+        statsSkillDescription->SetText("");
+        combatSkillDescription->SetText("");
+        magicSkillDescription->SetText("");
+        jobsSkillDescription->SetText("");
+        variousSkillDescription->SetText("");
+
+        // Clear everything on a flush
+        combatSkillList->Clear();
+        statsSkillList->Clear();
+        magicSkillList->Clear();
+        jobsSkillList->Clear();
+        variousSkillList->Clear();
+        unsortedSkills.DeleteAll();
+    }
+
     x = skills->getProgressionPoints();
-
     foundSelected = false;
 
     int idx = 0; // Row index counter
     psSkillCacheIter p = skills->iterBegin();
+    bool stats = false, combat = false, magic = false, jobs = false, various = false;
     while (p.HasNext())
     {
         psSkillCacheItem *skill = p.Next();
@@ -450,45 +462,86 @@ void pawsSkillWindow::HandleSkillList(psSkillCache *skills, int selectedNameId, 
             *rowIdx = idx; // Row index of the selected skill
         }
 
-        switch (skill->getCategory())
+        if (flush || skill->isModified())
         {
-            case 0://Stats
+            switch (skill->getCategory())
             {
-                HandleSkillCategory(statsSkillList, "StatsIndicator", "Stats Button", skill, idx);
-                break;
+                case 0://Stats
+                {
+                    stats = true;
+                    HandleSkillCategory(statsSkillList, "StatsIndicator", "Stats Button", skill, idx, flush);
+                    break;
+                }
+                case 1://Combat skills
+                {
+                    combat = true;
+                    HandleSkillCategory(combatSkillList, "CombatIndicator", "Combat Button", skill, idx, flush);
+                    break;
+                }
+                case 2://Magic skills
+                {
+                    magic = true;
+                    HandleSkillCategory(magicSkillList, "MagicIndicator", "Magic Button", skill, idx, flush);
+                    break;
+                }
+                case 3://Jobs skills
+                {
+                    jobs = true;
+                    HandleSkillCategory(jobsSkillList, "JobsIndicator", "Jobs Button", skill, idx, flush);
+                    break;
+                }
+                case 4://Various skills
+                {
+                    various = true;
+                    HandleSkillCategory(variousSkillList, "VariousIndicator", "Various Button", skill, idx, flush);
+                    break;
+                }
             }
-            case 1://Combat skills
+          /*  if(stat)
             {
-                HandleSkillCategory(combatSkillList, "CombatIndicator", "Combat Button", skill, idx);
-                break;
-            }
-            case 2://Magic skills
-            {
-                HandleSkillCategory(magicSkillList, "MagicIndicator", "Magic Button", skill, idx);
-                break;
-            }
-            case 3://Jobs skills
-            {
-                HandleSkillCategory(jobsSkillList, "JobsIndicator", "Jobs Button", skill, idx);
-                break;
-            }
-            case 4://Various skills
-            {
-                HandleSkillCategory(variousSkillList, "VariousIndicator", "Various Button", skill, idx);
-                break;
-            }
+                combatSkillList->MoveRow(combatSkillList->GetRowCount()-1,stati);
+                stati++;
+            }*/
         }
-      /*  if(stat)
-        {
-            combatSkillList->MoveRow(combatSkillList->GetRowCount()-1,stati);
-            stati++;
-        }*/
+    }
+    
+    if (stats)
+    {
+    statsSkillList->SetSortedColumn(0);
+    statsSkillList->SortRows();
+    }
+    
+    if (combat)
+    {
+    combatSkillList->SetSortedColumn(0);
+    combatSkillList->SortRows();
+    }
+    
+    if (magic)
+    {
+    magicSkillList->SetSortedColumn(0);
+    magicSkillList->SortRows();
+    }
+    
+    if (jobs)
+    {
+    jobsSkillList->SetSortedColumn(0);
+    jobsSkillList->SortRows();
+    }
+    
+    if (various)
+    {
+    variousSkillList->SetSortedColumn(0);
+    variousSkillList->SortRows();
     }
 
     if (!foundSelected)
     {
         selectedSkill.Clear();
     }
+    
+    skills->setRemoved(false);
+    skills->setModified(false);
 }
 
 void pawsSkillWindow::HandleSkillDescription( csString& description )
@@ -805,7 +858,7 @@ void pawsSkillWindow::HandleSkillCategory(pawsListBox* tabNameSkillList,
                                           const char* indWidget,
                                           const char* tabName,
                                           psSkillCacheItem *skillInfo,
-                                          int &idx)
+                                          int &idx, bool flush)
 {
 
     int R = skillInfo->getRank();
@@ -826,7 +879,16 @@ void pawsSkillWindow::HandleSkillCategory(pawsListBox* tabNameSkillList,
         return;
     }
 
-    pawsListBoxRow* row = tabNameSkillList->NewRow();
+    pawsListBoxRow* row = NULL;
+    if (!flush)
+    {
+        row = unsortedSkills[idx];
+    }
+    
+    if (row == NULL)
+    {
+        row = tabNameSkillList->NewRow();
+    }
 
     pawsTextBox* name = dynamic_cast <pawsTextBox*> (row->GetColumn(0));
     if (name == NULL)
@@ -864,15 +926,20 @@ void pawsSkillWindow::HandleSkillCategory(pawsListBox* tabNameSkillList,
     indicator->Set(x, R, Y, skillInfo->getKnowledgeCost(),
                    Z, skillInfo->getPracticeCost());
 
-    unsortedSkills.Push(row);
+    if (flush)
+    {
+        unsortedSkills.Push(row);
+    }
+    else
+    {
+        unsortedSkills[idx] = row;
+    }
+    
     if (skillName == selectedSkill)
     {
         statsSkillList->Select(row);
         foundSelected = true;
     }
-
-    tabNameSkillList->SetSortedColumn(0);
-    tabNameSkillList->SortRows();
 
     if (train) //If we are training, flash the tab button
     {

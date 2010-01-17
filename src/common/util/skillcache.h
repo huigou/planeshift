@@ -197,6 +197,16 @@ class psSkillCache {
          * is modified.
          */
         bool isModified();
+        
+        /**
+         * Sets the removed state for the cache.
+         */
+        void setRemoved(bool removed);
+        
+        /**
+         * Returns true if least one item has been removed from the cache.
+         */
+        bool hasRemoved();
 
         void setProgressionPoints(unsigned int points);
         unsigned int getProgressionPoints() const { return progressionPoints; }
@@ -231,6 +241,7 @@ class psSkillCache {
     private:
         csList<psSkillCacheItem *> skillCache;
         bool modified;
+        bool removed;
         unsigned int progressionPoints;
         bool newList;
 

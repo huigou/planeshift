@@ -351,10 +351,7 @@ pawsListBoxRow* pawsListBox::RemoveSelected()
     else
     {
         pawsListBoxRow* zombie = rows[selected];
-        rows.Delete( zombie );
-        children.Delete( zombie );
-        totalRows--;
-        CalculateDrawPositions();
+        Remove(zombie);
         selected = -1;
         return zombie;
     }
@@ -381,7 +378,7 @@ void pawsListBox::Remove (pawsListBoxRow* rowToRemove)
     {
         rows.Delete( rowToRemove );
         children.Delete( rowToRemove );
-        totalRows++;
+        totalRows--;
         CalculateDrawPositions();
     }
 }
