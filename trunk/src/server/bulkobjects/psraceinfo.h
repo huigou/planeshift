@@ -47,6 +47,7 @@ enum PSRACEINFO_STAMINA
 struct psRaceStartingLocation
 {
     float x,y,z,yrot;
+    float range; ///< the range in which a random position will be choosen.
     const char* sector_name;
 };
 

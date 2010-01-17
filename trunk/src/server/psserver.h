@@ -368,6 +368,12 @@ public:
      */
     float GetRandom() { return rng->Get(); }
     
+    /** Returns a random position within a range.
+     *
+     * @return Returns the provided position changed randomly of the supplied range.
+     */
+    float GetRandomRange(const float pos, const float range) { return (pos - range + GetRandom()*range*2); }
+    
     /** Returns a random number with a limit.
      *
      * @return Returns a random number between 0 and limit.
