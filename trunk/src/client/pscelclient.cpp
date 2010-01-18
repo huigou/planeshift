@@ -421,18 +421,22 @@ void psCelClient::HandleItemEffect( const char* factName, csRef<iMeshWrapper> mw
             }
         }
 
-        for(size_t i=0; i<ie->effects.GetSize(); i++)
+        csString particleLevel = psengine->GetConfig()->GetStr("PlaneShift.Graphics.Particles", "High");
+        if(particleLevel == "High")
         {
-            Effect* e = ie->effects.Get(i);
-            unsigned int id = psengine->GetEffectManager()->RenderEffect(e->effectname, e->effectoffset, mw, 0,
-                                                                         csVector3(0,1,0), 0, e->rotateWithMesh);
-            if(!id)
+            for(size_t i=0; i<ie->effects.GetSize(); i++)
             {
-              printf("Failed to load effect %s on item %s!\n", e->effectname.GetData(), factName);
-            }
-            else if(slot && effectids)
-            {
-                effectids->PutUnique(slot, id);
+                Effect* e = ie->effects.Get(i);
+                unsigned int id = psengine->GetEffectManager()->RenderEffect(e->effectname, e->effectoffset, mw, 0,
+                    csVector3(0,1,0), 0, e->rotateWithMesh);
+                if(!id)
+                {
+                    printf("Failed to load effect %s on item %s!\n", e->effectname.GetData(), factName);
+                }
+                else if(slot && effectids)
+                {
+                    effectids->PutUnique(slot, id);
+                }
             }
         }
     }
