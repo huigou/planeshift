@@ -656,6 +656,12 @@ void pawsLauncherWindow::LoadSettings()
         }
     }
 
+    pawsComboBox* particles = (pawsComboBox*)FindWidget("Particles");
+    particles->Clear();
+    particles->NewOption("High");
+    particles->NewOption("Medium");
+    particles->Select(configUser->GetStr("PlaneShift.Graphics.Particles", "High"));
+
     // Fill the languages
     pawsComboBox* languages = (pawsComboBox*)FindWidget("Languages");
     languages->Clear();
@@ -770,6 +776,7 @@ void pawsLauncherWindow::SaveSettings()
             configUser->SetInt("Video.OpenGL.TextureDownsample", 0);
             configUser->SetBool("PlaneShift.Graphics.EnableGrass", true);
             configUser->SetBool("Video.OpenGL.UseExtension.GL_ARB_vertex_buffer_object", true);
+            configUser->SetStr("PlaneShift.Graphics.Particles", "High");
             break;
         }
     case HIGH:
@@ -782,6 +789,7 @@ void pawsLauncherWindow::SaveSettings()
             configUser->SetInt("Video.OpenGL.TextureDownsample", 0);
             configUser->SetBool("PlaneShift.Graphics.EnableGrass", true);
             configUser->SetBool("Video.OpenGL.UseExtension.GL_ARB_vertex_buffer_object", true);
+            configUser->SetStr("PlaneShift.Graphics.Particles", "High");
             break;
         }
     case MEDIUM:
@@ -793,6 +801,7 @@ void pawsLauncherWindow::SaveSettings()
             configUser->SetInt("Video.OpenGL.TextureDownsample", 0);
             configUser->SetBool("PlaneShift.Graphics.EnableGrass", true);
             configUser->SetBool("Video.OpenGL.UseExtension.GL_ARB_vertex_buffer_object", true);
+            configUser->SetStr("PlaneShift.Graphics.Particles", "Medium");
             break;
         }
     case LOW:
@@ -804,6 +813,7 @@ void pawsLauncherWindow::SaveSettings()
             configUser->SetInt("Video.OpenGL.TextureDownsample", 2);
             configUser->SetBool("PlaneShift.Graphics.EnableGrass", false);
             configUser->SetBool("Video.OpenGL.UseExtension.GL_ARB_vertex_buffer_object", true);
+            configUser->SetStr("PlaneShift.Graphics.Particles", "Medium");
             break;
         }
     case LOWEST:
@@ -815,6 +825,7 @@ void pawsLauncherWindow::SaveSettings()
             configUser->SetInt("Video.OpenGL.TextureDownsample", 4);
             configUser->SetBool("PlaneShift.Graphics.EnableGrass", false);
             configUser->SetBool("Video.OpenGL.UseExtension.GL_ARB_vertex_buffer_object", true);
+            configUser->SetStr("PlaneShift.Graphics.Particles", "Medium");
             break;
         }
     case CUSTOM:
@@ -860,6 +871,9 @@ void pawsLauncherWindow::SaveSettings()
 
             pawsCheckBox* VBO = (pawsCheckBox*)FindWidget("VBO");
             configUser->SetBool("Video.OpenGL.UseExtension.GL_ARB_vertex_buffer_object", VBO->GetState());
+
+            pawsComboBox* particles = (pawsComboBox*)FindWidget("Particles");
+            configUser->SetStr("PlaneShift.Graphics.Particles", particles->GetSelectedRowString());
             break;
         }
     };

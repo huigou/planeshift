@@ -350,9 +350,19 @@
           <text string="Background Loading:"/>
         </widget>
 
-        <widget name="BackgroundLoading" factory="pawsComboBox" id="13118">
+        <widget name="BackgroundLoading" factory="pawsComboBox" id="13118" alwaysontop="true">
           <frame x="120" y="220" width="70" height="20" border="no"/>
           <listbox rows="3" height="25" useScrollBar="false" />
+        </widget>
+
+        <widget name="ParticlesText" factory="pawsTextBox" id="13119">
+          <frame x="0" y="243" width="210" height="20"/>
+          <text string="Particles:"/>
+        </widget>
+
+        <widget name="Particles" factory="pawsComboBox" id="131120" alwaysontop="true">
+          <frame x="120" y="240" width="70" height="20" border="no"/>
+          <listbox rows="2" height="25" useScrollBar="false" />
         </widget>
       </widget>
     </widget>
