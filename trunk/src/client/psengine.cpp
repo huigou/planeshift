@@ -198,6 +198,10 @@ csString psEngine::hwVersion = "";
 csString psEngine::playerName = "";
 
 #ifdef WIN32
+#include <WinUser.h>
+#ifdef SendMessage
+#undef SendMessage
+#endif
 #include "csutil/win32/win32.h"
 HWND psEngine::hwnd = 0;
 #endif
