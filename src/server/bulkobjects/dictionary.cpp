@@ -2499,7 +2499,7 @@ void NpcDialogMenu::ShowMenu(Client *client,csTicks delay, gemNPC *npc)
 	{
         csString prereq;
         
-        if(!triggers[i].quest->Active() && !IsTesting)
+        if(triggers[i].quest && !triggers[i].quest->Active() && !IsTesting)
             continue;
 
         if (triggers[i].prerequisite)
@@ -2525,7 +2525,7 @@ void NpcDialogMenu::ShowMenu(Client *client,csTicks delay, gemNPC *npc)
         
         //check availability (as per lockout). Note as gm we show quest even if in lockout as > gm get 
         //an error message in system even if they can't get it because testermode is off
-        if(!IsGm && !IsTesting && !client->GetCharacterData()->CheckQuestAvailable(triggers[i].quest, npc->GetPID()))
+        if(triggers[i].quest && !IsGm && !IsTesting && !client->GetCharacterData()->CheckQuestAvailable(triggers[i].quest, npc->GetPID()))
             continue;
 
         // Check to see about inserting a quest heading
