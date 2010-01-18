@@ -1208,37 +1208,40 @@ bool psMapSoundSystem::Initialize()
                 }
                 
                 //HACK: for now we always add the "combat" resource to all sectors
-                csString resource = "combat";
-                float minVol =  0.0f;
-                float maxVol =  1.0f;
-                int fadeDelay = 2;
-                int timeOfDay = -1;
-                int timeOfDayRange = 0;
-                int weather   = -1;
-                size_t loopStart = 0; //need to find the proper position and fix the song
-                size_t loopEnd   = 0;
-                csRef<SOUND_DATA_TYPE> snddata = sndmngr->GetSoundResource( resource );
-                if (!snddata)
-                {
-                    Error2("Failed to load Sound: %s", resource.GetData());
-                    continue;
-                }
+                if(!manager->hasCombatSongs())
+                    {
+                    csString resource = "combat";
+                    float minVol =  0.0f;
+                    float maxVol =  1.0f;
+                    int fadeDelay = 2;
+                    int timeOfDay = -1;
+                    int timeOfDayRange = 0;
+                    int weather   = -1;
+                    size_t loopStart = 0; //need to find the proper position and fix the song
+                    size_t loopEnd   = 0;
+                    csRef<SOUND_DATA_TYPE> snddata = sndmngr->GetSoundResource( resource );
+                    if (!snddata)
+                    {
+                        Error2("Failed to load Sound: %s", resource.GetData());
+                        continue;
+                    }
 
-                csRef<SOUND_STREAM_TYPE> sndstream = sndmngr->soundSystem->CreateStream(snddata, CS_SND3D_DISABLE);
-                if ( !sndstream )
-                {
-                    Error2("Failed to create Sound Stream: %s", resource.GetData());
-                    continue;
+                    csRef<SOUND_STREAM_TYPE> sndstream = sndmngr->soundSystem->CreateStream(snddata, CS_SND3D_DISABLE);
+                    if ( !sndstream )
+                    {
+                        Error2("Failed to create Sound Stream: %s", resource.GetData());
+                        continue;
+                    }
+                    psSoundObject* obj = new psSoundObject (sndstream, this,
+                                                                maxVol, minVol,
+                                                                fadeDelay,
+                                                                timeOfDay,
+                                                                timeOfDayRange,
+                                                                weather, loopStart,loopEnd,
+                                                                sndmngr->LoopBGM());
+                        
+                    manager->NewCombatBackground( obj );
                 }
-                psSoundObject* obj = new psSoundObject (sndstream, this,
-                                                            maxVol, minVol,
-                                                            fadeDelay,
-                                                            timeOfDay,
-                                                            timeOfDayRange,
-                                                            weather, loopStart,loopEnd,
-                                                            sndmngr->LoopBGM());
-                    
-                manager->NewCombatBackground( obj );
                     
                 //END HACK
             }

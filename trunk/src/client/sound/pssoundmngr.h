@@ -685,6 +685,8 @@ public:
 
     const char* GetSector() {return sector;}
     int GetWeather() { return weather;}
+    
+    bool hasCombatSongs() { return combatSongs.GetSize() > 0; }
 
 private:
     csRef<iEngine> engine;
