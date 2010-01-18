@@ -524,8 +524,11 @@ void GroupManager::Yield(psGroupCmdMessage& msg,Client *Yielder)
 {
     csRef<PlayerGroup> Group = Yielder->GetActor()->GetGroup();
 
-    if(!Group.IsValid())
+    if (!Group)
+    {
+        psserver->SendSystemError(Yielder->GetClientNum(),"You aren't a member of a group.");
         return;
+    }
 
     if(Group->IsLeader(Yielder->GetActor())) //only the group leader can yield to the group challengers
     {
