@@ -523,6 +523,10 @@ bool GroupManager::AddGroupChallenge(PlayerGroup *ChallengerGroup, PlayerGroup *
 void GroupManager::Yield(psGroupCmdMessage& msg,Client *Yielder)
 {
     csRef<PlayerGroup> Group = Yielder->GetActor()->GetGroup();
+
+    if(!Group.IsValid())
+        return;
+
     if(Group->IsLeader(Yielder->GetActor())) //only the group leader can yield to the group challengers
     {
         Group->DuelYield();
