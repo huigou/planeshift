@@ -200,7 +200,10 @@ PawsManager::PawsManager(iObjectRegistry* object, const char* skin, const char* 
     csRef<iTextureManager> texman = graphics3D->GetTextureManager();
     guiTexture = texman->CreateTexture(graphics3D->GetWidth(), graphics3D->GetHeight(),
       csimg2D, "rgba8", 0x9);
-    guiTexture->SetAlphaType (csAlphaMode::alphaBinary);
+    if(guiTexture.IsValid())
+        guiTexture->SetAlphaType (csAlphaMode::alphaBinary);
+    else
+	render2texture = false;
 }
 
 PawsManager::~PawsManager()
