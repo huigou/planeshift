@@ -62,7 +62,9 @@
 #include "glog/raw_logging.h"
 #include "base/googleinit.h"
 
-#include "stacktrace.h"
+#ifdef HAVE_STACKTRACE
+# include "stacktrace.h"
+#endif
 
 using std::string;
 using std::vector;
