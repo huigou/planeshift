@@ -32,6 +32,7 @@
 #include <iengine/mesh.h>
 #include <iengine/sector.h>
 #include <iengine/texture.h>
+#include <iengine/movable.h>
 #include <imap/loader.h>
 #include <iutil/objreg.h>
 #include <iutil/vfs.h>
@@ -142,7 +143,7 @@ public:
     * Load zones given by name.
     */
     bool LoadZones(iStringArray* regions, bool loadMeshes = true);
-
+    virtual csStringSet GetMeshString() { return mfStringSet; }
    /**
     * Returns an array of the available shaders for a given type.
     * @param usageType The type of shader you wish to have.
