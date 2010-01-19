@@ -357,7 +357,7 @@ void pawsMerchantWindow::HandleItems( const char* data )
         if (widget != NULL)
             widget->SetBackground( item->GetAttributeValue("IMG") );
     } 
-    if (itemsBox->GetRowCount() <= selectedItem)
+    if (itemsBox->GetRowCount() <= (size_t)selectedItem)
         selectedItem=itemsBox->GetRowCount()-1;
     itemsBox->SelectByIndex(selectedItem);
 }
