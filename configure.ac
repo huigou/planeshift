@@ -209,7 +209,7 @@ CS_CHECK_BUILD_FLAGS([for -msse2 flag], [cs_cv_prog_cc_msse2],
         [append])], [],	[$cs_cv_prog_cxx_code_gen])
 CS_CHECK_BUILD_FLAGS([for -mfpmath=sse flag], [cs_cv_prog_cc_mfpmath_sse],
     [CS_CREATE_TUPLE([-mfpmath=sse])], [],
-    [CS_EMIT_BUILD_PROPERTY([COMPILER.CFLAGS], [$cs_cv_prog_cc_mfpmath_sse],
+    [CS_EMIT_BUILD_PROPERTY([COMPILER.CFLAGS.SSE], [$cs_cv_prog_cc_mfpmath_sse],
         [append])], [],
 	[$cs_cv_prog_cxx_code_gen $cs_cv_prog_cxx_enable_errors])
 
