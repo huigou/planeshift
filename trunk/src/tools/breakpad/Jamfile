@@ -30,6 +30,7 @@ if $(TARGET.OS) != "WIN32"
      [ Wildcard client linux handler : *.cc ]
      [ Wildcard client linux minidump_writer : *.cc ]
      [ Wildcard client linux sender : *.cc ]
+     [ Wildcard third_party linux src : *.cc ]
     ;
   }
 }
