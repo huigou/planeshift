@@ -24,8 +24,11 @@ if $(TARGET.OS) != "WIN32"
   {
     ObjectHdrs google_crash_report_sender.cc : $(TOP)/src/tools/breakpad/common/linux/ ;
     Library breakpad :
+     [ Wildcard common : *.cc *.c ]
      [ Wildcard common linux : *.cc ]
+     [ Wildcard client : *.cc ]
      [ Wildcard client linux handler : *.cc ]
+     [ Wildcard client linux minidump_writer : *.cc ]
      [ Wildcard client linux sender : *.cc ]
     ;
   }
