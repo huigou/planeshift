@@ -143,7 +143,7 @@ public:
     * Load zones given by name.
     */
     bool LoadZones(iStringArray* regions, bool loadMeshes = true);
-    virtual csStringSet GetMeshString() { return mfStringSet; }
+
    /**
     * Returns an array of the available shaders for a given type.
     * @param usageType The type of shader you wish to have.
