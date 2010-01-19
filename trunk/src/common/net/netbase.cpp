@@ -106,8 +106,8 @@ NetBase::~NetBase()
     if (ready)
         Close();
 
-    Notify2(LOG_ANY,"Total bytes sent out was %d.\n",totaltransferout);
-    Notify2(LOG_ANY,"Total bytes received was %d.\n", totaltransferin);
+    Notify2(LOG_ANY,"Total bytes sent out was %li.\n",totaltransferout);
+    Notify2(LOG_ANY,"Total bytes received was %li.\n", totaltransferin);
 
     socklibrefcount--;
     if (socklibrefcount==0) {

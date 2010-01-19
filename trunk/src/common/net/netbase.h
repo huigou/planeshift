@@ -411,7 +411,10 @@ protected:
         if(FD_ISSET(pipe_fd[0], &set))
         {
             char throwaway[32];
-            (void) read(pipe_fd[0], throwaway, 32);
+            if(read(pipe_fd[0], throwaway, 32) == -1)
+            {
+               Error1("Read failed!");
+            }
         }
 #endif
 

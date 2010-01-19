@@ -7436,7 +7436,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psCachedFileMessage,MSGTYPE_CACHEFILE);
 
 psCachedFileMessage::psCachedFileMessage( uint32_t client, uint8_t sequence, const char *pathname, iDataBuffer *contents)
 {
-    printf("::Building cached file message for '%s', sequence %d, size %lu.\n", pathname, sequence,contents?contents->GetSize():0);
+    printf("::Building cached file message for '%s', sequence %d, size %u.\n", pathname, sequence,contents?contents->GetSize():0);
 
     // We send the hash along with it to save as the filename on the client
     if (pathname[0] == '(')  // timestamp always starts with '('
