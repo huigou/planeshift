@@ -266,10 +266,15 @@ void ZoneHandler::OnDrawingFinished()
             if(psengine->HasLoadedMap())
                 loadWindow->Hide();
 
+            loading = false;
             loadProgressBar->Completed();
             psengine->SetLoadedMap(true);
 
+            // Move the actor to the new sector.
             MovePlayerTo(newPos, sectorToLoad);
+
+            // Move all entities which belong in these new sectors to them.
+            psengine->GetCelClient()->OnMapsLoaded();
 
             // Reset camera clip distance.
             psCamera* cam = psengine->GetPSCamera();
@@ -277,10 +282,9 @@ void ZoneHandler::OnDrawingFinished()
                 cam->UseFixedDistanceClipping(cam->GetFixedDistClip());
             psengine->GetPSCamera()->ResetCameraPositioning();
 
+            // Update the lighting.
             psengine->GetModeHandler()->FinishLightFade();
             psengine->GetModeHandler()->DoneLoading(sectorToLoad);
-
-            loading = false;
         }
         else
         {
