@@ -515,6 +515,9 @@ private:
 
     /***********************************************************************/
 
+    /* Shader parsing */
+    void ParseShaders();
+
     /* Internal unloading methods. */
     void CleanDisconnectedSectors(Sector* sector);
     void FindConnectedSectors(csRefArray<Sector>& connectedSectors, Sector* sector);
@@ -548,6 +551,9 @@ private:
     csRef<iStringSet> strings;
     csRef<iCollideSystem> cdsys;
     csRef<iSyntaxService> syntaxService;
+
+    // Whether we've parsed shaders.
+    bool parsedShaders;
 
     // Our load range ^_^
     float loadRange;
