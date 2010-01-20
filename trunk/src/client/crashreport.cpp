@@ -283,6 +283,11 @@ bool UploadDump(const PS_CHAR* dump_path,
     if(reportResult == RESULT_SUCCEEDED)
 	    result = true;
 #elif defined(CS_PLATFORM_UNIX)
+    if(!wrapper.http_layer->Init())
+    {
+        printf("Unable to start correctly libcurl!\n");
+        return false;
+    }
     // Don't use GoogleCrashdumpUploader as it doesn't allow custom parameters.
     if (wrapper.http_layer->AddFile(path_file, "upload_file_minidump")) {
 	    result = wrapper.http_layer->SendRequest(crash_post_url,
@@ -291,7 +296,7 @@ bool UploadDump(const PS_CHAR* dump_path,
     }
     else 
     {
-	    printf("Could not add minidump file.");
+	    printf("Could not add minidump file.\n");
 	    return false;
     }
 
