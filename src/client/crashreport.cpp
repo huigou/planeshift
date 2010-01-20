@@ -296,10 +296,9 @@ bool UploadDump(const PS_CHAR* dump_path,
     }
 
 #endif
-
     if(result && !wrapper.report_code.empty())
     {
-	    printf("Upload successful.");
+	    printf("Upload successful.\n");
 #ifdef WIN32
 	    ::MessageBoxW( NULL, wrapper.report_code.c_str(), L"Report upload successful. Thanks.", MB_OK );
 #endif
@@ -310,12 +309,12 @@ bool UploadDump(const PS_CHAR* dump_path,
 	    printf("Report upload failed. ");
 #ifdef WIN32
 	    if (reportResult == RESULT_FAILED) {
-		    printf("Could not reach server.");
+		    printf("Could not reach server.\n");
 		    ::MessageBoxA( NULL, "Report upload failed: Could not reach server.", "PlaneShift", MB_OK + MB_ICONERROR );
 	    }
 	    else
 	    {
-		    printf("Unknown reason.");
+		    printf("Unknown reason.\n");
 		    ::MessageBoxA( NULL, "Report upload failed: Unknown reason.", "PlaneShift", MB_OK + MB_ICONERROR );
 	    }
 #endif
@@ -323,7 +322,7 @@ bool UploadDump(const PS_CHAR* dump_path,
     }
     else // result is true but report code is empty.
     {
-	    printf("Report upload failed: Unknown reason.");
+	    printf("Report upload failed: Unknown reason.\n");
 #ifdef WIN32
 	    ::MessageBoxA( NULL, "Report upload failed: Unknown reason.", "PlaneShift", MB_OK + MB_ICONERROR );
 #endif

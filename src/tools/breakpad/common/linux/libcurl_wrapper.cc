@@ -56,6 +56,7 @@ LibcurlWrapper::LibcurlWrapper()
   }
   LOG(INFO) << "LibcurlWrapper init succeeded";
   init_ok_ = true;
+  Init();
   return;
 }
 
