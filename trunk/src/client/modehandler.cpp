@@ -139,6 +139,9 @@ ModeHandler::ModeHandler(iSoundManager *sm,
 
 ModeHandler::~ModeHandler()
 {
+    RemovePortalWeather();
+    RemoveWeather();
+
     csHash<WeatherInfo*, csString>::GlobalIterator loop(weatherlist.GetIterator());
     WeatherInfo *wi;
 
@@ -147,8 +150,6 @@ ModeHandler::~ModeHandler()
     	wi = loop.Next();
     	delete wi;
     }
-    RemovePortalWeather();
-    RemoveWeather();
 
     if (msghandler)
     {
