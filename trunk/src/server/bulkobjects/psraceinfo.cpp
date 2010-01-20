@@ -114,6 +114,10 @@ bool psRaceInfo::Load(iResultRow& row)
     size.y = row.GetFloat("size_y");
     size.z = row.GetFloat("size_z");
 
+    // Z size and X size (width and length) need to be equal because the collision reaction system
+    // does not know how to cope with rotations. An ellipsoid would be more ideal.
+    size.z = size.x = MAX(size.x, size.z);
+
     baseRegen[PSRACEINFO_STAMINA_PHYSICAL_STILL] = row.GetFloat("base_physical_regen_still");
     baseRegen[PSRACEINFO_STAMINA_PHYSICAL_WALK]  = row.GetFloat("base_physical_regen_walk");
     baseRegen[PSRACEINFO_STAMINA_MENTAL_STILL]   = row.GetFloat("base_mental_regen_still");
