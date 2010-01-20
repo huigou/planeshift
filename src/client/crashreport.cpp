@@ -306,6 +306,8 @@ bool UploadDump(const PS_CHAR* dump_path,
 	    printf("Upload successful.\n");
 #ifdef WIN32
 	    ::MessageBoxW( NULL, wrapper.report_code.c_str(), L"Report upload successful. Thanks.", MB_OK );
+#else
+	    printf("%s\n", wrapper.report_code.c_str());
 #endif
 	    return succeeded;
     }
