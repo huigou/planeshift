@@ -27,6 +27,8 @@ CREATE TABLE `race_info` (
   `size_x` float unsigned DEFAULT '0',
   `size_y` float unsigned DEFAULT '0',
   `size_z` float unsigned DEFAULT '0',
+/* size_z and size_x should be equal since the collision reaction system does not 
+   deal with player rotations. Should we remove both size_z and size_x and just keep a size_radius? - Khaki */
   `cstr_base_texture` varchar(200) NOT NULL DEFAULT '',
   `initial_cp` int(10) DEFAULT '0',
   `start_str` int(5) NOT NULL DEFAULT '50',
