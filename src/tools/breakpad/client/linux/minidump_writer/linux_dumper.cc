@@ -167,6 +167,8 @@ LinuxDumper::ElfFileIdentifierForMapping(unsigned int mapping_id,
 {
   assert(mapping_id < mappings_.size());
   const MappingInfo* mapping = mappings_[mapping_id];
+  if(strncmp(mapping->name, "/dev/snd/", strlen("/dev/snd/")) == 0)
+    return false;
   int fd = sys_open(mapping->name, O_RDONLY, 0);
   if (fd < 0)
     return false;
