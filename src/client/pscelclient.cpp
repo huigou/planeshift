@@ -884,21 +884,10 @@ void psCelClient::OnMapsLoaded()
     while (posIter.HasCurrent())
     {
         UnresolvedPos * pos = posIter.FetchCurrent();
-        //Error3("Re-resolving %s at %s",pos->entity->GetName(), pos->sector.GetData());
         iSector * sector = psengine->GetEngine()->GetSectors ()->FindByName (pos->sector);
         if (sector)
         {
-            //Error2("Successfuly resolved %s", pos->sector.GetData());
-            if(pos->entity->GetMesh() && pos->entity->GetMesh()->GetMovable())
-            {
-                // If we have a mesh, no need to re set the position.
-                iMovable* movable = pos->entity->GetMesh()->GetMovable();
-                // Check if entity has moved to a different sector now, so no need to move back
-                if(IsUnresSector(movable->GetSectors()->Get(0)))
-                    movable->SetSector(sector);
-            }
-            else
-                pos->entity->SetPosition(pos->pos, pos->rot, sector);
+            pos->entity->SetPosition(pos->pos, pos->rot, sector);
 
             GEMClientActor* actor = dynamic_cast<GEMClientActor*> (pos->entity);
             if(actor)
@@ -912,6 +901,7 @@ void psCelClient::OnMapsLoaded()
         else
            ++posIter;
     }
+
     GEMClientActor* actor = GetMainPlayer();
     if (actor)
         actor->Movement().SetOnGround(false);
@@ -1214,13 +1204,23 @@ void GEMClientObject::Update()
 {
 }
 
-void GEMClientObject::Move(const csVector3& pos,float rotangle,  const char* room)
+void GEMClientObject::Move(const csVector3& pos, float rotangle, const char* room)
 {
-    iSector* sector = psengine->GetEngine()->FindSector(room);
-    if (sector)
-        GEMClientObject::SetPosition(pos, rotangle, sector);
-    else
-        cel->HandleUnresolvedPos(this, pos, rotangle, room);
+    // If we're moving to a new sector, wait until we're finished loading.
+    // If we're moving to the same sector, continue.
+    if (!psengine->GetZoneHandler()->IsLoading() ||
+       (GetSector() != NULL && strcmp(GetSector()->QueryObject()->GetName(), room) == 0))
+    {
+        iSector* sector = psengine->GetEngine()->FindSector(room);
+        if (sector)
+        {
+            GEMClientObject::SetPosition(pos, rotangle, sector);
+            return;
+        }
+    }
+    
+    // Else wait until the sector is loaded.
+    cel->HandleUnresolvedPos(this, pos, rotangle, room);
 }
 
 void GEMClientObject::SubstituteRacialMeshFact()
@@ -1361,7 +1361,7 @@ GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
     linmove.InitCD(mesg.top, mesg.bottom, mesg.offset, pcmesh);
     linmove.SetDeltaLimit(0.2f);
 
-    if (mesg.sector != NULL)
+    if (mesg.sector != NULL && !psengine->GetZoneHandler()->IsLoading())
         linmove.SetDRData(mesg.on_ground, 1.0f, mesg.pos, mesg.yrot, mesg.sector, mesg.vel, mesg.worldVel, mesg.ang_vel);
     else
         cel->HandleUnresolvedPos(this, mesg.pos, mesg.yrot, mesg.sectorName);
@@ -1612,20 +1612,29 @@ void GEMClientActor::SetDRData(psDRMessage& drmsg)
             iSector *cur_sector;
             linmove.GetLastPosition(cur_pos,cur_yrot,cur_sector);
 
-            // Force hard DR update on sector change, low speed, or large delta pos
-            if (drmsg.sector != cur_sector || (drmsg.vel < 0.1f) || (csSquaredDist::PointPoint(cur_pos,drmsg.pos) > 25.0f))
+            // If we're loading and this is a sector change, set unresolved.
+            // We don't want to move to a new sector which may be loading.
+            if (drmsg.sector != cur_sector && psengine->GetZoneHandler()->IsLoading())
             {
-                // Do hard DR when it would make you slide
-                linmove.SetDRData(drmsg.on_ground,1.0f,drmsg.pos,drmsg.yrot,drmsg.sector,drmsg.vel,drmsg.worldVel,drmsg.ang_vel);
+                cel->HandleUnresolvedPos(this, drmsg.pos, drmsg.yrot, drmsg.sectorName);
             }
             else
             {
-                // Do soft DR when moving
-                linmove.SetSoftDRData(drmsg.on_ground,1.0f,drmsg.pos,drmsg.yrot,drmsg.sector,drmsg.vel,drmsg.worldVel,drmsg.ang_vel);
-            }
+                // Force hard DR update on sector change, low speed, or large delta pos
+                if (drmsg.sector != cur_sector || (drmsg.vel < 0.1f) || (csSquaredDist::PointPoint(cur_pos,drmsg.pos) > 25.0f))
+                {
+                    // Do hard DR when it would make you slide
+                    linmove.SetDRData(drmsg.on_ground,1.0f,drmsg.pos,drmsg.yrot,drmsg.sector,drmsg.vel,drmsg.worldVel,drmsg.ang_vel);
+                }
+                else
+                {
+                    // Do soft DR when moving
+                    linmove.SetSoftDRData(drmsg.on_ground,1.0f,drmsg.pos,drmsg.yrot,drmsg.sector,drmsg.vel,drmsg.worldVel,drmsg.ang_vel);
+                }
 
-            DRcounter = drmsg.counter;
-            DRcounter_set = true;
+                DRcounter = drmsg.counter;
+                DRcounter_set = true;
+            }
         }
         else
         {
