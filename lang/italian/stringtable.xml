@@ -2,6 +2,7 @@
 <StringTable>
   <item orig="750" trans="" />
   <item orig="System text color" trans="" />
+  <item orig="Buddy List Hide" trans="" />
   <item orig="Put an item up for sale or offer to buy something." trans="Metti un oggeto in vendita o offri di comprare qualcosa." />
   <item orig="Stats" trans="Stato" />
   <item orig="Admin text color" trans="Colore testo Admin" />
@@ -10,7 +11,6 @@
   <item orig="Desc" trans="" />
   <item orig="!!!WARNING!!!" trans="!!!ATTENZIONE!!!" />
   <item orig="Others&apos; attacks (Successful ones)" trans="" />
-  <item orig="Buddy List Hide" trans="" />
   <item orig="Own attacks that missed the target" trans="" />
   <item orig="Graphics" trans="Grafica" />
   <item orig="Loading GUI" trans="Caricamento GUI" />
@@ -177,6 +177,7 @@
   <item orig="You must select a petition from the list in order to cancel it." trans="Devi selezionare una petizione della lista per poterla cancellare." />
   <item orig="Alliance" trans="Alleanza" />
   <item orig="Are you sure you want to upload?  " trans="" />
+  <item orig="Use basic chat window (need reload)" trans="" />
   <item orig="Dynamic Follow" trans="Inseguimento Dinamico" />
   <item orig="NPC_my text colour" trans="Colore testo NPC_my" />
   <item orig="Full Mesh" trans="Modello completo" />
@@ -329,6 +330,7 @@ chiamato " />
   <item orig="Talk to everyone in your guild privately." trans="Parla a chiunque nella tua gilda privatamente." />
   <item orig="shouts" trans="" />
   <item orig="Others&apos; attacks that are dodged" trans="" />
+  <item orig="Basic chat" trans="" />
   <item orig="Combat music" trans="Musica di combattimento" />
   <item orig="Enable shout" trans="" />
   <item orig="Own attacks (Successful ones)" trans="" />
@@ -349,6 +351,7 @@ chiamato " />
   <item orig="Enter" trans="" />
   <item orig="Name of the mesh" trans="" />
   <item orig="Trias available to withdraw." trans="" />
+  <item orig="Use simplified chat window (need reload)" trans="" />
   <item orig="Mainchat brackets" trans="" />
   <item orig="Inventory" trans="Inventario" />
   <item orig="Progression Points" trans="Punti di Progresso" />
@@ -370,6 +373,7 @@ chiamato " />
   <item orig="Labels" trans="" />
   <item orig="Upload" trans="Carica" />
   <item orig="Group Alignment" trans="Allineamento gruppo" />
+  <item orig="Tell" trans="" />
   <item orig="Exchange" trans="Scambia" />
   <item orig="Combat Skills List:" trans="" />
   <item orig="GM Spawn interface" trans="" />
@@ -739,6 +743,7 @@ Per disabilitare questa funzione cancella tutto in questa finestra usando il bot
   <item orig="Servers:" trans="Server:" />
   <item orig="Join" trans="Entra" />
   <item orig="Enable say" trans="" />
+  <item orig="Use simplified chat window" trans="" />
   <item orig="Assigned GM:" trans="Assegnato al GM:" />
   <item orig="Lockable" trans="" />
   <item orig="Distance:" trans="Distanza:" />
