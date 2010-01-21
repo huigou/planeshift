@@ -1553,6 +1553,66 @@ int com_showinvf(char *line)
     return com_showinv(line, true);
 }
 
+int com_bulkdelete(char *line)
+{
+    if (!line)
+    {
+        CPrintf(CON_CMDOUTPUT ,"Please specify a source file.\n");
+        return 0;
+    }
+    csRef<iVFS> vfs =  csQueryRegistry<iVFS> (psserver->GetObjectReg());
+
+    if (!vfs->Exists(line))
+    {
+        CPrintf(CON_CMDOUTPUT ,"The specified file doesn't exist.\n");
+        return 0;
+    }
+    if (line[strlen(line)-1] == '/')
+    {
+        CPrintf(CON_CMDOUTPUT ,"The specified file doesn't exist.\n");
+        return 0;
+    }
+
+    csRef<iDataBuffer> filedataBuf = vfs->ReadFile(line);
+    const char* filedata = *(*filedataBuf);
+    
+    int totalCount = 0, failCount = 0;
+
+    while (*filedata != 0)
+    {
+        while (*filedata == '\n')
+            ++filedata;
+
+        //Extract a line
+        char fline[100];
+        size_t len = strcspn(filedata, "\n");
+        memcpy(fline, filedata, len);
+        fline[len] = '\0';
+        filedata += len;
+
+        int characteruid_int = atoi(fline);
+        if (characteruid_int < 1)
+            continue;
+
+        ++totalCount;
+
+        PID characteruid(characteruid_int);
+
+        csString error;
+        if (!psserver->CharacterLoader.DeleteCharacterData(characteruid,error))
+        {
+            if(!error.Length())
+                CPrintf(CON_CMDOUTPUT ,"Character <%u> was not found in the database.\n", characteruid.Unbox());
+            else
+                CPrintf(CON_CMDOUTPUT ,"Character <%u> error: %s .\n", characteruid.Unbox(),error.GetData());
+            ++failCount;
+        }
+    }
+ 
+    CPrintf(CON_CMDOUTPUT, "Found %u characters, deleted %u successfully, while %u failed.\n", totalCount, (totalCount - failCount), failCount);
+
+    return 0;
+}
 
 int com_exec(char *line)
 {
@@ -2394,6 +2454,7 @@ const COMMAND commands[] = {
     { "-- Player commands",  true, NULL, "------------------------------------------------" },
     { "addinv",    true, com_addinv,    "Add an item to a player's inventory" },
     { "adjuststat",true, com_adjuststat,"Adjust player stat [HP|HP_max|HP_rate|Mana|Mana_max|Mana_rate|Stamina|Stamina_max|Stamina_rate]" },
+    { "bulkdelete",true, com_bulkdelete,"Delete a list of characters specified by character ID's in the given file" },
     { "charlist",  true, com_charlist,  "List all known characters" },
     { "delete",    false, com_delete,    "Delete a player from the database"},
     { "dict",      true, com_dict,      "Dump the NPC dictionary"},
