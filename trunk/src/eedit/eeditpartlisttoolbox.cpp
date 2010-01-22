@@ -568,19 +568,20 @@ public:
 
     virtual void UpdateParticleValue(EEditParticleListToolbox* tb)
     {
-	//float value = tb->valueNumSpinBox->GetValue(); @@@ TTL not yet supported.
+	float value = tb->valueNumSpinBox->GetValue();
 	float r = tb->valueScroll1->GetCurrentValue();
 	float g = tb->valueScroll2->GetCurrentValue();
 	float b = tb->valueScroll3->GetCurrentValue();
 	float a = tb->valueScroll4->GetCurrentValue();
 	lin->SetColor(index,csColor4(r,g,b,a));
+	lin->SetEndTTL(index,value);
     }
     virtual void FillParticleEditor(EEditParticleListToolbox* tb)
     {
 	csColor4 color;
 	float ttl;
 	lin->GetColor(index,color,ttl);
-	tb->valueNumSpinBox->SetRange(0, 1, .1);
+	tb->valueNumSpinBox->SetRange(0, 1000000, .1);
 	tb->valueScroll1->SetMinValue(0);
 	tb->valueScroll1->SetMaxValue(1);
 	tb->valueScroll2->SetMinValue(0);
@@ -595,7 +596,7 @@ public:
 	tb->valueScroll3->SetCurrentValue(color.blue, false, false);
 	tb->valueScroll4->SetCurrentValue(color.alpha, false, false);
 
-	//@@@ TTL can't be edited right now: tb->valueNumSpinBox->Show();
+	tb->valueNumSpinBox->Show();
 	tb->valueScroll1->Show();
 	tb->valueScroll2->Show();
 	tb->valueScroll3->Show();
@@ -902,19 +903,15 @@ public:
     virtual csString GetRowDescription()
     {
     	csString valueString;
-	csParticleParameterSet par;
-	float ttl;
-	lin->GetParameterSet(index, par, ttl);
-	valueString.Format("%g (%g)", ttl, par.mass);
+	const csParticleParameterSet& par = lin->GetParameterSet(index);
+	valueString.Format("%g", par.mass);
     	return valueString;
     }
 
     virtual void UpdateParticleValue(EEditParticleListToolbox* tb)
     {
 	float value = tb->valueNumSpinBox->GetValue();
-	csParticleParameterSet par;
-	float ttl;
-	lin->GetParameterSet(index, par, ttl);
+	csParticleParameterSet par = lin->GetParameterSet(index);
 	par.mass = value;
 	lin->SetParameterSet(index, par);
     }
@@ -922,10 +919,34 @@ public:
     {
 	tb->valueNumSpinBox->SetRange(0, 1000000, .1);
 	tb->valueNumSpinBox->Show();
-	float ttl;
-	csParticleParameterSet par;
-	lin->GetParameterSet(index, par, ttl);
+	const csParticleParameterSet& par = lin->GetParameterSet(index);
 	tb->valueNumSpinBox->SetValue (par.mass);
+    }
+};
+
+class PPLinParTTL : public ParticleParameterLinParRow
+{
+public:
+    PPLinParTTL(iParticleBuiltinEffectorLinear* lin, size_t index)
+	: ParticleParameterLinParRow("TTL ", lin, index) { }
+
+    virtual csString GetRowDescription()
+    {
+    	csString valueString;
+	valueString.Format("%g", lin->GetEndTTL(index));
+    	return valueString;
+    }
+
+    virtual void UpdateParticleValue(EEditParticleListToolbox* tb)
+    {
+	float value = tb->valueNumSpinBox->GetValue();
+	lin->SetEndTTL(index, value);
+    }
+    virtual void FillParticleEditor(EEditParticleListToolbox* tb)
+    {
+	tb->valueNumSpinBox->SetRange(0, 1000000, .1);
+	tb->valueNumSpinBox->Show();
+	tb->valueNumSpinBox->SetValue (lin->GetEndTTL(index));
     }
 };
 
@@ -938,10 +959,8 @@ public:
     virtual csString GetRowDescription()
     {
     	csString valueString;
-	csParticleParameterSet par;
-	float ttl;
-	lin->GetParameterSet(index, par, ttl);
-	valueString.Format("%g (%g , %g , %g)", ttl, par.linearVelocity.x, par.linearVelocity.y, par.linearVelocity.z);
+	const csParticleParameterSet& par = lin->GetParameterSet(index);
+	valueString.Format("%g , %g , %g", par.linearVelocity.x, par.linearVelocity.y, par.linearVelocity.z);
     	return valueString;
     }
 
@@ -950,9 +969,7 @@ public:
 	float x = tb->valueNumSpinBox->GetValue();
 	float y = tb->value2NumSpinBox->GetValue();
 	float z = tb->value3NumSpinBox->GetValue();
-	csParticleParameterSet par;
-	float ttl;
-	lin->GetParameterSet(index, par, ttl);
+	csParticleParameterSet par = lin->GetParameterSet(index);
 	par.linearVelocity.Set(x,y,z);
 	lin->SetParameterSet(index, par);
     }
@@ -964,9 +981,7 @@ public:
 	tb->value2NumSpinBox->Show();
 	tb->value3NumSpinBox->SetRange(-100000, 1000000, .1);
 	tb->value3NumSpinBox->Show();
-	float ttl;
-	csParticleParameterSet par;
-	lin->GetParameterSet(index, par, ttl);
+	const csParticleParameterSet& par = lin->GetParameterSet(index);
 	tb->valueNumSpinBox->SetValue (par.linearVelocity.x);
 	tb->value2NumSpinBox->SetValue (par.linearVelocity.y);
 	tb->value3NumSpinBox->SetValue (par.linearVelocity.z);
@@ -982,10 +997,8 @@ public:
     virtual csString GetRowDescription()
     {
     	csString valueString;
-	csParticleParameterSet par;
-	float ttl;
-	lin->GetParameterSet(index, par, ttl);
-	valueString.Format("%g (%g , %g , %g)", ttl, par.angularVelocity.x, par.angularVelocity.y, par.angularVelocity.z);
+	const csParticleParameterSet& par = lin->GetParameterSet(index);
+	valueString.Format("%g , %g , %g", par.angularVelocity.x, par.angularVelocity.y, par.angularVelocity.z);
     	return valueString;
     }
 
@@ -994,9 +1007,7 @@ public:
 	float x = tb->valueNumSpinBox->GetValue();
 	float y = tb->value2NumSpinBox->GetValue();
 	float z = tb->value3NumSpinBox->GetValue();
-	csParticleParameterSet par;
-	float ttl;
-	lin->GetParameterSet(index, par, ttl);
+	csParticleParameterSet par = lin->GetParameterSet(index);
 	par.angularVelocity.Set(x,y,z);
 	lin->SetParameterSet(index, par);
     }
@@ -1008,9 +1019,7 @@ public:
 	tb->value2NumSpinBox->Show();
 	tb->value3NumSpinBox->SetRange(-100000, 1000000, .1);
 	tb->value3NumSpinBox->Show();
-	float ttl;
-	csParticleParameterSet par;
-	lin->GetParameterSet(index, par, ttl);
+	const csParticleParameterSet& par = lin->GetParameterSet(index);
 	tb->valueNumSpinBox->SetValue (par.angularVelocity.x);
 	tb->value2NumSpinBox->SetValue (par.angularVelocity.y);
 	tb->value3NumSpinBox->SetValue (par.angularVelocity.z);
@@ -1026,29 +1035,23 @@ public:
     virtual csString GetRowDescription()
     {
     	csString valueString;
-	csParticleParameterSet par;
-	float ttl;
-	lin->GetParameterSet(index, par, ttl);
-	valueString.Format("%g (%g , %g , %g , %g)", ttl, par.color.red, par.color.green, par.color.blue, par.color.alpha);
+	const csParticleParameterSet& par = lin->GetParameterSet(index);
+	valueString.Format("%g , %g , %g , %g", par.color.red, par.color.green, par.color.blue, par.color.alpha);
     	return valueString;
     }
 
     virtual void UpdateParticleValue(EEditParticleListToolbox* tb)
     {
-	//float value = tb->valueNumSpinBox->GetValue(); @@@ TTL not yet supported.
 	float r = tb->valueScroll1->GetCurrentValue();
 	float g = tb->valueScroll2->GetCurrentValue();
 	float b = tb->valueScroll3->GetCurrentValue();
 	float a = tb->valueScroll4->GetCurrentValue();
-	csParticleParameterSet par;
-	float ttl;
-	lin->GetParameterSet(index, par, ttl);
+	csParticleParameterSet par = lin->GetParameterSet(index);
 	par.color.Set(r,g,b,a);
 	lin->SetParameterSet(index, par);
     }
     virtual void FillParticleEditor(EEditParticleListToolbox* tb)
     {
-	tb->valueNumSpinBox->SetRange(0, 1, .1);
 	tb->valueScroll1->SetMinValue(0);
 	tb->valueScroll1->SetMaxValue(1);
 	tb->valueScroll2->SetMinValue(0);
@@ -1058,17 +1061,13 @@ public:
 	tb->valueScroll4->SetMinValue(0);
 	tb->valueScroll4->SetMaxValue(1);
 
-	float ttl;
-	csParticleParameterSet par;
-	lin->GetParameterSet(index, par, ttl);
-	tb->valueNumSpinBox->SetValue (ttl);
+	const csParticleParameterSet& par = lin->GetParameterSet(index);
 
 	tb->valueScroll1->SetCurrentValue(par.color.red, false, false);
 	tb->valueScroll2->SetCurrentValue(par.color.green, false, false);
 	tb->valueScroll3->SetCurrentValue(par.color.blue, false, false);
 	tb->valueScroll4->SetCurrentValue(par.color.alpha, false, false);
 
-	//@@@ TTL can't be edited right now: tb->valueNumSpinBox->Show();
 	tb->valueScroll1->Show();
 	tb->valueScroll2->Show();
 	tb->valueScroll3->Show();
@@ -1085,10 +1084,8 @@ public:
     virtual csString GetRowDescription()
     {
     	csString valueString;
-	csParticleParameterSet par;
-	float ttl;
-	lin->GetParameterSet(index, par, ttl);
-	valueString.Format("%g (%g , %g)", ttl, par.particleSize.x, par.particleSize.y);
+	const csParticleParameterSet& par = lin->GetParameterSet(index);
+	valueString.Format("%g , %g", par.particleSize.x, par.particleSize.y);
     	return valueString;
     }
 
@@ -1096,9 +1093,7 @@ public:
     {
 	float x = tb->valueNumSpinBox->GetValue();
 	float y = tb->value2NumSpinBox->GetValue();
-	csParticleParameterSet par;
-	float ttl;
-	lin->GetParameterSet(index, par, ttl);
+	csParticleParameterSet par = lin->GetParameterSet(index);
 	par.particleSize.Set(x,y);
 	lin->SetParameterSet(index, par);
     }
@@ -1108,9 +1103,7 @@ public:
 	tb->valueNumSpinBox->Show();
 	tb->value2NumSpinBox->SetRange(-100000, 1000000, .1);
 	tb->value2NumSpinBox->Show();
-	float ttl;
-	csParticleParameterSet par;
-	lin->GetParameterSet(index, par, ttl);
+	const csParticleParameterSet& par = lin->GetParameterSet(index);
 	tb->valueNumSpinBox->SetValue (par.particleSize.x);
 	tb->value2NumSpinBox->SetValue (par.particleSize.y);
     }
@@ -1257,6 +1250,8 @@ void EEditParticleListToolbox::FillParmList(iParticleEffector* eff)
     if (lin)
     {
 	if (!NewParameterRow (a, parmList, this, new PPLinMask(lin))) return;
+	for (size_t i = 0 ; i < lin->GetParameterSetCount() ; i++)
+	    if (!NewParameterRow (a, parmList, this, new PPLinParTTL(lin,i))) return;
 	int mask = lin->GetMask();
 	if (mask & CS_PARTICLE_MASK_MASS)
 	    for (size_t i = 0 ; i < lin->GetParameterSetCount() ; i++)
