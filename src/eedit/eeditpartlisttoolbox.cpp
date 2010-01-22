@@ -20,6 +20,7 @@
 #include <psconfig.h>
 #include "eeditpartlisttoolbox.h"
 #include "eeditglobals.h"
+#include "eeditrequestcombo.h"
 
 #include <csutil/scanstr.h>
 #include <csutil/plugmgr.h>
@@ -29,13 +30,42 @@
 #include <iengine/engine.h>
 #include <iengine/mesh.h>
 #include <imesh/object.h>
-#include <imesh/particles.h>
 #include <imap/writer.h>
 
 #include "paws/pawsmanager.h"
 #include "paws/pawstextbox.h"
 #include "paws/pawslistbox.h"
 #include "paws/pawsbutton.h"
+
+//---------------------------------------------------------------------------------------
+
+class CreateEmitCB : public scfImplementation1<CreateEmitCB,iEEditRequestComboCallback>
+{
+private:
+    EEditParticleListToolbox* tb;
+
+public:
+    CreateEmitCB (EEditParticleListToolbox* tb) : scfImplementationType (this), tb (tb) { }
+    virtual ~CreateEmitCB() { }
+    virtual void Select (const char* string)
+    {
+	tb->CreateNewEmit (string);
+    }
+};
+
+class CreateEffectCB : public scfImplementation1<CreateEffectCB,iEEditRequestComboCallback>
+{
+private:
+    EEditParticleListToolbox* tb;
+
+public:
+    CreateEffectCB (EEditParticleListToolbox* tb) : scfImplementationType (this), tb (tb) { }
+    virtual ~CreateEffectCB() { }
+    virtual void Select (const char* string)
+    {
+	tb->CreateNewEffect (string);
+    }
+};
 
 //---------------------------------------------------------------------------------------
 
@@ -1363,7 +1393,7 @@ void EEditParticleListToolbox::RefreshEditList()
 
     iMeshFactoryWrapper* fact = engine->FindMeshFactory (partName);
     if (!fact) return;
-    csRef<iParticleSystemFactory> pfact = scfQueryInterface<iParticleSystemFactory> (fact->GetMeshObjectFactory());
+    pfact = scfQueryInterface<iParticleSystemFactory> (fact->GetMeshObjectFactory());
     if (!pfact) return;
     csRef<iParticleSystemBase> base = scfQueryInterface<iParticleSystemBase> (pfact);
 
@@ -1526,7 +1556,6 @@ void EEditParticleListToolbox::SaveParticleSystem (const csString& name)
     csRef<iDocumentNode> root = doc->CreateRoot();
     saver->WriteDown (pfact, root, 0);
     doc->Write(editApp->GetVFS(), "/this/particlesystem.xml");
-
 }
 
 bool EEditParticleListToolbox::PostSetup()
@@ -1552,6 +1581,9 @@ bool EEditParticleListToolbox::PostSetup()
     valueScroll4 = (pawsScrollBar *)FindWidget("value_scroll4");        CS_ASSERT(valueScroll4);
     addParButton = (pawsButton *)FindWidget("add_par_button");          CS_ASSERT(addParButton);
     delParButton = (pawsButton *)FindWidget("del_par_button");          CS_ASSERT(delParButton);
+    addEmitButton = (pawsButton *)FindWidget("add_emit_button");        CS_ASSERT(addEmitButton);
+    addEffectorButton = (pawsButton *)FindWidget("add_effector_button");CS_ASSERT(addEffectorButton);
+    delEEButton = (pawsButton *)FindWidget("del_ee_button");            CS_ASSERT(delEEButton);
 
     HideValues();
 
@@ -1592,6 +1624,70 @@ bool EEditParticleListToolbox::OnButtonReleased(int mouseButton, int keyModifier
     return false;
 }
 
+void EEditParticleListToolbox::CreateNewEmit (const char* string)
+{
+    if (!pfact) return;
+    csRef<iParticleBuiltinEmitterFactory> factory = 
+      csLoadPluginCheck<iParticleBuiltinEmitterFactory> (
+        editApp->GetObjectRegistry(), "crystalspace.mesh.object.particles.emitter", false);
+    csString str (string);
+    csRef<iParticleSystemBase> base = scfQueryInterface<iParticleSystemBase> (pfact);
+    if (str == "Cone")
+    {
+	csRef<iParticleBuiltinEmitterCone> cone = factory->CreateCone ();
+	base->AddEmitter(cone);
+    }
+    else if (str == "Sphere")
+    {
+	csRef<iParticleBuiltinEmitterSphere> sphere = factory->CreateSphere ();
+	base->AddEmitter(sphere);
+    }
+    else if (str == "Box")
+    {
+	csRef<iParticleBuiltinEmitterBox> box = factory->CreateBox ();
+	base->AddEmitter(box);
+    }
+    else if (str == "Cylinder")
+    {
+	csRef<iParticleBuiltinEmitterCylinder> cylinder = factory->CreateCylinder ();
+	base->AddEmitter(cylinder);
+    }
+    RefreshEditList();
+    editApp->CreateParticleSystem(editApp->GetCurrParticleSystemName());
+}
+
+void EEditParticleListToolbox::CreateNewEffect (const char* string)
+{
+    if (!pfact) return;
+    csRef<iParticleBuiltinEffectorFactory> factory = 
+      csLoadPluginCheck<iParticleBuiltinEffectorFactory> (
+        editApp->GetObjectRegistry(), "crystalspace.mesh.object.particles.effector", false);
+    csString str (string);
+    csRef<iParticleSystemBase> base = scfQueryInterface<iParticleSystemBase> (pfact);
+    if (str == "Force")
+    {
+	csRef<iParticleBuiltinEffectorForce> force = factory->CreateForce ();
+	base->AddEffector(force);
+    }
+    else if (str == "LinColor")
+    {
+	csRef<iParticleBuiltinEffectorLinColor> lc = factory->CreateLinColor ();
+	base->AddEffector(lc);
+    }
+    else if (str == "VelocityField")
+    {
+	csRef<iParticleBuiltinEffectorVelocityField> vf = factory->CreateVelocityField ();
+	base->AddEffector(vf);
+    }
+    else if (str == "Linear")
+    {
+	csRef<iParticleBuiltinEffectorLinear> lin = factory->CreateLinear ();
+	base->AddEffector(lin);
+    }
+    RefreshEditList();
+    editApp->CreateParticleSystem(editApp->GetCurrParticleSystemName());
+}
+
 bool EEditParticleListToolbox::OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* widget)
 {
     if (widget == openPartButton)
@@ -1618,12 +1714,78 @@ bool EEditParticleListToolbox::OnButtonPressed(int mouseButton, int keyModifier,
         size_t num = parmList->GetSelectedRowNum();
         ParticleParameterRow* prow = parameterRows[num];
 	prow->AddPar (this);
+        return true;
     }
     else if (widget == delParButton)
     {
         size_t num = parmList->GetSelectedRowNum();
         ParticleParameterRow* prow = parameterRows[num];
 	prow->DelPar (this);
+        return true;
+    }
+    else if (widget == addEmitButton)
+    {
+	pawsWidget* wnd = editApp->GetPaws()->FindWidget("RequestComboDialog");
+	if (wnd)
+	{
+	    EEditRequestCombo* rc = static_cast<EEditRequestCombo*> (wnd);
+	    csRef<CreateEmitCB> cb = csPtr<CreateEmitCB> (new CreateEmitCB(this));
+	    rc->SetCallback(cb);
+	    rc->ClearChoices();
+	    rc->AddChoice("Sphere");
+	    rc->AddChoice("Cone");
+	    rc->AddChoice("Box");
+	    rc->AddChoice("Cylinder");
+	    wnd->Show();
+	}
+        return true;
+    }
+    else if (widget == addEffectorButton)
+    {
+	pawsWidget* wnd = editApp->GetPaws()->FindWidget("RequestComboDialog");
+	if (wnd)
+	{
+	    EEditRequestCombo* rc = static_cast<EEditRequestCombo*> (wnd);
+	    csRef<CreateEffectCB> cb = csPtr<CreateEffectCB> (new CreateEffectCB(this));
+	    rc->SetCallback(cb);
+	    rc->ClearChoices();
+	    rc->AddChoice("Force");
+	    rc->AddChoice("LinColor");
+	    rc->AddChoice("VelocityField");
+	    rc->AddChoice("Linear");
+	    wnd->Show();
+	}
+        return true;
+    }
+    else if (widget == delEEButton)
+    {
+	int num = editList->GetSelectedRowNum();
+	if (num == -1) return false;
+	size_t i;
+	if (!pfact) return false;
+	csRef<iParticleSystemBase> base = scfQueryInterface<iParticleSystemBase> (pfact);
+	if (num >= emitters.GetSize())
+	{
+	    for (i = 0 ; i < base->GetEffectorCount() ; i++)
+		if (base->GetEffector(i) == effectors[num-emitters.GetSize()])
+		{
+		    base->RemoveEffector(i);
+		    break;
+		}
+	}
+	else
+	{
+	    for (i = 0 ; i < base->GetEmitterCount() ; i++)
+		if (base->GetEmitter(i) == emitters[num])
+		{
+		    base->RemoveEmitter(i);
+		    break;
+		}
+	}
+	RefreshEditList();
+	editApp->CreateParticleSystem(editApp->GetCurrParticleSystemName());
+
+	return true;
     }
     return false;
 }

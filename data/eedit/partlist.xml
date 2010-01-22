@@ -22,7 +22,7 @@
 	</widget>
 
     <widget name="edit_list" factory="pawsListBox">	
-        <frame x="180" y="5" width="200" height="85" border="no"/>
+        <frame x="180" y="5" width="170" height="85" border="no"/>
         <bgimage resource="Shaded" alpha="100" />
         <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"  sr="0" sg="0" sb="0" shadow="yes" />   
         <highlight resource="ListSelect" alpha="100" />
@@ -37,6 +37,28 @@
             </column>                                               
         </columns>
 	</widget>
+
+    <widget name="add_emit_button" factory="pawsButton">
+        <frame x="355" y="5" width="25" height="20" border="no" />
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="7"  sr="0" sg="0" sb="0" shadow="yes" />   
+        <buttonup resource="ButtonUp"/>
+        <buttondown resource="ButtonDown" />
+        <label text="Em+"/>
+    </widget>
+    <widget name="add_effector_button" factory="pawsButton">
+        <frame x="355" y="27" width="25" height="20" border="no" />
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="7"  sr="0" sg="0" sb="0" shadow="yes" />   
+        <buttonup resource="ButtonUp"/>
+        <buttondown resource="ButtonDown" />
+        <label text="Ef+"/>
+    </widget>
+    <widget name="del_ee_button" factory="pawsButton">
+        <frame x="355" y="49" width="25" height="20" border="no" />
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="7"  sr="0" sg="0" sb="0" shadow="yes" />   
+        <buttonup resource="ButtonUp"/>
+        <buttondown resource="ButtonDown" />
+        <label text="-"/>
+    </widget>
 
     <widget name="parm_list" factory="pawsListBox">	
         <frame x="180" y="95" width="200" height="120" border="no"/>
