@@ -95,6 +95,22 @@
         <bgimage resource="Shaded" alpha="75" />
     </widget>
 
+    <widget name="add_par_button" factory="pawsButton">
+        <frame x="385" y="155" width="25" height="25" border="no" />
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="7"  sr="0" sg="0" sb="0" shadow="yes" />   
+        <buttonup resource="ButtonUp"/>
+        <buttondown resource="ButtonDown" />
+        <label text="+"/>
+    </widget>
+
+    <widget name="del_par_button" factory="pawsButton">
+        <frame x="415" y="155" width="25" height="25" border="no" />
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="7"  sr="0" sg="0" sb="0" shadow="yes" />   
+        <buttonup resource="ButtonUp"/>
+        <buttondown resource="ButtonDown" />
+        <label text="-"/>
+    </widget>
+
     <widget name="value_choices" factory="pawsComboBox">
         <frame x="385" y="5" width="140" height="25" border="yes" />
         <bgimage resource="Shaded" alpha="100" />

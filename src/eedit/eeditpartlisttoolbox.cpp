@@ -53,6 +53,9 @@ public:
 
     virtual void UpdateParticleValue(EEditParticleListToolbox* tb) = 0;
     virtual void FillParticleEditor(EEditParticleListToolbox* tb) = 0;
+
+    virtual void AddPar(EEditParticleListToolbox* tb) { }
+    virtual void DelPar(EEditParticleListToolbox* tb) { }
 };
 
 class ParticleParameterFloatRow : public ParticleParameterRow
@@ -516,33 +519,6 @@ public:
     virtual void SetVector(const csVector3& v) { cylinder->SetExtent(v); }
 };
 
-#if 0
-class PPLinColCount : public ParticleParameterRow
-{
-private:
-    csRef<iParticleBuiltinEffectorLinColor> lin;
-
-public:
-    PPLinColCount(iParticleBuiltinEffectorLinColor* lin)
-	: ParticleParameterRow("LinCol: #"), lin(lin) { }
-
-    virtual csString GetRowDescription()
-    {
-    	csString valueString;
-	valueString.Format("0");
-    	return valueString;
-    }
-
-    virtual void UpdateParticleValue(EEditParticleListToolbox* tb)
-    {
-	//float value = tb->valueNumSpinBox->GetValue(); @@@ TTL not yet supported.
-    }
-    virtual void FillParticleEditor(EEditParticleListToolbox* tb)
-    {
-    }
-};
-#endif
-
 class PPLinCol : public ParticleParameterRow
 {
 private:
@@ -601,6 +577,21 @@ public:
 	tb->valueScroll2->Show();
 	tb->valueScroll3->Show();
 	tb->valueScroll4->Show();
+	tb->addParButton->Show();
+	tb->delParButton->Show();
+    }
+    virtual void AddPar(EEditParticleListToolbox* tb)
+    {
+	csColor4 color;
+	float ttl;
+	lin->GetColor(index,color,ttl);
+	lin->AddColor(color,ttl);
+	tb->RefreshParmList();
+    }
+    virtual void DelPar(EEditParticleListToolbox* tb)
+    {
+	lin->RemoveColor(index);
+	tb->RefreshParmList();
     }
 };
 
@@ -892,6 +883,18 @@ public:
     {
 	name += index;
     }
+    virtual void AddPar(EEditParticleListToolbox* tb)
+    {
+	const csParticleParameterSet& par = lin->GetParameterSet(index);
+	float ttl = lin->GetEndTTL(index);
+	lin->AddParameterSet(par,ttl);
+	tb->RefreshParmList();
+    }
+    virtual void DelPar(EEditParticleListToolbox* tb)
+    {
+	lin->RemoveParameterSet(index);
+	tb->RefreshParmList();
+    }
 };
 
 class PPLinParMass : public ParticleParameterLinParRow
@@ -947,6 +950,8 @@ public:
 	tb->valueNumSpinBox->SetRange(0, 1000000, .1);
 	tb->valueNumSpinBox->Show();
 	tb->valueNumSpinBox->SetValue (lin->GetEndTTL(index));
+	tb->addParButton->Show();
+	tb->delParButton->Show();
     }
 };
 
@@ -985,6 +990,8 @@ public:
 	tb->valueNumSpinBox->SetValue (par.linearVelocity.x);
 	tb->value2NumSpinBox->SetValue (par.linearVelocity.y);
 	tb->value3NumSpinBox->SetValue (par.linearVelocity.z);
+	tb->addParButton->Show();
+	tb->delParButton->Show();
     }
 };
 
@@ -1023,6 +1030,8 @@ public:
 	tb->valueNumSpinBox->SetValue (par.angularVelocity.x);
 	tb->value2NumSpinBox->SetValue (par.angularVelocity.y);
 	tb->value3NumSpinBox->SetValue (par.angularVelocity.z);
+	tb->addParButton->Show();
+	tb->delParButton->Show();
     }
 };
 
@@ -1072,6 +1081,8 @@ public:
 	tb->valueScroll2->Show();
 	tb->valueScroll3->Show();
 	tb->valueScroll4->Show();
+	tb->addParButton->Show();
+	tb->delParButton->Show();
     }
 };
 
@@ -1106,6 +1117,8 @@ public:
 	const csParticleParameterSet& par = lin->GetParameterSet(index);
 	tb->valueNumSpinBox->SetValue (par.particleSize.x);
 	tb->value2NumSpinBox->SetValue (par.particleSize.y);
+	tb->addParButton->Show();
+	tb->delParButton->Show();
     }
 };
 
@@ -1205,6 +1218,8 @@ void EEditParticleListToolbox::HideValues ()
     valueScroll2->Hide();
     valueScroll3->Hide();
     valueScroll4->Hide();
+    addParButton->Hide();
+    delParButton->Hide();
 }
 
 void EEditParticleListToolbox::ClearParmList ()
@@ -1535,6 +1550,8 @@ bool EEditParticleListToolbox::PostSetup()
     valueScroll2 = (pawsScrollBar *)FindWidget("value_scroll2");        CS_ASSERT(valueScroll2);
     valueScroll3 = (pawsScrollBar *)FindWidget("value_scroll3");        CS_ASSERT(valueScroll3);
     valueScroll4 = (pawsScrollBar *)FindWidget("value_scroll4");        CS_ASSERT(valueScroll4);
+    addParButton = (pawsButton *)FindWidget("add_par_button");          CS_ASSERT(addParButton);
+    delParButton = (pawsButton *)FindWidget("del_par_button");          CS_ASSERT(delParButton);
 
     HideValues();
 
@@ -1595,6 +1612,18 @@ bool EEditParticleListToolbox::OnButtonPressed(int mouseButton, int keyModifier,
 	if (name != "")
 	    SaveParticleSystem (name);
         return true;
+    }
+    else if (widget == addParButton)
+    {
+        size_t num = parmList->GetSelectedRowNum();
+        ParticleParameterRow* prow = parameterRows[num];
+	prow->AddPar (this);
+    }
+    else if (widget == delParButton)
+    {
+        size_t num = parmList->GetSelectedRowNum();
+        ParticleParameterRow* prow = parameterRows[num];
+	prow->DelPar (this);
     }
     return false;
 }
