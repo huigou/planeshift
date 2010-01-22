@@ -475,6 +475,12 @@ int psLinearMovement::MoveV (float delta)
   // Check for collisions and adjust position
   if (colldet)
   {
+    // Ignore rotations since the collision reaction system doesn't account for them.
+    // Save rotation matrix
+    const csMatrix3& transf = mesh->GetMovable ()
+      ->GetTransform ().GetT2O ();
+    // Reset rotation
+    mesh->GetMovable ()->GetTransform ().Identity();
     if (!colldet->AdjustForCollisions (oldpos, newpos, worldVel,
     	delta, movable))
     {
@@ -489,6 +495,8 @@ int psLinearMovement::MoveV (float delta)
         ret = PS_MOVE_PARTIAL;
       }
     }
+    // Recover original rotation
+    mesh->GetMovable ()->GetTransform ().SetT2O(transf);
   }
 
   csVector3 origNewpos = newpos;
@@ -516,6 +524,7 @@ int psLinearMovement::MoveV (float delta)
   portalDisplaced += newpos - origNewpos;
   if(!IsOnGround ())
   {
+	  //printf("Applying gravity: velY: %g.\n", velWorld.y);
     // gravity! move down!
     velWorld.y  -= gravity * delta;
     /*
@@ -531,8 +540,10 @@ int psLinearMovement::MoveV (float delta)
       	+ velWorld.y < -(ABS_MAX_FREEFALL_VELOCITY))
       	velWorld.y = -(ABS_MAX_FREEFALL_VELOCITY)
       	- fulltransf.This2OtherRelative (velBody).y;
-      if (velWorld.y > 0)
+      if (velWorld.y > 0){
+	      printf("Reset other y %g\n", fulltransf.This2OtherRelative (velBody).y);
         velWorld.y = 0;
+      }
     }  
   }
   else
@@ -778,6 +789,11 @@ void psLinearMovement::GetCDDimensions (csVector3& body, csVector3& legs,
 bool psLinearMovement::InitCD (const csVector3& body, const csVector3& legs,
 	const csVector3& shift, iMeshWrapper* meshWrap)
 {
+  csVector3 test = GetPosition();
+  if(mesh)
+  printf("Set mesh %s with pos %g %g %g oldmesh %s.\n", meshWrap->QueryObject()->GetName(), test.x, test.y, test.z, mesh->QueryObject()->GetName());
+  else
+    printf("Set mesh %s with pos %g %g %g.\n", meshWrap->QueryObject()->GetName(), test.x, test.y, test.z);
   mesh = meshWrap;
   
   topSize = body;
