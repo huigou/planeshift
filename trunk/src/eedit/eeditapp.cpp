@@ -75,6 +75,7 @@
 #include "eediterrortoolbox.h"
 #include "eeditfpstoolbox.h"
 #include "eeditshortcutstoolbox.h"
+#include "eeditrequestcombo.h"
 
 #include "iclient/ibgloader.h"
 #include "iclient/isoundmngr.h"
@@ -373,6 +374,7 @@ bool EEditApp::LoadWidgets()
     }
 
     // Load all other custom made paws widgets here
+    succeeded &= LoadWidget("data/eedit/requestcombo.xml");
 
     return succeeded;
 }
@@ -979,6 +981,7 @@ void EEditApp::RegisterFactories()
 
     // Register the factories of all other custom made
     // paws widgets here
+    factory = new EEditRequestComboFactory();
 }
 
 void EEditApp::Update()

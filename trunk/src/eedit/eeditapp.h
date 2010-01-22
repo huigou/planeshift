@@ -115,6 +115,12 @@ public:
      */
     bool LoadWidgets();
 
+    /**
+     * Get Paws
+     */
+    PawsManager* GetPaws() { return paws; }
+
+
     /** handles an event from the event handler
      *   @param Event the event to handle
      */

@@ -27,6 +27,7 @@
 #include "paws/pawscheckbox.h"
 #include "paws/pawscrollbar.h"
 
+#include <csutil/weakref.h>
 #include <imesh/particles.h>
 
 class pawsButton;
@@ -64,6 +65,9 @@ public:
     void FillParmList(iParticleEffector* eff);
     void RefreshParmList();
 
+    void CreateNewEmit (const char* string);
+    void CreateNewEffect (const char* string);
+
     // inheritted from EEditToolbox
     virtual void Update(unsigned int elapsed);
     virtual size_t GetType() const;
@@ -91,6 +95,7 @@ private:
     csRef<iEngine> engine;
 
     int updatingParticleValue;
+    csWeakRef<iParticleSystemFactory> pfact;
 
 public:
     csPDelArray<ParticleParameterRow> parameterRows;
@@ -116,6 +121,9 @@ public:
     pawsScrollBar* valueScroll4;
     pawsButton   * addParButton;
     pawsButton   * delParButton;
+    pawsButton   * addEmitButton;
+    pawsButton   * addEffectorButton;
+    pawsButton   * delEEButton;
 };
 
 CREATE_PAWS_FACTORY(EEditParticleListToolbox);
