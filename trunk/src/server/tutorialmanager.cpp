@@ -214,6 +214,7 @@ void TutorialManager::HandleGeneric(MsgEntry *me,Client *client)
     {
         switch (evt.eventType)
         {
+			/* Quest assignments are now explained in the tutorial, this is redundant
             case psGenericEvent::QUEST_ASSIGN:
             {
                 psCharacter *ch = client->GetCharacterData();
@@ -224,6 +225,7 @@ void TutorialManager::HandleGeneric(MsgEntry *me,Client *client)
                 }
                 break;
             }
+			*/
             case psGenericEvent::SPAWN_MOVE:
             {
                 psCharacter *ch = client->GetCharacterData();
