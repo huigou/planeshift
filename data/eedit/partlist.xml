@@ -3,13 +3,13 @@
 <widget name="PartListToolbox" factory="EEditParticleListToolbox" 
         visible="yes" savepositions="yes" movable="yes" resizable="no" resizetoscreen="no" >
         
-    <frame x="0" y="490" width="560" height="230" border="yes" justtitle="yes" />
+    <frame x="0" y="490" width="530" height="250" border="yes" justtitle="yes" />
     <title resource="TitleBar" text="Particle Systems" align="left" />
     <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"  sr="0" sg="0" sb="0" shadow="yes" />   
     <bgimage resource="BackTall" alpha="75" />
 
     <widget name="part_list" factory="pawsListBox">	
-        <frame x="5" y="5" width="200" height="190" border="no"/>
+        <frame x="5" y="5" width="170" height="210" border="no"/>
         <bgimage resource="Shaded" alpha="100" />
         <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"  sr="0" sg="0" sb="0" shadow="yes" />   
         <highlight resource="ListSelect" alpha="100" />
@@ -22,7 +22,7 @@
 	</widget>
 
     <widget name="edit_list" factory="pawsListBox">	
-        <frame x="210" y="5" width="200" height="85" border="no"/>
+        <frame x="180" y="5" width="200" height="85" border="no"/>
         <bgimage resource="Shaded" alpha="100" />
         <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"  sr="0" sg="0" sb="0" shadow="yes" />   
         <highlight resource="ListSelect" alpha="100" />
@@ -39,7 +39,7 @@
 	</widget>
 
     <widget name="parm_list" factory="pawsListBox">	
-        <frame x="210" y="95" width="200" height="105" border="no"/>
+        <frame x="180" y="95" width="200" height="120" border="no"/>
         <bgimage resource="Shaded" alpha="100" />
         <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"  sr="0" sg="0" sb="0" shadow="yes" />   
         <highlight resource="ListSelect" alpha="100" />
@@ -56,7 +56,7 @@
 	</widget>
 
     <widget name="value_bool" factory="pawsCheckBox">
-        <frame x="415" y="5" width="140" height="25" border="yes" />
+        <frame x="385" y="5" width="140" height="25" border="yes" />
         <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"  sr="0" sg="0" sb="0" shadow="yes" />
 	<checkbox off="RadioOff" on="RadioOn" />
 	<text string="..." />
@@ -64,7 +64,7 @@
     </widget>
 
     <widget name="value_bool2" factory="pawsCheckBox">
-        <frame x="415" y="35" width="140" height="25" border="yes" />
+        <frame x="385" y="35" width="140" height="25" border="yes" />
         <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"  sr="0" sg="0" sb="0" shadow="yes" />
 	<checkbox off="RadioOff" on="RadioOn" />
 	<text string="..." />
@@ -72,7 +72,7 @@
     </widget>
 
     <widget name="value_bool3" factory="pawsCheckBox">
-        <frame x="415" y="65" width="140" height="25" border="yes" />
+        <frame x="385" y="65" width="140" height="25" border="yes" />
         <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"  sr="0" sg="0" sb="0" shadow="yes" />
 	<checkbox off="RadioOff" on="RadioOn" />
 	<text string="..." />
@@ -80,7 +80,7 @@
     </widget>
 
     <widget name="value_bool4" factory="pawsCheckBox">
-        <frame x="415" y="95" width="140" height="25" border="yes" />
+        <frame x="385" y="95" width="140" height="25" border="yes" />
         <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"  sr="0" sg="0" sb="0" shadow="yes" />
 	<checkbox off="RadioOff" on="RadioOn" />
 	<text string="..." />
@@ -88,7 +88,7 @@
     </widget>
 
     <widget name="value_bool5" factory="pawsCheckBox">
-        <frame x="415" y="125" width="140" height="25" border="yes" />
+        <frame x="385" y="125" width="140" height="25" border="yes" />
         <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"  sr="0" sg="0" sb="0" shadow="yes" />
 	<checkbox off="RadioOff" on="RadioOn" />
 	<text string="..." />
@@ -96,61 +96,61 @@
     </widget>
 
     <widget name="value_choices" factory="pawsComboBox">
-        <frame x="415" y="5" width="140" height="25" border="yes" />
+        <frame x="385" y="5" width="140" height="25" border="yes" />
         <bgimage resource="Shaded" alpha="100" />
 	<listbox rows="5" height="25" useScrollBar="false"/>
     </widget>
 
     <widget name="value_scroll1" factory="pawsScrollBar" direction="horizontal" style="Standard Scrollbar Horizontal">
-        <frame x="415" y="35" width="140" height="20" border="no" />
+        <frame x="385" y="35" width="140" height="20" border="no" />
     </widget>
     <widget name="value_scroll2" factory="pawsScrollBar" direction="horizontal" style="Standard Scrollbar Horizontal">
-        <frame x="415" y="56" width="140" height="20" border="no" />
+        <frame x="385" y="56" width="140" height="20" border="no" />
     </widget>
     <widget name="value_scroll3" factory="pawsScrollBar" direction="horizontal" style="Standard Scrollbar Horizontal">
-        <frame x="415" y="77" width="140" height="20" border="no" />
+        <frame x="385" y="77" width="140" height="20" border="no" />
     </widget>
     <widget name="value_scroll4" factory="pawsScrollBar" direction="horizontal" style="Standard Scrollbar Horizontal">
-        <frame x="415" y="98" width="140" height="20" border="no" />
+        <frame x="385" y="98" width="140" height="20" border="no" />
     </widget>
 
     <widget name="value_num" factory="pawsSpinBox">
-        <frame x="415" y="5" width="140" height="25" border="no" />
+        <frame x="385" y="5" width="140" height="25" border="no" />
         <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"  sr="0" sg="0" sb="0" shadow="yes" />
         <bgimage resource="Shaded" alpha="75" />
         <number default="0.0" min="1" max="300" inc="1" position="left"/>
     </widget>
 
     <widget name="value2_num" factory="pawsSpinBox">
-        <frame x="415" y="35" width="140" height="25" border="no" />
+        <frame x="385" y="35" width="140" height="25" border="no" />
         <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"  sr="0" sg="0" sb="0" shadow="yes" />
         <bgimage resource="Shaded" alpha="75" />
         <number default="0.0" min="1" max="300" inc="1" position="left"/>
     </widget>
 
     <widget name="value3_num" factory="pawsSpinBox">
-        <frame x="415" y="65" width="140" height="25" border="no" />
+        <frame x="385" y="65" width="140" height="25" border="no" />
         <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"  sr="0" sg="0" sb="0" shadow="yes" />
         <bgimage resource="Shaded" alpha="75" />
         <number default="0.0" min="1" max="300" inc="1" position="left"/>
     </widget>
 
     <widget name="save_part_button" factory="pawsButton">
-        <frame x="215" y="200" width="95" height="25" border="no" />
+        <frame x="215" y="220" width="95" height="25" border="no" />
         <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="7"  sr="0" sg="0" sb="0" shadow="yes" />   
         <buttonup resource="ButtonUp"/>
         <buttondown resource="ButtonDown" />
         <label text="Save"/>
     </widget>
     <widget name="load_part_button" factory="pawsButton">
-        <frame x="110" y="200" width="95" height="25" border="no" />
+        <frame x="110" y="220" width="95" height="25" border="no" />
         <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="7"  sr="0" sg="0" sb="0" shadow="yes" />   
         <buttonup resource="ButtonUp"/>
         <buttondown resource="ButtonDown" />
         <label text="Open Particles"/>
     </widget>
     <widget name="refresh_button" factory="pawsButton">
-        <frame x="5" y="200" width="95" height="25" border="no" />
+        <frame x="5" y="220" width="95" height="25" border="no" />
         <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="7"  sr="0" sg="0" sb="0" shadow="yes" />   
         <buttonup resource="ButtonUp"/>
         <buttondown resource="ButtonDown" />
