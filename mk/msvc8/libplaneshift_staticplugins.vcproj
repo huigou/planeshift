@@ -1734,6 +1734,12 @@
 			<File
 				RelativePath="..\..\src\common\bgloader\loader.cpp">
 			</File>
+			<File
+				RelativePath="..\..\src\common\bgloader\manipulate.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\common\bgloader\parser.cpp">
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
