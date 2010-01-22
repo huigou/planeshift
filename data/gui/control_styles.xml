@@ -97,7 +97,7 @@
 </style4>
 
 <style5>
-    <bar width="960" height="70" min_w="360" min_h="30"  always_resize="yes"  />
+    <bar width="650" height="70" min_w="360" min_h="30"  always_resize="yes"  />
     <buttons width="64" height="64" hide_width="16" hide_height="16" />
     <!-- Standard values -->
     <button name="ShowButtonUp"     x="0" y="0" />
