@@ -114,6 +114,8 @@ public:
     pawsScrollBar* valueScroll2;
     pawsScrollBar* valueScroll3;
     pawsScrollBar* valueScroll4;
+    pawsButton   * addParButton;
+    pawsButton   * delParButton;
 };
 
 CREATE_PAWS_FACTORY(EEditParticleListToolbox);
