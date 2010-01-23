@@ -40,6 +40,11 @@
 #include "util/psconst.h"
 #include "loader.h"
 
+//#ifndef CS_DEBUG
+#undef  CS_ASSERT_MSG
+#define CS_ASSERT_MSG(msg, x) if(!x) printf("ART ERROR: %s\n", msg);
+//#endif
+
 CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
 {
     void BgLoader::ParseShaders()
