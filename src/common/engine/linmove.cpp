@@ -475,12 +475,6 @@ int psLinearMovement::MoveV (float delta)
   // Check for collisions and adjust position
   if (colldet)
   {
-    // Ignore rotations since the collision reaction system doesn't account for them.
-    // Save rotation matrix
-    const csMatrix3& transf = mesh->GetMovable ()
-      ->GetTransform ().GetT2O ();
-    // Reset rotation
-    mesh->GetMovable ()->GetTransform ().Identity();
     if (!colldet->AdjustForCollisions (oldpos, newpos, worldVel,
     	delta, movable))
     {
@@ -495,8 +489,6 @@ int psLinearMovement::MoveV (float delta)
         ret = PS_MOVE_PARTIAL;
       }
     }
-    // Recover original rotation
-    mesh->GetMovable ()->GetTransform ().SetT2O(transf);
   }
 
   csVector3 origNewpos = newpos;
