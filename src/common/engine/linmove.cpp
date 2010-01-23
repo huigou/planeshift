@@ -541,7 +541,7 @@ int psLinearMovement::MoveV (float delta)
       	velWorld.y = -(ABS_MAX_FREEFALL_VELOCITY)
       	- fulltransf.This2OtherRelative (velBody).y;
       if (velWorld.y > 0){
-	      printf("Reset other y %g\n", fulltransf.This2OtherRelative (velBody).y);
+	      // printf("Reset other y %g\n", fulltransf.This2OtherRelative (velBody).y);
         velWorld.y = 0;
       }
     }  
@@ -789,11 +789,6 @@ void psLinearMovement::GetCDDimensions (csVector3& body, csVector3& legs,
 bool psLinearMovement::InitCD (const csVector3& body, const csVector3& legs,
 	const csVector3& shift, iMeshWrapper* meshWrap)
 {
-  csVector3 test = GetPosition();
-  if(mesh)
-  printf("Set mesh %s with pos %g %g %g oldmesh %s.\n", meshWrap->QueryObject()->GetName(), test.x, test.y, test.z, mesh->QueryObject()->GetName());
-  else
-    printf("Set mesh %s with pos %g %g %g.\n", meshWrap->QueryObject()->GetName(), test.x, test.y, test.z);
   mesh = meshWrap;
   
   topSize = body;
