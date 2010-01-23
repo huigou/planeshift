@@ -791,6 +791,7 @@ void CharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
     chardata->SetRaceInfo(raceinfo);
     chardata->SetHitPoints(50.0);
     chardata->GetMaxHP().SetBase(0.0);
+    chardata->GetMaxMana().SetBase(0.0);
 
     //range is unused here
     float x,y,z,yrot,range;
