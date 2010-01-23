@@ -517,7 +517,7 @@ Example: /badtext 1 10 shows the latest 10 entries</topic>
         <topic name="/ban">/ban name minutes hours days [IP] reason
 OR /ban name [IP] reason
 
-Bans a player from logging into the game for a specified amount of time.  (default is 2 days)  'Name' may be a character name, an account name, or an account number.  A reason must be specified. If IP is specified the ip will be banned as well.</topic>
+Bans a player from logging into the game for a specified amount of time.  (default is 2 days)  'Name' may be a character name, an account name, or an account number.  A reason must be specified. If IP is specified the ip will be banned as well. Note that the optional switch [IP] above indicates optional inclusion of the letters "ip" in the command to have the IP address also banned.  Do NOT type a full IP Address in the command.</topic>
         <topic name="/banadvisor">/banadvisor name
         
 Bans a player from advising until /unbanadvisor is used.</topic>
