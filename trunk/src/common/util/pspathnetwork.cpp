@@ -101,6 +101,14 @@ bool psPathNetwork::Load(iEngine *engine, iDataConnection *db,psWorld * world)
     {
         Waypoint * wp1 = FindWaypoint(rs1[i].GetInt("wp1"));
         Waypoint * wp2 = FindWaypoint(rs1[i].GetInt("wp2"));
+        if(!wp1 || !wp2)
+        {
+        	if(!wp1)
+        	    Error2("Could not find waypoint wp1 link with id %d",rs1[i].GetInt("wp1") );
+        	if(!wp2)
+        	    Error2("Could not find waypoint wp2 link with id %d",rs1[i].GetInt("wp2") );
+        	return false;
+        }
         psString flagStr(rs1[i]["flags"]);
 
         int pathId = rs1[i].GetInt("id");
