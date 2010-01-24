@@ -687,10 +687,9 @@ bool psPathAnchor::Extrapolate(psWorld * world, iEngine *engine, float delta, ps
     GetInterpolatedUp (up);
     GetInterpolatedForward (look);
     
-    // Update Y for paths that go uphill/downhill.
-    csVector3 last_pos = movable->GetTransform().GetOrigin ();
-    last_pos.y = pos.y;
-    movable->GetTransform().SetOrigin(last_pos);
+    // Only set estimated position if in expected sector.
+    if (path->points[currentAtIndex]->GetSector(engine) == movable->GetSectors()->Get(0))
+        movable->GetTransform().SetOrigin(pos);
     
     // Set rotation.
     movable->GetTransform().LookAt(
