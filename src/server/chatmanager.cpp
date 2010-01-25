@@ -322,7 +322,7 @@ void ChatManager::HandleChatMessage(MsgEntry *me, Client *client)
 void ChatManager::HandleCacheMessage(MsgEntry *me, Client *client)
 {
     psCachedFileMessage msg(me);
-    printf("Got request for file '%s'\n",msg.hash.GetDataSafe());
+    // printf("Got request for file '%s'\n",msg.hash.GetDataSafe());
     SendAudioFile(client,msg.hash);
 }
 
@@ -672,7 +672,7 @@ void ChatManager::SendAudioFileHash(Client *client, const char *voiceFile, csTic
     if (!voiceFile || voiceFile[0]==0)
         return;
 
-    printf("Sending file '%s' in %d msec.\n",voiceFile,delay);
+    // printf("Sending file '%s' in %d msec.\n",voiceFile,delay);
 
     csString timestamp;
     csRef<iDataBuffer> buffer;
@@ -747,7 +747,7 @@ void ChatManager::SendAudioFileHash(Client *client, const char *voiceFile, csTic
                             timestamp,                                          //hash id value
                             NULL);                                              //null buffer means check in client-side cache first
     msg.SendMessage();
-    printf("Cached file hash message sent.");
+    // printf("Cached file hash message sent.");
 }
 
 void ChatManager::SendAudioFile(Client *client, const char *voiceFileHash)
@@ -777,7 +777,7 @@ void ChatManager::SendAudioFile(Client *client, const char *voiceFileHash)
             int sequence = client->GetOrderedMessageChannel(MSGTYPE_CACHEFILE)->IncrementSequenceNumber();
             psCachedFileMessage msg(client->GetClientNum(),sequence, timestamp, buffer);
             msg.SendMessage();
-            printf("Cached file message sent to client with buffer attached, seq=%d.\n",sequence);
+            // printf("Cached file message sent to client with buffer attached, seq=%d.\n",sequence);
             return;
         }
     }
