@@ -18,7 +18,20 @@
             <chat_message type="CHAT_SYSTEM_BASE" />
             <chat_message type="CHAT_GM" />
             <chat_message type="CHAT_SERVER_INFO" />
-            <chat_message type="CHAT_SYSTEM" />
+	    <chat_message type="CHAT_SYSTEM" />
+	    <chat_message type="CHAT_CHANNEL1" />
+            <chat_message type="CHAT_CHANNEL2" />
+            <chat_message type="CHAT_CHANNEL3" />
+            <chat_message type="CHAT_CHANNEL4" />
+            <chat_message type="CHAT_CHANNEL5" />
+            <chat_message type="CHAT_CHANNEL6" />
+            <chat_message type="CHAT_CHANNEL7" />
+            <chat_message type="CHAT_CHANNEL8" />
+            <chat_message type="CHAT_CHANNEL9" />
+            <chat_message type="CHAT_CHANNEL10" />
+            <chat_message type="CHAT_REPORT" />
+            <chat_message type="CHAT_SERVER_TELL" />
+            <chat_message type="CHAT_COMBAT" />
         </listener>
 	<listener name="subSystemText">
             <chat_message type="CHAT_SYSTEM" />

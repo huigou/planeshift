@@ -144,6 +144,11 @@ bool pawsConfigChatTabs::SaveConfig()
 	settings.bindings.Delete("subMainText", "CHAT_AUCTION");
 	settings.bindings.Delete("subMainText", "CHAT_SYSTEM");
 	settings.bindings.Delete("subMainText", "CHAT_ADVICE");
+    settings.bindings.Delete("subMainText", "CHAT_COMBAT");
+    settings.bindings.Delete("subMainText", "CHAT_SERVER_TELL");
+    settings.bindings.Delete("subMainText", "CHAT_ADVISOR");
+    settings.bindings.Delete("subMainText", "CHAT_ADVICE_LIST");
+    settings.bindings.Delete("subMainText", "CHAT_REPORT");
     
     if(isysbase->GetState())
     {
@@ -190,10 +195,15 @@ bool pawsConfigChatTabs::SaveConfig()
     if(isys->GetState())
 	{
 		settings.bindings.Put("subMainText", "CHAT_SYSTEM");
+		settings.bindings.Put("subMainText", "CHAT_SERVER_TELL");
+		settings.bindings.Put("subMainText", "CHAT_REPORT");
+		settings.bindings.Put("subMainText", "CHAT_COMBAT");
 	}
     if(ihelp->GetState())
 	{
 		settings.bindings.Put("subMainText", "CHAT_ADVICE");
+		settings.bindings.Put("subMainText", "CHAT_ADVISOR");
+		settings.bindings.Put("subMainText", "CHAT_ADVICE_LIST");
 	}
 
     //could be made more generic (scan the dir?)

@@ -321,10 +321,8 @@ void pawsChatWindow::LoadChatSettings()
     		csRef<iDocumentNodeIterator> bindingTypesIter = binding->GetNodes("chat_message");
     		csArray<iPAWSSubscriber*> subscribers = PawsManager::GetSingleton().ListSubscribers(listenerName);
     		
-    		// Clear existing subscriptions
     		for(size_t i = 0; i < subscribers.GetSize(); i++)
 			{
-    			PawsManager::GetSingleton().UnSubscribe(subscribers[i]);
     			PawsManager::GetSingleton().Subscribe(listenerName, subscribers[i]);
 			}
     		while(bindingTypesIter->HasNext())
