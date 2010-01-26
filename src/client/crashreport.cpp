@@ -96,7 +96,7 @@ bool UploadDump(const PS_CHAR* dump_path,
                      bool succeeded);
 #endif
 
-char szComments[1500];
+PS_CHAR szComments[1500];
 
 // Initialise the crash dumper.
 class BreakPadWrapper
@@ -208,10 +208,7 @@ BOOL CALLBACK CrashReportProc(HWND hwndDlg,
             switch (LOWORD(wParam)) 
             { 
                 case IDOK: 
-			wchar_t wszComments[1500];
-                    GetDlgItemTextW(hwndDlg, IDC_COMMENTS, wszComments, 1500); 
-		    // The server always assumes UTF-8 fields.
-	    	    WideCharToMultiByte(CP_UTF8, 0, wszComments, -1, szComments, sizeof(szComments), NULL, NULL);
+                    GetDlgItemTextW(hwndDlg, IDC_COMMENTS, szComments, 1500); 
                     EndDialog(hwndDlg, wParam); 
                     return TRUE; 
             } 
@@ -263,8 +260,7 @@ bool UploadDump(const PS_CHAR* dump_path,
     SetParameter (wrapper.parameters[STR("Renderer")], psEngine::hwRenderer);
     SetParameter (wrapper.parameters[STR("RendererVersion")], psEngine::hwVersion);
     SetParameter (wrapper.parameters[STR("PlayerName")], psEngine::playerName);
-	SetParameter (wrapper.parameters[STR("Comments")], szComments);
-	printf("User Comments: %s\n",szComments);
+    wrapper.parameters[STR("Comments")] = szComments;
     PS_CHAR timeBuffer[128];
 #ifdef WIN32
     swprintf(timeBuffer, L"%I64u", crash_time);
@@ -273,7 +269,7 @@ bool UploadDump(const PS_CHAR* dump_path,
 #endif
     wrapper.parameters[STR("CrashTime")] = timeBuffer;
 
-    printf("Attempting to upload crash report.\n");
+    printf("PlaneShift has quit unexpectedly!\n\nA report containing only information strictly necessary to identify this problem will be sent to the PlaneShift developers.\nPlease consult the PlaneShift forums for more details.\nAttempting to upload crash report.\n");
 
 
     bool result = false;
