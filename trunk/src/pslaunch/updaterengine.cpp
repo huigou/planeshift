@@ -983,6 +983,13 @@ void UpdaterEngine::CheckIntegrity(bool automatic)
       }
     }
 
+    // Load updater config
+    if (!config->GetCurrentConfig()->Initialize(confignode))
+    {
+        printf("Failed to Initialize mirror config current!\n");
+        success = false;
+    }
+
     if(!success)
     {
         // Check if we have write permissions.
@@ -996,7 +1003,7 @@ void UpdaterEngine::CheckIntegrity(bool automatic)
         fileUtil->RemoveFile("/this/updaterinfo.xml", true);
         downloader = new Downloader(vfs);
         downloader->SetProxy(config->GetProxy().host.GetData(), config->GetProxy().port);
-        if(!downloader->DownloadFile("http://www.psmirror.org/repo/updaterinfo.xml", UPDATERINFO_CURRENT_FILENAME, true, true, 3, true))
+        if(!downloader->DownloadFile("http://testing.xordan.com/updaterinfo.xml", UPDATERINFO_CURRENT_FILENAME, true, true, 3, true))
         {
             PrintOutput("\nFailed to download updater info!\n");
             return;
@@ -1017,13 +1024,13 @@ void UpdaterEngine::CheckIntegrity(bool automatic)
             printf("Couldn't find config node in configfile!\n");
             return;
         }
-    }
 
-    // Load updater config
-    if (!config->GetCurrentConfig()->Initialize(confignode))
-    {
-        printf("Failed to Initialize mirror config current!\n");
-        return;
+        // Load updater config
+        if (!config->GetCurrentConfig()->Initialize(confignode))
+        {
+            printf("Failed to Initialize mirror config current!\n");
+            return;
+        }
     }
 
     // Initialise downloader.
