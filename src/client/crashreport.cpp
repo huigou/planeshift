@@ -208,8 +208,10 @@ BOOL CALLBACK CrashReportProc(HWND hwndDlg,
             switch (LOWORD(wParam)) 
             { 
                 case IDOK: 
-                    GetDlgItemTextA(hwndDlg, IDC_COMMENTS, szComments, 1500); 
- 
+			wchar_t wszComments[1500];
+                    GetDlgItemTextW(hwndDlg, IDC_COMMENTS, wszComments, 1500); 
+		    // The server always assumes UTF-8 fields.
+	    	    WideCharToMultiByte(CP_UTF8, 0, wszComments, -1, szComments, sizeof(szComments), NULL, NULL);
                     EndDialog(hwndDlg, wParam); 
                     return TRUE; 
             } 
