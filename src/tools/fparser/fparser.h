@@ -47,10 +47,10 @@ public:
     void setDelimiterChar(char);
 
     const char* ErrorMsg() const;
-    inline ParseErrorType GetParseErrorType() const { return parseErrorType; }
+    ParseErrorType GetParseErrorType() const;
 
     Value_t Eval(const Value_t* Vars);
-    inline int EvalError() const { return evalErrorType; }
+    int EvalError() const;
 
     bool AddConstant(const std::string& name, Value_t value);
     bool AddUnit(const std::string& name, Value_t value);

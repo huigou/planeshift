@@ -739,6 +739,12 @@ const char* FunctionParserBase<Value_t>::ErrorMsg() const
     return ParseErrorMessage[parseErrorType];
 }
 
+template<typename Value_t>
+inline typename FunctionParserBase<Value_t>::ParseErrorType FunctionParserBase<Value_t>::GetParseErrorType() const
+{ return parseErrorType; }
+
+template<typename Value_t>
+inline int FunctionParserBase<Value_t>::EvalError() const { return evalErrorType; }
 
 // Parse variables
 // ---------------
