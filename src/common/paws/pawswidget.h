@@ -731,7 +731,7 @@ public:
      * @remark If you override this, be sure to also override 
      * GetFocusOverridesControls() as returning true
      */
-    virtual bool OnKeyDown( int keyCode, int keyChar, int modifiers );
+    virtual bool OnKeyDown( utf32_char keyCode, utf32_char keyChar, int modifiers );
 
     /** Test focus of the widget.
      * @return hasFocus Current status of the widget.

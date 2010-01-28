@@ -411,7 +411,7 @@ bool pawsButton::OnMouseUp( int button, int modifiers, int x, int y )
     return false;
 }
 
-bool pawsButton::OnKeyDown( int keyCode, int key, int modifiers )
+bool pawsButton::OnKeyDown( utf32_char keyCode, utf32_char key, int modifiers )
 {
     /* This would be supposed to send a mouse click to the button in case enter is used
     * but in reality as we don't have tab (or similar) focus switching for things in the gui it requires

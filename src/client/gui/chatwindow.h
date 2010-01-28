@@ -132,7 +132,7 @@ public:
 
     bool OnMouseDown( int button, int modifiers, int x , int y );
 
-    bool OnKeyDown( int keyCode, int key, int modifiers );
+    bool OnKeyDown( utf32_char keyCode, utf32_char key, int modifiers );
 
     /** Check to see if the text input box is active.
      *  @return true if the text box is active.

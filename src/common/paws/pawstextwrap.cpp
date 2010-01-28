@@ -76,7 +76,7 @@ pawsMultilineEditTextBox::~pawsMultilineEditTextBox()
 }
 
 
-bool pawsMultilineEditTextBox::OnKeyDown( int code, int key, int modifiers )
+bool pawsMultilineEditTextBox::OnKeyDown( utf32_char code, utf32_char key, int modifiers )
 {   
     bool changed = false;
     size_t position = 0;
@@ -88,10 +88,10 @@ bool pawsMultilineEditTextBox::OnKeyDown( int code, int key, int modifiers )
     {
     case CSKEY_DEL:
     {
-        size_t position =  GetCursorPosition(cursorLine,cursorLoc);
+        position =  GetCursorPosition(cursorLine,cursorLoc);
         if (text.Length() >0 && position < text.Length())
         {
-            text.DeleteAt(position);
+            text.DeleteAt(position, csUnicodeTransform::UTF8Skip((const utf8_char*)text.GetData() + position, text.Length() - position));
             changed = true;
         }
         break;
@@ -102,15 +102,16 @@ bool pawsMultilineEditTextBox::OnKeyDown( int code, int key, int modifiers )
         if (text.Length() > 0 && position >0 )//&& position <=text.Length())
         {
             position--;        
-            text.DeleteAt(position);
+            text.DeleteAt(position, csUnicodeTransform::UTF8Skip((const utf8_char*)text.GetData() + position, text.Length() - position));
             repositionCursor = true;
             changed = true;
         }
         break;
     }
     case CSKEY_LEFT:
+    	position = GetCursorPosition(cursorLine,cursorLoc);
         if ( cursorLoc > 0 )
-            cursorLoc--;
+            cursorLoc -= csUnicodeTransform::UTF8Rewind((const utf8_char*)text.GetData() + position, position);
         else if (cursorLine > 0)
         {
             cursorLine--;
@@ -119,9 +120,10 @@ bool pawsMultilineEditTextBox::OnKeyDown( int code, int key, int modifiers )
         }
         break;
     case CSKEY_RIGHT:
+    	position = GetCursorPosition(cursorLine,cursorLoc);
         if ( cursorLoc < lineInfo[cursorLine]->lineLength-lineInfo[cursorLine]->lineExtra )
         {
-            cursorLoc++;
+        	cursorLoc += csUnicodeTransform::UTF8Skip((const utf8_char*)text.GetData() + position, text.Length() - position);
         }
         else if (cursorLine<lineInfo.GetSize()-1)
         {
@@ -159,16 +161,16 @@ bool pawsMultilineEditTextBox::OnKeyDown( int code, int key, int modifiers )
         break;
     }
     default:
-        if ( !isprint((unsigned char)key) && !(key==CSKEY_ENTER))
-        {
-            //unhandled non-printing character
+    	// Don't treat numpad keys specially
+    	CSKEY_PAD_TO_NORMAL(key);
+    	
+        if ( CSKEY_IS_SPECIAL(key))
             break;
-        }            
+        
+        // Ignore ASCII control characters
+        if (key < 128 && !isprint(key) && key != CSKEY_ENTER)
+        	break;
 
-        if ( key == CSKEY_ALT || key == CSKEY_CTRL )
-        {
-            break;
-        }
         //Lookup the position.
         position =  GetCursorPosition(cursorLine,cursorLoc);
         if (key == CSKEY_ENTER)
@@ -180,9 +182,12 @@ bool pawsMultilineEditTextBox::OnKeyDown( int code, int key, int modifiers )
         }
         else
         {
-            text.Insert( position, (char) key);
+        	utf8_char utf8Char[5];
+            
+            int charLen = csUnicodeTransform::UTF32to8 (utf8Char, 5, &key, 1);
+            text.Insert( position, (char *)utf8Char);
             repositionCursor = true;
-            position++;
+            position += charLen - 1;
         }
         
         changed = true;
@@ -207,10 +212,10 @@ bool pawsMultilineEditTextBox::OnKeyDown( int code, int key, int modifiers )
         topLine = cursorLine;
     SetupScrollBar();
 
-    if ( isprint((unsigned char)key)  )       
+    if ( key > 128 || isprint(key)  )       
         return true;
     
-    if (!(code== CSKEY_ENTER))
+    if (code != CSKEY_ENTER)
     {        
         pawsWidget::OnKeyDown( code, key, modifiers );
     }

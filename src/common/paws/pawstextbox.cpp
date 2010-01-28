@@ -25,6 +25,7 @@
 #include <iutil/virtclk.h>
 #include <iutil/evdefs.h>
 #include <iutil/event.h>
+#include <csutil/csuctransform.h>
 
 #include "pawstextbox.h"
 #include "pawsmanager.h"
@@ -329,7 +330,44 @@ void pawsTextBox::OnUpdateData(const char *dataname,PAWSData& value)
         SetText( value.GetStr());
 }
 
+int pawsTextBox::CountCodePoints(const char* text, int start, int len)
+{
+	int codePoints = 0;
+	const utf8_char* strStart = (const utf8_char*) text;
+	const utf8_char* str = (const utf8_char*) text;
+	if(len == -1)
+		len = strlen(text) - start;
+	text += start;
+	while(str < strStart + len)
+	{
+		str += csUnicodeTransform::UTF8Skip(str, strStart + len - str);
+		codePoints++;
+	}
+	return codePoints;
+}
 
+const char* pawsTextBox::RewindCodePoints(const char* text, int start, int count)
+{
+	const char* str = text + start;
+	while(count > 0 && str > text)
+	{
+		str -= csUnicodeTransform::UTF8Rewind((const utf8_char*) str, str - text);
+		count--;
+	}
+	return str;
+}
+
+const char* pawsTextBox::SkipCodePoints(const char* text, int start, int count)
+{
+	const char* str = text + start;
+	int len = strlen(text);
+	while(count > 0 && str < text + len)
+	{
+		str += csUnicodeTransform::UTF8Skip((const utf8_char*)str, text + len - str);
+		count--;
+	}
+	return str;
+}
 
 //----------------------------------------------------------------------------------------
 
@@ -1053,7 +1091,7 @@ void pawsEditTextBox::Draw()
 }
 
 
-bool pawsEditTextBox::OnKeyDown( int code, int key, int modifiers )
+bool pawsEditTextBox::OnKeyDown( utf32_char code, utf32_char key, int modifiers )
 {   
     bool changed = false;
     blink = true;
@@ -1066,18 +1104,15 @@ bool pawsEditTextBox::OnKeyDown( int code, int key, int modifiers )
             break;
         if ( cursorPosition != (size_t)-1 )
         {
-            if ( cursorPosition - start < 5 ) 
-                start = (int)cursorPosition - 5;
+            if ( pawsTextBox::CountCodePoints(text, cursorPosition) - pawsTextBox::CountCodePoints(text, start) < 5 ) 
+                start = (int)pawsTextBox::RewindCodePoints(text, cursorPosition, 5);
 
             if ( start < 0 ) 
                 start = 0;
 
             if ( text.Length() > 1 )
             {
-                csString tmp(text.GetData());
-                tmp.Truncate(cursorPosition);
-                tmp.Append(text.GetData() + cursorPosition + 1);
-                text.Replace(tmp);
+                text.DeleteAt(cursorPosition, csUnicodeTransform::UTF8Skip((const utf8_char*)text.GetData() + cursorPosition, text.Length() - cursorPosition));
             } 
             else
             {
@@ -1094,26 +1129,16 @@ bool pawsEditTextBox::OnKeyDown( int code, int key, int modifiers )
             cursorPosition = text.Length();
         if ( cursorPosition > 0 )
         {
-            cursorPosition--;
-            if ( cursorPosition - start < 5 ) 
-                start = (int)cursorPosition - 5;
+        	cursorPosition -= csUnicodeTransform::UTF8Rewind((const utf8_char*)text.GetData() + cursorPosition, cursorPosition);
+            if ( pawsTextBox::CountCodePoints(text, cursorPosition) - pawsTextBox::CountCodePoints(text, start) < 5 ) 
+                start = (int)pawsTextBox::RewindCodePoints(text, cursorPosition, 5);
 
             if ( start < 0 ) 
                 start = 0;
 
             if ( text.Length() > 1 )
             {
-                if ( cursorPosition == text.Length() )
-                {
-                    text.Truncate( text.Length() - 1 );
-                }
-                else
-                {
-                    csString tmp( text.GetData() );
-                    tmp.Truncate( cursorPosition );
-                    tmp.Append( text.GetData() + cursorPosition + 1 );
-                    text.Replace( tmp );
-                }
+                text.DeleteAt(cursorPosition, csUnicodeTransform::UTF8Skip((const utf8_char*)text.GetData() + cursorPosition, text.Length() - cursorPosition));
             } 
             else
             {
@@ -1128,9 +1153,9 @@ bool pawsEditTextBox::OnKeyDown( int code, int key, int modifiers )
         if (cursorPosition > text.Length())
             cursorPosition = text.Length();
         if ( cursorPosition > 0 )
-            cursorPosition--;
-        if ( cursorPosition - start < 5 )
-            start = (int)cursorPosition - 5;
+            cursorPosition -= csUnicodeTransform::UTF8Rewind((const utf8_char*)text.GetData() + cursorPosition, cursorPosition);
+        if ( pawsTextBox::CountCodePoints(text, cursorPosition) - pawsTextBox::CountCodePoints(text, start) < 5 ) 
+            start = (int)pawsTextBox::RewindCodePoints(text, cursorPosition, 5);
         if ( start < 0 )
             start = 0;
 
@@ -1140,7 +1165,7 @@ bool pawsEditTextBox::OnKeyDown( int code, int key, int modifiers )
             cursorPosition = text.Length();
         if ( cursorPosition < text.Length() )
         {
-            cursorPosition++;
+        	cursorPosition += csUnicodeTransform::UTF8Skip((const utf8_char*)text.GetData() + cursorPosition, text.Length() - cursorPosition);
         }
         break;
     case CSKEY_END:
@@ -1151,25 +1176,28 @@ bool pawsEditTextBox::OnKeyDown( int code, int key, int modifiers )
         start=0;
         break;
     default:
-        if ( !isprint((unsigned char)key))
-        {
+    	// Don't treat numpad keys specially
+    	CSKEY_PAD_TO_NORMAL(key);
+    	
+        if ( CSKEY_IS_SPECIAL(key))
             break;
-        }            
-
-        if ( key == CSKEY_ALT || key == CSKEY_CTRL )
-        {
-            break;
-        }
-         
+        
+        // Ignore ASCII control characters
+        if (key < 128 && !isprint(key))
+        	break;
+        
+        utf8_char utf8Char[5];
+        
+        int charLen = csUnicodeTransform::UTF32to8 (utf8Char, 5, &key, 1);
         if ( cursorPosition >= text.Length() )
         {
-            text.Append( (char)key );
+        	text.Append( (char *)utf8Char );
         }
         else
         {
-            text.Insert( cursorPosition, (char)key );
+        	text.Insert( cursorPosition, (char *)utf8Char );
         }
-        cursorPosition++;
+        cursorPosition += charLen - 1;
 
         changed = true;
     }
@@ -1181,7 +1209,7 @@ bool pawsEditTextBox::OnKeyDown( int code, int key, int modifiers )
         parent->OnChange(this);
     }
 
-    if (!isprint((unsigned char)key))
+    if (key < 128 && !isprint(key))
         pawsWidget::OnKeyDown( code, key, modifiers );
 
     return true;
@@ -1213,7 +1241,7 @@ bool pawsEditTextBox::OnMouseDown( int button, int modifiers, int x, int y )
         return true;
     }
 
-    GetFont()->GetDimensions(text.GetData(),textWidth,dummy);
+    GetFont()->GetDimensions(text.GetData() + start,textWidth,dummy);
     if (x >= textWidth)
     {
     	cursorPosition = text.Length();
@@ -1228,16 +1256,16 @@ bool pawsEditTextBox::OnMouseDown( int button, int modifiers, int x, int y )
     // Find exact letter mouse was clicked on
     int xlast;
     int xlast2=0;
-    const char *c;
-    char temp[2];
-    temp[1]='\0';
-    c=temp;
+    int charLen = 0;
+    
+    csString sub;
 
-    for (unsigned int i=0;i<text.Length();i++)
+    for (unsigned int i=start;i<text.Length();i += charLen)
     {
+        charLen = csUnicodeTransform::UTF8Skip((const utf8_char*)text.GetData() + i, text.Length() - i);
         xlast=xlast2;
-        temp[0]=text.GetAt(i);
-        GetFont()->GetDimensions(c, textWidth, dummy);
+        text.SubString(sub, i, charLen);
+        GetFont()->GetDimensions(sub.GetData(), textWidth, dummy);
         xlast2+=textWidth;
         if (x >= xlast && x < xlast2)
         {

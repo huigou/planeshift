@@ -33,7 +33,7 @@ public:
 
     void Draw();
 
-    bool OnKeyDown(int keyCode, int keyChar, int modifiers);
+    bool OnKeyDown(utf32_char keyCode, utf32_char keyChar, int modifiers);
 
     /** Sets the key for this key select box.
      *   \param _key        The new key.

@@ -106,7 +106,7 @@ void pawsStringPromptWindow::CloseWindow(const csString & text)
     parent->DeleteChild(this);       // destructs itself 
 }
 
-bool pawsStringPromptWindow::OnKeyDown( int code, int key, int modifiers )
+bool pawsStringPromptWindow::OnKeyDown( utf32_char code, utf32_char key, int modifiers )
 {
     if ( key==CSKEY_ENTER )
     {

@@ -87,7 +87,7 @@ public:
     /// creates the title row
     void AddTitleColumn( int column, ColumnDef* def );
 
-    bool OnKeyDown(int keyCode, int keyChar, int modifiers);
+    bool OnKeyDown(utf32_char keyCode, utf32_char keyChar, int modifiers);
 
     /// A single mouse click (left button) highlights the row
     bool OnMouseDown(int button, int modifiers, int x, int y );
@@ -263,7 +263,7 @@ public:
     /** When enter is pressed the highlighted row will be selected
      *  and the widget will be notified
      */
-    bool OnKeyDown(int keyCode, int keyChar, int modifiers);
+    bool OnKeyDown(utf32_char keyCode, utf32_char keyChar, int modifiers);
     
     void Resize();
 

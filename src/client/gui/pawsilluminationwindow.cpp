@@ -373,7 +373,7 @@ double pawsSketchWindow::CalcFunction(const char * functionName, const double * 
     return pawsWidget::CalcFunction(functionName,params);
 }
 
-bool pawsSketchWindow::OnKeyDown( int keyCode, int key, int modifiers )
+bool pawsSketchWindow::OnKeyDown( utf32_char keyCode, utf32_char key, int modifiers )
 {
     // printf("Keycode: %d, Key: %d\n", keyCode, key);
 

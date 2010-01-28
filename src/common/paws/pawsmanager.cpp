@@ -422,8 +422,8 @@ bool PawsManager::HandleKeyDown( iEvent& event )
         }
 
 
-        int raw = csKeyEventHelper::GetRawCode(&event);
-        int cooked = csKeyEventHelper::GetCookedCode(&event);
+        utf32_char raw = csKeyEventHelper::GetRawCode(&event);
+        utf32_char cooked = csKeyEventHelper::GetCookedCode(&event);
         uint32 modifiers = csKeyEventHelper::GetModifiersBits(&event);
 
         bool result = currentFocusedWidget->OnKeyDown( raw,
