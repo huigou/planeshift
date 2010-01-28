@@ -520,22 +520,38 @@ void pawsMessageTextBox::Draw()
     
     if ( topLine < 0 )
         topLine = 0;
+    
 
     for ( size_t x = topLine; x < (topLine+maxLines); x++ )
     {
         if ( x < adjusted.GetSize() )
         {
+            csRef<iFont> font = GetFont();
+            
+            // Check all characters can be drawn in this font, if not use default.
+            // Check for unicode
+            utf32_char utf32Char[1024];
+            int charLen = csUnicodeTransform::UTF8to32(utf32Char, 1023, (const utf8_char*) adjusted[x]->text.GetData(), (size_t)-1);
+            for(int i = 0; i < charLen; i++)
+            {
+            	if(utf32Char[i] > 127 && !font->HasGlyph(utf32Char[i]))
+            	{
+            		font = GetUnicodeFont();
+            		break;
+            	}
+            }
+            
         	if(adjusted[x]->segments.IsEmpty())
         	{
 				// Draw shadow
-				graphics2D->Write(  GetFont(),
+				graphics2D->Write(  font,
 									screenFrame.xmin + 1,
 									screenFrame.ymin + yPos*lineHeight + 1,
 									0,
 									-1,
 									(const char*)adjusted[x]->text );
 				// Draw actual text
-				graphics2D->Write(  GetFont(),
+				graphics2D->Write(  font,
 									screenFrame.xmin,
 									screenFrame.ymin + yPos*lineHeight,
 									adjusted[x]->colour,
@@ -547,14 +563,14 @@ void pawsMessageTextBox::Draw()
         		for(size_t i = 0; i < adjusted[x]->segments.GetSize(); i++)
         		{
 					// Draw shadow
-					graphics2D->Write(  GetFont(),
+					graphics2D->Write(  font,
 										screenFrame.xmin + adjusted[x]->segments[i].x + 1,
 										screenFrame.ymin + yPos*lineHeight + 1,
 										0,
 										-1,
 										(const char*)adjusted[x]->segments[i].text );
 					// Draw actual text
-					graphics2D->Write(  GetFont(),
+					graphics2D->Write(  font,
 										screenFrame.xmin + adjusted[x]->segments[i].x,
 										screenFrame.ymin + yPos*lineHeight,
 										adjusted[x]->segments[i].colour,
