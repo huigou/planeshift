@@ -1305,6 +1305,8 @@ GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
     gender = mesg.gender;
     factName = mesg.factname;
     matName = mesg.matname;
+    scale = 1; //mesg.scale;
+    mountscale = 1; // mesg.mountscale
     ownerEID = mesg.ownerEID;
     lastSentVelocity = lastSentRotation = 0.0f;
     stationary = true;
@@ -1939,12 +1941,29 @@ bool GEMClientActor::CheckLoadStatus()
         csRef<iMeshWrapper> mountMesh = mountFactory->CreateMeshWrapper();
         SwitchToRealMesh(mountMesh);
         charApp->ApplyRider(pcmesh);
+        csRef<iSpriteCal3DState> mountstate = scfQueryInterface<iSpriteCal3DState> (mountMesh->GetMeshObject());
         csRef<iSpriteCal3DState> riderstate = scfQueryInterface<iSpriteCal3DState> (mesh->GetMeshObject());
+        if(mountscale != 0)
+        {
+            csRef<iSpriteCal3DFactoryState> sprite = scfQueryInterface<iSpriteCal3DFactoryState> (mountMesh->GetFactory()->GetMeshObjectFactory());
+            sprite->RescaleFactory(mountscale);
+        }
+        if(scale != 0)
+        {
+            csRef<iSpriteCal3DFactoryState> sprite = scfQueryInterface<iSpriteCal3DFactoryState> (mesh->GetFactory()->GetMeshObjectFactory());
+            sprite->RescaleFactory(mountscale);
+        }
         riderstate->SetAnimCycle(MounterAnim,100);
     }
     else
     {
         SwitchToRealMesh(mesh);
+        csRef<iSpriteCal3DState> meshstate = scfQueryInterface<iSpriteCal3DState> (mesh->GetMeshObject());
+        if(scale != 0)
+        {
+            csRef<iSpriteCal3DFactoryState> sprite = scfQueryInterface<iSpriteCal3DFactoryState> (mesh->GetFactory()->GetMeshObjectFactory());
+            sprite->RescaleFactory(mountscale);
+        }
     }
 
     pcmesh->GetFlags().Set(CS_ENTITY_NODECAL);
