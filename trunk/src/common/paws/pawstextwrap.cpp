@@ -161,9 +161,6 @@ bool pawsMultilineEditTextBox::OnKeyDown( utf32_char code, utf32_char key, int m
         break;
     }
     default:
-    	// Don't treat numpad keys specially
-    	CSKEY_PAD_TO_NORMAL(key);
-    	
         if ( CSKEY_IS_SPECIAL(key))
             break;
         
