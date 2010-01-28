@@ -333,14 +333,13 @@ void pawsTextBox::OnUpdateData(const char *dataname,PAWSData& value)
 int pawsTextBox::CountCodePoints(const char* text, int start, int len)
 {
 	int codePoints = 0;
-	const utf8_char* strStart = (const utf8_char*) text;
-	const utf8_char* str = (const utf8_char*) text;
+	const char* str = text;
 	if(len == -1)
 		len = strlen(text) - start;
 	text += start;
 	while(str < strStart + len)
 	{
-		str += csUnicodeTransform::UTF8Skip(str, strStart + len - str);
+		str += csUnicodeTransform::UTF8Skip((const utf8_char*) str, text + len - str);
 		codePoints++;
 	}
 	return codePoints;
@@ -357,7 +356,7 @@ int pawsTextBox::RewindCodePoints(const char* text, int start, int count)
 	return str - text;
 }
 
-const char* pawsTextBox::SkipCodePoints(const char* text, int start, int count)
+int pawsTextBox::SkipCodePoints(const char* text, int start, int count)
 {
 	const char* str = text + start;
 	int len = strlen(text);
@@ -366,7 +365,7 @@ const char* pawsTextBox::SkipCodePoints(const char* text, int start, int count)
 		str += csUnicodeTransform::UTF8Skip((const utf8_char*)str, text + len - str);
 		count--;
 	}
-	return str;
+	return str - text + start;
 }
 
 //----------------------------------------------------------------------------------------
@@ -1104,7 +1103,7 @@ bool pawsEditTextBox::OnKeyDown( utf32_char code, utf32_char key, int modifiers 
             break;
         if ( cursorPosition != (size_t)-1 )
         {
-            if ( pawsTextBox::CountCodePoints(text, cursorPosition) - pawsTextBox::CountCodePoints(text, start) < 5 ) 
+            if ( pawsTextBox::CountCodePoints(text, 0, cursorPosition) - pawsTextBox::CountCodePoints(text, 0, start) < 5 ) 
                 start = (int)pawsTextBox::RewindCodePoints(text, cursorPosition, 5);
 
             if ( start < 0 ) 
@@ -1130,7 +1129,7 @@ bool pawsEditTextBox::OnKeyDown( utf32_char code, utf32_char key, int modifiers 
         if ( cursorPosition > 0 )
         {
         	cursorPosition -= csUnicodeTransform::UTF8Rewind((const utf8_char*)text.GetData() + cursorPosition, cursorPosition);
-            if ( pawsTextBox::CountCodePoints(text, cursorPosition) - pawsTextBox::CountCodePoints(text, start) < 5 ) 
+            if ( pawsTextBox::CountCodePoints(text, 0, cursorPosition) - pawsTextBox::CountCodePoints(text, 0, start) < 5 ) 
                 start = (int)pawsTextBox::RewindCodePoints(text, cursorPosition, 5);
 
             if ( start < 0 ) 
@@ -1154,7 +1153,7 @@ bool pawsEditTextBox::OnKeyDown( utf32_char code, utf32_char key, int modifiers 
             cursorPosition = text.Length();
         if ( cursorPosition > 0 )
             cursorPosition -= csUnicodeTransform::UTF8Rewind((const utf8_char*)text.GetData() + cursorPosition, cursorPosition);
-        if ( pawsTextBox::CountCodePoints(text, cursorPosition) - pawsTextBox::CountCodePoints(text, start) < 5 ) 
+        if ( pawsTextBox::CountCodePoints(text, 0, cursorPosition) - pawsTextBox::CountCodePoints(text, 0, start) < 5 ) 
             start = (int)pawsTextBox::RewindCodePoints(text, cursorPosition, 5);
         if ( start < 0 )
             start = 0;

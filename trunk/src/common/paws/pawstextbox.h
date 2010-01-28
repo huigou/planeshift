@@ -86,7 +86,7 @@ public:
     static int RewindCodePoints(const char* text, int start, int count);
     
     // Utility function to skip a UTF-8 string by a certain number of codepoints
-    static const char* SkipCodePoints(const char* text, int start, int count);
+    static int SkipCodePoints(const char* text, int start, int count);
 
 protected:
 
