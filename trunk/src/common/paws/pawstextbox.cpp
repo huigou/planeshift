@@ -337,7 +337,7 @@ int pawsTextBox::CountCodePoints(const char* text, int start, int len)
 	if(len == -1)
 		len = strlen(text) - start;
 	text += start;
-	while(str < strStart + len)
+	while(str < text + len)
 	{
 		str += csUnicodeTransform::UTF8Skip((const utf8_char*) str, text + len - str);
 		codePoints++;
