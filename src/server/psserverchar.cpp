@@ -456,7 +456,7 @@ bool ServerCharManager::SendInventory( int clientNum, bool sendUpdatesOnly)
                           slot,
                           (exchanging && invitem->exchangeOfferSlot != PSCHARACTER_SLOT_NONE) ? item->GetStackCount() - invitem->exchangeStackCount : item->GetStackCount(),
                           item->GetWeight(),
-                          item->GetTotalStackSize(),
+                          item->GetTotalStackSize(), //TODO: CHANGE psGUIInventoryMessage to use float for this!!!
                           item->GetImageName(),
                           item->GetPurifyStatus(),
                           CacheManager::GetSingleton().GetMsgStrings());

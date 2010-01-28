@@ -1389,6 +1389,12 @@ ALTER TABLE `race_spawns` ADD COLUMN `range` FLOAT UNSIGNED NOT NULL DEFAULT 0 A
 ALTER TABLE `race_spawns` DROP PRIMARY KEY, ADD PRIMARY KEY  USING BTREE(`raceid`, `x`, `y`, `z`, `yrot`, `range`, `sector_id`);
 UPDATE `server_options` SET `option_value`='1235' WHERE `option_name`='db_version';
 
+ALTER TABLE `item_stats` MODIFY COLUMN `weight` FLOAT(10,3)  NOT NULL DEFAULT '0.000',
+ MODIFY COLUMN `size` FLOAT(10,3) UNSIGNED NOT NULL DEFAULT '0.000';
+
+
+
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to
