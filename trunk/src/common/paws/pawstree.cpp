@@ -1181,7 +1181,7 @@ bool pawsTree::OnMouseDown(int button, int modifiers, int x, int y)
     return false;
 }
 
-bool pawsTree::OnKeyDown( int keyCode, int keyChar, int modifiers )
+bool pawsTree::OnKeyDown( utf32_char keyCode, utf32_char keyChar, int modifiers )
 {
     pawsTreeNode *node;
 

@@ -132,7 +132,7 @@ public:
 
     // from pawsWidget:
     virtual bool OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget );
-    virtual bool OnKeyDown( int keyCode, int keyChar, int modifiers );
+    virtual bool OnKeyDown( utf32_char keyCode, utf32_char keyChar, int modifiers );
     virtual bool OnMouseDown( int button, int modifiers, int x, int y );
     virtual bool PostSetup();
     virtual void Hide();

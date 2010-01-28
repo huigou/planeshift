@@ -60,7 +60,7 @@ public:
     virtual bool OnMouseExit();
     virtual bool OnMouseDown( int button, int modifiers, int x, int y );
     virtual bool OnMouseUp( int button, int modifiers, int x, int y );
-    virtual bool OnKeyDown( int keyCode, int key, int modifiers );
+    virtual bool OnKeyDown( utf32_char keyCode, utf32_char key, int modifiers );
 
     virtual bool IsDown()  { return down; }
     virtual void SetState  ( bool isDown, bool publish=true );

@@ -57,7 +57,7 @@ pawsMainWidget::~pawsMainWidget()
 }
 
 
-bool pawsMainWidget::OnKeyDown( int keyCode, int key, int modifiers )
+bool pawsMainWidget::OnKeyDown( utf32_char keyCode, utf32_char key, int modifiers )
 {
     pawsScriptKey* found = 0;
     

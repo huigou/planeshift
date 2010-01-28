@@ -1003,7 +1003,7 @@ void pawsListBox::MoveSelectBar(bool direction)
 }
 
 
-bool pawsListBox::OnKeyDown(int keyCode, int keyChar, int modifiers)
+bool pawsListBox::OnKeyDown(utf32_char keyCode, utf32_char keyChar, int modifiers)
 {
     switch (keyChar)
     {
@@ -1289,7 +1289,7 @@ pawsListBoxRow::pawsListBoxRow()
 }
 
 
-bool pawsListBoxRow::OnKeyDown(int keyCode, int keyChar, int modifiers)
+bool pawsListBoxRow::OnKeyDown(utf32_char keyCode, utf32_char keyChar, int modifiers)
 {
     return GetParent()->OnKeyDown(keyCode,keyChar,modifiers);
 }

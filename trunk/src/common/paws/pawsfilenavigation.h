@@ -47,7 +47,7 @@ public:
     virtual bool OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* widget);
     virtual bool OnChange(pawsWidget * widget);
     virtual void OnListAction( pawsListBox* selected, int status );
-    virtual bool OnKeyDown( int keyCode, int key, int modifiers );
+    virtual bool OnKeyDown( utf32_char keyCode, utf32_char key, int modifiers );
 
     /// Overridden to reset the selection state on Show()
     virtual void Show();

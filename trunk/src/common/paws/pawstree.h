@@ -262,7 +262,7 @@ public:
     
     virtual void Draw();
     virtual bool OnMouseDown(int button, int modifiers, int x, int y);
-    virtual bool OnKeyDown( int keyCode, int keyChar, int modifiers );
+    virtual bool OnKeyDown( utf32_char keyCode, utf32_char keyChar, int modifiers );
     virtual bool OnScroll(int scrollDirection, pawsScrollBar* widget);
     virtual bool LoadChildren( iDocumentNode* node );
 

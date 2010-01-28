@@ -82,7 +82,7 @@ public:
     psMainWidget();
     virtual ~psMainWidget();
 
-    bool OnKeyDown(int keyCode, int key, int modifiers );
+    bool OnKeyDown(utf32_char keyCode, utf32_char key, int modifiers );
 
     bool OnMouseDown( int button, int modifiers, int x, int y );
     bool OnMouseUp( int button, int modifiers, int x, int y );

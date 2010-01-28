@@ -452,7 +452,7 @@ void pawsFingeringWindow::SetCollisionInfo(const char* action)
     buttonTextBox->SetText(str);
 }
 
-bool pawsFingeringWindow::OnKeyDown(int keyCode, int keyChar, int modifiers)
+bool pawsFingeringWindow::OnKeyDown(utf32_char keyCode, utf32_char keyChar, int modifiers)
 {
     /* Ignore autorepeats.
      * You can get odd results like ctrl+Lctrl if you accept them here,

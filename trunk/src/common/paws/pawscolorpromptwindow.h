@@ -47,7 +47,7 @@ public:
     //from pawsWidget:
     virtual bool PostSetup();
     bool OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget );
-    virtual bool OnKeyDown( int keyCode, int keyChar, int modifiers );
+    virtual bool OnKeyDown( utf32_char keyCode, utf32_char keyChar, int modifiers );
     virtual bool OnScroll( int scrollDirection, pawsScrollBar* widget );
 
     void Initialize(const csString & label, int color, int minColor, int maxColor,

@@ -47,7 +47,7 @@ void pawsKeySelectBox::Draw()
     DrawWidgetText((const char *)text, screenFrame.xmin + textX, screenFrame.ymin + textY);   
 }
 
-bool pawsKeySelectBox::OnKeyDown(int keyCode, int keyChar, int modifiers)
+bool pawsKeySelectBox::OnKeyDown(utf32_char keyCode, utf32_char keyChar, int modifiers)
 {
     if (!CSKEY_IS_MODIFIER(keyCode))
         SetKey(keyCode, modifiers);

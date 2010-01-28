@@ -133,7 +133,7 @@ bool pawsColorPromptWindow::OnButtonPressed( int mouseButton, int keyModifier, p
     return false;
 }
 
-bool pawsColorPromptWindow::OnKeyDown( int code, int key, int modifiers )
+bool pawsColorPromptWindow::OnKeyDown( utf32_char code, utf32_char key, int modifiers )
 {
     if ( key==CSKEY_ENTER )
     {

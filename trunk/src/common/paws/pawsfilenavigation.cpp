@@ -671,7 +671,7 @@ void pawsFileNavigation::Show()
 }
 
 
-bool pawsFileNavigation::OnKeyDown( int keyCode, int key, int modifiers )
+bool pawsFileNavigation::OnKeyDown( utf32_char keyCode, utf32_char key, int modifiers )
 {
     if (key==CSKEY_ENTER)
     {

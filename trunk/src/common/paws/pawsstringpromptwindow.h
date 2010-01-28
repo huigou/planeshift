@@ -53,7 +53,7 @@ public:
     
     //from pawsWidget:
     bool OnButtonReleased( int mouseButton, int keyModifier, pawsWidget* widget );
-    virtual bool OnKeyDown( int keyCode, int keyChar, int modifiers );
+    virtual bool OnKeyDown( utf32_char keyCode, utf32_char keyChar, int modifiers );
     
     static pawsStringPromptWindow * Create( 
         const csString & label, 

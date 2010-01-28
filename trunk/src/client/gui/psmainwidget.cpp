@@ -218,7 +218,7 @@ bool psMainWidget::OnDoubleClick( int button, int keyModifier, int x, int y )
     return false;
 }
 
-bool psMainWidget::OnKeyDown( int keyCode, int key, int modifiers )
+bool psMainWidget::OnKeyDown( utf32_char keyCode, utf32_char key, int modifiers )
 {
  if (!locked)
  {

@@ -28,7 +28,7 @@ struct iVirtualClock;
 #include "pawswidget.h"
 #include <csutil/parray.h>
 #include <ivideo/fontserv.h>
-		
+
 /** A basic text box widget.
  */
 class pawsTextBox : public pawsWidget
@@ -78,6 +78,15 @@ public:
     virtual int GetFontColour();
 
     virtual void OnUpdateData(const char *dataname,PAWSData& data);
+    
+    // Utility function to calculate number of code points in a substring
+    static int CountCodePoints(const char* text, int start = 0, int len = -1);
+    
+    // Utility function to rewind a UTF-8 string by a certain number of codepoints
+    static const char* RewindCodePoints(const char* text, int start, int count);
+    
+    // Utility function to skip a UTF-8 string by a certain number of codepoints
+    static const char* SkipCodePoints(const char* text, int start, int count);
 
 protected:
 
@@ -242,7 +251,7 @@ public:
 
     bool Setup( iDocumentNode* node );
 
-    bool OnKeyDown( int code, int key, int modifiers );
+    bool OnKeyDown( utf32_char code, utf32_char key, int modifiers );
     
     const char* GetText() { return text.GetDataSafe(); }
 
@@ -396,7 +405,7 @@ public:
     virtual bool OnMouseUp( int button, int modifiers, int x, int y );
     virtual bool OnMouseDown( int button, int modifiers, int x, int y );
     virtual void OnUpdateData(const char *dataname,PAWSData& data);
-    virtual bool OnKeyDown( int code, int key, int modifiers );
+    virtual bool OnKeyDown( utf32_char code, utf32_char key, int modifiers );
     virtual void CalcMouseClick( int x, int y, size_t &cursorLine, size_t &cursorChar);
     
     virtual const bool GetFocusOverridesControls() const { return true; }
