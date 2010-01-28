@@ -72,6 +72,7 @@ bool psRaceInfo::Load(iResultRow& row)
     MounterAnim = row["cstr_mounter_animation"];
     CacheManager::GetSingleton().AddCommonStringID(MounterAnim);
     sex = row["sex"];
+    scale    = row.GetFloat("scale");
     speedModifier = row.GetFloat("speed_modifier");
 
     gender = CacheManager::GetSingleton().ConvertGenderString(row["sex"]);
