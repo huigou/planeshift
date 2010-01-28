@@ -538,6 +538,8 @@ public:
     bool stationary,path_sent;
     csTicks lastDRUpdateTime;
     unsigned short gender;
+    float scale;
+    float mountScale;
 
     // Access functions for the group var
     bool IsGroupedWith(GEMClientActor* actor);

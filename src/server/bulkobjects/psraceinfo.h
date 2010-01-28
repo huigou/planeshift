@@ -77,7 +77,7 @@ public:
     int natural_armor_id;
     float runMinSpeed,runBaseSpeed,runMaxSpeed;
     float walkMinSpeed,walkBaseSpeed,walkMaxSpeed;
-    float scale;
+    float scale; ///< The scale override of this race
     
     float GetBaseAttribute(PSITEMSTATS_STAT attrib);
     
@@ -124,6 +124,9 @@ public:
 
     float GetSpeedModifier()     { return speedModifier; }
     
+    /** Gets the scale override, if any, of this race.
+     *  @return A float which contains the scale override for this race.
+     */
     float GetScale()     { return scale; }
     
 };
