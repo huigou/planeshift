@@ -346,7 +346,7 @@ int pawsTextBox::CountCodePoints(const char* text, int start, int len)
 	return codePoints;
 }
 
-const char* pawsTextBox::RewindCodePoints(const char* text, int start, int count)
+int pawsTextBox::RewindCodePoints(const char* text, int start, int count)
 {
 	const char* str = text + start;
 	while(count > 0 && str > text)
@@ -354,7 +354,7 @@ const char* pawsTextBox::RewindCodePoints(const char* text, int start, int count
 		str -= csUnicodeTransform::UTF8Rewind((const utf8_char*) str, str - text);
 		count--;
 	}
-	return str;
+	return str - text;
 }
 
 const char* pawsTextBox::SkipCodePoints(const char* text, int start, int count)
