@@ -83,7 +83,7 @@ public:
     static int CountCodePoints(const char* text, int start = 0, int len = -1);
     
     // Utility function to rewind a UTF-8 string by a certain number of codepoints
-    static const char* RewindCodePoints(const char* text, int start, int count);
+    static int RewindCodePoints(const char* text, int start, int count);
     
     // Utility function to skip a UTF-8 string by a certain number of codepoints
     static const char* SkipCodePoints(const char* text, int start, int count);
@@ -298,7 +298,7 @@ protected:
     /// Position of first character that we display 
     int start;
 
-    /// The position of the cursor blink 
+    /// The position of the cursor blink (in code units not points)
     size_t cursorPosition;
     unsigned int cursorLine;
 
