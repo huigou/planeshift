@@ -15,6 +15,7 @@
                     <text string="Movements"/>
                 </widget>
             </nodewidget>
+            <widget factory="pawsSeqTreeNode" name="MouseMove"/>
             <widget factory="pawsSeqTreeNode" name="Forward"/>
             <widget factory="pawsSeqTreeNode" name="Backward"/>
             <widget factory="pawsSeqTreeNode" name="Rotate left"/>
@@ -65,7 +66,6 @@
                     <text string="Camera"/>
                 </widget>
             </nodewidget>
-            <widget factory="pawsSeqTreeNode" name="MouseMove"/>
             <widget factory="pawsSeqTreeNode" name="Camera mode"/>
             <widget factory="pawsSeqTreeNode" name="Look up"/>
             <widget factory="pawsSeqTreeNode" name="Look down"/>
