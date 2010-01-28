@@ -77,6 +77,7 @@ public:
     int natural_armor_id;
     float runMinSpeed,runBaseSpeed,runMaxSpeed;
     float walkMinSpeed,walkBaseSpeed,walkMaxSpeed;
+    float scale;
     
     float GetBaseAttribute(PSITEMSTATS_STAT attrib);
     
@@ -122,6 +123,8 @@ public:
     const char *GetMounterAnim()  { return MounterAnim.GetDataSafe(); }
 
     float GetSpeedModifier()     { return speedModifier; }
+    
+    float GetScale()     { return scale; }
     
 };
 

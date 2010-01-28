@@ -1390,8 +1390,11 @@ ALTER TABLE `race_spawns` DROP PRIMARY KEY, ADD PRIMARY KEY  USING BTREE(`raceid
 UPDATE `server_options` SET `option_value`='1235' WHERE `option_name`='db_version';
 
 ALTER TABLE `item_stats` MODIFY COLUMN `weight` FLOAT(10,3)  NOT NULL DEFAULT '0.000',
- MODIFY COLUMN `size` FLOAT(10,3) UNSIGNED NOT NULL DEFAULT '0.000';
+MODIFY COLUMN `size` FLOAT(10,3) UNSIGNED NOT NULL DEFAULT '0.000';
 
+#1236 - Stefano Angeleri added scale factor
+ALTER TABLE `race_info` ADD COLUMN `scale` FLOAT  NOT NULL DEFAULT '0' COMMENT 'Defines the scale of the race. Overrides whathever is defined in the cal3d file.' AFTER `race`;
+UPDATE `server_options` SET `option_value`='1236' WHERE `option_name`='db_version';
 
 
 
