@@ -1727,7 +1727,7 @@ float psItem::GetWeight()
     return (current_stats->GetWeight() * GetStackCount());
 }
 
-unsigned short psItem::GetItemSize()
+float psItem::GetItemSize()
 {
     return current_stats->GetSize();
 }
@@ -2533,16 +2533,16 @@ bool psItem::SendItemDescription( Client *client)
 
     itemCategory.Format( "Category: %s", current_stats->GetCategory()->name.GetData() );
     float fweight = GetWeight();
-    unsigned short ssize = GetItemSize();
+    float ssize = GetItemSize();
     if(stack_count > 1)
     {
-        weight.Format("\nWeight: %.2f (%hu x %.2f)", fweight, stack_count, fweight/stack_count);
-        size.Format("\nSize: %hu (%hu x %hu)", ssize*stack_count, stack_count, ssize);
+        weight.Format("\nWeight: %.3f (%hu x %.3f)", fweight, stack_count, fweight/stack_count);
+        size.Format("\nSize: %.3f (%hu x %.3f)", ssize*stack_count, stack_count, ssize);
     }
     else
     {
-        weight.Format("\nWeight: %.2f", fweight);
-        size.Format("\nSize: %hu", ssize);
+        weight.Format("\nWeight: %.3f", fweight);
+        size.Format("\nSize: %.3f", ssize);
     }
     itemInfo += itemCategory+weight+size;
 

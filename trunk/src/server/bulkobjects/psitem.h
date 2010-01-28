@@ -191,7 +191,7 @@ class psWorkGameEvent;
 *   Weight of stacks is a the count of the stack multiplied by the weight of the base item stat.
 *
 * Size Rules:
-*   Size is single number (unsigned short) that relates to the length of the longest dimension measured in centimeters.
+*   Size is single number (float) that relates to the length of the longest dimension measured in centimeters.
 *   Stacks do not affect size.
 *   Containers have a maximum content size.
 *   65535 = infinite size. Items with 65535 cannot be put into any containers.  Containers with 65535 max content size can contain any item except items with 65535 size.
@@ -693,9 +693,9 @@ public:
     float GetWeaponAttributeBonusMax(int index);
 
     float GetWeight();
-    unsigned short GetItemSize();
+    float GetItemSize();
     /// Gets the total size of the items in the stack.
-    uint GetTotalStackSize() { return GetItemSize()*stack_count; }
+    float GetTotalStackSize() { return GetItemSize()*stack_count; }
 
     unsigned short GetContainerMaxSize();
 

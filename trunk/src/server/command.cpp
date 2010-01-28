@@ -1260,7 +1260,7 @@ void show_item_stats(psItem *item,int depth)
     }
 
     indent(depth);
-    CPrintf(CON_CMDOUTPUT ,"Weight:%g Size:%d ContainerMaxSize:%d VisDistance:%g DecayResist:%g\n",
+    CPrintf(CON_CMDOUTPUT ,"Weight:%g Size:%g ContainerMaxSize:%d VisDistance:%g DecayResist:%g\n",
                             item->GetWeight(),
                             item->GetItemSize(),
                             item->GetContainerMaxSize(),

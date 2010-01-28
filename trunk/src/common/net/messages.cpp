@@ -2289,7 +2289,7 @@ csString psGUIInventoryMessage::ToString(AccessPointers * /*access_ptrs*/)
             msgtext.AppendFmt("%d x '%s' ", items[x].stackcount, items[x].name.GetDataSafe());
 
 #ifdef FULL_DEBUG_DUMP
-            msgtext.AppendFmt("(Container: %d Slot: %d Weight: %.2f Size: %ud Icon: '%s' Purified: %d), ",
+            msgtext.AppendFmt("(Container: %d Slot: %d Weight: %.3f Size: %.3f Icon: '%s' Purified: %d), ",
             items[x].container,
             items[x].slot,
             items[x].weight,

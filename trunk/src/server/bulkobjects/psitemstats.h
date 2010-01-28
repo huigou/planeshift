@@ -372,7 +372,7 @@ private:
     /** Size of the longest dimension of this object, in cm
      *  This is used to determine wether an item can fit inside of a container.
      */
-    unsigned short size;
+    float size;
     /** Size of the longest dimension of the longest item this container can hold.
      *  This is used to determine wether an item can fit inside of a container.
      *  Only valid if this is a container.
@@ -525,7 +525,7 @@ public:
     void SetArmorVsWeaponType(const char* v);
 
     float GetWeight();
-    unsigned short GetSize();
+    float GetSize();
     unsigned short GetContainerMaxSize();
 
     /** Gets the slots available in this item (only containers) which means

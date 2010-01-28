@@ -460,7 +460,7 @@ bool psItemStats::ReadItemStats(iResultRow& row)
         item_quality = 300;
     }
     weight              = row.GetFloat("weight");
-    size                = (unsigned short)row.GetInt("size");
+    size                = row.GetFloat("size");
     container_max_size  = (unsigned short)row.GetInt("container_max_size");
     container_max_slots = row.GetInt("container_max_slots");
     visible_distance    = row.GetFloat("visible_distance");
@@ -1153,7 +1153,7 @@ float psItemStats::GetWeight()
 }
 
 
-unsigned short psItemStats::GetSize()
+float psItemStats::GetSize()
 {
     return size;
 }
