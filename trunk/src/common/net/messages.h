@@ -3109,6 +3109,8 @@ public:
                     const char* mountFactname,
                     const char* MounterAnim,
                     unsigned short int gender,
+                    float scale,
+                    float mountscale,
                     const char* helmGroup,
                     const char* BracerGroup,
                     const char* BeltGroup,
@@ -3167,6 +3169,8 @@ public:
 
     int posPlayerID; ///< Remember the position the playerID in the generated message
     int posInstance; ///< Remember the position of the instance field in the generated message
+    float scale; ///< Stores the scale of the actor
+    float mountScale; ///< Stores the scale of the mounted actor
 };
 
 

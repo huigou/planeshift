@@ -4683,6 +4683,8 @@ psPersistActor::psPersistActor( uint32_t clientNum,
                                 const char* mountFactname,
                                 const char* MounterAnim,
                                 unsigned short int gender,
+                                float scale,
+                                float mountscale,
                                 const char* helmGroup,
                                 const char* bracerGroup,
                                 const char* BeltGroup,
@@ -4742,10 +4744,13 @@ psPersistActor::psPersistActor( uint32_t clientNum,
     msg->Add(ownerEID.Unbox());
     posInstance = (int) msg->current;
     msg->Add( (int32_t)0 );
-    if (flags) // No point sending 0, has to be at the end
-    {
+    //if (flags) // No point sending 0, has to be at the end
+    //{
         msg->Add( flags );
-    }
+    //}
+    //^ for now send it always this allows us to avoid a netbump
+    msg->Add(scale);
+    msg->Add(mountScale);
 
     msg->ClipToCurrentSize();
 }
@@ -4804,6 +4809,16 @@ psPersistActor::psPersistActor( MsgEntry* me, csStringSet* msgstrings, csStringH
     } else
     {
         flags   = 0;
+    }
+    if(!me->IsEmpty()) //should allow to move without a netbump
+    {
+        scale      = me->GetFloat();
+        mountScale = me->GetFloat();
+    }
+    else
+    {
+        scale = 0;
+        mountScale = 0;
     }
 }
 
@@ -7436,7 +7451,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psCachedFileMessage,MSGTYPE_CACHEFILE);
 
 psCachedFileMessage::psCachedFileMessage( uint32_t client, uint8_t sequence, const char *pathname, iDataBuffer *contents)
 {
-    printf("::Building cached file message for '%s', sequence %d, size %u.\n", pathname, sequence,contents?contents->GetSize():0);
+    printf("::Building cached file message for '%s', sequence %d, size %lu.\n", pathname, sequence,contents?contents->GetSize():0);
 
     // We send the hash along with it to save as the filename on the client
     if (pathname[0] == '(')  // timestamp always starts with '('
