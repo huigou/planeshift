@@ -1165,6 +1165,11 @@ public:
      * or if it doesn't have a parent it returns windowManager DEFAULT_FONT.
      */
     iFont *GetFont( bool scaled = true);
+    
+    /** Gets a font used to draw general Unicode characters that the current font
+     * doesn't have.
+     */
+    iFont *GetUnicodeFont();
 
     /** Gets the current font color.
      * @return defaultFontColour if it is != -1, if it has a parent 
