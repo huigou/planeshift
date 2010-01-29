@@ -827,7 +827,7 @@ void ServerCharManager::HandleMerchantBuy(psGUIMerchantMessage& msg, Client *cli
         else // normal purchase
         {
             int maxcount = MAX_STACK_COUNT;
-            if (item->GetIsContainer())
+            if (item->GetIsContainer() || !item->GetIsStackable())
                 maxcount = 1;
 
             // split it into several stacks if it doesn't fit into a single one
