@@ -42,8 +42,7 @@
 
 
         <widget name="BulkList" factory="pawsListBox" selectable="0">
-            <frame x="90" y="160" width="192" height="192" border="no"/>
-            <scrollbar heightmod="-1" />
+            <frame x="82" y="160" width="205" height="192" border="no"/>
             <columns height="48" headings="no" >
                 <column width="48" >
                     <widget name="Bulk0" factory="pawsSlot">
