@@ -1205,7 +1205,7 @@ bool pawsEditTextBox::OnKeyDown( utf32_char code, utf32_char key, int modifiers 
         parent->OnChange(this);
     }
 
-    if (key < 128 && !isprint(key))
+    if ((key < 128 && !isprint(key)) || CSKEY_IS_SPECIAL(key))
         pawsWidget::OnKeyDown( code, key, modifiers );
 
     return true;

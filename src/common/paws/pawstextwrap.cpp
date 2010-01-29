@@ -209,7 +209,7 @@ bool pawsMultilineEditTextBox::OnKeyDown( utf32_char code, utf32_char key, int m
         topLine = cursorLine;
     SetupScrollBar();
 
-    if ( key > 128 || isprint(key)  )       
+    if ( !CSKEY_IS_SPECIAL(key) && (key > 128 || isprint(key)  ))       
         return true;
     
     if (code != CSKEY_ENTER)
