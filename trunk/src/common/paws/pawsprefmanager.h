@@ -49,7 +49,6 @@ public:
     bool LoadBorderFile( const char* file );
 
     iFont* GetDefaultFont( bool scaled = true ) { return scaled?defaultScaledFont:defaultFont; }
-    iFont* GetUnicodeFont() { return unicodeFont; }
     const char* GetDefaultFontName() { return defaultFontName; }
     int    GetDefaultFontColour() { return defaultFontColour; }
     int    GetBorderColour( int index ) { return borderColours[index]; }
@@ -62,7 +61,7 @@ private:
     csRef<iDocumentSystem>  xml; 
     csRef<iGraphics2D>      graphics2D;
 
-    csRef<iFont> defaultFont, defaultScaledFont, unicodeFont;
+    csRef<iFont> defaultFont, defaultScaledFont;
     int defaultFontColour;
     csString defaultFontName;
 
