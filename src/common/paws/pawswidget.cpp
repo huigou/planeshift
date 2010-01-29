@@ -27,7 +27,6 @@
 #include <iutil/evdefs.h>
 #include <ivideo/fontserv.h>
 #include <csutil/xmltiny.h>
-#include <csutil/csuctransform.h>
 
 #include "util/localization.h"
 
@@ -1193,20 +1192,6 @@ void pawsWidget::DrawWidgetText(const char *text, int x, int y, int style)
     csRef<iFont> font = GetFont();
     if (style==-1)
         style = GetFontStyle();
-    
-    bool unicode = false;
-    
-    // Check all characters can be drawn in this font, if not use default.
-    utf32_char utf32Char[1024];
-    int charLen = csUnicodeTransform::UTF8to32(utf32Char, 1023, (const utf8_char*) text, (size_t)-1);
-    for(int i = 0; i < charLen; i++)
-    {
-    	if(utf32Char[i] > 127 && !font->HasGlyph(utf32Char[i]))
-    	{
-    		font = GetUnicodeFont();
-    		break;
-    	}
-    }
 
     if (parent && !parent->GetBackground().IsEmpty() && parent->isFadeEnabled() && parent->GetMaxAlpha() != parent->GetMinAlpha())
     {
@@ -2547,11 +2532,6 @@ iFont *pawsWidget::GetFont( bool scaled )
         font = PawsManager::GetSingleton().GetPrefs()->GetDefaultFont( scaled );
 
     return font;
-}
-
-iFont *pawsWidget::GetUnicodeFont()
-{
-	return PawsManager::GetSingleton().GetPrefs()->GetUnicodeFont();
 }
 
 int pawsWidget::GetFontColour()

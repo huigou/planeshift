@@ -105,7 +105,6 @@ bool pawsPrefManager::LoadPrefFile( const char* fileName )
                 Error2("Could not load font: >%s<", (const char*)defaultFontName );
                 return false;
             }
-            unicodeFont = graphics2D->GetFontServer()->LoadFont("/fonts/ttf/Arial Unicode.ttf", 10 );
 
             int r = node->GetAttributeValueAsInt( "r" );            
             int g = node->GetAttributeValueAsInt( "g" );            
