@@ -350,7 +350,7 @@ public:
 
     size_t GetContainedItemCount(psItem *container);
     float GetContainedWeight(psItem *container);
-    uint32 GetContainedSize(psItem *container);
+    float GetContainedSize(psItem *container);
 
     /// Uses Mathscript formulas to determine the proper max weight and max space limits
     void CalculateLimits();

@@ -2710,7 +2710,7 @@ bool psItem::SendContainerContents(Client *client, int containerID)
     csString desc( GetDescription() );
 
     // FIXME: This function is called for world containers too...
-    desc.AppendFmt("\n\nWeight: %.2f\nCapacity: %u/%u",
+    desc.AppendFmt("\n\nWeight: %.2f\nCapacity: %.2f/%u",
                     client->GetCharacterData()->Inventory().GetContainedWeight(this),
                     client->GetCharacterData()->Inventory().GetContainedSize(this),
                     GetContainerMaxSize() );
