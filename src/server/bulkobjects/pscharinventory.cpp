@@ -1213,9 +1213,9 @@ float psCharacterInventory::GetContainedWeight(psItem *container)
     return total;
 }
 
-uint32 psCharacterInventory::GetContainedSize(psItem *container)
+float psCharacterInventory::GetContainedSize(psItem *container)
 {
-    uint32 total=0;
+    float total=0;
     gemContainer *cont = dynamic_cast<gemContainer*> (container->GetGemObject());
     if(cont)
     {
