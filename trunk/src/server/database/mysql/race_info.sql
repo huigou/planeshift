@@ -48,7 +48,7 @@ CREATE TABLE `race_info` (
   `cloak` varchar(20) DEFAULT '' COMMENT 'Stores a cloak group allowing to use the same cloak mesh for more than one race, just like for the helm column',
   `cstr_mounter_animation` varchar(200) NOT NULL DEFAULT '' COMMENT 'Defines the animation the mounter of this race will use when mounting it',
   `race` int(5) unsigned NOT NULL,
-  `scale` FLOAT  NOT NULL DEFAULT '0' COMMENT 'Defines the scale of the race. Overrides whathever is defined in the cal3d file.';
+  `scale` FLOAT  NOT NULL DEFAULT '0' COMMENT 'Defines the scale of the race. Overrides whathever is defined in the cal3d file.',
   `speed_modifier` float NOT NULL DEFAULT '1' COMMENT 'Used as a multiplier of the velocity',
   PRIMARY KEY (`id`) USING BTREE
 );
