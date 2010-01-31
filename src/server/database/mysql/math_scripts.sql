@@ -126,8 +126,8 @@ INSERT INTO math_scripts VALUES( "StaminaRatioSit",
 MStaminaRate = Actor:MaxMStamina*0.015*BaseRegenMental;");
 
 INSERT INTO math_scripts VALUES( "StaminaRatioWork", 
-"PStaminaRate = Actor:MaxPStamina-6.0*(100-SkillMentalFactor)/100;
-MStaminaRate = Actor:MaxMStamina-6.0*(100-SkillMentalFactor)/100;");
+"PStaminaRate = BaseRegenPhysical-6.0*(100-SkillMentalFactor)/100;
+MStaminaRate = BaseRegenMental-6.0*(100-SkillMentalFactor)/100;");
 
 INSERT INTO math_scripts VALUES( "CalculateMaxHP", "MaxHP = Actor:Will + Actor:Agility + Actor:Strength;");
 
