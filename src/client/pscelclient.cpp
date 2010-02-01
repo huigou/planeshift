@@ -1942,26 +1942,16 @@ bool GEMClientActor::CheckLoadStatus()
         SwitchToRealMesh(mountMesh);
         charApp->ApplyRider(pcmesh);
         csRef<iSpriteCal3DState> riderstate = scfQueryInterface<iSpriteCal3DState> (mesh->GetMeshObject());
-        if(mountScale != 0)
-        {
-            csRef<iSpriteCal3DFactoryState> sprite = scfQueryInterface<iSpriteCal3DFactoryState> (mountMesh->GetFactory()->GetMeshObjectFactory());
-            sprite->RescaleFactory(mountScale);
-        }
-        if(scale != 0)
-        {
-            csRef<iSpriteCal3DFactoryState> sprite = scfQueryInterface<iSpriteCal3DFactoryState> (mesh->GetFactory()->GetMeshObjectFactory());
-            sprite->RescaleFactory(scale);
-        }
         riderstate->SetAnimCycle(MounterAnim,100);
     }
     else
     {
         SwitchToRealMesh(mesh);
         csRef<iSpriteCal3DState> meshstate = scfQueryInterface<iSpriteCal3DState> (mesh->GetMeshObject());
-        if(scale != 0)
+        if(scale >= 0)
         {
             csRef<iSpriteCal3DFactoryState> sprite = scfQueryInterface<iSpriteCal3DFactoryState> (mesh->GetFactory()->GetMeshObjectFactory());
-            sprite->RescaleFactory(scale);
+            sprite->AbsoluteRescaleFactory(scale);
         }
     }
 
