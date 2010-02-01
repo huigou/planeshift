@@ -431,12 +431,6 @@ bool ServerCharManager::SendInventory( int clientNum, bool sendUpdatesOnly)
 										 (uint32_t)0, chardata->Inventory().MaxWeight(),
 										 chardata->Inventory().GetInventoryVersion(), msgsize);
     
-    csString status;
-    status.Format("Sending GUI Inventory message size %zu to clientnum %u", msgsize, toClientNumber);
-
-    if(LogCSV::GetSingletonPtr())
-        LogCSV::GetSingleton().Write(CSV_STATUS, status);
-    
     for (size_t i=1; i < chardata->Inventory().GetInventoryIndexCount(); i++)
     {
         psCharacterInventory::psCharacterInventoryItem *invitem = chardata->Inventory().GetIndexCharInventoryItem(i);
