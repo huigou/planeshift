@@ -620,6 +620,12 @@ public:
     }
     virtual void DelPar(EEditParticleListToolbox* tb)
     {
+	if (lin->GetColorCount() <= 1)
+	{
+	    csReport (editApp->GetObjectRegistry(), CS_REPORTER_SEVERITY_NOTIFY, EEditApp::APP_NAME,
+		    "Warning: can't remove last color!");
+	    return;
+	}
 	lin->RemoveColor(index);
 	tb->RefreshParmList();
     }
@@ -922,6 +928,12 @@ public:
     }
     virtual void DelPar(EEditParticleListToolbox* tb)
     {
+	if (lin->GetParameterSetCount() <= 1)
+	{
+	    csReport (editApp->GetObjectRegistry(), CS_REPORTER_SEVERITY_NOTIFY, EEditApp::APP_NAME,
+		    "Warning: can't remove last parameter!");
+	    return;
+	}
 	lin->RemoveParameterSet(index);
 	tb->RefreshParmList();
     }
@@ -1672,6 +1684,7 @@ void EEditParticleListToolbox::CreateNewEffect (const char* string)
     else if (str == "LinColor")
     {
 	csRef<iParticleBuiltinEffectorLinColor> lc = factory->CreateLinColor ();
+	lc->AddColor(csColor4(1,1,1,0), 0);
 	base->AddEffector(lc);
     }
     else if (str == "VelocityField")
@@ -1682,6 +1695,8 @@ void EEditParticleListToolbox::CreateNewEffect (const char* string)
     else if (str == "Linear")
     {
 	csRef<iParticleBuiltinEffectorLinear> lin = factory->CreateLinear ();
+	csParticleParameterSet param;
+	lin->AddParameterSet(param, 0);
 	base->AddEffector(lin);
     }
     RefreshEditList();
