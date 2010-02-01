@@ -760,6 +760,24 @@ public:
 	tb->valueNumSpinBox->SetRange(-100000, 1000000, .1);
 	tb->valueNumSpinBox->Show();
 	tb->valueNumSpinBox->SetValue (vfield->GetFParameter(index));
+	tb->addParButton->Show();
+	tb->delParButton->Show();
+    }
+    virtual void AddPar(EEditParticleListToolbox* tb)
+    {
+	vfield->AddFParameter(vfield->GetFParameter(index));
+	tb->RefreshParmList();
+    }
+    virtual void DelPar(EEditParticleListToolbox* tb)
+    {
+	if (vfield->GetFParameterCount() <= 1)
+	{
+	    csReport (editApp->GetObjectRegistry(), CS_REPORTER_SEVERITY_NOTIFY, EEditApp::APP_NAME,
+		    "Warning: can't remove last fparameter!");
+	    return;
+	}
+	vfield->RemoveFParameter(index);
+	tb->RefreshParmList();
     }
 };
 
@@ -803,6 +821,24 @@ public:
 	tb->value3NumSpinBox->SetRange(-100000, 1000000, .1);
 	tb->value3NumSpinBox->Show();
 	tb->value3NumSpinBox->SetValue (v.z);
+	tb->addParButton->Show();
+	tb->delParButton->Show();
+    }
+    virtual void AddPar(EEditParticleListToolbox* tb)
+    {
+	vfield->AddVParameter(vfield->GetVParameter(index));
+	tb->RefreshParmList();
+    }
+    virtual void DelPar(EEditParticleListToolbox* tb)
+    {
+	if (vfield->GetVParameterCount() <= 1)
+	{
+	    csReport (editApp->GetObjectRegistry(), CS_REPORTER_SEVERITY_NOTIFY, EEditApp::APP_NAME,
+		    "Warning: can't remove last vparameter!");
+	    return;
+	}
+	vfield->RemoveVParameter(index);
+	tb->RefreshParmList();
     }
 };
 
