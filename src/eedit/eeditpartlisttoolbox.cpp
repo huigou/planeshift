@@ -1781,7 +1781,12 @@ void EEditParticleListToolbox::SaveParticleSystem (const csString& name)
     syntax->WriteMixmode(mixmodeNode, fact->GetMeshObjectFactory()->GetMixMode(), true);
 
     saver->WriteDown (pfact, meshfactNode, 0);
-    doc->Write(editApp->GetVFS(), "/this/particlesystem.xml");
+    csString filename = "/this/fact_";
+    filename += name;
+    filename += ".xml";
+    doc->Write(editApp->GetVFS(), filename);
+    csReport (editApp->GetObjectRegistry(), CS_REPORTER_SEVERITY_NOTIFY, EEditApp::APP_NAME,
+		    "Saved particle system into %s!", filename.GetData());
 }
 
 bool EEditParticleListToolbox::PostSetup()
