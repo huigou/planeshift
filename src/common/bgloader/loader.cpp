@@ -1270,6 +1270,36 @@ csPtr<iMeshFactoryWrapper> BgLoader::LoadFactory(const char* name, bool* failed,
     return csPtr<iMeshFactoryWrapper>(0);
 }
 
+void BgLoader::CloneFactory(const char* name, const char* newName, bool load, bool* failed)
+{
+    // Find meshfact to clone.
+    csRef<MeshFact> meshfact = meshfacts.Get(mfStringSet.Request(name), csRef<MeshFact>());
+    {
+        if(!failed)
+        {
+            // Validation.
+            csString msg;
+            msg.Format("Invalid factory reference '%s' passed for cloning.", name);
+            CS_ASSERT_MSG(msg.GetData(), meshfact.IsValid());
+        }
+        else if(!meshfact.IsValid())
+        {
+            *failed = true;
+            return;
+        }
+    }
+
+    // Create a clone.
+    csRef<MeshFact> newMeshFact = meshfact->Clone(newName);
+    meshfacts.Put(mfStringSet.Request(newName), newMeshFact);
+
+    // Optionally begin loading.
+    if(load)
+    {
+        LoadMeshFact(newMeshFact);
+    }
+}
+
 csPtr<iMaterialWrapper> BgLoader::LoadMaterial(const char* name, bool* failed, bool wait)
 {
     csRef<Material> material = materials.Get(mStringSet.Request(name), csRef<Material>());

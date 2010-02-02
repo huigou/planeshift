@@ -45,7 +45,7 @@ struct StartPosition : public csRefCount
  */
 struct iBgLoader : public virtual iBase
 {
-  SCF_INTERFACE(iBgLoader, 1, 5, 0);
+  SCF_INTERFACE(iBgLoader, 1, 6, 0);
 
  /**
   * Start loading a material into the engine. Returns 0 if the material is not yet loaded.
@@ -58,6 +58,15 @@ struct iBgLoader : public virtual iBase
   * @param failed Pass a boolean to be able to manually handle a failed load.
   */
   virtual csPtr<iMeshFactoryWrapper> LoadFactory(const char* name, bool* failed = NULL, bool wait = false) = 0;
+
+  /**
+  * Clone a mesh factory.
+  * @param name The name of the mesh factory to clone.
+  * @param newName The name of the new cloned mesh factory.
+  * @param load Begin loading the cloned mesh factory.
+  * @param failed Pass a boolean to be able to manually handle a failed clone.
+  */
+  virtual void CloneFactory(const char* name, const char* newName, bool load = false, bool* failed = NULL) = 0;
 
  /**
   * Pass a data file to be cached. This method will parse your data and add it to it's
