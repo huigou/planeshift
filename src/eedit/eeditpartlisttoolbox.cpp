@@ -1297,6 +1297,94 @@ public:
     }
 };
 
+class PPMixMode : public ParticleParameterRow
+{
+private:
+    iEngine* engine;
+    iMeshObjectFactory* objectFactory;
+
+public:
+    PPMixMode(iEngine* engine, iMeshObjectFactory* objectFactory)
+	: ParticleParameterRow("MixMode"), engine(engine), objectFactory(objectFactory) { }
+
+    virtual csString GetRowDescription()
+    {
+	uint mm = objectFactory->GetMixMode();
+	uint mmode = mm & CS_FX_MASK_MIXMODE;
+	csString desc;
+	if (mmode == CS_FX_COPY) desc = "copy";
+	else if (mmode == CS_FX_MULTIPLY) desc = "multiply";
+	else if (mmode == CS_FX_MULTIPLY2) desc = "multiply2";
+	else if (mmode == CS_FX_ADD) desc = "add";
+	else if (mmode == CS_FX_DESTALPHAADD) desc = "destAlphaAdd";
+	else if (mmode == CS_FX_SRCALPHAADD) desc = "srcAlphaAdd";
+	else if (mmode == CS_FX_PREMULTALPHA) desc = "preMultAlpha";
+	else if (mmode == CS_FX_TRANSPARENT) desc = "transparent";
+	else if (mmode == CS_FX_ALPHA)
+	{
+	    desc = "alpha(";
+	    desc += mm & CS_FX_MASK_ALPHA;
+	    desc += ")";
+	}
+	else
+	{
+	    desc = "?";
+	}
+	return desc;
+    }
+
+    virtual void UpdateParticleValue(EEditParticleListToolbox* tb)
+    {
+	csString value = tb->valueChoices->GetSelectedRowString();
+	uint mm = CS_FX_COPY;
+	if (value == "copy") mm = CS_FX_COPY;
+	else if (value == "add") mm = CS_FX_ADD;
+	else if (value == "multiply") mm = CS_FX_MULTIPLY;
+	else if (value == "multiply2") mm = CS_FX_MULTIPLY2;
+	else if (value == "destAlphaAdd") mm = CS_FX_DESTALPHAADD;
+	else if (value == "srcAlphaAdd") mm = CS_FX_SRCALPHAADD;
+	else if (value == "preMultAlpha") mm = CS_FX_PREMULTALPHA;
+	else if (value == "transparent") mm = CS_FX_TRANSPARENT;
+	else if (value == "alpha")
+	{
+	    float alpha = tb->value2NumSpinBox->GetValue();
+	    mm = CS_FX_SETALPHA_INT(int(alpha));
+	}
+	objectFactory->SetMixMode(mm);
+        editApp->CreateParticleSystem(editApp->GetCurrParticleSystemName());
+    }
+    virtual void FillParticleEditor(EEditParticleListToolbox* tb)
+    {
+	tb->valueChoices->Clear();
+	tb->valueChoices->NewOption("copy");
+	tb->valueChoices->NewOption("add");
+	tb->valueChoices->NewOption("multiply");
+	tb->valueChoices->NewOption("multiply2");
+	tb->valueChoices->NewOption("destAlphaAdd");
+	tb->valueChoices->NewOption("srcAlphaAdd");
+	tb->valueChoices->NewOption("preMultAlpha");
+	tb->valueChoices->NewOption("transparent");
+	tb->valueChoices->NewOption("alpha");
+	uint mm = objectFactory->GetMixMode();
+	uint mmode = mm & CS_FX_MASK_MIXMODE;
+	csString desc;
+	if (mmode == CS_FX_COPY) desc = "copy";
+	else if (mmode == CS_FX_MULTIPLY) desc = "multiply";
+	else if (mmode == CS_FX_MULTIPLY2) desc = "multiply2";
+	else if (mmode == CS_FX_ADD) desc = "add";
+	else if (mmode == CS_FX_DESTALPHAADD) desc = "destAlphaAdd";
+	else if (mmode == CS_FX_SRCALPHAADD) desc = "srcAlphaAdd";
+	else if (mmode == CS_FX_PREMULTALPHA) desc = "preMultAlpha";
+	else if (mmode == CS_FX_TRANSPARENT) desc = "transparent";
+	else if (mmode == CS_FX_ALPHA) desc = "alpha";
+	tb->valueChoices->Select(desc);
+	tb->valueChoices->Show();
+	tb->value2NumSpinBox->SetValue (mm & CS_FX_MASK_ALPHA);
+	tb->value2NumSpinBox->SetRange(0, 255, 1);
+	tb->value2NumSpinBox->Show();
+    }
+};
+
 //---------------------------------------------------------------------------------------
 
 EEditParticleListToolbox::EEditParticleListToolbox() : scfImplementationType(this)
@@ -1387,6 +1475,7 @@ void EEditParticleListToolbox::FillParmList(iMeshObjectFactory* factory)
     ClearParmList();
     size_t a=0;
     if (!NewParameterRow (a, parmList, this, new PPMaterial(engine, factory))) return;
+    if (!NewParameterRow (a, parmList, this, new PPMixMode(engine, factory))) return;
 }
 
 void EEditParticleListToolbox::FillParmList(iParticleEffector* eff)
