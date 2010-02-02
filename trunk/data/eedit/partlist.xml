@@ -149,7 +149,7 @@
     <widget name="value_choices" factory="pawsComboBox">
         <frame x="385" y="5" width="140" height="25" border="yes" />
         <bgimage resource="Shaded" alpha="100" />
-	<listbox rows="5" height="25" useScrollBar="false"/>
+	<listbox rows="7" height="25" useScrollBar="true"/>
     </widget>
 
     <widget name="value_scroll1" factory="pawsScrollBar" direction="horizontal" style="Standard Scrollbar Horizontal">
