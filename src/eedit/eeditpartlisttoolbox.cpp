@@ -32,6 +32,7 @@
 #include <imesh/object.h>
 #include <imap/writer.h>
 #include <imap/services.h>
+#include <ivideo/material.h>
 
 #include "paws/pawsmanager.h"
 #include "paws/pawstextbox.h"
@@ -1274,6 +1275,7 @@ public:
 	    {
 		objectFactory->SetMaterialWrapper(mat);
 		editApp->CreateParticleSystem(editApp->GetCurrParticleSystemName());
+		tb->RefreshEditList();
 		break;
 	    }
 	}
@@ -1353,6 +1355,7 @@ public:
 	}
 	objectFactory->SetMixMode(mm);
         editApp->CreateParticleSystem(editApp->GetCurrParticleSystemName());
+    	tb->RefreshEditList();
     }
     virtual void FillParticleEditor(EEditParticleListToolbox* tb)
     {
@@ -1751,6 +1754,23 @@ void EEditParticleListToolbox::FillList(iEngine* engine)
     RefreshEditList();
 }
 
+void EEditParticleListToolbox::ReloadParticleSystem (const csString& name)
+{
+    iMeshFactoryList* list = engine->GetMeshFactories();
+    iMeshFactoryWrapper* fact = list->FindByName(name);
+    if (fact)
+        engine->RemoveObject(fact);
+
+    csString filename = "/this/fact_";
+    filename += name;
+    filename += ".xml";
+    editApp->GetLoader()->Load(filename);
+    csReport (editApp->GetObjectRegistry(), CS_REPORTER_SEVERITY_NOTIFY, EEditApp::APP_NAME,
+		    "Reloaded particle system from %s!", filename.GetData());
+    editApp->CreateParticleSystem(editApp->GetCurrParticleSystemName());
+    RefreshEditList();
+}
+
 void EEditParticleListToolbox::SaveParticleSystem (const csString& name)
 {
     iMeshFactoryWrapper* fact = engine->FindMeshFactory (name);
@@ -1766,21 +1786,58 @@ void EEditParticleListToolbox::SaveParticleSystem (const csString& name)
     csRef<iDocument> doc = xml->CreateDocument();
     csRef<iDocumentNode> root = doc->CreateRoot();
 
-    csRef<iDocumentNode> meshfactNode = root->CreateNodeBefore(CS_NODE_ELEMENT);
-    meshfactNode->SetValue("meshfact");
-    meshfactNode->SetAttribute("name", name);
-    csRef<iDocumentNode> materialNode = meshfactNode->CreateNodeBefore(CS_NODE_ELEMENT);
-    materialNode->SetValue("material");
-    meshfactNode->SetAttribute("name", name);
-    csRef<iDocumentNode> materialTextNode = materialNode->CreateNodeBefore(CS_NODE_TEXT);
-    materialTextNode->SetValue(fact->GetMeshObjectFactory()->GetMaterialWrapper()->QueryObject()->GetName());
-    csRef<iSyntaxService> syntax = csQueryRegistryOrLoad<iSyntaxService> (editApp->GetObjectRegistry(),
-	    "crystalspace.syntax.loader.service.text");
-    csRef<iDocumentNode> mixmodeNode = meshfactNode->CreateNodeBefore(CS_NODE_ELEMENT);
-    mixmodeNode->SetValue("mixmode");
-    syntax->WriteMixmode(mixmodeNode, fact->GetMeshObjectFactory()->GetMixMode(), true);
+    iMeshObjectFactory* objectFactory = fact->GetMeshObjectFactory();
+    iMaterialWrapper* mat = objectFactory->GetMaterialWrapper();
+    csRef<iMaterialEngine> mateng = scfQueryInterface<iMaterialEngine> (mat->GetMaterial());
+    iTextureWrapper* txt = mateng->GetTextureWrapper();
 
-    saver->WriteDown (pfact, meshfactNode, 0);
+    csRef<iDocumentNode> libraryNode = root->CreateNodeBefore(CS_NODE_ELEMENT);
+    libraryNode->SetValue("library");
+
+    {
+    	csRef<iDocumentNode> texturesNode = libraryNode->CreateNodeBefore(CS_NODE_ELEMENT);
+	texturesNode->SetValue("textures");
+    	csRef<iDocumentNode> textureNode = texturesNode->CreateNodeBefore(CS_NODE_ELEMENT);
+	textureNode->SetValue("texture");
+    	csRef<iDocumentNode> fileNode = textureNode->CreateNodeBefore(CS_NODE_ELEMENT);
+	fileNode->SetValue("file");
+    	csRef<iDocumentNode> fileTextNode = fileNode->CreateNodeBefore(CS_NODE_TEXT);
+	iImage* image = txt->GetImageFile();
+	if (image)
+    	    fileTextNode->SetValue(image->GetName());
+	else
+    	    fileTextNode->SetValue("?");
+    }
+
+    {
+    	csRef<iDocumentNode> materialsNode = libraryNode->CreateNodeBefore(CS_NODE_ELEMENT);
+    	materialsNode->SetValue("materials");
+    	csRef<iDocumentNode> materialNode = materialsNode->CreateNodeBefore(CS_NODE_ELEMENT);
+    	materialNode->SetValue("material");
+    	materialNode->SetAttribute("name", mat->QueryObject()->GetName());
+    	csRef<iDocumentNode> textureNode = materialNode->CreateNodeBefore(CS_NODE_ELEMENT);
+    	textureNode->SetValue("texture");
+    	csRef<iDocumentNode> textureTextNode = textureNode->CreateNodeBefore(CS_NODE_TEXT);
+    	textureTextNode->SetValue(txt->QueryObject()->GetName());
+    }
+
+    {
+    	csRef<iDocumentNode> meshfactNode = libraryNode->CreateNodeBefore(CS_NODE_ELEMENT);
+    	meshfactNode->SetValue("meshfact");
+    	meshfactNode->SetAttribute("name", name);
+
+    	csRef<iDocumentNode> pluginNode = meshfactNode->CreateNodeBefore(CS_NODE_ELEMENT);
+    	pluginNode->SetValue("plugin");
+    	csRef<iDocumentNode> pluginTextNode = pluginNode->CreateNodeBefore(CS_NODE_TEXT);
+    	pluginTextNode->SetValue("crystalspace.mesh.loader.factory.particles");
+
+    	saver->WriteDown (pfact, meshfactNode, 0);
+    	csRef<iDocumentNode> materialNode = meshfactNode->CreateNodeBefore(CS_NODE_ELEMENT);
+    	materialNode->SetValue("material");
+    	meshfactNode->SetAttribute("name", name);
+    	csRef<iDocumentNode> materialTextNode = materialNode->CreateNodeBefore(CS_NODE_TEXT);
+    	materialTextNode->SetValue(mat->QueryObject()->GetName());
+    }
     csString filename = "/this/fact_";
     filename += name;
     filename += ".xml";
@@ -1797,6 +1854,13 @@ bool EEditParticleListToolbox::PostSetup()
     openPartButton = (pawsButton *)FindWidget("load_part_button");      CS_ASSERT(openPartButton);
     refreshButton = (pawsButton *)FindWidget("refresh_button");         CS_ASSERT(refreshButton);
     saveButton = (pawsButton *)FindWidget("save_part_button");          CS_ASSERT(saveButton);
+    reloadButton = (pawsButton *)FindWidget("reload_part_button");      CS_ASSERT(reloadButton);
+    valueList = (pawsListBox *)FindWidget("value_list");                CS_ASSERT(valueList);
+    valueNumSpinBox = (pawsSpinBox *)FindWidget("value_num");           CS_ASSERT(valueNumSpinBox);
+    value2NumSpinBox = (pawsSpinBox *)FindWidget("value2_num");         CS_ASSERT(value2NumSpinBox);
+    value3NumSpinBox = (pawsSpinBox *)FindWidget("value3_num");         CS_ASSERT(value3NumSpinBox);
+    valueChoices = (pawsComboBox *)FindWidget("value_choices");         CS_ASSERT(valueChoices);
+    valueBool = (pawsCheckBox *)FindWidget("value_bool");               CS_ASSERT(valueBool);
     valueList = (pawsListBox *)FindWidget("value_list");                CS_ASSERT(valueList);
     valueNumSpinBox = (pawsSpinBox *)FindWidget("value_num");           CS_ASSERT(valueNumSpinBox);
     value2NumSpinBox = (pawsSpinBox *)FindWidget("value2_num");         CS_ASSERT(value2NumSpinBox);
@@ -1884,8 +1948,8 @@ void EEditParticleListToolbox::CreateNewEmit (const char* string)
 	csRef<iParticleBuiltinEmitterCylinder> cylinder = factory->CreateCylinder ();
 	base->AddEmitter(cylinder);
     }
-    RefreshEditList();
     editApp->CreateParticleSystem(editApp->GetCurrParticleSystemName());
+    RefreshEditList();
 }
 
 void EEditParticleListToolbox::CreateNewEffect (const char* string)
@@ -1919,8 +1983,8 @@ void EEditParticleListToolbox::CreateNewEffect (const char* string)
 	lin->AddParameterSet(param, 0);
 	base->AddEffector(lin);
     }
-    RefreshEditList();
     editApp->CreateParticleSystem(editApp->GetCurrParticleSystemName());
+    RefreshEditList();
 }
 
 bool EEditParticleListToolbox::OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* widget)
@@ -1935,6 +1999,13 @@ bool EEditParticleListToolbox::OnButtonPressed(int mouseButton, int keyModifier,
     else if (widget == refreshButton)
     {
 	FillList(engine);
+        return true;
+    }
+    else if (widget == reloadButton)
+    {
+        csString name = partList->GetTextCellValue(partList->GetSelectedRowNum(), 0);
+	if (name != "")
+	    ReloadParticleSystem (name);
         return true;
     }
     else if (widget == saveButton)
@@ -2024,8 +2095,8 @@ bool EEditParticleListToolbox::OnButtonPressed(int mouseButton, int keyModifier,
 		    break;
 		}
 	}
-	RefreshEditList();
 	editApp->CreateParticleSystem(editApp->GetCurrParticleSystemName());
+	RefreshEditList();
 
 	return true;
     }
