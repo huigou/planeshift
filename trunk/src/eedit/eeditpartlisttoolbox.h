@@ -91,6 +91,7 @@ private:
     void ClearParmList ();
     void UpdateParticleValue();
     void SaveParticleSystem (const csString& name);
+    void ReloadParticleSystem (const csString& name);
 
     csArray<iParticleEmitter*> emitters;
     csArray<iParticleEffector*> effectors;
@@ -110,6 +111,7 @@ public:
     pawsButton   * openPartButton;
     pawsButton   * refreshButton;
     pawsButton   * saveButton;
+    pawsButton   * reloadButton;
     pawsSpinBox  * valueNumSpinBox;
     pawsSpinBox  * value2NumSpinBox;
     pawsSpinBox  * value3NumSpinBox;

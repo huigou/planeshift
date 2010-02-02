@@ -186,6 +186,13 @@
         <number default="0.0" min="1" max="300" inc="1" position="left"/>
     </widget>
 
+    <widget name="reload_part_button" factory="pawsButton">
+        <frame x="320" y="220" width="95" height="25" border="no" />
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="7"  sr="0" sg="0" sb="0" shadow="yes" />   
+        <buttonup resource="ButtonUp"/>
+        <buttondown resource="ButtonDown" />
+        <label text="Reload"/>
+    </widget>
     <widget name="save_part_button" factory="pawsButton">
         <frame x="215" y="220" width="95" height="25" border="no" />
         <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="7"  sr="0" sg="0" sb="0" shadow="yes" />   
