@@ -199,10 +199,11 @@ private:
     /** Attach an object into a socket on the model.
       * @param socketName The name of the cal3d socket on the model to place the item in.
       * @param meshFactName The name of the mesh factory of the item to place here.
+      * @param materialName The optional name of a material to apply to the attached object.
       *
       * @return true if item was successfully attached to the model.
       */
-    bool Attach(const char* socketName, const char* meshFactName );
+    bool Attach(const char* socketName, const char* meshFactName, const char* materialName = NULL);
     
     /** Remove an item from a socket on the model.
       * @param socketName The name of the socket to remove the item from.
@@ -223,7 +224,7 @@ private:
       */
     void DefaultMesh(const char* part);
 
-    void ProcessAttach(csRef<iMeshFactoryWrapper> factory, const char* meshFactName, csRef<iSpriteCal3DSocket> socket);
+    void ProcessAttach(iMeshFactoryWrapper* factory, iMaterialWrapper* material, const char* meshFactName, csRef<iSpriteCal3DSocket> socket);
     void ProcessAttach(csRef<iMeshWrapper> meshWrap, csRef<iSpriteCal3DSocket> socket);
     void ProcessAttach(csRef<iMaterialWrapper> material, const char* materialName, const char* partName);
                

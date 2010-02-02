@@ -548,7 +548,10 @@ void psCharAppearance::Equip( csString& slotname,
     // If it's a new mesh attach that mesh.
     if ( mesh.Length() )
     {
-        Attach(slotname, mesh);
+        if( texture.Length() && !subMesh.Length() )
+            Attach(slotname, mesh, texture);
+        else
+            Attach(slotname, mesh);
     }
 
     // This is a subMesh on the model change so change the mesh for that part.
@@ -767,7 +770,7 @@ bool psCharAppearance::ChangeMesh(const char* partPattern, const char* newPart)
 }
 
 
-bool psCharAppearance::Attach(const char* socketName, const char* meshFactName)
+bool psCharAppearance::Attach(const char* socketName, const char* meshFactName, const char* materialName)
 {
     if (!socketName || !meshFactName || !state.IsValid())
     {
@@ -790,10 +793,22 @@ bool psCharAppearance::Attach(const char* socketName, const char* meshFactName)
         return false;
     }
 
-    if(!factory.IsValid())
+    csRef<iMaterialWrapper> material;
+    if(materialName != NULL)
+    {
+        psengine->GetLoader()->LoadMaterial(materialName, &failed);
+        if(failed)
+        {
+            Notify2(LOG_CHARACTER, "Material %s not found.", materialName);
+            return false;
+        }
+    }
+
+    if(!factory.IsValid() || (materialName != NULL && !material.IsValid()))
     {
         Attachment attach(true);
         attach.factName = meshFactName;
+        attach.materialName = materialName;
         attach.socket = socket;
         if(delayedAttach.IsEmpty())
         {
@@ -803,15 +818,20 @@ bool psCharAppearance::Attach(const char* socketName, const char* meshFactName)
     }
     else
     {
-        ProcessAttach(factory, meshFactName, socket);
+        ProcessAttach(factory, material, meshFactName, socket);
     }
 
     return true;
 }
 
-void psCharAppearance::ProcessAttach(csRef<iMeshFactoryWrapper> factory, const char* meshFactName, csRef<iSpriteCal3DSocket> socket)
+void psCharAppearance::ProcessAttach(iMeshFactoryWrapper* factory, iMaterialWrapper* material, const char* meshFactName, csRef<iSpriteCal3DSocket> socket)
 {
      csRef<iMeshWrapper> meshWrap = engine->CreateMeshWrapper( factory, meshFactName );
+
+     if(material != NULL)
+     {
+         meshWrap->GetMeshObject()->SetMaterialWrapper(material);
+     }
 
     ProcessAttach(meshWrap, socket);
 
@@ -877,10 +897,23 @@ bool psCharAppearance::CheckLoadStatus()
         if(attach.factory)
         {
             csRef<iMeshFactoryWrapper> factory = psengine->GetLoader()->LoadFactory(attach.factName);
+
             if(factory.IsValid())
             {
-                ProcessAttach(factory, attach.factName, attach.socket);
-                delayedAttach.PopFront();
+                if(!attach.materialName.IsEmpty())
+                {
+                    csRef<iMaterialWrapper> material = psengine->GetLoader()->LoadMaterial(attach.materialName);
+                    if(material.IsValid())
+                    {
+                        ProcessAttach(factory, material, attach.factName, attach.socket);
+                        delayedAttach.PopFront();
+                    }
+                }
+                else
+                {
+                    ProcessAttach(factory, NULL, attach.factName, attach.socket);
+                    delayedAttach.PopFront();
+                }
             }
         }
         else
