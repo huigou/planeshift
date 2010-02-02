@@ -1388,7 +1388,7 @@ GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
         }
     }
 
-    if(mountScale > 0.0f)
+    if(mountFactname != "null" && mountScale > 0.0f)
     {
         bool failed = false;
         csString newFactName = mountFactname;
