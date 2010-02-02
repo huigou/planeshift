@@ -35,6 +35,7 @@ class pawsListBox;
 struct iEngine;
 struct iParticleEmitter;
 struct iParticleEffector;
+struct iMeshObjectFactory;
 struct ParticleParameterRow;
 
 struct ParameterData
@@ -61,6 +62,7 @@ public:
      */
     void FillList(iEngine* engine);
     void RefreshEditList();
+    void FillParmList(iMeshObjectFactory* fact);
     void FillParmList(iParticleEmitter* emit);
     void FillParmList(iParticleEffector* eff);
     void RefreshParmList();
@@ -96,6 +98,7 @@ private:
 
     int updatingParticleValue;
     csWeakRef<iParticleSystemFactory> pfact;
+    csWeakRef<iMeshObjectFactory> objectFactory;
 
 public:
     csPDelArray<ParticleParameterRow> parameterRows;
@@ -103,6 +106,7 @@ public:
     pawsListBox  * partList;
     pawsListBox  * editList;
     pawsListBox  * parmList;
+    pawsListBox  * valueList;
     pawsButton   * openPartButton;
     pawsButton   * refreshButton;
     pawsButton   * saveButton;

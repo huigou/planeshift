@@ -31,7 +31,7 @@
                 <widget name="Type" factory="pawsTextBox">
                 </widget>
             </column>                                               
-            <column width="140">            
+            <column width="140">
                 <widget name="Description" factory="pawsTextBox">
                 </widget>
             </column>                                               
@@ -72,6 +72,19 @@
             </column>                                               
             <column width="110">            
                 <widget name="Value" factory="pawsTextBox">
+                </widget>
+            </column>                                               
+        </columns>
+	</widget>
+
+    <widget name="value_list" factory="pawsListBox">	
+        <frame x="385" y="5" width="135" height="210" border="no"/>
+        <bgimage resource="Shaded" alpha="100" />
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"  sr="0" sg="0" sb="0" shadow="yes" />   
+        <highlight resource="ListSelect" alpha="100" />
+        <columns height="20" headings="no">
+            <column width="135">            
+                <widget name="Name" factory="pawsTextBox">
                 </widget>
             </column>                                               
         </columns>

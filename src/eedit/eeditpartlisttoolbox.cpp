@@ -88,6 +88,48 @@ public:
     virtual void DelPar(EEditParticleListToolbox* tb) { }
 };
 
+//---------------------------------------------------------------------------------------
+
+static pawsListBoxRow* NewRow (size_t& a, pawsListBox* box, pawsTextBox** col1, pawsTextBox** col2 = 0, pawsTextBox** col3 = 0)
+{
+    box->NewRow(a);
+    pawsListBoxRow * row = box->GetRow(a);
+    if (!row) return 0;
+
+    *col1 = (pawsTextBox *)row->GetColumn(0);
+    if (!*col1) return 0;
+
+    if (col2)
+    {
+        *col2 = (pawsTextBox *)row->GetColumn(1);
+        if (!*col2) return 0;
+    }
+
+    if (col3)
+    {
+        *col3 = (pawsTextBox *)row->GetColumn(2);
+        if (!*col3) return 0;
+    }
+
+    ++a;
+    return row;
+}
+
+static pawsListBoxRow* NewParameterRow (size_t& a, pawsListBox* box, EEditParticleListToolbox* tb,
+	ParticleParameterRow* prow)
+{
+    pawsTextBox* col1, * col2;
+    pawsListBoxRow* row = NewRow (a, box, &col1, &col2);
+    if (!row)
+	return 0;
+    col1->SetText (prow->GetRowName());
+    col2->SetText (prow->GetRowDescription());
+    tb->parameterRows.Push(prow);
+    return row;
+}
+
+//---------------------------------------------------------------------------------------
+
 class ParticleParameterFloatRow : public ParticleParameterRow
 {
 private:
@@ -1200,6 +1242,61 @@ public:
     }
 };
 
+class PPMaterial : public ParticleParameterRow
+{
+private:
+    iEngine* engine;
+    iMeshObjectFactory* objectFactory;
+
+public:
+    PPMaterial(iEngine* engine, iMeshObjectFactory* objectFactory)
+	: ParticleParameterRow("Material"), engine(engine), objectFactory(objectFactory) { }
+
+    virtual csString GetRowDescription()
+    {
+	return objectFactory->GetMaterialWrapper()->QueryObject()->GetName();
+    }
+
+    virtual void UpdateParticleValue(EEditParticleListToolbox* tb)
+    {
+	int num = tb->valueList->GetSelectedRowNum();
+	if (num == -1) return;
+	pawsListBoxRow * row = tb->valueList->GetRow(num);
+	pawsTextBox * col = (pawsTextBox *)row->GetColumn(0);
+	csString text = col->GetText();
+	int i;
+	iMaterialList* list = engine->GetMaterialList();
+	for (i = 0 ; i < list->GetCount() ; i++)
+	{
+	    iMaterialWrapper* mat = list->Get(i);
+	    if (mat->QueryObject()->GetName() && text == mat->QueryObject()->GetName())
+	    {
+		objectFactory->SetMaterialWrapper(mat);
+		editApp->CreateParticleSystem(editApp->GetCurrParticleSystemName());
+		break;
+	    }
+	}
+    }
+    virtual void FillParticleEditor(EEditParticleListToolbox* tb)
+    {
+	tb->valueList->Clear();
+	tb->valueList->Select (0);
+	iMaterialList* list = engine->GetMaterialList();
+	int i;
+	size_t a = 0;
+	for (i = 0 ; i < list->GetCount() ; i++)
+	{
+	    iMaterialWrapper* mat = list->Get(i);
+	    pawsTextBox* col1;
+	    pawsListBoxRow* row = NewRow (a, tb->valueList, &col1);
+	    col1->SetText (mat->QueryObject()->GetName());
+	    if (mat == objectFactory->GetMaterialWrapper())
+		tb->valueList->Select (row);
+	}
+	tb->valueList->Show();
+    }
+};
+
 //---------------------------------------------------------------------------------------
 
 EEditParticleListToolbox::EEditParticleListToolbox() : scfImplementationType(this)
@@ -1243,46 +1340,9 @@ int EEditParticleListToolbox::SortTextBox(pawsWidget * widgetA, pawsWidget * wid
     return strcmp(textA, textB);
 }
 
-static pawsListBoxRow* NewRow (size_t& a, pawsListBox* box, pawsTextBox** col1, pawsTextBox** col2 = 0, pawsTextBox** col3 = 0)
-{
-    box->NewRow(a);
-    pawsListBoxRow * row = box->GetRow(a);
-    if (!row) return 0;
-
-    *col1 = (pawsTextBox *)row->GetColumn(0);
-    if (!*col1) return 0;
-
-    if (col2)
-    {
-        *col2 = (pawsTextBox *)row->GetColumn(1);
-        if (!*col2) return 0;
-    }
-
-    if (col3)
-    {
-        *col3 = (pawsTextBox *)row->GetColumn(2);
-        if (!*col3) return 0;
-    }
-
-    ++a;
-    return row;
-}
-
-static pawsListBoxRow* NewParameterRow (size_t& a, pawsListBox* box, EEditParticleListToolbox* tb,
-	ParticleParameterRow* prow)
-{
-    pawsTextBox* col1, * col2;
-    pawsListBoxRow* row = NewRow (a, box, &col1, &col2);
-    if (!row)
-	return 0;
-    col1->SetText (prow->GetRowName());
-    col2->SetText (prow->GetRowDescription());
-    tb->parameterRows.Push(prow);
-    return row;
-}
-
 void EEditParticleListToolbox::HideValues ()
 {
+    valueList->Hide();
     valueNumSpinBox->Hide();
     value2NumSpinBox->Hide();
     value3NumSpinBox->Hide();
@@ -1311,12 +1371,22 @@ void EEditParticleListToolbox::ClearParmList ()
 void EEditParticleListToolbox::RefreshParmList()
 {
     updatingParticleValue++;
-    size_t num = editList->GetSelectedRowNum();
-    if (num >= emitters.GetSize())
+    int num = (int)editList->GetSelectedRowNum();
+    num--;
+    if (num == -1)
+	FillParmList (objectFactory);
+    else if (num >= (int)emitters.GetSize())
 	FillParmList (effectors[num-emitters.GetSize()]);
     else
 	FillParmList (emitters[num]);
     updatingParticleValue--;
+}
+
+void EEditParticleListToolbox::FillParmList(iMeshObjectFactory* factory)
+{
+    ClearParmList();
+    size_t a=0;
+    if (!NewParameterRow (a, parmList, this, new PPMaterial(engine, factory))) return;
 }
 
 void EEditParticleListToolbox::FillParmList(iParticleEffector* eff)
@@ -1441,18 +1511,22 @@ void EEditParticleListToolbox::RefreshEditList()
 
     iMeshFactoryWrapper* fact = engine->FindMeshFactory (partName);
     if (!fact) return;
-    pfact = scfQueryInterface<iParticleSystemFactory> (fact->GetMeshObjectFactory());
+    objectFactory = fact->GetMeshObjectFactory();
+    pfact = scfQueryInterface<iParticleSystemFactory> (objectFactory);
     if (!pfact) return;
     csRef<iParticleSystemBase> base = scfQueryInterface<iParticleSystemBase> (pfact);
 
+    pawsTextBox* col1, * col2;
     size_t a=0;
+    if (!NewRow (a, editList, &col1, &col2))
+        return;
+    col1->SetText("Mesh");
+
     for (size_t i = 0 ; i < base->GetEmitterCount(); i++)
     {
         iParticleEmitter* emit = base->GetEmitter (i);
 
-	pawsTextBox* col1, * col2;
-	pawsListBoxRow* row = NewRow (a, editList, &col1, &col2);
-	if (!row)
+	if (!NewRow (a, editList, &col1, &col2))
 	    return;
 
         col1->SetText("Emit");
@@ -1502,7 +1576,6 @@ void EEditParticleListToolbox::RefreshEditList()
     {
         iParticleEffector* eff = base->GetEffector (i);
 
-	pawsTextBox* col1, * col2;
 	if (!NewRow (a, editList, &col1, &col2))
 	    return;
 
@@ -1614,6 +1687,7 @@ bool EEditParticleListToolbox::PostSetup()
     openPartButton = (pawsButton *)FindWidget("load_part_button");      CS_ASSERT(openPartButton);
     refreshButton = (pawsButton *)FindWidget("refresh_button");         CS_ASSERT(refreshButton);
     saveButton = (pawsButton *)FindWidget("save_part_button");          CS_ASSERT(saveButton);
+    valueList = (pawsListBox *)FindWidget("value_list");                CS_ASSERT(valueList);
     valueNumSpinBox = (pawsSpinBox *)FindWidget("value_num");           CS_ASSERT(valueNumSpinBox);
     value2NumSpinBox = (pawsSpinBox *)FindWidget("value2_num");         CS_ASSERT(value2NumSpinBox);
     value3NumSpinBox = (pawsSpinBox *)FindWidget("value3_num");         CS_ASSERT(value3NumSpinBox);
@@ -1815,7 +1889,14 @@ bool EEditParticleListToolbox::OnButtonPressed(int mouseButton, int keyModifier,
 	size_t i;
 	if (!pfact) return false;
 	csRef<iParticleSystemBase> base = scfQueryInterface<iParticleSystemBase> (pfact);
-	if (num >= emitters.GetSize())
+	num--;
+	if (num == -1)
+	{
+	    csReport (editApp->GetObjectRegistry(), CS_REPORTER_SEVERITY_NOTIFY, EEditApp::APP_NAME,
+		    "You can't remove the mesh itself!");
+	    return true;
+	}
+	else if (num >= (int)emitters.GetSize())
 	{
 	    for (i = 0 ; i < base->GetEffectorCount() ; i++)
 		if (base->GetEffector(i) == effectors[num-emitters.GetSize()])
@@ -1868,6 +1949,10 @@ void EEditParticleListToolbox::OnListAction(pawsListBox* selected, int status)
 	RefreshParmList();
     }
     else if (selected == valueChoices->GetChoiceList())
+    {
+	UpdateParticleValue();
+    }
+    else if (selected == valueList)
     {
 	UpdateParticleValue();
     }
