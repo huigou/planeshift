@@ -73,6 +73,15 @@ public:
     */
     csPtr<iMeshFactoryWrapper> LoadFactory(const char* name, bool* failed = NULL, bool wait = false);
 
+    /**
+    * Clone a mesh factory.
+    * @param name The name of the mesh factory to clone.
+    * @param newName The name of the new cloned mesh factory.
+    * @param load Begin loading the cloned mesh factory.
+    * @param failed Pass a boolean to be able to manually handle a failed clone.
+    */
+    void CloneFactory(const char* name, const char* newName, bool load = false, bool* failed = NULL);
+
    /**
     * Pass a data file to be cached. This method will parse your data and add it to it's
     * internal world representation. You may then request that these objects are loaded.
@@ -302,6 +311,19 @@ private:
         MeshFact(const char* name, const char* path, iDocumentNode* data) : name(name),
           path(path), useCount(0), data(data)
         {
+        }
+
+        csPtr<MeshFact> Clone(const char* clonedName)
+        {
+            csRef<MeshFact> meshfact;
+            meshfact.AttachNew(new MeshFact(clonedName, path, data));
+
+            meshfact->filename = filename;
+            meshfact->materials = materials;
+            meshfact->bboxvs = bboxvs;
+            meshfact->submeshes = submeshes;
+
+            return csPtr<MeshFact>(meshfact);
         }
 
         csString name;

@@ -1368,6 +1368,46 @@ GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
     else
         cel->HandleUnresolvedPos(this, mesg.pos, mesg.yrot, mesg.sectorName);
 
+    // Check whether we need to use a clone of our meshfact.
+    // This is needed when we have to scale.
+    if(scale > 0.0f)
+    {
+        bool failed = false;
+        csString newFactName = factName+race;
+
+        psengine->GetLoader()->CloneFactory(factName, newFactName, true, &failed);
+
+        if(failed)
+        {
+            Error2("Failed to clone mesh factory: %s\n", factName.GetData());
+            scale = 0.0f;
+        }
+        else
+        {
+            factName = newFactName;
+        }
+    }
+
+    if(mountScale > 0.0f)
+    {
+        bool failed = false;
+        csString newFactName = mountFactname;
+        newFactName.AppendFmt("%f", mountScale);
+
+        psengine->GetLoader()->CloneFactory(mountFactname, newFactName, true, &failed);
+
+        if(failed)
+        {
+            Error2("Failed to clone mesh factory: %s\n", mountFactname.GetData());
+            mountScale = 0.0f;
+        }
+        else
+        {
+            mountFactname = newFactName;
+        }
+    }
+
+
     LoadMesh();
 
     DRcounter = 0;  // mesg.counter cannot be trusted as it may have changed while the object was gone
