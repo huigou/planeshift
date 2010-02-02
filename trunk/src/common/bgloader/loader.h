@@ -320,6 +320,7 @@ private:
 
             meshfact->filename = filename;
             meshfact->materials = materials;
+            meshfact->checked = checked;
             meshfact->bboxvs = bboxvs;
             meshfact->submeshes = submeshes;
 
