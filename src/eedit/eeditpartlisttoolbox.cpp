@@ -31,6 +31,7 @@
 #include <iengine/mesh.h>
 #include <imesh/object.h>
 #include <imap/writer.h>
+#include <imap/services.h>
 
 #include "paws/pawsmanager.h"
 #include "paws/pawstextbox.h"
@@ -1764,7 +1765,22 @@ void EEditParticleListToolbox::SaveParticleSystem (const csString& name)
     xml.AttachNew (new csTinyDocumentSystem);
     csRef<iDocument> doc = xml->CreateDocument();
     csRef<iDocumentNode> root = doc->CreateRoot();
-    saver->WriteDown (pfact, root, 0);
+
+    csRef<iDocumentNode> meshfactNode = root->CreateNodeBefore(CS_NODE_ELEMENT);
+    meshfactNode->SetValue("meshfact");
+    meshfactNode->SetAttribute("name", name);
+    csRef<iDocumentNode> materialNode = meshfactNode->CreateNodeBefore(CS_NODE_ELEMENT);
+    materialNode->SetValue("material");
+    meshfactNode->SetAttribute("name", name);
+    csRef<iDocumentNode> materialTextNode = materialNode->CreateNodeBefore(CS_NODE_TEXT);
+    materialTextNode->SetValue(fact->GetMeshObjectFactory()->GetMaterialWrapper()->QueryObject()->GetName());
+    csRef<iSyntaxService> syntax = csQueryRegistryOrLoad<iSyntaxService> (editApp->GetObjectRegistry(),
+	    "crystalspace.syntax.loader.service.text");
+    csRef<iDocumentNode> mixmodeNode = meshfactNode->CreateNodeBefore(CS_NODE_ELEMENT);
+    mixmodeNode->SetValue("mixmode");
+    syntax->WriteMixmode(mixmodeNode, fact->GetMeshObjectFactory()->GetMixMode(), true);
+
+    saver->WriteDown (pfact, meshfactNode, 0);
     doc->Write(editApp->GetVFS(), "/this/particlesystem.xml");
 }
 
