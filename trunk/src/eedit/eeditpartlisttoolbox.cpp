@@ -1275,7 +1275,7 @@ public:
 	    {
 		objectFactory->SetMaterialWrapper(mat);
 		editApp->CreateParticleSystem(editApp->GetCurrParticleSystemName());
-		tb->RefreshEditList();
+		//tb->RefreshEditList();
 		break;
 	    }
 	}
@@ -1355,7 +1355,7 @@ public:
 	}
 	objectFactory->SetMixMode(mm);
         editApp->CreateParticleSystem(editApp->GetCurrParticleSystemName());
-    	tb->RefreshEditList();
+    	//tb->RefreshEditList();
     }
     virtual void FillParticleEditor(EEditParticleListToolbox* tb)
     {
@@ -1889,18 +1889,26 @@ bool EEditParticleListToolbox::PostSetup()
 void EEditParticleListToolbox::UpdateParticleValue()
 {
     if (updatingParticleValue) return;
+    int num = parmList->GetSelectedRowNum();
+    if (num == -1) return;
+    if (num >= parameterRows.GetSize())
+	return;
+
     updatingParticleValue++;
-    size_t num = parmList->GetSelectedRowNum();
     ParticleParameterRow* prow = parameterRows[num];
     prow->UpdateParticleValue(this);
 
     // Select and fetch the prow again because UpdateParticleValue() may
     // have forced a refresh of the parameter list.
-    pawsListBoxRow * row = parmList->GetRow(num);
-    parmList->Select(row);
-    prow = parameterRows[num];
-    pawsTextBox* colValue = (pawsTextBox *)row->GetColumn(1);
-    colValue->SetText(prow->GetRowDescription());
+    num = parmList->GetSelectedRowNum();
+    if (num >= 0)
+    {
+    	pawsListBoxRow * row = parmList->GetRow(num);
+    	parmList->Select(row);
+    	prow = parameterRows[num];
+    	pawsTextBox* colValue = (pawsTextBox *)row->GetColumn(1);
+    	colValue->SetText(prow->GetRowDescription());
+    }
     updatingParticleValue--;
 }
 
