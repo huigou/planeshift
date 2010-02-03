@@ -834,6 +834,18 @@ psItem *psCharacterInventory::GetInventoryItem(INVENTORY_SLOT_NUMBER slot)
     return NULL;
 }
 
+void psCharacterInventory::RestoreAllInventoryQuality()
+{
+    // Inventory indexes start at 1.  0 is reserved for the "NULL" item.
+    for (size_t i=1; i < inventory.GetSize(); i++)
+    {
+        // Here we restore status of all items in this inventory, used usually by npc respawn
+        //check for the item in the current inventory position
+        if (inventory[i].item)
+            inventory[i].item->SetItemQuality(inventory[i].item->GetMaxItemQuality()); //Restore the item to it's max quality
+    }
+}
+
 psItem *psCharacterInventory::GetItemHeld()
 {
     psItem * item = GetInventoryItem(PSCHARACTER_SLOT_RIGHTHAND);

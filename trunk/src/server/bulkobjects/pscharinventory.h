@@ -233,6 +233,11 @@ public:
       * @return The item in the given slot. NULL if no item was found.
       */
     psItem* GetInventoryItem(INVENTORY_SLOT_NUMBER slot);
+    
+    /** Restore all items in this inventory to their max quality.
+     *  This function is usually used by npc at their respawn after death.
+     */
+    void RestoreAllInventoryQuality();
 
     /** Get item held, either in right or left hand
      */
