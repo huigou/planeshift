@@ -2111,9 +2111,13 @@ bool GEMClientItem::CheckLoadStatus()
             {
                 material = gSubmesh->GetMaterial()->GetMaterial();
             }
+            else if(instance->pcmesh->GetMeshObject()->GetMaterialWrapper() != NULL)
+            {
+                material = instance->pcmesh->GetMeshObject()->GetMaterialWrapper()->GetMaterial();
+            }
             else
             {
-                instance->pcmesh->GetMeshObject()->GetMaterialWrapper()->GetMaterial();
+                material = factory->GetMeshObjectFactory()->GetMaterialWrapper()->GetMaterial();
             }
 
             // Get the base shader.
