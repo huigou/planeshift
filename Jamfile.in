@@ -6,6 +6,13 @@ SubDir TOP ;
 # Common include directories.
 
 IncludeDir ;
+# For MSVC project files, we need to include a dir containing MSVC specific includes.
+# Note: this has to appear before vanilla include as some files in include/msvc/ are
+# supposed to override the same named ones in include/.
+if [ Property build : projgen ] = msvc
+{
+  IncludeDir "include" msvc ;
+}
 IncludeDir "include" ;
 IncludeDir src client ;
 IncludeDir src server ;
@@ -59,13 +66,6 @@ MsvcGenSubDir TOP mk msvc9 : 9 ;
 
 MsvcGenTemplateDir TOP mk msvcgen ;
 
-# For MSVC project files, we need to include a dir containing MSVC specific includes.
-
-if [ Property build : projgen ] = msvc
-{
-  IncludeDir "include" msvc ;
-}
-
 # File containing custom scripting. Found in mk/msvcgen.
 
 MsvcGenVariable customize : custom.cslib custom2.cslib custom3.cslib ;
@@ -104,19 +104,19 @@ for a in x86 x64
     ;
   MsvcGenConfig CRYSTAL.LIBDIRS.$(varsuffix.$(a)) :
     [ ConcatDirs .. .. .. CS out release$(MSVC_VERSION)$(dirsuffix.$(a)) libs ]
-    [ ConcatDirs .. .. .. CS winlibs $(a) libs ]
-    [ ConcatDirs .. .. .. CS win32libs libs ]
+    [ ConcatDirs .. .. .. CS winlibs $(a) lib ]
+    [ ConcatDirs .. .. .. CS win32libs lib ]
     [ ConcatDirs "$(hash)(CRYSTAL)" out release$(MSVC_VERSION)$(dirsuffix.$(a)) libs ]
-    [ ConcatDirs "$(hash)(CRYSTAL)" winlibs $(a) libs ]
-    [ ConcatDirs "$(hash)(CRYSTAL)" win32libs libs ]
+    [ ConcatDirs "$(hash)(CRYSTAL)" winlibs $(a) lib ]
+    [ ConcatDirs "$(hash)(CRYSTAL)" win32libs lib ]
     ;
   MsvcGenConfig CRYSTAL.LIBDIRS.DEBUG.$(varsuffix.$(a)) :
     [ ConcatDirs .. .. .. CS out debug$(MSVC_VERSION)$(dirsuffix.$(a)) libs ]
-    [ ConcatDirs .. .. .. CS winlibs $(a) libs ]
-    [ ConcatDirs .. .. .. CS win32libs libs ]
+    [ ConcatDirs .. .. .. CS winlibs $(a) lib ]
+    [ ConcatDirs .. .. .. CS win32libs lib ]
     [ ConcatDirs "$(hash)(CRYSTAL)" out debug$(MSVC_VERSION)$(dirsuffix.$(a)) libs ]
-    [ ConcatDirs "$(hash)(CRYSTAL)" winlibs $(a) libs ]
-    [ ConcatDirs "$(hash)(CRYSTAL)" win32libs libs ]
+    [ ConcatDirs "$(hash)(CRYSTAL)" winlibs $(a) lib ]
+    [ ConcatDirs "$(hash)(CRYSTAL)" win32libs lib ]
     ;
 }
 
