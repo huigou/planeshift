@@ -1823,7 +1823,7 @@ void GEMClientActor::SetAnimationVelocity(const csVector3& velocity)
 
 void GEMClientActor::SetMode(uint8_t mode, bool newactor)
 {
-    CS_ASSERT(cal3dstate);
+    // TODO: Hacky fix for now when model has not finished loaded.
     if(!cal3dstate) return;
 
     if ((serverMode == psModeMessage::OVERWEIGHT || serverMode == psModeMessage::DEFEATED) && serverMode != mode)
