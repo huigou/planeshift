@@ -484,7 +484,7 @@ void SpawnManager::LoadHuntLocations(psSectorInfo *sectorinfo)
 
 void SpawnManager::LoadSpawnRanges(SpawnRule *rule)
 {
-    Result result(db->Select("select npc_spawn_ranges.id,x1,y1,z1,x2,y2,z2,name,range_type_code"
+    Result result(db->Select("select npc_spawn_ranges.id,x1,y1,z1,x2,y2,z2,radius,name,range_type_code"
                              "  from npc_spawn_ranges, sectors "
                              "  where npc_spawn_ranges.sector_id = sectors.id"
                              "  and npc_spawn_rule_id=%d", rule->GetID() ));
@@ -509,6 +509,7 @@ void SpawnManager::LoadSpawnRanges(SpawnRule *rule)
                        result[i].GetFloat("x2"),
                        result[i].GetFloat("y2"),
                        result[i].GetFloat("z2"),
+                       result[i].GetFloat("radius"),
                        result[i]["name"]);
 
 
@@ -1193,6 +1194,7 @@ void SpawnRange::Initialize(int idval,
                             const char *type_code,
                             float rx1, float ry1, float rz1,
                             float rx2, float ry2, float rz2,
+                            float radius,
                             const char *sectorname)
 {
     id = idval;
@@ -1210,12 +1212,18 @@ void SpawnRange::Initialize(int idval,
     spawnsector = sectorname;
     float dx = x1 == x2 ? RANGE_FICTITIOUS_WIDTH : x2 - x1;
     float dz = z1 == z2 ? RANGE_FICTITIOUS_WIDTH : z2 - z1;
-    area = dx * dz;
-
-    if (type=='L')
+    
+    if (type == 'A')
+    	area = dx * dz;
+    else if (type=='L')
     {
         area = (rx2-rx1)*(rx2-rx1) + (ry2-ry1)*(ry2-ry1) + (rz2-rz1)*(rz2-rz1);
         area = sqrt(area);
+    }
+    else if (type == 'C')
+    {
+    	
+    	area = radius * radius * PI;
     }
 }
 
@@ -1227,7 +1235,7 @@ const csVector3 SpawnRange::PickPos()
                          y1 + randomgen->Get() * (y2 - y1),
                          z1 + randomgen->Get() * (z2 - z1));
     }
-    else // type 'L' means spawn along line segment
+    else if (type == 'L')// type 'L' means spawn along line segment
     {
         float d = randomgen->Get();
 
@@ -1235,6 +1243,30 @@ const csVector3 SpawnRange::PickPos()
                          y1 + d * (y2 - y1),
                          z1 + d * (z2 - z1));
     }
+    else if (type == 'C') // type 'C' means spawn within a circle centered at the first set of co-ordinates
+    {
+    	float x;
+    	float z;
+    	
+    	float xDist;
+    	float zDist;
+    	
+    	do {
+    		// Pick random point in circumscribed rectangle.
+    		x = randomgen->Get() * (radius*2.0);
+			z = randomgen->Get() * (radius*2.0);
+			xDist = radius - x;
+			zDist = radius - z;
+			// Keep looping until the point is inside a circle.
+    	} while(xDist * xDist + zDist * zDist > radius * radius);
+    	
+    	return csVector3(x1 - radius + x, y1, z1 - radius + z);
+    }
+    else
+    {
+    	Error2("Unknown spawn range %s!", (const char *)type);
+    }
+    return csVector3(0.0, 0.0, 0.0);
 }
 
 

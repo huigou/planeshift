@@ -43,7 +43,7 @@ protected:
     /// Unique ID used for ident
     int   id;
 
-    char  type;  /// A = Area (rect) or L = Line Segment
+    char  type;  /// A = Area (rect), L = Line Segment, C = Circle
 
     /// Corresponding spawn rule ID
     int   npcspawnruleid;
@@ -59,6 +59,7 @@ private:
     float x2;
     float y2;
     float z2;
+    float radius;
 
     /// Pre-computed area to avoid overhead
     float area;
@@ -73,6 +74,7 @@ public:
                     const char *type_code,
                     float rx1, float ry1, float rz1,
                     float rx2, float ry2, float rz2,
+                    float radius,
                     const char *sectorname);
 
     void SetID(int idval) { id = idval; };

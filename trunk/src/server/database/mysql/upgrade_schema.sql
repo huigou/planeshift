@@ -1396,6 +1396,10 @@ MODIFY COLUMN `size` FLOAT(10,3) UNSIGNED NOT NULL DEFAULT '0.000';
 ALTER TABLE `race_info` ADD COLUMN `scale` FLOAT  NOT NULL DEFAULT '0' COMMENT 'Defines the scale of the race. Overrides whathever is defined in the cal3d file.' AFTER `race`;
 UPDATE `server_options` SET `option_value`='1236' WHERE `option_name`='db_version';
 
+#1237 - Andrew Dai added spawn radius
+ALTER TABLE `npc_spawn_ranges` ADD COLUMN `radius` FLOAT DEFAULT '0.0' COMMENT 'Defines the radius of a circle for a spawn range.' AFTER `z2`;
+UPDATE `server_options` SET `option_value`='1237' WHERE `option_name`='db_version';
+
 
 
 # Insert your upgrade before this line. Remember when you set a new db_version
