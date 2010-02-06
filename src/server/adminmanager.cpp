@@ -1822,9 +1822,28 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
     }
     else // Offline
     {
-        Result result(db->Select("SELECT c.id as 'id', c.name as 'name', lastname, account_id, time_connected_sec, loc_instance, "
+        PID pid;
+        Result result;
+        if (data.player.StartsWith("pid:",true) && data.player.Length() > 4)
+        {
+            pid = PID(strtoul(data.player.Slice(4).GetData(), NULL, 10));
+
+            if (!pid.IsValid())
+            {
+                 psserver->SendSystemError(client->GetClientNum(), "%s is invalid!",data.player.GetData() );
+                 return;
+            }
+
+            result = db->Select("SELECT c.id as 'id', c.name as 'name', lastname, account_id, time_connected_sec, loc_instance, "
                 "s.name as 'sector', loc_x, loc_y, loc_z, loc_yrot, advisor_ban from characters c join sectors s on s.id = loc_sector_id "
-                "join accounts a on a.id = account_id where c.name='%s'", data.player.GetData()));
+                "join accounts a on a.id = account_id where c.id=%u", pid.Unbox());
+        }
+        else
+        {
+            result = db->Select("SELECT c.id as 'id', c.name as 'name', lastname, account_id, time_connected_sec, loc_instance, "
+                "s.name as 'sector', loc_x, loc_y, loc_z, loc_yrot, advisor_ban from characters c join sectors s on s.id = loc_sector_id "
+                "join accounts a on a.id = account_id where c.name='%s'", data.player.GetData());
+        }
 
         if (!result.IsValid() || result.Count() == 0)
         {
@@ -2397,6 +2416,7 @@ void AdminManager::ViewMarriage(MsgEntry* me, AdminCmdData& data, bool duplicate
 
     bool married;
     csString spouse;
+    csString playerStr = data.player;
 
     if(player)
     {
@@ -2414,26 +2434,50 @@ void AdminManager::ViewMarriage(MsgEntry* me, AdminCmdData& data, bool duplicate
     {
         // player is offline - hit the db
         Result result;
+        PID charID;
         if(data.player.StartsWith("pid:",true) && data.player.Length() > 4) //check if pid was provided or only name
-            result = db->Select("SELECT id FROM characters WHERE name='%i'", atoi( data.player.Slice(4).GetData())); // FIXME: I think this is wrong.
+        {
+            charID = PID(strtoul(data.player.Slice(4).GetData(), NULL, 10));
+
+            if (!charID.IsValid())
+            {
+                // invalid PID
+                psserver->SendSystemInfo(me->clientnum, "%s is invalid!", data.player.GetData());
+                return;
+            }
+
+            result = db->Select("SELECT name FROM characters WHERE id = %u", charID.Unbox()); // Verify char exists and get name
+
+            if(!result.IsValid() || result.Count() == 0)
+            {
+                // there's no character with given PID
+                psserver->SendSystemInfo(me->clientnum, "There's no character with %s!", data.player.GetData());
+                return;
+            }
+
+            iResultRow& row = result[0];
+            playerStr = row["name"];
+        }
         else
+        {
             result = db->Select("SELECT id FROM characters WHERE name='%s'", data.player.GetData());
 
-        if(!result.IsValid() || result.Count() == 0)
-        {
-            // there's no character with given name
-            psserver->SendSystemInfo(me->clientnum, "There's no character named %s!", data.player.GetData());
-            return;
-        }
+            if(!result.IsValid() || result.Count() == 0)
+            {
+                // there's no character with given name
+                psserver->SendSystemInfo(me->clientnum, "There's no character named %s!", data.player.GetData());
+                return;
+            }
 
-        iResultRow& row = result[0];
-        int charID = row.GetInt("id");
+            iResultRow& row = result[0];
+            charID = PID(row.GetInt("id"));
+        }
 
         result = db->Select(
                 "SELECT name FROM characters WHERE id = "
                 "("
-                "   SELECT related_id FROM character_relationships WHERE character_id = %d AND relationship_type='spouse'"
-                ")", charID);
+                "   SELECT related_id FROM character_relationships WHERE character_id = %u AND relationship_type='spouse'"
+                ")", charID.Unbox());
 
         married = (result.IsValid() && result.Count() != 0);
         if(married)
@@ -2454,17 +2498,17 @@ void AdminManager::ViewMarriage(MsgEntry* me, AdminCmdData& data, bool duplicate
         // character is married
         if(psserver->GetCharManager()->HasConnected(spouse))
         {
-            psserver->SendSystemInfo(me->clientnum, "%s is married to %s, who was last online less than two months ago.", data.player.GetData(), spouse.GetData());
+            psserver->SendSystemInfo(me->clientnum, "%s is married to %s, who was last online less than two months ago.", playerStr.GetData(), spouse.GetData());
         }
         else
         {
-            psserver->SendSystemInfo(me->clientnum, "%s is married to %s, who was last online more than two months ago.", data.player.GetData(), spouse.GetData());
+            psserver->SendSystemInfo(me->clientnum, "%s is married to %s, who was last online more than two months ago.", playerStr.GetData(), spouse.GetData());
         }
     }
     else
     {
         // character isn't married
-        psserver->SendSystemInfo(me->clientnum, "%s is not married.", data.player.GetData());
+        psserver->SendSystemInfo(me->clientnum, "%s is not married.", playerStr.GetData());
     }
 }
 
