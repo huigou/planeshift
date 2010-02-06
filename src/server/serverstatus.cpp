@@ -85,6 +85,7 @@ void psServerStatusRunEvent::Trigger ()
     time( &now );
     currentTime = *gmtime( &now );
     timeString = asctime( &currentTime );
+    timeString.Trim();
     EconomyManager::Economy& economy = psserver->GetEconomyManager()->economy;
     
     unsigned int moneyIn = economy.lootValue + economy.sellingValue + economy.pickupsValue;
