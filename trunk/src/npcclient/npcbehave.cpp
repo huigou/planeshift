@@ -737,6 +737,9 @@ Behavior* BehaviorSet::Find(Behavior *key)
 bool Behavior::RunScript(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
     size_t start_step = current_step;
+    // Without this, we will get an infinite loop.
+    if (start_step >= sequence.GetSize())
+	    start_step = 0;
     while (true)
     {
         if (current_step < sequence.GetSize() )
