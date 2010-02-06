@@ -17,6 +17,7 @@ CREATE TABLE npc_spawn_ranges (
   x2 float(10,2) NOT NULL DEFAULT '0.00' ,
   y2 float(10,2) NOT NULL DEFAULT '0.00' ,
   z2 float(10,2) NOT NULL DEFAULT '0.00' ,
+  radius float(10,2) DEFAULT '0.00' ,
   sector_id int(10) NOT NULL DEFAULT '0' ,
   range_type_code char(1) NOT NULL DEFAULT 'A' ,
   PRIMARY KEY (id)
@@ -27,5 +28,6 @@ CREATE TABLE npc_spawn_ranges (
 # Dumping data for table 'npc_spawn_ranges'
 #
 
-INSERT INTO npc_spawn_ranges VALUES("1","999","-20.00","0.00","-160.00","0.00","0.00","-180.00","3","A");
-INSERT INTO npc_spawn_ranges VALUES("2","100","-20.00","0.00","-160.00","0.00","0.00","-180.00","3","L");
+INSERT INTO npc_spawn_ranges VALUES("1","999","-20.00","0.00","-160.00","0.00","0.00","-180.00", "0.00", "3","A");
+INSERT INTO npc_spawn_ranges VALUES("2","100","-20.00","0.00","-160.00","0.00","0.00","-180.00", "0.00", "3","L");
+INSERT INTO npc_spawn_ranges VALUES("3","100","-20.00","0.00","-160.00","0.00","0.00","0.00", "5.00", "3","C");
