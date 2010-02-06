@@ -2050,8 +2050,12 @@ void UserManager::HandleMount(psUserCmdMessage& msg, Client *client)
     if (!mount || !mount->GetActorPtr() || client->GetActor() == mount
     || (!mount->GetCharacterData()->IsMount() && (!client->IsGM() || !mount->GetCharacterData()->IsNPC()))) //remove that last test to allow for player mounting
     {
-        psserver->SendSystemError(client->GetClientNum(),
-                "Can't mount %s", mount->GetName());
+	if (mount)
+	        psserver->SendSystemError(client->GetClientNum(),
+                "Can't mount %s.", mount->GetName());
+	else
+	        psserver->SendSystemError(client->GetClientNum(),
+                "Can't find object to mount.");
         return;
     }
     
@@ -2065,7 +2069,7 @@ void UserManager::HandleMount(psUserCmdMessage& msg, Client *client)
     if(!client->GetActor()->IsNear(mount, RANGE_TO_USE, true))
     {
         psserver->SendSystemError(client->GetClientNum(),
-                "You are too far away from the mount");
+                "You are too far away from the mount.");
         return;
     }
 
