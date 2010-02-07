@@ -49,6 +49,7 @@ class MsgEntry;
 class psItemStats;
 class psItem;
 class gemContainer;
+struct psRaceInfo;
 
 
 
@@ -436,6 +437,13 @@ public:
 
     /// Update encumbrance/OVERWEIGHT mode to match current status.
     void UpdateEncumbrance();
+    
+    /** Sets the basic armor when not equipped depending on the passed race.
+     *  @note if race is NULL or the armor group is 0 it will set the basicloths else the defined ones.
+     *  @param race Pointer to the race to use to set the basic armor.
+     */    
+    void SetBasicArmor(psRaceInfo *race);
+
 
 private:
     void WriteItem(csRef<iDocumentNode> equipmentNode, psItem* item, int bulk, INVENTORY_SLOT_NUMBER slot);
