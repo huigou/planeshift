@@ -2179,6 +2179,7 @@ psGUIInventoryMessage::psGUIInventoryMessage(MsgEntry *message, csStringHashReve
                 ItemDescription item;
                 item.name          = message->GetStr();
                 item.meshName      = msgstringshash->Request(csStringID(message->GetUInt32()));
+                item.materialName  = msgstringshash->Request(csStringID(message->GetUInt32()));
                 item.container     = message->GetUInt32();
                 item.slot          = message->GetUInt32();
                 item.stackcount    = message->GetUInt32();
@@ -2234,6 +2235,7 @@ psGUIInventoryMessage::psGUIInventoryMessage(uint32_t clientnum,
 
 void psGUIInventoryMessage::AddItem( const char* name,
                                      const char* meshName,
+                                     const char* materialName,
                                      int containerID,
                                      int slotID,
                                      int stackcount,
@@ -2245,6 +2247,7 @@ void psGUIInventoryMessage::AddItem( const char* name,
 {
     msg->Add(name);
     msg->Add(msgstrings->Request(meshName).GetHash());
+    msg->Add(msgstrings->Request(materialName).GetHash());
     msg->Add((uint32_t)containerID);
     msg->Add((uint32_t)slotID);
 
@@ -5847,22 +5850,25 @@ csString psExchangeRequestMsg::ToString(AccessPointers * /*access_ptrs*/)
 
 //------------------------------------------------------------------------------
 
-PSF_IMPLEMENT_MSG_FACTORY(psExchangeAddItemMsg,MSGTYPE_EXCHANGE_ADD_ITEM);
+PSF_IMPLEMENT_MSG_FACTORY4(psExchangeAddItemMsg,MSGTYPE_EXCHANGE_ADD_ITEM);
 
 psExchangeAddItemMsg::psExchangeAddItemMsg( uint32_t clientNum,
                                             const csString& name,
                                             const csString& meshFactName,
+                                            const csString& materialName,
                                             int containerID,
                                             int slot,
                                             int stackcount,
-                                            const csString& icon )
+                                            const csString& icon,
+                                            csStringSet* msgstrings )
 {
     msg.AttachNew(new MsgEntry(1000));
     msg->SetType(MSGTYPE_EXCHANGE_ADD_ITEM);
     msg->clientnum = clientNum;
 
     msg->Add( name );
-    msg->Add( meshFactName );
+    msg->Add( msgstrings->Request(meshFactName) );
+    msg->Add( msgstrings->Request(materialName) );
     msg->Add( (uint32_t) containerID );
     msg->Add( (uint32_t) slot );
     msg->Add( (uint32_t) stackcount );
@@ -5870,10 +5876,11 @@ psExchangeAddItemMsg::psExchangeAddItemMsg( uint32_t clientNum,
     msg->ClipToCurrentSize();
 }
 
-psExchangeAddItemMsg::psExchangeAddItemMsg( MsgEntry* me )
+psExchangeAddItemMsg::psExchangeAddItemMsg( MsgEntry* me, csStringHashReversible* msgstringshash )
 {
     name         = me->GetStr();
-    meshFactName = me->GetStr();
+    meshFactName = msgstringshash->Request(csStringID(me->GetUInt32()));
+    materialName = msgstringshash->Request(csStringID(me->GetUInt32()));
     container    = me->GetUInt32();
     slot         = me->GetUInt32();
     stackCount   = me->GetUInt32();

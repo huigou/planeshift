@@ -28,13 +28,19 @@ public:
     int GetPurifyStatus();
     void SetPurifyStatus(int status);
     
-    void PlaceItem( const char* imageName, const char* meshFactName, int count = 0 );
+    void PlaceItem( const char* imageName, const char* meshFactName,
+        const char* materialName = NULL, int count = 0 );
     csRef<iPawsImage> Image() { return image;}
     const char *ImageName();
 
     const char *GetMeshFactName()
     {
       return meshfactName;
+    }
+
+    const char *GetMaterialName()
+    {
+        return materialName;
     }
     
     const csString & SlotName() const { return slotName; }
@@ -60,6 +66,7 @@ public:
 protected:
     psSlotManager*   mgr;
     csString         meshfactName;
+    csString         materialName;
     csString         slotName;
     int              containerID;  
     int              slotID;

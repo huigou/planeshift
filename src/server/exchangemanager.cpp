@@ -705,8 +705,8 @@ void Exchange::SendAddItemMessage(Client* fromClient, int slot, psCharacterInven
     psItem* item = invItem->GetItem();
 
     psExchangeAddItemMsg msg(fromClient->GetClientNum(), item->GetName(),
-      item->GetMeshName(), CONTAINER_EXCHANGE_OFFERING, slot, invItem->exchangeStackCount,
-      item->GetImageName());
+      item->GetMeshName(), item->GetTextureName(), CONTAINER_EXCHANGE_OFFERING, slot, invItem->exchangeStackCount,
+      item->GetImageName(), CacheManager::GetSingleton().GetMsgStrings());
 
     psserver->GetEventManager()->SendMessage(msg.msg);
 }
@@ -900,8 +900,8 @@ void PlayerToPlayerExchange::SendAddItemMessage(Client* fromClient, int slot, ps
     Client *toClient = GetOtherClient(fromClient);
 
     psExchangeAddItemMsg msg(toClient->GetClientNum(), item->GetName(),
-      item->GetMeshName(), CONTAINER_EXCHANGE_RECEIVING, slot, invItem->exchangeStackCount,
-      item->GetImageName());
+      item->GetMeshName(), item->GetTextureName(), CONTAINER_EXCHANGE_RECEIVING, slot, invItem->exchangeStackCount,
+      item->GetImageName(), CacheManager::GetSingleton().GetMsgStrings());
 
     psserver->GetEventManager()->SendMessage(msg.msg);
 }

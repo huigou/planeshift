@@ -42,7 +42,10 @@
 
 CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
 {
-    iMeshWrapper* BgLoader::CreateAndSelectMesh(const char* factName, iCamera* camera, const csVector2& pos)
+    iMeshWrapper* BgLoader::CreateAndSelectMesh(const char* factName,
+                                                const char* matName,
+                                                iCamera* camera,
+                                                const csVector2& pos)
     {
         // Check that requested mesh is valid.
         csRef<MeshFact> meshfact = meshfacts.Get(mfStringSet.Request(factName), csRef<MeshFact>());
@@ -57,7 +60,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
             return 0;
 
         // Load meshfactory.
-        while(!LoadMeshFact(meshfact));
+        LoadMeshFact(meshfact, true);
         csRef<iMeshFactoryWrapper> factory = scfQueryInterface<iMeshFactoryWrapper>(meshfact->status->GetResultRefPtr());
 
         // Update stored position.
@@ -73,6 +76,17 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
         selectedMesh->GetFlags().Set(CS_ENTITY_NOHITBEAM);
         selectedMesh->GetMovable()->SetPosition(camera->GetSector(), result.isect);
         selectedMesh->GetMovable()->UpdateMove();
+
+        if(matName != NULL)
+        {
+            // Check that requested material is valid.
+            csRef<Material> material = materials.Get(mfStringSet.Request(matName), csRef<Material>());
+            if(!material.IsValid())
+                return 0;
+
+            LoadMaterial(material, true);
+            selectedMesh->GetMeshObject()->SetMaterialWrapper(material->mat);
+        }
 
         return selectedMesh;
     }

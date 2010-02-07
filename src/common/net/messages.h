@@ -45,7 +45,7 @@ class csStringHashReversible;
 
 // This holds the version number of the network code, remember to increase
 // this each time you do an update which breaks compatibility
-#define PS_NETVERSION   0x00B5
+#define PS_NETVERSION   0x00B6
 // Remember to bump the version in pscssetup.h, as well.
 
 
@@ -1658,6 +1658,7 @@ public:
     /// Add an item to the output message buffer
     void AddItem(   const char* name,
                     const char* meshName,
+                    const char* materialName,
                     int containerID,
                     int slot,
                     int stackcount,
@@ -1680,6 +1681,7 @@ public:
     {
         csString name;
         csString meshName;
+        csString materialName;
         int slot;
         float weight;
         uint32 size;
@@ -4219,12 +4221,14 @@ public:
     psExchangeAddItemMsg(   uint32_t clientNum,
                             const csString& name,
                             const csString& meshFactName,
+                            const csString& materialName,
                             int containerID,
                             int slot,
                             int stackcount,
-                            const csString& icon );
+                            const csString& icon,
+                            csStringSet* msgstrings );
 
-    psExchangeAddItemMsg( MsgEntry* me );
+    psExchangeAddItemMsg( MsgEntry* me, csStringHashReversible* msgstringshash );
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -4238,6 +4242,7 @@ public:
 
     csString name;
     csString meshFactName;
+    csString materialName;
     int container;
     int slot;
     int stackCount;

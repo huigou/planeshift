@@ -295,7 +295,7 @@ void pawsExchangeWindow::HandleMessage( MsgEntry* me )
         ///////////////////////////////////////////////////////////        
         case MSGTYPE_EXCHANGE_ADD_ITEM:
         {
-            psExchangeAddItemMsg item(me);                        
+            psExchangeAddItemMsg item(me, psengine->GetMsgStrings());                        
             pawsSlot* itemSlot = 0;
             
             if ( item.container == CONTAINER_EXCHANGE_OFFERING )
@@ -310,7 +310,7 @@ void pawsExchangeWindow::HandleMessage( MsgEntry* me )
             if ( itemSlot )
             {
                 itemSlot->Clear();
-                itemSlot->PlaceItem( item.icon, item.meshFactName, item.stackCount );
+                itemSlot->PlaceItem( item.icon, item.meshFactName, item.materialName, item.stackCount );
                 itemSlot->SetToolTip( item.name );
                 itemSlot->SetContainer( item.container );
                 itemSlot->SetSlotID( item.slot );

@@ -41,6 +41,7 @@ private:
         int stackCount;
         pawsSlot* slot;
         csString meshFactName;
+        csString materialName;
         int parentID;
     } draggingSlot;
   
