@@ -4747,13 +4747,12 @@ psPersistActor::psPersistActor( uint32_t clientNum,
     msg->Add(ownerEID.Unbox());
     posInstance = (int) msg->current;
     msg->Add( (int32_t)0 );
-    //if (flags) // No point sending 0, has to be at the end
-    //{
-        msg->Add( flags );
-    //}
-    //^ for now send it always this allows us to avoid a netbump
     msg->Add(scale);
     msg->Add(mountScale);
+    if (flags) // No point sending 0, has to be at the end
+    {
+        msg->Add( flags );
+    }
 
     msg->ClipToCurrentSize();
 }
@@ -4806,23 +4805,13 @@ psPersistActor::psPersistActor( MsgEntry* me, csStringSet* msgstrings, csStringH
     ownerEID   = EID(me->GetUInt32());
     instance   = me->GetUInt32();
 
+    scale      = me->GetFloat();
+    mountScale = me->GetFloat();
+
     if (!me->IsEmpty())
-    {
         flags   = me->GetUInt32();
-    } else
-    {
-        flags   = 0;
-    }
-    if(!me->IsEmpty()) //should allow to move without a netbump
-    {
-        scale      = me->GetFloat();
-        mountScale = me->GetFloat();
-    }
     else
-    {
-        scale = 0;
-        mountScale = 0;
-    }
+        flags   = 0;
 }
 
 csString psPersistActor::ToString(AccessPointers * access_ptrs)
