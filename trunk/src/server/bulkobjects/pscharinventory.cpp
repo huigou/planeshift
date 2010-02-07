@@ -86,22 +86,9 @@ psCharacterInventory::psCharacterInventory(psCharacter *ownr)
 
     owner = ownr;
 
-    // Load basecloths. Default item equipped in clothing/armour slots.
-    psItemStats *basecloth;
-    if(owner && owner->GetRaceInfo() && owner->GetRaceInfo()->GetNaturalArmorID() != 0)
-		basecloth = CacheManager::GetSingleton().GetBasicItemStatsByID(owner->GetRaceInfo()->GetNaturalArmorID());
-	else
-		basecloth = CacheManager::GetSingleton().GetBasicItemStatsByName("basecloths");
-    psItem *basecloths = basecloth->InstantiateBasicItem();
-    basecloths->SetOwningCharacter(owner);
-
-    equipment[PSCHARACTER_SLOT_ARMS].default_if_empty = basecloths;
-    equipment[PSCHARACTER_SLOT_BOOTS].default_if_empty = basecloths;
-    equipment[PSCHARACTER_SLOT_GLOVES].default_if_empty = basecloths;
-    equipment[PSCHARACTER_SLOT_HELM].default_if_empty = basecloths;
-    equipment[PSCHARACTER_SLOT_TORSO].default_if_empty = basecloths;
-    equipment[PSCHARACTER_SLOT_LEGS].default_if_empty = basecloths;
-
+	//as a beginning we set a basic armor.
+	SetBasicArmor(NULL);
+	
     doRestrictions = false;
     loaded         = false;
     inExchangeMode = false;
@@ -119,6 +106,33 @@ psCharacterInventory::~psCharacterInventory()
         }
     }
     inventory.DeleteAll();
+}
+
+void psCharacterInventory::SetBasicArmor(psRaceInfo *race)
+{
+	// Load basecloths. Default item equipped in clothing/armour slots.
+    psItemStats *basecloth;
+    if(race && race->GetNaturalArmorID() != 0)
+		basecloth = CacheManager::GetSingleton().GetBasicItemStatsByID(owner->GetRaceInfo()->GetNaturalArmorID());
+	else
+		basecloth = CacheManager::GetSingleton().GetBasicItemStatsByName("basecloths");
+		
+	//delete the basecloth if it was already loaded.
+	if(equipment[PSCHARACTER_SLOT_ARMS].default_if_empty)
+		delete equipment[PSCHARACTER_SLOT_ARMS].default_if_empty;
+    
+    //make a new one
+    psItem* basecloths = basecloth->InstantiateBasicItem();
+    basecloths->SetOwningCharacter(owner);
+
+	//assign it
+    equipment[PSCHARACTER_SLOT_ARMS].default_if_empty = basecloths;
+    equipment[PSCHARACTER_SLOT_BOOTS].default_if_empty = basecloths;
+    equipment[PSCHARACTER_SLOT_GLOVES].default_if_empty = basecloths;
+    equipment[PSCHARACTER_SLOT_HELM].default_if_empty = basecloths;
+    equipment[PSCHARACTER_SLOT_TORSO].default_if_empty = basecloths;
+    equipment[PSCHARACTER_SLOT_LEGS].default_if_empty = basecloths;
+	
 }
 
 void psCharacterInventory::CalculateLimits()
