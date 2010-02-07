@@ -1392,6 +1392,7 @@ void gemItem::SendBehaviorMessage(const csString & msg_id, gemObject *actor)
          gemContainer* container = dynamic_cast<gemContainer*>(this);
 
          uint32 origUID = item->GetUID();
+	 csString itemName = item->GetName();
          unsigned short origStackCount = item->GetStackCount();
 
          gemActor* gActor = actor->GetActorPtr();
@@ -1412,7 +1413,9 @@ void gemItem::SendBehaviorMessage(const csString & msg_id, gemObject *actor)
                  item->ScheduleRespawn();
                  psPickupEvent evt(
                             chardata->GetPID(),
+			    chardata->GetCharName(),
                             item->GetUID(),
+			    item->GetName(),
                             item->GetStackCount(),
                             (int)item->GetCurrentStats()->GetQuality(),
                             0
@@ -1423,7 +1426,9 @@ void gemItem::SendBehaviorMessage(const csString & msg_id, gemObject *actor)
              {
                  psPickupEvent evt(
                                 chardata->GetPID(),
+				chardata->GetCharName(),
                                 origUID,
+				itemName,
                                 origStackCount,
                                 0,
                                 0

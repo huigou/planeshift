@@ -1247,7 +1247,9 @@ void psCharacter::DropItem(psItem *&item, csVector3 suggestedPos, float yrot, bo
     psMoney money;
 
     psDropEvent evt(pid,
+		    GetCharName(),
                     item->GetUID(),
+		    item->GetName(),
                     item->GetStackCount(),
                     (int)item->GetCurrentStats()->GetQuality(),
                     0);

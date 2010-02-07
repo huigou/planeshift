@@ -165,8 +165,11 @@ public:
 
         psLootEvent evt(
                        looteeID,
+		       looteename,
                        getter->GetCharacterData()->GetPID(),
+		       lootername,
                        item->GetUID(),
+		       item->GetName(),
                        item->GetStackCount(),
                        (int)item->GetCurrentStats()->GetQuality(),
                        0
@@ -1007,8 +1010,11 @@ void SpawnManager::HandleLootItem(MsgEntry *me,Client *client)
 
     psLootEvent evt(
                    chr->GetPID(),
+		   chr->GetCharName(),
                    looterclient->GetCharacterData()->GetPID(),
+		   looterclient->GetCharacterData()->GetCharName(),
                    item->GetUID(),
+		   item->GetName(),
                    item->GetStackCount(),
                    (int)item->GetCurrentStats()->GetQuality(),
                    0

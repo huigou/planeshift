@@ -66,6 +66,9 @@ EconomyManager::EconomyManager()
 {
     psserver->GetEventManager()->Subscribe(this,MSGTYPE_BUY_EVENT,NO_VALIDATION);
     psserver->GetEventManager()->Subscribe(this,MSGTYPE_SELL_EVENT,NO_VALIDATION);
+    psserver->GetEventManager()->Subscribe(this,MSGTYPE_PICKUP_EVENT,NO_VALIDATION);
+    psserver->GetEventManager()->Subscribe(this,MSGTYPE_DROP_EVENT,NO_VALIDATION);
+    psserver->GetEventManager()->Subscribe(this,MSGTYPE_LOOT_EVENT,NO_VALIDATION);
 
 };
 
@@ -76,6 +79,9 @@ EconomyManager::~EconomyManager()
     {
         psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_BUY_EVENT);
         psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_SELL_EVENT);
+        psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_PICKUP_EVENT);
+        psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_DROP_EVENT);
+        psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_LOOT_EVENT);
     }
 }
 
@@ -86,30 +92,7 @@ void EconomyManager::AddTransaction(TransactionEntity* trans,bool moneyIn, const
     
     csString buf;
     
-    gemObject* fromActor = GEMSupervisor::GetSingleton().FindPlayerEntity(trans->from.Unbox());
-    if(!fromActor)
-    	fromActor = GEMSupervisor::GetSingleton().FindNPCEntity(trans->from.Unbox());
-    csString fromName;
-    if(fromActor)
-	    fromName = fromActor->GetName();
-    else
-	    fromName = trans->from.Unbox();
-
-    gemObject* toActor = GEMSupervisor::GetSingleton().FindPlayerEntity(trans->to.Unbox());
-    if(!toActor)
-    	toActor = GEMSupervisor::GetSingleton().FindNPCEntity(trans->to.Unbox());
-    csString toName;
-    if(fromActor)
-	    toName = toActor->GetName();
-    else
-	    toName = trans->to.Unbox();
-    gemItem* item = GEMSupervisor::GetSingleton().FindItemEntity(trans->item);
-    csString itemName;
-    if(item)
-	    itemName = item->GetName();
-    else
-	    itemName = trans->item;
-    buf.Format("%s, %s, %s, %s, %u, %u", fromName.GetData(), toName.GetData(), type, itemName.GetData(), trans->count, trans->price);
+    buf.Format("%s, %s, %s, %s, %u, %u", trans->fromName.GetDataSafe(), trans->toName.GetDataSafe(), type, trans->itemName.GetDataSafe(), trans->count, trans->price);
     psserver->GetLogCSV()->Write(CSV_EXCHANGES, buf);
     
     if(!trans->item)

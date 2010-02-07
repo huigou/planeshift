@@ -1784,8 +1784,10 @@ void UserManager::Loot(Client *client)
 
                             psLootEvent evt(
                                             chr->GetPID(),
+					    chr->GetCharName(),
                                             currmember->GetCharacterData()->GetPID(),
-                                            0, 0, 0, eachmoney.GetTotal());
+					    currmember->GetCharacterData()->GetCharName(),
+                                            0, "N/A", 0, 0, eachmoney.GetTotal());
                             evt.FireEvent();
                         }
                         else
@@ -1812,8 +1814,10 @@ void UserManager::Loot(Client *client)
                     client->GetCharacterData()->AdjustMoney(remmoney, false);
                     psserver->GetCharManager()->SendPlayerMoney(client);
                     psLootEvent evt(chr->GetPID(),
+				    chr->GetCharName(),
                                     client->GetCharacterData()->GetPID(),
-                                    0, 0, 0, remmoney.GetTotal());
+				    client->GetCharacterData()->GetCharName(),
+                                    0, "N/A", 0, 0, remmoney.GetTotal());
                     evt.FireEvent();
                 }
             }
@@ -1829,8 +1833,10 @@ void UserManager::Loot(Client *client)
                 psserver->GetCharManager()->SendPlayerMoney(client);
 
                 psLootEvent evt(chr->GetPID(),
+				chr->GetCharName(),
                                 client->GetCharacterData()->GetPID(),
-                               0, 0, 0, m.GetTotal());
+				client->GetCharacterData()->GetCharName(),
+                               0, "N/A", 0, 0, m.GetTotal());
                 evt.FireEvent();
             }
         }
