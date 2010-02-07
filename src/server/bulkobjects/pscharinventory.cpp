@@ -53,6 +53,7 @@
 #include "psguildinfo.h"
 #include "adminmanager.h"
 #include "psmerchantinfo.h"
+#include "psraceinfo.h"
 
 psCharacterInventory::psCharacterInventory(psCharacter *ownr)
 {
@@ -86,7 +87,11 @@ psCharacterInventory::psCharacterInventory(psCharacter *ownr)
     owner = ownr;
 
     // Load basecloths. Default item equipped in clothing/armour slots.
-    psItemStats *basecloth = CacheManager::GetSingleton().GetBasicItemStatsByName("basecloths");
+    psItemStats *basecloth;
+    if(owner && owner->GetRaceInfo() && owner->GetRaceInfo()->GetNaturalArmorID() != 0)
+		basecloth = CacheManager::GetSingleton().GetBasicItemStatsByID(owner->GetRaceInfo()->GetNaturalArmorID());
+	else
+		basecloth = CacheManager::GetSingleton().GetBasicItemStatsByName("basecloths");
     psItem *basecloths = basecloth->InstantiateBasicItem();
     basecloths->SetOwningCharacter(owner);
 
