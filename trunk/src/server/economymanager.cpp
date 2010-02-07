@@ -86,7 +86,30 @@ void EconomyManager::AddTransaction(TransactionEntity* trans,bool moneyIn, const
     
     csString buf;
     
-    buf.Format("%d, %d, %s, %d, %u, \"%u\"", trans->from.Unbox(), trans->to.Unbox(), type, trans->item, trans->count, trans->price);
+    gemObject* fromActor = GEMSupervisor::GetSingleton().FindPlayerEntity(trans->from.Unbox());
+    if(!fromActor)
+    	fromActor = GEMSupervisor::GetSingleton().FindNPCEntity(trans->from.Unbox());
+    csString fromName;
+    if(fromActor)
+	    fromName = fromActor->GetName();
+    else
+	    fromName = trans->from.Unbox();
+
+    gemObject* toActor = GEMSupervisor::GetSingleton().FindPlayerEntity(trans->to.Unbox());
+    if(!toActor)
+    	toActor = GEMSupervisor::GetSingleton().FindNPCEntity(trans->to.Unbox());
+    csString toName;
+    if(fromActor)
+	    toName = toActor->GetName();
+    else
+	    toName = trans->to.Unbox();
+    gemItem* item = GEMSupervisor::GetSingleton().FindItemEntity(trans->item);
+    csString itemName;
+    if(item)
+	    itemName = item->GetName();
+    else
+	    itemName = trans->item;
+    buf.Format("%s, %s, %s, %s, %u, %u", fromName.GetData(), toName.GetData(), type, itemName.GetData(), trans->count, trans->price);
     psserver->GetLogCSV()->Write(CSV_EXCHANGES, buf);
     
     if(!trans->item)
