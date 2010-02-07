@@ -1869,12 +1869,19 @@ float psCharacter::GetCounterBlockValueForWeaponInSlot(INVENTORY_SLOT_NUMBER slo
     return weapon->GetCounterBlockValue();
 }
 
-#define ARMOR_USES_SKILL(slot,skill) inventory.GetInventoryItem(slot)==NULL?inventory.GetEquipmentObject(slot).default_if_empty->GetArmorType()==skill:inventory.GetInventoryItem(slot)->GetArmorType()==skill
+bool psCharacter::ArmorUsesSkill(INVENTORY_SLOT_NUMBER slot, PSITEMSTATS_ARMORTYPE skill)
+{
+	if (inventory.GetInventoryItem(slot)==NULL)
+		return inventory.GetEquipmentObject(slot).default_if_empty->GetArmorType()==skill;
+	else
+		return inventory.GetInventoryItem(slot)->GetArmorType()==skill;
+}
 
-#define CALCULATE_ARMOR_FOR_SLOT(slot) \
-    if (ARMOR_USES_SKILL(slot,PSITEMSTATS_ARMORTYPE_LIGHT)) light_p+=1.0f/6.0f; \
-    if (ARMOR_USES_SKILL(slot,PSITEMSTATS_ARMORTYPE_MEDIUM)) med_p+=1.0f/6.0f; \
-    if (ARMOR_USES_SKILL(slot,PSITEMSTATS_ARMORTYPE_HEAVY)) heavy_p+=1.0f/6.0f;
+void psCharacter::CalculateArmorForSlot(INVENTORY_SLOT_NUMBER slot, float& heavy_p, float& med_p, float& light_p) {
+    if (ArmorUsesSkill(slot,PSITEMSTATS_ARMORTYPE_LIGHT)) light_p+=1.0f/6.0f;
+    if (ArmorUsesSkill(slot,PSITEMSTATS_ARMORTYPE_MEDIUM)) med_p+=1.0f/6.0f;
+    if (ArmorUsesSkill(slot,PSITEMSTATS_ARMORTYPE_HEAVY)) heavy_p+=1.0f/6.0f;
+}
 
 
 float psCharacter::GetDodgeValue()
@@ -1885,12 +1892,12 @@ float psCharacter::GetDodgeValue()
     // hold the % of each type of armor worn
     heavy_p=med_p=light_p=0.0f;
 
-    CALCULATE_ARMOR_FOR_SLOT(PSCHARACTER_SLOT_HELM);
-    CALCULATE_ARMOR_FOR_SLOT(PSCHARACTER_SLOT_TORSO);
-    CALCULATE_ARMOR_FOR_SLOT(PSCHARACTER_SLOT_ARMS);
-    CALCULATE_ARMOR_FOR_SLOT(PSCHARACTER_SLOT_GLOVES);
-    CALCULATE_ARMOR_FOR_SLOT(PSCHARACTER_SLOT_LEGS);
-    CALCULATE_ARMOR_FOR_SLOT(PSCHARACTER_SLOT_BOOTS);
+    CalculateArmorForSlot(PSCHARACTER_SLOT_HELM, heavy_p, med_p, light_p);
+    CalculateArmorForSlot(PSCHARACTER_SLOT_TORSO, heavy_p, med_p, light_p);
+    CalculateArmorForSlot(PSCHARACTER_SLOT_ARMS, heavy_p, med_p, light_p);
+    CalculateArmorForSlot(PSCHARACTER_SLOT_GLOVES, heavy_p, med_p, light_p);
+    CalculateArmorForSlot(PSCHARACTER_SLOT_LEGS, heavy_p, med_p, light_p);
+    CalculateArmorForSlot(PSCHARACTER_SLOT_BOOTS, heavy_p, med_p, light_p);
 
     // multiplies for skill
     heavy_p *= skills.GetSkillRank(PSSKILL_HEAVYARMOR).Current();
