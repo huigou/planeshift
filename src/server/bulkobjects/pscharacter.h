@@ -875,8 +875,10 @@ private:
     /** Some races share cloaks so this tells which
         group it's in. If empty assume in racial group.*/
     csString CloakGroup;
-    
+
     bool banker;    ///< Whether or not the character is a banker
+    void CalculateArmorForSlot(INVENTORY_SLOT_NUMBER slot, float& heavy_p, float& med_p, float& light_p);
+    bool ArmorUsesSkill(INVENTORY_SLOT_NUMBER slot, PSITEMSTATS_ARMORTYPE skill);
 public:
     void RecalculateStats();
 
