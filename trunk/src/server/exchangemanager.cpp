@@ -1066,13 +1066,19 @@ bool PlayerToPlayerExchange::HandleAccept(Client * client)
         csString buf;
         starterChar.GetOfferingCSV(items);
 
-        buf.Format("%s, %s, %s, \"%s\", %d, %u", playerName, targetName, "P2P Exchange", items.GetDataSafe(), 0, starterChar.GetOfferedMoney().GetTotal());
-        psserver->GetLogCSV()->Write(CSV_EXCHANGES, buf);
+	if(!items.IsEmpty() || starterChar.GetOfferedMoney().GetTotal() > 0)
+	{
+		buf.Format("%s, %s, %s, \"%s\", %d, %u", playerName, targetName, "P2P Exchange", items.GetDataSafe(), 0, starterChar.GetOfferedMoney().GetTotal());
+		psserver->GetLogCSV()->Write(CSV_EXCHANGES, buf);
+	}
 
         targetChar.GetOfferingCSV(items);
 
-        buf.Format("%s, %s, %s, \"%s\", %d, %u", targetName, playerName, "P2P Exchange", items.GetDataSafe(), 0, targetChar.GetOfferedMoney().GetTotal());
-        psserver->GetLogCSV()->Write(CSV_EXCHANGES, buf);
+	if(!items.IsEmpty() || targetChar.GetOfferedMoney().GetTotal() > 0)
+	{
+		buf.Format("%s, %s, %s, \"%s\", %d, %u", targetName, playerName, "P2P Exchange", items.GetDataSafe(), 0, targetChar.GetOfferedMoney().GetTotal());
+		psserver->GetLogCSV()->Write(CSV_EXCHANGES, buf);
+	}
 
         csString itemsOffered;
 

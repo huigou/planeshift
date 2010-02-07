@@ -875,8 +875,11 @@ void ServerCharManager::HandleMerchantBuy(psGUIMerchantMessage& msg, Client *cli
 
                     psBuyEvent evt(
                         character->GetPID(),
+			character->GetCharName(),
                         merchant->GetPID(),
+			merchant->GetCharName(),
                         newstack->GetUID(),
+			newstack->GetName(),
                         partcount,
                         (int)newstack->GetCurrentStats()->GetQuality(),
                         partcost.GetTotal()
@@ -895,8 +898,11 @@ void ServerCharManager::HandleMerchantBuy(psGUIMerchantMessage& msg, Client *cli
 
                 psBuyEvent evt(
                     character->GetPID(),
+		    character->GetCharName(),
                     merchant->GetPID(),
+		    merchant->GetCharName(),
                     currentitem->GetUID(),
+		    currentitem->GetName(),
                     partcount,
                     (int)currentitem->GetCurrentStats()->GetQuality(),
                     partcost.GetTotal()
@@ -995,8 +1001,11 @@ void ServerCharManager::HandleMerchantSell(psGUIMerchantMessage& msg, Client *cl
 
         // Record
         psSellEvent evt(character->GetPID(),
+			character->GetCharName(),
                         merchant->GetPID(),
+			merchant->GetCharName(),
                         item->GetUID(),
+			item->GetName(),
                         count,
                         (int)item->GetCurrentStats()->GetQuality(),
                         cost.GetTotal() );
