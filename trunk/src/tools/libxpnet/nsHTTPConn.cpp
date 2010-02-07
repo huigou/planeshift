@@ -447,9 +447,9 @@ nsHTTPConn::Response(HTTPGetCB aCallback, const char *aDestFile, int aResumePos)
                 fwritePos += strlen(kHdrBodyDelim);
                 fwriteLen = bufSize - (fwritePos - resp);
                 total = expectedSize + aResumePos;
+            	bFirstIter = FALSE;
             }
 
-            bFirstIter = FALSE;
         }
         else
         {
