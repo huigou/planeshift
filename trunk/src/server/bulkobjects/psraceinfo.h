@@ -74,7 +74,7 @@ public:
     csString base_texture_name;
     csVector3 size;
     int initialCP;
-    int natural_armor_id;
+    uint32 natural_armor_id;
     float runMinSpeed,runBaseSpeed,runMaxSpeed;
     float walkMinSpeed,walkBaseSpeed,walkMaxSpeed;
     float scale; ///< The scale override of this race
@@ -121,6 +121,8 @@ public:
     const char *GetCloakGroup()  { return CloakGroup.GetDataSafe(); }
     
     const char *GetMounterAnim()  { return MounterAnim.GetDataSafe(); }
+    
+    uint32 GetNaturalArmorID() { return natural_armor_id; }
 
     float GetSpeedModifier()     { return speedModifier; }
     
