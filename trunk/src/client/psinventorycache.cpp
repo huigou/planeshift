@@ -88,6 +88,7 @@ bool psInventoryCache::SetInventoryItem(int slot,
                                         int container,
                                         csString name,
                                         csString meshName,
+                                        csString materialName,
                                         float weight,
                                         float size,
                                         int stackCount,
@@ -104,6 +105,7 @@ bool psInventoryCache::SetInventoryItem(int slot,
     CachedItemDescription *newItem = new CachedItemDescription;
     newItem->name = name;
     newItem->meshName = meshName;
+    newItem->materialName = materialName;
     newItem->weight = weight;
     newItem->size = size;
     newItem->stackCount = stackCount;
@@ -117,10 +119,11 @@ bool psInventoryCache::SetInventoryItem(int slot,
         csString sigData, data;
         sigData.Format("invslot_%d", slot);
 
-        data.Format( "%s %d %d %s %s", newItem->iconImage.GetData(),
+        data.Format( "%s %d %d %s %s %s", newItem->iconImage.GetData(),
             newItem->stackCount,
             newItem->purifyStatus,
             newItem->meshName.GetData(),
+            newItem->materialName.GetData(),
             newItem->name.GetData());
 
         PawsManager::GetSingleton().Publish(sigData, data);

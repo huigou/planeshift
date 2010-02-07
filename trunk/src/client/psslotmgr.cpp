@@ -133,7 +133,7 @@ void psSlotManager::CancelDrag()
     else
         res.Clear();
 
-    draggingSlot.slot->PlaceItem(res, draggingSlot.meshFactName, oldStack);
+    draggingSlot.slot->PlaceItem(res, draggingSlot.meshFactName, draggingSlot.materialName, oldStack);
     PawsManager::GetSingleton().SetDragDropWidget( NULL );
 }
 
@@ -169,9 +169,9 @@ void psSlotManager::OnNumberEntered(const char *name,int param,int count)
     widget->SetRelativeFrame( 0,0, parent->DefaultFrame().Width(), parent->DefaultFrame().Height() );
     
     if (parent->Image())    
-        widget->PlaceItem( parent->Image()->GetName(), parent->GetMeshFactName(), count );
+        widget->PlaceItem( parent->Image()->GetName(), parent->GetMeshFactName(), parent->GetMaterialName(), count );
     else        
-        widget->PlaceItem( NULL, parent->GetMeshFactName(), count );
+        widget->PlaceItem( NULL, parent->GetMeshFactName(), parent->GetMaterialName(), count );
 
     parent->StackCount( newStack );
     widget->SetPurifyStatus( purifyStatus );
@@ -190,6 +190,7 @@ void psSlotManager::SetDragDetails( pawsSlot* slot, int count )
     draggingSlot.stackCount     = count;
     draggingSlot.slot           = slot;
     draggingSlot.meshFactName   = slot->GetMeshFactName();
+    draggingSlot.materialName   = slot->GetMaterialName();
 }
 
 void psSlotManager::PlaceItem()
@@ -199,7 +200,7 @@ void psSlotManager::PlaceItem()
 
     // Create mesh.
     outline = psengine->GetSceneManipulator()->CreateAndSelectMesh(draggingSlot.meshFactName,
-        psengine->GetPSCamera()->GetICamera()->GetCamera(), csVector2(p.x, p.y));
+        draggingSlot.materialName, psengine->GetPSCamera()->GetICamera()->GetCamera(), csVector2(p.x, p.y));
 
     // If created mesh is valid.
     if(outline)

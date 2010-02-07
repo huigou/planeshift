@@ -24,15 +24,17 @@ class csVector2;
 
 struct iSceneManipulate : public virtual iBase
 {
-    SCF_INTERFACE(iSceneManipulate, 1, 0, 0);
+    SCF_INTERFACE(iSceneManipulate, 1, 1, 0);
 
    /**
     * Creates a new instance of the given factory at the given screen space coordinates.
     * @param factName The name of the factory to be used to create the mesh.
+    * @param matName The optional name of the material to set on the mesh. Pass NULL to set none.
     * @param camera The camera related to the screen space coordinates.
     * @param pos The screen space coordinates.
     */
-    virtual iMeshWrapper* CreateAndSelectMesh(const char* factName, iCamera* camera, const csVector2& pos) = 0;
+    virtual iMeshWrapper* CreateAndSelectMesh(const char* factName, const char* matName,
+        iCamera* camera, const csVector2& pos) = 0;
 
    /**
     * Selects the closest mesh at the given screen space coordinates.

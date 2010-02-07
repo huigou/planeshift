@@ -36,6 +36,7 @@ class psInventoryCache : public psCache
         {
             csString name;
             csString meshName;
+            csString materialName;
             float weight;
             float size;
             int stackCount;
@@ -66,6 +67,7 @@ class psInventoryCache : public psCache
                               int container,
                               csString name,
                               csString meshName,
+                              csString materialName,
                               float weight,
                               float size,
                               int stackCount,

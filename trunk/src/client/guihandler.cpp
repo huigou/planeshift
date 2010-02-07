@@ -91,6 +91,7 @@ void GUIHandler::HandleInventory(MsgEntry* me)
                                          incoming.items[z].container,
                                          incoming.items[z].name.GetData(),
                                          incoming.items[z].meshName.GetData(),
+                                         incoming.items[z].materialName.GetData(),
                                          incoming.items[z].weight,
                                          incoming.items[z].size,
                                          incoming.items[z].stackcount,

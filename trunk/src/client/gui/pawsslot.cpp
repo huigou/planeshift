@@ -147,9 +147,10 @@ void pawsSlot::StackCount( int newCount )
     }
 }
 
-void pawsSlot::PlaceItem( const char* imageName, const char* meshFactName, int count )
+void pawsSlot::PlaceItem( const char* imageName, const char* meshFactName, const char* materialName, int count )
 {
     meshfactName = meshFactName;
+    materialName = materialName;
     
     psengine->GetCelClient()->replaceRacialGroup(meshfactName);
     
@@ -264,7 +265,7 @@ bool pawsSlot::SelfPopulate( iDocumentNode *node)
     {
         this->DrawStackCount(false);
         this->SetDrag(false);
-        PlaceItem(node->GetAttributeValue("icon"), "", 1);
+        PlaceItem(node->GetAttributeValue("icon"), "", "", 1);
     }
     
     return true;
@@ -299,15 +300,17 @@ void pawsSlot::OnUpdateData(const char *dataname,PAWSData& value)
         psString count;
         psString name;
         psString mesh;
+        psString material;
         psString status;
 
         data.GetWordNumber(1,icon);
         data.GetWordNumber(2,count);
         data.GetWordNumber(3,status);
         data.GetWordNumber(4,mesh);
-        data.GetSubString( name, icon.Length()+count.Length()+status.Length()+mesh.Length()+4, data.Length());
+        data.GetWordNumber(5,material);
+        data.GetSubString( name, icon.Length()+count.Length()+status.Length()+mesh.Length()+material.Length()+4, data.Length());
 
-        PlaceItem( icon, mesh, atoi(  count.GetData() ) );        
+        PlaceItem( icon, mesh, material, atoi(  count.GetData() ) );        
         SetToolTip( name );
         SetPurifyStatus( atoi(status.GetData())  );
     }   

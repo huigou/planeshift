@@ -446,6 +446,7 @@ bool ServerCharManager::SendInventory( int clientNum, bool sendUpdatesOnly)
         Notify5(LOG_EXCHANGES, "  Inv item %s, slot %d, weight %1.1f, stack count %u\n",item->GetName(), slot, item->GetWeight(), item->GetStackCount() );
         outgoing->AddItem(item->GetName(),
                           item->GetMeshName(),
+                          item->GetTextureName(),
                           invType,
                           slot,
                           (exchanging && invitem->exchangeOfferSlot != PSCHARACTER_SLOT_NONE) ? item->GetStackCount() - invitem->exchangeStackCount : item->GetStackCount(),
