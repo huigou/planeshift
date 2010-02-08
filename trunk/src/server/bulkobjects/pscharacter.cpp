@@ -849,6 +849,20 @@ bool psCharacter::LoadSkills(PID use_id)
                 skills.SetSkillPractice(  skill, skillResult[i].GetInt("skill_Z") );
                 skills.SetSkillKnowledge( skill, skillResult[i].GetInt("skill_Y") );
                 skills.SetSkillRank(      skill, skillResult[i].GetInt("skill_Rank"),false );
+                
+                //check if the skill is a stat and set it in case (this overrides the present base ones if present
+				if(skill == PSSKILL_AGI)
+					attributes[PSITEMSTATS_STAT_AGILITY]     .SetBase(skillResult[i].GetInt("skill_Rank"));
+				else if(skill == PSSKILL_STR)
+					attributes[PSITEMSTATS_STAT_STRENGTH]    .SetBase(skillResult[i].GetInt("skill_Rank"));
+				else if(skill == PSSKILL_END)
+					attributes[PSITEMSTATS_STAT_ENDURANCE]   .SetBase(skillResult[i].GetInt("skill_Rank"));
+				else if(skill == PSSKILL_INT)
+					attributes[PSITEMSTATS_STAT_INTELLIGENCE].SetBase(skillResult[i].GetInt("skill_Rank"));
+				else if(skill == PSSKILL_WILL)
+					attributes[PSITEMSTATS_STAT_WILL]        .SetBase(skillResult[i].GetInt("skill_Rank"));
+				else if(skill == PSSKILL_CHA)
+					attributes[PSITEMSTATS_STAT_CHARISMA]    .SetBase(skillResult[i].GetInt("skill_Rank"));
                 skills.Get(skill).dirtyFlag = false;
             }
         }
