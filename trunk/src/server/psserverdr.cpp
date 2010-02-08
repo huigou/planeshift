@@ -140,7 +140,7 @@ void psServerDR::ResetPos(gemActor* actor)
         LogCSV::GetSingleton().Write(CSV_STATUS, status);
     
     psserver->GetAdminManager()->GetStartOfMap(actor->GetClient()->GetClientNum(), targetSectorName, targetSector, targetPoint);
-    actor->pcmove->SetOnGround(false);
+    actor->pcmove->SetOnGround(true);
     actor->Teleport(targetSector, targetPoint, 0);
     actor->FallEnded(targetPoint, targetSector);
 }
