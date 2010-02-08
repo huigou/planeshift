@@ -291,6 +291,17 @@ TEST(MathScriptTest, InterpolateTest)
     EXPECT_STREQ("${} 1337 ${}", msg.GetData());
 }
 
+TEST(MathScriptTest, MultipleOr)
+{
+    Foo foo;
+    MathExpression *exp = MathExpression::Create("Quux:Multiply(0,8) | Quux:Multiply(2,3) | Quux:Multiply(17,0)");
+    ASSERT_NE(exp, NULL);
+    MathEnvironment env;
+    env.Define("Quux", &foo);
+    ASSERT_NE(env.Lookup("Quux"), NULL);
+    EXPECT_NE(exp->Evaluate(&env), 0.0);
+}
+
 /*
 TEST(MathScriptTest, NameMemoryTest)
 {
