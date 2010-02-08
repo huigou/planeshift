@@ -955,6 +955,7 @@ public:
     void RemoveAttackerHistory(gemActor * attacker);
     bool CanBeAttackedBy(gemActor *attacker, gemActor ** lastAttacker) const;
     void Kill(gemActor *attacker) { DoDamage(attacker, psChar->GetHP() ); }
+    void Defeat();
     void Resurrect();
 
     virtual bool UpdateDR();
