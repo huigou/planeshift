@@ -2494,9 +2494,7 @@ void UserManager::YieldDuel(Client *client)
         return;
     }
 
-    psSpareDefeatedEvent *evt = new psSpareDefeatedEvent(client->GetActor());
-    psserver->GetEventManager()->Push(evt);
-    client->GetActor()->SetMode(PSCHARACTER_MODE_DEFEATED);
+    client->GetActor()->Defeat();
 }
 
 void UserManager::SwitchAttackTarget(Client *targeter, Client *targeted )

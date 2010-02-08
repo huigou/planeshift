@@ -2241,6 +2241,20 @@ csPtr<PlayerGroup> gemActor::GetGroup()
     return csPtr<PlayerGroup>(group);
 }
 
+void gemActor::Defeat()
+{
+    // Auto-unlock after a few seconds if not explicitly killed first
+    psSpareDefeatedEvent *evt = new psSpareDefeatedEvent(this);
+    psserver->GetEventManager()->Push(evt);
+
+    SetMode(PSCHARACTER_MODE_DEFEATED);
+
+    // Cancel any active spells which are marked as doing HP damage.
+    // This prevents DoT from killing the player.  We leave the rest
+    // since there may be long standing debuffs like the DR curse.
+    CancelActiveSpellsWhichDamage();
+}
+
 void gemActor::Resurrect()
 {
     // Note that this does not handle NPCs...see SpawnManager::Respawn.
@@ -2370,16 +2384,7 @@ void gemActor::DoDamage(gemActor* attacker, float damage)
         // If in a duel, don't immediately kill...defeat.
         if (attacker && GetMode() != PSCHARACTER_MODE_DEFEATED && GetClient() && GetClient()->IsDuelClient(attacker->GetClientID()))
         {
-            // Auto-unlock after a few seconds if not explicitly killed first
-            psSpareDefeatedEvent *evt = new psSpareDefeatedEvent(this);
-            psserver->GetEventManager()->Push(evt);
-            SetMode(PSCHARACTER_MODE_DEFEATED);
-
-            // Cancel any active spells which are marked as doing HP damage.
-            // This prevents DoT from killing the player.  We leave the rest
-            // since there may be long standing debuffs like the DR curse.
-            CancelActiveSpellsWhichDamage();
-
+            Defeat();
             psserver->SendSystemError(GetClientID(), "You've been defeated by %s!", attacker->GetName());
             GetClient()->AnnounceToDuelClients(attacker, "defeated");
         }
