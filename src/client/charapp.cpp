@@ -1077,7 +1077,7 @@ void psCharAppearance::DefaultMaterial(csString& part)
     }
 
     // Set stateFactory defaults if no skinToneSet found.
-    if ( !skinToneSetFound )
+    if ( !skinToneSetFound && stateFactory.IsValid() )
     {
         ChangeMaterial(part, stateFactory->GetDefaultMaterial(part));
     }
