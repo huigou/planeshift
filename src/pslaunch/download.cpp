@@ -25,9 +25,16 @@
 #include "updaterconfig.h"
 #include "updaterengine.h"
 
-static int ProgressCallback(int progress, int finalSize)
+size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream)
+{
+    size_t written = fwrite(ptr, size, nmemb, (FILE *)stream);
+    return written;
+}
+
+int ProgressCallback(void *clientp, double finalSize, double dlnow, double ultotal, double ulnow)
 {
     static int lastSize = 0;
+    double progress = dlnow / finalSize;
     
     // Don't output anything if there's been no progress.
     if(progress == 0)
@@ -69,11 +76,18 @@ static int ProgressCallback(int progress, int finalSize)
 
     fflush(stdout);
     
-    return UpdaterEngine::GetSingletonPtr()->CheckQuit() ? nsHTTPConn::E_USER_CANCEL : 0;
+    return UpdaterEngine::GetSingletonPtr()->CheckQuit() ? 1 : 0;
 }
 
 Downloader::Downloader(csRef<iVFS> _vfs, UpdaterConfig* _config)
 {
+    curl_global_init(CURL_GLOBAL_ALL);
+    curl = curl_easy_init();
+    curlerror = new char[CURL_ERROR_SIZE];
+    curl_easy_setopt (curl, CURLOPT_ERRORBUFFER, curlerror);
+    curl_easy_setopt(curl, CURLOPT_HEADER, 0);
+    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
+
     vfs = _vfs;
     config = _config;
     csRandomGen random = csRandomGen();
@@ -83,11 +97,19 @@ Downloader::Downloader(csRef<iVFS> _vfs, UpdaterConfig* _config)
 
 Downloader::Downloader(csRef<iVFS> _vfs)
 {
+    curl_global_init(CURL_GLOBAL_ALL);
+    curl = curl_easy_init();
+    curlerror = new char[CURL_ERROR_SIZE];
+    curl_easy_setopt (curl, CURLOPT_ERRORBUFFER, curlerror);
+    curl_easy_setopt(curl, CURLOPT_HEADER, 0);
+    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
     vfs = _vfs;
 }
 
 Downloader::~Downloader()
 {
+    delete[] curlerror;
+    curl_easy_cleanup(curl);
 }
 
 void Downloader::SetProxy(const char *host, int port)
@@ -139,46 +161,58 @@ bool Downloader::DownloadFile(const char *file, const char *dest, bool URL, bool
             return false;
         }
 
-        int httpCode = 200;
+        long curlhttpcode = 200;
         csString error;
 
         for(uint i=0; i<=retries; i++)
         {
-            nsHTTPConn *conn = new nsHTTPConn(url.GetData());
-            int result = conn->Open();
-            result = conn->ResumeOrGet(ProgressCallback, destpath.GetData());
-            httpCode = conn->GetResponseCode();
-            conn->Close();
-            delete conn;
-            conn = NULL;
+        FILE* file;
+        file = fopen (destpath, "wb");
 
-            if (result != nsSocket::OK)
+        if (!file)
+        {
+            printf("Couldn't write to file! (%s).\n", dest);
+            return false;
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.GetData());
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, file);
+        curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, &ProgressCallback);
+        curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0);
+        curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1);
+
+        CURLcode result = curl_easy_perform(curl);
+
+        fclose (file);
+
+        curl_easy_getinfo (curl, CURLINFO_HTTP_CODE, &curlhttpcode);
+
+            if (result != CURLE_OK)
             {
                 if(!silent)
                 {
-                    if (result == nsSocket::E_INVALID_HOST)
+                    if (result == CURLE_COULDNT_CONNECT || result == CURLE_COULDNT_RESOLVE_HOST)
                         error.Format("Couldn't connect to mirror %s\n", url.GetData());
-		    else if (result == nsHTTPConn::E_OPEN_FILE)
-			error.Format("Couldn't open file %s for writing\n", destpath.GetData());
                     else
-                        error.Format("Error %d while downloading file: %s\n", result, url.GetData());
+                        error.Format("Error %d while downloading file: %s\n", curlerror, url.GetData());
                 }
             }
             else
             {
                 break;
             }
-        }
+	}
 
         // Tell the user that we failed
-        if(httpCode != 200 || !error.IsEmpty())
+        if(curlhttpcode != 200 || !error.IsEmpty())
         {
             if(!silent)
             {
                 if(error.IsEmpty())
-                    printf ("Server error %i (%s)\n", httpCode, url.GetData());
+                    printf ("Server error %i (%s)\n", curlhttpcode, url.GetData());
                 else
-                    printf ("Server error: %s (%i)\n", error.GetData(), httpCode);
+                    printf ("Server error: %s (%i)\n", error.GetData(), curlhttpcode);
             }
 
             if(!URL)

@@ -23,8 +23,7 @@
 
 #include <iutil/vfs.h>
 
-#include "../tools/libxpnet/nsSocket.h"
-#include "../tools/libxpnet/nsHTTPConn.h"
+#include <curl/curl.h>
 
 class UpdaterEngine;
 class UpdaterConfig;
@@ -54,6 +53,12 @@ private:
 
     /* Cycle our currently active mirror to the next */
     uint CycleActiveMirror();
+
+    /* Curl object! */
+    CURL* curl;
+
+    /* curl error string */
+    char* curlerror;
 
     /* VFS */
     csRef<iVFS> vfs;
