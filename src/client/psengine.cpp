@@ -518,7 +518,7 @@ bool psEngine::Initialize (int level)
     }
     else if (level == 1)
     {
-        backgroundWorldLoading = psengine->GetConfig()->GetBool("PlaneShift.Loading.BackgroundWorldLoading");
+        backgroundWorldLoading = false; // Hardcoded disable due to major issues. psengine->GetConfig()->GetBool("PlaneShift.Loading.BackgroundWorldLoading");
         loader = csQueryRegistry<iBgLoader>(object_reg);
         scenemanipulator = scfQueryInterface<iSceneManipulate>(loader);
 
