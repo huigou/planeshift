@@ -281,7 +281,7 @@ void NetworkManager::HandleActor(MsgEntry *me)
     if(obj && obj->GetPID() == mesg.playerID)
     {
         // We already know this entity so just update the entity.
-        CPrintf(CON_ERROR, "Already know about gemNPCActor: %s (%s), %s.", mesg.name.GetData(), obj->GetName(), ShowID(mesg.entityid));
+        CPrintf(CON_ERROR, "Already know about gemNPCActor: %s (%s), %s.\n", mesg.name.GetData(), obj->GetName(), ShowID(mesg.entityid));
 
         obj->Move(mesg.pos, mesg.yrot, mesg.sectorName, mesg.instance );
         obj->SetVisible( (mesg.flags & psPersistActor::INVISIBLE) ? false : true );
