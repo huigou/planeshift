@@ -1757,7 +1757,7 @@ void gemContainer::psContainerIterator::UseContainerItem(gemContainer *container
 gemActionLocation::gemActionLocation(psActionLocation *action, iSector *isec, int clientnum)
                                      : gemActiveObject(action->name,
                                                        action->meshname,
-                                                       action->GetInstanceID(),
+                                                       action->GetInstance(),
                                                        isec,
                                                        action->position,
                                                        0.0f,
