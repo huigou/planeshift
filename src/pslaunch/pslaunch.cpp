@@ -575,17 +575,21 @@ int main(int argc, char* argv[])
                   commandLine.AppendFmt(" %s", argv[i]);
               }
 
-              CreateProcess(NULL, (LPSTR)commandLine.GetData(), 0, 0, false,
-                CREATE_DEFAULT_ERROR_MODE, 0, 0, &siStartupInfo, &piProcessInfo);
-              GetExitCodeProcess(piProcessInfo.hProcess, &dwExitCode);
-              while (dwExitCode == STILL_ACTIVE)
-              {
-                csSleep(1000);
-                GetExitCodeProcess(piProcessInfo.hProcess, &dwExitCode);
-              }
-              exitApp = dwExitCode ? 0 : !0;
-              CloseHandle(piProcessInfo.hProcess);
-              CloseHandle(piProcessInfo.hThread);
+	      if(CreateProcess(NULL, (LPSTR)commandLine.GetData(), 0, 0, false,
+                CREATE_DEFAULT_ERROR_MODE, 0, 0, &siStartupInfo, &piProcessInfo))
+	      {
+                  GetExitCodeProcess(piProcessInfo.hProcess, &dwExitCode);
+                  while (dwExitCode == STILL_ACTIVE)
+                  {
+                      csSleep(1000);
+                      GetExitCodeProcess(piProcessInfo.hProcess, &dwExitCode);
+                  }
+                  exitApp = dwExitCode ? 0 : !0;
+                  CloseHandle(piProcessInfo.hProcess);
+                  CloseHandle(piProcessInfo.hThread);
+	      }
+	      else
+		  printf("Failed to launch psclient!\n");
 #else
               if(fork() == 0)
               {
