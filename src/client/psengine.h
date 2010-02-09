@@ -231,6 +231,7 @@ public:
     // Functions to set and get frameLimit converted into a value of FPS for users
     void setLimitFPS(int);
     int getLimitFPS() { return maxFPS; }
+    float getFPS() { return currFPS; }
 
     /// Sets the duel confirmation type
     void SetDuelConfirm(int confirmType);
@@ -461,9 +462,11 @@ private:
     csTicks frameLimit;
 
     /// Maximum number of frames per second to draw.
-    // Maximum settable value in client/gui/pawsconfigdetails.cpp is 200, so
-    // it's more than enough to use an unsigned char to store this value
-    unsigned char maxFPS;
+    int maxFPS;
+
+    float currFPS;
+    unsigned int countFPS;
+    unsigned int timeFPS;
 
     /// Whether sounds should be muted when the application loses focus.
     bool muteSoundsOnFocusLoss;

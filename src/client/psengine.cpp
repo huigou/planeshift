@@ -269,6 +269,9 @@ psEngine::psEngine (iObjectRegistry *objectreg, psCSSetup *CSSetup)
 
     chatBubbles = 0;
     options = 0;
+    countFPS = 0;
+    timeFPS = 0;
+    currFPS = 0;
 
 #if !defined(CS_DEBUG) && defined(CS_PLATFORM_MACOSX)
     delete macReporter;
@@ -1078,6 +1081,14 @@ inline bool psEngine::FrameLimit()
     else
         sleeptime = frameLimit;
 
+    timeFPS += elapsedTime;
+    countFPS++;
+    if(timeFPS > 500)
+    {
+   	currFPS = 1000.0 * countFPS / timeFPS;
+	timeFPS = 0;
+	countFPS = 0;
+    }
 
     // Here we sacrifice drawing AND loading time
     if(elapsedTime < sleeptime)
