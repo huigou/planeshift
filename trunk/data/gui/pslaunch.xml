@@ -156,7 +156,7 @@
 
         <widget name="EnableSound" factory="pawsCheckBox" id="1371">
           <frame x="0" y="0" width="101" height="15"/>
-          <checkbox on="radioon" off="radiooff" size="12"/>
+          <checkbox on="radioon" off="radiooff" size="17"/>
           <text string="Enable Sound:" position="left"/>
         </widget>
 
@@ -212,7 +212,7 @@
 	
         <widget name="Fullscreen" factory="pawsCheckBox" id="1397">
           <frame x="0" y="60" width="110" height="15"/>
-          <checkbox on="radioon" off="radiooff" size="12"/>
+          <checkbox on="radioon" off="radiooff" size="17"/>
           <text string="Enable Fullscreen:" position="left"/>
         </widget>
 
@@ -311,37 +311,37 @@
 
         <widget name="EnableShadows" factory="pawsCheckBox" id="13111">
           <frame x="0" y="103" width="130" height="15"/>
-          <checkbox on="radioon" off="radiooff" size="12"/>
+          <checkbox on="radioon" off="radiooff" size="17"/>
           <text string="Enable Shadows:" position="left"/>
         </widget>
 
         <widget name="EnableBloom" factory="pawsCheckBox" id="13112">
           <frame x="0" y="123" width="130" height="15"/>
-          <checkbox on="radioon" off="radiooff" size="12"/>
+          <checkbox on="radioon" off="radiooff" size="17"/>
           <text string="Enable Bloom:" position="left"/>
         </widget>
 
         <widget name="EnableHDR" factory="pawsCheckBox" id="13113">
           <frame x="0" y="143" width="130" height="15"/>
-          <checkbox on="radioon" off="radiooff" size="12"/>
+          <checkbox on="radioon" off="radiooff" size="17"/>
           <text string="Enable HDR:" position="left"/>
         </widget>
 
         <widget name="EnableGrass" factory="pawsCheckBox" id="13114">
           <frame x="0" y="163" width="130" height="15"/>
-          <checkbox on="radioon" off="radiooff" size="12"/>
+          <checkbox on="radioon" off="radiooff" size="17"/>
           <text string="Enable Grass:" position="left"/>
         </widget>
 
-        <widget name="VBO" factory="pawsCheckBox" id="13115">
-          <frame x="0" y="183" width="130" height="15"/>
-          <checkbox on="radioon" off="radiooff" size="12"/>
+        <widget name="VBO (may cause crashes with ATI cards)" factory="pawsCheckBox" id="13115">
+          <frame x="0" y="183" width="280" height="15"/>
+          <checkbox on="radioon" off="radiooff" size="17"/>
           <text string="Enable VBO:" position="left"/>
         </widget>
 
         <widget name="LoaderCache" factory="pawsCheckBox" id="13116">
           <frame x="0" y="203" width="130" height="15"/>
-          <checkbox on="radioon" off="radiooff" size="12"/>
+          <checkbox on="radioon" off="radiooff" size="17"/>
           <text string="Loader Cache:" position="left"/>
         </widget>
 
