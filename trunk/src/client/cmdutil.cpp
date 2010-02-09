@@ -67,6 +67,7 @@ psUtilityCommands::psUtilityCommands(ClientMsgHandler *mh,
     cmdsource->Subscribe("/confirm",this);
     cmdsource->Subscribe("/ping",this);
     cmdsource->Subscribe("/screenshot",this);
+    cmdsource->Subscribe("/fps",this);
     cmdsource->Subscribe("/graphicbug",this);
     cmdsource->Subscribe("/repaintlabels",this);
     //cmdsource->Subscribe("/dumpmovements",this);
@@ -80,6 +81,7 @@ psUtilityCommands::~psUtilityCommands()
     cmdsource->Unsubscribe("/confirm",this);
     cmdsource->Unsubscribe("/ping",this);
     cmdsource->Unsubscribe("/screenshot",this);
+    cmdsource->Unsubscribe("/fps",this);
     cmdsource->Unsubscribe("/graphicbug",this);
     cmdsource->Unsubscribe("/repaintlabels",this);
     //cmdsource->Unsubscribe("/dumpmovements",this);
@@ -160,6 +162,12 @@ const char *psUtilityCommands::HandleCommand(const char *cmd)
         static csString cameraData;
         cameraData = SaveCamera();
         return cameraData.GetData();
+    }
+    else if(words[0] =="/fps")
+    {
+	    static csString fpsStr;
+	    fpsStr = psengine->getFPS();
+	return fpsStr;
     }
     else if(words[0] == "/repaintlabels")
     {
