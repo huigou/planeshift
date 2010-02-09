@@ -23,6 +23,7 @@
 #include "globals.h"
 #include "pscelclient.h"
 #include "clientvitals.h"
+#include "../charapp.h"
 #include "net/messages.h"
 #include "net/clientmsghandler.h"
 #include "util/skillcache.h"
@@ -67,6 +68,7 @@ pawsSkillWindow::pawsSkillWindow()
     menStaminaMax = 0;
 
     factRequest = false;
+    charApp = new psCharAppearance(PawsManager::GetSingleton().GetObjectRegistry());
 }
 
 pawsSkillWindow::~pawsSkillWindow()
@@ -78,10 +80,16 @@ pawsSkillWindow::~pawsSkillWindow()
         delete i.Next();
     }
     skillDescriptions.DeleteAll();
+    delete charApp;
 }
 
 bool pawsSkillWindow::PostSetup()
 {
+    // Setup the Doll
+    if ( !SetupDoll() )
+    {
+        return false;
+    }
     if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_GUISKILL))
     {
         return false;
@@ -138,6 +146,48 @@ bool pawsSkillWindow::PostSetup()
     currentTab =0;
     previousTab =0;
 
+    return true;
+}
+
+bool pawsSkillWindow::SetupDoll()
+{
+    pawsObjectView* widget = dynamic_cast<pawsObjectView*>(FindWidget("Doll"));
+    GEMClientActor* actor = psengine->GetCelClient()->GetMainPlayer();
+    if (!widget || !actor)
+    {
+        return true; // doll not wanted, not an error
+    }
+
+    csRef<iMeshWrapper> mesh = actor->GetMesh();
+    if (!mesh)
+    {
+        return false; // doll wanted, but mesh not found -> error
+    }
+
+    // Set the doll view
+    widget->View( mesh );
+
+    // Set the charApp.
+    widget->SetCharApp(charApp);
+
+    // Register this doll for updates
+    widget->SetID(actor->GetEID().Unbox());
+
+    csRef<iSpriteCal3DState> spstate = scfQueryInterface<iSpriteCal3DState> (widget->GetObject()->GetMeshObject());
+    if (spstate)
+    {
+        // Setup cal3d to select random 0 velocity anims
+        spstate->SetVelocity(0.0,&psengine->GetRandomGen());
+    }
+
+    charApp->SetMesh(widget->GetObject());
+
+    charApp->ApplyTraits(actor->traits);
+    charApp->ApplyEquipment(actor->equipment);
+
+    widget->EnableMouseControl(true);
+
+    //return (a && e);
     return true;
 }
 
