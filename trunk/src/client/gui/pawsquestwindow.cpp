@@ -418,24 +418,32 @@ bool pawsQuestListWindow::OnButtonPressed( int mouseButton, int keyModifier, paw
         }
 
         case QUEST_TAB_BUTTON:
+        {
+            if (currentTab != questTab)
+            {
+                if (currentTab)
+                    currentTab->Hide();
+                PopulateQuestTab();
+
+                description->Clear();
+                notes->Clear();
+            }
+
+            break;
+        }
+        
         case EVENT_TAB_BUTTON:
         {
-            if (currentTab)
-                currentTab->Hide();
-
-            if (!currentTab || currentTab == eventTab)
+            if (currentTab != eventTab)
             {
-                PopulateQuestTab();
-            }
-            else
-            {
+                if(currentTab)
+                    currentTab->Hide();
                 PopulateGMEventTab();
+                description->Clear();
+                notes->Clear();
             }
 
-            description->Clear();
-            notes->Clear();
-
-        break;
+            break;
         }
     }
     return true;
