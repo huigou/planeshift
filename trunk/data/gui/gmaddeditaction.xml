@@ -110,6 +110,15 @@
             <frame x="225" y="105" width="90" height="20"/>
             <text string="" horizAdjust="LEFT" />    
         </widget>
+
+        <widget name="lblInstance" factory="pawsTextBox" style="label">    
+            <frame x="175" y="125" width="45" height="20"/>
+            <text string="Instance:" horizAdjust="LEFT" />    
+        </widget>
+        <widget name="txtInstance" factory="pawsEditTextBox" >    
+            <frame x="230" y="125" width="90" height="20"/>
+            <text string="" horizAdjust="LEFT" />    
+        </widget>
         
         <widget name="lblMaster" factory="pawsTextBox" style="label">    
             <frame x="5" y="170" width="45" height="20"/>
