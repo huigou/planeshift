@@ -64,6 +64,7 @@ private:
     pawsEditTextBox*                txtPosY;
     pawsEditTextBox*                txtPosZ;
     pawsEditTextBox*                txtRadius;
+    pawsEditTextBox*                txtInstance;
     pawsEditTextBox*                txtMasterID;
     pawsComboBox*                   cboTriggerType;
     pawsComboBox*                   cboResponseType;
@@ -74,7 +75,7 @@ private:
     bool                            isDirty;
     csString                        id, name, masterid,
                                     sectorName, meshName, polygon,
-                                    X, Y, Z, radius,
+                                    X, Y, Z, pos_instance, radius,
                                     triggertype, responsetype, response;
 
 };

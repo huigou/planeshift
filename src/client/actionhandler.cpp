@@ -150,7 +150,7 @@ void ActionHandler::Query( const char* trigger, const char* sector, const char* 
 
 void ActionHandler::Save( const char* id, const char* masterid, const char* name, const char* sector, 
                          const char* mesh, const char* poly, const char* posx, const char* posy, 
-                         const char* posz, const char* radius, const char* triggertype, 
+                         const char* posz, const char* pos_instance, const char* radius, const char* triggertype, 
                          const char* responsetype, const char* response, const char* active )
 {
     csString xml;
@@ -186,6 +186,9 @@ void ActionHandler::Save( const char* id, const char* masterid, const char* name
                 xml.Append( posz );
             xml.Append( "</z>" ); 
         xml.Append( "</position>" ); 
+        xml.Append( "<pos_instance>" ); 
+            xml.Append( pos_instance ); 
+        xml.Append( "</pos_instance>" ); 
         xml.Append( "<radius>" ); 
             xml.Append( radius ); 
         xml.Append( "</radius>" ); 

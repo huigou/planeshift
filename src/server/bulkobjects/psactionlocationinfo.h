@@ -125,6 +125,10 @@ public:
     void SetEntranceRotation(float newRot) { entranceRot = newRot; }
     const csString & GetEntranceSector() const { return entranceSector; }
     void SetEntranceSector(const csString & newSector) { entranceSector = newSector; }
+    ///< Get entrace Instance in the world if not defined number of the action location
+    const InstanceID GetEntranceInstance() const { return entranceInstance; }
+    ///< Set entrace Instance in the world if not defined number of the action location
+    void SetEntranceInstance(const InstanceID newInstance) { entranceInstance = newInstance; }
 
     /// Returns or sets return location memebers
     csVector3 GetReturnPosition() const { return returnPosition; }
@@ -133,6 +137,10 @@ public:
     void SetReturnRotation(float newRot) { returnRot = newRot; }
     const csString & GetReturnSector() const { return returnSector; }
     void SetReturnSector(const csString & newSector) { returnSector = newSector; }
+    ///< Get return Instance in the world if not defined 0
+    const InstanceID GetReturnInstance() const { return returnInstance; }
+    ///< Set return Instance in the world if not defined 0
+    void SetReturnInstance(const InstanceID newInstance) { returnInstance = newInstance; }
 
     /// Sets
     void SetName(const csString & newname) { name = newname; }
@@ -142,6 +150,12 @@ public:
     void SetResponseType(const csString & newresponsetype) { responsetype = newresponsetype; }
     void SetResponse(const csString & newresponse) { response = newresponse; }
     void SetPosition(csVector3 newposition) { position = newposition; }
+    
+    /** Sets the instance in the world of this action location, default INSTANCE_ALL
+     *  @param instance The instance where this action location will be located
+     */    
+    void SetInstance(const InstanceID instance) { pos_instance = instance;}
+    InstanceID GetInstance() { return pos_instance; }
     void SetRadius(float newradius) { radius = newradius; }
 
     ///  The new operator is overriden to call PoolAllocator template functions
@@ -153,10 +167,11 @@ public:
     size_t master_id;
 
     csString name;
-    csString sectorname; // Sector Where item is located
-    csString meshname; // Mesh name
-    csString polygon; // Required if multiple mesh of same name in area
-    csVector3 position; // x,y,z coordinates required for entrances
+    csString sectorname; ///< Sector Where item is located
+    csString meshname; ///< Mesh name
+    csString polygon; ///< Required if multiple mesh of same name in area
+    csVector3 position; ///< x,y,z coordinates required for entrances
+    InstanceID pos_instance; ///< The instance from where this action location will be accesible.
     float radius;
     csString triggertype;
     csString responsetype;
@@ -190,10 +205,10 @@ private:
     /// Flag indicating that this action location is lockable
     bool isLockable;
 
-    // Flag indicator that location will display menu
+    /// Flag indicator that location will display menu
     bool isActive;
 
-    // Flag indicator that location has return tag
+    /// Flag indicator that location has return tag
     bool isReturn;
 
     ///  This is either a container ID or a lock ID
@@ -202,10 +217,11 @@ private:
     /// String containing the entrance type
     csString entranceType;
 
-    // Possition stuff for entrances
+    // Position stuff for entrances
     csVector3 entrancePosition;
     float entranceRot;
     csString entranceSector;
+    InstanceID entranceInstance;
 
     /// String containing the entrance script
     ///   Script return value of 0 indicates no entry
@@ -215,6 +231,8 @@ private:
     csVector3 returnPosition;
     float returnRot;
     csString returnSector;
+    InstanceID returnInstance;
+
 
     /// String containing response description
     csString description;
