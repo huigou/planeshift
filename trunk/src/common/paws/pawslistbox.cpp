@@ -21,6 +21,7 @@
 #include <ivideo/fontserv.h>
 #include <iutil/document.h>
 #include <csutil/xmltiny.h>
+#include <csutil/documenthelper.h> 
 #include <iutil/virtclk.h>
 #include <iutil/event.h>
 #include "pawslistbox.h"
@@ -366,6 +367,7 @@ void pawsListBox::Remove( int id )
         {
             pawsListBoxRow* zombie = rows[x];
             Remove(zombie);
+            delete zombie;
             return;
         }
     }
@@ -1157,6 +1159,8 @@ void pawsListBox::SortRows()
         return;
     if (columnDef[sortColNum].sortFunc == NULL)
         return;
+    if (GetRowCount() == 0)
+        return;
 
     sortedRows = new pawsListBoxRow*[rows.GetSize()];
     for ( i=0; i < rows.GetSize(); i++)
@@ -1346,7 +1350,13 @@ void pawsListBoxRow::AddColumn( int column, ColumnDef* def )
     }
 
     widget->SetParent( this );
-    widget->Load( def[column].widgetNode );
+    //widget->Load( def[column].widgetNode );
+    csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
+    csRef<iDocument> doc = xml->CreateDocument();
+    csRef<iDocumentNode> node = doc->CreateRoot();
+    node = node->CreateNodeBefore(CS_NODE_ELEMENT);
+    CS::DocSystem::CloneNode(def[column].widgetNode, node);
+    widget->Load(node);
 
     int borderW = 0;
     int borderH = 0;
