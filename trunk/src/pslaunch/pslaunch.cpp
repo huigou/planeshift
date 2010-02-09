@@ -300,8 +300,8 @@ void psLauncherGUI::FrameLimit()
     csTicks sleeptime;
     csTicks elapsedTime = csGetTicks() - elapsed;
 
-    // Define sleeptime to limit fps to around 30
-    sleeptime = 30;
+    // Define sleeptime to limit fps to around 45
+    sleeptime = 22; // 1000 / 45
 
     // Here we sacrifice drawing time
     if(elapsedTime < sleeptime)
