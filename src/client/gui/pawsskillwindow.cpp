@@ -23,7 +23,6 @@
 #include "globals.h"
 #include "pscelclient.h"
 #include "clientvitals.h"
-#include "../charapp.h"
 #include "net/messages.h"
 #include "net/clientmsghandler.h"
 #include "util/skillcache.h"
@@ -68,7 +67,6 @@ pawsSkillWindow::pawsSkillWindow()
     menStaminaMax = 0;
 
     factRequest = false;
-    charApp = new psCharAppearance(PawsManager::GetSingleton().GetObjectRegistry());
 }
 
 pawsSkillWindow::~pawsSkillWindow()
@@ -80,17 +78,10 @@ pawsSkillWindow::~pawsSkillWindow()
         delete i.Next();
     }
     skillDescriptions.DeleteAll();
-    delete charApp;
 }
 
 bool pawsSkillWindow::PostSetup()
 {
-    // Setup the Doll
-    if ( !SetupDoll() )
-    {
-        return false;
-    }
-
     if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_GUISKILL))
     {
         return false;
@@ -147,48 +138,6 @@ bool pawsSkillWindow::PostSetup()
     currentTab =0;
     previousTab =0;
 
-    return true;
-}
-
-bool pawsSkillWindow::SetupDoll()
-{
-    pawsObjectView* widget = dynamic_cast<pawsObjectView*>(FindWidget("Doll"));
-    GEMClientActor* actor = psengine->GetCelClient()->GetMainPlayer();
-    if (!widget || !actor)
-    {
-        return true; // doll not wanted, not an error
-    }
-
-    csRef<iMeshWrapper> mesh = actor->GetMesh();
-    if (!mesh)
-    {
-        return false; // doll wanted, but mesh not found -> error
-    }
-
-    // Set the doll view
-    widget->View( mesh );
-
-    // Set the charApp.
-    widget->SetCharApp(charApp);
-
-    // Register this doll for updates
-    widget->SetID(actor->GetEID().Unbox());
-
-    csRef<iSpriteCal3DState> spstate = scfQueryInterface<iSpriteCal3DState> (widget->GetObject()->GetMeshObject());
-    if (spstate)
-    {
-        // Setup cal3d to select random 0 velocity anims
-        spstate->SetVelocity(0.0,&psengine->GetRandomGen());
-    }
-
-    charApp->SetMesh(widget->GetObject());
-
-    charApp->ApplyTraits(actor->traits);
-    charApp->ApplyEquipment(actor->equipment);
-
-    widget->EnableMouseControl(true);
-
-    //return (a && e);
     return true;
 }
 
@@ -336,6 +285,7 @@ void pawsSkillWindow::Close()
     variousSkillList->Clear();
     skillString.Clear();
     selectedSkill.Clear();
+    unsortedSkills.DeleteAll();
 }
 
 bool pawsSkillWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
@@ -427,10 +377,10 @@ void pawsSkillWindow::HandleSkillList(psSkillCache *skills, int selectedNameId, 
     if (skills->hasRemoved())
         flush = true;
 
+    selectedSkill.Clear();
+
     if (flush)
     {
-        selectedSkill.Clear();
-
         // Clear descriptions
         statsSkillDescription->SetText("");
         combatSkillDescription->SetText("");
@@ -452,7 +402,6 @@ void pawsSkillWindow::HandleSkillList(psSkillCache *skills, int selectedNameId, 
 
     int idx = 0; // Row index counter
     psSkillCacheIter p = skills->iterBegin();
-    bool stats = false, combat = false, magic = false, jobs = false, various = false;
     while (p.HasNext())
     {
         psSkillCacheItem *skill = p.Next();
@@ -468,31 +417,26 @@ void pawsSkillWindow::HandleSkillList(psSkillCache *skills, int selectedNameId, 
             {
                 case 0://Stats
                 {
-                    stats = true;
                     HandleSkillCategory(statsSkillList, "StatsIndicator", "Stats Button", skill, idx, flush);
                     break;
                 }
                 case 1://Combat skills
                 {
-                    combat = true;
                     HandleSkillCategory(combatSkillList, "CombatIndicator", "Combat Button", skill, idx, flush);
                     break;
                 }
                 case 2://Magic skills
                 {
-                    magic = true;
                     HandleSkillCategory(magicSkillList, "MagicIndicator", "Magic Button", skill, idx, flush);
                     break;
                 }
                 case 3://Jobs skills
                 {
-                    jobs = true;
                     HandleSkillCategory(jobsSkillList, "JobsIndicator", "Jobs Button", skill, idx, flush);
                     break;
                 }
                 case 4://Various skills
                 {
-                    various = true;
                     HandleSkillCategory(variousSkillList, "VariousIndicator", "Various Button", skill, idx, flush);
                     break;
                 }
@@ -505,34 +449,18 @@ void pawsSkillWindow::HandleSkillList(psSkillCache *skills, int selectedNameId, 
         }
     }
     
-    if (stats)
+    if (flush)
     {
-    statsSkillList->SetSortedColumn(0);
-    statsSkillList->SortRows();
-    }
-    
-    if (combat)
-    {
-    combatSkillList->SetSortedColumn(0);
-    combatSkillList->SortRows();
-    }
-    
-    if (magic)
-    {
-    magicSkillList->SetSortedColumn(0);
-    magicSkillList->SortRows();
-    }
-    
-    if (jobs)
-    {
-    jobsSkillList->SetSortedColumn(0);
-    jobsSkillList->SortRows();
-    }
-    
-    if (various)
-    {
-    variousSkillList->SetSortedColumn(0);
-    variousSkillList->SortRows();
+        statsSkillList->SetSortedColumn(0);
+        statsSkillList->SortRows();
+        combatSkillList->SetSortedColumn(0);
+        combatSkillList->SortRows();
+        magicSkillList->SetSortedColumn(0);
+        magicSkillList->SortRows();
+        jobsSkillList->SetSortedColumn(0);
+        jobsSkillList->SortRows();
+        variousSkillList->SetSortedColumn(0);
+        variousSkillList->SortRows();
     }
 
     if (!foundSelected)
