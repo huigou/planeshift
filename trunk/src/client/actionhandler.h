@@ -88,7 +88,7 @@ public:
       * </PRE>
       */
     void Save( const char* id, const char* masterid, const char* name, const char* sector, const char* mesh, 
-        const char* poly, const char* posx, const char* posy, const char* posz, const char* radius, 
+        const char* poly, const char* posx, const char* posy, const char* posz, const char* pos_instance, const char* radius, 
         const char* triggertype, const char* responsetype, const char* response, const char* active );
 
     /** Command server to remove an action location. 

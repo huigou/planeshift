@@ -65,6 +65,7 @@ bool pawsGMActionWindow::PostSetup()
     txtPosX            = ( pawsEditTextBox * )FindWidget( "txtX" );
     txtPosY            = ( pawsEditTextBox * )FindWidget( "txtY" );
     txtPosZ            = ( pawsEditTextBox * )FindWidget( "txtZ" );
+    txtInstance        = ( pawsEditTextBox * )FindWidget( "txtInstance" );
     txtRadius        = ( pawsEditTextBox * )FindWidget( "txtRadius" );
     txtMasterID        = ( pawsEditTextBox * )FindWidget( "txtMaster" );
     cboTriggerType    = ( pawsComboBox    * )FindWidget( "cboTriggerType" );
@@ -103,7 +104,8 @@ bool pawsGMActionWindow::OnButtonPressed(int button,int keyModifier,pawsWidget* 
                                             txtPolygon->GetText(), 
                                             txtPosX->GetText(), 
                                             txtPosY->GetText(), 
-                                            txtPosZ->GetText(), 
+                                            txtPosZ->GetText(),
+                                            txtInstance->GetText(),
                                             txtRadius->GetText(), 
                                             cboTriggerType->GetSelectedRowString(), 
                                             cboResponseType->GetSelectedRowString(), 
@@ -187,7 +189,7 @@ void pawsGMActionWindow::LoadAction( csRef<iDocumentNode> topNode )
     id="";
     name=""; masterid="0",
     sectorName=""; meshName=""; polygon="0";
-    X="0"; Y="0"; Z="0"; radius="0";
+    X="0"; Y="0"; Z="0"; pos_instance="4294967295", radius="0";
     triggertype=""; responsetype=""; response="";
     
 
@@ -254,6 +256,12 @@ void pawsGMActionWindow::LoadAction( csRef<iDocumentNode> topNode )
         }
     }
 
+    node = topNode->GetNode( "pos_instance" );
+    if ( node )
+    {
+        pos_instance = node->GetContentsValue();
+    }
+
     node = topNode->GetNode( "radius" );
     if ( node )
     {
@@ -307,6 +315,7 @@ void pawsGMActionWindow::LoadAction( csRef<iDocumentNode> topNode )
     txtPosX->SetText( X );
     txtPosY->SetText( Y );
     txtPosZ->SetText( Z );
+    txtInstance->SetText(pos_instance);
     txtRadius->SetText( radius );
     if ( !IsVisible() )
     {

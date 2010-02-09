@@ -1400,7 +1400,9 @@ UPDATE `server_options` SET `option_value`='1236' WHERE `option_name`='db_versio
 ALTER TABLE `npc_spawn_ranges` ADD COLUMN `radius` FLOAT DEFAULT '0.0' COMMENT 'Defines the radius of a circle for a spawn range.' AFTER `z2`;
 UPDATE `server_options` SET `option_value`='1237' WHERE `option_name`='db_version';
 
-
+#1238 - Stefano Angeleri Added instanced action locations.
+ALTER TABLE `action_locations` MODIFY COLUMN `pos_instance` INTEGER UNSIGNED NOT NULL DEFAULT 4294967295 COMMENT 'Indicates the instance where this action location will be accessible from. 0xFFFFFFFF (default) is instance all';
+UPDATE `server_options` SET `option_value`='1238' WHERE `option_name`='db_version';
 
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.

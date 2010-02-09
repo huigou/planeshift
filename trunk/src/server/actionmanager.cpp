@@ -267,11 +267,14 @@ bool ActionManager::HandleSelectQuery( csRef<iDocumentNode> topNode, Client *cli
 
     psActionLocation *search = new psActionLocation();
     search->Load( topNode );
+    if(client && client->GetActor())
+    search->SetInstance(client->GetActor()->GetInstance());
 
     // Search for matches
     csArray<psActionLocation *> matchMesh;  // matches on sector + mesh
     csArray<psActionLocation *> matchPoly;  // matches on sector + mesh + poly or point w/in radius
     csArray<psActionLocation *> matchPoint; // matches on sector + mesh + poly + point w/in radius
+    csArray<psActionLocation *> matchInstance; // matches on sector + mesh + poly + point w/in radius + instance
     csArray<psActionLocation *> matches;    
     psActionLocation* actionLocation;
 
@@ -293,10 +296,15 @@ bool ActionManager::HandleSelectQuery( csRef<iDocumentNode> topNode, Client *cli
         case 3: // Match on Poly and Point
             matchPoint.Push( actionLocation );
             break;
+        case 4: //match on instance
+			matchInstance.Push(actionLocation);
+			break;
         }
     }
 
     // Use correct Set of Matches
+    if(matchInstance.GetSize() != 0)
+		matchInstance.TransferTo(matches);
     if ( matchPoint.GetSize() != 0 )
         matchPoint.TransferTo( matches );
     else if ( matchPoly.GetSize() != 0 )

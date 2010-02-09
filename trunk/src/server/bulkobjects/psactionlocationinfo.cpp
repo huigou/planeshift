@@ -81,6 +81,7 @@ psActionLocation::psActionLocation() : gemAction( NULL )
     meshname.Clear();
     polygon.Format("%d", 0);
     position = csVector3(0.0F);
+    pos_instance = INSTANCE_ALL;
     radius = 0.0F;
     triggertype .Clear();
     responsetype.Clear();
@@ -96,11 +97,13 @@ psActionLocation::psActionLocation() : gemAction( NULL )
     entrancePosition.x = 0;
     entrancePosition.y = 0;
     entrancePosition.z = 0;
+    entranceInstance = DEFAULT_INSTANCE;
     entranceRot = 0.0;
     returnSector.Clear();
     returnPosition.x = 0;
     returnPosition.y = 0;
     returnPosition.z = 0;
+    returnInstance = DEFAULT_INSTANCE;
     returnRot = 0.0;
     returnSector.Clear();
     description.Clear();
@@ -130,7 +133,9 @@ bool psActionLocation::Load(iResultRow& row)
     float y = row.GetFloat( "pos_y" );
     float z = row.GetFloat( "pos_z" );
     position = csVector3( x, y, z );
-
+	
+	pos_instance = row.GetUInt32("pos_instance");
+	
     if ( !master_id )
     {
         triggertype = row[ "triggertype" ];
@@ -188,6 +193,9 @@ bool psActionLocation::Load( csRef<iDocumentNode> root )
 
         position = csVector3( posx, posy, posz );
     }
+    
+    node = root->GetNode( "pos_instance" );
+    if ( node ) pos_instance = node->GetContentsValueAsInt();
 
     node = root->GetNode( "radius" );
     if ( node ) radius = node->GetContentsValueAsFloat();
@@ -223,6 +231,7 @@ bool psActionLocation::Save()
         "pos_x",
         "pos_y",
         "pos_z",
+        "pos_instance",
         "radius",
         "triggertype",
         "responsetype",
@@ -238,6 +247,7 @@ bool psActionLocation::Save()
     fields.FormatPush( "%f", position.x );
     fields.FormatPush( "%f", position.y );
     fields.FormatPush( "%f", position.z );
+    fields.FormatPush( "%u", pos_instance );
     fields.FormatPush( "%f", radius );
     //csString escpxml_response = EscpXML(response);
 
@@ -321,6 +331,17 @@ int psActionLocation::IsMatch( psActionLocation *compare )
                 return 0;
             }
         }
+        if (pos_instance != INSTANCE_ALL)
+        {
+			if(compare->pos_instance == pos_instance)
+			{
+				result++;
+			}
+			else
+			{
+				return 0;
+			}
+        }
     }
 
     return result;
@@ -362,7 +383,7 @@ void psActionLocation::Send( int clientnum)
 csString psActionLocation::ToXML() const
 {
     csString xml;
-    const char* formatXML = "<location><id>%u</id><masterid>%u</masterid><name>%s</name><sector>%s</sector><mesh>%s</mesh><polygon>%s</polygon><position><x>%f</x><y>%f</y><z>%f</z></position><radius>%f</radius><triggertype>%s</triggertype><responsetype>%s</responsetype><response>%s</response><active>%s</active></location>";
+    const char* formatXML = "<location><id>%u</id><masterid>%u</masterid><name>%s</name><sector>%s</sector><mesh>%s</mesh><polygon>%s</polygon><position><x>%f</x><y>%f</y><z>%f</z></position><pos_instance>%u</pos_instance><radius>%f</radius><triggertype>%s</triggertype><responsetype>%s</responsetype><response>%s</response><active>%s</active></location>";
     csString escpxml_name = EscpXML(name);
     csString escpxml_sectorname = EscpXML(sectorname);
     csString escpxml_meshname = EscpXML(meshname);
@@ -380,6 +401,7 @@ csString psActionLocation::ToXML() const
                 position.x,
                 position.y,
                 position.z,
+                pos_instance,
                 radius,
                 escpxml_triggertype.GetData(),
                 escpxml_responsetype.GetData(),
@@ -623,6 +645,7 @@ void psActionLocation::SetupEntrance(csRef<iDocumentNode> entranceNode)
     entrancePos.y = entranceNode->GetAttributeValueAsFloat( "Y" );
     entrancePos.z = entranceNode->GetAttributeValueAsFloat( "Z" );
     SetEntrancePosition(entrancePos);
+    SetEntranceInstance(entranceNode->GetAttributeValueAsFloat( "Instance" ));
     SetEntranceRotation(entranceNode->GetAttributeValueAsFloat( "Rot" ));
     SetEntranceSector(entranceNode->GetAttributeValue( "Sector" ));
 }
@@ -647,6 +670,7 @@ void psActionLocation::SetupReturn(csRef<iDocumentNode> returnNode)
     returnPos.y = returnNode->GetAttributeValueAsFloat( "Y" );
     returnPos.z = returnNode->GetAttributeValueAsFloat( "Z" );
     SetReturnPosition(returnPos);
+    SetReturnInstance(returnNode->GetAttributeValueAsFloat( "Instance" ));
     SetReturnRotation(returnNode->GetAttributeValueAsFloat( "Rot" ));
     SetReturnSector(returnNode->GetAttributeValue( "Sector" ));
 }
