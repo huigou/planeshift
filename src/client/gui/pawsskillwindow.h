@@ -155,6 +155,7 @@ protected:
     /// Flag if we have sent our initial request for faction information. Only sent
     /// once and everything else is an update.
     bool factRequest;
+    psCharAppearance* charApp;
 };
 
 CREATE_PAWS_FACTORY( pawsSkillWindow );
