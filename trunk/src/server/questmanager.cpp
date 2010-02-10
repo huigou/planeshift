@@ -318,7 +318,7 @@ bool QuestManager::HandleScriptCommand(csString& block,
 
         if (!strncasecmp(block,"Assign Quest",12))
         {
-            op.Format("<assign q1=\"%s\" />",mainQuest->GetName());
+            op.Format("<assign q1=\"%s\"/>",mainQuest->GetName());
             quest_assigned_already = true;
         }
 
@@ -331,34 +331,34 @@ bool QuestManager::HandleScriptCommand(csString& block,
         else if (!strncasecmp(block,"Complete",8))
         {
             csString questname = block.Slice(8,block.Length()-1).Trim();
-            op.Format("<complete quest_id=\"%s\" />",questname.GetData());
+            op.Format("<complete quest_id=\"%s\"/>",questname.GetData());
         }
         else if (!strncasecmp(block,"Give",4))
         {
             WordArray words(block);
             if (words.GetInt(1) != 0 && words.Get(2).CompareNoCase("tria")) // give tria money
             {
-                op.Format("<money value=\"0,0,0,%d\" />",words.GetInt(1) );
+                op.Format("<money value=\"0,0,0,%d\"/>",words.GetInt(1) );
             }
             else if (words.GetInt(1) != 0 && words.Get(2).CompareNoCase("hexa")) // give hexa money
             {
-                op.Format("<money value=\"0,0,%d,0\" />",words.GetInt(1) );
+                op.Format("<money value=\"0,0,%d,0\"/>",words.GetInt(1) );
             }
             else if (words.GetInt(1) != 0 && words.Get(2).CompareNoCase("octa")) // give octa money
             {
-                op.Format("<money value=\"0,%d,0,0\" />",words.GetInt(1) );
+                op.Format("<money value=\"0,%d,0,0\"/>",words.GetInt(1) );
             }
             else if (words.GetInt(1) != 0 && words.Get(2).CompareNoCase("circle")) // give circle money
             {
-                op.Format("<money value=\"%d,0,0,0\" />",words.GetInt(1) );
+                op.Format("<money value=\"%d,0,0,0\"/>",words.GetInt(1) );
             }
             else if (words.GetInt(1) != 0 && words.Get(2).CompareNoCase("exp")) // give experience points
             {
-                op.Format("<run script=\"give_exp\" with=\"Exp=%d;\" />",words.GetInt(1) );
+                op.Format("<run script=\"give_exp\" with=\"Exp=%d;\"/>",words.GetInt(1) );
             }
             else if (words.GetInt(1) != 0 && words.Get(2).CompareNoCase("faction") && words.GetCount() > 3) // give faction points
             {
-                op.Format("<faction name=\"%s\" value=\"%d\" />", words.GetTail(3).GetDataSafe(), words.GetInt(1) );
+                op.Format("<faction name=\"%s\" value=\"%d\"/>", words.GetTail(3).GetDataSafe(), words.GetInt(1) );
             }
             else
             {
@@ -372,7 +372,7 @@ bool QuestManager::HandleScriptCommand(csString& block,
                         if (end == SIZET_NOT_FOUND)
                             end = words.GetCount();
                         csString item = words.GetWords(start,end);
-                        op.AppendFmt("<item name=\"%s\" />",item.GetData() );
+                        op.AppendFmt("<item name=\"%s\"/>",item.GetData() );
                         start = end+1;
                     }
                     op.Append("</offer>");
@@ -393,7 +393,7 @@ bool QuestManager::HandleScriptCommand(csString& block,
         }
         else if (!strncasecmp(block,"NoRepeat",8))
         {
-            substep_requireop.AppendFmt("<not><completed quest=\"%s\" /></not>", quest->GetName() );
+            substep_requireop.AppendFmt("<not><completed quest=\"%s\"/></not>", quest->GetName() );
         }
         else if (!strncasecmp(block,"Require",7))
         {
