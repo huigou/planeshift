@@ -1,7 +1,7 @@
 /*
  * questmanager.cpp
  *
- * Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -102,12 +102,12 @@ bool QuestManager::LoadQuestScripts()
             if (quest_id == -1) continue; // -1 for quest id, than it is a KAs so don't load quest.
 
             psQuest* currQuest = CacheManager::GetSingleton().GetQuestByID(quest_id);
-            if (!currQuest) 
+            if (!currQuest)
             {
-                Error3("ERROR quest %s not found for quest script %s!  ",quests[i]["quest_id"], quests[i]["id"]); 
+                Error3("ERROR quest %s not found for quest script %s!  ",quests[i]["quest_id"], quests[i]["id"]);
                 return false;
             }
-            
+
             if (!currQuest->PostLoad())
             {
                 Error2("ERROR Loading quest prerequisites for quest %s!  ",quests[i]["quest_id"] );
@@ -156,7 +156,7 @@ void QuestManager::GetNextScriptLine(psString& scr, csString& block, size_t& sta
     csString line;
 
     // Get the first line
-    scr.GetLine(start,line); 
+    scr.GetLine(start,line);
     line_number++;
     block = line;
     start += line.Length();
@@ -170,7 +170,7 @@ void QuestManager::GetNextScriptLine(psString& scr, csString& block, size_t& sta
         // now get subsequent lines if indented
         while (start < scr.Length() && isspace(scr.GetAt(start)))
         {
-            scr.GetLine(start,line); 
+            scr.GetLine(start,line);
             line_number++;
             block.Append(line);
             start += line.Length();
@@ -183,7 +183,7 @@ void QuestManager::GetNextScriptLine(psString& scr, csString& block, size_t& sta
     }
 }
 
-bool QuestManager::PrependPrerequisites(csString &substep_requireop, 
+bool QuestManager::PrependPrerequisites(csString &substep_requireop,
                                         csString &response_requireop,
                                         bool quest_assigned_already,
                                         NpcResponse *last_response,
@@ -206,7 +206,7 @@ bool QuestManager::PrependPrerequisites(csString &substep_requireop,
         // If quest has been assigned in the script, we need to have every response
         // verify that the quest have been assigned.
         op.AppendFmt("<assigned quest=\"%s\" />", mainQuest->GetName());
-    } 
+    }
     else
     {
         // If quest has not been assigned in the script, we need to have every response
@@ -214,12 +214,12 @@ bool QuestManager::PrependPrerequisites(csString &substep_requireop,
         op.AppendFmt("<not><assigned quest=\"%s\" /></not>", mainQuest->GetName());
     }
 
-    if (substep_requireop) 
+    if (substep_requireop)
     {
         op.Append(substep_requireop);
     }
 
-    if (response_requireop) 
+    if (response_requireop)
     {
         op.Append(response_requireop);
 
@@ -251,7 +251,7 @@ bool QuestManager::HandlePlayerAction(csString& block, size_t& which_trigger,csS
         which_trigger = 0;
 
         int numwords = GetNPCFromBlock(words,current_npc);
-        if (numwords==-1) 
+        if (numwords==-1)
         {
             Error3("NPC '%s' is not present in db, but used in %s!",words[2].GetData(),block.GetData());
         }
@@ -261,12 +261,12 @@ bool QuestManager::HandlePlayerAction(csString& block, size_t& which_trigger,csS
         {
             pending_triggers.Empty();
             pending_triggers.Push(itemlist);  // next response will use this itemlist
-			Debug2( LOG_QUESTS, 0, "Got player action of: %s\n", itemlist.GetDataSafe() );
+            Debug2( LOG_QUESTS, 0, "Got player action of: %s\n", itemlist.GetDataSafe() );
         }
         else
             return false;
     }
-    else 
+    else
     {
         Error2("Unknown Player function in '%s' !",block.GetData());
         return false;
@@ -315,19 +315,19 @@ bool QuestManager::HandleScriptCommand(csString& block,
         {
             block.DeleteAt(block.Length()-1);
         }
-                
+
         if (!strncasecmp(block,"Assign Quest",12))
         {
             op.Format("<assign q1=\"%s\" />",mainQuest->GetName());
             quest_assigned_already = true;
         }
-        
+
         else if ( !strncasecmp(block, "FireEvent", 9) )
         {
             csString eventname = block.Slice(9,block.Length()-1).Trim();
             op.Format("<fire_event name='%s'/>", eventname.GetData());
-        }         
-        
+        }
+
         else if (!strncasecmp(block,"Complete",8))
         {
             csString questname = block.Slice(8,block.Length()-1).Trim();
@@ -354,11 +354,11 @@ bool QuestManager::HandleScriptCommand(csString& block,
             }
             else if (words.GetInt(1) != 0 && words.Get(2).CompareNoCase("exp")) // give experience points
             {
-                op.Format("<run script=\"give_exp\" with=\"Exp=%d;\" />",words.GetInt(1) );  
+                op.Format("<run script=\"give_exp\" with=\"Exp=%d;\" />",words.GetInt(1) );
             }
             else if (words.GetInt(1) != 0 && words.Get(2).CompareNoCase("faction") && words.GetCount() > 3) // give faction points
             {
-                op.Format("<faction name=\"%s\" value=\"%d\" />", words.GetTail(3).GetDataSafe(), words.GetInt(1) );  
+                op.Format("<faction name=\"%s\" value=\"%d\" />", words.GetTail(3).GetDataSafe(), words.GetInt(1) );
             }
             else
             {
@@ -391,21 +391,23 @@ bool QuestManager::HandleScriptCommand(csString& block,
             }
 
         }
-        else if (!strncasecmp(block,"NoRepeat",8)) 
+        else if (!strncasecmp(block,"NoRepeat",8))
         {
             substep_requireop.AppendFmt("<not><completed quest=\"%s\" /></not>", quest->GetName() );
         }
         else if (!strncasecmp(block,"Require",7))
         {
-			csString requireBlock = block.Slice(7).Trim();
-			if(!HandleRequireCommand(requireBlock,response_requireop,substep_requireop,last_response,mainQuest,
-			                     quest_assigned_already,quest))
-			{
-				Error2("Unknown require command '%s' !",block.GetData());
-				return false;
-			}
-		}
-        else if (!strncasecmp(block,"Run script",10)) 
+            //we remove the leading require and let another function do the parsing of this
+            csString requireBlock = block.Slice(7).Trim();
+            if(!HandleRequireCommand(requireBlock,response_requireop,substep_requireop,last_response,mainQuest,
+                                 quest_assigned_already,quest))
+            {
+                //we got a false from handlerequirecommand: it means it wasn't able to parse the require command.
+                Error2("Unknown require command '%s' !",block.GetData());
+                return false;
+            }
+        }
+        else if (!strncasecmp(block,"Run script",10))
         {
             csString script = block.Slice(10,block.Length()-1).Trim();
 
@@ -413,13 +415,13 @@ bool QuestManager::HandleScriptCommand(csString& block,
             csArray<csString> param;
             size_t start = script.FindStr("(");
             size_t end   = script.FindStr(")");
-            if (start != SIZET_NOT_FOUND && end != SIZET_NOT_FOUND && 
+            if (start != SIZET_NOT_FOUND && end != SIZET_NOT_FOUND &&
                 start == 0 && end > start)
             {
                 csString params = script.Slice(start+1,end-start-1).Trim();
                 script.DeleteAt(start,end-start+1).Trim();
                 size_t next;
-                do 
+                do
                 {
                     next = params.FindStr(",");
                     if (next == SIZET_NOT_FOUND)
@@ -443,18 +445,18 @@ bool QuestManager::HandleScriptCommand(csString& block,
             }
             op.Append("\"/>");
         }
-        else if (!strncasecmp(block,"DoAdminCmd",10)) 
+        else if (!strncasecmp(block,"DoAdminCmd",10))
         {
             csString command = block.Slice(11).Trim();
-            op.Format("<doadmincmd command=\"%s\"/>", command.GetData() ); 
+            op.Format("<doadmincmd command=\"%s\"/>", command.GetData() );
         }
-        else if (!strncasecmp(block,"Introduce",9)) 
+        else if (!strncasecmp(block,"Introduce",9))
         {
             csString charname = block.Slice(10).Trim();
             if (!charname.IsEmpty())
-                op.Format("<introduce name=\"%s\"/>", charname.GetData() ); 
+                op.Format("<introduce name=\"%s\"/>", charname.GetData() );
             else
-                op.Format("<introduce/>"); 
+                op.Format("<introduce/>");
         }
         else // unknown block
         {
@@ -486,35 +488,35 @@ bool QuestManager::HandleScriptCommand(csString& block,
 
 csString QuestManager::ParseRequireCommand(csString& block, bool& result)
 {
-    csString command;
-    if (!strncasecmp(block,"completion of",13))
+    csString command; //stores the formatted prerequisite of this block
+    if (!strncasecmp(block,"completion of",13)) // require completion of quest <step #>
     {
         csString questname = block.Slice(13,block.Length()-1).Trim();
         command.Format("<completed quest=\"%s\"/>", questname.GetData());
     }
-    else if (!strncasecmp(block,"time of day",11))
+    else if (!strncasecmp(block,"time of day",11)) // require time of day starthh-endhh
     {
-		csString data = block.Slice(12);
-		csArray<csString> timeinfo = psSplit(data, '-');
-		if (timeinfo.GetSize() == 2)
+        csString data = block.Slice(12);
+        csArray<csString> timeinfo = psSplit(data, '-');
+        if (timeinfo.GetSize() == 2)
             command.Format("<timeofday min=\"%s\" max=\"%s\"/>", timeinfo[0].GetData(), timeinfo[1].GetData() );
     }
-    else if (!strncasecmp(block,"trait",5))
+    else if (!strncasecmp(block,"trait",5)) //require trait name in place
     {
-		csString arguments = block.Slice(6,block.Length()).Trim();
-		size_t delimiter = arguments.FindFirst(" in",0);
-		csString name = arguments.Slice(0,delimiter).Trim();
-		csString location = arguments.Slice(delimiter+4, block.Length()).Trim();
-		command.Format("<trait name=\"%s\" location=\"%s\"/>", name.GetData(), location.GetData());
+        csString arguments = block.Slice(6,block.Length()).Trim();
+        size_t delimiter = arguments.FindFirst(" in",0);
+        csString name = arguments.Slice(0,delimiter).Trim();
+        csString location = arguments.Slice(delimiter+4, block.Length()).Trim();
+        command.Format("<trait name=\"%s\" location=\"%s\"/>", name.GetData(), location.GetData());
     }
     else if (!strncasecmp(block,"guild",5))  //NOTE: the both argument is implictly defined
     {
-		csString type = block.Slice(6,block.Length()).Trim();
+        csString type = block.Slice(6,block.Length()).Trim();
         command.Format("<guild type=\"%s\"/>", type.Length() ? type.GetData() : "both" );
     }
     else if (!strncasecmp(block,"active magic",12))
     {
-		csString magicname = block.Slice(13,block.Length()).Trim();
+        csString magicname = block.Slice(13,block.Length()).Trim();
         command.Format("<activemagic name=\"%s\"/>", magicname.GetData() );
     }
     else if (!strncasecmp(block,"known spell",11))
@@ -555,8 +557,8 @@ csString QuestManager::ParseRequireCommand(csString& block, bool& result)
     }
     else if (!strncasecmp(block,"possessed",9))
     {
-		csString itemName = block.Slice(10,block.Length()).Trim();
-		//this manages the category argument Require equipped category xxxx
+        csString itemName = block.Slice(10,block.Length()).Trim();
+        //this manages the category argument Require equipped category xxxx
         if(itemName.StartsWith("category"))
         {
             csString categoryName = itemName.Slice(9, itemName.Length()); //no need to trim done above
@@ -569,36 +571,39 @@ csString QuestManager::ParseRequireCommand(csString& block, bool& result)
     }
     else
     {
+        //it seems the require op we have found isn't
+        //implemented in this server bail out an error
         result = false;
     }
     return command;
 }
 
-bool QuestManager::HandleRequireCommand(csString& block,
-                                       csString& response_requireop,
-                                       csString& substep_requireop,
-                                       NpcResponse *last_response,
-                                       psQuest *mainQuest,
-                                       bool& quest_assigned_already,
-                                       psQuest *quest)
+bool QuestManager::HandleRequireCommand(csString& block, csString& response_requireop)
 {
-    csString commandList;
-    bool result = true;
+    csString commandList; //stores the entire parsed chunk of prerequisites.
+    bool result = true; //by default the result is positive, if it becomes false it means failure in parsing
     if(!strncasecmp(block, "not", 3)) //compatibility block this or the next should be removed and quest fixed.
     {
+        //we remove the leading not and parse as if there was no not
+        //then we put the result inside two <not></not>
         csString innerBlock = block.Slice(3, block.Length()-1).Trim();
         commandList.Format("<not>%s</not>", ParseRequireCommand(innerBlock, result).GetData());
     }
     else if(!strncasecmp(block, "no", 2))
     {
+        //we remove the leading no and parse as if there was no no
+        //then we put the result inside two <not></not>
         csString innerBlock = block.Slice(2, block.Length()-1).Trim();
         commandList.Format("<not>%s</not>", ParseRequireCommand(innerBlock, result).GetData());
     }
     else
     {
+        //this has no not or no then we just pass the string as it is.
         commandList = ParseRequireCommand(block, result);
     }
+    //append the result to the prerequisites
     response_requireop.Append(commandList);
+    //return the result of the operation
     return result;
 }
 
@@ -621,7 +626,7 @@ int QuestManager::ParseQuestScript(int quest_id, const char *script)
     psQuest *mainQuest = CacheManager::GetSingleton().GetQuestByID(quest_id);
     psQuest *quest = mainQuest; // Substep is main step until substep is defined.
     int line_number = 0;
-	NpcDialogMenu *pending_menu = NULL;
+    NpcDialogMenu *pending_menu = NULL;
     NpcDialogMenu *last_menu    = NULL;
 
     if (!mainQuest && quest_id > 0)
@@ -630,15 +635,15 @@ int QuestManager::ParseQuestScript(int quest_id, const char *script)
       lastError.Format("No Main quest could be found.");
       return -1;
     }
-      
+
 
     while (start < scr.Length())
     {
         GetNextScriptLine(scr,block,start,line_number);
 
         Debug2(LOG_QUESTS, 0, "Parsing line %s", block.GetData());
-    
-    
+
+
         // now we have the block to do something with
         if (!strncasecmp(block,"#",1)) // comment, skip it
           continue;
@@ -651,7 +656,7 @@ int QuestManager::ParseQuestScript(int quest_id, const char *script)
                 Error3("Could not determine triggers in script '%s', in line <%s>",
                        mainQuest->GetName(),block.GetData());
                 lastError.Format("Could not determine triggers in script '%s', in line <%s>", mainQuest->GetName(),block.GetData());
-                       
+
                 return line_number;
             }
             // When parsing responses, this tracks which one goes with which
@@ -662,52 +667,52 @@ int QuestManager::ParseQuestScript(int quest_id, const char *script)
                 Debug2( LOG_QUESTS, 0,"Player says '%s'", pending_triggers[i]);
             }
         }
-		else if (!strncasecmp(block,"Menu:",5))  // Menu: is an nice way of represention the various P: triggers
+        else if (!strncasecmp(block,"Menu:",5))  // Menu: is an nice way of represention the various P: triggers
         {
-			NpcDialogMenu *menu = new NpcDialogMenu();
+            NpcDialogMenu *menu = new NpcDialogMenu();
 
-			if (!BuildMenu(block, pending_triggers, mainQuest, menu))
+            if (!BuildMenu(block, pending_triggers, mainQuest, menu))
             {
                 Error3("Could not determine menu triggers in script '%s', in line <%s>",
                        mainQuest->GetName(),block.GetData());
                 lastError.Format("Could not determine triggers in script '%s', in line <%s>", mainQuest->GetName(),block.GetData());
-                       
+
                 return line_number;
             }
 
-			if (last_response)  // popup is part of a dialog chain
+            if (last_response)  // popup is part of a dialog chain
             {
-				last_response->menu = menu;  // attach the menu to the prior response for easy access in chains
+                last_response->menu = menu;  // attach the menu to the prior response for easy access in chains
                 last_menu = menu;           // save so we can add prerequisites later
             }
-			else
+            else
             {
-				pending_menu = menu;  // save for when we know the npc.  cannot attach to anything yet.
+                pending_menu = menu;  // save for when we know the npc.  cannot attach to anything yet.
             }
         }
-        else if (strchr(block,':')) // text response 
+        else if (strchr(block,':')) // text response
         {
             csString him,her,it,them,npc_name;
             block.SubString(npc_name,0,block.FindFirst(':'));  // pull out name before colon
             if (current_npc.Find(npc_name) == 0)  // if npc_name is the beginning of the current npc name, then it is a repeat
             {
                 // Need to add this trigger menu to the generic menu for this npc if same npc follows a "..."
-//   				if (last_response_id == -1 && pending_menu)
-//				{
-//					dict->AddMenu(current_npc, pending_menu);
-//					pending_menu = NULL;
-//				}
+//                  if (last_response_id == -1 && pending_menu)
+//              {
+//                  dict->AddMenu(current_npc, pending_menu);
+//                  pending_menu = NULL;
+//              }
 
             }
             else // switch NPCs here
             {
                 current_npc = npc_name;
                 next_to_last_response_id = last_response_id = -1;  // When you switch NPCs, the prior responses must be reset also.
-//   				if (pending_menu)
-//				{
-//					dict->AddMenu(current_npc, pending_menu);
-//					pending_menu = NULL;
-//				}
+//                  if (pending_menu)
+//              {
+//                  dict->AddMenu(current_npc, pending_menu);
+//                  pending_menu = NULL;
+//              }
             }
             if (!GetResponseText(block,response_text,file_path,him,her,it,them))
             {
@@ -735,9 +740,9 @@ int QuestManager::ParseQuestScript(int quest_id, const char *script)
                 bool ret = AddTrigger(current_npc,pending_triggers[which_trigger++],next_to_last_response_id,last_response_id, quest, "");
                 if (!ret)
                 {
-                    lastError.Format("Trigger could not be added on line %d", line_number);                
+                    lastError.Format("Trigger could not be added on line %d", line_number);
                     return line_number;
-                }                    
+                }
 
                 if (mainQuest) // Prerequisites only apply to quest scripts, not KA scripts.
                 {
@@ -747,13 +752,13 @@ int QuestManager::ParseQuestScript(int quest_id, const char *script)
                         return line_number;
                     }
                 }
-				if (pending_menu)
-				{
+                if (pending_menu)
+                {
                     // Now go back to the previous menu
                     pending_menu->SetPrerequisiteScript( last_response->GetPrerequisiteScript() );
-					dict->AddMenu(current_npc, pending_menu);
-					pending_menu = NULL;
-				}
+                    dict->AddMenu(current_npc, pending_menu);
+                    pending_menu = NULL;
+                }
                 else if (last_menu)
                 {
                     last_menu->SetPrerequisiteScript( last_response->GetPrerequisiteScript() );
@@ -776,13 +781,13 @@ int QuestManager::ParseQuestScript(int quest_id, const char *script)
             {
                 Error4("No space after ... for quest '%s' at line %d: %s",
                        mainQuest->GetName(), line_number, block.GetDataSafe());
-                lastError.Format("No space after ... for quest '%s' at line %d: %s", mainQuest->GetName(), line_number, block.GetDataSafe());                       
+                lastError.Format("No space after ... for quest '%s' at line %d: %s", mainQuest->GetName(), line_number, block.GetDataSafe());
                 return line_number;
             }
 
             // This clears out prior responses whether there is a quest or a KA script here
             next_to_last_response_id = last_response_id = -1;
-			last_response = NULL;  // This is used for popup menus
+            last_response = NULL;  // This is used for popup menus
             substep_requireop.Free();
 
             if (mainQuest)
@@ -796,8 +801,8 @@ int QuestManager::ParseQuestScript(int quest_id, const char *script)
                 Debug2( LOG_QUESTS, 0,"Quest <%s> is getting added dynamically.",newquestname.GetData());
                 quest = CacheManager::GetSingleton().AddDynamicQuest(newquestname, mainQuest, step_count);
                 quest_id = quest->GetID();
-            
-                // Check if this is a non repeatable substep. 
+
+                // Check if this is a non repeatable substep.
                 // Note: NoRepeat can either be an option to ... or a separate command.
                 if (words[1].CompareNoCase("NoRepeat"))
                 {
@@ -857,10 +862,10 @@ int QuestManager::GetNPCFromBlock(WordArray words,csString& current_npc)
     else // Than check double name: "Player gives Menlil Toresun ..."
     {
         csString last = words.Get(3);
-        
+
         select.Format("SELECT * from characters where name='%s' and lastname='%s' and npc_master_id!=0",first.GetData(),last.GetData());
         Result npc_db(db->Select(select));
-        if (npc_db.IsValid() && npc_db.Count()>0) 
+        if (npc_db.IsValid() && npc_db.Count()>0)
         {
             current_npc.Format("%s %s",first.GetData(),last.GetData() );
             return 2;
@@ -989,7 +994,7 @@ bool QuestManager::BuildTriggerList(csString& block,csStringArray& list)
             response = "error";
 
         list.Push(response);
-        
+
         start = end; // Start at next P: or exit loop
     }
     return true;
@@ -1015,8 +1020,8 @@ bool QuestManager::BuildMenu(const csString& block,const csStringArray& list, ps
         block.SubString(response,start,end-start);
         response.Trim();
 
-		menu->AddTrigger( response, list[ counter++ ], quest );
-        
+        menu->AddTrigger( response, list[ counter++ ], quest );
+
         start = end; // Start at next Menu: or exit loop
     }
     return true;
@@ -1087,8 +1092,8 @@ bool QuestManager::GetResponseText(csString& block,csString& response,csString& 
     return true;
 }
 
-NpcResponse *QuestManager::AddResponse(csString& current_npc,const char *response_text,int& last_response_id, psQuest * quest, 
-									   csString& him, csString& her, csString& it, csString& them, csString& file_path)
+NpcResponse *QuestManager::AddResponse(csString& current_npc,const char *response_text,int& last_response_id, psQuest * quest,
+                                       csString& him, csString& her, csString& it, csString& them, csString& file_path)
 {
     last_response_id = 0;  // let AddResponse autoset this if set to 0
     Debug2( LOG_QUESTS, 0,"Adding response %s to dictionary...", response_text );
@@ -1126,9 +1131,9 @@ bool QuestManager::AddTrigger(csString& current_npc,const char *trigger,int prio
                             "with prior response %d and trigger response %d...",
                             new_trigger.GetData(), current_npc.GetData(),
                             prior_response_id, trig_response);
-        
+
         NpcTrigger *npcTrigger = dict->AddTrigger(current_npc,new_trigger,prior_response_id,trig_response);
-        
+
         if(!npcTrigger)
         {
             return false;
@@ -1182,11 +1187,11 @@ void QuestManager::HandleQuestReward(MsgEntry *me,Client *who)
 
     if (msg.msgType==psQuestRewardMessage::selectReward)
     {
-        // verify that this item was really offered to the client as a 
+        // verify that this item was really offered to the client as a
         // possible reward
         for (size_t z=0;z<offers.GetSize();z++)
         {
-            QuestRewardOffer* offer = offers[z]; 
+            QuestRewardOffer* offer = offers[z];
             if (offer->clientID==me->clientnum)
             {
                 for (size_t x=0;x<offer->items.GetSize();x++)
@@ -1201,7 +1206,7 @@ void QuestManager::HandleQuestReward(MsgEntry *me,Client *who)
 
                         // remove the offer from the list
                         offers.DeleteIndex(z);
-                        return;                     
+                        return;
                     }
                 }
             }
@@ -1229,23 +1234,23 @@ void QuestManager::OfferRewardsToPlayer(Client *who, csArray<psItemStats*> &offe
         csString escpxml_image = EscpXML(image);
         csString escpxml_name = EscpXML(name);
         csString escpxml_desc = EscpXML(desc);
-        temp.Format( "<image icon=\"%s\"/><name text=\"%s\"/><id text=\"%d\"/><desc text=\"%s\"/>", 
+        temp.Format( "<image icon=\"%s\"/><name text=\"%s\"/><id text=\"%d\"/><desc text=\"%s\"/>",
                      escpxml_image.GetData(), escpxml_name.GetData(), id, escpxml_desc.GetData());
 
         rewardList += "<L>";
-        rewardList += temp;        
-        rewardList += "</L>"; 
+        rewardList += temp;
+        rewardList += "</L>";
     }
     rewardList+="</rewards>";
 
     // CPrintf(CON_DEBUG, "REWARD: %s\n",rewardList.GetData());
 
-    // store the combination of client and reward offers (temporarily) 
+    // store the combination of client and reward offers (temporarily)
     QuestRewardOffer* rewardOffer = new QuestRewardOffer;
     rewardOffer->clientID = who->GetClientNum();
     rewardOffer->items    = offer;
     offers.Push(rewardOffer);
-    
+
     // send a message, containing the rewardlist xml string, to the client,
     psQuestRewardMessage message(who->GetClientNum(), rewardList, psQuestRewardMessage::offerRewards);
     psserver->GetEventManager()->SendMessageDelayed(message.msg,timeDelay);
@@ -1275,16 +1280,16 @@ bool QuestManager::GiveRewardToPlayer(Client *who, psItemStats* itemstat)
     csString itemName = item->GetName();
 
     if (!chardata->Inventory().AddOrDrop(item))
-	{
-		psSystemMessage given(who->GetClientNum(),MSG_ERROR,"You received %s, but dropped it because you can't carry any more.", itemName.GetData());
-		given.SendMessage();
-	}
-	else
-	{
-		psSystemMessage given(who->GetClientNum(),MSG_INFO,"You have received %s.", itemName.GetData());
-		given.SendMessage();
-	}
-    
+    {
+        psSystemMessage given(who->GetClientNum(),MSG_ERROR,"You received %s, but dropped it because you can't carry any more.", itemName.GetData());
+        given.SendMessage();
+    }
+    else
+    {
+        psSystemMessage given(who->GetClientNum(),MSG_INFO,"You have received %s.", itemName.GetData());
+        given.SendMessage();
+    }
+
     // player got his reward
     return true;
 }
@@ -1293,11 +1298,11 @@ void QuestManager::Assign(psQuest *quest, Client *who,gemNPC *assigner,csTicks t
 {
     who->GetActor()->GetCharacterData()->AssignQuest(quest, assigner->GetPID());
 
-	psSystemMessage okmsg(who->GetClientNum() ,MSG_OK,   "You got a quest!");
+    psSystemMessage okmsg(who->GetClientNum() ,MSG_OK,   "You got a quest!");
     psSystemMessage newmsg(who->GetClientNum(),MSG_INFO, "You now have the %s quest.",quest->GetName() );
 
-	psserver->GetNetManager()->SendMessageDelayed(okmsg.msg,timeDelay);
-	psserver->GetNetManager()->SendMessageDelayed(newmsg.msg,timeDelay);
+    psserver->GetNetManager()->SendMessageDelayed(okmsg.msg,timeDelay);
+    psserver->GetNetManager()->SendMessageDelayed(newmsg.msg,timeDelay);
 
     // Post tutorial event
     psGenericEvent evt(who->GetClientNum(), psGenericEvent::QUEST_ASSIGN);
@@ -1321,8 +1326,8 @@ bool QuestManager::Complete(psQuest *quest, Client *who)
         psserver->SendSystemInfo(who->GetClientNum(),"You have completed the %s quest!", quest->GetName() );
         // TOFIX: we should clean all substeps of this quest from the character_quests db table.
 
-    } 
-    else 
+    }
+    else
     {
         Error3("Cannot complete quest %s for player %s ",quest->GetName(), who->GetName());
     }
