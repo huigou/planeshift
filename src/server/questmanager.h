@@ -104,6 +104,16 @@ protected:
                              bool& quest_assigned_already,
                              psQuest *quest);
 
+	csString ParseRequireCommand(csString& block, bool& result);
+
+    bool HandleRequireCommand(csString& block,
+                             csString& response_requireop,
+                             csString& substep_requireop,
+                             NpcResponse *last_response,
+                             psQuest *mainQuest,
+                             bool& quest_assigned_already,
+                             psQuest *quest);
+
     void HandleQuestInfo(MsgEntry *pMsg,Client *client);
     void HandleQuestReward(MsgEntry *pMsg,Client *client);
 

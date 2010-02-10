@@ -391,20 +391,20 @@ bool QuestManager::HandleScriptCommand(csString& block,
             }
 
         }
-        else if (!strncasecmp(block,"Require completion of",21)) 
-        {
-            csString questname = block.Slice(21,block.Length()-1).Trim();
-            response_requireop.AppendFmt("<completed quest=\"%s\" />", questname.GetData() );
-        }
-        else if (!strncasecmp(block,"Require no completion of",24)) 
-        {
-            csString questname = block.Slice(24,block.Length()-1).Trim();
-            response_requireop.AppendFmt("<not><completed quest=\"%s\" /></not>", questname.GetData() );
-        }
         else if (!strncasecmp(block,"NoRepeat",8)) 
         {
             substep_requireop.AppendFmt("<not><completed quest=\"%s\" /></not>", quest->GetName() );
         }
+        else if (!strncasecmp(block,"Require",7))
+        {
+			csString requireBlock = block.Slice(7).Trim();
+			if(!HandleRequireCommand(requireBlock,response_requireop,substep_requireop,last_response,mainQuest,
+			                     quest_assigned_already,quest))
+			{
+				Error2("Unknown require command '%s' !",block.GetData());
+				return false;
+			}
+		}
         else if (!strncasecmp(block,"Run script",10)) 
         {
             csString script = block.Slice(10,block.Length()-1).Trim();
@@ -448,164 +448,6 @@ bool QuestManager::HandleScriptCommand(csString& block,
             csString command = block.Slice(11).Trim();
             op.Format("<doadmincmd command=\"%s\"/>", command.GetData() ); 
         }
-        else if (!strncasecmp(block,"Require time of day",19)) 
-        {
-            csString data = block.Slice(20);
-            csArray<csString> timeinfo = psSplit(data, '-');
-            if (timeinfo.GetSize() == 2)
-            {
-                response_requireop.AppendFmt("<timeofday min=\"%s\" max=\"%s\" />", timeinfo[0].GetData(), timeinfo[1].GetData() );
-            }
-        }
-        else if (!strncasecmp(block,"Require not time of day",23)) 
-        {
-            csString data = block.Slice(24);
-            csArray<csString> timeinfo = psSplit(data, '-');
-            if (timeinfo.GetSize() == 2)
-            {
-                response_requireop.AppendFmt("<not><timeofday min=\"%s\" max=\"%s\" /></not>", timeinfo[0].GetData(), timeinfo[1].GetData() );
-            }
-        }
-        else if (!strncasecmp(block,"Require trait",13))
-        {
-            csString arguments = block.Slice(14,block.Length()).Trim();
-            size_t delimiter = arguments.FindFirst(" in",0);
-            csString name = arguments.Slice(0,delimiter).Trim();
-            csString location = arguments.Slice(delimiter+4, block.Length()).Trim();
-            response_requireop.AppendFmt("<trait name=\"%s\" location=\"%s\" />", name.GetData(), location.GetData());
-        }
-        else if (!strncasecmp(block,"Require not trait",17))
-        {
-            csString arguments = block.Slice(18,block.Length()).Trim();
-            size_t delimiter = arguments.FindFirst(" in",0);
-            csString name = arguments.Slice(0,delimiter).Trim();
-            csString location = arguments.Slice(delimiter+4, block.Length()).Trim();
-            response_requireop.AppendFmt("<not><trait name=\"%s\" location=\"%s\" /></not>", name.GetData(), location.GetData());
-        }
-        else if (!strncasecmp(block,"Require guild",13))  //NOTE: the both argument is implictly defined
-        {
-            csString type = block.Slice(14,block.Length()).Trim();
-            response_requireop.AppendFmt("<guild type=\"%s\" />", type.Length() ? type.GetData() : "both" );
-        }
-        else if (!strncasecmp(block,"Require not guild",17))  //NOTE: the both argument is implictly defined
-        {
-            csString type = block.Slice(18,block.Length()).Trim();
-            response_requireop.AppendFmt("<not><guild type=\"%s\" /></not>", type.Length() ? type.GetData() : "both" );
-        }
-        else if (!strncasecmp(block,"Require active magic",20)) 
-        {
-            csString magicname = block.Slice(21,block.Length()).Trim();
-            response_requireop.AppendFmt("<activemagic name=\"%s\" />", magicname.GetData() );
-        }
-        else if (!strncasecmp(block,"Require not active magic",24)) 
-        {
-            csString magicname = block.Slice(25,block.Length()).Trim();
-            response_requireop.AppendFmt("<not><activemagic name=\"%s\" /></not>", magicname.GetData() );
-        }
-        else if (!strncasecmp(block,"Require known spell",19))
-        {
-            csString magicname = block.Slice(20,block.Length()).Trim();
-            response_requireop.AppendFmt("<knownspell name=\"%s\" />", magicname.GetData() );
-        }
-        else if (!strncasecmp(block,"Require not known spell",23)) 
-        {
-            csString magicname = block.Slice(24,block.Length()).Trim();
-            response_requireop.AppendFmt("<not><knownspell name=\"%s\" /></not>", magicname.GetData() );
-        }
-        else if (!strncasecmp(block,"Require race",12)) 
-        {
-            csString racename = block.Slice(13,block.Length()).Trim();
-            response_requireop.AppendFmt("<race name=\"%s\" />", racename.GetData() );
-        }
-        else if (!strncasecmp(block,"Require not race",16)) 
-        {
-            csString racename = block.Slice(17,block.Length()).Trim();
-            response_requireop.AppendFmt("<not><race name=\"%s\" /></not>", racename.GetData() );
-        }
-        else if (!strncasecmp(block,"Require gender",14))
-        {
-            csString gender = block.Slice(15,block.Length()).Trim();
-            
-            if(gender == "male") gender = "M";
-            else if(gender == "female") gender = "F";
-            else if(gender == "neutral") gender = "N";
-
-            response_requireop.AppendFmt("<gender type=\"%s\" />", gender.GetData() );
-        }
-        else if (!strncasecmp(block,"Require not gender",18)) 
-        {
-            csString gender = block.Slice(19,block.Length()).Trim();
-
-            if(gender == "male") gender = "M";
-            else if(gender == "female") gender = "F";
-            else if(gender == "neutral") gender = "N";
-
-            response_requireop.AppendFmt("<not><gender type=\"%s\" /></not>", gender.GetData() );
-        }
-        else if (!strncasecmp(block,"Require married",15)) 
-        {
-            response_requireop.AppendFmt("<married />");
-        }
-        else if (!strncasecmp(block,"Require not married",19)) 
-        {
-            response_requireop.AppendFmt("<not><married /></not>");
-        }
-        else if (!strncasecmp(block,"Require equipped",16)) 
-        {
-            csString itemName = block.Slice(17,block.Length()).Trim();
-            //this manages the category argument Require equipped category xxxx
-            if(itemName.StartsWith("category"))
-            {
-                csString categoryName = itemName.Slice(9, itemName.Length()); //no need to trim done above
-                response_requireop.AppendFmt("<item inventory=\"false\" category=\"%s\" />", categoryName.GetData());
-            }
-            else
-            {
-                response_requireop.AppendFmt("<item inventory=\"false\" name=\"%s\" />", itemName.GetData());
-            }
-        }
-        else if (!strncasecmp(block,"Require not equipped",20)) 
-        {
-            csString itemName = block.Slice(21,block.Length()).Trim();
-            //this manages the category argument Require equipped category xxxx
-            if(itemName.StartsWith("category"))
-            {
-                csString categoryName = itemName.Slice(9, itemName.Length()); //no need to trim done above
-                response_requireop.AppendFmt("<not><item inventory=\"false\" category=\"%s\" /></not>", categoryName.GetData());
-            }
-            else
-            {
-                response_requireop.AppendFmt("<not><item inventory=\"false\" name=\"%s\" /></not>",itemName.GetData());
-            }
-        }
-        else if (!strncasecmp(block,"Require possessed",17)) 
-        {
-            csString itemName = block.Slice(18,block.Length()).Trim();
-            //this manages the category argument Require equipped category xxxx
-            if(itemName.StartsWith("category"))
-            {
-                csString categoryName = itemName.Slice(9, itemName.Length()); //no need to trim done above
-                response_requireop.AppendFmt("<item inventory=\"true\" category=\"%s\" />", categoryName.GetData());
-            }
-            else
-            {
-                response_requireop.AppendFmt("<item inventory=\"true\" name=\"%s\" />",itemName.GetData());
-            }
-        }
-        else if (!strncasecmp(block,"Require not possessed",21)) 
-        {
-            csString itemName = block.Slice(22,block.Length()).Trim();
-            //this manages the category argument Require equipped category xxxx
-            if(itemName.StartsWith("category"))
-            {
-                csString categoryName = itemName.Slice(9, itemName.Length()); //no need to trim done above
-                response_requireop.AppendFmt("<not><item inventory=\"true\" category=\"%s\" /></not>", categoryName.GetData());
-            }
-            else
-            {
-                response_requireop.AppendFmt("<not><item inventory=\"true\" name=\"%s\" /></not>",itemName.GetData());
-            }
-        }
         else if (!strncasecmp(block,"Introduce",9)) 
         {
             csString charname = block.Slice(10).Trim();
@@ -640,6 +482,124 @@ bool QuestManager::HandleScriptCommand(csString& block,
         Debug2( LOG_QUESTS, 0,"Parsed successfully and added to last response: %s .", op.GetData() );
     }
     return true;
+}
+
+csString QuestManager::ParseRequireCommand(csString& block, bool& result)
+{
+    csString command;
+    if (!strncasecmp(block,"completion of",13))
+    {
+        csString questname = block.Slice(13,block.Length()-1).Trim();
+        command.Format("<completed quest=\"%s\"/>", questname.GetData());
+    }
+    else if (!strncasecmp(block,"time of day",11))
+    {
+		csString data = block.Slice(12);
+		csArray<csString> timeinfo = psSplit(data, '-');
+		if (timeinfo.GetSize() == 2)
+            command.Format("<timeofday min=\"%s\" max=\"%s\"/>", timeinfo[0].GetData(), timeinfo[1].GetData() );
+    }
+    else if (!strncasecmp(block,"trait",5))
+    {
+		csString arguments = block.Slice(6,block.Length()).Trim();
+		size_t delimiter = arguments.FindFirst(" in",0);
+		csString name = arguments.Slice(0,delimiter).Trim();
+		csString location = arguments.Slice(delimiter+4, block.Length()).Trim();
+		command.Format("<trait name=\"%s\" location=\"%s\"/>", name.GetData(), location.GetData());
+    }
+    else if (!strncasecmp(block,"guild",5))  //NOTE: the both argument is implictly defined
+    {
+		csString type = block.Slice(6,block.Length()).Trim();
+        command.Format("<guild type=\"%s\"/>", type.Length() ? type.GetData() : "both" );
+    }
+    else if (!strncasecmp(block,"active magic",12))
+    {
+		csString magicname = block.Slice(13,block.Length()).Trim();
+        command.Format("<activemagic name=\"%s\"/>", magicname.GetData() );
+    }
+    else if (!strncasecmp(block,"known spell",11))
+    {
+        csString magicname = block.Slice(12,block.Length()).Trim();
+        command.Format("<knownspell name=\"%s\"/>", magicname.GetData() );
+    }
+    else if (!strncasecmp(block,"race",4))
+    {
+        csString racename = block.Slice(5,block.Length()).Trim();
+        command.Format("<race name=\"%s\"/>", racename.GetData() );
+    }
+    else if (!strncasecmp(block,"gender",6))
+    {
+        csString gender = block.Slice(7,block.Length()).Trim();
+        if(gender == "male") gender = "M";
+        else if(gender == "female") gender = "F";
+        else if(gender == "neutral") gender = "N";
+        command.Format("<gender type=\"%s\"/>", gender.GetData() );
+    }
+    else if (!strncasecmp(block,"married",7))
+    {
+        command.Format("<married/>");
+    }
+    else if (!strncasecmp(block,"equipped",8))
+    {
+        csString itemName = block.Slice(9,block.Length()).Trim();
+        //this manages the category argument Require equipped category xxxx
+        if(itemName.StartsWith("category"))
+        {
+            csString categoryName = itemName.Slice(9, itemName.Length()); //no need to trim done above
+            command.Format("<item inventory=\"false\" category=\"%s\"/>", categoryName.GetData());
+        }
+        else
+        {
+            command.Format("<item inventory=\"false\" name=\"%s\"/>", itemName.GetData());
+        }
+    }
+    else if (!strncasecmp(block,"possessed",9))
+    {
+		csString itemName = block.Slice(10,block.Length()).Trim();
+		//this manages the category argument Require equipped category xxxx
+        if(itemName.StartsWith("category"))
+        {
+            csString categoryName = itemName.Slice(9, itemName.Length()); //no need to trim done above
+            command.Format("<item inventory=\"true\" category=\"%s\"/>", categoryName.GetData());
+        }
+        else
+        {
+            command.Format("<item inventory=\"true\" name=\"%s\"/>",itemName.GetData());
+        }
+    }
+    else
+    {
+        result = false;
+    }
+    return command;
+}
+
+bool QuestManager::HandleRequireCommand(csString& block,
+                                       csString& response_requireop,
+                                       csString& substep_requireop,
+                                       NpcResponse *last_response,
+                                       psQuest *mainQuest,
+                                       bool& quest_assigned_already,
+                                       psQuest *quest)
+{
+    csString commandList;
+    bool result = true;
+    if(!strncasecmp(block, "not", 3)) //compatibility block this or the next should be removed and quest fixed.
+    {
+        csString innerBlock = block.Slice(3, block.Length()-1).Trim();
+        commandList.Format("<not>%s</not>", ParseRequireCommand(innerBlock, result).GetData());
+    }
+    else if(!strncasecmp(block, "no", 2))
+    {
+        csString innerBlock = block.Slice(2, block.Length()-1).Trim();
+        commandList.Format("<not>%s</not>", ParseRequireCommand(innerBlock, result).GetData());
+    }
+    else
+    {
+        commandList = ParseRequireCommand(block, result);
+    }
+    response_requireop.Append(commandList);
+    return result;
 }
 
 
