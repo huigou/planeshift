@@ -1,7 +1,7 @@
 /*
  * questmanager.h
  *
- * Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -59,7 +59,7 @@ protected:
     csArray<QuestRewardOffer*>  offers;
 
     csString lastError;     ///< Last error message to send to client on loadquest.
-            
+
     /**
      * Load all scripts from db
      */
@@ -71,7 +71,7 @@ protected:
                          csString& him, csString& her, csString& it, csString& them);
     bool BuildTriggerList(csString& block,csStringArray& list);
 
-	bool BuildMenu(const csString& block,const csStringArray& list, psQuest *quest, NpcDialogMenu *menu);
+    bool BuildMenu(const csString& block,const csStringArray& list, psQuest *quest, NpcDialogMenu *menu);
 
     int GetNPCFromBlock(WordArray words,csString& current_npc);
     bool ParseItemList(const csString & input, csString & parsedItemList);
@@ -82,16 +82,16 @@ protected:
                              csString& him, csString& her, csString& it, csString& them, csString& file_path);
     bool         AddTrigger(csString& current_npc,const char *trigger,
                             int prior_response_id,int trig_response, psQuest* quest, const psString& postfix);
-	void		 MergeTriggerMenus(NpcDialogMenu *pending_menu, const csString& current_npc);
+    void         MergeTriggerMenus(NpcDialogMenu *pending_menu, const csString& current_npc);
 
     void GetNextScriptLine(psString& scr, csString& block, size_t& start, int& line_number);
-    bool PrependPrerequisites(csString &substep_requireop, 
+    bool PrependPrerequisites(csString &substep_requireop,
                               csString &response_requireop,
                               bool quest_assigned_already,
                               NpcResponse *last_response,
                               psQuest *mainQuest);
 
-    bool HandlePlayerAction(csString& block, 
+    bool HandlePlayerAction(csString& block,
                             size_t& which_trigger,
                             csString& current_npc,
                             csStringArray& pending_triggers);
@@ -104,15 +104,22 @@ protected:
                              bool& quest_assigned_already,
                              psQuest *quest);
 
-	csString ParseRequireCommand(csString& block, bool& result);
+    /** Parses a require command inner part.
+     *  @note this functions doesn't handle the negations which are handled
+     *        by HandleRequireCommand
+     *  @param block A csString which is the block to be parsed stripped of "require" and the leading no, if any.
+     *  @param result A bool which will store if it was possible to parse the passed string
+     *  @return A csString which has the xml result of the parsing
+     */
+    csString ParseRequireCommand(csString& block, bool& result);
 
-    bool HandleRequireCommand(csString& block,
-                             csString& response_requireop,
-                             csString& substep_requireop,
-                             NpcResponse *last_response,
-                             psQuest *mainQuest,
-                             bool& quest_assigned_already,
-                             psQuest *quest);
+    /** Parses a require command.
+     *  @note this function handles no and not and calls parseRequireCommand for the inner parsing
+     *  @param block A csString which is the block to be parsed stripped of "require".
+     *  @param response_requireop A csString where to append the response prerequisites.
+     *  @return A boolean indicating if the operation was successfull.
+     */
+    bool HandleRequireCommand(csString& block, csString& response_requireop);
 
     void HandleQuestInfo(MsgEntry *pMsg,Client *client);
     void HandleQuestReward(MsgEntry *pMsg,Client *client);
