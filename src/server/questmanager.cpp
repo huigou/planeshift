@@ -579,27 +579,43 @@ csString QuestManager::ParseRequireCommand(csString& block, bool& result)
 
 bool QuestManager::HandleRequireCommand(csString& block, csString& response_requireop)
 {
+	csStringArray blockList;
+	blockList.SplitString(block, "|");
+	
     csString commandList; //stores the entire parsed chunk of prerequisites.
     bool result = true; //by default the result is positive, if it becomes false it means failure in parsing
-    if(!strncasecmp(block, "not", 3)) //compatibility block this or the next should be removed and quest fixed.
+    
+    if(blockList.GetSize() > 1) //if it's bigger than 1 we have *OR* so we prepend <or>
+		commandList = "<or>";
+
+    for(size_t i = 0; i < blockList.GetSize(); i++)
     {
-        //we remove the leading not and parse as if there was no not
-        //then we put the result inside two <not></not>
-        csString innerBlock = block.Slice(3, block.Length()-1).Trim();
-        commandList.Format("<not>%s</not>", ParseRequireCommand(innerBlock, result).GetData());
-    }
-    else if(!strncasecmp(block, "no", 2))
-    {
-        //we remove the leading no and parse as if there was no no
-        //then we put the result inside two <not></not>
-        csString innerBlock = block.Slice(2, block.Length()-1).Trim();
-        commandList.Format("<not>%s</not>", ParseRequireCommand(innerBlock, result).GetData());
-    }
-    else
-    {
-        //this has no not or no then we just pass the string as it is.
-        commandList = ParseRequireCommand(block, result);
-    }
+		csString currentBlock = blockList.Get(i);
+		currentBlock.Trim();
+		if(!strncasecmp(currentBlock, "not", 3)) //compatibility block this or the next should be removed and quest fixed.
+		{
+			//we remove the leading not and parse as if there was no not
+			//then we put the result inside two <not></not>
+			csString innerBlock = currentBlock.Slice(3, currentBlock.Length()-1).Trim();
+			commandList.AppendFmt("<not>%s</not>", ParseRequireCommand(innerBlock, result).GetData());
+		}
+		else if(!strncasecmp(currentBlock, "no", 2))
+		{
+			//we remove the leading no and parse as if there was no no
+			//then we put the result inside two <not></not>
+			csString innerBlock = currentBlock.Slice(2, currentBlock.Length()-1).Trim();
+			commandList.AppendFmt("<not>%s</not>", ParseRequireCommand(innerBlock, result).GetData());
+		}
+		else
+		{
+			//this has no not or no then we just pass the string as it is.
+			commandList.Append(ParseRequireCommand(currentBlock, result));
+		}
+	}
+	
+	if(blockList.GetSize() > 1) //if it's bigger than 1 we have *OR* so we append </or>
+		commandList.Append("</or>");
+
     //append the result to the prerequisites
     response_requireop.Append(commandList);
     //return the result of the operation
