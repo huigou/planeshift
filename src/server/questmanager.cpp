@@ -399,8 +399,7 @@ bool QuestManager::HandleScriptCommand(csString& block,
         {
             //we remove the leading require and let another function do the parsing of this
             csString requireBlock = block.Slice(7).Trim();
-            if(!HandleRequireCommand(requireBlock,response_requireop,substep_requireop,last_response,mainQuest,
-                                 quest_assigned_already,quest))
+            if(!HandleRequireCommand(requireBlock,response_requireop))
             {
                 //we got a false from handlerequirecommand: it means it wasn't able to parse the require command.
                 Error2("Unknown require command '%s' !",block.GetData());
