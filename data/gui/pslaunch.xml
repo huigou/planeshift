@@ -333,10 +333,10 @@
           <text string="Enable Grass:" position="left"/>
         </widget>
 
-        <widget name="VBO (may cause crashes with ATI cards)" factory="pawsCheckBox" id="13115">
+        <widget name="VBO" factory="pawsCheckBox" id="13115">
           <frame x="0" y="183" width="280" height="15"/>
           <checkbox on="radioon" off="radiooff" size="17"/>
-          <text string="Enable VBO:" position="left"/>
+          <text string="Enable VBO (may cause crashes with ATI cards):" position="left"/>
         </widget>
 
         <widget name="LoaderCache" factory="pawsCheckBox" id="13116">
