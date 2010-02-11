@@ -69,7 +69,7 @@ int ProgressCallback(void *clientp, double finalSize, double dlnow, double ultot
 
     double dlnormalized = dlnow;
     const char* dlUnits = normalize_bytes(&dlnormalized);
-    progressLine.AppendFmt("]    %4.3f%s (%3.2f%%)   %4.2f%s/s", dlnormalized, dlUnits, progress * 100.0, speed, speedUnits);
+    progressLine.AppendFmt("]    %4.2f%s (%3.1f%%)   %4.2f%s/s", dlnormalized, dlUnits, progress * 100.0, speed, speedUnits);
     lastSize = dlnow;
     if(dlnow == finalSize)
     {
