@@ -178,7 +178,7 @@ bool Downloader::DownloadFile(const char *file, const char *dest, bool URL, bool
 
         if (!file)
         {
-    		UpdaterEngine::GetSingletonPtr()->PrintOutput("Couldn't write to file! (%s)\n", destpath);
+    		UpdaterEngine::GetSingletonPtr()->PrintOutput("Couldn't write to file! (%s)\n", destpath.GetData());
             return false;
         }
 
