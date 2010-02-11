@@ -197,7 +197,7 @@ psBuyEvent::psBuyEvent(PID from, const char* fromName, PID to, const char* toNam
 {
     // Merchant => Player
 
-    msg.AttachNew(new MsgEntry( (sizeof(int) * 4) + sizeof(unsigned int)+
+    msg.AttachNew(new MsgEntry( (sizeof(int) * 4) + strlen(fromName) + 1 + strlen(toName) + 1 + strlen(itemName) + 1 + sizeof(unsigned int)+
                        sizeof(item), PRIORITY_LOW));
                        
     msg->SetType(MSGTYPE_BUY_EVENT);                   
@@ -251,7 +251,7 @@ psSellEvent::psSellEvent(PID from, const char* fromName, PID to, const char* toN
 {
     // Player => Merchant
 
-    msg.AttachNew(new MsgEntry( (sizeof(int) * 4) + sizeof(unsigned int)+
+    msg.AttachNew(new MsgEntry( (sizeof(int) * 4) + strlen(fromName) + 1 + strlen(toName) + 1 + strlen(itemName) + 1 + sizeof(unsigned int)+
                        sizeof(item), PRIORITY_LOW));
                        
     msg->SetType(MSGTYPE_SELL_EVENT);                   
@@ -305,7 +305,7 @@ psPickupEvent::psPickupEvent(PID to, const char* toName, unsigned int item, cons
 {
     // Player => Merchant
     
-    msg.AttachNew(new MsgEntry( (sizeof(int) * 4) + sizeof(unsigned int)+
+    msg.AttachNew(new MsgEntry( (sizeof(int) * 4) + strlen(toName) + 1 + strlen(itemName) + 1 + sizeof(unsigned int)+
                                sizeof(item), PRIORITY_LOW));
     
     msg->SetType(MSGTYPE_PICKUP_EVENT);                   
@@ -355,7 +355,7 @@ psDropEvent::psDropEvent(PID from, const char* fromName, unsigned int item, cons
 {
     // Player => Merchant
     
-    msg.AttachNew(new MsgEntry( (sizeof(int) * 4) + sizeof(unsigned int)+
+    msg.AttachNew(new MsgEntry( (sizeof(int) * 4) + strlen(fromName) + 1 + strlen(itemName) + 1 + sizeof(unsigned int)+
                                sizeof(item), PRIORITY_LOW));
     
     msg->SetType(MSGTYPE_DROP_EVENT);                   
@@ -405,7 +405,7 @@ psLootEvent::psLootEvent(PID from, const char* fromName, PID to, const char* toN
 {
     // Player => Merchant
     
-    msg.AttachNew(new MsgEntry( (sizeof(int) * 4) + sizeof(unsigned int)+
+    msg.AttachNew(new MsgEntry( (sizeof(int) * 4) + strlen(fromName) + 1 + strlen(toName) + 1 + strlen(itemName) + 1 + sizeof(unsigned int)+
                                sizeof(item), PRIORITY_LOW));
     
     msg->SetType(MSGTYPE_LOOT_EVENT);                   
