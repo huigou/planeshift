@@ -178,7 +178,7 @@ bool Downloader::DownloadFile(const char *file, const char *dest, bool URL, bool
 
         if (!file)
         {
-            printf("Couldn't write to file! (%s).\n", dest);
+    		UpdaterEngine::GetSingletonPtr()->PrintOutput("Couldn't write to file! (%s)\n", destpath);
             return false;
         }
 
@@ -218,9 +218,9 @@ bool Downloader::DownloadFile(const char *file, const char *dest, bool URL, bool
             if(!silent)
             {
                 if(error.IsEmpty())
-                    printf ("Server error %i (%s)\n", curlhttpcode, url.GetData());
+    			UpdaterEngine::GetSingletonPtr()->PrintOutput("Server error %i (%s)\n", curlhttpcode, url.GetData());
                 else
-                    printf ("Server error: %s (%i)\n", error.GetData(), curlhttpcode);
+    			UpdaterEngine::GetSingletonPtr()->PrintOutput("Server error: %s (%i)\n", error.GetData(), curlhttpcode);
             }
 
             if(!URL)
@@ -247,7 +247,7 @@ bool Downloader::DownloadFile(const char *file, const char *dest, bool URL, bool
         mirror = NULL;
     }
     else
-        printf("\nThere are no active mirrors! Please check the forums for more info and help!\n");
+    	UpdaterEngine::GetSingletonPtr()->PrintOutput("\nThere are no active mirrors! Please check the forums for more info and help!\n");
 
     return false;
 }
