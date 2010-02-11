@@ -186,6 +186,7 @@ public:
     void AddMessage( const char* data, int colour = -1 );
 
     void AppendLastMessage( const char* data );
+    void ReplaceLastMessage( const char* data );
 
     virtual void OnResize();
     virtual void Resize(); 

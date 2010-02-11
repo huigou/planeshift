@@ -206,6 +206,10 @@ bool psLauncherGUI::HandleEvent (iEvent &ev)
             {
                 updateProgressOutput->AddMessage(message);
             }
+            else if(message.FindFirst("\r") != (size_t) -1)
+            {
+                    updateProgressOutput->ReplaceLastMessage(message);
+            }
             else
             {
                 updateProgressOutput->AppendLastMessage(message);
@@ -235,7 +239,11 @@ bool psLauncherGUI::HandleEvent (iEvent &ev)
             {
                 updateProgressOutput->AddMessage(message);
             }
-            else
+            else if(message.FindFirst("\r") != (size_t)-1)
+	    {
+		    updateProgressOutput->ReplaceLastMessage(message);
+	    }
+	    else
             {
                 updateProgressOutput->AppendLastMessage(message);
             }
