@@ -315,6 +315,13 @@ bool UpdaterEngine::CheckUpdater()
         return false;
     }
 
+    // Check if we need to update the mirrors.
+    // TODO: Actually update the local list.
+    if(config->GetNewConfig()->GetMirrors().GetSize() != 0)
+    {
+        config->GetCurrentConfig()->GetMirrors() = config->GetNewConfig()->GetMirrors();
+    }
+
     // Compare Versions.
     return(config->UpdatePlatform() && (config->GetNewConfig()->GetUpdaterVersionLatest() - UPDATER_VERSION > 0.01));        
 }
