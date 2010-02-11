@@ -25,10 +25,24 @@
 #include "updaterconfig.h"
 #include "updaterengine.h"
 
+csTicks dlStart;
+const int progressWidth = 50;
+
 size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream)
 {
     size_t written = fwrite(ptr, size, nmemb, (FILE *)stream);
     return written;
+}
+
+const char* normalize_bytes(double* bytes)
+{
+	if(*bytes < 1000.0)
+		return "B";
+	*bytes /= 1000.0;
+	if(*bytes < 1000.0)
+		return "kB";
+	*bytes /= 1000.0;
+	return "MB";
 }
 
 int ProgressCallback(void *clientp, double finalSize, double dlnow, double ultotal, double ulnow)
@@ -37,42 +51,34 @@ int ProgressCallback(void *clientp, double finalSize, double dlnow, double ultot
     double progress = dlnow / finalSize;
     
     // Don't output anything if there's been no progress.
-    if(progress == 0)
+    if(progress == 0 || finalSize <= 102400)
         return 0;
-
+    csString progressLine;
     if(lastSize == 0)
+	    progressLine += '\n';
+    progressLine += '[';
+    for(int pos = 0; pos < progressWidth; pos++)
     {
-        if(finalSize > 102400)
-        {
-            UpdaterEngine::GetSingletonPtr()->PrintOutput("\n0%% ");
-            lastSize = progress;
-        }
+	    if(pos < progressWidth * progress)
+	    	progressLine += '-';
+	    else
+		progressLine += ' ';
     }
-    else if(finalSize/progress < 4 && lastSize < finalSize/4)
+    double speed = 1000.0 * dlnow / (csGetTicks() - dlStart);
+    const char* speedUnits = normalize_bytes(&speed);
+
+    double dlnormalized = dlnow;
+    const char* dlUnits = normalize_bytes(&dlnormalized);
+    progressLine.AppendFmt("]    %4.3f%s (%3.2f%%)   %4.2f%s/s", dlnormalized, dlUnits, progress * 100.0, speed, speedUnits);
+    lastSize = dlnow;
+    if(dlnow == finalSize)
     {
-        UpdaterEngine::GetSingletonPtr()->PrintOutput(" 25%% ");
-        lastSize = progress;
+	    progressLine += "\n\n";
+	    lastSize = 0;
     }
-    else if(finalSize/progress < 2 && lastSize < finalSize/2)
-    {
-        UpdaterEngine::GetSingletonPtr()->PrintOutput(" 50%% ");
-        lastSize = progress;
-    }
-    else if((float)finalSize/(float)progress < 1.34 && (float)lastSize < (float)finalSize/1.34)
-    {
-        UpdaterEngine::GetSingletonPtr()->PrintOutput(" 75%% ");
-        lastSize = progress;
-    }
-    else if(progress == finalSize)
-    {
-        UpdaterEngine::GetSingletonPtr()->PrintOutput(" 100%%\n\n");
-        lastSize = 0;
-    }
-    else if((progress-lastSize) > (finalSize/20) && progress < finalSize - (finalSize/20))
-    {
-        UpdaterEngine::GetSingletonPtr()->PrintOutput("-");
-        lastSize = progress;
-    }
+    else
+	    progressLine += '\r';
+    UpdaterEngine::GetSingletonPtr()->PrintOutput(progressLine);
 
     fflush(stdout);
     
@@ -136,6 +142,7 @@ bool Downloader::DownloadFile(const char *file, const char *dest, bool URL, bool
         
         if(!URL)
         {
+    		UpdaterEngine::GetSingletonPtr()->PrintOutput("Using mirror %s\n", url.GetData());
             url.Append(file);
         }
 
@@ -175,6 +182,7 @@ bool Downloader::DownloadFile(const char *file, const char *dest, bool URL, bool
             return false;
         }
 
+	dlStart = csGetTicks();
         curl_easy_setopt(curl, CURLOPT_URL, url.GetData());
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, file);

@@ -762,6 +762,29 @@ void pawsMessageTextBox::AppendLastMessage(const char* data)
     }
 }
 
+void pawsMessageTextBox::ReplaceLastMessage(const char* rawMessage)
+{
+	csString data(rawMessage);
+	data.ReplaceAll("\r", "");
+    if(messages.IsEmpty())
+    {
+      AddMessage(data);
+      return;
+    }
+
+    MessageLine* line = messages.Get(messages.GetSize()-1);
+    line->text.Replace(data);
+    line = adjusted.Get(adjusted.GetSize()-1);
+    line->text.Replace(data);
+
+    // Trim \n from the end and add a new line.
+    while(line->text.FindLast("\n") == line->text.Length()-1)
+    {
+      line->text.Truncate(line->text.Length()-1);
+      AddMessage("");
+    }
+}
+
 void pawsMessageTextBox::OnUpdateData(const char *dataname,PAWSData& value)
 {
     // This is called automatically whenever subscribed data is published.
