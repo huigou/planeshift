@@ -2035,6 +2035,13 @@ double gemActor::CalcFunction(const char *f, const double *params)
     {
         return ActiveSpellCount(MathScriptEngine::GetString(params[0]));
     }
+    else if (func == "RangeTo")
+    {
+        // Ultimately this should probably go in gemObject::CalcFunction, but
+        // we'd need to check both gemObject and psCharacter, and that's a bit
+        // of a pain with the current interface.
+        return RangeTo((gemObject*)(intptr_t)params[0]);
+    }
     else if (func == "Faction")
     {
         const char *factionName = MathScriptEngine::GetString(params[0]);
