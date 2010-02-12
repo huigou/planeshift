@@ -103,7 +103,7 @@ protected:
     Perception        *last_perception;
     int                debugging;       /// The current debugging level for this npc
     bool               alive;
-    PID                owner_id;
+    EID                owner_id;
     EID                target_id;
     psTribe           *tribe;
 
@@ -240,6 +240,12 @@ public:
 
     gemNPCObject *GetOwner();
     const char* GetOwnerName();
+    
+    /** Sets the owner of this npc. The server will send us the owner of
+     *  the entity connected to it so we can follow it's directions.
+     *  @param owner_EID the eid of the entity who owns this npc.
+     */
+    void SetOwner(EID owner_EID);
 
     /** Set a new tribe for this npc */
     void SetTribe(psTribe * new_tribe);

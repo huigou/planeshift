@@ -353,7 +353,7 @@ public:
      */
     void CheckAttachTribes( NPC* npc);
 
-    void AttachNPC( gemNPCActor* actor, uint8_t DRcounter ); 
+    void AttachNPC( gemNPCActor* actor, uint8_t DRcounter, EID ownerEID ); 
 
     iCollideSystem *GetCollDetSys() { return cdsys; }
 

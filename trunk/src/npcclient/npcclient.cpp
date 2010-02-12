@@ -665,7 +665,7 @@ void psNPCClient::CheckAttachTribes( NPC* npc)
 }
 
 
-void psNPCClient::AttachNPC( gemNPCActor* actor, uint8_t DRcounter)
+void psNPCClient::AttachNPC( gemNPCActor* actor, uint8_t DRcounter, EID ownerEID)
 {
     if (!actor) return;
 
@@ -706,6 +706,8 @@ void psNPCClient::AttachNPC( gemNPCActor* actor, uint8_t DRcounter)
                     return;
         }
     }
+    
+    npc->SetOwner(ownerEID);
     
     actor->AttachNPC(npc);
 
