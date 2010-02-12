@@ -272,7 +272,7 @@ void NetworkManager::HandleAllEntities(MsgEntry *message)
 
 void NetworkManager::HandleActor(MsgEntry *me)
 {
-    psPersistActor mesg( me, 0, GetMsgStrings(), engine );
+    psPersistActor mesg( me, 0, GetMsgStrings(), engine, true );
 
     Debug4(LOG_NET, 0, "Got persistActor message, size %zu, id=%d, name=%s", me->GetSize(),mesg.playerID.Unbox(),mesg.name.GetDataSafe() );
 
@@ -313,7 +313,7 @@ void NetworkManager::HandleActor(MsgEntry *me)
     
     if ( mesg.flags & psPersistActor::NPC )
     {
-        npcclient->AttachNPC( actor, mesg.counter, mesg.ownerEID );                
+        npcclient->AttachNPC( actor, mesg.counter, mesg.ownerEID, mesg.masterID );                
     }
     
     npcclient->Add( actor );

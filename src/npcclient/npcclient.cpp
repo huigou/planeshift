@@ -492,7 +492,7 @@ gemNPCObject *psNPCClient::FindCharacterID(PID PID)
     return all_gem_objects_by_pid.Get(PID, 0);
 }
 
-NPC* psNPCClient::ReadSingleNPC(PID char_id)
+NPC* psNPCClient::ReadSingleNPC(PID char_id, bool master)
 {
     Result result(db->Select("SELECT * FROM sc_npc_definitions WHERE char_id=%u", char_id.Unbox()));
     if (!result.IsValid() || !result.Count())
@@ -502,7 +502,9 @@ NPC* psNPCClient::ReadSingleNPC(PID char_id)
     }
     NPC *newnpc = new NPC(this, network, world, engine, cdsys);
 
-    if (newnpc->Load(result[0],npctypes, eventmanager))
+    //note we shouldn't load it manually but reuse what's loaded already but doing this till we know if the
+    //load taking parameters works well
+    if (newnpc->Load(result[0],npctypes, eventmanager, master ? char_id : 0))
     {
     	newnpc->Tick();
         npcs.Push(newnpc);
@@ -537,7 +539,7 @@ bool psNPCClient::ReadNPCsFromDatabase()
         }
 
         NPC *npc = new NPC(this, network, world, engine, cdsys);
-        if (npc->Load(rs[i],npctypes, eventmanager))
+        if (npc->Load(rs[i],npctypes, eventmanager, 0))
         {
         	npc->Tick();
             npcs.Push(npc);
@@ -665,7 +667,7 @@ void psNPCClient::CheckAttachTribes( NPC* npc)
 }
 
 
-void psNPCClient::AttachNPC( gemNPCActor* actor, uint8_t DRcounter, EID ownerEID)
+void psNPCClient::AttachNPC( gemNPCActor* actor, uint8_t DRcounter, EID ownerEID, PID masterID)
 {
     if (!actor) return;
 
@@ -679,31 +681,12 @@ void psNPCClient::AttachNPC( gemNPCActor* actor, uint8_t DRcounter, EID ownerEID
                 actor->GetName(), ShowID(actor->GetPID()));
 
         npc = ReadSingleNPC(actor->GetPID()); //try reloading the tables if we didn't find it
-        if(!npc) //still not found. Try recovering missing data. The recovery process is only for pets, but teorically it can be expanded
-        {        //to other npcs types
-        
-                Result result(db->Select("SELECT * FROM character_relationships WHERE related_id=%u", actor->GetPID().Unbox()));
-                if (result.IsValid() && result.Count() && (csString)result[0][2] == "familiar") //just to be sure
-                {
-                    PID owner_id = PID(result[0].GetUInt32("character_id")); //good we have the owner
-                    //now we need the char master npc
-                    Result result2(db->Select("SELECT npc_master_id FROM characters WHERE id=%u",actor->GetPID().Unbox()));
-                    
-                    if (result.IsValid() && result.Count())
-                    {
-                        PID master_id = PID(result2[0].GetUInt32(0)); //gotcha :)
-                        NPC *npc_int = FindNPCByPID(master_id);
-                        if(npc_int)
-                        {
-                            npc_int->InsertCopy(actor->GetPID(),owner_id);
-                            npc = ReadSingleNPC(actor->GetPID()); //should load now :P
-                            CPrintf(CON_WARNING, "Recreated missing pet %s owned by %s of type %s\n", ShowID(actor->GetPID()), ShowID(owner_id), ShowID(master_id));
-                        }
-                    }
-
-                }
-                if(!npc) //last chance if false good bye
-                    return;
+        if(!npc) //still not found. we do a last check
+        {
+            if(masterID.IsValid()) //Probably it's mastered. Try loading the master for this
+                npc = ReadSingleNPC(masterID, true); //loads the master npc data and assign it to this
+            if(!npc) //last chance if false good bye
+                return;
         }
     }
     
