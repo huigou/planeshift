@@ -272,6 +272,7 @@ psEngine::psEngine (iObjectRegistry *objectreg, psCSSetup *CSSetup)
     countFPS = 0;
     timeFPS = 0;
     currFPS = 0;
+    showFPS = false;
 
 #if !defined(CS_DEBUG) && defined(CS_PLATFORM_MACOSX)
     delete macReporter;
@@ -516,6 +517,12 @@ bool psEngine::Initialize (int level)
         csReport (object_reg, CS_REPORTER_SEVERITY_NOTIFY, PSAPP,
             "psEngine initialized.");
 
+	// Set up font for messages that bypass paws.
+        iFontServer* fntsvr = g2d->GetFontServer ();
+        if (fntsvr)
+        {
+            font = fntsvr->LoadFont (CSFONT_LARGE);
+	}
 
         return true;
     }
@@ -986,6 +993,12 @@ bool psEngine::Process2D(iEvent& ev)
         g3d->BeginDraw(CSDRAW_2DGRAPHICS);
         if (effectManager)
             effectManager->Render2D(g3d, g2d);
+	if (showFPS)
+	{
+	    csString fpsDisplay;
+	    fpsDisplay.Format("%.2f", getFPS());
+	    g2d->Write(font, 5, 5, g2d->FindRGB(255, 255, 255), -1, fpsDisplay);
+	}
         paws->Draw();
     }
 

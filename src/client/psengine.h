@@ -46,6 +46,7 @@ struct iDocumentSystem;
 struct iEngine;
 struct iEvent;
 struct iEventQueue;
+struct iFont;
 struct iGraphics2D;
 struct iGraphics3D;
 struct iSceneManipulate;
@@ -232,6 +233,8 @@ public:
     void setLimitFPS(int);
     int getLimitFPS() { return maxFPS; }
     float getFPS() { return currFPS; }
+
+    bool toggleFPS() { showFPS = !showFPS; return showFPS; }
 
     /// Sets the duel confirmation type
     void SetDuelConfirm(int confirmType);
@@ -467,6 +470,10 @@ private:
     float currFPS;
     unsigned int countFPS;
     unsigned int timeFPS;
+
+    bool showFPS;
+
+    csRef<iFont> font;
 
     /// Whether sounds should be muted when the application loses focus.
     bool muteSoundsOnFocusLoss;
