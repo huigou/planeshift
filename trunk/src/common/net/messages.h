@@ -3125,9 +3125,9 @@ public:
                     uint8_t movementMode,
                     uint8_t serverMode,
                     PID playerID = 0, uint32_t groupID = 0, EID ownerEID = 0,
-                    uint32_t flags = NONE );
+                    uint32_t flags = NONE, PID masterID = 0, bool forNPClient = false);
 
-    psPersistActor( MsgEntry* me, csStringSet* msgstrings, csStringHashReversible* msgstringshash, iEngine *engine );
+    psPersistActor( MsgEntry* me, csStringSet* msgstrings, csStringHashReversible* msgstringshash, iEngine *engine, bool forNPClient = false );
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -3166,6 +3166,7 @@ public:
     uint32_t groupID;
     EID ownerEID;
     bool control;
+    PID masterID;
     uint32_t flags;
     InstanceID instance;
 

@@ -353,11 +353,11 @@ public:
      */
     void CheckAttachTribes( NPC* npc);
 
-    void AttachNPC( gemNPCActor* actor, uint8_t DRcounter, EID ownerEID ); 
+    void AttachNPC( gemNPCActor* actor, uint8_t DRcounter, EID ownerEID, PID masterID ); 
 
     iCollideSystem *GetCollDetSys() { return cdsys; }
 
-    NPC *ReadSingleNPC(PID char_id);
+    NPC *ReadSingleNPC(PID char_id, bool master = false);
 
     /**
      * Update with time from server in order to start timed events.

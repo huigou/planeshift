@@ -2647,7 +2647,8 @@ void gemActor::Send( int clientnum, bool control, bool to_superclients, psPersis
                          (to_superclients || allEntities) ? pid : 0, // playerID should not be distributed to clients
                          groupID,
                          0, // ownerEID
-                         flags
+                         flags, 0,
+                         (to_superclients || allEntities)
                          );
 
     // Only send to client
@@ -4472,7 +4473,8 @@ void gemNPC::Send( int clientnum, bool control, bool to_superclients, psPersistA
                          (to_superclients || allEntities) ? pid : 0, // playerID should not be distributed to clients
                          0, // groupID
                          ownerEID,
-                         flags
+                         flags, (to_superclients || allEntities) ? psChar->GetMasterNPCID() : 0,
+                         (to_superclients || allEntities)
                          );
 
     if (clientnum && !to_superclients)

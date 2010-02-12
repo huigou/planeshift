@@ -4702,7 +4702,9 @@ psPersistActor::psPersistActor( uint32_t clientNum,
                                 PID playerID,
                                 uint32_t groupID,
                                 EID ownerEID,
-                                uint32_t flags)
+                                uint32_t flags,
+                                PID masterID,
+                                bool forNPClient)
 {
     msg.AttachNew(new MsgEntry( MAX_MESSAGE_SIZE ));
 
@@ -4749,6 +4751,11 @@ psPersistActor::psPersistActor( uint32_t clientNum,
     msg->Add( (int32_t)0 );
     msg->Add(scale);
     msg->Add(mountScale);
+    //add this only for the npcclient probably other data can be added to this like playerid, ownerid and instance
+    if(forNPClient)
+    {
+        msg->Add(masterID.Unbox());
+    }
     if (flags) // No point sending 0, has to be at the end
     {
         msg->Add( flags );
@@ -4757,7 +4764,7 @@ psPersistActor::psPersistActor( uint32_t clientNum,
     msg->ClipToCurrentSize();
 }
 
-psPersistActor::psPersistActor( MsgEntry* me, csStringSet* msgstrings, csStringHashReversible* msgstringshash, iEngine *engine )
+psPersistActor::psPersistActor( MsgEntry* me, csStringSet* msgstrings, csStringHashReversible* msgstringshash, iEngine *engine, bool forNPClient )
 {
     ReadDRInfo(me, msgstrings, msgstringshash, engine);
 
@@ -4808,10 +4815,16 @@ psPersistActor::psPersistActor( MsgEntry* me, csStringSet* msgstrings, csStringH
     scale      = me->GetFloat();
     mountScale = me->GetFloat();
 
+    if(forNPClient)
+        masterID = PID(me->GetUInt32());
+    else
+        masterID = 0;
+
     if (!me->IsEmpty())
         flags   = me->GetUInt32();
     else
         flags   = 0;
+        csString msgtext;
 }
 
 csString psPersistActor::ToString(AccessPointers * access_ptrs)
@@ -4839,6 +4852,7 @@ csString psPersistActor::ToString(AccessPointers * access_ptrs)
     msgtext.AppendFmt(" GroupID: %d",groupID);
     msgtext.AppendFmt(" OwnerEID: %d",ownerEID.Unbox());
     msgtext.AppendFmt(" Instance: %d",instance);
+    msgtext.AppendFmt(" MasterID: %d",masterID.Unbox());
     msgtext.AppendFmt(" Flags:");
     if (flags & INVISIBLE) msgtext.AppendFmt(" INVISIBLE");
     if (flags & INVINCIBLE) msgtext.AppendFmt(" INVINCIBLE");

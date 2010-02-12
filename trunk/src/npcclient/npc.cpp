@@ -160,14 +160,21 @@ void NPC::Load(const char* name, PID pid, NPCType* type, const char* region_name
     this->brain = new NPCType(*type, eventmanager);
 }
 
-bool NPC::Load(iResultRow& row, csHash<NPCType*, const char*>& npctypes, EventManager* eventmanager)
+bool NPC::Load(iResultRow& row, csHash<NPCType*, const char*>& npctypes, EventManager* eventmanager, PID usePID)
 {
     name = row["name"];
-    pid   = row.GetInt("char_id");
-    if ( pid == 0 )
+    if(usePID.IsValid())
     {
-        Error1("NPC has no id attribute. Error in XML");
-        return false;
+        pid = usePID;
+    }
+    else
+    {
+        pid   = row.GetInt("char_id");
+        if ( pid == 0 )
+        {
+            Error1("NPC has no id attribute. Error in XML");
+            return false;
+        }
     }
 
     type = row["npctype"];
