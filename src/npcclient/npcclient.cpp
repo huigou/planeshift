@@ -685,7 +685,7 @@ void psNPCClient::AttachNPC( gemNPCActor* actor, uint8_t DRcounter, EID ownerEID
                 npc = ReadSingleNPC(masterID, true); //loads the master npc data and assign it to this
             if(!npc) //last chance if false good bye
             {
-                Error2("Error loading char_id %s.", ShowID(char_id));
+                Error2("Error loading char_id %s.", ShowID(actor->GetPID()));
                 return;
             }
         }
