@@ -443,12 +443,12 @@ void psSpell::Affect(gemActor *caster, gemObject *target, float range, float kFa
             if (!(targetTypes & caster->GetClient()->GetTargetType(nearby[i])))
                 continue;
 
-            csVector3 targetPos;
-            iSector *targetSector;
-            nearby[i]->GetPosition(targetPos, targetSector);
-
             if (angle < 2*PI)
             {
+                csVector3 targetPos;
+                iSector *targetSector;
+                nearby[i]->GetPosition(targetPos, targetSector);
+
                 csVector3 TP; // Target - Player pos.
                 csVector3 ATP; // Affected Target - Player pos.
                 target->GetPosition(TP, sector);
