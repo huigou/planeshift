@@ -496,10 +496,8 @@ NPC* psNPCClient::ReadSingleNPC(PID char_id, bool master)
 {
     Result result(db->Select("SELECT * FROM sc_npc_definitions WHERE char_id=%u", char_id.Unbox()));
     if (!result.IsValid() || !result.Count())
-    {
-        Error2("Error loading char_id %s.", ShowID(char_id));
         return NULL;
-    }
+
     NPC *newnpc = new NPC(this, network, world, engine, cdsys);
 
     //note we shouldn't load it manually but reuse what's loaded already but doing this till we know if the
@@ -686,7 +684,10 @@ void psNPCClient::AttachNPC( gemNPCActor* actor, uint8_t DRcounter, EID ownerEID
             if(masterID.IsValid()) //Probably it's mastered. Try loading the master for this
                 npc = ReadSingleNPC(masterID, true); //loads the master npc data and assign it to this
             if(!npc) //last chance if false good bye
+            {
+                Error2("Error loading char_id %s.", ShowID(char_id));
                 return;
+            }
         }
     }
     
