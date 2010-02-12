@@ -252,9 +252,6 @@ gemNPC* EntityManager::CreateFamiliar (gemActor *owner, PID masterPID)
         return NULL;
     }
 
-    // Prepare NPC client to the new npc
-    psserver->npcmanager->NewNPCNotify(familiarID, masterFamiliarID, owner->GetPID() );
-
     // Create Familiar using new ID
     this->CreateNPC( familiarID , false); //Do not update proxList, we will do that later.
 
