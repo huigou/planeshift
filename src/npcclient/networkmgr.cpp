@@ -313,7 +313,7 @@ void NetworkManager::HandleActor(MsgEntry *me)
     
     if ( mesg.flags & psPersistActor::NPC )
     {
-        npcclient->AttachNPC( actor, mesg.counter );                
+        npcclient->AttachNPC( actor, mesg.counter, mesg.ownerEID );                
     }
     
     npcclient->Add( actor );

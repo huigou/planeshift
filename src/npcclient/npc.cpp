@@ -82,6 +82,7 @@ NPC::NPC(psNPCClient* npcclient, NetworkManager* networkmanager, psWorld* world,
     checked = false;
     checkedResult = false;
     disabled = false;
+    owner_id = 0;
     this->npcclient = npcclient;
     this->networkmanager = networkmanager;
     this->world = world;
@@ -204,8 +205,6 @@ bool NPC::Load(iResultRow& row, csHash<NPCType*, const char*>& npctypes, EventMa
     {
         debugging = 0;
     }
-
-    owner_id = row.GetInt("char_id_owner");
 
     const char *e = row["disabled"];
     if (e && (*e=='Y' || *e=='y'))
@@ -634,7 +633,7 @@ gemNPCObject *NPC::GetOwner()
 {
     if (owner_id.IsValid())
     {
-        return npcclient->FindCharacterID( owner_id );
+        return npcclient->FindEntityID( owner_id );
     }        
     return NULL;
 }
@@ -643,7 +642,7 @@ const char * NPC::GetOwnerName()
 {
     if (owner_id.IsValid())
     {
-        gemNPCObject *obj = npcclient->FindCharacterID( owner_id );
+        gemNPCObject *obj = npcclient->FindEntityID( owner_id );
         if (obj)
         {
             return obj->GetName();
@@ -651,6 +650,12 @@ const char * NPC::GetOwnerName()
     }        
 
     return "";        
+}
+
+void NPC::SetOwner(EID owner_EID)
+{
+    if (owner_EID.IsValid())
+        owner_id = owner_EID;
 }
 
 void NPC::SetTribe(psTribe * new_tribe)
