@@ -875,6 +875,7 @@ void UserManager::HandleEntranceMessage( MsgEntry* me, Client *client )
     csVector3 pos = action->GetEntrancePosition();
     float rot = action->GetEntranceRotation();
     csString sectorName = action->GetEntranceSector();
+    InstanceID targetInstance = action->GetEntranceInstance();
 
     // Check for different entrance types
     csString entranceType = action->GetEntranceType();
@@ -893,6 +894,14 @@ void UserManager::HandleEntranceMessage( MsgEntry* me, Client *client )
         if (secure) psserver->SendSystemInfo(client->GetClientNum(),"Teleporting to sector %s", sectorName.GetData());
         actor->Teleport(sectorName, pos, rot, instance);
     }
+    
+    //send player to defined instance
+    else if (entranceType == "Instanced")
+    {
+		InstanceID instance = action->GetEntranceInstance();
+        if (secure) psserver->SendSystemInfo(client->GetClientNum(),"Teleporting to sector %s Instance: %u", sectorName.GetData(), instance);
+        actor->Teleport(sectorName, pos, rot, instance);
+	}
 
     // Send player back to starting point
     else if (entranceType == "ExitActionID")
@@ -918,10 +927,11 @@ void UserManager::HandleEntranceMessage( MsgEntry* me, Client *client )
         csVector3 retPos = retAction->GetReturnPosition();
         float retRot = retAction->GetReturnRotation() + (PI/2);
         csString retSectorName = retAction->GetReturnSector();
+        InstanceID instance = retAction->GetReturnInstance();
 
         // Send player back to return point
         if (secure) psserver->SendSystemInfo(client->GetClientNum(),"Teleporting to sector %s", sectorName.GetData());
-        actor->Teleport(retSectorName, retPos, retRot, DEFAULT_INSTANCE);
+        actor->Teleport(retSectorName, retPos, retRot, instance);
     }
     else
     {
