@@ -166,7 +166,12 @@ const char *psUtilityCommands::HandleCommand(const char *cmd)
     else if(words[0] =="/fps")
     {
 	    static csString fpsStr;
-	    fpsStr = psengine->getFPS();
+	    fpsStr.Format("%.2f", psengine->getFPS());
+	    bool showFPS = psengine->toggleFPS();
+	    if(showFPS)
+		    fpsStr += " displaying FPS.";
+	    else
+		    fpsStr += " hiding FPS.";
 	return fpsStr;
     }
     else if(words[0] == "/repaintlabels")

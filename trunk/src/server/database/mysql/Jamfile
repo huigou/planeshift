@@ -8,4 +8,5 @@ Plugin dbmysql :
 ExternalLibs dbmysql : CRYSTAL LIBMYSQLCLIENT ;
 LinkWith dbmysql : psutil ;
 CompileGroups dbmysql : server psnpcclient ;
+
 }
