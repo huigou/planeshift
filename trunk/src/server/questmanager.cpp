@@ -531,9 +531,9 @@ csString QuestManager::ParseRequireCommand(csString& block, bool& result)
     else if (!strncasecmp(block,"gender",6))
     {
         csString gender = block.Slice(7,block.Length()).Trim();
-        if(gender == "male") gender = "M";
-        else if(gender == "female") gender = "F";
-        else if(gender == "neutral") gender = "N";
+        if(gender.CompareNoCase("male")) gender = "M";
+        else if(gender.CompareNoCase("female")) gender = "F";
+        else if(gender.CompareNoCase("neutral")) gender = "N";
         command.Format("<gender type=\"%s\"/>", gender.GetData() );
     }
     else if (!strncasecmp(block,"married",7))
@@ -544,7 +544,7 @@ csString QuestManager::ParseRequireCommand(csString& block, bool& result)
     {
         csString itemName = block.Slice(9,block.Length()).Trim();
         //this manages the category argument Require equipped category xxxx
-        if(itemName.StartsWith("category"))
+        if(itemName.StartsWith("category",true))
         {
             csString categoryName = itemName.Slice(9, itemName.Length()); //no need to trim done above
             command.Format("<item inventory=\"false\" category=\"%s\"/>", categoryName.GetData());
@@ -558,7 +558,7 @@ csString QuestManager::ParseRequireCommand(csString& block, bool& result)
     {
         csString itemName = block.Slice(10,block.Length()).Trim();
         //this manages the category argument Require equipped category xxxx
-        if(itemName.StartsWith("category"))
+        if(itemName.StartsWith("category",true))
         {
             csString categoryName = itemName.Slice(9, itemName.Length()); //no need to trim done above
             command.Format("<item inventory=\"true\" category=\"%s\"/>", categoryName.GetData());
