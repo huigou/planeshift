@@ -115,6 +115,7 @@ bool ServerCharManager::Initialize()
 
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ServerCharManager>(this,&ServerCharManager::HandleInventoryMessage), MSGTYPE_GUIINVENTORY,REQUIRE_READY_CLIENT);
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ServerCharManager>(this,&ServerCharManager::HandleMerchantMessage),  MSGTYPE_GUIMERCHANT,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ServerCharManager>(this,&ServerCharManager::HandleStorageMessage),  MSGTYPE_GUISTORAGE,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ServerCharManager>(this,&ServerCharManager::ViewItem),               MSGTYPE_VIEW_ITEM,REQUIRE_READY_CLIENT);
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ServerCharManager>(this,&ServerCharManager::UpdateSketch),           MSGTYPE_VIEW_SKETCH,REQUIRE_READY_CLIENT);
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ServerCharManager>(this,&ServerCharManager::HandleBookWrite),        MSGTYPE_WRITE_BOOK, REQUIRE_READY_CLIENT);
@@ -706,7 +707,7 @@ void ServerCharManager::HandleMerchantCategory(psGUIMerchantMessage& msg, Client
         }
         else
         {
-            SendPlayerItems( client, itemCategory );
+            SendPlayerItems( client, itemCategory, false );
         }
     }
 }
@@ -1017,7 +1018,7 @@ void ServerCharManager::HandleMerchantSell(psGUIMerchantMessage& msg, Client *cl
 
         // Update client views
         SendPlayerMoney( client );
-        SendPlayerItems( client, item->GetCategory() );
+        SendPlayerItems( client, item->GetCategory(), false );
 
         // items are not currently given to merchant, they are just destroyed
         psItemStats *itemStats = item->GetBaseStats();
@@ -1225,7 +1226,7 @@ void ServerCharManager::SendOutEquipmentMessages( gemActor* actor,
                                             PROX_LIST_ANY_RANGE );
 }
 
-void ServerCharManager::SendPlayerMoney( Client *client )
+void ServerCharManager::SendPlayerMoney( Client *client, bool storage )
 {
     csString buff;
 
@@ -1237,9 +1238,18 @@ void ServerCharManager::SendPlayerMoney( Client *client )
     csString money_str = money.ToString();
     buff.Format("<M MONEY=\"%s\" />",money_str.GetData());
 
-    psGUIMerchantMessage msg(client->GetClientNum(),
-                              psGUIMerchantMessage::MONEY,buff);
-    psserver->GetEventManager()->SendMessage(msg.msg);
+    if(storage)//sends the correct message
+    {
+        psGUIStorageMessage msg(client->GetClientNum(),
+                                  psGUIStorageMessage::MONEY,buff);
+        psserver->GetEventManager()->SendMessage(msg.msg);
+    }
+    else
+    {
+        psGUIMerchantMessage msg(client->GetClientNum(),
+                                  psGUIMerchantMessage::MONEY,buff);
+        psserver->GetEventManager()->SendMessage(msg.msg);
+    }
 }
 
 bool ServerCharManager::SendMerchantItems( Client *client, psCharacter* merchant, psItemCategory* category)
@@ -1311,7 +1321,7 @@ int ServerCharManager::CalculateMerchantPrice(psItem *item, Client *client, bool
     return result->GetRoundValue();
 }
 
-bool ServerCharManager::SendPlayerItems( Client *client, psItemCategory* category)
+bool ServerCharManager::SendPlayerItems( Client *client, psItemCategory* category, bool storage)
 {
     csArray<psItem*> items = client->GetCharacterData()->Inventory().GetItemsInCategory(category);
 
@@ -1361,13 +1371,25 @@ bool ServerCharManager::SendPlayerItems( Client *client, psItemCategory* categor
         buff.Append(item);
     }
     buff.Append("</L>");
-
-    psGUIMerchantMessage msg4(client->GetClientNum(),psGUIMerchantMessage::ITEMS,buff.GetData());
-    if (msg4.valid)
-        psserver->GetEventManager()->SendMessage(msg4.msg);
+    if(storage)//send the correct message depending on situation
+    {
+        psGUIStorageMessage msg4(client->GetClientNum(),psGUIStorageMessage::ITEMS,buff.GetData());
+        if (msg4.valid)
+            psserver->GetEventManager()->SendMessage(msg4.msg);
+        else
+        {
+            Bug2("Could not create valid psGUIStorageMessage for client %u.\n",client->GetClientNum());
+        }
+    }
     else
     {
-        Bug2("Could not create valid psGUIMerchantMessage for client %u.\n",client->GetClientNum());
+        psGUIMerchantMessage msg4(client->GetClientNum(),psGUIMerchantMessage::ITEMS,buff.GetData());
+        if (msg4.valid)
+            psserver->GetEventManager()->SendMessage(msg4.msg);
+        else
+        {
+            Bug2("Could not create valid psGUIMerchantMessage for client %u.\n",client->GetClientNum());
+        }
     }
 
 
@@ -1381,6 +1403,489 @@ bool ServerCharManager::VerifyGoal(Client* client, psCharacter* character, psIte
         return false;
 
     return true;
+}
+
+/*********************************************************************
+ * Storage functionalities                                           *
+ *********************************************************************/
+
+void ServerCharManager::HandleStorageMessage( MsgEntry* me, Client *client )
+{
+    psGUIStorageMessage msg(me);
+    if (!msg.valid)
+    {
+        Debug2(LOG_NET,me->clientnum,"Received unparsable psGUIStorageMessage from client %u.\n",me->clientnum);
+        return;
+    }
+
+    switch (msg.command)
+    {
+        // This handles the initial request to withdraw or store from a storage
+        // A list of categories that this the player has is sent (store is default)
+        case psGUIStorageMessage::REQUEST:
+        {
+            HandleStorageRequest(msg,client);
+            break;
+        }
+        //  This handles the categories in the player or storage inventory and shows them only
+        case psGUIStorageMessage::CATEGORY:
+        {
+            HandleStorageCategory(msg,client);
+            break;
+        }
+        // This handles the withdrawing of the items from the storage
+        case psGUIStorageMessage::WITHDRAW:
+        {
+            HandleStorageWithdraw(msg,client);
+            break;
+        }
+        // This handles the storing of the items in the storage
+        case psGUIStorageMessage::STORE:
+        {
+            HandleStorageStore(msg,client);
+            break;
+        }
+        // This allows showing the item informations for either player inventory and storage
+        case psGUIStorageMessage::VIEW:
+        {
+            HandleStorageView(msg,client);
+            break;
+        }
+        //stops the storage management.
+        case psGUIStorageMessage::CANCEL:
+        {
+            client->GetCharacterData()->SetTradingStatus(psCharacter::NOT_TRADING,0);
+            break;
+        }
+
+    }
+}
+
+bool ServerCharManager::SendStorageItems( Client *client, psCharacter* character, psItemCategory* category)
+{
+    csArray<psItem*> items = character->Inventory().GetItemsInCategory(category,true);
+
+    // Build item list
+    csString buff("<L>");
+    csString item;
+
+    for ( size_t z = 0; z < items.GetSize(); z++ )
+    {
+        if (items[z]->IsEquipped())
+            continue;
+
+        csString escpxml_name = EscpXML(items[z]->GetName());
+        csString escpxml_imagename = EscpXML(items[z]->GetImageName());
+        item.Format("<ITEM ID=\"%u\" "
+                    "NAME=\"%s\" "
+                    "IMG=\"%s\" "
+                    "PRICE=\"%i\" "
+                    "COUNT=\"%i\" />",
+                    items[z]->GetUID(),
+                    escpxml_name.GetData(),
+                    escpxml_imagename.GetData(),
+                    CalculateMerchantPrice(items[z], client, false),
+                    items[z]->GetStackCount());
+
+        buff.Append(item);
+    }
+    buff.Append("</L>");
+
+    psGUIStorageMessage msg4(client->GetClientNum(),psGUIStorageMessage::ITEMS,buff.GetData());
+    if (msg4.valid)
+        psserver->GetEventManager()->SendMessage(msg4.msg);
+    else
+    {
+        Bug2("Could not create valid psGUIStorageMessage for client %u.\n",client->GetClientNum());
+    }
+
+
+    return true;
+}
+
+void ServerCharManager::BeginStoring(Client * client, gemObject * target, const csString & type)
+{
+    psCharacter * storage = NULL;
+    int clientnum = client->GetClientNum();
+    psCharacter* character = client->GetCharacterData();
+
+    // Make sure that we are not busy with something else
+    if (client->GetActor()->GetMode() != PSCHARACTER_MODE_PEACE)
+    {
+        psserver->SendSystemError(client->GetClientNum(), "You cannot check the storage because you are already busy.");
+        return;
+    }
+
+    if ( client->GetExchangeID() )
+    {
+        psserver->SendSystemError(client->GetClientNum(), "You are already busy with another trade" );
+        return;
+    }
+
+    storage = target->GetCharacterData();
+    if(!storage)
+    {
+        psserver->SendSystemInfo(client->GetClientNum(), "Storage not found.");
+        return;
+    }
+
+    if (client->GetActor()->RangeTo(target) > RANGE_TO_SELECT)
+    {
+        psserver->SendSystemInfo(client->GetClientNum(), "You are not in range to check your storage with %s.",storage->GetCharName());
+        return;
+    }
+
+    if (!target->IsAlive())
+    {
+        psserver->SendSystemInfo(client->GetClientNum(), "Can't trade with a dead storage.");
+        return;
+    }
+    if (!storage->IsBanker())//check if it's a banker for now.
+    {
+        psserver->SendSystemInfo(client->GetClientNum(), "%s doesn't keep a storage.",storage->GetCharName());
+        return;
+    }
+
+    psserver->SendSystemInfo(client->GetClientNum(), "You started checking your storage with %s.",storage->GetCharName());
+
+    if (type == "STORE")
+    {
+        csString commandData;
+        commandData.Format("<STORAGE ID=\"%d\" TRADE_CMD=\"%d\" />",
+                storage->GetPID().Unbox(), psGUIStorageMessage::STORE);
+
+        psGUIStorageMessage msg1(clientnum,psGUIStorageMessage::STORAGE,commandData);
+        msg1.SendMessage();
+        character->SetTradingStatus(psCharacter::STORING,storage);
+    }
+    else
+    {
+        csString commandData;
+        commandData.Format("<STORAGE ID=\"%d\" TRADE_CMD=\"%d\" />",
+                storage->GetPID().Unbox(), psGUIStorageMessage::WITHDRAW);
+        psGUIStorageMessage msg1(clientnum,psGUIStorageMessage::STORAGE,commandData);
+        psserver->GetEventManager()->SendMessage(msg1.msg);
+        character->SetTradingStatus(psCharacter::WITHDRAWING,storage);
+    }
+
+    // Build category list
+    csString categoryList("<L>");
+    csString buff;
+
+    for ( size_t z = 0; z < CacheManager::GetSingleton().GetItemCategoryAmount(); z++ )
+    {
+        psItemCategory * category = CacheManager::GetSingleton().GetItemCategoryByPos(z);
+        //check from what category items in player inventory are.
+        if(type == "STORE")
+        {
+            if(character->Inventory().hasItemCategory(category,false,true,false))
+            {
+                csString escpxml = EscpXML(category->name);
+                buff.Format("<CATEGORY ID=\"%d\" "
+                            "NAME=\"%s\" />",category->id,
+                            escpxml.GetData());
+                categoryList.Append(buff);
+            }
+        }
+        //check from what category items in the storage are.
+        else if(character->Inventory().hasItemCategory(category,false,false,true))
+        {
+            csString escpxml = EscpXML(category->name);
+            buff.Format("<CATEGORY ID=\"%d\" "
+                        "NAME=\"%s\" />",category->id,
+                        escpxml.GetData());
+            categoryList.Append(buff);
+        }
+    }
+    categoryList.Append("</L>");
+
+    psGUIStorageMessage msg2(clientnum,psGUIStorageMessage::CATEGORIES,categoryList.GetData());
+    if (msg2.valid)
+        psserver->GetEventManager()->SendMessage(msg2.msg);
+    else
+    {
+        Bug2("Could not create valid psGUIMerchantMessage for client %u.\n",clientnum);
+    }
+
+    SendPlayerMoney(client, true);
+}
+
+void ServerCharManager::HandleStorageRequest(psGUIStorageMessage& msg, Client *client)
+{
+    csRef<iDocumentNode> exchangeNode = ParseString(msg.commandData, "R");
+    if (!exchangeNode)
+        return;
+
+    csRef<iDocumentAttribute> attr = exchangeNode->GetAttribute("TARGET");
+    csString type = exchangeNode->GetAttributeValue("TYPE");
+
+    gemObject * target = NULL;
+    if (attr)
+    {
+        csString targetName = attr->GetValue();
+        target = GEMSupervisor::GetSingleton().FindObject(targetName);
+        if (!target)
+        {
+            psserver->SendSystemInfo(client->GetClientNum(), "Storage '%s' not found.", targetName.GetData());
+            return;
+        }
+    }
+    else
+    {
+        target = client->GetTargetObject();
+        if (!target)
+        {
+            psserver->SendSystemInfo(client->GetClientNum(), "You have no target selected.");
+            return;
+        }
+    }
+
+    BeginStoring(client, target, type);
+}
+
+void ServerCharManager::HandleStorageCategory(psGUIStorageMessage& msg, Client *client)
+{
+    psCharacter* character = client->GetCharacterData();
+
+    csRef<iDocumentNode> storageNode = ParseString (msg.commandData, "C");
+    if (!storageNode)
+        return;
+
+    psCharacter * storage;
+
+//TODO lock this with a storage targeted and valid trading status
+    if (1)
+    {
+        csString category = storageNode->GetAttributeValue("CATEGORY");
+        psItemCategory * itemCategory = CacheManager::GetSingleton().GetItemCategoryByName(category);
+        if (!itemCategory)
+        {
+            CPrintf(CON_DEBUG, "Player %s fails to get items in category %s. Unkown category!\n",
+                character->GetCharName(), (const char*)category);
+            return;
+        }
+        /*if (!storage->GetActor()->IsAlive())
+        {
+            psserver->SendSystemInfo(client->GetClientNum(), "You can't trade with a dead storage.");
+            return;
+        }*/
+
+        // Send item list for given category
+        if (character->GetTradingStatus() == psCharacter::WITHDRAWING)
+        {
+            SendStorageItems( client, character, itemCategory );
+        }
+        else
+        {
+            SendPlayerItems( client, itemCategory, true );
+        }
+    }
+}
+
+void ServerCharManager::HandleStorageWithdraw(psGUIStorageMessage& msg, Client *client)
+{
+    psCharacter* character = client->GetCharacterData();
+    csRef <iDocumentNode> storageNode = ParseString(msg.commandData, "T");
+    if (!storageNode)
+        return;
+
+    csString itemName = storageNode->GetAttributeValue("ITEM");
+    int count = storageNode->GetAttributeValueAsInt("COUNT");
+    int merchantID = storageNode->GetAttributeValueAsInt("ID");
+    uint32 itemID = (uint32)storageNode->GetAttributeValueAsInt("ITEM_ID");
+
+    // check negative item counts to avoid integer overflow
+    if (count <= 0)
+    {
+        psserver->SendSystemError(client->GetClientNum(), "You can't trade this amount of items.");
+        return;
+    }
+
+    psCharacter * storage;
+//TODO protect
+    if (1)
+    {
+        psItem * item = character->Inventory().FindItemID(itemID, true);
+        if (!item || count > item->GetStackCount())
+        {
+            psserver->SendSystemError(client->GetClientNum(), "Storage does not have %i %s.", count, itemName.GetData());
+            return;
+        }
+        /*if (!storage->GetActor()->IsAlive())
+        {
+            psserver->SendSystemError(client->GetClientNum(),"That merchant is dead");
+            return;
+        }*/
+
+        int canFit = (int)character->Inventory().HowManyCanFit(item); // count that actually fit into inventory
+
+        if (count > canFit)
+        {
+            count = canFit;
+            // Notify the buyer that their inventory is full.  (will get what fits)
+            psserver->SendSystemError(client->GetClientNum(),"Your inventory is full");
+            if (count <= 0) return;
+        }
+
+        psItem * currentitem = character->Inventory().RemoveItemID(itemID,count,true);
+
+        int newcount = 0; // count what we really got
+
+        if (!currentitem)
+        {
+            psserver->SendSystemOK( client->GetClientNum(), "Unable to get the item from storage %d %s.", count, itemName.GetData());
+            return;
+        }
+
+        //these functions aren't compatible. They will discard the item if it doesn't stay so disabling for now.
+        //bool stackable = currentitem->GetIsStackable();
+        //int partcount = 1;
+
+        /*if (stackable) // if it's stackable, try to add in on existing stacks, first
+        {
+            for (psItem * newstack; (newstack = character->Inventory().AddStacked(currentitem, partcount)); )
+            {
+                newcount += partcount;
+            }
+                
+            partcount = currentitem->GetStackCount();
+        }*/
+            
+        if (character->Inventory().Add(currentitem, false, stackable))
+        {
+            //newcount += partcount;
+        }
+        else
+        {
+            //put back in storage
+            character->Inventory().AddStorageItem(currentitem);
+            currentitem->SetLocInParent(PSCHARACTER_SLOT_STORAGE);
+            currentitem->Save(false);
+            psserver->SendSystemError(client->GetClientNum(),"you're carrying too many items. The item was put back in the storage.");
+            return;
+        }
+
+        //if (newcount != count) // not enough empty or stackable slots
+        //    psserver->SendSystemError(client->GetClientNum(),"You're carrying too many items [%d/%d] the rest was put back in storage.", newcount, count);
+
+        //if (!newcount)
+        //    return;
+        
+        newcount = count;
+
+        // Update client views
+        SendPlayerMoney(client, true);
+        SendStorageItems( client, character, item->GetCategory() );
+        
+        psserver->SendSystemOK( client->GetClientNum(), "You got from the storage %d %s.",
+            newcount, itemName.GetData());
+
+        // Update all client views
+        UpdateItemViews( client->GetClientNum() );
+    }
+}
+
+void ServerCharManager::HandleStorageStore(psGUIStorageMessage& msg, Client *client)
+{
+    psCharacter* character = client->GetCharacterData();
+    csRef <iDocumentNode> storageNode = ParseString(msg.commandData, "T");
+    if (!storageNode)
+        return;
+
+    csString itemName = storageNode->GetAttributeValue("ITEM");
+    int count = storageNode->GetAttributeValueAsInt("COUNT");
+    int merchantID = storageNode->GetAttributeValueAsInt("ID");
+
+    // check negative item counts to avoid integer overflow
+    if (count <= 0)
+    {
+        psserver->SendSystemError(client->GetClientNum(), "You can't trade this amount of items.");
+        return;
+    }
+
+    psCharacter * merchant;
+    psMerchantInfo * merchantInfo;
+
+//check trading
+    if (1)
+    {
+        uint32 itemID =(uint32) storageNode->GetAttributeValueAsInt("ITEM_ID");
+        psItem * item = character->Inventory().FindItemID(itemID);
+        if (!item)
+            return;
+        if (character->Inventory().GetContainedItemCount(item) > 0)
+        {
+            psserver->SendSystemError(client->GetClientNum(), "You must take your items out of the container first.");
+            return;
+        }
+       /* if (!merchant->GetActor()->IsAlive())
+        {
+            psserver->SendSystemError(client->GetClientNum(), "You can't trade with a dead merchant.");
+            return;
+        }*/
+
+        count = MIN(count, item->GetStackCount());
+        csString name(item->GetName());
+
+        item = character->Inventory().RemoveItem(NULL,item->GetLocInParent(true), count);
+        if (item == NULL)
+        {
+            Error3("RemoveItem failed while selling to merchant %s %i", name.GetDataSafe(), count);
+            return;
+        }
+
+        // Update client views
+        SendPlayerMoney(client, true);
+        SendPlayerItems( client, item->GetCategory(), true );
+
+        //move item to player storage
+        character->Inventory().AddStorageItem(item);
+        item->SetLocInParent(PSCHARACTER_SLOT_STORAGE);
+        item->Save(false);
+
+        psserver->SendSystemOK(client->GetClientNum(), "You've stored %d %s.", count, itemName.GetData());
+
+        // Update all client views
+        UpdateItemViews( client->GetClientNum() );
+    }
+}
+
+void ServerCharManager::HandleStorageView(psGUIStorageMessage& msg, Client *client)
+{
+    psCharacter* character = client->GetCharacterData();
+    csRef <iDocumentNode> storageNode = ParseString(msg.commandData, "V");
+    if (!storageNode)
+        return;
+
+    csString itemName = storageNode->GetAttributeValue("ITEM");
+    int merchantID    = storageNode->GetAttributeValueAsInt("ID");
+    uint32 itemID     = (uint32)storageNode->GetAttributeValueAsInt("ITEM_ID");
+    int tradeCommand  = storageNode->GetAttributeValueAsInt("TRADE_CMD");
+
+    psCharacter * storage;
+//TODO: add check
+    if (1)
+    {
+        /*if (!merchant->GetActor()->IsAlive())
+        {
+            psserver->SendSystemInfo(client->GetClientNum(), "You can't trade with a dead merchant.");
+            return;
+        }*/
+        psItem * item;
+        if (tradeCommand == psGUIStorageMessage::STORE)
+            item = character->Inventory().FindItemID(itemID);
+        else
+            item = character->Inventory().FindItemID(itemID, true);
+
+        if (!item)
+        {
+            CPrintf(CON_DEBUG, "Player %s failed to view item %s. No item!\n",
+                client->GetName(), (const char*)itemName);
+            return;
+        }
+
+        item->SendItemDescription(client);
+    }
 }
 
 

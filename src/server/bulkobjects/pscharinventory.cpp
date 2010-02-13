@@ -97,6 +97,7 @@ psCharacterInventory::psCharacterInventory(psCharacter *ownr)
 
 psCharacterInventory::~psCharacterInventory()
 {
+    //delete main inventory
     for (size_t t = 0 ; t < inventory.GetSize() ; t++)
     {
         psItem* curritem = inventory.Get(t).GetItem();
@@ -106,6 +107,16 @@ psCharacterInventory::~psCharacterInventory()
         }
     }
     inventory.DeleteAll();
+    //delete storage inventory
+    for (size_t t = 0 ; t < storageInventory.GetSize() ; t++)
+    {
+        psItem* curritem = storageInventory.Get(t);
+        if(curritem)
+        {
+            delete curritem;
+        }
+    }
+    storageInventory.DeleteAll();
 }
 
 void psCharacterInventory::SetBasicArmor(psRaceInfo *race)
@@ -259,8 +270,14 @@ bool psCharacterInventory::Load(PID use_id)
                 continue;
             }
 
-            // Now add this instance to our inventory
-            if ( !AddLoadedItem(items[i].GetUInt32("parent_item_id"),(INVENTORY_SLOT_NUMBER)items[i].GetInt("location_in_parent"), item) )
+            INVENTORY_SLOT_NUMBER location = (INVENTORY_SLOT_NUMBER)items[i].GetInt("location_in_parent");
+            printf("location %d\n", location);
+            // Now add this instance to our inventory or storage
+            if (location == PSCHARACTER_SLOT_STORAGE)
+            {
+                AddStorageItem(item);//we have found a storage item so we store it in there.
+            }
+            else if (!AddLoadedItem(items[i].GetUInt32("parent_item_id"),location, item) )
             {
                 Bug5("Item %s(%u) could not be loaded for %s(%s). Skipping this item.\n",
                      item->GetName(), item->GetUID(), owner->GetCharName(), ShowID(owner->GetPID()));
@@ -272,7 +289,7 @@ bool psCharacterInventory::Load(PID use_id)
         }
 
         loaded = true; // Begin dimension checking
-
+printf("loaded %d items in storage\n", storageInventory.GetSize());
         return true;
     }
     else
@@ -285,7 +302,7 @@ bool psCharacterInventory::Load(PID use_id)
 
 bool psCharacterInventory::QuickLoad(PID use_id)
 {
-    Result items(db->Select("SELECT id, item_stats_id_standard, location_in_parent FROM item_instances WHERE char_id_owner = %u AND location_in_parent != -1 AND location_in_parent < %d AND (parent_item_id IS NULL OR parent_item_id = 0)" , use_id.Unbox(), PSCHARACTER_SLOT_BULK1));
+    Result items(db->Select("SELECT id, item_stats_id_standard, location_in_parent FROM item_instances WHERE char_id_owner = %u AND location_in_parent > -1 AND location_in_parent < %d AND (parent_item_id IS NULL OR parent_item_id = 0)" , use_id.Unbox(), PSCHARACTER_SLOT_BULK1));
 
     if ( items.IsValid() )
     {
@@ -323,10 +340,14 @@ bool psCharacterInventory::QuickLoad(PID use_id)
     }
 }
 
+void psCharacterInventory::AddStorageItem(psItem *item)
+{
+    storageInventory.Push(item);
+}
 
 bool psCharacterInventory::AddLoadedItem(uint32 parentID, INVENTORY_SLOT_NUMBER slot, psItem *item)
 {
-    if (!parentID && (slot < PSCHARACTER_SLOT_NONE || slot >= PSCHARACTER_SLOT_BULK_END))
+    if (!parentID && (slot <= PSCHARACTER_SLOT_NONE || slot >= PSCHARACTER_SLOT_BULK_END))
     {
         csString error;
         error.Format("Item %s(%u) Could not be placed in %s(%s) inventory into slot %d because its slot was illegal.",
@@ -927,9 +948,9 @@ bool psCharacterInventory::hasItemName(csString & itemname, bool includeEquipmen
     return false;
 }
 
-psItem *psCharacterInventory::RemoveItemIndex(size_t itemIndex, int count)
+psItem *psCharacterInventory::RemoveItemIndex(size_t itemIndex, int count, bool storage)
 {
-    psItem* currentItem = inventory[itemIndex].item;
+    psItem* currentItem = storage ? storageInventory[itemIndex] : inventory[itemIndex].item;
     if (currentItem==NULL)
         return NULL;
 
@@ -946,7 +967,7 @@ psItem *psCharacterInventory::RemoveItemIndex(size_t itemIndex, int count)
     //also if we are only dropping a partial stack as something is happening in that slot and to avoid
     //bugs and confusion on the user it's better removing the item entirely from the exchange window
     //if he/she wants to add it again it's up to him/her to do it after
-    if(inExchangeMode && inventory[itemIndex].exchangeOfferSlot  != -1)
+    if(!storage && inExchangeMode && inventory[itemIndex].exchangeOfferSlot  != -1)
     {
         //maybe a bit over careful
         Client * charClient = owner->GetActor() ?  owner->GetActor()->GetClient() : NULL;
@@ -960,15 +981,21 @@ psItem *psCharacterInventory::RemoveItemIndex(size_t itemIndex, int count)
     // Remove ALL items in stack
     if ( count == currentItem->GetStackCount() )
     {
-        inventory.DeleteIndex(itemIndex);  // Take out of inventory master list
-        UpdateEncumbrance();
-        currentItem->UpdateInventoryStatus(owner, 0, PSCHARACTER_SLOT_NONE);
-
-        // Update equipment array to compensate for index shifting
-        for (size_t slot = 0; slot < INVENTORY_EQUIP_COUNT; slot++)
+        if(storage) //if we are working on the storage
         {
-            if (equipment[slot].itemIndexEquipped > itemIndex)
-                equipment[slot].itemIndexEquipped--;
+            storageInventory.DeleteIndex(itemIndex); //take out of the storage inventory
+        }
+        else
+        {
+            inventory.DeleteIndex(itemIndex);  // Take out of inventory master list
+            UpdateEncumbrance();
+            currentItem->UpdateInventoryStatus(owner, 0, PSCHARACTER_SLOT_NONE);
+            // Update equipment array to compensate for index shifting
+            for (size_t slot = 0; slot < INVENTORY_EQUIP_COUNT; slot++)
+            {
+                if (equipment[slot].itemIndexEquipped > itemIndex)
+                    equipment[slot].itemIndexEquipped--;
+            }
         }
 
         return currentItem;
@@ -977,7 +1004,7 @@ psItem *psCharacterInventory::RemoveItemIndex(size_t itemIndex, int count)
     {
         psItem* newItem = currentItem->SplitStack((unsigned short)count);
         currentItem->Save(false);
-        if (newItem)
+        if (newItem && !storage)
         {
             UpdateEncumbrance();
             newItem->UpdateInventoryStatus(owner, 0, PSCHARACTER_SLOT_NONE);
@@ -987,13 +1014,24 @@ psItem *psCharacterInventory::RemoveItemIndex(size_t itemIndex, int count)
     }
 }
 
-psItem *psCharacterInventory::RemoveItemID(uint32 itemID, int count)
+psItem *psCharacterInventory::RemoveItemID(uint32 itemID, int count, bool storage)
 {
-    // Inventory indexes start at 1.  0 is reserved for the "NULL" item.
-    for (size_t itemIndex=1; itemIndex < inventory.GetSize(); itemIndex++)
+    if(storage)
     {
-        if (inventory[itemIndex].item->GetUID() == itemID)
-            return RemoveItemIndex(itemIndex,count);
+        for (size_t itemIndex = 0; itemIndex < storageInventory.GetSize(); itemIndex++)
+        {
+            if (storageInventory[itemIndex]->GetUID() == itemID)
+                return RemoveItemIndex(itemIndex,count, storage);
+        }
+    }
+    else
+    {
+        // Inventory indexes start at 1.  0 is reserved for the "NULL" item.
+        for (size_t itemIndex=1; itemIndex < inventory.GetSize(); itemIndex++)
+        {
+            if (inventory[itemIndex].item->GetUID() == itemID)
+                return RemoveItemIndex(itemIndex,count);
+        }
     }
     return NULL;
 }
@@ -1037,13 +1075,24 @@ unsigned int psCharacterInventory::TotalStackOfItem(psItemStats* item)
 }
 
 
-psItem *psCharacterInventory::FindItemID(uint32 itemID)
+psItem *psCharacterInventory::FindItemID(uint32 itemID, bool storage)
 {
-    // Inventory indexes start at 1.  0 is reserved for the "NULL" item.
-    for (size_t i=1; i<inventory.GetSize(); i++)
+    if(storage)
     {
-        if (inventory[i].item->GetUID() == itemID)
-            return inventory[i].item;
+        for (size_t i = 0; i<storageInventory.GetSize(); i++)
+        {
+            if (storageInventory[i]->GetUID() == itemID)
+                return storageInventory[i];
+        }
+    }
+    else
+    {
+        // Inventory indexes start at 1.  0 is reserved for the "NULL" item.
+        for (size_t i=1; i<inventory.GetSize(); i++)
+        {
+            if (inventory[i].item->GetUID() == itemID)
+                return inventory[i].item;
+        }
     }
     return NULL;
 }
@@ -1312,46 +1361,81 @@ void psCharacterInventory::SetDoRestrictions(bool v)
         UpdateEncumbrance(); // this will unlock if already encumbered
 }
 
-
-bool psCharacterInventory::hasItemCategory(psItemCategory * category, bool includeEquipment, bool includeBulk)
+bool psCharacterInventory::hasItemCategory(psItemCategory * category, bool includeEquipment, bool includeBulk, bool includeStorage)
 {
-    // Inventory indexes start at 1.  0 is reserved for the "NULL" item.
-    for (size_t i = 1; i < inventory.GetSize(); i++)
+    if(includeEquipment || includeBulk)
     {
-        if (inventory[i].item->GetCategory() == category &&
-           (includeEquipment || inventory[i].item->GetLocInParent(true) >= PSCHARACTER_SLOT_BULK1) &&
-           (includeBulk || inventory[i].item->GetLocInParent(true) < PSCHARACTER_SLOT_BULK1))
+        // Inventory indexes start at 1.  0 is reserved for the "NULL" item.
+        for (size_t i = 1; i < inventory.GetSize(); i++)
         {
-            return true;
+            if (inventory[i].item->GetCategory() == category &&
+               (includeEquipment || inventory[i].item->GetLocInParent(true) >= PSCHARACTER_SLOT_BULK1) &&
+               (includeBulk || inventory[i].item->GetLocInParent(true) < PSCHARACTER_SLOT_BULK1))
+            {
+                return true;
+            }
+        }
+    }
+    else if(includeStorage)
+    {
+        for (size_t i = 0; i < storageInventory.GetSize(); i++)
+        {
+            if (storageInventory[i]->GetCategory() == category)
+                return true;
         }
     }
 
     return false;
 }
 
-bool psCharacterInventory::hasItemCategory(csString & categoryname, bool includeEquipment, bool includeBulk)
+bool psCharacterInventory::hasItemCategory(csString & categoryname, bool includeEquipment, bool includeBulk, bool includeStorage)
 {
-    // Inventory indexes start at 1.  0 is reserved for the "NULL" item.
-    for (size_t i = 1; i < inventory.GetSize(); i++)
+    if(includeEquipment || includeBulk)
     {
-        if (inventory[i].item && inventory[i].item->GetCategory()->name == categoryname &&
-           (includeEquipment || inventory[i].item->GetLocInParent(true) >= PSCHARACTER_SLOT_BULK1) &&
-           (includeBulk || inventory[i].item->GetLocInParent(true) < PSCHARACTER_SLOT_BULK1))
-            return true;
+        // Inventory indexes start at 1.  0 is reserved for the "NULL" item.
+        for (size_t i = 1; i < inventory.GetSize(); i++)
+        {
+            if (inventory[i].item && inventory[i].item->GetCategory()->name == categoryname &&
+               (includeEquipment || inventory[i].item->GetLocInParent(true) >= PSCHARACTER_SLOT_BULK1) &&
+               (includeBulk || inventory[i].item->GetLocInParent(true) < PSCHARACTER_SLOT_BULK1))
+                return true;
+        }
     }
+    else if(includeStorage)
+    {
+        for (size_t i = 0; i < storageInventory.GetSize(); i++)
+        {
+            if (storageInventory[i]->GetCategory()->name == categoryname)
+                return true;
+        }
+    }
+
     return false;
 }
 
-csArray<psItem*> psCharacterInventory::GetItemsInCategory(psItemCategory * category)
+csArray<psItem*> psCharacterInventory::GetItemsInCategory(psItemCategory * category, bool storage)
 {
     csArray<psItem*> items;
 
-    // Inventory indexes start at 1.  0 is reserved for the "NULL" item.
-    for (size_t i = 1; i < inventory.GetSize(); i++)
+    if(storage)
     {
-        if (inventory[i].item->GetCategory() == category)
+        for (size_t i = 0; i < storageInventory.GetSize(); i++)
         {
-            items.Push(inventory[i].item);
+            if (storageInventory[i]->GetCategory() == category)
+            {
+                items.Push(storageInventory[i]);
+            }
+        }
+    }
+    else
+    {
+        // Inventory indexes start at 1.  0 is reserved for the "NULL" item.
+        for (size_t i = 1; i < inventory.GetSize(); i++)
+        {
+            if (inventory[i].item->GetCategory() == category)
+            {
+                items.Push(inventory[i].item);
+            }
         }
     }
 

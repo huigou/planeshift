@@ -1952,7 +1952,6 @@ psRaceInfo *CacheManager::GetRaceInfoByMeshName(const csString & meshname)
     return NULL;
 }
 
-
 psItemCategory *CacheManager::GetItemCategoryByID(unsigned int id)
 {
     size_t i;

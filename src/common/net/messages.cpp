@@ -2714,6 +2714,71 @@ csString psGUIMerchantMessage::ToString(AccessPointers * /*access_ptrs*/)
 
 //--------------------------------------------------------------------------
 
+PSF_IMPLEMENT_MSG_FACTORY(psGUIStorageMessage,MSGTYPE_GUIMERCHANT);
+
+psGUIStorageMessage::psGUIStorageMessage( uint8_t command,
+                                            csString commandData)
+{
+    msg.AttachNew(new MsgEntry( sizeof(uint8_t) +
+                        commandData.Length() +
+                        1));
+
+    msg->SetType(MSGTYPE_GUISTORAGE);
+    msg->clientnum  = 0;
+
+    msg->Add( command );
+    msg->Add( commandData );
+
+    // Sets valid flag based on message overrun state
+    valid=!(msg->overrun);
+}
+
+psGUIStorageMessage::psGUIStorageMessage( uint32_t clientNum,
+                                            uint8_t command,
+                                            csString commandData)
+{
+    msg.AttachNew(new MsgEntry( sizeof(uint8_t) +
+                        commandData.Length() +
+                        1));
+
+    msg->SetType(MSGTYPE_GUISTORAGE);
+    msg->clientnum  = clientNum;
+
+    msg->Add( command );
+    msg->Add( commandData );
+
+    // Sets valid flag based on message overrun state
+    valid=!(msg->overrun);
+}
+
+psGUIStorageMessage::psGUIStorageMessage( MsgEntry* message )
+{
+    if ( !message )
+        return;
+
+    command   = message->GetUInt8();
+    commandData = message->GetStr();
+
+    // Sets valid flag based on message overrun state
+    valid=!(message->overrun);
+}
+
+csString psGUIStorageMessage::ToString(AccessPointers * /*access_ptrs*/)
+{
+    csString msgtext;
+
+
+    msgtext.AppendFmt("Command: %d", command);
+#ifdef FULL_DEBUG_DUMP
+    msgtext.AppendFmt(" Data: '%s'", commandData.GetDataSafe());
+#endif
+
+    return msgtext;
+}
+
+
+//--------------------------------------------------------------------------
+
 PSF_IMPLEMENT_MSG_FACTORY(psGUIGroupMessage,MSGTYPE_GUIGROUP);
 
 psGUIGroupMessage::psGUIGroupMessage( uint8_t command,

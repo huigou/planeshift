@@ -982,7 +982,7 @@ public:
     csArray<psSpell*>& GetSpellList() { return spellList; }
 
     typedef enum
-        { NOT_TRADING, SELLING, BUYING} TradingStatus;
+        { NOT_TRADING, SELLING, BUYING, WITHDRAWING, STORING} TradingStatus;
 
     psCharacter* GetMerchant() { return merchant; }
     TradingStatus GetTradingStatus() { return tradingStatus; }

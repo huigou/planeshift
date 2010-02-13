@@ -294,6 +294,16 @@ public:
     // Item categories
     psItemCategory *GetItemCategoryByID(unsigned int id);
     psItemCategory *GetItemCategoryByName(const csString & name);
+    
+    /** Gets an item category by its position in the array. Useful to iterate it.
+     *  @param pos The position in the array from where to extract the category.
+     *  @return A pointer to the category in the position.
+     */
+    psItemCategory *GetItemCategoryByPos(size_t pos) { return itemCategoryList.Get(pos); }
+    /** Gets the size of the item category array. Useful to iterate it.
+     *  @return The size of the array.
+     */
+    size_t GetItemCategoryAmount() { return itemCategoryList.GetSize(); }
 
     // Item Animations
     csPDelArray<psItemAnimation> *FindAnimationList(int id);

@@ -74,6 +74,7 @@ psUserCommands::psUserCommands(ClientMsgHandler* mh,CmdHandler *ch,iObjectRegist
     cmdsource->Subscribe("/bank",          this);
     cmdsource->Subscribe("/buddy",         this); // add named player to buddy list
     cmdsource->Subscribe("/buy",           this);
+    cmdsource->Subscribe("/storage",       this); //allows to access the storage of an npc.
     cmdsource->Subscribe("/cast",          this);
     cmdsource->Subscribe("/challenge",     this);
     cmdsource->Subscribe("/clear",         this);
@@ -145,6 +146,7 @@ psUserCommands::~psUserCommands()
     cmdsource->Unsubscribe("/bank",                  this);
     cmdsource->Unsubscribe("/buddy",                 this);
     cmdsource->Unsubscribe("/buy",                   this);
+    cmdsource->Unsubscribe("/storage",               this);
     cmdsource->Unsubscribe("/cast",                  this);
     cmdsource->Unsubscribe("/challenge",             this);
     cmdsource->Unsubscribe("/clear",                 this);
@@ -426,6 +428,21 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         }
         psGUIMerchantMessage exchange(psGUIMerchantMessage::REQUEST,buff);
         exchange.SendMessage();
+    }
+    
+    else if (words[0] == "/storage")
+    {
+    	csString buff;
+        if (words.GetCount() > 1){
+        csString tail = words.GetTail(1);
+            buff.Format("<R TYPE=\"STORE\" TARGET=\"%s\"/>",tail.GetData());
+        }
+        else
+        {
+        	buff.Format("<R TYPE=\"STORE\"/>"); // If no target specified by user use active target
+        }
+        psGUIStorageMessage storage(psGUIStorageMessage::REQUEST,buff);
+        storage.SendMessage();
     }
 
     else if (words[0] == "/trade")

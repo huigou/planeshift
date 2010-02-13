@@ -142,6 +142,7 @@ if (!myref)                                                  \
 #include "gui/pawsgroupwindow.h"
 #include "gui/pawsexchangewindow.h"
 #include "gui/pawsmerchantwindow.h"
+#include "gui/pawsstoragewindow.h"
 #include "gui/pawspetitionwindow.h"
 #include "gui/pawspetitiongmwindow.h"
 #include "gui/pawsspellbookwindow.h"
@@ -766,6 +767,7 @@ void psEngine::DeclareExtraFactories()
     RegisterFactory (pawsSpellBookWindowFactory);
     RegisterFactory (pawsGlyphWindowFactory);
     RegisterFactory (pawsMerchantWindowFactory);
+    RegisterFactory (pawsStorageWindowFactory);
     RegisterFactory (pawsConfigWindowFactory);
     RegisterFactory (pawsConfigKeysFactory);
     RegisterFactory (pawsConfigPvPFactory);
@@ -1404,6 +1406,7 @@ void psEngine::LoadGame()
         LoadPawsWidget( "Exchange window",         "exchange.xml" );
         LoadPawsWidget( "Glyph window",            "glyph.xml" );
         LoadPawsWidget( "Merchant window",         "merchant.xml" );
+        LoadPawsWidget( "Storage window",          "storage.xml" );
         LoadPawsWidget( "Petition window",         "petition.xml" );
         LoadPawsWidget( "Petititon GM window",     "petitiongm.xml" );
         LoadPawsWidget( "Spellbook window",        "spellwindow.xml" );
@@ -1444,6 +1447,7 @@ void psEngine::LoadGame()
         HideWindow("InteractWindow");
         HideWindow("ExchangeWindow");
         HideWindow("MerchantWindow");
+        HideWindow("StorageWindow");
         HideWindow("ShortcutEdit");
         HideWindow("FingeringWindow");
         HideWindow("QuestEdit");

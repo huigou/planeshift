@@ -106,6 +106,9 @@ protected:
 
     /// Flat array of all items owned in this inventory
     csArray<psCharacterInventoryItem> inventory;
+    
+    /// Array with all the items stored by the character.
+    csArray<psItem*> storageInventory;
 
     struct psEquipInfo
     {
@@ -161,6 +164,12 @@ public:
     bool HasEnoughUnusedSpace( float desiredSpace );
     int GetCurrentTotalSpace();
     int GetCurrentMaxSpace();
+    
+    /** Adds the passed item to the storage.
+     *  The item will be accessible only from storage npc.
+     *  @param item The item to be added to the storage.
+     */
+    void AddStorageItem(psItem *item);
 
     /** Check to see if the player has the ability to carry and additional weight.
       * @param requiedWeight The amount of weight that we want to check.
@@ -266,9 +275,10 @@ public:
     /** Remove an item from the bulk slots. 
     * @param bulkSlot The slot we want to remove the item from.
     * @param count The number we want to take. -1 Means the entire stack.
+    * @param storage TRUE if we are looking in the storage.
     * @return pointer to the item that was removed. 
     */
-    psItem *RemoveItemID(uint32 itemID,int count = -1);
+    psItem *RemoveItemID(uint32 itemID,int count = -1, bool storage = false);
 
     /** Find the total stack count in inventory for a particular type of item.
       * @param item The base stats of the item we want to count.
@@ -276,11 +286,12 @@ public:
       */      
     unsigned int TotalStackOfItem(psItemStats* item);
     
-    /** Finds an item inside the bulk inventory.
+    /** Finds an item inside the bulk inventory or the storage
       * @param itemID The UID of the item we are looking for.
+      * @param storage TRUE if we have to look in the item storage.
       * @return The item if found, NULL otherwise.
       */    
-    psItem * FindItemID(uint32 itemID);
+    psItem * FindItemID(uint32 itemID, bool storage = false);
     
     void SetExchangeOfferSlot(psItem *Container,INVENTORY_SLOT_NUMBER slot,int toSlot,int stackCount);
     int  GetOfferedStackCount(psItem *item);
@@ -329,21 +340,22 @@ public:
      * @param category  pointer to the psItemCategory structure to search for.
      * @return true if the item was found, false if it wasn't.
      */
-    bool hasItemCategory(psItemCategory * category, bool includeEquipment, bool includeBulk);
+    bool hasItemCategory(psItemCategory * category, bool includeEquipment, bool includeBulk, bool includeStorage = false);
 
     /** Check if the item of a certain category is in the character inventory.
      * @param categoryname The name of the category of item to search for.
      * @param includeBulk searches for the item only in the equipment if true.
      * @return true if the item was found, false if it wasn't.
      */
-    bool hasItemCategory(csString & categoryname, bool includeEquipment, bool includeBulk);
+    bool hasItemCategory(csString & categoryname, bool includeEquipment, bool includeBulk, bool includeStorage = false);
     
     /** Iterates over the entire inventory to get a list of all the items from a particular category.
-      * This is useful for npc merchants when you want to get a list of all the items they have.
+      * This is useful for npc merchants/storage when you want to get a list of all the items they have.
       * @param category A pointer to the category that we want to match against.
+      * @param storage A boolean telling if we have to look in the storage in place of the main inventory.
       * @return The list of all items in category.
       */
-    csArray<psItem*> GetItemsInCategory(psItemCategory * category);
+    csArray<psItem*> GetItemsInCategory(psItemCategory * category, bool storage = false);
     
     /** Iterates over the inventory, stacking items
      * @param itemname Name of the item to be stacked
@@ -423,8 +435,9 @@ public:
 
     /** The one true way to remove an item or split a stack from inventory.
     *  Other removal functions all find the index and call this.
+    * @param storage A boolean TRUE if we are removing from the storage in place of the inventory.
     */
-    psItem *RemoveItemIndex(size_t index,int count=-1);
+    psItem *RemoveItemIndex(size_t index,int count=-1, bool storage = false);
 
     /// Copies current inventory to backup inventory
     bool BeginExchange();
