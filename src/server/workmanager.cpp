@@ -222,9 +222,9 @@ void WorkManager::HandleWorkCommand(MsgEntry* me,Client *client)
     {
         HandleProduction(client, "fish", msg.filter);
     }
-    else if (msg.command == "/harwest")
+    else if (msg.command == "/harvest")
     {
-        HandleProduction(client, "harwest", msg.filter);
+        HandleProduction(client, "harvest", msg.filter);
     }
     else if (msg.command == "/repair")
     {
