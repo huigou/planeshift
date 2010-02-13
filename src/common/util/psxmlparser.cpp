@@ -419,7 +419,7 @@ void CopyXMLNode(csRef<iDocumentNode> source, csRef<iDocumentNode> target, int m
     while (attrIter->HasNext())
     {
         csRef<iDocumentAttribute> attr = attrIter->Next();
-        csString attrName = attr->GetName();
+        const char* attrName = attr->GetName();
         if (mode==1  ||  !target->GetAttribute(attrName))
             target->SetAttribute(attrName, attr->GetValue());
     }
