@@ -28,7 +28,6 @@
 
 /* Widget ID's */
 #define MONEYBUTTON   1000
-#define ITEMBUTTON    1001
 #define ADMINBUTTON   1002
 #define WITHDRAW      1101
 #define DEPOSIT       1102
@@ -55,18 +54,12 @@ bool pawsBankWindow::PostSetup()
     Money = (pawsButton*)(FindWidget("MoneyButton"));
     if(!Money)
         return false;
-    Items = (pawsButton*)(FindWidget("ItemButton"));
-    if(!Items)
-        return false;
     Admin = (pawsButton*)(FindWidget("AdminButton"));
     if(!Admin)
         return false;
 
     moneyWindow = FindWidget("MoneyWindow");
     if(!moneyWindow)
-        return false;
-    itemWindow = FindWidget("ItemWindow");
-    if(!itemWindow)
         return false;
     adminWindow = FindWidget("AdminWindow");
     if(!adminWindow)
@@ -155,7 +148,6 @@ bool pawsBankWindow::PostSetup()
         return false;
 
     moneyWindow->SetAlwaysOnTop(true);
-    itemWindow->SetAlwaysOnTop(true);
     adminWindow->SetAlwaysOnTop(true);
     moneyWindow->Show();
     Money->SetState(true);
@@ -221,18 +213,6 @@ bool pawsBankWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidg
         Admin->SetState(false);
 
         moneyWindow->Show();
-        itemWindow->Hide();
-        adminWindow->Hide();
-    }
-
-    if(widget->GetID() == ITEMBUTTON)
-    {
-        Money->SetState(false);
-        Items->SetState(true);
-        Admin->SetState(false);
-
-        moneyWindow->Hide();
-        itemWindow->Show();
         adminWindow->Hide();
     }
 
@@ -243,7 +223,6 @@ bool pawsBankWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidg
         Admin->SetState(true);
 
         moneyWindow->Hide();
-        itemWindow->Hide();
         adminWindow->Show();
     }
 

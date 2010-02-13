@@ -75,8 +75,8 @@ protected:
     /* Tab buttons. */
     pawsButton *Money, *Items, *Admin;
 
-    /* Three sub-windows. */
-    pawsWidget *moneyWindow, *itemWindow, *adminWindow;
+    /* two sub-windows. */
+    pawsWidget *moneyWindow, *adminWindow;
 
     /* Whether or not this is a guild bank account. */
     bool guild;

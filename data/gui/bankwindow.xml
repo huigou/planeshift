@@ -10,11 +10,6 @@
             <label text="Money" />
         </widget>
 
-        <widget name="ItemButton" factory="pawsButton" id="1001" tooltip="Item storage" style="Standard Tab">
-            <frame x="67" y="0" width="66" height="20" />
-            <label text="Items" />
-        </widget>
-
         <widget name="AdminButton" factory="pawsButton" id="1002" tooltip="Administrative banking" style="Standard Tab">
             <frame x="133" y="0" width="66"  height="20"/>
             <label text="Admin" />
@@ -285,11 +280,6 @@
 		<label text="Exchange" />
 	    </widget>
 
-
-        </widget>
-
-        <widget name="ItemWindow" factory="pawsWidget" id="1200" visible="no" savepositions="no" movable="no" configurable="no" resizable="no" style="New Standard GUI">
-            <frame x="1" y="21" width="197" height="475" />
 
         </widget>
 
