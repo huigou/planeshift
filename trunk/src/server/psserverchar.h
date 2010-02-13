@@ -45,6 +45,7 @@ class psCharacter;
 
 struct psItemCategory;
 class psGUIMerchantMessage;
+class psGUIStorageMessage;
 class psMerchantInfo;
 
 
@@ -69,7 +70,7 @@ public:
     /// Sends the client an inventory
     virtual bool SendInventory( int clientNum, bool sendUpdatesOnly=true );
 
-    void SendPlayerMoney( Client *client);
+    void SendPlayerMoney( Client *client, bool storage = false);
 
     /// Update all views with items
     virtual bool UpdateItemViews( int clientNum );
@@ -98,6 +99,13 @@ public:
     void ViewItem(Client* client, int containerID, INVENTORY_SLOT_NUMBER slotID);
 
     void BeginTrading(Client * client, gemObject * target, const csString & type);
+    
+    /** Handles a storing beginning.
+     *  @param client The client sending us the message.
+     *  @param target The target of the storage operation.
+     *  @param type ?
+     */
+    void BeginStoring(Client * client, gemObject * target, const csString & type);
 
     bool IsBanned(const char* name);
 
@@ -123,9 +131,47 @@ protected:
     void HandleMerchantBuy(psGUIMerchantMessage& msg, Client *client);
     void HandleMerchantSell(psGUIMerchantMessage& msg, Client *client);
     void HandleMerchantView(psGUIMerchantMessage& msg, Client *client);
+    // ------------------Storage Handling----------------------------------
+    /** Handles a message coming from the client for making operations with his storage.
+     *  @param me The message received from the client.
+     *  @param client The client sending us the message.
+     */
+    void HandleStorageMessage( MsgEntry* me, Client *client );
+    /** Sends to the client the stored items for this category.
+     *  @param client The client sending us the message.
+     *  @param merchant ?????
+     *  @param category The category we are browsing
+     *  @return Always TRUE.
+     */
+    bool SendStorageItems( Client *client, psCharacter * character, psItemCategory * category);
+    /** Handles the request to access the storage from the player.
+     *  @param msg The cracked message received from the client.
+     *  @param client The client sending us the message.
+     */
+    void HandleStorageRequest(psGUIStorageMessage& msg, Client *client);
+    /** Handles the request to change category from the player.
+     *  @param msg The cracked message received from the client.
+     *  @param client The client sending us the message.
+     */
+    void HandleStorageCategory(psGUIStorageMessage& msg, Client *client);
+    /** Handles the request to withdraw an item from the NPC.
+     *  @param msg The cracked message received from the client.
+     *  @param client The client sending us the message.
+     */
+    void HandleStorageWithdraw(psGUIStorageMessage& msg, Client *client);
+    /** Handles the request to store an item from the player.
+     *  @param msg The cracked message received from the client.
+     *  @param client The client sending us the message.
+     */
+    void HandleStorageStore(psGUIStorageMessage& msg, Client *client);
+    /** Handles the request to check informations about a stored item.
+     *  @param msg The cracked message received from the client.
+     *  @param client The client sending us the message.
+     */
+    void HandleStorageView(psGUIStorageMessage& msg, Client *client);
+    // --------------------------------------------------------------------
 
-
-    bool SendPlayerItems( Client *client, psItemCategory * category);
+    bool SendPlayerItems( Client *client, psItemCategory * category, bool storage);
    
 
     /// Return true if all trade params are ok

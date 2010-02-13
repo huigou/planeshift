@@ -45,7 +45,7 @@ class csStringHashReversible;
 
 // This holds the version number of the network code, remember to increase
 // this each time you do an update which breaks compatibility
-#define PS_NETVERSION   0x00B6
+#define PS_NETVERSION   0x00B7
 // Remember to bump the version in pscssetup.h, as well.
 
 
@@ -118,6 +118,7 @@ enum MSG_TYPES
     MSGTYPE_EXCHANGE_AUTOGIVE,
     MSGTYPE_EXCHANGE_MONEY,
     MSGTYPE_GUIMERCHANT,
+    MSGTYPE_GUISTORAGE,
     MSGTYPE_GROUPCMD,
     MSGTYPE_GUIGROUP,
     MSGTYPE_STATDRUPDATE,
@@ -1968,6 +1969,60 @@ public:
 
     /// Crack this message off the network.
     psGUIMerchantMessage( MsgEntry* message );
+
+    PSF_DECLARE_MSG_FACTORY();
+
+    /**
+     * @brief Converts the message into human readable string.
+     *
+     * @param access_ptrs A struct to a number of access pointers.
+     * @return Return a human readable string for the message.
+     */
+    virtual csString ToString(AccessPointers * access_ptrs);
+
+    uint8_t command;
+    csString commandData;
+};
+
+//--------------------------------------------------------------------------
+
+/** GUI Merchant Message
+ *
+ * This message is used to manage the player storage window.
+ */
+class psGUIStorageMessage : public psMessageCracker
+{
+public:
+    enum Command { REQUEST,
+                   STORAGE,
+                   CATEGORIES,
+                   CATEGORY,
+                   MONEY,
+                   ITEMS,
+                   WITHDRAW,
+                   STORE,
+                   VIEW,
+                   CANCEL};
+
+    /** @brief Constuct a new equipment message to go on the network.
+     *
+     * This will build any of the GUI exchange message needed in
+     * a player item exchange.
+     *
+     * @param clientNum   Client destination.
+     * @param command     One of  REQUEST, EXCHANGE, INVENTORY, OFFERING or RECEIVING
+     * @param commandData XML string with command data
+     *
+     */
+    psGUIStorageMessage( uint32_t clientNum,
+                          uint8_t command,
+                          csString commandData);
+
+    psGUIStorageMessage( uint8_t command,
+                          csString commandData);
+
+    /// Crack this message off the network.
+    psGUIStorageMessage( MsgEntry* message );
 
     PSF_DECLARE_MSG_FACTORY();
 
