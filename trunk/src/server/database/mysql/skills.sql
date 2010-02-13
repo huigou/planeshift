@@ -103,6 +103,7 @@ INSERT INTO `skills` VALUES (64,'Armor Making','The making of various types of a
 INSERT INTO `skills` VALUES (65,'Illustration','Drawing and editing sketches, scrolls, maps, signs and poems.',0,80,42,20,'VARIOUS');
 INSERT INTO `skills` VALUES (66,'skill66','',0,80,42,20,'VARIOUS');
 INSERT INTO `skills` VALUES (67,'skill67','',0,80,42,20,'VARIOUS');
+INSERT INTO `skills` VALUES (68,'skill68','',0,80,42,20,'VARIOUS');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
