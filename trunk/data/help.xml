@@ -286,6 +286,9 @@ You are ready to trade.</topic>
         <topic name="/stoptrading">/stoptrading 
 
 Prevent anyone from trading with you.</topic>
+    <topic name="/storage">/storage 
+
+Opens the storage handling window. You need to have a character flagged as storage manager in order to use your storage.</topic>
         <topic name="/trade">/trade 
 
 Start a trade with current Target player.</topic>
