@@ -70,6 +70,7 @@ public:
       * It adds all attributes and child nodes to 'target'. If target already
       * contains some of these attributes/nodes, then they are not overwritten 
       */
+    /* CS_DEPRECATED_METHOD_MSG("Styles are deprecated, do not use unless absolutely necessary.") */
     void ApplyStyle(const char * style, iDocumentNode * target);
     void ApplyStyle(iDocumentNode * style, iDocumentNode * target);
     
