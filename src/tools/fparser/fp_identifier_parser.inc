@@ -278,6 +278,10 @@
     /* prefix f */{static const char tmp[4] = {'l','o','o','r'};
     if(std::memcmp(uptr+1, tmp, 4) == 0) return Functions[cFloor].enabled() ? (cFloor<<16) | 0x80000005U : 5;
     return 5; }
+    case 'h':
+    /* prefix h */{static const char tmp[4] = {'y','p','o','t'};
+    if(std::memcmp(uptr+1, tmp, 4) == 0) return Functions[cHypot].enabled() ? (cHypot<<16) | 0x80000005U : 5;
+    return 5; }
     case 'l':
     /* prefix l */{static const char tmp[4] = {'o','g','1','0'};
     if(std::memcmp(uptr+1, tmp, 4) == 0) return Functions[cLog10].enabled() ? (cLog10<<16) | 0x80000005U : 5;

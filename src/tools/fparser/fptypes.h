@@ -1,7 +1,11 @@
 /***************************************************************************\
-|* Function Parser for C++ v4.0.3                                          *|
+|* Function Parser for C++ v4.0.4                                          *|
 |*-------------------------------------------------------------------------*|
 |* Copyright: Juha Nieminen, Joel Yliluoma                                 *|
+|*                                                                         *|
+|* This library is distributed under the terms of the                      *|
+|* GNU Lesser General Public License version 3.                            *|
+|* (See lgpl.txt and gpl.txt for the license text.)                        *|
 \***************************************************************************/
 
 // NOTE:
@@ -32,7 +36,8 @@ namespace FUNCTIONPARSERTYPES
         cCbrt, cCeil,
         cCos, cCosh, cCot, cCsc,
         cEval,
-        cExp, cExp2, cFloor, cIf, cInt, cLog, cLog10, cLog2, cMax, cMin,
+        cExp, cExp2, cFloor, cHypot,
+        cIf, cInt, cLog, cLog10, cLog2, cMax, cMin,
         cPow, cSec, cSin, cSinh, cSqrt, cTan, cTanh,
         cTrunc,
 
@@ -56,6 +61,7 @@ namespace FUNCTIONPARSERTYPES
                    * above [x]. Used for disposing of temporaries.
                    */
         cLog2by, /* log2by(x,y) = log2(x) * y */
+        cSinCos, /* sin(x) followed by cos(x) (two values are pushed to stack) */
 #endif
         cAbsAnd,    /* As cAnd,       but assume both operands are absolute values */
         cAbsOr,     /* As cOr,        but assume both operands are absolute values */
@@ -142,6 +148,7 @@ namespace FUNCTIONPARSERTYPES
         /*cExp  */ { FP_FNAME("exp"),   1, FuncDefinition::Enabled },
         /*cExp2 */ { FP_FNAME("exp2"),  1, FuncDefinition::Enabled },
         /*cFloor*/ { FP_FNAME("floor"), 1, FuncDefinition::Enabled },
+        /*cHypot*/ { FP_FNAME("hypot"), 2, FuncDefinition::Enabled },
         /*cIf   */ { FP_FNAME("if"),    0,
                      FuncDefinition::Enabled | FuncDefinition::OkForInt },
         /*cInt  */ { FP_FNAME("int"),   1, FuncDefinition::Enabled },

@@ -1,7 +1,11 @@
 /***************************************************************************\
-|* Function Parser for C++ v4.0.3                                          *|
+|* Function Parser for C++ v4.0.4                                          *|
 |*-------------------------------------------------------------------------*|
 |* Copyright: Juha Nieminen                                                *|
+|*                                                                         *|
+|* This library is distributed under the terms of the                      *|
+|* GNU Lesser General Public License version 3.                            *|
+|* (See lgpl.txt and gpl.txt for the license text.)                        *|
 \***************************************************************************/
 
 // Configuration file
@@ -49,6 +53,7 @@
 #define FP_SUPPORT_EXP2
 #define FP_SUPPORT_LOG2
 #define FP_SUPPORT_CBRT
+#define FP_SUPPORT_HYPOT
 #endif
 
 /*

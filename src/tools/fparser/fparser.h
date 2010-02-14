@@ -1,7 +1,11 @@
 /***************************************************************************\
-|* Function Parser for C++ v4.0.3                                          *|
+|* Function Parser for C++ v4.0.4                                          *|
 |*-------------------------------------------------------------------------*|
 |* Copyright: Juha Nieminen, Joel Yliluoma                                 *|
+|*                                                                         *|
+|* This library is distributed under the terms of the                      *|
+|* GNU Lesser General Public License version 3.                            *|
+|* (See lgpl.txt and gpl.txt for the license text.)                        *|
 \***************************************************************************/
 
 #ifndef ONCE_FPARSER_H_

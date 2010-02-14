@@ -1,7 +1,11 @@
 /***************************************************************************\
-|* Function Parser for C++ v4.0.3                                          *|
+|* Function Parser for C++ v4.0.4                                          *|
 |*-------------------------------------------------------------------------*|
 |* Copyright: Juha Nieminen, Joel Yliluoma                                 *|
+|*                                                                         *|
+|* This library is distributed under the terms of the                      *|
+|* GNU Lesser General Public License version 3.                            *|
+|* (See lgpl.txt and gpl.txt for the license text.)                        *|
 \***************************************************************************/
 
 // NOTE:
@@ -26,6 +30,26 @@
 #ifdef ONCE_FPARSER_H_
 namespace FUNCTIONPARSERTYPES
 {
+    template<typename value_t>
+    struct IsIntType
+    {
+        enum { result = false };
+    };
+#ifdef FP_SUPPORT_LONG_INT_TYPE
+    template<>
+    struct IsIntType<long>
+    {
+        enum { result = true };
+    };
+#endif
+#ifdef FP_SUPPORT_GMP_INT_TYPE
+    template<>
+    struct IsIntType<GmpInt>
+    {
+        enum { result = true };
+    };
+#endif
+
 //==========================================================================
 // Math funcs
 //==========================================================================
@@ -126,6 +150,27 @@ namespace FUNCTIONPARSERTYPES
         return fp_pow_base(x, y);
     }
 
+    template<typename Value_t>
+    inline void fp_sinCos(Value_t& sin, Value_t& cos, const Value_t& a)
+    {
+        // Assuming that "cos" and "a" don't overlap, but "sin" and "a" may.
+        cos = fp_cos(a);
+        sin = fp_sin(a);
+    }
+
+    template<typename Value_t>
+    inline Value_t fp_hypot(Value_t x, Value_t y) { return fp_sqrt(x*x + y*y); }
+
+    template<typename Value_t>
+    inline Value_t fp_asinh(Value_t x)
+        { return fp_log(x + fp_sqrt(x*x + Value_t(1))); }
+    template<typename Value_t>
+    inline Value_t fp_acosh(Value_t x)
+        { return fp_log(x + fp_sqrt(x*x - Value_t(1))); }
+    template<typename Value_t>
+    inline Value_t fp_atanh(Value_t x)
+        { return fp_log( (Value_t(1)+x) / (Value_t(1)-x)) * Value_t(0.5); }
+
 // -------------------------------------------------------------------------
 // double
 // -------------------------------------------------------------------------
@@ -158,15 +203,14 @@ namespace FUNCTIONPARSERTYPES
     inline double fp_tan(double x) { return tan(x); }
     inline double fp_tanh(double x) { return tanh(x); }
 
-#ifndef FP_SUPPORT_ASINH
-    inline double fp_asinh(double x) { return log(x + sqrt(x*x + 1.0)); }
-    inline double fp_acosh(double x) { return log(x + sqrt(x*x - 1.0)); }
-    inline double fp_atanh(double x) { return log((1.0+x) / (1.0-x)) * 0.5; }
-#else
+#ifdef FP_SUPPORT_ASINH
     inline double fp_asinh(double x) { return asinh(x); }
     inline double fp_acosh(double x) { return acosh(x); }
     inline double fp_atanh(double x) { return atanh(x); }
 #endif // FP_SUPPORT_ASINH
+#ifdef FP_SUPPORT_HYPOT
+    inline double fp_hypot(double x, double y) { return hypot(x,y); }
+#endif
 
     inline double fp_trunc(double x) { return x<0.0 ? ceil(x) : floor(x); }
 
@@ -200,6 +244,13 @@ namespace FUNCTIONPARSERTYPES
     inline bool IsIntegerConst(double a)
     { return FloatEqual(a, (double)(long)a); }
 
+  #ifdef _GNU_SOURCE
+    template<>
+    inline void fp_sinCos<double>(double& sin, double& cos, const double& a)
+    {
+        sincos(a, &sin, &cos);
+    }
+  #endif
 
 // -------------------------------------------------------------------------
 // float
@@ -234,15 +285,14 @@ namespace FUNCTIONPARSERTYPES
     inline float fp_tan(float x) { return tanf(x); }
     inline float fp_tanh(float x) { return tanhf(x); }
 
-#ifndef FP_SUPPORT_ASINH
-    inline float fp_asinh(float x) { return logf(x + sqrt(x*x + 1.0F)); }
-    inline float fp_acosh(float x) { return logf(x + sqrt(x*x - 1.0F)); }
-    inline float fp_atanh(float x) { return logf((1.0F+x) / (1.0F-x)) * 0.5F; }
-#else
+#ifdef FP_SUPPORT_ASINH
     inline float fp_asinh(float x) { return asinhf(x); }
     inline float fp_acosh(float x) { return acoshf(x); }
     inline float fp_atanh(float x) { return atanhf(x); }
 #endif // FP_SUPPORT_ASINH
+#ifdef FP_SUPPORT_HYPOT
+    inline float fp_hypot(float x, float y) { return hypotf(x,y); }
+#endif
 
     inline float fp_trunc(float x) { return x<0.0F ? ceilf(x) : floorf(x); }
 
@@ -277,6 +327,13 @@ namespace FUNCTIONPARSERTYPES
     inline bool IsIntegerConst(float a)
     { return FloatEqual(a, (float)(long)a); }
 #endif // FP_SUPPORT_FLOAT_TYPE
+  #ifdef _GNU_SOURCE
+    template<>
+    inline void fp_sinCos<float>(float& sin, float& cos, const float& a)
+    {
+        sincosf(a, &sin, &cos);
+    }
+  #endif
 
 
 
@@ -316,18 +373,14 @@ namespace FUNCTIONPARSERTYPES
     inline long double fp_tan(long double x) { return tanl(x); }
     inline long double fp_tanh(long double x) { return tanhl(x); }
 
-#ifndef FP_SUPPORT_ASINH
-    inline long double fp_asinh(long double x)
-    { return logl(x + sqrtl(x*x + 1.0L)); }
-    inline long double fp_acosh(long double x)
-    { return logl(x + sqrtl(x*x - 1.0L)); }
-    inline long double fp_atanh(long double x)
-    { return logl((1.0L+x) / (1.0L-x)) * 0.5L; }
-#else
+#ifdef FP_SUPPORT_ASINH
     inline long double fp_asinh(long double x) { return asinhl(x); }
     inline long double fp_acosh(long double x) { return acoshl(x); }
     inline long double fp_atanh(long double x) { return atanhl(x); }
 #endif // FP_SUPPORT_ASINH
+#ifdef FP_SUPPORT_HYPOT
+    inline long double fp_hypot(long double x, long double y) { return hypotl(x,y); }
+#endif
 
     inline long double fp_trunc(long double x)
     { return x<0.0L ? ceill(x) : floorl(x); }
@@ -337,7 +390,7 @@ namespace FUNCTIONPARSERTYPES
 
 #ifndef FP_SUPPORT_LOG2
     inline long double fp_log2(long double x)
-    { return log(x) * 1.4426950408889634073599246810018921374266459541529859L; }
+    { return fp_log(x) * 1.4426950408889634073599246810018921374266459541529859L; }
 #else
     inline long double fp_log2(long double x) { return log2l(x); }
 #endif // FP_SUPPORT_LOG2
@@ -355,6 +408,14 @@ namespace FUNCTIONPARSERTYPES
     inline bool IsIntegerConst(long double a)
     { return FloatEqual(a, (long double)(long)a); }
 #endif // FP_SUPPORT_LONG_DOUBLE_TYPE
+
+  #ifdef _GNU_SOURCE
+    template<>
+    inline void fp_sinCos<long double>(long double& sin, long double& cos, const long double& a)
+    {
+        sincosl(a, &sin, &cos);
+    }
+  #endif
 
 
 // -------------------------------------------------------------------------
@@ -403,13 +464,16 @@ namespace FUNCTIONPARSERTYPES
     inline MpfrFloat fp_acos(const MpfrFloat& x) { return MpfrFloat::acos(x); }
     inline MpfrFloat fp_asin(const MpfrFloat& x) { return MpfrFloat::asin(x); }
     inline MpfrFloat fp_atan(const MpfrFloat& x) { return MpfrFloat::atan(x); }
-    inline MpfrFloat fp_atan2(const MpfrFloat& x, const MpfrFloat& y) { return MpfrFloat::atan2(x, y); }
+    inline MpfrFloat fp_atan2(const MpfrFloat& x, const MpfrFloat& y)
+        { return MpfrFloat::atan2(x, y); }
     inline MpfrFloat fp_cbrt(const MpfrFloat& x) { return MpfrFloat::cbrt(x); }
     inline MpfrFloat fp_ceil(const MpfrFloat& x) { return MpfrFloat::ceil(x); }
     inline MpfrFloat fp_cos(const MpfrFloat& x) { return MpfrFloat::cos(x); }
     inline MpfrFloat fp_cosh(const MpfrFloat& x) { return MpfrFloat::cosh(x); }
     inline MpfrFloat fp_exp(const MpfrFloat& x) { return MpfrFloat::exp(x); }
     inline MpfrFloat fp_floor(const MpfrFloat& x) { return MpfrFloat::floor(x); }
+    inline MpfrFloat fp_hypot(const MpfrFloat& x, const MpfrFloat& y)
+        { return MpfrFloat::hypot(x, y); }
     inline MpfrFloat fp_int(const MpfrFloat& x) { return MpfrFloat::round(x); }
     inline MpfrFloat fp_log(const MpfrFloat& x) { return MpfrFloat::log(x); }
     inline MpfrFloat fp_log10(const MpfrFloat& x) { return MpfrFloat::log10(x); }
@@ -429,6 +493,12 @@ namespace FUNCTIONPARSERTYPES
 
     inline MpfrFloat fp_log2(const MpfrFloat& x) { return MpfrFloat::log2(x); }
     inline MpfrFloat fp_exp2(const MpfrFloat& x) { return MpfrFloat::exp2(x); }
+
+    template<>
+    inline void fp_sinCos<MpfrFloat>(MpfrFloat& sin, MpfrFloat& cos, const MpfrFloat& a)
+    {
+        MpfrFloat::sincos(a, sin, cos);
+    }
 
     inline bool IsIntegerConst(const MpfrFloat& a) { return a.isInteger(); }
 
@@ -452,6 +522,7 @@ namespace FUNCTIONPARSERTYPES
     inline GmpInt fp_cosh(GmpInt) { return 0; }
     inline GmpInt fp_exp(GmpInt) { return 0; }
     inline GmpInt fp_floor(GmpInt x) { return x; }
+    inline GmpInt fp_hypot(GmpInt, GmpInt) { return 0; }
     inline GmpInt fp_int(GmpInt x) { return x; }
     inline GmpInt fp_log(GmpInt) { return 0; }
     inline GmpInt fp_log10(GmpInt) { return 0; }
@@ -482,59 +553,106 @@ namespace FUNCTIONPARSERTYPES
 // -------------------------------------------------------------------------
 #ifdef FP_EPSILON
     template<typename Value_t>
-    inline bool fp_equal(Value_t x, Value_t y)
-    { return fp_abs(x - y) <= fp_epsilon<Value_t>(); }
+    inline bool fp_equal(const Value_t& x, const Value_t& y)
+    { return IsIntType<Value_t>::result
+        ? (x == y)
+        : (fp_abs(x - y) <= fp_epsilon<Value_t>()); }
 
     template<typename Value_t>
-    inline bool fp_nequal(Value_t x, Value_t y)
-    { return fp_abs(x - y) > fp_epsilon<Value_t>(); }
+    inline bool fp_nequal(const Value_t& x, const Value_t& y)
+    { return IsIntType<Value_t>::result
+        ? (x != y)
+        : (fp_abs(x - y) > fp_epsilon<Value_t>()); }
 
     template<typename Value_t>
-    inline bool fp_less(Value_t x, Value_t y)
-    { return x < y - fp_epsilon<Value_t>(); }
+    inline bool fp_less(const Value_t& x, const Value_t& y)
+    { return IsIntType<Value_t>::result
+        ? (x < y)
+        : (x < y - fp_epsilon<Value_t>()); }
 
     template<typename Value_t>
-    inline bool fp_lessOrEq(Value_t x, Value_t y)
-    { return x <= y + fp_epsilon<Value_t>(); }
+    inline bool fp_lessOrEq(const Value_t& x, const Value_t& y)
+    { return IsIntType<Value_t>::result
+        ? (x <= y)
+        : (x <= y + fp_epsilon<Value_t>()); }
 #else // FP_EPSILON
     template<typename Value_t>
-    inline bool fp_equal(Value_t x, Value_t y) { return x == y; }
+    inline bool fp_equal(const Value_t& x, const Value_t& y) { return x == y; }
 
     template<typename Value_t>
-    inline bool fp_nequal(Value_t x, Value_t y) { return x != y; }
+    inline bool fp_nequal(const Value_t& x, const Value_t& y) { return x != y; }
 
     template<typename Value_t>
-    inline bool fp_less(Value_t x, Value_t y) { return x < y; }
+    inline bool fp_less(const Value_t& x, const Value_t& y) { return x < y; }
 
     template<typename Value_t>
-    inline bool fp_lessOrEq(Value_t x, Value_t y) { return x <= y; }
+    inline bool fp_lessOrEq(const Value_t& x, const Value_t& y) { return x <= y; }
 #endif // FP_EPSILON
 
-    template<>
-    inline bool fp_equal<long>(long x, long y) { return x == y; }
+    template<typename Value_t>
+    inline bool fp_greater(const Value_t& x, const Value_t& y)
+    { return fp_less(y, x); }
 
-    template<>
-    inline bool fp_nequal<long>(long x, long y) { return x != y; }
+    template<typename Value_t>
+    inline bool fp_greaterOrEq(const Value_t& x, const Value_t& y)
+    { return fp_lessOrEq(y, x); }
 
-    template<>
-    inline bool fp_less<long>(long x, long y) { return x < y; }
+    template<typename Value_t>
+    inline bool fp_truth(const Value_t& d)
+    {
+        return IsIntType<Value_t>::result
+                ? d != 0
+                : fp_abs(d) >= Value_t(0.5);
+    }
 
-    template<>
-    inline bool fp_lessOrEq<long>(long x, long y) { return x <= y; }
+    template<typename Value_t>
+    inline bool fp_absTruth(const Value_t& abs_d)
+    {
+        return IsIntType<Value_t>::result
+                ? abs_d > 0
+                : abs_d >= Value_t(0.5);
+    }
 
-#ifdef FP_SUPPORT_GMP_INT_TYPE
-    template<>
-    inline bool fp_equal<GmpInt>(GmpInt x, GmpInt y) { return x == y; }
+    template<typename Value_t>
+    inline const Value_t& fp_min(const Value_t& d1, const Value_t& d2)
+        { return d1<d2 ? d1 : d2; }
 
-    template<>
-    inline bool fp_nequal<GmpInt>(GmpInt x, GmpInt y) { return x != y; }
+    template<typename Value_t>
+    inline const Value_t& fp_max(const Value_t& d1, const Value_t& d2)
+        { return d1>d2 ? d1 : d2; }
 
-    template<>
-    inline bool fp_less<GmpInt>(GmpInt x, GmpInt y) { return x < y; }
+    template<typename Value_t>
+    inline const Value_t fp_not(const Value_t& b)
+        { return Value_t(!fp_truth(b)); }
 
-    template<>
-    inline bool fp_lessOrEq<GmpInt>(GmpInt x, GmpInt y) { return x <= y; }
-#endif
+    template<typename Value_t>
+    inline const Value_t fp_notNot(const Value_t& b)
+        { return Value_t(fp_truth(b)); }
+
+    template<typename Value_t>
+    inline const Value_t fp_absNot(const Value_t& b)
+        { return Value_t(!fp_absTruth(b)); }
+
+    template<typename Value_t>
+    inline const Value_t fp_absNotNot(const Value_t& b)
+        { return Value_t(fp_absTruth(b)); }
+
+    template<typename Value_t>
+    inline const Value_t fp_and(const Value_t& a, const Value_t& b)
+        { return Value_t(fp_truth(a) && fp_truth(b)); }
+
+    template<typename Value_t>
+    inline const Value_t fp_or(const Value_t& a, const Value_t& b)
+        { return Value_t(fp_truth(a) || fp_truth(b)); }
+
+    template<typename Value_t>
+    inline const Value_t fp_absAnd(const Value_t& a, const Value_t& b)
+        { return Value_t(fp_absTruth(a) && fp_absTruth(b)); }
+
+    template<typename Value_t>
+    inline const Value_t fp_absOr(const Value_t& a, const Value_t& b)
+        { return Value_t(fp_absTruth(a) || fp_absTruth(b)); }
+
 } // namespace FUNCTIONPARSERTYPES
 
 #endif // ONCE_FPARSER_H_
