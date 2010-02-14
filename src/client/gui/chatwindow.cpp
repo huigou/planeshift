@@ -1252,8 +1252,10 @@ void pawsChatWindow::FormatMessage(csString &sText, csString &sPerson, csString 
         buff.Format("%s%s's" DEFAULTCODE " %s", (const char *) nameColouringCode, (const char *)sPerson, ((const char *)sText)+4);
     else
     {
-        buff.Format("%s%s" DEFAULTCODE " %s: %s", (const char *) nameColouringCode,(const char *)sPerson, 
-                    (const char *) PawsManager::GetSingleton().Translate(prependingText), (const char *)sText);
+        buff.Format("%s%s" DEFAULTCODE "%s: %s", (const char *) nameColouringCode,(const char *)sPerson, 
+                    prependingText.Length() ?  
+                    (const char *) (" " +PawsManager::GetSingleton().Translate(prependingText)) : "", 
+                    (const char *)sText);
     }
 }
     
