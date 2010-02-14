@@ -1810,7 +1810,7 @@ void ServerCharManager::HandleStorageWithdraw(psGUIStorageMessage& msg, Client *
 
         // Update client views
         SendPlayerMoney(client, true);
-        SendStorageItems( client, character, item->GetCategory() );
+        SendStorageItems( client, character, currentitem->GetCategory() );
         
         psserver->SendSystemOK( client->GetClientNum(), "You got %d %s from the storage.",
             newcount, itemName.GetData());
