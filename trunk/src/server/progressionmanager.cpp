@@ -505,7 +505,7 @@ void ProgressionManager::SendSkillList(Client * client, bool forceOpen, PSSKILL 
 
     skills->setProgressionPoints(character->GetProgressionPoints());
 
-    if (trainer)
+    if (trainer && trainer->GetActor())
     {
         trainerInfo = trainer->GetTrainerInfo();
         faction = trainer->GetActor()->GetRelativeFaction(character->GetActor());
