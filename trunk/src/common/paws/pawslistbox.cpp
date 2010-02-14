@@ -1356,6 +1356,7 @@ void pawsListBoxRow::AddColumn( int column, ColumnDef* def )
     csRef<iDocumentNode> node = doc->CreateRoot();
     node = node->CreateNodeBefore(CS_NODE_ELEMENT);
     CS::DocSystem::CloneNode(def[column].widgetNode, node);
+    widget->Load(node);
 
     int borderW = 0;
     int borderH = 0;
