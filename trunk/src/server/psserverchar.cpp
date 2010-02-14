@@ -546,9 +546,11 @@ void ServerCharManager::BeginTrading(Client * client, gemObject * target, const 
     psCharacter * merchant = NULL;
     int clientnum = client->GetClientNum();
     psCharacter* character = client->GetCharacterData();
+    PSCHARACTER_MODE mode = client->GetActor()->GetMode();
 
     // Make sure that we are not busy with something else
-    if (client->GetActor()->GetMode() != PSCHARACTER_MODE_PEACE)
+    if (mode != PSCHARACTER_MODE_PEACE && mode != PSCHARACTER_MODE_SIT && mode != PSCHARACTER_MODE_OVERWEIGHT
+        && mode != PSCHARACTER_MODE_EXHAUSTED)
     {
         psserver->SendSystemError(client->GetClientNum(), "You cannot trade because you are already busy.");
         return;
@@ -1545,9 +1547,11 @@ void ServerCharManager::BeginStoring(Client * client, gemObject * target, const 
     psCharacter * storage = NULL;
     int clientnum = client->GetClientNum();
     psCharacter* character = client->GetCharacterData();
+    PSCHARACTER_MODE mode = client->GetActor()->GetMode();
 
     // Make sure that we are not busy with something else
-    if (client->GetActor()->GetMode() != PSCHARACTER_MODE_PEACE)
+    if (mode != PSCHARACTER_MODE_PEACE && mode != PSCHARACTER_MODE_SIT && mode != PSCHARACTER_MODE_OVERWEIGHT
+        && mode != PSCHARACTER_MODE_EXHAUSTED)
     {
         psserver->SendSystemError(client->GetClientNum(), "You cannot check the storage because you are already busy.");
         return;
@@ -1562,7 +1566,7 @@ void ServerCharManager::BeginStoring(Client * client, gemObject * target, const 
     storage = target->GetCharacterData();
     if(!storage)
     {
-        psserver->SendSystemInfo(client->GetClientNum(), "Storage not found.");
+        psserver->SendSystemInfo(client->GetClientNum(), "Storage keeper not found.");
         return;
     }
 
@@ -1574,7 +1578,7 @@ void ServerCharManager::BeginStoring(Client * client, gemObject * target, const 
 
     if (!target->IsAlive())
     {
-        psserver->SendSystemInfo(client->GetClientNum(), "Can't trade with a dead storage.");
+        psserver->SendSystemInfo(client->GetClientNum(), "Can't trade with a dead storage keeper.");
         return;
     }
     if (!storage->IsBanker())//check if it's a banker for now.
@@ -1798,12 +1802,11 @@ void ServerCharManager::HandleStorageWithdraw(psGUIStorageMessage& msg, Client *
 
             if (newcount != count) // not enough empty or stackable slots
                 psserver->SendSystemError(client->GetClientNum(),"You're carrying too many items [%d/%d] the rest was put back in storage.", newcount, count);
-        
         }
 
         if (!newcount)
         {
-            psserver->SendSystemError(client->GetClientNum(),"you're carrying too many items. The item was put back in the storage.");
+            psserver->SendSystemError(client->GetClientNum(),"You're carrying too many items. The item was put back in the storage.");
             return;
         }
         newcount = count;
