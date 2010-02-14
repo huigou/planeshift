@@ -271,7 +271,6 @@ bool psCharacterInventory::Load(PID use_id)
             }
 
             INVENTORY_SLOT_NUMBER location = (INVENTORY_SLOT_NUMBER)items[i].GetInt("location_in_parent");
-            printf("location %d\n", location);
             // Now add this instance to our inventory or storage
             if (location == PSCHARACTER_SLOT_STORAGE)
             {
@@ -289,7 +288,6 @@ bool psCharacterInventory::Load(PID use_id)
         }
 
         loaded = true; // Begin dimension checking
-printf("loaded %d items in storage\n", storageInventory.GetSize());
         return true;
     }
     else
