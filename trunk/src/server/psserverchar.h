@@ -177,8 +177,12 @@ protected:
     /// Return true if all trade params are ok
     bool VerifyTrade( Client * client, psCharacter * character, psCharacter ** merchant, psMerchantInfo ** info,
                       const char * trade, const char * itemName, PID merchantID);
+                      
+    /// Return true if all storage params are ok
+    bool VerifyStorage( Client * client, psCharacter * character, psCharacter ** storage,
+                      const char * trade, const char * itemName, PID storageID);
 
-    // verifies that item dropped in mind slot is a valid goal
+    /// verifies that item dropped in mind slot is a valid goal
     bool VerifyGoal(Client* client, psCharacter* character, psItem* goal);
 
 //    ClientConnectionSet*    clients;
