@@ -1461,6 +1461,43 @@ void ServerCharManager::HandleStorageMessage( MsgEntry* me, Client *client )
     }
 }
 
+bool ServerCharManager::VerifyStorage( Client * client, psCharacter * character, psCharacter ** storage,
+                                       const char * trade,const char * itemName, PID storageID)
+{
+    *storage = character->GetMerchant();
+    if (!*storage)
+    {
+        psserver->SendSystemInfo(client->GetClientNum(),"You can only store item with someone owning a storage.");
+        Debug4(LOG_CHARACTER,client->GetClientNum(),"Player %s failed to %s item %s. No storage!\n",
+                character->GetCharName(), trade, itemName);
+        return false;
+    }
+    // Check if player is trading with this merchant.
+    if (character->GetTradingStatus() == psCharacter::NOT_TRADING)
+    {
+        CPrintf(CON_DEBUG, "Player %s failed to %s item %s. No trading status!\n",
+                character->GetCharName(), trade, itemName);
+        return false;
+    }
+    // Check if this is correct merchant
+    if (storageID != (*storage)->GetPID())
+    {
+        CPrintf(CON_DEBUG, "Player %s failed to %s item %s. Different merchant!\n",
+                character->GetCharName(), trade, itemName);
+        return false;
+    }
+    // Check range
+    if (character->GetActor()->RangeTo((*storage)->GetActor()) > RANGE_TO_SELECT)
+    {
+        psserver->SendSystemInfo(client->GetClientNum(),"Storage owner is out of range.");
+        CPrintf(CON_DEBUG, "Player %s failed to %s item %s. Out of range!\n",
+                character->GetCharName(), trade, itemName);
+        return false;
+    }
+
+    return true;
+}
+
 bool ServerCharManager::SendStorageItems( Client *client, psCharacter* character, psItemCategory* category)
 {
     csArray<psItem*> items = character->Inventory().GetItemsInCategory(category,true);
@@ -1653,8 +1690,7 @@ void ServerCharManager::HandleStorageCategory(psGUIStorageMessage& msg, Client *
 
     psCharacter * storage;
 
-//TODO lock this with a storage targeted and valid trading status
-    if (1)
+    if (VerifyStorage(client, character,&storage,"category","",storageNode->GetAttributeValueAsInt("ID")))
     {
         csString category = storageNode->GetAttributeValue("CATEGORY");
         psItemCategory * itemCategory = CacheManager::GetSingleton().GetItemCategoryByName(category);
@@ -1664,11 +1700,11 @@ void ServerCharManager::HandleStorageCategory(psGUIStorageMessage& msg, Client *
                 character->GetCharName(), (const char*)category);
             return;
         }
-        /*if (!storage->GetActor()->IsAlive())
+        if (!storage->GetActor()->IsAlive())
         {
-            psserver->SendSystemInfo(client->GetClientNum(), "You can't trade with a dead storage.");
+            psserver->SendSystemInfo(client->GetClientNum(), "You can't manage your storage with a dead storage owner.");
             return;
-        }*/
+        }
 
         // Send item list for given category
         if (character->GetTradingStatus() == psCharacter::WITHDRAWING)
@@ -1691,7 +1727,7 @@ void ServerCharManager::HandleStorageWithdraw(psGUIStorageMessage& msg, Client *
 
     csString itemName = storageNode->GetAttributeValue("ITEM");
     int count = storageNode->GetAttributeValueAsInt("COUNT");
-    int merchantID = storageNode->GetAttributeValueAsInt("ID");
+    PID storageID = storageNode->GetAttributeValueAsInt("ID");
     uint32 itemID = (uint32)storageNode->GetAttributeValueAsInt("ITEM_ID");
 
     // check negative item counts to avoid integer overflow
@@ -1702,8 +1738,7 @@ void ServerCharManager::HandleStorageWithdraw(psGUIStorageMessage& msg, Client *
     }
 
     psCharacter * storage;
-//TODO protect
-    if (1)
+    if (VerifyStorage(client, character,&storage,"withdraw",itemName,storageID))
     {
         psItem * item = character->Inventory().FindItemID(itemID, true);
         if (!item || count > item->GetStackCount())
@@ -1711,11 +1746,11 @@ void ServerCharManager::HandleStorageWithdraw(psGUIStorageMessage& msg, Client *
             psserver->SendSystemError(client->GetClientNum(), "Storage does not have %i %s.", count, itemName.GetData());
             return;
         }
-        /*if (!storage->GetActor()->IsAlive())
+        if (!storage->GetActor()->IsAlive())
         {
-            psserver->SendSystemError(client->GetClientNum(),"That merchant is dead");
+            psserver->SendSystemError(client->GetClientNum(),"You can't manage your storage with a dead storage owner.");
             return;
-        }*/
+        }
 
         int canFit = (int)character->Inventory().HowManyCanFit(item); // count that actually fit into inventory
 
@@ -1737,8 +1772,8 @@ void ServerCharManager::HandleStorageWithdraw(psGUIStorageMessage& msg, Client *
             return;
         }
 
+        bool stackable = currentitem->GetIsStackable();
         //these functions aren't compatible. They will discard the item if it doesn't stay so disabling for now.
-        //bool stackable = currentitem->GetIsStackable();
         //int partcount = 1;
 
         /*if (stackable) // if it's stackable, try to add in on existing stacks, first
@@ -1794,7 +1829,7 @@ void ServerCharManager::HandleStorageStore(psGUIStorageMessage& msg, Client *cli
 
     csString itemName = storageNode->GetAttributeValue("ITEM");
     int count = storageNode->GetAttributeValueAsInt("COUNT");
-    int merchantID = storageNode->GetAttributeValueAsInt("ID");
+    PID storageID = storageNode->GetAttributeValueAsInt("ID");
 
     // check negative item counts to avoid integer overflow
     if (count <= 0)
@@ -1803,11 +1838,9 @@ void ServerCharManager::HandleStorageStore(psGUIStorageMessage& msg, Client *cli
         return;
     }
 
-    psCharacter * merchant;
-    psMerchantInfo * merchantInfo;
+    psCharacter * storage;
 
-//check trading
-    if (1)
+    if (VerifyStorage(client, character,&storage,"store",itemName,storageID))
     {
         uint32 itemID =(uint32) storageNode->GetAttributeValueAsInt("ITEM_ID");
         psItem * item = character->Inventory().FindItemID(itemID);
@@ -1818,11 +1851,11 @@ void ServerCharManager::HandleStorageStore(psGUIStorageMessage& msg, Client *cli
             psserver->SendSystemError(client->GetClientNum(), "You must take your items out of the container first.");
             return;
         }
-       /* if (!merchant->GetActor()->IsAlive())
+        if (!storage->GetActor()->IsAlive())
         {
-            psserver->SendSystemError(client->GetClientNum(), "You can't trade with a dead merchant.");
+            psserver->SendSystemError(client->GetClientNum(), "You can't manage your storage with a dead storage owner.");
             return;
-        }*/
+        }
 
         count = MIN(count, item->GetStackCount());
         csString name(item->GetName());
@@ -1858,19 +1891,19 @@ void ServerCharManager::HandleStorageView(psGUIStorageMessage& msg, Client *clie
         return;
 
     csString itemName = storageNode->GetAttributeValue("ITEM");
-    int merchantID    = storageNode->GetAttributeValueAsInt("ID");
+    PID storageID    = storageNode->GetAttributeValueAsInt("ID");
     uint32 itemID     = (uint32)storageNode->GetAttributeValueAsInt("ITEM_ID");
     int tradeCommand  = storageNode->GetAttributeValueAsInt("TRADE_CMD");
 
     psCharacter * storage;
-//TODO: add check
-    if (1)
+
+    if (VerifyStorage(client, character,&storage,"view",itemName,storageID))
     {
-        /*if (!merchant->GetActor()->IsAlive())
+        if (!storage->GetActor()->IsAlive())
         {
-            psserver->SendSystemInfo(client->GetClientNum(), "You can't trade with a dead merchant.");
+            psserver->SendSystemInfo(client->GetClientNum(), "You can't manage your storage with a dead storage owner.");
             return;
-        }*/
+        }
         psItem * item;
         if (tradeCommand == psGUIStorageMessage::STORE)
             item = character->Inventory().FindItemID(itemID);
