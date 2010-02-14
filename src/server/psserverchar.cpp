@@ -1773,10 +1773,9 @@ void ServerCharManager::HandleStorageWithdraw(psGUIStorageMessage& msg, Client *
         }
 
         bool stackable = currentitem->GetIsStackable();
-        //these functions aren't compatible. They will discard the item if it doesn't stay so disabling for now.
-        //int partcount = 1;
+        int partcount = 1;
 
-        /*if (stackable) // if it's stackable, try to add in on existing stacks, first
+        if (stackable) // if it's stackable, try to add in on existing stacks, first
         {
             for (psItem * newstack; (newstack = character->Inventory().AddStacked(currentitem, partcount)); )
             {
@@ -1784,11 +1783,11 @@ void ServerCharManager::HandleStorageWithdraw(psGUIStorageMessage& msg, Client *
             }
                 
             partcount = currentitem->GetStackCount();
-        }*/
+        }
             
         if (character->Inventory().Add(currentitem, false, stackable))
         {
-            //newcount += partcount;
+            newcount += partcount;
         }
         else
         {
@@ -1796,15 +1795,16 @@ void ServerCharManager::HandleStorageWithdraw(psGUIStorageMessage& msg, Client *
             character->Inventory().AddStorageItem(currentitem);
             currentitem->SetLocInParent(PSCHARACTER_SLOT_STORAGE);
             currentitem->Save(false);
+        }
+
+        if (!newcount)
+        {
             psserver->SendSystemError(client->GetClientNum(),"you're carrying too many items. The item was put back in the storage.");
             return;
         }
-
-        //if (newcount != count) // not enough empty or stackable slots
-        //    psserver->SendSystemError(client->GetClientNum(),"You're carrying too many items [%d/%d] the rest was put back in storage.", newcount, count);
-
-        //if (!newcount)
-        //    return;
+        
+        if (newcount != count) // not enough empty or stackable slots
+            psserver->SendSystemError(client->GetClientNum(),"You're carrying too many items [%d/%d] the rest was put back in storage.", newcount, count);
         
         newcount = count;
 
