@@ -661,8 +661,7 @@ psItem * psCharacterInventory::AddStacked(psItem *& item, int & added)
         }
         else // this really should never happen, but just in case
         {
-            item->SetStackCount(item->GetStackCount() + newstack->GetStackCount());
-            CacheManager::GetSingleton().RemoveInstance(newstack);
+            item->CombineStack(newstack);
         }
     }
 
