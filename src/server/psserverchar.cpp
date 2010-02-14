@@ -1795,6 +1795,10 @@ void ServerCharManager::HandleStorageWithdraw(psGUIStorageMessage& msg, Client *
             character->Inventory().AddStorageItem(currentitem);
             currentitem->SetLocInParent(PSCHARACTER_SLOT_STORAGE);
             currentitem->Save(false);
+
+            if (newcount != count) // not enough empty or stackable slots
+                psserver->SendSystemError(client->GetClientNum(),"You're carrying too many items [%d/%d] the rest was put back in storage.", newcount, count);
+        
         }
 
         if (!newcount)
@@ -1802,10 +1806,6 @@ void ServerCharManager::HandleStorageWithdraw(psGUIStorageMessage& msg, Client *
             psserver->SendSystemError(client->GetClientNum(),"you're carrying too many items. The item was put back in the storage.");
             return;
         }
-        
-        if (newcount != count) // not enough empty or stackable slots
-            psserver->SendSystemError(client->GetClientNum(),"You're carrying too many items [%d/%d] the rest was put back in storage.", newcount, count);
-        
         newcount = count;
 
         // Update client views
