@@ -1350,7 +1350,12 @@ void pawsListBoxRow::AddColumn( int column, ColumnDef* def )
     }
 
     widget->SetParent( this );
-    widget->Load( def[column].widgetNode );
+    //widget->Load( def[column].widgetNode );
+    csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
+    csRef<iDocument> doc = xml->CreateDocument();
+    csRef<iDocumentNode> node = doc->CreateRoot();
+    node = node->CreateNodeBefore(CS_NODE_ELEMENT);
+    CS::DocSystem::CloneNode(def[column].widgetNode, node);
 
     int borderW = 0;
     int borderH = 0;
