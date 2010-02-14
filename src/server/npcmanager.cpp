@@ -1688,6 +1688,8 @@ void NPCManager::HandlePetCommand(MsgEntry * me,Client *client)
             }
             else
             {
+                //we need this to be initialized or we won't be able to set it correctly
+                lastName = "";
                 lastName.Clear();
             }
 
