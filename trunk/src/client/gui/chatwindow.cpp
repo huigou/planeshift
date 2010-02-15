@@ -294,8 +294,7 @@ void pawsChatWindow::LoadChatSettings()
             {	
                 settings.chatWidget = option->GetAttributeValue("value");
                 if(!settings.chatWidget.Length()) //if none are defined put a default one
-                    settings.chatWidget = "chat.xml";    
-                    printf("hello  %s\n", settings.chatWidget.GetData());                
+                    settings.chatWidget = "chat.xml";                
             }   
             else
             {
