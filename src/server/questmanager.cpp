@@ -761,7 +761,7 @@ int QuestManager::ParseQuestScript(int quest_id, const char *script)
 
                 if (mainQuest) // Prerequisites only apply to quest scripts, not KA scripts.
                 {
-                    if (!PrependPrerequisites(substep_requireop, response_requireop, quest_assigned_already,last_response,mainQuest))
+                    if (!PrependPrerequisites(substep_requireop, response_requireop, quest_assigned_already && step_count > 1,last_response,mainQuest))
                     {
                         lastError.Format("PrependPrerequistes failed on line %d", line_number);
                         return line_number;
