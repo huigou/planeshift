@@ -353,8 +353,10 @@ bool psCharacter::Load(iResultRow& row)
     SetHitPoints(mod < 0 ? GetMaxHP().Base() : mod);
     mod = row.GetFloat("mod_mana");
     SetMana(mod < 0 ? GetMaxMana().Base() : mod);
-    SetStamina(row.GetFloat("stamina_physical"),true);
-    SetStamina(row.GetFloat("stamina_mental"),false);
+    mod = row.GetFloat("stamina_physical");
+    SetStamina(mod < 0 ? GetMaxPStamina.Base() : mod,true);
+    mod = row.GetFloat("stamina_mental");
+    SetStamina(mod < 0 ? GetMaxMStamina.Base() : mod,false);
 
     vitals->SetOrigVitals(); // This saves them as loaded state for restoring later without hitting db, npc death resurrect.
 
