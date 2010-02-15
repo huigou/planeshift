@@ -347,16 +347,16 @@ bool psCharacter::Load(iResultRow& row)
 
     RecalculateStats();
 
-    // If mod_hp or mod_mana are set < 0 in the db, then that means
+    // If mod_hp, mod_mana, stamina physical and mental are set < 0 in the db, then that means
     // to use whatever is calculated as the max, so npc's spawn at 100%.
     float mod = row.GetFloat("mod_hitpoints");
     SetHitPoints(mod < 0 ? GetMaxHP().Base() : mod);
     mod = row.GetFloat("mod_mana");
     SetMana(mod < 0 ? GetMaxMana().Base() : mod);
     mod = row.GetFloat("stamina_physical");
-    SetStamina(mod < 0 ? GetMaxPStamina.Base() : mod,true);
+    SetStamina(mod < 0 ? GetMaxPStamina().Base() : mod,true);
     mod = row.GetFloat("stamina_mental");
-    SetStamina(mod < 0 ? GetMaxMStamina.Base() : mod,false);
+    SetStamina(mod < 0 ? GetMaxMStamina().Base() : mod,false);
 
     vitals->SetOrigVitals(); // This saves them as loaded state for restoring later without hitting db, npc death resurrect.
 
