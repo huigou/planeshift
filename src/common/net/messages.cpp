@@ -2184,7 +2184,7 @@ psGUIInventoryMessage::psGUIInventoryMessage(MsgEntry *message, csStringHashReve
                 item.slot          = message->GetUInt32();
                 item.stackcount    = message->GetUInt32();
                 item.weight        = message->GetFloat();
-                item.size          = message->GetUInt32();
+                item.size          = message->GetFloat();
                 item.iconImage     = message->GetStr();
                 item.purifyStatus  = message->GetUInt8();
                 items.Push(item);
@@ -2240,7 +2240,7 @@ void psGUIInventoryMessage::AddItem( const char* name,
                                      int slotID,
                                      int stackcount,
                                      float weight,
-                                     uint32 size,
+                                     float size,
                                      const char* icon,
                                      int purifyStatus, 
                                      csStringSet* msgstrings )

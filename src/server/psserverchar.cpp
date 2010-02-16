@@ -414,7 +414,7 @@ bool ServerCharManager::SendInventory( int clientNum, bool sendUpdatesOnly)
             invType = CONTAINER_INVENTORY_EQUIPMENT;
 
         Notify5(LOG_EXCHANGES, "  Inv item %s, slot %d, weight %1.1f, stack count %u\n",item->GetName(), slot, item->GetWeight(), item->GetStackCount() );
-        msgsize += strlen(item->GetName()) + 1 + 3*sizeof(uint32_t) * 3 + sizeof(float) * 2 + strlen(item->GetImageName()) + 1 + sizeof(uint8_t);
+        msgsize += strlen(item->GetName()) + 1 + sizeof(uint32_t) * 5 + sizeof(float) * 2 + strlen(item->GetImageName()) + 1 + sizeof(uint8_t);
     }
     
     psMoney m = chardata->Money();
@@ -422,8 +422,6 @@ bool ServerCharManager::SendInventory( int clientNum, bool sendUpdatesOnly)
     if (exchange)
         m += -exchange->GetOfferedMoney(client);
     msgsize += strlen(m.ToString()) + 1;
-
-	msgsize += sizeof(uint32); // apply version size
     
     // actually create the message
     outgoing = new psGUIInventoryMessage(toClientNumber,
@@ -452,7 +450,7 @@ bool ServerCharManager::SendInventory( int clientNum, bool sendUpdatesOnly)
                           slot,
                           (exchanging && invitem->exchangeOfferSlot != PSCHARACTER_SLOT_NONE) ? item->GetStackCount() - invitem->exchangeStackCount : item->GetStackCount(),
                           item->GetWeight(),
-                          item->GetTotalStackSize(), //TODO: CHANGE psGUIInventoryMessage to use float for this!!!
+                          item->GetTotalStackSize(),
                           item->GetImageName(),
                           item->GetPurifyStatus(),
                           CacheManager::GetSingleton().GetMsgStrings());

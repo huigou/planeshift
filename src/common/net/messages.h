@@ -45,7 +45,7 @@ class csStringHashReversible;
 
 // This holds the version number of the network code, remember to increase
 // this each time you do an update which breaks compatibility
-#define PS_NETVERSION   0x00B7
+#define PS_NETVERSION   0x00B8
 // Remember to bump the version in pscssetup.h, as well.
 
 
@@ -1664,7 +1664,7 @@ public:
                     int slot,
                     int stackcount,
                     float weight,
-                    uint32 size,
+                    float size,
                     const char* icon,
                     int purifyStatus,
                     csStringSet* msgstrings );
@@ -1685,7 +1685,7 @@ public:
         csString materialName;
         int slot;
         float weight;
-        uint32 size;
+        float size;
         int stackcount;
         csString iconImage;
         int container;

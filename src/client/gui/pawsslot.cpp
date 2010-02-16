@@ -307,8 +307,10 @@ void pawsSlot::OnUpdateData(const char *dataname,PAWSData& value)
         data.GetWordNumber(2,count);
         data.GetWordNumber(3,status);
         data.GetWordNumber(4,mesh);
-        data.GetWordNumber(5,material);
-        data.GetSubString( name, icon.Length()+count.Length()+status.Length()+mesh.Length()+material.Length()+4, data.Length());
+        data.GetSubString( material, icon.Length()+count.Length()+status.Length()+mesh.Length()+4, data.Find(" ", icon.Length()+count.Length()+status.Length()+mesh.Length()+4));
+        // data.GetWordNumber(5,material);
+        data.GetSubString( name, icon.Length()+count.Length()+status.Length()+mesh.Length()+material.Length()+5, data.Length());
+        Error4("Found item %s [%s](%s)", name.GetData(), material.GetData(), icon.GetData());
 
         PlaceItem( icon, mesh, material, atoi(  count.GetData() ) );        
         SetToolTip( name );
