@@ -449,7 +449,7 @@ bool psQuestPrereqOpRace::Check(psCharacter * character)
 {
     if (character->GetRaceInfo())
     {
-        return ((csString)character->GetRaceInfo()->GetRace() == race);
+        return (race.CompareNoCase(character->GetRaceInfo()->GetRace()));
     }
     return false;
 }
