@@ -78,31 +78,31 @@ const char *logFileName[CHAT_NLOG] = {
 
 // Must match the chat types in messages.h
 const char *CHAT_TYPES[] = {
-		"CHAT_SYSTEM",
-		"CHAT_COMBAT",
-		"CHAT_SAY",
-		"CHAT_TELL",
-		"CHAT_GROUP",
-		"CHAT_GUILD",
+        "CHAT_SYSTEM",
+        "CHAT_COMBAT",
+        "CHAT_SAY",
+        "CHAT_TELL",
+        "CHAT_GROUP",
+        "CHAT_GUILD",
         "CHAT_ALLIANCE",
-		"CHAT_AUCTION",
-		"CHAT_SHOUT",
-		"CHAT_CHANNEL",
-		"CHAT_TELLSELF",
-		"CHAT_REPORT",
-		"CHAT_ADVISOR",
-		"CHAT_ADVICE",
-		"CHAT_ADVICE_LIST",
-		"CHAT_SERVER_TELL",      ///< this tell came from the server, not from another player
-		"CHAT_GM",
-		"CHAT_SERVER_INFO",
-		"CHAT_NPC",
-		"CHAT_NPCINTERNAL",
-		"CHAT_SYSTEM_BASE",      ///< System messages that are also shown on the "Main" tab
-		"CHAT_PET_ACTION",
-		"CHAT_NPC_ME",
-		"CHAT_NPC_MY",
-		"CHAT_NPC_NARRATE",
+        "CHAT_AUCTION",
+        "CHAT_SHOUT",
+        "CHAT_CHANNEL",
+        "CHAT_TELLSELF",
+        "CHAT_REPORT",
+        "CHAT_ADVISOR",
+        "CHAT_ADVICE",
+        "CHAT_ADVICE_LIST",
+        "CHAT_SERVER_TELL",      ///< this tell came from the server, not from another player
+        "CHAT_GM",
+        "CHAT_SERVER_INFO",
+        "CHAT_NPC",
+        "CHAT_NPCINTERNAL",
+        "CHAT_SYSTEM_BASE",      ///< System messages that are also shown on the "Main" tab
+        "CHAT_PET_ACTION",
+        "CHAT_NPC_ME",
+        "CHAT_NPC_MY",
+        "CHAT_NPC_NARRATE",
         "CHAT_AWAY"
 };
 
@@ -153,7 +153,7 @@ pawsChatWindow::pawsChatWindow()
 
     for (int i = 0; i < CHAT_NLOG; i++)
         logFile[i] = NULL;
-    
+
     channels.SetSize(10, 0);
 }
 
@@ -197,7 +197,7 @@ bool pawsChatWindow::PostSetup()
     }
     ReplayMessages();
     if(settings.joindefaultchannel)
-    	JoinChannel("gossip");
+        JoinChannel("gossip");
     PawsManager::GetSingleton().Publish(CHAT_TYPES[CHAT_ADVISOR], "This channel is the HELP channel. "
         "Please type in your question and other fellow players or GMs may answer. "
         "If you don't get an answer, you can check also the HELP button in the top toolbar, "
@@ -239,10 +239,10 @@ void pawsChatWindow::LoadChatSettings()
         Error2("%s has no <chat> tag", CONFIG_CHAT_FILE_NAME_DEF);
         return;
     }
-    
+
     if(chatOptionsExist)
     {
-    	doc = ParseFile(psengine->GetObjectRegistry(), CONFIG_CHAT_FILE_NAME);
+        doc = ParseFile(psengine->GetObjectRegistry(), CONFIG_CHAT_FILE_NAME);
         if (doc == NULL)
         {
             Error2("Failed to parse file %s", CONFIG_CHAT_FILE_NAME);
@@ -266,7 +266,7 @@ void pawsChatWindow::LoadChatSettings()
     // Load options such as loose after sending
     optionNode = chatNode->GetNode("chatoptions");
     if(!optionNode)
-    	optionNode = defaultChatNode->GetNode("chatoptions");
+        optionNode = defaultChatNode->GetNode("chatoptions");
     if (optionNode != NULL)
     {
         csRef<iDocumentNodeIterator> oNodes = optionNode->GetNodes();
@@ -287,15 +287,15 @@ void pawsChatWindow::LoadChatSettings()
             else if (nodeName == "yourcolormix")
                 settings.yourColorMix = option->GetAttributeValueAsBool("value", true);
             else if (nodeName == "joindefaultchannel")
-            	settings.joindefaultchannel = option->GetAttributeValueAsBool("value", true);
+                settings.joindefaultchannel = option->GetAttributeValueAsBool("value", true);
             else if (nodeName == "defaultlastchat")
-            	settings.defaultlastchat = option->GetAttributeValueAsBool("value", true);
+                settings.defaultlastchat = option->GetAttributeValueAsBool("value", true);
             else if (nodeName == "chatWidget")
-            {	
+            {
                 settings.chatWidget = option->GetAttributeValue("value");
                 if(!settings.chatWidget.Length()) //if none are defined put a default one
-                    settings.chatWidget = "chat.xml";                
-            }   
+                    settings.chatWidget = "chat.xml";
+            }
             else
             {
                 for (int i = 0; i < CHAT_NLOG; i++)
@@ -306,43 +306,43 @@ void pawsChatWindow::LoadChatSettings()
     }
     bindingsNode = chatNode->GetNode("bindings");
     if(!bindingsNode)
-    	bindingsNode = defaultChatNode->GetNode("bindings");
+        bindingsNode = defaultChatNode->GetNode("bindings");
     if (bindingsNode != NULL)
     {
-    	settings.bindings.DeleteAll();
-    	settings.subNames.DeleteAll();
-    	csRef<iDocumentNodeIterator> bindingsIter = bindingsNode->GetNodes("listener");
-    	while(bindingsIter->HasNext())
-    	{
-    		csRef<iDocumentNode> binding = bindingsIter->Next();
-    		csString listenerName(binding->GetAttributeValue("name"));
-    		settings.subNames.Push(listenerName);
-    		csRef<iDocumentNodeIterator> bindingTypesIter = binding->GetNodes("chat_message");
-    		csArray<iPAWSSubscriber*> subscribers = PawsManager::GetSingleton().ListSubscribers(listenerName);
-    		
-    		for(size_t i = 0; i < subscribers.GetSize(); i++)
-			{
-    			PawsManager::GetSingleton().Subscribe(listenerName, subscribers[i]);
-			}
-    		while(bindingTypesIter->HasNext())
-    		{
-    			csRef<iDocumentNode> bindingType = bindingTypesIter->Next();
-    			csString typeName(bindingType->GetAttributeValue("type"));
+        settings.bindings.DeleteAll();
+        settings.subNames.DeleteAll();
+        csRef<iDocumentNodeIterator> bindingsIter = bindingsNode->GetNodes("listener");
+        while(bindingsIter->HasNext())
+        {
+            csRef<iDocumentNode> binding = bindingsIter->Next();
+            csString listenerName(binding->GetAttributeValue("name"));
+            settings.subNames.Push(listenerName);
+            csRef<iDocumentNodeIterator> bindingTypesIter = binding->GetNodes("chat_message");
+            csArray<iPAWSSubscriber*> subscribers = PawsManager::GetSingleton().ListSubscribers(listenerName);
 
-				for(size_t i = 0; i < subscribers.GetSize(); i++)
-				{
-					PawsManager::GetSingleton().Subscribe(typeName, subscribers[i]);
-				}
-				// For loading/saving
-    			settings.bindings.Put(listenerName, typeName);
-    		}
-    	}
+            for(size_t i = 0; i < subscribers.GetSize(); i++)
+            {
+                PawsManager::GetSingleton().Subscribe(listenerName, subscribers[i]);
+            }
+            while(bindingTypesIter->HasNext())
+            {
+                csRef<iDocumentNode> bindingType = bindingTypesIter->Next();
+                csString typeName(bindingType->GetAttributeValue("type"));
+
+                for(size_t i = 0; i < subscribers.GetSize(); i++)
+                {
+                    PawsManager::GetSingleton().Subscribe(typeName, subscribers[i]);
+                }
+                // For loading/saving
+                settings.bindings.Put(listenerName, typeName);
+            }
+        }
     }
-    
+
     // Load colors
     colorNode = chatNode->GetNode("chatcolors");
     if(!colorNode)
-    	colorNode = defaultChatNode->GetNode("chatcolors");
+        colorNode = defaultChatNode->GetNode("chatcolors");
     if (colorNode != NULL)
     {
         csRef<iDocumentNodeIterator> cNodes = colorNode->GetNodes();
@@ -378,7 +378,7 @@ void pawsChatWindow::LoadChatSettings()
     // Load filters
     filtersNode = chatNode->GetNode("filters");
     if(!filtersNode)
-    	filtersNode = defaultChatNode->GetNode("filters");
+        filtersNode = defaultChatNode->GetNode("filters");
     settings.meFilters = 0;
     settings.vicinityFilters = 0;
 
@@ -432,7 +432,7 @@ void pawsChatWindow::LoadChatSettings()
     // Load message filters
     msgFiltersNode = chatNode->GetNode("msgfilters");
     if(!msgFiltersNode)
-    	msgFiltersNode = defaultChatNode->GetNode("msgfilters");
+        msgFiltersNode = defaultChatNode->GetNode("msgfilters");
     if (msgFiltersNode != NULL)
     {
         csRef<iDocumentNodeIterator> fNodes = msgFiltersNode->GetNodes();
@@ -473,23 +473,23 @@ void pawsChatWindow::LoadChatSettings()
 
 void pawsChatWindow::DetermineChatTabAndSelect(int chattype)
 {
-	csArray<iPAWSSubscriber*> subscribers = PawsManager::GetSingleton().ListSubscribers(CHAT_TYPES[chattype]);
-	
-	if(!tabs || subscribers.IsEmpty())
-		return;
-    
-	PawsManager::GetSingleton().SetCurrentFocusedWidget( inputText );
-	BringToTop( inputText );
+    csArray<iPAWSSubscriber*> subscribers = PawsManager::GetSingleton().ListSubscribers(CHAT_TYPES[chattype]);
 
-	for(size_t i = 0; i < subscribers.GetSize(); i++)
-	{
-		pawsWidget* widget = dynamic_cast<pawsWidget*>(subscribers[i]);
-		if(widget->IsVisible())
-			return;
-	}
+    if(!tabs || subscribers.IsEmpty())
+        return;
 
-	pawsWidget* newTab = dynamic_cast<pawsWidget*>(subscribers[0]);
-	tabs->SetTab(newTab->GetName());
+    PawsManager::GetSingleton().SetCurrentFocusedWidget( inputText );
+    BringToTop( inputText );
+
+    for(size_t i = 0; i < subscribers.GetSize(); i++)
+    {
+        pawsWidget* widget = dynamic_cast<pawsWidget*>(subscribers[i]);
+        if(widget->IsVisible())
+            return;
+    }
+
+    pawsWidget* newTab = dynamic_cast<pawsWidget*>(subscribers[0]);
+    tabs->SetTab(newTab->GetName());
 }
 
 const char* pawsChatWindow::HandleCommand( const char* cmd )
@@ -497,7 +497,7 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
     WordArray words(cmd);
     csString pPerson;
     csString text;
-    
+
     // Used to hold error message between calls
     static csString error;
     int chattype = 0;
@@ -516,11 +516,11 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
     {
         if (words.GetCount() == 1)
         {
-        	error = PawsManager::GetSingleton().Translate("You must enter the text");
+            error = PawsManager::GetSingleton().Translate("You must enter the text");
             return error;
         }
 
-        
+
         if (words[0] == "/say" || words[0] == "/s")
         {
             pPerson.Clear();
@@ -582,74 +582,74 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
         }
         else if (words[0] == "/1")
         {
-        	pPerson.Clear();
-        	words.GetTail(1,text);
-        	chattype = CHAT_CHANNEL;
-        	hotkeyChannel = 1;
+            pPerson.Clear();
+            words.GetTail(1,text);
+            chattype = CHAT_CHANNEL;
+            hotkeyChannel = 1;
         }
         else if (words[0] == "/2")
-		{
-			pPerson.Clear();
-			words.GetTail(1,text);
-			chattype = CHAT_CHANNEL;
-			hotkeyChannel = 2;
-		}
+        {
+            pPerson.Clear();
+            words.GetTail(1,text);
+            chattype = CHAT_CHANNEL;
+            hotkeyChannel = 2;
+        }
         else if (words[0] == "/3")
-		{
-			pPerson.Clear();
-			words.GetTail(1,text);
-			chattype = CHAT_CHANNEL;
-			hotkeyChannel = 3;
-		}
+        {
+            pPerson.Clear();
+            words.GetTail(1,text);
+            chattype = CHAT_CHANNEL;
+            hotkeyChannel = 3;
+        }
         else if (words[0] == "/4")
-		{
-			pPerson.Clear();
-			words.GetTail(1,text);
-			chattype = CHAT_CHANNEL;
-			hotkeyChannel = 4;
-		}
+        {
+            pPerson.Clear();
+            words.GetTail(1,text);
+            chattype = CHAT_CHANNEL;
+            hotkeyChannel = 4;
+        }
         else if (words[0] == "/5")
-		{
-			pPerson.Clear();
-			words.GetTail(1,text);
-			chattype = CHAT_CHANNEL;
-			hotkeyChannel = 5;
-		}
+        {
+            pPerson.Clear();
+            words.GetTail(1,text);
+            chattype = CHAT_CHANNEL;
+            hotkeyChannel = 5;
+        }
         else if (words[0] == "/6")
-		{
-			pPerson.Clear();
-			words.GetTail(1,text);
-			chattype = CHAT_CHANNEL;
-			hotkeyChannel = 6;
-		}
+        {
+            pPerson.Clear();
+            words.GetTail(1,text);
+            chattype = CHAT_CHANNEL;
+            hotkeyChannel = 6;
+        }
         else if (words[0] == "/7")
-		{
-			pPerson.Clear();
-			words.GetTail(1,text);
-			chattype = CHAT_CHANNEL;
-			hotkeyChannel = 7;
-		}
+        {
+            pPerson.Clear();
+            words.GetTail(1,text);
+            chattype = CHAT_CHANNEL;
+            hotkeyChannel = 7;
+        }
         else if (words[0] == "/8")
-		{
-			pPerson.Clear();
-			words.GetTail(1,text);
-			chattype = CHAT_CHANNEL;
-			hotkeyChannel = 8;
-		}
+        {
+            pPerson.Clear();
+            words.GetTail(1,text);
+            chattype = CHAT_CHANNEL;
+            hotkeyChannel = 8;
+        }
         else if (words[0] == "/9")
-		{
-			pPerson.Clear();
-			words.GetTail(1,text);
-			chattype = CHAT_CHANNEL;
-			hotkeyChannel = 9;
-		}
+        {
+            pPerson.Clear();
+            words.GetTail(1,text);
+            chattype = CHAT_CHANNEL;
+            hotkeyChannel = 9;
+        }
         else if (words[0] == "/10")
-		{
-			pPerson.Clear();
-			words.GetTail(1,text);
-			chattype = CHAT_CHANNEL;
-			hotkeyChannel = 10;
-		}
+        {
+            pPerson.Clear();
+            words.GetTail(1,text);
+            chattype = CHAT_CHANNEL;
+            hotkeyChannel = 10;
+        }
         else if (words[0] == "/group" || words[0] == "/gr")
         {
             pPerson.Clear();
@@ -696,7 +696,7 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
             pPerson.Clear();
             csString chatType;
             if(tabs)
-            	chatType = tabs->GetActiveTab()->GetName();
+                chatType = tabs->GetActiveTab()->GetName();
 
             csString allowedTabs;
             csString defaultButton("Main Button");
@@ -775,12 +775,12 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
     int channelID = 0;
     if(chattype == CHAT_CHANNEL)
     {
-    	channelID = channels[hotkeyChannel-1];
-		if(channelID == 0)
-		{
-			ChatOutput("No channel assigned to that channel hotkey!");
-			return NULL;
-		}
+        channelID = channels[hotkeyChannel-1];
+        if(channelID == 0)
+        {
+            ChatOutput("No channel assigned to that channel hotkey!");
+            return NULL;
+        }
     }
     psChatMessage chat(0, 0, pPerson.GetDataSafe(), 0, text.GetDataSafe(), chattype, false, channelID);
     if (chattype != CHAT_NPCINTERNAL)
@@ -793,54 +793,54 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
 
 void pawsChatWindow::ReplayMessages()
 {
-	csString filename;
-	filename.Format("/planeshift/userdata/logs/%s_%s",
-						psengine->GetMainPlayerName(),
-						logFileName[CHAT_LOG_ALL]);
-	filename.ReplaceAll(" ", "_");
-	
-	char buf[1001];
+    csString filename;
+    filename.Format("/planeshift/userdata/logs/%s_%s",
+                        psengine->GetMainPlayerName(),
+                        logFileName[CHAT_LOG_ALL]);
+    filename.ReplaceAll(" ", "_");
 
-	// Open file and seek to 1000 bytes from the end, unlikely to need anything earlier than that.
-	csRef<iFile> file = psengine->GetVFS()->Open(filename, VFS_FILE_READ);
-	if(!file.IsValid())
-		return;
-	size_t seekPos = 0;
-	if(file->GetSize() > 1000)
-		seekPos = file->GetSize() - 1000;
-	file->SetPos(seekPos);
-	size_t readLength = file->Read(buf, 1000);
-	
-	// At least 5 chars
-	if(readLength < 5)
-		return;
-	
-	buf[readLength] = '\0';
-	
-	// Find the last 10 lines
-	int lines = 0;
-	char* currentPos;
-	csArray<const char*> line;
-	
-	for(currentPos = buf + readLength - 2; currentPos != buf && lines != 10; currentPos--)
-	{
-		if(*currentPos == '\n')
-		{
-			*currentPos = '\0';
-			// Useful log messages are prepended with a ( time stamp
-			if(*(currentPos + 1) == '(')
-			{
-				line.Push(currentPos + 1);
-				lines++;
-			}
-		}
-		if(*currentPos == '\r')
-			*currentPos = '\0';
-	}
-	// Assume CHAT_SAY and place all in one chat type to ensure they end up in the same window
-	PawsManager::GetSingleton().Publish(CHAT_TYPES[CHAT_SAY], PawsManager::GetSingleton().Translate("Replaying previous chat..."), settings.systemColor );
-	while(!line.IsEmpty())
-		PawsManager::GetSingleton().Publish(CHAT_TYPES[CHAT_SAY], line.Pop(), settings.chatColor );
+    char buf[1001];
+
+    // Open file and seek to 1000 bytes from the end, unlikely to need anything earlier than that.
+    csRef<iFile> file = psengine->GetVFS()->Open(filename, VFS_FILE_READ);
+    if(!file.IsValid())
+        return;
+    size_t seekPos = 0;
+    if(file->GetSize() > 1000)
+        seekPos = file->GetSize() - 1000;
+    file->SetPos(seekPos);
+    size_t readLength = file->Read(buf, 1000);
+
+    // At least 5 chars
+    if(readLength < 5)
+        return;
+
+    buf[readLength] = '\0';
+
+    // Find the last 10 lines
+    int lines = 0;
+    char* currentPos;
+    csArray<const char*> line;
+
+    for(currentPos = buf + readLength - 2; currentPos != buf && lines != 10; currentPos--)
+    {
+        if(*currentPos == '\n')
+        {
+            *currentPos = '\0';
+            // Useful log messages are prepended with a ( time stamp
+            if(*(currentPos + 1) == '(')
+            {
+                line.Push(currentPos + 1);
+                lines++;
+            }
+        }
+        if(*currentPos == '\r')
+            *currentPos = '\0';
+    }
+    // Assume CHAT_SAY and place all in one chat type to ensure they end up in the same window
+    PawsManager::GetSingleton().Publish(CHAT_TYPES[CHAT_SAY], PawsManager::GetSingleton().Translate("Replaying previous chat..."), settings.systemColor );
+    while(!line.IsEmpty())
+        PawsManager::GetSingleton().Publish(CHAT_TYPES[CHAT_SAY], line.Pop(), settings.chatColor );
 }
 
 void pawsChatWindow::LogMessage(enum E_CHAT_LOG channel, const char* message, int type)
@@ -958,15 +958,15 @@ void pawsChatWindow::SaveChatSettings()
     yourColorMixNode = optionNode->CreateNodeBefore(CS_NODE_ELEMENT,0);
     yourColorMixNode->SetValue("yourcolormix");
     yourColorMixNode->SetAttributeAsInt("value",(int)settings.yourColorMix);
-    
+
     joindefaultchannelNode = optionNode->CreateNodeBefore(CS_NODE_ELEMENT,0);
     joindefaultchannelNode->SetValue("joindefaultchannel");
     joindefaultchannelNode->SetAttributeAsInt("value",(int)settings.joindefaultchannel);
-    
+
     defaultlastchatNode = optionNode->CreateNodeBefore(CS_NODE_ELEMENT,0);
     defaultlastchatNode->SetValue("defaultlastchat");
     defaultlastchatNode->SetAttributeAsInt("value",(int)settings.defaultlastchat);
-    
+
     chatWidgetNode = optionNode->CreateNodeBefore(CS_NODE_ELEMENT,0);
     chatWidgetNode->SetValue("chatWidget");
     chatWidgetNode->SetAttribute("value",settings.chatWidget.GetData());
@@ -985,23 +985,23 @@ void pawsChatWindow::SaveChatSettings()
 
     csRef<iDocumentNode> bindingsNode = chatNode->CreateNodeBefore(CS_NODE_ELEMENT, 0);
     bindingsNode->SetValue("bindings");
-    
+
     csRef<iDocumentNode> listenerNode;
 
     for(size_t i = 0; i < settings.subNames.GetSize(); i++)
     {
-		csHash<csString, csString>::Iterator bindingsIt = settings.bindings.GetIterator(settings.subNames[i]);
-		listenerNode = bindingsNode->CreateNodeBefore(CS_NODE_ELEMENT, 0);
-		listenerNode->SetValue("listener");
-		listenerNode->SetAttribute("name", settings.subNames[i]);
-		while(bindingsIt.HasNext())
-		{
-			csString type = bindingsIt.Next();
+        csHash<csString, csString>::Iterator bindingsIt = settings.bindings.GetIterator(settings.subNames[i]);
+        listenerNode = bindingsNode->CreateNodeBefore(CS_NODE_ELEMENT, 0);
+        listenerNode->SetValue("listener");
+        listenerNode->SetAttribute("name", settings.subNames[i]);
+        while(bindingsIt.HasNext())
+        {
+            csString type = bindingsIt.Next();
 
-			csRef<iDocumentNode> chatTabType = listenerNode->CreateNodeBefore(CS_NODE_ELEMENT, 0);
-			chatTabType->SetValue("chat_message");
-			chatTabType->SetAttribute("type", type);
-		}
+            csRef<iDocumentNode> chatTabType = listenerNode->CreateNodeBefore(CS_NODE_ELEMENT, 0);
+            chatTabType->SetValue("chat_message");
+            chatTabType->SetAttribute("type", type);
+        }
     }
 
     filtersNode = chatNode->CreateNodeBefore(CS_NODE_ELEMENT,0);
@@ -1158,7 +1158,7 @@ void pawsChatWindow::HandleSystemMessage(MsgEntry *me)
                 header.Append('\n');
                 size_t spacePos = playerLines[i].FindFirst(' ');
                 if(spacePos == (size_t) -1)
-                	spacePos = playerLines[i].Length();
+                    spacePos = playerLines[i].Length();
                 playerLines[i].Insert(0, WHITECODE);
                 playerLines[i].Insert(spacePos + LENGTHCODE, DEFAULTCODE);
                 header.Append(playerLines[i]);
@@ -1222,7 +1222,7 @@ void pawsChatWindow::HandleSystemMessage(MsgEntry *me)
                      msg.type == MSG_LOOT)
                 chatType = CHAT_SYSTEM_BASE;
             else if ((msg.type & MSG_COMBAT) != 0)
-            	chatType = CHAT_COMBAT;
+                chatType = CHAT_COMBAT;
 
             WordArray playerName(psengine->GetMainPlayerName());
             bool hasCharName = noCaseMsg.Find(playerName[0].Downcase().GetData()) != (size_t)-1;
@@ -1251,13 +1251,13 @@ void pawsChatWindow::FormatMessage(csString &sText, csString &sPerson, csString 
         buff.Format("%s%s's" DEFAULTCODE " %s", (const char *) nameColouringCode, (const char *)sPerson, ((const char *)sText)+4);
     else
     {
-        buff.Format("%s%s" DEFAULTCODE "%s: %s", (const char *) nameColouringCode,(const char *)sPerson, 
-                    prependingText.Length() ?  
-                    (const char *) (" " +PawsManager::GetSingleton().Translate(prependingText)) : "", 
+        buff.Format("%s%s" DEFAULTCODE "%s: %s", (const char *) nameColouringCode,(const char *)sPerson,
+                    prependingText.Length() ?
+                    (const char *) (" " +PawsManager::GetSingleton().Translate(prependingText)) : "",
                     (const char *)sText);
     }
 }
-    
+
 
 void pawsChatWindow::HandleMessage(MsgEntry *me)
 {
@@ -1271,23 +1271,23 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
     }
     if(me->GetType() == MSGTYPE_CHANNEL_JOINED)
     {
-    	psChannelJoinedMessage joinedMsg(me);
-    	channelIDs.PutUnique(joinedMsg.channel, joinedMsg.id);
-    	int hotkeyChannel = 10;
-    	for(size_t i = 0; i < channels.GetSize(); i++)
-    	{
-    		if(channels[i] == 0)
-    		{
-    			hotkeyChannel = i + 1;
-    			channels[i] = joinedMsg.id;
-    			break;
-    		}
-    	}
-    	csString msg;
-    	msg.Format("Channel %s has been added with hotkey /%d", joinedMsg.channel.GetData(), hotkeyChannel);
+        psChannelJoinedMessage joinedMsg(me);
+        channelIDs.PutUnique(joinedMsg.channel, joinedMsg.id);
+        int hotkeyChannel = 10;
+        for(size_t i = 0; i < channels.GetSize(); i++)
+        {
+            if(channels[i] == 0)
+            {
+                hotkeyChannel = i + 1;
+                channels[i] = joinedMsg.id;
+                break;
+            }
+        }
+        csString msg;
+        msg.Format("Channel %s has been added with hotkey /%d", joinedMsg.channel.GetData(), hotkeyChannel);
         ChatOutput(msg, settings.channelColor, CHAT_CHANNEL, true, false, hotkeyChannel);
 
-    	return;
+        return;
     }
 
     psChatMessage msg(me);
@@ -1339,10 +1339,10 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
     size_t charNamePos = noCaseText.Find(noCasePlayerForename);
     if(charNamePos != (size_t) -1)
     {
-    	msg.sText.Insert(charNamePos, REDCODE);
-    	msg.sText.Insert(charNamePos + LENGTHCODE + noCasePlayerForename.Length(), DEFAULTCODE);
+        msg.sText.Insert(charNamePos, REDCODE);
+        msg.sText.Insert(charNamePos + LENGTHCODE + noCasePlayerForename.Length(), DEFAULTCODE);
     }
-    
+
     csString noCaseMsg = msg.sText;
     noCaseMsg.Downcase();
 
@@ -1376,7 +1376,7 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
             colour = settings.guildColor;
             break;
         }
-        
+
         case CHAT_ALLIANCE:
         {
             FormatMessage(msg.sText, msg.sPerson, "says", buff, hasCharName);
@@ -1399,7 +1399,7 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
         }
 
         case CHAT_NPCINTERNAL:
-        case CHAT_NPC: 
+        case CHAT_NPC:
         {
             buff.Format(BLUECODE "%s" DEFAULTCODE " %s: %s",
                         (const char *)msg.sPerson, (const char *) PawsManager::GetSingleton().Translate("says"), (const char *)msg.sText);
@@ -1535,18 +1535,18 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
             colour = settings.helpColor;
             break;
         }
-        
+
         case CHAT_CHANNEL:
         {
-        	channelID = channels.Find(msg.channelID);
-        	// Not yet received channel join reply
-        	if(channelID == csArrayItemNotFound)
-        		return;
-        	channelID++;
+            channelID = channels.Find(msg.channelID);
+            // Not yet received channel join reply
+            if(channelID == csArrayItemNotFound)
+                return;
+            channelID++;
             FormatMessage(msg.sText, msg.sPerson, "", buff, hasCharName);
             buff.Insert(0, csString().Format("[%zu: %s] ", channelID, channelIDs.GetKey(msg.channelID, "").GetData()));
-			colour = settings.channelColor;
-			break;
+            colour = settings.channelColor;
+            break;
         }
         default:
         {
@@ -1582,13 +1582,13 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
     {
         ChatOutput(buff.GetData(), colour, msg.iChatType, flashEnabled, hasCharName, channelID);
     }
-    
+
     // Remove colour codes for log
     size_t colourStart = buff.FindFirst(ESCAPECODE);
     while(colourStart != (size_t) -1 && colourStart + LENGTHCODE <= buff.Length())
     {
-    	buff.DeleteAt(colourStart, LENGTHCODE);
-    	colourStart = buff.FindFirst(ESCAPECODE);
+        buff.DeleteAt(colourStart, LENGTHCODE);
+        colourStart = buff.FindFirst(ESCAPECODE);
     }
 
     LogMessage(CHAT_LOG_ALL, buff.GetDataSafe(), msg.iChatType);
@@ -1603,7 +1603,7 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
 
         if (settings.enableBadWordsFilterOutgoing)
             BadWordsFilter(clientmsg);
-        
+
         autoResponse.Format("[auto-reply] %s",clientmsg.GetData());
         psChatMessage chat(0, 0, (const char*)msg.sPerson, 0, autoResponse.GetDataSafe(), CHAT_AWAY, false, 0);
         msgqueue->SendMessage(chat.msg);  // Send away msg to server
@@ -1612,23 +1612,23 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
 
 void pawsChatWindow::JoinChannel(csString chan)
 {
-	psChannelJoinMessage cmdjoin(chan);
-	cmdjoin.SendMessage();
+    psChannelJoinMessage cmdjoin(chan);
+    cmdjoin.SendMessage();
 }
 
 bool pawsChatWindow::LeaveChannel(int hotkeyChannel)
-{	
-	uint16_t channelID = channels[hotkeyChannel - 1];
-	if(channelID == 0)
-		return false;
-	channels[hotkeyChannel - 1] = 0;
-	psChannelLeaveMessage cmdleave(channelID);
-	cmdleave.SendMessage();
-	csString msg;
-	msg.Format("Left channel %d.", hotkeyChannel);
+{
+    uint16_t channelID = channels[hotkeyChannel - 1];
+    if(channelID == 0)
+        return false;
+    channels[hotkeyChannel - 1] = 0;
+    psChannelLeaveMessage cmdleave(channelID);
+    cmdleave.SendMessage();
+    csString msg;
+    msg.Format("Left channel %d.", hotkeyChannel);
     ChatOutput(msg, settings.channelColor, CHAT_CHANNEL, true, false, hotkeyChannel);
 
-	return true;
+    return true;
 }
 
 
@@ -1654,7 +1654,7 @@ void pawsChatWindow::SubscribeCommands()
     cmdsource->Subscribe("/mypet",this);
     cmdsource->Subscribe("/auction",this);
     cmdsource->Subscribe("/report",this);
-    
+
     // channel shortcuts
     cmdsource->Subscribe("/1", this);
     cmdsource->Subscribe("/2", this);
@@ -1842,9 +1842,9 @@ void pawsChatWindow::SendChatLine(csString& textToSend)
     {
         if ( textToSend.GetAt(0) != '/' )
         {
-        	csString chatType;
-        	if(tabs)
-            	chatType = tabs->GetActiveTab()->GetName();
+            csString chatType;
+            if(tabs)
+                chatType = tabs->GetActiveTab()->GetName();
 
             if (chatType == "TellText")
             {
@@ -1881,7 +1881,7 @@ void pawsChatWindow::SendChatLine(csString& textToSend)
                 textToSend.Insert(0, "/say ");
 
         }
-        
+
         const char* errorMessage = cmdsource->Publish(textToSend);
         if (errorMessage)
             ChatOutput(errorMessage);
@@ -1976,8 +1976,8 @@ void pawsChatWindow::TabCompleteCommand(const char *cmd)
     csRedBlackTree<psString>::Iterator loop(commandList.GetIterator());
     while (loop.HasNext())
     {
-    	const psString& found = loop.Next();
-    	
+        const psString& found = loop.Next();
+
         if (!found.PartialEquals(partial))
         {
             count++;
@@ -2130,9 +2130,9 @@ void pawsChatWindow::SetAway(const char* text)
 
 void pawsChatWindow::Clear()
 {
-	for(int chattype = 0; chattype < CHAT_END; chattype++)
-	{
-		csArray<iPAWSSubscriber*> subscribers = PawsManager::GetSingleton().ListSubscribers(CHAT_TYPES[chattype]);
+    for(int chattype = 0; chattype < CHAT_END; chattype++)
+    {
+        csArray<iPAWSSubscriber*> subscribers = PawsManager::GetSingleton().ListSubscribers(CHAT_TYPES[chattype]);
 
         //if we are dealing with the chatchanneltype we need to add all the sub types
         if(chattype == CHAT_CHANNEL)
@@ -2143,16 +2143,16 @@ void pawsChatWindow::Clear()
                 channelPubName += hotkeyChannel;
                 subscribers.MergeSmart(PawsManager::GetSingleton().ListSubscribers(channelPubName));
             }
-                
+
         }
 
-		for(size_t i = 0; i < subscribers.GetSize(); i++)
-		{
-			pawsMessageTextBox* textbox = dynamic_cast<pawsMessageTextBox*>(subscribers[i]);
-			if(textbox)
-				textbox->Clear();
-		}
-	}
+        for(size_t i = 0; i < subscribers.GetSize(); i++)
+        {
+            pawsMessageTextBox* textbox = dynamic_cast<pawsMessageTextBox*>(subscribers[i]);
+            if(textbox)
+                textbox->Clear();
+        }
+    }
 }
 
 
@@ -2246,36 +2246,36 @@ csString pawsChatWindow::GetBracket(int type) //according to the type return the
 void pawsChatWindow::ChatOutput(const char* data, int colour, int type, bool flashEnabled, bool hasCharName, int hotkeyChannel)
 {
     csString s = data;
-    if (settings.enableBadWordsFilterIncoming && type != CHAT_SERVER_INFO && 
+    if (settings.enableBadWordsFilterIncoming && type != CHAT_SERVER_INFO &&
         type != CHAT_NPC && type != CHAT_NPC_ME && type != CHAT_NPC_MY && type != CHAT_NPC_NARRATE)
     {
         BadWordsFilter(s);
     }
-	csString pubName = CHAT_TYPES[type];
+    csString pubName = CHAT_TYPES[type];
     if(type == CHAT_CHANNEL)
-    	pubName += hotkeyChannel;
+        pubName += hotkeyChannel;
     PawsManager::GetSingleton().Publish(pubName, s, colour );
-    
+
     // Flash if all are not visible
     bool needFlash = true;
     pawsMessageTextBox* textbox = NULL;
-	csArray<iPAWSSubscriber*> subscribers = PawsManager::GetSingleton().ListSubscribers(pubName);
-	for(size_t i = 0; i < subscribers.GetSize(); i++)
-	{
-		textbox = dynamic_cast<pawsMessageTextBox*>(subscribers[i]);
-		if(textbox && textbox->IsVisible())
-		{
-			needFlash = false;
-			break;
-		}
-	}
-	
-	if(needFlash && textbox)
-	{
-		pawsTabWindow* tabwindow = dynamic_cast<pawsTabWindow*>(textbox->GetParent());
-		if(tabwindow)
-			tabwindow->FlashButtonFor(textbox);
-	}
+    csArray<iPAWSSubscriber*> subscribers = PawsManager::GetSingleton().ListSubscribers(pubName);
+    for(size_t i = 0; i < subscribers.GetSize(); i++)
+    {
+        textbox = dynamic_cast<pawsMessageTextBox*>(subscribers[i]);
+        if(textbox && textbox->IsVisible())
+        {
+            needFlash = false;
+            break;
+        }
+    }
+
+    if(needFlash && textbox)
+    {
+        pawsTabWindow* tabwindow = dynamic_cast<pawsTabWindow*>(textbox->GetParent());
+        if(tabwindow)
+            tabwindow->FlashButtonFor(textbox);
+    }
 }
 
 void pawsChatWindow::AddAutoCompleteName(const char *cname)
