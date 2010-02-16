@@ -568,6 +568,11 @@ csString QuestManager::ParseRequireCommand(csString& block, bool& result)
             command.Format("<item inventory=\"true\" name=\"%s\"/>",itemName.GetData());
         }
     }
+    else if (!strncasecmp(block,"assignment of", 13))
+    {
+        csString questname = block.Slice(13,block.Length()-1).Trim();
+        command.Format("<assigned quest=\"%s\"/>", questname.GetData());
+    }
     else
     {
         //it seems the require op we have found isn't
