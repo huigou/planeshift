@@ -568,7 +568,7 @@ csString QuestManager::ParseRequireCommand(csString& block, bool& result)
             command.Format("<item inventory=\"true\" name=\"%s\"/>",itemName.GetData());
         }
     }
-    else if (!strncasecmp(block,"assignment of", 13))
+    else if (!strncasecmp(block,"assignment of", 13)) //Require <no/not> assignment of deliver me an apple.
     {
         csString questname = block.Slice(13,block.Length()-1).Trim();
         command.Format("<assigned quest=\"%s\"/>", questname.GetData());
