@@ -149,6 +149,11 @@ void psMovementManager::LockMoves(bool v)
     if (!actor)
         return;
 
+    //we had a special event we need to unset stationary in case so the client
+    //queries the server on the status at least one time.
+    actor->stationary = false;
+    actor->lastDRUpdateTime = csGetTicks();
+
     if (v)
     {
         StopAllMovement();
