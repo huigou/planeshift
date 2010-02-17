@@ -356,7 +356,7 @@ void CharCreationManager::HandleName( MsgEntry* me, Client *client )
         return;
     }
 
-    if(!IsLastNameUnique(name.lastName))
+    if(!IsLastNameAvailable(name.lastName, client->GetAccountID()))
     {
         psNameCheckMessage response( me->clientnum, false, "Last name is already in use"); 
         response.SendMessage();        
@@ -731,7 +731,7 @@ void CharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
     if (lastName.Length())
     {
         Debug2( LOG_NEWCHAR, me->clientnum,"Checking player lastname '%s'..\n",lastName.GetData());
-        if  ( !IsLastNameUnique( lastName ) )
+        if (!IsLastNameAvailable(lastName, acctID))
         {
             psCharRejectedMessage reject(me->clientnum,
                                         psCharRejectedMessage::NON_UNIQUE_NAME,
@@ -1131,20 +1131,32 @@ bool CharCreationManager::IsUnique( const char* name , bool dbUniqueness)
     return ! ( result.IsValid() && (result.Count() > (unsigned long)(dbUniqueness ? 1:0)) );
 }
 
-bool CharCreationManager::IsLastNameUnique( const char* lastname )
+bool CharCreationManager::IsLastNameAvailable(const char* lastname, AccountID requestingAcct)
 {
-    if (lastname && strlen(lastname))
+    if (!lastname || strlen(lastname) < 1)
+        return true; // blank last names are allowed.
+
+    // Check to see if name already exists in character database.
+    csString query;
+    csString escape;
+    db->Escape(escape, lastname);
+    query.Format("SELECT account_id FROM characters WHERE lastname='%s'", escape.GetData());
+    Result result(db->Select(query));
+    if (result.IsValid())
     {
-        // Check to see if name already exists in character database.
-        csString query;
-        csString escape;
-        db->Escape(escape, lastname);
-        query.Format( "Select id from characters where lastname='%s'", escape.GetData() );
-        Result result (db->Select( query ) );
-        if ( result.IsValid() && result.Count() >= 1 )
-           return false;
-   }
-   return true;  // blank last name is now allowed.
+        if (result.Count() == 0)
+            return true; // nobody owns it yet, it's available
+
+        if (requestingAcct.IsValid())
+        {
+            for (unsigned int i = 0; i < result.Count(); i++)
+            {
+                if (AccountID(result[i].GetInt("account_id")) == requestingAcct)
+                    return true; // another character on the same account; available
+            }
+        }
+    }
+    return false; // already in use by someone else
 }
 
 bool CharCreationManager::FilterName(const char* name)
