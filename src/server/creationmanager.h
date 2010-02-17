@@ -69,11 +69,13 @@ public:
       */
     static bool IsUnique( const char* playerName,  bool dbUniqueness = false);
 
-    /** Check to see a lastname is unique in the characters table.
-      * @param lastname The lastname to check to see if it is unique.
-      * @return true if the name is unique.
+    /** Check whether a given last name is available.  Last names are available
+      * if (a) unused, or (b) used by another character on the same account.
+      * @param lastname The lastname to check for availability.
+      * @param requestingAcct The account requesting the last name (optional).
+      * @return true if allowed.
       */
-    static bool IsLastNameUnique( const char* lastname );
+    static bool IsLastNameAvailable(const char* lastname, AccountID requestingAcct = 0);
 
     // Returns true if the name is ok
     static bool FilterName( const char* name );

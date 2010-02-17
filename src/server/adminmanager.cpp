@@ -5560,7 +5560,7 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         return;
     }
 
-    bool secondNameUnique = CharCreationManager::IsLastNameUnique(data.newLastName);
+    bool secondNameUnique = CharCreationManager::IsLastNameAvailable(data.newLastName);
     // If the last name should be unique, check it
     if (checkLast && data.uniqueName && data.newLastName.Length() && !secondNameUnique)
     {
