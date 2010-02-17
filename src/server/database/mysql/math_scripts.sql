@@ -75,6 +75,8 @@ INSERT INTO math_scripts VALUES( "CalculateChanceOfResearchSuccess", "ChanceOfSu
 
 INSERT INTO math_scripts VALUES( "CalculatePowerLevel", "PowerLevel = 1.0 + (WaySkill/10)*(1+(1+(200-WaySkill)/100)*(KFactor*KFactor/10000));");
 
+INSERT INTO math_scripts VALUES( "SpellPractice", "PracticePoints = floor(10/(1 + MaxRealm - Realm))");
+
 INSERT INTO math_scripts VALUES( "CalculateMaxCarryWeight", "MaxCarry =  ( Actor:getStatValue(0) );");
 
 INSERT INTO math_scripts VALUES( "CalculateMaxCarryAmount", "MaxAmount =  750;");

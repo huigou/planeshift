@@ -216,7 +216,7 @@ float psSpell::ChanceOfCastSuccess(psCharacter *caster, float kFactor) const
 
 float psSpell::ChanceOfResearchSuccess(psCharacter *researcher)
 {
-    if (!researcher->CheckMagicKnowledge(way->skill, realm))
+    if (realm > researcher->GetMaxAllowedRealm(way->skill))
         return 0.0;
 
     static MathScript *script = NULL;
@@ -289,7 +289,7 @@ bool psSpell::CanCast(Client *client, float kFactor, csString & reason)
     // Skip testing some conditions for developers and game masters
     if (!CacheManager::GetSingleton().GetCommandManager()->Validate(client->GetSecurityLevel(), "cast all spells"))
     {
-        if (!casterChar->CheckMagicKnowledge(way->skill, realm))
+        if (realm > casterChar->GetMaxAllowedRealm(way->skill))
         {
             reason = "You have insufficient knowledge of this magic way to cast this spell.";
             return false;
@@ -407,14 +407,13 @@ void psSpell::Affect(gemActor *caster, gemObject *target, float range, float kFa
     float radius = aoeRadius->Evaluate(&env);
     float angle  = aoeAngle->Evaluate(&env);
 
+    int affectedCount = 0;
     if (radius < 0.01f) // single target
     {
         if (target && caster->RangeTo(target) <= range)
         {
             if (AffectTarget(caster, target, target, power))
-            {
-                caster->GetCharacterData()->Skills().AddSkillPractice(way->skill, 1);
-            }
+                affectedCount = 1;
         }
         else
         {
@@ -434,8 +433,6 @@ void psSpell::Affect(gemActor *caster, gemObject *target, float range, float kFa
 
         angle = (angle/2)*(PI/180); // convert degrees to radians, half on each side of the casters yrot
         //CPrintf(CON_DEBUG, "Spell has an effect arc of %1.2f radians to either side of LOS.\n", angle);
-
-        int affectedCount = 0;
 
         csArray<gemObject*> nearby = GEMSupervisor::GetSingleton().FindNearbyEntities(sector, pos, radius);
         for (size_t i = 0; i < nearby.GetSize(); i++)
@@ -472,13 +469,30 @@ void psSpell::Affect(gemActor *caster, gemObject *target, float range, float kFa
 
         if (affectedCount > 0)
         {
-            caster->GetCharacterData()->Skills().AddSkillPractice(way->skill, 1);
             psserver->SendSystemInfo(caster->GetClientID(), "%s affected %d %s.", name.GetData(), affectedCount, (affectedCount == 1) ? "target" : "targets");
         }
         else
         {
             psserver->SendSystemInfo(caster->GetClientID(), "%s has no effect.", name.GetData());
         }
+    }
+
+    if (affectedCount > 0)
+    {
+        int practicePoints = 1;
+        static MathScript* script = psserver->GetMathScriptEngine()->FindScript("SpellPractice");
+        if (script)
+        {
+            MathEnvironment env;
+            env.Define("Realm", realm);
+            env.Define("MaxRealm", caster->GetCharacterData()->GetMaxAllowedRealm(way->skill));
+            script->Evaluate(&env);
+
+            MathVar* var = env.Lookup("PracticePoints");
+            CS_ASSERT(var);
+            practicePoints = var->GetRoundValue();
+        }
+        caster->GetCharacterData()->Skills().AddSkillPractice(way->skill, practicePoints);
     }
 }
 
