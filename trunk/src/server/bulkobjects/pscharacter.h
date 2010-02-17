@@ -775,9 +775,6 @@ public:
 
     /// Get the maximum realm the caster can cast with given skill
     int GetMaxAllowedRealm( PSSKILL skill );
-    /// Checks if this character has enough knowledge to cast spell
-    /// of given way and realm
-    bool CheckMagicKnowledge( PSSKILL skill, int realm );
     SkillRank & GetSkillRank(PSSKILL skill) { return skills.GetSkillRank(skill); }
 
     void KilledBy(psCharacter* attacker) { deaths++; if(!attacker) suicides++; }

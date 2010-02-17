@@ -1168,8 +1168,9 @@ int psCharacter::GetMaxAllowedRealm( PSSKILL skill )
 {
     unsigned int waySkillRank = skills.GetSkillRank(skill).Current();
 
-    if (waySkillRank == 0)  // zero skill = no casting
-        return 0;
+    // Special case for rank 0 people just starting.
+    if (waySkillRank == 0 && skills.GetSkillRank(skill).Base() == 0 && !skills.Get(skill).CanTrain())
+        return 1;
 
     MathEnvironment env;
     env.Define("WaySkill", waySkillRank);
@@ -1183,15 +1184,6 @@ int psCharacter::GetMaxAllowedRealm( PSSKILL skill )
         return 0;
     }
     return maxRealm->GetRoundValue();
-}
-
-bool psCharacter::CheckMagicKnowledge( PSSKILL skill, int realm )
-{
-    if (GetMaxAllowedRealm(skill) >= realm)
-        return true;
-
-    // Special case for rank 0 people just starting.
-    return (realm == 1 && skills.GetSkillRank(skill).Base() == 0 && !skills.Get(skill).CanTrain());
 }
 
 void psCharacter::DropItem(psItem *&item, csVector3 suggestedPos, float yrot, bool guarded, bool transient, bool inplace)
