@@ -53,6 +53,9 @@
 #include "entitymanager.h"
 #include "globals.h"
 
+//uses the experimental optimized preparser
+#define OPTIMIZEPREPARSER 1
+
 
 
 QuestManager::QuestManager()
@@ -626,8 +629,6 @@ bool QuestManager::HandleRequireCommand(csString& block, csString& response_requ
     //return the result of the operation
     return result;
 }
-
-#define OPTIMIZEPREPARSER 1
 
 int QuestManager::PreParseQuestScript(psQuest *mainQuest, const char *script)
 {
