@@ -1930,6 +1930,9 @@
 				RelativePath="..\..\src\client\gui\pawssplashwindow.cpp">
 			</File>
 			<File
+				RelativePath="..\..\src\client\gui\pawsstoragewindow.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\client\gui\pawssummary.cpp">
 			</File>
 			<File
@@ -2148,6 +2151,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\client\gui\pawssplashwindow.h">
+			</File>
+			<File
+				RelativePath="..\..\src\client\gui\pawsstoragewindow.h">
 			</File>
 			<File
 				RelativePath="..\..\src\client\gui\pawssummary.h">
