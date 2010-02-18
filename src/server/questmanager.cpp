@@ -627,12 +627,15 @@ bool QuestManager::HandleRequireCommand(csString& block, csString& response_requ
     return result;
 }
 
+#define OPTIMIZEPREPARSER 1
+
 int QuestManager::PreParseQuestScript(psQuest *mainQuest, const char *script)
 {
+    int step_count=1; // Main quest is step 1
+#ifndef OPTIMIZEPREPARSER
     psString scr(script);
     size_t start = 0;
     int line_number = 0;
-    int step_count=1; // Main quest is step 1
     csString block;    
     while (start < scr.Length())
     {
@@ -655,6 +658,19 @@ int QuestManager::PreParseQuestScript(psQuest *mainQuest, const char *script)
             CacheManager::GetSingleton().AddDynamicQuest(newquestname, mainQuest, step_count);
         }
     }
+#else
+    csString scr(script);
+    size_t lastpos = scr.Find("\n...");
+    while (lastpos != (size_t) -1)
+    {
+        step_count++;
+        csString newquestname;
+        newquestname.Format("%s Step %d",mainQuest->GetName(),step_count);
+        Debug2( LOG_QUESTS, 0,"Quest <%s> is getting added dynamically.",newquestname.GetData());
+        CacheManager::GetSingleton().AddDynamicQuest(newquestname, mainQuest, step_count);
+        lastpos = scr.Find("\n...", lastpos+1);
+    }
+#endif
     return 0;
 }
 
@@ -859,6 +875,7 @@ int QuestManager::ParseQuestScript(int quest_id, const char *script)
                 newquestname.Format("%s Step %d",mainQuest->GetName(),step_count);
                 Debug2( LOG_QUESTS, 0,"New step for Quest <%s>.",newquestname.GetData());
                 quest = CacheManager::GetSingleton().GetQuestByName(newquestname);
+                //quest can't be null or it would have been stopped before.
                 quest_id = quest->GetID();
 
                 // Check if this is a non repeatable substep.
