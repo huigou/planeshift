@@ -5494,12 +5494,13 @@ psViewItemDescription::psViewItemDescription(uint32_t to, const char *itemName, 
     }
 }
 
-void psViewItemDescription::AddContents(const char *name, const char *meshName, const char *icon, int purifyStatus, int slot, int stack)
+void psViewItemDescription::AddContents(const char *name, const char *meshName, const char *materialName, const char *icon, int purifyStatus, int slot, int stack)
 {
     ContainerContents item;
     item.name = name;
     item.icon = icon;
     item.meshName = meshName;
+    item.materialName = materialName;
     item.purifyStatus = purifyStatus;
     item.slotID = slot;
     item.stackCount = stack;
@@ -5507,7 +5508,7 @@ void psViewItemDescription::AddContents(const char *name, const char *meshName, 
     contents.Push( item );
     int namesize = name?(int)strlen(name):0;
     int iconsize = icon?(int)strlen(icon):0;
-    msgSize += (int)(namesize + iconsize + 3 + sizeof(int)*4);
+    msgSize += (int)(namesize + iconsize + 3 + sizeof(int)*5);
 }
 
 void psViewItemDescription::ConstructMsg(csStringSet* msgstrings)
@@ -5529,6 +5530,7 @@ void psViewItemDescription::ConstructMsg(csStringSet* msgstrings)
         msg->Add( contents[n].name );
         msg->Add( contents[n].icon );
         msg->Add( msgstrings->Request(contents[n].meshName).GetHash() );
+        msg->Add( msgstrings->Request(contents[n].materialName).GetHash() );
         msg->Add( contents[n].purifyStatus );
         msg->Add( (uint32_t)contents[n].slotID );
         msg->Add( (uint32_t)contents[n].stackCount );
@@ -5571,7 +5573,8 @@ psViewItemDescription::psViewItemDescription( MsgEntry* me, csStringHashReversib
                 ContainerContents item;
                 item.name = me->GetStr();
                 item.icon = me->GetStr();
-                item.meshName = msgstringshash->Request(csStringID(me->GetUInt32()));;
+                item.meshName = msgstringshash->Request(csStringID(me->GetUInt32()));
+                item.materialName = msgstringshash->Request(csStringID(me->GetUInt32()));
                 item.purifyStatus = me->GetUInt32();
                 item.slotID = me->GetUInt32();
                 item.stackCount = me->GetUInt32();
@@ -5618,13 +5621,13 @@ csString psViewItemDescription::ToString(AccessPointers * /*access_ptrs*/)
 
 //------------------------------------------------------------------------------
 
-PSF_IMPLEMENT_MSG_FACTORY(psViewItemUpdate,MSGTYPE_UPDATE_ITEM);
+PSF_IMPLEMENT_MSG_FACTORY4(psViewItemUpdate,MSGTYPE_UPDATE_ITEM);
 
 psViewItemUpdate::psViewItemUpdate(uint32_t to, EID containerID, uint32_t slotID, bool clearSlot,
                                    const char *itemName, const char *icon, const char* meshName,
-                                   uint32_t stackCount, EID ownerID)
+                                   const char *materialName, uint32_t stackCount, EID ownerID, csStringSet* msgstrings)
 {
-    msg.AttachNew(new MsgEntry( sizeof(containerID)+1 + sizeof(slotID) + sizeof(clearSlot) + strlen(itemName)+1 + strlen(icon)+1 + strlen(meshName)+1 + sizeof(stackCount) + sizeof(uint32_t) ));
+    msg.AttachNew(new MsgEntry( sizeof(containerID)+1 + sizeof(slotID) + sizeof(clearSlot) + strlen(itemName)+1 + strlen(icon)+1 + strlen(meshName) + strlen(materialName) + 1 + sizeof(stackCount) + sizeof(uint32_t) ));
     msg->SetType(MSGTYPE_UPDATE_ITEM);
     msg->clientnum = to;
     msg->Add(containerID.Unbox());
@@ -5634,7 +5637,8 @@ psViewItemUpdate::psViewItemUpdate(uint32_t to, EID containerID, uint32_t slotID
     msg->Add(icon);
     msg->Add(stackCount);
     msg->Add(ownerID.Unbox());
-    msg->Add(meshName);
+    msg->Add(msgstrings->Request(meshName).GetHash());
+    msg->Add(msgstrings->Request(materialName).GetHash());
 }
 
 //void psViewItemUpdate::ConstructMsg()
@@ -5650,7 +5654,7 @@ psViewItemUpdate::psViewItemUpdate(uint32_t to, EID containerID, uint32_t slotID
 //    msg->Add( stackCount );
 //}
 
-psViewItemUpdate::psViewItemUpdate( MsgEntry* me )
+psViewItemUpdate::psViewItemUpdate( MsgEntry* me, csStringHashReversible* msgstringshash )
 {
     containerID = EID(me->GetUInt32());
     slotID = me->GetUInt32();
@@ -5659,20 +5663,22 @@ psViewItemUpdate::psViewItemUpdate( MsgEntry* me )
     icon = me->GetStr();
     stackCount = me->GetUInt32();
     ownerID = EID(me->GetUInt32());
-    meshName = me->GetStr();
+    meshName = msgstringshash->Request(csStringID(me->GetUInt32()));
+    materialName = msgstringshash->Request(csStringID(me->GetUInt32()));
 }
 
 csString psViewItemUpdate::ToString(AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
-    msgtext.AppendFmt("Container ID: %d Slot ID: %d Clear Slot? %s Name: '%s' Icon: '%s' meshName: '%s' Stack Count: %d",
+    msgtext.AppendFmt("Container ID: %d Slot ID: %d Clear Slot? %s Name: '%s' Icon: '%s' meshName: '%s' materialName: '%s' Stack Count: %d",
             containerID.Unbox(),
             slotID,
             (clearSlot?"True":"False"),
             name.GetDataSafe(),
             icon.GetDataSafe(),
             meshName.GetDataSafe(),
+            materialName.GetDataSafe(),
             stackCount);
 
     return msgtext;

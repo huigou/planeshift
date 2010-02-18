@@ -2452,8 +2452,10 @@ void psItem::UpdateView(Client *fromClient, EID eid, bool clear)
                           GetName(),
                           GetImageName(),
                           GetMeshName(),
+                          GetTextureName(),
                           GetStackCount(),
-                          guardian ? guardian->GetEID() : 0);
+                          guardian ? guardian->GetEID() : 0,
+                          CacheManager::GetSingleton().GetMsgStrings());
 
     mesg.Multicast(fromClient->GetActor()->GetMulticastClients(),0,5);
 }
@@ -2498,8 +2500,8 @@ void psItem::FillContainerMsg(Client* client, psViewItemDescription& outgoing)
             psItem *child = client->GetCharacterData()->Inventory().GetInventoryIndexItem(i);
             if (parent_item_InstanceID == uid)
             {
-                outgoing.AddContents(child->GetName(), child->GetMeshName(), child->GetImageName(),
-                        child->GetPurifyStatus(), slot++,
+                outgoing.AddContents(child->GetName(), child->GetMeshName(), child->GetTextureName(),
+                        child->GetImageName(), child->GetPurifyStatus(), slot++,
                         child->GetStackCount());
             }
         }
@@ -2517,7 +2519,7 @@ void psItem::FillContainerMsg(Client* client, psViewItemDescription& outgoing)
         }
 
         int stackCount = container->CanTake(client,child) ? child->GetStackCount() : -1;
-        outgoing.AddContents(child->GetName(), child->GetMeshName(), child->GetImageName(),
+        outgoing.AddContents(child->GetName(), child->GetMeshName(), child->GetTextureName(), child->GetImageName(),
                 child->GetPurifyStatus(), child->GetLocInParent(), stackCount);
     }
 }

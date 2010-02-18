@@ -93,7 +93,7 @@ bool pawsContainerDescWindow::PostSetup()
 
 void pawsContainerDescWindow::HandleUpdateItem( MsgEntry* me )
 {
-    psViewItemUpdate mesg( me );
+    psViewItemUpdate mesg( me, psengine->GetMsgStrings() );
     csString sigData, data;
 
     // We send ownerID to multiple clients, so each client must decide if the item is owned by
@@ -107,7 +107,7 @@ void pawsContainerDescWindow::HandleUpdateItem( MsgEntry* me )
     sigData.Format("invslot_%d", mesg.containerID.Unbox() * 100 + mesg.slotID + 16);
     if (!mesg.clearSlot)
     {
-        data.Format("%s %d %d %s %s", mesg.icon.GetData(), mesg.stackCount, 0, mesg.meshName.GetData(), mesg.name.GetData());
+        data.Format("%s %d %d %s %s %s", mesg.icon.GetData(), mesg.stackCount, 0, mesg.meshName.GetData(), mesg.materialName.GetData(), mesg.name.GetData());
     }
 
     printf("Got item update for %s: %s\n", sigData.GetDataSafe(), data.GetDataSafe() );
@@ -186,10 +186,11 @@ void pawsContainerDescWindow::HandleViewItem( MsgEntry* me )
             csString sigData, data;
             sigData.Format("invslot_%u", mesg.containerID * 100 + mesg.contents[i].slotID + 16);
 
-            data.Format( "%s %d %d %s %s", mesg.contents[i].icon.GetData(),
+            data.Format( "%s %d %d %s %s %s", mesg.contents[i].icon.GetData(),
                 mesg.contents[i].stackCount,
                 mesg.contents[i].purifyStatus,
                 mesg.contents[i].meshName.GetData(),
+                mesg.contents[i].materialName.GetData(),
                 mesg.contents[i].name.GetData() );
 
             printf("Publishing slot data %s -> %s\n", sigData.GetData(), data.GetData() );
