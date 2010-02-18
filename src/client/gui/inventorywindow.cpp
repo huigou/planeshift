@@ -343,7 +343,7 @@ void pawsInventoryWindow::Dequip( const char* itemName )
     }
 }
 
-void pawsInventoryWindow::Equip( const char* itemName, int stackCount )
+void pawsInventoryWindow::Equip( const char* itemName, int stackCount, int toSlotID )
 {
     pawsListBox * bulkList = dynamic_cast <pawsListBox*> (FindWidget("BulkList"));
     if ( (itemName != NULL) && (bulkList) )
@@ -364,12 +364,13 @@ void pawsInventoryWindow::Equip( const char* itemName, int stackCount )
 
         if ( fromSlot )
         {
+            fromSlot->Clear();
             int container   = fromSlot->ContainerID();
             int slot        = fromSlot->ID();
 
             //psItem* item = charData->GetItemInSlot( slot );
             psSlotMovementMsg msg( container, slot,
-                               CONTAINER_INVENTORY_EQUIPMENT, -1,
+                               CONTAINER_INVENTORY_EQUIPMENT, toSlotID,
                                stackCount );
             msg.SendMessage();
         }

@@ -45,6 +45,7 @@
 #include "gui/pawscontrolwindow.h"
 #include "gui/psmainwidget.h"
 #include "gui/pawsgameboard.h"
+#include "gui/pawsslot.h"
 
 #include "paws/pawsmanager.h"
 #include "paws/pawsyesnobox.h"
@@ -313,17 +314,28 @@ const char *psUserCommands::HandleCommand(const char *cmd)
     else if (words[0] == "/equip" || (words[0] == "/use" && words.GetCount() > 1))
     {
         if ( words.GetCount() < 2 )
-            return "Usage: /equip  [stack count] [item name]";
+            return "Usage: /equip  [stack count] [slot] [item name]";
+
+        int tail = 1;
         int quantity = atoi(words[1]);
-        csString itemName;
-        if (quantity == 0)
-        {
+        if (quantity > 0)
+            tail++;
+        else
             quantity = 1;
-            itemName = words.GetTail(1);
-        }
-        else itemName = words.GetTail(2);
+        
         pawsInventoryWindow* window = (pawsInventoryWindow*)PawsManager::GetSingleton().FindWidget("InventoryWindow");
-        window->Equip( itemName, quantity );
+
+        int slotID = -1;
+        pawsSlot* toSlot = dynamic_cast <pawsSlot*>(window->FindWidget(words[tail]));
+        if (toSlot)
+        {
+            slotID = toSlot->ID();
+            tail++;
+        }
+        
+        csString itemName;
+        itemName = words.GetTail(tail);
+        window->Equip( itemName, quantity, slotID );
     }
 
     else if ( words[0] == "/dequip" )
