@@ -73,8 +73,9 @@ public:
      *
      *  @param itemName The name of the item in the inventory.
      *  @param stackCount The amount to try to equip.  
+     *  @param toSlotID The slot you want to equip it to.
      */
-    void Equip( const char* itemName, int stackCount );
+    void Equip( const char* itemName, int stackCount, int toSlotID = -1 );
     
     
     /** Dequips an item into closest available bulk slot. 
