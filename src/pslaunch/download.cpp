@@ -25,8 +25,9 @@
 #include "updaterconfig.h"
 #include "updaterengine.h"
 
-csTicks dlStart;
+csTicks dlStart = 0;
 const int progressWidth = 50;
+int lastSize = 0;
 
 size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream)
 {
@@ -45,14 +46,17 @@ const char* normalize_bytes(double* bytes)
 	return "MB";
 }
 
+
 int ProgressCallback(void *clientp, double finalSize, double dlnow, double ultotal, double ulnow)
 {
-    static int lastSize = 0;
     double progress = dlnow / finalSize;
     
     // Don't output anything if there's been no progress.
     if(progress == 0 || finalSize <= 102400)
         return 0;
+    // Already notified of completion
+    if(lastSize == -1)
+	    return 0;
     csString progressLine;
     if(lastSize == 0)
 	    progressLine += '\n';
@@ -74,7 +78,7 @@ int ProgressCallback(void *clientp, double finalSize, double dlnow, double ultot
     if(dlnow == finalSize)
     {
 	    progressLine += "\n\n";
-	    lastSize = 0;
+	    lastSize = -1;
     }
     else
 	    progressLine += '\r';
@@ -184,6 +188,7 @@ bool Downloader::DownloadFile(const char *file, const char *dest, bool URL, bool
         }
 
 	dlStart = csGetTicks();
+	lastSize = 0;
         curl_easy_setopt(curl, CURLOPT_URL, url.GetData());
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, file);
