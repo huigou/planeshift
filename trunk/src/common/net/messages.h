@@ -45,7 +45,7 @@ class csStringHashReversible;
 
 // This holds the version number of the network code, remember to increase
 // this each time you do an update which breaks compatibility
-#define PS_NETVERSION   0x00B8
+#define PS_NETVERSION   0x00B9
 // Remember to bump the version in pscssetup.h, as well.
 
 
@@ -4019,7 +4019,7 @@ public:
     int to;
 
     /// Add a item to this message ( assumes the base item is a container )
-    void AddContents(const char *name, const char* meshName, const char *icon, int purifyStatus, int slot, int stack);
+    void AddContents(const char *name, const char* meshName, const char* materialName, const char *icon, int purifyStatus, int slot, int stack);
 
     /// Build the message ( assumes base item is a container ).
     void ConstructMsg(csStringSet* msgstrings);
@@ -4029,6 +4029,7 @@ public:
         csString name;
         csString icon;
         csString meshName;
+        csString materialName;
         int slotID;
         int stackCount;
         int purifyStatus;
@@ -4057,14 +4058,15 @@ public:
       * @param slotID The slot in the container where to make the update.
       * @param clearSlot Boolean that indicates if the update is to clear out the slot.
       * @param itemName The name of the item requested.
+      * @param materialName the name of the material to apply to this item when in the 3d world.
       * @param icon The 2D gui image to draw for this item.
       * @param stackCount The number of items in the stack.
       * @param ownerEID The GEM entity ID of the owner
       */
-    psViewItemUpdate(uint32_t to, EID containerID, uint32_t slotID, bool clearSlot, const char *itemName, const char *icon, const char *meshName, uint32_t stackCount, EID ownerID);
+    psViewItemUpdate(uint32_t to, EID containerID, uint32_t slotID, bool clearSlot, const char *itemName, const char *icon, const char *meshName, const char *materialName, uint32_t stackCount, EID ownerID, csStringSet* msgstrings);
 
     /// Crack out the details from the message.
-    psViewItemUpdate( MsgEntry* me );
+    psViewItemUpdate( MsgEntry* me, csStringHashReversible* msgstringshash );
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -4092,6 +4094,7 @@ public:
     csString name;
     csString icon;
     csString meshName;
+    csString materialName;
     int slotID;
     int stackCount;
     EID ownerID;
