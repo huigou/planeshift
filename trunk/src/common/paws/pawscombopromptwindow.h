@@ -45,6 +45,7 @@ public:
 
     //from pawsWidget:
     virtual bool PostSetup();
+    virtual void Close();
     bool OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget );
     
     void NewOption(const csString & text);

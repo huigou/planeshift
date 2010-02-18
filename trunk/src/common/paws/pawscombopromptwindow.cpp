@@ -75,6 +75,18 @@ bool pawsComboPromptWindow::PostSetup()
     return true;
 }
 
+void pawsComboPromptWindow::Close()
+{
+    Hide();
+    if (action != NULL)
+    {
+        action->OnItemChosen(name, param, -1, "");
+        action = NULL;
+    }
+
+    parent->DeleteChild(this);
+}
+
 void pawsComboPromptWindow::NewOption(const csString & text)
 {
     wrapper->combo->NewOption(text);

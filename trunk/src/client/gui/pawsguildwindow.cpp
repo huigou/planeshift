@@ -280,7 +280,7 @@ void pawsGuildWindow::HandleMessage( MsgEntry* me )
     psGUIGuildMessage incomming(me);
 
     // Don't open the window twice
-    if(incomming.command == psGUIGuildMessage::NOT_IN_GUILD && IsCreatingGuild())
+    if(incomming.command == psGUIGuildMessage::NOT_IN_GUILD && IsCreatingGuild() && PawsManager::GetSingleton().FindWidget("YesNoWindow")->IsVisible())
         return;
 
     switch (incomming.command)

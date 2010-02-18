@@ -67,6 +67,8 @@ void pawsYesNoBox::Hide()
     pawsWidget::Hide();
     useCustomIDs = false;
 
+    PawsManager::GetSingleton().SetModalWidget( 0 );
+
     // Reset the ID's back to defaults
 
     SetID();
@@ -96,7 +98,6 @@ bool pawsYesNoBox::OnButtonReleased( int mouseButton, int keyModifier, pawsWidge
     // The parent is responsible for handling the button presses.
     if ( notify )
     {
-        PawsManager::GetSingleton().SetModalWidget( 0 );
         bool result = notify->OnButtonPressed( mouseButton, keyModifier, widget );
         SetNotify(0);
         Hide();
@@ -104,12 +105,11 @@ bool pawsYesNoBox::OnButtonReleased( int mouseButton, int keyModifier, pawsWidge
     }
     else if ( handler )
     {
-        PawsManager::GetSingleton().SetModalWidget( 0 );
-        Hide();
         if ( widget == yesButton )
-            handler( true , owner ); 
+            handler( true , owner );
         else
             handler( false, owner );
+        Hide();
         return true;
     }        
     
