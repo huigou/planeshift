@@ -49,6 +49,7 @@ public:
     bool OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget );
     virtual bool OnScroll( int scrollDirection, pawsScrollBar* widget );
     virtual bool OnChange(pawsWidget * widget);
+    virtual void Close();
     
     void Initialize(const csString & label, int number, int minNumber, int maxNumber, 
                     iOnNumberEnteredAction * action,const char *name, int param=0);

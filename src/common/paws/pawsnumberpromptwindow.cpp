@@ -86,6 +86,17 @@ bool pawsNumberPromptWindow::PostSetup()
     return true;
 }
 
+void pawsNumberPromptWindow::Close()
+{
+    Hide();
+    if (action != NULL)
+    {
+        action->OnNumberEntered("Cancel",0,-1);
+        action = NULL;
+    }
+    parent->DeleteChild(this);
+}
+
 void pawsNumberPromptWindow::LayoutWindow()
 {
     pawsPromptWindow::LayoutWindow();
@@ -105,12 +116,7 @@ bool pawsNumberPromptWindow::OnButtonPressed( int mouseButton, int keyModifier, 
     }
     else if (widget == cancelButton)
     {
-        if (action != NULL)
-        {
-            action->OnNumberEntered("Cancel",0,-1);
-            action = NULL;
-        }
-        parent->DeleteChild(this);
+        Close();
         return true;
     }
     return false;
