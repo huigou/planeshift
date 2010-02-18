@@ -627,6 +627,36 @@ bool QuestManager::HandleRequireCommand(csString& block, csString& response_requ
     return result;
 }
 
+int QuestManager::PreParseQuestScript(psQuest *mainQuest, const char *script)
+{
+    psString scr(script);
+    size_t start = 0;
+    int line_number = 0;
+    int step_count=1; // Main quest is step 1
+    csString block;    
+    while (start < scr.Length())
+    {
+        GetNextScriptLine(scr,block,start,line_number);
+        if (!strncmp(block,"...",3)) // New substep. Syntax: "... [NoRepeat]"
+        {
+            if (block.Length() > 3 && block.GetAt(3) != ' ')
+            {
+                Error4("No space after ... for quest '%s' at line %d: %s",
+                       mainQuest->GetName(), line_number, block.GetDataSafe());
+                lastError.Format("No space after ... for quest '%s' at line %d: %s", mainQuest->GetName(), line_number, block.GetDataSafe());
+                return line_number;
+            }
+
+            // generate a sub step quest for the next block
+            step_count++; // increment substep count
+            csString newquestname;
+            newquestname.Format("%s Step %d",mainQuest->GetName(),step_count);
+            Debug2( LOG_QUESTS, 0,"Quest <%s> is getting added dynamically.",newquestname.GetData());
+            CacheManager::GetSingleton().AddDynamicQuest(newquestname, mainQuest, step_count);
+        }
+    }
+    return 0;
+}
 
 int QuestManager::ParseQuestScript(int quest_id, const char *script)
 {
@@ -654,6 +684,15 @@ int QuestManager::ParseQuestScript(int quest_id, const char *script)
       CPrintf(CON_CMDOUTPUT,"No main quest for quest_script with quest_id %d\n", quest_id);
       lastError.Format("No Main quest could be found.");
       return -1;
+    }
+    
+    //does a preliminary fast parse searching for the steps and prepares the steps to be filled.
+    //this is needed to cross reference steps in the quest script.
+    if(mainQuest)
+    {
+        int errorline = PreParseQuestScript(mainQuest, script);
+        if(errorline)
+            return errorline;
     }
 
 
@@ -818,8 +857,8 @@ int QuestManager::ParseQuestScript(int quest_id, const char *script)
                 step_count++; // increment substep count
                 csString newquestname;
                 newquestname.Format("%s Step %d",mainQuest->GetName(),step_count);
-                Debug2( LOG_QUESTS, 0,"Quest <%s> is getting added dynamically.",newquestname.GetData());
-                quest = CacheManager::GetSingleton().AddDynamicQuest(newquestname, mainQuest, step_count);
+                Debug2( LOG_QUESTS, 0,"New step for Quest <%s>.",newquestname.GetData());
+                quest = CacheManager::GetSingleton().GetQuestByName(newquestname);
                 quest_id = quest->GetID();
 
                 // Check if this is a non repeatable substep.
