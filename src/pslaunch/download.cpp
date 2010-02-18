@@ -174,11 +174,12 @@ bool Downloader::DownloadFile(const char *file, const char *dest, bool URL, bool
         for(uint i=0; i<=retries; i++)
         {
         FILE* file;
-        file = fopen (destpath, "wb");
+	// Download to temp file
+        file = fopen (destpath + ".download", "wb");
 
         if (!file)
         {
-    		UpdaterEngine::GetSingletonPtr()->PrintOutput("Couldn't write to file! (%s)\n", destpath.GetData());
+    		UpdaterEngine::GetSingletonPtr()->PrintOutput("Couldn't write to file! (%s.download)\n", destpath.GetData());
             return false;
         }
 
@@ -238,6 +239,14 @@ bool Downloader::DownloadFile(const char *file, const char *dest, bool URL, bool
             delete mirror;
             mirror = NULL;
         }
+	// Rename completed download back to real name
+	remove(destpath);
+	if(rename(destpath + ".download", destpath) != 0)
+	{
+		UpdaterEngine::GetSingletonPtr()->PrintOutput("Error renaming file %s.download to %s.\n", (const char*) destpath, (const char*) destpath);
+		remove(destpath + ".download");
+		break;
+	}
         return true;
     }
 
