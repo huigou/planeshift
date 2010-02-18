@@ -1128,7 +1128,8 @@ void UpdaterEngine::CheckIntegrity(bool automatic)
 
 void UpdaterEngine::CheckMD5s(iDocumentNode* md5sums, csString& baseurl, bool accepted)
 {
-    PrintOutput("Checking file integrity:\nUsing mirror %s\n\n", baseurl.GetData());
+    PrintOutput("Checking file integrity:\n");
+    PrintOutput("Using mirror %s\n\n", baseurl.GetData());
     csRefArray<iDocumentNode> failed;
     csArray<bool> updateinside;
 #ifdef CS_PLATFORM_UNIX
