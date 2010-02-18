@@ -65,6 +65,14 @@ protected:
      */
     bool LoadQuestScripts();
     int  ParseQuestScript(int id,const char *script);
+    /** Does a first parsing of the script.
+     *  @note curretly it just find substeps and creates the related quest in advance, so they can be used
+     *        anywhere in prerequisites.
+     *  @param mainQuest A pointer to the main psQuest. This can't be null it must be valid!
+     *  @param script The entire quest script.
+     *  @return the line number of the parse error if any.
+     */
+    int  PreParseQuestScript(psQuest *mainQuest,const char *script);
     void CutOutParenthesis(csString &response, csString &within,char start_char,char end_char);
 
     bool GetResponseText(csString& block,csString& response,csString& file_path,
