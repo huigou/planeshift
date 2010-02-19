@@ -54,12 +54,11 @@ int ProgressCallback(void *clientp, double finalSize, double dlnow, double ultot
     // Don't output anything if there's been no progress.
     if(progress == 0 || finalSize <= 102400)
         return 0;
-    // Already notified of completion
-    if(lastSize == -1)
-	    return 0;
     csString progressLine;
     if(lastSize == 0)
 	    progressLine += '\n';
+    else
+	    progressLine += '\r';
     progressLine += '[';
     for(int pos = 0; pos < progressWidth; pos++)
     {
@@ -73,15 +72,8 @@ int ProgressCallback(void *clientp, double finalSize, double dlnow, double ultot
 
     double dlnormalized = dlnow;
     const char* dlUnits = normalize_bytes(&dlnormalized);
-    progressLine.AppendFmt("]    %4.2f%s (%3.1f%%)   %4.2f%s/s", dlnormalized, dlUnits, progress * 100.0, speed, speedUnits);
+    progressLine.AppendFmt("]    %4.2f%s (%3.1f%%)   %4.2f%s/s     ", dlnormalized, dlUnits, progress * 100.0, speed, speedUnits);
     lastSize = dlnow;
-    if(dlnow == finalSize)
-    {
-	    progressLine += "\n\n";
-	    lastSize = -1;
-    }
-    else
-	    progressLine += '\r';
     UpdaterEngine::GetSingletonPtr()->PrintOutput(progressLine);
 
     fflush(stdout);
@@ -198,6 +190,12 @@ bool Downloader::DownloadFile(const char *file, const char *dest, bool URL, bool
 
         CURLcode result = curl_easy_perform(curl);
 
+	// Check if progress bar was shown.
+	if(lastSize != 0)
+	{
+		UpdaterEngine::GetSingletonPtr()->PrintOutput("\n\n");
+		lastSize = 0;
+	}
         fclose (file);
 
         curl_easy_getinfo (curl, CURLINFO_HTTP_CODE, &curlhttpcode);
