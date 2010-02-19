@@ -194,6 +194,9 @@ public:
 
     /// Returns true if the current focused widget needs to override all controls
     bool GetFocusOverridesControls() { return focusOverridesControls; }
+    
+    /// Returns modal widget
+    pawsWidget* GetModalWidget() { return modalWidget; }
 
     /** @brief Give this widget focus.
      *  @param widget The widget to focus.

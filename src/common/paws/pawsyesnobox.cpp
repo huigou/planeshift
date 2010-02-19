@@ -67,7 +67,7 @@ void pawsYesNoBox::Hide()
     pawsWidget::Hide();
     useCustomIDs = false;
 
-    if(PawsManager::GetSingleton().GetCurrentFocusedWidget() == this)
+    if(PawsManager::GetSingleton().GetModalWidget() == this)
         PawsManager::GetSingleton().SetModalWidget( 0 );
 
     // Reset the ID's back to defaults
