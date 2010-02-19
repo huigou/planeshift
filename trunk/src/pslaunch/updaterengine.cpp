@@ -413,6 +413,8 @@ csRef<iDocumentNode> UpdaterEngine::GetRootNode(const char* nodeName, csRef<iDoc
         return NULL;
     }
 
+    csRef<iDocument> configdoc;
+
     // Try to parse file
     if(document)
     {
