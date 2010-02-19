@@ -1265,7 +1265,7 @@ void UpdaterEngine::CheckMD5s(iDocumentNode* md5sums, csString& baseurl, bool ac
                 // Save permissions.
                 csRef<iDataBuffer> rp = vfs->GetRealPath(downloadpath);
                 csRef<FileStat> fs = fileUtil->StatFile(rp->GetData());
-                fileUtil->MoveFile(downloadpath, downloadpath + ".bak", true, false, true);
+                fileUtil->CopyFile(downloadpath, downloadpath + ".bak", true, false, true);
 
                 // Make parent dir if needed.
                 csString parent = downloadpath;
@@ -1329,7 +1329,7 @@ bool UpdaterEngine::SwitchMirror()
     csString xmlBakPath;
     xmlBakPath.Format("%s_bak", xmlPath.GetData());
 
-    fileUtil->MoveFile(xmlPath, xmlBakPath, true, false, true);
+    fileUtil->CopyFile(xmlPath, xmlBakPath, true, false, true);
     
     // Initialise downloader.
     downloader = new Downloader(vfs);
