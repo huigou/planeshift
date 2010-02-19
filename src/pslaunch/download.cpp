@@ -46,6 +46,29 @@ const char* normalize_bytes(double* bytes)
 	return "MB";
 }
 
+csString normalize_seconds(double seconds)
+{
+	unsigned int minutes = seconds / 60;
+	unsigned int hours = minutes / 60;
+	unsigned int days = hours / 24;
+	seconds -= minutes * 60;
+	minutes -= hours * 60;
+	hours -= days * 24;
+	csString time;
+	if(days > 0)
+		time.AppendFmt("%ud ", days);
+	if(hours > 0)
+		time.AppendFmt("%uh ", hours);
+	if(days > 0)
+		return time;
+	if(minutes > 0)
+		time.AppendFmt("%um ", minutes);
+	if(hours > 0)
+		return time;
+	if(seconds >= 1.0)
+		time.AppendFmt("%us", (unsigned int) seconds);
+	return time;
+}
 
 int ProgressCallback(void *clientp, double finalSize, double dlnow, double ultotal, double ulnow)
 {
@@ -63,16 +86,28 @@ int ProgressCallback(void *clientp, double finalSize, double dlnow, double ultot
     for(int pos = 0; pos < progressWidth; pos++)
     {
 	    if(pos < progressWidth * progress)
-	    	progressLine += '-';
+	    	progressLine += '=';
 	    else
 		progressLine += ' ';
     }
+
+    // Download speed in seconds
     double speed = 1000.0 * dlnow / (csGetTicks() - dlStart);
+    // Eta in seconds
+    double eta = 0;
+    csString etaStr;
+    if (speed > 0.0)
+    {
+    	eta = (finalSize - dlnow) / speed;
+    	etaStr = normalize_seconds(eta);
+    }
+    else
+	    etaStr = "Never";
     const char* speedUnits = normalize_bytes(&speed);
 
     double dlnormalized = dlnow;
     const char* dlUnits = normalize_bytes(&dlnormalized);
-    progressLine.AppendFmt("]    %4.2f%s (%3.1f%%)   %4.2f%s/s     ", dlnormalized, dlUnits, progress * 100.0, speed, speedUnits);
+    progressLine.AppendFmt("]    %4.3f%s (%3.1f%%)   %4.1f%s/s eta %s    ", dlnormalized, dlUnits, progress * 100.0, speed, speedUnits, etaStr.GetData());
     lastSize = dlnow;
     UpdaterEngine::GetSingletonPtr()->PrintOutput(progressLine);
 
