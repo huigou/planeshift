@@ -107,7 +107,7 @@ int ProgressCallback(void *clientp, double finalSize, double dlnow, double ultot
 
     double dlnormalized = dlnow;
     const char* dlUnits = normalize_bytes(&dlnormalized);
-    progressLine.AppendFmt("]    %4.3f%s (%3.1f%%)   %4.1f%s/s eta %s    ", dlnormalized, dlUnits, progress * 100.0, speed, speedUnits, etaStr.GetData());
+    progressLine.AppendFmt("]    %4.3f%s (%3d%%)   %4.1f%s/s eta %s    ", dlnormalized, dlUnits, (int) progress * 100, speed, speedUnits, etaStr.GetData());
     lastSize = dlnow;
     UpdaterEngine::GetSingletonPtr()->PrintOutput(progressLine);
 
