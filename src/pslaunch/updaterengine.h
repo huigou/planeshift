@@ -163,8 +163,6 @@ private:
     /* Real name of the app (e.g. updater, pslaunch, etc.) */
     csString appName;
 
-    /* XML doc; reading from xml files in the update zip. */
-    csRef<iDocument> configdoc;
 
     /* Info shared with other threads. */
     InfoShare *infoShare;
