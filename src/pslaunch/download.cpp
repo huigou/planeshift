@@ -65,8 +65,7 @@ csString normalize_seconds(double seconds)
 		time.AppendFmt("%um ", minutes);
 	if(hours > 0)
 		return time;
-	if(seconds >= 1.0)
-		time.AppendFmt("%us", (unsigned int) seconds);
+	time.AppendFmt("%us", (unsigned int) seconds);
 	return time;
 }
 
