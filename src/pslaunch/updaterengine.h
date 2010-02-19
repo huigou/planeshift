@@ -101,11 +101,11 @@ public:
         {
             synching = true;
             synched.Wait(mutex);
-            synching = false;
         }
         else
         {
             synched.NotifyAll();
+            synching = false;
         }
     }
 
