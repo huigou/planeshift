@@ -554,8 +554,13 @@ void WorkManager::HandleProduction(Client *client,const char *type,const char *r
     psItem *item = owner->GetCharacterData()->Inventory().GetInventoryItem(PSCHARACTER_SLOT_RIGHTHAND);
     if (!item || nr->item_cat_id != item->GetCategory()->id)
     {
-        psserver->SendSystemError(client->GetClientNum(),"You don't have a good tool to %s with, equipped in your right hand.",type);
-        return;
+        //try the left hand
+        item = owner->GetCharacterData()->Inventory().GetInventoryItem(PSCHARACTER_SLOT_LEFTHAND);
+        if (!item || nr->item_cat_id != item->GetCategory()->id)
+        {
+            psserver->SendSystemError(client->GetClientNum(),"You don't have a good tool to %s with, equipped in your hands.",type);
+            return;
+        }
     }
 
     // Calculate time required
