@@ -29,7 +29,7 @@ public:
     void SetPurifyStatus(int status);
     
     void PlaceItem( const char* imageName, const char* meshFactName,
-        const char* materialName = NULL, int count = 0 );
+        const char* matName = NULL, int count = 0 );
     csRef<iPawsImage> Image() { return image;}
     const char *ImageName();
 

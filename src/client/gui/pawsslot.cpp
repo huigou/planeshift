@@ -147,10 +147,10 @@ void pawsSlot::StackCount( int newCount )
     }
 }
 
-void pawsSlot::PlaceItem( const char* imageName, const char* meshFactName, const char* materialName, int count )
+void pawsSlot::PlaceItem( const char* imageName, const char* meshFactName, const char* matName, int count )
 {
     meshfactName = meshFactName;
-    materialName = materialName;
+    materialName = matName;
     
     psengine->GetCelClient()->replaceRacialGroup(meshfactName);
     
