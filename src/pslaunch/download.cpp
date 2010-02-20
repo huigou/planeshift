@@ -25,9 +25,19 @@
 #include "updaterconfig.h"
 #include "updaterengine.h"
 
-csTicks dlStart = 0;
+csTicks timeStart = 0;
+double dlStart = 0.0;
+double speedLast = -1.0;
 const int progressWidth = 50;
 int lastSize = 0;
+
+void init_callback()
+{
+	timeStart = csGetTicks();
+	dlStart = 0.0;
+	lastSize = 0;
+}
+
 
 size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream)
 {
@@ -76,7 +86,13 @@ int ProgressCallback(void *clientp, double finalSize, double dlnow, double ultot
     // Don't output anything if there's been no progress.
     if(progress == 0 || finalSize <= 102400)
         return 0;
+
+    csTicks timeNow = csGetTicks();
+
+    csTicks timeDelta = timeNow - timeStart;
+    double dlDelta = dlnow - dlStart;
     csString progressLine;
+
     if(lastSize == 0)
 	    progressLine += '\n';
     else
@@ -85,13 +101,22 @@ int ProgressCallback(void *clientp, double finalSize, double dlnow, double ultot
     for(int pos = 0; pos < progressWidth; pos++)
     {
 	    if(pos < progressWidth * progress)
-	    	progressLine += '=';
+	    	progressLine += '-';
 	    else
 		progressLine += ' ';
     }
 
-    // Download speed in seconds
-    double speed = 1000.0 * dlnow / (csGetTicks() - dlStart);
+
+    // Recalculate download speed in seconds every 5 seconds.
+    if(timeDelta > 5000 || speedLast == -1.0)
+    {
+    	speedLast = 1000.0 * dlDelta / timeDelta;
+	timeStart = timeNow;
+	dlStart = dlnow;
+    }
+
+    double speed = speedLast;
+
     // Eta in seconds
     double eta = 0;
     csString etaStr;
@@ -106,7 +131,7 @@ int ProgressCallback(void *clientp, double finalSize, double dlnow, double ultot
 
     double dlnormalized = dlnow;
     const char* dlUnits = normalize_bytes(&dlnormalized);
-    progressLine.AppendFmt("]    %4.3f%s (%3d%%)   %4.1f%s/s eta %s    ", dlnormalized, dlUnits, (int) progress * 100, speed, speedUnits, etaStr.GetData());
+    progressLine.AppendFmt("]    %4.3f%s (%3d%%)   %4.1f%s/s eta %s    ", dlnormalized, dlUnits, (int) (progress * 100.0), speed, speedUnits, etaStr.GetData());
     lastSize = dlnow;
     UpdaterEngine::GetSingletonPtr()->PrintOutput(progressLine);
 
@@ -213,8 +238,7 @@ bool Downloader::DownloadFile(const char *file, const char *dest, bool URL, bool
             return false;
         }
 
-	dlStart = csGetTicks();
-	lastSize = 0;
+	init_callback();
         curl_easy_setopt(curl, CURLOPT_URL, url.GetData());
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, file);
