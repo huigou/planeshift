@@ -80,12 +80,12 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
         if(matName != NULL)
         {
             // Check that requested material is valid.
-            csRef<Material> material = materials.Get(mfStringSet.Request(matName), csRef<Material>());
-            if(!material.IsValid())
-                return 0;
-
-            LoadMaterial(material, true);
-            selectedMesh->GetMeshObject()->SetMaterialWrapper(material->mat);
+            csRef<Material> material = materials.Get(mStringSet.Request(matName), csRef<Material>());
+            if(material.IsValid())
+            {
+                LoadMaterial(material, true);
+                selectedMesh->GetMeshObject()->SetMaterialWrapper(material->mat);
+            }
         }
 
         return selectedMesh;
