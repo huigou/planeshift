@@ -28,7 +28,7 @@
 #endif PS_VERSION
 
 #ifndef APPNAME
-#define APPNAME "PlaneShift Arcane Chrysalis (" + PS_VERSION + ")"
+#define APPNAME "PlaneShift Arcane Chrysalis (" PS_VERSION ")"
 #endif
 
 #ifdef CS_COMPILER_GCC
