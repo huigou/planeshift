@@ -23,10 +23,10 @@
 
 #include <iutil/vfs.h>
 
-#include <curl/curl.h>
-
 class UpdaterEngine;
 class UpdaterConfig;
+
+typedef void CURL;
 
 class Downloader
 {
