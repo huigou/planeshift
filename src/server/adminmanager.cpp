@@ -5458,7 +5458,9 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         csString query;
         //check if it's an npc
         if(targetobject && (targetobject->GetCharacterData()->GetCharType() == PSCHARACTER_TYPE_NPC ||
-           targetobject->GetCharacterData()->GetCharType() == PSCHARACTER_TYPE_PET))
+           targetobject->GetCharacterData()->GetCharType() == PSCHARACTER_TYPE_PET ||
+           targetobject->GetCharacterData()->GetCharType() == PSCHARACTER_TYPE_MOUNT ||
+           targetobject->GetCharacterData()->GetCharType() == PSCHARACTER_TYPE_MOUNTPET))
         { //if so get it's pid so it works correctly with targetting
             pid = targetobject->GetCharacterData()->GetPID();
         }
@@ -5590,7 +5592,8 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         actorId = target->GetActor()->GetEID();
 
     }
-    else if (type == PSCHARACTER_TYPE_NPC || type == PSCHARACTER_TYPE_PET)
+    else if (type == PSCHARACTER_TYPE_NPC || type == PSCHARACTER_TYPE_PET || 
+             type == PSCHARACTER_TYPE_MOUNT || type == PSCHARACTER_TYPE_MOUNTPET)
     {
         gemNPC *npc = GEMSupervisor::GetSingleton().FindNPCEntity(pid);
         if (!npc)
@@ -5626,11 +5629,13 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
                              );
 
     // Update
-    if (online || type == PSCHARACTER_TYPE_NPC || type == PSCHARACTER_TYPE_PET)
+    if ((online || type == PSCHARACTER_TYPE_NPC || type == PSCHARACTER_TYPE_PET 
+                || type == PSCHARACTER_TYPE_MOUNT || type == PSCHARACTER_TYPE_MOUNTPET) && targetobject->GetActorPtr())
     {
         psUpdateObjectNameMessage newNameMsg(0, actorId, fullName);
-        psserver->GetEventManager()->Broadcast(
-            newNameMsg.msg, NetBase::BC_EVERYONE);
+        
+        csArray<PublishDestination>& clients = targetobject->GetActorPtr()->GetMulticastClients();
+        newNameMsg.Multicast(clients, 0, PROX_LIST_ANY_RANGE );
     }
 
     // Need instant DB update if we should be able to change the same persons name twice
