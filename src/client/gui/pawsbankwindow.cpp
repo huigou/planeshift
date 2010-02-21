@@ -209,7 +209,6 @@ bool pawsBankWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidg
     if(widget->GetID() == MONEYBUTTON)
     {
         Money->SetState(true);
-        Items->SetState(false);
         Admin->SetState(false);
 
         moneyWindow->Show();
@@ -219,7 +218,6 @@ bool pawsBankWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidg
     if(widget->GetID() == ADMINBUTTON)
     {
         Money->SetState(false);
-        Items->SetState(false);
         Admin->SetState(true);
 
         moneyWindow->Hide();
