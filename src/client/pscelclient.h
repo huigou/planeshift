@@ -526,6 +526,7 @@ public:
     virtual bool CheckLoadStatus();
 
     csString race;
+    csString partName;
     csString mountFactname;
     csString MounterAnim;
     csString helmGroup;
