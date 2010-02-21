@@ -39,6 +39,7 @@
 #include <string>
 #include "globals.h"
 #include "psengine.h"
+#include "util/pscssetup.h"
 
 #ifdef WIN32
 typedef wchar_t PS_CHAR;
@@ -157,7 +158,7 @@ public:
 #endif
 		parameters[STR("StartupTime")] = timeBuffer;
 		parameters[STR("ProductName")] = STR("PlaneShift");
-		parameters[STR("Version")] = STR("0.5.1.1");
+		parameters[STR("Version")] = STR(PS_VERSION);
 		report_code.reserve(512);
 
 	}
