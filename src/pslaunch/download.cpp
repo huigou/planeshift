@@ -21,6 +21,8 @@
 
 #include <csutil/randomgen.h>
 
+#include <curl/curl.h>
+
 #include "download.h"
 #include "updaterconfig.h"
 #include "updaterengine.h"
