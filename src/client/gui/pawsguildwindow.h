@@ -115,6 +115,7 @@ private:
     pawsListBox     *memberList;
     pawsCheckBox    *onlineOnly;
     pawsCheckBox    *guildNotifications;
+    pawsCheckBox    *allianceNotifications;
     pawsTextBox     *memberCount;
     pawsMultilineEditTextBox *motdEdit;
     pawsListBox     *allianceMemberList;

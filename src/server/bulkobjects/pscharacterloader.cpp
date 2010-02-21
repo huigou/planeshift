@@ -739,9 +739,9 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
         targetUpdate->AddField("loc_yrot", yrot);
         targetUpdate->AddField("loc_sector_id", sectorinfo->uid);
         targetUpdate->AddField("loc_instance", instance);
-        //Saves the guild notification setting: this is done only when the client correctly quits.
+        //Saves the guild/alliance notification setting: this is done only when the client correctly quits.
         //This is to avoid flodding with setting changes as much as possible
-        targetUpdate->AddField("guild_notifications", chardata->IsGettingGuildNotifications() );
+        targetUpdate->AddField("join_notifications", chardata->GetNotifications() );
     }
 
     if(!chardata->GetLastLoginTime().GetData())

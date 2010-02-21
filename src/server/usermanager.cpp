@@ -1200,8 +1200,12 @@ void UserManager::HandleClientReady( MsgEntry* me, Client *client )
     psConnectEvent evt(me);
     if (client)
     {
+        //notifies normal buddies this player has logged in
         NotifyBuddies(client, LOGGED_ON);
+        //notifies guild buddies getting notifications this player has logged in
         NotifyGuildBuddies(client, LOGGED_ON);
+        //notifies alliance buddies getting notifications this player has logged in
+        NotifyAllianceBuddies(client, LOGGED_ON);
     }
 }
 
@@ -1290,6 +1294,57 @@ void UserManager::NotifyGuildBuddies(Client * client, bool logged_in)
 
             psChatMessage guildmsg(notifiedactor->GetClientID(), clientEID, name.GetData(),0,text,CHAT_GUILD, false);
             guildmsg.SendMessage();
+        }
+    }
+}
+
+void UserManager::NotifyAllianceBuddies(Client * client, bool logged_in)
+{
+    csString name (client->GetName());
+    PID char_id = client->GetCharacterData()->GetPID();
+    psGuildInfo * charGuild = client->GetCharacterData()->GetGuild();
+    EID clientEID;
+    psGuildAlliance * alliance;
+
+    if(client->GetActor())
+        clientEID = client->GetActor()->GetEID();
+
+    if(!charGuild)
+        return;
+    
+    //get the alliance 
+    alliance = CacheManager::GetSingleton().FindAlliance(charGuild->GetAllianceID());
+
+    //if there is no alliance we are done
+    if(!alliance)
+        return;
+        
+    //iterate all alliance members
+    for(size_t i = 0; i < alliance->GetMemberCount(); i++)
+    {
+        //get the guild of a member
+        psGuildInfo* currentGuild = alliance->GetMember(i);
+        //ignore this if it's missing (shouldn't happen) or it's the same of the player guild.
+        //we notify only other guilds in alliance.
+        if(!currentGuild || currentGuild == charGuild)
+            continue;
+
+        for(size_t i = 0; i < charGuild->members.GetSize(); i++)
+        {
+            psCharacter *notifiedmember = charGuild->members[i]->actor;
+            gemActor *notifiedactor = notifiedmember? notifiedmember->GetActor() : NULL;
+
+            if(notifiedactor && notifiedmember && notifiedmember->IsGettingAllianceNotifications())
+            {
+                csString text;
+                if (logged_in)
+                    text.Format("/me just joined PlaneShift");
+                else
+                    text.Format("/me has quit");
+
+                psChatMessage alliancemsg(notifiedactor->GetClientID(), clientEID, name.GetData(),0,text,CHAT_ALLIANCE, false);
+                alliancemsg.SendMessage();
+            }
         }
     }
 }

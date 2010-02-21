@@ -289,7 +289,7 @@
 
             </widget>
 
-            <widget name="MemberNotifications" factory="pawsCheckBox" id="1005" shadows="yes" >
+            <widget name="GuildMemberNotifications" factory="pawsCheckBox" id="1005" shadows="yes" >
                 <frame x="10" y="270" width="400" height="20" />
                 <text string="Notify when members login/logout" position="right" />
             </widget>
@@ -403,6 +403,11 @@
             <widget name="MakeLeader" factory="pawsButton" id="501" style="Standard Button">
                 <frame x="110" y="320" width="90" height="19" />
                 <label text="Make leader" />
+            </widget>
+            
+            <widget name="AllianceMemberNotifications" factory="pawsCheckBox" id="1006" shadows="yes" >
+                <frame x="10" y="270" width="400" height="20" />
+                <text string="Notify when alliance members login/logout" position="right" />
             </widget>
 
 

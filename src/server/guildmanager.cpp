@@ -347,6 +347,9 @@ void GuildManager::HandleGUIMessage(MsgEntry *me,Client *client)
     case psGUIGuildMessage::SET_GUILD_NOTIFICATION:
         HandleSetGuildNotifications(client, doc->GetRoot());
         break;
+    case psGUIGuildMessage::SET_ALLIANCE_NOTIFICATION:
+        HandleSetAllianceNotifications(client, doc->GetRoot());
+        break;
     case psGUIGuildMessage::SET_LEVEL_RIGHT:
         HandleSetLevelRight(client, doc->GetRoot());
         break;
@@ -452,10 +455,20 @@ bool RetrieveGuildNotifications(iDocumentNode * root)
 {
     csRef<iDocumentNode> topNode = root->GetNode("r");
     if (!topNode)
-         return true;
+         return false;
 
     csString guildNotifications = topNode->GetAttributeValue("guildnotifications");
     return (guildNotifications == "yes");
+}
+
+bool RetrieveAllianceNotifications(iDocumentNode * root)
+{
+    csRef<iDocumentNode> topNode = root->GetNode("r");
+    if (!topNode)
+         return false;
+
+    csString allianceNotifications = topNode->GetAttributeValue("alliancednotifications");
+    return (allianceNotifications == "yes");
 }
 
 void GuildManager::HandleSubscribeGuildData(Client *client,iDocumentNode * root)
@@ -510,6 +523,12 @@ void GuildManager::HandleSetGuildNotifications(Client *client,iDocumentNode * ro
 {
     if(client && client->GetCharacterData())
         client->GetCharacterData()->SetGuildNotifications(RetrieveGuildNotifications(root));
+}
+
+void GuildManager::HandleSetAllianceNotifications(Client *client,iDocumentNode * root)
+{
+    if(client && client->GetCharacterData())
+        client->GetCharacterData()->SetAllianceNotifications(RetrieveAllianceNotifications(root));
 }
 
 void GuildManager::SendNotifications(int guild, int msg)
@@ -987,7 +1006,9 @@ void GuildManager::SendMemberData(Client *client,bool onlineOnly)
 
     open.Append("</memberinfo>");
 
-    open.AppendFmt("<playerinfo char_id=\"%i\" guildnotifications=\"%i\"/>", client->GetPID().Unbox(), client->GetCharacterData()->IsGettingGuildNotifications());
+    open.AppendFmt("<playerinfo char_id=\"%i\" guildnotifications=\"%i\" alliancenotifications=\"%i\"/>", 
+                    client->GetPID().Unbox(), client->GetCharacterData()->IsGettingGuildNotifications(),
+                    client->GetCharacterData()->IsGettingAllianceNotifications());
 
     psGUIGuildMessage cmd(clientnum,psGUIGuildMessage::MEMBER_DATA,open);
     cmd.SendMessage();

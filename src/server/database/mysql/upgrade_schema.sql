@@ -1404,6 +1404,10 @@ UPDATE `server_options` SET `option_value`='1237' WHERE `option_name`='db_versio
 ALTER TABLE `action_locations` ADD COLUMN `pos_instance` INTEGER UNSIGNED NOT NULL DEFAULT 4294967295 COMMENT 'Indicates the instance where this action location will be accessible from. 0xFFFFFFFF (default) is instance all';
 UPDATE `server_options` SET `option_value`='1238' WHERE `option_name`='db_version';
 
+#1239 - Stefano Angeleri Expanded notification system
+ALTER TABLE `characters` CHANGE COLUMN `guild_notifications` `alliance_notifications` TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Contains a bitfield with the notifications being issued to this client about players login/logoff';
+UPDATE `server_options` SET `option_value`='1239' WHERE `option_name`='db_version';
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to

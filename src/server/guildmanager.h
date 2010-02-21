@@ -90,7 +90,10 @@ protected:
     void HandleSubscribeGuildData(Client *client,iDocumentNode * root);
     void UnsubscribeGuildData(Client *client);
     void HandleSetOnline(Client *client,iDocumentNode * root);
+    ///Sets the status of guild notifications when a guild member logins/logsout
     void HandleSetGuildNotifications(Client *client,iDocumentNode * root);
+    ///Sets the status of alliance notifications when an alliance member logins/logsout
+    void HandleSetAllianceNotifications(Client *client,iDocumentNode * root);
     void HandleSetLevelRight(Client *client,iDocumentNode * root);
     void HandleRemoveMember(Client *client,iDocumentNode * root);
     void HandleSetMemberLevel(Client *client,iDocumentNode * root);

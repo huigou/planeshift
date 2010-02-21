@@ -624,6 +624,9 @@ bool EntityManager::DeletePlayer(Client * client)
         
             // Check for Guild members to notify
             usermanager->NotifyGuildBuddies(client, UserManager::LOGGED_OFF);
+            
+            //check for alliance members to notify
+            usermanager->NotifyAllianceBuddies(client, UserManager::LOGGED_OFF);
         }
 
         // Any objects wanting to know when the actor is 'gone' are callback'd here.
