@@ -589,10 +589,10 @@ public:
     bool IsGettingAllianceNotifications() { return (joinNotifications & PSCHARACTER_JOINNOTIFICATION_ALLIANCE); }
     ///Sets if the client should receive notifications about guild members logging in
     void SetGuildNotifications(bool enabled) { if(enabled) joinNotifications |= PSCHARACTER_JOINNOTIFICATION_GUILD; 
-                                               else joinNotifications &= PSCHARACTER_JOINNOTIFICATION_GUILD;}
+                                               else joinNotifications &= ~PSCHARACTER_JOINNOTIFICATION_GUILD;}
     ///Sets if the client should receive notifications about alliance members logging in
     void SetAllianceNotifications(bool enabled) { if(enabled) joinNotifications |= PSCHARACTER_JOINNOTIFICATION_ALLIANCE; 
-                                                  else joinNotifications &= PSCHARACTER_JOINNOTIFICATION_ALLIANCE;}
+                                                  else joinNotifications &= ~PSCHARACTER_JOINNOTIFICATION_ALLIANCE;}
     
     ///gets the notification bitfield directly: to be used only by the save functon
     int GetNotifications(){ return joinNotifications; }
