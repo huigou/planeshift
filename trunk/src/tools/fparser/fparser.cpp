@@ -1,5 +1,5 @@
 /***************************************************************************\
-|* Function Parser for C++ v4.0.4                                          *|
+|* Function Parser for C++ v4.0.5                                          *|
 |*-------------------------------------------------------------------------*|
 |* Copyright: Juha Nieminen, Joel Yliluoma                                 *|
 |*                                                                         *|
@@ -41,29 +41,6 @@ using namespace FUNCTIONPARSERTYPES;
 //=========================================================================
 namespace
 {
-    template<typename Value_t>
-    inline Value_t const_pi()
-    {
-        return Value_t(3.1415926535897932384626433832795L);
-    }
-
-#ifdef FP_SUPPORT_MPFR_FLOAT_TYPE
-    template<>
-    inline MpfrFloat const_pi<MpfrFloat>() { return MpfrFloat::const_pi(); }
-#endif
-
-    template<typename Value_t>
-    inline Value_t const_e()
-    {
-        return Value_t(2.7182818284590452353602874713526624977572L);
-    }
-
-#ifdef FP_SUPPORT_MPFR_FLOAT_TYPE
-    template<>
-    inline MpfrFloat const_e<MpfrFloat>() { return MpfrFloat::const_e(); }
-#endif
-
-
     template<typename Value_t>
     bool addNewNameData(namePtrsType<Value_t>& namePtrs,
                         std::pair<NamePtr, NameData<Value_t> >& newName,
@@ -161,7 +138,7 @@ namespace
     template<typename Value_t>
     inline const Value_t& GetDegreesToRadiansFactor()
     {
-        static const Value_t factor = const_pi<Value_t>() / Value_t(180);
+        static const Value_t factor = fp_const_pi<Value_t>() / Value_t(180);
         return factor;
     }
 
@@ -174,7 +151,7 @@ namespace
     template<typename Value_t>
     inline const Value_t& GetRadiansToDegreesFactor()
     {
-        static const Value_t factor = Value_t(180) / const_pi<Value_t>();
+        static const Value_t factor = Value_t(180) / fp_const_pi<Value_t>();
         return factor;
     }
 
@@ -187,9 +164,17 @@ namespace
     template<typename Value_t>
     inline bool isEvenInteger(Value_t value)
     {
-        long longval = (long)value;
-        return fp_equal(value, Value_t(longval)) && (longval%2) == 0;
+        const Value_t halfValue = value * Value_t(0.5);
+        return fp_equal(halfValue, fp_floor(halfValue));
     }
+
+#ifdef FP_SUPPORT_LONG_INT_TYPE
+    template<>
+    inline bool isEvenInteger(long value)
+    {
+        return value%2 == 0;
+    }
+#endif
 
 #ifdef FP_SUPPORT_MPFR_FLOAT_TYPE
     template<>
@@ -210,9 +195,17 @@ namespace
     template<typename Value_t>
     inline bool isOddInteger(Value_t value)
     {
-        long longval = (long)value;
-        return fp_equal(value, Value_t(longval)) && (longval%2) != 0;
+        const Value_t halfValue = (value + Value_t(1)) * Value_t(0.5);
+        return fp_equal(halfValue, fp_floor(halfValue));
     }
+
+#ifdef FP_SUPPORT_LONG_INT_TYPE
+    template<>
+    inline bool isOddInteger(long value)
+    {
+        return value%2 != 0;
+    }
+#endif
 
 #ifdef FP_SUPPORT_MPFR_FLOAT_TYPE
     template<>
@@ -1518,7 +1511,7 @@ FunctionParserBase<Value_t>::CompilePow(const char* function)
         unsigned op = cPow;
         if(data->ByteCode.back() == cImmed)
         {
-            if(data->Immed.back() == const_e<Value_t>())
+            if(data->Immed.back() == fp_const_e<Value_t>())
                 { op = cExp;  data->ByteCode.pop_back();
                     data->Immed.pop_back(); --StackPtr; }
             else if(data->Immed.back() == Value_t(2))

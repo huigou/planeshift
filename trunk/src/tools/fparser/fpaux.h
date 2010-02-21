@@ -1,5 +1,5 @@
 /***************************************************************************\
-|* Function Parser for C++ v4.0.4                                          *|
+|* Function Parser for C++ v4.0.5                                          *|
 |*-------------------------------------------------------------------------*|
 |* Copyright: Juha Nieminen, Joel Yliluoma                                 *|
 |*                                                                         *|
@@ -170,6 +170,30 @@ namespace FUNCTIONPARSERTYPES
     template<typename Value_t>
     inline Value_t fp_atanh(Value_t x)
         { return fp_log( (Value_t(1)+x) / (Value_t(1)-x)) * Value_t(0.5); }
+
+
+    template<typename Value_t>
+    inline Value_t fp_const_pi()
+    {
+        return Value_t(3.1415926535897932384626433832795L);
+    }
+
+#ifdef FP_SUPPORT_MPFR_FLOAT_TYPE
+    template<>
+    inline MpfrFloat fp_const_pi<MpfrFloat>() { return MpfrFloat::const_pi(); }
+#endif
+
+    template<typename Value_t>
+    inline Value_t fp_const_e()
+    {
+        return Value_t(2.7182818284590452353602874713526624977572L);
+    }
+
+#ifdef FP_SUPPORT_MPFR_FLOAT_TYPE
+    template<>
+    inline MpfrFloat fp_const_e<MpfrFloat>() { return MpfrFloat::const_e(); }
+#endif
+
 
 // -------------------------------------------------------------------------
 // double
