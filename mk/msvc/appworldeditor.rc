@@ -17,7 +17,7 @@ FILEFLAGS 0x0
       VALUE "ProductName", "PlaneShift a 3d MMORPG"
       VALUE "ProductVersion", "0.5.2"
       VALUE "FileVersion", "0.5.2"
-      VALUE "LegalCopyright", "Copyright (C)2001-2008 Atomic Blue"
+      VALUE "LegalCopyright", "Copyright (C)2001-2010 Atomic Blue"
       VALUE "FileDescription", "worldeditor"
 #ifdef CS_DEBUG
       VALUE "Comments", "Debug build"
