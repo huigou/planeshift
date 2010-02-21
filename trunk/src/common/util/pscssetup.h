@@ -25,7 +25,7 @@
 
 #ifndef PS_VERSION
 #define PS_VERSION "0.5.2"
-#endif PS_VERSION
+#endif
 
 #ifndef APPNAME
 #define APPNAME "PlaneShift Arcane Chrysalis (" PS_VERSION ")"
