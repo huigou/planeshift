@@ -1808,6 +1808,9 @@
 				RelativePath="..\..\mk\msvc\apppslaunch_static_static_glue_app_CRYSTAL.cpp">
 			</File>
 			<File
+				RelativePath="..\..\mk\msvc\OPENAL.fake_stub.c">
+			</File>
+			<File
 				RelativePath="..\..\src\pslaunch\binarypatch.cpp">
 			</File>
 			<File

@@ -51,7 +51,7 @@
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD"
 				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_opengl.lib cg.lib cgGL.lib opengl32.lib cal3d-vc9.lib libcrystalspace_staticplugins.lib libcrystalspace.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release9\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\release9\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib"
 				TargetMachine="1"/>
@@ -128,7 +128,7 @@
 				ImportLibrary="..\..\out\release9\libs\libpsnpcclient_static_plugins_CRYSTAL.lib"
 				ProgramDatabaseFile="..\..\out\release9\build\libpsnpcclient_static_plugins_CRYSTAL\Win32\psnpcclient_static_plugins_CRYSTAL-0.5-vc9.pdb"
 				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_opengl.lib cg.lib cgGL.lib opengl32.lib cal3d-vc9.lib libcrystalspace_staticplugins.lib libcrystalspace.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release9\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\release9\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib"
 				TargetMachine="1"/>
@@ -198,7 +198,7 @@
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
 				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_opengl_d.lib cg.lib cgGL.lib opengl32.lib cal3d-vc9_d.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib"
 				TargetMachine="1"/>
@@ -273,7 +273,7 @@
 				ImportLibrary="..\..\out\debug9\libs\libpsnpcclient_static_plugins_CRYSTAL_d.lib"
 				ProgramDatabaseFile="..\..\out\debug9\build\libpsnpcclient_static_plugins_CRYSTAL\Win32\psnpcclient_static_plugins_CRYSTAL-0.5-vc9_d.pdb"
 				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_opengl_d.lib cg.lib cgGL.lib opengl32.lib cal3d-vc9_d.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib"
 				TargetMachine="1"/>
@@ -343,7 +343,7 @@
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
 				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_opengl_d.lib cg.lib cgGL.lib opengl32.lib cal3d-vc9_d.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib"
 				TargetMachine="1"/>
@@ -418,7 +418,7 @@
 				ImportLibrary="..\..\out\debug9\libs\libpsnpcclient_static_plugins_CRYSTAL_d.lib"
 				ProgramDatabaseFile="..\..\out\debug9\build\libpsnpcclient_static_plugins_CRYSTAL\Win32\psnpcclient_static_plugins_CRYSTAL-0.5-vc9_d.pdb"
 				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_opengl_d.lib cg.lib cgGL.lib opengl32.lib cal3d-vc9_d.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib"
 				TargetMachine="1"/>
@@ -488,7 +488,7 @@
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
 				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_opengl_d.lib cg.lib cgGL.lib opengl32.lib cal3d-vc9_d.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib"
 				TargetMachine="1"/>
@@ -563,7 +563,7 @@
 				ImportLibrary="..\..\out\debug9\libs\libpsnpcclient_static_plugins_CRYSTAL_d.lib"
 				ProgramDatabaseFile="..\..\out\debug9\build\libpsnpcclient_static_plugins_CRYSTAL\Win32\psnpcclient_static_plugins_CRYSTAL-0.5-vc9_d.pdb"
 				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_opengl_d.lib cg.lib cgGL.lib opengl32.lib cal3d-vc9_d.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib"
 				TargetMachine="1"/>
@@ -633,7 +633,7 @@
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
 				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_opengl_d.lib cg.lib cgGL.lib opengl32.lib cal3d-vc9_d.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib"
 				TargetMachine="1"/>
@@ -708,7 +708,7 @@
 				ImportLibrary="..\..\out\debug9\libs\libpsnpcclient_static_plugins_CRYSTAL_d.lib"
 				ProgramDatabaseFile="..\..\out\debug9\build\libpsnpcclient_static_plugins_CRYSTAL\Win32\psnpcclient_static_plugins_CRYSTAL-0.5-vc9_d.pdb"
 				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_opengl_d.lib cg.lib cgGL.lib opengl32.lib cal3d-vc9_d.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib"
 				TargetMachine="1"/>
@@ -778,7 +778,7 @@
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
 				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_opengl_d.lib cg.lib cgGL.lib opengl32.lib cal3d-vc9_d.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release9\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\release9\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib"
 				TargetMachine="1"/>
@@ -853,7 +853,7 @@
 				ImportLibrary="..\..\out\debug9\libs\libpsnpcclient_static_plugins_CRYSTAL_d.lib"
 				ProgramDatabaseFile="..\..\out\debug9\build\libpsnpcclient_static_plugins_CRYSTAL\Win32\psnpcclient_static_plugins_CRYSTAL-0.5-vc9_d.pdb"
 				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_opengl_d.lib cg.lib cgGL.lib opengl32.lib cal3d-vc9_d.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release9\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\release9\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib"
 				TargetMachine="1"/>
@@ -925,7 +925,7 @@
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD"
 				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_opengl.lib cg.lib cgGL.lib opengl32.lib cal3d-vc9.lib libcrystalspace_staticplugins.lib libcrystalspace.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release9-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\release9-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib"
 				TargetMachine="17"/>
@@ -1002,7 +1002,7 @@
 				ImportLibrary="..\..\out\release9-x64\libs\libpsnpcclient_static_plugins_CRYSTAL.lib"
 				ProgramDatabaseFile="..\..\out\release9-x64\build\libpsnpcclient_static_plugins_CRYSTAL\x64\psnpcclient_static_plugins_CRYSTAL-0.5-vc9-x64.pdb"
 				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_opengl.lib cg.lib cgGL.lib opengl32.lib cal3d-vc9.lib libcrystalspace_staticplugins.lib libcrystalspace.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release9-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\release9-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib"
 				TargetMachine="17"/>
@@ -1072,7 +1072,7 @@
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
 				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_opengl_d.lib cg.lib cgGL.lib opengl32.lib cal3d-vc9_d.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug9-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug9-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib"
 				TargetMachine="17"/>
@@ -1147,7 +1147,7 @@
 				ImportLibrary="..\..\out\debug9-x64\libs\libpsnpcclient_static_plugins_CRYSTAL_d.lib"
 				ProgramDatabaseFile="..\..\out\debug9-x64\build\libpsnpcclient_static_plugins_CRYSTAL\x64\psnpcclient_static_plugins_CRYSTAL-0.5-vc9-x64_d.pdb"
 				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_opengl_d.lib cg.lib cgGL.lib opengl32.lib cal3d-vc9_d.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug9-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug9-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib"
 				TargetMachine="17"/>
@@ -1217,7 +1217,7 @@
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
 				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_opengl_d.lib cg.lib cgGL.lib opengl32.lib cal3d-vc9_d.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug9-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug9-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib"
 				TargetMachine="17"/>
@@ -1292,7 +1292,7 @@
 				ImportLibrary="..\..\out\debug9-x64\libs\libpsnpcclient_static_plugins_CRYSTAL_d.lib"
 				ProgramDatabaseFile="..\..\out\debug9-x64\build\libpsnpcclient_static_plugins_CRYSTAL\x64\psnpcclient_static_plugins_CRYSTAL-0.5-vc9-x64_d.pdb"
 				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_opengl_d.lib cg.lib cgGL.lib opengl32.lib cal3d-vc9_d.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug9-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug9-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib"
 				TargetMachine="17"/>
@@ -1362,7 +1362,7 @@
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
 				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_opengl_d.lib cg.lib cgGL.lib opengl32.lib cal3d-vc9_d.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug9-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug9-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib"
 				TargetMachine="17"/>
@@ -1437,7 +1437,7 @@
 				ImportLibrary="..\..\out\debug9-x64\libs\libpsnpcclient_static_plugins_CRYSTAL_d.lib"
 				ProgramDatabaseFile="..\..\out\debug9-x64\build\libpsnpcclient_static_plugins_CRYSTAL\x64\psnpcclient_static_plugins_CRYSTAL-0.5-vc9-x64_d.pdb"
 				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_opengl_d.lib cg.lib cgGL.lib opengl32.lib cal3d-vc9_d.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug9-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug9-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib"
 				TargetMachine="17"/>
@@ -1507,7 +1507,7 @@
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
 				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_opengl_d.lib cg.lib cgGL.lib opengl32.lib cal3d-vc9_d.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug9-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug9-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib"
 				TargetMachine="17"/>
@@ -1582,7 +1582,7 @@
 				ImportLibrary="..\..\out\debug9-x64\libs\libpsnpcclient_static_plugins_CRYSTAL_d.lib"
 				ProgramDatabaseFile="..\..\out\debug9-x64\build\libpsnpcclient_static_plugins_CRYSTAL\x64\psnpcclient_static_plugins_CRYSTAL-0.5-vc9-x64_d.pdb"
 				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_opengl_d.lib cg.lib cgGL.lib opengl32.lib cal3d-vc9_d.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\debug9-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug9-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib"
 				TargetMachine="17"/>
@@ -1652,7 +1652,7 @@
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
 				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_opengl_d.lib cg.lib cgGL.lib opengl32.lib cal3d-vc9_d.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release9-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\release9-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib"
 				TargetMachine="17"/>
@@ -1727,7 +1727,7 @@
 				ImportLibrary="..\..\out\debug9-x64\libs\libpsnpcclient_static_plugins_CRYSTAL_d.lib"
 				ProgramDatabaseFile="..\..\out\debug9-x64\build\libpsnpcclient_static_plugins_CRYSTAL\x64\psnpcclient_static_plugins_CRYSTAL-0.5-vc9-x64_d.pdb"
 				AdditionalOptions="libpng.lib freetype2.lib libcrystalspace_opengl_d.lib cg.lib cgGL.lib opengl32.lib cal3d-vc9_d.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib "
-				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib libmysql.lib"
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\CS\out\release9-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\release9-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib"
 				TargetMachine="17"/>
@@ -1764,9 +1764,6 @@
 		<Filter
 			Name="Source Files"
 			Filter="">
-			<File
-				RelativePath="..\..\mk\msvc\apppsnpcclient_static_static_glue_app.cpp">
-			</File>
 			<File
 				RelativePath="..\..\mk\msvc\apppsnpcclient_static_static_glue_lib_CRYSTAL.cpp">
 			</File>

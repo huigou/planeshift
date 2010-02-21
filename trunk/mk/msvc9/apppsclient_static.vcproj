@@ -1805,7 +1805,13 @@
 			Name="Source Files"
 			Filter="">
 			<File
+				RelativePath="..\..\mk\msvc\apppsclient_static_static_glue_app.cpp">
+			</File>
+			<File
 				RelativePath="..\..\mk\msvc\apppsclient_static_static_glue_app_CRYSTAL.cpp">
+			</File>
+			<File
+				RelativePath="..\..\mk\msvc\OPENAL.fake_stub.c">
 			</File>
 			<File
 				RelativePath="..\..\src\client\actionhandler.cpp">
