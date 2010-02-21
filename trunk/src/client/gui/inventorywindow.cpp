@@ -364,9 +364,13 @@ void pawsInventoryWindow::Equip( const char* itemName, int stackCount, int toSlo
 
         if ( fromSlot )
         {
-            fromSlot->Clear();
             int container   = fromSlot->ContainerID();
             int slot        = fromSlot->ID();
+
+            if (fromSlot->StackCount() > stackCount)
+                fromSlot->StackCount(fromSlot->StackCount() - stackCount);
+            else
+                fromSlot->Clear();
 
             //psItem* item = charData->GetItemInSlot( slot );
             psSlotMovementMsg msg( container, slot,
