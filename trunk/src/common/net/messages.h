@@ -1162,7 +1162,8 @@ public:
                    SET_MEMBER_PUBLIC_NOTES,
                    SET_MEMBER_PRIVATE_NOTES,
 
-                   SET_GUILD_NOTIFICATION      ///< Clients asks server to change the guild member login/logout notification setting
+                   SET_GUILD_NOTIFICATION,      ///< Clients asks server to change the guild member login/logout notification setting
+                   SET_ALLIANCE_NOTIFICATION      ///< Clients asks server to change the alliance member login/logout notification setting
                 };
 
     /** @brief Constuct a new equipment message to go on the network.
