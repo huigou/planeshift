@@ -441,7 +441,7 @@ bool GuildManager::CheckClientRights(Client * client, GUILD_PRIVILEGE priv, cons
     }
 }
 
-bool RetrieveOnlineOnly(iDocumentNode * root)
+bool GuildManager::RetrieveOnlineOnly(iDocumentNode * root)
 {
     csRef<iDocumentNode> topNode = root->GetNode("r");
     if (!topNode)
@@ -451,7 +451,7 @@ bool RetrieveOnlineOnly(iDocumentNode * root)
     return (onlineOnly == "yes");
 }
 
-bool RetrieveGuildNotifications(iDocumentNode * root)
+bool GuildManager::RetrieveGuildNotifications(iDocumentNode * root)
 {
     csRef<iDocumentNode> topNode = root->GetNode("r");
     if (!topNode)
@@ -461,7 +461,7 @@ bool RetrieveGuildNotifications(iDocumentNode * root)
     return (guildNotifications == "yes");
 }
 
-bool RetrieveAllianceNotifications(iDocumentNode * root)
+bool GuildManager::RetrieveAllianceNotifications(iDocumentNode * root)
 {
     csRef<iDocumentNode> topNode = root->GetNode("r");
     if (!topNode)

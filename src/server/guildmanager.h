@@ -111,6 +111,14 @@ protected:
 
     /** Checks if client has right 'priv'. If not, it sends him psSystemMessage with text 'denialMsg' */
     bool CheckClientRights(Client * client, GUILD_PRIVILEGE priv, const char * denialMsg);
+    
+    ///parses the xml to check if the client wants only a list of online members
+    bool RetrieveOnlineOnly(iDocumentNode * root);
+    ///parses the xml to check if the client wants to be notified of guild member logging in/off
+    bool RetrieveGuildNotifications(iDocumentNode * root);
+    ///parses the xml to check if the client wants to be notified of alliance member logging in/off
+    bool RetrieveAllianceNotifications(iDocumentNode * root);
+
 
     void SendGuildData(Client *client);
     void SendLevelData(Client *client);
