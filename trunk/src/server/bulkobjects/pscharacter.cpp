@@ -405,7 +405,7 @@ bool psCharacter::Load(iResultRow& row)
     if (guildinfo)
         guildinfo->Connect(this);
 
-    SetGuildNotifications(row.GetInt("guild_notifications") == 1);
+    SetNotifications(row.GetInt("join_notifications"));
 
     // Loot rule here
     loot_category_id = row.GetInt("npc_addl_loot_category_id");

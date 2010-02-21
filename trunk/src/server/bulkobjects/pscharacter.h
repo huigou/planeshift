@@ -115,6 +115,14 @@ enum PSCHARACTER_CUSTOM
     PSCHARACTER_CUSTOM_COUNT
 };
 
+///enum containing the notification status (a bitfield)
+enum PSCHARACTER_JOINNOTIFICATION
+{
+    PSCHARACTER_JOINNOTIFICATION_GUILD    = 1,
+    PSCHARACTER_JOINNOTIFICATION_ALLIANCE = 2
+};
+    
+
 #define PSQUEST_DELETE   'D'
 #define PSQUEST_ASSIGNED 'A'
 #define PSQUEST_COMPLETE 'C'
@@ -478,7 +486,9 @@ protected:
     psSkillCache              skillCache;
     GMEventsAssignment        assigned_events;
     csArray<PID>              explored_areas;
-    bool guildNotified; ///< If true the player will get notifications about his guild members logging in and out
+
+    ///< A bitfield which contains the notifications the player will get if a guild or alliance member login/logoff.
+    int joinNotifications; 
 
     bool LoadSpells(PID use_id);
     bool LoadAdvantages(PID use_id);
@@ -574,9 +584,20 @@ public:
     psGuildMember *GetGuildMembership();
 
     ///Returns if the client should receive notifications about guild members logging in
-    bool IsGettingGuildNotifications() { return guildNotified; }
+    bool IsGettingGuildNotifications() { return (joinNotifications & PSCHARACTER_JOINNOTIFICATION_GUILD); }
+    ///Returns if the client should receive notifications about alliance members logging in
+    bool IsGettingAllianceNotifications() { return (joinNotifications & PSCHARACTER_JOINNOTIFICATION_ALLIANCE); }
     ///Sets if the client should receive notifications about guild members logging in
-    void SetGuildNotifications(bool enabled) { guildNotified = enabled; }
+    void SetGuildNotifications(bool enabled) { if(enabled) joinNotifications |= PSCHARACTER_JOINNOTIFICATION_GUILD; 
+                                               else joinNotifications &= PSCHARACTER_JOINNOTIFICATION_GUILD;}
+    ///Sets if the client should receive notifications about alliance members logging in
+    void SetAllianceNotifications(bool enabled) { if(enabled) joinNotifications |= PSCHARACTER_JOINNOTIFICATION_ALLIANCE; 
+                                                  else joinNotifications &= PSCHARACTER_JOINNOTIFICATION_ALLIANCE;}
+    
+    ///gets the notification bitfield directly: to be used only by the save functon
+    int GetNotifications(){ return joinNotifications; }
+    ///sets the notification bitfield directly: to be used only by the loader functon
+    void SetNotifications(int notifications) { joinNotifications = notifications; }
 
     StatSet  & Stats()  { return attributes; }
     SkillSet & Skills() { return skills;     }

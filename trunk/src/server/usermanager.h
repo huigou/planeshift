@@ -80,6 +80,14 @@ public:
      *  @param loggedon True if the player has logged on. False if logged off.
      */
     void NotifyGuildBuddies(Client * client, bool loggedon);
+    
+    /** @brief Send a notification to all clients on a person alliance if they log on/off.
+     *  @note This function excludes the same guild to avoid repetitions with notifyGuildBuddies.
+     *
+     *  @param client The client that has logged in/out.
+     *  @param loggedon True if the player has logged on. False if logged off.
+     */
+    void NotifyAllianceBuddies(Client * client, bool loggedon);
 
     enum
     {

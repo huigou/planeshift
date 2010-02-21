@@ -59,7 +59,7 @@ CREATE TABLE `characters` (
   `guild_points` int(10) unsigned NOT NULL default '0',
   `guild_public_notes` varchar(255) default NULL,
   `guild_private_notes` varchar(255) default '0',
-  `guild_notifications` tinyint(1) unsigned NOT NULL default '0',
+  `join_notifications` tinyint(1) unsigned NOT NULL default '0' COMMENT 'Contains a bitfield with the notifications being issued to this client about players login/logoff',
   `last_login` datetime default NULL,
   `faction_standings` blob,
   `progression_script` blob,

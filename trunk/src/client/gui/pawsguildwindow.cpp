@@ -53,11 +53,12 @@
 #define BTN_SETTINGS_TAB       203
 
 // Control ID definitions
-#define EDIT_GUILD_NAME     1001
-#define CHECK_GUILD_SECRET  1002
-#define CHECK_ONLINE_ONLY   1003
-#define EDIT_GUILD_WEB_PAGE 1004
-#define CHECK_GUILD_NOTIFY  1005
+#define EDIT_GUILD_NAME        1001
+#define CHECK_GUILD_SECRET     1002
+#define CHECK_ONLINE_ONLY      1003
+#define EDIT_GUILD_WEB_PAGE    1004
+#define CHECK_GUILD_NOTIFY     1005
+#define CHECK_ALLIANCE_NOTIFY  1006
 
 #define REMOVE_MEMBER_BUTTON 300
 #define EDIT_LEVEL_BUTTON 301
@@ -234,10 +235,15 @@ bool pawsGuildWindow::PostSetup()
         return false;
     onlineOnly->SetState(true);
 
-    guildNotifications = dynamic_cast<pawsCheckBox*>(FindWidget("MemberNotifications"));
+    guildNotifications = dynamic_cast<pawsCheckBox*>(FindWidget("GuildMemberNotifications"));
     if (!onlineOnly)
         return false;
-    guildNotifications->SetState(true);
+    guildNotifications->SetState(false);
+    
+    allianceNotifications = dynamic_cast<pawsCheckBox*>(FindWidget("AllianceMemberNotifications"));
+    if (!onlineOnly)
+        return false;
+    allianceNotifications->SetState(false);
 
     allianceMemberList = dynamic_cast<pawsListBox*>(FindWidget("AllianceMemberList"));
     if (!allianceMemberList)
@@ -452,6 +458,8 @@ void pawsGuildWindow::HandleMemberData( csString& openString )
         char_id = playerNode->GetAttributeValueAsInt("char_id");
         if(guildNotifications)
             guildNotifications->SetState(playerNode->GetAttributeValueAsBool("guildnotifications"));
+        if(guildNotifications)
+            allianceNotifications->SetState(playerNode->GetAttributeValueAsBool("alliancenotifications"));
     }
     else
     {
@@ -753,6 +761,16 @@ bool pawsGuildWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
             csString command;
             command.Format("<r guildnotifications=\"%s\"/>", guildNotifications->GetState() ? "yes":"no");
             psGUIGuildMessage msg(psGUIGuildMessage::SET_GUILD_NOTIFICATION, command);
+            msg.SendMessage();
+            retVal = true;
+            break;
+        }
+
+        case CHECK_ALLIANCE_NOTIFY:
+        {
+            csString command;
+            command.Format("<r alliancenotifications=\"%s\"/>", allianceNotifications->GetState() ? "yes":"no");
+            psGUIGuildMessage msg(psGUIGuildMessage::SET_ALLIANCE_NOTIFICATION, command);
             msg.SendMessage();
             retVal = true;
             break;
