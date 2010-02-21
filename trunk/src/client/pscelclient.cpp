@@ -1304,6 +1304,7 @@ GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
     groupID = mesg.groupID;
     gender = mesg.gender;
     factName = mesg.factname;
+    partName = factName;
     matName = mesg.matname;
     scale = mesg.scale;
     mountScale = mesg.mountScale;
@@ -1955,7 +1956,7 @@ bool GEMClientActor::CheckLoadStatus()
 
     if(!matName.IsEmpty())
     {
-        charApp->ChangeMaterial(factName, matName);
+        charApp->ChangeMaterial(partName, matName);
     }
 
     if (psengine->GetZoneHandler()->IsLoading() || !post_load->sector)
