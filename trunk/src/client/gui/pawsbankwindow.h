@@ -73,7 +73,7 @@ protected:
     pawsTextBox *feeInfo;
 
     /* Tab buttons. */
-    pawsButton *Money, *Items, *Admin;
+    pawsButton *Money, *Admin;
 
     /* two sub-windows. */
     pawsWidget *moneyWindow, *adminWindow;
