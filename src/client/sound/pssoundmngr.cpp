@@ -899,10 +899,6 @@ void psSoundManager::FadeSectorSounds( Fade_Direction dir )
     }
 }
 
-
-SCF_IMPLEMENT_FACTORY (psSoundManager)
-
-
 //-----------------------------------------------------------------------------
 
 
