@@ -1338,7 +1338,7 @@ void UserManager::NotifyAllianceBuddies(Client * client, bool logged_in)
             {
                 csString text;
                 if (logged_in)
-                    text.Format("/me from %s just joined PlaneShift", charGuild->GetName.GetData());
+                    text.Format("/me from %s just joined PlaneShift", charGuild->GetName().GetData());
                 else
                     text.Format("/me has quit");
 
