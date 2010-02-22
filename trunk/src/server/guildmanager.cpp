@@ -467,7 +467,7 @@ bool GuildManager::RetrieveAllianceNotifications(iDocumentNode * root)
     if (!topNode)
          return false;
 
-    csString allianceNotifications = topNode->GetAttributeValue("alliancednotifications");
+    csString allianceNotifications = topNode->GetAttributeValue("alliancenotifications");
     return (allianceNotifications == "yes");
 }
 
