@@ -1554,7 +1554,7 @@ psWorkCmdMessage::psWorkCmdMessage(MsgEntry *message)
     {
         return;
     }
-    if (command == "/dig" || command == "/fish")
+    if (command == "/dig" || command == "/fish" || command == "/harvest" )
     {
         filter = words[1];
         if (filter == "for")
