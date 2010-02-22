@@ -1329,16 +1329,16 @@ void UserManager::NotifyAllianceBuddies(Client * client, bool logged_in)
         if(!currentGuild || currentGuild == charGuild)
             continue;
 
-        for(size_t i = 0; i < charGuild->members.GetSize(); i++)
+        for(size_t i = 0; i < currentGuild->members.GetSize(); i++)
         {
-            psCharacter *notifiedmember = charGuild->members[i]->actor;
+            psCharacter *notifiedmember = currentGuild->members[i]->actor;
             gemActor *notifiedactor = notifiedmember? notifiedmember->GetActor() : NULL;
 
             if(notifiedactor && notifiedmember && notifiedmember->IsGettingAllianceNotifications())
             {
                 csString text;
                 if (logged_in)
-                    text.Format("/me just joined PlaneShift");
+                    text.Format("/me from %s just joined PlaneShift", charGuild->GetName.GetData());
                 else
                     text.Format("/me has quit");
 
