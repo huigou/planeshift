@@ -2710,8 +2710,6 @@ void MeleeOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
 void MeleeOperation::InterruptOperation(NPC *npc,EventManager *eventmgr)
 {
     ScriptOperation::InterruptOperation(npc,eventmgr);
-    
-    npcclient->GetNetworkMgr()->QueueAttackCommand(npc->GetActor(),NULL);
 }
 
 bool MeleeOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
