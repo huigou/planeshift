@@ -2376,6 +2376,10 @@ void gemActor::DoDamage(gemActor* attacker, float damage)
     // Death takes some special work
     if (fabs(hp) < 0.0005f || GetMode() == PSCHARACTER_MODE_DEFEATED)  // check for dead
     {
+        // for now, if the actor is on a mount, he's dropped off it
+        if(GetMount())
+            EntityManager::GetSingleton().RemoveRideRelation(this);
+
         // If no explicit killer, look for the last person to cast a DoT spell.
         if (!attacker && dmgHistory.GetSize() > 0)
         {
@@ -2416,10 +2420,6 @@ void gemActor::DoDamage(gemActor* attacker, float damage)
         {
             psserver->combatmanager->StopAttack(attacker);
         }
-
-        // for now, if the actor is on a mount, he's dropped off it
-        if(GetMount())
-            EntityManager::GetSingleton().RemoveRideRelation(this);
         
         MulticastDRUpdate();
     }
