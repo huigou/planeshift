@@ -579,20 +579,22 @@ void UserManager::SendCharacterDescription(Client * client, gemActor *actor, boo
             }
 
             // We calculate two 'levels', one physical and one magical.
+            const int maxLevel = 7;
+
             int theirPhysicalLevel = (theirPhysicalStat + theirBestPhysical * 2) / 100;
-            theirPhysicalLevel = (theirPhysicalLevel > 7) ? 7 : theirPhysicalLevel;
+            theirPhysicalLevel = (theirPhysicalLevel > maxLevel) ? maxLevel : theirPhysicalLevel;
             int theirMagicalLevel = (theirMagicalStat + theirBestMagical * 2) / 100;
-            theirMagicalLevel = (theirMagicalLevel > 7) ? 7 : theirMagicalLevel;
+            theirMagicalLevel = (theirMagicalLevel > maxLevel) ? maxLevel : theirMagicalLevel;
 
             int myPhysicalLevel = (myPhysicalStat + myBestPhysical * 2) / 100;
-            myPhysicalLevel = (myPhysicalLevel > 7) ? 7 : myPhysicalLevel;
+            myPhysicalLevel = (myPhysicalLevel > maxLevel) ? maxLevel : myPhysicalLevel;
             int myMagicalLevel = (myMagicalStat + myBestMagical * 2) / 100;
-            myMagicalLevel = (myMagicalLevel > 7) ? 7 : myMagicalLevel;
+            myMagicalLevel = (myMagicalLevel > maxLevel) ? maxLevel : myMagicalLevel;
 
             // And also a comparative difference for each.
             int physicalDiff = theirPhysicalLevel - myPhysicalLevel;
-            int magicalDiff = theirMagicalLevel - myPhysicalLevel;
-            int overallLevelComparison = (float)(14 + physicalDiff + magicalDiff) / 3.5f;
+            int magicalDiff = theirMagicalLevel - myMagicalLevel;
+            int overallLevelComparison = (float)(2 * maxLevel + physicalDiff + magicalDiff) / 3.5f;
 
             // Character's magical strength assessment.
             static const char* const MagicalStrengthAssessPhrases[] =
