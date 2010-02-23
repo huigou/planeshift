@@ -579,41 +579,20 @@ void UserManager::SendCharacterDescription(Client * client, gemActor *actor, boo
             }
 
             // We calculate two 'levels', one physical and one magical.
-            int physicalLevel = (theirPhysicalStat + theirBestPhysical * 2) / 100;
-            physicalLevel = (physicalLevel > 7) ? 7 : physicalLevel;
-            int magicalLevel = (theirMagicalStat + theirBestMagical * 2) / 100;
-            magicalLevel = (magicalLevel > 7) ? 7 : magicalLevel;
+            int theirPhysicalLevel = (theirPhysicalStat + theirBestPhysical * 2) / 100;
+            theirPhysicalLevel = (theirPhysicalLevel > 7) ? 7 : theirPhysicalLevel;
+            int theirMagicalLevel = (theirMagicalStat + theirBestMagical * 2) / 100;
+            theirMagicalLevel = (theirMagicalLevel > 7) ? 7 : theirMagicalLevel;
+
+            int myPhysicalLevel = (myPhysicalStat + myBestPhysical * 2) / 100;
+            myPhysicalLevel = (myPhysicalLevel > 7) ? 7 : myPhysicalLevel;
+            int myMagicalLevel = (myMagicalStat + myBestMagical * 2) / 100;
+            myMagicalLevel = (myMagicalLevel > 7) ? 7 : myMagicalLevel;
 
             // And also a comparative difference for each.
-            int physicalDiff = theirBestPhysical - myBestPhysical;
-            if(abs(physicalDiff) < 5)
-            {
-                physicalDiff = myPhysicalStat - theirPhysicalStat;
-                physicalDiff /= 10;
-            }
-            else
-            {
-                physicalDiff /= 5;
-            }
-
-            physicalDiff = (physicalDiff < -4) ? -4 : physicalDiff;
-            physicalDiff = (physicalDiff > 4) ? 4 : physicalDiff;
-
-            int magicalDiff = theirBestMagical - myBestMagical;
-            if(abs(magicalDiff) < 5)
-            {
-                magicalDiff = myMagicalStat - theirMagicalStat;
-                magicalDiff /= 10;
-            }
-            else
-            {
-                magicalDiff /= 5;
-            }
-
-            magicalDiff = (magicalDiff < -4) ? -4 : magicalDiff;
-            magicalDiff = (magicalDiff > 4) ? 4 : magicalDiff;
-
-            int overallLevelComparison = 4 + (physicalDiff + magicalDiff) / 2;
+            int physicalDiff = theirPhysicalLevel - myPhysicalLevel;
+            int magicalDiff = theirMagicalLevel - myPhysicalLevel;
+            int overallLevelComparison = (float)(14 + physicalDiff + magicalDiff) / 3.5f;
 
             // Character's magical strength assessment.
             static const char* const MagicalStrengthAssessPhrases[] =
@@ -656,7 +635,7 @@ void UserManager::SendCharacterDescription(Client * client, gemActor *actor, boo
             };
 
             desc.AppendFmt("\n\n%s appears %s, while also appearing %s. You judge that %s %s.", charName.GetData(),
-                MagicalStrengthAssessPhrases[magicalLevel], PhysicalStrengthAssessPhrases[physicalLevel],
+                MagicalStrengthAssessPhrases[theirMagicalLevel], PhysicalStrengthAssessPhrases[theirPhysicalLevel],
                 charName.GetData(), OverallComparePhrases[overallLevelComparison]);
         }
 
