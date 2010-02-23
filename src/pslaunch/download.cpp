@@ -30,7 +30,7 @@
 csTicks timeStart = 0;
 double dlStart = 0.0;
 double speedLast = -1.0;
-const int progressWidth = 50;
+const int progressWidth = 40;
 int lastSize = 0;
 
 void init_callback()
@@ -133,7 +133,7 @@ int ProgressCallback(void *clientp, double finalSize, double dlnow, double ultot
 
     double dlnormalized = dlnow;
     const char* dlUnits = normalize_bytes(&dlnormalized);
-    progressLine.AppendFmt("]    %4.3f%s (%3d%%)   %4.1f%s/s eta %s    ", dlnormalized, dlUnits, (int) (progress * 100.0), speed, speedUnits, etaStr.GetData());
+    progressLine.AppendFmt("]    %4.1f%s (%3d%%)   %4.1f%s/s eta %s    ", dlnormalized, dlUnits, (int) (progress * 100.0), speed, speedUnits, etaStr.GetData());
     lastSize = dlnow;
     UpdaterEngine::GetSingletonPtr()->PrintOutput(progressLine);
 
