@@ -173,7 +173,7 @@ psCamera::psCamera()
 
     fixedDistClip = 200;
 
-    useCameraCD = false;
+    useCameraCD = true;
     useNPCCam = false;
     npcModePosition = csVector3(0, 0, 0);
     npcOldRot = 0.0f;
