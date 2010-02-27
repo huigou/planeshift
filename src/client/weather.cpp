@@ -167,6 +167,8 @@ WeatherSound RainWeatherObject::GetWeatherSoundForced()
 {
     if(parent->downfall_params.value > 2000)
         return WEATHER_SOUND_RAIN_HEAVY;
+    else if(parent->downfall_params.value > 1000)
+	return WEATHER_SOUND_RAIN_MEDIUM;
     else
         return WEATHER_SOUND_RAIN_LIGHT;
 }
