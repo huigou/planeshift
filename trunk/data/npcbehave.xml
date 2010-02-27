@@ -123,7 +123,7 @@
           <rotate type="locatedest" anim="walk" ang_vel="120" />
 	  <melee seek_range="50" melee_range="2" />
       </behavior>
-      <behavior name="chase" completion_decay="100" growth="0" initial="0">
+      <behavior name="chase" decay="1" completion_decay="100" growth="0" initial="0">
           <chase type="target" anim="walk" />
       </behavior>
       <!--behavior name="hunt">
@@ -151,7 +151,7 @@
           <rotate type="locatedest" anim="walk" ang_vel="120" />
 	  <melee seek_range="50" melee_range="3" />
       </behavior>
-      <behavior name="chase" completion_decay="100" growth="0" initial="0">
+      <behavior name="chase" decay="1" completion_decay="100" growth="0" initial="0">
           <chase type="target" anim="run" vel="5" />
       </behavior>
       <react event="collision"           behavior="turn" />
@@ -213,7 +213,7 @@
   </npctype>
 
   <npctype name="Chaser" parent="Answerer">
-      <behavior name="chase" decay="0" growth="0" initial="100">
+      <behavior name="chase" decay="1" growth="0" initial="100">
           <chase type="owner" anim="walk" />
       </behavior>
       <react event="enemy in range" range="50" behavior="chase" delta="100" />
