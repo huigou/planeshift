@@ -367,7 +367,6 @@ void pawsListBox::Remove( int id )
         {
             pawsListBoxRow* zombie = rows[x];
             Remove(zombie);
-            delete zombie;
             return;
         }
     }
