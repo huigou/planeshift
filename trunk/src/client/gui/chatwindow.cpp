@@ -1337,10 +1337,14 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
     csString noCaseText = msg.sText;
     noCaseText.Downcase();
     size_t charNamePos = noCaseText.Find(noCasePlayerForename);
-    if(charNamePos != (size_t) -1)
+    size_t charEndNamePos = charNamePos + noCasePlayerForename.Length();
+
+    // Do not highlight if name is in middle of word.
+    if(charNamePos != (size_t) -1 && (charNamePos == 0 || isspace(noCaseText[charNamePos - 1] || ispunct(noCaseText[charNamePos - 1])))
+	&& (charEndNamePos == noCaseText.Length() || isspace(noCaseText[charEndNamePos + 1] || ispunct(noCaseText[charEndNamePos + 1]))))
     {
         msg.sText.Insert(charNamePos, REDCODE);
-        msg.sText.Insert(charNamePos + LENGTHCODE + noCasePlayerForename.Length(), DEFAULTCODE);
+        msg.sText.Insert(charEndNamePos + LENGTHCODE, DEFAULTCODE);
     }
 
     csString noCaseMsg = msg.sText;
