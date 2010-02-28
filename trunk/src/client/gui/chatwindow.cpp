@@ -1340,8 +1340,8 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
     size_t charEndNamePos = charNamePos + noCasePlayerForename.Length();
 
     // Do not highlight if name is in middle of word.
-    if(charNamePos != (size_t) -1 && (charNamePos == 0 || isspace(noCaseText[charNamePos - 1] || ispunct(noCaseText[charNamePos - 1])))
-	&& (charEndNamePos == noCaseText.Length() || isspace(noCaseText[charEndNamePos] || ispunct(noCaseText[charEndNamePos]))))
+    if(charNamePos != (size_t) -1 && (charNamePos == 0 || isspace(noCaseText[charNamePos - 1]) || ispunct(noCaseText[charNamePos - 1]))
+	&& (charEndNamePos == noCaseText.Length() || isspace(noCaseText[charEndNamePos]) || ispunct(noCaseText[charEndNamePos])))
     {
         msg.sText.Insert(charNamePos, REDCODE);
         msg.sText.Insert(charEndNamePos + LENGTHCODE, DEFAULTCODE);
