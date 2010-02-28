@@ -180,7 +180,7 @@ public:
     /// Remove selected row
     pawsListBoxRow* RemoveSelected();
     
-    /// Remove based on widget id. Note this does not delete the row.
+    /// Remove based on widget id. Note this also deletes the row.
     void Remove( int id );
 
     /// Remove based on row pointer
