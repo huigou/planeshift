@@ -211,7 +211,7 @@ bool pawsSelectorBox::SelectAndMoveRow(int rowNo, bool toSelected)
     if (!row)
         return false;
 
-    sourceList->Remove(row->GetID());
+    sourceList->Remove(row);
     destList->AddRow(row);
 
     moved = row;
