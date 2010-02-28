@@ -158,7 +158,6 @@
         <replace bad="l4m3r" good="yokel"/>
         <replace bad="lamer" good="yokel"/>
         <replace bad="l8r" good="later"/>
-        <replace bad="1337" good="noble"/>
         <replace bad="l33t" good="noble"/>
         <replace bad="l33tsp34k" good="worthy speech"/>
         <replace bad="13wt" good="loot"/>
