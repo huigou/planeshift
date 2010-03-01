@@ -932,16 +932,14 @@ bool psEngine::Process3D(iEvent& ev)
     for(size_t i=0; i<delayedLoaders.GetSize(); ++i)
     {
         csWeakRef<DelayedLoader> dl = delayedLoaders.Get(i);
-        if(dl.IsValid())
+        if(!dl.IsValid())
         {
-            if(dl->CheckLoadStatus())
-                break;
+            delayedLoaders.DeleteIndex(i--);
+            continue;
         }
-        else
-        {
-            delayedLoaders.DeleteIndexFast(i);
-	    i = 0;
-        }
+
+        if(dl->CheckLoadStatus())
+            break;
     }
 
     // Loading the game
