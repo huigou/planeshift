@@ -939,7 +939,8 @@ bool psEngine::Process3D(iEvent& ev)
         }
         else
         {
-            delayedLoaders.DeleteIndexFast(0);
+            delayedLoaders.DeleteIndexFast(i);
+	    i = 0;
         }
     }
 
