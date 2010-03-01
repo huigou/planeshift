@@ -1060,6 +1060,7 @@ psGuildCmdMessage::psGuildCmdMessage(MsgEntry *message)
         player = words[1];
         subCmd = words[2];
         permission = words[3];
+        return;
     }
     if (command == "/guildlevel")
     {
