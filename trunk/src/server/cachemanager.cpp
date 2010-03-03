@@ -425,6 +425,7 @@ bool CacheManager::PreloadSkills()
 
     if (!result.IsValid())
     {
+        Error1("Could not cache database table. Check >skills<");
         return false;
     }
 
@@ -473,6 +474,7 @@ bool CacheManager::PreloadLimitations()
 
     if (!result.IsValid())
     {
+        Error1("Could not cache database table. Check >character_limitations<");
         return false;
     }
 
@@ -510,7 +512,7 @@ bool CacheManager::PreloadSectors()
 
     if (!result.IsValid())
     {
-        Error1("CacheManager failed to get a list of sectors from the database.  Check table <sectors>");
+        Error1("Could not cache database table. Check >sectors<");
         return false;
     }
 
@@ -568,6 +570,7 @@ bool CacheManager::PreloadMovement()
     Result modes(db->Select("SELECT * FROM movement_modes"));
     if ( !modes.IsValid() )
     {
+        Error1("Could not cache database table. Check >movement_modes<");
         return false;
     }
     if ( !modes.Count() )
@@ -674,6 +677,7 @@ bool CacheManager::PreloadArmorVsWeapon()
 
     if (!result.IsValid())
     {
+        Error1("Could not cache database table. Check >armor_vs_weapon<");
         return false;
     }
 
@@ -715,6 +719,7 @@ bool CacheManager::PreloadStances()
 
     if(!result.IsValid())
     {
+        Error1("Could not cache database table. Check >stances<");
         return false;
     }
 
@@ -747,6 +752,7 @@ bool CacheManager::PreloadQuests()
 
     if (!result.IsValid())
     {
+        Error1("Could not cache database table. Check >quests<");
         return false;
     }
 
@@ -865,7 +871,7 @@ bool CacheManager::PreloadTradeCombinations()
     Result result(db->Select("select * from trade_combinations order by pattern_id, result_id, item_id"));
     if (!result.IsValid())
     {
-        Error1("No data in trade_combinations could be found");
+        Error1("Could not cache database table. Check >trade_combinations<");
     }
     else
     {
@@ -924,7 +930,7 @@ bool CacheManager::PreloadTradeTransformations()
     Result result(db->Select("select * from trade_transformations order by pattern_id, item_id"));
     if (!result.IsValid())
     {
-        Error1("No data in trade_transformations could be found");
+        Error1("Could not cache database table. Check >trade_transformations<");
     }
     else
     {
@@ -987,7 +993,7 @@ bool CacheManager::PreloadUniqueTradeTransformations()
     Result result(db->Select("select id from trade_patterns order by id"));
     if (!result.IsValid())
     {
-        Error1("No data in trade_patterns could be found");
+        Error1("Could not cache database table. Check >trade_patterns<");
     }
     else
     {
@@ -1054,7 +1060,7 @@ bool CacheManager::PreloadTradeProcesses()
     Result result(db->Select("select * from trade_processes order by process_id, subprocess_number"));
     if (!result.IsValid())
     {
-        Error1("No data in trade_processes could be found");
+        Error1("Could not cache database table. Check >trade_process<");
     }
     else
     {
@@ -1101,7 +1107,7 @@ bool CacheManager::PreloadTradePatterns()
     Result result(db->Select("select * from trade_patterns order by designitem_id"));
     if (!result.IsValid())
     {
-        Error1("Invalid select from trade patterns.");
+        Error1("Could not cache database table. Check >trade_patterns<");
     }
     else
     {
@@ -1511,6 +1517,7 @@ bool CacheManager::PreloadTips()
     Result result(db->Select("select tip from tips where id<1000"));
     if (!result.IsValid())
     {
+        Error1("Could not cache database table. Check >tips<");
         return false;
     }
 
@@ -1717,6 +1724,7 @@ bool CacheManager::PreloadTraits()
 
     if (!result.IsValid())
     {
+        Error1("Could not cache database table. Check >traits<");
         return false;
     }
 
@@ -1841,6 +1849,7 @@ bool CacheManager::PreloadRaceInfo()
 
     if (!result.IsValid())
     {
+        Error1("Could not cache database table. Check >race_info<");
         return false;
     }
 
@@ -2504,6 +2513,7 @@ bool CacheManager::PreloadItemAnimList()
 
     if (!result.IsValid())
     {
+        Error1("Could not cache database table. Check >item_animations<");
         return false;
     }
 
@@ -2618,6 +2628,7 @@ bool CacheManager::PreloadItemStatsDatabase()
 
     if (!result.IsValid())
     {
+        Error1("Could not cache database table. Check >item_stats<");
         return false;
     }
 
@@ -2705,7 +2716,7 @@ bool CacheManager::PreloadBadNames()
 
     if (!result.IsValid())
     {
-        Error1("Couldn't load bad names!");
+        Error1("Could not cache database table. Check >bad_names<");
         return false;
     }
 
