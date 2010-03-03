@@ -510,6 +510,7 @@ bool CacheManager::PreloadSectors()
 
     if (!result.IsValid())
     {
+        Error1("CacheManager failed to get a list of sectors from the database.  Check table <sectors>");
         return false;
     }
 
