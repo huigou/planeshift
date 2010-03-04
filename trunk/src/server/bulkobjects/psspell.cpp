@@ -506,8 +506,6 @@ bool psSpell::AffectTarget(gemActor* caster, gemObject* origTarget, gemObject* t
         gemActor *attackee = dynamic_cast<gemActor*>(target);
         if (attackee)
         {
-            attackee->AddAttackerHistory(caster, 1.0); // ???: Arbitrary number, we don't have a return value from the script like we used to
-
             gemNPC *targetNPC = dynamic_cast<gemNPC*>(target);
             if (targetNPC)
                 psserver->GetNPCManager()->QueueAttackPerception(caster, targetNPC);
