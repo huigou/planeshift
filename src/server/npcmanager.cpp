@@ -1563,7 +1563,7 @@ void NPCManager::HandlePetCommand(MsgEntry * me,Client *client)
                     {
                         psserver->SendSystemInfo(me->clientnum,"Your familiar refuses.");
                     }
-                    else if (targetActor && !targetActor->CanBeAttackedBy(pet,&lastAttacker))
+                    else if (targetActor && !targetActor->CanBeAttackedBy(pet,lastAttacker))
                     {
                         csString tmp;
                         if (lastAttacker)

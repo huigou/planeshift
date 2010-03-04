@@ -643,14 +643,55 @@ public:
 
 //-----------------------------------------------------------------------------
 
-/** Struct for damage history
+/** A record in a gemActor's attacker history.  This is abstract; entries are
+ *  classified as either normal damage or DOT.
  */
-struct DamageHistory
+class AttackerHistory
 {
+public:
+    virtual ~AttackerHistory() {}
+
+    csWeakRef<gemActor> Attacker() const { return attacker_ref; }
+    csTicks TimeOfAttack() const { return timeOfAttack; }
+    virtual float Damage() const = 0; // Always positive.
+protected:
+    AttackerHistory(gemActor* attacker) : attacker_ref(attacker) { timeOfAttack = csGetTicks(); }
+
     csWeakRef<gemActor> attacker_ref;
+    csTicks timeOfAttack;
+};
+
+/// An AttackerHistory entry for a regular, one-time damaging attack
+class DamageHistory : public AttackerHistory
+{
+public:
+    DamageHistory(gemActor* attacker, float dmg) : AttackerHistory(attacker), damage(dmg)
+    {
+        CS_ASSERT(damage > 0);
+    }
+    virtual ~DamageHistory() {}
+    virtual float Damage() const { return damage; }
+protected:
     float damage;
-    float damageRate;
-    unsigned int timestamp;
+};
+
+/// An AttackerHistory entry for a DOT (damage over time) attack
+class DOTHistory : public AttackerHistory
+{
+public:
+    DOTHistory(gemActor* attacker, float hpRate, csTicks duration) : AttackerHistory(attacker), hpRate(hpRate), duration(duration)
+    {
+        CS_ASSERT(hpRate < 0);
+    }
+    virtual ~DOTHistory() {}
+    virtual float Damage() const
+    {
+        csTicks elapsed = csGetTicks() - timeOfAttack;
+        return -hpRate * MIN(duration, elapsed);
+    }
+protected:
+    float hpRate;
+    csTicks duration;
 };
 
 //-----------------------------------------------------------------------------
@@ -756,7 +797,7 @@ protected:
     bool visible;             ///< is visible to clients ?
     bool viewAllObjects;      ///< can view invisible objects?
 
-    csPDelArray<DamageHistory> dmgHistory;
+    csPDelArray<AttackerHistory> dmgHistory;
     csPDelArray<ProgressionScript> onAttackScripts, onDefenseScripts;
 
     csArray<ActiveSpell*> activeSpells;
@@ -953,7 +994,7 @@ public:
     void AddAttackerHistory(gemActor* attacker, float damage); // direct damage version
     void AddAttackerHistory(gemActor* attacker, float hpRate, csTicks duration); // DoT version
     void RemoveAttackerHistory(gemActor * attacker);
-    bool CanBeAttackedBy(gemActor *attacker, gemActor ** lastAttacker) const;
+    bool CanBeAttackedBy(gemActor* attacker, gemActor*& lastAttacker) const;
     void Kill(gemActor *attacker) { DoDamage(attacker, psChar->GetHP() ); }
     void Defeat();
     void Resurrect();
@@ -1037,8 +1078,7 @@ public:
     /// Get the location of the player before he was teleported
     void GetPrevTeleportLocation(csVector3& pos, float& yrot, iSector*& sector, InstanceID& instance);
 
-    const DamageHistory* GetDamageHistory(int pos) const { return dmgHistory.Get(pos); }
-    DamageHistory* GetDamageHistory(int pos) { return dmgHistory.Get(pos); }
+    AttackerHistory* GetDamageHistory(int pos) const { return dmgHistory.Get(pos); }
     size_t GetDamageHistoryCount() const { return dmgHistory.GetSize(); }
     void ClearDamageHistory() { dmgHistory.Empty(); }
 

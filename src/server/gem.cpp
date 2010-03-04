@@ -2385,9 +2385,9 @@ void gemActor::DoDamage(gemActor* attacker, float damage)
         {
             for (int i = (int) dmgHistory.GetSize() - 1; i >= 0; i--)
             {
-                if (dmgHistory[i]->damageRate < 0)
+                if (dynamic_cast<DOTHistory*>(dmgHistory[i]))
                 {
-                    attacker = dmgHistory[i]->attacker_ref;
+                    attacker = dmgHistory[i]->Attacker();
                     break;
                 }
             }
@@ -2430,16 +2430,10 @@ void gemActor::DoDamage(gemActor* attacker, float damage)
 
 void gemActor::AddAttackerHistory(gemActor* attacker, float damage)
 {
-    if (!attacker)
+    if (!attacker || damage <= 0)
         return;
 
-    DamageHistory* dmg = new DamageHistory();
-    dmg->attacker_ref = attacker;
-    dmg->timestamp = csGetTicks();
-    dmg->damageRate = 0;
-    dmg->damage = damage;
-
-    dmgHistory.Push(dmg);
+    dmgHistory.Push(new DamageHistory(attacker, damage));
 }
 
 void gemActor::AddAttackerHistory(gemActor* attacker, float hpRate, csTicks duration)
@@ -2448,15 +2442,7 @@ void gemActor::AddAttackerHistory(gemActor* attacker, float hpRate, csTicks dura
     if (!attacker || hpRate >= 0)
         return;
 
-    DamageHistory* dmg = new DamageHistory();
-    dmg->attacker_ref = attacker;
-    dmg->timestamp = csGetTicks();
-    dmg->damageRate = -hpRate;
-    // Store the max theoretical DoT damage; AllocateKillDamage uses this
-    // information to recover the duration and compute the actual damage.
-    dmg->damage = (-hpRate/1000) * duration;
-
-    dmgHistory.Push(dmg);
+    dmgHistory.Push(new DOTHistory(attacker, hpRate, duration));
 }
 
 void gemActor::RemoveAttackerHistory(gemActor * attacker)
@@ -2466,48 +2452,38 @@ void gemActor::RemoveAttackerHistory(gemActor * attacker)
         // Count backwards to avoid trouble with shifting indexes
         for (size_t i = dmgHistory.GetSize() - 1; i != (size_t) -1; i--)
         {
-            if (dmgHistory[i]->attacker_ref == attacker)
+            if (dmgHistory[i]->Attacker() == attacker)
+            {
                 dmgHistory.DeleteIndex(i);
+            }
         }
     }
 }
 
-bool gemActor::CanBeAttackedBy(gemActor *attacker, gemActor ** lastAttacker) const
+bool gemActor::CanBeAttackedBy(gemActor* attacker, gemActor*& lastAttacker) const
 {
-    *lastAttacker = NULL;
-
-    if (GetDamageHistoryCount() == 0)
-    {
-        return true;
-    }
-
+    lastAttacker = NULL;
     csTicks lasttime = csGetTicks();
 
     for (int i = (int)GetDamageHistoryCount(); i>0; i--)
     {
-        const DamageHistory *lasthit = GetDamageHistory(i-1);
+        const AttackerHistory* lasthit = GetDamageHistory(i-1);
 
         // any 15 second gap is enough to make us stop looking
-        if (lasttime - lasthit->timestamp > 15000)
-        {
+        if (lasttime - lasthit->TimeOfAttack() > 15000)
             return true;
-        }
-        else
-        {
-            lasttime = lasthit->timestamp;
-        }
+        lasttime = lasthit->TimeOfAttack();
 
-        if (!lasthit->attacker_ref.IsValid())
+        gemActor* attacker = lasthit->Attacker();
+        if (!attacker)
             continue;  // ignore disconnects
 
-        *lastAttacker = dynamic_cast<gemActor*>((gemObject*) lasthit->attacker_ref);
-        if (*lastAttacker == NULL)
-            continue;  // shouldn't happen
+        lastAttacker = attacker;
 
         // If someone else, except for attacker pet, hit first and attacker not grouped with them,
         // attacker locked out
-        if ( *lastAttacker != attacker && !attacker->IsGroupedWith(*lastAttacker, true) &&
-             !attacker->IsMyPet(*lastAttacker))
+        if (lastAttacker != attacker && !attacker->IsGroupedWith(lastAttacker, true) &&
+             !attacker->IsMyPet(lastAttacker))
         {
             return false;
         }
