@@ -148,10 +148,7 @@ void ProgressionManager::HandleDeathEvent(MsgEntry *me, Client *notused)
 
 void ProgressionManager::AllocateKillDamage(gemActor *deadActor, int exp)
 {
-    // Convert to gemActor
     csArray<gemActor*> attackers;
-    unsigned int timeOfDeath = csGetTicks(); // TODO: Should be recorded on death
-                                             //       in the deadActor.
 
     // Last timestamp, used for breaking the loop when > 10 secs had gone
     unsigned int lastTimestamp = 0;
@@ -161,38 +158,28 @@ void ProgressionManager::AllocateKillDamage(gemActor *deadActor, int exp)
     // First build list of attackers and determine how far to go back and what total dmg was.
     for (i = (int) deadActor->GetDamageHistoryCount(); i > 0; i--)
     {
-        DamageHistory* history = deadActor->GetDamageHistory(i-1);
+        AttackerHistory* history = deadActor->GetDamageHistory(i-1);
 
         // 15 secs passed
-        if (lastTimestamp - history->timestamp > 15000 && lastTimestamp != 0)
+        if (lastTimestamp - history->TimeOfAttack() > 15000 && lastTimestamp != 0)
         {
             Debug1(LOG_COMBAT, 0, "15 secs passed between hits, breaking loop\n");
             break;
         }
-        lastTimestamp = history->timestamp;
+        lastTimestamp = history->TimeOfAttack();
 
-        // Special check for DoT adjustments if the target died before the DoT expired
-        if (history->damageRate != 0)
-        {
-            csTicks duration = -int(history->damage/history->damageRate);
-            if (duration > timeOfDeath - history->timestamp)
-            {
-                // Since damageRate should always be negative:
-                history->damage = -(history->damageRate * (timeOfDeath - history->timestamp));
-            }
-        }
-
-        totalDamage += history->damage;
+        totalDamage += history->Damage();
 
         bool found = false;
 
-        if (!history->attacker_ref.IsValid())
+        gemActor* attacker = history->Attacker();
+        if (!attacker)
             continue;  // This attacker has disconnected since he did this damage.
 
         // Have we already added that player?
         for (size_t j = 0; j < attackers.GetSize(); j++)
         {
-            if (attackers[j] == history->attacker_ref)
+            if (attackers[j] == attacker)
             {
                 found = true;
                 break;
@@ -202,7 +189,7 @@ void ProgressionManager::AllocateKillDamage(gemActor *deadActor, int exp)
         // New player, add to list
         if (!found)
         {
-            attackers.Push(dynamic_cast<gemActor*>((gemObject *) history->attacker_ref)); // This is ok because it is ONLY used in this function
+            attackers.Push(attacker);
         }
     }
     int lastHistory = i;
@@ -210,18 +197,16 @@ void ProgressionManager::AllocateKillDamage(gemActor *deadActor, int exp)
     for(size_t i = 0; i < attackers.GetSize(); i++)
     {
         gemActor* attacker = attackers[i];
-        if (!attacker)
-            continue;  // should not happen with new safe ref system.
 
         float dmgMade = 0;
         float mod = 0;
 
         for (int j = (int) deadActor->GetDamageHistoryCount(); j > lastHistory; j--)
         {
-            const DamageHistory *history = deadActor->GetDamageHistory(j-1);
-            if(history->attacker_ref == attacker)
+            AttackerHistory* history = deadActor->GetDamageHistory(j-1);
+            if (history->Attacker() == attacker)
             {
-                dmgMade += history->damage;
+                dmgMade += history->Damage();
             }
         }
 

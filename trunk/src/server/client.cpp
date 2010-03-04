@@ -436,7 +436,7 @@ bool Client::IsAllowedToAttack(gemObject * target, bool inform)
         CS_ASSERT(foe != NULL); // Since this is a foe it should have a actor.
 
         gemActor* lastAttacker = NULL;
-        if (target->HasKillStealProtection() && !foe->CanBeAttackedBy(attacker, &lastAttacker))
+        if (target->HasKillStealProtection() && !foe->CanBeAttackedBy(attacker, lastAttacker))
         {
             if (lastAttacker)
             {
@@ -543,9 +543,9 @@ int Client::GetTargetType(gemObject* target)
     // Is this a player who has hit you and run out of a PVP area?
     for (size_t i=0; i< GetActor()->GetDamageHistoryCount(); i++)
     {
-        const DamageHistory *dh = GetActor()->GetDamageHistory((int)i);
+        gemActor* attacker = GetActor()->GetDamageHistory((int) i)->Attacker();
         // If the target has ever hit you, you can attack them back.  Logging out clears this.
-        if (dh->attacker_ref.IsValid() && dh->attacker_ref->GetActorPtr() == target)
+        if (attacker && attacker == target)
             return TARGET_FOE;
     }
 
