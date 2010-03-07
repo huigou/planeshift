@@ -283,7 +283,7 @@ bool UpdaterEngine::CheckUpdater()
 {
     // Download the latest updaterinfo. 
     fileUtil->RemoveFile(UPDATERINFO_FILENAME, true);
-    if(!downloader->DownloadFile("updaterinfo.xml", UPDATERINFO_FILENAME, false, true, 3, true))
+    if(!downloader->DownloadFile("updaterinfo.xml", UPDATERINFO_FILENAME, false, true, 1, true))
     {
         return false;
     }
@@ -1012,7 +1012,7 @@ void UpdaterEngine::CheckIntegrity(bool automatic)
         fileUtil->RemoveFile("/this/updaterinfo.xml", true);
         downloader = new Downloader(vfs);
         downloader->SetProxy(config->GetProxy().host.GetData(), config->GetProxy().port);
-        if(!downloader->DownloadFile("http://testing.xordan.com/updaterinfo.xml", UPDATERINFO_CURRENT_FILENAME, true, true, 3, true))
+        if(!downloader->DownloadFile("http://testing.xordan.com/updaterinfo.xml", UPDATERINFO_CURRENT_FILENAME, true, true, 1, true))
         {
             PrintOutput("\nFailed to download updater info!\n");
             return;
@@ -1050,7 +1050,7 @@ void UpdaterEngine::CheckIntegrity(bool automatic)
 
     // Download new config.
     fileUtil->RemoveFile(UPDATERINFO_CURRENT_FILENAME, true);
-    if(!downloader->DownloadFile("updaterinfo.xml", UPDATERINFO_CURRENT_FILENAME, false, true, 3, true))
+    if(!downloader->DownloadFile("updaterinfo.xml", UPDATERINFO_CURRENT_FILENAME, false, true, 1, true))
     {
         PrintOutput("\nFailed to download updater info from a mirror!\n");
         return;
@@ -1342,7 +1342,7 @@ bool UpdaterEngine::SwitchMirror()
     // Download new xml file.
     csString xmlAddress;
     xmlAddress.Format("%s/updaterinfo.xml", config->GetNewMirrorAddress());
-    if(!downloader->DownloadFile(xmlAddress, xmlPath, true, true, 3, true))
+    if(!downloader->DownloadFile(xmlAddress, xmlPath, true, true, 1, true))
     {
         printf("Failed to download updaterinfo from new mirror.\n");
         fileUtil->MoveFile(xmlBakPath, xmlPath, true, false, true);
