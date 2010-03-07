@@ -111,11 +111,14 @@ bool pawsLauncherWindow::OnButtonPressed(int mouseButton, int keyModifier, pawsW
     else if(ID == PLAY_BUTTON)
     {
         // TODO: Grey out the Play button instead of doing nothing.
-        if(psLaunchGUI->UpdateChecked())
+        if(!psLaunchGUI->UpdateChecked())
         {
-            psLaunchGUI->ExecClient(true);
-            psLaunchGUI->Quit();
-        }
+            pawsMessageTextBox* serverNews = (pawsMessageTextBox*)FindWidget("ServerNews");
+	    if(serverNews)
+                serverNews->AddMessage("Warning: Did not finish checking for updates.");
+	}
+        psLaunchGUI->ExecClient(true);
+        psLaunchGUI->Quit();
     }
     else if(ID == SETTINGS_BUTTON)
     {
