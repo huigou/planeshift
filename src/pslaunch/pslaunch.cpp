@@ -26,6 +26,7 @@
 #include <iutil/eventq.h>
 #include <ivideo/graph2d.h>
 #include <ivideo/natwin.h>
+#include <curl/curl.h>
 
 #include "download.h"
 #include "globals.h"
@@ -368,6 +369,10 @@ int main(int argc, char* argv[])
             help = true;
         }
     }
+
+    // Must be done when no other threads are running!
+    curl_global_init(CURL_GLOBAL_ALL);
+
 
     if(help)
     {

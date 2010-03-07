@@ -27,19 +27,23 @@
 #include "updaterconfig.h"
 #include "updaterengine.h"
 
-csTicks timeStart = 0;
-double dlStart = 0.0;
-double speedLast = -1.0;
 const int progressWidth = 40;
-int lastSize = 0;
 
-void init_callback()
+struct progressData
 {
-	timeStart = csGetTicks();
-	dlStart = 0.0;
-	lastSize = 0;
-}
+	csTicks timeStart;
+	csTicks timeLast;
+	double dlLast;
+	double speedLast;
+	int lastSize;
 
+	progressData() {
+		timeLast = timeStart = csGetTicks();
+		dlLast = 0.0;
+		lastSize = 0;
+		speedLast = -1.0;
+	}
+};
 
 size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream)
 {
@@ -83,19 +87,19 @@ csString normalize_seconds(double seconds)
 
 int ProgressCallback(void *clientp, double finalSize, double dlnow, double ultotal, double ulnow)
 {
+    progressData* data = (progressData*) clientp;
     double progress = dlnow / finalSize;
+    csTicks timeNow = csGetTicks();
     
+    csTicks timeDelta = timeNow - data->timeLast;
     // Don't output anything if there's been no progress.
     if(progress == 0 || finalSize <= 102400)
         return 0;
 
-    csTicks timeNow = csGetTicks();
-
-    csTicks timeDelta = timeNow - timeStart;
-    double dlDelta = dlnow - dlStart;
+    double dlDelta = dlnow - data->dlLast;
     csString progressLine;
 
-    if(lastSize == 0)
+    if(data->lastSize == 0)
 	    progressLine += '\n';
     else
 	    progressLine += '\r';
@@ -110,14 +114,14 @@ int ProgressCallback(void *clientp, double finalSize, double dlnow, double ultot
 
 
     // Recalculate download speed in seconds every 5 seconds.
-    if(timeDelta > 5000 || speedLast == -1.0)
+    if(timeDelta > 5000 || data->speedLast == -1.0)
     {
-    	speedLast = 1000.0 * dlDelta / timeDelta;
-	timeStart = timeNow;
-	dlStart = dlnow;
+    	data->speedLast = 1000.0 * dlDelta / timeDelta;
+	data->timeLast	= timeNow;
+	data->dlLast = dlnow;
     }
 
-    double speed = speedLast;
+    double speed = data->speedLast;
 
     // Eta in seconds
     double eta = 0;
@@ -134,7 +138,7 @@ int ProgressCallback(void *clientp, double finalSize, double dlnow, double ultot
     double dlnormalized = dlnow;
     const char* dlUnits = normalize_bytes(&dlnormalized);
     progressLine.AppendFmt("]    %4.1f%s (%3d%%)   %4.1f%s/s eta %s    ", dlnormalized, dlUnits, (int) (progress * 100.0), speed, speedUnits, etaStr.GetData());
-    lastSize = dlnow;
+    data->lastSize = dlnow;
     UpdaterEngine::GetSingletonPtr()->PrintOutput(progressLine);
 
     fflush(stdout);
@@ -144,7 +148,6 @@ int ProgressCallback(void *clientp, double finalSize, double dlnow, double ultot
 
 Downloader::Downloader(csRef<iVFS> _vfs, UpdaterConfig* _config)
 {
-    curl_global_init(CURL_GLOBAL_ALL);
     curl = curl_easy_init();
     curlerror = new char[CURL_ERROR_SIZE];
     curl_easy_setopt (curl, CURLOPT_ERRORBUFFER, curlerror);
@@ -160,7 +163,6 @@ Downloader::Downloader(csRef<iVFS> _vfs, UpdaterConfig* _config)
 
 Downloader::Downloader(csRef<iVFS> _vfs)
 {
-    curl_global_init(CURL_GLOBAL_ALL);
     curl = curl_easy_init();
     curlerror = new char[CURL_ERROR_SIZE];
     curl_easy_setopt (curl, CURLOPT_ERRORBUFFER, curlerror);
@@ -240,21 +242,22 @@ bool Downloader::DownloadFile(const char *file, const char *dest, bool URL, bool
             return false;
         }
 
-	init_callback();
+	progressData data;
         curl_easy_setopt(curl, CURLOPT_URL, url.GetData());
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, file);
         curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, &ProgressCallback);
+        curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, &data);
         curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0);
         curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1);
 
         CURLcode result = curl_easy_perform(curl);
 
 	// Check if progress bar was shown.
-	if(lastSize != 0)
+	if(data.lastSize != 0)
 	{
 		UpdaterEngine::GetSingletonPtr()->PrintOutput("\n\n");
-		lastSize = 0;
+		data.lastSize = 0;
 	}
         fclose (file);
 
