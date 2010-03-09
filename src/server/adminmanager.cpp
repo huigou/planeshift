@@ -4129,7 +4129,7 @@ void AdminManager::CreateMoney(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDat
 
     int quantity = data.value;
     if(data.random > 0)
-        quantity = psserver->rng->Get(INT_MAX-1)+1;
+        quantity = psserver->rng->Get(1000) + 1;
 
     psMoney money;
 
