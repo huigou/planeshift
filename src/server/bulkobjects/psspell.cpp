@@ -163,6 +163,7 @@ float psSpell::PowerLevel(psCharacter *caster, float kFactor) const
     }
 
     MathEnvironment env;
+    env.Define("RelatedStat", caster->Stats()[way->related_stat].Current());
     env.Define("KFactor", kFactor);
     env.Define("WaySkill", caster->GetSkillRank(way->skill).Current());
     script->Evaluate(&env);
