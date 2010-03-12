@@ -321,6 +321,7 @@ void psSpell::Cast(Client *client, float kFactor) const
     env.Define("Power",       power);
     env.Define("WaySkill",    skill);
     env.Define("RelatedStat", stat);
+    env.Define("KFactor",     kFactor);
     float max_range = range->Evaluate(&env);
     float castDurationFloat = castDuration->Evaluate(&env);
     csTicks castingDuration = (csTicks) MAX(castDurationFloat, 0);
