@@ -94,8 +94,10 @@ bool psEffectAnchorSpline::Create(const csVector3 & offset, iMeshWrapper * posAt
 bool psEffectAnchorSpline::Update(csTicks elapsed)
 {
     life += (float)elapsed;
-    while (life > animLength)
-        life -= animLength;
+    if (life > animLength)
+        life = fmod(life,animLength);
+    if (!life)
+        life += animLength;
 
     if (keyFrames->GetSize() == 0)
         objTargetOffset = csVector3(0,0,0);

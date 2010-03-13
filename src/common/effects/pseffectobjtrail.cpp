@@ -174,8 +174,12 @@ bool psEffectObjTrail::Update(csTicks elapsed)
         return true;
 
     life += (float)elapsed;
-    while (life > animLength && killTime <= 0)
-        life -= animLength;
+    if (life > animLength && killTime <= 0)
+    {
+        life = fmod(life,animLength);
+        if (!life)
+            life += animLength;
+    }
 
     if (life >= birth && !isAlive)
     {
