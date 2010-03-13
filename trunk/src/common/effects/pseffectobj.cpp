@@ -454,8 +454,12 @@ bool psEffectObj::Update(csTicks elapsed)
     const static csMatrix3 UP_FIX(1,0,0,   0,0,1,  0,1,0);
         
     life += (float)elapsed;
-    while (life > animLength && killTime <= 0)
-        life -= animLength;
+    if (life > animLength && killTime <= 0)
+    {
+        life = fmod(life,animLength);
+        if (!life)
+            life += animLength;
+    }
 
     if (life >= birth && !isAlive)
     {

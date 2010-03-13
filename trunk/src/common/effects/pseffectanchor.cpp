@@ -229,8 +229,10 @@ bool psEffectAnchor::Update(csTicks elapsed)
         animLength = 10;
 
     life += (float)elapsed;
-    while (life > animLength)
-        life -= animLength;
+    if (life > animLength)
+        life = fmod(life,animLength);
+    if (!life)
+        life += animLength;
 
     if (keyFrames->GetSize() == 0)
         return true;
