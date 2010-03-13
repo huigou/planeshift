@@ -177,6 +177,15 @@ void ZoneHandler::LoadZone(csVector3 pos, const char* sector)
 
     newPos = pos;
     sectorToLoad = sector;
+    
+    bool connected = false;
+    iSector * newsector = psengine->GetEngine()->FindSector(sector);
+    iSector * oldsector = NULL;
+    if (celclient->GetMainPlayer())
+        oldsector = celclient->GetMainPlayer()->GetSector();
+
+    if (oldsector && newsector)
+        connected = celclient->GetWorld()->Connected(newsector, oldsector);
 
     ZoneLoadInfo* zone = FindZone(sectorToLoad);
     if (zone == NULL)
@@ -204,7 +213,7 @@ void ZoneHandler::LoadZone(csVector3 pos, const char* sector)
 
     // Set load screen if required.
     if(FindLoadWindow() && psengine->GetLoader()->GetLoadingCount() != 0 &&
-      (!psengine->BackgroundWorldLoading() || !psengine->HasLoadedMap()))
+      (!psengine->BackgroundWorldLoading() || !psengine->HasLoadedMap() || !connected))
     {
         loading = true;
 
