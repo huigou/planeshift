@@ -357,22 +357,22 @@ bool psCharacterInventory::QuickLoad(PID use_id)
 
 void psCharacterInventory::AddStorageItem(psItem *item)
 {
-    if (item-&gt;GetIsStackable())
+    if (item->GetIsStackable())
     {
-        csArray&lt;psItem*&gt;::Iterator it = storageInventory.GetIterator();
+        csArray<psItem>::Iterator it = storageInventory.GetIterator();
         while (it.HasNext())
         {
             psItem * storedItem = it.Next();
-            if (storedItem-&gt;CheckStackableWith(item, true, true)) // item fits completely
+            if (storedItem->CheckStackableWith(item, true, true)) // item fits completely
             {
-                storedItem-&gt;CombineStack(item);
+                storedItem->CombineStack(item);
                 return;
             }
-            else if (storedItem-&gt;GetStackCount() != MAX_STACK_COUNT &amp;&amp; storedItem-&gt;CheckStackableWith(item, true, false)) // item fits only partially
+            else if (storedItem->GetStackCount() != MAX_STACK_COUNT && storedItem->CheckStackableWith(item, true, false)) // item fits only partially
             {
-                psItem * split = item-&gt;SplitStack(MAX_STACK_COUNT - storedItem-&gt;GetStackCount());
+                psItem * split = item->SplitStack(MAX_STACK_COUNT - storedItem->GetStackCount());
                 if (split)
-                    storedItem-&gt;CombineStack(split);
+                    storedItem->CombineStack(split);
             }
         }
     }
