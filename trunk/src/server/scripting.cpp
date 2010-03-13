@@ -1506,6 +1506,9 @@ public:
                 return;
             }
 
+            // allow this violation
+            actor->GetClient()->SetCheatMask(MOVE_CHEAT, true);
+            
             if (type & INSTANCE)
                 actor->Teleport(sector, destPos, 0.0, instance);
             else

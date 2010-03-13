@@ -19,6 +19,7 @@
 #include <psconfig.h>
 #include <iengine/movable.h>
 
+#include <net/netbase.h>
 #include <iutil/object.h>
 #include "util/serverconsole.h"
 #include "gem.h"
@@ -29,6 +30,8 @@
 #include "playergroup.h"
 #include "engine/linmove.h"
 #include "cachemanager.h"
+#include "engine/psworld.h"
+#include "entitymanager.h"
 
 #include "paladinjr.h"
 
@@ -46,7 +49,7 @@ void PaladinJr::Initialize(EntityManager* celbase)
     const csPDelArray<psMovement>& moves = CacheManager::GetSingleton().GetMovements();
     
     maxVelocity.Set(0.0f);
-    csVector3 maxMod(0);
+    csVector3 maxMod(1);
     
     for(size_t i = 0;i < moves.GetSize(); i++)
     {
@@ -56,15 +59,15 @@ void PaladinJr::Initialize(EntityManager* celbase)
     }
     for(size_t i = 0;i < modes.GetSize(); i++)
     {
-        maxMod.x = MAX(maxMod.x, modes[i]->move_mod.x);
-        maxMod.y = MAX(maxMod.y, modes[i]->move_mod.y);
-        maxMod.z = MAX(maxMod.z, modes[i]->move_mod.z);
+        maxMod.x *= MAX(1, modes[i]->move_mod.x);
+        maxMod.y *= MAX(1, modes[i]->move_mod.y);
+        maxMod.z *= MAX(1, modes[i]->move_mod.z);
     }
     maxVelocity.x *= maxMod.x;
     maxVelocity.y *= maxMod.y;
     maxVelocity.z *= maxMod.z;
 
-    // Running forward while strafing
+    // Running forward while strafing on a mount
     maxSpeed = sqrtf(maxVelocity.z * maxVelocity.z + maxVelocity.x * maxVelocity.x);
     //maxSpeed = 1;
 
@@ -219,6 +222,8 @@ bool PaladinJr::SpeedCheck(Client* client, gemActor* actor, psDRMessage& currUpd
     // Dummy variables
     float yrot;
     iSector* sector;
+    psWorld * world = EntityManager::GetSingleton().GetWorld();
+    bool warpViolation = false;
 
     actor->pcmove->GetLastClientPosition (oldpos, yrot, sector);
     
@@ -226,8 +231,12 @@ bool PaladinJr::SpeedCheck(Client* client, gemActor* actor, psDRMessage& currUpd
     if (!sector)
         return true;
 
+    if (sector != currUpdate.sector && !world->WarpSpace(sector, currUpdate.sector, oldpos))
+        warpViolation = true;
+
     float dist = sqrtf ( (currUpdate.pos.x - oldpos.x)*(currUpdate.pos.x - oldpos.x) +
                         (currUpdate.pos.z - oldpos.z)*(currUpdate.pos.z - oldpos.z) );
+
 
     csTicks timedelta = actor->pcmove->ClientTimeDiff();
 
@@ -245,11 +254,13 @@ bool PaladinJr::SpeedCheck(Client* client, gemActor* actor, psDRMessage& currUpd
     if (fabs(currUpdate.vel.x) <= maxVelocity.x && 
               currUpdate.vel.y <= maxVelocity.y && 
         fabs(currUpdate.vel.z) <= maxVelocity.z && 
-              dist<max_noncheat_distance + lag_distance)
+              dist<max_noncheat_distance + lag_distance
+              && !warpViolation)
     {
         if (dist==0) // trivial case
         {
-            client->accumulatedLag = 200; // reset the allowed lag when the player becomes stationary again
+            NetBase::Connection * connection = client->GetConnection();
+            client->accumulatedLag = connection->estRTT + connection->devRTT; // reset the allowed lag when the player becomes stationary again
             return true;
         }
 
@@ -289,12 +300,11 @@ bool PaladinJr::SpeedCheck(Client* client, gemActor* actor, psDRMessage& currUpd
         csString sectorName(sector->QueryObject()->GetName());
 
         // Player has probably been warped
-        if (sector != currUpdate.sector)
+        if (warpViolation)
         {
-            return true;
-            //sectorName.Append(" to ");
-            //sectorName.Append(currUpdate.sectorName);
-            //type = "Possible Speed Violation";
+            sectorName.Append(" to ");
+            sectorName.Append(currUpdate.sectorName);
+            type = "Warp Violation";
         }
         else if (dist<max_noncheat_distance + lag_distance)
             type = "Speed Violation (Hack confirmed)";
