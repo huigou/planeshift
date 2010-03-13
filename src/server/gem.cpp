@@ -1515,7 +1515,7 @@ bool gemContainer::CanAdd(unsigned short amountToAdd, psItem *item, int slot)
      * and fake the stack count before calling AddToContainer with the test flag;
      * we put it back when we're done. */
 
-    uint currentSize = 0;
+    float currentSize = 0;
     gemContainer::psContainerIterator iter(this);
     while (iter.HasNext())
     {
