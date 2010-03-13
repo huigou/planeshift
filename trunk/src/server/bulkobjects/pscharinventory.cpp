@@ -291,7 +291,7 @@ bool psCharacterInventory::Load(PID use_id)
             // Now add this instance to our inventory or storage
             if (location == PSCHARACTER_SLOT_STORAGE)
             {
-                AddStorageItem(item);//we have found a storage item so we store it in there.
+                storageInventory.Push(item);//we have found a storage item so we store it in there.
                 if (!item)
                    continue;
             }
