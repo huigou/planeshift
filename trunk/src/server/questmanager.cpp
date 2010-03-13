@@ -630,6 +630,10 @@ bool QuestManager::HandleRequireCommand(csString& block, csString& response_requ
     return result;
 }
 
+//NOTE: we have two parsers there one is the same as the one used in the main parsing, so proven to be safe.
+//      the second is a more lightweight and faster one which is not tested a lot but seems to work well
+//      so for now it's the default.
+
 int QuestManager::PreParseQuestScript(psQuest *mainQuest, const char *script)
 {
     int step_count=1; // Main quest is step 1
@@ -661,15 +665,17 @@ int QuestManager::PreParseQuestScript(psQuest *mainQuest, const char *script)
     }
 #else
     csString scr(script);
-    size_t lastpos = scr.Find("\n...");
-    while (lastpos != (size_t) -1)
+    size_t lastpos = scr.Find("\n..."); //searches the first occurence of ... in the script
+    while (lastpos != (size_t) -1) //if we found any continue adding substeps
     {
         step_count++;
         csString newquestname;
+        //prepare the name of the step and add it to the quest. we will populate this later on the real
+        //parsing
         newquestname.Format("%s Step %d",mainQuest->GetName(),step_count);
         Debug2( LOG_QUESTS, 0,"Quest <%s> is getting added dynamically.",newquestname.GetData());
         CacheManager::GetSingleton().AddDynamicQuest(newquestname, mainQuest, step_count);
-        lastpos = scr.Find("\n...", lastpos+1);
+        lastpos = scr.Find("\n...", lastpos+1); //searches for the successive ... if any
     }
 #endif
     return 0;
