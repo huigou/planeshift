@@ -359,7 +359,7 @@ void psCharacterInventory::AddStorageItem(psItem *item)
 {
     if (item->GetIsStackable())
     {
-        csArray<psItem>::Iterator it = storageInventory.GetIterator();
+        csArray<psItem*>::Iterator it = storageInventory.GetIterator();
         while (it.HasNext())
         {
             psItem * storedItem = it.Next();
