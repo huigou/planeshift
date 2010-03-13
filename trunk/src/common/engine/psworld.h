@@ -113,6 +113,9 @@ public:
 
     /// Changes pos according to the warp portal between adjacent sectors from and to.
     bool WarpSpace(const iSector* from, const iSector* to, csVector3& pos);
+    
+    /// Checks whether 2 sectors are connected via a warp portal.
+    bool Connected(const iSector* from, const iSector* to);
 
     /// Calculate the distance between two to points either in same or different sectors.
     float Distance(const csVector3& from_pos, const iSector* from_sector, csVector3 to_pos, const iSector* to_sector);
