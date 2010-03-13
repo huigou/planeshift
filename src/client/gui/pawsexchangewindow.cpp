@@ -416,5 +416,8 @@ void pawsExchangeWindow::Clear()
     receivingMoneyWidget->Set(0,0,0,0);    
     
     offeringBG->SetBackground("Standard Background");            
-    receivingBG->SetBackground("Standard Background");            
+    receivingBG->SetBackground("Standard Background");
+    
+    totalTriasOffered->SetText("");
+    totalTriasReceived->SetText("");            
 }
