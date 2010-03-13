@@ -3266,7 +3266,7 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
     float startQuality = transItem->GetItemQuality();
     if ( process )
     {
-        if ( !ApplySkills(workEvent->GetKFactor(), workEvent->GetTranformationItem(), itemQty == 0) && process->GetGarbageId() != 0 )
+        if ( result > 0 && !ApplySkills(workEvent->GetKFactor(), workEvent->GetTranformationItem(), itemQty == 0) && process->GetGarbageId() != 0 )
         {
             result = process->GetGarbageId();
             resultQty = process->GetGarbageQty();
