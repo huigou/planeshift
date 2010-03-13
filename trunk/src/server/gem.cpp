@@ -2260,6 +2260,8 @@ void gemActor::Defeat()
     // This prevents DoT from killing the player.  We leave the rest
     // since there may be long standing debuffs like the DR curse.
     CancelActiveSpellsWhichDamage();
+    if(psChar->GetHP() < 1) // make sure we won't die instantly
+    	psChar->SetHitPoints(1);
 }
 
 void gemActor::Resurrect()
