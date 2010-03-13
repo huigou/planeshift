@@ -499,8 +499,9 @@ bool psCharacterInventory::CheckSlotRequirements(psItem *item, INVENTORY_SLOT_NU
         }
 
         // If moving inside the same container, allow it
-        if (item->GetContainerID() == parentItem->GetUID())
-            return true;
+        // if (item->GetContainerID() == parentItem->GetUID())
+        //    return true;
+        // allowing this without any checking is not safe if the size of it's content or the container changed
 
      // check if the item fit in the container
         if(doRestrictions &&
@@ -672,7 +673,7 @@ psItem * psCharacterInventory::AddStacked(psItem *& item, int & added)
         
         if (tocheck->GetContainerID())
         {
-            size_t size = FindItemID(tocheck->GetContainerID())->GetContainerMaxSize() - GetContainedSize(FindItemID(tocheck->GetContainerID()));
+            float size = FindItemID(tocheck->GetContainerID())->GetContainerMaxSize() - GetContainedSize(FindItemID(tocheck->GetContainerID()));
             if(size/item->GetItemSize() < fits)
                 fits = size/item->GetItemSize();
         }
@@ -740,7 +741,7 @@ bool psCharacterInventory::Add(psItem *&item, bool test, bool stack, INVENTORY_S
         itemIndices = FindCompatibleStackedItems(item);
         for (i=0; i<itemIndices.GetSize(); i++)
         {
-            int size=0;
+            float size=0;
             if(inventory[itemIndices[i]].item->GetContainerID()){
                 size = GetContainedSize(FindItemID(inventory[itemIndices[i]].item->GetContainerID()));
             }
@@ -819,7 +820,7 @@ bool psCharacterInventory::Add(psItem *&item, bool test, bool stack, INVENTORY_S
         {
             if (inventory[i].item->GetIsContainer())
             {
-                int size = GetContainedSize(inventory[i].item);
+                float size = GetContainedSize(inventory[i].item);
                 if (size + item->GetTotalStackSize() <= inventory[i].item->GetContainerMaxSize()) // adequate space in container
                 {
                     INVENTORY_SLOT_NUMBER containerSlot = (INVENTORY_SLOT_NUMBER)FindFirstOpenSlot(inventory[i].item);
