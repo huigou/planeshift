@@ -83,10 +83,10 @@ void psMoney::Set(int circles, int octas, int hexas, int trias)
 
 int psMoney::GetTotal() const
 {
-    int64 total = circles*CIRCLES_VALUE_TRIAS + octas*OCTAS_VALUE_TRIAS
-        + hexas*HEXAS_VALUE_TRIAS + trias;
+    int64 total = (int64)circles*CIRCLES_VALUE_TRIAS + (int64)octas*OCTAS_VALUE_TRIAS
+        + (int64)hexas*HEXAS_VALUE_TRIAS + trias;
     if(total > INT_MAX)
-	total = INT_MAX;
+        total = INT_MAX;
     return (int)total;
 }
 
