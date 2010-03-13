@@ -413,11 +413,6 @@ void psSkillCache::write(MsgEntry *msg)
                 // Remove skills that were marked for removal
                 skillCache.Delete(p);
                 delete item;
-                if (p.HasCurrent())
-                    item = p.FetchCurrent();
-                else
-                    item = NULL;
-                continue;
             }
         }
         if (p.HasNext())
