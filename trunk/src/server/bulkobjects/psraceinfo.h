@@ -75,6 +75,7 @@ public:
     csVector3 size;
     int initialCP;
     uint32 natural_armor_id;
+    uint32 natural_weapon_id;
     float runMinSpeed,runBaseSpeed,runMaxSpeed;
     float walkMinSpeed,walkBaseSpeed,walkMaxSpeed;
     float scale; ///< The scale override of this race
@@ -122,7 +123,15 @@ public:
     
     const char *GetMounterAnim()  { return MounterAnim.GetDataSafe(); }
     
+    /** Returns the natural armor stat id used for this race when it's not equipping an armor.
+     *  @return The itemstats id of the natural armor.
+     */
     uint32 GetNaturalArmorID() { return natural_armor_id; }
+
+    /** Returns the natural weapon stat id used for this race when it's not equipping a weapon.
+     *  @return The itemstats id of the natural weapon.
+     */
+    uint32 GetNaturalWeaponID() { return natural_weapon_id; }
 
     float GetSpeedModifier()     { return speedModifier; }
     

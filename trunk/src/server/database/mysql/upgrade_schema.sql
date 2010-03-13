@@ -1408,6 +1408,10 @@ UPDATE `server_options` SET `option_value`='1238' WHERE `option_name`='db_versio
 ALTER TABLE `characters` CHANGE COLUMN `guild_notifications` `join_notifications` TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Contains a bitfield with the notifications being issued to this client about players login/logoff';
 UPDATE `server_options` SET `option_value`='1239' WHERE `option_name`='db_version';
 
+#1240 - Stefano Angeleri Addition to raceinfo: allow to set a default weapon.
+ALTER TABLE `race_info` ADD COLUMN `weapon_id` INT(10)  DEFAULT 0 COMMENT 'The id of the default weapon used in case no weapon is actually equipped. Should be something like the natural claws of this race or hands.' AFTER `armor_id`;
+UPDATE `server_options` SET `option_value`='1240' WHERE `option_name`='db_version';
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to

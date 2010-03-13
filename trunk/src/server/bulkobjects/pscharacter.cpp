@@ -962,8 +962,9 @@ void psCharacter::SetRaceInfo(psRaceInfo *rinfo)
     attributes[PSITEMSTATS_STAT_WILL]       . SetBase(int(rinfo->GetBaseAttribute(PSITEMSTATS_STAT_WILL)));
     attributes[PSITEMSTATS_STAT_CHARISMA]  .  SetBase(int(rinfo->GetBaseAttribute(PSITEMSTATS_STAT_CHARISMA)));
     
-    //as we are changing or obtaining for the first time a race set the inventory correctly for this
+    //as we are changing or obtaining for the first time a race set the inventory correctly for this.
     inventory.SetBasicArmor(raceinfo);
+    inventory.SetBasicWeapon(raceinfo);
 }
 
 void psCharacter::SetFamiliarID(PID v)

@@ -73,21 +73,13 @@ psCharacterInventory::psCharacterInventory(psCharacter *ownr)
     maxWeight = 0.0f;
     maxSize = 0.0f;
 
-    // Load fists
-    psItemStats *fistStats = CacheManager::GetSingleton().GetBasicItemStatsByName("Fist");
-    psItem *fist = fistStats->InstantiateBasicItem();
-    equipment[PSCHARACTER_SLOT_LEFTHAND].default_if_empty = fist;
-    equipment[PSCHARACTER_SLOT_LEFTHAND].EquipmentFlags |= PSCHARACTER_EQUIPMENTFLAG_AUTOATTACK | PSCHARACTER_EQUIPMENTFLAG_ATTACKIFEMPTY;
-    equipment[PSCHARACTER_SLOT_RIGHTHAND].default_if_empty = fist;
-    equipment[PSCHARACTER_SLOT_RIGHTHAND].EquipmentFlags |= PSCHARACTER_EQUIPMENTFLAG_AUTOATTACK | PSCHARACTER_EQUIPMENTFLAG_ATTACKIFEMPTY;
-
-    psCharacterInventoryItem newItem(fist); // default item in inv index 0 every time, so we don't have to check for NULL everywhere
-    inventory.Push(newItem);
+    // Load fists. Set a basic weapon (fist). we will return to this later when raceinfo is available.
+    SetBasicWeapon();
 
     owner = ownr;
 
-	//as a beginning we set a basic armor.
-	SetBasicArmor(NULL);
+	//as a beginning we set a basic armor. we will return to this later when raceinfo is available.
+	SetBasicArmor();
 	
     doRestrictions = false;
     loaded         = false;
@@ -144,6 +136,31 @@ void psCharacterInventory::SetBasicArmor(psRaceInfo *race)
     equipment[PSCHARACTER_SLOT_TORSO].default_if_empty = basecloths;
     equipment[PSCHARACTER_SLOT_LEGS].default_if_empty = basecloths;
 	
+}
+
+void psCharacterInventory::SetBasicWeapon(psRaceInfo *race)
+{
+    psItemStats *fistStats;
+    // Load basic fists. Default item equipped in hands slots.
+    if(race && race->GetNaturalWeaponID() != 0)
+        fistStats = CacheManager::GetSingleton().GetBasicItemStatsByID(owner->GetRaceInfo()->GetNaturalWeaponID());
+    else
+        fistStats = CacheManager::GetSingleton().GetBasicItemStatsByName("Fist");
+        
+    //delete the fist if it was already loaded. (we expect this in the first position of the inventory array.
+    //if this changes this must be changed too.
+    if(inventory.GetSize())
+		delete inventory.Get(0).GetItem();
+
+    psItem *fist = fistStats->InstantiateBasicItem();
+    equipment[PSCHARACTER_SLOT_LEFTHAND].default_if_empty = fist;
+    equipment[PSCHARACTER_SLOT_LEFTHAND].EquipmentFlags |= PSCHARACTER_EQUIPMENTFLAG_AUTOATTACK | PSCHARACTER_EQUIPMENTFLAG_ATTACKIFEMPTY;
+    equipment[PSCHARACTER_SLOT_RIGHTHAND].default_if_empty = fist;
+    equipment[PSCHARACTER_SLOT_RIGHTHAND].EquipmentFlags |= PSCHARACTER_EQUIPMENTFLAG_AUTOATTACK | PSCHARACTER_EQUIPMENTFLAG_ATTACKIFEMPTY;
+
+    psCharacterInventoryItem newItem(fist); // default item in inv index 0 every time, so we don't have to check for NULL everywhere
+    inventory.DeleteIndex(0);
+    inventory.Insert(0,fist);
 }
 
 void psCharacterInventory::CalculateLimits()
@@ -880,6 +897,13 @@ void psCharacterInventory::RestoreAllInventoryQuality()
         //check for the item in the current inventory position
         if (inventory[i].item)
             inventory[i].item->SetItemQuality(inventory[i].item->GetMaxItemQuality()); //Restore the item to it's max quality
+    }
+    //we check also the default if not equipped and restore them to max quality.
+    //for now i'm not taking for granted the same item is equipped in all slots... even if it's the case.
+    for (size_t i=0; i<PSCHARACTER_SLOT_BULK1; i++)
+    {
+        if(equipment[i].default_if_empty)
+            equipment[i].default_if_empty->SetItemQuality(equipment[i].default_if_empty->GetMaxItemQuality()); //Restore the item to it's max quality
     }
 }
 

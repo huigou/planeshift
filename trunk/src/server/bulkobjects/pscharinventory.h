@@ -455,7 +455,13 @@ public:
      *  @note if race is NULL or the armor group is 0 it will set the basicloths else the defined ones.
      *  @param race Pointer to the race to use to set the basic armor.
      */    
-    void SetBasicArmor(psRaceInfo *race);
+    void SetBasicArmor(psRaceInfo *race = NULL);
+
+    /** Sets the basic weapon when not equipped depending on the passed race.
+     *  @note if race is NULL or the armor group is 0 it will set the fist item else the defined ones.
+     *  @param race Pointer to the race to use to set the basic armor.
+     */    
+    void SetBasicWeapon(psRaceInfo *race = NULL);
 
 
 private:
