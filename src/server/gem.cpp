@@ -2550,6 +2550,8 @@ void gemActor::SendGroupStats()
     {
         psChar->SendStatDRMessage(GetClientID(), eid, 0, InGroup() ? GetGroup() : NULL);
     }
+    
+    BroadcastTargetStatDR(EntityManager::GetSingleton().GetClients());
 }
 
 void gemActor::Send( int clientnum, bool control, bool to_superclients, psPersistAllEntities *allEntities  )
