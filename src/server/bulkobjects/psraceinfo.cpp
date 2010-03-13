@@ -144,6 +144,9 @@ bool psRaceInfo::Load(iResultRow& row)
 
     // Load natural armor
     natural_armor_id = row.GetUInt32("armor_id");
+    
+    // Load natural claws/weapons
+    natural_weapon_id = row.GetUInt32("weapon_id");
 
     return true;
 }
