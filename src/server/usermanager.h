@@ -142,7 +142,11 @@ public:
       */
     void Loot(Client *client);
 
-    /// Load emotes from xml.
+    /** Load emotes from xml.
+     *  @param xmlfile A point to a string containing the xml file.
+     *  @param vfs A pointer to an iVFS object.
+     *  @return bool FALSE if there were problems with the passed xml file.
+     */
     bool LoadEmotes(const char *xmlfile, iVFS *vfs);
     
      /** @brief Process an emote command.
@@ -153,6 +157,10 @@ public:
      */
     void Emote(csString general, csString specific, csString animation, Client *client);
 
+    /** Handles the /mount command
+     *  @param rider The actor which is going to mount
+     *  @param mount The actor which is going to be mounted.
+     */
     void Mount(gemActor *rider, gemActor *mount);
 
 protected:
