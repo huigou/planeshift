@@ -169,7 +169,7 @@ public:
      *  The item will be accessible only from storage npc.
      *  @param item The item to be added to the storage.
      */
-    void AddStorageItem(psItem *item);
+    void AddStorageItem(psItem *& item);
 
     /** Check to see if the player has the ability to carry and additional weight.
       * @param requiedWeight The amount of weight that we want to check.
