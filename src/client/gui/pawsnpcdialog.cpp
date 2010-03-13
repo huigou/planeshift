@@ -50,14 +50,14 @@ void pawsNpcDialogWindow::OnListAction( pawsListBox* widget, int status )
     if (status == LISTBOX_HIGHLIGHTED)
     {
 		pawsTextBox *fld = dynamic_cast<pawsTextBox *>(widget->GetSelectedRow()->FindWidgetXMLBinding("text"));
-		printf( "Pressed: %s\n",fld->GetText() );
+		Debug2(LOG_QUESTS, 0, "Pressed: %s\n",fld->GetText() );
     }
 	else if (status == LISTBOX_SELECTED)
 	{
 		pawsTextBox *fld  = dynamic_cast<pawsTextBox *>(widget->GetSelectedRow()->FindWidgetXMLBinding("text"));
-		printf("Player chose '%s'.\n", fld->GetText() );
+		Debug2(LOG_QUESTS, 0,"Player chose '%s'.\n", fld->GetText() );
 		pawsTextBox *trig = dynamic_cast<pawsTextBox *>(widget->GetSelectedRow()->FindWidgetXMLBinding("trig"));
-		printf("Player says '%s'.\n", trig->GetText() );
+		Debug2(LOG_QUESTS, 0,"Player says '%s'.\n", trig->GetText() );
 
         csString trigger(trig->GetText());
 
@@ -108,7 +108,7 @@ void pawsNpcDialogWindow::HandleMessage( MsgEntry* me )
     {
         psDialogMenuMessage mesg(me);
 
-		printf( "Got psDialogMenuMessage: %s\n", mesg.xml.GetDataSafe() );
+		Debug2(LOG_QUESTS, 0,"Got psDialogMenuMessage: %s\n", mesg.xml.GetDataSafe() );
 		responseList->Clear();
 
 		SelfPopulateXML(mesg.xml);
@@ -157,7 +157,7 @@ void pawsNpcDialogWindow::OnStringEntered(const char *name,int param,const char 
         return; 
     }
 
-	printf("Got name=%s, value=%s\n", name, value);
+	Debug3(LOG_QUESTS, 0,"Got name=%s, value=%s\n", name, value);
 
 	csString cmd;
 	cmd.Format("/tellnpc %s", value );
