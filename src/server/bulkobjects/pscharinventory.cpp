@@ -292,8 +292,6 @@ bool psCharacterInventory::Load(PID use_id)
             if (location == PSCHARACTER_SLOT_STORAGE)
             {
                 storageInventory.Push(item);//we have found a storage item so we store it in there.
-                if (!item)
-                   continue;
             }
             else if (!AddLoadedItem(items[i].GetUInt32("parent_item_id"),location, item) )
             {
@@ -368,14 +366,16 @@ void psCharacterInventory::AddStorageItem(psItem *& item)
             if (storedItem->CheckStackableWith(item, true, true)) // item fits completely
             {
                 storedItem->CombineStack(item);
-                item = NULL;
                 return;
             }
             else if (storedItem->GetStackCount() != MAX_STACK_COUNT && storedItem->CheckStackableWith(item, true, false)) // item fits only partially
             {
                 psItem * split = item->SplitStack(MAX_STACK_COUNT - storedItem->GetStackCount());
                 if (split)
+                {
                     storedItem->CombineStack(split);
+                    storedItem->Save(false); // save partial splits immediately
+                }
             }
         }
     }
