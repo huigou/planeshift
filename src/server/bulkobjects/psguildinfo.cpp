@@ -554,7 +554,7 @@ bool psGuildInfo::SetMemberPrivilege(psGuildMember *member, GUILD_PRIVILEGE priv
         }
 
         unsigned long res = db->Command("update characters"
-            "   set guild_additional_privileges='%d' guild_denied_privileges='%d'"
+            "   set guild_additional_privileges='%d', guild_denied_privileges='%d'"
             " where id = '%d'",
             member->privileges, member->removedPrivileges, member->char_id.Unbox());
 
