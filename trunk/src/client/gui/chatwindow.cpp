@@ -478,9 +478,6 @@ void pawsChatWindow::DetermineChatTabAndSelect(int chattype)
     if(!tabs || subscribers.IsEmpty())
         return;
 
-    PawsManager::GetSingleton().SetCurrentFocusedWidget( inputText );
-    BringToTop( inputText );
-
     for(size_t i = 0; i < subscribers.GetSize(); i++)
     {
         pawsWidget* widget = dynamic_cast<pawsWidget*>(subscribers[i]);
@@ -1901,6 +1898,9 @@ void pawsChatWindow::SendChatLine(csString& textToSend)
         }
 
         currLine.Free(); // Set to NULL
+        
+        PawsManager::GetSingleton().SetCurrentFocusedWidget( inputText );
+        BringToTop( inputText );
     }
 }
 
