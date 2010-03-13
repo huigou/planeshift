@@ -357,7 +357,21 @@ public:
 
     iCollideSystem *GetCollDetSys() { return cdsys; }
 
-    NPC *ReadSingleNPC(PID char_id, bool master = false);
+    NPC *ReadSingleNPC(PID char_id, PID master_id = 0);
+    
+    /** Clones a master npc to a new npc whith the passed PID.
+     *  Used to inheredit behaviours from other npc.
+     *  @note this is used as last shore scenario. This way the npc even
+     *        if mastered can override the entry of it's master. 
+     *        The master PID comes from psserver.
+     *  @param char_id A valid PID of the character which is taking it's
+     *                 attributes from the master npc.
+     *  @param master_id A valid PID of the master npc from which we will
+     *                   copy the attributes.
+     *  @return A pointer to the newly created NPC. NULL if the arguments
+     *          where invalid or the master wasn't found.
+     */
+    NPC* ReadMasteredNPC(PID char_id, PID master_id);
 
     /**
      * Update with time from server in order to start timed events.

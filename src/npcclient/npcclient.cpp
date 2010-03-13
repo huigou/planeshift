@@ -492,17 +492,16 @@ gemNPCObject *psNPCClient::FindCharacterID(PID PID)
     return all_gem_objects_by_pid.Get(PID, 0);
 }
 
-NPC* psNPCClient::ReadSingleNPC(PID char_id, bool master)
+NPC* psNPCClient::ReadSingleNPC(PID char_id, PID master_id)
 {
-    Result result(db->Select("SELECT * FROM sc_npc_definitions WHERE char_id=%u", char_id.Unbox()));
+    Result result(db->Select("SELECT * FROM sc_npc_definitions WHERE char_id=%u", 
+                  master_id.IsValid() ? master_id.Unbox() : char_id.Unbox()));
     if (!result.IsValid() || !result.Count())
         return NULL;
 
     NPC *newnpc = new NPC(this, network, world, engine, cdsys);
 
-    //note we shouldn't load it manually but reuse what's loaded already but doing this till we know if the
-    //load taking parameters works well
-    if (newnpc->Load(result[0],npctypes, eventmanager, master ? char_id : 0))
+    if (newnpc->Load(result[0],npctypes, eventmanager, master_id.IsValid() ? char_id : 0))
     {
     	newnpc->Tick();
         npcs.Push(newnpc);
@@ -514,6 +513,31 @@ NPC* psNPCClient::ReadSingleNPC(PID char_id, bool master)
         return NULL;
     }
 }
+
+NPC* psNPCClient::ReadMasteredNPC(PID char_id, PID master_id)
+{
+    if(!char_id.IsValid() || !master_id.IsValid())
+        return NULL;
+
+    NPC *npc = FindNPCByPID( master_id );
+    if(!npc) //the npc wasn't found in the loaded npc.
+    {
+        //try loading the master if missing.
+        npc = ReadSingleNPC(master_id);
+        if(!npc) //if not found bail out
+            return NULL;
+    }
+    
+    //create a new npc
+    NPC *newnpc = new NPC(this, network, world, engine, cdsys);
+    //copy the data from the master npc
+    newnpc->Load(npc->GetName(), char_id, npc->GetBrain(), npc->GetRegionName(), 
+                 npc->IsDebugging(), npc->IsDisabled(), eventmanager);
+    newnpc->Tick();
+    npcs.Push(newnpc);
+    return newnpc;
+}
+
 bool psNPCClient::ReadNPCsFromDatabase()
 {
     Result rs(db->Select("select * from sc_npc_definitions"));
@@ -682,7 +706,7 @@ void psNPCClient::AttachNPC( gemNPCActor* actor, uint8_t DRcounter, EID ownerEID
         if(!npc) //still not found. we do a last check
         {
             if(masterID.IsValid()) //Probably it's mastered. Try loading the master for this
-                npc = ReadSingleNPC(masterID, true); //loads the master npc data and assign it to this
+                npc = ReadMasteredNPC(actor->GetPID(), masterID); //loads the master npc data and assign it to this
             if(!npc) //last chance if false good bye
             {
                 Error2("Error loading char_id %s.", ShowID(actor->GetPID()));
@@ -1107,7 +1131,7 @@ void psNPCClient::ListAllNPCs(const char * pattern)
                     (npcs[i]->GetCurrentBehavior()?npcs[i]->GetCurrentBehavior()->GetName():"(None)"),
                     (npcs[i]->GetCurrentBehavior()?npcs[i]->GetCurrentBehavior()->GetCurrentStep():0),
                     (npcs[i]->IsDebugging()?"Yes":"No"),
-                    (npcs[i]->IsDisabled()?"Disabled":"Aktive")
+                    (npcs[i]->IsDisabled()?"Disabled":"Active")
                     );
         }
     }
