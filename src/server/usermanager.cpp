@@ -2232,10 +2232,10 @@ void UserManager::Guard(Client *client, gemObject *object, csString action)
     else                           //The player didn't provide anything so toggle the option
         toggle = true;
 
-    psItem* guardItem;
-    
-    if(object)
-        guardItem = object->GetItem();
+    if(!object)
+        return;
+        
+    psItem* guardItem = object->GetItem();
     
     if (guardItem)
     {
