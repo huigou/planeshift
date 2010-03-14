@@ -64,6 +64,8 @@ private:
     /// Pre-computed area to avoid overhead
     float area;
 
+    csVector3 PickWithRadius(csVector3 pos, float radius);
+
 public:
     /// Ctor clears all to zero
     SpawnRange();
