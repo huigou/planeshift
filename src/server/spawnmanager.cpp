@@ -1207,6 +1207,10 @@ void SpawnRange::Initialize(int idval,
     npcspawnruleid = spawnruleid;
     type = *type_code;
 
+    x1 = rx1; x2 = rx2;
+    y1 = ry1; y2 = ry2;
+    z1 = rz1; z2 = rz2;
+
     spawnsector = sectorname;
     float dx = x1 == x2 ? RANGE_FICTITIOUS_WIDTH : x2 - x1;
     float dz = z1 == z2 ? RANGE_FICTITIOUS_WIDTH : z2 - z1;
