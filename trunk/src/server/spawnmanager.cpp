@@ -1214,6 +1214,7 @@ void SpawnRange::Initialize(int idval,
     spawnsector = sectorname;
     float dx = x1 == x2 ? RANGE_FICTITIOUS_WIDTH : x2 - x1;
     float dz = z1 == z2 ? RANGE_FICTITIOUS_WIDTH : z2 - z1;
+    radius = radiusval;
     
     if (type == 'A')
     	area = dx * dz;
@@ -1224,13 +1225,14 @@ void SpawnRange::Initialize(int idval,
     }
     else if (type == 'C')
     {
-    	radius = radiusval;
     	area = radius * radius * PI;
     }
 }
 
 csVector3 SpawnRange::PickWithRadius(csVector3 pos, float radius)
 {    	
+	if(radius == 0.0f)
+		return pos;
 	float x;
     	float z;
     	
