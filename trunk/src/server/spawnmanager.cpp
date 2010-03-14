@@ -1200,7 +1200,7 @@ void SpawnRange::Initialize(int idval,
                             const char *type_code,
                             float rx1, float ry1, float rz1,
                             float rx2, float ry2, float rz2,
-                            float radius,
+                            float radiusval,
                             const char *sectorname)
 {
     id = idval;
@@ -1228,7 +1228,7 @@ void SpawnRange::Initialize(int idval,
     }
     else if (type == 'C')
     {
-    	
+    	radius = radiusval;
     	area = radius * radius * PI;
     }
 }
