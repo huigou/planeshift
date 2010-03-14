@@ -1207,14 +1207,6 @@ void SpawnRange::Initialize(int idval,
     npcspawnruleid = spawnruleid;
     type = *type_code;
 
-    // make sure x1 < x2, y1 < y2, z1 < z2
-    if (rx1 < rx2) { x1 = rx1; x2 = rx2; }
-    else { x1 = rx2; x2 = rx1; }
-    if (ry1 < ry2) { y1 = ry1; y2 = ry2; }
-    else { y1 = ry2; y2 = ry1; }
-    if (rz1 < rz2) { z1 = rz1; z2 = rz2; }
-    else { z1 = rz2; z2 = rz1; }
-
     spawnsector = sectorname;
     float dx = x1 == x2 ? RANGE_FICTITIOUS_WIDTH : x2 - x1;
     float dz = z1 == z2 ? RANGE_FICTITIOUS_WIDTH : z2 - z1;
