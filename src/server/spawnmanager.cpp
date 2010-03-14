@@ -1225,6 +1225,26 @@ void SpawnRange::Initialize(int idval,
     }
 }
 
+csVector3 SpawnRange::PickWithRadius(csVector3 pos, float radius)
+{    	
+	float x;
+    	float z;
+    	
+    	float xDist;
+    	float zDist;
+    	
+	do {
+		// Pick random point in circumscribed rectangle.
+		x = randomgen->Get() * (radius*2.0);
+		z = randomgen->Get() * (radius*2.0);
+		xDist = radius - x;
+		zDist = radius - z;
+		// Keep looping until the point is inside a circle.
+	} while(xDist * xDist + zDist * zDist > radius * radius);
+    	
+    	return csVector3(pos.x - radius + x, pos.y, pos.z - radius + z);
+}
+
 const csVector3 SpawnRange::PickPos()
 {
     if (type == 'A')
@@ -1233,32 +1253,19 @@ const csVector3 SpawnRange::PickPos()
                          y1 + randomgen->Get() * (y2 - y1),
                          z1 + randomgen->Get() * (z2 - z1));
     }
-    else if (type == 'L')// type 'L' means spawn along line segment
+    else if (type == 'L')// type 'L' means spawn along line segment with an offset determined by radius (Line swept circle)
     {
         float d = randomgen->Get();
 
-        return csVector3(x1 + d * (x2 - x1),
+        csVector3 pos = csVector3(x1 + d * (x2 - x1),
                          y1 + d * (y2 - y1),
                          z1 + d * (z2 - z1));
+
+	return PickWithRadius(pos, radius);
     }
     else if (type == 'C') // type 'C' means spawn within a circle centered at the first set of co-ordinates
     {
-    	float x;
-    	float z;
-    	
-    	float xDist;
-    	float zDist;
-    	
-    	do {
-    		// Pick random point in circumscribed rectangle.
-    		x = randomgen->Get() * (radius*2.0);
-			z = randomgen->Get() * (radius*2.0);
-			xDist = radius - x;
-			zDist = radius - z;
-			// Keep looping until the point is inside a circle.
-    	} while(xDist * xDist + zDist * zDist > radius * radius);
-    	
-    	return csVector3(x1 - radius + x, y1, z1 - radius + z);
+	return PickWithRadius(csVector3(x1, y1, z1), radius);
     }
     else
     {
