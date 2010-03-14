@@ -139,7 +139,7 @@ private:
     float updaterVersionLatest;
 
     /* Latest version md5sum */
-    const char* updaterVersionLatestMD5;
+    csString updaterVersionLatestMD5;
 
     /* List of mirrors */
     csRefArray<Mirror> mirrors;
