@@ -171,12 +171,6 @@ bool psNPCClient::Initialize(iObjectRegistry* object_reg,const char *_host, cons
         delete connection;
         return false;
     }
-    if (!connection->Connect(host,port))
-    {
-        CPrintf(CON_ERROR, "Couldn't resolve hostname %s on port %d.\n",(const char *)host,port);
-        exit(1);
-    }
-
     eventmanager = new EventManager;
     msghandler   = eventmanager;
     psMessageCracker::msghandler = eventmanager;
@@ -261,6 +255,13 @@ bool psNPCClient::Initialize(iObjectRegistry* object_reg,const char *_host, cons
     
     CPrintf(CON_DEBUG, "Connecting to Host: '%s' User: '%s' Password: '%s' Port %d...\n",
         (const char*) host, (const char*) user, (const char*) pass, port);
+    if (!connection->Connect(host,port))
+    {
+        CPrintf(CON_ERROR, "Couldn't resolve hostname %s on port %d.\n",(const char *)host,port);
+        exit(1);
+    }
+
+
     // Starts the logon process
     network->Authenticate(host,port,user,pass);
 
