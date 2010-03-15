@@ -404,8 +404,9 @@ psTribe::TribeNeed psTribe::Brain(NPC * npc)
     // Handle special case for dead npc's
     if (!npc->IsAlive())
     {
-        if (AliveCount() == 0) // Resurrect without cost if every member is dead.
+        if (AliveCount() == 0 && CountResource(wealth_resource_name) >= 10 * reproduction_cost) // Resurrect with large cost if every member is dead.
         {
+        	AddResource(wealth_resource_name,-10*reproduction_cost);
             return RESURRECT;
         }
         else if (CanGrow())
