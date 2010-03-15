@@ -29,4 +29,4 @@ CREATE TABLE `tribes`
 # Dumping data for table characters
 #
 
-INSERT INTO `tribes` VALUES (1,'Test tribe',3,-80,0,-180,10,15,'Gold Ore','gold','mine',1,5);
+INSERT INTO `tribes` VALUES (1,'Test tribe',3,-80,0,-180,10,15,'Gold Ore','gold','mine',1,60);
