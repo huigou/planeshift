@@ -61,6 +61,7 @@ psTribe::psTribe()
     :home_sector(0)
 {
     InitializeNeedSet();
+    last_growth = csGetTicks();
 }
 
 psTribe::~psTribe()
@@ -79,6 +80,7 @@ bool psTribe::Load(iResultRow& row)
     wealth_resource_name = row["wealth_resource_name"];
     wealth_resource_nick = row["wealth_resource_nick"];
     wealth_resource_area = row["wealth_resource_area"];
+    wealth_resource_growth = row.GetInt("wealth_resource_growth");
     reproduction_cost = row.GetInt("reproduction_cost");
 
     return true;
@@ -89,6 +91,13 @@ bool psTribe::LoadMember(iResultRow& row)
     int member_id   = row.GetInt("member_id");
 
     members_id.Push(member_id);
+    
+    return true;
+}
+
+bool psTribe::AddMember(PID pid)
+{
+    members_id.Push(pid.Unbox());
     
     return true;
 }
@@ -309,6 +318,13 @@ int psTribe::CountResource(csString resource) const
 
 void psTribe::Advance(csTicks when,EventManager *eventmgr)
 {
+	if(when - last_growth > 1000)
+	{
+		AddResource(wealth_resource_name, wealth_resource_growth * ((when - last_growth) / 1000));
+		while(when - last_growth > 1000)
+			last_growth += 1000;
+	}
+	
     for (size_t i=0; i < members.GetSize(); i++)
     {
         NPC *npc = members[i];
@@ -393,16 +409,17 @@ psTribe::TribeNeed psTribe::Brain(NPC * npc)
             return RESURRECT;
         }
         else if (CanGrow())
-        {
-            AddResource(wealth_resource_name,-reproduction_cost);
-            return RESURRECT;
-        }
+    	{
+    		AddResource(wealth_resource_name,-reproduction_cost);
+    		return RESURRECT;
+    	}
         else
         {
             needSet->MaxNeed("Dig");
         }
         return NOTHING;        
     }
+    
 
     // Continue on for live NPCs
 

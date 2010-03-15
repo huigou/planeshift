@@ -1412,6 +1412,10 @@ UPDATE `server_options` SET `option_value`='1239' WHERE `option_name`='db_versio
 ALTER TABLE `race_info` ADD COLUMN `weapon_id` INT(10)  DEFAULT 0 COMMENT 'The id of the default weapon used in case no weapon is actually equipped. Should be something like the natural claws of this race or hands.' AFTER `armor_id`;
 UPDATE `server_options` SET `option_value`='1240' WHERE `option_name`='db_version';
 
+#1241 - Andrew Dai Added wealth growth to tribes.
+ALTER TABLE `tribes` ADD COLUMN `wealth_resource_growth` INTEGER  DEFAULT 0 COMMENT 'Automatic growth rate of wealth of a tribe.' AFTER `wealth_resource_area`;
+UPDATE `server_options` SET `option_value`='1241' WHERE `option_name`='db_version';
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to

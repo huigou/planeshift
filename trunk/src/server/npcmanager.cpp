@@ -816,7 +816,8 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
 
                 if (spawner)
                 {
-                    EntityManager::GetSingleton().CloneNPC(spawner->GetCharacterData());
+                    gemNPC *spawned = EntityManager::GetSingleton().CloneNPC(spawner->GetCharacterData());
+                    QueueSpawnedPerception(spawned, spawner);
                 }
                 else
                 {
@@ -2019,6 +2020,17 @@ void NPCManager::QueueTransferPerception(gemActor *owner, psItem * itemdata, csS
            itemdata->GetStackCount(),
            itemdata->GetName(),
            target.GetDataSafe() );
+}
+
+void NPCManager::QueueSpawnedPerception(gemNPC *spawned, gemNPC *spawner)
+{
+    CheckSendPerceptionQueue(sizeof(int8_t)+sizeof(uint32_t)*3);
+    outbound->msg->Add( (int8_t) psNPCCommandsMessage::PCPT_SPAWNED);
+    outbound->msg->Add(spawned->GetCharacterData()->GetPID().Unbox());
+    outbound->msg->Add(spawned->GetEID().Unbox());
+    outbound->msg->Add(spawner->GetEID().Unbox());
+    cmd_count++;
+    Debug3(LOG_NPC, spawner->GetEID().Unbox(), "Added spawn perception: %s from %s.\n", ShowID(spawned->GetEID()), ShowID(spawner->GetEID()) );
 }
 
 void NPCManager::SendAllCommands(bool createNewTick)

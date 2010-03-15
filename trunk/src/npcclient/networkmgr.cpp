@@ -860,6 +860,26 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 }
                 break;
             }
+            case psNPCCommandsMessage::PCPT_SPAWNED:
+            {
+                PID spawned_pid = PID(msg->GetUInt32());
+                EID spawned_eid = EID(msg->GetUInt32());
+                EID spawner_eid = EID(msg->GetUInt32());
+
+
+                NPC *npc = npcclient->FindNPC(spawner_eid);
+
+                if (!npc)
+                    break;
+
+                npc->Printf("Got spawn Perception to %u from %u\n",
+                            spawned_eid.Unbox(), spawner_eid.Unbox());
+                npc->GetTribe()->AddMember(spawned_pid);
+                NPC *spawned_npc = npcclient->FindNPC(spawned_eid);
+                if(spawned_npc)
+                	npcclient->CheckAttachTribes(spawned_npc);
+                break;
+            }
            
             default:
             {
