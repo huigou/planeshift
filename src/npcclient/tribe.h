@@ -88,6 +88,9 @@ public:
 
     /** Load and add a new resource to the tribe */
     bool LoadResource(iResultRow& row);
+    
+    /** Adds a new member to the tribe, e.g. from reproduction */
+    bool AddMember(PID pid);
 
     /** Save or update an resource in database */
     void SaveResource(Resource* resource, bool new_resource);
@@ -253,9 +256,12 @@ protected:
     csString               wealth_resource_name;
     csString               wealth_resource_nick;
     csString               wealth_resource_area;
+    int					   wealth_resource_growth;
     int                    reproduction_cost;
     psTribeNeedSet        *needSet;
     csList<Memory*>        memories;
+    
+    csTicks				   last_growth;
 };
 
 #endif

@@ -2535,11 +2535,22 @@ bool ResurrectOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     csVector3 where;
     float     radius;
     iSector*  sector;
-    float     rot = 0; // Todo: Set to a random rotation
+    float     rot = psGetRandom() * TWO_PI;
 
     tribe->GetHome(where,radius,sector);
 
-    // Todo: Add a random delta within radius to the where value.
+    float x, z, xDist, zDist;
+	do {
+		// Pick random point in circumscribed rectangle.
+		x = psGetRandom() * (radius*2.0);
+		z = psGetRandom() * (radius*2.0);
+		xDist = radius - x;
+		zDist = radius - z;
+		// Keep looping until the point is inside a circle.
+	} while(xDist * xDist + zDist * zDist > radius * radius);
+	
+	where.x += x - radius;
+	where.z += z - radius;
 
     npcclient->GetNetworkMgr()->QueueResurrectCommand(where, rot, sector->QueryObject()->GetName(), npc->GetPID());
 

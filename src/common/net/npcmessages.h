@@ -226,7 +226,8 @@ public:
         PCPT_INVENTORY,
         PCPT_FLAG,
         PCPT_NPCCMD,
-        PCPT_TRANSFER
+        PCPT_TRANSFER,
+        PCPT_SPAWNED
     };
 
     /// Create psMessageBytes struct for outbound use

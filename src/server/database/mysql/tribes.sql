@@ -20,6 +20,7 @@ CREATE TABLE `tribes`
   wealth_resource_name varchar(30) NOT NULL default '',
   wealth_resource_nick varchar(30) NOT NULL default '',
   wealth_resource_area varchar(30) NOT NULL default '',
+  wealth_resource_growth varchar(30) NOT NULL default '',
   reproduction_cost int(10) signed DEFAULT '0',
   PRIMARY KEY  (`id`)
 );
@@ -28,4 +29,4 @@ CREATE TABLE `tribes`
 # Dumping data for table characters
 #
 
-INSERT INTO `tribes` VALUES (1,'Test tribe',3,-80,0,-180,10,15,'Gold Ore','gold','mine',5);
+INSERT INTO `tribes` VALUES (1,'Test tribe',3,-80,0,-180,10,15,'Gold Ore','gold','mine',1,5);

@@ -702,6 +702,24 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                 msgtext.AppendFmt("EID: %u Item: %s Count: %d Target: %s ", entity_id.Unbox(), item.GetDataSafe(), count, target.GetDataSafe());
                 break;
             }
+            case psNPCCommandsMessage::PCPT_SPAWNED:
+			{
+				msgtext.Append("PCPT_SPAWNED: ");
+
+				// Extract the data
+				EID spawned_id = EID(msg->GetUInt32());
+				EID spawner_id = EID(msg->GetUInt32());
+
+				// Make sure we haven't run past the end of the buffer
+				if (msg->overrun)
+				{
+					Debug2(LOG_SUPERCLIENT,msg->clientnum,"Received incomplete PCPT_SPAWNED from NPC client %u.\n", msg->clientnum);
+					break;
+				}
+
+				msgtext.AppendFmt("EID: %u EID: %u ", spawned_id.Unbox(), spawner_id.Unbox());
+				break;
+			}
 
 
         }
