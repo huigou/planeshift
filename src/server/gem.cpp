@@ -2477,11 +2477,10 @@ bool gemActor::CanBeAttackedBy(gemActor* attacker, gemActor*& lastAttacker) cons
             return true;
         lasttime = lasthit->TimeOfAttack();
 
-        gemActor* attacker = lasthit->Attacker();
-        if (!attacker)
+        if (lasthit->Attacker().IsValid())
+            lastAttacker = lasthit->Attacker();
+        else
             continue;  // ignore disconnects
-
-        lastAttacker = attacker;
 
         // If someone else, except for attacker pet, hit first and attacker not grouped with them,
         // attacker locked out
