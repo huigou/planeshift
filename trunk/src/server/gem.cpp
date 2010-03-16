@@ -2161,9 +2161,7 @@ bool gemActor::MoveToValidPos(bool force)
 
     isFalling = false;
     pcmove->SetOnGround(false);
-    
-    // allow this violation
-    GetClient()->SetCheatMask(MOVE_CHEAT, true);
+
     Teleport(valid_location.sector, valid_location.pos, valid_location.yrot, valid_location.instance);
     return true;
 }
