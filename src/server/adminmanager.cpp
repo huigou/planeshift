@@ -3966,9 +3966,6 @@ bool AdminManager::MoveObject(Client *client, gemObject *target, csVector3& pos,
     else if ( dynamic_cast<gemActor*>(target) ) // Actor? (Player/NPC)
     {
         gemActor *actor = (gemActor*) target;
-        
-        // allow this violation
-        actor->GetClient()->SetCheatMask(MOVE_CHEAT, true);
         actor->Teleport(sector, pos, yrot, instance);
     }
     else
