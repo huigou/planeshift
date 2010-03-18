@@ -168,6 +168,7 @@ public:
     virtual ~pawsMessageTextBox();    
     virtual bool Setup( iDocumentNode* node );
     virtual bool Setup( void );
+    virtual bool PostSetup();
 
     /**
      * This function allows a widget to fill in its own contents from an xml node
@@ -220,6 +221,12 @@ protected:
     /// Calculates value of the lineHeight attribute
     void CalcLineHeight();
     
+    /**
+     * checks for a child of type pawsScrollBar.
+     * @return pawsScrollBar* pointer to child or NULL
+     */
+    pawsScrollBar * GetScrollBar();
+    
     csPDelArray<MessageLine> adjusted;
 
     int lineHeight;
@@ -228,6 +235,7 @@ protected:
     int topLine;
 
     pawsScrollBar* scrollBar;
+    int scrollBarWidth;
     
 private:
     static const int INITOFFSET = 20;
@@ -339,6 +347,7 @@ public:
     virtual ~pawsMultiLineTextBox();
 
     bool Setup ( iDocumentNode* node );
+    bool PostSetup();
 
     void Draw();
       
@@ -355,6 +364,12 @@ public:
 protected:
 
     void OrganizeText( const char* text );
+
+    /**
+     * checks for a child of type pawsScrollBar.
+     * @return pawsScrollBar* pointer to child or NULL
+     */
+    pawsScrollBar * GetScrollBar();
 
     /// The text for this box.
     csString text;

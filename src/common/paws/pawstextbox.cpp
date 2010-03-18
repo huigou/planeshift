@@ -374,6 +374,7 @@ pawsMessageTextBox::pawsMessageTextBox()
 {
     topLine = 0;
     maxLines = 0;
+    scrollBarWidth = 25;
     CalcLineHeight();
     scrollBar = NULL;
 }
@@ -399,54 +400,58 @@ void pawsMessageTextBox::CalcLineHeight()
     lineHeight -=2;
 }
 
+pawsScrollBar * pawsMessageTextBox::GetScrollBar()
+{
+    csArray<pawsWidget*>::Iterator it = children.GetIterator();
+    while(it.HasNext())
+    {
+        pawsScrollBar * child = dynamic_cast<pawsScrollBar*>(it.Next());
+        if (child)
+            return child;
+    }
+    
+    return NULL;
+}
+
 bool pawsMessageTextBox::Setup( iDocumentNode* node )
 {
     csRef<iDocumentNode> scrollBarNode = node->GetNode( "pawsScrollBar" );
     if ( scrollBarNode )
     {
-        CalcLineHeight();
-
-        // Create the optional scroll bar here as well but hidden.
-        scrollBar = new pawsScrollBar;
-        //TODO: FIGURE OUT WHY THIS FUNCTION DOESN'T SETUP SCROLLBARS CORRECTLY!
-        //scrollBar->Setup( scrollBarNode );
-        scrollBar->SetParent( this );
-
         csRef<iDocumentAttribute> widthAttribute = scrollBarNode->GetAttribute("width");
-        int scrollBarWidth = 25;
-        if(widthAttribute){
+        if(widthAttribute)
             scrollBarWidth = widthAttribute->GetValueAsInt();
-        }
-
-        scrollBar->SetRelativeFrame( defaultFrame.Width() - scrollBarWidth, 6, scrollBarWidth, defaultFrame.Height() - 12 ); 
-        
-        int attach = ATTACH_TOP | ATTACH_BOTTOM | ATTACH_RIGHT;
-        scrollBar->SetAttachFlags( attach );
-        scrollBar->PostSetup();
-        AddChild( scrollBar );
-        OnResize();
-        return true;    
-    } 
-    else 
-    {
-        return Setup();
     }
+
+    CalcLineHeight();
+
+    return true;
 }
 
 bool pawsMessageTextBox::Setup()
 {
     CalcLineHeight();
+    return true;
+}
 
+bool pawsMessageTextBox::PostSetup()
+{
     // Create the optional scroll bar here as well but hidden.
-    scrollBar = new pawsScrollBar;
-    scrollBar->SetParent( this );
-    scrollBar->SetRelativeFrame( defaultFrame.Width() - 24, 6, 24, defaultFrame.Height() - 12 ); 
+    scrollBar = GetScrollBar();
+    if (!scrollBar)
+    {
+        scrollBar = new pawsScrollBar;
+        scrollBar->SetParent( this );
+        scrollBar->PostSetup();
+        AddChild( scrollBar );
+        
+        scrollBar->SetTickValue( 1.0 );
+        scrollBar->SetMaxValue(0.0);
+    }
+
+    scrollBar->SetRelativeFrame( defaultFrame.Width() - scrollBarWidth, 6, scrollBarWidth, defaultFrame.Height() - 12 ); 
     int attach = ATTACH_TOP | ATTACH_BOTTOM | ATTACH_RIGHT;
     scrollBar->SetAttachFlags( attach );
-    scrollBar->PostSetup();
-    scrollBar->SetTickValue( 1.0 );
-    scrollBar->SetMaxValue(0.0);
-    AddChild( scrollBar );
 
     OnResize();
 
@@ -1312,20 +1317,53 @@ pawsMultiLineTextBox::~pawsMultiLineTextBox()
 
 }
 
+pawsScrollBar * pawsMultiLineTextBox::GetScrollBar()
+{
+    csArray<pawsWidget*>::Iterator it = children.GetIterator();
+    while(it.HasNext())
+    {
+        pawsScrollBar * child = dynamic_cast<pawsScrollBar*>(it.Next());
+        if (child)
+            return child;
+    }
+    
+    return NULL;
+}
+
 bool pawsMultiLineTextBox::Setup( iDocumentNode* node )
 {    
-    csRef<iDocumentNode> textNode = node->GetNode( "text" );        
-    
+    csRef<iDocumentNode> textNode = node->GetNode( "text" );
     if ( textNode )
-    {        
+    {
         csRef<iDocumentAttribute> textAttribute = textNode->GetAttribute("string");
         if ( textAttribute )
-        {            
+        {
             SetText( textAttribute->GetValue() );
         }
-    }        
+    }
 
     return true;
+}
+
+bool pawsMultiLineTextBox::PostSetup()
+{
+    scrollBar = GetScrollBar();
+    if (!scrollBar)
+    {
+        scrollBar = new pawsScrollBar;
+        scrollBar->SetParent( this );
+        AddChild( scrollBar );
+        scrollBar->SetTickValue( 1.0 );
+        scrollBar->PostSetup();
+    }
+    
+    scrollBar->SetRelativeFrame( defaultFrame.Width() - 40, 6, 24, defaultFrame.Height() - 12 ); 
+    scrollBar->SetAttachFlags(ATTACH_TOP | ATTACH_BOTTOM | ATTACH_RIGHT);
+    pawsWidget::Resize();
+    
+    scrollBar->Show();
+    scrollBar->SetMaxValue(lines.GetSize() - canDrawLines );
+    scrollBar->SetCurrentValue(0);
 }
 
 void pawsMultiLineTextBox::Resize()
@@ -1471,22 +1509,12 @@ void pawsMultiLineTextBox::SetText( const char* newText )
         usingScrollBar = true;
         lines.Empty();    
         OrganizeText( str.GetData() );        
-        if ( !scrollBar )
+        if ( scrollBar )
         {
-            // Create the optional scroll bar here as well but hidden.
-            scrollBar = new pawsScrollBar();
-            scrollBar->SetParent( this );
-            scrollBar->SetRelativeFrame( defaultFrame.Width() - 40, 6, 24, defaultFrame.Height() - 12 ); 
-            scrollBar->SetAttachFlags(ATTACH_TOP | ATTACH_BOTTOM | ATTACH_RIGHT);
-            scrollBar->PostSetup();
-            scrollBar->SetTickValue( 1.0 );
-            AddChild( scrollBar );
-            pawsWidget::Resize();
+            scrollBar->Show();
+            scrollBar->SetMaxValue(lines.GetSize() - canDrawLines );
+            scrollBar->SetCurrentValue(0);
         }
-        
-        scrollBar->Show();
-        scrollBar->SetMaxValue(lines.GetSize() - canDrawLines );
-        scrollBar->SetCurrentValue(0);
     }    
     startLine = 0;    
     text.Replace( str.GetData() );    
