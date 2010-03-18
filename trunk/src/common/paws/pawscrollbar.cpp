@@ -168,7 +168,7 @@ bool pawsScrollBar::Setup( iDocumentNode* node )
 
 	// down button settings
 	csRef<iDocumentNode> downNode = node->GetNode("down");
-	if (upNode)
+	if (downNode)
 	{
 		attr = downNode->GetAttribute("grey");
 		if (attr)
