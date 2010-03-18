@@ -794,7 +794,7 @@ bool pawsWidget::Load( iDocumentNode* node )
     }
 
     Resize();
-    Resize( 0, 0, RESIZE_RIGHT | RESIZE_BOTTOM | RESIZE_TOP | RESIZE_BOTTOM );
+    Resize( 0, 0, RESIZE_RIGHT | RESIZE_LEFT | RESIZE_TOP | RESIZE_BOTTOM );
     StopResize();
 
     if (visible)
