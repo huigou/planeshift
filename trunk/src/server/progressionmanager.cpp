@@ -497,7 +497,7 @@ void ProgressionManager::SendSkillList(Client * client, bool forceOpen, PSSKILL 
     }
 
 
-    for (int skillID = 0; skillID < (int)PSSKILL_COUNT; skillID++)
+    for (int skillID = 0; skillID < CacheManager::GetSingleton().GetSkillAmount(); skillID++)
     {
         psSkillInfo * info = CacheManager::GetSingleton().GetSkillByID(skillID);
         if (!info)

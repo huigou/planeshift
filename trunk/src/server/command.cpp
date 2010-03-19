@@ -2075,7 +2075,7 @@ int com_liststats(char *line)
     CPrintf(CON_CMDOUTPUT ,"Experience points(W)  %7u\n",charData->GetExperiencePoints());
     CPrintf(CON_CMDOUTPUT ,"Progression points(X) %7u\n",charData->GetProgressionPoints());
     CPrintf(CON_CMDOUTPUT ,"%-20s %12s %12s %12s\n","Skill","Practice(Z)","Knowledge(Y)","Rank(R)");
-    for (int skillID = 0; skillID < (int)PSSKILL_COUNT; skillID++)
+    for (int skillID = 0; skillID < CacheManager::GetSingleton().GetSkillAmount(); skillID++)
     {
         psSkillInfo * info = CacheManager::GetSingleton().GetSkillByID(skillID);
         if (!info)

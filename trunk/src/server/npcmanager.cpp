@@ -2274,7 +2274,7 @@ void NPCManager::SendPetSkillList(Client * client, bool forceOpen, PSSKILL focus
     int realID = -1;
     bool found = false;
 
-    for (int skillID = 0; skillID < CacheManager::GetSingloton().GetSkillAmount(); skillID++)
+    for (int skillID = 0; skillID < CacheManager::GetSingleton().GetSkillAmount(); skillID++)
     {
         psSkillInfo * info = CacheManager::GetSingleton().GetSkillByID(skillID);
         if (!info)

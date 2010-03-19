@@ -467,7 +467,7 @@ void UserManager::SendCharacterDescription(Client * client, gemActor *actor, boo
         SkillSet & sks = charData->Skills();
         StatSet & sts = charData->Stats();
 
-        for (int skill = 0; skill < CacheManager::GetSingloton().GetSkillAmount(); skill++)
+        for (int skill = 0; skill < CacheManager::GetSingleton().GetSkillAmount(); skill++)
         {
             psSkillInfo *skinfo;
             skinfo = CacheManager::GetSingleton().GetSkillByID((PSSKILL)skill);

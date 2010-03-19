@@ -1023,7 +1023,7 @@ void CharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
                 mesg.AddStat( value, CacheManager::GetSingleton().Attribute2String((PSITEMSTATS_STAT)z));                
             }                                    
         }
-        for ( z = 0; z < PSSKILL_COUNT; z++ )
+        for ( z = 0; z < CacheManager::GetSingleton().GetSkillAmount(); z++ )
         {
             unsigned int rank = chardata->Skills().GetSkillRank((PSSKILL) z).Base();
             

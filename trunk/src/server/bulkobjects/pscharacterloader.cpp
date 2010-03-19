@@ -422,7 +422,7 @@ bool psCharacterLoader::NewCharacterData(AccountID accountid, psCharacter *chard
                ShowID(chardata->GetPID()), db->GetLastError());
     }
 
-    for (i=0;i<PSSKILL_COUNT;i++)
+    for (i=0;i<CacheManager::GetSingleton().GetSkillAmount();i++)
     {
         unsigned int skillRank = chardata->Skills().GetSkillRank((PSSKILL) i).Base();
         unsigned int skillY = chardata->Skills().GetSkillKnowledge((PSSKILL) i);
@@ -811,7 +811,7 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
 
     // For all the skills we have update them. If the update fails it will automatically save a new
     // one to the database.
-    for (i=0;i<PSSKILL_COUNT;i++)
+    for (i=0;i<CacheManager::GetSingleton().GetSkillAmount();i++)
     {
         if (chardata->Skills().Get((PSSKILL) i).dirtyFlag)
         {

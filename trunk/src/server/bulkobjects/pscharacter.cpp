@@ -3713,7 +3713,7 @@ int SkillSet::AddSkillPractice(PSSKILL skill, unsigned int val)
 unsigned int SkillSet::GetBestSkillValue( bool withBuffer )
 {
     unsigned int max=0;
-    for (int i=0; i<PSSKILL_COUNT; i++)
+    for (int i=0; i<CacheManager::GetSingleton().GetSkillAmount(); i++)
     {
         PSSKILL skill = skills[i].info->id;
         if(     skill == PSSKILL_AGI ||
@@ -3735,14 +3735,14 @@ unsigned int SkillSet::GetBestSkillSlot( bool withBuffer )
 {
     unsigned int max = 0;
     unsigned int i = 0;
-    for (; i<PSSKILL_COUNT; i++)
+    for (; i<CacheManager::GetSingleton().GetSkillAmount(); i++)
     {
         unsigned int rank = withBuffer ? skills[i].rank.Current() : skills[i].rank.Base();
         if (rank > max)
             max = rank;
     }
 
-    if (i == PSSKILL_COUNT)
+    if (i == CacheManager::GetSingleton().GetSkillAmount())
         return (unsigned int)~0;
     else
         return i;
@@ -3750,7 +3750,7 @@ unsigned int SkillSet::GetBestSkillSlot( bool withBuffer )
 
 void SkillSet::Calculate()
 {
-    for ( int z = 0; z < PSSKILL_COUNT; z++ )
+    for ( int z = 0; z < CacheManager::GetSingleton().GetSkillAmount(); z++ )
     {
         skills[z].CalculateCosts(self);
     }
@@ -3758,7 +3758,7 @@ void SkillSet::Calculate()
 
 bool SkillSet::CanTrain( PSSKILL skill )
 {
-    if (skill<0 || skill>=PSSKILL_COUNT)
+    if (skill<0 || skill>=CacheManager::GetSingleton().GetSkillAmount())
         return false;
     else
     {
@@ -3769,7 +3769,7 @@ bool SkillSet::CanTrain( PSSKILL skill )
 void SkillSet::Train( PSSKILL skill, int yIncrease )
 {
 
-    if (skill<0 ||skill>=PSSKILL_COUNT)
+    if (skill<0 ||skill>=CacheManager::GetSingleton().GetSkillAmount())
         return;
     else
     {
@@ -3780,7 +3780,7 @@ void SkillSet::Train( PSSKILL skill, int yIncrease )
 
 void SkillSet::SetSkillInfo( PSSKILL which, psSkillInfo* info, bool recalculatestats )
 {
-    if (which<0 || which>=PSSKILL_COUNT)
+    if (which<0 || which>=CacheManager::GetSingleton().GetSkillAmount())
         return;
     else
     {
@@ -3794,7 +3794,7 @@ void SkillSet::SetSkillInfo( PSSKILL which, psSkillInfo* info, bool recalculates
 
 void SkillSet::SetSkillRank( PSSKILL which, unsigned int rank, bool recalculatestats )
 {
-    if (which < 0 || which >= PSSKILL_COUNT)
+    if (which < 0 || which >= CacheManager::GetSingleton().GetSkillAmount())
         return;
 
     bool isStat = (which >= PSSKILL_AGI && which <= PSSKILL_WILL);
@@ -3817,7 +3817,7 @@ void SkillSet::SetSkillRank( PSSKILL which, unsigned int rank, bool recalculates
 
 void SkillSet::SetSkillKnowledge( PSSKILL which, int y_value )
 {
-    if (which<0 || which>=PSSKILL_COUNT)
+    if (which<0 || which>=CacheManager::GetSingleton().GetSkillAmount())
         return;
     if (y_value < 0)
         y_value = 0;
@@ -3828,7 +3828,7 @@ void SkillSet::SetSkillKnowledge( PSSKILL which, int y_value )
 
 void SkillSet::SetSkillPractice(PSSKILL which,int z_value)
 {
-    if (which<0 || which>=PSSKILL_COUNT)
+    if (which<0 || which>=CacheManager::GetSingleton().GetSkillAmount())
         return;
     if (z_value < 0)
         z_value = 0;
@@ -3840,7 +3840,7 @@ void SkillSet::SetSkillPractice(PSSKILL which,int z_value)
 
 bool SkillSet::AddToSkillPractice(PSSKILL skill, unsigned int val, unsigned int& added )
 {
-    if (skill<0 || skill>=PSSKILL_COUNT)
+    if (skill<0 || skill>=CacheManager::GetSingleton().GetSkillAmount())
         return 0;
 
     bool rankup = false;
@@ -3852,7 +3852,7 @@ bool SkillSet::AddToSkillPractice(PSSKILL skill, unsigned int val, unsigned int&
 unsigned int SkillSet::GetSkillPractice(PSSKILL skill)
 {
 
-    if (skill<0 || skill>=PSSKILL_COUNT)
+    if (skill<0 || skill>=CacheManager::GetSingleton().GetSkillAmount())
         return 0;
     return skills[skill].z;
 }
@@ -3861,20 +3861,20 @@ unsigned int SkillSet::GetSkillPractice(PSSKILL skill)
 unsigned int SkillSet::GetSkillKnowledge(PSSKILL skill)
 {
 
-    if (skill<0 || skill>=PSSKILL_COUNT)
+    if (skill<0 || skill>=CacheManager::GetSingleton().GetSkillAmount())
         return 0;
     return skills[skill].y;
 }
 
 SkillRank & SkillSet::GetSkillRank(PSSKILL skill)
 {
-    CS_ASSERT(skill >= 0 && skill < PSSKILL_COUNT);
+    CS_ASSERT(skill >= 0 && skill < CacheManager::GetSingleton().GetSkillAmount());
     return skills[skill].rank;
 }
 
 Skill& SkillSet::Get(PSSKILL skill)
 {
-    CS_ASSERT(skill >= 0 && skill < PSSKILL_COUNT);
+    CS_ASSERT(skill >= 0 && skill < CacheManager::GetSingleton().GetSkillAmount());
     return skills[skill];
 }
 
