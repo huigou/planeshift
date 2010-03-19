@@ -467,7 +467,7 @@ void UserManager::SendCharacterDescription(Client * client, gemActor *actor, boo
         SkillSet & sks = charData->Skills();
         StatSet & sts = charData->Stats();
 
-        for (int skill = 0; skill < PSSKILL_COUNT; skill++)
+        for (int skill = 0; skill < CacheManager::GetSingloton().GetSkillAmount(); skill++)
         {
             psSkillInfo *skinfo;
             skinfo = CacheManager::GetSingleton().GetSkillByID((PSSKILL)skill);
@@ -533,7 +533,7 @@ void UserManager::SendCharacterDescription(Client * client, gemActor *actor, boo
             int theirBestMagical = 0;
             int myBestMagical = 0;
 
-            for(int i=0; i<PSSKILL_COUNT; ++i)
+            for(int i=0; i < CacheManager::GetSingleton().GetSkillAmount(); ++i)
             {
                 int* theirBest = NULL;
                 int* myBest = NULL;
