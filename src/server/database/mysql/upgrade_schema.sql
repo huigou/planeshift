@@ -1416,6 +1416,12 @@ UPDATE `server_options` SET `option_value`='1240' WHERE `option_name`='db_versio
 ALTER TABLE `tribes` ADD COLUMN `wealth_resource_growth` INTEGER  DEFAULT 0 COMMENT 'Automatic growth rate of wealth of a tribe.' AFTER `wealth_resource_area`;
 UPDATE `server_options` SET `option_value`='1241' WHERE `option_name`='db_version';
 
+#1242 - Stefano Angeleri moved way flags to db.
+ALTER TABLE `ways` MODIFY COLUMN `name` VARCHAR(20)  NOT NULL COMMENT 'The name of the way',
+ ADD COLUMN `skill` INTEGER  NOT NULL COMMENT 'The skill related to this way' AFTER `name`,
+ ADD COLUMN `related_stat` INTEGER  NOT NULL COMMENT 'The stat which has influence on this way' AFTER `skill`;
+
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to
