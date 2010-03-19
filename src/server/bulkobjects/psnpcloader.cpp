@@ -1432,7 +1432,7 @@ void psNPCLoader::WriteSkills()
     csRef<iDocumentNode> skillsNode = npcRoot->CreateNodeBefore(CS_NODE_ELEMENT);
 
     skillsNode->SetValue("skills");
-    for (int i=0;i<PSSKILL_COUNT;i++)
+    for (int i=0;i<CacheManager::GetSingleton().GetSkillAmount();i++)
     {
         int rank = npc->Skills().GetSkillRank((PSSKILL)i).Current();
         if (rank)
