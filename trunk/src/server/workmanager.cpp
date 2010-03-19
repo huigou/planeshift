@@ -3864,7 +3864,7 @@ void WorkManager::StartLockpick(Client* client,psItem* item)
         return;
     }
 
-    client->GetCharacterData()->SetStaminaRegenerationWork(PSSKILL_LOCKPICKING);
+    client->GetCharacterData()->SetStaminaRegenerationWork(item->GetLockpickSkill());
 
     psserver->SendSystemInfo(client->GetClientNum(),"You started lockpicking %s",item->GetName());
     client->GetActor()->SetMode(PSCHARACTER_MODE_WORK);
@@ -3907,7 +3907,7 @@ void WorkManager::LockpickComplete(psWorkGameEvent* workEvent)
     {
         // Check if the user has the right skills
         int rank = 0;
-        if (skill >= 0 && skill < PSSKILL_COUNT)
+        if (skill >= 0 && skill < CacheManager::GetSingleton().GetSkillAmount())
             rank = character->Skills().GetSkillRank(skill).Current();
 
         if (rank >= (int) workEvent->object->GetLockStrength())
