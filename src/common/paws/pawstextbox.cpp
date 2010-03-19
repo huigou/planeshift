@@ -1364,6 +1364,8 @@ bool pawsMultiLineTextBox::PostSetup()
     scrollBar->Show();
     scrollBar->SetMaxValue(lines.GetSize() - canDrawLines );
     scrollBar->SetCurrentValue(0);
+
+    return true;
 }
 
 void pawsMultiLineTextBox::Resize()
