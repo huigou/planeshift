@@ -6691,7 +6691,7 @@ void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
             return;
         }
 
-        for (int i=0; i<PSSKILL_COUNT; i++)
+        for (int i=0; i<CacheManager::GetSingloton().GetSkillAmount(); i++)
         {
             psSkillInfo * skill = CacheManager::GetSingleton().GetSkillByID(i);
             if (skill == NULL) continue;
@@ -6737,7 +6737,7 @@ void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
     }
     else if (data.skill == "copy")
     {
-        for (int i=0; i<PSSKILL_COUNT; i++)
+        for (int i=0; i<CacheManager::GetSingloton().GetSkillAmount(); i++)
         {
             psSkillInfo * skill = CacheManager::GetSingleton().GetSkillByID(i);
             if (skill == NULL) continue;
