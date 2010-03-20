@@ -684,48 +684,15 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
         psSectorInfo *sectorinfo;
         csString sector;
         InstanceID instance;
-        if ( actor->IsAlive() )
-        {
-            iSector* sec;
-            // We want to save the last reported location
-            actor->GetLastLocation(pos, yrot, sec, instance);
-            sector = sec->QueryObject()->GetName();
-
-            sectorinfo = CacheManager::GetSingleton().GetSectorInfoByName(sector);
-        }
-        else
-        {
-            // Todo: Get these from database.
-            iSector* sec;
-            actor->GetPosition(pos,yrot,sec);
-            if (sec && !strcmp ("NPCroom", sec->QueryObject()->GetName()) )
-            {
-                pos.x = -20.0f;
-                pos.y = 1.0f;
-                pos.z =  -180.0f;
-                yrot = 0.0f;
-                sector = "NPCroom";
-            }
-            else
-            {
-                pos.x = -23.5f;
-                pos.y = -116.0f;
-                pos.z =  23.7f;
-                yrot = 0.0f;
-                sector = "DR01";
-            }
-
-            // Update actor's position for cached objects
-            sec = EntityManager::GetSingleton().GetEngine()->FindSector(sector);
-            if (sec)
-            {
-                actor->SetPosition(pos, yrot, sec);
-            }
-
-            sectorinfo =  CacheManager::GetSingleton().GetSectorInfoByName(sector);
+        if (!actor->IsAlive()) //resurrect the player where it should be before saving him.
+            actor->Resurrect();
             
-            instance = actor->GetInstance();
-        }
+        iSector* sec;
+        // We want to save the last reported location
+        actor->GetLastLocation(pos, yrot, sec, instance);
+        sector = sec->QueryObject()->GetName();
+
+        sectorinfo = CacheManager::GetSingleton().GetSectorInfoByName(sector);
 
         if(!sectorinfo)
         {
