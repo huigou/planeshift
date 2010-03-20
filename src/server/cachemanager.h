@@ -128,6 +128,49 @@ struct psCharacterLimitation
 };
 
 
+/** This class rappresents an option tree which comes from the server_options table.
+ *  You can iterate the tree starting from the root or get a leaf and start search
+ *  from there: useful if a specific class/manager wants to keep only the reference
+ *  to the options it needs in place of iterating the entire tree each time. All the
+ *  entries in the tree are the same, so you can assign and get a value to/from any.
+ *  Right now : is used as path delimiter.
+ */
+class optionEntry
+{
+    private:
+    csString value; ///< The value of this option entry.
+    csHash<optionEntry,csString> subOptions; ///< array of sub option entries to this.
+    public:
+    /** Sets the value of this specific option to a newvalue.
+     *  @note for now there is no support for db saving so this is only temporary.
+     *  @param newValue The new string to assign to this option
+     */
+    void setValue(const csString newValue) { value = newValue; }
+    /** Get the value of this specific option.
+     *  @return A csString containing the option value.
+     */
+    csString getValue() { return value; }
+    /** Sets an option in the option tree.
+     *  @note for now there is no support for db saving so this is only temporary.
+     *  @note If the value was never set the return will be an empty csString 
+     *        (internal string not initialized see crystal space documentation)
+     *  @param path A path relative to this optionEntry. It's the full path only when
+     *              using the "root" optionEntry.
+     *  @param value The value to set to the option we are adding to the tree.
+     */
+    bool setOption(const csString path, const csString value);
+    /** Gets an option entry in the tree. It doesn't have to be the actual option we want
+     *  a value from but also a folder containing the set of options we are interested for.
+     *  This is useful to allow managers to keep their reference to a specific part of the
+     *  tree and so avoid going through all the branches to reach what they are interested
+     *  each time.
+     *  @param path A path to the optionEntry we are interested in.
+     *  @return A pointer to the optionEntry we are interested in. NULL if the optionEntry
+     *          was not found.
+     */
+    optionEntry *getOption(const csString path);
+};
+
 /** This class manages the caching of data that is unchanging during server operation.
 * Data stored here is loaded from the database at server startup and retrieved by other code from this cache.
 * This allows the database to be used to store configuration data, but we don't have to query the database
@@ -423,6 +466,13 @@ public:
     csArray<csString> stanceID;
 
     void AddItemStatsToHashTable(psItemStats* newitem);
+    
+    /** Wrapper to the root optionEntry stored in cachemanager
+     *  @param A path to the requested option starting from the root optionEntry
+     *  @return An optionEntry in the requested position. NULL if the path was not found.
+     *  @see optionEntry
+     */
+    optionEntry* getOption(const csString path) { return rootOptionEntry.getOption(path); }
 
 protected:
     uint32_t effectID;
@@ -431,6 +481,10 @@ protected:
     bool PreloadSectors();
     bool PreloadRaceInfo();
     bool PreloadSkills();
+    /** Preloads the server_options and stores them in an easily accessible structure.
+     *  @return FALSE if the load failed
+     */
+    bool PreloadOptions();
     bool PreloadLimitations();
     bool PreloadTraits();
     bool PreloadItemCategories();
@@ -545,6 +599,8 @@ protected:
     csPDelArray<psMovement> movements;
     csPDelArray<psCharacterLimitation> limits;  ///< All the limitations based on scores for characters.
     psCommandManager* commandManager;
+    optionEntry rootOptionEntry;
+    
 };
 
 
