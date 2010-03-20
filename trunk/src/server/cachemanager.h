@@ -483,12 +483,19 @@ public:
 
     void AddItemStatsToHashTable(psItemStats* newitem);
     
-    /** Wrapper to the root optionEntry stored in cachemanager
+    /** Wrapper for the getOption method of the root optionEntry stored in cachemanager.
      *  @param A path to the requested option starting from the root optionEntry
      *  @return An optionEntry in the requested position. NULL if the path was not found.
      *  @see optionEntry
      */
     optionEntry* getOption(const csString path) { return rootOptionEntry.getOption(path); }
+    
+    /** Wrapper for the getOptionSafe method of the root optionEntry stored in cachemanager.
+     *  @param A path to the requested option starting from the root optionEntry
+     *  @return An optionEntry in the requested position. NULL if the path was invalid.
+     *  @see optionEntry
+     */
+    optionEntry* getOptionSafe(const csString path, const csString value) { return rootOptionEntry.getOptionSafe(path,value); }
 
 protected:
     uint32_t effectID;
