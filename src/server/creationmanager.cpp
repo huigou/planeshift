@@ -797,6 +797,8 @@ void CharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
     float x,y,z,yrot,range;
     const char *sectorname;
     InstanceID newinstance = DEFAULT_INSTANCE;
+    
+    //get the option entries for tutorial from the server options. Note it's tutorial:variousdata
     optionEntry* tutorialEntry = CacheManager::GetSingleton().getOptionSafe("tutorial","");   
     sectorname = tutorialEntry->getOptionSafe("sectorname", "tutorial")->getValue();
 

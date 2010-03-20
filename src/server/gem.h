@@ -960,7 +960,7 @@ public:
 
     bool SetDRData(psDRMessage& drmsg);
     void MulticastDRUpdate();
-    void ForcePositionUpdate();
+    virtual void ForcePositionUpdate();
 
     using gemObject::RegisterCallback;
     using gemObject::UnregisterCallback;
@@ -1211,6 +1211,7 @@ public:
 	virtual bool HasKillStealProtection() { return !GetCharacterData()->IsPet(); }
 
     virtual void SendGroupStats();
+    virtual void ForcePositionUpdate();
 };
 
 //-----------------------------------------------------------------------------

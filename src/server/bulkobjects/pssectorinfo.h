@@ -59,12 +59,44 @@ public:
 
     bool GetIsColliding() { return is_colliding; }
     bool GetIsNonTransient() { return is_non_transient; }
+    /** Checks if this is set as a teleporting sector.
+     *  A teleporting sector is a sector which teleports the player
+     *  to defined sector (in teleportingSector/Cords/Rot) or spawn if not
+     *  defined.
+     *  @return TRUE if this is a teleporting sector.
+     */
     bool GetIsTeleporting() { return is_teleporting; }
+    /** Checks if a teleporting sector will trigger the death penalty when used.
+     *  @note this can be TRUE even if the previous isn't but it won't do anything.
+     *  @return TRUE if this is a sector with death penalty.
+     */
     bool GetHasPenalty() { return has_penalty; }
     
+    /** Gets the sector name we will teleport to when entering this sector.
+     *  @return A csString containing the sector name.
+     */
     csString GetTeleportingSector() { return teleportingSector; }
+    /** Gets the sector cordinates we will teleport to when entering this sector.
+     *  @return A csVector3 containing the sector cordinates.
+     */
     csVector3 GetTeleportingCord() { return teleportingCords; }
+    /** Gets the rotation we will teleport to when entering this sector.
+     *  @return A float containing the rotation.
+     */
     float GetTeleportingRot() { return teleportingRot; }
+
+    /** Gets the sector name we will teleport to when dieing in this sector.
+     *  @return csString A csString containing the sector name.
+     */
+    csString GetDeathSector() { return deathSector; }
+    /** Gets the sector cordinates we will teleport to when dieing in this sector.
+     *  @return A csVector3 containing the sector cordinates.
+     */
+    csVector3 GetDeathCord() { return deathCords; }
+    /** Gets the rotation we will teleport to when dieing in this sector.
+     *  @return A float containing the rotation.
+     */
+    float GetDeathRot() { return deathRot; }
     
     unsigned int uid;
     csString  name;
