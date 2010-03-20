@@ -27,7 +27,7 @@
 #include "updaterconfig.h"
 #include "updaterengine.h"
 
-const int progressWidth = 40;
+const int progressWidth = 30;
 
 struct progressData
 {
@@ -137,7 +137,7 @@ int ProgressCallback(void *clientp, double finalSize, double dlnow, double ultot
 
     double dlnormalized = dlnow;
     const char* dlUnits = normalize_bytes(&dlnormalized);
-    progressLine.AppendFmt("]    %4.1f%s (%3d%%)   %4.1f%s/s eta %s    ", dlnormalized, dlUnits, (int) (progress * 100.0), speed, speedUnits, etaStr.GetData());
+    progressLine.AppendFmt("]  %4.1f%s (%3d%%)  %4.1f%s/s eta %s    ", dlnormalized, dlUnits, (int) (progress * 100.0), speed, speedUnits, etaStr.GetData());
     data->lastSize = dlnow;
     UpdaterEngine::GetSingletonPtr()->PrintOutput(progressLine);
 
