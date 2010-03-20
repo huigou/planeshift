@@ -150,6 +150,14 @@ class optionEntry
      *  @return A csString containing the option value.
      */
     csString getValue() { return value; }
+    /** Get the value of this specific option in double format.
+     *  @return A double containing the option value converted to double.
+     */
+    double getValueAsDouble() { return atof(value); }
+    /** Get the value of this specific option in int format.
+     *  @return An int containing the option value converted to int.
+     */
+    int getValueAsInt() { return atoi(value); }
     /** Sets an option in the option tree.
      *  @note for now there is no support for db saving so this is only temporary.
      *  @note If the value was never set the return will be an empty csString 
@@ -169,6 +177,14 @@ class optionEntry
      *          was not found.
      */
     optionEntry *getOption(const csString path);
+    /** Does the same of getOption, but, in case the entry is missing, an empty option will
+     *  be added to the tree.
+     *  @param path A path to the optionEntry we are interested in.
+     *  @param fallback A value to associate to the option in case it was not found.
+     *  @return A pointer to the optionEntry we are interested in. It still returns NULL if the
+     *          data is invalid, but that's a programming error and not a runtime error.
+     */
+    optionEntry *getOptionSafe(const csString path, const csString fallback);
 };
 
 /** This class manages the caching of data that is unchanging during server operation.
