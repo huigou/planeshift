@@ -2282,13 +2282,16 @@ void gemActor::Resurrect()
     // teleport back to npcroom or tutorial on resurrect. Otherwise we teleport
     // to DR.
     iSector *sector = pcmove->GetSector();
-    if (sector && !strncmp ("NPCroom", sector->QueryObject()->GetName(), 7))
+    
+    //get the sector info to check if this sector has a special death sector defined
+    psSectorInfo* sectorInfo = NULL;
+    if(sector)
+        sectorInfo = CacheManager::GetSingleton().GetSectorInfoByName(sector->QueryObject()->GetName());
+    
+    //if the sector was found and there is text in the sector try teleporting there.
+    if (sectorInfo && sectorInfo->GetDeathSector().Length())
     {
-        Teleport("NPCroom", csVector3(-20.0f, 1.0f, -180.0f), 0.0f, DEFAULT_INSTANCE);
-    }
-    else if (sector && !strncmp ("tutorial", sector->QueryObject()->GetName(), 8))
-    {
-        Teleport("tutorial", csVector3(-232.0f, 21.31f, 31.5f), 4.0f, DEFAULT_INSTANCE);
+        Teleport(sectorInfo->GetDeathSector(), sectorInfo->GetDeathCord(), sectorInfo->GetDeathRot(), DEFAULT_INSTANCE);
     }
     else
     {
@@ -3340,7 +3343,6 @@ bool gemActor::SetDRData(psDRMessage& drmsg)
     {
         UpdateValidLocation(drmsg.pos, drmsg.yrot, drmsg.sector, worldInstance);
         psSectorInfo* sectorInfo = CacheManager::GetSingleton().GetSectorInfoByName( drmsg.sector->QueryObject()->GetName() );
-        printf("%p\n", sectorInfo);
         if (sectorInfo != NULL)
         {
             psChar->SetLocationInWorld(worldInstance,sectorInfo, drmsg.pos.x, drmsg.pos.y, drmsg.pos.z, drmsg.yrot );

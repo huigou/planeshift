@@ -280,22 +280,27 @@ void psServerDR::HandleDeadReckoning(MsgEntry* me,Client *client)
     // Swap lines for easy   Penalty testing. Old code use db to do this.
     //if (strcmp(drmsg.sector->QueryObject()->GetName(), "NPCroom1") == 0)
     psSectorInfo* sectorInfo = NULL;
+    //get the sector info of this sector to check it's caracteristics
     if(drmsg.sector != NULL)
         sectorInfo = CacheManager::GetSingleton().GetSectorInfoByName(drmsg.sector->QueryObject()->GetName());
 
+    //is this a sector which teleports on entrance? (used for portals)
     if (sectorInfo && sectorInfo->GetIsTeleporting())
     {
         actor->pcmove->SetOnGround(false);
+        
+        //get the sector defined for teleport for later usage
         csString newSectorName = sectorInfo->GetTeleportingSector();
         
+        //if the sector for teleport has data teleport to it
         if(newSectorName.Length())
             actor->Teleport(newSectorName, sectorInfo->GetTeleportingCord(), sectorInfo->GetTeleportingRot(), DEFAULT_INSTANCE);
-        else
+        else //else just go to default (spawn)
             actor->MoveToSpawnPos();
 
         actor->StopMoving(true);
         
-        
+        //check if this sector triggered teleport has to warrant a death penalty
         if(sectorInfo->GetHasPenalty())
         {
             // should probably load this on startup.
