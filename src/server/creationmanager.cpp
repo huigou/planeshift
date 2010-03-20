@@ -816,7 +816,7 @@ void CharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
         // Try tutorial level first.
         x = tutorialEntry->getOptionSafe("sectorx", "-225.37")->getValueAsDouble();
         y = tutorialEntry->getOptionSafe("sectory", "-21.32")->getValueAsDouble();
-        z = tutorialEntry->getOptionSafe("sectory", "26.79")->getValueAsDouble();
+        z = tutorialEntry->getOptionSafe("sectorz", "26.79")->getValueAsDouble();
         yrot = tutorialEntry->getOptionSafe("sectoryrot", "-2.04")->getValueAsDouble();
     }
     
