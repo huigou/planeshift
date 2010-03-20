@@ -1466,7 +1466,7 @@ void UserManager::ReportPosition(psUserCmdMessage& msg,Client *client)
         csString name,range;
         if (self){
             name = "Your";
-            range.Clear();
+            range = "";
         }
         else
         {
