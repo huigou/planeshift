@@ -435,6 +435,7 @@ bool CacheManager::PreloadOptions()
     for (currentrow = 0; currentrow < result.Count(); currentrow++)
         rootOptionEntry.setOption(result[currentrow]["option_name"], result[currentrow]["option_value"]);
 
+
     Notify2( LOG_STARTUP, "%lu server options Loaded", result.Count() );
     return true;
 }
@@ -487,6 +488,19 @@ optionEntry *optionEntry::getOption(const csString path)
         return optEntry->getOption(path.Slice(csString(splittedOptName.Get(0)).Length()+1));
     
     return optEntry;
+}
+
+optionEntry *optionEntry::getOptionSafe(const csString path, csString fallback)
+{
+    //try to get the option normally
+    optionEntry *Entry = getOption(path)
+    if(Entry) //we found it all done
+        return Entry
+
+    //try to make a new entry and assign the fallback
+    setOption(path, fallback);
+    //return the option we have created.
+    return getOption(path);
 }
 
 bool CacheManager::PreloadSkills()
