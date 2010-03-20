@@ -481,7 +481,7 @@ optionEntry *optionEntry::getOption(const csString path)
     //get the actual option entry
     optionEntry *optEntry = subOptions.GetElementPointer(splittedOptName.Get(0));
     if(!optEntry)
-        return false;        
+        return NULL;        
 
     //is this the last entry?
     if(splittedOptName.GetSize() > 1)//if not then call the "subfolder"

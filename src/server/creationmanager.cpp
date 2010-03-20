@@ -797,7 +797,7 @@ void CharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
     float x,y,z,yrot,range;
     const char *sectorname;
     InstanceID newinstance = DEFAULT_INSTANCE;
-    optionEntry* tutorialEntry = CacheManager::GetSingleton().getOption("tutorial");   
+    optionEntry* tutorialEntry = CacheManager::GetSingleton().getOptionSafe("tutorial","");   
     sectorname = tutorialEntry->getOptionSafe("sectorname", "tutorial")->getValue();
 
     psSectorInfo *sectorinfo = CacheManager::GetSingleton().GetSectorInfoByName(sectorname);
