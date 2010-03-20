@@ -1420,6 +1420,17 @@ UPDATE `server_options` SET `option_value`='1241' WHERE `option_name`='db_versio
 ALTER TABLE `ways` MODIFY COLUMN `name` VARCHAR(20)  NOT NULL COMMENT 'The name of the way',
  ADD COLUMN `skill` INTEGER  NOT NULL COMMENT 'The skill related to this way' AFTER `name`,
  ADD COLUMN `related_stat` INTEGER  NOT NULL COMMENT 'The stat which has influence on this way' AFTER `skill`;
+UPDATE `server_options` SET `option_value`='1242' WHERE `option_name`='db_version';
+
+#1243 - Stefano Angeleri added various flags to sectors
+UPDATE `server_options` SET `option_value`='1243' WHERE `option_name`='db_version';
+ALTER TABLE `sectors` ADD COLUMN `TeleportingSector` VARCHAR(30)  NOT NULL COMMENT 'Sector where the player will be teleported automatically when entering this sector' AFTER `say_range`,
+ ADD COLUMN `TeleportingCords` VARCHAR(30)  NOT NULL COMMENT 'Cordinates where the player will be teleported automatically when entering this sector' AFTER `TeleportingSector`,
+ ADD COLUMN `DeathSector` VARCHAR(30)  NOT NULL COMMENT 'Sector where the player will be teleported automatically when dieing in this sector' AFTER `TeleportingCords`,
+ ADD COLUMN `DeathCords` VARCHAR(30)  NOT NULL COMMENT 'Cordinates where the player will be teleported automatically when dieing in this sector' AFTER `DeathSector`,
+ ADD COLUMN `TeleportingSectorEnable` CHAR(1)  NOT NULL DEFAULT 'N' COMMENT 'When not N the sector will teleport when accessing it according to teleportingsector and teleportingcords' AFTER `DeathCords`,
+ ADD COLUMN `TeleportingPenaltyEnable` CHAR(1)  NOT NULL DEFAULT 'N' COMMENT 'When not N when teleported when entering this sector it will apply the death penalty' AFTER `TeleportingSectorEnable`;
+
 
 
 # Insert your upgrade before this line. Remember when you set a new db_version

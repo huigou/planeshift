@@ -637,6 +637,35 @@ bool CacheManager::PreloadSectors()
 
         newsector->is_colliding = (result[currentrow].GetInt("collide_objects") != 0);
         newsector->is_non_transient = (result[currentrow].GetInt("non_transient_objects") != 0);
+        
+        newsector->is_teleporting = (*result[currentrow]["TeleportingSectorEnable"] != 'N');
+        newsector->has_penalty = (*result[currentrow]["TeleportingPenaltyEnable"] != 'N');
+        
+        newsector->teleportingSector = result[currentrow]["TeleportingSector"];
+        newsector->deathSector = result[currentrow]["DeathSector"];
+        
+        csStringArray teleportingcordarray;
+        teleportingcordarray.SplitString(result[currentrow]["TeleportingCords"],",");
+        if(teleportingcordarray.GetSize() > 3)
+        {
+            newsector->teleportingCords = csVector3(atof(teleportingcordarray.Get(0)),
+                                                    atof(teleportingcordarray.Get(1)),
+                                                    atof(teleportingcordarray.Get(2)));
+            newsector->teleportingRot = atof(teleportingcordarray.Get(3));
+        }
+                                                    
+        csStringArray deathcordarray;
+        deathcordarray.SplitString(result[currentrow]["DeathCords"],",");
+        if(deathcordarray.GetSize() > 3)
+        {
+            newsector->deathCords = csVector3(atof(deathcordarray.Get(0)),
+                                                    atof(deathcordarray.Get(1)),
+                                                    atof(deathcordarray.Get(2)));
+            newsector->deathRot = atof(deathcordarray.Get(3));
+        }
+        
+        
+        
         newsector->say_range = result[currentrow].GetFloat("say_range");
 
         newsector->god_name = result[currentrow]["god_name"];

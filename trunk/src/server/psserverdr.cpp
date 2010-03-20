@@ -39,6 +39,7 @@
 #include "util/psconst.h"
 #include "util/mathscript.h"
 #include "util/eventmanager.h"
+#include "bulkobjects/pssectorinfo.h"
 
 
 //=============================================================================
@@ -276,24 +277,38 @@ void psServerDR::HandleDeadReckoning(MsgEntry* me,Client *client)
 
     paladin->CheckCollDetection(client, actor);
 
-    // Swap lines for easy   Penalty testing.            
+    // Swap lines for easy   Penalty testing. Old code use db to do this.
     //if (strcmp(drmsg.sector->QueryObject()->GetName(), "NPCroom1") == 0)
-    if (strcmp(drmsg.sector->QueryObject()->GetName(), "DRexit") == 0)
+    psSectorInfo* sectorInfo = NULL;
+    if(drmsg.sector != NULL)
+        sectorInfo = CacheManager::GetSingleton().GetSectorInfoByName(drmsg.sector->QueryObject()->GetName());
+
+    if (sectorInfo && sectorInfo->GetIsTeleporting())
     {
         actor->pcmove->SetOnGround(false);
-        actor->MoveToSpawnPos();
+        csString newSectorName = sectorInfo->GetTeleportingSector();
+        
+        if(newSectorName.Length())
+            actor->Teleport(newSectorName, sectorInfo->GetTeleportingCord(), sectorInfo->GetTeleportingRot(), DEFAULT_INSTANCE);
+        else
+            actor->MoveToSpawnPos();
+
         actor->StopMoving(true);
         
-        // should probably load this on startup.
-        static ProgressionScript *death_penalty = NULL;
-        if (!death_penalty)
-            death_penalty = psserver->GetProgressionManager()->FindScript("death_penalty");
-
-        if (death_penalty)
+        
+        if(sectorInfo->GetHasPenalty())
         {
-            MathEnvironment env;
-            env.Define("Actor", actor);
-            death_penalty->Run(&env);
+            // should probably load this on startup.
+            static ProgressionScript *death_penalty = NULL;
+            if (!death_penalty)
+                death_penalty = psserver->GetProgressionManager()->FindScript("death_penalty");
+
+            if (death_penalty)
+            {
+                MathEnvironment env;
+                env.Define("Actor", actor);
+                death_penalty->Run(&env);
+            }
         }
     }
 }
