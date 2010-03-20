@@ -22,6 +22,7 @@
 // Crystal Space Includes
 //=============================================================================
 #include <zlib.h>
+#include <csutil/stringarray.h>
 
 //=============================================================================
 // Project Space Includes
@@ -199,6 +200,8 @@ bool CacheManager::PreloadAll()
     if (!PreloadMovement())
         return false;
     if (!PreloadStances())
+        return false;
+    if (!PreloadOptions())
         return false;
 
     PreloadCommandGroups();
@@ -415,6 +418,75 @@ void CacheManager::RemoveItemStats (psItemStats *&itemStats)
         delete itemStats;
         itemStats = NULL;
     }
+}
+
+bool CacheManager::PreloadOptions()
+{
+    unsigned int currentrow;
+    Result result(db->Select("SELECT * from server_options") );
+
+    if (!result.IsValid())
+    {
+        Error1("Could not cache database table. Check >server_options<");
+        return false;
+    }
+    
+    //check all rows and add the options to the tree
+    for (currentrow = 0; currentrow < result.Count(); currentrow++)
+        rootOptionEntry.setOption(result[currentrow]["option_name"], result[currentrow]["option_value"]);
+
+    Notify2( LOG_STARTUP, "%lu server options Loaded", result.Count() );
+    return true;
+}
+
+bool optionEntry::setOption(const csString path, const csString value)
+{
+    csStringArray splittedOptName;
+    //we split the options at : as we identify a path with it.
+    //changing this line changes the path delimiter of our options
+    splittedOptName.SplitString(path,":");
+    //is the category/option we have at hand already indexed?
+    if(!subOptions.Contains(splittedOptName.Get(0))) //if not add it
+    {
+        optionEntry entry;
+        subOptions.Put(splittedOptName.Get(0),entry);
+    }
+
+    //get what we have or we have created above for working on it
+    optionEntry *optEntry = subOptions.GetElementPointer(splittedOptName.Get(0));
+    if(!optEntry)
+        return false;
+    
+    //if this isn't the last entry in the path create another sub node
+    if(splittedOptName.GetSize() > 1)
+        return optEntry->setOption(path.Slice(csString(splittedOptName.Get(0)).Length()+1), value);
+    
+    //if this is the last entry in the path just assign the value directly and we are done
+    optEntry->setValue(value);
+    return true;
+}
+
+optionEntry *optionEntry::getOption(const csString path)
+{
+    //iterate the tree to find the option we want
+    csStringArray splittedOptName;
+    //we split the options at : as we identify a path with it.
+    //changing this line changes the path delimiter of our options
+    splittedOptName.SplitString(path,":");
+    //is the cateogory/option indexed?
+    if(!subOptions.Contains(splittedOptName.Get(0)))
+        return NULL;
+
+    //get the actual option entry
+    optionEntry *optEntry = subOptions.GetElementPointer(splittedOptName.Get(0));
+    if(!optEntry)
+        return false;        
+
+    //is this the last entry?
+    if(splittedOptName.GetSize() > 1)//if not then call the "subfolder"
+        return optEntry->getOption(path.Slice(csString(splittedOptName.Get(0)).Length()+1));
+    
+    return optEntry;
 }
 
 bool CacheManager::PreloadSkills()
