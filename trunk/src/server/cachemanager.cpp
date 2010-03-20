@@ -493,9 +493,9 @@ optionEntry *optionEntry::getOption(const csString path)
 optionEntry *optionEntry::getOptionSafe(const csString path, csString fallback)
 {
     //try to get the option normally
-    optionEntry *Entry = getOption(path)
+    optionEntry *Entry = getOption(path);
     if(Entry) //we found it all done
-        return Entry
+        return Entry;
 
     //try to make a new entry and assign the fallback
     setOption(path, fallback);
