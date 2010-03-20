@@ -25,6 +25,7 @@
 // Crystal Space Includes
 //=============================================================================
 #include <csutil/csstring.h>
+#include <csgeom/vector3.h>
 
 //=============================================================================
 // Project Includes
@@ -58,6 +59,12 @@ public:
 
     bool GetIsColliding() { return is_colliding; }
     bool GetIsNonTransient() { return is_non_transient; }
+    bool GetIsTeleporting() { return is_teleporting; }
+    bool GetHasPenalty() { return has_penalty; }
+    
+    csString GetTeleportingSector() { return teleportingSector; }
+    csVector3 GetTeleportingCord() { return teleportingCords; }
+    float GetTeleportingRot() { return teleportingRot; }
     
     unsigned int uid;
     csString  name;
@@ -74,6 +81,25 @@ public:
     bool is_snowing;
     bool is_colliding;
     bool is_non_transient;
+    
+    /// This sector will immediately teleport the player somewhere else when entered if true.
+    bool is_teleporting;
+    /// This sector will apply the death penalty if it's a teleporting sector
+    bool has_penalty;
+    /// The destination sector when this sector is a teleporting sector. Note if empty it will be spawn.
+    csString teleportingSector;
+    /// The destination cordinates when this sector is a teleporting sector
+    csVector3 teleportingCords;
+    /// The destination rotation when this sector is a teleporting sector
+    float teleportingRot;
+    ///The sector where to teleport on death from this sector. Note if empty it will be the default one.
+    csString deathSector;
+    ///the destination cordinates where to teleport on death from this sector
+    csVector3 deathCords;
+    /// The destination rotation where to teleport on death from this sector
+    float deathRot;
+    
+    
 
     // Fog
     unsigned int fog_density, fog_density_old;

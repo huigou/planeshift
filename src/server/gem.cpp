@@ -2284,11 +2284,11 @@ void gemActor::Resurrect()
     iSector *sector = pcmove->GetSector();
     if (sector && !strncmp ("NPCroom", sector->QueryObject()->GetName(), 7))
     {
-        Teleport("NPCroom", csVector3(-20.0f, 1.0f, -180.0f), 0.0f, worldInstance);
+        Teleport("NPCroom", csVector3(-20.0f, 1.0f, -180.0f), 0.0f, DEFAULT_INSTANCE);
     }
     else if (sector && !strncmp ("tutorial", sector->QueryObject()->GetName(), 8))
     {
-        Teleport("tutorial", csVector3(-232.0f, 21.31f, 31.5f), 4.0f, worldInstance);
+        Teleport("tutorial", csVector3(-232.0f, 21.31f, 31.5f), 4.0f, DEFAULT_INSTANCE);
     }
     else
     {
@@ -3340,6 +3340,7 @@ bool gemActor::SetDRData(psDRMessage& drmsg)
     {
         UpdateValidLocation(drmsg.pos, drmsg.yrot, drmsg.sector, worldInstance);
         psSectorInfo* sectorInfo = CacheManager::GetSingleton().GetSectorInfoByName( drmsg.sector->QueryObject()->GetName() );
+        printf("%p\n", sectorInfo);
         if (sectorInfo != NULL)
         {
             psChar->SetLocationInWorld(worldInstance,sectorInfo, drmsg.pos.x, drmsg.pos.y, drmsg.pos.z, drmsg.yrot );

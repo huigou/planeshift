@@ -45,7 +45,15 @@ psSectorInfo::psSectorInfo()
     densitySaved = false;
     fogFade = 0;
     say_range = 0;
-    god_name.Clear();
+    god_name = "";
+    is_teleporting = false;
+    has_penalty = false;
+    teleportingSector = "";
+    deathSector = "";
+    teleportingCords = csVector3(0,0,0);
+    deathCords = csVector3(0,0,0);
+    deathRot = 0;
+    teleportingRot = 0;
 }
 
 psSectorInfo::~psSectorInfo()
