@@ -797,7 +797,8 @@ void CharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
     float x,y,z,yrot,range;
     const char *sectorname;
     InstanceID newinstance = DEFAULT_INSTANCE;
-    sectorname = "tutorial";
+    optionEntry* tutorialEntry = CacheManager::GetSingleton().getOption("tutorial");   
+    sectorname = tutorialEntry->getOptionSafe("sectorname", "tutorial")->getValue();
 
     psSectorInfo *sectorinfo = CacheManager::GetSingleton().GetSectorInfoByName(sectorname);
 
@@ -813,10 +814,10 @@ void CharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
     else
     {
         // Try tutorial level first.
-        x = -225.37f;
-        y = 21.32f;
-        z = 26.79f;
-        yrot = -2.04f;
+        x = tutorialEntry->getOptionSafe("sectorx", "-225.37")->getValueAsDouble();
+        y = tutorialEntry->getOptionSafe("sectory", "-21.32")->getValueAsDouble();
+        z = tutorialEntry->getOptionSafe("sectory", "26.79")->getValueAsDouble();
+        yrot = tutorialEntry->getOptionSafe("sectoryrot", "-2.04")->getValueAsDouble();
     }
     
     bool sectorFound = true;
