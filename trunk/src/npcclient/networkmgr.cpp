@@ -448,9 +448,10 @@ void NetworkManager::HandlePositionUpdates(MsgEntry *msg)
         csVector3 pos;
         iSector* sector;
         InstanceID instance;
+        bool forced;
 
-        EID id = updates.Get(pos, sector, instance, 0, npcclient->GetNetworkMgr()->GetMsgStrings(), engine);
-        npcclient->SetEntityPos(id, pos, sector, instance);
+        EID id = updates.Get(pos, sector, instance, forced, 0, npcclient->GetNetworkMgr()->GetMsgStrings(), engine);
+        npcclient->SetEntityPos(id, pos, sector, instance, forced);
     }
 }
 

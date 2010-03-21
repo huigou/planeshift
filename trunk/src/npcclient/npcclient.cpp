@@ -819,17 +819,17 @@ void psNPCClient::TriggerEvent(NPC *npc,Perception *pcpt,float max_range,
     }
 }
 
-void psNPCClient::SetEntityPos(EID eid, csVector3& pos, iSector* sector, InstanceID instance)
+void psNPCClient::SetEntityPos(EID eid, csVector3& pos, iSector* sector, InstanceID instance, bool force)
 {
     
     gemNPCObject *obj = FindEntityID(eid);
     if (obj)
     {
-        /*if (obj->GetNPC())
+        if (!force && obj->GetNPC())
         {
-            // Skipp updating NPC
+            // Skip updating NPC
             return;
-        }*/ //WTF?
+        }
 
         obj->SetPosition(pos,sector,&instance);
     }

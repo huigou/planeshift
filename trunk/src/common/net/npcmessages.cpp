@@ -754,7 +754,7 @@ void psAllEntityPosMessage::SetLength(int elems, int client)
     msg->Add((int16_t)elems);
 }
 
-void psAllEntityPosMessage::Add(EID id, csVector3& pos, iSector*& sector, InstanceID instance, csStringSet* msgstrings)
+void psAllEntityPosMessage::Add(EID id, csVector3& pos, iSector*& sector, InstanceID instance, csStringSet* msgstrings, bool forced)
 {
     msg->Add(id.Unbox());
     msg->Add(pos.x);
@@ -771,9 +771,10 @@ void psAllEntityPosMessage::Add(EID id, csVector3& pos, iSector*& sector, Instan
         msg->Add(sectorName);
     }
     msg->Add( (int32_t)instance );
+    msg->Add(forced);
 }
 
-EID psAllEntityPosMessage::Get(csVector3& pos, iSector*& sector, InstanceID& instance, csStringSet* msgstrings,
+EID psAllEntityPosMessage::Get(csVector3& pos, iSector*& sector, InstanceID& instance, bool &forced, csStringSet* msgstrings,
                                csStringHashReversible* msgstringshash, iEngine *engine)
 {
     EID eid(msg->GetUInt32());
@@ -804,6 +805,7 @@ EID psAllEntityPosMessage::Get(csVector3& pos, iSector*& sector, InstanceID& ins
         sector = NULL;
     }
     instance = msg->GetUInt32();
+    forced = msg->GetBool();
     return eid;
 }
 
@@ -817,8 +819,9 @@ csString psAllEntityPosMessage::ToString(AccessPointers * access_ptrs)
         csVector3 pos;
         iSector* sector;
         InstanceID instance;
+        bool forced;
         
-        EID eid = Get(pos, sector, instance, access_ptrs->msgstrings, 0, access_ptrs->engine);
+        EID eid = Get(pos, sector, instance, forced, access_ptrs->msgstrings, 0, access_ptrs->engine);
 
         msgtext.AppendFmt(" ID: %u Pos: %s Inst: %d", eid.Unbox(), toString(pos,sector).GetDataSafe(), instance);
     }
