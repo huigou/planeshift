@@ -825,11 +825,11 @@ void psNPCClient::SetEntityPos(EID eid, csVector3& pos, iSector* sector, Instanc
     gemNPCObject *obj = FindEntityID(eid);
     if (obj)
     {
-        if (obj->GetNPC())
+        /*if (obj->GetNPC())
         {
             // Skipp updating NPC
             return;
-        }
+        }*/ //WTF?
 
         obj->SetPosition(pos,sector,&instance);
     }
