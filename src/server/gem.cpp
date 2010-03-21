@@ -4513,3 +4513,18 @@ void gemNPC::SendGroupStats()
         }
     }
 }
+
+void gemNPC::ForcePositionUpdate()
+{
+    psAllEntityPosMessage msg;
+    //we send just one position update
+    msg.SetLength(1,0);
+    iSector *sector = GetSector();
+    csVector3 position = GetPosition();
+    //we add the data and flag this position update as forced
+    msg.Add(GetEID(), position, sector, GetInstance(),
+            CacheManager::GetSingleton().GetMsgStrings(),true);
+    SetLastSuperclientPos(GetPosition(),GetInstance());
+    //send this to all npcclients
+    msg.Multicast(psserver->GetNPCManager()->GetSuperClients(),-1,PROX_LIST_ANY_RANGE);
+}

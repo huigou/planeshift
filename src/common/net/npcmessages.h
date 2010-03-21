@@ -248,7 +248,7 @@ public:
 
 
 //helpers for message splitting
-#define ALLENTITYPOS_SIZE_PER_ENTITY (4 * sizeof(float) + sizeof(uint32_t) + 100*sizeof(char))
+#define ALLENTITYPOS_SIZE_PER_ENTITY (4 * sizeof(float) + sizeof(bool) + sizeof(uint32_t) + 100*sizeof(char))
 #define ALLENTITYPOS_MAX_AMOUNT  (MAX_MESSAGE_SIZE-2)/ALLENTITYPOS_SIZE_PER_ENTITY
 
 /**
@@ -282,10 +282,10 @@ public:
     void SetLength(int size,int client);
 
     /// Add a new entity's position to the data buffer
-    void Add(EID id, csVector3 & pos, iSector* & sector, InstanceID instance, csStringSet* msgstrings);
+    void Add(EID id, csVector3 & pos, iSector* & sector, InstanceID instance, csStringSet* msgstrings, bool forced = false);
 
     /// Get the next entity and position from the buffer
-    EID Get(csVector3 & pos, iSector* & sector, InstanceID & instance, csStringSet* msgstrings,
+    EID Get(csVector3 & pos, iSector* & sector, InstanceID & instance, bool &forced, csStringSet* msgstrings,
         csStringHashReversible* msgstringshash, iEngine* engine);
 };
 

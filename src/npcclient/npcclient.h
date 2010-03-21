@@ -276,8 +276,9 @@ public:
     /**
      * SetEntityPos finds the given ID entity, and updates
      * its position in mesh and linmove.
+     * @param force Applies the entity reposition also on npc. Useful with teleport slide and other operations.
      */
-    void SetEntityPos(EID id, csVector3& pos, iSector* sector, InstanceID instance);
+    void SetEntityPos(EID id, csVector3& pos, iSector* sector, InstanceID instance, bool force = false);
 
     /**
      * Find the NPC* attached to the entity with the specified character ID
