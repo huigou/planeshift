@@ -2297,12 +2297,22 @@ void gemActor::Resurrect()
     {
         float x,y,z,yrot;
         optionEntry* deathentry = CacheManager::GetSingleton().getOptionSafe("death","");
-        csString sectorName = deathentry->getOptionSafe("sectorname", "DR01")->getValue();
-        x = deathentry->getOptionSafe("sectorx", "-29.2")->getValueAsDouble();
-        y = deathentry->getOptionSafe("sectory", "-119.0")->getValueAsDouble();
-        z = deathentry->getOptionSafe("sectorz", "28.2")->getValueAsDouble();
-        yrot = deathentry->getOptionSafe("sectoryrot", "0.0")->getValueAsDouble();
-        Teleport(sectorName, csVector3(x, y, z), yrot, DEFAULT_INSTANCE);
+        if(pschar->GetTotalOnlineTime() >deathentry->getOptionSafe("avoidtime", "0")->getValueAsInt())
+        {
+            csString sectorName = deathentry->getOptionSafe("sectorname", "DR01")->getValue();
+            x = deathentry->getOptionSafe("sectorx", "-29.2")->getValueAsDouble();
+            y = deathentry->getOptionSafe("sectory", "-119.0")->getValueAsDouble();
+            z = deathentry->getOptionSafe("sectorz", "28.2")->getValueAsDouble();
+            yrot = deathentry->getOptionSafe("sectoryrot", "0.0")->getValueAsDouble();
+            Teleport(sectorName, csVector3(x, y, z), yrot, DEFAULT_INSTANCE);
+        }
+        else
+        {
+            csString message = pschar->GetTotalOnlineTime() >deathentry->getOptionSafe("avoidtext", "")->getValue();
+            MoveToSpawnPos();
+            if(message.Length())
+                psserver->SendSystemInfo(GetClientID(), message.GetData());
+        }
     }
 
     psChar->SetHitPoints(psChar->GetMaxHP().Base());
