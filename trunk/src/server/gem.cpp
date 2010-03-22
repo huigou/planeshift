@@ -2295,14 +2295,22 @@ void gemActor::Resurrect()
     }
     else
     {
-        // TODO: Get Death Realm location from db somewhere
-        Teleport("DR01", csVector3(-29.2f, -119.0f, 28.2f), 0.0f, DEFAULT_INSTANCE);
+        float x,y,z,yrot;
+        optionEntry* deathentry = CacheManager::GetSingleton().getOptionSafe("death","");
+        csString sectorName = deathentry->getOptionSafe("sectorname", "DR01")->getValue();
+        x = deathentry->getOptionSafe("sectorx", "-29.2")->getValueAsDouble();
+        y = deathentry->getOptionSafe("sectory", "-119.0")->getValueAsDouble();
+        z = deathentry->getOptionSafe("sectorz", "28.2")->getValueAsDouble();
+        yrot = deathentry->getOptionSafe("sectoryrot", "0.0")->getValueAsDouble();
+        Teleport(sectorName, csVector3(x, y, z), yrot, DEFAULT_INSTANCE);
     }
 
     psChar->SetHitPoints(psChar->GetMaxHP().Base());
 
+    //TODO: better if it's moved to the sector table
+    csString sectorName = CacheManager::GetSingleton().getOptionSafe("death:sectorname", "DR01")->getValue();
     //Do not reset mana to max while in DR, to prevent exploits using /die
-    if (sector && strncmp ("DR", sector->QueryObject()->GetName(), 2))
+    if (sector && strncmp (sectorName.GetData(), sector->QueryObject()->GetName(), 2))
         psChar->SetMana(psChar->GetMaxMana().Base());
 
     psChar->SetStamina(psChar->GetMaxPStamina().Base(), true);
