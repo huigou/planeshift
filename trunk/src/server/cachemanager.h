@@ -158,6 +158,12 @@ class optionEntry
      *  @return An int containing the option value converted to int.
      */
     int getValueAsInt() { return atoi(value); }
+    /** Get the value of this specific option in csVector3 format.
+     *  This function takes in account the format is x,y,z as text, returns a vector with 0,0,0
+     *  in case of error.
+     *  @return A csVector3 containing the option value converted to a csvector.
+     */
+    csVector3 getValueAsVector();
     /** Sets an option in the option tree.
      *  @note for now there is no support for db saving so this is only temporary.
      *  @note If the value was never set the return will be an empty csString 
