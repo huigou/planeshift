@@ -2297,7 +2297,7 @@ void gemActor::Resurrect()
     {
         float x,y,z,yrot;
         optionEntry* deathentry = CacheManager::GetSingleton().getOptionSafe("death","");
-        if(pschar->GetTotalOnlineTime() >deathentry->getOptionSafe("avoidtime", "0")->getValueAsInt())
+        if(psChar->GetTotalOnlineTime() >deathentry->getOptionSafe("avoidtime", "0")->getValueAsInt())
         {
             csString sectorName = deathentry->getOptionSafe("sectorname", "DR01")->getValue();
             x = deathentry->getOptionSafe("sectorx", "-29.2")->getValueAsDouble();
