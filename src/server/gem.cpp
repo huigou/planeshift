@@ -2297,7 +2297,7 @@ void gemActor::Resurrect()
     {
         float x,y,z,yrot;
         optionEntry* deathentry = CacheManager::GetSingleton().getOptionSafe("death","");
-        if(psChar->GetTotalOnlineTime() >deathentry->getOptionSafe("avoidtime", "0")->getValueAsInt())
+        if(psChar->GetTotalOnlineTime() > deathentry->getOptionSafe("avoidtime", "0")->getValueAsInt())
         {
             csString sectorName = deathentry->getOptionSafe("sectorname", "DR01")->getValue();
             x = deathentry->getOptionSafe("sectorx", "-29.2")->getValueAsDouble();
@@ -2308,7 +2308,7 @@ void gemActor::Resurrect()
         }
         else
         {
-            csString message = pschar->GetTotalOnlineTime() >deathentry->getOptionSafe("avoidtext", "")->getValue();
+            csString message = deathentry->getOptionSafe("avoidtext", "")->getValue();
             MoveToSpawnPos();
             if(message.Length())
                 psserver->SendSystemInfo(GetClientID(), message.GetData());
