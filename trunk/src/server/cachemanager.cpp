@@ -503,16 +503,16 @@ optionEntry *optionEntry::getOptionSafe(const csString path, csString fallback)
     return getOption(path);
 }
 
-csVector3 getValueAsVector()
+csVector3 optionEntry::getValueAsVector()
 {
     //split the array each , 
     csStringArray cordArray;
-    cordArray.SplitString(GetValue(),",");
+    cordArray.SplitString(getValue(),",");
     //if there are enough string to do 3 cordinates parse them and stuff them in a csVector3
-    if(deathcordarray.GetSize() > 2)
-        return csVector3(atof(deathcordarray.Get(0)), atof(deathcordarray.Get(1)), atof(deathcordarray.Get(2)));
+    if(cordArray.GetSize() > 2)
+        return csVector3(atof(cordArray.Get(0)), atof(cordArray.Get(1)), atof(cordArray.Get(2)));
     //in case the data is bad just return 0,0,0
-    return csVector(0,0,0);
+    return csVector3(0,0,0);
 }
 
 bool CacheManager::PreloadSkills()
