@@ -275,7 +275,7 @@ bool psCharacter::Load(iResultRow& row)
     SetOldLastName( row["old_lastname"] );
 
     unsigned int raceid = row.GetUInt32("racegender_id");
-    psRaceInfo *raceinfo = CacheManager::GetSingleton().GetRaceInfoByID(raceid);
+    psRaceInfo *raceinfo = psserver->cachemanager->GetRaceInfoByID(raceid);
     if (!raceinfo)
     {
         Error3("Character ID %s has unknown race id %s. Character loading failed.",row["id"],row["racegender_id"]);
@@ -378,7 +378,7 @@ bool psCharacter::Load(iResultRow& row)
         row.GetInt("bank_money_hexas"),
         row.GetInt("bank_money_trias"));
 
-    psSectorInfo *sectorinfo=CacheManager::GetSingleton().GetSectorInfoByID(row.GetUInt32("loc_sector_id"));
+    psSectorInfo *sectorinfo=psserver->cachemanager->GetSectorInfoByID(row.GetUInt32("loc_sector_id"));
     if (sectorinfo==NULL)
     {
         Error3("Character %s has unresolvable sector id %lu.", ShowID(pid), row.GetUInt32("loc_sector_id"));
@@ -401,7 +401,7 @@ bool psCharacter::Load(iResultRow& row)
     spawn_loc = location;
 
     // Guild fields here
-    guildinfo = CacheManager::GetSingleton().FindGuild(row.GetUInt32("guild_member_of"));
+    guildinfo = psserver->cachemanager->FindGuild(row.GetUInt32("guild_member_of"));
     if (guildinfo)
         guildinfo->Connect(this);
 
@@ -559,7 +559,7 @@ bool psCharacter::QuickLoad(iResultRow& row, bool noInventory)
     SetFullName(row["name"], row["lastname"]);
 
     unsigned int raceid = row.GetUInt32("racegender_id");
-    psRaceInfo *raceinfo = CacheManager::GetSingleton().GetRaceInfoByID(raceid);
+    psRaceInfo *raceinfo = psserver->cachemanager->GetRaceInfoByID(raceid);
     if (!raceinfo)
     {
         Error3("Character ID %s has unknown race id %s.",row["id"],row["racegender_id"]);
@@ -816,7 +816,7 @@ bool psCharacter::LoadSpells(PID use_id)
 
         for (i=0;i<count;i++)
         {
-            psSpell * spell = CacheManager::GetSingleton().GetSpellByID(spells[i].GetInt("spell_id"));
+            psSpell * spell = psserver->cachemanager->GetSpellByID(spells[i].GetInt("spell_id"));
             if (spell != NULL)
                 AddSpell(spell);
             else
@@ -835,9 +835,9 @@ bool psCharacter::LoadSkills(PID use_id)
     // Load skills
     Result skillResult(db->Select("SELECT * FROM character_skills WHERE character_id=%u", use_id.Unbox()));
 
-    for ( int z = 0; z < CacheManager::GetSingleton().GetSkillAmount(); z++ )
+    for ( int z = 0; z < psserver->cachemanager->GetSkillAmount(); z++ )
     {
-        skills.SetSkillInfo( (PSSKILL)z, CacheManager::GetSingleton().GetSkillByID((PSSKILL)z), false );
+        skills.SetSkillInfo( (PSSKILL)z, psserver->cachemanager->GetSkillByID((PSSKILL)z), false );
     }
 
     if (skillResult.IsValid())
@@ -900,7 +900,7 @@ bool psCharacter::LoadTraits(PID use_id)
         unsigned int i;
         for (i=0;i<traits.Count();i++)
         {
-            psTrait *trait=CacheManager::GetSingleton().GetTraitByID(traits[i].GetInt("trait_id"));
+            psTrait *trait=psserver->cachemanager->GetTraitByID(traits[i].GetInt("trait_id"));
             if (!trait)
             {
                 Error3("%s has unknown trait id %s.", ShowID(pid), traits[i]["trait_id"]);
@@ -984,7 +984,7 @@ void psCharacter::LoadActiveSpells()
     if (progressionScriptText.IsEmpty())
         return;
 
-    ProgressionScript *script = ProgressionScript::Create(fullname, progressionScriptText);
+    ProgressionScript *script = ProgressionScript::Create(psserver->entitymanager, psserver->cachemanager, fullname, progressionScriptText);
     if (!script)
     {
         Error3("Saved progression script for >%s< is invalid:\n%s", fullname.GetData(), progressionScriptText.GetData());
@@ -1113,7 +1113,7 @@ unsigned int psCharacter::CalculateAddExperience(PSSKILL skill, unsigned int pra
         
         AddExperiencePointsNotify(experiencePoints);
 
-        if (CacheManager::GetSingleton().GetSkillByID((PSSKILL)skill)) //check if skill is valid
+        if (psserver->cachemanager->GetSkillByID((PSSKILL)skill)) //check if skill is valid
         {
             Skills().AddSkillPractice(skill, practicePoints);
         }
@@ -1467,7 +1467,7 @@ void psCharacter::SetMoney( psItem *& itemdata )
     if ( itemdata->GetBaseStats()->GetFlags() & PSITEMSTATS_FLAG_CIRCLE )
         money.AdjustCircles( itemdata->GetStackCount() );
 
-    CacheManager::GetSingleton().RemoveInstance(itemdata);
+    psserver->cachemanager->RemoveInstance(itemdata);
     SaveMoney(false);
 }
 
@@ -1739,7 +1739,7 @@ void psCharacter::SetStaminaRegenerationWork(int skill)
     
     // Need real formula for this. Shouldn't be hard coded anyway.
     // Stamina drain needs to be set depending on the complexity of the task.
-    psSkillInfo* skillInfo = CacheManager::GetSingleton().GetSkillByID(skill);
+    psSkillInfo* skillInfo = psserver->cachemanager->GetSkillByID(skill);
     //if skill is none (-1) we set zero here
     int factor = skillInfo? skillInfo->mental_factor : 100;
 
@@ -2133,7 +2133,7 @@ void psCharacter::MakeEquipmentString( csString& equipment )
         if (item == NULL)
             continue;
 
-        csString slot = EscpXML( CacheManager::GetSingleton().slotNameHash.GetName(i) );
+        csString slot = EscpXML( psserver->cachemanager->slotNameHash.GetName(i) );
         csString mesh = EscpXML( item->GetMeshName() );
         csString part = EscpXML( item->GetPartName() );
         csString texture = EscpXML( item->GetTextureName() );
@@ -2298,7 +2298,7 @@ QuestAssignment *psCharacter::AssignQuest(psQuest *quest, PID assigner_id)
                 AssignQuest(quest->GetParentQuest(),assigner_id );
 
         // assign any skipped sub quests
-        csHash<psQuest*>::GlobalIterator it = CacheManager::GetSingleton().GetQuestIterator();
+        csHash<psQuest*>::GlobalIterator it = psserver->cachemanager->GetQuestIterator();
         while (it.HasNext())
         {
             psQuest * q = it.Next();
@@ -2358,7 +2358,7 @@ bool psCharacter::CompleteQuest(psQuest *quest)
         if (!q->GetQuest()->GetParentQuest())
         {
             // assign any skipped sub quests
-            csHash<psQuest*>::GlobalIterator it = CacheManager::GetSingleton().GetQuestIterator();
+            csHash<psQuest*>::GlobalIterator it = psserver->cachemanager->GetQuestIterator();
             while (it.HasNext())
             {
                 psQuest * currQuest = it.Next();
@@ -2453,7 +2453,7 @@ bool psCharacter::CheckQuestAvailable(psQuest *quest, PID assigner_id)
     bool notify = false;
     if (GetActor()->GetClient())
     {
-        notify = CacheManager::GetSingleton().GetCommandManager()->Validate(GetActor()->GetClient()->GetSecurityLevel(), "quest notify");
+        notify = psserver->cachemanager->GetCommandManager()->Validate(GetActor()->GetClient()->GetSecurityLevel(), "quest notify");
     }
 
     //NPC should always answer, if the quest is assigned, no matter who started the quest.
@@ -2643,7 +2643,7 @@ bool psCharacter::LoadQuestAssignments()
     {
         QuestAssignment *q = new QuestAssignment;
         q->dirty = false;
-        q->SetQuest(CacheManager::GetSingleton().GetQuestByID( result[i].GetInt("quest_id") ) );
+        q->SetQuest(psserver->cachemanager->GetQuestByID( result[i].GetInt("quest_id") ) );
         q->status        = result[i]["status"][0];
         q->lockout_end   = result[i].GetInt("remaininglockout");
         q->assigner_id   = PID(result[i].GetInt("assigner_id"));
@@ -2982,7 +2982,7 @@ double psCharacter::CalcFunction(const char * functionName, const double * param
     if (!strcasecmp(functionName, "HasCompletedQuest"))
     {
         const char *questName = MathScriptEngine::GetString(params[0]);
-        psQuest *quest = CacheManager::GetSingleton().GetQuestByName(questName);
+        psQuest *quest = psserver->cachemanager->GetQuestByName(questName);
         return (double) CheckQuestCompleted(quest);
     }
     else if (!strcasecmp(functionName, "GetStatValue"))
@@ -3018,7 +3018,7 @@ double psCharacter::CalcFunction(const char * functionName, const double * param
     else if (!strcasecmp(functionName, "SkillRank"))
     {
         const char *skillName = MathScriptEngine::GetString(params[0]);
-        PSSKILL skill = CacheManager::GetSingleton().ConvertSkillString(skillName);
+        PSSKILL skill = psserver->cachemanager->ConvertSkillString(skillName);
         double value = skills.GetSkillRank(skill).Current();
 
         // always give a small % of melee (unharmed) skill
@@ -3669,7 +3669,7 @@ int SkillSet::AddSkillPractice(PSSKILL skill, unsigned int val)
 
     rankUp = AddToSkillPractice(skill,val, added);
 
-    psSkillInfo* skillInfo = CacheManager::GetSingleton().GetSkillByID(skill);
+    psSkillInfo* skillInfo = psserver->cachemanager->GetSkillByID(skill);
 
     if ( skillInfo )
     {
@@ -3713,7 +3713,7 @@ int SkillSet::AddSkillPractice(PSSKILL skill, unsigned int val)
 unsigned int SkillSet::GetBestSkillValue( bool withBuffer )
 {
     unsigned int max=0;
-    for (int i=0; i<CacheManager::GetSingleton().GetSkillAmount(); i++)
+    for (int i=0; i<psserver->cachemanager->GetSkillAmount(); i++)
     {
         PSSKILL skill = skills[i].info->id;
         if(     skill == PSSKILL_AGI ||
@@ -3735,14 +3735,14 @@ unsigned int SkillSet::GetBestSkillSlot( bool withBuffer )
 {
     unsigned int max = 0;
     unsigned int i = 0;
-    for (; i<CacheManager::GetSingleton().GetSkillAmount(); i++)
+    for (; i<psserver->cachemanager->GetSkillAmount(); i++)
     {
         unsigned int rank = withBuffer ? skills[i].rank.Current() : skills[i].rank.Base();
         if (rank > max)
             max = rank;
     }
 
-    if (i == CacheManager::GetSingleton().GetSkillAmount())
+    if (i == psserver->cachemanager->GetSkillAmount())
         return (unsigned int)~0;
     else
         return i;
@@ -3750,7 +3750,7 @@ unsigned int SkillSet::GetBestSkillSlot( bool withBuffer )
 
 void SkillSet::Calculate()
 {
-    for ( int z = 0; z < CacheManager::GetSingleton().GetSkillAmount(); z++ )
+    for ( int z = 0; z < psserver->cachemanager->GetSkillAmount(); z++ )
     {
         skills[z].CalculateCosts(self);
     }
@@ -3758,7 +3758,7 @@ void SkillSet::Calculate()
 
 bool SkillSet::CanTrain( PSSKILL skill )
 {
-    if (skill<0 || skill>=CacheManager::GetSingleton().GetSkillAmount())
+    if (skill<0 || skill>=psserver->cachemanager->GetSkillAmount())
         return false;
     else
     {
@@ -3769,7 +3769,7 @@ bool SkillSet::CanTrain( PSSKILL skill )
 void SkillSet::Train( PSSKILL skill, int yIncrease )
 {
 
-    if (skill<0 ||skill>=CacheManager::GetSingleton().GetSkillAmount())
+    if (skill<0 ||skill>=psserver->cachemanager->GetSkillAmount())
         return;
     else
     {
@@ -3780,7 +3780,7 @@ void SkillSet::Train( PSSKILL skill, int yIncrease )
 
 void SkillSet::SetSkillInfo( PSSKILL which, psSkillInfo* info, bool recalculatestats )
 {
-    if (which<0 || which>=CacheManager::GetSingleton().GetSkillAmount())
+    if (which<0 || which>=psserver->cachemanager->GetSkillAmount())
         return;
     else
     {
@@ -3794,7 +3794,7 @@ void SkillSet::SetSkillInfo( PSSKILL which, psSkillInfo* info, bool recalculates
 
 void SkillSet::SetSkillRank( PSSKILL which, unsigned int rank, bool recalculatestats )
 {
-    if (which < 0 || which >= CacheManager::GetSingleton().GetSkillAmount())
+    if (which < 0 || which >= psserver->cachemanager->GetSkillAmount())
         return;
 
     bool isStat = (which >= PSSKILL_AGI && which <= PSSKILL_WILL);
@@ -3817,7 +3817,7 @@ void SkillSet::SetSkillRank( PSSKILL which, unsigned int rank, bool recalculates
 
 void SkillSet::SetSkillKnowledge( PSSKILL which, int y_value )
 {
-    if (which<0 || which>=CacheManager::GetSingleton().GetSkillAmount())
+    if (which<0 || which>=psserver->cachemanager->GetSkillAmount())
         return;
     if (y_value < 0)
         y_value = 0;
@@ -3828,7 +3828,7 @@ void SkillSet::SetSkillKnowledge( PSSKILL which, int y_value )
 
 void SkillSet::SetSkillPractice(PSSKILL which,int z_value)
 {
-    if (which<0 || which>=CacheManager::GetSingleton().GetSkillAmount())
+    if (which<0 || which>=psserver->cachemanager->GetSkillAmount())
         return;
     if (z_value < 0)
         z_value = 0;
@@ -3840,7 +3840,7 @@ void SkillSet::SetSkillPractice(PSSKILL which,int z_value)
 
 bool SkillSet::AddToSkillPractice(PSSKILL skill, unsigned int val, unsigned int& added )
 {
-    if (skill<0 || skill>=CacheManager::GetSingleton().GetSkillAmount())
+    if (skill<0 || skill>=psserver->cachemanager->GetSkillAmount())
         return 0;
 
     bool rankup = false;
@@ -3852,7 +3852,7 @@ bool SkillSet::AddToSkillPractice(PSSKILL skill, unsigned int val, unsigned int&
 unsigned int SkillSet::GetSkillPractice(PSSKILL skill)
 {
 
-    if (skill<0 || skill>=CacheManager::GetSingleton().GetSkillAmount())
+    if (skill<0 || skill>=psserver->cachemanager->GetSkillAmount())
         return 0;
     return skills[skill].z;
 }
@@ -3861,20 +3861,20 @@ unsigned int SkillSet::GetSkillPractice(PSSKILL skill)
 unsigned int SkillSet::GetSkillKnowledge(PSSKILL skill)
 {
 
-    if (skill<0 || skill>=CacheManager::GetSingleton().GetSkillAmount())
+    if (skill<0 || skill>=psserver->cachemanager->GetSkillAmount())
         return 0;
     return skills[skill].y;
 }
 
 SkillRank & SkillSet::GetSkillRank(PSSKILL skill)
 {
-    CS_ASSERT(skill >= 0 && skill < CacheManager::GetSingleton().GetSkillAmount());
+    CS_ASSERT(skill >= 0 && skill < psserver->cachemanager->GetSkillAmount());
     return skills[skill].rank;
 }
 
 Skill& SkillSet::Get(PSSKILL skill)
 {
-    CS_ASSERT(skill >= 0 && skill < CacheManager::GetSingleton().GetSkillAmount());
+    CS_ASSERT(skill >= 0 && skill < psserver->cachemanager->GetSkillAmount());
     return skills[skill];
 }
 
@@ -3887,7 +3887,7 @@ csWeakRef<psQuest>& QuestAssignment::GetQuest()
 {
     if (!quest.IsValid())
     {
-        psQuest *q = CacheManager::GetSingleton().GetQuestByID(quest_id);
+        psQuest *q = psserver->cachemanager->GetQuestByID(quest_id);
         SetQuest(q);
     }
     return quest;

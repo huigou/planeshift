@@ -47,7 +47,7 @@ enum ReservedNames {NAME_RESERVED_FOR_YOU, NAME_RESERVED, NAME_AVAILABLE};
 class CharCreationManager : MessageManager
 {
 public:        
-    CharCreationManager();
+    CharCreationManager(GEMSupervisor* gemsupervisor, CacheManager* cachemanager, EntityManager* entitymanager);
     virtual ~CharCreationManager();
     
     /** Caches the data from the database needed for character creation.
@@ -198,6 +198,9 @@ private:
     csPDelArray<CreationChoice>  childhoodData;
     csPDelArray<LifeEventChoiceServer> lifeEvents;
         
+    GEMSupervisor* gemSupervisor;
+    CacheManager* cacheManager;
+    EntityManager* entityManager;
 };
 
 

@@ -40,6 +40,7 @@
 
 class gemObject;
 struct iObjectRegistry;
+class EntityManager;
 
 /* ProximityList must maintain following properties:
  *    - values in objectsThatWatchMe are unique
@@ -66,6 +67,8 @@ protected:
     bool         firstFrame;
     csVector3    oldPos;
     InstanceID  oldInstance;
+    
+    EntityManager* entityManager;
 
     /** Adds 'interestedobject' to 'objectsThatWatchMe' */
     void AddWatcher(gemObject *interestedobject, float range);
@@ -86,7 +89,7 @@ protected:
                                 float newrange);
 
 public:
-    ProximityList( iObjectRegistry* object_reg, gemObject *parent );
+    ProximityList( iObjectRegistry* object_reg, gemObject *parent, EntityManager* entitymanager);
     ~ProximityList();
 
     bool Initialize(int cnum,gemObject *parent);

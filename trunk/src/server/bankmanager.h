@@ -32,7 +32,7 @@
 class psMoneyGameEvent;
 class Client;
 
-class BankManager : public Singleton<BankManager>, public MessageManager
+class BankManager : public MessageManager
 {
 public:
     BankManager();

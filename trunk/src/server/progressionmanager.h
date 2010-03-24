@@ -46,7 +46,7 @@ class ProgressionManager : public MessageManager
 {
 public:
 
-    ProgressionManager(ClientConnectionSet *ccs);
+    ProgressionManager(ClientConnectionSet *ccs, CacheManager *cachemanager);
 
     virtual ~ProgressionManager();
 
@@ -85,6 +85,7 @@ protected:
     csHash<csString, csString> affinitycategories;
     ClientConnectionSet    *clients;
     MathScript *calc_dynamic_experience; ///< Math script used to calculate the dynamic experience
+    CacheManager *cacheManager;
 };
 
 #endif

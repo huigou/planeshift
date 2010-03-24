@@ -35,7 +35,7 @@
 //=============================================================================
 #include "clients.h"
 
-
+class CacheManager;
 /**
  * This is the network thread handling packets sending/receiving to/from network
  * other threads can register a message queue and the network thread will sort
@@ -60,9 +60,9 @@ public:
      *     default value given is 15000ms.
      * @return Returns success or faliure for initializing.
      */
-    bool Initialize(int client_firstmsg, int npcclient_firstmsg, int timeout=15000);
+    bool Initialize(CacheManager* cachemanager, int client_firstmsg, int npcclient_firstmsg, int timeout=15000);
     
-    static NetManager* Create(int client_firstmsg, int npcclient_firstmsg, int timeout=15000);
+    static NetManager* Create(CacheManager* cacheManager, int client_firstmsg, int npcclient_firstmsg, int timeout=15000);
 
     /** This broadcasts the same msg out to a bunch of Clients.  
      * Which clients recieve this message, depend on the scope.DON'T use this

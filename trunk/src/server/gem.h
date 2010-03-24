@@ -16,6 +16,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  * This is the cel access class for PS.
+ * 
+ * TODO: This API really needs to be refactored into a set of factories.
  */
 
 #ifndef __GEM_H__
@@ -113,13 +115,14 @@ private:
 class OverridableMesh : public Overridable<csString>
 {
 public:
-    OverridableMesh(const csString mesh) : Overridable<csString>(mesh), actor(NULL) { }
+    OverridableMesh(CacheManager* cachemanager, const csString mesh) : Overridable<csString>(mesh), actor(NULL) {cacheManager = cachemanager; }
     virtual ~OverridableMesh() { }
 
     void SetActor(gemActor *act) { actor = act; }
 protected:
     virtual void OnChange();
     gemActor *actor;
+    CacheManager *cacheManager;
 };
 
 //-----------------------------------------------------------------------------
@@ -127,8 +130,10 @@ protected:
 /**
 * This class holds the refs to the core factories, etc in CEL.
 */
-class GEMSupervisor : public MessageManager, public Singleton<GEMSupervisor>
+class GEMSupervisor : public MessageManager
 {
+    EntityManager *entityManager;
+    CacheManager *cacheManager;
 public:
     iObjectRegistry*        object_reg;                     ///< The Crystal Space Object Registry.
     psDatabase             *database;                       ///< The main PlaneShift database object.
@@ -138,7 +143,7 @@ public:
       * @param objreg The Crystal Space Object Registry.
       * @param db The main PlaneShift database.
       */
-    GEMSupervisor(iObjectRegistry *objreg, psDatabase *db);
+    GEMSupervisor(iObjectRegistry *objreg, psDatabase *db, EntityManager *entitymanager, CacheManager *cachemanager);
 
     /** @brief Destroy this singleton.
      *
@@ -336,7 +341,6 @@ public:
     float GetAngle();
     iSector* GetSector();
     const char *GetSectorName() { return GetSector() ? GetSector()->QueryObject()->GetName() : "(null)"; }
-    int FindAnimIndex(const char *name);
     csArray<gemObject*> *GetObjectsInRange( float range );
     //@}
 
@@ -412,7 +416,7 @@ public:
     //@}
 
 protected:
-    gemObject(const char* name, const char* factname, InstanceID myinstance, iSector* room,
+    gemObject(GEMSupervisor* gemsupervisor, EntityManager* entitymanager, CacheManager* cachemanager, const char* name, const char* factname, InstanceID myinstance, iSector* room,
               const csVector3& pos, float rotangle, int clientnum);
 
     bool valid;                                 ///< Is object fully loaded
@@ -422,6 +426,8 @@ protected:
     ProximityList *proxlist;                    ///< Proximity List for this object
     csString name;                              ///< Name of this object, used mostly for debugging
     static GEMSupervisor *cel;                  ///< Static ptr back to main collection of all objects
+    EntityManager *entityManager;
+    CacheManager* cacheManager;
     InstanceID worldInstance;                   ///< Only objects which match instances can see each other
     bool is_alive;                              ///< Flag indicating whether object is alive or not
     OverridableMesh factname;                   ///< Name of CS Mesh Factory used to create this object
@@ -447,7 +453,7 @@ protected:
 class gemActiveObject : public gemObject
 {
 public:
-    gemActiveObject( const char* name,
+    gemActiveObject(GEMSupervisor* gemSupervisor, EntityManager* entitymanager,CacheManager* cachemanager, const char* name,
                     const char* factname,
                     InstanceID myInstance,
                     iSector* room,
@@ -485,7 +491,10 @@ protected:
     float zRot;
 
 public:
-    gemItem(csWeakRef<psItem> item,
+    gemItem(GEMSupervisor* gemsupervisor,
+    		CacheManager* cachemanager,
+    		EntityManager* entitymanager,
+    		csWeakRef<psItem> item,
         const char* factname,
         InstanceID myInstance,
         iSector* room,
@@ -560,7 +569,9 @@ protected:
     bool AddToContainer(psItem *item, Client *fromClient,int slot, bool test);
 
 public:
-    gemContainer(csWeakRef<psItem> item,
+    gemContainer(GEMSupervisor* gemSupervisor, CacheManager* cachemanager,
+    		EntityManager* entitymanager,
+    		csWeakRef<psItem> item,
         const char* factname,
         InstanceID myInstance,
         iSector* room,
@@ -626,7 +637,8 @@ private:
     bool visible;
 
 public:
-    gemActionLocation(psActionLocation *action, iSector *isec, int clientnum);
+    gemActionLocation(GEMSupervisor* gemSupervisor,EntityManager* entitymanager,CacheManager* cachemanager,
+    		psActionLocation *action, iSector *isec, int clientnum);
 
     virtual const char* GetObjectType() { return "ActionLocation"; }
     virtual psActionLocation *GetAction() { return action; }
@@ -701,7 +713,6 @@ protected:
 class gemActor :  public gemObject, public iDeathNotificationObject
 {
 protected:
-
     psCharacter *psChar;
     FactionSet *factions;
     PID pid; ///< Player ID (also known as character ID or PID)
@@ -829,7 +840,10 @@ protected:
 public:
     psLinearMovement* pcmove;
 
-    gemActor(psCharacter *chardata, const char *factname,
+    gemActor(GEMSupervisor* gemsupervisor,
+    		CacheManager* cachemanager,
+    		EntityManager *entitymanager,
+    		psCharacter *chardata, const char *factname,
         InstanceID myInstance,iSector* room,const csVector3& pos,float rotangle,int clientnum);
 
     virtual ~gemActor();
@@ -1096,6 +1110,7 @@ public:
     csArray<ActiveSpell*> & GetActiveSpells() { return activeSpells; }
     void CancelActiveSpellsForDeath();
     void CancelActiveSpellsWhichDamage();
+    int FindAnimIndex(const char *name);
 
     /** These flags are for GM/debug abilities */
     bool nevertired;        ///< infinite stamina
@@ -1153,7 +1168,10 @@ protected:
     NpcDialogMenu *initial_triggers;
 
 public:
-    gemNPC(psCharacter *chardata, const char *factname,
+    gemNPC(GEMSupervisor* gemSupervisor,
+    		CacheManager* cachemanager,
+    		EntityManager *entityManager,
+    		psCharacter *chardata, const char *factname,
            InstanceID myInstance,iSector* room,const csVector3& pos,float rotangle,int clientnum);
 
     virtual ~gemNPC();
@@ -1220,8 +1238,11 @@ class gemPet : public gemNPC
 {
 public:
 
-    gemPet(psCharacter *chardata, const char* factname, InstanceID instance, iSector* room,
-        const csVector3& pos,float rotangle,int clientnum,uint32 id) : gemNPC(chardata,factname,instance,room,pos,rotangle,clientnum)
+    gemPet(GEMSupervisor* gemsupervisor,
+    		CacheManager* cachemanager,
+    		EntityManager* entitymanager,
+    		psCharacter *chardata, const char* factname, InstanceID instance, iSector* room,
+        const csVector3& pos,float rotangle,int clientnum,uint32 id) : gemNPC(gemsupervisor, cachemanager, entitymanager, chardata,factname,instance,room,pos,rotangle,clientnum)
     {
         this->persistanceLevel = "Temporary";
     };

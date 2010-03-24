@@ -94,7 +94,7 @@ NetManager::~NetManager()
     thread = NULL;
 }
 
-bool NetManager::Initialize(int client_firstmsg, int npcclient_firstmsg, int timeout)
+bool NetManager::Initialize(CacheManager* cachemanager, int client_firstmsg, int npcclient_firstmsg, int timeout)
 {
     if (!NetBase::Init(false))
         return false;
@@ -107,13 +107,14 @@ bool NetManager::Initialize(int client_firstmsg, int npcclient_firstmsg, int tim
     if (!clients.Initialize())
         return false;
 
-    SetMsgStrings(CacheManager::GetSingleton().GetMsgStrings(), 0);
+    SetMsgStrings(cachemanager->GetMsgStrings(), 0);
 
     return true;
 }
 
 class NetManagerStarter : public CS::Threading::Runnable
 {
+	CacheManager *cacheManager;
 public:
     csRef<NetManager> netManager;
     csRef<CS::Threading::Thread> thread;
@@ -124,8 +125,9 @@ public:
     int timeout;
 
 
-    NetManagerStarter(int _client_firstmsg, int _npcclient_firstmsg, int _timeout)
+    NetManagerStarter(CacheManager *cachemanager, int _client_firstmsg, int _npcclient_firstmsg, int _timeout)
     {
+    	cacheManager = cachemanager;
         client_firstmsg = _client_firstmsg;
         npcclient_firstmsg = _npcclient_firstmsg;
         timeout = _timeout;
@@ -137,7 +139,7 @@ public:
             CS::Threading::MutexScopedLock lock (doneMutex);
             // construct the netManager is its own thread to avoid wrong warnings of dynamic thread checking via valgrind
             netManager.AttachNew(new NetManager(thread));
-            if (!netManager->Initialize(client_firstmsg, npcclient_firstmsg,
+            if (!netManager->Initialize(cacheManager, client_firstmsg, npcclient_firstmsg,
                     timeout))
             {
                 Error1 ("Network thread initialization failed!\nIs there already a server running?");
@@ -154,10 +156,10 @@ public:
     }
 };
 
-NetManager* NetManager::Create(int client_firstmsg, int npcclient_firstmsg, int timeout)
+NetManager* NetManager::Create(CacheManager* cacheManager, int client_firstmsg, int npcclient_firstmsg, int timeout)
 {
     csRef<NetManagerStarter> netManagerStarter;
-    netManagerStarter.AttachNew (new NetManagerStarter(client_firstmsg, npcclient_firstmsg, timeout));
+    netManagerStarter.AttachNew (new NetManagerStarter(cacheManager, client_firstmsg, npcclient_firstmsg, timeout));
     csRef<CS::Threading::Thread> thread;
     thread.AttachNew (new CS::Threading::Thread (netManagerStarter));
     netManagerStarter->thread = thread;

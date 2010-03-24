@@ -147,9 +147,12 @@ public:
 
 /***********************************************************************/
 
-UserManager::UserManager(ClientConnectionSet *cs)
+UserManager::UserManager(ClientConnectionSet *cs, CacheManager* cachemanager, BankManager* bankmanager, EntityManager* entitymanager)
 {
     clients       = cs;
+    cacheManager = cachemanager;
+    bankManager = bankmanager;
+    entityManager = entitymanager;
 
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<UserManager>(this,&UserManager::HandleUserCommand),    MSGTYPE_USERCMD,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<UserManager>(this,&UserManager::HandleMOTDRequest),    MSGTYPE_MOTDREQUEST,REQUIRE_ANY_CLIENT);
@@ -236,14 +239,14 @@ void UserManager::HandleMOTDRequest(MsgEntry *me,Client *client)
     }
 
     csString tip;
-    if (CacheManager::GetSingleton().GetTipLength() > 0)
-        CacheManager::GetSingleton().GetTipByID(psserver->GetRandom(CacheManager::GetSingleton().GetTipLength()), tip );
+    if (cacheManager->GetTipLength() > 0)
+        cacheManager->GetTipByID(psserver->GetRandom(cacheManager->GetTipLength()), tip );
 
     csString motdMsg(psserver->GetMOTD());
 
     csString guildMotd("");
     csString guildName("");
-    psGuildInfo * guild = CacheManager::GetSingleton().FindGuild(guildID);
+    psGuildInfo * guild = cacheManager->FindGuild(guildID);
 
     if (guild)
     {
@@ -416,7 +419,7 @@ void UserManager::SendCharacterDescription(Client * client, gemActor *actor, boo
     csString raceName;
     csString creationinfo;
     PSCHARACTER_GENDER gender;
-    psRaceInfo* charrinfo = CacheManager::GetSingleton().GetRaceInfoByMeshName(meshName);
+    psRaceInfo* charrinfo = cacheManager->GetRaceInfoByMeshName(meshName);
     if (charrinfo != NULL)
     {
         raceName = charrinfo->GetRace();
@@ -467,10 +470,10 @@ void UserManager::SendCharacterDescription(Client * client, gemActor *actor, boo
         SkillSet & sks = charData->Skills();
         StatSet & sts = charData->Stats();
 
-        for (int skill = 0; skill < CacheManager::GetSingleton().GetSkillAmount(); skill++)
+        for (int skill = 0; skill < cacheManager->GetSkillAmount(); skill++)
         {
             psSkillInfo *skinfo;
-            skinfo = CacheManager::GetSingleton().GetSkillByID((PSSKILL)skill);
+            skinfo = cacheManager->GetSkillByID((PSSKILL)skill);
             if (skinfo != NULL)
             {
                 psCharacterDetailsMessage::NetworkDetailSkill s;
@@ -533,7 +536,7 @@ void UserManager::SendCharacterDescription(Client * client, gemActor *actor, boo
             int theirBestMagical = 0;
             int myBestMagical = 0;
 
-            for(int i=0; i < CacheManager::GetSingleton().GetSkillAmount(); ++i)
+            for(int i=0; i < cacheManager->GetSkillAmount(); ++i)
             {
                 int* theirBest = NULL;
                 int* myBest = NULL;
@@ -649,7 +652,7 @@ void UserManager::SendCharacterDescription(Client * client, gemActor *actor, boo
         // Show owner name if character is a pet
         if (charData->IsPet() && charData->GetOwnerID().IsValid())
         {
-            gemActor *owner = GEMSupervisor::GetSingleton().FindPlayerEntity(charData->GetOwnerID());
+            gemActor *owner = gem->FindPlayerEntity(charData->GetOwnerID());
             if (owner)
                 desc.AppendFmt( "\n\nA pet owned by: %s", owner->GetName() );
         }
@@ -824,7 +827,7 @@ void UserManager::HandleEntranceMessage( MsgEntry* me, Client *client )
     {
 
         // find lock to to test if locked
-        gemItem* realItem = GEMSupervisor::GetSingleton().FindItemEntity( instanceID );
+        gemItem* realItem = gem->FindItemEntity( instanceID );
         if (!realItem)
         {
             if (secure) psserver->SendSystemInfo(client->GetClientNum(),"Invalid instance ID %u in action location %s", instanceID, action->name.GetDataSafe());
@@ -1294,7 +1297,7 @@ void UserManager::NotifyAllianceBuddies(Client * client, bool logged_in)
         return;
     
     //get the alliance 
-    alliance = CacheManager::GetSingleton().FindAlliance(charGuild->GetAllianceID());
+    alliance = cacheManager->FindAlliance(charGuild->GetAllianceID());
 
     //if there is no alliance we are done
     if(!alliance)
@@ -1475,7 +1478,7 @@ void UserManager::ReportPosition(psUserCmdMessage& msg,Client *client)
             float char_angle;
             iSector* char_sector;
             client->GetActor()->GetPosition(char_pos,char_angle,char_sector);
-            dist = EntityManager::GetSingleton().GetWorld()->Distance(char_pos,char_sector,pos,sector);
+            dist = entityManager->GetWorld()->Distance(char_pos,char_sector,pos,sector);
             name.Format("%s's",object->GetName());
             range.Format(", range: %.2f",dist);
         }
@@ -1565,7 +1568,7 @@ void UserManager::StopAllCombat(Client *client)
 
 void UserManager::HandleAttack(psUserCmdMessage& msg,Client *client)
 {
-    Attack(CombatManager::GetStance(msg.stance), client);
+    Attack(CombatManager::GetStance(cacheManager,msg.stance), client);
 }
 
 void UserManager::HandleStopAttack(psUserCmdMessage& msg,Client *client)
@@ -1672,7 +1675,7 @@ void UserManager::Assist(psUserCmdMessage& msg, Client* client)
 
 void UserManager::UserStatRegeneration()
 {
-    GEMSupervisor::GetSingleton().UpdateAllStats();
+    gem->UpdateAllStats();
 
     // Push a new event
     psUserStatRegeneration* event;
@@ -2017,13 +2020,13 @@ void UserManager::HandleBanking(psUserCmdMessage& msg, Client *client)
     if (msg.action.CompareNoCase("personal"))
     {
         // Open personal bank.
-        psserver->GetBankManager()->GetSingleton().StartBanking(client, false);
+        bankManager->StartBanking(client, false);
         return;
     }
     else if (msg.action.CompareNoCase("guild"))
     {
         // Open guild bank.
-        psserver->GetBankManager()->GetSingleton().StartBanking(client, true);
+        bankManager->StartBanking(client, true);
         return;
     }
     else
@@ -2052,7 +2055,6 @@ void UserManager::Pickup(Client *client, csString target)
     else if (target.StartsWith("eid:", true))
     {
         gemObject* object= NULL;
-        GEMSupervisor *gem = GEMSupervisor::GetSingletonPtr();
         csString eid_str = target.Slice(4);
         EID eID = EID(strtoul(eid_str.GetDataSafe(), NULL, 10));
         if (eID.IsValid())
@@ -2088,7 +2090,6 @@ void UserManager::HandleMount(psUserCmdMessage& msg, Client *client)
     }
 
     gemObject* mount;
-    GEMSupervisor *gem = GEMSupervisor::GetSingletonPtr();
     
     csString eid_str = msg.target.Slice(4);
     EID targetEID = EID(strtoul(eid_str.GetDataSafe(), NULL, 10));
@@ -2172,7 +2173,7 @@ void PendingMountInvite::HandleAnswer(const csString & answer)
 void UserManager::Mount(gemActor *rider, gemActor *mount)
 {
     csString mountName = mount->GetName();
-    if(EntityManager::GetSingleton().AddRideRelation(rider, mount))
+    if(entityManager->AddRideRelation(rider, mount))
         psserver->SendSystemOK(rider->GetClientID(),
                 "You are riding %s", mountName.GetDataSafe());
     else
@@ -2193,7 +2194,7 @@ void UserManager::HandleUnmount(psUserCmdMessage& msg, Client *client)
         return;
     }
 
-    EntityManager::GetSingleton().RemoveRideRelation(client->GetActor());
+    entityManager->RemoveRideRelation(client->GetActor());
 
     return;
 }
@@ -2370,11 +2371,11 @@ void UserManager::Rotate(Client *client, gemObject* target, csString action)
 
 void UserManager::GiveTip(psUserCmdMessage& msg, Client *client)
 {
-    unsigned int max=CacheManager::GetSingleton().GetTipLength();
+    unsigned int max=cacheManager->GetTipLength();
     unsigned int rnd = psserver->rng->Get(max);
 
     csString tip;
-    CacheManager::GetSingleton().GetTipByID(rnd, tip);
+    cacheManager->GetTipByID(rnd, tip);
     psserver->SendSystemInfo(client->GetClientNum(),tip.GetData());
 }
 

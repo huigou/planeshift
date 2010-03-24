@@ -55,7 +55,7 @@ class CombatManager: public MessageManager
 {
 public:
 
-    CombatManager();
+    CombatManager(CacheManager* cachemanager, EntityManager* entitymanager);
     bool InitializePVP();
 
     virtual ~CombatManager();
@@ -72,7 +72,7 @@ public:
 
     void HandleCombatEvent(psCombatGameEvent *event);
 
-    static const Stance & GetStance(csString name);
+    static const Stance & GetStance(CacheManager* cachemanager, csString name);
 
     /***********************
      * Not implemented yet *
@@ -87,6 +87,8 @@ private:
     //    psSpawnManager *spawnmanager;
     csRandomGen* randomgen;
     LocationType* pvp_region;
+    CacheManager* cacheManager;
+    EntityManager* entityManager;
 
     MathScript *calc_damage; ///< This is the particular calculation for damage.
     /// if the player is too tired, stop fighting. We stop if we don't have enough stamina to make an attack with the current stance.

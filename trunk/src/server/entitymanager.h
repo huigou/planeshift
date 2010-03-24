@@ -84,7 +84,10 @@ public:
 
     bool Initialize(iObjectRegistry* object_reg,
                     ClientConnectionSet* clients,
-                    UserManager *usermanager);
+                    UserManager *usermanager,
+                    GEMSupervisor *gemsupervisor,
+                    psServerDR* psserverdr,
+                    CacheManager* cachemanager);
 
     void HandleUserAction(MsgEntry* me, Client *client);    
     void HandleWorld(MsgEntry* me, Client *client);
@@ -157,6 +160,7 @@ protected:
     ClientConnectionSet* clients;
     psDatabase* database;
     UserManager* usermanager;
+    CacheManager* cacheManager;
     GEMSupervisor* gem;
     iEngine *engine;    
     psWorld* gameWorld;
@@ -172,9 +176,10 @@ public:
         DESTROY = 0
     };
 
-    psEntityEvent(EventType type, gemObject* object) :
+    psEntityEvent(EntityManager* entitymanager, EventType type, gemObject* object) :
       psGameEvent(0, 0, "psEntityEvent"), type(type), object(object)
     {
+    	this->entitymanager = entitymanager;
     }
 
     virtual void Trigger()
@@ -183,7 +188,7 @@ public:
         {
         case DESTROY:
             {
-                EntityManager::GetSingleton().RemoveActor(object);
+                entitymanager->RemoveActor(object);
                 break;
             }
         }
@@ -192,6 +197,7 @@ public:
 private:
     EventType type;
     gemObject* object;
+    EntityManager* entitymanager;
 };
 
 #endif

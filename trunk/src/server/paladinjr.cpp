@@ -40,13 +40,13 @@
  */
 #define MAX_ACCUMULATED_LAG 10000
 
-void PaladinJr::Initialize(EntityManager* celbase)
+void PaladinJr::Initialize(EntityManager* celbase, CacheManager* cachemanager)
 {
     iConfigManager* configmanager = psserver->GetConfig();
     enabled = configmanager->GetBool("PlaneShift.Paladin.Enabled");
 
-    const csPDelArray<psCharMode>& modes = CacheManager::GetSingleton().GetCharModes();
-    const csPDelArray<psMovement>& moves = CacheManager::GetSingleton().GetMovements();
+    const csPDelArray<psCharMode>& modes = cachemanager->GetCharModes();
+    const csPDelArray<psMovement>& moves = cachemanager->GetMovements();
     
     maxVelocity.Set(0.0f);
     csVector3 maxMod(1);
@@ -222,7 +222,7 @@ bool PaladinJr::SpeedCheck(Client* client, gemActor* actor, psDRMessage& currUpd
     // Dummy variables
     float yrot;
     iSector* sector;
-    psWorld * world = EntityManager::GetSingleton().GetWorld();
+    psWorld * world = entitymanager->GetWorld();
     bool warpViolation = false;
 
     actor->pcmove->GetLastClientPosition (oldpos, yrot, sector);

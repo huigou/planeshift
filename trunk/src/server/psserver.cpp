@@ -79,6 +79,7 @@
 #include "playergroup.h"
 #include "progressionmanager.h"
 #include "psserver.h"
+#include "psserverdr.h"
 #include "psserverchar.h"
 #include "questionmanager.h"
 #include "questmanager.h"
@@ -351,9 +352,13 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     // MathScript Engine
     mathscriptengine = new MathScriptEngine();
 
+    entitymanager = new EntityManager;
+
+    // Needed by PreloadSpells
+    progression = new ProgressionManager(GetConnections(), cachemanager);
 
     // Initialize DB settings cache
-    if (!cachemanager->PreloadAll())
+    if (!cachemanager->PreloadAll(entitymanager))
     {
         CPrintf(CON_ERROR, "Could not initialize database cache.\n");
         delete database;
@@ -374,7 +379,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
 
     // Start Network Thread
 
-    netmanager = NetManager::Create(MSGTYPE_PREAUTHENTICATE,MSGTYPE_NPCAUTHENT);
+    netmanager = NetManager::Create(cachemanager, MSGTYPE_PREAUTHENTICATE,MSGTYPE_NPCAUTHENT);
     if (!netmanager)
     {
         return false;
@@ -412,9 +417,19 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
         return false;
 
     Debug1(LOG_STARTUP,0,"Started Event Manager Thread");
+    
+    if ( !progression->Initialize())
+    {
+        Error1("Failed to start progression manager!");
+        return false;
+    }
 
+    Debug1(LOG_STARTUP,0,"Started Progression Manager");
 
-    usermanager = new UserManager(GetConnections());
+    // Init Bank Manager.
+    bankmanager = new BankManager();
+    
+    usermanager = new UserManager(GetConnections(), cachemanager, bankmanager, entitymanager);
     Debug1(LOG_STARTUP,0,"Started User Manager");
 
     // Load emotes
@@ -423,9 +438,11 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
         CPrintf(CON_ERROR, "Could not load emotes from emotes.xml");
         return false;
     }
-
-    entitymanager = new EntityManager;
-    if (!entitymanager->Initialize(object_reg, GetConnections(), usermanager))
+    
+    // Set up wiring for entitymanager
+    GEMSupervisor *gem = new GEMSupervisor(object_reg,database, entitymanager, cachemanager);
+    psServerDR *psserverdr = new psServerDR(cachemanager, entitymanager);
+    if (!entitymanager->Initialize(object_reg, GetConnections(), usermanager, gem, psserverdr, cachemanager))
     {
         Error1("Failed to initialise CEL!");
         delete entitymanager;
@@ -433,11 +450,12 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
         return false;
     }
     entitymanager->SetReady(false);
+    usermanager->Initialize(entitymanager->GetGEM());
     netmanager->SetEngine(entitymanager->GetEngine());
     Debug1(LOG_STARTUP,0,"Started CEL");
 
     // Start Combat Manager
-    combatmanager = new CombatManager();
+    combatmanager = new CombatManager(cachemanager, entitymanager);
     if (!combatmanager->InitializePVP())
     {
         return false;
@@ -445,17 +463,17 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     Debug1(LOG_STARTUP,0,"Started Combat Manager");
 
     // Start Spell Manager
-    spellmanager = new SpellManager(GetConnections(), object_reg);
+    spellmanager = new SpellManager(GetConnections(), object_reg, cachemanager);
     Debug1(LOG_STARTUP,0,"Started Spell Manager");
 
     // Start Weather Manager
-    weathermanager = new WeatherManager();
+    weathermanager = new WeatherManager(cachemanager);
     weathermanager->Initialize();
     Debug1(LOG_STARTUP,0,"Started Weather Manager");
 
     marriageManager = new psMarriageManager();
 
-    questmanager = new QuestManager;
+    questmanager = new QuestManager(cachemanager);
 
     if (!questmanager->Initialize())
         return false;
@@ -475,12 +493,12 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     groupmanager = csPtr<GroupManager>(new GroupManager(GetConnections(), chatmanager));
     Debug1(LOG_STARTUP,0,"Started Group Manager");
 
-    charmanager = new ServerCharManager();
+    charmanager = new ServerCharManager(cachemanager, entitymanager->GetGEM());
     if (!charmanager->Initialize())
         return false;
     Debug1(LOG_STARTUP,0,"Started Character Manager");
 
-    spawnmanager = new SpawnManager(database);
+    spawnmanager = new SpawnManager(database, cachemanager, entitymanager, entitymanager->GetGEM());
     Debug1(LOG_STARTUP,0,"Started NPC Spawn Manager");
 
     adminmanager = new AdminManager;
@@ -497,7 +515,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     exchangemanager = new ExchangeManager(GetConnections());
     Debug1(LOG_STARTUP,0,"Started Exchange Manager");
 
-    npcmanager = new NPCManager(GetConnections(), database, eventmanager);
+    npcmanager = new NPCManager(GetConnections(), database, eventmanager, entitymanager->GetGEM(), cachemanager, entitymanager);
     if ( !npcmanager->Initialize())
     {
         Error1("Failed to start npc manager!");
@@ -506,17 +524,8 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     }
     Debug1(LOG_STARTUP,0,"Started NPC Superclient Manager");
 
-    progression = new ProgressionManager(GetConnections());
-    if ( !progression->Initialize())
-    {
-        Error1("Failed to start progression manager!");
-        return false;
-    }
-
-    Debug1(LOG_STARTUP,0,"Started Progression Manager");
-
     // Start work manager
-    workmanager = new WorkManager();
+    workmanager = new WorkManager(cachemanager, entitymanager);
     Debug1(LOG_STARTUP,0,"Started Work Manager");
 
     // Start economy manager
@@ -534,7 +543,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     }
     Debug1(LOG_STARTUP, 0, "Started Minigame Manager");
 
-    charCreationManager = new CharCreationManager();
+    charCreationManager = new CharCreationManager(gem, cachemanager, entitymanager);
     if ( !charCreationManager->Initialize() )
     {
         Error1("Failed to load character creation data");
@@ -548,9 +557,6 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
         Error1("Failed to load GM Events Manager");
         return false;
     }
-
-    // Init Bank Manager.
-    bankmanager = new BankManager();
 
     intromanager = new IntroductionManager();
     Debug1(LOG_STARTUP,0, "Started Introduction Manager");
@@ -687,7 +693,7 @@ bool psServer::IsFull(size_t numclients, Client * client)
     if (client)
     {
         return numclients > maxclients &&
-               !CacheManager::GetSingleton().GetCommandManager()->Validate(client->GetSecurityLevel(), "always login");
+               !cachemanager->GetCommandManager()->Validate(client->GetSecurityLevel(), "always login");
     }
     else
     {
@@ -1087,7 +1093,7 @@ bool psServer::CheckAccess(Client* client, const char* command, bool returnError
     {
         bool gotAccess;
         csString errorMessage;
-        gotAccess = CacheManager::GetSingleton().GetCommandManager()->Validate(client->GetSecurityLevel(), command, errorMessage);
+        gotAccess = cachemanager->GetCommandManager()->Validate(client->GetSecurityLevel(), command, errorMessage);
         if(gotAccess)
             return true;
 
@@ -1095,13 +1101,13 @@ bool psServer::CheckAccess(Client* client, const char* command, bool returnError
         return false;
     }
 
-    return CacheManager::GetSingleton().GetCommandManager()->Validate(client->GetSecurityLevel(), command);
+    return cachemanager->GetCommandManager()->Validate(client->GetSecurityLevel(), command);
 }
 
 class psQuitEvent : public psGameEvent
 {
 public:
-    psQuitEvent(csTicks msecDelay, psQuitEvent *quit_event, csString message,
+    psQuitEvent(EntityManager* entitymanager, csTicks msecDelay, psQuitEvent *quit_event, csString message,
                        bool server_lock, bool server_shutdown)
         : psGameEvent(0,msecDelay,"psDelayedQuitEvent")
     {
@@ -1109,6 +1115,7 @@ public:
        mytext = message;
        trigger_server_lock = server_lock;
        trigger_server_shutdown = server_shutdown;
+       entityManager = entitymanager;
     }
     virtual void Trigger()
     {
@@ -1116,7 +1123,7 @@ public:
         psserver->GetEventManager()->Broadcast(newmsg.msg);
         CPrintf(CON_CMDOUTPUT, "%s\n", mytext.GetDataSafe());
         if(trigger_server_lock) //This is triggering the server lock
-           EntityManager::GetSingleton().SetReady(false);
+        	entityManager->SetReady(false);
         if(trigger_server_shutdown) //This is triggering the server shut down
             psserver->GetEventManager()->Stop();
     }
@@ -1134,6 +1141,7 @@ private:
     bool trigger_server_lock; ///< If true this is the event locking the server
     bool trigger_server_shutdown; ///< If true this is the event which will shut down the server
     psQuitEvent *message_quit_event; ///< Stores a link to the master event which will shut down the server
+    EntityManager *entityManager;
 };
 
 /// Shuts down the server and exit program
@@ -1151,7 +1159,7 @@ void psServer::QuitServer(int time, Client *client) //-1 for stop, 0 for now > 0
         }
         server_quit_event->Invalidate(); //there is a quit event let's make it invalid
         if (IsMapLoaded() && HasBeenReady()) //remake the server available if it was locked in the process
-            EntityManager::GetSingleton().SetReady(true);
+            entitymanager->SetReady(true);
         server_quit_event = NULL;  //we don't need it anymore so let's clean ourselves of it
         //Let the user know about the new situation about the server
         csString abort_msg = "Server Admin: The server is no longer restarting.";
@@ -1175,7 +1183,7 @@ void psServer::QuitServer(int time, Client *client) //-1 for stop, 0 for now > 0
                     return;
                 }
                 //we got less than 5 minutes for shut down so let's lock the server immediately
-                if(quit_delay < 5) EntityManager::GetSingleton().SetReady(false);
+                if(quit_delay < 5) entitymanager->SetReady(false);
 
                 //generates the messages to alert the user and allocates them in the queque
                 for(uint i = 3; i > 0; i--) //i = 3 sets up the 0 seconds message and so is the event triggering
@@ -1183,13 +1191,13 @@ void psServer::QuitServer(int time, Client *client) //-1 for stop, 0 for now > 0
                     csString outtext = "Server Admin: The server will shut down in ";
                              outtext += 60-(i*20);
                              outtext += " seconds.";
-                    psQuitEvent *Quit_event = new psQuitEvent(((quit_delay-1)*60+i*20)*1000, server_quit_event,
+                    psQuitEvent *Quit_event = new psQuitEvent(entitymanager, ((quit_delay-1)*60+i*20)*1000, server_quit_event,
                                                                 outtext, false, i == 3);
                     GetEventManager()->Push(Quit_event);
                     if(!server_quit_event) server_quit_event = Quit_event;
                 }
                 csString outtext = "Server Admin: The server will shut down in 1 minute.";
-                psQuitEvent *Quit_event = new psQuitEvent((quit_delay-1)*60*1000, server_quit_event, outtext,
+                psQuitEvent *Quit_event = new psQuitEvent(entitymanager, (quit_delay-1)*60*1000, server_quit_event, outtext,
                                                           false, false);
                 GetEventManager()->Push(Quit_event);
 
@@ -1200,7 +1208,7 @@ void psServer::QuitServer(int time, Client *client) //-1 for stop, 0 for now > 0
                     csString outtext = "Server Admin: The server will shut down in ";
                              outtext += quit_time;
                              outtext += " minutes.";
-                    psQuitEvent *Quit_event = new psQuitEvent((quit_delay-quit_time)*60*1000, server_quit_event,
+                    psQuitEvent *Quit_event = new psQuitEvent(entitymanager, (quit_delay-quit_time)*60*1000, server_quit_event,
                                                                 outtext, quit_time == 5, false);
                     GetEventManager()->Push(Quit_event);
                     if(quit_time == quit_delay) { break; } //we have got to the first message saying the server

@@ -73,10 +73,12 @@ protected:
 //----------------------------------------------------------------------------
 
 SpellManager::SpellManager(ClientConnectionSet *ccs,
-                               iObjectRegistry * object_reg)
+                               iObjectRegistry * object_reg,
+                               CacheManager *cachemanager)
 {
     clients      = ccs;
     this->object_reg = object_reg;
+    cacheManager = cachemanager;
 
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<SpellManager>(this,&SpellManager::HandleGlyphRequest),MSGTYPE_GLYPH_REQUEST,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);  
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<SpellManager>(this,&SpellManager::HandleAssembler),MSGTYPE_GLYPH_ASSEMBLE,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);  
@@ -115,7 +117,7 @@ void SpellManager::HandleAssembler(MsgEntry* me, Client* client)
     {        
         if (mesg.glyphs[i] != 0)
         {
-            psItemStats* stats = CacheManager::GetSingleton().GetBasicItemStatsByID(mesg.glyphs[i]);
+            psItemStats* stats = cacheManager->GetBasicItemStatsByID(mesg.glyphs[i]);
             if (stats)
                 assembler.Push(stats);
         }
@@ -189,7 +191,7 @@ void SpellManager::SaveSpell(Client * client, csString spellName)
         return;
     }
 
-    spell = CacheManager::GetSingleton().GetSpellByName(spellName);
+    spell = cacheManager->GetSpellByName(spellName);
     if (!spell)
     {
         psserver->SendSystemInfo(client->GetClientNum(),
@@ -216,9 +218,9 @@ void SpellManager::Cast(MsgEntry *me, Client *client)
     float kFactor = msg.kFactor;
 
     // Allow developers to cast any spell, even if unknown to the character.
-    if (CacheManager::GetSingleton().GetCommandManager()->Validate(client->GetSecurityLevel(), "cast all spells"))
+    if (cacheManager->GetCommandManager()->Validate(client->GetSecurityLevel(), "cast all spells"))
     {
-        spell = CacheManager::GetSingleton().GetSpellByName(spellName);
+        spell = cacheManager->GetSpellByName(spellName);
     }        
     else
     {
@@ -271,7 +273,7 @@ void SpellManager::SendSpellBook(MsgEntry *notused, Client * client)
                       glyphImages[2], glyphImages[3], spells[i]->GetImage());
     }
 
-    mesg.Construct(CacheManager::GetSingleton().GetMsgStrings());
+    mesg.Construct(cacheManager->GetMsgStrings());
     mesg.SendMessage();
 }
 
@@ -401,7 +403,7 @@ void SpellManager::StartPurifying(MsgEntry *me, Client * client)
             // Notify the player that and why purification failed
             psserver->SendSystemError(client->GetClientNum(), "You can't purify %s because your inventory is full!", glyph->GetName());
             
-            CacheManager::GetSingleton().RemoveInstance(glyphItem);
+            cacheManager->RemoveInstance(glyphItem);
 
             // Reset the stack count to account for the one that was destroyed.
             stackOfGlyphs->SetStackCount(stackOfGlyphs->GetStackCount() + 1);
@@ -453,7 +455,7 @@ void SpellManager::EndPurifying(psCharacter * character, uint32 glyphUID)
 
 psSpell* SpellManager::FindSpell(Client *client, const csArray<psItemStats*> & assembler)
 {
-    CacheManager::SpellIterator loop = CacheManager::GetSingleton().GetSpellIterator();
+    CacheManager::SpellIterator loop = cacheManager->GetSpellIterator();
     
     psSpell *p;
     

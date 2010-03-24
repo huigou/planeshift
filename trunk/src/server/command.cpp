@@ -557,7 +557,7 @@ int com_spawn(char* sector = 0)
     static bool already_spawned = false;
     psSectorInfo *sectorinfo = NULL;
     if ( sector )
-        sectorinfo = CacheManager::GetSingleton().GetSectorInfoByName(sector);
+        sectorinfo = psserver->cachemanager->GetSectorInfoByName(sector);
 
     if (!already_spawned)
     {
@@ -587,7 +587,7 @@ int com_rain(char* arg)
     int drops = atoi(words[1]);
     int fade = atoi(words[2]);
     int length = atoi(words[3]);
-    psSectorInfo *sectorinfo = CacheManager::GetSingleton().GetSectorInfoByName(sector.GetData());
+    psSectorInfo *sectorinfo = psserver->cachemanager->GetSectorInfoByName(sector.GetData());
     if (!sectorinfo)
     {
         CPrintf(CON_CMDOUTPUT ,"Could not find that sector.\nSyntax: %s\n",syntax);
@@ -656,12 +656,12 @@ int com_loadquest(char* stringId)
     int id = atoi(stringId);
     CPrintf(CON_CMDOUTPUT, "Reloading quest id %d\n", id);
 
-    if(!CacheManager::GetSingleton().UnloadQuest(id))
+    if(!psserver->cachemanager->UnloadQuest(id))
         CPrintf(CON_CMDOUTPUT, "Could not remove quest %d\n", id);
     else
         CPrintf(CON_CMDOUTPUT, "Existing quest removed.\n");
 
-    if(!CacheManager::GetSingleton().LoadQuest(id))
+    if(!psserver->cachemanager->LoadQuest(id))
         CPrintf(CON_CMDOUTPUT, "Could not load quest %d\n", id);
     else
         CPrintf(CON_CMDOUTPUT, "Quest %d loaded.\n", id);
@@ -972,7 +972,7 @@ int com_newacct(char *userpass)
     accountinfo.password = csMD5::Encode(password).HexString();
     accountinfo.securitylevel = level;
 
-    if (CacheManager::GetSingleton().NewAccountInfo(&accountinfo)==0)
+    if (psserver->cachemanager->NewAccountInfo(&accountinfo)==0)
     {
         CPrintf(CON_CMDOUTPUT ,"Could not create account.\n");
         return 0;
@@ -1130,7 +1130,7 @@ int com_addinv(char *line)
     }
 
     // Get the ItemStats based on the name provided.
-    psItemStats *itemstats=CacheManager::GetSingleton().GetBasicItemStatsByID(atoi(item.GetData()) );
+    psItemStats *itemstats=psserver->cachemanager->GetBasicItemStatsByID(atoi(item.GetData()) );
     if (itemstats==NULL)
     {
         CPrintf(CON_CMDOUTPUT ,"No Basic Item Template with that id was found.\n");
@@ -1168,7 +1168,7 @@ int com_addinv(char *line)
     if (!chardata->Inventory().Add(iteminstance, false, false))
     {
         CPrintf(CON_CMDOUTPUT ,"The item did not fit into the character's inventory.\n");
-        CacheManager::GetSingleton().RemoveInstance(iteminstance);
+        psserver->cachemanager->RemoveInstance(iteminstance);
         return 0;
     }
 
@@ -1481,10 +1481,10 @@ int com_showinv(char *line, bool moreiteminfo)
         return 0;
     }
 
-    gemObject *obj = GEMSupervisor::GetSingleton().FindPlayerEntity(characteruid);
+    gemObject *obj = psserver->entitymanager->GetGEM()->FindPlayerEntity(characteruid);
     if (!obj)
     {
-        obj = GEMSupervisor::GetSingleton().FindNPCEntity(characteruid);
+        obj = psserver->entitymanager->GetGEM()->FindNPCEntity(characteruid);
     }
     // If the character is online use the active stats.  Otherwise we need to load the character data.
     if (obj)
@@ -1528,7 +1528,7 @@ int com_showinv(char *line, bool moreiteminfo)
     for (charslot=1;charslot<chardata->Inventory().GetInventoryIndexCount(); charslot++)
     {
         currentitem=chardata->Inventory().GetInventoryIndexItem(charslot);
-        const char *name = CacheManager::GetSingleton().slotNameHash.GetName( currentitem->GetLocInParent() );
+        const char *name = psserver->cachemanager->slotNameHash.GetName( currentitem->GetLocInParent() );
         char buff[20];
         if (!name)
         {
@@ -1650,7 +1650,7 @@ int com_print(char *line)
     EID eid(strtoul(line, NULL, 10));
     gemObject* obj;
 
-    obj = GEMSupervisor::GetSingleton().FindObject(eid);
+    obj = psserver->entitymanager->GetGEM()->FindObject(eid);
 
     if (obj)
     {
@@ -1680,7 +1680,7 @@ int com_print(char *line)
 
 int com_entlist(char *)
 {
-    csHash<gemObject*, EID> & gems = GEMSupervisor::GetSingleton().GetAllGEMS();
+    csHash<gemObject*, EID> & gems = psserver->entitymanager->GetGEM()->GetAllGEMS();
     csHash<gemObject*, EID>::GlobalIterator i(gems.GetIterator());
     gemObject* obj;
 
@@ -1710,7 +1710,7 @@ int com_entlist(char *)
 
 int com_charlist(char *)
 {
-    csHash<gemObject*, EID> & gems = GEMSupervisor::GetSingleton().GetAllGEMS();
+    csHash<gemObject*, EID> & gems = psserver->entitymanager->GetGEM()->GetAllGEMS();
     csHash<gemObject*, EID>::GlobalIterator i(gems.GetIterator());
     gemObject* obj;
 
@@ -1736,7 +1736,7 @@ int com_charlist(char *)
 int com_factions(char *)
 {
 
-    csHash<gemObject*, EID> & gems = GEMSupervisor::GetSingleton().GetAllGEMS();
+    csHash<gemObject*, EID> & gems = psserver->entitymanager->GetGEM()->GetAllGEMS();
     csHash<gemObject*, EID>::GlobalIterator itr(gems.GetIterator());
     gemObject* obj;
 
@@ -1772,7 +1772,7 @@ int com_factions(char *)
         CPrintf(CON_CMDOUTPUT ,"\n");
     }
 
-    csHash<Faction*,int> factions_by_id = CacheManager::GetSingleton().GetFactionHash();
+    csHash<Faction*,int> factions_by_id = psserver->cachemanager->GetFactionHash();
     CPrintf(CON_CMDOUTPUT ,"                     ");
     csHash<Faction*, int>::GlobalIterator iter = factions_by_id.GetIterator();
     while (iter.HasNext())
@@ -1811,7 +1811,7 @@ int com_sectors(char *)
     for (int i = 0; i < sectorList->GetCount(); i++){
         iSector * sector = sectorList->Get(i);
         csString sectorName = sector->QueryObject()->GetName();
-        psSectorInfo * si = CacheManager::GetSingleton().GetSectorInfoByName(sectorName);
+        psSectorInfo * si = psserver->cachemanager->GetSectorInfoByName(sectorName);
 
 
         CPrintf(CON_CMDOUTPUT ,"%4i %4u %s",i,si?si->uid:0,sectorName.GetDataSafe());
@@ -1892,7 +1892,7 @@ int com_adjuststat(char *line)
     float adjust = atof(words[2]);
     int clientnum = atoi(words[0]);
 
-    csHash<gemObject*, EID> & gems = GEMSupervisor::GetSingleton().GetAllGEMS();
+    csHash<gemObject*, EID> & gems = psserver->entitymanager->GetGEM()->GetAllGEMS();
     csHash<gemObject*, EID>::GlobalIterator i(gems.GetIterator());
     gemActor * actor = NULL;
     bool found = false;
@@ -2075,9 +2075,9 @@ int com_liststats(char *line)
     CPrintf(CON_CMDOUTPUT ,"Experience points(W)  %7u\n",charData->GetExperiencePoints());
     CPrintf(CON_CMDOUTPUT ,"Progression points(X) %7u\n",charData->GetProgressionPoints());
     CPrintf(CON_CMDOUTPUT ,"%-20s %12s %12s %12s\n","Skill","Practice(Z)","Knowledge(Y)","Rank(R)");
-    for (int skillID = 0; skillID < CacheManager::GetSingleton().GetSkillAmount(); skillID++)
+    for (int skillID = 0; skillID < psserver->cachemanager->GetSkillAmount(); skillID++)
     {
-        psSkillInfo * info = CacheManager::GetSingleton().GetSkillByID(skillID);
+        psSkillInfo * info = psserver->cachemanager->GetSkillByID(skillID);
         if (!info)
         {
             Error2("Can't find skill %d",skillID);
@@ -2122,7 +2122,7 @@ int com_progress(char * line)
     // Convert to int, if possible
     int clientnum = atoi(charname);
 
-    csHash<gemObject*, EID> & gems = GEMSupervisor::GetSingleton().GetAllGEMS();
+    csHash<gemObject*, EID> & gems = psserver->entitymanager->GetGEM()->GetAllGEMS();
     csHash<gemObject*, EID>::GlobalIterator i(gems.GetIterator());
     gemObject* obj;
     gemActor* actor = NULL;
@@ -2206,7 +2206,7 @@ int com_kill(char* player)
         return 0;
     }
     EID eid = client->GetActor()->GetEID();
-    gemActor* object = (gemActor*)GEMSupervisor::GetSingleton().FindObject(eid);
+    gemActor* object = (gemActor*)psserver->entitymanager->GetGEM()->FindObject(eid);
     object->Kill(NULL);
     return 0;
 }
@@ -2216,7 +2216,7 @@ int com_kill(char* player)
 int com_killnpc(char* input)
 {
     EID eid = atoi(input);
-    gemActor* object = (gemActor*)GEMSupervisor::GetSingleton().FindObject(eid);
+    gemActor* object = (gemActor*)psserver->entitymanager->GetGEM()->FindObject(eid);
     if (!object)
     {
         CPrintf(CON_CMDOUTPUT, "NPC with %s not found!\n", ShowID(eid));
@@ -2257,7 +2257,7 @@ int com_questreward( char* str )
     }
 
     // Get the ItemStats based on the name provided.
-    psItemStats *itemstats=CacheManager::GetSingleton().GetBasicItemStatsByID(atoi(item.GetData()) );
+    psItemStats *itemstats=psserver->cachemanager->GetBasicItemStatsByID(atoi(item.GetData()) );
     if (itemstats==NULL)
     {
         CPrintf(CON_CMDOUTPUT ,"No Basic Item Template with that id was found.\n");
@@ -2379,7 +2379,7 @@ int com_randomloot( char* loot )
     if (testLootEntrySet && testEntry)
     {
         // get the base item stats
-        testEntry->item = CacheManager::GetSingleton().GetBasicItemStatsByName(baseItemName);
+        testEntry->item = psserver->cachemanager->GetBasicItemStatsByName(baseItemName);
         if (testEntry->item)
         {
             testEntry->probability = 1.0;   // want a dead cert for testing!

@@ -59,6 +59,8 @@ protected:
     csArray<QuestRewardOffer*>  offers;
 
     csString lastError;     ///< Last error message to send to client on loadquest.
+    
+    CacheManager* cacheManager;
 
     /**
      * Load all scripts from db
@@ -134,7 +136,7 @@ protected:
 
 public:
 
-    QuestManager();
+    QuestManager(CacheManager* cachemanager);
     virtual ~QuestManager();
 
     bool Initialize();

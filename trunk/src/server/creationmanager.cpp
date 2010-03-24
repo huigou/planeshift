@@ -63,8 +63,11 @@
 
 
 
-CharCreationManager::CharCreationManager()
+CharCreationManager::CharCreationManager(GEMSupervisor* gemsupervisor, CacheManager* cachemanager, EntityManager* entitymanager)
 {    
+	gemSupervisor = gemsupervisor;
+	cacheManager = cachemanager;
+	entityManager = entitymanager;
     raceCPValues = 0;
     raceCPValuesLength = 0;
     if (psserver->GetEventManager())
@@ -141,13 +144,13 @@ void CharCreationManager::HandleCharDelete( MsgEntry* me, Client* client )
 
         // Remove cached objects to make sure that the client gets a fresh character
         // list from the database.
-        iCachedObject *obj = CacheManager::GetSingleton().RemoveFromCache(CacheManager::GetSingleton().MakeCacheName("list",client->GetAccountID().Unbox()));
+        iCachedObject *obj = psserver->cachemanager->RemoveFromCache(psserver->cachemanager->MakeCacheName("list",client->GetAccountID().Unbox()));
         if (obj)
         {
             obj->ProcessCacheTimeout();
             obj->DeleteSelf();
         }
-        obj = CacheManager::GetSingleton().RemoveFromCache(CacheManager::GetSingleton().MakeCacheName("auth", client->GetAccountID().Unbox()));
+        obj = psserver->cachemanager->RemoveFromCache(psserver->cachemanager->MakeCacheName("auth", client->GetAccountID().Unbox()));
         if (obj)
         {
             obj->ProcessCacheTimeout();
@@ -492,7 +495,7 @@ void CharCreationManager::HandleTraits( MsgEntry* me,Client *client )
     }
 
    csString str = "<traits>";
-   CacheManager::TraitIterator traits = CacheManager::GetSingleton().GetTraitIterator();
+   CacheManager::TraitIterator traits = psserver->cachemanager->GetTraitIterator();
    while (traits.HasNext())
    {
       psTrait * trait = traits.Next();
@@ -565,7 +568,7 @@ bool CharCreationManager::Validate( psCharUploadMessage& mesg, csString& errorMs
                  CalculateCPChoices( mesg.choices, mesg.fatherMod, mesg.motherMod );
                  
      psRaceInfo* race;
-     race = CacheManager::GetSingleton().GetRaceInfoByNameGender( mesg.race, (PSCHARACTER_GENDER)mesg.gender );                      
+     race = psserver->cachemanager->GetRaceInfoByNameGender( mesg.race, (PSCHARACTER_GENDER)mesg.gender );                      
 
     if ( !race )
     {
@@ -778,7 +781,7 @@ void CharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
     chardata->SetFullName(playerName,lastName);
     chardata->SetCreationInfo(upload.bio);
 
-    psRaceInfo *raceinfo=CacheManager::GetSingleton().GetRaceInfoByNameGender( upload.race, (PSCHARACTER_GENDER)upload.gender);
+    psRaceInfo *raceinfo=psserver->cachemanager->GetRaceInfoByNameGender( upload.race, (PSCHARACTER_GENDER)upload.gender);
     if (raceinfo==NULL)
     {
         Error3("Invalid race/gender combination on character creation:  Race='%d' Gender='%d'", upload.race, upload.gender );
@@ -799,15 +802,15 @@ void CharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
     InstanceID newinstance = DEFAULT_INSTANCE;
     
     //get the option entries for tutorial from the server options. Note it's tutorial:variousdata
-    optionEntry* tutorialEntry = CacheManager::GetSingleton().getOptionSafe("tutorial","");   
+    optionEntry* tutorialEntry = psserver->cachemanager->getOptionSafe("tutorial","");   
     sectorname = tutorialEntry->getOptionSafe("sectorname", "tutorial")->getValue();
 
-    psSectorInfo *sectorinfo = CacheManager::GetSingleton().GetSectorInfoByName(sectorname);
+    psSectorInfo *sectorinfo = psserver->cachemanager->GetSectorInfoByName(sectorname);
 
     if (!sectorinfo || PlayerHasFinishedTutorial(acctID, sectorinfo->uid))
     {
         raceinfo->GetStartingLocation(x,y,z,yrot,range,sectorname);
-        sectorinfo = CacheManager::GetSingleton().GetSectorInfoByName(sectorname);
+        sectorinfo = psserver->cachemanager->GetSectorInfoByName(sectorname);
         
         //As we aren't going in the tutorial disable the tutorial help messages disable them
         for(int i = 0; i < TutorialManager::TUTOREVENTTYPE_COUNT; i++)
@@ -827,7 +830,7 @@ void CharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
     if ( sectorinfo && EntityManager::GetSingleton().FindSector(sectorinfo->name) == NULL )
     {
         Error2("Sector='%s' found but no map file was detected for it. Using NPCroom1", sectorname );    
-        sectorinfo = CacheManager::GetSingleton().GetSectorInfoByName("NPCroom1");
+        sectorinfo = psserver->cachemanager->GetSectorInfoByName("NPCroom1");
         if ( sectorinfo && EntityManager::GetSingleton().FindSector(sectorinfo->name) == NULL )
         {
             Error1("NPCroom1 failed - Critical");                
@@ -866,27 +869,27 @@ void CharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
 
     psTrait * trait;
 //    CPrintf(CON_DEBUG, "Trait: %d\n", upload.selectedFace );    
-    trait = CacheManager::GetSingleton().GetTraitByID(upload.selectedFace);    
+    trait = psserver->cachemanager->GetTraitByID(upload.selectedFace);    
     if ( trait )
         chardata->SetTraitForLocation( trait->location, trait );
             
-    trait = CacheManager::GetSingleton().GetTraitByID(upload.selectedHairStyle);    
+    trait = psserver->cachemanager->GetTraitByID(upload.selectedHairStyle);    
     if ( trait )
         chardata->SetTraitForLocation( trait->location, trait );
     
-    trait = CacheManager::GetSingleton().GetTraitByID(upload.selectedBeardStyle);    
+    trait = psserver->cachemanager->GetTraitByID(upload.selectedBeardStyle);    
     if ( trait )
         chardata->SetTraitForLocation( trait->location, trait );
     
-    trait = CacheManager::GetSingleton().GetTraitByID(upload.selectedHairColour);    
+    trait = psserver->cachemanager->GetTraitByID(upload.selectedHairColour);    
     if ( trait )
         chardata->SetTraitForLocation( trait->location, trait );
     
-    trait = CacheManager::GetSingleton().GetTraitByID(upload.selectedSkinColour);    
+    trait = psserver->cachemanager->GetTraitByID(upload.selectedSkinColour);    
     if ( trait )
         chardata->SetTraitForLocation( trait->location, trait );
     
-    gemActor *actor = new gemActor( chardata,
+    gemActor *actor = new gemActor( gemSupervisor, cacheManager, entityManager, chardata,
                                     raceinfo->mesh_name,
                                     newinstance,
                                     EntityManager::GetSingleton().FindSector(sectorinfo->name),
@@ -991,13 +994,13 @@ void CharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
 
         // Remove cached objects to make sure that the client gets a fresh character
         // list from the database if it logs out and in within 2 minutes.
-        iCachedObject *obj = CacheManager::GetSingleton().RemoveFromCache(CacheManager::GetSingleton().MakeCacheName("list",client->GetAccountID().Unbox()));
+        iCachedObject *obj = psserver->cachemanager->RemoveFromCache(psserver->cachemanager->MakeCacheName("list",client->GetAccountID().Unbox()));
         if (obj)
         {
             obj->ProcessCacheTimeout();
             obj->DeleteSelf();
         }
-        obj = CacheManager::GetSingleton().RemoveFromCache(CacheManager::GetSingleton().MakeCacheName("auth",client->GetAccountID().Unbox()));
+        obj = psserver->cachemanager->RemoveFromCache(psserver->cachemanager->MakeCacheName("auth",client->GetAccountID().Unbox()));
         if (obj)
         {
             obj->ProcessCacheTimeout();
@@ -1023,14 +1026,14 @@ void CharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
             int value = chardata->Stats()[(PSITEMSTATS_STAT) z].Current();
             if ( value > 0 )
             {
-                mesg.AddStat( value, CacheManager::GetSingleton().Attribute2String((PSITEMSTATS_STAT)z));                
+                mesg.AddStat( value, psserver->cachemanager->Attribute2String((PSITEMSTATS_STAT)z));                
             }                                    
         }
-        for ( z = 0; z < CacheManager::GetSingleton().GetSkillAmount(); z++ )
+        for ( z = 0; z < psserver->cachemanager->GetSkillAmount(); z++ )
         {
             unsigned int rank = chardata->Skills().GetSkillRank((PSSKILL) z).Base();
             
-            psSkillInfo* info = CacheManager::GetSingleton().GetSkillByID(z);
+            psSkillInfo* info = psserver->cachemanager->GetSkillByID(z);
             csString name("Not found");
             if ( info )
                 name.Replace( info->name );
@@ -1049,7 +1052,7 @@ void CharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
     if (!upload.verify)
     {
         // Remove char data from the cache
-        iCachedObject *obj = CacheManager::GetSingleton().RemoveFromCache(CacheManager::GetSingleton().MakeCacheName("char", chardata->GetPID().Unbox()));
+        iCachedObject *obj = psserver->cachemanager->RemoveFromCache(psserver->cachemanager->MakeCacheName("char", chardata->GetPID().Unbox()));
         if (obj)
         {
             obj->ProcessCacheTimeout();

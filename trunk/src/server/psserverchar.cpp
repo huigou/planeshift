@@ -85,8 +85,10 @@
 /// The number of characters per email account
 #define CHARACTERS_ALLOWED 4       
 
-ServerCharManager::ServerCharManager()
+ServerCharManager::ServerCharManager(CacheManager* cachemanager, GEMSupervisor* gemsupervisor)
 {
+	cacheManager = cachemanager;
+	gemSupervisor = gemsupervisor;
     slotManager = NULL;
 
     calc_item_merchant_price_buy = psserver->GetMathScriptEngine()->FindScript("Calc Item Merchant Price Buy");
@@ -121,7 +123,7 @@ bool ServerCharManager::Initialize()
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ServerCharManager>(this,&ServerCharManager::HandleBookWrite),        MSGTYPE_WRITE_BOOK, REQUIRE_READY_CLIENT);
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ServerCharManager>(this,&ServerCharManager::HandleFaction),          MSGTYPE_FACTION_INFO, REQUIRE_READY_CLIENT);
 
-    slotManager = new SlotManager;
+    slotManager = new SlotManager(gemSupervisor, cacheManager);
     if ( !(slotManager && slotManager->Initialize()) )
         return false;
 
@@ -147,7 +149,7 @@ void ServerCharManager::UpdateSketch(MsgEntry* me, Client *client)
             csString currentTitle = item->GetStandardName();
             if (sketchMsg.name.Length() > 0)
             {
-                uint32 existingItemID = CacheManager::GetSingleton().BasicItemStatsByNameExist(sketchMsg.name);
+                uint32 existingItemID = cacheManager->BasicItemStatsByNameExist(sketchMsg.name);
                 if (existingItemID != 0 && existingItemID != item->GetBaseStats()->GetUID())
                 {
                     psserver->SendSystemError(me->clientnum, "The title is not unique");
@@ -292,7 +294,7 @@ void ServerCharManager::HandleBookWrite(MsgEntry* me, Client* client)
             csString currentTitle = item->GetStandardName();
             if (mesg.title.Length() > 0)
             {
-                uint32 existingItemID = CacheManager::GetSingleton().BasicItemStatsByNameExist(mesg.title);
+                uint32 existingItemID = cacheManager->BasicItemStatsByNameExist(mesg.title);
                 if (existingItemID != 0 && existingItemID != item->GetBaseStats()->GetUID())
                 {
                     psserver->SendSystemError(me->clientnum, "The title is not unique");
@@ -453,7 +455,7 @@ bool ServerCharManager::SendInventory( int clientNum, bool sendUpdatesOnly)
                           item->GetTotalStackSize(),
                           item->GetImageName(),
                           item->GetPurifyStatus(),
-                          CacheManager::GetSingleton().GetMsgStrings());
+                          cacheManager->GetMsgStrings());
     }
 
     
@@ -505,9 +507,9 @@ bool ServerCharManager::IsBanned(const char* name)
 {
     // Check if the name is banned
     csString nName = NormalizeCharacterName(name);
-    for(int i = 0;i < (int)CacheManager::GetSingleton().GetBadNamesCount(); i++)
+    for(int i = 0;i < (int)cacheManager->GetBadNamesCount(); i++)
     {
-        csString name = CacheManager::GetSingleton().GetBadName(i); // Name already normalized
+        csString name = cacheManager->GetBadName(i); // Name already normalized
         if(name == nName)
             return true;
     }
@@ -652,7 +654,7 @@ void ServerCharManager::HandleMerchantRequest(psGUIMerchantMessage& msg, Client 
     if (attr)
     {
         csString targetName = attr->GetValue();
-        target = GEMSupervisor::GetSingleton().FindObject(targetName);
+        target = gemSupervisor->FindObject(targetName);
         if (!target)
         {
             psserver->SendSystemInfo(client->GetClientNum(), "Merchant '%s' not found.", targetName.GetData());
@@ -788,13 +790,13 @@ void ServerCharManager::HandleMerchantBuy(psGUIMerchantMessage& msg, Client *cli
 
                 csString personalisedName(itemName);
 
-                for(int i = 1; CacheManager::GetSingleton().BasicItemStatsByNameExist(personalisedName) > 0; i++)
+                for(int i = 1; cacheManager->BasicItemStatsByNameExist(personalisedName) > 0; i++)
                 {
                     personalisedName = itemName;
-                    personalisedName.AppendFmt(" (%zu)", CacheManager::GetSingleton().ItemStatsSize()+i);
+                    personalisedName.AppendFmt(" (%zu)", cacheManager->ItemStatsSize()+i);
                 }
 
-                psItemStats * newCreation = CacheManager::GetSingleton().CopyItemStats(item->GetBaseStats()->GetUID(),
+                psItemStats * newCreation = cacheManager->CopyItemStats(item->GetBaseStats()->GetUID(),
                                                                                   personalisedName);
 
                 if (!newCreation)
@@ -847,7 +849,7 @@ void ServerCharManager::HandleMerchantBuy(psGUIMerchantMessage& msg, Client *cli
                 if (!currentitem)
                     continue;
 
-                CacheManager::GetSingleton().RemoveInstance(currentitem);
+                cacheManager->RemoveInstance(currentitem);
             }
 
             return;
@@ -913,7 +915,7 @@ void ServerCharManager::HandleMerchantBuy(psGUIMerchantMessage& msg, Client *cli
             }
             else
             {
-                CacheManager::GetSingleton().RemoveInstance(currentitem);
+                cacheManager->RemoveInstance(currentitem);
             }
         }
 
@@ -1023,10 +1025,10 @@ void ServerCharManager::HandleMerchantSell(psGUIMerchantMessage& msg, Client *cl
         // items are not currently given to merchant, they are just destroyed
         psItemStats *itemStats = item->GetBaseStats();
         bool uniqueItem = itemStats->GetUnique();
-        CacheManager::GetSingleton().RemoveInstance(item);
+        cacheManager->RemoveInstance(item);
         // if the item is unique, like a player-written book, remove the item stats too
         if (uniqueItem)
-            CacheManager::GetSingleton().RemoveItemStats(itemStats);
+            cacheManager->RemoveItemStats(itemStats);
 
         // Update all client views
         UpdateItemViews( client->GetClientNum() );
@@ -1611,9 +1613,9 @@ void ServerCharManager::BeginStoring(Client * client, gemObject * target, const 
     csString categoryList("<L>");
     csString buff;
 
-    for ( size_t z = 0; z < CacheManager::GetSingleton().GetItemCategoryAmount(); z++ )
+    for ( size_t z = 0; z < cacheManager->GetItemCategoryAmount(); z++ )
     {
-        psItemCategory * category = CacheManager::GetSingleton().GetItemCategoryByPos(z);
+        psItemCategory * category = cacheManager->GetItemCategoryByPos(z);
         //check from what category items in player inventory are.
         if(type == "STORE")
         {
@@ -1662,7 +1664,7 @@ void ServerCharManager::HandleStorageRequest(psGUIStorageMessage& msg, Client *c
     if (attr)
     {
         csString targetName = attr->GetValue();
-        target = GEMSupervisor::GetSingleton().FindObject(targetName);
+        target = gemSupervisor->FindObject(targetName);
         if (!target)
         {
             psserver->SendSystemInfo(client->GetClientNum(), "Storage '%s' not found.", targetName.GetData());
@@ -1695,7 +1697,7 @@ void ServerCharManager::HandleStorageCategory(psGUIStorageMessage& msg, Client *
     if (VerifyStorage(client, character,&storage,"category","",storageNode->GetAttributeValueAsInt("ID")))
     {
         csString category = storageNode->GetAttributeValue("CATEGORY");
-        psItemCategory * itemCategory = CacheManager::GetSingleton().GetItemCategoryByName(category);
+        psItemCategory * itemCategory = cacheManager->GetItemCategoryByName(category);
         if (!itemCategory)
         {
             CPrintf(CON_DEBUG, "Player %s fails to get items in category %s. Unkown category!\n",

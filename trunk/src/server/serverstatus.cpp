@@ -91,7 +91,7 @@ void psServerStatusRunEvent::Trigger ()
     unsigned int moneyIn = economy.lootValue + economy.sellingValue + economy.pickupsValue;
     unsigned int moneyOut = economy.buyingValue + economy.droppedValue;
     
-    ClientConnectionSet * clients = EntityManager::GetSingleton().GetClients();
+    ClientConnectionSet * clients = psserver->entitymanager->GetClients();
     reportString.Format("<server_report time=\"%s\" now=\"%ld\" number=\"%u\" client_count=\"%zu\" mob_births=\"%u\" mob_deaths=\"%u\" player_deaths=\"%u\" sold_items=\"%u\" sold_value=\"%u\" totalMoneyIn=\"%u\" totalMoneyOut=\"%u\">\n",
         timeString.GetData(), now, ServerStatus::count, clients->Count(), ServerStatus::mob_birthcount, ServerStatus::mob_deathcount, ServerStatus::player_deathcount, ServerStatus::sold_items, ServerStatus::sold_value, moneyIn, moneyOut );
     ClientIterator i(*clients);
@@ -101,7 +101,7 @@ void psServerStatusRunEvent::Trigger ()
         ReportClient(curr, clientLogger, reportString);
     }
     // Record npc data
-    csHash<gemObject*, EID> & gems = EntityManager::GetSingleton().GetGEM()->GetAllGEMS();
+    csHash<gemObject*, EID> & gems = psserver->entitymanager->GetGEM()->GetAllGEMS();
     csHash<gemObject*, EID>::GlobalIterator gemi(gems.GetIterator());
     gemObject* obj;
     

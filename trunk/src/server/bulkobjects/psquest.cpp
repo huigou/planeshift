@@ -87,14 +87,14 @@ bool psQuest::Load(iResultRow& row)
     if(flags & PSQUEST_DISABLED_QUEST) //the quest is set as disabled
         Active(false);
 
-    parent_quest = CacheManager::GetSingleton().GetQuestByID( row.GetUInt32("master_quest_id") );
+    parent_quest = psserver->cachemanager->GetQuestByID( row.GetUInt32("master_quest_id") );
 
     image = row["cstr_icon"];
     if(!image)
     {
         Error2("Invalid 'cstr_icon' for quest '%s'\n", name.GetData());
     }
-    CacheManager::GetSingleton().AddCommonStringID(image);
+    psserver->cachemanager->AddCommonStringID(image);
 
     // the value is expressed in seconds
     int lockout_time = row.GetInt("player_lockout_time");
@@ -151,7 +151,7 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, csRef<psQuestP
             }
             else
             {
-                quest = CacheManager::GetSingleton().GetQuestByName( name );
+                quest = psserver->cachemanager->GetQuestByName( name );
             }
 
             if (quest)
@@ -192,7 +192,7 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, csRef<psQuestP
             quest = self;
         } else
         {
-            quest = CacheManager::GetSingleton().GetQuestByName( name );
+            quest = psserver->cachemanager->GetQuestByName( name );
         }
         if (quest)
         {
@@ -337,7 +337,7 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, csRef<psQuestP
             return false;
         }
 
-        Faction * faction = CacheManager::GetSingleton().GetFaction(name);
+        Faction * faction = psserver->cachemanager->GetFaction(name);
         if (!faction)
         {
             Error2("Can't find faction '%s' for faction prerequisite operation",name.GetDataSafe());
@@ -508,7 +508,7 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, csRef<psQuestP
             return false;
         }
 
-        psSkillInfo * skill = CacheManager::GetSingleton().GetSkillByName( name );
+        psSkillInfo * skill = psserver->cachemanager->GetSkillByName( name );
         if (!skill)
         {
             Error2("Can't find skill '%s' for skill prerequisite operation",name.GetDataSafe());

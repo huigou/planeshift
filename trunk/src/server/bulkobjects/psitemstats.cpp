@@ -133,9 +133,9 @@ void psItemWeaponStats::ReadStats( iResultRow& row )
     else if ( type == "SLING" )
         weapon_type = PSITEMSTATS_WEAPONTYPE_SLING;
 
-    weapon_skill[PSITEMSTATS_WEAPONSKILL_INDEX_0] = CacheManager::GetSingleton().ConvertSkill(row.GetInt("item_skill_id_1"));
-    weapon_skill[PSITEMSTATS_WEAPONSKILL_INDEX_1] = CacheManager::GetSingleton().ConvertSkill(row.GetInt("item_skill_id_2"));
-    weapon_skill[PSITEMSTATS_WEAPONSKILL_INDEX_2] = CacheManager::GetSingleton().ConvertSkill(row.GetInt("item_skill_id_3"));
+    weapon_skill[PSITEMSTATS_WEAPONSKILL_INDEX_0] = psserver->cachemanager->ConvertSkill(row.GetInt("item_skill_id_1"));
+    weapon_skill[PSITEMSTATS_WEAPONSKILL_INDEX_1] = psserver->cachemanager->ConvertSkill(row.GetInt("item_skill_id_2"));
+    weapon_skill[PSITEMSTATS_WEAPONSKILL_INDEX_2] = psserver->cachemanager->ConvertSkill(row.GetInt("item_skill_id_3"));
 
     latency = row.GetFloat("weapon_speed");
     if (latency < 1.5F)
@@ -445,7 +445,7 @@ bool psItemStats::ReadItemStats(iResultRow& row)
     csString equipXML(row["equip_script"]);
     if (!equipXML.IsEmpty())
     {
-        equipScript = ApplicativeScript::Create(equipXML);
+        equipScript = ApplicativeScript::Create(psserver->entitymanager, psserver->cachemanager, equipXML);
         if (!equipScript)
         {
             Error4("Could not create ApplicativeScript for ItemStats %d (%s)'s equip script: %s.", uid, name.GetData(), equipXML.GetData());
@@ -493,15 +493,15 @@ bool psItemStats::ReadItemStats(iResultRow& row)
     {
         Error2("Invalid 'cstr_gfx_mesh' for mesh '%s'\n", name.GetData());
     }
-    CacheManager::GetSingleton().AddCommonStringID(meshname);
+    psserver->cachemanager->AddCommonStringID(meshname);
     SetMeshName(meshname);
 
     const char *texturename = row["cstr_gfx_texture"];
-    CacheManager::GetSingleton().AddCommonStringID(texturename);
+    psserver->cachemanager->AddCommonStringID(texturename);
     SetTextureName(texturename);
 
     const char *partname = row["cstr_part"];
-    CacheManager::GetSingleton().AddCommonStringID(partname);
+    psserver->cachemanager->AddCommonStringID(partname);
     SetPartName(partname);
 
     const char *imagename = row["cstr_gfx_icon"];
@@ -509,16 +509,16 @@ bool psItemStats::ReadItemStats(iResultRow& row)
     {
         Error2("Invalid 'cstr_gfx_icon' for mesh '%s'\n", name.GetData());
     }
-    CacheManager::GetSingleton().AddCommonStringID(imagename);
+    psserver->cachemanager->AddCommonStringID(imagename);
     SetImageName(imagename);
 
     const char *partmeshname = row["cstr_part_mesh"];
-    CacheManager::GetSingleton().AddCommonStringID(partmeshname);
+    psserver->cachemanager->AddCommonStringID(partmeshname);
     SetPartMeshName(partmeshname);
 
     SetPrice(row.GetInt("base_sale_price"));
     int categoryId = row.GetInt("category_id");
-    psItemCategory * category = CacheManager::GetSingleton().GetItemCategoryByID(categoryId);
+    psItemCategory * category = psserver->cachemanager->GetItemCategoryByID(categoryId);
     if (!category)
     {
         // Should not load without a category.
@@ -561,7 +561,7 @@ bool psItemStats::ReadItemStats(iResultRow& row)
     int anim_list_id = row.GetInt("item_anim_id");
     if (anim_list_id)
     {
-        anim_list = CacheManager::GetSingleton().FindAnimationList(anim_list_id);
+        anim_list = psserver->cachemanager->FindAnimationList(anim_list_id);
         if (!anim_list)
         {
             Error3("Failed to find Item Animation '%d' for itemstat '%d'",
@@ -587,11 +587,11 @@ void psItemStats::ParseFlags( iResultRow& row )
     int z = 0;
     // Iterates over all the flags in the list and adds that flag to the value if it
     // has been found in the flag string from the database.
-    while ( CacheManager::GetSingleton().ItemStatFlagArray[z].string != "END" )
+    while ( psserver->cachemanager->ItemStatFlagArray[z].string != "END" )
     {
-        if (flagstr.FindSubString(CacheManager::GetSingleton().ItemStatFlagArray[z].string,0,true)!=-1)
+        if (flagstr.FindSubString(psserver->cachemanager->ItemStatFlagArray[z].string,0,true)!=-1)
         {
-            flags |= CacheManager::GetSingleton().ItemStatFlagArray[z].flag;
+            flags |= psserver->cachemanager->ItemStatFlagArray[z].flag;
         }
         z++;
     }
@@ -874,7 +874,7 @@ int psItemStats::GetAttackAnimID(unsigned int skill_level)
         int which = psserver->rng->Get(max);
         if (anim_list->Get(which)->anim_id == csInvalidStringID)
         {
-            anim_list->Get(which)->anim_id = CacheManager::GetSingleton().GetMsgStrings()->Request(anim_list->Get(which)->anim_name);
+            anim_list->Get(which)->anim_id = psserver->cachemanager->GetMsgStrings()->Request(anim_list->Get(which)->anim_name);
             return anim_list->Get(which)->anim_id;
         }
         else
@@ -1095,7 +1095,7 @@ void psItemStats::SetName(const char *v)
     if (!v)
         return;
 
-    CacheManager::GetSingleton().CacheNameChange(csString(name), csString(v));
+    psserver->cachemanager->CacheNameChange(csString(name), csString(v));
 
     name = v;
 }
@@ -1292,7 +1292,7 @@ bool psItemStats::SetEquipScript(const csString & equipXML)
 
     if (!equipXML.IsEmpty())
     {
-        aps = ApplicativeScript::Create(equipXML);
+        aps = ApplicativeScript::Create(psserver->entitymanager, psserver->cachemanager, equipXML);
         if (!aps)
         {
             Error4("Could not create ApplicativeScript for ItemStats %u (%s)'s equip script: %s.", uid, name.GetData(), equipXML.GetData());
@@ -1322,7 +1322,7 @@ bool psItemStats::CheckRequirements( psCharacter* charData, csString& resp )
 
     for ( int z = 0; z < 3; z++ )
     {
-        PSITEMSTATS_STAT stat = CacheManager::GetSingleton().ConvertAttributeString(reqs[z].name);
+        PSITEMSTATS_STAT stat = psserver->cachemanager->ConvertAttributeString(reqs[z].name);
         if ( stat != PSITEMSTATS_STAT_NONE )
         {
             // Stat buffs may be negative; don't use those here
@@ -1333,7 +1333,7 @@ bool psItemStats::CheckRequirements( psCharacter* charData, csString& resp )
         }
         else
         {
-            PSSKILL skill = CacheManager::GetSingleton().ConvertSkillString(reqs[z].name);
+            PSSKILL skill = psserver->cachemanager->ConvertSkillString(reqs[z].name);
             if ( skill != PSSKILL_NONE )
             {
                 val = charData->Skills().GetSkillRank(skill).Current();

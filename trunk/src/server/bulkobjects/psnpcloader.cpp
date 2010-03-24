@@ -299,7 +299,7 @@ bool psNPCLoader::ReadBasicInfo()
         return false;
     }
 
-    psRaceInfo* raceInfo = CacheManager::GetSingleton().GetRaceInfoByNameGender(race, gender);
+    psRaceInfo* raceInfo = psserver->cachemanager->GetRaceInfoByNameGender(race, gender);
     if (!raceInfo)
     {
         CPrintf(CON_ERROR, "Error: Unknown race: %s gender: %s\n",race.GetData(), sex.GetData());
@@ -362,7 +362,7 @@ bool psNPCLoader::ReadLocation()
     rot.z = xmlnode->GetAttributeValueAsFloat("zr");
     sector = xmlnode->GetAttributeValue("sct");
 
-    psSectorInfo*   sectorInfo = CacheManager::GetSingleton().GetSectorInfoByName(sector);
+    psSectorInfo*   sectorInfo = psserver->cachemanager->GetSectorInfoByName(sector);
     if (sectorInfo==NULL)
     {
         CPrintf(CON_ERROR, "Error: Couldn't find a sector with name: %s\n",sector.GetData());
@@ -383,10 +383,10 @@ void psNPCLoader::ReadTraits()
     hair = npcRoot->GetAttributeValue("hair");
     skin = npcRoot->GetAttributeValue("skin");
 
-    psTrait* faceTrait   = CacheManager::GetSingleton().GetTraitByName(face);
-    psTrait* hairTrait  = CacheManager::GetSingleton().GetTraitByName(hair);
-    psTrait* beardTrait = CacheManager::GetSingleton().GetTraitByName(beard);
-    psTrait* skinTrait  = CacheManager::GetSingleton().GetTraitByName(skin);
+    psTrait* faceTrait   = psserver->cachemanager->GetTraitByName(face);
+    psTrait* hairTrait  = psserver->cachemanager->GetTraitByName(hair);
+    psTrait* beardTrait = psserver->cachemanager->GetTraitByName(beard);
+    psTrait* skinTrait  = psserver->cachemanager->GetTraitByName(skin);
 
     if (faceTrait)
         npc->SetTraitForLocation(PSTRAIT_LOCATION_FACE, faceTrait);
@@ -504,7 +504,7 @@ void psNPCLoader::ReadTrainerInfo()
         max_rank = trainnode->GetAttributeValueAsInt("max_rank");
         min_faction = trainnode->GetAttributeValueAsInt("min_faction");
 
-        psSkillInfo*    skillInfo = CacheManager::GetSingleton().GetSkillByName(skill);
+        psSkillInfo*    skillInfo = psserver->cachemanager->GetSkillByName(skill);
         if (skillInfo!=NULL)
         {
             psTrainerSkill trainerSkill;
@@ -542,7 +542,7 @@ void psNPCLoader::ReadSkills()
         skill = skillnode->GetAttributeValue("name");
         value = skillnode->GetAttributeValueAsInt("value");
 
-        psSkillInfo*    skillInfo = CacheManager::GetSingleton().GetSkillByName(skill);
+        psSkillInfo*    skillInfo = psserver->cachemanager->GetSkillByName(skill);
         if (skillInfo!=NULL)
         {
             npc->Skills().SetSkillRank(skillInfo->id, value);           
@@ -650,7 +650,7 @@ void psNPCLoader::ReadMerchantInfo()
             csRef<iDocumentNode> buynode = iter->Next();
             name = buynode->GetAttributeValue("name");
 
-            psItemCategory* itemCategory = CacheManager::GetSingleton().GetItemCategoryByName(name);
+            psItemCategory* itemCategory = psserver->cachemanager->GetItemCategoryByName(name);
 
             if (itemCategory!=NULL)
             {
@@ -675,7 +675,7 @@ void psNPCLoader::ReadMerchantInfo()
             csRef<iDocumentNode> sellnode = iter->Next();
             name = sellnode->GetAttributeValue("name");
 
-            psItemCategory* itemCategory = CacheManager::GetSingleton().GetItemCategoryByName(name);
+            psItemCategory* itemCategory = psserver->cachemanager->GetItemCategoryByName(name);
 
             if (itemCategory!=NULL)
             {
@@ -717,7 +717,7 @@ void psNPCLoader::SetupEquipment()
 
         psItem* newItem = new psItem();  // Not calling Loaded(), and will not ever save
 
-        psItemStats * stat = CacheManager::GetSingleton().GetBasicItemStatsByName(name);
+        psItemStats * stat = psserver->cachemanager->GetBasicItemStatsByName(name);
         if ( !stat )
         {
             Error2("Could not load basic item stat for %s", name.GetData() );
@@ -736,7 +736,7 @@ void psNPCLoader::SetupEquipment()
         }
         if (!guild.IsEmpty())
         {
-             psGuildInfo* newguild=CacheManager::GetSingleton().FindGuild(guild.GetData());
+             psGuildInfo* newguild=psserver->cachemanager->FindGuild(guild.GetData());
              newItem->SetGuildID(newguild->id);
         }
         if (location == "equipped")
@@ -1432,7 +1432,7 @@ void psNPCLoader::WriteSkills()
     csRef<iDocumentNode> skillsNode = npcRoot->CreateNodeBefore(CS_NODE_ELEMENT);
 
     skillsNode->SetValue("skills");
-    for (int i=0;i<CacheManager::GetSingleton().GetSkillAmount();i++)
+    for (int i=0;i<psserver->cachemanager->GetSkillAmount();i++)
     {
         int rank = npc->Skills().GetSkillRank((PSSKILL)i).Current();
         if (rank)
@@ -1441,7 +1441,7 @@ void psNPCLoader::WriteSkills()
 
             skillNode->SetValue("skill");
 
-            psSkillInfo* skillInfo = CacheManager::GetSingleton().GetSkillByID(i);
+            psSkillInfo* skillInfo = psserver->cachemanager->GetSkillByID(i);
             skillNode->SetAttribute("name", skillInfo->name);
             skillNode->SetAttributeAsInt("value", rank);
         }

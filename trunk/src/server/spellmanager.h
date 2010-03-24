@@ -51,7 +51,8 @@ class SpellManager : public MessageManager
 public:
 
     SpellManager(ClientConnectionSet *clients,
-                   iObjectRegistry * object_reg);
+                   iObjectRegistry * object_reg,
+                   CacheManager *cachemanager);
     virtual ~SpellManager();
     
     /** Handles a network message.  
@@ -135,6 +136,7 @@ protected:
 
     ClientConnectionSet *clients;
     iObjectRegistry *object_reg;
+    CacheManager *cacheManager;
 };
 
 #endif

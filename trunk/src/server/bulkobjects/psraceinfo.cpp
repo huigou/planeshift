@@ -62,7 +62,7 @@ bool psRaceInfo::Load(iResultRow& row)
 {
     uid  = row.GetUInt32("id");
     name = row["name"];
-    CacheManager::GetSingleton().AddCommonStringID(name);
+    psserver->cachemanager->AddCommonStringID(name);
     initialCP = row.GetUInt32("initial_cp");
     race = row.GetUInt32("race");
     helmGroup = row["helm"];
@@ -70,12 +70,12 @@ bool psRaceInfo::Load(iResultRow& row)
     BeltGroup = row["belt"];
     CloakGroup = row["cloak"];
     MounterAnim = row["cstr_mounter_animation"];
-    CacheManager::GetSingleton().AddCommonStringID(MounterAnim);
+    psserver->cachemanager->AddCommonStringID(MounterAnim);
     sex = row["sex"];
     scale = row.GetFloat("scale");
     speedModifier = row.GetFloat("speed_modifier");
 
-    gender = CacheManager::GetSingleton().ConvertGenderString(row["sex"]);
+    gender = psserver->cachemanager->ConvertGenderString(row["sex"]);
 
     iResultSet * rs = db->Select("SELECT * FROM race_spawns WHERE raceid = %lu", race);
 
@@ -96,7 +96,7 @@ bool psRaceInfo::Load(iResultRow& row)
         //set a range used to select a random point within it from the x and z
         startingLoc.range = (*rs)[i].GetFloat("range");
 
-        psSectorInfo *secinfo=CacheManager::GetSingleton().GetSectorInfoByID((*rs)[i].GetUInt32("sector_id"));
+        psSectorInfo *secinfo=psserver->cachemanager->GetSectorInfoByID((*rs)[i].GetUInt32("sector_id"));
         if (secinfo==NULL)
         {
             Error3("Unresolvable sector id %lu in start_sector_id field of race info for race %u.  Failing!",
@@ -129,10 +129,10 @@ bool psRaceInfo::Load(iResultRow& row)
     {
         Error2("Invalid 'cstr_mesh' for race '%s'\n", name.GetData());
     }
-    CacheManager::GetSingleton().AddCommonStringID(mesh_name);
+    psserver->cachemanager->AddCommonStringID(mesh_name);
 
     base_texture_name = row["cstr_base_texture"];
-    CacheManager::GetSingleton().AddCommonStringID(base_texture_name);
+    psserver->cachemanager->AddCommonStringID(base_texture_name);
 
     // Load starting stats
     SetBaseAttribute(PSITEMSTATS_STAT_STRENGTH      ,row.GetUInt32("start_str"));

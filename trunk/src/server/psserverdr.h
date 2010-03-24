@@ -36,11 +36,13 @@ class MsgEntry;
 class gemActor;
 class MathScript;
 class PaladinJr;
+class CacheManager;
+class EntityManager;
 
 class psServerDR : public MessageManager
 {
 public:    
-    psServerDR();
+    psServerDR(CacheManager* cachemanager, EntityManager* entitymanager);
     virtual ~psServerDR();
 
     bool Initialize();
@@ -59,6 +61,9 @@ protected:
 
     MathScript *calc_damage;
     PaladinJr *paladin;
+    
+    CacheManager* cacheManager;
+    EntityManager* entityManager;
 };
 
 #endif

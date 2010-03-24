@@ -119,8 +119,10 @@ const constraint constraints[] =
 
 //-----------------------------------------------------------------------------
 
-WorkManager::WorkManager()
+WorkManager::WorkManager(CacheManager* cachemanager, EntityManager* entitymanager)
 {
+	cacheManager = cachemanager;
+	entityManager = entitymanager;
     currentQuality = 1.00;
 
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<WorkManager>(this,&WorkManager::HandleWorkCommand),MSGTYPE_WORKCMD,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
@@ -176,7 +178,7 @@ void WorkManager::Initialize()
             nr->radius = res[i].GetFloat("radius");
             nr->visible_radius = res[i].GetFloat("visible_radius");
             nr->probability = res[i].GetFloat("probability");
-            nr->skill = CacheManager::GetSingleton().GetSkillByID( res[i].GetInt("skill") );
+            nr->skill = cacheManager->GetSkillByID( res[i].GetInt("skill") );
             nr->skill_level = res[i].GetInt("skill_level");
             nr->item_cat_id = res[i].GetUInt32("item_cat_id");
             nr->item_quality = res[i].GetFloat("item_quality");
@@ -288,7 +290,7 @@ void WorkManager::HandleRepair(Client *client, psWorkCmdMessage &msg)
     if ( msg.repairSlotName.IsEmpty() )
         slotTarget = PSCHARACTER_SLOT_RIGHTHAND;
     else
-        slotTarget = CacheManager::GetSingleton().slotNameHash.GetID(msg.repairSlotName);
+        slotTarget = cacheManager->slotNameHash.GetID(msg.repairSlotName);
 
     psItem *repairTarget = client->GetCharacterData()->Inventory().GetInventoryItem((INVENTORY_SLOT_NUMBER)slotTarget);
     if (repairTarget==NULL)
@@ -315,7 +317,7 @@ void WorkManager::HandleRepair(Client *client, psWorkCmdMessage &msg)
 
     // Check for required repair kit item in any inventory slot
     int toolstatid     = repairTarget->GetRequiredRepairTool();
-    psItemStats *tool  = CacheManager::GetSingleton().GetBasicItemStatsByID(toolstatid);
+    psItemStats *tool  = cacheManager->GetBasicItemStatsByID(toolstatid);
     psItem *repairTool = NULL;
     if (tool)
     {
@@ -400,7 +402,7 @@ void WorkManager::HandleRepairEvent(psWorkGameEvent* workEvent)
     repairTarget->SetInUse(false);
     // Check for presence of required tool
     int toolstatid     = repairTarget->GetRequiredRepairTool();
-    psItemStats *tool  = CacheManager::GetSingleton().GetBasicItemStatsByID(toolstatid);
+    psItemStats *tool  = cacheManager->GetBasicItemStatsByID(toolstatid);
     psItem *repairTool = NULL;
     if (tool)
     {
@@ -430,7 +432,7 @@ void WorkManager::HandleRepairEvent(psWorkGameEvent* workEvent)
                                        "You used a %s in your repair work.",
                                        item->GetName());
 
-            CacheManager::GetSingleton().RemoveInstance(item);
+            cacheManager->RemoveInstance(item);
             psserver->GetCharManager()->UpdateItemViews( workEvent->client->GetClientNum() );
         }
     }
@@ -676,7 +678,7 @@ NaturalResource *WorkManager::FindNearestResource(const char *reward,iSector *se
 {
     NaturalResource *nr=NULL;
 
-    psSectorInfo *playersector= CacheManager::GetSingleton().GetSectorInfoByName(sector->QueryObject()->GetName());
+    psSectorInfo *playersector= cacheManager->GetSectorInfoByName(sector->QueryObject()->GetName());
     int sectorid = playersector->uid;
 
     Debug2(LOG_TRADE,0, "Finding nearest resource for %s\n", reward);
@@ -793,7 +795,7 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
 
     if (roll < total)  // successful!
     {
-        psItemStats *newitem = CacheManager::GetSingleton().GetBasicItemStatsByID(workEvent->nr->reward);
+        psItemStats *newitem = cacheManager->GetBasicItemStatsByID(workEvent->nr->reward);
         if (!newitem)
         {
             Bug2("Natural Resource reward item #%d not found!\n",workEvent->nr->reward);
@@ -1585,8 +1587,8 @@ bool WorkManager::ValidateCombination(csArray<psItem*> itemArray, uint32 &result
     if (itemCount != 0)
     {
         // Get all possible combinations for that pattern
-        csPDelArray<CombinationConstruction>* combArray = CacheManager::GetSingleton().FindCombinationsList(patternId);
-        csPDelArray<CombinationConstruction>* combGroupArray = CacheManager::GetSingleton().FindCombinationsList(groupPatternId);
+        csPDelArray<CombinationConstruction>* combArray = cacheManager->FindCombinationsList(patternId);
+        csPDelArray<CombinationConstruction>* combGroupArray = cacheManager->FindCombinationsList(groupPatternId);
         if (combArray == NULL)
         {
             // Check for group pattern combinations
@@ -1657,12 +1659,12 @@ bool WorkManager::AnyCombination(csArray<psItem*> itemArray, uint32 &resultId, i
     {
         // Get list of unique ingredients for this pattern
         uint32 activePattern = patternId;
-        csArray<uint32>* uniqueArray = CacheManager::GetSingleton().GetTradeTransUniqueByID(activePattern);
+        csArray<uint32>* uniqueArray = cacheManager->GetTradeTransUniqueByID(activePattern);
         if (uniqueArray == NULL)
         {
             // Try the group pattern
             activePattern = groupPatternId;
-            csArray<uint32>* uniqueArray = CacheManager::GetSingleton().GetTradeTransUniqueByID(activePattern);
+            csArray<uint32>* uniqueArray = cacheManager->GetTradeTransUniqueByID(activePattern);
             if (uniqueArray == NULL)
             {
                 return false;
@@ -1685,7 +1687,7 @@ bool WorkManager::AnyCombination(csArray<psItem*> itemArray, uint32 &resultId, i
 
         // Get all unknow item transforms for this pattern
         csPDelArray<psTradeTransformations>* transArray =
-            CacheManager::GetSingleton().FindTransformationsList(activePattern, 0);
+            cacheManager->FindTransformationsList(activePattern, 0);
         if (transArray == NULL)
         {
             return false;
@@ -1850,7 +1852,7 @@ unsigned int WorkManager::IsTransformable(uint32 patternId, uint32 targetId, int
 
     // Only get those with correct target item and pattern
     csPDelArray<psTradeTransformations>* transArray =
-        CacheManager::GetSingleton().FindTransformationsList(patternId, targetId);
+        cacheManager->FindTransformationsList(patternId, targetId);
     if (transArray == NULL)
     {
         if (secure) psserver->SendSystemInfo(clientNum,"Found no transformations for item %d and pattern %d.", targetId, patternId );
@@ -1871,7 +1873,7 @@ unsigned int WorkManager::IsTransformable(uint32 patternId, uint32 targetId, int
         if (secure) psserver->SendSystemInfo(clientNum,"Testing transformation id %u.", transCandidate->GetId() );
 
         // Go thru all the possable processes and check if one is possible
-        csArray<psTradeProcesses*>* procArray = CacheManager::GetSingleton().GetTradeProcessesByID(
+        csArray<psTradeProcesses*>* procArray = cacheManager->GetTradeProcessesByID(
             transCandidate->GetProcessId());
 
         // If no process for this transform then just continue on
@@ -1957,10 +1959,10 @@ unsigned int WorkManager::IsTransformable(uint32 patternId, uint32 targetId, int
 bool WorkManager::IsIngredient(uint32 patternId, uint32 groupPatternId, uint32 targetId)
 {
     // Check if ingredient is on list of unique ingredients for this pattern
-    csArray<uint32>* itemArray = CacheManager::GetSingleton().GetTradeTransUniqueByID(patternId);
+    csArray<uint32>* itemArray = cacheManager->GetTradeTransUniqueByID(patternId);
     if (itemArray == NULL)
     {
-        csArray<uint32>* itemArray = CacheManager::GetSingleton().GetTradeTransUniqueByID(groupPatternId);
+        csArray<uint32>* itemArray = cacheManager->GetTradeTransUniqueByID(groupPatternId);
         if (itemArray == NULL)
         {
             if (secure) psserver->SendSystemInfo(clientNum,"No items for this pattern or group pattern.");
@@ -1976,7 +1978,7 @@ bool WorkManager::IsIngredient(uint32 patternId, uint32 groupPatternId, uint32 t
         {
             // Get all unknow item transforms for this pattern
             csPDelArray<psTradeTransformations>* transArray =
-                CacheManager::GetSingleton().FindTransformationsList(patternId, 0);
+                cacheManager->FindTransformationsList(patternId, 0);
             if (transArray == NULL)
             {
                 if (secure) psserver->SendSystemInfo(clientNum,"No known transformations for this item.");
@@ -2059,7 +2061,7 @@ void WorkManager::StartTransformationEvent(int transType, INVENTORY_SLOT_NUMBER 
     if ( process && process->GetRenderEffect().Length() > 0 )
     {
         csVector3 offset(0,0,0);
-        workEvent->effectID =  CacheManager::GetSingleton().NextEffectUID();
+        workEvent->effectID =  cacheManager->NextEffectUID();
         psEffectMessage newmsg( 0, process->GetRenderEffect(), offset, owner->GetEID(),0 ,workEvent->effectID );
         newmsg.Multicast(workEvent->multi,0,PROX_LIST_ANY_RANGE);
     }
@@ -2175,7 +2177,7 @@ bool WorkManager::ValidateMind()
 
     // Check if there is a pattern for that design item
     psItemStats* itemStats = designitem->GetCurrentStats();
-    psTradePatterns* pattern = CacheManager::GetSingleton().GetTradePatternByItemID( itemStats->GetUID() );
+    psTradePatterns* pattern = cacheManager->GetTradePatternByItemID( itemStats->GetUID() );
     if ( pattern == NULL )
     {
         Error3("ValidateWork() could not find pattern ID for item %u (%s) in mind slot",
@@ -2814,7 +2816,7 @@ psItem* WorkManager::TransformTargetItem(psItem* oldItem, uint32 newId, int newQ
     oldItem->GetLocationInWorld(instance, &sectorinfo, xpos, ypos, zpos, yrot );
 
     // Destroy gem and item
-    EntityManager::GetSingleton().RemoveActor(oldItem->GetGemObject());
+    entityManager->RemoveActor(oldItem->GetGemObject());
     if (!oldItem->Destroy())
     {
         Error2("TransformTargetItem() could not destroy old item ID #%u from database", oldItem->GetUID());
@@ -2838,7 +2840,7 @@ psItem* WorkManager::TransformTargetItem(psItem* oldItem, uint32 newId, int newQ
 
     // Locate the new item where the old one was
     newItem->SetLocationInWorld(instance,sectorinfo,xpos,ypos,zpos,yrot);
-    if (!EntityManager::GetSingleton().CreateItem(newItem, true))
+    if (!entityManager->CreateItem(newItem, true))
     {
         delete newItem;
         return NULL;
@@ -2880,7 +2882,7 @@ void WorkManager::TransformTargetItemToNpc(psItem* workItem, Client* client)
 
     psCharacter* charData = new psCharacter();
     charData->SetCharType(PSCHARACTER_TYPE_NPC);
-    psRaceInfo* raceinfo = CacheManager::GetSingleton().GetRaceInfoByNameGender("Special", PSCHARACTER_GENDER_NONE);
+    psRaceInfo* raceinfo = cacheManager->GetRaceInfoByNameGender("Special", PSCHARACTER_GENDER_NONE);
     charData->SetPID(psserver->GetUnusedPID());
     charData->SetName(charData->GetPID().Show());
     charData->SetRaceInfo(raceinfo);
@@ -2892,10 +2894,10 @@ void WorkManager::TransformTargetItemToNpc(psItem* workItem, Client* client)
     NpcResponse* response = dict->AddResponse(script);
     dict->AddTrigger(charData->GetPID().Show(), "!anyrange", 0, response->id);
 
-    EntityManager::GetSingleton().RemoveActor(workItem->GetGemObject());
+    entityManager->RemoveActor(workItem->GetGemObject());
     workItem->Destroy();
 
-    EntityManager::GetSingleton().CreateNPC(charData, true, true);
+    entityManager->CreateNPC(charData, true, true);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2914,7 +2916,7 @@ psItem* WorkManager::CreateTradeItem(uint32 newId, int newQty, float itemQuality
     if (newId > 0)
     {
         // Create a new item including stack count and the calculated quality
-        psItemStats* baseStats = CacheManager::GetSingleton().GetBasicItemStatsByID( newId );
+        psItemStats* baseStats = cacheManager->GetBasicItemStatsByID( newId );
         if (!baseStats)
         {
             Error2("CreateTradeItem() could not get base states for item #%iu", newId );
@@ -3270,7 +3272,7 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
         {
             result = process->GetGarbageId();
             resultQty = process->GetGarbageQty();
-            psItemStats* Stats = CacheManager::GetSingleton().GetBasicItemStatsByID( result );
+            psItemStats* Stats = cacheManager->GetBasicItemStatsByID( result );
             if(Stats)
                 startQuality = currentQuality = Stats->GetQuality();
         }
@@ -3411,7 +3413,7 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
     // Let the user know the we have done something
     if (result <= 0 )
     {
-        psItemStats* itemStats = CacheManager::GetSingleton().GetBasicItemStatsByID( trans->GetItemId() );
+        psItemStats* itemStats = cacheManager->GetBasicItemStatsByID( trans->GetItemId() );
         if (itemStats)
         {
             psserver->SendSystemOK(clientNum," %i %s is gone.", itemQty, itemStats->GetName());
@@ -3427,7 +3429,7 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
     }
     else
     {
-        psItemStats* resultStats = CacheManager::GetSingleton().GetBasicItemStatsByID( result );
+        psItemStats* resultStats = cacheManager->GetBasicItemStatsByID( result );
         if (resultStats)
         {
             psserver->SendSystemOK(clientNum,"You made %i %s.", resultQty, resultStats->GetName() );
@@ -3726,7 +3728,7 @@ void WorkManager::SendTransformError( uint32_t clientNum, unsigned int result, u
     }
     if (result & TRANSFORM_UNKNOWN_ITEM)
     {
-        psItemStats* curStats = CacheManager::GetSingleton().GetBasicItemStatsByID( curItemId );
+        psItemStats* curStats = cacheManager->GetBasicItemStatsByID( curItemId );
         if(curStats)
         {
             psserver->SendSystemError(clientNum, "You are not sure what to do with %d %s.", curItemQty, curStats->GetName());
@@ -3740,7 +3742,7 @@ void WorkManager::SendTransformError( uint32_t clientNum, unsigned int result, u
     }
     if (result & TRANSFORM_GARBAGE)
     {
-        psItemStats* curStats = CacheManager::GetSingleton().GetBasicItemStatsByID( curItemId );
+        psItemStats* curStats = cacheManager->GetBasicItemStatsByID( curItemId );
         if(curStats)
         {
             psserver->SendSystemError(clientNum, "You are not sure what to do with this.");
@@ -3907,7 +3909,7 @@ void WorkManager::LockpickComplete(psWorkGameEvent* workEvent)
     {
         // Check if the user has the right skills
         int rank = 0;
-        if (skill >= 0 && skill < CacheManager::GetSingleton().GetSkillAmount())
+        if (skill >= 0 && skill < cacheManager->GetSkillAmount())
             rank = character->Skills().GetSkillRank(skill).Current();
 
         if (rank >= (int) workEvent->object->GetLockStrength())

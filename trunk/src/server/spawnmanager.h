@@ -259,7 +259,7 @@ protected:
     float suffix_max;
 
 public:
-    LootRandomizer();
+    LootRandomizer(CacheManager* cachemanager);
     ~LootRandomizer();
 
     /// This adds another item to the entries array
@@ -275,6 +275,7 @@ public:
 
 protected:
     MathScript* modifierCostCalc;
+    CacheManager* cacheManager;
 
 private:
     void AddModifier( LootModifier *oper1, LootModifier *oper2 );
@@ -292,13 +293,16 @@ protected:
     csHash<SpawnRule*> rules;
     csHash<LootEntrySet*>   looting;
     LootRandomizer         *lootRandomizer;
+    CacheManager *cacheManager;
+    EntityManager *entityManager;
+    GEMSupervisor *gem;
 
     void HandleLootItem(MsgEntry *me,Client *client);
     void HandleDeathEvent(MsgEntry *me,Client *notused);
 
 public:
 
-    SpawnManager(psDatabase *db);
+    SpawnManager(psDatabase *db, CacheManager *cachemanager, EntityManager *entitymanager, GEMSupervisor *gemsupervisor);
     virtual ~SpawnManager();
 
     /** Returns the loot randomizer.
@@ -418,11 +422,13 @@ class psDespawnGameEvent : public psGameEvent
 {
 protected:
     SpawnManager *spawnmanager;
+    GEMSupervisor *gem;
     int ticks;
     EID entity;
 
 public:
     psDespawnGameEvent(SpawnManager *mgr,
+					   GEMSupervisor *gemSupervisor,
                        int delayticks,
                        gemObject *obj);
 

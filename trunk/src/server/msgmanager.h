@@ -47,10 +47,11 @@ class Client;
 class gemObject;
 class gemActor;
 class MsgEntry;
+class GEMSupervisor;
 
 class MessageManager : public iNetSubscriber
 {
-public:
+public:	
     virtual ~MessageManager() {}
 
 
@@ -64,7 +65,7 @@ public:
      *  @param client The client of the caller
      *  @param target The area: expression
      */
-    static csArray<csString> DecodeCommandArea(Client *client, csString target);
+    csArray<csString> DecodeCommandArea(Client *client, csString target);
     
     /** @brief Find the object we are referring to in str
      * 

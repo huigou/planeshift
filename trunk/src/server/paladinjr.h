@@ -43,9 +43,8 @@ public:
      */
     bool CheckCollDetection(Client* client, gemActor* actor);
 
-    void Initialize(EntityManager* celbase);
-    PaladinJr()
-    {  }
+    void Initialize(EntityManager* celbase, CacheManager* cachemanager);
+
     ~PaladinJr()
     {  }
 

@@ -99,10 +99,10 @@ bool psTrainerInfo::TrainingInSkill(PSSKILL skill, unsigned int rank, float fact
 
 psSkillInfo * psTrainerInfo::FindSkill(int id)
 {
-    return CacheManager::GetSingleton().GetSkillByID(id);
+    return psserver->cachemanager->GetSkillByID(id);
 }
 
 psSkillInfo * psTrainerInfo::FindSkill(const csString & name)
 {
-    return CacheManager::GetSingleton().GetSkillByName(name);
+    return psserver->cachemanager->GetSkillByName(name);
 }
