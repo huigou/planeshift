@@ -512,6 +512,7 @@ csVector3 optionEntry::getValueAsVector()
     if(cordArray.GetSize() > 2)
         return csVector3(atof(cordArray.Get(0)), atof(cordArray.Get(1)), atof(cordArray.Get(2)));
     //in case the data is bad just return 0,0,0
+    Error2("Server option is not a valid vector (%s should be like x,y,z)", getValue());
     return csVector3(0,0,0);
 }
 
