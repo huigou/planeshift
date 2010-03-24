@@ -515,6 +515,20 @@ csVector3 optionEntry::getValueAsVector()
     return csVector3(0,0,0);
 }
 
+bool optionEntry::getValueAsVector(csVector3 &vector)
+{
+    //split the array each , 
+    csStringArray cordArray;
+    cordArray.SplitString(getValue(),",");
+    //if there are enough string to do 3 cordinates parse them and stuff them in a csVector3
+    //else return false.
+    if(cordArray.GetSize() < 3)
+        return false;
+        
+    vector = csVector3(atof(cordArray.Get(0)), atof(cordArray.Get(1)), atof(cordArray.Get(2)));
+    return true;
+}
+
 bool CacheManager::PreloadSkills()
 {
     unsigned int currentrow;
