@@ -151,7 +151,7 @@ CacheManager::~CacheManager()
     UnloadAll();
 }
 
-bool CacheManager::PreloadAll()
+bool CacheManager::PreloadAll(EntityManager* entitymanager)
 {
     if (!PreloadSectors())
         return false;
@@ -173,7 +173,7 @@ bool CacheManager::PreloadAll()
         return false;
     if (!PreloadFactions())
         return false;
-    if (!PreloadScripts())
+    if (!PreloadScripts(entitymanager))
         return false;
     if (!PreloadSpells())
         return false;
@@ -1503,21 +1503,21 @@ csString CacheManager::CreateTransCraftDescription(psTradeTransformations* tran,
     csString desc("");
 
     // Get base item or skip for 0 id
-    psItemStats* itemStats = CacheManager::GetSingleton().GetBasicItemStatsByID( tran->GetItemId() );
+    psItemStats* itemStats = GetBasicItemStatsByID( tran->GetItemId() );
     if (!itemStats)
     {
         return desc;
     }
 
     // Get result name or skip for 0 id
-    psItemStats* resultStats = CacheManager::GetSingleton().GetBasicItemStatsByID( tran->GetResultId() );
+    psItemStats* resultStats = GetBasicItemStatsByID( tran->GetResultId() );
     if (!resultStats)
     {
         return desc;
     }
 
     // Get work name or skip for 0 id
-    psItemStats* workStats = CacheManager::GetSingleton().GetBasicItemStatsByID( proc->GetWorkItemId() );
+    psItemStats* workStats = GetBasicItemStatsByID( proc->GetWorkItemId() );
     if (!workStats)
     {
         return desc;
@@ -1541,7 +1541,7 @@ csString CacheManager::CreateTransCraftDescription(psTradeTransformations* tran,
     // Get tool name if one exists
     if (proc->GetEquipementId() != 0)
     {
-        psItemStats* toolStats = CacheManager::GetSingleton().GetBasicItemStatsByID( proc->GetEquipementId() );
+        psItemStats* toolStats = GetBasicItemStatsByID( proc->GetEquipementId() );
         if (!toolStats)
         {
             Error2("No tool id %u", proc->GetEquipementId());
@@ -1574,7 +1574,7 @@ csString CacheManager::CreateComboCraftDescription(CombinationConstruction* curr
         uint32 combId  = currentComb->combinations[j]->GetItemId();
         int combMinQty = currentComb->combinations[j]->GetMinQty();
         int combMaxQty = currentComb->combinations[j]->GetMaxQty();
-        psItemStats* itemStats = CacheManager::GetSingleton().GetBasicItemStatsByID( combId );
+        psItemStats* itemStats = GetBasicItemStatsByID( combId );
         if (!itemStats)
         {
             Error2("No item stats for id %u", combId);
@@ -1603,7 +1603,7 @@ csString CacheManager::CreateComboCraftDescription(CombinationConstruction* curr
     }
 
     // Get result item names
-    psItemStats* resultItemStats = CacheManager::GetSingleton().GetBasicItemStatsByID( currentComb->resultItem );
+    psItemStats* resultItemStats = GetBasicItemStatsByID( currentComb->resultItem );
     if (!resultItemStats)
     {
         Error2("No item stats for id %u", currentComb->resultItem);
@@ -2536,7 +2536,7 @@ bool CacheManager::PreloadFactions()
     return true;
 }
 
-bool CacheManager::PreloadScripts()
+bool CacheManager::PreloadScripts(EntityManager* entitymanager)
 {
     Result result(db->Select("SELECT * from progression_events"));
 
@@ -2544,7 +2544,7 @@ bool CacheManager::PreloadScripts()
     {
         for (size_t i = 0; i < result.Count(); i++)
         {
-            ProgressionScript *s = ProgressionScript::Create(result[i]["name"], result[i]["event_script"]);
+            ProgressionScript *s = ProgressionScript::Create(entitymanager, this, result[i]["name"], result[i]["event_script"]);
             if (!s)
             {
                 Error2("Couldn't load script %s\n", result[i]["name"]);
@@ -3205,6 +3205,6 @@ void CacheManager::psCacheExpireEvent::Trigger()
         // Delete the underlying object
         myObject->object->DeleteSelf();
         // Now remove the record from the cache last
-        CacheManager::GetSingleton().RemoveFromCache(myObject->name);
+        psserver->cachemanager->RemoveFromCache(myObject->name);
     }
 }

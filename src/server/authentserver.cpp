@@ -144,7 +144,7 @@ void AuthenticationServer::HandleAuthCharacter( MsgEntry* me, Client *client )
     }
 
     // cache will auto-delete this ptr if it times out
-    CacheManager::GetSingleton().AddToCache(charlist, CacheManager::GetSingleton().MakeCacheName("list", client->GetAccountID().Unbox()),120);
+    psserver->cachemanager->AddToCache(charlist, psserver->cachemanager->MakeCacheName("list", client->GetAccountID().Unbox()),120);
 }
 
 
@@ -234,7 +234,7 @@ void AuthenticationServer::HandleAuthent(MsgEntry *me, Client *notused)
     
     // Check if login was correct
     Notify2(LOG_CONNECTIONS,"Check Login for: '%s'\n", (const char*)msg.sUser);
-    psAccountInfo *acctinfo=CacheManager::GetSingleton().GetAccountInfoByUsername((const char *)msg.sUser);
+    psAccountInfo *acctinfo=psserver->cachemanager->GetAccountInfoByUsername((const char *)msg.sUser);
 
     if ( !acctinfo )
     {
@@ -247,7 +247,7 @@ void AuthenticationServer::HandleAuthent(MsgEntry *me, Client *notused)
     }
 
     // Add account to cache to optimize repeated login attempts
-    CacheManager::GetSingleton().AddToCache(acctinfo,msg.sUser,120);
+    psserver->cachemanager->AddToCache(acctinfo,msg.sUser,120);
     
     // Check if password was correct
     csString passwordhashandclientnum (acctinfo->password);
@@ -377,7 +377,7 @@ void AuthenticationServer::HandleAuthent(MsgEntry *me, Client *notused)
     }
 
     // cache will auto-delete this ptr if it times out
-    CacheManager::GetSingleton().AddToCache(charlist, CacheManager::GetSingleton().MakeCacheName("list", client->GetAccountID().Unbox()),120);
+    psserver->cachemanager->AddToCache(charlist, psserver->cachemanager->MakeCacheName("list", client->GetAccountID().Unbox()),120);
 
     
      /**
@@ -421,9 +421,9 @@ void AuthenticationServer::HandleAuthent(MsgEntry *me, Client *notused)
     acctinfo->os = msg.os_;
     acctinfo->gfxcard = msg.gfxcard_;
     acctinfo->gfxversion = msg.gfxversion_;
-    CacheManager::GetSingleton().UpdateAccountInfo(acctinfo);
+    psserver->cachemanager->UpdateAccountInfo(acctinfo);
 
-    iCachedObject *obj = CacheManager::GetSingleton().RemoveFromCache(CacheManager::GetSingleton().MakeCacheName("auth",acctinfo->accountid));
+    iCachedObject *obj = psserver->cachemanager->RemoveFromCache(psserver->cachemanager->MakeCacheName("auth",acctinfo->accountid));
     CachedAuthMessage *cam;
 
     if (!obj)
@@ -470,7 +470,7 @@ void AuthenticationServer::HandleAuthent(MsgEntry *me, Client *notused)
     }
     // Send auth approved and char list in one message now
     cam->msg->SendMessage();
-    CacheManager::GetSingleton().AddToCache(cam, CacheManager::GetSingleton().MakeCacheName("auth",acctinfo->accountid), 10);
+    psserver->cachemanager->AddToCache(cam, psserver->cachemanager->MakeCacheName("auth",acctinfo->accountid), 10);
 
     SendMsgStrings(me->clientnum, true); 
     
@@ -483,10 +483,10 @@ void AuthenticationServer::HandleAuthent(MsgEntry *me, Client *notused)
         psserver->GetAdminManager()->Admin(me->clientnum, client);
     }
     
-    if (CacheManager::GetSingletonPtr()->GetCommandManager()->Validate(client->GetSecurityLevel(), "default advisor"))
+    if (psserver->cachemanager->GetCommandManager()->Validate(client->GetSecurityLevel(), "default advisor"))
         psserver->GetAdviceManager()->AddAdvisor(client);
 
-    if (CacheManager::GetSingletonPtr()->GetCommandManager()->Validate(client->GetSecurityLevel(), "default buddylisthide"))
+    if (psserver->cachemanager->GetCommandManager()->Validate(client->GetSecurityLevel(), "default buddylisthide"))
         client->SetBuddyListHide(true);
 
     psserver->GetWeatherManager()->SendClientGameTime(me->clientnum);
@@ -553,7 +553,7 @@ void AuthenticationServer::SendMsgStrings(int cnum, bool send_digest)
     csMD5::Digest digest;
 
     // Get strings data.
-    CacheManager::GetSingleton().GetCompressedMessageStrings(data, size, num_strings, digest);
+    psserver->cachemanager->GetCompressedMessageStrings(data, size, num_strings, digest);
 
     // send message strings hash table to client
     if (send_digest)

@@ -56,7 +56,10 @@ class NPCManager : public MessageManager
 public:
     NPCManager(ClientConnectionSet *pCCS,
         psDatabase *db,
-        EventManager *evtmgr);
+        EventManager *evtmgr,
+        GEMSupervisor *gemsupervisor,
+        CacheManager *cachemanager,
+        EntityManager *entitymanager);
 
     virtual ~NPCManager();
 
@@ -193,6 +196,9 @@ protected:
 
     psDatabase*  database;
     EventManager *eventmanager;
+    GEMSupervisor *gemSupervisor;
+    CacheManager *cacheManager;
+    EntityManager *entityManager;
     ClientConnectionSet* clients;
     psNPCCommandsMessage *outbound;
     int cmd_count;

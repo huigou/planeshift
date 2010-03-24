@@ -132,7 +132,7 @@ class WorkManager : public MessageManager
 {
 public:
 
-    WorkManager();
+    WorkManager(CacheManager* cachemanager, EntityManager* entitymanager);
     virtual ~WorkManager();
 
     virtual void HandleMessage(MsgEntry *me, Client *client)  { }
@@ -504,6 +504,9 @@ private:
     psTradeProcesses* process;      ///< Current work process
     const char* preworkModeString;  ///< Mode string prior to work
     bool secure;                    ///< Cleint reached required security level
+    
+    CacheManager* cacheManager;
+    EntityManager* entityManager;
 };
 
 

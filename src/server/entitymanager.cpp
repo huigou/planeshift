@@ -128,8 +128,12 @@ EntityManager::~EntityManager()
 
 bool EntityManager::Initialize(iObjectRegistry* object_reg, 
                                ClientConnectionSet* clients,
-                               UserManager* umanager)
+                               UserManager* umanager,
+                               GEMSupervisor* gemsupervisor,
+                               psServerDR* psserverdr,
+                               CacheManager* cachemanager)
 {
+	cacheManager = cachemanager;
     csRef<iEngine> engine2 = csQueryRegistry<iEngine> (psserver->GetObjectReg());
     engine = engine2; // get out of csRef;
 
@@ -143,9 +147,9 @@ bool EntityManager::Initialize(iObjectRegistry* object_reg,
 
     EntityManager::clients = clients;
 
-    gem = new GEMSupervisor(object_reg,psserver->GetDatabase());
+    gem = gemsupervisor;
 
-    serverdr = new psServerDR;
+    serverdr = psserverdr;
     if (!serverdr->Initialize())
     {
         delete serverdr;
@@ -255,7 +259,7 @@ gemNPC* EntityManager::CreateFamiliar (gemActor *owner, PID masterPID)
     // Create Familiar using new ID
     this->CreateNPC( familiarID , false); //Do not update proxList, we will do that later.
 
-    gemNPC * npc = GEMSupervisor::GetSingleton().FindNPCEntity( familiarID );
+    gemNPC * npc = psserver->entitymanager->GetGEM()->FindNPCEntity( familiarID );
     if (npc == NULL)
     {
         psserver->SendSystemError( owner->GetClientID(), "Could not find GEM and set its location.");
@@ -315,7 +319,7 @@ gemNPC* EntityManager::CloneNPC ( psCharacter *chardata )
     // Create npc using new ID
     this->CreateNPC( npcPID , false); //Do not update proxList, we will do that later.
 
-    gemNPC * npc = GEMSupervisor::GetSingleton().FindNPCEntity( npcPID );
+    gemNPC * npc = psserver->entitymanager->GetGEM()->FindNPCEntity( npcPID );
     if (npc == NULL)
     {
         Error1("Could not find GEM and set its location.");
@@ -508,7 +512,7 @@ gemNPC* EntityManager::CreatePet (Client *client, int masterFamiliarID)
 
     EID familiarID = this->CreateNPC(petData, false); // Do not update proxList, we will do that later.
 
-    gemNPC * npc = GEMSupervisor::GetSingleton().FindNPCEntity( familiarID );
+    gemNPC * npc = psserver->entitymanager->GetGEM()->FindNPCEntity( familiarID );
     if (npc == NULL)
     {
         psserver->SendSystemError( client->GetClientNum(), "Could not find GEM and set its location.");
@@ -572,7 +576,7 @@ bool EntityManager::CreatePlayer (Client* client)
         return false;
     }
 
-    gemActor *actor = new gemActor(chardata,raceinfo->mesh_name,
+    gemActor *actor = new gemActor(gem, cacheManager, this, chardata,raceinfo->mesh_name,
                                    instance,sector,pos,yrot,
                                    client->GetClientNum());
 
@@ -670,7 +674,7 @@ PID EntityManager::CopyNPCFromDatabase(PID master_id, float x, float y, float z,
         return 0;
     }
 
-    psSectorInfo* sectorInfo = CacheManager::GetSingleton().GetSectorInfoByName( sector );
+    psSectorInfo* sectorInfo = psserver->cachemanager->GetSectorInfoByName( sector );
     if (sectorInfo != NULL)
     {
         npc->SetLocationInWorld(instance,sectorInfo,x,y,z,angle);
@@ -728,7 +732,7 @@ EID EntityManager::CreateNPC(psCharacter *chardata, InstanceID instance, csVecto
         return false;
     }
 
-    gemNPC *actor = new gemNPC(chardata, raceinfo->mesh_name, instance, sector, pos, yrot, 0);
+    gemNPC *actor = new gemNPC(gem, cacheManager, this, chardata, raceinfo->mesh_name, instance, sector, pos, yrot, 0);
     actor->SetAlwaysWatching(alwaysWatching);
 
     if ( !actor->IsValid() )
@@ -847,11 +851,11 @@ gemItem* EntityManager::CreateItem(psItem *& iteminstance, bool transient)
     gemItem *obj;
     if (iteminstance->GetIsContainer())
     {
-        obj = new gemContainer(iteminstance,meshname,instance,isec,newpos,xrot,yrot,zrot,0);
+        obj = new gemContainer(gem, cacheManager, this, iteminstance,meshname,instance,isec,newpos,xrot,yrot,zrot,0);
     }
     else
     {
-        obj = new gemItem(iteminstance,meshname,instance,isec,newpos,xrot,yrot,zrot,0);
+        obj = new gemItem(gem, cacheManager, this, iteminstance,meshname,instance,isec,newpos,xrot,yrot,zrot,0);
     }
 
     // Won't create item if gemItem entity was not created
@@ -884,7 +888,7 @@ bool EntityManager::CreateActionLocation(psActionLocation *al, bool transient = 
         return false;
     }
 
-    gemActionLocation *obj = new gemActionLocation(al, sector, 0);
+    gemActionLocation *obj = new gemActionLocation(gem, this, cacheManager, al, sector, 0);
     
     // Add action location to all nearby clients
     obj->UpdateProxList( true );
@@ -968,8 +972,8 @@ void EntityManager::HandleActor(MsgEntry* me, Client *client)
 
 void EntityManager::CreateMovementInfoMsg()
 {
-    const csPDelArray<psCharMode>& modes = CacheManager::GetSingletonPtr()->GetCharModes();
-    const csPDelArray<psMovement>& moves = CacheManager::GetSingletonPtr()->GetMovements();
+    const csPDelArray<psCharMode>& modes = psserver->cachemanager->GetCharModes();
+    const csPDelArray<psMovement>& moves = psserver->cachemanager->GetMovements();
 
     moveinfomsg = new psMovementInfoMessage(modes.GetSize(), moves.GetSize());
 
@@ -1128,7 +1132,7 @@ bool EntityManager::AddRideRelation(gemActor *rider, gemActor *mount)
 
     psCharacter *mountChar = mount->GetCharacterData();
     RemoveActor(mount);
-    CacheManager::GetSingleton().RemoveFromCache(CacheManager::GetSingleton().MakeCacheName("char",mountChar->GetPID().Unbox()));
+    psserver->cachemanager->RemoveFromCache(psserver->cachemanager->MakeCacheName("char",mountChar->GetPID().Unbox()));
     rider->SetMount(mountChar);
 
     rider->UpdateProxList(true);

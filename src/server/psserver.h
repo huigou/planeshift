@@ -547,12 +547,12 @@ public:
     UserManager*                    usermanager;
     ExchangeManager*                exchangemanager;
     EntityManager*                  entitymanager;
+    CacheManager*                   cachemanager;
     csRef<iVFS>                     vfs;
 
 protected:
 
     ServerConsole*                  serverconsole;
-    CacheManager*                   cachemanager;
     NetManager*                     netmanager;
     AdminManager*                   adminmanager;
     psDatabase*                     database;

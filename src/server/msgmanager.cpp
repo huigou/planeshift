@@ -36,6 +36,7 @@
 #include "gem.h"
 #include "clients.h"
 #include "globals.h"
+#include "entitymanager.h"
 #include "net/msghandler.h"
 
 
@@ -179,11 +180,7 @@ csArray<csString> MessageManager::DecodeCommandArea(Client *client, csString tar
     iSector* sector;
     self->GetPosition(pos, sector);
 
-    GEMSupervisor* gem = GEMSupervisor::GetSingletonPtr();
-    if (!gem)
-        return result;
-
-    csArray<gemObject*> nearlist = gem->FindNearbyEntities(sector, pos,
+    csArray<gemObject*> nearlist = psserver->entitymanager->GetGEM()->FindNearbyEntities(sector, pos,
             range);
     size_t count = nearlist.GetSize();
     csArray<csString *> results;
@@ -269,32 +266,27 @@ csArray<csString> MessageManager::DecodeCommandArea(Client *client, csString tar
 gemObject* MessageManager::FindObjectByString(const csString& str, gemActor * me) const
 {
     gemObject* found = NULL;
-    GEMSupervisor *gem = GEMSupervisor::GetSingletonPtr();
-    if (!gem)
-    {
-        return NULL;
-    }
 
     if ( str.StartsWith("pid:",true) ) // Find by player ID
     {
         csString pid_str = str.Slice(4);
         PID pid = PID(strtoul(pid_str.GetDataSafe(), NULL, 10));
         if (pid.IsValid())
-            found = gem->FindPlayerEntity(pid);
+            found = psserver->entitymanager->GetGEM()->FindPlayerEntity(pid);
     }
     else if ( str.StartsWith("eid:",true) ) // Find by entity ID
     {
         csString eid_str = str.Slice(4);
         EID eid = EID(strtoul(eid_str.GetDataSafe(), NULL, 10));
         if (eid.IsValid())
-            found = gem->FindObject(eid);
+            found = psserver->entitymanager->GetGEM()->FindObject(eid);
     }
     else if ( str.StartsWith("itemid:",true) ) // Find by item UID
     {
         csString itemid_str = str.Slice(7);
         uint32 itemID = strtoul(itemid_str.GetDataSafe(), NULL, 10);
         if (itemID != 0)
-            found = gem->FindItemEntity(itemID);
+            found = psserver->entitymanager->GetGEM()->FindItemEntity(itemID);
     }
     else if ( me != NULL && str.CompareNoCase("me") ) // Return me
     {
@@ -302,7 +294,7 @@ gemObject* MessageManager::FindObjectByString(const csString& str, gemActor * me
     }
     else // Try finding an entity by name
     {
-        found = gem->FindObject(str);
+        found = psserver->entitymanager->GetGEM()->FindObject(str);
     }
 
     return found;

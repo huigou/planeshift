@@ -62,8 +62,10 @@
 #include "globals.h"
 #include "scripting.h"
 
-psServerDR::psServerDR()
+psServerDR::psServerDR(CacheManager* cachemanager, EntityManager* entitymanager)
 {
+	cacheManager = cachemanager;
+	entityManager = entitymanager;
     paladin = NULL;
 }
 
@@ -88,7 +90,7 @@ bool psServerDR::Initialize()
     }
 
     paladin = new PaladinJr;
-    paladin->Initialize(psserver->entitymanager);
+    paladin->Initialize(entityManager, cacheManager);
     
     return true;
 }
@@ -148,7 +150,7 @@ void psServerDR::ResetPos(gemActor* actor)
 
 void psServerDR::HandleDeadReckoning(MsgEntry* me,Client *client)
 {
-    psDRMessage drmsg(me,CacheManager::GetSingleton().GetMsgStrings(),0,EntityManager::GetSingleton().GetEngine() );
+    psDRMessage drmsg(me,cacheManager->GetMsgStrings(),0,entityManager->GetEngine() );
     if (!drmsg.valid)
     {
         Error2("Received unparsable psDRMessage from client %u.\n",me->clientnum);
@@ -282,7 +284,7 @@ void psServerDR::HandleDeadReckoning(MsgEntry* me,Client *client)
     psSectorInfo* sectorInfo = NULL;
     //get the sector info of this sector to check it's caracteristics
     if(drmsg.sector != NULL)
-        sectorInfo = CacheManager::GetSingleton().GetSectorInfoByName(drmsg.sector->QueryObject()->GetName());
+        sectorInfo = cacheManager->GetSectorInfoByName(drmsg.sector->QueryObject()->GetName());
 
     //is this a sector which teleports on entrance? (used for portals)
     if (sectorInfo && sectorInfo->GetIsTeleporting())

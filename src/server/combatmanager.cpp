@@ -139,9 +139,11 @@ protected:
     CombatManager *combatmanager;
 };
 
-CombatManager::CombatManager() : pvp_region(NULL)
+CombatManager::CombatManager(CacheManager* cachemanager, EntityManager* entitymanager) : pvp_region(NULL)
 {
     randomgen = psserver->rng;
+    cacheManager = cachemanager;
+    entityManager = entitymanager;
   
     calc_damage   = psserver->GetMathScriptEngine()->FindScript("Calculate Damage");
     if ( !calc_damage )
@@ -212,22 +214,22 @@ bool CombatManager::InitializePVP()
 
 bool CombatManager::InPVPRegion(csVector3& pos,iSector * sector)
 {
-    if (pvp_region && pvp_region->CheckWithinBounds(EntityManager::GetSingleton().GetEngine(), pos, sector))
+    if (pvp_region && pvp_region->CheckWithinBounds(entityManager->GetEngine(), pos, sector))
         return true;
 
     return false;
 }
 
-const Stance & CombatManager::GetStance(csString name)
+const Stance & CombatManager::GetStance(CacheManager* cachemanager, csString name)
 {
     name.Downcase();
-    size_t id = CacheManager::GetSingleton().stanceID.Find(name);
+    size_t id = cachemanager->stanceID.Find(name);
     if (id == csArrayItemNotFound)
     {
         name = "normal"; // Default to Normal stance.
-        id = CacheManager::GetSingleton().stanceID.Find(name);
+        id = cachemanager->stanceID.Find(name);
     }
-    return CacheManager::GetSingleton().stances.Get(id);
+    return cachemanager->stances.Get(id);
 }
 
 void CombatManager::AttackSomeone(gemActor *attacker,gemObject *target,Stance stance)
@@ -568,7 +570,7 @@ void CombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_result
                     gemTarget->GetClient()->SetTargetObject(gemAttacker,true);
 
                 // The default stance is 'Fully Defensive'.
-                Stance initialStance = GetStance("FullyDefensive");
+                Stance initialStance = GetStance(cacheManager, "FullyDefensive");
                 AttackSomeone(gemTarget,gemAttacker,initialStance);
             }
 
@@ -967,7 +969,7 @@ bool CombatManager::ValidCombatAngle(gemObject *attacker,gemObject *target,psIte
     attacker->GetPosition(attackPos, attackSector);
     target->GetPosition(targetPos, targetSector);
 
-    if(!(EntityManager::GetSingleton().GetWorld()->WarpSpace(targetSector, attackSector, targetPos)))
+    if(!(entityManager->GetWorld()->WarpSpace(targetSector, attackSector, targetPos)))
     {
         return false;
     }

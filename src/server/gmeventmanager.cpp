@@ -460,7 +460,7 @@ bool GMEventManager::RewardPlayersInGMEvent (Client* client,
     psItemStats *basestats;
     if (rewardType == REWARD_ITEM)
     {
-        basestats = CacheManager::GetSingleton().GetBasicItemStatsByName(itemName.GetDataSafe());
+        basestats = psserver->cachemanager->GetBasicItemStatsByName(itemName.GetDataSafe());
         if (basestats == NULL)
         {
             psserver->SendSystemInfo(clientnum, "Reward \'%s\' not recognised.", itemName.GetDataSafe());
@@ -1022,7 +1022,7 @@ void GMEventManager::RewardPlayer(int clientnum, Client* target, short stackCoun
     }
 
     // failed to stash item, so remove it
-    CacheManager::GetSingleton().RemoveInstance(newitem);
+    psserver->cachemanager->RemoveInstance(newitem);
     psserver->SendSystemInfo(clientnum, "%s has not been rewarded.", target->GetName());
 }
 

@@ -47,8 +47,10 @@
 #define MONTH_COUNT 10
 const int monthLengths[MONTH_COUNT] = {32,32,32,32,32,32,32,32,32,32};
 
-WeatherManager::WeatherManager()
+WeatherManager::WeatherManager(CacheManager* cachemanager)
 {
+	cacheManager = cachemanager;
+	
     gameTimeMinute = 0;
     gameTimeHour = 0;
     gameTimeDay = 0;
@@ -65,7 +67,7 @@ WeatherManager::~WeatherManager()
 void WeatherManager::Initialize()
 {
     // Start rain/snow for all sectors
-    csHash<psSectorInfo *>::GlobalIterator iter = CacheManager::GetSingleton().GetSectorIterator();
+    csHash<psSectorInfo *>::GlobalIterator iter = cacheManager->GetSectorIterator();
     while (iter.HasNext() )
     {
         psSectorInfo *si = iter.Next();
@@ -149,7 +151,7 @@ void WeatherManager::UpdateClient(uint32_t cnum)
     psWeatherMessage::NetWeatherInfo info;
 
     // Update client with weather for all sectors
-    csHash<psSectorInfo *>::GlobalIterator iter = CacheManager::GetSingleton().GetSectorIterator();
+    csHash<psSectorInfo *>::GlobalIterator iter = cacheManager->GetSectorIterator();
     while (iter.HasNext())
     {
         psSectorInfo *sector = iter.Next();

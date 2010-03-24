@@ -48,6 +48,7 @@
 #include "../globals.h"
 #include "../psserver.h"
 #include "../cachemanager.h"
+#include "../entitymanager.h"
 #include "../gem.h"
 
 //=============================================================================
@@ -372,7 +373,7 @@ gemItem *psActionLocation::GetRealItem()
     if (InstanceID == 0)
         return NULL;
 
-    return GEMSupervisor::GetSingleton().FindItemEntity( InstanceID );
+    return psserver->entitymanager->GetGEM()->FindItemEntity( InstanceID );
 }
 
 void psActionLocation::Send( int clientnum)

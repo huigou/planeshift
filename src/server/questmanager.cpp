@@ -58,8 +58,9 @@
 
 
 
-QuestManager::QuestManager()
+QuestManager::QuestManager(CacheManager* cachemanager)
 {
+	cacheManager = cachemanager;
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<QuestManager>(this,&QuestManager::HandleQuestInfo),  MSGTYPE_QUESTINFO,REQUIRE_READY_CLIENT);
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<QuestManager>(this,&QuestManager::HandleQuestReward),MSGTYPE_QUESTREWARD,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
 }
@@ -104,7 +105,7 @@ bool QuestManager::LoadQuestScripts()
 
             if (quest_id == -1) continue; // -1 for quest id, than it is a KAs so don't load quest.
 
-            psQuest* currQuest = CacheManager::GetSingleton().GetQuestByID(quest_id);
+            psQuest* currQuest = cacheManager->GetQuestByID(quest_id);
             if (!currQuest)
             {
                 Error3("ERROR quest %s not found for quest script %s!  ",quests[i]["quest_id"], quests[i]["id"]);
@@ -660,7 +661,7 @@ int QuestManager::PreParseQuestScript(psQuest *mainQuest, const char *script)
             csString newquestname;
             newquestname.Format("%s Step %d",mainQuest->GetName(),step_count);
             Debug2( LOG_QUESTS, 0,"Quest <%s> is getting added dynamically.",newquestname.GetData());
-            CacheManager::GetSingleton().AddDynamicQuest(newquestname, mainQuest, step_count);
+            cacheManager->AddDynamicQuest(newquestname, mainQuest, step_count);
         }
     }
 #else
@@ -674,7 +675,7 @@ int QuestManager::PreParseQuestScript(psQuest *mainQuest, const char *script)
         //parsing
         newquestname.Format("%s Step %d",mainQuest->GetName(),step_count);
         Debug2( LOG_QUESTS, 0,"Quest <%s> is getting added dynamically.",newquestname.GetData());
-        CacheManager::GetSingleton().AddDynamicQuest(newquestname, mainQuest, step_count);
+        cacheManager->AddDynamicQuest(newquestname, mainQuest, step_count);
         lastpos = scr.Find("\n...", lastpos+1); //searches for the successive ... if any
     }
 #endif
@@ -696,7 +697,7 @@ int QuestManager::ParseQuestScript(int quest_id, const char *script)
     bool quest_assigned_already = false;
     csString response_requireop; // Accumulate prerequisites for next response
     csString substep_requireop;  // Accumulate prerequisites for current substep
-    psQuest *mainQuest = CacheManager::GetSingleton().GetQuestByID(quest_id);
+    psQuest *mainQuest = cacheManager->GetQuestByID(quest_id);
     psQuest *quest = mainQuest; // Substep is main step until substep is defined.
     int line_number = 0;
     NpcDialogMenu *pending_menu = NULL;
@@ -881,7 +882,7 @@ int QuestManager::ParseQuestScript(int quest_id, const char *script)
                 csString newquestname;
                 newquestname.Format("%s Step %d",mainQuest->GetName(),step_count);
                 Debug2( LOG_QUESTS, 0,"New step for Quest <%s>.",newquestname.GetData());
-                quest = CacheManager::GetSingleton().GetQuestByName(newquestname);
+                quest = cacheManager->GetQuestByName(newquestname);
                 //quest can't be null or it would have been stopped before.
                 quest_id = quest->GetID();
 
@@ -1017,7 +1018,7 @@ bool QuestManager::ParseItem(const char *text, psStringArray & xmlItems, psMoney
     itemName.Collapse();
 
     // check if the item exists in db
-    if (itemName.IsEmpty() || !CacheManager::GetSingleton().GetBasicItemStatsByName(itemName))
+    if (itemName.IsEmpty() || !cacheManager->GetBasicItemStatsByName(itemName))
     {
         Error2("ERROR Loading quests: Item %s doesn't exist in database", itemName.GetDataSafe());
         lastError.Format("Item %s does not exist", itemName.GetDataSafe());

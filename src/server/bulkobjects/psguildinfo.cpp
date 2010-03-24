@@ -380,7 +380,7 @@ bool psGuildInfo::RemoveGuild()
 {
     if (alliance != 0)
     {
-        psGuildAlliance * allianceObj = CacheManager::GetSingleton().FindAlliance(alliance);
+        psGuildAlliance * allianceObj = psserver->cachemanager->FindAlliance(alliance);
         if (allianceObj != NULL)
             allianceObj->RemoveMember(this);
         else
@@ -886,7 +886,7 @@ bool psGuildAlliance::Load(int id)
     leaderID = (*result)[0].GetInt("leading_guild");
     result->Release();
 
-    leader = CacheManager::GetSingleton().FindGuild(leaderID);
+    leader = psserver->cachemanager->FindGuild(leaderID);
     if (leader == NULL)
     {
         lastError = "ID of leader read from alliances.leading_guild not found in cachemanager";
@@ -905,7 +905,7 @@ bool psGuildAlliance::Load(int id)
 
     for (memberNum=0; memberNum < result->Count(); memberNum++)
     {
-        member = CacheManager::GetSingleton().FindGuild(  (*result)[memberNum].GetInt("id")  );
+        member = psserver->cachemanager->FindGuild(  (*result)[memberNum].GetInt("id")  );
         if (member == NULL)
         {
             lastError = "Member of alliance loaded from DB couln't be found in cachemanager";

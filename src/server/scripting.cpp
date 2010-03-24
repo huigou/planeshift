@@ -304,9 +304,9 @@ public:
     SkillAOp() : Applied2() { }
     virtual ~SkillAOp() { }
 
-    bool Load(iDocumentNode* node)
+    bool Load(iDocumentNode* node, CacheManager* cachemanager)
     {
-        psSkillInfo* info = CacheManager::GetSingleton().GetSkillByName(node->GetAttributeValue("name"));
+        psSkillInfo* info = cachemanager->GetSkillByName(node->GetAttributeValue("name"));
         if (!info)
         {
             Error2("Found <skill name=\"%s\">, but no such skill exists.", node->GetAttributeValue("name"));
@@ -519,7 +519,7 @@ private:
 class FxAOp : public AppliedOp
 {
 public:
-    FxAOp() : AppliedOp() { }
+    FxAOp(CacheManager *cachemanager) : AppliedOp() {cacheManager = cachemanager; }
     virtual ~FxAOp() { }
 
     bool Load(iDocumentNode* node)
@@ -552,7 +552,7 @@ public:
         }
 
         // Get a unique identifier we can use to later cancel/stop this effect.
-        uint32_t uid = CacheManager::GetSingleton().NextEffectUID();
+        uint32_t uid = cacheManager->NextEffectUID();
         /*
         if (anchor)
         {
@@ -586,6 +586,8 @@ protected:
     csString name;
     csString source;  //< The name of the MathVar containing the entity the effect originates from (optional)
     csVector3 offset; //< An offset from the target which the effect originates from
+    
+    CacheManager *cacheManager;
 };
 
 //----------------------------------------------------------------------------
@@ -625,7 +627,7 @@ protected:
 class OnAOp : public AppliedOp
 {
 public:
-    OnAOp() : AppliedOp() { }
+    OnAOp(EntityManager* entitymanager, CacheManager* cachemanager) : AppliedOp() {this->entitymanager = entitymanager; this->cachemanager = cachemanager; }
     virtual ~OnAOp() { }
 
     bool Load(iDocumentNode* node)
@@ -654,7 +656,7 @@ public:
             return;
 
         // Now, parse and load the script (but don't run it)...
-        ProgressionScript* body = ProgressionScript::Create("<on> body", self);
+        ProgressionScript* body = ProgressionScript::Create(entitymanager, cachemanager, "<on> body", self);
         CS_ASSERT_MSG("<on> body failed to load", body);
 
         // Register the triggering event
@@ -726,6 +728,8 @@ protected:
 
     SCRIPT_TRIGGER type;
     csRef<iDocumentNode> self;
+    EntityManager* entitymanager;
+    CacheManager* cachemanager;
 };
 
 //============================================================================
@@ -745,7 +749,7 @@ ApplicativeScript::~ApplicativeScript()
     }
 }
 
-ApplicativeScript* ApplicativeScript::Create(const char* script)
+ApplicativeScript* ApplicativeScript::Create(EntityManager* entitymanager, CacheManager* cachemanager, const char* script)
 {
     csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
     csRef<iDocument> doc = xml->CreateDocument();
@@ -767,10 +771,10 @@ ApplicativeScript* ApplicativeScript::Create(const char* script)
         Error2("Could not find <apply> node in: %s", script);
         return NULL;
     }
-    return Create(top);
+    return Create(entitymanager, cachemanager, top);
 }
 
-ApplicativeScript* ApplicativeScript::Create(iDocumentNode* top)
+ApplicativeScript* ApplicativeScript::Create(EntityManager* entitymanager, CacheManager* cachemanager, iDocumentNode* top)
 {
     if (!top->GetAttributeValue("name"))
         return NULL;
@@ -784,10 +788,10 @@ ApplicativeScript* ApplicativeScript::Create(iDocumentNode* top)
     else
         return NULL;
 
-    return Create(top, type, top->GetAttributeValue("name"), top->GetAttributeValue("duration"));
+    return Create(entitymanager, cachemanager, top, type, top->GetAttributeValue("name"), top->GetAttributeValue("duration"));
 }
 
-ApplicativeScript* ApplicativeScript::Create(iDocumentNode* top, SPELL_TYPE type, const char* name, const char* duration)
+ApplicativeScript* ApplicativeScript::Create(EntityManager* entitymanager, CacheManager* cachemanager, iDocumentNode* top, SPELL_TYPE type, const char* name, const char* duration)
 {
     CS_ASSERT(name);
     ApplicativeScript* script = new ApplicativeScript;
@@ -868,11 +872,11 @@ ApplicativeScript* ApplicativeScript::Create(iDocumentNode* top, SPELL_TYPE type
         }
         else if (elem == "fx")
         {
-            op = new FxAOp;
+            op = new FxAOp(cachemanager);
         }
         else if (elem == "on")
         {
-            op = new OnAOp;
+            op = new OnAOp(entitymanager, cachemanager);
         }
         else
         {
@@ -948,6 +952,7 @@ public:
 class ApplyOp : public ImperativeOp
 {
 public:
+	ApplyOp(EntityManager* entitymanager, CacheManager* cachemanager) {this->entitymanager = entitymanager; this->cachemanager = cachemanager; }
     virtual ~ApplyOp()
     {
         if (aps)
@@ -957,7 +962,7 @@ public:
 
     bool Load(iDocumentNode* top)
     {
-        aps = ApplicativeScript::Create(top);
+        aps = ApplicativeScript::Create(entitymanager, cachemanager, top);
         return aps != NULL;
     }
 
@@ -968,6 +973,8 @@ public:
 
 protected:
     ApplicativeScript* aps;
+    CacheManager* cachemanager;
+    EntityManager* entitymanager;
 };
 
 //----------------------------------------------------------------------------
@@ -975,6 +982,7 @@ protected:
 class ApplyLinkedOp : public ImperativeOp
 {
 public:
+	ApplyLinkedOp(EntityManager* entitymanager, CacheManager* cachemanager) {this->entitymanager = entitymanager; this->cachemanager = cachemanager; }
     virtual ~ApplyLinkedOp()
     {
         if (buff)
@@ -997,8 +1005,8 @@ public:
         csRef<iDocumentNode> buffNode   = top->GetNode("buff");
         csRef<iDocumentNode> debuffNode = top->GetNode("debuff");
 
-        buff   = ApplicativeScript::Create(buffNode,   BUFF,   name, top->GetAttributeValue("duration"));
-        debuff = ApplicativeScript::Create(debuffNode, DEBUFF, name, top->GetAttributeValue("duration"));
+        buff   = ApplicativeScript::Create(entitymanager, cachemanager, buffNode,   BUFF,   name, top->GetAttributeValue("duration"));
+        debuff = ApplicativeScript::Create(entitymanager, cachemanager, debuffNode, DEBUFF, name, top->GetAttributeValue("duration"));
         return buff && debuff;
     }
 
@@ -1014,6 +1022,8 @@ public:
 protected:
     ApplicativeScript* buff;   //< The buff (beneficiary) script
     ApplicativeScript* debuff; //< The debuff (victim) script
+    CacheManager* cachemanager;
+    EntityManager* entitymanager;
 };
 
 //----------------------------------------------------------------------------
@@ -1028,7 +1038,11 @@ protected:
 class LetOp : public ImperativeOp
 {
 public:
-    LetOp() : ImperativeOp(), bindings(NULL), body(NULL) { }
+    LetOp(EntityManager* entitymanager, CacheManager* cachemanager) : ImperativeOp(), bindings(NULL), body(NULL)
+    {
+    	this->entitymanager = entitymanager;
+    	this->cachemanager = cachemanager;
+    }
     virtual ~LetOp()
     {
         if (bindings)
@@ -1040,7 +1054,7 @@ public:
     bool Load(iDocumentNode* node)
     {
         bindings = MathScript::Create("<let> bindings", node->GetAttributeValue("vars"));
-        body = ProgressionScript::Create("<let> body", node);
+        body = ProgressionScript::Create(entitymanager, cachemanager, "<let> body", node);
         return (bindings && body);
     }
 
@@ -1054,6 +1068,8 @@ public:
 protected:
     MathScript* bindings; /// an embedded MathScript containing new bindings
     ProgressionScript* body;
+    EntityManager* entitymanager;
+    CacheManager* cachemanager;
 };
 
 //----------------------------------------------------------------------------
@@ -1071,7 +1087,11 @@ protected:
 class IfOp : public ImperativeOp
 {
 public:
-    IfOp() : ImperativeOp(), thenBranch(NULL), elseBranch(NULL), condition(NULL) { }
+    IfOp(EntityManager* entitymanager, CacheManager* cachemanager) : ImperativeOp(), thenBranch(NULL), elseBranch(NULL), condition(NULL)
+    {
+    	this->entitymanager = entitymanager;
+    	this->cachemanager = cachemanager;
+    }
     virtual ~IfOp()
     {
         if (thenBranch)
@@ -1094,10 +1114,10 @@ public:
             return false;
         }
 
-        thenBranch = ProgressionScript::Create("<then> clause", thenNode);
+        thenBranch = ProgressionScript::Create(entitymanager, cachemanager, "<then> clause", thenNode);
 
         if (elseNode)
-            elseBranch = ProgressionScript::Create("<else> clause", elseNode);
+            elseBranch = ProgressionScript::Create(entitymanager, cachemanager, "<else> clause", elseNode);
 
         return (condition && thenBranch && (elseBranch || !elseNode));
     }
@@ -1114,6 +1134,8 @@ protected:
     ProgressionScript* thenBranch;
     ProgressionScript* elseBranch;
     MathExpression* condition; /// an embedded MathExpression - should result in a boolean
+    EntityManager* entitymanager;
+    CacheManager* cachemanager;
 };
 
 //----------------------------------------------------------------------------
@@ -1415,14 +1437,16 @@ protected:
 class DestroyOp : public Imperative1
 {
 public:
-    DestroyOp() : Imperative1() { }
+    DestroyOp(EntityManager* entitymanager) : Imperative1() {this->entitymanager = entitymanager; }
     virtual ~DestroyOp() { }
 
     void Run(const MathEnvironment* env)
     {
         gemObject* obj = GetObject(env, aim);
-        EventManager::GetSingleton().Push(new psEntityEvent(psEntityEvent::DESTROY, obj));
+        psserver->GetEventManager()->Push(new psEntityEvent(entitymanager, psEntityEvent::DESTROY, obj));
     }
+protected:
+    EntityManager* entitymanager;
 };
 
 //----------------------------------------------------------------------------
@@ -1430,7 +1454,7 @@ public:
 class TeleportOp : public Imperative1
 {
 public:
-    TeleportOp() : Imperative1() { }
+    TeleportOp(EntityManager* entitymanager) : Imperative1() { entityManager = entitymanager; }
     virtual ~TeleportOp() { }
 
     bool Load(iDocumentNode* node)
@@ -1488,7 +1512,7 @@ public:
 
             if (type & XYZ)
             {
-                sector = EntityManager::GetSingleton().GetEngine()->FindSector(destination);
+                sector = entityManager->GetEngine()->FindSector(destination);
                 destPos = pos;
             }
             else
@@ -1519,6 +1543,8 @@ protected:
     csString destination;
     csVector3 pos;
     InstanceID instance;
+    
+    EntityManager* entityManager;
 };
 
 //----------------------------------------------------------------------------
@@ -1662,9 +1688,9 @@ public:
     SkillOp() : Imperative3() { }
     virtual ~SkillOp() { }
 
-    bool Load(iDocumentNode* node)
+    bool Load(iDocumentNode* node, CacheManager* cachemanager)
     {
-        psSkillInfo* info = CacheManager::GetSingleton().GetSkillByName(node->GetAttributeValue("name"));
+        psSkillInfo* info = cachemanager->GetSkillByName(node->GetAttributeValue("name"));
         if (!info)
         {
             Error2("Found <skill aim=\"...\" name=\"%s\">, but no such skill exists.", node->GetAttributeValue("name"));
@@ -1818,6 +1844,7 @@ public:
 class ActionOp : public Imperative1
 {
 public:
+	ActionOp(CacheManager* cachemanager) {cacheManager = cachemanager; }
     virtual ~ActionOp() { }
 
     bool Load(iDocumentNode* node)
@@ -1853,7 +1880,7 @@ public:
         }
 
         // Get the ItemStats based on the name provided.
-        psItemStats* itemstats=CacheManager::GetSingleton().GetBasicItemStatsByName(keyStat.GetData());
+        psItemStats* itemstats=cacheManager->GetBasicItemStatsByName(keyStat.GetData());
         if (!itemstats)
         {
             Error2("Error: <action stat=\"%s\"/> specified, but no corresponding psItemStats found.\n", keyStat.GetData());
@@ -1893,6 +1920,8 @@ public:
 protected:
     csString sector;            ///< sector name of action location entrance to activate
     csString keyStat;           ///< Item stat name to use for making new key
+    
+    CacheManager* cacheManager;
 };
 
 //----------------------------------------------------------------------------
@@ -1921,7 +1950,7 @@ protected:
 class KeyOp : public Imperative1
 {
 public:
-    KeyOp() : Imperative1() { }
+    KeyOp(CacheManager* cachemanager) : Imperative1() {cacheManager = cachemanager; }
     virtual ~KeyOp() { }
 
     bool Load(iDocumentNode* node)
@@ -1963,7 +1992,7 @@ public:
             case MAKE:
             {
                 // Get the ItemStats based on the name provided.
-                psItemStats* itemstats = CacheManager::GetSingleton().GetBasicItemStatsByName(keyStat.GetData());
+                psItemStats* itemstats = cacheManager->GetBasicItemStatsByName(keyStat.GetData());
                 if (!itemstats)
                 {
                     Error2("Error: <key funct=\"make\" stat=\"%s\"/> specified, but no corresponding psItemStats found.\n", keyStat.GetData());
@@ -2020,6 +2049,8 @@ protected:
     uint32 lockID;              ///< Instance ID of lock to assign to key
     csString keyStat;           ///< Item stat name to use for making new key
     uint32 keyID;               ///< Key instance ID to check lock
+    
+    CacheManager* cacheManager;
 };
 
 //----------------------------------------------------------------------------
@@ -2037,6 +2068,7 @@ protected:
 class ItemOp : public Imperative1
 {
 public:
+	ItemOp(CacheManager* cachemanager) {cacheManager = cachemanager; }
     virtual ~ItemOp() { }
 
     bool Load(iDocumentNode* node)
@@ -2098,7 +2130,7 @@ public:
     psItem* CreateItem(bool transient)
     {
         // Get the ItemStats based on the name provided.
-        psItemStats* itemstats = CacheManager::GetSingleton().GetBasicItemStatsByName(name.GetData());
+        psItemStats* itemstats = cacheManager->GetBasicItemStatsByName(name.GetData());
         if (!itemstats)
         {
             Error2("Error: <item name=\"%s\"/> specified, but no corresponding psItemStats exists.\n", name.GetData());
@@ -2126,6 +2158,7 @@ protected:
     csString name;
     int stackCount;
     bool placeOnGround;
+    CacheManager* cacheManager;
 };
 
 //----------------------------------------------------------------------------
@@ -2143,6 +2176,7 @@ protected:
 class CreateFamiliarOp : public Imperative1
 {
 public:
+	CreateFamiliarOp(EntityManager* entitymanager) { entityManager = entitymanager; }
     virtual ~CreateFamiliarOp() { }
 
     bool Load(iDocumentNode* node)
@@ -2166,7 +2200,7 @@ public:
             return;
         }*/
 
-        gemNPC* familiar = EntityManager::GetSingleton().CreateFamiliar(actor, masterPID);
+        gemNPC* familiar = entityManager->CreateFamiliar(actor, masterPID);
         if (!familiar)
         {
             Error2("Failed to create familiar for %s.\n", actor->GetName());
@@ -2175,6 +2209,7 @@ public:
     
     private:
     PID masterPID;
+    EntityManager* entityManager;
 };
 
 //============================================================================
@@ -2188,7 +2223,7 @@ ProgressionScript::~ProgressionScript()
     }
 }
 
-ProgressionScript* ProgressionScript::Create(const char* name, const char* script)
+ProgressionScript* ProgressionScript::Create(EntityManager* entitymanager,CacheManager* cachemanager, const char* name, const char* script)
 {
     csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
     csRef<iDocument> doc = xml->CreateDocument();
@@ -2210,10 +2245,10 @@ ProgressionScript* ProgressionScript::Create(const char* name, const char* scrip
         Error2("Could not find <script> tag in progression script >%s<!", name);
         return NULL;
     }
-    return Create(name, top);
+    return Create(entitymanager, cachemanager, name, top);
 }
 
-ProgressionScript* ProgressionScript::Create(const char* name, iDocumentNode* top)
+ProgressionScript* ProgressionScript::Create(EntityManager* entitymanager, CacheManager* cachemanager, const char* name, iDocumentNode* top)
 {
     // Note that this doesn't check that top is a particular kind of node;
     // it might be a top-level <script>, or a nested <if>, <let>, or <on>...
@@ -2233,11 +2268,11 @@ ProgressionScript* ProgressionScript::Create(const char* name, iDocumentNode* to
 
         if (elem == "let")
         {
-            op = new LetOp;
+            op = new LetOp(entitymanager, cachemanager);
         }
         else if (elem == "if")
         {
-            op = new IfOp;
+            op = new IfOp(entitymanager, cachemanager);
         }
         else if (elem == "exp")
         {
@@ -2245,11 +2280,11 @@ ProgressionScript* ProgressionScript::Create(const char* name, iDocumentNode* to
         }
         else if (elem == "apply")
         {
-            op = new ApplyOp;
+            op = new ApplyOp(entitymanager, cachemanager);
         }
         else if (elem == "apply-linked")
         {
-            op = new ApplyLinkedOp;
+            op = new ApplyLinkedOp(entitymanager, cachemanager);
         }
         else if (elem == "msg")
         {
@@ -2265,11 +2300,11 @@ ProgressionScript* ProgressionScript::Create(const char* name, iDocumentNode* to
         }
         else if (elem == "destroy")
         {
-            op = new DestroyOp;
+            op = new DestroyOp(entitymanager);
         }
         else if (elem == "teleport")
         {
-            op = new TeleportOp;
+            op = new TeleportOp(entitymanager);
         }
         else if (elem == "fog" || elem == "rain" || elem == "snow" || elem == "lightning" || elem == "weather")
         {
@@ -2303,19 +2338,19 @@ ProgressionScript* ProgressionScript::Create(const char* name, iDocumentNode* to
         }
         else if (elem == "action")
         {
-            op = new ActionOp;
+            op = new ActionOp(cachemanager);
         }
         else if (elem == "key")
         {
-            op = new KeyOp;
+            op = new KeyOp(cachemanager);
         }
         else if (elem == "item")
         {
-            op = new ItemOp;
+            op = new ItemOp(cachemanager);
         }
         else if (elem == "create-familiar")
         {
-            op = new CreateFamiliarOp;
+            op = new CreateFamiliarOp(entitymanager);
         }
         else
         {

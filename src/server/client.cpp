@@ -210,7 +210,7 @@ gemActor* Client::GetFamiliar()
 {
     if (pets[0].IsValid())
     {
-        return GEMSupervisor::GetSingleton().FindNPCEntity(pets[0]);
+        return psserver->entitymanager->GetGEM()->FindNPCEntity(pets[0]);
     }
     return NULL;
 }
@@ -229,7 +229,7 @@ gemActor* Client::GetPet(size_t i)
     if (i >= pets.GetSize() || !pets[i].IsValid())
         return NULL;
 
-    return GEMSupervisor::GetSingleton().FindNPCEntity(pets[i]);
+    return psserver->entitymanager->GetGEM()->FindNPCEntity(pets[i]);
 }
 
 size_t Client::GetNumPets()
@@ -241,7 +241,7 @@ bool Client::IsMyPet(gemActor * other) const
 {
     for (size_t i = 0; i < pets.GetSize(); i++)
     {
-        if (GEMSupervisor::GetSingleton().FindNPCEntity( pets[i] ) == other)
+        if (psserver->entitymanager->GetGEM()->FindNPCEntity( pets[i] ) == other)
         {
             return true;
         }
@@ -507,7 +507,7 @@ int Client::GetTargetType(gemObject* target)
         if (target->GetCharacterData()->IsPet())
         {
             // Pet's target type depends on its owner's (enable when they can defend themselves)
-            gemObject* owner = GEMSupervisor::GetSingleton().FindPlayerEntity( target->GetCharacterData()->GetOwnerID() );
+            gemObject* owner = psserver->entitymanager->GetGEM()->FindPlayerEntity( target->GetCharacterData()->GetOwnerID() );
             if ( !owner || !IsAllowedToAttack(owner,false) )
                 return TARGET_FRIEND;
         }
@@ -612,7 +612,7 @@ void Client::SaveAccountData()
 uint32_t Client::WaypointGetEffectID()
 {
     if (waypointEffectID == 0)
-        waypointEffectID = CacheManager::GetSingleton().NextEffectUID();
+        waypointEffectID = psserver->cachemanager->NextEffectUID();
 
     return waypointEffectID;
 }
@@ -620,7 +620,7 @@ uint32_t Client::WaypointGetEffectID()
 uint32_t Client::PathGetEffectID()
 {
     if (pathEffectID == 0)
-        pathEffectID = CacheManager::GetSingleton().NextEffectUID();
+        pathEffectID = psserver->cachemanager->NextEffectUID();
 
     return pathEffectID;
 }
@@ -628,7 +628,7 @@ uint32_t Client::PathGetEffectID()
 uint32_t Client::LocationGetEffectID()
 {
     if (locationEffectID == 0)
-        locationEffectID = CacheManager::GetSingleton().NextEffectUID();
+        locationEffectID = psserver->cachemanager->NextEffectUID();
 
     return locationEffectID;
 }

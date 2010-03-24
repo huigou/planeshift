@@ -41,6 +41,7 @@
 
 class psWeatherGameEvent;
 class psSectorInfo;
+class CacheManager;
 
 /**
  * This class handles generation of any and all weather events in the game,
@@ -49,7 +50,7 @@ class psSectorInfo;
 class WeatherManager
 {
 public:
-    WeatherManager();
+    WeatherManager(CacheManager* cachemanager);
     ~WeatherManager();
 
     void Initialize();
@@ -106,6 +107,7 @@ protected:
     CS::Threading::Mutex eventsMutex;
     csArray<psWeatherGameEvent*> events; // Ugly, but we need a copy of our events
     
+    CacheManager* cacheManager;
 };
 
 /**

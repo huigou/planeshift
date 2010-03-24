@@ -92,17 +92,16 @@ public:
                        Client *roller,
                        psItem *loot,
                        psCharacter *dropper,
-                       const char *question)
+                       const char *question,
+                       CacheManager *cachemanager,
+                       GEMSupervisor *gemsupervisor)
     : PendingQuestion( roller->GetClientNum(),
                        question,
                        psQuestionMessage::generalConfirm)
     {
-        if ( !looter || !roller || !loot || !dropper )
-        {
-            if (loot) CacheManager::GetSingleton().RemoveInstance(loot);
-            delete this;
-            return;
-        }
+    	cacheManager = cachemanager;
+    	gemSupervisor = gemsupervisor;
+
 
         item = loot;
         looterID = looter->GetActor()->GetPID();
@@ -127,8 +126,8 @@ public:
             return;
         }
         
-        gemActor* looter = GEMSupervisor::GetSingleton().FindPlayerEntity(looterID);
-        gemActor* roller = GEMSupervisor::GetSingleton().FindPlayerEntity(rollerID);
+        gemActor* looter = gemSupervisor->FindPlayerEntity(looterID);
+        gemActor* roller = gemSupervisor->FindPlayerEntity(rollerID);
 
         gemActor* getter = (answer == "yes") ? looter : roller ;
 
@@ -140,7 +139,7 @@ public:
             // If the other player also vanished, get rid of the item and be done with it...
             if (!getter /*|| !getter->InGroup()*/ )
             {
-                CacheManager::GetSingleton().RemoveInstance(item);
+                cacheManager->RemoveInstance(item);
                 return;
             }
         }
@@ -178,15 +177,21 @@ public:
     }
     
     void HandleTimeout() { HandleAnswer("yes"); }
+private:
+    CacheManager *cacheManager;
+    GEMSupervisor *gemSupervisor;
 };
 
 
 
-SpawnManager::SpawnManager(psDatabase *db)
+SpawnManager::SpawnManager(psDatabase *db, CacheManager *cachemanager, EntityManager *entitymanager, GEMSupervisor *gemsupervisor)
 {
     database  = db;
+    cacheManager = cachemanager;
+    entityManager = entitymanager;
+    gem = gemsupervisor;
 
-    lootRandomizer = new LootRandomizer();
+    lootRandomizer = new LootRandomizer(cachemanager);
 
     PreloadDatabase();
 
@@ -239,7 +244,7 @@ void SpawnManager::PreloadLootRules()
         LootEntry *entry = new LootEntry;
         int item_id = result[i].GetInt("item_stat_id");
 
-        entry->item = CacheManager::GetSingleton().GetBasicItemStatsByID( item_id );
+        entry->item = cacheManager->GetBasicItemStatsByID( item_id );
         entry->probability = result[i].GetFloat("probability");
         entry->min_money = result[i].GetInt("min_money");
         entry->max_money = result[i].GetInt("max_money");
@@ -429,7 +434,7 @@ void SpawnManager::LoadHuntLocations(psSectorInfo *sectorinfo)
         csString name = result[i]["name"];
         
         // Schdule the item spawn
-        psSectorInfo *spawnsector=CacheManager::GetSingleton().GetSectorInfoByName(sector);
+        psSectorInfo *spawnsector=cacheManager->GetSectorInfoByName(sector);
 
         if (spawnsector==NULL)
         {
@@ -437,41 +442,36 @@ void SpawnManager::LoadHuntLocations(psSectorInfo *sectorinfo)
             continue;
         }
 		
-		iSector *iSec = EntityManager::GetSingleton().FindSector(sector.GetData());
+		iSector *iSec = entityManager->FindSector(sector.GetData());
         if(!iSec)
         {
             Error2("Sector '%s' failed to be found when loading hunt location.", sector.GetData());
             continue;
         }
-
-        GEMSupervisor* gem = GEMSupervisor::GetSingletonPtr();
         
         csArray<gemObject*> nearlist;
         size_t handledSpawnsCount = 0;
  
-        if (gem)
-        {
-            // Look for nearby items to prevent rescheduling of existing items
-            nearlist = gem->FindNearbyEntities(iSec, pos, range);
-            size_t nearbyItemsCount = nearlist.GetSize();
-                        
-    		for (size_t i = 0; i < nearbyItemsCount; ++i)
-    		{
-                psItem *item = nearlist[i]->GetItem();
-                if (item)
-                {
-                    if (name == item->GetName()) // Correct item?
-                    {
-                        psScheduledItem* schedule = new psScheduledItem(id,itemid,pos,spawnsector,0,interval,max_rnd,range);
-                        item->SetScheduledItem(schedule);
-                        ++handledSpawnsCount;
-                    }
-                }
-                
-                if ((int) handledSpawnsCount == amount) // All schedules accounted for
-                    break;
-    		}
-        }
+		// Look for nearby items to prevent rescheduling of existing items
+		nearlist = gem->FindNearbyEntities(iSec, pos, range);
+		size_t nearbyItemsCount = nearlist.GetSize();
+					
+		for (size_t i = 0; i < nearbyItemsCount; ++i)
+		{
+			psItem *item = nearlist[i]->GetItem();
+			if (item)
+			{
+				if (name == item->GetName()) // Correct item?
+				{
+					psScheduledItem* schedule = new psScheduledItem(id,itemid,pos,spawnsector,0,interval,max_rnd,range);
+					item->SetScheduledItem(schedule);
+					++handledSpawnsCount;
+				}
+			}
+			
+			if ((int) handledSpawnsCount == amount) // All schedules accounted for
+				break;
+		}
 				
 		for (int i = 0; i < (amount - (int) handledSpawnsCount); ++i) //Make desired amount of items that are not already existing
 		{
@@ -580,7 +580,7 @@ void SpawnManager::RepopulateLive(psSectorInfo *sectorinfo)
     for (int i=0; i<count; i++)
     {
         if (chardatalist[i] != NULL)
-            EntityManager::GetSingleton().CreateNPC(chardatalist[i]);
+            entityManager->CreateNPC(chardatalist[i]);
         else
             Error1("Failed to repopulate NPC!");
     }
@@ -593,7 +593,7 @@ void SpawnManager::RepopulateItems(psSectorInfo *sectorinfo)
     csArray<psItem*> items;
 
     // Load list from database
-    if (!CacheManager::GetSingleton().LoadWorldItems(sectorinfo, items))
+    if (!cacheManager->LoadWorldItems(sectorinfo, items))
     {
         Error1("Failed to load world items.");
         return;
@@ -609,7 +609,7 @@ void SpawnManager::RepopulateItems(psSectorInfo *sectorinfo)
         if (item->GetContainerID() == 0)
         {
             //if create item returns false, then no spawn occurs
-            if (EntityManager::GetSingleton().CreateItem( item, (item->GetFlags() & PSITEM_FLAG_TRANSIENT) ? true : false))
+            if (entityManager->CreateItem( item, (item->GetFlags() & PSITEM_FLAG_TRANSIENT) ? true : false))
             {
                 // printf("Created item %d: %s\n", item->GetUID(), item->GetName() );
                 // item->Save(false);
@@ -624,7 +624,7 @@ void SpawnManager::RepopulateItems(psSectorInfo *sectorinfo)
         // load items in containers
         else if (item->GetContainerID())
         {
-            gemItem *citem = EntityManager::GetSingleton().GetGEM()->FindItemEntity(item->GetContainerID());
+            gemItem *citem = entityManager->GetGEM()->FindItemEntity(item->GetContainerID());
             gemContainer *container = dynamic_cast<gemContainer*> (citem);
             if (container)
             {
@@ -764,7 +764,7 @@ void SpawnManager::KillNPC(gemObject *obj, gemActor* killer)
 
     // Set timer for when NPC will disappear
     csTicks delay = (respawn)?respawn->GetDeadRemainTime():5000;
-    psDespawnGameEvent *newevent = new psDespawnGameEvent(this,delay,obj);
+    psDespawnGameEvent *newevent = new psDespawnGameEvent(this, gem, delay,obj);
     psserver->GetEventManager()->Push(newevent);
 
     Notify3(LOG_SPAWN,"Scheduled NPC %s to be removed in %1.1f seconds.",obj->GetName(),(float)delay/1000.0);
@@ -807,7 +807,7 @@ void SpawnManager::RemoveNPC(gemObject *obj)
         }
 
         // Remove mesh, etc from engine
-        EntityManager::GetSingleton().RemoveActor(obj);
+        entityManager->RemoveActor(obj);
         return;
     }
 
@@ -826,7 +826,7 @@ void SpawnManager::RemoveNPC(gemObject *obj)
     respawn->DetermineSpawnLoc(obj->GetCharacterData(),pos,angle,sector,instance);
 
     // Remove mesh, etc from engine
-    EntityManager::GetSingleton().RemoveActor(obj);
+    entityManager->RemoveActor(obj);
 
     PID newplayer = respawn->CheckSubstitution(pid);
 
@@ -849,7 +849,7 @@ void SpawnManager::RemoveNPC(gemObject *obj)
 
 void SpawnManager::Respawn(InstanceID instance, csVector3& where, float rot, csString& sector, PID playerID)
 {
-    psSectorInfo* spawnsector = CacheManager::GetSingleton().GetSectorInfoByName(sector);
+    psSectorInfo* spawnsector = cacheManager->GetSectorInfoByName(sector);
     if (spawnsector==NULL)
     {
         Error2("Spawn message indicated unresolvable sector '%s'\n",(const char*)sector);
@@ -871,7 +871,7 @@ void SpawnManager::Respawn(InstanceID instance, csVector3& where, float rot, csS
     chardata->Inventory().RestoreAllInventoryQuality();
 
     // Now create the NPC as usual
-    EntityManager::GetSingleton().CreateNPC(chardata);
+    entityManager->CreateNPC(chardata);
 
     ServerStatus::mob_birthcount++;
 }
@@ -881,7 +881,7 @@ void SpawnManager::HandleLootItem(MsgEntry *me,Client *client)
     psLootItemMessage msg(me);
 
     // Possible hack here?  We are trusting the client to send the right msg.entity?
-    gemObject *obj = GEMSupervisor::GetSingleton().FindObject(msg.entity);
+    gemObject *obj = gem->FindObject(msg.entity);
     if (!obj)
     {
         Error3("LootItem Message from %s specified an erroneous entity id: %s.\n", client->GetName(), ShowID(msg.entity));
@@ -909,7 +909,7 @@ void SpawnManager::HandleLootItem(MsgEntry *me,Client *client)
         return;
     }
 
-    psItemStats *itemstat = CacheManager::GetSingleton().GetBasicItemStatsByID(msg.lootitem);
+    psItemStats *itemstat = cacheManager->GetBasicItemStatsByID(msg.lootitem);
     size_t index = chr->Inventory().FindItemStatIndex(itemstat);
     psItem *item = NULL;
     if (index != SIZET_NOT_FOUND)
@@ -957,8 +957,9 @@ void SpawnManager::HandleLootItem(MsgEntry *me,Client *client)
                        item->GetName(), client->GetName());
 
         // Item will be held in the prompt until answered.
-        PendingLootPrompt *p = new PendingLootPrompt(client, randfriendclient, item, chr, request);
-        psserver->questionmanager->SendQuestion(p);
+
+		PendingLootPrompt *p = new PendingLootPrompt(client, randfriendclient, item, chr, request, cacheManager, gem);
+		psserver->questionmanager->SendQuestion(p);
 
         type.Append(" Pending");
     }
@@ -1311,17 +1312,19 @@ void psRespawnGameEvent::Trigger()
 
 
 psDespawnGameEvent::psDespawnGameEvent(SpawnManager *mgr,
+									   GEMSupervisor *gemsupervisor,
                                        int delayticks,
                                        gemObject *obj)
     : psGameEvent(0,delayticks,"psDespawnGameEvent")
 {
     spawnmanager = mgr;
+    gem = gemsupervisor;
     entity       = obj->GetEID();
 }
 
 void psDespawnGameEvent::Trigger()
 {
-    gemObject* object = GEMSupervisor::GetSingleton().FindObject(entity);
+    gemObject* object = gem->FindObject(entity);
     if(!object)
     {
         csString status;
@@ -1498,11 +1501,12 @@ void psItemSpawnEvent::Trigger()
     }
 }
 
-LootRandomizer::LootRandomizer()
+LootRandomizer::LootRandomizer(CacheManager* cachemanager)
 {
     prefix_max = 0;
     adjective_max = 0;
     suffix_max = 0;
+    cacheManager = cachemanager;
 
     // Find any math scripts that are needed
     modifierCostCalc = psserver->GetMathScriptEngine()->FindScript("LootModifierCostCap");
@@ -1661,12 +1665,12 @@ psItemStats* LootRandomizer::RandomizeItem( psItemStats* itemstats, float maxcos
     }
 
     // Check if item already present
-    newStats = CacheManager::GetSingleton().GetBasicItemStatsByName( totalMods.name.GetData() );
+    newStats = cacheManager->GetBasicItemStatsByName( totalMods.name.GetData() );
     if ( !newStats ) // If it doesn't exist
     {
         // This will copy the current ItemsStats row in the DB and create a new one for us.
         // TODO: rewrite loot handling to not generate a bazillion item_stats entries
-        newStats = CacheManager::GetSingleton().CopyItemStats(itemstats->GetUID(), totalMods.name);
+        newStats = cacheManager->CopyItemStats(itemstats->GetUID(), totalMods.name);
         if ( !newStats )
         {
             return itemstats;

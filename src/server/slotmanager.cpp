@@ -46,7 +46,6 @@
 #include "workmanager.h"
 #include "psserverchar.h"
 #include "client.h"
-#include "entitymanager.h"
 #include "globals.h"
 #include "adminmanager.h"
 #include "scripting.h"
@@ -145,7 +144,7 @@ void SlotManager::MoveFromWorldContainer(psSlotMovementMsg& msg, Client *fromCli
     psItem *parentItem=NULL;
     gemContainer *worldContainer=NULL;
 
-    gemObject *obj = EntityManager::GetSingleton().GetGEM()->FindObject(EID(containerEntityID)); // CEL id assigned
+    gemObject *obj = gemSupervisor->FindObject(EID(containerEntityID)); // CEL id assigned
     worldContainer = dynamic_cast<gemContainer*>(obj);
     if (!worldContainer)
     {
@@ -212,7 +211,7 @@ void SlotManager::MoveFromWorldContainer(psSlotMovementMsg& msg, Client *fromCli
             psItem *parentItem = NULL;
             worldContainer = NULL;
  
-            gemObject *obj = EntityManager::GetSingleton().GetGEM()->FindObject(EID(containerEntityID)); // CEL id assigned
+            gemObject *obj = gemSupervisor->FindObject(EID(containerEntityID)); // CEL id assigned
             worldContainer = dynamic_cast<gemContainer*>(obj);
             if (!worldContainer)
             {
@@ -454,7 +453,7 @@ void SlotManager::MoveFromInventory(psSlotMovementMsg& msg, Client *fromClient)
             psItem *parentItem=NULL;
             worldContainer=NULL;
  
-            gemObject *obj = EntityManager::GetSingleton().GetGEM()->FindObject(EID(containerEntityID)); // CEL id assigned
+            gemObject *obj = gemSupervisor->FindObject(EID(containerEntityID)); // CEL id assigned
             worldContainer = dynamic_cast<gemContainer*>(obj);
             if (!worldContainer)
             {
@@ -831,7 +830,7 @@ psItem* SlotManager::FindItem(Client* client, int containerID, INVENTORY_SLOT_NU
 
         default:  // Find container in world
         {
-            gemObject* object = GEMSupervisor::GetSingleton().FindObject(EID(containerID));
+            gemObject* object = gemSupervisor->FindObject(EID(containerID));
             if (object && slotID == -1)
                 return object->GetItem();
 
@@ -865,7 +864,7 @@ psItem* SlotManager::MakeMoneyItem(INVENTORY_SLOT_NUMBER slot, int stackCount)
             break;
     }
             
-    psItemStats *stat = CacheManager::GetSingleton().GetBasicItemStatsByName(type);
+    psItemStats *stat = cacheManager->GetBasicItemStatsByName(type);
     if (!stat)
     {
         Error2("Could not load basic item stat for %s", type.GetData());

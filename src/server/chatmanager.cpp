@@ -458,7 +458,7 @@ void ChatManager::SendSay(uint32_t clientNum, gemActor *actor, psChatMessage& ms
     iSector * sector = actor->GetMeshWrapper()->GetMovable()->GetSectors()->Get(0);
 
     if (sector)
-        sectorinfo = CacheManager::GetSingleton().GetSectorInfoByName(sector->QueryObject()->GetName());
+        sectorinfo = psserver->cachemanager->GetSectorInfoByName(sector->QueryObject()->GetName());
     if (sectorinfo)
         range = sectorinfo->say_range;
     if (range == 0) // If 0 set default
@@ -538,7 +538,7 @@ void ChatManager::SendAlliance(Client *client, psChatMessage& msg)
         return;
     }
 
-    psGuildAlliance * alliance = CacheManager::GetSingleton().FindAlliance(guild->GetAllianceID());
+    psGuildAlliance * alliance = psserver->cachemanager->FindAlliance(guild->GetAllianceID());
     if(alliance == NULL)
     {
         psserver->SendSystemInfo(client->GetClientNum(), "Your guild is not in an alliance.");

@@ -62,9 +62,10 @@
 
 //----------------------------------------------------------------------------
 
-ProximityList::ProximityList( iObjectRegistry* object_reg, gemObject *parent )
+ProximityList::ProximityList( iObjectRegistry* object_reg, gemObject *parent, EntityManager *entitymanager)
 {
     pslog::Initialize (object_reg);
+    entityManager = entitymanager;
     
     #ifdef PSPROXDEBUG
         CPrintf(CON_DEBUG, "Construction of cel Proximity List (%p)!\n", this);
@@ -471,7 +472,7 @@ float ProximityList::RangeTo( gemObject* object, bool ignoreY, bool ignoreInstan
 
     if ( ignoreY )
     {
-        if(EntityManager::GetSingleton().GetWorld()->WarpSpace(sector2, sector1, pos2))
+        if(entityManager->GetWorld()->WarpSpace(sector2, sector1, pos2))
         {
         return ( sqrt(  (pos1.x - pos2.x)*(pos1.x - pos2.x)+
                     (pos1.z - pos2.z)*(pos1.z - pos2.z)));
@@ -483,7 +484,7 @@ float ProximityList::RangeTo( gemObject* object, bool ignoreY, bool ignoreInstan
     }
     else
     {
-        return EntityManager::GetSingleton().GetWorld()->Distance(pos1, sector1, pos2, sector2);
+        return entityManager->GetWorld()->Distance(pos1, sector1, pos2, sector2);
     }
 }
 

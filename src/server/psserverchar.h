@@ -59,7 +59,7 @@ class ServerCharManager : public MessageManager
 {
 public:
 
-    ServerCharManager();
+    ServerCharManager(CacheManager* cachemanager, GEMSupervisor* gemsupervisor);
     virtual ~ServerCharManager();
 
     bool Initialize();
@@ -188,6 +188,8 @@ protected:
 //    ClientConnectionSet*    clients;
 
     SlotManager *slotManager;
+    CacheManager* cacheManager;
+    GEMSupervisor* gemSupervisor;
 
     MathScript* calc_item_merchant_price_buy;
     MathScript* calc_item_merchant_price_sell;

@@ -43,6 +43,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 class ClientConnectionSet;
 class PendingDuelInvite;
+class BankManager;
+class EntityManager;
 
 /** Used to manage incoming user commands from a client. Most commands are in
  * the format of /command param1 param2 ... paramN
@@ -51,8 +53,10 @@ class UserManager : public MessageManager
 {
 public:
 
-    UserManager(ClientConnectionSet *pCCS);
+    UserManager(ClientConnectionSet *pCCS, CacheManager* cachemanager, BankManager* bankmanager, EntityManager* entitymanager);
     virtual ~UserManager();
+    
+    virtual bool Initialize(GEMSupervisor* gemsupervisor) {gem = gemsupervisor; return true; }
 
     virtual void HandleMessage(MsgEntry *pMsg,Client *client) { }
 
@@ -488,6 +492,11 @@ protected:
     typedef void (UserManager::*userCmdPointer)(psUserCmdMessage& msg, Client *client);
     /// Hash of the user commands, the key is the command name
     csHash<userCmdPointer, csString> userCommandHash;
+    
+    CacheManager* cacheManager;
+    GEMSupervisor* gem;
+    BankManager* bankManager;
+    EntityManager* entityManager;
 };
 
 #endif

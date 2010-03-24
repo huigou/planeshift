@@ -43,6 +43,7 @@
 
 class psSectorInfo;
 class Client;
+class EntityManager;
 class psGuildInfo;
 class psGuildAlliance;
 class psSkillInfo;
@@ -203,7 +204,7 @@ class optionEntry
 * Races will fail if Meshes, Textures and Sectors are not loaded beforehand.
 *
 */
-class CacheManager : public Singleton<CacheManager>
+class CacheManager
 {
 public:
     CacheManager();
@@ -353,7 +354,7 @@ public:
     //@}
 
     /// Convenience function to preload all of the above in an appropriate order
-    bool PreloadAll();
+    bool PreloadAll(EntityManager* entitymanager);
     void UnloadAll();
 
     // Item categories
@@ -521,7 +522,7 @@ protected:
     ///preloads the character events script for a faction
     void PreloadFactionCharacterEvents(const char* script, Faction* faction);
     bool PreloadFactions();
-    bool PreloadScripts();
+    bool PreloadScripts(EntityManager* entitymanager);
     bool PreloadSpells();
     bool PreloadItemStatsDatabase();
     bool PreloadItemAnimList();

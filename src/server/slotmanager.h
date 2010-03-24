@@ -43,12 +43,17 @@ class SlotManager : public MessageManager
 {
 public:
     virtual ~SlotManager();
+    SlotManager(GEMSupervisor *gemsupervisor, CacheManager *cachemanager)
+    {
+    	gemSupervisor = gemsupervisor;
+    	cacheManager = cachemanager;
+    }
 
     bool Initialize();
 
     virtual void HandleMessage(MsgEntry *me, Client *client) { }
 
-    static psItem* FindItem(Client* client, int containerID, INVENTORY_SLOT_NUMBER slotID);
+    psItem* FindItem(Client* client, int containerID, INVENTORY_SLOT_NUMBER slotID);
 
     gemContainer *worldContainer;   ///< Working world GEM container we are using.
     int  containerEntityID;         ///< Working ID of the container ID
@@ -65,7 +70,7 @@ private:
      * @param stackCount The amount to put in the item.
      * @return A new psItem object.
      */
-    static psItem* MakeMoneyItem(INVENTORY_SLOT_NUMBER slot, int stackCount);
+    psItem* MakeMoneyItem(INVENTORY_SLOT_NUMBER slot, int stackCount);
 
     /// Handle psSlotMovementMsg from Inventory to somewhere.
     void MoveFromInventory(psSlotMovementMsg& msg, Client *fromClient);
@@ -84,6 +89,9 @@ private:
 
     /// Consume an item and fire off any progression events it has.
     static void Consume(psItem* item, psCharacter *charData, int count);
+    
+    GEMSupervisor *gemSupervisor;
+    CacheManager *cacheManager;
 };
 
 #endif

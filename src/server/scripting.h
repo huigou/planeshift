@@ -35,6 +35,8 @@
 class MathEnvironment;
 class MathExpression;
 class ActiveSpell;
+class EntityManager;
+class CacheManager;
 
 // Events that can trigger scripts, i.e. <on type="attack">
 enum SCRIPT_TRIGGER
@@ -65,8 +67,8 @@ class ProgressionScript
 {
 public:
     ~ProgressionScript();
-    static ProgressionScript* Create(const char* name, const char* script);
-    static ProgressionScript* Create(const char* name, iDocumentNode* top);
+    static ProgressionScript* Create(EntityManager* entitymanager,CacheManager* cachemanager, const char* name, const char* script);
+    static ProgressionScript* Create(EntityManager* entitymanager,CacheManager* cachemanager, const char* name, iDocumentNode* top);
 
     const csString& Name() { return name; }
     void Run(const MathEnvironment* env);
@@ -83,9 +85,9 @@ class ApplicativeScript
 {
 public:
     ~ApplicativeScript();
-    static ApplicativeScript* Create(const char* script);
-    static ApplicativeScript* Create(iDocumentNode* top);
-    static ApplicativeScript* Create(iDocumentNode* top, SPELL_TYPE type, const char* name, const char* duration);
+    static ApplicativeScript* Create(EntityManager* entitymanager, CacheManager* cachemanager, const char* script);
+    static ApplicativeScript* Create(EntityManager* entitymanager, CacheManager* cachemanager, iDocumentNode* top);
+    static ApplicativeScript* Create(EntityManager* entitymanager, CacheManager* cachemanager, iDocumentNode* top, SPELL_TYPE type, const char* name, const char* duration);
 
     ActiveSpell* Apply(const MathEnvironment* env, bool registerCancelEvent = true);
 protected:

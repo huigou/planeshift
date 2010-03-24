@@ -79,13 +79,10 @@
 #include "introductionmanager.h"
 #include "adminmanager.h"
 
-ProgressionManager::ProgressionManager(ClientConnectionSet *ccs)
+ProgressionManager::ProgressionManager(ClientConnectionSet *ccs, CacheManager *cachemanager)
 {
     clients      = ccs;
-
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ProgressionManager>(this,&ProgressionManager::HandleSkill)      ,MSGTYPE_GUISKILL,    REQUIRE_READY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ProgressionManager>(this,&ProgressionManager::HandleDeathEvent) ,MSGTYPE_DEATH_EVENT, NO_VALIDATION);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ProgressionManager>(this,&ProgressionManager::HandleZPointEvent),MSGTYPE_ZPOINT_EVENT,REQUIRE_READY_CLIENT);
+    cacheManager = cachemanager;
     
     calc_dynamic_experience  = psserver->GetMathScriptEngine()->FindScript("Calculate Dynamic Experience");
     if(!calc_dynamic_experience)
@@ -104,6 +101,10 @@ ProgressionManager::~ProgressionManager()
 
 bool ProgressionManager::Initialize()
 {
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ProgressionManager>(this,&ProgressionManager::HandleSkill)      ,MSGTYPE_GUISKILL,    REQUIRE_READY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ProgressionManager>(this,&ProgressionManager::HandleDeathEvent) ,MSGTYPE_DEATH_EVENT, NO_VALIDATION);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ProgressionManager>(this,&ProgressionManager::HandleZPointEvent),MSGTYPE_ZPOINT_EVENT,REQUIRE_READY_CLIENT);
+
     Result result_affinitycategories(db->Select("SELECT * from char_create_affinity"));
 
     if ( result_affinitycategories.IsValid() )
@@ -293,8 +294,8 @@ void ProgressionManager::HandleSkill(MsgEntry *me, Client * client)
 
             csString skillName = topNode->GetAttributeValue("NAME");
 
-            psSkillInfo * info = CacheManager::GetSingleton().GetSkillByName(skillName);
-            Faction * faction = CacheManager::GetSingleton().GetFactionByName(skillName);
+            psSkillInfo * info = cacheManager->GetSkillByName(skillName);
+            Faction * faction = cacheManager->GetFactionByName(skillName);
             csString buff;
             csString description;
             int cathegory;
@@ -381,7 +382,7 @@ void ProgressionManager::HandleSkill(MsgEntry *me, Client * client)
             csString skillName = topNode->GetAttributeValue("NAME");
             uint skillAmount = topNode->GetAttributeValueAsInt("AMOUNT");
 
-            psSkillInfo * info = CacheManager::GetSingleton().GetSkillByName(skillName);
+            psSkillInfo * info = cacheManager->GetSkillByName(skillName);
             Debug2(LOG_SKILLXP, client->GetClientNum(),"    Looking for: %s\n", (const char*)skillName);
 
             if (!info)
@@ -497,9 +498,9 @@ void ProgressionManager::SendSkillList(Client * client, bool forceOpen, PSSKILL 
     }
 
 
-    for (int skillID = 0; skillID < CacheManager::GetSingleton().GetSkillAmount(); skillID++)
+    for (int skillID = 0; skillID < cacheManager->GetSkillAmount(); skillID++)
     {
-        psSkillInfo * info = CacheManager::GetSingleton().GetSkillByID(skillID);
+        psSkillInfo * info = cacheManager->GetSkillByID(skillID);
         if (!info)
         {
             Error2("Can't find skill %d",skillID);
@@ -526,7 +527,7 @@ void ProgressionManager::SendSkillList(Client * client, bool forceOpen, PSSKILL 
                in the cache. If it can't be found, skip this skill.
             */
             unsigned int skillNameId =
-                    CacheManager::GetSingleton().FindCommonStringID(info->name);
+                    cacheManager->FindCommonStringID(info->name);
 
             if (skillNameId == 0)
             {
@@ -648,7 +649,7 @@ void ProgressionManager::StartTraining(Client * client, psCharacter * trainer)
 
 ProgressionScript *ProgressionManager::FindScript(char const *name)
 {
-    return CacheManager::GetSingleton().GetProgressionScript(name);
+    return cacheManager->GetProgressionScript(name);
 }
 
 void ProgressionManager::QueueEvent(psGameEvent *event)

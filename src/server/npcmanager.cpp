@@ -91,7 +91,7 @@ const int NPC_TICK_INTERVAL = 300;  //msec
  */
 class PetOwnerSession : public iDeleteObjectCallback
 {
-
+	EntityManager* entityManager;
 public:
     PID ownerID; ///< Character ID of the owner
     PID petID; ///< Character ID of the pet
@@ -101,11 +101,12 @@ public:
     csString curDate;
     csString curTime;
 
-    PetOwnerSession()
+    PetOwnerSession(EntityManager* entitymanager)
     {
         owner = NULL;
         elapsedTime = 0.0f;
         isActive = false;
+        entityManager = entitymanager;
     };
 
     PetOwnerSession(gemActor* owner, psCharacter* pet)
@@ -242,7 +243,7 @@ public:
 
                     CPrintf(CON_NOTIFY,"NPCManager Removing familiar %s from owner %s.\n",pet->GetName(),pet->GetName() );
                     owner->GetClient()->SetFamiliar( NULL );
-                    EntityManager::GetSingleton().RemoveActor( pet );
+                    entityManager->RemoveActor( pet );
                     psserver->SendSystemInfo( owner->GetClientID(), "You feel your power to maintain your pet wane." );
                 }
             }
@@ -328,11 +329,17 @@ public:
 
 NPCManager::NPCManager(ClientConnectionSet *pCCS,
                        psDatabase *db,
-                       EventManager *evtmgr)
+                       EventManager *evtmgr,
+                       GEMSupervisor *gemsupervisor,
+                       CacheManager *cachemanager,
+                       EntityManager *entitymanager)
 {
     clients      = pCCS;
     database     = db;
     eventmanager = evtmgr;
+    gemSupervisor = gemsupervisor;
+    cacheManager = cachemanager;
+    entityManager = entitymanager;
 
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<NPCManager>(this,&NPCManager::HandleAuthentRequest),MSGTYPE_NPCAUTHENT,REQUIRE_ANY_CLIENT);
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<NPCManager>(this,&NPCManager::HandleCommandList)   ,MSGTYPE_NPCOMMANDLIST,REQUIRE_ANY_CLIENT);
@@ -389,7 +396,7 @@ NPCManager::~NPCManager()
 
 void NPCManager::HandleNPCReady(MsgEntry *me,Client *client)
 {
-	GEMSupervisor::GetSingleton().ActivateNPCs(client->GetAccountID());
+	gemSupervisor->ActivateNPCs(client->GetAccountID());
 	// NPC Client is now ready so add onto superclients list
 	client->SetReady(true);
 	superclients.Push(PublishDestination(client->GetClientNum(), client, 0, 0));
@@ -511,7 +518,7 @@ void NPCManager::HandleAuthentRequest(MsgEntry *me,Client *notused)
     // CHECK 4: Check to see if the login is correct.
 
     Notify2(LOG_SUPERCLIENT, "Check Superclient Login for: '%s'\n", (const char*)msg.sUser);
-    psAccountInfo *acctinfo=CacheManager::GetSingleton().GetAccountInfoByUsername((const char *)msg.sUser);
+    psAccountInfo *acctinfo=cacheManager->GetAccountInfoByUsername((const char *)msg.sUser);
 
 
     csString password = csMD5::Encode(msg.sPassword).HexString();
@@ -596,7 +603,7 @@ void NPCManager::HandleAuthentRequest(MsgEntry *me,Client *notused)
 void NPCManager::Disconnect(Client *client)
 {
     // Deactivate all the NPCs that are managed by this client
-    GEMSupervisor::GetSingleton().StopAllNPCs(client->GetAccountID() );
+    gemSupervisor->StopAllNPCs(client->GetAccountID() );
 
     // Disconnect the superclient
     for (size_t i=0; i< superclients.GetSize(); i++)
@@ -614,7 +621,7 @@ void NPCManager::Disconnect(Client *client)
 
 void NPCManager::SendMapList(Client *client)
 {
-    psWorld *psworld = EntityManager::GetSingleton().GetWorld();
+    psWorld *psworld = entityManager->GetWorld();
 
     csString regions;
     psworld->GetAllRegionNames(regions);
@@ -625,12 +632,12 @@ void NPCManager::SendMapList(Client *client)
 
 void NPCManager::SendRaces(Client *client)
 {
-    uint32_t count = (uint32_t)CacheManager::GetSingleton().GetRaceInfoCount();
+    uint32_t count = (uint32_t)cacheManager->GetRaceInfoCount();
 
     psNPCRaceListMessage newmsg(client->GetClientNum(),count);
     for (uint32_t i=0; i < count; i++)
     {
-        psRaceInfo * ri = CacheManager::GetSingleton().GetRaceInfoByIndex(i);
+        psRaceInfo * ri = cacheManager->GetRaceInfoByIndex(i);
         newmsg.AddRace(ri->name,ri->walkBaseSpeed,ri->runBaseSpeed, i == (count-1));
     }
     newmsg.SendMessage();
@@ -639,7 +646,7 @@ void NPCManager::SendRaces(Client *client)
 
 void NPCManager::SendNPCList(Client *client)
 {
-    int count = GEMSupervisor::GetSingleton().CountManagedNPCs(client->GetAccountID());
+    int count = gemSupervisor->CountManagedNPCs(client->GetAccountID());
 
     // Note, building the internal message outside the msg ctor is very bad
     // but I am doing this to avoid sending database result sets to the msg ctor.
@@ -647,7 +654,7 @@ void NPCManager::SendNPCList(Client *client)
 
     newmsg.msg->Add( (uint32_t)count );
 
-    GEMSupervisor::GetSingleton().FillNPCList(newmsg.msg,client->GetAccountID());
+    gemSupervisor->FillNPCList(newmsg.msg,client->GetAccountID());
 
     if (!newmsg.msg->overrun)
     {
@@ -694,14 +701,14 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                 }
 
                 psDRMessage drmsg(data,len,
-                                  CacheManager::GetSingleton().GetMsgStrings(), 0,
-                                  EntityManager::GetSingleton().GetEngine());  // alternate method of cracking
+                                  cacheManager->GetMsgStrings(), 0,
+                                  entityManager->GetEngine());  // alternate method of cracking
 
                 // copy the DR data into an iDataBuffer
                 csRef<iDataBuffer> databuf = csPtr<iDataBuffer> (new csDataBuffer (len));
                 memcpy(databuf->GetData(), data, len);
                 // find the entity and Set the DR data for it
-                gemNPC *actor = dynamic_cast<gemNPC*>(GEMSupervisor::GetSingleton().FindObject(drmsg.entityid));
+                gemNPC *actor = dynamic_cast<gemNPC*>(gemSupervisor->FindObject(drmsg.entityid));
 
                 if (!actor)
                 {
@@ -752,10 +759,10 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                     break;
                 }
 
-                gemNPC *attacker = dynamic_cast<gemNPC *> (GEMSupervisor::GetSingleton().FindObject(attacker_id));
+                gemNPC *attacker = dynamic_cast<gemNPC *> (gemSupervisor->FindObject(attacker_id));
                 if (attacker && attacker->IsAlive())
                 {
-                    gemObject *target   = (gemObject *)GEMSupervisor::GetSingleton().FindObject(target_id);
+                    gemObject *target   = (gemObject *)gemSupervisor->FindObject(target_id);
                     if (!target)
                     {
                         attacker->SetTarget(target);
@@ -784,7 +791,7 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                         if ( !target->GetClient() || !target->GetActorPtr()->GetInvincibility() )
                         {
                             // NPCs only use 'Normal' stance for now.
-                            psserver->combatmanager->AttackSomeone(attacker,target,CombatManager::GetStance("Normal"));
+                            psserver->combatmanager->AttackSomeone(attacker,target,CombatManager::GetStance(cacheManager, "Normal"));
                             Debug3(LOG_SUPERCLIENT, attacker_id.Unbox(), "%s is now attacking %s.\n", attacker->GetName(), target->GetName());
                         }
                         else
@@ -812,11 +819,11 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                     Debug2(LOG_SUPERCLIENT,me->clientnum,"Received incomplete CMD_SPAWN from NPC client %u.\n",me->clientnum);
                     break;
                 }
-                gemNPC *spawner = dynamic_cast<gemNPC *> (GEMSupervisor::GetSingleton().FindObject(spawner_id));
+                gemNPC *spawner = dynamic_cast<gemNPC *> (gemSupervisor->FindObject(spawner_id));
 
                 if (spawner)
                 {
-                    gemNPC *spawned = EntityManager::GetSingleton().CloneNPC(spawner->GetCharacterData());
+                    gemNPC *spawned = entityManager->CloneNPC(spawner->GetCharacterData());
                     QueueSpawnedPerception(spawned, spawner);
                 }
                 else
@@ -837,7 +844,7 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                     Debug2(LOG_SUPERCLIENT,me->clientnum,"Received incomplete CMD_TALK from NPC client %u.\n",me->clientnum);
                     break;
                 }
-                gemNPC *speaker = dynamic_cast<gemNPC *> (GEMSupervisor::GetSingleton().FindObject(speaker_id));
+                gemNPC *speaker = dynamic_cast<gemNPC *> (gemSupervisor->FindObject(speaker_id));
                 csTicks timeDelay=0;
                 speaker->Say(text,NULL,false,timeDelay);
                 break;
@@ -854,7 +861,7 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                     Debug2(LOG_SUPERCLIENT,me->clientnum,"Received incomplete CMD_VISIBILITY from NPC client %u.\n",me->clientnum);
                     break;
                 }
-                gemNPC *entity = dynamic_cast<gemNPC *> (GEMSupervisor::GetSingleton().FindObject(entity_id));
+                gemNPC *entity = dynamic_cast<gemNPC *> (gemSupervisor->FindObject(entity_id));
                 entity->SetVisibility(status);
                 break;
             }
@@ -872,7 +879,7 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                     break;
                 }
 
-                gemNPC *gEntity = dynamic_cast<gemNPC *> (GEMSupervisor::GetSingleton().FindObject(entity_id));
+                gemNPC *gEntity = dynamic_cast<gemNPC *> (gemSupervisor->FindObject(entity_id));
                 psCharacter* chardata = NULL;
                 if (gEntity) chardata = gEntity->GetCharacterData();
                 if (!chardata)
@@ -881,7 +888,7 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                     break;
                 }
 
-                gemItem *gItem = dynamic_cast<gemItem *> (GEMSupervisor::GetSingleton().FindObject(item_id));
+                gemItem *gItem = dynamic_cast<gemItem *> (gemSupervisor->FindObject(item_id));
                 psItem *item = NULL;
                 if (gItem) item = gItem->GetItem();
                 if (!item)
@@ -902,7 +909,7 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
 
                     if (chardata && chardata->Inventory().Add(item))
                     {
-                        EntityManager::GetSingleton().RemoveActor(gItem);  // Destroy this
+                        entityManager->RemoveActor(gItem);  // Destroy this
                     } else
                     {
                         // TODO: Handle of pickup of partial stacks.
@@ -927,7 +934,7 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                     break;
                 }
 
-                gemNPC *gEntity = dynamic_cast<gemNPC *> (GEMSupervisor::GetSingleton().FindObject(entity_id));
+                gemNPC *gEntity = dynamic_cast<gemNPC *> (gemSupervisor->FindObject(entity_id));
                 psCharacter* chardata = NULL;
                 if (gEntity) chardata = gEntity->GetCharacterData();
                 if (!chardata)
@@ -936,7 +943,7 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                     break;
                 }
 
-                INVENTORY_SLOT_NUMBER slotID = (INVENTORY_SLOT_NUMBER)CacheManager::GetSingleton().slotNameHash.GetID( slot );
+                INVENTORY_SLOT_NUMBER slotID = (INVENTORY_SLOT_NUMBER)cacheManager->slotNameHash.GetID( slot );
                 if (slotID == PSCHARACTER_SLOT_NONE)
                 {
                     Debug2(LOG_SUPERCLIENT, entity_id.Unbox(), "Couldn't find slot %s.\n", slot.GetData());
@@ -944,7 +951,7 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                 }
 
                 // Create the item
-                psItemStats* baseStats = CacheManager::GetSingleton().GetBasicItemStatsByName(item);
+                psItemStats* baseStats = cacheManager->GetBasicItemStatsByName(item);
                 if (!baseStats)
                 {
                     Debug2(LOG_SUPERCLIENT, entity_id.Unbox(), "Couldn't find base for item %s.\n", item.GetData());
@@ -1000,7 +1007,7 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                     break;
                 }
 
-                gemNPC *gEntity = dynamic_cast<gemNPC *> (GEMSupervisor::GetSingleton().FindObject(entity_id));
+                gemNPC *gEntity = dynamic_cast<gemNPC *> (gemSupervisor->FindObject(entity_id));
                 psCharacter* chardata = NULL;
                 if (gEntity) chardata = gEntity->GetCharacterData();
                 if (!chardata)
@@ -1009,7 +1016,7 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                     break;
                 }
 
-                INVENTORY_SLOT_NUMBER slotID = (INVENTORY_SLOT_NUMBER)CacheManager::GetSingleton().slotNameHash.GetID( slot );
+                INVENTORY_SLOT_NUMBER slotID = (INVENTORY_SLOT_NUMBER)cacheManager->slotNameHash.GetID( slot );
                 if (slotID == PSCHARACTER_SLOT_NONE)
                 {
                     Debug2(LOG_SUPERCLIENT, entity_id.Unbox(), "Couldn't find slot %s.\n", slot.GetData());
@@ -1038,7 +1045,7 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                     break;
                 }
 
-                gemNPC *gEntity = dynamic_cast<gemNPC *> (GEMSupervisor::GetSingleton().FindObject(entity_id));
+                gemNPC *gEntity = dynamic_cast<gemNPC *> (gemSupervisor->FindObject(entity_id));
                 psCharacter* chardata = NULL;
                 if (gEntity) chardata = gEntity->GetCharacterData();
                 if (!chardata)
@@ -1065,7 +1072,7 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                     break;
                 }
 
-                gemNPC *gEntity = dynamic_cast<gemNPC *> (GEMSupervisor::GetSingleton().FindObject(entity_id));
+                gemNPC *gEntity = dynamic_cast<gemNPC *> (gemSupervisor->FindObject(entity_id));
                 psCharacter* chardata = NULL;
                 if (gEntity) chardata = gEntity->GetCharacterData();
                 if (!chardata)
@@ -1074,7 +1081,7 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                     break;
                 }
 
-                INVENTORY_SLOT_NUMBER slotID = (INVENTORY_SLOT_NUMBER)CacheManager::GetSingleton().slotNameHash.GetID( slot );
+                INVENTORY_SLOT_NUMBER slotID = (INVENTORY_SLOT_NUMBER)cacheManager->slotNameHash.GetID( slot );
                 if (slotID == PSCHARACTER_SLOT_NONE)
                 {
                     Debug2(LOG_SUPERCLIENT, entity_id.Unbox(), "Couldn't find slot %s.\n", slot.GetData());
@@ -1108,7 +1115,7 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                     break;
                 }
 
-                gemNPC *gEntity = dynamic_cast<gemNPC *> (GEMSupervisor::GetSingleton().FindObject(entity_id));
+                gemNPC *gEntity = dynamic_cast<gemNPC *> (gemSupervisor->FindObject(entity_id));
                 psCharacter* chardata = NULL;
                 if (gEntity) chardata = gEntity->GetCharacterData();
                 if (!chardata)
@@ -1117,7 +1124,7 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                     break;
                 }
 
-                psItemStats* itemstats = CacheManager::GetSingleton().GetBasicItemStatsByName(item);
+                psItemStats* itemstats = cacheManager->GetBasicItemStatsByName(item);
                 if (!itemstats)
                 {
                     Debug1(LOG_SUPERCLIENT, entity_id.Unbox(),  "Invalid item name\n");
@@ -1189,7 +1196,7 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                 EID entity_id = EID(list.msg->GetUInt32());
                 int impervious = list.msg->GetBool();
 
-                gemNPC *entity = dynamic_cast<gemNPC *> (GEMSupervisor::GetSingleton().FindObject(entity_id));
+                gemNPC *entity = dynamic_cast<gemNPC *> (gemSupervisor->FindObject(entity_id));
 
                 psCharacter* chardata = NULL;
                 if (entity) chardata = entity->GetCharacterData();
@@ -1252,10 +1259,10 @@ void NPCManager::UpdateWorldPositions()
 {
     if (superclients.GetSize())
     {
-        GEMSupervisor::GetSingleton().UpdateAllDR();
+        gemSupervisor->UpdateAllDR();
 
         csArray<psAllEntityPosMessage> msgs;
-        GEMSupervisor::GetSingleton().GetAllEntityPos(msgs);
+        gemSupervisor->GetAllEntityPos(msgs);
 
         for(size_t i = 0; i < msgs.GetSize(); i++)
             msgs.Get(i).Multicast(superclients,-1,PROX_LIST_ANY_RANGE);
@@ -1438,7 +1445,7 @@ void NPCManager::HandlePetCommand(MsgEntry * me,Client *client)
 
             CPrintf(CON_NOTIFY, "NPCManager Removing familiar %s from owner %s.\n", pet->GetName(), owner->GetName() );
             owner->SetFamiliar( NULL );
-            EntityManager::GetSingleton().RemoveActor( pet );
+            entityManager->RemoveActor( pet );
         }
         else
         {
@@ -1508,11 +1515,11 @@ void NPCManager::HandlePetCommand(MsgEntry * me,Client *client)
                 InstanceID instance;
                 owner->GetActor()->GetPosition(targetPoint,yRot,targetSector);
                 instance = owner->GetActor()->GetInstance();
-                psSectorInfo* sectorInfo = CacheManager::GetSingleton().GetSectorInfoByName(targetSector->QueryObject()->GetName());
+                psSectorInfo* sectorInfo = cacheManager->GetSectorInfoByName(targetSector->QueryObject()->GetName());
                 petdata->SetLocationInWorld(instance,sectorInfo,targetPoint.x,targetPoint.y,targetPoint.z,yRot);
 
-                EntityManager::GetSingleton().CreateNPC( petdata );
-                pet = GEMSupervisor::GetSingleton().FindNPCEntity( familiarID );
+                entityManager->CreateNPC( petdata );
+                pet = gemSupervisor->FindNPCEntity( familiarID );
                 if (pet == NULL)
                 {
                     Error2("Error while creating Familiar NPC for Character '%s'\n", owner->GetCharacterData()->GetCharName());
@@ -1580,7 +1587,7 @@ void NPCManager::HandlePetCommand(MsgEntry * me,Client *client)
                     }
                     else
                     {
-                        Stance stance = CombatManager::GetStance("Aggressive");
+                        Stance stance = CombatManager::GetStance(cacheManager, "Aggressive");
                         if ( words.GetCount() != 0 )
                         {
                             stance.stance_id = words.GetInt( 0 );
@@ -1737,7 +1744,7 @@ void NPCManager::HandlePetCommand(MsgEntry * me,Client *client)
             }
             else
             {
-                EntityManager::GetSingleton().RemoveActor( pet );
+                entityManager->RemoveActor( pet );
             }
 
             psserver->SendSystemInfo( me->clientnum,
@@ -2204,7 +2211,7 @@ void NPCManager::HandlePetSkill(MsgEntry * me,Client *client)
 
             csString skillName = topNode->GetAttributeValue( "NAME" );
 
-            psSkillInfo *info = CacheManager::GetSingleton().GetSkillByName( skillName );
+            psSkillInfo *info = cacheManager->GetSkillByName( skillName );
 
             csString buff;
             if (info)
@@ -2274,9 +2281,9 @@ void NPCManager::SendPetSkillList(Client * client, bool forceOpen, PSSKILL focus
     int realID = -1;
     bool found = false;
 
-    for (int skillID = 0; skillID < CacheManager::GetSingleton().GetSkillAmount(); skillID++)
+    for (int skillID = 0; skillID < cacheManager->GetSkillAmount(); skillID++)
     {
-        psSkillInfo * info = CacheManager::GetSingleton().GetSkillByID(skillID);
+        psSkillInfo * info = cacheManager->GetSkillByID(skillID);
         if (!info)
         {
             Error2("Can't find skill %d",skillID);
