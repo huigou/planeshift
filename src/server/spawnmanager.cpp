@@ -99,7 +99,7 @@ public:
                        question,
                        psQuestionMessage::generalConfirm)
     {
-    	cacheManager = cachemanager;
+        cacheManager = cachemanager;
     	gemSupervisor = gemsupervisor;
 
 
