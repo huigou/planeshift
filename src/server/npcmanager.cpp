@@ -317,7 +317,7 @@ public:
         {
             MathEnvironment env;
             env.Define("Actor", owner->GetCharacterData());
-            env.Define("Skill", owner->GetCharacterData()->Skills().GetSkillRank(PSSKILL_EMPATHY).Current());
+            env.Define("Skill", owner->GetCharacterData()->Skills().GetSkillRank(petSkill).Current());
             maxPetTime->Evaluate(&env);
             MathVar *timeValue = env.Lookup("MaxTime");
             maxTime = timeValue->GetValue();
@@ -358,6 +358,8 @@ NPCManager::NPCManager(ClientConnectionSet *pCCS,
 
     petRangeScript = psserver->GetMathScriptEngine()->FindScript("CalculateMaxPetRange");
     petReactScript = psserver->GetMathScriptEngine()->FindScript("CalculatePetReact");;
+    
+    petSkill = PSSKILL_EMPATHY;
 }
 
 bool NPCManager::Initialize()
@@ -1274,7 +1276,7 @@ bool NPCManager::CanPetHearYou(int clientnum, Client *owner, gemNPC *pet, const 
     //TODO: Add a range check
 
     MathEnvironment env;
-    env.Define("Skill", owner->GetCharacterData()->GetSkillRank(PSSKILL_EMPATHY).Current());
+    env.Define("Skill", owner->GetCharacterData()->GetSkillRank(petSkill).Current());
     petRangeScript->Evaluate(&env);
     MathVar *varMaxRange = env.Lookup("MaxRange");
     float max_range = varMaxRange->GetValue();
@@ -1298,7 +1300,7 @@ bool NPCManager::CanPetHearYou(int clientnum, Client *owner, gemNPC *pet, const 
 bool NPCManager::WillPetReact(int clientnum, Client * owner, gemNPC * pet, const char * type, int level)
 {
     MathEnvironment env;
-    env.Define("Skill", owner->GetCharacterData()->GetSkillRank(PSSKILL_EMPATHY).Current());
+    env.Define("Skill", owner->GetCharacterData()->GetSkillRank(petSkill).Current());
     env.Define("Level", level);
     petReactScript->Evaluate(&env);
     MathVar *varReact = env.Lookup("React");
@@ -1400,7 +1402,7 @@ void NPCManager::HandlePetCommand(MsgEntry * me,Client *client)
                     pet->SetTarget( owner->GetActor() );
                 }
                 QueueOwnerCmdPerception( owner->GetActor(), pet, psPETCommandMessage::CMD_FOLLOW );
-                owner->GetCharacterData()->Skills().AddSkillPractice(PSSKILL_EMPATHY, 1);
+                owner->GetCharacterData()->Skills().AddSkillPractice(petSkill, 1);
             }
         }
         else
@@ -1415,7 +1417,7 @@ void NPCManager::HandlePetCommand(MsgEntry * me,Client *client)
             if (CanPetHearYou(me->clientnum, owner, pet, typeStr) && WillPetReact(me->clientnum, owner, pet, typeStr, 1))
             {
                 QueueOwnerCmdPerception( owner->GetActor(), pet, psPETCommandMessage::CMD_STAY );
-                owner->GetCharacterData()->Skills().AddSkillPractice(PSSKILL_EMPATHY, 1);
+                owner->GetCharacterData()->Skills().AddSkillPractice(petSkill, 1);
             }
         }
         else
@@ -1536,7 +1538,7 @@ void NPCManager::HandlePetCommand(MsgEntry * me,Client *client)
                 owner->SetFamiliar( pet );
                 // Send OwnerActionLogon Perception
                 pet->SetOwner( owner->GetActor() );
-                owner->GetCharacterData()->Skills().AddSkillPractice(PSSKILL_EMPATHY, 1);
+                owner->GetCharacterData()->Skills().AddSkillPractice(petSkill, 1);
             }
             else
             {
@@ -1593,7 +1595,7 @@ void NPCManager::HandlePetCommand(MsgEntry * me,Client *client)
                             stance.stance_id = words.GetInt( 0 );
                         }
                         QueueOwnerCmdPerception( owner->GetActor(), pet, psPETCommandMessage::CMD_ATTACK );
-                        owner->GetCharacterData()->Skills().AddSkillPractice(PSSKILL_EMPATHY, 1);
+                        owner->GetCharacterData()->Skills().AddSkillPractice(petSkill, 1);
                     }
                 }
                 else
@@ -1614,7 +1616,7 @@ void NPCManager::HandlePetCommand(MsgEntry * me,Client *client)
             if (CanPetHearYou(me->clientnum, owner, pet, typeStr) && WillPetReact(me->clientnum, owner, pet, typeStr, 4))
             {
                 QueueOwnerCmdPerception( owner->GetActor(), pet, psPETCommandMessage::CMD_STOPATTACK );
-                owner->GetCharacterData()->Skills().AddSkillPractice(PSSKILL_EMPATHY, 1);
+                owner->GetCharacterData()->Skills().AddSkillPractice(petSkill, 1);
             }
         }
         else

@@ -2426,7 +2426,7 @@ PSSKILL CacheManager::ConvertSkillString(const char *skillstring)
 
 PSSKILL CacheManager::ConvertSkill(int skill_id)
 {
-    if (skill_id >= (int)PSSKILL_NONE && skill_id < (int)PSSKILL_COUNT)
+    if (skill_id >= (int)PSSKILL_NONE && skill_id < (int)GetSkillAmount())
     {
         return (PSSKILL)skill_id;
     }
