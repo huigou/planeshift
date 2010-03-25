@@ -186,9 +186,15 @@ void WorkManager::Initialize()
             nr->anim_duration_seconds = res[i].GetInt("anim_duration_seconds");
             nr->reward = res[i].GetInt("item_id_reward");
             nr->reward_nickname = res[i]["reward_nickname"];
-            nr->action = res[i]["action"];
+            
+            size_t actionNum = resourcesActions.FindCaseInsensitive(res[i]["action"]);
+            if(actionNum == csArrayItemNotFound)
+                actionNum = resourcesActions.Push(res[i]["action"]);
+
+            nr->action = actionNum;
 
             resources.Push(nr);
+            
         }
     }
     else
@@ -202,39 +208,30 @@ void WorkManager::HandleWorkCommand(MsgEntry* me,Client *client)
 {
     psWorkCmdMessage msg(me);
 
-    if (!msg.valid)
-    {
-        psserver->SendSystemError(me->clientnum,"Invalid work command.");
-        return;
-    }
-
-    if (msg.command == "/use" )
+    if (msg.command == "use" )
     {
         HandleUse(client);
     }
-    else if (msg.command == "/combine")
+    else if (msg.command == "combine")
     {
         HandleCombine(client);
     }
-    else if (msg.command == "/dig")
+
+    else if (msg.command == "repair")
     {
-        HandleProduction(client,"dig",msg.filter);
+        HandleRepair(client, msg.repairSlotName);
     }
-    else if (msg.command == "/fish")
-    {
-        HandleProduction(client, "fish", msg.filter);
-    }
-    else if (msg.command == "/harvest")
-    {
-        HandleProduction(client, "harvest", msg.filter);
-    }
-    else if (msg.command == "/repair")
-    {
-        HandleRepair(client, msg);
-    }
-    else if (msg.command == "/construct")
+    else if (msg.command == "construct")
     {
         HandleConstruct(client);
+    }    
+    else
+    {
+        size_t result = resourcesActions.FindCaseInsensitive(msg.command);
+        if(result != csArrayItemNotFound)
+            HandleProduction(client,result,msg.filter);
+        else
+            psserver->SendSystemError(me->clientnum,"Invalid work command.");
     }
 }
 
@@ -274,7 +271,7 @@ void WorkManager::HandleLockPick(MsgEntry* me,Client *client)
 // Repair
 //-----------------------------------------------------------------------------
 
-void WorkManager::HandleRepair(Client *client, psWorkCmdMessage &msg)
+void WorkManager::HandleRepair(Client *client, const csString &repairSlotName)
 {
     // Make sure client isn't already busy digging, etc.
     if ( client->GetActor()->GetMode() != PSCHARACTER_MODE_PEACE )
@@ -287,25 +284,25 @@ void WorkManager::HandleRepair(Client *client, psWorkCmdMessage &msg)
 
     // Check for repairable item in precised or default(right hand) slot
     int slotTarget;
-    if ( msg.repairSlotName.IsEmpty() )
+    if ( repairSlotName.IsEmpty() )
         slotTarget = PSCHARACTER_SLOT_RIGHTHAND;
     else
-        slotTarget = cacheManager->slotNameHash.GetID(msg.repairSlotName);
+        slotTarget = cacheManager->slotNameHash.GetID(repairSlotName);
 
     psItem *repairTarget = client->GetCharacterData()->Inventory().GetInventoryItem((INVENTORY_SLOT_NUMBER)slotTarget);
     if (repairTarget==NULL)
     {
         if(slotTarget == -1)
         {
-            psserver->SendSystemError(client->GetClientNum(),"The Slot %s doesn't exists.", msg.repairSlotName.GetData() );
+            psserver->SendSystemError(client->GetClientNum(),"The Slot %s doesn't exists.", repairSlotName.GetData() );
         }
-        else if(msg.repairSlotName.IsEmpty())
+        else if(repairSlotName.IsEmpty())
         {
-            psserver->SendSystemError(client->GetClientNum(),"The Default Slot (Right Hand) is empty.", msg.repairSlotName.GetData() );
+            psserver->SendSystemError(client->GetClientNum(),"The Default Slot (Right Hand) is empty.", repairSlotName.GetData() );
         }
         else
         {
-            psserver->SendSystemError(client->GetClientNum(),"The Slot %s is empty.", msg.repairSlotName.GetData() );
+            psserver->SendSystemError(client->GetClientNum(),"The Slot %s is empty.", repairSlotName.GetData() );
         }
         return;
     }
@@ -490,7 +487,7 @@ void WorkManager::HandleRepairEvent(psWorkGameEvent* workEvent)
 // Production
 //-----------------------------------------------------------------------------
 
-void WorkManager::HandleProduction(Client *client,const char *type,const char *reward)
+void WorkManager::HandleProduction(Client *client, size_t type,const char *reward)
 {
     if ( !LoadLocalVars(client) )
     {
@@ -502,21 +499,21 @@ void WorkManager::HandleProduction(Client *client,const char *type,const char *r
     // Make sure client isn't already busy digging, etc.
     if ( mode != PSCHARACTER_MODE_PEACE )
     {
-        psserver->SendSystemError(client->GetClientNum(),"You cannot %s because you are already busy.",type);
+        psserver->SendSystemError(client->GetClientNum(),"You cannot %s because you are already busy.",resourcesActions.Get(type));
         return;
     }
 
     // check stamina
     if ( !CheckStamina( client->GetCharacterData() ) )
     {
-        psserver->SendSystemError(client->GetClientNum(),"You cannot %s because you are too tired.",type);
+        psserver->SendSystemError(client->GetClientNum(),"You cannot %s because you are too tired.",resourcesActions.Get(type));
         return;
     }
 
     // Make sure they specified a resource type
     if (reward == NULL || !strcmp(reward,""))
     {
-        psserver->SendSystemError(client->GetClientNum(),"Please specify which resource you want to %s for. (/%s <some resource>)",type,type);
+        psserver->SendSystemError(client->GetClientNum(),"Please specify which resource you want to %s for. (/%s <some resource>)",resourcesActions.Get(type),resourcesActions.Get(type));
         return;
     }
 
@@ -528,7 +525,7 @@ void WorkManager::HandleProduction(Client *client,const char *type,const char *r
     {
         psserver->SendSystemError(client->GetClientNum(),
                                   "You cannot %s in the same place twice in a"
-                                  " row.", type);
+                                  " row.", resourcesActions.Get(type));
         return;
     }
 
@@ -539,7 +536,7 @@ void WorkManager::HandleProduction(Client *client,const char *type,const char *r
     NaturalResource *nr = FindNearestResource(reward,sector,pos,type);
     if (!nr)
     {
-        psserver->SendSystemInfo(client->GetClientNum(),"You don't see a good place to %s.",type);
+        psserver->SendSystemInfo(client->GetClientNum(),"You don't see a good place to %s.",resourcesActions.Get(type));
         return;
     }
 
@@ -548,7 +545,7 @@ void WorkManager::HandleProduction(Client *client,const char *type,const char *r
     if (client->GetCharacterData()->Skills().GetSkillRank((PSSKILL)nr->skill->id).Current() == 0 &&
         client->GetCharacterData()->Skills().Get((PSSKILL)nr->skill->id).CanTrain())
     {
-        psserver->SendSystemInfo(client->GetClientNum(),"You don't have the skill to %s for %s.",type,reward);
+        psserver->SendSystemInfo(client->GetClientNum(),"You don't have the skill to %s for %s.",resourcesActions.Get(type),reward);
         return;
     }
 
@@ -560,7 +557,7 @@ void WorkManager::HandleProduction(Client *client,const char *type,const char *r
         item = owner->GetCharacterData()->Inventory().GetInventoryItem(PSCHARACTER_SLOT_LEFTHAND);
         if (!item || nr->item_cat_id != item->GetCategory()->id)
         {
-            psserver->SendSystemError(client->GetClientNum(),"You don't have a good tool to %s with, equipped in your hands.",type);
+            psserver->SendSystemError(client->GetClientNum(),"You don't have a good tool to %s with, equipped in your hands.",resourcesActions.Get(type));
             return;
         }
     }
@@ -582,19 +579,20 @@ void WorkManager::HandleProduction(Client *client,const char *type,const char *r
 
     client->GetActor()->SetTradeWork(ev);
 
-    psserver->SendSystemInfo(client->GetClientNum(),"You start to %s.",type);
+    psserver->SendSystemInfo(client->GetClientNum(),"You start to %s.",resourcesActions.Get(type));
 }
 
 // Function used by super client
-void WorkManager::HandleProduction(gemActor *actor,const char *type,const char *reward)
+// TODO generalize the npcclient for now it has no way to specify a specific type it can only dig
+void WorkManager::HandleProduction(gemActor *actor,const char *restype,const char *reward)
 {
     int mode = actor->GetMode();
-
+    size_t type = resourcesActions.FindCaseInsensitive(restype);
     // Make sure client isn't already busy digging, etc.
     if ( mode != PSCHARACTER_MODE_PEACE )
     {
         // psserver->SendSystemError(client->GetClientNum(),"You cannot %s because you are already busy.",type);
-        Warning3(LOG_SUPERCLIENT,"%s cannot %s because you are already busy.",actor->GetName(),type);
+        Warning3(LOG_SUPERCLIENT,"%s cannot %s because you are already busy.",actor->GetName(),resourcesActions.Get(type));
         return;
     }
 
@@ -602,7 +600,7 @@ void WorkManager::HandleProduction(gemActor *actor,const char *type,const char *
     if ( !CheckStamina( actor->GetCharacterData() ) )
     {
         // psserver->SendSystemError(client->GetClientNum(),"You cannot %s because you are too tired.",type);
-        Warning3(LOG_SUPERCLIENT,"%s cannot %s because you are too tired.",actor->GetName(),type);
+        Warning3(LOG_SUPERCLIENT,"%s cannot %s because you are too tired.",actor->GetName(),resourcesActions.Get(type));
         return;
     }
 
@@ -616,7 +614,7 @@ void WorkManager::HandleProduction(gemActor *actor,const char *type,const char *
     if (!nr)
     {
         // psserver->SendSystemInfo(client->GetClientNum(),"You don't see a good place to %s.",type);
-        Warning4(LOG_SUPERCLIENT,"%s doesn't see a good place to %s for %s.",actor->GetName(),type,reward);
+        Warning4(LOG_SUPERCLIENT,"%s doesn't see a good place to %s for %s.",actor->GetName(),resourcesActions.Get(type),reward);
         return;
     }
 
@@ -627,7 +625,7 @@ void WorkManager::HandleProduction(gemActor *actor,const char *type,const char *
     {
         //psserver->SendSystemInfo(client->GetClientNum(),"You don't have the skill to %s for %s.",type,reward);
         Warning6(LOG_SUPERCLIENT,"%s(%s) don't have the skill(%d) to %s for %s.",
-                 actor->GetName(), ShowID(actor->GetEID()), nr->skill->id, type, reward);
+                 actor->GetName(), ShowID(actor->GetEID()), nr->skill->id, resourcesActions.Get(type), reward);
         return;
     }
 
@@ -636,7 +634,7 @@ void WorkManager::HandleProduction(gemActor *actor,const char *type,const char *
     if (!item || nr->item_cat_id != item->GetCategory()->id)
     {
         // psserver->SendSystemError(client->GetClientNum(),"You don't have a good tool to %s with, equipped in your right hand.",type);
-        Warning3(LOG_SUPERCLIENT,"%s don't have a good tool to %s with, equipped in right hand.",actor->GetName(),type);
+        Warning3(LOG_SUPERCLIENT,"%s don't have a good tool to %s with, equipped in right hand.",actor->GetName(),resourcesActions.Get(type));
         return;
     }
 
@@ -659,7 +657,7 @@ void WorkManager::HandleProduction(gemActor *actor,const char *type,const char *
     actor->SetTradeWork(ev);
 
     //psserver->SendSystemInfo(client->GetClientNum(),"You start to %s.",type);
-    Debug4(LOG_SUPERCLIENT,0,"%s start to %s for %s",actor->GetName(),type,reward);
+    Debug4(LOG_SUPERCLIENT,0,"%s start to %s for %s",actor->GetName(),resourcesActions.Get(type),reward);
 }
 
 
@@ -674,7 +672,7 @@ bool WorkManager::SameProductionPosition(gemActor *actor,
     return ((startPos - pos).SquaredNorm() < 1);
 }
 
-NaturalResource *WorkManager::FindNearestResource(const char *reward,iSector *sector, csVector3& pos, const char *action)
+NaturalResource *WorkManager::FindNearestResource(const char *reward,iSector *sector, csVector3& pos, const size_t action)
 {
     NaturalResource *nr=NULL;
 
@@ -689,8 +687,7 @@ NaturalResource *WorkManager::FindNearestResource(const char *reward,iSector *se
         NaturalResource *curr=resources[i];
         if (curr->sector==sectorid)
         {
-            if (reward && curr->reward_nickname.CompareNoCase( reward ) &&
-                curr->action.CompareNoCase(action))
+            if (reward && curr->action == action && curr->reward_nickname.CompareNoCase( reward ))
             {
                 csVector3 diff = curr->loc - pos;
                 float dist = diff.Norm();
