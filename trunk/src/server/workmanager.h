@@ -474,6 +474,8 @@ protected:
       * -# Calculate time required for repair based on item and skill level
       * -# Calculate result after repair
       * -# Queue time event to trigger when repair is complete, if not canceled.
+      * @param client The client that issues the command
+      * @param repairSlotName the slot name which should be repaired.
       */
     void HandleRepair(Client *client, const csString &repairSlotName);
 
@@ -488,10 +490,20 @@ protected:
       * -# Calculate time required
       * -# Send anim and confirmation message to client
       * -# Queue up game event for success
+      * @param client The client that issues the command
+      * @param type The position in the resourcesActions array of the requested production type.
+      * @param reward The name of the natural resource we are looking for.
       */
     void HandleProduction(Client *client,size_t type,const char *reward);
 
     bool SameProductionPosition(gemActor *actor, const csVector3& startPos);
+
+    /** Find the nearest resource to the player of the requested type.
+      * @param reward The name of the natural resource we are looking for.
+      * @param sector A pointer to the iSector the player is currently in.
+      * @param pos A csVector3 with the position of the player in the current sector.
+      * @param action The position in the resourcesActions array of the requested production type.
+      */
     NaturalResource *FindNearestResource(const char *reward,iSector *sector, csVector3& pos, const size_t action);
 
 private:
