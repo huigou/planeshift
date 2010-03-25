@@ -317,7 +317,7 @@ public:
         {
             MathEnvironment env;
             env.Define("Actor", owner->GetCharacterData());
-            env.Define("Skill", owner->GetCharacterData()->Skills().GetSkillRank(petSkill).Current());
+            env.Define("Skill", owner->GetCharacterData()->Skills().GetSkillRank(psserver->GetNPCManager()->GetPetSkill()).Current());
             maxPetTime->Evaluate(&env);
             MathVar *timeValue = env.Lookup("MaxTime");
             maxTime = timeValue->GetValue();

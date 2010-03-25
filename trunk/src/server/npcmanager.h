@@ -140,6 +140,11 @@ public:
 
     /// Updates time in game for a pet
     void UpdatePetTime();
+    
+    /** Returns the skill used to handle pet operations.
+     *  @return A PSSKILL which is the skill choosen to handle pet operations.
+     */
+    PSSKILL GetPetSkill() { return petSkill; }
 
 protected:
 
