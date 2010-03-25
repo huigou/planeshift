@@ -89,7 +89,7 @@ bool psCharacterLoader::AccountOwner(const char* characterName, AccountID accoun
 psCharacterList *psCharacterLoader::LoadCharacterList(AccountID accountid)
 {
     // Check the generic cache first
-    iCachedObject *obj = psserver->cachemanager->RemoveFromCache(psserver->cachemanager->MakeCacheName("list",accountid.Unbox()));
+    iCachedObject *obj = psserver->GetCacheManager()->RemoveFromCache(psserver->GetCacheManager()->MakeCacheName("list",accountid.Unbox()));
     if (obj)
     {
         Notify2(LOG_CACHE,"Returning char object %p from cache.",obj->RecoverObject());
@@ -168,7 +168,7 @@ psCharacter *psCharacterLoader::LoadCharacterData(PID pid, bool forceReload)
     //if (!forceReload)
     //{
         // Check the generic cache first
-        iCachedObject *obj = psserver->cachemanager->RemoveFromCache(psserver->cachemanager->MakeCacheName("char", pid.Unbox()));
+        iCachedObject *obj = psserver->GetCacheManager()->RemoveFromCache(psserver->GetCacheManager()->MakeCacheName("char", pid.Unbox()));
         if (obj)
         {
             if (!forceReload)
@@ -422,7 +422,7 @@ bool psCharacterLoader::NewCharacterData(AccountID accountid, psCharacter *chard
                ShowID(chardata->GetPID()), db->GetLastError());
     }
 
-    for (i=0;i<psserver->cachemanager->GetSkillAmount();i++)
+    for (i=0;i<psserver->GetCacheManager()->GetSkillAmount();i++)
     {
         unsigned int skillRank = chardata->Skills().GetSkillRank((PSSKILL) i).Base();
         unsigned int skillY = chardata->Skills().GetSkillKnowledge((PSSKILL) i);
@@ -566,7 +566,7 @@ bool psCharacterLoader::DeleteCharacterData(PID pid, csString& error )
         psserver->RemovePlayer(zombieClient->GetClientNum(),"This character is being deleted");
 
     // Remove the character from guild if he has joined any
-    psGuildInfo* guildinfo = psserver->cachemanager->FindGuild( guild );
+    psGuildInfo* guildinfo = psserver->GetCacheManager()->FindGuild( guild );
     if ( guildinfo )
         guildinfo->RemoveMember(guildinfo->FindMember(pid));
 
@@ -692,7 +692,7 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
         actor->GetLastLocation(pos, yrot, sec, instance);
         sector = sec->QueryObject()->GetName();
 
-        sectorinfo = psserver->cachemanager->GetSectorInfoByName(sector);
+        sectorinfo = psserver->GetCacheManager()->GetSectorInfoByName(sector);
 
         if(!sectorinfo)
         {
@@ -778,7 +778,7 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
 
     // For all the skills we have update them. If the update fails it will automatically save a new
     // one to the database.
-    for (i=0;i<psserver->cachemanager->GetSkillAmount();i++)
+    for (i=0;i<psserver->GetCacheManager()->GetSkillAmount();i++)
     {
         if (chardata->Skills().Get((PSSKILL) i).dirtyFlag)
         {

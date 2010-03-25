@@ -557,7 +557,7 @@ int com_spawn(char* sector = 0)
     static bool already_spawned = false;
     psSectorInfo *sectorinfo = NULL;
     if ( sector )
-        sectorinfo = psserver->cachemanager->GetSectorInfoByName(sector);
+        sectorinfo = psserver->GetCacheManager()->GetSectorInfoByName(sector);
 
     if (!already_spawned)
     {
@@ -587,7 +587,7 @@ int com_rain(char* arg)
     int drops = atoi(words[1]);
     int fade = atoi(words[2]);
     int length = atoi(words[3]);
-    psSectorInfo *sectorinfo = psserver->cachemanager->GetSectorInfoByName(sector.GetData());
+    psSectorInfo *sectorinfo = psserver->GetCacheManager()->GetSectorInfoByName(sector.GetData());
     if (!sectorinfo)
     {
         CPrintf(CON_CMDOUTPUT ,"Could not find that sector.\nSyntax: %s\n",syntax);
@@ -656,12 +656,12 @@ int com_loadquest(char* stringId)
     int id = atoi(stringId);
     CPrintf(CON_CMDOUTPUT, "Reloading quest id %d\n", id);
 
-    if(!psserver->cachemanager->UnloadQuest(id))
+    if(!psserver->GetCacheManager()->UnloadQuest(id))
         CPrintf(CON_CMDOUTPUT, "Could not remove quest %d\n", id);
     else
         CPrintf(CON_CMDOUTPUT, "Existing quest removed.\n");
 
-    if(!psserver->cachemanager->LoadQuest(id))
+    if(!psserver->GetCacheManager()->LoadQuest(id))
         CPrintf(CON_CMDOUTPUT, "Could not load quest %d\n", id);
     else
         CPrintf(CON_CMDOUTPUT, "Quest %d loaded.\n", id);
@@ -972,7 +972,7 @@ int com_newacct(char *userpass)
     accountinfo.password = csMD5::Encode(password).HexString();
     accountinfo.securitylevel = level;
 
-    if (psserver->cachemanager->NewAccountInfo(&accountinfo)==0)
+    if (psserver->GetCacheManager()->NewAccountInfo(&accountinfo)==0)
     {
         CPrintf(CON_CMDOUTPUT ,"Could not create account.\n");
         return 0;
@@ -1130,7 +1130,7 @@ int com_addinv(char *line)
     }
 
     // Get the ItemStats based on the name provided.
-    psItemStats *itemstats=psserver->cachemanager->GetBasicItemStatsByID(atoi(item.GetData()) );
+    psItemStats *itemstats=psserver->GetCacheManager()->GetBasicItemStatsByID(atoi(item.GetData()) );
     if (itemstats==NULL)
     {
         CPrintf(CON_CMDOUTPUT ,"No Basic Item Template with that id was found.\n");
@@ -1168,7 +1168,7 @@ int com_addinv(char *line)
     if (!chardata->Inventory().Add(iteminstance, false, false))
     {
         CPrintf(CON_CMDOUTPUT ,"The item did not fit into the character's inventory.\n");
-        psserver->cachemanager->RemoveInstance(iteminstance);
+        psserver->GetCacheManager()->RemoveInstance(iteminstance);
         return 0;
     }
 
@@ -1528,7 +1528,7 @@ int com_showinv(char *line, bool moreiteminfo)
     for (charslot=1;charslot<chardata->Inventory().GetInventoryIndexCount(); charslot++)
     {
         currentitem=chardata->Inventory().GetInventoryIndexItem(charslot);
-        const char *name = psserver->cachemanager->slotNameHash.GetName( currentitem->GetLocInParent() );
+        const char *name = psserver->GetCacheManager()->slotNameHash.GetName( currentitem->GetLocInParent() );
         char buff[20];
         if (!name)
         {
@@ -1772,7 +1772,7 @@ int com_factions(char *)
         CPrintf(CON_CMDOUTPUT ,"\n");
     }
 
-    csHash<Faction*,int> factions_by_id = psserver->cachemanager->GetFactionHash();
+    csHash<Faction*,int> factions_by_id = psserver->GetCacheManager()->GetFactionHash();
     CPrintf(CON_CMDOUTPUT ,"                     ");
     csHash<Faction*, int>::GlobalIterator iter = factions_by_id.GetIterator();
     while (iter.HasNext())
@@ -1811,7 +1811,7 @@ int com_sectors(char *)
     for (int i = 0; i < sectorList->GetCount(); i++){
         iSector * sector = sectorList->Get(i);
         csString sectorName = sector->QueryObject()->GetName();
-        psSectorInfo * si = psserver->cachemanager->GetSectorInfoByName(sectorName);
+        psSectorInfo * si = psserver->GetCacheManager()->GetSectorInfoByName(sectorName);
 
 
         CPrintf(CON_CMDOUTPUT ,"%4i %4u %s",i,si?si->uid:0,sectorName.GetDataSafe());
@@ -2075,9 +2075,9 @@ int com_liststats(char *line)
     CPrintf(CON_CMDOUTPUT ,"Experience points(W)  %7u\n",charData->GetExperiencePoints());
     CPrintf(CON_CMDOUTPUT ,"Progression points(X) %7u\n",charData->GetProgressionPoints());
     CPrintf(CON_CMDOUTPUT ,"%-20s %12s %12s %12s\n","Skill","Practice(Z)","Knowledge(Y)","Rank(R)");
-    for (int skillID = 0; skillID < psserver->cachemanager->GetSkillAmount(); skillID++)
+    for (int skillID = 0; skillID < psserver->GetCacheManager()->GetSkillAmount(); skillID++)
     {
-        psSkillInfo * info = psserver->cachemanager->GetSkillByID(skillID);
+        psSkillInfo * info = psserver->GetCacheManager()->GetSkillByID(skillID);
         if (!info)
         {
             Error2("Can't find skill %d",skillID);
@@ -2257,7 +2257,7 @@ int com_questreward( char* str )
     }
 
     // Get the ItemStats based on the name provided.
-    psItemStats *itemstats=psserver->cachemanager->GetBasicItemStatsByID(atoi(item.GetData()) );
+    psItemStats *itemstats=psserver->GetCacheManager()->GetBasicItemStatsByID(atoi(item.GetData()) );
     if (itemstats==NULL)
     {
         CPrintf(CON_CMDOUTPUT ,"No Basic Item Template with that id was found.\n");
@@ -2379,7 +2379,7 @@ int com_randomloot( char* loot )
     if (testLootEntrySet && testEntry)
     {
         // get the base item stats
-        testEntry->item = psserver->cachemanager->GetBasicItemStatsByName(baseItemName);
+        testEntry->item = psserver->GetCacheManager()->GetBasicItemStatsByName(baseItemName);
         if (testEntry->item)
         {
             testEntry->probability = 1.0;   // want a dead cert for testing!

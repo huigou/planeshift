@@ -1536,12 +1536,12 @@ void AdminManager::HandleLoadQuest(psAdminCmdMessage& msg, AdminCmdData& data, C
         questID = result[0].GetInt("id");
     }
 
-    if(!psserver->cachemanager->UnloadQuest(questID))
+    if(!psserver->GetCacheManager()->UnloadQuest(questID))
         psserver->SendSystemError(client->GetClientNum(), "Quest <%s> Could not be unloaded", data.text.GetData());
     else
         psserver->SendSystemError(client->GetClientNum(), "Quest <%s> unloaded", data.text.GetData());
 
-    if(!psserver->cachemanager->LoadQuest(questID))
+    if(!psserver->GetCacheManager()->LoadQuest(questID))
     {
         psserver->SendSystemError(client->GetClientNum(), "Quest <%s> Could not be loaded", data.text.GetData());
         psserver->SendSystemError(client->GetClientNum(), psserver->questmanager->LastError());
@@ -2037,7 +2037,7 @@ void AdminManager::CreateHuntLocation(MsgEntry* me,psAdminCmdMessage& msg, Admin
     int interval = 1000*data.interval;
     int random   = 1000*data.random;
 
-    psItemStats* rawitem = psserver->cachemanager->GetBasicItemStatsByName(data.item);
+    psItemStats* rawitem = psserver->GetCacheManager()->GetBasicItemStatsByName(data.item);
     if (!rawitem)
     {
         psserver->SendSystemError(me->clientnum, "Invalid item to spawn");
@@ -2066,7 +2066,7 @@ void AdminManager::CreateHuntLocation(MsgEntry* me,psAdminCmdMessage& msg, Admin
         return;
     }
 
-    psSectorInfo *spawnsector = psserver->cachemanager->GetSectorInfoByName(sector->QueryObject()->GetName());
+    psSectorInfo *spawnsector = psserver->GetCacheManager()->GetSectorInfoByName(sector->QueryObject()->GetName());
     if(!spawnsector)
     {
         CPrintf(CON_ERROR,"Player is in invalid sector %s!",sector->QueryObject()->GetName());
@@ -2538,7 +2538,7 @@ void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
         psSectorInfo * mysectorinfo = NULL;
         if (mySector != NULL)
         {
-            mysectorinfo = psserver->cachemanager->GetSectorInfoByName(mySector->QueryObject()->GetName());
+            mysectorinfo = psserver->GetCacheManager()->GetSectorInfoByName(mySector->QueryObject()->GetName());
         }
         if (mysectorinfo == NULL)
         {
@@ -2655,12 +2655,12 @@ void AdminManager::HandleActionLocation(MsgEntry* me, psAdminCmdMessage& msg, Ad
     {
         // Create sign
         csString doorLock = "Signpost01";
-        psItemStats *itemstats=psserver->cachemanager->GetBasicItemStatsByName(doorLock.GetData());
+        psItemStats *itemstats=psserver->GetCacheManager()->GetBasicItemStatsByName(doorLock.GetData());
         if (!itemstats)
         {
             // Try some SVN art
             doorLock = "Claymore";
-            itemstats=psserver->cachemanager->GetBasicItemStatsByName(doorLock.GetData());
+            itemstats=psserver->GetCacheManager()->GetBasicItemStatsByName(doorLock.GetData());
             if (!itemstats)
             {
                 Error2("Error: Action entrance failed to get item stats for item %s.\n",doorLock.GetData());
@@ -2691,7 +2691,7 @@ void AdminManager::HandleActionLocation(MsgEntry* me, psAdminCmdMessage& msg, Ad
         // Get client position and sector
         object->GetPosition(pos, angle, sector);
         csString sector_name = (sector) ? sector->QueryObject()->GetName() : "(null)";
-        psSectorInfo* sectorInfo = psserver->cachemanager->GetSectorInfoByName( sector_name.GetData() );
+        psSectorInfo* sectorInfo = psserver->GetCacheManager()->GetSectorInfoByName( sector_name.GetData() );
         if (!sectorInfo)
         {
             Error2("Error: Action entrance failed to get sector using name %s.\n",sector_name.GetData());
@@ -2724,7 +2724,7 @@ void AdminManager::HandleActionLocation(MsgEntry* me, psAdminCmdMessage& msg, Ad
 
         // Create new lock for entrance
         doorLock = "Simple Lock";
-        itemstats=psserver->cachemanager->GetBasicItemStatsByName(doorLock.GetData());
+        itemstats=psserver->GetCacheManager()->GetBasicItemStatsByName(doorLock.GetData());
         if (!itemstats)
         {
             Error2("Error: Action entrance failed to get item stats for item %s.\n",doorLock.GetData());
@@ -2825,7 +2825,7 @@ int AdminManager::PathPointCreate(int pathID, int prevPointId, csVector3& pos, c
             "loc_sector_id"
         };
 
-    psSectorInfo * si = psserver->cachemanager->GetSectorInfoByName(sectorName);
+    psSectorInfo * si = psserver->GetCacheManager()->GetSectorInfoByName(sectorName);
     if (!si)
     {
         Error2("No sector info for %s",sectorName.GetDataSafe());
@@ -3546,7 +3546,7 @@ int AdminManager::LocationCreate(int typeID, csVector3& pos, csString& sectorNam
 
         };
 
-    psSectorInfo * si = psserver->cachemanager->GetSectorInfoByName(sectorName);
+    psSectorInfo * si = psserver->GetCacheManager()->GetSectorInfoByName(sectorName);
 
     psStringArray values;
     values.FormatPush("%u", typeID );
@@ -3943,7 +3943,7 @@ bool AdminManager::MoveObject(Client *client, gemObject *target, csVector3& pos,
         gemItem* item = (gemItem*)target;
 
         // Check to see if this client has the admin level to move this particular item
-        bool extras = psserver->cachemanager->GetCommandManager()->Validate(client->GetSecurityLevel(), "move unpickupables/spawns", response);
+        bool extras = psserver->GetCacheManager()->GetCommandManager()->Validate(client->GetSecurityLevel(), "move unpickupables/spawns", response);
 
         if ( !item->IsPickable() && !extras )
         {
@@ -4323,7 +4323,7 @@ void AdminManager::CopyKey(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData& d
     else
     {
         psserver->SendSystemInfo(me->clientnum, "Couldn't spawn %s to your inventory, maybe it's full?", key->GetName());
-        psserver->cachemanager->RemoveInstance(newKey);
+        psserver->GetCacheManager()->RemoveInstance(newKey);
     }
     psserver->GetCharManager()->UpdateItemViews(me->clientnum);
 }
@@ -4648,7 +4648,7 @@ void AdminManager::Admin(int clientnum, Client *client, int requestedLevel)
     if(type > 0 && requestedLevel >= 0)
 		type = requestedLevel;
 
-    psserver->cachemanager->GetCommandManager()->BuildXML( type, commandList, requestedLevel == -1 );
+    psserver->GetCacheManager()->GetCommandManager()->BuildXML( type, commandList, requestedLevel == -1 );
 	//NOTE: with only a check for requestedLevel == -1 players can actually make this function add the nonsubscrition flag
 	//      but as it brings no real benefits to the player there is no need to check for it. They will just get the commands
 	//      of their level and they won't be subscripted in their client
@@ -5652,7 +5652,7 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     }
 
     // Handle guild update
-    psGuildInfo* guild = psserver->cachemanager->FindGuild(gid);
+    psGuildInfo* guild = psserver->GetCacheManager()->FindGuild(gid);
     if(guild)
     {
         psGuildMember* member = guild->FindMember(pid);
@@ -5727,7 +5727,7 @@ void AdminManager::BanName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& d
         return;
     }
 
-    psserver->cachemanager->AddBadName(data.player);
+    psserver->GetCacheManager()->AddBadName(data.player);
     psserver->SendSystemInfo(me->clientnum, "You banned the name '%s'", data.player.GetDataSafe());
 }
 
@@ -5745,7 +5745,7 @@ void AdminManager::UnBanName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
         return;
     }
 
-    psserver->cachemanager->DelBadName(data.player);
+    psserver->GetCacheManager()->DelBadName(data.player);
     psserver->SendSystemInfo(me->clientnum,"You unbanned the name '%s'",data.player.GetDataSafe());
 }
 
@@ -6059,7 +6059,7 @@ void AdminManager::SendSpawnTypes(MsgEntry* me, psAdminCmdMessage& msg, AdminCmd
 
     for(int i = 1;; i++)
     {
-        psItemCategory* cat = psserver->cachemanager->GetItemCategoryByID(i);
+        psItemCategory* cat = psserver->GetCacheManager()->GetItemCategoryByID(i);
         if(!cat)
             break;
 
@@ -6092,7 +6092,7 @@ void AdminManager::SendSpawnItems (MsgEntry* me, Client *client)
         return;
     }
 
-    psItemCategory * category = psserver->cachemanager->GetItemCategoryByName(msg.type);
+    psItemCategory * category = psserver->GetCacheManager()->GetItemCategoryByName(msg.type);
     if ( !category )
     {
         psserver->SendSystemError(me->clientnum, "Category %s is not valid.", msg.type.GetData() );
@@ -6112,7 +6112,7 @@ void AdminManager::SendSpawnItems (MsgEntry* me, Client *client)
     for ( unsigned int i=0; i < result.Count(); i++ )
     {
         unsigned id = result[i].GetUInt32(0);
-        psItemStats* item = psserver->cachemanager->GetBasicItemStatsByID(id);
+        psItemStats* item = psserver->GetCacheManager()->GetBasicItemStatsByID(id);
         if(item && !item->IsMoney())
         {
             csString name(item->GetName());
@@ -6162,7 +6162,7 @@ void AdminManager::SpawnItemInv( MsgEntry* me, psGMSpawnItem& msg, Client *clien
     }
 
     // Get the basic stats
-    psItemStats* stats = psserver->cachemanager->GetBasicItemStatsByName(msg.item);
+    psItemStats* stats = psserver->GetCacheManager()->GetBasicItemStatsByName(msg.item);
     if (!stats)
     {
         psserver->SendSystemError(me->clientnum, "Couldn't find basic stats for that item!");
@@ -6177,7 +6177,7 @@ void AdminManager::SpawnItemInv( MsgEntry* me, psGMSpawnItem& msg, Client *clien
     }
 
     // Check skill
-    PSSKILL skill = psserver->cachemanager->ConvertSkillString(msg.lskill);
+    PSSKILL skill = psserver->GetCacheManager()->ConvertSkillString(msg.lskill);
     if (skill == PSSKILL_NONE && msg.lockable)
     {
         psserver->SendSystemError(me->clientnum, "Couldn't find the lock skill!");
@@ -6214,7 +6214,7 @@ void AdminManager::SpawnItemInv( MsgEntry* me, psGMSpawnItem& msg, Client *clien
     item->SetIsTransient(msg.Transient);
     
     //These are setting only flags. When modify gets valid permission update also here accordly
-    if(psserver->cachemanager->GetCommandManager()->Validate(client->GetSecurityLevel(), "/modify"))
+    if(psserver->GetCacheManager()->GetCommandManager()->Validate(client->GetSecurityLevel(), "/modify"))
     {
         item->SetIsSettingItem(msg.SettingItem);
         item->SetIsNpcOwned(msg.NPCOwned);
@@ -6247,7 +6247,7 @@ void AdminManager::SpawnItemInv( MsgEntry* me, psGMSpawnItem& msg, Client *clien
     else
     {
         text.Format("Couldn't spawn %s to your inventory, maybe it's full?",msg.item.GetData());
-        psserver->cachemanager->RemoveInstance(item);
+        psserver->GetCacheManager()->RemoveInstance(item);
     }
 
     psserver->SendSystemInfo(me->clientnum,text);
@@ -6314,7 +6314,7 @@ void AdminManager::AwardExperienceToTarget(int gmClientnum, Client* target, csSt
 
 void AdminManager::AdjustFactionStandingOfTarget(int gmClientnum, Client* target, csString factionName, int standingDelta)
 {
-    Faction *faction = psserver->cachemanager->GetFaction(factionName.GetData());
+    Faction *faction = psserver->GetCacheManager()->GetFaction(factionName.GetData());
     if (!faction)
     {
         psserver->SendSystemInfo(gmClientnum, "\'%s\' Unrecognised faction.", factionName.GetData());
@@ -6409,7 +6409,7 @@ void AdminManager::TransferItem(MsgEntry* me, psAdminCmdMessage& msg,
     else
     {
         psItemStats* itemstats =
-                psserver->cachemanager->GetBasicItemStatsByName(data.item);
+                psserver->GetCacheManager()->GetBasicItemStatsByName(data.item);
 
         if (!itemstats)
         {
@@ -6508,7 +6508,7 @@ void AdminManager::CheckItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
         return;
     }
 
-    psItemStats* itemstats = psserver->cachemanager->GetBasicItemStatsByName(data.item);
+    psItemStats* itemstats = psserver->GetCacheManager()->GetBasicItemStatsByName(data.item);
     if (!itemstats)
     {
         psserver->SendSystemError(me->clientnum, "Invalid item name");
@@ -6693,9 +6693,9 @@ void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
             return;
         }
 
-        for (int i=0; i<psserver->cachemanager->GetSkillAmount(); i++)
+        for (int i=0; i<psserver->GetCacheManager()->GetSkillAmount(); i++)
         {
-            psSkillInfo * skill = psserver->cachemanager->GetSkillByID(i);
+            psSkillInfo * skill = psserver->GetCacheManager()->GetSkillByID(i);
             if (skill == NULL) continue;
 
             unsigned int old_value = pchar->Skills().GetSkillRank(skill->id).Current();
@@ -6739,9 +6739,9 @@ void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
     }
     else if (data.skill == "copy")
     {
-        for (int i=0; i<psserver->cachemanager->GetSkillAmount(); i++)
+        for (int i=0; i<psserver->GetCacheManager()->GetSkillAmount(); i++)
         {
-            psSkillInfo * skill = psserver->cachemanager->GetSkillByID(i);
+            psSkillInfo * skill = psserver->GetCacheManager()->GetSkillByID(i);
             if (skill == NULL) continue;
 
             unsigned int old_value = pchar->Skills().GetSkillRank(skill->id).Current();
@@ -6759,7 +6759,7 @@ void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
     }
     else
     {
-        psSkillInfo * skill = psserver->cachemanager->GetSkillByName(data.skill);
+        psSkillInfo * skill = psserver->GetCacheManager()->GetSkillByName(data.skill);
         if (skill == NULL)
         {
             psserver->SendSystemError(me->clientnum, "Skill not found");
@@ -6827,7 +6827,7 @@ void AdminManager::AwardSkillToTarget(int gmClientnum, Client* target, csSring s
     }
     else
     {
-        psSkillInfo * skill = psserver->cachemanager->GetSkillByName(skillName);
+        psSkillInfo * skill = psserver->GetCacheManager()->GetSkillByName(skillName);
         if (skill == NULL)
         {
             psserver->SendSystemError(me->clientnum, "Skill not found");
@@ -6884,7 +6884,7 @@ void AdminManager::UpdateRespawn(AdminCmdData& data, Client* client, gemActor* t
 
     csString sector = sec->QueryObject()->GetName();
 
-    psSectorInfo* sectorinfo = psserver->cachemanager->GetSectorInfoByName(sector);
+    psSectorInfo* sectorinfo = psserver->GetCacheManager()->GetSectorInfoByName(sector);
 
     target->GetCharacterData()->UpdateRespawn(pos, yrot, sectorinfo, instance);
 
@@ -6934,7 +6934,7 @@ void AdminManager::Inspect(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& d
 
             message.Append(" - ");
 
-            const char *slotname = psserver->cachemanager->slotNameHash.GetName(item->GetLocInParent());
+            const char *slotname = psserver->GetCacheManager()->slotNameHash.GetName(item->GetLocInParent());
             if (slotname)
                 message.Append(slotname);
             else
@@ -6956,7 +6956,7 @@ void AdminManager::RenameGuild(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDat
         return;
     }
 
-    psGuildInfo* guild = psserver->cachemanager->FindGuild(data.target);
+    psGuildInfo* guild = psserver->GetCacheManager()->FindGuild(data.target);
     if(!guild)
     {
         psserver->SendSystemError(me->clientnum,"No guild with that name");
@@ -7012,7 +7012,7 @@ void AdminManager::ChangeGuildLeader(MsgEntry* me, psAdminCmdMessage& msg, Admin
         return;
     }
 
-    psGuildInfo* guild = psserver->cachemanager->FindGuild(data.target);
+    psGuildInfo* guild = psserver->GetCacheManager()->FindGuild(data.target);
     if (!guild)
     {
         psserver->SendSystemError(me->clientnum, "No guild with that name.");
@@ -7065,7 +7065,7 @@ void AdminManager::Thunder(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& d
     psSectorInfo *sectorinfo = NULL;
 
     if (!data.sector.IsEmpty())
-        sectorinfo = psserver->cachemanager->GetSectorInfoByName(data.sector);
+        sectorinfo = psserver->GetCacheManager()->GetSectorInfoByName(data.sector);
     else
     {
         csVector3 pos;
@@ -7078,7 +7078,7 @@ void AdminManager::Thunder(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& d
             return;
         }
 
-        sectorinfo = psserver->cachemanager->GetSectorInfoByName(sect->QueryObject()->GetName());
+        sectorinfo = psserver->GetCacheManager()->GetSectorInfoByName(sect->QueryObject()->GetName());
     }
 
     if (!sectorinfo)
@@ -7117,7 +7117,7 @@ void AdminManager::Fog(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data,
     }
 
     // Find the sector
-    psSectorInfo *sectorinfo = psserver->cachemanager->GetSectorInfoByName(data.sector);
+    psSectorInfo *sectorinfo = psserver->GetCacheManager()->GetSectorInfoByName(data.sector);
     if(!sectorinfo)
     {
         psserver->SendSystemError(me->clientnum,"Sector not found!");
@@ -7157,7 +7157,7 @@ void AdminManager::Weather(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& d
     }
 
     // Find the sector
-    psSectorInfo *sectorinfo = psserver->cachemanager->GetSectorInfoByName(data.sector);
+    psSectorInfo *sectorinfo = psserver->GetCacheManager()->GetSectorInfoByName(data.sector);
     if(!sectorinfo)
     {
         psserver->SendSystemError(me->clientnum,"Sector not found!");
@@ -7215,7 +7215,7 @@ void AdminManager::Rain(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data
     }
 
     // Find the sector
-    psSectorInfo *sectorinfo = psserver->cachemanager->GetSectorInfoByName(data.sector);
+    psSectorInfo *sectorinfo = psserver->GetCacheManager()->GetSectorInfoByName(data.sector);
     if(!sectorinfo)
     {
         psserver->SendSystemError(me->clientnum,"Sector not found!");
@@ -7265,7 +7265,7 @@ void AdminManager::Snow(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data
     }
 
     // Find the sector
-    psSectorInfo *sectorinfo = psserver->cachemanager->GetSectorInfoByName(data.sector);
+    psSectorInfo *sectorinfo = psserver->GetCacheManager()->GetSectorInfoByName(data.sector);
     if(!sectorinfo)
     {
         psserver->SendSystemError(me->clientnum,"Sector not found!");
@@ -7397,7 +7397,7 @@ void AdminManager::ModifyItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     {
         if(data.name != "none") //if the skill name isn't none...
         {
-            psSkillInfo * skill = psserver->cachemanager->GetSkillByName(data.name); //try searching for the skill
+            psSkillInfo * skill = psserver->GetCacheManager()->GetSkillByName(data.name); //try searching for the skill
             if(skill) //if found...
             {
                 item->SetLockpickSkill(skill->id); //set the selected skill for picking the lock to the item
@@ -7522,8 +7522,8 @@ void AdminManager::Morph(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& dat
             //from races with same mesh name but different texture for now
             //but till we have an idea on how to allow the user to select them let's leave like this to
             //have at least a basic listing
-            for(size_t i = 0; i < psserver->cachemanager->GetRaceInfoCount(); i++)
-                dirNames.PushSmart(psserver->cachemanager->GetRaceInfoByIndex(i)->GetMeshName());
+            for(size_t i = 0; i < psserver->GetCacheManager()->GetRaceInfoCount(); i++)
+                dirNames.PushSmart(psserver->GetCacheManager()->GetRaceInfoByIndex(i)->GetMeshName());
 
             // Make alphabetized list
             dirNames.Sort();
@@ -7561,7 +7561,7 @@ void AdminManager::Morph(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& dat
     }
     else
     {
-        if(!psserver->cachemanager->GetRaceInfoByMeshName(data.mesh.GetData()))
+        if(!psserver->GetCacheManager()->GetRaceInfoByMeshName(data.mesh.GetData()))
         {
             psserver->SendSystemError(me->clientnum, "Unable to override mesh for %s to %s. Race not found.", targetclient->GetName(), data.mesh.GetData());
             return;
@@ -7625,7 +7625,7 @@ void AdminManager::TempSecurityLevel(MsgEntry* me, psAdminCmdMessage& msg, Admin
         return;
     }
 
-    if (!psserver->cachemanager->GetCommandManager()->GroupExists(value) )
+    if (!psserver->GetCacheManager()->GetCommandManager()->GroupExists(value) )
     {
         psserver->SendSystemError(me->clientnum,"Specified access level does not exist!");
         return;
@@ -7657,7 +7657,7 @@ void AdminManager::TempSecurityLevel(MsgEntry* me, psAdminCmdMessage& msg, Admin
         psserver->SendSystemInfo(target->GetClientNum(),"Your access level has been changed for this session.");
     }
 
-    if (!psserver->cachemanager->GetCommandManager()->Validate(value, "/deputize")) // Cannot access this command, but may still reset
+    if (!psserver->GetCacheManager()->GetCommandManager()->Validate(value, "/deputize")) // Cannot access this command, but may still reset
     {
         psserver->SendSystemInfo(target->GetClientNum(),"You may do \"/deputize me reset\" at any time to reset yourself. "
                                  " The temporary access level will also expire on logout.");
@@ -7898,7 +7898,7 @@ void AdminManager::HandleCompleteQuest(MsgEntry* me,psAdminCmdMessage& msg, Admi
             return;
         }
 
-        psQuest *quest = psserver->cachemanager->GetQuestByName(data.text);
+        psQuest *quest = psserver->GetCacheManager()->GetQuestByName(data.text);
         if (!quest)
         {
             psserver->SendSystemError(me->clientnum, "Quest not found for %s", name.GetData());
@@ -7949,7 +7949,7 @@ void AdminManager::HandleCompleteQuest(MsgEntry* me,psAdminCmdMessage& msg, Admi
             return;
         }
 
-        psQuest *quest = psserver->cachemanager->GetQuestByName(data.text);
+        psQuest *quest = psserver->GetCacheManager()->GetQuestByName(data.text);
         if (!quest)
         {
                 psserver->SendSystemError(me->clientnum, "Quest not found for %s!", name.GetData());
@@ -7983,7 +7983,7 @@ void AdminManager::HandleCompleteQuest(MsgEntry* me,psAdminCmdMessage& msg, Admi
     }
     else if(data.subCmd == "assign") //this command will assign the quest to the player
     {
-        psQuest *quest = psserver->cachemanager->GetQuestByName(data.text); //searches for the required quest
+        psQuest *quest = psserver->GetCacheManager()->GetQuestByName(data.text); //searches for the required quest
         if (!quest) //if not found send an error
         {
             psserver->SendSystemError(me->clientnum, "Quest not found for %s", name.GetData());
@@ -8034,7 +8034,7 @@ void AdminManager::HandleCompleteQuest(MsgEntry* me,psAdminCmdMessage& msg, Admi
                 for(uint currResult = 0; currResult < result.Count(); currResult++) //iterate the results and output info about the quest
                 {
                     //get the quest data from the cache so we can print it's name without accessing the db again
-                    psQuest* currQuest = psserver->cachemanager->GetQuestByID(result[currResult].GetUInt32("quest_id"));
+                    psQuest* currQuest = psserver->GetCacheManager()->GetQuestByID(result[currResult].GetUInt32("quest_id"));
                     csString QuestName = currQuest->GetName();
                     if(!data.text.Length() || QuestName.StartsWith(data.text,true)) //check if we are searching a particular quest
                         psserver->SendSystemInfo(me->clientnum, "Quest name: %s. Status: %s", QuestName.GetData(), result[currResult]["status"]);
@@ -8148,7 +8148,7 @@ void AdminManager::HandleSetTrait(psAdminCmdMessage& msg, AdminCmdData& data, Cl
         }
 
         // check if given race is valid
-        psRaceInfo * raceInfo = psserver->cachemanager->GetRaceInfoByNameGender(data.attribute.GetData(), gender);
+        psRaceInfo * raceInfo = psserver->GetCacheManager()->GetRaceInfoByNameGender(data.attribute.GetData(), gender);
         if(!raceInfo)
         {
             psserver->SendSystemError(client->GetClientNum(), "Invalid race!");
@@ -8156,7 +8156,7 @@ void AdminManager::HandleSetTrait(psAdminCmdMessage& msg, AdminCmdData& data, Cl
         }
 
         // collect all matching traits
-        CacheManager::TraitIterator ti = psserver->cachemanager->GetTraitIterator();
+        CacheManager::TraitIterator ti = psserver->GetCacheManager()->GetTraitIterator();
         csString message = "Available traits:\n";
         bool found = false;
         while(ti.HasNext())
@@ -8196,7 +8196,7 @@ void AdminManager::HandleSetTrait(psAdminCmdMessage& msg, AdminCmdData& data, Cl
         return;
     }
 
-    CacheManager::TraitIterator ti = psserver->cachemanager->GetTraitIterator();
+    CacheManager::TraitIterator ti = psserver->GetCacheManager()->GetTraitIterator();
     while(ti.HasNext())
     {
         psTrait* currTrait = ti.Next();
@@ -8253,7 +8253,7 @@ void AdminManager::HandleReload(psAdminCmdMessage& msg, AdminCmdData& data, Clie
     if (data.subCmd == "item")
     {
         bool bCreatingNew = false;
-        psItemStats* itemStats = psserver->cachemanager->GetBasicItemStatsByID(data.value);
+        psItemStats* itemStats = psserver->GetCacheManager()->GetBasicItemStatsByID(data.value);
         iResultSet* rs = db->Select("select * from item_stats where id = %d", data.value);
         if (!rs || rs->Count() == 0)
         {
@@ -8276,7 +8276,7 @@ void AdminManager::HandleReload(psAdminCmdMessage& msg, AdminCmdData& data, Clie
 
         if (bCreatingNew)
         {
-            psserver->cachemanager->AddItemStatsToHashTable(itemStats);
+            psserver->GetCacheManager()->AddItemStatsToHashTable(itemStats);
             psserver->SendSystemOK(client->GetClientNum(), "Successfully created new item", data.value);
         }
         else
@@ -8346,7 +8346,7 @@ void AdminManager::CheckTarget(psAdminCmdMessage& msg, AdminCmdData& data, gemOb
 
 void AdminManager::DisableQuest(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client )
 {
-    psQuest * quest = psserver->cachemanager->GetQuestByName(data.text); //get the quest associated by name
+    psQuest * quest = psserver->GetCacheManager()->GetQuestByName(data.text); //get the quest associated by name
 
     if(!quest) //the quest was not found
     {

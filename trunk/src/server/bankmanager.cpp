@@ -271,7 +271,7 @@ void BankManager::ProcessTax()
             // Check for guild or character removal to remove auto-tax.
             if(temp.guild)
             {
-                psGuildInfo* g = psserver->cachemanager->FindGuild(temp.taxid);
+                psGuildInfo* g = psserver->GetCacheManager()->FindGuild(temp.taxid);
                 if(!g)
                 {
                     monEvts.DeleteIndexFast(i);

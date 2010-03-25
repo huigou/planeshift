@@ -674,7 +674,7 @@ PID EntityManager::CopyNPCFromDatabase(PID master_id, float x, float y, float z,
         return 0;
     }
 
-    psSectorInfo* sectorInfo = psserver->cachemanager->GetSectorInfoByName( sector );
+    psSectorInfo* sectorInfo = psserver->GetCacheManager()->GetSectorInfoByName( sector );
     if (sectorInfo != NULL)
     {
         npc->SetLocationInWorld(instance,sectorInfo,x,y,z,angle);
@@ -972,8 +972,8 @@ void EntityManager::HandleActor(MsgEntry* me, Client *client)
 
 void EntityManager::CreateMovementInfoMsg()
 {
-    const csPDelArray<psCharMode>& modes = psserver->cachemanager->GetCharModes();
-    const csPDelArray<psMovement>& moves = psserver->cachemanager->GetMovements();
+    const csPDelArray<psCharMode>& modes = psserver->GetCacheManager()->GetCharModes();
+    const csPDelArray<psMovement>& moves = psserver->GetCacheManager()->GetMovements();
 
     moveinfomsg = new psMovementInfoMessage(modes.GetSize(), moves.GetSize());
 
@@ -1132,7 +1132,7 @@ bool EntityManager::AddRideRelation(gemActor *rider, gemActor *mount)
 
     psCharacter *mountChar = mount->GetCharacterData();
     RemoveActor(mount);
-    psserver->cachemanager->RemoveFromCache(psserver->cachemanager->MakeCacheName("char",mountChar->GetPID().Unbox()));
+    psserver->GetCacheManager()->RemoveFromCache(psserver->GetCacheManager()->MakeCacheName("char",mountChar->GetPID().Unbox()));
     rider->SetMount(mountChar);
 
     rider->UpdateProxList(true);

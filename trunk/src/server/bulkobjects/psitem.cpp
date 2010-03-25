@@ -373,7 +373,7 @@ bool psItem::Load(iResultRow& row)
     }
 
     unsigned int stats_id=row.GetUInt32("item_stats_id_standard");
-    psItemStats *stats=psserver->cachemanager->GetBasicItemStatsByID(stats_id);
+    psItemStats *stats=psserver->GetCacheManager()->GetBasicItemStatsByID(stats_id);
     if (!stats)
     {
         Error3("Item with id %s has unresolvable basic item stats id %u",row["id"],stats_id);
@@ -409,7 +409,7 @@ bool psItem::Load(iResultRow& row)
         instance = row.GetUInt32("loc_instance");
         //        printf("KWF: Item instance=%d\n", instance);
 
-        psSectorInfo *itemsector=psserver->cachemanager->GetSectorInfoByID(row.GetInt("loc_sector_id"));
+        psSectorInfo *itemsector=psserver->GetCacheManager()->GetSectorInfoByID(row.GetInt("loc_sector_id"));
         if (!itemsector)
         {
             Error4("Item %s(%s) Could not be loaded\nIt is in sector id %s which does not resolve\n",
@@ -1503,7 +1503,7 @@ void psItem::CombineStack(psItem *& stackme)
     int newCharges = (GetCharges()*GetStackCount() + stackme->GetCharges()*stackme->GetStackCount())/newStackCount;
     SetCharges(newCharges);
 
-    psserver->cachemanager->RemoveInstance(stackme);
+    psserver->GetCacheManager()->RemoveInstance(stackme);
 
     // Point to the final stack
     stackme = this;
@@ -1687,7 +1687,7 @@ float psItem::GetDamageProtection(PSITEMSTATS_DAMAGETYPE dmgtype)
 {
     // Add the characters natural armour bonus onto his normal armour.
     psItemStats* natArm;
-    natArm = psserver->cachemanager->GetBasicItemStatsByID(owning_character->raceinfo->natural_armor_id);
+    natArm = psserver->GetCacheManager()->GetBasicItemStatsByID(owning_character->raceinfo->natural_armor_id);
     if (!natArm || current_stats->Armor().Protection(dmgtype) > natArm->Armor().Protection(dmgtype))
     {
         useNat = false;
@@ -1884,7 +1884,7 @@ const char *psItem::GetSound()
 
 float psItem::GetArmorVSWeaponResistance(psItemStats* armor)
 {
-    return psserver->cachemanager->GetArmorVSWeaponResistance(armor, current_stats);
+    return psserver->GetCacheManager()->GetArmorVSWeaponResistance(armor, current_stats);
 }
 
 bool psItem::HasCharges() const
@@ -1934,7 +1934,7 @@ double psItem::GetProperty(const char *ptr)
     {
         // For natural armour quality
         if(useNat)
-            return psserver->cachemanager->GetBasicItemStatsByID(owning_character->raceinfo->natural_armor_id)->GetQuality();
+            return psserver->GetCacheManager()->GetBasicItemStatsByID(owning_character->raceinfo->natural_armor_id)->GetQuality();
         return GetItemQuality();
     }
     else if (!strcasecmp(ptr,"MaxQuality"))
@@ -2004,7 +2004,7 @@ double psItem::GetProperty(const char *ptr)
     else if (!strcasecmp(ptr,"MentalFactor"))
     {
         int temp = GetWeaponSkill((PSITEMSTATS_WEAPONSKILL_INDEX)0);
-        return ( (double)psserver->cachemanager->GetSkillByID((temp<0)?0:temp)->mental_factor / 100.0 );
+        return ( (double)psserver->GetCacheManager()->GetSkillByID((temp<0)?0:temp)->mental_factor / 100.0 );
     }
     else if (!strcasecmp(ptr,"RequiredRepairSkill"))
     {
@@ -2305,7 +2305,7 @@ psItem* psScheduledItem::CreateItem() // Spawns the item
 
     Notify3(LOG_SPAWN,"Spawning item (%u) in instance %u.\n",itemID,worldInstance);
 
-    psItemStats *stats = psserver->cachemanager->GetBasicItemStatsByID(itemID);
+    psItemStats *stats = psserver->GetCacheManager()->GetBasicItemStatsByID(itemID);
     if (stats==NULL)
     {
         Error2("Could not find basic stats with ID %u for item spawn.\n",itemID);
@@ -2455,7 +2455,7 @@ void psItem::UpdateView(Client *fromClient, EID eid, bool clear)
                           GetTextureName(),
                           GetStackCount(),
                           guardian ? guardian->GetEID() : 0,
-                          psserver->cachemanager->GetMsgStrings());
+                          psserver->GetCacheManager()->GetMsgStrings());
 
     mesg.Multicast(fromClient->GetActor()->GetMulticastClients(),0,5);
 }
@@ -2600,7 +2600,7 @@ bool psItem::SendItemDescription( Client *client)
         if ( GetGuildID() != 0 )
         {
             csString guildInfo;
-            psGuildInfo* guild = psserver->cachemanager->FindGuild( GetGuildID() );
+            psGuildInfo* guild = psserver->GetCacheManager()->FindGuild( GetGuildID() );
             if ( guild && !guild->IsSecret())
             {
                 guildInfo.Format( "\nGuild: %s", guild->GetName().GetData());
@@ -2733,7 +2733,7 @@ bool psItem::SendContainerContents(Client *client, int containerID)
 
     FillContainerMsg( client, outgoing);
 
-    outgoing.ConstructMsg(psserver->cachemanager->GetMsgStrings());
+    outgoing.ConstructMsg(psserver->GetCacheManager()->GetMsgStrings());
     outgoing.SendMessage();
 
     return true;
@@ -2784,7 +2784,7 @@ void psItem::SendCraftTransInfo(Client *client)
 
 void psItem::GetComboInfoString(psCharacter* character, uint32 designID, csString & comboString)
 {
-    csArray<CraftComboInfo*>* combInfoArray = psserver->cachemanager->GetTradeComboInfoByItemID(designID);
+    csArray<CraftComboInfo*>* combInfoArray = psserver->GetCacheManager()->GetTradeComboInfoByItemID(designID);
     if (!combInfoArray)
         return;
 
@@ -2819,7 +2819,7 @@ void psItem::GetComboInfoString(psCharacter* character, uint32 designID, csStrin
 
 void psItem::GetTransInfoString(psCharacter* character, uint32 designID, csString & transString)
 {
-    csArray<CraftTransInfo*>* craftArray = psserver->cachemanager->GetTradeTransInfoByItemID(designID);
+    csArray<CraftTransInfo*>* craftArray = psserver->GetCacheManager()->GetTradeTransInfoByItemID(designID);
     if (!craftArray)
         return;
 
@@ -2911,9 +2911,9 @@ void psItem::SendSketchDefinition(Client *client)
         xml.Append("<rdonly/>");
 
     size_t i=0;
-    while (psserver->cachemanager->GetLimitation(i))
+    while (psserver->GetCacheManager()->GetLimitation(i))
     {
-        const psCharacterLimitation *charlimit = psserver->cachemanager->GetLimitation(i);
+        const psCharacterLimitation *charlimit = psserver->GetCacheManager()->GetLimitation(i);
 
         // This limits which icons each player can use to only the ones below his level.
         if (playerScore > charlimit->min_score)
@@ -3010,7 +3010,7 @@ bool psItem::SendActionContents(Client *client, psActionLocation *action)
     if ( isContainer )
     {
         FillContainerMsg( client, outgoing );
-        outgoing.ConstructMsg(psserver->cachemanager->GetMsgStrings());
+        outgoing.ConstructMsg(psserver->GetCacheManager()->GetMsgStrings());
     }
 
     outgoing.SendMessage();

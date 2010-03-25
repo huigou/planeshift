@@ -3220,6 +3220,6 @@ void CacheManager::psCacheExpireEvent::Trigger()
         // Delete the underlying object
         myObject->object->DeleteSelf();
         // Now remove the record from the cache last
-        psserver->cachemanager->RemoveFromCache(myObject->name);
+        psserver->GetCacheManager()->RemoveFromCache(myObject->name);
     }
 }

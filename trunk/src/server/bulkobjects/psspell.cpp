@@ -88,10 +88,10 @@ bool psSpell::Load(iResultRow& row)
 
     name = row["name"];
 
-    way = psserver->cachemanager->GetWayByID(row.GetInt("way_id"));
+    way = psserver->GetCacheManager()->GetWayByID(row.GetInt("way_id"));
 
     image         = row["image_name"];
-    psserver->cachemanager->AddCommonStringID(image);
+    psserver->GetCacheManager()->AddCommonStringID(image);
 
     description   = row["spell_description"];
     castingEffect = row["casting_effect"];
@@ -128,7 +128,7 @@ bool psSpell::Load(iResultRow& row)
     {
         Error2("Invalid 'cstr_npc_spell_category' for spell '%s'\n", name.GetData());
     }
-    npcSpellCategoryID    = psserver->cachemanager->FindCommonStringID(npcSpellCategory);
+    npcSpellCategoryID    = psserver->GetCacheManager()->FindCommonStringID(npcSpellCategory);
     npcSpellRelativePower = row.GetFloat("npc_spell_power");
 
     // Load glyph sequence/assembler info
@@ -138,7 +138,7 @@ bool psSpell::Load(iResultRow& row)
         unsigned int i;
         for (i=0;i<glyphs.Count();i++)
         {
-            psItemStats * stats = psserver->cachemanager->GetBasicItemStatsByID(glyphs[i].GetInt("item_id"));
+            psItemStats * stats = psserver->GetCacheManager()->GetBasicItemStatsByID(glyphs[i].GetInt("item_id"));
             if (stats)
             {
                 glyphList.Push(stats);
@@ -289,7 +289,7 @@ bool psSpell::CanCast(Client *client, float kFactor, csString & reason)
     }
 
     // Skip testing some conditions for developers and game masters
-    if (!psserver->cachemanager->GetCommandManager()->Validate(client->GetSecurityLevel(), "cast all spells"))
+    if (!psserver->GetCacheManager()->GetCommandManager()->Validate(client->GetSecurityLevel(), "cast all spells"))
     {
         if (realm > casterChar->GetMaxAllowedRealm(way->skill))
         {

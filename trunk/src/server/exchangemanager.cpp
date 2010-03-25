@@ -706,7 +706,7 @@ void Exchange::SendAddItemMessage(Client* fromClient, int slot, psCharacterInven
 
     psExchangeAddItemMsg msg(fromClient->GetClientNum(), item->GetName(),
       item->GetMeshName(), item->GetTextureName(), CONTAINER_EXCHANGE_OFFERING, slot, invItem->exchangeStackCount,
-      item->GetImageName(), psserver->cachemanager->GetMsgStrings());
+      item->GetImageName(), psserver->GetCacheManager()->GetMsgStrings());
 
     psserver->GetEventManager()->SendMessage(msg.msg);
 }
@@ -901,7 +901,7 @@ void PlayerToPlayerExchange::SendAddItemMessage(Client* fromClient, int slot, ps
 
     psExchangeAddItemMsg msg(toClient->GetClientNum(), item->GetName(),
       item->GetMeshName(), item->GetTextureName(), CONTAINER_EXCHANGE_RECEIVING, slot, invItem->exchangeStackCount,
-      item->GetImageName(), psserver->cachemanager->GetMsgStrings());
+      item->GetImageName(), psserver->GetCacheManager()->GetMsgStrings());
 
     psserver->GetEventManager()->SendMessage(msg.msg);
 }
@@ -1570,7 +1570,7 @@ void ExchangeManager::HandleAutoGive(MsgEntry *me,Client *client)
         int      itemCount = node->GetAttributeValueAsInt("c");
 
         // Get the definition of the item from the name
-        psItemStats *itemstat = psserver->cachemanager->GetBasicItemStatsByName(itemName);
+        psItemStats *itemstat = psserver->GetCacheManager()->GetBasicItemStatsByName(itemName);
         if (itemstat)
         {
             // Now find that item in the player's inv from the definition

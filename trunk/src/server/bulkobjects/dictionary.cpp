@@ -1728,7 +1728,7 @@ bool NPCCmdResponseOp::Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTi
 
 bool VerifyQuestCompletedResponseOp::Load(iDocumentNode *node)
 {
-    quest = psserver->cachemanager->GetQuestByName( node->GetAttributeValue("quest") );
+    quest = psserver->GetCacheManager()->GetQuestByName( node->GetAttributeValue("quest") );
     error_msg = node->GetAttributeValue("error_msg");
     if (error_msg=="(null)") error_msg="";
 
@@ -1766,7 +1766,7 @@ bool VerifyQuestCompletedResponseOp::Run(gemNPC *who, gemActor *target,NpcRespon
 VerifyQuestAssignedResponseOp::VerifyQuestAssignedResponseOp(int quest_id)
 {
     name="verifyquestassigned";
-    quest = psserver->cachemanager->GetQuestByID(quest_id);
+    quest = psserver->GetCacheManager()->GetQuestByID(quest_id);
     if (!quest)
     {
         Error2("Quest %d was not found in VerifyQuestAssigned script op!",quest_id);
@@ -1775,7 +1775,7 @@ VerifyQuestAssignedResponseOp::VerifyQuestAssignedResponseOp(int quest_id)
 
 bool VerifyQuestAssignedResponseOp::Load(iDocumentNode *node)
 {
-    quest = psserver->cachemanager->GetQuestByName( node->GetAttributeValue("quest") );
+    quest = psserver->GetCacheManager()->GetQuestByName( node->GetAttributeValue("quest") );
     error_msg = node->GetAttributeValue("error_msg");
     if (error_msg=="(null)") error_msg="";
     if (!quest && node->GetAttributeValue("quest") )
@@ -1820,7 +1820,7 @@ bool VerifyQuestAssignedResponseOp::Run(gemNPC *who, gemActor *target,NpcRespons
 VerifyQuestNotAssignedResponseOp::VerifyQuestNotAssignedResponseOp(int quest_id)
 {
     name="verifyquestnotassigned";
-    quest = psserver->cachemanager->GetQuestByID(quest_id);
+    quest = psserver->GetCacheManager()->GetQuestByID(quest_id);
     if (!quest)
     {
         Error2("Quest %d was not found in VerifyQuestNotAssigned script op!",quest_id);
@@ -1829,7 +1829,7 @@ VerifyQuestNotAssignedResponseOp::VerifyQuestNotAssignedResponseOp(int quest_id)
 
 bool VerifyQuestNotAssignedResponseOp::Load(iDocumentNode *node)
 {
-    quest = psserver->cachemanager->GetQuestByName( node->GetAttributeValue("quest") );
+    quest = psserver->GetCacheManager()->GetQuestByName( node->GetAttributeValue("quest") );
     error_msg = node->GetAttributeValue("error_msg");
     if (error_msg=="(null)") error_msg="";
     if (!quest && node->GetAttributeValue("quest") )
@@ -1874,11 +1874,11 @@ bool VerifyQuestNotAssignedResponseOp::Run(gemNPC *who, gemActor *target,NpcResp
 
 bool AssignQuestResponseOp::Load(iDocumentNode *node)
 {
-    quest[0] = psserver->cachemanager->GetQuestByName( node->GetAttributeValue("q1") );
-    quest[1] = psserver->cachemanager->GetQuestByName( node->GetAttributeValue("q2") );
-    quest[2] = psserver->cachemanager->GetQuestByName( node->GetAttributeValue("q3") );
-    quest[3] = psserver->cachemanager->GetQuestByName( node->GetAttributeValue("q4") );
-    quest[4] = psserver->cachemanager->GetQuestByName( node->GetAttributeValue("q5") );
+    quest[0] = psserver->GetCacheManager()->GetQuestByName( node->GetAttributeValue("q1") );
+    quest[1] = psserver->GetCacheManager()->GetQuestByName( node->GetAttributeValue("q2") );
+    quest[2] = psserver->GetCacheManager()->GetQuestByName( node->GetAttributeValue("q3") );
+    quest[3] = psserver->GetCacheManager()->GetQuestByName( node->GetAttributeValue("q4") );
+    quest[4] = psserver->GetCacheManager()->GetQuestByName( node->GetAttributeValue("q5") );
 
     if (!quest[0])
     {
@@ -2019,7 +2019,7 @@ csString CheckQuestTimeoutOp::GetResponseScript()
 
 bool CompleteQuestResponseOp::Load(iDocumentNode *node)
 {
-    quest = psserver->cachemanager->GetQuestByName( node->GetAttributeValue("quest_id") );
+    quest = psserver->GetCacheManager()->GetQuestByName( node->GetAttributeValue("quest_id") );
     if (!quest)
     {
         Error2("Quest '%s' was not found in Complete Quest script op!",node->GetAttributeValue("quest_id") );
@@ -2056,9 +2056,9 @@ bool CompleteQuestResponseOp::Run(gemNPC *who, gemActor *target,NpcResponse *own
 
 bool GiveItemResponseOp::Load(iDocumentNode *node)
 {
-    itemstat = psserver->cachemanager->GetBasicItemStatsByID( node->GetAttributeValueAsInt("item") );
+    itemstat = psserver->GetCacheManager()->GetBasicItemStatsByID( node->GetAttributeValueAsInt("item") );
     if (!itemstat)
-        itemstat = psserver->cachemanager->GetBasicItemStatsByName(node->GetAttributeValue("item") );
+        itemstat = psserver->GetCacheManager()->GetBasicItemStatsByName(node->GetAttributeValue("item") );
 
     if (!itemstat)
     {
@@ -2133,7 +2133,7 @@ bool GiveItemResponseOp::Run(gemNPC *who, gemActor *target,NpcResponse *owner,cs
 
 bool FactionResponseOp::Load(iDocumentNode *node)
 {
-    faction = psserver->cachemanager->GetFaction(node->GetAttributeValue("name"));
+    faction = psserver->GetCacheManager()->GetFaction(node->GetAttributeValue("name"));
     if (!faction)
     {
         Error2("Error: FactionOp faction(%s) not found\n",node->GetAttributeValue("name"));
@@ -2238,7 +2238,7 @@ bool RunScriptResponseOp::Run(gemNPC *who, gemActor *target, NpcResponse *owner,
 bool TrainResponseOp::Load(iDocumentNode *node)
 {
     if (node->GetAttributeValue("skill"))
-        skill = psserver->cachemanager->GetSkillByName(node->GetAttributeValue("skill"));
+        skill = psserver->GetCacheManager()->GetSkillByName(node->GetAttributeValue("skill"));
     else
         skill = NULL;
 
@@ -2285,7 +2285,7 @@ csString GuildAwardResponseOp::GetResponseScript()
 
 bool GuildAwardResponseOp::Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber)
 {
-    psGuildInfo * guild = psserver->cachemanager->FindGuild(target->GetGuildID());
+    psGuildInfo * guild = psserver->GetCacheManager()->FindGuild(target->GetGuildID());
     if (!guild)
     {
         CPrintf(CON_ERROR, "Couldn't find guild (%d). Guild karma points not added\n",target->GetGuildID());
@@ -2314,9 +2314,9 @@ bool OfferRewardResponseOp::Load(iDocumentNode *node)
         // get item
         uint32 itemID = (uint32)node->GetAttributeValueAsInt("id");
         if (itemID)
-            itemstat = psserver->cachemanager->GetBasicItemStatsByID(itemID);
+            itemstat = psserver->GetCacheManager()->GetBasicItemStatsByID(itemID);
         else
-            itemstat = psserver->cachemanager->GetBasicItemStatsByName(node->GetAttributeValue("name"));
+            itemstat = psserver->GetCacheManager()->GetBasicItemStatsByName(node->GetAttributeValue("name"));
 
         // make sure that the item exists
         if (!itemstat)

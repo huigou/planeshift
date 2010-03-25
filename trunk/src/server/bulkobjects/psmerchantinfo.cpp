@@ -66,10 +66,10 @@ bool psMerchantInfo::Load(PID pid)
 
 psItemCategory * psMerchantInfo::FindCategory(int id)
 {
-    return psserver->cachemanager->GetItemCategoryByID(id);
+    return psserver->GetCacheManager()->GetItemCategoryByID(id);
 }
 
 psItemCategory * psMerchantInfo::FindCategory(const csString & name)
 {
-    return psserver->cachemanager->GetItemCategoryByName(name);
+    return psserver->GetCacheManager()->GetItemCategoryByName(name);
 }
