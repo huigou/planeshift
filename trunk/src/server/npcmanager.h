@@ -202,6 +202,7 @@ protected:
     ClientConnectionSet* clients;
     psNPCCommandsMessage *outbound;
     int cmd_count;
+    PSSKILL petSkill;
 
     csHash<PetOwnerSession*, PID> OwnerPetList;
 
