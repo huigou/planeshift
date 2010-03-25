@@ -110,7 +110,9 @@ struct NaturalResource
     int      anim_duration_seconds; ///< Length of time the animation should play.
     int      reward;                ///< Item ID of the reward
     csString reward_nickname;       ///< Item name of the reward
-    csString action;            ///< The action you need to take to get this resource.
+    /** The action you need to take to get this resource. Id Corresponding to resourcesActions index.*/
+    size_t action;             
+             
 };
 
 //-----------------------------------------------------------------------------
@@ -268,16 +270,21 @@ public:
     void HandleProduction(gemActor *actor,const char *type,const char *reward);
 
 protected:
-    csPDelArray<NaturalResource> resources; ///< list of all natural resources in game.
-    MathScript *calc_repair_rank;           ///< This is the calculation for how much skill is required to repair.
-    MathScript *calc_repair_time;           ///< This is the calculation for how long a repair takes.
-    MathScript *calc_repair_result;         ///< This is the calculation for how many points of quality are added in a repair.
-    MathScript *calc_repair_quality;        ///< This calculates the item ending quality and max quality at the end of repair.
-    MathScript *calc_repair_exp;            ///< This is the calculation for the experience to assign to player for repairing.
-    MathScript *calc_mining_chance;         ///< This is the calculation for chance of successful mining.
-    MathScript *calc_mining_exp;            ///< This is the calculation for the experience to assign to player for mining.
-    MathScript *calc_transform_exp;         ///< This is the calculation for the experience to assign to player for trasformations.
-    MathScript *calc_lockpick_time;         ///< This is the calculation for how long it takes to pick a lock.
+    csPDelArray<NaturalResource> resources;       ///< list of all natural resources in game.
+    /** List of all actions usable with natural resources.
+     *  @note this must be never sorted in any way as it's cross referenced in resources so the
+     *        array position of the string is extremely important to be mantained
+     */
+    csStringArray resourcesActions;
+    MathScript *calc_repair_rank;                 ///< This is the calculation for how much skill is required to repair.
+    MathScript *calc_repair_time;                 ///< This is the calculation for how long a repair takes.
+    MathScript *calc_repair_result;               ///< This is the calculation for how many points of quality are added in a repair.
+    MathScript *calc_repair_quality;              ///< This calculates the item ending quality and max quality at the end of repair.
+    MathScript *calc_repair_exp;                  ///< This is the calculation for the experience to assign to player for repairing.
+    MathScript *calc_mining_chance;               ///< This is the calculation for chance of successful mining.
+    MathScript *calc_mining_exp;                  ///< This is the calculation for the experience to assign to player for mining.
+    MathScript *calc_transform_exp;               ///< This is the calculation for the experience to assign to player for trasformations.
+    MathScript *calc_lockpick_time;               ///< This is the calculation for how long it takes to pick a lock.
 
     void HandleLockPick(MsgEntry* me,Client *client);
     void HandleWorkCommand(MsgEntry* me,Client *client);
@@ -468,7 +475,7 @@ protected:
       * -# Calculate result after repair
       * -# Queue time event to trigger when repair is complete, if not canceled.
       */
-    void HandleRepair(Client *client, psWorkCmdMessage& msg);
+    void HandleRepair(Client *client, const csString &repairSlotName);
 
     /** @brief Handle production events from clients
       *
@@ -482,10 +489,10 @@ protected:
       * -# Send anim and confirmation message to client
       * -# Queue up game event for success
       */
-    void HandleProduction(Client *client,const char *type,const char *reward);
+    void HandleProduction(Client *client,size_t type,const char *reward);
 
     bool SameProductionPosition(gemActor *actor, const csVector3& startPos);
-    NaturalResource *FindNearestResource(const char *reward,iSector *sector, csVector3& pos, const char *action);
+    NaturalResource *FindNearestResource(const char *reward,iSector *sector, csVector3& pos, const size_t action);
 
 private:
 
