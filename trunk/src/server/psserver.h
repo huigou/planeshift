@@ -346,6 +346,12 @@ public:
      * @return returns a reference to the User manager for the server.
      */
     UserManager *GetUserManager() { return usermanager; }
+    
+    /** Returns the Chace Manager
+     *
+     * @return returns a reference to the chache manager for the server.
+     */
+    CacheManager *GetCacheManager() { return cachemanager; }
 
     /** Returns the Introduction Manager
      *
