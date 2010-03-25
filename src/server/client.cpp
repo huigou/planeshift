@@ -612,7 +612,7 @@ void Client::SaveAccountData()
 uint32_t Client::WaypointGetEffectID()
 {
     if (waypointEffectID == 0)
-        waypointEffectID = psserver->cachemanager->NextEffectUID();
+        waypointEffectID = psserver->GetCacheManager()->NextEffectUID();
 
     return waypointEffectID;
 }
@@ -620,7 +620,7 @@ uint32_t Client::WaypointGetEffectID()
 uint32_t Client::PathGetEffectID()
 {
     if (pathEffectID == 0)
-        pathEffectID = psserver->cachemanager->NextEffectUID();
+        pathEffectID = psserver->GetCacheManager()->NextEffectUID();
 
     return pathEffectID;
 }
@@ -628,7 +628,7 @@ uint32_t Client::PathGetEffectID()
 uint32_t Client::LocationGetEffectID()
 {
     if (locationEffectID == 0)
-        locationEffectID = psserver->cachemanager->NextEffectUID();
+        locationEffectID = psserver->GetCacheManager()->NextEffectUID();
 
     return locationEffectID;
 }

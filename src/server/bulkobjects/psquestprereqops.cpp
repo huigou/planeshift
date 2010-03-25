@@ -240,7 +240,7 @@ psQuestPrereqOpQuestCompleted::psQuestPrereqOpQuestCompleted(csString questName)
 bool psQuestPrereqOpQuestCompleted::Check(psCharacter * character)
 {
     if (quest == NULL)
-        quest = psserver->cachemanager->GetQuestByName(name);
+        quest = psserver->GetCacheManager()->GetQuestByName(name);
     return character->CheckQuestCompleted(quest);
 }
 

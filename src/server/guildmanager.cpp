@@ -391,8 +391,8 @@ void GuildManager::HandleMOTDSet(MsgEntry *me,Client *client)
         psserver->GetEventManager()->Broadcast(newmsg.msg,NetBase::BC_GUILD,gi->id);
         // Refresh MOTD for all guild members
         csString tip;
-        if (psserver->cachemanager->GetTipLength() > 0)
-            psserver->cachemanager->GetTipByID(psserver->GetRandom(psserver->cachemanager->GetTipLength()), tip);
+        if (psserver->GetCacheManager()->GetTipLength() > 0)
+            psserver->GetCacheManager()->GetTipByID(psserver->GetRandom(psserver->GetCacheManager()->GetTipLength()), tip);
         psMOTDMessage motd(client->GetClientNum(), tip, psserver->GetMOTD(), gi->GetMOTD(), gi->GetName());
         psserver->GetEventManager()->Broadcast(motd.msg,NetBase::BC_GUILD,gi->id);
     }
@@ -1060,7 +1060,7 @@ void GuildManager::SendAllianceData(Client *client)
 
     if (guild->alliance != 0)
     {
-        alliance = psserver->cachemanager->FindAlliance(guild->alliance);
+        alliance = psserver->GetCacheManager()->FindAlliance(guild->alliance);
         if (alliance == NULL) return;
 
     csString escpxml = EscpXML(alliance->GetName());
@@ -1114,7 +1114,7 @@ void GuildManager::CheckMinimumRequirements(psGuildInfo *guild, gemActor *notify
 
 void GuildManager::RequirementsDeadline(int guild_id)
 {
-    psGuildInfo *guild = psserver->cachemanager->FindGuild(guild_id);
+    psGuildInfo *guild = psserver->GetCacheManager()->FindGuild(guild_id);
 
     if (!guild)
         return;
@@ -1169,7 +1169,7 @@ void GuildManager::CreateGuild(psGuildCmdMessage& msg,Client *client)
         return;
     }
 
-    if (psserver->cachemanager->FindGuild(msg.guildname))
+    if (psserver->GetCacheManager()->FindGuild(msg.guildname))
     {
         psserver->SendSystemError(clientnum,"A guild already exists with that name.");
         return;
@@ -1181,7 +1181,7 @@ void GuildManager::CreateGuild(psGuildCmdMessage& msg,Client *client)
         return;
     }
 
-    if (!psserver->cachemanager->CreateGuild(msg.guildname, client) )
+    if (!psserver->GetCacheManager()->CreateGuild(msg.guildname, client) )
     {
         psserver->SendSystemError(clientnum, db->GetLastError());
         return;
@@ -1253,7 +1253,7 @@ void GuildManager::EndGuild(psGuildCmdMessage& msg,Client *client)
 void GuildManager::EndGuild(psGuildInfo *guild,int clientnum)
 {
     //if this guild is in an alliance, it must be removed from it
-    psGuildAlliance * alliance = psserver->cachemanager->FindAlliance(guild->GetAllianceID());
+    psGuildAlliance * alliance = psserver->GetCacheManager()->FindAlliance(guild->GetAllianceID());
     if(alliance)
         alliance->RemoveMember(guild);
 
@@ -1286,7 +1286,7 @@ void GuildManager::EndGuild(psGuildInfo *guild,int clientnum)
         }
     }
 
-    psserver->cachemanager->RemoveGuild(guild);
+    psserver->GetCacheManager()->RemoveGuild(guild);
 }
 
 void GuildManager::UnsubscribeWholeGuild(psGuildInfo * guild)
@@ -1350,7 +1350,7 @@ void GuildManager::ChangeGuildName(psGuildCmdMessage& msg,Client *client)
         return;
     }
 
-    if(psserver->cachemanager->FindGuild(msg.guildname))
+    if(psserver->GetCacheManager()->FindGuild(msg.guildname))
     {
         psserver->SendSystemError(clientnum,"A guild already exists with that name");
         return;
@@ -1454,7 +1454,7 @@ void GuildManager::HandleJoinGuild(PendingGuildInvite *invite)
     if (inviteeClient != NULL)
         inviterEID = inviterClient->GetActor()->GetEID();
 
-    psGuildInfo * guild = psserver->cachemanager->FindGuild(invite->guildID);
+    psGuildInfo * guild = psserver->GetCacheManager()->FindGuild(invite->guildID);
     if (guild == NULL)
         return;
 
@@ -2336,7 +2336,7 @@ public:
         psGuildInfo * inviteeGuild = GetClientGuild(inviteeClient);
         if (inviteeGuild == NULL) return;
 
-        psGuildAlliance * alliance = psserver->cachemanager->FindAlliance(allianceID);
+        psGuildAlliance * alliance = psserver->GetCacheManager()->FindAlliance(allianceID);
         if (alliance == NULL) return;
 
         alliance->AddNewMember(inviteeGuild);
@@ -2383,7 +2383,7 @@ bool GuildManager::CheckAllianceOperation(Client * client, bool checkLeaderGuild
         return false;
     }
 
-    alliance = psserver->cachemanager->FindAlliance(guild->alliance);
+    alliance = psserver->GetCacheManager()->FindAlliance(guild->alliance);
     if (alliance == NULL)
     {
         psserver->SendSystemError(clientnum,"Internal error - alliance %d not found.", guild->alliance);
@@ -2425,13 +2425,13 @@ void GuildManager::NewAlliance(psGuildCmdMessage &msg, Client *client)
         return;
     }
 
-    if (psserver->cachemanager->CreateAlliance(msg.alliancename, guild, client))
+    if (psserver->GetCacheManager()->CreateAlliance(msg.alliancename, guild, client))
         psserver->SendSystemInfo(clientnum, "Alliance \"%s\" was created.", msg.alliancename.GetData());
     else
         psserver->SendSystemInfo(clientnum, "Alliance creation failed: %s", psGuildAlliance::lastError.GetData());
 
 
-    psGuildAlliance * alliance = psserver->cachemanager->FindAlliance(guild->alliance);
+    psGuildAlliance * alliance = psserver->GetCacheManager()->FindAlliance(guild->alliance);
     if (alliance != NULL)
     {
         SendAllianceNotifications(alliance);
@@ -2526,7 +2526,7 @@ void GuildManager::AllianceRemove(psGuildCmdMessage &msg, Client *client)
         return;
     }
 
-    psGuildInfo * removedGuild = psserver->cachemanager->FindGuild(msg.guildname);
+    psGuildInfo * removedGuild = psserver->GetCacheManager()->FindGuild(msg.guildname);
     if (removedGuild == NULL)
     {
         psserver->SendSystemError(clientnum,"No such guild exists.");
@@ -2603,7 +2603,7 @@ void GuildManager::AllianceLeader(psGuildCmdMessage &msg, Client *client)
         return;
     }
 
-    psGuildInfo * newLeader = psserver->cachemanager->FindGuild(msg.guildname);
+    psGuildInfo * newLeader = psserver->GetCacheManager()->FindGuild(msg.guildname);
     if (newLeader == NULL)
     {
         psserver->SendSystemError(clientnum,"No such guild exists.");
@@ -2660,7 +2660,7 @@ void GuildManager::EndAlliance(psGuildCmdMessage &msg, Client *client)
         chatserver->SendAlliance(client->GetName(), client->GetActor()->GetEID(), alliance, guildmsg);
     } 
 
-    if (psserver->cachemanager->RemoveAlliance(alliance))
+    if (psserver->GetCacheManager()->RemoveAlliance(alliance))
         psserver->SendSystemInfo(clientnum,"Alliance was disbanded.");
     else
         psserver->SendSystemInfo(clientnum,"Failed to disband alliance: %s.", psGuildAlliance::lastError.GetData());
@@ -2689,9 +2689,9 @@ void GuildManager::SendGuildPoints(psGuildCmdMessage& msg,Client *client)
     psGuildInfo* guild = NULL;
 
     if(msg.guildname.Length() == 0)
-        guild = psserver->cachemanager->FindGuild(client->GetGuildID());
+        guild = psserver->GetCacheManager()->FindGuild(client->GetGuildID());
     else
-        guild = psserver->cachemanager->FindGuild(msg.guildname);
+        guild = psserver->GetCacheManager()->FindGuild(msg.guildname);
 
     if(!guild)
     {

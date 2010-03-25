@@ -116,9 +116,9 @@ void psCharacterInventory::SetBasicArmor(psRaceInfo *race)
 	// Load basecloths. Default item equipped in clothing/armour slots.
     psItemStats *basecloth;
     if(race && race->GetNaturalArmorID() != 0)
-		basecloth = psserver->cachemanager->GetBasicItemStatsByID(owner->GetRaceInfo()->GetNaturalArmorID());
+		basecloth = psserver->GetCacheManager()->GetBasicItemStatsByID(owner->GetRaceInfo()->GetNaturalArmorID());
 	else
-		basecloth = psserver->cachemanager->GetBasicItemStatsByName("basecloths");
+		basecloth = psserver->GetCacheManager()->GetBasicItemStatsByName("basecloths");
 		
 	//delete the basecloth if it was already loaded.
 	if(equipment[PSCHARACTER_SLOT_ARMS].default_if_empty)
@@ -143,9 +143,9 @@ void psCharacterInventory::SetBasicWeapon(psRaceInfo *race)
     psItemStats *fistStats;
     // Load basic fists. Default item equipped in hands slots.
     if(race && race->GetNaturalWeaponID() != 0)
-        fistStats = psserver->cachemanager->GetBasicItemStatsByID(owner->GetRaceInfo()->GetNaturalWeaponID());
+        fistStats = psserver->GetCacheManager()->GetBasicItemStatsByID(owner->GetRaceInfo()->GetNaturalWeaponID());
     else
-        fistStats = psserver->cachemanager->GetBasicItemStatsByName("Fist");
+        fistStats = psserver->GetCacheManager()->GetBasicItemStatsByName("Fist");
         
     //delete the fist if it was already loaded. (we expect this in the first position of the inventory array.
     //if this changes this must be changed too.
@@ -269,7 +269,7 @@ bool psCharacterInventory::Load(PID use_id)
 
             // Determine type of item
             unsigned int stats_id = items[i].GetUInt32("item_stats_id_standard");
-            psItemStats *stats = psserver->cachemanager->GetBasicItemStatsByID(stats_id);
+            psItemStats *stats = psserver->GetCacheManager()->GetBasicItemStatsByID(stats_id);
             if ( !stats )
             {
                 Bug3("Error! Item %s could not be created because item_stats id=%d was not found.\n",items[i]["id"], stats_id);
@@ -324,7 +324,7 @@ bool psCharacterInventory::QuickLoad(PID use_id)
         for ( int i=0; i < (int)items.Count(); i++ )
         {
             unsigned int stats_id = items[i].GetUInt32("item_stats_id_standard");
-            psItemStats *stats = psserver->cachemanager->GetBasicItemStatsByID(stats_id);
+            psItemStats *stats = psserver->GetCacheManager()->GetBasicItemStatsByID(stats_id);
 
             if ( stats )
             {
@@ -610,7 +610,7 @@ INVENTORY_SLOT_NUMBER psCharacterInventory::FindFreeEquipSlot(psItem* itemToPlac
         INVENTORY_SLOT_NUMBER proposedSlot = fitsIn[i];
         psItem* existingItem = GetInventoryItem(proposedSlot);
         // If there is an item already here then this is not allowed for equipment.
-        if (!existingItem && itemToPlace->FitsInSlots(psserver->cachemanager->slotMap[proposedSlot]))
+        if (!existingItem && itemToPlace->FitsInSlots(psserver->GetCacheManager()->slotMap[proposedSlot]))
             return proposedSlot;
     }
     return PSCHARACTER_SLOT_NONE;
@@ -1617,7 +1617,7 @@ void psCharacterInventory::WriteItem(csRef<iDocumentNode> equipmentNode, psItem*
 
     if (item->GetIsGuildIDValid())
     {
-        psGuildInfo* guild = psserver->cachemanager->FindGuild(item->GetGuildID());
+        psGuildInfo* guild = psserver->GetCacheManager()->FindGuild(item->GetGuildID());
         if (guild)
             objNode->SetAttribute("guild", guild->GetName());
     }
