@@ -1547,31 +1547,28 @@ psWorkCmdMessage::psWorkCmdMessage(MsgEntry *message)
 
     WordArray words(message->GetStr());
 
-    command = words[0];
+    command = words[0].Slice(1);
 
-    if (command == "/use" ||
-        command == "/combine" ||
-        command == "/construct")
+    if (command == "use" ||
+        command == "combine" ||
+        command == "construct")
     {
         return;
     }
-    if (command == "/dig" || command == "/fish" || command == "/harvest" )
-    {
-        filter = words[1];
-        if (filter == "for")
-        {
-            filter = words[2];
-        }
-        return;
-    }
 
-    if (command == "/repair")
+    if (command == "repair")
     {
         repairSlotName = words[1];
         return;
     }
-
-    valid = false;
+    
+    //in case all the above fails conside this a message for handle production (natural resources)
+    //this means this must be last. workmanager will check if the command is actually valid
+    filter = words[1];
+    if (filter == "for")
+    {
+        filter = words[2];
+    }
 }
 
 csString psWorkCmdMessage::ToString(AccessPointers * /*access_ptrs*/)
