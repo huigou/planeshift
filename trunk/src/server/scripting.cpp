@@ -301,10 +301,10 @@ protected:
 class SkillAOp : public Applied2
 {
 public:
-    SkillAOp() : Applied2() { }
+    SkillAOp(CacheManager* cachemanager) : Applied2() { this->cachemanager = cachemanager; }
     virtual ~SkillAOp() { }
 
-    bool Load(iDocumentNode* node, CacheManager* cachemanager)
+    bool Load(iDocumentNode* node)
     {
         psSkillInfo* info = cachemanager->GetSkillByName(node->GetAttributeValue("name"));
         if (!info)
@@ -327,6 +327,7 @@ public:
 
 protected:
     PSSKILL skill;
+    CacheManager* cachemanager;
 };
 
 //----------------------------------------------------------------------------
@@ -842,7 +843,7 @@ ApplicativeScript* ApplicativeScript::Create(EntityManager* entitymanager, Cache
         }
         else if (elem == "skill")
         {
-            op = new SkillAOp;
+            op = new SkillAOp(cachemanager);
         }
         else if (elem == "faction")
         {
@@ -1685,10 +1686,10 @@ protected:
 class SkillOp : public Imperative3
 {
 public:
-    SkillOp() : Imperative3() { }
+    SkillOp(CacheManager* cachemanager) : Imperative3() { this->cachemanager = cachemanager; }
     virtual ~SkillOp() { }
 
-    bool Load(iDocumentNode* node, CacheManager* cachemanager)
+    bool Load(iDocumentNode* node)
     {
         psSkillInfo* info = cachemanager->GetSkillByName(node->GetAttributeValue("name"));
         if (!info)
@@ -1710,6 +1711,7 @@ public:
     }
 protected:
     PSSKILL skill;
+    CacheManager* cachemanager;
 };
 
 //----------------------------------------------------------------------------
@@ -2325,7 +2327,7 @@ ProgressionScript* ProgressionScript::Create(EntityManager* entitymanager, Cache
         }
         else if (elem == "skill")
         {
-            op = new SkillOp;
+            op = new SkillOp(cachemanager);
         }
         else if (elem == "faction")
         {
