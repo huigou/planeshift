@@ -284,3 +284,4 @@ void pawsFrameDrawable::DrawPiece( FRAME_DRAWABLE_PIECE p, int x, int y, int alp
     y += pieces[p].offsety;
     pieces[p].drawable->Draw(x, y, alpha);
 }
+
