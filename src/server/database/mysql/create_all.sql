@@ -1,7 +1,3 @@
-drop database if exists planeshift;
-create database planeshift;
-use planeshift;
-
 source accessrules.sql;
 source accounts.sql;
 source action_locations.sql;
