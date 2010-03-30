@@ -19,6 +19,6 @@ CREATE TABLE `wc_statistics` (
 
 /*!40000 ALTER TABLE `wc_statistics` DISABLE KEYS */;
 LOCK TABLES `wc_statistics` WRITE;
-INSERT INTO `wc_statistics` VALUES (1,1,'2007 Q1',10,'');
-INSERT INTO `wc_statistics` VALUES (2,1,'2007 Q2',20,'');
+INSERT INTO `wc_statistics` VALUES (1,1,'2007 Q1',10,0);
+INSERT INTO `wc_statistics` VALUES (2,1,'2007 Q2',20,0);
 UNLOCK TABLES;

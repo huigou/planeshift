@@ -33,7 +33,7 @@ CREATE TABLE `quest_scripts` (
 # Dumping data for table 'quest_scripts'
 #
 
-LOCK TABLES `quest_scripts` WRITE;
+#LOCK TABLES `quest_scripts` WRITE;
 /*!40000 ALTER TABLE `quest_scripts` DISABLE KEYS*/;
 INSERT INTO `quest_scripts` (`id`, `quest_id`, `script`) VALUES
 	('1',1,'P:give me quest\nMenu: Is there anyone you need saving?\n\nMerchant: Congratulations! You get to save the princess now.[Merchant bows to $playername.]I wish you luck.[As he finishes talking, you notice clouds darkening on the horizon...]\n\nAssign Quest\n\n...\n\nP: done\nMenu: Ok she is safe on Yavin 4 now.\n\nM: OMG you did it!  I can\'t believe it.\n\nGive Mug or Steel Falchion or Claymore\n\n'),

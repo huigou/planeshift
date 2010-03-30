@@ -7,7 +7,7 @@ CREATE TABLE `bad_names` (
   `id` int(8) NOT NULL auto_increment,
   `name` text NOT NULL,
   PRIMARY KEY  (`id`)
-) TYPE=MyISAM AUTO_INCREMENT=5 ;
+) ENGINE=MyISAM AUTO_INCREMENT=5 ;
 
 #
 # Dumping data for table `bad_names`

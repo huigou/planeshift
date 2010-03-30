@@ -23,7 +23,7 @@ CREATE TABLE "introductions" (
   "charid" int(10) unsigned NOT NULL,
   "introcharid" int(10) unsigned NOT NULL,
   PRIMARY KEY  ("charid","introcharid")
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table "introductions"

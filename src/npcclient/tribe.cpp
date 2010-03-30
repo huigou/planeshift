@@ -98,7 +98,11 @@ bool psTribe::LoadMember(iResultRow& row)
 bool psTribe::AddMember(PID pid)
 {
     members_id.Push(pid.Unbox());
-    
+
+    // Add to members list in db
+    db->Command("INSERT INTO tribe_members (tribe_id,member_id) "
+                "VALUES (%u,%u)", GetID(), pid.Unbox());
+
     return true;
 }
 
@@ -212,21 +216,7 @@ bool psTribe::CheckAttach(NPC * npc)
             return true;
         }
     }
-    for (size_t i=0; i < members.GetSize(); i++)
-    {
-        if (strcmp(npc->GetName(),members[i]->GetName())==0 &&
-            npc->GetPID() != members[i]->GetPID())
-        {
-            AttachMember(npc);
 
-            // Add to members list in db
-            db->Command("INSERT INTO tribe_members (tribe_id,member_id) "
-                        "VALUES (%u,%u)", GetID(), npc->GetPID().Unbox());
-            members_id.Push(npc->GetPID());
-            return true;
-        }
-    }
-    
     return false;
 }
 
@@ -440,6 +430,12 @@ int psTribe::GetMaxSize() const
 
     return size; 
 }
+
+int psTribe::GetReproductionCost() const
+{
+    return reproduction_cost;
+}
+
 
 
 void psTribe::GetHome(csVector3& pos, float& radius, iSector* &sector)

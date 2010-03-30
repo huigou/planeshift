@@ -136,6 +136,12 @@ public:
      * Calculate the maximum number of members for the tribe.
      */
     int GetMaxSize() const;
+
+
+    /**
+     * Return the reproduction cost for this tribe.
+     */
+    int GetReproductionCost() const;
     
     /**
      * Get home position for the tribe.
