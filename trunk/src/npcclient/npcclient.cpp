@@ -1234,8 +1234,8 @@ void psNPCClient::ListTribes(const char * pattern)
                     tribes[i]->GetMemberIDCount(),
                     tribes[i]->GetMemberCount(),
                     pos.x,pos.y,pos.z,radius,(sector?sector->QueryObject()->GetName():"(null)"));
-            CPrintf(CON_CMDOUTPUT,"   ShouldGrow: %s\n",(tribes[i]->ShouldGrow()?"Yes":"No"));
-            CPrintf(CON_CMDOUTPUT,"   CanGrow   : %s\n",(tribes[i]->CanGrow()?"Yes":"No"));
+            CPrintf(CON_CMDOUTPUT,"   ShouldGrow: %s  MaxSize          : %d\n",(tribes[i]->ShouldGrow()?"Yes":"No "),tribes[i]->GetMaxSize());
+            CPrintf(CON_CMDOUTPUT,"   CanGrow   : %s  Reproduction Cost: %d\n",(tribes[i]->CanGrow()?"Yes":"No "),tribes[i]->GetReproductionCost());
             CPrintf(CON_CMDOUTPUT,"Members:\n");
             CPrintf(CON_CMDOUTPUT, "%-6s %-6s %-30s %-6s %-6s %-15s %-15s %-20s %-20s\n", 
                     "NPC ID", "EID", "Name", "Entity", "Status", "Brain","Behaviour","Owner","Tribe");

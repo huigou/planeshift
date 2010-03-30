@@ -54,9 +54,9 @@ CREATE TABLE `sectors` (
 --
 
 /*!40000 ALTER TABLE `sectors` DISABLE KEYS */;
-INSERT INTO `sectors` (`id`,`name`,`rain_enabled`,`rain_min_gap`,`rain_max_gap`,`rain_min_duration`,`rain_max_duration`,`rain_min_drops`,`rain_max_drops`,`rain_min_fade_in`,`rain_max_fade_in`,`rain_min_fade_out`,`rain_max_fade_out`,`lightning_min_gap`,`lightning_max_gap`,`collide_objects`, `non_transient_objects`, `say_range`, `god_name`) VALUES 
- (1,'room','N',0,0,0,0,0,0,0,0,0,0,0,0,0, 0, 10.0, '','','','N','N', 'Laanx'),
- (2,'temple','N',0,0,0,0,0,0,0,0,0,0,0,0,0, 0, 10.0, '','','','N','N', 'Laanx'),
+INSERT INTO `sectors` (`id`,`name`,`rain_enabled`,`rain_min_gap`,`rain_max_gap`,`rain_min_duration`,`rain_max_duration`,`rain_min_drops`,`rain_max_drops`,`rain_min_fade_in`,`rain_max_fade_in`,`rain_min_fade_out`,`rain_max_fade_out`,`lightning_min_gap`,`lightning_max_gap`,`collide_objects`, `non_transient_objects`, `say_range`,`TeleportingSector`, `TeleportingCords`, `DeathSector`, `DeathCords`, `TeleportingSectorEnable`, `TeleportingPenaltyEnable`, `god_name`) VALUES 
+ (1,'room','N',0,0,0,0,0,0,0,0,0,0,0,0,0, 0, 10.0, '','','','','N','N', 'Laanx'),
+ (2,'temple','N',0,0,0,0,0,0,0,0,0,0,0,0,0, 0, 10.0, '','','','','N','N', 'Laanx'),
  (3,'NPCroom','N',15000,15000,10000,10000,8000,8000,5000,5000,5000,5000,4000,4000,0, 0, 10.0, '','', 'NPCroom','-20.0,1.0,-180.0,0.0','N','N', 'Laanx'),
  (4,'NPCroom1','N',15000,15000,10000,10000,8000,8000,5000,5000,5000,5000,4000,4000,0, 0, 10.0, '','', 'NPCroom','-20.0,1.0,-180.0,0.0','N','N', 'Laanx'),
  (5,'NPCroom2','N',15000,15000,10000,10000,8000,8000,5000,5000,5000,5000,4000,4000,0, 0, 10.0, '','', 'NPCroom','-20.0,1.0,-180.0,0.0','N','N', 'Laanx'),

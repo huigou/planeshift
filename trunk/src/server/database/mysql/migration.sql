@@ -7,6 +7,7 @@
 # Table structure for table 'migration'
 #
 
+DROP TABLE IF EXISTS `migration`;
 CREATE TABLE migration (
   id int(8) unsigned NOT NULL auto_increment,
   username varchar(50) NOT NULL DEFAULT '0' ,
