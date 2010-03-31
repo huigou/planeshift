@@ -54,6 +54,8 @@ psSectorInfo::psSectorInfo()
     deathCords = csVector3(0,0,0);
     deathRot = 0;
     teleportingRot = 0;
+    deathRestoreHP = true;
+    deathRestoreMana = true;
 }
 
 psSectorInfo::~psSectorInfo()

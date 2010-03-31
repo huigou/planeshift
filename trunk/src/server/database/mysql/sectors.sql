@@ -43,6 +43,8 @@ CREATE TABLE `sectors` (
   `DeathCords` varchar(30) NOT NULL COMMENT 'Cordinates where the player will be teleported automatically when dieing in this sector',
   `TeleportingSectorEnable` char(1) NOT NULL DEFAULT 'N' COMMENT 'When not N the sector will teleport when accessing it according to teleportingsector and teleportingcords',
   `TeleportingPenaltyEnable` char(1) NOT NULL DEFAULT 'N' COMMENT 'When not N when teleported when entering this sector it will apply the death penalty',
+  `DeathRestoreMana` char(1) NOT NULL DEFAULT 'Y' COMMENT 'When not N the sector will restore mana when the player dies in it, else nothing is done.',
+  `DeathRestoreHP` char(1) NOT NULL DEFAULT 'Y' COMMENT 'When not N the sector will restore HP when the player dies in it, else it just sets the minimum to keep him alive and not death loop.',
   `god_name` VARCHAR(45) NOT NULL DEFAULT 'Laanx',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `name` (`name`)
@@ -55,13 +57,13 @@ CREATE TABLE `sectors` (
 
 /*!40000 ALTER TABLE `sectors` DISABLE KEYS */;
 INSERT INTO `sectors` (`id`,`name`,`rain_enabled`,`rain_min_gap`,`rain_max_gap`,`rain_min_duration`,`rain_max_duration`,`rain_min_drops`,`rain_max_drops`,`rain_min_fade_in`,`rain_max_fade_in`,`rain_min_fade_out`,`rain_max_fade_out`,`lightning_min_gap`,`lightning_max_gap`,`collide_objects`, `non_transient_objects`, `say_range`,`TeleportingSector`, `TeleportingCords`, `DeathSector`, `DeathCords`, `TeleportingSectorEnable`, `TeleportingPenaltyEnable`, `god_name`) VALUES 
- (1,'room','N',0,0,0,0,0,0,0,0,0,0,0,0,0, 0, 10.0, '','','','','N','N', 'Laanx'),
- (2,'temple','N',0,0,0,0,0,0,0,0,0,0,0,0,0, 0, 10.0, '','','','','N','N', 'Laanx'),
- (3,'NPCroom','N',15000,15000,10000,10000,8000,8000,5000,5000,5000,5000,4000,4000,0, 0, 10.0, '','', 'NPCroom','-20.0,1.0,-180.0,0.0','N','N', 'Laanx'),
- (4,'NPCroom1','N',15000,15000,10000,10000,8000,8000,5000,5000,5000,5000,4000,4000,0, 0, 10.0, '','', 'NPCroom','-20.0,1.0,-180.0,0.0','N','N', 'Laanx'),
- (5,'NPCroom2','N',15000,15000,10000,10000,8000,8000,5000,5000,5000,5000,4000,4000,0, 0, 10.0, '','', 'NPCroom','-20.0,1.0,-180.0,0.0','N','N', 'Laanx'),
- (6,'NPCroom3','N',15000,15000,10000,10000,8000,8000,5000,5000,5000,5000,4000,4000,1, 1, 10.0, '','', 'NPCroom','-20.0,1.0,-180.0,0.0','N','N', 'Laanx'),
- (7,'NPCroomwarp','N',15000,15000,10000,10000,8000,8000,5000,5000,5000,5000,4000,4000,0, 0, 10.0, '','', 'NPCroom','-20.0,1.0,-180.0,0.0','N','N', 'Laanx');
+ (1,'room','N',0,0,0,0,0,0,0,0,0,0,0,0,0, 0, 10.0, '','','','','N','N', 'Y','Y', 'Laanx'),
+ (2,'temple','N',0,0,0,0,0,0,0,0,0,0,0,0,0, 0, 10.0, '','','','','N','N', 'Y','Y', 'Laanx'),
+ (3,'NPCroom','N',15000,15000,10000,10000,8000,8000,5000,5000,5000,5000,4000,4000,0, 0, 10.0, '','', 'NPCroom','-20.0,1.0,-180.0,0.0','N','N', 'Y','Y', 'Laanx'),
+ (4,'NPCroom1','N',15000,15000,10000,10000,8000,8000,5000,5000,5000,5000,4000,4000,0, 0, 10.0, '','', 'NPCroom','-20.0,1.0,-180.0,0.0','N','N', 'Y','Y', 'Laanx'),
+ (5,'NPCroom2','N',15000,15000,10000,10000,8000,8000,5000,5000,5000,5000,4000,4000,0, 0, 10.0, '','', 'NPCroom','-20.0,1.0,-180.0,0.0','N','N', 'Y','Y', 'Laanx'),
+ (6,'NPCroom3','N',15000,15000,10000,10000,8000,8000,5000,5000,5000,5000,4000,4000,1, 1, 10.0, '','', 'NPCroom','-20.0,1.0,-180.0,0.0','N','N', 'Y','Y', 'Laanx'),
+ (7,'NPCroomwarp','N',15000,15000,10000,10000,8000,8000,5000,5000,5000,5000,4000,4000,0, 0, 10.0, '','', 'NPCroom','-20.0,1.0,-180.0,0.0','N','N', 'Y','Y', 'Laanx');
 /*!40000 ALTER TABLE `sectors` ENABLE KEYS */;
 
 

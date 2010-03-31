@@ -72,6 +72,18 @@ public:
      */
     bool GetHasPenalty() { return has_penalty; }
     
+    /** Checks if a teleporting sector will trigger the death penalty when used.
+     *  @note this can be TRUE even if the previous isn't but it won't do anything.
+     *  @return TRUE if this is a sector with death penalty.
+     */
+    bool GetDeathRestoreHP() { return deathRestoreHP; }
+    
+        /** Checks if a teleporting sector will trigger the death penalty when used.
+     *  @note this can be TRUE even if the previous isn't but it won't do anything.
+     *  @return TRUE if this is a sector with death penalty.
+     */
+    bool GetDeathRestoreMana() { return deathRestoreMana; }
+    
     /** Gets the sector name we will teleport to when entering this sector.
      *  @return A csString containing the sector name.
      */
@@ -114,6 +126,11 @@ public:
     bool is_colliding;
     bool is_non_transient;
     
+    /// Sets if this sector will restore mana when the player dies in it.
+    bool deathRestoreMana;
+    /// Sets if this sector will restore hp when the player dies in it.
+    bool deathRestoreHP;
+
     /// This sector will immediately teleport the player somewhere else when entered if true.
     bool is_teleporting;
     /// This sector will apply the death penalty if it's a teleporting sector
