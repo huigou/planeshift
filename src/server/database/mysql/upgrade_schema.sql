@@ -1431,6 +1431,11 @@ ALTER TABLE `sectors` ADD COLUMN `TeleportingSector` VARCHAR(30)  NOT NULL COMME
  ADD COLUMN `TeleportingSectorEnable` CHAR(1)  NOT NULL DEFAULT 'N' COMMENT 'When not N the sector will teleport when accessing it according to teleportingsector and teleportingcords' AFTER `DeathCords`,
  ADD COLUMN `TeleportingPenaltyEnable` CHAR(1)  NOT NULL DEFAULT 'N' COMMENT 'When not N when teleported when entering this sector it will apply the death penalty' AFTER `TeleportingSectorEnable`;
 
+#1244 - Stefano Angeleri added various flags to sectors
+UPDATE `server_options` SET `option_value`='1244' WHERE `option_name`='db_version';
+ALTER TABLE `sectors` ADD COLUMN `DeathRestoreMana` CHAR(1)  NOT NULL DEFAULT 'Y' COMMENT 'When not N the sector will restore mana when the player dies in it, else nothing is done.' AFTER `TeleportingPenaltyEnable`,
+ ADD COLUMN `DeathRestoreHP` CHAR(1)  NOT NULL DEFAULT 'Y' COMMENT 'When not N the sector will restore HP when the player dies in it, else it just sets the minimum to keep him alive and not death loop.' AFTER `DeathRestoreMana`;
+
 
 
 # Insert your upgrade before this line. Remember when you set a new db_version

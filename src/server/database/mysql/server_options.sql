@@ -29,7 +29,7 @@ CREATE TABLE `server_options` (
 # Dumping data for table server_options
 #
 
-INSERT INTO `server_options` VALUES ('db_version','1243');
+INSERT INTO `server_options` VALUES ('db_version','1244');
 INSERT INTO `server_options` VALUES ('game_time','15:00');
 INSERT INTO `server_options` VALUES ('game_date','100-1-1');
 INSERT INTO `server_options` VALUES ('standard_motd','This is the message of the day from server_options table.');
@@ -43,6 +43,8 @@ INSERT INTO `server_options` VALUES('death:sectorx', '-29.2');
 INSERT INTO `server_options` VALUES('death:sectorz', '28.2');
 INSERT INTO `server_options` VALUES('death:sectory', '-119.0');
 INSERT INTO `server_options` VALUES('death:sectoryrot', '0.00');
+INSERT INTO `server_options` VALUES('death:avoidtext', '');
+INSERT INTO `server_options` VALUES('death:avoidtime', '0');
 
 
 

@@ -668,6 +668,9 @@ bool CacheManager::PreloadSectors()
         newsector->is_teleporting = (*result[currentrow]["TeleportingSectorEnable"] != 'N');
         newsector->has_penalty = (*result[currentrow]["TeleportingPenaltyEnable"] != 'N');
         
+        newsector->deathRestoreMana = (*result[currentrow]["DeathRestoreMana"] != 'N');
+        newsector->deathRestoreHP = (*result[currentrow]["DeathRestoreHP"] != 'N');
+        
         newsector->teleportingSector = result[currentrow]["TeleportingSector"];
         newsector->deathSector = result[currentrow]["DeathSector"];
         

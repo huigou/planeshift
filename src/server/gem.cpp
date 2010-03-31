@@ -2319,13 +2319,18 @@ void gemActor::Resurrect()
         }
     }
 
-    psChar->SetHitPoints(psChar->GetMaxHP().Base());
-
-    //TODO: better if it's moved to the sector table
-    csString sectorName = cacheManager->getOptionSafe("death:sectorname", "DR01")->getValue();
-    //Do not reset mana to max while in DR, to prevent exploits using /die
-    if (sector && strncmp (sectorName.GetData(), sector->QueryObject()->GetName(), 2))
+    //reset mana only in sectors restoring it, to prevent exploits using /die in death maps or for
+    //other reasoning.
+    if(!sectorInfo || sectorInfo->GetDeathRestoreMana())
         psChar->SetMana(psChar->GetMaxMana().Base());
+    
+    //reset HP only in sectors restoring it, to prevent exploits using /die in death maps or for
+    //other reasoning, in the other cases set only the minimum amount to keep the player alive and not
+    //make him loop die.
+    if(!sectorInfo || sectorInfo->GetDeathRestoreHP())
+        psChar->SetHitPoints(psChar->GetMaxHP().Base());
+    else
+        psChar->SetHitPoints(1);
 
     psChar->SetStamina(psChar->GetMaxPStamina().Base(), true);
     psChar->SetStamina(psChar->GetMaxMStamina().Base(), false);
