@@ -202,11 +202,6 @@ public:
      * will be deleted if NPC die.
      */
     void Memorize(NPC* npc, Perception * perception);
-
-    /**
-     * Move TribeHome to the perception location.
-     */
-    void TribeHome(NPC* npc, Perception * perception);
     
     /**
      * Find a privat memory

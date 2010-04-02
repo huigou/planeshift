@@ -2941,20 +2941,19 @@ ScriptOperation *TribeHomeOperation::MakeCopy()
 
 bool TribeHomeOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
-    Perception * percept = npc->GetLastPerception();
-    if (!percept)
-    {
-        npc->Printf(5, ">>> TribeHome No Perception.");
-        return true; // Nothing more to do for this op.
-    }
-    
-    npc->Printf(5, ">>> TribeHome '%s' '%s'.",percept->GetType(),percept->GetName());
-
     psTribe * tribe = npc->GetTribe();
     
     if ( !tribe ) return true; // Nothing more to do for this op.
 
-    tribe->TribeHome(npc, percept );
+    csVector3 pos;
+    iSector*  sector;
+    float     rot;
+
+    npc->GetActiveLocate(pos,sector,rot);
+    
+    npc->Printf("Moves tribe home to: %s",toString(pos,sector).GetData());
+
+    tribe->SetHome(pos,sector);
 
     return true; // Nothing more to do for this op.
 }

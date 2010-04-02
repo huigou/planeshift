@@ -498,6 +498,9 @@ void psTribe::SetHome(const csVector3& pos, iSector* sector)
 { 
     home_pos = pos; 
     home_sector = sector;
+    home_sector_name = sector->QueryObject()->GetName();
+    printf("Chainging home for tribe %s to %s\n",GetName(),toString(home_pos,home_sector).GetData());
+    
     // Consider adding storrage of this new position to DB here
     // TODO: Store to DB.
 }
@@ -606,21 +609,6 @@ void psTribe::Memorize(NPC * npc, Perception * perception)
     
     npc->Printf("Store in privat memory: '%s' %.2f %.2f %2f %.2f '%s'",name.GetDataSafe(),pos.x,pos.y,pos.z,radius,npc->GetName());
     AddMemory(name,pos,sector,radius,npc);
-}
-
-void psTribe::TribeHome(NPC * npc, Perception * perception)
-{
-    // Retriv date from the perception
-    csString  name = perception->GetType();
-    float     radius = perception->GetRadius();
-    csVector3 pos;
-    iSector*  sector;
-    perception->GetLocation(pos,sector);
-        
-    
-    npc->Printf("Moves tribe home to: '%s' %.2f %.2f %2f %.2f '%s'",name.GetDataSafe(),pos.x,pos.y,pos.z,radius,npc->GetName());
-
-    SetHome(pos,sector);
 }
 
 psTribe::Memory* psTribe::FindPrivMemory(csString name,const csVector3& pos, iSector* sector, float radius, NPC * npc)
