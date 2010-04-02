@@ -429,12 +429,23 @@
       <wander anim="walk" />        <!-- Navigate using waypoints -->
       <loop iterations="3">
         <navigate anim="walk" />      <!-- Local navigation -->
+	<wait anim="stand" duration="20" />     <!-- Pretend to hunt. -->
+        <reward resource="tribe:wealth" count="2" /> <!-- Reward the tribe for hunting -->
         <locate obj="tribe:resource" static="no" random="no" range="80" /> <!-- Get new random pos in field -->
       </loop>
       <locate obj="tribe:home"  static="no" />
       <wander anim="walk" />        <!-- Navigate using waypoints -->
       <navigate anim="walk" />      <!-- Local navigation -->
       <transfer item="tribe:wealth" target="tribe" />
+    </behavior>
+    <behavior name="MoveTribe" completion_decay="200" growth="0" initial="0">
+      <locate obj="waypoint"  static="no" />    <!-- Locate nearest waypoint -->
+      <navigate anim="walk" />                  <!-- Local navigation -->
+      <locate obj="tribe_home" static="no" random="yes" range="800" />
+      <wander anim="walk" />        <!-- Navigate using waypoints -->
+      <navigate anim="walk" />      <!-- Local navigation -->
+      <wait anim="stand" duration="30" />
+      <tribe_home /> <!-- This command will move the tribe home to current location -->
     </behavior>
     <behavior name="Reproduce" completion_decay="200" growth="0" initial="0">
       <!--  Should include a go home behaviour here first -->
@@ -461,6 +472,7 @@
     <react event="tribe:reproduce"    behavior="Reproduce"     inactive_only="yes" />
     <react event="tribe:resurrect"    behavior="Resurrect"     inactive_only="yes" when_dead="yes" />
     <react event="inventory:added"    behavior="RememberLoc"   type="Flesh"/>
+    <react event="tribe:move"         behavior="MoveTribe"     delta="200" />
   </npctype>
 
 

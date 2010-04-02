@@ -300,6 +300,15 @@ public:
      */
     psPath *FindPath(const Waypoint * wp1, const Waypoint * wp2, psPath::Direction & direction);
 
+    /** Enable or disable NPCs
+     *
+     *  Alter the Disabled state of NPCs.
+     *
+     *  @param pattern Used to mach NPC(s) to enable or disable.
+     *  @param enable  Set to true if the NPC should be enabled.
+     */
+    void EnableDisableNPCs( const char* pattern, bool enable );
+    
     /**
      * List all NPCs matching pattern to console.
      */

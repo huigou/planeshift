@@ -41,6 +41,7 @@ public:
 
     /**
      * Construct a basic need with the given needType and needName for debuging.
+     *
      */
     psTribeNeed(psTribe::TribeNeedType needType, csString name, csString perception,
                 float needStartValue, float needGrowthValue)

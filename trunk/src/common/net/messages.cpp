@@ -4300,16 +4300,22 @@ PSF_IMPLEMENT_MSG_FACTORY3(psDRMessage,MSGTYPE_DEAD_RECKONING);
 void psDRMessage::CreateMsgEntry(uint32_t client, csStringSet* msgstrings, csStringHashReversible* msgstringshash,
                                  iSector *sector, csString sectorName)
 {
-    if(sector)
+    if (sector)
+    {
         sectorName = sector->QueryObject()->GetName();
+    }
 
     csStringID sectorNameStrId;
-    if(msgstrings)
-        sectorNameStrId = msgstrings ? msgstrings->Request(sectorName) : csInvalidStringID;
-    else if(msgstringshash)
-        sectorNameStrId = msgstrings ? msgstringshash->Request(sectorName) : csInvalidStringID;
+    if (msgstrings)
+    {
+        sectorNameStrId = msgstrings ? msgstrings->Request(sectorName.GetDataSafe()) : csInvalidStringID;
+    }
+    else if (msgstringshash)
+    {
+        sectorNameStrId = msgstrings ? msgstringshash->Request(sectorName.GetDataSafe()) : csInvalidStringID;
+    }
 
-    int sectorNameLen = (sectorNameStrId == csInvalidStringID) ? (int) strlen (sectorName) : 0;
+    int sectorNameLen = (sectorNameStrId == csInvalidStringID) ? sectorName.Length() : 0;
 
     msg.AttachNew(new MsgEntry( sizeof(uint32)*12 + sizeof(uint8)*4 + (sectorNameLen?sectorNameLen+1:0) ));
 
@@ -7531,7 +7537,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psCachedFileMessage,MSGTYPE_CACHEFILE);
 
 psCachedFileMessage::psCachedFileMessage( uint32_t client, uint8_t sequence, const char *pathname, iDataBuffer *contents)
 {
-    printf("::Building cached file message for '%s', sequence %d, size %lu.\n", pathname, sequence,contents?contents->GetSize():0);
+    printf("::Building cached file message for '%s', sequence %d, size %u.\n", pathname, sequence,contents?contents->GetSize():0);
 
     // We send the hash along with it to save as the filename on the client
     if (pathname[0] == '(')  // timestamp always starts with '('

@@ -1123,6 +1123,33 @@ csList<Waypoint*> psNPCClient::FindWaypointRoute(Waypoint * start, Waypoint * en
     return pathNetwork->FindWaypointRoute(start,end);
 }
 
+void psNPCClient::EnableDisableNPCs( const char* pattern, bool enable )
+{
+    // First check if pattern is number
+    EID eid = atoi(pattern);
+
+    if (eid != 0)
+    {
+        NPC* npc = FindNPC(eid);
+        npc->Disable(!enable);
+    }
+    else
+    {
+        // Mach by pattern
+
+        for (size_t i=0; i<npcs.GetSize(); i++)
+        {
+            if ( (strcmp(pattern,"all")==0) ||
+                 (strstr(npcs[i]->GetName(),pattern)) )
+            {
+                npcs[i]->Disable(!enable);
+            }
+        }
+    }
+}
+
+
+
 void psNPCClient::ListAllNPCs(const char * pattern)
 {
     CPrintf(CON_CMDOUTPUT, "%-7s %-5s %-30s %-6s %-6s %-20s %-20s %-4s %-3s %-8s\n", 
@@ -1255,9 +1282,15 @@ void psNPCClient::ListAllEntities(const char * pattern, bool onlyCharacters)
 
 void psNPCClient::ListTribes(const char * pattern)
 {
-    CPrintf(CON_CMDOUTPUT, "%9s %-30s %-7s %-7s %7s %7s %7s %7s %-15s \n", "Tribe id", "Name", "MCount","NPCs","x","y","z","r","sector");
+    if (tribes.GetSize() == 0)
+    {
+        CPrintf(CON_CMDOUTPUT, "No tribes defined\n");
+        return;
+    }
+    
     for (size_t i = 0; i < tribes.GetSize(); i++)
     {
+        CPrintf(CON_CMDOUTPUT, "\n%9s %-30s %-7s %-7s %7s %7s %7s %7s %-15s \n", "Tribe id", "Name", "MCount","NPCs","x","y","z","r","sector");
         if (!pattern || strstr(tribes[i]->GetName(),pattern))
         {
             csVector3 pos;

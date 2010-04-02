@@ -147,7 +147,7 @@ public:
     const char* GetName() {return name.GetDataSafe();}
     void SetAlive(bool a) { alive = a; }
     bool IsAlive() const { return alive; }
-    void Disable();
+    void Disable(bool disable = true);
     bool IsDisabled() { return disabled; }
 
     Behavior *GetCurrentBehavior() { return brain->GetCurrentBehavior(); }

@@ -1851,7 +1851,8 @@ int com_setlog(char *line)
     csString filter(words[2]);
 
     bool flag;
-    if (tolower(flagword.GetAt(0)) == 't' || tolower(flagword.GetAt(0)) == 'y' || flagword.GetAt(0) == '1')
+    if (flagword.IsEmpty() || tolower(flagword.GetAt(0)) == 't' ||
+        tolower(flagword.GetAt(0)) == 'y' || flagword.GetAt(0) == '1')
     {
         flag=true;
     }
@@ -2075,7 +2076,7 @@ int com_liststats(char *line)
     CPrintf(CON_CMDOUTPUT ,"Experience points(W)  %7u\n",charData->GetExperiencePoints());
     CPrintf(CON_CMDOUTPUT ,"Progression points(X) %7u\n",charData->GetProgressionPoints());
     CPrintf(CON_CMDOUTPUT ,"%-20s %12s %12s %12s\n","Skill","Practice(Z)","Knowledge(Y)","Rank(R)");
-    for (int skillID = 0; skillID < psserver->GetCacheManager()->GetSkillAmount(); skillID++)
+    for (unsigned int skillID = 0; skillID < psserver->GetCacheManager()->GetSkillAmount(); skillID++)
     {
         psSkillInfo * info = psserver->GetCacheManager()->GetSkillByID(skillID);
         if (!info)
@@ -2406,7 +2407,18 @@ int com_randomloot( char* loot )
     return 0;
 }
 
-/* add all new commands here */
+/** List of commands available at the console.
+ *
+ * Add new commands that should be avalble at the console here.
+ * 1st parameter is the name.
+ * 2nd parameter is allowRemote, that when true would allow this command to be executed
+ *               from a remote console.
+ * 3rd parameter is the function pointer to the callback function that will be called
+ *               when the user acctivate the function.
+ * 4th parameter is a description of the command.
+ *
+ * Make sure the last entry contain 0 for all entries to terminate the list.
+ */
 const COMMAND commands[] = {
 
   // Server commands

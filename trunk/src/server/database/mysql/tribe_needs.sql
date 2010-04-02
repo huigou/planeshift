@@ -60,4 +60,7 @@ INSERT INTO `tribe_needs` VALUES (2,4,'RESOURCE_AREA','Hunt'     ,'tribe:hunt'  
 #
 # Reproduce need some welth in order to work. Hunt will gather that resource to the tribe.
 INSERT INTO `tribe_needs` VALUES (2,5,'REPRODUCE'    ,'Reproduce','tribe:reproduce','Hunt'    ,'0.00','1.00');
+#
+# Once in a while this tribe will relocate to a new place.
+INSERT INTO `tribe_needs` VALUES (2,6,'GENERIC'      ,'Move'     ,'tribe:move'     ,''        ,'0.00','0.05');
 
