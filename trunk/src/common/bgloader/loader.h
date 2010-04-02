@@ -454,7 +454,7 @@ private:
 
         inline bool InRange(const csBox3& curBBox, bool force)
         {
-            return force || !mObject.IsValid() && curBBox.Overlap(bbox);
+            return force || (!mObject.IsValid() && curBBox.Overlap(bbox));
         }
 
         inline bool OutOfRange(const csBox3& curBBox)
