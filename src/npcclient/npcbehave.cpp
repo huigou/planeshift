@@ -150,7 +150,8 @@ bool NPCType::Load(iDocumentNode *node)
             Behavior *b = new Behavior;
             if (!b->Load(node))
             {
-                Error1("Could not load behavior. Error in XML");
+                Error3("Could not load behavior '%s'. Error in XML in node '%s'.",
+                       b->GetName(),node->GetValue());
                 delete b;
                 return false;
             }
@@ -622,6 +623,10 @@ bool Behavior::LoadScript(iDocumentNode *node,bool top_level)
         {
             op = new RotateOperation;
         }
+        else if ( strcmp( node->GetValue(), "reward" ) == 0 )
+        {
+            op = new RewardOperation;
+        }
         else if ( strcmp( node->GetValue(), "sequence" ) == 0 )
         {
             op = new SequenceOperation;
@@ -634,7 +639,7 @@ bool Behavior::LoadScript(iDocumentNode *node,bool top_level)
         {
             op = new TransferOperation;
         }
-        else if ( strcmp( node->GetValue(), "tribehome" ) == 0 )
+        else if ( strcmp( node->GetValue(), "tribe_home" ) == 0 )
         {
             op = new TribeHomeOperation;
         }
@@ -656,7 +661,8 @@ bool Behavior::LoadScript(iDocumentNode *node,bool top_level)
         }
         else
         {
-            Error2("Node '%s' under Behavior is not a valid script operation name. Error in XML",node->GetValue() );
+            Error2("Node '%s' under Behavior is not a valid script operation name. Error in XML",
+                   node->GetValue() );
             return false;
         }
 

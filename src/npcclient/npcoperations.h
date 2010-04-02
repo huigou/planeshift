@@ -379,7 +379,7 @@ class Waypoint;
 
 /**
  * Wander auto-navigates randomly between a network of waypoints specified
- * in npcdefs.xml.
+ * in the DB.
  */
 class WanderOperation : public ScriptOperation
 {
@@ -808,7 +808,7 @@ protected:
 
 public:
 
-    TribeHomeOperation(): ScriptOperation("TribeHome") {};
+    TribeHomeOperation(): ScriptOperation("Tribe_Home") {};
     virtual ~TribeHomeOperation() {};
     virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
     virtual bool Load(iDocumentNode *node);
@@ -817,13 +817,19 @@ public:
 
 //-----------------------------------------------------------------------------
 
-/**
-* Dig will make the NPC dig for a resource
-*/
+/** Dig will make the NPC dig for a resource.
+ *
+ *  This class is the implementation of the dig operations
+ *  used in behavior scripts for NPCS.
+ *
+ *  Examples:
+ *  <dig resource="tribe:wealth" />
+ *  <dig resource="Gold Ore" />
+ */
 class DigOperation : public ScriptOperation
 {
 protected:
-    csString resource;
+    csString resource; ///< The name of the resource to dig for.
 
 public:
 
@@ -837,7 +843,7 @@ public:
 //-----------------------------------------------------------------------------
 
 /**
-* Eat will take a bite of a nearby dead actor and resource to tribe wealth
+* Eat will take a bite of a nearby dead actor and add resource to tribe wealth.
 */
 class EatOperation : public ScriptOperation
 {
@@ -848,6 +854,32 @@ public:
 
     EatOperation(): ScriptOperation("Eat") {};
     virtual ~EatOperation() {};
+    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual bool Load(iDocumentNode *node);
+    virtual ScriptOperation *MakeCopy();
+};
+
+//-----------------------------------------------------------------------------
+
+/** Implement the reward NPC script operation.
+ *
+ * Reward will add a given resource to the Tribe that the
+ * current NPC is a member of.
+ *
+ * Examples:
+ * <reward resource="Gold Ore" count="2" />
+ * <reward resource="tribe:wealth" />
+ */
+class RewardOperation : public ScriptOperation
+{
+protected:
+    csString resource; ///< The Resource to be rewarded to the tribe.
+    int count;         ///< The number of the resource to reward to the tribe.
+    
+public:
+
+    RewardOperation(): ScriptOperation("Reward") {};
+    virtual ~RewardOperation() {};
     virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
     virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy();

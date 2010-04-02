@@ -74,9 +74,21 @@ int com_list(char *arg)
     return 0;
 }
 
+int com_disable(char *arg)
+{
+    npcclient->EnableDisableNPCs(arg,false);
+    return 0;
+}
+
 int com_entlist(char *arg)
 {
     npcclient->ListAllEntities(arg,false);
+    return 0;
+}
+
+int com_enable(char *arg)
+{
+    npcclient->EnableDisableNPCs(arg,true);
     return 0;
 }
 
@@ -320,7 +332,8 @@ int com_setlog(char *line)
     csString filter(words[2]);
     
     bool flag;
-    if (tolower(flagword.GetAt(0)) == 't' || tolower(flagword.GetAt(0)) == 'y' || flagword.GetAt(0) == '1')
+    if (flagword.IsEmpty() || tolower(flagword.GetAt(0)) == 't' ||
+        tolower(flagword.GetAt(0)) == 'y' || flagword.GetAt(0) == '1')
     {
         flag=true;
     }
@@ -363,11 +376,24 @@ int com_showtime(char *)
 }
 
 
-/* add all new commands here */
+/** List of commands available at the console.
+ *
+ * Add new commands that should be avalble at the console here.
+ * 1st parameter is the name.
+ * 2nd parameter is allowRemote, that when true would allow this command to be executed
+ *               from a remote console.
+ * 3rd parameter is the function pointer to the callback function that will be called
+ *               when the user acctivate the function.
+ * 4th parameter is a description of the command.
+ *
+ * Make sure the last entry contain 0 for all entries to terminate the list.
+ */
 const COMMAND commands[] = {
     { "charlist",     false, com_charlist,     "List all known characters"},
     { "debugnpc",     false, com_debugnpc,     "Switches the debug mode on 1 NPC"},
+    { "disable",      false, com_disable,      "Disable a enabled NPC. [all | pattern | EID]"},
     { "dumpwarpspace",true,  com_dumpwarpspace,"Dump the warp space table"},
+    { "enable",       false, com_enable,       "Enable a disabled NPC. [all | pattern | EID]"},
     { "entlist",      false, com_entlist,      "List all known entities (entlist [pattern | EID]"},
     { "filtermsg",    true,  com_filtermsg,    "Add or remove messages from the LOG_MESSAGE log"},
     { "help",         false, com_help,         "Show help information" },

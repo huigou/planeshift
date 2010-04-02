@@ -380,9 +380,9 @@ LocationType *NPC::GetRegion()
     }
 }
 
-void NPC::Disable()
+void NPC::Disable( bool disable)
 {
-    disabled = true;
+    disabled = disabled;
 
     // Stop the movement
     

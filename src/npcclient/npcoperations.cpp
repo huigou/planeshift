@@ -3037,6 +3037,57 @@ bool EatOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 
 //---------------------------------------------------------------------------
 
+bool RewardOperation::Load(iDocumentNode *node)
+{
+    // Load attributes
+    resource = node->GetAttributeValue("resource");
+    count = node->GetAttributeValueAsInt("count");
+
+    // Resource is mandatory for this operation
+    if (resource.IsEmpty())
+    {
+        return false;
+    }
+
+    // Default count to 1 if not pressent
+    if (csString(node->GetAttributeValue("count")).IsEmpty())
+    {
+        count = 1;
+    }
+    
+    return true;
+}
+
+ScriptOperation *RewardOperation::MakeCopy()
+{
+    RewardOperation *op = new RewardOperation;
+    op->resource = resource;
+    op->count = count;
+    return op;
+}
+
+bool RewardOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+{
+    csString res = resource;
+    
+    if (resource == "tribe:wealth")
+    {
+        if (npc->GetTribe())
+        {
+            res = npc->GetTribe()->GetNeededResource();
+        }
+    }
+
+    if (npc->GetTribe())
+    {
+        npc->GetTribe()->AddResource(res,count);
+    }
+
+    return true;
+}
+
+//---------------------------------------------------------------------------
+
 bool DebugOperation::Load(iDocumentNode *node)
 {
     exclusive = node->GetAttributeValue("exclusive");
