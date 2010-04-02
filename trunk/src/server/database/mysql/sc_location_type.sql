@@ -26,4 +26,6 @@ INSERT INTO `sc_location_type` VALUES (6, 'winch');
 INSERT INTO `sc_location_type` VALUES (7, 'NPC Room Fighter region 1');
 INSERT INTO `sc_location_type` VALUES (8, 'home');
 INSERT INTO `sc_location_type` VALUES (9, 'work');
+INSERT INTO `sc_location_type` VALUES (10,'tribe_home');
+INSERT INTO `sc_location_type` VALUES (11,'hunting_ground');
 

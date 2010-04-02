@@ -867,10 +867,12 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
     }
 
     //Assign experience and practice points
-    int practicePoints;
-    int experiencePoints;
-    float modifier;
+    if (workEvent->client)
     {
+        int practicePoints;
+        int experiencePoints;
+        float modifier;
+
         MathEnvironment env;
         env.Define("Success", roll < total);
         env.Define("Worker", workEvent->client->GetCharacterData());
@@ -883,14 +885,24 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
             experiencePoints = varResult->GetRoundValue();
         else
             experiencePoints = 0;
+
+
+        // assign practice and experience
+        if(practicePoints != 0)
+        {
+            workEvent->client->GetCharacterData()->CalculateAddExperience((PSSKILL)workEvent->nr->skill->id, practicePoints, modifier);
+        }
+        else
+        {
+            workEvent->client->GetCharacterData()->AddExperiencePointsNotify(experiencePoints);
+        }
+        
     }
-
-
-    // assign practice and experience
-    if(practicePoints != 0)
-        workEvent->client->GetCharacterData()->CalculateAddExperience((PSSKILL)workEvent->nr->skill->id, practicePoints, modifier);
     else
-        workEvent->client->GetCharacterData()->AddExperiencePointsNotify(experiencePoints);
+    {
+        //TODO: Fix the code abow to work without using the client all the time.
+        Debug2(LOG_SUPERCLIENT,0,"%s where not assigned experience for his work. Not implemented yet.",workEvent->worker->GetName());
+    }
 
     workEvent->worker->SetMode(PSCHARACTER_MODE_PEACE); // Actor isn't working anymore
 }

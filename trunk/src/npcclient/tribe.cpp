@@ -47,14 +47,12 @@
 
 extern iDataConnection *db;
 
-const char* psTribe::TribeNeedName[] =
+const char* psTribe::TribeNeedTypeName[] =
 {
-    "NOTHING",
-    "EXPLORE",
-    "WALK",
-    "DIG",
+    "GENERIC",
+    "RESOURCE_AREA",
     "REPRODUCE",
-    "RESURRECT"
+    ""
 };
 
 psTribe::psTribe()
@@ -82,9 +80,61 @@ bool psTribe::Load(iResultRow& row)
     wealth_resource_area = row["wealth_resource_area"];
     wealth_resource_growth = row.GetInt("wealth_resource_growth");
     reproduction_cost = row.GetInt("reproduction_cost");
+    wealth_gather_need = row["wealth_gather_need"];
 
     return true;
 }
+
+bool psTribe::LoadNeed(iResultRow& row)
+{
+    int      needId          = row.GetInt("need_id");
+    csString needType        = row["type"];
+    csString needName        = row["name"];
+    csString perception      = row["perception"];
+    csString dependName      = row["depend"];
+    float    needStartValue  = row.GetFloat("need_start_value");
+    float    needGrowthValue = row.GetFloat("need_growth_value");
+    
+    psTribeNeed *depend = needSet->Find( dependName );
+    psTribeNeed *need = NULL;
+
+    if (needType.CompareNoCase(psTribe::TribeNeedTypeName[GENERIC]))
+    {
+        need = new psTribeNeedGeneric(needName,perception,needStartValue,needGrowthValue);
+    } else
+    {
+        // The rest of the needs are depened on other needs.
+        // Check that we have the dependend need.
+
+        if (depend == NULL)
+        {
+            Error4("Failed to find dependend need '%s' for the need %d for tribe %d",
+                   dependName.GetDataSafe(),needId,id);
+            return false;
+        }
+
+        if (needType.CompareNoCase(psTribe::TribeNeedTypeName[RESOURCE_AREA]))
+        {
+            need = new psTribeNeedResourceArea(needName,perception,needStartValue,needGrowthValue,depend);
+        } else if (needType.CompareNoCase(psTribe::TribeNeedTypeName[REPRODUCE]))
+        {
+            need = new psTribeNeedReproduce(needName,perception,needStartValue,needGrowthValue,depend);
+        } else
+        {
+            Error3("Could not mach need '%s' for tribe %d",needName.GetDataSafe(),id);
+            return false;
+        }
+    }
+    
+    if (need)
+    {
+        needSet->AddNeed( need );
+        return true;
+    }
+
+    return false;
+}
+
 
 bool psTribe::LoadMember(iResultRow& row)
 {
@@ -308,12 +358,21 @@ int psTribe::CountResource(csString resource) const
 
 void psTribe::Advance(csTicks when,EventManager *eventmgr)
 {
-	if(when - last_growth > 1000)
-	{
-		AddResource(wealth_resource_name, wealth_resource_growth * ((when - last_growth) / 1000));
-		while(when - last_growth > 1000)
-			last_growth += 1000;
-	}
+    if (when - last_growth > 1000)
+    {
+        // We need to help tribes that have no members with some resources
+        // so that they can spawn the first entity
+        if (AliveCount() <= 0)
+        {
+            AddResource(wealth_resource_name, wealth_resource_growth * ((when - last_growth) / 1000));
+        }
+        
+        last_growth = when;
+    } else if (when - last_growth < 0) // Handle wrappoer of tick
+    {
+        last_growth = when;
+    }
+    
 	
     for (size_t i=0; i < members.GetSize(); i++)
     {
@@ -324,31 +383,23 @@ void psTribe::Advance(csTicks when,EventManager *eventmgr)
         if ((behavior && strcmp(behavior->GetName(),"do nothing")==0) ||
             (!npc->IsAlive()) )
         {
-            if (npc->IsAlive())
+            csString perc;
+
+            psTribeNeed *need = Brain(npc);
+            if (!need || need->GetPerception().IsEmpty())
             {
-                // TODO: Call this only once when returning to home.
-                npc->Printf("Share memories with tribe");
-                ShareMemories(npc);
+                continue; // Do noting
             }
             
-            csString perc;
-            switch (Brain(npc))
+            switch (need->GetNeedType())
             {
-            case EXPLORE:
-                perc.Format("tribe:explore");
-                break;
-            case DIG:
-                perc.Format("tribe:dig");
+            case GENERIC:
+            case RESOURCE_AREA:
+                perc = need->GetPerception();
                 break;
             case REPRODUCE:
                 AddResource(wealth_resource_name,-reproduction_cost);
-                perc.Format("tribe:reproduce");
-                break;
-            case RESURRECT:
-                perc.Format("tribe:resurrect");
-                break;
-            case WALK: 
-                perc.Format("tribe:path%d",psGetRandom(2)+1);
+                perc = need->GetPerception();
                 break;
             default:
                 continue; // Do nothing
@@ -377,46 +428,40 @@ void psTribe::InitializeNeedSet()
    
     needSet = new psTribeNeedSet(this);
 
-    psTribeNeedNothing   * nothing   = new psTribeNeedNothing();
-    needSet->AddNeed( nothing );
-    psTribeNeedExplore   * explore   = new psTribeNeedExplore();
-    needSet->AddNeed( explore );
-    psTribeNeedDig       * dig       = new psTribeNeedDig(explore);
-    needSet->AddNeed( dig );
-    psTribeNeedReproduce * reproduce = new psTribeNeedReproduce(dig);
-    needSet->AddNeed( reproduce );
-    psTribeNeedWalk      * walk      = new psTribeNeedWalk();
-    needSet->AddNeed( walk );
 }
 
-psTribe::TribeNeed psTribe::Brain(NPC * npc)
+psTribeNeed* psTribe::Brain(NPC * npc)
 {
     // Handle special case for dead npc's
     if (!npc->IsAlive())
     {
         if (AliveCount() == 0 && CountResource(wealth_resource_name) >= 10 * reproduction_cost) // Resurrect with large cost if every member is dead.
         {
-        	AddResource(wealth_resource_name,-10*reproduction_cost);
-            return RESURRECT;
+            AddResource(wealth_resource_name,-10*reproduction_cost); 
+            return needSet->Find("Resurrect");
         }
         else if (CanGrow())
     	{
-    		AddResource(wealth_resource_name,-reproduction_cost);
-    		return RESURRECT;
+            AddResource(wealth_resource_name,-reproduction_cost); 
+            return needSet->Find("Resurrect");
     	}
         else
         {
-            needSet->MaxNeed("Dig");
+            needSet->MaxNeed(wealth_gather_need); // Next live NPC will start gather resources
         }
-        return NOTHING;        
+        return NULL;        
     }
     
-
     // Continue on for live NPCs
 
     needSet->UpdateNeed(npc);
     
-    return needSet->CalculateNeed(npc);
+    psTribeNeed *next_need = needSet->CalculateNeed(npc);
+
+    // Check if the most needed need has some depenency that needs to be done first.
+    next_need = next_need->GetNeed();
+
+    return next_need;
 }
 
 int psTribe::GetMaxSize() const
@@ -447,6 +492,14 @@ void psTribe::GetHome(csVector3& pos, float& radius, iSector* &sector)
         home_sector = npcclient->GetEngine()->FindSector(home_sector_name);
     }
     sector = home_sector;
+}
+
+void psTribe::SetHome(const csVector3& pos, iSector* sector)
+{ 
+    home_pos = pos; 
+    home_sector = sector;
+    // Consider adding storrage of this new position to DB here
+    // TODO: Store to DB.
 }
 
 bool psTribe::GetResource(NPC* npc, csVector3 start_pos, iSector * start_sector, csVector3& located_pos, iSector* &located_sector, float range, bool random)
@@ -553,6 +606,21 @@ void psTribe::Memorize(NPC * npc, Perception * perception)
     
     npc->Printf("Store in privat memory: '%s' %.2f %.2f %2f %.2f '%s'",name.GetDataSafe(),pos.x,pos.y,pos.z,radius,npc->GetName());
     AddMemory(name,pos,sector,radius,npc);
+}
+
+void psTribe::TribeHome(NPC * npc, Perception * perception)
+{
+    // Retriv date from the perception
+    csString  name = perception->GetType();
+    float     radius = perception->GetRadius();
+    csVector3 pos;
+    iSector*  sector;
+    perception->GetLocation(pos,sector);
+        
+    
+    npc->Printf("Moves tribe home to: '%s' %.2f %.2f %2f %.2f '%s'",name.GetDataSafe(),pos.x,pos.y,pos.z,radius,npc->GetName());
+
+    SetHome(pos,sector);
 }
 
 psTribe::Memory* psTribe::FindPrivMemory(csString name,const csVector3& pos, iSector* sector, float radius, NPC * npc)

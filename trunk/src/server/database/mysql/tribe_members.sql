@@ -15,4 +15,5 @@ CREATE TABLE `tribe_members`
 #
 
 INSERT INTO `tribe_members` VALUES (1,20);
+INSERT INTO `tribe_members` VALUES (2,62);
 

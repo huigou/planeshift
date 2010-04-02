@@ -68,6 +68,7 @@
 #include "pathfind.h"
 #include "gem.h"
 #include "tribe.h"
+#include "tribeneed.h"
 #include "status.h"
 
 #ifndef INFINITY
@@ -629,12 +630,31 @@ bool psNPCClient::LoadTribes()
         if (tribe->Load(rs[i]))
         {
             tribes.Push(tribe);
+
+            { // Start Load Needs scope
+                Result rs2(db->Select("select * from tribe_needs where tribe_id=%d",tribe->GetID()));
+                if (!rs2.IsValid())
+                {
+                    Error2("Could not load tribe needs from db: %s",db->GetLastError() );
+                    return false;
+                }
+                for (int j=0; j<(int)rs2.Count(); j++)
+                {
+                    if (!tribe->LoadNeed(rs2[j]))
+                    {
+                        Error2("Failed to load needs for tribe from db: %s",db->GetLastError());
+                        return false;
+                    }
+                    
+                }
+            } // End Load Needs scope
+
             { // Start Load Members scope
                 Result rs2(db->Select("select * from tribe_members where tribe_id=%d",tribe->GetID()));
                 if (!rs2.IsValid())
                 {
                     Error2("Could not load tribe members from db: %s",db->GetLastError() );
-                return false;
+                    return false;
                 }
                 for (int j=0; j<(int)rs2.Count(); j++)
                 {
@@ -857,41 +877,53 @@ void psNPCClient::LoadCompleted()
 void psNPCClient::Tick()
 {
     // Fire a new tick for the common AI processing loop
-	psNPCClientTick *tick = new psNPCClientTick(250,this);
+    psNPCClientTick *tick = new psNPCClientTick(250,this);
     tick->QueueEvent();
 
-	tick_counter++;
+    tick_counter++;
 
-	ScopedTimer st_tick(250, "tick for tick_counter %d.",tick_counter);
+    ScopedTimer st_tick(250, "tick for tick_counter %d.",tick_counter);
 	
-	csTicks when = csGetTicks();
+    csTicks when = csGetTicks();
 
-	// Advance tribes
-	for (size_t j=0; j<tribes.GetSize(); j++)
-	{
-		csTicks start = csGetTicks();             // When did we start
+    // Advance tribes
+    for (size_t j=0; j<tribes.GetSize(); j++)
+    {
+        csTicks start = csGetTicks();             // When did we start
+        
+        tribes[j]->Advance(when,eventmanager);
+        
+        csTicks timeTaken = csGetTicks() - start; // How long did it take
+        
+        if (timeTaken > 250)                      // This took way to long time
+        {
+            CPrintf(CON_WARNING,"Used %u time to process tick for tribe: %s(ID: %u)\n",
+                    timeTaken,tribes[j]->GetName(),tribes[j]->GetID());
+            ListTribes(tribes[j]->GetName());
+        }
+    }
+    
+    // Percept proximity items every 4th tick
+    if (tick_counter % 4 == 0)
+    {
+        ScopedTimer st(200, "tick for percept proximity items");
+        
+        PerceptProximityItems();
+    }
 
-		tribes[j]->Advance(when,eventmanager);
+    // Percept proximity locations every 4th tick
+    // Tribes uses this to memorize locations as a tribe
+    // member pass by
+    if (tick_counter % 4 == 2)
+    {
+        ScopedTimer st(200, "tick for percept proximity locations");
+        
+        PerceptProximityLocations();
+    }
+ 
 
-		csTicks timeTaken = csGetTicks() - start; // How long did it take
-
-		if (timeTaken > 250)                      // This took way to long time
-		{
-			CPrintf(CON_WARNING,"Used %u time to process tick for tribe: %s(ID: %u)\n",
-					timeTaken,tribes[j]->GetName(),tribes[j]->GetID());
-			ListTribes(tribes[j]->GetName());
-		}
-	}
-
-	// Percept proximity items every 4th tick
-	if (tick_counter % 4 == 0)
-	{
-		ScopedTimer st(200, "tick for percept proximity items");
-
-		PerceptProximityItems();
-	}
-	// Send all queued npc commands to the server
-	network->SendAllCommands(true); // Final
+   // Send all queued npc commands to the server
+    network->SendAllCommands(true); // Final
 }
 
 
@@ -1115,7 +1147,7 @@ void psNPCClient::ListAllNPCs(const char * pattern)
             if(npcs[i]->GetBrain())
                 brain++;
         }
-        CPrintf(CON_CMDOUTPUT, "NPC summary for %d NPCs: %d disabled, %d alive, %d with entities, %d with current behaviour, %d with brain", 
+        CPrintf(CON_CMDOUTPUT, "NPC summary for %d NPCs: %d disabled, %d alive, %d with entities, %d with current behaviour, %d with brain\n", 
                 npcs.GetSize(), disabled, alive, entity, behaviour, brain);
     }
     for (size_t i = 0; i < npcs.GetSize(); i++)
@@ -1170,7 +1202,8 @@ void psNPCClient::ListAllEntities(const char * pattern, bool onlyCharacters)
 {
     if(onlyCharacters)
     {
-        CPrintf(CON_CMDOUTPUT, "%-9s %-5s %-10s %-30s %-3s\n" ,"Player ID", "EID","Type","Name","Vis","Inv");
+        CPrintf(CON_CMDOUTPUT, "%-9s %-5s %-10s %-30s %-3s %-3s %-5s\n" ,
+                "Player ID", "EID","Type","Name","Vis","Inv","Alive");
         for (size_t i=0; i < all_gem_objects.GetSize(); i++)
         {
             gemNPCActor * actor = dynamic_cast<gemNPCActor *> (all_gem_objects[i]);
@@ -1179,20 +1212,22 @@ void psNPCClient::ListAllEntities(const char * pattern, bool onlyCharacters)
 
             if (!pattern || strstr(actor->GetName(),pattern) || atoi(pattern) == (int)actor->GetEID().Unbox())
             {
-                CPrintf(CON_CMDOUTPUT, "%-9d %-5d %-10s %-30s %-3s %-3s\n",
+                CPrintf(CON_CMDOUTPUT, "%-9d %-5d %-10s %-30s %-3s %-3s %-5s\n",
                         actor->GetPID().Unbox(),
                         actor->GetEID().Unbox(),
                         actor->GetObjectType(),
                         actor->GetName(),
                         (actor->IsVisible()?"Yes":"No"),
-                        (actor->IsInvincible()?"Yes":"No"));
+                        (actor->IsInvincible()?"Yes":"No"),
+                        (actor->IsAlive()?"Yes":"No"));
             }
             
         }
         return;
     }
 
-    CPrintf(CON_CMDOUTPUT, "%-5s %-10s %-30s %-3s %-3s %-4s Position\n","EID","Type","Name","Vis","Inv","Pick");
+    CPrintf(CON_CMDOUTPUT, "%-9s %-5s %-10s %-30s %-3s %-3s %-4s Position\n",
+            "Player ID","EID","Type","Name","Vis","Inv","Pick");
     for (size_t i=0; i < all_gem_objects.GetSize(); i++)
     {
         gemNPCObject * obj = all_gem_objects[i];
@@ -1203,7 +1238,8 @@ void psNPCClient::ListAllEntities(const char * pattern, bool onlyCharacters)
 
         if (!pattern || strstr(obj->GetName(),pattern) || atoi(pattern) == (int)obj->GetEID().Unbox())
         {
-            CPrintf(CON_CMDOUTPUT, "%5d %-10s %-30s %-3s %-3s %-4s %s %d\n",
+            CPrintf(CON_CMDOUTPUT, "%-9d %5d %-10s %-30s %-3s %-3s %-4s %s %d\n",
+                    obj->GetPID().Unbox(),
                     obj->GetEID().Unbox(),
                     obj->GetObjectType(),
                     obj->GetName(),
@@ -1263,24 +1299,44 @@ void psNPCClient::ListTribes(const char * pattern)
                         tribes[i]->GetResource(r).name.GetData(),
                         tribes[i]->GetResource(r).amount);
             }
-            CPrintf(CON_CMDOUTPUT,"Memories:\n");
-            CPrintf(CON_CMDOUTPUT,"%7s %-20s Position                Radius  %-20s  %-20s\n","ID","Name","Sector","Private to NPC");
-            csList<psTribe::Memory*>::Iterator it = tribes[i]->GetMemoryIterator();
-            while (it.HasNext())
-            {
-                psTribe::Memory* memory = it.Next();
-                csString name;
-                if (memory->npc)
+            { // Start print Memories scope
+                CPrintf(CON_CMDOUTPUT,"Memories:\n");
+                CPrintf(CON_CMDOUTPUT,"%7s %-20s Position                Radius  %-20s  %-20s\n","ID","Name","Sector","Private to NPC");
+                csList<psTribe::Memory*>::Iterator it = tribes[i]->GetMemoryIterator();
+                while (it.HasNext())
                 {
-                    name.Format("%s(%u)", memory->npc->GetName(), memory->npc->GetPID().Unbox());
+                    psTribe::Memory* memory = it.Next();
+                    csString name;
+                    if (memory->npc)
+                    {
+                        name.Format("%s(%u)", memory->npc->GetName(), memory->npc->GetPID().Unbox());
+                    }
+                    CPrintf(CON_CMDOUTPUT,"%7d %-20s %7.1f %7.1f %7.1f %7.1f %-20s %-20s\n",
+                            memory->id,
+                            memory->name.GetDataSafe(),
+                            memory->pos.x,memory->pos.y,memory->pos.z,memory->radius,
+                            (memory->sector?memory->sector->QueryObject()->GetName():""),
+                            name.GetDataSafe());
                 }
-                CPrintf(CON_CMDOUTPUT,"%7d %-20s %7.1f %7.1f %7.1f %7.1f %-20s %-20s\n",
-                        memory->id,
-                        memory->name.GetDataSafe(),
-                        memory->pos.x,memory->pos.y,memory->pos.z,memory->radius,
-                        (memory->sector?memory->sector->QueryObject()->GetName():""),
-                        name.GetDataSafe());
-            }
+            } // End print Memeories scope
+
+            { // Start print Needs scope
+                
+                CPrintf(CON_CMDOUTPUT,"Needs:\n");
+                CPrintf(CON_CMDOUTPUT,"%-20s %10s %-20s %6s %6s   %s\n","Need","Value","Perception","Start","Growth","Depend on");
+                psTribeNeedSet::NeedIterator it(tribes[i]->GetNeedSet()->GetIterator());
+                while (it.HasNext())
+                {
+                    psTribeNeed* need = it.Next();
+                    CPrintf(CON_CMDOUTPUT,"%-20s %10.2f %-20s %6.2f %6.2f -> %s\n",
+                            need->GetTypeAndName().GetDataSafe(),
+                            need->current_need,
+                            need->GetPerception().GetDataSafe(),
+                            need->GetNeedStartValue(),
+                            need->GetNeedGrowthValue(),
+                            need->GetNeed()->GetTypeAndName().GetDataSafe());
+                }
+            } // End print Needs scope
         }
     }
 }

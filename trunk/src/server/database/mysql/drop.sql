@@ -81,6 +81,7 @@ DROP TABLE trainer_skills;
 DROP TABLE traits;
 DROP TABLE `tribe_members`;
 DROP TABLE `tribes`;
+DROP TABLE `tribe_needs`;
 DROP TABLE `unique_content`;
 DROP TABLE `character_relationships`;
 DROP TABLE `familiar_types`;

@@ -29,11 +29,20 @@
 #include "tribeneed.h"
 #include "npc.h"
 
-
+// ---------------------------------------------------------------------------------
 
 psTribe * psTribeNeed::GetTribe() const 
 {
     return parentSet->GetTribe();
+}
+
+csString psTribeNeed::GetTypeAndName() const
+{
+    csString result;
+    
+    result = needName + "(" + psTribe::TribeNeedTypeName[needType] +")";
+    
+    return result;
 }
 
 // ---------------------------------------------------------------------------------
@@ -46,13 +55,13 @@ void psTribeNeedSet::UpdateNeed(NPC * npc)
     }
 }
 
-psTribe::TribeNeed psTribeNeedSet::CalculateNeed(NPC * npc)
+psTribeNeed* psTribeNeedSet::CalculateNeed(NPC * npc)
 {
     for (size_t i=0; i < needs.GetSize()-1; i++)
     {
         for (size_t j=i+1; j < needs.GetSize(); j++)
         {
-            if (needs[i]->GetNeed(npc) < needs[j]->GetNeed(npc))
+            if (needs[i]->GetNeedValue(npc) < needs[j]->GetNeedValue(npc))
             {
                 psTribeNeed *tmp = needs[i];
                 needs[i] = needs[j];
@@ -62,24 +71,41 @@ psTribe::TribeNeed psTribeNeedSet::CalculateNeed(NPC * npc)
     }
 
     csString log;
-    log.Format("Need for %s",npc->GetName());
+    log.Format("Need for %s(%s)",npc->GetName(),ShowID(npc->GetEID()));
     for (size_t i=0; i < needs.GetSize(); i++)
     {
-        log.AppendFmt("\n%20s %.2f -> %s",needs[i]->name.GetDataSafe(),needs[i]->current_need,psTribe::TribeNeedName[needs[i]->GetNeedType()]);
+        log.AppendFmt("\n%20s %10.2f -> %s",needs[i]->GetTypeAndName().GetDataSafe(),needs[i]->current_need,needs[i]->GetNeed()->GetTypeAndName().GetDataSafe());
     }
     Debug2(LOG_TRIBES, GetTribe()->GetID(), "%s", log.GetData());
 
     needs[0]->ResetNeed();
-    return needs[0]->GetNeedType();
+    return needs[0];
 }
 
 void psTribeNeedSet::MaxNeed(const csString& needName)
 {
+    psTribeNeed * need = Find( needName );
+    if (need)
+    {
+        need->current_need = 9999.0;
+    }
+}
+
+void psTribeNeedSet::AddNeed(psTribeNeed * newNeed)
+{
+    newNeed->SetParent(this);
+    newNeed->ResetNeed();
+    needs.Push(newNeed);
+}
+
+psTribeNeed* psTribeNeedSet::Find(const csString& needName) const
+{
     for (size_t i=0; i < needs.GetSize(); i++)
     {
-        if (needs[i]->name == needName)
+        if (needs[i]->needName.CompareNoCase(needName))
         {
-            needs[i]->current_need = 9999.0;
+            return needs[i];
         }
-    }    
+    }
+    return NULL;
 }

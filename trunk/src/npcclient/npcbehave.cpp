@@ -552,6 +552,10 @@ bool Behavior::LoadScript(iDocumentNode *node,bool top_level)
         {
             op = new DigOperation;
         }
+        else if ( strcmp( node->GetValue(), "eat" ) == 0 )
+        {
+            op = new EatOperation;
+        }
         else if ( strcmp( node->GetValue(), "drop" ) == 0 )
         {
             op = new DropOperation;
@@ -581,6 +585,10 @@ bool Behavior::LoadScript(iDocumentNode *node,bool top_level)
         else if ( strcmp( node->GetValue(), "memorize" ) == 0 )
         {
             op = new MemorizeOperation;
+        }
+        else if ( strcmp( node->GetValue(), "share_memories" ) == 0 )
+        {
+            op = new ShareMemoriesOperation;
         }
         else if ( strcmp( node->GetValue(), "move" ) == 0 )
         {
@@ -625,6 +633,10 @@ bool Behavior::LoadScript(iDocumentNode *node,bool top_level)
         else if ( strcmp( node->GetValue(), "transfer" ) == 0 )
         {
             op = new TransferOperation;
+        }
+        else if ( strcmp( node->GetValue(), "tribehome" ) == 0 )
+        {
+            op = new TribeHomeOperation;
         }
         else if ( strcmp( node->GetValue(), "visible" ) == 0 )
         {

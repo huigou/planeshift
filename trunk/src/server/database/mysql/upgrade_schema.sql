@@ -1436,6 +1436,12 @@ UPDATE `server_options` SET `option_value`='1244' WHERE `option_name`='db_versio
 ALTER TABLE `sectors` ADD COLUMN `DeathRestoreMana` CHAR(1)  NOT NULL DEFAULT 'Y' COMMENT 'When not N the sector will restore mana when the player dies in it, else nothing is done.' AFTER `TeleportingPenaltyEnable`,
  ADD COLUMN `DeathRestoreHP` CHAR(1)  NOT NULL DEFAULT 'Y' COMMENT 'When not N the sector will restore HP when the player dies in it, else it just sets the minimum to keep him alive and not death loop.' AFTER `DeathRestoreMana`;
 
+#1245 - Anders Reggestad added tribe_needs
+UPDATE `server_options` SET `option_value`='1245' WHERE `option_name`='db_version';
+SOURCE tribe_needs.sql;
+ALTER TABLE `tribes`
+  ADD COLUMN wealth_gather_need varchar(30) NOT NULL default '' COMMENT 'The need used to gather resources' AFTER `wealth_resource_area`;
+UPDATE `tribes` SET `wealth_gather_need` WHERE `id`=1;
 
 
 # Insert your upgrade before this line. Remember when you set a new db_version

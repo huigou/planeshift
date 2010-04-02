@@ -705,12 +705,21 @@ void gemObject::Broadcast(int clientnum, bool control )
 
 void gemObject::SetAlive(bool flag)
 {
+    bool changed = is_alive != flag;
+    
     is_alive = flag;
     if (!flag)
     {
         GetCharacterData()->GetHPRate().SetBase(0);  // This keeps dead guys from regen'ing HP
         GetCharacterData()->GetManaRate().SetBase(0);  // This keeps dead guys from regen'ing Mana
         BroadcastTargetStatDR( psserver->GetNetManager()->GetConnections() );
+    }
+
+    gemActor * actor = GetActorPtr();
+
+    if (changed && actor )
+    {
+        psserver->GetNPCManager()->QueueFlagPerception( actor );
     }
 }
 
@@ -1918,10 +1927,10 @@ gemActor::gemActor(GEMSupervisor* gemsupervisor, CacheManager* cachemanager, Ent
   gemObject(gemsupervisor,entitymanager,cachemanager,chardata->GetCharFullName(),factname,myInstance,room,pos,rotangle,clientnum),
 psChar(chardata), factions(NULL), mount(NULL), DRcounter(0), forceDRcounter(0), lastDR(0), lastV(0), lastSentSuperclientPos(0, 0, 0),
 lastSentSuperclientInstance(-1), activeReports(0), isFalling(false), invincible(false), visible(true), viewAllObjects(false),
-movementMode(0), isAllowedToMove(true), atRest(true), spellCasting(NULL), workEvent(NULL), pcmove(NULL),
+  movementMode(0), isAllowedToMove(true), atRest(true), player_mode(PSCHARACTER_MODE_PEACE), spellCasting(NULL), workEvent(NULL), pcmove(NULL),
 nevertired(false), infinitemana(false), instantcast(false), safefall(false), givekillexp(false), attackable(false)
 {
-	forcedSector = NULL;
+    forcedSector = NULL;
     matname = chardata->GetRaceInfo()->base_texture_name;
     entityManager = entitymanager;
 
@@ -2612,8 +2621,11 @@ void gemActor::Send( int clientnum, bool control, bool to_superclients, psPersis
     csString BeltGroup   = psChar->GetBeltGroup();
     csString CloakGroup  = psChar->GetCloakGroup();
 
+    // The following flags will be percepted to the NPC client in the FlagPerception message
+    // upon change.
     if (!GetVisibility())    flags |= psPersistActor::INVISIBLE;
     if (GetInvincibility())  flags |= psPersistActor::INVINCIBLE;
+    if (IsAlive())           flags |= psPersistActor::IS_ALIVE;
 
     Client* targetClient = psserver->GetConnections()->Find(clientnum);
     if (targetClient && targetClient->GetCharacterData())

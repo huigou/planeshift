@@ -36,6 +36,7 @@ class iResultRow;
 class EventManager;
 class NPC;
 class psTribeNeedSet;
+class psTribeNeed;
 class Perception;
 
 #define TRIBE_UNLIMITED_SIZE   100
@@ -63,16 +64,17 @@ public:
         iSector* GetSector();
     };
 
-    enum TribeNeed 
+    /**
+     * Represent each type of NPC Needs
+     */
+    enum TribeNeedType
     {
-        NOTHING,
-        EXPLORE,
-        WALK,
-        DIG,
-        REPRODUCE,
-        RESURRECT
+        GENERIC,
+        RESOURCE_AREA,
+        REPRODUCE
     };
-    static const char *TribeNeedName[];
+    
+    static const char *TribeNeedTypeName[];
 
     /** Construct a new tribe object */
     psTribe();
@@ -82,7 +84,10 @@ public:
 
     /** Load the tribe object */
     bool Load(iResultRow& row);
-    
+
+    /** Load and add a new need to the tribe */
+    bool LoadNeed(iResultRow& row);
+
     /** Load and add a new member to the tribe */
     bool LoadMember(iResultRow& row);
 
@@ -131,6 +136,7 @@ public:
     size_t GetResourceCount() { return resources.GetSize(); }
     const Resource& GetResource(size_t n) { return resources[n]; }
     csList<Memory*>::Iterator GetMemoryIterator() { csList<Memory*>::Iterator it(memories); return it; };
+    psTribeNeedSet* GetNeedSet() { return needSet; };
 
     /**
      * Calculate the maximum number of members for the tribe.
@@ -147,6 +153,11 @@ public:
      * Get home position for the tribe.
      */
     void GetHome(csVector3& pos, float& radius, iSector* &sector);
+
+    /**
+     * Set home position for the tribe.
+     */
+    void SetHome(const csVector3& pos, iSector* sector);
 
     /**
      * Get a memorized location for resources
@@ -192,6 +203,11 @@ public:
      */
     void Memorize(NPC* npc, Perception * perception);
 
+    /**
+     * Move TribeHome to the perception location.
+     */
+    void TribeHome(NPC* npc, Perception * perception);
+    
     /**
      * Find a privat memory
      */
@@ -245,7 +261,7 @@ public:
 protected:
 
     /** Calculate the tribes need from a NPC */
-    TribeNeed Brain(NPC * npc);
+    psTribeNeed* Brain(NPC * npc);
     
     int                    id;
     csString               name;
@@ -262,12 +278,13 @@ protected:
     csString               wealth_resource_name;
     csString               wealth_resource_nick;
     csString               wealth_resource_area;
-    int					   wealth_resource_growth;
+    int	                   wealth_resource_growth;
     int                    reproduction_cost;
+    csString               wealth_gather_need;
     psTribeNeedSet        *needSet;
     csList<Memory*>        memories;
     
-    csTicks				   last_growth;
+    csTicks                last_growth;
 };
 
 #endif

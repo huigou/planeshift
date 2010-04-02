@@ -320,7 +320,7 @@
      </behavior>
   </npctype>
 
-  <npctype name="Tribe" vel="5.0">
+  <npctype name="MineingTribe" vel="2.5">
 			
     <behavior name="do nothing" decay="0" growth="0" initial="10">
       <wait duration="1" anim="stand" />
@@ -403,6 +403,64 @@
     <react event="tribe:reproduce"    behavior="Reproduce"     inactive_only="yes" />
     <react event="tribe:resurrect"    behavior="Resurrect"     inactive_only="yes" when_dead="yes" />
     <react event="inventory:added"    behavior="RememberLoc"   type="Gold Ore"/>
+  </npctype>
+
+  <npctype name="HuntingTribe" vel="5.0">
+			
+    <behavior name="do nothing" decay="0" growth="0" initial="10">
+      <wait duration="1" anim="stand" />
+    </behavior>
+    <behavior name="Explore" completion_decay="100" growth="0" initial="0" resume="yes">
+      <!--debug level="0" /-->
+      <locate obj="waypoint"  static="no" />    <!-- Locate nearest waypoint -->
+      <navigate anim="walk" />                  <!-- Local navigation -->
+      <locate obj="waypoint" static="no" random="yes" range="80" />
+      <wander anim="walk" />                    <!-- Navigate using waypoints -->
+      <wait anim="stand" duration="5" />
+      <locate obj="tribe:home"  static="no" />
+      <wander anim="walk" />                    <!-- Navigate using waypoints -->
+      <navigate anim="walk" />                  <!-- Local navigation -->
+      <share_memories />
+    </behavior>
+    <behavior name="Hunt" completion_decay="100" growth="0" initial="0">
+      <locate obj="waypoint"  static="no" />    <!-- Locate nearest waypoint -->
+      <navigate anim="walk" />                  <!-- Local navigation -->
+      <locate obj="tribe:resource" static="no" random="yes" range="200" />
+      <wander anim="walk" />        <!-- Navigate using waypoints -->
+      <loop iterations="3">
+        <navigate anim="walk" />      <!-- Local navigation -->
+        <locate obj="tribe:resource" static="no" random="no" range="80" /> <!-- Get new random pos in field -->
+      </loop>
+      <locate obj="tribe:home"  static="no" />
+      <wander anim="walk" />        <!-- Navigate using waypoints -->
+      <navigate anim="walk" />      <!-- Local navigation -->
+      <transfer item="tribe:wealth" target="tribe" />
+    </behavior>
+    <behavior name="Reproduce" completion_decay="200" growth="0" initial="0">
+      <!--  Should include a go home behaviour here first -->
+      <wait duration="10" anim="sit" />
+      <locate obj="self" /> <!-- Update target for reproduce to be self -->
+      <reproduce/>
+      <wait duration="10" anim="sit" />
+    </behavior>
+    <behavior name="Resurrect" completion_decay="200" growth="0" initial="0" when_dead="yes">
+      <resurrect/>
+    </behavior>
+    <behavior name="ExploreLoc" completion_decay="0" growth="0" initial="0" >
+      <memorize obj="perception" />
+    </behavior>
+    <behavior name="RememberLoc" completion_decay="0" growth="0" initial="0" >
+      <!-- debug level="5" /-->
+      <memorize obj="perception" />
+      <!-- debug level="0" /-->
+    </behavior>
+
+    <react event="tribe:explore"      behavior="Explore"        delta="100" />
+    <react event="location sensed"    behavior="ExploreLoc"    type="hunting_ground" only_interrupt="Explore" />
+    <react event="tribe:hunt"         behavior="Hunt"          delta="100" />
+    <react event="tribe:reproduce"    behavior="Reproduce"     inactive_only="yes" />
+    <react event="tribe:resurrect"    behavior="Resurrect"     inactive_only="yes" when_dead="yes" />
+    <react event="inventory:added"    behavior="RememberLoc"   type="Flesh"/>
   </npctype>
 
 

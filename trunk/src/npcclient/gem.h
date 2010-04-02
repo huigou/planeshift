@@ -99,6 +99,9 @@ public:
     virtual bool IsInvincible() { return invincible; }
     virtual void SetInvincible(bool inv) { invincible = inv; }
 
+    virtual bool IsAlive() { return isAlive; }
+    virtual void SetAlive(bool alive ) { isAlive = alive; }
+
     virtual NPC *GetNPC() { return NULL; }
 
     virtual void SetPosition(csVector3& pos, iSector* sector = NULL, InstanceID* instance = NULL);
@@ -115,6 +118,8 @@ protected:
     int  type;
     bool visible;
     bool invincible;
+    bool isAlive;
+    
     InstanceID  instance;
     
     csRef<iEngine> engine;

@@ -667,6 +667,23 @@ public:
     virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy();
 };
+//-----------------------------------------------------------------------------
+
+/**
+* ShareMemories will make the npc share memoreis with tribe
+*/
+class ShareMemoriesOperation : public ScriptOperation
+{
+protected:
+
+public:
+
+    ShareMemoriesOperation(): ScriptOperation("ShareMemories") {};
+    virtual ~ShareMemoriesOperation() {};
+    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual bool Load(iDocumentNode *node);
+    virtual ScriptOperation *MakeCopy();
+};
 
 //-----------------------------------------------------------------------------
 
@@ -783,6 +800,24 @@ public:
 //-----------------------------------------------------------------------------
 
 /**
+* TribeHome will make the npc to setup a spawn point here
+*/
+class TribeHomeOperation : public ScriptOperation
+{
+protected:
+
+public:
+
+    TribeHomeOperation(): ScriptOperation("TribeHome") {};
+    virtual ~TribeHomeOperation() {};
+    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual bool Load(iDocumentNode *node);
+    virtual ScriptOperation *MakeCopy();
+};
+
+//-----------------------------------------------------------------------------
+
+/**
 * Dig will make the NPC dig for a resource
 */
 class DigOperation : public ScriptOperation
@@ -794,6 +829,25 @@ public:
 
     DigOperation(): ScriptOperation("Dig") {};
     virtual ~DigOperation() {};
+    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual bool Load(iDocumentNode *node);
+    virtual ScriptOperation *MakeCopy();
+};
+
+//-----------------------------------------------------------------------------
+
+/**
+* Eat will take a bite of a nearby dead actor and resource to tribe wealth
+*/
+class EatOperation : public ScriptOperation
+{
+protected:
+    csString resource;
+
+public:
+
+    EatOperation(): ScriptOperation("Eat") {};
+    virtual ~EatOperation() {};
     virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
     virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy();
