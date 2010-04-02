@@ -53,6 +53,7 @@
 struct iObjectRegistry;
 struct iGraphics2D;
 struct iGraphics3D;
+struct iXWindow;
 struct iEvent;
 class psLocalization;
 
@@ -69,6 +70,14 @@ struct PAWSData;
 struct PAWSSubscription;
 
 typedef csHash<PAWSSubscription*,csString> PAWSSubscriptionsHash;
+
+#if defined(CS_PLATFORM_UNIX) && defined(INCLUDE_CLIPBOARD)
+
+/// SelectionNotify event(Should be moved into CS).
+#define csevSelectionNotify(reg) (csEventNameRegistry::GetID((reg), "crystalspace.xwindow.clipboard.selection.notify"))
+
+#endif
+
 
 /**
  * Main PlaneShift Window manager.
@@ -382,6 +391,14 @@ public:
 
     csString &getVFSPathToSkin() { return vfsPathToSkin; }
 
+#if defined(CS_PLATFORM_UNIX) && defined(INCLUDE_CLIPBOARD)
+    /** RequestClipboardContent will result in a call to OnClipboard in
+     *  in the widget with focus. This needs to be implemented asyncronos
+     *  due to the nature of the X11 system.
+     */
+    void RequestClipboardContent();
+#endif
+    
 protected:
     MathEnvironment extraScriptVars;
 
@@ -489,6 +506,19 @@ protected:
      */
     bool HandleKeyDown( iEvent& event );
 
+#if defined(CS_PLATFORM_UNIX) && defined(INCLUDE_CLIPBOARD)
+    /** @brief Process Selection Notify events.
+     *
+     * If a widget has focus it extracts the clipboard content
+     * and calls OnClipboard on the focused widget.
+     *
+     * @param event iEvent to process.
+     * @return TRUE if a widget has focus AND the
+     * OnClipboard returns TRUE when called.
+     */
+    bool HandleSelectionNotify( iEvent& event );
+#endif
+    
     /** The object registry.
      */
     iObjectRegistry* objectReg;
@@ -605,6 +635,17 @@ protected:
     csEventID KeyboardDown;
     /// Shortcut for event key up
     csEventID KeyboardUp;
+
+    /*                      X Clipboard 
+    ------------------------------------------------------------------------*/
+#if defined(CS_PLATFORM_UNIX) && defined(INCLUDE_CLIPBOARD)
+    csRef<iXWindow> xwin;
+
+    /// Shortcut for event Selection Notify
+    csEventID SelectionNotifyEvent;
+    
+#endif
+    
 
 };
 

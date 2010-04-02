@@ -491,7 +491,9 @@ bool psEngine::Initialize (int level)
         event_mouse = csevMouseEvent (object_reg);
         event_keyboard = csevKeyboardEvent (object_reg);
         event_quit = csevQuit(object_reg);
-
+#if defined(CS_PLATFORM_UNIX) && defined(INCLUDE_CLIPBOARD)
+        event_selectionnotify = csevSelectionNotify(object_reg);
+#endif
         eventHandlerLogic = csPtr<LogicEventHandler> (new LogicEventHandler (this));
         eventHandler2D = csPtr<EventHandler2D> (new EventHandler2D (this));
         eventHandler3D = csPtr<EventHandler3D> (new EventHandler3D (this));
@@ -506,6 +508,9 @@ bool psEngine::Initialize (int level)
               event_mouse,
               event_keyboard,
               event_quit,
+#if defined(CS_PLATFORM_UNIX) && defined(INCLUDE_CLIPBOARD)
+              event_selectionnotify,
+#endif
               CS_EVENTLIST_END
         };
 

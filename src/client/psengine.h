@@ -492,7 +492,11 @@ private:
     csEventID event_mouse;
     csEventID event_keyboard;
     csEventID event_quit;
-
+    
+#if defined(CS_PLATFORM_UNIX) && defined(INCLUDE_CLIPBOARD)
+    csEventID event_selectionnotify;
+#endif
+    
     /**
     * Embedded iEventHandler interface that handles frame events in the
     * logic phase.

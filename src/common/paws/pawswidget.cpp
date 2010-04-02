@@ -1744,6 +1744,20 @@ bool pawsWidget::OnKeyDown( utf32_char keyCode, utf32_char key, int modifiers )
     return false;
 }
 
+bool pawsWidget::OnClipboard( const csString& content )
+{
+    if ( parent )
+    {
+        return parent->OnClipboard( content );
+    }
+    else
+    {
+        return false;
+    }
+}
+
+
+
 void pawsWidget::MoveDelta( int deltaX, int deltaY )
 {
     //snap to edge of screen

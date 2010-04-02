@@ -733,6 +733,12 @@ public:
      */
     virtual bool OnKeyDown( utf32_char keyCode, utf32_char keyChar, int modifiers );
 
+    /** Process Clipboard content, as a response to RequestClipboardContent
+     * @param content The content of the clipboard
+     * @return bool TRUE for success FALSE if no action.
+     */
+    virtual bool OnClipboard( const csString& content );
+    
     /** Test focus of the widget.
      * @return hasFocus Current status of the widget.
      */

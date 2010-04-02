@@ -1229,7 +1229,10 @@ bool pawsEditTextBox::OnKeyDown( utf32_char code, utf32_char key, int modifiers 
     if (changed)
     {
         if (subscribedVar)
+        {
             PawsManager::GetSingleton().Publish(subscribedVar, text);
+        }
+        
         parent->OnChange(this);
     }
 
@@ -1260,45 +1263,92 @@ bool pawsEditTextBox::OnMouseDown( int button, int modifiers, int x, int y )
     // Basic comparisons to see if it was clicked after all the text or before all the text or neither
     if (x <= 0 || text.Length() == 0)
     {
+        // The click where before all text. Moving cursor to start of text.
         start=0;
         cursorPosition=0;
-        return true;
     }
-
-    GetFont()->GetDimensions(text.GetData() + start,textWidth,dummy);
-    if (x >= textWidth)
+    else
     {
-    	cursorPosition = text.Length();
-    	return true;
-    }
-    
-    if(textWidth > boxWidth)
-    {
-    	x += textWidth - boxWidth;
-    }
-
-    // Find exact letter mouse was clicked on
-    int xlast;
-    int xlast2=0;
-    int charLen = 0;
-    
-    csString sub;
-
-    for (unsigned int i=start;i<text.Length();i += charLen)
-    {
-        charLen = csUnicodeTransform::UTF8Skip((const utf8_char*)text.GetData() + i, text.Length() - i);
-        xlast=xlast2;
-        text.SubString(sub, i, charLen);
-        GetFont()->GetDimensions(sub.GetData(), textWidth, dummy);
-        xlast2+=textWidth;
-        if (x >= xlast && x < xlast2)
+        GetFont()->GetDimensions(text.GetData() + start,textWidth,dummy);
+        if (x >= textWidth)
         {
-            cursorPosition=i;
-            break;
+            // The click where after all text. Moving cursor to end of text.
+            cursorPosition = text.Length();
+        }
+        else
+        {
+            // The click where in the text. Finding cursosr position in text.
+
+            if(textWidth > boxWidth)
+            {
+                x += textWidth - boxWidth;
+            }
+
+            // Find exact letter mouse was clicked on
+            int xlast;
+            int xlast2=0;
+            int charLen = 0;
+            
+            csString sub;
+            
+            for (unsigned int i=start;i<text.Length();i += charLen)
+            {
+                charLen = csUnicodeTransform::UTF8Skip((const utf8_char*)text.GetData() + i, text.Length() - i);
+                xlast=xlast2;
+                text.SubString(sub, i, charLen);
+                GetFont()->GetDimensions(sub.GetData(), textWidth, dummy);
+                xlast2+=textWidth;
+                if (x >= xlast && x < xlast2)
+                {
+                    cursorPosition=i;
+                    break;
+                }
+            }
         }
     }
+    
+
+#if defined(CS_PLATFORM_UNIX) && defined(INCLUDE_CLIPBOARD)
+    if (button == csmbMiddle)
+    {
+        // Only included for platforms using Middle button to past.
+
+        // Request Clipboard. Reuslt will be available in OnClipboard
+        PawsManager::GetSingleton().RequestClipboardContent();
+
+        return true;
+    }
+#endif
+
+
     return pawsWidget::OnMouseDown( button, modifiers, x ,y);
 }
+
+bool pawsEditTextBox::OnClipboard( const csString& content )
+{
+    printf("Received from clipboard: %s\n", content.GetDataSafe());
+
+    if ( cursorPosition >= text.Length() )
+    {
+        text.Append( content );
+    }
+    else
+    {
+        text.Insert( cursorPosition, content );
+    }
+    cursorPosition += content.Length();
+
+    if (subscribedVar)
+    {
+        PawsManager::GetSingleton().Publish(subscribedVar, text);
+    }
+    
+    parent->OnChange(this);
+
+    return true;
+}
+
+
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
