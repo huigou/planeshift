@@ -279,6 +279,12 @@ public:
     void Clear();
 
     virtual bool OnMouseDown( int button, int modifiers, int x, int y );
+    
+    /** Called as a callback to a request for clipboard content if avaliabe.
+     *
+     * \note Only implemented for unix
+     */
+    virtual bool OnClipboard( const csString& content );
 
     int GetBorderStyle() { return BORDER_SUNKEN; }    
 

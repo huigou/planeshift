@@ -38,6 +38,11 @@
 #include <csutil/syspath.h>
 #include <csutil/xmltiny.h>
 
+#if defined(CS_PLATFORM_UNIX) && defined(INCLUDE_CLIPBOARD)
+#include <iutil/plugin.h>
+#include <ivaria/xwindow.h>
+#include <X11/Xlib.h>
+#endif
 
 ////////////////////////////////////////////////////////////////////////////
 // COMMON INCLUDES
@@ -115,6 +120,17 @@ PawsManager::PawsManager(iObjectRegistry* object, const char* skin, const char* 
     vfs =  csQueryRegistry<iVFS > ( objectReg);
     xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
     csRef<iConfigManager> cfg =  csQueryRegistry<iConfigManager> (objectReg);
+
+#if defined(CS_PLATFORM_UNIX) && defined(INCLUDE_CLIPBOARD)
+    csRef<iPluginManager> plugin_mgr = csQueryRegistry<iPluginManager> (objectReg);
+    xwin = csQueryPluginClass<iXWindow>(plugin_mgr, "crystalspace.window.x");
+    if (!xwin)
+    {
+        printf("Didn't find iXWindow\n");
+    }
+
+    SelectionNotifyEvent = csevSelectionNotify(objectReg);
+#endif
 
     float screenWidth = cfg->GetFloat( "Video.ScreenWidth", 800.0f );
     float screenHeight = cfg->GetFloat( "Video.ScreenHeight", 600.0f );
@@ -266,16 +282,36 @@ void PawsManager::ResizingWidget( pawsWidget* widget, int flags )
 bool PawsManager::HandleEvent( iEvent &event )
 {
     if (event.Name == MouseMove)
-      return HandleMouseMove (event);
+    {
+        return HandleMouseMove (event);
+    }
+    
     if (event.Name == MouseDown)
+    {
       return HandleMouseDown (event);
+    }
+
     if (event.Name == MouseDoubleClick)
+    {
       return HandleDoubleClick (event);
+    }
+
     if (event.Name == MouseUp)
+    {
       return HandleMouseUp (event);
-    if (event.Name == KeyboardDown ||
-    event.Name == KeyboardUp)
+    }
+
+    if (event.Name == KeyboardDown || event.Name == KeyboardUp)
+    {
       return HandleKeyDown( event );
+    }
+
+#if defined(CS_PLATFORM_UNIX) && defined(INCLUDE_CLIPBOARD)
+    if (event.Name == SelectionNotifyEvent)
+    {
+      return HandleSelectionNotify (event);
+    }
+#endif
 
     return false;
 }
@@ -436,6 +472,87 @@ bool PawsManager::HandleKeyDown( iEvent& event )
     return false;
 }
 
+#if defined(CS_PLATFORM_UNIX) && defined(INCLUDE_CLIPBOARD)
+bool PawsManager::HandleSelectionNotify( iEvent &ev )
+{
+    int result = false;
+    
+    printf("HandleSelectionNotify\n");
+    
+    if ( currentFocusedWidget )
+    {
+        Display * dpy = xwin->GetDisplay();
+        if (dpy == NULL)
+        {
+            printf("Failed to find display\n");
+            return false;
+        }
+        
+        Window w = xwin->GetWindow();
+        if (w == 0)
+        {
+            printf("Failed to find window\n");    
+            return false;
+        }
+
+        XEvent event = xwin->GetStoredEvent();
+
+        if (event.xselection.property == None)
+        {
+            printf("Asked format was denied\n");
+            return false;
+        }
+        else
+        {
+            uint8 *clipData;
+            Atom actualType;
+            int  actualFormat;
+            unsigned long nitems, bytesLeft;
+            if ((result = XGetWindowProperty (dpy, w, event.xselection.property,
+                                              0L /* offset */, 1000000 /* length (max) */, false,
+                                              AnyPropertyType /* format */,
+                                              &actualType, &actualFormat, &nitems, &bytesLeft,
+                                              &clipData)) == Success)
+            {
+                printf ("type:%i len:%i format:%i byte_left:%i %s\n", 
+                        (int)actualType, nitems, actualFormat, bytesLeft,clipData);
+                /*
+                  if (actualType == atom_UTF8_STRING && actualFormat == 8) {
+                  returnData = String::fromUTF8 (clipData, nitems);
+                  } else if (actualType == XA_STRING && actualFormat == 8) {
+                  returnData = String((const char*)clipData, nitems);
+                  }
+                */
+
+                csString content((const char*)clipData);
+
+                if (clipData != 0)
+                    XFree (clipData);
+                
+                XDeleteProperty (dpy, w, event.xselection.property );
+
+                return currentFocusedWidget->OnClipboard( content );
+            }
+            else
+            {
+                XDeleteProperty (dpy, w, event.xselection.property );
+
+                if (result == BadAtom)
+                {
+                    printf("Check data: Bad Atom\n");
+                }
+                if (result == BadWindow)
+                {
+                    printf("Check data: Bad Window\n");
+                }
+                return false;
+            }
+        }
+    }
+    
+    return false;
+}
+#endif
 
 bool PawsManager::HandleMouseDown( iEvent &ev )
 {
@@ -449,7 +566,8 @@ bool PawsManager::HandleMouseDown( iEvent &ev )
 
     if ( widget != NULL )
     {
-		// Enforce modality by only allowing button clicks within the modal widget if there is one.
+
+        // Enforce modality by only allowing button clicks within the modal widget if there is one.
         if ( modalWidget != NULL )
         {
             // Check to see if the widget is a child of the modal widget.
@@ -464,11 +582,19 @@ bool PawsManager::HandleMouseDown( iEvent &ev )
 
         if ( widget != NULL )
         {
+            // Handle focus and ordering
+
             SetCurrentFocusedWidget( widget );
 
             if ( widget != mainWidget )
+            {
                 widget->GetParent()->BringToTop(widget);
+            }
+            
+            // Distribute the event to the widget
+
             widget->RunScriptEvent(PW_SCRIPT_EVENT_MOUSEDOWN);
+
             bool returnResult = widget->OnMouseDown( button,
                                                      modifiers,
                                                      event.x,
@@ -504,11 +630,12 @@ bool PawsManager::HandleMouseUp( iEvent &ev )
     }
 
     if ( currentFocusedWidget )
+    {
         return currentFocusedWidget->OnMouseUp( button,
                                                 modifiers,
                                                 event.x,
                                                 event.y );
-
+    }
 
     pawsWidget* widget = mainWidget->WidgetAt(event.x, event.y );
 
@@ -517,7 +644,9 @@ bool PawsManager::HandleMouseUp( iEvent &ev )
     if ( widget )
     {
         if ( widget != mainWidget )
+        {
             widget->GetParent()->BringToTop( widget );
+        }
 
         return widget->OnMouseUp( button,
                                   modifiers,
@@ -1514,3 +1643,68 @@ csArray<iPAWSSubscriber*> PawsManager::ListSubscribers(const char *dataname)
     return list;
 }
 
+#if defined(CS_PLATFORM_UNIX) && defined(INCLUDE_CLIPBOARD)
+void PawsManager::RequestClipboardContent()
+{
+    printf("Requesting Clipboard\n");
+
+    if (!xwin)
+    {
+        printf("Need xwin in order to request selection.\n");
+        return;
+    }
+
+    Display * dpy = xwin->GetDisplay();
+    if (dpy == NULL)
+    {
+        printf("Failed to find display\n");
+        return;
+    }
+
+    Window w = xwin->GetWindow();
+    if (!w)
+    {
+        printf("Failed to find window.\n");
+        return;
+    }
+
+    //for some reason unknown only to mortals, XA_CLIPBOARD is not an internal atom defined in Xatom.h
+    Atom XA_CLIPBOARD = XInternAtom(dpy, "CLIPBOARD", 0);
+    
+    // Check if there is an owner of primary selection
+    Atom selection = XA_PRIMARY;
+    Window selection_owner = None;
+    if ((selection_owner = XGetSelectionOwner(dpy, selection)) == None)
+    {
+        printf("No Primary selection, trying clipboard\n");
+        selection = XA_CLIPBOARD;
+        selection_owner = XGetSelectionOwner(dpy, selection);
+    }
+    
+    
+    if (selection_owner != None)
+    {
+        if (selection_owner == w)
+        {
+            // Copy from internal clipboard
+            // content = localClipboardContent;
+            // call OnClipboard( content ) for focus widget.
+        }
+        else
+        {
+            printf("Found selection owner other than self\n");
+            
+            Atom XA_UTF8_STRING = XInternAtom (dpy, "UTF8_STRING", False);
+            
+            //bool ok = juce_x11_requestSelectionContent(content, selection, atom_UTF8_STRING);
+            //static bool juce_x11_requestSelectionContent(String &selection_content, Atom selection, Atom requested_format) {
+            
+            Atom property_name = XInternAtom(dpy, "PLANESHIFT_SEL", false);
+            
+            /* the selection owner will be asked to set the PLANESHIFT_SEL property on the PS window(w) with the selection content */
+            XConvertSelection(dpy, selection, XA_UTF8_STRING, property_name, w, CurrentTime);
+            
+        }
+    }
+}
+#endif
