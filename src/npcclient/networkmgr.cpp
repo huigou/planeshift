@@ -286,6 +286,7 @@ void NetworkManager::HandleActor(MsgEntry *me)
         obj->Move(mesg.pos, mesg.yrot, mesg.sectorName, mesg.instance );
         obj->SetVisible( (mesg.flags & psPersistActor::INVISIBLE) ? false : true );
         obj->SetInvincible( (mesg.flags & psPersistActor::INVINCIBLE) ? true : false );
+        obj->SetAlive( (mesg.flags & psPersistActor::IS_ALIVE) ? true : false );
         
         return;
     }
@@ -810,7 +811,8 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                     break;
 
                 obj->SetVisible(!(flags & psNPCCommandsMessage::INVISIBLE));
-				obj->SetInvincible((flags & psNPCCommandsMessage::INVINCIBLE) ? true : false);
+                obj->SetInvincible((flags & psNPCCommandsMessage::INVINCIBLE) ? true : false);
+                obj->SetAlive((flags & psNPCCommandsMessage::IS_ALIVE));
 
                 break;
             }

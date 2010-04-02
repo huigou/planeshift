@@ -668,6 +668,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                 csString str;
                 if (flags & INVISIBLE)  str.Append(" INVISIBLE");
                 if (flags & INVINCIBLE) str.Append(" INVINCIBLE");
+                if (flags & IS_ALIVE)   str.Append(" IS_ALIVE");
 
                 msgtext.AppendFmt("OwnerID: %u Flags: %s ", owner_id.Unbox(), str.GetDataSafe());
                 break;

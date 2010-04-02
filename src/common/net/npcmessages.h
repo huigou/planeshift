@@ -191,7 +191,8 @@ public:
     {
         NONE        = 0,
         INVISIBLE   = 1 << 0,
-        INVINCIBLE  = 1 << 1
+        INVINCIBLE  = 1 << 1,
+        IS_ALIVE    = 1 << 2
     };
 
     enum PerceptionType

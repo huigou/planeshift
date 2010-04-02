@@ -4920,6 +4920,7 @@ csString psPersistActor::ToString(AccessPointers * access_ptrs)
     if (flags & INVISIBLE) msgtext.AppendFmt(" INVISIBLE");
     if (flags & INVINCIBLE) msgtext.AppendFmt(" INVINCIBLE");
     if (flags & NPC) msgtext.AppendFmt(" NPC");
+    if (flags & IS_ALIVE) msgtext.AppendFmt(" IS_ALIVE");
 
     return msgtext;
 }

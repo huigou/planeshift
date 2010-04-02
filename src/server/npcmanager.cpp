@@ -1988,6 +1988,7 @@ void NPCManager::QueueFlagPerception(gemActor *owner)
 
     if (!owner->GetVisibility())   flags |= psNPCCommandsMessage::INVISIBLE;
     if (owner->GetInvincibility()) flags |= psNPCCommandsMessage::INVINCIBLE;
+    if (owner->IsAlive())          flags |= psNPCCommandsMessage::IS_ALIVE;
 
     outbound->msg->Add( flags );
     cmd_count++;

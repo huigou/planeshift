@@ -2592,6 +2592,33 @@ bool MemorizeOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 
 //---------------------------------------------------------------------------
 
+bool ShareMemoriesOperation::Load(iDocumentNode *node)
+{
+    return true;
+}
+
+ScriptOperation *ShareMemoriesOperation::MakeCopy()
+{
+    ShareMemoriesOperation *op = new ShareMemoriesOperation;
+    return op;
+}
+
+bool ShareMemoriesOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+{
+
+    npc->Printf("ShareMemories with tribe.");
+
+    psTribe * tribe = npc->GetTribe();
+    if ( !tribe ) return true; // Nothing more to do for this op.
+
+    tribe->ShareMemories( npc );
+
+    return true; // Nothing more to do for this op.
+}
+
+
+//---------------------------------------------------------------------------
+
 bool MeleeOperation::Load(iDocumentNode *node)
 {
     seek_range   = node->GetAttributeValueAsFloat("seek_range");
@@ -2899,6 +2926,39 @@ bool TransferOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 
     return true;
 }
+//---------------------------------------------------------------------------
+
+bool TribeHomeOperation::Load(iDocumentNode *node)
+{
+    return true;
+}
+
+ScriptOperation *TribeHomeOperation::MakeCopy()
+{
+    TribeHomeOperation *op = new TribeHomeOperation;
+    return op;
+}
+
+bool TribeHomeOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+{
+    Perception * percept = npc->GetLastPerception();
+    if (!percept)
+    {
+        npc->Printf(5, ">>> TribeHome No Perception.");
+        return true; // Nothing more to do for this op.
+    }
+    
+    npc->Printf(5, ">>> TribeHome '%s' '%s'.",percept->GetType(),percept->GetName());
+
+    psTribe * tribe = npc->GetTribe();
+    
+    if ( !tribe ) return true; // Nothing more to do for this op.
+
+    tribe->TribeHome(npc, percept );
+
+    return true; // Nothing more to do for this op.
+}
+
 
 //---------------------------------------------------------------------------
 
@@ -2930,6 +2990,47 @@ bool DigOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         npcclient->GetNetworkMgr()->QueueDigCommand(npc->GetActor(), resource );
     }
     
+
+    return true;
+}
+
+//---------------------------------------------------------------------------
+
+bool EatOperation::Load(iDocumentNode *node)
+{
+    resource = node->GetAttributeValue("resource");
+    if (resource.IsEmpty()) return false;
+    return true;
+}
+
+ScriptOperation *EatOperation::MakeCopy()
+{
+    EatOperation *op = new EatOperation;
+    op->resource = resource;
+    return op;
+}
+
+bool EatOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+{
+    csString res = resource;
+    
+    if (resource == "tribe:wealth")
+    {
+        if (npc->GetTribe())
+        {
+            res = npc->GetTribe()->GetNeededResourceNick();
+        }
+    }
+
+    gemNPCActor *ent = npc->GetNearestDeadActor(1.0);
+    if (ent)
+    {
+        // Take a bite :)
+        if (npc->GetTribe())
+        {
+            npc->GetTribe()->AddResource(res,1);
+        }
+    }
 
     return true;
 }

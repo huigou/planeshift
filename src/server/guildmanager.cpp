@@ -1085,9 +1085,9 @@ void GuildManager::CheckMinimumRequirements(psGuildInfo *guild, gemActor *notify
 
     if (!guild->MeetsMinimumRequirements())
     {
-        Warning4(LOG_ANY,
-           "Guild %s has %zu members and will be deleted in %d minutes.\n",
-           guild->name.GetData(), guild->members.GetSize(), GUILD_KICK_GRACE);
+        Warning5(LOG_ANY,
+           "Guild <%s>(%d) has %zu members and will be deleted in %d minutes.\n",
+                 guild->name.GetData(), guild->id, guild->members.GetSize(), GUILD_KICK_GRACE);
 
         if (!notify) // If not auto-notifying the leader, find the leader if online
         {
@@ -1098,11 +1098,13 @@ void GuildManager::CheckMinimumRequirements(psGuildInfo *guild, gemActor *notify
             clientid = notify->GetClientID();
 
         if (clientid)
+        {
             psserver->SendSystemInfo(clientid,
-            "You have %d minutes to meet guild minimum requirements "
-            "(%d+ members) or your guild will be disbanded.",
-            GUILD_KICK_GRACE, GUILD_MIN_MEMBERS );
-
+                "You have %d minutes to meet guild minimum requirements "
+                "(%d+ members) or your guild will be disbanded.",
+                GUILD_KICK_GRACE, GUILD_MIN_MEMBERS );
+        }
+        
         psGuildCheckEvent *event = new psGuildCheckEvent(guild->id, this);
         psserver->GetEventManager()->Push(event);
     }
@@ -1116,12 +1118,14 @@ void GuildManager::RequirementsDeadline(int guild_id)
 {
     psGuildInfo *guild = psserver->GetCacheManager()->FindGuild(guild_id);
 
-    if (!guild)
+    if (guild == NULL)
+    {
         return;
+    }
 
     if (!guild->MeetsMinimumRequirements())
     {
-        printf("Removing guild <%s> for failure to meet minimum requirements.\n",guild->GetName().GetDataSafe());
+        printf("Removing guild <%s>(%d) for failure to meet minimum requirements.\n",guild->GetName().GetDataSafe(),guild_id);
         EndGuild(guild,0);
     }
 }
@@ -1222,6 +1226,11 @@ void GuildManager::CreateGuild(psGuildCmdMessage& msg,Client *client)
 
 void GuildManager::EndGuild(psGuildCmdMessage& msg,Client *client)
 {
+    if (client == NULL)
+    {
+        return;
+    }
+    
     int clientnum = client->GetClientNum();
 
     psGuildInfo * guild = client->GetCharacterData()->GetGuild();
@@ -1238,8 +1247,13 @@ void GuildManager::EndGuild(psGuildCmdMessage& msg,Client *client)
     }
 
     if ( ! IsLeader(client))
+    {
         if ( ! CheckClientRights(client, RIGHTS_EDIT_GUILD, "You do not have the rights to disband your guild."))
+        {
             return;
+        }
+    }
+    
 
     if (!guild->GetName().CompareNoCase(msg.guildname))
     {
@@ -1250,8 +1264,15 @@ void GuildManager::EndGuild(psGuildCmdMessage& msg,Client *client)
     EndGuild(guild,clientnum);
 }
 
-void GuildManager::EndGuild(psGuildInfo *guild,int clientnum)
+void GuildManager::EndGuild(psGuildInfo *guild, int clientnum)
 {
+    if (guild == NULL)
+    {
+        Error2("Trying to remove (NULL) guild from client %d",clientnum);
+        return;
+    }
+    
+
     //if this guild is in an alliance, it must be removed from it
     psGuildAlliance * alliance = psserver->GetCacheManager()->FindAlliance(guild->GetAllianceID());
     if(alliance)
@@ -1264,7 +1285,9 @@ void GuildManager::EndGuild(psGuildInfo *guild,int clientnum)
     }
 
     if (clientnum)
+    {
         psserver->SendSystemInfo(clientnum, "Guild has been disbanded.");
+    }
 
     UnsubscribeWholeGuild(guild);
 

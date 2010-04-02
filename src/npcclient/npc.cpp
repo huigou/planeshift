@@ -559,6 +559,55 @@ gemNPCActor* NPC::GetNearestVisibleFriend(float range)
     return (gemNPCActor*)friendEnt;
 }
 
+gemNPCActor* NPC::GetNearestDeadActor(float range)
+{
+    csVector3 loc;
+    iSector* sector;
+    float rot,min_range;
+    gemNPCActor *nearEnt = NULL;
+
+    psGameObject::GetPosition(GetActor(),loc,rot,sector);
+
+    csArray<gemNPCObject*> nearlist = npcclient->FindNearbyEntities(sector,loc,range);
+    if (nearlist.GetSize() > 0)
+    {
+        min_range=range;
+        for (size_t i=0; i<nearlist.GetSize(); i++)
+        {
+            // Check if this is an Actor
+            gemNPCActor *ent = dynamic_cast<gemNPCActor*>(nearlist[i]);
+            if (!ent)
+            {
+                continue; // No actor
+            }
+            
+            // Check if this is an NPC
+            if (ent->GetNPC())
+            {
+                continue; // This is and NPC
+            }
+            
+            if (ent->IsAlive())
+            {
+                continue;
+            }
+
+            csVector3 loc2, isect;
+            iSector *sector2;
+            float rot2;
+            psGameObject::GetPosition(ent,loc2,rot2,sector2);
+
+            float dist = (loc2 - loc).Norm();
+            if(min_range < dist)
+                continue;
+
+            min_range = (loc2 - loc).Norm();
+            nearEnt = ent;
+        }
+    }
+    return nearEnt;
+}
+
 void NPC::Printf(const char *msg,...)
 {
     va_list args;

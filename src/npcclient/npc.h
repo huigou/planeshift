@@ -230,6 +230,7 @@ public:
     EID GetNearestEntity(csVector3& dest, csString& name, float range);
 
     gemNPCActor * GetNearestVisibleFriend(float range);
+    gemNPCActor * GetNearestDeadActor(float range);
 
     void Printf(const char *msg,...);
     void Printf(int debug, const char *msg,...);

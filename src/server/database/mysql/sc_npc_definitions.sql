@@ -33,7 +33,7 @@ INSERT INTO sc_npc_definitions VALUES("7","Fighter2","On Sight Fighter","","0.00
 INSERT INTO sc_npc_definitions VALUES("8","Merchant","Wanderer","wander region","0.00","0.00","0","N","N");
 INSERT INTO sc_npc_definitions VALUES("14","DictMaster1","Answerer","","0.00","0.00","0","N","N");
 INSERT INTO sc_npc_definitions VALUES("15","DictMaster2","Answerer","","0.00","0.00","0","N","N");
-INSERT INTO sc_npc_definitions VALUES("20","TribeMember","Tribe","","0.00","0.00","0","N","N");
+INSERT INTO sc_npc_definitions VALUES("20","Miner","MineingTribe","","0.00","0.00","0","N","N");
 INSERT INTO sc_npc_definitions VALUES("21","MoveMaster1","MoveTest1","","0.00","0.00","0","N","N");
 INSERT INTO sc_npc_definitions VALUES("22","MoveMaster2","MoveTest2","","0.00","0.00","0","N","N");
 INSERT INTO sc_npc_definitions VALUES("23","MoveMaster3","MoveTest3","","0.00","0.00","0","N","N");
@@ -49,4 +49,4 @@ INSERT INTO sc_npc_definitions VALUES("50","FAMILIAR:Rogue","Minion","","0.00","
 INSERT INTO sc_npc_definitions VALUES("51","FAMILIAR:Clacker","Minion","","0.00","0.00","0","N","N");
 INSERT INTO sc_npc_definitions VALUES("52","FAMILIAR:Rat","Minion","","0.00","0.00","0","N","N");
 INSERT INTO sc_npc_definitions VALUES("53","MoveUnderground","MoveUnderground","","0.00","0.00","0","N","N");
-
+INSERT INTO sc_npc_definitions VALUES("62","Hunter","HuntingTribe","","0.00","0.00","0","N","N");
